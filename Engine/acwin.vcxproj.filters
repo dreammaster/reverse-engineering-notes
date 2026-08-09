@@ -1,0 +1,397 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{b0183b5d-3a27-48fb-9aae-a6d0ea49f7aa}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{0f36c57a-48ad-452b-9a38-c998f4619f13}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{5f026188-3686-4537-b74a-3c0a3f03551c}</UniqueIdentifier>
+      <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
+    </Filter>
+    <Filter Include="Libraries">
+      <UniqueIdentifier>{0e9e9eb1-a7ad-4ec6-86f0-24022ccc6428}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library Sources">
+      <UniqueIdentifier>{adaa3ecb-c39a-4500-b165-bf8a57d7ac27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library Sources\alogg">
+      <UniqueIdentifier>{58d0c3ec-1d3c-46ec-aae7-64fac5f10864}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library Sources\almp3">
+      <UniqueIdentifier>{39ef87b3-84ff-4a8c-be82-b3cb038a4fd3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library Sources\apeg">
+      <UniqueIdentifier>{7c642cb6-cb28-4578-8b48-2d0a6e77af22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library Sources\DUMB">
+      <UniqueIdentifier>{0646d2d8-e78c-4c25-b6d8-5ca74f25dc00}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library Sources\libcda">
+      <UniqueIdentifier>{a94f7300-f77d-404a-9b85-e586353bdcd2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library Sources\Hq2x">
+      <UniqueIdentifier>{3feb5416-239e-41eb-9109-efa71b6b8a99}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library Sources\aastr">
+      <UniqueIdentifier>{34098a32-8b19-4c29-a66b-3726861e31ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library Sources\AllegroPatches">
+      <UniqueIdentifier>{ee0da250-076d-45c1-a83b-30e3ec33e1a5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AC.CPP">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="acaudio.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="acchars.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="acdebug.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="acdialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="acfonts.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="acgfx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="acgui.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="acplatfm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="acplwin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="acsound.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="acwavi.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="acwavi3d.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ACWSETUP.CPP">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ali3dd3d.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ali3dsw.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Clib32.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\compress.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\cscommon.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\CSRUN.CPP">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\lzw.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="misc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\MOUSEW32.CPP">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="routefnd.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scrptrt.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\sprcache.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ALOGG.C">
+      <Filter>Library Sources\alogg</Filter>
+    </ClCompile>
+    <ClCompile Include="almp3.c">
+      <Filter>Library Sources\almp3</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\almp3-2.0.5\decoder\common.c">
+      <Filter>Library Sources\almp3</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\almp3-2.0.5\decoder\dct64_i386.c">
+      <Filter>Library Sources\almp3</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\almp3-2.0.5\decoder\decode_i386.c">
+      <Filter>Library Sources\almp3</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\almp3-2.0.5\decoder\interface.c">
+      <Filter>Library Sources\almp3</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\almp3-2.0.5\decoder\layer2.c">
+      <Filter>Library Sources\almp3</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\almp3-2.0.5\decoder\layer3.c">
+      <Filter>Library Sources\almp3</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\almp3-2.0.5\decoder\tabinit.c">
+      <Filter>Library Sources\almp3</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\apeg-1.2.1\audio\audio.c">
+      <Filter>Library Sources\apeg</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\apeg-1.2.1\display.c">
+      <Filter>Library Sources\apeg</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\apeg-1.2.1\getbits.c">
+      <Filter>Library Sources\apeg</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\apeg-1.2.1\getblk.c">
+      <Filter>Library Sources\apeg</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\apeg-1.2.1\gethdr.c">
+      <Filter>Library Sources\apeg</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\apeg-1.2.1\getpic.c">
+      <Filter>Library Sources\apeg</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\apeg-1.2.1\idct.c">
+      <Filter>Library Sources\apeg</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\apeg-1.2.1\motion.c">
+      <Filter>Library Sources\apeg</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\apeg-1.2.1\mpeg1dec.c">
+      <Filter>Library Sources\apeg</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\apeg-1.2.1\audio\mpg123.c">
+      <Filter>Library Sources\apeg</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\apeg-1.2.1\ogg.c">
+      <Filter>Library Sources\apeg</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\apeg-1.2.1\recon.c">
+      <Filter>Library Sources\apeg</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\dumb-0.9.2\allegro\alplay.c">
+      <Filter>Library Sources\DUMB</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\dumb-0.9.2\core\atexit.c">
+      <Filter>Library Sources\DUMB</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\dumb-0.9.2\helpers\clickrem.c">
+      <Filter>Library Sources\DUMB</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\dumb-0.9.2\allegro\datduh.c">
+      <Filter>Library Sources\DUMB</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\dumb-0.9.2\allegro\datit.c">
+      <Filter>Library Sources\DUMB</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\dumb-0.9.2\allegro\datmod.c">
+      <Filter>Library Sources\DUMB</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\dumb-0.9.2\allegro\dats3m.c">
+      <Filter>Library Sources\DUMB</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\dumb-0.9.2\allegro\datunld.c">
+      <Filter>Library Sources\DUMB</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\dumb-0.9.2\allegro\datxm.c">
+      <Filter>Library Sources\DUMB</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\dumb-0.9.2\core\duhlen.c">
+      <Filter>Library Sources\DUMB</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\dumb-0.9.2\core\dumbfile.c">
+      <Filter>Library Sources\DUMB</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\dumb-0.9.2\it\itload.c">
+      <Filter>Library Sources\DUMB</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\dumb-0.9.2\it\itmisc.c">
+      <Filter>Library Sources\DUMB</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\dumb-0.9.2\it\itorder.c">
+      <Filter>Library Sources\DUMB</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\dumb-0.9.2\it\itread.c">
+      <Filter>Library Sources\DUMB</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\dumb-0.9.2\it\itrender.c">
+      <Filter>Library Sources\DUMB</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\dumb-0.9.2\it\itunload.c">
+      <Filter>Library Sources\DUMB</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\dumb-0.9.2\core\loadduh.c">
+      <Filter>Library Sources\DUMB</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\dumb-0.9.2\it\loadmod.c">
+      <Filter>Library Sources\DUMB</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\dumb-0.9.2\it\loads3m.c">
+      <Filter>Library Sources\DUMB</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\dumb-0.9.2\it\loadxm.c">
+      <Filter>Library Sources\DUMB</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\dumb-0.9.2\core\makeduh.c">
+      <Filter>Library Sources\DUMB</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\dumb-0.9.2\helpers\memfile.c">
+      <Filter>Library Sources\DUMB</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\dumb-0.9.2\allegro\packfile.c">
+      <Filter>Library Sources\DUMB</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\dumb-0.9.2\core\rawsig.c">
+      <Filter>Library Sources\DUMB</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\dumb-0.9.2\core\readduh.c">
+      <Filter>Library Sources\DUMB</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\dumb-0.9.2\it\readmod.c">
+      <Filter>Library Sources\DUMB</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\dumb-0.9.2\it\reads3m.c">
+      <Filter>Library Sources\DUMB</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\dumb-0.9.2\it\readxm.c">
+      <Filter>Library Sources\DUMB</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\dumb-0.9.2\core\register.c">
+      <Filter>Library Sources\DUMB</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\dumb-0.9.2\core\rendduh.c">
+      <Filter>Library Sources\DUMB</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\dumb-0.9.2\core\rendsig.c">
+      <Filter>Library Sources\DUMB</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\dumb-0.9.2\helpers\resample.c">
+      <Filter>Library Sources\DUMB</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\dumb-0.9.2\helpers\sampbuf.c">
+      <Filter>Library Sources\DUMB</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\dumb-0.9.2\helpers\silence.c">
+      <Filter>Library Sources\DUMB</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\dumb-0.9.2\helpers\stdfile.c">
+      <Filter>Library Sources\DUMB</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\dumb-0.9.2\core\unload.c">
+      <Filter>Library Sources\DUMB</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\dumb-0.9.2\it\xmeffect.c">
+      <Filter>Library Sources\DUMB</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\libcda-0.4\libcdaWin.C">
+      <Filter>Library Sources\libcda</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\hq2x\hq2x3x.cpp">
+      <Filter>Library Sources\Hq2x</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\aastr-0.1.1\AASTR.C">
+      <Filter>Library Sources\aastr</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\aastr-0.1.1\AAUTIL.C">
+      <Filter>Library Sources\aastr</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\allegro-4.2.2-agspatch\c\cstretch.c">
+      <Filter>Library Sources\AllegroPatches</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\allegro-4.2.2-agspatch\file.c">
+      <Filter>Library Sources\AllegroPatches</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\allegro-4.2.2-agspatch\win\wkeybd.c">
+      <Filter>Library Sources\AllegroPatches</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\allegro-4.2.2-agspatch\win\wmouse.c">
+      <Filter>Library Sources\AllegroPatches</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrc\allegro-4.2.2-agspatch\win\wwnd.c">
+      <Filter>Library Sources\AllegroPatches</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ali3d.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="DefaultGDF.gdf.xml">
+      <Filter>Resource Files</Filter>
+    </Xml>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="game-1.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="tintshader.fxo">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="tintshaderLegacy.fxo">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="version.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\NativeLibs\alfont_mt.lib">
+      <Filter>Libraries</Filter>
+    </Library>
+    <Library Include="..\NativeLibs\alleg_s_crt.lib">
+      <Filter>Libraries</Filter>
+    </Library>
+    <Library Include="..\NativeLibs\ddraw.lib">
+      <Filter>Libraries</Filter>
+    </Library>
+    <Library Include="..\NativeLibs\dinput.lib">
+      <Filter>Libraries</Filter>
+    </Library>
+    <Library Include="..\NativeLibs\dsound.lib">
+      <Filter>Libraries</Filter>
+    </Library>
+    <Library Include="..\NativeLibs\dxguid.lib">
+      <Filter>Libraries</Filter>
+    </Library>
+    <Library Include="..\NativeLibs\ogg_static.lib">
+      <Filter>Libraries</Filter>
+    </Library>
+    <Library Include="..\NativeLibs\theora_static.lib">
+      <Filter>Libraries</Filter>
+    </Library>
+    <Library Include="..\NativeLibs\vorbis_static.lib">
+      <Filter>Libraries</Filter>
+    </Library>
+    <Library Include="..\NativeLibs\vorbisfile_static.lib">
+      <Filter>Libraries</Filter>
+    </Library>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="License.txt" />
+  </ItemGroup>
+</Project>

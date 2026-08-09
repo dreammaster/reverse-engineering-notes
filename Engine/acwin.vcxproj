@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="DebugWorking|Win32">
+      <Configuration>DebugWorking</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="ReleaseNoMP3|Win32">
+      <Configuration>ReleaseNoMP3</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <ProjectGuid>{0FAE0543-C09B-43CE-AEE1-D68FA8B33276}</ProjectGuid>
+    <RootNamespace>acwin</RootNamespace>
+    <SccProjectName>"$/ags/acwin", PAAAAAAA</SccProjectName>
+    <SccLocalPath>.</SccLocalPath>
+    <SccProvider>MSSCCI:Microsoft Visual SourceSafe</SccProvider>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugWorking|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseNoMP3|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DebugWorking|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseNoMP3|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>17.0.34322.80</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseNoMP3|Win32'">
+    <OutDir>.\acwin___Win32_ReleaseNoMP3\</OutDir>
+    <IntDir>.\acwin___Win32_ReleaseNoMP3\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugWorking|Win32'">
+    <OutDir>.\acwin___Win32_DebugWorking\</OutDir>
+    <IntDir>.\acwin___Win32_DebugWorking\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>C:\dev\ags\Common;C:\dev\ags\Common\libinclude;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>.\Release\</OutDir>
+    <IntDir>.\Release\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseNoMP3|Win32'">
+    <Midl>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>true</MkTypLibCompatible>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TargetEnvironment>Win32</TargetEnvironment>
+      <TypeLibraryName>.\acwin___Win32_ReleaseNoMP3/acwin.tlb</TypeLibraryName>
+      <HeaderFileName />
+    </Midl>
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <AdditionalIncludeDirectories>.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>VS2005;WIN32;NDEBUG;_WINDOWS;ALLEGRO_STATICLINK;THIS_IS_THE_ENGINE;WINDOWS_VERSION;DISABLE_MPEG_AUDIO;_CRT_SECURE_NO_WARNINGS;ALLEGRO_NO_ASM;NO_MP3_PLAYER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeaderOutputFile>.\acwin___Win32_ReleaseNoMP3/acwin.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>.\acwin___Win32_ReleaseNoMP3/</AssemblerListingLocation>
+      <ObjectFileName>.\acwin___Win32_ReleaseNoMP3/</ObjectFileName>
+      <ProgramDataBaseFileName>.\acwin___Win32_ReleaseNoMP3/</ProgramDataBaseFileName>
+      <BrowseInformation>true</BrowseInformation>
+      <WarningLevel>Level3</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0809</Culture>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>odbc32.lib;odbccp32.lib;libcmt.lib;libcpmt.lib;d3d9.lib;quartz.lib;strmiids.lib;winmm.lib;shlwapi.lib;amstrmid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>.\acwin___Win32_ReleaseNoMP3/acwin.exe</OutputFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <IgnoreSpecificDefaultLibraries>LIBC;LIBCD;msvcrt;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ProgramDatabaseFile>.\acwin___Win32_ReleaseNoMP3/acwin.pdb</ProgramDatabaseFile>
+      <GenerateMapFile>true</GenerateMapFile>
+      <MapFileName>.\acwin___Win32_ReleaseNoMP3/acwin.map</MapFileName>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention />
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\acwin___Win32_ReleaseNoMP3/acwin.bsc</OutputFile>
+    </Bscmake>
+    <PostBuildEvent>
+      <Command>cmd /c copy e:\code\ags\acwin\release\acwin.exe e:\code\ags\agsedit\release
+cmd /c copy e:\code\ags\acwin\release\acwin.exe E:\Code\ags\netedit\AGS.Editor\bin\Debug
+</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugWorking|Win32'">
+    <Midl>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>true</MkTypLibCompatible>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TargetEnvironment>Win32</TargetEnvironment>
+      <TypeLibraryName>.\acwin___Win32_DebugWorking/acwin.tlb</TypeLibraryName>
+      <HeaderFileName />
+    </Midl>
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>VS2005;_DEBUG;WIN32;NDEBUG;_WINDOWS;ALLEGRO_STATICLINK;THIS_IS_THE_ENGINE;WINDOWS_VERSION;DISABLE_MPEG_AUDIO;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+      <PrecompiledHeaderOutputFile>.\acwin___Win32_DebugWorking/acwin.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>.\acwin___Win32_DebugWorking/</AssemblerListingLocation>
+      <ObjectFileName>.\acwin___Win32_DebugWorking/</ObjectFileName>
+      <ProgramDataBaseFileName>.\acwin___Win32_DebugWorking/</ProgramDataBaseFileName>
+      <BrowseInformation>true</BrowseInformation>
+      <WarningLevel>Level3</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0809</Culture>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>odbc32.lib;odbccp32.lib;libcpmt.lib;d3d9.lib;quartz.lib;strmiids.lib;winmm.lib;shlwapi.lib;amstrmid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>.\acwin___Win32_DebugWorking/acwin.exe</OutputFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <IgnoreSpecificDefaultLibraries>LIBC;LIBCD;msvcrt;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ProgramDatabaseFile>.\acwin___Win32_DebugWorking/acwin.pdb</ProgramDatabaseFile>
+      <GenerateMapFile>true</GenerateMapFile>
+      <MapFileName>.\acwin___Win32_DebugWorking/acwin.map</MapFileName>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention />
+      <TargetMachine>MachineX86</TargetMachine>
+      <Profile>true</Profile>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+    </Link>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\acwin___Win32_DebugWorking/acwin.bsc</OutputFile>
+    </Bscmake>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Midl>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>true</MkTypLibCompatible>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TargetEnvironment>Win32</TargetEnvironment>
+      <TypeLibraryName>.\Release/acwin.tlb</TypeLibraryName>
+      <HeaderFileName />
+    </Midl>
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <AdditionalIncludeDirectories>.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>VS2005;WIN32;NDEBUG;_WINDOWS;ALLEGRO_STATICLINK;THIS_IS_THE_ENGINE;WINDOWS_VERSION;DISABLE_MPEG_AUDIO;_CRT_SECURE_NO_WARNINGS;ALLEGRO_NO_ASM;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeaderOutputFile>.\Release/acwin.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>.\Release/</AssemblerListingLocation>
+      <ObjectFileName>.\Release/</ObjectFileName>
+      <ProgramDataBaseFileName>.\Release/</ProgramDataBaseFileName>
+      <BrowseInformation>true</BrowseInformation>
+      <WarningLevel>Level3</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0809</Culture>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>odbc32.lib;odbccp32.lib;libcmt.lib;libcpmt.lib;d3d9.lib;quartz.lib;strmiids.lib;winmm.lib;shlwapi.lib;amstrmid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>.\Release/acwin.exe</OutputFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <IgnoreSpecificDefaultLibraries>LIBC;LIBCD;msvcrt;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ProgramDatabaseFile>.\Release/acwin.pdb</ProgramDatabaseFile>
+      <GenerateMapFile>true</GenerateMapFile>
+      <MapFileName>.\Release/acwin.map</MapFileName>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention />
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\Release/acwin.bsc</OutputFile>
+    </Bscmake>
+    <PostBuildEvent>
+      <Command>cmd /c copy e:\code\ags\acwin\release\acwin.exe e:\code\ags\agsedit\release
+cmd /c copy e:\code\ags\acwin\release\acwin.exe E:\Code\ags\netedit\AGS.Editor\bin\Debug
+</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\common\Clib32.cpp" />
+    <ClCompile Include="..\common\compress.cpp" />
+    <ClCompile Include="..\common\cscommon.cpp" />
+    <ClCompile Include="..\common\CSRUN.CPP" />
+    <ClCompile Include="..\common\lzw.cpp" />
+    <ClCompile Include="..\common\MOUSEW32.CPP" />
+    <ClCompile Include="..\Common\sprcache.cpp" />
+    <ClCompile Include="AC.CPP" />
+    <ClCompile Include="acaudio.cpp" />
+    <ClCompile Include="acchars.cpp" />
+    <ClCompile Include="acdebug.cpp" />
+    <ClCompile Include="acdialog.cpp" />
+    <ClCompile Include="acfonts.cpp" />
+    <ClCompile Include="acgfx.cpp" />
+    <ClCompile Include="acgui.cpp" />
+    <ClCompile Include="acplatfm.cpp" />
+    <ClCompile Include="acplwin.cpp" />
+    <ClCompile Include="acsound.cpp" />
+    <ClCompile Include="acwavi.cpp" />
+    <ClCompile Include="acwavi3d.cpp" />
+    <ClCompile Include="ACWSETUP.CPP" />
+    <ClCompile Include="ali3dd3d.cpp" />
+    <ClCompile Include="ali3dsw.cpp" />
+    <ClCompile Include="almp3.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNoMP3|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="ALOGG.C" />
+    <ClCompile Include="libsrc\aastr-0.1.1\AASTR.C" />
+    <ClCompile Include="libsrc\aastr-0.1.1\AAUTIL.C" />
+    <ClCompile Include="libsrc\allegro-4.2.2-agspatch\c\cstretch.c" />
+    <ClCompile Include="libsrc\allegro-4.2.2-agspatch\file.c" />
+    <ClCompile Include="libsrc\allegro-4.2.2-agspatch\win\wkeybd.c" />
+    <ClCompile Include="libsrc\allegro-4.2.2-agspatch\win\wmouse.c" />
+    <ClCompile Include="libsrc\allegro-4.2.2-agspatch\win\wwnd.c" />
+    <ClCompile Include="libsrc\almp3-2.0.5\decoder\common.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNoMP3|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="libsrc\almp3-2.0.5\decoder\dct64_i386.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNoMP3|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="libsrc\almp3-2.0.5\decoder\decode_i386.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNoMP3|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="libsrc\almp3-2.0.5\decoder\interface.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNoMP3|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="libsrc\almp3-2.0.5\decoder\layer2.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNoMP3|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="libsrc\almp3-2.0.5\decoder\layer3.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNoMP3|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="libsrc\almp3-2.0.5\decoder\tabinit.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNoMP3|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="libsrc\apeg-1.2.1\audio\audio.c" />
+    <ClCompile Include="libsrc\apeg-1.2.1\audio\mpg123.c" />
+    <ClCompile Include="libsrc\apeg-1.2.1\display.c" />
+    <ClCompile Include="libsrc\apeg-1.2.1\getbits.c" />
+    <ClCompile Include="libsrc\apeg-1.2.1\getblk.c" />
+    <ClCompile Include="libsrc\apeg-1.2.1\gethdr.c" />
+    <ClCompile Include="libsrc\apeg-1.2.1\getpic.c" />
+    <ClCompile Include="libsrc\apeg-1.2.1\idct.c" />
+    <ClCompile Include="libsrc\apeg-1.2.1\motion.c" />
+    <ClCompile Include="libsrc\apeg-1.2.1\mpeg1dec.c" />
+    <ClCompile Include="libsrc\apeg-1.2.1\ogg.c" />
+    <ClCompile Include="libsrc\apeg-1.2.1\recon.c" />
+    <ClCompile Include="libsrc\dumb-0.9.2\allegro\alplay.c" />
+    <ClCompile Include="libsrc\dumb-0.9.2\allegro\datduh.c" />
+    <ClCompile Include="libsrc\dumb-0.9.2\allegro\datit.c" />
+    <ClCompile Include="libsrc\dumb-0.9.2\allegro\datmod.c" />
+    <ClCompile Include="libsrc\dumb-0.9.2\allegro\dats3m.c" />
+    <ClCompile Include="libsrc\dumb-0.9.2\allegro\datunld.c" />
+    <ClCompile Include="libsrc\dumb-0.9.2\allegro\datxm.c" />
+    <ClCompile Include="libsrc\dumb-0.9.2\allegro\packfile.c" />
+    <ClCompile Include="libsrc\dumb-0.9.2\core\atexit.c" />
+    <ClCompile Include="libsrc\dumb-0.9.2\core\duhlen.c" />
+    <ClCompile Include="libsrc\dumb-0.9.2\core\dumbfile.c" />
+    <ClCompile Include="libsrc\dumb-0.9.2\core\loadduh.c" />
+    <ClCompile Include="libsrc\dumb-0.9.2\core\makeduh.c" />
+    <ClCompile Include="libsrc\dumb-0.9.2\core\rawsig.c" />
+    <ClCompile Include="libsrc\dumb-0.9.2\core\readduh.c" />
+    <ClCompile Include="libsrc\dumb-0.9.2\core\register.c" />
+    <ClCompile Include="libsrc\dumb-0.9.2\core\rendduh.c" />
+    <ClCompile Include="libsrc\dumb-0.9.2\core\rendsig.c" />
+    <ClCompile Include="libsrc\dumb-0.9.2\core\unload.c" />
+    <ClCompile Include="libsrc\dumb-0.9.2\helpers\clickrem.c" />
+    <ClCompile Include="libsrc\dumb-0.9.2\helpers\memfile.c" />
+    <ClCompile Include="libsrc\dumb-0.9.2\helpers\resample.c" />
+    <ClCompile Include="libsrc\dumb-0.9.2\helpers\sampbuf.c" />
+    <ClCompile Include="libsrc\dumb-0.9.2\helpers\silence.c" />
+    <ClCompile Include="libsrc\dumb-0.9.2\helpers\stdfile.c" />
+    <ClCompile Include="libsrc\dumb-0.9.2\it\itload.c" />
+    <ClCompile Include="libsrc\dumb-0.9.2\it\itmisc.c" />
+    <ClCompile Include="libsrc\dumb-0.9.2\it\itorder.c" />
+    <ClCompile Include="libsrc\dumb-0.9.2\it\itread.c" />
+    <ClCompile Include="libsrc\dumb-0.9.2\it\itrender.c" />
+    <ClCompile Include="libsrc\dumb-0.9.2\it\itunload.c" />
+    <ClCompile Include="libsrc\dumb-0.9.2\it\loadmod.c" />
+    <ClCompile Include="libsrc\dumb-0.9.2\it\loads3m.c" />
+    <ClCompile Include="libsrc\dumb-0.9.2\it\loadxm.c" />
+    <ClCompile Include="libsrc\dumb-0.9.2\it\readmod.c" />
+    <ClCompile Include="libsrc\dumb-0.9.2\it\reads3m.c" />
+    <ClCompile Include="libsrc\dumb-0.9.2\it\readxm.c" />
+    <ClCompile Include="libsrc\dumb-0.9.2\it\xmeffect.c" />
+    <ClCompile Include="libsrc\hq2x\hq2x3x.cpp" />
+    <ClCompile Include="libsrc\libcda-0.4\libcdaWin.C" />
+    <ClCompile Include="misc.cpp" />
+    <ClCompile Include="routefnd.cpp" />
+    <ClCompile Include="scrptrt.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ali3d.h" />
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="DefaultGDF.gdf.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="game-1.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="tintshader.fxo" />
+    <None Include="tintshaderLegacy.fxo" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="version.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\NativeLibs\alfont_mt.lib" />
+    <Library Include="..\NativeLibs\alleg_s_crt.lib" />
+    <Library Include="..\NativeLibs\ddraw.lib" />
+    <Library Include="..\NativeLibs\dinput.lib" />
+    <Library Include="..\NativeLibs\dsound.lib" />
+    <Library Include="..\NativeLibs\dxguid.lib" />
+    <Library Include="..\NativeLibs\ogg_static.lib" />
+    <Library Include="..\NativeLibs\theora_static.lib" />
+    <Library Include="..\NativeLibs\vorbisfile_static.lib" />
+    <Library Include="..\NativeLibs\vorbis_static.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="License.txt" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

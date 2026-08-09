@@ -1,0 +1,4425 @@
+[
+ {
+  "kind": "function",
+  "asm_name": "getshort",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "get_col8_lookup",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "clear",
+  "new_name": null,
+  "source_file": "Engine/ali3dsw.cpp",
+  "source_obj": "ali3dsw.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=ali3dsw.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "INIreaditem",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "INIreadint",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "fix_filename_case",
+  "new_name": null,
+  "source_file": "Engine/libsrc/allegro-4.2.2-agspatch/file.c",
+  "source_obj": "file.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=file.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "StopAmbientSound",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "PlayAmbientSound",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "UpdatePalette",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "IsTranslationAvailable",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "dj_timer_handler",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "set_game_speed",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "TintScreen",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "setup_for_dialog",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "restore_after_dialog",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "RestoreGameSlot",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "GetSaveSlotDescription",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "FadeOut",
+  "new_name": null,
+  "source_file": "Engine/ali3dsw.cpp",
+  "source_obj": "ali3dsw.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=ali3dsw.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetAreaLightLevel",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "MoveToWalkableArea",
+  "new_name": null,
+  "source_file": "Engine/acchars.cpp",
+  "source_obj": "acchars.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=acchars.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetMouseBounds",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "new_room",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "setevent",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "ChangeCursorGraphic",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "ChangeCursorHotspot",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetActiveInventory",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "IsGamePaused",
+  "new_name": null,
+  "source_file": "Engine/acplatfm.cpp",
+  "source_obj": "acplatfm.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=acplatfm.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "IsButtonDown",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetCharacterIdle",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "IsKeyPressed",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "update_invorder",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "atexit_handler",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "quit",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "RemoveOverlay",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "CreateGraphicOverlay",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "CreateTextOverlay",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetTextOverlay",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "MoveOverlay",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "DisplaySpeechBackground",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "DisplayAt",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetSpeechVolume",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetSpeechFont",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetNormalFont",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetSpeechStyle",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetVoiceMode",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "IsVoxAvailable",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "IsMusicVoxAvailable",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "DisplaySpeechAt",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetGlobalInt",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "GetGlobalInt",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetScreenTransition",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetSkipSpeech",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "DisplayAtY",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "Display",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "DisplaySpeech",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "DisplayMessage",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "RawSaveScreen",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "RawRestoreScreen",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "RawSetColor",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "RawPrint",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "RawDrawImage",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "RawDrawLine",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "RawDrawTriangle",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetObjectView",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetObjectFrame",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetObjectTransparency",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetObjectBaseline",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetCharacterBaseline",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetCharacterTransparency",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "animate_character",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "AnimateObject",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "MergeObject",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "ObjectOff",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "ObjectOn",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetObjectGraphic",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "AreObjectsColliding",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "AreCharObjColliding",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "AreCharactersColliding",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "scrWait",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "WaitKey",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "WaitMouseKey",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "StringToInt",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "StrGetCharAt",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "PlayVideo",
+  "new_name": null,
+  "source_file": "Engine/ali3dsw.cpp",
+  "source_obj": "ali3dsw.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=ali3dsw.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "IsSoundPlaying",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "add_inventory",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "RunDialog",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "GetGUIAt",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "IsGUIOn",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "GetObjectAt",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "RunObjectInteraction",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "GetCharacterAt",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "RunCharacterInteraction",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "GetObjectX",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "GetObjectY",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "IsObjectAnimating",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "IsObjectMoving",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "RunHotspotInteraction",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "ProcessClick",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "RemoveWalkableArea",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "RestoreWalkableArea",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "DisableHotspot",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "EnableHotspot",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "FlipScreen",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "scr_StopMusic",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "IsMusicPlaying",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SeekMODPattern",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SeekMP3PosMillis",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "GetMP3PosMillis",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SeekMIDIPosition",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "GetMIDIPosition",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetMusicVolume",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetMusicMasterVolume",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetSoundVolume",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "GetCurrentMusic",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetMusicRepeat",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetPlayerCharacter",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "FollowCharacterEx",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "FollowCharacter",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetCharacterIgnoreLight",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetCharacterProperty",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "QuitGame",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SaidUnknownWord",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "ParseText",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "Said",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "FileOpen",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "FileClose",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "FileWrite",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "FileWriteRawLine",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "FileRead",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "FileWriteInt",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "FileReadInt",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "FileReadRawChar",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "FileReadRawInt",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "InterfaceOn",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "InterfaceOff",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetGUIPosition",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "PauseGame",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "UnPauseGame",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "GetTextBoxText",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetTextBoxText",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "ListBoxClear",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "ListBoxAdd",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "ListBoxGetSelected",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "ListBoxGetNumItems",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "ListBoxGetItemText",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "ListBoxSetSelected",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "ListBoxSaveGameList",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "ListBoxDirList",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetLabelText",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetLabelFont",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetSliderValue",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "GetSliderValue",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetGUIBackgroundPic",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetButtonPic",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "DisableInterface",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "EnableInterface",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "IsInterfaceEnabled",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "NewRoom",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "NewRoomEx",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "ResetRoom",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetRestartPoint",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "CallRoomScript",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetGameSpeed",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "GetGameSpeed",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "StopDialog",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetDialogOption",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "ShakeScreen",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "CyclePalette",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetPalRGB",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "FadeIn",
+  "new_name": null,
+  "source_file": "Engine/ali3dsw.cpp",
+  "source_obj": "ali3dsw.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=ali3dsw.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "RefreshMouse",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "GetCursorMode",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "GiveScore",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "GetHotspotAt",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "GetLocationType",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "GetLocationName",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "GetInvName",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "MoveCharacter",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "MoveCharacterDirect",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "MoveCharacterStraight",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "MoveCharacterPath",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "MoveObject",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "MoveObjectDirect",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "GetPlayerCharacter",
+  "new_name": null,
+  "source_file": "Engine/acplatfm.cpp",
+  "source_obj": "acplatfm.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=acplatfm.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetCharacterSpeed",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetTalkingColor",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetCharacterView",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "ReleaseCharacterView",
+  "new_name": null,
+  "source_file": "Engine/acchars.cpp",
+  "source_obj": "acchars.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=acchars.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "ChangeCharacterView",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetCharacterClickable",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetCharacterIgnoreWalkbehinds",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetObjectClickable",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "FaceLocation",
+  "new_name": null,
+  "source_file": "Engine/acchars.cpp",
+  "source_obj": "acchars.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=acchars.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "FaceCharacter",
+  "new_name": null,
+  "source_file": "Engine/acchars.cpp",
+  "source_obj": "acchars.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=acchars.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "MoveCharacterToObject",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "MoveCharacterToHotspot",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "MoveCharacterBlocking",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "StopMoving",
+  "new_name": null,
+  "source_file": "Engine/acchars.cpp",
+  "source_obj": "acchars.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=acchars.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetViewport",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "ReleaseViewport",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "GetViewportX",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "GetViewportY",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetBackgroundFrame",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "GetBackgroundFrame",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "script_debug",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "script_SetTimer",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "_sc_strcat",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "_sc_strcpy",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "_sc_strlower",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "_sc_strupper",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "_sc_sprintf",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetInvDimensions",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "StartCutscene",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "EndCutscene",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "setup_script_exports",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "check_write_access",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "do_main_cycle",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "cd_player_init",
+  "new_name": null,
+  "source_file": "Engine/acplatfm.cpp",
+  "source_obj": "acplatfm.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=acplatfm.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "malloc_fail_handler",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "winclosehook",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "bitmap_color_depth",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alleg_s_crt:mouse.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:mouse.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "line",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alleg_s_crt:spline.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:spline.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "clear_to_color",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alleg_s_crt:gfx.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:gfx.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "bitmap_mask_color",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alleg_s_crt:blit.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:blit.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "set_close_button_callback",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alleg_s_crt:allegro.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:allegro.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "enternumberwindow",
+  "new_name": null,
+  "source_file": "Engine/acdialog.cpp",
+  "source_obj": "acdialog.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=acdialog.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "csetlib",
+  "new_name": null,
+  "source_file": "Common/Clib32.cpp",
+  "source_obj": "Clib32.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=Clib32.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "clibfilesize",
+  "new_name": null,
+  "source_file": "Common/Clib32.cpp",
+  "source_obj": "Clib32.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=Clib32.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "cliboffset",
+  "new_name": null,
+  "source_file": "Common/Clib32.cpp",
+  "source_obj": "Clib32.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=Clib32.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "clibopenfile",
+  "new_name": null,
+  "source_file": "Common/Clib32.cpp",
+  "source_obj": "Clib32.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=Clib32.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "clibfopen",
+  "new_name": null,
+  "source_file": "Common/Clib32.cpp",
+  "source_obj": "Clib32.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=Clib32.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "ccSetOption",
+  "new_name": null,
+  "source_file": "Common/cscommon.cpp",
+  "source_obj": "cscommon.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=cscommon.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "domouse",
+  "new_name": null,
+  "source_file": "Common/MOUSEW32.CPP",
+  "source_obj": "MOUSEW32.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=MOUSEW32.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "minstalled",
+  "new_name": null,
+  "source_file": "Common/MOUSEW32.CPP",
+  "source_obj": "MOUSEW32.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=MOUSEW32.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "get_route_composition",
+  "new_name": null,
+  "source_file": "Engine/routefnd.cpp",
+  "source_obj": "routefnd.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=routefnd.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "route_script_link",
+  "new_name": null,
+  "source_file": "Engine/routefnd.cpp",
+  "source_obj": "routefnd.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=routefnd.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "init_pathfinder",
+  "new_name": null,
+  "source_file": "Engine/routefnd.cpp",
+  "source_obj": "routefnd.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=routefnd.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "print_welcome_text",
+  "new_name": null,
+  "source_file": "Engine/routefnd.cpp",
+  "source_obj": "routefnd.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=routefnd.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "load_graphical_scripts",
+  "new_name": null,
+  "source_file": "Engine/scrptrt.cpp",
+  "source_obj": "scrptrt.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=scrptrt.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "cd_init",
+  "new_name": null,
+  "source_file": "Engine/libsrc/libcda-0.4/libcdaWin.C",
+  "source_obj": "libcdaWin.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=libcdaWin.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "command",
+  "new_name": null,
+  "source_file": "Engine/libsrc/libcda-0.4/libcdaWin.C",
+  "source_obj": "libcdaWin.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=libcdaWin.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "install_allegro",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "allegro_exit",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alleg_s_crt:allegro.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:allegro.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "set_gfx_mode",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alleg_s_crt:graphics.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:graphics.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "create_bitmap_ex",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alleg_s_crt:graphics.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:graphics.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "create_bitmap",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alleg_s_crt:graphics.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:graphics.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "destroy_bitmap",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alleg_s_crt:graphics.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:graphics.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "blit",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alleg_s_crt:blit.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:blit.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "create_rgb_table",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alleg_s_crt:color.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:color.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "set_palette_range",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alleg_s_crt:gfx.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:gfx.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "do_line",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alleg_s_crt:gfx.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:gfx.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "circlefill",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "do_ellipse",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alleg_s_crt:gfx.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:gfx.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "do_arc",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alleg_s_crt:gfx.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:gfx.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "polygon",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alleg_s_crt:polygon.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:polygon.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "render_to_screen",
+  "new_name": null,
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "reserve_voices",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alleg_s_crt:sound.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:sound.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "install_sound",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alleg_s_crt:sound.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:sound.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "install_sound_input",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alleg_s_crt:sound.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:sound.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "remove_sound",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alleg_s_crt:sound.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:sound.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "set_volume",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alleg_s_crt:sound.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:sound.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "load_voc",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alleg_s_crt:sound.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:sound.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "load_wav",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alleg_s_crt:sound.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:sound.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "allocate_voice",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alleg_s_crt:sound.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:sound.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "update_sweeps",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alleg_s_crt:sound.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:sound.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "poll_keyboard",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alleg_s_crt:keyboard.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:keyboard.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "install_keyboard",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alleg_s_crt:keyboard.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:keyboard.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "install_int_ex",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alleg_s_crt:timer.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:timer.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "install_timer",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alleg_s_crt:timer.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:timer.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "midi_seek",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alleg_s_crt:midi.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:midi.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "load_pcx",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alleg_s_crt:pcx.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:pcx.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "save_pcx",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alleg_s_crt:pcx.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:pcx.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "set_volume_per_voice",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alleg_s_crt:mixer.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:mixer.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "set_uformat",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alleg_s_crt:unicode.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:unicode.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "utolower",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alleg_s_crt:unicode.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:unicode.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "utoupper",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alleg_s_crt:unicode.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:unicode.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "install_mouse",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alleg_s_crt:mouse.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:mouse.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "set_config_string",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alleg_s_crt:config.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:config.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "load_tga",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alleg_s_crt:tga.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:tga.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "save_tga",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alleg_s_crt:tga.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:tga.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "load_lbm",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alleg_s_crt:lbm.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:lbm.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "save_bmp",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alleg_s_crt:bmp.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:bmp.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "get_rle_sprite",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alleg_s_crt:rle.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:rle.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "init_mod_player",
+  "new_name": null,
+  "source_file": "Engine/acsound.cpp",
+  "source_obj": "acsound.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=acsound.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "FT_New_Library",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alfont_mt:ftbase.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alfont_mt:ftbase.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "FT_Done_Library",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alfont_mt:ftbase.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alfont_mt:ftbase.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "FT_Outline_Decompose",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alfont_mt:ftbase.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alfont_mt:ftbase.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "FT_Init_FreeType",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alfont_mt:ftinit.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alfont_mt:ftinit.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "FT_Done_FreeType",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alfont_mt:ftinit.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alfont_mt:ftinit.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "ft_alloc",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alfont_mt:ftsystem.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alfont_mt:ftsystem.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "ft_realloc",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alfont_mt:ftsystem.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alfont_mt:ftsystem.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "ft_free",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alfont_mt:ftsystem.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alfont_mt:ftsystem.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "FT_Done_Memory",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "alfont_mt:ftsystem.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=alfont_mt:ftsystem.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "__onexit",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "LIBCMTD:utility.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=LIBCMTD:utility.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "fclose",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "libucrtd:fclose.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=libucrtd:fclose.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "fread",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "libucrtd:fread.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=libucrtd:fread.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "fseek",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "libucrtd:fseek.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=libucrtd:fseek.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "fwrite",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "libucrtd:fwrite.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=libucrtd:fwrite.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "memcpy",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "libvcruntimed:memcpy.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=libvcruntimed:memcpy.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "strcmp",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "libucrtd:strcmp.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=libucrtd:strcmp.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "strcpy",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "libucrtd:strcat.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=libucrtd:strcat.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "free",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "libucrtd:free.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=libucrtd:free.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "malloc",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "libucrtd:malloc.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=libucrtd:malloc.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "strstr",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "libvcruntimed:strstr.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=libvcruntimed:strstr.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "strlen",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "libucrtd:strlen.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=libucrtd:strlen.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "vsprintf",
+  "new_name": null,
+  "source_file": "Common/cscommon.cpp",
+  "source_obj": "cscommon.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=cscommon.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "localtime",
+  "new_name": null,
+  "source_file": "Engine/acplatfm.cpp",
+  "source_obj": "acplatfm.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=acplatfm.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "time",
+  "new_name": null,
+  "source_file": "Engine/acplatfm.cpp",
+  "source_obj": "acplatfm.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=acplatfm.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "calloc",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "libucrtd:calloc.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=libucrtd:calloc.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "ftell",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "libucrtd:ftell.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=libucrtd:ftell.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "fputc",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "libucrtd:fputc.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=libucrtd:fputc.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "fopen",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "libucrtd:fopen.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=libucrtd:fopen.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "fgetc",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "libucrtd:fgetc.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=libucrtd:fgetc.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "sprintf",
+  "new_name": null,
+  "source_file": "Common/Clib32.cpp",
+  "source_obj": "Clib32.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=Clib32.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "memset",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "libvcruntimed:memset.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=libvcruntimed:memset.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "exit",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "libvcruntimed:strrchr.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=libvcruntimed:strrchr.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "printf",
+  "new_name": null,
+  "source_file": "Engine/libsrc/dumb-0.9.2/IT/XMEFFECT.C",
+  "source_obj": "xmeffect.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=xmeffect.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "atoi",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "libucrtd:atox.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=libucrtd:atox.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "fprintf",
+  "new_name": null,
+  "source_file": "Common/CSRUN.CPP",
+  "source_obj": "CSRUN.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=CSRUN.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "sqrt",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "libucrtd:sqrt.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=libucrtd:sqrt.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "abs",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "libucrtd:abs.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=libucrtd:abs.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "rand",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "libucrtd:rand.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=libucrtd:rand.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "strcat",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "libucrtd:strcat.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=libucrtd:strcat.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "strncpy",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "libucrtd:strncpy.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=libucrtd:strncpy.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "strncmp",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "libucrtd:strncmp.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=libucrtd:strncmp.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "strchr",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "libvcruntimed:strchr.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=libvcruntimed:strchr.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "isalnum",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "libucrtd:_ctype.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=libucrtd:_ctype.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "srand",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "libucrtd:rand.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=libucrtd:rand.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "strrchr",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "libvcruntimed:strrchr.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=libvcruntimed:strrchr.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "toupper",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "libucrtd:tolower_toupper.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=libucrtd:tolower_toupper.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "memmove",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "libvcruntimed:memmove.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=libvcruntimed:memmove.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "getenv",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "libucrtd:getenv.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=libucrtd:getenv.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "strpbrk",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "libucrtd:argv_wildcards.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=libucrtd:argv_wildcards.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "tmpnam",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "libucrtd:tmpfile.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=libucrtd:tmpfile.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "realloc",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "libucrtd:realloc.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=libucrtd:realloc.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "qsort",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "libucrtd:qsort.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=libucrtd:qsort.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "__alloca_probe",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "LIBCMTD:chkstk.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=LIBCMTD:chkstk.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "__aulldiv",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "LIBCMTD:ulldiv.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=LIBCMTD:ulldiv.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "__aullrem",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "LIBCMTD:ullrem.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=LIBCMTD:ullrem.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "__aullshr",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "LIBCMTD:ullshr.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=LIBCMTD:ullshr.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "__alldiv",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "LIBCMTD:lldiv.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=LIBCMTD:lldiv.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "__allmul",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "LIBCMTD:llmul.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=LIBCMTD:llmul.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "__allshr",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "LIBCMTD:llshr.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=LIBCMTD:llshr.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "longjmp",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "libvcruntimed:longjmpc.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=libvcruntimed:longjmpc.obj"
+ },
+ {
+  "kind": "function",
+  "asm_name": "DirectInputCreateA",
+  "new_name": null,
+  "source_file": null,
+  "source_obj": "dinput:DINPUT.dll",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=dinput:DINPUT.dll"
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_42AAAB",
+  "new_name": "ccCreateInstanceEx",
+  "source_file": "Common/CSRUN.CPP",
+  "source_line": 787,
+  "confidence": "high",
+  "evidence": "Exact string matches within function body span (787-976 in source): \"null pointer passed\" (line 796), \"unresolved import %s\" (871), \"internal fixup index error\" (926). Role matches: instance loader that resolves imports."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_42BF84",
+  "new_name": "ccCallInstance",
+  "source_file": "Common/CSRUN.CPP",
+  "source_line": 1879,
+  "confidence": "high",
+  "evidence": "Verbatim string matches: \"too many arguments to function\" (source line 1885), \"instance already being executed\" (1890) -- exact text, not paraphrased. Callgraph matches: called from two distinct sites (sub_409DC7, sub_409E9A), consistent with ccCallInstance being a public multi-caller API entry point. Internally calls sub_42B394 once, consistent with dispatching into the bytecode interpreter after resolving the function address by name."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_42B394",
+  "new_name": null,
+  "source_file": "Common/CSRUN.CPP",
+  "source_line": 1287,
+  "confidence": "medium",
+  "evidence": "Closest role/file match is cc_run_code (Common/CSRUN.CPP:1287), the bytecode-interpreter switch loop -- string matches (stack overflow x4 via PUSH_CALL_STACK macro sites, \"invalid instruction %d found in code stream\", \"specified code offset is not valid\", \"stack corrupt after function call\") all fall within its 1287-1878 source range. HOWEVER: sub_42B394 is directly SELF-RECURSIVE (calls itself at two sites), whereas in the 2011 reference source, cc_run_code never recurses into itself for script-to-script calls -- it calls a separate trampoline call_function() (line 1217) which invokes a native function pointer, not the interpreter. This looks like a real architectural divergence: in the 2002 Rob Blanc 1 build, script-to-script AGS function calls appear to be handled by the interpreter loop calling itself directly, later refactored (by 2011) into a separate call_function/ccCallInstance dispatch layer. Do not blindly rename to cc_run_code without accounting for this -- see reversing/notes/csrun-interpreter-evolution.md."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_408FE9",
+  "new_name": "init_translation",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 1932,
+  "confidence": "high",
+  "evidence": "bool init_translation(const char *lang) at AC.CPP:1932. String matches within body span (1932-2036): default.tra, %s.tra, AGSTranslation, \"!Language file is corrupt\", \"!The translation file you have selected is not compatible...\", \"!The selected translation file was empty...\", \"Unknown block type in translation file.\" -- 7 distinct exact matches, all within source range, none outside it. Structural fit: single caller (main), consistent with a startup-time init routine."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_403AD9",
+  "new_name": "load_main_block",
+  "source_file": "Common/acroom.h",
+  "source_line": 1605,
+  "confidence": "high",
+  "evidence": "void load_main_block(roomstruct*, char*, FILE*, room_file_header) at acroom.h:1605. String matches: \"load_room: Too many walkable areas, need newer version\" (1839), \"No hotspot\" (1634). Callgraph: sub_403AD9 is called from sub_404959 (matched to load_room below) at exactly the point load_room calls load_main_block in source (acroom.h:2108)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_404959",
+  "new_name": "load_room",
+  "source_file": "Common/acroom.h",
+  "source_line": 1977,
+  "confidence": "high",
+  "evidence": "void load_room(char*, roomstruct*, bool) at acroom.h:1977. String matches: \"Load_room: old room format...\" (2131), \"Load_room: inconsistent blocks for object names\" (2135), \"LoadRoom: unexpected end of file...\" (2190), \"LoadRoom: unknown block type %d...\" (2195). Callgraph: calls sub_403AD9 (load_main_block) at the same relative point source calls it (acroom.h:2108); itself called from sub_40B194 (matched to load_new_room below)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_40B194",
+  "new_name": "load_new_room",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 4055,
+  "confidence": "high",
+  "evidence": "void load_new_room(int newnum, CharacterInfo *forchar) at AC.CPP:4055. String matches: \"room%d.crm\" and \"intro.crm\" (both at AC.CPP:4066-4071, the room-filename resolution logic) plus room-script-data related string. Callgraph: calls sub_404959 (load_room), completing a clean 3-level chain load_new_room -> load_room -> load_main_block that matches the source exactly."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_428905",
+  "new_name": "RenderFileToMMStream",
+  "source_file": "Engine/acwavi.cpp",
+  "source_line": 160,
+  "confidence": "high",
+  "evidence": "HRESULT RenderFileToMMStream(LPCTSTR szFilename) at acwavi.cpp:160 -- DirectShow AMMultiMediaStream setup for AVI/video playback. String matches: \"AddMediaStream failed.\" (x2, lines 188 & 196 -- matches disasm's two aAddmediastream/aAddmediastream_0 copies exactly), \"...Initialize failed.\" (182), \"File not found or format not supported: %s\" (204). Single caller (sub_428B70), consistent with a helper invoked from a higher-level PlayFlic/PlayVideo-style function."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_406B01",
+  "new_name": "GUIButton__Draw",
+  "source_file": "Engine/acgui.cpp",
+  "source_line": 776,
+  "confidence": "high",
+  "evidence": "void GUIButton::Draw() at acgui.cpp:776. String matches: \"(INV)\" (809), \"(INVNS)\" (812), \"(INVSHR)\" (816) -- the three special button-text sentinels that trigger inventory-icon rendering, unique to this function. Structural confirmation: sub_406B01 is referenced only via a DATA XREF from .rdata (a vtable slot), consistent with Draw() being a virtual method rather than a plain call site. Named GUIButton__Draw (flat, no ::) since it is a C++ virtual method -- if the IDB has a GUIButton class/vtable set up, prefer attaching it there properly instead of a flat rename."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_409923",
+  "new_name": "prepare_text_script",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 3041,
+  "confidence": "high",
+  "evidence": "int prepare_text_script(ccInstance*, char**) at AC.CPP:3041. String matches: \"no such function in script\" (3045), \"unable to fork instance for secondary script\" (3061), \"too many nested text script instances created\" (3067) -- all inside its 3041-3255 body span."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_409DC7",
+  "new_name": "run_script_function_if_exist",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 3256,
+  "confidence": "high",
+  "evidence": "int run_script_function_if_exist(ccInstance*,char*,int,int,int,int) at AC.CPP:3256. Found via callgraph triangulation, not string leads: this function calls both sub_409923 (matched to prepare_text_script) and sub_42BF84 (already matched to ccCallInstance), at the exact same relative call structure as source (prepare_text_script(...) then ccCallInstance(...) with 3-6 args depending on numParam) -- two independent corroborating matches for one identification."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_40C85E",
+  "new_name": "process_event",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 4721,
+  "confidence": "high",
+  "evidence": "void process_event(EventHappened*) at AC.CPP:4721. String matches: \"process_event: RunEvBlock: unknown evb type\" (4786), \"process_event: unknown event to process\" (4940) -- both string literals literally contain the function name itself, and both fall inside the 4721-4950 body span."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_40DDB7",
+  "new_name": "check_controls",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 5640,
+  "confidence": "high",
+  "evidence": "void check_controls() at AC.CPP:5640. String matches: \"[Game paused.\" (5843), \"[Object %d: (%d,%d) size...\" (5849) -- part of the Ctrl+D debug-info dump branch inside this function. Role fits: check_controls is the per-frame keyboard/mouse input dispatch, and this is its debug-hotkey handling section."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_414527",
+  "new_name": "_displayspeech",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 13516,
+  "confidence": "high",
+  "evidence": "void _displayspeech(char*,int,int,int,int,int) at AC.CPP:13516. String matches: \"!DisplaySpeech: invalid character\" (13518), \"!DisplaySpeech: character has invalid view\" (13522), \"DisplaySpeech: auto-voice symbol '&' not followed by...\" (13610). Caller matches exactly: called only from DisplayAtY, an already-named function."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_4150F6",
+  "new_name": "replace_tokens",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 14200,
+  "confidence": "high",
+  "evidence": "void replace_tokens(char*,char*,int) at AC.CPP:14200. String matches: \"!Display: special token not terminated\" (14214), \"!Display: invalid inv item specified in @IN@\" (14221), \"!Display: invalid global int index speicifed in @GI@\" (14226). Caller matches exactly: called only from DisplayMessage, an already-named function."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_4195B1",
+  "new_name": "parse_sentence",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 18104,
+  "confidence": "high",
+  "evidence": "int parse_sentence(char*,int*,short*,short*,int) at AC.CPP:18104. String matches: \"!Said: unexpected ']'\" (18120), \"!Said: nested optional words\" (18131), \"!Said: unterminated [optional]\" (18184). Caller matches exactly: called only from ParseText, an already-named function (ParseText is the script Said()-adjacent command that invokes sentence parsing)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_41A146",
+  "new_name": "is_valid_listbox",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 19383,
+  "confidence": "high",
+  "evidence": "GUIListBox* is_valid_listbox(int,int) at AC.CPP:19383. String matches: \"!ListBox: invalid GUI number\" (19384), \"!ListBox: invalid object number\" (19385), \"!ListBox: specified control is not a list box\" (19387). Caller matches exactly: called only from ListBoxClear, an already-named function."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_41E7AD",
+  "new_name": "restore_game_data",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 23041,
+  "confidence": "high",
+  "evidence": "int restore_game_data(FILE*, const char*) at AC.CPP:23041. String matches: \"Save game has invalid value for rooms_entered: %d\" (23211), \"!Restore_Game: Game has changed (dlg), unable to restore\" (23282), \"!Restore_game: Global script changed, cannot restore game\" (23540) -- all inside its body span. Caller: RestartGame, an already-named function (restoring the initial save-state data on restart uses the same deserialization routine as loading a save)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_40B019",
+  "new_name": "run_on_event",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 3827,
+  "confidence": "high",
+  "evidence": "void run_on_event(int,int) at AC.CPP:3827. String matches: \"on_event\"/\"#on_event\" (3829, 3832), the function's own global-script hook name. Caller matches exactly: called only from new_room, an already-named function (room transitions fire an on_event hook)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_40D738",
+  "new_name": "process_interface_click",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 5355,
+  "confidence": "high",
+  "evidence": "void process_interface_click(int,int,int) at AC.CPP:5355. String match: \"unknown GUI object triggered process_interface\" (5371), and \"interface_click\" script-hook name (5390), both inside its body. Caller matches exactly: called only from process_event, an already-matched function (5355 falls immediately after process_event's own 4721-4950 span, and process_event is precisely where a GUI-click event would dispatch to interface-click handling)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_40EF0D",
+  "new_name": "update_stuff",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 6426,
+  "confidence": "high",
+  "evidence": "void update_stuff() at AC.CPP:6426. String matches: \"!Last loop in a view requested to move to next loop\" (6471), \"!Animating character tried to overrun last loop in view\" (6736), both inside body. Caller matches exactly: called from sub_42106D (matched below to mainloop), consistent with update_stuff being the per-frame update called from the main loop."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_411940",
+  "new_name": "draw_screen_overlay",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 8721,
+  "confidence": "medium",
+  "evidence": "void draw_screen_overlay() at AC.CPP:8721. String match: \"!The player.activeinv variable has been corrupted...\" (8746), inside body. Also references \"FPS: %d\" (8700), which source has in a SEPARATE, small, single-call-site function draw_fps() (AC.CPP:8686) immediately preceding it -- most likely inlined into draw_screen_overlay by the compiler (small, called once). Caller matches: called from sub_42106D (mainloop), consistent with per-frame overlay drawing. Confidence medium rather than high because of the inlining uncertainty -- verify against actual disassembly instructions before treating draw_fps as fully absorbed."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_42106D",
+  "new_name": "mainloop",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 25400,
+  "confidence": "high",
+  "evidence": "void mainloop(bool checkControls, IDriverDependantBitmap*, int, int) at AC.CPP:25400. String match: \"Wait() was used in Player Enters Screen - use Enters Screen After...\" (25425). Very strong structural corroboration: this function calls check_controls (already matched) at the exact relative offset expected for the checkControls-guarded call, calls sub_40EF0D (matched above to update_stuff) and sub_411940 (matched above to draw_screen_overlay) -- three independent callee matches, all fitting a per-frame game loop body. Its own caller is DisplayAtY (already matched), consistent with AGS's blocking speech-display code pumping the main loop while waiting for the player to dismiss text."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_42A400",
+  "new_name": "cc_error",
+  "source_file": "Common/cscommon.cpp",
+  "source_line": 29,
+  "confidence": "high",
+  "evidence": "void cc_error(char *descr, ...) at cscommon.cpp:29. String matches: \"Error (line %d): %s\" (49), \"Runtime error: %s\" (57). Caller matches exactly: called from ccCreateInstanceEx (already matched), consistent with cc_error being the universal script-subsystem error reporter used throughout Common/CSRUN.CPP and Common/cscommon.cpp."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_42A620",
+  "new_name": "dump_instruction",
+  "source_file": "Common/CSRUN.CPP",
+  "source_line": 118,
+  "confidence": "high",
+  "evidence": "void dump_instruction(unsigned long*,int,int) at CSRUN.CPP:118. String matches: \"script.log\" (127), \"Line %3d, IP:%8d (SP:%8d) \" (128). Caller: sub_42B394 (the unrenamed 2002-era interpreter predecessor of cc_run_code) -- matches a bytecode-dump debug helper being called from the interpreter loop."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_42C337",
+  "new_name": "fread_script",
+  "source_file": "Common/CSRUN.CPP",
+  "source_line": 2029,
+  "confidence": "high",
+  "evidence": "ccScript *fread_script(FILE*) at CSRUN.CPP:2029. String matches: \"file was not written by fwrite_script or seek position is incorrect\" (2043), \"internal error rebuilding script\" (2117). Caller matches exactly: load_room (already matched) -- room files embed a compiled room script blob, deserialized via fread_script."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_4338F9",
+  "new_name": "find_route",
+  "source_file": "Engine/routefnd.cpp",
+  "source_line": 766,
+  "confidence": "high",
+  "evidence": "int find_route(...) at routefnd.cpp:766. String matches: \"My name is there for all to see.\" (809, a routefnd.cpp Easter-egg comment string), \"too many stages for auto-walk\" (847)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_407CA7",
+  "new_name": "read_gui",
+  "source_file": "Engine/acgui.cpp",
+  "source_line": 1445,
+  "confidence": "high",
+  "evidence": "void read_gui(FILE*,GUIMain*,GameSetupStruct*,GUIMain**) at acgui.cpp:1445. String match: \"read_gui: file is corrupt\" (1450). Caller matches exactly: load_ac2game_dta (already matched), the main game-data loader."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_40D8A9",
+  "new_name": "run_event_block_inv",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 5411,
+  "confidence": "high",
+  "evidence": "void run_event_block_inv(int,int) at AC.CPP:5411. String match: \"inventory%d\" (5412). Caller matches exactly: check_controls (already matched), consistent with inventory-item click dispatch."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_410D9D",
+  "new_name": "prepare_characters_for_drawing",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 8267,
+  "confidence": "high",
+  "evidence": "void prepare_characters_for_drawing() at AC.CPP:8267. String match: \"!The character %s was turned on in the current room\" (8284). Caller matches exactly: mainloop (already matched), per-frame character prep before rendering."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_41344E",
+  "new_name": "draw_text_window",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 12533,
+  "confidence": "high",
+  "evidence": "void draw_text_window(int*,int*,int*,int*,int*,int,int) at AC.CPP:12533. String match: \"!Cannot use QFG4 style options without custom text window\" (12539)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_413CE1",
+  "new_name": "_display_at",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 13072,
+  "confidence": "high",
+  "evidence": "void _display_at(int,int,int,char*,int,int,int,int,bool) at AC.CPP:13072. String match: \"Display: auto-voice symbol '&' not followed by valid...\" (13085). Caller matches exactly: DisplayAt (already-named), matching the leading-underscore internal-helper naming convention seen elsewhere (DisplaySpeech/_displayspeech)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_40829D",
+  "new_name": "debug_log",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 1243,
+  "confidence": "high",
+  "evidence": "void debug_log(char*, ...) at AC.CPP:1243. String match: \"warnings.log\" (1267, the fopen target). Note: this string also appears once more at AC.CPP:27613 inside initialize_engine (an unlink(\"warnings.log\") call) -- disambiguated via caller: sub_40829D is called from PlayAmbientSound (already matched), which fits debug_log (a general-purpose debug print used all over the codebase) and not initialize_engine (a startup-only routine with a single call site from main)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_407400",
+  "new_name": "GUIMain__rebuild_array",
+  "source_file": "Engine/acgui.cpp",
+  "source_line": 1102,
+  "confidence": "high",
+  "evidence": "void GUIMain::rebuild_array() at acgui.cpp:1102. String match: \"guimain: unknown control type found on gui\" (1126), the default-case quit() in its type-dispatch loop. Caller matches exactly: read_gui (matched above), which rebuilds each loaded GUI's object array after deserializing it. Flat-named (no ::) as a C++ member function, same convention as GUIButton__Draw."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_40A129",
+  "new_name": "add_screen_overlay",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 3451,
+  "confidence": "high",
+  "evidence": "int add_screen_overlay(int,int,int,block,bool) at AC.CPP:3451. String match: \"too many screen overlays created\" (3453)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_412D3D",
+  "new_name": "update_polled_stuff",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 12353,
+  "confidence": "high",
+  "evidence": "void update_polled_stuff(bool) at AC.CPP:12353. String match: \"||exit!\" (12358). Caller matches exactly: called from load_main_block (already matched) at a label mid-function, consistent with polling input/sound during a potentially slow room-data load."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_416040",
+  "new_name": "GetObjectGraphic",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 14990,
+  "confidence": "high",
+  "evidence": "int GetObjectGraphic(int) at AC.CPP:14990. String match: \"!GetObjectGraphic: invalid object specified\" (14991). Referenced via DATA XREF from setup_script_exports (a script-export function-pointer table), not a direct call site -- consistent with being a script API function registered by name rather than called directly from engine C++ code."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_4166DC",
+  "new_name": "make_ts_func_name",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 4604,
+  "confidence": "high",
+  "evidence": "char* make_ts_func_name(char*,int,int) at AC.CPP:4604. String match: \"%s_%c\" (4606), the sprintf format used to build the mangled name."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_418311",
+  "new_name": "move_object",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 16543,
+  "confidence": "high",
+  "evidence": "void move_object(int,int,int,int,int) at AC.CPP:16543. String match: \"!MoveObject: invalid object number\" (16546). Callgraph: calls find_route (already matched) internally for auto-walk path calculation, matching source exactly."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_418401",
+  "new_name": "walk_character",
+  "source_file": "Engine/acchars.cpp",
+  "source_line": 37,
+  "confidence": "high",
+  "evidence": "void walk_character(int,int,int,int,bool) at acchars.cpp:37. String match: \"!MoveCharacter: character not in current room\" (40). Same caller (sub_40C3E0) as move_object -- a single dispatcher function invoking both, plausible for a generic \"move this game entity\" script-command handler."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_418798",
+  "new_name": "do_movelist_move",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 17327,
+  "confidence": "high",
+  "evidence": "int do_movelist_move(short*,int*,int*) at AC.CPP:17327. String match: \"movelist_move: attempted to move on a non-exist movelist\" (17329). Caller matches exactly: update_stuff (already matched), per-frame processing of active move-lists."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_41990A",
+  "new_name": "check_valid_file_handle",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 18291,
+  "confidence": "high",
+  "evidence": "int check_valid_file_handle(FILE*,char*) at AC.CPP:18291. String match: \"!%s: invalid file handle; file not previously opened\" (18300). Caller matches exactly: FileClose (already-named script API function)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_41D49B",
+  "new_name": "run_dialog_request",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 21797,
+  "confidence": "high",
+  "evidence": "int run_dialog_request(int) at AC.CPP:21797. String match: \"dialog_request\" (21799). Caller matches: sub_41D95B (matched below to do_conversation), exactly where source has do_conversation call run_dialog_request after show_dialog_options returns CHOSE_TEXTPARSER (AC.CPP:22552)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_41D95B",
+  "new_name": "do_conversation",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 22488,
+  "confidence": "high",
+  "evidence": "void do_conversation(int) at AC.CPP:22488. String match: \"!DoDialog: all options have been turned off\" (21999) -- that line is technically inside show_dialog_options (AC.CPP:21938), not do_conversation itself, suggesting show_dialog_options was inlined into do_conversation in this build (do_conversation calls it exactly once, immediately using the result -- an easy inlining target, same pattern seen elsewhere e.g. draw_fps into draw_screen_overlay). Callgraph confirms do_conversation identity: calls sub_41D49B (run_dialog_request) right where source does (AC.CPP:22552), and is called from sub_409B1A (matched below to post_script_cleanup) matching post_script_cleanup ePSARunDialog case (AC.CPP:3143)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_41E162",
+  "new_name": "find_highest_room_entered",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 22597,
+  "confidence": "high",
+  "evidence": "int find_highest_room_entered() at AC.CPP:22597. String match: \"find_highest_room: been in no rooms?\" (22603). Caller matches exactly: SaveGameSlot (already-named)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_41F205",
+  "new_name": "__actual_invscreen",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 23859,
+  "confidence": "high",
+  "evidence": "int __actual_invscreen() at AC.CPP:23859. String match: \"inconsistent inventory calculations\" (23898)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_409B1A",
+  "new_name": "post_script_cleanup",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 3093,
+  "confidence": "high",
+  "evidence": "RESOLVES the earlier open question (reversing/notes/open-question-sub_409B1A.md). Confirmed this time by reading the actual disassembled instructions (not just string/callgraph heuristics): sub_409B1A decrements a global (dword_523150, matching num_scripts), computes an index into a 0x6Ch-sized-element array (dword_4CC848, matching the ExecutingScript scripts[] array -- sizeof(ExecutingScript) is plausible at 108 bytes), and decrements the global inside_script by name (IDA already had this variable named, and it matches source AC.CPP:3101 inside_script--; exactly) -- this is unmistakably post_script_cleanup opening sequence (AC.CPP:3093-3101). Further down it conditionally calls RestoreGameDialog, restore_game_data + Display(\"Unable to load game (error: %s).\",...) + RestartGame, and sub_41D95B (do_conversation) -- matching post_script_cleanup ePSARestoreGameDialog / ePSARestoreGame / ePSARestartGame / ePSARunDialog switch cases respectively (AC.CPP:3116-3157). The restore_game_data+Display+RestartGame sequence is load_game_and_print_error logic (AC.CPP:2988) INLINED directly into post_script_cleanup in this build rather than called as a separate function -- that inlining is what caused the original misleading string-only match to load_game_and_print_error and the apparent mutual-recursion contradiction with run_script_function_if_exist (post_script_cleanup is called from run_script_function_if_exist at AC.CPP:3297, and itself calls run_script_function_if_exist back via at least two branches further down its body). Both directions are genuine, just not through the function originally guessed."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_42158D",
+  "new_name": "wait_loop_still_valid",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 25649,
+  "confidence": "high",
+  "evidence": "int wait_loop_still_valid() at AC.CPP:25649. String match: \"loop_until: unknown until event\" (25681). Caller matches: called from an already-named function, do_main_cycle, at a label mid-function -- fits a loop-condition check."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_421957",
+  "new_name": "compile_room_script",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 25789,
+  "confidence": "high",
+  "evidence": "void compile_room_script() at AC.CPP:25789. String match: \"Unable to create local script: %s\" (25796). Caller matches exactly: load_new_room (already matched), which compiles the room script after loading room data."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_421AF1",
+  "new_name": "initialize_sprite",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 25905,
+  "confidence": "high",
+  "evidence": "void initialize_sprite(int) at AC.CPP:25905. String match: \"Not enough memory to load sprite graphics\" (25941). Caller matches: sub_4026CD (a sprite-cache-related lead, Common/sprcache.cpp), consistent with the sprite cache initializing a sprite on demand."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_424E20",
+  "new_name": "TreeMap__addText",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 1869,
+  "confidence": "high",
+  "evidence": "TreeMap::addText(const char*, char*) at AC.CPP:1869 (inline-defined struct method). String match: \"load_translation: out of memory\" (1879). Caller matches exactly: init_translation (already matched), which builds the translation binary tree by calling addText for each entry. Flat-named as a C++ member function, same convention as GUIButton__Draw / GUIMain__rebuild_array."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_42B17F",
+  "new_name": "call_function",
+  "source_file": "Common/CSRUN.CPP",
+  "source_line": 1217,
+  "confidence": "high",
+  "evidence": "int call_function(long,int,long*,int) at CSRUN.CPP:1217 -- the small native-function-pointer trampoline (distinct from sub_42B394, the larger un-renamed interpreter loop). String match: \"too many arguments in call to function\" (1275). Caller matches exactly: sub_42B394 calls it, matching cc_run_code calling call_function() for SCMD_CALLAS/CALL opcodes in the 2011 source -- further corroborates sub_42B394's role even though it remains unrenamed pending closer reading (see reversing/notes/csrun-interpreter-evolution.md)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_432008",
+  "new_name": "is_route_possible",
+  "source_file": "Engine/routefnd.cpp",
+  "source_line": 171,
+  "confidence": "high",
+  "evidence": "int is_route_possible(int,int,int,int,block) at routefnd.cpp:171. String match: \"no memory for route calculation\" (186). Caller matches exactly: sub_43358C (matched below to __find_route)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_43358C",
+  "new_name": "__find_route",
+  "source_file": "Engine/routefnd.cpp",
+  "source_line": 607,
+  "confidence": "high",
+  "evidence": "int __find_route(int,int,short*,short*,int) at routefnd.cpp:607. String match: \"Don't even try it.\" (618, another routefnd.cpp Easter-egg string). Caller matches exactly: find_route (already matched), which wraps __find_route."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_434031",
+  "new_name": "load_script_configuration",
+  "source_file": "Engine/scrptrt.cpp",
+  "source_line": 40,
+  "confidence": "high",
+  "evidence": "void load_script_configuration(FILE*) at scrptrt.cpp:40. String match: \"ScriptEdit: invliad config version\" (44, typo preserved from source). Caller matches exactly: load_main_block (already matched), validating the room's embedded compiled-script header."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_4026CD",
+  "new_name": "SpriteCache__loadSprite",
+  "source_file": "Common/sprcache.cpp",
+  "source_line": 358,
+  "confidence": "high",
+  "evidence": "int SpriteCache::loadSprite(int) at sprcache.cpp:358. String match: \"sprite cache array index out of bounds\" (374). Callgraph: calls initialize_sprite (already matched), consistent with lazily loading a sprite into the cache. Flat-named as a C++ member function."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_424870",
+  "new_name": "InterfaceElement__InterfaceElement",
+  "source_file": "Common/acroom.h",
+  "source_line": 316,
+  "confidence": "high",
+  "evidence": "InterfaceElement::InterfaceElement() constructor at acroom.h:316. String match: \"@SCORETEXT@$r@GAMENAME@\" (317), the default vtext value. Referenced via DATA XREF (from sub_424830, likely an array-of-objects default-construction loop), not a direct call site. Flat-named as a C++ constructor."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_428B70",
+  "new_name": "dxmedia_abort_video",
+  "source_file": "Engine/acwavi.cpp",
+  "source_line": 274,
+  "confidence": "high",
+  "evidence": "void dxmedia_abort_video() at acwavi.cpp:274. String match: \"Played successfully.\" (290). Caller matches exactly: PlayVideo (already-named script API function), cleaning up DirectShow state after video playback ends. This is also the caller of sub_428905 (already matched to RenderFileToMMStream) via a sibling function, tying together the whole video-playback subsystem."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_411E2A",
+  "new_name": "get_hotspot_at",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 8939,
+  "confidence": "high",
+  "evidence": "int get_hotspot_at(int,int) at AC.CPP:8939. Found via pure callgraph/structural analysis, no string evidence -- inside mainloop (already matched), the exact call/arg pattern from source line 25453 (int hotspotThere = get_hotspot_at(playerchar->x, playerchar->y); setevent(EV_RUNEVBLOCK, EVB_HOTSPOT, hotspotThere, 0);) appears verbatim in the disassembly: two args pulled from playerchar struct offsets +0x14/+0x18, a call to sub_411E2A, the result stored, then immediately pushed into a setevent(2,1,X,0) call (setevent already matched). Also called from ProcessClick (already-named) and sub_411E70 (matched below to __GetLocationType), both of which plausibly need hotspot lookups."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_411E70",
+  "new_name": "__GetLocationType",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 20466,
+  "confidence": "high",
+  "evidence": "int __GetLocationType(int,int,int) at AC.CPP:20466. Found via callgraph: calls sub_411E2A (matched above to get_hotspot_at) internally, exactly matching source line 20482 (int hsat = get_hotspot_at(xxx,yyy);). Takes 3 params matching the source signature. Called from mainloop (already matched), matching source line 25535 (__GetLocationType(...) == LOCTYPE_HOTSPOT check)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_402447",
+  "new_name": "SpriteCache__operator_index",
+  "source_file": "Common/sprcache.cpp",
+  "source_line": 185,
+  "confidence": "high",
+  "evidence": "block SpriteCache::operator[](int index) at sprcache.cpp:185. Found via callgraph: this function calls SpriteCache__loadSprite (already matched) internally exactly where source does (sprcache.cpp:198, \"if (...) loadSprite(index);\"). Callers match exactly: GUIButton__Draw (already matched, accesses the global spriteset[usepic]) and update_stuff (already matched, per-frame character sprite access) -- both are exactly the kind of code that would index the global SpriteCache via operator[]. Flat-named as a C++ operator overload, same convention as other member functions."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_412517",
+  "new_name": "set_default_glmsg",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 9397,
+  "confidence": "high",
+  "evidence": "void set_default_glmsg(int msgnum, const char* val) at AC.CPP:9397. Structural match: lazy-init pattern (if slot is NULL, malloc(strlen(val)+5) then strcpy), exactly matching source's malloc(strlen(val)+5) (note the same unusual \"+5\" padding, not just +1). Called exactly 12 times from load_ac2game_dta (already matched) -- matches the 12 built-in default global messages (MSG_RESTORE=984 through MSG_QUITDIALOG=995, see Engine/acdialog.h) that get initialized during game-data load if not overridden."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_42B026",
+  "new_name": "ccCreateInstance",
+  "source_file": "Common/CSRUN.CPP",
+  "source_line": 1032,
+  "confidence": "high",
+  "evidence": "ccInstance *ccCreateInstance(ccScript *scri) at CSRUN.CPP:1032 -- a thin wrapper: \"return ccCreateInstanceEx(scri, NULL);\". Disassembly matches exactly: passes its single arg through plus a hardcoded 0/NULL second arg to ccCreateInstanceEx (already matched). Called from load_ac2game_dta (already matched, loading the global script) and compile_room_script (already matched, loading the room script) -- both are exactly where a fresh ccInstance would be created from a freshly-compiled/loaded ccScript."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_40AAE3",
+  "new_name": "EndSkippingUntilCharStops",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 24172,
+  "confidence": "high",
+  "evidence": "void EndSkippingUntilCharStops() at AC.CPP:24172. Callgraph: single caller is new_room (already matched), at the very first call offset (+0x1D, right after prologue) -- matches it being the literal first statement of new_room's source body. Internally calls sub_409FD4 (matched below to stop_fast_forwarding), matching source exactly (EndSkippingUntilCharStops calls stop_fast_forwarding() at AC.CPP:24177)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_409FD4",
+  "new_name": "stop_fast_forwarding",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 24132,
+  "confidence": "high",
+  "evidence": "void stop_fast_forwarding() at AC.CPP:24132. Found via callgraph: called from EndSkippingUntilCharStops (matched above) at the exact position source calls it."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_40ADC8",
+  "new_name": "generate_light_table",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 3723,
+  "confidence": "high",
+  "evidence": "void generate_light_table() at AC.CPP:3723 -- no parameters (disasm confirms: no arg_ stack labels, only a local). Caller matches exactly: SetAreaLightLevel (already matched), which calls it right after setting thisroom.regionLightLevel/regionTintLevel, before the DEBUG_CONSOLE call, exactly matching source order (AC.CPP:3745). Also called from load_new_room (already matched) -- room loading also needs to regenerate the light table for the newly loaded room's tinted regions."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_41E70E",
+  "new_name": "read_serialized_bitmap",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 23018,
+  "confidence": "high",
+  "evidence": "block read_serialized_bitmap(FILE*) at AC.CPP:23018. Exact structural match: reads 3 ints via getw (width, height, color depth, in that order) then calls create_bitmap_ex -- disasm matches precisely, including argument order (create_bitmap_ex's 1st arg is the 3rd value read, matching piccoldep/picwid/pichit -> create_bitmap_ex(piccoldep,picwid,pichit) exactly). Called once from restore_game_data (already matched), and defined immediately before it in source (line 23018, restore_game_data starts at 23041) -- consistent with being its private helper."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_431D9A",
+  "new_name": "misbuttondown",
+  "source_file": "Common/MOUSEW32.CPP",
+  "source_line": 246,
+  "confidence": "high",
+  "evidence": "int misbuttondown(int buno) at MOUSEW32.CPP:246: \"poll_mouse(); if (mouse_b & MB_ARRAY[buno]) return TRUE; return FALSE;\". Exact structural match: calls sub_457910 (matched below to poll_mouse), then ANDs a global (mouse_b) against a lookup table indexed by the arg (MB_ARRAY[buno]), returns -1/0. Caller matches: IsButtonDown (already matched, calls misbuttondown(which-1) at AC.CPP:5443), also called from check_controls."
+ },
+ {
+  "kind": "function",
+  "asm_name": "sub_457910",
+  "new_name": "poll_mouse",
+  "source_file": null,
+  "source_obj": "alleg_s_crt:mouse.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "Allegro library function, confirmed via refmap_symbols.json exact match (_poll_mouse, alleg_s_crt:mouse.obj). Called from sub_431D9A (misbuttondown), matching Common/MOUSEW32.CPP:248 exactly."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_40D662",
+  "new_name": "remove_popup_interface",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 5339,
+  "confidence": "high",
+  "evidence": "void remove_popup_interface(int ifacenum) at AC.CPP:5339. Very strong structural match across the whole function body: \"if (ifacepopped != ifacenum) return;\" matches the arg_0 vs dword_4B4210 compare and early jump; \"ifacepopped=-1; UnPauseGame();\" matches dword_4B4210=-1 followed by game_paused--; \"guis[ifacenum].on=0;\" matches an array access with element size 0x184 (bytes) and field offset 0x90 -- real evidence for GUIMain's struct layout (element size 0x184, \"on\" at +0x90, a popupyp-related field at +0x44); \"if (mousey<=guis[ifacenum].popupyp) filter->SetMousePosition(...)\" matches the +0x44 comparison and a subsequent call. Called twice from check_controls (already matched), matching source's two call sites in that function."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_407587",
+  "new_name": "GUIMain__is_mouse_on_gui",
+  "source_file": "Common/acgui.h",
+  "source_line": 1142,
+  "confidence": "high",
+  "evidence": "int GUIMain::is_mouse_on_gui() at Engine/acgui.cpp:1142 (declared acgui.h:696). \"if (on < 1) return 0;\" matches exactly: no explicit args (this-only, __thiscall), checks [this+0x90] >= 1 -- corroborates the \"on\" field offset (+0x90) already found via remove_popup_interface. Caller matches: check_controls (already matched), in its GUI mouse-over scan loop (AC.CPP:5652-5654)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_407C58",
+  "new_name": "GUIMain__mouse_but_up",
+  "source_file": "Engine/acgui.cpp",
+  "source_line": 1342,
+  "confidence": "high",
+  "evidence": "void GUIMain::mouse_but_up() at acgui.cpp:1342. Matches: \"if (mousedownon < 0) return;\" (this+0x60 >= 0 guard), \"objs[mousedownon]->MouseUp();\" (indexes the objs[] array at +0x94 using the +0x60 field, then calls a virtual method at vtable slot +0x10), \"mousedownon = -1; guis_need_update = 1;\" (matches exactly). New GUIMain field evidence: mousedownon at +0x60, objs[] pointer array at +0x94, MouseUp at vtable slot +0x10. Caller matches: check_controls (already matched)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_407BCA",
+  "new_name": "GUIMain__mouse_but_down",
+  "source_file": "Engine/acgui.cpp",
+  "source_line": 1325,
+  "confidence": "high",
+  "evidence": "void GUIMain::mouse_but_down() at acgui.cpp:1325. Matches: \"objs[mouseover]->MouseDown();\" (indexes objs[] at +0x94 using the +0x54 \"mouseover\" field, calls vtable slot +0xC -- adjacent to MouseUp's +0x10, consistent vtable ordering), \"mousedownon = mouseover;\" (copies +0x54 into +0x60, matching mouse_but_up's already-confirmed mousedownon field), then computes (mousex - x, mousey - y) using globals dword_5358CC/dword_5358D0 (mousex/mousey) minus fields at +0x28/+0x2C -- matching \"objs[mousedownon]->MouseMove(mousex - x, mousey - y);\" exactly. New GUIMain field evidence: x at +0x28, y at +0x2C, MouseDown at vtable slot +0xC. Caller matches: check_controls (already matched)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_40DD7C",
+  "new_name": "check_skip_cutscene_keypress",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 5605,
+  "confidence": "high",
+  "evidence": "void check_skip_cutscene_keypress(int kgn) at AC.CPP:5605. Exact branch-structure match: \"(play.in_cutscene > 0) && (play.in_cutscene != 3)\" matches the dword_4EEB50 >0 / !=3 guard; the De Morgan-expanded \"(kgn != 27) && (in_cutscene==1 || in_cutscene==5)\" matches the arg_0==0x1B(ESC) / dword_4EEB50==1 / dword_4EEB50==5 branch chain exactly. Called from check_controls (already matched, source AC.CPP:5801) and sub_4136F6 (a lead for another blocking-wait-loop function, source AC.CPP:13013)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_4136F6",
+  "new_name": "_display_main",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 12819,
+  "confidence": "high",
+  "evidence": "int _display_main(int,int,int,char*,int,int,int,int,int,bool) at AC.CPP:12819 -- 10 params, matching _display_at (already matched) calling it with its 9 args plus an injected usingfont (AC.CPP:13093). Caller matches exactly: called from _display_at, the only caller. Body matches: calls draw_text_window_and_bar (which itself calls draw_text_window, already matched -- consistent with draw_text_window_and_bar being a thin wrapper likely inlined here) and check_skip_cutscene_keypress (already matched, at AC.CPP:13013, the \"let them press ESC to skip the cutscene\" blocking-display loop)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_401058",
+  "new_name": "wsetscreen",
+  "source_file": "Common/Wgt2allg.h",
+  "source_line": 139,
+  "confidence": "high",
+  "evidence": "void wsetscreen(block nss) at Wgt2allg.h:139: \"if (nss==NULL) abuf=screen; else abuf=nss;\". Exact, verbatim match to the disassembly: single arg, conditional on zero -> abuf=screen (Allegro global), else abuf=arg. Called from __GetLocationType (already matched) and other sites. Note: its caller list includes a FLIRT-guessed \"construct_virtual_screen?\" entry (uncertain, tagged with \"?\" by IDA) -- worth independently verifying that guess later, not done as part of this match."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "construct_virtual_screen?",
+  "new_name": null,
+  "revert_name": true,
+  "confidence": "confirmed wrong",
+  "evidence": "This IDA-guessed FLIRT/manual name (tagged \"?\" by IDA itself, meaning uncertain) is INCORRECT. The real construct_virtual_screen(bool fullRedraw) at Engine/AC.CPP:25343 is a large function (gfxDriver->ClearDrawList(), draw_screen_background(), etc.) taking one bool parameter. This disassembly function is only 10 instructions, takes ZERO parameters, and just calls an unknown helper (sub_4096B5) then wsetscreen(virtual_screen) -- no bool argument is ever pushed at either of its two call sites (restore_after_dialog+1B, _display_main+5C7), which rules out the real construct_virtual_screen entirely (it would require an arg push at every call site). Reverted to an unnamed sub_ label rather than leave a misleading name in place. No confident replacement name found yet -- role appears to be a small \"restore drawing target to virtual screen\" helper, possibly the true 2002 wsetscreen(virtual_screen)-equivalent that later got folded into the larger construct_virtual_screen. Worth another look later."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_42B054",
+  "new_name": "ccFreeInstance",
+  "source_file": "Common/CSRUN.CPP",
+  "source_line": 1042,
+  "confidence": "high",
+  "evidence": "void ccFreeInstance(ccInstance*) at CSRUN.CPP:1042. RESOLVES an old open lead (see reversing/notes/open-lead-sub_42B054-forked-instance-refcounting.md) originally left unmatched because a suspected refcount decrement did not match 2011's simplified \"if (forked) ccFreeInstance(...)\" cleanup in post_script_cleanup. Found via ccInstance struct-offset recovery work: ccCreateInstanceEx stores the source ccScript* at instance offset +0x9A4 (matching the newly confirmed \"instanceof\" field) and increments that script's own +0x1C4C field (\"instances\"). sub_42B054 does the exact inverse -- \"if (cinst->instanceof != NULL) { cinst->instanceof->instances--; if (...==0) { simp.remove_range(globaldata,globaldatasize); simp.remove_range(code,codesize*4); } }\" matches the disassembly line for line, including the exact field offsets (+4=globaldata, +8=globaldatasize, +0xC=code, +0x10=codesize) and the two calls to a shared helper (sub_42A969, likely simp.remove_range) with those exact argument pairs."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_42A969",
+  "new_name": "SystemImports__remove_range",
+  "source_file": "Common/CSRUN.CPP",
+  "source_line": 712,
+  "confidence": "high",
+  "evidence": "void SystemImports::remove_range(char*,unsigned long) at CSRUN.CPP:712. Called from ccFreeInstance (already matched) with (globaldata,globaldatasize) then (code,codesize*4) -- matches source's \"simp.remove_range((char*)&cinst->globaldata[0], cinst->globaldatasize); simp.remove_range((char*)&cinst->code[0], cinst->codesize * sizeof(long));\" exactly (predicted this match while deriving ccFreeInstance, now confirmed directly). Flat-named as a C++ member function."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_42A7D3",
+  "new_name": "SystemImports__add",
+  "source_file": "Common/CSRUN.CPP",
+  "source_line": 594,
+  "confidence": "high",
+  "evidence": "int SystemImports::add(char*,char*,ccInstance*) at CSRUN.CPP:594. Called from ccAddExternalSymbol (via the scAdd_External_Symbol macro, Engine/AC.CPP:24236) and from ccCreateInstanceEx's export-registration loop (already matched) -- exactly the two call sites source shows. Body matches the \"search by name first, override if found and not a script import, else append at first free slot\" logic. Note: this 2002 build implements the table as a FIXED 400-entry array (explicit \"if (count>=400) return\" cap, confirmed via field offsets: name[400]@+0, addr[400]@+0x640, isScriptImp[400]@+0xC80 (1 byte each here, not a pointer -- another drift point), count@+0xE10), whereas 2011's version dynamically reallocates via realloc() with no fixed cap -- same method, evolved capacity strategy. Flat-named as a C++ member function."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_42A8E1",
+  "new_name": "SystemImports__get_index_of",
+  "source_file": "Common/CSRUN.CPP",
+  "source_line": 660,
+  "confidence": "high",
+  "evidence": "int SystemImports::get_index_of(char*) at CSRUN.CPP:660. The 2011 body has been rewritten to use a btree, but the OLD implementation survives as a comment in the same function: \"for (o=0;o<numimports;o++) { if (strcmp(name[o],namw)==0) return o; ... }\". The disassembly matches that commented-out code line for line: loop bounded by [this+0xE10] (numimports, same offset confirmed via SystemImports::add above), strcmp against name[o] at [this+o*4], return o on match, -1 if the loop completes. Called from SystemImports::add (already matched) and sub_42A934 (a lead for a future round, likely SystemImports::is_valid_import or ccGetSymbolAddress-adjacent). Flat-named as a C++ member function."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_42A934",
+  "new_name": "SystemImports__is_script_import",
+  "source_file": "Common/CSRUN.CPP",
+  "source_line": 698,
+  "confidence": "high",
+  "evidence": "ccInstance* SystemImports::is_script_import(char*) at CSRUN.CPP:698. Body matches: calls get_index_of(namw) (already matched), if <0 return 0/NULL, else return isScriptImp[idx] (byte at [this+idx+0xC80], matching the already-confirmed isScriptImp[400] offset from SystemImports::add). Missing source's NULL-pointer guard/quit() call, but the core logic is an exact match. Called from ccCreateInstanceEx (already matched). Flat-named as a C++ member function."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_42C318",
+  "new_name": "fget_long",
+  "source_file": "Common/CSRUN.CPP",
+  "source_line": 2022,
+  "confidence": "high",
+  "evidence": "long fget_long(FILE*) at CSRUN.CPP:2022: \"fread(&tmpp,4,1,iii); return tmpp;\". Exact structural match. Called 8 times from fread_script (already matched), matching source's 8 fget_long() call sites (fileVer, globaldatasize, codesize, stringssize, numfixups, numimports, numexports, plus the trailing ENDFILESIG check)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_42C294",
+  "new_name": "freadstring",
+  "source_file": "Common/CSRUN.CPP",
+  "source_line": 2005,
+  "confidence": "high",
+  "evidence": "void freadstring(char**, FILE*) at CSRUN.CPP:2005: reads chars via fgetc into a static buffer until a NUL terminator, then malloc+strcpy's the result (or sets *strptr=NULL if empty). Matches disasm exactly (fgetc loop into byte_534804, a global -- disasm's representation of source's \"static char ibuffer[300]\"). Called twice from fread_script (already matched), matching source's two freadstring(&scri->imports[n], ooo) / freadstring(&scri->exports[n], ooo) call sites in the imports/exports-loading loops. Also explains why the recovered ccScript struct (see struct-layout-drift.md) has no room for 2011's sections feature: source gates section-reading behind \"if (fileVer >= 83)\", so this build's scripts (older format) skip it entirely, consistent with the derived 0x1C50 total size ending right after instances."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_42A885",
+  "new_name": "SystemImports__get_addr_of",
+  "source_file": "Common/CSRUN.CPP",
+  "source_line": 651,
+  "confidence": "high",
+  "evidence": "char* SystemImports::get_addr_of(char*) at CSRUN.CPP:651. 2011 delegates to get_index_of, but this disasm does the linear strcmp scan inline (same pattern seen in the already-matched SystemImports::get_index_of, whose 2011 body also shows the old inline-scan version preserved as a dead comment) -- consistent with 2002 having simpler, more duplicated implementations before being refactored to share a common helper. Loop bounded by [this+0xE10] (numimports), returns [this+idx*4+0x640] (addr[idx], matching SystemImports::add's confirmed offset) or 0/NULL if not found. Called from ccCreateInstanceEx (already matched). Flat-named as a C++ member function."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_42A4C1",
+  "new_name": "ccGetOption",
+  "source_file": "Common/cscommon.cpp",
+  "source_line": 71,
+  "confidence": "high",
+  "evidence": "int ccGetOption(int optbit) at cscommon.cpp:71: \"if (ccCompOptions & optbit) return 1; return 0;\". Exact match: disasm ANDs a global (dword_5347F0 = ccCompOptions) against the single arg, returns 1/0. Called from ccCreateInstanceEx with arg=8=SCOPT_AUTOIMPORT (Common/CSCOMP.H:129), matching source's \"if ((scri->instances == 1) && (ccGetOption(SCOPT_AUTOIMPORT) != 0))\" exactly (same instances==1 gate seen right before the call). Also called from sub_42B394 (the still-unrenamed cc_run_code predecessor), matching source's \"int write_debug_dump = ccGetOption(SCOPT_DEBUGRUN);\" -- further corroborates sub_42B394's role as the interpreter loop, and dump_instruction (already matched) being gated by this same flag."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_409E9A",
+  "new_name": "run_text_script_iparam",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 3369,
+  "confidence": "medium",
+  "evidence": "int run_text_script_iparam(ccInstance*,char*,int) at AC.CPP:3369. Structural/role match: calls prepare_text_script (already matched) then ccCallInstance (already matched) with exactly one extra parameter (arg_8), and its error-path sprintf format string is literally \"run_text_script1: error %d (%s)\" -- naming evidence for the 1-param variant specifically. Always calls post_script_cleanup (already matched) before returning, matching run_script_function_if_exist's own cleanup pattern. CAVEAT: in the 2011 source, run_text_script_iparam does NOT call prepare_text_script/ccCallInstance directly -- it delegates to run_script_function_if_exist (which does that internally with generic numParam handling). This looks like another case of an early per-arity implementation later refactored to share a common generic helper (same pattern as call_function/cc_run_code and do_conversation/show_dialog_options). Confidence medium rather than high because of this structural divergence -- the role match is strong but the call graph does not delegate the way 2011 does. Called from run_dialog_request (already matched) and post_script_cleanup (already matched)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_425570",
+  "new_name": "acquire_screen",
+  "source_file": null,
+  "confidence": "high",
+  "evidence": "Matches Allegro's canonical macro/function pair \"#define acquire_screen() acquire_bitmap(screen)\": disasm pushes the global `screen` bitmap and calls a single sub-function (sub_425250, presumably acquire_bitmap, a library primitive). Confirmed as a real linker symbol in the reference build (refmap_symbols.json: acquire_screen, obj=acwavi.obj) even though 2011's Engine/acwavi.cpp source only shows it being CALLED (as a no-arg call), not defined -- consistent with it being an Allegro library-provided function/macro instantiated wherever first used. Called from process_event and __GetLocationType (already matched), consistent with locking the screen surface around direct pixel access."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_425590",
+  "new_name": "release_screen",
+  "source_file": null,
+  "confidence": "high",
+  "evidence": "Same pattern as acquire_screen (see sub_425570 above) -- pushes `screen`, calls a single sub-function (sub_425280, presumably release_bitmap). Confirmed as a real linker symbol in the reference build (refmap_symbols.json: release_screen, obj=acwavi.obj). Called from process_event and __GetLocationType (already matched), pairing with acquire_screen around the same drawing operations."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_4318CD",
+  "new_name": "mgetgraphpos",
+  "source_file": "Common/MOUSEW32.CPP",
+  "source_line": 87,
+  "confidence": "high",
+  "evidence": "void mgetgraphpos() at MOUSEW32.CPP:87. Exact match: calls poll_mouse (already matched), copies mouse_x/mouse_y (Allegro globals) into mousex/mousey (dword_5358CC/D0), then bounds-clamps against boundx1/boundy1/boundx2/boundy2 -- matching dword_5358DC/5358E0/4BB8F8/4BB8FC exactly, the same four globals sub_43195E (an unmatched function from the earlier SetMouseBounds investigation) writes to. The byte_5358E4 flag check matches \"!ignore_bounds\" exactly. Called from RefreshMouse (already matched) as its literal first statement (RefreshMouse calls domouse(DOMOUSE_NOCURSOR), which itself calls mgetgraphpos as its own first statement in the 2011 source -- close enough in role/position that this direct match, rather than domouse's much larger cursor-drawing body, is clearly correct)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_43195E",
+  "new_name": "msetcursorlimit",
+  "source_file": "Common/MOUSEW32.CPP",
+  "source_line": 120,
+  "confidence": "high",
+  "evidence": "void msetcursorlimit(int x1,int y1,int x2,int y2) at MOUSEW32.CPP:120: \"boundx1=x1; boundy1=y1; boundx2=x2; boundy2=y2;\" -- no other side effects. Exact match to sub_43195E (4 args, direct assignment to the same 4 globals confirmed via mgetgraphpos, already matched). Resolves an old open item: called directly from SetMouseBounds (already matched) and restore_game_data (already matched), whereas the 2011 source has SetMouseBounds call a virtual filter->SetMouseLimit(...) instead -- consistent with the project's established pattern of later versions wrapping direct global writes behind a pluggable driver interface."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_431DBF",
+  "new_name": "msetgraphpos",
+  "source_file": "Common/MOUSEW32.CPP",
+  "source_line": 254,
+  "confidence": "high",
+  "evidence": "void msetgraphpos(int,int) at MOUSEW32.CPP:254: \"position_mouse(xa,ya);\" -- exact 2-line match, just forwards both args to sub_4577C0 (matched below to position_mouse). Called from remove_popup_interface (already matched, source line \"filter->SetMousePosition(mousex, guis[ifacenum].popupyp+2);\" -- 2002 calls the low-level msetgraphpos directly instead of through a virtual filter driver) and main (already matched, likely initial cursor centering)."
+ },
+ {
+  "kind": "function",
+  "asm_name": "sub_4577C0",
+  "new_name": "position_mouse",
+  "source_file": null,
+  "source_obj": "alleg_s_crt:mouse.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "Allegro library function, confirmed via refmap_symbols.json exact match (_position_mouse, alleg_s_crt:mouse.obj). Called from msetgraphpos (matched above), matching Common/MOUSEW32.CPP:256 exactly."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_4219BB",
+  "new_name": "precache_view",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 5125,
+  "confidence": "high",
+  "evidence": "void precache_view(int view) at AC.CPP:5125. Exact structural match: guards view<0 (implicit via the array-size check), nested loop over views[view].numLoops then loops[i].numFrames (both read from the confirmed per-view table at stride 0x8D4), calling spriteset.precache(frames[j].pic) for each -- matches disasm's nested loop with identical stride arithmetic and a final call to sub_402696 (matched below to SpriteCache::precache) with `this`=spriteset. Called twice from main (already matched)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_402696",
+  "new_name": "SpriteCache__precache",
+  "source_file": "Common/sprcache.cpp",
+  "source_line": 326,
+  "confidence": "high",
+  "evidence": "void SpriteCache::precache(int) at sprcache.cpp:326. Matches: \"if (images[index]==NULL) sprSize=loadSprite(index);\" -- disasm calls SpriteCache__loadSprite (already matched) under the exact same images[index]==NULL guard. Simpler than the 2011 body (no maxCacheSize accounting -- consistent with SpriteCache's already-established 2002 size drift, see reversing/notes/struct-layout-drift.md). Called from ChangeCursorGraphic (already-named) and precache_view (matched above), both matching source's spriteset.precache(...) call sites exactly. Flat-named as a C++ member function."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_4318B0",
+  "new_name": "mgraphconfine",
+  "source_file": "Common/MOUSEW32.CPP",
+  "source_line": 82,
+  "confidence": "high",
+  "evidence": "void mgraphconfine(int,int,int,int) at MOUSEW32.CPP:82: \"set_mouse_range(x1,y1,x2,y2);\" -- exact 4-arg passthrough match. Called from load_new_room and main (both already matched). Rounds out the mouse-bounds subsystem alongside msetcursorlimit (already matched) -- the same conceptual pair as 2011's source (one confines the OS/Allegro cursor directly, the other tracks AGS-internal bounds)."
+ },
+ {
+  "kind": "function",
+  "asm_name": "sub_457850",
+  "new_name": "set_mouse_range",
+  "source_file": null,
+  "source_obj": "alleg_s_crt:mouse.obj",
+  "is_library": true,
+  "confidence": "high",
+  "evidence": "Allegro library function, confirmed via refmap_symbols.json exact match (_set_mouse_range, alleg_s_crt:mouse.obj). Called from mgraphconfine (matched above), matching Common/MOUSEW32.CPP:84 exactly."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_424120",
+  "new_name": "GUIButton__MouseDown",
+  "source_file": "Common/acgui.h",
+  "source_line": 597,
+  "confidence": "high",
+  "evidence": "virtual int GUIButton::MouseDown() at acgui.h:597: \"if (pushedpic>0) usepic=pushedpic; ispushed=1; return 0;\". Exact match: [this+0x5C]>0 -> [this+0x60]=[this+0x5C], then [this+0x64]=1. Found by reading the GUIButton vtable directly from .rdata (starting at off_4AD4A0, the same table GUIButton__Draw -- already matched -- lives in at slot 6/+0x18): this is slot 3/+0xC, which matches GUIMain::mouse_but_down's independently-confirmed \"objs[mouseover]->MouseDown() at vtable+0xC\" call -- two unrelated pieces of evidence agreeing on the same slot. Flat-named as a C++ virtual method."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_40723F",
+  "new_name": "GUIButton__MouseUp",
+  "source_file": "Engine/acgui.cpp",
+  "source_line": 946,
+  "confidence": "high",
+  "evidence": "void GUIButton::MouseUp() at acgui.cpp:946. Exact match: \"if (isover) { usepic=overpic; if (!IsDisabled() && IsClickable()) activated++; } else usepic=pic; ispushed=0;\" -- disasm checks [this+0x68] (isover), sets [this+0x60]=[this+0x58] (usepic=overpic) or [this+0x60]=[this+0x54] (usepic=pic), conditionally increments [this+0x1C] (activated), always sets [this+0x64]=0 (ispushed). Vtable slot 4/+0x10, matching GUIMain::mouse_but_up's independently-confirmed MouseUp vtable slot. New field evidence: pic@+0x54, overpic@+0x58, isover@+0x68, activated@+0x1C (GUIObject base field), flags@+0x4 (via the IsDisabled/IsClickable check). Flat-named as a C++ virtual method."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_406A9C",
+  "new_name": "GUIButton__ReadFromFile",
+  "source_file": "Engine/acgui.cpp",
+  "source_line": 756,
+  "confidence": "high",
+  "evidence": "void GUIButton::ReadFromFile(FILE*,int) at acgui.cpp:756. Exact match, three sequential freads: (1) 28 bytes at [this+4] = GUIObject::ReadFromFile's base fields (flags first at +4, confirmed separately via MouseUp; ends at +0x20); (2) 48 bytes at [this+0x54] = \"fread(&pic,sizeof(int),12,ooo)\", matching pic/overpic/pushedpic/usepic/ispushed/isover/font/textcol/leftclick/rightclick/lclickdata/rclickdata at their exact 2011-predicted consecutive offsets (+0x54 through +0x80, zero drift for this whole block); (3) 50 bytes at [this+0x20] = \"fread(&text[0],sizeof(char),50,ooo)\", i.e. GUIButton's text[50] field, sitting immediately after GUIObject's persisted base fields. Trailing \"if (textcol==0) textcol=16;\" matches [this+0x70]==0 check exactly (textcol is the 8th int in the +0x54 block, +0x54+7*4=+0x70). Called from read_gui (already matched). Flat-named as a C++ virtual method."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "unknown_libname_1",
+  "new_name": "GUIButton__MouseMove",
+  "source_file": "Common/acgui.h",
+  "source_line": 577,
+  "confidence": "high",
+  "evidence": "void GUIButton::MouseMove(int x, int y) {} at acgui.h:577 -- empty inline body. Exact match: unknown_libname_1 does nothing but save `this` and return, with `retn 8` (pops 2 stack dwords, matching 2 int params under __thiscall). Vtable slot 0/+0x00 in the GUIButton vtable at 0x4AD4A0 (GUIButton__Draw, already matched, lives in the same table at slot 6/+0x18 -- confirms slot numbering). FLIRT mis-tagged this as a \"Microsoft VisualC runtime\" library function, almost certainly a false positive against a generic empty-stub signature (this exact byte-identical stub is also referenced from a second vtable at off_4AD4E8, consistent with linker COMDAT-folding of identical empty functions across multiple GUIObject-derived classes). Flat-named as a C++ virtual method."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "unknown_libname_2",
+  "new_name": "GUIButton__KeyPress",
+  "source_file": "Common/acgui.h",
+  "source_line": 606,
+  "confidence": "high",
+  "evidence": "void GUIButton::KeyPress(int keycode) {} at acgui.h:606 -- empty inline body. Exact match: unknown_libname_2 does nothing but save `this` and return, with `retn 4` (1 int param). Vtable slot 5/+0x14, immediately before the already-matched Draw at slot 6/+0x18. Same FLIRT-mistag/COMDAT-folding situation as GUIButton__MouseMove above (also referenced from a second vtable location). Flat-named as a C++ virtual method."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_406A4A",
+  "new_name": "GUIButton__WriteToFile",
+  "source_file": "Engine/acgui.cpp",
+  "source_line": 746,
+  "confidence": "high",
+  "evidence": "void GUIButton::WriteToFile(FILE*) at acgui.cpp:746. CORRECTS an earlier guess (this slot was tentatively assumed to be IsOverControl based on 2011's declared vtable order -- wrong). Exact mirror of the already-matched GUIButton__ReadFromFile: three sequential fwrite calls at the identical three offsets ([this+4] 28 bytes, [this+0x54] 48 bytes, [this+0x20] 50 bytes), matching source's \"GUIObject::WriteToFile(ooo); fwrite(&pic,sizeof(int),12,ooo); fwrite(&text[0],sizeof(char),50,ooo); ...\" exactly. Sits at vtable slot 7/+0x1C, DIRECTLY after Draw (slot 6/+0x18) with no gap -- meaning IsOverControl does NOT occupy a slot between them in this 2002 vtable, unlike 2011's declared order (MouseMove,MouseOver,MouseLeave,MouseDown,MouseUp,KeyPress,Draw,IsOverControl,WriteToFile,...). Likely IsOverControl was added to GUIObject sometime after this build. Flat-named as a C++ virtual method."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "unknown_libname_5",
+  "new_name": "nullfree",
+  "source_file": "Common/CSRUN.CPP",
+  "source_line": 736,
+  "confidence": "high",
+  "evidence": "void nullfree(void *data) at CSRUN.CPP:736: \"if (data != NULL) free(data);\". Exact match. Called from ccCreateInstanceEx (already matched, 3+ call sites) -- matches source's error-path cleanup pattern seen throughout ccCreateInstanceEx (freeing partially-constructed instance data on failure)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "unknown_libname_4",
+  "new_name": "GUIObject__MouseDown_default",
+  "source_file": "Common/acgui.h",
+  "source_line": 140,
+  "confidence": "medium",
+  "evidence": "virtual int GUIObject::MouseDown() { return 0; } at acgui.h:140 -- the base class's default (non-pure) implementation, inherited by any GUIObject-derived class that doesn't override it. Matches exactly: \"xor eax,eax; retn\" (return 0, no side effects, no stack args). Referenced from multiple vtable slots (.rdata:004AD600, 004AD60C, and more per the truncated xref list), consistent with being a shared default used across several GUI control types that aren't independently clickable (e.g. GUILabel). Confidence medium rather than high since the exact concrete class(es) using this specific vtable slot instance aren't individually identified."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_406399",
+  "new_name": "GUIListBox__Clear",
+  "source_file": "Engine/acgui.cpp",
+  "source_line": 577,
+  "confidence": "high",
+  "evidence": "void GUIListBox::Clear() at acgui.cpp:577: \"for(aa=0;aa<numItems;aa++) free(items[aa]); numItems=0; selected=0; topItem=0; guis_need_update=1;\". Exact match: loop bounded by [this+0x1B0] (numItems), frees items[aa] at [this+aa*4+0x20] (items[] array), sets [this+0x1B0]=0, [this+0x1B4]=0 (selected), [this+0x1B8]=0 (topItem), guis_need_update=1. New field evidence: items[]@+0x20 (matches the same \"GUIObject base fields end at +0x20\" pattern already found for GUIButton::text), numItems@+0x1B0, selected@+0x1B4, topItem@+0x1B8 (consecutive, matching 2011's declared order exactly). Derived array length (0x1B0-0x20)/4 = 100 entries, vs 2011's MAX_LISTBOX_ITEMS=200 (Common/acgui.h:28) -- another confirmed 2002 fixed-capacity limit, consistent with the same drift pattern already seen for ccScript's imports/exports arrays. Called from ListBoxClear (already matched) and ListBoxSaveGameList (a lead for next round). Flat-named as a C++ member function."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_40630B",
+  "new_name": "GUIListBox__AddItem",
+  "source_file": "Engine/acgui.cpp",
+  "source_line": 525,
+  "confidence": "high",
+  "evidence": "int GUIListBox::AddItem(const char*) at acgui.cpp:525. Matches: \"if (numItems>=MAX_LISTBOX_ITEMS) return -1; guis_need_update=1; items[numItems]=malloc(strlen(toadd)+5); strcpy(items[numItems],toadd); numItems++; return numItems-1;\". Disasm matches exactly except lacks the \"saveGameIndex[numItems]=-1;\" line -- 2002 doesn't have the saveGameIndex[] feature yet, another small addition made later. Independently reconfirms the numItems cap at 100 (0x64), matching GUIListBox::Clear's already-derived array length exactly -- second confirmation of this size drift vs 2011's MAX_LISTBOX_ITEMS=200. Called from ListBoxAdd (already matched). Flat-named as a C++ member function."
+ }
+]

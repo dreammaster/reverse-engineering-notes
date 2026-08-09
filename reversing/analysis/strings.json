@@ -1,0 +1,10910 @@
+[
+ {
+  "label": "aKernel32Dll",
+  "text": "KERNEL32.dll"
+ },
+ {
+  "label": "aUser32Dll",
+  "text": "USER32.dll"
+ },
+ {
+  "label": "aAdvapi32Dll",
+  "text": "ADVAPI32.dll"
+ },
+ {
+  "label": "aOle32Dll",
+  "text": "ole32.dll"
+ },
+ {
+  "label": "aWinmmDll",
+  "text": "WINMM.dll"
+ },
+ {
+  "label": "aShlwapiDll",
+  "text": "SHLWAPI.dll"
+ },
+ {
+  "label": "aMsvcrtDll",
+  "text": "MSVCRT.dll"
+ },
+ {
+  "label": "aGdi32Dll",
+  "text": "GDI32.dll"
+ },
+ {
+  "label": "aDdrawDll",
+  "text": "DDRAW.dll"
+ },
+ {
+  "label": "aDinputDll",
+  "text": "DINPUT.dll"
+ },
+ {
+  "label": "aDsoundDll",
+  "text": "DSOUND.dll"
+ },
+ {
+  "label": "ac_engine_copyright",
+  "text": "Adventure Game Studio engine & tools (c) 1999-2000 by Chris Jones"
+ },
+ {
+  "label": "aAcsetupCfg_0",
+  "text": "acsetup.cfg"
+ },
+ {
+  "label": "aWgt2allegroC19",
+  "text": "WGT2Allegro (c) 1997,1998 Chris Jones"
+ },
+ {
+  "label": "aWgtFontFile",
+  "text": "WGT Font File  "
+ },
+ {
+  "label": "aNull_2",
+  "text": "NULL"
+ },
+ {
+  "label": "aAdd",
+  "text": "$add"
+ },
+ {
+  "label": "aSub",
+  "text": "$sub"
+ },
+ {
+  "label": "aMov",
+  "text": "$$mov"
+ },
+ {
+  "label": "aMemwritelit",
+  "text": "memwritelit"
+ },
+ {
+  "label": "aRet",
+  "text": "ret"
+ },
+ {
+  "label": "aMov_0",
+  "text": "$mov"
+ },
+ {
+  "label": "aMemread",
+  "text": "$memread"
+ },
+ {
+  "label": "aMemwrite",
+  "text": "$memwrite"
+ },
+ {
+  "label": "aMul",
+  "text": "$$mul"
+ },
+ {
+  "label": "aDiv",
+  "text": "$$div"
+ },
+ {
+  "label": "aAdd_0",
+  "text": "$$add"
+ },
+ {
+  "label": "aSub_0",
+  "text": "$$sub"
+ },
+ {
+  "label": "aBitAnd",
+  "text": "$$bit_and"
+ },
+ {
+  "label": "aBitOr",
+  "text": "$$bit_or"
+ },
+ {
+  "label": "aCmp",
+  "text": "$$cmp"
+ },
+ {
+  "label": "aNcmp",
+  "text": "$$ncmp"
+ },
+ {
+  "label": "aGt",
+  "text": "$$gt"
+ },
+ {
+  "label": "aLt",
+  "text": "$$lt"
+ },
+ {
+  "label": "aGte",
+  "text": "$$gte"
+ },
+ {
+  "label": "aLte",
+  "text": "$$lte"
+ },
+ {
+  "label": "aAnd",
+  "text": "$$and"
+ },
+ {
+  "label": "aOr",
+  "text": "$$or"
+ },
+ {
+  "label": "aCall",
+  "text": "$call"
+ },
+ {
+  "label": "aMemreadB",
+  "text": "$memread.b"
+ },
+ {
+  "label": "aMemreadW",
+  "text": "$memread.w"
+ },
+ {
+  "label": "aMemwriteB",
+  "text": "$memwrite.b"
+ },
+ {
+  "label": "aMemwriteW",
+  "text": "$memwrite.w"
+ },
+ {
+  "label": "aJz",
+  "text": "jz"
+ },
+ {
+  "label": "aPush",
+  "text": "$push"
+ },
+ {
+  "label": "aPop",
+  "text": "$pop"
+ },
+ {
+  "label": "aJmp",
+  "text": "jmp"
+ },
+ {
+  "label": "aMul_0",
+  "text": "$mul"
+ },
+ {
+  "label": "aFarcall",
+  "text": "$farcall"
+ },
+ {
+  "label": "aFarpush",
+  "text": "$farpush"
+ },
+ {
+  "label": "aFarsubsp",
+  "text": "farsubsp"
+ },
+ {
+  "label": "aSourceline",
+  "text": "sourceline"
+ },
+ {
+  "label": "aCallscr",
+  "text": "$callscr"
+ },
+ {
+  "label": "aThisaddr",
+  "text": "thisaddr"
+ },
+ {
+  "label": "aNull_3",
+  "text": "null"
+ },
+ {
+  "label": "aSp",
+  "text": "sp"
+ },
+ {
+  "label": "aMar",
+  "text": "mar"
+ },
+ {
+  "label": "aAx",
+  "text": "ax"
+ },
+ {
+  "label": "aBx",
+  "text": "bx"
+ },
+ {
+  "label": "aCx",
+  "text": "cx"
+ },
+ {
+  "label": "aChrisroomV200C",
+  "text": "ChrisRoom v2.00 - CRM reader/writer copyright (c) 1995, 1998, 1999 by Chris Jones."
+ },
+ {
+  "label": "aAdventureCreat",
+  "text": "Adventure Creator Game File v2"
+ },
+ {
+  "label": "aAclzwTmp",
+  "text": "~aclzw.tmp"
+ },
+ {
+  "label": "aAvisDurgan",
+  "text": "Avis Durgan"
+ },
+ {
+  "label": "aMyiniTmp",
+  "text": "~myini.tmp"
+ },
+ {
+  "label": "aRepeatedlyExec",
+  "text": "repeatedly_execute"
+ },
+ {
+  "label": "aOnKeyPress",
+  "text": "on_key_press"
+ },
+ {
+  "label": "aOnMouseClick",
+  "text": "on_mouse_click"
+ },
+ {
+  "label": "aNoError",
+  "text": "No error"
+ },
+ {
+  "label": "aFileNotFound",
+  "text": "File not found"
+ },
+ {
+  "label": "aNotAnAgsSaveGa",
+  "text": "Not an AGS save game"
+ },
+ {
+  "label": "aInvalidSaveGam",
+  "text": "Invalid save game version"
+ },
+ {
+  "label": "aSavedWithDiffe",
+  "text": "Saved with different interpreter"
+ },
+ {
+  "label": "aAgssave03d",
+  "text": "agssave.%03d"
+ },
+ {
+  "label": "aAdventureGameS_4",
+  "text": "Adventure Game Studio saved game"
+ },
+ {
+  "label": "aAdventureGameS_5",
+  "text": "Adventure.Game.Studio.File"
+ },
+ {
+  "label": "aRb_42",
+  "text": "rb"
+ },
+ {
+  "label": "aRb_43",
+  "text": "rb"
+ },
+ {
+  "label": "fmt",
+  "text": "rb"
+ },
+ {
+  "label": "aWb_5",
+  "text": "wb"
+ },
+ {
+  "label": "aSpriteFile",
+  "text": " Sprite File "
+ },
+ {
+  "label": "SubStr",
+  "text": ".ttf"
+ },
+ {
+  "label": "aTtf_0",
+  "text": ".TTF"
+ },
+ {
+  "label": "aRb",
+  "text": "rb"
+ },
+ {
+  "label": "aRb_49",
+  "text": "rb"
+ },
+ {
+  "label": "aRb_50",
+  "text": "rb"
+ },
+ {
+  "label": "quitmsg",
+  "text": "sprite cache array index out of bounds"
+ },
+ {
+  "label": "aRb_0",
+  "text": "rb"
+ },
+ {
+  "label": "Caption",
+  "text": "Adventure Game Studio"
+ },
+ {
+  "label": "Mode",
+  "text": "a+b"
+ },
+ {
+  "label": "aWb",
+  "text": "wb"
+ },
+ {
+  "label": "aRoomstructAllo",
+  "text": "roomstruct::allocall: out of memory"
+ },
+ {
+  "label": "aWb_0",
+  "text": "wb"
+ },
+ {
+  "label": "aRB",
+  "text": "r+b"
+ },
+ {
+  "label": "aRb_1",
+  "text": "rb"
+ },
+ {
+  "label": "Format",
+  "text": "Hotspot %d"
+ },
+ {
+  "label": "aNoHotspot",
+  "text": "No hotspot"
+ },
+ {
+  "label": "aLoadRoomTooMan",
+  "text": "load_room: Too many walkable areas, need newer version"
+ },
+ {
+  "label": "aRb_2",
+  "text": "rb"
+ },
+ {
+  "label": "aLoadRoomUnable",
+  "text": "Load_room: Unable to load the room file '%s'\\x0a"
+ },
+ {
+  "label": "aLoadRoomBadPac",
+  "text": "Load_Room: Bad packed file. Either the file requires a newer vers"
+ },
+ {
+  "label": "aLoadRoomOldRoo",
+  "text": "Load_room: old room format. Please upgrade the room."
+ },
+ {
+  "label": "aLoadRoomIncons",
+  "text": "Load_room: inconsistent blocks for object names"
+ },
+ {
+  "label": "aLoadroomUnexpe",
+  "text": "LoadRoom: unexpected end of file while loading room"
+ },
+ {
+  "label": "aLoadroomUnknow",
+  "text": "LoadRoom: unknown block type %d encountered in '%s'"
+ },
+ {
+  "label": "aNoSectionsInFi",
+  "text": "No sections in file"
+ },
+ {
+  "label": "aNeedToEndSecti",
+  "text": "Need ']' to end section line"
+ },
+ {
+  "label": "aMissingInDefin",
+  "text": "Missing '=' in definition"
+ },
+ {
+  "label": "aUnexpectedEof",
+  "text": "Unexpected EOF"
+ },
+ {
+  "label": "aParseError",
+  "text": "Parse Error"
+ },
+ {
+  "label": "aDiskFull",
+  "text": "Disk full"
+ },
+ {
+  "label": "aTemporaryFileE",
+  "text": "Temporary file error"
+ },
+ {
+  "label": "aOutOfMemory",
+  "text": "Out of memory"
+ },
+ {
+  "label": "aIniLibE102dS",
+  "text": "\\x0a\\x0aINI_Lib (E1%02d): %s\\x0a"
+ },
+ {
+  "label": "aRb_3",
+  "text": "rb"
+ },
+ {
+  "label": "aZhypjihqfb",
+  "text": "ZhypjIHQFb"
+ },
+ {
+  "label": "aBigyjtext",
+  "text": "BigyjTEXT"
+ },
+ {
+  "label": "aYpyjihgmnwq",
+  "text": "YpyjIHgMNWQ"
+ },
+ {
+  "label": "aInv",
+  "text": "(INV)"
+ },
+ {
+  "label": "aInvns",
+  "text": "(INVNS)"
+ },
+ {
+  "label": "aInvshr",
+  "text": "(INVSHR)"
+ },
+ {
+  "label": "aGuimainUnknown",
+  "text": "guimain: unknown control type found on gui"
+ },
+ {
+  "label": "aReadGuiFileIsC",
+  "text": "read_gui: file is corrupt"
+ },
+ {
+  "label": "aReadGuiUnknwon",
+  "text": "read_gui: unknwon version, update this program"
+ },
+ {
+  "label": "aReadGuiTooMany",
+  "text": "read_gui: too many GUIs, possibly newer version"
+ },
+ {
+  "label": "aReadGuiTooMany_0",
+  "text": "read_gui: Too many controls, old version?"
+ },
+ {
+  "label": "aReadGuiTooMany_1",
+  "text": "read_gui: Too many controls, old version?"
+ },
+ {
+  "label": "aAt",
+  "text": "at"
+ },
+ {
+  "label": "aAcLog",
+  "text": "ac.log"
+ },
+ {
+  "label": "aS",
+  "text": "%s\\x0a"
+ },
+ {
+  "label": "aAt_0",
+  "text": "at"
+ },
+ {
+  "label": "aWt",
+  "text": "wt"
+ },
+ {
+  "label": "aWarningsLog",
+  "text": "warnings.log"
+ },
+ {
+  "label": "aInRoomDS",
+  "text": "(in room %d): %s\\x0a"
+ },
+ {
+  "label": "aRb_4",
+  "text": "rb"
+ },
+ {
+  "label": "aRb_5",
+  "text": "rb"
+ },
+ {
+  "label": "aRb_6",
+  "text": "rb"
+ },
+ {
+  "label": "aStopambientsou",
+  "text": "!StopAmbientSound: invalid channel"
+ },
+ {
+  "label": "aPlayambientsou",
+  "text": "!PlayAmbientSound: channel must be 1"
+ },
+ {
+  "label": "aPlayambientsou_0",
+  "text": "!PlayAmbientSound: volume must be 1 to 255"
+ },
+ {
+  "label": "aSoundDMp3",
+  "text": "sound%d.mp3"
+ },
+ {
+  "label": "aSoundDWav",
+  "text": "sound%d.wav"
+ },
+ {
+  "label": "texx",
+  "text": "Cannot load ambient sound '%s'"
+ },
+ {
+  "label": "aUnableToRestar",
+  "text": "unable to restart game (error:%s)"
+ },
+ {
+  "label": "aRb_7",
+  "text": "rb"
+ },
+ {
+  "label": "aDefaultTra",
+  "text": "default.tra"
+ },
+ {
+  "label": "aSTra",
+  "text": "%s.tra"
+ },
+ {
+  "label": "aRb_8",
+  "text": "rb"
+ },
+ {
+  "label": "aAgstranslation",
+  "text": "AGSTranslation"
+ },
+ {
+  "label": "aLanguageFileIs",
+  "text": "!Language file is corrupt"
+ },
+ {
+  "label": "aTheTranslation",
+  "text": "!The translation file you have selected is not compatible with th"
+ },
+ {
+  "label": "aUnknownBlockTy",
+  "text": "Unknown block type in translation file."
+ },
+ {
+  "label": "aTheSelectedTra",
+  "text": "!The selected translation file was empty. The translation source "
+ },
+ {
+  "label": "aUnableToGetBit",
+  "text": "unable to get bitmap vtable"
+ },
+ {
+  "label": "aTintscreenRgbV",
+  "text": "!TintScreen: RGB values must be 0-100"
+ },
+ {
+  "label": "aStringArgument",
+  "text": "!String argument was null: make sure you pass a string, not an in"
+ },
+ {
+  "label": "aInvalidSlotD",
+  "text": "INVALID SLOT %d"
+ },
+ {
+  "label": "aSorryNotNow",
+  "text": "Sorry, not now."
+ },
+ {
+  "label": "Str",
+  "text": "Unable to load game (error: %s)."
+ },
+ {
+  "label": "aSorryNotNow_0",
+  "text": "Sorry, not now."
+ },
+ {
+  "label": "aNoSuchFunction",
+  "text": "no such function in script"
+ },
+ {
+  "label": "aRoomScriptIsAl",
+  "text": "room script is already in execution"
+ },
+ {
+  "label": "aUnableToForkIn",
+  "text": "unable to fork instance for secondary script"
+ },
+ {
+  "label": "aTooManyNestedT",
+  "text": "too many nested text script instances created"
+ },
+ {
+  "label": "aUnableToLoadGa_0",
+  "text": "Unable to load game (error: %s)."
+ },
+ {
+  "label": "aPrepareScriptE",
+  "text": "prepare_script: error %d (%s) trying to run '%s'   (R"
+ },
+ {
+  "label": "aRunTextScriptE",
+  "text": "run_text_script: error %d (%s)"
+ },
+ {
+  "label": "aRunTextScript1",
+  "text": "run_text_script1: error %d (%s)"
+ },
+ {
+  "label": "aRunTextScript2",
+  "text": "run_text_script2: error %d (%s)"
+ },
+ {
+  "label": "String2",
+  "text": "interface_click"
+ },
+ {
+  "label": "aTooManyScreenO",
+  "text": "too many screen overlays created"
+ },
+ {
+  "label": "aSetarealightle",
+  "text": "!SetAreaLightLevel: invalid welkable area"
+ },
+ {
+  "label": "aMovetowalkable",
+  "text": "!MoveToWalkableArea: invalid character specified"
+ },
+ {
+  "label": "aOnEvent",
+  "text": "#on_event"
+ },
+ {
+  "label": "aOnEvent_0",
+  "text": "on_event"
+ },
+ {
+  "label": "aSetmousebounds",
+  "text": "!SetMouseBounds: invalid co-ordinates, must be within (0,0) - (32"
+ },
+ {
+  "label": "aRoomDCrm",
+  "text": "room%d.crm"
+ },
+ {
+  "label": "aIntroCrm",
+  "text": "intro.crm"
+ },
+ {
+  "label": "aRoomScriptData",
+  "text": "room script data segment size has changed"
+ },
+ {
+  "label": "aRoom",
+  "text": "room"
+ },
+ {
+  "label": "aUndefinedAnima",
+  "text": "!undefined animation command"
+ },
+ {
+  "label": "aInvalidObjectN",
+  "text": "!invalid object number specified for animation. must be 0-9 or CH"
+ },
+ {
+  "label": "aUnknownAnimati",
+  "text": "unknown animation encountered"
+ },
+ {
+  "label": "aTooManyEventsP",
+  "text": "too many events posted"
+ },
+ {
+  "label": "aS_0",
+  "text": "!%s"
+ },
+ {
+  "label": "aHotspotD_0",
+  "text": "hotspot%d"
+ },
+ {
+  "label": "aRoom_0",
+  "text": "room"
+ },
+ {
+  "label": "aProcessEventRu",
+  "text": "process_event: RunEvBlock: unknown evb type"
+ },
+ {
+  "label": "aProcessEventUn",
+  "text": "process_event: unknown event to process"
+ },
+ {
+  "label": "aChangecursorgr",
+  "text": "!ChangeCursorGraphic: invalid mouse cursor"
+ },
+ {
+  "label": "aChangecursorho",
+  "text": "!ChangeCursorHotspot: invalid mouse cursor"
+ },
+ {
+  "label": "aSetinvitempicI",
+  "text": "!SetInvItemPic: invalid inventory item specified"
+ },
+ {
+  "label": "aUnknownGuiObje",
+  "text": "unknown GUI object triggered process_interface"
+ },
+ {
+  "label": "aInterfaceClick_0",
+  "text": "interface_click"
+ },
+ {
+  "label": "aInventoryD",
+  "text": "inventory%d"
+ },
+ {
+  "label": "aSetactiveinven",
+  "text": "!SetActiveInventory: invalid inventory number"
+ },
+ {
+  "label": "aSetactiveinven_0",
+  "text": "!SetActiveInventory: player doesn't have any of that invent"
+ },
+ {
+  "label": "aIsbuttondownRe",
+  "text": "!IsButtonDown: requires LEFT or RIGHT as input"
+ },
+ {
+  "label": "aSetcharacterid",
+  "text": "!SetCharacterIdle: Invalid character specified"
+ },
+ {
+  "label": "aSetcharacterid_0",
+  "text": "!SetCharacterIdle: view 1 cannot be used as an idle view, sorry."
+ },
+ {
+  "label": "aSetcharacterid_1",
+  "text": "SetCharacterIdle called while character view locked with SetChara"
+ },
+ {
+  "label": "aClickedOnUnkno",
+  "text": "clicked on unknown control type"
+ },
+ {
+  "label": "aGamePaused",
+  "text": "[Game paused."
+ },
+ {
+  "label": "aInRoomDPlayerA",
+  "text": "In room %d[Player at %d, %d (view %d, loop %d, frame %d)%s"
+ },
+ {
+  "label": "aYes",
+  "text": "yes"
+ },
+ {
+  "label": "aNo",
+  "text": "no"
+ },
+ {
+  "label": "aObjectDDDSizeD",
+  "text": "[Object %d: (%d,%d) size (%d x %d) on:%d moving:%s animating:%d s"
+ },
+ {
+  "label": "aPlayerCharacte",
+  "text": "Player character: %s[view:%d frame:%d idleview:%d idletime:%d idl"
+ },
+ {
+  "label": "aLastLoopInAVie",
+  "text": "!Last loop in a view requested to move to next loop"
+ },
+ {
+  "label": "aAnimatingChara",
+  "text": "!Animating character tried to overrun last loop in view"
+ },
+ {
+  "label": "aScore",
+  "text": "score"
+ },
+ {
+  "label": "aD",
+  "text": "%d"
+ },
+ {
+  "label": "aTotalscore",
+  "text": "totalscore"
+ },
+ {
+  "label": "aD_0",
+  "text": "%d"
+ },
+ {
+  "label": "aScoretext",
+  "text": "scoretext"
+ },
+ {
+  "label": "aDOfD",
+  "text": "%d of %d"
+ },
+ {
+  "label": "aGamename",
+  "text": "gamename"
+ },
+ {
+  "label": "aOverhotspot",
+  "text": "overhotspot"
+ },
+ {
+  "label": "aAdToSpriteList",
+  "text": "ad_to_sprite_list: roo many sprite added"
+ },
+ {
+  "label": "aTheCharacterSW",
+  "text": "!The character '%s' was turned on in the current room"
+ },
+ {
+  "label": "aThePlayerActiv",
+  "text": "!The player.activeinv variable has been corrupted, probably as a "
+ },
+ {
+  "label": "aFpsD",
+  "text": "FPS: %d"
+ },
+ {
+  "label": "aErrorTheProgra",
+  "text": "\\x0aError: the program has exited without requesting it.\\x0aProgram pointer: %+03d  (write this number down), ACI version 2.40.325\\x0aIf you see a list of numbers above, please write them down and contact\\x0aChris Jones. Otherwise, note down any other information displayed.\\x0a"
+ },
+ {
+  "label": "aAbortKeyPresse",
+  "text": "Abort key pressed.\\x0a\\x0a"
+ },
+ {
+  "label": "aAnErrorHasOccu",
+  "text": "An error has occured. Please contact the game author for support,"
+ },
+ {
+  "label": "aGlobal",
+  "text": "Global"
+ },
+ {
+  "label": "aRoomD",
+  "text": "Room %d"
+ },
+ {
+  "label": "aUnknown",
+  "text": "Unknown"
+ },
+ {
+  "label": "aSScriptLineD",
+  "text": "(%s script line %d)\\x0a"
+ },
+ {
+  "label": "aError",
+  "text": "Error: "
+ },
+ {
+  "label": "aAnInternalErro",
+  "text": "An internal error has occured. Please note down the following inf"
+ },
+ {
+  "label": "aS_1",
+  "text": "%s\\x0a"
+ },
+ {
+  "label": "aAcTmp",
+  "text": "~ac*.tmp"
+ },
+ {
+  "label": "aAgssave999",
+  "text": "agssave.999"
+ },
+ {
+  "label": "aRb_9",
+  "text": "rb"
+ },
+ {
+  "label": "aAc2gameDta",
+  "text": "ac2game.dta"
+ },
+ {
+  "label": "a240325",
+  "text": "2.40.325"
+ },
+ {
+  "label": "aThisGameRequir",
+  "text": "This game requires a newer version of AGS (%s). It may not run co"
+ },
+ {
+  "label": "aRestore",
+  "text": "Restore"
+ },
+ {
+  "label": "aCancel",
+  "text": "Cancel"
+ },
+ {
+  "label": "aSelectAGameToR",
+  "text": "Select a game to restore:"
+ },
+ {
+  "label": "aSave",
+  "text": "Save"
+ },
+ {
+  "label": "aTypeANameToSav",
+  "text": "Type a name to save as:"
+ },
+ {
+  "label": "aReplace",
+  "text": "Replace"
+ },
+ {
+  "label": "aTheSaveDirecto",
+  "text": "The save directory is full. You must replace an existing game:"
+ },
+ {
+  "label": "aReplace_0",
+  "text": "Replace:"
+ },
+ {
+  "label": "aWith",
+  "text": "With:"
+ },
+ {
+  "label": "aQuit",
+  "text": "Quit"
+ },
+ {
+  "label": "aPlay",
+  "text": "Play"
+ },
+ {
+  "label": "aAreYouSureYouW",
+  "text": "Are you sure you want to quit?"
+ },
+ {
+  "label": "aErrorInGameFil",
+  "text": "Error in game file: too many dialog lines"
+ },
+ {
+  "label": "aCharacter",
+  "text": "character"
+ },
+ {
+  "label": "aPlayer",
+  "text": "player"
+ },
+ {
+  "label": "aAgsfntDTtf",
+  "text": "agsfnt%d.ttf"
+ },
+ {
+  "label": "aAgsfntDWfn",
+  "text": "agsfnt%d.wfn"
+ },
+ {
+  "label": "aAgsfnt0Wfn",
+  "text": "agsfnt0.wfn"
+ },
+ {
+  "label": "aZhwypqhkilik",
+  "text": "ZHwypqhkilIK"
+ },
+ {
+  "label": "aExit",
+  "text": "||exit!"
+ },
+ {
+  "label": "aDisplaySingleW",
+  "text": "!Display: single word longer than window width"
+ },
+ {
+  "label": "aCannotDisplayM",
+  "text": "!Cannot display message with extended characters in SCI font"
+ },
+ {
+  "label": "aCannotUseQfg4S",
+  "text": "!Cannot use QFG4 style options without custom text window"
+ },
+ {
+  "label": "aZhwypqhkilik_0",
+  "text": "ZHwypqhkilIK"
+ },
+ {
+  "label": "aDisplayAutoVoi",
+  "text": "Display: auto-voice symbol '&' not followed by valid "
+ },
+ {
+  "label": "aRemoveoverlayI",
+  "text": "!RemoveOverlay: invalid overlay id passed"
+ },
+ {
+  "label": "aSettextoverlay",
+  "text": "SetTextOverlay internal error: inconsistent type ids"
+ },
+ {
+  "label": "aMoveoverlayInv",
+  "text": "!MoveOverlay: invalid overlay ID specified"
+ },
+ {
+  "label": "aDWav",
+  "text": "%d.WAV"
+ },
+ {
+  "label": "aMp3",
+  "text": "mp3"
+ },
+ {
+  "label": "aSpeechLoadFail",
+  "text": "!Speech load failure: '%s'"
+ },
+ {
+  "label": "aSetspeechvolum",
+  "text": "!SetSpeechVolume: invalid volume - must be from 0-255"
+ },
+ {
+  "label": "aSetspeechfontI",
+  "text": "!SetSpeechFont: invalid font number."
+ },
+ {
+  "label": "aSetnormalfontI",
+  "text": "!SetNormalFont: invalid font number."
+ },
+ {
+  "label": "aSetspeechstyle",
+  "text": "!SetSpeechStyle: must use a SPEECH_* constant as parameter"
+ },
+ {
+  "label": "aPlayspeechNotY",
+  "text": "PlaySpeech not yet implemented"
+ },
+ {
+  "label": "aSetvoicemodeIn",
+  "text": "!SetVoiceMode: invalid mode number (must be 0,1,2)"
+ },
+ {
+  "label": "aDisplayspeechI",
+  "text": "!DisplaySpeech: invalid character"
+ },
+ {
+  "label": "aDisplayspeechC",
+  "text": "!DisplaySpeech: character has invalid view"
+ },
+ {
+  "label": "aDisplayspeechA",
+  "text": "DisplaySpeech: auto-voice symbol '&' not followed by "
+ },
+ {
+  "label": "aDisplayspeecha",
+  "text": "!DisplaySpeechAt: invalid cahracetr name"
+ },
+ {
+  "label": "aSetglobalintIn",
+  "text": "!SetGlobalInt: invalid index"
+ },
+ {
+  "label": "aGetglobalintIn",
+  "text": "!GetGlobalInt: invalid index"
+ },
+ {
+  "label": "aSetscreentrans",
+  "text": "!SetScreenTransition: invalid transition type"
+ },
+ {
+  "label": "aSetskipspeechI",
+  "text": "!SetSkipSpeech: invalid skip mode specified (0,1,2,3)"
+ },
+ {
+  "label": "aDisplayatyInva",
+  "text": "!DisplayAtY: invalid Y co-ordinate supplied"
+ },
+ {
+  "label": "aDisplayspeechI_0",
+  "text": "!DisplaySpeech: invalid character specified"
+ },
+ {
+  "label": "aDisplaySpecial",
+  "text": "!Display: special token not terminated"
+ },
+ {
+  "label": "aDisplayInvalid",
+  "text": "!Display: invalid inv item specified in @IN@"
+ },
+ {
+  "label": "aD_1",
+  "text": "%d"
+ },
+ {
+  "label": "aDisplayInvalid_0",
+  "text": "!Display: invalid global int index speicifed in @GI@"
+ },
+ {
+  "label": "aD_2",
+  "text": "%d"
+ },
+ {
+  "label": "aNomsg",
+  "text": "nomsg"
+ },
+ {
+  "label": "aDisplayglobalm",
+  "text": "!DisplayGlobalMessage: message does not exist"
+ },
+ {
+  "label": "aDisplaymessage",
+  "text": "!DisplayMessage: Invalid message number to display"
+ },
+ {
+  "label": "aDisplaymessage_0",
+  "text": "!DisplayMessage: data column specified a character for local\\x0a"
+ },
+ {
+  "label": "aRawrestorescre",
+  "text": "!RawRestoreScreen: screen hasn't been saved."
+ },
+ {
+  "label": "aRawdrawimageIn",
+  "text": "!RawDrawImage: invalid sprite slot number specified"
+ },
+ {
+  "label": "aBmp",
+  "text": ".bmp"
+ },
+ {
+  "label": "aSetobjectviewI",
+  "text": "!SetObjectView: invalid object number specified"
+ },
+ {
+  "label": "aSetobjectviewI_0",
+  "text": "!SetObjectView: invalid view number used"
+ },
+ {
+  "label": "aSetobjectframe",
+  "text": "!SetObjectFrame: invalid object number specified"
+ },
+ {
+  "label": "aSetobjectframe_0",
+  "text": "!SetObjectFrame: invalid view number used"
+ },
+ {
+  "label": "aSetobjectframe_1",
+  "text": "!SetObjectFrame: invalid loop number used"
+ },
+ {
+  "label": "aSetobjecttrans",
+  "text": "!SetObjectTransparent: invalid object number specified"
+ },
+ {
+  "label": "aSetobjecttrans_0",
+  "text": "!SetObjectTransparent: transparency value must be between 0 and 1"
+ },
+ {
+  "label": "aSetobjectbasel",
+  "text": "!SetObjectBaseline: invalid object number specified"
+ },
+ {
+  "label": "aSetcharacterba",
+  "text": "!SetCharacterBaseline: invalid object number specified"
+ },
+ {
+  "label": "aSetchartranspa",
+  "text": "!SetCharTransparent: invalid object number specified"
+ },
+ {
+  "label": "aSetchartranspa_0",
+  "text": "!SetCharTransparent: transparency value must be between 0 and 100"
+ },
+ {
+  "label": "aAnimatecharact",
+  "text": "!AnimateCharacter: you need to set the view number first\\x0a"
+ },
+ {
+  "label": "aAnimatecharact_0",
+  "text": "!AnimateCharacter: invalid loop number specified"
+ },
+ {
+  "label": "aAnimateobjectO",
+  "text": "!AnimateObject: object has not been assigned a view"
+ },
+ {
+  "label": "aAnimateobjectI",
+  "text": "!AnimateObject: invalid object number specified"
+ },
+ {
+  "label": "aMergeobjectInv",
+  "text": "!MergeObject: invalid object specified"
+ },
+ {
+  "label": "aMergeobjectUna",
+  "text": "!MergeObject: unable to merge object due to color depth differenc"
+ },
+ {
+  "label": "aObjectoffInval",
+  "text": "!ObjectOff: invalid object specified"
+ },
+ {
+  "label": "aObjectonInvali",
+  "text": "!ObjectOn: invalid object specified"
+ },
+ {
+  "label": "aSetobjectgraph",
+  "text": "!SetObjectGraphic: invalid object specified"
+ },
+ {
+  "label": "aGetobjectgraph",
+  "text": "!GetObjectGraphic: invalid object specified"
+ },
+ {
+  "label": "aAreobjectscoll",
+  "text": "!AreObjectsColliding: invalid object specified"
+ },
+ {
+  "label": "aArecharobjcoll",
+  "text": "!AreCharObjColliding: invalid object number"
+ },
+ {
+  "label": "aArecharobjcoll_0",
+  "text": "!AreCharObjColliding: invalid character"
+ },
+ {
+  "label": "aArecharactersc",
+  "text": "!AreCharactersColliding: invalid char1"
+ },
+ {
+  "label": "aArecharactersc_0",
+  "text": "!AreCharactersColliding: invalid char2"
+ },
+ {
+  "label": "aGettimeInvalid",
+  "text": "!GetTime: invalid parameter passed"
+ },
+ {
+  "label": "aSC",
+  "text": "%s_%c"
+ },
+ {
+  "label": "aFlicDFlc",
+  "text": "flic%d.flc"
+ },
+ {
+  "label": "aRb_10",
+  "text": "rb"
+ },
+ {
+  "label": "aFlicDFli",
+  "text": "flic%d.fli"
+ },
+ {
+  "label": "aRb_11",
+  "text": "rb"
+ },
+ {
+  "label": "aFlicAnimationF",
+  "text": "FLIC animation FLIC%d.FLC not found"
+ },
+ {
+  "label": "aNotEnoughMemor",
+  "text": "Not enough memory to play animation"
+ },
+ {
+  "label": "aFliFlcAnimatio",
+  "text": "FLI/FLC animation play error"
+ },
+ {
+  "label": "aVideoPlayingEr",
+  "text": "Video playing error: %s"
+ },
+ {
+  "label": "aSoundSampleLoa",
+  "text": "Sound sample load failure: '%s'"
+ },
+ {
+  "label": "aSoundDMp3_0",
+  "text": "sound%d.mp3"
+ },
+ {
+  "label": "aRb_12",
+  "text": "rb"
+ },
+ {
+  "label": "aSoundDWav_0",
+  "text": "sound%d.wav"
+ },
+ {
+  "label": "aRb_13",
+  "text": "rb"
+ },
+ {
+  "label": "aSoundDVoc",
+  "text": "sound%d.voc"
+ },
+ {
+  "label": "aRb_14",
+  "text": "rb"
+ },
+ {
+  "label": "aAddinventoryIn",
+  "text": "!AddInventory: invalid invnetory number"
+ },
+ {
+  "label": "aLoseinventoryI",
+  "text": "!LoseInventory: invalid inventory number"
+ },
+ {
+  "label": "aRundialogInval",
+  "text": "!RunDialog: invalid topic number specified"
+ },
+ {
+  "label": "aRundialogAlrea",
+  "text": "!RunDialog: already inside a conversation; use goto-dialog dlg sc"
+ },
+ {
+  "label": "aProcesseventAn",
+  "text": "!ProcessEvent: An inventory event was used, but the Data column\\x0a"
+ },
+ {
+  "label": "aCharacter_0",
+  "text": "character"
+ },
+ {
+  "label": "aInventory",
+  "text": "inventory"
+ },
+ {
+  "label": "aRunAnimateUnde",
+  "text": "!run_animate: undefined animation was run"
+ },
+ {
+  "label": "aRunAnimateEmpt",
+  "text": "!Run_animate: empty animation was run"
+ },
+ {
+  "label": "aUnknownRespons",
+  "text": "unknown response encountered in block"
+ },
+ {
+  "label": "aHotspot",
+  "text": "hotspot"
+ },
+ {
+  "label": "aObject",
+  "text": "object"
+ },
+ {
+  "label": "aCharacter_1",
+  "text": "character"
+ },
+ {
+  "label": "aInventory_0",
+  "text": "inventory"
+ },
+ {
+  "label": "aUnhandledEvent",
+  "text": "#unhandled_event"
+ },
+ {
+  "label": "aUnhandledEvent_0",
+  "text": "unhandled_event"
+ },
+ {
+  "label": "aIsguionInvalid",
+  "text": "!IsGUIOn: invalid GUI number specified"
+ },
+ {
+  "label": "aRunobjectinter",
+  "text": "!RunObjectInteraction: invalid object number for current room"
+ },
+ {
+  "label": "aObjectD",
+  "text": "object%d"
+ },
+ {
+  "label": "aRuncharacterin",
+  "text": "!RunCharacterInteraction: invalid character"
+ },
+ {
+  "label": "aCharacterD",
+  "text": "character%d"
+ },
+ {
+  "label": "aGetobjectxInva",
+  "text": "!GetObjectX: invalid object number"
+ },
+ {
+  "label": "aGetobjectyInva",
+  "text": "!GetObjectY: invalid object number"
+ },
+ {
+  "label": "aIsobjectanimat",
+  "text": "!IsObjectAnimating: invalid object number"
+ },
+ {
+  "label": "aIsobjectmoving",
+  "text": "!IsObjectMoving: invalid object number"
+ },
+ {
+  "label": "aMoveobjectInva",
+  "text": "!MoveObject: invalid object number"
+ },
+ {
+  "label": "aObjects10AndAb",
+  "text": "Objects 10 and above can't move. Use a lower object number"
+ },
+ {
+  "label": "aMovecharacterC",
+  "text": "!MoveCharacter: character not in current room"
+ },
+ {
+  "label": "aErrorBreakseer",
+  "text": "error: breakseer set"
+ },
+ {
+  "label": "aHotspotD_1",
+  "text": "hotspot%d"
+ },
+ {
+  "label": "aMovelistMoveAt",
+  "text": "movelist_move: attempted to move on a non-exist movelist"
+ },
+ {
+  "label": "aRemovewalkable",
+  "text": "!RemoveWalkableArea: invalid area number specified (1-15)."
+ },
+ {
+  "label": "aRestorewalkabl",
+  "text": "!RestoreWalkableArea: invalid area number specified (1-15)."
+ },
+ {
+  "label": "aDisablehotspot",
+  "text": "!DisableHotspot: invalid hotspot specified"
+ },
+ {
+  "label": "aEnablehotspotI",
+  "text": "!EnableHotspot: invalid hotspot specified"
+ },
+ {
+  "label": "aSetwalkbehindb",
+  "text": "!SetWalkBehindBase: invalid walk-behind area specified"
+ },
+ {
+  "label": "aFlipscreenInva",
+  "text": "!FlipScreen: invalid argument (0-3)"
+ },
+ {
+  "label": "aSetmusicvolume",
+  "text": "!SetMusicVolume: invalid volume number. Must be from 1 to 5."
+ },
+ {
+  "label": "aSetmusicmaster",
+  "text": "!SetMusicMasterVolume: invalid volume - must be from 0-100"
+ },
+ {
+  "label": "aSetsoundvolume",
+  "text": "!SetSoundVolume: invalid volume - must be from 0-255"
+ },
+ {
+  "label": "aMusicDMp3",
+  "text": "music%d.mp3"
+ },
+ {
+  "label": "aMusicVoxMusicD",
+  "text": "~MUSIC.VOX~music%d.mp3"
+ },
+ {
+  "label": "aMusicDWav",
+  "text": "music%d.wav"
+ },
+ {
+  "label": "aMusicDMid",
+  "text": "music%d.mid"
+ },
+ {
+  "label": "aCouldnTPlayMid",
+  "text": "!Couldn't play MIDI file"
+ },
+ {
+  "label": "aMusicDMod",
+  "text": "music%d.mod"
+ },
+ {
+  "label": "aMusicDXm",
+  "text": "music%d.xm"
+ },
+ {
+  "label": "aMusicDS3m",
+  "text": "music%d.s3m"
+ },
+ {
+  "label": "aMusicDNotFound",
+  "text": "Music %d not found"
+ },
+ {
+  "label": "aSetplayerchara",
+  "text": "!SetPlayerCharacter: Invalid character specified"
+ },
+ {
+  "label": "aFollowcharacte",
+  "text": "!FollowCharacter: Invalid character specified"
+ },
+ {
+  "label": "aSetcharacterig",
+  "text": "!SetCharacterIgnoreLight: Invalid character specified"
+ },
+ {
+  "label": "aSetcharacterpr",
+  "text": "!SetCharacterProperty: Invalid character specified"
+ },
+ {
+  "label": "aSetcharacterpr_0",
+  "text": "!SetCharacterProperty: parameter 3 must be 0 or 1"
+ },
+ {
+  "label": "aYouHaveExited",
+  "text": "|You have exited."
+ },
+ {
+  "label": "aStringArgument_0",
+  "text": "!String argument was null: make sure you pass a string, not an in"
+ },
+ {
+  "label": "aStringArgument_1",
+  "text": "!String argument was null: make sure you pass a string, not an in"
+ },
+ {
+  "label": "aSaidUnexpected",
+  "text": "!Said: unexpected ']'"
+ },
+ {
+  "label": "aSaidNestedOpti",
+  "text": "!Said: nested optional words"
+ },
+ {
+  "label": "aSaidSuppliedWo",
+  "text": "!Said: supplied word is not in dictionary or is an ignored word"
+ },
+ {
+  "label": "aSaidUnterminat",
+  "text": "!Said: unterminated [optional]"
+ },
+ {
+  "label": "aSInvalidFileHa",
+  "text": "!%s: invalid file handle; file not previously opened"
+ },
+ {
+  "label": "aAttemptToOpenF",
+  "text": "Attempt to open file '%s' denied (not current directo"
+ },
+ {
+  "label": "aFileopenTriedT",
+  "text": "!FileOpen: tried to open more than 10 files simultaneously - clos"
+ },
+ {
+  "label": "msg",
+  "text": "FileClose"
+ },
+ {
+  "label": "aFilewrite",
+  "text": "FileWrite"
+ },
+ {
+  "label": "aFilewriterawli",
+  "text": "FileWriteRawLine"
+ },
+ {
+  "label": "aStringArgument_2",
+  "text": "!String argument was null: make sure you pass a string, not an in"
+ },
+ {
+  "label": "aFileread",
+  "text": "FileRead"
+ },
+ {
+  "label": "aFilereadFileWa",
+  "text": "!FileRead: file was not written by FileWrite"
+ },
+ {
+  "label": "aFilewriteint",
+  "text": "FileWriteInt"
+ },
+ {
+  "label": "aFilereadint",
+  "text": "FileReadInt"
+ },
+ {
+  "label": "aFilereadintFil",
+  "text": "!FileReadInt: File read back in wrong order"
+ },
+ {
+  "label": "aFilereadrawcha",
+  "text": "FileReadRawChar"
+ },
+ {
+  "label": "aFilereadrawint",
+  "text": "FileReadRawInt"
+ },
+ {
+  "label": "aInterfaceonInv",
+  "text": "!InterfaceOn: invalid GUI specified"
+ },
+ {
+  "label": "aInterfaceoffIn",
+  "text": "!InterfaceOff: invalid GUI specified"
+ },
+ {
+  "label": "aSetguiposition",
+  "text": "!SetGUIPosition: invalid GUI number"
+ },
+ {
+  "label": "aSetguiposition_0",
+  "text": "!SetGUIPosition: co-ordinates must lie in range (0,0) - (RMWID,RM"
+ },
+ {
+  "label": "aStringArgument_3",
+  "text": "!String argument was null: make sure you pass a string, not an in"
+ },
+ {
+  "label": "aGettextboxtext",
+  "text": "!GetTextBoxText: invalid GUI number"
+ },
+ {
+  "label": "aGettextboxtext_0",
+  "text": "!GetTextBoxText: invalid object number"
+ },
+ {
+  "label": "aGettextboxtext_1",
+  "text": "!GetTextBoxText: specified control is not a text box"
+ },
+ {
+  "label": "aSettextboxtext",
+  "text": "!SetTextBoxText: text too long"
+ },
+ {
+  "label": "aSettextboxtext_0",
+  "text": "!SetTextBoxText: invalid GUI number"
+ },
+ {
+  "label": "aSettextboxtext_1",
+  "text": "!SetTextBoxText: invalid object number"
+ },
+ {
+  "label": "aSettextboxtext_2",
+  "text": "!SetTextBoxText: specified control is not a text box"
+ },
+ {
+  "label": "aListboxInvalid",
+  "text": "!ListBox: invalid GUI number"
+ },
+ {
+  "label": "aListboxInvalid_0",
+  "text": "!ListBox: invalid object number"
+ },
+ {
+  "label": "aListboxSpecifi",
+  "text": "!ListBox: specified control is not a list box"
+ },
+ {
+  "label": "aListboxaddTooM",
+  "text": "!ListBoxAdd: too many items added, list is full."
+ },
+ {
+  "label": "aStringArgument_4",
+  "text": "!String argument was null: make sure you pass a string, not an in"
+ },
+ {
+  "label": "aListboxgetitem",
+  "text": "!ListBoxGetItemText: invalid item specified"
+ },
+ {
+  "label": "aAgssave",
+  "text": "agssave.*"
+ },
+ {
+  "label": "a0",
+  "text": ".0"
+ },
+ {
+  "label": "aSetlabeltextTe",
+  "text": "!SetLabelText: text too long"
+ },
+ {
+  "label": "aSetlabeltextIn",
+  "text": "!SetLabelText: invalid GUI number"
+ },
+ {
+  "label": "aSetlabeltextIn_0",
+  "text": "!SetLabelTexT: invalid object number"
+ },
+ {
+  "label": "aSetlabeltextSp",
+  "text": "!SetLabelText: specified control is not a label"
+ },
+ {
+  "label": "aSetlabelfontIn",
+  "text": "!SetLabelFont: invalid font number."
+ },
+ {
+  "label": "aSetlabelfontIn_0",
+  "text": "!SetLabelFont: invalid GUI number"
+ },
+ {
+  "label": "aSetlabelfontIn_1",
+  "text": "!SetLabelFont: invalid object number"
+ },
+ {
+  "label": "aSetlabelfontSp",
+  "text": "!SetLabelFont: specified control is not a label"
+ },
+ {
+  "label": "aSetslidervalue",
+  "text": "!SetSliderValue: invalid GUI number"
+ },
+ {
+  "label": "aSetslidervalue_0",
+  "text": "!SetSliderValue: specified control is not a slider"
+ },
+ {
+  "label": "aGetslidervalue",
+  "text": "!GetSliderValue: invalid GUI number"
+ },
+ {
+  "label": "aGetslidervalue_0",
+  "text": "!GetSliderValue: specified control is not a slider"
+ },
+ {
+  "label": "aSetguibackgrou",
+  "text": "!SetGUIBackgroundPic: invalid GUI number"
+ },
+ {
+  "label": "aSetbuttonpicIn",
+  "text": "!SetButtonPic: invalid GUI number"
+ },
+ {
+  "label": "aSetbuttonpicIn_0",
+  "text": "!SetButtonPic: invalid object number"
+ },
+ {
+  "label": "aSetbuttonpicSp",
+  "text": "!SetButtonPic: specified control is not a button"
+ },
+ {
+  "label": "aSetbuttonpicIn_1",
+  "text": "!SetButtonPic: invalid pic type"
+ },
+ {
+  "label": "aNewroomTwoNewr",
+  "text": "!NewRoom: two NewRoom/StopDialog requests within dialog"
+ },
+ {
+  "label": "aNewroomRequest",
+  "text": "!NewRoom: requested 2 room changes within one script"
+ },
+ {
+  "label": "aResetroomCanno",
+  "text": "!ResetRoom: cannot reset current room"
+ },
+ {
+  "label": "aResetroomInval",
+  "text": "!ResetRoom: invalid room number"
+ },
+ {
+  "label": "aRestartGamePos",
+  "text": "restart game position"
+ },
+ {
+  "label": "aCallroomscript",
+  "text": "!CallRoomScript: not inside a script???"
+ },
+ {
+  "label": "aOnCall",
+  "text": "$on_call"
+ },
+ {
+  "label": "aStopdialogNotI",
+  "text": "!StopDialog: not in a dialog script"
+ },
+ {
+  "label": "aSetdialogoptio",
+  "text": "!SetDialogOption: Invalid topic number specified"
+ },
+ {
+  "label": "aSetdialogoptio_0",
+  "text": "!SetDialogOption: Invalid option number specified"
+ },
+ {
+  "label": "aStringArgument_5",
+  "text": "!String argument was null: make sure you pass a string, not an in"
+ },
+ {
+  "label": "aStringArgument_6",
+  "text": "!String argument was null: make sure you pass a string, not an in"
+ },
+ {
+  "label": "aGetinvnameInva",
+  "text": "!GetInvName: invalid inventory item specified"
+ },
+ {
+  "label": "aMovecharacters",
+  "text": "!MoveCharacterStraight: invalid character specified"
+ },
+ {
+  "label": "aMovecharacters_0",
+  "text": "!MoveCharacterStraight: specified character not in current room"
+ },
+ {
+  "label": "aMovecharacterp",
+  "text": "!MoveCharacterPath: invalid character specified"
+ },
+ {
+  "label": "aMovecharacterp_0",
+  "text": "!MoveCharacterPath: specified character not in current room"
+ },
+ {
+  "label": "aMovecharacterp_1",
+  "text": "!MoveCharacterPath: move is too complex, cannot add any further p"
+ },
+ {
+  "label": "aSetcharactersp",
+  "text": "!SetCharacterSpeed: invalid character"
+ },
+ {
+  "label": "aSetcharactersp_0",
+  "text": "!SetCharacterSpeed: invalid speed value"
+ },
+ {
+  "label": "aSetcharactersp_1",
+  "text": "!SetCharacterSpeed: cannot change speed while walking"
+ },
+ {
+  "label": "aSettalkingcolo",
+  "text": "!SetTalkingColor: invalid character"
+ },
+ {
+  "label": "aSettalkingcolo_0",
+  "text": "!SetTAlkingColor: invalid colour specified"
+ },
+ {
+  "label": "aSetcharactervi",
+  "text": "!SetCharacterView: invalid character specified"
+ },
+ {
+  "label": "aSetcharactervi_0",
+  "text": "!SetCharacterView: invalid view number"
+ },
+ {
+  "label": "aReleasecahract",
+  "text": "!ReleaseCahracterView: invalid character supplied"
+ },
+ {
+  "label": "aChangecharacte",
+  "text": "!ChangeCharacterView: invalid character specified"
+ },
+ {
+  "label": "aChangecharacte_0",
+  "text": "!ChangeCharacterView: invalid view number specified"
+ },
+ {
+  "label": "aSetcharactercl",
+  "text": "!SetCharacterClickable: Invalid character specified"
+ },
+ {
+  "label": "aSetcharacterig_0",
+  "text": "!SetCharacterIgnoreWalkbehinds: Invalid character specified"
+ },
+ {
+  "label": "aSetobjectclick",
+  "text": "!SetObjectClickable: Invalid object specified"
+ },
+ {
+  "label": "aSetobjectignor",
+  "text": "!SetObjectIgnoreWalkbehinds: Invalid object specified"
+ },
+ {
+  "label": "aFacelocationIn",
+  "text": "!FaceLocation: Invalid character specified"
+ },
+ {
+  "label": "aFacecharacterI",
+  "text": "!FaceCharacter: Invalid character specified"
+ },
+ {
+  "label": "aFacecharacterC",
+  "text": "!FaceCharacter: characters are in different rooms"
+ },
+ {
+  "label": "aMovecharactert",
+  "text": "!MovecharacterToHotspot: invalid hotspot"
+ },
+ {
+  "label": "aSetbackgrondfr",
+  "text": "!SetBackgrondFrame: invalid frame number specified"
+ },
+ {
+  "label": "aBgr",
+  "text": "BGR"
+ },
+ {
+  "label": "aAdventureGameS_0",
+  "text": "Adventure Game Studio run-time engine[ACI version 2.40.325[Compil"
+ },
+ {
+  "label": "aMusicVoxEnable",
+  "text": "[MUSIC.VOX enabled"
+ },
+ {
+  "label": "aSpeechVoxEnabl",
+  "text": "[SPEECH.VOX enabled"
+ },
+ {
+  "label": "aUsingTranslati",
+  "text": "[Using translation "
+ },
+ {
+  "label": "prompttext",
+  "text": "Enter room to teleport to:"
+ },
+ {
+  "label": "aNotCurrentlyMo",
+  "text": "Not currently moving."
+ },
+ {
+  "label": "aDebugUnknownCo",
+  "text": "!Debug: unknown command code"
+ },
+ {
+  "label": "aCdaudioUnknown",
+  "text": "!CDAudio: Unknown command code"
+ },
+ {
+  "label": "aStarttimerInva",
+  "text": "!StartTimer: invalid timer number"
+ },
+ {
+  "label": "aIstimerexpired",
+  "text": "!IsTimerExpired: invalid timer number"
+ },
+ {
+  "label": "aStringArgument_7",
+  "text": "!String argument was null: make sure you pass a string, not an in"
+ },
+ {
+  "label": "aStringArgument_8",
+  "text": "!String argument was null: make sure you pass a string, not an in"
+ },
+ {
+  "label": "aStringArgument_9",
+  "text": "!String argument was null: make sure you pass a string, not an in"
+ },
+ {
+  "label": "aGraphScriptSet",
+  "text": "!graph_script: SET_FLAG used with invalid flag number"
+ },
+ {
+  "label": "aGraphScriptCle",
+  "text": "!graph_script: CLEAR_FLAG used with invalid flag number"
+ },
+ {
+  "label": "aLoseInventoryD",
+  "text": "!lose_inventory: doesn't have the object"
+ },
+ {
+  "label": "aGscriptRequest",
+  "text": "gscript_request"
+ },
+ {
+  "label": "aRunTextScriptF",
+  "text": "run_text_script failed, error code %d"
+ },
+ {
+  "label": "aYouCanOnlyUseT",
+  "text": "\\x0aYou can only use the 'run text script' feature from the Room"
+ },
+ {
+  "label": "aInteractionsNo",
+  "text": "\\x0ainteractions, not from hotspot interactions.\\x0a"
+ },
+ {
+  "label": "aNoGscriptReque",
+  "text": "\\x0a(No 'gscript_request' function was found.\\x0a"
+ },
+ {
+  "label": "aRunGraphScript",
+  "text": "run_graph_script: unknown evnt %d"
+ },
+ {
+  "label": "aRb_15",
+  "text": "rb"
+ },
+ {
+  "label": "aRunGraphScript_0",
+  "text": "Run_Graph_script: temp file '%s' not found"
+ },
+ {
+  "label": "aRunGraphScript_1",
+  "text": "run_graph_script: invalid script version"
+ },
+ {
+  "label": "aRunGraphScript_2",
+  "text": "run_graph_script: invalid block version"
+ },
+ {
+  "label": "aDialogRequest",
+  "text": "dialog_request"
+ },
+ {
+  "label": "aUnknownDialogC",
+  "text": "unknown dialog command"
+ },
+ {
+  "label": "aZhwypqhkilik_1",
+  "text": "ZHwypqhkilIK"
+ },
+ {
+  "label": "aDodialogAllOpt",
+  "text": "!DoDialog: all options have been turned off"
+ },
+ {
+  "label": "aFindHighestRoo",
+  "text": "find_highest_room: been in no rooms?"
+ },
+ {
+  "label": "aWb_1",
+  "text": "wb"
+ },
+ {
+  "label": "a240325_0",
+  "text": "2.40.325"
+ },
+ {
+  "label": "aRb_16",
+  "text": "rb"
+ },
+ {
+  "label": "a240325_1",
+  "text": "2.40.325"
+ },
+ {
+  "label": "aThisGameWasSav",
+  "text": "This game was saved with the interpreter running at a different\\x0a"
+ },
+ {
+  "label": "aRestoreGameGlo",
+  "text": "!Restore_game: Global script changed, cannot restore game"
+ },
+ {
+  "label": "aRb_17",
+  "text": "rb"
+ },
+ {
+  "label": "aSaveGameHasInv",
+  "text": "Save game has invalid value for rooms_entered: %d"
+ },
+ {
+  "label": "aRestoreGameGam",
+  "text": "!Restore_Game: Game has changed (dlg), unable to restore"
+ },
+ {
+  "label": "aRestoreGameGam_0",
+  "text": "!Restore_Game: Game has changed, unable to restore position"
+ },
+ {
+  "label": "aInconsistentIn",
+  "text": "inconsistent inventory calculations"
+ },
+ {
+  "label": "aStartcutsceneA",
+  "text": "!StartCutscene: already in a cutscene"
+ },
+ {
+  "label": "aStartcutsceneI",
+  "text": "!StartCutscene: invalid argument, must be 1 to 5."
+ },
+ {
+  "label": "aEndcutsceneNot",
+  "text": "!EndCutscene: not in a cutscene"
+ },
+ {
+  "label": "aAddinventory",
+  "text": "AddInventory"
+ },
+ {
+  "label": "aAnimateobject",
+  "text": "AnimateObject"
+ },
+ {
+  "label": "aArecharactersc_1",
+  "text": "AreCharactersColliding"
+ },
+ {
+  "label": "aArecharobjcoll_1",
+  "text": "AreCharObjColliding"
+ },
+ {
+  "label": "aAreobjectscoll_0",
+  "text": "AreObjectsColliding"
+ },
+ {
+  "label": "aCallroomscript_0",
+  "text": "CallRoomScript"
+ },
+ {
+  "label": "aCdaudio",
+  "text": "CDAudio"
+ },
+ {
+  "label": "aChangecharacte_1",
+  "text": "ChangeCharacterView"
+ },
+ {
+  "label": "aChangecursorgr_0",
+  "text": "ChangeCursorGraphic"
+ },
+ {
+  "label": "aChangecursorho_0",
+  "text": "ChangeCursorHotspot"
+ },
+ {
+  "label": "aCreategraphico",
+  "text": "CreateGraphicOverlay"
+ },
+ {
+  "label": "aCreatetextover",
+  "text": "CreateTextOverlay"
+ },
+ {
+  "label": "aCyclepalette",
+  "text": "CyclePalette"
+ },
+ {
+  "label": "aDebug",
+  "text": "Debug"
+ },
+ {
+  "label": "aDisablecursorm",
+  "text": "DisableCursorMode"
+ },
+ {
+  "label": "aDisablehotspot_0",
+  "text": "DisableHotspot"
+ },
+ {
+  "label": "aDisableinterfa",
+  "text": "DisableInterface"
+ },
+ {
+  "label": "aDisplay",
+  "text": "Display"
+ },
+ {
+  "label": "aDisplayat",
+  "text": "DisplayAt"
+ },
+ {
+  "label": "aDisplayaty",
+  "text": "DisplayAtY"
+ },
+ {
+  "label": "aDisplaymessage_1",
+  "text": "DisplayMessage"
+ },
+ {
+  "label": "aDisplayspeech",
+  "text": "DisplaySpeech"
+ },
+ {
+  "label": "aDisplayspeecha_0",
+  "text": "DisplaySpeechAt"
+ },
+ {
+  "label": "aDisplayspeechb",
+  "text": "DisplaySpeechBackground"
+ },
+ {
+  "label": "aEnablecursormo",
+  "text": "EnableCursorMode"
+ },
+ {
+  "label": "aEnablehotspot",
+  "text": "EnableHotspot"
+ },
+ {
+  "label": "aEnableinterfac",
+  "text": "EnableInterface"
+ },
+ {
+  "label": "aEndcutscene",
+  "text": "EndCutscene"
+ },
+ {
+  "label": "aFacecharacter",
+  "text": "FaceCharacter"
+ },
+ {
+  "label": "aFacelocation",
+  "text": "FaceLocation"
+ },
+ {
+  "label": "aFadein",
+  "text": "FadeIn"
+ },
+ {
+  "label": "aFadeout",
+  "text": "FadeOut"
+ },
+ {
+  "label": "aFileclose_0",
+  "text": "FileClose"
+ },
+ {
+  "label": "aFileopen",
+  "text": "FileOpen"
+ },
+ {
+  "label": "aFileread_0",
+  "text": "FileRead"
+ },
+ {
+  "label": "aFilereadint_0",
+  "text": "FileReadInt"
+ },
+ {
+  "label": "aFilereadrawcha_0",
+  "text": "FileReadRawChar"
+ },
+ {
+  "label": "aFilereadrawint_0",
+  "text": "FileReadRawInt"
+ },
+ {
+  "label": "aFilewrite_0",
+  "text": "FileWrite"
+ },
+ {
+  "label": "aFilewriteint_0",
+  "text": "FileWriteInt"
+ },
+ {
+  "label": "aFilewriterawli_0",
+  "text": "FileWriteRawLine"
+ },
+ {
+  "label": "aFlipscreen",
+  "text": "FlipScreen"
+ },
+ {
+  "label": "aFollowcharacte_0",
+  "text": "FollowCharacter"
+ },
+ {
+  "label": "aFollowcharacte_1",
+  "text": "FollowCharacterEx"
+ },
+ {
+  "label": "aGetbackgroundf",
+  "text": "GetBackgroundFrame"
+ },
+ {
+  "label": "aGetcharacterat",
+  "text": "GetCharacterAt"
+ },
+ {
+  "label": "aGetcurrentmusi",
+  "text": "GetCurrentMusic"
+ },
+ {
+  "label": "aGetcursormode",
+  "text": "GetCursorMode"
+ },
+ {
+  "label": "aGetgamespeed",
+  "text": "GetGameSpeed"
+ },
+ {
+  "label": "aGetglobalint",
+  "text": "GetGlobalInt"
+ },
+ {
+  "label": "aGetguiat",
+  "text": "GetGUIAt"
+ },
+ {
+  "label": "aGetguiobjectat",
+  "text": "GetGUIObjectAt"
+ },
+ {
+  "label": "aGethotspotat",
+  "text": "GetHotspotAt"
+ },
+ {
+  "label": "aGetinvname",
+  "text": "GetInvName"
+ },
+ {
+  "label": "aGetlocationnam",
+  "text": "GetLocationName"
+ },
+ {
+  "label": "aGetlocationtyp",
+  "text": "GetLocationType"
+ },
+ {
+  "label": "aGetmidipositio",
+  "text": "GetMIDIPosition"
+ },
+ {
+  "label": "aGetmp3posmilli",
+  "text": "GetMP3PosMillis"
+ },
+ {
+  "label": "aGetobjectat",
+  "text": "GetObjectAt"
+ },
+ {
+  "label": "s_GetObjectGraphic",
+  "text": "GetObjectGraphic"
+ },
+ {
+  "label": "aGetobjectx",
+  "text": "GetObjectX"
+ },
+ {
+  "label": "aGetobjecty",
+  "text": "GetObjectY"
+ },
+ {
+  "label": "aGetplayerchara",
+  "text": "GetPlayerCharacter"
+ },
+ {
+  "label": "aGetsaveslotdes",
+  "text": "GetSaveSlotDescription"
+ },
+ {
+  "label": "aGetslidervalue_1",
+  "text": "GetSliderValue"
+ },
+ {
+  "label": "aGettextboxtext_2",
+  "text": "GetTextBoxText"
+ },
+ {
+  "label": "aGettime",
+  "text": "GetTime"
+ },
+ {
+  "label": "aGettranslation",
+  "text": "GetTranslation"
+ },
+ {
+  "label": "aGetviewportx",
+  "text": "GetViewportX"
+ },
+ {
+  "label": "aGetviewporty",
+  "text": "GetViewportY"
+ },
+ {
+  "label": "aGivescore",
+  "text": "GiveScore"
+ },
+ {
+  "label": "aInputbox",
+  "text": "InputBox"
+ },
+ {
+  "label": "aInterfaceoff",
+  "text": "InterfaceOff"
+ },
+ {
+  "label": "aInterfaceon",
+  "text": "InterfaceOn"
+ },
+ {
+  "label": "aInventoryscree",
+  "text": "InventoryScreen"
+ },
+ {
+  "label": "aIsbuttondown",
+  "text": "IsButtonDown"
+ },
+ {
+  "label": "aIsgamepaused",
+  "text": "IsGamePaused"
+ },
+ {
+  "label": "aIsguion",
+  "text": "IsGUIOn"
+ },
+ {
+  "label": "aIsinterfaceena",
+  "text": "IsInterfaceEnabled"
+ },
+ {
+  "label": "aIskeypressed",
+  "text": "IsKeyPressed"
+ },
+ {
+  "label": "aIsmusicplaying",
+  "text": "IsMusicPlaying"
+ },
+ {
+  "label": "aIsmusicvoxavai",
+  "text": "IsMusicVoxAvailable"
+ },
+ {
+  "label": "aIsobjectanimat_0",
+  "text": "IsObjectAnimating"
+ },
+ {
+  "label": "aIsobjectmoving_0",
+  "text": "IsObjectMoving"
+ },
+ {
+  "label": "aIssoundplaying",
+  "text": "IsSoundPlaying"
+ },
+ {
+  "label": "aIstimerexpired_0",
+  "text": "IsTimerExpired"
+ },
+ {
+  "label": "aIstranslationa",
+  "text": "IsTranslationAvailable"
+ },
+ {
+  "label": "aIsvoxavailable",
+  "text": "IsVoxAvailable"
+ },
+ {
+  "label": "aListboxadd",
+  "text": "ListBoxAdd"
+ },
+ {
+  "label": "aListboxclear",
+  "text": "ListBoxClear"
+ },
+ {
+  "label": "aListboxdirlist",
+  "text": "ListBoxDirList"
+ },
+ {
+  "label": "aListboxgetitem_0",
+  "text": "ListBoxGetItemText"
+ },
+ {
+  "label": "aListboxgetnumi",
+  "text": "ListBoxGetNumItems"
+ },
+ {
+  "label": "aListboxgetsele",
+  "text": "ListBoxGetSelected"
+ },
+ {
+  "label": "aListboxsavegam",
+  "text": "ListBoxSaveGameList"
+ },
+ {
+  "label": "aListboxsetsele",
+  "text": "ListBoxSetSelected"
+ },
+ {
+  "label": "aLoseinventory",
+  "text": "LoseInventory"
+ },
+ {
+  "label": "aMergeobject",
+  "text": "MergeObject"
+ },
+ {
+  "label": "aMovecharacter",
+  "text": "MoveCharacter"
+ },
+ {
+  "label": "aMovecharacterb",
+  "text": "MoveCharacterBlocking"
+ },
+ {
+  "label": "aMovecharacterd",
+  "text": "MoveCharacterDirect"
+ },
+ {
+  "label": "aMovecharacterp_2",
+  "text": "MoveCharacterPath"
+ },
+ {
+  "label": "aMovecharacters_1",
+  "text": "MoveCharacterStraight"
+ },
+ {
+  "label": "aMovecharactert_0",
+  "text": "MoveCharacterToHotspot"
+ },
+ {
+  "label": "aMovecharactert_1",
+  "text": "MoveCharacterToObject"
+ },
+ {
+  "label": "aMoveobject",
+  "text": "MoveObject"
+ },
+ {
+  "label": "aMoveobjectdire",
+  "text": "MoveObjectDirect"
+ },
+ {
+  "label": "aMoveoverlay",
+  "text": "MoveOverlay"
+ },
+ {
+  "label": "aMovetowalkable_0",
+  "text": "MoveToWalkableArea"
+ },
+ {
+  "label": "aNewroom",
+  "text": "NewRoom"
+ },
+ {
+  "label": "aNewroomex",
+  "text": "NewRoomEx"
+ },
+ {
+  "label": "aObjectoff",
+  "text": "ObjectOff"
+ },
+ {
+  "label": "aObjecton",
+  "text": "ObjectOn"
+ },
+ {
+  "label": "aParsetext",
+  "text": "ParseText"
+ },
+ {
+  "label": "aPausegame",
+  "text": "PauseGame"
+ },
+ {
+  "label": "aPlayambientsou_1",
+  "text": "PlayAmbientSound"
+ },
+ {
+  "label": "aPlayflic",
+  "text": "PlayFlic"
+ },
+ {
+  "label": "aPlaymusic",
+  "text": "PlayMusic"
+ },
+ {
+  "label": "aPlaysound",
+  "text": "PlaySound"
+ },
+ {
+  "label": "aPlayspeech",
+  "text": "PlaySpeech"
+ },
+ {
+  "label": "aPlayvideo",
+  "text": "PlayVideo"
+ },
+ {
+  "label": "aProcessclick",
+  "text": "ProcessClick"
+ },
+ {
+  "label": "aQuitgame",
+  "text": "QuitGame"
+ },
+ {
+  "label": "aRandom",
+  "text": "Random"
+ },
+ {
+  "label": "aRawclearscreen",
+  "text": "RawClearScreen"
+ },
+ {
+  "label": "aRawdrawimage",
+  "text": "RawDrawImage"
+ },
+ {
+  "label": "aRawdrawline",
+  "text": "RawDrawLine"
+ },
+ {
+  "label": "aRawdrawtriangl",
+  "text": "RawDrawTriangle"
+ },
+ {
+  "label": "aRawprint",
+  "text": "RawPrint"
+ },
+ {
+  "label": "aRawrestorescre_0",
+  "text": "RawRestoreScreen"
+ },
+ {
+  "label": "aRawsavescreen",
+  "text": "RawSaveScreen"
+ },
+ {
+  "label": "aRawsetcolor",
+  "text": "RawSetColor"
+ },
+ {
+  "label": "aRefreshmouse",
+  "text": "RefreshMouse"
+ },
+ {
+  "label": "aReleasecharact",
+  "text": "ReleaseCharacterView"
+ },
+ {
+  "label": "aReleaseviewpor",
+  "text": "ReleaseViewport"
+ },
+ {
+  "label": "aRemoveoverlay",
+  "text": "RemoveOverlay"
+ },
+ {
+  "label": "aRemovewalkable_0",
+  "text": "RemoveWalkableArea"
+ },
+ {
+  "label": "aResetroom",
+  "text": "ResetRoom"
+ },
+ {
+  "label": "aRestartgame",
+  "text": "RestartGame"
+ },
+ {
+  "label": "aRestoregamedia",
+  "text": "RestoreGameDialog"
+ },
+ {
+  "label": "aRestoregameslo",
+  "text": "RestoreGameSlot"
+ },
+ {
+  "label": "aRestorewalkabl_0",
+  "text": "RestoreWalkableArea"
+ },
+ {
+  "label": "aRuncharacterin_0",
+  "text": "RunCharacterInteraction"
+ },
+ {
+  "label": "aRundialog",
+  "text": "RunDialog"
+ },
+ {
+  "label": "aRunhotspotinte",
+  "text": "RunHotspotInteraction"
+ },
+ {
+  "label": "aRunobjectinter_0",
+  "text": "RunObjectInteraction"
+ },
+ {
+  "label": "aSaid",
+  "text": "Said"
+ },
+ {
+  "label": "aSaidunknownwor",
+  "text": "SaidUnknownWord"
+ },
+ {
+  "label": "aSavegamedialog",
+  "text": "SaveGameDialog"
+ },
+ {
+  "label": "aSavegameslot",
+  "text": "SaveGameSlot"
+ },
+ {
+  "label": "aSavescreenshot",
+  "text": "SaveScreenShot"
+ },
+ {
+  "label": "aSeekmidipositi",
+  "text": "SeekMIDIPosition"
+ },
+ {
+  "label": "aSeekmodpattern",
+  "text": "SeekMODPattern"
+ },
+ {
+  "label": "aSeekmp3posmill",
+  "text": "SeekMP3PosMillis"
+ },
+ {
+  "label": "aSetactiveinven_1",
+  "text": "SetActiveInventory"
+ },
+ {
+  "label": "aSetarealightle_0",
+  "text": "SetAreaLightLevel"
+ },
+ {
+  "label": "aSetbackgroundf",
+  "text": "SetBackgroundFrame"
+ },
+ {
+  "label": "aSetbuttonpic",
+  "text": "SetButtonPic"
+ },
+ {
+  "label": "aSetcharacterba_0",
+  "text": "SetCharacterBaseline"
+ },
+ {
+  "label": "aSetcharactercl_0",
+  "text": "SetCharacterClickable"
+ },
+ {
+  "label": "aSetcharacterid_2",
+  "text": "SetCharacterIdle"
+ },
+ {
+  "label": "aSetcharacterig_1",
+  "text": "SetCharacterIgnoreLight"
+ },
+ {
+  "label": "aSetcharacterig_2",
+  "text": "SetCharacterIgnoreWalkbehinds"
+ },
+ {
+  "label": "aSetcharacterpr_1",
+  "text": "SetCharacterProperty"
+ },
+ {
+  "label": "aSetcharactersp_2",
+  "text": "SetCharacterSpeed"
+ },
+ {
+  "label": "aSetcharactertr",
+  "text": "SetCharacterTransparency"
+ },
+ {
+  "label": "aSetcharactervi_1",
+  "text": "SetCharacterView"
+ },
+ {
+  "label": "aSetcursormode",
+  "text": "SetCursorMode"
+ },
+ {
+  "label": "aSetdefaultcurs",
+  "text": "SetDefaultCursor"
+ },
+ {
+  "label": "aSetdialogoptio_1",
+  "text": "SetDialogOption"
+ },
+ {
+  "label": "aSetgamespeed",
+  "text": "SetGameSpeed"
+ },
+ {
+  "label": "aSetglobalint",
+  "text": "SetGlobalInt"
+ },
+ {
+  "label": "aSetguibackgrou_0",
+  "text": "SetGUIBackgroundPic"
+ },
+ {
+  "label": "aSetguiposition_1",
+  "text": "SetGUIPosition"
+ },
+ {
+  "label": "aSetinvitempic",
+  "text": "SetInvItemPic"
+ },
+ {
+  "label": "aSetinvdimensio",
+  "text": "SetInvDimensions"
+ },
+ {
+  "label": "aSetlabelfont",
+  "text": "SetLabelFont"
+ },
+ {
+  "label": "aSetlabeltext",
+  "text": "SetLabelText"
+ },
+ {
+  "label": "aSetmousebounds_0",
+  "text": "SetMouseBounds"
+ },
+ {
+  "label": "aSetmousecursor",
+  "text": "SetMouseCursor"
+ },
+ {
+  "label": "aSetmusicmaster_0",
+  "text": "SetMusicMasterVolume"
+ },
+ {
+  "label": "aSetmusicrepeat",
+  "text": "SetMusicRepeat"
+ },
+ {
+  "label": "aSetmusicvolume_0",
+  "text": "SetMusicVolume"
+ },
+ {
+  "label": "aSetnextcursorm",
+  "text": "SetNextCursorMode"
+ },
+ {
+  "label": "aSetnormalfont",
+  "text": "SetNormalFont"
+ },
+ {
+  "label": "aSetobjectbasel_0",
+  "text": "SetObjectBaseline"
+ },
+ {
+  "label": "aSetobjectclick_0",
+  "text": "SetObjectClickable"
+ },
+ {
+  "label": "aSetobjectframe_2",
+  "text": "SetObjectFrame"
+ },
+ {
+  "label": "aSetobjectgraph_0",
+  "text": "SetObjectGraphic"
+ },
+ {
+  "label": "aSetobjectignor_0",
+  "text": "SetObjectIgnoreWalkbehinds"
+ },
+ {
+  "label": "aSetobjecttrans_1",
+  "text": "SetObjectTransparency"
+ },
+ {
+  "label": "aSetobjectview",
+  "text": "SetObjectView"
+ },
+ {
+  "label": "aSetpalrgb",
+  "text": "SetPalRGB"
+ },
+ {
+  "label": "aSetplayerchara_0",
+  "text": "SetPlayerCharacter"
+ },
+ {
+  "label": "aSetrestartpoin",
+  "text": "SetRestartPoint"
+ },
+ {
+  "label": "aSetscreentrans_0",
+  "text": "SetScreenTransition"
+ },
+ {
+  "label": "aSetskipspeech",
+  "text": "SetSkipSpeech"
+ },
+ {
+  "label": "aSetslidervalue_1",
+  "text": "SetSliderValue"
+ },
+ {
+  "label": "aSetsoundvolume_0",
+  "text": "SetSoundVolume"
+ },
+ {
+  "label": "aSetspeechfont",
+  "text": "SetSpeechFont"
+ },
+ {
+  "label": "aSetspeechstyle_0",
+  "text": "SetSpeechStyle"
+ },
+ {
+  "label": "aSetspeechvolum_0",
+  "text": "SetSpeechVolume"
+ },
+ {
+  "label": "aSettalkingcolo_1",
+  "text": "SetTalkingColor"
+ },
+ {
+  "label": "aSettextboxtext_3",
+  "text": "SetTextBoxText"
+ },
+ {
+  "label": "aSettextoverlay_0",
+  "text": "SetTextOverlay"
+ },
+ {
+  "label": "aSettimer",
+  "text": "SetTimer"
+ },
+ {
+  "label": "aSetviewport",
+  "text": "SetViewport"
+ },
+ {
+  "label": "aSetvoicemode",
+  "text": "SetVoiceMode"
+ },
+ {
+  "label": "aSetwalkbehindb_0",
+  "text": "SetWalkBehindBase"
+ },
+ {
+  "label": "aShakescreen",
+  "text": "ShakeScreen"
+ },
+ {
+  "label": "aStartcutscene",
+  "text": "StartCutscene"
+ },
+ {
+  "label": "aStopambientsou_0",
+  "text": "StopAmbientSound"
+ },
+ {
+  "label": "aStopdialog",
+  "text": "StopDialog"
+ },
+ {
+  "label": "aStopmoving",
+  "text": "StopMoving"
+ },
+ {
+  "label": "aStopmusic",
+  "text": "StopMusic"
+ },
+ {
+  "label": "aStrcat",
+  "text": "StrCat"
+ },
+ {
+  "label": "aStrcasecomp",
+  "text": "StrCaseComp"
+ },
+ {
+  "label": "aStrcomp",
+  "text": "StrComp"
+ },
+ {
+  "label": "aStrcopy",
+  "text": "StrCopy"
+ },
+ {
+  "label": "aStrformat",
+  "text": "StrFormat"
+ },
+ {
+  "label": "aStrgetcharat",
+  "text": "StrGetCharAt"
+ },
+ {
+  "label": "aStringtoint",
+  "text": "StringToInt"
+ },
+ {
+  "label": "aStrlen",
+  "text": "StrLen"
+ },
+ {
+  "label": "aStrtolowercase",
+  "text": "StrToLowerCase"
+ },
+ {
+  "label": "aStrtouppercase",
+  "text": "StrToUpperCase"
+ },
+ {
+  "label": "aTintscreen",
+  "text": "TintScreen"
+ },
+ {
+  "label": "aUnpausegame",
+  "text": "UnPauseGame"
+ },
+ {
+  "label": "aUpdateinventor",
+  "text": "UpdateInventory"
+ },
+ {
+  "label": "aUpdatepalette",
+  "text": "UpdatePalette"
+ },
+ {
+  "label": "aWait",
+  "text": "Wait"
+ },
+ {
+  "label": "aWaitkey",
+  "text": "WaitKey"
+ },
+ {
+  "label": "aWaitmousekey",
+  "text": "WaitMouseKey"
+ },
+ {
+  "label": "aInterface",
+  "text": "interface"
+ },
+ {
+  "label": "aGame",
+  "text": "game"
+ },
+ {
+  "label": "aGsGlobals",
+  "text": "gs_globals"
+ },
+ {
+  "label": "aMouse",
+  "text": "mouse"
+ },
+ {
+  "label": "aPalette",
+  "text": "palette"
+ },
+ {
+  "label": "aSystem",
+  "text": "system"
+ },
+ {
+  "label": "aSavegameindex",
+  "text": "savegameindex"
+ },
+ {
+  "label": "aExit_0",
+  "text": "||exit!"
+ },
+ {
+  "label": "aATextScriptRun",
+  "text": "!A text script run in the Player Enters Screen event caused the\\x0a"
+ },
+ {
+  "label": "aWaitWasUsedInP",
+  "text": "Wait() was used in Player Enters Screen - use Enters Screen After"
+ },
+ {
+  "label": "aWb_2",
+  "text": "wb"
+ },
+ {
+  "label": "aTmptestTmp",
+  "text": "~tmptest.tmp"
+ },
+ {
+  "label": "aJustToTestTheD",
+  "text": "just to test the drive free space"
+ },
+ {
+  "label": "aTmptestTmp_0",
+  "text": "~tmptest.tmp"
+ },
+ {
+  "label": "aAdventureGameS_1",
+  "text": "Adventure Game Studio v2.40.325 setup"
+ },
+ {
+  "label": "aLoopUntilUnkno",
+  "text": "loop_until: unknown until event"
+ },
+ {
+  "label": "aErrUserDisForS",
+  "text": "err: user_dis: FOR_SCript"
+ },
+ {
+  "label": "aFunction",
+  "text": "function "
+ },
+ {
+  "label": "aExport",
+  "text": "export "
+ },
+ {
+  "label": "aDefine",
+  "text": "#define "
+ },
+ {
+  "label": "aD_3",
+  "text": "%d\\x0d\\x0a"
+ },
+ {
+  "label": "aUnableToCreate",
+  "text": "Unable to create local script: %s"
+ },
+ {
+  "label": "aNotEnoughMemor_0",
+  "text": "Not enough memory to load sprite graphics"
+ },
+ {
+  "label": "aAt_1",
+  "text": "at"
+ },
+ {
+  "label": "aAssertionFaile",
+  "text": "Assertion failed"
+ },
+ {
+  "label": "aWarning",
+  "text": "Warning"
+ },
+ {
+  "label": "aSS_0",
+  "text": "%s: %s\\x0a"
+ },
+ {
+  "label": "aOutOfMemoryFai",
+  "text": "Out of memory: failed to allocate %ld bytes"
+ },
+ {
+  "label": "pszSubKey",
+  "text": ".ags"
+ },
+ {
+  "label": "pszValue",
+  "text": "ACIVersion"
+ },
+ {
+  "label": "aAgs_0",
+  "text": ".ags"
+ },
+ {
+  "label": "a240325_2",
+  "text": "2.40.325"
+ },
+ {
+  "label": "aAcilocation",
+  "text": "ACILocation"
+ },
+ {
+  "label": "aAgs_1",
+  "text": ".ags"
+ },
+ {
+  "label": "aRb_18",
+  "text": "rb"
+ },
+ {
+  "label": "SubKey",
+  "text": ".ags"
+ },
+ {
+  "label": "Data",
+  "text": "Adventure Game"
+ },
+ {
+  "label": "aS0",
+  "text": "\"%s\", 0"
+ },
+ {
+  "label": "aSShelllaunch1",
+  "text": "\"%s\" -shelllaunch \"%%1\""
+ },
+ {
+  "label": "aSSetup1",
+  "text": "\"%s\" --setup \"%%1\""
+ },
+ {
+  "label": "a240325_3",
+  "text": "2.40.325"
+ },
+ {
+  "label": "aAciversion_0",
+  "text": "ACIVersion"
+ },
+ {
+  "label": "aAgs_3",
+  "text": ".ags"
+ },
+ {
+  "label": "aAcilocation_0",
+  "text": "ACILocation"
+ },
+ {
+  "label": "aAgs_4",
+  "text": ".ags"
+ },
+ {
+  "label": "ACI_VERSION_TEXT",
+  "text": "2.40.325"
+ },
+ {
+  "label": "AC_VERSION_TEXT",
+  "text": "2.40 "
+ },
+ {
+  "label": "aShelllaunch",
+  "text": "-shelllaunch"
+ },
+ {
+  "label": "aUpdatereg",
+  "text": "-updatereg"
+ },
+ {
+  "label": "aWindowed",
+  "text": "-windowed"
+ },
+ {
+  "label": "aFullscreen",
+  "text": "-fullscreen"
+ },
+ {
+  "label": "aTestre",
+  "text": "--testre"
+ },
+ {
+  "label": "a15bit",
+  "text": "--15bit"
+ },
+ {
+  "label": "aFps",
+  "text": "--fps"
+ },
+ {
+  "label": "aTest",
+  "text": "--test"
+ },
+ {
+  "label": "aNoiface",
+  "text": "-noiface"
+ },
+ {
+  "label": "aNosprdisp",
+  "text": "-nosprdisp"
+ },
+ {
+  "label": "aNospr",
+  "text": "-nospr"
+ },
+ {
+  "label": "aNoupdate",
+  "text": "-noupdate"
+ },
+ {
+  "label": "aNosound",
+  "text": "-nosound"
+ },
+ {
+  "label": "aNomusic",
+  "text": "-nomusic"
+ },
+ {
+  "label": "aNoscript",
+  "text": "-noscript"
+ },
+ {
+  "label": "aDbgscript",
+  "text": "-dbgscript"
+ },
+ {
+  "label": "aRb_19",
+  "text": "rb"
+ },
+ {
+  "label": "aRt",
+  "text": "rt"
+ },
+ {
+  "label": "item",
+  "text": "digiwin"
+ },
+ {
+  "label": "sectn",
+  "text": "sound"
+ },
+ {
+  "label": "aMidiwin",
+  "text": "midiwin"
+ },
+ {
+  "label": "aSound_0",
+  "text": "sound"
+ },
+ {
+  "label": "aWindowed_0",
+  "text": "windowed"
+ },
+ {
+  "label": "aMisc",
+  "text": "misc"
+ },
+ {
+  "label": "aScreenres",
+  "text": "screenres"
+ },
+ {
+  "label": "aMisc_0",
+  "text": "misc"
+ },
+ {
+  "label": "aUsevox",
+  "text": "usevox"
+ },
+ {
+  "label": "aSound_1",
+  "text": "sound"
+ },
+ {
+  "label": "aUsespeech",
+  "text": "usespeech"
+ },
+ {
+  "label": "aSound_2",
+  "text": "sound"
+ },
+ {
+  "label": "entry",
+  "text": "datadir"
+ },
+ {
+  "label": "aMisc_1",
+  "text": "misc"
+ },
+ {
+  "label": "aTranslation",
+  "text": "translation"
+ },
+ {
+  "label": "aLanguage",
+  "text": "language"
+ },
+ {
+  "label": "aCachemax",
+  "text": "cachemax"
+ },
+ {
+  "label": "aMisc_2",
+  "text": "misc"
+ },
+ {
+  "label": "aUnableToInitia",
+  "text": "Unable to initialize graphics subsystem. Make sure you have Direc"
+ },
+ {
+  "label": "aAdventureGameS_2",
+  "text": "Adventure Game Studio"
+ },
+ {
+  "label": "aSetup",
+  "text": "--setup"
+ },
+ {
+  "label": "aErrorYouMustCr",
+  "text": "ERROR: You must create and save a game first in the Room Editor b"
+ },
+ {
+  "label": "aErrorTooManyFi",
+  "text": "ERROR: Too many files in data file."
+ },
+ {
+  "label": "aErrorTheFileIs",
+  "text": "ERROR: The file is corrupt. Make sure you have the correct versio"
+ },
+ {
+  "label": "a386",
+  "text": "386"
+ },
+ {
+  "label": "a486",
+  "text": "486"
+ },
+ {
+  "label": "aPentium",
+  "text": "Pentium"
+ },
+ {
+  "label": "aPentiumPro",
+  "text": "Pentium Pro"
+ },
+ {
+  "label": "aUnableToWriteT",
+  "text": "Unable to write to the current directory. Do not run this game of"
+ },
+ {
+  "label": "aNoMouseWasDete",
+  "text": "No mouse was detected on your system, or your mouse is not config"
+ },
+ {
+  "label": "aThereIsNotEnou",
+  "text": "There is not enough memory available to run this game. You need 4"
+ },
+ {
+  "label": "aRb_20",
+  "text": "rb"
+ },
+ {
+  "label": "FileName",
+  "text": "SPEECH.VOX"
+ },
+ {
+  "label": "namm",
+  "text": "speech.vox"
+ },
+ {
+  "label": "aUnableToInitia_0",
+  "text": "Unable to initialize speech sample file - check for corruption an"
+ },
+ {
+  "label": "aRb_21",
+  "text": "rb"
+ },
+ {
+  "label": "aMusicVox",
+  "text": "MUSIC.VOX"
+ },
+ {
+  "label": "aMusicVox_0",
+  "text": "music.vox"
+ },
+ {
+  "label": "aUnableToInitia_1",
+  "text": "Unable to initialize music library - check for corruption and tha"
+ },
+ {
+  "label": "aUnableToInitia_2",
+  "text": "\\x0aUnable to initialize your audio hardware.\\x0a[Problem: %s]\\x0a"
+ },
+ {
+  "label": "aEngineDebuggin",
+  "text": "Engine debugging enabled.\\x0a"
+ },
+ {
+  "label": "aWarningsLog_0",
+  "text": "warnings.log"
+ },
+ {
+  "label": "aWarningInstall",
+  "text": "Warning: install_mod: MOD player failed to initialize."
+ },
+ {
+  "label": "aFileNotFoundPl",
+  "text": "File not found. Please run the Room Editor to create a game first"
+ },
+ {
+  "label": "aInvalidFileFor",
+  "text": "Invalid file format. The file may be corrupt, or from a different"
+ },
+ {
+  "label": "aScriptLinkFail",
+  "text": "Script link failed: %s\\x0a"
+ },
+ {
+  "label": "aThereWasAProbl",
+  "text": "There was a problem initializing graphics mode %d x %d.\\x0a"
+ },
+ {
+  "label": "aPreloadPcx",
+  "text": "preload.pcx"
+ },
+ {
+  "label": "aAcsprsetSpr",
+  "text": "acsprset.spr"
+ },
+ {
+  "label": "aCouldNotLoadSp",
+  "text": "Could not load sprite set file ACSPRSET.SPR\\x0a"
+ },
+ {
+  "label": "aWarningAgsHasD",
+  "text": "WARNING: AGS has detected that you have an incompatible graphics "
+ },
+ {
+  "label": "aGameStart",
+  "text": "game_start"
+ },
+ {
+  "label": "aRestartGamePos_0",
+  "text": "restart game position"
+ },
+ {
+  "label": "aBye",
+  "text": "|bye!"
+ },
+ {
+  "label": "aScoretextRGame",
+  "text": "@SCORETEXT@$r@GAMENAME@"
+ },
+ {
+  "label": "aLoadTranslatio",
+  "text": "load_translation: out of memory"
+ },
+ {
+  "label": "aTooManyWindows",
+  "text": "Too many windows created."
+ },
+ {
+  "label": "aTooManyControl",
+  "text": "Too many controls created"
+ },
+ {
+  "label": "aUnknownControl",
+  "text": "Unknown control type requested"
+ },
+ {
+  "label": "aAgssave_0",
+  "text": "agssave.*"
+ },
+ {
+  "label": "a0_0",
+  "text": ".0"
+ },
+ {
+  "label": "aRb_22",
+  "text": "rb"
+ },
+ {
+  "label": "aOk",
+  "text": "OK"
+ },
+ {
+  "label": "aNosavegamename",
+  "text": "_NOSAVEGAMENAME"
+ },
+ {
+  "label": "aSaveGameDirect",
+  "text": "Save game directory overflow"
+ },
+ {
+  "label": "aCsciuser16TooM",
+  "text": "!CSCIUSER16: Too many items added to listbox"
+ },
+ {
+  "label": "aRootAde",
+  "text": "root/ade"
+ },
+ {
+  "label": "aQgimport",
+  "text": "QGImport"
+ },
+ {
+  "label": "aQgstats",
+  "text": "qgstats"
+ },
+ {
+  "label": "aQg2export",
+  "text": "QG2Export"
+ },
+ {
+  "label": "aQg2stats",
+  "text": "qg2stats"
+ },
+ {
+  "label": "aRb_23",
+  "text": "rb"
+ },
+ {
+  "label": "aWb_3",
+  "text": "wb"
+ },
+ {
+  "label": "a2x",
+  "text": "%2x"
+ },
+ {
+  "label": "aInitialization",
+  "text": "Initialization failure in InitRenderToSurface"
+ },
+ {
+  "label": "aCouldNotCreate",
+  "text": "Could not create a CLSID_MultiMediaStream object\\x0a"
+ },
+ {
+  "label": "aInitializeFail",
+  "text": "Initialize failed."
+ },
+ {
+  "label": "aAddmediastream",
+  "text": "AddMediaStream failed."
+ },
+ {
+  "label": "aAddmediastream_0",
+  "text": "AddMediaStream failed."
+ },
+ {
+  "label": "aFileNotFoundOr",
+  "text": "File not found or format not supported: %s"
+ },
+ {
+  "label": "aUnableToPlaySt",
+  "text": "Unable to play stream."
+ },
+ {
+  "label": "aPlayedSuccessf",
+  "text": "Played successfully."
+ },
+ {
+  "label": "aDefaultDirects",
+  "text": "Default DirectSound Device"
+ },
+ {
+  "label": "aDefaultWaveout",
+  "text": "Default WaveOut Device"
+ },
+ {
+  "label": "aNoDigitalSound",
+  "text": "No Digital Sound"
+ },
+ {
+  "label": "aDefaultMciMusi",
+  "text": "Default MCI Music Device"
+ },
+ {
+  "label": "aNoMidiMusic",
+  "text": "No MIDI Music"
+ },
+ {
+  "label": "aWin32MidiMappe",
+  "text": "Win32 MIDI Mapper"
+ },
+ {
+  "label": "aGameDefault",
+  "text": "Game Default"
+ },
+ {
+  "label": "aTra",
+  "text": "*.tra"
+ },
+ {
+  "label": "aTranslation_0",
+  "text": " translation"
+ },
+ {
+  "label": "a2Mb",
+  "text": "2 MB"
+ },
+ {
+  "label": "a5MbDefault",
+  "text": "5 MB (default)"
+ },
+ {
+  "label": "a8Mb",
+  "text": "8 MB"
+ },
+ {
+  "label": "a10Mb",
+  "text": "10 MB"
+ },
+ {
+  "label": "a15Mb",
+  "text": "15 MB"
+ },
+ {
+  "label": "a20Mb",
+  "text": "20 MB"
+ },
+ {
+  "label": "aRb_24",
+  "text": "rb"
+ },
+ {
+  "label": "aMusicVox_1",
+  "text": "music.vox"
+ },
+ {
+  "label": "aRb_25",
+  "text": "rb"
+ },
+ {
+  "label": "aSpeechVox_1",
+  "text": "speech.vox"
+ },
+ {
+  "label": "aD_4",
+  "text": "%d"
+ },
+ {
+  "label": "KeyName",
+  "text": "screenres"
+ },
+ {
+  "label": "AppName",
+  "text": "misc"
+ },
+ {
+  "label": "a1",
+  "text": "-1"
+ },
+ {
+  "label": "aDigiid",
+  "text": "digiid"
+ },
+ {
+  "label": "aSound_3",
+  "text": "sound"
+ },
+ {
+  "label": "aMidiid",
+  "text": "midiid"
+ },
+ {
+  "label": "aSound_4",
+  "text": "sound"
+ },
+ {
+  "label": "a0_1",
+  "text": "0"
+ },
+ {
+  "label": "aDigiindx",
+  "text": "digiindx"
+ },
+ {
+  "label": "aSound_5",
+  "text": "sound"
+ },
+ {
+  "label": "aMidiindx",
+  "text": "midiindx"
+ },
+ {
+  "label": "aSound_6",
+  "text": "sound"
+ },
+ {
+  "label": "aD_5",
+  "text": "%d"
+ },
+ {
+  "label": "aDigiwinindx",
+  "text": "digiwinindx"
+ },
+ {
+  "label": "aSound_7",
+  "text": "sound"
+ },
+ {
+  "label": "aD_6",
+  "text": "%d"
+ },
+ {
+  "label": "aDigiwin_0",
+  "text": "digiwin"
+ },
+ {
+  "label": "aSound_8",
+  "text": "sound"
+ },
+ {
+  "label": "aD_7",
+  "text": "%d"
+ },
+ {
+  "label": "aMidiwinindx",
+  "text": "midiwinindx"
+ },
+ {
+  "label": "aSound_9",
+  "text": "sound"
+ },
+ {
+  "label": "aD_8",
+  "text": "%d"
+ },
+ {
+  "label": "aMidiwin_0",
+  "text": "midiwin"
+ },
+ {
+  "label": "aSound_10",
+  "text": "sound"
+ },
+ {
+  "label": "aTranslation_1",
+  "text": " translation"
+ },
+ {
+  "label": "aTranslation_2",
+  "text": "translation"
+ },
+ {
+  "label": "aLanguage_0",
+  "text": "language"
+ },
+ {
+  "label": "aD_9",
+  "text": "%d"
+ },
+ {
+  "label": "aCachemax_0",
+  "text": "cachemax"
+ },
+ {
+  "label": "aMisc_4",
+  "text": "misc"
+ },
+ {
+  "label": "aUsevox_0",
+  "text": "usevox"
+ },
+ {
+  "label": "aSound_11",
+  "text": "sound"
+ },
+ {
+  "label": "String",
+  "text": "0"
+ },
+ {
+  "label": "aUsevox_1",
+  "text": "usevox"
+ },
+ {
+  "label": "aSound_12",
+  "text": "sound"
+ },
+ {
+  "label": "aUsespeech_0",
+  "text": "usespeech"
+ },
+ {
+  "label": "aSound_13",
+  "text": "sound"
+ },
+ {
+  "label": "a0_3",
+  "text": "0"
+ },
+ {
+  "label": "aUsespeech_1",
+  "text": "usespeech"
+ },
+ {
+  "label": "aSound_14",
+  "text": "sound"
+ },
+ {
+  "label": "a1_0",
+  "text": "1"
+ },
+ {
+  "label": "aWindowed_1",
+  "text": "windowed"
+ },
+ {
+  "label": "aMisc_5",
+  "text": "misc"
+ },
+ {
+  "label": "a0_4",
+  "text": "0"
+ },
+ {
+  "label": "aWindowed_2",
+  "text": "windowed"
+ },
+ {
+  "label": "aMisc_6",
+  "text": "misc"
+ },
+ {
+  "label": "aRt_0",
+  "text": "rt"
+ },
+ {
+  "label": "aScreenres_1",
+  "text": "screenres"
+ },
+ {
+  "label": "aMisc_7",
+  "text": "misc"
+ },
+ {
+  "label": "aDigiwinindx_0",
+  "text": "digiwinindx"
+ },
+ {
+  "label": "aSound_15",
+  "text": "sound"
+ },
+ {
+  "label": "aMidiwinindx_0",
+  "text": "midiwinindx"
+ },
+ {
+  "label": "aSound_16",
+  "text": "sound"
+ },
+ {
+  "label": "aWindowed_3",
+  "text": "windowed"
+ },
+ {
+  "label": "aMisc_8",
+  "text": "misc"
+ },
+ {
+  "label": "aCachemax_1",
+  "text": "cachemax"
+ },
+ {
+  "label": "aMisc_9",
+  "text": "misc"
+ },
+ {
+  "label": "aUsevox_2",
+  "text": "usevox"
+ },
+ {
+  "label": "aSound_17",
+  "text": "sound"
+ },
+ {
+  "label": "aUsespeech_2",
+  "text": "usespeech"
+ },
+ {
+  "label": "aSound_18",
+  "text": "sound"
+ },
+ {
+  "label": "aTranslation_3",
+  "text": "translation"
+ },
+ {
+  "label": "aLanguage_1",
+  "text": "language"
+ },
+ {
+  "label": "aClib32V12C1995",
+  "text": "CLIB32 v1.2 (c) 1995,1996,1998,2001 Chris Jones"
+ },
+ {
+  "label": "lib_file_name",
+  "text": " "
+ },
+ {
+  "label": "base_path",
+  "text": "."
+ },
+ {
+  "label": "aRb_36",
+  "text": "rb"
+ },
+ {
+  "label": "aClib",
+  "text": "CLIB"
+ },
+ {
+  "label": "aNull_4",
+  "text": "NULL"
+ },
+ {
+  "label": "aAdd_1",
+  "text": "$add"
+ },
+ {
+  "label": "aSub_1",
+  "text": "$sub"
+ },
+ {
+  "label": "aMov_1",
+  "text": "$$mov"
+ },
+ {
+  "label": "aMemwritelit_0",
+  "text": "memwritelit"
+ },
+ {
+  "label": "aRet_0",
+  "text": "ret"
+ },
+ {
+  "label": "aMov_2",
+  "text": "$mov"
+ },
+ {
+  "label": "aMemread_0",
+  "text": "$memread"
+ },
+ {
+  "label": "aMemwrite_0",
+  "text": "$memwrite"
+ },
+ {
+  "label": "aMul_1",
+  "text": "$$mul"
+ },
+ {
+  "label": "aDiv_0",
+  "text": "$$div"
+ },
+ {
+  "label": "aAdd_2",
+  "text": "$$add"
+ },
+ {
+  "label": "aSub_2",
+  "text": "$$sub"
+ },
+ {
+  "label": "aBitAnd_0",
+  "text": "$$bit_and"
+ },
+ {
+  "label": "aBitOr_0",
+  "text": "$$bit_or"
+ },
+ {
+  "label": "aCmp_0",
+  "text": "$$cmp"
+ },
+ {
+  "label": "aNcmp_0",
+  "text": "$$ncmp"
+ },
+ {
+  "label": "aGt_0",
+  "text": "$$gt"
+ },
+ {
+  "label": "aLt_0",
+  "text": "$$lt"
+ },
+ {
+  "label": "aGte_0",
+  "text": "$$gte"
+ },
+ {
+  "label": "aLte_0",
+  "text": "$$lte"
+ },
+ {
+  "label": "aAnd_0",
+  "text": "$$and"
+ },
+ {
+  "label": "aOr_0",
+  "text": "$$or"
+ },
+ {
+  "label": "aCall_0",
+  "text": "$call"
+ },
+ {
+  "label": "aMemreadB_0",
+  "text": "$memread.b"
+ },
+ {
+  "label": "aMemreadW_0",
+  "text": "$memread.w"
+ },
+ {
+  "label": "aMemwriteB_0",
+  "text": "$memwrite.b"
+ },
+ {
+  "label": "aMemwriteW_0",
+  "text": "$memwrite.w"
+ },
+ {
+  "label": "aJz_0",
+  "text": "jz"
+ },
+ {
+  "label": "aPush_0",
+  "text": "$push"
+ },
+ {
+  "label": "aPop_0",
+  "text": "$pop"
+ },
+ {
+  "label": "aJmp_0",
+  "text": "jmp"
+ },
+ {
+  "label": "aMul_2",
+  "text": "$mul"
+ },
+ {
+  "label": "aFarcall_0",
+  "text": "$farcall"
+ },
+ {
+  "label": "aFarpush_0",
+  "text": "$farpush"
+ },
+ {
+  "label": "aFarsubsp_0",
+  "text": "farsubsp"
+ },
+ {
+  "label": "aSourceline_0",
+  "text": "sourceline"
+ },
+ {
+  "label": "aCallscr_0",
+  "text": "$callscr"
+ },
+ {
+  "label": "aThisaddr_0",
+  "text": "thisaddr"
+ },
+ {
+  "label": "aNull_5",
+  "text": "null"
+ },
+ {
+  "label": "aSp_0",
+  "text": "sp"
+ },
+ {
+  "label": "aMar_0",
+  "text": "mar"
+ },
+ {
+  "label": "aAx_0",
+  "text": "ax"
+ },
+ {
+  "label": "aBx_0",
+  "text": "bx"
+ },
+ {
+  "label": "aCx_0",
+  "text": "cx"
+ },
+ {
+  "label": "aErrorLineDS",
+  "text": "Error (line %d): %s"
+ },
+ {
+  "label": "aRuntimeErrorS",
+  "text": "Runtime error: %s"
+ },
+ {
+  "label": "aScom",
+  "text": "SCOM"
+ },
+ {
+  "label": "aNull",
+  "text": "NULL"
+ },
+ {
+  "label": "aAdd_3",
+  "text": "$add"
+ },
+ {
+  "label": "aSub_3",
+  "text": "$sub"
+ },
+ {
+  "label": "aMov_3",
+  "text": "$$mov"
+ },
+ {
+  "label": "aMemwritelit_1",
+  "text": "memwritelit"
+ },
+ {
+  "label": "aRet_1",
+  "text": "ret"
+ },
+ {
+  "label": "aMov_4",
+  "text": "$mov"
+ },
+ {
+  "label": "aMemread_1",
+  "text": "$memread"
+ },
+ {
+  "label": "aMemwrite_1",
+  "text": "$memwrite"
+ },
+ {
+  "label": "aMul_3",
+  "text": "$$mul"
+ },
+ {
+  "label": "aDiv_1",
+  "text": "$$div"
+ },
+ {
+  "label": "aAdd_4",
+  "text": "$$add"
+ },
+ {
+  "label": "aSub_4",
+  "text": "$$sub"
+ },
+ {
+  "label": "aBitAnd_1",
+  "text": "$$bit_and"
+ },
+ {
+  "label": "aBitOr_1",
+  "text": "$$bit_or"
+ },
+ {
+  "label": "aCmp_1",
+  "text": "$$cmp"
+ },
+ {
+  "label": "aNcmp_1",
+  "text": "$$ncmp"
+ },
+ {
+  "label": "aGt_1",
+  "text": "$$gt"
+ },
+ {
+  "label": "aLt_1",
+  "text": "$$lt"
+ },
+ {
+  "label": "aGte_1",
+  "text": "$$gte"
+ },
+ {
+  "label": "aLte_1",
+  "text": "$$lte"
+ },
+ {
+  "label": "aAnd_1",
+  "text": "$$and"
+ },
+ {
+  "label": "aOr_1",
+  "text": "$$or"
+ },
+ {
+  "label": "aCall_1",
+  "text": "$call"
+ },
+ {
+  "label": "aMemreadB_1",
+  "text": "$memread.b"
+ },
+ {
+  "label": "aMemreadW_1",
+  "text": "$memread.w"
+ },
+ {
+  "label": "aMemwriteB_1",
+  "text": "$memwrite.b"
+ },
+ {
+  "label": "aMemwriteW_1",
+  "text": "$memwrite.w"
+ },
+ {
+  "label": "aJz_1",
+  "text": "jz"
+ },
+ {
+  "label": "aPush_1",
+  "text": "$push"
+ },
+ {
+  "label": "aPop_1",
+  "text": "$pop"
+ },
+ {
+  "label": "aJmp_1",
+  "text": "jmp"
+ },
+ {
+  "label": "aMul_4",
+  "text": "$mul"
+ },
+ {
+  "label": "aFarcall_1",
+  "text": "$farcall"
+ },
+ {
+  "label": "aFarpush_1",
+  "text": "$farpush"
+ },
+ {
+  "label": "aFarsubsp_1",
+  "text": "farsubsp"
+ },
+ {
+  "label": "aSourceline_1",
+  "text": "sourceline"
+ },
+ {
+  "label": "aCallscr_1",
+  "text": "$callscr"
+ },
+ {
+  "label": "aThisaddr_1",
+  "text": "thisaddr"
+ },
+ {
+  "label": "aNull_0",
+  "text": "null"
+ },
+ {
+  "label": "aSp_1",
+  "text": "sp"
+ },
+ {
+  "label": "aMar_1",
+  "text": "mar"
+ },
+ {
+  "label": "aAx_1",
+  "text": "ax"
+ },
+ {
+  "label": "aBx_1",
+  "text": "bx"
+ },
+ {
+  "label": "aCx_1",
+  "text": "cx"
+ },
+ {
+  "label": "aScriptexecuter",
+  "text": "ScriptExecuter32 v0.81 (c) 2001 Chris Jones"
+ },
+ {
+  "label": "aAt_2",
+  "text": "at"
+ },
+ {
+  "label": "aScriptLog",
+  "text": "script.log"
+ },
+ {
+  "label": "aLine3dIp8dSp8d",
+  "text": "Line %3d, IP:%8d (SP:%8d) "
+ },
+ {
+  "label": "aS_2",
+  "text": "%s"
+ },
+ {
+  "label": "aS_3",
+  "text": " %s"
+ },
+ {
+  "label": "aS_4",
+  "text": " %s"
+ },
+ {
+  "label": "aD_10",
+  "text": " %d"
+ },
+ {
+  "label": "descr",
+  "text": "null pointer passed"
+ },
+ {
+  "label": "aNotEnoughMemor_1",
+  "text": "not enough memory to allocate stack"
+ },
+ {
+  "label": "aUnresolvedImpo",
+  "text": "unresolved import '%s'"
+ },
+ {
+  "label": "aInternalFixupI",
+  "text": "internal fixup index error"
+ },
+ {
+  "label": "aInternalExport",
+  "text": "internal export fixup error"
+ },
+ {
+  "label": "aTooManyArgumen",
+  "text": "too many arguments in call to function"
+ },
+ {
+  "label": "aSpecifiedCodeO",
+  "text": "specified code offset is not valid"
+ },
+ {
+  "label": "aStackOverflow",
+  "text": "stack overflow"
+ },
+ {
+  "label": "aStackOverflow_0",
+  "text": "stack overflow"
+ },
+ {
+  "label": "aStackOverflow_1",
+  "text": "stack overflow"
+ },
+ {
+  "label": "aStackOverflow_2",
+  "text": "stack overflow"
+ },
+ {
+  "label": "aStackCorruptAf",
+  "text": "stack corrupt after function call"
+ },
+ {
+  "label": "aInvalidInstruc",
+  "text": "invalid instruction %d found in code stream"
+ },
+ {
+  "label": "aTooManyArgumen_0",
+  "text": "too many arguments to function"
+ },
+ {
+  "label": "aInstanceAlread",
+  "text": "instance already being executed"
+ },
+ {
+  "label": "aSymbolIsNotAFu",
+  "text": "symbol is not a function"
+ },
+ {
+  "label": "aFunctionSNotFo",
+  "text": "function '%s' not found"
+ },
+ {
+  "label": "aStackPointerWa",
+  "text": "stack pointer was not zero at completion of script"
+ },
+ {
+  "label": "aFileWasNotWrit",
+  "text": "file was not written by fwrite_script or seek position is incorre"
+ },
+ {
+  "label": "aInternalErrorR",
+  "text": "internal error rebuilding script"
+ },
+ {
+  "label": "aR",
+  "text": "r"
+ },
+ {
+  "label": "aRp",
+  "text": "rp"
+ },
+ {
+  "label": "aR_0",
+  "text": "r"
+ },
+ {
+  "label": "aR_1",
+  "text": "r"
+ },
+ {
+  "label": "aR_2",
+  "text": "r"
+ },
+ {
+  "label": "aDat",
+  "text": "dat"
+ },
+ {
+  "label": "VarName",
+  "text": "ALLEGRO"
+ },
+ {
+  "label": "aDat_0",
+  "text": "dat"
+ },
+ {
+  "label": "aW",
+  "text": "w"
+ },
+ {
+  "label": "aR_3",
+  "text": "r"
+ },
+ {
+  "label": "aR_4",
+  "text": "r"
+ },
+ {
+  "label": "Control",
+  "text": "wW"
+ },
+ {
+  "label": "aWp",
+  "text": "wp"
+ },
+ {
+  "label": "aW_0",
+  "text": "w!"
+ },
+ {
+  "label": "aR_5",
+  "text": "r"
+ },
+ {
+  "label": "aOutOfMemory_0",
+  "text": "out of memory"
+ },
+ {
+  "label": "aInsufficientMe",
+  "text": "insufficient memory"
+ },
+ {
+  "label": "aMouselib32C199",
+  "text": "MouseLib32 (c) 1994, 1998 Chris Jones"
+ },
+ {
+  "label": "aNull_6",
+  "text": "NULL"
+ },
+ {
+  "label": "aAdd_5",
+  "text": "$add"
+ },
+ {
+  "label": "aSub_5",
+  "text": "$sub"
+ },
+ {
+  "label": "aMov_5",
+  "text": "$$mov"
+ },
+ {
+  "label": "aMemwritelit_2",
+  "text": "memwritelit"
+ },
+ {
+  "label": "aRet_2",
+  "text": "ret"
+ },
+ {
+  "label": "aMov_6",
+  "text": "$mov"
+ },
+ {
+  "label": "aMemread_2",
+  "text": "$memread"
+ },
+ {
+  "label": "aMemwrite_2",
+  "text": "$memwrite"
+ },
+ {
+  "label": "aMul_5",
+  "text": "$$mul"
+ },
+ {
+  "label": "aDiv_2",
+  "text": "$$div"
+ },
+ {
+  "label": "aAdd_6",
+  "text": "$$add"
+ },
+ {
+  "label": "aSub_6",
+  "text": "$$sub"
+ },
+ {
+  "label": "aBitAnd_2",
+  "text": "$$bit_and"
+ },
+ {
+  "label": "aBitOr_2",
+  "text": "$$bit_or"
+ },
+ {
+  "label": "aCmp_2",
+  "text": "$$cmp"
+ },
+ {
+  "label": "aNcmp_2",
+  "text": "$$ncmp"
+ },
+ {
+  "label": "aGt_2",
+  "text": "$$gt"
+ },
+ {
+  "label": "aLt_2",
+  "text": "$$lt"
+ },
+ {
+  "label": "aGte_2",
+  "text": "$$gte"
+ },
+ {
+  "label": "aLte_2",
+  "text": "$$lte"
+ },
+ {
+  "label": "aAnd_2",
+  "text": "$$and"
+ },
+ {
+  "label": "aOr_2",
+  "text": "$$or"
+ },
+ {
+  "label": "aCall_2",
+  "text": "$call"
+ },
+ {
+  "label": "aMemreadB_2",
+  "text": "$memread.b"
+ },
+ {
+  "label": "aMemreadW_2",
+  "text": "$memread.w"
+ },
+ {
+  "label": "aMemwriteB_2",
+  "text": "$memwrite.b"
+ },
+ {
+  "label": "aMemwriteW_2",
+  "text": "$memwrite.w"
+ },
+ {
+  "label": "aJz_2",
+  "text": "jz"
+ },
+ {
+  "label": "aPush_2",
+  "text": "$push"
+ },
+ {
+  "label": "aPop_2",
+  "text": "$pop"
+ },
+ {
+  "label": "aJmp_2",
+  "text": "jmp"
+ },
+ {
+  "label": "aMul_6",
+  "text": "$mul"
+ },
+ {
+  "label": "aFarcall_2",
+  "text": "$farcall"
+ },
+ {
+  "label": "aFarpush_2",
+  "text": "$farpush"
+ },
+ {
+  "label": "aFarsubsp_2",
+  "text": "farsubsp"
+ },
+ {
+  "label": "aSourceline_2",
+  "text": "sourceline"
+ },
+ {
+  "label": "aCallscr_2",
+  "text": "$callscr"
+ },
+ {
+  "label": "aThisaddr_2",
+  "text": "thisaddr"
+ },
+ {
+  "label": "aNull_7",
+  "text": "null"
+ },
+ {
+  "label": "aSp_2",
+  "text": "sp"
+ },
+ {
+  "label": "aMar_2",
+  "text": "mar"
+ },
+ {
+  "label": "aAx_2",
+  "text": "ax"
+ },
+ {
+  "label": "aBx_2",
+  "text": "bx"
+ },
+ {
+  "label": "aCx_2",
+  "text": "cx"
+ },
+ {
+  "label": "aAdventureGameS_3",
+  "text": "Adventure Game Studio engine & tools (c) 1999-2000 by Chris Jones"
+ },
+ {
+  "label": "aDonTScrewWithM",
+  "text": "Don't screw with my name."
+ },
+ {
+  "label": "aLeaveMyNameAlo",
+  "text": "Leave my name alone."
+ },
+ {
+  "label": "aNiceTry",
+  "text": "Nice try."
+ },
+ {
+  "label": "aNoMemoryForRou",
+  "text": "no memory for route calculation"
+ },
+ {
+  "label": "aDonTEvenTryIt",
+  "text": "Don't even try it."
+ },
+ {
+  "label": "aRoomTooTallFor",
+  "text": "room too tall for pathfinder"
+ },
+ {
+  "label": "aMyNameIsThereF",
+  "text": "My name is there for all to see."
+ },
+ {
+  "label": "aTooManyStagesF",
+  "text": "too many stages for auto-walk"
+ },
+ {
+  "label": "aNull_8",
+  "text": "NULL"
+ },
+ {
+  "label": "aAdd_7",
+  "text": "$add"
+ },
+ {
+  "label": "aSub_7",
+  "text": "$sub"
+ },
+ {
+  "label": "aMov_7",
+  "text": "$$mov"
+ },
+ {
+  "label": "aMemwritelit_3",
+  "text": "memwritelit"
+ },
+ {
+  "label": "aRet_3",
+  "text": "ret"
+ },
+ {
+  "label": "aMov_8",
+  "text": "$mov"
+ },
+ {
+  "label": "aMemread_3",
+  "text": "$memread"
+ },
+ {
+  "label": "aMemwrite_3",
+  "text": "$memwrite"
+ },
+ {
+  "label": "aMul_7",
+  "text": "$$mul"
+ },
+ {
+  "label": "aDiv_3",
+  "text": "$$div"
+ },
+ {
+  "label": "aAdd_8",
+  "text": "$$add"
+ },
+ {
+  "label": "aSub_8",
+  "text": "$$sub"
+ },
+ {
+  "label": "aBitAnd_3",
+  "text": "$$bit_and"
+ },
+ {
+  "label": "aBitOr_3",
+  "text": "$$bit_or"
+ },
+ {
+  "label": "aCmp_3",
+  "text": "$$cmp"
+ },
+ {
+  "label": "aNcmp_3",
+  "text": "$$ncmp"
+ },
+ {
+  "label": "aGt_3",
+  "text": "$$gt"
+ },
+ {
+  "label": "aLt_3",
+  "text": "$$lt"
+ },
+ {
+  "label": "aGte_3",
+  "text": "$$gte"
+ },
+ {
+  "label": "aLte_3",
+  "text": "$$lte"
+ },
+ {
+  "label": "aAnd_3",
+  "text": "$$and"
+ },
+ {
+  "label": "aOr_3",
+  "text": "$$or"
+ },
+ {
+  "label": "aCall_3",
+  "text": "$call"
+ },
+ {
+  "label": "aMemreadB_3",
+  "text": "$memread.b"
+ },
+ {
+  "label": "aMemreadW_3",
+  "text": "$memread.w"
+ },
+ {
+  "label": "aMemwriteB_3",
+  "text": "$memwrite.b"
+ },
+ {
+  "label": "aMemwriteW_3",
+  "text": "$memwrite.w"
+ },
+ {
+  "label": "aJz_3",
+  "text": "jz"
+ },
+ {
+  "label": "aPush_3",
+  "text": "$push"
+ },
+ {
+  "label": "aPop_3",
+  "text": "$pop"
+ },
+ {
+  "label": "aJmp_3",
+  "text": "jmp"
+ },
+ {
+  "label": "aMul_8",
+  "text": "$mul"
+ },
+ {
+  "label": "aFarcall_3",
+  "text": "$farcall"
+ },
+ {
+  "label": "aFarpush_3",
+  "text": "$farpush"
+ },
+ {
+  "label": "aFarsubsp_3",
+  "text": "farsubsp"
+ },
+ {
+  "label": "aSourceline_3",
+  "text": "sourceline"
+ },
+ {
+  "label": "aCallscr_3",
+  "text": "$callscr"
+ },
+ {
+  "label": "aThisaddr_3",
+  "text": "thisaddr"
+ },
+ {
+  "label": "aNull_9",
+  "text": "null"
+ },
+ {
+  "label": "aSp_3",
+  "text": "sp"
+ },
+ {
+  "label": "aMar_3",
+  "text": "mar"
+ },
+ {
+  "label": "aAx_3",
+  "text": "ax"
+ },
+ {
+  "label": "aBx_3",
+  "text": "bx"
+ },
+ {
+  "label": "aCx_3",
+  "text": "cx"
+ },
+ {
+  "label": "aScriptEditorV1",
+  "text": "Script Editor v1.2 run-time component. (c) 1998 Chris Jones"
+ },
+ {
+  "label": "aAcscDTmp",
+  "text": "~acsc%d.tmp"
+ },
+ {
+  "label": "aScripteditRunT",
+  "text": "ScriptEdit: run-time version can't save"
+ },
+ {
+  "label": "aScripteditInvl",
+  "text": "ScriptEdit: invliad config version"
+ },
+ {
+  "label": "aScripteditRunT_0",
+  "text": "ScriptEdit: run-time version can't save"
+ },
+ {
+  "label": "aStopIt",
+  "text": "STOP IT."
+ },
+ {
+  "label": "aWb_4",
+  "text": "wb"
+ },
+ {
+  "label": "aOpenCdaudioWai",
+  "text": "open cdaudio wait"
+ },
+ {
+  "label": "aSetCdaudioTime",
+  "text": "set cdaudio time format tmsf"
+ },
+ {
+  "label": "aCloseCdaudio",
+  "text": "close cdaudio"
+ },
+ {
+  "label": "aUS",
+  "text": "%u:%s"
+ },
+ {
+  "label": "aPlayCdaudioFro",
+  "text": "play cdaudio from %lu to %s"
+ },
+ {
+  "label": "aStatusCdaudioL",
+  "text": "status cdaudio length track %u"
+ },
+ {
+  "label": "aUS_0",
+  "text": "%u:%s"
+ },
+ {
+  "label": "aPlayCdaudioFro_0",
+  "text": "play cdaudio from %lu to %s"
+ },
+ {
+  "label": "aPlayCdaudioFro_1",
+  "text": "play cdaudio from %lu"
+ },
+ {
+  "label": "aStatusCdaudioM",
+  "text": "status cdaudio mode"
+ },
+ {
+  "label": "aPlaying",
+  "text": "playing"
+ },
+ {
+  "label": "aStatusCdaudioC",
+  "text": "status cdaudio current track"
+ },
+ {
+  "label": "strCommand",
+  "text": "status cdaudio position"
+ },
+ {
+  "label": "aPauseCdaudio",
+  "text": "pause cdaudio"
+ },
+ {
+  "label": "aPlayCdaudioFro_2",
+  "text": "play cdaudio from %s to %s"
+ },
+ {
+  "label": "aPlayCdaudioFro_3",
+  "text": "play cdaudio from %s"
+ },
+ {
+  "label": "aStopCdaudioWai",
+  "text": "stop cdaudio wait"
+ },
+ {
+  "label": "aStatusCdaudioN",
+  "text": "status cdaudio number of tracks"
+ },
+ {
+  "label": "aStatusCdaudioT",
+  "text": "status cdaudio type track %u"
+ },
+ {
+  "label": "aAudio",
+  "text": "audio"
+ },
+ {
+  "label": "aSetCdaudioDoor",
+  "text": "set cdaudio door open"
+ },
+ {
+  "label": "aSetCdaudioDoor_0",
+  "text": "set cdaudio door closed"
+ },
+ {
+  "label": "aSystem_0",
+  "text": "system"
+ },
+ {
+  "label": "aSystem_1",
+  "text": "system"
+ },
+ {
+  "label": "aFatalErrorUnab",
+  "text": "Fatal error: unable to activate the Allegro system"
+ },
+ {
+  "label": "aSS_3",
+  "text": "%s\\x0a%s\\x0a"
+ },
+ {
+  "label": "aS_5",
+  "text": "%s\\x0a"
+ },
+ {
+  "label": "aAssertFailedAt",
+  "text": "Assert failed at line %d of %s"
+ },
+ {
+  "label": "aAllegroAssert",
+  "text": "ALLEGRO_ASSERT"
+ },
+ {
+  "label": "aW_1",
+  "text": "w"
+ },
+ {
+  "label": "aS_9",
+  "text": "%s\\x0a"
+ },
+ {
+  "label": "aS_10",
+  "text": "%s\\x0a"
+ },
+ {
+  "label": "aAllegroTrace",
+  "text": "ALLEGRO_TRACE"
+ },
+ {
+  "label": "aW_2",
+  "text": "w"
+ },
+ {
+  "label": "aW_3",
+  "text": "w"
+ },
+ {
+  "label": "aAllegroLog",
+  "text": "allegro.log"
+ },
+ {
+  "label": "aFatalErrorUnab_0",
+  "text": "Fatal error: unable to set GFX_SAFE"
+ },
+ {
+  "label": "aS_6",
+  "text": "%s\\x0a"
+ },
+ {
+  "label": "aGfxCardw",
+  "text": "gfx_cardw"
+ },
+ {
+  "label": "aGfxCard",
+  "text": "gfx_card"
+ },
+ {
+  "label": "aUnableToFindAS",
+  "text": "Unable to find a suitable graphics driver"
+ },
+ {
+  "label": "aSDxDxD",
+  "text": "%s_%dx%dx%d"
+ },
+ {
+  "label": "aSDbpp",
+  "text": "%s_%dbpp"
+ },
+ {
+  "label": "aS_8",
+  "text": "%s"
+ },
+ {
+  "label": "aSD",
+  "text": "%s%d"
+ },
+ {
+  "label": "aGraphics",
+  "text": "graphics"
+ },
+ {
+  "label": "aAllegroCallPro",
+  "text": "Allegro call proc"
+ },
+ {
+  "label": "aAllegroKeyboar",
+  "text": "Allegro keyboard acquire proc"
+ },
+ {
+  "label": "aAllegroKeyboar_0",
+  "text": "Allegro keyboard unacquire proc"
+ },
+ {
+  "label": "aAllegroMouseAc",
+  "text": "Allegro mouse acquire proc"
+ },
+ {
+  "label": "aAllegroMouseUn",
+  "text": "Allegro mouse unacquire proc"
+ },
+ {
+  "label": "aAllegroMouseCu",
+  "text": "Allegro mouse cursor proc"
+ },
+ {
+  "label": "aAllegroWindowS",
+  "text": "Allegro window suicide"
+ },
+ {
+  "label": "Text",
+  "text": "Warning: forcing program shutdown may lead to data loss and unexp"
+ },
+ {
+  "label": "IconName",
+  "text": "allegro_icon"
+ },
+ {
+  "label": "aAllegrowindow",
+  "text": "AllegroWindow"
+ },
+ {
+  "label": "ClassName",
+  "text": "AllegroWindow"
+ },
+ {
+  "label": "aNoSound",
+  "text": "No sound"
+ },
+ {
+  "label": "aNoSound_0",
+  "text": "No sound"
+ },
+ {
+  "label": "aTheSoundOfSile",
+  "text": "The sound of silence"
+ },
+ {
+  "label": "aSound_20",
+  "text": "sound"
+ },
+ {
+  "label": "aFlipPan",
+  "text": "flip_pan"
+ },
+ {
+  "label": "aQuality",
+  "text": "quality"
+ },
+ {
+  "label": "aSoundPort",
+  "text": "sound_port"
+ },
+ {
+  "label": "aSoundDma",
+  "text": "sound_dma"
+ },
+ {
+  "label": "aSoundIrq",
+  "text": "sound_irq"
+ },
+ {
+  "label": "aSoundFreq",
+  "text": "sound_freq"
+ },
+ {
+  "label": "aSoundBits",
+  "text": "sound_bits"
+ },
+ {
+  "label": "aSoundStereo",
+  "text": "sound_stereo"
+ },
+ {
+  "label": "aDigiVolume",
+  "text": "digi_volume"
+ },
+ {
+  "label": "aMidiVolume",
+  "text": "midi_volume"
+ },
+ {
+  "label": "aSound_19",
+  "text": "sound"
+ },
+ {
+  "label": "aDigiCard",
+  "text": "digi_card"
+ },
+ {
+  "label": "aMidiCard",
+  "text": "midi_card"
+ },
+ {
+  "label": "aDigiVoices",
+  "text": "digi_voices"
+ },
+ {
+  "label": "aMidiVoices",
+  "text": "midi_voices"
+ },
+ {
+  "label": "aDigitalSoundDr",
+  "text": "Digital sound driver not found"
+ },
+ {
+  "label": "aMidiMusicDrive",
+  "text": "MIDI music driver not found"
+ },
+ {
+  "label": "aDigital_0",
+  "text": "digital"
+ },
+ {
+  "label": "aMidi_0",
+  "text": "MIDI"
+ },
+ {
+  "label": "aInsufficientSV_0",
+  "text": "Insufficient %s voices available"
+ },
+ {
+  "label": "aFailedToInitDi",
+  "text": "Failed to init digital sound driver"
+ },
+ {
+  "label": "aFailedToInitMi",
+  "text": "Failed to init MIDI music driver"
+ },
+ {
+  "label": "aDigital",
+  "text": "digital"
+ },
+ {
+  "label": "aMidi",
+  "text": "MIDI"
+ },
+ {
+  "label": "aInsufficientSV",
+  "text": "Insufficient %s voices available"
+ },
+ {
+  "label": "aSound_21",
+  "text": "sound"
+ },
+ {
+  "label": "aSoundSystemNot",
+  "text": "Sound system not installed"
+ },
+ {
+  "label": "aDigiInputCard",
+  "text": "digi_input_card"
+ },
+ {
+  "label": "aMidiInputCard",
+  "text": "midi_input_card"
+ },
+ {
+  "label": "aSDoesNotSuppor",
+  "text": "%s does not support audio input"
+ },
+ {
+  "label": "aDigitalInputDr",
+  "text": "Digital input driver not found"
+ },
+ {
+  "label": "aSDoesNotSuppor_0",
+  "text": "%s does not support MIDI input"
+ },
+ {
+  "label": "aMidiInputDrive",
+  "text": "MIDI input driver not found"
+ },
+ {
+  "label": "aFailedToInitDi_0",
+  "text": "Failed to init digital input driver"
+ },
+ {
+  "label": "aFailedToInitMi_0",
+  "text": "Failed to init MIDI input driver"
+ },
+ {
+  "label": "aWav",
+  "text": "wav"
+ },
+ {
+  "label": "aVoc",
+  "text": "voc"
+ },
+ {
+  "label": "aR_10",
+  "text": "r"
+ },
+ {
+  "label": "aCreativeVoiceF",
+  "text": "Creative Voice File"
+ },
+ {
+  "label": "aR_6",
+  "text": "r"
+ },
+ {
+  "label": "aRiff",
+  "text": "RIFF"
+ },
+ {
+  "label": "aWave",
+  "text": "WAVE"
+ },
+ {
+  "label": "aFmt",
+  "text": "fmt "
+ },
+ {
+  "label": "aData",
+  "text": "data"
+ },
+ {
+  "label": "aMthd",
+  "text": "MThd"
+ },
+ {
+  "label": "aMtrk",
+  "text": "MTrk"
+ },
+ {
+  "label": "aPD",
+  "text": "p%d"
+ },
+ {
+  "label": "aMidimap",
+  "text": "midimap"
+ },
+ {
+  "label": "aR_11",
+  "text": "r"
+ },
+ {
+  "label": "aW_4",
+  "text": "w"
+ },
+ {
+  "label": "aCyrixinstead",
+  "text": "CyrixInstead"
+ },
+ {
+  "label": "a0123456789abcd",
+  "text": "0123456789ABCDEF"
+ },
+ {
+  "label": "a0123456789abcd_0",
+  "text": "0123456789abcdef"
+ },
+ {
+  "label": "aD_11",
+  "text": "%d"
+ },
+ {
+  "label": "aD_12",
+  "text": ".%d"
+ },
+ {
+  "label": "aDirectx",
+  "text": "DirectX"
+ },
+ {
+  "label": "aDirectxUX",
+  "text": "DirectX %u.%x"
+ },
+ {
+  "label": "aUnsupportedVir",
+  "text": "Unsupported virtual resolution"
+ },
+ {
+  "label": "aCanNotSetVideo",
+  "text": "Can not set video mode"
+ },
+ {
+  "label": "aNoMouse",
+  "text": "No mouse"
+ },
+ {
+  "label": "aMouse_0",
+  "text": "mouse"
+ },
+ {
+  "label": "aMouse_1",
+  "text": "mouse"
+ },
+ {
+  "label": "aNumButtons",
+  "text": "num_buttons"
+ },
+ {
+  "label": "aMouse_2",
+  "text": "mouse"
+ },
+ {
+  "label": "aEmulateThree",
+  "text": "emulate_three"
+ },
+ {
+  "label": "aMouse_3",
+  "text": "mouse"
+ },
+ {
+  "label": "aAllegroCfg",
+  "text": "allegro.cfg"
+ },
+ {
+  "label": "a7fffffff",
+  "text": "7FFFFFFF"
+ },
+ {
+  "label": "aD_13",
+  "text": "%d"
+ },
+ {
+  "label": "a1_1",
+  "text": "-1"
+ },
+ {
+  "label": "aD_14",
+  "text": "%d"
+ },
+ {
+  "label": "aLanguage_2",
+  "text": "language"
+ },
+ {
+  "label": "aSystem_2",
+  "text": "system"
+ },
+ {
+  "label": "aLanguage_3",
+  "text": "language"
+ },
+ {
+  "label": "aSystem_3",
+  "text": "system"
+ },
+ {
+  "label": "aText",
+  "text": "text"
+ },
+ {
+  "label": "aTextCfg",
+  "text": "text.cfg"
+ },
+ {
+  "label": "aCfg",
+  "text": ".cfg"
+ },
+ {
+  "label": "aLanguageDat",
+  "text": "language.dat"
+ },
+ {
+  "label": "aLanguage_4",
+  "text": "[language]"
+ },
+ {
+  "label": "aDirectinputMou",
+  "text": "DirectInput mouse"
+ },
+ {
+  "label": "aMouseAccelFact",
+  "text": "mouse_accel_factor"
+ },
+ {
+  "label": "aMouse_4",
+  "text": "mouse"
+ },
+ {
+  "label": "ModuleName",
+  "text": "OLE32.DLL"
+ },
+ {
+  "label": "ProcName",
+  "text": "CoInitializeEx"
+ },
+ {
+  "label": "aWarning_0",
+  "text": "Warning"
+ },
+ {
+  "label": "aOle32DllCanTBe",
+  "text": "OLE32.DLL can't be loaded."
+ },
+ {
+  "label": "aDcomNotFound",
+  "text": "DCOM not found"
+ },
+ {
+  "label": "aMicrosoftDistr",
+  "text": "Microsoft Distributed COM is not installed on this system. If you"
+ },
+ {
+  "label": "LibFileName",
+  "text": "DINPUT.DLL"
+ },
+ {
+  "label": "OutputString",
+  "text": "Couldn't LoadLibrary DInput\\x0d\\x0a"
+ },
+ {
+  "label": "aDirectinputcre",
+  "text": "DirectInputCreateA"
+ },
+ {
+  "label": "aDdrawDll_0",
+  "text": "DDRAW.DLL"
+ },
+ {
+  "label": "aDirectdrawcrea",
+  "text": "DirectDrawCreate"
+ },
+ {
+  "label": "aDinputDll_1",
+  "text": "DINPUT.DLL"
+ },
+ {
+  "label": "aDirectinputcre_0",
+  "text": "DirectInputCreateA"
+ },
+ {
+  "label": "aDirectdrawOver",
+  "text": "DirectDraw overlay"
+ },
+ {
+  "label": "aUnsupportedVir_0",
+  "text": "Unsupported virtual resolution"
+ },
+ {
+  "label": "aOverlaysNotSup",
+  "text": "Overlays not supported"
+ },
+ {
+  "label": "aUnsupportedCol",
+  "text": "Unsupported color depth"
+ },
+ {
+  "label": "aResolutionNotS_1",
+  "text": "Resolution not supported"
+ },
+ {
+  "label": "aResolutionNotS",
+  "text": "Resolution not supported"
+ },
+ {
+  "label": "aResolutionNotS_0",
+  "text": "Resolution not supported"
+ },
+ {
+  "label": "aDirectdrawInMa",
+  "text": "DirectDraw, in matching, %d bpp overlay"
+ },
+ {
+  "label": "aDirectdrawWind",
+  "text": "DirectDraw window"
+ },
+ {
+  "label": "aUnsupportedVir_1",
+  "text": "Unsupported virtual resolution"
+ },
+ {
+  "label": "aUnsupportedCol_0",
+  "text": "Unsupported color depth"
+ },
+ {
+  "label": "aResolutionNotS_2",
+  "text": "Resolution not supported"
+ },
+ {
+  "label": "aWindowedModeNo",
+  "text": "Windowed mode not supported"
+ },
+ {
+  "label": "aColorConversio",
+  "text": "color conversion"
+ },
+ {
+  "label": "aMatching",
+  "text": "matching"
+ },
+ {
+  "label": "aDirectdrawInSD",
+  "text": "DirectDraw, in %s, %d bpp window"
+ },
+ {
+  "label": "aIjhwkkr0123456",
+  "text": "IJhWkKr/012345678qp,-.X)*+Y&'"
+ },
+ {
+  "label": "aG9",
+  "text": "G9:"
+ },
+ {
+  "label": "aKeyboard",
+  "text": "keyboard"
+ },
+ {
+  "label": "aSystem_4",
+  "text": "system"
+ },
+ {
+  "label": "aCfg_0",
+  "text": ".cfg"
+ },
+ {
+  "label": "aKeyboardDat",
+  "text": "keyboard.dat"
+ },
+ {
+  "label": "aKeyAscii",
+  "text": "key_ascii"
+ },
+ {
+  "label": "aKeyCapslock",
+  "text": "key_capslock"
+ },
+ {
+  "label": "aKeyShift",
+  "text": "key_shift"
+ },
+ {
+  "label": "aKeyControl",
+  "text": "key_control"
+ },
+ {
+  "label": "aKeyAltgr",
+  "text": "key_altgr"
+ },
+ {
+  "label": "aKeyAltgr_0",
+  "text": "key_altgr"
+ },
+ {
+  "label": "aKeyAltgrLower",
+  "text": "key_altgr_lower"
+ },
+ {
+  "label": "aKeyAltgrUpper",
+  "text": "key_altgr_upper"
+ },
+ {
+  "label": "aKeyAccent1Lowe",
+  "text": "key_accent1_lower"
+ },
+ {
+  "label": "aKeyAccent1Uppe",
+  "text": "key_accent1_upper"
+ },
+ {
+  "label": "aKeyAccent2Lowe",
+  "text": "key_accent2_lower"
+ },
+ {
+  "label": "aKeyAccent2Uppe",
+  "text": "key_accent2_upper"
+ },
+ {
+  "label": "aKeyAccent3Lowe",
+  "text": "key_accent3_lower"
+ },
+ {
+  "label": "aKeyAccent3Uppe",
+  "text": "key_accent3_upper"
+ },
+ {
+  "label": "aKeyAccent4Lowe",
+  "text": "key_accent4_lower"
+ },
+ {
+  "label": "aKeyAccent4Uppe",
+  "text": "key_accent4_upper"
+ },
+ {
+  "label": "aAccent1",
+  "text": "accent1"
+ },
+ {
+  "label": "aKeyEscape",
+  "text": "key_escape"
+ },
+ {
+  "label": "aAccent2",
+  "text": "accent2"
+ },
+ {
+  "label": "aKeyEscape_0",
+  "text": "key_escape"
+ },
+ {
+  "label": "aAccent3",
+  "text": "accent3"
+ },
+ {
+  "label": "aKeyEscape_1",
+  "text": "key_escape"
+ },
+ {
+  "label": "aAccent4",
+  "text": "accent4"
+ },
+ {
+  "label": "aKeyEscape_2",
+  "text": "key_escape"
+ },
+ {
+  "label": "aAccent1Flag",
+  "text": "accent1_flag"
+ },
+ {
+  "label": "aKeyEscape_3",
+  "text": "key_escape"
+ },
+ {
+  "label": "aAccent2Flag",
+  "text": "accent2_flag"
+ },
+ {
+  "label": "aKeyEscape_4",
+  "text": "key_escape"
+ },
+ {
+  "label": "aAccent3Flag",
+  "text": "accent3_flag"
+ },
+ {
+  "label": "aKeyEscape_5",
+  "text": "key_escape"
+ },
+ {
+  "label": "aAccent4Flag",
+  "text": "accent4_flag"
+ },
+ {
+  "label": "aKeyEscape_6",
+  "text": "key_escape"
+ },
+ {
+  "label": "aKeyD",
+  "text": "key%d"
+ },
+ {
+  "label": "aDigmid",
+  "text": "DIGMID"
+ },
+ {
+  "label": "aPatches",
+  "text": "patches"
+ },
+ {
+  "label": "aSound_22",
+  "text": "sound"
+ },
+ {
+  "label": "aPatchesDat",
+  "text": "patches.dat"
+ },
+ {
+  "label": "aDefaultCfg",
+  "text": "default.cfg"
+ },
+ {
+  "label": "aUltradir",
+  "text": "ULTRADIR"
+ },
+ {
+  "label": "aMidi_1",
+  "text": "midi"
+ },
+ {
+  "label": "aR_8",
+  "text": "r"
+ },
+ {
+  "label": "aBeginMultipatc",
+  "text": "begin_multipatch"
+ },
+ {
+  "label": "aOverridePatch",
+  "text": "override_patch"
+ },
+ {
+  "label": "aEndMultipatch",
+  "text": "end_multipatch"
+ },
+ {
+  "label": "aRp_0",
+  "text": "rp"
+ },
+ {
+  "label": "aPat",
+  "text": ".pat"
+ },
+ {
+  "label": "aR_9",
+  "text": "r"
+ },
+ {
+  "label": "aGf1patch110",
+  "text": "GF1PATCH110"
+ },
+ {
+  "label": "aId000002",
+  "text": "ID#000002"
+ },
+ {
+  "label": "aDigmidPatchSet",
+  "text": "DIGMID patch set not found"
+ },
+ {
+  "label": "aSoftwareWaveta",
+  "text": "Software wavetable synth"
+ },
+ {
+  "label": "aWaveout44100hz",
+  "text": "WaveOut 44100hz 16bit stereo"
+ },
+ {
+  "label": "aWaveout22050hz",
+  "text": "WaveOut 22050hz 8bit mono"
+ },
+ {
+  "label": "aInputIsNotSupp",
+  "text": "Input is not supported"
+ },
+ {
+  "label": "aUnableToSetupI",
+  "text": "Unable to setup initialization sample"
+ },
+ {
+  "label": "aJgmodNotEnough",
+  "text": "JGMOD : Not enough memory to setup initialization sample"
+ },
+ {
+  "label": "aJgmodUnableToA",
+  "text": "JGMOD : Unable to allocate enough voices"
+ },
+ {
+  "label": "aRb_26",
+  "text": "rb"
+ },
+ {
+  "label": "aUnableToOpenS",
+  "text": "Unable to open %s"
+ },
+ {
+  "label": "aUnsupportedMod",
+  "text": "Unsupported MOD type or unable to open file"
+ },
+ {
+  "label": "aCanTPlayAJgmod",
+  "text": "Can't play a JGMOD pointer with null value"
+ },
+ {
+  "label": "aJgmodPointerPa",
+  "text": "JGMOD pointer passed in is a NULL value"
+ },
+ {
+  "label": "aIncorrectValue",
+  "text": "Incorrect value of no sample found"
+ },
+ {
+  "label": "aRb_38",
+  "text": "rb"
+ },
+ {
+  "label": "aUnsupportedMod_0",
+  "text": "Unsupported MOD type or unable to open file"
+ },
+ {
+  "label": "aMK",
+  "text": "M.K."
+ },
+ {
+  "label": "aMK_0",
+  "text": "M!K!"
+ },
+ {
+  "label": "aMod15Samples",
+  "text": "MOD (15 Samples)"
+ },
+ {
+  "label": "aMod31Samples",
+  "text": "MOD (31 Samples)"
+ },
+ {
+  "label": "aModMustHave15O",
+  "text": "MOD must have 15 or 31 samples"
+ },
+ {
+  "label": "aRb_41",
+  "text": "rb"
+ },
+ {
+  "label": "aUnableToOpenS_3",
+  "text": "Unable to open %s"
+ },
+ {
+  "label": "aRb_45",
+  "text": "rb"
+ },
+ {
+  "label": "a32fw",
+  "text": "32FW"
+ },
+ {
+  "label": "aModMustBe15Or3",
+  "text": "MOD must be 15 or 31 instruments"
+ },
+ {
+  "label": "aUnableToAlloca",
+  "text": "Unable to allocate enough memory for JGMOD structure"
+ },
+ {
+  "label": "aUnableToAlloca_0",
+  "text": "Unable to allocate enough memory for SAMPLE_INFO structure"
+ },
+ {
+  "label": "aUnableToAlloca_1",
+  "text": "Unable to allocate enough memory for SAMPLE structure"
+ },
+ {
+  "label": "aRb_27",
+  "text": "rb"
+ },
+ {
+  "label": "aUnableToOpenS_0",
+  "text": "Unable to open %s"
+ },
+ {
+  "label": "a32fw_0",
+  "text": "32FW"
+ },
+ {
+  "label": "aUnableToAlloca_2",
+  "text": "Unable to allocate enough memory for PATTERN_INFO"
+ },
+ {
+  "label": "aUnableToAlloca_3",
+  "text": "Unable to allocate enough memory for NOTE_INFO"
+ },
+ {
+  "label": "aUnableToAlloca_4",
+  "text": "Unable to allocate enough memory for SAMPLE DATA"
+ },
+ {
+  "label": "aRb_28",
+  "text": "rb"
+ },
+ {
+  "label": "aUnableToOpenS_4",
+  "text": "Unable to open %s"
+ },
+ {
+  "label": "aUnrealS3mUmx",
+  "text": "Unreal S3M (UMX)"
+ },
+ {
+  "label": "aRb_46",
+  "text": "rb"
+ },
+ {
+  "label": "aScrm",
+  "text": "SCRM"
+ },
+ {
+  "label": "aRb_29",
+  "text": "rb"
+ },
+ {
+  "label": "aScrm_0",
+  "text": "SCRM"
+ },
+ {
+  "label": "aRb_30",
+  "text": "rb"
+ },
+ {
+  "label": "aUnableToOpenS_1",
+  "text": "Unable to open %s"
+ },
+ {
+  "label": "aUnableToAlloca_5",
+  "text": "Unable to allocate enough memory for JGMOD structure"
+ },
+ {
+  "label": "aUnableToAlloca_10",
+  "text": "Unable to allocate enough memory for SAMPLE or SAMPLE_INFO"
+ },
+ {
+  "label": "aUnableToAlloca_6",
+  "text": "Unable to allocate enough memory for parapointer"
+ },
+ {
+  "label": "aScrs",
+  "text": "SCRS"
+ },
+ {
+  "label": "aUnableToAlloca_7",
+  "text": "Unable to allocate enough memory for data sample"
+ },
+ {
+  "label": "aUnableToAlloca_8",
+  "text": "Unable to allocate enough memory for PATTERN_INFO"
+ },
+ {
+  "label": "aUnableToAlloca_9",
+  "text": "Unable to allocate enough memory for NOTE_INFO"
+ },
+ {
+  "label": "aRb_39",
+  "text": "rb"
+ },
+ {
+  "label": "aUnableToOpenS_5",
+  "text": "Unable to open %s"
+ },
+ {
+  "label": "aXm",
+  "text": "XM"
+ },
+ {
+  "label": "aUnrealXmUmx",
+  "text": "Unreal XM (UMX)"
+ },
+ {
+  "label": "aRb_47",
+  "text": "rb"
+ },
+ {
+  "label": "aExtendedModule",
+  "text": "Extended Module: "
+ },
+ {
+  "label": "aRb_31",
+  "text": "rb"
+ },
+ {
+  "label": "aExtendedModule_0",
+  "text": "Extended Module: "
+ },
+ {
+  "label": "aUnableToAlloca_11",
+  "text": "Unable to allocate enough memory for JGMOD structure"
+ },
+ {
+  "label": "aRb_32",
+  "text": "rb"
+ },
+ {
+  "label": "aUnableToOpenS_2",
+  "text": "Unable to open %s"
+ },
+ {
+  "label": "aUnableToAlloca_12",
+  "text": "Unable to allocate enough memory for PATTERN_INFO"
+ },
+ {
+  "label": "aUnableToAlloca_14",
+  "text": "Unable to allocate enough memroy for NOTE_INFO"
+ },
+ {
+  "label": "aUnableToAlloca_13",
+  "text": "Unable to allocate enough memory for NOTE_INFO"
+ },
+ {
+  "label": "aUnableToAlloca_15",
+  "text": "Unable to allocate enough memory for INSTRUMENT_INFO"
+ },
+ {
+  "label": "aUnableToAlloca_16",
+  "text": "Unable to allocate enough memory for XMWAV"
+ },
+ {
+  "label": "aUnableToAlloca_17",
+  "text": "Unable to allocate enough memory for SAMPLE_INFO"
+ },
+ {
+  "label": "aUnableToAlloca_18",
+  "text": "Unable to allocate enough memory for SAMPLE"
+ },
+ {
+  "label": "aUnbleToAllocat",
+  "text": "Unble to allocate enough memory for sample data"
+ },
+ {
+  "label": "aUnableToAlloca_19",
+  "text": "Unable to allocate enough memory for sample data"
+ },
+ {
+  "label": "aRb_33",
+  "text": "rb"
+ },
+ {
+  "label": "aImpm",
+  "text": "IMPM"
+ },
+ {
+  "label": "aRb_34",
+  "text": "rb"
+ },
+ {
+  "label": "aImpm_0",
+  "text": "IMPM"
+ },
+ {
+  "label": "aRb_40",
+  "text": "rb"
+ },
+ {
+  "label": "aUnableToOpenS_6",
+  "text": "Unable to open %s"
+ },
+ {
+  "label": "aIt",
+  "text": "IT"
+ },
+ {
+  "label": "aUnrealItUmx",
+  "text": "Unreal IT (UMX)"
+ },
+ {
+  "label": "aRb_48",
+  "text": "rb"
+ },
+ {
+  "label": "aUnableToAlloca_20",
+  "text": "Unable to allocate enough memory for JGMOD structure"
+ },
+ {
+  "label": "aS_7",
+  "text": "%s\\x0a"
+ },
+ {
+  "label": "aItSupportIsNot",
+  "text": "IT support is not completed yet. Wait a few more versions"
+ },
+ {
+  "label": "aR_7",
+  "text": "r"
+ },
+ {
+  "label": "aRb_35",
+  "text": "rb"
+ },
+ {
+  "label": "aJgmod01Module",
+  "text": "JGMOD 01 module : "
+ },
+ {
+  "label": "aUnableToAlloca_21",
+  "text": "Unable to allocate enough memory for JGMOD structure"
+ },
+ {
+  "label": "aUnableToAlloca_22",
+  "text": "Unable to allocate enough memory for INSTRUMENT_INFO"
+ },
+ {
+  "label": "aUnableToAlloca_26",
+  "text": "Unable to allocate enough memory for SAMPLE or SAMPLE_INFO"
+ },
+ {
+  "label": "aUnableToAlloca_24",
+  "text": "Unable to allocate enough memory for sample data"
+ },
+ {
+  "label": "aUnableToAllcat",
+  "text": "Unable to allcate enough memory for sample data"
+ },
+ {
+  "label": "aUnableToAlloca_23",
+  "text": "Unable to allocate enough memory for PATTERN_INFO"
+ },
+ {
+  "label": "aUnableToAlloca_25",
+  "text": "Unable to allocate enough memory for NOTE_INFO"
+ },
+ {
+  "label": "aXing",
+  "text": "Xing"
+ },
+ {
+  "label": "aId3",
+  "text": "ID3"
+ },
+ {
+  "label": "aNameIndex",
+  "text": "name_index"
+ },
+ {
+  "label": "aGlyphName",
+  "text": "glyph_name"
+ },
+ {
+  "label": "aPostscriptName",
+  "text": "postscript_name"
+ },
+ {
+  "label": "aGetSfnt",
+  "text": "get_sfnt"
+ },
+ {
+  "label": "aRb_37",
+  "text": "rb"
+ },
+ {
+  "label": "aWinfonts",
+  "text": "winfonts"
+ },
+ {
+  "label": "aItalic",
+  "text": "Italic"
+ },
+ {
+  "label": "aBold",
+  "text": "Bold"
+ },
+ {
+  "label": "aBoldItalic",
+  "text": "Bold Italic"
+ },
+ {
+  "label": "aRegular",
+  "text": "Regular"
+ },
+ {
+  "label": "aType1",
+  "text": "type1"
+ },
+ {
+  "label": "aShareddict",
+  "text": "shareddict"
+ },
+ {
+  "label": "aWeightvector",
+  "text": "WeightVector"
+ },
+ {
+  "label": "aBlendaxistypes",
+  "text": "BlendAxisTypes"
+ },
+ {
+  "label": "aBlenddesignmap",
+  "text": "BlendDesignMap"
+ },
+ {
+  "label": "aBlenddesignpos",
+  "text": "BlendDesignPositions"
+ },
+ {
+  "label": "aCharstrings",
+  "text": "CharStrings"
+ },
+ {
+  "label": "aSubrs",
+  "text": "Subrs"
+ },
+ {
+  "label": "aEncoding",
+  "text": "Encoding"
+ },
+ {
+  "label": "aFontmatrix",
+  "text": "FontMatrix"
+ },
+ {
+  "label": "aFontbbox",
+  "text": "FontBBox"
+ },
+ {
+  "label": "aFontname",
+  "text": "FontName"
+ },
+ {
+  "label": "aStrokewidth",
+  "text": "StrokeWidth"
+ },
+ {
+  "label": "aFonttype_0",
+  "text": "FontType"
+ },
+ {
+  "label": "aPainttype",
+  "text": "PaintType"
+ },
+ {
+  "label": "aStemsnapv",
+  "text": "StemSnapV"
+ },
+ {
+  "label": "aStemsnaph",
+  "text": "StemSnapH"
+ },
+ {
+  "label": "aMinfeature",
+  "text": "MinFeature"
+ },
+ {
+  "label": "aStdvw",
+  "text": "StdVW"
+ },
+ {
+  "label": "aStdhw",
+  "text": "StdHW"
+ },
+ {
+  "label": "aFamilyotherblu",
+  "text": "FamilyOtherBlues"
+ },
+ {
+  "label": "aFamilyblues",
+  "text": "FamilyBlues"
+ },
+ {
+  "label": "aOtherblues",
+  "text": "OtherBlues"
+ },
+ {
+  "label": "aBluevalues",
+  "text": "BlueValues"
+ },
+ {
+  "label": "aBluefuzz",
+  "text": "BlueFuzz"
+ },
+ {
+  "label": "aBlueshift",
+  "text": "BlueShift"
+ },
+ {
+  "label": "aBluescale",
+  "text": "BlueScale"
+ },
+ {
+  "label": "aPassword",
+  "text": "password"
+ },
+ {
+  "label": "aLanguagegroup",
+  "text": "LanguageGroup"
+ },
+ {
+  "label": "aLeniv",
+  "text": "lenIV"
+ },
+ {
+  "label": "aUniqueid",
+  "text": "UniqueID"
+ },
+ {
+  "label": "aUnderlinethick",
+  "text": "UnderlineThickness"
+ },
+ {
+  "label": "aUnderlineposit",
+  "text": "UnderlinePosition"
+ },
+ {
+  "label": "aIsfixedpitch",
+  "text": "isFixedPitch"
+ },
+ {
+  "label": "aItalicangle",
+  "text": "ItalicAngle"
+ },
+ {
+  "label": "aWeight",
+  "text": "Weight"
+ },
+ {
+  "label": "aFamilyname",
+  "text": "FamilyName"
+ },
+ {
+  "label": "aFullname",
+  "text": "FullName"
+ },
+ {
+  "label": "aNotice",
+  "text": "Notice"
+ },
+ {
+  "label": "aVersion",
+  "text": "version"
+ },
+ {
+  "label": "aExpertencoding",
+  "text": "ExpertEncoding"
+ },
+ {
+  "label": "aStandardencodi",
+  "text": "StandardEncoding"
+ },
+ {
+  "label": "aNotdef",
+  "text": ".notdef"
+ },
+ {
+  "label": "aPut",
+  "text": "put"
+ },
+ {
+  "label": "aDup",
+  "text": "dup"
+ },
+ {
+  "label": "aPshinter",
+  "text": "pshinter"
+ },
+ {
+  "label": "aBlack",
+  "text": "Black"
+ },
+ {
+  "label": "aPsaux",
+  "text": "psaux"
+ },
+ {
+  "label": "aPsnames",
+  "text": "psnames"
+ },
+ {
+  "label": "aFonttype",
+  "text": "%!FontType"
+ },
+ {
+  "label": "aPsAdobefont1",
+  "text": "%!PS-AdobeFont-1"
+ },
+ {
+  "label": "aKnown",
+  "text": "known"
+ },
+ {
+  "label": "aFontdirectory",
+  "text": "FontDirectory"
+ },
+ {
+  "label": "aSetMmBlend",
+  "text": "set_mm_blend"
+ },
+ {
+  "label": "aSetMmDesign",
+  "text": "set_mm_design"
+ },
+ {
+  "label": "aGetMm",
+  "text": "get_mm"
+ },
+ {
+  "label": "aTruetype",
+  "text": "truetype"
+ },
+ {
+  "label": "aSfnt",
+  "text": "sfnt"
+ },
+ {
+  "label": "aSmooth",
+  "text": "smooth"
+ },
+ {
+  "label": "aRaster5",
+  "text": "raster5"
+ },
+ {
+  "label": "aRaster1",
+  "text": "raster1"
+ },
+ {
+  "label": "aZeta_0",
+  "text": "zeta"
+ },
+ {
+  "label": "aZdotaccent_0",
+  "text": "zdotaccent"
+ },
+ {
+  "label": "aZacute_0",
+  "text": "zacute"
+ },
+ {
+  "label": "aYgrave_0",
+  "text": "ygrave"
+ },
+ {
+  "label": "aYcircumflex_0",
+  "text": "ycircumflex"
+ },
+ {
+  "label": "aXi",
+  "text": "xi"
+ },
+ {
+  "label": "aWgrave_0",
+  "text": "wgrave"
+ },
+ {
+  "label": "aWeierstrass",
+  "text": "weierstrass"
+ },
+ {
+  "label": "aWdieresis_0",
+  "text": "wdieresis"
+ },
+ {
+  "label": "aWcircumflex_0",
+  "text": "wcircumflex"
+ },
+ {
+  "label": "aWacute_0",
+  "text": "wacute"
+ },
+ {
+  "label": "aUtilde_0",
+  "text": "utilde"
+ },
+ {
+  "label": "aUring_0",
+  "text": "uring"
+ },
+ {
+  "label": "aUpsilontonos_0",
+  "text": "upsilontonos"
+ },
+ {
+  "label": "aUpsilondieresi_1",
+  "text": "upsilondieresistonos"
+ },
+ {
+  "label": "aUpsilondieresi_0",
+  "text": "upsilondieresis"
+ },
+ {
+  "label": "aUpsilon_0",
+  "text": "upsilon"
+ },
+ {
+  "label": "aUpblock",
+  "text": "upblock"
+ },
+ {
+  "label": "aUogonek_0",
+  "text": "uogonek"
+ },
+ {
+  "label": "aUniversal",
+  "text": "universal"
+ },
+ {
+  "label": "aUnion",
+  "text": "union"
+ },
+ {
+  "label": "aUnderscoredbl",
+  "text": "underscoredbl"
+ },
+ {
+  "label": "aUmacron_0",
+  "text": "umacron"
+ },
+ {
+  "label": "aUhungarumlaut_0",
+  "text": "uhungarumlaut"
+ },
+ {
+  "label": "aUhorn_0",
+  "text": "uhorn"
+ },
+ {
+  "label": "aUbreve_0",
+  "text": "ubreve"
+ },
+ {
+  "label": "aTriagup",
+  "text": "triagup"
+ },
+ {
+  "label": "aTriagrt",
+  "text": "triagrt"
+ },
+ {
+  "label": "aTriaglf",
+  "text": "triaglf"
+ },
+ {
+  "label": "aTriagdn",
+  "text": "triagdn"
+ },
+ {
+  "label": "aTrademarkserif",
+  "text": "trademarkserif"
+ },
+ {
+  "label": "aTrademarksans",
+  "text": "trademarksans"
+ },
+ {
+  "label": "aTonos",
+  "text": "tonos"
+ },
+ {
+  "label": "aTildecomb",
+  "text": "tildecomb"
+ },
+ {
+  "label": "aTheta1",
+  "text": "theta1"
+ },
+ {
+  "label": "aTheta_0",
+  "text": "theta"
+ },
+ {
+  "label": "aTherefore",
+  "text": "therefore"
+ },
+ {
+  "label": "aTcommaaccent_0",
+  "text": "tcommaaccent"
+ },
+ {
+  "label": "aTcaron_0",
+  "text": "tcaron"
+ },
+ {
+  "label": "aTbar_0",
+  "text": "tbar"
+ },
+ {
+  "label": "aTau",
+  "text": "tau"
+ },
+ {
+  "label": "aSun",
+  "text": "sun"
+ },
+ {
+  "label": "aSummation",
+  "text": "summation"
+ },
+ {
+  "label": "aSuchthat",
+  "text": "suchthat"
+ },
+ {
+  "label": "aSpade",
+  "text": "spade"
+ },
+ {
+  "label": "aSmileface",
+  "text": "smileface"
+ },
+ {
+  "label": "aSimilar",
+  "text": "similar"
+ },
+ {
+  "label": "aSigma1",
+  "text": "sigma1"
+ },
+ {
+  "label": "aSigma_0",
+  "text": "sigma"
+ },
+ {
+  "label": "aShade",
+  "text": "shade"
+ },
+ {
+  "label": "aSecond",
+  "text": "second"
+ },
+ {
+  "label": "aScommaaccent_0",
+  "text": "scommaaccent"
+ },
+ {
+  "label": "aScircumflex_0",
+  "text": "scircumflex"
+ },
+ {
+  "label": "aScedilla_0",
+  "text": "scedilla"
+ },
+ {
+  "label": "aSacute_0",
+  "text": "sacute"
+ },
+ {
+  "label": "aRtblock",
+  "text": "rtblock"
+ },
+ {
+  "label": "aRho",
+  "text": "rho"
+ },
+ {
+  "label": "aRevlogicalnot",
+  "text": "revlogicalnot"
+ },
+ {
+  "label": "aRegisterserif",
+  "text": "registerserif"
+ },
+ {
+  "label": "aRegistersans",
+  "text": "registersans"
+ },
+ {
+  "label": "aReflexsuperset",
+  "text": "reflexsuperset"
+ },
+ {
+  "label": "aReflexsubset",
+  "text": "reflexsubset"
+ },
+ {
+  "label": "aRcommaaccent_0",
+  "text": "rcommaaccent"
+ },
+ {
+  "label": "aRcaron_0",
+  "text": "rcaron"
+ },
+ {
+  "label": "aRadicalex",
+  "text": "radicalex"
+ },
+ {
+  "label": "aRadical",
+  "text": "radical"
+ },
+ {
+  "label": "aRacute_0",
+  "text": "racute"
+ },
+ {
+  "label": "aQuotereversed",
+  "text": "quotereversed"
+ },
+ {
+  "label": "aPsi",
+  "text": "psi"
+ },
+ {
+  "label": "aProportional",
+  "text": "proportional"
+ },
+ {
+  "label": "aPropersuperset",
+  "text": "propersuperset"
+ },
+ {
+  "label": "aPropersubset",
+  "text": "propersubset"
+ },
+ {
+  "label": "aProduct",
+  "text": "product"
+ },
+ {
+  "label": "aPrescription",
+  "text": "prescription"
+ },
+ {
+  "label": "aPi",
+  "text": "pi"
+ },
+ {
+  "label": "aPhi1",
+  "text": "phi1"
+ },
+ {
+  "label": "aPhi",
+  "text": "phi"
+ },
+ {
+  "label": "aPeseta",
+  "text": "peseta"
+ },
+ {
+  "label": "aPerpendicular",
+  "text": "perpendicular"
+ },
+ {
+  "label": "aPartialdiff",
+  "text": "partialdiff"
+ },
+ {
+  "label": "aParenrighttp",
+  "text": "parenrighttp"
+ },
+ {
+  "label": "aParenrightex",
+  "text": "parenrightex"
+ },
+ {
+  "label": "aParenrightbt",
+  "text": "parenrightbt"
+ },
+ {
+  "label": "aParenlefttp",
+  "text": "parenlefttp"
+ },
+ {
+  "label": "aParenleftex",
+  "text": "parenleftex"
+ },
+ {
+  "label": "aParenleftbt",
+  "text": "parenleftbt"
+ },
+ {
+  "label": "aOslashacute_0",
+  "text": "oslashacute"
+ },
+ {
+  "label": "aOrthogonal",
+  "text": "orthogonal"
+ },
+ {
+  "label": "aOpenbullet",
+  "text": "openbullet"
+ },
+ {
+  "label": "aOmicrontonos_0",
+  "text": "omicrontonos"
+ },
+ {
+  "label": "aOmicron_0",
+  "text": "omicron"
+ },
+ {
+  "label": "aOmegatonos_0",
+  "text": "omegatonos"
+ },
+ {
+  "label": "aOmega1",
+  "text": "omega1"
+ },
+ {
+  "label": "aOmega_0",
+  "text": "omega"
+ },
+ {
+  "label": "aOmacron_0",
+  "text": "omacron"
+ },
+ {
+  "label": "aOhungarumlaut_0",
+  "text": "ohungarumlaut"
+ },
+ {
+  "label": "aOhorn_0",
+  "text": "ohorn"
+ },
+ {
+  "label": "aObreve_0",
+  "text": "obreve"
+ },
+ {
+  "label": "aNu",
+  "text": "nu"
+ },
+ {
+  "label": "aNotsubset",
+  "text": "notsubset"
+ },
+ {
+  "label": "aNotequal",
+  "text": "notequal"
+ },
+ {
+  "label": "aNotelement",
+  "text": "notelement"
+ },
+ {
+  "label": "aNcommaaccent_0",
+  "text": "ncommaaccent"
+ },
+ {
+  "label": "aNcaron_0",
+  "text": "ncaron"
+ },
+ {
+  "label": "aNapostrophe",
+  "text": "napostrophe"
+ },
+ {
+  "label": "aNacute_0",
+  "text": "nacute"
+ },
+ {
+  "label": "aMusicalnotedbl",
+  "text": "musicalnotedbl"
+ },
+ {
+  "label": "aMusicalnote",
+  "text": "musicalnote"
+ },
+ {
+  "label": "aMinute",
+  "text": "minute"
+ },
+ {
+  "label": "aMale",
+  "text": "male"
+ },
+ {
+  "label": "aLtshade",
+  "text": "ltshade"
+ },
+ {
+  "label": "aLozenge",
+  "text": "lozenge"
+ },
+ {
+  "label": "aLongs",
+  "text": "longs"
+ },
+ {
+  "label": "aLogicalor",
+  "text": "logicalor"
+ },
+ {
+  "label": "aLogicaland",
+  "text": "logicaland"
+ },
+ {
+  "label": "aLl",
+  "text": "ll"
+ },
+ {
+  "label": "aLira",
+  "text": "lira"
+ },
+ {
+  "label": "aLfblock",
+  "text": "lfblock"
+ },
+ {
+  "label": "aLessequal",
+  "text": "lessequal"
+ },
+ {
+  "label": "aLdot_0",
+  "text": "ldot"
+ },
+ {
+  "label": "aLcommaaccent_0",
+  "text": "lcommaaccent"
+ },
+ {
+  "label": "aLcaron_0",
+  "text": "lcaron"
+ },
+ {
+  "label": "aLambda_0",
+  "text": "lambda"
+ },
+ {
+  "label": "aLacute_0",
+  "text": "lacute"
+ },
+ {
+  "label": "aKgreenlandic",
+  "text": "kgreenlandic"
+ },
+ {
+  "label": "aKcommaaccent_0",
+  "text": "kcommaaccent"
+ },
+ {
+  "label": "aKappa_0",
+  "text": "kappa"
+ },
+ {
+  "label": "aJcircumflex_0",
+  "text": "jcircumflex"
+ },
+ {
+  "label": "aItilde_0",
+  "text": "itilde"
+ },
+ {
+  "label": "aIotatonos_0",
+  "text": "iotatonos"
+ },
+ {
+  "label": "aIotadieresisto",
+  "text": "iotadieresistonos"
+ },
+ {
+  "label": "aIotadieresis_0",
+  "text": "iotadieresis"
+ },
+ {
+  "label": "aIota_0",
+  "text": "iota"
+ },
+ {
+  "label": "aIogonek_0",
+  "text": "iogonek"
+ },
+ {
+  "label": "aInvsmileface",
+  "text": "invsmileface"
+ },
+ {
+  "label": "aInvcircle",
+  "text": "invcircle"
+ },
+ {
+  "label": "aInvbullet",
+  "text": "invbullet"
+ },
+ {
+  "label": "aIntersection",
+  "text": "intersection"
+ },
+ {
+  "label": "aIntegraltp",
+  "text": "integraltp"
+ },
+ {
+  "label": "aIntegralex",
+  "text": "integralex"
+ },
+ {
+  "label": "aIntegralbt",
+  "text": "integralbt"
+ },
+ {
+  "label": "aIntegral",
+  "text": "integral"
+ },
+ {
+  "label": "aInfinity",
+  "text": "infinity"
+ },
+ {
+  "label": "aImacron_0",
+  "text": "imacron"
+ },
+ {
+  "label": "aIj",
+  "text": "ij"
+ },
+ {
+  "label": "aIbreve_0",
+  "text": "ibreve"
+ },
+ {
+  "label": "aHouse",
+  "text": "house"
+ },
+ {
+  "label": "aHookabovecomb",
+  "text": "hookabovecomb"
+ },
+ {
+  "label": "aHeart",
+  "text": "heart"
+ },
+ {
+  "label": "aHcircumflex_0",
+  "text": "hcircumflex"
+ },
+ {
+  "label": "aHbar_0",
+  "text": "hbar"
+ },
+ {
+  "label": "aGreaterequal",
+  "text": "greaterequal"
+ },
+ {
+  "label": "aGravecomb",
+  "text": "gravecomb"
+ },
+ {
+  "label": "aGradient",
+  "text": "gradient"
+ },
+ {
+  "label": "aGdotaccent_0",
+  "text": "gdotaccent"
+ },
+ {
+  "label": "aGcommaaccent_0",
+  "text": "gcommaaccent"
+ },
+ {
+  "label": "aGcircumflex_0",
+  "text": "gcircumflex"
+ },
+ {
+  "label": "aGcaron_0",
+  "text": "gcaron"
+ },
+ {
+  "label": "aGbreve_0",
+  "text": "gbreve"
+ },
+ {
+  "label": "aGamma_0",
+  "text": "gamma"
+ },
+ {
+  "label": "aFranc",
+  "text": "franc"
+ },
+ {
+  "label": "aFilledrect",
+  "text": "filledrect"
+ },
+ {
+  "label": "aFilledbox",
+  "text": "filledbox"
+ },
+ {
+  "label": "aFemale",
+  "text": "female"
+ },
+ {
+  "label": "aExistential",
+  "text": "existential"
+ },
+ {
+  "label": "aExclamdbl",
+  "text": "exclamdbl"
+ },
+ {
+  "label": "aEtatonos_0",
+  "text": "etatonos"
+ },
+ {
+  "label": "aEta",
+  "text": "eta"
+ },
+ {
+  "label": "aEstimated",
+  "text": "estimated"
+ },
+ {
+  "label": "aEquivalence",
+  "text": "equivalence"
+ },
+ {
+  "label": "aEpsilontonos_0",
+  "text": "epsilontonos"
+ },
+ {
+  "label": "aEpsilon_0",
+  "text": "epsilon"
+ },
+ {
+  "label": "aEogonek_0",
+  "text": "eogonek"
+ },
+ {
+  "label": "aEng",
+  "text": "eng"
+ },
+ {
+  "label": "aEmptyset",
+  "text": "emptyset"
+ },
+ {
+  "label": "aEmacron_0",
+  "text": "emacron"
+ },
+ {
+  "label": "aElement",
+  "text": "element"
+ },
+ {
+  "label": "aEdotaccent_0",
+  "text": "edotaccent"
+ },
+ {
+  "label": "aEcaron_0",
+  "text": "ecaron"
+ },
+ {
+  "label": "aEbreve_0",
+  "text": "ebreve"
+ },
+ {
+  "label": "aDotmath",
+  "text": "dotmath"
+ },
+ {
+  "label": "aDotlessj",
+  "text": "dotlessj"
+ },
+ {
+  "label": "aDotbelowcomb",
+  "text": "dotbelowcomb"
+ },
+ {
+  "label": "aDong",
+  "text": "dong"
+ },
+ {
+  "label": "aDnblock",
+  "text": "dnblock"
+ },
+ {
+  "label": "aDkshade",
+  "text": "dkshade"
+ },
+ {
+  "label": "aDieresistonos",
+  "text": "dieresistonos"
+ },
+ {
+  "label": "aDieresisgrave_0",
+  "text": "dieresisgrave"
+ },
+ {
+  "label": "aDieresisacute_0",
+  "text": "dieresisacute"
+ },
+ {
+  "label": "aDiamond",
+  "text": "diamond"
+ },
+ {
+  "label": "aDelta_0",
+  "text": "delta"
+ },
+ {
+  "label": "aDcroat_0",
+  "text": "dcroat"
+ },
+ {
+  "label": "aDcaron_0",
+  "text": "dcaron"
+ },
+ {
+  "label": "aDblgrave_0",
+  "text": "dblgrave"
+ },
+ {
+  "label": "aDblgrave",
+  "text": "dblGrave"
+ },
+ {
+  "label": "aCyrflex_0",
+  "text": "cyrflex"
+ },
+ {
+  "label": "aCyrbreve_0",
+  "text": "cyrbreve"
+ },
+ {
+  "label": "aCyrflex",
+  "text": "cyrFlex"
+ },
+ {
+  "label": "aCyrbreve",
+  "text": "cyrBreve"
+ },
+ {
+  "label": "aCopyrightserif",
+  "text": "copyrightserif"
+ },
+ {
+  "label": "aCopyrightsans",
+  "text": "copyrightsans"
+ },
+ {
+  "label": "aCongruent",
+  "text": "congruent"
+ },
+ {
+  "label": "aCommaaccent",
+  "text": "commaaccent"
+ },
+ {
+  "label": "aClub",
+  "text": "club"
+ },
+ {
+  "label": "aCircleplus",
+  "text": "circleplus"
+ },
+ {
+  "label": "aCirclemultiply",
+  "text": "circlemultiply"
+ },
+ {
+  "label": "aCircle",
+  "text": "circle"
+ },
+ {
+  "label": "aChi",
+  "text": "chi"
+ },
+ {
+  "label": "aCdotaccent_0",
+  "text": "cdotaccent"
+ },
+ {
+  "label": "aCcircumflex_0",
+  "text": "ccircumflex"
+ },
+ {
+  "label": "aCcaron_0",
+  "text": "ccaron"
+ },
+ {
+  "label": "aCarriagereturn",
+  "text": "carriagereturn"
+ },
+ {
+  "label": "aCacute_0",
+  "text": "cacute"
+ },
+ {
+  "label": "aBracketrighttp",
+  "text": "bracketrighttp"
+ },
+ {
+  "label": "aBracketrightex",
+  "text": "bracketrightex"
+ },
+ {
+  "label": "aBracketrightbt",
+  "text": "bracketrightbt"
+ },
+ {
+  "label": "aBracketlefttp",
+  "text": "bracketlefttp"
+ },
+ {
+  "label": "aBracketleftex",
+  "text": "bracketleftex"
+ },
+ {
+  "label": "aBracketleftbt",
+  "text": "bracketleftbt"
+ },
+ {
+  "label": "aBracerighttp",
+  "text": "bracerighttp"
+ },
+ {
+  "label": "aBracerightmid",
+  "text": "bracerightmid"
+ },
+ {
+  "label": "aBracerightbt",
+  "text": "bracerightbt"
+ },
+ {
+  "label": "aBracelefttp",
+  "text": "bracelefttp"
+ },
+ {
+  "label": "aBraceleftmid",
+  "text": "braceleftmid"
+ },
+ {
+  "label": "aBraceleftbt",
+  "text": "braceleftbt"
+ },
+ {
+  "label": "aBraceex",
+  "text": "braceex"
+ },
+ {
+  "label": "aBlock",
+  "text": "block"
+ },
+ {
+  "label": "aBeta_0",
+  "text": "beta"
+ },
+ {
+  "label": "aAsteriskmath",
+  "text": "asteriskmath"
+ },
+ {
+  "label": "aArrowvertex",
+  "text": "arrowvertex"
+ },
+ {
+  "label": "aArrowupdnbse",
+  "text": "arrowupdnbse"
+ },
+ {
+  "label": "aArrowupdn",
+  "text": "arrowupdn"
+ },
+ {
+  "label": "aArrowup",
+  "text": "arrowup"
+ },
+ {
+  "label": "aArrowright",
+  "text": "arrowright"
+ },
+ {
+  "label": "aArrowleft",
+  "text": "arrowleft"
+ },
+ {
+  "label": "aArrowhorizex",
+  "text": "arrowhorizex"
+ },
+ {
+  "label": "aArrowdown",
+  "text": "arrowdown"
+ },
+ {
+  "label": "aArrowdblup",
+  "text": "arrowdblup"
+ },
+ {
+  "label": "aArrowdblright",
+  "text": "arrowdblright"
+ },
+ {
+  "label": "aArrowdblleft",
+  "text": "arrowdblleft"
+ },
+ {
+  "label": "aArrowdbldown",
+  "text": "arrowdbldown"
+ },
+ {
+  "label": "aArrowdblboth",
+  "text": "arrowdblboth"
+ },
+ {
+  "label": "aArrowboth",
+  "text": "arrowboth"
+ },
+ {
+  "label": "aAringacute_0",
+  "text": "aringacute"
+ },
+ {
+  "label": "aApproxequal",
+  "text": "approxequal"
+ },
+ {
+  "label": "aAogonek_0",
+  "text": "aogonek"
+ },
+ {
+  "label": "aAnoteleia",
+  "text": "anoteleia"
+ },
+ {
+  "label": "aAngleright",
+  "text": "angleright"
+ },
+ {
+  "label": "aAngleleft",
+  "text": "angleleft"
+ },
+ {
+  "label": "aAngle",
+  "text": "angle"
+ },
+ {
+  "label": "aAmacron_0",
+  "text": "amacron"
+ },
+ {
+  "label": "aAlphatonos_0",
+  "text": "alphatonos"
+ },
+ {
+  "label": "aAlpha_0",
+  "text": "alpha"
+ },
+ {
+  "label": "aAleph",
+  "text": "aleph"
+ },
+ {
+  "label": "aAfii64937",
+  "text": "afii64937"
+ },
+ {
+  "label": "aAfii63167",
+  "text": "afii63167"
+ },
+ {
+  "label": "aAfii61664",
+  "text": "afii61664"
+ },
+ {
+  "label": "aAfii61575",
+  "text": "afii61575"
+ },
+ {
+  "label": "aAfii61574",
+  "text": "afii61574"
+ },
+ {
+  "label": "aAfii61573",
+  "text": "afii61573"
+ },
+ {
+  "label": "aAfii61352",
+  "text": "afii61352"
+ },
+ {
+  "label": "aAfii61289",
+  "text": "afii61289"
+ },
+ {
+  "label": "aAfii61248",
+  "text": "afii61248"
+ },
+ {
+  "label": "aAfii57929",
+  "text": "afii57929"
+ },
+ {
+  "label": "aAfii57842",
+  "text": "afii57842"
+ },
+ {
+  "label": "aAfii57841",
+  "text": "afii57841"
+ },
+ {
+  "label": "aAfii57839",
+  "text": "afii57839"
+ },
+ {
+  "label": "aAfii57807",
+  "text": "afii57807"
+ },
+ {
+  "label": "aAfii57806",
+  "text": "afii57806"
+ },
+ {
+  "label": "aAfii57804",
+  "text": "afii57804"
+ },
+ {
+  "label": "aAfii57803",
+  "text": "afii57803"
+ },
+ {
+  "label": "aAfii57802",
+  "text": "afii57802"
+ },
+ {
+  "label": "aAfii57801",
+  "text": "afii57801"
+ },
+ {
+  "label": "aAfii57800",
+  "text": "afii57800"
+ },
+ {
+  "label": "aAfii57799",
+  "text": "afii57799"
+ },
+ {
+  "label": "aAfii57798",
+  "text": "afii57798"
+ },
+ {
+  "label": "aAfii57797",
+  "text": "afii57797"
+ },
+ {
+  "label": "aAfii57796",
+  "text": "afii57796"
+ },
+ {
+  "label": "aAfii57795",
+  "text": "afii57795"
+ },
+ {
+  "label": "aAfii57794",
+  "text": "afii57794"
+ },
+ {
+  "label": "aAfii57793",
+  "text": "afii57793"
+ },
+ {
+  "label": "aAfii57723",
+  "text": "afii57723"
+ },
+ {
+  "label": "aAfii57718",
+  "text": "afii57718"
+ },
+ {
+  "label": "aAfii57717",
+  "text": "afii57717"
+ },
+ {
+  "label": "aAfii57716",
+  "text": "afii57716"
+ },
+ {
+  "label": "aAfii57705",
+  "text": "afii57705"
+ },
+ {
+  "label": "aAfii57700",
+  "text": "afii57700"
+ },
+ {
+  "label": "aAfii57695",
+  "text": "afii57695"
+ },
+ {
+  "label": "aAfii57694",
+  "text": "afii57694"
+ },
+ {
+  "label": "aAfii57690",
+  "text": "afii57690"
+ },
+ {
+  "label": "aAfii57689",
+  "text": "afii57689"
+ },
+ {
+  "label": "aAfii57688",
+  "text": "afii57688"
+ },
+ {
+  "label": "aAfii57687",
+  "text": "afii57687"
+ },
+ {
+  "label": "aAfii57686",
+  "text": "afii57686"
+ },
+ {
+  "label": "aAfii57685",
+  "text": "afii57685"
+ },
+ {
+  "label": "aAfii57684",
+  "text": "afii57684"
+ },
+ {
+  "label": "aAfii57683",
+  "text": "afii57683"
+ },
+ {
+  "label": "aAfii57682",
+  "text": "afii57682"
+ },
+ {
+  "label": "aAfii57681",
+  "text": "afii57681"
+ },
+ {
+  "label": "aAfii57680",
+  "text": "afii57680"
+ },
+ {
+  "label": "aAfii57679",
+  "text": "afii57679"
+ },
+ {
+  "label": "aAfii57678",
+  "text": "afii57678"
+ },
+ {
+  "label": "aAfii57677",
+  "text": "afii57677"
+ },
+ {
+  "label": "aAfii57676",
+  "text": "afii57676"
+ },
+ {
+  "label": "aAfii57675",
+  "text": "afii57675"
+ },
+ {
+  "label": "aAfii57674",
+  "text": "afii57674"
+ },
+ {
+  "label": "aAfii57673",
+  "text": "afii57673"
+ },
+ {
+  "label": "aAfii57672",
+  "text": "afii57672"
+ },
+ {
+  "label": "aAfii57671",
+  "text": "afii57671"
+ },
+ {
+  "label": "aAfii57670",
+  "text": "afii57670"
+ },
+ {
+  "label": "aAfii57669",
+  "text": "afii57669"
+ },
+ {
+  "label": "aAfii57668",
+  "text": "afii57668"
+ },
+ {
+  "label": "aAfii57667",
+  "text": "afii57667"
+ },
+ {
+  "label": "aAfii57666",
+  "text": "afii57666"
+ },
+ {
+  "label": "aAfii57665",
+  "text": "afii57665"
+ },
+ {
+  "label": "aAfii57664",
+  "text": "afii57664"
+ },
+ {
+  "label": "aAfii57658",
+  "text": "afii57658"
+ },
+ {
+  "label": "aAfii57645",
+  "text": "afii57645"
+ },
+ {
+  "label": "aAfii57636",
+  "text": "afii57636"
+ },
+ {
+  "label": "aAfii57534",
+  "text": "afii57534"
+ },
+ {
+  "label": "aAfii57519",
+  "text": "afii57519"
+ },
+ {
+  "label": "aAfii57514",
+  "text": "afii57514"
+ },
+ {
+  "label": "aAfii57513",
+  "text": "afii57513"
+ },
+ {
+  "label": "aAfii57512",
+  "text": "afii57512"
+ },
+ {
+  "label": "aAfii57511",
+  "text": "afii57511"
+ },
+ {
+  "label": "aAfii57509",
+  "text": "afii57509"
+ },
+ {
+  "label": "aAfii57508",
+  "text": "afii57508"
+ },
+ {
+  "label": "aAfii57507",
+  "text": "afii57507"
+ },
+ {
+  "label": "aAfii57506",
+  "text": "afii57506"
+ },
+ {
+  "label": "aAfii57505",
+  "text": "afii57505"
+ },
+ {
+  "label": "aAfii57470",
+  "text": "afii57470"
+ },
+ {
+  "label": "aAfii57458",
+  "text": "afii57458"
+ },
+ {
+  "label": "aAfii57457",
+  "text": "afii57457"
+ },
+ {
+  "label": "aAfii57456",
+  "text": "afii57456"
+ },
+ {
+  "label": "aAfii57455",
+  "text": "afii57455"
+ },
+ {
+  "label": "aAfii57454",
+  "text": "afii57454"
+ },
+ {
+  "label": "aAfii57453",
+  "text": "afii57453"
+ },
+ {
+  "label": "aAfii57452",
+  "text": "afii57452"
+ },
+ {
+  "label": "aAfii57451",
+  "text": "afii57451"
+ },
+ {
+  "label": "aAfii57450",
+  "text": "afii57450"
+ },
+ {
+  "label": "aAfii57449",
+  "text": "afii57449"
+ },
+ {
+  "label": "aAfii57448",
+  "text": "afii57448"
+ },
+ {
+  "label": "aAfii57446",
+  "text": "afii57446"
+ },
+ {
+  "label": "aAfii57445",
+  "text": "afii57445"
+ },
+ {
+  "label": "aAfii57444",
+  "text": "afii57444"
+ },
+ {
+  "label": "aAfii57443",
+  "text": "afii57443"
+ },
+ {
+  "label": "aAfii57442",
+  "text": "afii57442"
+ },
+ {
+  "label": "aAfii57441",
+  "text": "afii57441"
+ },
+ {
+  "label": "aAfii57440",
+  "text": "afii57440"
+ },
+ {
+  "label": "aAfii57434",
+  "text": "afii57434"
+ },
+ {
+  "label": "aAfii57433",
+  "text": "afii57433"
+ },
+ {
+  "label": "aAfii57432",
+  "text": "afii57432"
+ },
+ {
+  "label": "aAfii57431",
+  "text": "afii57431"
+ },
+ {
+  "label": "aAfii57430",
+  "text": "afii57430"
+ },
+ {
+  "label": "aAfii57429",
+  "text": "afii57429"
+ },
+ {
+  "label": "aAfii57428",
+  "text": "afii57428"
+ },
+ {
+  "label": "aAfii57427",
+  "text": "afii57427"
+ },
+ {
+  "label": "aAfii57426",
+  "text": "afii57426"
+ },
+ {
+  "label": "aAfii57425",
+  "text": "afii57425"
+ },
+ {
+  "label": "aAfii57424",
+  "text": "afii57424"
+ },
+ {
+  "label": "aAfii57423",
+  "text": "afii57423"
+ },
+ {
+  "label": "aAfii57422",
+  "text": "afii57422"
+ },
+ {
+  "label": "aAfii57421",
+  "text": "afii57421"
+ },
+ {
+  "label": "aAfii57420",
+  "text": "afii57420"
+ },
+ {
+  "label": "aAfii57419",
+  "text": "afii57419"
+ },
+ {
+  "label": "aAfii57418",
+  "text": "afii57418"
+ },
+ {
+  "label": "aAfii57417",
+  "text": "afii57417"
+ },
+ {
+  "label": "aAfii57416",
+  "text": "afii57416"
+ },
+ {
+  "label": "aAfii57415",
+  "text": "afii57415"
+ },
+ {
+  "label": "aAfii57414",
+  "text": "afii57414"
+ },
+ {
+  "label": "aAfii57413",
+  "text": "afii57413"
+ },
+ {
+  "label": "aAfii57412",
+  "text": "afii57412"
+ },
+ {
+  "label": "aAfii57411",
+  "text": "afii57411"
+ },
+ {
+  "label": "aAfii57410",
+  "text": "afii57410"
+ },
+ {
+  "label": "aAfii57409",
+  "text": "afii57409"
+ },
+ {
+  "label": "aAfii57407",
+  "text": "afii57407"
+ },
+ {
+  "label": "aAfii57403",
+  "text": "afii57403"
+ },
+ {
+  "label": "aAfii57401",
+  "text": "afii57401"
+ },
+ {
+  "label": "aAfii57400",
+  "text": "afii57400"
+ },
+ {
+  "label": "aAfii57399",
+  "text": "afii57399"
+ },
+ {
+  "label": "aAfii57398",
+  "text": "afii57398"
+ },
+ {
+  "label": "aAfii57397",
+  "text": "afii57397"
+ },
+ {
+  "label": "aAfii57396",
+  "text": "afii57396"
+ },
+ {
+  "label": "aAfii57395",
+  "text": "afii57395"
+ },
+ {
+  "label": "aAfii57394",
+  "text": "afii57394"
+ },
+ {
+  "label": "aAfii57393",
+  "text": "afii57393"
+ },
+ {
+  "label": "aAfii57392",
+  "text": "afii57392"
+ },
+ {
+  "label": "aAfii57388",
+  "text": "afii57388"
+ },
+ {
+  "label": "aAfii57381",
+  "text": "afii57381"
+ },
+ {
+  "label": "aAfii301",
+  "text": "afii301"
+ },
+ {
+  "label": "aAfii300",
+  "text": "afii300"
+ },
+ {
+  "label": "aAfii299",
+  "text": "afii299"
+ },
+ {
+  "label": "aAfii10846",
+  "text": "afii10846"
+ },
+ {
+  "label": "aAfii10832",
+  "text": "afii10832"
+ },
+ {
+  "label": "aAfii10831",
+  "text": "afii10831"
+ },
+ {
+  "label": "aAfii10196",
+  "text": "afii10196"
+ },
+ {
+  "label": "aAfii10195",
+  "text": "afii10195"
+ },
+ {
+  "label": "aAfii10194",
+  "text": "afii10194"
+ },
+ {
+  "label": "aAfii10193",
+  "text": "afii10193"
+ },
+ {
+  "label": "aAfii10192",
+  "text": "afii10192"
+ },
+ {
+  "label": "aAfii10148",
+  "text": "afii10148"
+ },
+ {
+  "label": "aAfii10147",
+  "text": "afii10147"
+ },
+ {
+  "label": "aAfii10146",
+  "text": "afii10146"
+ },
+ {
+  "label": "aAfii10145",
+  "text": "afii10145"
+ },
+ {
+  "label": "aAfii10110",
+  "text": "afii10110"
+ },
+ {
+  "label": "aAfii10109",
+  "text": "afii10109"
+ },
+ {
+  "label": "aAfii10108",
+  "text": "afii10108"
+ },
+ {
+  "label": "aAfii10107",
+  "text": "afii10107"
+ },
+ {
+  "label": "aAfii10106",
+  "text": "afii10106"
+ },
+ {
+  "label": "aAfii10105",
+  "text": "afii10105"
+ },
+ {
+  "label": "aAfii10104",
+  "text": "afii10104"
+ },
+ {
+  "label": "aAfii10103",
+  "text": "afii10103"
+ },
+ {
+  "label": "aAfii10102",
+  "text": "afii10102"
+ },
+ {
+  "label": "aAfii10101",
+  "text": "afii10101"
+ },
+ {
+  "label": "aAfii10100",
+  "text": "afii10100"
+ },
+ {
+  "label": "aAfii10099",
+  "text": "afii10099"
+ },
+ {
+  "label": "aAfii10098",
+  "text": "afii10098"
+ },
+ {
+  "label": "aAfii10097",
+  "text": "afii10097"
+ },
+ {
+  "label": "aAfii10096",
+  "text": "afii10096"
+ },
+ {
+  "label": "aAfii10095",
+  "text": "afii10095"
+ },
+ {
+  "label": "aAfii10094",
+  "text": "afii10094"
+ },
+ {
+  "label": "aAfii10093",
+  "text": "afii10093"
+ },
+ {
+  "label": "aAfii10092",
+  "text": "afii10092"
+ },
+ {
+  "label": "aAfii10091",
+  "text": "afii10091"
+ },
+ {
+  "label": "aAfii10090",
+  "text": "afii10090"
+ },
+ {
+  "label": "aAfii10089",
+  "text": "afii10089"
+ },
+ {
+  "label": "aAfii10088",
+  "text": "afii10088"
+ },
+ {
+  "label": "aAfii10087",
+  "text": "afii10087"
+ },
+ {
+  "label": "aAfii10086",
+  "text": "afii10086"
+ },
+ {
+  "label": "aAfii10085",
+  "text": "afii10085"
+ },
+ {
+  "label": "aAfii10084",
+  "text": "afii10084"
+ },
+ {
+  "label": "aAfii10083",
+  "text": "afii10083"
+ },
+ {
+  "label": "aAfii10082",
+  "text": "afii10082"
+ },
+ {
+  "label": "aAfii10081",
+  "text": "afii10081"
+ },
+ {
+  "label": "aAfii10080",
+  "text": "afii10080"
+ },
+ {
+  "label": "aAfii10079",
+  "text": "afii10079"
+ },
+ {
+  "label": "aAfii10078",
+  "text": "afii10078"
+ },
+ {
+  "label": "aAfii10077",
+  "text": "afii10077"
+ },
+ {
+  "label": "aAfii10076",
+  "text": "afii10076"
+ },
+ {
+  "label": "aAfii10075",
+  "text": "afii10075"
+ },
+ {
+  "label": "aAfii10074",
+  "text": "afii10074"
+ },
+ {
+  "label": "aAfii10073",
+  "text": "afii10073"
+ },
+ {
+  "label": "aAfii10072",
+  "text": "afii10072"
+ },
+ {
+  "label": "aAfii10071",
+  "text": "afii10071"
+ },
+ {
+  "label": "aAfii10070",
+  "text": "afii10070"
+ },
+ {
+  "label": "aAfii10069",
+  "text": "afii10069"
+ },
+ {
+  "label": "aAfii10068",
+  "text": "afii10068"
+ },
+ {
+  "label": "aAfii10067",
+  "text": "afii10067"
+ },
+ {
+  "label": "aAfii10066",
+  "text": "afii10066"
+ },
+ {
+  "label": "aAfii10065",
+  "text": "afii10065"
+ },
+ {
+  "label": "aAfii10064",
+  "text": "afii10064"
+ },
+ {
+  "label": "aAfii10063",
+  "text": "afii10063"
+ },
+ {
+  "label": "aAfii10062",
+  "text": "afii10062"
+ },
+ {
+  "label": "aAfii10061",
+  "text": "afii10061"
+ },
+ {
+  "label": "aAfii10060",
+  "text": "afii10060"
+ },
+ {
+  "label": "aAfii10059",
+  "text": "afii10059"
+ },
+ {
+  "label": "aAfii10058",
+  "text": "afii10058"
+ },
+ {
+  "label": "aAfii10057",
+  "text": "afii10057"
+ },
+ {
+  "label": "aAfii10056",
+  "text": "afii10056"
+ },
+ {
+  "label": "aAfii10055",
+  "text": "afii10055"
+ },
+ {
+  "label": "aAfii10054",
+  "text": "afii10054"
+ },
+ {
+  "label": "aAfii10053",
+  "text": "afii10053"
+ },
+ {
+  "label": "aAfii10052",
+  "text": "afii10052"
+ },
+ {
+  "label": "aAfii10051",
+  "text": "afii10051"
+ },
+ {
+  "label": "aAfii10050",
+  "text": "afii10050"
+ },
+ {
+  "label": "aAfii10049",
+  "text": "afii10049"
+ },
+ {
+  "label": "aAfii10048",
+  "text": "afii10048"
+ },
+ {
+  "label": "aAfii10047",
+  "text": "afii10047"
+ },
+ {
+  "label": "aAfii10046",
+  "text": "afii10046"
+ },
+ {
+  "label": "aAfii10045",
+  "text": "afii10045"
+ },
+ {
+  "label": "aAfii10044",
+  "text": "afii10044"
+ },
+ {
+  "label": "aAfii10043",
+  "text": "afii10043"
+ },
+ {
+  "label": "aAfii10042",
+  "text": "afii10042"
+ },
+ {
+  "label": "aAfii10041",
+  "text": "afii10041"
+ },
+ {
+  "label": "aAfii10040",
+  "text": "afii10040"
+ },
+ {
+  "label": "aAfii10039",
+  "text": "afii10039"
+ },
+ {
+  "label": "aAfii10038",
+  "text": "afii10038"
+ },
+ {
+  "label": "aAfii10037",
+  "text": "afii10037"
+ },
+ {
+  "label": "aAfii10036",
+  "text": "afii10036"
+ },
+ {
+  "label": "aAfii10035",
+  "text": "afii10035"
+ },
+ {
+  "label": "aAfii10034",
+  "text": "afii10034"
+ },
+ {
+  "label": "aAfii10033",
+  "text": "afii10033"
+ },
+ {
+  "label": "aAfii10032",
+  "text": "afii10032"
+ },
+ {
+  "label": "aAfii10031",
+  "text": "afii10031"
+ },
+ {
+  "label": "aAfii10030",
+  "text": "afii10030"
+ },
+ {
+  "label": "aAfii10029",
+  "text": "afii10029"
+ },
+ {
+  "label": "aAfii10028",
+  "text": "afii10028"
+ },
+ {
+  "label": "aAfii10027",
+  "text": "afii10027"
+ },
+ {
+  "label": "aAfii10026",
+  "text": "afii10026"
+ },
+ {
+  "label": "aAfii10025",
+  "text": "afii10025"
+ },
+ {
+  "label": "aAfii10024",
+  "text": "afii10024"
+ },
+ {
+  "label": "aAfii10023",
+  "text": "afii10023"
+ },
+ {
+  "label": "aAfii10022",
+  "text": "afii10022"
+ },
+ {
+  "label": "aAfii10021",
+  "text": "afii10021"
+ },
+ {
+  "label": "aAfii10020",
+  "text": "afii10020"
+ },
+ {
+  "label": "aAfii10019",
+  "text": "afii10019"
+ },
+ {
+  "label": "aAfii10018",
+  "text": "afii10018"
+ },
+ {
+  "label": "aAfii10017",
+  "text": "afii10017"
+ },
+ {
+  "label": "aAfii00208",
+  "text": "afii00208"
+ },
+ {
+  "label": "aAeacute_0",
+  "text": "aeacute"
+ },
+ {
+  "label": "aAcutecomb",
+  "text": "acutecomb"
+ },
+ {
+  "label": "aAbreve_0",
+  "text": "abreve"
+ },
+ {
+  "label": "aZeta",
+  "text": "Zeta"
+ },
+ {
+  "label": "aZdotaccent",
+  "text": "Zdotaccent"
+ },
+ {
+  "label": "aZacute",
+  "text": "Zacute"
+ },
+ {
+  "label": "aYgrave",
+  "text": "Ygrave"
+ },
+ {
+  "label": "aYcircumflex",
+  "text": "Ycircumflex"
+ },
+ {
+  "label": "aXi_0",
+  "text": "Xi"
+ },
+ {
+  "label": "aWgrave",
+  "text": "Wgrave"
+ },
+ {
+  "label": "aWdieresis",
+  "text": "Wdieresis"
+ },
+ {
+  "label": "aWcircumflex",
+  "text": "Wcircumflex"
+ },
+ {
+  "label": "aWacute",
+  "text": "Wacute"
+ },
+ {
+  "label": "aUtilde",
+  "text": "Utilde"
+ },
+ {
+  "label": "aUring",
+  "text": "Uring"
+ },
+ {
+  "label": "aUpsilontonos",
+  "text": "Upsilontonos"
+ },
+ {
+  "label": "aUpsilondieresi",
+  "text": "Upsilondieresis"
+ },
+ {
+  "label": "aUpsilon1",
+  "text": "Upsilon1"
+ },
+ {
+  "label": "aUpsilon",
+  "text": "Upsilon"
+ },
+ {
+  "label": "aUogonek",
+  "text": "Uogonek"
+ },
+ {
+  "label": "aUmacron",
+  "text": "Umacron"
+ },
+ {
+  "label": "aUhungarumlaut",
+  "text": "Uhungarumlaut"
+ },
+ {
+  "label": "aUhorn",
+  "text": "Uhorn"
+ },
+ {
+  "label": "aUbreve",
+  "text": "Ubreve"
+ },
+ {
+  "label": "aTheta",
+  "text": "Theta"
+ },
+ {
+  "label": "aTcommaaccent",
+  "text": "Tcommaaccent"
+ },
+ {
+  "label": "aTcaron",
+  "text": "Tcaron"
+ },
+ {
+  "label": "aTbar",
+  "text": "Tbar"
+ },
+ {
+  "label": "aTau_0",
+  "text": "Tau"
+ },
+ {
+  "label": "aSigma",
+  "text": "Sigma"
+ },
+ {
+  "label": "aScommaaccent",
+  "text": "Scommaaccent"
+ },
+ {
+  "label": "aScircumflex",
+  "text": "Scircumflex"
+ },
+ {
+  "label": "aScedilla",
+  "text": "Scedilla"
+ },
+ {
+  "label": "aSacute",
+  "text": "Sacute"
+ },
+ {
+  "label": "aSf540000",
+  "text": "SF540000"
+ },
+ {
+  "label": "aSf530000",
+  "text": "SF530000"
+ },
+ {
+  "label": "aSf520000",
+  "text": "SF520000"
+ },
+ {
+  "label": "aSf510000",
+  "text": "SF510000"
+ },
+ {
+  "label": "aSf500000",
+  "text": "SF500000"
+ },
+ {
+  "label": "aSf490000",
+  "text": "SF490000"
+ },
+ {
+  "label": "aSf480000",
+  "text": "SF480000"
+ },
+ {
+  "label": "aSf470000",
+  "text": "SF470000"
+ },
+ {
+  "label": "aSf460000",
+  "text": "SF460000"
+ },
+ {
+  "label": "aSf450000",
+  "text": "SF450000"
+ },
+ {
+  "label": "aSf440000",
+  "text": "SF440000"
+ },
+ {
+  "label": "aSf430000",
+  "text": "SF430000"
+ },
+ {
+  "label": "aSf420000",
+  "text": "SF420000"
+ },
+ {
+  "label": "aSf410000",
+  "text": "SF410000"
+ },
+ {
+  "label": "aSf400000",
+  "text": "SF400000"
+ },
+ {
+  "label": "aSf390000",
+  "text": "SF390000"
+ },
+ {
+  "label": "aSf380000",
+  "text": "SF380000"
+ },
+ {
+  "label": "aSf370000",
+  "text": "SF370000"
+ },
+ {
+  "label": "aSf360000",
+  "text": "SF360000"
+ },
+ {
+  "label": "aSf280000",
+  "text": "SF280000"
+ },
+ {
+  "label": "aSf270000",
+  "text": "SF270000"
+ },
+ {
+  "label": "aSf260000",
+  "text": "SF260000"
+ },
+ {
+  "label": "aSf250000",
+  "text": "SF250000"
+ },
+ {
+  "label": "aSf240000",
+  "text": "SF240000"
+ },
+ {
+  "label": "aSf230000",
+  "text": "SF230000"
+ },
+ {
+  "label": "aSf220000",
+  "text": "SF220000"
+ },
+ {
+  "label": "aSf210000",
+  "text": "SF210000"
+ },
+ {
+  "label": "aSf200000",
+  "text": "SF200000"
+ },
+ {
+  "label": "aSf190000",
+  "text": "SF190000"
+ },
+ {
+  "label": "aSf110000",
+  "text": "SF110000"
+ },
+ {
+  "label": "aSf100000",
+  "text": "SF100000"
+ },
+ {
+  "label": "aSf090000",
+  "text": "SF090000"
+ },
+ {
+  "label": "aSf080000",
+  "text": "SF080000"
+ },
+ {
+  "label": "aSf070000",
+  "text": "SF070000"
+ },
+ {
+  "label": "aSf060000",
+  "text": "SF060000"
+ },
+ {
+  "label": "aSf050000",
+  "text": "SF050000"
+ },
+ {
+  "label": "aSf040000",
+  "text": "SF040000"
+ },
+ {
+  "label": "aSf030000",
+  "text": "SF030000"
+ },
+ {
+  "label": "aSf020000",
+  "text": "SF020000"
+ },
+ {
+  "label": "aSf010000",
+  "text": "SF010000"
+ },
+ {
+  "label": "aRho_0",
+  "text": "Rho"
+ },
+ {
+  "label": "aRfraktur",
+  "text": "Rfraktur"
+ },
+ {
+  "label": "aRcommaaccent",
+  "text": "Rcommaaccent"
+ },
+ {
+  "label": "aRcaron",
+  "text": "Rcaron"
+ },
+ {
+  "label": "aRacute",
+  "text": "Racute"
+ },
+ {
+  "label": "aPsi_0",
+  "text": "Psi"
+ },
+ {
+  "label": "aPi_0",
+  "text": "Pi"
+ },
+ {
+  "label": "aPhi_0",
+  "text": "Phi"
+ },
+ {
+  "label": "aOslashacute",
+  "text": "Oslashacute"
+ },
+ {
+  "label": "aOmicrontonos",
+  "text": "Omicrontonos"
+ },
+ {
+  "label": "aOmicron",
+  "text": "Omicron"
+ },
+ {
+  "label": "aOmegatonos",
+  "text": "Omegatonos"
+ },
+ {
+  "label": "aOmega",
+  "text": "Omega"
+ },
+ {
+  "label": "aOmacron",
+  "text": "Omacron"
+ },
+ {
+  "label": "aOhungarumlaut",
+  "text": "Ohungarumlaut"
+ },
+ {
+  "label": "aOhorn",
+  "text": "Ohorn"
+ },
+ {
+  "label": "aObreve",
+  "text": "Obreve"
+ },
+ {
+  "label": "aNu_0",
+  "text": "Nu"
+ },
+ {
+  "label": "aNcommaaccent",
+  "text": "Ncommaaccent"
+ },
+ {
+  "label": "aNcaron",
+  "text": "Ncaron"
+ },
+ {
+  "label": "aNacute",
+  "text": "Nacute"
+ },
+ {
+  "label": "aMu",
+  "text": "Mu"
+ },
+ {
+  "label": "aMacron_0",
+  "text": "Macron"
+ },
+ {
+  "label": "aLdot",
+  "text": "Ldot"
+ },
+ {
+  "label": "aLcommaaccent",
+  "text": "Lcommaaccent"
+ },
+ {
+  "label": "aLcaron",
+  "text": "Lcaron"
+ },
+ {
+  "label": "aLambda",
+  "text": "Lambda"
+ },
+ {
+  "label": "aLacute",
+  "text": "Lacute"
+ },
+ {
+  "label": "aLl_0",
+  "text": "LL"
+ },
+ {
+  "label": "aKcommaaccent",
+  "text": "Kcommaaccent"
+ },
+ {
+  "label": "aKappa",
+  "text": "Kappa"
+ },
+ {
+  "label": "aJcircumflex",
+  "text": "Jcircumflex"
+ },
+ {
+  "label": "aItilde",
+  "text": "Itilde"
+ },
+ {
+  "label": "aIotatonos",
+  "text": "Iotatonos"
+ },
+ {
+  "label": "aIotadieresis",
+  "text": "Iotadieresis"
+ },
+ {
+  "label": "aIota",
+  "text": "Iota"
+ },
+ {
+  "label": "aIogonek",
+  "text": "Iogonek"
+ },
+ {
+  "label": "aImacron",
+  "text": "Imacron"
+ },
+ {
+  "label": "aIfraktur",
+  "text": "Ifraktur"
+ },
+ {
+  "label": "aIdotaccent",
+  "text": "Idotaccent"
+ },
+ {
+  "label": "aIbreve",
+  "text": "Ibreve"
+ },
+ {
+  "label": "aIj_0",
+  "text": "IJ"
+ },
+ {
+  "label": "aHungarumlaut_0",
+  "text": "Hungarumlaut"
+ },
+ {
+  "label": "aHcircumflex",
+  "text": "Hcircumflex"
+ },
+ {
+  "label": "aHbar",
+  "text": "Hbar"
+ },
+ {
+  "label": "aH22073",
+  "text": "H22073"
+ },
+ {
+  "label": "aH18551",
+  "text": "H18551"
+ },
+ {
+  "label": "aH18543",
+  "text": "H18543"
+ },
+ {
+  "label": "aH18533",
+  "text": "H18533"
+ },
+ {
+  "label": "aGrave_0",
+  "text": "Grave"
+ },
+ {
+  "label": "aGdotaccent",
+  "text": "Gdotaccent"
+ },
+ {
+  "label": "aGcommaaccent",
+  "text": "Gcommaaccent"
+ },
+ {
+  "label": "aGcircumflex",
+  "text": "Gcircumflex"
+ },
+ {
+  "label": "aGcaron",
+  "text": "Gcaron"
+ },
+ {
+  "label": "aGbreve",
+  "text": "Gbreve"
+ },
+ {
+  "label": "aGamma",
+  "text": "Gamma"
+ },
+ {
+  "label": "aEuro",
+  "text": "Euro"
+ },
+ {
+  "label": "aEtatonos",
+  "text": "Etatonos"
+ },
+ {
+  "label": "aEta_0",
+  "text": "Eta"
+ },
+ {
+  "label": "aEpsilontonos",
+  "text": "Epsilontonos"
+ },
+ {
+  "label": "aEpsilon",
+  "text": "Epsilon"
+ },
+ {
+  "label": "aEogonek",
+  "text": "Eogonek"
+ },
+ {
+  "label": "aEng_0",
+  "text": "Eng"
+ },
+ {
+  "label": "aEmacron",
+  "text": "Emacron"
+ },
+ {
+  "label": "aEdotaccent",
+  "text": "Edotaccent"
+ },
+ {
+  "label": "aEcaron",
+  "text": "Ecaron"
+ },
+ {
+  "label": "aEbreve",
+  "text": "Ebreve"
+ },
+ {
+  "label": "aDieresisgrave",
+  "text": "DieresisGrave"
+ },
+ {
+  "label": "aDieresisacute",
+  "text": "DieresisAcute"
+ },
+ {
+  "label": "aDieresis_0",
+  "text": "Dieresis"
+ },
+ {
+  "label": "aDelta",
+  "text": "Delta"
+ },
+ {
+  "label": "aDcroat",
+  "text": "Dcroat"
+ },
+ {
+  "label": "aDcaron",
+  "text": "Dcaron"
+ },
+ {
+  "label": "aChi_0",
+  "text": "Chi"
+ },
+ {
+  "label": "aCdotaccent",
+  "text": "Cdotaccent"
+ },
+ {
+  "label": "aCcircumflex",
+  "text": "Ccircumflex"
+ },
+ {
+  "label": "aCcaron",
+  "text": "Ccaron"
+ },
+ {
+  "label": "aCaron_0",
+  "text": "Caron"
+ },
+ {
+  "label": "aCacute",
+  "text": "Cacute"
+ },
+ {
+  "label": "aBeta",
+  "text": "Beta"
+ },
+ {
+  "label": "aAringacute",
+  "text": "Aringacute"
+ },
+ {
+  "label": "aAogonek",
+  "text": "Aogonek"
+ },
+ {
+  "label": "aAmacron",
+  "text": "Amacron"
+ },
+ {
+  "label": "aAlphatonos",
+  "text": "Alphatonos"
+ },
+ {
+  "label": "aAlpha",
+  "text": "Alpha"
+ },
+ {
+  "label": "aAcute_0",
+  "text": "Acute"
+ },
+ {
+  "label": "aAbreve",
+  "text": "Abreve"
+ },
+ {
+  "label": "aAeacute",
+  "text": "AEacute"
+ },
+ {
+  "label": "aSemibold",
+  "text": "Semibold"
+ },
+ {
+  "label": "aRoman",
+  "text": "Roman"
+ },
+ {
+  "label": "aMedium",
+  "text": "Medium"
+ },
+ {
+  "label": "aLight",
+  "text": "Light"
+ },
+ {
+  "label": "aBook",
+  "text": "Book"
+ },
+ {
+  "label": "a001003",
+  "text": "001.003"
+ },
+ {
+  "label": "a001002",
+  "text": "001.002"
+ },
+ {
+  "label": "a001001",
+  "text": "001.001"
+ },
+ {
+  "label": "a001000",
+  "text": "001.000"
+ },
+ {
+  "label": "aYdieresissmall",
+  "text": "Ydieresissmall"
+ },
+ {
+  "label": "aThornsmall",
+  "text": "Thornsmall"
+ },
+ {
+  "label": "aYacutesmall",
+  "text": "Yacutesmall"
+ },
+ {
+  "label": "aUdieresissmall",
+  "text": "Udieresissmall"
+ },
+ {
+  "label": "aUcircumflexsma",
+  "text": "Ucircumflexsmall"
+ },
+ {
+  "label": "aUacutesmall",
+  "text": "Uacutesmall"
+ },
+ {
+  "label": "aUgravesmall",
+  "text": "Ugravesmall"
+ },
+ {
+  "label": "aOslashsmall",
+  "text": "Oslashsmall"
+ },
+ {
+  "label": "aOesmall",
+  "text": "OEsmall"
+ },
+ {
+  "label": "aOdieresissmall",
+  "text": "Odieresissmall"
+ },
+ {
+  "label": "aOtildesmall",
+  "text": "Otildesmall"
+ },
+ {
+  "label": "aOcircumflexsma",
+  "text": "Ocircumflexsmall"
+ },
+ {
+  "label": "aOacutesmall",
+  "text": "Oacutesmall"
+ },
+ {
+  "label": "aOgravesmall",
+  "text": "Ogravesmall"
+ },
+ {
+  "label": "aNtildesmall",
+  "text": "Ntildesmall"
+ },
+ {
+  "label": "aEthsmall",
+  "text": "Ethsmall"
+ },
+ {
+  "label": "aIdieresissmall",
+  "text": "Idieresissmall"
+ },
+ {
+  "label": "aIcircumflexsma",
+  "text": "Icircumflexsmall"
+ },
+ {
+  "label": "aIacutesmall",
+  "text": "Iacutesmall"
+ },
+ {
+  "label": "aIgravesmall",
+  "text": "Igravesmall"
+ },
+ {
+  "label": "aEdieresissmall",
+  "text": "Edieresissmall"
+ },
+ {
+  "label": "aEcircumflexsma",
+  "text": "Ecircumflexsmall"
+ },
+ {
+  "label": "aEacutesmall",
+  "text": "Eacutesmall"
+ },
+ {
+  "label": "aEgravesmall",
+  "text": "Egravesmall"
+ },
+ {
+  "label": "aCcedillasmall",
+  "text": "Ccedillasmall"
+ },
+ {
+  "label": "aAesmall",
+  "text": "AEsmall"
+ },
+ {
+  "label": "aAringsmall",
+  "text": "Aringsmall"
+ },
+ {
+  "label": "aAdieresissmall",
+  "text": "Adieresissmall"
+ },
+ {
+  "label": "aAtildesmall",
+  "text": "Atildesmall"
+ },
+ {
+  "label": "aAcircumflexsma",
+  "text": "Acircumflexsmall"
+ },
+ {
+  "label": "aAacutesmall",
+  "text": "Aacutesmall"
+ },
+ {
+  "label": "aAgravesmall",
+  "text": "Agravesmall"
+ },
+ {
+  "label": "aCommainferior",
+  "text": "commainferior"
+ },
+ {
+  "label": "aPeriodinferior",
+  "text": "periodinferior"
+ },
+ {
+  "label": "aDollarinferior",
+  "text": "dollarinferior"
+ },
+ {
+  "label": "aCentinferior",
+  "text": "centinferior"
+ },
+ {
+  "label": "aNineinferior",
+  "text": "nineinferior"
+ },
+ {
+  "label": "aEightinferior",
+  "text": "eightinferior"
+ },
+ {
+  "label": "aSeveninferior",
+  "text": "seveninferior"
+ },
+ {
+  "label": "aSixinferior",
+  "text": "sixinferior"
+ },
+ {
+  "label": "aFiveinferior",
+  "text": "fiveinferior"
+ },
+ {
+  "label": "aFourinferior",
+  "text": "fourinferior"
+ },
+ {
+  "label": "aThreeinferior",
+  "text": "threeinferior"
+ },
+ {
+  "label": "aTwoinferior",
+  "text": "twoinferior"
+ },
+ {
+  "label": "aOneinferior",
+  "text": "oneinferior"
+ },
+ {
+  "label": "aZeroinferior",
+  "text": "zeroinferior"
+ },
+ {
+  "label": "aNinesuperior",
+  "text": "ninesuperior"
+ },
+ {
+  "label": "aEightsuperior",
+  "text": "eightsuperior"
+ },
+ {
+  "label": "aSevensuperior",
+  "text": "sevensuperior"
+ },
+ {
+  "label": "aSixsuperior",
+  "text": "sixsuperior"
+ },
+ {
+  "label": "aFivesuperior",
+  "text": "fivesuperior"
+ },
+ {
+  "label": "aFoursuperior",
+  "text": "foursuperior"
+ },
+ {
+  "label": "aZerosuperior",
+  "text": "zerosuperior"
+ },
+ {
+  "label": "aTwothirds",
+  "text": "twothirds"
+ },
+ {
+  "label": "aOnethird",
+  "text": "onethird"
+ },
+ {
+  "label": "aSeveneighths",
+  "text": "seveneighths"
+ },
+ {
+  "label": "aFiveeighths",
+  "text": "fiveeighths"
+ },
+ {
+  "label": "aThreeeighths",
+  "text": "threeeighths"
+ },
+ {
+  "label": "aOneeighth",
+  "text": "oneeighth"
+ },
+ {
+  "label": "aQuestiondownsm",
+  "text": "questiondownsmall"
+ },
+ {
+  "label": "aCedillasmall",
+  "text": "Cedillasmall"
+ },
+ {
+  "label": "aRingsmall",
+  "text": "Ringsmall"
+ },
+ {
+  "label": "aOgoneksmall",
+  "text": "Ogoneksmall"
+ },
+ {
+  "label": "aHypheninferior",
+  "text": "hypheninferior"
+ },
+ {
+  "label": "aFiguredash",
+  "text": "figuredash"
+ },
+ {
+  "label": "aMacronsmall",
+  "text": "Macronsmall"
+ },
+ {
+  "label": "aDotaccentsmall",
+  "text": "Dotaccentsmall"
+ },
+ {
+  "label": "aCaronsmall",
+  "text": "Caronsmall"
+ },
+ {
+  "label": "aBrevesmall",
+  "text": "Brevesmall"
+ },
+ {
+  "label": "aDieresissmall",
+  "text": "Dieresissmall"
+ },
+ {
+  "label": "aZcaronsmall",
+  "text": "Zcaronsmall"
+ },
+ {
+  "label": "aScaronsmall",
+  "text": "Scaronsmall"
+ },
+ {
+  "label": "aLslashsmall",
+  "text": "Lslashsmall"
+ },
+ {
+  "label": "aCentoldstyle",
+  "text": "centoldstyle"
+ },
+ {
+  "label": "aExclamdownsmal",
+  "text": "exclamdownsmall"
+ },
+ {
+  "label": "aTildesmall",
+  "text": "Tildesmall"
+ },
+ {
+  "label": "aRupiah",
+  "text": "rupiah"
+ },
+ {
+  "label": "aOnefitted",
+  "text": "onefitted"
+ },
+ {
+  "label": "aColonmonetary",
+  "text": "colonmonetary"
+ },
+ {
+  "label": "aZsmall",
+  "text": "Zsmall"
+ },
+ {
+  "label": "aYsmall",
+  "text": "Ysmall"
+ },
+ {
+  "label": "aXsmall",
+  "text": "Xsmall"
+ },
+ {
+  "label": "aWsmall",
+  "text": "Wsmall"
+ },
+ {
+  "label": "aVsmall",
+  "text": "Vsmall"
+ },
+ {
+  "label": "aUsmall",
+  "text": "Usmall"
+ },
+ {
+  "label": "aTsmall",
+  "text": "Tsmall"
+ },
+ {
+  "label": "aSsmall",
+  "text": "Ssmall"
+ },
+ {
+  "label": "aRsmall",
+  "text": "Rsmall"
+ },
+ {
+  "label": "aQsmall",
+  "text": "Qsmall"
+ },
+ {
+  "label": "aPsmall",
+  "text": "Psmall"
+ },
+ {
+  "label": "aOsmall",
+  "text": "Osmall"
+ },
+ {
+  "label": "aNsmall",
+  "text": "Nsmall"
+ },
+ {
+  "label": "aMsmall",
+  "text": "Msmall"
+ },
+ {
+  "label": "aLsmall",
+  "text": "Lsmall"
+ },
+ {
+  "label": "aKsmall",
+  "text": "Ksmall"
+ },
+ {
+  "label": "aJsmall",
+  "text": "Jsmall"
+ },
+ {
+  "label": "aIsmall",
+  "text": "Ismall"
+ },
+ {
+  "label": "aHsmall",
+  "text": "Hsmall"
+ },
+ {
+  "label": "aGsmall",
+  "text": "Gsmall"
+ },
+ {
+  "label": "aFsmall",
+  "text": "Fsmall"
+ },
+ {
+  "label": "aEsmall",
+  "text": "Esmall"
+ },
+ {
+  "label": "aDsmall",
+  "text": "Dsmall"
+ },
+ {
+  "label": "aCsmall",
+  "text": "Csmall"
+ },
+ {
+  "label": "aBsmall",
+  "text": "Bsmall"
+ },
+ {
+  "label": "aAsmall",
+  "text": "Asmall"
+ },
+ {
+  "label": "aGravesmall",
+  "text": "Gravesmall"
+ },
+ {
+  "label": "aHyphensuperior",
+  "text": "hyphensuperior"
+ },
+ {
+  "label": "aCircumflexsmal",
+  "text": "Circumflexsmall"
+ },
+ {
+  "label": "aParenrightinfe",
+  "text": "parenrightinferior"
+ },
+ {
+  "label": "aParenleftinfer",
+  "text": "parenleftinferior"
+ },
+ {
+  "label": "aFfl",
+  "text": "ffl"
+ },
+ {
+  "label": "aFfi",
+  "text": "ffi"
+ },
+ {
+  "label": "aFf",
+  "text": "ff"
+ },
+ {
+  "label": "aTsuperior",
+  "text": "tsuperior"
+ },
+ {
+  "label": "aSsuperior",
+  "text": "ssuperior"
+ },
+ {
+  "label": "aRsuperior",
+  "text": "rsuperior"
+ },
+ {
+  "label": "aOsuperior",
+  "text": "osuperior"
+ },
+ {
+  "label": "aNsuperior",
+  "text": "nsuperior"
+ },
+ {
+  "label": "aMsuperior",
+  "text": "msuperior"
+ },
+ {
+  "label": "aLsuperior",
+  "text": "lsuperior"
+ },
+ {
+  "label": "aIsuperior",
+  "text": "isuperior"
+ },
+ {
+  "label": "aEsuperior",
+  "text": "esuperior"
+ },
+ {
+  "label": "aDsuperior",
+  "text": "dsuperior"
+ },
+ {
+  "label": "aCentsuperior",
+  "text": "centsuperior"
+ },
+ {
+  "label": "aBsuperior",
+  "text": "bsuperior"
+ },
+ {
+  "label": "aAsuperior",
+  "text": "asuperior"
+ },
+ {
+  "label": "aQuestionsmall",
+  "text": "questionsmall"
+ },
+ {
+  "label": "aPeriodsuperior",
+  "text": "periodsuperior"
+ },
+ {
+  "label": "aThreequarterse",
+  "text": "threequartersemdash"
+ },
+ {
+  "label": "aCommasuperior",
+  "text": "commasuperior"
+ },
+ {
+  "label": "aNineoldstyle",
+  "text": "nineoldstyle"
+ },
+ {
+  "label": "aEightoldstyle",
+  "text": "eightoldstyle"
+ },
+ {
+  "label": "aSevenoldstyle",
+  "text": "sevenoldstyle"
+ },
+ {
+  "label": "aSixoldstyle",
+  "text": "sixoldstyle"
+ },
+ {
+  "label": "aFiveoldstyle",
+  "text": "fiveoldstyle"
+ },
+ {
+  "label": "aFouroldstyle",
+  "text": "fouroldstyle"
+ },
+ {
+  "label": "aThreeoldstyle",
+  "text": "threeoldstyle"
+ },
+ {
+  "label": "aTwooldstyle",
+  "text": "twooldstyle"
+ },
+ {
+  "label": "aOneoldstyle",
+  "text": "oneoldstyle"
+ },
+ {
+  "label": "aZerooldstyle",
+  "text": "zerooldstyle"
+ },
+ {
+  "label": "aOnedotenleader",
+  "text": "onedotenleader"
+ },
+ {
+  "label": "aTwodotenleader",
+  "text": "twodotenleader"
+ },
+ {
+  "label": "aParenrightsupe",
+  "text": "parenrightsuperior"
+ },
+ {
+  "label": "aParenleftsuper",
+  "text": "parenleftsuperior"
+ },
+ {
+  "label": "aAcutesmall",
+  "text": "Acutesmall"
+ },
+ {
+  "label": "aAmpersandsmall",
+  "text": "ampersandsmall"
+ },
+ {
+  "label": "aDollarsuperior",
+  "text": "dollarsuperior"
+ },
+ {
+  "label": "aDollaroldstyle",
+  "text": "dollaroldstyle"
+ },
+ {
+  "label": "aHungarumlautsm",
+  "text": "Hungarumlautsmall"
+ },
+ {
+  "label": "aExclamsmall",
+  "text": "exclamsmall"
+ },
+ {
+  "label": "aZcaron_0",
+  "text": "zcaron"
+ },
+ {
+  "label": "aYdieresis_0",
+  "text": "ydieresis"
+ },
+ {
+  "label": "aYacute_0",
+  "text": "yacute"
+ },
+ {
+  "label": "aUgrave_0",
+  "text": "ugrave"
+ },
+ {
+  "label": "aUdieresis_0",
+  "text": "udieresis"
+ },
+ {
+  "label": "aUcircumflex_0",
+  "text": "ucircumflex"
+ },
+ {
+  "label": "aUacute_0",
+  "text": "uacute"
+ },
+ {
+  "label": "aScaron_0",
+  "text": "scaron"
+ },
+ {
+  "label": "aOtilde_0",
+  "text": "otilde"
+ },
+ {
+  "label": "aOgrave_0",
+  "text": "ograve"
+ },
+ {
+  "label": "aOdieresis_0",
+  "text": "odieresis"
+ },
+ {
+  "label": "aOcircumflex_0",
+  "text": "ocircumflex"
+ },
+ {
+  "label": "aOacute_0",
+  "text": "oacute"
+ },
+ {
+  "label": "aNtilde_0",
+  "text": "ntilde"
+ },
+ {
+  "label": "aIgrave_0",
+  "text": "igrave"
+ },
+ {
+  "label": "aIdieresis_0",
+  "text": "idieresis"
+ },
+ {
+  "label": "aIcircumflex_0",
+  "text": "icircumflex"
+ },
+ {
+  "label": "aIacute_0",
+  "text": "iacute"
+ },
+ {
+  "label": "aEgrave_0",
+  "text": "egrave"
+ },
+ {
+  "label": "aEdieresis_0",
+  "text": "edieresis"
+ },
+ {
+  "label": "aEcircumflex_0",
+  "text": "ecircumflex"
+ },
+ {
+  "label": "aEacute_0",
+  "text": "eacute"
+ },
+ {
+  "label": "aCcedilla_0",
+  "text": "ccedilla"
+ },
+ {
+  "label": "aAtilde_0",
+  "text": "atilde"
+ },
+ {
+  "label": "aAring_0",
+  "text": "aring"
+ },
+ {
+  "label": "aAgrave_0",
+  "text": "agrave"
+ },
+ {
+  "label": "aAdieresis_0",
+  "text": "adieresis"
+ },
+ {
+  "label": "aAcircumflex_0",
+  "text": "acircumflex"
+ },
+ {
+  "label": "aAacute_0",
+  "text": "aacute"
+ },
+ {
+  "label": "aZcaron",
+  "text": "Zcaron"
+ },
+ {
+  "label": "aYdieresis",
+  "text": "Ydieresis"
+ },
+ {
+  "label": "aYacute",
+  "text": "Yacute"
+ },
+ {
+  "label": "aUgrave",
+  "text": "Ugrave"
+ },
+ {
+  "label": "aUdieresis",
+  "text": "Udieresis"
+ },
+ {
+  "label": "aUcircumflex",
+  "text": "Ucircumflex"
+ },
+ {
+  "label": "aUacute",
+  "text": "Uacute"
+ },
+ {
+  "label": "aScaron",
+  "text": "Scaron"
+ },
+ {
+  "label": "aOtilde",
+  "text": "Otilde"
+ },
+ {
+  "label": "aOgrave",
+  "text": "Ograve"
+ },
+ {
+  "label": "aOdieresis",
+  "text": "Odieresis"
+ },
+ {
+  "label": "aOcircumflex",
+  "text": "Ocircumflex"
+ },
+ {
+  "label": "aOacute",
+  "text": "Oacute"
+ },
+ {
+  "label": "aNtilde",
+  "text": "Ntilde"
+ },
+ {
+  "label": "aIgrave",
+  "text": "Igrave"
+ },
+ {
+  "label": "aIdieresis",
+  "text": "Idieresis"
+ },
+ {
+  "label": "aIcircumflex",
+  "text": "Icircumflex"
+ },
+ {
+  "label": "aIacute",
+  "text": "Iacute"
+ },
+ {
+  "label": "aEgrave",
+  "text": "Egrave"
+ },
+ {
+  "label": "aEdieresis",
+  "text": "Edieresis"
+ },
+ {
+  "label": "aEcircumflex",
+  "text": "Ecircumflex"
+ },
+ {
+  "label": "aEacute",
+  "text": "Eacute"
+ },
+ {
+  "label": "aCcedilla",
+  "text": "Ccedilla"
+ },
+ {
+  "label": "aAtilde",
+  "text": "Atilde"
+ },
+ {
+  "label": "aAring",
+  "text": "Aring"
+ },
+ {
+  "label": "aAgrave",
+  "text": "Agrave"
+ },
+ {
+  "label": "aAdieresis",
+  "text": "Adieresis"
+ },
+ {
+  "label": "aAcircumflex",
+  "text": "Acircumflex"
+ },
+ {
+  "label": "aAacute",
+  "text": "Aacute"
+ },
+ {
+  "label": "aCopyright",
+  "text": "copyright"
+ },
+ {
+  "label": "aThreesuperior",
+  "text": "threesuperior"
+ },
+ {
+  "label": "aMultiply",
+  "text": "multiply"
+ },
+ {
+  "label": "aEth",
+  "text": "eth"
+ },
+ {
+  "label": "aMinus",
+  "text": "minus"
+ },
+ {
+  "label": "aRegistered",
+  "text": "registered"
+ },
+ {
+  "label": "aTwosuperior",
+  "text": "twosuperior"
+ },
+ {
+  "label": "aThreequarters",
+  "text": "threequarters"
+ },
+ {
+  "label": "aThorn_0",
+  "text": "thorn"
+ },
+ {
+  "label": "aDegree",
+  "text": "degree"
+ },
+ {
+  "label": "aBrokenbar",
+  "text": "brokenbar"
+ },
+ {
+  "label": "aDivide",
+  "text": "divide"
+ },
+ {
+  "label": "aOnequarter",
+  "text": "onequarter"
+ },
+ {
+  "label": "aThorn",
+  "text": "Thorn"
+ },
+ {
+  "label": "aPlusminus",
+  "text": "plusminus"
+ },
+ {
+  "label": "aOnehalf",
+  "text": "onehalf"
+ },
+ {
+  "label": "aEth_0",
+  "text": "Eth"
+ },
+ {
+  "label": "aTrademark",
+  "text": "trademark"
+ },
+ {
+  "label": "aMu_0",
+  "text": "mu"
+ },
+ {
+  "label": "aLogicalnot",
+  "text": "logicalnot"
+ },
+ {
+  "label": "aOnesuperior",
+  "text": "onesuperior"
+ },
+ {
+  "label": "aGermandbls",
+  "text": "germandbls"
+ },
+ {
+  "label": "aOe",
+  "text": "oe"
+ },
+ {
+  "label": "aOslash_0",
+  "text": "oslash"
+ },
+ {
+  "label": "aLslash_0",
+  "text": "lslash"
+ },
+ {
+  "label": "aDotlessi",
+  "text": "dotlessi"
+ },
+ {
+  "label": "aAe",
+  "text": "ae"
+ },
+ {
+  "label": "aOrdmasculine",
+  "text": "ordmasculine"
+ },
+ {
+  "label": "aOe_0",
+  "text": "OE"
+ },
+ {
+  "label": "aOslash",
+  "text": "Oslash"
+ },
+ {
+  "label": "aLslash",
+  "text": "Lslash"
+ },
+ {
+  "label": "aOrdfeminine",
+  "text": "ordfeminine"
+ },
+ {
+  "label": "aAe_0",
+  "text": "AE"
+ },
+ {
+  "label": "aEmdash",
+  "text": "emdash"
+ },
+ {
+  "label": "aCaron",
+  "text": "caron"
+ },
+ {
+  "label": "aOgonek",
+  "text": "ogonek"
+ },
+ {
+  "label": "aHungarumlaut",
+  "text": "hungarumlaut"
+ },
+ {
+  "label": "aCedilla",
+  "text": "cedilla"
+ },
+ {
+  "label": "aRing",
+  "text": "ring"
+ },
+ {
+  "label": "aDieresis",
+  "text": "dieresis"
+ },
+ {
+  "label": "aDotaccent",
+  "text": "dotaccent"
+ },
+ {
+  "label": "aBreve",
+  "text": "breve"
+ },
+ {
+  "label": "aMacron",
+  "text": "macron"
+ },
+ {
+  "label": "aTilde",
+  "text": "tilde"
+ },
+ {
+  "label": "aCircumflex",
+  "text": "circumflex"
+ },
+ {
+  "label": "aAcute",
+  "text": "acute"
+ },
+ {
+  "label": "aGrave",
+  "text": "grave"
+ },
+ {
+  "label": "aQuestiondown",
+  "text": "questiondown"
+ },
+ {
+  "label": "aPerthousand",
+  "text": "perthousand"
+ },
+ {
+  "label": "aEllipsis",
+  "text": "ellipsis"
+ },
+ {
+  "label": "aGuillemotright",
+  "text": "guillemotright"
+ },
+ {
+  "label": "aQuotedblright",
+  "text": "quotedblright"
+ },
+ {
+  "label": "aQuotedblbase",
+  "text": "quotedblbase"
+ },
+ {
+  "label": "aQuotesinglbase",
+  "text": "quotesinglbase"
+ },
+ {
+  "label": "aBullet",
+  "text": "bullet"
+ },
+ {
+  "label": "aParagraph",
+  "text": "paragraph"
+ },
+ {
+  "label": "aPeriodcentered",
+  "text": "periodcentered"
+ },
+ {
+  "label": "aDaggerdbl",
+  "text": "daggerdbl"
+ },
+ {
+  "label": "aDagger",
+  "text": "dagger"
+ },
+ {
+  "label": "aEndash",
+  "text": "endash"
+ },
+ {
+  "label": "aFl",
+  "text": "fl"
+ },
+ {
+  "label": "aFi",
+  "text": "fi"
+ },
+ {
+  "label": "aGuilsinglright",
+  "text": "guilsinglright"
+ },
+ {
+  "label": "aGuilsinglleft",
+  "text": "guilsinglleft"
+ },
+ {
+  "label": "aGuillemotleft",
+  "text": "guillemotleft"
+ },
+ {
+  "label": "aQuotedblleft",
+  "text": "quotedblleft"
+ },
+ {
+  "label": "aQuotesingle",
+  "text": "quotesingle"
+ },
+ {
+  "label": "aCurrency",
+  "text": "currency"
+ },
+ {
+  "label": "aSection",
+  "text": "section"
+ },
+ {
+  "label": "aFlorin",
+  "text": "florin"
+ },
+ {
+  "label": "aYen",
+  "text": "yen"
+ },
+ {
+  "label": "aFraction",
+  "text": "fraction"
+ },
+ {
+  "label": "aSterling",
+  "text": "sterling"
+ },
+ {
+  "label": "aCent",
+  "text": "cent"
+ },
+ {
+  "label": "aExclamdown",
+  "text": "exclamdown"
+ },
+ {
+  "label": "aAsciitilde",
+  "text": "asciitilde"
+ },
+ {
+  "label": "aBraceright",
+  "text": "braceright"
+ },
+ {
+  "label": "aBar",
+  "text": "bar"
+ },
+ {
+  "label": "aBraceleft",
+  "text": "braceleft"
+ },
+ {
+  "label": "aZ",
+  "text": "z"
+ },
+ {
+  "label": "aY",
+  "text": "y"
+ },
+ {
+  "label": "aW_5",
+  "text": "w"
+ },
+ {
+  "label": "aV",
+  "text": "v"
+ },
+ {
+  "label": "aU",
+  "text": "u"
+ },
+ {
+  "label": "aT",
+  "text": "t"
+ },
+ {
+  "label": "aS_11",
+  "text": "s"
+ },
+ {
+  "label": "aR_12",
+  "text": "r"
+ },
+ {
+  "label": "aQ",
+  "text": "q"
+ },
+ {
+  "label": "aP",
+  "text": "p"
+ },
+ {
+  "label": "aO",
+  "text": "o"
+ },
+ {
+  "label": "aN",
+  "text": "n"
+ },
+ {
+  "label": "aM",
+  "text": "m"
+ },
+ {
+  "label": "aK",
+  "text": "k"
+ },
+ {
+  "label": "aJ",
+  "text": "j"
+ },
+ {
+  "label": "aI",
+  "text": "i"
+ },
+ {
+  "label": "aG",
+  "text": "g"
+ },
+ {
+  "label": "aE",
+  "text": "e"
+ },
+ {
+  "label": "aD_15",
+  "text": "d"
+ },
+ {
+  "label": "aC",
+  "text": "c"
+ },
+ {
+  "label": "aB",
+  "text": "b"
+ },
+ {
+  "label": "aA",
+  "text": "a"
+ },
+ {
+  "label": "aQuoteleft",
+  "text": "quoteleft"
+ },
+ {
+  "label": "aUnderscore",
+  "text": "underscore"
+ },
+ {
+  "label": "aAsciicircum",
+  "text": "asciicircum"
+ },
+ {
+  "label": "aBracketright",
+  "text": "bracketright"
+ },
+ {
+  "label": "aBackslash",
+  "text": "backslash"
+ },
+ {
+  "label": "aBracketleft",
+  "text": "bracketleft"
+ },
+ {
+  "label": "aZ_0",
+  "text": "Z"
+ },
+ {
+  "label": "aY_0",
+  "text": "Y"
+ },
+ {
+  "label": "aW_6",
+  "text": "W"
+ },
+ {
+  "label": "aV_0",
+  "text": "V"
+ },
+ {
+  "label": "aU_0",
+  "text": "U"
+ },
+ {
+  "label": "aT_0",
+  "text": "T"
+ },
+ {
+  "label": "aS_12",
+  "text": "S"
+ },
+ {
+  "label": "aR_13",
+  "text": "R"
+ },
+ {
+  "label": "aQ_0",
+  "text": "Q"
+ },
+ {
+  "label": "aP_0",
+  "text": "P"
+ },
+ {
+  "label": "aO_0",
+  "text": "O"
+ },
+ {
+  "label": "aN_0",
+  "text": "N"
+ },
+ {
+  "label": "aM_0",
+  "text": "M"
+ },
+ {
+  "label": "aK_0",
+  "text": "K"
+ },
+ {
+  "label": "aJ_0",
+  "text": "J"
+ },
+ {
+  "label": "aI_0",
+  "text": "I"
+ },
+ {
+  "label": "aG_0",
+  "text": "G"
+ },
+ {
+  "label": "aE_0",
+  "text": "E"
+ },
+ {
+  "label": "aD_16",
+  "text": "D"
+ },
+ {
+  "label": "aC_0",
+  "text": "C"
+ },
+ {
+  "label": "aB_0",
+  "text": "B"
+ },
+ {
+  "label": "aA_0",
+  "text": "A"
+ },
+ {
+  "label": "aAt_3",
+  "text": "at"
+ },
+ {
+  "label": "aQuestion",
+  "text": "question"
+ },
+ {
+  "label": "aGreater",
+  "text": "greater"
+ },
+ {
+  "label": "aEqual",
+  "text": "equal"
+ },
+ {
+  "label": "aLess",
+  "text": "less"
+ },
+ {
+  "label": "aSemicolon",
+  "text": "semicolon"
+ },
+ {
+  "label": "aColon",
+  "text": "colon"
+ },
+ {
+  "label": "aNine",
+  "text": "nine"
+ },
+ {
+  "label": "aEight",
+  "text": "eight"
+ },
+ {
+  "label": "aSeven",
+  "text": "seven"
+ },
+ {
+  "label": "aSix",
+  "text": "six"
+ },
+ {
+  "label": "aFive",
+  "text": "five"
+ },
+ {
+  "label": "aFour",
+  "text": "four"
+ },
+ {
+  "label": "aThree",
+  "text": "three"
+ },
+ {
+  "label": "aTwo",
+  "text": "two"
+ },
+ {
+  "label": "aOne",
+  "text": "one"
+ },
+ {
+  "label": "aZero",
+  "text": "zero"
+ },
+ {
+  "label": "aSlash",
+  "text": "slash"
+ },
+ {
+  "label": "aPeriod",
+  "text": "period"
+ },
+ {
+  "label": "aHyphen",
+  "text": "hyphen"
+ },
+ {
+  "label": "aComma",
+  "text": "comma"
+ },
+ {
+  "label": "aPlus",
+  "text": "plus"
+ },
+ {
+  "label": "aAsterisk",
+  "text": "asterisk"
+ },
+ {
+  "label": "aParenright",
+  "text": "parenright"
+ },
+ {
+  "label": "aParenleft",
+  "text": "parenleft"
+ },
+ {
+  "label": "aQuoteright",
+  "text": "quoteright"
+ },
+ {
+  "label": "aAmpersand",
+  "text": "ampersand"
+ },
+ {
+  "label": "aPercent",
+  "text": "percent"
+ },
+ {
+  "label": "aDollar",
+  "text": "dollar"
+ },
+ {
+  "label": "aNumbersign",
+  "text": "numbersign"
+ },
+ {
+  "label": "aQuotedbl",
+  "text": "quotedbl"
+ },
+ {
+  "label": "aExclam",
+  "text": "exclam"
+ },
+ {
+  "label": "aSpace",
+  "text": "space"
+ },
+ {
+  "label": "aApple",
+  "text": "apple"
+ },
+ {
+  "label": "aNonbreakingspa",
+  "text": "nonbreakingspace"
+ },
+ {
+  "label": "aNonmarkingretu",
+  "text": "nonmarkingreturn"
+ },
+ {
+  "label": "aNull_1",
+  "text": ".null"
+ },
+ {
+  "label": "aPcf",
+  "text": "pcf"
+ },
+ {
+  "label": "a1_2",
+  "text": "1"
+ },
+ {
+  "label": "aIso8859",
+  "text": "ISO8859"
+ },
+ {
+  "label": "aIso10646",
+  "text": "ISO10646"
+ },
+ {
+  "label": "aCharsetEncodin",
+  "text": "CHARSET_ENCODING"
+ },
+ {
+  "label": "aCharsetRegistr",
+  "text": "CHARSET_REGISTRY"
+ },
+ {
+  "label": "aAverageWidth",
+  "text": "AVERAGE_WIDTH"
+ },
+ {
+  "label": "aResolutionY",
+  "text": "RESOLUTION_Y"
+ },
+ {
+  "label": "aResolutionX",
+  "text": "RESOLUTION_X"
+ },
+ {
+  "label": "aPointSize",
+  "text": "POINT_SIZE"
+ },
+ {
+  "label": "aPixelSize",
+  "text": "PIXEL_SIZE"
+ },
+ {
+  "label": "aFamilyName",
+  "text": "FAMILY_NAME"
+ },
+ {
+  "label": "aWeightName",
+  "text": "WEIGHT_NAME"
+ },
+ {
+  "label": "aSlant",
+  "text": "SLANT"
+ },
+ {
+  "label": "aT1cid",
+  "text": "t1cid"
+ },
+ {
+  "label": "aFdarray",
+  "text": "FDArray"
+ },
+ {
+  "label": "aExpansionfacto",
+  "text": "ExpansionFactor"
+ },
+ {
+  "label": "aForceboldthres",
+  "text": "ForceBoldThreshold"
+ },
+ {
+  "label": "aLenbuildcharar",
+  "text": "lenBuildCharArray"
+ },
+ {
+  "label": "aSubrcount",
+  "text": "SubrCount"
+ },
+ {
+  "label": "aSdbytes",
+  "text": "SDBytes"
+ },
+ {
+  "label": "aSubrmapoffset",
+  "text": "SubrMapOffset"
+ },
+ {
+  "label": "aCidcount",
+  "text": "CIDCount"
+ },
+ {
+  "label": "aGdbytes",
+  "text": "GDBytes"
+ },
+ {
+  "label": "aFdbytes",
+  "text": "FDBytes"
+ },
+ {
+  "label": "aCidmapoffset",
+  "text": "CIDMapOffset"
+ },
+ {
+  "label": "aUidbase",
+  "text": "UIDBase"
+ },
+ {
+  "label": "aSupplement",
+  "text": "Supplement"
+ },
+ {
+  "label": "aOrdering",
+  "text": "Ordering"
+ },
+ {
+  "label": "aRegistry",
+  "text": "Registry"
+ },
+ {
+  "label": "aCidfonttype",
+  "text": "CIDFontType"
+ },
+ {
+  "label": "aCidfontversion",
+  "text": "CIDFontVersion"
+ },
+ {
+  "label": "aCidfontname",
+  "text": "CIDFontName"
+ },
+ {
+  "label": "aStartdata",
+  "text": "StartData"
+ },
+ {
+  "label": "aPsAdobe30Resou",
+  "text": "%!PS-Adobe-3.0 Resource-CIDFont"
+ },
+ {
+  "label": "aAdobeginfontdi",
+  "text": "%ADOBeginFontDict"
+ },
+ {
+  "label": "aCff",
+  "text": "cff"
+ },
+ {
+  "label": "aAutohinter",
+  "text": "autohinter"
+ },
+ {
+  "label": "aPqgjy",
+  "text": "pqgjy"
+ },
+ {
+  "label": "aXzroesc",
+  "text": "xzroesc"
+ },
+ {
+  "label": "aHezlocus",
+  "text": "HEZLOCUS"
+ },
+ {
+  "label": "aThezocqs",
+  "text": "THEZOCQS"
+ }
+]

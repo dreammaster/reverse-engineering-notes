@@ -1,0 +1,4 @@
+*.lib
+manual/
+Engine/acwin___Win32_DebugWorking
+Engine/.vs/

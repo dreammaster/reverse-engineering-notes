@@ -1,0 +1,2034 @@
+{
+ "getshort": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Engine/AC.CPP"
+ },
+ "get_col8_lookup": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Engine/AC.CPP"
+ },
+ "clear": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Engine/ali3dsw.cpp"
+ },
+ "INIreaditem": {
+  "status": "ok",
+  "prototype": "char * INIreaditem(const char *sectn, const char *entry)",
+  "source_symbol": "INIreaditem",
+  "source_file": "Engine/AC.CPP"
+ },
+ "INIreadint": {
+  "status": "ok",
+  "prototype": "int INIreadint(const char *sectn, const char *item, int errornosect)",
+  "source_symbol": "INIreadint",
+  "source_file": "Engine/AC.CPP"
+ },
+ "fix_filename_case": {
+  "status": "ok",
+  "prototype": "char * fix_filename_case(char *filename)",
+  "source_symbol": "fix_filename_case",
+  "source_file": "Engine/libsrc/allegro-4.2.2-agspatch/file.c"
+ },
+ "StopAmbientSound": {
+  "status": "ok",
+  "prototype": "void StopAmbientSound(int channel)",
+  "source_symbol": "StopAmbientSound",
+  "source_file": "Engine/AC.CPP"
+ },
+ "PlayAmbientSound": {
+  "status": "ok",
+  "prototype": "void PlayAmbientSound(int channel, int sndnum, int vol, int x, int y)",
+  "source_symbol": "PlayAmbientSound",
+  "source_file": "Engine/AC.CPP"
+ },
+ "UpdatePalette": {
+  "status": "ok",
+  "prototype": "void UpdatePalette(void)",
+  "source_symbol": "UpdatePalette",
+  "source_file": "Engine/AC.CPP"
+ },
+ "IsTranslationAvailable": {
+  "status": "ok",
+  "prototype": "int IsTranslationAvailable(void)",
+  "source_symbol": "IsTranslationAvailable",
+  "source_file": "Engine/AC.CPP"
+ },
+ "dj_timer_handler": {
+  "status": "ok",
+  "prototype": "void __cdecl dj_timer_handler(void)",
+  "source_symbol": "dj_timer_handler",
+  "source_file": "Engine/AC.CPP"
+ },
+ "set_game_speed": {
+  "status": "ok",
+  "prototype": "void set_game_speed(int fps)",
+  "source_symbol": "set_game_speed",
+  "source_file": "Engine/AC.CPP"
+ },
+ "TintScreen": {
+  "status": "ok",
+  "prototype": "void TintScreen(int red, int grn, int blu)",
+  "source_symbol": "TintScreen",
+  "source_file": "Engine/AC.CPP"
+ },
+ "setup_for_dialog": {
+  "status": "ok",
+  "prototype": "void setup_for_dialog(void)",
+  "source_symbol": "setup_for_dialog",
+  "source_file": "Engine/AC.CPP"
+ },
+ "restore_after_dialog": {
+  "status": "ok",
+  "prototype": "void restore_after_dialog(void)",
+  "source_symbol": "restore_after_dialog",
+  "source_file": "Engine/AC.CPP"
+ },
+ "RestoreGameSlot": {
+  "status": "ok",
+  "prototype": "void RestoreGameSlot(int slnum)",
+  "source_symbol": "RestoreGameSlot",
+  "source_file": "Engine/AC.CPP"
+ },
+ "GetSaveSlotDescription": {
+  "status": "ok",
+  "prototype": "int GetSaveSlotDescription(int slnum, char*desbuf)",
+  "source_symbol": "GetSaveSlotDescription",
+  "source_file": "Engine/AC.CPP"
+ },
+ "FadeOut": {
+  "status": "ok",
+  "prototype": "void FadeOut(int speed, int targetColourRed, int targetColourGreen, int targetColourBlue)",
+  "source_symbol": "FadeOut",
+  "source_file": "Engine/ali3dsw.cpp"
+ },
+ "SetAreaLightLevel": {
+  "status": "ok",
+  "prototype": "void SetAreaLightLevel(int area, int brightness)",
+  "source_symbol": "SetAreaLightLevel",
+  "source_file": "Engine/AC.CPP"
+ },
+ "MoveToWalkableArea": {
+  "status": "ok",
+  "prototype": "void MoveToWalkableArea(int charid)",
+  "source_symbol": "MoveToWalkableArea",
+  "source_file": "Engine/acchars.cpp"
+ },
+ "SetMouseBounds": {
+  "status": "ok",
+  "prototype": "void SetMouseBounds(int x1, int y1, int x2, int y2)",
+  "source_symbol": "SetMouseBounds",
+  "source_file": "Engine/AC.CPP"
+ },
+ "new_room": {
+  "status": "ok",
+  "prototype": "void new_room(int newnum, CharacterInfo*forchar)",
+  "source_symbol": "new_room",
+  "source_file": "Engine/AC.CPP"
+ },
+ "setevent": {
+  "status": "ok",
+  "prototype": "void setevent(int evtyp, int ev1, int ev2, int ev3)",
+  "source_symbol": "setevent",
+  "source_file": "Engine/AC.CPP"
+ },
+ "ChangeCursorGraphic": {
+  "status": "ok",
+  "prototype": "void ChangeCursorGraphic(int curs, int newslot)",
+  "source_symbol": "ChangeCursorGraphic",
+  "source_file": "Engine/AC.CPP"
+ },
+ "ChangeCursorHotspot": {
+  "status": "ok",
+  "prototype": "void ChangeCursorHotspot(int curs, int x, int y)",
+  "source_symbol": "ChangeCursorHotspot",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetActiveInventory": {
+  "status": "ok",
+  "prototype": "void SetActiveInventory(int iit)",
+  "source_symbol": "SetActiveInventory",
+  "source_file": "Engine/AC.CPP"
+ },
+ "IsGamePaused": {
+  "status": "ok",
+  "prototype": "int IsGamePaused(void)",
+  "source_symbol": "IsGamePaused",
+  "source_file": "Engine/acplatfm.cpp"
+ },
+ "IsButtonDown": {
+  "status": "ok",
+  "prototype": "int IsButtonDown(int which)",
+  "source_symbol": "IsButtonDown",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetCharacterIdle": {
+  "status": "ok",
+  "prototype": "void SetCharacterIdle(int who, int iview, int itime)",
+  "source_symbol": "SetCharacterIdle",
+  "source_file": "Engine/AC.CPP"
+ },
+ "IsKeyPressed": {
+  "status": "ok",
+  "prototype": "int IsKeyPressed(int keycode)",
+  "source_symbol": "IsKeyPressed",
+  "source_file": "Engine/AC.CPP"
+ },
+ "update_invorder": {
+  "status": "ok",
+  "prototype": "void update_invorder(void)",
+  "source_symbol": "update_invorder",
+  "source_file": "Engine/AC.CPP"
+ },
+ "atexit_handler": {
+  "status": "ok",
+  "prototype": "void atexit_handler(void)",
+  "source_symbol": "atexit_handler",
+  "source_file": "Engine/AC.CPP"
+ },
+ "quit": {
+  "status": "ok",
+  "prototype": "void quit(char*quitmsg)",
+  "source_symbol": "quit",
+  "source_file": "Engine/AC.CPP"
+ },
+ "RemoveOverlay": {
+  "status": "ok",
+  "prototype": "void RemoveOverlay(int ovrid)",
+  "source_symbol": "RemoveOverlay",
+  "source_file": "Engine/AC.CPP"
+ },
+ "CreateGraphicOverlay": {
+  "status": "ok",
+  "prototype": "int CreateGraphicOverlay(int xx, int yy, int slott, int trans)",
+  "source_symbol": "CreateGraphicOverlay",
+  "source_file": "Engine/AC.CPP"
+ },
+ "CreateTextOverlay": {
+  "status": "ok",
+  "prototype": "int CreateTextOverlay(int xx, int yy, int wii, int fontid, int clr, char*texx, ...)",
+  "source_symbol": "CreateTextOverlay",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetTextOverlay": {
+  "status": "ok",
+  "prototype": "void SetTextOverlay(int ovrid, int xx, int yy, int wii, int fontid, int clr, char*texx, ...)",
+  "source_symbol": "SetTextOverlay",
+  "source_file": "Engine/AC.CPP"
+ },
+ "MoveOverlay": {
+  "status": "ok",
+  "prototype": "void MoveOverlay(int ovrid, int newx, int newy)",
+  "source_symbol": "MoveOverlay",
+  "source_file": "Engine/AC.CPP"
+ },
+ "DisplaySpeechBackground": {
+  "status": "ok",
+  "prototype": "int DisplaySpeechBackground(int charid, char*speel)",
+  "source_symbol": "DisplaySpeechBackground",
+  "source_file": "Engine/AC.CPP"
+ },
+ "DisplayAt": {
+  "status": "ok",
+  "prototype": "void DisplayAt(int xxp, int yyp, int widd, char*texx, ...)",
+  "source_symbol": "DisplayAt",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetSpeechVolume": {
+  "status": "ok",
+  "prototype": "void SetSpeechVolume(int newvol)",
+  "source_symbol": "SetSpeechVolume",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetSpeechFont": {
+  "status": "ok",
+  "prototype": "void SetSpeechFont(int fontnum)",
+  "source_symbol": "SetSpeechFont",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetNormalFont": {
+  "status": "ok",
+  "prototype": "void SetNormalFont(int fontnum)",
+  "source_symbol": "SetNormalFont",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetSpeechStyle": {
+  "status": "ok",
+  "prototype": "void SetSpeechStyle(int newstyle)",
+  "source_symbol": "SetSpeechStyle",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetVoiceMode": {
+  "status": "ok",
+  "prototype": "void SetVoiceMode(int newmod)",
+  "source_symbol": "SetVoiceMode",
+  "source_file": "Engine/AC.CPP"
+ },
+ "IsVoxAvailable": {
+  "status": "ok",
+  "prototype": "int IsVoxAvailable(void)",
+  "source_symbol": "IsVoxAvailable",
+  "source_file": "Engine/AC.CPP"
+ },
+ "IsMusicVoxAvailable": {
+  "status": "ok",
+  "prototype": "int IsMusicVoxAvailable(void)",
+  "source_symbol": "IsMusicVoxAvailable",
+  "source_file": "Engine/AC.CPP"
+ },
+ "DisplaySpeechAt": {
+  "status": "ok",
+  "prototype": "void DisplaySpeechAt(int xx, int yy, int wii, int aschar, char*spch)",
+  "source_symbol": "DisplaySpeechAt",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetGlobalInt": {
+  "status": "ok",
+  "prototype": "void SetGlobalInt(int index, int valu)",
+  "source_symbol": "SetGlobalInt",
+  "source_file": "Engine/AC.CPP"
+ },
+ "GetGlobalInt": {
+  "status": "ok",
+  "prototype": "int GetGlobalInt(int index)",
+  "source_symbol": "GetGlobalInt",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetScreenTransition": {
+  "status": "ok",
+  "prototype": "void SetScreenTransition(int newtrans)",
+  "source_symbol": "SetScreenTransition",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetSkipSpeech": {
+  "status": "ok",
+  "prototype": "void SetSkipSpeech(int newval)",
+  "source_symbol": "SetSkipSpeech",
+  "source_file": "Engine/AC.CPP"
+ },
+ "DisplayAtY": {
+  "status": "ok",
+  "prototype": "void DisplayAtY(int ypos, char *texx)",
+  "source_symbol": "DisplayAtY",
+  "source_file": "Engine/AC.CPP"
+ },
+ "Display": {
+  "status": "ok",
+  "prototype": "void Display(char*texx, ...)",
+  "source_symbol": "Display",
+  "source_file": "Engine/AC.CPP"
+ },
+ "DisplaySpeech": {
+  "status": "ok",
+  "prototype": "void DisplaySpeech(char*texx, int aschar)",
+  "source_symbol": "DisplaySpeech",
+  "source_file": "Engine/AC.CPP"
+ },
+ "DisplayMessage": {
+  "status": "ok",
+  "prototype": "void DisplayMessage(int msnum)",
+  "source_symbol": "DisplayMessage",
+  "source_file": "Engine/AC.CPP"
+ },
+ "RawSaveScreen": {
+  "status": "ok",
+  "prototype": "play.raw_modified[play.bg_frame] = 1 void RawSaveScreen(void)",
+  "source_symbol": "RawSaveScreen",
+  "source_file": "Engine/AC.CPP"
+ },
+ "RawRestoreScreen": {
+  "status": "ok",
+  "prototype": "we void RawRestoreScreen(void)",
+  "source_symbol": "RawRestoreScreen",
+  "source_file": "Engine/AC.CPP"
+ },
+ "RawSetColor": {
+  "status": "ok",
+  "prototype": "void RawSetColor(int clr)",
+  "source_symbol": "RawSetColor",
+  "source_file": "Engine/AC.CPP"
+ },
+ "RawPrint": {
+  "status": "ok",
+  "prototype": "void RawPrint(int xx, int yy, char*texx, ...)",
+  "source_symbol": "RawPrint",
+  "source_file": "Engine/AC.CPP"
+ },
+ "RawDrawImage": {
+  "status": "ok",
+  "prototype": "void RawDrawImage(int xx, int yy, int slot)",
+  "source_symbol": "RawDrawImage",
+  "source_file": "Engine/AC.CPP"
+ },
+ "RawDrawLine": {
+  "status": "ok",
+  "prototype": "void RawDrawLine(int fromx, int fromy, int tox, int toy)",
+  "source_symbol": "RawDrawLine",
+  "source_file": "Engine/AC.CPP"
+ },
+ "RawDrawTriangle": {
+  "status": "ok",
+  "prototype": "void RawDrawTriangle(int x1, int y1, int x2, int y2, int x3, int y3)",
+  "source_symbol": "RawDrawTriangle",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetObjectView": {
+  "status": "ok",
+  "prototype": "void SetObjectView(int obn, int vii)",
+  "source_symbol": "SetObjectView",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetObjectFrame": {
+  "status": "ok",
+  "prototype": "void SetObjectFrame(int obn, int viw, int lop, int fra)",
+  "source_symbol": "SetObjectFrame",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetObjectTransparency": {
+  "status": "ok",
+  "prototype": "void SetObjectTransparency(int obn, int trans)",
+  "source_symbol": "SetObjectTransparency",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetObjectBaseline": {
+  "status": "ok",
+  "prototype": "void SetObjectBaseline(int obn, int basel)",
+  "source_symbol": "SetObjectBaseline",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetCharacterBaseline": {
+  "status": "ok",
+  "prototype": "void SetCharacterBaseline(int obn, int basel)",
+  "source_symbol": "SetCharacterBaseline",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetCharacterTransparency": {
+  "status": "ok",
+  "prototype": "void SetCharacterTransparency(int obn, int trans)",
+  "source_symbol": "SetCharacterTransparency",
+  "source_file": "Engine/AC.CPP"
+ },
+ "animate_character": {
+  "status": "ok",
+  "prototype": "void animate_character(CharacterInfo *chap, int loopn, int sppd, int rept, int noidleoverride, int direction)",
+  "source_symbol": "animate_character",
+  "source_file": "Engine/AC.CPP"
+ },
+ "AnimateObject": {
+  "status": "ok",
+  "prototype": "void AnimateObject(int obn, int loopn, int spdd, int rept)",
+  "source_symbol": "AnimateObject",
+  "source_file": "Engine/AC.CPP"
+ },
+ "MergeObject": {
+  "status": "ok",
+  "prototype": "void MergeObject(int obn)",
+  "source_symbol": "MergeObject",
+  "source_file": "Engine/AC.CPP"
+ },
+ "ObjectOff": {
+  "status": "ok",
+  "prototype": "void ObjectOff(int obn)",
+  "source_symbol": "ObjectOff",
+  "source_file": "Engine/AC.CPP"
+ },
+ "ObjectOn": {
+  "status": "ok",
+  "prototype": "void ObjectOn(int obn)",
+  "source_symbol": "ObjectOn",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetObjectGraphic": {
+  "status": "ok",
+  "prototype": "void SetObjectGraphic(int obn, int slott)",
+  "source_symbol": "SetObjectGraphic",
+  "source_file": "Engine/AC.CPP"
+ },
+ "AreObjectsColliding": {
+  "status": "ok",
+  "prototype": "int AreObjectsColliding(int obj1, int obj2)",
+  "source_symbol": "AreObjectsColliding",
+  "source_file": "Engine/AC.CPP"
+ },
+ "AreCharObjColliding": {
+  "status": "ok",
+  "prototype": "int AreCharObjColliding(int charid, int objid)",
+  "source_symbol": "AreCharObjColliding",
+  "source_file": "Engine/AC.CPP"
+ },
+ "AreCharactersColliding": {
+  "status": "ok",
+  "prototype": "int AreCharactersColliding(int cchar1, int cchar2)",
+  "source_symbol": "AreCharactersColliding",
+  "source_file": "Engine/AC.CPP"
+ },
+ "scrWait": {
+  "status": "ok",
+  "prototype": "void scrWait(int nloops)",
+  "source_symbol": "scrWait",
+  "source_file": "Engine/AC.CPP"
+ },
+ "WaitKey": {
+  "status": "ok",
+  "prototype": "int WaitKey(int nloops)",
+  "source_symbol": "WaitKey",
+  "source_file": "Engine/AC.CPP"
+ },
+ "WaitMouseKey": {
+  "status": "ok",
+  "prototype": "int WaitMouseKey(int nloops)",
+  "source_symbol": "WaitMouseKey",
+  "source_file": "Engine/AC.CPP"
+ },
+ "StringToInt": {
+  "status": "ok",
+  "prototype": "int StringToInt(char*stino)",
+  "source_symbol": "StringToInt",
+  "source_file": "Engine/AC.CPP"
+ },
+ "StrGetCharAt": {
+  "status": "ok",
+  "prototype": "int StrGetCharAt(char *strin, int posn)",
+  "source_symbol": "StrGetCharAt",
+  "source_file": "Engine/AC.CPP"
+ },
+ "PlayVideo": {
+  "status": "ok",
+  "prototype": "bool PlayVideo(const char *filename, bool useAVISound, VideoSkipType skipType, bool stretchToFullScreen)",
+  "source_symbol": "PlayVideo",
+  "source_file": "Engine/ali3dsw.cpp"
+ },
+ "IsSoundPlaying": {
+  "status": "ok",
+  "prototype": "int IsSoundPlaying(void)",
+  "source_symbol": "IsSoundPlaying",
+  "source_file": "Engine/AC.CPP"
+ },
+ "add_inventory": {
+  "status": "ok",
+  "prototype": "void add_inventory(int inum)",
+  "source_symbol": "add_inventory",
+  "source_file": "Engine/AC.CPP"
+ },
+ "RunDialog": {
+  "status": "ok",
+  "prototype": "void RunDialog(int tum)",
+  "source_symbol": "RunDialog",
+  "source_file": "Engine/AC.CPP"
+ },
+ "GetGUIAt": {
+  "status": "ok",
+  "prototype": "int GetGUIAt(int xx, int yy)",
+  "source_symbol": "GetGUIAt",
+  "source_file": "Engine/AC.CPP"
+ },
+ "IsGUIOn": {
+  "status": "ok",
+  "prototype": "int IsGUIOn(int guinum)",
+  "source_symbol": "IsGUIOn",
+  "source_file": "Engine/AC.CPP"
+ },
+ "GetObjectAt": {
+  "status": "ok",
+  "prototype": "int GetObjectAt(int xx, int yy)",
+  "source_symbol": "GetObjectAt",
+  "source_file": "Engine/AC.CPP"
+ },
+ "RunObjectInteraction": {
+  "status": "ok",
+  "prototype": "void RunObjectInteraction(int aa, int mood)",
+  "source_symbol": "RunObjectInteraction",
+  "source_file": "Engine/AC.CPP"
+ },
+ "GetCharacterAt": {
+  "status": "ok",
+  "prototype": "int GetCharacterAt(int xx, int yy)",
+  "source_symbol": "GetCharacterAt",
+  "source_file": "Engine/AC.CPP"
+ },
+ "RunCharacterInteraction": {
+  "status": "ok",
+  "prototype": "void RunCharacterInteraction(int cc, int mood)",
+  "source_symbol": "RunCharacterInteraction",
+  "source_file": "Engine/AC.CPP"
+ },
+ "GetObjectX": {
+  "status": "ok",
+  "prototype": "int GetObjectX(int objj)",
+  "source_symbol": "GetObjectX",
+  "source_file": "Engine/AC.CPP"
+ },
+ "GetObjectY": {
+  "status": "ok",
+  "prototype": "int GetObjectY(int objj)",
+  "source_symbol": "GetObjectY",
+  "source_file": "Engine/AC.CPP"
+ },
+ "IsObjectAnimating": {
+  "status": "ok",
+  "prototype": "int IsObjectAnimating(int objj)",
+  "source_symbol": "IsObjectAnimating",
+  "source_file": "Engine/AC.CPP"
+ },
+ "IsObjectMoving": {
+  "status": "ok",
+  "prototype": "int IsObjectMoving(int objj)",
+  "source_symbol": "IsObjectMoving",
+  "source_file": "Engine/AC.CPP"
+ },
+ "RunHotspotInteraction": {
+  "status": "ok",
+  "prototype": "void RunHotspotInteraction(int hotspothere, int mood)",
+  "source_symbol": "RunHotspotInteraction",
+  "source_file": "Engine/AC.CPP"
+ },
+ "ProcessClick": {
+  "status": "ok",
+  "prototype": "void ProcessClick(int xx, int yy, int mood)",
+  "source_symbol": "ProcessClick",
+  "source_file": "Engine/AC.CPP"
+ },
+ "RemoveWalkableArea": {
+  "status": "ok",
+  "prototype": "void RemoveWalkableArea(int areanum)",
+  "source_symbol": "RemoveWalkableArea",
+  "source_file": "Engine/AC.CPP"
+ },
+ "RestoreWalkableArea": {
+  "status": "ok",
+  "prototype": "void RestoreWalkableArea(int areanum)",
+  "source_symbol": "RestoreWalkableArea",
+  "source_file": "Engine/AC.CPP"
+ },
+ "DisableHotspot": {
+  "status": "ok",
+  "prototype": "void DisableHotspot(int hsnum)",
+  "source_symbol": "DisableHotspot",
+  "source_file": "Engine/AC.CPP"
+ },
+ "EnableHotspot": {
+  "status": "ok",
+  "prototype": "void EnableHotspot(int hsnum)",
+  "source_symbol": "EnableHotspot",
+  "source_file": "Engine/AC.CPP"
+ },
+ "FlipScreen": {
+  "status": "ok",
+  "prototype": "void FlipScreen(int amount)",
+  "source_symbol": "FlipScreen",
+  "source_file": "Engine/AC.CPP"
+ },
+ "scr_StopMusic": {
+  "status": "ok",
+  "prototype": "void scr_StopMusic(void)",
+  "source_symbol": "scr_StopMusic",
+  "source_file": "Engine/AC.CPP"
+ },
+ "IsMusicPlaying": {
+  "status": "ok",
+  "prototype": "int IsMusicPlaying(void)",
+  "source_symbol": "IsMusicPlaying",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SeekMODPattern": {
+  "status": "ok",
+  "prototype": "void SeekMODPattern(int patnum)",
+  "source_symbol": "SeekMODPattern",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SeekMP3PosMillis": {
+  "status": "ok",
+  "prototype": "void SeekMP3PosMillis(int posn)",
+  "source_symbol": "SeekMP3PosMillis",
+  "source_file": "Engine/AC.CPP"
+ },
+ "GetMP3PosMillis": {
+  "status": "ok",
+  "prototype": "int GetMP3PosMillis(void)",
+  "source_symbol": "GetMP3PosMillis",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SeekMIDIPosition": {
+  "status": "ok",
+  "prototype": "void SeekMIDIPosition(int position)",
+  "source_symbol": "SeekMIDIPosition",
+  "source_file": "Engine/AC.CPP"
+ },
+ "GetMIDIPosition": {
+  "status": "ok",
+  "prototype": "int GetMIDIPosition(void)",
+  "source_symbol": "GetMIDIPosition",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetMusicVolume": {
+  "status": "ok",
+  "prototype": "void SetMusicVolume(int newvol)",
+  "source_symbol": "SetMusicVolume",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetMusicMasterVolume": {
+  "status": "ok",
+  "prototype": "void SetMusicMasterVolume(int newvol)",
+  "source_symbol": "SetMusicMasterVolume",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetSoundVolume": {
+  "status": "ok",
+  "prototype": "void SetSoundVolume(int newvol)",
+  "source_symbol": "SetSoundVolume",
+  "source_file": "Engine/AC.CPP"
+ },
+ "GetCurrentMusic": {
+  "status": "ok",
+  "prototype": "int GetCurrentMusic(void)",
+  "source_symbol": "GetCurrentMusic",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetMusicRepeat": {
+  "status": "ok",
+  "prototype": "void SetMusicRepeat(int loopflag)",
+  "source_symbol": "SetMusicRepeat",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetPlayerCharacter": {
+  "status": "ok",
+  "prototype": "void SetPlayerCharacter(int newchar)",
+  "source_symbol": "SetPlayerCharacter",
+  "source_file": "Engine/AC.CPP"
+ },
+ "FollowCharacterEx": {
+  "status": "ok",
+  "prototype": "void FollowCharacterEx(int who, int tofollow, int distaway, int eagerness)",
+  "source_symbol": "FollowCharacterEx",
+  "source_file": "Engine/AC.CPP"
+ },
+ "FollowCharacter": {
+  "status": "ok",
+  "prototype": "void FollowCharacter(int who, int tofollow)",
+  "source_symbol": "FollowCharacter",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetCharacterIgnoreLight": {
+  "status": "ok",
+  "prototype": "void SetCharacterIgnoreLight(int who, int yesorno)",
+  "source_symbol": "SetCharacterIgnoreLight",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetCharacterProperty": {
+  "status": "ok",
+  "prototype": "void SetCharacterProperty(int who, int flag, int yesorno)",
+  "source_symbol": "SetCharacterProperty",
+  "source_file": "Engine/AC.CPP"
+ },
+ "QuitGame": {
+  "status": "ok",
+  "prototype": "void QuitGame(int dialog)",
+  "source_symbol": "QuitGame",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SaidUnknownWord": {
+  "status": "ok",
+  "prototype": "int SaidUnknownWord(char*buffer)",
+  "source_symbol": "SaidUnknownWord",
+  "source_file": "Engine/AC.CPP"
+ },
+ "ParseText": {
+  "status": "ok",
+  "prototype": "void ParseText(char*text)",
+  "source_symbol": "ParseText",
+  "source_file": "Engine/AC.CPP"
+ },
+ "Said": {
+  "status": "ok",
+  "prototype": "we then check int Said(char*checkwords)",
+  "source_symbol": "Said",
+  "source_file": "Engine/AC.CPP"
+ },
+ "FileOpen": {
+  "status": "ok",
+  "prototype": "FILE* FileOpen(const char*fnmm, const char* mode)",
+  "source_symbol": "FileOpen",
+  "source_file": "Engine/AC.CPP"
+ },
+ "FileClose": {
+  "status": "ok",
+  "prototype": "void FileClose(FILE*hha)",
+  "source_symbol": "FileClose",
+  "source_file": "Engine/AC.CPP"
+ },
+ "FileWrite": {
+  "status": "ok",
+  "prototype": "void FileWrite(FILE*haa, const char *towrite)",
+  "source_symbol": "FileWrite",
+  "source_file": "Engine/AC.CPP"
+ },
+ "FileWriteRawLine": {
+  "status": "ok",
+  "prototype": "void FileWriteRawLine(FILE*haa, const char*towrite)",
+  "source_symbol": "FileWriteRawLine",
+  "source_file": "Engine/AC.CPP"
+ },
+ "FileRead": {
+  "status": "ok",
+  "prototype": "void FileRead(FILE*haa, char*toread)",
+  "source_symbol": "FileRead",
+  "source_file": "Engine/AC.CPP"
+ },
+ "FileWriteInt": {
+  "status": "ok",
+  "prototype": "void FileWriteInt(FILE*haa, int into)",
+  "source_symbol": "FileWriteInt",
+  "source_file": "Engine/AC.CPP"
+ },
+ "FileReadInt": {
+  "status": "ok",
+  "prototype": "int FileReadInt(FILE*haa)",
+  "source_symbol": "FileReadInt",
+  "source_file": "Engine/AC.CPP"
+ },
+ "FileReadRawChar": {
+  "status": "ok",
+  "prototype": "char FileReadRawChar(FILE*haa)",
+  "source_symbol": "FileReadRawChar",
+  "source_file": "Engine/AC.CPP"
+ },
+ "FileReadRawInt": {
+  "status": "ok",
+  "prototype": "int FileReadRawInt(FILE*haa)",
+  "source_symbol": "FileReadRawInt",
+  "source_file": "Engine/AC.CPP"
+ },
+ "InterfaceOn": {
+  "status": "ok",
+  "prototype": "void InterfaceOn(int ifn)",
+  "source_symbol": "InterfaceOn",
+  "source_file": "Engine/AC.CPP"
+ },
+ "InterfaceOff": {
+  "status": "ok",
+  "prototype": "void InterfaceOff(int ifn)",
+  "source_symbol": "InterfaceOff",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetGUIPosition": {
+  "status": "ok",
+  "prototype": "void SetGUIPosition(int ifn, int xx, int yy)",
+  "source_symbol": "SetGUIPosition",
+  "source_file": "Engine/AC.CPP"
+ },
+ "PauseGame": {
+  "status": "ok",
+  "prototype": "void PauseGame(void)",
+  "source_symbol": "PauseGame",
+  "source_file": "Engine/AC.CPP"
+ },
+ "UnPauseGame": {
+  "status": "ok",
+  "prototype": "void UnPauseGame(void)",
+  "source_symbol": "UnPauseGame",
+  "source_file": "Engine/AC.CPP"
+ },
+ "GetTextBoxText": {
+  "status": "ok",
+  "prototype": "void GetTextBoxText(int guin, int objn, char*txbuf)",
+  "source_symbol": "GetTextBoxText",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetTextBoxText": {
+  "status": "ok",
+  "prototype": "void SetTextBoxText(int guin, int objn, char*txbuf)",
+  "source_symbol": "SetTextBoxText",
+  "source_file": "Engine/AC.CPP"
+ },
+ "ListBoxClear": {
+  "status": "ok",
+  "prototype": "void ListBoxClear(int guin, int objn)",
+  "source_symbol": "ListBoxClear",
+  "source_file": "Engine/AC.CPP"
+ },
+ "ListBoxAdd": {
+  "status": "ok",
+  "prototype": "void ListBoxAdd(int guin, int objn, const char*newitem)",
+  "source_symbol": "ListBoxAdd",
+  "source_file": "Engine/AC.CPP"
+ },
+ "ListBoxGetSelected": {
+  "status": "ok",
+  "prototype": "int ListBoxGetSelected(int guin, int objn)",
+  "source_symbol": "ListBoxGetSelected",
+  "source_file": "Engine/AC.CPP"
+ },
+ "ListBoxGetNumItems": {
+  "status": "ok",
+  "prototype": "int ListBoxGetNumItems(int guin, int objn)",
+  "source_symbol": "ListBoxGetNumItems",
+  "source_file": "Engine/AC.CPP"
+ },
+ "ListBoxGetItemText": {
+  "status": "ok",
+  "prototype": "char* ListBoxGetItemText(int guin, int objn, int item, char*buffer)",
+  "source_symbol": "ListBoxGetItemText",
+  "source_file": "Engine/AC.CPP"
+ },
+ "ListBoxSetSelected": {
+  "status": "ok",
+  "prototype": "void ListBoxSetSelected(int guin, int objn, int newsel)",
+  "source_symbol": "ListBoxSetSelected",
+  "source_file": "Engine/AC.CPP"
+ },
+ "ListBoxSaveGameList": {
+  "status": "ok",
+  "prototype": "int ListBoxSaveGameList(int guin, int objn)",
+  "source_symbol": "ListBoxSaveGameList",
+  "source_file": "Engine/AC.CPP"
+ },
+ "ListBoxDirList": {
+  "status": "ok",
+  "prototype": "void ListBoxDirList(int guin, int objn, const char*filemask)",
+  "source_symbol": "ListBoxDirList",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetLabelText": {
+  "status": "ok",
+  "prototype": "void SetLabelText(int guin, int objn, char*newtx)",
+  "source_symbol": "SetLabelText",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetLabelFont": {
+  "status": "ok",
+  "prototype": "void SetLabelFont(int guin, int objn, int fontnum)",
+  "source_symbol": "SetLabelFont",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetSliderValue": {
+  "status": "ok",
+  "prototype": "void SetSliderValue(int guin, int objn, int valn)",
+  "source_symbol": "SetSliderValue",
+  "source_file": "Engine/AC.CPP"
+ },
+ "GetSliderValue": {
+  "status": "ok",
+  "prototype": "int GetSliderValue(int guin, int objn)",
+  "source_symbol": "GetSliderValue",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetGUIBackgroundPic": {
+  "status": "ok",
+  "prototype": "void SetGUIBackgroundPic(int guin, int slotn)",
+  "source_symbol": "SetGUIBackgroundPic",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetButtonPic": {
+  "status": "ok",
+  "prototype": "void SetButtonPic(int guin, int objn, int ptype, int slotn)",
+  "source_symbol": "SetButtonPic",
+  "source_file": "Engine/AC.CPP"
+ },
+ "DisableInterface": {
+  "status": "ok",
+  "prototype": "void DisableInterface(void)",
+  "source_symbol": "DisableInterface",
+  "source_file": "Engine/AC.CPP"
+ },
+ "EnableInterface": {
+  "status": "ok",
+  "prototype": "void EnableInterface(void)",
+  "source_symbol": "EnableInterface",
+  "source_file": "Engine/AC.CPP"
+ },
+ "IsInterfaceEnabled": {
+  "status": "ok",
+  "prototype": "int IsInterfaceEnabled(void)",
+  "source_symbol": "IsInterfaceEnabled",
+  "source_file": "Engine/AC.CPP"
+ },
+ "NewRoom": {
+  "status": "ok",
+  "prototype": "void NewRoom(int nrnum)",
+  "source_symbol": "NewRoom",
+  "source_file": "Engine/AC.CPP"
+ },
+ "NewRoomEx": {
+  "status": "ok",
+  "prototype": "void NewRoomEx(int nrnum, int newx, int newy)",
+  "source_symbol": "NewRoomEx",
+  "source_file": "Engine/AC.CPP"
+ },
+ "ResetRoom": {
+  "status": "ok",
+  "prototype": "void ResetRoom(int nrnum)",
+  "source_symbol": "ResetRoom",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetRestartPoint": {
+  "status": "ok",
+  "prototype": "void SetRestartPoint(void)",
+  "source_symbol": "SetRestartPoint",
+  "source_file": "Engine/AC.CPP"
+ },
+ "CallRoomScript": {
+  "status": "ok",
+  "prototype": "void CallRoomScript(int value)",
+  "source_symbol": "CallRoomScript",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetGameSpeed": {
+  "status": "ok",
+  "prototype": "void SetGameSpeed(int newspd)",
+  "source_symbol": "SetGameSpeed",
+  "source_file": "Engine/AC.CPP"
+ },
+ "GetGameSpeed": {
+  "status": "ok",
+  "prototype": "int GetGameSpeed(void)",
+  "source_symbol": "GetGameSpeed",
+  "source_file": "Engine/AC.CPP"
+ },
+ "StopDialog": {
+  "status": "ok",
+  "prototype": "void StopDialog(void)",
+  "source_symbol": "StopDialog",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetDialogOption": {
+  "status": "ok",
+  "prototype": "void SetDialogOption(int dlg, int opt, int onoroff)",
+  "source_symbol": "SetDialogOption",
+  "source_file": "Engine/AC.CPP"
+ },
+ "ShakeScreen": {
+  "status": "ok",
+  "prototype": "void ShakeScreen(int severe)",
+  "source_symbol": "ShakeScreen",
+  "source_file": "Engine/AC.CPP"
+ },
+ "CyclePalette": {
+  "status": "ok",
+  "prototype": "void CyclePalette(int strt, int eend)",
+  "source_symbol": "CyclePalette",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetPalRGB": {
+  "status": "ok",
+  "prototype": "void SetPalRGB(int inndx, int rr, int gg, int bb)",
+  "source_symbol": "SetPalRGB",
+  "source_file": "Engine/AC.CPP"
+ },
+ "FadeIn": {
+  "status": "ok",
+  "prototype": "void FadeIn(int speed, PALLETE p, int targetColourRed, int targetColourGreen, int targetColourBlue)",
+  "source_symbol": "FadeIn",
+  "source_file": "Engine/ali3dsw.cpp"
+ },
+ "RefreshMouse": {
+  "status": "ok",
+  "prototype": "void RefreshMouse(void)",
+  "source_symbol": "RefreshMouse",
+  "source_file": "Engine/AC.CPP"
+ },
+ "GetCursorMode": {
+  "status": "ok",
+  "prototype": "int GetCursorMode(void)",
+  "source_symbol": "GetCursorMode",
+  "source_file": "Engine/AC.CPP"
+ },
+ "GiveScore": {
+  "status": "ok",
+  "prototype": "void GiveScore(int amnt)",
+  "source_symbol": "GiveScore",
+  "source_file": "Engine/AC.CPP"
+ },
+ "GetHotspotAt": {
+  "status": "ok",
+  "prototype": "int GetHotspotAt(int xxx, int yyy)",
+  "source_symbol": "GetHotspotAt",
+  "source_file": "Engine/AC.CPP"
+ },
+ "GetLocationType": {
+  "status": "ok",
+  "prototype": "int GetLocationType(int xxx, int yyy)",
+  "source_symbol": "GetLocationType",
+  "source_file": "Engine/AC.CPP"
+ },
+ "GetLocationName": {
+  "status": "ok",
+  "prototype": "void GetLocationName(int xxx, int yyy, char*tempo)",
+  "source_symbol": "GetLocationName",
+  "source_file": "Engine/AC.CPP"
+ },
+ "GetInvName": {
+  "status": "ok",
+  "prototype": "void GetInvName(int indx, char*buff)",
+  "source_symbol": "GetInvName",
+  "source_file": "Engine/AC.CPP"
+ },
+ "MoveCharacter": {
+  "status": "ok",
+  "prototype": "void MoveCharacter(int cc, int xx, int yy)",
+  "source_symbol": "MoveCharacter",
+  "source_file": "Engine/AC.CPP"
+ },
+ "MoveCharacterDirect": {
+  "status": "ok",
+  "prototype": "void MoveCharacterDirect(int cc, int xx, int yy)",
+  "source_symbol": "MoveCharacterDirect",
+  "source_file": "Engine/AC.CPP"
+ },
+ "MoveCharacterStraight": {
+  "status": "ok",
+  "prototype": "void MoveCharacterStraight(int cc, int xx, int yy)",
+  "source_symbol": "MoveCharacterStraight",
+  "source_file": "Engine/AC.CPP"
+ },
+ "MoveCharacterPath": {
+  "status": "ok",
+  "prototype": "void MoveCharacterPath(int chac, int tox, int toy)",
+  "source_symbol": "MoveCharacterPath",
+  "source_file": "Engine/AC.CPP"
+ },
+ "MoveObject": {
+  "status": "ok",
+  "prototype": "void MoveObject(int objj, int xx, int yy, int spp)",
+  "source_symbol": "MoveObject",
+  "source_file": "Engine/AC.CPP"
+ },
+ "MoveObjectDirect": {
+  "status": "ok",
+  "prototype": "void MoveObjectDirect(int objj, int xx, int yy, int spp)",
+  "source_symbol": "MoveObjectDirect",
+  "source_file": "Engine/AC.CPP"
+ },
+ "GetPlayerCharacter": {
+  "status": "ok",
+  "prototype": "int GetPlayerCharacter(void)",
+  "source_symbol": "GetPlayerCharacter",
+  "source_file": "Engine/acplatfm.cpp"
+ },
+ "SetCharacterSpeed": {
+  "status": "ok",
+  "prototype": "void SetCharacterSpeed(int chaa, int nspeed)",
+  "source_symbol": "SetCharacterSpeed",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetTalkingColor": {
+  "status": "ok",
+  "prototype": "void SetTalkingColor(int chaa, int ncol)",
+  "source_symbol": "SetTalkingColor",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetCharacterView": {
+  "status": "ok",
+  "prototype": "void SetCharacterView(int chaa, int vii)",
+  "source_symbol": "SetCharacterView",
+  "source_file": "Engine/AC.CPP"
+ },
+ "ReleaseCharacterView": {
+  "status": "ok",
+  "prototype": "void ReleaseCharacterView(int chat)",
+  "source_symbol": "ReleaseCharacterView",
+  "source_file": "Engine/acchars.cpp"
+ },
+ "ChangeCharacterView": {
+  "status": "ok",
+  "prototype": "void ChangeCharacterView(int chaa, int vii)",
+  "source_symbol": "ChangeCharacterView",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetCharacterClickable": {
+  "status": "ok",
+  "prototype": "void SetCharacterClickable(int cha, int clik)",
+  "source_symbol": "SetCharacterClickable",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetCharacterIgnoreWalkbehinds": {
+  "status": "ok",
+  "prototype": "void SetCharacterIgnoreWalkbehinds(int cha, int clik)",
+  "source_symbol": "SetCharacterIgnoreWalkbehinds",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetObjectClickable": {
+  "status": "ok",
+  "prototype": "void SetObjectClickable(int cha, int clik)",
+  "source_symbol": "SetObjectClickable",
+  "source_file": "Engine/AC.CPP"
+ },
+ "FaceLocation": {
+  "status": "ok",
+  "prototype": "void FaceLocation(int cha, int xx, int yy)",
+  "source_symbol": "FaceLocation",
+  "source_file": "Engine/acchars.cpp"
+ },
+ "FaceCharacter": {
+  "status": "ok",
+  "prototype": "void FaceCharacter(int cha, int toface)",
+  "source_symbol": "FaceCharacter",
+  "source_file": "Engine/acchars.cpp"
+ },
+ "MoveCharacterToObject": {
+  "status": "ok",
+  "prototype": "void MoveCharacterToObject(int chaa, int obbj)",
+  "source_symbol": "MoveCharacterToObject",
+  "source_file": "Engine/AC.CPP"
+ },
+ "MoveCharacterToHotspot": {
+  "status": "ok",
+  "prototype": "void MoveCharacterToHotspot(int chaa, int hotsp)",
+  "source_symbol": "MoveCharacterToHotspot",
+  "source_file": "Engine/AC.CPP"
+ },
+ "MoveCharacterBlocking": {
+  "status": "ok",
+  "prototype": "void MoveCharacterBlocking(int chaa, int xx, int yy, int direct)",
+  "source_symbol": "MoveCharacterBlocking",
+  "source_file": "Engine/AC.CPP"
+ },
+ "StopMoving": {
+  "status": "ok",
+  "prototype": "void StopMoving(int chaa)",
+  "source_symbol": "StopMoving",
+  "source_file": "Engine/acchars.cpp"
+ },
+ "SetViewport": {
+  "status": "ok",
+  "prototype": "void SetViewport(int offsx, int offsy)",
+  "source_symbol": "SetViewport",
+  "source_file": "Engine/AC.CPP"
+ },
+ "ReleaseViewport": {
+  "status": "ok",
+  "prototype": "void ReleaseViewport(void)",
+  "source_symbol": "ReleaseViewport",
+  "source_file": "Engine/AC.CPP"
+ },
+ "GetViewportX": {
+  "status": "ok",
+  "prototype": "int GetViewportX(void)",
+  "source_symbol": "GetViewportX",
+  "source_file": "Engine/AC.CPP"
+ },
+ "GetViewportY": {
+  "status": "ok",
+  "prototype": "int GetViewportY(void)",
+  "source_symbol": "GetViewportY",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetBackgroundFrame": {
+  "status": "ok",
+  "prototype": "void SetBackgroundFrame(int frnum)",
+  "source_symbol": "SetBackgroundFrame",
+  "source_file": "Engine/AC.CPP"
+ },
+ "GetBackgroundFrame": {
+  "status": "ok",
+  "prototype": "int GetBackgroundFrame(void)",
+  "source_symbol": "GetBackgroundFrame",
+  "source_file": "Engine/AC.CPP"
+ },
+ "script_debug": {
+  "status": "ok",
+  "prototype": "void script_debug(int cmdd, int dataa)",
+  "source_symbol": "script_debug",
+  "source_file": "Engine/AC.CPP"
+ },
+ "script_SetTimer": {
+  "status": "ok",
+  "prototype": "void script_SetTimer(int tnum, int timeout)",
+  "source_symbol": "script_SetTimer",
+  "source_file": "Engine/AC.CPP"
+ },
+ "_sc_strcat": {
+  "status": "ok",
+  "prototype": "void _sc_strcat(char*s1, char*s2)",
+  "source_symbol": "_sc_strcat",
+  "source_file": "Engine/AC.CPP"
+ },
+ "_sc_strcpy": {
+  "status": "ok",
+  "prototype": "void _sc_strcpy(char*s1, char*s2)",
+  "source_symbol": "_sc_strcpy",
+  "source_file": "Engine/AC.CPP"
+ },
+ "_sc_strlower": {
+  "status": "ok",
+  "prototype": "void _sc_strlower(char *desbuf)",
+  "source_symbol": "_sc_strlower",
+  "source_file": "Engine/AC.CPP"
+ },
+ "_sc_strupper": {
+  "status": "ok",
+  "prototype": "void _sc_strupper(char *desbuf)",
+  "source_symbol": "_sc_strupper",
+  "source_file": "Engine/AC.CPP"
+ },
+ "_sc_sprintf": {
+  "status": "ok",
+  "prototype": "void _sc_sprintf(char*destt, char*texx, ...)",
+  "source_symbol": "_sc_sprintf",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetInvDimensions": {
+  "status": "ok",
+  "prototype": "void SetInvDimensions(int ww, int hh)",
+  "source_symbol": "SetInvDimensions",
+  "source_file": "Engine/AC.CPP"
+ },
+ "StartCutscene": {
+  "status": "ok",
+  "prototype": "void StartCutscene(int skipwith)",
+  "source_symbol": "StartCutscene",
+  "source_file": "Engine/AC.CPP"
+ },
+ "EndCutscene": {
+  "status": "ok",
+  "prototype": "int EndCutscene(void)",
+  "source_symbol": "EndCutscene",
+  "source_file": "Engine/AC.CPP"
+ },
+ "setup_script_exports": {
+  "status": "ok",
+  "prototype": "void setup_script_exports(void)",
+  "source_symbol": "setup_script_exports",
+  "source_file": "Engine/AC.CPP"
+ },
+ "check_write_access": {
+  "status": "ok",
+  "prototype": "int check_write_access(void)",
+  "source_symbol": "check_write_access",
+  "source_file": "Engine/AC.CPP"
+ },
+ "do_main_cycle": {
+  "status": "ok",
+  "prototype": "void do_main_cycle(int untilwhat, int daaa)",
+  "source_symbol": "do_main_cycle",
+  "source_file": "Engine/AC.CPP"
+ },
+ "cd_player_init": {
+  "status": "ok",
+  "prototype": "int cd_player_init(void)",
+  "source_symbol": "cd_player_init",
+  "source_file": "Engine/acplatfm.cpp"
+ },
+ "malloc_fail_handler": {
+  "status": "ok",
+  "prototype": "int malloc_fail_handler(size_t amountwanted)",
+  "source_symbol": "malloc_fail_handler",
+  "source_file": "Engine/AC.CPP"
+ },
+ "winclosehook": {
+  "status": "ok",
+  "prototype": "void winclosehook(void)",
+  "source_symbol": "winclosehook",
+  "source_file": "Engine/AC.CPP"
+ },
+ "enternumberwindow": {
+  "status": "ok",
+  "prototype": "int enternumberwindow(char *prompttext)",
+  "source_symbol": "enternumberwindow",
+  "source_file": "Engine/acdialog.cpp"
+ },
+ "csetlib": {
+  "status": "ok",
+  "prototype": "int csetlib(char *namm, char *passw)",
+  "source_symbol": "csetlib",
+  "source_file": "Common/Clib32.cpp"
+ },
+ "clibfilesize": {
+  "status": "ok",
+  "prototype": "long clibfilesize(char *fill)",
+  "source_symbol": "clibfilesize",
+  "source_file": "Common/Clib32.cpp"
+ },
+ "cliboffset": {
+  "status": "ok",
+  "prototype": "long cliboffset(char *fill)",
+  "source_symbol": "cliboffset",
+  "source_file": "Common/Clib32.cpp"
+ },
+ "clibopenfile": {
+  "status": "ok",
+  "prototype": "FILE * clibopenfile(char *filly, char *readmode)",
+  "source_symbol": "clibopenfile",
+  "source_file": "Common/Clib32.cpp"
+ },
+ "clibfopen": {
+  "status": "ok",
+  "prototype": "FILE * clibfopen(char *filnamm, char *fmt)",
+  "source_symbol": "clibfopen",
+  "source_file": "Common/Clib32.cpp"
+ },
+ "ccSetOption": {
+  "status": "ok",
+  "prototype": "void ccSetOption(int optbit, int onoroff)",
+  "source_symbol": "ccSetOption",
+  "source_file": "Common/cscommon.cpp"
+ },
+ "domouse": {
+  "status": "ok",
+  "prototype": "void domouse(int str)",
+  "source_symbol": "domouse",
+  "source_file": "Common/MOUSEW32.CPP"
+ },
+ "minstalled": {
+  "status": "ok",
+  "prototype": "int minstalled(void)",
+  "source_symbol": "minstalled",
+  "source_file": "Common/MOUSEW32.CPP"
+ },
+ "get_route_composition": {
+  "status": "ok",
+  "prototype": "int get_route_composition(void)",
+  "source_symbol": "get_route_composition",
+  "source_file": "Engine/routefnd.cpp"
+ },
+ "route_script_link": {
+  "status": "ok",
+  "prototype": "int route_script_link(void)",
+  "source_symbol": "route_script_link",
+  "source_file": "Engine/routefnd.cpp"
+ },
+ "init_pathfinder": {
+  "status": "ok",
+  "prototype": "void init_pathfinder(void)",
+  "source_symbol": "init_pathfinder",
+  "source_file": "Engine/routefnd.cpp"
+ },
+ "print_welcome_text": {
+  "status": "ok",
+  "prototype": "void print_welcome_text(char *verno, char *aciverno)",
+  "source_symbol": "print_welcome_text",
+  "source_file": "Engine/routefnd.cpp"
+ },
+ "load_graphical_scripts": {
+  "status": "ok",
+  "prototype": "void load_graphical_scripts(FILE * iii, roomstruct * rst)",
+  "source_symbol": "load_graphical_scripts",
+  "source_file": "Engine/scrptrt.cpp"
+ },
+ "cd_init": {
+  "status": "ok",
+  "prototype": "int cd_init(void)",
+  "source_symbol": "cd_init",
+  "source_file": "Engine/libsrc/libcda-0.4/libcdaWin.C"
+ },
+ "command": {
+  "status": "ok",
+  "prototype": "static int command(char *fmt, ...)",
+  "source_symbol": "command",
+  "source_file": "Engine/libsrc/libcda-0.4/libcdaWin.C"
+ },
+ "install_allegro": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Engine/AC.CPP"
+ },
+ "circlefill": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Engine/AC.CPP"
+ },
+ "render_to_screen": {
+  "status": "ok",
+  "prototype": "void render_to_screen(BITMAP *toRender, int atx, int aty)",
+  "source_symbol": "render_to_screen",
+  "source_file": "Engine/AC.CPP"
+ },
+ "init_mod_player": {
+  "status": "ok",
+  "prototype": "int init_mod_player(int numVoices)",
+  "source_symbol": "init_mod_player",
+  "source_file": "Engine/acsound.cpp"
+ },
+ "vsprintf": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Common/cscommon.cpp"
+ },
+ "localtime": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Engine/acplatfm.cpp"
+ },
+ "time": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Engine/acplatfm.cpp"
+ },
+ "sprintf": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Common/Clib32.cpp"
+ },
+ "printf": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Engine/libsrc/dumb-0.9.2/IT/XMEFFECT.C"
+ },
+ "fprintf": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Common/CSRUN.CPP"
+ },
+ "ccCreateInstanceEx": {
+  "status": "ok",
+  "prototype": "ccInstance * ccCreateInstanceEx(ccScript * scri, ccInstance * joined)",
+  "source_symbol": "ccCreateInstanceEx",
+  "source_file": "Common/CSRUN.CPP"
+ },
+ "ccCallInstance": {
+  "status": "ok",
+  "prototype": "int ccCallInstance(ccInstance * inst, char *funcname, long numargs, ...)",
+  "source_symbol": "ccCallInstance",
+  "source_file": "Common/CSRUN.CPP"
+ },
+ "init_translation": {
+  "status": "ok",
+  "prototype": "bool init_translation(const char *lang)",
+  "source_symbol": "init_translation",
+  "source_file": "Engine/AC.CPP"
+ },
+ "load_main_block": {
+  "status": "ok",
+  "prototype": "void load_main_block(roomstruct *rstruc, char *files, FILE *opty, room_file_header rfh)",
+  "source_symbol": "load_main_block",
+  "source_file": "Common/acroom.h"
+ },
+ "load_room": {
+  "status": "ok",
+  "prototype": "void load_room(char *files, roomstruct *rstruc, bool gameIsHighRes)",
+  "source_symbol": "load_room",
+  "source_file": "Common/acroom.h"
+ },
+ "load_new_room": {
+  "status": "ok",
+  "prototype": "void load_new_room(int newnum, CharacterInfo*forchar)",
+  "source_symbol": "load_new_room",
+  "source_file": "Engine/AC.CPP"
+ },
+ "RenderFileToMMStream": {
+  "status": "ok",
+  "prototype": "HRESULT RenderFileToMMStream(LPCTSTR szFilename)",
+  "source_symbol": "RenderFileToMMStream",
+  "source_file": "Engine/acwavi.cpp"
+ },
+ "GUIButton__Draw": {
+  "status": "ok",
+  "prototype": "void __thiscall GUIButton__Draw(GUIButton *this)",
+  "source_symbol": "GUIButton::Draw",
+  "source_file": "Engine/acgui.cpp"
+ },
+ "prepare_text_script": {
+  "status": "ok",
+  "prototype": "int prepare_text_script(ccInstance*sci, char**tsname)",
+  "source_symbol": "prepare_text_script",
+  "source_file": "Engine/AC.CPP"
+ },
+ "run_script_function_if_exist": {
+  "status": "ok",
+  "prototype": "int run_script_function_if_exist(ccInstance*sci, char*tsname, int numParam, int iparam, int iparam2, int iparam3)",
+  "source_symbol": "run_script_function_if_exist",
+  "source_file": "Engine/AC.CPP"
+ },
+ "process_event": {
+  "status": "ok",
+  "prototype": "void process_event(EventHappened*evp)",
+  "source_symbol": "process_event",
+  "source_file": "Engine/AC.CPP"
+ },
+ "check_controls": {
+  "status": "ok",
+  "prototype": "void check_controls(void)",
+  "source_symbol": "check_controls",
+  "source_file": "Engine/AC.CPP"
+ },
+ "_displayspeech": {
+  "status": "ok",
+  "prototype": "void _displayspeech(char*texx, int aschar, int xx, int yy, int widd, int isThought)",
+  "source_symbol": "_displayspeech",
+  "source_file": "Engine/AC.CPP"
+ },
+ "replace_tokens": {
+  "status": "ok",
+  "prototype": "void replace_tokens(char*srcmes, char*destm, int maxlen)",
+  "source_symbol": "replace_tokens",
+  "source_file": "Engine/AC.CPP"
+ },
+ "parse_sentence": {
+  "status": "ok",
+  "prototype": "int parse_sentence(char*text, int *numwords, short*wordarray, short*compareto, int comparetonum)",
+  "source_symbol": "parse_sentence",
+  "source_file": "Engine/AC.CPP"
+ },
+ "is_valid_listbox": {
+  "status": "ok",
+  "prototype": "GUIListBox* is_valid_listbox(int guin, int objn)",
+  "source_symbol": "is_valid_listbox",
+  "source_file": "Engine/AC.CPP"
+ },
+ "restore_game_data": {
+  "status": "ok",
+  "prototype": "int restore_game_data(FILE *ooo, const char *nametouse)",
+  "source_symbol": "restore_game_data",
+  "source_file": "Engine/AC.CPP"
+ },
+ "run_on_event": {
+  "status": "ok",
+  "prototype": "void run_on_event(int evtype, int wparam)",
+  "source_symbol": "run_on_event",
+  "source_file": "Engine/AC.CPP"
+ },
+ "process_interface_click": {
+  "status": "ok",
+  "prototype": "void process_interface_click(int ifce, int btn, int mbut)",
+  "source_symbol": "process_interface_click",
+  "source_file": "Engine/AC.CPP"
+ },
+ "update_stuff": {
+  "status": "ok",
+  "prototype": "void update_stuff(void)",
+  "source_symbol": "update_stuff",
+  "source_file": "Engine/AC.CPP"
+ },
+ "mainloop": {
+  "status": "ok",
+  "prototype": "void mainloop(bool checkControls, IDriverDependantBitmap *extraBitmap, int extraX, int extraY)",
+  "source_symbol": "mainloop",
+  "source_file": "Engine/AC.CPP"
+ },
+ "cc_error": {
+  "status": "ok",
+  "prototype": "void cc_error(char *descr, ...)",
+  "source_symbol": "cc_error",
+  "source_file": "Common/cscommon.cpp"
+ },
+ "dump_instruction": {
+  "status": "ok",
+  "prototype": "void dump_instruction(unsigned long *codeptr, int cps, int spp)",
+  "source_symbol": "dump_instruction",
+  "source_file": "Common/CSRUN.CPP"
+ },
+ "fread_script": {
+  "status": "ok",
+  "prototype": "ccScript * fread_script(FILE * ooo)",
+  "source_symbol": "fread_script",
+  "source_file": "Common/CSRUN.CPP"
+ },
+ "find_route": {
+  "status": "ok",
+  "prototype": "int find_route(short srcx, short srcy, short xx, short yy, block onscreen, int movlst, int nocross, int ignore_walls)",
+  "source_symbol": "find_route",
+  "source_file": "Engine/routefnd.cpp"
+ },
+ "read_gui": {
+  "status": "ok",
+  "prototype": "void read_gui(FILE * iii, GUIMain * guiread, GameSetupStruct * gss, GUIMain** allocate)",
+  "source_symbol": "read_gui",
+  "source_file": "Engine/acgui.cpp"
+ },
+ "run_event_block_inv": {
+  "status": "ok",
+  "prototype": "void run_event_block_inv(int invNum, int aaa)",
+  "source_symbol": "run_event_block_inv",
+  "source_file": "Engine/AC.CPP"
+ },
+ "prepare_characters_for_drawing": {
+  "status": "ok",
+  "prototype": "void prepare_characters_for_drawing(void)",
+  "source_symbol": "prepare_characters_for_drawing",
+  "source_file": "Engine/AC.CPP"
+ },
+ "draw_text_window": {
+  "status": "ok",
+  "prototype": "void draw_text_window(int*xins, int*yins, int*xx, int*yy, int*wii, int ovrheight, int ifnum)",
+  "source_symbol": "draw_text_window",
+  "source_file": "Engine/AC.CPP"
+ },
+ "_display_at": {
+  "status": "ok",
+  "prototype": "void _display_at(int xx, int yy, int wii, char*todis, int blocking, int asspch, int isThought, int allowShrink, bool overlayPositionFixed)",
+  "source_symbol": "_display_at",
+  "source_file": "Engine/AC.CPP"
+ },
+ "debug_log": {
+  "status": "ok",
+  "prototype": "void debug_log(char*texx, ...)",
+  "source_symbol": "debug_log",
+  "source_file": "Engine/AC.CPP"
+ },
+ "GUIMain__rebuild_array": {
+  "status": "ok",
+  "prototype": "void __thiscall GUIMain__rebuild_array(GUIMain *this)",
+  "source_symbol": "GUIMain::rebuild_array",
+  "source_file": "Engine/acgui.cpp"
+ },
+ "add_screen_overlay": {
+  "status": "ok",
+  "prototype": "int add_screen_overlay(int x, int y, int type, block piccy, bool alphaChannel)",
+  "source_symbol": "add_screen_overlay",
+  "source_file": "Engine/AC.CPP"
+ },
+ "update_polled_stuff": {
+  "status": "ok",
+  "prototype": "void update_polled_stuff(void)",
+  "source_symbol": "update_polled_stuff",
+  "source_file": "Engine/AC.CPP"
+ },
+ "GetObjectGraphic": {
+  "status": "ok",
+  "prototype": "int GetObjectGraphic(int obn)",
+  "source_symbol": "GetObjectGraphic",
+  "source_file": "Engine/AC.CPP"
+ },
+ "make_ts_func_name": {
+  "status": "ok",
+  "prototype": "char* make_ts_func_name(char*base, int iii, int subd)",
+  "source_symbol": "make_ts_func_name",
+  "source_file": "Engine/AC.CPP"
+ },
+ "move_object": {
+  "status": "ok",
+  "prototype": "void move_object(int objj, int tox, int toy, int spee, int ignwal)",
+  "source_symbol": "move_object",
+  "source_file": "Engine/AC.CPP"
+ },
+ "walk_character": {
+  "status": "ok",
+  "prototype": "void walk_character(int chac, int tox, int toy, int ignwal, bool autoWalkAnims)",
+  "source_symbol": "walk_character",
+  "source_file": "Engine/acchars.cpp"
+ },
+ "do_movelist_move": {
+  "status": "ok",
+  "prototype": "int do_movelist_move(short*mlnum, int*xx, int*yy)",
+  "source_symbol": "do_movelist_move",
+  "source_file": "Engine/AC.CPP"
+ },
+ "check_valid_file_handle": {
+  "status": "ok",
+  "prototype": "int check_valid_file_handle(FILE*hann, char*msg)",
+  "source_symbol": "check_valid_file_handle",
+  "source_file": "Engine/AC.CPP"
+ },
+ "run_dialog_request": {
+  "status": "ok",
+  "prototype": "int run_dialog_request(int parmtr)",
+  "source_symbol": "run_dialog_request",
+  "source_file": "Engine/AC.CPP"
+ },
+ "do_conversation": {
+  "status": "ok",
+  "prototype": "void do_conversation(int dlgnum)",
+  "source_symbol": "do_conversation",
+  "source_file": "Engine/AC.CPP"
+ },
+ "find_highest_room_entered": {
+  "status": "ok",
+  "prototype": "int find_highest_room_entered(void)",
+  "source_symbol": "find_highest_room_entered",
+  "source_file": "Engine/AC.CPP"
+ },
+ "__actual_invscreen": {
+  "status": "ok",
+  "prototype": "int __actual_invscreen(void)",
+  "source_symbol": "__actual_invscreen",
+  "source_file": "Engine/AC.CPP"
+ },
+ "post_script_cleanup": {
+  "status": "ok",
+  "prototype": "void post_script_cleanup(void)",
+  "source_symbol": "post_script_cleanup",
+  "source_file": "Engine/AC.CPP"
+ },
+ "wait_loop_still_valid": {
+  "status": "ok",
+  "prototype": "int wait_loop_still_valid(void)",
+  "source_symbol": "wait_loop_still_valid",
+  "source_file": "Engine/AC.CPP"
+ },
+ "compile_room_script": {
+  "status": "ok",
+  "prototype": "void compile_room_script(void)",
+  "source_symbol": "compile_room_script",
+  "source_file": "Engine/AC.CPP"
+ },
+ "initialize_sprite": {
+  "status": "ok",
+  "prototype": "void initialize_sprite(int ee)",
+  "source_symbol": "initialize_sprite",
+  "source_file": "Engine/AC.CPP"
+ },
+ "TreeMap__addText": {
+  "status": "ok",
+  "prototype": "void __thiscall TreeMap__addText(TreeMap *this, const char* ntx, char *trans)",
+  "source_symbol": "TreeMap::addText",
+  "source_file": "Engine/AC.CPP"
+ },
+ "call_function": {
+  "status": "ok",
+  "prototype": "int call_function(long addr, int numparm, long *parms, int offset)",
+  "source_symbol": "call_function",
+  "source_file": "Common/CSRUN.CPP"
+ },
+ "is_route_possible": {
+  "status": "ok",
+  "prototype": "int is_route_possible(int fromx, int fromy, int tox, int toy, block wss)",
+  "source_symbol": "is_route_possible",
+  "source_file": "Engine/routefnd.cpp"
+ },
+ "__find_route": {
+  "status": "ok",
+  "prototype": "int __find_route(int srcx, int srcy, short *tox, short *toy, int noredx)",
+  "source_symbol": "__find_route",
+  "source_file": "Engine/routefnd.cpp"
+ },
+ "load_script_configuration": {
+  "status": "ok",
+  "prototype": "void load_script_configuration(FILE * iii)",
+  "source_symbol": "load_script_configuration",
+  "source_file": "Engine/scrptrt.cpp"
+ },
+ "SpriteCache__loadSprite": {
+  "status": "ok",
+  "prototype": "int __thiscall SpriteCache__loadSprite(SpriteCache *this, int index)",
+  "source_symbol": "SpriteCache::loadSprite",
+  "source_file": "Common/sprcache.cpp"
+ },
+ "InterfaceElement__InterfaceElement": {
+  "status": "ok",
+  "prototype": "void __thiscall InterfaceElement__InterfaceElement(InterfaceElement *this)",
+  "source_symbol": "InterfaceElement::InterfaceElement",
+  "source_file": "Common/acroom.h"
+ },
+ "dxmedia_abort_video": {
+  "status": "ok",
+  "prototype": "void dxmedia_abort_video(void)",
+  "source_symbol": "dxmedia_abort_video",
+  "source_file": "Engine/acwavi.cpp"
+ },
+ "get_hotspot_at": {
+  "status": "ok",
+  "prototype": "int get_hotspot_at(int xpp, int ypp)",
+  "source_symbol": "get_hotspot_at",
+  "source_file": "Engine/AC.CPP"
+ },
+ "__GetLocationType": {
+  "status": "ok",
+  "prototype": "int __GetLocationType(int xxx, int yyy, int allowHotspot0)",
+  "source_symbol": "__GetLocationType",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SpriteCache__operator_index": {
+  "status": "ok",
+  "prototype": "block __thiscall SpriteCache__operator_index(SpriteCache *this, int index)",
+  "source_symbol": "SpriteCache::operator[]",
+  "source_file": "Common/sprcache.cpp"
+ },
+ "set_default_glmsg": {
+  "status": "ok",
+  "prototype": "void set_default_glmsg(int msgnum, const char* val)",
+  "source_symbol": "set_default_glmsg",
+  "source_file": "Engine/AC.CPP"
+ },
+ "ccCreateInstance": {
+  "status": "ok",
+  "prototype": "ccInstance * ccCreateInstance(ccScript * scri)",
+  "source_symbol": "ccCreateInstance",
+  "source_file": "Common/CSRUN.CPP"
+ },
+ "EndSkippingUntilCharStops": {
+  "status": "ok",
+  "prototype": "void EndSkippingUntilCharStops(void)",
+  "source_symbol": "EndSkippingUntilCharStops",
+  "source_file": "Engine/AC.CPP"
+ },
+ "stop_fast_forwarding": {
+  "status": "ok",
+  "prototype": "void stop_fast_forwarding(void)",
+  "source_symbol": "stop_fast_forwarding",
+  "source_file": "Engine/AC.CPP"
+ },
+ "generate_light_table": {
+  "status": "ok",
+  "prototype": "void generate_light_table(void)",
+  "source_symbol": "generate_light_table",
+  "source_file": "Engine/AC.CPP"
+ },
+ "read_serialized_bitmap": {
+  "status": "ok",
+  "prototype": "block read_serialized_bitmap(FILE* ooo)",
+  "source_symbol": "read_serialized_bitmap",
+  "source_file": "Engine/AC.CPP"
+ },
+ "misbuttondown": {
+  "status": "ok",
+  "prototype": "int misbuttondown(int buno)",
+  "source_symbol": "misbuttondown",
+  "source_file": "Common/MOUSEW32.CPP"
+ },
+ "remove_popup_interface": {
+  "status": "ok",
+  "prototype": "void remove_popup_interface(int ifacenum)",
+  "source_symbol": "remove_popup_interface",
+  "source_file": "Engine/AC.CPP"
+ },
+ "GUIMain__is_mouse_on_gui": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Common/acgui.h"
+ },
+ "GUIMain__mouse_but_up": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Engine/acgui.cpp"
+ },
+ "GUIMain__mouse_but_down": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Engine/acgui.cpp"
+ },
+ "check_skip_cutscene_keypress": {
+  "status": "ok",
+  "prototype": "void check_skip_cutscene_keypress(int kgn)",
+  "source_symbol": "check_skip_cutscene_keypress",
+  "source_file": "Engine/AC.CPP"
+ },
+ "_display_main": {
+  "status": "ok",
+  "prototype": "int _display_main(int xx, int yy, int wii, char*todis, int blocking, int usingfont, int asspch, int isThought, int allowShrink, bool overlayPositionFixed)",
+  "source_symbol": "_display_main",
+  "source_file": "Engine/AC.CPP"
+ },
+ "wsetscreen": {
+  "status": "ok",
+  "prototype": "void wsetscreen(block nss)",
+  "source_symbol": "wsetscreen",
+  "source_file": "Common/Wgt2allg.h"
+ },
+ "ccFreeInstance": {
+  "status": "ok",
+  "prototype": "void ccFreeInstance(ccInstance * cinst)",
+  "source_symbol": "ccFreeInstance",
+  "source_file": "Common/CSRUN.CPP"
+ },
+ "SystemImports__remove_range": {
+  "status": "ok",
+  "prototype": "void __thiscall SystemImports__remove_range(SystemImports *this, char *from, unsigned long dist)",
+  "source_symbol": "SystemImports::remove_range",
+  "source_file": "Common/CSRUN.CPP"
+ },
+ "SystemImports__add": {
+  "status": "ok",
+  "prototype": "int __thiscall SystemImports__add(SystemImports *this, char *namm, char *add, ccInstance *anotherscr)",
+  "source_symbol": "SystemImports::add",
+  "source_file": "Common/CSRUN.CPP"
+ },
+ "SystemImports__get_index_of": {
+  "status": "ok",
+  "prototype": "int __thiscall SystemImports__get_index_of(SystemImports *this, char *namw)",
+  "source_symbol": "SystemImports::get_index_of",
+  "source_file": "Common/CSRUN.CPP"
+ },
+ "SystemImports__is_script_import": {
+  "status": "ok",
+  "prototype": "ccInstance* __thiscall SystemImports__is_script_import(SystemImports *this, char *namw)",
+  "source_symbol": "SystemImports::is_script_import",
+  "source_file": "Common/CSRUN.CPP"
+ },
+ "fget_long": {
+  "status": "ok",
+  "prototype": "long fget_long(FILE * iii)",
+  "source_symbol": "fget_long",
+  "source_file": "Common/CSRUN.CPP"
+ },
+ "freadstring": {
+  "status": "ok",
+  "prototype": "void freadstring(char **strptr, FILE * iii)",
+  "source_symbol": "freadstring",
+  "source_file": "Common/CSRUN.CPP"
+ },
+ "SystemImports__get_addr_of": {
+  "status": "ok",
+  "prototype": "char * __thiscall SystemImports__get_addr_of(SystemImports *this, char *namw)",
+  "source_symbol": "SystemImports::get_addr_of",
+  "source_file": "Common/CSRUN.CPP"
+ },
+ "ccGetOption": {
+  "status": "ok",
+  "prototype": "int ccGetOption(int optbit)",
+  "source_symbol": "ccGetOption",
+  "source_file": "Common/cscommon.cpp"
+ },
+ "mgetgraphpos": {
+  "status": "ok",
+  "prototype": "void mgetgraphpos(void)",
+  "source_symbol": "mgetgraphpos",
+  "source_file": "Common/MOUSEW32.CPP"
+ },
+ "msetcursorlimit": {
+  "status": "ok",
+  "prototype": "void msetcursorlimit(int x1, int y1, int x2, int y2)",
+  "source_symbol": "msetcursorlimit",
+  "source_file": "Common/MOUSEW32.CPP"
+ },
+ "msetgraphpos": {
+  "status": "ok",
+  "prototype": "void msetgraphpos(int xa, int ya)",
+  "source_symbol": "msetgraphpos",
+  "source_file": "Common/MOUSEW32.CPP"
+ },
+ "precache_view": {
+  "status": "ok",
+  "prototype": "void precache_view(int view)",
+  "source_symbol": "precache_view",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SpriteCache__precache": {
+  "status": "ok",
+  "prototype": "void __thiscall SpriteCache__precache(SpriteCache *this, int index)",
+  "source_symbol": "SpriteCache::precache",
+  "source_file": "Common/sprcache.cpp"
+ },
+ "mgraphconfine": {
+  "status": "ok",
+  "prototype": "void mgraphconfine(int x1, int y1, int x2, int y2)",
+  "source_symbol": "mgraphconfine",
+  "source_file": "Common/MOUSEW32.CPP"
+ },
+ "GUIButton__MouseDown": {
+  "status": "ok",
+  "prototype": "virtual int __thiscall GUIButton__MouseDown(GUIButton *this)",
+  "source_symbol": "GUIButton::MouseDown",
+  "source_file": "Common/acgui.h"
+ },
+ "GUIButton__MouseUp": {
+  "status": "ok",
+  "prototype": "void __thiscall GUIButton__MouseUp(GUIButton *this)",
+  "source_symbol": "GUIButton::MouseUp",
+  "source_file": "Engine/acgui.cpp"
+ },
+ "GUIButton__ReadFromFile": {
+  "status": "ok",
+  "prototype": "void __thiscall GUIButton__ReadFromFile(GUIButton *this, FILE * ooo, int version)",
+  "source_symbol": "GUIButton::ReadFromFile",
+  "source_file": "Engine/acgui.cpp"
+ },
+ "GUIButton__MouseMove": {
+  "status": "ok",
+  "prototype": "void __thiscall GUIButton__MouseMove(GUIButton *this, int x, int y)",
+  "source_symbol": "GUIButton::MouseMove",
+  "source_file": "Common/acgui.h"
+ },
+ "GUIButton__KeyPress": {
+  "status": "ok",
+  "prototype": "void __thiscall GUIButton__KeyPress(GUIButton *this, int kp)",
+  "source_symbol": "GUIButton::KeyPress",
+  "source_file": "Common/acgui.h"
+ },
+ "GUIButton__WriteToFile": {
+  "status": "ok",
+  "prototype": "void __thiscall GUIButton__WriteToFile(GUIButton *this, FILE * ooo)",
+  "source_symbol": "GUIButton::WriteToFile",
+  "source_file": "Engine/acgui.cpp"
+ }
+}
