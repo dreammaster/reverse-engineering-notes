@@ -270,34 +270,34 @@
   "is_named": true
  },
  {
-  "name": "sub_40543C",
+  "name": "GUISlider__WriteToFile",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_405477",
+  "name": "GUISlider__ReadFromFile",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_4054B2",
+  "name": "GUISlider__Draw",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_4058A4",
+  "name": "GUISlider__MouseMove",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_4059A7",
+  "name": "GUILabel__WriteToFile",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_4059FF",
+  "name": "GUILabel__ReadFromFile",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_405A70",
@@ -305,39 +305,39 @@
   "is_named": false
  },
  {
-  "name": "sub_405B28",
+  "name": "GUILabel__Draw",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_405DE1",
+  "name": "GUITextBox__WriteToFile",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_405E39",
+  "name": "GUITextBox__ReadFromFile",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_405EAA",
+  "name": "GUITextBox__Draw",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_406058",
+  "name": "GUITextBox__KeyPress",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_406159",
+  "name": "GUIListBox__WriteToFile",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_4061EA",
+  "name": "GUIListBox__ReadFromFile",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "GUIListBox__AddItem",
@@ -350,14 +350,14 @@
   "is_named": true
  },
  {
-  "name": "sub_40649A",
+  "name": "GUIListBox__Draw",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_406950",
+  "name": "GUIListBox__MouseDown",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "GUIButton__WriteToFile",
@@ -445,9 +445,9 @@
   "is_named": true
  },
  {
-  "name": "sub_407541",
+  "name": "GUIMain__get_control_type",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "GUIMain__is_mouse_on_gui",
@@ -1030,9 +1030,9 @@
   "is_named": true
  },
  {
-  "name": "sub_4104E0",
+  "name": "GUIInv__Draw",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_410631",
@@ -2575,29 +2575,29 @@
   "is_named": false
  },
  {
-  "name": "sub_424290",
+  "name": "GUIInv__WriteToFile",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_4242C0",
+  "name": "GUIInv__ReadFromFile",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_4242F0",
+  "name": "GUIInv__MouseOver",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_424310",
+  "name": "GUIInv__MouseLeave",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_424330",
+  "name": "GUIInv__MouseUp",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_424350",
@@ -2605,14 +2605,14 @@
   "is_named": false
  },
  {
-  "name": "sub_424380",
+  "name": "GUISlider__MouseDown",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_4243A0",
+  "name": "GUISlider__MouseUp",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_4243C0",
@@ -2635,9 +2635,9 @@
   "is_named": false
  },
  {
-  "name": "sub_424490",
+  "name": "GUIListBox__MouseMove",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_4244D0",
@@ -3925,54 +3925,79 @@
   "is_named": true
  },
  {
-  "name": "sub_4342A2",
+  "name": "cd_exit",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_4342FD",
+  "name": "lengthof",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_434361",
+  "name": "cd_play_range",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_434388",
+  "name": "cd_play_from",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_4343DA",
+  "name": "cd_current_track",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_43440A",
+  "name": "cd_pause",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_434464",
+  "name": "cd_resume",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_434480",
+  "name": "cd_is_paused",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_434533",
+  "name": "cd_stop",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_43454F",
+  "name": "cd_get_tracks",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
+ },
+ {
+  "name": "cd_is_audio",
+  "addr_hint": null,
+  "is_named": true
+ },
+ {
+  "name": "cd_get_volume",
+  "addr_hint": null,
+  "is_named": true
+ },
+ {
+  "name": "cd_set_volume",
+  "addr_hint": null,
+  "is_named": true
+ },
+ {
+  "name": "cd_eject",
+  "addr_hint": null,
+  "is_named": true
+ },
+ {
+  "name": "cd_close",
+  "addr_hint": null,
+  "is_named": true
  },
  {
   "name": "_add_exit_func",
@@ -4005,19 +4030,19 @@
   "is_named": false
  },
  {
-  "name": "sub_434970",
+  "name": "al_assert",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_434AC0",
+  "name": "debug_exit",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_434B20",
+  "name": "al_trace",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_434C10",
@@ -4375,24 +4400,24 @@
   "is_named": false
  },
  {
-  "name": "sub_43B890",
-  "addr_hint": null,
-  "is_named": false
- },
- {
-  "name": "sub_43B9B0",
-  "addr_hint": null,
-  "is_named": false
- },
- {
-  "name": "StartAddress",
+  "name": "init_directx_window",
   "addr_hint": null,
   "is_named": true
  },
  {
-  "name": "sub_43BF20",
+  "name": "directx_wnd_proc",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
+ },
+ {
+  "name": "wnd_thread_proc",
+  "addr_hint": null,
+  "is_named": true
+ },
+ {
+  "name": "create_directx_window",
+  "addr_hint": null,
+  "is_named": true
  },
  {
   "name": "sub_43C090",
@@ -4700,9 +4725,9 @@
   "is_named": true
  },
  {
-  "name": "sub_443500",
+  "name": "read_sound_config",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "reserve_voices",
@@ -5930,9 +5955,9 @@
   "is_named": false
  },
  {
-  "name": "sub_452560",
+  "name": "need_uconvert",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_4525D0",
@@ -5945,9 +5970,9 @@
   "is_named": false
  },
  {
-  "name": "sub_452700",
+  "name": "uconvert",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_452770",
@@ -6165,9 +6190,9 @@
   "is_named": false
  },
  {
-  "name": "sub_455490",
+  "name": "sys_directx_init",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_4555F0",
@@ -6665,9 +6690,9 @@
   "is_named": false
  },
  {
-  "name": "sub_460620",
+  "name": "get_config_string",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_460750",
@@ -6675,9 +6700,9 @@
   "is_named": false
  },
  {
-  "name": "sub_460820",
+  "name": "get_config_int",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_460910",
@@ -6730,9 +6755,9 @@
   "is_named": false
  },
  {
-  "name": "sub_461370",
+  "name": "get_config_text",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "__mkgmtime_1",
@@ -6920,9 +6945,9 @@
   "is_named": false
  },
  {
-  "name": "sub_464A30",
+  "name": "mouse_directx_init",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_464B10",
@@ -7660,9 +7685,9 @@
   "is_named": false
  },
  {
-  "name": "sub_46E820",
+  "name": "init_directx_ovl",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_46EB60",
@@ -7700,9 +7725,9 @@
   "is_named": false
  },
  {
-  "name": "sub_46EF10",
+  "name": "init_directx_win",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_46F2D0",
@@ -7760,9 +7785,9 @@
   "is_named": false
  },
  {
-  "name": "sub_470340",
+  "name": "read_keyboard_config",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_4708D0",

@@ -48,6 +48,9 @@ FLAT_CPP_NAMES = {
     "GUIButton__MouseMove": ("GUIButton::MouseMove", "MouseMove"),
     "GUIButton__KeyPress": ("GUIButton::KeyPress", "KeyPress"),
     "GUIButton__WriteToFile": ("GUIButton::WriteToFile", "WriteToFile"),
+    "GUIMain__get_control_type": ("GUIMain::get_control_type", "get_control_type"),
+    "GUIListBox__Clear": ("GUIListBox::Clear", "Clear"),
+    "GUIListBox__AddItem": ("GUIListBox::AddItem", "AddItem"),
 }
 
 

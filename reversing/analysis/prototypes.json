@@ -2030,5 +2030,29 @@
   "prototype": "void __thiscall GUIButton__WriteToFile(GUIButton *this, FILE * ooo)",
   "source_symbol": "GUIButton::WriteToFile",
   "source_file": "Engine/acgui.cpp"
+ },
+ "nullfree": {
+  "status": "ok",
+  "prototype": "void nullfree(void *data)",
+  "source_symbol": "nullfree",
+  "source_file": "Common/CSRUN.CPP"
+ },
+ "GUIListBox__Clear": {
+  "status": "ok",
+  "prototype": "void __thiscall GUIListBox__Clear(GUIListBox *this)",
+  "source_symbol": "GUIListBox::Clear",
+  "source_file": "Engine/acgui.cpp"
+ },
+ "GUIListBox__AddItem": {
+  "status": "ok",
+  "prototype": "int __thiscall GUIListBox__AddItem(GUIListBox *this, const char *toadd)",
+  "source_symbol": "GUIListBox::AddItem",
+  "source_file": "Engine/acgui.cpp"
+ },
+ "GUIMain__get_control_type": {
+  "status": "ok",
+  "prototype": "int __thiscall GUIMain__get_control_type(GUIMain *this, int indx)",
+  "source_symbol": "GUIMain::get_control_type",
+  "source_file": "Engine/acgui.cpp"
  }
 }

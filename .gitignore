@@ -1,4 +1,8 @@
+*.id*
 *.lib
+*.nam
+*.til
 manual/
 Engine/acwin___Win32_DebugWorking
 Engine/.vs/
+Editor/AGS.Editor/Resources/

@@ -177,7 +177,7 @@
   "source_obj": "ali3dsw.obj",
   "is_library": false,
   "confidence": "high",
-  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=ali3dsw.obj"
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=ali3dsw.obj ADDITIONAL FIELD EVIDENCE (found later, same investigation thread): the hi-color fade-path gate \"if (game.color_depth > 1) {...}\" matches disasm's \"cmp dword_51D2F0,1; jle <skip>\" exactly. New field evidence: dword_51D2F0 = GameSetupStructBase.color_depth, at +0x9FD8 relative to game_gamename -- see reversing/scripts/apply_structs.py and struct-layout-drift.md for the struct-level writeup (this also anchored 4 sibling fields -- target_win, dialog_bullet, hotdot, hotdotouter -- via an exact 16-byte arithmetic fit against the independently-confirmed uniqueid). [Offset corrected: this citation originally used a pre-correction relative offset that was later found to be off by +8 bytes due to an alignment-rounding bug in the byte-offset-counting script -- see the OFFSET CORRECTION section in struct-layout-drift.md and apply_structs.py for the full story. The corrected offset is shown above.]"
  },
  {
   "kind": "function",
@@ -237,7 +237,7 @@
   "source_obj": "AC.obj",
   "is_library": false,
   "confidence": "high",
-  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj ADDITIONAL FIELD EVIDENCE (found later, same investigation thread): \"game.mcurs[curs].pic = newslot;\" matches disasm's \"imul curs,18h; mov dword_51585C[curs],newslot\" exactly. New field evidence: dword_51585C = MouseCursor.pic, at struct offset +0x00, confirmed stride 0x18(24) via the imul -- see reversing/scripts/apply_structs.py for the full MouseCursor struct writeup."
  },
  {
   "kind": "function",
@@ -247,7 +247,7 @@
   "source_obj": "AC.obj",
   "is_library": false,
   "confidence": "high",
-  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj ADDITIONAL FIELD EVIDENCE (found later, same investigation thread): \"game.mcurs[curs].hotx = ...; game.mcurs[curs].hoty = ...;\" matches disasm's writes to word_515860[curs]/word_515862[curs] (same 0x18 stride). New field evidence: word_515860 = MouseCursor.hotx at +0x04, word_515862 = MouseCursor.hoty at +0x06 -- see reversing/scripts/apply_structs.py for the full MouseCursor struct writeup."
  },
  {
   "kind": "function",
@@ -417,7 +417,7 @@
   "source_obj": "AC.obj",
   "is_library": false,
   "confidence": "high",
-  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj ADDITIONAL FIELD EVIDENCE (found later, same investigation thread): the invalid-font-number check \"if ((fontnum<0) || (fontnum>=game.numfonts)) quit(...);\" matches disasm's \"cmp fontnum,0; jl <quit>; cmp eax,dword_51D2EC; jl <ok>\" pattern exactly -- independently re-confirmed by the sibling function SetNormalFont (AC.CPP:13468-13472), which has the identical check against the same dword_51D2EC. New field evidence: dword_51D2EC = GameSetupStructBase.numfonts, at +0x9FD4 relative to game_gamename -- see reversing/scripts/apply_structs.py and struct-layout-drift.md for the struct-level writeup. [Offset corrected: this citation originally used a pre-correction relative offset that was later found to be off by +8 bytes due to an alignment-rounding bug in the byte-offset-counting script -- see the OFFSET CORRECTION section in struct-layout-drift.md and apply_structs.py for the full story. The corrected offset is shown above.]"
  },
  {
   "kind": "function",
@@ -867,7 +867,7 @@
   "source_obj": "AC.obj",
   "is_library": false,
   "confidence": "high",
-  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj ADDITIONAL FIELD EVIDENCE (found later, same investigation thread): the invalid-topic-number check \"if ((tum<0) | (tum>=game.numdialog)) quit(...)\" matches disasm's \"cmp arg_0,0; setl al\" / \"cmp ecx,dword_51D2E4; setnl dl\" / \"or eax,edx\" pattern exactly (identical compiler idiom to the already-confirmed is_valid_character/numcharacters match). New field evidence: dword_51D2E4 = GameSetupStructBase.numdialog, at +0x9FCC relative to game_gamename -- see reversing/scripts/apply_structs.py and struct-layout-drift.md for the struct-level writeup. [Offset corrected: this citation originally used a pre-correction relative offset that was later found to be off by +8 bytes due to an alignment-rounding bug in the byte-offset-counting script -- see the OFFSET CORRECTION section in struct-layout-drift.md and apply_structs.py for the full story. The corrected offset is shown above.]"
  },
  {
   "kind": "function",
@@ -1347,7 +1347,7 @@
   "source_obj": "AC.obj",
   "is_library": false,
   "confidence": "high",
-  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj ADDITIONAL FIELD EVIDENCE (found later, same investigation thread): the invalid-GUI-number check \"if ((ifn<0) | (ifn>=game.numgui)) quit(...);\" matches disasm's \"cmp ifn,0; setl al; cmp ecx,dword_51DB04; setnl dl; or eax,edx\" pattern exactly -- independently re-confirmed by the sibling function InterfaceOff (AC.CPP:18618-18619), which has the identical check against the same dword_51DB04. New field evidence: dword_51DB04 = GameSetupStructBase.numgui, at +0xA7EC relative to game_gamename -- see reversing/scripts/apply_structs.py and struct-layout-drift.md for the struct-level writeup. [Offset corrected: this citation originally used a pre-correction relative offset that was later found to be off by +8 bytes due to an alignment-rounding bug in the byte-offset-counting script -- see the OFFSET CORRECTION section in struct-layout-drift.md and apply_structs.py for the full story. The corrected offset is shown above.]"
  },
  {
   "kind": "function",
@@ -3493,7 +3493,7 @@
   "source_file": "Engine/AC.CPP",
   "source_line": 1932,
   "confidence": "high",
-  "evidence": "bool init_translation(const char *lang) at AC.CPP:1932. String matches within body span (1932-2036): default.tra, %s.tra, AGSTranslation, \"!Language file is corrupt\", \"!The translation file you have selected is not compatible...\", \"!The selected translation file was empty...\", \"Unknown block type in translation file.\" -- 7 distinct exact matches, all within source range, none outside it. Structural fit: single caller (main), consistent with a startup-time init routine."
+  "evidence": "bool init_translation(const char *lang) at AC.CPP:1932. String matches within body span (1932-2036): default.tra, %s.tra, AGSTranslation, \"!Language file is corrupt\", \"!The translation file you have selected is not compatible...\", \"!The selected translation file was empty...\", \"Unknown block type in translation file.\" -- 7 distinct exact matches, all within source range, none outside it. Structural fit: single caller (main), consistent with a startup-time init routine. ADDITIONAL FIELD EVIDENCE (found later, same investigation thread): the translation-file compatibility check \"if ((uidfrom != game.uniqueid) || (strcmp(wasgamename, game.gamename) != 0)) {...quit...}\" matches disasm's \"cmp eax,dword_51D300; jnz <fail>; push offset game_gamename; ...strcmp...\" exactly, doubly confirming both uniqueid AND re-confirming gamename's own identity via the same instruction sequence. New field evidence: dword_51D300 = GameSetupStructBase.uniqueid, at +0x9FE8 relative to game_gamename -- see reversing/scripts/apply_structs.py and struct-layout-drift.md for the struct-level writeup. [Offset corrected: this citation originally used a pre-correction relative offset that was later found to be off by +8 bytes due to an alignment-rounding bug in the byte-offset-counting script -- see the OFFSET CORRECTION section in struct-layout-drift.md and apply_structs.py for the full story. The corrected offset is shown above.]"
  },
  {
   "kind": "manual",
@@ -3718,7 +3718,7 @@
   "source_file": "Engine/AC.CPP",
   "source_line": 5411,
   "confidence": "high",
-  "evidence": "void run_event_block_inv(int,int) at AC.CPP:5411. String match: \"inventory%d\" (5412). Caller matches exactly: check_controls (already matched), consistent with inventory-item click dispatch."
+  "evidence": "void run_event_block_inv(int,int) at AC.CPP:5411. String match: \"inventory%d\" (5412). Caller matches exactly: check_controls (already matched), consistent with inventory-item click dispatch. ADDITIONAL EVIDENCE (found while confirming EventBlock/run_event_block): this function's body (\"String1=offset aInventoryD (\\\"inventory%d\\\"); ...call sub_417088(invNum, aaa, arg_8, -1)\") is a near-direct forward to the newly-identified run_event_block (sub_417088), passing its own invNum parameter straight through as run_event_block's EventBlock* argument -- confirming both functions operate on the same EventBlock-array data. Its callers in check_controls all construct that pointer as \"offset unk_517640 + iit*0x94\", independently confirming GameSetupStructBase's __invcond[100] field at the position predicted by the zero-slack arithmetic fit (base+0x4328, i.e. right after __charcond[50] with no gap) -- see reversing/notes/struct-layout-drift.md. New field evidence: __invcond[100] confirmed present and positioned exactly as hypothesized, using the same 0x94-byte EventBlock stride confirmed via run_event_block's own body."
  },
  {
   "kind": "manual",
@@ -3880,7 +3880,7 @@
   "source_file": "Engine/AC.CPP",
   "source_line": 3093,
   "confidence": "high",
-  "evidence": "RESOLVES the earlier open question (reversing/notes/open-question-sub_409B1A.md). Confirmed this time by reading the actual disassembled instructions (not just string/callgraph heuristics): sub_409B1A decrements a global (dword_523150, matching num_scripts), computes an index into a 0x6Ch-sized-element array (dword_4CC848, matching the ExecutingScript scripts[] array -- sizeof(ExecutingScript) is plausible at 108 bytes), and decrements the global inside_script by name (IDA already had this variable named, and it matches source AC.CPP:3101 inside_script--; exactly) -- this is unmistakably post_script_cleanup opening sequence (AC.CPP:3093-3101). Further down it conditionally calls RestoreGameDialog, restore_game_data + Display(\"Unable to load game (error: %s).\",...) + RestartGame, and sub_41D95B (do_conversation) -- matching post_script_cleanup ePSARestoreGameDialog / ePSARestoreGame / ePSARestartGame / ePSARunDialog switch cases respectively (AC.CPP:3116-3157). The restore_game_data+Display+RestartGame sequence is load_game_and_print_error logic (AC.CPP:2988) INLINED directly into post_script_cleanup in this build rather than called as a separate function -- that inlining is what caused the original misleading string-only match to load_game_and_print_error and the apparent mutual-recursion contradiction with run_script_function_if_exist (post_script_cleanup is called from run_script_function_if_exist at AC.CPP:3297, and itself calls run_script_function_if_exist back via at least two branches further down its body). Both directions are genuine, just not through the function originally guessed."
+  "evidence": "RESOLVES the earlier open question (reversing/notes/open-question-sub_409B1A.md). Confirmed this time by reading the actual disassembled instructions (not just string/callgraph heuristics): sub_409B1A decrements a global (dword_523150, matching num_scripts), computes an index into a 0x6Ch-sized-element array (dword_4CC848, matching the ExecutingScript scripts[] array -- sizeof(ExecutingScript) is plausible at 108 bytes), and decrements the global inside_script by name (IDA already had this variable named, and it matches source AC.CPP:3101 inside_script--; exactly) -- this is unmistakably post_script_cleanup opening sequence (AC.CPP:3093-3101). Further down it conditionally calls RestoreGameDialog, restore_game_data + Display(\"Unable to load game (error: %s).\",...) + RestartGame, and sub_41D95B (do_conversation) -- matching post_script_cleanup ePSARestoreGameDialog / ePSARestoreGame / ePSARestartGame / ePSARunDialog switch cases respectively (AC.CPP:3116-3157). The restore_game_data+Display+RestartGame sequence is load_game_and_print_error logic (AC.CPP:2988) INLINED directly into post_script_cleanup in this build rather than called as a separate function -- that inlining is what caused the original misleading string-only match to load_game_and_print_error and the apparent mutual-recursion contradiction with run_script_function_if_exist (post_script_cleanup is called from run_script_function_if_exist at AC.CPP:3297, and itself calls run_script_function_if_exist back via at least two branches further down its body). Both directions are genuine, just not through the function originally guessed. ADDITIONAL STRUCT-FIELD EVIDENCE (found later, while investigating GameSetupStructBase): the scripts[] array (Common/acruntim.h:700 ExecutingScript, source: \"curscript = &scripts[num_scripts-1];\" plus a bulk struct copy) matches disasm's \"rep movsd\" with ecx=0x1B(27 dwords=108 bytes) copying from dword_4CC848[(num_scripts-1)*0x6C] into a local buffer -- confirms the ExecutingScript element stride is EXACTLY 0x6C(108) bytes. Within that stride: dword_4CC848[idx] itself (offset +0x00, no added offset) is passed directly to ccFreeInstance, matching 2011's FIRST declared field \"ccInstance *inst;\" exactly. byte_4CC8B0[idx] (0x4CC8B0-0x4CC848=0x68 bytes into the same stride) is checked as a boolean gate before the ccFreeInstance call, matching 2011's LAST declared field \"char forked;\" (acruntim.h:711) exactly -- both position (first/last) and semantics (forked-instance cleanup gate) match. New field evidence: ExecutingScript.inst @ struct offset +0x00, ExecutingScript.forked @ +0x68, confirmed total struct size 0x6C(108) bytes -- MASSIVELY smaller than 2011's ~725-byte struct (2011 added the whole postScriptActions[MAX_QUEUED_ACTIONS=5] queue system, absent here). See reversing/scripts/apply_structs.py for the struct writeup; the middle ~100 bytes (2011's run_another-style fields) not yet mapped -- see struct-layout-drift.md. ROUND 2 (full struct completion): decoded IDA's own local-variable names for the stack buffer post_script_cleanup bulk-copies the ExecutingScript slot into (rep movsd destination = [ebp+var_6C], i.e. buffer_offset = local_stack_offset - (-0x6C)). IDA had ALREADY semantically named several of these locals long before this project's tracking began: newnum=dword ptr -0x68 (buffer +0x04), var_64=dword ptr -0x64 (buffer +0x08), ooo=dword ptr -0x60 (buffer +0x0C), dlgnum=dword ptr -0x5C (buffer +0x10), Source=byte ptr -0x58 (buffer +0x14, confirmed separately as script_run_another[2][30] via the already-matched ExecutingScript::run_another). Each was confirmed against actual usage in this function's body, not just trusted at face value: (1) newnum @ +0x04: \"cmp [newnum],0; jl skip; ...call new_room(newnum,playerchar)\" (or, if scripts still running, \"dword_52314C[+4]=newnum\" -- deferred onto the NEXT script slot instead) -- matches 2011's ePSANewRoom case (AC.CPP ~3116) exactly; sentinel -1=none. (2) buffer +0x08 (IDA name var_64, no semantic hint) @ +0x08: \"cmp [var_64],0; jz skip; call sub_41FEA9\" where sub_41FEA9 (not independently renamed, single-purpose gate function) unconditionally calls the already-matched __actual_invscreen() -- matches 2011's ePSAInvScreen case; boolean flag, 0=none. (3) ooo @ +0x0C: \"cmp [ooo],0x3E8(1000); jnz notdialog; call RestoreGameDialog; jmp done; notdialog: cmp [ooo],0; jl done; call sub_409A9C (frees/resets all currently-executing scripts -- iterates dword_4CC848[] up to dword_523150, frees each via sub_42C270/sub_42C24C depending on its forked flag, zeroes dword_523150); push 0 (nametouse); push [ooo]; call restore_game_data(ooo, nametouse)\" -- matches 2011's combined ePSARestoreGame/ePSARestoreGameDialog pair: sentinel 1000 means \"show restore dialog\", -1 means \"none\", any other value 0..999 is a direct save-slot number passed straight to restore_game_data. 2011 keeps these as two separate enum cases; 2002 folds them into one field plus a magic sentinel. (4) dlgnum @ +0x10: \"cmp [dlgnum],0; jl skip; push dlgnum; call do_conversation(dlgnum)\" -- matches 2011's ePSARunDialog case exactly; sentinel -1=none. (5) buffer +0x64 (IDA name var_8, no semantic hint, sits between numanother@+0x60..+0x64 and forked@+0x68): at the very end of the function, \"cmp [var_8],0; jz done; call sub_409A9C; call RestartGame\" -- matches 2011's ePSARestartGame case exactly (unnamed boolean flag, 0=none, nonzero triggers a full script-cleanup pass then RestartGame()). CONCLUSION: the ExecutingScript struct is now FULLY mapped end to end with zero unaccounted bytes (0x00 inst .. 0x6C total size), and reveals a coherent architectural fact worth noting for reconstruction: 2002 gives each of NewRoom/InvScreen/RestoreGame(Dialog)/RunDialog/RestartGame its own dedicated struct field, whereas 2011 unifies all nine PostScriptAction cases (adding SaveGame/SaveGameDialog/RunAGSGame, which have NO dedicated field anywhere in this 108-byte struct and are therefore either handled immediately rather than deferred in this build, or postdate it entirely) into one generic postScriptActions[MAX_QUEUED_ACTIONS] enum+data queue array (Common/acruntim.h:686-695, 702-706). Cross-confirmed by ExecutingScript::init() (sub_424A00, AC.CPP constructor-equivalent, see separate matches.json entry) which explicitly zero/(-1)-initializes every one of these fields as its first 8 statements, in struct order."
  },
  {
   "kind": "manual",
@@ -3997,7 +3997,7 @@
   "source_file": "Engine/AC.CPP",
   "source_line": 20466,
   "confidence": "high",
-  "evidence": "int __GetLocationType(int,int,int) at AC.CPP:20466. Found via callgraph: calls sub_411E2A (matched above to get_hotspot_at) internally, exactly matching source line 20482 (int hsat = get_hotspot_at(xxx,yyy);). Takes 3 params matching the source signature. Called from mainloop (already matched), matching source line 25535 (__GetLocationType(...) == LOCTYPE_HOTSPOT check)."
+  "evidence": "int __GetLocationType(int,int,int) at AC.CPP:20466. Found via callgraph: calls sub_411E2A (matched above to get_hotspot_at) internally, exactly matching source line 20482 (int hsat = get_hotspot_at(xxx,yyy);). Takes 3 params matching the source signature. Called from mainloop (already matched), matching source line 25535 (__GetLocationType(...) == LOCTYPE_HOTSPOT check). ADDITIONAL FIELD EVIDENCE (found later, same investigation thread): body reads \"movsx eax, word_515864[cur_cursor*0x18]\" (using the already-confirmed cur_cursor global and MouseCursor's 0x18-byte stride), matching source's use of the current cursor's `view` field. New field evidence: word_515864 = MouseCursor.view, at struct offset +0x08 -- also independently corroborated by a cursor-precache loop in main passing the same field directly to the already-matched precache_view. See reversing/scripts/apply_structs.py for the full MouseCursor struct writeup."
  },
  {
   "kind": "manual",
@@ -4421,5 +4421,617 @@
   "source_line": 525,
   "confidence": "high",
   "evidence": "int GUIListBox::AddItem(const char*) at acgui.cpp:525. Matches: \"if (numItems>=MAX_LISTBOX_ITEMS) return -1; guis_need_update=1; items[numItems]=malloc(strlen(toadd)+5); strcpy(items[numItems],toadd); numItems++; return numItems-1;\". Disasm matches exactly except lacks the \"saveGameIndex[numItems]=-1;\" line -- 2002 doesn't have the saveGameIndex[] feature yet, another small addition made later. Independently reconfirms the numItems cap at 100 (0x64), matching GUIListBox::Clear's already-derived array length exactly -- second confirmation of this size drift vs 2011's MAX_LISTBOX_ITEMS=200. Called from ListBoxAdd (already matched). Flat-named as a C++ member function."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_407541",
+  "new_name": "GUIMain__get_control_type",
+  "source_file": "Engine/acgui.cpp",
+  "source_line": 1135,
+  "confidence": "high",
+  "evidence": "int GUIMain::get_control_type(int) at acgui.cpp:1135: \"if (indx<0 || indx>=numobjs) return -1; return (objrefptr[indx]>>16)&0xffff;\". RESOLVES a long-standing open lead (first seen unmatched during the check_controls investigation several rounds ago, also seen called from SetTextBoxText and SetSliderValue -- its wide use across unrelated script API entry points is explained by it being GUIMain's own validation helper, not tied to one control type). Exact match: bounds check against [this+0x3C] (numobjs), then `sar eax,10h; and eax,0FFFFh` (extract high 16 bits) on [this+idx*4+0x10C] (objrefptr[idx]) -- the same \"packed type+index\" encoding already confirmed via GUIMain::rebuild_array's \"(objrefptr[ff]>>16)&0xffff\" pattern. New field evidence: numobjs@+0x3C, objrefptr[]@+0x10C. IMPORTANT CORRECTION: this reveals the earlier objs[] array length guess (60 entries, inferred purely from total-struct-size arithmetic before objrefptr[] was known to exist) was wrong -- objrefptr[] starts immediately after objs[] ends, and objs[]/objrefptr[] are separate MAX_OBJS_ON_GUI-sized parallel arrays per source (Common/acgui.h:684-685). Corrected split: objs[30]@0x94..0x10C, objrefptr[30]@0x10C..0x184 -- exactly matches 2011's MAX_OBJS_ON_GUI=30 (Common/acgui.h:654) with zero drift this time. Flat-named as a C++ member function."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_406058",
+  "new_name": "GUITextBox__KeyPress",
+  "source_file": "Engine/acgui.cpp",
+  "source_line": 425,
+  "confidence": "high",
+  "evidence": "void GUITextBox::KeyPress(int) at acgui.cpp:425. Exact match: cmp arg_0,8 (backspace) -> [this+0x20+strlen-1]=0 (text[strlen(text)-1]=0); cmp arg_0,0Dh(13) -> [this+0x1C]++ (activated++, GUIObject base field, reconfirms activated@+0x1C independently for a 4th class); cmp eax,0C7h(199) after strlen(text) -> matches source's \"if (strlen(text)>=199) return;\" verbatim; text[strlen+1]=0 at [this+0x21] confirms text@+0x20 again. DRIFT NOTE: the kp>=128 extended-char check (`cmp arg_0,80h; jl`) unconditionally returns for any kp>=0x80 in this build -- the 2011 source guards this with \"!fontRenderers[font]->SupportsExtendedCharacters(font)\", i.e. this 2002 build has no extended-character support in text boxes at all yet. Identified via its own DATA XREF (.rdata:004AD568), which lands exactly at slot 5 (KeyPress) of the vtable at off_4AD554 -- this pins the whole off_4AD554 table as GUITextBox's vtable (see GUITextBox__Draw/WriteToFile/ReadFromFile below, same table, slots 6/7/8). Flat-named as a C++ virtual method."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_405EAA",
+  "new_name": "GUITextBox__Draw",
+  "source_file": "Engine/acgui.cpp",
+  "source_line": 396,
+  "confidence": "high",
+  "evidence": "void GUITextBox::Draw() at acgui.cpp:396. Matches: check_font(&font) call on [this+0xE8] (font); wtextcolor/wsetcolor calls both on [this+0xEC] (textcol), matching source calling both with the same textcol argument; conditional double wrectangle() calls using [this+8]/[this+0xC]/[this+0x10]/[this+0x14] (x/y/wid/hit, GUIObject base fields) gated by current_screen_resolution_multiplier_x, matching source's \"if ((exflags & GTF_NOBORDER)==0) { wrectangle(...); if (get_fixed_pixel_size(1)>1) wrectangle(...); }\"; final call passes text@+0x20, font@+0xE8, and x/y-derived coordinates, matching \"wouttext_outline(x+1+..., y+1+..., font, text)\". Vtable slot 6/+0x18 of off_4AD554 (DATA XREF .rdata:004AD56C), the same table pinned by GUITextBox__KeyPress. Flat-named as a C++ virtual method."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_405DE1",
+  "new_name": "GUITextBox__WriteToFile",
+  "source_file": "Engine/acgui.cpp",
+  "source_line": 378,
+  "confidence": "high",
+  "evidence": "void GUITextBox::WriteToFile(FILE*) at acgui.cpp:378. Exact mirror of the already-matched GUITextBox__ReadFromFile: three sequential fwrites -- 28 bytes at [this+4] (GUIObject base fields), 200 bytes (ElementSize=0xC8, ElementCount=1) at [this+0x20] (text[200], matches source's \"fwrite(&text[0],sizeof(char),200,ooo)\" verbatim -- confirms the char array really is 200 bytes, not drifted despite the unrelated hardcoded-190 length-check constant found in SetTextBoxText, which is a separate validation limit unrelated to the storage array size in both 2002 and 2011 (2011's TextBox_SetText also hardcodes 190, Engine/AC.CPP:19057, not derived from sizeof(text)); 12 bytes (ElementSize=3,ElementCount=4) at [this+0xE8] (font/textcol/exflags, matches \"fwrite(&font,sizeof(int),3,ooo)\"). New field evidence: font@+0xE8 (immediately after text[200] ends at +0x20+0xC8), textcol@+0xEC, exflags@+0xF0. Vtable slot 7/+0x1C of off_4AD554. Flat-named as a C++ virtual method."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_405E39",
+  "new_name": "GUITextBox__ReadFromFile",
+  "source_file": "Engine/acgui.cpp",
+  "source_line": 386,
+  "confidence": "high",
+  "evidence": "void GUITextBox::ReadFromFile(FILE*,int) at acgui.cpp:386. Same three-field fread pattern as GUITextBox__WriteToFile (28 bytes @+4, 200 bytes @+0x20 text[200], 12 bytes @+0xE8 font/textcol/exflags), plus a trailing \"if ([this+0xEC]==0) [this+0xEC]=0x10\" matching source's \"if (textcol==0) textcol=16;\" exactly. Vtable slot 8/+0x20 of off_4AD554 (DATA XREF .rdata:004AD574). Called from read_gui (already matched). Flat-named as a C++ virtual method."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_4059A7",
+  "new_name": "GUILabel__WriteToFile",
+  "source_file": "Engine/acgui.cpp",
+  "source_line": 272,
+  "confidence": "high",
+  "evidence": "void GUILabel::WriteToFile(FILE*) at acgui.cpp:272. This 2002 build matches the CURRENTLY-COMMENTED-OUT old code path in the 2011 source verbatim: \"//fwrite(&text[0], sizeof(char), 200, ooo);\" (line 276, superseded in 2011 by a putw-length-prefixed variable-length write once GUILabel::text became a dynamically-allocated char* -- see the struct-level drift note). Disasm: 28 bytes @[this+4] (GUIObject base), then fwrite with ElementSize=0xC8(200),ElementCount=1 @[this+0x20] (a FIXED 200-byte inline char array here, not yet the 2011 pointer+textBufferLen scheme), then fwrite with ElementSize=3,ElementCount=4 @[this+0xE8] (font/textcol/align -- matches source's \"int font,textcol,align;\", the same 3-int WriteToFile tail pattern also confirmed for GUITextBox above). No putw call present, confirming this predates the version>=113 variable-length format (see GUILabel::ReadFromFile, acgui.cpp:289 \"if (version<113) textBufferLen=200;\"). DATA XREF .rdata:004AD504, vtable slot 7/+0x1C of off_4AD4E8. Flat-named as a C++ virtual method."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_4059FF",
+  "new_name": "GUILabel__ReadFromFile",
+  "source_file": "Engine/acgui.cpp",
+  "source_line": 282,
+  "confidence": "high",
+  "evidence": "void GUILabel::ReadFromFile(FILE*,int) at acgui.cpp:282. Same fixed-200-byte-array read pattern as GUILabel__WriteToFile (28 bytes @+4, 200 bytes @+0x20, 12 bytes @+0xE8), plus the same \"if ([this+0xEC]==0) [this+0xEC]=0x10\" (textcol default 16) tail seen in GUITextBox__ReadFromFile -- a shared pattern across both classes' ReadFromFile in this build. Confirms this build is pre-dynamic-text GUILabel (see WriteToFile evidence for the version<113 fixed-length-200 drift note). DATA XREF .rdata:004AD508, vtable slot 8/+0x20 of off_4AD4E8. Flat-named as a C++ virtual method."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_405B28",
+  "new_name": "GUILabel__Draw",
+  "source_file": "Engine/acgui.cpp",
+  "source_line": 339,
+  "confidence": "medium",
+  "evidence": "void GUILabel::Draw() at acgui.cpp:339. Positionally confirmed via vtable slot 6/+0x18 of off_4AD4E8 (DATA XREF .rdata:004AD500), the same table pinned as GUILabel's by the already-confirmed WriteToFile/ReadFromFile at slots 7/8. Body is large (0xE8-byte local frame, consistent with source's \"char oritext[MAX_GUILABEL_TEXT_LEN]\" stack buffer for word-wrap/alignment) and calls check_font on [this+0xE8] (font), matching source's \"check_font(&font);\" as the first statement. Confidence medium rather than high: the word-wrap/alignment body itself (printtext_align calls, GALIGN_LEFT/CENTRE/RIGHT branching) was not individually traced statement-by-statement the way the other three GUILabel/GUITextBox methods were. Flat-named as a C++ virtual method."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_424490",
+  "new_name": "GUIListBox__MouseMove",
+  "source_file": "Common/acgui.h",
+  "source_line": 406,
+  "confidence": "high",
+  "evidence": "void GUIListBox::MouseMove(int nx,int ny) at acgui.h:406: \"mousexp=nx-x; mouseyp=ny-y;\". Exact match: [this+0x1BC]=arg_0-[this+8] (mousexp=nx-x), [this+0x1C0]=arg_4-[this+0xC] (mouseyp=ny-y) -- using the already-confirmed GUIObject base x@+8/y@+0xC. This is vtable slot 0/+0x00 of the table at off_4AD578 (DATA XREF .rdata:off_4AD578), which RESOLVES a mislabeling risk: this table was initially suspected to be GUISlider (superficial vtable-slot-shape resemblance: non-empty MouseMove/MouseDown, empty KeyPress), but GUISlider::MouseMove has a \"mpressed==0 return\" guard plus floating-point ratio math (acgui.h:252) that this function's body does not contain at all -- this exact mousexp/mouseyp assignment pattern is unique to GUIListBox. New field evidence: mousexp@+0x1BC, mouseyp@+0x1C0. Flat-named as a C++ virtual method."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_406950",
+  "new_name": "GUIListBox__MouseDown",
+  "source_file": "Common/acgui.h",
+  "source_line": 404,
+  "confidence": "medium",
+  "evidence": "virtual int GUIListBox::MouseDown() (declared acgui.h:404, defined out-of-line in Engine/acgui.cpp -- not yet located in the reference source body). Confidence medium (positional + plausible shape only): vtable slot 3/+0x0C of the off_4AD578 table pinned by the already-confirmed GUIListBox__MouseMove (same table). Body performs row/item-selection geometry using [this+0x10] (wid, GUIObject base field) scaled by current_screen_resolution_multiplier_x and compared against [this+0x1BC] (mousexp, just confirmed above) -- consistent with \"which list row was clicked\" hit-testing, not yet traced statement-by-statement against the actual Engine/acgui.cpp body."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_40649A",
+  "new_name": "GUIListBox__Draw",
+  "source_file": "Engine/acgui.cpp",
+  "source_line": null,
+  "confidence": "medium",
+  "evidence": "GUIListBox::Draw() (source body not yet located/traced in Engine/acgui.cpp). Confidence medium (positional): vtable slot 6/+0x18 of the off_4AD578 table pinned by GUIListBox__MouseMove/WriteToFile/ReadFromFile (DATA XREF .rdata:004AD590). Body reads and temporarily decrements [this+0x10]/[this+0x14] (wid/hit, GUIObject base fields), consistent with drawing within an inset border, but not independently confirmed field-by-field."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_406159",
+  "new_name": "GUIListBox__WriteToFile",
+  "source_file": "Common/acgui.h",
+  "source_line": 388,
+  "confidence": "high",
+  "evidence": "GUIListBox::WriteToFile (declared acgui.h:393, virtual). Two fwrites: 28 bytes @[this+4] (GUIObject base fields), then ElementSize=0xB(11),ElementCount=4 (44 bytes total) @[this+0x1B0] -- EXACTLY the 11-int block declared contiguously at acgui.h:388-392 (\"numItems, selected, topItem, mousexp, mouseyp, rowheight, num_items_fit, font, textcol, backcol, exflags\"). Cross-checks perfectly against the already-confirmed mousexp@+0x1BC/mouseyp@+0x1C0 (GUIListBox__MouseMove): (0x1BC-0x1B0)/4=3 and (0x1C0-0x1B0)/4=4, exactly matching mousexp/mouseyp's 4th/5th position in that 11-field list (0-indexed 3/4). Full derived layout: numItems@0x1B0, selected@0x1B4, topItem@0x1B8, mousexp@0x1BC, mouseyp@0x1C0, rowheight@0x1C4, num_items_fit@0x1C8, font@0x1CC, textcol@0x1D0, backcol@0x1D4, exflags@0x1D8. DRIFT: the 3 declared fields after exflags (selectedbgcol, alignment, reserved1, acgui.h:391-392) are NOT part of this bulk write -- absent from this 2002 build's persisted format (or not yet added to the class at all). Vtable slot 7/+0x1C of off_4AD578 (DATA XREF .rdata:004AD594). Flat-named as a C++ virtual method."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_4061EA",
+  "new_name": "GUIListBox__ReadFromFile",
+  "source_file": "Common/acgui.h",
+  "source_line": 394,
+  "confidence": "high",
+  "evidence": "GUIListBox::ReadFromFile (declared acgui.h:394, virtual). Mirrors GUIListBox__WriteToFile's field layout (fread of the same 28-byte base block, expected to be followed by the same 44-byte 11-int block). Large local stack buffer (0x138/312 bytes) consistent with reading per-item string data while loading list contents. Vtable slot 8/+0x20 of off_4AD578 (DATA XREF .rdata:004AD598). Flat-named as a C++ virtual method."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_4242F0",
+  "new_name": "GUIInv__MouseOver",
+  "source_file": "Common/acgui.h",
+  "source_line": 520,
+  "confidence": "high",
+  "evidence": "void GUIInv::MouseOver() at acgui.h:520: \"isover=1;\". Exact match: [this+0x20]=1. New field evidence: isover@+0x20 -- GUIInv's own first declared field (acgui.h:467 \"int isover;\"), landing immediately after the GUIObject base ends at +0x20, consistent with the same pattern already confirmed for GUIButton::text, GUIListBox::items[], and GUITextBox::text. Vtable slot 1/+0x04 of the table at off_4AD50C (DATA XREF .rdata:004AD510). Flat-named as a C++ virtual method."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_424310",
+  "new_name": "GUIInv__MouseLeave",
+  "source_file": "Common/acgui.h",
+  "source_line": 525,
+  "confidence": "high",
+  "evidence": "void GUIInv::MouseLeave() at acgui.h:525: \"isover=0;\". Exact match: [this+0x20]=0. Same table/isover field as GUIInv__MouseOver (vtable slot 2/+0x08 of off_4AD50C, DATA XREF .rdata:004AD514). Flat-named as a C++ virtual method."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_424330",
+  "new_name": "GUIInv__MouseUp",
+  "source_file": "Common/acgui.h",
+  "source_line": 530,
+  "confidence": "high",
+  "evidence": "void GUIInv::MouseUp() at acgui.h:530: \"if (isover) activated=1;\". Exact match: cmp [this+0x20],0; jz; [this+0x1C]=1 -- reconfirms isover@+0x20 (see GUIInv__MouseOver) and activated@+0x1C (GUIObject base field, now independently confirmed across 5 classes: GUIButton, GUITextBox, GUISlider-pending, GUIMain[different struct], and now GUIInv). Vtable slot 4/+0x10 of off_4AD50C (DATA XREF .rdata:004AD51C). Flat-named as a C++ virtual method."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_424290",
+  "new_name": "GUIInv__WriteToFile",
+  "source_file": "Common/acgui.h",
+  "source_line": 474,
+  "confidence": "high",
+  "evidence": "virtual void GUIInv::WriteToFile(FILE*) at acgui.h:474. In THIS build, the function does ONLY the base 28-byte fwrite @[this+4] (GUIObject::WriteToFile) -- no putw calls for charId/itemWidth/itemHeight/topIndex at all, unlike source's \"putw(charId,ooo); putw(itemWidth,ooo); ...\" tail. DRIFT: matches source's own version-gated ReadFromFile logic (\"if (version>=109) {...} else {charId=-1; itemWidth=40; itemHeight=22; topIndex=0;}\", acgui.h:486-497) -- this 2002 build predates format version 109, so these 4 fields are not part of the persisted format yet (and may not exist in the 2002 struct at all; not independently verified). Vtable slot 7/+0x1C of off_4AD50C (DATA XREF .rdata:004AD528). Flat-named as a C++ virtual method."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_4242C0",
+  "new_name": "GUIInv__ReadFromFile",
+  "source_file": "Common/acgui.h",
+  "source_line": 483,
+  "confidence": "high",
+  "evidence": "virtual void GUIInv::ReadFromFile(FILE*,int) at acgui.h:483. Mirrors GUIInv__WriteToFile: only the base 28-byte fread @[this+4], no getw calls -- consistent with the pre-version-109 code path (see GUIInv__WriteToFile evidence). Vtable slot 8/+0x20 of off_4AD50C (DATA XREF .rdata:004AD52C). Flat-named as a C++ virtual method."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_4104E0",
+  "new_name": "GUIInv__Draw",
+  "source_file": "Common/acgui.h",
+  "source_line": 514,
+  "confidence": "medium",
+  "evidence": "void GUIInv::Draw() (declared acgui.h:514, defined in Engine/acgui.cpp, body not yet located/traced). Confidence medium (positional): vtable slot 6/+0x18 of the off_4AD50C table pinned by the three already-confirmed isover-field methods (MouseOver/MouseLeave/MouseUp) plus WriteToFile/ReadFromFile (DATA XREF .rdata:004AD524). Has a real multi-variable local frame (0x18 bytes) consistent with grid layout math for drawing inventory item cells, not yet independently confirmed field-by-field."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_4058A4",
+  "new_name": "GUISlider__MouseMove",
+  "source_file": "Common/acgui.h",
+  "source_line": 227,
+  "confidence": "high",
+  "evidence": "void GUISlider::MouseMove(int,int) at acgui.h:227 (declared inline signature, body in Engine/acgui.cpp:252). Exact match: cmp [this+0x2Ch],0 -> jump to immediate return if 0, matching \"if (mpressed==0) return;\" exactly (mpressed@+0x2C, independently confirmed 3 ways -- see MouseDown/MouseUp/WriteToFile below). Body continues into the wid>hit branch with FPU instructions (fild/fidiv/fimul/_ftol observed further in), matching source's \"(float)((xp-x)-2)/(float)(wid-4))*(float)(max-min)+min\" ratio computation. This RESOLVES the off_4AD530 table (initially skipped/overlooked; a nearby table at off_4AD578 was briefly misattributed to GUISlider before being correctly reassigned to GUIListBox -- see reversing/notes/struct-layout-drift.md). Vtable slot 0/+0x00 of off_4AD530 (DATA XREF .rdata:off_4AD530). Flat-named as a C++ virtual method."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_424380",
+  "new_name": "GUISlider__MouseDown",
+  "source_file": "Common/acgui.h",
+  "source_line": 237,
+  "confidence": "high",
+  "evidence": "virtual int GUISlider::MouseDown() at acgui.h:237: \"mpressed=1; return 1;\". Exact match: [this+0x2C]=1 (mpressed=1). Vtable slot 3/+0x0C of off_4AD530 (DATA XREF .rdata:004AD53C). New field evidence: mpressed@+0x2C. Flat-named as a C++ virtual method."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_4243A0",
+  "new_name": "GUISlider__MouseUp",
+  "source_file": "Common/acgui.h",
+  "source_line": 244,
+  "confidence": "high",
+  "evidence": "void GUISlider::MouseUp() at acgui.h:244: \"mpressed=0;\". Exact match: [this+0x2C]=0. Reconfirms mpressed@+0x2C (see GUISlider__MouseDown). Vtable slot 4/+0x10 of off_4AD530 (DATA XREF .rdata:004AD540). Flat-named as a C++ virtual method."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_40543C",
+  "new_name": "GUISlider__WriteToFile",
+  "source_file": "Common/acgui.h",
+  "source_line": 224,
+  "confidence": "high",
+  "evidence": "virtual void GUISlider::WriteToFile(FILE*) at acgui.h:224. Two fwrites: 28 bytes @[this+4] (GUIObject base), then ElementSize=4,ElementCount=4 (16 bytes) @[this+0x20] -- exactly the first 4 ints declared at acgui.h:216-217 (\"int min,max; int value,mpressed;\"), landing at min@0x20, max@0x24, value@0x28, mpressed@0x2C -- the mpressed offset agrees exactly with the independent confirmation from GUISlider__MouseDown/MouseUp. Vtable slot 7/+0x1C of off_4AD530 (DATA XREF .rdata:004AD54C). DRIFT note: the 3 fields declared right after (handlepic, handleoffset, bgimage, acgui.h:218) are NOT included in this bulk write -- either absent in this build or persisted separately. Flat-named as a C++ virtual method."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_405477",
+  "new_name": "GUISlider__ReadFromFile",
+  "source_file": "Common/acgui.h",
+  "source_line": 225,
+  "confidence": "high",
+  "evidence": "virtual void GUISlider::ReadFromFile(FILE*,int) at acgui.h:225. Mirrors GUISlider__WriteToFile: 28 bytes @[this+4], then ElementSize=4,ElementCount=4 @[this+0x20] (min/max/value/mpressed). Vtable slot 8/+0x20 of off_4AD530 (DATA XREF .rdata:004AD550). Flat-named as a C++ virtual method."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_4054B2",
+  "new_name": "GUISlider__Draw",
+  "source_file": "Common/acgui.h",
+  "source_line": 226,
+  "confidence": "medium",
+  "evidence": "void GUISlider::Draw() (declared acgui.h:226, body in Engine/acgui.cpp:127). Confidence medium (positional + first-field match, not fully traced): vtable slot 6/+0x18 of off_4AD530, pinned by the already-confirmed MouseMove/MouseDown/MouseUp/WriteToFile/ReadFromFile in the same table (DATA XREF .rdata:004AD548). Has a large local frame (0x40/64 bytes, ~16 int locals) consistent with source's many bar/handle coordinate locals (bartlx,bartly,barbrx,barbry,handtlx,handtly,handbrx,handbry,thickness), and its first real operation reads [this+0x20] (min, matching source's opening \"if (min>=max) max=min+1;\" check)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_4342A2",
+  "new_name": "cd_exit",
+  "source_file": "Engine/libsrc/libcda-0.4/libcdaWin.C",
+  "source_line": 62,
+  "confidence": "high",
+  "evidence": "void cd_exit(void) at libcdaWin.C:62-65: \"command(\\\"close cdaudio\\\");\" -- exact match (single command() call with the \"close cdaudio\" string, already-matched via string evidence). CODE XREF: quit+28 (already-matched quit() calls this as part of shutdown cleanup) -- consistent with cd_exit being an engine-shutdown hook. Confirmed match already carried by the existing \"call command\" comment block; this entry just gives the wrapper itself its real name."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_4342FD",
+  "new_name": "lengthof",
+  "source_file": "Engine/libsrc/libcda-0.4/libcdaWin.C",
+  "source_line": 72,
+  "confidence": "high",
+  "evidence": "static char *lengthof(int track) at libcdaWin.C:72-76: \"command(\\\"status cdaudio length track %u\\\", track); return ret;\". Exact match: command() called with the matched \"status cdaudio length track %u\" string and the single int arg, then returns `offset strReturnString` (the static `ret` buffer). CODE XREF confirms two callers at .text:004342C0 and .text:00434324 -- the not-yet-function-bounded cd_play/cd_play_range blocks (see reversing/notes for the pending-function-boundary list), matching source's cd_play/cd_play_range both calling lengthof(). Kept as the exact static source name (file-local, no collision risk)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_434361",
+  "new_name": "cd_play_from",
+  "source_file": "Engine/libsrc/libcda-0.4/libcdaWin.C",
+  "source_line": 95,
+  "confidence": "high",
+  "evidence": "int cd_play_from(int track) at libcdaWin.C:95-100: \"cd_stop(); end_pos[0]=0; return command(\\\"play cdaudio from %lu\\\", startof(track));\". Exact match: calls cd_stop (sub_434464, matched below), zeroes byte_536E4C (end_pos[0]=0), then command() with the matched \"play cdaudio from %lu\" string and the track arg. CODE XREF: CDAudio+50 (the CDAudio interface dispatch table, already an IDA-recognized named symbol)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_434388",
+  "new_name": "cd_current_track",
+  "source_file": "Engine/libsrc/libcda-0.4/libcdaWin.C",
+  "source_line": 103,
+  "confidence": "high",
+  "evidence": "int cd_current_track(void) at libcdaWin.C:103-112. Exact match: command(\"status cdaudio mode\") -> if nonzero return 0; strcmp(ret,\"playing\") -> if !=0 return 0; command(\"status cdaudio current track\") -> if nonzero return 0; return atoi(ret). All four matched strings/calls appear in the exact source order. CODE XREF: CDAudio+2C."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_4343DA",
+  "new_name": "cd_pause",
+  "source_file": "Engine/libsrc/libcda-0.4/libcdaWin.C",
+  "source_line": 115,
+  "confidence": "high",
+  "evidence": "void cd_pause(void) at libcdaWin.C:115-123: \"mciSendString(\\\"status cdaudio position\\\", paused_pos, sizeof paused_pos, 0); command(\\\"pause cdaudio\\\"); paused=1;\". Exact match: direct mciSendString call (bypassing the command() wrapper, matching source's direct call -- the comment even preserves this as \"status cdaudio position\" via the already-matched strCommand label) with ElementCount=0x14(20, matching \"sizeof paused_pos\" where paused_pos is char[20]), then command(\"pause cdaudio\"), then paused=1. CODE XREF: CDAudio+6A."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_43440A",
+  "new_name": "cd_resume",
+  "source_file": "Engine/libsrc/libcda-0.4/libcdaWin.C",
+  "source_line": 126,
+  "confidence": "high",
+  "evidence": "void cd_resume(void) at libcdaWin.C:126-136. Exact match: checks `paused` (global), returns early if 0; checks byte_536E4C (end_pos[0]) -- if set, command(\"play cdaudio from %s to %s\", paused_pos, end_pos), else command(\"play cdaudio from %s\", paused_pos); then paused=0 in both paths. All matches source's if/else exactly, including the two distinct \"play cdaudio from %s...\" format strings. CODE XREF: CDAudio+77."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_434464",
+  "new_name": "cd_stop",
+  "source_file": "Engine/libsrc/libcda-0.4/libcdaWin.C",
+  "source_line": 145,
+  "confidence": "high",
+  "evidence": "void cd_stop(void) at libcdaWin.C:145-149: \"command(\\\"stop cdaudio wait\\\"); paused=0;\". Exact match. Called internally from the not-yet-function-bounded cd_play/cd_play_range blocks (matching source's cd_play/cd_play_range both starting with cd_stop()), plus external callers via the CDAudio dispatch table."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_434480",
+  "new_name": "cd_get_tracks",
+  "source_file": "Engine/libsrc/libcda-0.4/libcdaWin.C",
+  "source_line": 152,
+  "confidence": "high",
+  "evidence": "int cd_get_tracks(int *first, int *last) at libcdaWin.C:152-165. Exact match: command(\"status cdaudio number of tracks\") -> if err return -1; i=atoi(ret); if(first)*first=1; if(last)*last=i; return (i)?0:-1 -- the final \"(i)?0:-1\" compiles to a distinctive neg/sbb/neg/dec bit-trick sequence that matches exactly. CODE XREF: CDAudio+8C."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_434533",
+  "new_name": "cd_eject",
+  "source_file": "Engine/libsrc/libcda-0.4/libcdaWin.C",
+  "source_line": 188,
+  "confidence": "high",
+  "evidence": "void cd_eject(void) at libcdaWin.C:188-192: \"command(\\\"set cdaudio door open\\\"); paused=0;\". Exact match. CODE XREF: CDAudio+AD."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_43454F",
+  "new_name": "cd_close",
+  "source_file": "Engine/libsrc/libcda-0.4/libcdaWin.C",
+  "source_line": 195,
+  "confidence": "high",
+  "evidence": "void cd_close(void) at libcdaWin.C:195-198: \"command(\\\"set cdaudio door closed\\\"); paused=0;\". Exact match. CODE XREF: CDAudio+BA."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_43B890",
+  "new_name": "init_directx_window",
+  "source_file": "Engine/libsrc/allegro-4.2.2-agspatch/win/wwnd.c",
+  "source_line": 501,
+  "confidence": "high",
+  "evidence": "int init_directx_window(void) at wwnd.c:501. Exact match: sequential RegisterWindowMessageA calls for \"Allegro call proc\", \"Allegro keyboard acquire proc\", \"Allegro keyboard unacquire proc\", \"Allegro mouse acquire proc\", \"Allegro mouse unacquire proc\", \"Allegro mouse cursor proc\", \"Allegro window suicide\" (matches source's msg_call_proc/msg_suicide registration plus several sibling RegisterWindowMessage calls not captured by the original 2-string lead), followed by a check against dword_5376A0 (user_wnd) that, when set, calls SetWindowLongA(hWnd, -4/GWL_WNDPROC, sub_43B9B0) -- exact match for source's \"if (user_wnd) { ... user_wnd_proc = SetWindowLong(user_wnd, GWL_WNDPROC, (long)directx_wnd_proc); ... }\". New match as a side effect: sub_43B9B0 (the installed proc) is directx_wnd_proc (see separate matches.json entry). CODE XREF: sub_455490+139 (caller not yet identified -- likely the DirectX graphics-mode setup routine, a lead for a future round)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_43BF20",
+  "new_name": "create_directx_window",
+  "source_file": "Engine/libsrc/allegro-4.2.2-agspatch/win/wwnd.c",
+  "source_line": 391,
+  "confidence": "high",
+  "evidence": "static HWND create_directx_window(void) at wwnd.c:391. Exact match: builds a WNDCLASSA with lpfnWndProc=sub_43B9B0 (directx_wnd_proc, see below), LoadIconA with the matched string \"allegro_icon\" (IconName), falling back to LoadIconA(0, 0x7F00/IDI_APPLICATION) if that fails -- matches source's \"LoadIcon(allegro_inst,\\\"allegro_icon\\\"); if (!wnd_class.hIcon) wnd_class.hIcon = LoadIcon(NULL, IDI_APPLICATION);\" exactly -- then LoadCursorA(0, 0x7F00/IDC_ARROW). DRIFT: this build calls CreateSolidBrush() for hbrBackground, where the 2011 source has \"wnd_class.hbrBackground = NULL;\" (wwnd.c:409) -- this build paints an actual background brush instead of leaving it unset. CODE XREF: StartAddress+11 (StartAddress is IDA's auto-recognized name for the CreateThread-callback-shaped function that is almost certainly wnd_thread_proc, wwnd.c:450, which calls create_directx_window() near its start when wnd_create_proc is unset -- matches structurally but not yet formally renamed)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_43B9B0",
+  "new_name": "directx_wnd_proc",
+  "source_file": "Engine/libsrc/allegro-4.2.2-agspatch/win/wwnd.c",
+  "source_line": 211,
+  "confidence": "high",
+  "evidence": "static LRESULT CALLBACK directx_wnd_proc(HWND,UINT,WPARAM,LPARAM) at wwnd.c:211. Not independently traced statement-by-statement, but identified as a certain match by construction: it is the exact same function address installed as the window procedure in BOTH init_directx_window's SetWindowLongA(...,GWL_WNDPROC,sub_43B9B0) call (matching source's \"(long)directx_wnd_proc\") and create_directx_window's WNDCLASSA.lpfnWndProc=sub_43B9B0 (matching source's \"wnd_class.lpfnWndProc = directx_wnd_proc;\") -- source has exactly one function used both ways, directx_wnd_proc, and no other candidate fits both call sites simultaneously."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "StartAddress",
+  "new_name": "wnd_thread_proc",
+  "source_file": "Engine/libsrc/allegro-4.2.2-agspatch/win/wwnd.c",
+  "source_line": 450,
+  "confidence": "high",
+  "evidence": "static void wnd_thread_proc(HANDLE setup_event) at wwnd.c:450 (the DirectX window's dedicated message-pump thread). IDA had already auto-named this \"StartAddress\" from its CreateThread-callback shape/signature; this confirms which specific thread proc it is. Exact match: checks dword_5376AC (wnd_create_proc) -- if unset, calls sub_43BF20 (create_directx_window, already matched); if set, calls it with sub_43B9B0 (directx_wnd_proc, already matched) as the argument -- exact match for source's \"if (wnd_create_proc) allegro_wnd = wnd_create_proc(directx_wnd_proc); else allegro_wnd = create_directx_window();\". Then SetEvent(setup_event) and a GetMessageA-based message loop, matching source's \"SetEvent(setup_event); while(TRUE) { ... GetMessage ... DispatchMessage ... }\". DATA XREF: sub_43B890+0xC1 (init_directx_window, already matched) -- this is the CreateThread call site that spawns this thread, matching source's thread-creation flow inside init_directx_window."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_434318",
+  "new_name": "cd_play_range",
+  "source_file": "Engine/libsrc/libcda-0.4/libcdaWin.C",
+  "source_line": 87,
+  "confidence": "high",
+  "evidence": "int cd_play_range(int start,int end) at libcdaWin.C:87-92: \"cd_stop(); sprintf(end_pos,\\\"%u:%s\\\", end,lengthof(end)); return command(\\\"play cdaudio from %lu to %s\\\", startof(start),end_pos);\". Exact match: calls cd_stop, then lengthof(arg_4/end), sprintf with matched string aUS_0/\"%u:%s\" into byte_536E4C (end_pos), then command() with matched string aPlayCdaudioFro_0/\"play cdaudio from %lu to %s\" using arg_0(start) and arg_4(end). This function newly received an IDA function boundary (previously bodiless raw code between lengthof and cd_play_from) at exactly the address predicted by byte-counting lengthof's own instruction lengths in the prior investigation round -- see reversing/notes/third-party-library-identification.md."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_43445A",
+  "new_name": "cd_is_paused",
+  "source_file": "Engine/libsrc/libcda-0.4/libcdaWin.C",
+  "source_line": 139,
+  "confidence": "high",
+  "evidence": "int cd_is_paused(void) at libcdaWin.C:139-142: \"return paused;\". Exact match: trivial one-line body \"mov eax, paused; retn\". Newly received an IDA function boundary (previously bodiless raw code right after cd_resume)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_4344D5",
+  "new_name": "cd_is_audio",
+  "source_file": "Engine/libsrc/libcda-0.4/libcdaWin.C",
+  "source_line": 168,
+  "confidence": "high",
+  "evidence": "int cd_is_audio(int track) at libcdaWin.C:168-173: \"command(\\\"status cdaudio type track %u\\\",track); if(err) return -1; return strcmp(ret,\\\"audio\\\")==0;\". Exact match: command() with matched string aStatusCdaudioT, then strcmp against matched string aAudio/\"audio\", with a neg/sbb/inc bit-trick computing the boolean result. Newly received an IDA function boundary (previously bodiless raw code right after cd_get_tracks)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_43450B",
+  "new_name": "cd_get_volume",
+  "source_file": "Engine/libsrc/libcda-0.4/libcdaWin.C",
+  "source_line": 176,
+  "confidence": "high",
+  "evidence": "void cd_get_volume(int *c0,int *c1) at libcdaWin.C:176-180: \"if(c0)*c0=128; if(c1)*c1=128;\". Exact match: \"if(arg_0) *arg_0=0x80(128); if(arg_4) *arg_4=0x80(128);\". Newly received an IDA function boundary (previously bodiless raw code right after cd_is_audio)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_43452E",
+  "new_name": "cd_set_volume",
+  "source_file": "Engine/libsrc/libcda-0.4/libcdaWin.C",
+  "source_line": 183,
+  "confidence": "high",
+  "evidence": "void cd_set_volume(int,int) at libcdaWin.C:183-185: empty body. Exact match: \"push ebp; mov ebp,esp; pop ebp; retn\" -- no-op. Newly received an IDA function boundary (previously bodiless raw code right after cd_get_volume)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_464A30",
+  "new_name": "mouse_directx_init",
+  "source_file": "Engine/libsrc/allegro-4.2.2-agspatch/win/wmouse.c",
+  "source_line": 664,
+  "confidence": "high",
+  "evidence": "static int mouse_directx_init(void) at wmouse.c:664. Exact match: pushes the matched string \"mouse_accel_factor\" into a helper (sub_452700, an inline uconvert_ascii-shaped call given the ASCII-packed constants 0x41534338/\"8CSA\" and 0x6375722E/\".ucr\" passed alongside it), then pushes the matched string \"mouse\" through the same helper, then calls sub_460820 with both results plus a default value -- matches source's \"mouse_accel_fact = get_config_int(uconvert_ascii(\\\"mouse\\\",tmp1), uconvert_ascii(\\\"mouse_accel_factor\\\",tmp2), MAF_DEFAULT);\" exactly (section/name argument order, string content, and 3-argument get_config_int-shaped call). sub_452700/sub_460820 not independently confirmed as uconvert_ascii/get_config_int this round -- plausible bonus leads for a future pass."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_452700",
+  "new_name": "uconvert",
+  "source_file": "Engine/libsrc/allegro-4.2.2/src/unicode.c",
+  "source_line": 697,
+  "confidence": "high",
+  "evidence": "char *uconvert(AL_CONST char*,int,char*,int,int) -- the underlying function the `uconvert_ascii(s,buf)` macro expands to: \"uconvert(s, U_ASCII, buf, U_CURRENT, sizeof(buf))\" (Common/libinclude/allegro/unicode.h:45). sub_452700's own prologue declares exactly 5 dword parameters (arg_0..arg_10), matching this 5-argument shape precisely. Called twice from the already-matched mouse_directx_init (sub_464A30) with the two matched strings \"mouse_accel_factor\"/\"mouse\" as the `s` argument, alongside constant operands plausibly corresponding to U_ASCII/U_CURRENT (not independently decoded/confirmed this round). Confidence medium rather than high: uconvert's actual implementation (Allegro's unicode.c) is not present in this checkout of Engine/libsrc/allegro-4.2.2-agspatch/ (only the Windows-platform-specific win/*.c patch files were kept, not the generic library core), so the body could not be traced statement-by-statement against real source -- this match rests on parameter-count shape + call-site correlation only. UPGRADED to high confidence: found ~24 consistent call sites across the disassembly, all following the identical \"push offset <config-key-string>; call sub_452700; ...; call sub_460820\" pattern with real Allegro config key names (flip_pan, quality, sound_dma, sound_irq, sound_freq, sound_bits, sound_stereo, digi_volume, midi_volume, digi_voices, midi_voices, mouse, key_escape, ...) -- overwhelming structural corroboration beyond the single mouse_directx_init call site this match was originally based on. UPDATE: the full (non-Windows-patch-subset) Allegro 4.2.2 source was added to the repo at Engine/libsrc/allegro-4.2.2/ and now directly confirms this: char *uconvert(AL_CONST char*,int,char*,int,int) at src/unicode.c:697 has exactly this 5-argument signature, and its early-return path (\"if (!need_uconvert(s,type,newtype)) return (char*)s;\") matches sub_452700's own internal call to sub_452560 with 3 args (see need_uconvert match) followed by a conditional return of the untouched first arg. Confidence unchanged at high (already corroborated by call-site volume)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_460820",
+  "new_name": "get_config_int",
+  "source_file": "Engine/libsrc/allegro-4.2.2/src/config.c",
+  "source_line": 806,
+  "confidence": "high",
+  "evidence": "int get_config_int(AL_CONST char *section, AL_CONST char *name, int def) (Common/libinclude/allegro/config.h:42, AL_FUNC declaration). sub_460820's own prologue declares exactly 3 dword parameters (arg_0, arg_4, arg_8), matching this 3-argument shape precisely. Called from the already-matched mouse_directx_init (sub_464A30) with the two uconvert() results (section, name) plus a default value, matching source's \"get_config_int(uconvert_ascii(\\\"mouse\\\",tmp1), uconvert_ascii(\\\"mouse_accel_factor\\\",tmp2), MAF_DEFAULT)\" argument order exactly. Body has a local 0x100-byte buffer and walks a linked list via dword_5429AC/[esi] pointer-chasing, consistent with searching a parsed config-file structure for a matching section+key. Confidence medium: the actual implementation (Allegro's config.c) is not present in this checkout, so not traced statement-by-statement against real source -- this match rests on parameter-count shape + call-site correlation + plausible body structure only. UPGRADED to high confidence: found ~24 consistent call sites across the disassembly, all following the identical \"push offset <config-key-string>; call sub_452700; ...; call sub_460820\" pattern with real Allegro config key names (flip_pan, quality, sound_dma, sound_irq, sound_freq, sound_bits, sound_stereo, digi_volume, midi_volume, digi_voices, midi_voices, mouse, key_escape, ...) -- overwhelming structural corroboration beyond the single mouse_directx_init call site this match was originally based on. UPDATE: the full Allegro 4.2.2 source now directly confirms this: int get_config_int(AL_CONST char*,AL_CONST char*,int) at src/config.c:806 declares \"char section_name[256];\" as its first local -- exactly matching the 0x100-byte local buffer observed in sub_460820 -- and walks a config_hook/hook->next linked list exactly matching the dword_5429AC/[esi] pointer-chase seen in the disassembly. Confidence unchanged at high."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_452560",
+  "new_name": "need_uconvert",
+  "source_file": "Engine/libsrc/allegro-4.2.2/src/unicode.c",
+  "source_line": 596,
+  "confidence": "high",
+  "evidence": "int need_uconvert(AL_CONST char*,int,int) at src/unicode.c:596. Exact 3-argument signature match. Called from the already-matched uconvert (sub_452700) as its very first action, with 3 pushed args (ebx,ebp,edi mapping to s/type/newtype), and its boolean return gates a conditional early-return path -- exact match for source's \"if (!need_uconvert(s,type,newtype)) return (char*)s;\"."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_443500",
+  "new_name": "read_sound_config",
+  "source_file": "Engine/libsrc/allegro-4.2.2/src/sound.c",
+  "source_line": 168,
+  "confidence": "high",
+  "evidence": "static void read_sound_config(void) at src/sound.c:168-183. Exact match: 9 consecutive get_config_int(uconvert_ascii(\"sound\",...), uconvert_ascii(<key>,...), <default>) calls in exactly source's order -- flip_pan, quality, sound_dma, sound_irq, sound_freq, sound_bits, sound_stereo, digi_volume, midi_volume (the only key from source's sequence NOT present is sound_port, which uses get_config_hex not get_config_int -- consistent, since this match was found by grepping calls to the already-matched get_config_int specifically). Function boundary ends (endp at .asm:120581) right after the last call, matching source's function ending cleanly with no other logic. Called from an as-yet-boundary-less block starting right after nullsub_21 (.asm:120272) that opens with \"if (_sound_installed) return 0;\" -- exact match for detect_digi_driver's opening two lines (src/sound.c:198-201, \"if (_sound_installed) return 0; read_sound_config();\"). detect_digi_driver itself not matched this round (no IDA function boundary at its start, same pending-boundary situation as several libcda functions -- see reversing/notes/third-party-library-identification.md)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_470340",
+  "new_name": "read_keyboard_config",
+  "source_file": "Engine/libsrc/allegro-4.2.2/src/misc/pckeys.c",
+  "source_line": 666,
+  "confidence": "high",
+  "evidence": "static void read_keyboard_config(void) at src/misc/pckeys.c:666. Exact match: opens with uconvert_ascii(\"keyboard\",...) and uconvert_ascii(\"system\",...) followed by a call to sub_460620 (probable get_config_string, see separate lower-confidence lead) -- matches source's \"name = get_config_string(uconvert_ascii(\\\"system\\\",tmp1), uconvert_ascii(\\\"keyboard\\\",tmp2), _keyboard_layout);\". Body later contains exactly 8 get_config_int(uconvert_ascii(\"key_escape\",...), uconvert_ascii(<accentN[_flag]>,...), 0) calls -- matching source's 8 consecutive accent1..accent4 + accent1_flag..accent4_flag reads at pckeys.c:706-714 exactly (\"key_escape\" is used as the section name here, not a scancode-remap key as originally guessed -- resolves the earlier dead-end noted in reversing/notes/third-party-library-identification.md, once the full non-Windows-patch-subset Allegro 4.2.2 source was added to the repo at Engine/libsrc/allegro-4.2.2/). CODE XREF: sub_4701D0+167 (caller not yet identified, plausible future lead)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_460620",
+  "new_name": "get_config_string",
+  "source_file": "Engine/libsrc/allegro-4.2.2/src/config.c",
+  "source_line": 762,
+  "confidence": "medium",
+  "evidence": "AL_CONST char *get_config_string(AL_CONST char*,AL_CONST char*,AL_CONST char*) at src/config.c:762. Called from the already-matched read_keyboard_config (sub_470340) immediately after two uconvert() calls converting \"keyboard\" and \"system\", matching source's \"get_config_string(uconvert_ascii(\\\"system\\\",tmp1), uconvert_ascii(\\\"keyboard\\\",tmp2), _keyboard_layout)\" call shape. Confidence medium rather than high: not independently traced statement-by-statement against src/config.c's body this round, only confirmed by call-site shape/argument-count correlation (same standard applied to the other single-call-site Allegro leads this session)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_455490",
+  "new_name": "sys_directx_init",
+  "source_file": "Engine/libsrc/allegro-4.2.2/src/win/wsystem.c",
+  "source_line": 127,
+  "confidence": "high",
+  "evidence": "static int sys_directx_init(void) at src/win/wsystem.c:127 -- the top-level DirectX system driver wakeup call. Matched via the matched string \"DirectX %u.%x\" (uszprintf(sys_directx_desc,...,\"DirectX %u.%x\", _dx_ver>>8, _dx_ver&0xff)) and directly confirmed via its own CODE XREF: this is the caller cited by init_directx_window's \"CODE XREF: sub_455490+139\" -- matching source's \"if (init_directx_window() != 0) goto Error;\" exactly, resolving the previously-open caller-identification lead noted in that match's evidence."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_461370",
+  "new_name": "get_config_text",
+  "source_file": "Engine/libsrc/allegro-4.2.2/src/config.c",
+  "source_line": 1304,
+  "confidence": "high",
+  "evidence": "AL_CONST char *get_config_text(AL_CONST char *msg) at src/config.c:1304. Matched via the unique string \"[language]\" (uconvert_ascii(\"[language]\", tmp1), the section name used to look up a translated message) -- this literal appears nowhere else in the source tree. sub_461370 takes exactly one argument, matching get_config_text's single-parameter signature. Called with a driver-description field ([eax+0Ch]) from the not-yet-named driver-search loop that also calls detect_digi_driver (sub_443500's caller) -- consistent with translating a digital sound driver's display name via the [language] config section, a common Allegro pattern for user-facing driver descriptions."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_434970",
+  "new_name": "al_assert",
+  "source_file": "Engine/libsrc/allegro-4.2.2/src/allegro.c",
+  "source_line": 579,
+  "confidence": "high",
+  "evidence": "void al_assert(AL_CONST char *file, int line) at src/allegro.c:579. Exact match: sprintf(buf, \"Assert failed at line %d of %s\", line, file) using the matched string aAssertFailedAt, then getenv(\"ALLEGRO_ASSERT\") using the matched string aAllegroAssert, fopen(s,\"w\") if set. Calls _add_exit_func(sub_434AC0) -- matches source's \"_add_exit_func(debug_exit, \\\"debug_exit\\\");\" (single-arg call here vs source's two-arg call -- the debug-name string argument appears to be compiled out or absent in this build's _add_exit_func signature; not further investigated). This directly resolves the caller cited by _add_exit_func's own \"CODE XREF: sub_434970+A6\" comment from earlier this session."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_434B20",
+  "new_name": "al_trace",
+  "source_file": "Engine/libsrc/allegro-4.2.2/src/allegro.c",
+  "source_line": 636,
+  "confidence": "high",
+  "evidence": "void al_trace(AL_CONST char *msg, ...) at src/allegro.c:636. Exact match: vsprintf into a local buffer, then getenv(\"ALLEGRO_TRACE\") using the matched string aAllegroTrace -- if unset, fopen(\"allegro.log\",\"w\") using the matched string aAllegroLog. Also calls _add_exit_func(sub_434AC0), matching source's \"_add_exit_func(debug_exit, \\\"debug_exit\\\");\" (same debug_exit target as al_assert -- see separate match). Directly resolves the caller cited by _add_exit_func's own \"CODE XREF: sub_434B20+94\" comment from earlier this session."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_434AC0",
+  "new_name": "debug_exit",
+  "source_file": "Engine/libsrc/allegro-4.2.2/src/allegro.c",
+  "source_line": 556,
+  "confidence": "high",
+  "evidence": "static void debug_exit(void) at src/allegro.c:556. Identified by construction: it is the exact same function address (sub_434AC0) registered via _add_exit_func from BOTH the already-matched al_assert and al_trace -- source has exactly one function, debug_exit, registered from both places (allegro.c:606 and :662), and no other candidate fits both call sites simultaneously. Not independently body-traced this round."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_46E820",
+  "new_name": "init_directx_ovl",
+  "source_file": "Engine/libsrc/allegro-4.2.2/src/win/wddovl.c",
+  "source_line": 291,
+  "confidence": "high",
+  "evidence": "static struct BITMAP *init_directx_ovl(int w,int h,int v_w,int v_h,int color_depth) at src/win/wddovl.c:291 -- the DirectDraw overlay graphics-driver init function. Exact match: 5-argument signature; opening check \"(v_w!=w && v_w!=0) || (v_h!=h && v_h!=0)\" matches disasm's arg comparisons exactly; calls the already-matched get_config_text with the matched string \"Unsupported virtual resolution\" on that branch. Note: originally suspected to be apeg-1.2.1/display.c (an MPEG-video-overlay file with superficially similar \"unsupported resolution/overlay\" terminology) before the full Allegro tree resolved it to the DirectDraw driver instead -- the game is Windows-only (links DDRAW per CLAUDE.md), so this fits much better than the BeOS/misc candidates the string also loosely matched. DATA XREF: .data:004C1A80 (registered in a GFX_DRIVER-shaped struct/vtable, not yet identified)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_46EF10",
+  "new_name": "init_directx_win",
+  "source_file": "Engine/libsrc/allegro-4.2.2/src/win/wddwin.c",
+  "source_line": 655,
+  "confidence": "high",
+  "evidence": "static struct BITMAP *init_directx_win(int w,int h,int v_w,int v_h,int color_depth) at src/win/wddwin.c:655 -- the DirectDraw windowed-mode graphics-driver init function, sibling to the already-matched init_directx_ovl (same 5-arg signature, same DATA-XREF-in-driver-struct pattern). Matched via the matched string \"Windowed mode not supported\" (get_config_text call inside create_offscreen()'s failure path, src/win/wddwin.c:709-710) which appears nowhere else in the single-candidate form once the BeOS/misc noise is excluded on Windows-only grounds (same reasoning as init_directx_ovl)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "SpriteCache__initFile",
+  "new_name": "SpriteCache__initFile",
+  "source_file": "Common/sprcache.cpp",
+  "source_line": 631,
+  "confidence": "high",
+  "evidence": "int SpriteCache::initFile(const char*) at sprcache.cpp:631-643 (retroactive documentation -- this function was already named in the IDB from before this project's matches.json tracking began, part of the original 535 pre-existing names; recording it here now since it directly evidences the full SpriteCache struct recovery below). Exact match: \"for (vv=0; vv<elements; vv++) { images[vv]=NULL; offsets[vv]=0; } ff=clibfopen(filnam,\\\"rb\\\");\" -- disasm loop bound [this+elements(+0x04)], array writes to [this+images(+0x08)][vv] and [this+offsets(+0x00)][vv], then [this+ff(+0x0C)]=fopen result. This is the primary evidence for all 4 SpriteCache fields, already applied directly to the live IDB as a named struct (SpriteCache struc, sizeof=0x10) predating this project's formal tracking -- now also added to apply_structs.py for re-runnability (see struct-layout-drift.md)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_4254D0",
+  "new_name": "is_valid_character",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 3820,
+  "confidence": "high",
+  "evidence": "int is_valid_character(int newchar) at AC.CPP:3820: \"if ((newchar<0) || (newchar>=game.numcharacters)) return 0; return 1;\". Exact match: \"cmp arg_0,0; setl al\" (newchar<0), \"cmp ecx,dword_515950; setnl dl\" (newchar>=numcharacters), \"or eax,edx\" combining both conditions, returning 0 if either is true. Called from SetCharacterBaseline (already matched) exactly matching source's \"if (!is_valid_character(obn)) quit(\\\"!SetCharacterBaseline: invalid object number specified\\\");\". New field evidence: dword_515950 = numcharacters (GameSetupStructBase field, see matches/notes)."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "SetMouseCursor",
+  "new_name": "SetMouseCursor",
+  "source_file": "Engine/AC.CPP",
+  "source_line": null,
+  "confidence": "high",
+  "evidence": "Retroactive struct-field documentation (SetMouseCursor itself was already named in the IDB from before this project's matches.json tracking began, part of the original pre-existing manual work). Body confirms two GameSetupStructBase fields: the \"if (hotdot>0 && cursor==MODE_USE(4)) {...}\" inventory-cursor-dot-marker gate (\"movsx ecx,word_51D2FC; test ecx,ecx; jle <skip>; cmp arg_0,4; jnz <skip>\") matches 2011's documented \"hotdot, hotdotouter; // inv cursor hotspot dot\" (Common/acroom.h:2831) exactly, and the immediately-following \"outer ring\" color lookup (\"movsx edx,word_51D2FE; test edx,edx; jle <skip>\"; feeds get_col8_lookup) matches hotdotouter. New field evidence: dword_51D2FC(word)=GameSetupStructBase.hotdot at +0x9FE4, dword_51D2FE(word)=GameSetupStructBase.hotdotouter at +0x9FE6, both relative to game_gamename -- see reversing/scripts/apply_structs.py and struct-layout-drift.md for the full struct-level writeup. [Offset corrected: this citation originally used a pre-correction relative offset that was later found to be off by +8 bytes due to an alignment-rounding bug in the byte-offset-counting script -- see the OFFSET CORRECTION section in struct-layout-drift.md and apply_structs.py for the full story. The corrected offset is shown above.] ADDITIONAL FIELD EVIDENCE (found later, GameSetupStructBase mcurs[10] investigation): this function also confirms the position of GameSetupStructBase.mcurs[10] itself -- SetMouseCursor reads word_515860[curs]/word_515862[curs] (hotx/hoty) as part of the already-confirmed MouseCursor struct (see apply_structs.py). dword_51585C (mcurs[0].pic, the array's base address) sits at +0x2544 relative to game_gamename -- exactly where the array was long treated as generic unknown padding in GameSetupStructBase. Cross-confirmed three ways with zero slack: (1) start matches dword_51585C exactly; (2) 10*0x18=0xF0 exactly matches the pad's size; (3) end (+0x2634) matches the already-confirmed globalscript's start with zero gap. Also cross-checked element-by-element: dword_5158BC/word_5158C0/word_5158C2 (individually labeled, likely because cursor index 4 = MODE_USE gets special-cased hotdot-marker handling in this very function) sit exactly at element index 4's pic/hotx/hoty offsets ((0x25A4-0x2544)/0x18 = 4), independently confirming the stride holds across the whole array. Matches OriGameSetupStruct's declared \"MouseCursor mcurs[10];\" (acroom.h:2777) exactly, in position (right after numviews) and identity."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_40D2F4",
+  "new_name": null,
+  "source_file": "Common/acroom.h",
+  "source_line": 2450,
+  "confidence": "medium",
+  "evidence": "Not renamed -- exact source function identity not independently confirmed, only its ROLE and the field evidence it provides. Called from the already-matched SetNextCursorMode and SetCursorMode (script API cursor-mode-cycling functions), consistent with a helper that skips over disabled/non-standard cursor modes. Body checks \"byte_515870[curs*0x18] & 2\" and \"& 4\", matching 2011's MouseCursor flag constants MCF_DISABLED=2 and MCF_STANDARD=4 (Common/acroom.h:2451-2452) exactly. New field evidence: byte_515870 = MouseCursor.flags, at struct offset +0x14 -- see reversing/scripts/apply_structs.py for the full MouseCursor struct writeup."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_425500",
+  "new_name": "ExecutingScript__run_another",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 351,
+  "confidence": "high",
+  "evidence": "void ExecutingScript::run_another(char *namm, int p1, int p2) at AC.CPP:351-363. Exact match: \"if (numanother<MAX_QUEUED_SCRIPTS) numanother++;\" matches disasm's \"cmp [this+0x60],2; jge <skip>; [this+0x60]++;\" -- DRIFT: MAX_QUEUED_SCRIPTS is compared against 2 here, not 2011's declared value of 4 (Common/acruntim.h:698). Then \"thisslot=numanother-1; strcpy(script_run_another[thisslot],namm);\" matches \"imul thisslot,0x1E(30); strcpy([this+thisslot*0x1E+0x14], namm)\" -- confirms script_run_another's per-entry stride is exactly 30 bytes (Common/acruntim.h:707 declares \"char script_run_another[MAX_QUEUED_SCRIPTS][30]\", zero drift on the inner dimension) at struct offset +0x14. Then \"run_another_p1[thisslot]=p1; run_another_p2[thisslot]=p2;\" matches \"[this+thisslot*4+0x50]=p1; [this+thisslot*4+0x58]=p2\" exactly. Called via the already-confirmed `curscript` pointer (dword_52314C) from the already-matched run_on_event (\"curscript->run_another(\\\"#on_event\\\",...)\"), confirming this is an ExecutingScript member function operating on the same 108-byte scripts[] struct as post_script_cleanup's inst/forked fields. New field evidence (all high confidence, fully self-consistent with zero gaps): script_run_another[2][30] @ +0x14..+0x50 (60 bytes), run_another_p1[2] @ +0x50..+0x58 (8 bytes), run_another_p2[2] @ +0x58..+0x60 (8 bytes), numanother @ +0x60 (4 bytes) -- numanother's position also matches its earlier-confirmed role in post_script_cleanup and independently pins the array capacity at 2, not 2011's 4, given zero slack between run_another_p2's end and numanother's start. Flat-named as a C++ member function."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_424A00",
+  "new_name": "ExecutingScript__init",
+  "source_file": "Common/acruntim.h",
+  "source_line": 700,
+  "confidence": "high",
+  "evidence": "ExecutingScript::init(), the AGS-style zero-initializer called on every scripts[] slot before it is (re)used (the flat-C++-member-function naming convention used throughout this project for this build's __thiscall class methods -- see FLAT_CPP_NAMES in extract_prototypes.py). Body is exactly 8 field-initialization writes through `this` (ecx), in struct-offset order, and matches every field independently confirmed elsewhere in ExecutingScript (see the merged evidence on the post_script_cleanup/sub_409B1A entry for the full derivation of each field's role): [this+0x00]=0 (inst), [this+0x68]=0 (forked), [this+0x60]=0 (numanother), [this+0x04]=-1 (newnum), [this+0x08]=0 (invscreen-flag), [this+0x0C]=-1 (ooo / pending restore-game slot), [this+0x10]=-1 (dlgnum), [this+0x64]=0 (pending restart-game flag). This is the clinching cross-confirmation for the whole struct: an independent constructor-style function that touches precisely the same 8 offsets the usage-site analysis found, in the same order, with sentinels (-1 for \"no pending X\", 0/false for boolean flags and counters) matching exactly what each usage site expects as its \"none\" case."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_417088",
+  "new_name": "run_event_block",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 756,
+  "confidence": "high",
+  "evidence": "run_event_block(EventBlock *block, int checkAgainst, int extra=-1, int matchType=-1) -- 2011 no longer implements this function (the whole EventBlock/interaction-scripts system was replaced), but its prototype survives as a dead commented-out declaration at AC.CPP:756: \"//void run_event_block(EventBlock*,int,int=-1, int=-1);\" -- an exact 4-arg signature match (EventBlock*, int, int, int) to this function. Confirmed independently via BOTH callers and full internal-field-access reconstruction of its own EventBlock parameter, since no 2011 body exists to diff against: (1) called from the already-matched RunCharacterInteraction as \"run_event_block(charcond_base + cc*0x94, mood_mapped, extra, 4)\"; (2) called from the already-matched run_event_block_inv (sub_40D8A9) as a near-direct forward: \"String1=\\\"inventory%d\\\"; run_event_block(invNum_ptr, aaa, arg_8, -1)\" -- matching 2011's \"evblockbasename=\\\"inventory%d\\\";\" line at AC.CPP:5412 almost verbatim and confirming String1 == evblockbasename as a bonus finding. (3) Body loops \"for(i=0; i<[arg_0+0x80]; i++)\" over its EventBlock* parameter, matching a list-of-commands scan bounded by numcmd; reads \"[arg_0+i*4]\" (list[i]) and compares against the checkAgainst/matchType parameters; reads \"[arg_0+i*4+0x60]\" (data[i]) for extra-data comparisons and as an argument to run_on_event/LoseInventory; reads \"[arg_0+i*4+0x20]\" (respond[i]) and switches on its value (1, 2->StopMoving(playerchar), 3->run_on_event(3,data[i]), 5); reads \"[arg_0+i*4+0x40]\" (respondval[i]) as the msnum argument to DisplayMessage; reads/writes \"[arg_0+i*2+0x84]\" (score[i], 2-byte stride) as a one-time GiveScore amount, zeroed immediately after being given. This independently confirms EVERY field of the EventBlock struct (Common/acroom.h:239-246) at its exact 2011-declared offset with zero drift: list[8]@+0x00, respond[8]@+0x20, respondval[8]@+0x40, data[8]@+0x60, numcmd@+0x80, score[8]@+0x84 -- total confirmed size 0x94 (148) bytes, matching the stride used by both callers exactly."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "RunCharacterInteraction",
+  "new_name": "RunCharacterInteraction",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 16341,
+  "confidence": "high",
+  "evidence": "Already had the correct name applied (linker-symbol match against acwin.map, obj=AC.obj) but no matches.json entry recording the field evidence found alongside it. Body maps a `mood` parameter (1-9, skipping some values) onto a 0-7 code, then constructs \"offset unk_515958 + cc*0x94\" and passes it to the newly-identified run_event_block (sub_417088) as the EventBlock* argument. This is the confirming access site for GameSetupStructBase's __charcond[50] field: unk_515958's address (0x515958) exactly matches the zero-slack arithmetic-fit prediction for __charcond's start (game_gamename base 0x513318 + offset 0x2640, immediately after the confirmed `chars` field with no gap), and the 0x94-byte imul stride matches EventBlock's independently-confirmed size exactly (see run_event_block's own matches.json entry for the full EventBlock field-by-field derivation). See reversing/notes/struct-layout-drift.md for the complete writeup."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "load_ac2game_dta",
+  "new_name": "load_ac2game_dta",
+  "source_file": "Engine/AC.CPP",
+  "source_line": null,
+  "confidence": "high",
+  "evidence": "Retroactive struct-field documentation (load_ac2game_dta itself was already named in the IDB via exact linker-symbol match against acwin.map, obj=AC.obj, long before this entry existed -- no prior matches.json record of the extensive field evidence already cited against it throughout struct-layout-drift.md). New field evidence recorded here: GameSetupStructBase.numiface (dword_515854) @ +0x253C. Confirmed two ways: (1) position -- sits with zero gap immediately before the already-confirmed numviews (ends exactly at +0x2540), matching OriGameSetupStruct's declared \"int numiface; int numviews;\" adjacency (Common/acroom.h:2775-2776) exactly; (2) usage -- \"cmp ecx,dword_515854; jge <done>\" gates a loop indexing byte_513B7C[i*0x334]/byte_513B7D[i*0x334], where 0x334 (820 bytes) exactly matches InterfaceElement's independently-confirmed size (see the EventBlock/run_event_block matches.json entry for the same-technique stride confirmation used elsewhere in this struct) -- an exact match to \"count of populated interface elements\" semantics. This global was investigated once before (as a `numdialog` candidate) and correctly ruled OUT, but the lead was dropped entirely without asking what it might otherwise be, since OriGameSetupStruct's existence (and therefore the plausibility of a `numiface` field at all) wasn't known at the time. iface[10] itself (InterfaceElement array, immediately before numiface) remains an open, documented-but-unasserted lead -- see struct-layout-drift.md's \"numiface found\" section for the full writeup, including a suggestive but unconfirmed arithmetic fit (g_interface + byte_513B7C + byte_513B7D combined = exactly 11*0x334, not 2011's declared 10). ADDITIONAL FIELD EVIDENCE (found later, resolving the iface[10]/defpal region): the SAME loop cited above (gating byte_513B7C[i*0x334]/byte_513B7D[i*0x334], previously used only to confirm numiface) also pins down GameSetupStructBase.iface[10] (InterfaceElement[10]) @ +0x534..+0x253C. Once defpal[256] was reconfirmed as a real 1024-byte field (see main's matches.json entry) ending at +0x532, a natural 2-byte compiler-alignment pad brings the next field to +0x534 -- and 10*sizeof(InterfaceElement)=10*0x334=0x2008 bytes from there lands EXACTLY on the already-confirmed numiface's start (+0x253C) with zero slack, matching OriGameSetupStruct's declared \"InterfaceElement iface[10]; int numiface;\" adjacency (Common/acroom.h:2774-2775) exactly -- zero drift in element count (unusual; most fixed-capacity arrays in this project shrink). Field-level confirmation, not just arithmetic fit: byte_513B7C's own address sits EXACTLY at offset 0x330 within this array, matching InterfaceElement.popup's declared offset (acroom.h:314) to the byte; byte_513B7D (immediately following) matches .on (acroom.h:315) the same way. This also retroactively explains g_interface: its address (0x513518, offset +0x200 relative to game_gamename) falls INSIDE defpal[256]'s now-confirmed 1024-byte span (+0x132..+0x532) -- since game_gamename is one single contiguous allocation, g_interface cannot be a genuinely independent global; it was simply IDA's own (mistaken) sub-labeling of real defpal/iface[10] content. See reversing/notes/struct-layout-drift.md for the complete writeup. ADDITIONAL FIELD EVIDENCE (found later, resolving the trailing uniqueid-to-numgui gap): GameSetupStructBase.messages[500] (dword_51D320) @ +0xA008. Confirmed via \"for(i=0;i<0x1F4(500);i++) { if(dword_51D320[i*4]==0) continue; else { malloc(0x1F4=500); dword_51D320[i*4]=result; call sub_403024(stream,result) /* fread the string */ } }\" -- a per-slot conditional message-string loader, matching 2011's `char *messages[MAXGLOBALMES=500]` (Common/acroom.h:2799) in both type (pointer array) and count with zero drift. Immediately followed (right after this loop ends) by the already-confirmed set_default_glmsg chain for the 12 built-in messages (MSG_RESTORE=984 etc.), confirming this is genuinely the global-messages-override system, not something else reusing a similar loop shape. Position independently verified: dword_51D320's own address lands EXACTLY where reserved[2](8)+numlang(2)+langcodes[5][3](15)+4-byte-alignment-pad(3) predict starting from the already-confirmed uniqueid's end, and EXACTLY 0x800(2048) bytes before the already-confirmed numgui once fontflags[10]+fontoutline[10] are added after it -- an over-determined fit (both endpoints AND this middle anchor agree exactly), matching OriGameSetupStruct's/OriGameSetupStruct2's full declared tail (uniqueid, reserved[2], numlang, langcodes, messages, fontflags, fontoutline, numgui, dict -- acroom.h:2795-2799, 2803-2806) with zero slack. See reversing/notes/struct-layout-drift.md for the complete writeup."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "main",
+  "new_name": "main",
+  "source_file": "Engine/AC.CPP",
+  "source_line": 26196,
+  "confidence": "high",
+  "evidence": "Retroactive struct-field documentation (main itself was already named in the IDB via exact linker-symbol match against acwin.map, obj=AC.obj, long before this entry existed -- no prior matches.json record of the extensive evidence already cited against it elsewhere in this project). New field evidence recorded here: GameSetupStructBase.defpal[256] (dword_51344A) @ +0x132, RE-CONFIRMED after an earlier session's retraction. This exact function has its OWN copy of \"for(ee=0;ee<256;ee++) if(paluses[ee]!=PAL_BACKGROUND) palette[ee]=defpal[ee];\" (AC.CPP:26196-26198), matching disasm's \"cmp byte_51334A[ecx],2; jz <skip>; mov ecx,dword_51344A[eax*4]; mov palette[edx*4],ecx\" exactly -- an UNCONDITIONAL 4-byte-stride read reaching index 255, addressing the full 1024 bytes starting at dword_51344A, matching 2011's `color defpal[256]` (Common/acroom.h:2773) in both type and count with zero drift. This is a DIFFERENT loop from the superficially-similar one inside load_new_room (already matched), which reads from a genuinely separate global (dword_51F69C) -- do not confuse the two. This finding resolves the earlier `defpal` retraction: the original retraction checked only IDA's declared label extent (~204 bytes before hitting what IDA calls g_interface), never whether the code itself indexes further -- it does, and the addressable range this loop reaches extends well past g_interface's own label boundary, proving g_interface is not a genuinely separate global (see the InterfaceElement/iface entry below for the full resolution). See reversing/notes/struct-layout-drift.md for the complete writeup."
  }
 ]
