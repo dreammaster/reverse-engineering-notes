@@ -5,15 +5,23 @@ aastr, almp3, hq2x under `Engine/libsrc/`) in `rob_blanc_1.asm`. Lower
 priority than Engine/Common matches for the "reconstruct Rob Blanc 1" goal,
 but worth doing for IDB completeness (see `CLAUDE.md`).
 
-**Status: paused by explicit user request (not exhausted).** One
-productive session got `libcda-0.4` essentially done, made a solid dent
-in Allegro (window/thread creation, mouse/keyboard/sound config reading,
-DirectDraw driver init, assert/trace/exit-hook plumbing), and
-conclusively ruled `apeg` out entirely (see its own section below) --
-roughly 40 new `matches.json` entries total this thread. To resume, start
-from the "Next up" section at the bottom: the still-unresolved
-`dumb-0.9.2` XM-loader cascade, then `aastr-0.1.1`/`almp3-2.0.5`/`hq2x`
-(untouched so far).
+**Status: resumed, still not exhausted.** The original session got
+`libcda-0.4` essentially done, made a solid dent in Allegro (window/
+thread creation, mouse/keyboard/sound config reading, DirectDraw driver
+init, assert/trace/exit-hook plumbing), and conclusively ruled `apeg`
+out entirely (see its own section below). A follow-up round resolved
+the previously-open "dumb-0.9.2 XM loader" lead completely -- it was
+never DUMB at all, it's **JGMOD** (a library with no source tree in
+this repo), and separately, **`dumb-0.9.2` itself is now conclusively
+ruled out**, same as `apeg`, via a release-date check (see its own
+section below). A THIRD round tackled the previously-untouched
+`aastr-0.1.1`/`almp3-2.0.5`/`hq2x` group: `aastr` and `hq2x` are
+genuine string-matching dead ends (see their own section), but
+`almp3-2.0.5` yielded 5 solid new matches via the caller-shape
+technique (`my_load_static_mp3`, `almp3_create_mp3`, plus 3 Allegro
+`PACKFILE` functions). Roughly 50 new `matches.json` entries total
+across all three rounds. To resume further, see the "Next up" section
+at the bottom.
 
 ## Key finding: `cross_reference.py` already covers `Engine/libsrc/`
 
@@ -248,52 +256,93 @@ bonus `debug_exit` (`allegro.c:556`) match the same way `directx_wnd_proc`
 was found earlier (one function address used identically from two
 call sites, source has exactly one candidate for both).
 
-## Open lead: dumb-0.9.2 XM loader cluster (`sub_47C360`/`sub_47C4C0`) -- ambiguous, not resolved
+## RESOLVED: the "dumb-0.9.2 XM loader cluster" was JGMOD all along -- and dumb-0.9.2 isn't linked into this binary at all
 
-Both functions reference the matched string `"Extended Module: "`
-(`aExtendedModule`/`aExtendedModule_0`), and both are called identically
-from the same two callers (`sub_477320`, `sub_477CE0`) at different
-offsets. Investigation found the string is checked in exactly one place
-in `IT/READXM.C` (`it_xm_load_sigdata`, line 613/627), but there's also a
-`dumb_load_xm()` wrapper in the separate file `IT/LOADXM.C` (opens the
-file, calls `dumb_read_xm()`, closes it) that doesn't reference the
-string directly.
+The lead as previously framed was based on a false premise: both
+`sub_47C360`/`sub_47C4C0` reference the matched string `"Extended
+Module: "`, which was assumed to be DUMB's XM-file magic-string check
+(it's the standard XM format magic, so the string alone doesn't
+distinguish which library is checking for it). Reading the FULL
+cascade this round, plus the surrounding data, conclusively identifies
+the whole thing as **JGMOD**, not DUMB -- and separately, proves
+dumb-0.9.2 cannot be linked into Rob Blanc 1 at all.
 
-**Follow-up investigation (this round)**: `sub_477320` (`CODE XREF:
-PlayMusic+1CE`) is NOT `my_load_mod` (`Engine/acsound.cpp:1290`, the
-file-extension-based `if(charAfterDot=='X') dumb_load_xm(...)` dispatcher
-originally suspected) -- reading its full body reveals a **5-format
-check-then-load cascade**: `check1(filename)` -> if true,
-`open("rb")`+`load1(file)`; else `check2(filename)` -> if true,
-`load2(0,filename)`; else `check3(filename)` [= `sub_47C4C0`, our XM
-signature check] -> if true, `load3(0,filename)` [= `sub_47C520`, NOT
-`sub_47C360` as originally guessed]; else `check4(filename)` -> ...;
-else `check5(filename)` -> ... This means `sub_47C4C0` is very likely a
-lightweight XM *signature-check-only* probe (opens the file, reads 17
-bytes, checks against "Extended Module: ", closes it, returns a
-boolean) rather than the XM loader itself -- and the actual XM loader in
-this cascade is `sub_47C520`, a function not previously investigated at
-all. `sub_47C360`'s role is now unclear again (it was originally paired
-with `sub_47C4C0` based on shared string reference alone, but doesn't
-appear in this specific 5-format cascade at all -- it may belong to a
-*different* caller/context entirely).
+**`dumb-0.9.2` ruled out on a simple date check**, the same way `apeg`
+was: `Engine/libsrc/dumb-0.9.2/RELEASE.TXT` states `"DUMB v0.9.2,
+released 2 April 2003"` -- seven months AFTER Rob Blanc 1's binary link
+date (2002-07-21, per `CLAUDE.md`). It is chronologically impossible
+for this build to contain dumb-0.9.2 code. Stop looking for dumb-0.9.2
+matches in this binary; treat `Engine/libsrc/dumb-0.9.2/` the same as
+`apeg-1.2.1` -- a feature added to AGS well after this game shipped.
 
-This 5-check/5-load cascade doesn't match any DUMB public API found in
-`CORE/` (`REGISTER.C` is confirmed to be unrelated -- just DUMB's
-internal `DUH_SIGTYPE_DESC` linked-list registry for signal *rendering*,
-not file-format *detection*; `LOADDUH.C`/`MAKEDUH.C` don't match either).
-Each `check(filename)` call takes a bare filename directly rather than an
-opened `DUMBFILE*`, which doesn't match DUMB's usual `dumbfile_open`-first
-architecture -- this cascade may well be **AGS's own custom
-multi-format-probing code** (Engine-side, calling into individual DUMB/
-JGMOD/other loaders), not DUMB library internals at all, which would
-make it higher-value to identify than plain library code but wasn't
-locatable in the available `Engine/*.cpp` source this round.
+**The real identity: JGMOD**, a MOD/XM/S3M tracker-music library. Not
+present anywhere in this repo's `Engine/libsrc/` checkout (no source to
+verify exact internal function names against), but its identity is
+beyond doubt from the disassembly's own strings alone -- distinctive,
+full-sentence, library-specific error messages appear throughout the
+whole call tree: `"JGMOD : Not enough memory to setup initialization
+sample"`, `"JGMOD : Unable to allocate enough voices"`, `"Can't play a
+JGMOD pointer with null value"`, `"JGMOD pointer passed in is a NULL
+value"`, `"JGMOD 01 module : "`, and FIVE separate compiled copies of
+`"Unable to allocate enough memory for JGMOD structure"` (one per
+format-specific loader function, a common pattern when each loader
+duplicates its own error-handling boilerplate).
 
-Logged as a genuine open lead, substantially better characterized than
-before but still not resolved -- a future session should look for a
-5-branch cascading format-prober in `Engine/` source (not yet found by
-string search) before assuming this is DUMB-internal.
+This also lines up perfectly with the 2011 reference source's own
+build configuration: `Engine/acsound.cpp:1025` has `#ifdef
+JGMOD_MOD_PLAYER` as the ACTIVE branch (with `#include "jgmod.h"`) --
+2011's `my_load_mod` calls `load_mod()` and 2011's `MYMOD::play()`
+calls `play_mod()`, both genuine JGMOD public API functions. The
+alternate `#ifdef DUMB_MOD_PLAYER` branch a few lines later
+(`acsound.cpp:1139`) is present in source but NOT the compiled-in
+choice, in either the 2011 reference build OR (now confirmed) Rob
+Blanc 1's much earlier one.
+
+**Two high-confidence matches added**:
+- **`sub_477320` = `load_mod`** (JGMOD's own public API,
+  `Engine/acsound.cpp:1116`'s `"JGMOD *modPtr = load_mod((char *)
+  filname);"`). Confirmed via caller pattern: `PlayMusic` (already
+  matched) builds candidate filenames (`"music%d.mod"`,
+  `"music%d.xm"`, `"music%d.s3m"`) and calls this function on each in
+  turn, checking for a non-NULL result -- exactly matching
+  `my_load_mod`'s "call `load_mod`, check NULL" shape, just with the
+  multi-extension-guessing loop living directly in this build's
+  `PlayMusic` rather than a level up. Internally does an 8-format
+  check-then-load cascade (not 5, as the original framing guessed --
+  MOD/XM/S3M/and at least 5 more format pairs), matching JGMOD's own
+  multi-format auto-detection concept exactly. The XM-specific pair
+  within it is `sub_47C4C0`(check, reads 17 bytes at a fixed offset
+  and compares to `"Extended Module: "`) / `sub_47C520`(load, mallocs
+  a `0x558`-byte JGMOD structure) -- both use the SAME low-level file
+  helpers (`sub_47D670`=open, `sub_47D700`=read-N-bytes,
+  `sub_47D720`=read-1-byte) as every other check/load pair in the
+  cascade, confirming they're all part of the same library rather than
+  two different ones sharing a magic string by coincidence.
+  `sub_47C360` (a DIFFERENT function, also checking for `"Extended
+  Module: "` but via a byte-by-byte SLIDING-WINDOW scan rather than a
+  fixed-offset read, and checking an unidentified 4-byte binary magic
+  first) is a SEPARATE format-check pair, not a rival library's
+  competing XM detector as originally guessed -- it's simply another
+  JGMOD-internal probe, for a format not yet identified (the leading
+  4-byte magic, `0xC1 0x83 0x2A 0x9E`, isn't recognizable ASCII and
+  wasn't decoded further this round).
+- **`sub_477470` = `play_mod`** (`Engine/acsound.cpp:1103`'s
+  `"play_mod(tune, repeat);"`), confirmed via the distinctive `"Can't
+  play a JGMOD pointer with null value"` string guarding a NULL check
+  on its first argument, called from `PlayMusic` immediately after a
+  successful `load_mod`.
+
+The internal cascade's other functions (`sub_47D9E0`, `sub_47D4D0`/
+`sub_47D5D0`, `sub_47B4E0`/`sub_47B710`, `sub_47AD30`/`sub_47ADB0`,
+`sub_47D400`, `sub_47C360`, `sub_47B410`, `sub_47B2B0`, plus the
+low-level I/O helpers `sub_47D670`/`sub_47D700`/`sub_47D720`/
+`sub_47B360`) are NOT individually renamed -- JGMOD's own source isn't
+in this repo to verify exact names against, and guessing plausible
+JGMOD API names without a source to check would violate this project's
+"verify, don't invent" discipline. If JGMOD source becomes available
+(it's open source, historically hosted alongside other Allegro-era
+tracker libraries), revisiting this cluster would likely unlock several
+more clean matches the same way the Allegro tree did earlier.
 
 ## `apeg-1.2.1` is NOT LINKED into Rob Blanc 1 at all -- conclusively ruled out
 
@@ -337,9 +386,187 @@ a feature the 2011 reference source has that the 2002 binary doesn't --
 like the earlier `IsOverControl` vtable-slot drift, just at library scope
 instead of a single method.
 
+## `aastr-0.1.1` and `hq2x`: genuine string-matching dead ends
+
+Picked up the last untouched group. `aastr-0.1.1` (anti-aliased
+stretch/rotate) and `hq2x` (pixel-magnification filter) both turn out
+to have **zero quoted string literals anywhere in their source** --
+pure numeric/algorithmic code, no error messages, no debug output, no
+assertions. This isn't a search failure; it's *why* `leads.json` never
+had single-file candidates for either (already noted in `CLAUDE.md`),
+and it rules out this project's most productive technique
+(string-matching) categorically for both libraries. No FLIRT-assigned
+names exist for their public API either (`aa_stretch`/`aa_rotate`
+prefixes turn up nothing in the disassembly).
+
+For `aastr` specifically, there's also a plausible reason its one real
+usage site might not even be *reachable*: 2011's only caller
+(`scale_and_flip_sprite`, `Engine/AC.CPP:7810`, calling
+`aa_stretch_sprite` for antialiased sprite zoom-scaling) is gated by
+`IS_ANTIALIAS_SPRITES`, itself gated by an INI setting read via
+`INIreadint("misc","antialias",0)` -- and the literal string
+`"antialias"` does not appear ANYWHERE in this binary. Separately, two
+already-recovered structs that a "sprite zoom" feature would need
+fields on (`RoomObject`, fully mapped this session, and `CharacterInfo`,
+mapped in an earlier session) show no `zoom`-type field at all --
+`RoomObject`'s tint/zoom/last-width/last-height region is explicitly
+CONFIRMED ABSENT (see its own struct-layout-drift.md section).
+Circumstantial, not as airtight as the date-based `apeg`/`dumb-0.9.2`
+rulings (aastr's copyright is 1998-99, so it COULD have been available
+to link in 2002 -- this isn't a chronological impossibility, just an
+absence of any positive evidence of use), but consistent enough to
+treat as low priority: this build most likely doesn't have sprite-zoom
+antialiasing wired up at all, whether or not the library itself is
+statically linked for some other/future purpose.
+
+`hq2x` has no equivalent circumstantial angle explored this round --
+just the flat "no strings, no FLIRT names" wall. Both are logged as
+genuine technique dead ends; revisit only with a structural/callgraph
+approach (tracing 2011's actual call sites through to already-matched
+Engine functions, the same way `almp3` below was cracked) if this
+becomes a priority again.
+
+## `almp3-2.0.5`: 5 new matches via the caller-shape technique
+
+Unlike `aastr`/`hq2x`, `almp3` (MP3 playback) has essentially no useful
+strings either (checked and confirmed empty), but its usage is
+substantial and well-documented in `Engine/acsound.cpp`, and Rob Blanc
+1's own `PlayMusic` (already matched) DOES try MP3 first -- the string
+`"music%d.mp3"` sits right in its preamble, gated by an already-named
+flag (`opts_mp3_player`). This gave a solid caller-side thread to pull.
+
+**`sub_4083FC` = `my_load_static_mp3`** (`Engine/acsound.cpp:~415-477`,
+the buffered/non-streaming MP3 loader -- distinct from the nearby
+streaming `my_load_mp3`). Called directly from `PlayMusic` right after
+the `"music%d.mp3"` filename is built. Its body matches source's
+sequence exactly: open the file `"rb"`, read a size field off the
+returned handle, `malloc` that size, read the whole file in and close
+the handle, then hand the buffer to `almp3_create_mp3`.
+
+**`sub_47E3F0` = `almp3_create_mp3`** (referenced at
+`acsound.cpp:465`), confirmed via an exact 2-argument match
+(`buffer, size`) called immediately after the file read completes,
+result checked for `NULL` exactly as source does. ALMP3's own source
+isn't in this repo's `Engine/libsrc/almp3-2.0.5/` checkout at a level
+that defines the public API bodies traceably, so this is a
+reference-citation match (like `run_event_block`'s dead-declaration
+match earlier), not a body-diff -- but the call shape leaves little
+room for doubt.
+
+**Three supporting Allegro `PACKFILE` matches** fell out of the same
+investigation, at MEDIUM confidence: **`sub_408E49` = `pack_fopen`**
+(2-arg, `filename`+`"rb"` mode string, exact match), **`sub_42F8FC` =
+`pack_fread`** (3-arg, matching argument ORDER verified via cdecl push
+sequence: buffer, size, file-handle), **`sub_42EE9A` = `pack_fclose`**
+(1-arg). The confidence is MEDIUM rather than HIGH because the size
+field this build reads off the `PACKFILE` handle sits at `+0x10`, which
+doesn't match this repo's Allegro 4.2.2 reference declaration of
+`_al_normal_packfile_details.todo` (computed at `+0x1C` from the outer
+`PACKFILE` struct, `Common/libinclude/allegro/file.h:101`) -- plausible
+`PACKFILE`-layout drift between whatever Allegro version this 2002
+build actually used and the 4.2.2 reference tree (not independently
+resolved this round), consistent with this project's repeated finding
+that internal struct layouts drift even when function identities and
+call shapes match cleanly. The function IDENTITIES themselves aren't in
+doubt -- the argument counts, ORDER, and surrounding call sequence all
+line up exactly with `pack_fopen`/`pack_fread`/`pack_fclose`'s
+documented signatures.
+
+**One loose end**: `sub_47E7A0`, called right after with a 6-argument
+shape (`tune, 0x4000, dword_4B42A0, 0x80, 0x3E8, repeat`) that doesn't
+cleanly match any single documented ALMP3 API function's signature
+(`almp3_play_mp3(tune,bufsize,vol,pan)` is only 4 args; the literal
+`0x4000`=16384 does match `almp3_play_mp3`'s bufsize argument at
+`acsound.cpp:404`, but the extra `0x3E8`(1000)/`0x80`(128) arguments
+suggest this might be a combined AGS-side wrapper doing BOTH `play_mp3`
+and an `adjust_mp3`-style volume/pan/speed set in one call, or a
+different ALMP3 function entirely). Not matched this round -- logged
+as a promising lead for a future pass.
+
+## JGMOD's cascade characterized: 4 more tracker formats identified by magic string
+
+Went back to `load_mod` (`sub_477320`, already matched)'s 8-branch
+cascade to read the remaining check functions individually, rather than
+leaving them all as an undifferentiated "8-format check-then-load"
+block. Four resolve cleanly via their own magic-string checks (none
+renamed -- still no JGMOD source tree in this repo to verify exact
+function names against -- but each is now documented with its specific
+format role):
+
+- **`sub_47D9E0`** (format 1): reads 18 bytes, compares against the
+  matched string `"JGMOD 01 module : "` -- JGMOD's own
+  native/proprietary module format, not a generic tracker format.
+- **`sub_47D4D0`** (format 2): reads 4 bytes, compares against `"IMPM"`
+  -- the standard Impulse Tracker (`.it`) magic signature.
+- **`sub_47B4E0`** (format 3): seeks to offset `0x2C`(44), reads 4
+  bytes, compares against `"SCRM"` -- the standard Scream Tracker 3
+  (`.s3m`) magic signature, at its standard file offset.
+- **`sub_47AD30`** (format 4): seeks to offset `0x438`(1080), reads 4
+  bytes, loops through a table of classic ProTracker-family MOD magic
+  tags starting with `"M.K."`, stepping 6 bytes per table entry -- the
+  standard MOD magic at its standard offset, checked against several
+  known tag variants (a well-documented convention among MOD loaders,
+  since ProTracker itself and various trackers/converters all wrote
+  slightly different 4-byte tags at that position).
+
+Combined with the two already-documented formats (`sub_47C4C0`=XM via
+`"Extended Module: "`, `sub_47C520`=its loader), this cascade is now
+known to detect (in order): JGMOD-native, IT, S3M, MOD, XM, plus two
+more unidentified pairs (`sub_47B410`/`sub_47B2B0`, not examined this
+round) and a `dword_5477F8`-gated final fallback pair. **JGMOD is
+confirmed as a genuine multi-format tracker-music library**, not a
+single-format loader -- consistent with real JGMOD's documented feature
+set (it supports MOD/S3M/XM/IT plus its own native format).
+
+**A shared unresolved sub-thread**: `sub_47C360` (an XM-adjacent check,
+doing a byte-by-byte sliding-window scan for `"Extended Module: "`
+rather than `sub_47C4C0`'s simple fixed-offset read) and `sub_47D400`
+(an IT-adjacent check, same sliding-window technique for `"IMPM"`) both
+check an IDENTICAL, non-ASCII 4-byte constant (`0xC1 0x83 0x2A 0x9E`)
+FIRST, before falling back to their respective text scans. The exact
+purpose of that shared constant wasn't resolved this round, but its
+presence in TWO otherwise-unrelated format checks strongly suggests a
+shared JGMOD-internal helper pattern (plausibly a generic "packed/
+wrapped module" pre-check) rather than coincidence. `sub_47D400` also
+returns a position/index rather than a plain boolean (used by the
+caller as an argument to its load function), hinting it may be probing
+for an embedded/archived module rather than doing a simple top-of-file
+signature check -- not investigated further.
+
 ## Next up
 
-- **dumb-0.9.2, `CORE/REGISTER.C`**: separate lead from the XM cluster
-  above, not yet investigated.
-- **aastr-0.1.1, almp3-2.0.5, hq2x**: no single-file leads currently in
-  `leads.json`; lower priority, revisit if the above run dry.
+- **dumb-0.9.2**: CLOSED, do not revisit -- conclusively not linked
+  into this binary (released April 2003, seven months after this
+  binary's 2002-07-21 link date). `CORE/REGISTER.C`'s lead (previously
+  flagged as a "separate lead from the XM cluster") should be treated
+  the same way -- it can only ever be a false positive now.
+- **JGMOD**: identity established, and 6 of 8 cascade branches now have
+  a documented format role via magic-string checks (JGMOD-native, IT,
+  S3M, MOD, XM x2 -- see the cascade-characterization section above),
+  though none renamed since no JGMOD source tree exists in this repo to
+  verify exact function names against. Remaining open items: the last
+  2 format pairs (`sub_47B410`/`sub_47B2B0`) and the `dword_5477F8`-
+  gated fallback pair haven't been read yet; the shared unresolved
+  `0xC1832A9E` constant checked by `sub_47C360`/`sub_47D400` before
+  their text scans; `sub_47D400`'s odd "returns an index, not a
+  boolean" behavior. If JGMOD source becomes available, revisit the
+  whole `sub_477320`/`sub_477CE0` cluster (and their many internal
+  helpers, including `sub_47D670`/`sub_47D700`/`sub_47D720`/
+  `sub_47B360`, the shared low-level I/O primitives) for real function
+  names -- likely a productive round, similar to what adding the full
+  Allegro tree unlocked.
+- **almp3-2.0.5**: `sub_47E7A0` (called right after `almp3_create_mp3`
+  with a 6-argument shape not matching any single known ALMP3 API
+  function cleanly) is the one open lead -- see its own writeup above.
+  Otherwise essentially done for what's reachable from `PlayMusic`;
+  the streaming `my_load_mp3`/`ALMP3_MP3STREAM` path (`acsound.cpp`
+  lines ~179-330) hasn't been checked against the disassembly at all
+  yet, a plausible next avenue if this round's caller-shape technique
+  is revisited.
+- **aastr-0.1.1, hq2x**: CLOSED for the string-matching technique --
+  genuinely zero string literals in either library's source, so
+  `leads.json` will never populate for them via that method. Only a
+  structural/callgraph approach could make progress here, and for
+  `aastr` specifically there's decent circumstantial evidence (see its
+  own section above) that its actual sprite-zoom-antialiasing use case
+  may not even be present in this build at all. Low priority.

@@ -1227,14 +1227,361 @@ earlier in this struct's recovery.
 
 `GameSetupStructBase` is now at 34 confirmed fields (up from 28) --
 **every field `OriGameSetupStruct`/`OriGameSetupStruct2` declares is
-now accounted for.** Remaining unrecovered content is entirely inside
-the trailing `_pad_unknown7` gap (`+0xA7F4`..`+0xBF84`, 6032 bytes):
-whatever fixed-size arrays the further-derived `GameSetupStruct`
-embeds directly (`invinfo[100]`, `spriteflags`, `acroom.h:2890-2917`)
-that this build predates `OriGameSetupStruct`'s own layout for -- a
-genuinely different, harder kind of lead than anything resolved so far,
-since there's no `OriGameSetupStruct` declaration left to anchor
-against.
+now accounted for** (at the time this was written -- see the
+`invinfo[100]` section immediately below for a correction: it turned
+out to ALSO be declared directly in `OriGameSetupStruct` itself, not
+just the further-derived `GameSetupStruct` as first assumed here).
+Remaining unrecovered content is entirely inside the trailing
+`_pad_unknown7` gap (`+0xA7F4`..`+0xBF84`, 6032 bytes): whatever
+fixed-size arrays the further-derived `GameSetupStruct` embeds directly
+(`spriteflags`, `acroom.h:2890-2917`) that this build predates
+`OriGameSetupStruct`'s own layout for -- a genuinely different, harder
+kind of lead, since there's no `OriGameSetupStruct` declaration left to
+anchor against for THAT gap specifically.
+
+## invinfo[100]: found while surveying for a NEW struct to tackle -- the strongest zero-drift match in the project
+
+Asked to switch focus to a genuinely different structure, surveyed
+`Common/acroom.h`'s full struct list against what's already confirmed.
+Two promising leads stood out, both tied to already-confirmed count
+fields: `DialogTopic` (`numdialog`) and `InventoryItemInfo`
+(`numinvitems`).
+
+**`DialogTopic` checked first, hit a real wall**: `Engine/AC.CPP:567`
+declares `DialogTopic *dialog;` as a genuine pointer, dynamically
+`malloc`+`fread`'d in `load_ac2game_dta` with an explicit per-element
+size of `0x484` (1156 bytes) -- found by searching for the
+already-confirmed `numdialog` (`dword_51D2E4`) as a `fread` `ElementCount`
+argument. But `1156` bytes is nowhere near 2011's declared
+`DialogTopic` size (`optionnames[30][150]` alone is 4500 bytes, ~4696
+total) -- and unlike `CharacterInfo`/`GameSetupStructBase`, `acroom.h`
+preserves NO older ancestor declaration for `DialogTopic` to check
+against. Reconstructing it would mean starting from zero evidence, not
+even an old reference struct to anchor a hypothesis against -- shelved
+as a harder, more novel task for a future round.
+
+**`InventoryItemInfo` picked up instead, and paid off immediately.**
+`SetInvItemPic` (already matched, script-exported) writes its `piccy`
+parameter into `dword_51B870[item*0x44]` -- `0x44` (68 bytes) matching
+`InventoryItemInfo`'s own computed total size from its 2011 declaration
+almost exactly (a promising sign before even chasing the field itself).
+Tracing `dword_51B870` through every caller confirmed FOUR fields at
+once, each landing at its EXACT 2011-declared offset:
+
+- **`pic`** @ element-relative `+0x1C`: confirmed via `SetInvItemPic`
+  (writes it), `GUIInv::Draw` (already matched -- reads it as a
+  sprite-cache index for icon rendering), AND `sub_40CF16` (an unnamed
+  helper called from both `SetInvItemPic` and `SetMouseCursor` -- reads
+  it to set the MODE_USE cursor's picture, and again as a sprite-index
+  for an auto-center-hotspot fallback when no explicit hotspot is set).
+  Three independent callers, one field, all consistent.
+- **`hotx`**/**`hoty`** @ `+0x24`/`+0x28`: confirmed via `sub_40CF16`
+  (applies them to the already-confirmed `mcurs[MODE_USE].hotx`/`.hoty`)
+  AND via `main`'s startup sequence (scales them by
+  `current_screen_resolution_multiplier_x`/`_y`) -- both read/write
+  them as FULL DWORDS, matching 2011's declared `int hotx, hoty`
+  (`acroom.h:2627`) with ZERO type drift. Worth noting explicitly:
+  `MouseCursor`'s OWN `hotx`/`hoty` ARE `short` in this build --
+  two different, independently-confirmed types for similarly-named
+  fields in two different structs, don't conflate them just because
+  the names match.
+- **`flags`** @ `+0x40` (the struct's LAST field): confirmed via
+  `main`'s startup sequence -- `"movsx eax,byte_51B894[ee*0x44]; and
+  eax,1; jz <skip>; ...playerchar->inv[ee]=1..."`, checking bit 0 and
+  giving the player 1 starting copy of the item if set. Matches 2011's
+  `IFLG_STARTWITH=1` (`acroom.h:2623`, "start the player off with this
+  item") exactly.
+
+Four fields, four exact matches to 2011's declared offsets -- `pic`
+(+0x1C), `hotx` (+0x24), `hoty` (+0x28), `flags` (+0x40) -- with ZERO
+drift in any of them. This is genuinely the strongest confirmation-to-
+effort ratio found in this project alongside `MouseCursor`'s own "rare
+full match" case. The one open question: 2011 declares a SEPARATE
+`cursorPic` field at `+0x20` (between `pic` and `hotx`) that no traced
+code path in this build reads or writes -- every cursor-picture code
+path found (`sub_40CF16`) uses `pic` directly instead. Left as an
+unconfirmed (not asserted, not denied) gap in `apply_structs.py`: there's
+no NEGATIVE evidence the field is absent (unlike `numcursors` etc.,
+which have explicit absence proof), just no code path that happens to
+touch it in what's been traced so far.
+
+**And the array's own position resolves what used to be
+`GameSetupStructBase`'s `_pad_unknown4` gap entirely**: `dword_51B870`'s
+absolute address, minus its own `+0x1C` intra-element offset, lands
+EXACTLY 2 bytes after the already-confirmed `numinvitems` ends -- a
+natural alignment pad (a `short` field needing to reach 4-byte
+alignment before an int-heavy array). And `100 * sizeof
+(InventoryItemInfo) = 100*0x44 = 0x1A90` bytes from there lands EXACTLY
+on the already-confirmed `numdialog`'s start, zero slack. Matches
+`OriGameSetupStruct`'s own declared adjacency `"short numinvitems;
+InventoryItemInfo invinfo[100]; int numdialog, numdlgmessage;"`
+(`acroom.h:2787-2789`) exactly -- meaning `invinfo[100]` was ALREADY
+part of the ancient ancestor struct's own declaration all along, not
+something added later by `GameSetupStruct`'s derived-class extensions
+as the previous section's closing paragraph assumed before this was
+traced through properly. `GameSetupStructBase` is now at 35 confirmed
+fields (up from 34).
+
+## DialogTopic: a genuinely NEW struct with no 2011 reference to lean on -- EVERY field eventually confirmed, one field proven ABSENT
+
+Picked back up the `DialogTopic` lead shelved in the previous round.
+Unlike every other struct tackled in this project, `Common/acroom.h`
+preserves no older ancestor declaration for `DialogTopic` -- no
+`OldDialogTopic`, no `DialogTopic272`, nothing. 2011's own declaration
+(`acroom.h:2673-2696`) is the only reference available, and it's
+~4696 bytes -- over 4x this build's already-confirmed 1156-byte
+(`0x484`) per-topic size. This is the first struct this session where
+"check against the reference and expect broad agreement" simply
+doesn't apply; every field needed independent disassembly confirmation
+with no size/shape hint to guide the search.
+
+**The global itself**: `Engine/AC.CPP:567` declares `DialogTopic
+*dialog;` as a genuine standalone pointer (NOT embedded in
+`GameSetupStructBase` or anywhere else) -- found by searching for the
+already-confirmed `numdialog` (`dword_51D2E4`) as a `fread`
+`ElementCount` argument inside `load_ac2game_dta`: `"imul edx,
+numdialog; add edx,5; malloc(edx); dword_4EDA48=result;
+fread(result,ElementSize=0x484,ElementCount=numdialog,stream)"`. The
+`+5` beyond the raw array size is presumably a small safety margin or
+sentinel, not itself a meaningful field. `dword_4EDA48` should be
+renamed to `dialog` (typed `DialogTopic *`) manually in IDA -- this
+project's `matches.json`/`apply_matches.py` machinery only covers
+FUNCTION renames, there's no automated path for a raw data global like
+this one.
+
+**Six fields confirmed, each from a different already-matched caller**:
+
+- **`optionflags[15]`** @ `+0x41C` (60 bytes) -- the strongest evidence
+  of the round: `SaveGameSlot` (already matched) has "`push 0Fh
+  /* ElementCount */; push 4 /* ElementSize */; lea eax,[dialog+i*0x484
+  +0x41C]; call fwrite`" -- an explicit, LITERAL `0x0F` (15) constant,
+  not an inferred gap size. Independently cross-confirmed by
+  `restore_game_data` (already matched)'s matching `fread` with the
+  identical `0x0F`/`4`/`+0x41C` triple -- a genuine save/restore
+  round-trip of the topic's mutable per-option ON/OFF state (option
+  text/scripts are presumably static per-game-file data that doesn't
+  need saving, which is why only `optionflags` gets round-tripped).
+  Type/role also confirmed via `SetDialogOption` (already matched,
+  script-exported): bitwise `AND ~1`/`OR 1` and `AND 2`/`OR 2`
+  manipulation matches 2011's documented `DFLG_ON=1`/`DFLG_OFFPERM=2`
+  semantics exactly. **DRIFT**: `MAXTOPICOPTIONS=15` here, not 2011's
+  declared 30 -- a genuine capacity halving, matching the "smaller
+  fixed capacity" pattern already seen throughout this project
+  (`ExecutingScript`'s `MAX_QUEUED_SCRIPTS=2`, `numcursors` hardcoded
+  to 10, etc.).
+- **`optionscripts`** @ `+0x458` -- confirmed via `load_ac2game_dta`:
+  `"cmp [dialog+i*0x484+0x458],0; jz <skip>; Size=word[dialog+i*0x484
+  +0x47C]+0xA; malloc(Size); [dialog+i*0x484+0x458]=result;
+  fread(result,ElementSize=word[...+0x47C],1,stream)"` -- an on-disk
+  presence-flag-that-becomes-a-real-pointer idiom, the SAME pattern
+  already confirmed for `GameSetupStructBase.compiled_script`/`.dict`.
+  Matches 2011's `unsigned char *optionscripts` (compiled per-option
+  dialog bytecode) in identity and position.
+- **`entrypoints[15]`** @ `+0x45C` (30 bytes) -- MEDIUM confidence, not
+  independently confirmed via its own access site: boxed in with zero
+  slack between the confirmed `optionscripts` and `startupentrypoint`,
+  and 15 elements at 2 bytes each matches the SAME independently-
+  confirmed `MAXTOPICOPTIONS=15` capacity as `optionflags` exactly --
+  not just a coincidental gap fit.
+- **`startupentrypoint`** @ `+0x47A` -- confirmed via `do_conversation`
+  (already matched): `"movsx edx,word[parmtr+0x47A]; push edx; push
+  parmtr; call run_dialog_request"` -- passed alongside the dialog
+  topic pointer itself to `run_dialog_request` (already matched),
+  matching 2011's role ("initial dialog-script entry point") exactly.
+- **`codesize`** @ `+0x47C` -- confirmed via the SAME `load_ac2game_dta`
+  site as `optionscripts` above: used directly as the malloc/fread
+  size for the compiled bytecode blob, matching 2011's declared `short
+  codesize` in type and role exactly.
+- **`numoptions`** @ `+0x480`, ending EXACTLY at the struct's own
+  confirmed total (`0x484`) -- confirmed via `SetDialogOption`
+  (already matched): `"cmp opt,[dlg*0x484+dialog+0x480]; setnle bl;
+  ...quit(\"!SetDialogOption: Invalid option number\")"`, an
+  option-index range check matching 2011's role and position exactly.
+
+**Architectural finding, mirroring `ExecutingScript`'s `+0x64` field
+discovery**: `numoptions` landing exactly at the struct's own confirmed
+end leaves NO ROOM for 2011's `int topicFlags;` (2011's declared LAST
+field, right after `numoptions`) -- `topicFlags` is CONFIRMED ABSENT
+from this build, the zero-slack arithmetic proves it, not merely
+"unfound."
+
+**`optionnames` -- the one open question -- resolved immediately in the
+very next round**, by directly following `do_conversation`'s (already
+matched) option-display code rather than searching for `get_translation`
+by name first (that search came up empty -- its distinctive error
+string, `"!Null string supplied to CheckForTranslations"`, doesn't
+exist anywhere in this disassembly, meaning 2011's `get_translation`
+either predates this build under a different name or genuinely didn't
+exist with that exact error-handling shape yet). Instead, searched for
+the STRING already cited in `do_conversation`'s own match evidence
+(`"!DoDialog: all options have been turned off"`, from `show_dialog_options`,
+inlined into `do_conversation` per an earlier round) and read straight
+through the surrounding code. Found the option-text-rendering loop
+directly: `"movsx eax,[disporder_buf+var_50]; imul eax,46h; mov
+ecx,parmtr; add ecx,eax; push ecx; call GetTranslation"` -- passing
+`dialog[dlgnum] + chosenOption*0x46` to a function ALREADY correctly
+named `GetTranslation` in the IDB (capitalized differently from 2011's
+`get_translation`, but otherwise unchanged) -- reading its body
+confirmed a clean, simplified match to 2011's `get_translation`
+(`AC.CPP:2041-2072`): `strlen` + a `transtree` lookup + fallback to the
+original string, missing only 2011's later plugin-hook and
+`"&12 text"`-prefix-stripping additions.
+
+The `imul eax,46h` is the answer: **`0x46` (70 decimal) is
+`optionnames`'s per-entry stride**. `15 * 0x46 = 0x41A` (1050 bytes),
+leaving an exact 2-byte alignment pad before the already-confirmed
+`optionflags` at `+0x41C` -- zero slack, resolving the entire region in
+one shot. DRIFT: `optionnames` is `char[15][0x46]` in this build, not
+2011's declared `char[30][150]` -- BOTH the element count and the
+per-option text length are smaller, the same "reduced fixed capacity"
+pattern as everything else found in this struct.
+
+**Net result: EVERY field of `DialogTopic` is now confirmed** --
+`optionnames`, `optionflags`, `optionscripts`, `entrypoints`,
+`startupentrypoint`, `codesize`, `numoptions` all located and typed,
+plus `topicFlags` confirmed absent. `MAXTOPICOPTIONS=15` is now
+independently confirmed THREE separate ways (the `optionnames` fit,
+the `optionflags` fit, and the literal `0x0F` constant in `SaveGameSlot`/
+`restore_game_data`) -- about as solid as evidence gets in this
+project. A struct that started with zero reference material to lean on
+ended up as complete as `MouseCursor`/`InventoryItemInfo`'s "exact
+zero-drift match" cases, just via a different route (real access-site
+evidence for every field instead of a clean match to a still-existing
+2011 declaration, since none exists for this one). The lesson: when a
+name-based search for the "obvious" 2011 function comes up empty
+(`get_translation`'s error string wasn't in the binary), following an
+ALREADY-matched caller's actual code -- rather than searching for the
+callee by name first -- found the same function under a
+differently-capitalized name in one pass.
+
+## GameSetupStructBase: FULLY MAPPED -- spriteflags[6000] closes the very last gap, every byte of the struct now accounted for
+
+Went back to `_pad_unknown7` (`+0xA7F4`..`+0xBF84`, 6032 bytes), the
+last remaining span in `GameSetupStructBase` and the one flagged as
+genuinely harder than everything resolved so far -- no
+`OriGameSetupStruct` declaration exists to anchor a search against it,
+since it's entirely inside the further-derived 2011 `GameSetupStruct`'s
+own additions (`spriteflags[MAX_SPRITES=30000]`, `invinfo[MAX_INV]`
+again, audio clips, custom properties, GUIDs, room lists -- almost all
+clearly much-later features this build predates).
+
+**Checked what's already referenced inside that address range first**,
+rather than guessing at which 2011 field might apply. Computed the
+range's real addresses (`game_gamename`'s base `+0xA7F4` through
+`+0xBF84` → `0x51DB0C`..`0x51F29C`) and grepped for any already-
+labeled global inside it. Found exactly one: `byte_51DB2C`, referenced
+from `prepare_characters_for_drawing` (already matched) at relative
+offset `+0xA814` (right after the small `+0x20` gap past the
+already-confirmed `dict`).
+
+**`byte_51DB2C` is `spriteflags`**, confirmed three independent ways in
+the SAME function:
+1. `"xor eax,eax; mov al,byte_51DB2C[edx]; and eax,2; test eax,eax; jz
+   <skip>; ...var_C=final_col_dep..."` -- reads a per-sprite flags
+   byte and checks bit 1 to gate hi-color-specific rendering behavior,
+   sitting right alongside an already-confirmed sprite-width lookup
+   (`dword_4CD2E8[index*4]`) -- matching 2011's `SPF_HICOLOR`-style
+   per-sprite flag semantics exactly.
+2. A direct sanity-clamp bounds check in the same function: `"cmp
+   index,0; jl <clamp>; cmp index,1770h; jl <ok>; clamp: index=0"` --
+   `0x1770` is **6000 decimal**, a LITERAL constant, not an inferred
+   fit.
+3. `+0xA814` plus 6000 bytes lands EXACTLY on `GameSetupStructBase`'s
+   own independently-confirmed total size (`0xBF84`, from the
+   `fread`/`fwrite` `sizeof()` constant used consistently throughout
+   `load_ac2game_dta`/`SaveGameSlot`/`restore_game_data`) with zero
+   slack -- `spriteflags` is the struct's own FINAL field, the
+   remaining space wasn't a coincidence, it's exactly what was left.
+
+**DRIFT**: `MAX_SPRITES=6000` in this build, not 2011's declared 30000
+(`acroom.h:2698`) -- a 5x capacity reduction, the same "smaller fixed
+capacity" pattern as `ExecutingScript`'s `MAX_QUEUED_SCRIPTS`,
+`DialogTopic`'s `MAXTOPICOPTIONS`, `numcursors`'s hardcoded 10, and
+just about everything else in this project.
+
+**The small `+0x20` (32-byte) gap between `dict` and `spriteflags`
+also resolved itself for free**: it's an EXACT match for
+`OriGameSetupStruct2`'s own declared LAST field, `int reserved2[8]`
+(`acroom.h:2807`, `8*4=32` bytes) -- no access-site evidence of its
+own (consistent with genuinely unused reserved space), but boxed in
+with zero slack between two independently-confirmed neighbors. This
+completes `OriGameSetupStruct2`'s ENTIRE declared field list with zero
+remaining gaps -- literally every field either of `OriGameSetupStruct`
+or `OriGameSetupStruct2` declares is now accounted for, plus one
+further-derived `GameSetupStruct` field (`spriteflags`) that this
+build apparently added early, ahead of the rest of that later class's
+additions.
+
+**`GameSetupStructBase` is now FULLY MAPPED**: every byte from `+0x00`
+through `+0xBF84` (49028 bytes total) is accounted for, closing out
+what has been by far the largest and longest-running single-struct
+effort in this project -- 37 fields confirmed across dozens of rounds,
+spanning a genuine mid-investigation retraction (`defpal`), a real
+tooling bug found and fixed (the alignment-rounding `OFFSET
+CORRECTION`), a completely novel from-scratch struct reconstruction
+that hung off it (`DialogTopic`), and a handful of fields independently
+proven ABSENT rather than merely unfound (`numcursors`,
+`default_lipsync_frame`, `invhotdotsprite`, `default_resolution`).
+Nothing further remains to recover in this struct's own layout.
+
+## MoveList: another complete, zero-drift match -- found by surveying for the next struct after GameSetupStructBase closed out
+
+With `GameSetupStructBase` fully mapped, surveyed `InterfaceElement`
+first (only `popup`/`on` confirmed of its ~15 fields) but hit a wall:
+no already-matched function references ANY of its other fields
+anywhere in the disassembly -- the whole "legacy interface" subsystem
+(`g_interface`'s only live code reference is a single
+`scAdd_External_Symbol("interface", ...)` script-export registration,
+AC.CPP:59954-ish) appears to be genuinely rarely touched by the
+compiled game logic traced so far. Shelved, no further evidence
+available without a slower, from-scratch investigation.
+
+**Pivoted to `MoveList` (`mls[]`) instead**, and it paid off
+immediately. `SaveGameSlot`/`restore_game_data` (both already matched)
+already had a literal `fwrite`/`fread` with `ElementSize=0x200`(512),
+`ElementCount=0x3C`(60) for the global `mls` array -- and the live IDB
+ALREADY had a PARTIAL `MoveList` type applied to it (from before this
+project's own tracking began), with only `pos`/`numstage` named via
+dot-notation access (`mls.pos[eax]`, `mls.numstage[eax]`); every OTHER
+field was still accessed via raw offset arithmetic
+(`(mls+1E4h)[eax]` etc.), meaning nobody had extended that partial
+type since.
+
+**Every remaining field confirmed, all in already-matched functions,
+all at 2011's exact declared offset**:
+- `pos[40]`/`numstage` (already named in the IDB) re-confirmed via
+  `find_route` (`Engine/routefnd.cpp:766`): `numstage` is set to the
+  computed route's stage count, immediately followed by a direct
+  `memcpy(&mls[movlst].pos, Src, numstage*4)` populating `pos[]` --
+  matching both fields' declared roles exactly.
+- `fromx`/`fromy`/`onstage`/`onpart`/`lastx`/`lasty`/`doneflag` (7
+  fields) all confirmed in the SAME `find_route` function, a later
+  branch doing a clean "start of move" reset: `fromx`/`fromy` set from
+  a computed coordinate, `onstage`/`onpart` zeroed, `lastx`/`lasty` set
+  to `-1` (a "not yet drawn" sentinel), `doneflag` zeroed -- all via
+  literal offsets (`+0x1E4` through `+0x1FC`) that match 2011's
+  declared layout (`Common/acroom.h:3082-3090`) to the byte, zero
+  drift in any of them.
+- `walk_character` (already matched) independently confirms the
+  array's own `0x200`(512)-byte stride via a `shl eax,9` (2^9=512)
+  scaling, and reads `pos[0]`/`pos[1]` to short-circuit a route with
+  only one distinct waypoint.
+- `xpermove[40]`/`ypermove[40]`/`direct` remain MEDIUM confidence
+  (positionally boxed in with zero slack between confirmed neighbors,
+  no independent access site found this round) -- consistent with the
+  project's usual "include at lower confidence, don't assert past the
+  evidence" treatment for the small remainder of an otherwise
+  fully-confirmed struct.
+
+Total size (`512` bytes, including a natural 2-byte trailing alignment
+pad after the 1-byte `doneflag`+`direct` pair) matches the ALREADY-
+confirmed `fwrite`/`fread` `ElementSize` exactly. `MoveList` joins
+`MouseCursor`/`InventoryItemInfo` as one of the cleanest zero-drift
+matches in this project -- and as a nice bonus, this round's field
+definitions can be applied via `apply_structs.py` to UPGRADE the live
+IDB's already-existing partial `MoveList` type into a complete one,
+converting several raw-offset accesses into proper struct-member
+references.
 
 ## ExecutingScript: FULLY mapped, zero unaccounted bytes -- individual dedicated fields where 2011 later unified into a generic queue
 
@@ -2070,3 +2417,713 @@ looked like at first glance -- most of the effort per struct is in this
 verification step, and for genuinely drifted structs, full recovery is
 roughly as expensive as the incremental-offset-recovery option that was
 available from the start.
+
+(Note: this "Takeaway" was written early in the project, during the
+GUIButton vtable round. It reads as overly pessimistic in hindsight --
+`GameSetupStructBase`, `DialogTopic`, `MoveList`, and `ViewStruct272`
+(below) all turned out to be efficient, high-yield investigations once
+the "follow an already-matched caller's actual code" technique matured.
+Left in place as a historical snapshot, not current guidance.)
+
+## ViewStruct272: this build's per-view animation data -- an "over-determined fit" across three independent strides, with a genuine architectural drift (no per-loop `loopflags[]`)
+
+Surveyed for the next struct after `MoveList` closed out. `numviews`
+(`GameSetupStructBase`, already confirmed) pointed at an obvious next
+target: the animation "views" data itself, 2011's old-format ancestor
+being the already-old `ViewStruct272` (`Common/acroom.h:2421-2448`,
+itself superseded by a modern pointer-based `ViewStruct`/`ViewLoopNew`
+by 2011 -- the same "ancestor struct preserved for old-save
+compatibility" pattern as `OriGameSetupStruct`, though here it's the
+build's *live* runtime format, not just a save-compat relic).
+
+**The global itself**: `load_ac2game_dta` (already matched) does `imul
+eax, ElementCount(numviews), 8D4h; add eax, 14h; call malloc; ...;
+mov dword_52313C, eax; ...; fread(dword_52313C, 8D4h, numviews,
+stream)` -- confirming `dword_52313C` = `views`, a genuine standalone
+global pointer (dynamically allocated, NOT embedded in
+`GameSetupStructBase`, mirroring the earlier `dialog`/`DialogTopic`
+discovery), with a confirmed per-view stride of `0x8D4` (2260 bytes).
+Computing 2011's full `ViewStruct272` size (16 loops x 20 frames of
+28-byte `ViewFrame` each, plus headers) gives roughly 9060 bytes --
+meaning this 2002 build's format is *even more reduced* than the
+already-old 2011 ancestor it's named after.
+
+**Cracking the internal layout** took reading through the 60+ usage
+sites of `dword_52313C` scattered across the binary. The first
+productive cluster was inside an unmatched function, `sub_40C3E0`
+(called from another unmatched function, `sub_40C75E`): a record from a
+DIFFERENT global, `dword_4E45C8` (stride `0x20`/32 bytes -- at the time
+guessed to be "a per-character runtime animation-state array, NOT the
+same as `CharacterInfo`/`chars`"; **CORRECTED in the very next round,
+see the `RoomObject` section below** -- it's actually `croom->obj`, the
+current room's `RoomObject` array, completely unrelated to characters;
+IDA's own `chat`/`chaa` loop-variable names were misleading, not real
+evidence) supplied a view number and loop number, combined via `imul
+eax, 8D4h` (view stride, already known) then `imul eax, 118h` -- the
+first sighting of a SECOND stride, `0x118` (280 bytes), applied
+per-loop within a view.
+
+That per-loop stride was independently corroborated TWICE more, both
+inside the already-matched `update_stuff` (the per-frame main-loop
+update function -- the same function `MouseCursor`/`ExecutingScript`
+evidence came from in earlier rounds). Two clean, complementary
+patterns emerged:
+
+1. **Frame-advance check**: `viewbase = views + curview*0x8D4; cmp
+   curframe, word[viewbase + curloop*2 + 2]; jl <keep-animating>` --
+   reading `numframes[curloop]` to decide whether to advance to the
+   next frame or move on to the next loop. This confirms a `short
+   numframes[]` array starting at view-relative `+0x02`, 2-byte stride
+   per loop -- matching 2011's exact declared field ORDER (`short
+   numloops; short numframes[16];`, `acroom.h:2421-2422`) even though
+   the reference to `numloops` itself (at `+0x00`) is only a positional
+   inference (boxed in with zero slack, no direct read found).
+
+2. **Loop-mirroring fallback**: when the frame-advance check fails
+   (`curframe >= numframes[curloop]`), a second path reads the SAME
+   `numframes[]` array one loop index further back -- `word[viewbase +
+   curloop*2]` (no `+2`) is exactly `numframes[curloop-1]` -- then
+   computes that PREVIOUS loop's frame-block address (`(curloop-1)*
+   0x118 + 0x14`) and checks its LAST frame's first field against the
+   `-1` sentinel: `cmp dword[loopbase + (numframes[curloop-1]-1)*0x1Ch],
+   0FFFFFFFFh`. This is the classic AGS "a loop with no frames of its
+   own mirrors the previous loop" behavior. It independently confirms
+   THREE things at once: the `0x118` per-loop stride (corroborating
+   `sub_40C3E0`'s earlier finding), a `0x1C`(28-byte) per-frame stride
+   (via several `imul reg, 1Ch` sites sitting right alongside, matching
+   2011's declared 28-byte `ViewFrame` size), and that the frame's
+   FIRST field (`pic`, a 4-byte int/sprite-index) uses `-1` as an
+   "unused frame slot" sentinel -- matching 2011's own `pic==-1`
+   convention (`acroom.h:2270`-adjacent usage in `AC.CPP`) exactly.
+
+**The result is an "over-determined fit"**: three independently-found
+strides -- total view size (`0x8D4`, from `load_ac2game_dta`'s
+malloc/fread), per-loop block size (`0x118`, from three separate
+disassembly sites), and per-frame size (`0x1C`, from multiple `imul`
+sites) -- all reconcile with ZERO slack simultaneously: `0x14`(header)
+`+ 8*0x118`(loop blocks) `= 0x8D4` exactly, and `0x118 / 0x1C = 10`
+frames per loop exactly. No other loop-count/frame-count combination
+closes all three at once, which is strong evidence even without a
+direct "loop count" or "frames per loop" literal constant found
+anywhere.
+
+**Confirmed layout**: `short numloops`(MEDIUM, positional -- **upgraded
+to HIGH in the next round**, see the `RoomObject` section below, where
+`SetObjectView` was found reading it directly) @ `+0x00`,
+`short numframes[8]`(HIGH) @ `+0x02`, 2-byte alignment pad, then
+`ViewFrame272 frames[8][10]` @ `+0x14` through the confirmed end
+`+0x8D4`. Only `ViewFrame272.pic` @ `+0x00` has independent access-site
+evidence (the `-1` sentinel check above); the remaining `ViewFrame272`
+fields (`xoffs`/`yoffs`/`speed`/`flags`/`sound`/`reserved_for_future[2]`)
+are carried over from 2011's declared `ViewFrame` layout
+(`acroom.h:2268-2291`) as an unverified structural assumption, included
+only to give the confirmed 28-byte stride named fields instead of
+opaque padding -- flagged accordingly in `apply_structs.py`, not to be
+cited as confirmed without new evidence.
+
+**DRIFT, and a genuine architectural finding**: capacity is 8 loops x
+10 frames/loop (80 total frame slots) here, vs. 2011's declared 16
+loops x 20 frames (320 slots) -- a 4x reduction, consistent with this
+project's repeated "smaller fixed capacity" pattern. More interesting:
+the header ends immediately after `numframes[8]` (`+0x02 + 0x10 =
++0x12`, +2 pad = `+0x14`, landing exactly on the loop-block start with
+zero slack) -- leaving NO ROOM for 2011's declared `int
+loopflags[MAXLOOPSPERVIEW]` (`acroom.h:2423`) as a separate array.
+Per-loop flags (e.g. `LOOPFLAG_RUNNEXTLOOP`) are CONFIRMED ABSENT from
+this build's per-view header, not merely unfound -- consistent with the
+project's other "later AGS feature, confirmed absent" findings
+(`numcursors`, `default_lipsync_frame`, `invhotdotsprite`,
+`DialogTopic.topicFlags`).
+
+Two functions remain unmatched but now documented for the struct-field
+evidence they contributed: `sub_40C3E0` (first sighting of the `0x118`
+per-loop stride) and its caller `sub_40C75E` (not yet individually
+examined). `dword_4E45C8` (stride `0x20`, holding view/loop/frame/
+counter/flag fields at `+0x10`/`+0x12`/`+0x14`/`+0x16`/`+0x1A`) was
+flagged as a promising lead for a future round -- that round happened
+immediately next, see below.
+
+## RoomObject: correcting a misattribution -- `dword_4E45C8` is `croom->obj`, not a character array
+
+Picked up the `dword_4E45C8` lead flagged at the end of the
+`ViewStruct272` round above. The first step, tracing `dword_4E45C8`'s
+own single write site, immediately overturned the earlier "per-character"
+guess: `load_new_room` (already matched) does
+
+```
+mov eax, roomstats
+add eax, newnum*1390h      ; sizeof(RoomStatus)
+mov dword_523128, eax      ; (or, for an out-of-range room number,
+                            ;  a fixed fallback: dword_523128 =
+                            ;  offset dword_4EF3A0)
+...
+mov eax, dword_523128
+add eax, 8
+mov dword_4E45C8, eax
+```
+
+`roomstats` is already a confirmed global -- `RoomStatus *roomstats`
+(`Engine/AC.CPP:493`) -- so `dword_523128 = &roomstats[newnum]`,
+matching 2011's `croom=&roomstats[newnum]` (`AC.CPP:4259`) exactly.
+`RoomStatus`'s own declared field order (`Common/acruntim.h:94-97`) is
+`int beenhere; int numobj; RoomObject obj[MAX_INIT_SPR];` -- meaning
+`dword_4E45C8 = dword_523128 + 8` is simply `&roomstats[newnum].obj[0]`.
+**`dword_4E45C8` is `croom->obj` -- AGS's `objs[]` room-object array --
+nothing to do with characters at all.** The `chat`/`chaa` loop-variable
+names IDA had assigned around its use sites (which drove the original
+"per-character" guess) turn out to be generic placeholder names, not a
+genuine hint.
+
+The SAME `load_new_room` block independently confirms `RoomStatus`'s
+two leading fields: `beenhere`@`+0x00` (`cmp dword ptr[croom],0`, an
+"already visited, don't re-run first-time-enters-room setup" gate) and
+`numobj`@`+0x04` (set from a default count, then used as the loop bound
+for a per-object initialization loop) -- both matching 2011's declared
+order with zero drift. `RoomStatus` itself is not being formalized as
+its own `apply_structs.py` struct yet -- its total size and `obj[]`'s
+actual capacity in this build (2011 declares `MAX_INIT_SPR=40`,
+`acroom.h:59`, not verified here) haven't been independently confirmed,
+and this project's own discipline says don't guess a capacity without
+evidence. Only the two leading fields plus `obj[]`'s start address are
+confirmed.
+
+**`RoomObject` itself, however, closed out completely**, all in
+already-matched functions:
+
+- **`x`@`+0x00`, `y`@`+0x04`** (both `int`): confirmed via `GetObjectAt`
+  (already matched, script-exported `GetObjectAt(int xx,int yy)`),
+  read directly as the object's on-screen position. Matches 2011's
+  declared first two fields (`acruntim.h:39`) exactly.
+- **`num`@`+0x0C`** (`short`, sprite slot number): confirmed THREE
+  independent ways -- `GetObjectAt` uses it as an index into
+  `dword_4E787C[]` (a sprite-dimension lookup table) to compute the
+  object's bounding box; `SetObjectView` and `SetObjectFrame` (both
+  already matched) each set it from the low 16 bits of the relevant
+  `ViewFrame272.pic` field right after changing the object's view/loop/
+  frame -- the same "narrow read" pattern seen with `InventoryItemInfo`
+  earlier in this project. Matches 2011's declared field
+  (`acruntim.h:46`) exactly.
+- **`baseline`@`+0x0E`** (`short`): confirmed via `GetObjectAt`: `cmp
+  var,1; jge <use-as-is>; else var=y` -- an exact match to 2011's
+  `RoomObject::get_baseline()` ("if (baseline<1) return y; return
+  baseline;", `acruntim.h:66-70`), both in logic shape and semantic
+  role.
+- **`view`@`+0x10`, `loop`@`+0x12`, `frame`@`+0x14`**: confirmed via
+  `SetObjectView`/`SetObjectFrame` (both already matched), which set
+  them directly from their `viw`/`vii`/`lop`/`fra` parameters. Crucially,
+  `SetObjectView` also reads `loop`@`+0x12` back afterward and compares
+  it *directly* against `ViewStruct272.numloops` (`views[vii]`, offset
+  `+0x00`, no added offset) -- the direct read that upgrades
+  `ViewStruct272.numloops` from MEDIUM (positional-only) to HIGH
+  confidence, resolving the one open question left over from the
+  previous round.
+- **`wait`@`+0x16`, `moving`@`+0x18`**: confirmed via `update_stuff`'s
+  frame-advance/loop-mirroring logic (see the `ViewStruct272` section
+  above -- now correctly understood to be operating on `RoomObject`
+  records, not characters) for `wait`, and, even more conclusively for
+  `moving`, `update_stuff` passing `&obj[+0x18]` *by address* to
+  `do_movelist_move` -- matching 2011's own call shape exactly:
+  `do_movelist_move(&objs[aa].moving,&objs[aa].x,&objs[aa].y)`
+  (`Engine/AC.CPP:6438`). This one call site independently nails down
+  BOTH the field identity (`moving`) AND the global's own identity
+  (`objs[]`) at once. (This build's actual call site only pushes the
+  one `mlnum` pointer, not all three from 2011's declared signature --
+  a reduced calling convention, not investigated further this round.)
+- **`cycling`@`+0x1A`** (`char`): confirmed via `SetObjectView` and
+  `SetObjectFrame`, both of which clear it to 0 immediately after
+  changing the object's view/frame -- matching 2011's "is it currently
+  animating?" role (explicitly setting a frame stops any in-progress
+  animation).
+- **`on`@`+0x1C`, `flags`@`+0x1D`** (both `char`): confirmed via
+  `GetObjectAt`'s hit-test gate, `cmp byte[obj+1Ch],1; jz <continue>`
+  then `and byte[obj+1Dh],1; jz <continue>` -- an object must be
+  visible (`on==1`) AND not have the interaction-disabling bit set in
+  `flags` to be clickable. Matches 2011's declared fields
+  (`acruntim.h:52-53`) in position and semantic role exactly.
+- **`transparent`@`+0x08`** (`int`): MEDIUM confidence -- a real access
+  site exists (`load_new_room`'s per-object initialization loop copies
+  a value from the compiled room file's own object-data table,
+  `word_51FF5C[chaa*0xA]`, into this offset), but the field's semantic
+  *role* is inferred from 2011's declared field order rather than
+  independently confirmed via a script-API read/write (no
+  `SetObjectTransparency`/`GetObjectTransparency` disassembly examined
+  this round).
+- **`overall_speed`@`+0x1B`** (`char`): MEDIUM confidence, boxed in
+  with zero slack between the confirmed `cycling` and `on` fields, no
+  independent access site found.
+
+Total size `0x20` (32 bytes) is high confidence, confirmed by the
+consistent `shl reg,5` stride scaling used by every function above.
+Field order matches 2011's declared `RoomObject` (`acruntim.h:38-54`)
+**exactly**, with 2011's `transparent`-adjacent tint fields
+(`tint_r/g/b/level/light`), `last_zoom`, `last_width`/`last_height`,
+and trailing `blocking_width`/`blocking_height` all CONFIRMED ABSENT
+from this build (the header runs straight from `y`@`+0x04` to
+`transparent`@`+0x08` to `num`@`+0x0C` with no gap for the tint/zoom
+fields, and the struct ends immediately after `flags`@`+0x1D` with no
+room for the trailing blocking-box fields) -- consistent with this
+project's repeated "later AGS feature, confirmed absent" pattern, just
+applied to a script-visible object struct instead of an internal one
+this time.
+
+Also documented in passing: `sub_4256E0`, an unmatched helper called
+from both `SetObjectView` and `SetObjectFrame` to validate an object
+number (`return arg_0<0 || arg_0>=croom->numobj`), which independently
+cross-confirms `RoomStatus.numobj`@`+0x04`.
+
+**Methodology note worth repeating**: this whole correction happened
+because a loop-index variable IDA itself had named `chat`/`chaa`
+*looked* like it meant "character," and that assumption went
+unchallenged for a full round of struct work before the array's actual
+allocation/pointer-chain evidence was traced back to its source. The
+fix, as always in this project, was to follow the pointer to its real
+origin (`load_new_room`'s `croom=&roomstats[newnum]` assignment) rather
+than trust a suggestive-but-unverified name.
+
+## RoomObject: closing the last two MEDIUM-confidence fields, and an unexpected ViewFrame272 bonus
+
+Went back to `RoomObject`'s two remaining non-HIGH fields
+(`transparent`@`+0x08`, `overall_speed`@`+0x1B`) to see if a dedicated
+script-API function would confirm them directly, the same way
+`GetObjectAt`/`SetObjectView`/`SetObjectFrame` had closed out
+everything else. Both paid off immediately.
+
+**`SetObjectTransparency`** (already matched, script-exported) is an
+exact instruction-for-instruction match to 2011's implementation
+(`Engine/AC.CPP:14679-14688`): `trans==0` sets the field to `0`,
+`trans==100` sets it to `255`, otherwise `((100-trans)*25)/10` -- all
+three branches target `dword_4E45C8[obn*0x20+8]`, i.e.
+`RoomObject.transparent`. This upgrades it from MEDIUM (a real access
+site existed, but only from `load_new_room`'s room-file initialization,
+with the field's *role* inferred rather than confirmed) to HIGH.
+
+**`AnimateObject`** (already matched, script-exported,
+`AnimateObject(int obn,int loopn,int spdd,int rept)`) turned out to be
+a small goldmine, confirming or reconfirming FIVE fields in one pass:
+
+- `.cycling`@`+0x1A` = `rept+1` -- not just "cleared to 0" as the
+  `SetObjectView`/`SetObjectFrame` evidence alone suggested, but the
+  fuller picture: cycling holds `0` when idle and `repeat-count+1` while
+  animating, matching 2011's exact encoding convention.
+- `.loop`@`+0x12` = `loopn`, `.frame`@`+0x14` = `0` -- reconfirms the
+  existing evidence via a third independent function.
+- `.overall_speed`@`+0x1B` = `(char)spdd` -- direct confirmation,
+  upgrading it from MEDIUM (boxed-in-only) to HIGH.
+- `.wait`@`+0x16` = `spdd + views[view].loops[loopn].frames[0].speed` --
+  this is the interesting one: it's simultaneously the confirmation for
+  `RoomObject.wait` (already HIGH) AND the FIRST independent access-site
+  evidence for `ViewFrame272.speed`@`+0x08` (loop-block-relative
+  `+0x08`, i.e. frame 0's own `+0x08`), which had been sitting at
+  UNCONFIRMED/borrowed-from-2011-only status since the original
+  `ViewStruct272` round. Upgraded to HIGH.
+
+With this round, **every field of `RoomObject` is now HIGH confidence**
+-- `x`, `y`, `transparent`, `num`, `baseline`, `view`, `loop`, `frame`,
+`wait`, `moving`, `cycling`, `overall_speed`, `on`, `flags`, spanning
+`+0x00` through `+0x1D` with the natural 2-byte pad closing out `0x20`.
+It joins `MouseCursor`/`InventoryItemInfo`/`MoveList` as one of the
+project's fully-confirmed, zero-guesswork structs.
+
+One more thread surfaced but not pulled this round: `AnimateObject`
+branches to the already-matched `animate_character` when `obn>=99`
+(this build's convention for aliasing object/character ID ranges), and
+is itself called from `sub_40C3E0` at `+0x1E7` -- the same still-
+unmatched function that first revealed `ViewStruct272`'s `0x118`
+per-loop stride. `sub_40C3E0` calling a script-exported API function
+directly (rather than through the bytecode interpreter) is an
+interesting shape worth investigating for its own identity in a future
+round.
+
+## RoomObject.flags bit values, and a shelving decision for ViewFrame272's remaining fields
+
+Continued past the previous round's HIGH-confidence sweep to look for
+the last two things worth chasing: real bit-level meaning for
+`RoomObject.flags` (so far just "some bits gate some behavior"), and
+any evidence at all for `ViewFrame272`'s still-unconfirmed
+`xoffs`/`yoffs`/`flags`/`sound` fields.
+
+**`RoomObject.flags` now has two confirmed bit values.** Reading
+`prepare_characters_for_drawing` (already matched) in full revealed
+that -- despite its name -- it ALSO prepares ROOM OBJECTS for drawing,
+not just characters: it loops over `dword_523128[+4]`
+(`RoomStatus.numobj`) indexing the confirmed `dword_4E45C8`
+(`RoomObject[]`) array, gated by `.on`@`+0x1C`. Partway through, `and
+edx,2` against `.flags`@`+0x1D` selects between two different draw
+paths (a walk-behind-aware pixel-masking sort, `sub_410631`/
+`sub_410C6A`, vs. a simpler direct blit) -- matching 2011's declared
+`OBJF_NOWALKBEHINDS`(`2`, `Common/acroom.h:793`) exactly. Combined with
+`GetObjectAt`'s existing bit-0 check (`OBJF_NOINTERACT`, `1`,
+`acroom.h:792`), `flags` now carries two independently confirmed bit
+meanings instead of just "an opaque interactability-adjacent byte."
+(The same function also re-confirms the `get_baseline()` fallback
+pattern -- "if `baseline`<1, use `y` instead" -- via a second, separate
+call site from `GetObjectAt`'s original one.)
+
+**`ViewFrame272`'s `speed`@`+0x08` picked up a THIRD independent
+confirmation**, from an unexpected direction: `GetLocationType`
+(already matched) contains the mouse cursor's own idle-animation logic
+-- gated by a `MouseCursor.flags` bit (`byte_515870[cur_cursor*0x18] &
+8`, "is this cursor animated"), it does `wait = frames[frame].speed +
+5` when advancing to the next frame, then reloads the sprite via
+`SpriteCache::operator[]`. This is useful beyond just re-confirming
+`speed` -- it proves `ViewStruct272`/`ViewFrame272` is a genuinely
+SHARED animation-data format used by mouse cursors, room objects, AND
+characters alike (via the identical `0x8D4`/`0x118`/`0x1C` stride math
+applied to `MouseCursor.view`, with loop fixed at 0), not something
+room-object-specific.
+
+**`xoffs`/`yoffs`/`flags`(frame-mirroring)/`sound` remain
+unconfirmed.** Every already-matched frame-consuming function examined
+across this and the previous two rounds --
+`prepare_characters_for_drawing`, `AnimateObject`,
+`SetObjectView`/`SetObjectFrame`, `update_stuff`, and now
+`GetLocationType`'s cursor code -- touches only `pic` and/or `speed`.
+2011's `VFLG_FLIPSPRITE` mirroring check (`views[...].frames[...].flags
+& VFLG_FLIPSPRITE`) lives inside `AC.CPP`'s object/character sprite
+compositing code, which in the 2011 source is entangled with `tint`/
+`objcache`/hardware-acceleration logic that this build's `RoomObject`
+has already been shown to lack entirely (no tint fields at all) --
+strongly suggesting this build's actual draw-compositing code is
+differently shaped and not a profitable place to keep searching by
+analogy with 2011. Shelving these four fields at the same status as
+`InterfaceElement`'s remaining fields: real, but not yet reachable from
+any already-matched caller. Revisit if a new lead (a mirrored-sprite
+draw path, or a frame-linked sound-effect trigger) surfaces some other
+way.
+
+## EventBlockCmd: characterizing sub_40C3E0/sub_40C75E -- a pre-NewInteraction command-list format, no 2011 source to anchor to
+
+Pivoted away from `ViewStruct272`'s exhausted remaining fields to chase
+a lead flagged twice already: `sub_40C3E0`, the still-unmatched
+function that first revealed `ViewStruct272`'s `0x118` per-loop stride
+and later turned out to call `AnimateObject`. Reading it in full (and
+its sole caller, `sub_40C75E`) turned into a genuinely different kind
+of investigation than usual for this project: there is no living 2011
+source AND no dead-commented declaration to anchor either function to
+-- the first time that's been true for something this substantial.
+
+**The shape, established solidly**: `sub_40C75E(list, startIndex)`
+loops `for (i=startIndex; i<list[+0xF0]; i++) sub_40C3E0(&list[i*0x18])`
+-- an outer loop over a command list with a confirmed `0x18`(24-byte)
+per-record stride. `sub_40C3E0` is the per-record dispatcher: it
+decodes a `target` field (`+0x0C`) using this build's now-familiar
+object/character selector convention (`<10`=room object, `==99`=player
+character, `>=100`=character index+100 -- the same convention seen in
+`AnimateObject`'s `obn>=99` branch to `animate_character`), then
+switches on a `type` byte (`+0x14`): `0` is an explicit error
+("!undefined animation command"), `1` routes to `SetObjectView` or
+`SetCharacterView` depending on what `target` resolved to, `2` routes
+to `AnimateObject` or an inline animate-character equivalent (packing a
+value into `CharacterInfo+0x3E`, optionally blocking via
+`do_main_cycle` if a secondary flag byte at `+0x15` is set). Further
+`type` values reach `move_object` and `walk_character` per their own
+`CODE XREF` comments, but weren't individually read this round.
+
+**Tracing the caller chain the rest of the way** was the interesting
+part: `sub_40C75E` is called from `run_event_block` (already matched)
+at exactly one call site, `+0x548`. `run_event_block`'s own evidence
+(from an earlier round) already documents its `EventBlock.respond[i]`
+switch handling values `1`, `2` (`StopMoving`), `3` (`run_on_event`),
+and `5` -- notably skipping `4`. The natural hypothesis is that
+`sub_40C75E` is exactly what fires for `respond[i]==4`, giving
+`EventBlock` a way to attach a richer "do several
+move/animate/set-view things" command list to a single response slot,
+rather than the simple fixed actions the other respond values trigger.
+This is a strong, coherent hypothesis but **not independently confirmed
+this round** -- it would take reading `run_event_block`'s own
+disassembly around `+0x548` directly (not yet done) to nail down the
+exact `respond` value.
+
+**Why no 2011 match exists**: `run_event_block` itself was matched
+earlier via a *dead, commented-out* prototype declaration -- "the whole
+EventBlock/interaction-scripts system was replaced" by 2011. Whatever
+`sub_40C75E`/`sub_40C3E0` process didn't survive even as a dead
+comment. The command *set* they dispatch to (set view, animate, move
+object, move character, set/release character view) maps closely onto
+2011's later `NewInteractionCommand`/`run_interaction_commandlist`
+(`Common/acroom.h:600`, `Engine/AC.CPP:21449` -- cases 14/17/18/19/27/28
+cover almost exactly the same actions), which is a reasonable thing to
+notice given AGS's later interaction system is a documented descendant
+of the EventBlock-era one. But the STRUCT LAYOUT doesn't match at all:
+2011's `NewInteractionCommand` inherits from a virtual base
+(`NewInteractionAction`, giving it a vtable pointer) and carries 5 typed
+`data[]` slots (each a 12-byte `NewInteractionValue`), totaling 70+
+bytes -- nothing close to this build's flat 24-byte POD record. The
+most defensible reading is that this build's format is a genuine,
+simpler ANCESTOR of `NewInteractionCommand` from before the
+`NewInteractionAction` virtual-base refactor, not a corrupted or
+misread version of the 2011 struct.
+
+**Naming decision**: given neither function has ANY 2011 source to
+derive a name from (living or dead), both are documented in
+`matches.json` with `new_name: None` rather than forcing an invented
+name that would misleadingly imply a real correspondence. The new
+struct, however, gets a project-assigned name --
+**`EventBlockCmd`** -- clearly flagged in its own comment as
+project-invented, not source-derived, since a completely nameless
+struct in `apply_structs.py` would be less useful going forward than an
+honestly-labeled provisional one. Several of its fields are MEDIUM
+confidence (single-`type`-case evidence only, e.g. `data1`/`data2`'s
+roles are inferred from just the `type==1`/`type==2` paths, not
+cross-checked against the `move_object`/`walk_character`-routing type
+values), and `+0x00` (4 bytes) has no observed access site at all.
+Treated the same way as `InterfaceElement`'s shelved remainder: a real,
+partially-mapped lead, explicitly left open rather than forced closed.
+This is a good next thread to pull on -- reading `sub_40C3E0`'s
+remaining `type` branches (the `move_object`/`walk_character` routes)
+would very likely fill in `data1`/`data2`'s roles more completely and
+might turn up the mysterious `+0x00` field's purpose too.
+
+## EventBlockCmd resolved completely: reading the remaining `type` branches closed every open question
+
+Continued straight on from the previous round's provisional
+`EventBlockCmd` writeup by reading the rest of `sub_40C3E0`'s body --
+the `type` branches beyond 1 and 2 that hadn't been examined yet. This
+closed out every open question from that round in one pass.
+
+**The full `type` enum, 0 through 5**:
+- `0`: explicit error, `"!undefined animation command"`.
+- `1`: `SetObjectView` (object target) or, for a character target,
+  `SetCharacterView`/`ReleaseCharacterView` UNIFIED into a single type
+  -- `data2==0` means "release", nonzero means "set to this view". 2011
+  later SPLIT this into two separate command types (`case 27`/`28`).
+- `2`: `AnimateObject` (object) or an inline animate-character
+  equivalent (character, packing a value into `CharacterInfo+0x3E`).
+- `3`/`4`: both route to `move_object`/`walk_character`, differing only
+  in the `ignwal` flag (`3`=respect walls, `4`="move direct") -- again
+  one flag on a shared type where 2011 later has a separate
+  `MoveObjectDirect`-style distinction.
+- `5`: set the target's `x`/`y` directly with no movement at all --
+  writes straight into `RoomObject.x`/`.y` (already HIGH confidence)
+  for an object, or `CharacterInfo+0x14`/`+0x18` (already independently
+  confirmed as `x`/`y`) for a character. A clean THIRD confirming
+  caller for both.
+- Anything else: a SECOND, distinct error, `"unknown animation
+  encountered"` -- proving the switch is exhaustive and there is
+  nothing left to find in this dimension.
+
+**This resolved the two things left open last round.** The mystery
+`+0x00` field turned out to be `data0`, the move/set-position target X
+coordinate (used only by types 3/4/5, hence invisible in the type-1/2
+evidence examined previously). And `+0x04` -- tentatively called
+`flags` last round because only a single bit had been observed -- is
+actually the SAME kind of generic reusable slot: a full Y-coordinate
+int for types 3/4/5, but reinterpreted as a single repeat-flag bit for
+types 1/2. That dual role is itself good evidence for how this struct
+works: it's a flat set of 4 generic 4-byte argument slots
+(`data0`/`data1`/`data2`/`data3`) whose meaning is entirely
+`type`-defined, precisely mirroring 2011's `NewInteractionCommand.data[
+MAX_ACTION_ARGS]`/`IPARAM1`-`IPARAM5` convention -- just without the
+12-byte `NewInteractionValue` wrapper or the vtable, both later
+additions.
+
+With every byte from `+0x00` through `+0x15` now positively identified
+(and `+0x16`..`+0x18` a natural trailing pad), `EventBlockCmd` is
+promoted from "provisional, partially explored" to essentially
+complete -- as solid as any struct in this project despite having zero
+2011 source to lean on. `sub_40C3E0`/`sub_40C75E` remain intentionally
+unnamed (no 2011 identifier exists for either), but are now among the
+most thoroughly documented *unnamed* functions in the whole codebase.
+
+One thread still open: confirming that `sub_40C75E` genuinely fires on
+`EventBlock.respond[i]==4` specifically (a hypothesis from last round,
+not yet checked against `run_event_block`'s own disassembly around
+`+0x548`).
+
+## GameAnimation: confirming EventBlock.respond[i]==4 uncovers a whole undocumented game resource
+
+Went back to the one thread left dangling from the `EventBlockCmd`
+rounds: does `sub_40C75E` really fire for `EventBlock.respond[i]==4`?
+Read `run_event_block`'s own disassembly directly around its call to
+`sub_40C75E` (rather than continuing to infer from the outside) and
+found much more than expected.
+
+**The hypothesis is confirmed directly**: `cmp dword ptr
+[respond_base+i*4+0x20], 4; jnz <next-check>` gates the whole branch --
+an exact, literal `respond[i]==4` check sitting right before the call.
+But the branch itself does a lot more than just call `sub_40C75E`
+blind. It:
+
+1. Bounds-checks `EventBlock.data[i]` against `0Ah`(10), erroring
+   `"!run_animate: undefined animation was r[un]"` if out of range --
+   giving a hard capacity of 10 for whatever `data[i]` indexes into.
+2. Checks a parallel global table, `dword_52033C[data[i]*0xF4]`, for
+   nonzero, erroring `"!Run_animate: empty animation was run"`
+   otherwise -- a "this slot hasn't been populated" gate. `dword_52033C`
+   itself is confirmed to have a `0xF4`(244-byte) stride by this access
+   alone; its own per-slot contents weren't explored further this
+   round.
+3. Finally calls `sub_40C75E(&unk_52024C[data[i]*0xF4], 0)`.
+
+**`unk_52024C` is a whole table of `EventBlockCmd` LISTS** -- this
+build's entirely undocumented (in 2011) "Animations" resource system.
+Old AGS Editor versions had a distinct "Animations" entry in the
+project resource tree (separate from Views, Characters, Rooms) letting
+the game author define a reusable, room-independent sequence of
+move/animate/set-view commands, triggerable from ANY interaction's "Run
+Animation" response. That feature is long gone by the 2011 reference
+build -- consistent with `run_event_block`'s own note that "the whole
+EventBlock/interaction-scripts system was replaced" extending to this
+resource type specifically, not just the command format itself.
+
+**The per-slot struct, formalized as `GameAnimation`**, closes with an
+unusually clean confirmation: `sub_40C75E`'s own already-established
+"list[+0xF0] = numCommands" behavior (from the `EventBlockCmd` rounds)
+applied to `unk_52024C[slot]` means `EventBlockCmd command[10]`
+(`10*0x18=0xF0`) plus a trailing `int numCommands` lands EXACTLY on the
+`0xF4` stride independently confirmed by `run_event_block`'s own
+`data[i]*0xF4` scaling -- two completely separate pieces of evidence
+(one from the caller's indexing math, one from the callee's own loop
+bound) landing on the same total with zero slack.
+
+This closes out the entire `sub_40C3E0`/`sub_40C75E` investigation
+thread cleanly: both functions are now fully characterized (all 6
+command types known, exact caller-side trigger condition confirmed),
+and it surfaced a genuine "new resource type" finding on top -- not
+just a struct-layout detail, but a whole game-authoring feature this
+2002 build has that the 2011 reference source has no trace of at all,
+not even a dead declaration. `dword_52033C`'s own contents (beyond the
+single non-zero gate check) remain a loose end for a future round.
+
+## GameAnimation follow-up: `dword_52033C` resolved -- it was never a second table
+
+Went back to close the one loose end left from the `GameAnimation`
+round: what is `dword_52033C`, actually? A quick address check settled
+it immediately -- `dword_52033C - unk_52024C = 0xF0` exactly, which is
+precisely `GameAnimation.numCommands`'s own offset within each slot.
+`dword_52033C` isn't a second parallel table at all; it's simply
+`&unk_52024C[0].numCommands`, reached through a differently-computed
+address that IDA's auto-analysis didn't recognize as overlapping with
+`unk_52024C`. `run_event_block`'s "!Run_animate: empty animation was
+run" check is therefore nothing more exotic than `GameAnimation[data[i]
+].numCommands != 0` -- the exact same field `sub_40C75E`'s own loop
+bound already reads, just checked once early as a friendlier error path
+before the (otherwise silently-no-op) iteration would run. This is also
+a second, fully independent confirmation of `numCommands`@`+0xF0`,
+arrived at via address arithmetic rather than disassembly reading --
+worth remembering as a technique: when two IDA symbols in the same
+data region look suspiciously related, checking their raw address
+delta against an already-confirmed struct's field offsets is a quick,
+cheap way to test whether they're actually the same object.
+
+Nothing else remains open in this thread.
+
+## RoomStatus: pivoting to a fresh struct after the EventBlockCmd thread closed out
+
+Surveyed for the next thread and picked up `RoomStatus` -- already
+known to have `beenhere`@`+0x00` and `numobj`@`+0x04` confirmed
+(discovered incidentally during the `RoomObject` round), but never
+pursued further. `SaveGameSlot`/`restore_game_data` (both already
+matched) turned out to be an efficient way in, since save/restore code
+naturally has to touch every field that survives across a save file.
+
+**The bulk of the struct saves/restores as one raw blob** -- both
+functions do a single `fwrite`/`fread` of the ENTIRE `roomstats` array
+with a literal `ElementSize=0x1390`(5008 bytes), which independently
+reconfirms the struct's total size (already known from `load_new_room`'s
+`newnum*0x1390` scaling) and, as a bonus, the array's own capacity:
+`restore_game_data`'s restore loop is bounded by `cmp roomIndex,0x12Ch`
+-- `MAX_ROOMS=300`, matching 2011's declared value (`Common/
+acroom.h:789`) with ZERO drift, unusual for this project where most
+capacities are reduced.
+
+**`tsdatasize`/`tsdata` get separate, individual handling** -- exactly
+what you'd expect for a heap-allocated pointer field that can't survive
+a raw blob copy. Both functions gate on `tsdatasize@+0x168 > 0`; the
+writer does a size-prefixed `fwrite(tsdata@+0x16C, tsdatasize, 1,
+Stream)`, the reader frees any existing buffer, `malloc(tsdatasize+5)`,
+and `fread`s it back in. This is about as clean a confirmation as this
+project gets -- both the save AND restore sides independently agree on
+both fields' exact offsets and roles, matching 2011's declared
+`tsdatasize`/`tsdata` (`Common/acruntim.h:99-100`) exactly.
+
+**`obj[]`'s capacity and `flagstates[]`'s existence were closed via
+arithmetic**, not direct access-site evidence (no already-matched
+function reads them field-by-field). `obj[]`'s own start (`+0x08`) was
+already established during the `RoomObject` round; `tsdatasize`'s
+confirmed position (`+0x168`) gives the other boundary. The 352 bytes
+between them only close cleanly if `flagstates[]` matches 2011's
+declared `MAX_FLAGS=15` (`acroom.h:801`) EXACTLY (`15*2=30`, +2 align
+pad = 32 bytes) -- which leaves `320` bytes for `obj[]`, dividing
+EXACTLY by `RoomObject`'s own confirmed `0x20`-byte stride into `10`
+objects. A clean round number falling out of an otherwise-arbitrary
+subtraction, anchored at one end by a zero-drift 2011 constant, is
+convincing evidence even without a direct access site -- but flagged at
+MEDIUM confidence per this project's usual standard for arithmetic-only
+fits. DRIFT: 10 objects/room here vs. 2011's declared
+`MAX_INIT_SPR=40` (`acroom.h:59`) -- a 4x reduction, the usual pattern.
+
+**Everything from `+0x170` onward (4640 bytes) is unexplored.** 2011
+declares this space as `intrHotspot`/`intrObject`/`intrRegion`/
+`intrRoom` (all `NewInteraction`-based) plus several `enabled`/
+`walkbehind_base`/`interactionVariableValues` arrays -- but this build
+has already been shown, repeatedly and conclusively (`EventBlockCmd`,
+`GameAnimation`, `run_event_block`), to predate `NewInteraction`
+entirely and use `EventBlock` instead. 2011's declared layout for this
+region cannot be assumed to apply at all, and `SaveGameSlot`/
+`restore_game_data` give no field-level evidence here since they only
+touch it as part of the single raw blob transfer. Left as an opaque
+tail, honestly labeled unexplored rather than guessed at -- a good next
+thread if a caller ever turns up (most likely candidates: whatever
+this build's own room-level `EventBlock`s for hotspots/regions/the room
+itself are called and stored, and walk-behind-related code, which
+would need `walkbehind_base`-equivalent data from somewhere in this
+range).
+
+## WordsDictionary formalized, plus three clean new function matches along the way
+
+Picked up the last item on the "next candidates" list from `CLAUDE.md`:
+`dict`'s own internal layout had been worked out in an earlier round
+(the `num_words`/`word[]`/`wordnum[]` fields, with a `sub_4039AB`
+placeholder for the reading function) but never turned into a real
+`apply_structs.py` struct or given `sub_4039AB` a proper match entry.
+Revisiting it turned up three clean function identifications for free.
+
+**`sub_4039AB` = `read_dictionary`** (`Common/acroom.h:1552-1560`) --
+an exact shape match: read `num_words` via `getw()`, then loop that
+many times reading a word (via a helper) and a `wordnum` short. Its own
+helper, **`sub_403969` = `read_string_decrypt`** (`acroom.h:1541-1550`)
+-- `newlen=getw(); fread(sss,1,newlen); sss[newlen]=0;
+decrypt_text(sss);`, matching the disasm exactly (this build omits
+2011's later-added corruption sanity check, `newlen<0 ||
+newlen>5000000`, consistent with predating that hardening). And ITS
+helper, **`sub_40390F` = `decrypt_text`** (`acroom.h:1483-1497`) --
+confirmed beyond doubt by the disassembly literally referencing the
+string `"Avis Durgan"` at its decryption-key table, matching 2011's
+`static char *passwencstring = "Avis Durgan";` (`acroom.h:1481`) --
+AGS's well-known text-encryption Easter egg. The loop shape (subtract
+key byte, break on null, advance index mod 11) matches
+instruction-for-instruction.
+
+**`WordsDictionary` itself formalized** with capacity confirmed via a
+satisfying double-arithmetic check: the boundary between `word[]` and
+`wordnum[]` (`0xAFCC`) and the boundary between `wordnum[]` and the
+struct's own end (`0xBB84`, the confirmed `malloc` size from
+`load_ac2game_dta`) both independently divide out to EXACTLY 1500 words
+-- `(0xAFCC-4)/30 = 1500` and `(0xBB84-0xAFCC)/2 = 1500`, two
+completely separate calculations landing on the same integer with zero
+remainder either way. The per-word stride itself (30 bytes) matches
+2011's `MAX_PARSER_WORD_LENGTH=30` (`acroom.h:337`) with zero drift --
+though the outer 1500-word table capacity itself has no 2011 analogue
+at all, since 2011's version is dynamically sized with no fixed
+ceiling. This is the same "flatten a dynamic 2011 double-allocation
+into one fixed blob behind a single presence-flag pointer" pattern seen
+elsewhere in this build (`compiled_script`).
+
+Also note for the record: an attempt to push `InterfaceElement`'s
+remaining fields a third time (this session, before pivoting here)
+found zero new evidence -- a direct address search for every one of
+its unconfirmed fields' computed absolute addresses (`x`/`y`/`x2`/`y2`/
+`bgcol`/`fgcol`/`bordercol`/`vtextxp`/`vtextyp`/`vtextalign`/`vtext`/
+`numbuttons`/`button`/`flags`/`reserved_for_future`/`popupyp`, derived
+from `popup`'s own confirmed address minus `0x330`) across the ENTIRE
+disassembly turned up not one single reference anywhere. This is
+stronger negative evidence than the previous two "no already-matched
+caller touches it" shelvings -- it now looks like Rob Blanc 1 simply
+doesn't use the old icon-bar interface system at all (a plausible
+authoring choice for a game from the GUI-era transition), making this
+a genuine dead end rather than a not-yet-found lead. Recommend not
+re-attempting without a fundamentally different technique (e.g.
+disassembling the room-file/game-file format itself to see whether
+`iface[]` data is even present in Rob Blanc 1's compiled `.crm`/`.dta`
+resources, independent of runtime code).
