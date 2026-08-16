@@ -235,7 +235,7 @@ rather than trusting these numbers as they age)
   944/776 before that addition) — this pool was "largely exhausted" for
   Engine/Common code specifically; a productive third-party-library round
   (Task #10, now paused — see below) pushed it further before wrapping up.
-- `reversing/analysis/matches.json` has 545 entries (function + struct-field
+- `reversing/analysis/matches.json` has 548 entries (function + struct-field
   matches combined)
 - 25 struct definitions built entirely from disassembly evidence (not
   borrowed from the 2011 source — see `reversing/notes/struct-layout-drift.md`):
@@ -509,6 +509,49 @@ rather than trusting these numbers as they age)
   `intrObject`/`intrRegion`/`intrRoom` fields entirely (already proven
   via `EventBlockCmd`/`GameAnimation`), so 2011's declared layout for
   this region cannot be assumed to apply.
+  **A follow-up round cracked part of that tail**: `DisableHotspot`/
+  `EnableHotspot`/`get_hotspot_at` (all already matched) all touch the
+  identical offset, `+0x135C`, confirming `hotspot_enabled[20]` —
+  and the same access pattern turns out to be one already read once
+  before, in `load_new_room`'s room-entry init loop, just not
+  recognized at the time. Capacity 20 matches 2011's own documented
+  ORIGINAL `MAX_HOTSPOTS` value (`Common/acroom.h:65`'s comment: "v2.62
+  increased from 20 to 30; v2.8 to 50") — this build genuinely
+  predates both later increases, a rare case of drift lining up with
+  an explicit version-history comment rather than an inferred pattern.
+  A parallel search for `DisableRegion`/`EnableRegion` came up
+  completely empty (neither name nor error string exists anywhere in
+  this binary, unlike the hotspot pair) — logged as an open lead, not
+  confirmed absent.
+  **An immediate follow-up closed the loop**: `SetWalkBehindBase`
+  (already matched) writes `RoomStatus.walkbehind_base[15]` starting at
+  `+0x1370` — landing EXACTLY where `hotspot_enabled` ends, with ZERO
+  gap. That gap is 2011's declared position for `region_enabled`,
+  so its total absence is now CONFIRMED, not just circumstantial — no
+  room exists for it at all. `walkbehind_base[15]` plus a natural
+  2-byte pad also lands exactly on the struct's confirmed `0x1390`
+  total, which similarly proves 2011's trailing
+  `interactionVariableValues[100]` is CONFIRMED ABSENT too. Only one
+  real gap remains in `RoomStatus`: `+0x170`–`+0x135C` (4588 bytes,
+  where 2011's `NewInteraction`-based fields would sit, already proven
+  irrelevant here).
+  **That last gap closed immediately** — 2011's own source has it
+  commented out right next to the `NewInteraction` declarations:
+  `/* EventBlock hscond[MAX_HOTSPOTS]; EventBlock objcond[
+  MAX_INIT_SPR]; EventBlock misccond; */`, this build's EventBlock-era
+  ancestor layout. `RunHotspotInteraction`/`RunObjectInteraction`
+  (already matched) and a newly-characterized helper called only from
+  `new_room` confirm all three directly: `hscond[20]`@`+0x170`,
+  `objcond[10]`@`+0xD00`, `misccond`@`+0x12C8`. The arithmetic converges
+  from three independent directions at once — `hscond`'s capacity (20)
+  matches `hotspot_enabled`'s independently-confirmed capacity,
+  `objcond`'s capacity (10) matches `RoomObject.obj[]`'s independently-
+  confirmed capacity, and `hscond+objcond`'s combined size lands EXACTLY
+  on `misccond`'s confirmed start, which itself ends EXACTLY on
+  `hotspot_enabled`'s confirmed start. **`RoomStatus` is now FULLY
+  MAPPED** — every byte accounted for, turning out to be almost a
+  direct, still-live implementation of what 2011 keeps only as a
+  commented-out historical footnote.
   **A third attempt at `InterfaceElement`'s remaining fields found
   nothing new** — a direct address search across the ENTIRE
   disassembly for every one of its unconfirmed fields' computed
@@ -527,6 +570,64 @@ rather than trusting these numbers as they age)
   behind a single presence-flag pointer (the same idiom as
   `compiled_script`), with capacity confirmed via two independent
   zero-remainder divisions landing on the same number from both ends.
+  **`CharacterInfo`'s remaining gaps closed the same way `RoomStatus`'s
+  did** — via 2011's OTHER save-compat ancestor, `OldCharacterInfo`
+  (`Common/acroom.h:2599`). Every already-confirmed field already
+  landed exactly where `OldCharacterInfo`'s declared order predicts,
+  including the struct's own total size (`0x140`); reading
+  `FollowCharacterEx`/`SetCharacterIdle`/`SetCharacterTransparency`/
+  `SetCharacterBaseline` (all already matched) confirmed the two small
+  remaining gaps directly (`following`/`followinfo`/`idleview`/
+  `transparency`/`baseline`), and also RESOLVED a long-standing caution
+  note on the `inv` field: `main`'s already-known startup loop writes
+  it as a 2-byte value, not 4 — it's `OldCharacterInfo`'s declared
+  `short inv[100]`, not a mis-sized attempt at 2011's modern 301-entry
+  array as previously worried. The trailing tail (`actx`/`acty`/
+  `name[30]`/`scrname[16]`/`on`) is filled in at MEDIUM confidence,
+  positional-only — no caller found yet, a candidate for a future round.
+  **A follow-up round found leads for two of those**: `GetLocationName`
+  (already matched) passes `name`@`+0x110` straight to `GetTranslation`
+  for the "what's under the cursor" hover text, and `GetCharacterAt`
+  (already matched) delegates to a previously-undocumented internal
+  helper whose per-character hit-test filter checks `on`@`+0x13E`
+  directly. Both upgraded from MEDIUM to HIGH confidence. `actx`/
+  `acty`/`scrname` remain open.
+  **A quick follow-up resolved `scrname` completely**: `compile_room_script`
+  (already matched) passes `scrname`@`+0x12E` straight to `strcat`
+  while building `"#define cEgo 0\r\n"`-style character-name-to-index
+  macros for room-script compilation — upgraded to HIGH confidence.
+  `actx`/`acty` were checked and shelved: 2011's only usage site for
+  either sits deep inside hardware-accelerated drawing code
+  (`gfxDriver`/`actspsbmp`/`SetTint`) this build has already been
+  shown, repeatedly, to predate entirely — plausibly a later addition,
+  not just unfound. `CharacterInfo` is now HIGH confidence everywhere
+  except those two fields.
+  **Fresh survey target: `GUIMain`** — unlike most other structs in
+  this project, its already-confirmed fields (`x`/`y`/`numobjs`/
+  `mouseover`/`mousedownon`/`on`/`objs`/`objrefptr`) turned out to
+  match 2011's CURRENT/live `GUIMain` declaration (not an old
+  save-compat ancestor) with zero drift — a rare case, alongside
+  `MouseCursor`/`InventoryItemInfo`. Laying 2011's declared fields
+  into the five previously-opaque padding gaps closes ALL of them
+  simultaneously with zero slack (`vtext`/`name`/`clickEventHandler`
+  → `+0x00..+0x28`; `wid`/`hit`/`focus` → `+0x30..+0x3C`; `popup`/
+  `popupyp`/`bgcol`/`bgpic`/`fgcol` → `+0x40..+0x54`; `mousewasx`/
+  `mousewasy` → `+0x58..+0x60`; `highlightobj`/`flags`/`transparency`/
+  `zorder`/`guiId`/`reserved[6]` → `+0x64..+0x90`) — a strong
+  over-determined fit even before individual confirmation.
+  `SetGUIBackgroundPic` (already matched) confirms `bgpic`@`+0x4C`
+  directly, anchoring the hypothesis with real evidence. Checked and
+  NOT found: `SetGUIClickable`/`SetGUITransparency`/`SetGUIZOrder` —
+  none of their names or error strings exist in this binary, so
+  `flags`/`transparency`/`zorder` stay MEDIUM confidence.
+  **An immediate follow-up upgraded four more fields at once**:
+  `GetGUIAt` (already matched) touches `on`/`flags`/`x`/`y`/`wid`/`hit`
+  all in one hit-test loop, confirming `flags`@`+0x68` bit 0
+  (`GUIF_NOCLICK`, matching 2011 exactly) and `wid`@`+0x30`/`hit`
+  @`+0x34` (used to compute the bounding box's right/bottom edge)
+  directly, plus reconfirming `x`/`y`/`on`. `transparency`/`zorder`/
+  the color fields remain MEDIUM — no `GUIMain::draw` equivalent is
+  matched yet, the most likely place to find them.
   — this
   **completes the full `GUIObject` class hierarchy** (all six derived
   classes' vtables identified and structs recovered). Struct work has

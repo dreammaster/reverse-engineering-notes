@@ -11,22 +11,29 @@ evidence in the disassembly.
 Currently verified safe:
   - `block` = BITMAP* : a trivial pointer typedef, size-independent of
     BITMAP's actual (currently only partially known) internal layout.
-  - `GUIMain`: a PARTIAL struct. Unlike everything else in this file, this
-    was NOT copied from the 2011 reference source at all -- every named
-    field/size below was read directly off real disassembly instructions
-    while matching GUIMain member functions (remove_popup_interface,
-    is_mouse_on_gui, mouse_but_down, mouse_but_up, get_control_type). See
-    reversing/notes/struct-layout-drift.md for the full derivation of each
-    offset. Total size (0x184, confirmed via an `imul reg, 184h` array-
-    index computation in remove_popup_interface) is exact. `objs[30]` and
-    `objrefptr[30]` (added via get_control_type) are confirmed as separate
-    parallel arrays filling +0x94..+0x184 exactly, matching 2011's
-    MAX_OBJS_ON_GUI=30 with zero drift -- this CORRECTS an earlier
-    `objs[60]` guess made before objrefptr[] was known to exist (that guess
-    inferred length purely from total-size arithmetic, which silently
-    assumed objs[] was the only thing filling that space). Unknown regions
-    are left as opaque `_padN` byte arrays,
-    not guessed field names.
+  - `GUIMain`: mostly filled in now. Unlike most other structs in this file,
+    the core fields (x/y/numobjs/mouseover/mousedownon/on/objs/objrefptr)
+    were originally read directly off real disassembly instructions, not
+    copied from 2011 -- see reversing/notes/struct-layout-drift.md for the
+    full derivation. A later round found that EVERY one of those
+    independently-confirmed fields lands exactly where 2011's CURRENT/MODERN
+    `GUIMain` declaration (`Common/acgui.h:664-687`) predicts -- unlike most
+    other structs in this project, which match an OLD save-compat ancestor
+    instead, this one matches 2011's live layout with zero drift (a rare
+    case, alongside `MouseCursor`/`InventoryItemInfo`). The remaining fields
+    are filled in from that same declaration, MEDIUM confidence unless
+    individually confirmed (see each field's own comment) -- an
+    "over-determined fit": five separate previously-opaque gaps ALL close
+    with zero slack simultaneously against one internally-consistent 2011
+    declaration, which is strong corroborating evidence even where a field
+    lacks its own direct access-site confirmation. Total size (0x184,
+    confirmed via an `imul reg, 184h` array-index computation in
+    remove_popup_interface) is exact, and matches 2011's own declared
+    save-file size (`27 + 2*MAX_OBJS_ON_GUI` ints after a 40-byte header,
+    computed in `GUIMain::ReadFromFile`) exactly -- notably NOT including
+    `drawOrder[MAX_OBJS_ON_GUI]`, which 2011 explicitly regenerates rather
+    than persists, consistent with this build's confirmed total excluding
+    it too.
 
 roomstruct needs no action: the IDB's existing struct already has all 4
 fields named and its size (0x10) exactly matches the reference source's
@@ -362,17 +369,76 @@ SAFE_DECLS = r"""
 typedef BITMAP *block;
 
 struct GUIMain {
-  char _pad0[0x28];       // unknown -- not yet touched by any matched function
-  int x;                  // +0x28, confirmed via GUIMain::mouse_but_down
-  int y;                  // +0x2C, confirmed via GUIMain::mouse_but_down
-  char _pad1[0x0C];       // +0x30..0x3C, unknown
+  // Fields below +0x28 (x) are ALL independently confirmed (see each field's own history in
+  // struct-layout-drift.md); everything ELSE in this struct is filled in from 2011's CURRENT
+  // `GUIMain` declaration (`Common/acgui.h:664-687`), which those confirmed fields match with
+  // zero drift -- an over-determined fit across five separate previously-opaque gaps. MEDIUM
+  // confidence unless a field has its own direct access-site note below.
+  char vtext[4];             // +0x00, MEDIUM confidence: positional/arithmetic fit only. 2011's
+                           // own comment calls this "for compatibility" -- likely already vestigial
+                           // even in 2011, plausibly more so here.
+  char name[16];              // +0x04, MEDIUM confidence: positional/arithmetic fit only, matching
+                           // 2011's declared `char name[16]; // the name of the GUI`.
+  char clickEventHandler[20]; // +0x14, MEDIUM confidence: positional/arithmetic fit only, matching
+                           // 2011's declared field.
+  int x;                  // +0x28, confirmed via GUIMain::mouse_but_down; RECONFIRMED via
+                           // `GetGUIAt` (already matched, script-exported) as part of its
+                           // point-in-bounding-box hit test.
+  int y;                  // +0x2C, confirmed via GUIMain::mouse_but_down; RECONFIRMED via
+                           // `GetGUIAt` the same way as `x` above.
+  int wid;                  // +0x30, high confidence (UPGRADED from MEDIUM): confirmed via
+                           // `GetGUIAt` (already matched, script-exported): "eax=guis[idx].x;
+                           // add eax,[guis+idx*184h+30h]; cmp xx,eax; setle cl" -- computes
+                           // `x+wid` as the right edge of the bounding-box hit test, matching
+                           // 2011's "xx<=guis[aa].x+guis[aa].wid" exactly. Matches 2011's
+                           // declared field (`acgui.h:669`) in position exactly.
+  int hit;                  // +0x34, high confidence (UPGRADED from MEDIUM): confirmed the same
+                           // way as `wid` immediately above -- `GetGUIAt` computes `y+hit` as
+                           // the bottom edge of the bounding-box hit test, matching 2011's
+                           // "yy<=guis[aa].y+guis[aa].hit" exactly.
+  int focus;                 // +0x38, MEDIUM confidence: positional/arithmetic fit only, matching
+                           // 2011's declared "which object has the focus" field.
   int numobjs;             // +0x3C, high confidence: confirmed via GUIMain::get_control_type's bounds
                            // check ("if (indx<0 || indx>=numobjs) return -1;").
-  char _pad2[0x14];       // +0x40..0x54, unknown
+  int popup;                 // +0x40, MEDIUM confidence: positional/arithmetic fit only, matching
+                           // 2011's declared "when it pops up (POPUP_NONE/MOUSEY/SCRIPT)" field.
+  int popupyp;                // +0x44, MEDIUM confidence: same status as `popup` immediately above.
+  int bgcol;                  // +0x48, MEDIUM confidence: positional/arithmetic fit only, boxed in
+                           // with zero slack between the confirmed `popupyp` and `bgpic` fields.
+  int bgpic;                  // +0x4C, high confidence: confirmed via `SetGUIBackgroundPic` (already
+                           // matched, script-exported): "mov [guis+guin*184h+4Ch], slotn" -- sets
+                           // this field directly from its `slotn` parameter, matching 2011's
+                           // declared field in position exactly.
+  int fgcol;                  // +0x50, MEDIUM confidence: positional/arithmetic fit only, boxed in
+                           // with zero slack between the confirmed `bgpic` and `mouseover` fields.
   int mouseover;          // +0x54, confirmed via GUIMain::mouse_but_down
-  char _pad3[0x08];       // +0x58..0x60, unknown
+  int mousewasx;              // +0x58, MEDIUM confidence: positional/arithmetic fit only, matching
+                           // 2011's declared `mousewasx, mousewasy` adjacency.
+  int mousewasy;              // +0x5C, MEDIUM confidence: same status as `mousewasx` immediately above.
   int mousedownon;        // +0x60, confirmed via GUIMain::mouse_but_up/down
-  char _pad4[0x2C];       // +0x64..0x90, unknown
+  int highlightobj;           // +0x64, MEDIUM confidence: positional/arithmetic fit only, matching
+                           // 2011's declared field.
+  int flags;                  // +0x68, high confidence (UPGRADED from MEDIUM): confirmed via
+                           // `GetGUIAt` (already matched, script-exported): "edx=guis[idx].flags;
+                           // and edx,1; test edx,edx; jz <continue-hit-test>; else <skip-this-gui>"
+                           // -- a bit-0 check gating the hit test, matching 2011's declared
+                           // `GUIF_NOCLICK=1` (`acgui.h:662`) exactly ("if (guis[aa].flags &
+                           // GUIF_NOCLICK) continue;"). `SetGUIClickable` itself (the function that
+                           // would SET this bit) was searched for and NOT found anywhere in this
+                           // binary -- consistent with this project's repeated "later API, not yet
+                           // added" pattern -- but the bit is genuinely READ and matches exactly.
+  int transparency;           // +0x6C, MEDIUM confidence: positional/arithmetic fit only. Checked
+                           // for `SetGUITransparency` this round -- also not found in this binary,
+                           // same caveat as `flags` above.
+  int zorder;                 // +0x70, MEDIUM confidence: positional/arithmetic fit only. Checked
+                           // for `SetGUIZOrder`/`GUI_SetZOrder` this round -- also not found.
+  int guiId;                  // +0x74, MEDIUM confidence: positional/arithmetic fit only, matching
+                           // 2011's declared field.
+  int reserved[6];             // +0x78..0x90 (24 bytes), MEDIUM confidence: positional/arithmetic
+                           // fit only, boxed in with zero slack between the confirmed `guiId` and
+                           // `on` fields -- plausible for genuinely unused reserved space, matching
+                           // the field's own name/intent (same reasoning already used for
+                           // `InventoryItemInfo.reserved`).
   int on;                 // +0x90, confirmed via remove_popup_interface + is_mouse_on_gui
   void *objs[30];          // +0x94, high confidence. CORRECTED from an earlier `objs[60]` guess (inferred
                            // purely from total-struct-size arithmetic before objrefptr[] below was known to
@@ -420,16 +486,51 @@ struct CharacterInfo {
   int flags;                // +0x20, high confidence: Character_UnlockView does
                            // "chaa->flags &= ~CHF_FIXVIEW;" where CHF_FIXVIEW=2 (Common/acroom.h:2480) --
                            // disasm matches exactly: `and al, 0FDh` (~2) on a 32-bit field read via `mov eax,[...]`.
-  char _pad2b[0x08];      // +0x24..0x2C, unknown
+                           //
+                           // Everything from here through the end of the struct matches 2011's
+                           // OLD `OldCharacterInfo` ancestor (`Common/acroom.h:2599-2621`) --
+                           // NOT the modern `CharacterInfo` (`acroom.h:2504`) -- position-for-
+                           // position with ZERO drift on every field checked so far, including
+                           // the struct's own total size (0x140, matching exactly). This mirrors
+                           // the `GameSetupStructBase`=`OriGameSetupStruct` finding: this build's
+                           // struct is a still-live implementation of what 2011 keeps only as a
+                           // save-compat ancestor declaration.
+  short following;          // +0x24, high confidence: `FollowCharacterEx` (already matched,
+                           // script-exported): "mov dx,word[tofollow]; mov [chars+who*140h+
+                           // 24h],dx" -- sets this field directly from its `tofollow` parameter.
+                           // Matches 2011's declared field (`acroom.h:2606`) exactly.
+  short followinfo;         // +0x26, high confidence: `FollowCharacterEx` (same call, immediately
+                           // after `following`): "eax=(distaway<<8)|eagerness; mov [chars+who*
+                           // 140h+26h],ax" -- a packed byte pair (distance in the high byte,
+                           // eagerness in the low byte), matching 2011's declared field
+                           // (`acroom.h:2607`) in position and the same packed-byte convention.
+  int idleview;              // +0x28, high confidence: `SetCharacterIdle` (already matched,
+                           // script-exported): "mov [chars+who*140h+28h], iview-1" -- sets this
+                           // field to the caller's `iview` parameter minus 1. Matches 2011's
+                           // declared field (`acroom.h:2608`) in position and type exactly.
   short idletime;           // +0x2C, high confidence: walk_character does
                            // "chin->idleleft=chin->idletime;" -- disasm matches verbatim:
                            // [+0x2E] = [+0x2C] inside the exact "if (chin->idleleft < 0)" branch.
+                           // ALSO reconfirmed via `SetCharacterIdle` (already matched): sets both
+                           // `idletime`@+0x2C and `idleleft`@+0x2E directly from its `itime`
+                           // parameter, matching source's "chin->idletime=itime; chin->idleleft=
+                           // itime;" exactly.
   short idleleft;           // +0x2E, high confidence: same evidence as idletime -- walk_character's
                            // "if (chin->idleleft < 0) { ReleaseCharacterView(...); ... }" matches a
                            // signed [+0x2E]<0 check driving a call to the already-matched ReleaseCharacterView.
                            // Also independently re-confirmed via Character_UnlockView's own
-                           // "chaa->idleleft = chaa->idletime;" at its end.
-  char _pad2c[0x04];      // +0x30..0x34, unknown
+                           // "chaa->idleleft = chaa->idletime;" at its end, and via SetCharacterIdle
+                           // (see idletime above).
+  short transparency;       // +0x30, high confidence: `SetCharacterTransparency` (already matched,
+                           // script-exported): "if(trans==0) t=0; else if(trans==100) t=0xFF; else
+                           // t=((100-trans)*25)/10; mov [chars+obn*140h+30h], t" -- the EXACT same
+                           // transparency-percentage-to-byte formula already confirmed for
+                           // `RoomObject.transparent`. Matches 2011's declared field
+                           // (`acroom.h:2610`) in position and semantic role exactly.
+  short baseline;            // +0x32, high confidence: `SetCharacterBaseline` (already matched,
+                           // script-exported): "mov ax,word[basel]; mov [chars+obn*140h+32h],ax"
+                           // -- sets this field directly from its `basel` parameter. Matches
+                           // 2011's declared field (`acroom.h:2611`) in position exactly.
   int activeinv;            // +0x34, high confidence: SetActiveInventory(-1) sets this to -1,
                            // matching source's "player.activeinv = -1;" exactly.
   short loop;               // +0x38, medium confidence: update_stuff writes an 8-entry direction-lookup
@@ -453,12 +554,52 @@ struct CharacterInfo {
                            // walkspeed (matches 2011's "short walkspeed, animspeed;" pair) plus an earlier,
                            // less certain read-site seen during unrelated work -- not independently nailed
                            // down to the same standard as the fields above.
-  int inv;                 // +0x44, pre-existing IDB annotation, kept as-is. CAUTION: named "inv" by
-                           // earlier work, presumably after 2011's short inv[MAX_INV] array -- but this
-                           // 2002 struct is far too small (0x140 total) to hold a 301-element array, so
-                           // if a per-character inventory array exists here at all it must be a very
-                           // different size/shape. Not re-verified this pass; flagged for a closer look.
-  char _pad5[0xF8];        // +0x48..0x140, unknown (248 bytes, pre-existing "field_48")
+  short inv[100];            // +0x44..0x10C (200 bytes), high confidence: CORRECTS the earlier
+                           // pre-existing "int inv" annotation -- `main` (already matched): "mov
+                           // word ptr [playerchar+ee*2+44h], 1" (or 0) sets each item's starting-
+                           // inventory count as a 2-byte write inside a `for(ee=0;ee<numinvitems;
+                           // ee++)` loop, matching 2011's OLD ancestor `short inv[100]`
+                           // (`acroom.h:2616`) exactly in both type (short, not int) and position.
+                           // Only element-level access confirmed (the array's own existence/type/
+                           // start position is HIGH confidence; individual elements beyond the
+                           // one directly observed are inferred from the confirmed stride, same
+                           // standard used for every other array in this project).
+  short actx;               // +0x10C, MEDIUM confidence: NOT independently confirmed via its own
+                           // access site -- positional inference only, matching 2011's declared
+                           // field (`acroom.h:2617`) immediately after `inv[100]`. Checked and NOT
+                           // found this round: 2011's only usage site for `actx`/`acty`
+                           // (`Engine/AC.CPP:8525-8526`) sits deep inside hardware-accelerated
+                           // drawing code (`gfxDriver`/`actspsbmp`/`SetTint`/`SetLightLevel`) that
+                           // this build has already been shown, repeatedly, to predate entirely --
+                           // plausibly a genuinely later addition, not just unfound.
+  short acty;                // +0x10E, MEDIUM confidence: same status as `actx` immediately above.
+  char name[30];              // +0x110..0x12E, high confidence (UPGRADED from MEDIUM): confirmed
+                           // via `GetLocationName` (already matched, script-exported): "lea
+                           // ecx,[game_chars+idx*140h+110h]; push ecx; call GetTranslation" --
+                           // passes this field straight to the already-matched `GetTranslation`
+                           // and `strcpy`'s the result into the caller's buffer, matching 2011's
+                           // "strcpy(tempo,get_translation(game.chars[onhs].name));" exactly.
+                           // Matches 2011's declared field (`acroom.h:2618`) in position exactly.
+  char scrname[16];           // +0x12E..0x13E, high confidence (UPGRADED from MEDIUM): confirmed
+                           // via `compile_room_script` (already matched): "movsx edx,byte[game_chars
+                           // +aa*140h+12Eh]; test edx,edx; jz <skip>" (checking `scrname[0]==0`)
+                           // then "lea edx,[game_chars+aa*140h+12Eh]; push edx; call strcat" --
+                           // matching 2011's "if (game.chars[aa].scrname[0]==0) continue; ...
+                           // strcat(temphdr,game.chars[aa].scrname);" exactly (building "#define
+                           // cEgo 0\r\n"-style macros mapping script names to character indices
+                           // for room-script compilation). Matches 2011's declared field
+                           // (`acroom.h:2619`) in position exactly.
+  char on;                   // +0x13E, high confidence (UPGRADED from MEDIUM): confirmed via
+                           // `sub_417ECD` (an unnamed internal helper, called from `GetCharacterAt`,
+                           // already matched): "movsx ecx,byte[chars+idx*140h+13Eh]; test ecx,ecx;
+                           // jz <skip-this-character>" -- part of a per-character filter loop
+                           // (room match, `on`, `!(flags & CHF_NOINTERACT)`, valid `view`) used
+                           // to find which character is at a given screen location. Matches
+                           // 2011's declared LAST field (`acroom.h:2620`) in position and
+                           // semantic role ("is this character visible/clickable") exactly.
+  char _pad_align[1];        // +0x13F..0x140, compiler alignment padding (not a real field) --
+                           // boxed in with zero slack by the confirmed total stride (0x140) and
+                           // `on`'s own predicted end at +0x13F.
 };
 
 struct ccScript;  // forward declaration -- full definition follows ccInstance below, since
@@ -2118,6 +2259,15 @@ struct RoomStatus {
   // `ElementSize` for a single `fwrite`/`fread` of the ENTIRE `roomstats` array as one raw blob
   // (plus a SEPARATE, size-prefixed transfer for the `tsdata` pointer field specifically, since
   // heap-allocated pointers can't be blindly blob-copied across save files -- see below).
+  //
+  // STRUCT FULLY MAPPED: every byte from +0x00 through +0x1390 is now accounted for. The
+  // region 2011 fills with `NewInteraction`-based `intrHotspot`/`intrObject`/`intrRegion`/
+  // `intrRoom` (already proven entirely absent from this build, see `EventBlockCmd`/
+  // `GameAnimation`) turns out to hold this build's OWN EventBlock-based per-room interaction
+  // data instead -- `hscond[20]`/`objcond[10]`/`misccond` below, matching 2011's OWN dead-
+  // commented-out declaration for exactly this (`Common/acruntim.h:105-107`) almost verbatim.
+  // `region_enabled` and `interactionVariableValues` are CONFIRMED ABSENT (see their own notes
+  // below). 8 fields confirmed total, plus 2 confirmed absent.
   int beenhere;                     // +0x00, high confidence: confirmed via `load_new_room`
                             // (already matched): "cmp dword ptr[croom],0" gates a "first time
                             // entering this room" initialization block. Matches 2011's declared
@@ -2163,16 +2313,103 @@ struct RoomStatus {
                             // declared `char* tsdata` (`acruntim.h:100`) in position and
                             // semantic role exactly, including the "free the old buffer before
                             // replacing it" pattern on restore.
-  unsigned char _tail_unexplored[0x1220]; // +0x170..0x1390 (4640 bytes), UNCONFIRMED.
-                            // 2011 declares `intrHotspot`/`intrObject`/`intrRegion`/`intrRoom`
-                            // (all `NewInteraction`-based) filling most of this space, plus
-                            // `hotspot_enabled`/`region_enabled`/`walkbehind_base`/
-                            // `interactionVariableValues` -- but this build predates
-                            // NewInteraction entirely (see EventBlockCmd/GameAnimation's own
-                            // struct comments), so 2011's layout cannot be assumed to apply here
-                            // at all. Not explored this round -- `SaveGameSlot`/
-                            // `restore_game_data` only touch this region as part of the single
-                            // raw `0x1390`-byte blob transfer, giving no field-level evidence.
+  EventBlock hscond[20];              // +0x170..0xD00 (3760 bytes), high confidence: confirmed
+                            // via `RunHotspotInteraction` (already matched): "imul ecx,hotspothere,
+                            // 94h; mov edx,dword_523128(croom); lea eax,[edx+ecx+170h]" -- a
+                            // per-hotspot EventBlock array starting IMMEDIATELY after `tsdata`,
+                            // matching 2011's OWN dead-commented-out declaration exactly
+                            // (`Common/acruntim.h:105`, "/* EventBlock hscond[MAX_HOTSPOTS]; ...
+                            // */" -- 2011 replaced this with the NewInteraction-based
+                            // `intrHotspot` array, but left the OLD EventBlock-based declaration
+                            // as a comment, which is exactly what this build still has live).
+                            // Capacity 20 matches the ALREADY-confirmed `hotspot_enabled[20]`
+                            // capacity exactly (independent confirmation via a completely
+                            // different access site), and the stride (`0x94`, EventBlock's own
+                            // confirmed size) times 20 lands EXACTLY on the independently-
+                            // confirmed `objcond` start below with zero slack.
+  EventBlock objcond[10];             // +0xD00..0x12C8 (1480 bytes), high confidence: confirmed
+                            // via `RunObjectInteraction` (already matched): "imul ecx,aa,94h; mov
+                            // edx,dword_523128; lea eax,[edx+ecx+0D00h]" -- a per-object EventBlock
+                            // array, matching 2011's dead-commented `EventBlock objcond[
+                            // MAX_INIT_SPR]` (`acruntim.h:106`) in the same way as `hscond` above.
+                            // Capacity 10 matches the ALREADY-confirmed `RoomObject obj[10]`
+                            // capacity exactly (independent confirmation via a completely
+                            // different access site: `obj[]`'s own count came from `SaveGameSlot`/
+                            // `restore_game_data` arithmetic, `objcond`'s from a live script-API
+                            // caller). `hscond[20] + objcond[10]` (`0x1160 + 0x5C8 = 0x1728` from
+                            // `+0x170`) lands EXACTLY on `+0x12C8`, zero slack.
+  EventBlock misccond;                // +0x12C8..0x135C (148 bytes), high confidence: confirmed
+                            // via `sub_40C335` (already matched, called only from `new_room`):
+                            // "mov ecx,dword_523128; add ecx,12C8h; ...; call run_event_block"
+                            // with `String1="room"` -- the room-level EventBlock (2011's dead-
+                            // commented `EventBlock misccond;`, acruntim.h:107, handling
+                            // "Player Enters Screen"/"Player Leaves Screen" room events). Ends
+                            // EXACTLY at the already-confirmed `hotspot_enabled` start (`+0x135C`)
+                            // with zero slack -- the THIRD independent arithmetic convergence in
+                            // this one small resolved region (hscond capacity, objcond capacity,
+                            // and now misccond's own end position), closing the entire previously-
+                            // opaque `+0x170..+0x135C` gap with real, caller-confirmed fields
+                            // instead of an unexplored blob. All 9 `run_event_block` call sites in
+                            // the binary are now accounted for: 2x `RunCharacterInteraction`
+                            // (character-level, a SEPARATE global array, not part of RoomStatus),
+                            // 2x `RunHotspotInteraction` (`hscond`), 2x `RunObjectInteraction`
+                            // (`objcond`), 1x `sub_40C335`/`new_room` (`misccond`), 1x
+                            // `run_event_block_inv` (inventory-level, also a separate array), and
+                            // 1x `process_event`'s generic dispatch (routes to a pointer resolved
+                            // elsewhere, not itself a new lead).
+  char hotspot_enabled[20];           // +0x135C..0x1370 (20 bytes), high confidence: confirmed
+                            // via FOUR independent already-matched sites all agreeing on this
+                            // exact offset: `DisableHotspot`/`EnableHotspot` (both script-
+                            // exported, "cmp hsnum,1; ...; cmp hsnum,14h(20); ..." bounds-checks
+                            // hsnum to the range 1 through 19 inclusive before writing 0/1 to
+                            // `croom[+0x135C+hsnum]`), `get_hotspot_at` (already matched: reads
+                            // `croom[+0x135C+hsidx]`,
+                            // "if zero, treat as no hotspot here" -- gating hotspot hit-testing
+                            // on this exact flag), and `load_new_room` (already matched: a
+                            // room-load init loop, "for(cc=0;cc<14h(20);cc++)
+                            // croom[+0x135C+cc]=1", resetting every hotspot to enabled on room
+                            // entry). DRIFT: capacity 20 here matches 2011's documented ORIGINAL
+                            // `MAX_HOTSPOTS` value before it was later increased (`Common/
+                            // acroom.h:65` comment: "v2.62 increased from 20 to 30; v2.8 to
+                            // 50") -- this build genuinely predates both of those increases,
+                            // a rare case of a confirmed field matching 2011's OLDEST
+                            // documented capacity rather than a smaller ad-hoc reduction.
+                            // Matches 2011's declared field (`acruntim.h:108`) in semantic role
+                            // exactly, just not immediately adjacent to `tsdata` the way 2011
+                            // declares it (2011 has several `NewInteraction`-based fields
+                            // between them that this build doesn't have).
+  short walkbehind_base[15];           // +0x1370..0x138E (30 bytes), high confidence: confirmed
+                            // via `SetWalkBehindBase` (already matched, script-exported --
+                            // currently mislabeled `SetalkBehindBase` in the IDB, a pre-existing
+                            // typo, not introduced by this project): "cmp wa,1; ...; cmp wa,0Fh
+                            // (15); ..." bounds-checks its `wa` argument to [1,14] before "mov
+                            // [croom+wa*2+1370h], bl" (a 2-byte/short write, matching 2011's
+                            // declared `short` element type exactly). Sits IMMEDIATELY after the
+                            // confirmed `hotspot_enabled[20]` with ZERO gap -- this is also the
+                            // decisive evidence that 2011's declared `region_enabled[MAX_REGIONS]`
+                            // (`Common/acruntim.h`, between `hotspot_enabled` and
+                            // `walkbehind_base`) is CONFIRMED ABSENT from this build, not merely
+                            // unfound: there is no room for it at all between the two confirmed
+                            // neighbors. Consistent with the independently-noted absence of
+                            // `DisableRegion`/`EnableRegion`'s names AND error strings anywhere
+                            // in this binary (unlike `DisableHotspot`/`EnableHotspot`, both
+                            // present) -- this build most likely predates per-region
+                            // enable/disable as a concept entirely, even though per-region
+                            // tinting/light-level data already exists elsewhere (`SetAreaLightLevel`,
+                            // already matched). DRIFT: capacity 15 (valid indices 1-14, plus an
+                            // implicit reserved index 0, matching the same "index 0 = none"
+                            // convention as `hotspot_enabled`) vs. 2011's declared `MAX_OBJ=16`
+                            // (`Common/acroom.h:60`) -- a one-less reduction, unconfirmed whether
+                            // this reflects a genuinely older `MAX_OBJ` value the way
+                            // `hotspot_enabled`'s capacity did (no equivalent version-history
+                            // comment exists for `MAX_OBJ` in the reference source).
+  char _pad_align[2];                // +0x138E..0x1390, compiler alignment padding (not a real
+                            // field) -- boxed in with zero slack by the confirmed total stride
+                            // (0x1390) and `walkbehind_base`'s own confirmed end at +0x138E. 2011's
+                            // trailing `int interactionVariableValues[MAX_GLOBAL_VARIABLES]`
+                            // (100 ints = 400 bytes) is CONFIRMED ABSENT here too -- there is no
+                            // room for it at all, the struct simply ends 2 bytes after
+                            // `walkbehind_base`.
 };
 
 struct WordsDictionary {

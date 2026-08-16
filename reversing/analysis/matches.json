@@ -287,7 +287,7 @@
   "source_obj": "AC.obj",
   "is_library": false,
   "confidence": "high",
-  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj NEW FIELD EVIDENCE (CharacterInfo struct recovery, OldCharacterInfo round): confirms CharacterInfo.idleview@+0x28 (\"mov [chars+who*140h+28h], iview-1\"), and reconfirms idletime@+0x2C/idleleft@+0x2E (both set directly from `itime`), wait@+0x1C (reset to 0), and flags@+0x20 (CHF_FIXVIEW bit checked for a debug_log warning) -- all matching 2011's OLD ancestor OldCharacterInfo declaration (Common/acroom.h:2608-2609) exactly. See reversing/notes/struct-layout-drift.md for the complete writeup."
  },
  {
   "kind": "function",
@@ -677,7 +677,7 @@
   "source_obj": "AC.obj",
   "is_library": false,
   "confidence": "high",
-  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj NEW FIELD EVIDENCE (CharacterInfo struct recovery, OldCharacterInfo round): confirms CharacterInfo.baseline@+0x32 (\"mov ax,word[basel]; mov [chars+obn*140h+32h],ax\"), matching 2011's OLD ancestor OldCharacterInfo declaration (Common/acroom.h:2611) exactly. See reversing/notes/struct-layout-drift.md for the complete writeup."
  },
  {
   "kind": "function",
@@ -687,7 +687,7 @@
   "source_obj": "AC.obj",
   "is_library": false,
   "confidence": "high",
-  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj NEW FIELD EVIDENCE (CharacterInfo struct recovery, OldCharacterInfo round): confirms CharacterInfo.transparency@+0x30 -- the EXACT same \"((100-trans)*25)/10\" percentage-to-byte formula already confirmed for RoomObject.transparent, matching 2011's OLD ancestor OldCharacterInfo declaration (Common/acroom.h:2610) exactly. See reversing/notes/struct-layout-drift.md for the complete writeup."
  },
  {
   "kind": "function",
@@ -877,7 +877,7 @@
   "source_obj": "AC.obj",
   "is_library": false,
   "confidence": "high",
-  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj NEW FIELD EVIDENCE (GUIMain struct recovery): a rich source of GUIMain field confirmations. Confirms GUIMain.flags@+0x68 bit 0 (\"and edx,1; test edx,edx; jz <continue>\"), matching 2011's GUIF_NOCLICK=1 (Common/acgui.h:662) exactly. Confirms GUIMain.wid@+0x30 and .hit@+0x34, both used to compute the bounding-box's right/bottom edge (\"x+wid\"/\"y+hit\") for the point-in-rectangle hit test, matching 2011's \"xx<=guis[aa].x+guis[aa].wid\"/\"yy<=guis[aa].y+guis[aa].hit\" exactly. Also RECONFIRMS x@+0x28, y@+0x2C, and on@+0x90 (checked >=1) via the same hit-test loop, matching 2011's GetGUIAt (Engine/AC.CPP:16085-16098) instruction-for-instruction. See reversing/notes/struct-layout-drift.md for the complete writeup."
  },
  {
   "kind": "function",
@@ -907,7 +907,7 @@
   "source_obj": "AC.obj",
   "is_library": false,
   "confidence": "high",
-  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj NEW FIELD EVIDENCE (RoomStatus struct recovery, closing its last opaque gap): confirms RoomStatus.objcond[10] @ +0xD00 -- \"imul ecx,aa,94h; mov edx,dword_523128(croom); lea eax,[edx+ecx+0D00h]; call run_event_block\" -- a per-object EventBlock array, matching 2011's own dead-commented-out declaration \"EventBlock objcond[MAX_INIT_SPR];\" (Common/acruntim.h:106) almost verbatim. Capacity 10 independently matches the already-confirmed RoomObject obj[10] capacity (via a completely different access site), and hscond[20]+objcond[10] (0x170 + 0x1160 + 0x5C8) lands EXACTLY on +0x12C8 with zero slack, matching the independently-confirmed misccond start position. See reversing/notes/struct-layout-drift.md for the complete writeup."
  },
  {
   "kind": "function",
@@ -917,7 +917,7 @@
   "source_obj": "AC.obj",
   "is_library": false,
   "confidence": "high",
-  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj NEW FIELD EVIDENCE (CharacterInfo struct recovery, OldCharacterInfo round): its internal per-character filter helper (sub_417ECD, documented separately) confirms CharacterInfo.on@+0x13E as part of a hit-testing filter loop. See sub_417ECD's own matches.json entry and reversing/notes/struct-layout-drift.md for the complete writeup."
  },
  {
   "kind": "function",
@@ -977,7 +977,7 @@
   "source_obj": "AC.obj",
   "is_library": false,
   "confidence": "high",
-  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj NEW FIELD EVIDENCE (RoomStatus struct recovery, closing its last opaque gap): confirms RoomStatus.hscond[20] @ +0x170 -- \"imul ecx,hotspothere,94h; mov edx,dword_523128(croom); lea eax,[edx+ecx+170h]; call run_event_block\" -- a per-hotspot EventBlock array starting IMMEDIATELY after the confirmed `tsdata` field, matching 2011's own dead-commented-out declaration \"EventBlock hscond[MAX_HOTSPOTS];\" (Common/acruntim.h:105) almost verbatim. Capacity 20 independently matches the already-confirmed RoomStatus.hotspot_enabled[20] capacity (via a completely different access site). See reversing/notes/struct-layout-drift.md for the complete writeup."
  },
  {
   "kind": "function",
@@ -1017,7 +1017,7 @@
   "source_obj": "AC.obj",
   "is_library": false,
   "confidence": "high",
-  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj NEW FIELD EVIDENCE (RoomStatus struct recovery): confirms RoomStatus.hotspot_enabled[20] @ +0x135C -- \"cmp hsnum,1; ...; cmp hsnum,14h(20); ...\" bounds-checks hsnum to 1 through 19 inclusive (giving MAX_HOTSPOTS=20 for this build -- matching 2011's documented ORIGINAL value before it was later increased to 30 then 50, Common/acroom.h:65 comment) before \"mov byte ptr[croom+0x135C+hsnum],0\". See reversing/notes/struct-layout-drift.md for the complete writeup."
  },
  {
   "kind": "function",
@@ -1027,7 +1027,7 @@
   "source_obj": "AC.obj",
   "is_library": false,
   "confidence": "high",
-  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj NEW FIELD EVIDENCE (RoomStatus struct recovery): same evidence as DisableHotspot's own entry, just writing 1 instead of 0 to RoomStatus.hotspot_enabled[hsnum] @ +0x135C."
  },
  {
   "kind": "function",
@@ -1177,7 +1177,7 @@
   "source_obj": "AC.obj",
   "is_library": false,
   "confidence": "high",
-  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj NEW FIELD EVIDENCE (CharacterInfo struct recovery, OldCharacterInfo round): confirms CharacterInfo.following@+0x24 (\"mov dx,word[tofollow]; mov [chars+who*140h+24h],dx\") and CharacterInfo.followinfo@+0x26 (\"eax=(distaway<<8)|eagerness; mov [chars+who*140h+26h],ax\", a packed byte pair) -- both matching 2011's OLD ancestor OldCharacterInfo declaration (Common/acroom.h:2606-2607) exactly in position and type. See reversing/notes/struct-layout-drift.md for the complete writeup."
  },
  {
   "kind": "function",
@@ -1537,7 +1537,7 @@
   "source_obj": "AC.obj",
   "is_library": false,
   "confidence": "high",
-  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj NEW FIELD EVIDENCE (GUIMain struct recovery): confirms GUIMain.bgpic@+0x4C -- \"mov [guis+guin*184h+4Ch], slotn\" -- sets this field directly from its `slotn` parameter, matching 2011's declared field (Common/acgui.h:674) in position exactly. This is also the piece of evidence that anchors the rest of GUIMain's previously-opaque gaps: every already-confirmed field (x/y/numobjs/mouseover/mousedownon/on/objs/objrefptr) was found to land exactly where 2011's CURRENT/MODERN GUIMain declaration predicts, and this round confirmed one of the remaining gap fields directly for the first time. See reversing/notes/struct-layout-drift.md for the complete writeup."
  },
  {
   "kind": "function",
@@ -1767,7 +1767,7 @@
   "source_obj": "AC.obj",
   "is_library": false,
   "confidence": "high",
-  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+  "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj NEW FIELD EVIDENCE (CharacterInfo struct recovery, OldCharacterInfo round): confirms CharacterInfo.name@+0x110 -- the character-hovering branch does \"lea ecx,[game_chars+charidx*140h+110h]; push ecx; call GetTranslation\" then strcpy's the result into the caller's destination buffer, matching 2011's \"strcpy(tempo,get_translation(game.chars[onhs].name));\" exactly. Upgrades name from MEDIUM (positional) to HIGH confidence. See reversing/notes/struct-layout-drift.md for the complete writeup."
  },
  {
   "kind": "function",
@@ -3520,7 +3520,7 @@
   "source_file": "Engine/AC.CPP",
   "source_line": 4055,
   "confidence": "high",
-  "evidence": "void load_new_room(int newnum, CharacterInfo *forchar) at AC.CPP:4055. String matches: \"room%d.crm\" and \"intro.crm\" (both at AC.CPP:4066-4071, the room-filename resolution logic) plus room-script-data related string. Callgraph: calls sub_404959 (load_room), completing a clean 3-level chain load_new_room -> load_room -> load_main_block that matches the source exactly. NEW FIELD EVIDENCE (RoomObject struct recovery): confirms `dword_523128` = `&roomstats[newnum]` -- \"mov eax,roomstats; add eax,newnum*1390h /* sizeof(RoomStatus) */; mov dword_523128,eax\" (or, for an out-of-range room number, a fixed fallback \"mov dword_523128, offset dword_4EF3A0\") -- matching 2011's \"croom=&roomstats[newnum]\" (AC.CPP:4259) exactly (`roomstats` itself already independently confirmed as the global `RoomStatus *roomstats`, AC.CPP:493). Confirms RoomStatus.beenhere@+0x00 (\"cmp dword ptr[dword_523128],0\") and RoomStatus.numobj@+0x04 (set from a global default count, then used as a loop bound) match 2011's declared leading fields (Common/acruntim.h:94-97) exactly, and confirms `dword_4E45C8` = `dword_523128+8` = `&roomstats[newnum].obj[0]` -- the array formalized as the new RoomObject struct (see apply_structs.py). The per-object initialization loop, \"imul edx,chaa,0Ah; movsx eax,word_51FF5C[edx]; ...; mov [dword_523128+chaa*20h+8],eax\", is the access site for RoomObject.transparent@+0x08 (MEDIUM confidence -- role inferred from 2011's field order, not independently confirmed via a script API). See reversing/notes/struct-layout-drift.md for the complete writeup, including the correction of an earlier \"per-character\" misattribution of this same array."
+  "evidence": "void load_new_room(int newnum, CharacterInfo *forchar) at AC.CPP:4055. String matches: \"room%d.crm\" and \"intro.crm\" (both at AC.CPP:4066-4071, the room-filename resolution logic) plus room-script-data related string. Callgraph: calls sub_404959 (load_room), completing a clean 3-level chain load_new_room -> load_room -> load_main_block that matches the source exactly. NEW FIELD EVIDENCE (RoomObject struct recovery): confirms `dword_523128` = `&roomstats[newnum]` -- \"mov eax,roomstats; add eax,newnum*1390h /* sizeof(RoomStatus) */; mov dword_523128,eax\" (or, for an out-of-range room number, a fixed fallback \"mov dword_523128, offset dword_4EF3A0\") -- matching 2011's \"croom=&roomstats[newnum]\" (AC.CPP:4259) exactly (`roomstats` itself already independently confirmed as the global `RoomStatus *roomstats`, AC.CPP:493). Confirms RoomStatus.beenhere@+0x00 (\"cmp dword ptr[dword_523128],0\") and RoomStatus.numobj@+0x04 (set from a global default count, then used as a loop bound) match 2011's declared leading fields (Common/acruntim.h:94-97) exactly, and confirms `dword_4E45C8` = `dword_523128+8` = `&roomstats[newnum].obj[0]` -- the array formalized as the new RoomObject struct (see apply_structs.py). The per-object initialization loop, \"imul edx,chaa,0Ah; movsx eax,word_51FF5C[edx]; ...; mov [dword_523128+chaa*20h+8],eax\", is the access site for RoomObject.transparent@+0x08 (MEDIUM confidence -- role inferred from 2011's field order, not independently confirmed via a script API). See reversing/notes/struct-layout-drift.md for the complete writeup, including the correction of an earlier \"per-character\" misattribution of this same array. NEW FIELD EVIDENCE (RoomStatus struct recovery): the room-load initialization loop found in an earlier round (\"for(chaa=0;chaa<14h(20);chaa++) byte ptr[dword_523128+chaa+135Ch]=1\") is now identified precisely -- it resets RoomStatus.hotspot_enabled[0..19] to 1 (all hotspots enabled) on room entry, a THIRD independent confirmation of both the +0x135C offset and the MAX_HOTSPOTS=20 capacity, matching 2011's equivalent room-load reset logic for hotspot_enabled. See reversing/notes/struct-layout-drift.md for the complete writeup."
  },
  {
   "kind": "manual",
@@ -3898,7 +3898,7 @@
   "source_file": "Engine/AC.CPP",
   "source_line": 25789,
   "confidence": "high",
-  "evidence": "void compile_room_script() at AC.CPP:25789. String match: \"Unable to create local script: %s\" (25796). Caller matches exactly: load_new_room (already matched), which compiles the room script after loading room data."
+  "evidence": "void compile_room_script() at AC.CPP:25789. String match: \"Unable to create local script: %s\" (25796). Caller matches exactly: load_new_room (already matched), which compiles the room script after loading room data. NEW FIELD EVIDENCE (CharacterInfo struct recovery, OldCharacterInfo round): confirms CharacterInfo.scrname@+0x12E -- \"movsx edx,byte[game_chars+aa*140h+12Eh]; test edx,edx; jz <skip>\" (checking scrname[0]==0) then \"lea edx,[game_chars+aa*140h+12Eh]; push edx; call strcat\" -- matching 2011's \"if (game.chars[aa].scrname[0]==0) continue; ... strcat(temphdr,game.chars[aa].scrname);\" exactly, building \"#define cEgo 0\r\n\"-style macros mapping character script names to indices for room-script compilation. Upgrades scrname from MEDIUM (positional) to HIGH confidence. See reversing/notes/struct-layout-drift.md for the complete writeup."
  },
  {
   "kind": "manual",
@@ -3988,7 +3988,7 @@
   "source_file": "Engine/AC.CPP",
   "source_line": 8939,
   "confidence": "high",
-  "evidence": "int get_hotspot_at(int,int) at AC.CPP:8939. Found via pure callgraph/structural analysis, no string evidence -- inside mainloop (already matched), the exact call/arg pattern from source line 25453 (int hotspotThere = get_hotspot_at(playerchar->x, playerchar->y); setevent(EV_RUNEVBLOCK, EVB_HOTSPOT, hotspotThere, 0);) appears verbatim in the disassembly: two args pulled from playerchar struct offsets +0x14/+0x18, a call to sub_411E2A, the result stored, then immediately pushed into a setevent(2,1,X,0) call (setevent already matched). Also called from ProcessClick (already-named) and sub_411E70 (matched below to __GetLocationType), both of which plausibly need hotspot lookups."
+  "evidence": "int get_hotspot_at(int,int) at AC.CPP:8939. Found via pure callgraph/structural analysis, no string evidence -- inside mainloop (already matched), the exact call/arg pattern from source line 25453 (int hotspotThere = get_hotspot_at(playerchar->x, playerchar->y); setevent(EV_RUNEVBLOCK, EVB_HOTSPOT, hotspotThere, 0);) appears verbatim in the disassembly: two args pulled from playerchar struct offsets +0x14/+0x18, a call to sub_411E2A, the result stored, then immediately pushed into a setevent(2,1,X,0) call (setevent already matched). Also called from ProcessClick (already-named) and sub_411E70 (matched below to __GetLocationType), both of which plausibly need hotspot lookups. NEW FIELD EVIDENCE (RoomStatus struct recovery): reads RoomStatus.hotspot_enabled[hsidx] @ +0x135C (\"mov eax,dword_523128(croom); add eax,var_4(hsidx); movsx ecx,byte ptr[eax+135Ch]; test ecx,ecx; jnz <use-it>; else return 0\") -- gating hotspot hit-testing on this flag, matching 2011's \"if (!croom->hotspot_enabled[hsat]) hsat=0;\"-style check exactly. See reversing/notes/struct-layout-drift.md for the complete writeup."
  },
  {
   "kind": "manual",
@@ -5032,7 +5032,7 @@
   "source_file": "Engine/AC.CPP",
   "source_line": 26196,
   "confidence": "high",
-  "evidence": "Retroactive struct-field documentation (main itself was already named in the IDB via exact linker-symbol match against acwin.map, obj=AC.obj, long before this entry existed -- no prior matches.json record of the extensive evidence already cited against it elsewhere in this project). New field evidence recorded here: GameSetupStructBase.defpal[256] (dword_51344A) @ +0x132, RE-CONFIRMED after an earlier session's retraction. This exact function has its OWN copy of \"for(ee=0;ee<256;ee++) if(paluses[ee]!=PAL_BACKGROUND) palette[ee]=defpal[ee];\" (AC.CPP:26196-26198), matching disasm's \"cmp byte_51334A[ecx],2; jz <skip>; mov ecx,dword_51344A[eax*4]; mov palette[edx*4],ecx\" exactly -- an UNCONDITIONAL 4-byte-stride read reaching index 255, addressing the full 1024 bytes starting at dword_51344A, matching 2011's `color defpal[256]` (Common/acroom.h:2773) in both type and count with zero drift. This is a DIFFERENT loop from the superficially-similar one inside load_new_room (already matched), which reads from a genuinely separate global (dword_51F69C) -- do not confuse the two. This finding resolves the earlier `defpal` retraction: the original retraction checked only IDA's declared label extent (~204 bytes before hitting what IDA calls g_interface), never whether the code itself indexes further -- it does, and the addressable range this loop reaches extends well past g_interface's own label boundary, proving g_interface is not a genuinely separate global (see the InterfaceElement/iface entry below for the full resolution). See reversing/notes/struct-layout-drift.md for the complete writeup. ADDITIONAL FIELD EVIDENCE (found later, GameSetupStructBase.invinfo[100] investigation): main's startup sequence has a \"for(ee=0;ee<game.numinvitems;ee++)\" loop reading \"movsx eax,byte_51B894[edx*0x44]; and eax,1; test eax,eax; jz <skip>; ...set playerchar's inv[ee]=1...\" -- checking invinfo[ee].flags bit 0 and, if set, giving the player 1 starting copy of that item. Matches 2011's IFLG_STARTWITH=1 (Common/acroom.h:2623) semantics exactly (\"start the player off with this item\"). Confirms invinfo[].flags @ element-relative +0x40 (dword_51B894 - dword_51B870 = 0x24 = 36, plus pic's own +0x1C offset = +0x40), matching 2011's declared `char flags;` (acroom.h:2629) -- the struct's LAST field -- at its EXACT predicted offset with zero drift. The same block also scales invinfo[].hotx/.hoty by current_screen_resolution_multiplier_x/_y at startup, matching 2011's general low-res-authored-coordinates-to-actual-resolution scaling pattern. See reversing/notes/struct-layout-drift.md for the full InventoryItemInfo writeup."
+  "evidence": "Retroactive struct-field documentation (main itself was already named in the IDB via exact linker-symbol match against acwin.map, obj=AC.obj, long before this entry existed -- no prior matches.json record of the extensive evidence already cited against it elsewhere in this project). New field evidence recorded here: GameSetupStructBase.defpal[256] (dword_51344A) @ +0x132, RE-CONFIRMED after an earlier session's retraction. This exact function has its OWN copy of \"for(ee=0;ee<256;ee++) if(paluses[ee]!=PAL_BACKGROUND) palette[ee]=defpal[ee];\" (AC.CPP:26196-26198), matching disasm's \"cmp byte_51334A[ecx],2; jz <skip>; mov ecx,dword_51344A[eax*4]; mov palette[edx*4],ecx\" exactly -- an UNCONDITIONAL 4-byte-stride read reaching index 255, addressing the full 1024 bytes starting at dword_51344A, matching 2011's `color defpal[256]` (Common/acroom.h:2773) in both type and count with zero drift. This is a DIFFERENT loop from the superficially-similar one inside load_new_room (already matched), which reads from a genuinely separate global (dword_51F69C) -- do not confuse the two. This finding resolves the earlier `defpal` retraction: the original retraction checked only IDA's declared label extent (~204 bytes before hitting what IDA calls g_interface), never whether the code itself indexes further -- it does, and the addressable range this loop reaches extends well past g_interface's own label boundary, proving g_interface is not a genuinely separate global (see the InterfaceElement/iface entry below for the full resolution). See reversing/notes/struct-layout-drift.md for the complete writeup. ADDITIONAL FIELD EVIDENCE (found later, GameSetupStructBase.invinfo[100] investigation): main's startup sequence has a \"for(ee=0;ee<game.numinvitems;ee++)\" loop reading \"movsx eax,byte_51B894[edx*0x44]; and eax,1; test eax,eax; jz <skip>; ...set playerchar's inv[ee]=1...\" -- checking invinfo[ee].flags bit 0 and, if set, giving the player 1 starting copy of that item. Matches 2011's IFLG_STARTWITH=1 (Common/acroom.h:2623) semantics exactly (\"start the player off with this item\"). Confirms invinfo[].flags @ element-relative +0x40 (dword_51B894 - dword_51B870 = 0x24 = 36, plus pic's own +0x1C offset = +0x40), matching 2011's declared `char flags;` (acroom.h:2629) -- the struct's LAST field -- at its EXACT predicted offset with zero drift. The same block also scales invinfo[].hotx/.hoty by current_screen_resolution_multiplier_x/_y at startup, matching 2011's general low-res-authored-coordinates-to-actual-resolution scaling pattern. See reversing/notes/struct-layout-drift.md for the full InventoryItemInfo writeup. ADDITIONAL FIELD EVIDENCE (found later, CharacterInfo struct recovery, OldCharacterInfo round): the same startup loop already cited for InventoryItemInfo.flags/IFLG_STARTWITH also CORRECTS CharacterInfo's own \"inv\" field -- \"mov word ptr [playerchar+ee*2+44h], 1\" (or 0) is a 2-byte write, not the 4-byte write the earlier \"int inv\" annotation implied. This matches 2011's OLD ancestor OldCharacterInfo's declared \"short inv[100]\" (Common/acroom.h:2616) exactly in both type and position -- the previous annotation's caution note (\"this 2002 struct is far too small to hold a 301-element array\") is now resolved: it never held one, it holds OldCharacterInfo's smaller short array instead. See reversing/notes/struct-layout-drift.md for the complete writeup."
  },
  {
   "kind": "manual",
@@ -5249,5 +5249,33 @@
   "source_line": null,
   "confidence": "medium",
   "evidence": "JGMOD library, format check in the sub_477320 (load_mod, already matched) cascade -- opens the file \"rb\", reads 4 bytes and compares against an unidentified 4-byte binary constant (unk_4C41E4, bytes C1 83 2A 9E, NOT printable ASCII -- identical to a constant checked first in sub_47C360, see its own entry) before falling back to a byte-by-byte sliding-window scan for the matched string \"IMPM\" (aImpm) -- an IT-format-adjacent check, but structurally different from sub_47D4D0's simple fixed-offset IT check (this one returns a position/index rather than a boolean, used by the caller as an argument to the load function rather than a plain yes/no gate -- possibly indexing into a multi-module container or archive format). MEDIUM confidence: the IT-adjacent role is clear, but the leading 4-byte constant's purpose and the returned-index semantics are not resolved. Not renamed since no JGMOD source tree exists in this repo to verify an exact function name against. See reversing/notes/third-party-library-identification.md."
+ },
+ {
+  "kind": "function",
+  "asm_name": "SetalkBehindBase",
+  "new_name": "SetWalkBehindBase",
+  "source_file": "Engine/AC.CPP",
+  "source_obj": "AC.obj",
+  "is_library": false,
+  "confidence": "high",
+  "evidence": "Retroactive documentation -- exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj (this function was already correctly identified via the linker map in an earlier pass; the IDB label itself has a pre-existing typo, \"SetalkBehindBase\" missing the 'W', not introduced by this project -- left as-is since fixing IDB labels is out of scope for matches.json). NEW FIELD EVIDENCE (RoomStatus struct recovery): confirms RoomStatus.walkbehind_base[15] @ +0x1370 -- \"cmp wa,1; ...; cmp wa,0Fh(15); ...\" bounds-checks `wa` to [1,14] before \"mov [croom+wa*2+1370h], bl\" (a 2-byte/short write, matching 2011's declared `short walkbehind_base[MAX_OBJ]`, Common/acruntim.h, exactly in type). Sits IMMEDIATELY after the confirmed RoomStatus.hotspot_enabled[20] with ZERO gap -- decisive evidence that 2011's declared `region_enabled[MAX_REGIONS]` (positioned between hotspot_enabled and walkbehind_base in 2011's declared order) is CONFIRMED ABSENT from this build, not merely unfound. DRIFT: capacity 15 here vs. 2011's declared MAX_OBJ=16 (Common/acroom.h:60). See reversing/notes/struct-layout-drift.md for the complete writeup."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_40C335",
+  "new_name": null,
+  "source_file": null,
+  "source_line": null,
+  "confidence": "high",
+  "evidence": "Unnamed helper, called only from new_room (already matched) -- runs the room-level EventBlock: \"mov String1,\\\"room\\\"; mov ecx,dword_523128(croom); add ecx,12C8h; push ecx; push arg_0; push -1; push -1; call run_event_block\" -- confirms RoomStatus.misccond @ +0x12C8 (a single EventBlock instance, not an array), matching 2011's own dead-commented-out declaration \"EventBlock misccond;\" (Common/acruntim.h:107) almost verbatim -- this build's room-level \"Player Enters Screen\"/\"Player Leaves Screen\" event handler. misccond's end (+0x12C8+0x94=+0x135C) lands EXACTLY on the independently-confirmed RoomStatus.hotspot_enabled start, closing the entire previously-opaque +0x170..+0x135C gap with zero slack across three independent capacity/position confirmations (hscond, objcond, misccond). No living or dead-commented 2011 FUNCTION declaration corresponds to this specific wrapper (only the struct FIELD it touches has one) -- left unnamed rather than force an invented name. See reversing/notes/struct-layout-drift.md for the complete RoomStatus writeup."
+ },
+ {
+  "kind": "manual",
+  "asm_name": "sub_417ECD",
+  "new_name": null,
+  "source_file": null,
+  "source_line": null,
+  "confidence": "high",
+  "evidence": "Unnamed internal helper, called from GetCharacterAt (already matched) -- finds which character (if any) is under a given screen pixel. Loops all characters, filtering each on: room@+0x0C == newnum (must be in current room), on@+0x13E != 0 (must be visible), !(flags@+0x20 & 4) (not CHF_NOINTERACT-style bit), view@+0x08 >= 0 (has an assigned view), then does pixel-precise hit-testing against the character's current sprite (view/loop/frame -> ViewStruct272/ViewFrame272 lookup, matching the same stride math confirmed elsewhere). NEW FIELD EVIDENCE: confirms CharacterInfo.on@+0x13E directly, matching 2011's declared OldCharacterInfo LAST field (Common/acroom.h:2620) in position and semantic role (\"is this character visible/clickable\") exactly. No living or dead-commented 2011 function declaration corresponds to this specific internal helper (2011's GetCharacterAt/get_character_at logic is structured differently) -- left unnamed rather than force an invented name. See reversing/notes/struct-layout-drift.md for the complete CharacterInfo/OldCharacterInfo writeup."
  }
 ]

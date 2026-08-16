@@ -3127,3 +3127,399 @@ re-attempting without a fundamentally different technique (e.g.
 disassembling the room-file/game-file format itself to see whether
 `iface[]` data is even present in Rob Blanc 1's compiled `.crm`/`.dta`
 resources, independent of runtime code).
+
+## RoomStatus.hotspot_enabled recovered -- a script-API lead deep in the previously-opaque tail
+
+Went back to `RoomStatus`'s unexplored `+0x170` tail with a targeted
+technique: rather than searching blindly, looked for AGS's well-known
+`DisableHotspot`/`EnableHotspot`/`GetHotspotAt` script API functions,
+already matched (or trivially matchable) by name, on the theory that
+per-room hotspot state has to live SOMEWHERE and these are the obvious
+functions to touch it.
+
+**`DisableHotspot`/`EnableHotspot`** (both script-exported, already
+named): both bounds-check their `hsnum` argument to the range 1
+through 19 inclusive, then write `0`/`1` respectively to
+`croom[+0x135C+hsnum]` -- a direct, unambiguous hit deep inside the
+previously-opaque tail. **`get_hotspot_at`** (already matched) reads
+the same offset to gate hotspot hit-testing ("if the flag is zero,
+treat as if there's no hotspot here"). And -- a satisfying callback --
+the exact same `[reg+135Ch]` access pattern had ALREADY been read once
+before, much earlier in this project's `RoomObject` investigation
+(inside `load_new_room`'s room-entry initialization loop, "for
+cc=0..19: `croom[+0x135C+cc]=1`"), just not recognized as anything in
+particular at the time since neither `RoomStatus` nor this offset had
+been mapped yet. All FOUR sites agree exactly: this is
+`RoomStatus.hotspot_enabled[20]` @ `+0x135C`.
+
+**A genuinely archaeological capacity finding**: the bounds check
+caps `hsnum` at 20, matching 2011's own code comment documenting
+`MAX_HOTSPOTS`'s history -- `Common/acroom.h:65`: "v2.62 increased
+from 20 to 30; v2.8 to 50". This build's `20` isn't an ad-hoc
+reduction like most of this project's other drift findings -- it's
+2011's own documented ORIGINAL value, meaning Rob Blanc 1 genuinely
+predates BOTH of AGS's later hotspot-capacity increases. A rare case
+where the drift finding lines up with an explicit version-history
+comment in the reference source rather than just an inferred "smaller
+capacity" pattern.
+
+**A related search came up empty, and that's informative too**:
+looked for `DisableRegion`/`EnableRegion` (2011's region equivalents,
+`Engine/AC.CPP:17484-17494`) the same way, expecting to find
+`region_enabled` similarly. Neither function's name NOR its distinctive
+error string (`"!DisableRegion: invalid region specified"`) appears
+anywhere in this binary at all -- unlike `DisableHotspot`/
+`EnableHotspot`, which are both cleanly present. Regions THEMSELVES
+aren't absent (per-region tinting/light-level code is already
+confirmed elsewhere), just this specific pair of enable/disable script
+commands. Not conclusive on its own, but a real lead: it's plausible
+this build predates the "toggle a region on/off" script API even
+though the region concept and its light-level data already exist.
+Logged as an open question, not asserted as confirmed-absent (unlike
+`OBJF_*`-style bit findings elsewhere, this doesn't have the same
+"total absence across the whole cascade" strength of evidence).
+
+**Struct updated**: the previous single `_tail_unexplored[0x1220]`
+opaque blob is now split into three pieces --
+`_pad_unexplored1[0x11EC]` (`+0x170..+0x135C`, still opaque),
+`hotspot_enabled[20]` (`+0x135C..+0x1370`, HIGH confidence), and
+`_pad_unexplored2[0x20]` (`+0x1370..+0x1390`, still opaque, where 2011
+declares `region_enabled`/`walkbehind_base`/
+`interactionVariableValues`). Total size unchanged and still lands
+exactly at the confirmed `0x1390`.
+
+## RoomStatus.walkbehind_base closes the tail, and proves region_enabled is genuinely absent
+
+Immediate follow-up to the `hotspot_enabled` round: checked for AGS's
+`SetWalkBehindBase` script function the same way, on the theory that
+2011 declares `walkbehind_base[]` as `hotspot_enabled`'s very next
+neighbor.
+
+**`SetWalkBehindBase`** (already correctly named in the IDB via linker
+map, though with a pre-existing label typo -- `SetalkBehindBase`,
+missing the `W`, not introduced by this project) bounds-checks its `wa`
+argument to `1` through `14` inclusive, then writes a 2-byte value to
+`croom[+0x1370+wa*2]` -- landing EXACTLY at `RoomStatus.hotspot_enabled`'s
+confirmed end (`+0x1370`), with ZERO gap between them.
+
+**That zero gap is the interesting part.** 2011 declares
+`region_enabled[MAX_REGIONS]` between `hotspot_enabled` and
+`walkbehind_base`. If it existed in this build at all, there would have
+to be room for it right there -- and there isn't any. Combined with the
+already-noted total absence of `DisableRegion`/`EnableRegion`'s names
+AND error strings anywhere in this binary (unlike `DisableHotspot`/
+`EnableHotspot`, both cleanly present), this upgrades last round's
+tentative "open lead, not confirmed absent" to a genuine CONFIRMED
+ABSENT finding -- the same standard used for `numcursors`,
+`default_lipsync_frame`, `DialogTopic.topicFlags`, and others
+throughout this project. Rob Blanc 1 most likely predates per-region
+enable/disable as a scriptable concept entirely, even though per-region
+tint/light-level DATA already exists (`SetAreaLightLevel`, already
+matched) -- the data and the on/off toggle for it appear to have been
+added to AGS at different times.
+
+**The struct's final 32 bytes are now fully closed too**:
+`walkbehind_base[15]` (`+0x1370..+0x138E`, 30 bytes) plus a natural
+2-byte trailing pad lands EXACTLY on the confirmed `0x1390` total with
+zero slack -- which ALSO proves 2011's declared trailing field,
+`interactionVariableValues[MAX_GLOBAL_VARIABLES]` (100 ints = 400
+bytes), is CONFIRMED ABSENT here as well: there's simply no room left
+for it. DRIFT: capacity 15 (indices 0-14, with 0 conventionally
+reserved the same way `hotspot_enabled` treats its own index 0) vs.
+2011's declared `MAX_OBJ=16` -- a one-less reduction, though unlike
+`MAX_HOTSPOTS` there's no version-history comment in the reference
+source to say whether this is an "original value" or an ad-hoc
+reduction.
+
+**Where this leaves `RoomStatus`**: `beenhere`, `numobj`, `obj[10]`,
+`flagstates[15]`, `tsdatasize`, `tsdata`, `hotspot_enabled[20]`, and now
+`walkbehind_base[15]` are all confirmed, plus TWO fields conclusively
+proven absent (`region_enabled`, `interactionVariableValues`). One
+real gap remains: `+0x170` through `+0x135C` (4588 bytes, where 2011's
+enormous `NewInteraction`-based `intrHotspot`/`intrObject`/
+`intrRegion`/`intrRoom` block would sit, already proven irrelevant
+here) -- still genuinely unexplored, no already-matched caller found
+touching it yet. A good candidate for a future round if a new lead
+surfaces.
+
+## RoomStatus FULLY MAPPED: the last gap was this build's own EventBlock-based room interactions
+
+Went back to `RoomStatus`'s one remaining gap (`+0x170` through
+`+0x135C`, 4588 bytes) with a specific hypothesis: 2011 fills this
+region with `NewInteraction`-based `intrHotspot`/`intrObject`/
+`intrRegion`/`intrRoom` (already proven entirely absent from this
+build), but 2011's OWN source has a suggestive clue sitting right next
+to that declaration -- three lines, commented out:
+
+```c
+/*  EventBlock hscond[MAX_HOTSPOTS];
+  EventBlock objcond[MAX_INIT_SPR];
+  EventBlock misccond;*/
+```
+
+This is exactly the EventBlock-based ancestor layout this build has
+already been shown to use throughout (`GameSetupStructBase.__charcond`/
+`__invcond`, `run_event_block` itself). The hypothesis: this build's
+`RoomStatus` still has these three fields live, in this exact gap,
+matching the dead comment almost verbatim.
+
+**Confirmed directly, all three, no arithmetic guessing required.**
+Searching for `run_event_block`'s remaining unread call sites (9 total
+in the whole binary) turned up two already-matched functions that go
+straight to the point:
+
+- **`RunHotspotInteraction`**: `croom + hotspothere*0x94 + 0x170` --
+  `hscond[20]`, starting IMMEDIATELY after the confirmed `tsdata`
+  field.
+- **`RunObjectInteraction`**: `croom + aa*0x94 + 0xD00` -- `objcond[10]`.
+- A previously-unmatched helper (`sub_40C335`, called only from
+  `new_room`, with `String1="room"`): `croom + 0x12C8` -- `misccond`, a
+  single instance (not an array), the room-level "Player Enters/Leaves
+  Screen" event handler.
+
+**The arithmetic converges from three independent directions at
+once**, which is the strongest kind of evidence this project gets:
+`hscond`'s capacity (20) independently matches the ALREADY-confirmed
+`hotspot_enabled[20]` (a totally different access site, from the
+`DisableHotspot`/`EnableHotspot` round); `objcond`'s capacity (10)
+independently matches the ALREADY-confirmed `RoomObject obj[10]`
+(again, a totally different access site, from `SaveGameSlot`/
+`restore_game_data` arithmetic); and `hscond[20] + objcond[10]`
+(`20*0x94 + 10*0x94 = 0x1728`, from `+0x170`) lands EXACTLY on
+`misccond`'s own independently-confirmed start (`+0x12C8`), which in
+turn ends EXACTLY on `hotspot_enabled`'s own independently-confirmed
+start (`+0x135C`). Every boundary in this entire 4588-byte region is
+now pinned down by at least two unrelated pieces of evidence agreeing
+with zero slack.
+
+The remaining unread `run_event_block` call sites are all accounted
+for too: 2x `RunCharacterInteraction` (character-level, uses a SEPARATE
+global array, not part of `RoomStatus`), 1x `run_event_block_inv`
+(inventory-level, also separate), and 1x inside `process_event`'s
+generic dispatcher (routes to a pointer resolved elsewhere, not a new
+struct lead).
+
+**`RoomStatus` is now FULLY MAPPED** -- every byte from `+0x00` through
+the confirmed `+0x1390` total is accounted for: `beenhere`, `numobj`,
+`obj[10]`, `flagstates[15]`, `tsdatasize`, `tsdata`, `hscond[20]`,
+`objcond[10]`, `misccond`, `hotspot_enabled[20]`, `walkbehind_base[15]`
+(8 confirmed fields), plus `region_enabled` and
+`interactionVariableValues` CONFIRMED ABSENT. A genuinely satisfying
+result: this build's `RoomStatus` turns out to be almost a direct,
+still-live implementation of what 2011's source keeps around only as a
+commented-out historical footnote.
+
+## CharacterInfo = OldCharacterInfo: a whole struct's remaining gaps close via 2011's other save-compat ancestor
+
+Surveyed for a fresh target after `RoomStatus` closed out, and found
+one sitting in plain view: `CharacterInfo` had two small unexplored
+gaps (`+0x24..+0x2C`, `+0x30..+0x34`) and one large one (`+0x48..
++0x140`, 248 bytes) left over from much earlier rounds, plus a
+previously-flagged caution note on its `inv` field ("named after
+2011's `short inv[MAX_INV]` array, but this 2002 struct is far too
+small to hold a 301-element array").
+
+**The key realization**: this project already has precedent for a
+2011 struct having an OLDER, smaller save-compatibility ancestor
+declaration sitting alongside the modern one (`GameSetupStructBase` /
+`OriGameSetupStruct`, `RoomStatus`'s own dead-commented `EventBlock`
+fields). `CharacterInfo` has exactly this too --
+`Common/acroom.h:2599`, `struct OldCharacterInfo`. Laying out its
+declared fields by hand and comparing to what's ALREADY confirmed in
+this build's `CharacterInfo` was immediately striking: every single
+already-independently-confirmed field (`defview`, `talkview`, `view`,
+`room`, `prevroom`, `x`, `y`, `wait`, `flags`, `idletime`, `idleleft`,
+`activeinv`, `loop`, `frame`, `walking`, `animating`, `walkspeed`,
+`animspeed`) lands at EXACTLY the offset `OldCharacterInfo`'s own
+declared field order predicts -- and the struct's OWN total size
+(`0x140`) matches `OldCharacterInfo`'s computed total exactly too.
+
+**Confirmed the gaps directly, not just by arithmetic**, the same
+standard as every other struct in this project:
+
+- **`following`@`+0x24`, `followinfo`@`+0x26`**: `FollowCharacterEx`
+  (already matched, script-exported) sets both directly -- `following`
+  from its `tofollow` parameter, `followinfo` as a packed byte pair
+  (`(distaway<<8)|eagerness`).
+- **`idleview`@`+0x28`**: `SetCharacterIdle` (already matched) sets it
+  to `iview-1`. The same function also reconfirmed `idletime`/
+  `idleleft`/`wait`/`flags`, all at their already-known offsets.
+- **`transparency`@`+0x30`**: `SetCharacterTransparency` (already
+  matched) -- the EXACT same `((100-trans)*25)/10` formula already
+  confirmed for `RoomObject.transparent` earlier this session, just
+  applied to a different struct.
+- **`baseline`@`+0x32`**: `SetCharacterBaseline` (already matched)
+  sets it directly from its `basel` parameter.
+
+**The `inv` caution note is resolved, not just closed**: `main`'s
+already-known startup loop (previously cited only for
+`InventoryItemInfo.flags`/`IFLG_STARTWITH`) does `mov word ptr
+[playerchar+ee*2+0x44], 1` -- a 2-BYTE write, not the 4-byte write the
+old "int inv" annotation implied. This is `OldCharacterInfo`'s declared
+`short inv[100]` (`acroom.h:2616`), not a mis-sized attempt at 2011's
+301-entry array as the caution note worried. The earlier annotation
+had the right offset but the wrong type/size the whole time.
+
+**The remaining tail** (`actx`, `acty`, `name[30]`, `scrname[16]`, `on`
+-- everything from `+0x10C` onward) is filled in at MEDIUM confidence,
+positional-only: no already-matched function was found touching them
+this round, but they close the struct's own confirmed total size
+(`0x140`) with zero slack once `inv[100]`'s corrected type/size is
+accounted for. A good candidate for a future round (character name/
+script-name lookups are common enough operations that a caller
+probably exists, just not found yet).
+
+**`CharacterInfo` is now essentially fully accounted for** -- every
+byte from `+0x00` through `+0x140`, mixing HIGH-confidence directly-
+confirmed fields (everything through `+0x44`) with MEDIUM-confidence
+positional fields for the tail, following the exact same "OLD
+save-compat ancestor, still live in 2002" pattern already established
+for `GameSetupStructBase` and `RoomStatus`.
+
+## CharacterInfo.name/.on upgraded to HIGH confidence -- the predicted tail lead paid off immediately
+
+Picked up the thread flagged at the end of the previous round: find a
+caller touching `CharacterInfo`'s still-positional-only tail
+(`actx`/`acty`/`name[30]`/`scrname[16]`/`on`). Character name lookups
+turned out to be exactly as findable as expected.
+
+**`GetLocationName`** (already matched, the classic AGS "what's under
+the cursor" script function) has a character-hover branch: `lea
+ecx,[game_chars+idx*0x140+0x110]; push ecx; call GetTranslation` --
+passing `CharacterInfo.name` straight to the already-matched
+`GetTranslation`, then `strcpy`-ing the result out, matching 2011's
+`strcpy(tempo,get_translation(game.chars[onhs].name));` exactly.
+Upgrades `name`@`+0x110` from MEDIUM (positional) to HIGH.
+
+**`GetCharacterAt`** (already matched) delegates the actual pixel-hit-
+testing to an internal helper (`sub_417ECD`, undocumented until now).
+Its per-character filter loop checks four things before doing
+sprite-level hit-testing: `room`@`+0x0C` matches the current room,
+`flags`@`+0x20` doesn't have a `CHF_NOINTERACT`-style bit set, `view`
+@`+0x08` is a valid (non-negative) view number, and -- the new find --
+`on`@`+0x13E` is nonzero. Upgrades `on`@`+0x13E` from MEDIUM to HIGH,
+and gives it a clear semantic role ("is this character
+visible/clickable") matching 2011's declared last `OldCharacterInfo`
+field exactly.
+
+Still open: `actx`/`acty`/`scrname[16]` remain positional-only (MEDIUM
+confidence) -- no caller found yet for those three specifically. Not
+pursued further this round; a reasonable place to stop given how much
+of `CharacterInfo` is now HIGH confidence (everything through `+0x44`,
+plus `name` and `on` in the tail).
+
+## CharacterInfo.scrname confirmed too -- actx/acty checked and shelved as a likely later addition
+
+Continued chasing `CharacterInfo`'s last few positional-only fields.
+
+**`scrname`@`+0x12E` confirmed** via `compile_room_script` (already
+matched): "`if (game.chars[aa].scrname[0]==0) continue; ...
+strcat(temphdr,game.chars[aa].scrname);`" -- building `"#define cEgo
+0\r\n"`-style macros that map each character's script name to its
+numeric index, so room scripts can reference characters by their
+in-editor name. This is about as foundational an AGS feature as they
+come (room-script compilation needing name-to-index resolution), and
+the disassembly match is exact: `scrname[0]` checked at `+0x12E`, then
+the whole field passed to `strcat` at the same offset. Upgraded from
+MEDIUM to HIGH.
+
+**`actx`/`acty` checked and NOT found this round** -- worth recording
+why, since it wasn't for lack of trying. 2011's ONLY usage site for
+either field (`Engine/AC.CPP:8525-8526`, `chin->actx=atxp+offsetx;`)
+sits deep inside hardware-accelerated sprite drawing code --
+`gfxDriver`, `actspsbmp`, `SetTint`, `SetLightLevel` -- an abstraction
+layer this build has already been shown, repeatedly and independently
+(`RoomObject`'s confirmed-absent tint/zoom fields, the total absence of
+`region_enabled`, etc.), to predate entirely. Grepped the whole
+`Engine/` tree for `actx`/`acty` and found nothing outside that one
+site. Plausibly these fields track "last drawn position for hardware-
+accelerated sprite caching," a concept that simply didn't exist yet in
+2002 -- not asserted as CONFIRMED ABSENT (unlike fields with harder
+proof, e.g. `RoomStatus.region_enabled`), just shelved as unlikely to
+be found via this technique.
+
+**`CharacterInfo` status after this round**: every field through
+`+0x44` is HIGH confidence, plus `name`, `on`, and now `scrname` in the
+tail. Only `actx`/`acty` remain MEDIUM (positional-only, likely-absent-
+feature). About as complete as this struct is going to get without a
+fundamentally different technique.
+
+## GUIMain: a fresh survey target, and a rare case matching 2011's CURRENT layout instead of an old ancestor
+
+Surveyed for a genuinely fresh target after `CharacterInfo` wound
+down, and found one hiding in plain sight: `GUIMain` had been sitting
+with only 8 fields confirmed (`x`, `y`, `numobjs`, `mouseover`,
+`mousedownon`, `on`, `objs[30]`, `objrefptr[30]`) and five large opaque
+padding gaps, unlike almost everything else in this project, its
+padding had never been revisited with a hypothesis to test.
+
+**The realization**: laying out 2011's CURRENT `GUIMain` declaration
+(`Common/acgui.h:664-687` -- notably NOT an old ancestor struct, this
+one doesn't have one) by hand and comparing to the already-confirmed
+offsets was immediately striking, the same way `OldCharacterInfo` was:
+`x`@`+0x28`, `y`@`+0x2C`, `numobjs`@`+0x3C`, `mouseover`@`+0x54`,
+`mousedownon`@`+0x60`, `on`@`+0x90`, `objs`@`+0x94`, `objrefptr`@`+0x10C`
+-- EVERY one of these lands exactly where 2011's declared field order
+predicts, with zero drift. Unlike most other structs in this project
+(`GameSetupStructBase`, `RoomStatus`, `CharacterInfo`, all matching an
+OLD save-compat ancestor), `GUIMain` apparently matches 2011's LIVE,
+current layout almost unchanged -- a genuinely rare case, alongside
+`MouseCursor`/`InventoryItemInfo`'s own "zero drift" wins.
+
+**The five previously-opaque gaps all close simultaneously** once
+2011's declared fields are laid into them: `vtext[4]`+`name[16]`+
+`clickEventHandler[20]` = 40 bytes, exactly filling `+0x00..+0x28`;
+`wid`+`hit`+`focus` = 12 bytes, exactly filling `+0x30..+0x3C`;
+`popup`+`popupyp`+`bgcol`+`bgpic`+`fgcol` = 20 bytes, exactly filling
+`+0x40..+0x54`; `mousewasx`+`mousewasy` = 8 bytes, exactly filling
+`+0x58..+0x60`; `highlightobj`+`flags`+`transparency`+`zorder`+
+`guiId`+`reserved[6]` = 44 bytes, exactly filling `+0x64..+0x90`. Five
+independent gaps, each closing with zero slack against ONE internally
+consistent declaration, is about as strong an over-determined fit as
+this project produces without individual access-site evidence for
+every field.
+
+**One field got real access-site confirmation too**: `SetGUIBackgroundPic`
+(already matched, script-exported) writes its `slotn` parameter
+straight to `+0x4C` -- exactly `bgpic`'s predicted position, upgrading
+it to HIGH confidence and giving the whole arithmetic-fit hypothesis a
+concrete anchor rather than resting on positional inference alone.
+
+**Checked and NOT found this round**: `SetGUIClickable` (`flags`/
+`GUIF_NOCLICK`), `SetGUITransparency`, and `SetGUIZOrder`/
+`GUI_SetZOrder` -- none of these function names or their distinctive
+error strings appear anywhere in this binary, consistent with (but not
+conclusive proof of) this project's repeated "later API surface, not
+yet added" pattern. `flags`/`transparency`/`zorder` remain at MEDIUM
+confidence (positional-fit only) as a result.
+
+Total confirmed size (`0x184`) also matches 2011's own declared
+save-file read/write size EXACTLY -- `GUIMain::ReadFromFile` reads a
+40-byte header plus `27 + 2*MAX_OBJS_ON_GUI` ints, deliberately
+EXCLUDING `drawOrder[MAX_OBJS_ON_GUI]` (regenerated at load time, never
+persisted) -- matching this build's own confirmed total exactly,
+including that same exclusion.
+
+## GUIMain follow-up: GetGUIAt confirms four more fields in one pass
+
+Immediate follow-up to the `GUIMain` round: checked `GetGUIAt`
+(already matched, script-exported "find the GUI at this screen
+location") for more of the arithmetic-fit-only fields, since its
+2011 source (`Engine/AC.CPP:16085-16098`) touches `on`, `flags`,
+`x`, `y`, `wid`, and `hit` all in one small function.
+
+The disassembly matches instruction-for-instruction: `on`@`+0x90`
+checked `>=1` (reconfirming existing evidence), `flags`@`+0x68` bit 0
+checked (`and edx,1; jz <continue>`) matching 2011's `GUIF_NOCLICK=1`
+exactly, and -- the new finds -- `wid`@`+0x30` and `hit`@`+0x34`, both
+used to compute the bounding box's right/bottom edge (`x+wid`, `y+hit`)
+for the point-in-rectangle test, matching 2011's `xx<=guis[aa].x+
+guis[aa].wid` / `yy<=guis[aa].y+guis[aa].hit` exactly. Four fields
+upgraded to HIGH confidence in one function (`flags`, `wid`, `hit`,
+plus a clean reconfirmation of `x`/`y`/`on`).
+
+`transparency`/`zorder`/`popup`/`bgcol`/`fgcol` (and the rest of the
+still-MEDIUM fields) remain positional-only -- no `GUIMain::draw`
+equivalent has been matched yet in this project, which is the most
+likely place to find `transparency`/`zorder` touched. A reasonable
+next lead for a future round.
