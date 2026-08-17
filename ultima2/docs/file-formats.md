@@ -102,7 +102,7 @@ not yet fetched in detail — TODO)
   see discrepancy writeup below, settled, not still open).
 - Byte 0: null marker/header byte.
 - Then a run of **null-terminated ASCII strings**, indexed and printed
-  one at a time by `sub_1154E` — see the consumer trace below for how
+  one at a time by `print_indexed_shop_string` — see the consumer trace below for how
   many and what selects which one; likely four given the wiki's
   framing, not independently confirmed in the disassembly.
 - **Encryption**: every byte is ROT-128, i.e. `stored = plaintext + 128
@@ -160,16 +160,16 @@ forward.
 
 ### Consumer traced: read out by `transact`, not a walk-up "talk"
 
-Followed `word_17886`'s only other reader, `sub_1154E` (asm 3383-3435),
+Followed `word_17886`'s only other reader, `print_indexed_shop_string` (asm 3383-3435),
 all the way through, and it closes out both "where's the decrypt loop"
 and "where's the display code" at once:
 
-- `sub_1154E(al = index)`: sets `si = index` (zero-extended), `di =
+- `print_indexed_shop_string(al = index)`: sets `si = index` (zero-extended), `di =
   word_17886` (the buffer `load_talk_file` filled in), then walks
   forward counting null (`0x00`) terminators, decrementing `si` each
   time, until it reaches the start of the `index`-th string in the
   buffer. It then prints that string byte-by-byte by calling
-  `sub_153F4` (a one-line wrapper: `call write_character; retn`) until
+  `print_char` (a one-line wrapper: `call write_character; retn`) until
   the next null terminator.
 - **There is no separate ROT-128 decrypt loop anywhere in the binary**
   (confirmed by grepping for `sub al,80h`/`xor al,80h`/`sbb al,80h`
@@ -182,14 +182,14 @@ and "where's the display code" at once:
   incidental side effect of the normal display routine, not a dedicated
   step, which is exactly why no decrypt code turned up in the earlier
   search: there isn't any to find.
-- `sub_1154E` is called from exactly one place: `transact` (asm 10545,
+- `print_indexed_shop_string` is called from exactly one place: `transact` (asm 10545,
   the `T` command), in the branch handling a shopkeeper-type monster
   (`[di+1D7h] >= 0x80` on that monster's record, where `di` points at
   the monster/NPC record for whatever's at the transacted-with tile).
   The high bit of `[di+1D7h]` gets stripped (`sbb al, 80h`, asm 10701 —
   the one `80h`-subtraction hit from the grep above, an item-index/flag
   mask, *not* a text decrypt) to get a small integer, which becomes the
-  `index` argument to `sub_1154E`.
+  `index` argument to `print_indexed_shop_string`.
 
 **Revised understanding**: the `TLKXFF`-loaded buffer isn't consumed by
 a dedicated "walk up and talk to an NPC" interaction — there's no such
@@ -203,7 +203,7 @@ walk-up dialogue doesn't match this port — here it's shop dialogue,
 loaded once per map at `enter` time and read back out during `transact`.
 Full chain: `enter` (asm 9136/9159/9206, VILLAGE/TOWN/CASTLE) →
 `load_talk_file` (loads 256 bytes into `sg08e3:0x2800`) → later,
-`transact` on a shopkeeper NPC → `sub_1154E` (string lookup) →
+`transact` on a shopkeeper NPC → `print_indexed_shop_string` (string lookup) →
 `write_character` (prints, incidentally stripping the ROT-128 high bit).
 
 ## `pic???` — Full-screen CGA art
@@ -232,12 +232,51 @@ Full chain: `enter` (asm 9136/9159/9206, VILLAGE/TOWN/CASTLE) →
 - Wiki: overworld tile graphics start at **file offset `0x7C43`**, **0x40
   (64) tiles**, consistent with the "64 distinct tile types" in the map
   format doc above.
-- **Not yet translated to an address in the IDB.** In the IDA Python
-  console: `print(hex(idc.get_fileregion_ea(0x7C43)))` will give the
-  effective address for this session's load — do this next and update
-  this doc with the real address, then identify/label the tile array
-  (likely `ida_scripts/` candidate: a small script to `create_data` over
-  the 64-tile array once the per-tile byte size is confirmed — CGA Linear
-  16×16px at 2bpp would be 64 bytes/tile → 4096 bytes total, but that's
-  inference, not yet confirmed against the actual bytes or rendering
-  code).
+- **Located and confirmed — found a better path than the wiki's file
+  offset.** The IDB already has a fully-resolved `TILE_OFFSETS` table
+  (asm ~19157, a 64-entry word array, one pointer per tile, xref'd from
+  `draw_map_content` and `animate_water`) that gives the real per-tile
+  addresses directly — no `ida_loader.get_fileregion_ea` translation
+  needed (that approach was tried first; it landed 3 bytes into tile
+  0's *pixel* data rather than its start, and assumed the wrong
+  per-tile stride, so the resulting visualization looked like noise
+  past the first tile — see git history on
+  `ida_scripts/label_tile_graphics.py` for that dead end).
+- **Confirmed layout** (counted `byte_17A40`'s declared bytes by hand,
+  spot-checked headers on the first, middle, and last of the 64 table
+  entries, all consistent): each tile is a **66-byte record**, tiles
+  contiguous from `byte_17A40` (0x1080 bytes total for all 64):
+  - Byte 0: `04h` — row width in bytes.
+  - Byte 1: `10h` — row count (16).
+  - Bytes 2-65: 64 bytes of packed pixel data, CGA Linear 2bpp,
+    matching byte 0/1 exactly (16px/row × 2 bits ÷ 8 = 4 bytes/row × 16
+    rows = 64 bytes) — i.e. the original "64 bytes/tile, CGA Linear
+    16×16px" inference was right for the *pixel* portion, it was just
+    missing this 2-byte header in front of each tile.
+- `ida_scripts/label_tile_graphics.py` re-derives all 64 addresses from
+  `TILE_OFFSETS` itself (working around a second IDA quirk found along
+  the way — see the script's docstring: `idautils.DataRefsFrom` only
+  resolves a stored xref for the *first* sub-word of a multi-value `dw
+  offset a,b,c,...` declaration, not the other 63, despite IDA
+  rendering `offset labelname` text for all of them; fixed by reading
+  the raw word + segment base instead), verified the 66-byte-stride/
+  header pattern holds for all 64 (not just the hand-spot-checked
+  ones), and confirmed all 64/64 resolved cleanly.
+- **Visually confirmed against real tiles**, not just the header/stride
+  pattern. Dry-run output for `[0, 1, 6, 20, 40, 63]`, unpacked 2bpp and
+  eyeballed:
+  - Tile 0 (wiki: water) — a diagonal dash pattern repeating every 4
+    rows, plausible stylized ripples.
+  - Tile 1 (wiki: swamp) — a similar but distinct diagonal dash motif,
+    consistent with another liquid/marsh terrain sharing the general
+    "water-family" look but a different specific pattern.
+  - **Tile 6 (wiki: town) — unambiguous**: two square towers with
+    crenellated tops/bottoms (`#####  #####`), solid connecting wall
+    bands (`############`), paired vertical walls between — a clear
+    stylized twin-tower town/castle icon. This alone confirms the
+    66-byte/`[04h,10h]`-header decode is correct.
+  - Tiles 20, 40, 63 — not yet matched to wiki names, but all render as
+    coherent small sprites (a bar/pole shape for 40, a branching
+    diagonal for 20, a humanoid-ish figure for 63), not noise.
+- Not yet applied (renamed) as of this pass — `DRY_RUN` still `True` in
+  the script; flip it once ready to commit `tile_00`..`tile_63` names.

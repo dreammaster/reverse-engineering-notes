@@ -4,13 +4,21 @@ Ultima II (DOS).
 
 Single accumulating script instead of one standalone name_*.py file per
 finding. Whenever a function's or global's role becomes clear enough to
-name confidently, add an entry to RENAMES below and re-run (DRY_RUN =
-True first, always). Safe to re-run repeatedly -- each entry is checked
-against the address's *current* name and skipped if already applied, so
-old entries are harmless to leave in place. Keep them rather than
-deleting: this file doubles as a dated changelog of "what have we named
-and roughly why" that's easy to diff in git, which is the whole point of
-consolidating into one file instead of many.
+name confidently, add an entry to RENAMES below and re-run. Safe to
+re-run repeatedly -- each entry is checked against the address's
+*current* name and skipped if already applied, so old entries are
+harmless to leave in place. Keep them rather than deleting: this file
+doubles as a dated changelog of "what have we named and roughly why"
+that's easy to diff in git, which is the whole point of consolidating
+into one file instead of many.
+
+Convention: DRY_RUN is left False (Paul's call, 2026-08-17) -- new
+entries take effect the moment they're added and the script is re-run,
+no separate dry-run confirmation pass. Sanity-check a new entry's
+address and name before adding it, since there's no dry-run safety net
+here anymore -- get it right in the list, not via a preview step.
+(apply_structs.py hasn't had this same call made yet; treat it as
+dry-run-first until told otherwise.)
 
 Scope: plain renames only (idc.set_name on an address that IDA can
 already address -- a function start, or an existing named/auto-named

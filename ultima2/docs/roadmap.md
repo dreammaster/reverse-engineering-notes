@@ -39,10 +39,16 @@ sessions, unlike a one-off todo list.
       list) instead of a new standalone script per finding — see that
       file's docstring. Struct-member findings get the same treatment
       in `ida_scripts/apply_structs.py`.
-- [ ] Run `ida_scripts/apply_renames.py` (dry run first) — has two new
-      pending entries from the transact/talk-buffer trace below:
-      `sub_1154E` → proposed `print_indexed_shop_string`, `sub_153F4` →
-      proposed `print_char`. Confirm/adjust the names before applying.
+- [x] Run `ida_scripts/apply_renames.py` — done. `sub_1154E` →
+      `print_indexed_shop_string`, `sub_153F4` → `print_char`.
+      **Convention going forward**: `apply_renames.py` is kept with
+      `DRY_RUN = False` (Paul's call, 2026-08-17) — new entries take
+      effect as soon as they're added and the script is re-run, no
+      separate dry-run confirmation step. Still sanity-check a new
+      entry's address/name before adding it, since there's no
+      dry-run safety net anymore for this file specifically.
+      `apply_structs.py` hasn't had this decision made for it yet —
+      treat it as still dry-run-first until Paul says otherwise.
 - [x] Chase the `tlkx???` 256-vs-384-byte discrepancy — **settled, not a
       bug**: `access_file` hardcodes FCB `record_size=1` for every
       caller so `cx=100h` is a literal 256-byte count; `random_record`
@@ -54,7 +60,7 @@ sessions, unlike a one-off todo list.
       for this DOS port; the wiki's 384 likely describes the Apple II
       original instead. Full trace in
       [file-formats.md](file-formats.md#256-vs-384-byte-discrepancy-traced-and-settled).
-- [x] **Traced the talk-buffer consumer** — `sub_1154E` (asm 3383,
+- [x] **Traced the talk-buffer consumer** — `print_indexed_shop_string` (asm 3383,
       called only from `transact`) walks the buffer to the `index`-th
       null-terminated string and prints it via `write_character`, which
       unconditionally does `and al,7Fh` on every character it ever
@@ -75,11 +81,32 @@ sessions, unlike a one-off todo list.
       internals are still unnamed `sub_XXXXX` helpers (proc/sub counts
       jumped from 93/58 to 145/79 after resolving the table) — sweep
       these for names once a few are read through.
-- [ ] Translate EXE file offset `0x7C43` (embedded overworld tile
-      graphics, 0x40 tiles) to an IDB address via
-      `idc.get_fileregion_ea(0x7C43)` in the IDA console, then label/type
-      the tile array. Cross-check tile byte size against the "divide by
-      4" tile-ID encoding note in file-formats.md.
+- [x] Locate the embedded overworld tile graphics — **found via a
+      better path than the file-offset translation originally
+      planned**. Paul spotted that the IDB already has a resolved
+      `TILE_OFFSETS` table (asm ~19157) giving real per-tile addresses;
+      using that instead of `ida_loader.get_fileregion_ea(0x7C43)`
+      avoided a base/stride mismatch the first script draft had (see
+      git history — the first version's visualization looked like
+      noise because of it). Confirmed layout: 64 tiles, 66 bytes each
+      (2-byte header `04h,10h` + 64 bytes CGA Linear 2bpp pixel data),
+      contiguous from `byte_17A40`. Full writeup in
+      [file-formats.md](file-formats.md#ultimaiiexe--embedded-overworld-tiles).
+- [x] Visually confirmed the tile decode — all 64/64 resolved cleanly
+      after the second script fix (see project memory / script
+      docstring for the `DataRefsFrom` multi-word-declaration gotcha).
+      Tile 6 (wiki: town) renders as an unambiguous twin-tower castle
+      icon; tiles 0/1 (water/swamp) show plausible diagonal ripple
+      motifs; 20/40/63 render as coherent sprites though not yet matched
+      to wiki names. Full detail in
+      [file-formats.md](file-formats.md#ultimaiiexe--embedded-overworld-tiles).
+- [ ] Flip `DRY_RUN = False` in `ida_scripts/label_tile_graphics.py`
+      to actually rename the 64 tiles to `tile_00`..`tile_63` and
+      comment each — visualization is confirmed, just needs applying.
+      Once applied, cross-check tile byte size against the "divide by
+      4" tile-ID encoding note elsewhere in file-formats.md, and
+      consider matching tiles 20/40/63 (and the rest) against the
+      wiki's full tile-ID list to get real names instead of `tile_NN`.
 - [ ] Fetch the ModdingWiki "Ultima II Monster Format" page (linked from
       the summary page, not yet pulled) to fill in `monx??` layout in
       file-formats.md.
