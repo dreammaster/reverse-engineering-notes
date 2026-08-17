@@ -75,10 +75,17 @@ FCB random-block I/O, not stream I/O.
   | `0xC0` | Door |
   | `0xE0` | Secret door |
 
-  Note these are all multiples of 0x10 in the high nibble — looks like a
-  bitfield/category encoding (low nibble likely unused or a sub-variant).
-  Worth checking dungeon-rendering code for a `and 0F0h` or `and 0E0h`
-  mask to confirm.
+  Note these are all multiples of 0x10 in the high nibble, confirmed
+  bitfield encoding — the low nibble **is used**, not unused: `attack`'s
+  dungeon-combat code (traced via `loc_11451`/`map_get_monster_at?`,
+  see `docs/overview.md`) checks the low 3 bits (`al & 7`) of the cell
+  in front of the player to detect **monster presence**, and clears
+  those bits (`and 0F0h`) on a kill while preserving the terrain type.
+  So dungeon monster tracking has two independent layers: the
+  `_mapMonsters`-style per-slot fields (position, HP, type — see
+  `monx??` below) *and* a presence flag baked directly into the
+  dungeon map's own tile bytes, specific to dungeons/towers (overworld
+  combat uses only the per-slot fields, via `find_target_monster`).
 
 ## `monx??` — Monster/NPC data
 
