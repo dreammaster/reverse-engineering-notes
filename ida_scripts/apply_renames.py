@@ -101,11 +101,13 @@ RENAMES = [
      "see docs/roadmap.md."),
 
     (0x1113A, "alert_town_guards",
-     "no-op outside a settlement (player._mapNum2==0). Inside one: "
+     "no-op only on the overworld (player._mapNum2==0 -- see the "
+     "_mapNum2 value table in docs/overview.md: 0=overworld, "
+     "1-3=village/town/castle, 4=tower, 5=dungeon). Everywhere else: "
      "sets [di+1D7h]=1 for monster slots 0-7 plus the current target "
-     "slot. Called from attack, steal -- committing a hostile act in "
-     "town raises an alarm flag on a block of slots, plausibly the "
-     "town's reserved guard slots."),
+     "slot. Called from attack, steal -- committing a hostile act "
+     "raises an alarm flag on a block of slots, plausibly the town's "
+     "reserved guard slots."),
 
     (0x12052, "try_spend_gold",
      "subtracts a 2-byte BCD amount (byte_17438/_sleepFlag2? as "
@@ -123,6 +125,26 @@ RENAMES = [
      "another over N steps. Generic tone-sweep primitive reused for "
      "multiple sound effects (play_hit_sound, pause?'s sound, etc.), "
      "not attack-specific itself."),
+
+    # -- found while closing out the cast/_readiedSpell trace --
+
+    (0x15FC3, "play_magic_sound",
+     "thin play_tone_sweep wrapper, structurally identical to "
+     "play_hit_sound but different fixed params. NOT cast-specific "
+     "despite being called there (as soon as a cast attempt begins, "
+     "before the map-type gate) -- also called from 3 unrelated "
+     "trap/curse handlers ('LEGS PARALIZED!', 'ARMS PARALIZED!', "
+     "'SLEEP SPELL!') plus a 'MAGIC MISSILE!' trap hitting the player "
+     "(distinct from the player's own Magic Missile spell). Generic "
+     "'something magical just happened' chime. See "
+     "docs/overview.md#sub_15fc3-and-sub_15e83--the-two-sound-effects-traced."),
+
+    (0x15E83, "play_fail_sound",
+     "cast's fail buzzer: checks byte_1795D then sweeps a descending "
+     "tone via the lower-level primitives directly (sub_15CB2/"
+     "sub_15CD2/sub_15CE4), not via play_tone_sweep. Called at all 4 "
+     "of cast's failure points ('NEED WAND OR STAFF!', 'NO SPELL!', "
+     "both '-FAILED!' cases) -- cast-only, no other callers."),
 ]
 
 

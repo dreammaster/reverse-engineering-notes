@@ -228,21 +228,117 @@ sessions, unlike a one-off todo list.
       yet** — raw displacement), and `player.field_80[di]` (per-spell
       charge count). Lower-hanging fruit than `_mapMonsters`'s
       struct-of-arrays fields since these are array-typed `Savegame`
-      members, not a separate loaded file — but `apply_structs.py`
-      would need extending to handle array members (currently only
-      scalar byte/word/dword).
-- [ ] `field_A1`/`field_A2` (wand-owned / staff-owned counts, gate
-      `cast` — "NEED WAND OR STAFF!" if both zero) not yet renamed —
-      proposed `_wands`/`_staves`?
-- [ ] Loose ends from the `cast` trace, not chased: `loc_11451` (shared
-      validity-check helper used by 5 of the 9 spell branches),
-      `loc_12ED1` (Prayer/Kill's shared continuation — unclear why
-      those two specific spells share a tail), `sub_15FC3` (called on
-      every successful-gate cast attempt), `sub_15E83` (called on every
-      cast failure path, likely a fail sound/flash). Also: outside a
-      dungeon, Down Ladder/Up Ladder do a different, not-fully-traced
-      search (still via `loc_11451`) — plausibly locating a nearby
-      dungeon entrance.
+      members, not a separate loaded file.
+- [x] Extended `ida_scripts/apply_structs.py` to handle array-typed
+      struct members — new `"add_member"` (now takes `element_size` +
+      `count`) and `"resize_member"` ops (delete + recreate, for
+      members that already exist but at the wrong size — `field_60`/
+      `field_80` were both auto-created as 1-byte scalars when they're
+      really 7- and 10-byte arrays).
+- [x] Ran it with the 3 proposed entries — confirmed in the refreshed
+      `.asm`: `field_60`→`_armorOwned` (7 bytes), new `_weaponOwned`
+      member at `0x76` (10 bytes), `field_80`→`_spellCharges` (10
+      bytes). Full detail in
+      [overview.md](overview.md#three-per-item-ownedcharges-flag-arrays).
+- [x] `_weaponOwned`'s reference sites fixed up via
+      `ida_scripts/fixup_weaponowned_stroff.py` — now show as
+      `[di+Savegame._weaponOwned]` instead of raw `[di+76h]`. Took two
+      passes: the first covered `ready`/`get`/`steal`/`zstats` (7
+      sites), then a `transact` "buy weapon from shopkeeper" site
+      turned up that the initial proc list had missed (asm ~4160-4172)
+      — added and re-run, all sites now fixed. Cosmetic only, the
+      struct member itself was already correct throughout.
+- [x] `field_A1`/`field_A2` renamed to `_wands`/`_staves` (wand-owned /
+      staff-owned counts, gate `cast` — "NEED WAND OR STAFF!" if both
+      zero) — confirmed in the refreshed `.asm`.
+- [x] Traced `loc_11451` fully — it's a second entry point into the
+      already-named `map_get_monster_at?` proc (asm 3283-3309), not a
+      standalone function. Given a dungeon level and a position, reads
+      (or, via the returned pointer, writes) the raw dungeon tile byte
+      there. Confirmed via all 5 real call sites: `cast`'s Down/Up
+      Ladder, Passwall, Blink (already known), plus **`attack`'s
+      separate dungeon-combat code path**, which turned out to use the
+      low 3 bits of dungeon tile bytes as a second, independent
+      monster-presence flag (extends the dungeon tile-format doc — see
+      [file-formats.md](file-formats.md#dungeontower-format-mapx-number-ends-4-5)).
+      Also resolved the Prayer/Kill shared-tail mystery as a side
+      effect: both route into `attack`'s generic monster-death cleanup
+      (`loc_12ED1`) — Kill unconditionally, Prayer only on a random
+      success roll; they're an instant-kill "smite" pair, not two
+      spells that coincidentally overlap. Full writeup in
+      [overview.md](overview.md#loc_11451--the-shared-dungeon-cell-accessor).
+      One thing this did NOT resolve: `map_get_monster_at?`'s own
+      (non-`loc_11451`) entry point, used from the monster-AI wander
+      loop, passes a monster's display-tile value where `loc_11451`'s
+      callers pass a dungeon level — those aren't reconciled, since a
+      tile-ID value doesn't fit the 0-15 level range. Separate open
+      question.
+- [x] Traced `cast`'s Down Ladder/Up Ladder "non-dungeon" branches —
+      **the premise was wrong, not just incomplete**. There is no
+      non-dungeon case: the earlier `_mapNum2>=4` gate already
+      guarantees Tower (4) or Dungeon (5) by the time these branches
+      run. The real `_mapNum2==4` check distinguishes **Tower vs.
+      Dungeon**, which matters because the two number their levels in
+      opposite directions. Both spells route into one of two shared
+      primitives (increment-capped-at-15, or decrement-with-surface-
+      at-0) depending on map type + direction needed. Along the way,
+      corrected an earlier wrong assumption in `docs/overview.md` that
+      Tower was `_mapNum2==0` (it's `4`; `0` is the overworld; Dungeon
+      is `5`, not shared with Tower) — added a proper `_mapNum2` value
+      table to `docs/overview.md` and fixed the now-stale
+      `alert_town_guards` description that inherited the same error.
+      Full trace in
+      [overview.md](overview.md#down-ladder--up-ladder--tower-vs-dungeon-fully-traced).
+- [x] Traced `sub_15FC3` and `sub_15E83` — both sound effects.
+      `sub_15E83` is `cast`'s fail buzzer (descending tone sweep,
+      called at all 4 failure points, cast-only). `sub_15FC3` is a
+      generic "something magical happened" chime, reused across
+      `cast`'s attempt sound *and* three unrelated trap/curse handlers
+      (leg/arm paralysis, sleep spell) plus a fourth "magic missile
+      trap" hitting the player — surfaced three not-yet-named magical
+      item-protection flags (`player+0xA3`/`0xA4`/`0xAE`) as a side
+      finding. Full trace in
+      [overview.md](overview.md#sub_15fc3-and-sub_15e83--the-two-sound-effects-traced).
+      Renamed and confirmed in the refreshed `.asm`: `sub_15FC3` →
+      `play_magic_sound`, `sub_15E83` → `play_fail_sound`.
+- [x] Traced `player+0xA3`/`0xA4`/`0xAE` — all three are magical-item
+      protection flags for `end_of_turn`'s random trap encounters, same
+      mechanic: item owned + `rand_byte()>=0x40` (~75%) resists, item
+      owned but unlucky roll or item not owned both still trigger the
+      trap. `0xA3`=Boots (leg paralysis), `0xA4`=Cloak (arm paralysis),
+      `0xAE`=Green Idol (sleep trap) — item names cross-confirmed
+      against `TEXT_STRINGS`. Full trace in
+      [overview.md](overview.md#player0xa30xa40xae--magical-item-protection-flags-traced).
+- [x] Added and confirmed in the refreshed `.asm`: `player+0xA3`→
+      `_bootsOwned`, `player+0xA4`→`_cloakOwned`, `player+0xAE`→
+      `_idolOwned`.
+- [x] Traced `board`'s full vehicle-boarding requirements. Two
+      preconditions (`_mapNum2<4` — no vehicles underground; `_playerTileId>=0x78`
+      — must be on foot, confirmed as exactly the 4 class sprite tiles
+      via the ×2 `TileId` encoding), then reads the tile stood on,
+      matched exactly against Horse/Ship/Airplane/Rocket (`0x22/0x24/
+      0x26/0x28` = `TileId` 17-20 ×2). Horse is free; Ship vs. Frigate
+      is `field_AC`; Airplane is `field_A9`; Rocket is `field_A7`
+      (Ankh, already known). All 4 successes route through
+      `end_of_turn2`, a label *inside* `end_of_turn` (not a separate
+      proc) that skips one call to `sub_15C95` — not chased further.
+      Full trace in
+      [overview.md](overview.md#boards-vehicle-boarding-requirements-fully-traced).
+- [x] **IDB hygiene gap fixed** — Paul fixed the Ship/Airplane
+      failure-path bytes directly in IDA. Revealed real text and
+      **corrected an assumption from the initial trace**: both are
+      rejection messages (`"THE CREW OF THIS SHIP WILL NOT LET YOU
+      BOARD!"`, `"STRANGE YOU CAN'T GET IN!"`), not a harmless default
+      — there's no "board a plain Ship" path at all, all three
+      non-Horse vehicles are gated the same way (required condition or
+      rejection). Corrected in
+      [overview.md](overview.md#boards-vehicle-boarding-requirements-fully-traced).
+- [x] `field_A7`→`_ankhOwned` renamed, confirmed in the refreshed `.asm`.
+- [ ] `field_A9`/`field_AC` still unnamed — no natural item name the
+      way Ankh/Boots/Cloak/Idol had one (reads as an authorization
+      check, not "missing item X"). Proposed: `_frigateAllowed`,
+      `_planeAllowed`. `sub_15C95` (what `end_of_turn2` skips) also
+      still unchased.
 - [ ] Location-descriptor block (`TEXT_STRINGS` indices 1-18, "IN THE
       WATER." etc.) and the treasure-item block (46-61, RING/WAND/
       GEM/etc.) aren't yet tied to a specific caller/index formula —
