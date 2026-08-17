@@ -20,68 +20,77 @@ FCB             ends
 ; ---------------------------------------------------------------------------
 
 Savegame        struc ; (sizeof=0x100, mappedto_2)
-                                        ; XREF: canMoveToTile-18B0/r
-                                        ; canMoveToTile-1729/w ...
-_name           db 13 dup(?)            ; XREF: sg01a2:07AA/r
-                                        ; write_player_name:loc_1507D/r ...
+                                        ; XREF: sub_10A30+2CA/w
+                                        ; sub_10A30+2CE/r ...
+_name           db 13 dup(?)            ; XREF: sg01a2:loc_107AA/r
+                                        ; view+2B/w ...
                 db ? ; undefined
                 db ? ; undefined
                 db ? ; undefined
-_sex            db ?                    ; XREF: sg01a2:5751/w
+_sex            db ?                    ; XREF: zstats+30/r
+                                        ; write_player_sex/r ...
 _class          db ?                    ; XREF: sg01a2:080D/r
-                                        ; sg01a2:5894/w ...
-_race           db ?                    ; XREF: sg01a2:57BF/w
-                                        ; sg01a2:587A/r ...
+                                        ; transact-280E/r ...
+_race           db ?                    ; XREF: zstats+3B/r
+                                        ; sg01a2:57BF/w ...
 _mapNum1        db ?                    ; XREF: load_map+1/r
-                                        ; sg01a2:2306/r ...
-_mapNum2        db ?                    ; XREF: canMoveToTile-1BB0/r
-                                        ; canMoveToTile-19E0/r ...
-_strength       db ?                    ; XREF: sg01a2:56C1/w
-                                        ; sg01a2:5760/r ...
-_agility        db ?                    ; XREF: sg01a2:56D9/w
-                                        ; sg01a2:57FB/r ...
-_stamina        db ?                    ; XREF: sg01a2:56F1/w
-_charisma       db ?                    ; XREF: sg01a2:5709/w
-                                        ; sg01a2:578F/r ...
-_wisdom         db ?                    ; XREF: sg01a2:5721/w
-                                        ; sg01a2:585B/r ...
-_intelligence   db ?                    ; XREF: sg01a2:5739/w
-                                        ; sg01a2:57CF/r ...
-_hp             db 2 dup(?)             ; XREF: canMoveToTile-183B/r
-                                        ; canMoveToTile-1831/w ...
-_food           db 2 dup(?)             ; XREF: canMoveToTile-1B0B/r
-                                        ; canMoveToTile-1B03/w ...
-_foodTurnCtr    db ?                    ; XREF: canMoveToTile-1B16/r
-                                        ; canMoveToTile-1B0E/w ...
+                                        ; load_talk_file+1/r ...
+_mapNum2        db ?                    ; XREF: sg01a2:0873/r
+                                        ; sub_10A30+13/r ...
+_strength       db ?                    ; XREF: attack+75/r
+                                        ; attack+319/r ...
+_agility        db ?                    ; XREF: attack+4E/r
+                                        ; attack+2F5/r ...
+_stamina        db ?                    ; XREF: zstats+16E/r
+                                        ; sg01a2:56F1/w
+_charisma       db ?                    ; XREF: zstats+18D/r
+                                        ; sg01a2:5709/w ...
+_wisdom         db ?                    ; XREF: zstats+1AC/r
+                                        ; sg01a2:5721/w ...
+_intelligence   db ?                    ; XREF: zstats+1CB/r
+                                        ; sg01a2:5739/w ...
+_hp             db 2 dup(?)             ; XREF: sub_10A30+1B8/r
+                                        ; sub_10A30+1C2/w ...
+_food           db 2 dup(?)             ; XREF: sg01a2:0918/r
+                                        ; sg01a2:0920/w ...
+_foodTurnCtr    db ?                    ; XREF: sg01a2:090D/r
+                                        ; sg01a2:0915/w ...
 _experience     db 2 dup(?)             ; XREF: sub_10F8E-31B/w
                                         ; sub_10F8E-318/w ...
 _gold           db 2 dup(?)             ; XREF: sub_10F8E-315/w
                                         ; sub_10F8E-312/w ...
 _mapX           db ?                    ; XREF: sg01a2:0826/r
-                                        ; sg01a2:2323/w ...
+                                        ; save_game+26/w ...
 _mapY           db ?                    ; XREF: sg01a2:082C/r
-                                        ; sg01a2:2329/w ...
+                                        ; save_game+2C/w ...
                 db ? ; undefined
-_lastKeypress   db ?                    ; XREF: canMoveToTile:overworld_keypress/w
-                                        ; canMoveToTile-1AEA/r
-                db ? ; undefined
-                db ? ; undefined
+_lastKeypress   db ?                    ; XREF: sg01a2:loc_10936/w
+                                        ; sg01a2:0939/r
                 db ? ; undefined
                 db ? ; undefined
                 db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
+field_2B        db ?                    ; XREF: attack+6C/r
+                                        ; attack+310/r ...
+field_2C        db ?                    ; XREF: sub_10A30+143/r
+                                        ; sub_10A30+92E/r ...
+field_2D        db ?                    ; XREF: cast+49/r cast+7B/r ...
+field_2E        db ?                    ; XREF: attack+1BE/r
+                                        ; attack+1C3/w ...
+field_2F        db ?                    ; XREF: attack+14A/r
+                                        ; attack+150/w ...
+field_30        db ?                    ; XREF: sg01a2:28DC/r
+                                        ; sg01a2:2904/r ...
                 db ? ; undefined
                 db ? ; undefined
 field_33        db ?                    ; XREF: sg01a2:0832/r
+                                        ; launch+A7/w ...
 field_34        db ?                    ; XREF: sg01a2:0839/r
-                                        ; canMoveToTile+37/r
+                                        ; canMoveToTile+37/r ...
 field_35        db ?                    ; XREF: sg01a2:083F/r
-                                        ; canMoveToTile+3D/r
-                db ? ; undefined
-_disableSave    db ?                    ; XREF: sg01a2:save_game/r
+                                        ; canMoveToTile+3D/r ...
+field_36        db ?                    ; XREF: offer+E9/r
+                                        ; transact+1F3/w
+_disableSave    db ?                    ; XREF: save_game/r
                                         ; canMoveToTile+30/r ...
 field_38        db ?                    ; XREF: normal_movement+142/r
                                         ; normal_movement+161/r ...
@@ -93,6 +102,8 @@ field_38        db ?                    ; XREF: normal_movement+142/r
 _gameSpeed?     db ?                    ; XREF: set_player_game_speed/w
                                         ; setup_speed_array:loc_106F0/r ...
                 db ? ; undefined
+field_40        db ?                    ; XREF: offer+12F/r
+                                        ; offer+136/w ...
                 db ? ; undefined
                 db ? ; undefined
                 db ? ; undefined
@@ -101,6 +112,7 @@ _gameSpeed?     db ?                    ; XREF: set_player_game_speed/w
                 db ? ; undefined
                 db ? ; undefined
                 db ? ; undefined
+field_49        db ?                    ; XREF: offer+DC/w
                 db ? ; undefined
                 db ? ; undefined
                 db ? ; undefined
@@ -123,6 +135,7 @@ _gameSpeed?     db ?                    ; XREF: set_player_game_speed/w
                 db ? ; undefined
                 db ? ; undefined
                 db ? ; undefined
+field_60        db ?                    ; XREF: wear_armor+70/r
                 db ? ; undefined
                 db ? ; undefined
                 db ? ; undefined
@@ -154,10 +167,7 @@ _gameSpeed?     db ?                    ; XREF: set_player_game_speed/w
                 db ? ; undefined
                 db ? ; undefined
                 db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
+field_80        db ?                    ; XREF: cast+89/r cast+B1/r ...
                 db ? ; undefined
                 db ? ; undefined
                 db ? ; undefined
@@ -190,21 +200,24 @@ _gameSpeed?     db ?                    ; XREF: set_player_game_speed/w
                 db ? ; undefined
                 db ? ; undefined
 _hasRing        db ?                    ; XREF: canMoveToTile+92/r
+                                        ; offer+11E/w
+field_A1        db ?                    ; XREF: cast+52/r
+field_A2        db ?                    ; XREF: cast+56/r
+                db ? ; undefined
+                db ? ; undefined
+field_A5        db ?                    ; XREF: attack+1A5/r
+                                        ; attack+1AB/w ...
+                db ? ; undefined
+field_A7        db ?                    ; XREF: board+146/r
+                db ? ; undefined
+field_A9        db ?                    ; XREF: board+EB/r
                 db ? ; undefined
                 db ? ; undefined
                 db ? ; undefined
+field_AD        db ?                    ; XREF: negate_time+F/r
+                                        ; negate_time+37/r ...
                 db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
-                db ? ; undefined
+field_AF        db ?                    ; XREF: get+130/r get+136/w ...
                 db ? ; undefined
                 db ? ; undefined
                 db ? ; undefined
@@ -416,14 +429,10 @@ loc_1020B:                              ; CODE XREF: start_+106↑j
                 mov     ah, 27h ; '''
                 mov     cx, 4000h
                 mov     dx, 0
-                call    access_file
-                push    ax
-                dec     cx
-                inc     bx
-                inc     sp
-                push    dx
-                inc     cx
-                and     [bx+si], ah
+                call    access_file     ; PICDRA
+; ---------------------------------------------------------------------------
+aPicdra         db 'PICDRA  '
+; ---------------------------------------------------------------------------
                 call    pauseScreen
                 mov     si, 5
 
@@ -612,24 +621,20 @@ demo:                                   ; CODE XREF: start_+13F↑j
                 mov     ah, 27h ; '''
                 mov     cx, 4000h
                 mov     dx, 0
-                call    access_file
-                push    ax
-                dec     cx
-                inc     bx
-                dec     di
-                push    bp
-                push    sp
-                and     [bx+si], ah
+                call    access_file     ; PICOUT
+; ---------------------------------------------------------------------------
+aPicout         db 'PICOUT  '
+; ---------------------------------------------------------------------------
                 mov     text_y, 17h
                 mov     text_x, 0
-                call    write_string    ;         BATTLE STRANGE CREATURES
+                call    write_string
 ; ---------------------------------------------------------------------------
 aBattleStrangeC db '        BATTLE STRANGE CREATURES',0
 ; ---------------------------------------------------------------------------
                 mov     text_x, 0
                 mov     text_y, 18h
                 call    write_string    ;       ACROSS THE FACE OF THE EARTH
-start_          endp ; sp-analysis failed
+start_          endp
 
 ; ---------------------------------------------------------------------------
 aAcrossTheFaceO db '      ACROSS THE FACE OF THE EARTH',0
@@ -640,17 +645,15 @@ aAcrossTheFaceO db '      ACROSS THE FACE OF THE EARTH',0
                 mov     ah, 27h ; '''
                 mov     cx, 4000h
                 mov     dx, 0
-                call    access_file
-                push    ax
-                dec     cx
-                inc     bx
-                push    sp
-                push    di
-                dec     si
-                and     [bx+si], ah
+                call    access_file     ; PICTWN
+; ---------------------------------------------------------------------------
+aPictwn         db 'PICTWN  '
+; ---------------------------------------------------------------------------
+
+loc_10445:                              ; CODE XREF: sg01a2:043A↑j
                 mov     text_x, 0
                 mov     text_y, 17h
-                call    write_string    ;    SEARCH FOR CLUES IN CARELESS WORDS
+                call    write_string
 ; ---------------------------------------------------------------------------
 aSearchForClues db '   SEARCH FOR CLUES IN CARELESS WORDS',0
 ; ---------------------------------------------------------------------------
@@ -784,14 +787,12 @@ loc_10519:                              ; CODE XREF: sg01a2:04A6↑j
                 mov     ah, 27h ; '''
                 mov     cx, 4000h
                 mov     dx, 0
-                call    access_file
-                push    ax
-                dec     cx
-                inc     bx
-                inc     sp
-                dec     si
-                inc     di
-                and     [bx+si], ah
+                call    access_file     ; PICDNG
+; ---------------------------------------------------------------------------
+aPicdng         db 'PICDNG  '
+; ---------------------------------------------------------------------------
+
+loc_10532:                              ; CODE XREF: sg01a2:0527↑j
                 mov     text_x, 0
                 mov     text_y, 17h
                 call    write_string
@@ -1289,73 +1290,33 @@ locret_10720:                           ; CODE XREF: delayFrames+5↑j
 delayFrames     endp
 
 ; ---------------------------------------------------------------------------
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db  8Fh
-                db  2Bh ; +
-                db  6Fh ; o
-                db  2Fh ; /
-                db  0Bh
-                db  31h ; 1
-                db  4Dh ; M
-                db  33h ; 3
-                db  89h
-                db  33h ; 3
-                db 0C1h
-                db  35h ; 5
-                db  3Bh ; ;
-                db  36h ; 6
-                db  82h
-                db  37h ; 7
-                db  94h
-                db  37h ; 7
-                db 0DCh
-                db  37h ; 7
-                db 0F1h
-                db  37h ; 7
-                db 0B0h
-                db  38h ; 8
-                db  92h
-                db  3Bh ; ;
-                db 0CEh
-                db  3Bh ; ;
-                db  2Eh ; .
-                db  3Ch ; <
-                db 0BCh
-                db  3Dh ; =
-                db 0C7h
-                db  3Dh ; =
-                db  50h ; P
-                db  3Eh ; >
-                db  25h ; %
-                db  3Fh ; ?
-                db  50h ; P
-                db  40h ; @
-                db 0F1h
-                db  42h ; B
-                db  7Eh ; ~
-                db  43h ; C
-                db 0F3h
-                db  43h ; C
-                db 0D4h
-                db  44h ; D
-                db  42h ; B
-                db  45h ; E
-                db  68h ; h
-                db  45h ; E
+                db 0Fh dup(0)
+command_jump_table dw offset attack     ; DATA XREF: sg01a2:0A29↓r
+                dw offset board
+                dw offset cast
+                dw offset descend
+                dw offset enter
+                dw offset fire
+                dw offset get
+                dw offset hyper
+                dw offset ignite_torch
+                dw offset jump
+                dw offset klimb
+                dw offset launch
+                dw offset magic
+                dw offset negate_time
+                dw offset offer
+                dw offset pass
+                dw offset quit
+                dw offset ready
+                dw offset steal
+                dw offset transact
+                dw offset unlock
+                dw offset view
+                dw offset wear_armor
+                dw offset x_it
+                dw offset yell
+                dw offset zstats
 ; ---------------------------------------------------------------------------
 
 play_game:                              ; CODE XREF: start_:loc_103AC↑p
@@ -1383,10 +1344,12 @@ loc_10796:                              ; CODE XREF: sg01a2:0776↑j
                 mov     cx, 100h
                 lea     dx, player
                 mov     ah, 27h
-                call    access_file
+                call    access_file     ; PLAYER
 ; ---------------------------------------------------------------------------
 aPlayer_0       db 'PLAYER  '
 ; ---------------------------------------------------------------------------
+
+loc_107AA:                              ; CODE XREF: sg01a2:079F↑j
                 mov     al, player._name
                 or      al, al
                 jnz     short loc_107E6
@@ -1420,16 +1383,18 @@ loc_107F0:                              ; CODE XREF: sg01a2:07EB↑j
                 mov     cx, 800h
                 mov     dx, monsters_ptr
                 mov     ah, 27h
-                call    access_file
+                call    access_file     ; MONSTERS
 ; ---------------------------------------------------------------------------
 aMonsters       db 'MONSTERS'
 ; ---------------------------------------------------------------------------
+
+loc_10807:                              ; CODE XREF: sg01a2:07FC↑j
                 call    load_map
                 call    setPalette
                 mov     al, player._class
                 add     al, al
                 clc
-                adc     al, 120
+                adc     al, 78h ; 'x'
                 mov     _playerTileId, al
                 mov     al, 0
                 mov     _flag1, al
@@ -1449,7 +1414,7 @@ aMonsters       db 'MONSTERS'
                 mov     al, player.field_35
                 mov     _playerY, al
                 call    get_player_tile
-                mov     al, 80
+                mov     al, 50h ; 'P'
                 mov     bx, current_tile_ptr
                 mov     [bx+si], al
 
@@ -1469,20 +1434,18 @@ loc_10859:                              ; CODE XREF: sg01a2:0862↓j
                 mov     al, 0FFh
                 mov     _outsideMapTile, al
                 call    write_stats
-; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR canMoveToTile
 
-loc_1086F:                              ; CODE XREF: canMoveToTile:loc_10C5F↓j
-                                        ; canMoveToTile-114B↓j
+loc_1086F:                              ; CODE XREF: sg01a2:loc_10C5F↓j
+                                        ; sg01a2:12D8↓j
                 nop
                 mov     sp, 100h
                 mov     al, player._mapNum2
                 cmp     al, 4
-                jb      short overworld_render
-                jmp     dungeon_render
+                jb      short loc_1087D
+                jmp     loc_127C0
 ; ---------------------------------------------------------------------------
 
-overworld_render:                       ; CODE XREF: canMoveToTile-1BAB↑j
+loc_1087D:                              ; CODE XREF: sg01a2:0878↑j
                 nop
                 call    write_string
 ; ---------------------------------------------------------------------------
@@ -1503,7 +1466,7 @@ aCmd            db 'CMD: ',0
                 mov     al, 20
                 mov     _sleepFlag2?, al
 
-loc_108AC:                              ; CODE XREF: canMoveToTile-1B60↓j
+loc_108AC:                              ; CODE XREF: sg01a2:08C3↓j
                 call    write_string
 ; ---------------------------------------------------------------------------
 aZ              db 'Z',0
@@ -1512,7 +1475,7 @@ aZ              db 'Z',0
                 mov     bl, 0FFh
                 mov     di, bx
 
-loc_108B7:                              ; CODE XREF: canMoveToTile-1B66↓j
+loc_108B7:                              ; CODE XREF: sg01a2:08BD↓j
                 dec     di
                 nop
                 nop
@@ -1525,13 +1488,13 @@ loc_108B7:                              ; CODE XREF: canMoveToTile-1B66↓j
                 jmp     loc_10A33
 ; ---------------------------------------------------------------------------
 
-loc_108C8:                              ; CODE XREF: canMoveToTile-1B7E↑j
-                                        ; canMoveToTile-1B49↓j ...
+loc_108C8:                              ; CODE XREF: sg01a2:08A5↑j
+                                        ; sg01a2:08DA↓j ...
                 mov     bx, 0
                 call    delayFrames
                 call    keypress_check
                 cmp     ah, 0FFh
-                jz      short overworld_keypress
+                jz      short loc_10936
                 inc     _commandWaitCtr
                 jnz     short loc_108C8
                 mov     al, _playerTileId
@@ -1539,7 +1502,7 @@ loc_108C8:                              ; CODE XREF: canMoveToTile-1B7E↑j
                 jnz     short loc_108E6
                 call    sub_15EC7
 
-loc_108E6:                              ; CODE XREF: canMoveToTile-1B42↑j
+loc_108E6:                              ; CODE XREF: sg01a2:08E1↑j
                 nop
                 call    draw_map
                 call    animate_water
@@ -1556,7 +1519,7 @@ loc_108E6:                              ; CODE XREF: canMoveToTile-1B42↑j
 aPass_0         db 'PASS',0
 ; ---------------------------------------------------------------------------
 
-end_of_turn:                            ; CODE XREF: canMoveToTile-1AD6↓j
+loc_1090C:                              ; CODE XREF: sg01a2:094D↓j
                 stc
                 mov     al, player._foodTurnCtr
                 cmc
@@ -1576,31 +1539,31 @@ end_of_turn:                            ; CODE XREF: canMoveToTile-1AD6↓j
                 das
                 cmc
                 mov     player._food, al
-                jb      short not_dead
+                jb      short loc_10933
                 jmp     dead2
 ; ---------------------------------------------------------------------------
 
-not_dead:                               ; CODE XREF: canMoveToTile-1AF5↑j
+loc_10933:                              ; CODE XREF: sg01a2:092E↑j
                 jmp     loc_10A33
 ; ---------------------------------------------------------------------------
 
-overworld_keypress:                     ; CODE XREF: canMoveToTile-1B4F↑j
+loc_10936:                              ; CODE XREF: sg01a2:08D4↑j
                 mov     player._lastKeypress, al
                 mov     al, player._lastKeypress
                 cmp     al, ' '
-                jnz     short not_pass
+                jnz     short loc_1094F
                 mov     al, 0
                 mov     byte_17436, al
                 call    write_string
 ; ---------------------------------------------------------------------------
 aPass           db 'PASS',0
 ; ---------------------------------------------------------------------------
-                jmp     short end_of_turn
+                jmp     short loc_1090C
 ; ---------------------------------------------------------------------------
 
-not_pass:                               ; CODE XREF: canMoveToTile-1AE5↑j
+loc_1094F:                              ; CODE XREF: sg01a2:093E↑j
                 cmp     al, NORTH_KEYCODE
-                jnz     short not_north
+                jnz     short loc_10976
                 dec     _mapY
                 call    write_string
 ; ---------------------------------------------------------------------------
@@ -1614,15 +1577,13 @@ aNorth          db 'NORTH',0
                 jmp     loc_10A02
 ; ---------------------------------------------------------------------------
 
-loc_10973:                              ; CODE XREF: canMoveToTile-1AB9↑j
+loc_10973:                              ; CODE XREF: sg01a2:096A↑j
                 jmp     short loc_109E9
-; END OF FUNCTION CHUNK FOR canMoveToTile
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR canMoveToTile
 
-not_north:                              ; CODE XREF: canMoveToTile-1AD0↑j
+loc_10976:                              ; CODE XREF: sg01a2:0953↑j
                 cmp     al, byte_1767F
                 jnz     short loc_1099D
                 inc     _mapY
@@ -1636,21 +1597,17 @@ aSouth          db 'SOUTH',0
                 jz      short loc_1099A
                 dec     _mapY
                 jmp     short loc_10A02
-; END OF FUNCTION CHUNK FOR canMoveToTile
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR canMoveToTile
 
-loc_1099A:                              ; CODE XREF: canMoveToTile-1A92↑j
+loc_1099A:                              ; CODE XREF: sg01a2:0991↑j
                 jmp     short loc_109E9
-; END OF FUNCTION CHUNK FOR canMoveToTile
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR canMoveToTile
 
-loc_1099D:                              ; CODE XREF: canMoveToTile-1AA9↑j
+loc_1099D:                              ; CODE XREF: sg01a2:097A↑j
                 cmp     al, byte_17681
                 jnz     short loc_109C3
                 dec     _mapX
@@ -1664,21 +1621,17 @@ aWest           db 'WEST',0
                 jz      short loc_109C0
                 inc     _mapX
                 jmp     short loc_10A02
-; END OF FUNCTION CHUNK FOR canMoveToTile
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR canMoveToTile
 
-loc_109C0:                              ; CODE XREF: canMoveToTile-1A6C↑j
+loc_109C0:                              ; CODE XREF: sg01a2:09B7↑j
                 jmp     short loc_109E9
-; END OF FUNCTION CHUNK FOR canMoveToTile
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR canMoveToTile
 
-loc_109C3:                              ; CODE XREF: canMoveToTile-1A82↑j
+loc_109C3:                              ; CODE XREF: sg01a2:09A1↑j
                 cmp     al, byte_17680
                 jnz     short loc_109F4
                 inc     _mapX
@@ -1692,82 +1645,99 @@ aEast           db 'EAST',0
                 jz      short loc_109E6
                 dec     _mapX
                 jmp     short loc_10A02
-; END OF FUNCTION CHUNK FOR canMoveToTile
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR canMoveToTile
 
-loc_109E6:                              ; CODE XREF: canMoveToTile-1A46↑j
+loc_109E6:                              ; CODE XREF: sg01a2:09DD↑j
                 jmp     short loc_109E9
-; END OF FUNCTION CHUNK FOR canMoveToTile
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR canMoveToTile
 
-loc_109E9:                              ; CODE XREF: canMoveToTile:loc_10973↑j
-                                        ; canMoveToTile:loc_1099A↑j ...
+loc_109E9:                              ; CODE XREF: sg01a2:loc_10973↑j
+                                        ; sg01a2:loc_1099A↑j ...
                 mov     al, byte_17436
                 xor     al, 0FFh
                 mov     byte_17436, al
                 jmp     short loc_10A33
-; END OF FUNCTION CHUNK FOR canMoveToTile
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR canMoveToTile
 
-loc_109F4:                              ; CODE XREF: canMoveToTile-1A5C↑j
+loc_109F4:                              ; CODE XREF: sg01a2:09C7↑j
                 push    ax
                 mov     al, 0
                 mov     byte_17436, al
                 pop     ax
 
-loc_109FB:                              ; CODE XREF: canMoveToTile:loc_1285E↓j
+loc_109FB:                              ; CODE XREF: sg01a2:loc_1285E↓j
                 cmp     al, 41h ; 'A'
                 jnb     short loc_10A18
                 jmp     loc_12275
 ; ---------------------------------------------------------------------------
 
-loc_10A02:                              ; CODE XREF: canMoveToTile-1AB3↑j
-                                        ; canMoveToTile-1A8C↑j ...
+loc_10A02:                              ; CODE XREF: sg01a2:0970↑j
+                                        ; sg01a2:0997↑j ...
                 call    write_string    ; --INVALID MOVE!
 ; ---------------------------------------------------------------------------
 aInvalidMove    db '--INVALID MOVE!',0
 ; ---------------------------------------------------------------------------
-                jmp     short loc_10A30
-; END OF FUNCTION CHUNK FOR canMoveToTile
+                jmp     short sub_10A30
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR canMoveToTile
 
-loc_10A18:                              ; CODE XREF: canMoveToTile-1A26↑j
+loc_10A18:                              ; CODE XREF: sg01a2:09FD↑j
                 cmp     al, 5Ah ; 'Z'
                 jbe     short loc_10A1F
                 jmp     loc_12275
 ; ---------------------------------------------------------------------------
 
-loc_10A1F:                              ; CODE XREF: canMoveToTile-1A09↑j
+loc_10A1F:                              ; CODE XREF: sg01a2:0A1A↑j
                 stc
                 cmc
                 sbb     al, 41h ; 'A'
                 add     al, al
                 mov     ah, 0
                 mov     si, ax
-                mov     bx, cs:[si+730h]
+                mov     bx, cs:command_jump_table[si]
                 jmp     bx
-; ---------------------------------------------------------------------------
 
-loc_10A30:                              ; CODE XREF: canMoveToTile-1A0E↑j
-                                        ; sub_12052:loc_120A4↓j ...
+; =============== S U B R O U T I N E =======================================
+
+
+sub_10A30       proc near               ; CODE XREF: sg01a2:0A15↑j
+                                        ; sub_12052+52↓j ...
+
+; FUNCTION CHUNK AT 0C62 SIZE 0000003A BYTES
+; FUNCTION CHUNK AT 0C9C SIZE 0000003C BYTES
+; FUNCTION CHUNK AT 0CD9 SIZE 0000002F BYTES
+; FUNCTION CHUNK AT 0D09 SIZE 00000007 BYTES
+; FUNCTION CHUNK AT 0D11 SIZE 00000007 BYTES
+; FUNCTION CHUNK AT 0D19 SIZE 00000035 BYTES
+; FUNCTION CHUNK AT 0D4F SIZE 0000001F BYTES
+; FUNCTION CHUNK AT 0D6F SIZE 0000001F BYTES
+; FUNCTION CHUNK AT 0D8F SIZE 0000001F BYTES
+; FUNCTION CHUNK AT 0DAF SIZE 0000001E BYTES
+; FUNCTION CHUNK AT 0DCE SIZE 00000002 BYTES
+; FUNCTION CHUNK AT 0DD1 SIZE 00000002 BYTES
+; FUNCTION CHUNK AT 0DD4 SIZE 0000009C BYTES
+; FUNCTION CHUNK AT 1013 SIZE 0000002C BYTES
+; FUNCTION CHUNK AT 1040 SIZE 000000FA BYTES
+; FUNCTION CHUNK AT 115E SIZE 00000141 BYTES
+; FUNCTION CHUNK AT 1308 SIZE 00000027 BYTES
+; FUNCTION CHUNK AT 1330 SIZE 00000085 BYTES
+; FUNCTION CHUNK AT 13D7 SIZE 00000006 BYTES
+; FUNCTION CHUNK AT 1410 SIZE 00000004 BYTES
+; FUNCTION CHUNK AT 2122 SIZE 00000077 BYTES
+
                 call    sub_15C95
 
-loc_10A33:                              ; CODE XREF: canMoveToTile-1B5E↑j
-                                        ; canMoveToTile:not_dead↑j ...
+loc_10A33:                              ; CODE XREF: sg01a2:08C5↑j
+                                        ; sg01a2:loc_10933↑j ...
                 mov     al, 0Dh
-                call    sub_153F4
+                call    print_char
                 mov     al, 0
                 mov     byte_17432, al
                 mov     byte_17430, al
@@ -1780,38 +1750,38 @@ loc_10A33:                              ; CODE XREF: canMoveToTile-1B5E↑j
                 jmp     loc_11013
 ; ---------------------------------------------------------------------------
 
-loc_10A51:                              ; CODE XREF: canMoveToTile-19D7↑j
+loc_10A51:                              ; CODE XREF: sub_10A30+1C↑j
                 cmp     al, 2
                 jnz     short loc_10A58
                 jmp     loc_11014
 ; ---------------------------------------------------------------------------
 
-loc_10A58:                              ; CODE XREF: canMoveToTile-19D0↑j
+loc_10A58:                              ; CODE XREF: sub_10A30+23↑j
                 cmp     al, 3
                 jnz     short loc_10A5F
                 jmp     loc_11015
 ; ---------------------------------------------------------------------------
 
-loc_10A5F:                              ; CODE XREF: canMoveToTile-19C9↑j
+loc_10A5F:                              ; CODE XREF: sub_10A30+2A↑j
                 cmp     al, 4
                 jnz     short loc_10A66
                 jmp     loc_1115F
 ; ---------------------------------------------------------------------------
 
-loc_10A66:                              ; CODE XREF: canMoveToTile-19C2↑j
+loc_10A66:                              ; CODE XREF: sub_10A30+31↑j
                 cmp     al, 5
                 jnz     short loc_10A6D
                 jmp     loc_1115E
 ; ---------------------------------------------------------------------------
 
-loc_10A6D:                              ; CODE XREF: canMoveToTile-19DB↑j
-                                        ; canMoveToTile-19BB↑j
+loc_10A6D:                              ; CODE XREF: sub_10A30+18↑j
+                                        ; sub_10A30+38↑j
                 nop
                 mov     bh, 0
                 mov     bl, 1Fh
                 mov     di, bx
 
-loc_10A74:                              ; CODE XREF: canMoveToTile-1981↓j
+loc_10A74:                              ; CODE XREF: sub_10A30+72↓j
                 mov     al, [di+197h]
                 or      al, al
                 jz      short loc_10AA1
@@ -1832,15 +1802,15 @@ loc_10A74:                              ; CODE XREF: canMoveToTile-1981↓j
                 cmp     al, 22h ; '"'
                 jnz     short loc_10AA7
 
-loc_10AA1:                              ; CODE XREF: canMoveToTile-19A9↑j
-                                        ; canMoveToTile-1877↓j ...
+loc_10AA1:                              ; CODE XREF: sub_10A30+4A↑j
+                                        ; sub_10A30+17C↓j ...
                 dec     di
                 jnz     short loc_10A74
                 jmp     loc_10C9C
 ; ---------------------------------------------------------------------------
 
-loc_10AA7:                              ; CODE XREF: canMoveToTile-19A2↑j
-                                        ; canMoveToTile-199B↑j ...
+loc_10AA7:                              ; CODE XREF: sub_10A30+51↑j
+                                        ; sub_10A30+58↑j ...
                 call    sub_14F36
                 mov     bx, di
                 mov     points_to_distrubte, bl
@@ -1864,44 +1834,38 @@ loc_10AA7:                              ; CODE XREF: canMoveToTile-19A2↑j
                 call    sub_10E70
 ; ---------------------------------------------------------------------------
                 jmp     short loc_10AFC
-; END OF FUNCTION CHUNK FOR canMoveToTile
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR canMoveToTile
 
-loc_10AE1:                              ; CODE XREF: canMoveToTile-194A↑j
+loc_10AE1:                              ; CODE XREF: sub_10A30+A9↑j
                 cmp     al, 38h ; '8'
                 jnz     short loc_10AEB
                 call    sub_10EC2
 ; ---------------------------------------------------------------------------
                 jmp     short loc_10AFC
-; END OF FUNCTION CHUNK FOR canMoveToTile
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR canMoveToTile
 
-loc_10AEB:                              ; CODE XREF: canMoveToTile-1940↑j
+loc_10AEB:                              ; CODE XREF: sub_10A30+B3↑j
                 cmp     al, 0F8h
                 jnz     short loc_10AF5
                 call    sub_10F12
 ; ---------------------------------------------------------------------------
                 jmp     short loc_10AFC
-; END OF FUNCTION CHUNK FOR canMoveToTile
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR canMoveToTile
 
-loc_10AF5:                              ; CODE XREF: canMoveToTile-1936↑j
+loc_10AF5:                              ; CODE XREF: sub_10A30+BD↑j
                 cmp     al, 3Ch ; '<'
                 jnz     short loc_10AFC
                 call    near ptr sub_10F48
 ; ---------------------------------------------------------------------------
 
-loc_10AFC:                              ; CODE XREF: canMoveToTile-196B↑j
-                                        ; canMoveToTile-1961↑j ...
+loc_10AFC:                              ; CODE XREF: sub_10A30+88↑j
+                                        ; sub_10A30+92↑j ...
                 mov     bh, 0
                 mov     bl, points_to_distrubte
                 mov     di, bx
@@ -1920,7 +1884,7 @@ loc_10AFC:                              ; CODE XREF: canMoveToTile-196B↑j
                 sbb     al, _circleDeltaY
                 mov     _circleDeltaY, al
 
-loc_10B25:                              ; CODE XREF: canMoveToTile-1916↑j
+loc_10B25:                              ; CODE XREF: sub_10A30+DD↑j
                 clc
                 mov     al, [di+137h]
                 adc     al, _circleDeltaX
@@ -1930,7 +1894,7 @@ loc_10B25:                              ; CODE XREF: canMoveToTile-1916↑j
                 jmp     loc_12122
 ; ---------------------------------------------------------------------------
 
-loc_10B39:                              ; CODE XREF: canMoveToTile-18EF↑j
+loc_10B39:                              ; CODE XREF: sub_10A30+104↑j
                 clc
                 mov     al, [di+157h]
                 adc     al, _circleDeltaY
@@ -1940,7 +1904,7 @@ loc_10B39:                              ; CODE XREF: canMoveToTile-18EF↑j
                 jmp     loc_12122
 ; ---------------------------------------------------------------------------
 
-loc_10B4D:                              ; CODE XREF: canMoveToTile-18DB↑j
+loc_10B4D:                              ; CODE XREF: sub_10A30+118↑j
                 inc     byte_17430
                 mov     bx, di
                 mov     _sleepFlag2?, bl
@@ -1949,7 +1913,7 @@ loc_10B4D:                              ; CODE XREF: canMoveToTile-18DB↑j
                 jnz     short loc_10B62
                 call    sub_10FCD
 
-loc_10B62:                              ; CODE XREF: canMoveToTile-18C6↑j
+loc_10B62:                              ; CODE XREF: sub_10A30+12D↑j
                 call    sub_15217
                 mov     bh, 0
                 mov     bl, _sleepFlag2?
@@ -1957,7 +1921,7 @@ loc_10B62:                              ; CODE XREF: canMoveToTile-18C6↑j
                 cmp     al, 0
                 js      short loc_10BA0
                 and     al, 7
-                cmp     al, byte ptr player+2Ch
+                cmp     al, player.field_2C
                 jb      short loc_10BA0
                 inc     _commandWaitCtr
                 mov     al, [di+177h]
@@ -1975,11 +1939,11 @@ loc_10B62:                              ; CODE XREF: canMoveToTile-18C6↑j
                 jnz     short loc_10B9D
                 add     al, al
 
-loc_10B9D:                              ; CODE XREF: canMoveToTile-188A↑j
+loc_10B9D:                              ; CODE XREF: sub_10A30+169↑j
                 mov     byte_17432, al
 
-loc_10BA0:                              ; CODE XREF: canMoveToTile-18B4↑j
-                                        ; canMoveToTile-18AC↑j
+loc_10BA0:                              ; CODE XREF: sub_10A30+13F↑j
+                                        ; sub_10A30+147↑j
                 nop
                 mov     al, player._mapNum2
                 or      al, al
@@ -1987,17 +1951,17 @@ loc_10BA0:                              ; CODE XREF: canMoveToTile-18B4↑j
                 jmp     loc_11040
 ; ---------------------------------------------------------------------------
 
-loc_10BAB:                              ; CODE XREF: canMoveToTile-187D↑j
+loc_10BAB:                              ; CODE XREF: sub_10A30+176↑j
                 nop
                 jmp     loc_10AA1
 ; ---------------------------------------------------------------------------
 
-loc_10BAF:                              ; CODE XREF: canMoveToTile-1776↓j
-                                        ; canMoveToTile-1766↓j ...
+loc_10BAF:                              ; CODE XREF: sub_10A30+27D↓j
+                                        ; sub_10A30+28D↓j ...
                 call    draw_map
 
-loc_10BB2:                              ; CODE XREF: canMoveToTile-185F↓j
-                                        ; canMoveToTile-1854↓j
+loc_10BB2:                              ; CODE XREF: sub_10A30+194↓j
+                                        ; sub_10A30+19F↓j
                 mov     al, byte_17430
                 or      al, al
                 jz      short loc_10BD1
@@ -2011,7 +1975,7 @@ loc_10BB2:                              ; CODE XREF: canMoveToTile-185F↓j
                 jmp     short loc_10BB2
 ; ---------------------------------------------------------------------------
 
-loc_10BD1:                              ; CODE XREF: canMoveToTile-186C↑j
+loc_10BD1:                              ; CODE XREF: sub_10A30+187↑j
                 mov     al, byte_17432
                 or      al, al
                 jz      short loc_10C1C
@@ -2048,10 +2012,11 @@ loc_10BD1:                              ; CODE XREF: canMoveToTile-186C↑j
                 mov     player._hp, al
                 jnb     short dead
 
-loc_10C1C:                              ; CODE XREF: canMoveToTile-184D↑j
-                                        ; canMoveToTile-181C↑j
+loc_10C1C:                              ; CODE XREF: sub_10A30+1A6↑j
+                                        ; sub_10A30+1D7↑j
                 call    write_stats
-; ---------------------------------------------------------------------------
+sub_10A30       endp ; sp-analysis failed
+
                 mov     al, 4
                 mov     _outsideMapTile, al
                 mov     al, player._mapNum2
@@ -2061,40 +2026,42 @@ loc_10C1C:                              ; CODE XREF: canMoveToTile-184D↑j
                 mov     _outsideMapTile, al
                 call    sub_126F9
 
-loc_10C33:                              ; CODE XREF: canMoveToTile-17FA↑j
+loc_10C33:                              ; CODE XREF: sg01a2:0C29↑j
                 mov     al, player_paralyzedFlag
                 or      al, al
                 jz      short loc_10C3E
                 dec     player_paralyzedFlag
 
-loc_10C3E:                              ; CODE XREF: canMoveToTile-17EB↑j
+loc_10C3E:                              ; CODE XREF: sg01a2:0C38↑j
                 mov     al, _flag3
                 or      al, al
                 jz      short loc_10C49
                 dec     _flag3
 
-loc_10C49:                              ; CODE XREF: canMoveToTile-17E0↑j
+loc_10C49:                              ; CODE XREF: sg01a2:0C43↑j
                 mov     al, _sleepFlag
                 or      al, al
                 jz      short loc_10C54
                 dec     _sleepFlag
 
-loc_10C54:                              ; CODE XREF: canMoveToTile-17D5↑j
+loc_10C54:                              ; CODE XREF: sg01a2:0C4E↑j
                 mov     al, _flag1
                 or      al, al
                 jz      short loc_10C5F
                 dec     _flag1
 
-loc_10C5F:                              ; CODE XREF: canMoveToTile-17CA↑j
+loc_10C5F:                              ; CODE XREF: sg01a2:0C59↑j
                 jmp     loc_1086F
-; END OF FUNCTION CHUNK FOR canMoveToTile
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR sub_10F8E
+;   ADDITIONAL PARENT FUNCTION sub_10A30
 ;   ADDITIONAL PARENT FUNCTION sub_112DB
 ;   ADDITIONAL PARENT FUNCTION canMoveToTile
+;   ADDITIONAL PARENT FUNCTION normal_movement
+;   ADDITIONAL PARENT FUNCTION launch
 
-dead:                                   ; CODE XREF: canMoveToTile-1823↑j
-                                        ; canMoveToTile-1809↑j ...
+dead:                                   ; CODE XREF: sub_10A30+1D0↑j
+                                        ; sub_10A30+1EA↑j ...
                 mov     al, 0
                 mov     player._hp, al
                 mov     player._hp+1, al
@@ -2106,7 +2073,6 @@ dead:                                   ; CODE XREF: canMoveToTile-1823↑j
                 mov     player._gold, al
                 mov     player._gold+1, al
                 call    write_stats
-; ---------------------------------------------------------------------------
                 call    write_string
 ; ---------------------------------------------------------------------------
                 db 8Dh,8Dh,8Dh,0
@@ -2123,14 +2089,14 @@ halt:                                   ; CODE XREF: sub_10F8E:halt↓j
                 jmp     short halt
 ; END OF FUNCTION CHUNK FOR sub_10F8E
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR canMoveToTile
+; START OF FUNCTION CHUNK FOR sub_10A30
 
-loc_10C9C:                              ; CODE XREF: canMoveToTile-197F↑j
+loc_10C9C:                              ; CODE XREF: sub_10A30+74↑j
                 mov     bh, 0
                 mov     bl, 1Fh
                 mov     di, bx
 
-loc_10CA2:                              ; CODE XREF: canMoveToTile-1778↓j
+loc_10CA2:                              ; CODE XREF: sub_10A30+27B↓j
                 mov     al, [di+197h]
                 or      al, al
                 jz      short loc_10CB0
@@ -2139,7 +2105,7 @@ loc_10CA2:                              ; CODE XREF: canMoveToTile-1778↓j
                 jmp     loc_10BAF
 ; ---------------------------------------------------------------------------
 
-loc_10CB0:                              ; CODE XREF: canMoveToTile-177B↑j
+loc_10CB0:                              ; CODE XREF: sub_10A30+278↑j
                 mov     bx, di
                 mov     byte_1742F, bl
                 call    sub_15217
@@ -2148,7 +2114,7 @@ loc_10CB0:                              ; CODE XREF: canMoveToTile-177B↑j
                 jmp     loc_10BAF
 ; ---------------------------------------------------------------------------
 
-loc_10CC0:                              ; CODE XREF: canMoveToTile-1768↑j
+loc_10CC0:                              ; CODE XREF: sub_10A30+28B↑j
                 mov     bh, 0
                 mov     bl, byte_1742F
                 mov     di, bx
@@ -2158,17 +2124,17 @@ loc_10CC0:                              ; CODE XREF: canMoveToTile-1768↑j
                 js      short loc_10CD9
                 and     al, 3Fh
                 jmp     short loc_10CDC
-; END OF FUNCTION CHUNK FOR canMoveToTile
+; END OF FUNCTION CHUNK FOR sub_10A30
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR canMoveToTile
+; START OF FUNCTION CHUNK FOR sub_10A30
 
-loc_10CD9:                              ; CODE XREF: canMoveToTile-1751↑j
+loc_10CD9:                              ; CODE XREF: sub_10A30+2A2↑j
                 jmp     loc_10BAF
 ; ---------------------------------------------------------------------------
 
-loc_10CDC:                              ; CODE XREF: canMoveToTile-174D↑j
+loc_10CDC:                              ; CODE XREF: sub_10A30+2A6↑j
                 mov     bh, 0
                 mov     bl, byte_1742F
                 mov     di, bx
@@ -2185,85 +2151,85 @@ loc_10CDC:                              ; CODE XREF: canMoveToTile-174D↑j
                 rcr     al, 1
                 jnb     short loc_10D09
                 jmp     short loc_10D44
-; END OF FUNCTION CHUNK FOR canMoveToTile
+; END OF FUNCTION CHUNK FOR sub_10A30
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR canMoveToTile
+; START OF FUNCTION CHUNK FOR sub_10A30
 
-loc_10D09:                              ; CODE XREF: canMoveToTile-171F↑j
+loc_10D09:                              ; CODE XREF: sub_10A30+2D4↑j
                 clc
                 rcr     al, 1
                 jnb     short loc_10D11
                 jmp     short loc_10D64
-; END OF FUNCTION CHUNK FOR canMoveToTile
+; END OF FUNCTION CHUNK FOR sub_10A30
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR canMoveToTile
+; START OF FUNCTION CHUNK FOR sub_10A30
 
-loc_10D11:                              ; CODE XREF: canMoveToTile-1717↑j
+loc_10D11:                              ; CODE XREF: sub_10A30+2DC↑j
                 clc
                 rcr     al, 1
                 jnb     short loc_10D19
                 jmp     short loc_10D84
-; END OF FUNCTION CHUNK FOR canMoveToTile
+; END OF FUNCTION CHUNK FOR sub_10A30
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR canMoveToTile
+; START OF FUNCTION CHUNK FOR sub_10A30
 
-loc_10D19:                              ; CODE XREF: canMoveToTile-170F↑j
+loc_10D19:                              ; CODE XREF: sub_10A30+2E4↑j
                 clc
                 rcr     al, 1
                 jnb     short loc_10D21
                 jmp     loc_10DA4
 ; ---------------------------------------------------------------------------
 
-loc_10D21:                              ; CODE XREF: canMoveToTile-1707↑j
+loc_10D21:                              ; CODE XREF: sub_10A30+2EC↑j
                 clc
                 rcr     al, 1
                 jnb     short loc_10D29
                 jmp     loc_10DD4
 ; ---------------------------------------------------------------------------
 
-loc_10D29:                              ; CODE XREF: canMoveToTile-16FF↑j
+loc_10D29:                              ; CODE XREF: sub_10A30+2F4↑j
                 clc
                 rcr     al, 1
                 jnb     short loc_10D31
                 jmp     loc_10DCB
 ; ---------------------------------------------------------------------------
 
-loc_10D31:                              ; CODE XREF: canMoveToTile-16F7↑j
+loc_10D31:                              ; CODE XREF: sub_10A30+2FC↑j
                 clc
                 rcr     al, 1
                 jnb     short loc_10D39
                 jmp     loc_10DCE
 ; ---------------------------------------------------------------------------
 
-loc_10D39:                              ; CODE XREF: canMoveToTile-16EF↑j
+loc_10D39:                              ; CODE XREF: sub_10A30+304↑j
                 clc
                 rcr     al, 1
                 jnb     short loc_10D41
                 jmp     loc_10DD1
 ; ---------------------------------------------------------------------------
 
-loc_10D41:                              ; CODE XREF: canMoveToTile-16E7↑j
+loc_10D41:                              ; CODE XREF: sub_10A30+30C↑j
                 jmp     loc_10E50
 ; ---------------------------------------------------------------------------
 
-loc_10D44:                              ; CODE XREF: canMoveToTile-171D↑j
+loc_10D44:                              ; CODE XREF: sub_10A30+2D6↑j
                 mov     al, [di+1B7h]
                 cmp     al, 8
                 jz      short loc_10D4F
                 jmp     short loc_10DC4
-; END OF FUNCTION CHUNK FOR canMoveToTile
+; END OF FUNCTION CHUNK FOR sub_10A30
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR canMoveToTile
+; START OF FUNCTION CHUNK FOR sub_10A30
 
-loc_10D4F:                              ; CODE XREF: canMoveToTile-16D9↑j
+loc_10D4F:                              ; CODE XREF: sub_10A30+31A↑j
                 mov     al, 30h ; '0'
                 mov     bx, current_tile_ptr
                 mov     [bx+si], al
@@ -2273,18 +2239,18 @@ loc_10D4F:                              ; CODE XREF: canMoveToTile-16D9↑j
                 jmp     loc_10BAF
 ; ---------------------------------------------------------------------------
 
-loc_10D64:                              ; CODE XREF: canMoveToTile-1715↑j
+loc_10D64:                              ; CODE XREF: sub_10A30+2DE↑j
                 mov     al, [di+1B7h]
                 cmp     al, 8
                 jz      short loc_10D6F
                 jmp     short loc_10DC4
-; END OF FUNCTION CHUNK FOR canMoveToTile
+; END OF FUNCTION CHUNK FOR sub_10A30
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR canMoveToTile
+; START OF FUNCTION CHUNK FOR sub_10A30
 
-loc_10D6F:                              ; CODE XREF: canMoveToTile-16B9↑j
+loc_10D6F:                              ; CODE XREF: sub_10A30+33A↑j
                 mov     al, 0FCh
                 mov     bx, current_tile_ptr
                 mov     [bx+si], al
@@ -2294,18 +2260,18 @@ loc_10D6F:                              ; CODE XREF: canMoveToTile-16B9↑j
                 jmp     loc_10BAF
 ; ---------------------------------------------------------------------------
 
-loc_10D84:                              ; CODE XREF: canMoveToTile-170D↑j
+loc_10D84:                              ; CODE XREF: sub_10A30+2E6↑j
                 mov     al, [di+1B7h]
                 cmp     al, 8
                 jz      short loc_10D8F
                 jmp     short loc_10DC4
-; END OF FUNCTION CHUNK FOR canMoveToTile
+; END OF FUNCTION CHUNK FOR sub_10A30
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR canMoveToTile
+; START OF FUNCTION CHUNK FOR sub_10A30
 
-loc_10D8F:                              ; CODE XREF: canMoveToTile-1699↑j
+loc_10D8F:                              ; CODE XREF: sub_10A30+35A↑j
                 mov     al, 34h ; '4'
                 mov     bx, current_tile_ptr
                 mov     [bx+si], al
@@ -2315,18 +2281,18 @@ loc_10D8F:                              ; CODE XREF: canMoveToTile-1699↑j
                 jmp     loc_10BAF
 ; ---------------------------------------------------------------------------
 
-loc_10DA4:                              ; CODE XREF: canMoveToTile-1705↑j
+loc_10DA4:                              ; CODE XREF: sub_10A30+2EE↑j
                 mov     al, [di+1B7h]
                 cmp     al, 0
                 jz      short loc_10DAF
                 jmp     short loc_10DC4
-; END OF FUNCTION CHUNK FOR canMoveToTile
+; END OF FUNCTION CHUNK FOR sub_10A30
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR canMoveToTile
+; START OF FUNCTION CHUNK FOR sub_10A30
 
-loc_10DAF:                              ; CODE XREF: canMoveToTile-1679↑j
+loc_10DAF:                              ; CODE XREF: sub_10A30+37A↑j
                 mov     al, 2Ch ; ','
                 mov     bx, current_tile_ptr
                 mov     [bx+si], al
@@ -2336,44 +2302,44 @@ loc_10DAF:                              ; CODE XREF: canMoveToTile-1679↑j
                 jmp     loc_10BAF
 ; ---------------------------------------------------------------------------
 
-loc_10DC4:                              ; CODE XREF: canMoveToTile-16D7↑j
-                                        ; canMoveToTile-16B7↑j ...
+loc_10DC4:                              ; CODE XREF: sub_10A30+31C↑j
+                                        ; sub_10A30+33C↑j ...
                 dec     byte ptr player+2Ah
                 jmp     loc_10BAF
 ; ---------------------------------------------------------------------------
 
-loc_10DCB:                              ; CODE XREF: canMoveToTile-16F5↑j
+loc_10DCB:                              ; CODE XREF: sub_10A30+2FE↑j
                 jmp     short loc_10DF3
-; END OF FUNCTION CHUNK FOR canMoveToTile
+; END OF FUNCTION CHUNK FOR sub_10A30
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR canMoveToTile
+; START OF FUNCTION CHUNK FOR sub_10A30
 
-loc_10DCE:                              ; CODE XREF: canMoveToTile-16ED↑j
+loc_10DCE:                              ; CODE XREF: sub_10A30+306↑j
                 jmp     short loc_10E12
-; END OF FUNCTION CHUNK FOR canMoveToTile
+; END OF FUNCTION CHUNK FOR sub_10A30
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR canMoveToTile
+; START OF FUNCTION CHUNK FOR sub_10A30
 
-loc_10DD1:                              ; CODE XREF: canMoveToTile-16E5↑j
+loc_10DD1:                              ; CODE XREF: sub_10A30+30E↑j
                 jmp     short loc_10E31
-; END OF FUNCTION CHUNK FOR canMoveToTile
+; END OF FUNCTION CHUNK FOR sub_10A30
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR canMoveToTile
+; START OF FUNCTION CHUNK FOR sub_10A30
 
-loc_10DD4:                              ; CODE XREF: canMoveToTile-16FD↑j
+loc_10DD4:                              ; CODE XREF: sub_10A30+2F6↑j
                 mov     al, [di+1B7h]
                 cmp     al, 8
                 jz      short loc_10DDE
                 jmp     short loc_10DC4
 ; ---------------------------------------------------------------------------
 
-loc_10DDE:                              ; CODE XREF: canMoveToTile-1649↑j
+loc_10DDE:                              ; CODE XREF: sub_10A30+3AA↑j
                 mov     al, 0F0h
                 mov     bx, current_tile_ptr
                 mov     [bx+si], al
@@ -2383,14 +2349,14 @@ loc_10DDE:                              ; CODE XREF: canMoveToTile-1649↑j
                 jmp     loc_10BAF
 ; ---------------------------------------------------------------------------
 
-loc_10DF3:                              ; CODE XREF: canMoveToTile:loc_10DCB↑j
+loc_10DF3:                              ; CODE XREF: sub_10A30:loc_10DCB↑j
                 mov     al, [di+1B7h]
                 cmp     al, 0
                 jz      short loc_10DFD
                 jmp     short loc_10DC4
 ; ---------------------------------------------------------------------------
 
-loc_10DFD:                              ; CODE XREF: canMoveToTile-162A↑j
+loc_10DFD:                              ; CODE XREF: sub_10A30+3C9↑j
                 mov     al, 48h ; 'H'
                 mov     bx, current_tile_ptr
                 mov     [bx+si], al
@@ -2400,14 +2366,14 @@ loc_10DFD:                              ; CODE XREF: canMoveToTile-162A↑j
                 jmp     loc_10BAF
 ; ---------------------------------------------------------------------------
 
-loc_10E12:                              ; CODE XREF: canMoveToTile:loc_10DCE↑j
+loc_10E12:                              ; CODE XREF: sub_10A30:loc_10DCE↑j
                 mov     al, [di+1B7h]
                 cmp     al, 8
                 jz      short loc_10E1C
                 jmp     short loc_10DC4
 ; ---------------------------------------------------------------------------
 
-loc_10E1C:                              ; CODE XREF: canMoveToTile-160B↑j
+loc_10E1C:                              ; CODE XREF: sub_10A30+3E8↑j
                 mov     al, 38h ; '8'
                 mov     bx, current_tile_ptr
                 mov     [bx+si], al
@@ -2417,14 +2383,14 @@ loc_10E1C:                              ; CODE XREF: canMoveToTile-160B↑j
                 jmp     loc_10BAF
 ; ---------------------------------------------------------------------------
 
-loc_10E31:                              ; CODE XREF: canMoveToTile:loc_10DD1↑j
+loc_10E31:                              ; CODE XREF: sub_10A30:loc_10DD1↑j
                 mov     al, [di+1B7h]
                 cmp     al, 8
                 jz      short loc_10E3B
                 jmp     short loc_10DC4
 ; ---------------------------------------------------------------------------
 
-loc_10E3B:                              ; CODE XREF: canMoveToTile-15EC↑j
+loc_10E3B:                              ; CODE XREF: sub_10A30+407↑j
                 mov     al, 0F8h
                 mov     bx, current_tile_ptr
                 mov     [bx+si], al
@@ -2434,14 +2400,14 @@ loc_10E3B:                              ; CODE XREF: canMoveToTile-15EC↑j
                 jmp     loc_10BAF
 ; ---------------------------------------------------------------------------
 
-loc_10E50:                              ; CODE XREF: canMoveToTile:loc_10D41↑j
+loc_10E50:                              ; CODE XREF: sub_10A30:loc_10D41↑j
                 mov     al, [di+1B7h]
                 cmp     al, 8
                 jz      short loc_10E5B
                 jmp     loc_10DC4
 ; ---------------------------------------------------------------------------
 
-loc_10E5B:                              ; CODE XREF: canMoveToTile-15CD↑j
+loc_10E5B:                              ; CODE XREF: sub_10A30+426↑j
                 mov     al, 3Ch ; '<'
                 mov     bx, current_tile_ptr
                 mov     [bx+si], al
@@ -2449,13 +2415,13 @@ loc_10E5B:                              ; CODE XREF: canMoveToTile-15CD↑j
                 mov     al, 0FFh
                 mov     [di+177h], al
                 jmp     loc_10BAF
-; END OF FUNCTION CHUNK FOR canMoveToTile
+; END OF FUNCTION CHUNK FOR sub_10A30
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: noreturn
 
-sub_10E70       proc near               ; CODE XREF: canMoveToTile-1948↑p
+sub_10E70       proc near               ; CODE XREF: sub_10A30+AB↑p
 
 ; FUNCTION CHUNK AT 0EB8 SIZE 0000000A BYTES
 
@@ -2494,7 +2460,7 @@ loc_10EB8:                              ; CODE XREF: sub_10E70+22↑j
 
 ; Attributes: noreturn
 
-sub_10EC2       proc near               ; CODE XREF: canMoveToTile-193E↑p
+sub_10EC2       proc near               ; CODE XREF: sub_10A30+B5↑p
 
 ; FUNCTION CHUNK AT 0F09 SIZE 00000009 BYTES
 
@@ -2533,7 +2499,7 @@ loc_10F09:                              ; CODE XREF: sub_10EC2+22↑j
 
 ; Attributes: noreturn
 
-sub_10F12       proc near               ; CODE XREF: canMoveToTile-1934↑p
+sub_10F12       proc near               ; CODE XREF: sub_10A30+BF↑p
                 call    write_string    ; MAGIC MISSILE!
 ; ---------------------------------------------------------------------------
 aMagicMissile   db 'MAGIC MISSILE!',0Dh,0
@@ -2557,7 +2523,7 @@ sub_10F12       endp
 
 ; Attributes: noreturn
 
-sub_10F48       proc far                ; CODE XREF: canMoveToTile-192A↑p
+sub_10F48       proc far                ; CODE XREF: sub_10A30+C9↑p
                 call    write_string    ; SLEEP SPELL!
 ; ---------------------------------------------------------------------------
 aSleepSpell     db 'SLEEP SPELL!',0Dh,0
@@ -2641,7 +2607,7 @@ sub_10F8E       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_10FCD       proc near               ; CODE XREF: canMoveToTile-18C4↑p
+sub_10FCD       proc near               ; CODE XREF: sub_10A30+12F↑p
                 nop
                 call    sub_15217
                 cmp     al, 40h ; '@'
@@ -2671,15 +2637,15 @@ sub_10FCD       endp
 aAThiefStoleSom db 'A THIEF STOLE SOMETHING!',8Dh,0
 ; [00000001 BYTES: COLLAPSED FUNCTION nullsub_1. PRESS CTRL-NUMPAD+ TO EXPAND]
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR canMoveToTile
+; START OF FUNCTION CHUNK FOR sub_10A30
 
-loc_11013:                              ; CODE XREF: canMoveToTile-19D5↑j
+loc_11013:                              ; CODE XREF: sub_10A30+1E↑j
                 nop
 
-loc_11014:                              ; CODE XREF: canMoveToTile-19CE↑j
+loc_11014:                              ; CODE XREF: sub_10A30+25↑j
                 nop
 
-loc_11015:                              ; CODE XREF: canMoveToTile-19C7↑j
+loc_11015:                              ; CODE XREF: sub_10A30+2C↑j
                 nop
                 mov     bh, 0
                 mov     bl, 1Fh
@@ -2701,14 +2667,15 @@ loc_1101C:                              ; CODE XREF: canMoveToTile-13AD↓j
                 cmp     al, 2
                 jz      short loc_1107B
                 jmp     short loc_11082
-; END OF FUNCTION CHUNK FOR canMoveToTile
+; END OF FUNCTION CHUNK FOR sub_10A30
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR canMoveToTile
+;   ADDITIONAL PARENT FUNCTION sub_10A30
 
-loc_11040:                              ; CODE XREF: canMoveToTile-187B↑j
-                                        ; canMoveToTile-13FA↑j ...
+loc_11040:                              ; CODE XREF: sub_10A30+178↑j
+                                        ; sub_10A30+5F9↑j ...
                 mov     al, [di+197h]
                 cmp     al, 40h ; '@'
                 jnz     short loc_1106D
@@ -2738,18 +2705,18 @@ loc_1106D:                              ; CODE XREF: canMoveToTile-13DD↑j
                 jmp     loc_10BAF
 ; ---------------------------------------------------------------------------
 
-loc_1107B:                              ; CODE XREF: canMoveToTile-13E8↑j
+loc_1107B:                              ; CODE XREF: sub_10A30+60B↑j
                 nop
                 call    sub_14F11
                 jmp     loc_12122
 ; ---------------------------------------------------------------------------
 
-loc_11082:                              ; CODE XREF: canMoveToTile-13E6↑j
+loc_11082:                              ; CODE XREF: sub_10A30+60D↑j
                 nop
                 jmp     loc_10AA7
 ; ---------------------------------------------------------------------------
 
-loc_11086:                              ; CODE XREF: canMoveToTile-13EC↑j
+loc_11086:                              ; CODE XREF: sub_10A30+607↑j
                 nop
                 mov     bh, 0
                 mov     bl, byte_17435
@@ -2842,50 +2809,42 @@ loc_1112F:                              ; CODE XREF: canMoveToTile-12FD↑j
                 mov     di, bx
                 jmp     loc_12201
 ; END OF FUNCTION CHUNK FOR canMoveToTile
-; ---------------------------------------------------------------------------
-                db 0A0h
-                db  4Ah ; J
-                db    0
-                db  0Ah
-                db 0C0h
-                db  75h ; u
-                db    1
-                db 0C3h
-                db 0B7h
-                db    0
-                db 0B3h
-                db    7
-                db  8Bh
-                db 0FBh
-                db 0B0h
-                db    1
-                db  88h
-                db  85h
-                db 0D7h
-                db    1
-                db  4Fh ; O
-                db  79h ; y
-                db 0F9h
-                db 0B7h
-                db    0
-                db  8Ah
-                db  1Eh
-                db  20h
-                db    0
-                db  8Bh
-                db 0FBh
-                db  88h
-                db  85h
-                db 0D7h
-                db    1
-                db 0C3h
-; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR canMoveToTile
 
-loc_1115E:                              ; CODE XREF: canMoveToTile-19B9↑j
+; =============== S U B R O U T I N E =======================================
+
+
+sub_1113A       proc near               ; CODE XREF: attack+5A↓p
+                                        ; steal+6C↓p
+                mov     al, player._mapNum2
+                or      al, al
+                jnz     short loc_11142
+                retn
+; ---------------------------------------------------------------------------
+
+loc_11142:                              ; CODE XREF: sub_1113A+5↑j
+                mov     bh, 0
+                mov     bl, 7
+                mov     di, bx
+                mov     al, 1
+
+loc_1114A:                              ; CODE XREF: sub_1113A+15↓j
+                mov     [di+1D7h], al
+                dec     di
+                jns     short loc_1114A
+                mov     bh, 0
+                mov     bl, byte_17430
+                mov     di, bx
+                mov     [di+1D7h], al
+                retn
+sub_1113A       endp
+
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR sub_10A30
+
+loc_1115E:                              ; CODE XREF: sub_10A30+3A↑j
                 nop
 
-loc_1115F:                              ; CODE XREF: canMoveToTile-19C0↑j
+loc_1115F:                              ; CODE XREF: sub_10A30+33↑j
                 nop
                 call    sub_1147F
                 nop
@@ -2895,13 +2854,13 @@ loc_1115F:                              ; CODE XREF: canMoveToTile-19C0↑j
                 mov     bx, di
                 mov     byte_1742F, bl
 
-loc_11170:                              ; CODE XREF: canMoveToTile-129D↓j
+loc_11170:                              ; CODE XREF: sub_10A30+756↓j
                 mov     al, [di+197h]
                 or      al, al
                 jnz     short loc_1118B
 
-loc_11178:                              ; CODE XREF: canMoveToTile:loc_11229↓j
-                                        ; canMoveToTile-11EF↓j ...
+loc_11178:                              ; CODE XREF: sub_10A30:loc_11229↓j
+                                        ; sub_10A30+804↓j ...
                 dec     byte_1742F
                 mov     bh, 0
                 mov     bl, byte_1742F
@@ -2911,7 +2870,7 @@ loc_11178:                              ; CODE XREF: canMoveToTile:loc_11229↓j
                 jmp     loc_11291
 ; ---------------------------------------------------------------------------
 
-loc_1118B:                              ; CODE XREF: canMoveToTile-12AD↑j
+loc_1118B:                              ; CODE XREF: sub_10A30+746↑j
                 nop
                 mov     bh, 0
                 mov     bl, byte_1742F
@@ -2931,7 +2890,7 @@ loc_1118B:                              ; CODE XREF: canMoveToTile-12AD↑j
                 sbb     al, _circleDeltaY
                 mov     _circleDeltaY, al
 
-loc_111B5:                              ; CODE XREF: canMoveToTile-1286↑j
+loc_111B5:                              ; CODE XREF: sub_10A30+76D↑j
                 nop
                 mov     al, _circleDeltaX
                 or      al, al
@@ -2950,8 +2909,8 @@ loc_111B5:                              ; CODE XREF: canMoveToTile-1286↑j
                 jmp     loc_11308
 ; ---------------------------------------------------------------------------
 
-loc_111E1:                              ; CODE XREF: canMoveToTile-1250↑j
-                                        ; canMoveToTile-1247↑j
+loc_111E1:                              ; CODE XREF: sub_10A30+7A3↑j
+                                        ; sub_10A30+7AC↑j
                 nop
                 call    sub_1143C
                 jz      short loc_1122C
@@ -2960,8 +2919,8 @@ loc_111E1:                              ; CODE XREF: canMoveToTile-1250↑j
                 and     al, 7Fh
                 jnz     short loc_1122C
 
-loc_111EF:                              ; CODE XREF: canMoveToTile-1268↑j
-                                        ; canMoveToTile-123A↑j
+loc_111EF:                              ; CODE XREF: sub_10A30+78B↑j
+                                        ; sub_10A30+7B9↑j
                 nop
                 mov     al, _circleDeltaY
                 or      al, al
@@ -2980,8 +2939,8 @@ loc_111EF:                              ; CODE XREF: canMoveToTile-1268↑j
                 jmp     loc_11308
 ; ---------------------------------------------------------------------------
 
-loc_1121B:                              ; CODE XREF: canMoveToTile-1216↑j
-                                        ; canMoveToTile-120D↑j
+loc_1121B:                              ; CODE XREF: sub_10A30+7DD↑j
+                                        ; sub_10A30+7E6↑j
                 nop
                 call    sub_1143C
                 jz      short loc_1122C
@@ -2990,13 +2949,13 @@ loc_1121B:                              ; CODE XREF: canMoveToTile-1216↑j
                 and     al, 7Fh
                 jnz     short loc_1122C
 
-loc_11229:                              ; CODE XREF: canMoveToTile-122E↑j
-                                        ; canMoveToTile-1200↑j
+loc_11229:                              ; CODE XREF: sub_10A30+7C5↑j
+                                        ; sub_10A30+7F3↑j
                 jmp     loc_11178
 ; ---------------------------------------------------------------------------
 
-loc_1122C:                              ; CODE XREF: canMoveToTile-123E↑j
-                                        ; canMoveToTile-1236↑j ...
+loc_1122C:                              ; CODE XREF: sub_10A30+7B5↑j
+                                        ; sub_10A30+7BD↑j ...
                 nop
                 call    map_get_monster_at?
                 and     al, 7
@@ -3004,7 +2963,7 @@ loc_1122C:                              ; CODE XREF: canMoveToTile-123E↑j
                 jmp     loc_11178
 ; ---------------------------------------------------------------------------
 
-loc_11237:                              ; CODE XREF: canMoveToTile-11F1↑j
+loc_11237:                              ; CODE XREF: sub_10A30+802↑j
                 nop
                 mov     al, _playerX
                 mov     [di+1F7h], al
@@ -3035,19 +2994,20 @@ loc_11237:                              ; CODE XREF: canMoveToTile-11F1↑j
                 jmp     loc_11178
 ; ---------------------------------------------------------------------------
 
-loc_11291:                              ; CODE XREF: canMoveToTile-129B↑j
+loc_11291:                              ; CODE XREF: sub_10A30+758↑j
                 nop
                 mov     al, byte_17436
                 or      al, al
                 jnz     short near ptr loc_112AC+2
                 call    sub_14B4E
                 call    write_string    ; IT'S DARK!
+; END OF FUNCTION CHUNK FOR sub_10A30
 ; ---------------------------------------------------------------------------
 aItSDark        db 'IT',27h,'S DARK!',8Dh,0
                 db 0EBh
 ; ---------------------------------------------------------------------------
 
-loc_112AC:                              ; CODE XREF: canMoveToTile-118C↑j
+loc_112AC:                              ; CODE XREF: sub_10A30+867↑j
                 and     [bx+si+0EFEh], dl
                 add     es:[di+19h], dh
                 call    write_string    ; TORCH BURNED OUT!
@@ -3059,14 +3019,12 @@ aTorchBurnedOut db 'TORCH BURNED OUT!',8Dh,0
                 mov     al, 10h
                 call    sub_112DB
                 call    write_stats
-; ---------------------------------------------------------------------------
                 jmp     loc_1086F
-; END OF FUNCTION CHUNK FOR canMoveToTile
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_112DB       proc near               ; CODE XREF: canMoveToTile-1151↑p
+sub_112DB       proc near               ; CODE XREF: sg01a2:12D2↑p
 
 ; FUNCTION CHUNK AT 0C62 SIZE 0000003A BYTES
 
@@ -3099,10 +3057,10 @@ locret_11307:                           ; CODE XREF: sub_112DB+27↑j
 sub_112DB       endp ; sp-analysis failed
 
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR canMoveToTile
+; START OF FUNCTION CHUNK FOR sub_10A30
 
-loc_11308:                              ; CODE XREF: canMoveToTile-1245↑j
-                                        ; canMoveToTile-120B↑j
+loc_11308:                              ; CODE XREF: sub_10A30+7AE↑j
+                                        ; sub_10A30+7E8↑j
                 nop
                 call    sub_15217
                 cmp     al, 40h ; '@'
@@ -3116,32 +3074,32 @@ loc_11308:                              ; CODE XREF: canMoveToTile-1245↑j
                 jmp     loc_11178
 ; ---------------------------------------------------------------------------
 
-loc_11324:                              ; CODE XREF: canMoveToTile-1104↑j
+loc_11324:                              ; CODE XREF: sub_10A30+8EF↑j
                 nop
                 mov     al, [di+197h]
                 cmp     al, 2
                 jnz     short loc_11330
                 jmp     short loc_113AB
-; END OF FUNCTION CHUNK FOR canMoveToTile
+; END OF FUNCTION CHUNK FOR sub_10A30
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR canMoveToTile
+; START OF FUNCTION CHUNK FOR sub_10A30
 
-loc_11330:                              ; CODE XREF: canMoveToTile-10F8↑j
+loc_11330:                              ; CODE XREF: sub_10A30+8FB↑j
                 cmp     al, 5
                 jnz     short loc_11337
                 jmp     loc_113DA
 ; ---------------------------------------------------------------------------
 
-loc_11337:                              ; CODE XREF: canMoveToTile-10F1↑j
+loc_11337:                              ; CODE XREF: sub_10A30+902↑j
                 cmp     al, 7
                 jnz     short loc_1133E
                 jmp     loc_11410
 ; ---------------------------------------------------------------------------
 
-loc_1133E:                              ; CODE XREF: canMoveToTile-1115↑j
-                                        ; canMoveToTile-10EA↑j
+loc_1133E:                              ; CODE XREF: sub_10A30+8DE↑j
+                                        ; sub_10A30+909↑j
                 nop
                 mov     bh, 0
                 mov     bl, byte_1742F
@@ -3152,20 +3110,20 @@ loc_1133E:                              ; CODE XREF: canMoveToTile-1115↑j
                 jmp     loc_11178
 ; ---------------------------------------------------------------------------
 
-loc_11353:                              ; CODE XREF: canMoveToTile-10D5↑j
+loc_11353:                              ; CODE XREF: sub_10A30+91E↑j
                 nop
                 call    sub_15EAC
                 call    sub_15217
                 js      short loc_11364
                 and     al, 7
-                cmp     al, byte ptr player+2Ch
+                cmp     al, player.field_2C
                 jnb     short loc_11367
 
-loc_11364:                              ; CODE XREF: canMoveToTile-10C9↑j
+loc_11364:                              ; CODE XREF: sub_10A30+92A↑j
                 jmp     loc_11178
 ; ---------------------------------------------------------------------------
 
-loc_11367:                              ; CODE XREF: canMoveToTile-10C1↑j
+loc_11367:                              ; CODE XREF: sub_10A30+932↑j
                 nop
                 call    sub_14B26
                 call    pause?
@@ -3196,31 +3154,32 @@ loc_11367:                              ; CODE XREF: canMoveToTile-10C1↑j
                 jmp     dead
 ; ---------------------------------------------------------------------------
 
-loc_113A7:                              ; CODE XREF: canMoveToTile-1081↑j
+loc_113A7:                              ; CODE XREF: sub_10A30+972↑j
                 nop
                 jmp     loc_11178
 ; ---------------------------------------------------------------------------
 
-loc_113AB:                              ; CODE XREF: canMoveToTile-10F6↑j
+loc_113AB:                              ; CODE XREF: sub_10A30+8FD↑j
                 mov     al, byte_17436
                 or      al, al
                 jz      short loc_113D7
                 call    write_string    ; YOUR TORCH IS BLOWN OUT!
+; END OF FUNCTION CHUNK FOR sub_10A30
 ; ---------------------------------------------------------------------------
 aYourTorchIsBlo db 'YOUR TORCH IS BLOWN OUT!',8Dh,0
 ; ---------------------------------------------------------------------------
                 call    sub_15C95
-; END OF FUNCTION CHUNK FOR canMoveToTile
                 mov     al, 0
                 mov     byte_17436, al
-; START OF FUNCTION CHUNK FOR canMoveToTile
+; START OF FUNCTION CHUNK FOR sub_10A30
 
-loc_113D7:                              ; CODE XREF: canMoveToTile-1073↑j
+loc_113D7:                              ; CODE XREF: sub_10A30+980↑j
                 jmp     loc_11178
 ; ---------------------------------------------------------------------------
 
-loc_113DA:                              ; CODE XREF: canMoveToTile-10EF↑j
+loc_113DA:                              ; CODE XREF: sub_10A30+904↑j
                 call    write_string    ; A GREMLIN STOLE SOME FOOD!
+; END OF FUNCTION CHUNK FOR sub_10A30
 ; ---------------------------------------------------------------------------
 aAGremlinStoleS db 'A GREMLIN STOLE SOME FOOD!',8Dh,0
 ; ---------------------------------------------------------------------------
@@ -3236,13 +3195,15 @@ aAGremlinStoleS db 'A GREMLIN STOLE SOME FOOD!',8Dh,0
                 jmp     loc_11178
 ; ---------------------------------------------------------------------------
 
-loc_1140D:                              ; CODE XREF: canMoveToTile-101B↑j
+loc_1140D:                              ; CODE XREF: sg01a2:1408↑j
                 jmp     dead
 ; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR sub_10A30
 
-loc_11410:                              ; CODE XREF: canMoveToTile-10E8↑j
+loc_11410:                              ; CODE XREF: sub_10A30+90B↑j
                 nop
                 call    write_string    ; YOU FEEL A STRONG MAGIC!
+; END OF FUNCTION CHUNK FOR sub_10A30
 ; ---------------------------------------------------------------------------
 aYouFeelAStrong db 'YOU FEEL A STRONG MAGIC!',8Dh,0
 ; ---------------------------------------------------------------------------
@@ -3251,13 +3212,12 @@ aYouFeelAStrong db 'YOU FEEL A STRONG MAGIC!',8Dh,0
                 and     al, 7
                 mov     _sleepFlag, al
                 jmp     loc_11178
-; END OF FUNCTION CHUNK FOR canMoveToTile
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1143C       proc near               ; CODE XREF: canMoveToTile-1241↑p
-                                        ; canMoveToTile-1207↑p
+sub_1143C       proc near               ; CODE XREF: sub_10A30+7B2↑p
+                                        ; sub_10A30+7EC↑p
                 nop
                 mov     al, byte_17435
                 cmp     al, [di+1B7h]
@@ -3275,10 +3235,13 @@ sub_1143C       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-map_get_monster_at? proc near           ; CODE XREF: canMoveToTile-11F6↑p
-                                        ; canMoveToTile-11CF↑p ...
+map_get_monster_at? proc near           ; CODE XREF: sub_10A30+7FD↑p
+                                        ; sub_10A30+824↑p ...
                 nop
                 mov     al, (_mapMonsters+80h)[di]
+
+loc_11451:                              ; CODE XREF: attack+2A4↓p
+                                        ; attack+362↓p ...
                 nop
                 mov     ah, al
                 mov     al, 0
@@ -3304,7 +3267,7 @@ map_get_monster_at? endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1147F       proc near               ; CODE XREF: canMoveToTile-12C3↑p
+sub_1147F       proc near               ; CODE XREF: sub_10A30+730↑p
                 nop
                 mov     bh, 0
                 mov     bl, 1Fh
@@ -3396,7 +3359,7 @@ sub_1147F       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1152E       proc near               ; CODE XREF: canMoveToTile-128F↑p
+sub_1152E       proc near               ; CODE XREF: sub_10A30+764↑p
                 nop
                 mov     al, _mapX
                 stc
@@ -3413,21 +3376,21 @@ sub_1152E       proc near               ; CODE XREF: canMoveToTile-128F↑p
                 retn
 sub_1152E       endp
 
+
+; =============== S U B R O U T I N E =======================================
+
+
+print_indexed_shop_string proc near     ; CODE XREF: transact+1BE↓p
+                nop
+                push    es
+                mov     ah, 0
+                mov     si, ax
+                mov     di, word_17886
+                push    ds
+                pop     es
+                assume es:sg08e3
+                jmp     short loc_11564
 ; ---------------------------------------------------------------------------
-                db  90h
-                db    6
-                db 0B4h
-                db    0
-                db  8Bh
-                db 0F0h
-                db  8Bh
-                db  3Eh ; >
-                db  76h ; v
-                db    4
-                db  1Eh
-                db    7
-                db 0EBh
-                db    8
                 db  90h
                 db    6
                 db  0Eh
@@ -3436,138 +3399,142 @@ sub_1152E       endp
                 db  3Eh ; >
                 db  27h ; '
                 db    0
-                db  26h ; &
-                db  8Ah
-                db    5
-                db  3Ch ; <
-                db    0
-                db  74h ; t
-                db    3
-                db  47h ; G
-                db 0EBh
-                db 0F6h
-                db  4Eh ; N
-                db  74h ; t
-                db    2
-                db 0EBh
-                db 0F8h
-                db  47h ; G
-                db  26h ; &
-                db  8Ah
-                db    5
-                db  3Ch ; <
-                db    0
-                db  74h ; t
-                db    5
-                db 0E8h
-                db  76h ; v
-                db  3Eh ; >
-                db 0EBh
-                db 0F3h
-                db    7
-                db 0C3h
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
+; ---------------------------------------------------------------------------
+
+loc_11564:                              ; CODE XREF: print_indexed_shop_string+C↑j
+                                        ; print_indexed_shop_string+1E↓j
+                mov     al, es:[di]
+                cmp     al, 0
+                jz      short loc_1156E
+
+loc_1156B:                              ; CODE XREF: print_indexed_shop_string+23↓j
+                inc     di
+                jmp     short loc_11564
+; ---------------------------------------------------------------------------
+
+loc_1156E:                              ; CODE XREF: print_indexed_shop_string+1B↑j
+                dec     si
+                jz      short loc_11573
+                jmp     short loc_1156B
+; ---------------------------------------------------------------------------
+
+loc_11573:                              ; CODE XREF: print_indexed_shop_string+21↑j
+                                        ; print_indexed_shop_string+30↓j
+                inc     di
+                mov     al, es:[di]
+                cmp     al, 0
+                jz      short loc_11580
+                call    print_char
+                jmp     short loc_11573
+; ---------------------------------------------------------------------------
+
+loc_11580:                              ; CODE XREF: print_indexed_shop_string+2B↑j
+                pop     es
+                assume es:nothing
+                retn
+print_indexed_shop_string endp
+
+; ---------------------------------------------------------------------------
                 db    0
                 db    0
                 db    0
                 db    0
                 db    0
                 db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR transact
+
+loc_11590:                              ; CODE XREF: transact+53↓j
+                nop
+                mov     al, _mapX
+                cmp     al, 20h ; ' '
+                jb      short loc_115A2
+                mov     al, _mapY
+                cmp     al, 20h ; ' '
+                jb      short loc_115AC
+                jmp     short loc_115C8
+; END OF FUNCTION CHUNK FOR transact
+; ---------------------------------------------------------------------------
                 db  90h
-                db 0A0h
-                db    0
-                db    0
-                db  3Ch ; <
-                db  20h
-                db  72h ; r
-                db  0Ah
-                db 0A0h
-                db    1
-                db    0
-                db  3Ch ; <
-                db  20h
-                db  72h ; r
-                db  0Dh
-                db 0EBh
-                db  27h ; '
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR transact
+
+loc_115A2:                              ; CODE XREF: transact-2ABA↑j
+                mov     al, _mapY
+                cmp     al, 20h ; ' '
+                jb      short loc_115BA
+                jmp     short loc_115D6
+; END OF FUNCTION CHUNK FOR transact
+; ---------------------------------------------------------------------------
                 db  90h
-                db 0A0h
-                db    1
-                db    0
-                db  3Ch ; <
-                db  20h
-                db  72h ; r
-                db  11h
-                db 0EBh
-                db  2Bh ; +
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR transact
+
+loc_115AC:                              ; CODE XREF: transact-2AB3↑j
+                nop
+                mov     al, player._mapNum2
+                cmp     al, 2
+                jnz     short loc_115B7
+                jmp     loc_11D1D
+; ---------------------------------------------------------------------------
+
+loc_115B7:                              ; CODE XREF: transact-2A9E↑j
+                jmp     loc_11799
+; ---------------------------------------------------------------------------
+
+loc_115BA:                              ; CODE XREF: transact-2AA9↑j
+                nop
+                mov     al, player._mapNum2
+                cmp     al, 2
+                jnz     short loc_115C5
+                jmp     loc_11E4F
+; ---------------------------------------------------------------------------
+
+loc_115C5:                              ; CODE XREF: transact-2A90↑j
+                jmp     loc_11AE0
+; ---------------------------------------------------------------------------
+
+loc_115C8:                              ; CODE XREF: transact-2AB1↑j
+                nop
+                mov     al, player._mapNum2
+                cmp     al, 2
+                jnz     short loc_115D3
+                jmp     loc_11F75
+; ---------------------------------------------------------------------------
+
+loc_115D3:                              ; CODE XREF: transact-2A82↑j
+                jmp     loc_11841
+; ---------------------------------------------------------------------------
+
+loc_115D6:                              ; CODE XREF: transact-2AA7↑j
+                nop
+                mov     al, player._mapNum2
+                cmp     al, 2
+                jnz     short loc_115E1
+                jmp     short loc_115E4
+; END OF FUNCTION CHUNK FOR transact
+; ---------------------------------------------------------------------------
                 db  90h
-                db  90h
-                db 0A0h
-                db  4Ah ; J
-                db    0
-                db  3Ch ; <
-                db    2
-                db  75h ; u
-                db    3
-                db 0E9h
-                db  66h ; f
-                db    7
-                db 0E9h
-                db 0DFh
-                db    1
-                db  90h
-                db 0A0h
-                db  4Ah ; J
-                db    0
-                db  3Ch ; <
-                db    2
-                db  75h ; u
-                db    3
-                db 0E9h
-                db  8Ah
-                db    8
-                db 0E9h
-                db  18h
-                db    5
-                db  90h
-                db 0A0h
-                db  4Ah ; J
-                db    0
-                db  3Ch ; <
-                db    2
-                db  75h ; u
-                db    3
-                db 0E9h
-                db 0A2h
-                db    9
-                db 0E9h
-                db  6Bh ; k
-                db    2
-                db  90h
-                db 0A0h
-                db  4Ah ; J
-                db    0
-                db  3Ch ; <
-                db    2
-                db  75h ; u
-                db    3
-                db 0EBh
-                db    4
-                db  90h
-                db 0E9h
-                db 0CBh
-                db    3
-                db  90h
-                db 0E8h
-                db 0F7h
-                db  39h ; 9
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR transact
+
+loc_115E1:                              ; CODE XREF: transact-2A74↑j
+                jmp     loc_119AF
+; ---------------------------------------------------------------------------
+
+loc_115E4:                              ; CODE XREF: transact-2A72↑j
+                nop
+                call    write_string
+; END OF FUNCTION CHUNK FOR transact
+; ---------------------------------------------------------------------------
                 db  57h ; W
                 db  45h ; E
                 db  4Ch ; L
@@ -4001,10 +3968,14 @@ sub_1152E       endp
                 db  53h ; S
                 db  21h ; !
                 db    0
-                db  90h
-                db 0E8h
-                db  42h ; B
-                db  38h ; 8
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR transact
+
+loc_11799:                              ; CODE XREF: transact:loc_115B7↑j
+                nop
+                call    write_string
+; END OF FUNCTION CHUNK FOR transact
+; ---------------------------------------------------------------------------
                 db  54h ; T
                 db  48h ; H
                 db  45h ; E
@@ -4169,20 +4140,18 @@ sub_1152E       endp
                 db 0E9h
                 db 0F2h
                 db 0F1h
-                db  90h
-                db 0A0h
-                db  47h ; G
-                db    0
-                db  3Ch ; <
-                db    1
-                db  74h ; t
-                db  20h
-                db 0E8h
-                db  2Eh ; .
-                db  38h ; 8
-                db 0E8h
-                db  90h
-                db  37h ; 7
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR transact
+
+loc_11841:                              ; CODE XREF: transact:loc_115D3↑j
+                nop
+                mov     al, player._class
+                cmp     al, 1
+                jz      short loc_11869
+                call    write_player_name
+                call    write_string
+; END OF FUNCTION CHUNK FOR transact
+; ---------------------------------------------------------------------------
                 db  20h
                 db  59h ; Y
                 db  4Fh ; O
@@ -4209,10 +4178,14 @@ sub_1152E       endp
                 db 0E9h
                 db 0CAh
                 db 0F1h
-                db  90h
-                db 0E8h
-                db  72h ; r
-                db  37h ; 7
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR transact
+
+loc_11869:                              ; CODE XREF: transact-2809↑j
+                nop
+                call    write_string
+; END OF FUNCTION CHUNK FOR transact
+; ---------------------------------------------------------------------------
                 db  57h ; W
                 db  45h ; E
                 db  4Ch ; L
@@ -4535,20 +4508,18 @@ sub_1152E       endp
                 db 0E9h
                 db  84h
                 db 0F0h
-                db  90h
-                db 0E8h
-                db 0C7h
-                db  36h ; 6
-                db 0A0h
-                db  47h ; G
-                db    0
-                db  3Ch ; <
-                db    2
-                db  74h ; t
-                db  1Dh
-                db 0E8h
-                db  22h ; "
-                db  36h ; 6
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR transact
+
+loc_119AF:                              ; CODE XREF: transact:loc_115E1↑j
+                nop
+                call    write_player_name
+                mov     al, player._class
+                cmp     al, 2
+                jz      short loc_119D7
+                call    write_string
+; END OF FUNCTION CHUNK FOR transact
+; ---------------------------------------------------------------------------
                 db  20h
                 db  59h ; Y
                 db  4Fh ; O
@@ -4575,10 +4546,14 @@ sub_1152E       endp
                 db 0E9h
                 db  5Ch ; \
                 db 0F0h
-                db  90h
-                db 0E8h
-                db    4
-                db  36h ; 6
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR transact
+
+loc_119D7:                              ; CODE XREF: transact-2698↑j
+                nop
+                call    write_string
+; END OF FUNCTION CHUNK FOR transact
+; ---------------------------------------------------------------------------
                 db  20h
                 db  4Dh ; M
                 db  55h ; U
@@ -4840,10 +4815,14 @@ sub_1152E       endp
                 db 0E9h
                 db  53h ; S
                 db 0EFh
-                db  90h
-                db 0E8h
-                db 0FBh
-                db  34h ; 4
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR transact
+
+loc_11AE0:                              ; CODE XREF: transact:loc_115C5↑j
+                nop
+                call    write_string
+; END OF FUNCTION CHUNK FOR transact
+; ---------------------------------------------------------------------------
                 db  54h ; T
                 db  49h ; I
                 db  4Dh ; M
@@ -5413,10 +5392,14 @@ sub_1152E       endp
                 db  55h ; U
                 db  21h ; !
                 db    0
-                db  90h
-                db 0E8h
-                db 0BEh
-                db  32h ; 2
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR transact
+
+loc_11D1D:                              ; CODE XREF: transact-2A9C↑j
+                nop
+                call    write_string
+; END OF FUNCTION CHUNK FOR transact
+; ---------------------------------------------------------------------------
                 db  20h
                 db  20h
                 db  20h
@@ -5719,10 +5702,14 @@ sub_1152E       endp
                 db 0E9h
                 db 0E4h
                 db 0EBh
-                db  90h
-                db 0E8h
-                db  8Ch
-                db  31h ; 1
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR transact
+
+loc_11E4F:                              ; CODE XREF: transact-2A8E↑j
+                nop
+                call    write_string
+; END OF FUNCTION CHUNK FOR transact
+; ---------------------------------------------------------------------------
                 db  20h
                 db  20h
                 db  54h ; T
@@ -6013,10 +6000,14 @@ sub_1152E       endp
                 db 0E9h
                 db 0BEh
                 db 0EAh
-                db  90h
-                db 0E8h
-                db  66h ; f
-                db  30h ; 0
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR transact
+
+loc_11F75:                              ; CODE XREF: transact-2A80↑j
+                nop
+                call    write_string
+; END OF FUNCTION CHUNK FOR transact
+; ---------------------------------------------------------------------------
                 db  57h ; W
                 db  45h ; E
                 db  4Ch ; L
@@ -6192,53 +6183,42 @@ sub_1152E       endp
                 db 0E9h
                 db  0Bh
                 db 0EAh
-                db  90h
-                db 0E8h
-                db  21h ; !
-                db  2Fh ; /
-                db  80h
-                db 0FCh
-                db 0FFh
-                db  75h ; u
-                db 0F7h
-                db  3Ch ; <
-                db  30h ; 0
-                db  72h ; r
-                db 0F3h
-                db  3Ch ; <
-                db  39h ; 9
-                db  77h ; w
-                db 0EFh
-                db 0F9h
-                db 0F5h
-                db  1Ch
-                db  30h ; 0
-                db 0F5h
-                db 0B4h
-                db    0
-                db  8Bh
-                db 0F8h
-                db 0F8h
-                db  14h
-                db  30h ; 0
-                db 0E8h
-                db 0ACh
-                db  33h ; 3
-                db 0B0h
-                db  8Dh
-                db 0E8h
-                db 0A7h
-                db  33h ; 3
-                db  8Bh
-                db 0C7h
-                db  3Ch ; <
-                db    0
-                db 0C3h
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_12052       proc near               ; CODE XREF: sg01a2:428B↓p
+sub_12028       proc near               ; CODE XREF: sub_12028+7↓j
+                                        ; sub_12028+B↓j ...
+                nop
+                call    keypress_check
+                cmp     ah, 0FFh
+                jnz     short sub_12028
+                cmp     al, 30h ; '0'
+                jb      short sub_12028
+                cmp     al, 39h ; '9'
+                ja      short sub_12028
+                stc
+                cmc
+                sbb     al, 30h ; '0'
+                cmc
+                mov     ah, 0
+                mov     di, ax
+                clc
+                adc     al, 30h ; '0'
+                call    print_char
+                mov     al, 8Dh
+                call    print_char
+                mov     ax, di
+                cmp     al, 0
+                retn
+sub_12028       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_12052       proc near               ; CODE XREF: offer+64↓p
+                                        ; transact+23B↓p
                 nop
                 stc
                 mov     al, player._gold+1
@@ -6268,9 +6248,7 @@ sub_12052       proc near               ; CODE XREF: sg01a2:428B↓p
 ; ---------------------------------------------------------------------------
 aYouDontHaveTha db 'YOU DONT HAVE THAT MUCH!',0
 ; ---------------------------------------------------------------------------
-
-loc_120A4:                              ; CODE XREF: sub_12052+36↑j
-                jmp     loc_10A30
+                jmp     sub_10A30
 ; ---------------------------------------------------------------------------
 
 loc_120A7:                              ; CODE XREF: sub_12052+1C↑j
@@ -6401,9 +6379,10 @@ sub_12052       endp ; sp-analysis failed
                 db 0C3h
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR canMoveToTile
+;   ADDITIONAL PARENT FUNCTION sub_10A30
 
-loc_12122:                              ; CODE XREF: canMoveToTile-18ED↑j
-                                        ; canMoveToTile-18D9↑j ...
+loc_12122:                              ; CODE XREF: sub_10A30+106↑j
+                                        ; sub_10A30+11A↑j ...
                 mov     al, [di+177h]
                 cmp     al, 10h
                 jnb     short loc_1212E
@@ -6594,28 +6573,27 @@ loc_12272:                              ; CODE XREF: canMoveToTile-1B6↑j
                 jmp     loc_10AA1
 ; ---------------------------------------------------------------------------
 
-loc_12275:                              ; CODE XREF: canMoveToTile-1A24↑j
-                                        ; canMoveToTile-1A07↑j
+loc_12275:                              ; CODE XREF: sg01a2:09FF↑j
+                                        ; sg01a2:0A1C↑j
                 call    write_string    ; -ILLEGAL COMMAND!
 ; ---------------------------------------------------------------------------
 aIllegalCommand db '-ILLEGAL COMMAND!',0
 ; ---------------------------------------------------------------------------
-                jmp     loc_10A30
+                jmp     sub_10A30
 ; END OF FUNCTION CHUNK FOR canMoveToTile
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR canMoveToTile
-;   ADDITIONAL PARENT FUNCTION normal_movement
+; START OF FUNCTION CHUNK FOR normal_movement
 ;   ADDITIONAL PARENT FUNCTION canMoveToTileEnd
 
-dead2:                                  ; CODE XREF: canMoveToTile-1AF3↑j
+dead2:                                  ; CODE XREF: sg01a2:0930↑j
                                         ; normal_movement+48↓j ...
                 jmp     dead
-; END OF FUNCTION CHUNK FOR canMoveToTile
+; END OF FUNCTION CHUNK FOR normal_movement
 
 ; =============== S U B R O U T I N E =======================================
 
 
-load_map        proc near               ; CODE XREF: sg01a2:0807↑p
+load_map        proc near               ; CODE XREF: sg01a2:loc_10807↑p
                                         ; canMoveToTile+2D↓p ...
                 clc
                 mov     al, player._mapNum1
@@ -6629,14 +6607,14 @@ load_map        proc near               ; CODE XREF: sg01a2:0807↑p
                 mov     ah, 27h
                 mov     cx, 1000h
                 mov     dx, map_ptr
-                call    access_file
+                call    access_file     ; MAPXFF
 ; ---------------------------------------------------------------------------
 aMapxff         db 'MAPXFF  '           ; DATA XREF: load_map+6↑w
                                         ; load_map+13↑w
 ; ---------------------------------------------------------------------------
                 mov     cx, 100h
                 lea     dx, _mapMonsters
-                call    access_file
+                call    access_file     ; MONXFF
 ; ---------------------------------------------------------------------------
 byte_122C9      db    'M',   'O',   'N',   'X',   'F',   'F',   ' ',   ' '
                                         ; DATA XREF: load_map+A↑w
@@ -6646,57 +6624,43 @@ byte_122C9      db    'M',   'O',   'N',   'X',   'F',   'F',   ' ',   ' '
                 retn
 load_map        endp
 
-; ---------------------------------------------------------------------------
-                db 0F8h
-                db 0A0h
-                db  49h ; I
-                db    0
-                db  14h
-                db  30h ; 0
-                db  2Eh ; .
-                db 0A2h
-                db 0F8h
-                db  22h ; "
-                db 0A0h
-                db  4Ah ; J
-                db    0
-                db  14h
-                db  30h ; 0
-                db  2Eh ; .
-                db 0A2h
-                db 0F9h
-                db  22h ; "
-                db 0B4h
-                db  27h ; '
-                db 0B9h
-                db    0
-                db    1
-                db  8Bh
-                db  16h
-                db  76h ; v
-                db    4
-                db 0E8h
-                db 0D6h
-                db  2Fh ; /
-                db  54h ; T
-                db  4Ch ; L
-                db  4Bh ; K
-                db  58h ; X
-                db  46h ; F
-                db  46h ; F
-                db  20h
-                db  20h
-                db 0C3h
-; ---------------------------------------------------------------------------
 
-save_game:                              ; CODE XREF: normal_movement+13F↓p
+; =============== S U B R O U T I N E =======================================
+
+
+load_talk_file  proc near               ; CODE XREF: enter+B3↓p
+                                        ; enter+E8↓p ...
+                clc
+                mov     al, player._mapNum1
+                adc     al, '0'
+                mov     byte ptr cs:aTlkxff+4, al ; "FF  "
+                mov     al, player._mapNum2
+                adc     al, '0'
+                mov     byte ptr cs:aTlkxff+5, al ; "F  "
+                mov     ah, 27h ; '''
+                mov     cx, 100h
+                mov     dx, word_17886
+                call    access_file
+; ---------------------------------------------------------------------------
+aTlkxff         db 'TLKXFF  '           ; DATA XREF: load_talk_file+6↑w
+                                        ; load_talk_file+F↑w
+; ---------------------------------------------------------------------------
+                retn
+load_talk_file  endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+save_game       proc near               ; CODE XREF: normal_movement+13F↓p
+                                        ; enter+9E↓p ...
                 mov     al, player._disableSave
                 or      al, al
                 jz      short save_game1
                 retn
 ; ---------------------------------------------------------------------------
 
-save_game1:                             ; CODE XREF: sg01a2:2302↑j
+save_game1:                             ; CODE XREF: save_game+5↑j
                 clc
                 mov     al, player._mapNum1
                 adc     al, '0'
@@ -6713,25 +6677,30 @@ save_game1:                             ; CODE XREF: sg01a2:2302↑j
                 mov     ah, 40
                 mov     cx, 1000h
                 mov     dx, map_ptr
-                call    access_file
+                call    access_file     ; MAPXFF
 ; ---------------------------------------------------------------------------
-aMapxff_0       db 'MAPXFF  '           ; DATA XREF: sg01a2:230B↑w
-                                        ; sg01a2:2318↑w
+aMapxff_0       db 'MAPXFF  '           ; DATA XREF: save_game+E↑w
+                                        ; save_game+1B↑w
 ; ---------------------------------------------------------------------------
                 mov     cx, 100h
                 lea     dx, _mapMonsters
-                call    access_file
+                call    access_file     ; MONXFF
 ; ---------------------------------------------------------------------------
-aMonxff         db 'MONXFF  '           ; DATA XREF: sg01a2:230F↑w
-                                        ; sg01a2:231C↑w
+aMonxff         db 'MONXFF  '           ; DATA XREF: save_game+12↑w
+                                        ; save_game+1F↑w
 ; ---------------------------------------------------------------------------
                 lea     dx, player
-                call    access_file
+                call    access_file     ; PLAYER
 ; ---------------------------------------------------------------------------
 aPlayer_1       db 'PLAYER  '
 ; ---------------------------------------------------------------------------
                 retn
+save_game       endp
+
 ; ---------------------------------------------------------------------------
+
+loc_12362:                              ; CODE XREF: attack:loc_12BBE↓p
+                                        ; fire+29↓p ...
                 mov     al, 0
                 mov     byte_1742F, al
                 mov     byte_17430, al
@@ -6756,7 +6725,7 @@ loc_12370:                              ; CODE XREF: sg01a2:2381↓j
                 call    write_string    ; PASS
 ; ---------------------------------------------------------------------------
 aPass_1         db 'PASS',0
-unk_12392       db 0E9h                 ; CODE XREF: sg01a2:238A↑j
+                db 0E9h
 ; ---------------------------------------------------------------------------
                 wait
 
@@ -6778,8 +6747,6 @@ loc_123B0:                              ; CODE XREF: sg01a2:239A↑j
 ; ---------------------------------------------------------------------------
 aNorth_0        db 'NORTH',0
 ; ---------------------------------------------------------------------------
-
-loc_123B9:                              ; CODE XREF: sg01a2:loc_123B0↑j
                 dec     _circleDeltaY
                 retn
 ; ---------------------------------------------------------------------------
@@ -6789,8 +6756,6 @@ loc_123BE:                              ; CODE XREF: sg01a2:23A0↑j
 ; ---------------------------------------------------------------------------
 aSouth_0        db 'SOUTH',0
 ; ---------------------------------------------------------------------------
-
-loc_123C7:                              ; CODE XREF: sg01a2:loc_123BE↑j
                 inc     _circleDeltaY
                 retn
 ; ---------------------------------------------------------------------------
@@ -6800,8 +6765,6 @@ loc_123CC:                              ; CODE XREF: sg01a2:23A6↑j
 ; ---------------------------------------------------------------------------
 aEast_0         db 'EAST',0
 ; ---------------------------------------------------------------------------
-
-loc_123D4:                              ; CODE XREF: sg01a2:loc_123CC↑j
                 inc     _circleDeltaX
                 retn
 ; ---------------------------------------------------------------------------
@@ -6811,119 +6774,60 @@ loc_123D9:                              ; CODE XREF: sg01a2:23AC↑j
 ; ---------------------------------------------------------------------------
 aWest_0         db 'WEST',0
 ; ---------------------------------------------------------------------------
-
-loc_123E1:                              ; CODE XREF: sg01a2:loc_123D9↑j
                 dec     _circleDeltaX
                 retn
-; ---------------------------------------------------------------------------
-                db 0F8h
-                db 0A0h
-                db    0
-                db    0
-                db  12h
-                db    6
-                db  19h
-                db    0
-                db 0A2h
-                db  23h ; #
-                db    0
-                db 0F8h
-                db 0A0h
-                db    1
-                db    0
-                db  12h
-                db    6
-                db  1Ah
-                db    0
-                db 0A2h
-                db  24h ; $
-                db    0
-                db 0B7h
-                db    0
-                db 0B3h
-                db  1Fh
-                db  8Bh
-                db 0FBh
-                db  8Ah
-                db  85h
-                db  97h
-                db    1
-                db  3Ch ; <
-                db    0
-                db  74h ; t
-                db  15h
-                db  8Ah
-                db  85h
-                db  37h ; 7
-                db    1
-                db  3Ah ; :
-                db    6
-                db  23h ; #
-                db    0
-                db  75h ; u
-                db  0Bh
-                db  8Ah
-                db  85h
-                db  57h ; W
-                db    1
-                db  3Ah ; :
-                db    6
-                db  24h ; $
-                db    0
-                db  75h ; u
-                db    1
-                db 0C3h
-                db  4Fh ; O
-                db  75h ; u
-                db 0E0h
-                db 0C3h
 
 ; =============== S U B R O U T I N E =======================================
 
 
-canMoveToTile   proc near               ; CODE XREF: canMoveToTile-1ABE↑p
-                                        ; canMoveToTile-1A97↑p ...
+sub_123E6       proc near               ; CODE XREF: attack+35↓p
+                                        ; fire+2F↓p ...
+                clc
+                mov     al, _mapX
+                adc     al, _circleDeltaX
+                mov     _playerX, al
+                clc
+                mov     al, _mapY
+                adc     al, _circleDeltaY
+                mov     _playerY, al
+                mov     bh, 0
+                mov     bl, 1Fh
+                mov     di, bx
 
-; FUNCTION CHUNK AT 086F SIZE 00000106 BYTES
-; FUNCTION CHUNK AT 0976 SIZE 00000023 BYTES
-; FUNCTION CHUNK AT 099A SIZE 00000002 BYTES
-; FUNCTION CHUNK AT 099D SIZE 00000022 BYTES
-; FUNCTION CHUNK AT 09C0 SIZE 00000002 BYTES
-; FUNCTION CHUNK AT 09C3 SIZE 00000022 BYTES
-; FUNCTION CHUNK AT 09E6 SIZE 00000002 BYTES
-; FUNCTION CHUNK AT 09E9 SIZE 0000000A BYTES
-; FUNCTION CHUNK AT 09F4 SIZE 00000023 BYTES
-; FUNCTION CHUNK AT 0A18 SIZE 000000C8 BYTES
-; FUNCTION CHUNK AT 0AE1 SIZE 00000009 BYTES
-; FUNCTION CHUNK AT 0AEB SIZE 00000009 BYTES
-; FUNCTION CHUNK AT 0AF5 SIZE 0000016D BYTES
+loc_12402:                              ; CODE XREF: sub_123E6+3A↓j
+                mov     al, [di+197h]
+                cmp     al, 0
+                jz      short loc_1241F
+                mov     al, [di+137h]
+                cmp     al, _playerX
+                jnz     short loc_1241F
+                mov     al, [di+157h]
+                cmp     al, _playerY
+                jnz     short loc_1241F
+                retn
+; ---------------------------------------------------------------------------
+
+loc_1241F:                              ; CODE XREF: sub_123E6+22↑j
+                                        ; sub_123E6+2C↑j ...
+                dec     di
+                jnz     short loc_12402
+                retn
+sub_123E6       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+canMoveToTile   proc near               ; CODE XREF: sg01a2:0965↑p
+                                        ; sg01a2:098C↑p ...
+
 ; FUNCTION CHUNK AT 0C62 SIZE 0000003A BYTES
-; FUNCTION CHUNK AT 0C9C SIZE 0000003C BYTES
-; FUNCTION CHUNK AT 0CD9 SIZE 0000002F BYTES
-; FUNCTION CHUNK AT 0D09 SIZE 00000007 BYTES
-; FUNCTION CHUNK AT 0D11 SIZE 00000007 BYTES
-; FUNCTION CHUNK AT 0D19 SIZE 00000035 BYTES
-; FUNCTION CHUNK AT 0D4F SIZE 0000001F BYTES
-; FUNCTION CHUNK AT 0D6F SIZE 0000001F BYTES
-; FUNCTION CHUNK AT 0D8F SIZE 0000001F BYTES
-; FUNCTION CHUNK AT 0DAF SIZE 0000001E BYTES
-; FUNCTION CHUNK AT 0DCE SIZE 00000002 BYTES
-; FUNCTION CHUNK AT 0DD1 SIZE 00000002 BYTES
-; FUNCTION CHUNK AT 0DD4 SIZE 0000009C BYTES
-; FUNCTION CHUNK AT 1013 SIZE 0000002C BYTES
 ; FUNCTION CHUNK AT 1040 SIZE 000000FA BYTES
-; FUNCTION CHUNK AT 115E SIZE 0000017D BYTES
-; FUNCTION CHUNK AT 1308 SIZE 00000027 BYTES
-; FUNCTION CHUNK AT 1330 SIZE 000000A2 BYTES
-; FUNCTION CHUNK AT 13D7 SIZE 00000065 BYTES
 ; FUNCTION CHUNK AT 2122 SIZE 00000077 BYTES
 ; FUNCTION CHUNK AT 2201 SIZE 0000008C BYTES
-; FUNCTION CHUNK AT 228D SIZE 00000003 BYTES
 ; FUNCTION CHUNK AT 25FB SIZE 00000004 BYTES
 ; FUNCTION CHUNK AT 2604 SIZE 00000002 BYTES
 ; FUNCTION CHUNK AT 2607 SIZE 0000001F BYTES
-; FUNCTION CHUNK AT 27C0 SIZE 0000007B BYTES
-; FUNCTION CHUNK AT 283C SIZE 0000018C BYTES
 
                 mov     points_to_distrubte, al
                 mov     al, player._mapNum2
@@ -6941,7 +6845,7 @@ canMoveToTile   proc near               ; CODE XREF: canMoveToTile-1ABE↑p
 ; ---------------------------------------------------------------------------
 
 loc_1243E:                              ; CODE XREF: canMoveToTile+F↑j
-                                        ; canMoveToTile+16↑j
+                                        ; canMoveToTile+16↑j ...
                 nop
                 mov     al, player._mapX
                 mov     _mapX, al
@@ -6958,24 +6862,20 @@ loc_1243E:                              ; CODE XREF: canMoveToTile+F↑j
                 mov     al, player.field_35
                 mov     _playerY, al
                 call    get_player_tile
-                mov     al, 80
+                mov     al, 50h ; 'P'
                 mov     bx, current_tile_ptr
                 mov     [bx+si], al
                 jmp     loc_10A33
 ; ---------------------------------------------------------------------------
 
 loc_12474:                              ; CODE XREF: canMoveToTile+35↑j
-                mov     ah, 40
+                mov     ah, 28h ; '('
                 mov     cx, 100h
                 lea     dx, player
                 call    access_file
-                push    ax
-                dec     sp
-                inc     cx
-                pop     cx
-                inc     bp
-                push    dx
-                and     [bx+si], ah
+; ---------------------------------------------------------------------------
+aPlayer_3       db 'PLAYER  '
+; ---------------------------------------------------------------------------
                 jmp     loc_10A33
 ; ---------------------------------------------------------------------------
 
@@ -7095,7 +6995,7 @@ loc_12566:                              ; CODE XREF: canMoveToTile+144↓j
                 dec     di
                 jnz     short loc_12560
                 jmp     canMoveToTileEnd
-canMoveToTile   endp ; sp-analysis failed
+canMoveToTile   endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -7104,6 +7004,7 @@ canMoveToTile   endp ; sp-analysis failed
 normal_movement proc near               ; CODE XREF: canMoveToTile+132↑j
                                         ; canMoveToTileEnd:loc_1264E↓p
 
+; FUNCTION CHUNK AT 0C62 SIZE 0000003A BYTES
 ; FUNCTION CHUNK AT 228D SIZE 00000003 BYTES
 ; FUNCTION CHUNK AT 2604 SIZE 00000002 BYTES
 ; FUNCTION CHUNK AT 2664 SIZE 00000095 BYTES
@@ -7356,7 +7257,7 @@ loc_126C6:                              ; CODE XREF: normal_movement+14C↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_126F9       proc near               ; CODE XREF: canMoveToTile-17F3↑p
+sub_126F9       proc near               ; CODE XREF: sg01a2:0C30↑p
                 mov     al, player._disableSave
                 cmp     al, 0
                 jz      short loc_12701
@@ -7474,9 +7375,8 @@ sub_126F9       endp
                 db    8
                 db  0Bh
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR canMoveToTile
 
-dungeon_render:                         ; CODE XREF: canMoveToTile-1BA9↑j
+loc_127C0:                              ; CODE XREF: sg01a2:087A↑j
                 nop
                 mov     al, _sleepFlag
                 or      al, al
@@ -7491,7 +7391,7 @@ aCmd_0          db 'CMD: ',0
                 db  27h ; '
 ; ---------------------------------------------------------------------------
 
-loc_127D5:                              ; CODE XREF: canMoveToTile+3C5↓j
+loc_127D5:                              ; CODE XREF: sg01a2:27E8↓j
                 add     al, ch
                 push    es
                 sub     [bp+si+0], bl
@@ -7499,7 +7399,7 @@ loc_127D5:                              ; CODE XREF: canMoveToTile+3C5↓j
                 mov     bl, 0FFh
                 mov     di, bx
 
-loc_127E1:                              ; CODE XREF: canMoveToTile+3BF↓j
+loc_127E1:                              ; CODE XREF: sg01a2:27E2↓j
                 dec     di
                 jnz     short loc_127E1
                 dec     _sleepFlag2?
@@ -7508,7 +7408,7 @@ loc_127E1:                              ; CODE XREF: canMoveToTile+3BF↓j
                 jmp     loc_10A33
 ; ---------------------------------------------------------------------------
 
-loc_127F1:                              ; CODE XREF: canMoveToTile+3A3↑j
+loc_127F1:                              ; CODE XREF: sg01a2:27C6↑j
                 nop
                 call    write_string
 ; ---------------------------------------------------------------------------
@@ -7523,8 +7423,8 @@ aCmd_1          db 'CMD: ',0
                 db  8Bh
 ; ---------------------------------------------------------------------------
 
-loc_12806:                              ; CODE XREF: canMoveToTile+3FF↓j
-                                        ; canMoveToTile+402↓j
+loc_12806:                              ; CODE XREF: sg01a2:2822↓j
+                                        ; sg01a2:2825↓j
                 rep mov bx, 0
                 call    delayFrames
                 call    keypress_check
@@ -7553,46 +7453,44 @@ aPass_2         db 'PASS',0
                 jmp     loc_10A33
 ; ---------------------------------------------------------------------------
 
-loc_12832:                              ; CODE XREF: canMoveToTile+3F0↑j
+loc_12832:                              ; CODE XREF: sg01a2:2813↑j
                 nop
                 cmp     al, NORTH_KEYCODE
                 jnz     short loc_1283C
                 jmp     short loc_12861
-; END OF FUNCTION CHUNK FOR canMoveToTile
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR canMoveToTile
 
-loc_1283C:                              ; CODE XREF: canMoveToTile+414↑j
+loc_1283C:                              ; CODE XREF: sg01a2:2837↑j
                 cmp     al, byte_17681
                 jnz     short loc_12845
                 jmp     loc_12912
 ; ---------------------------------------------------------------------------
 
-loc_12845:                              ; CODE XREF: canMoveToTile+41D↑j
+loc_12845:                              ; CODE XREF: sg01a2:2840↑j
                 cmp     al, byte_17680
                 jnz     short loc_1284E
                 jmp     loc_12944
 ; ---------------------------------------------------------------------------
 
-loc_1284E:                              ; CODE XREF: canMoveToTile+426↑j
+loc_1284E:                              ; CODE XREF: sg01a2:2849↑j
                 cmp     al, byte_1767F
                 jnz     short loc_12857
                 jmp     loc_12977
 ; ---------------------------------------------------------------------------
 
-loc_12857:                              ; CODE XREF: canMoveToTile+42F↑j
+loc_12857:                              ; CODE XREF: sg01a2:2852↑j
                 cmp     al, 20h ; ' '
                 jnz     short loc_1285E
                 jmp     loc_129BC
 ; ---------------------------------------------------------------------------
 
-loc_1285E:                              ; CODE XREF: canMoveToTile+436↑j
+loc_1285E:                              ; CODE XREF: sg01a2:2859↑j
                 jmp     loc_109FB
 ; ---------------------------------------------------------------------------
 
-loc_12861:                              ; CODE XREF: canMoveToTile+416↑j
+loc_12861:                              ; CODE XREF: sg01a2:2839↑j
                 nop
                 call    write_string    ; ADVANCE
 ; ---------------------------------------------------------------------------
@@ -7602,15 +7500,15 @@ aAdvance        db 'ADVANCE',0
                 and     al, 0Fh
                 jz      short loc_12884
 
-loc_12874:                              ; CODE XREF: canMoveToTile+466↓j
+loc_12874:                              ; CODE XREF: sg01a2:2889↓j
                 call    write_string    ; -BLOCKED!
 ; ---------------------------------------------------------------------------
 aBlocked        db '-BLOCKED!',0
 ; ---------------------------------------------------------------------------
-                jmp     loc_10A30
+                jmp     sub_10A30
 ; ---------------------------------------------------------------------------
 
-loc_12884:                              ; CODE XREF: canMoveToTile+44F↑j
+loc_12884:                              ; CODE XREF: sg01a2:2872↑j
                 mov     al, _tilePlayerUp
                 cmp     al, 80h
                 jz      short loc_12874
@@ -7630,7 +7528,7 @@ loc_12884:                              ; CODE XREF: canMoveToTile+44F↑j
                 jmp     loc_10A33
 ; ---------------------------------------------------------------------------
 
-loc_128B1:                              ; CODE XREF: canMoveToTile+489↑j
+loc_128B1:                              ; CODE XREF: sg01a2:28AC↑j
                 nop
                 call    sub_14B4E
                 mov     al, 0
@@ -7644,28 +7542,28 @@ loc_128B1:                              ; CODE XREF: canMoveToTile+489↑j
                 call    pause?
                 call    pause?
                 call    pause?
-                mov     al, byte ptr player+30h
+                mov     al, player.field_30
                 or      al, al
                 jnz     short loc_128E6
                 jmp     dead
 ; ---------------------------------------------------------------------------
 
-loc_128E6:                              ; CODE XREF: canMoveToTile+4BE↑j
+loc_128E6:                              ; CODE XREF: sg01a2:28E1↑j
                 call    write_string    ; ESCAPED! BY USE OF TOOLS!
 ; ---------------------------------------------------------------------------
 aEscapedByUseOf db 'ESCAPED! BY USE OF TOOLS!',0
 ; ---------------------------------------------------------------------------
                 stc
-                mov     al, byte ptr player+30h
+                mov     al, player.field_30
                 cmc
                 sbb     al, 1
                 das
                 cmc
-                mov     byte ptr player+30h, al
+                mov     player.field_30, al
                 jmp     loc_10A33
 ; ---------------------------------------------------------------------------
 
-loc_12912:                              ; CODE XREF: canMoveToTile+41F↑j
+loc_12912:                              ; CODE XREF: sg01a2:2842↑j
                 nop
                 call    write_string    ; TURN LEFT
 ; ---------------------------------------------------------------------------
@@ -7680,7 +7578,7 @@ aTurnLeft       db 'TURN LEFT',0
                 jmp     loc_10A33
 ; ---------------------------------------------------------------------------
 
-loc_12932:                              ; CODE XREF: canMoveToTile+502↑j
+loc_12932:                              ; CODE XREF: sg01a2:2925↑j
                 stc
                 cmc
                 sbb     al, _mapLeft
@@ -7691,7 +7589,7 @@ loc_12932:                              ; CODE XREF: canMoveToTile+502↑j
                 jmp     loc_10A33
 ; ---------------------------------------------------------------------------
 
-loc_12944:                              ; CODE XREF: canMoveToTile+428↑j
+loc_12944:                              ; CODE XREF: sg01a2:284B↑j
                 nop
                 call    write_string    ; TURN RIGHT
 ; ---------------------------------------------------------------------------
@@ -7706,7 +7604,7 @@ aTurnRight      db 'TURN RIGHT',0
                 jmp     loc_10A33
 ; ---------------------------------------------------------------------------
 
-loc_12965:                              ; CODE XREF: canMoveToTile+535↑j
+loc_12965:                              ; CODE XREF: sg01a2:2958↑j
                 stc
                 cmc
                 sbb     al, _mapTop
@@ -7717,7 +7615,7 @@ loc_12965:                              ; CODE XREF: canMoveToTile+535↑j
                 jmp     loc_10A33
 ; ---------------------------------------------------------------------------
 
-loc_12977:                              ; CODE XREF: canMoveToTile+431↑j
+loc_12977:                              ; CODE XREF: sg01a2:2854↑j
                 nop
                 call    write_string    ; RETREAT
 ; ---------------------------------------------------------------------------
@@ -7730,10 +7628,10 @@ aRetreat        db 'RETREAT',0
 ; ---------------------------------------------------------------------------
 aBlocked_0      db '-BLOCKED!',0
 ; ---------------------------------------------------------------------------
-                jmp     loc_10A30
+                jmp     sub_10A30
 ; ---------------------------------------------------------------------------
 
-loc_1299A:                              ; CODE XREF: canMoveToTile+565↑j
+loc_1299A:                              ; CODE XREF: sg01a2:2988↑j
                 nop
                 mov     al, _mapX
                 stc
@@ -7752,7 +7650,7 @@ loc_1299A:                              ; CODE XREF: canMoveToTile+565↑j
                 jmp     loc_10A33
 ; ---------------------------------------------------------------------------
 
-loc_129BC:                              ; CODE XREF: canMoveToTile+438↑j
+loc_129BC:                              ; CODE XREF: sg01a2:285B↑j
                 call    write_string    ; PASS
 ; ---------------------------------------------------------------------------
 aPass_3         db 'PASS',0
@@ -7760,7 +7658,6 @@ aPass_3         db 'PASS',0
                 jmp     loc_10A33
 ; ---------------------------------------------------------------------------
                 db    0
-; END OF FUNCTION CHUNK FOR canMoveToTile
                 db    0
                 db    0
                 db    0
@@ -7769,1868 +7666,952 @@ aPass_3         db 'PASS',0
                 db    0
                 db    0
                 db    0
-                db    0
-                db    0
+byte_129D0      db 0                    ; DATA XREF: sub_129D2+3↓w
+                                        ; sub_129D2:loc_129E6↓r
+byte_129D1      db 0                    ; DATA XREF: sub_129D2+7↓w
+                                        ; sub_129D2+22↓r
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_129D2       proc near               ; CODE XREF: view+4E↓p
+                nop
+                mov     al, 0
+                mov     cs:byte_129D0, al
+                mov     cs:byte_129D1, al
+                mov     _circleDeltaX, al
+                mov     _circleDeltaY, al
+                call    sub_14B4E
+
+loc_129E6:                              ; CODE XREF: sub_129D2:loc_12B56↓j
+                mov     al, cs:byte_129D0
+                clc
+                adc     al, _circleDeltaX
+                and     al, 3Fh
+                mov     _playerX, al
+                mov     al, cs:byte_129D1
+                clc
+                adc     al, _circleDeltaY
+                and     al, 3Fh
+                mov     _playerY, al
+                call    get_player_tile
+                jnz     short loc_12A0A
+                jmp     loc_12B46
+; ---------------------------------------------------------------------------
+
+loc_12A0A:                              ; CODE XREF: sub_129D2+33↑j
+                cmp     al, 10h
+                jz      short loc_12A2F
+                cmp     al, 78h ; 'x'
+                jb      short loc_12A16
+                cmp     al, 0F0h
+                jb      short loc_12A2F
+
+loc_12A16:                              ; CODE XREF: sub_129D2+3E↑j
+                cmp     al, 8
+                jz      short loc_12A89
+                cmp     al, 0Ch
+                jz      short loc_12A6B
+                cmp     al, 4
+                jz      short loc_12A29
+                cmp     al, 70h ; 'p'
+                jz      short loc_12A2C
+                jmp     loc_12B0A
+; ---------------------------------------------------------------------------
+
+loc_12A29:                              ; CODE XREF: sub_129D2+4E↑j
+                jmp     short loc_12AAA
+; ---------------------------------------------------------------------------
                 db  90h
-                db 0B0h
-                db    0
-                db  2Eh ; .
-                db 0A2h
-                db 0D0h
-                db  29h ; )
-                db  2Eh ; .
-                db 0A2h
-                db 0D1h
-                db  29h ; )
-                db 0A2h
-                db  19h
-                db    0
-                db 0A2h
-                db  1Ah
-                db    0
-                db 0E8h
-                db  68h ; h
-                db  21h ; !
-                db  2Eh ; .
-                db 0A0h
-                db 0D0h
-                db  29h ; )
-                db 0F8h
-                db  12h
-                db    6
-                db  19h
-                db    0
-                db  24h ; $
-                db  3Fh ; ?
-                db 0A2h
-                db  23h ; #
-                db    0
-                db  2Eh ; .
-                db 0A0h
-                db 0D1h
-                db  29h ; )
-                db 0F8h
-                db  12h
-                db    6
-                db  1Ah
-                db    0
-                db  24h ; $
-                db  3Fh ; ?
-                db 0A2h
-                db  24h ; $
-                db    0
-                db 0E8h
-                db 0AEh
-                db  26h ; &
-                db  75h ; u
-                db    3
-                db 0E9h
-                db  3Ch ; <
-                db    1
-                db  3Ch ; <
-                db  10h
-                db  74h ; t
-                db  21h ; !
-                db  3Ch ; <
-                db  78h ; x
-                db  72h ; r
-                db    4
-                db  3Ch ; <
-                db 0F0h
-                db  72h ; r
-                db  19h
-                db  3Ch ; <
-                db    8
-                db  74h ; t
-                db  6Fh ; o
-                db  3Ch ; <
-                db  0Ch
-                db  74h ; t
-                db  4Dh ; M
-                db  3Ch ; <
-                db    4
-                db  74h ; t
-                db    7
-                db  3Ch ; <
-                db  70h ; p
-                db  74h ; t
-                db    6
-                db 0E9h
-                db 0E1h
-                db    0
-                db 0EBh
-                db  7Fh ; 
+; ---------------------------------------------------------------------------
+
+loc_12A2C:                              ; CODE XREF: sub_129D2+52↑j
+                jmp     loc_12ACB
+; ---------------------------------------------------------------------------
+
+loc_12A2F:                              ; CODE XREF: sub_129D2+3A↑j
+                                        ; sub_129D2+42↑j
+                mov     bh, 0
+                mov     bl, 0
+                mov     di, bx
+                mov     bh, 0
+                mov     bl, 0
+                mov     si, bx
+                call    sub_12B65
+                mov     bh, 0
+                mov     bl, 0
+                mov     di, bx
+                mov     bh, 0
+                mov     bl, 1
+                mov     si, bx
+                call    sub_12B65
+                mov     bh, 0
+                mov     bl, 2
+                mov     di, bx
+                mov     bh, 0
+                mov     bl, 1
+                mov     si, bx
+                call    sub_12B65
+                mov     bh, 0
+                mov     bl, 2
+                mov     di, bx
+                mov     bh, 0
+                mov     bl, 0
+                mov     si, bx
+                call    sub_12B65
+
+loc_12A6B:                              ; CODE XREF: sub_129D2+4A↑j
+                mov     bh, 0
+                mov     bl, 1
+                mov     di, bx
+                mov     bh, 0
+                mov     bl, 1
+                mov     si, bx
+                call    sub_12B65
+                mov     bh, 0
+                mov     bl, 3
+                mov     di, bx
+                mov     bh, 0
+                mov     bl, 0
+                mov     si, bx
+                call    sub_12B65
+
+loc_12A89:                              ; CODE XREF: sub_129D2+46↑j
+                mov     bh, 0
+                mov     bl, 1
+                mov     di, bx
+                mov     bh, 0
+                mov     bl, 0
+                mov     si, bx
+                call    sub_12B65
+                mov     bh, 0
+                mov     bl, 3
+                mov     di, bx
+                mov     bh, 0
+                mov     bl, 1
+                mov     si, bx
+                call    sub_12B65
+                jmp     loc_12B46
+; ---------------------------------------------------------------------------
+
+loc_12AAA:                              ; CODE XREF: sub_129D2:loc_12A29↑j
+                mov     bh, 0
+                mov     bl, 1
+                mov     di, bx
+                mov     bh, 0
+                mov     bl, 0
+                mov     si, bx
+                call    sub_12B65
+                mov     bh, 0
+                mov     bl, 3
+                mov     di, bx
+                mov     bh, 0
+                mov     bl, 0
+                mov     si, bx
+                call    sub_12B65
+                jmp     short loc_12B46
+; ---------------------------------------------------------------------------
                 db  90h
-                db 0E9h
-                db  9Ch
-                db    0
-                db 0B7h
-                db    0
-                db 0B3h
-                db    0
-                db  8Bh
-                db 0FBh
-                db 0B7h
-                db    0
-                db 0B3h
-                db    0
-                db  8Bh
-                db 0F3h
-                db 0E8h
-                db  27h ; '
-                db    1
-                db 0B7h
-                db    0
-                db 0B3h
-                db    0
-                db  8Bh
-                db 0FBh
-                db 0B7h
-                db    0
-                db 0B3h
-                db    1
-                db  8Bh
-                db 0F3h
-                db 0E8h
-                db  18h
-                db    1
-                db 0B7h
-                db    0
-                db 0B3h
-                db    2
-                db  8Bh
-                db 0FBh
-                db 0B7h
-                db    0
-                db 0B3h
-                db    1
-                db  8Bh
-                db 0F3h
-                db 0E8h
-                db    9
-                db    1
-                db 0B7h
-                db    0
-                db 0B3h
-                db    2
-                db  8Bh
-                db 0FBh
-                db 0B7h
-                db    0
-                db 0B3h
-                db    0
-                db  8Bh
-                db 0F3h
-                db 0E8h
-                db 0FAh
-                db    0
-                db 0B7h
-                db    0
-                db 0B3h
-                db    1
-                db  8Bh
-                db 0FBh
-                db 0B7h
-                db    0
-                db 0B3h
-                db    1
-                db  8Bh
-                db 0F3h
-                db 0E8h
-                db 0EBh
-                db    0
-                db 0B7h
-                db    0
-                db 0B3h
-                db    3
-                db  8Bh
-                db 0FBh
-                db 0B7h
-                db    0
-                db 0B3h
-                db    0
-                db  8Bh
-                db 0F3h
-                db 0E8h
-                db 0DCh
-                db    0
-                db 0B7h
-                db    0
-                db 0B3h
-                db    1
-                db  8Bh
-                db 0FBh
-                db 0B7h
-                db    0
-                db 0B3h
-                db    0
-                db  8Bh
-                db 0F3h
-                db 0E8h
-                db 0CDh
-                db    0
-                db 0B7h
-                db    0
-                db 0B3h
-                db    3
-                db  8Bh
-                db 0FBh
-                db 0B7h
-                db    0
-                db 0B3h
-                db    1
-                db  8Bh
-                db 0F3h
-                db 0E8h
-                db 0BEh
-                db    0
-                db 0E9h
-                db  9Ch
-                db    0
-                db 0B7h
-                db    0
-                db 0B3h
-                db    1
-                db  8Bh
-                db 0FBh
-                db 0B7h
-                db    0
-                db 0B3h
-                db    0
-                db  8Bh
-                db 0F3h
-                db 0E8h
-                db 0ACh
-                db    0
-                db 0B7h
-                db    0
-                db 0B3h
-                db    3
-                db  8Bh
-                db 0FBh
-                db 0B7h
-                db    0
-                db 0B3h
-                db    0
-                db  8Bh
-                db 0F3h
-                db 0E8h
-                db  9Dh
-                db    0
-                db 0EBh
-                db  7Ch ; |
+; ---------------------------------------------------------------------------
+
+loc_12ACB:                              ; CODE XREF: sub_129D2:loc_12A2C↑j
+                mov     bh, 0
+                mov     bl, 0
+                mov     di, bx
+                mov     bh, 0
+                mov     bl, 0
+                mov     si, bx
+                call    sub_12B65
+                mov     bh, 0
+                mov     bl, 0
+                mov     di, bx
+                mov     bh, 0
+                mov     bl, 1
+                mov     si, bx
+                call    sub_12B65
+                mov     bh, 0
+                mov     bl, 2
+                mov     di, bx
+                mov     bh, 0
+                mov     bl, 0
+                mov     si, bx
+                call    sub_12B65
+                mov     bh, 0
+                mov     bl, 2
+                mov     di, bx
+                mov     bh, 0
+                mov     bl, 1
+                mov     si, bx
+                call    sub_12B65
+                jmp     short loc_12B46
+; ---------------------------------------------------------------------------
                 db  90h
-                db 0B7h
-                db    0
-                db 0B3h
-                db    0
-                db  8Bh
-                db 0FBh
-                db 0B7h
-                db    0
-                db 0B3h
-                db    0
-                db  8Bh
-                db 0F3h
-                db 0E8h
-                db  8Bh
-                db    0
-                db 0B7h
-                db    0
-                db 0B3h
-                db    0
-                db  8Bh
-                db 0FBh
-                db 0B7h
-                db    0
-                db 0B3h
-                db    1
-                db  8Bh
-                db 0F3h
-                db 0E8h
-                db  7Ch ; |
-                db    0
-                db 0B7h
-                db    0
-                db 0B3h
-                db    2
-                db  8Bh
-                db 0FBh
-                db 0B7h
-                db    0
-                db 0B3h
-                db    0
-                db  8Bh
-                db 0F3h
-                db 0E8h
-                db  6Dh ; m
-                db    0
-                db 0B7h
-                db    0
-                db 0B3h
-                db    2
-                db  8Bh
-                db 0FBh
-                db 0B7h
-                db    0
-                db 0B3h
-                db    1
-                db  8Bh
-                db 0F3h
-                db 0E8h
-                db  5Eh ; ^
-                db    0
-                db 0EBh
-                db  3Dh ; =
+; ---------------------------------------------------------------------------
+
+loc_12B0A:                              ; CODE XREF: sub_129D2+54↑j
+                mov     bh, 0
+                mov     bl, 1
+                mov     di, bx
+                mov     bh, 0
+                mov     bl, 0
+                mov     si, bx
+                call    sub_12B65
+                mov     bh, 0
+                mov     bl, 2
+                mov     di, bx
+                mov     bh, 0
+                mov     bl, 0
+                mov     si, bx
+                call    sub_12B65
+                mov     bh, 0
+                mov     bl, 2
+                mov     di, bx
+                mov     bh, 0
+                mov     bl, 1
+                mov     si, bx
+                call    sub_12B65
+                mov     bh, 0
+                mov     bl, 1
+                mov     di, bx
+                mov     bh, 0
+                mov     bl, 1
+                mov     si, bx
+                call    sub_12B65
+
+loc_12B46:                              ; CODE XREF: sub_129D2+35↑j
+                                        ; sub_129D2+D5↑j ...
+                inc     _circleDeltaX
+                mov     al, _circleDeltaX
+                and     al, 3Fh
+                mov     _circleDeltaX, al
+                or      al, al
+                jz      short loc_12B59
+
+loc_12B56:                              ; CODE XREF: sub_129D2+190↓j
+                jmp     loc_129E6
+; ---------------------------------------------------------------------------
+
+loc_12B59:                              ; CODE XREF: sub_129D2+182↑j
+                inc     _circleDeltaY
+                mov     al, _circleDeltaY
+                cmp     al, 40h ; '@'
+                jb      short loc_12B56
+                retn
+sub_129D2       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_12B65       proc near               ; CODE XREF: sub_129D2+69↑p
+                                        ; sub_129D2+78↑p ...
+                mov     bx, di
+                mov     byte_17889, bl
+                mov     bx, si
+                mov     byte_1788A, bl
+                mov     al, _circleDeltaX
+                add     al, al
+                add     al, al
+                adc     al, byte_17889
+                mov     byte_17889, al
+                mov     al, _circleDeltaY
+                add     al, al
+                adc     al, byte_1788A
+                mov     byte_1788A, al
+                call    sub_14B76
+                retn
+sub_12B65       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: noreturn
+
+attack          proc near               ; DATA XREF: sg01a2:command_jump_table↑o
+                call    write_string
+; ---------------------------------------------------------------------------
+aAttack         db 'ATTACK--',0
+; ---------------------------------------------------------------------------
+                mov     al, player._mapNum2
+                cmp     al, 4
+                jb      short loc_12BA5
+                jmp     loc_12E16
+; ---------------------------------------------------------------------------
+
+loc_12BA5:                              ; CODE XREF: attack+11↑j
+                nop
+                mov     al, _flag3
+                or      al, al
+                jz      short loc_12BBE
+                call    write_string
+; ---------------------------------------------------------------------------
+aParalized_0    db 'PARALIZED!',0
+; ---------------------------------------------------------------------------
+                jmp     sub_10A30
+; ---------------------------------------------------------------------------
+
+loc_12BBE:                              ; CODE XREF: attack+1C↑j
+                call    loc_12362
+                call    sub_15FE0
+                call    sub_123E6
+                mov     bx, di
+                mov     byte_17430, bl
+                mov     bx, di
+                cmp     bl, 0
+                jnz     short loc_12BD7
+                jmp     loc_12E09
+; ---------------------------------------------------------------------------
+
+loc_12BD7:                              ; CODE XREF: attack+43↑j
+                call    sub_15217
+                clc
+                rcr     al, 1
+                cmp     al, player._agility
+                jb      short loc_12BE6
+                jmp     loc_12E09
+; ---------------------------------------------------------------------------
+
+loc_12BE6:                              ; CODE XREF: attack+52↑j
+                call    xorDrawCircle
+                call    sub_1113A
+                call    write_string
+; ---------------------------------------------------------------------------
+aHit            db '--HIT!!!',0
+; ---------------------------------------------------------------------------
+                call    sub_15ED7
+                mov     al, player.field_2B
+                add     al, al
+                add     al, al
+                add     al, al
+                adc     al, player._strength
+                clc
+                rcr     al, 1
+                clc
+                rcr     al, 1
+                mov     byte_1742F, al
+                mov     bh, 0
+                mov     bl, byte_17430
+                mov     di, bx
+
+loc_12C19:                              ; CODE XREF: fire+58↓j
+                stc
+                mov     al, [di+177h]
+                cmc
+                sbb     al, byte_1742F
+                cmc
+                jnb     short loc_12CA4
+                mov     [di+177h], al
+                call    xorDrawCircle
+                mov     al, [di+197h]
+                cmp     al, 40h ; '@'
+                jz      short loc_12C38
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_12C38:                              ; CODE XREF: attack+A4↑j
+                call    sub_14B26
+                call    sub_15FA6
+                call    sub_14B26
+                mov     bh, 0
+                mov     bl, byte_17430
+                mov     di, bx
+                mov     al, [di+137h]
+                mov     _playerX, al
+                mov     al, [di+157h]
+                mov     _playerY, al
+                call    get_player_tile
+                mov     al, [di+1B7h]
+                mov     bx, current_tile_ptr
+                mov     [bx+si], al
+                mov     al, _playerX
+                mov     [di+157h], al
+                mov     al, _playerY
+                mov     [di+137h], al
+                mov     _playerX, al
+                mov     al, [di+157h]
+                mov     _playerY, al
+                call    get_player_tile
+                mov     al, [di+197h]
+                mov     bx, current_tile_ptr
+                mov     [bx+si], al
+                mov     al, 84h
+                mov     [di+1D7h], al
+                call    write_string
+; ---------------------------------------------------------------------------
+                db 8Dh,'SHE',27h,'S GONE!!!',0
+; ---------------------------------------------------------------------------
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_12CA4:                              ; CODE XREF: attack+95↑j
+                mov     al, _mapMonsters[di]
+                mov     _playerX, al
+                mov     al, (_mapMonsters+20h)[di]
+                mov     _playerY, al
+                call    get_player_tile
+                mov     bh, 0
+                mov     bl, 0
+                mov     si, bx
+                mov     al, (_mapMonsters+80h)[di]
+                mov     bx, current_tile_ptr
+                mov     [bx+si], al
+                mov     al, (_mapMonsters+60h)[di]
+                cmp     al, 40h ; '@'
+                jnz     short loc_12CD3
+                call    sub_172A0
+; ---------------------------------------------------------------------------
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_12CD3:                              ; CODE XREF: attack+13C↑j
+                nop
+                cmp     al, 60h ; '`'
+                jnz     short loc_12CE5
+                clc
+                mov     al, player.field_2F
+                adc     al, 2
+                daa
+                mov     player.field_2F, al
+                jmp     loc_12D8C
+; ---------------------------------------------------------------------------
+
+loc_12CE5:                              ; CODE XREF: attack+147↑j
+                cmp     al, 0FCh
+                jnz     short loc_12D22
+                mov     bx, di
+                mov     byte_1742F, bl
+                call    sub_15217
+                cmp     al, 40h ; '@'
+                jnb     short loc_12D00
+                clc
+                mov     al, player.field_30
+                adc     al, 1
+                daa
+                mov     player.field_30, al
+
+loc_12D00:                              ; CODE XREF: attack+165↑j
+                call    sub_15217
+                and     al, 0Fh
+                jz      short loc_12D17
+                mov     ah, 0
+                mov     di, ax
+                clc
+                mov     al, [di+0D6h]
+                adc     al, 1
+                daa
+                mov     [di+0D6h], al
+
+loc_12D17:                              ; CODE XREF: attack+176↑j
+                mov     bh, 0
+                mov     bl, byte_1742F
+                mov     di, bx
+                jmp     short loc_12D8C
+; ---------------------------------------------------------------------------
                 db  90h
-                db 0B7h
-                db    0
-                db 0B3h
-                db    1
-                db  8Bh
-                db 0FBh
-                db 0B7h
-                db    0
-                db 0B3h
-                db    0
-                db  8Bh
-                db 0F3h
-                db 0E8h
-                db  4Ch ; L
-                db    0
-                db 0B7h
-                db    0
-                db 0B3h
-                db    2
-                db  8Bh
-                db 0FBh
-                db 0B7h
-                db    0
-                db 0B3h
-                db    0
-                db  8Bh
-                db 0F3h
-                db 0E8h
-                db  3Dh ; =
-                db    0
-                db 0B7h
-                db    0
-                db 0B3h
-                db    2
-                db  8Bh
-                db 0FBh
-                db 0B7h
-                db    0
-                db 0B3h
-                db    1
-                db  8Bh
-                db 0F3h
-                db 0E8h
-                db  2Eh ; .
-                db    0
-                db 0B7h
-                db    0
-                db 0B3h
-                db    1
-                db  8Bh
-                db 0FBh
-                db 0B7h
-                db    0
-                db 0B3h
-                db    1
-                db  8Bh
-                db 0F3h
-                db 0E8h
-                db  1Fh
-                db    0
-                db 0FEh
-                db    6
-                db  19h
-                db    0
-                db 0A0h
-                db  19h
-                db    0
-                db  24h ; $
-                db  3Fh ; ?
-                db 0A2h
-                db  19h
-                db    0
-                db  0Ah
-                db 0C0h
-                db  74h ; t
-                db    3
-                db 0E9h
-                db  8Dh
-                db 0FEh
-                db 0FEh
-                db    6
-                db  1Ah
-                db    0
-                db 0A0h
-                db  1Ah
-                db    0
-                db  3Ch ; <
-                db  40h ; @
-                db  72h ; r
-                db 0F2h
-                db 0C3h
-                db  8Bh
-                db 0DFh
-                db  88h
-                db  1Eh
-                db  79h ; y
-                db    4
-                db  8Bh
-                db 0DEh
-                db  88h
-                db  1Eh
-                db  7Ah ; z
-                db    4
-                db 0A0h
-                db  19h
-                db    0
-                db    2
-                db 0C0h
-                db    2
-                db 0C0h
-                db  12h
-                db    6
-                db  79h ; y
-                db    4
-                db 0A2h
-                db  79h ; y
-                db    4
-                db 0A0h
-                db  1Ah
-                db    0
-                db    2
-                db 0C0h
-                db  12h
-                db    6
-                db  7Ah ; z
-                db    4
-                db 0A2h
-                db  7Ah ; z
-                db    4
-                db 0E8h
-                db 0E8h
-                db  1Fh
-                db 0C3h
-                db 0E8h
-                db  4Dh ; M
-                db  24h ; $
-                db  41h ; A
-                db  54h ; T
-                db  54h ; T
-                db  41h ; A
-                db  43h ; C
-                db  4Bh ; K
-                db  2Dh ; -
-                db  2Dh ; -
-                db    0
-                db 0A0h
-                db  4Ah ; J
-                db    0
-                db  3Ch ; <
-                db    4
-                db  72h ; r
-                db    3
-                db 0E9h
-                db  71h ; q
-                db    2
+; ---------------------------------------------------------------------------
+
+loc_12D22:                              ; CODE XREF: attack+158↑j
+                cmp     al, 0F0h
+                jnz     short loc_12D60
+                mov     bx, di
+                mov     byte_1742F, bl
+                call    sub_15217
+                cmp     al, 40h ; '@'
+                jnb     short loc_12D3D
+                clc
+                mov     al, player.field_A5
+                adc     al, 1
+                daa
+                mov     player.field_A5, al
+
+loc_12D3D:                              ; CODE XREF: attack+1A2↑j
+                mov     bh, 0
+                mov     bl, byte_1742F
+                mov     di, bx
+                call    sub_15217
+                and     al, 3
+                adc     al, 1
+                clc
+                adc     al, player.field_2E
+                daa
+                mov     player.field_2E, al
+                mov     bh, 0
+                mov     bl, byte_1742F
+                mov     di, bx
+                jmp     short loc_12D8C
+; ---------------------------------------------------------------------------
                 db  90h
-                db 0A0h
-                db  6Ch ; l
-                db    2
-                db  0Ah
-                db 0C0h
-                db  74h ; t
-                db  11h
-                db 0E8h
-                db  2Fh ; /
-                db  24h ; $
-                db  50h ; P
-                db  41h ; A
-                db  52h ; R
-                db  41h ; A
-                db  4Ch ; L
-                db  49h ; I
-                db  5Ah ; Z
-                db  45h ; E
-                db  44h ; D
-                db  21h ; !
-                db    0
-                db 0E9h
-                db  72h ; r
-                db 0DEh
-                db 0E8h
-                db 0A1h
-                db 0F7h
-                db 0E8h
-                db  1Ch
-                db  34h ; 4
-                db 0E8h
-                db  1Fh
-                db 0F8h
-                db  8Bh
-                db 0DFh
-                db  88h
-                db  1Eh
-                db  20h
-                db    0
-                db  8Bh
-                db 0DFh
-                db  80h
-                db 0FBh
-                db    0
-                db  75h ; u
-                db    3
-                db 0E9h
-                db  32h ; 2
-                db    2
-                db 0E8h
-                db  3Dh ; =
-                db  26h ; &
-                db 0F8h
-                db 0D0h
-                db 0D8h
-                db  3Ah ; :
-                db    6
-                db  4Ch ; L
-                db    0
-                db  72h ; r
-                db    3
-                db 0E9h
-                db  23h ; #
-                db    2
-                db 0E8h
-                db  55h ; U
-                db  26h ; &
-                db 0E8h
-                db  4Eh ; N
-                db 0E5h
-                db 0E8h
-                db 0F0h
-                db  23h ; #
-                db  2Dh ; -
-                db  2Dh ; -
-                db  48h ; H
-                db  49h ; I
-                db  54h ; T
-                db  21h ; !
-                db  21h ; !
-                db  21h ; !
-                db    0
-                db 0E8h
-                db 0DCh
-                db  32h ; 2
-                db 0A0h
-                db  61h ; a
-                db    0
-                db    2
-                db 0C0h
-                db    2
-                db 0C0h
-                db    2
-                db 0C0h
-                db  12h
-                db    6
-                db  4Bh ; K
-                db    0
-                db 0F8h
-                db 0D0h
-                db 0D8h
-                db 0F8h
-                db 0D0h
-                db 0D8h
-                db 0A2h
-                db  1Fh
-                db    0
-                db 0B7h
-                db    0
-                db  8Ah
-                db  1Eh
-                db  20h
-                db    0
-                db  8Bh
-                db 0FBh
-                db 0F9h
-                db  8Ah
-                db  85h
-                db  77h ; w
-                db    1
-                db 0F5h
-                db  1Ah
-                db    6
-                db  1Fh
-                db    0
-                db 0F5h
-                db  73h ; s
-                db  7Eh ; ~
-                db  88h
-                db  85h
-                db  77h ; w
-                db    1
-                db 0E8h
-                db  11h
-                db  26h ; &
-                db  8Ah
-                db  85h
-                db  97h
-                db    1
-                db  3Ch ; <
-                db  40h ; @
-                db  74h ; t
-                db    3
-                db 0E9h
-                db 0FBh
-                db 0DDh
-                db 0E8h
-                db 0EBh
-                db  1Eh
-                db 0E8h
-                db  68h ; h
-                db  33h ; 3
-                db 0E8h
-                db 0E5h
-                db  1Eh
-                db 0B7h
-                db    0
-                db  8Ah
-                db  1Eh
-                db  20h
-                db    0
-                db  8Bh
-                db 0FBh
-                db  8Ah
-                db  85h
-                db  37h ; 7
-                db    1
-                db 0A2h
-                db  23h ; #
-                db    0
-                db  8Ah
-                db  85h
-                db  57h ; W
-                db    1
-                db 0A2h
-                db  24h ; $
-                db    0
-                db 0E8h
-                db  59h ; Y
-                db  24h ; $
-                db  8Ah
-                db  85h
-                db 0B7h
-                db    1
-                db  8Bh
-                db  1Eh
-                db    6
-                db    0
-                db  88h
-                db    0
-                db 0A0h
-                db  23h ; #
-                db    0
-                db  88h
-                db  85h
-                db  57h ; W
-                db    1
-                db 0A0h
-                db  24h ; $
-                db    0
-                db  88h
-                db  85h
-                db  37h ; 7
-                db    1
-                db 0A2h
-                db  23h ; #
-                db    0
-                db  8Ah
-                db  85h
-                db  57h ; W
-                db    1
-                db 0A2h
-                db  24h ; $
-                db    0
-                db 0E8h
-                db  34h ; 4
-                db  24h ; $
-                db  8Ah
-                db  85h
-                db  97h
-                db    1
-                db  8Bh
-                db  1Eh
-                db    6
-                db    0
-                db  88h
-                db    0
-                db 0B0h
-                db  84h
-                db  88h
-                db  85h
-                db 0D7h
-                db    1
-                db 0E8h
-                db  4Dh ; M
-                db  23h ; #
-                db  8Dh
-                db  53h ; S
-                db  48h ; H
-                db  45h ; E
-                db  27h ; '
-                db  53h ; S
-                db  20h
-                db  47h ; G
-                db  4Fh ; O
-                db  4Eh ; N
-                db  45h ; E
-                db  21h ; !
-                db  21h ; !
-                db  21h ; !
-                db    0
-                db 0E9h
-                db  8Fh
-                db 0DDh
-                db  8Ah
-                db  85h
-                db  37h ; 7
-                db    1
-                db 0A2h
-                db  23h ; #
-                db    0
-                db  8Ah
-                db  85h
-                db  57h ; W
-                db    1
-                db 0A2h
-                db  24h ; $
-                db    0
-                db 0E8h
-                db 0FEh
-                db  23h ; #
-                db 0B7h
-                db    0
-                db 0B3h
-                db    0
-                db  8Bh
-                db 0F3h
-                db  8Ah
-                db  85h
-                db 0B7h
-                db    1
-                db  8Bh
-                db  1Eh
-                db    6
-                db    0
-                db  88h
-                db    0
-                db  8Ah
-                db  85h
-                db  97h
-                db    1
-                db  3Ch ; <
-                db  40h ; @
-                db  75h ; u
-                db    6
-                db 0E8h
-                db 0D0h
-                db  45h ; E
-                db 0E9h
-                db  60h ; `
-                db 0DDh
+; ---------------------------------------------------------------------------
+
+loc_12D60:                              ; CODE XREF: attack+195↑j
+                cmp     al, 0F8h
+                jnz     short loc_12D8B
+                mov     bx, di
+                mov     byte_1742F, bl
+                call    sub_15217
+                and     al, 1
+                mov     ah, 0
+                mov     di, ax
+                inc     di
+                clc
+                mov     al, [di+0D6h]
+                adc     al, 1
+                daa
+                mov     [di+0D6h], al
+                mov     bh, 0
+                mov     bl, byte_1742F
+                mov     di, bx
+                jmp     short loc_12D8C
+; ---------------------------------------------------------------------------
                 db  90h
-                db  3Ch ; <
-                db  60h ; `
-                db  75h ; u
-                db  0Dh
-                db 0F8h
-                db 0A0h
-                db  65h ; e
-                db    0
-                db  14h
-                db    2
-                db  27h ; '
-                db 0A2h
-                db  65h ; e
-                db    0
-                db 0E9h
-                db 0A7h
-                db    0
-                db  3Ch ; <
-                db 0FCh
-                db  75h ; u
-                db  39h ; 9
-                db  8Bh
-                db 0DFh
-                db  88h
-                db  1Eh
-                db  1Fh
-                db    0
-                db 0E8h
-                db  25h ; %
-                db  25h ; %
-                db  3Ch ; <
-                db  40h ; @
-                db  73h ; s
-                db  0Ah
-                db 0F8h
-                db 0A0h
-                db  66h ; f
-                db    0
-                db  14h
-                db    1
-                db  27h ; '
-                db 0A2h
-                db  66h ; f
-                db    0
-                db 0E8h
-                db  14h
-                db  25h ; %
-                db  24h ; $
-                db  0Fh
-                db  74h ; t
-                db  10h
-                db 0B4h
-                db    0
-                db  8Bh
-                db 0F8h
-                db 0F8h
-                db  8Ah
-                db  85h
-                db 0D6h
-                db    0
-                db  14h
-                db    1
-                db  27h ; '
-                db  88h
-                db  85h
-                db 0D6h
-                db    0
-                db 0B7h
-                db    0
-                db  8Ah
-                db  1Eh
-                db  1Fh
-                db    0
-                db  8Bh
-                db 0FBh
-                db 0EBh
-                db  6Bh ; k
+; ---------------------------------------------------------------------------
+
+loc_12D8B:                              ; CODE XREF: attack+1D3↑j
+                nop
+
+loc_12D8C:                              ; CODE XREF: attack+153↑j
+                                        ; attack+190↑j ...
+                mov     al, 0
+                mov     (_mapMonsters+80h)[di], al
+                mov     (_mapMonsters+40h)[di], al
+                mov     _mapMonsters[di], al
+                mov     (_mapMonsters+20h)[di], al
+                mov     (_mapMonsters+60h)[di], al
+                call    write_string
+; ---------------------------------------------------------------------------
+aKilledGold     db 0Dh,'KILLED--GOLD+',0
+; ---------------------------------------------------------------------------
+                call    sub_15217
+                and     al, 17h
+                or      al, 1
+                mov     byte_1742F, al
+                call    write_number
+                clc
+                mov     al, player._gold+1
+                adc     al, byte_1742F
+                daa
+                mov     player._gold+1, al
+                mov     al, player._gold
+                adc     al, 0
+                daa
+                mov     player._gold, al
+                call    write_string
+; ---------------------------------------------------------------------------
+aExp_0          db '--EXP.+',0
+; ---------------------------------------------------------------------------
+                call    sub_15217
+                and     al, 3
+                adc     al, 1
+                mov     byte_1742F, al
+                call    write_number
+                clc
+                mov     al, player._experience+1
+                adc     al, byte_1742F
+                daa
+                mov     player._experience+1, al
+                mov     al, player._experience
+                adc     al, 0
+                daa
+                mov     player._experience, al
+                call    xorDrawCircle
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_12E09:                              ; CODE XREF: attack+45↑j
+                                        ; attack+54↑j ...
+                call    write_string
+; ---------------------------------------------------------------------------
+aMiss           db '--MISS',0
+; ---------------------------------------------------------------------------
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_12E16:                              ; CODE XREF: attack+13↑j
+                nop
+                call    sub_15FE0
+                mov     al, _mapX
+                clc
+                adc     al, _mapLeft
+                mov     _playerX, al
+                mov     al, _mapY
+                clc
+                adc     al, _mapTop
+                mov     _playerY, al
+                mov     al, byte_17435
+                call    loc_11451
+                and     al, 7
+                jnz     short loc_12E3D
+                jmp     loc_12F64
+; ---------------------------------------------------------------------------
+
+loc_12E3D:                              ; CODE XREF: attack+2A9↑j
+                mov     bh, 0
+                mov     bl, 1Fh
+                mov     di, bx
+                mov     bx, di
+                mov     byte_1742F, bl
+
+loc_12E49:                              ; CODE XREF: attack+2E9↓j
+                mov     al, [di+137h]
+                cmp     al, _playerX
+                jnz     short loc_12E6A
+                mov     al, [di+157h]
+                cmp     al, _playerY
+                jnz     short loc_12E6A
+                mov     al, [di+1B7h]
+                cmp     al, byte_17435
+                jnz     short loc_12E6A
+                jmp     short loc_12E7D
+; ---------------------------------------------------------------------------
                 db  90h
-                db  3Ch ; <
-                db 0F0h
-                db  75h ; u
-                db  3Ah ; :
-                db  8Bh
-                db 0DFh
-                db  88h
-                db  1Eh
-                db  1Fh
-                db    0
-                db 0E8h
-                db 0E8h
-                db  24h ; $
-                db  3Ch ; <
-                db  40h ; @
-                db  73h ; s
-                db  0Ah
-                db 0F8h
-                db 0A0h
-                db 0DBh
-                db    0
-                db  14h
-                db    1
-                db  27h ; '
-                db 0A2h
-                db 0DBh
-                db    0
-                db 0B7h
-                db    0
-                db  8Ah
-                db  1Eh
-                db  1Fh
-                db    0
-                db  8Bh
-                db 0FBh
-                db 0E8h
-                db 0CFh
-                db  24h ; $
-                db  24h ; $
-                db    3
-                db  14h
-                db    1
-                db 0F8h
-                db  12h
-                db    6
-                db  64h ; d
-                db    0
-                db  27h ; '
-                db 0A2h
-                db  64h ; d
-                db    0
-                db 0B7h
-                db    0
-                db  8Ah
-                db  1Eh
-                db  1Fh
-                db    0
-                db  8Bh
-                db 0FBh
-                db 0EBh
-                db  2Dh ; -
+; ---------------------------------------------------------------------------
+
+loc_12E6A:                              ; CODE XREF: attack+2C2↑j
+                                        ; attack+2CC↑j ...
+                dec     byte_1742F
+                mov     bh, 0
+                mov     bl, byte_1742F
+                mov     di, bx
+                or      al, al
+                jnz     short loc_12E49
+                jmp     loc_12F64
+; ---------------------------------------------------------------------------
+
+loc_12E7D:                              ; CODE XREF: attack+2D8↑j
+                nop
+                call    sub_15217
+                clc
+                rcr     al, 1
+                cmp     al, player._agility
+                jb      short loc_12E8D
+                jmp     loc_12F64
+; ---------------------------------------------------------------------------
+
+loc_12E8D:                              ; CODE XREF: attack+2F9↑j
+                nop
+                call    write_string
+; ---------------------------------------------------------------------------
+aHit_0          db 'HIT!',0
+; ---------------------------------------------------------------------------
+                call    xorDrawCircle
+                call    sub_15ED7
+                call    xorDrawCircle
+                mov     al, player.field_2B
+                add     al, al
+                add     al, al
+                add     al, al
+                adc     al, player._strength
+                clc
+                rcr     al, 1
+                clc
+                rcr     al, 1
+                mov     bh, 0
+                mov     bl, byte_1742F
+                mov     di, bx
+                mov     byte_17430, al
+                mov     al, [di+177h]
+                stc
+                cmc
+                sbb     al, byte_17430
+                cmc
+                jnb     short loc_12ED1
+                mov     [di+177h], al
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_12ED1:                              ; CODE XREF: attack+339↑j
+                                        ; cast+1C1↓j ...
+                nop
+                mov     al, 0
+                mov     [di+177h], al
+                mov     [di+197h], al
+                mov     [di+1B7h], al
+                mov     al, [di+137h]
+                mov     _playerX, al
+                mov     al, [di+157h]
+                mov     _playerY, al
+                mov     al, byte_17435
+                call    loc_11451
+                mov     bx, word_17418
+                mov     al, [bx+si]
+                and     al, 0F0h
+                mov     bx, word_17418
+                mov     [bx+si], al
+                call    write_string
+; ---------------------------------------------------------------------------
+                db 8Dh,'KILLED--GOLD+',0
+; ---------------------------------------------------------------------------
+                call    sub_15217
+                and     al, 17h
+                or      al, 1
+                mov     byte_17430, al
+                call    write_number
+                clc
+                mov     al, player._gold+1
+                adc     al, byte_17430
+                daa
+                mov     player._gold+1, al
+                mov     al, player._gold
+                adc     al, 0
+                daa
+                mov     player._gold, al
+                call    write_string
+; ---------------------------------------------------------------------------
+aExp_1          db '--EXP.+',0
+; ---------------------------------------------------------------------------
+                call    sub_15217
+                and     al, 7
+                mov     byte_17430, al
+                call    write_number
+                clc
+                mov     al, player._experience+1
+                adc     al, byte_17430
+                daa
+                mov     player._experience+1, al
+                mov     al, player._experience
+                adc     al, 0
+                daa
+                mov     player._experience, al
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_12F64:                              ; CODE XREF: attack+2AB↑j
+                                        ; attack+2EB↑j ...
+                call    write_string
+; ---------------------------------------------------------------------------
+aMiss_0         db 'MISS',0
+; ---------------------------------------------------------------------------
+                jmp     loc_10A33
+attack          endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: noreturn thunk
+
+board           proc near               ; DATA XREF: sg01a2:command_jump_table↑o
+                call    write_string
+; ---------------------------------------------------------------------------
+aBoard          db 'BOARD',0
+; ---------------------------------------------------------------------------
+                mov     al, player._mapNum2
+                cmp     al, 4
+                jb      short loc_12F96
+
+loc_12F7F:                              ; CODE XREF: board+2D↓j
+                call    write_string
+; ---------------------------------------------------------------------------
+                db 8Dh,'THINK AGAIN ',0
+; ---------------------------------------------------------------------------
+                call    write_player_name
+                jmp     sub_10A30
+; ---------------------------------------------------------------------------
+
+loc_12F96:                              ; CODE XREF: board+E↑j
+                nop
+                mov     al, _playerTileId
+                cmp     al, 78h ; 'x'
+                jb      short loc_12F7F
+                mov     al, _mapX
+                mov     _playerX, al
+                mov     al, _mapY
+                mov     _playerY, al
+                call    get_player_tile
+                mov     al, _tilePlayerCenter
+                cmp     al, 22h ; '"'
+                jz      short loc_12FD6
+                cmp     al, 24h ; '$'
+                jz      short loc_12FCD
+                cmp     al, 26h ; '&'
+                jz      short loc_12FD0
+                cmp     al, 28h ; '('
+                jz      short loc_12FD3
+                call    write_string
+; ---------------------------------------------------------------------------
+aWhat           db ' WHAT?',0
+; ---------------------------------------------------------------------------
+                jmp     sub_10A30
+; ---------------------------------------------------------------------------
+
+loc_12FCD:                              ; CODE XREF: board+47↑j
+                jmp     short loc_12FF6
+; ---------------------------------------------------------------------------
                 db  90h
-                db  3Ch ; <
-                db 0F8h
-                db  75h ; u
-                db  27h ; '
-                db  8Bh
-                db 0DFh
-                db  88h
-                db  1Eh
-                db  1Fh
-                db    0
-                db 0E8h
-                db 0AAh
-                db  24h ; $
-                db  24h ; $
-                db    1
-                db 0B4h
-                db    0
-                db  8Bh
-                db 0F8h
-                db  47h ; G
-                db 0F8h
-                db  8Ah
-                db  85h
-                db 0D6h
-                db    0
-                db  14h
-                db    1
-                db  27h ; '
-                db  88h
-                db  85h
-                db 0D6h
-                db    0
-                db 0B7h
-                db    0
-                db  8Ah
-                db  1Eh
-                db  1Fh
-                db    0
-                db  8Bh
-                db 0FBh
-                db 0EBh
-                db    2
-                db  90h
-                db  90h
-                db 0B0h
-                db    0
-                db  88h
-                db  85h
-                db 0B7h
-                db    1
-                db  88h
-                db  85h
-                db  77h ; w
-                db    1
-                db  88h
-                db  85h
-                db  37h ; 7
-                db    1
-                db  88h
-                db  85h
-                db  57h ; W
-                db    1
-                db  88h
-                db  85h
-                db  97h
-                db    1
-                db 0E8h
-                db  3Ah ; :
-                db  22h ; "
-                db  0Dh
-                db  4Bh ; K
-                db  49h ; I
-                db  4Ch ; L
-                db  4Ch ; L
-                db  45h ; E
-                db  44h ; D
-                db  2Dh ; -
-                db  2Dh ; -
-                db  47h ; G
-                db  4Fh ; O
-                db  4Ch ; L
-                db  44h ; D
-                db  2Bh ; +
-                db    0
-                db 0E8h
-                db  60h ; `
-                db  24h ; $
-                db  24h ; $
-                db  17h
-                db  0Ch
-                db    1
-                db 0A2h
-                db  1Fh
-                db    0
-                db 0E8h
-                db 0F4h
-                db  25h ; %
-                db 0F8h
-                db 0A0h
-                db  59h ; Y
-                db    0
-                db  12h
-                db    6
-                db  1Fh
-                db    0
-                db  27h ; '
-                db 0A2h
-                db  59h ; Y
-                db    0
-                db 0A0h
-                db  58h ; X
-                db    0
-                db  14h
-                db    0
-                db  27h ; '
-                db 0A2h
-                db  58h ; X
-                db    0
-                db 0E8h
-                db    6
-                db  22h ; "
-                db  2Dh ; -
-                db  2Dh ; -
-                db  45h ; E
-                db  58h ; X
-                db  50h ; P
-                db  2Eh ; .
-                db  2Bh ; +
-                db    0
-                db 0E8h
-                db  33h ; 3
-                db  24h ; $
-                db  24h ; $
-                db    3
-                db  14h
-                db    1
-                db 0A2h
-                db  1Fh
-                db    0
-                db 0E8h
-                db 0C7h
-                db  25h ; %
-                db 0F8h
-                db 0A0h
-                db  57h ; W
-                db    0
-                db  12h
-                db    6
-                db  1Fh
-                db    0
-                db  27h ; '
-                db 0A2h
-                db  57h ; W
-                db    0
-                db 0A0h
-                db  56h ; V
-                db    0
-                db  14h
-                db    0
-                db  27h ; '
-                db 0A2h
-                db  56h ; V
-                db    0
-                db 0E8h
-                db  38h ; 8
-                db  24h ; $
-                db 0E9h
-                db  2Ah ; *
-                db 0DCh
-                db 0E8h
-                db 0D3h
-                db  21h ; !
-                db  2Dh ; -
-                db  2Dh ; -
-                db  4Dh ; M
-                db  49h ; I
-                db  53h ; S
-                db  53h ; S
-                db    0
-                db 0E9h
-                db  1Dh
-                db 0DCh
-                db  90h
-                db 0E8h
-                db 0C6h
-                db  31h ; 1
-                db 0A0h
-                db    0
-                db    0
-                db 0F8h
-                db  12h
-                db    6
-                db    2
-                db    0
-                db 0A2h
-                db  23h ; #
-                db    0
-                db 0A0h
-                db    1
-                db    0
-                db 0F8h
-                db  12h
-                db    6
-                db    3
-                db    0
-                db 0A2h
-                db  24h ; $
-                db    0
-                db 0A0h
-                db  25h ; %
-                db    0
-                db 0E8h
-                db  1Bh
-                db 0E6h
-                db  24h ; $
-                db    7
-                db  75h ; u
-                db    3
-                db 0E9h
-                db  27h ; '
-                db    1
-                db 0B7h
-                db    0
-                db 0B3h
-                db  1Fh
-                db  8Bh
-                db 0FBh
-                db  8Bh
-                db 0DFh
-                db  88h
-                db  1Eh
-                db  1Fh
-                db    0
-                db  8Ah
-                db  85h
-                db  37h ; 7
-                db    1
-                db  3Ah ; :
-                db    6
-                db  23h ; #
-                db    0
-                db  75h ; u
-                db  17h
-                db  8Ah
-                db  85h
-                db  57h ; W
-                db    1
-                db  3Ah ; :
-                db    6
-                db  24h ; $
-                db    0
-                db  75h ; u
-                db  0Dh
-                db  8Ah
-                db  85h
-                db 0B7h
-                db    1
-                db  3Ah ; :
-                db    6
-                db  25h ; %
-                db    0
-                db  75h ; u
-                db    3
-                db 0EBh
-                db  14h
-                db  90h
-                db 0FEh
-                db  0Eh
-                db  1Fh
-                db    0
-                db 0B7h
-                db    0
-                db  8Ah
-                db  1Eh
-                db  1Fh
-                db    0
-                db  8Bh
-                db 0FBh
-                db  0Ah
-                db 0C0h
-                db  75h ; u
-                db 0CFh
-                db 0E9h
-                db 0E7h
-                db    0
-                db  90h
-                db 0E8h
-                db  96h
-                db  23h ; #
-                db 0F8h
-                db 0D0h
-                db 0D8h
-                db  3Ah ; :
-                db    6
-                db  4Ch ; L
-                db    0
-                db  72h ; r
-                db    3
-                db 0E9h
-                db 0D7h
-                db    0
-                db  90h
-                db 0E8h
-                db  4Eh ; N
-                db  21h ; !
-                db  48h ; H
-                db  49h ; I
-                db  54h ; T
-                db  21h ; !
-                db    0
-                db 0E8h
-                db 0A5h
-                db  23h ; #
-                db 0E8h
-                db  3Bh ; ;
-                db  30h ; 0
-                db 0E8h
-                db  9Fh
-                db  23h ; #
-                db 0A0h
-                db  61h ; a
-                db    0
-                db    2
-                db 0C0h
-                db    2
-                db 0C0h
-                db    2
-                db 0C0h
-                db  12h
-                db    6
-                db  4Bh ; K
-                db    0
-                db 0F8h
-                db 0D0h
-                db 0D8h
-                db 0F8h
-                db 0D0h
-                db 0D8h
-                db 0B7h
-                db    0
-                db  8Ah
-                db  1Eh
-                db  1Fh
-                db    0
-                db  8Bh
-                db 0FBh
-                db 0A2h
-                db  20h
-                db    0
-                db  8Ah
-                db  85h
-                db  77h ; w
-                db    1
-                db 0F9h
-                db 0F5h
-                db  1Ah
-                db    6
-                db  20h
-                db    0
-                db 0F5h
-                db  73h ; s
-                db    7
-                db  88h
-                db  85h
-                db  77h ; w
-                db    1
-                db 0E9h
-                db  62h ; b
-                db 0DBh
-                db  90h
-                db 0B0h
-                db    0
-                db  88h
-                db  85h
-                db  77h ; w
-                db    1
-                db  88h
-                db  85h
-                db  97h
-                db    1
-                db  88h
-                db  85h
-                db 0B7h
-                db    1
-                db  8Ah
-                db  85h
-                db  37h ; 7
-                db    1
-                db 0A2h
-                db  23h ; #
-                db    0
-                db  8Ah
-                db  85h
-                db  57h ; W
-                db    1
-                db 0A2h
-                db  24h ; $
-                db    0
-                db 0A0h
-                db  25h ; %
-                db    0
-                db 0E8h
-                db  5Dh ; ]
-                db 0E5h
-                db  8Bh
-                db  1Eh
-                db    8
-                db    0
-                db  8Ah
-                db    0
-                db  24h ; $
-                db 0F0h
-                db  8Bh
-                db  1Eh
-                db    8
-                db    0
-                db  88h
-                db    0
-                db 0E8h
-                db 0DAh
-                db  20h
-                db  8Dh
-                db  4Bh ; K
-                db  49h ; I
-                db  4Ch ; L
-                db  4Ch ; L
-                db  45h ; E
-                db  44h ; D
-                db  2Dh ; -
-                db  2Dh ; -
-                db  47h ; G
-                db  4Fh ; O
-                db  4Ch ; L
-                db  44h ; D
-                db  2Bh ; +
-                db    0
-                db 0E8h
-                db    0
-                db  23h ; #
-                db  24h ; $
-                db  17h
-                db  0Ch
-                db    1
-                db 0A2h
-                db  20h
-                db    0
-                db 0E8h
-                db  94h
-                db  24h ; $
-                db 0F8h
-                db 0A0h
-                db  59h ; Y
-                db    0
-                db  12h
-                db    6
-                db  20h
-                db    0
-                db  27h ; '
-                db 0A2h
-                db  59h ; Y
-                db    0
-                db 0A0h
-                db  58h ; X
-                db    0
-                db  14h
-                db    0
-                db  27h ; '
-                db 0A2h
-                db  58h ; X
-                db    0
-                db 0E8h
-                db 0A6h
-                db  20h
-                db  2Dh ; -
-                db  2Dh ; -
-                db  45h ; E
-                db  58h ; X
-                db  50h ; P
-                db  2Eh ; .
-                db  2Bh ; +
-                db    0
-                db 0E8h
-                db 0D3h
-                db  22h ; "
-                db  24h ; $
-                db    7
-                db 0A2h
-                db  20h
-                db    0
-                db 0E8h
-                db  69h ; i
-                db  24h ; $
-                db 0F8h
-                db 0A0h
-                db  57h ; W
-                db    0
-                db  12h
-                db    6
-                db  20h
-                db    0
-                db  27h ; '
-                db 0A2h
-                db  57h ; W
-                db    0
-                db 0A0h
-                db  56h ; V
-                db    0
-                db  14h
-                db    0
-                db  27h ; '
-                db 0A2h
-                db  56h ; V
-                db    0
-                db 0E9h
-                db 0CFh
-                db 0DAh
-                db 0E8h
-                db  78h ; x
-                db  20h
-                db  4Dh ; M
-                db  49h ; I
-                db  53h ; S
-                db  53h ; S
-                db    0
-                db 0E9h
-                db 0C4h
-                db 0DAh
-                db 0E8h
-                db  6Dh ; m
-                db  20h
-                db  42h ; B
-                db  4Fh ; O
-                db  41h ; A
-                db  52h ; R
-                db  44h ; D
-                db    0
-                db 0A0h
-                db  4Ah ; J
-                db    0
-                db  3Ch ; <
-                db    4
-                db  72h ; r
-                db  17h
-                db 0E8h
-                db  5Dh ; ]
-                db  20h
-                db  8Dh
-                db  54h ; T
-                db  48h ; H
-                db  49h ; I
-                db  4Eh ; N
-                db  4Bh ; K
-                db  20h
-                db  41h ; A
-                db  47h ; G
-                db  41h ; A
-                db  49h ; I
-                db  4Eh ; N
-                db  20h
-                db    0
-                db 0E8h
-                db 0E7h
-                db  20h
-                db 0E9h
-                db  9Ah
-                db 0DAh
-                db  90h
-                db 0A0h
-                db  13h
-                db    0
-                db  3Ch ; <
-                db  78h ; x
-                db  72h ; r
-                db 0E1h
-                db 0A0h
-                db    0
-                db    0
-                db 0A2h
-                db  23h ; #
-                db    0
-                db 0A0h
-                db    1
-                db    0
-                db 0A2h
-                db  24h ; $
-                db    0
-                db 0E8h
-                db    6
-                db  21h ; !
-                db 0A0h
-                db  14h
-                db    0
-                db  3Ch ; <
-                db  22h ; "
-                db  74h ; t
-                db  22h ; "
-                db  3Ch ; <
-                db  24h ; $
-                db  74h ; t
-                db  15h
-                db  3Ch ; <
-                db  26h ; &
-                db  74h ; t
-                db  14h
-                db  3Ch ; <
-                db  28h ; (
-                db  74h ; t
-                db  13h
-                db 0E8h
-                db  1Ch
-                db  20h
-                db  20h
-                db  57h ; W
-                db  48h ; H
-                db  41h ; A
-                db  54h ; T
-                db  3Fh ; ?
-                db    0
-                db 0E9h
-                db  63h ; c
-                db 0DAh
-                db 0EBh
-                db  27h ; '
-                db  90h
-                db 0E9h
-                db  86h
-                db    0
-                db 0E9h
-                db 0D3h
-                db    0
-                db 0E8h
-                db    6
-                db  20h
-                db  20h
-                db  48h ; H
-                db  4Fh ; O
-                db  52h ; R
-                db  53h ; S
-                db  45h ; E
-                db    0
-                db 0B0h
-                db    8
-                db 0B7h
-                db    0
-                db 0B3h
-                db    0
-                db  8Bh
-                db 0FBh
-                db  8Bh
-                db  9Dh
-                db    6
-                db    0
-                db  88h
-                db    7
-                db 0B0h
-                db  22h ; "
-                db 0A2h
-                db  13h
-                db    0
-                db 0E9h
-                db  3Dh ; =
-                db 0DAh
-                db  90h
-                db 0A0h
-                db 0E2h
-                db    0
-                db  0Ah
-                db 0C0h
-                db  75h ; u
-                db  3Ah ; :
-                db 0E8h
-                db 0DEh
-                db  1Fh
-                db  20h
-                db  53h ; S
-                db  48h ; H
-                db  49h ; I
-                db  50h ; P
-                db  8Dh
-                db  54h ; T
-                db  48h ; H
-                db  45h ; E
-                db  20h
-                db  43h ; C
-                db  52h ; R
-                db  45h ; E
-                db  57h ; W
-                db  20h
-                db  4Fh ; O
-                db  46h ; F
-                db  20h
-                db  54h ; T
-                db  48h ; H
-                db  49h ; I
-                db  53h ; S
-                db  20h
-                db  53h ; S
-                db  48h ; H
-                db  49h ; I
-                db  50h ; P
-                db  8Dh
-                db  57h ; W
-                db  49h ; I
-                db  4Ch ; L
-                db  4Ch ; L
-                db  20h
-                db  4Eh ; N
-                db  4Fh ; O
-                db  54h ; T
-                db  20h
-                db  4Ch ; L
-                db  45h ; E
-                db  54h ; T
-                db  20h
-                db  59h ; Y
-                db  4Fh ; O
-                db  55h ; U
-                db  20h
-                db  42h ; B
-                db  4Fh ; O
-                db  41h ; A
-                db  52h ; R
-                db  44h ; D
-                db  21h ; !
-                db    0
-                db 0E9h
-                db 0F8h
-                db 0D9h
-                db  90h
-                db 0E8h
-                db 0A3h
-                db  1Fh
-                db  20h
-                db  46h ; F
-                db  52h ; R
-                db  49h ; I
-                db  47h ; G
-                db  41h ; A
-                db  54h ; T
-                db  45h ; E
-                db    0
-                db 0B0h
-                db    0
-                db 0B4h
-                db    0
-                db  8Bh
-                db 0F0h
-                db  8Bh
-                db  1Eh
-                db    6
-                db    0
-                db  88h
-                db    0
-                db 0B0h
-                db  24h ; $
-                db 0A2h
-                db  13h
-                db    0
-                db 0E9h
-                db 0DAh
-                db 0D9h
-                db  90h
-                db 0A0h
-                db 0DFh
-                db    0
-                db  0Ah
-                db 0C0h
-                db  75h ; u
-                db  27h ; '
-                db 0E8h
-                db  7Bh ; {
-                db  1Fh
-                db  20h
-                db  50h ; P
-                db  4Ch ; L
-                db  41h ; A
-                db  4Eh ; N
-                db  45h ; E
-                db  8Dh
-                db  53h ; S
-                db  54h ; T
-                db  52h ; R
-                db  41h ; A
-                db  4Eh ; N
-                db  47h ; G
-                db  45h ; E
-                db  20h
-                db  59h ; Y
-                db  4Fh ; O
-                db  55h ; U
-                db  20h
-                db  43h ; C
-                db  41h ; A
-                db  4Eh ; N
-                db  27h ; '
-                db  54h ; T
-                db  20h
-                db  47h ; G
-                db  45h ; E
-                db  54h ; T
-                db  20h
-                db  49h ; I
-                db  4Eh ; N
-                db  21h ; !
-                db    0
-                db 0E9h
-                db 0A8h
-                db 0D9h
-                db  90h
-                db 0E8h
-                db  53h ; S
-                db  1Fh
-                db  20h
-                db  50h ; P
-                db  4Ch ; L
-                db  41h ; A
-                db  4Eh ; N
-                db  45h ; E
-                db    0
-                db 0B0h
-                db    8
-                db 0B7h
-                db    0
-                db 0B3h
-                db    0
-                db  8Bh
-                db 0F3h
-                db  8Bh
-                db  1Eh
-                db    6
-                db    0
-                db  88h
-                db    0
-                db 0B0h
-                db  26h ; &
-                db 0A2h
-                db  13h
-                db    0
-                db 0E9h
-                db  8Ah
-                db 0D9h
-                db  90h
-                db 0E8h
-                db  32h ; 2
-                db  1Fh
-                db  20h
-                db  52h ; R
-                db  4Fh ; O
-                db  43h ; C
-                db  4Bh ; K
-                db  45h ; E
-                db  54h ; T
-                db    0
-                db 0A0h
-                db 0DDh
-                db    0
-                db  0Ah
-                db 0C0h
-                db  75h ; u
-                db  38h ; 8
-                db 0E8h
-                db  20h
-                db  1Fh
-                db  8Dh
-                db  41h ; A
-                db  20h
-                db  4Dh ; M
-                db  45h ; E
-                db  54h ; T
-                db  41h ; A
-                db  4Ch ; L
-                db  49h ; I
-                db  43h ; C
-                db  20h
-                db  56h ; V
-                db  4Fh ; O
-                db  49h ; I
-                db  43h ; C
-                db  45h ; E
-                db  20h
-                db  43h ; C
-                db  4Fh ; O
-                db  4Dh ; M
-                db  4Dh ; M
-                db  41h ; A
-                db  4Eh ; N
-                db  44h ; D
-                db  53h ; S
-                db  3Ah ; :
-                db  8Dh
-                db  59h ; Y
-                db  4Fh ; O
-                db  55h ; U
-                db  20h
-                db  4Dh ; M
-                db  55h ; U
-                db  53h ; S
-                db  54h ; T
-                db  20h
-                db  48h ; H
-                db  41h ; A
-                db  56h ; V
-                db  45h ; E
-                db  20h
-                db  41h ; A
-                db  4Eh ; N
-                db  20h
-                db  41h ; A
-                db  4Eh ; N
-                db  4Bh ; K
-                db  48h ; H
-                db  21h ; !
-                db    0
-                db 0E9h
-                db  3Ch ; <
-                db 0D9h
-                db  90h
-                db 0B0h
-                db    8
-                db 0B7h
-                db    0
-                db 0B3h
-                db    0
-                db  8Bh
-                db 0F3h
-                db  8Bh
-                db  1Eh
-                db    6
-                db    0
-                db  88h
-                db    0
-                db 0B0h
-                db  28h ; (
-                db 0A2h
-                db  13h
-                db    0
-                db 0E9h
-                db  28h ; (
-                db 0D9h
-                db 0E8h
-                db 0D1h
-                db  1Eh
-                db  43h ; C
-                db  41h ; A
-                db  53h ; S
-                db  54h ; T
-                db  2Dh ; -
-                db    0
-                db 0EBh
-                db  3Dh ; =
+; ---------------------------------------------------------------------------
+
+loc_12FD0:                              ; CODE XREF: board+4B↑j
+                jmp     loc_13059
+; ---------------------------------------------------------------------------
+
+loc_12FD3:                              ; CODE XREF: board+4F↑j
+                jmp     loc_130A9
+; ---------------------------------------------------------------------------
+
+loc_12FD6:                              ; CODE XREF: board+43↑j
+                call    write_string
+; ---------------------------------------------------------------------------
+aHorse          db ' HORSE',0
+; ---------------------------------------------------------------------------
+                mov     al, 8
+                mov     bh, 0
+                mov     bl, 0
+                mov     di, bx
+                mov     bx, [di+6]
+                mov     [bx], al
+                mov     al, 22h ; '"'
+                mov     _playerTileId, al
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_12FF6:                              ; CODE XREF: board:loc_12FCD↑j
+                nop
+                mov     al, byte ptr player+0ACh
+                or      al, al
+                jnz     short loc_13038
+                call    write_string
+; ---------------------------------------------------------------------------
+aShip           db ' SHIP'
+; ---------------------------------------------------------------------------
+                lea     dx, [si+48h]
+                inc     bp
+                and     [bp+di+52h], al
+                inc     bp
+                push    di
+                and     [bx+46h], cl
+                and     [si+48h], dl
+                dec     cx
+                push    bx
+                and     [bp+di+48h], dl
+                dec     cx
+                push    ax
+                lea     dx, [bx+49h]
+                dec     sp
+                dec     sp
+                and     [bp+4Fh], cl
+                push    sp
+                and     [si+45h], cl
+                push    sp
+                and     [bx+di+4Fh], bl
+                push    bp
+                and     [bp+si+4Fh], al
+                inc     cx
+                push    dx
+                inc     sp
+                and     [bx+si], ax
+                jmp     sub_10A30
+; ---------------------------------------------------------------------------
+
+loc_13038:                              ; CODE XREF: board+8D↑j
+                nop
+                call    write_string
+; ---------------------------------------------------------------------------
+aFrigate        db ' FRIGATE',0
+; ---------------------------------------------------------------------------
+                mov     al, 0
+                mov     ah, 0
+                mov     si, ax
+                mov     bx, current_tile_ptr
+                mov     [bx+si], al
+                mov     al, 24h ; '$'
+                mov     _playerTileId, al
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_13059:                              ; CODE XREF: board:loc_12FD0↑j
+                nop
+                mov     al, player.field_A9
+                or      al, al
+                jnz     short loc_13088
+                call    write_string
+; ---------------------------------------------------------------------------
+aPlane          db ' PLANE'
+; ---------------------------------------------------------------------------
+                lea     dx, [bp+di+54h]
+                push    dx
+                inc     cx
+                dec     si
+                inc     di
+                inc     bp
+                and     [bx+di+4Fh], bl
+                push    bp
+                and     [bp+di+41h], al
+                dec     si
+                daa
+                push    sp
+                and     [bx+45h], al
+                push    sp
+                and     [bx+di+4Eh], cl
+                and     [bx+si], ax
+                jmp     sub_10A30
+; ---------------------------------------------------------------------------
+
+loc_13088:                              ; CODE XREF: board+F0↑j
+                nop
+                call    write_string
+; ---------------------------------------------------------------------------
+aPlane_0        db ' PLANE',0
+; ---------------------------------------------------------------------------
+                mov     al, 8
+                mov     bh, 0
+                mov     bl, 0
+                mov     si, bx
+                mov     bx, current_tile_ptr
+                mov     [bx+si], al
+                mov     al, 26h ; '&'
+                mov     _playerTileId, al
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_130A9:                              ; CODE XREF: board:loc_12FD3↑j
+                nop
+                call    write_string
+; ---------------------------------------------------------------------------
+aRocket         db ' ROCKET',0
+; ---------------------------------------------------------------------------
+                mov     al, player.field_A7
+                or      al, al
+                jnz     short loc_130F4
+                call    write_string
+; ---------------------------------------------------------------------------
+                db 8Dh,'A METALIC VOICE COMMANDS:',8Dh,'YOU MUST HAVE AN ANKH!',0
+; ---------------------------------------------------------------------------
+                jmp     sub_10A30
+; ---------------------------------------------------------------------------
+
+loc_130F4:                              ; CODE XREF: board+14B↑j
+                nop
+                mov     al, 8
+                mov     bh, 0
+                mov     bl, 0
+                mov     si, bx
+                mov     bx, current_tile_ptr
+                mov     [bx+si], al
+                mov     al, 40
+                mov     _playerTileId, al
+                jmp     loc_10A33
+board           endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: noreturn
+
+cast            proc near               ; DATA XREF: sg01a2:command_jump_table↑o
+
+; FUNCTION CHUNK AT 3153 SIZE 0000004C BYTES
+; FUNCTION CHUNK AT 31B0 SIZE 00000023 BYTES
+; FUNCTION CHUNK AT 31E2 SIZE 00000053 BYTES
+; FUNCTION CHUNK AT 3244 SIZE 00000068 BYTES
+; FUNCTION CHUNK AT 32AD SIZE 0000005F BYTES
+
+                call    write_string
+; ---------------------------------------------------------------------------
+aCast           db 'CAST-',0
+; ---------------------------------------------------------------------------
+                jmp     short loc_13153
+cast            endp
+
+; ---------------------------------------------------------------------------
                 db  90h
                 db 0B8h
                 db    0
@@ -9692,3305 +8673,1623 @@ aPass_3         db 'PASS',0
                 db    7
                 db  5Bh ; [
                 db 0C3h
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR cast
+
+loc_13153:                              ; CODE XREF: cast+9↑j
+                nop
+                mov     al, player.field_2D
+                clc
+                adc     al, 24h ; '$'
+                call    sub_1508C
+                mov     al, player.field_A1
+                clc
+                adc     al, player.field_A2
+                jnz     short loc_13185
+                call    write_string
+; ---------------------------------------------------------------------------
+                db 8Dh,'NEED WAND OR STAFF!',0
+; ---------------------------------------------------------------------------
+                call    sub_15E83
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_13185:                              ; CODE XREF: cast+5A↑j
+                nop
+                mov     al, player.field_2D
+                or      al, al
+                jnz     short loc_13190
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_13190:                              ; CODE XREF: cast+80↑j
+                mov     ah, 0
+                mov     di, ax
+                mov     al, player.field_80[di]
+                or      al, al
+                jnz     short loc_131B0
+                call    write_string
+; END OF FUNCTION CHUNK FOR cast
+; ---------------------------------------------------------------------------
+                db 8Dh,'NO SPELL!',0
+; ---------------------------------------------------------------------------
+                call    sub_15E83
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR cast
+
+loc_131B0:                              ; CODE XREF: cast+8F↑j
+                call    sub_15FC3
+                mov     bh, 0
+                mov     bl, player.field_2D
+                mov     di, bx
+                stc
+                mov     al, player.field_80[di]
+                cmc
+                sbb     al, 1
+                das
+                cmc
+                mov     player.field_80[di], al
+                mov     al, player._mapNum2
+                cmp     al, 4
+                jnb     short loc_131E2
+                call    write_string
+; END OF FUNCTION CHUNK FOR cast
+; ---------------------------------------------------------------------------
+aFailed         db '-FAILED!',0
+; ---------------------------------------------------------------------------
+                call    sub_15E83
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR cast
+
+loc_131E2:                              ; CODE XREF: cast+C3↑j
+                nop
+                mov     al, player.field_2D
+                or      al, al
+                jnz     short loc_131ED
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_131ED:                              ; CODE XREF: cast+DD↑j
+                cmp     al, 1
+                jz      short loc_1321C
+                cmp     al, 2
+                jz      short loc_13224
+                cmp     al, 3
+                jz      short loc_13253
+                cmp     al, 4
+                jz      short loc_13272
+                cmp     al, 5
+                jz      short loc_13210
+                cmp     al, 6
+                jz      short loc_13213
+                cmp     al, 7
+                jz      short loc_13216
+                cmp     al, 8
+                jnz     short loc_13219
+                jmp     loc_132D2
+; ---------------------------------------------------------------------------
+
+loc_13210:                              ; CODE XREF: cast+F4↑j
+                jmp     loc_132A2
+; ---------------------------------------------------------------------------
+
+loc_13213:                              ; CODE XREF: cast+F8↑j
+                jmp     loc_132A5
+; ---------------------------------------------------------------------------
+
+loc_13216:                              ; CODE XREF: cast+FC↑j
+                jmp     loc_132AD
+; ---------------------------------------------------------------------------
+
+loc_13219:                              ; CODE XREF: cast+100↑j
+                jmp     loc_13301
+; ---------------------------------------------------------------------------
+
+loc_1321C:                              ; CODE XREF: cast+E4↑j
+                mov     al, 96h
+                mov     byte_17436, al
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_13224:                              ; CODE XREF: cast+E8↑j
+                mov     al, player._mapNum2
+                cmp     al, 4
+                jz      short loc_1325A
+
+loc_1322B:                              ; CODE XREF: cast+14D↓j
+                mov     al, byte_17435
+                cmp     al, 0Fh
+                jb      short loc_13244
+
+loc_13232:                              ; CODE XREF: cast+13F↓j
+                                        ; cast+15E↓j ...
+                call    write_string
+; END OF FUNCTION CHUNK FOR cast
+; ---------------------------------------------------------------------------
+aFailed_0       db '-FAILED!',0
+; ---------------------------------------------------------------------------
+                call    sub_15E83
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR cast
+
+loc_13244:                              ; CODE XREF: cast+125↑j
+                clc
+                adc     al, 1
+                call    loc_11451
+                jnz     short loc_13232
+                inc     byte_17435
+                jmp     loc_1382A
+; ---------------------------------------------------------------------------
+
+loc_13253:                              ; CODE XREF: cast+EC↑j
+                mov     al, player._mapNum2
+                cmp     al, 4
+                jz      short loc_1322B
+
+loc_1325A:                              ; CODE XREF: cast+11E↑j
+                mov     al, byte_17435
+                or      al, al
+                jz      short loc_132A2
+                stc
+                cmc
+                sbb     al, 1
+                cmc
+                call    loc_11451
+                jnz     short loc_13232
+                dec     byte_17435
+                jmp     loc_1382A
+; ---------------------------------------------------------------------------
+
+loc_13272:                              ; CODE XREF: cast+F0↑j
+                clc
+                mov     al, _mapX
+                adc     al, _mapLeft
+                and     al, 0Fh
+                jz      short loc_13232
+                mov     _playerX, al
+                mov     al, _mapY
+                adc     al, _mapTop
+                and     al, 0Fh
+                jz      short loc_13232
+                mov     _playerY, al
+                mov     al, byte_17435
+                call    loc_11451
+                jns     short loc_13232
+                mov     al, 0
+                mov     bx, word_17418
+                mov     [bx+si], al
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_132A2:                              ; CODE XREF: cast:loc_13210↑j
+                                        ; cast+154↑j
+                jmp     loc_13844
+; ---------------------------------------------------------------------------
+
+loc_132A5:                              ; CODE XREF: cast:loc_13213↑j
+                call    sub_15217
+                js      short loc_13232
+                jmp     short loc_13301
+; END OF FUNCTION CHUNK FOR cast
+; ---------------------------------------------------------------------------
                 db  90h
-                db 0A0h
-                db  63h ; c
-                db    0
-                db 0F8h
-                db  14h
-                db  24h ; $
-                db 0E8h
-                db  2Fh ; /
-                db  1Fh
-                db 0A0h
-                db 0D7h
-                db    0
-                db 0F8h
-                db  12h
-                db    6
-                db 0D8h
-                db    0
-                db  75h ; u
-                db  1Eh
-                db 0E8h
-                db  75h ; u
-                db  1Eh
-                db  8Dh
-                db  4Eh ; N
-                db  45h ; E
-                db  45h ; E
-                db  44h ; D
-                db  20h
-                db  57h ; W
-                db  41h ; A
-                db  4Eh ; N
-                db  44h ; D
-                db  20h
-                db  4Fh ; O
-                db  52h ; R
-                db  20h
-                db  53h ; S
-                db  54h ; T
-                db  41h ; A
-                db  46h ; F
-                db  46h ; F
-                db  21h ; !
-                db    0
-                db 0E8h
-                db    1
-                db  2Dh ; -
-                db 0E9h
-                db 0AEh
-                db 0D8h
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR cast
+
+loc_132AD:                              ; CODE XREF: cast:loc_13216↑j
+                call    sub_1330C
+                jz      short loc_13232
+                mov     al, player._experience
+                add     al, al
+                adc     al, 1Eh
+                mov     byte_17430, al
+                mov     al, (_mapMonsters+40h)[di]
+                cmc
+                sbb     al, byte_17430
+                cmc
+                mov     (_mapMonsters+40h)[di], al
+                jb      short loc_132CF
+                jmp     loc_12ED1
+; ---------------------------------------------------------------------------
+
+loc_132CF:                              ; CODE XREF: cast+1BF↑j
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_132D2:                              ; CODE XREF: cast+102↑j
+                call    sub_15217
+                and     al, 0Fh
+                or      al, 1
+                mov     _playerX, al
+                call    sub_15217
+                and     al, 0Fh
+                or      al, 1
+                mov     _playerY, al
+                mov     al, byte_17435
+                call    loc_11451
+                jz      short loc_132F1
+                jmp     loc_13232
+; ---------------------------------------------------------------------------
+
+loc_132F1:                              ; CODE XREF: cast+1E1↑j
+                nop
+                mov     al, _playerX
+                mov     _mapX, al
+                mov     al, _playerY
+                mov     _mapY, al
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_13301:                              ; CODE XREF: cast:loc_13219↑j
+                                        ; cast+19F↑j
+                call    sub_1330C
+                jnz     short loc_13309
+                jmp     loc_13232
+; ---------------------------------------------------------------------------
+
+loc_13309:                              ; CODE XREF: cast+1F9↑j
+                jmp     loc_12ED1
+; END OF FUNCTION CHUNK FOR cast
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_1330C       proc near               ; CODE XREF: cast:loc_132AD↑p
+                                        ; cast:loc_13301↑p
+                mov     bh, 0
+                mov     bl, 1Fh
+                mov     di, bx
+
+loc_13312:                              ; CODE XREF: sub_1330C+F↓j
+                mov     al, (_mapMonsters+60h)[di]
+                or      al, al
+                jnz     short loc_13322
+
+loc_1331A:                              ; CODE XREF: sub_1330C+1E↓j
+                                        ; sub_1330C+2C↓j ...
+                dec     di
+                jnz     short loc_13312
+                mov     al, 0
+                or      al, al
+                retn
+; ---------------------------------------------------------------------------
+
+loc_13322:                              ; CODE XREF: sub_1330C+C↑j
+                mov     al, (_mapMonsters+80h)[di]
+                cmp     al, byte_17435
+                jnz     short loc_1331A
+                mov     al, _mapX
+                clc
+                adc     al, _mapLeft
+                cmp     al, _mapMonsters[di]
+                jnz     short loc_1331A
+                mov     al, _mapY
+                clc
+                adc     al, _mapTop
+                cmp     al, (_mapMonsters+20h)[di]
+                jnz     short loc_1331A
+                mov     ax, di
+                or      al, al
+                retn
+sub_1330C       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: noreturn
+
+descend         proc near               ; DATA XREF: sg01a2:command_jump_table↑o
+                call    write_string
+; ---------------------------------------------------------------------------
+aDescend        db 'DESCEND',0
+; ---------------------------------------------------------------------------
+                mov     al, player._mapNum2
+                cmp     al, 5
+                jz      short loc_13370
+                cmp     al, 4
+                jz      short loc_13370
+
+loc_13363:                              ; CODE XREF: descend+28↓j
+                call    write_string
+; ---------------------------------------------------------------------------
+aWhat_7         db '-WHAT?',0
+; ---------------------------------------------------------------------------
+                jmp     sub_10A30
+; ---------------------------------------------------------------------------
+
+loc_13370:                              ; CODE XREF: descend+10↑j
+                                        ; descend+14↑j
+                mov     al, _tilePlayerCenter
+                and     al, 20h
+                jz      short loc_13363
+                mov     al, player._mapNum2
+                cmp     al, 4
+                jnz     short loc_13381
+                jmp     loc_13823
+; ---------------------------------------------------------------------------
+
+loc_13381:                              ; CODE XREF: descend+2F↑j
+                                        ; klimb+2F↓j
+                nop
+                inc     byte_17435
+                jmp     loc_1382A
+descend         endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: noreturn
+
+enter           proc near               ; DATA XREF: sg01a2:command_jump_table↑o
+                call    write_string
+; ---------------------------------------------------------------------------
+aEnter          db 'ENTER',0
+; ---------------------------------------------------------------------------
+                mov     al, player._mapNum2
+                or      al, al
+                jz      short loc_133A6
+                call    write_string
+; ---------------------------------------------------------------------------
+aWhat_5         db ' WHAT?',0
+; ---------------------------------------------------------------------------
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_133A6:                              ; CODE XREF: enter+E↑j
+                nop
+                mov     al, _playerTileId
+                cmp     al, 78h ; 'x'
+                jnb     short loc_133C3
+                call    write_string
+; ---------------------------------------------------------------------------
+aOnlyOnFoot     db '-ONLY ON FOOT!',0
+; ---------------------------------------------------------------------------
+                jmp     sub_10A30
+; ---------------------------------------------------------------------------
+
+loc_133C3:                              ; CODE XREF: enter+23↑j
+                nop
+                mov     al, _tilePlayerCenter
+                clc
+                rcr     al, 1
+                stc
+                cmc
+                sbb     al, 5
+                cmc
+                jnz     short loc_133D4
+                jmp     short loc_1340F
+; ---------------------------------------------------------------------------
                 db  90h
-                db 0A0h
-                db  63h ; c
-                db    0
-                db  0Ah
-                db 0C0h
-                db  75h ; u
-                db    3
-                db 0E9h
-                db 0A3h
-                db 0D8h
-                db 0B4h
-                db    0
-                db  8Bh
-                db 0F8h
-                db  8Ah
-                db  85h
-                db 0B6h
-                db    0
-                db  0Ah
-                db 0C0h
-                db  75h ; u
-                db  14h
-                db 0E8h
-                db  40h ; @
-                db  1Eh
-                db  8Dh
-                db  4Eh ; N
-                db  4Fh ; O
-                db  20h
-                db  53h ; S
-                db  50h ; P
-                db  45h ; E
-                db  4Ch ; L
-                db  4Ch ; L
-                db  21h ; !
-                db    0
-                db 0E8h
-                db 0D6h
-                db  2Ch ; ,
-                db 0E9h
-                db  83h
-                db 0D8h
-                db 0E8h
-                db  10h
-                db  2Eh ; .
-                db 0B7h
-                db    0
-                db  8Ah
-                db  1Eh
-                db  63h ; c
-                db    0
-                db  8Bh
-                db 0FBh
-                db 0F9h
-                db  8Ah
-                db  85h
-                db 0B6h
-                db    0
-                db 0F5h
-                db  1Ch
-                db    1
-                db  2Fh ; /
-                db 0F5h
-                db  88h
-                db  85h
-                db 0B6h
-                db    0
-                db 0A0h
-                db  4Ah ; J
-                db    0
-                db  3Ch ; <
-                db    4
-                db  73h ; s
-                db  12h
-                db 0E8h
-                db  0Ch
-                db  1Eh
-                db  2Dh ; -
-                db  46h ; F
-                db  41h ; A
-                db  49h ; I
-                db  4Ch ; L
-                db  45h ; E
-                db  44h ; D
-                db  21h ; !
-                db    0
-                db 0E8h
-                db 0A4h
-                db  2Ch ; ,
-                db 0E9h
-                db  51h ; Q
-                db 0D8h
+; ---------------------------------------------------------------------------
+
+loc_133D4:                              ; CODE XREF: enter+46↑j
+                cmc
+                sbb     al, 1
+                cmc
+                jnz     short loc_133DD
+                jmp     short loc_13447
+; ---------------------------------------------------------------------------
                 db  90h
-                db 0A0h
-                db  63h ; c
-                db    0
-                db  0Ah
-                db 0C0h
-                db  75h ; u
-                db    3
-                db 0E9h
-                db  46h ; F
-                db 0D8h
-                db  3Ch ; <
-                db    1
-                db  74h ; t
-                db  2Bh ; +
-                db  3Ch ; <
-                db    2
-                db  74h ; t
-                db  2Fh ; /
-                db  3Ch ; <
-                db    3
-                db  74h ; t
-                db  5Ah ; Z
-                db  3Ch ; <
-                db    4
-                db  74h ; t
-                db  75h ; u
-                db  3Ch ; <
-                db    5
-                db  74h ; t
-                db  0Fh
-                db  3Ch ; <
-                db    6
-                db  74h ; t
-                db  0Eh
-                db  3Ch ; <
-                db    7
-                db  74h ; t
-                db  0Dh
-                db  3Ch ; <
-                db    8
-                db  75h ; u
-                db  0Ch
-                db 0E9h
-                db 0C2h
-                db    0
-                db 0E9h
-                db  8Fh
-                db    0
-                db 0E9h
-                db  8Fh
-                db    0
-                db 0E9h
-                db  94h
-                db    0
-                db 0E9h
-                db 0E5h
-                db    0
-                db 0B0h
-                db  96h
-                db 0A2h
-                db  26h ; &
-                db    0
-                db 0E9h
-                db  0Fh
-                db 0D8h
-                db 0A0h
-                db  4Ah ; J
-                db    0
-                db  3Ch ; <
-                db    4
-                db  74h ; t
-                db  2Fh ; /
-                db 0A0h
-                db  25h ; %
-                db    0
-                db  3Ch ; <
-                db  0Fh
-                db  72h ; r
-                db  12h
-                db 0E8h
-                db 0AAh
-                db  1Dh
-                db  2Dh ; -
-                db  46h ; F
-                db  41h ; A
-                db  49h ; I
-                db  4Ch ; L
-                db  45h ; E
-                db  44h ; D
-                db  21h ; !
-                db    0
-                db 0E8h
-                db  42h ; B
-                db  2Ch ; ,
-                db 0E9h
-                db 0EFh
-                db 0D7h
-                db 0F8h
-                db  14h
-                db    1
-                db 0E8h
-                db    7
-                db 0E2h
-                db  75h ; u
-                db 0E6h
-                db 0FEh
-                db    6
-                db  25h ; %
-                db    0
-                db 0E9h
-                db 0D7h
-                db    5
-                db 0A0h
-                db  4Ah ; J
-                db    0
-                db  3Ch ; <
-                db    4
-                db  74h ; t
-                db 0D1h
-                db 0A0h
-                db  25h ; %
-                db    0
-                db  0Ah
-                db 0C0h
-                db  74h ; t
-                db  41h ; A
-                db 0F9h
-                db 0F5h
-                db  1Ch
-                db    1
-                db 0F5h
-                db 0E8h
-                db 0E8h
-                db 0E1h
-                db  75h ; u
-                db 0C7h
-                db 0FEh
-                db  0Eh
-                db  25h ; %
-                db    0
-                db 0E9h
-                db 0B8h
-                db    5
-                db 0F8h
-                db 0A0h
-                db    0
-                db    0
-                db  12h
-                db    6
-                db    2
-                db    0
-                db  24h ; $
-                db  0Fh
-                db  74h ; t
-                db 0B4h
-                db 0A2h
-                db  23h ; #
-                db    0
-                db 0A0h
-                db    1
-                db    0
-                db  12h
-                db    6
-                db    3
-                db    0
-                db  24h ; $
-                db  0Fh
-                db  74h ; t
-                db 0A6h
-                db 0A2h
-                db  24h ; $
-                db    0
-                db 0A0h
-                db  25h ; %
-                db    0
-                db 0E8h
-                db 0BCh
-                db 0E1h
-                db  79h ; y
-                db  9Bh
-                db 0B0h
-                db    0
-                db  8Bh
-                db  1Eh
-                db    8
-                db    0
-                db  88h
-                db    0
-                db 0E9h
-                db  91h
-                db 0D7h
-                db 0E9h
-                db  9Fh
-                db    5
-                db 0E8h
-                db  6Fh ; o
-                db  1Fh
-                db  78h ; x
-                db  88h
-                db 0EBh
-                db  55h ; U
+; ---------------------------------------------------------------------------
+
+loc_133DD:                              ; CODE XREF: enter+4F↑j
+                cmc
+                sbb     al, 1
+                cmc
+                jnz     short loc_133E6
+                jmp     loc_1347C
+; ---------------------------------------------------------------------------
+
+loc_133E6:                              ; CODE XREF: enter+58↑j
+                cmc
+                sbb     al, 1
+                cmc
+                jnz     short loc_133EF
+                jmp     loc_134B5
+; ---------------------------------------------------------------------------
+
+loc_133EF:                              ; CODE XREF: enter+61↑j
+                cmc
+                sbb     al, 1
+                cmc
+                jnz     short loc_133F8
+                jmp     loc_134EC
+; ---------------------------------------------------------------------------
+
+loc_133F8:                              ; CODE XREF: enter+6A↑j
+                cmc
+                sbb     al, 1
+                cmc
+                jnz     short loc_13401
+                jmp     loc_13525
+; ---------------------------------------------------------------------------
+
+loc_13401:                              ; CODE XREF: enter+73↑j
+                nop
+                call    write_string
+; ---------------------------------------------------------------------------
+aWhat_6         db ' WHAT?',0
+; ---------------------------------------------------------------------------
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_1340F:                              ; CODE XREF: enter+48↑j
+                call    write_string
+; ---------------------------------------------------------------------------
+aVillage        db '-VILLAGE',0
+; ---------------------------------------------------------------------------
+                mov     al, _mapX
+                mov     player._mapX, al
+                mov     al, _mapY
+                mov     player._mapY, al
+                call    save_game
+                mov     al, 1Fh
+                mov     _mapX, al
+                mov     al, 3Eh ; '>'
+                mov     _mapY, al
+                mov     al, 1
+                mov     player._mapNum2, al
+                call    load_map
+                call    load_talk_file
+                mov     al, 4
+                mov     _outsideMapTile, al
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_13447:                              ; CODE XREF: enter+51↑j
+                call    write_string
+; ---------------------------------------------------------------------------
+aTown           db '-TOWN',0
+; ---------------------------------------------------------------------------
+                mov     al, _mapX
+                mov     player._mapX, al
+                mov     al, _mapY
+                mov     player._mapY, al
+                call    save_game
+                mov     al, 1Fh
+                mov     _mapX, al
+                mov     al, 3Eh ; '>'
+                mov     _mapY, al
+                mov     al, 2
+                mov     player._mapNum2, al
+                call    load_map
+                call    load_talk_file
+                mov     al, 4
+                mov     _outsideMapTile, al
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_1347C:                              ; CODE XREF: enter+5A↑j
+                call    write_string
+; ---------------------------------------------------------------------------
+aTower          db '-TOWER',0
+; ---------------------------------------------------------------------------
+                mov     al, _mapX
+                mov     player._mapX, al
+                mov     al, _mapY
+                mov     player._mapY, al
+                call    save_game
+                mov     al, 0
+                mov     byte_17435, al
+                mov     _mapTop, al
+                mov     al, 1
+                mov     _mapLeft, al
+                mov     al, 5
+                mov     _mapX, al
+                mov     _mapY, al
+                mov     al, 4
+                mov     player._mapNum2, al
+                call    load_map
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_134B5:                              ; CODE XREF: enter+63↑j
+                call    write_string
+; ---------------------------------------------------------------------------
+aCastle         db '-CASTLE',0
+; ---------------------------------------------------------------------------
+                mov     al, _mapX
+                mov     player._mapX, al
+                mov     al, _mapY
+                mov     player._mapY, al
+                call    save_game
+                mov     al, 1Fh
+                mov     _mapX, al
+                mov     al, 3Eh ; '>'
+                mov     _mapY, al
+                mov     al, 3
+                mov     player._mapNum2, al
+                call    load_map
+                call    load_talk_file
+                mov     al, 4
+                mov     _outsideMapTile, al
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_134EC:                              ; CODE XREF: enter+6C↑j
+                call    write_string
+; ---------------------------------------------------------------------------
+aDungeon        db '-DUNGEON',0
+; ---------------------------------------------------------------------------
+                mov     al, _mapX
+                mov     player._mapX, al
+                mov     al, _mapY
+                mov     player._mapY, al
+                call    save_game
+                mov     al, 0
+                mov     byte_17435, al
+                mov     _mapTop, al
+                mov     al, 1
+                mov     _mapLeft, al
+                mov     al, 5
+                mov     _mapX, al
+                mov     _mapY, al
+                mov     player._mapNum2, al
+                call    load_map
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_13525:                              ; CODE XREF: enter+75↑j
+                call    write_string
+; ---------------------------------------------------------------------------
+aTheSignReads   db '-THE SIGN READS:',0Dh,0
+; ---------------------------------------------------------------------------
+                mov     bh, 0
+                mov     bl, player._mapNum1
+                mov     di, bx
+                or      di, di
+                jz      short loc_13565
+                dec     di
+                jz      short loc_1357A
+                dec     di
+                jz      short loc_13595
+                dec     di
+                jz      short loc_135AB
+                call    write_string
+; ---------------------------------------------------------------------------
+aAnos2112AD     db 'ANOS: 2112 A.D.',0
+; ---------------------------------------------------------------------------
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_13565:                              ; CODE XREF: enter+1BB↑j
+                call    write_string
+; ---------------------------------------------------------------------------
+aAnosLegends    db 'ANOS: LEGENDS!',0
+; ---------------------------------------------------------------------------
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_1357A:                              ; CODE XREF: enter+1BE↑j
+                call    write_string
+; ---------------------------------------------------------------------------
+aAnos9000000BC  db 'ANOS: 9,000,000 B.C.',0
+; ---------------------------------------------------------------------------
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_13595:                              ; CODE XREF: enter+1C1↑j
+                call    write_string
+; ---------------------------------------------------------------------------
+aAnos1423BC     db 'ANOS: 1423 B.C.',0
+; ---------------------------------------------------------------------------
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_135AB:                              ; CODE XREF: enter+1C4↑j
+                call    write_string
+; ---------------------------------------------------------------------------
+aAnos1990AD     db 'ANOS: 1990 A.D.',0
+; ---------------------------------------------------------------------------
+                jmp     loc_10A33
+enter           endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: noreturn
+
+fire            proc near               ; DATA XREF: sg01a2:command_jump_table↑o
+                call    write_string
+; ---------------------------------------------------------------------------
+aFire           db 'FIRE',0
+; ---------------------------------------------------------------------------
+                mov     al, _playerTileId
+                cmp     al, 24h ; '$'
+                jz      short loc_135DD
+                call    write_string
+; ---------------------------------------------------------------------------
+aWhat_4         db ' WHAT?',0
+; ---------------------------------------------------------------------------
+                jmp     sub_10A30
+; ---------------------------------------------------------------------------
+
+loc_135DD:                              ; CODE XREF: fire+D↑j
+                nop
+                call    write_string
+; ---------------------------------------------------------------------------
+aDirect         db ' DIRECT-',0
+; ---------------------------------------------------------------------------
+                call    loc_12362
+                call    sub_15EAC
+                call    sub_123E6
+                mov     bx, di
+                mov     byte_17430, bl
+                mov     bx, di
+                cmp     bl, 0
+                jnz     short loc_13603
+                jmp     loc_12E09
+; ---------------------------------------------------------------------------
+
+loc_13603:                              ; CODE XREF: fire+3D↑j
+                call    sub_15217
+                or      al, 20h
+                mov     byte_1742F, al
+                call    xorDrawCircle
+                call    sub_15ED7
+                mov     bh, 0
+                mov     bl, byte_17430
+                mov     di, bx
+                jmp     loc_12C19
+fire            endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_1361C       proc near               ; CODE XREF: get+35↓p get+6B↓p
+                cmp     player._mapNum2, 4
+                jnb     short locret_1363A
+                mov     al, _mapX
+                mov     _playerX, al
+                mov     al, _mapY
+                mov     _playerY, al
+                call    get_player_tile
+                mov     al, 8
+                mov     bx, current_tile_ptr
+                mov     [bx+si], al
+
+locret_1363A:                           ; CODE XREF: sub_1361C+5↑j
+                retn
+sub_1361C       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: noreturn
+
+get             proc near               ; DATA XREF: sg01a2:command_jump_table↑o
+                call    write_string
+; ---------------------------------------------------------------------------
+aGet            db 'GET',0
+; ---------------------------------------------------------------------------
+                mov     al, player._mapNum2
+                cmp     al, 4
+                jb      short loc_1364C
+                jmp     short loc_136C3
+; ---------------------------------------------------------------------------
                 db  90h
-                db 0E8h
-                db  5Ch ; \
-                db    0
-                db  74h ; t
-                db  80h
-                db 0A0h
-                db  56h ; V
-                db    0
-                db    2
-                db 0C0h
-                db  14h
-                db  1Eh
-                db 0A2h
-                db  20h
-                db    0
-                db  8Ah
-                db  85h
-                db  77h ; w
-                db    1
-                db 0F5h
-                db  1Ah
-                db    6
-                db  20h
-                db    0
-                db 0F5h
-                db  88h
-                db  85h
-                db  77h ; w
-                db    1
-                db  72h ; r
-                db    3
-                db 0E9h
-                db    2
-                db 0FCh
-                db 0E9h
-                db  61h ; a
-                db 0D7h
-                db 0E8h
-                db  42h ; B
-                db  1Fh
-                db  24h ; $
-                db  0Fh
-                db  0Ch
-                db    1
-                db 0A2h
-                db  23h ; #
-                db    0
-                db 0E8h
-                db  38h ; 8
-                db  1Fh
-                db  24h ; $
-                db  0Fh
-                db  0Ch
-                db    1
-                db 0A2h
-                db  24h ; $
-                db    0
-                db 0A0h
-                db  25h ; %
-                db    0
-                db 0E8h
-                db  65h ; e
-                db 0E1h
-                db  74h ; t
-                db    3
-                db 0E9h
-                db  41h ; A
-                db 0FFh
+; ---------------------------------------------------------------------------
+
+loc_1364C:                              ; CODE XREF: get+C↑j
+                nop
+                mov     al, _tilePlayerCenter
+                cmp     al, 2Ah ; '*'
+                jz      short loc_1369B
+                cmp     al, 2Ch ; ','
+                jz      short loc_13665
+                call    write_string
+; ---------------------------------------------------------------------------
+aWhat_2         db ' WHAT?',0
+; ---------------------------------------------------------------------------
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_13665:                              ; CODE XREF: get+1B↑j
+                                        ; get+11C↓j
+                call    write_string
+; ---------------------------------------------------------------------------
+aWeapon_0       db ' WEAPON',0
+; ---------------------------------------------------------------------------
+                call    sub_1361C
+                call    sub_15217
+                and     al, 7
+                jz      short loc_1368D
+                mov     ah, 0
+                mov     di, ax
+                clc
+                mov     al, [di+76h]
+                adc     al, 1
+                daa
+                mov     [di+76h], al
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_1368D:                              ; CODE XREF: get+3D↑j get+73↓j
+                call    write_string
+; ---------------------------------------------------------------------------
+aEmpty          db ' EMPTY!',0
+; ---------------------------------------------------------------------------
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_1369B:                              ; CODE XREF: get+17↑j
+                                        ; get+113↓j
+                call    write_string
+; ---------------------------------------------------------------------------
+aArmour_1       db ' ARMOUR',0
+; ---------------------------------------------------------------------------
+                call    sub_1361C
+                call    sub_15217
+                and     al, 3
+                jz      short loc_1368D
+                mov     ah, 0
+                mov     di, ax
+                clc
+                mov     al, [di+96h]
+                adc     al, 1
+                daa
+                mov     [di+96h], al
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_136C3:                              ; CODE XREF: get+E↑j
+                nop
+                mov     al, _tilePlayerCenter
+                cmp     al, 40h ; '@'
+                jz      short loc_136D8
+                call    write_string
+; ---------------------------------------------------------------------------
+aWhat_3         db ' WHAT?',0
+; ---------------------------------------------------------------------------
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_136D8:                              ; CODE XREF: get+8E↑j
+                nop
+                call    write_string
+; ---------------------------------------------------------------------------
+aChest          db ' CHEST!'
+; ---------------------------------------------------------------------------
+                lea     cx, [bx+di+54h]
+                and     [bp+di+4Fh], al
+                dec     si
+                push    sp
+                inc     cx
+                dec     cx
+                dec     si
+                push    bx
+                and     [bx+si], al
+                mov     al, _mapX
+                mov     _playerX, al
+                mov     al, _mapY
+                mov     _playerY, al
+                mov     al, byte_17435
+                call    loc_11451
+                mov     al, 0
+                mov     bx, word_17418
+                mov     [bx+si], al
+                mov     al, byte_17435
+                cmp     al, 0Fh
+                jz      short loc_1375A
+                call    sub_15217
+                cmp     al, 40h ; '@'
+                jb      short loc_13746
+                call    write_string
+; ---------------------------------------------------------------------------
+aGold_0         db 'GOLD!',0
+; ---------------------------------------------------------------------------
+                call    sub_15217
+                and     al, 1Fh
+                adc     al, byte_17435
+                adc     al, byte_17435
+                and     al, 77h
+                clc
+                adc     al, player._gold+1
+                daa
+                mov     player._gold+1, al
+                mov     al, player._gold
+                adc     al, 0
+                daa
+                mov     player._gold, al
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_13746:                              ; CODE XREF: get+DC↑j
+                mov     al, byte_17435
+                clc
+                rcr     al, 1
+                jnb     short loc_13751
+                jmp     loc_1369B
+; ---------------------------------------------------------------------------
+
+loc_13751:                              ; CODE XREF: get+111↑j
+                call    write_string
+; ---------------------------------------------------------------------------
+aA              db 'A ',0
+; ---------------------------------------------------------------------------
+                jmp     loc_13665
+; ---------------------------------------------------------------------------
+
+loc_1375A:                              ; CODE XREF: get+D5↑j
+                call    write_string
+; ---------------------------------------------------------------------------
+aTriLithium     db 'TRI-LITHIUM!',0
+; ---------------------------------------------------------------------------
+                clc
+                mov     al, player.field_AF
+                adc     al, 1
+                daa
+                mov     player.field_AF, al
+                jmp     loc_10A33
+get             endp
+
+; ---------------------------------------------------------------------------
+                db 0Bh dup(0)
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: noreturn
+
+hyper           proc near               ; DATA XREF: sg01a2:command_jump_table↑o
+                call    write_string
+; ---------------------------------------------------------------------------
+aHyperWhat      db 'HYPER WHAT?',0
+; ---------------------------------------------------------------------------
+                jmp     loc_10A33
+hyper           endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: noreturn
+
+ignite_torch    proc near               ; DATA XREF: sg01a2:command_jump_table↑o
+                call    write_string
+; ---------------------------------------------------------------------------
+aIgniteTorch    db 'IGNITE TORCH',0
+; ---------------------------------------------------------------------------
+                mov     al, player._mapNum2
+                cmp     al, 4
+                jnb     short loc_137AE
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_137AE:                              ; CODE XREF: ignite_torch+15↑j
+                mov     al, player.field_2E
+                or      al, al
+                jnz     short loc_137C8
+                call    write_string
+; ---------------------------------------------------------------------------
+                db 8Dh,'NONE OWNED!',0
+; ---------------------------------------------------------------------------
+                jmp     sub_10A30
+; ---------------------------------------------------------------------------
+
+loc_137C8:                              ; CODE XREF: ignite_torch+1F↑j
+                stc
+                mov     al, player.field_2E
+                cmc
+                sbb     al, 1
+                das
+                cmc
+                mov     player.field_2E, al
+                mov     al, 150
+                mov     byte_17436, al
+                jmp     loc_10A33
+ignite_torch    endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: noreturn thunk
+
+jump            proc near               ; DATA XREF: sg01a2:command_jump_table↑o
+                call    write_string
+; ---------------------------------------------------------------------------
+aJumpWhee       db 'JUMP...WHEE...',0
+; ---------------------------------------------------------------------------
+                jmp     loc_10A33
+jump            endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: noreturn
+
+klimb           proc near               ; DATA XREF: sg01a2:command_jump_table↑o
+                call    write_string
+; ---------------------------------------------------------------------------
+aKlimb          db 'KLIMB',0
+; ---------------------------------------------------------------------------
+                mov     al, player._mapNum2
+                cmp     al, 5
+                jz      short loc_13812
+                cmp     al, 4
+                jz      short loc_13812
+
+loc_13805:                              ; CODE XREF: klimb+26↓j
+                call    write_string
+; ---------------------------------------------------------------------------
+aWhat_1         db '-WHAT?',0
+; ---------------------------------------------------------------------------
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_13812:                              ; CODE XREF: klimb+E↑j
+                                        ; klimb+12↑j
+                mov     al, _tilePlayerCenter
+                and     al, 10h
+                jz      short loc_13805
+                mov     al, player._mapNum2
+                cmp     al, 4
+                jnz     short loc_13823
+                jmp     loc_13381
+; ---------------------------------------------------------------------------
+
+loc_13823:                              ; CODE XREF: descend+31↑j
+                                        ; klimb+2D↑j
+                nop
+                dec     byte_17435
+                js      short loc_13844
+
+loc_1382A:                              ; CODE XREF: cast+145↑j
+                                        ; cast+164↑j ...
+                call    write_string
+; ---------------------------------------------------------------------------
+                db 8Dh,'TO LEVEL ',0
+; ---------------------------------------------------------------------------
+                mov     al, byte_17435
+                add     al, 0
+                daa
+                call    write_number
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_13844:                              ; CODE XREF: cast:loc_132A2↑j
+                                        ; klimb+37↑j
+                nop
+                mov     al, player._mapX
+                mov     _mapX, al
+                mov     al, player._mapY
+                mov     _mapY, al
+                mov     bx, 0FEh
+                mov     ax, 0FFFFh
+
+loc_13857:                              ; CODE XREF: klimb+71↓j
+                mov     [bx+272h], ax
+                mov     [bx+372h], ax
+                sub     bx, 2
+                jns     short loc_13857
+                mov     al, 0
+                mov     player._mapNum2, al
+                call    load_map
+                mov     al, player._mapX
+                mov     _mapX, al
+                mov     al, player._mapY
+                mov     _mapY, al
+                mov     al, player._disableSave
+                or      al, al
+                jz      short loc_13899
+                mov     al, player.field_34
+                mov     _playerX, al
+                mov     al, player.field_35
+                mov     _playerY, al
+                call    get_player_tile
+                mov     al, 50h ; 'P'
+                mov     bx, current_tile_ptr
+                mov     [bx+si], al
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_13899:                              ; CODE XREF: klimb+8C↑j
+                lea     dx, player
+                mov     ah, 28h ; '('
+                mov     cx, 100h
+                call    access_file
+; ---------------------------------------------------------------------------
+aPlayer_4       db 'PLAYER  '
+; ---------------------------------------------------------------------------
+                jmp     loc_10A33
+klimb           endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: noreturn
+
+launch          proc near               ; DATA XREF: sg01a2:command_jump_table↑o
+
+; FUNCTION CHUNK AT 0C62 SIZE 0000003A BYTES
+
+                mov     al, _playerTileId
+                cmp     al, 26h ; '&'
+                jnz     short loc_138BA
+                jmp     loc_139FA
+; ---------------------------------------------------------------------------
+
+loc_138BA:                              ; CODE XREF: launch+5↑j
+                nop
+                cmp     al, 28h ; '('
+                jz      short loc_138D2
+                call    write_string
+; ---------------------------------------------------------------------------
+aLaunchWhat     db 'LAUNCH WHAT?',0
+; ---------------------------------------------------------------------------
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_138D2:                              ; CODE XREF: launch+D↑j
+                call    write_string
+; ---------------------------------------------------------------------------
+aLaunchRocket   db 'LAUNCH--ROCKET',0
+; ---------------------------------------------------------------------------
+                mov     al, player.field_AF
+                or      al, al
+                jnz     short loc_13923
+                call    write_string
+; ---------------------------------------------------------------------------
+                db 8Dh,'A METALLIC VOICE SAYS:',8Dh,'SHIP INCAPABLE OF LAUNCH!',0
+; ---------------------------------------------------------------------------
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_13923:                              ; CODE XREF: launch+39↑j
+                call    write_string
+; ---------------------------------------------------------------------------
+                db 8Dh,'PREPARE FOR LAUNCH!',0
+; ---------------------------------------------------------------------------
+                mov     al, player._disableSave
+                or      al, al
+                jnz     short loc_1395D
+                mov     al, player._mapNum2
+                or      al, al
+                jnz     short loc_1395D
+                mov     al, _mapX
+                mov     player.field_34, al
+                mov     al, _mapY
+                mov     player.field_35, al
+                mov     al, 1
+                mov     player.field_33, al
+                call    save_game
+
+loc_1395D:                              ; CODE XREF: launch+90↑j
+                                        ; launch+97↑j
+                nop
+                call    sub_16999
+                call    load_map
+                mov     di, 0FFh
+                mov     al, 0FFh
+
+loc_13969:                              ; CODE XREF: launch+C2↓j
+                mov     [di+272h], al
+                mov     [di+372h], al
+                dec     di
+                jns     short loc_13969
+                mov     _mapX, 0
+                mov     _mapY, 0
+                mov     _outsideMapTile, al
+                call    write_string
+; ---------------------------------------------------------------------------
+aPressAnyKey    db '(PRESS ANY KEY)',0
+; ---------------------------------------------------------------------------
+
+loc_13994:                              ; CODE XREF: launch+10D↓j
+                mov     al, _mapY
+                clc
+                adc     al, 2
+                and     al, 3Fh
+                mov     _mapY, al
+                and     al, 7
+                jnz     short loc_139AE
+                mov     al, _mapX
+                clc
+                adc     al, 1
+                and     al, 3Fh
+                mov     _mapX, al
+
+loc_139AE:                              ; CODE XREF: launch+F1↑j
+                call    draw_map
+                mov     bx, 1Ch
+                call    delayFrames
+                call    keypress_check
+                cmp     ah, 0FFh
+                jnz     short loc_13994
+                mov     al, _mapX
+                mov     _playerX, al
+                mov     al, _mapY
+                mov     _playerY, al
+                call    get_player_tile
+                and     al, 7Fh
+                cmp     al, 8
+                jz      short loc_139D7
+                jmp     dead
+; ---------------------------------------------------------------------------
+
+loc_139D7:                              ; CODE XREF: launch+122↑j
+                mov     al, player._disableSave
+                or      al, al
+                jnz     short loc_139E6
+                mov     al, 0
+                mov     player.field_33, al
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_139E6:                              ; CODE XREF: launch+12C↑j
+                mov     al, _mapX
+                mov     player.field_34, al
+                mov     al, _mapY
+                mov     player.field_35, al
+                mov     al, 1
+                mov     player.field_33, al
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_139FA:                              ; CODE XREF: launch+7↑j
+                call    write_string
+; ---------------------------------------------------------------------------
+aLaunchPlane    db 'LAUNCH--PLANE',0
+; ---------------------------------------------------------------------------
+                mov     al, byte ptr player+0ABh
+                or      al, al
+                jnz     short loc_13A45
+                call    write_string
+; ---------------------------------------------------------------------------
+                db 8Dh,'FUNNY THIS PLANE IS',8Dh,'MISSING A BRASS BUTTON!',0
+; ---------------------------------------------------------------------------
+                jmp     sub_10A30
+; ---------------------------------------------------------------------------
+
+loc_13A45:                              ; CODE XREF: launch+160↑j
+                nop
+                mov     al, 0
+                mov     _commandWaitCtr, al
+                mov     al, 0FFh
+                mov     byte_17432, al
+                call    write_string
+; ---------------------------------------------------------------------------
+aCmd_2          db 0Dh,'CMD: ',0
+; ---------------------------------------------------------------------------
+                mov     map_freezeAnimation, 0FFh
+
+loc_13A5F:                              ; CODE XREF: launch+229↓j
+                call    sub_15EC7
+                mov     bx, 2
+                call    delayFrames
+                call    keypress_check
+                cmp     ah, 0FFh
+                jnz     short loc_13A9B
+                cmp     al, NORTH_KEYCODE
+                jnz     short loc_13A79
+                jmp     short loc_13ADB
+; ---------------------------------------------------------------------------
                 db  90h
-                db 0A0h
-                db  23h ; #
-                db    0
-                db 0A2h
-                db    0
-                db    0
-                db 0A0h
-                db  24h ; $
-                db    0
-                db 0A2h
-                db    1
-                db    0
-                db 0E9h
-                db  32h ; 2
-                db 0D7h
-                db 0E8h
-                db    8
-                db    0
-                db  75h ; u
-                db    3
-                db 0E9h
-                db  29h ; )
-                db 0FFh
-                db 0E9h
-                db 0C5h
-                db 0FBh
-                db 0B7h
-                db    0
-                db 0B3h
-                db  1Fh
-                db  8Bh
-                db 0FBh
-                db  8Ah
-                db  85h
-                db  97h
-                db    1
-                db  0Ah
-                db 0C0h
-                db  75h ; u
-                db    8
-                db  4Fh ; O
-                db  75h ; u
-                db 0F5h
-                db 0B0h
-                db    0
-                db  0Ah
-                db 0C0h
-                db 0C3h
-                db  8Ah
-                db  85h
-                db 0B7h
-                db    1
-                db  3Ah ; :
-                db    6
-                db  25h ; %
-                db    0
-                db  75h ; u
-                db 0EEh
-                db 0A0h
-                db    0
-                db    0
-                db 0F8h
-                db  12h
-                db    6
-                db    2
-                db    0
-                db  3Ah ; :
-                db  85h
-                db  37h ; 7
-                db    1
-                db  75h ; u
-                db 0E0h
-                db 0A0h
-                db    1
-                db    0
-                db 0F8h
-                db  12h
-                db    6
-                db    3
-                db    0
-                db  3Ah ; :
-                db  85h
-                db  57h ; W
-                db    1
-                db  75h ; u
-                db 0D2h
-                db  8Bh
-                db 0C7h
-                db  0Ah
-                db 0C0h
-                db 0C3h
-                db 0E8h
-                db  8Fh
-                db  1Ch
-                db  44h ; D
-                db  45h ; E
-                db  53h ; S
-                db  43h ; C
-                db  45h ; E
-                db  4Eh ; N
-                db  44h ; D
-                db    0
-                db 0A0h
-                db  4Ah ; J
-                db    0
-                db  3Ch ; <
-                db    5
-                db  74h ; t
-                db  11h
-                db  3Ch ; <
-                db    4
-                db  74h ; t
-                db  0Dh
-                db 0E8h
-                db  79h ; y
-                db  1Ch
-                db  2Dh ; -
-                db  57h ; W
-                db  48h ; H
-                db  41h ; A
-                db  54h ; T
-                db  3Fh ; ?
-                db    0
-                db 0E9h
-                db 0C0h
-                db 0D6h
-                db 0A0h
-                db  14h
-                db    0
-                db  24h ; $
-                db  20h
-                db  74h ; t
-                db 0ECh
-                db 0A0h
-                db  4Ah ; J
-                db    0
-                db  3Ch ; <
-                db    4
-                db  75h ; u
-                db    3
-                db 0E9h
-                db 0A2h
-                db    4
+; ---------------------------------------------------------------------------
+
+loc_13A79:                              ; CODE XREF: launch+1C4↑j
+                cmp     al, byte_1767F
+                jnz     short loc_13A82
+                jmp     short loc_13AF6
+; ---------------------------------------------------------------------------
                 db  90h
-                db 0FEh
-                db    6
-                db  25h ; %
-                db    0
-                db 0E9h
-                db 0A1h
-                db    4
-                db 0E8h
-                db  53h ; S
-                db  1Ch
-                db  45h ; E
-                db  4Eh ; N
-                db  54h ; T
-                db  45h ; E
-                db  52h ; R
-                db    0
-                db 0A0h
-                db  4Ah ; J
-                db    0
-                db  0Ah
-                db 0C0h
-                db  74h ; t
-                db  0Dh
-                db 0E8h
-                db  43h ; C
-                db  1Ch
-                db  20h
-                db  57h ; W
-                db  48h ; H
-                db  41h ; A
-                db  54h ; T
-                db  3Fh ; ?
-                db    0
-                db 0E9h
-                db  8Dh
-                db 0D6h
+; ---------------------------------------------------------------------------
+
+loc_13A82:                              ; CODE XREF: launch+1CD↑j
+                cmp     al, byte_17680
+                jnz     short loc_13A8B
+                jmp     loc_13B11
+; ---------------------------------------------------------------------------
+
+loc_13A8B:                              ; CODE XREF: launch+1D6↑j
+                cmp     al, byte_17681
+                jnz     short loc_13A94
+                jmp     loc_13B2C
+; ---------------------------------------------------------------------------
+
+loc_13A94:                              ; CODE XREF: launch+1DF↑j
+                cmp     al, 4Ch ; 'L'
+                jnz     short loc_13A9B
+                jmp     loc_13B47
+; ---------------------------------------------------------------------------
+
+loc_13A9B:                              ; CODE XREF: launch+1BE↑j
+                                        ; launch+1E6↑j ...
+                clc
+                mov     al, _mapX
+                adc     al, _commandWaitCtr
+                and     al, 3Fh
+                mov     _mapX, al
+                clc
+                mov     al, _mapY
+                adc     al, byte_17432
+                and     al, 3Fh
+                mov     _mapY, al
+                mov     al, player._mapNum2
+                or      al, al
+                jz      short loc_13AD5
+                mov     al, _mapX
+                or      al, al
+                jz      short loc_13ACD
+                mov     al, _mapY
+                or      al, al
+                jz      short loc_13ACD
+                jmp     short loc_13AD5
+; ---------------------------------------------------------------------------
                 db  90h
-                db 0A0h
-                db  13h
-                db    0
-                db  3Ch ; <
-                db  78h ; x
-                db  73h ; s
-                db  15h
-                db 0E8h
-                db  2Eh ; .
-                db  1Ch
-                db  2Dh ; -
-                db  4Fh ; O
-                db  4Eh ; N
-                db  4Ch ; L
-                db  59h ; Y
-                db  20h
-                db  4Fh ; O
-                db  4Eh ; N
-                db  20h
-                db  46h ; F
-                db  4Fh ; O
-                db  4Fh ; O
-                db  54h ; T
-                db  21h ; !
-                db    0
-                db 0E9h
-                db  6Dh ; m
-                db 0D6h
+; ---------------------------------------------------------------------------
+
+loc_13ACD:                              ; CODE XREF: launch+211↑j
+                                        ; launch+218↑j
+                mov     map_freezeAnimation, 0
+                jmp     loc_1243E
+; ---------------------------------------------------------------------------
+
+loc_13AD5:                              ; CODE XREF: launch+20A↑j
+                                        ; launch+21A↑j
+                nop
+                call    draw_map
+                jmp     short loc_13A5F
+; ---------------------------------------------------------------------------
+
+loc_13ADB:                              ; CODE XREF: launch+1C6↑j
+                mov     al, 0
+                mov     _commandWaitCtr, al
+                mov     al, 0FFh
+                mov     byte_17432, al
+                call    write_string
+; ---------------------------------------------------------------------------
+aNorthCmd       db 'NORTH',0Dh,'CMD: ',0
+; ---------------------------------------------------------------------------
+                jmp     short loc_13A9B
+; ---------------------------------------------------------------------------
+
+loc_13AF6:                              ; CODE XREF: launch+1CF↑j
+                mov     al, 0
+                mov     _commandWaitCtr, al
+                mov     al, 1
+                mov     byte_17432, al
+                call    write_string
+; ---------------------------------------------------------------------------
+aSouthCmd       db 'SOUTH',0Dh,'CMD: ',0
+; ---------------------------------------------------------------------------
+                jmp     short loc_13A9B
+; ---------------------------------------------------------------------------
+
+loc_13B11:                              ; CODE XREF: launch+1D8↑j
+                mov     al, 1
+                mov     _commandWaitCtr, al
+                mov     al, 0
+                mov     byte_17432, al
+                call    write_string
+; ---------------------------------------------------------------------------
+aEastCmd        db 'EAST',0Dh,'CMD: ',0
+; ---------------------------------------------------------------------------
+                jmp     loc_13A9B
+; ---------------------------------------------------------------------------
+
+loc_13B2C:                              ; CODE XREF: launch+1E1↑j
+                mov     al, 0FFh
+                mov     _commandWaitCtr, al
+                mov     al, 0
+                mov     byte_17432, al
+                call    write_string
+; ---------------------------------------------------------------------------
+aWestCmd        db 'WEST',0Dh,'CMD: ',0
+; ---------------------------------------------------------------------------
+                jmp     loc_13A9B
+; ---------------------------------------------------------------------------
+
+loc_13B47:                              ; CODE XREF: launch+1E8↑j
+                mov     al, _mapX
+                mov     _playerX, al
+                mov     al, _mapY
+                mov     _playerY, al
+                call    get_player_tile
+                cmp     al, 8
+                jnz     short loc_13B71
+                call    write_string
+; ---------------------------------------------------------------------------
+aLandPlane      db 'LAND PLANE.',0
+; ---------------------------------------------------------------------------
+                mov     map_freezeAnimation, 0
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_13B71:                              ; CODE XREF: launch+2A8↑j
+                nop
+                call    write_string
+; ---------------------------------------------------------------------------
+aLandNotHereCmd db 'LAND--NOT HERE!!!!!',0Dh,'CMD: ',0
+; ---------------------------------------------------------------------------
+                jmp     loc_13A9B
+launch          endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: noreturn
+
+magic           proc near               ; DATA XREF: sg01a2:command_jump_table↑o
+                call    write_string
+; ---------------------------------------------------------------------------
+aMagicSpellRead db 'MAGIC SPELL READY #',0
+; ---------------------------------------------------------------------------
+                call    sub_12028
+                mov     player.field_2D, al
+                call    write_string
+; ---------------------------------------------------------------------------
+aSpellReady     db 'SPELL READY => ',0
+; ---------------------------------------------------------------------------
+                mov     al, player.field_2D
+                clc
+                adc     al, 24h ; '$'
+                call    sub_1508C
+                jmp     loc_10A33
+magic           endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: noreturn
+
+negate_time     proc near               ; DATA XREF: sg01a2:command_jump_table↑o
+                call    write_string
+; ---------------------------------------------------------------------------
+aNegateTime     db 'NEGATE TIME',0
+; ---------------------------------------------------------------------------
+                mov     al, player.field_AD
+                or      al, al
+                jnz     short loc_13C04
+                call    write_string
+; ---------------------------------------------------------------------------
+aHow            db ' HOW?',8Dh,'YOU',27h,'RE NOT EINSTEIN',0
+; ---------------------------------------------------------------------------
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_13C04:                              ; CODE XREF: negate_time+14↑j
+                stc
+                mov     al, player.field_AD
+                cmc
+                sbb     al, 1
+                das
+                cmc
+                mov     player.field_AD, al
+                call    write_string
+; ---------------------------------------------------------------------------
+                db 8Dh,'YOU RUB A COIN...',0
+; ---------------------------------------------------------------------------
+                mov     al, 14h
+                mov     _flag1, al
+                jmp     loc_10A33
+negate_time     endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: noreturn
+
+offer           proc near               ; DATA XREF: sg01a2:command_jump_table↑o
+                call    write_string
+; ---------------------------------------------------------------------------
+aOfferGoldDirec db 'OFFER GOLD DIRECT-',0
+; ---------------------------------------------------------------------------
+                call    loc_12362
+                call    sub_123E6
+                mov     bx, di
+                mov     byte_1742F, bl
+                mov     al, 8Dh
+                call    print_char
+                mov     bx, di
+                cmp     bl, 0
+                jnz     short loc_13C71
+                call    write_string
+; ---------------------------------------------------------------------------
+aOfferToWhom    db 'OFFER TO WHOM?',0
+; ---------------------------------------------------------------------------
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_13C71:                              ; CODE XREF: offer+2C↑j
+                call    write_string
+; ---------------------------------------------------------------------------
+aHowMuch100     db 'HOW MUCH (*100) ? ',0
+; ---------------------------------------------------------------------------
+                call    sub_12028
+                mov     _sleepFlag2?, al
+                mov     al, 0
+                mov     byte_17438, al
+                call    sub_12052
+                mov     bh, 0
+                mov     bl, byte_1742F
+                mov     di, bx
+                mov     al, (_mapMonsters+0A0h)[di]
+                or      al, al
+                jns     short loc_13CB6
+                mov     al, player._mapNum2
+                cmp     al, 2
+                jnz     short loc_13CB6
+                mov     al, player._mapNum1
+                cmp     al, 3
+                jnz     short loc_13CB6
+                jmp     short loc_13CD2
+; ---------------------------------------------------------------------------
                 db  90h
-                db 0A0h
-                db  14h
-                db    0
-                db 0F8h
-                db 0D0h
-                db 0D8h
-                db 0F9h
-                db 0F5h
-                db  1Ch
-                db    5
-                db 0F5h
-                db  75h ; u
-                db    3
-                db 0EBh
-                db  3Ch ; <
-                db  90h
-                db 0F5h
-                db  1Ch
-                db    1
-                db 0F5h
-                db  75h ; u
-                db    3
-                db 0EBh
-                db  6Bh ; k
-                db  90h
-                db 0F5h
-                db  1Ch
-                db    1
-                db 0F5h
-                db  75h ; u
-                db    3
-                db 0E9h
-                db  96h
-                db    0
-                db 0F5h
-                db  1Ch
-                db    1
-                db 0F5h
-                db  75h ; u
-                db    3
-                db 0E9h
-                db 0C6h
-                db    0
-                db 0F5h
-                db  1Ch
-                db    1
-                db 0F5h
-                db  75h ; u
-                db    3
-                db 0E9h
-                db 0F4h
-                db    0
-                db 0F5h
-                db  1Ch
-                db    1
-                db 0F5h
-                db  75h ; u
-                db    3
-                db 0E9h
-                db  24h ; $
-                db    1
-                db  90h
-                db 0E8h
-                db 0DAh
-                db  1Bh
-                db  20h
-                db  57h ; W
-                db  48h ; H
-                db  41h ; A
-                db  54h ; T
-                db  3Fh ; ?
-                db    0
-                db 0E9h
-                db  24h ; $
-                db 0D6h
-                db 0E8h
-                db 0CDh
-                db  1Bh
-                db  2Dh ; -
-                db  56h ; V
-                db  49h ; I
-                db  4Ch ; L
-                db  4Ch ; L
-                db  41h ; A
-                db  47h ; G
-                db  45h ; E
-                db    0
-                db 0A0h
-                db    0
-                db    0
-                db 0A2h
-                db  5Ah ; Z
-                db    0
-                db 0A0h
-                db    1
-                db    0
-                db 0A2h
-                db  5Bh ; [
-                db    0
-                db 0E8h
-                db 0D3h
-                db 0EEh
-                db 0B0h
-                db  1Fh
-                db 0A2h
-                db    0
-                db    0
-                db 0B0h
-                db  3Eh ; >
-                db 0A2h
-                db    1
-                db    0
-                db 0B0h
-                db    1
-                db 0A2h
-                db  4Ah ; J
-                db    0
-                db 0E8h
-                db  54h ; T
-                db 0EEh
-                db 0E8h
-                db  96h
-                db 0EEh
-                db 0B0h
-                db    4
-                db 0A2h
-                db  12h
-                db    0
-                db 0E9h
-                db 0ECh
-                db 0D5h
-                db 0E8h
-                db  95h
-                db  1Bh
-                db  2Dh ; -
-                db  54h ; T
-                db  4Fh ; O
-                db  57h ; W
-                db  4Eh ; N
-                db    0
-                db 0A0h
-                db    0
-                db    0
-                db 0A2h
-                db  5Ah ; Z
-                db    0
-                db 0A0h
-                db    1
-                db    0
-                db 0A2h
-                db  5Bh ; [
-                db    0
-                db 0E8h
-                db  9Eh
-                db 0EEh
-                db 0B0h
-                db  1Fh
-                db 0A2h
-                db    0
-                db    0
-                db 0B0h
-                db  3Eh ; >
-                db 0A2h
-                db    1
-                db    0
-                db 0B0h
-                db    2
-                db 0A2h
-                db  4Ah ; J
-                db    0
-                db 0E8h
-                db  1Fh
-                db 0EEh
-                db 0E8h
-                db  61h ; a
-                db 0EEh
-                db 0B0h
-                db    4
-                db 0A2h
-                db  12h
-                db    0
-                db 0E9h
-                db 0B7h
-                db 0D5h
-                db 0E8h
-                db  60h ; `
-                db  1Bh
-                db  2Dh ; -
-                db  54h ; T
-                db  4Fh ; O
-                db  57h ; W
-                db  45h ; E
-                db  52h ; R
-                db    0
-                db 0A0h
-                db    0
-                db    0
-                db 0A2h
-                db  5Ah ; Z
-                db    0
-                db 0A0h
-                db    1
-                db    0
-                db 0A2h
-                db  5Bh ; [
-                db    0
-                db 0E8h
-                db  68h ; h
-                db 0EEh
-                db 0B0h
-                db    0
-                db 0A2h
-                db  25h ; %
-                db    0
-                db 0A2h
-                db    3
-                db    0
-                db 0B0h
-                db    1
-                db 0A2h
-                db    2
-                db    0
-                db 0B0h
-                db    5
-                db 0A2h
-                db    0
-                db    0
-                db 0A2h
-                db    1
-                db    0
-                db 0B0h
-                db    4
-                db 0A2h
-                db  4Ah ; J
-                db    0
-                db 0E8h
-                db 0DEh
-                db 0EDh
-                db 0E9h
-                db  7Eh ; ~
-                db 0D5h
-                db 0E8h
-                db  27h ; '
-                db  1Bh
-                db  2Dh ; -
-                db  43h ; C
-                db  41h ; A
-                db  53h ; S
-                db  54h ; T
-                db  4Ch ; L
-                db  45h ; E
-                db    0
-                db 0A0h
-                db    0
-                db    0
-                db 0A2h
-                db  5Ah ; Z
-                db    0
-                db 0A0h
-                db    1
-                db    0
-                db 0A2h
-                db  5Bh ; [
-                db    0
-                db 0E8h
-                db  2Eh ; .
-                db 0EEh
-                db 0B0h
-                db  1Fh
-                db 0A2h
-                db    0
-                db    0
-                db 0B0h
-                db  3Eh ; >
-                db 0A2h
-                db    1
-                db    0
-                db 0B0h
-                db    3
-                db 0A2h
-                db  4Ah ; J
-                db    0
-                db 0E8h
-                db 0AFh
-                db 0EDh
-                db 0E8h
-                db 0F1h
-                db 0EDh
-                db 0B0h
-                db    4
-                db 0A2h
-                db  12h
-                db    0
-                db 0E9h
-                db  47h ; G
-                db 0D5h
-                db 0E8h
-                db 0F0h
-                db  1Ah
-                db  2Dh ; -
-                db  44h ; D
-                db  55h ; U
-                db  4Eh ; N
-                db  47h ; G
-                db  45h ; E
-                db  4Fh ; O
-                db  4Eh ; N
-                db    0
-                db 0A0h
-                db    0
-                db    0
-                db 0A2h
-                db  5Ah ; Z
-                db    0
-                db 0A0h
-                db    1
-                db    0
-                db 0A2h
-                db  5Bh ; [
-                db    0
-                db 0E8h
-                db 0F6h
-                db 0EDh
-                db 0B0h
-                db    0
-                db 0A2h
-                db  25h ; %
-                db    0
-                db 0A2h
-                db    3
-                db    0
-                db 0B0h
-                db    1
-                db 0A2h
-                db    2
-                db    0
-                db 0B0h
-                db    5
-                db 0A2h
-                db    0
-                db    0
-                db 0A2h
-                db    1
-                db    0
-                db 0A2h
-                db  4Ah ; J
-                db    0
-                db 0E8h
-                db  6Eh ; n
-                db 0EDh
-                db 0E9h
-                db  0Eh
-                db 0D5h
-                db 0E8h
-                db 0B7h
-                db  1Ah
-                db  2Dh ; -
-                db  54h ; T
-                db  48h ; H
-                db  45h ; E
-                db  20h
-                db  53h ; S
-                db  49h ; I
-                db  47h ; G
-                db  4Eh ; N
-                db  20h
-                db  52h ; R
-                db  45h ; E
-                db  41h ; A
-                db  44h ; D
-                db  53h ; S
-                db  3Ah ; :
-                db  0Dh
-                db    0
-                db 0B7h
-                db    0
-                db  8Ah
-                db  1Eh
-                db  49h ; I
-                db    0
-                db  8Bh
-                db 0FBh
-                db  0Bh
-                db 0FFh
-                db  74h ; t
-                db  1Fh
-                db  4Fh ; O
-                db  74h ; t
-                db  31h ; 1
-                db  4Fh ; O
-                db  74h ; t
-                db  49h ; I
-                db  4Fh ; O
-                db  74h ; t
-                db  5Ch ; \
-                db 0E8h
-                db  8Dh
-                db  1Ah
-                db  41h ; A
-                db  4Eh ; N
-                db  4Fh ; O
-                db  53h ; S
-                db  3Ah ; :
-                db  20h
-                db  32h ; 2
-                db  31h ; 1
-                db  31h ; 1
-                db  32h ; 2
-                db  20h
-                db  41h ; A
-                db  2Eh ; .
-                db  44h ; D
-                db  2Eh ; .
-                db    0
-                db 0E9h
-                db 0CEh
-                db 0D4h
-                db 0E8h
-                db  77h ; w
-                db  1Ah
-                db  41h ; A
-                db  4Eh ; N
-                db  4Fh ; O
-                db  53h ; S
-                db  3Ah ; :
-                db  20h
-                db  4Ch ; L
-                db  45h ; E
-                db  47h ; G
-                db  45h ; E
-                db  4Eh ; N
-                db  44h ; D
-                db  53h ; S
-                db  21h ; !
-                db    0
-                db 0E9h
-                db 0B9h
-                db 0D4h
-                db 0E8h
-                db  62h ; b
-                db  1Ah
-                db  41h ; A
-                db  4Eh ; N
-                db  4Fh ; O
-                db  53h ; S
-                db  3Ah ; :
-                db  20h
-                db  39h ; 9
-                db  2Ch ; ,
-                db  30h ; 0
-                db  30h ; 0
-                db  30h ; 0
-                db  2Ch ; ,
-                db  30h ; 0
-                db  30h ; 0
-                db  30h ; 0
-                db  20h
-                db  42h ; B
-                db  2Eh ; .
-                db  43h ; C
-                db  2Eh ; .
-                db    0
-                db 0E9h
-                db  9Eh
-                db 0D4h
-                db 0E8h
-                db  47h ; G
-                db  1Ah
-                db  41h ; A
-                db  4Eh ; N
-                db  4Fh ; O
-                db  53h ; S
-                db  3Ah ; :
-                db  20h
-                db  31h ; 1
-                db  34h ; 4
-                db  32h ; 2
-                db  33h ; 3
-                db  20h
-                db  42h ; B
-                db  2Eh ; .
-                db  43h ; C
-                db  2Eh ; .
-                db    0
-                db 0E9h
-                db  88h
-                db 0D4h
-                db 0E8h
-                db  31h ; 1
-                db  1Ah
-                db  41h ; A
-                db  4Eh ; N
-                db  4Fh ; O
-                db  53h ; S
-                db  3Ah ; :
-                db  20h
-                db  31h ; 1
-                db  39h ; 9
-                db  39h ; 9
-                db  30h ; 0
-                db  20h
-                db  41h ; A
-                db  2Eh ; .
-                db  44h ; D
-                db  2Eh ; .
-                db    0
-                db 0E9h
-                db  72h ; r
-                db 0D4h
-                db 0E8h
-                db  1Bh
-                db  1Ah
-                db  46h ; F
-                db  49h ; I
-                db  52h ; R
-                db  45h ; E
-                db    0
-                db 0A0h
-                db  13h
-                db    0
-                db  3Ch ; <
-                db  24h ; $
-                db  74h ; t
-                db  0Dh
-                db 0E8h
-                db  0Ch
-                db  1Ah
-                db  20h
-                db  57h ; W
-                db  48h ; H
-                db  41h ; A
-                db  54h ; T
-                db  3Fh ; ?
-                db    0
-                db 0E9h
-                db  53h ; S
-                db 0D4h
-                db  90h
-                db 0E8h
-                db 0FEh
-                db  19h
-                db  20h
-                db  44h ; D
-                db  49h ; I
-                db  52h ; R
-                db  45h ; E
-                db  43h ; C
-                db  54h ; T
-                db  2Dh ; -
-                db    0
-                db 0E8h
-                db  75h ; u
-                db 0EDh
-                db 0E8h
-                db 0BCh
-                db  28h ; (
-                db 0E8h
-                db 0F3h
-                db 0EDh
-                db  8Bh
-                db 0DFh
-                db  88h
-                db  1Eh
-                db  20h
-                db    0
-                db  8Bh
-                db 0DFh
-                db  80h
-                db 0FBh
-                db    0
-                db  75h ; u
-                db    3
-                db 0E9h
-                db    6
-                db 0F8h
-                db 0E8h
-                db  11h
-                db  1Ch
-                db  0Ch
-                db  20h
-                db 0A2h
-                db  1Fh
-                db    0
-                db 0E8h
-                db  30h ; 0
-                db  1Ch
-                db 0E8h
-                db 0C6h
-                db  28h ; (
-                db 0B7h
-                db    0
-                db  8Ah
-                db  1Eh
-                db  20h
-                db    0
-                db  8Bh
-                db 0FBh
-                db 0E9h
-                db 0FDh
-                db 0F5h
-                db  80h
-                db  3Eh ; >
-                db  4Ah ; J
-                db    0
-                db    4
-                db  73h ; s
-                db  17h
-                db 0A0h
-                db    0
-                db    0
-                db 0A2h
-                db  23h ; #
-                db    0
-                db 0A0h
-                db    1
-                db    0
-                db 0A2h
-                db  24h ; $
-                db    0
-                db 0E8h
-                db  81h
-                db  1Ah
-                db 0B0h
-                db    8
-                db  8Bh
-                db  1Eh
-                db    6
-                db    0
-                db  88h
-                db    0
-                db 0C3h
-                db 0E8h
-                db 0A1h
-                db  19h
-                db  47h ; G
-                db  45h ; E
-                db  54h ; T
-                db    0
-                db 0A0h
-                db  4Ah ; J
-                db    0
-                db  3Ch ; <
-                db    4
-                db  72h ; r
-                db    3
-                db 0EBh
-                db  78h ; x
-                db  90h
-                db  90h
-                db 0A0h
-                db  14h
-                db    0
-                db  3Ch ; <
-                db  2Ah ; *
-                db  74h ; t
-                db  47h ; G
-                db  3Ch ; <
-                db  2Ch ; ,
-                db  74h ; t
-                db  0Dh
-                db 0E8h
-                db  84h
-                db  19h
-                db  20h
-                db  57h ; W
-                db  48h ; H
-                db  41h ; A
-                db  54h ; T
-                db  3Fh ; ?
-                db    0
-                db 0E9h
-                db 0CEh
-                db 0D3h
-                db 0E8h
-                db  77h ; w
-                db  19h
-                db  20h
-                db  57h ; W
-                db  45h ; E
-                db  41h ; A
-                db  50h ; P
-                db  4Fh ; O
-                db  4Eh ; N
-                db    0
-                db 0E8h
-                db 0A9h
-                db 0FFh
-                db 0E8h
-                db 0A1h
-                db  1Bh
-                db  24h ; $
-                db    7
-                db  74h ; t
-                db  13h
-                db 0B4h
-                db    0
-                db  8Bh
-                db 0F8h
-                db 0F8h
-                db  8Ah
-                db  85h
-                db  76h ; v
-                db    0
-                db  14h
-                db    1
-                db  27h ; '
-                db  88h
-                db  85h
-                db  76h ; v
-                db    0
-                db 0E9h
-                db 0A6h
-                db 0D3h
-                db 0E8h
-                db  4Fh ; O
-                db  19h
-                db  20h
-                db  45h ; E
-                db  4Dh ; M
-                db  50h ; P
-                db  54h ; T
-                db  59h ; Y
-                db  21h ; !
-                db    0
-                db 0E9h
-                db  98h
-                db 0D3h
-                db 0E8h
-                db  41h ; A
-                db  19h
-                db  20h
-                db  41h ; A
-                db  52h ; R
-                db  4Dh ; M
-                db  4Fh ; O
-                db  55h ; U
-                db  52h ; R
-                db    0
-                db 0E8h
-                db  73h ; s
-                db 0FFh
-                db 0E8h
-                db  6Bh ; k
-                db  1Bh
-                db  24h ; $
-                db    3
-                db  74h ; t
-                db 0DDh
-                db 0B4h
-                db    0
-                db  8Bh
-                db 0F8h
-                db 0F8h
-                db  8Ah
-                db  85h
-                db  96h
-                db    0
-                db  14h
-                db    1
-                db  27h ; '
-                db  88h
-                db  85h
-                db  96h
-                db    0
-                db 0E9h
-                db  70h ; p
-                db 0D3h
-                db  90h
-                db 0A0h
-                db  14h
-                db    0
-                db  3Ch ; <
-                db  40h ; @
-                db  74h ; t
-                db  0Dh
-                db 0E8h
-                db  11h
-                db  19h
-                db  20h
-                db  57h ; W
-                db  48h ; H
-                db  41h ; A
-                db  54h ; T
-                db  3Fh ; ?
-                db    0
-                db 0E9h
-                db  5Bh ; [
-                db 0D3h
-                db  90h
-                db 0E8h
-                db    3
-                db  19h
-                db  20h
-                db  43h ; C
-                db  48h ; H
-                db  45h ; E
-                db  53h ; S
-                db  54h ; T
-                db  21h ; !
-                db  8Dh
-                db  49h ; I
-                db  54h ; T
-                db  20h
-                db  43h ; C
-                db  4Fh ; O
-                db  4Eh ; N
-                db  54h ; T
-                db  41h ; A
-                db  49h ; I
-                db  4Eh ; N
-                db  53h ; S
-                db  20h
-                db    0
-                db 0A0h
-                db    0
-                db    0
-                db 0A2h
-                db  23h ; #
-                db    0
-                db 0A0h
-                db    1
-                db    0
-                db 0A2h
-                db  24h ; $
-                db    0
-                db 0A0h
-                db  25h ; %
-                db    0
-                db 0E8h
-                db  4Eh ; N
-                db 0DDh
-                db 0B0h
-                db    0
-                db  8Bh
-                db  1Eh
-                db    8
-                db    0
-                db  88h
-                db    0
-                db 0A0h
-                db  25h ; %
-                db    0
-                db  3Ch ; <
-                db  0Fh
-                db  74h ; t
-                db  48h ; H
-                db 0E8h
-                db    2
-                db  1Bh
-                db  3Ch ; <
-                db  40h ; @
-                db  72h ; r
-                db  2Dh ; -
-                db 0E8h
-                db 0C3h
-                db  18h
-                db  47h ; G
-                db  4Fh ; O
-                db  4Ch ; L
-                db  44h ; D
-                db  21h ; !
-                db    0
-                db 0E8h
-                db 0F2h
-                db  1Ah
-                db  24h ; $
-                db  1Fh
-                db  12h
-                db    6
-                db  25h ; %
-                db    0
-                db  12h
-                db    6
-                db  25h ; %
-                db    0
-                db  24h ; $
-                db  77h ; w
-                db 0F8h
-                db  12h
-                db    6
-                db  59h ; Y
-                db    0
-                db  27h ; '
-                db 0A2h
-                db  59h ; Y
-                db    0
-                db 0A0h
-                db  58h ; X
-                db    0
-                db  14h
-                db    0
-                db  27h ; '
-                db 0A2h
-                db  58h ; X
-                db    0
-                db 0E9h
-                db 0EDh
-                db 0D2h
-                db 0A0h
-                db  25h ; %
-                db    0
-                db 0F8h
-                db 0D0h
-                db 0D8h
-                db  73h ; s
-                db    3
-                db 0E9h
-                db  4Ah ; J
-                db 0FFh
-                db 0E8h
-                db  8Bh
-                db  18h
-                db  41h ; A
-                db  20h
-                db    0
-                db 0E9h
-                db  0Bh
-                db 0FFh
-                db 0E8h
-                db  82h
-                db  18h
-                db  54h ; T
-                db  52h ; R
-                db  49h ; I
-                db  2Dh ; -
-                db  4Ch ; L
-                db  49h ; I
-                db  54h ; T
-                db  48h ; H
-                db  49h ; I
-                db  55h ; U
-                db  4Dh ; M
-                db  21h ; !
-                db    0
-                db 0F8h
-                db 0A0h
-                db 0E5h
-                db    0
-                db  14h
-                db    1
-                db  27h ; '
-                db 0A2h
-                db 0E5h
-                db    0
-                db 0E9h
-                db 0BCh
-                db 0D2h
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db 0E8h
-                db  5Ah ; Z
-                db  18h
-                db  48h ; H
-                db  59h ; Y
-                db  50h ; P
-                db  45h ; E
-                db  52h ; R
-                db  20h
-                db  57h ; W
-                db  48h ; H
-                db  41h ; A
-                db  54h ; T
-                db  3Fh ; ?
-                db    0
-                db 0E9h
-                db  9Fh
-                db 0D2h
-                db 0E8h
-                db  48h ; H
-                db  18h
-                db  49h ; I
-                db  47h ; G
-                db  4Eh ; N
-                db  49h ; I
-                db  54h ; T
-                db  45h ; E
-                db  20h
-                db  54h ; T
-                db  4Fh ; O
-                db  52h ; R
-                db  43h ; C
-                db  48h ; H
-                db    0
-                db 0A0h
-                db  4Ah ; J
-                db    0
-                db  3Ch ; <
-                db    4
-                db  73h ; s
-                db    3
-                db 0E9h
-                db  85h
-                db 0D2h
-                db 0A0h
-                db  64h ; d
-                db    0
-                db  0Ah
-                db 0C0h
-                db  75h ; u
-                db  13h
-                db 0E8h
-                db  27h ; '
-                db  18h
-                db  8Dh
-                db  4Eh ; N
-                db  4Fh ; O
-                db  4Eh ; N
-                db  45h ; E
-                db  20h
-                db  4Fh ; O
-                db  57h ; W
-                db  4Eh ; N
-                db  45h ; E
-                db  44h ; D
-                db  21h ; !
-                db    0
-                db 0E9h
-                db  68h ; h
-                db 0D2h
-                db 0F9h
-                db 0A0h
-                db  64h ; d
-                db    0
-                db 0F5h
-                db  1Ch
-                db    1
-                db  2Fh ; /
-                db 0F5h
-                db 0A2h
-                db  64h ; d
-                db    0
-                db 0B0h
-                db  96h
-                db 0A2h
-                db  26h ; &
-                db    0
-                db 0E9h
-                db  57h ; W
-                db 0D2h
-                db 0E8h
-                db    0
-                db  18h
-                db  4Ah ; J
-                db  55h ; U
-                db  4Dh ; M
-                db  50h ; P
-                db  2Eh ; .
-                db  2Eh ; .
-                db  2Eh ; .
-                db  57h ; W
-                db  48h ; H
-                db  45h ; E
-                db  45h ; E
-                db  2Eh ; .
-                db  2Eh ; .
-                db  2Eh ; .
-                db    0
-                db 0E9h
-                db  42h ; B
-                db 0D2h
-                db 0E8h
-                db 0EBh
-                db  17h
-                db  4Bh ; K
-                db  4Ch ; L
-                db  49h ; I
-                db  4Dh ; M
-                db  42h ; B
-                db    0
-                db 0A0h
-                db  4Ah ; J
-                db    0
-                db  3Ch ; <
-                db    5
-                db  74h ; t
-                db  11h
-                db  3Ch ; <
-                db    4
-                db  74h ; t
-                db  0Dh
-                db 0E8h
-                db 0D7h
-                db  17h
-                db  2Dh ; -
-                db  57h ; W
-                db  48h ; H
-                db  41h ; A
-                db  54h ; T
-                db  3Fh ; ?
-                db    0
-                db 0E9h
-                db  21h ; !
-                db 0D2h
-                db 0A0h
-                db  14h
-                db    0
-                db  24h ; $
-                db  10h
-                db  74h ; t
-                db 0ECh
-                db 0A0h
-                db  4Ah ; J
-                db    0
-                db  3Ch ; <
-                db    4
-                db  75h ; u
-                db    3
-                db 0E9h
-                db  5Eh ; ^
-                db 0FBh
-                db  90h
-                db 0FEh
-                db  0Eh
-                db  25h ; %
-                db    0
-                db  78h ; x
-                db  1Ah
-                db 0E8h
-                db 0B2h
-                db  17h
-                db  8Dh
-                db  54h ; T
-                db  4Fh ; O
-                db  20h
-                db  4Ch ; L
-                db  45h ; E
-                db  56h ; V
-                db  45h ; E
-                db  4Ch ; L
-                db  20h
-                db    0
-                db 0A0h
-                db  25h ; %
-                db    0
-                db    4
-                db    0
-                db  27h ; '
-                db 0E8h
-                db  74h ; t
-                db  1Bh
-                db 0E9h
-                db 0EFh
-                db 0D1h
-                db  90h
-                db 0A0h
-                db  5Ah ; Z
-                db    0
-                db 0A2h
-                db    0
-                db    0
-                db 0A0h
-                db  5Bh ; [
-                db    0
-                db 0A2h
-                db    1
-                db    0
-                db 0BBh
-                db 0FEh
-                db    0
-                db 0B8h
-                db 0FFh
-                db 0FFh
-                db  89h
-                db  87h
-                db  72h ; r
-                db    2
-                db  89h
-                db  87h
-                db  72h ; r
-                db    3
-                db  83h
-                db 0EBh
-                db    2
-                db  79h ; y
-                db 0F3h
-                db 0B0h
-                db    0
-                db 0A2h
-                db  4Ah ; J
-                db    0
-                db 0E8h
-                db  24h ; $
-                db 0EAh
-                db 0A0h
-                db  5Ah ; Z
-                db    0
-                db 0A2h
-                db    0
-                db    0
-                db 0A0h
-                db  5Bh ; [
-                db    0
-                db 0A2h
-                db    1
-                db    0
-                db 0A0h
-                db  6Dh ; m
-                db    0
-                db  0Ah
-                db 0C0h
-                db  74h ; t
-                db  1Ah
-                db 0A0h
-                db  6Ah ; j
-                db    0
-                db 0A2h
-                db  23h ; #
-                db    0
-                db 0A0h
-                db  6Bh ; k
-                db    0
-                db 0A2h
-                db  24h ; $
-                db    0
-                db 0E8h
-                db  25h ; %
-                db  18h
-                db 0B0h
-                db  50h ; P
-                db  8Bh
-                db  1Eh
-                db    6
-                db    0
-                db  88h
-                db    0
-                db 0E9h
-                db  9Ah
-                db 0D1h
-                db  8Dh
-                db  16h
-                db  36h ; 6
-                db    0
-                db 0B4h
-                db  28h ; (
-                db 0B9h
-                db    0
-                db    1
-                db 0E8h
-                db  25h ; %
-                db  1Ah
-                db  50h ; P
-                db  4Ch ; L
-                db  41h ; A
-                db  59h ; Y
-                db  45h ; E
-                db  52h ; R
-                db  20h
-                db  20h
-                db 0E9h
-                db  83h
-                db 0D1h
-                db 0A0h
-                db  13h
-                db    0
-                db  3Ch ; <
-                db  26h ; &
-                db  75h ; u
-                db    3
-                db 0E9h
-                db  40h ; @
-                db    1
-                db  90h
-                db  3Ch ; <
-                db  28h ; (
-                db  74h ; t
-                db  13h
-                db 0E8h
-                db  1Dh
-                db  17h
-                db  4Ch ; L
-                db  41h ; A
-                db  55h ; U
-                db  4Eh ; N
-                db  43h ; C
-                db  48h ; H
-                db  20h
-                db  57h ; W
-                db  48h ; H
-                db  41h ; A
-                db  54h ; T
-                db  3Fh ; ?
-                db    0
-                db 0E9h
-                db  61h ; a
-                db 0D1h
-                db 0E8h
-                db  0Ah
-                db  17h
-                db  4Ch ; L
-                db  41h ; A
-                db  55h ; U
-                db  4Eh ; N
-                db  43h ; C
-                db  48h ; H
-                db  2Dh ; -
-                db  2Dh ; -
-                db  52h ; R
-                db  4Fh ; O
-                db  43h ; C
-                db  4Bh ; K
-                db  45h ; E
-                db  54h ; T
-                db    0
-                db 0A0h
-                db 0E5h
-                db    0
-                db  0Ah
-                db 0C0h
-                db  75h ; u
-                db  38h ; 8
-                db 0E8h
-                db 0F1h
-                db  16h
-                db  8Dh
-                db  41h ; A
-                db  20h
-                db  4Dh ; M
-                db  45h ; E
-                db  54h ; T
-                db  41h ; A
-                db  4Ch ; L
-                db  4Ch ; L
-                db  49h ; I
-                db  43h ; C
-                db  20h
-                db  56h ; V
-                db  4Fh ; O
-                db  49h ; I
-                db  43h ; C
-                db  45h ; E
-                db  20h
-                db  53h ; S
-                db  41h ; A
-                db  59h ; Y
-                db  53h ; S
-                db  3Ah ; :
-                db  8Dh
-                db  53h ; S
-                db  48h ; H
-                db  49h ; I
-                db  50h ; P
-                db  20h
-                db  49h ; I
-                db  4Eh ; N
-                db  43h ; C
-                db  41h ; A
-                db  50h ; P
-                db  41h ; A
-                db  42h ; B
-                db  4Ch ; L
-                db  45h ; E
-                db  20h
-                db  4Fh ; O
-                db  46h ; F
-                db  20h
-                db  4Ch ; L
-                db  41h ; A
-                db  55h ; U
-                db  4Eh ; N
-                db  43h ; C
-                db  48h ; H
-                db  21h ; !
-                db    0
-                db 0E9h
-                db  10h
-                db 0D1h
-                db 0E8h
-                db 0B9h
-                db  16h
-                db  8Dh
-                db  50h ; P
-                db  52h ; R
-                db  45h ; E
-                db  50h ; P
-                db  41h ; A
-                db  52h ; R
-                db  45h ; E
-                db  20h
-                db  46h ; F
-                db  4Fh ; O
-                db  52h ; R
-                db  20h
-                db  4Ch ; L
-                db  41h ; A
-                db  55h ; U
-                db  4Eh ; N
-                db  43h ; C
-                db  48h ; H
-                db  21h ; !
-                db    0
-                db 0A0h
-                db  6Dh ; m
-                db    0
-                db  0Ah
-                db 0C0h
-                db  75h ; u
-                db  1Bh
-                db 0A0h
-                db  4Ah ; J
-                db    0
-                db  0Ah
-                db 0C0h
-                db  75h ; u
-                db  14h
-                db 0A0h
-                db    0
-                db    0
-                db 0A2h
-                db  6Ah ; j
-                db    0
-                db 0A0h
-                db    1
-                db    0
-                db 0A2h
-                db  6Bh ; k
-                db    0
-                db 0B0h
-                db    1
-                db 0A2h
-                db  69h ; i
-                db    0
-                db 0E8h
-                db 0A0h
-                db 0E9h
-                db  90h
-                db 0E8h
-                db  38h ; 8
-                db  30h ; 0
-                db 0E8h
-                db  2Ch ; ,
-                db 0E9h
-                db 0BFh
-                db 0FFh
-                db    0
-                db 0B0h
-                db 0FFh
-                db  88h
-                db  85h
-                db  72h ; r
-                db    2
-                db  88h
-                db  85h
-                db  72h ; r
-                db    3
-                db  4Fh ; O
-                db  79h ; y
-                db 0F5h
-                db 0C6h
-                db    6
-                db    0
-                db    0
-                db    0
-                db 0C6h
-                db    6
-                db    1
-                db    0
-                db    0
-                db 0A2h
-                db  12h
-                db    0
-                db 0E8h
-                db  5Bh ; [
-                db  16h
-                db  28h ; (
-                db  50h ; P
-                db  52h ; R
-                db  45h ; E
-                db  53h ; S
-                db  53h ; S
-                db  20h
-                db  41h ; A
-                db  4Eh ; N
-                db  59h ; Y
-                db  20h
-                db  4Bh ; K
-                db  45h ; E
-                db  59h ; Y
-                db  29h ; )
-                db    0
-                db 0A0h
-                db    1
-                db    0
-                db 0F8h
-                db  14h
-                db    2
-                db  24h ; $
-                db  3Fh ; ?
-                db 0A2h
-                db    1
-                db    0
-                db  24h ; $
-                db    7
-                db  75h ; u
-                db  0Bh
-                db 0A0h
-                db    0
-                db    0
-                db 0F8h
-                db  14h
-                db    1
-                db  24h ; $
-                db  3Fh ; ?
-                db 0A2h
-                db    0
-                db    0
-                db 0E8h
-                db    0
-                db  21h ; !
-                db 0BBh
-                db  1Ch
-                db    0
-                db 0E8h
-                db  5Ah ; Z
-                db 0CDh
-                db 0E8h
-                db  93h
-                db  15h
-                db  80h
-                db 0FCh
-                db 0FFh
-                db  75h ; u
-                db 0D5h
-                db 0A0h
-                db    0
-                db    0
-                db 0A2h
-                db  23h ; #
-                db    0
-                db 0A0h
-                db    1
-                db    0
-                db 0A2h
-                db  24h ; $
-                db    0
-                db 0E8h
-                db 0E5h
-                db  16h
-                db  24h ; $
-                db  7Fh ; 
-                db  3Ch ; <
-                db    8
-                db  74h ; t
-                db    3
-                db 0E9h
-                db  8Bh
-                db 0D2h
-                db 0A0h
-                db  6Dh ; m
-                db    0
-                db  0Ah
-                db 0C0h
-                db  75h ; u
-                db    8
-                db 0B0h
-                db    0
-                db 0A2h
-                db  69h ; i
-                db    0
-                db 0E9h
-                db  4Dh ; M
-                db 0D0h
-                db 0A0h
-                db    0
-                db    0
-                db 0A2h
-                db  6Ah ; j
-                db    0
-                db 0A0h
-                db    1
-                db    0
-                db 0A2h
-                db  6Bh ; k
-                db    0
-                db 0B0h
-                db    1
-                db 0A2h
-                db  69h ; i
-                db    0
-                db 0E9h
-                db  39h ; 9
-                db 0D0h
-                db 0E8h
-                db 0E2h
-                db  15h
-                db  4Ch ; L
-                db  41h ; A
-                db  55h ; U
-                db  4Eh ; N
-                db  43h ; C
-                db  48h ; H
-                db  2Dh ; -
-                db  2Dh ; -
-                db  50h ; P
-                db  4Ch ; L
-                db  41h ; A
-                db  4Eh ; N
-                db  45h ; E
-                db    0
-                db 0A0h
-                db 0E1h
-                db    0
-                db  0Ah
-                db 0C0h
-                db  75h ; u
-                db  33h ; 3
-                db 0E8h
-                db 0CAh
-                db  15h
-                db  8Dh
-                db  46h ; F
-                db  55h ; U
-                db  4Eh ; N
-                db  4Eh ; N
-                db  59h ; Y
-                db  20h
-                db  54h ; T
-                db  48h ; H
-                db  49h ; I
-                db  53h ; S
-                db  20h
-                db  50h ; P
-                db  4Ch ; L
-                db  41h ; A
-                db  4Eh ; N
-                db  45h ; E
-                db  20h
-                db  49h ; I
-                db  53h ; S
-                db  8Dh
-                db  4Dh ; M
-                db  49h ; I
-                db  53h ; S
-                db  53h ; S
-                db  49h ; I
-                db  4Eh ; N
-                db  47h ; G
-                db  20h
-                db  41h ; A
-                db  20h
-                db  42h ; B
-                db  52h ; R
-                db  41h ; A
-                db  53h ; S
-                db  53h ; S
-                db  20h
-                db  42h ; B
-                db  55h ; U
-                db  54h ; T
-                db  54h ; T
-                db  4Fh ; O
-                db  4Eh ; N
-                db  21h ; !
-                db    0
-                db 0E9h
-                db 0EBh
-                db 0CFh
-                db  90h
-                db 0B0h
-                db    0
-                db 0A2h
-                db  21h ; !
-                db    0
-                db 0B0h
-                db 0FFh
-                db 0A2h
-                db  22h ; "
-                db    0
-                db 0E8h
-                db  8Ch
-                db  15h
-                db  0Dh
-                db  43h ; C
-                db  4Dh ; M
-                db  44h ; D
-                db  3Ah ; :
-                db  20h
-                db    0
-                db 0C6h
-                db    6
-                db  4Eh ; N
-                db    5
-                db 0FFh
-                db 0E8h
-                db  65h ; e
-                db  24h ; $
-                db 0BBh
-                db    2
-                db    0
-                db 0E8h
-                db 0A9h
-                db 0CCh
-                db 0E8h
-                db 0E2h
-                db  14h
-                db  80h
-                db 0FCh
-                db 0FFh
-                db  75h ; u
-                db  2Bh ; +
-                db  3Ah ; :
-                db    6
-                db  6Eh ; n
-                db    2
-                db  75h ; u
-                db    3
-                db 0EBh
-                db  63h ; c
-                db  90h
-                db  3Ah ; :
-                db    6
-                db  6Fh ; o
-                db    2
-                db  75h ; u
-                db    3
-                db 0EBh
-                db  75h ; u
-                db  90h
-                db  3Ah ; :
-                db    6
-                db  70h ; p
-                db    2
-                db  75h ; u
-                db    3
-                db 0E9h
-                db  86h
-                db    0
-                db  3Ah ; :
-                db    6
-                db  71h ; q
-                db    2
-                db  75h ; u
-                db    3
-                db 0E9h
-                db  98h
-                db    0
-                db  3Ch ; <
-                db  4Ch ; L
-                db  75h ; u
-                db    3
-                db 0E9h
-                db 0ACh
-                db    0
-                db 0F8h
-                db 0A0h
-                db    0
-                db    0
-                db  12h
-                db    6
-                db  21h ; !
-                db    0
-                db  24h ; $
-                db  3Fh ; ?
-                db 0A2h
-                db    0
-                db    0
-                db 0F8h
-                db 0A0h
-                db    1
-                db    0
-                db  12h
-                db    6
-                db  22h ; "
-                db    0
-                db  24h ; $
-                db  3Fh ; ?
-                db 0A2h
-                db    1
-                db    0
-                db 0A0h
-                db  4Ah ; J
-                db    0
-                db  0Ah
-                db 0C0h
-                db  74h ; t
-                db  19h
-                db 0A0h
-                db    0
-                db    0
-                db  0Ah
-                db 0C0h
-                db  74h ; t
-                db  0Ah
-                db 0A0h
-                db    1
-                db    0
-                db  0Ah
-                db 0C0h
-                db  74h ; t
-                db    3
-                db 0EBh
-                db    9
-                db  90h
-                db 0C6h
-                db    6
-                db  4Eh ; N
-                db    5
-                db    0
-                db 0E9h
-                db  69h ; i
-                db 0E9h
-                db  90h
-                db 0E8h
-                db 0D8h
-                db  1Fh
-                db 0EBh
-                db  84h
-                db 0B0h
-                db    0
-                db 0A2h
-                db  21h ; !
-                db    0
-                db 0B0h
-                db 0FFh
-                db 0A2h
-                db  22h ; "
-                db    0
-                db 0E8h
-                db 0F7h
-                db  14h
-                db  4Eh ; N
-                db  4Fh ; O
-                db  52h ; R
-                db  54h ; T
-                db  48h ; H
-                db  0Dh
-                db  43h ; C
-                db  4Dh ; M
-                db  44h ; D
-                db  3Ah ; :
-                db  20h
-                db    0
-                db 0EBh
-                db 0A5h
-                db 0B0h
-                db    0
-                db 0A2h
-                db  21h ; !
-                db    0
-                db 0B0h
-                db    1
-                db 0A2h
-                db  22h ; "
-                db    0
-                db 0E8h
-                db 0DCh
-                db  14h
-                db  53h ; S
-                db  4Fh ; O
-                db  55h ; U
-                db  54h ; T
-                db  48h ; H
-                db  0Dh
-                db  43h ; C
-                db  4Dh ; M
-                db  44h ; D
-                db  3Ah ; :
-                db  20h
-                db    0
-                db 0EBh
-                db  8Ah
-                db 0B0h
-                db    1
-                db 0A2h
-                db  21h ; !
-                db    0
-                db 0B0h
-                db    0
-                db 0A2h
-                db  22h ; "
-                db    0
-                db 0E8h
-                db 0C1h
-                db  14h
-                db  45h ; E
-                db  41h ; A
-                db  53h ; S
-                db  54h ; T
-                db  0Dh
-                db  43h ; C
-                db  4Dh ; M
-                db  44h ; D
-                db  3Ah ; :
-                db  20h
-                db    0
-                db 0E9h
-                db  6Fh ; o
-                db 0FFh
-                db 0B0h
-                db 0FFh
-                db 0A2h
-                db  21h ; !
-                db    0
-                db 0B0h
-                db    0
-                db 0A2h
-                db  22h ; "
-                db    0
-                db 0E8h
-                db 0A6h
-                db  14h
-                db  57h ; W
-                db  45h ; E
-                db  53h ; S
-                db  54h ; T
-                db  0Dh
-                db  43h ; C
-                db  4Dh ; M
-                db  44h ; D
-                db  3Ah ; :
-                db  20h
-                db    0
-                db 0E9h
-                db  54h ; T
-                db 0FFh
-                db 0A0h
-                db    0
-                db    0
-                db 0A2h
-                db  23h ; #
-                db    0
-                db 0A0h
-                db    1
-                db    0
-                db 0A2h
-                db  24h ; $
-                db    0
-                db 0E8h
-                db  5Dh ; ]
-                db  15h
-                db  3Ch ; <
-                db    8
-                db  75h ; u
-                db  17h
-                db 0E8h
-                db  82h
-                db  14h
-                db  4Ch ; L
-                db  41h ; A
-                db  4Eh ; N
-                db  44h ; D
-                db  20h
-                db  50h ; P
-                db  4Ch ; L
-                db  41h ; A
-                db  4Eh ; N
-                db  45h ; E
-                db  2Eh ; .
-                db    0
-                db 0C6h
-                db    6
-                db  4Eh ; N
-                db    5
-                db    0
-                db 0E9h
-                db 0C2h
-                db 0CEh
-                db  90h
-                db 0E8h
-                db  6Ah ; j
-                db  14h
-                db  4Ch ; L
-                db  41h ; A
-                db  4Eh ; N
-                db  44h ; D
-                db  2Dh ; -
-                db  2Dh ; -
-                db  4Eh ; N
-                db  4Fh ; O
-                db  54h ; T
-                db  20h
-                db  48h ; H
-                db  45h ; E
-                db  52h ; R
-                db  45h ; E
-                db  21h ; !
-                db  21h ; !
-                db  21h ; !
-                db  21h ; !
-                db  21h ; !
-                db  0Dh
-                db  43h ; C
-                db  4Dh ; M
-                db  44h ; D
-                db  3Ah ; :
-                db  20h
-                db    0
-                db 0E9h
-                db    9
-                db 0FFh
-                db 0E8h
-                db  4Ah ; J
-                db  14h
-                db  4Dh ; M
-                db  41h ; A
-                db  47h ; G
-                db  49h ; I
-                db  43h ; C
-                db  20h
-                db  53h ; S
-                db  50h ; P
-                db  45h ; E
-                db  4Ch ; L
-                db  4Ch ; L
-                db  20h
-                db  52h ; R
-                db  45h ; E
-                db  41h ; A
-                db  44h ; D
-                db  59h ; Y
-                db  20h
-                db  23h ; #
-                db    0
-                db 0E8h
-                db  7Ch ; |
-                db 0E4h
-                db 0A2h
-                db  63h ; c
-                db    0
-                db 0E8h
-                db  2Dh ; -
-                db  14h
-                db  53h ; S
-                db  50h ; P
-                db  45h ; E
-                db  4Ch ; L
-                db  4Ch ; L
-                db  20h
-                db  52h ; R
-                db  45h ; E
-                db  41h ; A
-                db  44h ; D
-                db  59h ; Y
-                db  20h
-                db  3Dh ; =
-                db  3Eh ; >
-                db  20h
-                db    0
-                db 0A0h
-                db  63h ; c
-                db    0
-                db 0F8h
-                db  14h
-                db  24h ; $
-                db 0E8h
-                db 0C1h
-                db  14h
-                db 0E9h
-                db  65h ; e
-                db 0CEh
-                db 0E8h
-                db  0Eh
-                db  14h
-                db  4Eh ; N
-                db  45h ; E
-                db  47h ; G
-                db  41h ; A
-                db  54h ; T
-                db  45h ; E
-                db  20h
-                db  54h ; T
-                db  49h ; I
-                db  4Dh ; M
-                db  45h ; E
-                db    0
-                db 0A0h
-                db 0E3h
-                db    0
-                db  0Ah
-                db 0C0h
-                db  75h ; u
-                db  20h
-                db 0E8h
-                db 0F8h
-                db  13h
-                db  20h
-                db  48h ; H
-                db  4Fh ; O
-                db  57h ; W
-                db  3Fh ; ?
-                db  8Dh
-                db  59h ; Y
-                db  4Fh ; O
-                db  55h ; U
-                db  27h ; '
-                db  52h ; R
-                db  45h ; E
-                db  20h
-                db  4Eh ; N
-                db  4Fh ; O
-                db  54h ; T
-                db  20h
-                db  45h ; E
-                db  49h ; I
-                db  4Eh ; N
-                db  53h ; S
-                db  54h ; T
-                db  45h ; E
-                db  49h ; I
-                db  4Eh ; N
-                db    0
-                db 0E9h
-                db  2Fh ; /
-                db 0CEh
-                db 0F9h
-                db 0A0h
-                db 0E3h
-                db    0
-                db 0F5h
-                db  1Ch
-                db    1
-                db  2Fh ; /
-                db 0F5h
-                db 0A2h
-                db 0E3h
-                db    0
-                db 0E8h
-                db 0CCh
-                db  13h
-                db  8Dh
-                db  59h ; Y
-                db  4Fh ; O
-                db  55h ; U
-                db  20h
-                db  52h ; R
-                db  55h ; U
-                db  42h ; B
-                db  20h
-                db  41h ; A
-                db  20h
-                db  43h ; C
-                db  4Fh ; O
-                db  49h ; I
-                db  4Eh ; N
-                db  2Eh ; .
-                db  2Eh ; .
-                db  2Eh ; .
-                db    0
-                db 0B0h
-                db  14h
-                db 0A2h
-                db  6Ah ; j
-                db    2
-                db 0E9h
-                db    5
-                db 0CEh
-                db 0E8h
-                db 0AEh
-                db  13h
-                db  4Fh ; O
-                db  46h ; F
-                db  46h ; F
-                db  45h ; E
-                db  52h ; R
-                db  20h
-                db  47h ; G
-                db  4Fh ; O
-                db  4Ch ; L
-                db  44h ; D
-                db  20h
-                db  44h ; D
-                db  49h ; I
-                db  52h ; R
-                db  45h ; E
-                db  43h ; C
-                db  54h ; T
-                db  2Dh ; -
-                db    0
-                db 0E8h
-                db  1Bh
-                db 0E7h
-                db 0E8h
-                db  9Ch
-                db 0E7h
-                db  8Bh
-                db 0DFh
-                db  88h
-                db  1Eh
-                db  1Fh
-                db    0
-                db 0B0h
-                db  8Dh
-                db 0E8h
-                db  9Fh
-                db  17h
-                db  8Bh
-                db 0DFh
-                db  80h
-                db 0FBh
-                db    0
-                db  75h ; u
-                db  15h
-                db 0E8h
-                db  80h
-                db  13h
-                db  4Fh ; O
-                db  46h ; F
-                db  46h ; F
-                db  45h ; E
-                db  52h ; R
-                db  20h
-                db  54h ; T
-                db  4Fh ; O
-                db  20h
-                db  57h ; W
-                db  48h ; H
-                db  4Fh ; O
-                db  4Dh ; M
-                db  3Fh ; ?
-                db    0
-                db 0E9h
-                db 0C2h
-                db 0CDh
-                db 0E8h
-                db  6Bh ; k
-                db  13h
-                db  48h ; H
-                db  4Fh ; O
-                db  57h ; W
-                db  20h
-                db  4Dh ; M
-                db  55h ; U
-                db  43h ; C
-                db  48h ; H
-                db  20h
-                db  28h ; (
-                db  2Ah ; *
-                db  31h ; 1
-                db  30h ; 0
-                db  30h ; 0
-                db  29h ; )
-                db  20h
-                db  3Fh ; ?
-                db  20h
-                db    0
-                db 0E8h
-                db  9Eh
-                db 0E3h
-                db 0A2h
-                db  27h ; '
-                db    0
-                db 0B0h
-                db    0
-                db 0A2h
-                db  28h ; (
-                db    0
-                db 0E8h
-                db 0BDh
-                db 0E3h
-                db 0B7h
-                db    0
-                db  8Ah
-                db  1Eh
-                db  1Fh
-                db    0
-                db  8Bh
-                db 0FBh
-                db  8Ah
-                db  85h
-                db 0D7h
-                db    1
-                db  0Ah
-                db 0C0h
-                db  79h ; y
-                db  11h
-                db 0A0h
-                db  4Ah ; J
-                db    0
-                db  3Ch ; <
-                db    2
-                db  75h ; u
-                db  0Ah
-                db 0A0h
-                db  49h ; I
-                db    0
-                db  3Ch ; <
-                db    3
-                db  75h ; u
-                db    3
-                db 0EBh
-                db  1Dh
-                db  90h
-                db  90h
-                db 0E8h
-                db  25h ; %
-                db  13h
-                db  54h ; T
-                db  48h ; H
-                db  41h ; A
-                db  4Eh ; N
-                db  4Bh ; K
-                db  20h
-                db  59h ; Y
-                db  4Fh ; O
-                db  55h ; U
-                db  20h
-                db  56h ; V
-                db  45h ; E
-                db  52h ; R
-                db  59h ; Y
-                db  20h
-                db  4Dh ; M
-                db  55h ; U
-                db  43h ; C
-                db  48h ; H
-                db  21h ; !
-                db    0
-                db 0E9h
-                db  61h ; a
-                db 0CDh
-                db 0B7h
-                db    0
-                db  8Ah
-                db  1Eh
-                db  1Fh
-                db    0
-                db  8Bh
-                db 0FBh
-                db  8Ah
-                db  85h
-                db 0D7h
-                db    1
-                db  3Ch ; <
-                db  81h
-                db  74h ; t
-                db  0Bh
-                db  3Ch ; <
-                db  82h
-                db  74h ; t
-                db  2Ah ; *
-                db  3Ch ; <
-                db  83h
-                db  74h ; t
-                db  68h ; h
-                db 0E9h
-                db  91h
-                db    0
-                db 0A0h
-                db  27h ; '
-                db    0
-                db  3Ch ; <
-                db    5
-                db  72h ; r
-                db 0C2h
-                db 0E8h
-                db 0E8h
-                db  12h
-                db  45h ; E
-                db  4Eh ; N
-                db  49h ; I
-                db  4Ch ; L
-                db  4Eh ; N
-                db  4Fh ; O
-                db  20h
-                db  49h ; I
-                db  53h ; S
-                db  20h
-                db  59h ; Y
-                db  4Fh ; O
-                db  55h ; U
-                db  52h ; R
-                db  53h ; S
-                db  21h ; !
-                db    0
-                db 0B0h
-                db    1
-                db 0A2h
-                db  7Fh ; 
-                db    0
-                db 0E9h
-                db  23h ; #
-                db 0CDh
-                db 0A0h
-                db  27h ; '
-                db    0
-                db  3Ch ; <
-                db    5
-                db  72h ; r
-                db  9Fh
-                db 0A0h
-                db  6Ch ; l
-                db    0
-                db  0Ah
-                db 0C0h
-                db  75h ; u
-                db  15h
-                db 0E8h
-                db 0BEh
-                db  12h
-                db  45h ; E
-                db  41h ; A
-                db  52h ; R
-                db  4Eh ; N
-                db  20h
-                db  54h ; T
-                db  48h ; H
-                db  45h ; E
-                db  20h
-                db  52h ; R
-                db  49h ; I
-                db  4Eh ; N
-                db  47h ; G
-                db  21h ; !
-                db    0
-                db 0E9h
-                db    0
-                db 0CDh
-                db  90h
-                db 0E8h
-                db 0A8h
-                db  12h
-                db  54h ; T
-                db  48h ; H
-                db  45h ; E
-                db  20h
-                db  52h ; R
-                db  49h ; I
-                db  4Eh ; N
-                db  47h ; G
-                db  20h
-                db  49h ; I
-                db  53h ; S
-                db  20h
-                db  59h ; Y
-                db  4Fh ; O
-                db  55h ; U
-                db  52h ; R
-                db  53h ; S
-                db  21h ; !
-                db    0
-                db 0B0h
-                db    1
-                db 0A2h
-                db 0D6h
-                db    0
-                db 0E9h
-                db 0E1h
-                db 0CCh
-                db 0E8h
-                db 0C2h
-                db  14h
-                db  24h ; $
-                db    7
-                db 0F8h
-                db 0B4h
-                db    0
-                db  8Bh
-                db 0F8h
-                db  47h ; G
-                db  8Ah
-                db  85h
-                db  76h ; v
-                db    0
-                db  14h
-                db    1
-                db  27h ; '
-                db  88h
-                db  85h
-                db  76h ; v
-                db    0
-                db 0E8h
-                db  74h ; t
-                db  12h
-                db  48h ; H
-                db  45h ; E
-                db  52h ; R
-                db  45h ; E
-                db  20h
-                db  54h ; T
-                db  41h ; A
-                db  4Bh ; K
-                db  45h ; E
-                db  20h
-                db  54h ; T
-                db  48h ; H
-                db  49h ; I
-                db  53h ; S
-                db  21h ; !
-                db    0
-                db 0E9h
-                db 0B5h
-                db 0CCh
-                db 0E8h
-                db  96h
-                db  14h
-                db  24h ; $
-                db    7
-                db  3Ch ; <
-                db    6
-                db  72h ; r
-                db    3
-                db 0E9h
-                db  2Ch ; ,
-                db 0FFh
-                db  90h
-                db 0B4h
-                db    0
-                db  8Bh
-                db 0F8h
-                db 0F8h
-                db  8Ah
-                db  85h
-                db  4Bh ; K
-                db    0
-                db  12h
-                db    6
-                db  27h ; '
-                db    0
-                db  27h ; '
-                db  12h
-                db    6
-                db  27h ; '
-                db    0
-                db  27h ; '
-                db  12h
-                db    6
-                db  27h ; '
-                db    0
-                db  27h ; '
-                db  12h
-                db    6
-                db  27h ; '
-                db    0
-                db  27h ; '
-                db  88h
-                db  85h
-                db  4Bh ; K
-                db    0
-                db 0E8h
-                db  30h ; 0
-                db  12h
-                db  41h ; A
-                db  4Ch ; L
-                db  41h ; A
-                db  4Bh ; K
-                db  41h ; A
-                db  5Ah ; Z
-                db  41h ; A
-                db  4Dh ; M
-                db  21h ; !
-                db    0
-                db 0E9h
-                db  77h ; w
-                db 0CCh
-                db 0E8h
-                db  20h
-                db  12h
-                db  50h ; P
-                db  41h ; A
-                db  53h ; S
-                db  53h ; S
-                db    0
-                db 0E9h
-                db  6Ch ; l
-                db 0CCh
-                db 0E8h
-                db  15h
-                db  12h
-                db  51h ; Q
-                db  55h ; U
-                db  49h ; I
-                db  54h ; T
-                db  20h
-                db  4Fh ; O
-                db  52h ; R
-                db  20h
-                db  53h ; S
-                db  41h ; A
-                db  56h ; V
-                db  45h ; E
-                db  20h
-                db  47h ; G
-                db  41h ; A
-                db  4Dh ; M
-                db  45h ; E
-                db  2Eh ; .
-                db    0
-                db 0A0h
-                db  4Ah ; J
-                db    0
-                db  0Ah
-                db 0C0h
-                db  74h ; t
-                db  16h
-                db 0E8h
-                db 0F8h
-                db  11h
-                db  8Dh
-                db  4Fh ; O
-                db  4Eh ; N
-                db  4Ch ; L
-                db  59h ; Y
-                db  20h
-                db  4Fh ; O
-                db  55h ; U
-                db  54h ; T
-                db  44h ; D
-                db  4Fh ; O
-                db  4Fh ; O
-                db  52h ; R
-                db  53h ; S
-                db  21h ; !
-                db    0
-                db 0E9h
-                db  36h ; 6
-                db 0CCh
-                db 0A0h
-                db  6Dh ; m
-                db    0
-                db  0Ah
-                db 0C0h
-                db  74h ; t
-                db  16h
-                db 0E8h
-                db 0DBh
-                db  11h
-                db  8Dh
-                db  4Fh ; O
-                db  4Eh ; N
-                db  4Ch ; L
-                db  59h ; Y
-                db  20h
-                db  4Fh ; O
-                db  4Eh ; N
-                db  20h
-                db  45h ; E
-                db  41h ; A
-                db  52h ; R
-                db  54h ; T
-                db  48h ; H
-                db  21h ; !
-                db    0
-                db 0E9h
-                db  19h
-                db 0CCh
-                db 0A0h
-                db  13h
-                db    0
-                db  3Ch ; <
-                db  78h ; x
-                db  73h ; s
-                db  15h
-                db 0E8h
-                db 0BEh
-                db  11h
-                db  8Dh
-                db  4Fh ; O
-                db  4Eh ; N
-                db  4Ch ; L
-                db  59h ; Y
-                db  20h
-                db  4Fh ; O
-                db  4Eh ; N
-                db  20h
-                db  46h ; F
-                db  4Fh ; O
-                db  4Fh ; O
-                db  54h ; T
-                db  21h ; !
-                db    0
-                db 0E9h
-                db 0FDh
-                db 0CBh
-                db 0E8h
-                db 0A9h
-                db  11h
+; ---------------------------------------------------------------------------
+
+loc_13CB6:                              ; CODE XREF: offer+75↑j
+                                        ; offer+7C↑j ...
+                nop
+                call    write_string
+; ---------------------------------------------------------------------------
+aThankYouVeryMu db 'THANK YOU VERY MUCH!',0
+; ---------------------------------------------------------------------------
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_13CD2:                              ; CODE XREF: offer+85↑j
+                mov     bh, 0
+                mov     bl, byte_1742F
+                mov     di, bx
+                mov     al, (_mapMonsters+0A0h)[di]
+                cmp     al, 81h
+                jz      short loc_13CED
+                cmp     al, 82h
+                jz      short loc_13D10
+                cmp     al, 83h
+                jz      short loc_13D52
+                jmp     loc_13D7E
+; ---------------------------------------------------------------------------
+
+loc_13CED:                              ; CODE XREF: offer+B2↑j
+                mov     al, _sleepFlag2?
+                cmp     al, 5
+                jb      short loc_13CB6
+                call    write_string
+; ---------------------------------------------------------------------------
+aEnilnoIsYours  db 'ENILNO IS YOURS!',0
+; ---------------------------------------------------------------------------
+                mov     al, 1
+                mov     player.field_49, al
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_13D10:                              ; CODE XREF: offer+B6↑j
+                mov     al, _sleepFlag2?
+                cmp     al, 5
+                jb      short loc_13CB6
+                mov     al, player.field_36
+                or      al, al
+                jnz     short loc_13D33
+                call    write_string
+; ---------------------------------------------------------------------------
+aEarnTheRing    db 'EARN THE RING!',0
+; ---------------------------------------------------------------------------
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_13D33:                              ; CODE XREF: offer+EE↑j
+                nop
+                call    write_string
+; ---------------------------------------------------------------------------
+aTheRingIsYours db 'THE RING IS YOURS!',0
+; ---------------------------------------------------------------------------
+                mov     al, 1
+                mov     player._hasRing, al
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_13D52:                              ; CODE XREF: offer+BA↑j
+                call    sub_15217
+                and     al, 7
+                clc
+                mov     ah, 0
+                mov     di, ax
+                inc     di
+                mov     al, player.field_40[di]
+                adc     al, 1
+                daa
+                mov     player.field_40[di], al
+                call    write_string
+; ---------------------------------------------------------------------------
+aHereTakeThis   db 'HERE TAKE THIS!',0
+; ---------------------------------------------------------------------------
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_13D7E:                              ; CODE XREF: offer+BC↑j
+                call    sub_15217
+                and     al, 7
+                cmp     al, 6
+                jb      short loc_13D8A
+                jmp     loc_13CB6
+; ---------------------------------------------------------------------------
+
+loc_13D8A:                              ; CODE XREF: offer+157↑j
+                nop
+                mov     ah, 0
+                mov     di, ax
+                clc
+                mov     al, player._strength[di]
+                adc     al, _sleepFlag2?
+                daa
+                adc     al, _sleepFlag2?
+                daa
+                adc     al, _sleepFlag2?
+                daa
+                adc     al, _sleepFlag2?
+                daa
+                mov     [di+4Bh], al
+                call    write_string
+; ---------------------------------------------------------------------------
+aAlakazam       db 'ALAKAZAM!',0
+; ---------------------------------------------------------------------------
+                jmp     loc_10A33
+offer           endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: noreturn
+
+pass            proc near               ; DATA XREF: sg01a2:command_jump_table↑o
+                call    write_string
+; ---------------------------------------------------------------------------
+aPass_4         db 'PASS',0
+; ---------------------------------------------------------------------------
+                jmp     loc_10A33
+pass            endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: noreturn
+
+quit            proc near               ; DATA XREF: sg01a2:command_jump_table↑o
+                call    write_string
+; ---------------------------------------------------------------------------
+aQuitOrSaveGame db 'QUIT OR SAVE GAME.',0
+; ---------------------------------------------------------------------------
+                mov     al, player._mapNum2
+                or      al, al
+                jz      short loc_13DFA
+                call    write_string
+; ---------------------------------------------------------------------------
+                db 8Dh,'ONLY OUTDOORS!',0
+; ---------------------------------------------------------------------------
+                jmp     sub_10A30
+; ---------------------------------------------------------------------------
+
+loc_13DFA:                              ; CODE XREF: quit+1B↑j
+                mov     al, player._disableSave
+                or      al, al
+                jz      short loc_13E17
+                call    write_string
+; ---------------------------------------------------------------------------
+                db 8Dh,'ONLY ON EARTH!',0
+; ---------------------------------------------------------------------------
+                jmp     sub_10A30
+; ---------------------------------------------------------------------------
+
+loc_13E17:                              ; CODE XREF: quit+38↑j
+                mov     al, _playerTileId
+                cmp     al, 78h ; 'x'
+                jnb     short loc_13E33
+                call    write_string
+; ---------------------------------------------------------------------------
+                db 8Dh,'ONLY ON FOOT!',0
+; ---------------------------------------------------------------------------
+                jmp     sub_10A30
+; ---------------------------------------------------------------------------
+
+loc_13E33:                              ; CODE XREF: quit+55↑j
+                call    write_string
+quit            endp
+
+; ---------------------------------------------------------------------------
                 db  8Dh
                 db  4Fh ; O
                 db  4Eh ; N
@@ -13017,1053 +10316,434 @@ aPass_3         db 'PASS',0
                 db 0E9h
                 db 0E3h
                 db 0CBh
-                db 0E8h
-                db  8Ch
-                db  11h
-                db  52h ; R
-                db  45h ; E
-                db  41h ; A
-                db  44h ; D
-                db  59h ; Y
-                db  20h
-                db  57h ; W
-                db  45h ; E
-                db  41h ; A
-                db  50h ; P
-                db  4Fh ; O
-                db  4Eh ; N
-                db  3Ah ; :
-                db  0Dh
-                db  31h ; 1
-                db  2Dh ; -
-                db  44h ; D
-                db  41h ; A
-                db  2Ch ; ,
-                db  20h
-                db  32h ; 2
-                db  2Dh ; -
-                db  4Dh ; M
-                db  41h ; A
-                db  2Ch ; ,
-                db  20h
-                db  33h ; 3
-                db  2Dh ; -
-                db  41h ; A
-                db  58h ; X
-                db  2Ch ; ,
-                db  20h
-                db  34h ; 4
-                db  2Dh ; -
-                db  42h ; B
-                db  4Fh ; O
-                db  2Ch ; ,
-                db  0Dh
-                db  35h ; 5
-                db  2Dh ; -
-                db  53h ; S
-                db  57h ; W
-                db  2Ch ; ,
-                db  20h
-                db  36h ; 6
-                db  2Dh ; -
-                db  47h ; G
-                db  52h ; R
-                db  2Ch ; ,
-                db  20h
-                db  37h ; 7
-                db  2Dh ; -
-                db  4Ch ; L
-                db  49h ; I
-                db  2Ch ; ,
-                db  20h
-                db  38h ; 8
-                db  2Dh ; -
-                db  50h ; P
-                db  48h ; H
-                db  2Eh ; .
-                db  0Dh
-                db  39h ; 9
-                db  2Dh ; -
-                db  51h ; Q
-                db  55h ; U
-                db  2Ch ; ,
-                db  20h
-                db  57h ; W
-                db  48h ; H
-                db  49h ; I
-                db  43h ; C
-                db  48h ; H
-                db  3Fh ; ?
-                db  20h
-                db    0
-                db 0E8h
-                db  86h
-                db 0E1h
-                db 0A2h
-                db  1Fh
-                db    0
-                db 0F8h
-                db  14h
-                db  13h
-                db 0E8h
-                db 0E1h
-                db  11h
-                db 0B7h
-                db    0
-                db  8Ah
-                db  1Eh
-                db  1Fh
-                db    0
-                db  8Bh
-                db 0FBh
-                db  8Ah
-                db  85h
-                db  76h ; v
-                db    0
-                db  0Ah
-                db 0C0h
-                db  75h ; u
-                db  19h
-                db 0A0h
-                db  1Fh
-                db    0
-                db  0Ah
-                db 0C0h
-                db  74h ; t
-                db  12h
-                db 0E8h
-                db  1Ah
-                db  11h
-                db  20h
-                db  4Eh ; N
-                db  4Fh ; O
-                db  54h ; T
-                db  20h
-                db  4Fh ; O
-                db  57h ; W
-                db  4Eh ; N
-                db  45h ; E
-                db  44h ; D
-                db  21h ; !
-                db    0
-                db 0E9h
-                db  5Ch ; \
-                db 0CBh
-                db 0A0h
-                db  1Fh
-                db    0
-                db    2
-                db 0C0h
-                db    2
-                db 0C0h
-                db    2
-                db 0C0h
-                db  3Ah ; :
-                db    6
-                db  4Ch ; L
-                db    0
-                db  72h ; r
-                db  2Eh ; .
-                db 0E8h
-                db 0F9h
-                db  10h
-                db  20h
-                db  3Ch ; <
-                db  2Dh ; -
-                db  54h ; T
-                db  48h ; H
-                db  4Fh ; O
-                db  55h ; U
-                db  20h
-                db  41h ; A
-                db  52h ; R
-                db  54h ; T
-                db  20h
-                db  4Eh ; N
-                db  4Fh ; O
-                db  54h ; T
-                db  20h
-                db  8Dh
-                db  41h ; A
-                db  47h ; G
-                db  49h ; I
-                db  4Ch ; L
-                db  45h ; E
-                db  20h
-                db  45h ; E
-                db  4Eh ; N
-                db  4Fh ; O
-                db  55h ; U
-                db  47h ; G
-                db  48h ; H
-                db  20h
-                db  54h ; T
-                db  4Fh ; O
-                db  20h
-                db  57h ; W
-                db  49h ; I
-                db  45h ; E
-                db  4Ch ; L
-                db  44h ; D
-                db  21h ; !
-                db    0
-                db 0E9h
-                db  22h ; "
-                db 0CBh
-                db 0E8h
-                db 0CBh
-                db  10h
-                db  20h
-                db  52h ; R
-                db  45h ; E
-                db  41h ; A
-                db  44h ; D
-                db  59h ; Y
-                db  2Eh ; .
-                db    0
-                db 0A0h
-                db  1Fh
-                db    0
-                db 0A2h
-                db  61h ; a
-                db    0
-                db 0E9h
-                db  0Eh
-                db 0CBh
-                db 0E8h
-                db 0B7h
-                db  10h
-                db  53h ; S
-                db  54h ; T
-                db  45h ; E
-                db  41h ; A
-                db  4Ch ; L
-                db  20h
-                db  44h ; D
-                db  49h ; I
-                db  52h ; R
-                db  45h ; E
-                db  43h ; C
-                db  54h ; T
-                db  2Dh ; -
-                db    0
-                db 0E8h
-                db  29h ; )
-                db 0E4h
-                db 0F8h
-                db 0A0h
-                db    0
-                db    0
-                db  12h
-                db    6
-                db  19h
-                db    0
-                db 0A2h
-                db  23h ; #
-                db    0
-                db 0F8h
-                db 0A0h
-                db    1
-                db    0
-                db  12h
-                db    6
-                db  1Ah
-                db    0
-                db 0A2h
-                db  24h ; $
-                db    0
-                db 0B0h
-                db  8Dh
-                db 0E8h
-                db 0A0h
-                db  14h
-                db 0E8h
-                db  5Ch ; \
-                db  11h
-                db  78h ; x
-                db    4
-                db  3Ch ; <
-                db  7Ch ; |
-                db  75h ; u
-                db  21h ; !
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: noreturn
+
+ready           proc near               ; DATA XREF: sg01a2:command_jump_table↑o
+                call    write_string
+; ---------------------------------------------------------------------------
+aReadyWeapon1Da db 'READY WEAPON:',0Dh,'1-DA, 2-MA, 3-AX, 4-BO,',0Dh,'5-SW, 6-GR, 7-L'
+                db 'I, 8-PH.',0Dh,'9-QU, WHICH? ',0
+; ---------------------------------------------------------------------------
+                call    sub_12028
+                mov     byte_1742F, al
+                clc
+                adc     al, 13h
+                call    sub_1508C
+                mov     bh, 0
+                mov     bl, byte_1742F
+                mov     di, bx
+                mov     al, [di+76h]
+                or      al, al
+                jnz     short loc_13ED4
+                mov     al, byte_1742F
+                or      al, al
+                jz      short loc_13ED4
+                call    write_string
+; ---------------------------------------------------------------------------
+aNotOwned_0     db ' NOT OWNED!',0
+; ---------------------------------------------------------------------------
+                jmp     sub_10A30
+; ---------------------------------------------------------------------------
+
+loc_13ED4:                              ; CODE XREF: ready+69↑j
+                                        ; ready+70↑j
+                mov     al, byte_1742F
+                add     al, al
+                add     al, al
+                add     al, al
+                cmp     al, player._agility
+                jb      short loc_13F11
+                call    write_string
+; ---------------------------------------------------------------------------
+aThouArtNot     db ' <-THOU ART NOT '
+; ---------------------------------------------------------------------------
+                lea     ax, [bx+di+47h]
+                dec     cx
+                dec     sp
+                inc     bp
+                and     [di+4Eh], al
+                dec     di
+                push    bp
+                inc     di
+                dec     ax
+                and     [si+4Fh], dl
+                and     [bx+49h], dl
+                inc     bp
+                dec     sp
+                inc     sp
+                and     [bx+si], ax
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_13F11:                              ; CODE XREF: ready+91↑j
+                call    write_string
+; ---------------------------------------------------------------------------
+aReady_0        db ' READY.',0
+; ---------------------------------------------------------------------------
+                mov     al, byte_1742F
+                mov     player.field_2B, al
+                jmp     loc_10A33
+ready           endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: noreturn
+
+steal           proc near               ; DATA XREF: sg01a2:command_jump_table↑o
+                call    write_string
+; ---------------------------------------------------------------------------
+aStealDirect    db 'STEAL DIRECT-',0
+; ---------------------------------------------------------------------------
+                call    loc_12362
+                clc
+                mov     al, _mapX
+                adc     al, _circleDeltaX
+                mov     _playerX, al
+                clc
+                mov     al, _mapY
+                adc     al, _circleDeltaY
+                mov     _playerY, al
+                mov     al, 8Dh
+                call    print_char
+                call    get_player_tile
+                js      short loc_13F5D
+                cmp     al, 7Ch ; '|'
+                jnz     short loc_13F7E
+
+loc_13F5D:                              ; CODE XREF: steal+32↑j
+                nop
+                clc
+                mov     al, _playerX
+                adc     al, _circleDeltaX
+                mov     _playerX, al
+                clc
+                mov     al, _playerY
+                adc     al, _circleDeltaY
+                mov     _playerY, al
+                call    get_player_tile
+                cmp     al, 68h ; 'h'
+                jnz     short loc_13F7E
+                jmp     short loc_13F98
+; ---------------------------------------------------------------------------
                 db  90h
-                db 0F8h
-                db 0A0h
-                db  23h ; #
-                db    0
-                db  12h
-                db    6
-                db  19h
-                db    0
-                db 0A2h
-                db  23h ; #
-                db    0
-                db 0F8h
-                db 0A0h
-                db  24h ; $
-                db    0
-                db  12h
-                db    6
-                db  1Ah
-                db    0
-                db 0A2h
-                db  24h ; $
-                db    0
-                db 0E8h
-                db  3Ch ; <
-                db  11h
-                db  3Ch ; <
-                db  68h ; h
-                db  75h ; u
-                db    3
-                db 0EBh
-                db  1Bh
+; ---------------------------------------------------------------------------
+
+loc_13F7E:                              ; CODE XREF: steal+36↑j
+                                        ; steal+54↑j ...
+                call    write_string
+; ---------------------------------------------------------------------------
+aNoLuck         db 'NO LUCK!',0
+; ---------------------------------------------------------------------------
+                call    sub_15217
+                and     al, 7
+                jnz     short loc_13F94
+                call    sub_1113A
+
+loc_13F94:                              ; CODE XREF: steal+6A↑j
+                nop
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_13F98:                              ; CODE XREF: steal+56↑j
+                nop
+                mov     al, player._class
+                cmp     al, 3
+                jz      short loc_13FA5
+                call    sub_15217
+                js      short loc_13F7E
+
+loc_13FA5:                              ; CODE XREF: steal+79↑j
+                nop
+                call    sub_15217
+                js      short loc_13F7E
+                mov     al, _mapMonsters+0A0h
+                cmp     al, 1
+                jz      short loc_13F7E
+                mov     al, player._mapNum2
+                cmp     al, 1
+                jz      short loc_13FCE
+                cmp     al, 2
+                jnz     short loc_13F7E
+                mov     al, _mapY
+                cmp     al, 20h ; ' '
+                jnb     short loc_13F7E
+                mov     al, _mapX
+                cmp     al, 20h ; ' '
+                jnb     short loc_13FF9
+                jmp     short loc_14024
+; ---------------------------------------------------------------------------
                 db  90h
-                db 0E8h
-                db  5Eh ; ^
-                db  10h
-                db  4Eh ; N
-                db  4Fh ; O
-                db  20h
-                db  4Ch ; L
-                db  55h ; U
-                db  43h ; C
-                db  4Bh ; K
-                db  21h ; !
-                db    0
-                db 0E8h
-                db  8Ah
-                db  12h
-                db  24h ; $
-                db    7
-                db  75h ; u
-                db    3
-                db 0E8h
-                db 0A6h
-                db 0D1h
-                db  90h
-                db 0E9h
-                db  9Bh
-                db 0CAh
-                db  90h
-                db 0A0h
-                db  47h ; G
-                db    0
-                db  3Ch ; <
-                db    3
-                db  74h ; t
-                db    5
-                db 0E8h
-                db  74h ; t
-                db  12h
-                db  78h ; x
-                db 0D9h
-                db  90h
-                db 0E8h
-                db  6Eh ; n
-                db  12h
-                db  78h ; x
-                db 0D3h
-                db 0A0h
-                db 0D7h
-                db    1
-                db  3Ch ; <
-                db    1
-                db  74h ; t
-                db 0CCh
-                db 0A0h
-                db  4Ah ; J
-                db    0
-                db  3Ch ; <
-                db    1
-                db  74h ; t
-                db  15h
-                db  3Ch ; <
-                db    2
-                db  75h ; u
-                db 0C1h
-                db 0A0h
-                db    1
-                db    0
-                db  3Ch ; <
-                db  20h
-                db  73h ; s
-                db 0BAh
-                db 0A0h
-                db    0
-                db    0
-                db  3Ch ; <
-                db  20h
-                db  73h ; s
-                db  2Eh ; .
-                db 0EBh
-                db  57h ; W
-                db  90h
-                db 0A0h
-                db    1
-                db    0
-                db  3Ch ; <
-                db  20h
-                db  73h ; s
-                db 0A9h
-                db 0A0h
-                db    0
-                db    0
-                db  3Ch ; <
-                db  20h
-                db  72h ; r
-                db 0A2h
-                db  90h
-                db 0E8h
-                db 0FFh
-                db  0Fh
-                db  53h ; S
-                db  54h ; T
-                db  45h ; E
-                db  41h ; A
-                db  4Ch ; L
-                db  20h
-                db  46h ; F
-                db  4Fh ; O
-                db  4Fh ; O
-                db  44h ; D
-                db  21h ; !
-                db    0
-                db 0F8h
-                db 0A0h
-                db  53h ; S
-                db    0
-                db  14h
-                db    1
-                db  27h ; '
-                db 0A2h
-                db  53h ; S
-                db    0
-                db 0E9h
-                db  3Ah ; :
-                db 0CAh
-                db  90h
-                db 0E8h
-                db 0E2h
-                db  0Fh
-                db  53h ; S
-                db  54h ; T
-                db  45h ; E
-                db  41h ; A
-                db  4Ch ; L
-                db  20h
-                db  41h ; A
-                db  52h ; R
-                db  4Dh ; M
-                db  4Fh ; O
-                db  55h ; U
-                db  52h ; R
-                db  21h ; !
-                db    0
-                db 0E8h
-                db    9
-                db  12h
-                db  24h ; $
-                db    3
-                db 0B4h
-                db    0
-                db  8Bh
-                db 0F8h
-                db  47h ; G
-                db 0F8h
-                db  8Ah
-                db  85h
-                db  96h
-                db    0
-                db  14h
-                db    1
-                db  27h ; '
-                db  88h
-                db  85h
-                db  96h
-                db    0
-                db 0E9h
-                db  0Fh
-                db 0CAh
-                db  90h
-                db 0E8h
-                db 0B7h
-                db  0Fh
-                db  53h ; S
-                db  54h ; T
-                db  45h ; E
-                db  41h ; A
-                db  4Ch ; L
-                db  20h
-                db  57h ; W
-                db  45h ; E
-                db  41h ; A
-                db  50h ; P
-                db  4Fh ; O
-                db  4Eh ; N
-                db  53h ; S
-                db  21h ; !
-                db    0
-                db 0E8h
-                db 0DDh
-                db  11h
-                db  24h ; $
-                db    7
-                db 0B4h
-                db    0
-                db  8Bh
-                db 0F8h
-                db  47h ; G
-                db 0F8h
-                db  8Ah
-                db  85h
-                db  76h ; v
-                db    0
-                db  14h
-                db    1
-                db  27h ; '
-                db  88h
-                db  85h
-                db  76h ; v
-                db    0
-                db 0E9h
-                db 0E3h
-                db 0C9h
-                db 0E8h
-                db  8Ch
-                db  0Fh
-                db  54h ; T
-                db  52h ; R
-                db  41h ; A
-                db  4Eh ; N
-                db  53h ; S
-                db  41h ; A
-                db  43h ; C
-                db  54h ; T
-                db  2Dh ; -
-                db    0
-                db 0E8h
-                db    2
-                db 0E3h
-                db 0E8h
-                db  83h
-                db 0E3h
-                db  8Bh
-                db 0DFh
-                db  88h
-                db  1Eh
-                db  20h
-                db    0
-                db 0B0h
-                db  8Dh
-                db 0E8h
-                db  86h
-                db  13h
-                db 0A0h
-                db  4Ah ; J
-                db    0
-                db  0Ah
-                db 0C0h
-                db  74h ; t
-                db  31h ; 1
-                db  8Bh
-                db 0DFh
-                db  80h
-                db 0FBh
-                db    0
-                db  75h ; u
-                db  44h ; D
-                db 0E8h
-                db  34h ; 4
-                db  10h
-                db  78h ; x
-                db    4
-                db  3Ch ; <
-                db  7Ch ; |
-                db  75h ; u
-                db  21h ; !
-                db  90h
-                db 0F8h
-                db 0A0h
-                db  23h ; #
-                db    0
-                db  12h
-                db    6
-                db  19h
-                db    0
-                db 0A2h
-                db  23h ; #
-                db    0
-                db 0F8h
-                db 0A0h
-                db  24h ; $
-                db    0
-                db  12h
-                db    6
-                db  1Ah
-                db    0
-                db 0A2h
-                db  24h ; $
-                db    0
-                db 0E8h
-                db  14h
-                db  10h
-                db  3Ch ; <
-                db  68h ; h
-                db  75h ; u
-                db    3
-                db 0E9h
-                db 0EAh
-                db 0D4h
-                db 0E8h
-                db  36h ; 6
-                db  0Fh
-                db  46h ; F
-                db  55h ; U
-                db  4Eh ; N
-                db  4Eh ; N
-                db  59h ; Y
-                db  2Ch ; ,
-                db  20h
-                db  4Eh ; N
-                db  4Fh ; O
-                db  20h
-                db  52h ; R
-                db  45h ; E
-                db  53h ; S
-                db  50h ; P
-                db  4Fh ; O
-                db  4Eh ; N
-                db  53h ; S
-                db  45h ; E
-                db  21h ; !
-                db    0
-                db 0E9h
-                db  73h ; s
-                db 0C9h
-                db  8Ah
-                db  85h
-                db 0D7h
-                db    1
-                db  3Ch ; <
-                db  80h
-                db  72h ; r
-                db    3
-                db 0E9h
-                db  3Eh ; >
-                db    1
-                db  90h
-                db  8Ah
-                db  85h
-                db  97h
-                db    1
-                db  3Ch ; <
-                db  6Ch ; l
-                db  75h ; u
-                db    3
-                db 0E9h
-                db  72h ; r
-                db    1
-                db  90h
-                db  8Ah
-                db  85h
-                db  97h
-                db    1
-                db  3Ch ; <
-                db  60h ; `
-                db  75h ; u
-                db  24h ; $
-                db 0E8h
-                db 0FCh
-                db  0Eh
-                db  41h ; A
-                db  20h
-                db  47h ; G
-                db  55h ; U
-                db  41h ; A
-                db  52h ; R
-                db  44h ; D
-                db  20h
-                db  53h ; S
-                db  41h ; A
-                db  59h ; Y
-                db  53h ; S
-                db  3Ah ; :
-                db  0Dh
-                db  50h ; P
-                db  41h ; A
-                db  59h ; Y
-                db  20h
-                db  59h ; Y
-                db  4Fh ; O
-                db  55h ; U
-                db  52h ; R
-                db  20h
-                db  54h ; T
-                db  41h ; A
-                db  58h ; X
-                db  45h ; E
-                db  53h ; S
-                db  21h ; !
-                db    0
-                db 0E9h
-                db  2Fh ; /
-                db 0C9h
-                db  3Ch ; <
-                db  64h ; d
-                db  75h ; u
-                db  20h
-                db 0E8h
-                db 0D4h
-                db  0Eh
-                db  41h ; A
-                db  20h
-                db  4Ah ; J
-                db  45h ; E
-                db  53h ; S
-                db  54h ; T
-                db  45h ; E
-                db  52h ; R
-                db  20h
-                db  53h ; S
-                db  49h ; I
-                db  4Eh ; N
-                db  47h ; G
-                db  53h ; S
-                db  3Ah ; :
-                db  0Dh
-                db  48h ; H
-                db  4Fh ; O
-                db  20h
-                db  48h ; H
-                db  4Fh ; O
-                db  20h
-                db  48h ; H
-                db  4Fh ; O
-                db  21h ; !
-                db    0
-                db 0E9h
-                db  0Bh
-                db 0C9h
-                db  3Ch ; <
-                db  68h ; h
-                db  75h ; u
-                db  2Fh ; /
-                db 0E8h
-                db 0B0h
-                db  0Eh
-                db  41h ; A
-                db  20h
-                db  4Dh ; M
-                db  45h ; E
-                db  52h ; R
-                db  43h ; C
-                db  48h ; H
-                db  41h ; A
-                db  4Eh ; N
-                db  54h ; T
-                db  20h
-                db  53h ; S
-                db  41h ; A
-                db  59h ; Y
-                db  53h ; S
-                db  3Ah ; :
-                db  0Dh
-                db  57h ; W
-                db  49h ; I
-                db  4Ch ; L
-                db  4Ch ; L
-                db  20h
-                db  59h ; Y
-                db  4Fh ; O
-                db  55h ; U
-                db  20h
-                db  42h ; B
-                db  55h ; U
-                db  59h ; Y
-                db  20h
-                db  4Dh ; M
-                db  59h ; Y
-                db  20h
-                db  41h ; A
-                db  50h ; P
-                db  50h ; P
-                db  4Ch ; L
-                db  45h ; E
-                db  53h ; S
-                db  3Fh ; ?
-                db    0
-                db 0E9h
-                db 0D8h
-                db 0C8h
-                db  3Ch ; <
-                db 0F0h
-                db  75h ; u
-                db  25h ; %
-                db 0E8h
-                db  7Dh ; }
-                db  0Eh
-                db  41h ; A
-                db  20h
-                db  46h ; F
-                db  49h ; I
-                db  47h ; G
-                db  48h ; H
-                db  54h ; T
-                db  45h ; E
-                db  52h ; R
-                db  20h
-                db  53h ; S
-                db  41h ; A
-                db  59h ; Y
-                db  53h ; S
-                db  3Ah ; :
-                db  0Dh
-                db  55h ; U
-                db  47h ; G
-                db  48h ; H
-                db  2Ch ; ,
-                db  20h
-                db  4Dh ; M
-                db  45h ; E
-                db  20h
-                db  54h ; T
-                db  4Fh ; O
-                db  55h ; U
-                db  47h ; G
-                db  48h ; H
-                db  21h ; !
-                db    0
-                db 0E9h
-                db 0AFh
-                db 0C8h
-                db  3Ch ; <
-                db 0F4h
-                db  75h ; u
-                db  1Eh
-                db 0E8h
-                db  54h ; T
-                db  0Eh
-                db  41h ; A
-                db  20h
-                db  43h ; C
-                db  4Ch ; L
-                db  45h ; E
-                db  52h ; R
-                db  49h ; I
-                db  43h ; C
-                db  20h
-                db  53h ; S
-                db  41h ; A
-                db  59h ; Y
-                db  53h ; S
-                db  3Ah ; :
-                db  0Dh
-                db  42h ; B
-                db  45h ; E
-                db  4Ch ; L
-                db  49h ; I
-                db  45h ; E
-                db  56h ; V
-                db  45h ; E
-                db  21h ; !
-                db    0
-                db 0E9h
-                db  8Dh
-                db 0C8h
-                db  3Ch ; <
-                db 0F8h
-                db  75h ; u
-                db  2Bh ; +
-                db 0E8h
-                db  32h ; 2
-                db  0Eh
-                db  41h ; A
-                db  20h
-                db  57h ; W
-                db  49h ; I
-                db  5Ah ; Z
-                db  41h ; A
-                db  52h ; R
-                db  44h ; D
-                db  20h
-                db  53h ; S
-                db  41h ; A
-                db  59h ; Y
-                db  53h ; S
-                db  3Ah ; :
-                db  0Dh
-                db  48h ; H
-                db  45h ; E
-                db  58h ; X
-                db  2Dh ; -
-                db  45h ; E
-                db  2Dh ; -
-                db  50h ; P
-                db  4Fh ; O
-                db  4Fh ; O
-                db  2Dh ; -
-                db  48h ; H
-                db  45h ; E
-                db  58h ; X
-                db  2Dh ; -
-                db  4Fh ; O
-                db  4Eh ; N
-                db  2Dh ; -
-                db  59h ; Y
-                db  4Fh ; O
-                db  55h ; U
-                db  21h ; !
-                db    0
-                db 0E9h
-                db  5Eh ; ^
-                db 0C8h
-                db  3Ch ; <
-                db 0FCh
-                db  75h ; u
-                db  2Dh ; -
-                db 0E8h
-                db    3
-                db  0Eh
-                db  41h ; A
-                db  20h
-                db  54h ; T
-                db  48h ; H
-                db  49h ; I
-                db  45h ; E
-                db  46h ; F
-                db  20h
-                db  53h ; S
-                db  41h ; A
-                db  59h ; Y
-                db  53h ; S
-                db  3Ah ; :
-                db  0Dh
-                db  50h ; P
-                db  53h ; S
-                db  53h ; S
-                db  54h ; T
-                db  2Ch ; ,
-                db  20h
-                db  57h ; W
-                db  41h ; A
-                db  4Eh ; N
-                db  4Eh ; N
-                db  41h ; A
-                db  20h
-                db  42h ; B
-                db  55h ; U
-                db  59h ; Y
-                db  20h
-                db  41h ; A
-                db  20h
-                db  57h ; W
-                db  41h ; A
-                db  54h ; T
-                db  43h ; C
-                db  48h ; H
-                db  3Fh ; ?
-                db    0
-                db 0E9h
-                db  2Dh ; -
-                db 0C8h
-                db 0E9h
-                db  9Dh
-                db 0FEh
-                db 0F9h
-                db 0F5h
-                db  1Ch
-                db  80h
-                db 0F5h
-                db 0E8h
-                db  3Dh ; =
-                db 0D3h
-                db 0BFh
-                db    3
-                db    0
-                db 0BEh
-                db 0FFh
-                db 0FFh
-                db  4Eh ; N
-                db  75h ; u
-                db 0FDh
-                db 0BBh
-                db    4
-                db    0
-                db 0E8h
-                db 0F1h
-                db 0C4h
-                db  4Fh ; O
-                db  75h ; u
-                db 0F1h
-                db 0B7h
-                db    0
-                db  8Ah
-                db  1Eh
-                db  20h
-                db    0
-                db  8Bh
-                db 0FBh
-                db 0A0h
-                db  6Dh ; m
-                db    0
-                db  3Ch ; <
-                db    9
-                db  75h ; u
-                db  14h
-                db 0A0h
-                db  4Ah ; J
-                db    0
-                db  3Ch ; <
-                db    3
-                db  75h ; u
-                db  0Dh
-                db  8Ah
-                db  85h
-                db 0D7h
-                db    1
-                db  3Ch ; <
-                db  81h
-                db  75h ; u
-                db    5
-                db 0B0h
-                db    1
-                db 0A2h
-                db  6Ch ; l
-                db    0
-                db 0E9h
-                db 0EAh
-                db 0C7h
-                db  90h
-                db 0E8h
-                db  92h
-                db  0Dh
-                db  57h ; W
-                db  45h ; E
-                db  4Ch ; L
-                db  43h ; C
-                db  4Fh ; O
-                db  4Dh ; M
-                db  45h ; E
-                db  20h
-                db  4Dh ; M
-                db  59h ; Y
-                db  20h
-                db  43h ; C
-                db  48h ; H
-                db  49h ; I
-                db  4Ch ; L
-                db  44h ; D
-                db  20h
-                db    0
+; ---------------------------------------------------------------------------
+
+loc_13FCE:                              ; CODE XREF: steal+92↑j
+                mov     al, _mapY
+                cmp     al, 20h ; ' '
+                jnb     short loc_13F7E
+                mov     al, _mapX
+                cmp     al, 20h ; ' '
+                jb      short loc_13F7E
+                nop
+                call    write_string
+; ---------------------------------------------------------------------------
+aStealFood      db 'STEAL FOOD!',0
+; ---------------------------------------------------------------------------
+                clc
+                mov     al, player._food
+                adc     al, 1
+                daa
+                mov     player._food, al
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_13FF9:                              ; CODE XREF: steal+A4↑j
+                nop
+                call    write_string
+; ---------------------------------------------------------------------------
+aStealArmour    db 'STEAL ARMOUR!',0
+; ---------------------------------------------------------------------------
+                call    sub_15217
+                and     al, 3
+                mov     ah, 0
+                mov     di, ax
+                inc     di
+                clc
+                mov     al, [di+96h]
+                adc     al, 1
+                daa
+                mov     [di+96h], al
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_14024:                              ; CODE XREF: steal+A6↑j
+                nop
+                call    write_string
+; ---------------------------------------------------------------------------
+aStealWeapons   db 'STEAL WEAPONS!',0
+; ---------------------------------------------------------------------------
+                call    sub_15217
+                and     al, 7
+                mov     ah, 0
+                mov     di, ax
+                inc     di
+                clc
+                mov     al, [di+76h]
+                adc     al, 1
+                daa
+                mov     [di+76h], al
+                jmp     loc_10A33
+steal           endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: noreturn
+
+transact        proc near               ; DATA XREF: sg01a2:command_jump_table↑o
+
+; FUNCTION CHUNK AT 1590 SIZE 00000011 BYTES
+; FUNCTION CHUNK AT 15A2 SIZE 00000009 BYTES
+; FUNCTION CHUNK AT 15AC SIZE 00000034 BYTES
+; FUNCTION CHUNK AT 15E1 SIZE 00000007 BYTES
+; FUNCTION CHUNK AT 1799 SIZE 00000004 BYTES
+; FUNCTION CHUNK AT 1841 SIZE 0000000E BYTES
+; FUNCTION CHUNK AT 1869 SIZE 00000004 BYTES
+; FUNCTION CHUNK AT 19AF SIZE 0000000E BYTES
+; FUNCTION CHUNK AT 19D7 SIZE 00000004 BYTES
+; FUNCTION CHUNK AT 1AE0 SIZE 00000004 BYTES
+; FUNCTION CHUNK AT 1D1D SIZE 00000004 BYTES
+; FUNCTION CHUNK AT 1E4F SIZE 00000004 BYTES
+; FUNCTION CHUNK AT 1F75 SIZE 00000004 BYTES
+
+                call    write_string
+; ---------------------------------------------------------------------------
+aTransact       db 'TRANSACT-',0
+; ---------------------------------------------------------------------------
+                call    loc_12362
+                call    sub_123E6
+                mov     bx, di
+                mov     byte_17430, bl
+                mov     al, 8Dh
+                call    print_char
+                mov     al, player._mapNum2
+                or      al, al
+                jz      short loc_140A6
+                mov     bx, di
+                cmp     bl, 0
+                jnz     short loc_140C0
+                call    get_player_tile
+                js      short loc_14085
+                cmp     al, 7Ch ; '|'
+                jnz     short loc_140A6
+
+loc_14085:                              ; CODE XREF: transact+2F↑j
+                nop
+                clc
+                mov     al, _playerX
+                adc     al, _circleDeltaX
+                mov     _playerX, al
+                clc
+                mov     al, _playerY
+                adc     al, _circleDeltaY
+                mov     _playerY, al
+                call    get_player_tile
+                cmp     al, 68h ; 'h'
+                jnz     short loc_140A6
+                jmp     loc_11590
+; ---------------------------------------------------------------------------
+
+loc_140A6:                              ; CODE XREF: transact+23↑j
+                                        ; transact+33↑j ...
+                call    write_string
+; ---------------------------------------------------------------------------
+aFunnyNoRespons db 'FUNNY, NO RESPONSE!',0
+; ---------------------------------------------------------------------------
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_140C0:                              ; CODE XREF: transact+2A↑j
+                mov     al, [di+1D7h]
+                cmp     al, 80h
+                jb      short loc_140CB
+                jmp     loc_14209
+; ---------------------------------------------------------------------------
+
+loc_140CB:                              ; CODE XREF: transact+76↑j
+                nop
+                mov     al, [di+197h]
+                cmp     al, 6Ch ; 'l'
+                jnz     short loc_140D7
+                jmp     loc_14249
+; ---------------------------------------------------------------------------
+
+loc_140D7:                              ; CODE XREF: transact+82↑j
+                nop
+                mov     al, [di+197h]
+                cmp     al, 60h ; '`'
+                jnz     short loc_14104
+                call    write_string
+; ---------------------------------------------------------------------------
+aAGuardSaysPayY db 'A GUARD SAYS:',0Dh,'PAY YOUR TAXES!',0
+; ---------------------------------------------------------------------------
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_14104:                              ; CODE XREF: transact+8E↑j
+                cmp     al, 64h ; 'd'
+                jnz     short loc_14128
+                call    write_string
+; ---------------------------------------------------------------------------
+aAJesterSingsHo db 'A JESTER SINGS:',0Dh,'HO HO HO!',0
+; ---------------------------------------------------------------------------
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_14128:                              ; CODE XREF: transact+B6↑j
+                cmp     al, 68h ; 'h'
+                jnz     short loc_1415B
+                call    write_string
+; ---------------------------------------------------------------------------
+aAMerchantSaysW db 'A MERCHANT SAYS:',0Dh,'WILL YOU BUY MY APPLES?',0
+; ---------------------------------------------------------------------------
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_1415B:                              ; CODE XREF: transact+DA↑j
+                cmp     al, 0F0h
+                jnz     short loc_14184
+                call    write_string
+; ---------------------------------------------------------------------------
+aAFighterSaysUg db 'A FIGHTER SAYS:',0Dh,'UGH, ME TOUGH!',0
+; ---------------------------------------------------------------------------
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_14184:                              ; CODE XREF: transact+10D↑j
+                cmp     al, 0F4h
+                jnz     short loc_141A6
+                call    write_string
+; ---------------------------------------------------------------------------
+aAClericSaysBel db 'A CLERIC SAYS:',0Dh,'BELIEVE!',0
+; ---------------------------------------------------------------------------
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_141A6:                              ; CODE XREF: transact+136↑j
+                cmp     al, 0F8h
+                jnz     short loc_141D5
+                call    write_string
+; ---------------------------------------------------------------------------
+aAWizardSaysHex db 'A WIZARD SAYS:',0Dh,'HEX-E-POO-HEX-ON-YOU!',0
+; ---------------------------------------------------------------------------
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_141D5:                              ; CODE XREF: transact+158↑j
+                cmp     al, 0FCh
+                jnz     short loc_14206
+                call    write_string
+; ---------------------------------------------------------------------------
+aAThiefSaysPsst db 'A THIEF SAYS:',0Dh,'PSST, WANNA BUY A WATCH?',0
+; ---------------------------------------------------------------------------
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_14206:                              ; CODE XREF: transact+187↑j
+                jmp     loc_140A6
+; ---------------------------------------------------------------------------
+
+loc_14209:                              ; CODE XREF: transact+78↑j
+                stc
+                cmc
+                sbb     al, 80h
+                cmc
+                call    print_indexed_shop_string
+                mov     di, 3
+
+loc_14214:                              ; CODE XREF: transact+1D1↓j
+                mov     si, 0FFFFh
+
+loc_14217:                              ; CODE XREF: transact+1C8↓j
+                dec     si
+                jnz     short loc_14217
+                mov     bx, 4
+                call    delayFrames
+                dec     di
+                jnz     short loc_14214
+                mov     bh, 0
+                mov     bl, byte_17430
+                mov     di, bx
+                mov     al, player._disableSave
+                cmp     al, 9
+                jnz     short loc_14246
+                mov     al, player._mapNum2
+                cmp     al, 3
+                jnz     short loc_14246
+                mov     al, [di+1D7h]
+                cmp     al, 81h
+                jnz     short loc_14246
+                mov     al, 1
+                mov     player.field_36, al
+
+loc_14246:                              ; CODE XREF: transact+1E0↑j
+                                        ; transact+1E7↑j ...
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_14249:                              ; CODE XREF: transact+84↑j
+                nop
+                call    write_string
+; ---------------------------------------------------------------------------
+aWelcomeMyChild db 'WELCOME MY CHILD ',0
 ; ---------------------------------------------------------------------------
                 call    write_player_name
                 call    write_string
 ; ---------------------------------------------------------------------------
                 db 8Dh,'FIRST MY 50 G.P. TRIBUTE!',8Dh,0
 ; ---------------------------------------------------------------------------
-
-loc_14281:                              ; CODE XREF: sg01a2:4262↑j
                 mov     al, 50h ; 'P'
                 mov     byte_17438, al
                 mov     al, 0
@@ -14093,8 +10773,8 @@ aAndForItIRaise db 'AND FOR IT I RAISE THEE ',0
                 mov     bl, 0
                 mov     di, bx
 
-loc_142D1:                              ; CODE XREF: sg01a2:42B5↑j
-                                        ; sg01a2:42BF↑j ...
+loc_142D1:                              ; CODE XREF: transact+265↑j
+                                        ; transact+26F↑j ...
                 mov     bx, di
                 mov     byte_1742F, bl
                 mov     ax, di
@@ -14108,1507 +10788,678 @@ loc_142D1:                              ; CODE XREF: sg01a2:42B5↑j
                 daa
                 mov     player._hp, al
                 jmp     loc_10A33
+transact        endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: noreturn
+
+unlock          proc near               ; DATA XREF: sg01a2:command_jump_table↑o
+                call    write_string
 ; ---------------------------------------------------------------------------
-                db 0E8h
-                db 0EBh
-                db  0Ch
-                db  55h ; U
-                db  4Eh ; N
-                db  4Ch ; L
-                db  4Fh ; O
-                db  43h ; C
-                db  4Bh ; K
-                db  20h
-                db  44h ; D
-                db  49h ; I
-                db  52h ; R
-                db  45h ; E
-                db  43h ; C
-                db  54h ; T
-                db  49h ; I
-                db  4Fh ; O
-                db  4Eh ; N
-                db  2Dh ; -
-                db    0
-                db 0E8h
-                db  59h ; Y
-                db 0E0h
-                db 0A0h
-                db  19h
-                db    0
-                db  0Ah
-                db 0C0h
-                db  75h ; u
-                db  16h
-                db 0E8h
-                db 0CCh
-                db  0Ch
-                db  8Dh
-                db  4Eh ; N
-                db  4Fh ; O
-                db  20h
-                db  44h ; D
-                db  4Fh ; O
-                db  4Fh ; O
-                db  52h ; R
-                db  20h
-                db  54h ; T
-                db  48h ; H
-                db  45h ; E
-                db  52h ; R
-                db  45h ; E
-                db  21h ; !
-                db    0
-                db 0E9h
-                db  0Ah
-                db 0C7h
-                db 0A0h
-                db    1
-                db    0
-                db 0A2h
-                db  24h ; $
-                db    0
-                db 0A0h
-                db    0
-                db    0
-                db 0F8h
-                db  12h
-                db    6
-                db  19h
-                db    0
-                db 0A2h
-                db  23h ; #
-                db    0
-                db 0E8h
-                db  79h ; y
-                db  0Dh
-                db  3Ch ; <
-                db 0A0h
-                db  75h ; u
-                db 0D2h
-                db 0A0h
-                db  65h ; e
-                db    0
-                db  0Ah
-                db 0C0h
-                db  75h ; u
-                db  19h
-                db 0E8h
-                db  97h
-                db  0Ch
-                db  8Dh
-                db  4Eh ; N
-                db  4Fh ; O
-                db  20h
-                db  4Bh ; K
-                db  45h ; E
-                db  59h ; Y
-                db  53h ; S
-                db  20h
-                db  54h ; T
-                db  48h ; H
-                db  41h ; A
-                db  54h ; T
-                db  20h
-                db  46h ; F
-                db  49h ; I
-                db  54h ; T
-                db  21h ; !
-                db    0
-                db 0E9h
-                db 0D2h
-                db 0C6h
-                db 0F9h
-                db 0A0h
-                db  65h ; e
-                db    0
-                db 0F5h
-                db  1Ch
-                db    1
-                db  2Fh ; /
-                db 0F5h
-                db 0A2h
-                db  65h ; e
-                db    0
-                db 0A0h
-                db  14h
-                db    0
-                db    2
-                db 0C0h
-                db 0B7h
-                db    0
-                db 0B3h
-                db    0
-                db  8Bh
-                db 0FBh
-                db  8Bh
-                db  9Dh
-                db    6
-                db    0
-                db  88h
-                db    7
-                db 0E9h
-                db 0B5h
-                db 0C6h
-                db 0A0h
-                db 0DBh
-                db    0
-                db  0Ah
-                db 0C0h
-                db  75h ; u
-                db  11h
-                db 0E8h
-                db  57h ; W
-                db  0Ch
-                db  56h ; V
-                db  49h ; I
-                db  45h ; E
-                db  57h ; W
-                db  20h
-                db  57h ; W
-                db  48h ; H
-                db  41h ; A
-                db  54h ; T
-                db  3Fh ; ?
-                db    0
+aUnlockDirectio db 'UNLOCK DIRECTION-',0
+; ---------------------------------------------------------------------------
+                call    loc_12362
+                mov     al, _circleDeltaX
+                or      al, al
+                jnz     short loc_14326
+
+loc_14310:                              ; CODE XREF: unlock+4B↓j
+                call    write_string
+; ---------------------------------------------------------------------------
+                db 8Dh,'NO DOOR THERE!',0
+; ---------------------------------------------------------------------------
+                jmp     sub_10A30
+; ---------------------------------------------------------------------------
+
+loc_14326:                              ; CODE XREF: unlock+1D↑j
+                mov     al, _mapY
+                mov     _playerY, al
+                mov     al, _mapX
+                clc
+                adc     al, _circleDeltaX
+                mov     _playerX, al
+                call    get_player_tile
+                cmp     al, 0A0h
+                jnz     short loc_14310
+                mov     al, player.field_2F
+                or      al, al
+                jnz     short loc_1435E
+                call    write_string
+; ---------------------------------------------------------------------------
+                db 8Dh,'NO KEYS THAT FIT!',0
+; ---------------------------------------------------------------------------
+                jmp     sub_10A30
+; ---------------------------------------------------------------------------
+
+loc_1435E:                              ; CODE XREF: unlock+52↑j
+                stc
+                mov     al, player.field_2F
+                cmc
+                sbb     al, 1
+                das
+                cmc
+                mov     player.field_2F, al
+                mov     al, _tilePlayerCenter
+                add     al, al
+                mov     bh, 0
+                mov     bl, 0
+                mov     di, bx
+                mov     bx, [di+6]
+                mov     [bx], al
+                jmp     loc_10A33
+unlock          endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: noreturn
+
+view            proc near               ; DATA XREF: sg01a2:command_jump_table↑o
+                mov     al, player.field_A5
+                or      al, al
+                jnz     short loc_14396
+
+loc_14385:                              ; CODE XREF: view+1D↓j
+                call    write_string
+; ---------------------------------------------------------------------------
+aViewWhat       db 'VIEW WHAT?',0
                 db 0E9h
                 db  9Dh
                 db 0C6h
-                db 0A0h
-                db  4Ah ; J
-                db    0
-                db  3Ch ; <
-                db    4
-                db  73h ; s
-                db 0E8h
-                db 0E8h
-                db  3Fh ; ?
-                db  0Ch
-                db  56h ; V
-                db  49h ; I
-                db  45h ; E
-                db  57h ; W
-                db  8Dh
-                db  57h ; W
-                db  49h ; I
-                db  54h ; T
-                db  48h ; H
-                db  20h
-                db  4Dh ; M
-                db  41h ; A
-                db  47h ; G
-                db  49h ; I
-                db  43h ; C
-                db  41h ; A
-                db  4Ch ; L
-                db  20h
-                db  48h ; H
-                db  45h ; E
-                db  4Ch ; L
-                db  4Dh ; M
-                db  21h ; !
-                db    0
-                db 0F9h
-                db 0A0h
-                db 0DBh
-                db    0
-                db 0F5h
-                db  1Ch
-                db    1
-                db  2Fh ; /
-                db 0F5h
-                db 0A2h
-                db 0DBh
-                db    0
-                db 0B0h
-                db  20h
-                db 0A2h
-                db  23h ; #
-                db    0
-                db 0A2h
-                db  24h ; $
-                db    0
-                db 0E8h
-                db    3
-                db 0E6h
-                db 0E8h
-                db  7Bh ; {
-                db  0Bh
-                db  80h
-                db 0FCh
-                db 0FFh
-                db  75h ; u
-                db 0F8h
-                db 0B7h
-                db    0
-                db 0B3h
-                db 0FFh
-                db  8Bh
-                db 0FBh
-                db 0B0h
-                db 0FFh
-                db  88h
-                db  85h
-                db  72h ; r
-                db    2
-                db  88h
-                db  85h
-                db  72h ; r
-                db    3
-                db  4Fh ; O
-                db  75h ; u
-                db 0F5h
-                db 0A2h
-                db  72h ; r
-                db    2
-                db 0A2h
-                db  72h ; r
-                db    3
-                db 0E9h
-                db  40h ; @
-                db 0C6h
-                db 0E8h
-                db 0E9h
-                db  0Bh
-                db  57h ; W
-                db  45h ; E
-                db  41h ; A
-                db  52h ; R
-                db  20h
-                db  41h ; A
-                db  52h ; R
-                db  4Dh ; M
-                db  4Fh ; O
-                db  55h ; U
-                db  52h ; R
-                db  3Ah ; :
-                db  0Dh
-                db  31h ; 1
-                db  2Dh ; -
-                db  43h ; C
-                db  4Ch ; L
-                db  4Fh ; O
-                db  54h ; T
-                db  48h ; H
-                db  2Ch ; ,
-                db  20h
-                db  32h ; 2
-                db  2Dh ; -
-                db  4Ch ; L
-                db  45h ; E
-                db  41h ; A
-                db  54h ; T
-                db  48h ; H
-                db  45h ; E
-                db  52h ; R
-                db  2Ch ; ,
-                db  20h
-                db  33h ; 3
-                db  2Dh ; -
-                db  43h ; C
-                db  48h ; H
-                db  41h ; A
-                db  49h ; I
-                db  4Eh ; N
-                db  2Ch ; ,
-                db  0Dh
-                db  34h ; 4
-                db  2Dh ; -
-                db  50h ; P
-                db  4Ch ; L
-                db  41h ; A
-                db  54h ; T
-                db  45h ; E
-                db  2Ch ; ,
-                db  20h
-                db  35h ; 5
-                db  2Dh ; -
-                db  52h ; R
-                db  45h ; E
-                db  46h ; F
-                db  4Ch ; L
-                db  45h ; E
-                db  43h ; C
-                db  54h ; T
-                db  2Ch ; ,
-                db  20h
-                db  36h ; 6
-                db  2Dh ; -
-                db  50h ; P
-                db  4Fh ; O
-                db  57h ; W
-                db  45h ; E
-                db  52h ; R
-                db  2Ch ; ,
-                db  0Dh
-                db  57h ; W
-                db  48h ; H
-                db  49h ; I
-                db  43h ; C
-                db  48h ; H
-                db  3Fh ; ?
-                db  20h
-                db    0
-                db 0E8h
-                db 0E0h
-                db 0DBh
-                db 0A2h
-                db  1Fh
-                db    0
-                db  3Ch ; <
-                db    7
-                db  72h ; r
-                db    5
-                db 0B0h
-                db    0
-                db 0A2h
-                db  1Fh
-                db    0
-                db  90h
-                db 0F8h
-                db  14h
-                db  1Dh
-                db 0E8h
-                db  31h ; 1
-                db  0Ch
-                db 0B7h
-                db    0
-                db  8Ah
-                db  1Eh
-                db  1Fh
-                db    0
-                db  8Bh
-                db 0FBh
-                db  8Ah
-                db  85h
-                db  96h
-                db    0
-                db  0Ah
-                db 0C0h
-                db  75h ; u
-                db  19h
-                db 0A0h
-                db  1Fh
-                db    0
-                db  0Ah
-                db 0C0h
-                db  74h ; t
-                db  12h
-                db 0E8h
-                db  6Ah ; j
-                db  0Bh
-                db  20h
-                db  4Eh ; N
-                db  4Fh ; O
-                db  54h ; T
-                db  20h
-                db  4Fh ; O
-                db  57h ; W
-                db  4Eh ; N
-                db  45h ; E
-                db  44h ; D
-                db  21h ; !
-                db    0
-                db 0E9h
-                db 0AFh
-                db 0C5h
-                db 0A0h
-                db  1Fh
-                db    0
-                db    2
-                db 0C0h
-                db    2
-                db 0C0h
-                db    2
-                db 0C0h
-                db  3Ah ; :
-                db    6
-                db  4Bh ; K
-                db    0
-                db  72h ; r
-                db  2Dh ; -
-                db 0E8h
-                db  49h ; I
-                db  0Bh
-                db  20h
-                db  3Ch ; <
-                db  2Dh ; -
-                db  54h ; T
-                db  48h ; H
-                db  4Fh ; O
-                db  55h ; U
-                db  20h
-                db  41h ; A
-                db  52h ; R
-                db  54h ; T
-                db  20h
-                db  4Eh ; N
-                db  4Fh ; O
-                db  54h ; T
-                db  0Dh
-                db  53h ; S
-                db  54h ; T
-                db  52h ; R
-                db  4Fh ; O
-                db  4Eh ; N
-                db  47h ; G
-                db  20h
-                db  45h ; E
-                db  4Eh ; N
-                db  4Fh ; O
-                db  55h ; U
-                db  47h ; G
-                db  48h ; H
-                db  20h
-                db  54h ; T
-                db  4Fh ; O
-                db  20h
-                db  57h ; W
-                db  45h ; E
-                db  41h ; A
-                db  52h ; R
-                db  21h ; !
-                db    0
-                db 0E9h
-                db  73h ; s
-                db 0C5h
-                db 0E8h
-                db  1Ch
-                db  0Bh
-                db  20h
-                db  52h ; R
-                db  45h ; E
-                db  41h ; A
-                db  44h ; D
-                db  59h ; Y
-                db  2Eh ; .
-                db    0
-                db 0A0h
-                db  1Fh
-                db    0
-                db 0A2h
-                db  62h ; b
-                db    0
-                db 0E9h
-                db  5Fh ; _
-                db 0C5h
-                db 0E8h
-                db    8
-                db  0Bh
-                db  58h ; X
-                db  2Dh ; -
-                db  49h ; I
-                db  54h ; T
-                db    0
-                db 0A0h
-                db  13h
-                db    0
-                db  3Ch ; <
-                db  78h ; x
-                db  72h ; r
-                db  0Dh
-                db 0E8h
-                db 0F9h
-                db  0Ah
-                db  20h
-                db  57h ; W
-                db  48h ; H
-                db  41h ; A
-                db  54h ; T
-                db  3Fh ; ?
-                db    0
-                db 0E9h
-                db  40h ; @
-                db 0C5h
-                db  90h
-                db 0A0h
-                db    0
-                db    0
-                db 0A2h
-                db  23h ; #
-                db    0
-                db 0A0h
-                db    1
-                db    0
-                db 0A2h
-                db  24h ; $
-                db    0
-                db 0E8h
-                db 0B3h
-                db  0Bh
-                db 0A0h
-                db  14h
-                db    0
-                db  3Ch ; <
-                db    4
-                db  74h ; t
-                db  1Ch
-                db  3Ch ; <
-                db    0
-                db  75h ; u
-                db    7
-                db 0A0h
-                db  13h
-                db    0
-                db  3Ch ; <
-                db  24h ; $
-                db  74h ; t
-                db  11h
-                db 0E8h
-                db 0CAh
-                db  0Ah
-                db  2Dh ; -
-                db  4Eh ; N
-                db  4Fh ; O
-                db  54h ; T
-                db  20h
-                db  48h ; H
-                db  45h ; E
-                db  52h ; R
-                db  45h ; E
-                db  21h ; !
-                db    0
-                db 0E9h
-                db  0Dh
-                db 0C5h
-                db 0A0h
-                db  13h
-                db    0
-                db    2
-                db 0C0h
-                db 0B7h
-                db    0
-                db 0B3h
-                db    0
-                db  8Bh
-                db 0F3h
-                db  8Bh
-                db  1Eh
-                db    6
-                db    0
-                db  88h
-                db    0
-                db 0A0h
-                db  47h ; G
-                db    0
-                db    2
-                db 0C0h
-                db 0F8h
-                db  14h
-                db  78h ; x
-                db 0A2h
-                db  13h
-                db    0
-                db 0E9h
-                db 0F1h
-                db 0C4h
-                db 0E8h
-                db  9Ah
-                db  0Ah
-                db  59h ; Y
-                db  45h ; E
-                db  4Ch ; L
-                db  4Ch ; L
-                db  20h
-                db  57h ; W
-                db  48h ; H
-                db  41h ; A
-                db  54h ; T
-                db  3Fh ; ?
-                db  8Dh
-                db    0
-                db 0E8h
-                db 0F9h
-                db    9
-                db  80h
-                db 0FCh
-                db 0FFh
-                db  75h ; u
-                db 0F8h
-                db  3Ch ; <
-                db  0Dh
-                db  74h ; t
-                db    5
-                db 0E8h
-                db  94h
-                db  0Eh
-                db 0EBh
-                db 0EFh
-                db 0E8h
-                db  8Fh
-                db  0Eh
-                db 0E9h
-                db 0CBh
-                db 0C4h
-                db 0E8h
-                db 0B1h
-                db    4
-                db 0C6h
-                db    6
-                db  4Fh ; O
-                db    5
-                db    1
-                db 0C6h
-                db    6
-                db  2Eh ; .
-                db    0
-                db    1
-                db 0C6h
-                db    6
-                db  31h ; 1
-                db    0
-                db  26h ; &
-                db 0E8h
-                db  80h
-                db  0Ch
-                db 0E8h
-                db 0FAh
-                db  0Ah
-                db 0E8h
-                db  5Ch ; \
-                db  0Ah
-                db  8Dh
-                db  41h ; A
-                db  20h
-                db  4Ch ; L
-                db  45h ; E
-                db  56h ; V
-                db  45h ; E
-                db  4Ch ; L
-                db  20h
-                db    0
-                db 0A0h
-                db  56h ; V
-                db    0
-                db 0E8h
-                db  22h ; "
-                db  0Eh
-                db 0B0h
-                db  20h
-                db 0E8h
-                db  5Ch ; \
-                db  0Eh
-                db 0A0h
-                db  46h ; F
-                db    0
-                db 0E8h
-                db 0C1h
-                db  0Ah
-                db 0B0h
-                db  20h
-                db 0E8h
-                db  51h ; Q
-                db  0Eh
-                db 0A0h
-                db  48h ; H
-                db    0
-                db 0F8h
-                db  14h
-                db  44h ; D
-                db 0E8h
-                db 0E0h
-                db  0Ah
-                db 0B0h
-                db  20h
-                db 0E8h
-                db  43h ; C
-                db  0Eh
-                db 0A0h
-                db  47h ; G
-                db    0
-                db 0F8h
-                db  14h
-                db  48h ; H
-                db 0E8h
-                db 0D2h
-                db  0Ah
-                db 0B0h
-                db  0Dh
-                db 0E8h
-                db  35h ; 5
-                db  0Eh
-                db 0B0h
-                db  0Dh
-                db 0E8h
-                db  30h ; 0
-                db  0Eh
-                db 0E8h
-                db  18h
-                db  0Ah
-                db  20h
-                db  20h
-                db  57h ; W
-                db  45h ; E
-                db  41h ; A
-                db  50h ; P
-                db  4Fh ; O
-                db  4Eh ; N
-                db  2Dh ; -
-                db    0
-                db 0A0h
-                db  61h ; a
-                db    0
-                db 0F8h
-                db  14h
-                db  13h
-                db 0E8h
-                db 0B2h
-                db  0Ah
-                db 0B7h
-                db    0
-                db 0B3h
-                db  1Dh
-                db  8Bh
-                db 0FBh
-                db 0B7h
-                db    0
-                db 0B3h
-                db    3
-                db  8Bh
-                db 0F3h
-                db 0E8h
-                db    2
-                db  0Ch
-                db 0E8h
-                db 0F3h
-                db    9
-                db  54h ; T
-                db  4Fh ; O
-                db  52h ; R
-                db  43h ; C
-                db  48h ; H
-                db  45h ; E
-                db  53h ; S
-                db  2Dh ; -
-                db    0
-                db 0A0h
-                db  64h ; d
-                db    0
-                db 0E8h
-                db 0BAh
-                db  0Dh
-                db 0B7h
-                db    0
-                db 0B3h
-                db    1
-                db  8Bh
-                db 0FBh
-                db 0B7h
-                db    0
-                db 0B3h
-                db    4
-                db  8Bh
-                db 0F3h
-                db 0E8h
-                db 0E1h
-                db  0Bh
-                db 0E8h
-                db 0D2h
-                db    9
-                db  20h
-                db  20h
-                db  41h ; A
-                db  52h ; R
-                db  4Dh ; M
-                db  4Fh ; O
-                db  55h ; U
-                db  52h ; R
-                db  2Dh ; -
-                db    0
-                db 0A0h
-                db  62h ; b
-                db    0
-                db 0F8h
-                db  14h
-                db  1Dh
-                db 0E8h
-                db  6Ch ; l
-                db  0Ah
-                db 0B7h
-                db    0
-                db 0B3h
-                db  20h
-                db  8Bh
-                db 0FBh
-                db 0B7h
-                db    0
-                db 0B3h
-                db    4
-                db  8Bh
-                db 0F3h
-                db 0E8h
-                db 0BCh
-                db  0Bh
-                db 0E8h
-                db 0ADh
-                db    9
-                db  4Bh ; K
-                db  45h ; E
-                db  59h ; Y
-                db  53h ; S
-                db  2Dh ; -
-                db    0
-                db 0A0h
-                db  65h ; e
-                db    0
-                db 0E8h
-                db  77h ; w
-                db  0Dh
-                db 0B7h
-                db    0
-                db 0B3h
-                db    4
-                db  8Bh
-                db 0FBh
-                db 0B7h
-                db    0
-                db 0B3h
-                db    5
-                db  8Bh
-                db 0F3h
-                db 0E8h
-                db  9Eh
-                db  0Bh
-                db 0E8h
-                db  8Fh
-                db    9
-                db  53h ; S
-                db  50h ; P
-                db  45h ; E
-                db  4Ch ; L
-                db  4Ch ; L
-                db  2Dh ; -
-                db    0
-                db 0A0h
-                db  63h ; c
-                db    0
-                db 0F8h
-                db  14h
-                db  24h ; $
-                db 0E8h
-                db  2Ch ; ,
-                db  0Ah
-                db 0B7h
-                db    0
-                db 0B3h
-                db  1Fh
-                db  8Bh
-                db 0FBh
-                db 0B7h
-                db    0
-                db 0B3h
-                db    5
-                db  8Bh
-                db 0F3h
-                db 0E8h
-                db  7Ch ; |
-                db  0Bh
-                db 0E8h
-                db  6Dh ; m
-                db    9
-                db  54h ; T
-                db  4Fh ; O
-                db  4Fh ; O
-                db  4Ch ; L
-                db  53h ; S
-                db  2Dh ; -
-                db    0
-                db 0A0h
-                db  66h ; f
-                db    0
-                db 0E8h
-                db  36h ; 6
-                db  0Dh
-                db 0B7h
-                db    0
-                db 0B3h
-                db    1
-                db  8Bh
-                db 0FBh
-                db 0B7h
-                db    0
-                db 0B3h
-                db    6
-                db  8Bh
-                db 0F3h
-                db 0E8h
-                db  5Dh ; ]
-                db  0Bh
-                db 0B0h
-                db  3Eh ; >
-                db 0E8h
-                db 0F9h
-                db    9
-                db 0B0h
-                db  2Dh ; -
-                db 0E8h
-                db  5Ch ; \
-                db  0Dh
-                db 0A0h
-                db  4Bh ; K
-                db    0
-                db 0E8h
-                db  17h
-                db  0Dh
-                db 0B7h
-                db    0
-                db 0B3h
-                db    2
-                db  8Bh
-                db 0FBh
-                db 0B7h
-                db    0
-                db 0B3h
-                db    7
-                db  8Bh
-                db 0F3h
-                db 0E8h
-                db  3Eh ; >
-                db  0Bh
-                db 0B0h
-                db  3Fh ; ?
-                db 0E8h
-                db 0DAh
-                db    9
-                db 0B0h
-                db  2Dh ; -
-                db 0E8h
-                db  3Dh ; =
-                db  0Dh
-                db 0A0h
-                db  4Ch ; L
-                db    0
-                db 0E8h
-                db 0F8h
-                db  0Ch
-                db 0B7h
-                db    0
-                db 0B3h
-                db  10h
-                db  8Bh
-                db 0FBh
-                db 0B7h
-                db    0
-                db 0B3h
-                db    6
-                db  8Bh
-                db 0F3h
-                db 0E8h
-                db  1Fh
-                db  0Bh
-                db 0B0h
-                db  40h ; @
-                db 0E8h
-                db 0BBh
-                db    9
-                db 0B0h
-                db  2Dh ; -
-                db 0E8h
-                db  1Eh
-                db  0Dh
-                db 0A0h
-                db  4Dh ; M
-                db    0
-                db 0E8h
-                db 0D9h
-                db  0Ch
-                db 0B7h
-                db    0
-                db 0B3h
-                db  0Fh
-                db  8Bh
-                db 0FBh
-                db 0B7h
-                db    0
-                db 0B3h
-                db    7
-                db  8Bh
-                db 0F3h
-                db 0E8h
-                db    0
-                db  0Bh
-                db 0B0h
-                db  41h ; A
-                db 0E8h
-                db  9Ch
-                db    9
-                db 0B0h
-                db  2Dh ; -
-                db 0E8h
-                db 0FFh
-                db  0Ch
-                db 0A0h
-                db  4Eh ; N
-                db    0
-                db 0E8h
-                db 0BAh
-                db  0Ch
-                db 0B7h
-                db    0
-                db 0B3h
-                db  1Eh
-                db  8Bh
-                db 0FBh
-                db 0B7h
-                db    0
-                db 0B3h
-                db    6
-                db  8Bh
-                db 0F3h
-                db 0E8h
-                db 0E1h
-                db  0Ah
-                db 0B0h
-                db  42h ; B
-                db 0E8h
-                db  7Dh ; }
-                db    9
-                db 0B0h
-                db  2Dh ; -
-                db 0E8h
-                db 0E0h
-                db  0Ch
-                db 0A0h
-                db  4Fh ; O
-                db    0
-                db 0E8h
-                db  9Bh
-                db  0Ch
-                db 0B7h
-                db    0
-                db 0B3h
-                db  1Dh
-                db  8Bh
-                db 0FBh
-                db 0B7h
-                db    0
-                db 0B3h
-                db    7
-                db  8Bh
-                db 0F3h
-                db 0E8h
-                db 0C2h
-                db  0Ah
-                db 0B0h
-                db  43h ; C
-                db 0E8h
-                db  5Eh ; ^
-                db    9
-                db 0B0h
-                db  2Dh ; -
-                db 0E8h
-                db 0C1h
-                db  0Ch
-                db 0A0h
-                db  50h ; P
-                db    0
-                db 0E8h
-                db  7Ch ; |
-                db  0Ch
-                db 0B7h
-                db    0
-                db 0B3h
-                db    1
-                db  8Bh
-                db 0FBh
-                db 0B7h
-                db    0
-                db 0B3h
-                db    9
-                db  8Bh
-                db 0F3h
-                db 0E8h
-                db 0A3h
-                db  0Ah
-                db 0E8h
-                db  94h
-                db    8
-                db  57h ; W
-                db  45h ; E
-                db  41h ; A
-                db  50h ; P
-                db  4Fh ; O
-                db  4Eh ; N
-                db  53h ; S
-                db  3Ah ; :
-                db  20h
-                db    0
-                db 0B7h
-                db    0
-                db 0B3h
-                db    1
-                db  8Bh
-                db 0FBh
-                db  8Ah
-                db  85h
-                db  76h ; v
-                db    0
-                db  0Ah
-                db 0C0h
-                db  74h ; t
-                db  28h ; (
-                db  8Bh
-                db 0DFh
-                db  88h
-                db  1Eh
-                db  1Fh
-                db    0
-                db  8Bh
-                db 0C7h
-                db 0F8h
-                db  14h
-                db  13h
-                db 0E8h
-                db  1Bh
-                db    9
-                db 0E8h
-                db  6Bh ; k
-                db    8
-                db  53h ; S
-                db  2Dh ; -
-                db    0
-                db 0B7h
-                db    0
-                db  8Ah
-                db  1Eh
-                db  1Fh
-                db    0
-                db  8Bh
-                db 0FBh
-                db  8Ah
-                db  85h
-                db  76h ; v
-                db    0
-                db 0E8h
-                db  2Fh ; /
-                db  0Ch
-                db 0B0h
-                db  20h
-                db 0E8h
-                db  69h ; i
-                db  0Ch
-                db  47h ; G
-                db  8Bh
-                db 0DFh
-                db  80h
-                db 0FBh
-                db  0Ah
-                db  72h ; r
-                db 0C8h
-                db 0B7h
-                db    0
-                db 0B3h
-                db    1
-                db  8Bh
-                db 0FBh
-                db 0B7h
-                db    0
-                db 0B3h
-                db  0Ch
-                db  8Bh
-                db 0F3h
-                db 0E8h
-                db  49h ; I
-                db  0Ah
-                db 0E8h
-                db  3Ah ; :
-                db    8
-                db  41h ; A
-                db  52h ; R
-                db  4Dh ; M
-                db  4Fh ; O
-                db  55h ; U
-                db  52h ; R
-                db  3Ah ; :
-                db  20h
-                db    0
-                db 0B7h
-                db    0
-                db 0B3h
-                db    1
-                db  8Bh
-                db 0FBh
-                db  8Ah
-                db  85h
-                db  96h
-                db    0
-                db  0Ah
-                db 0C0h
-                db  74h ; t
-                db  27h ; '
-                db  8Bh
-                db 0DFh
-                db  88h
-                db  1Eh
-                db  1Fh
-                db    0
-                db  8Bh
-                db 0C7h
-                db 0F8h
-                db  14h
-                db  1Dh
-                db 0E8h
-                db 0C2h
-                db    8
-                db 0E8h
-                db  12h
-                db    8
-                db  2Dh ; -
-                db    0
-                db 0B7h
-                db    0
-                db  8Ah
-                db  1Eh
-                db  1Fh
-                db    0
-                db  8Bh
-                db 0FBh
-                db  8Ah
-                db  85h
-                db  96h
-                db    0
-                db 0E8h
-                db 0D7h
-                db  0Bh
-                db 0B0h
-                db  20h
-                db 0E8h
-                db  11h
-                db  0Ch
-                db  47h ; G
-                db  8Bh
-                db 0DFh
-                db  80h
-                db 0FBh
-                db    7
-                db  72h ; r
-                db 0C9h
-                db 0B7h
-                db    0
-                db 0B3h
-                db    1
-                db  8Bh
-                db 0FBh
-                db 0B7h
-                db    0
-                db 0B3h
-                db  0Eh
-                db  8Bh
-                db 0F3h
-                db 0E8h
-                db 0F1h
-                db    9
-                db 0E8h
-                db 0E2h
-                db    7
-                db  53h ; S
-                db  50h ; P
-                db  45h ; E
-                db  4Ch ; L
-                db  4Ch ; L
-                db  53h ; S
-                db  3Ah ; :
-                db  20h
-                db    0
-                db 0B7h
-                db    0
-                db 0B3h
-                db    1
-                db  8Bh
-                db 0FBh
-                db  8Ah
-                db  85h
-                db 0B6h
-                db    0
-                db  0Ah
-                db 0C0h
-                db  74h ; t
-                db  28h ; (
-                db  8Bh
-                db 0DFh
-                db  88h
-                db  1Eh
-                db  1Fh
-                db    0
-                db  8Bh
-                db 0C7h
-                db 0F8h
-                db  14h
-                db  24h ; $
-                db 0E8h
-                db  6Ah ; j
-                db    8
-                db 0E8h
-                db 0BAh
-                db    7
-                db  53h ; S
-                db  2Dh ; -
-                db    0
-                db 0B7h
-                db    0
-                db  8Ah
-                db  1Eh
-                db  1Fh
-                db    0
-                db  8Bh
-                db 0FBh
-                db  8Ah
-                db  85h
-                db 0B6h
-                db    0
-                db 0E8h
-                db  7Eh ; ~
-                db  0Bh
-                db 0B0h
-                db  20h
-                db 0E8h
-                db 0B8h
-                db  0Bh
-                db  47h ; G
-                db  8Bh
-                db 0DFh
-                db  80h
-                db 0FBh
-                db  0Ah
-                db  72h ; r
-                db 0C8h
-                db 0B7h
-                db    0
-                db 0B3h
-                db    1
-                db  8Bh
-                db 0FBh
-                db 0B7h
-                db    0
-                db 0B3h
-                db  12h
-                db  8Bh
-                db 0F3h
-                db 0E8h
-                db  98h
-                db    9
-                db 0E8h
-                db  89h
-                db    7
-                db  49h ; I
-                db  54h ; T
-                db  45h ; E
-                db  4Dh ; M
-                db  53h ; S
-                db  3Ah ; :
-                db  20h
-                db    0
-                db 0B7h
-                db    0
-                db 0B3h
-                db    0
-                db  8Bh
-                db 0FBh
-                db  8Ah
-                db  85h
-                db 0D6h
-                db    0
-                db  0Ah
-                db 0C0h
-                db  74h ; t
-                db  33h ; 3
-                db  8Bh
-                db 0DFh
-                db  88h
-                db  1Eh
-                db  1Fh
-                db    0
-                db  8Bh
-                db 0C7h
-                db 0F8h
-                db  14h
-                db  2Eh ; .
-                db 0E8h
-                db  12h
-                db    8
-                db  80h
-                db  3Eh ; >
-                db  1Fh
-                db    0
-                db    3
-                db  74h ; t
-                db    5
-                db 0E8h
-                db  5Bh ; [
-                db    7
-                db  53h ; S
-                db    0
-                db 0E8h
-                db  56h ; V
-                db    7
-                db  2Dh ; -
-                db    0
-                db 0B7h
-                db    0
-                db  8Ah
-                db  1Eh
-                db  1Fh
-                db    0
-                db  8Bh
-                db 0FBh
-                db  8Ah
-                db  85h
-                db 0D6h
-                db    0
-                db 0E8h
-                db  1Bh
-                db  0Bh
-                db 0B0h
-                db  20h
-                db 0E8h
-                db  55h ; U
-                db  0Bh
-                db  47h ; G
-                db  8Bh
-                db 0DFh
-                db  80h
-                db 0FBh
-                db  10h
-                db  72h ; r
-                db 0BDh
-                db 0C6h
-                db    6
-                db  2Eh ; .
-                db    0
-                db    0
-                db 0C6h
-                db    6
-                db  4Fh ; O
-                db    5
-                db    0
-                db 0C6h
-                db    6
-                db  31h ; 1
-                db    0
-                db  28h ; (
-                db 0B7h
-                db    0
-                db 0B3h
-                db    0
-                db  8Bh
-                db 0FBh
-                db 0E8h
-                db  8Eh
-                db    6
-                db  80h
-                db 0FCh
-                db 0FFh
-                db  75h ; u
-                db 0F8h
-                db 0E8h
-                db  77h ; w
-                db    1
-                db 0E8h
-                db  2Fh ; /
-                db    8
-                db 0E9h
-                db  66h ; f
-                db 0C1h
+; ---------------------------------------------------------------------------
+
+loc_14396:                              ; CODE XREF: view+5↑j
+                mov     al, player._mapNum2
+                cmp     al, 4
+                jnb     short loc_14385
+                call    write_string
+; ---------------------------------------------------------------------------
+aView           db 'VIEW'
+; ---------------------------------------------------------------------------
+                lea     dx, player._mapNum1[bx]
+                push    sp
+                dec     ax
+                and     (player._name+0Bh)[di], cl
+                inc     di
+                dec     cx
+                inc     bx
+                inc     cx
+                dec     sp
+                and     [bx+si+45h], cl
+                dec     sp
+                dec     bp
+                and     [bx+si], ax
+                stc
+                mov     al, player.field_A5
+                cmc
+                sbb     al, 1
+                das
+                cmc
+                mov     player.field_A5, al
+                mov     al, 20h ; ' '
+                mov     _playerX, al
+                mov     _playerY, al
+                call    sub_129D2
+
+loc_143CF:                              ; CODE XREF: view+57↓j
+                call    keypress_check
+                cmp     ah, 0FFh
+                jnz     short loc_143CF
+                mov     bh, 0
+                mov     bl, 0FFh
+                mov     di, bx
+                mov     al, 0FFh
+
+loc_143DF:                              ; CODE XREF: view+6A↓j
+                mov     _mapTileIds[di], al
+                mov     _priorMapTileIds[di], al
+                dec     di
+                jnz     short loc_143DF
+                mov     _mapTileIds, al
+                mov     _priorMapTileIds, al
+                jmp     loc_10A33
+view            endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: noreturn
+
+wear_armor      proc near               ; DATA XREF: sg01a2:command_jump_table↑o
+                call    write_string
+; ---------------------------------------------------------------------------
+aWearArmour1Clo db 'WEAR ARMOUR:',0Dh,'1-CLOTH, 2-LEATHER, 3-CHAIN,',0Dh,'4-PLATE, 5-'
+                db 'REFLECT, 6-POWER,',0Dh,'WHICH? ',0
+; ---------------------------------------------------------------------------
+                call    sub_12028
+                mov     byte_1742F, al
+                cmp     al, 7
+                jb      short loc_14454
+                mov     al, 0
+                mov     byte_1742F, al
+
+loc_14454:                              ; CODE XREF: wear_armor+5A↑j
+                nop
+                clc
+                adc     al, 1Dh
+                call    sub_1508C
+                mov     bh, 0
+                mov     bl, byte_1742F
+                mov     di, bx
+                mov     al, player.field_60[di]
+                or      al, al
+                jnz     short loc_14484
+                mov     al, byte_1742F
+                or      al, al
+                jz      short loc_14484
+                call    write_string
+; ---------------------------------------------------------------------------
+aNotOwned       db ' NOT OWNED!',0
+; ---------------------------------------------------------------------------
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_14484:                              ; CODE XREF: wear_armor+76↑j
+                                        ; wear_armor+7D↑j
+                mov     al, byte_1742F
+                add     al, al
+                add     al, al
+                add     al, al
+                cmp     al, player._strength
+                jb      short loc_144C0
+                call    write_string
+; ---------------------------------------------------------------------------
+aThouArtNotStro db ' <-THOU ART NOT',0Dh,'STRONG ENOUGH TO WEAR!',0
+; ---------------------------------------------------------------------------
+                jmp     loc_10A33
+; ---------------------------------------------------------------------------
+
+loc_144C0:                              ; CODE XREF: wear_armor+9E↑j
+                call    write_string
+; ---------------------------------------------------------------------------
+aReady          db ' READY.',0
+; ---------------------------------------------------------------------------
+                mov     al, byte_1742F
+                mov     player.field_2C, al
+                jmp     loc_10A33
+wear_armor      endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: noreturn
+
+x_it            proc near               ; DATA XREF: sg01a2:command_jump_table↑o
+                call    write_string
+; ---------------------------------------------------------------------------
+aXIt            db 'X-IT',0
+; ---------------------------------------------------------------------------
+                mov     al, _playerTileId
+                cmp     al, 78h ; 'x'
+                jb      short loc_144F0
+                call    write_string
+; ---------------------------------------------------------------------------
+aWhat_0         db ' WHAT?',0
+; ---------------------------------------------------------------------------
+                jmp     sub_10A30
+; ---------------------------------------------------------------------------
+
+loc_144F0:                              ; CODE XREF: x_it+D↑j
+                nop
+                mov     al, _mapX
+                mov     _playerX, al
+                mov     al, _mapY
+                mov     _playerY, al
+                call    get_player_tile
+                mov     al, _tilePlayerCenter
+                cmp     al, 4
+                jz      short loc_14523
+                cmp     al, 0
+                jnz     short loc_14512
+                mov     al, _playerTileId
+                cmp     al, 24h ; '$'
+                jz      short loc_14523
+
+loc_14512:                              ; CODE XREF: x_it+35↑j
+                call    write_string
+; ---------------------------------------------------------------------------
+aNotHere        db '-NOT HERE!',0
+; ---------------------------------------------------------------------------
+                jmp     sub_10A30
+; ---------------------------------------------------------------------------
+
+loc_14523:                              ; CODE XREF: x_it+31↑j
+                                        ; x_it+3C↑j
+                mov     al, _playerTileId
+                add     al, al
+                mov     bh, 0
+                mov     bl, 0
+                mov     si, bx
+                mov     bx, current_tile_ptr
+                mov     [bx+si], al
+                mov     al, player._class
+                add     al, al
+                clc
+                adc     al, 78h ; 'x'
+                mov     _playerTileId, al
+                jmp     loc_10A33
+x_it            endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: noreturn
+
+yell            proc near               ; DATA XREF: sg01a2:command_jump_table↑o
+                call    write_string
+; ---------------------------------------------------------------------------
+aYellWhat       db 'YELL WHAT?',8Dh,0
+; ---------------------------------------------------------------------------
+
+loc_14551:                              ; CODE XREF: yell+15↓j
+                                        ; yell+1E↓j
+                call    keypress_check
+                cmp     ah, 0FFh
+                jnz     short loc_14551
+                cmp     al, 0Dh
+                jz      short loc_14562
+                call    print_char
+                jmp     short loc_14551
+; ---------------------------------------------------------------------------
+
+loc_14562:                              ; CODE XREF: yell+19↑j
+                call    print_char
+                jmp     loc_10A33
+yell            endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: noreturn
+
+zstats          proc near               ; DATA XREF: sg01a2:command_jump_table↑o
+                call    set_cga_mode
+                mov     byte_1795F, 1
+                mov     text_x, 1
+                mov     text_width?, 26h ; '&'
+                call    set_cursor_position
+                call    write_player_name
+                call    write_string
+; ---------------------------------------------------------------------------
+                db 8Dh,'A LEVEL ',0
+; ---------------------------------------------------------------------------
+                mov     al, player._experience
+                call    write_number
+                mov     al, 20h ; ' '
+                call    print_char
+                mov     al, player._sex
+                call    write_player_sex
+                mov     al, 20h ; ' '
+                call    print_char
+                mov     al, player._race
+                clc
+                adc     al, 44h ; 'D'
+                call    sub_1508C
+                mov     al, 20h ; ' '
+                call    print_char
+                mov     al, player._class
+                clc
+                adc     al, 48h ; 'H'
+                call    sub_1508C
+                mov     al, 0Dh
+                call    print_char
+                mov     al, 0Dh
+                call    print_char
+                call    write_string
+; ---------------------------------------------------------------------------
+aWeapon         db '  WEAPON-',0
+; ---------------------------------------------------------------------------
+                mov     al, player.field_2B
+                clc
+                adc     al, 13h
+                call    sub_1508C
+                mov     bh, 0
+                mov     bl, 1Dh
+                mov     di, bx          ; x
+                mov     bh, 0
+                mov     bl, 3
+                mov     si, bx          ; y
+                call    set_text_pos
+                call    write_string
+; ---------------------------------------------------------------------------
+aTorches        db 'TORCHES-',0
+; ---------------------------------------------------------------------------
+                mov     al, player.field_2E
+                call    write_number
+                mov     bh, 0
+                mov     bl, 1
+                mov     di, bx          ; x
+                mov     bh, 0
+                mov     bl, 4
+                mov     si, bx          ; y
+                call    set_text_pos
+                call    write_string
+; ---------------------------------------------------------------------------
+aArmour         db '  ARMOUR-',0
+; ---------------------------------------------------------------------------
+                mov     al, player.field_2C
+                clc
+                adc     al, 1Dh
+                call    sub_1508C
+                mov     bh, 0
+                mov     bl, 20h ; ' '
+                mov     di, bx          ; x
+                mov     bh, 0
+                mov     bl, 4
+                mov     si, bx          ; y
+                call    set_text_pos
+                call    write_string
+; ---------------------------------------------------------------------------
+aKeys           db 'KEYS-',0
+; ---------------------------------------------------------------------------
+                mov     al, player.field_2F
+                call    write_number
+                mov     bh, 0
+                mov     bl, 4
+                mov     di, bx          ; x
+                mov     bh, 0
+                mov     bl, 5
+                mov     si, bx          ; y
+                call    set_text_pos
+                call    write_string
+; ---------------------------------------------------------------------------
+aSpell          db 'SPELL-',0
+; ---------------------------------------------------------------------------
+                mov     al, player.field_2D
+                clc
+                adc     al, 24h ; '$'
+                call    sub_1508C
+                mov     bh, 0
+                mov     bl, 1Fh
+                mov     di, bx          ; x
+                mov     bh, 0
+                mov     bl, 5
+                mov     si, bx          ; y
+                call    set_text_pos
+                call    write_string
+; ---------------------------------------------------------------------------
+aTools          db 'TOOLS-',0
+; ---------------------------------------------------------------------------
+                mov     al, player.field_30
+                call    write_number
+                mov     bh, 0
+                mov     bl, 1
+                mov     di, bx          ; x
+                mov     bh, 0
+                mov     bl, 6
+                mov     si, bx          ; y
+                call    set_text_pos
+                mov     al, 3Eh ; '>'
+                call    sub_1508C
+                mov     al, 2Dh ; '-'
+                call    print_char
+                mov     al, player._strength
+                call    write_number
+                mov     bh, 0
+                mov     bl, 2
+                mov     di, bx          ; x
+                mov     bh, 0
+                mov     bl, 7
+                mov     si, bx          ; y
+                call    set_text_pos
+                mov     al, 3Fh ; '?'
+                call    sub_1508C
+                mov     al, 2Dh ; '-'
+                call    print_char
+                mov     al, player._agility
+                call    write_number
+                mov     bh, 0
+                mov     bl, 10h
+                mov     di, bx          ; x
+                mov     bh, 0
+                mov     bl, 6
+                mov     si, bx          ; y
+                call    set_text_pos
+                mov     al, 40h ; '@'
+                call    sub_1508C
+                mov     al, 2Dh ; '-'
+                call    print_char
+                mov     al, player._stamina
+                call    write_number
+                mov     bh, 0
+                mov     bl, 0Fh
+                mov     di, bx          ; x
+                mov     bh, 0
+                mov     bl, 7
+                mov     si, bx          ; y
+                call    set_text_pos
+                mov     al, 41h ; 'A'
+                call    sub_1508C
+                mov     al, 2Dh ; '-'
+                call    print_char
+                mov     al, player._charisma
+                call    write_number
+                mov     bh, 0
+                mov     bl, 1Eh
+                mov     di, bx          ; x
+                mov     bh, 0
+                mov     bl, 6
+                mov     si, bx          ; y
+                call    set_text_pos
+                mov     al, 42h ; 'B'
+                call    sub_1508C
+                mov     al, 2Dh ; '-'
+                call    print_char
+                mov     al, player._wisdom
+                call    write_number
+                mov     bh, 0
+                mov     bl, 1Dh
+                mov     di, bx          ; x
+                mov     bh, 0
+                mov     bl, 7
+                mov     si, bx          ; y
+                call    set_text_pos
+                mov     al, 43h ; 'C'
+                call    sub_1508C
+                mov     al, 2Dh ; '-'
+                call    print_char
+                mov     al, player._intelligence
+                call    write_number
+                mov     bh, 0
+                mov     bl, 1
+                mov     di, bx          ; x
+                mov     bh, 0
+                mov     bl, 9
+                mov     si, bx          ; y
+                call    set_text_pos
+                call    write_string
+; ---------------------------------------------------------------------------
+aWeapons        db 'WEAPONS: ',0
+; ---------------------------------------------------------------------------
+                mov     bh, 0
+                mov     bl, 1
+                mov     di, bx
+
+loc_1475B:                              ; CODE XREF: zstats+229↓j
+                mov     al, player.field_40[di]
+                or      al, al
+                jz      short loc_1478B
+                mov     bx, di
+                mov     byte_1742F, bl
+                mov     ax, di
+                clc
+                adc     al, 13h
+                call    sub_1508C
+                call    write_string
+; ---------------------------------------------------------------------------
+aS              db 'S-',0
+; ---------------------------------------------------------------------------
+                mov     bh, 0
+                mov     bl, byte_1742F
+                mov     di, bx
+                mov     al, [di+76h]
+                call    write_number
+                mov     al, 20h ; ' '
+                call    print_char
+
+loc_1478B:                              ; CODE XREF: zstats+1F9↑j
+                inc     di
+                mov     bx, di
+                cmp     bl, 0Ah
+                jb      short loc_1475B
+                mov     bh, 0
+                mov     bl, 1
+                mov     di, bx          ; x
+                mov     bh, 0
+                mov     bl, 0Ch
+                mov     si, bx          ; y
+                call    set_text_pos
+                call    write_string
+; ---------------------------------------------------------------------------
+aArmour_0       db 'ARMOUR: ',0
+; ---------------------------------------------------------------------------
+                mov     bh, 0
+                mov     bl, 1
+                mov     di, bx
+
+loc_147B4:                              ; CODE XREF: zstats+281↓j
+                mov     al, [di+96h]
+                or      al, al
+                jz      short loc_147E3
+                mov     bx, di
+                mov     byte_1742F, bl
+                mov     ax, di
+                clc
+                adc     al, 1Dh
+                call    sub_1508C
+                call    write_string
+; ---------------------------------------------------------------------------
+                db '-',0
+; ---------------------------------------------------------------------------
+                mov     bh, 0
+                mov     bl, byte_1742F
+                mov     di, bx
+                mov     al, [di+96h]
+                call    write_number
+                mov     al, 20h ; ' '
+                call    print_char
+
+loc_147E3:                              ; CODE XREF: zstats+252↑j
+                inc     di
+                mov     bx, di
+                cmp     bl, 7
+                jb      short loc_147B4
+                mov     bh, 0
+                mov     bl, 1
+                mov     di, bx          ; x
+                mov     bh, 0
+                mov     bl, 0Eh
+                mov     si, bx          ; y
+                call    set_text_pos
+                call    write_string
+; ---------------------------------------------------------------------------
+aSpells         db 'SPELLS: ',0
+; ---------------------------------------------------------------------------
+                mov     bh, 0
+                mov     bl, 1
+                mov     di, bx
+
+loc_1480C:                              ; CODE XREF: zstats+2DA↓j
+                mov     al, [di+0B6h]
+                or      al, al
+                jz      short loc_1483C
+                mov     bx, di
+                mov     byte_1742F, bl
+                mov     ax, di
+                clc
+                adc     al, 24h ; '$'
+                call    sub_1508C
+                call    write_string
+; ---------------------------------------------------------------------------
+aS_0            db 'S-',0
+; ---------------------------------------------------------------------------
+                mov     bh, 0
+                mov     bl, byte_1742F
+                mov     di, bx
+                mov     al, [di+0B6h]
+                call    write_number
+                mov     al, 20h ; ' '
+                call    print_char
+
+loc_1483C:                              ; CODE XREF: zstats+2AA↑j
+                inc     di
+                mov     bx, di
+                cmp     bl, 0Ah
+                jb      short loc_1480C
+                mov     bh, 0
+                mov     bl, 1
+                mov     di, bx          ; x
+                mov     bh, 0
+                mov     bl, 12h
+                mov     si, bx          ; y
+                call    set_text_pos
+                call    write_string
+; ---------------------------------------------------------------------------
+aItems          db 'ITEMS: ',0
+; ---------------------------------------------------------------------------
+                mov     bh, 0
+                mov     bl, 0
+                mov     di, bx
+
+loc_14864:                              ; CODE XREF: zstats+33D↓j
+                mov     al, [di+0D6h]
+                or      al, al
+                jz      short loc_1489F
+                mov     bx, di
+                mov     byte_1742F, bl
+                mov     ax, di
+                clc
+                adc     al, 2Eh ; '.'
+                call    sub_1508C
+                cmp     byte_1742F, 3
+                jz      short loc_14886
+                call    write_string
+; ---------------------------------------------------------------------------
+aS_1            db 'S',0
+; ---------------------------------------------------------------------------
+
+loc_14886:                              ; CODE XREF: zstats+317↑j
+                call    write_string
+; ---------------------------------------------------------------------------
+                db '-',0
+; ---------------------------------------------------------------------------
+                mov     bh, 0
+                mov     bl, byte_1742F
+                mov     di, bx
+                mov     al, [di+0D6h]
+                call    write_number
+                mov     al, 20h ; ' '
+                call    print_char
+
+loc_1489F:                              ; CODE XREF: zstats+302↑j
+                inc     di
+                mov     bx, di
+                cmp     bl, 10h
+                jb      short loc_14864
+                mov     text_x, 0
+                mov     byte_1795F, 0
+                mov     text_width?, 28h ; '('
+                mov     bh, 0
+                mov     bl, 0
+                mov     di, bx
+
+loc_148BC:                              ; CODE XREF: zstats+35A↓j
+                call    keypress_check
+                cmp     ah, 0FFh
+                jnz     short loc_148BC
+                call    setPalette
+                call    write_stats
+                jmp     loc_10A33
+zstats          endp
+
+; ---------------------------------------------------------------------------
                 db    0
                 db    0
                 db    0
@@ -15731,8 +11582,8 @@ sub_14B5D       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14B76       proc near               ; CODE XREF: sub_167B3+A3↓p
-                                        ; sub_167B3+E6↓p
+sub_14B76       proc near               ; CODE XREF: sub_12B65+26↑p
+                                        ; sub_167B3+A3↓p ...
                 push    es
                 mov     ah, 0
                 mov     al, byte_17889
@@ -16586,7 +12437,7 @@ byte_14F0A      db 0Eh                  ; DATA XREF: keypress_check:loc_14FCC↓
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14F11       proc near               ; CODE XREF: canMoveToTile-191F↑p
+sub_14F11       proc near               ; CODE XREF: sub_10A30+D4↑p
                                         ; canMoveToTile-13A7↑p
                 stc
                 mov     al, _mapX
@@ -16609,7 +12460,7 @@ sub_14F11       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14F36       proc near               ; CODE XREF: canMoveToTile:loc_10AA7↑p
+sub_14F36       proc near               ; CODE XREF: sub_10A30:loc_10AA7↑p
                 stc
                 mov     al, _mapX
                 sub     al, [di+137h]
@@ -16852,40 +12703,34 @@ loc_15057:                              ; CODE XREF: write_character+20↑j
                 retn
 write_character endp
 
+
+; =============== S U B R O U T I N E =======================================
+
+
+write_player_sex proc near              ; CODE XREF: zstats+33↑p
+                mov     al, player._sex
+                cmp     al, 4Dh ; 'M'
+                jnz     short loc_1506F
+                call    write_string
 ; ---------------------------------------------------------------------------
-                db 0A0h
-                db  46h ; F
-                db    0
-                db  3Ch ; <
-                db  4Dh ; M
-                db  75h ; u
-                db    9
-                db 0E8h
-                db  76h ; v
-                db 0FFh
-                db  4Dh ; M
-                db  41h ; A
-                db  4Ch ; L
-                db  45h ; E
-                db    0
+aMale_0         db 'MALE',0
                 db 0C3h
-                db 0E8h
-                db  6Dh ; m
-                db 0FFh
-                db  46h ; F
-                db  45h ; E
-                db  4Dh ; M
-                db  41h ; A
-                db  4Ch ; L
-                db  45h ; E
-                db    0
-                db 0C3h
+; ---------------------------------------------------------------------------
+
+loc_1506F:                              ; CODE XREF: write_player_sex+5↑j
+                call    write_string
+; ---------------------------------------------------------------------------
+aFemale_0       db 'FEMALE',0
+; ---------------------------------------------------------------------------
+                retn
+write_player_sex endp
+
 
 ; =============== S U B R O U T I N E =======================================
 
 
 write_player_name proc near             ; CODE XREF: sub_10F8E-305↑p
-                                        ; sg01a2:425F↑p
+                                        ; transact-2807↑p ...
                 mov     bx, 0
 
 loc_1507D:                              ; CODE XREF: write_player_name+F↓j
@@ -16901,52 +12746,51 @@ locret_1508B:                           ; CODE XREF: write_player_name+9↑j
                 retn
 write_player_name endp
 
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_1508C       proc near               ; CODE XREF: cast+4F↑p
+                                        ; magic+36↑p ...
+                mov     ah, 0
+                mov     si, ax
+                mov     di, 0
+
+loc_15093:                              ; CODE XREF: sub_1508C+10↓j
+                cmp     byte ptr cs:[di+4C60h], 0
+                jz      short loc_1509E
+
+loc_1509B:                              ; CODE XREF: sub_1508C+15↓j
+                inc     di
+                jmp     short loc_15093
 ; ---------------------------------------------------------------------------
-                db 0B4h
-                db    0
-                db  8Bh
-                db 0F0h
-                db 0BFh
-                db    0
-                db    0
-                db  2Eh ; .
-                db  80h
-                db 0BDh
-                db  60h ; `
-                db  4Ch ; L
-                db    0
-                db  74h ; t
-                db    3
-                db  47h ; G
-                db 0EBh
-                db 0F5h
-                db  4Eh ; N
-                db  74h ; t
-                db    2
-                db 0EBh
-                db 0F8h
-                db  47h ; G
-                db  2Eh ; .
-                db  8Ah
-                db  85h
-                db  60h ; `
-                db  4Ch ; L
-                db  3Ch ; <
-                db    0
-                db  74h ; t
-                db    5
-                db 0E8h
-                db  53h ; S
-                db 0FFh
-                db 0EBh
-                db 0F1h
-                db 0C3h
+
+loc_1509E:                              ; CODE XREF: sub_1508C+D↑j
+                dec     si
+                jz      short loc_150A3
+                jmp     short loc_1509B
+; ---------------------------------------------------------------------------
+
+loc_150A3:                              ; CODE XREF: sub_1508C+13↑j
+                                        ; sub_1508C+24↓j
+                inc     di
+                mov     al, cs:[di+4C60h]
+                cmp     al, 0
+                jz      short locret_150B2
+                call    write_character
+                jmp     short loc_150A3
+; ---------------------------------------------------------------------------
+
+locret_150B2:                           ; CODE XREF: sub_1508C+1F↑j
+                retn
+sub_1508C       endp
+
 
 ; =============== S U B R O U T I N E =======================================
 
 
 get_player_tile proc near               ; CODE XREF: sg01a2:0845↑p
-                                        ; canMoveToTile-1738↑p ...
+                                        ; sub_10A30+2BB↑p ...
                 push    bx
                 push    cx
                 mov     ah, 0
@@ -17003,8 +12847,8 @@ sub_150D8       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_150EF       proc near               ; CODE XREF: canMoveToTile-1970↑p
-                                        ; canMoveToTile-1966↑p ...
+sub_150EF       proc near               ; CODE XREF: sub_10A30+83↑p
+                                        ; sub_10A30+8D↑p ...
                 cmp     al, 80h
                 jb      short locret_150E3
                 xor     al, 0FFh
@@ -17016,10 +12860,9 @@ sub_150EF       endp
 
 ; =============== S U B R O U T I N E =======================================
 
-; Attributes: noreturn
 
 write_stats     proc near               ; CODE XREF: sg01a2:086C↑p
-                                        ; canMoveToTile:loc_10C1C↑p ...
+                                        ; sub_10A30:loc_10C1C↑p ...
                 mov     al, 40
                 mov     text_width?, al
                 mov     text_x, 30
@@ -17046,8 +12889,6 @@ loc_15123:                              ; CODE XREF: write_stats+25↑j
                 call    write_string    ; FOOD=
 ; ---------------------------------------------------------------------------
 aFood           db 'FOOD=',0
-write_stats     endp
-
 ; ---------------------------------------------------------------------------
                 mov     bh, 0
                 mov     bl, player._food+1
@@ -17057,7 +12898,7 @@ write_stats     endp
                 jnz     short loc_1514E
                 call    set_reverse_text_color
 
-loc_1514E:                              ; CODE XREF: sg01a2:5149↑j
+loc_1514E:                              ; CODE XREF: write_stats+50↑j
                 call    write_two_numbers
                 call    set_normal_text_color
                 mov     al, 1Eh
@@ -17084,17 +12925,19 @@ aGold           db 'GOLD=',0
                 mov     bl, player._gold+1
                 mov     di, bx
                 call    write_two_numbers
-                mov     al, 1Dh
+                mov     al, 29
                 mov     text_width?, al
-                mov     di, 0
-                mov     si, 17h
+                mov     di, 0           ; x
+                mov     si, 23          ; y
                 call    set_text_pos
                 retn
+write_stats     endp
+
 
 ; =============== S U B R O U T I N E =======================================
 
 
-write_two_numbers proc near             ; CODE XREF: sg01a2:42DF↑p
+write_two_numbers proc near             ; CODE XREF: transact+28F↑p
                                         ; write_stats:loc_15123↑p ...
                 push    ax
                 call    write_number
@@ -17165,8 +13008,8 @@ set_text_pos    endp
 ; =============== S U B R O U T I N E =======================================
 
 
-set_cursor_position proc near           ; CODE XREF: set_cga_mode+10↑p
-                                        ; write_string↑p ...
+set_cursor_position proc near           ; CODE XREF: zstats+12↑p
+                                        ; set_cga_mode+10↑p ...
                 push    ax
                 push    bx
                 push    cx
@@ -17190,8 +13033,8 @@ set_cursor_position endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_15217       proc near               ; CODE XREF: canMoveToTile-195F↑p
-                                        ; canMoveToTile:loc_10B62↑p ...
+sub_15217       proc near               ; CODE XREF: sub_10A30+94↑p
+                                        ; sub_10A30:loc_10B62↑p ...
                 push    ax
                 push    bx
                 stc
@@ -17236,8 +13079,8 @@ xorDrawCircle   endp
 ; =============== S U B R O U T I N E =======================================
 
 
-xorSpriteDrawCenter proc near           ; CODE XREF: canMoveToTile-185D↑p
-                                        ; canMoveToTile-1857↑p
+xorSpriteDrawCenter proc near           ; CODE XREF: sub_10A30+196↑p
+                                        ; sub_10A30+19C↑p
                 mov     ax, 144
                 mov     bx, 80
                 jmp     short xorDrawCircleAt
@@ -17314,6 +13157,7 @@ spriteCircle    db      4,   10h,     0,   0Fh,  0F0h,2 dup(     0),2 dup(  0FFh
 
 ; =============== S U B R O U T I N E =======================================
 
+; Attributes: noreturn
 
 access_file     proc near               ; CODE XREF: start_+117↑p
                                         ; start_+2C0↑p ...
@@ -17458,8 +13302,8 @@ sub_153A0       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-write_number    proc near               ; CODE XREF: write_two_numbers+1↑p
-                                        ; write_two_numbers+6↑p ...
+write_number    proc near               ; CODE XREF: attack+22F↑p
+                                        ; attack+25C↑p ...
                 push    ax
                 mov     ah, al
                 shr     al, 1
@@ -17503,7 +13347,7 @@ set_normal_text_color endp
 
 
 set_reverse_text_color proc near        ; CODE XREF: write_stats+27↑p
-                                        ; sg01a2:514B↑p ...
+                                        ; write_stats+52↑p ...
                 cmp     text_mode?, 0
                 jz      short loc_153EE
                 mov     text_color, 2
@@ -17523,10 +13367,11 @@ set_reverse_text_color endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_153F4       proc near               ; CODE XREF: canMoveToTile-19EE↑p
+print_char      proc near               ; CODE XREF: sub_10A30+5↑p
+                                        ; print_indexed_shop_string+2D↑p ...
                 call    write_character
                 retn
-sub_153F4       endp
+print_char      endp
 
 ; ---------------------------------------------------------------------------
                 db    0
@@ -17561,10 +13406,12 @@ loc_1543B:                              ; CODE XREF: sg01a2:5412↑j
                 mov     ah, 27h
                 mov     cx, size Savegame
                 lea     dx, player
-                call    access_file
+                call    access_file     ; PLAYER
 ; ---------------------------------------------------------------------------
 aPlayer_2       db 'PLAYER  '
 ; ---------------------------------------------------------------------------
+
+loc_1544F:                              ; CODE XREF: sg01a2:5444↑j
                 cmp     player._name, 0
                 jz      short loc_15498
                 call    set_cga_mode
@@ -18045,10 +13892,12 @@ loc_159D8:                              ; CODE XREF: sg01a2:59D3↑j
                 mov     ah, 28h         ; Write PLAYER file
                 mov     cx, 100h
                 lea     dx, player
-                call    access_file
+                call    access_file     ; PLAYER
 ; ---------------------------------------------------------------------------
 aPlayer         db 'PLAYER  '
 ; ---------------------------------------------------------------------------
+
+loc_15A0A:                              ; CODE XREF: sg01a2:59FF↑j
                 call    set_cga_mode
                 mov     bh, 0
                 mov     bl, 11
@@ -18150,7 +13999,7 @@ _mapDrawX       db 0                    ; DATA XREF: draw_map+11B↓w
 
 
 draw_map        proc near               ; CODE XREF: sg01a2:0864↑p
-                                        ; canMoveToTile-1B3C↑p ...
+                                        ; sg01a2:08E7↑p ...
                 cmp     _outsideMapTile, -1
                 jnz     short nonwrapping_draw
                 jmp     normal_draw
@@ -18408,8 +14257,8 @@ byte_15C90      db 0                    ; DATA XREF: sub_15CB2+F↓w
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_15C95       proc near               ; CODE XREF: canMoveToTile:loc_10A30↑p
-                                        ; canMoveToTile-1159↑p ...
+sub_15C95       proc near               ; CODE XREF: sub_10A30↑p
+                                        ; sg01a2:12CA↑p ...
                 cmp     byte_1795D, 0
                 jnz     short locret_15CB1
                 push    ax
@@ -18756,7 +14605,7 @@ sub_15DA9       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_15E3B       proc near               ; CODE XREF: canMoveToTile+4AA↑p
+sub_15E3B       proc near               ; CODE XREF: sg01a2:28CD↑p
                 push    ax
                 push    bx
                 push    cx
@@ -18820,53 +14669,44 @@ sub_15E3B       endp
                 db  5Bh ; [
                 db  58h ; X
                 db 0C3h
-                db  80h
-                db  3Eh ; >
-                db  4Dh ; M
-                db    5
-                db    0
-                db  75h ; u
-                db  21h ; !
-                db  50h ; P
-                db  53h ; S
-                db  51h ; Q
-                db  52h ; R
-                db 0BBh
-                db    0
-                db    8
-                db 0E8h
-                db  1Eh
-                db 0FEh
-                db 0BAh
-                db    0
-                db    1
-                db  8Bh
-                db 0CAh
-                db 0E8h
-                db  36h ; 6
-                db 0FEh
-                db  83h
-                db 0EAh
-                db    2
-                db  83h
-                db 0EBh
-                db  40h ; @
-                db  79h ; y
-                db 0F3h
-                db 0E8h
-                db  3Dh ; =
-                db 0FEh
-                db  5Ah ; Z
-                db  59h ; Y
-                db  5Bh ; [
-                db  58h ; X
-                db 0C3h
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_15EAC       proc near               ; CODE XREF: canMoveToTile-186A↑p
-                                        ; canMoveToTile-10CF↑p
+sub_15E83       proc near               ; CODE XREF: cast+74↑p
+                                        ; sg01a2:31AA↑p ...
+                cmp     byte_1795D, 0
+                jnz     short locret_15EAB
+                push    ax
+                push    bx
+                push    cx
+                push    dx
+                mov     bx, 800h
+                call    sub_15CB2
+                mov     dx, 100h
+
+loc_15E97:                              ; CODE XREF: sub_15E83+1F↓j
+                mov     cx, dx
+                call    sub_15CD2
+                sub     dx, 2
+                sub     bx, 40h ; '@'
+                jns     short loc_15E97
+                call    sub_15CE4
+                pop     dx
+                pop     cx
+                pop     bx
+                pop     ax
+
+locret_15EAB:                           ; CODE XREF: sub_15E83+5↑j
+                retn
+sub_15E83       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_15EAC       proc near               ; CODE XREF: sub_10A30+189↑p
+                                        ; sub_10A30+924↑p ...
                 push    ax
                 push    bx
                 push    cx
@@ -18888,7 +14728,7 @@ sub_15EAC       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_15EC7       proc near               ; CODE XREF: canMoveToTile-1B40↑p
+sub_15EC7       proc near               ; CODE XREF: sg01a2:08E3↑p
                                         ; canMoveToTile+134↑p ...
                 cmp     byte_1795D, 0
                 jnz     short locret_15ED6
@@ -18901,39 +14741,34 @@ locret_15ED6:                           ; CODE XREF: sub_15EC7+5↑j
                 retn
 sub_15EC7       endp
 
-; ---------------------------------------------------------------------------
-                db  50h ; P
-                db  53h ; S
-                db  51h ; Q
-                db  52h ; R
-                db 0B8h
-                db    0
-                db    2
-                db 0BBh
-                db    0
-                db  30h ; 0
-                db 0B9h
-                db  20h
-                db    0
-                db 0BAh
-                db    0
-                db  0Eh
-                db 0BDh
-                db    8
-                db    0
-                db 0E8h
-                db 0BCh
-                db 0FEh
-                db  5Ah ; Z
-                db  59h ; Y
-                db  5Bh ; [
-                db  58h ; X
-                db 0C3h
 
 ; =============== S U B R O U T I N E =======================================
 
 
-pause?          proc near               ; CODE XREF: canMoveToTile-185A↑p
+sub_15ED7       proc near               ; CODE XREF: attack+69↑p
+                                        ; attack+30A↑p ...
+                push    ax
+                push    bx
+                push    cx
+                push    dx
+                mov     ax, 200h
+                mov     bx, 3000h
+                mov     cx, 20h ; ' '
+                mov     dx, 0E00h
+                mov     bp, 8
+                call    sub_15DA9
+                pop     dx
+                pop     cx
+                pop     bx
+                pop     ax
+                retn
+sub_15ED7       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+pause?          proc near               ; CODE XREF: sub_10A30+199↑p
                                         ; sub_10F8E+27↑p ...
                 push    ax
                 push    bx
@@ -19111,7 +14946,7 @@ pause?          endp
 
 
 sub_15FA6       proc near               ; CODE XREF: normal_movement+130↑p
-                                        ; normal_movement+17D↑p
+                                        ; normal_movement+17D↑p ...
                 push    ax
                 push    bx
                 push    cx
@@ -19156,36 +14991,32 @@ sub_15FC3       proc near               ; CODE XREF: sub_10E70+17↑p
                 retn
 sub_15FC3       endp
 
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_15FE0       proc near               ; CODE XREF: attack+32↑p
+                                        ; attack+288↑p
+                push    ax
+                push    bx
+                push    cx
+                push    dx
+                push    bp
+                mov     ax, 400h
+                mov     bx, 1000h
+                mov     cx, 1
+                mov     dx, 200h
+                mov     bp, 80h
+                call    sub_15DA9
+                pop     bp
+                pop     dx
+                pop     cx
+                pop     bx
+                pop     ax
+                retn
+sub_15FE0       endp
+
 ; ---------------------------------------------------------------------------
-                db  50h ; P
-                db  53h ; S
-                db  51h ; Q
-                db  52h ; R
-                db  55h ; U
-                db 0B8h
-                db    0
-                db    4
-                db 0BBh
-                db    0
-                db  10h
-                db 0B9h
-                db    1
-                db    0
-                db 0BAh
-                db    0
-                db    2
-                db 0BDh
-                db  80h
-                db    0
-                db 0E8h
-                db 0B2h
-                db 0FDh
-                db  5Dh ; ]
-                db  5Ah ; Z
-                db  59h ; Y
-                db  5Bh ; [
-                db  58h ; X
-                db 0C3h
                 db    0
                 db    0
                 db    0
@@ -19193,7 +15024,7 @@ sub_15FC3       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16000       proc near               ; CODE XREF: canMoveToTile-1156↑p
+sub_16000       proc near               ; CODE XREF: sg01a2:12CD↑p
                 nop
                 mov     al, _mapLeft
                 mov     byte_17893, al
@@ -20375,240 +16206,112 @@ sub_168ED       endp
                 db    0
                 db    0
                 db    0
-                db    0
-                db    0
-                db    0
-                db  90h
-                db 0E8h
-                db 0A1h
-                db 0E0h
-                db  2Eh ; .
-                db 0C6h
-                db    6
-                db  98h
-                db  69h ; i
-                db 0FFh
-                db 0B0h
-                db  80h
-                db 0A2h
-                db  7Bh ; {
-                db    4
-                db 0B0h
-                db  40h ; @
-                db 0A2h
-                db  7Ch ; |
-                db    4
-                db 0B7h
-                db    0
-                db  8Ah
-                db  1Eh
-                db  6Dh ; m
-                db    0
-                db  8Bh
-                db 0FBh
-                db  2Eh ; .
-                db  8Ah
-                db  85h
-                db  12h
-                db  70h ; p
-                db 0A2h
-                db 0CAh
-                db    4
-                db  2Eh ; .
-                db  8Ah
-                db  85h
-                db  1Ch
-                db  70h ; p
-                db 0A2h
-                db 0CBh
-                db    4
-                db  2Eh ; .
-                db  8Ah
-                db  85h
-                db  26h ; &
-                db  70h ; p
-                db 0A2h
-                db 0CCh
-                db    4
-                db 0A0h
-                db 0E5h
-                db    0
-                db 0F9h
-                db 0F5h
-                db  1Ch
-                db    1
-                db  2Fh ; /
-                db 0F5h
-                db 0A2h
-                db 0E5h
-                db    0
-                db 0B0h
-                db  28h ; (
-                db 0A2h
-                db  31h ; 1
-                db    0
-                db 0B7h
-                db    0
-                db 0B3h
-                db  1Eh
-                db  8Bh
-                db 0FBh
-                db 0B7h
-                db    0
-                db 0B3h
-                db  14h
-                db  8Bh
-                db 0F3h
-                db 0E8h
-                db 0FEh
-                db 0E7h
-                db 0E8h
-                db 0EFh
-                db 0E5h
-                db  20h
-                db  20h
-                db  46h ; F
-                db  55h ; U
-                db  45h ; E
-                db  4Ch ; L
-                db  3Dh ; =
-                db    0
-                db 0B7h
-                db    0
-                db 0B3h
-                db  1Eh
-                db  8Bh
-                db 0FBh
-                db 0B7h
-                db    0
-                db 0B3h
-                db  15h
-                db  8Bh
-                db 0F3h
-                db 0E8h
-                db 0E4h
-                db 0E7h
-                db 0E8h
-                db 0D5h
-                db 0E5h
-                db  20h
-                db  20h
-                db  58h ; X
-                db  45h ; E
-                db  4Eh ; N
-                db  4Fh ; O
-                db  3Dh ; =
-                db    0
-                db 0B7h
-                db    0
-                db 0B3h
-                db  1Eh
-                db  8Bh
-                db 0FBh
-                db 0B7h
-                db    0
-                db 0B3h
-                db  16h
-                db  8Bh
-                db 0F3h
-                db 0E8h
-                db 0CAh
-                db 0E7h
-                db 0E8h
-                db 0BBh
-                db 0E5h
-                db  20h
-                db  20h
-                db  59h ; Y
-                db  41h ; A
-                db  4Bh ; K
-                db  4Fh ; O
-                db  3Dh ; =
-                db    0
-                db 0B7h
-                db    0
-                db 0B3h
-                db  1Eh
-                db  8Bh
-                db 0FBh
-                db 0B7h
-                db    0
-                db 0B3h
-                db  17h
-                db  8Bh
-                db 0F3h
-                db 0E8h
-                db 0B0h
-                db 0E7h
-                db 0E8h
-                db 0A1h
-                db 0E5h
-                db  20h
-                db  20h
-                db  5Ah ; Z
-                db  41h ; A
-                db  42h ; B
-                db  4Fh ; O
-                db  3Dh ; =
-                db    0
-                db 0B0h
-                db  20h
-                db 0A2h
-                db  31h ; 1
-                db    0
-                db 0E8h
-                db  55h ; U
-                db    5
-                db 0E8h
-                db 0EDh
-                db    2
-                db 0E8h
-                db 0A9h
-                db    3
-                db 0A0h
-                db  62h ; b
-                db    0
-                db  3Ch ; <
-                db    5
-                db  73h ; s
-                db  1Eh
-                db 0E8h
-                db  81h
-                db 0E5h
-                db  8Dh
-                db  59h ; Y
-                db  4Fh ; O
-                db  55h ; U
-                db  20h
-                db  48h ; H
-                db  41h ; A
-                db  56h ; V
-                db  45h ; E
-                db  20h
-                db  45h ; E
-                db  58h ; X
-                db  50h ; P
-                db  4Ch ; L
-                db  4Fh ; O
-                db  44h ; D
-                db  45h ; E
-                db  44h ; D
-                db  21h ; !
-                db  8Dh
-                db  8Dh
-                db    0
-                db 0E8h
-                db  12h
-                db    8
-                db 0EBh
-                db 0FEh
-                db  90h
-                db 0E8h
-                db  26h ; &
-                db    5
-                db 0E8h
-                db  5Fh ; _
-                db 0E5h
+byte_16996      db 0                    ; DATA XREF: sub_16D5B↓w
+                                        ; sub_16D68+1↓r ...
+byte_16997      db 0                    ; DATA XREF: sub_16D5B+6↓w
+                                        ; sub_16D68+7↓r ...
+byte_16998      db 0                    ; DATA XREF: sub_16999+4↓w
+                                        ; sub_17289+1↓r ...
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_16999       proc near               ; CODE XREF: launch+AE↑p
+                nop
+                call    setPalette
+                mov     cs:byte_16998, 0FFh
+                mov     al, 80h
+                mov     byte_1788B, al
+                mov     al, 40h ; '@'
+                mov     byte_1788C, al
+                mov     bh, 0
+                mov     bl, player._disableSave
+                mov     di, bx
+                mov     al, cs:byte_17012[di]
+                mov     byte_178DA, al
+                mov     al, cs:byte_1701C[di]
+                mov     byte_178DB, al
+                mov     al, cs:byte_17026[di]
+                mov     byte_178DC, al
+                mov     al, player.field_AF
+                stc
+                cmc
+                sbb     al, 1
+                das
+                cmc
+                mov     player.field_AF, al
+                mov     al, 28h ; '('
+                mov     text_width?, al
+                mov     bh, 0
+                mov     bl, 1Eh
+                mov     di, bx          ; x
+                mov     bh, 0
+                mov     bl, 14h
+                mov     si, bx          ; y
+                call    set_text_pos
+                call    write_string
+sub_16999       endp
+
+; ---------------------------------------------------------------------------
+aFuel           db '  FUEL=',0
+; ---------------------------------------------------------------------------
+                mov     bh, 0
+                mov     bl, 1Eh
+                mov     di, bx
+                mov     bh, 0
+                mov     bl, 15h
+                mov     si, bx
+                call    set_text_pos
+                call    write_string
+; ---------------------------------------------------------------------------
+aXeno           db '  XENO=',0
+; ---------------------------------------------------------------------------
+                mov     bh, 0
+                mov     bl, 1Eh
+                mov     di, bx
+                mov     bh, 0
+                mov     bl, 16h
+                mov     si, bx
+                call    set_text_pos
+                call    write_string
+; ---------------------------------------------------------------------------
+aYako           db '  YAKO=',0
+; ---------------------------------------------------------------------------
+                mov     bh, 0
+                mov     bl, 1Eh
+                mov     di, bx
+                mov     bh, 0
+                mov     bl, 17h
+                mov     si, bx
+                call    set_text_pos
+                call    write_string
+; ---------------------------------------------------------------------------
+aZabo           db '  ZABO=',0
+; ---------------------------------------------------------------------------
+                mov     al, 20h ; ' '
+                mov     text_width?, al
+                call    sub_16FA3
+                call    sub_16D3E
+                call    j_write_string
+; ---------------------------------------------------------------------------
+                mov     al, player.field_2C
+                cmp     al, 5
+                jnb     short loc_16A79
+                call    write_string
+; ---------------------------------------------------------------------------
+                db 8Dh,'YOU HAVE EXPLODED!',8Dh,8Dh,0
+; ---------------------------------------------------------------------------
+                call    sub_17289
+
+loc_16A77:                              ; CODE XREF: sg01a2:loc_16A77↓j
+                jmp     short loc_16A77
+; ---------------------------------------------------------------------------
+
+loc_16A79:                              ; CODE XREF: sg01a2:6A59↑j
+                nop
+                call    sub_16FA3
+                call    write_string
+; ---------------------------------------------------------------------------
                 db  43h ; C
                 db  4Dh ; M
                 db  44h ; D
@@ -21311,75 +17014,54 @@ sub_168ED       endp
                 db  6Dh ; m
                 db 0DEh
                 db 0C3h
-                db 0E8h
-                db  1Ah
-                db    0
-                db 0B7h
-                db    0
-                db 0B3h
-                db  3Fh ; ?
-                db  8Bh
-                db 0F3h
-                db 0E8h
-                db  1Eh
-                db    0
-                db  88h
-                db  84h
-                db 0CDh
-                db    4
-                db 0E8h
-                db  17h
-                db    0
-                db  24h ; $
-                db  7Fh ; 
-                db  88h
-                db  84h
-                db  0Dh
-                db    5
-                db  4Eh ; N
-                db  79h ; y
-                db 0EDh
-                db 0C3h
-                db  2Eh ; .
-                db 0C6h
-                db    6
-                db  96h
-                db  69h ; i
-                db  3Bh ; ;
-                db  2Eh ; .
-                db 0C6h
-                db    6
-                db  97h
-                db  69h ; i
-                db  67h ; g
-                db 0C3h
-                db 0F8h
-                db  2Eh ; .
-                db 0A0h
-                db  96h
-                db  69h ; i
-                db  14h
-                db    9
-                db  2Eh ; .
-                db  12h
-                db    6
-                db  97h
-                db  69h ; i
-                db  2Eh ; .
-                db  8Ah
-                db  26h ; &
-                db  96h
-                db  69h ; i
-                db  2Eh ; .
-                db 0A2h
-                db  96h
-                db  69h ; i
-                db  2Eh ; .
-                db  88h
-                db  26h ; &
-                db  97h
-                db  69h ; i
-                db 0C3h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_16D3E       proc near               ; CODE XREF: sg01a2:6A4E↑p
+                call    sub_16D5B
+                mov     bh, 0
+                mov     bl, 3Fh ; '?'
+                mov     si, bx
+
+loc_16D47:                              ; CODE XREF: sub_16D3E+1A↓j
+                call    sub_16D68
+                mov     [si+4CDh], al
+                call    sub_16D68
+                and     al, 7Fh
+                mov     [si+50Dh], al
+                dec     si
+                jns     short loc_16D47
+                retn
+sub_16D3E       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_16D5B       proc near               ; CODE XREF: sub_16D3E↑p
+                mov     cs:byte_16996, 3Bh ; ';'
+                mov     cs:byte_16997, 67h ; 'g'
+                retn
+sub_16D5B       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_16D68       proc near               ; CODE XREF: sub_16D3E:loc_16D47↑p
+                                        ; sub_16D3E+10↑p
+                clc
+                mov     al, cs:byte_16996
+                adc     al, 9
+                adc     al, cs:byte_16997
+                mov     ah, cs:byte_16996
+                mov     cs:byte_16996, al
+                mov     cs:byte_16997, ah
+                retn
+sub_16D68       endp
+
+; ---------------------------------------------------------------------------
                 db 0A0h
                 db  7Bh ; {
                 db    4
@@ -21502,9 +17184,7 @@ sub_168ED       endp
                 db  7Ah ; z
                 db 0DDh
                 db 0C3h
-                db 0E8h
-                db 0DFh
-                db 0E1h
+; [00000003 BYTES: COLLAPSED FUNCTION j_write_string. PRESS CTRL-NUMPAD+ TO EXPAND]
                 db  48h ; H
                 db  59h ; Y
                 db  50h ; P
@@ -21924,118 +17604,65 @@ sub_168ED       endp
                 db  30h ; 0
                 db 0F5h
                 db 0C3h
-                db  90h
-                db 0B0h
-                db  28h ; (
-                db 0A2h
-                db  31h ; 1
-                db    0
-                db 0B7h
-                db    0
-                db 0B3h
-                db  25h ; %
-                db  8Bh
-                db 0FBh
-                db 0B7h
-                db    0
-                db 0B3h
-                db  14h
-                db  8Bh
-                db 0F3h
-                db 0E8h
-                db  33h ; 3
-                db 0E2h
-                db 0A0h
-                db 0E5h
-                db    0
-                db 0E8h
-                db 0F7h
-                db 0E3h
-                db 0B7h
-                db    0
-                db 0B3h
-                db  25h ; %
-                db  8Bh
-                db 0FBh
-                db 0B7h
-                db    0
-                db 0B3h
-                db  15h
-                db  8Bh
-                db 0F3h
-                db 0E8h
-                db  1Eh
-                db 0E2h
-                db 0A0h
-                db 0CAh
-                db    4
-                db 0E8h
-                db 0E2h
-                db 0E3h
-                db 0B7h
-                db    0
-                db 0B3h
-                db  25h ; %
-                db  8Bh
-                db 0FBh
-                db 0B7h
-                db    0
-                db 0B3h
-                db  16h
-                db  8Bh
-                db 0F3h
-                db 0E8h
-                db    9
-                db 0E2h
-                db 0A0h
-                db 0CBh
-                db    4
-                db 0E8h
-                db 0CDh
-                db 0E3h
-                db 0B7h
-                db    0
-                db 0B3h
-                db  25h ; %
-                db  8Bh
-                db 0FBh
-                db 0B7h
-                db    0
-                db 0B3h
-                db  17h
-                db  8Bh
-                db 0F3h
-                db 0E8h
-                db 0F4h
-                db 0E1h
-                db 0A0h
-                db 0CCh
-                db    4
-                db 0E8h
-                db 0B8h
-                db 0E3h
-                db 0B0h
-                db  1Fh
-                db 0A2h
-                db  31h ; 1
-                db    0
-                db 0B7h
-                db    0
-                db 0B3h
-                db    0
-                db  8Bh
-                db 0FBh
-                db 0B7h
-                db    0
-                db 0B3h
-                db  17h
-                db  8Bh
-                db 0F3h
-                db 0E8h
-                db 0DAh
-                db 0E1h
-                db 0C3h
-                db    6
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_16FA3       proc near               ; CODE XREF: sg01a2:6A4B↑p
+                                        ; sg01a2:6A7A↑p
+                nop
+                mov     al, 28h ; '('
+                mov     text_width?, al
+                mov     bh, 0
+                mov     bl, 25h ; '%'
+                mov     di, bx          ; x
+                mov     bh, 0
+                mov     bl, 14h
+                mov     si, bx          ; y
+                call    set_text_pos
+                mov     al, player.field_AF
+                call    write_number
+                mov     bh, 0
+                mov     bl, 25h ; '%'
+                mov     di, bx          ; x
+                mov     bh, 0
+                mov     bl, 15h
+                mov     si, bx          ; y
+                call    set_text_pos
+                mov     al, byte_178DA
+                call    write_number
+                mov     bh, 0
+                mov     bl, 25h ; '%'
+                mov     di, bx          ; x
+                mov     bh, 0
+                mov     bl, 16h
+                mov     si, bx          ; y
+                call    set_text_pos
+                mov     al, byte_178DB
+                call    write_number
+                mov     bh, 0
+                mov     bl, 25h ; '%'
+                mov     di, bx          ; x
+                mov     bh, 0
+                mov     bl, 17h
+                mov     si, bx          ; y
+                call    set_text_pos
+                mov     al, byte_178DC
+                call    write_number
+                mov     al, 1Fh
+                mov     text_width?, al
+                mov     bh, 0
+                mov     bl, 0
+                mov     di, bx          ; x
+                mov     bh, 0
+                mov     bl, 17h
+                mov     si, bx          ; y
+                call    set_text_pos
+                retn
+sub_16FA3       endp
+
+; ---------------------------------------------------------------------------
+byte_17012      db 6                    ; DATA XREF: sub_16999+1C↑r
                 db    5
                 db    3
                 db    6
@@ -22045,7 +17672,7 @@ sub_168ED       endp
                 db    4
                 db    0
                 db    9
-                db    6
+byte_1701C      db 6                    ; DATA XREF: sub_16999+24↑r
                 db    4
                 db    3
                 db    2
@@ -22055,7 +17682,7 @@ sub_168ED       endp
                 db    0
                 db    1
                 db    9
-                db    6
+byte_17026      db 6                    ; DATA XREF: sub_16999+2C↑r
                 db    5
                 db    4
                 db    3
@@ -22666,38 +18293,38 @@ sub_168ED       endp
                 db  69h ; i
                 db    0
                 db 0C3h
-                db  90h
-                db  2Eh ; .
-                db  80h
-                db  3Eh ; >
-                db  98h
-                db  69h ; i
-                db    0
-                db  75h ; u
-                db    9
-                db 0E8h
-                db  4Fh ; O
-                db 0EAh
-                db  2Eh ; .
-                db 0C6h
-                db    6
-                db  98h
-                db  69h ; i
-                db 0FFh
-                db 0C3h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_17289       proc near               ; CODE XREF: sg01a2:6A74↑p
+                nop
+                cmp     cs:byte_16998, 0
+                jnz     short locret_1729B
+                call    sub_15CE4
+                mov     cs:byte_16998, 0FFh
+
+locret_1729B:                           ; CODE XREF: sub_17289+7↑j
+                retn
+sub_17289       endp
+
+; ---------------------------------------------------------------------------
                 db    0
                 db    0
                 db    0
                 db    0
-                db  90h
-                db 0C6h
-                db    6
-                db  31h ; 1
-                db    0
-                db  28h ; (
-                db 0E8h
-                db  36h ; 6
-                db 0DDh
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: noreturn
+
+sub_172A0       proc near               ; CODE XREF: attack+13E↑p
+                nop
+                mov     text_width?, 28h ; '('
+                call    write_string
+sub_172A0       endp
+
+; ---------------------------------------------------------------------------
                 db  8Dh
                 db  8Dh
                 db  20h
@@ -23066,21 +18693,21 @@ sg08e3          segment byte public 'UNK' use16
                 assume cs:sg08e3
                 assume es:nothing, ss:nothing, ds:nothing, fs:nothing, gs:nothing
 _mapX           db 0                    ; DATA XREF: sg01a2:0829↑w
-                                        ; canMoveToTile-1A80↑w ...
+                                        ; sg01a2:09A3↑w ...
 _mapY           db 0                    ; DATA XREF: sg01a2:082F↑w
-                                        ; canMoveToTile-1ACE↑w ...
-_mapLeft        db 0                    ; DATA XREF: canMoveToTile+46C↑r
-                                        ; canMoveToTile+504↑w ...
-_mapTop         db 0                    ; DATA XREF: canMoveToTile+479↑r
-                                        ; canMoveToTile+4FD↑r ...
+                                        ; sg01a2:0955↑w ...
+_mapLeft        db 0                    ; DATA XREF: sg01a2:288F↑r
+                                        ; sg01a2:2927↑w ...
+_mapTop         db 0                    ; DATA XREF: sg01a2:289C↑r
+                                        ; sg01a2:2920↑r ...
 _mapOffsetX     db 0                    ; DATA XREF: draw_map+25↑w
                                         ; draw_map+31↑r ...
 _mapOffsetY     db 0                    ; DATA XREF: draw_map+22↑w
                                         ; draw_map+3D↑r ...
 current_tile_ptr dw 0                   ; DATA XREF: sg01a2:084A↑r
-                                        ; canMoveToTile-16D2↑r ...
-word_17418      dw 0                    ; DATA XREF: canMoveToTile-11CC↑r
-                                        ; canMoveToTile-11C4↑r ...
+                                        ; sub_10A30+321↑r ...
+word_17418      dw 0                    ; DATA XREF: sub_10A30+827↑r
+                                        ; sub_10A30+82F↑r ...
                 db    0
                 db    0
                 db    0
@@ -23090,49 +18717,49 @@ word_17418      dw 0                    ; DATA XREF: canMoveToTile-11CC↑r
                 db    0
                 db    0
 _outsideMapTile db 0                    ; DATA XREF: sg01a2:0869↑w
-                                        ; canMoveToTile-1802↑w ...
+                                        ; sg01a2:0C21↑w ...
 _playerTileId   db 0                    ; DATA XREF: sg01a2:0815↑w
-                                        ; canMoveToTile-1B47↑r ...
-_tilePlayerCenter db 0                  ; DATA XREF: canMoveToTile-1895↑r
-                                        ; draw_map+C3↑w ...
-_tilePlayerUp   db 0                    ; DATA XREF: canMoveToTile-1AC1↑r
-                                        ; canMoveToTile+44A↑r ...
-_tilePlayerDown db 0                    ; DATA XREF: canMoveToTile-1A9A↑r
-                                        ; canMoveToTile+560↑r ...
-_tilePlayerRight db 0                   ; DATA XREF: canMoveToTile-1A4E↑r
+                                        ; sg01a2:08DC↑r ...
+_tilePlayerCenter db 0                  ; DATA XREF: sub_10A30+15E↑r
+                                        ; board+3E↑r ...
+_tilePlayerUp   db 0                    ; DATA XREF: sg01a2:0962↑r
+                                        ; sg01a2:286D↑r ...
+_tilePlayerDown db 0                    ; DATA XREF: sg01a2:0989↑r
+                                        ; sg01a2:2983↑r ...
+_tilePlayerRight db 0                   ; DATA XREF: sg01a2:09D5↑r
                                         ; draw_map+DB↑w ...
-_tilePlayerLeft db 0                    ; DATA XREF: canMoveToTile-1A74↑r
+_tilePlayerLeft db 0                    ; DATA XREF: sg01a2:09AF↑r
                                         ; draw_map+D5↑w ...
-_circleDeltaX   db 0                    ; DATA XREF: canMoveToTile-1973↑r
-                                        ; canMoveToTile-1910↑r ...
-_circleDeltaY   db 0                    ; DATA XREF: canMoveToTile-1969↑r
-                                        ; canMoveToTile-1905↑r ...
+_circleDeltaX   db 0                    ; DATA XREF: sub_10A30+80↑r
+                                        ; sub_10A30+E3↑r ...
+_circleDeltaY   db 0                    ; DATA XREF: sub_10A30+8A↑r
+                                        ; sub_10A30+EE↑r ...
                 db    0
                 db    0
                 db    0
                 db    0
-byte_1742F      db 0                    ; DATA XREF: canMoveToTile-1771↑w
-                                        ; canMoveToTile-1761↑r ...
-byte_17430      db 0                    ; DATA XREF: canMoveToTile-19E6↑w
-                                        ; canMoveToTile:loc_10B4D↑w ...
-_commandWaitCtr db 0                    ; DATA XREF: canMoveToTile-1B8B↑w
-                                        ; canMoveToTile-1B4D↑w ...
-byte_17432      db 0                    ; DATA XREF: canMoveToTile-1B86↑w
-                                        ; canMoveToTile-1B2A↑w ...
+byte_1742F      db 0                    ; DATA XREF: sub_10A30+282↑w
+                                        ; sub_10A30+292↑r ...
+byte_17430      db 0                    ; DATA XREF: sub_10A30+D↑w
+                                        ; sub_10A30:loc_10B4D↑w ...
+_commandWaitCtr db 0                    ; DATA XREF: sg01a2:0898↑w
+                                        ; sg01a2:08D6↑w ...
+byte_17432      db 0                    ; DATA XREF: sg01a2:089D↑w
+                                        ; sg01a2:08F9↑w ...
 _playerX        db 0                    ; DATA XREF: sg01a2:083C↑w
-                                        ; canMoveToTile-1757↑w ...
+                                        ; sub_10A30+29C↑w ...
 _playerY        db 0                    ; DATA XREF: sg01a2:0842↑w
-                                        ; canMoveToTile-173B↑w ...
-byte_17435      db 0                    ; DATA XREF: canMoveToTile-1404↑w
+                                        ; sub_10A30+2B8↑w ...
+byte_17435      db 0                    ; DATA XREF: sub_10A30+5EF↑w
                                         ; canMoveToTile-13B4↑r ...
-byte_17436      db 0                    ; DATA XREF: canMoveToTile-1B22↑w
-                                        ; canMoveToTile-1AE1↑w ...
-_sleepFlag2?    db 0                    ; DATA XREF: canMoveToTile-1B7A↑w
-                                        ; canMoveToTile-1B64↑w ...
+byte_17436      db 0                    ; DATA XREF: sg01a2:0901↑w
+                                        ; sg01a2:0942↑w ...
+_sleepFlag2?    db 0                    ; DATA XREF: sg01a2:08A9↑w
+                                        ; sg01a2:08BF↑w ...
 byte_17438      db 0                    ; DATA XREF: sub_12052+6↑r
                                         ; sub_12052+22↑r ...
-points_to_distrubte db 0                ; DATA XREF: canMoveToTile-1977↑w
-                                        ; canMoveToTile-195A↑r ...
+points_to_distrubte db 0                ; DATA XREF: sub_10A30+7C↑w
+                                        ; sub_10A30+99↑r ...
 _attribPoints   db 0                    ; DATA XREF: update_points_remaining↑w
                                         ; update_points_remaining+A↑r
 word_1743B      dw 0                    ; DATA XREF: write_string+4↑w
@@ -23143,17 +18770,17 @@ text_x          db 0                    ; DATA XREF: start_+14D↑w
 text_y          db 0                    ; DATA XREF: start_+146↑w
                                         ; start_+15D↑w ...
                 db    0
-text_width?     db 0                    ; DATA XREF: set_cga_mode+13↑w
-                                        ; write_character+29↑r ...
+text_width?     db 0                    ; DATA XREF: zstats+D↑w
+                                        ; zstats+349↑w ...
                 db    0
                 db    0
                 db    0
                 db    0
 player          Savegame <0>            ; DATA XREF: sg01a2:0799↑o
-                                        ; sg01a2:07AA↑r ...
+                                        ; sg01a2:loc_107AA↑r ...
                 db    0
 _mapMonsters    db 0BCh dup(     0)     ; DATA XREF: load_map+32↑o
-                                        ; sg01a2:2343↑o
+                                        ; save_game+46↑o ...
 unk_17603       db    0                 ; DATA XREF: seg002:0221↓o
                 db    0
                 db    0
@@ -23245,37 +18872,37 @@ _timer6         db 0                    ; DATA XREF: start_+25↑w
 _picData        FCB <0>                 ; DATA XREF: access_file:loc_152E7↑w
                                         ; access_file+47↑o ...
 _flag1          db 0                    ; DATA XREF: sg01a2:081A↑w
-                                        ; canMoveToTile:loc_10C54↑r ...
+                                        ; sg01a2:loc_10C54↑r ...
 player_paralyzedFlag db 0               ; DATA XREF: sg01a2:081D↑w
-                                        ; canMoveToTile:loc_10C33↑r ...
+                                        ; sg01a2:loc_10C33↑r ...
 _flag3          db 0                    ; DATA XREF: sg01a2:0820↑w
-                                        ; canMoveToTile:loc_10C3E↑r ...
+                                        ; sg01a2:loc_10C3E↑r ...
 _sleepFlag      db 0                    ; DATA XREF: sg01a2:0823↑w
-                                        ; canMoveToTile-1B83↑r ...
-NORTH_KEYCODE   db 0Eh                  ; DATA XREF: canMoveToTile:not_pass↑r
+                                        ; sg01a2:08A0↑r ...
+NORTH_KEYCODE   db 0Eh                  ; DATA XREF: sg01a2:loc_1094F↑r
                                         ; sg01a2:2396↑r ...
-byte_1767F      db 19h                  ; DATA XREF: canMoveToTile:not_north↑r
+byte_1767F      db 19h                  ; DATA XREF: sg01a2:loc_10976↑r
                                         ; sg01a2:239C↑r ...
-byte_17680      db 5                    ; DATA XREF: canMoveToTile:loc_109C3↑r
+byte_17680      db 5                    ; DATA XREF: sg01a2:loc_109C3↑r
                                         ; sg01a2:23A2↑r ...
-byte_17681      db 17h                  ; DATA XREF: canMoveToTile:loc_1099D↑r
+byte_17681      db 17h                  ; DATA XREF: sg01a2:loc_1099D↑r
                                         ; sg01a2:23A8↑r ...
 _mapTileIds     db 100h dup(     0)     ; DATA XREF: sg01a2:085A↑w
-                                        ; setPalette:loc_14A64↑w ...
+                                        ; view:loc_143DF↑w ...
 _priorMapTileIds db 100h dup(     0)    ; DATA XREF: sg01a2:085E↑w
-                                        ; setPalette+2A↑w ...
+                                        ; view+65↑w ...
 map_ptr         dw 1800h                ; DATA XREF: map_get_monster_at?+A↑r
                                         ; load_map+20↑r ...
 monsters_ptr    dw 2900h                ; DATA XREF: sg01a2:07F6↑r
                                         ; sub_168ED+22↑r ...
-                db    0
-                db  28h ; (
+word_17886      dw 2800h                ; DATA XREF: print_indexed_shop_string+6↑r
+                                        ; load_talk_file+18↑r
 text_mode?      db 0                    ; DATA XREF: set_cga_mode+18↑w
                                         ; setPalette+18↑w ...
-byte_17889      db 0                    ; DATA XREF: sub_14B76+3↑r
-                                        ; sub_16078+B↑w ...
-byte_1788A      db 0                    ; DATA XREF: sub_14B76+E↑r
-                                        ; sub_16078+1B↑w ...
+byte_17889      db 0                    ; DATA XREF: sub_12B65+2↑w
+                                        ; sub_12B65+13↑r ...
+byte_1788A      db 0                    ; DATA XREF: sub_12B65+8↑w
+                                        ; sub_12B65+1F↑r ...
 byte_1788B      db 0                    ; DATA XREF: sub_16078+4↑w
                                         ; sub_16078+65↑r ...
 byte_1788C      db 0                    ; DATA XREF: sub_16078+12↑w
@@ -23365,9 +18992,12 @@ word_178D1      dw 10h                  ; DATA XREF: sub_14B76+11↑r
                 db    0
                 db    0
                 db    0
-                db    0
-                db    0
-                db    0
+byte_178DA      db 0                    ; DATA XREF: sub_16999+21↑w
+                                        ; sub_16FA3+2A↑r
+byte_178DB      db 0                    ; DATA XREF: sub_16999+29↑w
+                                        ; sub_16FA3+3F↑r
+byte_178DC      db 0                    ; DATA XREF: sub_16999+31↑w
+                                        ; sub_16FA3+54↑r
                 db    0
                 db    0
                 db    0
@@ -23498,9 +19128,10 @@ word_178D1      dw 10h                  ; DATA XREF: sub_14B76+11↑r
                 db    0
 byte_1795D      db 0                    ; DATA XREF: keypress_check+2E↑w
                                         ; sub_15C95↑r ...
-map_freezeAnimation db 0                ; DATA XREF: draw_map+8C↑r
-                                        ; draw_map+164↑r
-byte_1795F      db 0                    ; DATA XREF: write_character:loc_1500D↑r
+map_freezeAnimation db 0                ; DATA XREF: launch+1AA↑w
+                                        ; launch:loc_13ACD↑w ...
+byte_1795F      db 0                    ; DATA XREF: zstats+3↑w
+                                        ; zstats+344↑w ...
                 db    0
                 db    0
                 db    0
