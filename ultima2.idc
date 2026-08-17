@@ -76,12 +76,84 @@ static Segments(void) {
 	set_inf_attr(INF_HIGH_OFF, 0x7410);
 }
 
+static Enums_0(id) {
+
+	id = add_enum(-1,"TileId",0x1100000);
+	set_enum_cmt(id,"Overworld/town tile IDs, 0-63. Source: ModdingWiki's Ultima II Map Format page, cross-checked against this port's actual tile_NN graphics (see docs/file-formats.md). NOTE: the byte stored on disk in mapx?? files is this ID x4, not the raw ID -- see the \"divide by 4\" note in docs/file-formats.md before comparing against a raw map byte.",0);
+	add_enum_member(id,"TILE_WATER",	0,	-1);
+	add_enum_member(id,"TILE_SWAMP",	0X1,	-1);
+	add_enum_member(id,"TILE_GRASS",	0X2,	-1);
+	add_enum_member(id,"TILE_FOREST",	0X3,	-1);
+	add_enum_member(id,"TILE_MOUNTAIN",	0X4,	-1);
+	add_enum_member(id,"TILE_UNKNOWN_5",	0X5,	-1);
+	add_enum_member(id,"TILE_TOWN",	0X6,	-1);
+	add_enum_member(id,"TILE_TOWER",	0X7,	-1);
+	add_enum_member(id,"TILE_CASTLE",	0X8,	-1);
+	add_enum_member(id,"TILE_DUNGEON_ENTRANCE",	0X9,	-1);
+	add_enum_member(id,"TILE_SIGNPOST",	0XA,	-1);
+	add_enum_member(id,"TILE_SEA_MONSTER",	0XB,	-1);
+	add_enum_member(id,"TILE_ORC",	0XC,	-1);
+	add_enum_member(id,"TILE_DAEMON",	0XD,	-1);
+	add_enum_member(id,"TILE_DEVIL",	0XE,	-1);
+	add_enum_member(id,"TILE_BALRON",	0XF,	-1);
+	add_enum_member(id,"TILE_MINAX",	0X10,	-1);
+	add_enum_member(id,"TILE_HORSE",	0X11,	-1);
+	add_enum_member(id,"TILE_SHIP",	0X12,	-1);
+	add_enum_member(id,"TILE_AIRPLANE",	0X13,	-1);
+	add_enum_member(id,"TILE_ROCKET",	0X14,	-1);
+	add_enum_member(id,"TILE_SHIELD",	0X15,	-1);
+	add_enum_member(id,"TILE_SWORD",	0X16,	-1);
+	add_enum_member(id,"TILE_FORCEFIELD",	0X17,	-1);
+	add_enum_member(id,"TILE_GUARD",	0X18,	-1);
+	add_enum_member(id,"TILE_JESTER",	0X19,	-1);
+	add_enum_member(id,"TILE_SHOPKEEP",	0X1A,	-1);
+	add_enum_member(id,"TILE_UNKNOWN_27",	0X1B,	-1);
+	add_enum_member(id,"TILE_ROAD",	0X1C,	-1);
+	add_enum_member(id,"TILE_EMPTY",	0X1D,	-1);
+	add_enum_member(id,"TILE_WALL",	0X1E,	-1);
+	add_enum_member(id,"TILE_COUNTER_EMPTY",	0X1F,	-1);
+	add_enum_member(id,"TILE_LETTER_A",	0X20,	-1);
+	add_enum_member(id,"TILE_LETTER_B",	0X21,	-1);
+	add_enum_member(id,"TILE_LETTER_C",	0X22,	-1);
+	add_enum_member(id,"TILE_LETTER_D",	0X23,	-1);
+	add_enum_member(id,"TILE_LETTER_E",	0X24,	-1);
+	add_enum_member(id,"TILE_LETTER_F",	0X25,	-1);
+	add_enum_member(id,"TILE_LETTER_G",	0X26,	-1);
+	add_enum_member(id,"TILE_LETTER_H",	0X27,	-1);
+	add_enum_member(id,"TILE_DOOR",	0X28,	-1);
+	add_enum_member(id,"TILE_LETTER_J",	0X29,	-1);
+	add_enum_member(id,"TILE_LETTER_K",	0X2A,	-1);
+	add_enum_member(id,"TILE_LETTER_L",	0X2B,	-1);
+	add_enum_member(id,"TILE_LETTER_M",	0X2C,	-1);
+	add_enum_member(id,"TILE_LETTER_N",	0X2D,	-1);
+	add_enum_member(id,"TILE_LETTER_O",	0X2E,	-1);
+	add_enum_member(id,"TILE_LETTER_P",	0X2F,	-1);
+	add_enum_member(id,"TILE_MOONGATE",	0X30,	-1);
+	add_enum_member(id,"TILE_LETTER_R",	0X31,	-1);
+	add_enum_member(id,"TILE_LETTER_S",	0X32,	-1);
+	add_enum_member(id,"TILE_LETTER_T",	0X33,	-1);
+	add_enum_member(id,"TILE_LETTER_U",	0X34,	-1);
+	add_enum_member(id,"TILE_LETTER_V",	0X35,	-1);
+	add_enum_member(id,"TILE_LETTER_W",	0X36,	-1);
+	add_enum_member(id,"TILE_LETTER_X",	0X37,	-1);
+	add_enum_member(id,"TILE_LETTER_Y",	0X38,	-1);
+	add_enum_member(id,"TILE_LETTER_Z",	0X39,	-1);
+	add_enum_member(id,"TILE_COUNTER_END_RIGHT",	0X3A,	-1);
+	add_enum_member(id,"TILE_COUNTER_END_LEFT",	0X3B,	-1);
+	add_enum_member(id,"TILE_FIGHTER",	0X3C,	-1);
+	add_enum_member(id,"TILE_CLERIC",	0X3D,	-1);
+	add_enum_member(id,"TILE_MAGE",	0X3E,	-1);
+	add_enum_member(id,"TILE_THIEF",	0X3F,	-1);
+	return id;
+}
+
 //------------------------------------------------------------------------
 // Information about enum types
 
 static Enums(void) {
         auto id;
         begin_type_updating(UTP_ENUM);
+	id = Enums_0(id);
         end_type_updating(UTP_ENUM);
 }
 

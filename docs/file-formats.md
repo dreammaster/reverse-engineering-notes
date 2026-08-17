@@ -275,8 +275,52 @@ Full chain: `enter` (asm 9136/9159/9206, VILLAGE/TOWN/CASTLE) →
     bands (`############`), paired vertical walls between — a clear
     stylized twin-tower town/castle icon. This alone confirms the
     66-byte/`[04h,10h]`-header decode is correct.
-  - Tiles 20, 40, 63 — not yet matched to wiki names, but all render as
-    coherent small sprites (a bar/pole shape for 40, a branching
-    diagonal for 20, a humanoid-ish figure for 63), not noise.
-- Not yet applied (renamed) as of this pass — `DRY_RUN` still `True` in
-  the script; flip it once ready to commit `tile_00`..`tile_63` names.
+  - Tiles 20, 40, 63 — matched against the full wiki legend below once
+    fetched: 20 = Rocket (the diagonal branching shape reads as a
+    rocket silhouette), 40 = "I / Door" (an exact match — solid
+    top/bottom bars with a thin stem is a textbook serif capital "I"),
+    63 = Thief (the humanoid figure).
+- **Applied**: `tile_00`..`tile_63` renamed in the IDB via
+  `ida_scripts/label_tile_graphics.py` (`DRY_RUN = False`). Paul
+  deliberately kept these as `tile_NN`, not semantic names — see below
+  for where the semantic names live instead.
+
+### Full tile ID legend (0-63) and the `TileId` enum
+
+Fetched verbatim from the wiki (no gaps guessed/filled in — confirmed
+with Paul that the alphabet gaps below are original-game-intentional,
+not a fetch error: the in-town sign-lettering font never needed the
+full alphabet):
+
+| ID | Name | ID | Name | ID | Name | ID | Name |
+|---|---|---|---|---|---|---|---|
+| 0 | Water | 16 | Minax | 32 | A | 48 | Moongate |
+| 1 | Swamp | 17 | Horse | 33 | B | 49 | R |
+| 2 | Grass | 18 | Ship | 34 | C | 50 | S |
+| 3 | Forest | 19 | Airplane | 35 | D | 51 | T |
+| 4 | Mountain | 20 | Rocket | 36 | E | 52 | U |
+| 5 | ? | 21 | Shield | 37 | F | 53 | V |
+| 6 | Town | 22 | Sword | 38 | G | 54 | W |
+| 7 | Tower | 23 | Forcefield | 39 | H | 55 | X |
+| 8 | Castle | 24 | Guard | 40 | I / Door | 56 | Y |
+| 9 | Dungeon Entrance | 25 | Jester | 41 | J | 57 | Z |
+| 10 | Signpost | 26 | Shopkeep | 42 | K | 58 | Counter End, Right |
+| 11 | Sea Monster | 27 | ? | 43 | L | 59 | Counter End, Left |
+| 12 | Orc | 28 | Road | 44 | M | 60 | Fighter |
+| 13 | Daemon | 29 | Empty | 45 | N | 61 | Cleric |
+| 14 | Devil | 30 | Wall | 46 | O | 62 | Mage |
+| 15 | Balron | 31 | Empty Counter / Space | 47 | P | 63 | Thief |
+
+Note IDs 5 and 27 have no name on the wiki page (marked `?` there too
+— not a gap in our transcription).
+
+This is where the **semantic** tile names live, as an IDA enum
+(`TileId`, e.g. `TILE_TOWN = 6`) rather than as renames of the
+`tile_NN` graphics-array symbols — deliberate choice, so the enum is
+available anywhere a raw tile-ID literal shows up in code (movement/
+collision checks, etc., see `docs/overview.md`'s `canMoveToTile`
+notes) without conflating "the graphics data for tile 6" with "the
+numeric ID 6". **Applied** via `ida_scripts/create_tile_id_enum.py`
+(idempotent, safe to extend and re-run for future finds). Remember the
+on-disk byte in `mapx??` files is the ID **×4**, not this raw 0-63
+value — see the "divide by 4" note earlier in this doc.

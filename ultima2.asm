@@ -300,6 +300,74 @@ field_AF        db ?                    ; XREF: get+130/r get+136/w ...
 field_FF        db ?
 Savegame        ends
 
+; ---------------------------------------------------------------------------
+
+; Overworld/town tile IDs, 0-63. Source: ModdingWiki's Ultima II Map Format page, cross-checked against this port's actual tile_NN graphics (see docs/file-formats.md). NOTE: the byte stored on disk in mapx?? files is this ID x4, not the raw ID -- see the "divide by 4" note in docs/file-formats.md before comparing against a raw map byte.
+; enum TileId, mappedto_3
+TILE_WATER       = 0
+TILE_SWAMP       = 1
+TILE_GRASS       = 2
+TILE_FOREST      = 3
+TILE_MOUNTAIN    = 4
+TILE_UNKNOWN_5   = 5
+TILE_TOWN        = 6
+TILE_TOWER       = 7
+TILE_CASTLE      = 8
+TILE_DUNGEON_ENTRANCE  = 9
+TILE_SIGNPOST    = 0Ah
+TILE_SEA_MONSTER  = 0Bh
+TILE_ORC         = 0Ch
+TILE_DAEMON      = 0Dh
+TILE_DEVIL       = 0Eh
+TILE_BALRON      = 0Fh
+TILE_MINAX       = 10h
+TILE_HORSE       = 11h
+TILE_SHIP        = 12h
+TILE_AIRPLANE    = 13h
+TILE_ROCKET      = 14h
+TILE_SHIELD      = 15h
+TILE_SWORD       = 16h
+TILE_FORCEFIELD  = 17h
+TILE_GUARD       = 18h
+TILE_JESTER      = 19h
+TILE_SHOPKEEP    = 1Ah
+TILE_UNKNOWN_27  = 1Bh
+TILE_ROAD        = 1Ch
+TILE_EMPTY       = 1Dh
+TILE_WALL        = 1Eh
+TILE_COUNTER_EMPTY  = 1Fh
+TILE_LETTER_A    = 20h
+TILE_LETTER_B    = 21h
+TILE_LETTER_C    = 22h
+TILE_LETTER_D    = 23h
+TILE_LETTER_E    = 24h
+TILE_LETTER_F    = 25h
+TILE_LETTER_G    = 26h
+TILE_LETTER_H    = 27h
+TILE_DOOR        = 28h
+TILE_LETTER_J    = 29h
+TILE_LETTER_K    = 2Ah
+TILE_LETTER_L    = 2Bh
+TILE_LETTER_M    = 2Ch
+TILE_LETTER_N    = 2Dh
+TILE_LETTER_O    = 2Eh
+TILE_LETTER_P    = 2Fh
+TILE_MOONGATE    = 30h
+TILE_LETTER_R    = 31h
+TILE_LETTER_S    = 32h
+TILE_LETTER_T    = 33h
+TILE_LETTER_U    = 34h
+TILE_LETTER_V    = 35h
+TILE_LETTER_W    = 36h
+TILE_LETTER_X    = 37h
+TILE_LETTER_Y    = 38h
+TILE_LETTER_Z    = 39h
+TILE_COUNTER_END_RIGHT  = 3Ah
+TILE_COUNTER_END_LEFT  = 3Bh
+TILE_FIGHTER     = 3Ch
+TILE_CLERIC      = 3Dh
+TILE_MAGE        = 3Eh
+TILE_THIEF       = 3Fh
 
 ;
 ; +-------------------------------------------------------------------------+

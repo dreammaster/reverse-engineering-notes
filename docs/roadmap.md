@@ -100,13 +100,34 @@ sessions, unlike a one-off todo list.
       motifs; 20/40/63 render as coherent sprites though not yet matched
       to wiki names. Full detail in
       [file-formats.md](file-formats.md#ultimaiiexe--embedded-overworld-tiles).
-- [ ] Flip `DRY_RUN = False` in `ida_scripts/label_tile_graphics.py`
-      to actually rename the 64 tiles to `tile_00`..`tile_63` and
-      comment each — visualization is confirmed, just needs applying.
-      Once applied, cross-check tile byte size against the "divide by
-      4" tile-ID encoding note elsewhere in file-formats.md, and
-      consider matching tiles 20/40/63 (and the rest) against the
-      wiki's full tile-ID list to get real names instead of `tile_NN`.
+- [x] Applied `tile_00`..`tile_63` renames (`label_tile_graphics.py`,
+      `DRY_RUN = False`) — Paul deliberately kept these generic rather
+      than renaming to semantic names.
+- [x] Fetched the wiki's full 64-entry tile ID legend and cross-checked
+      several against our own pixel decode (20=Rocket, 40="I / Door" —
+      an exact serif-I glyph match — 63=Thief, on top of the
+      already-confirmed 0/1/6). Full table in
+      [file-formats.md](file-formats.md#full-tile-id-legend-0-63-and-the-tileid-enum).
+- [x] Ran `ida_scripts/create_tile_id_enum.py` — done. `TileId` enum
+      created with all 64 members (`TILE_WATER = 0`, `TILE_TOWN = 6`,
+      etc.) so semantic tile names are available wherever a raw tile-ID
+      literal shows up in code, without renaming the `tile_NN` graphics
+      symbols (Paul's call — enum for semantics, `tile_NN` stays as the
+      graphics-data name). Two IDA 8.3 API issues hit and fixed along
+      the way — `idc.hexflag()` missing (moved to `ida_bytes.hex_flag()`,
+      third `idc`-wrapper casualty this project, see project memory) and
+      a SWIG `OverflowError` from passing literal `-1` to
+      `ida_enum.add_enum`'s `size_t idx` param (fixed: pass
+      `idaapi.BADADDR` instead, the properly-unsigned form of the same
+      "append" sentinel). Note as of this pass: `ultima2.idc`'s `Enums()`
+      block is still empty — the `.idc` export hasn't been refreshed
+      since the enum was created (git shows it unchanged while `.asm`
+      is), so re-export it next time for the repo to catch up.
+- [ ] Now that `TileId` exists: cross-check tile byte size against the
+      "divide by 4" tile-ID encoding note elsewhere in file-formats.md,
+      and consider going through `canMoveToTile`/`draw_map` etc. to
+      apply the enum to existing raw tile-ID comparisons where it's
+      unambiguous which ones are actually tile IDs vs. unrelated bytes.
 - [ ] Fetch the ModdingWiki "Ultima II Monster Format" page (linked from
       the summary page, not yet pulled) to fill in `monx??` layout in
       file-formats.md.
