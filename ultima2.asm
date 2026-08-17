@@ -69,16 +69,16 @@ _lastKeypress   db ?                    ; XREF: sg01a2:loc_10936/w
                 db ? ; undefined
                 db ? ; undefined
                 db ? ; undefined
-field_2B        db ?                    ; XREF: attack+6C/r
+_readiedWeapon  db ?                    ; XREF: attack+6C/r
                                         ; attack+310/r ...
-field_2C        db ?                    ; XREF: sub_10A30+143/r
+_readiedArmor   db ?                    ; XREF: sub_10A30+143/r
                                         ; sub_10A30+92E/r ...
-field_2D        db ?                    ; XREF: cast+49/r cast+7B/r ...
-field_2E        db ?                    ; XREF: attack+1BE/r
+_readiedSpell   db ?                    ; XREF: cast+49/r cast+7B/r ...
+_torches        db ?                    ; XREF: attack+1BE/r
                                         ; attack+1C3/w ...
-field_2F        db ?                    ; XREF: attack+14A/r
+_keys           db ?                    ; XREF: attack+14A/r
                                         ; attack+150/w ...
-field_30        db ?                    ; XREF: sg01a2:28DC/r
+_thievesTools   db ?                    ; XREF: sg01a2:28DC/r
                                         ; sg01a2:2904/r ...
                 db ? ; undefined
                 db ? ; undefined
@@ -201,11 +201,11 @@ field_80        db ?                    ; XREF: cast+89/r cast+B1/r ...
                 db ? ; undefined
 _hasRing        db ?                    ; XREF: canMoveToTile+92/r
                                         ; offer+11E/w
-field_A1        db ?                    ; XREF: cast+52/r
-field_A2        db ?                    ; XREF: cast+56/r
+_wands          db ?                    ; XREF: cast+52/r
+_staves         db ?                    ; XREF: cast+56/r
                 db ? ; undefined
                 db ? ; undefined
-field_A5        db ?                    ; XREF: attack+1A5/r
+_gems           db ?                    ; XREF: attack+1A5/r
                                         ; attack+1AB/w ...
                 db ? ; undefined
 field_A7        db ?                    ; XREF: board+146/r
@@ -1776,7 +1776,7 @@ loc_10A1F:                              ; CODE XREF: sg01a2:0A1A↑j
 
 
 sub_10A30       proc near               ; CODE XREF: sg01a2:0A15↑j
-                                        ; sub_12052+52↓j ...
+                                        ; try_spend_gold+52↓j ...
 
 ; FUNCTION CHUNK AT 0C62 SIZE 0000003A BYTES
 ; FUNCTION CHUNK AT 0C9C SIZE 0000003C BYTES
@@ -1890,7 +1890,7 @@ loc_10AA7:                              ; CODE XREF: sub_10A30+51↑j
                 call    sub_150EF
                 cmp     al, 3
                 jnb     short loc_10AFC
-                call    sub_15217
+                call    rand_byte
                 mov     bh, 0
                 mov     bl, points_to_distrubte
                 mov     di, bx
@@ -1982,14 +1982,14 @@ loc_10B4D:                              ; CODE XREF: sub_10A30+118↑j
                 call    sub_10FCD
 
 loc_10B62:                              ; CODE XREF: sub_10A30+12D↑j
-                call    sub_15217
+                call    rand_byte
                 mov     bh, 0
                 mov     bl, _sleepFlag2?
                 mov     di, bx
                 cmp     al, 0
                 js      short loc_10BA0
                 and     al, 7
-                cmp     al, player.field_2C
+                cmp     al, player._readiedArmor
                 jb      short loc_10BA0
                 inc     _commandWaitCtr
                 mov     al, [di+177h]
@@ -2047,7 +2047,7 @@ loc_10BD1:                              ; CODE XREF: sub_10A30+187↑j
                 mov     al, byte_17432
                 or      al, al
                 jz      short loc_10C1C
-                call    sub_15217
+                call    rand_byte
                 and     al, byte_17432
                 and     al, 77h
                 clc
@@ -2176,7 +2176,7 @@ loc_10CA2:                              ; CODE XREF: sub_10A30+27B↓j
 loc_10CB0:                              ; CODE XREF: sub_10A30+278↑j
                 mov     bx, di
                 mov     byte_1742F, bl
-                call    sub_15217
+                call    rand_byte
                 cmp     al, 3Fh ; '?'
                 jb      short loc_10CC0
                 jmp     loc_10BAF
@@ -2188,7 +2188,7 @@ loc_10CC0:                              ; CODE XREF: sub_10A30+28B↑j
                 mov     di, bx
                 mov     [di+137h], al
                 mov     _playerX, al
-                call    sub_15217
+                call    rand_byte
                 js      short loc_10CD9
                 and     al, 3Fh
                 jmp     short loc_10CDC
@@ -2502,7 +2502,7 @@ aLegsParalized  db 'LEGS PARALIZED!',0Dh,0
                 call    sub_14B26
                 cmp     byte ptr player+0A3h, 0
                 jz      short loc_10EB8
-                call    sub_15217
+                call    rand_byte
                 cmp     al, 40h ; '@'
                 jb      short loc_10EB8
                 call    write_string    ; SAVED BY MAGICAL BOOTS!
@@ -2518,7 +2518,7 @@ sub_10E70       endp
 loc_10EB8:                              ; CODE XREF: sub_10E70+22↑j
                                         ; sub_10E70+29↑j
                 nop
-                call    sub_15217
+                call    rand_byte
                 and     al, 0Fh
                 mov     player_paralyzedFlag, al
                 retn
@@ -2542,7 +2542,7 @@ aArmsParalized  db 'ARMS PARALIZED!',0Dh,0
                 mov     al, byte ptr player+0A4h
                 or      al, al
                 jz      short loc_10F09
-                call    sub_15217
+                call    rand_byte
                 cmp     al, 40h ; '@'
                 jb      short loc_10F09
                 call    write_string    ; SAVED BY MAGICAL CLOAK
@@ -2557,7 +2557,7 @@ sub_10EC2       endp
 
 loc_10F09:                              ; CODE XREF: sub_10EC2+22↑j
                                         ; sub_10EC2+29↑j
-                call    sub_15217
+                call    rand_byte
                 and     al, 0Fh
                 mov     _flag3, al
                 retn
@@ -2604,7 +2604,7 @@ sub_10F48       endp
                 mov     al, byte ptr player+0AEh
                 or      al, al
                 jz      short loc_10F84
-                call    sub_15217
+                call    rand_byte
                 cmp     al, 40h ; '@'
                 jb      short loc_10F84
                 call    write_string
@@ -2631,7 +2631,7 @@ sub_10F48       endp
 loc_10F84:                              ; CODE XREF: sg01a2:0F67↑j
                                         ; sg01a2:0F6E↑j
                 nop
-                call    sub_15217
+                call    rand_byte
                 and     al, 0Fh
                 mov     _sleepFlag, al
                 retn
@@ -2677,7 +2677,7 @@ sub_10F8E       endp
 
 sub_10FCD       proc near               ; CODE XREF: sub_10A30+12F↑p
                 nop
-                call    sub_15217
+                call    rand_byte
                 cmp     al, 40h ; '@'
                 jb      short loc_10FD6
                 retn
@@ -2685,7 +2685,7 @@ sub_10FCD       proc near               ; CODE XREF: sub_10A30+12F↑p
 
 loc_10FD6:                              ; CODE XREF: sub_10FCD+6↑j
                 nop
-                call    sub_15217
+                call    rand_byte
                 and     ax, 0Fh
                 mov     di, ax
                 mov     al, [di+0D6h]
@@ -2793,17 +2793,17 @@ loc_11086:                              ; CODE XREF: sub_10A30+607↑j
                 mov     _circleDeltaX, al
                 mov     al, [di+217h]
                 mov     _circleDeltaY, al
-                call    sub_15217
+                call    rand_byte
                 cmp     al, 40h ; '@'
                 jnb     short loc_110CE
-                call    sub_15217
+                call    rand_byte
                 call    sub_150D8
                 mov     bh, 0
                 mov     bl, byte_17435
                 mov     di, bx
                 mov     [di+1F7h], al
                 mov     _circleDeltaX, al
-                call    sub_15217
+                call    rand_byte
                 call    sub_150D8
                 mov     bh, 0
                 mov     bl, byte_17435
@@ -2881,7 +2881,7 @@ loc_1112F:                              ; CODE XREF: canMoveToTile-12FD↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1113A       proc near               ; CODE XREF: attack+5A↓p
+alert_town_guards proc near             ; CODE XREF: attack+5A↓p
                                         ; steal+6C↓p
                 mov     al, player._mapNum2
                 or      al, al
@@ -2889,13 +2889,13 @@ sub_1113A       proc near               ; CODE XREF: attack+5A↓p
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_11142:                              ; CODE XREF: sub_1113A+5↑j
+loc_11142:                              ; CODE XREF: alert_town_guards+5↑j
                 mov     bh, 0
                 mov     bl, 7
                 mov     di, bx
                 mov     al, 1
 
-loc_1114A:                              ; CODE XREF: sub_1113A+15↓j
+loc_1114A:                              ; CODE XREF: alert_town_guards+15↓j
                 mov     [di+1D7h], al
                 dec     di
                 jns     short loc_1114A
@@ -2904,7 +2904,7 @@ loc_1114A:                              ; CODE XREF: sub_1113A+15↓j
                 mov     di, bx
                 mov     [di+1D7h], al
                 retn
-sub_1113A       endp
+alert_town_guards endp
 
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR sub_10A30
@@ -3130,7 +3130,7 @@ sub_112DB       endp ; sp-analysis failed
 loc_11308:                              ; CODE XREF: sub_10A30+7AE↑j
                                         ; sub_10A30+7E8↑j
                 nop
-                call    sub_15217
+                call    rand_byte
                 cmp     al, 40h ; '@'
                 jnb     short loc_1133E
                 mov     bh, 0
@@ -3181,10 +3181,10 @@ loc_1133E:                              ; CODE XREF: sub_10A30+8DE↑j
 loc_11353:                              ; CODE XREF: sub_10A30+91E↑j
                 nop
                 call    sub_15EAC
-                call    sub_15217
+                call    rand_byte
                 js      short loc_11364
                 and     al, 7
-                cmp     al, player.field_2C
+                cmp     al, player._readiedArmor
                 jnb     short loc_11367
 
 loc_11364:                              ; CODE XREF: sub_10A30+92A↑j
@@ -3196,7 +3196,7 @@ loc_11367:                              ; CODE XREF: sub_10A30+932↑j
                 call    sub_14B26
                 call    pause?
                 call    sub_14B26
-                call    sub_15217
+                call    rand_byte
                 and     al, 77h
                 mov     byte_17430, al
                 mov     al, byte_17435
@@ -3276,7 +3276,7 @@ loc_11410:                              ; CODE XREF: sub_10A30+90B↑j
 aYouFeelAStrong db 'YOU FEEL A STRONG MAGIC!',8Dh,0
 ; ---------------------------------------------------------------------------
                 call    sub_15C95
-                call    sub_15217
+                call    rand_byte
                 and     al, 7
                 mov     _sleepFlag, al
                 jmp     loc_11178
@@ -3360,7 +3360,7 @@ loc_11494:                              ; CODE XREF: sub_1147F+5E↓j
 
 loc_114A0:                              ; CODE XREF: sub_1147F+13↑j
                 nop
-                call    sub_15217
+                call    rand_byte
                 mov     bh, 0
                 mov     bl, byte_1742F
                 mov     di, bx
@@ -3369,7 +3369,7 @@ loc_114A0:                              ; CODE XREF: sub_1147F+13↑j
                 or      al, 1
                 mov     [di+137h], al
                 mov     _playerX, al
-                call    sub_15217
+                call    rand_byte
                 mov     bh, 0
                 mov     bl, byte_1742F
                 mov     di, bx
@@ -3384,7 +3384,7 @@ loc_114A0:                              ; CODE XREF: sub_1147F+13↑j
                 mov     [di+1B7h], al
                 call    map_get_monster_at?
                 jnz     short loc_11494
-                call    sub_15217
+                call    rand_byte
                 mov     bh, 0
                 mov     bl, byte_1742F
                 mov     di, bx
@@ -6255,16 +6255,16 @@ loc_11F75:                              ; CODE XREF: transact-2A80↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_12028       proc near               ; CODE XREF: sub_12028+7↓j
-                                        ; sub_12028+B↓j ...
+read_digit_keypress proc near           ; CODE XREF: read_digit_keypress+7↓j
+                                        ; read_digit_keypress+B↓j ...
                 nop
                 call    keypress_check
                 cmp     ah, 0FFh
-                jnz     short sub_12028
+                jnz     short read_digit_keypress
                 cmp     al, 30h ; '0'
-                jb      short sub_12028
+                jb      short read_digit_keypress
                 cmp     al, 39h ; '9'
-                ja      short sub_12028
+                ja      short read_digit_keypress
                 stc
                 cmc
                 sbb     al, 30h ; '0'
@@ -6279,13 +6279,13 @@ sub_12028       proc near               ; CODE XREF: sub_12028+7↓j
                 mov     ax, di
                 cmp     al, 0
                 retn
-sub_12028       endp
+read_digit_keypress endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_12052       proc near               ; CODE XREF: offer+64↓p
+try_spend_gold  proc near               ; CODE XREF: offer+64↓p
                                         ; transact+23B↓p
                 nop
                 stc
@@ -6319,11 +6319,11 @@ aYouDontHaveTha db 'YOU DONT HAVE THAT MUCH!',0
                 jmp     sub_10A30
 ; ---------------------------------------------------------------------------
 
-loc_120A7:                              ; CODE XREF: sub_12052+1C↑j
+loc_120A7:                              ; CODE XREF: try_spend_gold+1C↑j
                 nop
                 mov     al, 0
                 retn
-sub_12052       endp ; sp-analysis failed
+try_spend_gold  endp ; sp-analysis failed
 
 ; ---------------------------------------------------------------------------
                 db  90h
@@ -6848,7 +6848,7 @@ aWest_0         db 'WEST',0
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_123E6       proc near               ; CODE XREF: attack+35↓p
+find_target_monster proc near           ; CODE XREF: attack+35↓p
                                         ; fire+2F↓p ...
                 clc
                 mov     al, _mapX
@@ -6862,7 +6862,7 @@ sub_123E6       proc near               ; CODE XREF: attack+35↓p
                 mov     bl, 1Fh
                 mov     di, bx
 
-loc_12402:                              ; CODE XREF: sub_123E6+3A↓j
+loc_12402:                              ; CODE XREF: find_target_monster+3A↓j
                 mov     al, [di+197h]
                 cmp     al, 0
                 jz      short loc_1241F
@@ -6875,12 +6875,12 @@ loc_12402:                              ; CODE XREF: sub_123E6+3A↓j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1241F:                              ; CODE XREF: sub_123E6+22↑j
-                                        ; sub_123E6+2C↑j ...
+loc_1241F:                              ; CODE XREF: find_target_monster+22↑j
+                                        ; find_target_monster+2C↑j ...
                 dec     di
                 jnz     short loc_12402
                 retn
-sub_123E6       endp
+find_target_monster endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -7590,7 +7590,7 @@ loc_12884:                              ; CODE XREF: sg01a2:2872↑j
                 adc     al, _mapTop
                 and     al, 3Fh
                 mov     _mapY, al
-                call    sub_15217
+                call    rand_byte
                 cmp     al, byte_17435
                 jb      short loc_128B1
                 jmp     loc_10A33
@@ -7610,7 +7610,7 @@ loc_128B1:                              ; CODE XREF: sg01a2:28AC↑j
                 call    pause?
                 call    pause?
                 call    pause?
-                mov     al, player.field_30
+                mov     al, player._thievesTools
                 or      al, al
                 jnz     short loc_128E6
                 jmp     dead
@@ -7622,12 +7622,12 @@ loc_128E6:                              ; CODE XREF: sg01a2:28E1↑j
 aEscapedByUseOf db 'ESCAPED! BY USE OF TOOLS!',0
 ; ---------------------------------------------------------------------------
                 stc
-                mov     al, player.field_30
+                mov     al, player._thievesTools
                 cmc
                 sbb     al, 1
                 das
                 cmc
-                mov     player.field_30, al
+                mov     player._thievesTools, al
                 jmp     loc_10A33
 ; ---------------------------------------------------------------------------
 
@@ -8021,7 +8021,7 @@ aParalized_0    db 'PARALIZED!',0
 loc_12BBE:                              ; CODE XREF: attack+1C↑j
                 call    loc_12362
                 call    sub_15FE0
-                call    sub_123E6
+                call    find_target_monster
                 mov     bx, di
                 mov     byte_17430, bl
                 mov     bx, di
@@ -8031,7 +8031,7 @@ loc_12BBE:                              ; CODE XREF: attack+1C↑j
 ; ---------------------------------------------------------------------------
 
 loc_12BD7:                              ; CODE XREF: attack+43↑j
-                call    sub_15217
+                call    rand_byte
                 clc
                 rcr     al, 1
                 cmp     al, player._agility
@@ -8041,13 +8041,13 @@ loc_12BD7:                              ; CODE XREF: attack+43↑j
 
 loc_12BE6:                              ; CODE XREF: attack+52↑j
                 call    xorDrawCircle
-                call    sub_1113A
+                call    alert_town_guards
                 call    write_string
 ; ---------------------------------------------------------------------------
 aHit            db '--HIT!!!',0
 ; ---------------------------------------------------------------------------
-                call    sub_15ED7
-                mov     al, player.field_2B
+                call    play_hit_sound
+                mov     al, player._readiedWeapon
                 add     al, al
                 add     al, al
                 add     al, al
@@ -8136,10 +8136,10 @@ loc_12CD3:                              ; CODE XREF: attack+13C↑j
                 cmp     al, 60h ; '`'
                 jnz     short loc_12CE5
                 clc
-                mov     al, player.field_2F
+                mov     al, player._keys
                 adc     al, 2
                 daa
-                mov     player.field_2F, al
+                mov     player._keys, al
                 jmp     loc_12D8C
 ; ---------------------------------------------------------------------------
 
@@ -8148,17 +8148,17 @@ loc_12CE5:                              ; CODE XREF: attack+147↑j
                 jnz     short loc_12D22
                 mov     bx, di
                 mov     byte_1742F, bl
-                call    sub_15217
+                call    rand_byte
                 cmp     al, 40h ; '@'
                 jnb     short loc_12D00
                 clc
-                mov     al, player.field_30
+                mov     al, player._thievesTools
                 adc     al, 1
                 daa
-                mov     player.field_30, al
+                mov     player._thievesTools, al
 
 loc_12D00:                              ; CODE XREF: attack+165↑j
-                call    sub_15217
+                call    rand_byte
                 and     al, 0Fh
                 jz      short loc_12D17
                 mov     ah, 0
@@ -8183,26 +8183,26 @@ loc_12D22:                              ; CODE XREF: attack+158↑j
                 jnz     short loc_12D60
                 mov     bx, di
                 mov     byte_1742F, bl
-                call    sub_15217
+                call    rand_byte
                 cmp     al, 40h ; '@'
                 jnb     short loc_12D3D
                 clc
-                mov     al, player.field_A5
+                mov     al, player._gems
                 adc     al, 1
                 daa
-                mov     player.field_A5, al
+                mov     player._gems, al
 
 loc_12D3D:                              ; CODE XREF: attack+1A2↑j
                 mov     bh, 0
                 mov     bl, byte_1742F
                 mov     di, bx
-                call    sub_15217
+                call    rand_byte
                 and     al, 3
                 adc     al, 1
                 clc
-                adc     al, player.field_2E
+                adc     al, player._torches
                 daa
-                mov     player.field_2E, al
+                mov     player._torches, al
                 mov     bh, 0
                 mov     bl, byte_1742F
                 mov     di, bx
@@ -8216,7 +8216,7 @@ loc_12D60:                              ; CODE XREF: attack+195↑j
                 jnz     short loc_12D8B
                 mov     bx, di
                 mov     byte_1742F, bl
-                call    sub_15217
+                call    rand_byte
                 and     al, 1
                 mov     ah, 0
                 mov     di, ax
@@ -8249,7 +8249,7 @@ loc_12D8C:                              ; CODE XREF: attack+153↑j
 ; ---------------------------------------------------------------------------
 aKilledGold     db 0Dh,'KILLED--GOLD+',0
 ; ---------------------------------------------------------------------------
-                call    sub_15217
+                call    rand_byte
                 and     al, 17h
                 or      al, 1
                 mov     byte_1742F, al
@@ -8267,7 +8267,7 @@ aKilledGold     db 0Dh,'KILLED--GOLD+',0
 ; ---------------------------------------------------------------------------
 aExp_0          db '--EXP.+',0
 ; ---------------------------------------------------------------------------
-                call    sub_15217
+                call    rand_byte
                 and     al, 3
                 adc     al, 1
                 mov     byte_1742F, al
@@ -8347,7 +8347,7 @@ loc_12E6A:                              ; CODE XREF: attack+2C2↑j
 
 loc_12E7D:                              ; CODE XREF: attack+2D8↑j
                 nop
-                call    sub_15217
+                call    rand_byte
                 clc
                 rcr     al, 1
                 cmp     al, player._agility
@@ -8362,9 +8362,9 @@ loc_12E8D:                              ; CODE XREF: attack+2F9↑j
 aHit_0          db 'HIT!',0
 ; ---------------------------------------------------------------------------
                 call    xorDrawCircle
-                call    sub_15ED7
+                call    play_hit_sound
                 call    xorDrawCircle
-                mov     al, player.field_2B
+                mov     al, player._readiedWeapon
                 add     al, al
                 add     al, al
                 add     al, al
@@ -8409,7 +8409,7 @@ loc_12ED1:                              ; CODE XREF: attack+339↑j
 ; ---------------------------------------------------------------------------
                 db 8Dh,'KILLED--GOLD+',0
 ; ---------------------------------------------------------------------------
-                call    sub_15217
+                call    rand_byte
                 and     al, 17h
                 or      al, 1
                 mov     byte_17430, al
@@ -8427,7 +8427,7 @@ loc_12ED1:                              ; CODE XREF: attack+339↑j
 ; ---------------------------------------------------------------------------
 aExp_1          db '--EXP.+',0
 ; ---------------------------------------------------------------------------
-                call    sub_15217
+                call    rand_byte
                 and     al, 7
                 mov     byte_17430, al
                 call    write_number
@@ -8746,13 +8746,13 @@ cast            endp
 
 loc_13153:                              ; CODE XREF: cast+9↑j
                 nop
-                mov     al, player.field_2D
+                mov     al, player._readiedSpell
                 clc
                 adc     al, 24h ; '$'
-                call    sub_1508C
-                mov     al, player.field_A1
+                call    print_indexed_menu_string
+                mov     al, player._wands
                 clc
-                adc     al, player.field_A2
+                adc     al, player._staves
                 jnz     short loc_13185
                 call    write_string
 ; ---------------------------------------------------------------------------
@@ -8764,7 +8764,7 @@ loc_13153:                              ; CODE XREF: cast+9↑j
 
 loc_13185:                              ; CODE XREF: cast+5A↑j
                 nop
-                mov     al, player.field_2D
+                mov     al, player._readiedSpell
                 or      al, al
                 jnz     short loc_13190
                 jmp     loc_10A33
@@ -8789,7 +8789,7 @@ loc_13190:                              ; CODE XREF: cast+80↑j
 loc_131B0:                              ; CODE XREF: cast+8F↑j
                 call    sub_15FC3
                 mov     bh, 0
-                mov     bl, player.field_2D
+                mov     bl, player._readiedSpell
                 mov     di, bx
                 stc
                 mov     al, player.field_80[di]
@@ -8813,7 +8813,7 @@ aFailed         db '-FAILED!',0
 
 loc_131E2:                              ; CODE XREF: cast+C3↑j
                 nop
-                mov     al, player.field_2D
+                mov     al, player._readiedSpell
                 or      al, al
                 jnz     short loc_131ED
                 jmp     loc_10A33
@@ -8938,7 +8938,7 @@ loc_132A2:                              ; CODE XREF: cast:loc_13210↑j
 ; ---------------------------------------------------------------------------
 
 loc_132A5:                              ; CODE XREF: cast:loc_13213↑j
-                call    sub_15217
+                call    rand_byte
                 js      short loc_13232
                 jmp     short loc_13301
 ; END OF FUNCTION CHUNK FOR cast
@@ -8968,11 +8968,11 @@ loc_132CF:                              ; CODE XREF: cast+1BF↑j
 ; ---------------------------------------------------------------------------
 
 loc_132D2:                              ; CODE XREF: cast+102↑j
-                call    sub_15217
+                call    rand_byte
                 and     al, 0Fh
                 or      al, 1
                 mov     _playerX, al
-                call    sub_15217
+                call    rand_byte
                 and     al, 0Fh
                 or      al, 1
                 mov     _playerY, al
@@ -9383,7 +9383,7 @@ aDirect         db ' DIRECT-',0
 ; ---------------------------------------------------------------------------
                 call    loc_12362
                 call    sub_15EAC
-                call    sub_123E6
+                call    find_target_monster
                 mov     bx, di
                 mov     byte_17430, bl
                 mov     bx, di
@@ -9393,11 +9393,11 @@ aDirect         db ' DIRECT-',0
 ; ---------------------------------------------------------------------------
 
 loc_13603:                              ; CODE XREF: fire+3D↑j
-                call    sub_15217
+                call    rand_byte
                 or      al, 20h
                 mov     byte_1742F, al
                 call    xorDrawCircle
-                call    sub_15ED7
+                call    play_hit_sound
                 mov     bh, 0
                 mov     bl, byte_17430
                 mov     di, bx
@@ -9463,7 +9463,7 @@ loc_13665:                              ; CODE XREF: get+1B↑j
 aWeapon_0       db ' WEAPON',0
 ; ---------------------------------------------------------------------------
                 call    sub_1361C
-                call    sub_15217
+                call    rand_byte
                 and     al, 7
                 jz      short loc_1368D
                 mov     ah, 0
@@ -9491,7 +9491,7 @@ loc_1369B:                              ; CODE XREF: get+17↑j
 aArmour_1       db ' ARMOUR',0
 ; ---------------------------------------------------------------------------
                 call    sub_1361C
-                call    sub_15217
+                call    rand_byte
                 and     al, 3
                 jz      short loc_1368D
                 mov     ah, 0
@@ -9543,14 +9543,14 @@ aChest          db ' CHEST!'
                 mov     al, byte_17435
                 cmp     al, 0Fh
                 jz      short loc_1375A
-                call    sub_15217
+                call    rand_byte
                 cmp     al, 40h ; '@'
                 jb      short loc_13746
                 call    write_string
 ; ---------------------------------------------------------------------------
 aGold_0         db 'GOLD!',0
 ; ---------------------------------------------------------------------------
-                call    sub_15217
+                call    rand_byte
                 and     al, 1Fh
                 adc     al, byte_17435
                 adc     al, byte_17435
@@ -9627,7 +9627,7 @@ aIgniteTorch    db 'IGNITE TORCH',0
 ; ---------------------------------------------------------------------------
 
 loc_137AE:                              ; CODE XREF: ignite_torch+15↑j
-                mov     al, player.field_2E
+                mov     al, player._torches
                 or      al, al
                 jnz     short loc_137C8
                 call    write_string
@@ -9639,12 +9639,12 @@ loc_137AE:                              ; CODE XREF: ignite_torch+15↑j
 
 loc_137C8:                              ; CODE XREF: ignite_torch+1F↑j
                 stc
-                mov     al, player.field_2E
+                mov     al, player._torches
                 cmc
                 sbb     al, 1
                 das
                 cmc
-                mov     player.field_2E, al
+                mov     player._torches, al
                 mov     al, 150
                 mov     byte_17436, al
                 jmp     loc_10A33
@@ -10085,16 +10085,16 @@ magic           proc near               ; DATA XREF: sg01a2:command_jump_table�
 ; ---------------------------------------------------------------------------
 aMagicSpellRead db 'MAGIC SPELL READY #',0
 ; ---------------------------------------------------------------------------
-                call    sub_12028
-                mov     player.field_2D, al
+                call    read_digit_keypress
+                mov     player._readiedSpell, al
                 call    write_string
 ; ---------------------------------------------------------------------------
 aSpellReady     db 'SPELL READY => ',0
 ; ---------------------------------------------------------------------------
-                mov     al, player.field_2D
+                mov     al, player._readiedSpell
                 clc
                 adc     al, 24h ; '$'
-                call    sub_1508C
+                call    print_indexed_menu_string
                 jmp     loc_10A33
 magic           endp
 
@@ -10146,7 +10146,7 @@ offer           proc near               ; DATA XREF: sg01a2:command_jump_table�
 aOfferGoldDirec db 'OFFER GOLD DIRECT-',0
 ; ---------------------------------------------------------------------------
                 call    loc_12362
-                call    sub_123E6
+                call    find_target_monster
                 mov     bx, di
                 mov     byte_1742F, bl
                 mov     al, 8Dh
@@ -10166,11 +10166,11 @@ loc_13C71:                              ; CODE XREF: offer+2C↑j
 ; ---------------------------------------------------------------------------
 aHowMuch100     db 'HOW MUCH (*100) ? ',0
 ; ---------------------------------------------------------------------------
-                call    sub_12028
+                call    read_digit_keypress
                 mov     _sleepFlag2?, al
                 mov     al, 0
                 mov     byte_17438, al
-                call    sub_12052
+                call    try_spend_gold
                 mov     bh, 0
                 mov     bl, byte_1742F
                 mov     di, bx
@@ -10251,7 +10251,7 @@ aTheRingIsYours db 'THE RING IS YOURS!',0
 ; ---------------------------------------------------------------------------
 
 loc_13D52:                              ; CODE XREF: offer+BA↑j
-                call    sub_15217
+                call    rand_byte
                 and     al, 7
                 clc
                 mov     ah, 0
@@ -10269,7 +10269,7 @@ aHereTakeThis   db 'HERE TAKE THIS!',0
 ; ---------------------------------------------------------------------------
 
 loc_13D7E:                              ; CODE XREF: offer+BC↑j
-                call    sub_15217
+                call    rand_byte
                 and     al, 7
                 cmp     al, 6
                 jb      short loc_13D8A
@@ -10395,11 +10395,11 @@ ready           proc near               ; DATA XREF: sg01a2:command_jump_table�
 aReadyWeapon1Da db 'READY WEAPON:',0Dh,'1-DA, 2-MA, 3-AX, 4-BO,',0Dh,'5-SW, 6-GR, 7-L'
                 db 'I, 8-PH.',0Dh,'9-QU, WHICH? ',0
 ; ---------------------------------------------------------------------------
-                call    sub_12028
+                call    read_digit_keypress
                 mov     byte_1742F, al
                 clc
                 adc     al, 13h
-                call    sub_1508C
+                call    print_indexed_menu_string
                 mov     bh, 0
                 mov     bl, byte_1742F
                 mov     di, bx
@@ -10452,7 +10452,7 @@ loc_13F11:                              ; CODE XREF: ready+91↑j
 aReady_0        db ' READY.',0
 ; ---------------------------------------------------------------------------
                 mov     al, byte_1742F
-                mov     player.field_2B, al
+                mov     player._readiedWeapon, al
                 jmp     loc_10A33
 ready           endp
 
@@ -10506,10 +10506,10 @@ loc_13F7E:                              ; CODE XREF: steal+36↑j
 ; ---------------------------------------------------------------------------
 aNoLuck         db 'NO LUCK!',0
 ; ---------------------------------------------------------------------------
-                call    sub_15217
+                call    rand_byte
                 and     al, 7
                 jnz     short loc_13F94
-                call    sub_1113A
+                call    alert_town_guards
 
 loc_13F94:                              ; CODE XREF: steal+6A↑j
                 nop
@@ -10521,12 +10521,12 @@ loc_13F98:                              ; CODE XREF: steal+56↑j
                 mov     al, player._class
                 cmp     al, 3
                 jz      short loc_13FA5
-                call    sub_15217
+                call    rand_byte
                 js      short loc_13F7E
 
 loc_13FA5:                              ; CODE XREF: steal+79↑j
                 nop
-                call    sub_15217
+                call    rand_byte
                 js      short loc_13F7E
                 mov     al, _mapMonsters+0A0h
                 cmp     al, 1
@@ -10573,7 +10573,7 @@ loc_13FF9:                              ; CODE XREF: steal+A4↑j
 ; ---------------------------------------------------------------------------
 aStealArmour    db 'STEAL ARMOUR!',0
 ; ---------------------------------------------------------------------------
-                call    sub_15217
+                call    rand_byte
                 and     al, 3
                 mov     ah, 0
                 mov     di, ax
@@ -10592,7 +10592,7 @@ loc_14024:                              ; CODE XREF: steal+A6↑j
 ; ---------------------------------------------------------------------------
 aStealWeapons   db 'STEAL WEAPONS!',0
 ; ---------------------------------------------------------------------------
-                call    sub_15217
+                call    rand_byte
                 and     al, 7
                 mov     ah, 0
                 mov     di, ax
@@ -10631,7 +10631,7 @@ transact        proc near               ; DATA XREF: sg01a2:command_jump_table�
 aTransact       db 'TRANSACT-',0
 ; ---------------------------------------------------------------------------
                 call    loc_12362
-                call    sub_123E6
+                call    find_target_monster
                 mov     bx, di
                 mov     byte_17430, bl
                 mov     al, 8Dh
@@ -10816,7 +10816,7 @@ aWelcomeMyChild db 'WELCOME MY CHILD ',0
                 mov     byte_17438, al
                 mov     al, 0
                 mov     _sleepFlag2?, al
-                call    sub_12052
+                call    try_spend_gold
                 call    write_string    ; AND FOR IT I RAISE THEE
 ; ---------------------------------------------------------------------------
 aAndForItIRaise db 'AND FOR IT I RAISE THEE ',0
@@ -10891,7 +10891,7 @@ loc_14326:                              ; CODE XREF: unlock+1D↑j
                 call    get_player_tile
                 cmp     al, 0A0h
                 jnz     short loc_14310
-                mov     al, player.field_2F
+                mov     al, player._keys
                 or      al, al
                 jnz     short loc_1435E
                 call    write_string
@@ -10903,12 +10903,12 @@ loc_14326:                              ; CODE XREF: unlock+1D↑j
 
 loc_1435E:                              ; CODE XREF: unlock+52↑j
                 stc
-                mov     al, player.field_2F
+                mov     al, player._keys
                 cmc
                 sbb     al, 1
                 das
                 cmc
-                mov     player.field_2F, al
+                mov     player._keys, al
                 mov     al, _tilePlayerCenter
                 add     al, al
                 mov     bh, 0
@@ -10925,7 +10925,7 @@ unlock          endp
 ; Attributes: noreturn
 
 view            proc near               ; DATA XREF: sg01a2:command_jump_table↑o
-                mov     al, player.field_A5
+                mov     al, player._gems
                 or      al, al
                 jnz     short loc_14396
 
@@ -10960,12 +10960,12 @@ aView           db 'VIEW'
                 dec     bp
                 and     [bx+si], ax
                 stc
-                mov     al, player.field_A5
+                mov     al, player._gems
                 cmc
                 sbb     al, 1
                 das
                 cmc
-                mov     player.field_A5, al
+                mov     player._gems, al
                 mov     al, 20h ; ' '
                 mov     _playerX, al
                 mov     _playerY, al
@@ -11001,7 +11001,7 @@ wear_armor      proc near               ; DATA XREF: sg01a2:command_jump_table�
 aWearArmour1Clo db 'WEAR ARMOUR:',0Dh,'1-CLOTH, 2-LEATHER, 3-CHAIN,',0Dh,'4-PLATE, 5-'
                 db 'REFLECT, 6-POWER,',0Dh,'WHICH? ',0
 ; ---------------------------------------------------------------------------
-                call    sub_12028
+                call    read_digit_keypress
                 mov     byte_1742F, al
                 cmp     al, 7
                 jb      short loc_14454
@@ -11012,7 +11012,7 @@ loc_14454:                              ; CODE XREF: wear_armor+5A↑j
                 nop
                 clc
                 adc     al, 1Dh
-                call    sub_1508C
+                call    print_indexed_menu_string
                 mov     bh, 0
                 mov     bl, byte_1742F
                 mov     di, bx
@@ -11050,7 +11050,7 @@ loc_144C0:                              ; CODE XREF: wear_armor+9E↑j
 aReady          db ' READY.',0
 ; ---------------------------------------------------------------------------
                 mov     al, byte_1742F
-                mov     player.field_2C, al
+                mov     player._readiedArmor, al
                 jmp     loc_10A33
 wear_armor      endp
 
@@ -11169,13 +11169,13 @@ zstats          proc near               ; DATA XREF: sg01a2:command_jump_table�
                 mov     al, player._race
                 clc
                 adc     al, 44h ; 'D'
-                call    sub_1508C
+                call    print_indexed_menu_string
                 mov     al, 20h ; ' '
                 call    print_char
                 mov     al, player._class
                 clc
                 adc     al, 48h ; 'H'
-                call    sub_1508C
+                call    print_indexed_menu_string
                 mov     al, 0Dh
                 call    print_char
                 mov     al, 0Dh
@@ -11184,10 +11184,10 @@ zstats          proc near               ; DATA XREF: sg01a2:command_jump_table�
 ; ---------------------------------------------------------------------------
 aWeapon         db '  WEAPON-',0
 ; ---------------------------------------------------------------------------
-                mov     al, player.field_2B
+                mov     al, player._readiedWeapon
                 clc
                 adc     al, 13h
-                call    sub_1508C
+                call    print_indexed_menu_string
                 mov     bh, 0
                 mov     bl, 1Dh
                 mov     di, bx          ; x
@@ -11199,7 +11199,7 @@ aWeapon         db '  WEAPON-',0
 ; ---------------------------------------------------------------------------
 aTorches        db 'TORCHES-',0
 ; ---------------------------------------------------------------------------
-                mov     al, player.field_2E
+                mov     al, player._torches
                 call    write_number
                 mov     bh, 0
                 mov     bl, 1
@@ -11212,10 +11212,10 @@ aTorches        db 'TORCHES-',0
 ; ---------------------------------------------------------------------------
 aArmour         db '  ARMOUR-',0
 ; ---------------------------------------------------------------------------
-                mov     al, player.field_2C
+                mov     al, player._readiedArmor
                 clc
                 adc     al, 1Dh
-                call    sub_1508C
+                call    print_indexed_menu_string
                 mov     bh, 0
                 mov     bl, 20h ; ' '
                 mov     di, bx          ; x
@@ -11227,7 +11227,7 @@ aArmour         db '  ARMOUR-',0
 ; ---------------------------------------------------------------------------
 aKeys           db 'KEYS-',0
 ; ---------------------------------------------------------------------------
-                mov     al, player.field_2F
+                mov     al, player._keys
                 call    write_number
                 mov     bh, 0
                 mov     bl, 4
@@ -11240,10 +11240,10 @@ aKeys           db 'KEYS-',0
 ; ---------------------------------------------------------------------------
 aSpell          db 'SPELL-',0
 ; ---------------------------------------------------------------------------
-                mov     al, player.field_2D
+                mov     al, player._readiedSpell
                 clc
                 adc     al, 24h ; '$'
-                call    sub_1508C
+                call    print_indexed_menu_string
                 mov     bh, 0
                 mov     bl, 1Fh
                 mov     di, bx          ; x
@@ -11255,7 +11255,7 @@ aSpell          db 'SPELL-',0
 ; ---------------------------------------------------------------------------
 aTools          db 'TOOLS-',0
 ; ---------------------------------------------------------------------------
-                mov     al, player.field_30
+                mov     al, player._thievesTools
                 call    write_number
                 mov     bh, 0
                 mov     bl, 1
@@ -11265,7 +11265,7 @@ aTools          db 'TOOLS-',0
                 mov     si, bx          ; y
                 call    set_text_pos
                 mov     al, 3Eh ; '>'
-                call    sub_1508C
+                call    print_indexed_menu_string
                 mov     al, 2Dh ; '-'
                 call    print_char
                 mov     al, player._strength
@@ -11278,7 +11278,7 @@ aTools          db 'TOOLS-',0
                 mov     si, bx          ; y
                 call    set_text_pos
                 mov     al, 3Fh ; '?'
-                call    sub_1508C
+                call    print_indexed_menu_string
                 mov     al, 2Dh ; '-'
                 call    print_char
                 mov     al, player._agility
@@ -11291,7 +11291,7 @@ aTools          db 'TOOLS-',0
                 mov     si, bx          ; y
                 call    set_text_pos
                 mov     al, 40h ; '@'
-                call    sub_1508C
+                call    print_indexed_menu_string
                 mov     al, 2Dh ; '-'
                 call    print_char
                 mov     al, player._stamina
@@ -11304,7 +11304,7 @@ aTools          db 'TOOLS-',0
                 mov     si, bx          ; y
                 call    set_text_pos
                 mov     al, 41h ; 'A'
-                call    sub_1508C
+                call    print_indexed_menu_string
                 mov     al, 2Dh ; '-'
                 call    print_char
                 mov     al, player._charisma
@@ -11317,7 +11317,7 @@ aTools          db 'TOOLS-',0
                 mov     si, bx          ; y
                 call    set_text_pos
                 mov     al, 42h ; 'B'
-                call    sub_1508C
+                call    print_indexed_menu_string
                 mov     al, 2Dh ; '-'
                 call    print_char
                 mov     al, player._wisdom
@@ -11330,7 +11330,7 @@ aTools          db 'TOOLS-',0
                 mov     si, bx          ; y
                 call    set_text_pos
                 mov     al, 43h ; 'C'
-                call    sub_1508C
+                call    print_indexed_menu_string
                 mov     al, 2Dh ; '-'
                 call    print_char
                 mov     al, player._intelligence
@@ -11359,7 +11359,7 @@ loc_1475B:                              ; CODE XREF: zstats+229↓j
                 mov     ax, di
                 clc
                 adc     al, 13h
-                call    sub_1508C
+                call    print_indexed_menu_string
                 call    write_string
 ; ---------------------------------------------------------------------------
 aS              db 'S-',0
@@ -11401,7 +11401,7 @@ loc_147B4:                              ; CODE XREF: zstats+281↓j
                 mov     ax, di
                 clc
                 adc     al, 1Dh
-                call    sub_1508C
+                call    print_indexed_menu_string
                 call    write_string
 ; ---------------------------------------------------------------------------
                 db '-',0
@@ -11443,7 +11443,7 @@ loc_1480C:                              ; CODE XREF: zstats+2DA↓j
                 mov     ax, di
                 clc
                 adc     al, 24h ; '$'
-                call    sub_1508C
+                call    print_indexed_menu_string
                 call    write_string
 ; ---------------------------------------------------------------------------
 aS_0            db 'S-',0
@@ -11485,7 +11485,7 @@ loc_14864:                              ; CODE XREF: zstats+33D↓j
                 mov     ax, di
                 clc
                 adc     al, 2Eh ; '.'
-                call    sub_1508C
+                call    print_indexed_menu_string
                 cmp     byte_1742F, 3
                 jz      short loc_14886
                 call    write_string
@@ -11811,682 +11811,83 @@ xorSpriteDraw   endp
                 db    0
                 db    0
                 db    0
-                db    0
-                db  49h ; I
-                db  4Eh ; N
-                db  20h
-                db  54h ; T
-                db  48h ; H
-                db  45h ; E
-                db  20h
-                db  57h ; W
-                db  41h ; A
-                db  54h ; T
-                db  45h ; E
-                db  52h ; R
-                db  2Eh ; .
-                db    0
-                db  49h ; I
-                db  4Eh ; N
-                db  20h
-                db  41h ; A
-                db  20h
-                db  4Dh ; M
-                db  41h ; A
-                db  52h ; R
-                db  53h ; S
-                db  48h ; H
-                db  2Eh ; .
-                db    0
-                db  4Fh ; O
-                db  4Eh ; N
-                db  20h
-                db  47h ; G
-                db  52h ; R
-                db  41h ; A
-                db  53h ; S
-                db  53h ; S
-                db  2Eh ; .
-                db    0
-                db  49h ; I
-                db  4Eh ; N
-                db  20h
-                db  57h ; W
-                db  4Fh ; O
-                db  4Fh ; O
-                db  44h ; D
-                db  53h ; S
-                db  2Eh ; .
-                db    0
-                db  49h ; I
-                db  4Eh ; N
-                db  20h
-                db  54h ; T
-                db  48h ; H
-                db  45h ; E
-                db  20h
-                db  4Dh ; M
-                db  54h ; T
-                db  53h ; S
-                db  2Eh ; .
-                db    0
-                db  4Eh ; N
-                db  45h ; E
-                db  41h ; A
-                db  52h ; R
-                db  20h
-                db  41h ; A
-                db  20h
-                db  56h ; V
-                db  49h ; I
-                db  4Ch ; L
-                db  4Ch ; L
-                db  41h ; A
-                db  47h ; G
-                db  45h ; E
-                db  2Eh ; .
-                db    0
-                db  4Eh ; N
-                db  45h ; E
-                db  41h ; A
-                db  52h ; R
-                db  20h
-                db  41h ; A
-                db  20h
-                db  54h ; T
-                db  4Fh ; O
-                db  57h ; W
-                db  4Eh ; N
-                db  45h ; E
-                db  2Eh ; .
-                db    0
-                db  4Eh ; N
-                db  45h ; E
-                db  41h ; A
-                db  52h ; R
-                db  20h
-                db  41h ; A
-                db  20h
-                db  54h ; T
-                db  4Fh ; O
-                db  57h ; W
-                db  45h ; E
-                db  52h ; R
-                db  2Eh ; .
-                db    0
-                db  4Eh ; N
-                db  45h ; E
-                db  41h ; A
-                db  52h ; R
-                db  20h
-                db  41h ; A
-                db  20h
-                db  43h ; C
-                db  41h ; A
-                db  53h ; S
-                db  54h ; T
-                db  4Ch ; L
-                db  45h ; E
-                db  2Eh ; .
-                db    0
-                db  4Eh ; N
-                db  45h ; E
-                db  41h ; A
-                db  52h ; R
-                db  20h
-                db  41h ; A
-                db  20h
-                db  44h ; D
-                db  55h ; U
-                db  4Eh ; N
-                db  47h ; G
-                db  45h ; E
-                db  4Fh ; O
-                db  4Eh ; N
-                db  2Eh ; .
-                db    0
-                db  4Eh ; N
-                db  45h ; E
-                db  41h ; A
-                db  52h ; R
-                db  20h
-                db  41h ; A
-                db  20h
-                db  53h ; S
-                db  49h ; I
-                db  47h ; G
-                db  4Eh ; N
-                db  2Eh ; .
-                db    0
-                db  4Eh ; N
-                db  45h ; E
-                db  41h ; A
-                db  52h ; R
-                db  20h
-                db  41h ; A
-                db  20h
-                db  48h ; H
-                db  4Fh ; O
-                db  52h ; R
-                db  53h ; S
-                db  45h ; E
-                db  2Eh ; .
-                db    0
-                db  4Eh ; N
-                db  45h ; E
-                db  41h ; A
-                db  52h ; R
-                db  20h
-                db  41h ; A
-                db  20h
-                db  46h ; F
-                db  52h ; R
-                db  49h ; I
-                db  47h ; G
-                db  41h ; A
-                db  54h ; T
-                db  45h ; E
-                db  2Eh ; .
-                db    0
-                db  4Eh ; N
-                db  45h ; E
-                db  41h ; A
-                db  52h ; R
-                db  20h
-                db  41h ; A
-                db  20h
-                db  50h ; P
-                db  4Ch ; L
-                db  41h ; A
-                db  4Eh ; N
-                db  45h ; E
-                db  2Eh ; .
-                db    0
-                db  4Eh ; N
-                db  45h ; E
-                db  41h ; A
-                db  52h ; R
-                db  20h
-                db  41h ; A
-                db  20h
-                db  52h ; R
-                db  4Fh ; O
-                db  43h ; C
-                db  4Bh ; K
-                db  45h ; E
-                db  54h ; T
-                db  2Eh ; .
-                db    0
-                db  4Eh ; N
-                db  45h ; E
-                db  41h ; A
-                db  52h ; R
-                db  20h
-                db  41h ; A
-                db  52h ; R
-                db  4Dh ; M
-                db  4Fh ; O
-                db  55h ; U
-                db  52h ; R
-                db  2Eh ; .
-                db    0
-                db  4Eh ; N
-                db  45h ; E
-                db  41h ; A
-                db  52h ; R
-                db  20h
-                db  41h ; A
-                db  20h
-                db  48h ; H
-                db  4Fh ; O
-                db  4Ch ; L
-                db  45h ; E
-                db  2Eh ; .
-                db    0
-                db  4Fh ; O
-                db  4Eh ; N
-                db  20h
-                db  43h ; C
-                db  4Fh ; O
-                db  42h ; B
-                db  42h ; B
-                db  4Ch ; L
-                db  45h ; E
-                db  2Eh ; .
-                db    0
-                db  48h ; H
-                db  41h ; A
-                db  4Eh ; N
-                db  44h ; D
-                db  53h ; S
-                db    0
-                db  44h ; D
-                db  41h ; A
-                db  47h ; G
-                db  47h ; G
-                db  45h ; E
-                db  52h ; R
-                db    0
-                db  4Dh ; M
-                db  41h ; A
-                db  43h ; C
-                db  45h ; E
-                db    0
-                db  41h ; A
-                db  58h ; X
-                db  45h ; E
-                db    0
-                db  42h ; B
-                db  4Fh ; O
-                db  57h ; W
-                db    0
-                db  53h ; S
-                db  57h ; W
-                db  4Fh ; O
-                db  52h ; R
-                db  44h ; D
-                db    0
-                db  47h ; G
-                db  52h ; R
-                db  45h ; E
-                db  41h ; A
-                db  54h ; T
-                db  20h
-                db  53h ; S
-                db  57h ; W
-                db  4Fh ; O
-                db  52h ; R
-                db  44h ; D
-                db    0
-                db  4Ch ; L
-                db  49h ; I
-                db  47h ; G
-                db  48h ; H
-                db  54h ; T
-                db  20h
-                db  53h ; S
-                db  57h ; W
-                db  4Fh ; O
-                db  52h ; R
-                db  44h ; D
-                db    0
-                db  50h ; P
-                db  48h ; H
-                db  41h ; A
-                db  53h ; S
-                db  45h ; E
-                db  52h ; R
-                db    0
-                db  51h ; Q
-                db  55h ; U
-                db  49h ; I
-                db  43h ; C
-                db  4Bh ; K
-                db  20h
-                db  53h ; S
-                db  57h ; W
-                db  4Fh ; O
-                db  52h ; R
-                db  44h ; D
-                db    0
-                db  53h ; S
-                db  4Bh ; K
-                db  49h ; I
-                db  4Eh ; N
-                db    0
-                db  43h ; C
-                db  4Ch ; L
-                db  4Fh ; O
-                db  54h ; T
-                db  48h ; H
-                db    0
-                db  4Ch ; L
-                db  45h ; E
-                db  41h ; A
-                db  54h ; T
-                db  48h ; H
-                db  45h ; E
-                db  52h ; R
-                db    0
-                db  43h ; C
-                db  48h ; H
-                db  41h ; A
-                db  49h ; I
-                db  4Eh ; N
-                db    0
-                db  50h ; P
-                db  4Ch ; L
-                db  41h ; A
-                db  54h ; T
-                db  45h ; E
-                db    0
-                db  52h ; R
-                db  45h ; E
-                db  46h ; F
-                db  4Ch ; L
-                db  45h ; E
-                db  43h ; C
-                db  54h ; T
-                db    0
-                db  50h ; P
-                db  4Fh ; O
-                db  57h ; W
-                db  45h ; E
-                db  52h ; R
-                db    0
-                db  4Eh ; N
-                db  4Fh ; O
-                db  4Eh ; N
-                db  45h ; E
-                db    0
-                db  4Ch ; L
-                db  49h ; I
-                db  47h ; G
-                db  48h ; H
-                db  54h ; T
-                db    0
-                db  44h ; D
-                db  4Fh ; O
-                db  57h ; W
-                db  4Eh ; N
-                db  20h
-                db  4Ch ; L
-                db  41h ; A
-                db  44h ; D
-                db  44h ; D
-                db  45h ; E
-                db  52h ; R
-                db    0
-                db  55h ; U
-                db  50h ; P
-                db  20h
-                db  4Ch ; L
-                db  41h ; A
-                db  44h ; D
-                db  44h ; D
-                db  45h ; E
-                db  52h ; R
-                db    0
-                db  50h ; P
-                db  41h ; A
-                db  53h ; S
-                db  53h ; S
-                db  57h ; W
-                db  41h ; A
-                db  4Ch ; L
-                db  4Ch ; L
-                db    0
-                db  53h ; S
-                db  55h ; U
-                db  52h ; R
-                db  46h ; F
-                db  41h ; A
-                db  43h ; C
-                db  45h ; E
-                db    0
-                db  50h ; P
-                db  52h ; R
-                db  41h ; A
-                db  59h ; Y
-                db  45h ; E
-                db  52h ; R
-                db    0
-                db  4Dh ; M
-                db  41h ; A
-                db  47h ; G
-                db  49h ; I
-                db  43h ; C
-                db  20h
-                db  4Dh ; M
-                db  49h ; I
-                db  53h ; S
-                db  53h ; S
-                db  49h ; I
-                db  4Ch ; L
-                db  45h ; E
-                db    0
-                db  42h ; B
-                db  4Ch ; L
-                db  49h ; I
-                db  4Eh ; N
-                db  4Bh ; K
-                db    0
-                db  4Bh ; K
-                db  49h ; I
-                db  4Ch ; L
-                db  4Ch ; L
-                db    0
-                db  52h ; R
-                db  49h ; I
-                db  4Eh ; N
-                db  47h ; G
-                db    0
-                db  57h ; W
-                db  41h ; A
-                db  4Eh ; N
-                db  44h ; D
-                db    0
-                db  53h ; S
-                db  54h ; T
-                db  41h ; A
-                db  46h ; F
-                db  46h ; F
-                db    0
-                db  42h ; B
-                db  4Fh ; O
-                db  4Fh ; O
-                db  54h ; T
-                db  53h ; S
-                db    0
-                db  43h ; C
-                db  4Ch ; L
-                db  4Fh ; O
-                db  41h ; A
-                db  4Bh ; K
-                db    0
-                db  48h ; H
-                db  45h ; E
-                db  4Ch ; L
-                db  4Dh ; M
-                db    0
-                db  47h ; G
-                db  45h ; E
-                db  4Dh ; M
-                db    0
-                db  41h ; A
-                db  4Eh ; N
-                db  4Bh ; K
-                db  48h ; H
-                db    0
-                db  52h ; R
-                db  45h ; E
-                db  44h ; D
-                db  20h
-                db  47h ; G
-                db  45h ; E
-                db  4Dh ; M
-                db    0
-                db  53h ; S
-                db  4Bh ; K
-                db  55h ; U
-                db  4Ch ; L
-                db  4Ch ; L
-                db  20h
-                db  4Bh ; K
-                db  45h ; E
-                db  59h ; Y
-                db    0
-                db  47h ; G
-                db  52h ; R
-                db  45h ; E
-                db  45h ; E
-                db  4Eh ; N
-                db  20h
-                db  47h ; G
-                db  45h ; E
-                db  4Dh ; M
-                db    0
-                db  42h ; B
-                db  52h ; R
-                db  41h ; A
-                db  53h ; S
-                db  53h ; S
-                db  20h
-                db  42h ; B
-                db  55h ; U
-                db  54h ; T
-                db  54h ; T
-                db  4Fh ; O
-                db  4Eh ; N
-                db    0
-                db  42h ; B
-                db  4Ch ; L
-                db  55h ; U
-                db  45h ; E
-                db  20h
-                db  54h ; T
-                db  41h ; A
-                db  53h ; S
-                db  53h ; S
-                db  4Ch ; L
-                db  45h ; E
-                db    0
-                db  53h ; S
-                db  54h ; T
-                db  52h ; R
-                db  41h ; A
-                db  4Eh ; N
-                db  47h ; G
-                db  45h ; E
-                db  20h
-                db  43h ; C
-                db  4Fh ; O
-                db  49h ; I
-                db  4Eh ; N
-                db    0
-                db  47h ; G
-                db  52h ; R
-                db  45h ; E
-                db  45h ; E
-                db  4Eh ; N
-                db  20h
-                db  49h ; I
-                db  44h ; D
-                db  4Fh ; O
-                db  4Ch ; L
-                db    0
-                db  54h ; T
-                db  52h ; R
-                db  49h ; I
-                db  2Dh ; -
-                db  4Ch ; L
-                db  49h ; I
-                db  54h ; T
-                db  48h ; H
-                db  49h ; I
-                db  55h ; U
-                db  4Dh ; M
-                db    0
-                db  53h ; S
-                db  54h ; T
-                db  52h ; R
-                db  45h ; E
-                db  4Eh ; N
-                db  47h ; G
-                db  54h ; T
-                db  48h ; H
-                db    0
-                db  41h ; A
-                db  47h ; G
-                db  49h ; I
-                db  4Ch ; L
-                db  49h ; I
-                db  54h ; T
-                db  59h ; Y
-                db    0
-                db  53h ; S
-                db  54h ; T
-                db  41h ; A
-                db  4Dh ; M
-                db  49h ; I
-                db  4Eh ; N
-                db  41h ; A
-                db    0
-                db  43h ; C
-                db  48h ; H
-                db  41h ; A
-                db  52h ; R
-                db  49h ; I
-                db  53h ; S
-                db  4Dh ; M
-                db  41h ; A
-                db    0
-                db  57h ; W
-                db  49h ; I
-                db  53h ; S
-                db  44h ; D
-                db  4Fh ; O
-                db  4Dh ; M
-                db    0
-                db  49h ; I
-                db  4Eh ; N
-                db  54h ; T
-                db  45h ; E
-                db  4Ch ; L
-                db  4Ch ; L
-                db  2Eh ; .
-                db    0
-                db  48h ; H
-                db  55h ; U
-                db  4Dh ; M
-                db  41h ; A
-                db  4Eh ; N
-                db    0
-                db  45h ; E
-                db  4Ch ; L
-                db  46h ; F
-                db    0
-                db  44h ; D
-                db  57h ; W
-                db  41h ; A
-                db  52h ; R
-                db  46h ; F
-                db    0
-                db  48h ; H
-                db  4Fh ; O
-                db  42h ; B
-                db  42h ; B
-                db  49h ; I
-                db  54h ; T
-                db    0
-                db  46h ; F
-                db  49h ; I
-                db  47h ; G
-                db  48h ; H
-                db  54h ; T
-                db  45h ; E
-                db  52h ; R
-                db    0
-                db  43h ; C
-                db  4Ch ; L
-                db  45h ; E
-                db  52h ; R
-                db  49h ; I
-                db  43h ; C
-                db    0
-                db  57h ; W
-                db  49h ; I
-                db  5Ah ; Z
-                db  41h ; A
-                db  52h ; R
-                db  44h ; D
-                db    0
-                db  54h ; T
-                db  48h ; H
-                db  49h ; I
-                db  45h ; E
-                db  46h ; F
-                db    0
+TEXT_STRINGS    db 0                    ; DATA XREF: print_indexed_menu_string:loc_15093↓r
+                                        ; print_indexed_menu_string+18↓r
+aInTheWater     db 'IN THE WATER.',0
+aInAMarsh       db 'IN A MARSH.',0
+aOnGrass        db 'ON GRASS.',0
+aInWoods        db 'IN WOODS.',0
+aInTheMts       db 'IN THE MTS.',0
+aNearAVillage   db 'NEAR A VILLAGE.',0
+aNearATowne     db 'NEAR A TOWNE.',0
+aNearATower     db 'NEAR A TOWER.',0
+aNearACastle    db 'NEAR A CASTLE.',0
+aNearADungeon   db 'NEAR A DUNGEON.',0
+aNearASign      db 'NEAR A SIGN.',0
+aNearAHorse     db 'NEAR A HORSE.',0
+aNearAFrigate   db 'NEAR A FRIGATE.',0
+aNearAPlane     db 'NEAR A PLANE.',0
+aNearARocket    db 'NEAR A ROCKET.',0
+aNearArmour     db 'NEAR ARMOUR.',0
+aNearAHole      db 'NEAR A HOLE.',0
+aOnCobble       db 'ON COBBLE.',0
+aHands          db 'HANDS',0
+aDagger         db 'DAGGER',0
+aMace           db 'MACE',0
+aAxe            db 'AXE',0
+aBow            db 'BOW',0
+aSword          db 'SWORD',0
+aGreatSword     db 'GREAT SWORD',0
+aLightSword     db 'LIGHT SWORD',0
+aPhaser         db 'PHASER',0
+aQuickSword     db 'QUICK SWORD',0
+aSkin           db 'SKIN',0
+aCloth          db 'CLOTH',0
+aLeather        db 'LEATHER',0
+aChain          db 'CHAIN',0
+aPlate          db 'PLATE',0
+aReflect        db 'REFLECT',0
+aPower          db 'POWER',0
+aNone           db 'NONE',0
+aLight          db 'LIGHT',0
+aDownLadder     db 'DOWN LADDER',0
+aUpLadder       db 'UP LADDER',0
+aPasswall       db 'PASSWALL',0
+aSurface        db 'SURFACE',0
+aPrayer         db 'PRAYER',0
+aMagicMissile_0 db 'MAGIC MISSILE',0
+aBlink          db 'BLINK',0
+aKill           db 'KILL',0
+aRing           db 'RING',0
+aWand           db 'WAND',0
+aStaff          db 'STAFF',0
+aBoots          db 'BOOTS',0
+aCloak          db 'CLOAK',0
+aHelm           db 'HELM',0
+aGem            db 'GEM',0
+aAnkh           db 'ANKH',0
+aRedGem         db 'RED GEM',0
+aSkullKey       db 'SKULL KEY',0
+aGreenGem       db 'GREEN GEM',0
+aBrassButton    db 'BRASS BUTTON',0
+aBlueTassle     db 'BLUE TASSLE',0
+aStrangeCoin    db 'STRANGE COIN',0
+aGreenIdol      db 'GREEN IDOL',0
+aTriLithium_0   db 'TRI-LITHIUM',0
+aStrength       db 'STRENGTH',0
+aAgility        db 'AGILITY',0
+aStamina        db 'STAMINA',0
+aCharisma       db 'CHARISMA',0
+aWisdom         db 'WISDOM',0
+aIntell         db 'INTELL.',0
+aHuman_0        db 'HUMAN',0
+aElf_0          db 'ELF',0
+aDwarf_0        db 'DWARF',0
+aHobbit_0       db 'HOBBIT',0
+aFighter_0      db 'FIGHTER',0
+aCleric_0       db 'CLERIC',0
+aWizard_0       db 'WIZARD',0
+aThief_0        db 'THIEF',0
 _picture_int21_function db 0            ; DATA XREF: access_file+B↓w
                                         ; access_file+A0↓r
 _picture_int21_cx dw 0                  ; DATA XREF: access_file+10↓w
@@ -12818,40 +12219,40 @@ write_player_name endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1508C       proc near               ; CODE XREF: cast+4F↑p
+print_indexed_menu_string proc near     ; CODE XREF: cast+4F↑p
                                         ; magic+36↑p ...
                 mov     ah, 0
                 mov     si, ax
                 mov     di, 0
 
-loc_15093:                              ; CODE XREF: sub_1508C+10↓j
-                cmp     byte ptr cs:[di+4C60h], 0
+loc_15093:                              ; CODE XREF: print_indexed_menu_string+10↓j
+                cmp     cs:TEXT_STRINGS[di], 0
                 jz      short loc_1509E
 
-loc_1509B:                              ; CODE XREF: sub_1508C+15↓j
+loc_1509B:                              ; CODE XREF: print_indexed_menu_string+15↓j
                 inc     di
                 jmp     short loc_15093
 ; ---------------------------------------------------------------------------
 
-loc_1509E:                              ; CODE XREF: sub_1508C+D↑j
+loc_1509E:                              ; CODE XREF: print_indexed_menu_string+D↑j
                 dec     si
                 jz      short loc_150A3
                 jmp     short loc_1509B
 ; ---------------------------------------------------------------------------
 
-loc_150A3:                              ; CODE XREF: sub_1508C+13↑j
-                                        ; sub_1508C+24↓j
+loc_150A3:                              ; CODE XREF: print_indexed_menu_string+13↑j
+                                        ; print_indexed_menu_string+24↓j
                 inc     di
-                mov     al, cs:[di+4C60h]
+                mov     al, cs:TEXT_STRINGS[di]
                 cmp     al, 0
                 jz      short locret_150B2
                 call    write_character
                 jmp     short loc_150A3
 ; ---------------------------------------------------------------------------
 
-locret_150B2:                           ; CODE XREF: sub_1508C+1F↑j
+locret_150B2:                           ; CODE XREF: print_indexed_menu_string+1F↑j
                 retn
-sub_1508C       endp
+print_indexed_menu_string endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -13101,7 +12502,7 @@ set_cursor_position endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_15217       proc near               ; CODE XREF: sub_10A30+94↑p
+rand_byte       proc near               ; CODE XREF: sub_10A30+94↑p
                                         ; sub_10A30:loc_10B62↑p ...
                 push    ax
                 push    bx
@@ -13112,7 +12513,7 @@ sub_15217       proc near               ; CODE XREF: sub_10A30+94↑p
                 mov     _timer1, al
                 mov     bx, 4
 
-loc_1522B:                              ; CODE XREF: sub_15217+1D↓j
+loc_1522B:                              ; CODE XREF: rand_byte+1D↓j
                 mov     al, [bx+23Fh]
                 mov     [bx+240h], al
                 dec     bx
@@ -13122,7 +12523,7 @@ loc_1522B:                              ; CODE XREF: sub_15217+1D↓j
                 mov     al, _timer1
                 or      al, al
                 retn
-sub_15217       endp
+rand_byte       endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -14581,26 +13982,26 @@ unk_15D65       db    1                 ; DATA XREF: sg01a2:5D9F↓o
 off_15D9B       dw offset unk_15D5D     ; DATA XREF: sub_15D09+D↑r
                 dw offset unk_15D61
                 dw offset unk_15D65
-word_15DA1      dw 0                    ; DATA XREF: sub_15DA9+11↓w
-                                        ; sub_15DA9:loc_15DDE↓r ...
-word_15DA3      dw 0                    ; DATA XREF: sub_15DA9+15↓w
-                                        ; sub_15DA9+57↓r ...
-word_15DA5      dw 0                    ; DATA XREF: sub_15DA9+1A↓w
-                                        ; sub_15DA9+27↓r ...
-word_15DA7      dw 0                    ; DATA XREF: sub_15DA9+39↓w
-                                        ; sub_15DA9:loc_15DE6↓r ...
+word_15DA1      dw 0                    ; DATA XREF: play_tone_sweep+11↓w
+                                        ; play_tone_sweep:loc_15DDE↓r ...
+word_15DA3      dw 0                    ; DATA XREF: play_tone_sweep+15↓w
+                                        ; play_tone_sweep+57↓r ...
+word_15DA5      dw 0                    ; DATA XREF: play_tone_sweep+1A↓w
+                                        ; play_tone_sweep+27↓r ...
+word_15DA7      dw 0                    ; DATA XREF: play_tone_sweep+39↓w
+                                        ; play_tone_sweep:loc_15DE6↓r ...
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_15DA9       proc near               ; CODE XREF: sub_15E3B+13↓p
+play_tone_sweep proc near               ; CODE XREF: sub_15E3B+13↓p
                                         ; sub_15EAC+13↓p ...
                 cmp     byte_1795D, 0
                 jz      short loc_15DB3
                 jmp     locret_15E3A
 ; ---------------------------------------------------------------------------
 
-loc_15DB3:                              ; CODE XREF: sub_15DA9+5↑j
+loc_15DB3:                              ; CODE XREF: play_tone_sweep+5↑j
                 push    ax
                 push    bx
                 push    cx
@@ -14621,12 +14022,12 @@ loc_15DB3:                              ; CODE XREF: sub_15DA9+5↑j
                 db  90h
 ; ---------------------------------------------------------------------------
 
-loc_15DDE:                              ; CODE XREF: sub_15DA9+2C↑j
-                                        ; sub_15DA9+87↓j
+loc_15DDE:                              ; CODE XREF: play_tone_sweep+2C↑j
+                                        ; play_tone_sweep+87↓j
                 mov     ax, cs:word_15DA1
                 mov     cs:word_15DA7, ax
 
-loc_15DE6:                              ; CODE XREF: sub_15DA9+5C↓j
+loc_15DE6:                              ; CODE XREF: play_tone_sweep+5C↓j
                 mov     bx, cs:word_15DA7
                 mov     cx, bp
                 call    sub_15CD2
@@ -14638,11 +14039,11 @@ loc_15DE6:                              ; CODE XREF: sub_15DA9+5C↓j
                 cmp     ax, cs:word_15DA3
                 jb      short loc_15DE6
 
-loc_15E07:                              ; CODE XREF: sub_15DA9+32↑j
+loc_15E07:                              ; CODE XREF: play_tone_sweep+32↑j
                 mov     ax, cs:word_15DA3
                 mov     cs:word_15DA7, ax
 
-loc_15E0F:                              ; CODE XREF: sub_15DA9+85↓j
+loc_15E0F:                              ; CODE XREF: play_tone_sweep+85↓j
                 mov     bx, cs:word_15DA7
                 mov     cx, bp
                 call    sub_15CD2
@@ -14656,8 +14057,8 @@ loc_15E0F:                              ; CODE XREF: sub_15DA9+85↓j
                 jmp     short loc_15DDE
 ; ---------------------------------------------------------------------------
 
-loc_15E32:                              ; CODE XREF: sub_15DA9+48↑j
-                                        ; sub_15DA9+71↑j
+loc_15E32:                              ; CODE XREF: play_tone_sweep+48↑j
+                                        ; play_tone_sweep+71↑j
                 call    sub_15CE4
                 pop     bp
                 pop     dx
@@ -14665,9 +14066,9 @@ loc_15E32:                              ; CODE XREF: sub_15DA9+48↑j
                 pop     bx
                 pop     ax
 
-locret_15E3A:                           ; CODE XREF: sub_15DA9+7↑j
+locret_15E3A:                           ; CODE XREF: play_tone_sweep+7↑j
                 retn
-sub_15DA9       endp
+play_tone_sweep endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -14683,7 +14084,7 @@ sub_15E3B       proc near               ; CODE XREF: sg01a2:28CD↑p
                 mov     cx, 1
                 mov     dx, 1000h
                 mov     bp, 80h
-                call    sub_15DA9
+                call    play_tone_sweep
                 pop     dx
                 pop     cx
                 pop     bx
@@ -14784,7 +14185,7 @@ sub_15EAC       proc near               ; CODE XREF: sub_10A30+189↑p
                 mov     cx, 2
                 mov     dx, 200h
                 mov     bp, 8
-                call    sub_15DA9
+                call    play_tone_sweep
                 pop     dx
                 pop     cx
                 pop     bx
@@ -14813,7 +14214,7 @@ sub_15EC7       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_15ED7       proc near               ; CODE XREF: attack+69↑p
+play_hit_sound  proc near               ; CODE XREF: attack+69↑p
                                         ; attack+30A↑p ...
                 push    ax
                 push    bx
@@ -14824,13 +14225,13 @@ sub_15ED7       proc near               ; CODE XREF: attack+69↑p
                 mov     cx, 20h ; ' '
                 mov     dx, 0E00h
                 mov     bp, 8
-                call    sub_15DA9
+                call    play_tone_sweep
                 pop     dx
                 pop     cx
                 pop     bx
                 pop     ax
                 retn
-sub_15ED7       endp
+play_hit_sound  endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -14847,7 +14248,7 @@ pause?          proc near               ; CODE XREF: sub_10A30+199↑p
                 mov     cx, 47h ; 'G'
                 mov     dx, 800h
                 mov     bp, 8
-                call    sub_15DA9
+                call    play_tone_sweep
                 pop     dx
                 pop     cx
                 pop     bx
@@ -15025,7 +14426,7 @@ sub_15FA6       proc near               ; CODE XREF: normal_movement+130↑p
                 mov     cx, 0FFFFh
                 mov     dx, 50h ; 'P'
                 mov     bp, 0F00h
-                call    sub_15DA9
+                call    play_tone_sweep
                 pop     bp
                 pop     dx
                 pop     cx
@@ -15050,7 +14451,7 @@ sub_15FC3       proc near               ; CODE XREF: sub_10E70+17↑p
                 mov     cx, 0FFFFh
                 mov     dx, 5Ch ; '\'
                 mov     bp, 0B00h
-                call    sub_15DA9
+                call    play_tone_sweep
                 pop     bp
                 pop     dx
                 pop     cx
@@ -15075,7 +14476,7 @@ sub_15FE0       proc near               ; CODE XREF: attack+32↑p
                 mov     cx, 1
                 mov     dx, 200h
                 mov     bp, 80h
-                call    sub_15DA9
+                call    play_tone_sweep
                 pop     bp
                 pop     dx
                 pop     cx
@@ -16362,7 +15763,7 @@ aZabo           db '  ZABO=',0
                 call    sub_16D3E
                 call    j_write_string
 ; ---------------------------------------------------------------------------
-                mov     al, player.field_2C
+                mov     al, player._readiedArmor
                 cmp     al, 5
                 jnb     short loc_16A79
                 call    write_string
@@ -18824,8 +18225,8 @@ byte_17436      db 0                    ; DATA XREF: sg01a2:0901↑w
                                         ; sg01a2:0942↑w ...
 _sleepFlag2?    db 0                    ; DATA XREF: sg01a2:08A9↑w
                                         ; sg01a2:08BF↑w ...
-byte_17438      db 0                    ; DATA XREF: sub_12052+6↑r
-                                        ; sub_12052+22↑r ...
+byte_17438      db 0                    ; DATA XREF: try_spend_gold+6↑r
+                                        ; try_spend_gold+22↑r ...
 points_to_distrubte db 0                ; DATA XREF: sub_10A30+7C↑w
                                         ; sub_10A30+99↑r ...
 _attribPoints   db 0                    ; DATA XREF: update_points_remaining↑w
@@ -18934,9 +18335,9 @@ _timer2         db 0                    ; DATA XREF: start_+19↑w
 _timer3         db 0                    ; DATA XREF: start_+1C↑w
 _timer4         db 0                    ; DATA XREF: start_+1F↑w
 _timer5         db 0                    ; DATA XREF: start_+22↑w
-                                        ; sub_15217+6↑r
+                                        ; rand_byte+6↑r
 _timer6         db 0                    ; DATA XREF: start_+25↑w
-                                        ; sub_15217+A↑r
+                                        ; rand_byte+A↑r
 _picData        FCB <0>                 ; DATA XREF: access_file:loc_152E7↑w
                                         ; access_file+47↑o ...
 _flag1          db 0                    ; DATA XREF: sg01a2:081A↑w

@@ -5,8 +5,13 @@ renames, retypes) for Ultima II (DOS).
 Companion to apply_renames.py, same rationale: one accumulating,
 git-trackable file instead of a new one-off script per finding. Add an
 entry to OPERATIONS below whenever a struct field's meaning becomes
-clear, then re-run (DRY_RUN = True first, always). Idempotent: each
-operation checks current state and skips if already applied.
+clear, then re-run. Idempotent: each operation checks current state and
+skips if already applied.
+
+Convention: DRY_RUN is left False (Paul's call, 2026-08-17, same as
+apply_renames.py) -- new entries take effect the moment they're added
+and the script is re-run. Sanity-check a new entry's offset/name before
+adding it, since there's no dry-run safety net here anymore.
 
 Scope: operations on IDA *struct* definitions (`Savegame`, `FCB`, and
 any future ones) via add_struc_member / set_member_name -- i.e. things
@@ -43,17 +48,81 @@ Each OPERATIONS entry is a dict:
 import idc
 import ida_struct
 
-DRY_RUN = True
+DRY_RUN = False
 
 OPERATIONS = [
-    # No pending struct findings yet. Example shape for the next one:
-    #
-    # {"op": "rename_member", "struct": "Savegame", "offset": 0x2B,
-    #  "new_name": "_something", "note": "figured out via ..., see "
-    #  "docs/overview.md#... -- replaces the placeholder field_2B"},
-    #
-    # {"op": "add_member", "struct": "Savegame", "member": "_newField",
-    #  "offset": 0x39, "size": 1, "note": "..."},
+    {"op": "rename_member", "struct": "Savegame", "offset": 0x2E,
+     "new_name": "_torches",
+     "note": "checked/decremented by ignite_torch (\"NONE OWNED!\" if "
+             "zero, asm ~9629-9647); +1..4 (BCD) dropped by most "
+             "monster kills in attack (asm ~8199-8209). See "
+             "docs/file-formats.md#monx--monsternpc-data."},
+
+    {"op": "rename_member", "struct": "Savegame", "offset": 0x2F,
+     "new_name": "_keys",
+     "note": "checked/decremented by unlock (\"NO KEYS THAT FIT!\" if "
+             "zero, asm ~10884-10908); +2 (BCD) dropped by killing a "
+             "Guard (TILE_GUARD, monster type 0x60) in attack (asm "
+             "~8134-8143). See docs/file-formats.md#monx--monsternpc-data."},
+
+    {"op": "rename_member", "struct": "Savegame", "offset": 0x30,
+     "new_name": "_thievesTools",
+     "note": "saves you from a trap death (\"ESCAPED! BY USE OF "
+             "TOOLS!\", decremented on use, asm ~7599-7631) -- die "
+             "instead if zero; +1 (BCD) dropped by killing a Thief "
+             "(TILE_THIEF, monster type 0xFC) in attack (asm "
+             "~8146-8177). See docs/file-formats.md#monx--monsternpc-data."},
+
+    # -- 4 fields decoded via the TEXT_STRINGS (cs:4C60h) table Paul
+    # formatted directly in IDA -- cross-checked each command's write
+    # site against zstats' matching read formula, see
+    # docs/overview.md#text_strings--the-cs4c60h-table-fully-decoded --
+
+    {"op": "rename_member", "struct": "Savegame", "offset": 0x2B,
+     "new_name": "_readiedWeapon",
+     "note": "0=unarmed..9=Quick Sword. Set by ready right after "
+             "\" READY.\" (asm ~10454); read by attack's melee damage "
+             "formula (field_2B*8 + _strength, asm ~8050) and by "
+             "zstats (field_2B+0x13 indexes TEXT_STRINGS' weapon "
+             "names, matching ready's own digit+0x13 prompt formula)."},
+
+    {"op": "rename_member", "struct": "Savegame", "offset": 0x2C,
+     "new_name": "_readiedArmor",
+     "note": "0=none/Skin..6=Power. Set by wear_armor (asm ~11053); "
+             "read by zstats (field_2C+0x1D indexes TEXT_STRINGS' "
+             "armor names, matching wear_armor's own digit+0x1D "
+             "prompt formula)."},
+
+    {"op": "rename_member", "struct": "Savegame", "offset": 0x2D,
+     "new_name": "_readiedSpell",
+     "note": "0=none..9=Kill. Set directly by magic from the keypress "
+             "(asm 10089); read by zstats (field_2D+0x24 indexes "
+             "TEXT_STRINGS' spell names -- None/Light/Down Ladder/Up "
+             "Ladder/Passwall/Surface/Prayer/Magic Missile/Blink/Kill, "
+             "matching Ultima II's real spell list)."},
+
+    {"op": "rename_member", "struct": "Savegame", "offset": 0xA5,
+     "new_name": "_gems",
+     "note": "closes out an open item from the _mapMonsters decoding "
+             "pass (was: 'Fighter-kill drop, +1 BCD, no consumption "
+             "site found'). view requires it nonzero (\"VIEW WHAT?\" "
+             "otherwise, asm 10927-10935) and decrements it on use "
+             "(asm 10962-10968) -- spending a gem to see the world "
+             "map. See docs/overview.md as above."},
+
+    # -- found while tracing _readiedSpell into cast --
+
+    {"op": "rename_member", "struct": "Savegame", "offset": 0xA1,
+     "new_name": "_wands",
+     "note": "wand-owned count. cast requires field_A1+field_A2 != 0 "
+             "(\"NEED WAND OR STAFF!\" otherwise, asm ~13153-13165) -- "
+             "TEXT_STRINGS index 47 is WAND. See "
+             "docs/overview.md#cast--how-_readiedspell-drives-spell-effects."},
+
+    {"op": "rename_member", "struct": "Savegame", "offset": 0xA2,
+     "new_name": "_staves",
+     "note": "staff-owned count, same gate as _wands above -- "
+             "TEXT_STRINGS index 48 is STAFF."},
 ]
 
 _SIZE_FLAGS = {1: idc.FF_BYTE, 2: idc.FF_WORD, 4: idc.FF_DWORD}

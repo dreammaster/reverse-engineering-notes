@@ -128,13 +128,131 @@ sessions, unlike a one-off todo list.
       and consider going through `canMoveToTile`/`draw_map` etc. to
       apply the enum to existing raw tile-ID comparisons where it's
       unambiguous which ones are actually tile IDs vs. unrelated bytes.
-- [ ] Fetch the ModdingWiki "Ultima II Monster Format" page (linked from
-      the summary page, not yet pulled) to fill in `monx??` layout in
-      file-formats.md.
-- [ ] Look for a wiki page on the `player` save format specifically (the
-      summary page names it "Ultima II Save Game Format" but we haven't
-      located/fetched that page's URL yet) to cross-check the `Savegame`
-      struct fields already identified.
+- [x] Fetch the ModdingWiki "Ultima II Monster Format" page — **doesn't
+      exist**, confirmed redlink on the summary page. No external
+      source for `monx??`. Went ahead and wrote up what the
+      disassembly already tells us instead (256-byte struct-of-arrays,
+      5 of an estimated ~8 on-disk fields located but not decoded, plus
+      7 separate runtime-only per-monster fields already reasonably
+      well understood from earlier tracing work) — see
+      [file-formats.md](file-formats.md#monx--monsternpc-data).
+- [x] Look for a wiki page on the `player` save format — **also
+      doesn't exist**, same redlink check as above ("Ultima II Save
+      Game Format"). No cross-check available; the `Savegame` struct
+      layout stays disassembly-only, see the item below.
+- [x] Decode the on-disk `_mapMonsters` fields — **6 of them found and
+      decoded** (one more than expected, `+0xA0`), by reading `attack`
+      (asm 8115-8257), `cast`'s monster-finder `sub_1330C` (asm
+      8950-9044), and `offer` (asm 10164-10219). Big result: monster
+      type (`+0x60`) is literally `TileId × 4` — same ×4 encoding as
+      `mapx??` terrain, confirmed via exact value matches
+      (`TILE_MINAX`, `TILE_GUARD`, `TILE_THIEF`, `TILE_FIGHTER`).
+      Bonus: decoded 3 previously-unplaced `Savegame` fields in the
+      process — `field_2E`=Torches, `field_2F`=Keys,
+      `field_30`=Thieves' Tools, all cross-checked against both their
+      monster-kill drop site and their separate spend site elsewhere
+      in the code. Full writeup in
+      [file-formats.md](file-formats.md#monx--monsternpc-data).
+- [x] Run `ida_scripts/apply_structs.py` — done. `field_2E`→`_torches`,
+      `field_2F`→`_keys`, `field_30`→`_thievesTools`, confirmed in the
+      refreshed `.asm`. **Convention update**: Paul ran this one with
+      `DRY_RUN = False` too (previously only `apply_renames.py` had
+      this), so both master scripts now default to applying
+      immediately — still propose new entries and get sign-off in chat
+      before adding them, same as `apply_renames.py`'s convention.
+- [ ] Follow-up leads from the decoding pass, not yet chased:
+      - `field_A5` (Fighter-kill drop, +1 BCD) has no confirmed
+        consumption site — find where else it's read.
+      - The Thief/Fighter kill branches in `attack` touch a small
+        array at `[idx+0D6h]` (asm ~8161-8170, ~8219-8228) — not
+        traced at all yet.
+      - `+0x80` (display/glyph tile) vs. `+0x60` (type) — likely
+        redundant/companion fields, not fully distinguished.
+      - `+0xC0`-`+0xFF` (the remaining 64 bytes of the 256-byte file)
+        — no code found referencing this span yet; possibly 1-2 more
+        fields, possibly padding.
+      - The on-disk `+0x00`/`+0x20` (map X/Y) vs. the runtime-only
+        `+0x137`/`+0x157` (also map X/Y) — relationship between the
+        two not established (spawn vs. live copy? kept in sync?).
+      - A possible bug/oddity in the "killed Minax" branch of `attack`
+        (asm 8079-8111) — looks like it writes to a transposed (Y, X)
+        map position instead of (X, Y). Worth a closer look, not
+        confirmed as a real bug yet.
+- [ ] Once the above settles, name the `_mapMonsters` sub-fields and
+      the 7 runtime-only per-monster fields (`+0x137` through
+      `+0x217`, see file-formats.md) in the IDB — needs a bespoke
+      splitting script similar to `resolve_command_jump_table.py`, not
+      a plain rename, per `ida_scripts/apply_structs.py`'s docstring
+      (struct-of-arrays doesn't fit an IDA struct type the normal way).
+- [x] Decode the `sub_XXXXX` helpers shared across the 26 A-Z command
+      handlers, ranked by reuse (functions called from more than one
+      command are higher-confidence and higher-value to name first).
+      8 decoded with proposed names — `rand_byte`, `find_target_monster`,
+      `read_digit_keypress`, `print_indexed_menu_string`,
+      `alert_town_guards`, `try_spend_gold`, `play_hit_sound`,
+      `play_tone_sweep`. Full table in
+      [overview.md](overview.md#command-handler-shared-helpers-decoded-and-applied).
+- [x] Ran `ida_scripts/apply_renames.py` with the above 8 entries —
+      confirmed in the refreshed `.asm`: `rand_byte`,
+      `find_target_monster`, `read_digit_keypress`,
+      `print_indexed_menu_string`, `alert_town_guards`,
+      `try_spend_gold`, `play_hit_sound`, `play_tone_sweep`.
+- [x] `print_indexed_menu_string`'s backing table at `cs:4C60h` —
+      **Paul formatted it directly in IDA and pasted the result**,
+      already named `TEXT_STRINGS` in the IDB. All 75 entries decoded
+      and cross-checked against every caller's index formula (location
+      descriptors, weapons, armor, spells, treasure items, attributes,
+      races, classes). Full table in
+      [overview.md](overview.md#text_strings--the-cs4c60h-table-fully-decoded).
+      Resolved 4 more `Savegame` fields in the process:
+      `field_2B`=readied weapon, `field_2C`=readied armor,
+      `field_2D`=readied spell, and — closing out a loose end from the
+      `_mapMonsters` decoding pass — `field_A5`=gem count (spent by
+      `view` to show the world map).
+- [x] Ran `ida_scripts/apply_structs.py` with the 4 new `Savegame`
+      field renames — confirmed in the refreshed `.asm`:
+      `field_2B`→`_readiedWeapon`, `field_2C`→`_readiedArmor`,
+      `field_2D`→`_readiedSpell`, `field_A5`→`_gems`.
+- [x] Traced how `_readiedSpell` drives `cast` — full 9-spell dispatch
+      table decoded (Light/Down Ladder/Up Ladder/Passwall/Surface/
+      Prayer/Magic Missile/Blink/Kill), plus the wand-or-staff gate and
+      per-spell charge consumption. Also resolved `byte_17435` = current
+      dungeon depth level (confirmed via the shared "TO LEVEL <N>"
+      message) and found that "cast Surface" and `klimb` share their
+      entire return-to-surface implementation. Full table in
+      [overview.md](overview.md#cast--how-_readiedspell-drives-spell-effects).
+- [ ] Three per-item "owned"/"charges" flag arrays surfaced this
+      session (`ready`/`wear_armor`/`cast` tracing): `player.field_60[di]`
+      (armor-owned, already a recognized struct member, just unnamed),
+      `[di+76h]` (weapon-owned, **not even a recognized struct member
+      yet** — raw displacement), and `player.field_80[di]` (per-spell
+      charge count). Lower-hanging fruit than `_mapMonsters`'s
+      struct-of-arrays fields since these are array-typed `Savegame`
+      members, not a separate loaded file — but `apply_structs.py`
+      would need extending to handle array members (currently only
+      scalar byte/word/dword).
+- [ ] `field_A1`/`field_A2` (wand-owned / staff-owned counts, gate
+      `cast` — "NEED WAND OR STAFF!" if both zero) not yet renamed —
+      proposed `_wands`/`_staves`?
+- [ ] Loose ends from the `cast` trace, not chased: `loc_11451` (shared
+      validity-check helper used by 5 of the 9 spell branches),
+      `loc_12ED1` (Prayer/Kill's shared continuation — unclear why
+      those two specific spells share a tail), `sub_15FC3` (called on
+      every successful-gate cast attempt), `sub_15E83` (called on every
+      cast failure path, likely a fail sound/flash). Also: outside a
+      dungeon, Down Ladder/Up Ladder do a different, not-fully-traced
+      search (still via `loc_11451`) — plausibly locating a nearby
+      dungeon entrance.
+- [ ] Location-descriptor block (`TEXT_STRINGS` indices 1-18, "IN THE
+      WATER." etc.) and the treasure-item block (46-61, RING/WAND/
+      GEM/etc.) aren't yet tied to a specific caller/index formula —
+      the location block is plausibly `view`'s `sub_129D2` (still
+      unchased, see below).
+- [ ] Single-caller helpers inside the 26 command handlers, not chased
+      this pass (lower priority — no cross-context confirmation
+      available): `sub_15FE0`, `sub_14B26`, `sub_15FA6`, `sub_172A0`
+      (attack), `sub_15EAC` (fire), `sub_1361C` (get), `sub_16999`/
+      `sub_15EC7` (launch), `sub_129D2` (view).
 
 ## Medium term
 
