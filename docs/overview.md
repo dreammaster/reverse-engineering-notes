@@ -108,7 +108,7 @@ deliberate, not a bug — full trace in
 [file-formats.md](file-formats.md#256-vs-384-byte-discrepancy-traced-and-settled).
 
 **Also traced end-to-end**: the loaded buffer's only consumer is
-`sub_1154E` (asm 3383), called solely from `transact` — so `TLKXFF`
+`print_indexed_shop_string` (asm 3383), called solely from `transact` — so `TLKXFF`
 data is shop/response text read during a shopkeeper transaction, not
 walk-up dialogue (consistent with there being no Talk key at all). There
 is no separate ROT-128 decrypt loop anywhere in the binary; the decode
@@ -198,7 +198,7 @@ if/when a page for it is found.
 | `access_file` | 17318 | shared FCB-based file I/O; see above |
 | `load_map` | 6618 | loads `mapx??`/`monx??` for current map, patches filename digits from `player._mapNum1/2` |
 | `load_talk_file` | 6631 | loads `tlkx??` for the current map; called from `enter` on VILLAGE/TOWN/CASTLE only — see inline-data-trick section above |
-| `sub_1154E` | 3383 | indexed null-string lookup + print into the `load_talk_file` buffer; called only from `transact` (shopkeeper NPC response) |
+| `print_indexed_shop_string` | 3383 | indexed null-string lookup + print into the `load_talk_file` buffer; called only from `transact` (shopkeeper NPC response) |
 | `write_character` | 12639 | universal char-output primitive; `and al,7Fh` here is the de facto ROT-128 decode for `tlkx` text, no dedicated decrypt step exists |
 | `attack, board, cast, descend, enter, fire, get, hyper, ignite_torch, jump, klimb, launch, magic, negate_time, offer, pass, quit, ready, steal, transact, unlock, view, wear_armor, x_it, yell, zstats` | 1294 table, procs 7930-11082 | the 26 A-Z single-key command handlers, resolved from `off_10730` — see inline-data-trick section above |
 | `save_game` / `save_game1` | 6692 | writes `mapx??`/`monx??`/`player` back out |
