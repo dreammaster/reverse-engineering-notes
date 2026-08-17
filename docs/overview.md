@@ -186,18 +186,26 @@ _thievesTools   db ?    ; saves from a trap death, +1 from killing a Thief
 field_33        db ?   ; unnamed, xref'd
 field_34        db ?   ; unnamed, xref'd
 ; ... struct continues to offset 0x100, largely unmapped past here
-; 0xA0-0xAF cluster: item-owned flags, only partly mapped
-_gems           db ?    ; dropped +1 by killing a Fighter, spent by view to show the world map
-_wands          db ?    ; wand-owned count, gates cast
-_staves         db ?    ; staff-owned count, gates cast
-_bootsOwned     db ?    ; resists the leg-paralysis trap, see below
-_cloakOwned     db ?    ; resists the arm-paralysis trap, see below
-field_A7        db ?    ; ankh-owned -- required to board the Rocket in `board`, see below
-field_A9        db ?    ; gates boarding the Airplane in `board` ("STRANGE YOU CAN'T GET IN!" if zero), see below
-field_AC        db ?    ; gates boarding the Frigate in `board` ("...WILL NOT LET YOU BOARD!" if zero) -- no plain-Ship fallback, see below
-field_AD        db ?    ; unnamed, xref'd, not traced this pass
-_idolOwned      db ?    ; resists the sleep trap, see below
-field_AF        db ?    ; unnamed, xref'd many times -- likely a counter, not a flag, not traced this pass
+; 0xA0-0xAF is ONE 16-element treasure-item array, _hasRing[0..15] --
+; see the TEXT_STRINGS treasure-item block writeup below. Individual
+; names below predate that discovery and were assigned per-field
+; before the array shape was known; kept as-is except where noted.
+_hasRing        db ?    ; item 0 = RING
+_wands          db ?    ; item 1 = WAND, gates cast
+_staves         db ?    ; item 2 = STAFF, gates cast
+_bootsOwned     db ?    ; item 3 = BOOTS, resists the leg-paralysis trap
+_cloakOwned     db ?    ; item 4 = CLOAK, resists the arm-paralysis trap
+_gems           db ?    ; item 5 = HELM per array position, NOT gems -- see the treasure-item block writeup, this name is suspect
+                        ; item 6 = GEM (no member yet -- likely where "gems" really lives)
+_ankhOwned      db ?    ; item 7 = ANKH, required to board the Rocket in `board`
+                        ; item 8 = RED GEM (no member yet)
+_planeAllowed   db ?    ; item 9 = SKULL KEY; gates boarding the Airplane in `board`
+                        ; item 10 = GREEN GEM (no member yet)
+field_AB        db ?    ; item 11 = BRASS BUTTON; required to launch a Plane in `launch`, see below
+_frigateAllowed db ?    ; item 12 = BLUE TASSLE; gates boarding the Frigate in `board`
+field_AD        db ?    ; item 13 = STRANGE COIN, not independently confirmed elsewhere
+_idolOwned      db ?    ; item 14 = GREEN IDOL, resists the sleep trap
+field_AF        db ?    ; item 15 = TRI-LITHIUM, many xrefs elsewhere, not traced -- plausibly quest-critical
 ```
 
 `_disableSave` is also referenced (used by `save_game`, asm ~6692) but
@@ -293,10 +301,11 @@ confirmed in the `.asm`:
 | `play_tone_sweep` (0x15DA9) | (via `play_hit_sound`, `pause?`, others) | Checks a mute flag (`byte_1795D`, toggled elsewhere via `xor ...,0FFh` — a sound on/off setting), then sweeps the PC speaker from one frequency to another over N steps. Generic tone-sweep primitive reused for multiple sound effects, not attack-specific itself. |
 
 Not chased further this pass (single-caller, lower priority by the
-reuse-based ranking above): `sub_15FE0`, `sub_14B26`, `sub_15FA6`,
+reuse-based ranking above): `sub_15FE0`, `sub_15FA6`,
 `sub_172A0` (attack-only), `sub_15EAC` (fire-only), `sub_1361C`
 (get-only), `sub_16999`/`sub_15EC7` (launch-only), `sub_129D2`
-(view-only).
+(view-only). (`sub_14B26` was in this list originally but has since
+been traced in full — see below.)
 
 ### `TEXT_STRINGS` — the `cs:4C60h` table, fully decoded
 
@@ -310,14 +319,118 @@ where each block of strings starts — all matched exactly:
 
 | Index range | Formula seen in callers | Content |
 |---|---|---|
-| 1-18 | (not yet tied to a specific caller — likely `view`'s `sub_129D2`, not chased) | Location descriptors: "IN THE WATER.", "IN A MARSH.", "ON GRASS.", "IN WOODS.", "IN THE MTS.", "NEAR A VILLAGE.", "NEAR A TOWNE.", "NEAR A TOWER.", "NEAR A CASTLE.", "NEAR A DUNGEON.", "NEAR A SIGN.", "NEAR A HORSE.", "NEAR A FRIGATE.", "NEAR A PLANE.", "NEAR A ROCKET.", "NEAR ARMOUR.", "NEAR A HOLE.", "ON COBBLE." |
+| 1-18 | **none — dead data, confirmed** (see below) | Location descriptors: "IN THE WATER.", "IN A MARSH.", "ON GRASS.", "IN WOODS.", "IN THE MTS.", "NEAR A VILLAGE.", "NEAR A TOWNE.", "NEAR A TOWER.", "NEAR A CASTLE.", "NEAR A DUNGEON.", "NEAR A SIGN.", "NEAR A HORSE.", "NEAR A FRIGATE.", "NEAR A PLANE.", "NEAR A ROCKET.", "NEAR ARMOUR.", "NEAR A HOLE.", "ON COBBLE." |
 | 19-28 | `ready`: digit(1-9) `+ 0x13`; `zstats`: `_readiedWeapon + 0x13` | Weapons: HANDS(19, unarmed), DAGGER, MACE, AXE, BOW, SWORD, GREAT SWORD, LIGHT SWORD, PHASER, QUICK SWORD(28) |
 | 29-35 | `wear_armor`: digit(1-6, wraps 7→0) `+ 0x1D`; `zstats`: `_readiedArmor + 0x1D` | Armor: SKIN(29, none), CLOTH, LEATHER, CHAIN, PLATE, REFLECT, POWER(35) |
 | 36-45 | `magic`: digit(0-9) `+ 0x24`; `zstats`: `_readiedSpell + 0x24` | Spells: NONE(36), LIGHT, DOWN LADDER, UP LADDER, PASSWALL, SURFACE, PRAYER, MAGIC MISSILE, BLINK, KILL(45) — matches Ultima II's real spell list |
-| 46-61 | not yet tied to a caller | Items/treasure: RING, WAND, STAFF, BOOTS, CLOAK, HELM, GEM, ANKH, RED GEM, SKULL KEY, GREEN GEM, BRASS BUTTON, BLUE TASSLE, STRANGE COIN, GREEN IDOL, TRI-LITHIUM |
+| 46-61 | `zstats`: `_hasRing[di] + 0x2E` where `di` is the item's slot 0-15 — see below | Items/treasure: RING(46), WAND, STAFF, BOOTS, CLOAK, HELM, GEM, ANKH, RED GEM, SKULL KEY, GREEN GEM, BRASS BUTTON, BLUE TASSLE, STRANGE COIN, GREEN IDOL, TRI-LITHIUM(61) |
 | 62-67 | `zstats`: fixed literals `0x3E`-`0x43` (not player-data-driven — these are constant labels printed before each stat's number) | Attributes: STRENGTH(62), AGILITY, STAMINA, CHARISMA, WISDOM, INTELL.(67) |
 | 68-71 | `zstats`: `player._race + 0x44` | Races: HUMAN(68), ELF, DWARF, HOBBIT(71) |
 | 72-75 | `zstats`: `player._class + 0x48` | Classes: FIGHTER(72), CLERIC, WIZARD, THIEF(75) — same 4 words reused as monster "class" flavor-text keys in `transact` |
+
+### `TEXT_STRINGS` location-descriptor block, traced — dead data
+
+Indices 1-18 (the "IN THE WATER." / "NEAR A ..." strings) are
+unreachable in the current disassembly. Checked exhaustively, not just
+spot-checked:
+
+- All **23** real call sites of `print_indexed_menu_string` in the
+  binary — every single one lands in the weapon (≥19), armor (≥29),
+  or spell (≥36) ranges, or is one of the already-documented callers
+  (`ready`, `wear_armor`, `magic`, `cast`, `zstats`). None compute an
+  index in 1-18. (Several sites weren't previously catalogued —
+  turned out to be wandering NPC merchants selling spell scrolls and
+  reusing the weapon/armor shop scripts, e.g. a Turkish-flavored
+  "MUSERREF OLDUM!... BIR IKI UC...?" scroll-seller — all still just
+  reusing the ≥19 ranges, nothing new for 1-18.)
+- The location strings (`aInTheWater` etc.) have **zero xrefs**
+  anywhere in the `.asm` beyond their own declarations.
+- The raw `TEXT_STRINGS[di]` table access only appears twice in the
+  whole binary — both inside `print_indexed_menu_string`'s own
+  string-walking loop. No other code touches the table directly,
+  bypassing the shared helper.
+- Ruled out the standing hypothesis directly: `view`'s `sub_129D2`
+  (asm 5247-5470) is a pure map-drawing/flood-fill routine — repeated
+  calls to a screen-drawing helper (`sub_12B65`) and `sub_14B4E`
+  (`flash_screen`'s sibling), walking outward from the player's
+  position. **No `write_string` or `print_indexed_menu_string` call
+  anywhere in its body.** `view` shows the map graphically; it prints
+  no status text at all.
+
+Most likely explanation: a cut or unfinished "status line" feature
+(telling the player what terrain they're standing on/near — the
+strings read exactly like that) that never got wired up to a caller,
+or was wired up in a small piece of code that hasn't been
+disassembled/named yet (a candidate for one of the 79 remaining
+`sub_XXXXX` functions, though none of the ones already surveyed in
+this project show any sign of it). Not pursued further — this is a
+settled negative result, not an open thread to keep chasing blindly.
+
+### `TEXT_STRINGS` treasure-item block, traced — a 16-element inventory array, unifying 8 prior findings
+
+Opposite outcome from the location block: **fully wired up**, and
+tracing it revealed the entire `Savegame` `0xA0`-`0xAF` cluster — which
+this project has been naming field-by-field over several sessions,
+somewhat awkwardly — is actually **one 16-byte array**, `_hasRing[0..15]`,
+displayed by `zstats`' `"ITEMS:"` screen (asm ~8935-8973, the loop
+bound is confirmed `di < 0x10` = 16, matching the 16 treasure strings
+exactly). For each nonzero slot it prints `TEXT_STRINGS[di + 0x2E]`
+(0x2E = 46, the block's start) followed by `write_number` of the count
+— a real inventory listing, name + quantity, not just a flag.
+
+Cross-checking this array-position formula against every `0xA0`-`0xAF`
+field already named in earlier sessions is where this gets
+interesting — **7 line up perfectly**, confirming the formula is
+right, and along the way this also explains *why* two fields already
+named for what they gate (`_planeAllowed`, `_frigateAllowed`) gate
+what they do, plus turns up an explicit 8th confirmation that wasn't
+in this cluster's neighborhood before:
+
+| `di` | Offset | Item | Current name | Status |
+|---|---|---|---|---|
+| 0 | `0xA0` | RING | `_hasRing` | ✓ consistent (name already implies "item 0") |
+| 1 | `0xA1` | WAND | `_wands` | ✓ consistent |
+| 2 | `0xA2` | STAFF | `_staves` | ✓ consistent |
+| 3 | `0xA3` | BOOTS | `_bootsOwned` | ✓ consistent |
+| 4 | `0xA4` | CLOAK | `_cloakOwned` | ✓ consistent |
+| 5 | `0xA5` | HELM | `_gems` | **✗ conflict — see below** |
+| 6 | `0xA6` | GEM | *(no member)* | gap — never independently referenced elsewhere |
+| 7 | `0xA7` | ANKH | `_ankhOwned` | ✓ consistent (gates Rocket boarding) |
+| 8 | `0xA8` | RED GEM | *(no member)* | gap |
+| 9 | `0xA9` | SKULL KEY | `_planeAllowed` | structurally = Skull Key owned; explains *why* it gates the Airplane |
+| 10 | `0xAA` | GREEN GEM | *(no member)* | gap |
+| 11 | `0xAB` | BRASS BUTTON | *(unnamed, `field_AB`)* | **independently confirmed**: `launch` requires it nonzero to launch a Plane, else `"FUNNY THIS PLANE IS MISSING A BRASS BUTTON!"` (asm ~7359-7371) — exact match |
+| 12 | `0xAC` | BLUE TASSLE | `_frigateAllowed` | structurally = Blue Tassle owned; explains *why* it gates the Frigate |
+| 13 | `0xAD` | STRANGE COIN | *(unnamed, `field_AD`)* | not independently confirmed elsewhere yet |
+| 14 | `0xAE` | GREEN IDOL | `_idolOwned` | ✓ consistent (resists the sleep trap) |
+| 15 | `0xAF` | TRI-LITHIUM | *(unnamed, `field_AF`)* | many xrefs elsewhere (not traced) — plausibly a significant/quest-critical item given the reuse |
+
+Two nice thematic unifications this explains: boarding vs. launching a
+Plane turn out to need **two different items** (Skull Key to board,
+Brass Button to actually launch it) — a real two-step requirement, not
+a naming coincidence. And `_ankhOwned`/`_idolOwned` (already confirmed
+independently, positions 7/14) match their array slots exactly, which
+is strong corroborating evidence the whole array-position theory is
+sound, not just true for the 2 new confirmations.
+
+**The one real conflict: `_gems` (`0xA5`, array position 5 = HELM, not
+GEM).** This directly contradicts how `_gems` was named — `view`
+requiring it nonzero and (per the original trace) decrementing it,
+attributed to "spending a gem to see the map." Re-reading `view`'s code
+to resolve this surfaced why the conflict likely exists:
+**`view` has the same unfixed IDB gap** the Ship/Frigate and Airplane
+paths in `board` had (`aView db 'VIEW'` with no null terminator,
+falling straight into undissasembled garbage bytes) — a **third
+instance** of the pattern documented at the top of this file. The
+original "`_gems` decremented by `view`" claim was extracted from that
+same garbled region, so it should be treated as unverified until the
+gap is fixed, the same way the Ship/Airplane "requirements" turned out
+to be wrong once *that* gap was fixed. Recommend: fix `view`'s inline-data
+gap the same way, re-read what's actually there, and reconcile — real
+GEM is very plausibly `0xA6` (currently unclaimed) rather than `0xA5`.
+Not renaming `_gems` in this pass — that would be undoing an
+already-applied rename on unverified grounds, worth Paul's explicit
+call once the gap is fixed and the real behavior is visible.
 
 This closes out three more `Savegame` fields, confirmed by matching
 each command's *write* site against `zstats`' *read* formula for the
@@ -472,10 +585,33 @@ same field:
    player's own Magic Missile spell in `cast`). Same magic chime either
    way, whether it's good news (your own successful cast) or bad
    (something magical just happened to you). All four of those trap
-   handlers share a bracketing pattern — `sub_14B26` called immediately
-   before and after `sub_15FC3` — mirroring how `attack` brackets
-   `play_hit_sound` with `xorDrawCircle`; `sub_14B26` is presumably a
-   companion visual flash effect, not traced further here.
+   handlers share a bracketing pattern — `flash_screen` called
+   immediately before and after `play_magic_sound` — mirroring how
+   `attack` brackets `play_hit_sound` with `xorDrawCircle`. Now fully
+   traced, see below.
+
+   ### `flash_screen` — the screen-flash effect, traced and renamed
+
+   Confirmed as a screen-invert flash. `flash_screen` (formerly
+   `sub_14B26`, asm 9039-9048) calls a private helper
+   `xor_invert_cga_bank` (formerly `sub_14B35`, asm 9054-9070, no
+   other callers) twice, once with `ax=0xB800` and once `ax=0xBA00` —
+   the two interleaved CGA framebuffer segments (even/odd scanlines).
+   `xor_invert_cga_bank` sets `ES` to that segment and XORs every word
+   from offset 0 through `0x1900` with `0xFFFF`, inverting that whole
+   region of video memory. Being XOR-based, calling it once inverts
+   the screen and calling it again restores it — exactly the
+   before/after bracketing pattern seen everywhere: flash to inverted
+   colors, play/run the paired effect, flash back to normal.
+
+   Reused well beyond the four trap handlers above — also brackets an
+   armor-damage-style random encounter in `end_of_turn` (asm
+   ~2750-2754, paired with `pause?`) and the "killed Minax" branch in
+   `fire` (asm ~5581-5584, paired with `sub_15FA6`, not itself traced)
+   — confirming it's a general-purpose "flash the screen for this
+   significant event" utility, not tied to any one event type.
+
+   Both renames applied and confirmed in the `.asm`.
 
    ### `_bootsOwned`/`_cloakOwned`/`_idolOwned` — magical-item protection flags, traced and applied
 
@@ -528,8 +664,8 @@ same field:
    | Tile | Vehicle | Requirement |
    |---|---|---|
    | `0x22` | Horse | None — always boards. |
-   | `0x24` | Ship / Frigate | `player.field_AC`: nonzero boards the upgraded **Frigate**. Zero: `"THE CREW OF THIS SHIP WILL NOT LET YOU BOARD!"` — rejected, no boarding. |
-   | `0x26` | Airplane | `player.field_A9`: nonzero boards successfully. Zero: `"STRANGE YOU CAN'T GET IN!"` — rejected. |
+   | `0x24` | Ship / Frigate | `player._frigateAllowed`: nonzero boards the upgraded **Frigate**. Zero: `"THE CREW OF THIS SHIP WILL NOT LET YOU BOARD!"` — rejected, no boarding. |
+   | `0x26` | Airplane | `player._planeAllowed`: nonzero boards successfully. Zero: `"STRANGE YOU CAN'T GET IN!"` — rejected. |
    | `0x28` | Rocket | `player._ankhOwned` (Ankh, `TEXT_STRINGS` 53) — zero prints `"A METALIC VOICE COMMANDS: YOU MUST HAVE AN ANKH!"` and the turn ends without boarding. |
 
    **Correction from the initial pass**: the Ship/Airplane failure
@@ -546,14 +682,28 @@ same field:
    plain `end_of_turn`. Traced that distinction too: `end_of_turn2` is
    not a separate function, it's a **label inside `end_of_turn` itself**
    (asm 1346-1373), one instruction past the proc's own start — the
-   only thing a successful board skips is a single call to `sub_15C95`.
-   Not chased further what that call does; noting it as a lead rather
-   than guessing (possibly turn/food bookkeeping, possibly related to
-   the random trap-encounter roll the "SAVED BY..." section above
-   documents, but the trap handlers are called well past this point in
-   `end_of_turn`'s body, reached by both entry points alike, so
-   boarding a vehicle does *not* appear to skip the trap roll specifically
-   — `sub_15C95` does something else).
+   only thing a successful board skips is a single call to
+   `play_tick_sound` (formerly `sub_15C95`), now fully traced (see
+   below): it's **just a sound effect**, not turn/food bookkeeping as
+   originally guessed here. Vehicle boarding skips the generic "turn
+   tick" beep, nothing state-related.
+
+   ### `play_tick_sound` — the "turn tick" sound, traced and renamed
+
+   Called from exactly one place: `end_of_turn`'s own first
+   instruction (asm 11163-11181). Same shape as the other sound
+   effects already named: checks the mute flag `byte_1795D`, then
+   plays a single fixed tone via the shared low-level primitives —
+   `sub_15CB2` (programs the PC speaker's timer frequency, `bx=0x500`,
+   and switches the speaker on), `sub_15CD2` (holds it for a duration,
+   `cx=0x4000`), `sub_15CE4` (silences it, not traced in detail but
+   clearly the companion "stop" call to `sub_15CB2`'s "start"). Unlike
+   `play_tone_sweep`/`play_hit_sound`/`play_magic_sound`/`play_fail_sound`,
+   this one is a flat single-frequency beep, no sweep — a generic
+   "turn advances" tick, played once at the start of every full
+   `end_of_turn` and skipped whenever a caller jumps straight to
+   `end_of_turn2` instead (as `board`'s four vehicle-boarding
+   successes do).
 
    **IDB hygiene gap — fixed.** The zero/failure paths for Ship and
    Airplane fell through `write_string`'s inline-text trick into bytes
@@ -562,11 +712,12 @@ same field:
    inline-argument convention) — Paul fixed both directly in IDA,
    confirmed in the refreshed `.asm`.
 
-   `_ankhOwned` is renamed and applied. `field_A9`/`field_AC` aren't
-   yet — no natural item name for either the way Ankh/Boots/Cloak/Idol
-   had one (the failure messages read as an authorization/access
-   check, "the crew won't let you" / "you can't get in," not "you're
-   missing item X"). Proposed: `_frigateAllowed`, `_planeAllowed`.
+   `_ankhOwned`, `_frigateAllowed` (`field_AC`), and `_planeAllowed`
+   (`field_A9`) are all renamed and applied — no natural item name for
+   the latter two the way Ankh/Boots/Cloak/Idol had one (the failure
+   messages read as an authorization/access check, "the crew won't let
+   you" / "you can't get in," not "you're missing item X"), hence the
+   more functional names.
 
 **Also resolves an open item from the `_mapMonsters` decoding pass**:
 `_gems` (previously "Fighter-kill drop, +1 BCD, no consumption site

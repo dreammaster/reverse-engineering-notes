@@ -334,21 +334,56 @@ sessions, unlike a one-off todo list.
       rejection). Corrected in
       [overview.md](overview.md#boards-vehicle-boarding-requirements-fully-traced).
 - [x] `field_A7`→`_ankhOwned` renamed, confirmed in the refreshed `.asm`.
-- [ ] `field_A9`/`field_AC` still unnamed — no natural item name the
-      way Ankh/Boots/Cloak/Idol had one (reads as an authorization
-      check, not "missing item X"). Proposed: `_frigateAllowed`,
-      `_planeAllowed`. `sub_15C95` (what `end_of_turn2` skips) also
-      still unchased.
-- [ ] Location-descriptor block (`TEXT_STRINGS` indices 1-18, "IN THE
-      WATER." etc.) and the treasure-item block (46-61, RING/WAND/
-      GEM/etc.) aren't yet tied to a specific caller/index formula —
-      the location block is plausibly `view`'s `sub_129D2` (still
-      unchased, see below).
+- [x] `field_AC`→`_frigateAllowed`, `field_A9`→`_planeAllowed` renamed
+      and confirmed in the refreshed `.asm` — double-checked the
+      which-is-which pairing against the code before applying, since
+      it had been stated backwards in chat at one point.
+- [x] Traced `sub_15C95` — just a sound effect (corrects the earlier
+      "possibly turn/food bookkeeping" guess in `docs/overview.md`).
+      Same shape as `play_hit_sound`/`play_magic_sound`/`play_fail_sound`:
+      checks `byte_1795D`, plays one fixed tone via the shared
+      low-level primitives, but a flat single beep, not a sweep. A
+      generic "turn advances" tick played at the start of every full
+      `end_of_turn`, skipped by callers (like `board`'s vehicle-board
+      successes) that jump straight to `end_of_turn2`. Full trace in
+      [overview.md](overview.md#play_tick_sound--the-turn-tick-sound-traced-and-renamed).
+      Renamed and confirmed in the refreshed `.asm`: `sub_15C95` →
+      `play_tick_sound`.
+- [x] Traced `sub_14B26` — a screen-invert flash effect. XORs both
+      interleaved CGA framebuffer segments (`0xB800`/`0xBA00`) via a
+      private helper `sub_14B35`; XOR-based so calling it twice
+      (bracketing pattern seen everywhere) flashes then restores.
+      Reused well beyond the 4 trap handlers — also brackets an
+      armor-damage encounter in `end_of_turn` and the "killed Minax"
+      branch in `fire` — confirming it's general-purpose, not
+      event-specific. Full trace in
+      [overview.md](overview.md#flash_screen--the-screen-flash-effect-traced-and-renamed).
+      Renamed and confirmed in the refreshed `.asm`: `sub_14B26`→
+      `flash_screen`, `sub_14B35`→`xor_invert_cga_bank`.
+- [x] Traced the `TEXT_STRINGS` location-descriptor block (indices
+      1-18) — **dead data, confirmed, not just unconfirmed**. Checked
+      all 23 real call sites of `print_indexed_menu_string`; every one
+      lands in the weapon/armor/spell ranges (≥19) or is an
+      already-known caller, none reach 1-18. The strings themselves
+      have zero xrefs beyond their own declarations. Ruled out the
+      `view`/`sub_129D2` hypothesis directly — read that routine in
+      full, it's a pure map-drawing/flood-fill routine (repeated calls
+      to `sub_12B65`, a screen helper) with no `write_string` or
+      `print_indexed_menu_string` call anywhere in its body. Likely a
+      cut/unused "status line" feature (terrain-under-player text) that
+      never shipped, or reachable only from one of the 79 still-unnamed
+      `sub_XXXXX` functions elsewhere. Full writeup in
+      [overview.md](overview.md#text_strings-location-descriptor-block-traced--dead-data).
+- [ ] The treasure-item block (`TEXT_STRINGS` 46-61, RING/WAND/GEM/etc.)
+      still isn't tied to a specific caller/index formula — separate
+      from the location block above, not chased this pass.
 - [ ] Single-caller helpers inside the 26 command handlers, not chased
       this pass (lower priority — no cross-context confirmation
-      available): `sub_15FE0`, `sub_14B26`, `sub_15FA6`, `sub_172A0`
+      available): `sub_15FE0`, `sub_15FA6`, `sub_172A0`
       (attack), `sub_15EAC` (fire), `sub_1361C` (get), `sub_16999`/
-      `sub_15EC7` (launch), `sub_129D2` (view).
+      `sub_15EC7` (launch). (`sub_14B26` and `sub_129D2` were
+      originally in this list — both have since been traced: `sub_14B26`
+      → `flash_screen`, `sub_129D2` above.)
 
 ## Medium term
 
