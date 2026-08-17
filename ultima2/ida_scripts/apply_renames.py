@@ -145,6 +145,35 @@ RENAMES = [
      "sub_15CD2/sub_15CE4), not via play_tone_sweep. Called at all 4 "
      "of cast's failure points ('NEED WAND OR STAFF!', 'NO SPELL!', "
      "both '-FAILED!' cases) -- cast-only, no other callers."),
+
+    # -- found while tracing what end_of_turn2 skips --
+
+    (0x15C95, "play_tick_sound",
+     "generic 'turn advances' tick: checks byte_1795D then plays one "
+     "flat tone (bx=0x500, cx=0x4000) via sub_15CB2/sub_15CD2/"
+     "sub_15CE4 -- same primitives as play_fail_sound but no sweep, "
+     "just a single beep. Called only from end_of_turn's own first "
+     "instruction; skipped whenever a caller jumps straight to "
+     "end_of_turn2 instead (e.g. board's 4 vehicle-boarding "
+     "successes). See "
+     "docs/overview.md#play_tick_sound--the-turn-tick-sound-traced-and-renamed."),
+
+    # -- found while tracing the visual flash bracketing these sounds --
+
+    (0x14B26, "flash_screen",
+     "screen-invert flash: calls xor_invert_cga_bank twice, once per "
+     "interleaved CGA framebuffer segment (0xB800/0xBA00). XOR-based, "
+     "so the bracketing pattern seen everywhere (call before + after "
+     "a sound/effect) inverts then restores. Reused across the 4 "
+     "end_of_turn trap handlers, an armor-damage encounter, and "
+     "fire's 'killed Minax' branch -- general purpose, not "
+     "event-specific. See "
+     "docs/overview.md#flash_screen--the-screen-flash-effect-traced-and-renamed."),
+
+    (0x14B35, "xor_invert_cga_bank",
+     "given a CGA framebuffer segment in AX, XORs every word from "
+     "offset 0 through 0x1900 with 0xFFFF, inverting that memory. "
+     "Private helper, only caller is flash_screen."),
 ]
 
 

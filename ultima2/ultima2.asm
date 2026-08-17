@@ -1369,7 +1369,7 @@ end_of_turn     proc near               ; CODE XREF: play_game+2B1↑j
 ; FUNCTION CHUNK AT 1410 SIZE 00000004 BYTES
 ; FUNCTION CHUNK AT 2122 SIZE 00000077 BYTES
 
-                call    sub_15C95
+                call    play_tick_sound
 
 end_of_turn2:                           ; CODE XREF: play_game+161↑j
                                         ; play_game:loc_10933↑j ...
@@ -2064,9 +2064,9 @@ sub_10E70       proc near               ; CODE XREF: end_of_turn+AB↑p
 ; ---------------------------------------------------------------------------
 aLegsParalized  db 'LEGS PARALIZED!',0Dh,0
 ; ---------------------------------------------------------------------------
-                call    sub_14B26
+                call    flash_screen
                 call    play_magic_sound
-                call    sub_14B26
+                call    flash_screen
                 cmp     player._bootsOwned, 0
                 jz      short loc_10EB8
                 call    rand_byte
@@ -2103,9 +2103,9 @@ sub_10EC2       proc near               ; CODE XREF: end_of_turn+B5↑p
 ; ---------------------------------------------------------------------------
 aArmsParalized  db 'ARMS PARALIZED!',0Dh,0
 ; ---------------------------------------------------------------------------
-                call    sub_14B26
+                call    flash_screen
                 call    play_magic_sound
-                call    sub_14B26
+                call    flash_screen
                 mov     al, player._cloakOwned
                 or      al, al
                 jz      short loc_10F09
@@ -2139,9 +2139,9 @@ sub_10F12       proc near               ; CODE XREF: end_of_turn+BF↑p
 ; ---------------------------------------------------------------------------
 aMagicMissile   db 'MAGIC MISSILE!',0Dh,0
 ; ---------------------------------------------------------------------------
-                call    sub_14B26
+                call    flash_screen
                 call    play_magic_sound
-                call    sub_14B26
+                call    flash_screen
                 inc     byte_17430
                 inc     byte_17430
                 inc     _commandWaitCtr
@@ -2163,9 +2163,9 @@ sub_10F48       proc far                ; CODE XREF: end_of_turn+C9↑p
 ; ---------------------------------------------------------------------------
 aSleepSpell     db 'SLEEP SPELL!',0Dh,0
 ; ---------------------------------------------------------------------------
-                call    sub_14B26
+                call    flash_screen
                 call    play_magic_sound
-                call    sub_14B26
+                call    flash_screen
                 mov     al, player._idolOwned
                 or      al, al
                 jz      short loc_10F84
@@ -2637,7 +2637,7 @@ loc_112AC:                              ; CODE XREF: end_of_turn+867↑j
 ; ---------------------------------------------------------------------------
 aTorchBurnedOut db 'TORCH BURNED OUT!',8Dh,0
 ; ---------------------------------------------------------------------------
-                call    sub_15C95
+                call    play_tick_sound
                 call    sub_16000
                 mov     al, 10h
                 call    sub_112DB
@@ -2749,9 +2749,9 @@ loc_11364:                              ; CODE XREF: end_of_turn+92A↑j
 
 loc_11367:                              ; CODE XREF: end_of_turn+932↑j
                 nop
-                call    sub_14B26
+                call    flash_screen
                 call    pause?
-                call    sub_14B26
+                call    flash_screen
                 call    rand_byte
                 and     al, 77h
                 mov     byte_17430, al
@@ -2792,7 +2792,7 @@ loc_113AB:                              ; CODE XREF: end_of_turn+8FD↑j
 ; ---------------------------------------------------------------------------
 aYourTorchIsBlo db 'YOUR TORCH IS BLOWN OUT!',8Dh,0
 ; ---------------------------------------------------------------------------
-                call    sub_15C95
+                call    play_tick_sound
                 mov     al, 0
                 mov     byte_17436, al
 ; START OF FUNCTION CHUNK FOR end_of_turn
@@ -2807,7 +2807,7 @@ loc_113DA:                              ; CODE XREF: end_of_turn+904↑j
 ; ---------------------------------------------------------------------------
 aAGremlinStoleS db 'A GREMLIN STOLE SOME FOOD!',8Dh,0
 ; ---------------------------------------------------------------------------
-                call    sub_15C95
+                call    play_tick_sound
                 stc
                 mov     al, player._food
                 cmc
@@ -2831,7 +2831,7 @@ loc_11410:                              ; CODE XREF: end_of_turn+90B↑j
 ; ---------------------------------------------------------------------------
 aYouFeelAStrong db 'YOU FEEL A STRONG MAGIC!',8Dh,0
 ; ---------------------------------------------------------------------------
-                call    sub_15C95
+                call    play_tick_sound
                 call    rand_byte
                 and     al, 7
                 mov     _sleepFlag, al
@@ -5579,9 +5579,9 @@ loc_12C19:                              ; CODE XREF: fire+58↓j
 ; ---------------------------------------------------------------------------
 
 loc_12C38:                              ; CODE XREF: attack+A4↑j
-                call    sub_14B26
+                call    flash_screen
                 call    sub_15FA6
-                call    sub_14B26
+                call    flash_screen
                 mov     bh, 0
                 mov     bl, byte_17430
                 mov     di, bx
@@ -9036,30 +9036,30 @@ screen_rows     dw 0B800h,0BA00h,0B805h,0BA05h,0B80Ah,0BA0Ah,0B80Fh,0BA0Fh
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14B26       proc near               ; CODE XREF: sub_10E70+14↑p
+flash_screen    proc near               ; CODE XREF: sub_10E70+14↑p
                                         ; sub_10E70+1A↑p ...
                 push    ax
                 mov     ax, 0B800h
-                call    sub_14B35
+                call    xor_invert_cga_bank
                 mov     ax, 0BA00h
-                call    sub_14B35
+                call    xor_invert_cga_bank
                 pop     ax
                 retn
-sub_14B26       endp
+flash_screen    endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14B35       proc near               ; CODE XREF: sub_14B26+4↑p
-                                        ; sub_14B26+A↑p
+xor_invert_cga_bank proc near           ; CODE XREF: flash_screen+4↑p
+                                        ; flash_screen+A↑p
                 push    bx
                 push    es
                 mov     es, ax
                 mov     ax, 0FFFFh
                 mov     bx, 0
 
-loc_14B3F:                              ; CODE XREF: sub_14B35+14↓j
+loc_14B3F:                              ; CODE XREF: xor_invert_cga_bank+14↓j
                 xor     es:[bx], ax
                 add     bx, 2
                 cmp     bx, 1900h
@@ -9067,7 +9067,7 @@ loc_14B3F:                              ; CODE XREF: sub_14B35+14↓j
                 pop     es
                 pop     bx
                 retn
-sub_14B35       endp
+xor_invert_cga_bank endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -11160,7 +11160,7 @@ byte_15C90      db 0                    ; DATA XREF: sub_15CB2+F↓w
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_15C95       proc near               ; CODE XREF: end_of_turn↑p
+play_tick_sound proc near               ; CODE XREF: end_of_turn↑p
                                         ; end_of_turn+89A↑p ...
                 cmp     byte_1795D, 0
                 jnz     short locret_15CB1
@@ -11176,15 +11176,15 @@ sub_15C95       proc near               ; CODE XREF: end_of_turn↑p
                 pop     bx
                 pop     ax
 
-locret_15CB1:                           ; CODE XREF: sub_15C95+5↑j
+locret_15CB1:                           ; CODE XREF: play_tick_sound+5↑j
                 retn
-sub_15C95       endp
+play_tick_sound endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_15CB2       proc near               ; CODE XREF: sub_15C95+D↑p
+sub_15CB2       proc near               ; CODE XREF: play_tick_sound+D↑p
                                         ; sub_15D09+16↓p ...
                 push    ax
                 mov     al, 0B6h
@@ -11223,7 +11223,7 @@ sub_15CB2       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_15CD2       proc near               ; CODE XREF: sub_15C95+13↑p
+sub_15CD2       proc near               ; CODE XREF: play_tick_sound+13↑p
                                         ; sub_15D09+2E↓p ...
                 mov     ax, bx
                 out     42h, al         ; Timer 8253-5 (AT: 8254.2).
@@ -11245,7 +11245,7 @@ sub_15CD2       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_15CE4       proc near               ; CODE XREF: sub_15C95+16↑p
+sub_15CE4       proc near               ; CODE XREF: play_tick_sound+16↑p
                                         ; sub_15D09:loc_15D3D↓p ...
                 push    ax
                 mov     al, cs:byte_15C90
@@ -15180,7 +15180,7 @@ byte_1791D      db 0                    ; DATA XREF: sub_16B3D+CD↑r
                 db    0
                 db    0
 byte_1795D      db 0                    ; DATA XREF: keypress_check+2E↑w
-                                        ; sub_15C95↑r ...
+                                        ; play_tick_sound↑r ...
 map_freezeAnimation db 0                ; DATA XREF: launch+1AA↑w
                                         ; launch:loc_13ACD↑w ...
 byte_1795F      db 0                    ; DATA XREF: zstats+3↑w

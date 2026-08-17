@@ -2637,7 +2637,9 @@ static Bytes_0(void) {
 	create_insn	(x=0X14B06);
 	op_dec		(x,	1);
 	create_insn	(0X14B26);
+	set_name	(0X14B26,	"flash_screen");
 	create_insn	(0X14B35);
+	set_name	(0X14B35,	"xor_invert_cga_bank");
 	create_insn	(0X14B4E);
 	create_insn	(0X14B5D);
 	create_insn	(0X14B76);
@@ -3394,6 +3396,7 @@ static Bytes_0(void) {
 	op_dec		(x,	1);
 	create_byte	(0X15C90);
 	create_insn	(0X15C95);
+	set_name	(0X15C95,	"play_tick_sound");
 	create_insn	(0X15CB2);
 	set_cmt	(0X15CB5,	"Timer 8253-5 (AT: 8254.2).",	0);
 	create_insn	(x=0X15CB5);
@@ -4484,10 +4487,6 @@ static Bytes_0(void) {
 	create_byte	(0X18598);
 	make_array	(0X18598,	0X42);
 	set_name	(0X18598,	"tile_44");
-	set_cmt	(0X185DA,	"overworld tile 45: byte0=row width in bytes, byte1=row count, then 64 bytes CGA Linear 2bpp pixel data (16x16px)",	0);
-	create_byte	(0X185DA);
-	make_array	(0X185DA,	0X42);
-	set_name	(0X185DA,	"tile_45");
 }
 
 //------------------------------------------------------------------------
@@ -4497,6 +4496,10 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X185DA,	"overworld tile 45: byte0=row width in bytes, byte1=row count, then 64 bytes CGA Linear 2bpp pixel data (16x16px)",	0);
+	create_byte	(0X185DA);
+	make_array	(0X185DA,	0X42);
+	set_name	(0X185DA,	"tile_45");
 	set_cmt	(0X1861C,	"overworld tile 46: byte0=row width in bytes, byte1=row count, then 64 bytes CGA Linear 2bpp pixel data (16x16px)",	0);
 	create_byte	(0X1861C);
 	make_array	(0X1861C,	0X42);
