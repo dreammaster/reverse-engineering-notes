@@ -80,8 +80,15 @@ FCB random-block I/O, not stream I/O.
   Worth checking dungeon-rendering code for a `and 0F0h` or `and 0E0h`
   mask to confirm.
 
-## `monx??` — Monster/NPC data (ModdingWiki: "Ultima II Monster Format",
-not yet fetched in detail — TODO)
+## `monx??` — Monster/NPC data
+
+**No wiki page exists.** The summary page links to "Ultima II Monster
+Format" under `monx??`, but the link is a redlink
+(`.../w/index.php?title=Ultima_II_Monster_Format&action=edit&redlink=1`)
+— the page has never been created. Checked 2026-08-17; same is true of
+the "Ultima II Save Game Format" page linked for `player`. This format
+has to come entirely from our own disassembly work — no external
+source to cross-check against.
 
 - Same `nn` map-number suffix scheme as `mapx??`, patched identically —
   see `save_game1` (asm ~6700-6708) patching both `aMapxff_0+4/+5` and
@@ -90,10 +97,104 @@ not yet fetched in detail — TODO)
 - Loaded/saved as a companion file alongside the matching `mapx??` —
   always the pair (map file, then monster file) in both `load_map` and
   `save_game1`.
-- Byte-level layout not yet pulled from the wiki — fetch
-  `Ultima_II_Monster_Format` next session if it exists as its own page
-  (the summary page links to it under "monx??" but we haven't fetched
-  that specific page yet).
+- **Fixed size: 256 bytes** (`load_map` reads it with `mov cx,100h`
+  into `_mapMonsters`, same size confirmed on the `save_game1` write
+  side).
+- **Layout: struct-of-arrays, not one struct per monster.** The game
+  supports up to 32 monster/NPC slots per map (`byte_1742F` in the
+  movement-AI loop, asm ~2851-2870, counts down from `1Fh`=31 to 0).
+  Rather than one N-byte record per monster, each *field* is its own
+  32-byte array (one byte per monster slot), and the monster's slot
+  index (0-31) is used as a common array index across all fields
+  (`di`). `_mapMonsters` itself is declared only `0xBC` (188) bytes in
+  the IDB, undersized vs. the true 256-byte file — same pattern seen
+  elsewhere in this binary (IDA sizes data items from what it's
+  observed referenced, not true bounds).
+- **6 of the on-disk fields decoded** (asm 8115-8247 in `attack`,
+  8950-9044 in `cast`'s monster-finder `sub_1330C`, 10164-10219 in
+  `offer`):
+
+  | Offset | Field | Evidence |
+  |---|---|---|
+  | `+0x00` | Map X position | `sub_1330C` (asm 9032-9036) matches it against `_mapX + _mapLeft` (viewport→absolute X) when locating "the monster under the cursor" for `cast` |
+  | `+0x20` | Map Y position | same routine, `_mapY + _mapTop` against `+0x20` |
+  | `+0x40` | Magic/spell HP | `cast` (asm 8950-8963) subtracts a computed spell-damage value from it and checks for "borrow" (death) — same borrowless-subtract idiom as `player._hp`, but a separate pool from the runtime `+0x177` melee HP below |
+  | `+0x60` | **Monster type = `TileId × 4`** | `sub_1330C`'s "is this slot active" check is `!= 0`; `attack`'s post-kill type dispatch compares it to `40h`/`60h`/`0FCh`/`0F0h` — **exact matches** for `TILE_MINAX×4`, `TILE_GUARD×4`, `TILE_THIEF×4`, `TILE_FIGHTER×4` from the `TileId` enum. Same ×4 encoding as `mapx??` tile bytes — monster identity *is* its overworld tile ID |
+  | `+0x80` | Display/glyph tile ID | written directly onto the map as a tile byte after a non-lethal hit (asm 8123-8125); also compared against a caller-supplied value in `sub_1330C` (asm 9029-9031, a "match this specific glyph" parameter for `cast`'s detection). Likely a companion/duplicate of `+0x60` rather than something distinct — both get zeroed together on death (asm 8243-8247) — not fully distinguished from `+0x60` yet |
+  | `+0xA0` | "Offer" flag/type | only touched by `offer` (asm 10177-10219); values seen: `0x81`/`0x82`/`0x83` (high bit + a 1-3 index), gates a location-specific "beggar/pirate" gold-offer script (checked alongside `player._mapNum1==3 && _mapNum2==2`) |
+
+  That's 6 fields × 32 bytes = 0xC0 (192) bytes; the remaining 0x40
+  (64) bytes of the 256-byte file (`+0xC0` through `+0xFF`) aren't
+  referenced by any code found so far — possibly 1-2 more 32-byte
+  fields, possibly padding, not yet confirmed either way.
+- **Bonus find while tracing `attack`'s kill-cleanup code (asm
+  8181-8257)**: three previously-unplaced `Savegame` fields turned out
+  to be consumable resources, looted from specific monster types on
+  death and spent via specific commands — cross-checked both ends
+  (drop site in `attack`, spend site elsewhere) for each:
+  - `field_2E` = **Torches**. `ignite_torch` checks it ("NONE OWNED!"
+    if zero) and decrements on use (asm 9629-9647). Dropped by *any*
+    monster kill not covered by the two entries below, random 1-4
+    (`(roll & 3) + 1`, BCD).
+  - `field_2F` = **Keys**. `unlock` checks/decrements it ("NO KEYS
+    THAT FIT!" if zero, asm 10884-10908). Guards (`TILE_GUARD`, type
+    `0x60`) drop +2 on death.
+  - `field_30` = **Thieves' Tools**. Saves you from a trap death
+    ("ESCAPED! BY USE OF TOOLS!", decremented on use, asm 7599-7631) —
+    die instead if you have none. Thieves (`TILE_THIEF`, type `0xFC`)
+    drop +1 on death.
+  - `field_A5` — also incremented +1 (BCD) on killing a Fighter
+    (`TILE_FIGHTER`, type `0xF0`), but no consumption site found yet
+    (only reference besides the struct declaration is this drop). Not
+    yet named.
+  - All BCD-encoded (`daa` after the add), same style as `_hp`/`_food`.
+  - The Thief/Fighter kill branches also touch a small array at
+    `[[roll-derived index]+0D6h]` (asm 8161-8170, 8219-8228) — not
+    traced, flagged for later.
+  - One oddity worth double-checking later, not yet confirmed as a bug
+    or intentional: the "killed Minax" branch (`+0x60 == 0x40`, asm
+    8079-8111, prints "SHE'S GONE!!!") does a position lookup, then
+    what reads like an X/Y-transposed second lookup — writes the
+    monster-type byte to map position `(Y, X)` instead of `(X, Y)`.
+    Possibly intentional (unclear why), possibly a genuine bug in the
+    original 1983 code.
+- **Separate from the above**: several *runtime-only* per-monster
+  fields exist further out in the same data segment, past the 256-byte
+  file-backed region (`_mapMonsters+0x137` onward) — **not** saved to
+  `monx??`, transient combat/AI state instead. Same struct-of-arrays
+  shape (each field a 32-byte array, `di` = monster slot), found while
+  tracing the movement-AI loop (`sub_10A30`) and `transact`'s
+  shopkeeper branch (see
+  [overview.md](overview.md#resolved-a-z-command-jump-table-and-the-tlkxff-loader)):
+  - `+0x137` — monster's map X position. **Open question**: how does
+    this relate to the on-disk `+0x00` field (also map X, see above)?
+    Both get read/written independently in different code paths
+    (`+0x137` in the AI wander loop, `+0x00` in `attack`'s post-hit
+    redraw and `cast`'s monster-finder) — not yet confirmed whether
+    they're kept in sync (spawn copy vs. live copy) or serve genuinely
+    different purposes.
+  - `+0x157` — monster's map Y position, same open question as `+0x137`.
+  - `+0x177` — unclear; compared against `0x0Fh` in the AI wander
+    logic (asm ~2879-2881), plausibly a cooldown/range value.
+  - `+0x197` — monster type/class byte. `0` = inactive/no monster
+    (checked in the AI loop, asm ~2858-2860); nonzero values select
+    the canned flavor line in `transact` (`0x60`=guard, `0x64`=jester,
+    `0x68`=merchant, `0xF0`=fighter, `0xF4`=cleric, `0xF8`=wizard,
+    `0xFC`=thief, `0x6C`=one more not yet named).
+  - `+0x1B7` — cached tile ID at the monster's map position (used to
+    restore terrain after the monster moves off a cell).
+  - `+0x1D7` — shopkeeper flag/item index: high bit set = this NPC is
+    a shopkeeper with an item for sale, low 7 bits = index into the
+    `load_talk_file`-loaded buffer, read via `print_indexed_shop_string`
+    (asm 10607-10611, 10698-10703).
+  - `+0x1F7`, `+0x217` — temp X/Y scratch, used only transiently while
+    swapping the player's position with a monster's during tile
+    lookups (asm ~2724-2745, ~6540-6560).
+  - These aren't yet split into named data items in the IDB (raw
+    `[di+137h]`-style displacements, no symbol at those addresses) —
+    see `ida_scripts/apply_structs.py`'s docstring for why they don't
+    fit an IDA struct cleanly (struct-of-arrays, not array-of-structs)
+    and what a future splitting script would need to do.
 
 ## `tlkx???` — shop/NPC response text (wiki: "NPC dialogue")
 
