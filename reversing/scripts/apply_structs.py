@@ -400,9 +400,24 @@ struct GUIMain {
                            // 2011's declared "which object has the focus" field.
   int numobjs;             // +0x3C, high confidence: confirmed via GUIMain::get_control_type's bounds
                            // check ("if (indx<0 || indx>=numobjs) return -1;").
-  int popup;                 // +0x40, MEDIUM confidence: positional/arithmetic fit only, matching
-                           // 2011's declared "when it pops up (POPUP_NONE/MOUSEY/SCRIPT)" field.
-  int popupyp;                // +0x44, MEDIUM confidence: same status as `popup` immediately above.
+  int popup;                 // +0x40, high confidence (UPGRADED from MEDIUM): confirmed via
+                           // `check_controls` (already matched): "cmp [guis+ev2*184h+40h],1; jz
+                           // <continue-popup-mouseover-check>" -- a literal exact-match check
+                           // against `1`, matching 2011's declared `POPUP_MOUSEY=1` (`Common/
+                           // acroom.h:277`) precisely (gating the "should this GUI auto-show when
+                           // the mouse nears the trigger line" logic). Matches 2011's declared
+                           // field (`acgui.h:672`) in position and semantic role exactly.
+  int popupyp;                // +0x44, high confidence (UPGRADED from MEDIUM): confirmed via BOTH
+                           // `check_controls` ("mov eax,mouseY; cmp eax,[guis+ev2*184h+44h]; jge
+                           // <not-yet>" -- guarding the "show this popup GUI" trigger, only
+                           // proceeding while `mouseY < popupyp`) and `remove_popup_interface`
+                           // (already matched -- whose own matches.json evidence already cited
+                           // this offset as "popupyp-related" from an earlier round, before this
+                           // struct-field round propagated it into apply_structs.py): "if
+                           // (mouseY<=guis[ifn].popupyp) msetgraphpos(mouseX, popupyp+2);" -- the
+                           // "reposition the mouse when auto-hiding the popup" logic. Matches
+                           // 2011's declared field (`acgui.h:673`, "popup when mousey < this") in
+                           // position and semantic role exactly.
   int bgcol;                  // +0x48, MEDIUM confidence: positional/arithmetic fit only, boxed in
                            // with zero slack between the confirmed `popupyp` and `bgpic` fields.
   int bgpic;                  // +0x4C, high confidence: confirmed via `SetGUIBackgroundPic` (already
@@ -430,8 +445,18 @@ struct GUIMain {
   int transparency;           // +0x6C, MEDIUM confidence: positional/arithmetic fit only. Checked
                            // for `SetGUITransparency` this round -- also not found in this binary,
                            // same caveat as `flags` above.
-  int zorder;                 // +0x70, MEDIUM confidence: positional/arithmetic fit only. Checked
-                           // for `SetGUIZOrder`/`GUI_SetZOrder` this round -- also not found.
+  int zorder;                 // +0x70, MEDIUM confidence: positional/arithmetic fit only.
+                           // `SetGUIZOrder`/`GUI_SetZOrder`/`update_gui_zorder` -- the whole
+                           // 2011 z-order machinery -- were searched for and NOT found anywhere
+                           // in this binary. Stronger supporting evidence than a mere absent
+                           // name/string: `GetGUIAt` (already matched) iterates GUIs by RAW INDEX
+                           // directly (`var_4` counting down from `numgui-1` to `0`, used straight
+                           // as the array multiplier) with NO `play.gui_draw_order[var_4]`
+                           // indirection at all -- unlike 2011's "aa = play.gui_draw_order[ll];"
+                           // (`Engine/AC.CPP:16090`). This build most likely predates GUI z-order
+                           // sorting as a feature entirely; `zorder` itself may still exist as an
+                           // inert field (matching the struct's own total-size arithmetic), just
+                           // not yet wired up to anything that reads or writes it.
   int guiId;                  // +0x74, MEDIUM confidence: positional/arithmetic fit only, matching
                            // 2011's declared field.
   int reserved[6];             // +0x78..0x90 (24 bytes), MEDIUM confidence: positional/arithmetic
@@ -623,10 +648,28 @@ struct ccInstance {
                             // from the source ccScript's +0x10 field (shared, read-only script string pool).
   int stringssize;             // +0x18, high confidence: copied directly from ccScript's +0x14 field,
                             // alongside strings above (same non-owning-copy treatment).
-  char _pad_calls[0x960];    // +0x1C..0x97C, unknown (2400 bytes). Almost certainly holds the call-stack
-                            // bookkeeping arrays (2011 has three parallel MAX_CALL_STACK=100 arrays here --
-                            // callStackLineNumber/Addr/CodeInst -- but the exact 2002 composition, including
-                            // whether MAX_CALL_STACK is still 100, has not been independently verified).
+  void *exportaddr[600];      // +0x1C..0x97C, high confidence (RESOLVES the region formerly tracked
+                            // as an unknown 2400-byte pad). ccCreateInstanceEx's export-address
+                            // resolution loop (source CSRUN.CPP:933-948) writes directly into
+                            // `[cinst + idx*4 + 0x1C]` -- an array EMBEDDED inline in the struct,
+                            // not a separately malloc'd `char **exportaddr` pointer like 2011's.
+                            // Loop bound is the already-confirmed ccScript.numexports@+0x1C48; the
+                            // per-entry computation matches source exactly for both export types
+                            // (EXPORT_FUNCTION -> &cinst->code[eaddr], EXPORT_DATA -> cinst->
+                            // globaldata+eaddr, CSRUN.CPP:940/942), and the auto-import loop right
+                            // after reads the same array back (`[cinst+idx*4+0x1Ch]`) as the 3rd arg
+                            // to SystemImports::add, matching source's `simp.add(scri->exports[i],
+                            // cinst->exportaddr[i], cinst)` (CSRUN.CPP:959) exactly -- three
+                            // independent confirmations. Capacity closes with ZERO slack: 600
+                            // entries (matching ccScript.export_addr[600]'s own confirmed capacity)
+                            // x 4 bytes = 2400 = 0x960, landing exactly on stack@+0x97C. This also
+                            // retroactively explains why the interpreter (sub_42B394) never once
+                            // touches this region (see its own matches.json entry and reversing/
+                            // notes/csrun-interpreter-evolution.md for the earlier, now-superseded
+                            // call-stack-array hypothesis disproof) -- exportaddr is populated once
+                            // at instance-creation time and never touched by the bytecode loop
+                            // itself. CLOSES ccInstance COMPLETELY -- every byte from +0x00 through
+                            // the struct's confirmed +0x9A8 total size is now accounted for.
   char *stack;                // +0x97C, high confidence: malloc'd right where source computes register/stack
                             // setup, using the size stored at the very next field.
   int stacksize;               // +0x980, high confidence: the size used for the above malloc. Value
@@ -649,7 +692,12 @@ struct ccInstance {
                             // from the array's existence, not individually verified.
   int pc;                      // +0x99C, high confidence: set to 0 right after the registers-sized region,
                             // matching source's program-counter reset on instance creation.
-  char _pad_9A0[0x04];       // +0x9A0..0x9A4, unknown
+  int line_number;            // +0x9A0, high confidence: SCMD_LINENUM (opcode 36, "debug info --
+                            // source code line number", Common/CSCOMP.H:303) handler inside the
+                            // interpreter (sub_42B394) does `[ecx+9A0h] = edx; dword_5347F4 = edx`
+                            // in one place -- matches 2011's `case SCMD_LINENUM: inst->line_number =
+                            // arg1; currentline = arg1;` (CSRUN.CPP:1334-1336) exactly, and
+                            // independently identifies dword_5347F4 as the global `currentline`.
   struct ccScript *instanceof_; // +0x9A4, high confidence (named instanceof_ -- `instanceof` is a C++
                             // reserved word in some contexts / awkward as a plain identifier, kept
                             // trailing underscore to be safe for IDA's parser): set to the source
@@ -668,10 +716,27 @@ struct ccScript {
   char *strings;                // +0x10, high confidence: pointer an instance copies directly (not
                             // malloc'd) into its own `strings` field -- shared read-only string pool.
   int stringssize;              // +0x14, high confidence: copied directly alongside strings.
-  char _pad_18[0x0C];         // +0x18..0x24, unknown (12 bytes). TENTATIVE positional-only inference:
-                            // matches the exact combined size of 2011's fixuptypes(4)+fixups(4)+
-                            // numfixups(4), which would fall here if that adjacency holds -- not
-                            // independently verified, same caution as CharacterInfo's talkview/prevroom.
+  char *fixuptypes;            // +0x18, high confidence (UPGRADED from a TENTATIVE positional-only
+                            // padding guess): confirmed via `ccCreateInstanceEx` (already matched):
+                            // its fixup-processing loop does "movsx ecx,byte ptr[[scri+0x18]+i]" --
+                            // reading a per-fixup TYPE byte through a POINTER stored at this offset
+                            // (matching 2011's declared `char *fixuptypes`, not an embedded array),
+                            // then switches on it (1-6) to relocate `code[fixups[i]]` by adding the
+                            // new instance's own `globaldata`(+0x04, case 1/FIXUP_GLOBALDATA) or
+                            // `strings`(+0x14, case 3/FIXUP_STRING) base address, or resolving a
+                            // system import (case 4/FIXUP_IMPORT, via the already-matched
+                            // `SystemImports::is_script_import`) -- matching 2011's declared
+                            // `FIXUP_*` constants (`Common/CSCOMP.H:165-170`) and switch behavior
+                            // exactly. Matches 2011's declared field (`CSCOMP.H:208`) in position
+                            // and type exactly.
+  long *fixups;                // +0x1C, high confidence (same upgrade/evidence as `fixuptypes`
+                            // above): the fixup-loop's other operand, read as "[[scri+0x1C]+i*4]"
+                            // through a POINTER at this offset (matching 2011's declared `long
+                            // *fixups`, a code-array-index list, not an embedded array). Matches
+                            // 2011's declared field (`CSCOMP.H:209`) in position and type exactly.
+  int numfixups;                // +0x20, high confidence (same upgrade/evidence as `fixuptypes`
+                            // above): the fixup-loop's own bound ("cmp i,[scri+0x20]; jge <done>").
+                            // Matches 2011's declared field (`CSCOMP.H:210`) in position exactly.
   void *imports[600];          // +0x24, high confidence: ccCreateInstanceEx null-checks entries in this
                             // array (`[arg_0+ecx*4+24h]`) in a loop bounded by numimports below. Length
                             // (600) is exact: (numimports's offset 0x984 - 0x24) / 4 = 600, and this
@@ -2403,7 +2468,7 @@ struct RoomStatus {
                             // this reflects a genuinely older `MAX_OBJ` value the way
                             // `hotspot_enabled`'s capacity did (no equivalent version-history
                             // comment exists for `MAX_OBJ` in the reference source).
-  char _pad_align[2];                // +0x138E..0x1390, compiler alignment padding (not a real
+  char _pad_align6[2];                // +0x138E..0x1390, compiler alignment padding (not a real
                             // field) -- boxed in with zero slack by the confirmed total stride
                             // (0x1390) and `walkbehind_base`'s own confirmed end at +0x138E. 2011's
                             // trailing `int interactionVariableValues[MAX_GLOBAL_VARIABLES]`
@@ -2450,6 +2515,252 @@ struct WordsDictionary {
                             // 344`) in role (a per-word numeric ID for the text parser) with the
                             // same "no 2011 fixed ceiling" caveat as `word[]` above.
 };
+
+struct GameState {
+  // FRESH SURVEY, ROUND 1 -- IN PROGRESS, deliberately partial. This is this build's version of
+  // 2011's `play` global (`struct GameState play;`, Common/acruntim.h:465-618), the single
+  // largest runtime-state struct in the whole engine (150+ fields in 2011, accumulated over
+  // 9 years). Unlike most structs in this project, `play` is a plain global (not malloc'd), so
+  // there is no allocation-size site to anchor a total struct size from -- boundaries here come
+  // purely from .data layout adjacency and behavioral confirmation.
+  //
+  // MOST of the fields below (score through inv_numorder) were ALREADY named directly in the
+  // live IDB from prior manual work (the same "already recovered, just needs formalizing"
+  // precedent as SpriteCache) -- confirmed here to be a genuine tightly-packed run with zero
+  // gaps in the raw .data listing, strongly reinforced by `play_globalvars`'s pre-existing
+  // `32h dup(?)` = 50-dword declaration landing EXACTLY on 2011's `MAXGLOBALVARS=50`
+  // (`acruntim.h:21`) with zero drift.
+  //
+  // STRUCTURAL QUESTION RESOLVED (fresh survey, later round): earlier rounds found dword_4EEB50
+  // (in_cutscene) etc. computing to +0x138 from `play`'s base, but a global then labeled `ifnum`
+  // appeared to sit at the intervening +0x110 position -- seemingly proving these couldn't be
+  // the same contiguous object. That reasoning is now OVERTURNED: `SaveGameSlot` (already
+  // matched) writes `play` directly to the save file with a LITERAL size constant --
+  // "fwrite(&play, 0x964, 1, Stream)" (2404 bytes) -- landing with ZERO byte slack exactly where
+  // an unrelated global, `String1`, begins. This proves GameState really is one contiguous
+  // 2404-byte object end to end. `ifnum` turned out to be a MISLABELED field, not a genuine
+  // separate global -- see `speech_textwindow_gui` below. See reversing/notes/
+  // struct-layout-drift.md for the full correction writeup.
+  int score;                  // +0x00, high confidence: confirmed via `replace_macro_tokens`
+                            // (new match this round, sub_41024B, AC.CPP:7104) -- the GUI label
+                            // "@SCORE@"/"@SCORETEXT@" macro-substitution routine reads the `play`
+                            // global (this field) at exactly the two call sites matching source's
+                            // two separate play.score reads.
+  int usedmode;                // +0x04, medium-high confidence: pre-existing IDA name
+                            // (`play_usedmode`), positionally exact; `ProcessClick` (already
+                            // matched) writes it once via "play.usedmode=mood;" (AC.CPP:16680),
+                            // matching the single write XREF'd here.
+  int disabled_user_interface;  // +0x08, medium-high confidence: pre-existing IDA name, XREF'd
+                            // from an as-yet-unmatched helper (sub_40C395) reading then writing
+                            // it -- plausible role match, not yet individually confirmed.
+  int gscript_timer;          // +0x0C, medium-high confidence: pre-existing IDA name, XREF'd from
+                            // `load_new_room` (already matched, write) and `update_stuff`
+                            // (already matched, read) -- plausible role match, not yet
+                            // individually confirmed via a specific instruction.
+  int debug_mode;              // +0x10, medium-high confidence: pre-existing IDA name, XREF'd
+                            // from `debug_log` (already matched) and `check_controls` (already
+                            // matched) -- plausible role match, not yet individually confirmed.
+  int globalvars[50];         // +0x14..0xDC (200 bytes), high confidence: pre-existing IDA name
+                            // AND pre-existing explicit `32h dup(?)` (50-entry) declaration,
+                            // matching 2011's declared `int globalvars[MAXGLOBALVARS]`
+                            // (`acruntim.h:471`, `MAXGLOBALVARS=50`) with ZERO drift -- a strong
+                            // signal this is a real, deliberately-sized array, not coincidental
+                            // padding. XREF'd from `setup_script_exports` (already matched) as an
+                            // exported symbol, meaning this array is directly script-visible
+                            // (matching 2011's own "obsolete" but still script-exposed role).
+  int messagetime;             // +0xDC, medium-high confidence: pre-existing IDA name, XREF'd
+                            // from `update_stuff` (already matched, read) -- plausible role
+                            // match, not yet individually confirmed via a specific instruction.
+  int usedinv;                 // +0xE0, medium confidence: pre-existing IDA name flagged with a
+                            // trailing "?" by the prior (pre-this-project) manual naming pass,
+                            // XREF'd from `check_controls` (already matched, read+write) --
+                            // plausible but not individually confirmed; the prior session's own
+                            // uncertainty flag is preserved here rather than silently upgraded.
+  int inv_top;                 // +0xE4, HIGH confidence (UPGRADED from medium/"?"-flagged):
+                            // confirmed via sub_40D80C (new match this round, algorithmic twin
+                            // of 2011's offset_over_inv, AC.CPP:5394-5409) -- "mover +=
+                            // play_inv_top" matches source's "mover += topIndex" exactly. The
+                            // prior session's own uncertainty flag is now resolved.
+  int inv_numdisp;             // +0xE8, HIGH confidence (UPGRADED from medium-high): confirmed
+                            // via sub_40D80C -- "if (mover >= play_inv_numdisp) return -1"
+                            // matches source's "if (mover >= itemsPerLine*numLines) return -1"
+                            // exactly, i.e. inv_numdisp is a precomputed itemsPerLine*numLines
+                            // total-capacity value.
+  int inv_numorder;            // +0xEC, HIGH confidence (UPGRADED from medium-high): CONFIRMED
+                            // NOT obsolete in this build, resolving the prior round's open
+                            // question -- `update_invorder` (already matched) directly
+                            // increments this field as its LIVE running counter
+                            // ("play_inv_numorder=0; ... play_inv_numorder++;"), and
+                            // sub_40D80C bounds-checks against it exactly like 2011's
+                            // "invorder_count". 2011 keeps `obsolete_inv_numorder`
+                            // (`acruntim.h:474`) only as a single backwards-compatibility mirror
+                            // of the real per-character count; this build has no such
+                            // generalization yet -- this IS the one true counter.
+  int inv_numinline;          // +0xF0, high confidence (UPGRADED from tentative): confirmed via
+                            // sub_40D80C as `itemsPerLine` -- "mover = mouseX/(item_wid*mult_x);
+                            // if (mover < inv_numinline) { ... }" matches source's "mover =
+                            // xoffs/itemWidth; if (mover >= itemsPerLine) return -1;" (inverted
+                            // branch sense) exactly, and the field name itself ("number in a
+                            // line") matches 2011's declared role precisely
+                            // (`acruntim.h:474`-adjacent field, "inv_numinline").
+  int _tentative_text_speed;  // +0xF4, TENTATIVE, positional inference only: the 12-byte gap
+                            // between the newly-confirmed `inv_numinline`@+0xF0 and
+                            // `inv_item_wid`@+0x100 is EXACTLY 3 ints, matching the count of
+                            // fields 2011 declares in that same span (`text_speed`,
+                            // `sierra_inv_color`, `talkanim_speed`) with zero slack -- a
+                            // positional over-determined fit, but none of these three has an
+                            // access-site confirmation yet.
+  int _tentative_sierra_inv_color; // +0xF8, TENTATIVE, see `_tentative_text_speed` above.
+  int _tentative_talkanim_speed;   // +0xFC, TENTATIVE, see `_tentative_text_speed` above.
+  int inv_item_wid;            // +0x100, high confidence: confirmed via sub_40D80C as the
+                            // column-width divisor -- "mover = mouseX/(inv_item_wid*mult_x)"
+                            // matches source's "mover = xoffs/itemWidth" (`GUIInv::itemWidth`,
+                            // set by `SetInvDimensions`, AC.CPP:24106) exactly. Matches 2011's
+                            // exact declared field name and adjacent pairing with `inv_item_hit`.
+  int inv_item_hit;            // +0x104, high confidence: confirmed via sub_40D80C as the
+                            // row-height divisor, same match shape as `inv_item_wid` above.
+  int _tentative_speech_text_shadow;   // +0x108, TENTATIVE, positional inference only: the
+                            // 8-byte gap between `inv_item_hit`@+0x104 and the newly-confirmed
+                            // `speech_textwindow_gui`@+0x110 (below) is exactly 2 ints, matching
+                            // 2011's declared field count in that same span (`speech_text_shadow`,
+                            // `swap_portrait_side`) with zero slack -- no access-site evidence yet.
+  int _tentative_swap_portrait_side;   // +0x10C, TENTATIVE, see field above.
+  int speech_textwindow_gui;  // +0x110, high confidence: this is what the pre-existing IDA
+                            // global label `ifnum` (address 0x4EEB28) actually is -- NOT a
+                            // genuinely separate variable as earlier rounds assumed (see this
+                            // struct's own header comment for the correction). `main` (already
+                            // matched) contains "ifnum = game_options[OPT_TWCUSTOM]; if
+                            // (ifnum==0) ifnum=-1;", matching 2011's "play.speech_textwindow_gui
+                            // = game.options[OPT_TWCUSTOM]; if (play.speech_textwindow_gui==0)
+                            // play.speech_textwindow_gui=-1;" (AC.CPP:26389-26391) exactly. Its
+                            // computed offset (0x4EEB28-0x4EEA18=0x110) also lines up exactly
+                            // with 2011's declared position (3 fields after inv_item_hit) if
+                            // this build has zero drift in that short span.
+  char _pad_unknown1a[0x04];   // +0x114..0x118, genuinely unexplored (1 dword, dword_4EEB2C) --
+                            // XREF'd from `update_stuff` (already matched) negating it into a
+                            // walk-target-adjacent field; role not pinned down this round.
+  int totalscore;               // +0x118, high confidence: `replace_macro_tokens` (already
+                            // matched) reads this for BOTH its "totalscore" and "scoretext"
+                            // macro branches, matching 2011's `#define MAXSCORE
+                            // play.totalscore` (`acruntim.h:809`) exactly -- 2011's own source
+                            // uses the macro rather than the field name directly at both call
+                            // sites (`AC.CPP:7134`/`7136`), but the macro's definition makes
+                            // the identification unambiguous.
+  int _tentative_skip_display;  // +0x11C, MEDIUM confidence: `_display_main` (already matched)
+                            // checks this against 0/2/3 in a message-box wait loop deciding
+                            // whether to poll for a skipping keypress/mouseclick -- generally
+                            // consistent with GameState.skip_display's role ("how the user can
+                            // skip normal Display windows") and small-int-enum value space
+                            // (2011's sibling field skip_speech uses the same style of enum via
+                            // user_to_internal_skip_speech, AC.CPP:12790-12810), but this
+                            // build's specific branch structure doesn't cleanly match a single
+                            // identifiable 2011 function line for line -- not upgraded past
+                            // medium confidence pending a more direct behavioral match.
+  char _pad_unknown1c[0x04];   // +0x120..0x124 (1 dword, dword_4EEB38), genuinely unexplored --
+                            // XREF'd from `update_stuff` (already matched) gating a per-
+                            // character blink/talk-animation update block; role not pinned
+                            // down this round.
+  int roomscript_finished;      // +0x124, high confidence: `post_script_cleanup` (already
+                            // matched)'s `runnext[0]=='$'` branch does
+                            // "run_text_script_iparam(roominst,...); dword_4EEB3C=1;" matching
+                            // 2011's "run_text_script_iparam(roominst,&runnext[1],...);
+                            // play.roomscript_finished = 1;" (AC.CPP:3179-3181) exactly.
+  int used_inv_on;              // +0x128, high confidence: `check_controls` (already matched)'s
+                            // GOBJ_INVENTORY click branch does "iit=sub_40D80C(); if (iit>=0)
+                            // dword_4EEB40=iit;" matching 2011's "int
+                            // iit=offset_over_inv(...); if (iit>=0) { ...; play.used_inv_on =
+                            // iit; }" (AC.CPP:5707-5710) exactly -- also a further independent
+                            // confirmation that sub_40D80C is this build's offset_over_inv
+                            // equivalent.
+  char _pad_unknown1d[0x04];   // +0x12C..0x130 (1 dword, dword_4EEB44), genuinely unexplored --
+                            // an earlier round's `skip_display` guess for this specific field
+                            // is RETRACTED in favor of `_tentative_skip_display`@+0x11C above,
+                            // which has closer-matching evidence (the same small-int value
+                            // space AND a message-box-skip-specific role, vs. this field's
+                            // weaker "set to 2 under some unrelated gate" evidence). XREF'd
+                            // from an `_display_at`-adjacent function (sub_4141B8, already
+                            // touched but not fully read this round).
+  int max_dialogoption_width;   // +0x130, high confidence: `do_conversation` (already matched)
+                            // computes "wii = dword_4EEB48 * current_screen_resolution_
+                            // multiplier_x" inside its is_textwindow-equivalent branch,
+                            // matching 2011's "areawid = multiply_up_coordinate(play.
+                            // max_dialogoption_width);" (`AC.CPP:22119`) exactly in role and
+                            // context (dialog-options text-window width computation).
+  int no_hicolor_fadein;        // +0x134, medium-high confidence: an unmatched helper
+                            // (sub_40A6D8, called from the already-matched `FadeIn`/
+                            // `process_event`) gates a hi-color-depth-specific fast path on
+                            // this flag ("if (color_depth>1) { if (dword_4EEB4C) {
+                            // fast_path(); } else { full_fadein_path(); } }"), matching 2011's
+                            // `no_hicolor_fadein`'s role (`AC.CPP:3495-3497`, "fade out but
+                            // instant in for hi-color") closely but not as a clean line-for-
+                            // line structural match, hence medium-high rather than high.
+  int in_cutscene;              // +0x138, high confidence: check_skip_cutscene_keypress
+                            // (already matched) -- "(play.in_cutscene>0) &&
+                            // (play.in_cutscene!=3)" exact branch match.
+  int fast_forward;             // +0x13C, high confidence: FadeOut (already matched)
+                            // bails out immediately "if (dword_4EEB54!=0) return;",
+                            // matching AGS's extremely common "if (play.fast_forward)
+                            // return;" early-bailout idiom (41 occurrences in AC.CPP,
+                            // e.g. write_screen()'s identical first-line gate,
+                            // AC.CPP:2776-2777) -- also matches 2011's own declared
+                            // adjacency to in_cutscene ("int in_cutscene; int
+                            // fast_forward;", acruntim.h:496-497) with zero drift.
+  int bg_frame;                 // +0x140, HIGH confidence (upgraded via a second
+                            // independent confirmation, see mainloop below) -- zeroed in
+                            // the EndSkippingUntilCharStops/unload_old_room-combined
+                            // function (sub_40AAE3) matching source's paired
+                            // "play.bg_frame=0; play.bg_frame_locked=0;"
+                            // (AC.CPP:3624-3625), AND incremented/wrapped in mainloop
+                            // (sub_42106D, already matched) matching source's
+                            // "play.bg_frame++; if (play.bg_frame>=thisroom.num_bscenes)
+                            // play.bg_frame=0;" (AC.CPP:25573-25575) exactly.
+  int bg_anim_delay;            // +0x144, high confidence: mainloop (already matched)
+                            // matches 2011's "if (play.bg_anim_delay>0)
+                            // play.bg_anim_delay--; else if (play.bg_frame_locked) ;
+                            // else { play.bg_anim_delay=play.anim_background_speed;
+                            // play.bg_frame++; ...}" (AC.CPP:25569-25575) instruction
+                            // for instruction. Bonus: identifies dword_52308C
+                            // (standalone global) as GameState.anim_background_speed.
+  short wait_counter;           // +0x148, high confidence: pre-existing IDA name
+                            // (`play_wait_counter`), positionally exact (see SetMouseBounds
+                            // evidence for the four fields right after it).
+  short mboundx1;                // +0x14A, high confidence via SetMouseBounds (already
+                            // matched) -- see its own evidence.
+  short mboundx2;                // +0x14C, high confidence, see mboundx1.
+  short mboundy1;                // +0x14E, high confidence, see mboundx1.
+  short mboundy2;                // +0x150, high confidence, see mboundx1.
+  int fade_effect;               // +0x154, high confidence: sub_40AAE3's 3-way screen-
+                            // transition dispatch ("cmp dword_4EEB6C,1 / cmp
+                            // play_scren_tint,0 / cmp dword_4EEB6C,0") matches 2011's
+                            // current_fade_out_effect() (AC.CPP:3538-3567) exactly,
+                            // using FADE_NORMAL=0/FADE_INSTANT=1 (acroom.h:2753-2754).
+                            // Matches 2011's own declared adjacency to bg_frame_locked
+                            // immediately below (acruntim.h:550-551) with zero drift.
+  int bg_frame_locked;           // +0x158, high confidence: TRIPLY confirmed --
+                            // zeroed matching source's "play.bg_frame_locked=0;" in
+                            // sub_40AAE3, sits immediately after fade_effect matching
+                            // 2011's exact declared order, AND checked in mainloop's
+                            // bg_frame-advance gate matching source exactly.
+  int globalscriptvars[300];    // +0x15C..0x60C (1200 bytes), high confidence via SetGlobalInt
+                            // (already matched) -- see its own evidence. DRIFT: 300 here vs.
+                            // 2011's declared MAXGSVALUES=500.
+  char _pad_unexplored2[0x358]; // +0x60C..0x964 (856 bytes), genuinely unexplored tail, sized
+                            // to exactly reach the confirmed total (SaveGameSlot's literal
+                            // fwrite ElementSize=0x964, see this struct's header comment).
+                            // Two globals independently confirmed to sit somewhere in THIS
+                            // range (not yet positionally pinned down against each other):
+                            // `play_scren_tint`/screen_tint is CONFIRMED ABSENT here (its own
+                            // address computes to +0x10C6C, far outside GameState's bounds --
+                            // it really is a standalone global). `play_invorder` (this build's
+                            // `short[]` inventory-order array, see update_invorder's evidence)
+                            // computes to +0x614, just 8 bytes past this pad's start; `word_4EF236`
+                            // (offsets_locked, see sub_40AAE3's evidence) computes to +0x81E.
+                            // Both fall WITHIN GameState's proven bounds, contradicting earlier
+                            // rounds' "standalone global" calls for them -- corrected here, but
+                            // not added as typed struct members since the territory around them
+                            // (what's at +0x60C..+0x614, +0x618..+0x81E, +0x820..+0x964) is
+                            // entirely unmapped and their exact field boundaries aren't confirmed.
+};
 """
 
 
@@ -2478,7 +2789,7 @@ def main():
               "GUISlider, SpriteCache, EventBlock, MouseCursor, InterfaceElement, "
               "InventoryItemInfo, GameSetupStructBase, ExecutingScript, DialogTopic, "
               "MoveList, ViewFrame272, ViewStruct272, RoomObject, EventBlockCmd, "
-              "GameAnimation, RoomStatus, WordsDictionary).")
+              "GameAnimation, RoomStatus, WordsDictionary, GameState).")
     else:
         print(f"parse_decls reported {err_count} error(s) -- check the declarations above.")
 

@@ -46,6 +46,82 @@ before writing any reconstructed C for it, rather than copying the 2011
 `cc_run_code` body verbatim. Left as `new_name: null` / confidence
 `medium` in `matches.json` pending a closer read.
 
+## Follow-up: the self-recursion isn't just a control-flow curiosity -- it removes an entire struct feature
+
+A later round, investigating `ccInstance`'s own unexplored 2400-byte
+region (`+0x1C..+0x97C`), read the SCMD_CALL handler inside
+`sub_42B394` (the self-recursive call site at line 79177 in this
+project's `rob_blanc_1.asm` line numbering) in full, rather than just
+noting that it recurses.
+
+**What it actually does**: pushes the call's arguments onto the VM's
+own data stack (`registers[SP]`, i.e. `ccInstance+0x988`), saves
+`pc`(`ccInstance+0x99C`) into a **plain local stack variable** (not a
+struct field), recurses directly into `sub_42B394` itself to execute
+the called function's bytecode, then on return restores `pc` from that
+same local variable and sanity-checks `registers[SP]` for stack
+corruption.
+
+This means the earlier hypothesis parked in `apply_structs.py` for
+`ccInstance`'s unexplored region -- that it "almost certainly" holds
+2011's `callStackLineNumber[100]`/`callStackAddr[100]`/
+`callStackCodeInst[100]`/`callStackSize` arrays (`Common/
+CSCOMP.H:259-262`, the `PUSH_CALL_STACK`/`POP_CALL_STACK` macros) -- is
+**wrong, not just unverified**. This build doesn't need a software
+call-stack array at all: nested script calls are native C recursion,
+and each nesting level's saved `pc` lives on the REAL machine stack
+(inside `sub_42B394`'s own recursive frame), never inside `ccInstance`.
+2011's later refactor -- splitting the interpreter into a non-recursive
+`cc_run_code` plus a `call_function()` trampoline -- apparently
+required an EXPLICIT software call-stack precisely because it gave up
+native recursion as the call-nesting mechanism. The 2002 self-recursive
+design didn't need one.
+
+This also resolves a loose thread from the original investigation:
+this build's plain `"stack overflow"` error strings (found 4 times in
+`sub_42B394`) are NOT the `PUSH_CALL_STACK` overflow check at all --
+they guard a completely different thing, the VM's data/operand stack
+pointer (`registers[SP]` minus `stack`) against `stacksize`. 2011's
+`"Call stack overflow (recursive call error?)"` and `"Call stack
+underflow -- internal error"` strings, which WOULD correspond to
+`PUSH_CALL_STACK`/`POP_CALL_STACK`, are both entirely absent from this
+binary -- consistent with those macros (and the array they guard)
+simply not existing here.
+
+`ccInstance`'s 2400-byte gap remains genuinely unexplored -- this round
+only disproves the previous guess, it doesn't supply a replacement one.
+
+## Second follow-up: SCMD_LINENUM closes the small pad next to the gap, and IDs four globals
+
+A later round grepped `sub_42B394`'s full offset list (rather than
+reading start-to-finish) and found it touches exactly one offset in
+the ccInstance region outside the big gap: `+0x9A0`, in the SCMD_LINENUM
+(opcode 36) handler -- `[ecx+9A0h] = edx; dword_5347F4 = edx`, matching
+2011's `inst->line_number = arg1; currentline = arg1;`
+(`CSRUN.CPP:1334-1336`) exactly. This closes `ccInstance`'s previously-
+unexplored `_pad_9A0` field as `line_number`, and identifies
+`dword_5347F4` as `currentline`. Reading the functions that already
+reference that global then IDed three more: `cc_error` sets `ccError`/
+`ccErrorLine` right next to it (`dword_5347F8`/`dword_5347FC`), and a
+previously-untouched 3-instruction getter (`sub_42AAA1`, called from
+`quit`) turned out to be `ccGetCurrentInstance()`, returning a fourth
+adjacent global (`dword_534800`/`current_instance`) that `sub_42B394`
+itself also saves/restores around nested calls. Full writeup in
+`reversing/notes/struct-layout-drift.md`.
+
+## Third follow-up: the 2400-byte gap itself is now closed -- it was `exportaddr[600]` all along
+
+A third read of `ccCreateInstanceEx` (not `sub_42B394` this time) found
+the gap's actual contents: `cinst->exportaddr` (`CSRUN.CPP:933-948`),
+except this build embeds it directly in the struct as a fixed
+`void *exportaddr[600]` array instead of 2011's separately malloc'd
+`char **exportaddr` pointer -- 600*4=2400 bytes, landing exactly on the
+gap's own boundaries with zero slack. This also explains, after the
+fact, why `sub_42B394` never touches this region at all: `exportaddr`
+is populated once at instance-creation time and never read by the
+interpreter loop itself. Full writeup in `reversing/notes/
+struct-layout-drift.md` -- `ccInstance` is now completely mapped.
+
 ## Takeaway for the rest of the project
 
 This is a concrete example of the caution in `CLAUDE.md`: string/role
@@ -53,3 +129,13 @@ matches reliably identify *which subsystem/file* a function belongs to,
 but across a 9-year gap, function *boundaries* (what got split, merged, or
 had a layer inserted) can differ. Treat "same file, same error strings" as
 confirmation of subsystem, not proof of an identical implementation.
+
+A second, sharper version of the same lesson from the follow-up round:
+a control-flow oddity (self-recursion) noticed early on turned out,
+once actually read to completion, to falsify a SEPARATE hypothesis
+recorded elsewhere (a struct field guess) that had seemed independently
+plausible. Two "probably true" guesses reached from different angles
+aren't necessarily consistent with each other -- reading the actual
+code that would need to exist for a hypothesis to be true is the only
+way to know, and it's worth doing even when the guess isn't the
+immediate target of investigation.

@@ -1,4 +1,7 @@
-*.id*
+*.idb
+*.id0
+*.id1
+*.id2
 *.lib
 *.nam
 *.til
@@ -6,3 +9,5 @@ manual/
 Engine/acwin___Win32_DebugWorking
 Engine/.vs/
 Editor/AGS.Editor/Resources/
+reversing/scripts/logs/
+reversing/scripts/__pycache__/

@@ -235,7 +235,7 @@ rather than trusting these numbers as they age)
   944/776 before that addition) — this pool was "largely exhausted" for
   Engine/Common code specifically; a productive third-party-library round
   (Task #10, now paused — see below) pushed it further before wrapping up.
-- `reversing/analysis/matches.json` has 548 entries (function + struct-field
+- `reversing/analysis/matches.json` has 555 entries (function + struct-field
   matches combined)
 - 25 struct definitions built entirely from disassembly evidence (not
   borrowed from the 2011 source — see `reversing/notes/struct-layout-drift.md`):
@@ -628,6 +628,251 @@ rather than trusting these numbers as they age)
   directly, plus reconfirming `x`/`y`/`on`. `transparency`/`zorder`/
   the color fields remain MEDIUM — no `GUIMain::draw` equivalent is
   matched yet, the most likely place to find them.
+  **Checked and NOT found: `GUIMain::draw`/`draw_at`** — turns out 2011's
+  own version doesn't touch `transparency` at all (delegated to a
+  later hardware-acceleration abstraction), a dead end. `zorder` got a
+  stronger negative result instead: `SetGUIZOrder`/`GUI_SetZOrder`/
+  `update_gui_zorder` are all absent by name, AND `GetGUIAt`'s own loop
+  iterates GUIs by raw index directly with NO `play.gui_draw_order[]`
+  indirection at all (unlike 2011) — real evidence, not just an absent
+  string, that this build predates GUI z-order sorting as a feature.
+  **`popup`@`+0x40` and `popupyp`@`+0x44` confirmed next**, via
+  `check_controls` (already matched): a literal `cmp X,1` gates the
+  "should this GUI auto-show" branch, matching 2011's `POPUP_MOUSEY=1`
+  exactly, and the mouseY-vs-`popupyp` trigger check confirms the
+  latter — `remove_popup_interface`'s own evidence had already named
+  `+0x44` as "popupyp-related" in an earlier round, just not yet
+  propagated into the struct file. 14 of `GUIMain`'s ~24 fields are
+  now HIGH confidence.
+  **Pivoted to `ccInstance`'s own long-parked 2400-byte unexplored
+  region** (`+0x1C..+0x97C`) and DISPROVED a standing hypothesis rather
+  than confirming it: the region was guessed to "almost certainly" hold
+  2011's `callStackLineNumber`/`callStackAddr`/`callStackCodeInst`/
+  `callStackSize` arrays. Reading the interpreter's SCMD_CALL handler
+  (`sub_42B394`, the self-recursive function already flagged in
+  `reversing/notes/csrun-interpreter-evolution.md`) in full shows this
+  build handles nested script calls via NATIVE C RECURSION — `pc` gets
+  saved into a plain local stack variable before the interpreter calls
+  itself, and restored from that same variable on return. No array, no
+  counter, nothing that could overflow/underflow in 2011's sense —
+  consistent with 2011's `"Call stack overflow (recursive call
+  error?)"`/`"Call stack underflow"` strings being entirely absent from
+  this binary, while the `"stack overflow"` strings that DO exist guard
+  a completely different thing (the VM's data-stack pointer). The
+  2400-byte region is back to genuinely unknown — this round only rules
+  out the previous guess, doesn't supply a replacement.
+  **A "wrong turn, right destination" follow-up**: reading
+  `ccCreateInstanceEx` in full while chasing `ccInstance`'s gap didn't
+  find that, but turned up a clean win on `ccScript` instead —
+  `fixuptypes`@`+0x18`/`fixups`@`+0x1C`/`numfixups`@`+0x20`, previously
+  one single TENTATIVE positional guess, now confirmed directly via
+  the relocation loop that reads them (and whose switch on fixup type
+  matches 2011's `FIXUP_GLOBALDATA`/`FIXUP_STRING`/`FIXUP_IMPORT`
+  constants exactly, targeting `ccInstance.globaldata`/`strings`, both
+  already confirmed).
+  **`ccInstance.line_number` closes the small pad next to the big gap,
+  and cascades into four global-variable IDs**: grepping the
+  interpreter's (`sub_42B394`) full offset list instead of reading it
+  start-to-finish showed it touches exactly one offset outside the
+  still-unresolved 2400-byte gap — `+0x9A0`, in the SCMD_LINENUM
+  (opcode 36) handler, `[ecx+9A0h] = edx; dword_5347F4 = edx`, matching
+  2011's `inst->line_number = arg1; currentline = arg1;`
+  (`CSRUN.CPP:1334-1336`) exactly. Closes the previously-unexplored
+  `_pad_9A0` field as `line_number` and IDs `dword_5347F4` as
+  `currentline` in one stroke. Following that global to its other
+  readers picked up three more: `cc_error` (already matched) sets
+  `ccError`/`ccErrorLine` right next to it (`dword_5347F8`/
+  `dword_5347FC`, `cscommon.cpp:59-60`), and a previously-untouched
+  3-instruction getter (`sub_42AAA1`, called from `quit`) turned out to
+  be `ccGetCurrentInstance()`, returning a fourth adjacent global
+  (`dword_534800`/`current_instance`, `CSRUN.CPP:770`) that
+  `sub_42B394` itself also saves/restores around nested calls and that
+  `ccCallInstance` resets at top-level entry/exit — matching 2011's
+  save/restore pattern in shape, just always resetting to 0 instead of
+  restoring a saved prior value, consistent with this build's
+  native-recursion call design needing no explicit re-entrancy
+  bookkeeping. All four globals happen to sit in four consecutive
+  dwords in `.data`, most likely link-order coincidence rather than a
+  real struct. The big 2400-byte gap itself is still completely
+  unexplored.
+  **`ccInstance.exportaddr[600]` closes that gap completely, on the very
+  next round** — a third read of `ccCreateInstanceEx` found what the
+  2400 bytes actually are: 2011's export-address resolution step
+  (`CSRUN.CPP:933-948`) has a disassembly counterpart that writes
+  computed addresses directly into `[cinst+idx*4+0x1C]` rather than
+  mallocing a separate `char **exportaddr` array — an array EMBEDDED
+  inline in the struct starting exactly where the gap starts. Three
+  independent confirmations converge with zero slack: the loop bound is
+  the already-confirmed `ccScript.numexports`@`+0x1C48`; the per-entry
+  computation matches source exactly for both export types
+  (`EXPORT_FUNCTION`→`&cinst->code[eaddr]`, `EXPORT_DATA`→`cinst->
+  globaldata+eaddr`, `CSRUN.CPP:940`/`942`); and the auto-import loop
+  right after reads the same array back as the 3rd argument to
+  `SystemImports::add`, matching `CSRUN.CPP:959` exactly. Capacity is
+  600 entries (matching `ccScript.export_addr[600]`'s own capacity) x 4
+  bytes = 2400 = `0x960`, landing exactly on `stack`@`+0x97C` with zero
+  remainder — also retroactively explaining why the interpreter never
+  touches this region (`exportaddr` is populated once at instance
+  creation, never read by the bytecode loop). **`ccInstance` is now
+  FULLY MAPPED** — every byte from `+0x00` through its confirmed
+  `+0x9A8` total size accounted for, joining `RoomStatus`/
+  `GameSetupStructBase` as one of this project's completely-closed
+  structs.
+  **Fresh survey target: `GameState` (`play`), the biggest remaining
+  prize** — 2011's runtime-state struct (150+ fields across every
+  subsystem) is, unlike most structs here, a plain global rather than a
+  malloc'd object, so there's no allocation-size anchor. `score`
+  through `inv_numorder` (11 fields, `+0x00`-`+0xEC`) turned out to
+  already be named directly in the live IDB from prior manual work —
+  the same "already recovered, just needs formalizing" situation as
+  `SpriteCache` — reinforced by `play_globalvars`'s pre-existing
+  50-entry declaration landing exactly on `MAXGLOBALVARS=50`
+  (`acruntim.h:21`) with zero drift. New matches this round:
+  `replace_macro_tokens` (`AC.CPP:7104`, the GUI label "@SCORE@"/etc.
+  substitution routine) confirms `score`@`+0x00` via two separate reads
+  matching source exactly; `SetGlobalInt` (already matched) confirms
+  `globalscriptvars[300]` (DRIFT: 300 here vs. 2011's `MAXGSVALUES=500`)
+  via an exact bounds-check/error-string match; `SetMouseBounds`
+  (already matched) confirms `wait_counter`/`mboundx1-y2` as five
+  zero-drift consecutive fields matching 2011's exact declared
+  adjacency. **A genuine structural puzzle surfaced and was left
+  open rather than papered over**: naively treating everything as one
+  contiguous struct would place these newly-confirmed fields at
+  computed offsets that require the confirmed-UNRELATED global `ifnum`
+  (predecessor of a default function argument, `AC.CPP:12533`) to sit
+  INSIDE the same struct object — structurally impossible for a real C
+  struct. Likeliest explanation: `in_cutscene`/`wait_counter`/
+  `mboundx1-y2`/`globalscriptvars` are independent standalone 2002
+  globals that 2011 later consolidated into one `GameState` struct,
+  rather than already being members of the same object as `score` in
+  this build — not yet conclusively proven. `apply_structs.py`'s new
+  `GameState` struct deliberately stops at `inv_numorder` rather than
+  asserting a size past the ambiguity. See `reversing/notes/
+  struct-layout-drift.md` for the full reasoning.
+  **A GameState follow-up closed the `inv_numinline`/`inv_item_wid`/
+  `inv_item_hit` lead and settled the `inv_numorder` question**: reading
+  `sub_40D80C` in full showed it's an instruction-for-instruction twin
+  of 2011's `offset_over_inv(GUIInv*)` (`AC.CPP:5394-5409`), confirming
+  `inv_numinline`@`+0xF0` (`itemsPerLine`), `inv_item_wid`@`+0x100`/
+  `inv_item_hit`@`+0x104` (matching 2011's exact declared pair), and
+  upgrading `inv_top`/`inv_numdisp` (previously "?"-flagged/medium) to
+  HIGH confidence. Separately, `update_invorder` (already matched)
+  turned out to be a much simpler single-character predecessor of
+  2011's per-character-generalized version — no per-character loop, no
+  `OPT_DUPLICATEINV` handling, no `MAX_INVORDER` bounds check — and its
+  body directly PROVES `inv_numorder`@`+0xEC` is NOT obsolete here: it's
+  the one true live counter, where 2011 keeps `obsolete_inv_numorder`
+  only as a backwards-compatibility mirror of a per-character count.
+  Surfaced a new global along the way, `play_invorder` (a `short[]`,
+  this build's predecessor of 2011's per-character `charextra[].
+  invorder[]`) — its address is far from `GameState`'s own confirmed
+  range, joining the "independent 2002 global, later folded into
+  GameState" side of the still-open structural question from the
+  previous round rather than resolving it.
+  **`EndSkippingUntilCharStops` turns out to secretly be
+  `unload_old_room` too** — cracking the round's last open thread
+  (`dword_4EEB54`/`58`/`5C`/`6C`/`70`, flagged "inconclusive"
+  previously). Reading the whole ~220-line function (already matched
+  via callgraph, but far bigger than 2011's 3-line source counterpart)
+  showed it does everything 2011 later split into a separate
+  `unload_old_room()` — a 3-way screen-transition dispatch matching
+  `current_fade_out_effect()` (`AC.CPP:3538-3567`) instruction for
+  instruction identifies `dword_4EEB6C` as `fade_effect` and
+  reconfirms `play_scren_tint` as `screen_tint`; a final trio of
+  zero-writes matching source's `play.bg_frame=0;
+  play.bg_frame_locked=0; play.offsets_locked=0;` identifies
+  `dword_4EEB70`=`bg_frame_locked` (doubly confirmed via its exact
+  2011-matching adjacency to `fade_effect` too), `dword_4EEB58`=
+  `bg_frame`, and a third standalone global, `word_4EF236`=
+  `offsets_locked`. Joins `sub_42B394`/`cc_run_code` and
+  `offset_over_inv`/`GetInvAt` as another "one big pre-refactor 2002
+  function, later split into several 2011 ones" case — `unload_old_room`
+  didn't exist as its own function yet. Formalized as a documented
+  "GameState island 2" comment block in `apply_structs.py` rather than
+  struct members, consistent with the still-open contiguity question.
+  **A self-correction**: the previous round's guess that an unmatched
+  helper (`sub_409A9C`) was plausibly `save_room_data_segment` turned
+  out wrong once actually read — it's `cancel_all_scripts`
+  (`AC.CPP:3078-3091`), an exact algorithmic match confirmed via the
+  already-known `ExecutingScript` layout (`scripts[]`'s base address,
+  `0x4CC848`, pinned down for the first time) and two small dispatched
+  helpers that turned out to be `ccAbortInstance`/
+  `ccAbortAndDestroyInstance` (`CSRUN.CPP:1991-2003`, both new matches).
+  Also identifies `num_scripts` (a new global) and reconfirms
+  `ExecutingScript.forked`/`.numanother` a third independent way. Note
+  for next time: `sub_409A9C`'s behavior had already been described
+  accurately, in passing, inside `post_script_cleanup`'s own evidence
+  from an earlier round — grepping `matches.json` for a function's
+  address before guessing its identity from callsite position alone
+  would have caught this immediately.
+  **GameState "island 2" (`in_cutscene` through `globalscriptvars`) is
+  now FULLY MAPPED**, closing the last two genuinely-unidentified
+  fields from the prior two rounds: `dword_4EEB54`=`fast_forward` (via
+  `FadeOut`'s early-bailout gate, matching AGS's extremely common `if
+  (play.fast_forward) return;` idiom — 41 occurrences in `AC.CPP` —
+  and zero-gap positional adjacency to `in_cutscene` matching 2011's
+  exact declared order) and `dword_4EEB5C`=`bg_anim_delay` (via
+  `mainloop`'s background-frame-advance gate, an instruction-for-
+  instruction match to source). The `bg_anim_delay` find also upgrades
+  `bg_frame` to HIGH confidence (a second independent confirmation),
+  reconfirms `bg_frame_locked` a third way, and picks up two bonus
+  standalone globals: `anim_background_speed` and (a `roomstruct`
+  field, not GameState) `num_bscenes`. The only field left open in
+  GameState's confirmed territory is now the small positional-only
+  `text_speed`/`sierra_inv_color`/`talkanim_speed` gap between
+  `inv_numinline` and `inv_item_wid` — plus the still-unresolved
+  question of whether island 1 and island 2 are the same contiguous
+  object.
+  **MAJOR CORRECTION: GameState is one contiguous 2404-byte struct
+  after all — the `ifnum` puzzle resolved, and the previous three
+  rounds' "independent standalone globals" conclusion overturned.**
+  `SaveGameSlot` (already matched) writes `play` to the save file with
+  a literal size constant — `fwrite(&play, 0x964, 1, Stream)` (2404
+  bytes) — landing with zero slack exactly where an unrelated global,
+  `String1`, begins. This proves `GameState` really is one object end
+  to end. That forced a second look at `ifnum` (address `0x4EEB28`,
+  sitting squarely inside this proven range) — its actual usage (inside
+  `main`, already matched: `ifnum = game_options[OPT_TWCUSTOM]; if
+  (ifnum==0) ifnum=-1;`) matches 2011's `play.speech_textwindow_gui`
+  assignment (`AC.CPP:26389-26391`) exactly. The pre-existing `ifnum`
+  label was simply a naming mistake, not a genuine separate global.
+  Two more fields dismissed earlier as "standalone" also turn out to
+  fall inside the proven 2404-byte range once actually checked against
+  it — `play_invorder`@`+0x614` and `offsets_locked`@`+0x81E` — while
+  `screen_tint`@`+0x10C6C` genuinely is outside it, so that one call
+  stands. `apply_structs.py`'s `GameState` struct is rebuilt as one
+  unified definition, padded to its now-proven total size with two
+  explicitly-labeled unexplored regions. Process lesson: the original
+  "proves discontiguity" call was built on an address looking
+  inconvenient, never checked against a hard size anchor — worth
+  actively hunting for one (a `fwrite`/`malloc` literal) before
+  concluding two regions are separate objects.
+  **Three more fields close in the newly-reopened +0x114..+0x138 gap**:
+  `totalscore`@`+0x118` (via `replace_macro_tokens`'s two macro
+  branches, matching 2011's `#define MAXSCORE play.totalscore`
+  exactly), `max_dialogoption_width`@`+0x130` (via `do_conversation`'s
+  dialog-text-window width computation, exact match), and
+  `no_hicolor_fadein`@`+0x134` (via an unmatched helper called from
+  `FadeIn`/`process_event`, a close but not line-for-line role match,
+  medium-high confidence). Five dwords in this stretch remain
+  genuinely unidentified — `apply_structs.py` reflects this precisely
+  with two small pad blocks bracketing the three confirmed fields
+  rather than one undifferentiated gap.
+  **A follow-up round closed two more of those five**: `post_script_cleanup`
+  (already matched) confirms `roomscript_finished`@`+0x124` via its
+  `runnext[0]=='$'` branch, matching 2011's `run_text_script_iparam(...);
+  play.roomscript_finished=1;` exactly (bonus: identifies the global
+  `roominst`). `check_controls` (already matched) confirms
+  `used_inv_on`@`+0x128` via its `GOBJ_INVENTORY` click branch, matching
+  2011's `offset_over_inv(...)` call and `play.used_inv_on=iit;` exactly
+  — a third independent confirmation that `sub_40D80C` is this build's
+  `offset_over_inv` equivalent, and a bonus identification of the two
+  mystery mouse-offset globals from two rounds ago as
+  `mouse_ifacebut_xoffs`/`mouse_ifacebut_yoffs`. A third field,
+  `dword_4EEB34`, gets a MEDIUM-confidence `skip_display` candidacy
+  (a message-box wait loop checking it against 0/2/3), retracting a
+  weaker same-role guess for a different field from the prior round.
+  Three dwords in this stretch remain genuinely unidentified.
   — this
   **completes the full `GUIObject` class hierarchy** (all six derived
   classes' vtables identified and structs recovered). Struct work has
