@@ -1907,16 +1907,16 @@ loc_10FD6:                              ; CODE XREF: sub_10FCD+6↑j
                 call    rand_byte
                 and     ax, 0Fh
                 mov     di, ax
-                mov     al, player._hasRing[di]
+                mov     al, player._ringOwned[di]
                 or      al, al
                 jz      short nullsub_1
                 stc
-                mov     al, player._hasRing[di]
+                mov     al, player._ringOwned[di]
                 cmc
                 sbb     al, 1
                 das
                 cmc
-                mov     player._hasRing[di], al
+                mov     player._ringOwned[di], al
                 call    write_string    ; A THIEF STOLE SOMETHING!
 ; ---------------------------------------------------------------------------
 aAThiefStoleSom db 'A THIEF STOLE SOMETHING!',8Dh,0
@@ -4156,7 +4156,7 @@ loc_124B1:                              ; CODE XREF: canMoveToTile+70↑j
                                         ; canMoveToTile+89↑j
                 cmp     al, 46
                 jnz     short check_paralyzed
-                mov     al, player._hasRing
+                mov     al, player._ringOwned
                 cmp     al, 0
                 jz      short loc_124E0
                 call    write_string
@@ -5347,10 +5347,10 @@ loc_12D00:                              ; CODE XREF: attack+165↑j
                 mov     ah, 0
                 mov     di, ax
                 clc
-                mov     al, player._hasRing[di]
+                mov     al, player._ringOwned[di]
                 adc     al, 1
                 daa
-                mov     player._hasRing[di], al
+                mov     player._ringOwned[di], al
 
 loc_12D17:                              ; CODE XREF: attack+176↑j
                 mov     bh, 0
@@ -5405,10 +5405,10 @@ loc_12D60:                              ; CODE XREF: attack+195↑j
                 mov     di, ax
                 inc     di
                 clc
-                mov     al, player._hasRing[di]
+                mov     al, player._ringOwned[di]
                 adc     al, 1
                 daa
-                mov     player._hasRing[di], al
+                mov     player._ringOwned[di], al
                 mov     bh, 0
                 mov     bl, byte_1742F
                 mov     di, bx
@@ -7380,7 +7380,7 @@ loc_13D33:                              ; CODE XREF: offer+EE↑j
 aTheRingIsYours db 'THE RING IS YOURS!',0
 ; ---------------------------------------------------------------------------
                 mov     al, 1
-                mov     player._hasRing, al
+                mov     player._ringOwned, al
                 jmp     end_of_turn2
 ; ---------------------------------------------------------------------------
 
@@ -8567,7 +8567,7 @@ aItems          db 'ITEMS: ',0
                 mov     di, bx
 
 loc_14864:                              ; CODE XREF: zstats+33D↓j
-                mov     al, player._hasRing[di]
+                mov     al, player._ringOwned[di]
                 or      al, al
                 jz      short loc_1489F
                 mov     bx, di
@@ -8591,7 +8591,7 @@ loc_14886:                              ; CODE XREF: zstats+317↑j
                 mov     bh, 0
                 mov     bl, byte_1742F
                 mov     di, bx
-                mov     al, player._hasRing[di]
+                mov     al, player._ringOwned[di]
                 call    write_number
                 mov     al, 20h ; ' '
                 call    print_char

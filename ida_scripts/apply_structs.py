@@ -299,6 +299,16 @@ OPERATIONS = [
      "note": "TEXT_STRINGS item 10 = GREEN GEM. Same as _gemOwned "
              "above: no independent reference, only known via "
              "_hasRing[] array position (di=10)."},
+
+    {"op": "rename_member", "struct": "Savegame", "offset": 0xA0,
+     "new_name": "_ringOwned",
+     "note": "renamed from _hasRing for consistency with the array's "
+             "other boolean-flag slots (Paul's call, 2026-08-18). "
+             "TEXT_STRINGS item 0 = RING. Boolean, not a count: "
+             "checked in canMoveToTile (\"RING PROTECTS FROM FIELD!\", "
+             "asm ~4159-4166) and set unconditionally to 1 (never "
+             "incremented) as a quest reward in offer (\"THE RING IS "
+             "YOURS!\", asm ~7376-7383)."},
 ]
 
 _SIZE_FLAGS = {1: idc.FF_BYTE, 2: idc.FF_WORD, 4: idc.FF_DWORD}

@@ -229,7 +229,7 @@ static Structures_0(id) {
 	mid = add_struc_member(id,"_armorOwned",	0X60,	0x00000400,	-1,	7);
 	mid = add_struc_member(id,"_weaponOwned",	0X76,	0x00000400,	-1,	10);
 	mid = add_struc_member(id,"_spellCharges",	0X80,	0x00000400,	-1,	10);
-	mid = add_struc_member(id,"_hasRing",	0XA0,	0x00000400,	-1,	1);
+	mid = add_struc_member(id,"_ringOwned",	0XA0,	0x00000400,	-1,	1);
 	mid = add_struc_member(id,"_wands",	0XA1,	0x00000400,	-1,	1);
 	mid = add_struc_member(id,"_staves",	0XA2,	0x00000400,	-1,	1);
 	mid = add_struc_member(id,"_bootsOwned",	0XA3,	0x00000400,	-1,	1);

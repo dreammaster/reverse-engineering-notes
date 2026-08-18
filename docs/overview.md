@@ -186,11 +186,11 @@ _thievesTools   db ?    ; saves from a trap death, +1 from killing a Thief
 field_33        db ?   ; unnamed, xref'd
 field_34        db ?   ; unnamed, xref'd
 ; ... struct continues to offset 0x100, largely unmapped past here
-; 0xA0-0xAF is ONE 16-element treasure-item array, _hasRing[0..15] --
+; 0xA0-0xAF is ONE 16-element treasure-item array, _ringOwned[0..15] --
 ; see the TEXT_STRINGS treasure-item block writeup below. Individual
 ; names below predate that discovery and were assigned per-field
 ; before the array shape was known; kept as-is except where noted.
-_hasRing        db ?    ; item 0 = RING
+_ringOwned      db ?    ; item 0 = RING
 _wands          db ?    ; item 1 = WAND, gates cast
 _staves         db ?    ; item 2 = STAFF, gates cast
 _bootsOwned     db ?    ; item 3 = BOOTS, resists the leg-paralysis trap
@@ -323,7 +323,7 @@ where each block of strings starts — all matched exactly:
 | 19-28 | `ready`: digit(1-9) `+ 0x13`; `zstats`: `_readiedWeapon + 0x13` | Weapons: HANDS(19, unarmed), DAGGER, MACE, AXE, BOW, SWORD, GREAT SWORD, LIGHT SWORD, PHASER, QUICK SWORD(28) |
 | 29-35 | `wear_armor`: digit(1-6, wraps 7→0) `+ 0x1D`; `zstats`: `_readiedArmor + 0x1D` | Armor: SKIN(29, none), CLOTH, LEATHER, CHAIN, PLATE, REFLECT, POWER(35) |
 | 36-45 | `magic`: digit(0-9) `+ 0x24`; `zstats`: `_readiedSpell + 0x24` | Spells: NONE(36), LIGHT, DOWN LADDER, UP LADDER, PASSWALL, SURFACE, PRAYER, MAGIC MISSILE, BLINK, KILL(45) — matches Ultima II's real spell list |
-| 46-61 | `zstats`: `_hasRing[di] + 0x2E` where `di` is the item's slot 0-15 — see below | Items/treasure: RING(46), WAND, STAFF, BOOTS, CLOAK, HELM, GEM, ANKH, RED GEM, SKULL KEY, GREEN GEM, BRASS BUTTON, BLUE TASSLE, STRANGE COIN, GREEN IDOL, TRI-LITHIUM(61) |
+| 46-61 | `zstats`: `_ringOwned[di] + 0x2E` where `di` is the item's slot 0-15 — see below | Items/treasure: RING(46), WAND, STAFF, BOOTS, CLOAK, HELM, GEM, ANKH, RED GEM, SKULL KEY, GREEN GEM, BRASS BUTTON, BLUE TASSLE, STRANGE COIN, GREEN IDOL, TRI-LITHIUM(61) |
 | 62-67 | `zstats`: fixed literals `0x3E`-`0x43` (not player-data-driven — these are constant labels printed before each stat's number) | Attributes: STRENGTH(62), AGILITY, STAMINA, CHARISMA, WISDOM, INTELL.(67) |
 | 68-71 | `zstats`: `player._race + 0x44` | Races: HUMAN(68), ELF, DWARF, HOBBIT(71) |
 | 72-75 | `zstats`: `player._class + 0x48` | Classes: FIGHTER(72), CLERIC, WIZARD, THIEF(75) — same 4 words reused as monster "class" flavor-text keys in `transact` |
@@ -371,7 +371,7 @@ settled negative result, not an open thread to keep chasing blindly.
 Opposite outcome from the location block: **fully wired up**, and
 tracing it revealed the entire `Savegame` `0xA0`-`0xAF` cluster — which
 this project has been naming field-by-field over several sessions,
-somewhat awkwardly — is actually **one 16-byte array**, `_hasRing[0..15]`,
+somewhat awkwardly — is actually **one 16-byte array**, `_ringOwned[0..15]`,
 displayed by `zstats`' `"ITEMS:"` screen (asm ~8935-8973, the loop
 bound is confirmed `di < 0x10` = 16, matching the 16 treasure strings
 exactly). For each nonzero slot it prints `TEXT_STRINGS[di + 0x2E]`
@@ -388,7 +388,7 @@ in this cluster's neighborhood before:
 
 | `di` | Offset | Item | Current name | Status |
 |---|---|---|---|---|
-| 0 | `0xA0` | RING | `_hasRing` | ✓ consistent (name already implies "item 0") |
+| 0 | `0xA0` | RING | `_ringOwned` | ✓ resolved — was `_hasRing`, renamed for consistency with the array's other boolean-flag slots once confirmed it's a flag (set to 1 as a quest reward in `offer`, never incremented) not a count |
 | 1 | `0xA1` | WAND | `_wands` | ✓ consistent |
 | 2 | `0xA2` | STAFF | `_staves` | ✓ consistent |
 | 3 | `0xA3` | BOOTS | `_bootsOwned` | ✓ consistent |
