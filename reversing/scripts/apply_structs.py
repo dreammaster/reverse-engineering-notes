@@ -2744,23 +2744,140 @@ struct GameState {
   int globalscriptvars[300];    // +0x15C..0x60C (1200 bytes), high confidence via SetGlobalInt
                             // (already matched) -- see its own evidence. DRIFT: 300 here vs.
                             // 2011's declared MAXGSVALUES=500.
-  char _pad_unexplored2[0x358]; // +0x60C..0x964 (856 bytes), genuinely unexplored tail, sized
-                            // to exactly reach the confirmed total (SaveGameSlot's literal
-                            // fwrite ElementSize=0x964, see this struct's header comment).
-                            // Two globals independently confirmed to sit somewhere in THIS
-                            // range (not yet positionally pinned down against each other):
+  char _pad_unexplored2[0x200]; // +0x60C..0x80C (512 bytes), genuinely unexplored -- KNOWN to
+                            // contain at least one whole unrelated struct, not just uncharted
+                            // GameState fields: `word_4EF0F4`/`word_4EF158`/`word_4EF1BC`
+                            // (+0x6DC from play's base) turned out to be this build's
+                            // `CharacterExtras.width`/`.height`/`.zoom` (three parallel
+                            // `short[50]` arrays -- structure-of-arrays, unlike 2011's single
+                            // `CharacterExtras charextra[50]` array-of-structs, Common/
+                            // acruntim.h:441-455; see `prepare_characters_for_drawing`'s own
+                            // matches.json entry for the full evidence chain). This PROVES
+                            // SaveGameSlot's literal 0x964 fwrite constant (see this struct's
+                            // header comment) sweeps in more than just the true GameState
+                            // struct -- it also captures adjacent-but-distinct AC.CPP file-scope
+                            // globals (here, a WHOLE SEPARATE real struct, not just scratch
+                            // memory) that the linker happened to place contiguously after
+                            // `play`. IMPORTANT CAUTION for the rest of this pad and the one
+                            // below: falling inside the fwrite's span is NOT by itself
+                            // sufficient evidence of GameState membership -- role-based
+                            // confirmation is still required, as it was for every field already
+                            // confirmed in this struct (in_cutscene, speech_textwindow_gui,
+                            // totalscore, walkable_areas_on below, etc.).
+                            //
                             // `play_scren_tint`/screen_tint is CONFIRMED ABSENT here (its own
                             // address computes to +0x10C6C, far outside GameState's bounds --
                             // it really is a standalone global). `play_invorder` (this build's
-                            // `short[]` inventory-order array, see update_invorder's evidence)
-                            // computes to +0x614, just 8 bytes past this pad's start; `word_4EF236`
-                            // (offsets_locked, see sub_40AAE3's evidence) computes to +0x81E.
-                            // Both fall WITHIN GameState's proven bounds, contradicting earlier
-                            // rounds' "standalone global" calls for them -- corrected here, but
-                            // not added as typed struct members since the territory around them
-                            // (what's at +0x60C..+0x614, +0x618..+0x81E, +0x820..+0x964) is
-                            // entirely unmapped and their exact field boundaries aren't confirmed.
+                            // `short[100]` inventory-order array -- capacity confirmed via a
+                            // clean, zero-interruption 200-byte span immediately after it,
+                            // matching MAX_INV=100 with zero drift -- see update_invorder's
+                            // evidence) computes to +0x614 -- still unresolved whether it's a
+                            // genuine GameState member or, like CharacterExtras, a
+                            // coincidentally-adjacent separate global; not added as a typed
+                            // struct member pending role-based confirmation or further mapping
+                            // of the surrounding territory.
+  char walkable_areas_on[16]; // +0x80C..0x81C, high confidence: `EndSkippingUntilCharStops`/
+                            // `unload_old_room`-combined (sub_40AAE3, already matched) does
+                            // "memset(&byte_4EF224, 1, 0x10);" matching 2011's
+                            // "memset(&play.walkable_areas_on[0],1,MAX_WALK_AREAS+1);"
+                            // (AC.CPP:3623) exactly -- MAX_WALK_AREAS=15 (acroom.h:250), so
+                            // MAX_WALK_AREAS+1=16=0x10 with zero drift.
+  short _tentative_screen_flipped; // +0x81C, TENTATIVE, positional inference only: the 2-byte
+                            // gap between the newly-confirmed walkable_areas_on's end (+0x81C)
+                            // and the already-confirmed offsets_locked (+0x81E, below) matches
+                            // 2011's declared adjacency "char walkable_areas_on[...]; short
+                            // screen_flipped; short offsets_locked;" (acruntim.h:556-558) with
+                            // zero slack for exactly this one intervening field -- no direct
+                            // access-site evidence of its own yet.
+  short offsets_locked;    // +0x81E, high confidence: originally found via sub_40AAE3 zeroing
+                            // it immediately after bg_frame_locked (matching source's exact
+                            // adjacent assignment order), and its GameState membership -- left
+                            // as an open question two rounds ago after the CharacterExtras
+                            // correction -- is now REINFORCED by a second, independent,
+                            // positional confirmation: it lands exactly 2 bytes after the newly
+                            // and separately confirmed walkable_areas_on, matching 2011's own
+                            // declared field order with zero slack.
+  char _pad_unexplored3[0x18]; // +0x820..0x838 (24 bytes), genuinely unexplored -- contains at
+                            // least dword_4EF240 (XREF'd from load_new_room) and dword_4EF248
+                            // (XREF'd from check_controls, itself checked against 0/2/3 the
+                            // same way the tentative skip_display candidate was -- not chased
+                            // further this round, possibly a related or duplicate lead).
+  int script_timers[21];       // +0x838..0x88C (84 bytes), high confidence: `update_stuff`
+                            // (already matched)'s own OPENING lines loop "for(chat=0;chat<15h;
+                            // chat++) if(dword_4EF250[chat]>1) dword_4EF250[chat]--;" matching
+                            // 2011's "for (aa=0;aa<MAX_TIMERS;aa++) { if
+                            // (play.script_timers[aa]>1) play.script_timers[aa]--; }"
+                            // (AC.CPP:6431-6433) instruction for instruction, including the
+                            // loop bound (0x15=21=MAX_TIMERS, acruntim.h:431).
+  int sound_volume;             // +0x88C, high confidence: an unmatched helper (sub_4089CC,
+                            // called from PlayAmbientSound/SetSoundVolume, both already
+                            // matched) computes "vol*dword_4EF2A4/255" matching 2011's
+                            // "ambientvol = (sourceVolume*play.sound_volume)/255;"
+                            // (AC.CPP:1567) exactly. Sits with ZERO gap immediately after
+                            // script_timers, matching 2011's exact declared adjacency
+                            // "script_timers[MAX_TIMERS]; sound_volume,speech_volume;" with
+                            // zero drift.
+  int speech_volume;            // +0x890, high confidence: an unmatched helper (sub_4141B8,
+                            // called from _display_at, already matched) passes dword_4EF2A8 as
+                            // a volume argument to WAV-then-MP3 speech-file-loading helpers in
+                            // sequence, matching 2011's "speechmp3=my_load_wave(finame,
+                            // play.speech_volume,0); ... speechmp3=my_load_mp3(finame,
+                            // play.speech_volume);" (AC.CPP:13387-13396) exactly. Sits with
+                            // ZERO gap immediately after sound_volume, matching 2011's exact
+                            // declared pairing with zero drift.
+  char _pad_unexplored4[0xA4]; // +0x894..0x938 (164 bytes), genuinely unexplored -- 2011
+                            // declares a large run of fields here (normal_font/speech_font
+                            // through parsed_words[]/bad_parsed_word[100]), almost certainly
+                            // not all present given this project's repeated massive-drift
+                            // pattern; not mapped this round.
+  int raw_color;                // +0x938, high confidence: `RawSetColor` (already matched,
+                            // mechanical) does "dword_4EF350 = get_col8_lookup(this);"
+                            // matching 2011's "play.raw_color = get_col8_lookup(clr);"
+                            // (AC.CPP:14434) exactly. Sits with ZERO gap immediately before
+                            // filenumbers below, CONFIRMING 2011's declared
+                            // raw_modified[MAX_BSCENE] is ABSENT here -- no room for it at all.
+  short filenumbers[20];        // +0x93C..0x964 (40 bytes), high confidence: pre-existing IDA
+                            // name (`play_filenumbers`), capacity confirmed via
+                            // `ListBoxSaveGameList` (already matched)'s own sort/swap loop
+                            // bound ("cmp [var],14h", 20 -- matching Engine/acdialog.h:870's
+                            // MAXSAVEGAMES=20, not acruntim.h's own separate MAXSAVEGAMES=50
+                            // definition). THIS IS GAMESTATE'S LAST FIELD: it ends EXACTLY at
+                            // +0x964, the struct's own independently-proven total size
+                            // (SaveGameSlot's literal fwrite ElementSize, see this struct's
+                            // header comment) -- zero remaining bytes, closing the tail
+                            // completely. A parallel array, word_4EF356[20], is swapped
+                            // alongside filenumbers in the same sort loop but sits just OUTSIDE
+                            // GameState's proven bounds -- plausibly a save-slot sort-key/
+                            // timestamp array, not part of this struct, not independently
+                            // identified.
 };
+
+// CharacterExtras (this build's version) -- found while mapping GameState's unexplored tail,
+// initially misread as more render-time scratch before its actual role was confirmed (see
+// prepare_characters_for_drawing's matches.json entry for the full correction). NOT declared as
+// a single struct type here: unlike 2011's `CharacterExtras charextra[50]` (array-of-structs,
+// Common/acruntim.h:441-455), this build implements it as THREE SEPARATE PARALLEL short[50]
+// arrays (structure-of-arrays) -- a genuine memory-layout difference, matching the same
+// "flattened/simplified 2002 predecessor" pattern seen elsewhere in this project (e.g.
+// ExecutingScript, GameAnimation), just applied to array-of-structs vs. structure-of-arrays
+// rather than field count. Address range: 0x4EF0F4..0x4EF220 (300 bytes total, 3*50*2).
+//   short char_width[50];   // word_4EF0F4, high confidence: matches 2011's
+//                           // "scale_sprite_size(sppic,zoom_level,&newwidth,&newheight);
+//                           // charextra[aa].width=newwidth;" (AC.CPP:8392-8393) exactly.
+//   short char_height[50];  // word_4EF158, high confidence: same source call/statement pair
+//                           // as char_width above, "charextra[aa].height=newheight;"
+//                           // (AC.CPP:8393-8394).
+//   short char_zoom[50];    // word_4EF1BC, high confidence: matches 2011's "zoom_level =
+//                           // charextra[aa].zoom; if (zoom_level==0) zoom_level=100;"
+//                           // (AC.CPP:8309-8312) read side, and the field's own write-back
+//                           // after computation matches "charextra[aa].zoom=zoom_level;".
+// Capacity 50 (vs. 2011's declared array size, not independently checked against a version-
+// history comment the way some other capacity-drift findings in this project have been) --
+// confirmed via a clean, zero-interruption 100-byte (50-short) span between each of the three
+// arrays with no other labels breaking it. Base sprite dimensions feeding the width/height
+// scale computation, dword_4CD2E8[]/dword_4E787C[], are plausibly `spritewidth[]`/
+// `spriteheight[]` (both well-known AGS globals, Engine/acplatfm.cpp:438 etc.) -- medium-high
+// confidence, not independently confirmed this round.
 """
 
 

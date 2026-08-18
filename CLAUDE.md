@@ -235,7 +235,7 @@ rather than trusting these numbers as they age)
   944/776 before that addition) — this pool was "largely exhausted" for
   Engine/Common code specifically; a productive third-party-library round
   (Task #10, now paused — see below) pushed it further before wrapping up.
-- `reversing/analysis/matches.json` has 555 entries (function + struct-field
+- `reversing/analysis/matches.json` has 557 entries (function + struct-field
   matches combined)
 - 25 struct definitions built entirely from disassembly evidence (not
   borrowed from the 2011 source — see `reversing/notes/struct-layout-drift.md`):
@@ -873,6 +873,64 @@ rather than trusting these numbers as they age)
   (a message-box wait loop checking it against 0/2/3), retracting a
   weaker same-role guess for a different field from the prior round.
   Three dwords in this stretch remain genuinely unidentified.
+  **An important nuance surfaced while confirming `play_invorder`'s
+  capacity**: its own capacity closed cleanly (a zero-interruption
+  200-byte span = 100 shorts, matching `MAX_INV=100` with zero drift),
+  but the global immediately after it turned out to be part of THREE
+  50-entry per-character render-time caches (`prepare_characters_for_
+  drawing`, already matched — percent-scaled X/Y plus zoom, recomputed
+  every frame) that are unambiguously NOT save-worthy state, yet still
+  sit inside `SaveGameSlot`'s proven 2404-byte fwrite span. This means
+  that span sweeps in more than just true `GameState` fields — it also
+  captures adjacent-but-distinct `AC.CPP` globals the linker happened
+  to place contiguously after `play`. Every field already confirmed by
+  BEHAVIOR (not just position) is unaffected, but `play_invorder`@
+  `+0x614` and `offsets_locked`@`+0x81E` — both previously assumed
+  corrected into GameState purely on falling inside the span — are
+  reopened as unsettled rather than treated as confirmed members.
+  **Immediate correction**: chasing `CharacterExtras` as a fresh target
+  walked straight back into that same render-cache trio, and the
+  earlier "definitely not save-worthy scratch" call was too hasty.
+  `word_4EF1BC` reads with a defaulting-to-100-when-zero fallback
+  matching 2011's `zoom_level = charextra[aa].zoom; if
+  (zoom_level==0) zoom_level=100;` exactly, and that value scales two
+  base sprite dimensions into `word_4EF0F4`/`word_4EF158`, matching
+  `scale_sprite_size(...); charextra[aa].width=newwidth;
+  charextra[aa].height=newheight;` exactly. These are real, meaningful
+  **`CharacterExtras.width`/`.height`/`.zoom`** fields — 2011 still
+  maintains them today — just laid out as three parallel `short[50]`
+  arrays (structure-of-arrays) instead of 2011's single array-of-
+  structs. This doesn't undo the prior caution (the fwrite span still
+  isn't sufficient evidence alone) — it reinforces it: the span sweeps
+  in a whole separate real struct, not just scratch memory.
+  **`walkable_areas_on` closes a real gap, and settles `offsets_locked`
+  again**: `sub_40AAE3`'s `memset(&byte_4EF224,1,0x10)` matches 2011's
+  `memset(&play.walkable_areas_on[0],1,MAX_WALK_AREAS+1);` exactly
+  (`MAX_WALK_AREAS=15`, zero drift). Its confirmed end lands exactly 2
+  bytes before `offsets_locked`'s already-known address — matching
+  2011's declared adjacency `walkable_areas_on; short screen_flipped;
+  short offsets_locked;` with zero slack for the one intervening field.
+  This gives `offsets_locked` a SECOND independent confirmation (on top
+  of its original zero-write evidence), settling the question reopened
+  two rounds ago. Bonus: identifies `dword_523204` as `raw_saved_screen`.
+  **GameState's tail closes completely**: `RawSetColor` (already
+  matched) confirms `raw_color`@`+0x938` exactly, sitting with zero gap
+  before the already-IDA-named `play_filenumbers` — proving 2011's
+  `raw_modified[MAX_BSCENE]` is absent. `ListBoxSaveGameList` (already
+  matched) confirms `filenumbers[20]`'s capacity via its own sort-loop
+  bound (`MAXSAVEGAMES=20`, `Engine/acdialog.h:870`), and that field
+  **lands exactly on GameState's own proven total size with zero bytes
+  left over — this is the struct's last field.** Working backward from
+  there closed three more: `script_timers[21]`@`+0x838` (via
+  `update_stuff`'s own opening lines, an instruction-for-instruction
+  match to 2011's `MAX_TIMERS` loop), and `sound_volume`/
+  `speech_volume` (via two as-yet-unnamed helper functions computing
+  `vol*sound_volume/255` and passing `speech_volume` into WAV/MP3
+  speech-file loaders — both exact matches to source, each sitting with
+  zero gap against its confirmed neighbor). GameState is now mapped
+  end to end from `+0x00` to `+0x964` — every remaining gap is an
+  explicitly-sized, explicitly-labeled pad rather than unaccounted
+  territory.
   — this
   **completes the full `GUIObject` class hierarchy** (all six derived
   classes' vtables identified and structs recovered). Struct work has

@@ -4320,3 +4320,202 @@ weak candidate role withdrawn in favor of `dword_4EEB34` above.
 blocks now bracket the two newly confirmed fields and the medium-
 confidence `skip_display` candidate, rather than one larger
 undifferentiated pad.
+
+## An important nuance to the "one contiguous struct" finding: the fwrite sweeps in more than just GameState
+
+Chasing `play_invorder`'s exact capacity (left unconfirmed two rounds
+ago) turned up something worth being careful about, rather than a clean
+further confirmation.
+
+The lead itself paid off cleanly: the raw `.data` bytes immediately
+after `play_invorder` run uninterrupted (zero other labels) for exactly
+200 bytes before the next labeled global. 200 bytes / 2 bytes-per-short
+= 100 entries -- landing exactly on `MAX_INV=100`, the same capacity
+already established elsewhere in this project for `game.invinfo[100]`,
+with zero drift. `play_invorder[100]` is now a settled capacity.
+
+But the label immediately after that 200-byte span is where the
+complication starts: `word_4EF0F4`, written by `prepare_characters_for_
+drawing` (already matched). Reading that write site showed it's part of
+THREE parallel 50-entry `short[]` arrays (`word_4EF0F4`/`word_4EF158`/
+`word_4EF1BC`, each 100 bytes = 50 shorts apart), computing a percent-
+scaled X, percent-scaled Y, and zoom percentage per character --
+unmistakably a per-frame RENDER-TIME cache (recomputed fresh every draw
+call), not anything that would ever need to survive a save/load.
+
+The problem: this render-cache trio's address (`+0x6DC` from `play`'s
+base) sits WELL WITHIN the 2404-byte span `SaveGameSlot`'s literal
+`fwrite` constant proved two rounds ago -- the finding written up then as
+"GameState is one contiguous struct, full stop." That conclusion now
+needs a qualification: the fwrite's `0x964` size constant evidently
+sweeps in MORE than just the true `GameState` struct. It also captures
+adjacent-but-distinct `AC.CPP` file-scope globals (at minimum this
+render-cache trio, quite possibly others) that the linker happened to
+lay out contiguously right after `play`, most likely because the
+original developer's literal size constant was never tightened to an
+exact `sizeof(GameState)` as the struct's own declaration evolved.
+
+**This does not undo the earlier fields already confirmed** --
+`in_cutscene`, `speech_textwindow_gui`, `totalscore`, and everything else
+established in this struct so far were confirmed by matching actual
+BEHAVIOR against 2011 source, not merely by falling inside the fwrite's
+byte range. Those stand. What it does mean: falling inside the fwrite's
+span is necessary but not SUFFICIENT evidence on its own that something
+is a genuine `GameState` member. The two remaining positional-only leads
+sitting in the unmapped tail -- `play_invorder`@`+0x614` and
+`offsets_locked`@`+0x81E` -- should be treated as open questions again,
+not settled corrections, until they get real role-based confirmation or
+the territory around them gets mapped closely enough to rule out the
+same "coincidentally adjacent, not actually GameState" outcome the
+render-cache trio turned out to be.
+
+`apply_structs.py`'s tail pad comment has been rewritten to carry this
+caution explicitly, so a future round doesn't accidentally promote
+`play_invorder`/`offsets_locked` into typed struct members on the
+strength of the (now-qualified) span argument alone.
+
+## Correction: the "render-cache trio" is CharacterExtras.width/height/zoom, not scratch memory
+
+An immediate follow-up on the previous round's nuance-finding -- chasing
+`CharacterExtras` as a fresh target (flagged as a lead many rounds ago,
+never investigated) walked straight back into `word_4EF0F4`/`word_4EF158`/
+`word_4EF1BC`, the three arrays just written off last round as "per-frame
+render scratch, definitely not save-worthy."
+
+That characterization was too hasty. Reading `prepare_characters_for_
+drawing`'s full computation showed `word_4EF1BC[idx]` (the "zoom" array)
+is read with a defaulting-to-100-when-zero fallback that matches 2011's
+`zoom_level = charextra[aa].zoom; if (zoom_level==0) zoom_level=100;`
+(`AC.CPP:8309-8312`) exactly -- and that computed value then scales two
+base sprite dimensions into `word_4EF0F4[idx]`/`word_4EF158[idx]`,
+matching `scale_sprite_size(sppic, zoom_level, &newwidth, &newheight);
+charextra[aa].width=newwidth; charextra[aa].height=newheight;`
+(`AC.CPP:8392-8394`) exactly. `word_4EF1BC[idx]` also gets written back
+after computation, matching source's own `charextra[aa].zoom=zoom_level;`
+reassignment.
+
+These are this build's actual **`CharacterExtras.width`/`.height`/
+`.zoom`** fields (`Common/acruntim.h:441-455`) -- real, meaningful,
+semi-persistent per-character state that 2011 still maintains today,
+not throwaway scratch. The genuine architectural finding is HOW they're
+laid out: this build implements what 2011 declares as one
+`CharacterExtras charextra[50]` (array-of-structs) as THREE SEPARATE
+PARALLEL `short[50]` arrays instead (structure-of-arrays) -- confirmed
+via a clean, zero-interruption 100-byte span between each array with no
+other labels breaking it. A bonus, medium-high-confidence lead: the two
+base dimension arrays feeding the scale computation, `dword_4CD2E8[]`/
+`dword_4E787C[]`, are plausibly the well-known AGS globals
+`spritewidth[]`/`spriteheight[]`, both also referenced together from an
+unmatched `SpriteCache::loadSprite`-adjacent helper.
+
+This does NOT undo last round's core caution -- falling inside
+`SaveGameSlot`'s fwrite span still isn't sufficient evidence of GameState
+membership by itself, and that lesson is if anything reinforced here: the
+span sweeps in not just scratch memory but a WHOLE SEPARATE real struct
+(`CharacterExtras`) that happens to sit adjacent to `play` in the same
+source file. `apply_structs.py`'s tail-pad comment and the
+`prepare_characters_for_drawing` `matches.json` entry have both been
+corrected to reflect this -- the render-cache characterization is
+explicitly retracted in favor of the `CharacterExtras` identification,
+and the new struct is documented as three parallel array declarations
+(matching the real memory layout) rather than a single struct type.
+
+## walkable_areas_on closes a real gap, and resolves offsets_locked's reopened question
+
+A further pass over `EndSkippingUntilCharStops`/`unload_old_room`-combined
+(`sub_40AAE3`, already matched many rounds ago and re-read several times
+since) found one more piece that had gone unremarked in earlier reads:
+`memset(&byte_4EF224, 1, 0x10)`, matching 2011's
+`memset(&play.walkable_areas_on[0],1,MAX_WALK_AREAS+1);` (`AC.CPP:3623`)
+exactly -- `MAX_WALK_AREAS=15` (`acroom.h:250`), so `MAX_WALK_AREAS+1=16=
+0x10` with zero drift. `byte_4EF224[16]` is `GameState.walkable_areas_on`.
+
+This closes more than just one field. `walkable_areas_on`'s own confirmed
+end (`+0x81C` from `play`'s base) lands EXACTLY 2 bytes before
+`offsets_locked`'s already-known address (`+0x81E`) -- matching 2011's
+own declared adjacency `char walkable_areas_on[...]; short
+screen_flipped; short offsets_locked;` (`acruntim.h:556-558`) with zero
+slack for the one intervening field. This directly answers the question
+reopened two rounds ago (after the `CharacterExtras` correction cast
+doubt on "falls inside the fwrite span" as sufficient evidence):
+`offsets_locked` now has TWO independent confirmations -- its own
+original zero-write behavioral evidence, AND this new positional
+adjacency to a separately, freshly role-confirmed field. That's enough
+to treat it as settled again, not just reopened.
+
+A plausible-but-unconfirmed `screen_flipped`@`+0x81C` fills the 2-byte
+gap between them (positional-only, matching 2011's exact field count in
+that span, no direct access-site evidence of its own).
+
+Bonus, found in the same read: the `destroy_bitmap` call right at this
+function's end, gated on `dword_523204` and followed by
+`dword_523204=0`, matches source's `if (raw_saved_screen != NULL) {
+wfreeblock(raw_saved_screen); raw_saved_screen = NULL; }`
+(`AC.CPP:3628-3630`) -- identifies `dword_523204` as the global
+`raw_saved_screen`.
+
+`apply_structs.py`'s tail pad is now split into three pieces: a
+512-byte pad (`+0x60C..+0x80C`, still containing at least the
+`CharacterExtras` trio and possibly more unmapped territory),
+`walkable_areas_on`/`screen_flipped`/`offsets_locked` as real fields,
+and a final 324-byte pad (`+0x820..+0x964`) closing out the struct's
+proven total size.
+
+## GameState's tail closes completely: script_timers, sound_volume, speech_volume, raw_color, and the final field
+
+The most productive single round on GameState's tail yet -- five new
+fields, one of them closing the struct completely.
+
+Chasing labeled globals in the second unmapped pad (`+0x820..+0x964`)
+turned up `RawSetColor` (already matched, mechanical) doing
+`dword_4EF350 = get_col8_lookup(this);`, an exact match to 2011's
+`play.raw_color = get_col8_lookup(clr);` (`AC.CPP:14434`). That field
+sits with zero gap immediately before the already-IDA-named
+`play_filenumbers`, confirming 2011's declared trailing
+`raw_modified[MAX_BSCENE]` is absent here -- no room for it at all.
+
+`play_filenumbers`'s own capacity closed via `ListBoxSaveGameList`
+(already matched): a sort/swap loop bounded by `cmp [var],14h` (20)
+confirms 20 entries, matching `Engine/acdialog.h:870`'s
+`MAXSAVEGAMES=20` (not `acruntim.h`'s own separate `MAXSAVEGAMES=50`
+definition -- the disasm evidence is unambiguous). And here's the
+payoff: `filenumbers[20]` (40 bytes) lands EXACTLY on GameState's own
+independently-proven total size (`SaveGameSlot`'s fwrite
+`ElementSize=0x964`) with zero remaining bytes. **This is GameState's
+last field** -- the struct's tail is now closed completely, end to end,
+from `+0x00` through `+0x964`.
+
+Working backward from `script_timers` gave three more, all with the
+same "zero gap between confirmed neighbors" over-determined pattern
+this project keeps finding when a region is genuinely tightly packed:
+
+- **`script_timers[21]`**@`+0x838`: `update_stuff`'s own OPENING lines
+  (already matched, but not fully read until now) loop `for(chat=0;
+  chat<0x15;chat++) if(dword_4EF250[chat]>1) dword_4EF250[chat]--;`,
+  matching 2011's own opening lines `for (aa=0;aa<MAX_TIMERS;aa++) { if
+  (play.script_timers[aa]>1) play.script_timers[aa]--; }`
+  (`AC.CPP:6431-6433`) instruction for instruction, loop bound included
+  (`MAX_TIMERS=21`).
+- **`sound_volume`**@`+0x88C`: an unmatched helper (`sub_4089CC`, called
+  from `PlayAmbientSound`/`SetSoundVolume`) computes `vol*sound_volume/
+  255`, matching 2011's `ambientvol = (sourceVolume*play.sound_volume)/
+  255;` (`AC.CPP:1567`) exactly. Sits with zero gap immediately after
+  `script_timers`, matching 2011's exact declared adjacency.
+- **`speech_volume`**@`+0x890`: an unmatched helper (`sub_4141B8`,
+  called from `_display_at`) passes it as a volume argument to
+  WAV-then-MP3 speech-loading helpers, matching 2011's `speechmp3=
+  my_load_wave(finame,play.speech_volume,0); ...
+  my_load_mp3(finame,play.speech_volume);` (`AC.CPP:13387-13396`)
+  exactly. Sits with zero gap immediately after `sound_volume`.
+
+`apply_structs.py`'s tail is now: a 24-byte pad, `script_timers[21]`,
+`sound_volume`, `speech_volume`, a 164-byte pad (2011 declares a large
+run of fields here -- `normal_font`/`speech_font` through
+`parsed_words[]`/`bad_parsed_word[100]` -- almost certainly not all
+present, not mapped this round), `raw_color`, and `filenumbers[20]`
+closing the struct exactly at its proven total.
+
+Two functions central to this round (`sub_4089CC`, `sub_4141B8`) are
+still not matched to specific 2011 names -- the field identifications
+riding on them are high confidence regardless, since they come from
+exact algorithmic/role matches independent of the caller's own name.
