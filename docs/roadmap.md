@@ -611,11 +611,57 @@ sessions, unlike a one-off todo list.
       question. Worth another pass later with fresh eyes (possibly a
       DOS EXE packer/compressor signature, linker debug info, or an
       unrecognized resource table).
-- [ ] Build a "string catalog" script/pass: since `write_string` call
-      sites now carry the decoded text as a comment, a script to walk all
-      xrefs to `write_string` and dump `(address, text)` to a text file
-      would give a full game-text inventory for free — useful both as
-      documentation and later as a resource file for the ScummVM port.
+- [x] **Built the string catalog — done, and a lot more came out of it
+      (2026-08-18).** `ida_scripts/build_string_catalog.py` walks every
+      `write_string` call site and dumps `(address, function, text)` to
+      [game-text-catalog.txt](game-text-catalog.txt) — **333 entries,
+      the complete game-text inventory.** Getting there surfaced real
+      findings, not just a mechanical dump:
+      - Of 332 call sites found initially, only 75 had the
+        decoded-text comment `fix_inline_strings.py` normally sets.
+        Turned out 331 of 332 were **already correctly fixed** —
+        `fix_inline_strings.py`'s idempotency check (`already_
+        processed()`) returns early on a re-run *before* reaching the
+        comment-setting step, so sites fixed by an earlier pass never
+        got commented. Backfilled via
+        `ida_scripts/backfill_write_string_comments.py` (read-only
+        against string data, only ever calls `set_cmt`).
+      - The **one** genuinely broken site (`0x1734F`) turned out to be
+        **the game's actual ending sequence** — never found before,
+        not inside any function IDA recognized (reached by ordinary
+        fallthrough, not a proc boundary), so the general sweep never
+        caught it via `XrefsTo`. It's a direct continuation of
+        `minax_death_sequence`'s function chunk: after the victory
+        animation, "YOU FEEL A STRANGE FORCE!", loads a special final
+        map (`MAPX30` — level 30, not a normal numbered map), then
+        `"YOU HAVE SAVED THE UNIVERSE, AND COMPLETED ULTIMA ][! SEEK
+        NOW TO CONQUER WICKED EXODUS,"` followed immediately by an
+        Easter-egg teaser for future games, `"FOUND IN ULTIMA
+        ]I[-D ]II[-P!"` (`]I[` = Ultima III, `]II[` = Ultima IV).
+        Fixed via `ida_scripts/fix_ending_strings.py` (same technique
+        as `fix_inline_strings.py`, applied to these 2 specific sites).
+      - Backfilling then found *another* 36 sites without a comment —
+        exposed by the resync from fixing the ending, same
+        "fixing one thing exposes more" pattern this project has hit
+        repeatedly. All 36 were already-fixed, not broken.
+      - Found and fixed a real bug in the backfill script itself along
+        the way: `ida_bytes.get_strlit_contents()` silently returned
+        `b''` for a subset of already-fixed strings despite the raw
+        bytes clearly holding real text (confirmed via direct
+        `get_bytes` read) — likely a string-subtype mismatch from
+        whatever process originally created them. Fixed by reading
+        raw bytes up to the terminator directly instead of trusting
+        `get_strlit_contents`. This also means some of the very first
+        backfill round silently failed without being caught (the
+        script didn't check for empty results) — re-ran once fixed,
+        confirmed all 333 sites now genuinely have a real, correct
+        comment.
+      - Also surfaced a **new question worth a closer look**:
+        `play_bump_sound` (lower-confidence guess from the `sub_XXXXX`
+        sweep, tentatively "can't move there") gets called twice in
+        this ending sequence — a context with no relation to blocked
+        movement. Its name may need revisiting once there's time to
+        look at it properly; not renamed yet, just flagging the doubt.
 - [ ] Write a standalone (non-IDA) Python decoder for `tlkx???` files —
       once we have actual game data files to test against, not just the
       EXE — applying the ROT-128 decrypt. Useful independent of IDA.
