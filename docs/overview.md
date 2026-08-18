@@ -775,16 +775,15 @@ and fixed on a second pass, now covers all 5 procs.
 
 ### `sub_XXXXX` sweep — unnamed helpers ranked by call-site reuse
 
-Systematic sweep of the (at the time) 73 remaining unnamed `sub_XXXXX`
-functions, ranked by how many static `call`/`jmp` sites reference each
-(this codebase tail-jumps into shared code a lot, so `jmp` matters as
-much as `call` for reuse counting). Working down the ranked list rather
-than picking functions arbitrarily. **63 of 73 named — essentially
-complete.** The remaining 12 are exactly the dungeon wall-segment
-helper cluster, already scoped out as its own follow-up (see below).
-The single biggest find — identifying the entire dungeon first-person
-view rendering pipeline — gets its own writeup below rather than being
-folded into this list.
+Systematic sweep of the (at the time) 73 unnamed `sub_XXXXX` functions,
+ranked by how many static `call`/`jmp` sites reference each (this
+codebase tail-jumps into shared code a lot, so `jmp` matters as much as
+`call` for reuse counting). Working down the ranked list rather than
+picking functions arbitrarily. **Complete: 73 of 73 named, zero
+unnamed functions left in the binary.** The single biggest find —
+identifying the entire dungeon first-person view rendering pipeline,
+including the 10 individual wall-segment helpers — gets its own
+writeup below rather than being folded into this list.
 
 **CGA point/line-drawing primitives** (the most-reused unnamed code in
 the binary — `draw_line` alone has 44 static call/jmp sites):
@@ -937,23 +936,47 @@ body:
 - **`draw_dungeon_corridor`** (was `sub_16144`) — the actual renderer.
   `clear_screen`, then iterates depth 0-7, checking bit patterns of
   the 3 precomputed wall-type bytes at each depth to dispatch to one
-  of 10 wall-segment-drawing helpers (right wall: `sub_16425`/
-  `sub_16594`/`sub_1660C`/`sub_166CB`; left wall: `sub_16377`/
-  `sub_164E2`/`sub_16291`; straight ahead: `sub_163CE`/`sub_1653F`/
-  `sub_16304`), stopping early once a wall blocks further view (sign
-  bit set on the right-wall byte).
+  of the 10 wall-segment-drawing helpers below, stopping early once a
+  wall blocks further view (sign bit set on the right-wall byte).
 - **`draw_dungeon_monster`** (was `sub_168ED`) — runs after the
   corridor renders: scans the precomputed monster-presence flags up to
   whatever depth the wall-render loop stopped at, and draws a monster
-  sprite at that depth if one's present.
+  sprite at that depth if one's present (`draw_dungeon_monster_sprite`/
+  `draw_sprite_row`, were `sub_168A3`/`sub_14BE0`).
 
-The 10 individual wall-segment helpers are understood *collectively*
-(each draws a specific left/right/ahead perspective wall segment for a
-specific precomputed bit pattern, confirmed by reading
-`draw_dungeon_corridor`'s dispatch logic in full) but not
-*individually* pinned yet — each one's exact geometry needs its own
-trace. Flagged as a follow-up in `docs/roadmap.md` rather than forcing
-weak names onto all 10 right now.
+**The 10 wall-segment helpers, individually pinned** (follow-up
+finished, not just scoped): precisely decoded — not guessed — by
+cross-referencing `draw_dungeon_corridor`'s bit-check dispatch logic
+against the already-documented dungeon tile format
+([file-formats.md](file-formats.md#dungeontower-format-mapx-number-ends-4-5):
+`0x00` Floor, `0x10` Ladder up, `0x20` Ladder down, `0x30` both,
+`0x40` Chest/Tri-Lithium, `0x80` Wall, `0xC0` Door, `0xE0` Secret
+door — all multiples of `0x10` in the high nibble, sign bit set =
+Wall/Door/SecretDoor, clear = Floor/Ladder/Chest). Every mapping
+cross-checked against each function's actual `CODE XREF` caller site,
+not just the bit logic alone:
+
+| Position | Case | Function (was) |
+|---|---|---|
+| Right | Wall/Door/SecretDoor (sign set) + initial depth-0 frame | `draw_corridor_wall_segment` (`sub_16425`) |
+| Right | Door specifically (`0xC0`) | `draw_dungeon_door` (`sub_1648D`) |
+| Right | Ladder down (`0x20` bit) | `draw_ladder_down` (`sub_16594`) |
+| Right | Ladder up (`0x10` bit) | `draw_ladder_up` (`sub_1660C`) |
+| Right | Chest (`0x40` bit) | `draw_chest_icon` (`sub_166CB`) |
+| (shared) | Called by both ladder functions | `draw_ladder_rail` (`sub_16684`) |
+| Left | Wall/Door/SecretDoor | `draw_left_wall_segment` (`sub_16377`) |
+| Left | Door specifically | `draw_left_door` (`sub_164E2`) |
+| Left | Floor/Ladder/Chest (open) | `draw_left_open` (`sub_16291`) |
+| Ahead | Wall/Door/SecretDoor | `draw_ahead_wall_segment` (`sub_163CE`) |
+| Ahead | Door specifically | `draw_ahead_door` (`sub_1653F`) |
+| Ahead | Floor/Ladder/Chest (open) | `draw_ahead_open` (`sub_16304`) |
+
+Note the left/ahead positions only distinguish "blocked" vs. "open" —
+ladders and chests are only rendered as distinct icons on the right
+probe position, not on the side/ahead ones.
+
+**With this, the `sub_XXXXX` sweep is fully complete: 73 of 73 named,
+zero unnamed functions remaining in the binary.**
 
 Two more pieces of the dungeon view, found right after: `draw_sprite_row`/
 `draw_dungeon_monster_sprite` (were `sub_14BE0`/`sub_168A3`) — the

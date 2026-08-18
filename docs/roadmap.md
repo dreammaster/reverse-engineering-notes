@@ -458,12 +458,10 @@ sessions, unlike a one-off todo list.
 - [ ] Pin down remaining `Savegame` struct fields — current layout stops
       being well-understood partway through the 256-byte struct.
       `_disableSave` is used but not yet placed.
-- [x] **Sweep of the unnamed `sub_XXXXX` functions — essentially
-      complete.** Ranked by call/jmp-site reuse rather than picked
-      arbitrarily; 63 of the original 73 named, 2026-08-18. The
-      remaining 12 are exactly the dungeon wall-segment helper cluster
-      (see the follow-up item right below) — nothing else is left
-      unaddressed. See
+- [x] **Sweep of the unnamed `sub_XXXXX` functions — COMPLETE.**
+      Ranked by call/jmp-site reuse rather than picked arbitrarily; all
+      73 named, 2026-08-18, zero unnamed functions left in the binary.
+      See
       [overview.md](overview.md#sub_xxxxx-sweep--unnamed-helpers-ranked-by-call-site-reuse)
       for the full list and evidence. Named clusters: CGA
       point/line-drawing primitives (`draw_line`/`plot_point`/
@@ -484,30 +482,28 @@ sessions, unlike a one-off todo list.
       `_flag1` → `_negateTimeDuration` (Negate Time's remaining-
       duration counter, confirmed via 3 sites), `minax_death_sequence`,
       and — the biggest find — **Ultima II's entire dungeon
-      first-person view rendering pipeline**, fully identified:
+      first-person view rendering pipeline**, fully identified end to
+      end including all 10 individual wall-segment helpers:
       `render_dungeon_view` → `precompute_dungeon_corridor` →
-      `draw_dungeon_corridor` → `draw_dungeon_monster` →
-      `draw_dungeon_monster_sprite`/`draw_sprite_row`. This is what the
-      old "`sub_16xxx` cluster, dense, likely dungeon movement or
-      combat" note used to point at — it's neither, it's the classic
-      wireframe maze-view renderer. Full writeup in
+      `draw_dungeon_corridor` → (`draw_corridor_wall_segment`/
+      `draw_dungeon_door`/`draw_ladder_down`/`draw_ladder_up`/
+      `draw_chest_icon`/`draw_ladder_rail` for the right probe;
+      `draw_left_wall_segment`/`draw_left_door`/`draw_left_open`;
+      `draw_ahead_wall_segment`/`draw_ahead_door`/`draw_ahead_open`) →
+      `draw_dungeon_monster` → `draw_dungeon_monster_sprite`/
+      `draw_sprite_row`. The 10 wall-segment helpers were precisely
+      decoded (not guessed) by cross-referencing the dispatch bit
+      logic against the already-documented dungeon tile format — see
+      the table in overview.md. This is what the old "`sub_16xxx`
+      cluster, dense, likely dungeon movement or combat" note used to
+      point at — it's neither, it's the classic wireframe maze-view
+      renderer. Full writeup in
       [overview.md](overview.md#ultima-iis-dungeon-first-person-view-fully-identified).
       Note: the old `sub_10A30` "movement-key dispatcher" entry point
       from an earlier session no longer exists as a separate function
       — its callers now resolve inside `end_of_turn` itself (likely
       absorbed when the `command_jump_table` fix reshuffled code
       boundaries); don't go looking for it.
-- [ ] **Follow-up from the dungeon-view find above**: the 10 individual
-      wall-segment-drawing helpers `draw_dungeon_corridor` dispatches
-      to (`sub_16425`/`sub_16594`/`sub_1660C`/`sub_166CB` for the right
-      wall; `sub_16377`/`sub_164E2`/`sub_16291` for the left;
-      `sub_163CE`/`sub_1653F`/`sub_16304` for straight ahead) are
-      understood *collectively* (each draws a specific perspective wall
-      segment for a specific bit pattern) but not *individually*
-      pinned — each needs its own trace to nail down exact geometry
-      (which side, near/far perspective, open/closed/door variant).
-      Worth a dedicated pass rather than folding into the general
-      sweep.
 - [ ] Rename the auto-named segments (`sg01a2`, `sg08e3`) once their
       contents/roles are clear, and rename `_picData` (misleadingly named
       after one file type when it's the shared FCB for all file I/O).

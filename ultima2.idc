@@ -3598,6 +3598,7 @@ static Bytes_0(void) {
 	create_byte	(0X16281);
 	create_byte	(0X16289);
 	create_insn	(0X16291);
+	set_name	(0X16291,	"draw_left_open");
 	create_insn	(x=0X16299);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -3620,6 +3621,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X16304);
+	set_name	(0X16304,	"draw_ahead_open");
 	create_insn	(x=0X1630C);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -3642,6 +3644,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X16377);
+	set_name	(0X16377,	"draw_left_wall_segment");
 	create_insn	(x=0X1637F);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -3664,6 +3667,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X163CE);
+	set_name	(0X163CE,	"draw_ahead_wall_segment");
 	create_insn	(x=0X163D6);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -3686,6 +3690,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X16425);
+	set_name	(0X16425,	"draw_corridor_wall_segment");
 	create_insn	(x=0X1642D);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -3705,6 +3710,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X1648D);
+	set_name	(0X1648D,	"draw_dungeon_door");
 	create_insn	(x=0X16495);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -3721,6 +3727,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X164E2);
+	set_name	(0X164E2,	"draw_left_door");
 	create_insn	(x=0X164EA);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -3740,6 +3747,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X1653F);
+	set_name	(0X1653F,	"draw_ahead_door");
 	create_insn	(x=0X16547);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -3759,6 +3767,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X16594);
+	set_name	(0X16594,	"draw_ladder_down");
 	create_insn	(x=0X1659C);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -3784,6 +3793,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X1660C);
+	set_name	(0X1660C,	"draw_ladder_up");
 	create_insn	(x=0X16614);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -3809,6 +3819,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X16684);
+	set_name	(0X16684,	"draw_ladder_rail");
 	create_insn	(x=0X16694);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -3822,6 +3833,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X166CB);
+	set_name	(0X166CB,	"draw_chest_icon");
 	create_insn	(x=0X166CC);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -4521,14 +4533,6 @@ static Bytes_0(void) {
 	create_byte	(0X18136);
 	make_array	(0X18136,	0X42);
 	set_name	(0X18136,	"tile_27");
-	set_cmt	(0X18178,	"overworld tile 28: byte0=row width in bytes, byte1=row count, then 64 bytes CGA Linear 2bpp pixel data (16x16px)",	0);
-	create_byte	(0X18178);
-	make_array	(0X18178,	0X42);
-	set_name	(0X18178,	"tile_28");
-	set_cmt	(0X181BA,	"overworld tile 29: byte0=row width in bytes, byte1=row count, then 64 bytes CGA Linear 2bpp pixel data (16x16px)",	0);
-	create_byte	(0X181BA);
-	make_array	(0X181BA,	0X42);
-	set_name	(0X181BA,	"tile_29");
 }
 
 //------------------------------------------------------------------------
@@ -4538,6 +4542,14 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X18178,	"overworld tile 28: byte0=row width in bytes, byte1=row count, then 64 bytes CGA Linear 2bpp pixel data (16x16px)",	0);
+	create_byte	(0X18178);
+	make_array	(0X18178,	0X42);
+	set_name	(0X18178,	"tile_28");
+	set_cmt	(0X181BA,	"overworld tile 29: byte0=row width in bytes, byte1=row count, then 64 bytes CGA Linear 2bpp pixel data (16x16px)",	0);
+	create_byte	(0X181BA);
+	make_array	(0X181BA,	0X42);
+	set_name	(0X181BA,	"tile_29");
 	set_cmt	(0X181FC,	"overworld tile 30: byte0=row width in bytes, byte1=row count, then 64 bytes CGA Linear 2bpp pixel data (16x16px)",	0);
 	create_byte	(0X181FC);
 	make_array	(0X181FC,	0X42);
