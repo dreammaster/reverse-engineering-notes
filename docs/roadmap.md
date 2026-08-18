@@ -141,18 +141,17 @@ sessions, unlike a one-off todo list.
         instead (`ida_scripts/comment_vehicle_tile_checks.py`,
         address-verified against the actual decoded instruction before
         writing each comment, not just hand-computed and trusted).
-      - **`draw_map`'s "divide by 4" bit-shift, found but not fully
-        reconciled**: it does `rcr al,1` (÷2) then `and al,0FEh`
-        (clears bit 0) on each raw map-tile byte before caching it in
-        `_mapTileIds[]` — only one halving step directly visible, not
-        two. But `_mapTileIds[]` gets compared against
-        `_priorMapTileIds[]` right after (a dirty-cell redraw-tracking
-        cache, bit 7 also used as a highlight flag via a sibling `or
-        al,80h`), so it may be an internal packed representation, not
-        the canonical tile-graphic index — reconciling fully would
-        need tracing whatever consumes `_mapTileIds[]` next, a deeper
-        rabbit hole than this item asked for. Left open rather than
-        guessing.
+      - **`draw_map`'s "divide by 4" bit-shift — since fully resolved
+        (2026-08-18)**, while investigating collapsed functions for
+        the DOS/BIOS interrupt task below. `_mapTileIds[]` genuinely
+        does hold `TileID × 2` (one halving step, not the raw 0-63
+        ID) — but that's correct by design, not a loose end:
+        `draw_map_content` uses it directly as a byte-offset into
+        `TILE_OFFSETS[]`, a *word*-sized table, where `×2` is exactly
+        the right scaling with no further multiply needed. Bit 7 is a
+        confirmed dirty-rectangle flag (skip redrawing an unchanged
+        cell), not a highlight marker. Full writeup in
+        [overview.md](overview.md#the-tile-renderinganimation-subsystem-found-and-documented).
 - [x] Fetch the ModdingWiki "Ultima II Monster Format" page — **doesn't
       exist**, confirmed redlink on the summary page. No external
       source for `monx??`. Went ahead and wrote up what the
@@ -629,9 +628,33 @@ sessions, unlike a one-off todo list.
       start sketching the clean-room C++ structure (data model first:
       `Savegame`, map/dungeon representations, monster/NPC state —
       these map fairly directly to ScummVM engine conventions).
-- [ ] Identify all DOS/BIOS interrupt dependencies (`int 21h` FCB I/O,
-      CGA video I/O, keyboard) as the porting boundary — these are what
-      the ScummVM engine shim will need to replace.
+- [x] **Identified all DOS/BIOS interrupt dependencies — done
+      (2026-08-18).** Full inventory: `int 10h` (video mode/palette/
+      cursor/text-scroll, 7 sites across `set_cga_mode`/`setPalette`/
+      `set_cursor_position`/`write_character`), `int 16h` (keyboard
+      poll/read, 4 sites in `keypress_check`), `int 21h` (FCB file
+      open/close/DTA/read-write, 4 sites in `access_file`), plus direct
+      PIT/PPI port I/O for the PC speaker (`speaker_on`/`hold_tone`/
+      `speaker_off`) — not interrupt-based but an equally real
+      porting-boundary concern. CGA framebuffer pixel/tile drawing
+      itself is **not** interrupt-based at all (direct writes to
+      `0xB800`/`0xBA00`, already documented throughout this project) —
+      the `int 10h` calls only cover mode-setting/palette/cursor/text.
+      Full table in
+      [overview.md](overview.md#dosbios-interrupt-dependencies--the-porting-boundary-fully-cataloged).
+      Bonus find along the way: `set_cga_mode`/`setPalette` and 5
+      other functions (`draw_tile`/`draw_map_content`/`animate_water`/
+      `animate_forcefield`/`animate_tile`) were **collapsed** in the
+      IDB (IDA's folding feature, a different mechanism than the
+      generic "hidden range" API) — the `.asm` export was silently
+      showing placeholder text instead of their real instructions.
+      Expanded via `ida_scripts/uncollapse_functions.py`
+      (`ida_funcs.FUNC_HIDDEN`), revealing a whole previously-
+      undocumented tile-rendering/animation subsystem — see
+      [overview.md](overview.md#the-tile-renderinganimation-subsystem-found-and-documented).
+      Confirmed via a full-binary grep for the `.asm` export's
+      "COLLAPSED FUNCTION" placeholder text that these were the only 7
+      — none left anywhere else.
 - [ ] **Design note (Paul, 2026-08-18)**: the `_ringOwned[]` treasure
       array's 16 individual `Savegame` member names (`_ringOwned`,
       `_wands`, `_triLithium`, etc.) are an artifact of naming each

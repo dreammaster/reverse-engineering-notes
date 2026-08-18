@@ -1137,3 +1137,75 @@ With these, the `sub_XXXXX` sweep is essentially complete: 63 of the
 original 73 named, and the remaining 12 are exactly the dungeon
 wall-segment helper cluster already flagged above as its own
 follow-up — nothing else is left unaddressed.
+
+### DOS/BIOS interrupt dependencies — the porting boundary, fully cataloged
+
+Every `int` and direct hardware-port instruction in the binary
+(2026-08-18) — this is the complete list of what a ScummVM engine shim
+will need to replace:
+
+| Interrupt/port | Function | Site(s) | Purpose |
+|---|---|---|---|
+| `int 10h` AH=0 | `set_cga_mode` | 1 | Set video mode 1 (40×25 16-color text) |
+| `int 10h` AH=0 | `setPalette` | 1 | Set video mode 4 (320×200 4-color CGA graphics) |
+| `int 10h` AH=0Bh | `setPalette` | 2 | Set border color 0, select palette 1 |
+| `int 10h` AH=6 | (inside `write_character`/scroll helper) | 1 | Scroll page up |
+| `int 10h` AH=9 | (inside `write_character`) | 1 | Write attributes/character at cursor |
+| `int 10h` AH=2 | `set_cursor_position` | 1 | Set text-mode cursor position |
+| `int 16h` AH=1/0 | `keypress_check` | 4 (2 check+read pairs) | Poll/read a keypress from the BIOS keyboard buffer |
+| `int 21h` AH=0Fh | `access_file` | 1 | Open (FCB) |
+| `int 21h` AH=1Ah | `access_file` | 1 | Set Disk Transfer Area address |
+| `int 21h` AH=`_picture_int21_function` | `access_file` | 1 | Read/write record (function selected by a variable, not a fixed literal) |
+| `int 21h` AH=10h | `access_file` | 1 | Close (FCB) |
+| `out 43h`/`out 42h` | `speaker_on`/`hold_tone` | — | PIT (8253) timer channel 2 — tone frequency |
+| `out 61h`/`in 61h` | `speaker_on`/`speaker_off` | — | PC/XT PPI port B — speaker gate enable/disable |
+
+CGA framebuffer access itself (`plot_point`/`erase_point`/`draw_line`/
+`draw_tile`/etc.) is **not** interrupt-based at all — it's direct
+writes to the `0xB800`/`0xBA00` interleaved video memory segments,
+already extensively documented throughout this file. The `int 10h`
+calls above only cover mode-setting, palette, cursor, and text-mode
+scroll/write — the actual pixel/tile drawing bypasses BIOS entirely.
+
+### The tile-rendering/animation subsystem, found and documented
+
+Found while chasing the interrupt inventory above: `set_cga_mode` and
+`setPalette` turned out to be **collapsed functions** in the IDB (IDA's
+folding feature) — the `.asm` export was showing a
+`[NN BYTES: COLLAPSED FUNCTION ...]` placeholder instead of their real
+instructions, which is why they hadn't been readable via the exported
+`.asm` before. Expanding them (`ida_scripts/uncollapse_functions.py`,
+using the per-function `ida_funcs.FUNC_HIDDEN` flag — a different
+mechanism than IDA's generic "hidden range" feature, which reported 0
+ranges despite 7 visibly-collapsed functions) revealed 5 more
+collapsed functions right alongside them, none previously documented
+in this project despite already having clear names from an earlier
+session:
+
+- **`draw_tile`** — blits one 16-row tile bitmap onto the screen,
+  copying 4 bytes/row from the tile's graphics data (`si`) into the
+  CGA framebuffer via a `screen_rows[]` lookup table (segment per
+  scanline, matching the same interleaved-bank addressing as
+  `plot_point`).
+- **`draw_map_content`** — the actual redraw loop `draw_map` calls:
+  iterates a 20×10 grid of 16×16 cells (320×160 px), reading each
+  cell's cached value from `_mapTileIds[]`. **This resolves the
+  `draw_map` bit-shift question left open earlier as unreconciled**:
+  `_mapTileIds[]`'s low 7 bits hold the tile ID **× 2** (not the raw
+  0-63 ID) — which is exactly the correct byte-offset scaling to index
+  directly into `TILE_OFFSETS[]`, a *word*-sized table, with no further
+  multiply needed at draw time. Bit 7 is a separate flag: if set, the
+  cell already matches what's on screen (set by `draw_map`'s
+  `_priorMapTileIds[]` comparison) and drawing is skipped entirely — a
+  dirty-rectangle redraw optimization, confirmed rather than guessed.
+  `setPalette` initializes both `_mapTileIds[]` and
+  `_priorMapTileIds[]` to `0xFFFF`, forcing a full redraw the first
+  time `draw_map` runs after a mode/palette change.
+- **`animate_water`/`animate_forcefield`/`animate_tile`** — a simple
+  animated-tile mechanism: `animate_tile` does a circular rotation of
+  15 animation-frame pointers (shifts frames 1-14 back by one slot,
+  wraps frame 0 to the end) within a tile's `TILE_OFFSETS` record —
+  the classic "cycle through N pre-drawn bitmaps" technique for water/
+  forcefield animation. `animate_water` operates on `TILE_OFFSETS`
+  itself (tile 0); `animate_forcefield` on `TILE_OFFSETS+0x2Eh`. Called
+  from `play_game`'s main loop.

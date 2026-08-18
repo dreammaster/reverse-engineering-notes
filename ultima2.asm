@@ -8656,13 +8656,202 @@ screen_rows     dw 0B800h,0BA00h,0B805h,0BA05h,0B80Ah,0BA0Ah,0B80Fh,0BA0Fh
                 dw 0B954h,0BB54h,0B959h,0BB59h,0B95Eh,0BB5Eh,0B963h,0BB63h
                 dw 0B968h,0BB68h,0B96Dh,0BB6Dh,0B972h,0BB72h,0B977h,0BB77h
                 dw 0B97Ch,0BB7Ch,0B981h,0BB81h,0B986h,0BB86h,0B98Bh,0BB8Bh
-; [00000022 BYTES: COLLAPSED FUNCTION set_cga_mode. PRESS NUMPAD+ TO EXPAND]
-; [00000036 BYTES: COLLAPSED FUNCTION setPalette. PRESS NUMPAD+ TO EXPAND]
-; [00000039 BYTES: COLLAPSED FUNCTION draw_tile. PRESS NUMPAD+ TO EXPAND]
-; [00000039 BYTES: COLLAPSED FUNCTION draw_map_content. PRESS NUMPAD+ TO EXPAND]
-; [0000000B BYTES: COLLAPSED FUNCTION animate_water. PRESS NUMPAD+ TO EXPAND]
-; [0000000B BYTES: COLLAPSED FUNCTION animate_forcefield. PRESS NUMPAD+ TO EXPAND]
-; [0000002A BYTES: COLLAPSED FUNCTION animate_tile. PRESS NUMPAD+ TO EXPAND]
+
+; =============== S U B R O U T I N E =======================================
+
+
+set_cga_mode    proc near               ; CODE XREF: start_+30↑p
+                                        ; start_+3F↑p ...
+                push    ax
+                mov     ax, 1
+                int     10h             ; - VIDEO - SET VIDEO MODE
+                                        ; AL = mode
+                mov     text_x, 0
+                mov     text_y, 0
+                call    set_cursor_position
+                mov     text_width?, 40
+                mov     text_mode?, 0
+                call    set_normal_text_color
+                pop     ax
+                retn
+set_cga_mode    endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+setPalette      proc near               ; CODE XREF: start_+10C↑p
+                                        ; start_+2B0↑p ...
+                push    ax
+                push    bx
+                mov     ah, 0
+                mov     al, 4
+                int     16              ; - VIDEO - SET VIDEO MODE
+                                        ; AL = mode
+                mov     ah, 11
+                mov     bh, 0
+                mov     bl, 0
+                int     10h             ; - VIDEO - SET COLOR PALETTE
+                                        ; BH = 00h, BL = border color
+                                        ; BH = 01h, BL = palette (0-3)
+                mov     ah, 11
+                mov     bh, 1
+                mov     bl, 1
+                int     10h             ; - VIDEO - SET COLOR PALETTE
+                                        ; BH = 00h, BL = border color
+                                        ; BH = 01h, BL = palette (0-3)
+                mov     text_mode?, 1
+                call    set_normal_text_color
+                mov     bx, 254
+                mov     ax, 0FFFFh
+
+loc_14A64:                              ; CODE XREF: setPalette+31↓j
+                mov     word ptr _mapTileIds[bx], ax
+                mov     word ptr _priorMapTileIds[bx], ax
+                sub     bx, 2
+                jns     short loc_14A64
+                pop     bx
+                pop     ax
+                retn
+setPalette      endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+draw_tile       proc near               ; CODE XREF: draw_map_content+1E↓p
+                push    ax
+                push    bx
+                push    dx
+                push    di
+                push    si
+                push    es
+                mov     si, cx
+                shr     ax, 1
+                shr     ax, 1
+                mov     di, ax
+                shl     bx, 1
+                mov     dl, 10h
+                add     si, 2
+
+loc_14A89:                              ; CODE XREF: draw_tile+30↓j
+                mov     ax, cs:screen_rows[bx]
+                mov     es, ax
+                mov     ax, [si]
+                mov     es:[di], ax
+                mov     ax, [si+2]
+                mov     es:[di+2], ax
+                add     si, 4
+                add     bx, 2
+                dec     dl
+                jnz     short loc_14A89
+                pop     es
+                pop     si
+                pop     di
+                pop     dx
+                pop     bx
+                pop     ax
+                retn
+draw_tile       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+draw_map_content proc near              ; CODE XREF: draw_map:loc_15C6D↓p
+                push    ax
+                push    bx
+                push    cx
+                push    di
+                push    si
+                mov     bx, 0
+                mov     si, 0
+
+loc_14AB8:                              ; CODE XREF: draw_map_content+31↓j
+                mov     ax, 0
+
+loc_14ABB:                              ; CODE XREF: draw_map_content+28↓j
+                mov     cl, _mapTileIds[si]
+                or      cl, cl
+                js      short loc_14ACE
+                mov     ch, 0
+                mov     di, cx
+                mov     cx, TILE_OFFSETS[di]
+                call    draw_tile
+
+loc_14ACE:                              ; CODE XREF: draw_map_content+14↑j
+                inc     si
+                add     ax, 16
+                cmp     ax, 320
+                jb      short loc_14ABB
+                add     bx, 16
+                cmp     bx, 160
+                jb      short loc_14AB8
+                pop     si
+                pop     di
+                pop     cx
+                pop     bx
+                pop     ax
+                retn
+draw_map_content endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+animate_water   proc near               ; CODE XREF: play_game+123↑p
+                                        ; play_game+126↑p ...
+                push    si
+                mov     si, cs:TILE_OFFSETS
+                call    animate_tile
+                pop     si
+                retn
+animate_water   endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+animate_forcefield proc near            ; CODE XREF: play_game+12F↑p
+                                        ; play_game+192↑p
+                push    si
+                mov     si, cs:TILE_OFFSETS+2Eh
+                call    animate_tile
+                pop     si
+                retn
+animate_forcefield endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+animate_tile    proc near               ; CODE XREF: animate_water+6↑p
+                                        ; animate_forcefield+6↑p
+                push    ax
+                push    bx
+                push    cx
+                push    dx
+                mov     bx, [si+2]
+                mov     cx, [si+4]
+                mov     dl, 15
+
+loc_14B08:                              ; CODE XREF: animate_tile+1D↓j
+                mov     ax, [si+6]
+                mov     [si+2], ax
+                mov     ax, [si+8]
+                mov     [si+4], ax
+                add     si, 4
+                dec     dl
+                jnz     short loc_14B08
+                mov     [si+2], bx
+                mov     [si+4], cx
+                pop     dx
+                pop     cx
+                pop     bx
+                pop     ax
+                retn
+animate_tile    endp
+
 
 ; =============== S U B R O U T I N E =======================================
 
