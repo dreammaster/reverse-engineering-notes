@@ -107,6 +107,11 @@ source to cross-check against.
 - **Fixed size: 256 bytes** (`load_map` reads it with `mov cx,100h`
   into `_mapMonsters`, same size confirmed on the `save_game1` write
   side).
+- **Confirmed against real files, 2026-08-19**: real `monx??` files on
+  disk are actually 384 bytes, same story as `tlkx???` above — bytes
+  `[256:384]` are a stale duplicate of part of `[0:256]`, not new
+  data, and the game's 256-byte read is the correct logical size.
+  Checked `MONX00` specifically: `[257:384] == [129:256]` exactly.
 - **Layout: struct-of-arrays, not one struct per monster.** The game
   supports up to 32 monster/NPC slots per map (`byte_1742F` in the
   movement-AI loop, asm ~2851-2870, counts down from `1Fh`=31 to 0).
@@ -226,6 +231,78 @@ source to cross-check against.
   asymmetry that may itself be intentional (different flavor per kill
   method) rather than an oversight.
 
+## `MONSTERS` — dungeon corridor monster-marker position table (traced 2026-08-19)
+
+Distinct from `monx??` (the per-map monster/NPC instance data above) —
+this is a single master file, loaded once at `play_game` startup (asm
+~10807), name literally `MONSTERS` (no digit suffix). **Despite the
+generic name, this is not a monster stat/type/name table at all — it's
+a small, fixed lookup of screen positions for drawing monster markers
+in the dungeon 3D corridor view.** Full consumer chain traced:
+
+- Read with `mov cx,800h` (2048 bytes) into scratch buffer
+  `monsters_ptr` (`0x2900`, DATA segment). Real file on disk is 2176
+  bytes — same inert-tail pattern as every other format on this page
+  (2176 − 2048 = 128 bytes unread).
+- **Sole consumer: `draw_dungeon_monster`** (asm ~12856), called once
+  per frame from `render_dungeon_view` right after the corridor walls
+  are drawn. For each of up to 8 look-ahead corridor depth steps
+  (`di` = 1..however far the corridor is currently visible, tracked in
+  `byte_17892`):
+  1. Checks `[di+4AFh]` (DATA:0x4AF, an 8-entry per-frame scratch
+     array) — nonzero means "draw a monster marker at this depth."
+     **This flag is not new data** — it's the same dungeon-tile
+     "monster presence" sub-field already documented above (the low 3
+     bits of the tile byte), re-extracted fresh every frame by
+     `precompute_dungeon_corridor` (asm ~11809, which also fills the
+     parallel left/straight/right wall-type caches at `[di+48Fh]`
+     `[di+497h]` `[di+49Fh]` that the corridor-wall-segment drawer
+     uses) for the 8 tiles directly ahead of the player. So dungeon
+     monster rendering and dungeon monster *combat* (`attack`,
+     `map_get_monster_at?`) both key off the exact same tile bitfield,
+     just cached separately.
+  2. For `di >= 2`: looks up `cs:byte_1697E[di]` (asm ~12934), a table
+     with exactly 6 nonzero entries for `di`=2..7 — `0x80, 0xC0, 0xE0,
+     0xF0, 0xF8, 0xFC` — each a **fixed byte offset into the
+     `MONSTERS` buffer**, one per visual depth band. (`di == 1`, the
+     nearest step, takes a different addressing path whose input
+     register state comes from the caller and wasn't traced further —
+     flagged open below.)
+  3. Reads a **2-byte record** from `MONSTERS` at that fixed offset:
+     byte 0 is used almost directly as an X screen-position value;
+     byte 1 is packed — low 5 bits = Y position, top 3 bits (extracted
+     via 5x `rcr` with `clc` first, i.e. a plain `>> 5`) = a
+     facing/type value 0-7.
+  4. Feeds `(X, Y, facing)` into `draw_dungeon_monster_sprite` →
+     `draw_sprite_row`, which reuses the **same shared low-level CGA
+     pixel-plot tables** (`cs:48D0h`/`48D4h`/`48DCh`/`48DEh`) as
+     `plot_point`/`erase_point` (the space-flight starfield/line-draw
+     primitives) to paint a small 4-pixel-wide marker at a screen
+     position fixed for that depth band.
+- **Confirmed against the real file**: decoded the 6 addressed
+  `(X, Y, facing)` triples from Paul's actual `MONSTERS` file — all
+  small, plausible screen-offset-shaped values (X≈30-31, Y≈14-16,
+  facing 0-2), consistent with this theory rather than character/stat
+  data.
+- **Conclusion**: `MONSTERS` supplies fixed marker positions for up to
+  6 dungeon-corridor depth bands, nothing more. There is **no
+  per-monster-type stat/name table anywhere in this DOS port's data
+  files** — monster-type behavior (HP formulas, offer rewards, etc.)
+  is hardcoded in code branches keyed on the type-value byte
+  (`0xFC`=Thief, `0xF0`=Fighter, `0xF8`=Wizard, ... — see `monx??`
+  above), not loaded from disk. **For the C++ port**: model monster
+  *types* as a hardcoded table mirroring those branches, not as
+  something read from a data file; `MONSTERS` only needs to be
+  understood at all for implementing dungeon-view rendering
+  specifically.
+- **Left genuinely open** (not force-resolved): the `di == 1` special
+  case's addressing, and why only ~256 of the file's 2048 logical
+  bytes (really only a 126-byte window within that) have any confirmed
+  reader — the remaining ~1.8KB has no reader found anywhere in the
+  binary. Could be reserved headroom or a carryover from a richer
+  original-platform format; left as an honest unknown rather than
+  guessed.
+
 ## `tlkx???` — shop/NPC response text (wiki: "NPC dialogue")
 
 - **Actual size for this DOS port: 256 bytes, confirmed against the
@@ -288,6 +365,31 @@ wiki's 384 most likely describes the 1982 Apple II original (different
 platform/memory model) rather than this port, or is simply inaccurate.
 Treat 256 as the confirmed figure for DOS `TLKXFF`-pattern files going
 forward.
+
+**Update, 2026-08-19, confirmed against real game data files** (Paul's
+own install at `c:\games\ultima2`, not just the EXE): every `tlkx???`
+file on disk actually *is* 384 bytes — the wiki's figure is physically
+correct after all. But the DOS binary's 256-byte read is still right:
+checked byte-for-byte, bytes `[256:384]` of every real `TLKXFF` file
+are not new content, they're a stale duplicate of a chunk of bytes
+`[0:256]` (the exact overlap offset varies per file — e.g. `TLKX81`
+has `[257:384] == [129:256]`, `TLKX03` has a similar but not
+byte-identical overlap). That's consistent with leftover
+scratch-buffer content baked in by whatever tool wrote these files,
+not meaningful game data — and it means the disassembly-only
+conclusion above was correct even though it had no real files to
+check against at the time. **The same 384-byte-container /
+256-byte-logical / 128-byte-inert-tail pattern was independently
+confirmed in `player` and `monx??` too** (see their sections below) —
+this isn't a `tlkx???`-specific quirk, it's how every fixed-size
+record file in this DOS port was packaged. For the C++ port: read
+(or just allocate for) the full on-disk size if it matters for file
+I/O parity, but only the first 256 bytes (first `N` bytes generally —
+see each format's own logical size) are ever meaningful.
+
+A standalone, non-IDA reference decoder implementing this (confirmed
+against every real `tlkx???` file in the install) lives at
+[tools/decode_talk_file.py](../tools/decode_talk_file.py).
 
 ### Consumer traced: read out by `transact`, not a walk-up "talk"
 
@@ -374,6 +476,11 @@ Full chain: `enter` (asm 9136/9159/9206, VILLAGE/TOWN/CASTLE) →
   for known fields. No separate wiki page found/fetched yet for this
   format specifically (ModdingWiki calls it "Ultima II Save Game
   Format").
+- **Confirmed against a real file, 2026-08-19**: the real `PLAYER`
+  file on disk is 384 bytes, same pattern as `tlkx???`/`monx??` above
+  — bytes `[256:384]` duplicate part of `[0:256]` (`[257:384] ==
+  [0:127]` exactly), not new data. The `Savegame` struct is still
+  correctly 256 bytes; ignore the trailing 128 on disk.
 
 ## `ULTIMAII.EXE` — embedded overworld tiles
 

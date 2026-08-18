@@ -2734,3 +2734,224 @@ Wrote 333 entries to C:\dev\ultima2\docs\game-text-catalog.txt
 [*] gen_file(OFILE_IDC) returned 1
 [*] saving database to C:\dev\ultima2\ultima2.idb
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'apply_renames.py']
+[*] reading apply_renames.py
+[*] executing apply_renames.py
+[*] captured stdout from target script:
+----- begin target script output -----
+10730: already 'command_jump_table' -- skipping
+122D5: already 'load_talk_file' -- skipping
+1154E: already 'print_indexed_shop_string' -- skipping
+153F4: already 'print_char' -- skipping
+15217: already 'rand_byte' -- skipping
+123E6: already 'find_target_monster' -- skipping
+12028: already 'read_digit_keypress' -- skipping
+1508C: already 'print_indexed_menu_string' -- skipping
+1113A: already 'alert_town_guards' -- skipping
+12052: already 'try_spend_gold' -- skipping
+15ED7: already 'play_hit_sound' -- skipping
+15DA9: already 'play_tone_sweep' -- skipping
+15FC3: already 'play_magic_sound' -- skipping
+15E83: already 'play_fail_sound' -- skipping
+15C95: already 'play_tick_sound' -- skipping
+14B26: already 'flash_screen' -- skipping
+14B35: already 'xor_invert_cga_bank' -- skipping
+167B3: already 'draw_line' -- skipping
+14B76: already 'plot_point' -- skipping
+14BAA: already 'erase_point' -- skipping
+14B4E: already 'clear_screen' -- skipping
+14B5D: already 'clear_cga_bank' -- skipping
+15CB2: already 'speaker_on' -- skipping
+15CD2: already 'hold_tone' -- skipping
+15CE4: already 'speaker_off' -- skipping
+16D83: already 'draw_ship_marker' -- skipping
+16CC4: already 'erase_ship_marker' -- skipping
+168C0: already 'get_dungeon_tile_at_player' -- skipping
+150D8: already 'sign_byte' -- skipping
+150EF: already 'abs_byte' -- skipping
+16B3D: already 'animate_starfield' -- skipping
+16D68: already 'next_star_coord' -- skipping
+129D2: already 'draw_world_map_overview' -- skipping
+12B65: already 'plot_map_icon_point' -- skipping
+12362: already 'read_direction_keypress' -- skipping
+1068F: already 'longPauseScreen' -- skipping
+120AB: already 'compute_item_price' -- skipping
+16D5B: already 'seed_star_prng' -- skipping
+15FA6: 'play_bump_sound' -> 'play_beep_sound'
+    RENAMED from play_bump_sound (2026-08-19) -- the original guess was too narrow. One-shot play_tone_sweep call with fixed, unusual params (ax=2F8h bx=320h cx=0FFFFh dx=50h bp=0F00h), called from 5 sites: 2 blocked-movement/map-edge cases in normal_movement (the original naming basis), a combat special-hit flash in attack (loc_12C38, monster type 0x40), the Minax-death map transition (minax_death_sequence), and the final victory fanfare right before the game's ending text. A single generic short beep used as a catch-all sound cue across unrelated contexts, not bump-specific.
+15D09: already 'play_melody' -- skipping
+15EC7: already 'play_step_tick' -- skipping
+153A0: already 'clear_text_row' -- skipping
+1538F: already 'clear_caption_rows' -- skipping
+15EAC: already 'play_cannon_sound' -- skipping
+16F7F: already 'read_animated_digit_keypress' -- skipping
+17289: already 'speaker_off_once' -- skipping
+16FA3: already 'draw_hyperwarp_hud' -- skipping
+12199: already 'check_monster_collision' -- skipping
+1767A: already '_negateTimeDuration' -- skipping
+17030: already 'check_hyperwarp_sun_collision' -- skipping
+1720B: already 'patch_map_filename' -- skipping
+17276: already 'speaker_on_once' -- skipping
+15FE0: already 'play_attack_sound' -- skipping
+16000: already 'render_dungeon_view' -- skipping
+16078: already 'precompute_dungeon_corridor' -- skipping
+16144: already 'draw_dungeon_corridor' -- skipping
+168ED: already 'draw_dungeon_monster' -- skipping
+10E70: already 'leg_paralysis_trap' -- skipping
+10EC2: already 'arm_paralysis_trap' -- skipping
+10F12: already 'magic_missile_trap' -- skipping
+10F48: already 'sleep_trap' -- skipping
+10F8E: already 'minax_curse_trap' -- skipping
+10FCD: already 'random_item_loss_trap' -- skipping
+112DB: already 'consume_food' -- skipping
+1143C: already 'check_monster_on_level' -- skipping
+1147F: already 'spawn_dungeon_monster' -- skipping
+1152E: already 'compute_monster_direction_to_player' -- skipping
+126F9: already 'update_patrol_marker' -- skipping
+1330C: already 'find_cursor_target_monster' -- skipping
+1361C: already 'clear_picked_up_tile' -- skipping
+14BE0: already 'draw_sprite_row' -- skipping
+168A3: already 'draw_dungeon_monster_sprite' -- skipping
+1697E: 'byte_1697E' -> '_dungeonMonsterBandOffsets'
+    6-entry byte table (indices 2-7 populated: 0x80/0xC0/0xE0/0xF0/0xF8/0xFC, index 0-1 and 8+ are 0) read by draw_dungeon_monster as `cs:byte_1697E[di]` where di is the corridor depth step (di==1 uses a separate, not-fully-traced addressing path). Each value is a fixed byte offset into the MONSTERS buffer (monsters_ptr) where that depth band's 2-byte (X,Y,facing) marker-position record lives -- confirmed by decoding the real MONSTERS file at these 6 offsets and getting plausible small screen-offset values. Formerly byte_1697E.
+17899: 'word_17899' -> '_dungeonMonsterRecordPtr'
+    scratch word built by draw_dungeon_monster as (monsters_ptr_hi : _dungeonMonsterBandOffsets[di]) -- i.e. the absolute address of the current depth band's 2-byte marker record inside the MONSTERS buffer. Read twice: once for the X byte, once (incremented) for the packed Y/facing byte. Formerly word_17899.
+1788F: 'byte_1788F' -> '_dungeonMonsterFacing'
+    top 3 bits of the MONSTERS record's second byte (extracted via 5x `clc`+`rcr al,1`, equivalent to `>> 5`) -- a 0-7 facing/type value selecting which pixel pattern draw_sprite_row draws for the monster marker at this depth. Written by draw_dungeon_monster, read by draw_dungeon_monster_sprite. Formerly byte_1788F.
+14F11: already 'compute_monster_direction_scaled' -- skipping
+14F36: already 'compute_monster_delta' -- skipping
+15E3B: already 'play_trap_sound' -- skipping
+16999: already 'setup_rocket_launch_display' -- skipping
+16A79: already 'space_travel_command_loop' -- skipping
+16D3E: already 'init_starfield' -- skipping
+17242: already 'play_star_twinkle_sound' -- skipping
+172A0: already 'minax_death_sequence' -- skipping
+16425: already 'draw_corridor_wall_segment' -- skipping
+1648D: already 'draw_dungeon_door' -- skipping
+16594: already 'draw_ladder_down' -- skipping
+1660C: already 'draw_ladder_up' -- skipping
+166CB: already 'draw_chest_icon' -- skipping
+16684: already 'draw_ladder_rail' -- skipping
+16377: already 'draw_left_wall_segment' -- skipping
+164E2: already 'draw_left_door' -- skipping
+16291: already 'draw_left_open' -- skipping
+163CE: already 'draw_ahead_wall_segment' -- skipping
+1653F: already 'draw_ahead_door' -- skipping
+16304: already 'draw_ahead_open' -- skipping
+17655: already '_fileFCB' -- skipping
+
+Done. Re-export the .asm/.idc and check the new names took, then update docs/roadmap.md's checklist.
+----- end target script output -----
+[*] finished executing apply_renames.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 15277
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'name_dungeon_monster_slot_array.py']
+[*] reading name_dungeon_monster_slot_array.py
+[*] executing name_dungeon_monster_slot_array.py
+[*] captured stdout from target script:
+----- begin target script output -----
+DATA base = 17410, target EA = 178BF
+178BF: '' (0 bytes) -> '_dungeonCorridorMonsterSlot' (8 bytes)
+    Per-frame scratch, 8 entries (one per dungeon corridor look-ahead depth, di=0-7). Filled by precompute_dungeon_corridor from the low 3 bits of the dungeon tile at that depth -- the same monster-presence bitfield attack/map_get_monster_at? use for combat, just re-cached here for draw_dungeon_monster's rendering pass. Nonzero = draw a monster marker at this depth.
+
+Done. Re-export the .asm/.idc and check the new name took, then update docs/roadmap.md's checklist.
+----- end target script output -----
+[*] finished executing name_dungeon_monster_slot_array.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 15270
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'refresh_dungeon_monster_slot_operands.py']
+[*] reading refresh_dungeon_monster_slot_operands.py
+[*] executing refresh_dungeon_monster_slot_operands.py
+[*] captured stdout from target script:
+----- begin target script output -----
+
+----- end target script output -----
+[*] finished executing refresh_dungeon_monster_slot_operands.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 15270
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'refresh_dungeon_monster_slot_operands.py']
+[*] reading refresh_dungeon_monster_slot_operands.py
+[*] executing refresh_dungeon_monster_slot_operands.py
+[*] captured stdout from target script:
+----- begin target script output -----
+1610B: before: MOV     [DI+4AFH], AL
+1610B: after:  mov     [di+4AFh], al
+16902: before: MOV     AH, [DI+4AFH]
+16902: after:  mov     ah, [di+4AFh]
+----- end target script output -----
+[*] finished executing refresh_dungeon_monster_slot_operands.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 15270
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'refresh_dungeon_monster_slot_operands.py']
+[*] reading refresh_dungeon_monster_slot_operands.py
+[*] executing refresh_dungeon_monster_slot_operands.py
+[!] EXCEPTION:
+Traceback (most recent call last):
+  File "C:/dev/ultima2/ida_scripts/batch_run_and_export.py", line 80, in main
+    exec(compile(code, target_script, "exec"), g)
+  File "refresh_dungeon_monster_slot_operands.py", line 63, in <module>
+    main()
+  File "refresh_dungeon_monster_slot_operands.py", line 59, in main
+    refresh_matching_insns(ea, seg.start_ea)
+  File "refresh_dungeon_monster_slot_operands.py", line 44, in refresh_matching_insns
+    ok = ida_bytes.op_plain_offset(ea, n, seg_base)
+AttributeError: module 'ida_bytes' has no attribute 'op_plain_offset'
+
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'refresh_dungeon_monster_slot_operands.py']
+[*] reading refresh_dungeon_monster_slot_operands.py
+[*] executing refresh_dungeon_monster_slot_operands.py
+[*] captured stdout from target script:
+----- begin target script output -----
+1610B: before: MOV     [DI+4AFH], AL
+    op_plain_offset(n=0, base=17410) -> True
+1610B: after:  mov     _dungeonCorridorMonsterSlot[di], al
+16902: before: MOV     AH, [DI+4AFH]
+    op_plain_offset(n=1, base=17410) -> True
+16902: after:  mov     ah, _dungeonCorridorMonsterSlot[di]
+----- end target script output -----
+[*] finished executing refresh_dungeon_monster_slot_operands.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 15272
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0

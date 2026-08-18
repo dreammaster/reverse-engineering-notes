@@ -3758,7 +3758,7 @@ static Bytes_0(void) {
 	create_insn	(0X15EF2);
 	set_name	(0X15EF2,	"pause?");
 	create_insn	(0X15FA6);
-	set_name	(0X15FA6,	"play_bump_sound");
+	set_name	(0X15FA6,	"play_beep_sound");
 	create_insn	(0X15FC3);
 	set_name	(0X15FC3,	"play_magic_sound");
 	create_insn	(0X15FE0);
@@ -3781,6 +3781,9 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X16109);
 	op_hex		(x,	1);
+	create_insn	(x=0X1610B);
+	op_plain_offset	(x,	0,	0X17410);
+	op_plain_offset	(x,	128,	0X17410);
 	create_insn	(x=0X16112);
 	op_hex		(x,	1);
 	create_insn	(x=0X16122);
@@ -4158,10 +4161,9 @@ static Bytes_0(void) {
 	set_name	(0X168C0,	"get_dungeon_tile_at_player");
 	create_insn	(0X168ED);
 	set_name	(0X168ED,	"draw_dungeon_monster");
-	create_insn	(0X16902);
-	create_insn	(x=0X16916);
-	op_plain_offset	(x,	1,	0X10000);
-	op_plain_offset	(x,	129,	0X10000);
+	create_insn	(x=0X16902);
+	op_plain_offset	(x,	1,	0X17410);
+	op_plain_offset	(x,	129,	0X17410);
 	create_insn	(0X1692C);
 	create_insn	(0X1694B);
 	create_insn	(x=0X16958);
@@ -4177,6 +4179,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X16970);
 	op_hex		(x,	1);
 	create_byte	(0X1697E);
+	set_name	(0X1697E,	"_dungeonMonsterBandOffsets");
 	create_word	(0X16990);
 	create_word	(0X16992);
 	create_word	(0X16994);
@@ -4477,10 +4480,6 @@ static Bytes_0(void) {
 	create_insn	(0X1716C);
 	create_strlit	(0X1716F,	0X8);
 	set_name	(0X1716F,	"aPluto");
-	create_insn	(0X17177);
-	set_cmt	(0X1717A,	"X.",	0);
-	create_insn	(0X1717A);
-	create_strlit	(0X1717D,	0X4);
 }
 
 //------------------------------------------------------------------------
@@ -4490,6 +4489,10 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(0X17177);
+	set_cmt	(0X1717A,	"X.",	0);
+	create_insn	(0X1717A);
+	create_strlit	(0X1717D,	0X4);
 	create_insn	(0X17181);
 	create_insn	(0X17184);
 	set_name	(0X17184,	"nullsub_2");
@@ -4686,6 +4689,7 @@ static Bytes_1(void) {
 	create_byte	(0X1788D);
 	create_byte	(0X1788E);
 	create_byte	(0X1788F);
+	set_name	(0X1788F,	"_dungeonMonsterFacing");
 	create_byte	(0X17890);
 	create_byte	(0X17891);
 	create_byte	(0X17892);
@@ -4693,6 +4697,11 @@ static Bytes_1(void) {
 	create_byte	(0X17894);
 	create_word	(0X17897);
 	create_word	(0X17899);
+	set_name	(0X17899,	"_dungeonMonsterRecordPtr");
+	set_cmt	(0X178BF,	"Per-frame scratch, 8 entries (one per dungeon corridor look-ahead depth, di=0-7). Filled by precompute_dungeon_corridor from the low 3 bits of the dungeon tile at that depth -- the same monster-presence bitfield attack/map_get_monster_at? use for combat, just re-cached here for draw_dungeon_monster's rendering pass. Nonzero = draw a monster marker at this depth.",	0);
+	create_byte	(0X178BF);
+	make_array	(0X178BF,	0X8);
+	set_name	(0X178BF,	"_dungeonCorridorMonsterSlot");
 	create_word	(0X178CF);
 	create_word	(0X178D1);
 	create_byte	(0X178D3);
@@ -5369,7 +5378,7 @@ static Functions_0(void) {
 	add_func    (0X16000,0X16078);
 	set_func_flags(0X16000,0x5400);
 	set_frame_size(0X16000, 0, 0, 0);
-	add_func    (0X16078,0X16144);
+	add_func    (0X16078,0X1610F);
 	set_func_flags(0X16078,0x5400);
 	set_frame_size(0X16078, 0, 0, 0);
 	add_func    (0X16144,0X1620D);

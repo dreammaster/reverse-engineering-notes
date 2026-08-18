@@ -662,18 +662,69 @@ sessions, unlike a one-off todo list.
         this ending sequence — a context with no relation to blocked
         movement. Its name may need revisiting once there's time to
         look at it properly; not renamed yet, just flagging the doubt.
-- [ ] Write a standalone (non-IDA) Python decoder for `tlkx???` files —
-      once we have actual game data files to test against, not just the
-      EXE — applying the ROT-128 decrypt. Useful independent of IDA.
-      Use **256 bytes**, not the wiki's 384, per the confirmed trace in
-      file-formats.md.
+- [x] Write a standalone (non-IDA) Python decoder for `tlkx???` files —
+      **done (2026-08-19)**, tested against Paul's real game install at
+      `c:\games\ultima2`. [tools/decode_talk_file.py](../tools/decode_talk_file.py).
+      Bonus finding from having real files to check: they're actually
+      384 bytes on disk (the wiki was right after all), but bytes
+      `[256:384]` are confirmed to be a stale duplicate of part of
+      `[0:256]`, not new content — so the disassembly-only 256-byte
+      conclusion was correct regardless. **Same 384-byte-container /
+      256-logical / 128-inert-tail pattern independently confirmed in
+      `player` and `monx??` too** — see file-formats.md, this appears
+      to be universal across this port's fixed-size record files.
+- [x] `MONSTERS` (no digit suffix) traced — **done (2026-08-19)**. It's
+      **not** a monster stat/type table — full consumer chain
+      (`draw_dungeon_monster` → `byte_1697E` → 2-byte `(X,Y,facing)`
+      records → `draw_dungeon_monster_sprite` → `draw_sprite_row`,
+      reusing the same CGA pixel-plot primitives as `plot_point`)
+      proves it's a small fixed lookup of screen positions for
+      drawing monster markers at up to 6 depth bands in the dungeon
+      3D corridor view. Confirmed the presence-flag it reads
+      (`[di+4AFh]`) is the *same* dungeon-tile low-3-bits "monster
+      here" field already documented in the dungeon format section
+      above, just re-cached per-frame for rendering instead of
+      combat. Confirmed the 6 addressed table entries decode to
+      plausible small screen-offset values against the real file.
+      **No per-monster-type stat/name table exists anywhere in this
+      port's data files** — that behavior is hardcoded in code
+      branches keyed on the type byte (see `monx??` section) — so the
+      C++ port's monster-type table should be hardcoded, not
+      file-loaded. Two sub-questions left honestly open (not
+      blockers): the `di==1` special-case addressing, and why ~1.8KB
+      of the file's 2048-byte logical read has no confirmed reader.
+      Renames applied (2026-08-19):
+      `byte_1697E`→`_dungeonMonsterBandOffsets`,
+      `byte_1788F`→`_dungeonMonsterFacing`,
+      `word_17899`→`_dungeonMonsterRecordPtr`,
+      `[di+4AFh]`→`_dungeonCorridorMonsterSlot` (a new 8-byte array,
+      via `ida_scripts/name_dungeon_monster_slot_array.py` — also
+      needed `idc.op_plain_offset` to make its 2 raw-literal call
+      sites render symbolically, since naming a previously-undefined
+      address doesn't retroactively reformat other instructions that
+      reference it by displacement; see
+      `ida_scripts/refresh_dungeon_monster_slot_operands.py`'s
+      docstring for the gotcha). Full writeup in file-formats.md's
+      `MONSTERS` section.
+- [x] `play_bump_sound` renamed to `play_beep_sound` — **done
+      (2026-08-19)**. It's a single fixed-parameter `play_tone_sweep`
+      call, no branching, called from 5 sites: two blocked-movement/
+      map-edge cases (the old name's basis), a combat special-hit
+      flash in `attack`, the Minax-death map transition, and the
+      final victory fanfare. One generic short beep used as a
+      catch-all sound cue, not bump-specific.
 
 ## Longer term (toward the C++ / ScummVM goal)
 
-- [ ] Once `canMoveToTile` and the map/draw pipeline are understood,
-      start sketching the clean-room C++ structure (data model first:
+- [ ] Start sketching the clean-room C++ structure (data model first:
       `Savegame`, map/dungeon representations, monster/NPC state —
-      these map fairly directly to ScummVM engine conventions).
+      these map fairly directly to ScummVM engine conventions). **Its
+      prerequisite is now met (2026-08-19)**: `canMoveToTile` and the
+      map/draw pipeline are fully traced, `Savegame` is fully pinned
+      down, `_mapMonsters` is fully split, and the `tlkx???`/`monx??`/
+      `player` file formats are all confirmed against real game data.
+      Paul is starting a separate thread for the actual C++
+      implementation work.
 - [x] **Identified all DOS/BIOS interrupt dependencies — done
       (2026-08-18).** Full inventory: `int 10h` (video mode/palette/
       cursor/text-scroll, 7 sites across `set_cga_mode`/`setPalette`/

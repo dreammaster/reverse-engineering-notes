@@ -944,10 +944,14 @@ note list, `0xFFFF`=rest). `play_step_tick` (was `sub_15EC7`) —
 thin `play_melody` wrapper always playing tune 0, called across
 `play_game`'s idle-wait loop, `canMoveToTile`, `normal_movement`'s
 walking loop, and `launch`'s cleanup — a generic step/tick sound tied
-to animation frames. `play_bump_sound` (was `sub_15FA6`) — one-shot
-sweep with fixed params called from `normal_movement`, best guess is
-a "can't move there" bump sound but not independently confirmed
-(lower confidence than the rest of this sweep). `play_cannon_sound`
+to animation frames. `play_beep_sound` (was `sub_15FA6`, briefly
+`play_bump_sound` — renamed 2026-08-19 after tracing the game's
+ending sequence and finding it's also used there) — one-shot sweep
+with fixed params, called from 5 sites: two blocked-movement/map-edge
+cases in `normal_movement`, a combat special-hit flash in `attack`,
+the Minax-death map transition, and the final victory fanfare. A
+single generic short beep used as a catch-all sound cue, not
+bump-specific. `play_cannon_sound`
 (was `sub_15EAC`) — clearest context is `fire`'s "FIRE DIRECT-"
 sequence (`_playerTileId==0x24`, Ship) right after the direction is
 confirmed. `read_animated_digit_keypress` (was `sub_16F7F`) — same
@@ -1238,7 +1242,8 @@ It's a direct continuation of `minax_death_sequence`'s function chunk
    same bracket convention as this game's own "ULTIMA ][" branding.
 
 Fixed via `ida_scripts/fix_ending_strings.py` (identical technique to
-`fix_inline_strings.py`, scoped to these 2 specific sites). Both
-`play_bump_sound` calls bracketing this sequence are worth revisiting
-— see the open item in `docs/roadmap.md`, since their use here weakens
-that name's original "movement blocked" justification.
+`fix_inline_strings.py`, scoped to these 2 specific sites). The two
+sound-effect calls bracketing this sequence are what led to renaming
+`play_bump_sound` → `play_beep_sound` (2026-08-19, see
+`docs/roadmap.md`) — their use here had nothing to do with blocked
+movement, confirming the old name was too narrow.
