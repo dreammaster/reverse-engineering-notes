@@ -4327,10 +4327,29 @@ static Bytes_0(void) {
 	MakeStruct	(0X17446,	"Savegame");
 	set_name	(0X17446,	"player");
 	create_byte	(0X17547);
-	make_array	(0X17547,	0XBC);
+	make_array	(0X17547,	0X20);
 	set_name	(0X17547,	"_mapMonsters");
+	create_byte	(0X17567);
+	make_array	(0X17567,	0X20);
+	set_name	(0X17567,	"_monsterMapY");
+	create_byte	(0X17587);
+	make_array	(0X17587,	0X20);
+	set_name	(0X17587,	"_monsterSpellHP");
+	create_byte	(0X175A7);
+	make_array	(0X175A7,	0X20);
+	set_name	(0X175A7,	"_monsterType");
+	create_byte	(0X175C7);
+	make_array	(0X175C7,	0X20);
+	set_name	(0X175C7,	"_monsterGlyphTile");
+	create_byte	(0X175E7);
+	make_array	(0X175E7,	0X20);
+	set_name	(0X175E7,	"_monsterOfferFlag");
 	create_byte	(0X17607);
+	make_array	(0X17607,	0X20);
+	set_name	(0X17607,	"_monsterTempX");
 	create_byte	(0X17627);
+	make_array	(0X17627,	0X20);
+	set_name	(0X17627,	"_monsterTempY");
 	create_byte	(0X17649);
 	set_name	(0X17649,	"_demoMode");
 	create_byte	(0X1764E);
@@ -4525,14 +4544,6 @@ static Bytes_0(void) {
 	create_byte	(0X180B2);
 	make_array	(0X180B2,	0X42);
 	set_name	(0X180B2,	"tile_25");
-	set_cmt	(0X180F4,	"overworld tile 26: byte0=row width in bytes, byte1=row count, then 64 bytes CGA Linear 2bpp pixel data (16x16px)",	0);
-	create_byte	(0X180F4);
-	make_array	(0X180F4,	0X42);
-	set_name	(0X180F4,	"tile_26");
-	set_cmt	(0X18136,	"overworld tile 27: byte0=row width in bytes, byte1=row count, then 64 bytes CGA Linear 2bpp pixel data (16x16px)",	0);
-	create_byte	(0X18136);
-	make_array	(0X18136,	0X42);
-	set_name	(0X18136,	"tile_27");
 }
 
 //------------------------------------------------------------------------
@@ -4542,6 +4553,14 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X180F4,	"overworld tile 26: byte0=row width in bytes, byte1=row count, then 64 bytes CGA Linear 2bpp pixel data (16x16px)",	0);
+	create_byte	(0X180F4);
+	make_array	(0X180F4,	0X42);
+	set_name	(0X180F4,	"tile_26");
+	set_cmt	(0X18136,	"overworld tile 27: byte0=row width in bytes, byte1=row count, then 64 bytes CGA Linear 2bpp pixel data (16x16px)",	0);
+	create_byte	(0X18136);
+	make_array	(0X18136,	0X42);
+	set_name	(0X18136,	"tile_27");
 	set_cmt	(0X18178,	"overworld tile 28: byte0=row width in bytes, byte1=row count, then 64 bytes CGA Linear 2bpp pixel data (16x16px)",	0);
 	create_byte	(0X18178);
 	make_array	(0X18178,	0X42);

@@ -1085,7 +1085,7 @@ loc_10A6D:                              ; CODE XREF: end_of_turn+18↑j
                 mov     di, bx
 
 loc_10A74:                              ; CODE XREF: end_of_turn+72↓j
-                mov     al, (_mapMonsters+60h)[di]
+                mov     al, _monsterType[di]
                 or      al, al
                 jz      short loc_10AA1
                 mov     al, _playerTileId
@@ -1094,7 +1094,7 @@ loc_10A74:                              ; CODE XREF: end_of_turn+72↓j
                 mov     al, byte_17436
                 or      al, al
                 jns     short loc_10AA7
-                mov     al, (_mapMonsters+60h)[di]
+                mov     al, _monsterType[di]
                 cmp     al, 48h ; 'H'
                 jz      short loc_10AA7
                 cmp     al, 3Ch ; '<'
@@ -1131,7 +1131,7 @@ loc_10AA7:                              ; CODE XREF: end_of_turn+51↑j
                 mov     di, bx
                 cmp     al, 20h ; ' '
                 jnb     short loc_10AFC
-                mov     al, (_mapMonsters+60h)[di]
+                mov     al, _monsterType[di]
                 cmp     al, 34h ; '4'
                 jnz     short loc_10AE1
                 call    leg_paralysis_trap
@@ -1173,7 +1173,7 @@ loc_10AFC:                              ; CODE XREF: end_of_turn+88↑j
                 mov     bl, points_to_distrubte
                 mov     di, bx
                 call    compute_monster_direction_scaled
-                mov     al, (_mapMonsters+40h)[di]
+                mov     al, _monsterSpellHP[di]
                 cmp     al, 0Fh
                 jnb     short loc_10B25
                 stc
@@ -1199,7 +1199,7 @@ loc_10B25:                              ; CODE XREF: end_of_turn+DD↑j
 
 loc_10B39:                              ; CODE XREF: end_of_turn+104↑j
                 clc
-                mov     al, (_mapMonsters+20h)[di]
+                mov     al, _monsterMapY[di]
                 adc     al, _circleDeltaY
                 and     al, 3Fh
                 cmp     al, _mapY
@@ -1211,7 +1211,7 @@ loc_10B4D:                              ; CODE XREF: end_of_turn+118↑j
                 inc     byte_17430
                 mov     bx, di
                 mov     byte ptr _sleepFlag2?, bl
-                mov     al, (_mapMonsters+60h)[di]
+                mov     al, _monsterType[di]
                 cmp     al, 0FCh
                 jnz     short loc_10B62
                 call    random_item_loss_trap
@@ -1227,7 +1227,7 @@ loc_10B62:                              ; CODE XREF: end_of_turn+12D↑j
                 cmp     al, player._readiedArmor
                 jb      short loc_10BA0
                 inc     _commandWaitCtr
-                mov     al, (_mapMonsters+40h)[di]
+                mov     al, _monsterSpellHP[di]
                 clc
                 rcr     al, 1
                 clc
@@ -1398,7 +1398,7 @@ loc_10C9C:                              ; CODE XREF: end_of_turn+74↑j
                 mov     di, bx
 
 loc_10CA2:                              ; CODE XREF: end_of_turn+27B↓j
-                mov     al, (_mapMonsters+60h)[di]
+                mov     al, _monsterType[di]
                 or      al, al
                 jz      short loc_10CB0
                 dec     di
@@ -1439,13 +1439,13 @@ loc_10CDC:                              ; CODE XREF: end_of_turn+2A6↑j
                 mov     bh, 0
                 mov     bl, byte_1742F
                 mov     di, bx
-                mov     (_mapMonsters+20h)[di], al
+                mov     _monsterMapY[di], al
                 mov     _playerY, al
                 call    get_player_tile
                 mov     bh, 0
                 mov     bl, byte_1742F
                 mov     di, bx
-                mov     (_mapMonsters+80h)[di], al
+                mov     _monsterGlyphTile[di], al
                 inc     byte ptr player+2Ah
                 mov     al, byte ptr player+2Ah
                 clc
@@ -1520,7 +1520,7 @@ loc_10D41:                              ; CODE XREF: end_of_turn+30C↑j
 ; ---------------------------------------------------------------------------
 
 loc_10D44:                              ; CODE XREF: end_of_turn+2D6↑j
-                mov     al, (_mapMonsters+80h)[di]
+                mov     al, _monsterGlyphTile[di]
                 cmp     al, 8
                 jz      short loc_10D4F
                 jmp     short loc_10DC4
@@ -1534,14 +1534,14 @@ loc_10D4F:                              ; CODE XREF: end_of_turn+31A↑j
                 mov     al, 30h ; '0'
                 mov     bx, current_tile_ptr
                 mov     [bx+si], al
-                mov     (_mapMonsters+60h)[di], al
+                mov     _monsterType[di], al
                 mov     al, 10h
-                mov     (_mapMonsters+40h)[di], al
+                mov     _monsterSpellHP[di], al
                 jmp     loc_10BAF
 ; ---------------------------------------------------------------------------
 
 loc_10D64:                              ; CODE XREF: end_of_turn+2DE↑j
-                mov     al, (_mapMonsters+80h)[di]
+                mov     al, _monsterGlyphTile[di]
                 cmp     al, 8
                 jz      short loc_10D6F
                 jmp     short loc_10DC4
@@ -1555,14 +1555,14 @@ loc_10D6F:                              ; CODE XREF: end_of_turn+33A↑j
                 mov     al, 0FCh
                 mov     bx, current_tile_ptr
                 mov     [bx+si], al
-                mov     (_mapMonsters+60h)[di], al
+                mov     _monsterType[di], al
                 mov     al, 20h ; ' '
-                mov     (_mapMonsters+40h)[di], al
+                mov     _monsterSpellHP[di], al
                 jmp     loc_10BAF
 ; ---------------------------------------------------------------------------
 
 loc_10D84:                              ; CODE XREF: end_of_turn+2E6↑j
-                mov     al, (_mapMonsters+80h)[di]
+                mov     al, _monsterGlyphTile[di]
                 cmp     al, 8
                 jz      short loc_10D8F
                 jmp     short loc_10DC4
@@ -1576,14 +1576,14 @@ loc_10D8F:                              ; CODE XREF: end_of_turn+35A↑j
                 mov     al, 34h ; '4'
                 mov     bx, current_tile_ptr
                 mov     [bx+si], al
-                mov     (_mapMonsters+60h)[di], al
+                mov     _monsterType[di], al
                 mov     al, 40h ; '@'
-                mov     (_mapMonsters+40h)[di], al
+                mov     _monsterSpellHP[di], al
                 jmp     loc_10BAF
 ; ---------------------------------------------------------------------------
 
 loc_10DA4:                              ; CODE XREF: end_of_turn+2EE↑j
-                mov     al, (_mapMonsters+80h)[di]
+                mov     al, _monsterGlyphTile[di]
                 cmp     al, 0
                 jz      short loc_10DAF
                 jmp     short loc_10DC4
@@ -1597,9 +1597,9 @@ loc_10DAF:                              ; CODE XREF: end_of_turn+37A↑j
                 mov     al, 2Ch ; ','
                 mov     bx, current_tile_ptr
                 mov     [bx+si], al
-                mov     (_mapMonsters+60h)[di], al
+                mov     _monsterType[di], al
                 mov     al, 40h ; '@'
-                mov     (_mapMonsters+40h)[di], al
+                mov     _monsterSpellHP[di], al
                 jmp     loc_10BAF
 ; ---------------------------------------------------------------------------
 
@@ -1634,7 +1634,7 @@ loc_10DD1:                              ; CODE XREF: end_of_turn+30E↑j
 ; START OF FUNCTION CHUNK FOR end_of_turn
 
 loc_10DD4:                              ; CODE XREF: end_of_turn+2F6↑j
-                mov     al, (_mapMonsters+80h)[di]
+                mov     al, _monsterGlyphTile[di]
                 cmp     al, 8
                 jz      short loc_10DDE
                 jmp     short loc_10DC4
@@ -1644,14 +1644,14 @@ loc_10DDE:                              ; CODE XREF: end_of_turn+3AA↑j
                 mov     al, 0F0h
                 mov     bx, current_tile_ptr
                 mov     [bx+si], al
-                mov     (_mapMonsters+60h)[di], al
+                mov     _monsterType[di], al
                 mov     al, 80h
-                mov     (_mapMonsters+40h)[di], al
+                mov     _monsterSpellHP[di], al
                 jmp     loc_10BAF
 ; ---------------------------------------------------------------------------
 
 loc_10DF3:                              ; CODE XREF: end_of_turn:loc_10DCB↑j
-                mov     al, (_mapMonsters+80h)[di]
+                mov     al, _monsterGlyphTile[di]
                 cmp     al, 0
                 jz      short loc_10DFD
                 jmp     short loc_10DC4
@@ -1661,14 +1661,14 @@ loc_10DFD:                              ; CODE XREF: end_of_turn+3C9↑j
                 mov     al, 48h ; 'H'
                 mov     bx, current_tile_ptr
                 mov     [bx+si], al
-                mov     (_mapMonsters+60h)[di], al
+                mov     _monsterType[di], al
                 mov     al, 0A0h
-                mov     (_mapMonsters+40h)[di], al
+                mov     _monsterSpellHP[di], al
                 jmp     loc_10BAF
 ; ---------------------------------------------------------------------------
 
 loc_10E12:                              ; CODE XREF: end_of_turn:loc_10DCE↑j
-                mov     al, (_mapMonsters+80h)[di]
+                mov     al, _monsterGlyphTile[di]
                 cmp     al, 8
                 jz      short loc_10E1C
                 jmp     short loc_10DC4
@@ -1678,14 +1678,14 @@ loc_10E1C:                              ; CODE XREF: end_of_turn+3E8↑j
                 mov     al, 38h ; '8'
                 mov     bx, current_tile_ptr
                 mov     [bx+si], al
-                mov     (_mapMonsters+60h)[di], al
+                mov     _monsterType[di], al
                 mov     al, 0C0h
-                mov     (_mapMonsters+40h)[di], al
+                mov     _monsterSpellHP[di], al
                 jmp     loc_10BAF
 ; ---------------------------------------------------------------------------
 
 loc_10E31:                              ; CODE XREF: end_of_turn:loc_10DD1↑j
-                mov     al, (_mapMonsters+80h)[di]
+                mov     al, _monsterGlyphTile[di]
                 cmp     al, 8
                 jz      short loc_10E3B
                 jmp     short loc_10DC4
@@ -1695,14 +1695,14 @@ loc_10E3B:                              ; CODE XREF: end_of_turn+407↑j
                 mov     al, 0F8h
                 mov     bx, current_tile_ptr
                 mov     [bx+si], al
-                mov     (_mapMonsters+60h)[di], al
+                mov     _monsterType[di], al
                 mov     al, 0E0h
-                mov     (_mapMonsters+40h)[di], al
+                mov     _monsterSpellHP[di], al
                 jmp     loc_10BAF
 ; ---------------------------------------------------------------------------
 
 loc_10E50:                              ; CODE XREF: end_of_turn:loc_10D41↑j
-                mov     al, (_mapMonsters+80h)[di]
+                mov     al, _monsterGlyphTile[di]
                 cmp     al, 8
                 jz      short loc_10E5B
                 jmp     loc_10DC4
@@ -1712,9 +1712,9 @@ loc_10E5B:                              ; CODE XREF: end_of_turn+426↑j
                 mov     al, 3Ch ; '<'
                 mov     bx, current_tile_ptr
                 mov     [bx+si], al
-                mov     (_mapMonsters+60h)[di], al
+                mov     _monsterType[di], al
                 mov     al, 0FFh
-                mov     (_mapMonsters+40h)[di], al
+                mov     _monsterSpellHP[di], al
                 jmp     loc_10BAF
 ; END OF FUNCTION CHUNK FOR end_of_turn
 
@@ -1945,10 +1945,10 @@ loc_1101C:                              ; CODE XREF: canMoveToTile-13AD↓j
                 nop
                 mov     bx, di
                 mov     byte_17435, bl
-                mov     al, (_mapMonsters+60h)[di]
+                mov     al, _monsterType[di]
                 or      al, al
                 jz      short loc_11040
-                mov     al, (_mapMonsters+0A0h)[di]
+                mov     al, _monsterOfferFlag[di]
                 or      al, al
                 jz      short loc_11040
                 js      short loc_11040
@@ -1966,7 +1966,7 @@ loc_1101C:                              ; CODE XREF: canMoveToTile-13AD↓j
 
 loc_11040:                              ; CODE XREF: end_of_turn+178↑j
                                         ; end_of_turn+5F9↑j ...
-                mov     al, (_mapMonsters+60h)[di]
+                mov     al, _monsterType[di]
                 cmp     al, 40h ; '@'
                 jnz     short loc_1106D
                 mov     al, _mapMonsters[di]
@@ -1976,7 +1976,7 @@ loc_11040:                              ; CODE XREF: end_of_turn+178↑j
                 call    abs_byte
                 cmp     al, 4
                 jnb     short loc_1106D
-                mov     al, (_mapMonsters+20h)[di]
+                mov     al, _monsterMapY[di]
                 stc
                 cmc
                 sbb     al, _mapY
@@ -2011,9 +2011,9 @@ loc_11086:                              ; CODE XREF: end_of_turn+607↑j
                 mov     bh, 0
                 mov     bl, byte_17435
                 mov     di, bx
-                mov     al, byte_17607[di]
+                mov     al, _monsterTempX[di]
                 mov     _circleDeltaX, al
-                mov     al, byte_17627[di]
+                mov     al, _monsterTempY[di]
                 mov     _circleDeltaY, al
                 call    rand_byte
                 cmp     al, 40h ; '@'
@@ -2023,14 +2023,14 @@ loc_11086:                              ; CODE XREF: end_of_turn+607↑j
                 mov     bh, 0
                 mov     bl, byte_17435
                 mov     di, bx
-                mov     byte_17607[di], al
+                mov     _monsterTempX[di], al
                 mov     _circleDeltaX, al
                 call    rand_byte
                 call    sign_byte
                 mov     bh, 0
                 mov     bl, byte_17435
                 mov     di, bx
-                mov     byte_17627[di], al
+                mov     _monsterTempY[di], al
                 mov     _circleDeltaY, al
 
 loc_110CE:                              ; CODE XREF: canMoveToTile-1381↑j
@@ -2062,7 +2062,7 @@ loc_110F3:                              ; CODE XREF: canMoveToTile-1335↑j
 
 loc_110FC:                              ; CODE XREF: canMoveToTile-132C↑j
                 clc
-                mov     al, (_mapMonsters+20h)[di]
+                mov     al, _monsterMapY[di]
                 adc     al, _circleDeltaY
                 and     al, 3Fh
                 mov     _playerY, al
@@ -2145,7 +2145,7 @@ loc_1115F:                              ; CODE XREF: end_of_turn+33↑j
                 mov     byte_1742F, bl
 
 loc_11170:                              ; CODE XREF: end_of_turn+756↓j
-                mov     al, (_mapMonsters+60h)[di]
+                mov     al, _monsterType[di]
                 or      al, al
                 jnz     short loc_1118B
 
@@ -2166,7 +2166,7 @@ loc_1118B:                              ; CODE XREF: end_of_turn+746↑j
                 mov     bl, byte_1742F
                 mov     di, bx
                 call    compute_monster_direction_to_player
-                mov     al, (_mapMonsters+40h)[di]
+                mov     al, _monsterSpellHP[di]
                 cmp     al, 0Fh
                 jnb     short loc_111B5
                 stc
@@ -2188,7 +2188,7 @@ loc_111B5:                              ; CODE XREF: end_of_turn+76D↑j
                 clc
                 adc     al, _mapMonsters[di]
                 mov     _playerX, al
-                mov     al, (_mapMonsters+20h)[di]
+                mov     al, _monsterMapY[di]
                 mov     _playerY, al
                 mov     al, _playerX
                 cmp     al, _mapX
@@ -2216,7 +2216,7 @@ loc_111EF:                              ; CODE XREF: end_of_turn+78B↑j
                 or      al, al
                 jz      short loc_11229
                 clc
-                adc     al, (_mapMonsters+20h)[di]
+                adc     al, _monsterMapY[di]
                 mov     _playerY, al
                 mov     al, _mapMonsters[di]
                 mov     _playerX, al
@@ -2261,7 +2261,7 @@ loc_11237:                              ; CODE XREF: end_of_turn+802↑j
                 mov     [di+217h], al
                 mov     al, _mapMonsters[di]
                 mov     _playerX, al
-                mov     al, (_mapMonsters+20h)[di]
+                mov     al, _monsterMapY[di]
                 mov     _playerY, al
                 call    map_get_monster_at?
                 mov     bx, word_17418
@@ -2274,11 +2274,11 @@ loc_11237:                              ; CODE XREF: end_of_turn+802↑j
                 mov     _mapMonsters[di], al
                 mov     al, [di+217h]
                 mov     _playerY, al
-                mov     (_mapMonsters+20h)[di], al
+                mov     _monsterMapY[di], al
                 call    map_get_monster_at?
                 mov     bx, word_17418
                 mov     al, [bx+si]
-                or      al, (_mapMonsters+60h)[di]
+                or      al, _monsterType[di]
                 mov     bx, word_17418
                 mov     [bx+si], al
                 jmp     loc_11178
@@ -2359,14 +2359,14 @@ loc_11308:                              ; CODE XREF: end_of_turn+7AE↑j
                 mov     bl, byte_1742F
                 mov     di, bx
                 mov     al, byte_17435
-                cmp     al, (_mapMonsters+80h)[di]
+                cmp     al, _monsterGlyphTile[di]
                 jz      short loc_11324
                 jmp     loc_11178
 ; ---------------------------------------------------------------------------
 
 loc_11324:                              ; CODE XREF: end_of_turn+8EF↑j
                 nop
-                mov     al, (_mapMonsters+60h)[di]
+                mov     al, _monsterType[di]
                 cmp     al, 2
                 jnz     short loc_11330
                 jmp     short loc_113AB
@@ -2395,7 +2395,7 @@ loc_1133E:                              ; CODE XREF: end_of_turn+8DE↑j
                 mov     bl, byte_1742F
                 mov     di, bx
                 mov     al, byte_17435
-                cmp     al, (_mapMonsters+80h)[di]
+                cmp     al, _monsterGlyphTile[di]
                 jz      short loc_11353
                 jmp     loc_11178
 ; ---------------------------------------------------------------------------
@@ -2510,7 +2510,7 @@ check_monster_on_level proc near        ; CODE XREF: end_of_turn+7B2↑p
                                         ; end_of_turn+7EC↑p
                 nop
                 mov     al, byte_17435
-                cmp     al, (_mapMonsters+80h)[di]
+                cmp     al, _monsterGlyphTile[di]
                 jz      short loc_1144B
                 mov     al, 0FFh
                 or      al, al
@@ -2528,7 +2528,7 @@ check_monster_on_level endp
 map_get_monster_at? proc near           ; CODE XREF: end_of_turn+7FD↑p
                                         ; end_of_turn+824↑p ...
                 nop
-                mov     al, (_mapMonsters+80h)[di]
+                mov     al, _monsterGlyphTile[di]
 
 loc_11451:                              ; CODE XREF: attack+2A4↓p
                                         ; attack+362↓p ...
@@ -2566,7 +2566,7 @@ spawn_dungeon_monster proc near         ; CODE XREF: end_of_turn+730↑p
 loc_11486:                              ; CODE XREF: spawn_dungeon_monster+1E↓j
                 mov     bx, di
                 mov     byte_1742F, bl
-                mov     al, (_mapMonsters+60h)[di]
+                mov     al, _monsterType[di]
                 or      al, al
                 jz      short loc_114A0
 
@@ -2598,12 +2598,12 @@ loc_114A0:                              ; CODE XREF: spawn_dungeon_monster+13↑
                 and     al, 7
                 add     al, al
                 or      al, 1
-                mov     (_mapMonsters+20h)[di], al
+                mov     _monsterMapY[di], al
                 mov     _playerY, al
                 mov     ax, di
                 clc
                 rcr     al, 1
-                mov     (_mapMonsters+80h)[di], al
+                mov     _monsterGlyphTile[di], al
                 call    map_get_monster_at?
                 jnz     short loc_11494
                 call    rand_byte
@@ -2614,7 +2614,7 @@ loc_114A0:                              ; CODE XREF: spawn_dungeon_monster+13↑
                 cmp     al, 7
                 jz      short loc_114FA
                 add     al, al
-                cmp     al, (_mapMonsters+80h)[di]
+                cmp     al, _monsterGlyphTile[di]
                 jz      short loc_114FC
                 jb      short loc_114FC
 
@@ -2628,18 +2628,18 @@ loc_114FC:                              ; CODE XREF: spawn_dungeon_monster+77↑
                 clc
                 rcr     al, 1
                 adc     al, 1
-                mov     (_mapMonsters+60h)[di], al
+                mov     _monsterType[di], al
                 add     al, al
-                adc     al, (_mapMonsters+80h)[di]
+                adc     al, _monsterGlyphTile[di]
                 add     al, al
                 add     al, al
                 add     al, al
                 or      al, 10h
-                mov     (_mapMonsters+40h)[di], al
+                mov     _monsterSpellHP[di], al
                 call    map_get_monster_at?
                 mov     bx, word_17418
                 mov     al, [bx+si]
-                or      al, (_mapMonsters+60h)[di]
+                or      al, _monsterType[di]
                 mov     bx, word_17418
                 mov     [bx+si], al
                 jmp     loc_11494
@@ -2661,7 +2661,7 @@ compute_monster_direction_to_player proc near
                 mov     al, _mapY
                 stc
                 cmc
-                sbb     al, (_mapMonsters+20h)[di]
+                sbb     al, _monsterMapY[di]
                 call    sign_byte
                 mov     _circleDeltaY, al
                 retn
@@ -3615,10 +3615,10 @@ compute_item_price endp
 
 loc_12122:                              ; CODE XREF: end_of_turn+106↑j
                                         ; end_of_turn+11A↑j ...
-                mov     al, (_mapMonsters+40h)[di]
+                mov     al, _monsterSpellHP[di]
                 cmp     al, 10h
                 jnb     short loc_1212E
-                inc     (_mapMonsters+40h)[di]
+                inc     _monsterSpellHP[di]
 
 loc_1212E:                              ; CODE XREF: canMoveToTile-2FB↑j
                 clc
@@ -3627,7 +3627,7 @@ loc_1212E:                              ; CODE XREF: canMoveToTile-2FB↑j
                 and     al, 3Fh
                 mov     _playerX, al
                 clc
-                mov     al, (_mapMonsters+20h)[di]
+                mov     al, _monsterMapY[di]
                 adc     al, _circleDeltaY
                 and     al, 3Fh
                 mov     _playerY, al
@@ -3656,7 +3656,7 @@ loc_1216E:                              ; CODE XREF: canMoveToTile-2C9↑j
                 adc     al, _circleDeltaX
                 and     al, 3Fh
                 mov     _playerX, al
-                mov     al, (_mapMonsters+20h)[di]
+                mov     al, _monsterMapY[di]
                 mov     _playerY, al
                 call    get_player_tile
                 call    check_monster_collision
@@ -3689,7 +3689,7 @@ check_monster_collision proc near       ; CODE XREF: canMoveToTile-2D6↑p
 ; ---------------------------------------------------------------------------
 
 loc_121A6:                              ; CODE XREF: check_monster_collision+8↑j
-                mov     al, (_mapMonsters+60h)[di]
+                mov     al, _monsterType[di]
                 cmp     al, 2Ch ; ','
                 jz      short loc_121D8
                 cmp     al, 48h ; 'H'
@@ -3775,10 +3775,10 @@ loc_12216:                              ; CODE XREF: canMoveToTile-21B↑j
                 mov     byte ptr _sleepFlag2?+1, al
                 mov     al, _mapMonsters[di]
                 mov     _playerX, al
-                mov     al, (_mapMonsters+20h)[di]
+                mov     al, _monsterMapY[di]
                 mov     _playerY, al
                 call    get_player_tile
-                mov     al, (_mapMonsters+80h)[di]
+                mov     al, _monsterGlyphTile[di]
                 mov     bh, 0
                 mov     bl, 0
                 mov     si, bx
@@ -3789,10 +3789,10 @@ loc_12216:                              ; CODE XREF: canMoveToTile-21B↑j
                 mov     _mapMonsters[di], al
                 mov     al, byte ptr _sleepFlag2?+1
                 mov     _playerY, al
-                mov     (_mapMonsters+20h)[di], al
+                mov     _monsterMapY[di], al
                 call    get_player_tile
-                mov     (_mapMonsters+80h)[di], al
-                mov     al, (_mapMonsters+60h)[di]
+                mov     _monsterGlyphTile[di], al
+                mov     al, _monsterType[di]
                 mov     bx, current_tile_ptr
                 mov     [bx+si], al
                 mov     al, player._mapNum2
@@ -4044,13 +4044,13 @@ find_target_monster proc near           ; CODE XREF: attack+35↓p
                 mov     di, bx
 
 loc_12402:                              ; CODE XREF: find_target_monster+3A↓j
-                mov     al, (_mapMonsters+60h)[di]
+                mov     al, _monsterType[di]
                 cmp     al, 0
                 jz      short loc_1241F
                 mov     al, _mapMonsters[di]
                 cmp     al, _playerX
                 jnz     short loc_1241F
-                mov     al, (_mapMonsters+20h)[di]
+                mov     al, _monsterMapY[di]
                 cmp     al, _playerY
                 jnz     short loc_1241F
                 retn
@@ -5247,14 +5247,14 @@ aHit            db '--HIT!!!',0
 
 loc_12C19:                              ; CODE XREF: fire+58↓j
                 stc
-                mov     al, (_mapMonsters+40h)[di]
+                mov     al, _monsterSpellHP[di]
                 cmc
                 sbb     al, byte_1742F
                 cmc
                 jnb     short loc_12CA4
-                mov     (_mapMonsters+40h)[di], al
+                mov     _monsterSpellHP[di], al
                 call    xorDrawCircle
-                mov     al, (_mapMonsters+60h)[di]
+                mov     al, _monsterType[di]
                 cmp     al, 40h ; '@'
                 jz      short loc_12C38
                 jmp     end_of_turn2
@@ -5269,21 +5269,21 @@ loc_12C38:                              ; CODE XREF: attack+A4↑j
                 mov     di, bx
                 mov     al, _mapMonsters[di]
                 mov     _playerX, al
-                mov     al, (_mapMonsters+20h)[di]
+                mov     al, _monsterMapY[di]
                 mov     _playerY, al
                 call    get_player_tile
-                mov     al, (_mapMonsters+80h)[di]
+                mov     al, _monsterGlyphTile[di]
                 mov     bx, current_tile_ptr
                 mov     [bx+si], al
                 mov     al, _playerX
-                mov     (_mapMonsters+20h)[di], al
+                mov     _monsterMapY[di], al
                 mov     al, _playerY
                 mov     _mapMonsters[di], al
                 mov     _playerX, al
-                mov     al, (_mapMonsters+20h)[di]
+                mov     al, _monsterMapY[di]
                 mov     _playerY, al
                 call    get_player_tile
-                mov     al, (_mapMonsters+60h)[di]
+                mov     al, _monsterType[di]
                 mov     bx, current_tile_ptr
                 mov     [bx+si], al
                 mov     al, 84h
@@ -5298,16 +5298,16 @@ loc_12C38:                              ; CODE XREF: attack+A4↑j
 loc_12CA4:                              ; CODE XREF: attack+95↑j
                 mov     al, _mapMonsters[di]
                 mov     _playerX, al
-                mov     al, (_mapMonsters+20h)[di]
+                mov     al, _monsterMapY[di]
                 mov     _playerY, al
                 call    get_player_tile
                 mov     bh, 0
                 mov     bl, 0
                 mov     si, bx
-                mov     al, (_mapMonsters+80h)[di]
+                mov     al, _monsterGlyphTile[di]
                 mov     bx, current_tile_ptr
                 mov     [bx+si], al
-                mov     al, (_mapMonsters+60h)[di]
+                mov     al, _monsterType[di]
                 cmp     al, 40h ; '@'
                 jnz     short loc_12CD3
                 call    minax_death_sequence
@@ -5424,11 +5424,11 @@ loc_12D8B:                              ; CODE XREF: attack+1D3↑j
 loc_12D8C:                              ; CODE XREF: attack+153↑j
                                         ; attack+190↑j ...
                 mov     al, 0
-                mov     (_mapMonsters+80h)[di], al
-                mov     (_mapMonsters+40h)[di], al
+                mov     _monsterGlyphTile[di], al
+                mov     _monsterSpellHP[di], al
                 mov     _mapMonsters[di], al
-                mov     (_mapMonsters+20h)[di], al
-                mov     (_mapMonsters+60h)[di], al
+                mov     _monsterMapY[di], al
+                mov     _monsterType[di], al
                 call    write_string
 ; ---------------------------------------------------------------------------
 aKilledGold     db 0Dh,'KILLED--GOLD+',0
@@ -5507,10 +5507,10 @@ loc_12E49:                              ; CODE XREF: attack+2E9↓j
                 mov     al, _mapMonsters[di]
                 cmp     al, _playerX
                 jnz     short loc_12E6A
-                mov     al, (_mapMonsters+20h)[di]
+                mov     al, _monsterMapY[di]
                 cmp     al, _playerY
                 jnz     short loc_12E6A
-                mov     al, (_mapMonsters+80h)[di]
+                mov     al, _monsterGlyphTile[di]
                 cmp     al, byte_17435
                 jnz     short loc_12E6A
                 jmp     short loc_12E7D
@@ -5561,13 +5561,13 @@ aHit_0          db 'HIT!',0
                 mov     bl, byte_1742F
                 mov     di, bx
                 mov     byte_17430, al
-                mov     al, (_mapMonsters+40h)[di]
+                mov     al, _monsterSpellHP[di]
                 stc
                 cmc
                 sbb     al, byte_17430
                 cmc
                 jnb     short loc_12ED1
-                mov     (_mapMonsters+40h)[di], al
+                mov     _monsterSpellHP[di], al
                 jmp     end_of_turn2
 ; ---------------------------------------------------------------------------
 
@@ -5575,12 +5575,12 @@ loc_12ED1:                              ; CODE XREF: attack+339↑j
                                         ; cast+1C1↓j ...
                 nop
                 mov     al, 0
-                mov     (_mapMonsters+40h)[di], al
-                mov     (_mapMonsters+60h)[di], al
-                mov     (_mapMonsters+80h)[di], al
+                mov     _monsterSpellHP[di], al
+                mov     _monsterType[di], al
+                mov     _monsterGlyphTile[di], al
                 mov     al, _mapMonsters[di]
                 mov     _playerX, al
-                mov     al, (_mapMonsters+20h)[di]
+                mov     al, _monsterMapY[di]
                 mov     _playerY, al
                 mov     al, byte_17435
                 call    loc_11451
@@ -6096,11 +6096,11 @@ loc_132AD:                              ; CODE XREF: cast:loc_13216↑j
                 add     al, al
                 adc     al, 1Eh
                 mov     byte_17430, al
-                mov     al, (_mapMonsters+40h)[di]
+                mov     al, _monsterSpellHP[di]
                 cmc
                 sbb     al, byte_17430
                 cmc
-                mov     (_mapMonsters+40h)[di], al
+                mov     _monsterSpellHP[di], al
                 jb      short loc_132CF
                 jmp     loc_12ED1
 ; ---------------------------------------------------------------------------
@@ -6154,7 +6154,7 @@ find_cursor_target_monster proc near    ; CODE XREF: cast:loc_132AD↑p
                 mov     di, bx
 
 loc_13312:                              ; CODE XREF: find_cursor_target_monster+F↓j
-                mov     al, (_mapMonsters+60h)[di]
+                mov     al, _monsterType[di]
                 or      al, al
                 jnz     short loc_13322
 
@@ -6168,7 +6168,7 @@ loc_1331A:                              ; CODE XREF: find_cursor_target_monster+
 ; ---------------------------------------------------------------------------
 
 loc_13322:                              ; CODE XREF: find_cursor_target_monster+C↑j
-                mov     al, (_mapMonsters+80h)[di]
+                mov     al, _monsterGlyphTile[di]
                 cmp     al, byte_17435
                 jnz     short loc_1331A
                 mov     al, _mapX
@@ -6179,7 +6179,7 @@ loc_13322:                              ; CODE XREF: find_cursor_target_monster+
                 mov     al, _mapY
                 clc
                 adc     al, _mapTop
-                cmp     al, (_mapMonsters+20h)[di]
+                cmp     al, _monsterMapY[di]
                 jnz     short loc_1331A
                 mov     ax, di
                 or      al, al
@@ -7309,7 +7309,7 @@ aHowMuch100     db 'HOW MUCH (*100) ? ',0
                 mov     bh, 0
                 mov     bl, byte_1742F
                 mov     di, bx
-                mov     al, (_mapMonsters+0A0h)[di]
+                mov     al, _monsterOfferFlag[di]
                 or      al, al
                 jns     short loc_13CB6
                 mov     al, player._mapNum2
@@ -7337,7 +7337,7 @@ loc_13CD2:                              ; CODE XREF: offer+85↑j
                 mov     bh, 0
                 mov     bl, byte_1742F
                 mov     di, bx
-                mov     al, (_mapMonsters+0A0h)[di]
+                mov     al, _monsterOfferFlag[di]
                 cmp     al, 81h
                 jz      short loc_13CED
                 cmp     al, 82h
@@ -7633,7 +7633,7 @@ loc_13FA5:                              ; CODE XREF: steal+79↑j
                 nop
                 call    rand_byte
                 js      short loc_13F7E
-                mov     al, _mapMonsters+0A0h
+                mov     al, _monsterOfferFlag
                 cmp     al, 1
                 jz      short loc_13F7E
                 mov     al, player._mapNum2
@@ -7786,7 +7786,7 @@ loc_140C0:                              ; CODE XREF: transact+2A↑j
 
 loc_140CB:                              ; CODE XREF: transact+76↑j
                 nop
-                mov     al, (_mapMonsters+60h)[di]
+                mov     al, _monsterType[di]
                 cmp     al, 6Ch ; 'l'
                 jnz     short loc_140D7
                 jmp     loc_14249
@@ -7794,7 +7794,7 @@ loc_140CB:                              ; CODE XREF: transact+76↑j
 
 loc_140D7:                              ; CODE XREF: transact+82↑j
                 nop
-                mov     al, (_mapMonsters+60h)[di]
+                mov     al, _monsterType[di]
                 cmp     al, 60h ; '`'
                 jnz     short loc_14104
                 call    write_string
@@ -8982,7 +8982,7 @@ compute_monster_direction_scaled proc near ; CODE XREF: end_of_turn+D4↑p
                 mov     _circleDeltaX, al
                 stc
                 mov     al, _mapY
-                sub     al, (_mapMonsters+20h)[di]
+                sub     al, _monsterMapY[di]
                 add     al, al
                 add     al, al
                 call    sign_byte
@@ -9001,7 +9001,7 @@ compute_monster_delta proc near         ; CODE XREF: end_of_turn:loc_10AA7↑p
                 mov     _circleDeltaX, al
                 stc
                 mov     al, _mapY
-                sub     al, (_mapMonsters+20h)[di]
+                sub     al, _monsterMapY[di]
                 mov     _circleDeltaY, al
                 retn
 compute_monster_delta endp
@@ -14350,78 +14350,22 @@ text_width?     db 0                    ; DATA XREF: zstats+D↑w
 player          Savegame <0>            ; DATA XREF: play_game+35↑o
                                         ; play_game:loc_107AA↑r ...
                 db    0
-_mapMonsters    db 0BCh dup(     0)     ; DATA XREF: end_of_turn+F6↑r
+_mapMonsters    db 20h dup(0)           ; DATA XREF: end_of_turn+F6↑r
                                         ; end_of_turn+298↑w ...
-unk_17603       db    0                 ; DATA XREF: seg002:0221↓o
-                db    0
-                db    0
-                db    0
-byte_17607      db 0                    ; DATA XREF: canMoveToTile-1394↑r
+_monsterMapY    db 20h dup(0)           ; DATA XREF: end_of_turn+10A↑r
+                                        ; end_of_turn+2B4↑w ...
+_monsterSpellHP db 20h dup(0)           ; DATA XREF: end_of_turn+D7↑r
+                                        ; end_of_turn+14D↑r ...
+_monsterType    db 20h dup(0)           ; DATA XREF: end_of_turn:loc_10A74↑r
+                                        ; end_of_turn+5A↑r ...
+_monsterGlyphTile db 20h dup(0)         ; DATA XREF: end_of_turn+2C6↑w
+                                        ; end_of_turn:loc_10D44↑r ...
+_monsterOfferFlag db 20h dup(0)         ; DATA XREF: end_of_turn+5FB↑r
+                                        ; offer+6F↑r ...
+_monsterTempX   db 20h dup(0)           ; DATA XREF: canMoveToTile-1394↑r
                                         ; canMoveToTile-1371↑w
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-byte_17627      db 0                    ; DATA XREF: canMoveToTile-138D↑r
+_monsterTempY   db 20h dup(0)           ; DATA XREF: canMoveToTile-138D↑r
                                         ; canMoveToTile-135C↑w
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
                 db    0
                 db    0
 _demoMode       db 0                    ; DATA XREF: start_+35↑w
@@ -15582,7 +15526,7 @@ loc_18CDA:                              ; CODE XREF: seg002:019B↑j
 loc_18CDE:                              ; CODE XREF: seg002:019F↑j
                 push    ds
                 adc     al, [bx+si]
-                lea     cx, unk_17603
+                lea     cx, _monsterOfferFlag+1Ch
                 sub     cx, 2
                 sub     cx, bx
 
