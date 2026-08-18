@@ -125,15 +125,34 @@ sessions, unlike a one-off todo list.
       a SWIG `OverflowError` from passing literal `-1` to
       `ida_enum.add_enum`'s `size_t idx` param (fixed: pass
       `idaapi.BADADDR` instead, the properly-unsigned form of the same
-      "append" sentinel). Note as of this pass: `ultima2.idc`'s `Enums()`
-      block is still empty — the `.idc` export hasn't been refreshed
-      since the enum was created (git shows it unchanged while `.asm`
-      is), so re-export it next time for the repo to catch up.
-- [ ] Now that `TileId` exists: cross-check tile byte size against the
-      "divide by 4" tile-ID encoding note elsewhere in file-formats.md,
-      and consider going through `canMoveToTile`/`draw_map` etc. to
-      apply the enum to existing raw tile-ID comparisons where it's
-      unambiguous which ones are actually tile IDs vs. unrelated bytes.
+      "append" sentinel). The "`.idc`'s `Enums()` block still empty"
+      note from this pass is now stale — resolved by the many
+      re-exports since (confirmed present: `add_enum(-1,"TileId",...)`
+      plus all members).
+- [x] Cross-checked `TileId` against raw tile comparisons in
+      `canMoveToTile`/`draw_map` (2026-08-18) — mixed result, both
+      halves resolved as far as they can be:
+      - **Clean win**: `canMoveToTile`'s vehicle dispatch compares
+        `_playerTileId` against `34`/`36`/`38`/`40` (decimal) = `TileId
+        × 2` for Horse/Ship/Airplane/Rocket — same encoding already
+        confirmed in `board`. The `TileId` enum stores the `×1` base
+        values, so direct `op_enum` operand-typing won't render
+        cleanly (no exact literal match) — commented all 4 sites
+        instead (`ida_scripts/comment_vehicle_tile_checks.py`,
+        address-verified against the actual decoded instruction before
+        writing each comment, not just hand-computed and trusted).
+      - **`draw_map`'s "divide by 4" bit-shift, found but not fully
+        reconciled**: it does `rcr al,1` (÷2) then `and al,0FEh`
+        (clears bit 0) on each raw map-tile byte before caching it in
+        `_mapTileIds[]` — only one halving step directly visible, not
+        two. But `_mapTileIds[]` gets compared against
+        `_priorMapTileIds[]` right after (a dirty-cell redraw-tracking
+        cache, bit 7 also used as a highlight flag via a sibling `or
+        al,80h`), so it may be an internal packed representation, not
+        the canonical tile-graphic index — reconciling fully would
+        need tracing whatever consumes `_mapTileIds[]` next, a deeper
+        rabbit hole than this item asked for. Left open rather than
+        guessing.
 - [x] Fetch the ModdingWiki "Ultima II Monster Format" page — **doesn't
       exist**, confirmed redlink on the summary page. No external
       source for `monx??`. Went ahead and wrote up what the

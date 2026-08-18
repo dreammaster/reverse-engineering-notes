@@ -1695,3 +1695,92 @@ Done. Re-export the .asm/.idc and check the new names took, then update docs/roa
 [*] gen_file(OFILE_IDC) returned 1
 [*] saving database to C:\dev\ultima2\ultima2.idb
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'C:\\dev\\ultima2\\ida_scripts\\comment_vehicle_tile_checks.py']
+[*] reading C:\dev\ultima2\ida_scripts\comment_vehicle_tile_checks.py
+[*] executing C:\dev\ultima2\ida_scripts\comment_vehicle_tile_checks.py
+[!] EXCEPTION:
+Traceback (most recent call last):
+  File "C:/dev/ultima2/ida_scripts/batch_run_and_export.py", line 80, in main
+    exec(compile(code, target_script, "exec"), g)
+  File "C:\dev\ultima2\ida_scripts\comment_vehicle_tile_checks.py", line 81, in <module>
+    main()
+  File "C:\dev\ultima2\ida_scripts\comment_vehicle_tile_checks.py", line 73, in main
+    apply_comment(ea, expected, comment)
+  File "C:\dev\ultima2\ida_scripts\comment_vehicle_tile_checks.py", line 55, in apply_comment
+    ok, err = verify_cmp_al_imm(ea, expected)
+  File "C:\dev\ultima2\ida_scripts\comment_vehicle_tile_checks.py", line 45, in verify_cmp_al_imm
+    if insn.itype != ida_ua.NN_cmp:
+AttributeError: module 'ida_ua' has no attribute 'NN_cmp'
+
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'C:\\dev\\ultima2\\ida_scripts\\comment_vehicle_tile_checks.py']
+[*] reading C:\dev\ultima2\ida_scripts\comment_vehicle_tile_checks.py
+[*] executing C:\dev\ultima2\ida_scripts\comment_vehicle_tile_checks.py
+[*] captured stdout from target script:
+----- begin target script output -----
+1253E: [!] address verification FAILED -- first operand isn't AL, skipping
+12545: [!] address verification FAILED -- first operand isn't AL, skipping
+1254C: [!] address verification FAILED -- first operand isn't AL, skipping
+12553: [!] address verification FAILED -- first operand isn't AL, skipping
+
+Done. Re-export the .asm/.idc and check the comments took.
+----- end target script output -----
+[*] finished executing C:\dev\ultima2\ida_scripts\comment_vehicle_tile_checks.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 16310
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'C:\\dev\\ultima2\\ida_scripts\\comment_vehicle_tile_checks.py']
+[*] reading C:\dev\ultima2\ida_scripts\comment_vehicle_tile_checks.py
+[*] executing C:\dev\ultima2\ida_scripts\comment_vehicle_tile_checks.py
+[*] captured stdout from target script:
+----- begin target script output -----
+1253E: [!] address verification FAILED -- first operand isn't AL -- itype=27 (NN_cmp=27) Op1.type=1 Op1.reg=16 Op1.dtype=0 Op2.type=5 Op2.value=0x28, skipping
+12545: [!] address verification FAILED -- first operand isn't AL -- itype=27 (NN_cmp=27) Op1.type=1 Op1.reg=16 Op1.dtype=0 Op2.type=5 Op2.value=0x26, skipping
+1254C: [!] address verification FAILED -- first operand isn't AL -- itype=27 (NN_cmp=27) Op1.type=1 Op1.reg=16 Op1.dtype=0 Op2.type=5 Op2.value=0x24, skipping
+12553: [!] address verification FAILED -- first operand isn't AL -- itype=27 (NN_cmp=27) Op1.type=1 Op1.reg=16 Op1.dtype=0 Op2.type=5 Op2.value=0x22, skipping
+
+Done. Re-export the .asm/.idc and check the comments took.
+----- end target script output -----
+[*] finished executing C:\dev\ultima2\ida_scripts\comment_vehicle_tile_checks.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 16310
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'C:\\dev\\ultima2\\ida_scripts\\comment_vehicle_tile_checks.py']
+[*] reading C:\dev\ultima2\ida_scripts\comment_vehicle_tile_checks.py
+[*] executing C:\dev\ultima2\ida_scripts\comment_vehicle_tile_checks.py
+[*] captured stdout from target script:
+----- begin target script output -----
+1253E: verified cmp al,0x28 -- None -> '_playerTileId == TILE_ROCKET x2 (0x28)'
+12545: verified cmp al,0x26 -- None -> '_playerTileId == TILE_AIRPLANE x2 (0x26)'
+1254C: verified cmp al,0x24 -- None -> '_playerTileId == TILE_SHIP x2 (0x24)'
+12553: verified cmp al,0x22 -- None -> '_playerTileId == TILE_HORSE x2 (0x22)'
+
+Done. Re-export the .asm/.idc and check the comments took.
+----- end target script output -----
+[*] finished executing C:\dev\ultima2\ida_scripts\comment_vehicle_tile_checks.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 16310
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0

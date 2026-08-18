@@ -4207,25 +4207,25 @@ aParalized      db '--PARALIZED!',0Dh,0
 
 loc_1253B:                              ; CODE XREF: canMoveToTile+102↑j
                 mov     al, _playerTileId
-                cmp     al, 28h ; '('
+                cmp     al, 28h ; '('   ; _playerTileId == TILE_ROCKET x2 (0x28)
                 jnz     short loc_12545
                 jmp     loc_125FB
 ; ---------------------------------------------------------------------------
 
 loc_12545:                              ; CODE XREF: canMoveToTile+11D↑j
-                cmp     al, 38
+                cmp     al, 38          ; _playerTileId == TILE_AIRPLANE x2 (0x26)
                 jnz     short loc_1254C
                 jmp     loc_12607
 ; ---------------------------------------------------------------------------
 
 loc_1254C:                              ; CODE XREF: canMoveToTile+124↑j
-                cmp     al, 36
+                cmp     al, 36          ; _playerTileId == TILE_SHIP x2 (0x24)
                 jnz     short loc_12553
                 jmp     ship
 ; ---------------------------------------------------------------------------
 
 loc_12553:                              ; CODE XREF: canMoveToTile+12B↑j
-                cmp     al, 34
+                cmp     al, 34          ; _playerTileId == TILE_HORSE x2 (0x22)
                 jnz     short normal_movement
                 call    play_step_tick
                 mov     bh, 0

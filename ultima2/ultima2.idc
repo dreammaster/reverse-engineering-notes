@@ -1511,10 +1511,14 @@ static Bytes_0(void) {
 	set_name	(0X1252A,	"aParalized");
 	create_insn	(0X12538);
 	create_insn	(0X1253B);
+	set_cmt	(0X1253E,	"_playerTileId == TILE_ROCKET x2 (0x28)",	0);
+	set_cmt	(0X12545,	"_playerTileId == TILE_AIRPLANE x2 (0x26)",	0);
 	create_insn	(x=0X12545);
 	op_dec		(x,	1);
+	set_cmt	(0X1254C,	"_playerTileId == TILE_SHIP x2 (0x24)",	0);
 	create_insn	(x=0X1254C);
 	op_dec		(x,	1);
+	set_cmt	(0X12553,	"_playerTileId == TILE_HORSE x2 (0x22)",	0);
 	create_insn	(x=0X12553);
 	op_dec		(x,	1);
 	create_insn	(0X12575);
@@ -4540,10 +4544,6 @@ static Bytes_0(void) {
 	create_byte	(0X18070);
 	make_array	(0X18070,	0X42);
 	set_name	(0X18070,	"tile_24");
-	set_cmt	(0X180B2,	"overworld tile 25: byte0=row width in bytes, byte1=row count, then 64 bytes CGA Linear 2bpp pixel data (16x16px)",	0);
-	create_byte	(0X180B2);
-	make_array	(0X180B2,	0X42);
-	set_name	(0X180B2,	"tile_25");
 }
 
 //------------------------------------------------------------------------
@@ -4553,6 +4553,10 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X180B2,	"overworld tile 25: byte0=row width in bytes, byte1=row count, then 64 bytes CGA Linear 2bpp pixel data (16x16px)",	0);
+	create_byte	(0X180B2);
+	make_array	(0X180B2,	0X42);
+	set_name	(0X180B2,	"tile_25");
 	set_cmt	(0X180F4,	"overworld tile 26: byte0=row width in bytes, byte1=row count, then 64 bytes CGA Linear 2bpp pixel data (16x16px)",	0);
 	create_byte	(0X180F4);
 	make_array	(0X180F4,	0X42);
