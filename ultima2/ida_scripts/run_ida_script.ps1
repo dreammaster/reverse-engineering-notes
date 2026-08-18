@@ -28,6 +28,19 @@ if (-not (Test-Path $ScriptName)) {
     exit 1
 }
 
+# Pre-flight lock check: idat.exe opening an .idb the GUI already has open
+# doesn't fail cleanly -- it races the GUI's in-memory copy and can produce
+# a silently partial/inconsistent result (hit 2026-08-18: the last entry in
+# an apply_structs.py run vanished with zero error output). Refuse to even
+# launch idat.exe if something else already has the .idb open exclusively.
+try {
+    $lockCheck = [System.IO.File]::Open($IdbPath, [System.IO.FileMode]::Open, [System.IO.FileAccess]::ReadWrite, [System.IO.FileShare]::None)
+    $lockCheck.Close()
+} catch {
+    Write-Error "$IdbPath appears to be open elsewhere (IDA GUI still running?). Close it first -- refusing to run idat.exe against a locked database."
+    exit 1
+}
+
 & $IdatExe -A -S"$Driver $ScriptName" $IdbPath
 
 Write-Host "`n--- batch_run_and_export.log ---"

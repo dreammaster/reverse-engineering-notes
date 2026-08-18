@@ -382,7 +382,8 @@ sessions, unlike a one-off todo list.
 - [x] Traced the `TEXT_STRINGS` treasure-item block (46-61) — **major
       structural discovery**: the whole `Savegame` `0xA0`-`0xAF`
       cluster (named field-by-field across several sessions) is
-      actually one 16-element array, `_hasRing[0..15]`, displayed by
+      actually one 16-element array, `_ringOwned[0..15]` (named
+      `_hasRing` at the time, renamed since — see below), displayed by
       `zstats`' `"ITEMS:"` inventory screen. 8 of 16 slots
       cross-check perfectly against fields already named independently
       elsewhere — including a new exact confirmation: `launch`
@@ -410,7 +411,7 @@ sessions, unlike a one-off todo list.
       `view`'s check+decrement, plus a previously-uncatalogued 25%-
       chance drop on killing a Fighter in `attack`, asm 5341-5348 — see
       [file-formats.md](file-formats.md#monx--monsternpc-data)).
-- [x] **All 16 `_hasRing[]` treasure-array slots now named.** Traced
+- [x] **All 16 `_ringOwned[]` treasure-array slots now named.** Traced
       the last 3 vague ones: `_triLithium` (`0xAF`, Rocket *and*
       hyperwarp fuel — richest mechanic of the batch, see
       [overview.md](overview.md#text_strings-treasure-item-block-traced--a-16-element-inventory-array-unifying-8-prior-findings)),
@@ -423,7 +424,10 @@ sessions, unlike a one-off todo list.
       find: a barkeep "buy a rumor" hint table independently confirms
       almost every item-requirement mapping in this arc. Kept
       `_planeAllowed`/`_frigateAllowed` as functional names rather
-      than renaming to item identities (Paul's call).
+      than renaming to item identities (Paul's call). Also renamed
+      `_hasRing` (`0xA0`) → `_ringOwned` for consistency, once traced
+      usage (asm ~4159-4166, ~7376-7383) confirmed it's a boolean flag
+      like its siblings, not a count.
 - [x] **New IDA automation**: `ida_scripts/batch_run_and_export.py` +
       `run_ida_script.ps1` run any `apply_*.py`/fix script headlessly
       via `idat.exe -A` and re-export `.asm`/`.idc`, no GUI needed
@@ -432,8 +436,15 @@ sessions, unlike a one-off todo list.
       a real SWIG `FILE *` from `ida_diskio.fopenWT()`/`eclose()`, not
       a plain Python file handle; console output from `idat.exe -A`
       isn't reliable, so the driver logs every step to
-      `batch_run_and_export.log` instead. See
-      [[reference-ida-headless-batch]] in memory.
+      `batch_run_and_export.log` instead.
+      **Hardened same day**: running `idat.exe` against an `.idb` the
+      GUI already has open doesn't fail cleanly — it races the GUI's
+      in-memory copy and can silently drop the *last* operation in a
+      batch with zero error output (hit for real: `_ringOwned`'s
+      `apply_structs.py` entry vanished this way). `run_ida_script.ps1`
+      now does a pre-flight exclusive-open check on the `.idb` and
+      refuses to launch `idat.exe` at all if something else already
+      has it open.
 - [ ] Single-caller helpers inside the 26 command handlers, not chased
       this pass (lower priority — no cross-context confirmation
       available): `sub_15FE0`, `sub_15FA6`, `sub_172A0`
@@ -476,3 +487,21 @@ sessions, unlike a one-off todo list.
 - [ ] Identify all DOS/BIOS interrupt dependencies (`int 21h` FCB I/O,
       CGA video I/O, keyboard) as the porting boundary — these are what
       the ScummVM engine shim will need to replace.
+- [ ] **Design note (Paul, 2026-08-18)**: the `_ringOwned[]` treasure
+      array's 16 individual `Savegame` member names (`_ringOwned`,
+      `_wands`, `_triLithium`, etc.) are an artifact of naming each
+      slot separately while its meaning was worked out one at a time
+      during disassembly — don't carry that 1:1 into the C++ port. The
+      clean-room struct should instead have one generic array (e.g.
+      `_items[]`) indexed by an `ItemType` enum (`RING`, `WAND`,
+      `STAFF`, `BOOTS`, `CLOAK`, `HELM`, `GEM`, `ANKH`, `RED_GEM`,
+      `SKULL_KEY`, `GREEN_GEM`, `BRASS_BUTTON`, `BLUE_TASSLE`,
+      `STRANGE_COIN`, `GREEN_IDOL`, `TRI_LITHIUM`, matching
+      `TEXT_STRINGS` order 46-61) — same shape as the `TileId` enum
+      already used for tile/monster-type semantics. Applies more
+      broadly too: several other `Savegame` fields were named
+      individually during disassembly (`_armorOwned[]`/
+      `_weaponOwned[]`/`_spellCharges[]`, the readied-item indices)
+      that are really parallel per-type arrays and should get the same
+      enum-indexed treatment in the C++ struct rather than keeping
+      their disassembly-era per-field names.
