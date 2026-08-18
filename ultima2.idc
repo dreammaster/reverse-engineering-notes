@@ -58,12 +58,13 @@ static GenInfo(void) {
 static Segments(void) {
 
 	add_segm_ex(0X10000,0X17410,0X1000,0,1,2,ADDSEG_NOSREG);
-	SegRename(0X10000,"sg01a2");
+	SegRename(0X10000,"CODE");
 	SegClass (0X10000,"CODE");
 	set_segm_type(0X10000,2);
 	add_segm_ex(0X17410,0X18AC0,0X1741,0,1,2,ADDSEG_NOSREG);
-	SegRename(0X17410,"sg08e3");
-	SegClass (0X17410,"UNK");
+	SegRename(0X17410,"DATA");
+	SegClass (0X17410,"DATA");
+	set_segm_type(0X17410,3);
 	add_segm_ex(0X18AC0,0X19FE0,0X18AC,0,1,2,ADDSEG_NOSREG);
 	SegRename(0X18AC0,"seg002");
 	SegClass (0X18AC0,"CODE");
@@ -4371,7 +4372,7 @@ static Bytes_0(void) {
 	create_byte	(0X17654);
 	set_name	(0X17654,	"_timer6");
 	MakeStruct	(0X17655,	"FCB");
-	set_name	(0X17655,	"_picData");
+	set_name	(0X17655,	"_fileFCB");
 	create_byte	(0X1767A);
 	set_name	(0X1767A,	"_negateTimeDuration");
 	create_byte	(0X1767B);
@@ -4714,26 +4715,10 @@ static Bytes_1(void) {
 	create_insn	(x=0X18ACD);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
-	create_insn	(0X18AE0);
-	create_insn	(x=0X18B0A);
-	op_hex		(x,	0);
-	create_insn	(x=0X18B1B);
-	op_hex		(x,	1);
-	create_insn	(0X18B67);
-	create_insn	(0X18B97);
-	create_insn	(0X18BAB);
-	create_insn	(x=0X18BBE);
-	op_hex		(x,	0);
-	create_insn	(0X18BC8);
-	create_insn	(x=0X18BE3);
-	op_hex		(x,	0);
-	create_insn	(0X18C46);
-	create_insn	(0X18CDA);
-	create_insn	(x=0X18CE1);
-	op_plain_offset	(x,	1,	0X17410);
-	op_plain_offset	(x,	129,	0X17410);
-	create_insn	(x=0X18CEC);
-	op_hex		(x,	1);
+	set_cmt	(0X18AE0,	"Not code (confirmed) -- structure/meaning not understood. 45% zero bytes, some repeating pattern, no readable text. See docs/roadmap.md.",	0);
+	create_byte	(0X18AE0);
+	make_array	(0X18AE0,	0X500);
+	set_name	(0X18AE0,	"seg002_unexplained_data");
 	create_byte	(0X18FE0);
 	make_array	(0X18FE0,	0X1000);
 	create_byte	(0X19FE0);
@@ -5321,9 +5306,6 @@ static SegRegs(void) {
 	split_sreg_range(0X17410,"es",BADSEL,3);
 	split_sreg_range(0X18AC0,"es",BADSEL,3);
 	split_sreg_range(0X18AC4,"es",0XFF0,3);
-	split_sreg_range(0X18C3E,"es",BADSEL,3);
-	split_sreg_range(0X18C51,"es",BADSEL,3);
-	split_sreg_range(0X18CF8,"es",BADSEL,3);
 	split_sreg_range(0X19FE0,"es",BADSEL,3);
 	split_sreg_range(0X10000,"ss",BADSEL,3);
 	split_sreg_range(0X1010A,"ss",0X1A51,3);
@@ -5338,8 +5320,6 @@ static SegRegs(void) {
 	split_sreg_range(0X1535B,"ds",0X1741,2);
 	split_sreg_range(0X17410,"ds",BADSEL,3);
 	split_sreg_range(0X18AC0,"ds",0XFF0,3);
-	split_sreg_range(0X18B09,"ds",0X1741,2);
-	split_sreg_range(0X18CF9,"ds",BADSEL,3);
 	split_sreg_range(0X19FE0,"ds",BADSEL,3);
 	split_sreg_range(0X10000,"fs",BADSEL,3);
 	split_sreg_range(0X17410,"fs",BADSEL,3);

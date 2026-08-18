@@ -574,9 +574,44 @@ sessions, unlike a one-off todo list.
       — its callers now resolve inside `end_of_turn` itself (likely
       absorbed when the `command_jump_table` fix reshuffled code
       boundaries); don't go looking for it.
-- [ ] Rename the auto-named segments (`sg01a2`, `sg08e3`) once their
-      contents/roles are clear, and rename `_picData` (misleadingly named
-      after one file type when it's the shared FCB for all file I/O).
+- [x] Renamed the auto-named segments and `_picData` (2026-08-18,
+      `ida_scripts/rename_segments.py` + `apply_renames.py`) —
+      `sg01a2`→`CODE` (main segment, holds nearly all code plus
+      embedded read-only data like `TEXT_STRINGS`/tile graphics,
+      already correctly classed); `sg08e3`→`DATA` (holds `player`/
+      `_mapMonsters`/most runtime globals, also fixed its segment
+      class from `UNK` to `DATA` — never properly classified before);
+      `_picData`→`_fileFCB` (the single shared FCB used for every
+      `access_file` call regardless of file type, not just `PIC*`).
+- [x] **`seg002` investigated (2026-08-18) — mostly resolved, one
+      genuine open mystery left.** `seg002` (`0x18AC0`) turns out to
+      start at the EXE's actual DOS entry point (header: "Entry Point:
+      18AC:0") — a completely separate, earlier entry point than
+      `start_`, which this whole project had been treating as *the*
+      entry point. The first 32 bytes are a clean, legitimate
+      bootstrap routine, named `start`: computes `SS` relative to `DS`
+      (set by the DOS loader at load time), zeroes all general
+      registers, then far-jumps into the game's own `start_` — i.e.
+      `start_` is really stage two, not the true entry point.
+      Everything from `0x18FE0` onward (`byte_18FE0`, `0x1000` bytes)
+      was already correctly marked "Uninitialized" and exactly matches
+      the EXE header's "Loaded length: 8FE0h" (`0x10000+0x8FE0 =
+      0x18FE0`) — that tail was never part of the file at all, just
+      reserved-but-unfilled memory the loader allocates.
+      **Still an open mystery**: the 1280 bytes between `start`'s end
+      (`0x18AE0`) and `byte_18FE0` (`0x18FE0`) were disassembled as
+      nonsense x86 (random FPU instructions, a jump to a nonsensical
+      far pointer) — confirmed not real code, but also **not** simple
+      zero padding (only 45% zero bytes; the rest is a semi-regular
+      repeating pattern with no readable text and no recognizable
+      table/jump-table structure). Cleaned up the misleading fake
+      disassembly (now a plain, honestly-labeled byte array,
+      `seg002_unexplained_data` via
+      `ida_scripts/clean_seg002_garbage.py`) but did **not** claim to
+      explain what the bytes represent — left as a genuinely open
+      question. Worth another pass later with fresh eyes (possibly a
+      DOS EXE packer/compressor signature, linker debug info, or an
+      unrecognized resource table).
 - [ ] Build a "string catalog" script/pass: since `write_string` call
       sites now carry the decoded text as a comment, a script to walk all
       xrefs to `write_string` and dump `(address, text)` to a text file
