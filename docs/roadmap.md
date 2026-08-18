@@ -374,9 +374,39 @@ sessions, unlike a one-off todo list.
       never shipped, or reachable only from one of the 79 still-unnamed
       `sub_XXXXX` functions elsewhere. Full writeup in
       [overview.md](overview.md#text_strings-location-descriptor-block-traced--dead-data).
-- [ ] The treasure-item block (`TEXT_STRINGS` 46-61, RING/WAND/GEM/etc.)
-      still isn't tied to a specific caller/index formula — separate
-      from the location block above, not chased this pass.
+- [x] Traced the `TEXT_STRINGS` treasure-item block (46-61) — **major
+      structural discovery**: the whole `Savegame` `0xA0`-`0xAF`
+      cluster (named field-by-field across several sessions) is
+      actually one 16-element array, `_hasRing[0..15]`, displayed by
+      `zstats`' `"ITEMS:"` inventory screen. 8 of 16 slots
+      cross-check perfectly against fields already named independently
+      elsewhere — including a new exact confirmation: `launch`
+      requires `field_AB` (item 11 = Brass Button) to launch a Plane,
+      "FUNNY THIS PLANE IS MISSING A BRASS BUTTON!" Also explains *why*
+      `_planeAllowed`/`_frigateAllowed` gate what they do (they're
+      really Skull Key/Blue Tassle ownership). Full table in
+      [overview.md](overview.md#text_strings-treasure-item-block-traced--a-16-element-inventory-array-unifying-8-prior-findings).
+- [ ] **Real conflict surfaced re: `_gems`/`0xA5` (array position 5 =
+      HELM, not GEM)** — root cause found: `view`'s code has a **third
+      instance** of the `write_string` inline-data gap, same shape as
+      `board`'s Ship/Frigate/Airplane ones. Rather than a narrow
+      one-off fix, realized the *existing* `fix_inline_strings.py`
+      (generic, handles every `write_string` call site) simply
+      predates the A-Z `command_jump_table` fix — it was last run
+      before that exposed all 26 command handlers, so it never had a
+      chance to see `view`'s (or possibly other commands') new call
+      sites. Re-running it now, with `DRY_RUN` flipped back to `True`
+      given the scope is now much larger than last time — not yet run
+      against the live IDB.
+- [ ] Once `view`'s gap is resolved: name the remaining treasure-array
+      slots — `0xA6`(GEM)/`0xA8`(RED GEM)/`0xAA`(GREEN GEM) have no
+      struct member at all yet (never independently referenced outside
+      the array), `field_AD`(STRANGE COIN)/`field_AF`(TRI-LITHIUM) are
+      recognized but unnamed. Consider whether `_planeAllowed`/
+      `_frigateAllowed`/`field_AB` should be renamed to their item
+      identities (`_skullKeyOwned`/`_blueTassleOwned`/`_brassButtonOwned`)
+      now that the structural reason is known, or kept as-is since the
+      functional names are arguably more directly useful.
 - [ ] Single-caller helpers inside the 26 command handlers, not chased
       this pass (lower priority — no cross-context confirmation
       available): `sub_15FE0`, `sub_15FA6`, `sub_172A0`

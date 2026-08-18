@@ -1187,13 +1187,11 @@ static Bytes_0(void) {
 	create_strlit	(0X11AAA,	0X4);
 	set_name	(0X11AAA,	"aNo_1");
 	create_insn	(0X11AAE);
+	set_cmt	(0X11AB0,	"YES",	0);
 	create_insn	(0X11AB0);
-	create_strlit	(0X11AB3,	0X3);
+	create_strlit	(0X11AB3,	0X5);
 	set_name	(0X11AB3,	"aYes_1");
-	create_insn	(0X11AB6);
-	create_insn	(x=0X11AC4);
-	op_plain_offset	(x,	1,	0X17410);
-	op_plain_offset	(x,	129,	0X17410);
+	create_insn	(0X11AB8);
 	create_strlit	(0X11AD2,	0XB);
 	set_name	(0X11AD2,	"aGuleGule");
 	create_insn	(0X11ADD);
@@ -2070,9 +2068,10 @@ static Bytes_0(void) {
 	set_name	(0X136CE,	"aWhat_3");
 	create_insn	(0X136D5);
 	create_insn	(0X136D8);
-	create_strlit	(0X136DC,	0X7);
+	set_cmt	(0X136D9,	" CHEST!",	0);
+	create_strlit	(0X136DC,	0X15);
 	set_name	(0X136DC,	"aChest");
-	create_insn	(0X136E3);
+	create_insn	(0X136F1);
 	create_strlit	(0X1371C,	0X6);
 	set_name	(0X1371C,	"aGold_0");
 	create_insn	(0X13722);
@@ -2303,6 +2302,8 @@ static Bytes_0(void) {
 	create_strlit	(0X13E21,	0XF);
 	create_insn	(0X13E30);
 	create_insn	(0X13E33);
+	create_strlit	(0X13E36,	0X14);
+	create_insn	(0X13E4A);
 	create_insn	(0X13E50);
 	set_name	(0X13E50,	"ready");
 	create_strlit	(0X13E53,	0X4C);
@@ -2314,9 +2315,10 @@ static Bytes_0(void) {
 	set_name	(0X13EC5,	"aNotOwned_0");
 	create_insn	(0X13ED1);
 	create_insn	(0X13ED4);
-	create_strlit	(0X13EE6,	0X10);
+	set_cmt	(0X13EE3,	" <-THOU ART NOT ",	0);
+	create_strlit	(0X13EE6,	0X28);
 	set_name	(0X13EE6,	"aThouArtNot");
-	create_insn	(0X13EF6);
+	create_insn	(0X13F0E);
 	create_insn	(0X13F11);
 	create_strlit	(0X13F14,	0X8);
 	set_name	(0X13F14,	"aReady_0");
@@ -2425,15 +2427,11 @@ static Bytes_0(void) {
 	set_name	(0X1437E,	"view");
 	create_strlit	(0X14388,	0XB);
 	set_name	(0X14388,	"aViewWhat");
+	create_insn	(0X14393);
 	create_insn	(0X14396);
-	create_strlit	(0X143A0,	0X4);
+	create_strlit	(0X143A0,	0X18);
 	set_name	(0X143A0,	"aView");
-	create_insn	(x=0X143A4);
-	op_plain_offset	(x,	1,	0X17410);
-	op_plain_offset	(x,	129,	0X17410);
-	create_insn	(x=0X143A9);
-	op_plain_offset	(x,	0,	0X17410);
-	op_plain_offset	(x,	128,	0X17410);
+	create_insn	(0X143B8);
 	create_insn	(x=0X143DF);
 	op_plain_offset	(x,	0,	0X17410);
 	op_plain_offset	(x,	128,	0X17410);
@@ -2557,6 +2555,8 @@ static Bytes_0(void) {
 	create_insn	(x=0X14864);
 	op_plain_offset	(x,	1,	0X17410);
 	op_plain_offset	(x,	129,	0X17410);
+	create_insn	(x=0X14875);
+	op_dec		(x,	1);
 	create_strlit	(0X14884,	0X2);
 	set_name	(0X14884,	"aS_1");
 	create_insn	(0X14886);
@@ -3904,22 +3904,26 @@ static Bytes_0(void) {
 	create_insn	(0X16ABB);
 	create_insn	(0X16AC2);
 	create_insn	(0X16AC9);
+	set_cmt	(0X16AD8,	"LEFT",	0);
 	create_insn	(0X16AD8);
-	create_strlit	(0X16ADB,	0X4);
+	create_strlit	(0X16ADB,	0X6);
 	set_name	(0X16ADB,	"aLeft");
-	create_insn	(0X16ADF);
+	create_insn	(0X16AE1);
+	set_cmt	(0X16AF0,	"RIGHT",	0);
 	create_insn	(0X16AF0);
-	create_strlit	(0X16AF3,	0X5);
+	create_strlit	(0X16AF3,	0X7);
 	set_name	(0X16AF3,	"aRight");
-	create_insn	(0X16AF8);
+	create_insn	(0X16AFA);
+	set_cmt	(0X16B0A,	"CLIMB",	0);
 	create_insn	(0X16B0A);
-	create_strlit	(0X16B0D,	0X5);
+	create_strlit	(0X16B0D,	0X7);
 	set_name	(0X16B0D,	"aClimb");
-	create_insn	(0X16B12);
+	create_insn	(0X16B14);
+	set_cmt	(0X16B24,	"DIVE",	0);
 	create_insn	(0X16B24);
-	create_strlit	(0X16B27,	0X4);
+	create_strlit	(0X16B27,	0X6);
 	set_name	(0X16B27,	"aDive");
-	create_insn	(0X16B2B);
+	create_insn	(0X16B2D);
 	create_insn	(0X16B3D);
 	create_insn	(x=0X16B47);
 	op_plain_offset	(x,	1,	0X17410);
@@ -4015,18 +4019,20 @@ static Bytes_0(void) {
 	create_insn	(0X16D5B);
 	create_insn	(0X16D68);
 	create_insn	(0X16D83);
+	set_cmt	(0X16DFD,	"HYPERWARP ENGAGED!",	0);
 	create_insn	(0X16DFD);
 	set_name	(0X16DFD,	"hyperwarp");
-	create_strlit	(0X16E00,	0X12);
+	create_strlit	(0X16E00,	0X14);
 	set_name	(0X16E00,	"aHyperwarpEngag");
-	create_insn	(0X16E12);
+	create_insn	(0X16E14);
 	create_insn	(x=0X16E8A);
 	op_hex		(x,	1);
 	create_insn	(x=0X16E8F);
 	op_hex		(x,	1);
-	create_strlit	(0X16E96,	0X10);
+	set_cmt	(0X16E93,	"SHIP OFF COURSE!",	0);
+	create_strlit	(0X16E96,	0X12);
 	set_name	(0X16E96,	"aShipOffCourse");
-	create_insn	(0X16EA6);
+	create_insn	(0X16EA8);
 	create_insn	(x=0X16EAB);
 	op_hex		(x,	1);
 	create_insn	(x=0X16EB3);
@@ -4034,9 +4040,10 @@ static Bytes_0(void) {
 	create_insn	(x=0X16EBB);
 	op_hex		(x,	1);
 	create_insn	(0X16EC5);
-	create_strlit	(0X16ECF,	0X8);
+	set_cmt	(0X16ECC,	"NO FUEL!",	0);
+	create_strlit	(0X16ECF,	0XA);
 	set_name	(0X16ECF,	"aNoFuel");
-	create_insn	(0X16ED7);
+	create_insn	(0X16ED9);
 	create_insn	(0X16EDC);
 	create_strlit	(0X16EF5,	0X14);
 	set_name	(0X16EF5,	"aHyperwarpTo");
@@ -4080,61 +4087,74 @@ static Bytes_0(void) {
 	create_insn	(x=0X17080);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
-	create_strlit	(0X17091,	0X16);
+	set_cmt	(0X1708E,	"YOU ARE IN DEEP SPACE.",	0);
+	create_strlit	(0X17091,	0X18);
 	set_name	(0X17091,	"aYouAreInDeepSp");
-	create_insn	(0X170A7);
+	create_insn	(0X170A9);
 	create_insn	(0X170B1);
 	create_strlit	(0X170B9,	0X12);
 	set_name	(0X170B9,	"aYouAreOrbiting");
 	create_insn	(0X170CB);
+	set_cmt	(0X170F5,	"EARTH.",	0);
 	create_insn	(0X170F5);
-	create_strlit	(0X170F8,	0X6);
+	create_strlit	(0X170F8,	0X8);
 	set_name	(0X170F8,	"aEarth");
-	create_insn	(0X170FE);
+	create_insn	(0X17100);
+	set_cmt	(0X17103,	"MERCURY.",	0);
 	create_insn	(0X17103);
-	create_strlit	(0X17106,	0X8);
+	create_strlit	(0X17106,	0XA);
 	set_name	(0X17106,	"aMercury");
-	create_insn	(0X1710E);
+	create_insn	(0X17110);
+	set_cmt	(0X17113,	"VENUS.",	0);
 	create_insn	(0X17113);
-	create_strlit	(0X17116,	0X6);
+	create_strlit	(0X17116,	0X8);
 	set_name	(0X17116,	"aVenus");
-	create_insn	(0X1711C);
+	create_insn	(0X1711E);
+	set_cmt	(0X17121,	"MARS.",	0);
 	create_insn	(0X17121);
-	create_strlit	(0X17124,	0X5);
+	create_strlit	(0X17124,	0X7);
 	set_name	(0X17124,	"aMars");
-	create_insn	(0X17129);
+	create_insn	(0X1712B);
+	set_cmt	(0X1712E,	"JUPITER.",	0);
 	create_insn	(0X1712E);
-	create_strlit	(0X17131,	0X8);
+	create_strlit	(0X17131,	0XA);
 	set_name	(0X17131,	"aJupiter");
-	create_insn	(0X17139);
+	create_insn	(0X1713B);
+	set_cmt	(0X1713E,	"SATURN.",	0);
 	create_insn	(0X1713E);
-	create_strlit	(0X17141,	0X7);
+	create_strlit	(0X17141,	0X9);
 	set_name	(0X17141,	"aSaturn");
-	create_insn	(0X17148);
+	create_insn	(0X1714A);
+	set_cmt	(0X1714D,	"URANUS.",	0);
 	create_insn	(0X1714D);
-	create_strlit	(0X17150,	0X7);
+	create_strlit	(0X17150,	0X9);
 	set_name	(0X17150,	"aUranus");
-	create_insn	(0X17157);
+	create_insn	(0X17159);
+	set_cmt	(0X1715C,	"NEPTUNE.",	0);
 	create_insn	(0X1715C);
-	create_strlit	(0X1715F,	0X8);
+	create_strlit	(0X1715F,	0XA);
 	set_name	(0X1715F,	"aNeptune");
-	create_insn	(0X17167);
+	create_insn	(0X17169);
+	set_cmt	(0X1716C,	"PLUTO.",	0);
 	create_insn	(0X1716C);
-	create_strlit	(0X1716F,	0X6);
+	create_strlit	(0X1716F,	0X8);
 	set_name	(0X1716F,	"aPluto");
-	create_insn	(0X17175);
+	create_insn	(0X17177);
+	set_cmt	(0X1717A,	"X.",	0);
 	create_insn	(0X1717A);
-	create_strlit	(0X1717D,	0X2);
-	create_insn	(0X1717F);
+	create_strlit	(0X1717D,	0X4);
+	create_insn	(0X17181);
 	create_insn	(0X17184);
 	set_name	(0X17184,	"nullsub_2");
 	create_insn	(0X17185);
-	create_strlit	(0X17195,	0X12);
+	set_cmt	(0X17192,	"LANDING REQUESTED!",	0);
+	create_strlit	(0X17195,	0X14);
 	set_name	(0X17195,	"aLandingRequest");
-	create_insn	(0X171A7);
-	create_strlit	(0X171B6,	0XF);
+	create_insn	(0X171A9);
+	set_cmt	(0X171B3,	"REQUEST DENIED!",	0);
+	create_strlit	(0X171B6,	0X11);
 	set_name	(0X171B6,	"aRequestDenied");
-	create_insn	(0X171C5);
+	create_insn	(0X171C7);
 	create_insn	(0X171CA);
 	create_strlit	(0X171D2,	0X14);
 	set_name	(0X171D2,	"aInsertPlayerDi_0");
@@ -4153,6 +4173,14 @@ static Bytes_0(void) {
 	create_insn	(0X17276);
 	create_insn	(0X17289);
 	create_insn	(0X172A0);
+	create_strlit	(0X172A9,	0X31);
+	create_insn	(0X172DA);
+	create_insn	(x=0X172EA);
+	op_hex		(x,	1);
+	create_insn	(x=0X172F2);
+	op_hex		(x,	1);
+	create_strlit	(0X1731A,	0X1B);
+	create_insn	(0X17335);
 	create_byte	(0X17410);
 	set_name	(0X17410,	"_mapX");
 	create_byte	(0X17411);
@@ -4475,6 +4503,15 @@ static Bytes_0(void) {
 	create_byte	(0X184D2);
 	make_array	(0X184D2,	0X42);
 	set_name	(0X184D2,	"tile_41");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X18514,	"overworld tile 42: byte0=row width in bytes, byte1=row count, then 64 bytes CGA Linear 2bpp pixel data (16x16px)",	0);
 	create_byte	(0X18514);
 	make_array	(0X18514,	0X42);
@@ -4487,15 +4524,6 @@ static Bytes_0(void) {
 	create_byte	(0X18598);
 	make_array	(0X18598,	0X42);
 	set_name	(0X18598,	"tile_44");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X185DA,	"overworld tile 45: byte0=row width in bytes, byte1=row count, then 64 bytes CGA Linear 2bpp pixel data (16x16px)",	0);
 	create_byte	(0X185DA);
 	make_array	(0X185DA,	0X42);
@@ -4773,7 +4801,7 @@ static Functions_0(void) {
 	add_func    (0X142F1,0X1437E);
 	set_func_flags(0X142F1,0x1401);
 	add_func    (0X1437E,0X143F3);
-	set_func_flags(0X1437E,0x1401);
+	set_func_flags(0X1437E,0x1001);
 	add_func    (0X143F3,0X144D4);
 	set_func_flags(0X143F3,0x1401);
 	add_func    (0X144D4,0X14542);
@@ -5033,7 +5061,7 @@ static Functions_0(void) {
 	add_func    (0X16999,0X169F0);
 	set_func_flags(0X16999,0x1400);
 	set_frame_size(0X16999, 0, 0, 0);
-	add_func    (0X16A79,0X16B3D);
+	add_func    (0X16A79,0X16B2D);
 	set_func_flags(0X16A79,0x1401);
 	add_func    (0X16B3D,0X16CAC);
 	set_func_flags(0X16B3D,0x5400);
@@ -5063,7 +5091,7 @@ static Functions_0(void) {
 	set_func_flags(0X16FA3,0x5400);
 	set_frame_size(0X16FA3, 0, 0, 0);
 	add_func    (0X17030,0X17185);
-	set_func_flags(0X17030,0x1400);
+	set_func_flags(0X17030,0x1000);
 	set_frame_size(0X17030, 0, 0, 0);
 	add_func    (0X1720B,0X17218);
 	set_func_flags(0X1720B,0x5400);
@@ -5141,9 +5169,11 @@ static Functions_0(void) {
 	append_func_tail(0X1310B,0X131E2,0X13235);
 	append_func_tail(0X1310B,0X13244,0X132AC);
 	append_func_tail(0X1310B,0X132AD,0X1330C);
+	append_func_tail(0X13DC7,0X13E4A,0X13E50);
 	append_func_tail(0X15A66,0X15498,0X1549E);
 	append_func_tail(0X17030,0X16A74,0X16A79);
 	append_func_tail(0X16A79,0X17185,0X17195);
+	append_func_tail(0X172A0,0X172DA,0X1731A);
 }
 
 //------------------------------------------------------------------------

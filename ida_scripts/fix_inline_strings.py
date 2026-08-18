@@ -36,6 +36,29 @@ USAGE
    are detected and skipped.
 
 Run via File > Script file... (Alt+F7) or File > Recent scripts (Shift+F9).
+
+RE-RUN NOTE (2026-08-17): flipped back to DRY_RUN = True for a fresh
+pass. This script was last run (validated against ORIGIN/PROUDLY
+PRESENTS/BY LORD BRITISH) *before* the A-Z command_jump_table got
+resolved -- that fix exposed huge amounts of previously-orphaned code
+across all 26 command handlers (14.5k-line .asm diff), including new
+`call write_string` sites this script never had a chance to see, since
+find_call_sites() only finds xrefs IDA already recognizes. `view`'s
+"aView" gap (and `board`'s Ship/Frigate/Airplane gaps, already fixed
+by hand) are exactly this: real write_string calls that only became
+disassembled instructions after the jump-table fix. Re-running now,
+scoped to the whole binary as always, should catch `view`'s gap and
+may surface others in the other 25 commands that haven't been read
+line-by-line yet. Dry-run first given the number of sites this could
+now touch is unknown and probably much larger than last time.
+
+FOLLOW-UP (same day): first re-run fixed 2 new sites cleanly (ONE
+MOMENT PLEASE!, MINAX IS DEAD!!) but did NOT catch `view`'s "aView"
+gap -- turned out already_processed() was too permissive (see its
+docstring) and was treating an already-malformed 4-byte 'VIEW' string
+literal as "already fixed" without checking it was actually
+terminated correctly. Fixed that check; re-running again with
+DRY_RUN = True to see what else this now catches before applying.
 """
 
 import idaapi
@@ -84,8 +107,21 @@ def find_call_sites(func_ea):
 
 
 def already_processed(ea):
-    """True if ea already looks like a string literal (idempotent re-run)."""
-    return ida_bytes.is_strlit(ida_bytes.get_flags(ea))
+    """True if ea already looks like a CORRECTLY-terminated string literal
+    (idempotent re-run). Deliberately checks more than just "is this typed
+    as a string" -- found via `view`'s "aView" site (2026-08-17): it was
+    already a strlit-typed item, just a malformed 4-byte one ('VIEW', no
+    terminator) from some earlier partial classification, and the old
+    is_strlit-only check treated that as permanently "already fixed",
+    silently skipping the real fix forever. Now also verifies the item's
+    last byte is actually the terminator before trusting it."""
+    flags = ida_bytes.get_flags(ea)
+    if not ida_bytes.is_strlit(flags):
+        return False
+    item_len = ida_bytes.get_item_size(ea)
+    if item_len <= 0:
+        return False
+    return ida_bytes.get_byte(ea + item_len - 1) == TERMINATOR
 
 
 def find_terminator(start_ea):
