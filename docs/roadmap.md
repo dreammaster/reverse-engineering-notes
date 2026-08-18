@@ -6,20 +6,25 @@ sessions, unlike a one-off todo list.
 
 ## Immediate (IDB hygiene)
 
-- [ ] Run `ida_scripts/fix_inline_strings.py` with `DRY_RUN = False`
-      (already validated in dry-run — strings like `ORIGIN`,
-      `PROUDLY PRESENTS`, `BY LORD BRITISH` decoded correctly). **Done in
-      a prior session per the .asm already reflecting it** — confirm
-      still current after any further analysis passes.
-- [ ] Run `ida_scripts/fix_access_file_calls.py`, `DRY_RUN = True` first.
-      Several `access_file` call sites are still raw code garbage (asm
-      lines ~419, 615, 643, 787, 6971 as of this pass) while others
-      already happen to show a clean 8-byte name — the script handles
-      both, always repairing the CALL→data graph edge either way.
-- [ ] Grep the refreshed asm for any *other* `pop bx` / stack-adjust
-      pattern near a `proc` start — `access_file` was found this way
-      (noticed while reading its body after the `write_string` fix). If
-      one turns up, add a third `ida_scripts/fix_*.py`.
+- [x] Ran `ida_scripts/fix_inline_strings.py` with `DRY_RUN = False` —
+      fully applied and verified, see the "IDB hygiene gap fixed" and
+      `_gems`/`_helmsOwned` entries below.
+- [x] Ran `ida_scripts/fix_access_file_calls.py` — dry-run first (all
+      20 remaining sites already showed clean 8-byte filenames, no
+      code-garbage left — the earlier note about raw garbage was
+      resolved by other work in the meantime, likely the
+      `command_jump_table` fix), then applied for real: all 20
+      CALL→data graph edges fixed. Surfaced 6 new filenames
+      (`PICOUT`/`PICTWN`/`PICCAS`/`PICDNG`/`PICSPA`/`PICMIN`), traced
+      and documented as the title/demo attract-mode slideshow — see
+      [file-formats.md](file-formats.md#pic--full-screen-cga-art).
+- [x] Grepped the refreshed asm for any *other* `pop <reg>` pattern
+      immediately at a `proc near` start (the giveaway of this trick —
+      a `pop` with no matching `push` earlier in the same function,
+      since it's popping the *caller's* return address, not a locally
+      saved register) — **negative result, confirmed**: only
+      `access_file` (`pop bx`) and `write_string` (`pop ax`, already
+      known) match. No third function using this trick.
 
 ## High value / next session
 
@@ -386,27 +391,49 @@ sessions, unlike a one-off todo list.
       `_planeAllowed`/`_frigateAllowed` gate what they do (they're
       really Skull Key/Blue Tassle ownership). Full table in
       [overview.md](overview.md#text_strings-treasure-item-block-traced--a-16-element-inventory-array-unifying-8-prior-findings).
-- [ ] **Real conflict surfaced re: `_gems`/`0xA5` (array position 5 =
-      HELM, not GEM)** — root cause found: `view`'s code has a **third
-      instance** of the `write_string` inline-data gap, same shape as
-      `board`'s Ship/Frigate/Airplane ones. Rather than a narrow
-      one-off fix, realized the *existing* `fix_inline_strings.py`
-      (generic, handles every `write_string` call site) simply
-      predates the A-Z `command_jump_table` fix — it was last run
-      before that exposed all 26 command handlers, so it never had a
-      chance to see `view`'s (or possibly other commands') new call
-      sites. Re-running it now, with `DRY_RUN` flipped back to `True`
-      given the scope is now much larger than last time — not yet run
-      against the live IDB.
-- [ ] Once `view`'s gap is resolved: name the remaining treasure-array
-      slots — `0xA6`(GEM)/`0xA8`(RED GEM)/`0xAA`(GREEN GEM) have no
-      struct member at all yet (never independently referenced outside
-      the array), `field_AD`(STRANGE COIN)/`field_AF`(TRI-LITHIUM) are
-      recognized but unnamed. Consider whether `_planeAllowed`/
-      `_frigateAllowed`/`field_AB` should be renamed to their item
-      identities (`_skullKeyOwned`/`_blueTassleOwned`/`_brassButtonOwned`)
-      now that the structural reason is known, or kept as-is since the
-      functional names are arguably more directly useful.
+- [x] **`fix_inline_strings.py` re-run, `DRY_RUN = False`, applied for
+      real** — fixed `view`'s inline-data gap (and the space-travel/
+      planet-name cluster in `launch`, ~10 sites). Hit and fixed a real
+      bug in `find_terminator()`/the resync logic along the way (it was
+      finding the correct `0x00` terminator, but a stale/malformed
+      auto-created string literal left over from IDA's own heuristics —
+      stopping short at a non-printable `0x8D` byte, mistaking it for
+      the start of an opcode — was masking the fix; the already-broken
+      "lea" garbage downstream was old damage the fix repairs, not
+      something the script introduced). `view`'s full text recovered:
+      `"VIEW",0x8D,"WITH MAGICAL HELM!"`.
+- [x] **`_gems`/`0xA5` conflict resolved** — with `view`'s gap fixed,
+      confirmed `field_A5` is spent by `view` on a *Magical Helm*, not
+      a gem ("VIEW WHAT?" if zero, "VIEW WITH MAGICAL HELM!" +
+      decrement on success). Renamed `_gems` → `_helmsOwned` via
+      `apply_structs.py`, confirmed in the refreshed `.asm` (3 sites:
+      `view`'s check+decrement, plus a previously-uncatalogued 25%-
+      chance drop on killing a Fighter in `attack`, asm 5341-5348 — see
+      [file-formats.md](file-formats.md#monx--monsternpc-data)).
+- [x] **All 16 `_hasRing[]` treasure-array slots now named.** Traced
+      the last 3 vague ones: `_triLithium` (`0xAF`, Rocket *and*
+      hyperwarp fuel — richest mechanic of the batch, see
+      [overview.md](overview.md#text_strings-treasure-item-block-traced--a-16-element-inventory-array-unifying-8-prior-findings)),
+      `_strangeCoin` (`0xAD`, spent by `negate_time`),
+      `_brassButtonOwned` (`0xAB`, wasn't even a recognized struct
+      member before — raw `player+0ABh`; gates launching the Plane).
+      Added the 3 pure gaps (`_gemOwned`/`_redGemOwned`/
+      `_greenGemOwned`, `0xA6`/`0xA8`/`0xAA`) from array position only
+      — no independent reference exists for any of the three. Bonus
+      find: a barkeep "buy a rumor" hint table independently confirms
+      almost every item-requirement mapping in this arc. Kept
+      `_planeAllowed`/`_frigateAllowed` as functional names rather
+      than renaming to item identities (Paul's call).
+- [x] **New IDA automation**: `ida_scripts/batch_run_and_export.py` +
+      `run_ida_script.ps1` run any `apply_*.py`/fix script headlessly
+      via `idat.exe -A` and re-export `.asm`/`.idc`, no GUI needed
+      (IDA must be closed first — the `.idb` locks). Confirmed working
+      2026-08-18. Two non-obvious fixes: `ida_loader.gen_file()` needs
+      a real SWIG `FILE *` from `ida_diskio.fopenWT()`/`eclose()`, not
+      a plain Python file handle; console output from `idat.exe -A`
+      isn't reliable, so the driver logs every step to
+      `batch_run_and_export.log` instead. See
+      [[reference-ida-headless-batch]] in memory.
 - [ ] Single-caller helpers inside the 26 command handlers, not chased
       this pass (lower priority — no cross-context confirmation
       available): `sub_15FE0`, `sub_15FA6`, `sub_172A0`

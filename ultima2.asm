@@ -132,6 +132,8 @@ loc_1020B:                              ; CODE XREF: start_+106↑j
 ; ---------------------------------------------------------------------------
 aPicdra         db 'PICDRA  '
 ; ---------------------------------------------------------------------------
+
+loc_10222:                              ; CODE XREF: start_+117↑j
                 call    pauseScreen
                 mov     si, 5
 
@@ -275,6 +277,8 @@ demo:                                   ; CODE XREF: start_+13F↑j
 ; ---------------------------------------------------------------------------
 aPicout         db 'PICOUT  '
 ; ---------------------------------------------------------------------------
+
+loc_103CB:                              ; CODE XREF: start_+2C0↑j
                 mov     text_y, 17h
                 mov     text_x, 0
                 call    write_string
@@ -322,10 +326,12 @@ aSpokenAtTheLoc db '      SPOKEN AT THE LOCAL PUB',0
                 mov     ah, 27h ; '''
                 mov     cx, 4000h
                 mov     dx, 0
-                call    access_file
+                call    access_file     ; PICCAS
 ; ---------------------------------------------------------------------------
 aPiccas         db 'PICCAS  '
 ; ---------------------------------------------------------------------------
+
+loc_104C2:                              ; CODE XREF: sg01a2:04B7↑j
                 mov     text_x, 0
                 mov     text_y, 23
                 call    write_string
@@ -370,10 +376,12 @@ aAndTallTerrify db '      AND TALL TERRIFYING TOWERS',0
                 mov     ah, 27h ; '''
                 mov     cx, 4000h
                 mov     dx, 0
-                call    access_file
+                call    access_file     ; PICSPA
 ; ---------------------------------------------------------------------------
 aPicspa         db 'PICSPA  '
 ; ---------------------------------------------------------------------------
+
+loc_105AF:                              ; CODE XREF: sg01a2:05A4↑j
                 mov     text_x, 0
                 mov     text_y, 17h
                 call    write_string
@@ -392,10 +400,12 @@ aToThePlanetsOf db '  TO THE PLANETS OF OUR SOLAR SYSTEM',0
                 mov     ah, 27h ; '''
                 mov     cx, 4000h
                 mov     dx, 0
-                call    access_file
+                call    access_file     ; PICMIN
 ; ---------------------------------------------------------------------------
 aPicmin         db 'PICMIN  '
 ; ---------------------------------------------------------------------------
+
+loc_1062D:                              ; CODE XREF: sg01a2:0622↑j
                 mov     text_x, 0
                 mov     text_y, 23
                 call    write_string
@@ -639,6 +649,8 @@ loc_10796:                              ; CODE XREF: play_game+12↑j
 ; ---------------------------------------------------------------------------
 aPlayer_0       db 'PLAYER  '
 ; ---------------------------------------------------------------------------
+
+loc_107AA:                              ; CODE XREF: play_game+3B↑j
                 mov     al, player._name
                 or      al, al
                 jnz     short loc_107E6
@@ -676,6 +688,8 @@ loc_107F0:                              ; CODE XREF: play_game+87↑j
 ; ---------------------------------------------------------------------------
 aMonsters       db 'MONSTERS'
 ; ---------------------------------------------------------------------------
+
+loc_10807:                              ; CODE XREF: play_game+98↑j
                 call    load_map
                 call    setPalette
                 mov     al, player._class
@@ -3811,7 +3825,7 @@ dead2:                                  ; CODE XREF: play_game+1CC↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-load_map        proc near               ; CODE XREF: play_game+A3↑p
+load_map        proc near               ; CODE XREF: play_game:loc_10807↑p
                                         ; canMoveToTile+2D↓p ...
                 clc
                 mov     al, player._mapNum1
@@ -3830,6 +3844,8 @@ load_map        proc near               ; CODE XREF: play_game+A3↑p
 aMapxff         db 'MAPXFF  '           ; DATA XREF: sub_1720B↓w
                                         ; load_map+6↑w ...
 ; ---------------------------------------------------------------------------
+
+loc_122BF:                              ; CODE XREF: load_map+24↑j
                 mov     cx, 100h
                 lea     dx, _mapMonsters
                 call    access_file     ; MONXFF
@@ -3838,6 +3854,8 @@ byte_122C9      db    'M',   'O',   'N',   'X',   'F',   'F',   ' ',   ' '
                                         ; DATA XREF: sub_1720B+4↓w
                                         ; load_map+A↑w ...
 ; ---------------------------------------------------------------------------
+
+loc_122D1:                              ; CODE XREF: load_map+36↑j
                 call    keypress_check
                 retn
 load_map        endp
@@ -3858,11 +3876,13 @@ load_talk_file  proc near               ; CODE XREF: enter+B3↓p
                 mov     ah, 27h ; '''
                 mov     cx, 100h
                 mov     dx, word_17886
-                call    access_file
+                call    access_file     ; TLKXFF
 ; ---------------------------------------------------------------------------
 aTlkxff         db 'TLKXFF  '           ; DATA XREF: sub_1720B+8↓w
                                         ; load_talk_file+6↑w ...
 ; ---------------------------------------------------------------------------
+
+locret_122FC:                           ; CODE XREF: load_talk_file+1C↑j
                 retn
 load_talk_file  endp
 
@@ -3900,6 +3920,8 @@ save_game1:                             ; CODE XREF: save_game+5↑j
 aMapxff_0       db 'MAPXFF  '           ; DATA XREF: save_game+E↑w
                                         ; save_game+1B↑w
 ; ---------------------------------------------------------------------------
+
+loc_12340:                              ; CODE XREF: save_game+38↑j
                 mov     cx, 100h
                 lea     dx, _mapMonsters
                 call    access_file     ; MONXFF
@@ -3907,11 +3929,15 @@ aMapxff_0       db 'MAPXFF  '           ; DATA XREF: save_game+E↑w
 aMonxff         db 'MONXFF  '           ; DATA XREF: save_game+12↑w
                                         ; save_game+1F↑w
 ; ---------------------------------------------------------------------------
+
+loc_12352:                              ; CODE XREF: save_game+4A↑j
                 lea     dx, player
                 call    access_file     ; PLAYER
 ; ---------------------------------------------------------------------------
 aPlayer_1       db 'PLAYER  '
 ; ---------------------------------------------------------------------------
+
+locret_12361:                           ; CODE XREF: save_game+59↑j
                 retn
 save_game       endp
 
@@ -4093,10 +4119,12 @@ loc_12474:                              ; CODE XREF: canMoveToTile+35↑j
                 mov     ah, 28h ; '('
                 mov     cx, 100h
                 lea     dx, player
-                call    access_file
+                call    access_file     ; PLAYER
 ; ---------------------------------------------------------------------------
 aPlayer_3       db 'PLAYER  '
 ; ---------------------------------------------------------------------------
+
+loc_12488:                              ; CODE XREF: canMoveToTile+5A↑j
                 jmp     end_of_turn2
 ; ---------------------------------------------------------------------------
 
@@ -5342,10 +5370,10 @@ loc_12D22:                              ; CODE XREF: attack+158↑j
                 cmp     al, 40h ; '@'
                 jnb     short loc_12D3D
                 clc
-                mov     al, player._gems
+                mov     al, player._helmsOwned
                 adc     al, 1
                 daa
-                mov     player._gems, al
+                mov     player._helmsOwned, al
 
 loc_12D3D:                              ; CODE XREF: attack+1A2↑j
                 mov     bh, 0
@@ -6692,10 +6720,10 @@ loc_1375A:                              ; CODE XREF: get+D5↑j
 aTriLithium     db 'TRI-LITHIUM!',0
 ; ---------------------------------------------------------------------------
                 clc
-                mov     al, player.field_AF
+                mov     al, player._triLithium
                 adc     al, 1
                 daa
-                mov     player.field_AF, al
+                mov     player._triLithium, al
                 jmp     end_of_turn2
 get             endp
 
@@ -6861,10 +6889,12 @@ loc_13899:                              ; CODE XREF: klimb+8C↑j
                 lea     dx, player
                 mov     ah, 28h ; '('
                 mov     cx, 100h
-                call    access_file
+                call    access_file     ; PLAYER
 ; ---------------------------------------------------------------------------
 aPlayer_4       db 'PLAYER  '
 ; ---------------------------------------------------------------------------
+
+loc_138AD:                              ; CODE XREF: klimb+B1↑j
                 jmp     end_of_turn2
 klimb           endp
 
@@ -6899,7 +6929,7 @@ loc_138D2:                              ; CODE XREF: launch+D↑j
 ; ---------------------------------------------------------------------------
 aLaunchRocket   db 'LAUNCH--ROCKET',0
 ; ---------------------------------------------------------------------------
-                mov     al, player.field_AF
+                mov     al, player._triLithium
                 or      al, al
                 jnz     short loc_13923
                 call    write_string
@@ -7005,7 +7035,7 @@ loc_139FA:                              ; CODE XREF: launch+7↑j
 ; ---------------------------------------------------------------------------
 aLaunchPlane    db 'LAUNCH--PLANE',0
 ; ---------------------------------------------------------------------------
-                mov     al, byte ptr player+0ABh
+                mov     al, player._brassButtonOwned
                 or      al, al
                 jnz     short loc_13A45
                 call    write_string
@@ -7212,7 +7242,7 @@ negate_time     proc near               ; DATA XREF: sg01a2:command_jump_table�
 ; ---------------------------------------------------------------------------
 aNegateTime     db 'NEGATE TIME',0
 ; ---------------------------------------------------------------------------
-                mov     al, player.field_AD
+                mov     al, player._strangeCoin
                 or      al, al
                 jnz     short loc_13C04
                 call    write_string
@@ -7224,12 +7254,12 @@ aHow            db ' HOW?',8Dh,'YOU',27h,'RE NOT EINSTEIN',0
 
 loc_13C04:                              ; CODE XREF: negate_time+14↑j
                 stc
-                mov     al, player.field_AD
+                mov     al, player._strangeCoin
                 cmc
                 sbb     al, 1
                 das
                 cmc
-                mov     player.field_AD, al
+                mov     player._strangeCoin, al
                 call    write_string
 ; ---------------------------------------------------------------------------
                 db 8Dh,'YOU RUB A COIN...',0
@@ -7999,7 +8029,7 @@ unlock          endp
 ; Attributes: noreturn
 
 view            proc near               ; DATA XREF: sg01a2:command_jump_table↑o
-                mov     al, player._gems
+                mov     al, player._helmsOwned
                 or      al, al
                 jnz     short loc_14396
 
@@ -8020,12 +8050,12 @@ loc_14396:                              ; CODE XREF: view+5↑j
 aView           db 'VIEW',8Dh,'WITH MAGICAL HELM!',0
 ; ---------------------------------------------------------------------------
                 stc
-                mov     al, player._gems
+                mov     al, player._helmsOwned
                 cmc
                 sbb     al, 1
                 das
                 cmc
-                mov     player._gems, al
+                mov     player._helmsOwned, al
                 mov     al, 20h ; ' '
                 mov     _playerX, al
                 mov     _playerY, al
@@ -12757,13 +12787,13 @@ sub_16999       proc near               ; CODE XREF: launch+AE↑p
                 mov     byte_178DB, al
                 mov     al, cs:byte_17026[di]
                 mov     byte_178DC, al
-                mov     al, player.field_AF
+                mov     al, player._triLithium
                 stc
                 cmc
                 sbb     al, 1
                 das
                 cmc
-                mov     player.field_AF, al
+                mov     player._triLithium, al
                 mov     al, 28h ; '('
                 mov     text_width?, al
                 mov     bh, 0
@@ -13399,7 +13429,7 @@ loc_16E73:                              ; CODE XREF: hyperwarp+87↓j
                 inc     byte_178D7
                 inc     byte_178D7
                 jns     short loc_16E73
-                mov     al, player.field_AF
+                mov     al, player._triLithium
                 clc
                 rcr     al, 1
                 jnb     short loc_16EC0
@@ -13430,7 +13460,7 @@ loc_16EC0:                              ; CODE XREF: hyperwarp+8F↑j
 ; ---------------------------------------------------------------------------
 
 loc_16EC5:                              ; CODE XREF: sub_16A79+46↑j
-                mov     al, player.field_AF
+                mov     al, player._triLithium
                 or      al, al
                 jnz     short loc_16EDC
                 call    write_string    ; NO FUEL!
@@ -13448,7 +13478,7 @@ loc_16EDC:                              ; CODE XREF: hyperwarp+CD↑j
                 sbb     al, 1
                 das
                 cmc
-                mov     player.field_AF, al
+                mov     player._triLithium, al
                 call    sub_16CC4
                 mov     al, 80h
                 mov     byte_1788B, al
@@ -13542,7 +13572,7 @@ sub_16FA3       proc near               ; CODE XREF: sg01a2:6A4B↑p
                 mov     bl, 14h
                 mov     si, bx          ; y
                 call    set_text_pos
-                mov     al, player.field_AF
+                mov     al, player._triLithium
                 call    write_number
                 mov     bh, 0
                 mov     bl, 25h ; '%'
@@ -14020,7 +14050,7 @@ loc_17335:                              ; CODE XREF: sub_172A0+77↑j
                 mov     ah, 27h ; '''
                 mov     cx, 1000h
                 mov     dx, map_ptr
-                call    access_file
+                call    access_file     ; MAPX30
 ; ---------------------------------------------------------------------------
                 db  4Dh ; M
                 db  41h ; A
@@ -14030,12 +14060,12 @@ loc_17335:                              ; CODE XREF: sub_172A0+77↑j
                 db  30h ; 0
                 db  20h
                 db  20h
-                db 0E8h
-                db  57h ; W
-                db 0ECh
-                db 0E8h
-                db  8Dh
-                db 0DCh
+; ---------------------------------------------------------------------------
+
+loc_1734C:                              ; CODE XREF: sg01a2:7341↑j
+                call    sub_15FA6
+                call    write_string
+; ---------------------------------------------------------------------------
                 db  8Dh
                 db  8Dh
                 db  59h ; Y
@@ -14317,7 +14347,7 @@ text_width?     db 0                    ; DATA XREF: zstats+D↑w
                 db    0
                 db    0
 player          Savegame <0>            ; DATA XREF: play_game+35↑o
-                                        ; play_game+46↑r ...
+                                        ; play_game:loc_107AA↑r ...
                 db    0
 _mapMonsters    db 0BCh dup(     0)     ; DATA XREF: end_of_turn+F6↑r
                                         ; end_of_turn+298↑w ...

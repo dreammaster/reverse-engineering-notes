@@ -26,9 +26,16 @@ the Alt+F7 workflow wouldn't guess:
     ida_diskio.fopenWT()/eclose(), not a plain Python open() handle
     (that raises "TypeError: argument 2 of type 'FILE *'").
   - idat.exe's stdout/msg() output is not reliably flushed/visible
-    before qexit(); don't depend on console output for diagnosis.
+    before qexit(); don't depend on console output for diagnosis. This
+    also means the TARGET script's own print() calls (e.g. a dry-run
+    script's [dry]/[!] lines) need to be captured explicitly -- this
+    driver redirects sys.stdout during the exec() and writes whatever
+    it captured into the log too, so DRY_RUN=True scripts are just as
+    inspectable headlessly as DRY_RUN=False ones.
 """
 
+import contextlib
+import io
 import traceback
 
 import idc
@@ -68,7 +75,13 @@ def main():
 
             log(fh, f"[*] executing {target_script}")
             g = {"__name__": "__main__", "__file__": target_script}
-            exec(compile(code, target_script, "exec"), g)
+            captured = io.StringIO()
+            with contextlib.redirect_stdout(captured):
+                exec(compile(code, target_script, "exec"), g)
+            log(fh, "[*] captured stdout from target script:")
+            log(fh, "----- begin target script output -----")
+            log(fh, captured.getvalue().rstrip("\n"))
+            log(fh, "----- end target script output -----")
             log(fh, f"[*] finished executing {target_script}")
 
             log(fh, "[*] auto_wait (post-script)")

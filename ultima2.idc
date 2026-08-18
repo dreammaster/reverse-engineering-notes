@@ -234,13 +234,17 @@ static Structures_0(id) {
 	mid = add_struc_member(id,"_staves",	0XA2,	0x00000400,	-1,	1);
 	mid = add_struc_member(id,"_bootsOwned",	0XA3,	0x00000400,	-1,	1);
 	mid = add_struc_member(id,"_cloakOwned",	0XA4,	0x00000400,	-1,	1);
-	mid = add_struc_member(id,"_gems",	0XA5,	0x00000400,	-1,	1);
+	mid = add_struc_member(id,"_helmsOwned",	0XA5,	0x00000400,	-1,	1);
+	mid = add_struc_member(id,"_gemOwned",	0XA6,	0x00000400,	-1,	1);
 	mid = add_struc_member(id,"_ankhOwned",	0XA7,	0x00000400,	-1,	1);
+	mid = add_struc_member(id,"_redGemOwned",	0XA8,	0x00000400,	-1,	1);
 	mid = add_struc_member(id,"_planeAllowed",	0XA9,	0x00000400,	-1,	1);
+	mid = add_struc_member(id,"_greenGemOwned",	0XAA,	0x00000400,	-1,	1);
+	mid = add_struc_member(id,"_brassButtonOwned",	0XAB,	0x00000400,	-1,	1);
 	mid = add_struc_member(id,"_frigateAllowed",	0XAC,	0x00000400,	-1,	1);
-	mid = add_struc_member(id,"field_AD",	0XAD,	0x00000400,	-1,	1);
+	mid = add_struc_member(id,"_strangeCoin",	0XAD,	0x00000400,	-1,	1);
 	mid = add_struc_member(id,"_idolOwned",	0XAE,	0x00000400,	-1,	1);
-	mid = add_struc_member(id,"field_AF",	0XAF,	0x00000400,	-1,	1);
+	mid = add_struc_member(id,"_triLithium",	0XAF,	0x00000400,	-1,	1);
 	mid = add_struc_member(id,"field_FF",	0XFF,	0x00000400,	-1,	1);
 	return id;
 }
@@ -398,6 +402,7 @@ static Bytes_0(void) {
 	set_name	(0X10485,	"aSpokenAtTheLoc");
 	create_insn	(0X104A3);
 	create_insn	(0X104A8);
+	set_cmt	(0X104B7,	"PICCAS",	0);
 	create_strlit	(0X104BA,	0X8);
 	set_name	(0X104BA,	"aPiccas");
 	create_insn	(0X104C2);
@@ -423,6 +428,7 @@ static Bytes_0(void) {
 	create_strlit	(0X10572,	0X21);
 	set_name	(0X10572,	"aAndTallTerrify");
 	create_insn	(0X10593);
+	set_cmt	(0X105A4,	"PICSPA",	0);
 	create_strlit	(0X105A7,	0X8);
 	set_name	(0X105A7,	"aPicspa");
 	create_insn	(0X105AF);
@@ -434,6 +440,7 @@ static Bytes_0(void) {
 	create_strlit	(0X105EC,	0X25);
 	set_name	(0X105EC,	"aToThePlanetsOf");
 	create_insn	(0X10611);
+	set_cmt	(0X10622,	"PICMIN",	0);
 	create_strlit	(0X10625,	0X8);
 	set_name	(0X10625,	"aPicmin");
 	create_insn	(0X1062D);
@@ -1394,6 +1401,7 @@ static Bytes_0(void) {
 	op_chr		(x,	1);
 	create_insn	(x=0X122E2);
 	op_chr		(x,	1);
+	set_cmt	(0X122F1,	"TLKXFF",	0);
 	create_strlit	(0X122F4,	0X8);
 	set_name	(0X122F4,	"aTlkxff");
 	create_insn	(0X122FC);
@@ -1469,6 +1477,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X12479);
 	op_plain_offset	(x,	1,	0X17410);
 	op_plain_offset	(x,	129,	0X17410);
+	set_cmt	(0X1247D,	"PLAYER",	0);
 	create_strlit	(0X12480,	0X8);
 	set_name	(0X12480,	"aPlayer_3");
 	create_insn	(0X12488);
@@ -2131,6 +2140,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X13899);
 	op_plain_offset	(x,	1,	0X17410);
 	op_plain_offset	(x,	129,	0X17410);
+	set_cmt	(0X138A2,	"PLAYER",	0);
 	create_strlit	(0X138A5,	0X8);
 	set_name	(0X138A5,	"aPlayer_4");
 	create_insn	(0X138AD);
@@ -4181,6 +4191,8 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_strlit	(0X1731A,	0X1B);
 	create_insn	(0X17335);
+	set_cmt	(0X17341,	"MAPX30",	0);
+	create_insn	(0X1734C);
 	create_byte	(0X17410);
 	set_name	(0X17410,	"_mapX");
 	create_byte	(0X17411);
@@ -4499,10 +4511,6 @@ static Bytes_0(void) {
 	create_byte	(0X18490);
 	make_array	(0X18490,	0X42);
 	set_name	(0X18490,	"tile_40");
-	set_cmt	(0X184D2,	"overworld tile 41: byte0=row width in bytes, byte1=row count, then 64 bytes CGA Linear 2bpp pixel data (16x16px)",	0);
-	create_byte	(0X184D2);
-	make_array	(0X184D2,	0X42);
-	set_name	(0X184D2,	"tile_41");
 }
 
 //------------------------------------------------------------------------
@@ -4512,6 +4520,10 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X184D2,	"overworld tile 41: byte0=row width in bytes, byte1=row count, then 64 bytes CGA Linear 2bpp pixel data (16x16px)",	0);
+	create_byte	(0X184D2);
+	make_array	(0X184D2,	0X42);
+	set_name	(0X184D2,	"tile_41");
 	set_cmt	(0X18514,	"overworld tile 42: byte0=row width in bytes, byte1=row count, then 64 bytes CGA Linear 2bpp pixel data (16x16px)",	0);
 	create_byte	(0X18514);
 	make_array	(0X18514,	0X42);

@@ -12,3 +12,146 @@
 [*] gen_file(OFILE_IDC) returned 1
 [*] saving database to C:\dev\ultima2\ultima2.idb
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'C:\\dev\\ultima2\\ida_scripts\\apply_structs.py']
+[*] reading C:\dev\ultima2\ida_scripts\apply_structs.py
+[*] executing C:\dev\ultima2\ida_scripts\apply_structs.py
+[*] finished executing C:\dev\ultima2\ida_scripts\apply_structs.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 16335
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'C:\\dev\\ultima2\\ida_scripts\\fix_access_file_calls.py']
+[*] reading C:\dev\ultima2\ida_scripts\fix_access_file_calls.py
+[*] executing C:\dev\ultima2\ida_scripts\fix_access_file_calls.py
+[*] captured stdout from target script:
+----- begin target script output -----
+--- access_file @ 152CA: 20 call site(s) ---
+[dry] 10217: filename @ 1021A = 'PICDRA  ' (already data), resumes @ 10222
+[dry] 103C0: filename @ 103C3 = 'PICOUT  ' (already data), resumes @ 103CB
+[dry] 1043A: filename @ 1043D = 'PICTWN  ' (already data), resumes @ 10445
+[dry] 104B7: filename @ 104BA = 'PICCAS  ' (already data), resumes @ 104C2
+[dry] 10527: filename @ 1052A = 'PICDNG  ' (already data), resumes @ 10532
+[dry] 105A4: filename @ 105A7 = 'PICSPA  ' (already data), resumes @ 105AF
+[dry] 10622: filename @ 10625 = 'PICMIN  ' (already data), resumes @ 1062D
+[dry] 1079F: filename @ 107A2 = 'PLAYER  ' (already data), resumes @ 107AA
+[dry] 107FC: filename @ 107FF = 'MONSTERS' (already data), resumes @ 10807
+[dry] 122B4: filename @ 122B7 = 'MAPXFF  ' (already data), resumes @ 122BF
+[dry] 122C6: filename @ 122C9 = 'MONXFF  ' (already data), resumes @ 122D1
+[dry] 122F1: filename @ 122F4 = 'TLKXFF  ' (already data), resumes @ 122FC
+[dry] 12335: filename @ 12338 = 'MAPXFF  ' (already data), resumes @ 12340
+[dry] 12347: filename @ 1234A = 'MONXFF  ' (already data), resumes @ 12352
+[dry] 12356: filename @ 12359 = 'PLAYER  ' (already data), resumes @ 12361
+[dry] 1247D: filename @ 12480 = 'PLAYER  ' (already data), resumes @ 12488
+[dry] 138A2: filename @ 138A5 = 'PLAYER  ' (already data), resumes @ 138AD
+[dry] 15444: filename @ 15447 = 'PLAYER  ' (already data), resumes @ 1544F
+[dry] 159FF: filename @ 15A02 = 'PLAYER  ' (already data), resumes @ 15A0A
+[dry] 17341: filename @ 17344 = 'MAPX30  ' (already data), resumes @ 1734C
+
+Done (DRY RUN -- nothing changed): 20/20 call sites fixed.
+----- end target script output -----
+[*] finished executing C:\dev\ultima2\ida_scripts\fix_access_file_calls.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 16335
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'C:\\dev\\ultima2\\ida_scripts\\fix_access_file_calls.py']
+[*] reading C:\dev\ultima2\ida_scripts\fix_access_file_calls.py
+[*] executing C:\dev\ultima2\ida_scripts\fix_access_file_calls.py
+[*] captured stdout from target script:
+----- begin target script output -----
+--- access_file @ 152CA: 20 call site(s) ---
+[+] 10217: fixed, filename @ 1021A = 'PICDRA  ', resumes @ 10222
+[+] 103C0: fixed, filename @ 103C3 = 'PICOUT  ', resumes @ 103CB
+[+] 1043A: fixed, filename @ 1043D = 'PICTWN  ', resumes @ 10445
+[+] 104B7: fixed, filename @ 104BA = 'PICCAS  ', resumes @ 104C2
+[+] 10527: fixed, filename @ 1052A = 'PICDNG  ', resumes @ 10532
+[+] 105A4: fixed, filename @ 105A7 = 'PICSPA  ', resumes @ 105AF
+[+] 10622: fixed, filename @ 10625 = 'PICMIN  ', resumes @ 1062D
+[+] 1079F: fixed, filename @ 107A2 = 'PLAYER  ', resumes @ 107AA
+[+] 107FC: fixed, filename @ 107FF = 'MONSTERS', resumes @ 10807
+[+] 122B4: fixed, filename @ 122B7 = 'MAPXFF  ', resumes @ 122BF
+[+] 122C6: fixed, filename @ 122C9 = 'MONXFF  ', resumes @ 122D1
+[+] 122F1: fixed, filename @ 122F4 = 'TLKXFF  ', resumes @ 122FC
+[+] 12335: fixed, filename @ 12338 = 'MAPXFF  ', resumes @ 12340
+[+] 12347: fixed, filename @ 1234A = 'MONXFF  ', resumes @ 12352
+[+] 12356: fixed, filename @ 12359 = 'PLAYER  ', resumes @ 12361
+[+] 1247D: fixed, filename @ 12480 = 'PLAYER  ', resumes @ 12488
+[+] 138A2: fixed, filename @ 138A5 = 'PLAYER  ', resumes @ 138AD
+[+] 15444: fixed, filename @ 15447 = 'PLAYER  ', resumes @ 1544F
+[+] 159FF: fixed, filename @ 15A02 = 'PLAYER  ', resumes @ 15A0A
+[+] 17341: fixed, filename @ 17344 = 'MAPX30  ', resumes @ 1734C
+
+Done (applied): 20/20 call sites fixed.
+----- end target script output -----
+[*] finished executing C:\dev\ultima2\ida_scripts\fix_access_file_calls.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 16365
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'C:\\dev\\ultima2\\ida_scripts\\apply_structs.py']
+[*] reading C:\dev\ultima2\ida_scripts\apply_structs.py
+[*] executing C:\dev\ultima2\ida_scripts\apply_structs.py
+[*] captured stdout from target script:
+----- begin target script output -----
+Savegame+2E: already '_torches' -- skipping
+Savegame+2F: already '_keys' -- skipping
+Savegame+30: already '_thievesTools' -- skipping
+Savegame+2B: already '_readiedWeapon' -- skipping
+Savegame+2C: already '_readiedArmor' -- skipping
+Savegame+2D: already '_readiedSpell' -- skipping
+Savegame+A5: already '_helmsOwned' -- skipping
+Savegame+A1: already '_wands' -- skipping
+Savegame+A2: already '_staves' -- skipping
+Savegame+60: already '_armorOwned' -- skipping (not re-verifying size; delete the member by hand in IDA first if it needs correcting again)
+Savegame+76: already '_weaponOwned' -- skipping add (use "resize_member" if it needs to change size/name)
+Savegame+80: already '_spellCharges' -- skipping (not re-verifying size; delete the member by hand in IDA first if it needs correcting again)
+Savegame+A3: already '_bootsOwned' -- skipping add (use "resize_member" if it needs to change size/name)
+Savegame+A4: already '_cloakOwned' -- skipping add (use "resize_member" if it needs to change size/name)
+Savegame+AE: already '_idolOwned' -- skipping add (use "resize_member" if it needs to change size/name)
+Savegame+A7: already '_ankhOwned' -- skipping
+Savegame+AC: already '_frigateAllowed' -- skipping
+Savegame+A9: already '_planeAllowed' -- skipping
+Savegame+AF: 'field_AF' -> '_triLithium'
+    TEXT_STRINGS item 15 = TRI-LITHIUM. Rocket AND hyperwarp fuel: `launch` requires it nonzero to launch the Rocket ("SHIP INCAPABLE OF LAUNCH!" otherwise, asm ~6932-6939) and decrements it via sub_16999 (asm ~12790-12796); `hyperwarp` requires it nonzero ("NO FUEL!" otherwise, asm ~13463-13469) and decrements it (asm ~13475-13481) per jump. Also shown on an in-flight fuel-gauge HUD (sub_16FA3, asm ~13575) and low fuel (specific bit pattern) risks "SHIP OFF COURSE!" during hyperwarp (asm ~13432-13441). Acquired via `get` (+1 BCD, "TRI-LITHIUM!", asm ~6717-6726).
+Savegame+AD: 'field_AD' -> '_strangeCoin'
+    TEXT_STRINGS item 13 = STRANGE COIN. Spent by the `negate_time` command ("HOW? YOU'RE NOT EINSTEIN" if zero, else decrements it and "YOU RUB A COIN..." then sets _flag1=0x14, asm ~7245-7268 -- the _flag1 effect itself not chased further).
+Savegame+AB: add member '_brassButtonOwned' (1 byte(s))
+    TEXT_STRINGS item 11 = BRASS BUTTON. Not a recognized struct member before this -- still raw `byte ptr player+0ABh`. Gates launching the Airplane in `launch` ("FUNNY THIS PLANE IS MISSING A BRASS BUTTON!" if zero, asm ~7038-7043), check-only, never decremented. Matches the barkeep hint "PLANES NEED BRASS BUTTONS!" exactly.
+Savegame+A6: add member '_gemOwned' (1 byte(s))
+    TEXT_STRINGS item 6 = GEM. No independent reference anywhere in the binary -- only known via _hasRing[] array position (di=6), same methodology already cross-validated for 8 other slots in this array.
+Savegame+A8: add member '_redGemOwned' (1 byte(s))
+    TEXT_STRINGS item 8 = RED GEM. Same as _gemOwned above: no independent reference, only known via _hasRing[] array position (di=8).
+Savegame+AA: add member '_greenGemOwned' (1 byte(s))
+    TEXT_STRINGS item 10 = GREEN GEM. Same as _gemOwned above: no independent reference, only known via _hasRing[] array position (di=10).
+
+Done. Re-export the .asm/.idc and check the new names took, then update docs/roadmap.md's checklist.
+----- end target script output -----
+[*] finished executing C:\dev\ultima2\ida_scripts\apply_structs.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 16365
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0

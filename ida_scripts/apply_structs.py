@@ -126,13 +126,15 @@ OPERATIONS = [
              "matching Ultima II's real spell list)."},
 
     {"op": "rename_member", "struct": "Savegame", "offset": 0xA5,
-     "new_name": "_gems",
-     "note": "closes out an open item from the _mapMonsters decoding "
-             "pass (was: 'Fighter-kill drop, +1 BCD, no consumption "
-             "site found'). view requires it nonzero (\"VIEW WHAT?\" "
-             "otherwise, asm 10927-10935) and decrements it on use "
-             "(asm 10962-10968) -- spending a gem to see the world "
-             "map. See docs/overview.md as above."},
+     "new_name": "_helmsOwned",
+     "note": "corrected from an earlier '_gems' guess once view's IDB "
+             "inline-data gap was fixed and the real text came back: "
+             "view requires it nonzero (\"VIEW WHAT?\" otherwise, asm "
+             "~8004-8011) then prints \"VIEW WITH MAGICAL HELM!\" and "
+             "decrements it (BCD) on use -- it's the Magical Helm "
+             "count, not gems, matching array position 5 = HELM in the "
+             "_hasRing[] treasure-item decode. See "
+             "docs/overview.md#text_strings-treasure-item-block-traced--a-16-element-inventory-array-unifying-8-prior-findings."},
 
     # -- found while tracing _readiedSpell into cast --
 
@@ -235,6 +237,68 @@ OPERATIONS = [
      "new_name": "_planeAllowed",
      "note": "gates boarding the Airplane in `board` -- zero: "
              "\"STRANGE YOU CAN'T GET IN!\" (asm ~6066-6073)."},
+
+    # -- last 3 previously-vague treasure-array slots (0xA6/0xA8/0xAA
+    # still gaps) fully traced 2026-08-18, plus a bonus corroborating
+    # find: a barkeep "buy a rumor" hint table (unk_116BC, asm
+    # ~2899-2909, TIP HOW MUCH?/THE BARKEEP SAYS:) independently
+    # confirms nearly every item-requirement mapping in this whole
+    # arc -- "SOME FIGHTERS WEAR MAGIC HELMS!", "AVIATORS USE SKULL
+    # KEYS!", "SAYLORS WEAR BLUE TASSLES!", "MAGES CARRY WANDS OR
+    # STAFFS!", "GUARDS CARRY KEYS!", "ANKHS OPEN SPACE!", "PLANES
+    # NEED BRASS BUTTONS!". See
+    # docs/overview.md#text_strings-treasure-item-block-traced--a-16-element-inventory-array-unifying-8-prior-findings --
+
+    {"op": "rename_member", "struct": "Savegame", "offset": 0xAF,
+     "new_name": "_triLithium",
+     "note": "TEXT_STRINGS item 15 = TRI-LITHIUM. Rocket AND hyperwarp "
+             "fuel: `launch` requires it nonzero to launch the Rocket "
+             "(\"SHIP INCAPABLE OF LAUNCH!\" otherwise, asm ~6932-6939) "
+             "and decrements it via sub_16999 (asm ~12790-12796); "
+             "`hyperwarp` requires it nonzero (\"NO FUEL!\" otherwise, "
+             "asm ~13463-13469) and decrements it (asm ~13475-13481) "
+             "per jump. Also shown on an in-flight fuel-gauge HUD "
+             "(sub_16FA3, asm ~13575) and low fuel (specific bit "
+             "pattern) risks \"SHIP OFF COURSE!\" during hyperwarp (asm "
+             "~13432-13441). Acquired via `get` (+1 BCD, \"TRI-LITHIUM!"
+             "\", asm ~6717-6726)."},
+
+    {"op": "rename_member", "struct": "Savegame", "offset": 0xAD,
+     "new_name": "_strangeCoin",
+     "note": "TEXT_STRINGS item 13 = STRANGE COIN. Spent by the "
+             "`negate_time` command (\"HOW? YOU'RE NOT EINSTEIN\" if "
+             "zero, else decrements it and \"YOU RUB A COIN...\" then "
+             "sets _flag1=0x14, asm ~7245-7268 -- the _flag1 effect "
+             "itself not chased further)."},
+
+    {"op": "add_member", "struct": "Savegame", "offset": 0xAB,
+     "member": "_brassButtonOwned", "element_size": 1, "count": 1,
+     "note": "TEXT_STRINGS item 11 = BRASS BUTTON. Not a recognized "
+             "struct member before this -- still raw `byte ptr "
+             "player+0ABh`. Gates launching the Airplane in `launch` "
+             "(\"FUNNY THIS PLANE IS MISSING A BRASS BUTTON!\" if "
+             "zero, asm ~7038-7043), check-only, never decremented. "
+             "Matches the barkeep hint \"PLANES NEED BRASS BUTTONS!\" "
+             "exactly."},
+
+    {"op": "add_member", "struct": "Savegame", "offset": 0xA6,
+     "member": "_gemOwned", "element_size": 1, "count": 1,
+     "note": "TEXT_STRINGS item 6 = GEM. No independent reference "
+             "anywhere in the binary -- only known via _hasRing[] "
+             "array position (di=6), same methodology already "
+             "cross-validated for 8 other slots in this array."},
+
+    {"op": "add_member", "struct": "Savegame", "offset": 0xA8,
+     "member": "_redGemOwned", "element_size": 1, "count": 1,
+     "note": "TEXT_STRINGS item 8 = RED GEM. Same as _gemOwned above: "
+             "no independent reference, only known via _hasRing[] "
+             "array position (di=8)."},
+
+    {"op": "add_member", "struct": "Savegame", "offset": 0xAA,
+     "member": "_greenGemOwned", "element_size": 1, "count": 1,
+     "note": "TEXT_STRINGS item 10 = GREEN GEM. Same as _gemOwned "
+             "above: no independent reference, only known via "
+             "_hasRing[] array position (di=10)."},
 ]
 
 _SIZE_FLAGS = {1: idc.FF_BYTE, 2: idc.FF_WORD, 4: idc.FF_DWORD}
