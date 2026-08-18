@@ -458,12 +458,29 @@ sessions, unlike a one-off todo list.
 - [ ] Pin down remaining `Savegame` struct fields — current layout stops
       being well-understood partway through the 256-byte struct.
       `_disableSave` is used but not yet placed.
-- [ ] Name the 79 remaining `sub_XXXXX` functions. Best entry points:
-      `canMoveToTile` and `sub_10A30` (movement/collision and command
-      dispatch respectively — see the correction in overview.md, these
-      are two separate functions, not one) and the `sub_16xxx` cluster
-      (asm ~19113-20276, dense self-contained call graph, likely one
-      subsystem — combat? dungeon movement?).
+- [ ] **In progress**: sweep of the remaining unnamed `sub_XXXXX`
+      functions, ranked by call/jmp-site reuse rather than picked
+      arbitrarily (73 at the start of the sweep, 29 named so far, 44
+      left — mostly single-reference from here on, 2026-08-18) — see
+      [overview.md](overview.md#sub_xxxxx-sweep--unnamed-helpers-ranked-by-call-site-reuse)
+      for the full list and evidence. Named clusters so far: CGA
+      point/line-drawing primitives (`draw_line`/`plot_point`/
+      `erase_point`/`clear_screen`/`clear_cga_bank`), PC-speaker
+      primitives (`speaker_on`/`hold_tone`/`speaker_off`), the
+      hyperwarp starfield animation (`animate_starfield`/
+      `draw_ship_marker`/`erase_ship_marker`/`next_star_coord`), and —
+      major find — `view`'s actual map-overview mechanism
+      (`draw_world_map_overview`/`plot_map_icon_point`, resolves what
+      `sub_129D2` does, previously only vaguely described during the
+      location-descriptor dead-data investigation). Note: the old
+      `sub_10A30` "movement-key dispatcher" entry point from an earlier
+      session no longer exists as a separate function — its callers
+      now resolve inside `end_of_turn` itself (likely absorbed when
+      the `command_jump_table` fix reshuffled code boundaries); don't
+      go looking for it. Remaining candidates ranked by reuse: the
+      `sub_16xxx` cluster still has unresolved pieces (dense,
+      self-contained call graph, likely dungeon movement or combat —
+      not yet confirmed which).
 - [ ] Rename the auto-named segments (`sg01a2`, `sg08e3`) once their
       contents/roles are clear, and rename `_picData` (misleadingly named
       after one file type when it's the shared FCB for all file I/O).

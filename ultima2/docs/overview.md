@@ -772,3 +772,112 @@ numerically identical and no longer raw hex. The script initially
 missed `transact`'s purchase site (its proc list was assembled from
 what had been read at the time, not an exhaustive search) — caught
 and fixed on a second pass, now covers all 5 procs.
+
+### `sub_XXXXX` sweep — unnamed helpers ranked by call-site reuse
+
+Systematic sweep of the (at the time) 73 remaining unnamed `sub_XXXXX`
+functions, ranked by how many static `call`/`jmp` sites reference each
+(this codebase tail-jumps into shared code a lot, so `jmp` matters as
+much as `call` for reuse counting). Working down the ranked list rather
+than picking functions arbitrarily. 29 named so far (44 left, mostly
+single-reference from here on — lower value/confidence per function),
+falling into a few clean clusters:
+
+**CGA point/line-drawing primitives** (the most-reused unnamed code in
+the binary — `draw_line` alone has 44 static call/jmp sites):
+- `draw_line` (was `sub_167B3`) — Bresenham line stepper: steps a
+  current point (`byte_17889`/`byte_178A`) toward a target
+  (`byte_1788B`/`byte_1788C`), calling `plot_point` once per pixel.
+- `plot_point` (was `sub_14B76`) — converts a point + viewport origin
+  (`word_178CF`/`word_178D1`) to a CGA framebuffer address/2bpp pixel
+  mask (same interleaved-bank addressing as `xor_invert_cga_bank`),
+  `OR`s the mask in.
+- `erase_point` (was `sub_14BAA`) — identical address math, `AND`s an
+  *inverted* mask in instead — the erase counterpart.
+- `clear_screen`/`clear_cga_bank` (were `sub_14B4E`/`sub_14B5D`) —
+  clears both CGA banks; `clear_cga_bank` zeroes one bank's 6400 bytes
+  (160 of 200 rows — leaves room for a status/text area).
+
+**PC-speaker primitives**, already understood from the earlier
+`play_hit_sound`/`play_tone_sweep`/`play_fail_sound`/`play_tick_sound`
+trace (which call these) but never renamed themselves:
+`speaker_on`/`hold_tone`/`speaker_off` (were `sub_15CB2`/`sub_15CD2`/
+`sub_15CE4`) — start the PIT square wave + enable speaker, reload
+frequency + busy-wait hold (called per-step during a sweep), and
+restore the saved port state, respectively.
+
+**Hyperwarp starfield animation** — the per-frame rendering for flying
+between planets, all sharing the `byte_1788x` point-drawing variables
+with the CGA primitives above:
+- `animate_starfield` (was `sub_16B3D`) — draws the ship marker, then
+  loops all 64 star slots, computing each star's new position relative
+  to ship motion (boundary-checked via lookup tables), erasing the old
+  point and plotting the new one, respawning any star that scrolls
+  off-screen via `next_star_coord`.
+- `draw_ship_marker`/`erase_ship_marker` (were `sub_16D83`/`sub_16CC4`)
+  — draw/erase a "+"-shaped crosshair at the ship's position (6+6
+  `plot_point`/`erase_point` calls, vertical then horizontal stroke).
+- `next_star_coord` (was `sub_16D68`) — a lightweight PRNG step
+  distinct from the game's main `rand_byte`, only used to generate
+  fresh coordinates when respawning an off-screen star.
+
+**`view`'s actual map-overview mechanism** — resolves what `sub_129D2`
+does, previously only described as "a pure map-drawing routine" during
+the `TEXT_STRINGS` location-descriptor dead-data investigation:
+- `draw_world_map_overview` (was `sub_129D2`) — `_circleDeltaX`
+  increments 0-63 as the inner loop, `_circleDeltaY` 0-63 as the outer
+  loop (both masked `&3Fh`) — a full 64×64 scan of the overworld map,
+  **not** a circle despite the variable names (reused scratch globals
+  here, unrelated to their name elsewhere). For each cell, reads the
+  tile via `get_player_tile` and, for several tile-type categories,
+  draws a small 2-4-point glyph icon via `plot_map_icon_point` instead
+  of the real tile graphic — a simplified overview, since a real
+  64×64-tile render wouldn't fit legibly on a 320×200 screen. This is
+  literally `view`'s `"VIEW WITH MAGICAL HELM!"` effect.
+- `plot_map_icon_point` (was `sub_12B65`) — converts a small sub-cell
+  offset (0-3) plus the current scan position into screen coordinates
+  and plots one point; different offset combinations per tile-type
+  case form each glyph's distinct point pattern.
+
+**Small math utilities**: `get_dungeon_tile_at_player` (was
+`sub_168C0`) — dungeon/tower tile reader, 16-row stride banked by the
+depth level, distinct from `get_player_tile`'s 64-row overworld
+stride; `sign_byte`/`abs_byte` (were `sub_150D8`/`sub_150EF`) —
+classic `sign()`/`abs()` for a signed byte.
+
+**`transact` helpers**: `read_direction_keypress` (was `sub_12362`) —
+"which direction?" prompt (busy-waits for a directional key, sets
+`_circleDeltaX`/`_circleDeltaY` to the delta — reused as generic
+scratch vars here, same as in `draw_world_map_overview`, unrelated to
+their circle-sounding name), parallels the already-named
+`read_digit_keypress`. `compute_item_price` (was `sub_120AB`) — shop
+item-price calculator, discounted by `bit-length(_intelligence +
+_charisma)`, built via repeated BCD addition; all 6 call sites are
+inside `transact`'s shop-purchase branches — a "smooth talker gets a
+better price" haggling mechanic. `longPauseScreen` (was `sub_1068F`)
+— identical to `pauseScreen` but a longer delay constant.
+
+**More hyperwarp/sound pieces**: `seed_star_prng` (was `sub_16D5B`) —
+seeds `next_star_coord`'s PRNG state with a fixed constant, so every
+hyperwarp launch gets the same starfield sequence. `play_melody` (was
+`sub_15D09`) — generic table-driven melody player (duration/frequency
+note list, `0xFFFF`=rest). `play_step_tick` (was `sub_15EC7`) —
+thin `play_melody` wrapper always playing tune 0, called across
+`play_game`'s idle-wait loop, `canMoveToTile`, `normal_movement`'s
+walking loop, and `launch`'s cleanup — a generic step/tick sound tied
+to animation frames. `play_bump_sound` (was `sub_15FA6`) — one-shot
+sweep with fixed params called from `normal_movement`, best guess is
+a "can't move there" bump sound but not independently confirmed
+(lower confidence than the rest of this sweep). `play_cannon_sound`
+(was `sub_15EAC`) — clearest context is `fire`'s "FIRE DIRECT-"
+sequence (`_playerTileId==0x24`, Ship) right after the direction is
+confirmed. `read_animated_digit_keypress` (was `sub_16F7F`) — same
+shape as `read_digit_keypress` but calls `animate_starfield` every
+loop iteration, used for hyperwarp's XENO=/YAKO=/ZABO= coordinate
+entry. `speaker_off_once` (was `sub_17289`) — guards `speaker_off`
+behind an "already silenced" flag.
+
+**Text/UI helpers**: `clear_text_row`/`clear_caption_rows` (were
+`sub_153A0`/`sub_1538F`) — clear a 40-column text row (`text_y=23`
+and `24` specifically for the caption pair), matching the demo
+sequence's caption `text_y` values exactly.

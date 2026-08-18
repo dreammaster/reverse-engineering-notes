@@ -457,6 +457,7 @@ static Bytes_0(void) {
 	create_insn	(0X10688);
 	set_name	(0X10688,	"pauseScreen");
 	create_insn	(0X1068F);
+	set_name	(0X1068F,	"longPauseScreen");
 	create_insn	(x=0X10696);
 	op_dec		(x,	1);
 	set_name	(0X10696,	"delayMilli?");
@@ -1309,6 +1310,7 @@ static Bytes_0(void) {
 	create_insn	(0X120A4);
 	create_insn	(0X120A7);
 	create_insn	(0X120AB);
+	set_name	(0X120AB,	"compute_item_price");
 	create_insn	(x=0X120D1);
 	op_hex		(x,	1);
 	create_insn	(x=0X12122);
@@ -1433,6 +1435,7 @@ static Bytes_0(void) {
 	set_name	(0X12359,	"aPlayer_1");
 	create_insn	(0X12361);
 	create_insn	(0X12362);
+	set_name	(0X12362,	"read_direction_keypress");
 	set_cmt	(0X1238A,	"PASS",	0);
 	create_strlit	(0X1238D,	0X5);
 	set_name	(0X1238D,	"aPass_1");
@@ -1627,6 +1630,7 @@ static Bytes_0(void) {
 	create_byte	(0X129D0);
 	create_byte	(0X129D1);
 	create_insn	(0X129D2);
+	set_name	(0X129D2,	"draw_world_map_overview");
 	create_insn	(x=0X129EF);
 	op_hex		(x,	1);
 	create_insn	(x=0X129FD);
@@ -1642,6 +1646,7 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X12B59);
 	create_insn	(0X12B65);
+	set_name	(0X12B65,	"plot_map_icon_point");
 	create_insn	(0X12B8F);
 	set_name	(0X12B8F,	"attack");
 	create_strlit	(0X12B92,	0X9);
@@ -2651,8 +2656,11 @@ static Bytes_0(void) {
 	create_insn	(0X14B35);
 	set_name	(0X14B35,	"xor_invert_cga_bank");
 	create_insn	(0X14B4E);
+	set_name	(0X14B4E,	"clear_screen");
 	create_insn	(0X14B5D);
+	set_name	(0X14B5D,	"clear_cga_bank");
 	create_insn	(0X14B76);
+	set_name	(0X14B76,	"plot_point");
 	create_insn	(x=0X14B8F);
 	op_hex		(x,	1);
 	create_insn	(x=0X14B93);
@@ -2662,6 +2670,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X14B97);
 	op_hex		(x,	1);
 	create_insn	(0X14BAA);
+	set_name	(0X14BAA,	"erase_point");
 	create_insn	(x=0X14BC3);
 	op_hex		(x,	1);
 	create_insn	(x=0X14BC7);
@@ -2955,8 +2964,10 @@ static Bytes_0(void) {
 	create_insn	(0X150B3);
 	set_name	(0X150B3,	"get_player_tile");
 	create_insn	(0X150D8);
+	set_name	(0X150D8,	"sign_byte");
 	create_insn	(0X150E1);
 	create_insn	(0X150EF);
+	set_name	(0X150EF,	"abs_byte");
 	create_insn	(x=0X150F3);
 	op_hex		(x,	1);
 	create_insn	(x=0X150F9);
@@ -3084,7 +3095,9 @@ static Bytes_0(void) {
 	op_hex		(x,	0);
 	create_insn	(0X15380);
 	create_insn	(0X1538F);
+	set_name	(0X1538F,	"clear_caption_rows");
 	create_insn	(0X153A0);
+	set_name	(0X153A0,	"clear_text_row");
 	create_insn	(0X153B5);
 	set_name	(0X153B5,	"write_number");
 	create_insn	(x=0X153B8);
@@ -3408,6 +3421,7 @@ static Bytes_0(void) {
 	create_insn	(0X15C95);
 	set_name	(0X15C95,	"play_tick_sound");
 	create_insn	(0X15CB2);
+	set_name	(0X15CB2,	"speaker_on");
 	set_cmt	(0X15CB5,	"Timer 8253-5 (AT: 8254.2).",	0);
 	create_insn	(x=0X15CB5);
 	op_hex		(x,	0);
@@ -3426,6 +3440,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X15CCE);
 	op_hex		(x,	0);
 	create_insn	(0X15CD2);
+	set_name	(0X15CD2,	"hold_tone");
 	set_cmt	(0X15CD4,	"Timer 8253-5 (AT: 8254.2).",	0);
 	create_insn	(x=0X15CD4);
 	op_hex		(x,	0);
@@ -3433,10 +3448,12 @@ static Bytes_0(void) {
 	create_insn	(x=0X15CD8);
 	op_hex		(x,	0);
 	create_insn	(0X15CE4);
+	set_name	(0X15CE4,	"speaker_off");
 	set_cmt	(0X15CE9,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═► OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
 	create_insn	(x=0X15CE9);
 	op_hex		(x,	0);
 	create_insn	(0X15D09);
+	set_name	(0X15D09,	"play_melody");
 	create_insn	(x=0X15D14);
 	op_hex		(x,	1);
 	create_insn	(x=0X15D16);
@@ -3468,12 +3485,15 @@ static Bytes_0(void) {
 	create_insn	(0X15E83);
 	set_name	(0X15E83,	"play_fail_sound");
 	create_insn	(0X15EAC);
+	set_name	(0X15EAC,	"play_cannon_sound");
 	create_insn	(0X15EC7);
+	set_name	(0X15EC7,	"play_step_tick");
 	create_insn	(0X15ED7);
 	set_name	(0X15ED7,	"play_hit_sound");
 	create_insn	(0X15EF2);
 	set_name	(0X15EF2,	"pause?");
 	create_insn	(0X15FA6);
+	set_name	(0X15FA6,	"play_bump_sound");
 	create_insn	(0X15FC3);
 	set_name	(0X15FC3,	"play_magic_sound");
 	create_insn	(0X15FE0);
@@ -3829,6 +3849,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X167B3);
+	set_name	(0X167B3,	"draw_line");
 	create_insn	(0X167C7);
 	create_insn	(x=0X167D6);
 	op_hex		(x,	1);
@@ -3852,6 +3873,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X168BA);
 	op_hex		(x,	1);
 	create_insn	(0X168C0);
+	set_name	(0X168C0,	"get_dungeon_tile_at_player");
 	create_insn	(0X168ED);
 	create_insn	(0X16902);
 	create_insn	(x=0X16916);
@@ -3935,6 +3957,7 @@ static Bytes_0(void) {
 	set_name	(0X16B27,	"aDive");
 	create_insn	(0X16B2D);
 	create_insn	(0X16B3D);
+	set_name	(0X16B3D,	"animate_starfield");
 	create_insn	(x=0X16B47);
 	op_plain_offset	(x,	1,	0X17410);
 	op_plain_offset	(x,	129,	0X17410);
@@ -4017,6 +4040,7 @@ static Bytes_0(void) {
 	create_byte	(0X16CAC);
 	create_byte	(0X16CBC);
 	create_insn	(0X16CC4);
+	set_name	(0X16CC4,	"erase_ship_marker");
 	create_insn	(0X16D3E);
 	create_insn	(x=0X16D4A);
 	op_plain_offset	(x,	0,	0X17410);
@@ -4027,8 +4051,11 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	0,	0X17410);
 	op_plain_offset	(x,	128,	0X17410);
 	create_insn	(0X16D5B);
+	set_name	(0X16D5B,	"seed_star_prng");
 	create_insn	(0X16D68);
+	set_name	(0X16D68,	"next_star_coord");
 	create_insn	(0X16D83);
+	set_name	(0X16D83,	"draw_ship_marker");
 	set_cmt	(0X16DFD,	"HYPERWARP ENGAGED!",	0);
 	create_insn	(0X16DFD);
 	set_name	(0X16DFD,	"hyperwarp");
@@ -4067,6 +4094,7 @@ static Bytes_0(void) {
 	create_strlit	(0X16F32,	0X19);
 	create_insn	(0X16F4B);
 	create_insn	(0X16F7F);
+	set_name	(0X16F7F,	"read_animated_digit_keypress");
 	create_insn	(0X16FA3);
 	set_cmt	(0X16FAD,	"x",	0);
 	set_cmt	(0X16FB3,	"y",	0);
@@ -4182,6 +4210,7 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X17276);
 	create_insn	(0X17289);
+	set_name	(0X17289,	"speaker_off_once");
 	create_insn	(0X172A0);
 	create_strlit	(0X172A9,	0X31);
 	create_insn	(0X172DA);
@@ -4495,6 +4524,15 @@ static Bytes_0(void) {
 	create_byte	(0X18388);
 	make_array	(0X18388,	0X42);
 	set_name	(0X18388,	"tile_36");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X183CA,	"overworld tile 37: byte0=row width in bytes, byte1=row count, then 64 bytes CGA Linear 2bpp pixel data (16x16px)",	0);
 	create_byte	(0X183CA);
 	make_array	(0X183CA,	0X42);
@@ -4511,15 +4549,6 @@ static Bytes_0(void) {
 	create_byte	(0X18490);
 	make_array	(0X18490,	0X42);
 	set_name	(0X18490,	"tile_40");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X184D2,	"overworld tile 41: byte0=row width in bytes, byte1=row count, then 64 bytes CGA Linear 2bpp pixel data (16x16px)",	0);
 	create_byte	(0X184D2);
 	make_array	(0X184D2,	0X42);
