@@ -707,12 +707,12 @@ loc_10807:                              ; CODE XREF: play_game+98↑j
                 mov     al, player._mapY
                 mov     _mapY, al
 ;
-                mov     al, player.field_33
+                mov     al, player._inSpace
                 or      al, al
                 jz      short loc_10850
-                mov     al, player.field_34
+                mov     al, player._launchMapX
                 mov     _playerX, al
-                mov     al, player.field_35
+                mov     al, player._launchMapY
                 mov     _playerY, al
                 call    get_player_tile
                 mov     al, 50h ; 'P'
@@ -4105,9 +4105,9 @@ loc_1243E:                              ; CODE XREF: canMoveToTile+F↑j
                 mov     al, player._disableSave
                 cmp     al, 0
                 jz      short loc_12474
-                mov     al, player.field_34
+                mov     al, player._launchMapX
                 mov     _playerX, al
-                mov     al, player.field_35
+                mov     al, player._launchMapY
                 mov     _playerY, al
                 call    get_player_tile
                 mov     al, 50h ; 'P'
@@ -4472,7 +4472,7 @@ loc_12677:                              ; CODE XREF: normal_movement+54↑j
                 mov     al, _mapY
                 mov     player._mapY, al
                 call    save_game
-                mov     al, player.field_38
+                mov     al, player._patrolWaypoint
                 clc
                 rcr     al, 1
                 cmp     al, player._mapNum1
@@ -4488,7 +4488,7 @@ loc_126C6:                              ; CODE XREF: normal_movement+14C↑j
                 add     al, al
                 add     al, al
                 add     al, al
-                adc     al, player.field_38
+                adc     al, player._patrolWaypoint
                 mov     ah, 0
                 mov     di, ax
                 mov     al, cs:[di+2798h]
@@ -4525,7 +4525,7 @@ loc_12708:                              ; CODE XREF: update_patrol_marker+C↑j
                 add     al, al
                 add     al, al
                 mov     byte_1742F, al
-                adc     al, player.field_38
+                adc     al, player._patrolWaypoint
                 mov     ah, 0
                 mov     di, ax
                 mov     al, cs:[di+2798h]
@@ -4546,11 +4546,11 @@ loc_12708:                              ; CODE XREF: update_patrol_marker+C↑j
 loc_12744:                              ; CODE XREF: update_patrol_marker+3A↑j
                 mov     al, 8
                 mov     byte ptr player+39h, al
-                inc     player.field_38
-                inc     player.field_38
-                mov     al, player.field_38
+                inc     player._patrolWaypoint
+                inc     player._patrolWaypoint
+                mov     al, player._patrolWaypoint
                 and     al, 7
-                mov     player.field_38, al
+                mov     player._patrolWaypoint, al
                 clc
                 adc     al, byte_1742F
                 mov     ah, 0
@@ -6875,9 +6875,9 @@ loc_13857:                              ; CODE XREF: klimb+71↓j
                 mov     al, player._disableSave
                 or      al, al
                 jz      short loc_13899
-                mov     al, player.field_34
+                mov     al, player._launchMapX
                 mov     _playerX, al
-                mov     al, player.field_35
+                mov     al, player._launchMapY
                 mov     _playerY, al
                 call    get_player_tile
                 mov     al, 50h ; 'P'
@@ -6952,11 +6952,11 @@ loc_13923:                              ; CODE XREF: launch+39↑j
                 or      al, al
                 jnz     short loc_1395D
                 mov     al, _mapX
-                mov     player.field_34, al
+                mov     player._launchMapX, al
                 mov     al, _mapY
-                mov     player.field_35, al
+                mov     player._launchMapY, al
                 mov     al, 1
-                mov     player.field_33, al
+                mov     player._inSpace, al
                 call    save_game
 
 loc_1395D:                              ; CODE XREF: launch+90↑j
@@ -7017,17 +7017,17 @@ loc_139D7:                              ; CODE XREF: launch+122↑j
                 or      al, al
                 jnz     short loc_139E6
                 mov     al, 0
-                mov     player.field_33, al
+                mov     player._inSpace, al
                 jmp     end_of_turn2
 ; ---------------------------------------------------------------------------
 
 loc_139E6:                              ; CODE XREF: launch+12C↑j
                 mov     al, _mapX
-                mov     player.field_34, al
+                mov     player._launchMapX, al
                 mov     al, _mapY
-                mov     player.field_35, al
+                mov     player._launchMapY, al
                 mov     al, 1
-                mov     player.field_33, al
+                mov     player._inSpace, al
                 jmp     end_of_turn2
 ; ---------------------------------------------------------------------------
 
@@ -7356,7 +7356,7 @@ loc_13CED:                              ; CODE XREF: offer+B2↑j
 aEnilnoIsYours  db 'ENILNO IS YOURS!',0
 ; ---------------------------------------------------------------------------
                 mov     al, 1
-                mov     player.field_49, al
+                mov     player._enilnoOwned, al
                 jmp     end_of_turn2
 ; ---------------------------------------------------------------------------
 
@@ -7364,7 +7364,7 @@ loc_13D10:                              ; CODE XREF: offer+B6↑j
                 mov     al, byte ptr _sleepFlag2?
                 cmp     al, 5
                 jb      short loc_13CB6
-                mov     al, player.field_36
+                mov     al, player._ringQuestFlag
                 or      al, al
                 jnz     short loc_13D33
                 call    write_string
@@ -7392,10 +7392,10 @@ loc_13D52:                              ; CODE XREF: offer+BA↑j
                 mov     ah, 0
                 mov     di, ax
                 inc     di
-                mov     al, player.field_40[di]
+                mov     al, player._offerRewardItems[di]
                 adc     al, 1
                 daa
-                mov     player.field_40[di], al
+                mov     player._offerRewardItems[di], al
                 call    write_string
 ; ---------------------------------------------------------------------------
 aHereTakeThis   db 'HERE TAKE THIS!',0
@@ -7899,7 +7899,7 @@ loc_14217:                              ; CODE XREF: transact+1C8↓j
                 cmp     al, 81h
                 jnz     short loc_14246
                 mov     al, 1
-                mov     player.field_36, al
+                mov     player._ringQuestFlag, al
 
 loc_14246:                              ; CODE XREF: transact+1E0↑j
                                         ; transact+1E7↑j ...

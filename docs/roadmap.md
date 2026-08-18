@@ -490,9 +490,25 @@ sessions, unlike a one-off todo list.
 
 ## Medium term
 
-- [ ] Pin down remaining `Savegame` struct fields — current layout stops
-      being well-understood partway through the 256-byte struct.
-      `_disableSave` is used but not yet placed.
+- [x] **Pin down remaining `Savegame` struct fields — done
+      (2026-08-18).** `_disableSave`'s "not yet placed" note was stale
+      — it's already a named member at `0x37`; tracing it properly
+      revealed it's genuinely dual-purpose (save-gate boolean +
+      hyperwarp orbit-target index, 0-8=planet/0xA=deep space/9=a
+      distinct Castle-quest value), documented rather than renamed.
+      Named 7 more fields along the way: `_inSpace` (persisted
+      "away from overworld" flag, checked at game-load),
+      `_launchMapX`/`_launchMapY` (saved launch position for `klimb`
+      to return to), `_ringQuestFlag`, `_patrolWaypoint`,
+      `_offerRewardItems` (a previously-unknown 9-byte reward array —
+      individual slot contents still not cross-referenced against any
+      item table, small open follow-up), and `_enilnoOwned`
+      ("ENILNO IS YOURS!", "ONLINE" backwards — a third `offer` quest
+      reward alongside the Ring and the reward array, not previously
+      documented at all). Also fixed a badly stale struct dump in
+      overview.md that still showed old pre-rename names (`_gems`,
+      `field_AB`/`AD`/`AF`) for the treasure array. Full struct layout
+      in [overview.md](overview.md#savegame-asm-line-22-sizeof-0x100--256-bytes).
 - [x] **Sweep of the unnamed `sub_XXXXX` functions — COMPLETE.**
       Ranked by call/jmp-site reuse rather than picked arbitrarily; all
       73 named, 2026-08-18, zero unnamed functions left in the binary.

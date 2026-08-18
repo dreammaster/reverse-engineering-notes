@@ -309,6 +309,74 @@ OPERATIONS = [
              "asm ~4159-4166) and set unconditionally to 1 (never "
              "incremented) as a quest reward in offer (\"THE RING IS "
              "YOURS!\", asm ~7376-7383)."},
+
+    # -- Savegame struct cleanup pass (2026-08-18): the remaining
+    # unnamed fields between the treasure array and the struct's known
+    # boundaries, found while tracing _disableSave's placement (which
+    # turned out to already be a named member at 0x37 -- the roadmap's
+    # "not yet placed" note was stale, not a real gap). All 7 traced
+    # via direct read/write-site evidence, no guessing. --
+
+    {"op": "rename_member", "struct": "Savegame", "offset": 0x33,
+     "new_name": "_inSpace",
+     "note": "persisted 'currently away from the overworld' flag. Set "
+             "to 1 alongside the launch-position save in both rocket "
+             "and plane launch paths (asm ~6958-6959, ~7029-7030), "
+             "cleared to 0 when _disableSave==0 at a specific launch "
+             "check (asm ~7019-7020). Checked at game-load time (asm "
+             "~710) to decide how to resume a save made while away "
+             "from the overworld -- a real boolean, not reused scratch."},
+
+    {"op": "rename_member", "struct": "Savegame", "offset": 0x34,
+     "new_name": "_launchMapX",
+     "note": "saved launch position X, written by launch right before "
+             "liftoff (asm ~6954-6955, ~7025-7026) alongside "
+             "_inSpace/_launchMapY. Read back by klimb when "
+             "_disableSave is nonzero to know where to place the 'P' "
+             "player marker on return (asm ~6878-6885)."},
+
+    {"op": "rename_member", "struct": "Savegame", "offset": 0x35,
+     "new_name": "_launchMapY",
+     "note": "saved launch position Y, same mechanism as _launchMapX."},
+
+    {"op": "rename_member", "struct": "Savegame", "offset": 0x36,
+     "new_name": "_ringQuestFlag",
+     "note": "ring-quest eligibility gate in offer "
+             "(_monsterOfferFlag==0x82): if nonzero, skips straight "
+             "to \"THE RING IS YOURS!\" (sets _ringOwned=1); if zero, "
+             "\"EARN THE RING!\" instead (asm ~7367-7374). Set to 1 "
+             "elsewhere when player._disableSave==9 && "
+             "player._mapNum2==3 (Castle) && a specific NPC's "
+             "_monsterOfferFlag==0x81 all match (asm ~7892-7902) -- "
+             "note _disableSave==9 here is a distinct special value, "
+             "separate from its 0-8 planet-index/0xA deep-space "
+             "reuse in the hyperwarp code."},
+
+    {"op": "rename_member", "struct": "Savegame", "offset": 0x38,
+     "new_name": "_patrolWaypoint",
+     "note": "update_patrol_marker's waypoint index, cycling 0/2/4/6 "
+             "through a 4-entry position table every 8 turns. See "
+             "docs/overview.md's sub_XXXXX sweep writeup for "
+             "update_patrol_marker (formerly sub_126F9)."},
+
+    {"op": "resize_member", "struct": "Savegame", "offset": 0x40,
+     "new_name": "_offerRewardItems", "element_size": 1, "count": 9,
+     "note": "was a 1-byte scalar, actually a 9-byte array (index "
+             "0 unused/padding -- code always does 'inc di' before "
+             "use, so only indices 1-8 are ever touched). Random "
+             "BCD-incremented reward from offer's third NPC type "
+             "(_monsterOfferFlag==0x83): rand_byte()&7, +1, then "
+             "field_40[di]++ (asm ~7388-7398). Individual slot "
+             "contents not yet cross-referenced against TEXT_STRINGS "
+             "or any other item table -- open follow-up."},
+
+    {"op": "rename_member", "struct": "Savegame", "offset": 0x49,
+     "new_name": "_enilnoOwned",
+     "note": "\"ENILNO IS YOURS!\" ('ONLINE' spelled backwards) -- a "
+             "third offer quest reward (_monsterOfferFlag==0x81, "
+             "gated by byte ptr _sleepFlag2?>=5), same one-shot-flag "
+             "shape as the Ring quest (set to 1, never read back "
+             "elsewhere in the code found so far). Asm ~7350-7359."},
 ]
 
 _SIZE_FLAGS = {1: idc.FF_BYTE, 2: idc.FF_WORD, 4: idc.FF_DWORD}
