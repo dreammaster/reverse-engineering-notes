@@ -747,6 +747,13 @@ RENAMES = [
     (0x16304, "draw_ahead_open",
      "straight-ahead tile has the sign bit clear (Floor/Ladder/Chest) "
      "-- the 'open' counterpart to draw_ahead_wall_segment."),
+
+    (0x17655, "_fileFCB",
+     "renamed from _picData -- misleadingly named after one file type "
+     "(PIC*) when it's actually the single shared FCB instance used "
+     "for every access_file call regardless of file type (PLAYER/"
+     "MAPXFF/MONXFF/TLKXFF/PIC* alike). Found while renaming the "
+     "auto-named segments, 2026-08-18."),
 ]
 
 

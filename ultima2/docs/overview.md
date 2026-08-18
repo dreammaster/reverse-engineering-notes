@@ -19,12 +19,51 @@ orphaned/undefined and is still unnamed). `ultima2.asm` is ~28.7k lines.
 
 - Original release: Apple II (1982). This IDB is the **1983 DOS port**,
   16-bit real-mode x86, segmented `MZ` executable (`ULTIMAII.EXE`).
-- Three segments in the IDB: `sg01a2` (main code, huge — contains gameplay
-  logic, movement, text/UI, save/load), `seg002` (second code segment,
-  starts asm line 27525), `seg003` (stack segment, line 28713). The
-  `sg01a2`/`sg08e3`-style names are IDA's auto-generated segment names
-  (hex of the segment's start paragraph) — worth renaming once we know
-  what each contains, e.g. `sg08e3` currently holds at least `_picData`.
+- Four segments in the IDB, renamed from IDA's auto-generated
+  `sgXXXX`-style names (hex of the segment's start paragraph) once
+  their roles were clear (2026-08-18):
+  - **`CODE`** (was `sg01a2`, `0x10000`) — the main segment, holds
+    nearly all code (`start_`, all 26 A-Z commands, every helper) plus
+    embedded read-only data (`TEXT_STRINGS`, the tile graphics, all
+    `write_string` literals).
+  - **`DATA`** (was `sg08e3`, `0x17410`) — holds `player`/
+    `_mapMonsters` and most runtime globals. Was never properly
+    classified (`SegClass` was `UNK`), fixed to `DATA` in the same
+    pass.
+  - **`seg002`** (`0x18AC0`) — the EXE's *actual* DOS entry point
+    (header: "Entry Point: 18AC:0"), investigated in full 2026-08-18.
+    See below.
+  - **`seg003`** (`0x19FE0`) — the stack segment.
+
+### `seg002` — the real DOS entry point, and `start_` is stage two
+
+Found while renaming the auto-named segments: `seg002` isn't leftover
+code or dead space, it's where DOS actually starts executing this EXE.
+Three pieces:
+
+- **`start`** (`0x18AC0`-`0x18AE0`, 32 bytes) — a clean, legitimate
+  bootstrap routine, the *true* entry point (`start_`, which this whole
+  project had been treating as the entry point, is really stage two).
+  Computes `SS` relative to `DS` (set by the DOS loader at load time —
+  real-mode DOS EXEs get relocated at load, so absolute segment values
+  aren't fixed at compile time), zeroes all general registers, then
+  far-jumps into `start_`.
+- **`seg002_unexplained_data`** (`0x18AE0`-`0x18FE0`, 1280 bytes) — was
+  disassembled as nonsense x86 (random FPU instructions, a jump to a
+  nonsensical far pointer); confirmed not real code, cleaned up to a
+  plain byte array (`ida_scripts/clean_seg002_garbage.py`) rather than
+  left as misleading fake instructions. **Genuinely unresolved**: not
+  simple zero padding either (only 45% zero bytes; the rest is a
+  semi-regular repeating pattern, no readable text, no recognizable
+  table structure). Left as an open question rather than guessed —
+  see `docs/roadmap.md`.
+- **`byte_18FE0`** (`0x18FE0`-`0x1A044`, `0x1000` bytes) — already
+  correctly marked "Uninitialized", and exactly matches the EXE
+  header's "Loaded length: 8FE0h" (`0x10000 + 0x8FE0 = 0x18FE0`): this
+  tail was never part of the file at all, just reserved-but-unfilled
+  memory the DOS loader allocates without initializing (extra
+  stack/heap headroom, a common technique for old EXEs to reserve
+  runtime scratch space without paying file-size cost for it).
 
 ## The "inline data after CALL" trick
 

@@ -1784,3 +1784,231 @@ Done. Re-export the .asm/.idc and check the comments took.
 [*] gen_file(OFILE_IDC) returned 1
 [*] saving database to C:\dev\ultima2\ultima2.idb
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'C:\\dev\\ultima2\\ida_scripts\\apply_renames.py']
+[*] reading C:\dev\ultima2\ida_scripts\apply_renames.py
+[*] executing C:\dev\ultima2\ida_scripts\apply_renames.py
+[*] captured stdout from target script:
+----- begin target script output -----
+10730: already 'command_jump_table' -- skipping
+122D5: already 'load_talk_file' -- skipping
+1154E: already 'print_indexed_shop_string' -- skipping
+153F4: already 'print_char' -- skipping
+15217: already 'rand_byte' -- skipping
+123E6: already 'find_target_monster' -- skipping
+12028: already 'read_digit_keypress' -- skipping
+1508C: already 'print_indexed_menu_string' -- skipping
+1113A: already 'alert_town_guards' -- skipping
+12052: already 'try_spend_gold' -- skipping
+15ED7: already 'play_hit_sound' -- skipping
+15DA9: already 'play_tone_sweep' -- skipping
+15FC3: already 'play_magic_sound' -- skipping
+15E83: already 'play_fail_sound' -- skipping
+15C95: already 'play_tick_sound' -- skipping
+14B26: already 'flash_screen' -- skipping
+14B35: already 'xor_invert_cga_bank' -- skipping
+167B3: already 'draw_line' -- skipping
+14B76: already 'plot_point' -- skipping
+14BAA: already 'erase_point' -- skipping
+14B4E: already 'clear_screen' -- skipping
+14B5D: already 'clear_cga_bank' -- skipping
+15CB2: already 'speaker_on' -- skipping
+15CD2: already 'hold_tone' -- skipping
+15CE4: already 'speaker_off' -- skipping
+16D83: already 'draw_ship_marker' -- skipping
+16CC4: already 'erase_ship_marker' -- skipping
+168C0: already 'get_dungeon_tile_at_player' -- skipping
+150D8: already 'sign_byte' -- skipping
+150EF: already 'abs_byte' -- skipping
+16B3D: already 'animate_starfield' -- skipping
+16D68: already 'next_star_coord' -- skipping
+129D2: already 'draw_world_map_overview' -- skipping
+12B65: already 'plot_map_icon_point' -- skipping
+12362: already 'read_direction_keypress' -- skipping
+1068F: already 'longPauseScreen' -- skipping
+120AB: already 'compute_item_price' -- skipping
+16D5B: already 'seed_star_prng' -- skipping
+15FA6: already 'play_bump_sound' -- skipping
+15D09: already 'play_melody' -- skipping
+15EC7: already 'play_step_tick' -- skipping
+153A0: already 'clear_text_row' -- skipping
+1538F: already 'clear_caption_rows' -- skipping
+15EAC: already 'play_cannon_sound' -- skipping
+16F7F: already 'read_animated_digit_keypress' -- skipping
+17289: already 'speaker_off_once' -- skipping
+16FA3: already 'draw_hyperwarp_hud' -- skipping
+12199: already 'check_monster_collision' -- skipping
+1767A: already '_negateTimeDuration' -- skipping
+17030: already 'check_hyperwarp_sun_collision' -- skipping
+1720B: already 'patch_map_filename' -- skipping
+17276: already 'speaker_on_once' -- skipping
+15FE0: already 'play_attack_sound' -- skipping
+16000: already 'render_dungeon_view' -- skipping
+16078: already 'precompute_dungeon_corridor' -- skipping
+16144: already 'draw_dungeon_corridor' -- skipping
+168ED: already 'draw_dungeon_monster' -- skipping
+10E70: already 'leg_paralysis_trap' -- skipping
+10EC2: already 'arm_paralysis_trap' -- skipping
+10F12: already 'magic_missile_trap' -- skipping
+10F48: already 'sleep_trap' -- skipping
+10F8E: already 'minax_curse_trap' -- skipping
+10FCD: already 'random_item_loss_trap' -- skipping
+112DB: already 'consume_food' -- skipping
+1143C: already 'check_monster_on_level' -- skipping
+1147F: already 'spawn_dungeon_monster' -- skipping
+1152E: already 'compute_monster_direction_to_player' -- skipping
+126F9: already 'update_patrol_marker' -- skipping
+1330C: already 'find_cursor_target_monster' -- skipping
+1361C: already 'clear_picked_up_tile' -- skipping
+14BE0: already 'draw_sprite_row' -- skipping
+168A3: already 'draw_dungeon_monster_sprite' -- skipping
+14F11: already 'compute_monster_direction_scaled' -- skipping
+14F36: already 'compute_monster_delta' -- skipping
+15E3B: already 'play_trap_sound' -- skipping
+16999: already 'setup_rocket_launch_display' -- skipping
+16A79: already 'space_travel_command_loop' -- skipping
+16D3E: already 'init_starfield' -- skipping
+17242: already 'play_star_twinkle_sound' -- skipping
+172A0: already 'minax_death_sequence' -- skipping
+16425: already 'draw_corridor_wall_segment' -- skipping
+1648D: already 'draw_dungeon_door' -- skipping
+16594: already 'draw_ladder_down' -- skipping
+1660C: already 'draw_ladder_up' -- skipping
+166CB: already 'draw_chest_icon' -- skipping
+16684: already 'draw_ladder_rail' -- skipping
+16377: already 'draw_left_wall_segment' -- skipping
+164E2: already 'draw_left_door' -- skipping
+16291: already 'draw_left_open' -- skipping
+163CE: already 'draw_ahead_wall_segment' -- skipping
+1653F: already 'draw_ahead_door' -- skipping
+16304: already 'draw_ahead_open' -- skipping
+17655: '_picData' -> '_fileFCB'
+    renamed from _picData -- misleadingly named after one file type (PIC*) when it's actually the single shared FCB instance used for every access_file call regardless of file type (PLAYER/MAPXFF/MONXFF/TLKXFF/PIC* alike). Found while renaming the auto-named segments, 2026-08-18.
+
+Done. Re-export the .asm/.idc and check the new names took, then update docs/roadmap.md's checklist.
+----- end target script output -----
+[*] finished executing C:\dev\ultima2\ida_scripts\apply_renames.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 16310
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'C:\\dev\\ultima2\\ida_scripts\\rename_segments.py']
+[*] reading C:\dev\ultima2\ida_scripts\rename_segments.py
+[*] executing C:\dev\ultima2\ida_scripts\rename_segments.py
+[*] captured stdout from target script:
+----- begin target script output -----
+10000: 'sg01a2' -> 'CODE'
+17410: 'sg08e3' -> 'DATA', class 'UNK' -> 'DATA'
+
+Done. Re-export the .asm/.idc and check the new names took.
+----- end target script output -----
+[*] finished executing C:\dev\ultima2\ida_scripts\rename_segments.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 16309
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'C:\\dev\\ultima2\\ida_scripts\\investigate_seg002.py']
+[*] reading C:\dev\ultima2\ida_scripts\investigate_seg002.py
+[*] executing C:\dev\ultima2\ida_scripts\investigate_seg002.py
+[*] captured stdout from target script:
+----- begin target script output -----
+start proc @ 18AC0
+start proc end_ea (real, via ida_funcs) = 18AE0
+byte_18FE0 @ 18FE0
+
+Gap to investigate: 18AE0 .. 18FE0 (0x500 = 1280 bytes)
+Zero bytes: 576/1280 (45.0%)
+First run of >=16 consecutive zero bytes starts at 18CFB (0x21b bytes into the gap)
+----- end target script output -----
+[*] finished executing C:\dev\ultima2\ida_scripts\investigate_seg002.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 16309
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'C:\\dev\\ultima2\\ida_scripts\\investigate_seg002.py']
+[*] reading C:\dev\ultima2\ida_scripts\investigate_seg002.py
+[*] executing C:\dev\ultima2\ida_scripts\investigate_seg002.py
+[*] captured stdout from target script:
+----- begin target script output -----
+Gap: 18AE0 .. 18FE0 (0x500 = 1280 bytes)
+
+4 printable-ASCII run(s) of length >=5:
+  18BE6: 'r^Y^Y' (5 bytes)
+  18C08: '}^Yw^Y^Y' (8 bytes)
+  18C5B: 's}s}s}^Yw' (9 bytes)
+  18C8D: 'SR}PeQSM' (8 bytes)
+
+First 96 bytes (hex):
+  18AE0: 2E 43 D9 83 BB 16 53 D3 AF 53 27 50 BA 94 53 BA  .C....S..S'P..S.
+  18AF0: 21 52 E1 53 BB 66 53 D3 AF 53 27 A0 E1 52 BB 78  !R.S.fS..S'..R.x
+  18B00: 53 D3 AF 53 27 BA DE 45 1F 52 E7 5A 9E 72 E7 53  S..S'..E.R.Z.r.S
+  18B10: 9E 45 E1 53 BB 46 53 D3 AF 53 27 80 E1 52 BB 58  .E.S.FS..S'..R.X
+  18B20: 53 D3 AF 53 27 9A BA DE 53 BA DA 53 EB 53 53 DD  S..S'...S..S.SS.
+  18B30: 93 E5 53 E8 2B 53 75 D8 54 D8 9B E8 29 53 75 D8  ..S.+Su.T...)Su.
+----- end target script output -----
+[*] finished executing C:\dev\ultima2\ida_scripts\investigate_seg002.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 16309
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'C:\\dev\\ultima2\\ida_scripts\\clean_seg002_garbage.py']
+[*] reading C:\dev\ultima2\ida_scripts\clean_seg002_garbage.py
+[*] executing C:\dev\ultima2\ida_scripts\clean_seg002_garbage.py
+[*] captured stdout from target script:
+----- begin target script output -----
+Gap: 18AE0 .. 18FE0 (0x500 = 1280 bytes)
+[dry] would del_items + create a byte array here, named seg002_unexplained_data. Set DRY_RUN = False to apply.
+----- end target script output -----
+[*] finished executing C:\dev\ultima2\ida_scripts\clean_seg002_garbage.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 16309
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'C:\\dev\\ultima2\\ida_scripts\\clean_seg002_garbage.py']
+[*] reading C:\dev\ultima2\ida_scripts\clean_seg002_garbage.py
+[*] executing C:\dev\ultima2\ida_scripts\clean_seg002_garbage.py
+[*] captured stdout from target script:
+----- begin target script output -----
+Gap: 18AE0 .. 18FE0 (0x500 = 1280 bytes)
+Done: 18AE0 now a 1280-byte array, named seg002_unexplained_data.
+----- end target script output -----
+[*] finished executing C:\dev\ultima2\ida_scripts\clean_seg002_garbage.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 15227
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
