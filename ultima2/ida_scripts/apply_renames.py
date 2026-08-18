@@ -350,12 +350,17 @@ RENAMES = [
      "fixed constant (3Bh/67h) -- every hyperwarp launch gets the "
      "same starfield sequence. Called from hyperwarp's startup."),
 
-    (0x15FA6, "play_bump_sound",
-     "one-shot play_tone_sweep call with fixed, unusual params "
-     "(ax=2F8h bx=320h cx=0FFFFh dx=50h bp=0F00h), called from "
-     "normal_movement. Best guess given the calling context is a "
-     "'can't move there' bump sound -- not independently confirmed, "
-     "lower confidence than most of this sweep's other entries."),
+    (0x15FA6, "play_beep_sound",
+     "RENAMED from play_bump_sound (2026-08-19) -- the original guess "
+     "was too narrow. One-shot play_tone_sweep call with fixed, "
+     "unusual params (ax=2F8h bx=320h cx=0FFFFh dx=50h bp=0F00h), "
+     "called from 5 sites: 2 blocked-movement/map-edge cases in "
+     "normal_movement (the original naming basis), a combat "
+     "special-hit flash in attack (loc_12C38, monster type 0x40), the "
+     "Minax-death map transition (minax_death_sequence), and the "
+     "final victory fanfare right before the game's ending text. A "
+     "single generic short beep used as a catch-all sound cue across "
+     "unrelated contexts, not bump-specific."),
 
     (0x15D09, "play_melody",
      "generic table-driven melody player: bx selects a tune from "
@@ -476,12 +481,15 @@ RENAMES = [
     (0x16078, "precompute_dungeon_corridor",
      "for each of 8 steps ahead along the facing direction "
      "(byte_17893/17894 = the reused _mapLeft/_mapTop deltas), reads "
-     "3 dungeon tiles via get_dungeon_tile_at_player and builds 3 "
+     "3 dungeon tiles via get_dungeon_tile_at_player and builds 4 "
      "parallel 8-entry arrays: left-wall type ([di+48Fh], high "
-     "nibble), right-wall type + monster-presence flag ([di+497h] "
-     "high nibble / [di+4AFh] low 3 bits -- same low-3-bits monster "
-     "flag as loc_11451's dungeon-cell accessor), and straight-ahead "
-     "wall type ([di+49Fh] high nibble)."),
+     "nibble), straight-ahead wall type ([di+497h] high nibble), "
+     "monster-presence flag (_dungeonCorridorMonsterSlot, [di+4AFh] "
+     "low 3 bits -- same low-3-bits monster flag as loc_11451's "
+     "dungeon-cell accessor, just re-cached here for rendering instead "
+     "of combat), and right-wall type ([di+49Fh] high nibble). Note "
+     "the array order in memory (48F/497/49F/4AF) doesn't match "
+     "reading order in the code."),
 
     (0x16144, "draw_dungeon_corridor",
      "the actual corridor renderer: clear_screen, then iterates depth "
@@ -496,11 +504,13 @@ RENAMES = [
 
     (0x168ED, "draw_dungeon_monster",
      "runs after draw_dungeon_corridor: scans the precomputed "
-     "monster-presence flags ([di+4AFh] from precompute_dungeon_"
-     "corridor) up to whatever depth (byte_17892) the wall render "
-     "loop stopped at, and if one's nonzero, looks up a screen "
-     "position via byte_1697E[di] and draws a monster sprite from "
-     "monsters_ptr at that depth in the corridor view."),
+     "monster-presence flags (_dungeonCorridorMonsterSlot, from "
+     "precompute_dungeon_corridor) up to whatever depth (byte_17892) "
+     "the wall render loop stopped at, and if one's nonzero, looks up "
+     "a fixed screen position for that depth band via "
+     "_dungeonMonsterBandOffsets[di] from the MONSTERS-loaded "
+     "monsters_ptr buffer and draws a monster marker there in the "
+     "corridor view."),
 
     # -- end_of_turn's random trap-encounter handlers. The item-flags
     # that gate these (_bootsOwned/_cloakOwned/_idolOwned) were already
@@ -608,11 +618,46 @@ RENAMES = [
      "caller is draw_dungeon_monster_sprite."),
 
     (0x168A3, "draw_dungeon_monster_sprite",
-     "called directly from draw_dungeon_monster: byte_1788F (a "
-     "monster glyph ID) selects the sprite via bp, _mapOffsetX/"
-     "_mapOffsetY (x4) give the screen position, then draw_sprite_row "
-     "does the actual write -- the monster-sprite draw for the "
-     "dungeon corridor view."),
+     "called directly from draw_dungeon_monster: _dungeonMonsterFacing "
+     "selects the sprite pixel pattern via bp, _mapOffsetX/"
+     "_mapOffsetY (x4, reused scratch here) give the screen position, "
+     "then draw_sprite_row does the actual write -- the monster-marker "
+     "draw for the dungeon corridor view."),
+
+    # -- MONSTERS file fully traced (2026-08-19, Paul asked to resolve
+    # the item flagged while checking real game data files against the
+    # disassembly): it's not a monster stat/type table at all, it's a
+    # small fixed lookup of screen positions for the dungeon corridor's
+    # monster markers, keyed by visual depth band. Full chain: see
+    # draw_dungeon_monster/draw_dungeon_monster_sprite above and
+    # docs/file-formats.md's MONSTERS section --
+
+    (0x1697E, "_dungeonMonsterBandOffsets",
+     "6-entry byte table (indices 2-7 populated: 0x80/0xC0/0xE0/0xF0/"
+     "0xF8/0xFC, index 0-1 and 8+ are 0) read by draw_dungeon_monster "
+     "as `cs:byte_1697E[di]` where di is the corridor depth step "
+     "(di==1 uses a separate, not-fully-traced addressing path). Each "
+     "value is a fixed byte offset into the MONSTERS buffer "
+     "(monsters_ptr) where that depth band's 2-byte (X,Y,facing) "
+     "marker-position record lives -- confirmed by decoding the real "
+     "MONSTERS file at these 6 offsets and getting plausible small "
+     "screen-offset values. Formerly byte_1697E."),
+
+    (0x17899, "_dungeonMonsterRecordPtr",
+     "scratch word built by draw_dungeon_monster as "
+     "(monsters_ptr_hi : _dungeonMonsterBandOffsets[di]) -- i.e. the "
+     "absolute address of the current depth band's 2-byte marker "
+     "record inside the MONSTERS buffer. Read twice: once for the X "
+     "byte, once (incremented) for the packed Y/facing byte. Formerly "
+     "word_17899."),
+
+    (0x1788F, "_dungeonMonsterFacing",
+     "top 3 bits of the MONSTERS record's second byte (extracted via "
+     "5x `clc`+`rcr al,1`, equivalent to `>> 5`) -- a 0-7 facing/type "
+     "value selecting which pixel pattern draw_sprite_row draws for "
+     "the monster marker at this depth. Written by "
+     "draw_dungeon_monster, read by draw_dungeon_monster_sprite. "
+     "Formerly byte_1788F."),
 
     (0x14F11, "compute_monster_direction_scaled",
      "same _circleDeltaX/_circleDeltaY output as "

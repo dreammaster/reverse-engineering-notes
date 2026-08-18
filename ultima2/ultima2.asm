@@ -4466,7 +4466,7 @@ loc_12677:                              ; CODE XREF: normal_movement+54↑j
                 call    draw_map
                 mov     al, byte_1742F
                 mov     _playerTileId, al
-                call    play_bump_sound
+                call    play_beep_sound
                 mov     al, _mapX
                 mov     player._mapX, al
                 mov     al, _mapY
@@ -4497,7 +4497,7 @@ loc_126C6:                              ; CODE XREF: normal_movement+14C↑j
                 mov     al, cs:[di+2798h]
                 mov     _mapY, al
                 call    draw_map
-                call    play_bump_sound
+                call    play_beep_sound
                 pop     ax
                 jmp     end_of_turn2
 ; END OF FUNCTION CHUNK FOR normal_movement
@@ -5262,7 +5262,7 @@ loc_12C19:                              ; CODE XREF: fire+58↓j
 
 loc_12C38:                              ; CODE XREF: attack+A4↑j
                 call    flash_screen
-                call    play_bump_sound
+                call    play_beep_sound
                 call    flash_screen
                 mov     bh, 0
                 mov     bl, byte_17430
@@ -11673,7 +11673,7 @@ pause?          endp
 ; =============== S U B R O U T I N E =======================================
 
 
-play_bump_sound proc near               ; CODE XREF: normal_movement+130↑p
+play_beep_sound proc near               ; CODE XREF: normal_movement+130↑p
                                         ; normal_movement+17D↑p ...
                 push    ax
                 push    bx
@@ -11692,7 +11692,7 @@ play_bump_sound proc near               ; CODE XREF: normal_movement+130↑p
                 pop     bx
                 pop     ax
                 retn
-play_bump_sound endp
+play_beep_sound endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -11833,7 +11833,7 @@ precompute_dungeon_corridor proc near   ; CODE XREF: render_dungeon_view+14↑p
                 mov     bl, 0
                 mov     di, bx
 
-loc_160B4:                              ; CODE XREF: precompute_dungeon_corridor+C8↓j
+loc_160B4:                              ; CODE XREF: CODE:6140↓j
                 mov     al, byte_17889
                 and     al, 3Fh
                 mov     _playerX, al
@@ -11866,7 +11866,9 @@ loc_160B4:                              ; CODE XREF: precompute_dungeon_corridor
                 mov     [di+497h], al
                 call    get_dungeon_tile_at_player
                 and     al, 7
-                mov     [di+4AFh], al
+                mov     _dungeonCorridorMonsterSlot[di], al
+precompute_dungeon_corridor endp
+
                 mov     al, byte_1788D
                 and     al, 3Fh
                 mov     _playerX, al
@@ -11889,10 +11891,8 @@ loc_160B4:                              ; CODE XREF: precompute_dungeon_corridor
                 jmp     loc_160B4
 ; ---------------------------------------------------------------------------
 
-locret_16143:                           ; CODE XREF: precompute_dungeon_corridor+C6↑j
+locret_16143:                           ; CODE XREF: CODE:613E↑j
                 retn
-precompute_dungeon_corridor endp
-
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -12811,7 +12811,7 @@ draw_line       endp
 draw_dungeon_monster_sprite proc near   ; CODE XREF: draw_dungeon_monster+8C↓p
                 nop
                 mov     ah, 0
-                mov     al, byte_1788F
+                mov     al, _dungeonMonsterFacing
                 mov     bp, ax
                 mov     al, _mapOffsetX
                 shl     ax, 1
@@ -12869,18 +12869,18 @@ loc_168F8:                              ; CODE XREF: draw_dungeon_monster+1B↓j
 ; ---------------------------------------------------------------------------
 
 loc_16902:                              ; CODE XREF: draw_dungeon_monster+12↑j
-                mov     ah, [di+4AFh]
+                mov     ah, _dungeonCorridorMonsterSlot[di]
                 or      ah, ah
                 jz      short loc_168F8
                 cmp     di, 1
                 jz      short loc_1692C
                 mov     ax, monsters_ptr
-                mov     byte ptr word_17899+1, ah
-                mov     al, cs:byte_1697E[di]
-                mov     byte ptr word_17899, al
-                mov     al, byte ptr word_17899+1
+                mov     byte ptr _dungeonMonsterRecordPtr+1, ah
+                mov     al, cs:[di+697Eh]
+                mov     byte ptr _dungeonMonsterRecordPtr, al
+                mov     al, byte ptr _dungeonMonsterRecordPtr+1
                 mov     bh, 0
-                mov     bl, byte ptr word_17899
+                mov     bl, byte ptr _dungeonMonsterRecordPtr
                 mov     di, bx
                 jmp     short loc_1693A
 ; ---------------------------------------------------------------------------
@@ -12890,15 +12890,15 @@ loc_16902:                              ; CODE XREF: draw_dungeon_monster+12↑j
 loc_1692C:                              ; CODE XREF: draw_dungeon_monster+20↑j
                 clc
                 add     ax, monsters_ptr
-                mov     byte ptr word_17899+1, ah
-                mov     byte ptr word_17899, 0
+                mov     byte ptr _dungeonMonsterRecordPtr+1, ah
+                mov     byte ptr _dungeonMonsterRecordPtr, 0
 
 loc_1693A:                              ; CODE XREF: draw_dungeon_monster+3C↑j
                                         ; draw_dungeon_monster+8F↓j
                 mov     bh, 0
                 mov     bl, 0
                 mov     si, bx
-                mov     bx, word_17899
+                mov     bx, _dungeonMonsterRecordPtr
                 mov     al, [bx+si]
                 or      al, al
                 jnz     short loc_1694B
@@ -12907,12 +12907,12 @@ loc_1693A:                              ; CODE XREF: draw_dungeon_monster+3C↑j
 
 loc_1694B:                              ; CODE XREF: draw_dungeon_monster+5B↑j
                 mov     _mapOffsetX, al
-                inc     word_17899
-                mov     bx, word_17899
+                inc     _dungeonMonsterRecordPtr
+                mov     bx, _dungeonMonsterRecordPtr
                 mov     al, [bx+si]
                 and     al, 1Fh
                 mov     _mapOffsetY, al
-                mov     bx, word_17899
+                mov     bx, _dungeonMonsterRecordPtr
                 mov     al, [bx+si]
                 clc
                 rcr     al, 1
@@ -12924,14 +12924,14 @@ loc_1694B:                              ; CODE XREF: draw_dungeon_monster+5B↑j
                 rcr     al, 1
                 clc
                 rcr     al, 1
-                mov     byte_1788F, al
-                inc     word_17899
+                mov     _dungeonMonsterFacing, al
+                inc     _dungeonMonsterRecordPtr
                 call    draw_dungeon_monster_sprite
                 jmp     short loc_1693A
 draw_dungeon_monster endp
 
 ; ---------------------------------------------------------------------------
-byte_1697E      db 0                    ; DATA XREF: draw_dungeon_monster+29↑r
+_dungeonMonsterBandOffsets db 0
                 db    0
                 db  80h
                 db 0C0h
@@ -14241,7 +14241,7 @@ loc_172E7:                              ; CODE XREF: minax_death_sequence+66↓j
 ; ---------------------------------------------------------------------------
 
 loc_17335:                              ; CODE XREF: minax_death_sequence+77↑j
-                call    play_bump_sound
+                call    play_beep_sound
                 mov     ah, 27h ; '''
                 mov     cx, 1000h
                 mov     dx, map_ptr
@@ -14258,7 +14258,7 @@ loc_17335:                              ; CODE XREF: minax_death_sequence+77↑j
 ; ---------------------------------------------------------------------------
 
 loc_1734C:                              ; CODE XREF: CODE:7341↑j
-                call    play_bump_sound
+                call    play_beep_sound
                 call    write_string    ; YOU HAVE SAVED THE UNIVERSE,AND COMPLETED ULTIMA ][! SEEKNOW TO CONQUER WICKED EXODUS,
 ; ---------------------------------------------------------------------------
                 db 8Dh,8Dh,'YOU HAVE SAVED THE UNIVERSE,',8Dh,'AND COMPLETED ULTIMA ]'
@@ -14474,10 +14474,10 @@ byte_1788B      db 0                    ; DATA XREF: precompute_dungeon_corridor
 byte_1788C      db 0                    ; DATA XREF: precompute_dungeon_corridor+12↑w
                                         ; precompute_dungeon_corridor+75↑r ...
 byte_1788D      db 0                    ; DATA XREF: precompute_dungeon_corridor+28↑w
-                                        ; precompute_dungeon_corridor+97↑r ...
+                                        ; CODE:610F↑r ...
 byte_1788E      db 0                    ; DATA XREF: precompute_dungeon_corridor+33↑w
-                                        ; precompute_dungeon_corridor+A7↑r ...
-byte_1788F      db 0                    ; DATA XREF: draw_dungeon_monster_sprite+3↑r
+                                        ; CODE:611F↑r ...
+_dungeonMonsterFacing db 0              ; DATA XREF: draw_dungeon_monster_sprite+3↑r
                                         ; draw_dungeon_monster+85↑w
 byte_17890      db 0                    ; DATA XREF: draw_line+6D↑w
                                         ; draw_line+A6↑w ...
@@ -14493,7 +14493,7 @@ byte_17894      db 0                    ; DATA XREF: render_dungeon_view+A↑w
                 db    0
 word_17897      dw 0                    ; DATA XREF: get_dungeon_tile_at_player+1D↑w
                                         ; get_dungeon_tile_at_player+26↑r ...
-word_17899      dw 0                    ; DATA XREF: draw_dungeon_monster+2E↑w
+_dungeonMonsterRecordPtr dw 0           ; DATA XREF: draw_dungeon_monster+2E↑w
                                         ; draw_dungeon_monster+36↑r ...
                 db    0
                 db    0
@@ -14531,14 +14531,9 @@ word_17899      dw 0                    ; DATA XREF: draw_dungeon_monster+2E↑w
                 db    0
                 db    0
                 db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
+_dungeonCorridorMonsterSlot db 8 dup(0) ; DATA XREF: precompute_dungeon_corridor+93↑w
+                                        ; draw_dungeon_monster:loc_16902↑r
+                                        ; Per-frame scratch, 8 entries (one per dungeon corridor look-ahead depth, di=0-7). Filled by precompute_dungeon_corridor from the low 3 bits of the dungeon tile at that depth -- the same monster-presence bitfield attack/map_get_monster_at? use for combat, just re-cached here for draw_dungeon_monster's rendering pass. Nonzero = draw a monster marker at this depth.
                 db    0
                 db    0
                 db    0
