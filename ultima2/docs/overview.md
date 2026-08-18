@@ -183,42 +183,80 @@ _torches        db ?    ; checked/spent by ignite_torch, see file-formats.md's m
 _keys           db ?    ; checked/spent by unlock, +2 from killing a Guard
 _thievesTools   db ?    ; saves from a trap death, +1 from killing a Thief
 ; gap 0x31-0x32
-field_33        db ?   ; unnamed, xref'd
-field_34        db ?   ; unnamed, xref'd
-; ... struct continues to offset 0x100, largely unmapped past here
+_inSpace        db ?    ; persisted "away from overworld" flag, checked at game-load
+_launchMapX     db ?    ; saved launch position, written by `launch`, read back by `klimb`
+_launchMapY     db ?
+_ringQuestFlag  db ?    ; ring-quest eligibility gate in `offer` ("EARN THE RING!")
+; gap 0x37 is _disableSave, see below (kept out of this block since it's
+; documented separately due to its richer dual-purpose role)
+_patrolWaypoint db ?    ; update_patrol_marker's 4-waypoint cycling index (0/2/4/6)
+; gap 0x39-0x3D
+_gameSpeed?     db ?    ; 0x3E
+; gap 0x3F
+_offerRewardItems db 9 dup(?)  ; 0x40-0x48, index 0 unused (code always `inc di` first);
+                        ; random reward from offer's 3rd NPC type, slot contents not
+                        ; yet cross-referenced against any item table
+_enilnoOwned    db ?    ; 0x49, "ENILNO IS YOURS!" ("ONLINE" backwards) -- offer's 3rd
+                        ; one-shot quest reward, alongside the Ring and the 8-item array
+; gap 0x4A-0x5F, large, unmapped
+_armorOwned     db 7 dup(?)   ; 0x60
+_weaponOwned    db 10 dup(?)  ; 0x76
+_spellCharges   db 10 dup(?)  ; 0x80
+; gap 0x8A-0x9F
 ; 0xA0-0xAF is ONE 16-element treasure-item array, _ringOwned[0..15] --
-; see the TEXT_STRINGS treasure-item block writeup below. Individual
-; names below predate that discovery and were assigned per-field
-; before the array shape was known; kept as-is except where noted.
+; see the TEXT_STRINGS treasure-item block writeup below.
 _ringOwned      db ?    ; item 0 = RING
 _wands          db ?    ; item 1 = WAND, gates cast
 _staves         db ?    ; item 2 = STAFF, gates cast
 _bootsOwned     db ?    ; item 3 = BOOTS, resists the leg-paralysis trap
 _cloakOwned     db ?    ; item 4 = CLOAK, resists the arm-paralysis trap
-_gems           db ?    ; item 5 = HELM per array position, NOT gems -- see the treasure-item block writeup, this name is suspect
-                        ; item 6 = GEM (no member yet -- likely where "gems" really lives)
+_helmsOwned     db ?    ; item 5 = HELM, spent by `view`
+_gemOwned       db ?    ; item 6 = GEM, array position only
 _ankhOwned      db ?    ; item 7 = ANKH, required to board the Rocket in `board`
-                        ; item 8 = RED GEM (no member yet)
+_redGemOwned    db ?    ; item 8 = RED GEM, array position only
 _planeAllowed   db ?    ; item 9 = SKULL KEY; gates boarding the Airplane in `board`
-                        ; item 10 = GREEN GEM (no member yet)
-field_AB        db ?    ; item 11 = BRASS BUTTON; required to launch a Plane in `launch`, see below
+_greenGemOwned  db ?    ; item 10 = GREEN GEM, array position only
+_brassButtonOwned db ?  ; item 11 = BRASS BUTTON; required to launch a Plane in `launch`
 _frigateAllowed db ?    ; item 12 = BLUE TASSLE; gates boarding the Frigate in `board`
-field_AD        db ?    ; item 13 = STRANGE COIN, not independently confirmed elsewhere
+_strangeCoin    db ?    ; item 13 = STRANGE COIN, spent by `negate_time`
 _idolOwned      db ?    ; item 14 = GREEN IDOL, resists the sleep trap
-field_AF        db ?    ; item 15 = TRI-LITHIUM, many xrefs elsewhere, not traced -- plausibly quest-critical
+_triLithium     db ?    ; item 15 = TRI-LITHIUM; Rocket + hyperwarp fuel
+; gap 0xB0-0xFE, huge, unmapped -- field_FF at the very end has zero
+; code references anywhere, likely just an IDA size-boundary artifact
 ```
 
-`_disableSave` is also referenced (used by `save_game`, asm ~6692) but
-not yet located within the struct layout above — worth pinning down.
+**`_disableSave`** (offset `0x37`, already a named struct member —
+an earlier roadmap note calling it "not yet placed" was simply stale
+documentation, not a real gap) is genuinely **dual-purpose**, found
+while pinning down the struct's remaining fields (2026-08-18):
+- Its primary, most common role: `save_game` and several other
+  subsystems (`update_patrol_marker`, `klimb`) treat it as a simple
+  boolean — nonzero disables normal saving/background-event
+  processing.
+- But in the hyperwarp code (`check_hyperwarp_sun_collision` and
+  around it), it's also reused as a **current orbit-target index**:
+  set to `0`-`8` when the ship's coordinates match one of 9 known
+  planets (Earth/Mercury/Venus/Mars/Jupiter/Saturn/Uranus/Neptune/
+  Pluto, in that order), or `0xA` for deep space — driving "YOU ARE
+  ORBITING ___." Both roles are consistent (any of these values is
+  nonzero, so orbiting/deep-space also naturally disables normal
+  ground-based saving) rather than contradictory. A third specific
+  value, `9`, gates the Castle NPC interaction that unlocks
+  `_ringQuestFlag` — distinct from both the planet indices and the
+  deep-space marker.
+- Kept the existing name rather than renaming (unlike `_gems` →
+  `_helmsOwned`, this name isn't *wrong* anywhere — it's just
+  incomplete) — same "reused scratch/multi-purpose field" pattern as
+  `_circleDeltaX`/`_mapLeft` elsewhere in this codebase.
 
 **`_readiedWeapon`/`_readiedArmor`/`_readiedSpell`/`_torches`/`_keys`/
-`_thievesTools`/`_gems`** (formerly `field_2B`/`2C`/`2D`/`2E`/`2F`/`30`/
-`A5`) all decoded and renamed — see
+`_thievesTools`** (formerly `field_2B`/`2C`/`2D`/`2E`/`2F`/`30`) all
+decoded and renamed — see
 [file-formats.md](file-formats.md#monx--monsternpc-data) for
 `_torches`/`_keys`/`_thievesTools` (consumable resources dropped by
 monster kills) and the
 [`TEXT_STRINGS` section below](#text_strings--the-cs4c60h-table-fully-decoded)
-for `_readiedWeapon`/`_readiedArmor`/`_readiedSpell`/`_gems`.
+for `_readiedWeapon`/`_readiedArmor`/`_readiedSpell`.
 
 Note `_mapNum1`/`_mapNum2` are stored as **raw digit values that get
 `+ '0'` at use time** (see `load_map`, asm 6620-6628: `clc` /
