@@ -779,9 +779,12 @@ Systematic sweep of the (at the time) 73 remaining unnamed `sub_XXXXX`
 functions, ranked by how many static `call`/`jmp` sites reference each
 (this codebase tail-jumps into shared code a lot, so `jmp` matters as
 much as `call` for reuse counting). Working down the ranked list rather
-than picking functions arbitrarily. 29 named so far (44 left, mostly
-single-reference from here on — lower value/confidence per function),
-falling into a few clean clusters:
+than picking functions arbitrarily. **63 of 73 named — essentially
+complete.** The remaining 12 are exactly the dungeon wall-segment
+helper cluster, already scoped out as its own follow-up (see below).
+The single biggest find — identifying the entire dungeon first-person
+view rendering pipeline — gets its own writeup below rather than being
+folded into this list.
 
 **CGA point/line-drawing primitives** (the most-reused unnamed code in
 the binary — `draw_line` alone has 44 static call/jmp sites):
@@ -881,3 +884,156 @@ behind an "already silenced" flag.
 `sub_153A0`/`sub_1538F`) — clear a 40-column text row (`text_y=23`
 and `24` specifically for the caption pair), matching the demo
 sequence's caption `text_y` values exactly.
+
+**More small pieces**: `draw_hyperwarp_hud` (was `sub_16FA3`) —
+displays fuel (`_triLithium`) plus the XENO=/YAKO=/ZABO= destination
+coordinates. `check_hyperwarp_sun_collision` (was `sub_17030`) — "YOU
+HIT THE SUN!" if all 3 destination coordinates equal 4.
+`patch_map_filename` (was `sub_1720B`) — patches the 'X' placeholder
+byte of the `MAPXFF`/`MONXFF`/`TLKXFF` filename templates for dynamic
+map/monster/talk file selection. `speaker_on_once` (was `sub_17276`)
+— mirror of `speaker_off_once`. `play_attack_sound` (was `sub_15FE0`)
+— weapon-swing sound, called twice from `attack`, distinct from
+`play_hit_sound`'s on-hit-only sound. `check_monster_collision` (was
+`sub_12199`) — `canMoveToTile`'s monster-blocks-movement check, and
+the direct evidence for the next finding below: entirely bypassed
+while Negate Time is active.
+
+**`_flag1` → `_negateTimeDuration`** (plain global, not a `Savegame`
+member): confirmed via 3 sites — initialized to 0 in `play_game`
+alongside `_flag3`/`_sleepFlag` (paralysis/sleep duration counters),
+decremented once per turn in the exact same `end_of_turn` spot as
+those two, and set to `0x14` by `negate_time` ("YOU RUB A COIN...",
+spends `_strangeCoin`, see the treasure-item block writeup above).
+While nonzero, `check_monster_collision` skips its monster-blocking
+check entirely — you can walk through monsters while time is negated.
+
+### Ultima II's dungeon first-person view, fully identified
+
+Found while continuing the `sub_XXXXX` sweep — this is what the
+original roadmap's "`sub_16xxx` cluster, dense self-contained call
+graph, likely one subsystem — combat? dungeon movement?" note was
+pointing at. It's neither combat nor movement: it's the classic
+first-person wireframe dungeon-corridor renderer (the "maze view"
+familiar from early Ultima/Wizardry-style dungeon crawlers), called
+from `end_of_turn`. Four pieces, each confirmed by reading the full
+body:
+
+- **`render_dungeon_view`** (was `sub_16000`) — top-level step. Always
+  computes `_tilePlayerCenter`/`_tilePlayerUp`/`_tilePlayerDown` via
+  `get_dungeon_tile_at_player` (needed for movement/combat logic
+  regardless of rendering); if `byte_17436` is set, also triggers the
+  full corridor render. Reuses `_mapLeft`/`_mapTop` as scratch
+  facing-direction deltas here — a different meaning than their more
+  common "viewport scroll origin" role elsewhere, the same
+  reused-global pattern already seen with `_circleDeltaX`/`Y` in
+  `draw_world_map_overview`.
+- **`precompute_dungeon_corridor`** (was `sub_16078`) — for each of 8
+  steps ahead along the facing direction, reads 3 dungeon tiles via
+  `get_dungeon_tile_at_player` and builds 3 parallel 8-entry arrays:
+  left-wall type, right-wall type + monster-presence flag (same
+  low-3-bits monster flag as `loc_11451`'s dungeon-cell accessor), and
+  straight-ahead wall type — each the tile's high nibble.
+- **`draw_dungeon_corridor`** (was `sub_16144`) — the actual renderer.
+  `clear_screen`, then iterates depth 0-7, checking bit patterns of
+  the 3 precomputed wall-type bytes at each depth to dispatch to one
+  of 10 wall-segment-drawing helpers (right wall: `sub_16425`/
+  `sub_16594`/`sub_1660C`/`sub_166CB`; left wall: `sub_16377`/
+  `sub_164E2`/`sub_16291`; straight ahead: `sub_163CE`/`sub_1653F`/
+  `sub_16304`), stopping early once a wall blocks further view (sign
+  bit set on the right-wall byte).
+- **`draw_dungeon_monster`** (was `sub_168ED`) — runs after the
+  corridor renders: scans the precomputed monster-presence flags up to
+  whatever depth the wall-render loop stopped at, and draws a monster
+  sprite at that depth if one's present.
+
+The 10 individual wall-segment helpers are understood *collectively*
+(each draws a specific left/right/ahead perspective wall segment for a
+specific precomputed bit pattern, confirmed by reading
+`draw_dungeon_corridor`'s dispatch logic in full) but not
+*individually* pinned yet — each one's exact geometry needs its own
+trace. Flagged as a follow-up in `docs/roadmap.md` rather than forcing
+weak names onto all 10 right now.
+
+Two more pieces of the dungeon view, found right after: `draw_sprite_row`/
+`draw_dungeon_monster_sprite` (were `sub_14BE0`/`sub_168A3`) — the
+actual monster-sprite draw `draw_dungeon_monster` calls, same
+table-driven CGA addressing style as `plot_point` but writing a full
+byte mask instead of a 2-bit pixel. `play_trap_sound` (was `sub_15E3B`)
+— the "ARGH! A TRAP!" dungeon pit encounter, chance scaling with depth.
+
+### `end_of_turn`'s trap handlers and monster-AI helpers, named
+
+The item-protection flags gating `end_of_turn`'s random trap
+encounters (`_bootsOwned`/`_cloakOwned`/`_idolOwned`) were named in an
+earlier session, but the trap *handler functions themselves* were
+never named — found while continuing the sweep:
+
+- `leg_paralysis_trap`/`arm_paralysis_trap` (were `sub_10E70`/
+  `sub_10EC2`) — "LEGS PARALIZED!"/"ARMS PARALIZED!", same
+  flash+sound+resist-check shape. A real mechanical distinction: legs
+  sets `player_paralyzedFlag`, arms sets `_flag3` (the duration
+  counter `attack`'s "PARALIZED!" gate checks) — different
+  consequences for movement vs. combat.
+- `magic_missile_trap` (was `sub_10F12`) — no protection item, always
+  wastes 2 turns.
+- `sleep_trap` (was `sub_10F48`) — `_idolOwned`-gated, sets
+  `_sleepFlag`. Declared `proc far`, not `proc near`, so it was missed
+  by the sweep's initial grep.
+- `minax_curse_trap` (was `sub_10F8E`) — "MINAX CRIES: DIE FOOL!", a
+  cursed-*tile* encounter (called from `canMoveToTile`, not
+  `end_of_turn`), 1 HP damage.
+- `random_item_loss_trap` (was `sub_10FCD`) — ~25% chance, picks a
+  random treasure-array slot and decrements it if owned. No resist
+  mechanic, unlike the paralysis/sleep traps.
+- `consume_food` (was `sub_112DB`) — per-turn food consumption;
+  starving to 0 kills the player.
+
+And the monster-AI side, also called from `end_of_turn`:
+`check_monster_on_level` (was `sub_1143C`) gates the dungeon
+monster-tile accessor by depth; `spawn_dungeon_monster` (was
+`sub_1147F`) is the wandering-monster generator (finds an inactive
+slot, assigns position/type, writes both the monster array and the
+map tile); `compute_monster_direction_to_player`/
+`compute_monster_direction_scaled`/`compute_monster_delta` (were
+`sub_1152E`/`sub_14F11`/`sub_14F36`) are three related but distinct
+delta helpers — direction sign at 1x and 4x scale, and the raw signed
+delta with no sign taken (likely a distance/range check) — named for
+their structural differences since the exact semantic split between
+the 1x/4x direction variants wasn't fully traced.
+
+Two more, found nearby: `update_patrol_marker` (was `sub_126F9`) — a
+map marker cycling through 4 fixed waypoints every 8 turns,
+`_disableSave`-gated, preserving/restoring terrain as it moves.
+Functional name only — possibly Minax's overworld movement per Ultima
+II lore, not independently confirmed which entity this represents.
+`find_cursor_target_monster` (was `sub_1330C`) — `cast`'s
+cursor-based monster finder, already referred to this way in earlier
+notes but never actually renamed; distinct from the facing-direction-
+based `find_target_monster` used by `attack`/`fire`/`offer`/
+`transact`. `clear_picked_up_tile` (was `sub_1361C`) — clears a
+picked-up item's overworld tile back to ground, called from `get`.
+
+### Space-flight loop and Minax's death, named
+
+Closing out the hyperwarp/space-travel cluster: `space_travel_command_loop`
+(was `sub_16A79`) is the main per-turn loop while flying in space,
+parallel to `play_game`'s overworld loop — draws the HUD, prompts
+"CMD: ", keeps `animate_starfield` running while waiting for a
+keypress, dispatches on the key. `init_starfield` (was `sub_16D3E`)
+seeds the PRNG and populates all 64 star positions once, entering the
+view. `play_star_twinkle_sound` (was `sub_17242`) is the periodic
+ambient chime scheduled from inside `animate_starfield`'s countdown.
+`setup_rocket_launch_display` (was `sub_16999`) is `launch`'s
+post-launch setup (ship marker, destination coords, fuel decrement,
+HUD labels).
+
+Unrelated but found in the same pass: `minax_death_sequence` (was
+`sub_172A0`) — "MINAX IS DEAD!! ALL HER WORKS SHALL DIE!", called
+from `attack`, a victory/destruction animation (repeated
+`play_hit_sound` bracketing randomized screen positions).
+
+With these, the `sub_XXXXX` sweep is essentially complete: 63 of the
+original 73 named, and the remaining 12 are exactly the dungeon
+wall-segment helper cluster already flagged above as its own
+follow-up — nothing else is left unaddressed.

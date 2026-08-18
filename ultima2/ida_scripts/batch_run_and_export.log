@@ -650,3 +650,793 @@ Done. Re-export the .asm/.idc and check the new names took, then update docs/roa
 [*] gen_file(OFILE_IDC) returned 1
 [*] saving database to C:\dev\ultima2\ultima2.idb
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'C:\\dev\\ultima2\\ida_scripts\\apply_renames.py']
+[*] reading C:\dev\ultima2\ida_scripts\apply_renames.py
+[*] executing C:\dev\ultima2\ida_scripts\apply_renames.py
+[*] captured stdout from target script:
+----- begin target script output -----
+10730: already 'command_jump_table' -- skipping
+122D5: already 'load_talk_file' -- skipping
+1154E: already 'print_indexed_shop_string' -- skipping
+153F4: already 'print_char' -- skipping
+15217: already 'rand_byte' -- skipping
+123E6: already 'find_target_monster' -- skipping
+12028: already 'read_digit_keypress' -- skipping
+1508C: already 'print_indexed_menu_string' -- skipping
+1113A: already 'alert_town_guards' -- skipping
+12052: already 'try_spend_gold' -- skipping
+15ED7: already 'play_hit_sound' -- skipping
+15DA9: already 'play_tone_sweep' -- skipping
+15FC3: already 'play_magic_sound' -- skipping
+15E83: already 'play_fail_sound' -- skipping
+15C95: already 'play_tick_sound' -- skipping
+14B26: already 'flash_screen' -- skipping
+14B35: already 'xor_invert_cga_bank' -- skipping
+167B3: already 'draw_line' -- skipping
+14B76: already 'plot_point' -- skipping
+14BAA: already 'erase_point' -- skipping
+14B4E: already 'clear_screen' -- skipping
+14B5D: already 'clear_cga_bank' -- skipping
+15CB2: already 'speaker_on' -- skipping
+15CD2: already 'hold_tone' -- skipping
+15CE4: already 'speaker_off' -- skipping
+16D83: already 'draw_ship_marker' -- skipping
+16CC4: already 'erase_ship_marker' -- skipping
+168C0: already 'get_dungeon_tile_at_player' -- skipping
+150D8: already 'sign_byte' -- skipping
+150EF: already 'abs_byte' -- skipping
+16B3D: already 'animate_starfield' -- skipping
+16D68: already 'next_star_coord' -- skipping
+129D2: already 'draw_world_map_overview' -- skipping
+12B65: already 'plot_map_icon_point' -- skipping
+12362: already 'read_direction_keypress' -- skipping
+1068F: already 'longPauseScreen' -- skipping
+120AB: already 'compute_item_price' -- skipping
+16D5B: already 'seed_star_prng' -- skipping
+15FA6: already 'play_bump_sound' -- skipping
+15D09: already 'play_melody' -- skipping
+15EC7: already 'play_step_tick' -- skipping
+153A0: already 'clear_text_row' -- skipping
+1538F: already 'clear_caption_rows' -- skipping
+15EAC: already 'play_cannon_sound' -- skipping
+16F7F: already 'read_animated_digit_keypress' -- skipping
+17289: already 'speaker_off_once' -- skipping
+16FA3: 'sub_16FA3' -> 'draw_hyperwarp_hud'
+    displays 4 numbers via write_number: player._triLithium (fuel), then byte_178DA/178DB/178DC (the XENO=/YAKO=/ZABO= hyperwarp destination coordinates). The hyperwarp navigation HUD.
+12199: 'sub_12199' -> 'check_monster_collision'
+    canMoveToTile's monster-blocks-movement check -- entirely bypassed if _negateTimeDuration is nonzero (jumps past the whole (_mapMonsters+60h)[di] monster-type dispatch), i.e. you can walk through monsters while Negate Time is active. Otherwise dispatches on monster type (0x2C/0x48/>=0x78 vs byte_1742F==0x5C) to decide collision behavior.
+1767A: '_flag1' -> '_negateTimeDuration'
+    confirmed via 3 sites: initialized to 0 in play_game alongside _flag3/_sleepFlag (paralysis/sleep duration counters), decremented once per turn in the exact same end_of_turn spot as those two, and set to 0x14 by negate_time ("YOU RUB A COIN...", spends _strangeCoin). While nonzero, check_monster_collision skips its monster-blocking check entirely -- the Negate Time spell/item effect's remaining-duration counter. Formerly _flag1, a plain global (not a Savegame struct member).
+
+Done. Re-export the .asm/.idc and check the new names took, then update docs/roadmap.md's checklist.
+----- end target script output -----
+[*] finished executing C:\dev\ultima2\ida_scripts\apply_renames.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 16365
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'C:\\dev\\ultima2\\ida_scripts\\apply_renames.py']
+[*] reading C:\dev\ultima2\ida_scripts\apply_renames.py
+[*] executing C:\dev\ultima2\ida_scripts\apply_renames.py
+[*] captured stdout from target script:
+----- begin target script output -----
+10730: already 'command_jump_table' -- skipping
+122D5: already 'load_talk_file' -- skipping
+1154E: already 'print_indexed_shop_string' -- skipping
+153F4: already 'print_char' -- skipping
+15217: already 'rand_byte' -- skipping
+123E6: already 'find_target_monster' -- skipping
+12028: already 'read_digit_keypress' -- skipping
+1508C: already 'print_indexed_menu_string' -- skipping
+1113A: already 'alert_town_guards' -- skipping
+12052: already 'try_spend_gold' -- skipping
+15ED7: already 'play_hit_sound' -- skipping
+15DA9: already 'play_tone_sweep' -- skipping
+15FC3: already 'play_magic_sound' -- skipping
+15E83: already 'play_fail_sound' -- skipping
+15C95: already 'play_tick_sound' -- skipping
+14B26: already 'flash_screen' -- skipping
+14B35: already 'xor_invert_cga_bank' -- skipping
+167B3: already 'draw_line' -- skipping
+14B76: already 'plot_point' -- skipping
+14BAA: already 'erase_point' -- skipping
+14B4E: already 'clear_screen' -- skipping
+14B5D: already 'clear_cga_bank' -- skipping
+15CB2: already 'speaker_on' -- skipping
+15CD2: already 'hold_tone' -- skipping
+15CE4: already 'speaker_off' -- skipping
+16D83: already 'draw_ship_marker' -- skipping
+16CC4: already 'erase_ship_marker' -- skipping
+168C0: already 'get_dungeon_tile_at_player' -- skipping
+150D8: already 'sign_byte' -- skipping
+150EF: already 'abs_byte' -- skipping
+16B3D: already 'animate_starfield' -- skipping
+16D68: already 'next_star_coord' -- skipping
+129D2: already 'draw_world_map_overview' -- skipping
+12B65: already 'plot_map_icon_point' -- skipping
+12362: already 'read_direction_keypress' -- skipping
+1068F: already 'longPauseScreen' -- skipping
+120AB: already 'compute_item_price' -- skipping
+16D5B: already 'seed_star_prng' -- skipping
+15FA6: already 'play_bump_sound' -- skipping
+15D09: already 'play_melody' -- skipping
+15EC7: already 'play_step_tick' -- skipping
+153A0: already 'clear_text_row' -- skipping
+1538F: already 'clear_caption_rows' -- skipping
+15EAC: already 'play_cannon_sound' -- skipping
+16F7F: already 'read_animated_digit_keypress' -- skipping
+17289: already 'speaker_off_once' -- skipping
+16FA3: already 'draw_hyperwarp_hud' -- skipping
+12199: already 'check_monster_collision' -- skipping
+1767A: already '_negateTimeDuration' -- skipping
+17030: 'sub_17030' -> 'check_hyperwarp_sun_collision'
+    checks if all 3 hyperwarp destination coordinates (byte_178DA/178DB/178DC, XENO=/YAKO=/ZABO=) equal 4 -- if so, "YOU HIT THE SUN!" and clear_screen. Called from hyperwarp.
+1720B: 'sub_1720B' -> 'patch_map_filename'
+    patches byte offset 3 (the 'X' placeholder) of 3 file-loading templates (aMapxff/'MAPXFF', byte_122C9/'MONXFF', aTlkxff/'TLKXFF') with the character in AL -- dynamic map/monster/talk file selection (e.g. building 'MAP0FF' for a specific numbered planet/dungeon) rather than a fixed filename.
+17276: 'sub_17276' -> 'speaker_on_once'
+    mirror of speaker_off_once, same guard flag (byte_16998) but opposite condition/action: only calls speaker_on if the flag is 0FFh (already-silenced marker), then clears it.
+15FE0: 'sub_15FE0' -> 'play_attack_sound'
+    fixed play_tone_sweep params (ax=400h bx=1000h cx=1 dx=200h bp=80h), called twice from attack (early in the sequence and again later) -- likely the weapon-swing sound, distinct from play_hit_sound which is specifically on a successful hit.
+
+Done. Re-export the .asm/.idc and check the new names took, then update docs/roadmap.md's checklist.
+----- end target script output -----
+[*] finished executing C:\dev\ultima2\ida_scripts\apply_renames.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 16365
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'C:\\dev\\ultima2\\ida_scripts\\apply_renames.py']
+[*] reading C:\dev\ultima2\ida_scripts\apply_renames.py
+[*] executing C:\dev\ultima2\ida_scripts\apply_renames.py
+[*] captured stdout from target script:
+----- begin target script output -----
+10730: already 'command_jump_table' -- skipping
+122D5: already 'load_talk_file' -- skipping
+1154E: already 'print_indexed_shop_string' -- skipping
+153F4: already 'print_char' -- skipping
+15217: already 'rand_byte' -- skipping
+123E6: already 'find_target_monster' -- skipping
+12028: already 'read_digit_keypress' -- skipping
+1508C: already 'print_indexed_menu_string' -- skipping
+1113A: already 'alert_town_guards' -- skipping
+12052: already 'try_spend_gold' -- skipping
+15ED7: already 'play_hit_sound' -- skipping
+15DA9: already 'play_tone_sweep' -- skipping
+15FC3: already 'play_magic_sound' -- skipping
+15E83: already 'play_fail_sound' -- skipping
+15C95: already 'play_tick_sound' -- skipping
+14B26: already 'flash_screen' -- skipping
+14B35: already 'xor_invert_cga_bank' -- skipping
+167B3: already 'draw_line' -- skipping
+14B76: already 'plot_point' -- skipping
+14BAA: already 'erase_point' -- skipping
+14B4E: already 'clear_screen' -- skipping
+14B5D: already 'clear_cga_bank' -- skipping
+15CB2: already 'speaker_on' -- skipping
+15CD2: already 'hold_tone' -- skipping
+15CE4: already 'speaker_off' -- skipping
+16D83: already 'draw_ship_marker' -- skipping
+16CC4: already 'erase_ship_marker' -- skipping
+168C0: already 'get_dungeon_tile_at_player' -- skipping
+150D8: already 'sign_byte' -- skipping
+150EF: already 'abs_byte' -- skipping
+16B3D: already 'animate_starfield' -- skipping
+16D68: already 'next_star_coord' -- skipping
+129D2: already 'draw_world_map_overview' -- skipping
+12B65: already 'plot_map_icon_point' -- skipping
+12362: already 'read_direction_keypress' -- skipping
+1068F: already 'longPauseScreen' -- skipping
+120AB: already 'compute_item_price' -- skipping
+16D5B: already 'seed_star_prng' -- skipping
+15FA6: already 'play_bump_sound' -- skipping
+15D09: already 'play_melody' -- skipping
+15EC7: already 'play_step_tick' -- skipping
+153A0: already 'clear_text_row' -- skipping
+1538F: already 'clear_caption_rows' -- skipping
+15EAC: already 'play_cannon_sound' -- skipping
+16F7F: already 'read_animated_digit_keypress' -- skipping
+17289: already 'speaker_off_once' -- skipping
+16FA3: already 'draw_hyperwarp_hud' -- skipping
+12199: already 'check_monster_collision' -- skipping
+1767A: already '_negateTimeDuration' -- skipping
+17030: already 'check_hyperwarp_sun_collision' -- skipping
+1720B: already 'patch_map_filename' -- skipping
+17276: already 'speaker_on_once' -- skipping
+15FE0: already 'play_attack_sound' -- skipping
+16000: 'sub_16000' -> 'render_dungeon_view'
+    top-level dungeon view step, called from end_of_turn. Always computes _tilePlayerCenter/_tilePlayerUp/_tilePlayerDown via get_dungeon_tile_at_player (needed for movement/combat logic regardless of rendering); if byte_17436 is set, also triggers the full corridor render (precompute_dungeon_corridor -> draw_dungeon_corridor -> draw_dungeon_monster). Note: reuses _mapLeft/_mapTop as scratch facing-direction deltas here, unrelated to their more common 'viewport scroll origin' meaning elsewhere -- same reused-global pattern as _circleDeltaX/Y in draw_world_map_overview.
+16078: 'sub_16078' -> 'precompute_dungeon_corridor'
+    for each of 8 steps ahead along the facing direction (byte_17893/17894 = the reused _mapLeft/_mapTop deltas), reads 3 dungeon tiles via get_dungeon_tile_at_player and builds 3 parallel 8-entry arrays: left-wall type ([di+48Fh], high nibble), right-wall type + monster-presence flag ([di+497h] high nibble / [di+4AFh] low 3 bits -- same low-3-bits monster flag as loc_11451's dungeon-cell accessor), and straight-ahead wall type ([di+49Fh] high nibble).
+16144: 'sub_16144' -> 'draw_dungeon_corridor'
+    the actual corridor renderer: clear_screen, then iterates depth 0-7, checking bit patterns of the 3 precomputed wall-type bytes at each depth to dispatch to one of 10 wall-segment-drawing helpers (right wall: sub_16425/sub_16594/sub_1660C/sub_166CB; left wall: sub_16377/sub_164E2/sub_16291; straight ahead: sub_163CE/sub_1653F/sub_16304 -- not individually named yet, see docs/roadmap.md), stopping early once a wall blocks further view (sign bit set on the right-wall byte). Classic first-person wireframe dungeon crawler rendering.
+168ED: 'sub_168ED' -> 'draw_dungeon_monster'
+    runs after draw_dungeon_corridor: scans the precomputed monster-presence flags ([di+4AFh] from precompute_dungeon_corridor) up to whatever depth (byte_17892) the wall render loop stopped at, and if one's nonzero, looks up a screen position via byte_1697E[di] and draws a monster sprite from monsters_ptr at that depth in the corridor view.
+
+Done. Re-export the .asm/.idc and check the new names took, then update docs/roadmap.md's checklist.
+----- end target script output -----
+[*] finished executing C:\dev\ultima2\ida_scripts\apply_renames.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 16365
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'C:\\dev\\ultima2\\ida_scripts\\apply_renames.py']
+[*] reading C:\dev\ultima2\ida_scripts\apply_renames.py
+[*] executing C:\dev\ultima2\ida_scripts\apply_renames.py
+[*] captured stdout from target script:
+----- begin target script output -----
+10730: already 'command_jump_table' -- skipping
+122D5: already 'load_talk_file' -- skipping
+1154E: already 'print_indexed_shop_string' -- skipping
+153F4: already 'print_char' -- skipping
+15217: already 'rand_byte' -- skipping
+123E6: already 'find_target_monster' -- skipping
+12028: already 'read_digit_keypress' -- skipping
+1508C: already 'print_indexed_menu_string' -- skipping
+1113A: already 'alert_town_guards' -- skipping
+12052: already 'try_spend_gold' -- skipping
+15ED7: already 'play_hit_sound' -- skipping
+15DA9: already 'play_tone_sweep' -- skipping
+15FC3: already 'play_magic_sound' -- skipping
+15E83: already 'play_fail_sound' -- skipping
+15C95: already 'play_tick_sound' -- skipping
+14B26: already 'flash_screen' -- skipping
+14B35: already 'xor_invert_cga_bank' -- skipping
+167B3: already 'draw_line' -- skipping
+14B76: already 'plot_point' -- skipping
+14BAA: already 'erase_point' -- skipping
+14B4E: already 'clear_screen' -- skipping
+14B5D: already 'clear_cga_bank' -- skipping
+15CB2: already 'speaker_on' -- skipping
+15CD2: already 'hold_tone' -- skipping
+15CE4: already 'speaker_off' -- skipping
+16D83: already 'draw_ship_marker' -- skipping
+16CC4: already 'erase_ship_marker' -- skipping
+168C0: already 'get_dungeon_tile_at_player' -- skipping
+150D8: already 'sign_byte' -- skipping
+150EF: already 'abs_byte' -- skipping
+16B3D: already 'animate_starfield' -- skipping
+16D68: already 'next_star_coord' -- skipping
+129D2: already 'draw_world_map_overview' -- skipping
+12B65: already 'plot_map_icon_point' -- skipping
+12362: already 'read_direction_keypress' -- skipping
+1068F: already 'longPauseScreen' -- skipping
+120AB: already 'compute_item_price' -- skipping
+16D5B: already 'seed_star_prng' -- skipping
+15FA6: already 'play_bump_sound' -- skipping
+15D09: already 'play_melody' -- skipping
+15EC7: already 'play_step_tick' -- skipping
+153A0: already 'clear_text_row' -- skipping
+1538F: already 'clear_caption_rows' -- skipping
+15EAC: already 'play_cannon_sound' -- skipping
+16F7F: already 'read_animated_digit_keypress' -- skipping
+17289: already 'speaker_off_once' -- skipping
+16FA3: already 'draw_hyperwarp_hud' -- skipping
+12199: already 'check_monster_collision' -- skipping
+1767A: already '_negateTimeDuration' -- skipping
+17030: already 'check_hyperwarp_sun_collision' -- skipping
+1720B: already 'patch_map_filename' -- skipping
+17276: already 'speaker_on_once' -- skipping
+15FE0: already 'play_attack_sound' -- skipping
+16000: already 'render_dungeon_view' -- skipping
+16078: already 'precompute_dungeon_corridor' -- skipping
+16144: already 'draw_dungeon_corridor' -- skipping
+168ED: already 'draw_dungeon_monster' -- skipping
+10E70: 'sub_10E70' -> 'leg_paralysis_trap'
+    "LEGS PARALIZED!" -- flash_screen + play_magic_sound, _bootsOwned + rand_byte()>=0x40 (~75%) resists ("SAVED BY MAGICAL BOOTS!"), otherwise sets player_paralyzedFlag (0-15 random duration).
+10EC2: 'sub_10EC2' -> 'arm_paralysis_trap'
+    "ARMS PARALIZED!", same shape as leg_paralysis_trap but _cloakOwned-gated ("SAVED BY MAGICAL CLOAK") and sets _flag3 on failure instead -- the duration counter attack's "PARALIZED!" gate checks. Legs vs. arms is a real mechanical distinction: player_paralyzedFlag vs. _flag3 are different globals with different consequences (movement vs. combat).
+10F12: 'sub_10F12' -> 'magic_missile_trap'
+    "MAGIC MISSILE!" -- flash_screen + play_magic_sound, no protection item, always wastes 2 turns (byte_17430/_commandWaitCtr both +2) and adds 0x40 (BCD) to byte_17432.
+10F48: 'sub_10F48' -> 'sleep_trap'
+    "SLEEP SPELL!", same shape as the paralysis traps but _idolOwned-gated ("SAVED BY IDOL!") and sets _sleepFlag on failure. proc far, not proc near -- missed by the initial sub_XXXXX sweep grep for this reason.
+10F8E: 'sub_10F8E' -> 'minax_curse_trap'
+    "MINAX CRIES: DIE FOOL!" -- a cursed-tile encounter, called from canMoveToTile (not end_of_turn like the others above). Draws and erases a circle via xorDrawCircle (XOR flash bracketing pattern) then does 1 HP damage (BCD), death check on underflow.
+10FCD: 'sub_10FCD' -> 'random_item_loss_trap'
+    end_of_turn random encounter, ~25% chance (rand_byte()<0x40): picks a random treasure-array slot (rand_byte()&0xF indexes player._ringOwned[]) and decrements it by 1 if owned -- an unprotected item-loss encounter, no resist mechanic like the paralysis/sleep traps above.
+
+Done. Re-export the .asm/.idc and check the new names took, then update docs/roadmap.md's checklist.
+----- end target script output -----
+[*] finished executing C:\dev\ultima2\ida_scripts\apply_renames.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 16365
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'C:\\dev\\ultima2\\ida_scripts\\apply_renames.py']
+[*] reading C:\dev\ultima2\ida_scripts\apply_renames.py
+[*] executing C:\dev\ultima2\ida_scripts\apply_renames.py
+[*] captured stdout from target script:
+----- begin target script output -----
+10730: already 'command_jump_table' -- skipping
+122D5: already 'load_talk_file' -- skipping
+1154E: already 'print_indexed_shop_string' -- skipping
+153F4: already 'print_char' -- skipping
+15217: already 'rand_byte' -- skipping
+123E6: already 'find_target_monster' -- skipping
+12028: already 'read_digit_keypress' -- skipping
+1508C: already 'print_indexed_menu_string' -- skipping
+1113A: already 'alert_town_guards' -- skipping
+12052: already 'try_spend_gold' -- skipping
+15ED7: already 'play_hit_sound' -- skipping
+15DA9: already 'play_tone_sweep' -- skipping
+15FC3: already 'play_magic_sound' -- skipping
+15E83: already 'play_fail_sound' -- skipping
+15C95: already 'play_tick_sound' -- skipping
+14B26: already 'flash_screen' -- skipping
+14B35: already 'xor_invert_cga_bank' -- skipping
+167B3: already 'draw_line' -- skipping
+14B76: already 'plot_point' -- skipping
+14BAA: already 'erase_point' -- skipping
+14B4E: already 'clear_screen' -- skipping
+14B5D: already 'clear_cga_bank' -- skipping
+15CB2: already 'speaker_on' -- skipping
+15CD2: already 'hold_tone' -- skipping
+15CE4: already 'speaker_off' -- skipping
+16D83: already 'draw_ship_marker' -- skipping
+16CC4: already 'erase_ship_marker' -- skipping
+168C0: already 'get_dungeon_tile_at_player' -- skipping
+150D8: already 'sign_byte' -- skipping
+150EF: already 'abs_byte' -- skipping
+16B3D: already 'animate_starfield' -- skipping
+16D68: already 'next_star_coord' -- skipping
+129D2: already 'draw_world_map_overview' -- skipping
+12B65: already 'plot_map_icon_point' -- skipping
+12362: already 'read_direction_keypress' -- skipping
+1068F: already 'longPauseScreen' -- skipping
+120AB: already 'compute_item_price' -- skipping
+16D5B: already 'seed_star_prng' -- skipping
+15FA6: already 'play_bump_sound' -- skipping
+15D09: already 'play_melody' -- skipping
+15EC7: already 'play_step_tick' -- skipping
+153A0: already 'clear_text_row' -- skipping
+1538F: already 'clear_caption_rows' -- skipping
+15EAC: already 'play_cannon_sound' -- skipping
+16F7F: already 'read_animated_digit_keypress' -- skipping
+17289: already 'speaker_off_once' -- skipping
+16FA3: already 'draw_hyperwarp_hud' -- skipping
+12199: already 'check_monster_collision' -- skipping
+1767A: already '_negateTimeDuration' -- skipping
+17030: already 'check_hyperwarp_sun_collision' -- skipping
+1720B: already 'patch_map_filename' -- skipping
+17276: already 'speaker_on_once' -- skipping
+15FE0: already 'play_attack_sound' -- skipping
+16000: already 'render_dungeon_view' -- skipping
+16078: already 'precompute_dungeon_corridor' -- skipping
+16144: already 'draw_dungeon_corridor' -- skipping
+168ED: already 'draw_dungeon_monster' -- skipping
+10E70: already 'leg_paralysis_trap' -- skipping
+10EC2: already 'arm_paralysis_trap' -- skipping
+10F12: already 'magic_missile_trap' -- skipping
+10F48: already 'sleep_trap' -- skipping
+10F8E: already 'minax_curse_trap' -- skipping
+10FCD: already 'random_item_loss_trap' -- skipping
+112DB: 'sub_112DB' -> 'consume_food'
+    per-turn food consumption: decrements player._foodTurnCtr, and on borrow decrements the 2-byte player._food (BCD). Death check on underflow -- starving to 0 food kills the player. Called from end_of_turn.
+1143C: 'sub_1143C' -> 'check_monster_on_level'
+    gates map_get_monster_at?/loc_11451 by dungeon level: if byte_17435 (current depth) doesn't match the monster's (_mapMonsters+80h)[di] level field, returns 0FFh (not found on this level) instead of falling through to read its tile.
+1147F: 'sub_1147F' -> 'spawn_dungeon_monster'
+    wandering-monster spawner: loops all 32 monster slots looking for an inactive one ((_mapMonsters+60h)[di]==0), then assigns a random position (retrying via map_get_monster_at? if occupied), monster type, and display tile, writing both the monster-data arrays and the dungeon map tile itself. Called from end_of_turn.
+1152E: 'sub_1152E' -> 'compute_monster_direction_to_player'
+    sign(_mapX - _mapMonsters[di]) -> _circleDeltaX, sign(_mapY - (_mapMonsters+20h)[di]) -> _circleDeltaY (reused scratch direction-delta globals, same pattern as elsewhere in this sweep) -- the direction vector from a monster toward the player, monster AI movement targeting. Called from end_of_turn.
+
+Done. Re-export the .asm/.idc and check the new names took, then update docs/roadmap.md's checklist.
+----- end target script output -----
+[*] finished executing C:\dev\ultima2\ida_scripts\apply_renames.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 16366
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'C:\\dev\\ultima2\\ida_scripts\\apply_renames.py']
+[*] reading C:\dev\ultima2\ida_scripts\apply_renames.py
+[*] executing C:\dev\ultima2\ida_scripts\apply_renames.py
+[*] captured stdout from target script:
+----- begin target script output -----
+10730: already 'command_jump_table' -- skipping
+122D5: already 'load_talk_file' -- skipping
+1154E: already 'print_indexed_shop_string' -- skipping
+153F4: already 'print_char' -- skipping
+15217: already 'rand_byte' -- skipping
+123E6: already 'find_target_monster' -- skipping
+12028: already 'read_digit_keypress' -- skipping
+1508C: already 'print_indexed_menu_string' -- skipping
+1113A: already 'alert_town_guards' -- skipping
+12052: already 'try_spend_gold' -- skipping
+15ED7: already 'play_hit_sound' -- skipping
+15DA9: already 'play_tone_sweep' -- skipping
+15FC3: already 'play_magic_sound' -- skipping
+15E83: already 'play_fail_sound' -- skipping
+15C95: already 'play_tick_sound' -- skipping
+14B26: already 'flash_screen' -- skipping
+14B35: already 'xor_invert_cga_bank' -- skipping
+167B3: already 'draw_line' -- skipping
+14B76: already 'plot_point' -- skipping
+14BAA: already 'erase_point' -- skipping
+14B4E: already 'clear_screen' -- skipping
+14B5D: already 'clear_cga_bank' -- skipping
+15CB2: already 'speaker_on' -- skipping
+15CD2: already 'hold_tone' -- skipping
+15CE4: already 'speaker_off' -- skipping
+16D83: already 'draw_ship_marker' -- skipping
+16CC4: already 'erase_ship_marker' -- skipping
+168C0: already 'get_dungeon_tile_at_player' -- skipping
+150D8: already 'sign_byte' -- skipping
+150EF: already 'abs_byte' -- skipping
+16B3D: already 'animate_starfield' -- skipping
+16D68: already 'next_star_coord' -- skipping
+129D2: already 'draw_world_map_overview' -- skipping
+12B65: already 'plot_map_icon_point' -- skipping
+12362: already 'read_direction_keypress' -- skipping
+1068F: already 'longPauseScreen' -- skipping
+120AB: already 'compute_item_price' -- skipping
+16D5B: already 'seed_star_prng' -- skipping
+15FA6: already 'play_bump_sound' -- skipping
+15D09: already 'play_melody' -- skipping
+15EC7: already 'play_step_tick' -- skipping
+153A0: already 'clear_text_row' -- skipping
+1538F: already 'clear_caption_rows' -- skipping
+15EAC: already 'play_cannon_sound' -- skipping
+16F7F: already 'read_animated_digit_keypress' -- skipping
+17289: already 'speaker_off_once' -- skipping
+16FA3: already 'draw_hyperwarp_hud' -- skipping
+12199: already 'check_monster_collision' -- skipping
+1767A: already '_negateTimeDuration' -- skipping
+17030: already 'check_hyperwarp_sun_collision' -- skipping
+1720B: already 'patch_map_filename' -- skipping
+17276: already 'speaker_on_once' -- skipping
+15FE0: already 'play_attack_sound' -- skipping
+16000: already 'render_dungeon_view' -- skipping
+16078: already 'precompute_dungeon_corridor' -- skipping
+16144: already 'draw_dungeon_corridor' -- skipping
+168ED: already 'draw_dungeon_monster' -- skipping
+10E70: already 'leg_paralysis_trap' -- skipping
+10EC2: already 'arm_paralysis_trap' -- skipping
+10F12: already 'magic_missile_trap' -- skipping
+10F48: already 'sleep_trap' -- skipping
+10F8E: already 'minax_curse_trap' -- skipping
+10FCD: already 'random_item_loss_trap' -- skipping
+112DB: already 'consume_food' -- skipping
+1143C: already 'check_monster_on_level' -- skipping
+1147F: already 'spawn_dungeon_monster' -- skipping
+1152E: already 'compute_monster_direction_to_player' -- skipping
+126F9: 'sub_126F9' -> 'update_patrol_marker'
+    gated by player._disableSave. Cycles a map marker through 4 fixed waypoints (a table at cs:[+2798h]) every 8 turns (player+39h countdown, player.field_38 waypoint index 0/2/4/6), preserving/restoring the underlying terrain tile (player+3Ah) as it moves off/onto each waypoint, writing tile 0C0h to mark its current position. Functional name -- possibly Minax's overworld movement per Ultima II lore, but not independently confirmed which entity this represents.
+1330C: 'sub_1330C' -> 'find_cursor_target_monster'
+    cast's monster-finder (already referred to this way in earlier docs/overview.md notes, never actually renamed): scans all 32 monster slots for one active, on the current dungeon level (byte_17435), and at the cursor-targeted position. Distinct from the already-named find_target_monster (facing-direction- based, used by attack/fire/offer/transact) -- this one is cursor-based and cast-only.
+1361C: 'sub_1361C' -> 'clear_picked_up_tile'
+    only runs above ground (player._mapNum2<4): reads the tile at _mapX/_mapY via get_player_tile then overwrites it with tile value 8 (plain ground). Called twice from get -- clears a picked-up item's tile off the overworld map.
+
+Done. Re-export the .asm/.idc and check the new names took, then update docs/roadmap.md's checklist.
+----- end target script output -----
+[*] finished executing C:\dev\ultima2\ida_scripts\apply_renames.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 16366
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'C:\\dev\\ultima2\\ida_scripts\\apply_renames.py']
+[*] reading C:\dev\ultima2\ida_scripts\apply_renames.py
+[*] executing C:\dev\ultima2\ida_scripts\apply_renames.py
+[*] captured stdout from target script:
+----- begin target script output -----
+10730: already 'command_jump_table' -- skipping
+122D5: already 'load_talk_file' -- skipping
+1154E: already 'print_indexed_shop_string' -- skipping
+153F4: already 'print_char' -- skipping
+15217: already 'rand_byte' -- skipping
+123E6: already 'find_target_monster' -- skipping
+12028: already 'read_digit_keypress' -- skipping
+1508C: already 'print_indexed_menu_string' -- skipping
+1113A: already 'alert_town_guards' -- skipping
+12052: already 'try_spend_gold' -- skipping
+15ED7: already 'play_hit_sound' -- skipping
+15DA9: already 'play_tone_sweep' -- skipping
+15FC3: already 'play_magic_sound' -- skipping
+15E83: already 'play_fail_sound' -- skipping
+15C95: already 'play_tick_sound' -- skipping
+14B26: already 'flash_screen' -- skipping
+14B35: already 'xor_invert_cga_bank' -- skipping
+167B3: already 'draw_line' -- skipping
+14B76: already 'plot_point' -- skipping
+14BAA: already 'erase_point' -- skipping
+14B4E: already 'clear_screen' -- skipping
+14B5D: already 'clear_cga_bank' -- skipping
+15CB2: already 'speaker_on' -- skipping
+15CD2: already 'hold_tone' -- skipping
+15CE4: already 'speaker_off' -- skipping
+16D83: already 'draw_ship_marker' -- skipping
+16CC4: already 'erase_ship_marker' -- skipping
+168C0: already 'get_dungeon_tile_at_player' -- skipping
+150D8: already 'sign_byte' -- skipping
+150EF: already 'abs_byte' -- skipping
+16B3D: already 'animate_starfield' -- skipping
+16D68: already 'next_star_coord' -- skipping
+129D2: already 'draw_world_map_overview' -- skipping
+12B65: already 'plot_map_icon_point' -- skipping
+12362: already 'read_direction_keypress' -- skipping
+1068F: already 'longPauseScreen' -- skipping
+120AB: already 'compute_item_price' -- skipping
+16D5B: already 'seed_star_prng' -- skipping
+15FA6: already 'play_bump_sound' -- skipping
+15D09: already 'play_melody' -- skipping
+15EC7: already 'play_step_tick' -- skipping
+153A0: already 'clear_text_row' -- skipping
+1538F: already 'clear_caption_rows' -- skipping
+15EAC: already 'play_cannon_sound' -- skipping
+16F7F: already 'read_animated_digit_keypress' -- skipping
+17289: already 'speaker_off_once' -- skipping
+16FA3: already 'draw_hyperwarp_hud' -- skipping
+12199: already 'check_monster_collision' -- skipping
+1767A: already '_negateTimeDuration' -- skipping
+17030: already 'check_hyperwarp_sun_collision' -- skipping
+1720B: already 'patch_map_filename' -- skipping
+17276: already 'speaker_on_once' -- skipping
+15FE0: already 'play_attack_sound' -- skipping
+16000: already 'render_dungeon_view' -- skipping
+16078: already 'precompute_dungeon_corridor' -- skipping
+16144: already 'draw_dungeon_corridor' -- skipping
+168ED: already 'draw_dungeon_monster' -- skipping
+10E70: already 'leg_paralysis_trap' -- skipping
+10EC2: already 'arm_paralysis_trap' -- skipping
+10F12: already 'magic_missile_trap' -- skipping
+10F48: already 'sleep_trap' -- skipping
+10F8E: already 'minax_curse_trap' -- skipping
+10FCD: already 'random_item_loss_trap' -- skipping
+112DB: already 'consume_food' -- skipping
+1143C: already 'check_monster_on_level' -- skipping
+1147F: already 'spawn_dungeon_monster' -- skipping
+1152E: already 'compute_monster_direction_to_player' -- skipping
+126F9: already 'update_patrol_marker' -- skipping
+1330C: already 'find_cursor_target_monster' -- skipping
+1361C: already 'clear_picked_up_tile' -- skipping
+14BE0: 'sub_14BE0' -> 'draw_sprite_row'
+    low-level sprite drawer: bp selects a byte mask from a glyph-indexed table (cs:[bp+48D4h]), ax/bx give screen X/Y -- same table-driven CGA addressing style as plot_point, but writes a full byte (not a 2-bit pixel) across 2 rows (di and di+50h) and both interleaved framebuffer banks per call. Only caller is draw_dungeon_monster_sprite.
+168A3: 'sub_168A3' -> 'draw_dungeon_monster_sprite'
+    called directly from draw_dungeon_monster: byte_1788F (a monster glyph ID) selects the sprite via bp, _mapOffsetX/_mapOffsetY (x4) give the screen position, then draw_sprite_row does the actual write -- the monster-sprite draw for the dungeon corridor view.
+
+Done. Re-export the .asm/.idc and check the new names took, then update docs/roadmap.md's checklist.
+----- end target script output -----
+[*] finished executing C:\dev\ultima2\ida_scripts\apply_renames.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 16366
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'C:\\dev\\ultima2\\ida_scripts\\apply_renames.py']
+[*] reading C:\dev\ultima2\ida_scripts\apply_renames.py
+[*] executing C:\dev\ultima2\ida_scripts\apply_renames.py
+[*] captured stdout from target script:
+----- begin target script output -----
+10730: already 'command_jump_table' -- skipping
+122D5: already 'load_talk_file' -- skipping
+1154E: already 'print_indexed_shop_string' -- skipping
+153F4: already 'print_char' -- skipping
+15217: already 'rand_byte' -- skipping
+123E6: already 'find_target_monster' -- skipping
+12028: already 'read_digit_keypress' -- skipping
+1508C: already 'print_indexed_menu_string' -- skipping
+1113A: already 'alert_town_guards' -- skipping
+12052: already 'try_spend_gold' -- skipping
+15ED7: already 'play_hit_sound' -- skipping
+15DA9: already 'play_tone_sweep' -- skipping
+15FC3: already 'play_magic_sound' -- skipping
+15E83: already 'play_fail_sound' -- skipping
+15C95: already 'play_tick_sound' -- skipping
+14B26: already 'flash_screen' -- skipping
+14B35: already 'xor_invert_cga_bank' -- skipping
+167B3: already 'draw_line' -- skipping
+14B76: already 'plot_point' -- skipping
+14BAA: already 'erase_point' -- skipping
+14B4E: already 'clear_screen' -- skipping
+14B5D: already 'clear_cga_bank' -- skipping
+15CB2: already 'speaker_on' -- skipping
+15CD2: already 'hold_tone' -- skipping
+15CE4: already 'speaker_off' -- skipping
+16D83: already 'draw_ship_marker' -- skipping
+16CC4: already 'erase_ship_marker' -- skipping
+168C0: already 'get_dungeon_tile_at_player' -- skipping
+150D8: already 'sign_byte' -- skipping
+150EF: already 'abs_byte' -- skipping
+16B3D: already 'animate_starfield' -- skipping
+16D68: already 'next_star_coord' -- skipping
+129D2: already 'draw_world_map_overview' -- skipping
+12B65: already 'plot_map_icon_point' -- skipping
+12362: already 'read_direction_keypress' -- skipping
+1068F: already 'longPauseScreen' -- skipping
+120AB: already 'compute_item_price' -- skipping
+16D5B: already 'seed_star_prng' -- skipping
+15FA6: already 'play_bump_sound' -- skipping
+15D09: already 'play_melody' -- skipping
+15EC7: already 'play_step_tick' -- skipping
+153A0: already 'clear_text_row' -- skipping
+1538F: already 'clear_caption_rows' -- skipping
+15EAC: already 'play_cannon_sound' -- skipping
+16F7F: already 'read_animated_digit_keypress' -- skipping
+17289: already 'speaker_off_once' -- skipping
+16FA3: already 'draw_hyperwarp_hud' -- skipping
+12199: already 'check_monster_collision' -- skipping
+1767A: already '_negateTimeDuration' -- skipping
+17030: already 'check_hyperwarp_sun_collision' -- skipping
+1720B: already 'patch_map_filename' -- skipping
+17276: already 'speaker_on_once' -- skipping
+15FE0: already 'play_attack_sound' -- skipping
+16000: already 'render_dungeon_view' -- skipping
+16078: already 'precompute_dungeon_corridor' -- skipping
+16144: already 'draw_dungeon_corridor' -- skipping
+168ED: already 'draw_dungeon_monster' -- skipping
+10E70: already 'leg_paralysis_trap' -- skipping
+10EC2: already 'arm_paralysis_trap' -- skipping
+10F12: already 'magic_missile_trap' -- skipping
+10F48: already 'sleep_trap' -- skipping
+10F8E: already 'minax_curse_trap' -- skipping
+10FCD: already 'random_item_loss_trap' -- skipping
+112DB: already 'consume_food' -- skipping
+1143C: already 'check_monster_on_level' -- skipping
+1147F: already 'spawn_dungeon_monster' -- skipping
+1152E: already 'compute_monster_direction_to_player' -- skipping
+126F9: already 'update_patrol_marker' -- skipping
+1330C: already 'find_cursor_target_monster' -- skipping
+1361C: already 'clear_picked_up_tile' -- skipping
+14BE0: already 'draw_sprite_row' -- skipping
+168A3: already 'draw_dungeon_monster_sprite' -- skipping
+14F11: 'sub_14F11' -> 'compute_monster_direction_scaled'
+    same _circleDeltaX/_circleDeltaY output as compute_monster_direction_to_player, but takes sign_byte() of a x4-scaled delta instead of the raw delta -- called from different sites (end_of_turn+D4, canMoveToTile-13A7) than the x1 version (end_of_turn+764). Exact semantic distinction from the x1 version not fully traced -- named for the structural difference (scaling) rather than an unconfirmed purpose.
+14F36: 'sub_14F36' -> 'compute_monster_delta'
+    same delta computation as the two direction helpers above (_mapX/_mapY minus a monster's position) but no sign_byte() call -- stores the raw signed difference in _circleDeltaX/Y instead of just its direction. Single caller, end_of_turn:loc_10AA7 -- likely feeds a distance/range check rather than a movement direction, not independently confirmed.
+
+Done. Re-export the .asm/.idc and check the new names took, then update docs/roadmap.md's checklist.
+----- end target script output -----
+[*] finished executing C:\dev\ultima2\ida_scripts\apply_renames.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 16366
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'C:\\dev\\ultima2\\ida_scripts\\apply_renames.py']
+[*] reading C:\dev\ultima2\ida_scripts\apply_renames.py
+[*] executing C:\dev\ultima2\ida_scripts\apply_renames.py
+[*] captured stdout from target script:
+----- begin target script output -----
+10730: already 'command_jump_table' -- skipping
+122D5: already 'load_talk_file' -- skipping
+1154E: already 'print_indexed_shop_string' -- skipping
+153F4: already 'print_char' -- skipping
+15217: already 'rand_byte' -- skipping
+123E6: already 'find_target_monster' -- skipping
+12028: already 'read_digit_keypress' -- skipping
+1508C: already 'print_indexed_menu_string' -- skipping
+1113A: already 'alert_town_guards' -- skipping
+12052: already 'try_spend_gold' -- skipping
+15ED7: already 'play_hit_sound' -- skipping
+15DA9: already 'play_tone_sweep' -- skipping
+15FC3: already 'play_magic_sound' -- skipping
+15E83: already 'play_fail_sound' -- skipping
+15C95: already 'play_tick_sound' -- skipping
+14B26: already 'flash_screen' -- skipping
+14B35: already 'xor_invert_cga_bank' -- skipping
+167B3: already 'draw_line' -- skipping
+14B76: already 'plot_point' -- skipping
+14BAA: already 'erase_point' -- skipping
+14B4E: already 'clear_screen' -- skipping
+14B5D: already 'clear_cga_bank' -- skipping
+15CB2: already 'speaker_on' -- skipping
+15CD2: already 'hold_tone' -- skipping
+15CE4: already 'speaker_off' -- skipping
+16D83: already 'draw_ship_marker' -- skipping
+16CC4: already 'erase_ship_marker' -- skipping
+168C0: already 'get_dungeon_tile_at_player' -- skipping
+150D8: already 'sign_byte' -- skipping
+150EF: already 'abs_byte' -- skipping
+16B3D: already 'animate_starfield' -- skipping
+16D68: already 'next_star_coord' -- skipping
+129D2: already 'draw_world_map_overview' -- skipping
+12B65: already 'plot_map_icon_point' -- skipping
+12362: already 'read_direction_keypress' -- skipping
+1068F: already 'longPauseScreen' -- skipping
+120AB: already 'compute_item_price' -- skipping
+16D5B: already 'seed_star_prng' -- skipping
+15FA6: already 'play_bump_sound' -- skipping
+15D09: already 'play_melody' -- skipping
+15EC7: already 'play_step_tick' -- skipping
+153A0: already 'clear_text_row' -- skipping
+1538F: already 'clear_caption_rows' -- skipping
+15EAC: already 'play_cannon_sound' -- skipping
+16F7F: already 'read_animated_digit_keypress' -- skipping
+17289: already 'speaker_off_once' -- skipping
+16FA3: already 'draw_hyperwarp_hud' -- skipping
+12199: already 'check_monster_collision' -- skipping
+1767A: already '_negateTimeDuration' -- skipping
+17030: already 'check_hyperwarp_sun_collision' -- skipping
+1720B: already 'patch_map_filename' -- skipping
+17276: already 'speaker_on_once' -- skipping
+15FE0: already 'play_attack_sound' -- skipping
+16000: already 'render_dungeon_view' -- skipping
+16078: already 'precompute_dungeon_corridor' -- skipping
+16144: already 'draw_dungeon_corridor' -- skipping
+168ED: already 'draw_dungeon_monster' -- skipping
+10E70: already 'leg_paralysis_trap' -- skipping
+10EC2: already 'arm_paralysis_trap' -- skipping
+10F12: already 'magic_missile_trap' -- skipping
+10F48: already 'sleep_trap' -- skipping
+10F8E: already 'minax_curse_trap' -- skipping
+10FCD: already 'random_item_loss_trap' -- skipping
+112DB: already 'consume_food' -- skipping
+1143C: already 'check_monster_on_level' -- skipping
+1147F: already 'spawn_dungeon_monster' -- skipping
+1152E: already 'compute_monster_direction_to_player' -- skipping
+126F9: already 'update_patrol_marker' -- skipping
+1330C: already 'find_cursor_target_monster' -- skipping
+1361C: already 'clear_picked_up_tile' -- skipping
+14BE0: already 'draw_sprite_row' -- skipping
+168A3: already 'draw_dungeon_monster_sprite' -- skipping
+14F11: already 'compute_monster_direction_scaled' -- skipping
+14F36: already 'compute_monster_delta' -- skipping
+15E3B: 'sub_15E3B' -> 'play_trap_sound'
+    fixed play_tone_sweep params, called right after "ARGH! A TRAP!" (rand_byte() < byte_17435 -- deeper dungeon levels are more dangerous), clears byte_17436 (the dungeon-view-refresh flag render_dungeon_view checks) and pauses twice. A dungeon pit/trap encounter.
+16999: 'sub_16999' -> 'setup_rocket_launch_display'
+    launch's post-rocket-launch setup: setPalette, positions the ship marker at screen center (0x80,0x40), loads the 3 destination coordinates from a table (indexed by player._disableSave, reused as scratch here), decrements player._triLithium (fuel), and starts drawing the FUEL=/XENO=/ YAKO=/ZABO= HUD labels (continues into unnamed code after the proc boundary).
+16A79: 'sub_16A79' -> 'space_travel_command_loop'
+    space flight's main per-turn loop, parallel to play_game's overworld loop: draw_hyperwarp_hud, "CMD: " prompt, animate_starfield while waiting for a keypress, then dispatches on the key (NORTH_KEYCODE and others) to movement/hyperwarp commands.
+16D3E: 'sub_16D3E' -> 'init_starfield'
+    seed_star_prng then initializes all 64 star positions via next_star_coord (X then Y, masked to 0-127, si=63 downto 0). Run once when entering the hyperwarp/space-travel view.
+17242: 'sub_17242' -> 'play_star_twinkle_sound'
+    periodic chime scheduled from inside animate_starfield's countdown (word_16994): plays a short random-frequency tone via speaker_on_once/hold_tone, or silences via speaker_off_once if byte_16998 is already set -- the ambient twinkling-star sound during hyperwarp flight.
+172A0: 'sub_172A0' -> 'minax_death_sequence'
+    "MINAX IS DEAD!! ALL HER WORKS SHALL DIE!", called from attack+13E -- a victory/destruction animation: repeated play_hit_sound calls bracketing randomized _playerX/_playerY positions (function chunk continues past the proc boundary).
+
+Done. Re-export the .asm/.idc and check the new names took, then update docs/roadmap.md's checklist.
+----- end target script output -----
+[*] finished executing C:\dev\ultima2\ida_scripts\apply_renames.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 16366
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0

@@ -458,29 +458,56 @@ sessions, unlike a one-off todo list.
 - [ ] Pin down remaining `Savegame` struct fields — current layout stops
       being well-understood partway through the 256-byte struct.
       `_disableSave` is used but not yet placed.
-- [ ] **In progress**: sweep of the remaining unnamed `sub_XXXXX`
-      functions, ranked by call/jmp-site reuse rather than picked
-      arbitrarily (73 at the start of the sweep, 29 named so far, 44
-      left — mostly single-reference from here on, 2026-08-18) — see
+- [x] **Sweep of the unnamed `sub_XXXXX` functions — essentially
+      complete.** Ranked by call/jmp-site reuse rather than picked
+      arbitrarily; 63 of the original 73 named, 2026-08-18. The
+      remaining 12 are exactly the dungeon wall-segment helper cluster
+      (see the follow-up item right below) — nothing else is left
+      unaddressed. See
       [overview.md](overview.md#sub_xxxxx-sweep--unnamed-helpers-ranked-by-call-site-reuse)
-      for the full list and evidence. Named clusters so far: CGA
+      for the full list and evidence. Named clusters: CGA
       point/line-drawing primitives (`draw_line`/`plot_point`/
       `erase_point`/`clear_screen`/`clear_cga_bank`), PC-speaker
       primitives (`speaker_on`/`hold_tone`/`speaker_off`), the
-      hyperwarp starfield animation (`animate_starfield`/
-      `draw_ship_marker`/`erase_ship_marker`/`next_star_coord`), and —
-      major find — `view`'s actual map-overview mechanism
-      (`draw_world_map_overview`/`plot_map_icon_point`, resolves what
-      `sub_129D2` does, previously only vaguely described during the
-      location-descriptor dead-data investigation). Note: the old
-      `sub_10A30` "movement-key dispatcher" entry point from an earlier
-      session no longer exists as a separate function — its callers
-      now resolve inside `end_of_turn` itself (likely absorbed when
-      the `command_jump_table` fix reshuffled code boundaries); don't
-      go looking for it. Remaining candidates ranked by reuse: the
-      `sub_16xxx` cluster still has unresolved pieces (dense,
-      self-contained call graph, likely dungeon movement or combat —
-      not yet confirmed which).
+      hyperwarp starfield animation and space-flight loop
+      (`animate_starfield`/`draw_ship_marker`/`erase_ship_marker`/
+      `next_star_coord`/`init_starfield`/`space_travel_command_loop`/
+      `setup_rocket_launch_display`/`play_star_twinkle_sound`), `view`'s
+      actual map-overview mechanism (`draw_world_map_overview`/
+      `plot_map_icon_point`, resolves what `sub_129D2` does, previously
+      only vaguely described during the location-descriptor dead-data
+      investigation), `end_of_turn`'s trap handlers (`leg_paralysis_trap`/
+      `arm_paralysis_trap`/`magic_missile_trap`/`sleep_trap`/
+      `minax_curse_trap`/`random_item_loss_trap`/`consume_food`) and
+      monster-AI helpers (`spawn_dungeon_monster`/
+      `compute_monster_direction_to_player`/`update_patrol_marker`),
+      `_flag1` → `_negateTimeDuration` (Negate Time's remaining-
+      duration counter, confirmed via 3 sites), `minax_death_sequence`,
+      and — the biggest find — **Ultima II's entire dungeon
+      first-person view rendering pipeline**, fully identified:
+      `render_dungeon_view` → `precompute_dungeon_corridor` →
+      `draw_dungeon_corridor` → `draw_dungeon_monster` →
+      `draw_dungeon_monster_sprite`/`draw_sprite_row`. This is what the
+      old "`sub_16xxx` cluster, dense, likely dungeon movement or
+      combat" note used to point at — it's neither, it's the classic
+      wireframe maze-view renderer. Full writeup in
+      [overview.md](overview.md#ultima-iis-dungeon-first-person-view-fully-identified).
+      Note: the old `sub_10A30` "movement-key dispatcher" entry point
+      from an earlier session no longer exists as a separate function
+      — its callers now resolve inside `end_of_turn` itself (likely
+      absorbed when the `command_jump_table` fix reshuffled code
+      boundaries); don't go looking for it.
+- [ ] **Follow-up from the dungeon-view find above**: the 10 individual
+      wall-segment-drawing helpers `draw_dungeon_corridor` dispatches
+      to (`sub_16425`/`sub_16594`/`sub_1660C`/`sub_166CB` for the right
+      wall; `sub_16377`/`sub_164E2`/`sub_16291` for the left;
+      `sub_163CE`/`sub_1653F`/`sub_16304` for straight ahead) are
+      understood *collectively* (each draws a specific perspective wall
+      segment for a specific bit pattern) but not *individually*
+      pinned — each needs its own trace to nail down exact geometry
+      (which side, near/far perspective, open/closed/door variant).
+      Worth a dedicated pass rather than folding into the general
+      sweep.
 - [ ] Rename the auto-named segments (`sg01a2`, `sg08e3`) once their
       contents/roles are clear, and rename `_picData` (misleadingly named
       after one file type when it's the shared FCB for all file I/O).

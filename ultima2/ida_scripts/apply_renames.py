@@ -401,6 +401,276 @@ RENAMES = [
      "(byte_16998): calls it and sets the flag only if not already "
      "set, so repeated calls only silence once. Used in "
      "hyperwarp-adjacent cleanup paths."),
+
+    (0x16FA3, "draw_hyperwarp_hud",
+     "displays 4 numbers via write_number: player._triLithium (fuel), "
+     "then byte_178DA/178DB/178DC (the XENO=/YAKO=/ZABO= hyperwarp "
+     "destination coordinates). The hyperwarp navigation HUD."),
+
+    (0x12199, "check_monster_collision",
+     "canMoveToTile's monster-blocks-movement check -- entirely "
+     "bypassed if _negateTimeDuration is nonzero (jumps past the "
+     "whole (_mapMonsters+60h)[di] monster-type dispatch), i.e. you "
+     "can walk through monsters while Negate Time is active. "
+     "Otherwise dispatches on monster type (0x2C/0x48/>=0x78 vs "
+     "byte_1742F==0x5C) to decide collision behavior."),
+
+    (0x1767A, "_negateTimeDuration",
+     "confirmed via 3 sites: initialized to 0 in play_game alongside "
+     "_flag3/_sleepFlag (paralysis/sleep duration counters), "
+     "decremented once per turn in the exact same end_of_turn spot as "
+     "those two, and set to 0x14 by negate_time (\"YOU RUB A "
+     "COIN...\", spends _strangeCoin). While nonzero, "
+     "check_monster_collision skips its monster-blocking check "
+     "entirely -- the Negate Time spell/item effect's remaining-"
+     "duration counter. Formerly _flag1, a plain global (not a "
+     "Savegame struct member)."),
+
+    (0x17030, "check_hyperwarp_sun_collision",
+     "checks if all 3 hyperwarp destination coordinates "
+     "(byte_178DA/178DB/178DC, XENO=/YAKO=/ZABO=) equal 4 -- if so, "
+     "\"YOU HIT THE SUN!\" and clear_screen. Called from hyperwarp."),
+
+    (0x1720B, "patch_map_filename",
+     "patches byte offset 3 (the 'X' placeholder) of 3 file-loading "
+     "templates (aMapxff/'MAPXFF', byte_122C9/'MONXFF', aTlkxff/"
+     "'TLKXFF') with the character in AL -- dynamic map/monster/talk "
+     "file selection (e.g. building 'MAP0FF' for a specific numbered "
+     "planet/dungeon) rather than a fixed filename."),
+
+    (0x17276, "speaker_on_once",
+     "mirror of speaker_off_once, same guard flag (byte_16998) but "
+     "opposite condition/action: only calls speaker_on if the flag is "
+     "0FFh (already-silenced marker), then clears it."),
+
+    (0x15FE0, "play_attack_sound",
+     "fixed play_tone_sweep params (ax=400h bx=1000h cx=1 dx=200h "
+     "bp=80h), called twice from attack (early in the sequence and "
+     "again later) -- likely the weapon-swing sound, distinct from "
+     "play_hit_sound which is specifically on a successful hit."),
+
+    # -- Ultima II's dungeon first-person wireframe corridor view,
+    # called from end_of_turn -- the "sub_16xxx cluster" flagged in an
+    # earlier roadmap note as "dense, likely one subsystem, not yet
+    # confirmed which". 4 structurally-confirmed pieces; the 10
+    # individual wall-segment-drawing helpers sub_16144 dispatches to
+    # (sub_16425/16594/1660C/166CB for the right wall, sub_16377/164E2/
+    # 16291 for the left, sub_163CE/1653F/16304 for straight ahead) are
+    # understood collectively (each draws a specific perspective wall
+    # segment for a specific precomputed bit pattern) but not
+    # individually pinned yet -- flagged as a follow-up in
+    # docs/roadmap.md rather than forcing weak names onto all 10. --
+
+    (0x16000, "render_dungeon_view",
+     "top-level dungeon view step, called from end_of_turn. Always "
+     "computes _tilePlayerCenter/_tilePlayerUp/_tilePlayerDown via "
+     "get_dungeon_tile_at_player (needed for movement/combat logic "
+     "regardless of rendering); if byte_17436 is set, also triggers "
+     "the full corridor render (precompute_dungeon_corridor -> "
+     "draw_dungeon_corridor -> draw_dungeon_monster). Note: reuses "
+     "_mapLeft/_mapTop as scratch facing-direction deltas here, "
+     "unrelated to their more common 'viewport scroll origin' "
+     "meaning elsewhere -- same reused-global pattern as "
+     "_circleDeltaX/Y in draw_world_map_overview."),
+
+    (0x16078, "precompute_dungeon_corridor",
+     "for each of 8 steps ahead along the facing direction "
+     "(byte_17893/17894 = the reused _mapLeft/_mapTop deltas), reads "
+     "3 dungeon tiles via get_dungeon_tile_at_player and builds 3 "
+     "parallel 8-entry arrays: left-wall type ([di+48Fh], high "
+     "nibble), right-wall type + monster-presence flag ([di+497h] "
+     "high nibble / [di+4AFh] low 3 bits -- same low-3-bits monster "
+     "flag as loc_11451's dungeon-cell accessor), and straight-ahead "
+     "wall type ([di+49Fh] high nibble)."),
+
+    (0x16144, "draw_dungeon_corridor",
+     "the actual corridor renderer: clear_screen, then iterates depth "
+     "0-7, checking bit patterns of the 3 precomputed wall-type bytes "
+     "at each depth to dispatch to one of 10 wall-segment-drawing "
+     "helpers (right wall: sub_16425/sub_16594/sub_1660C/sub_166CB; "
+     "left wall: sub_16377/sub_164E2/sub_16291; straight ahead: "
+     "sub_163CE/sub_1653F/sub_16304 -- not individually named yet, "
+     "see docs/roadmap.md), stopping early once a wall blocks further "
+     "view (sign bit set on the right-wall byte). Classic first-person "
+     "wireframe dungeon crawler rendering."),
+
+    (0x168ED, "draw_dungeon_monster",
+     "runs after draw_dungeon_corridor: scans the precomputed "
+     "monster-presence flags ([di+4AFh] from precompute_dungeon_"
+     "corridor) up to whatever depth (byte_17892) the wall render "
+     "loop stopped at, and if one's nonzero, looks up a screen "
+     "position via byte_1697E[di] and draws a monster sprite from "
+     "monsters_ptr at that depth in the corridor view."),
+
+    # -- end_of_turn's random trap-encounter handlers. The item-flags
+    # that gate these (_bootsOwned/_cloakOwned/_idolOwned) were already
+    # named from tracing play_magic_sound/play_fail_sound's callers in
+    # an earlier session, but the handler functions themselves were
+    # never named -- see
+    # docs/overview.md#player0xa30xa40xae--magical-item-protection-flags-traced --
+
+    (0x10E70, "leg_paralysis_trap",
+     "\"LEGS PARALIZED!\" -- flash_screen + play_magic_sound, "
+     "_bootsOwned + rand_byte()>=0x40 (~75%) resists (\"SAVED BY "
+     "MAGICAL BOOTS!\"), otherwise sets player_paralyzedFlag (0-15 "
+     "random duration)."),
+
+    (0x10EC2, "arm_paralysis_trap",
+     "\"ARMS PARALIZED!\", same shape as leg_paralysis_trap but "
+     "_cloakOwned-gated (\"SAVED BY MAGICAL CLOAK\") and sets _flag3 "
+     "on failure instead -- the duration counter attack's "
+     "\"PARALIZED!\" gate checks. Legs vs. arms is a real mechanical "
+     "distinction: player_paralyzedFlag vs. _flag3 are different "
+     "globals with different consequences (movement vs. combat)."),
+
+    (0x10F12, "magic_missile_trap",
+     "\"MAGIC MISSILE!\" -- flash_screen + play_magic_sound, no "
+     "protection item, always wastes 2 turns (byte_17430/"
+     "_commandWaitCtr both +2) and adds 0x40 (BCD) to byte_17432."),
+
+    (0x10F48, "sleep_trap",
+     "\"SLEEP SPELL!\", same shape as the paralysis traps but "
+     "_idolOwned-gated (\"SAVED BY IDOL!\") and sets _sleepFlag on "
+     "failure. proc far, not proc near -- missed by the initial "
+     "sub_XXXXX sweep grep for this reason."),
+
+    (0x10F8E, "minax_curse_trap",
+     "\"MINAX CRIES: DIE FOOL!\" -- a cursed-tile encounter, called "
+     "from canMoveToTile (not end_of_turn like the others above). "
+     "Draws and erases a circle via xorDrawCircle (XOR flash "
+     "bracketing pattern) then does 1 HP damage (BCD), death check on "
+     "underflow."),
+
+    (0x10FCD, "random_item_loss_trap",
+     "end_of_turn random encounter, ~25% chance (rand_byte()<0x40): "
+     "picks a random treasure-array slot (rand_byte()&0xF indexes "
+     "player._ringOwned[]) and decrements it by 1 if owned -- an "
+     "unprotected item-loss encounter, no resist mechanic like the "
+     "paralysis/sleep traps above."),
+
+    (0x112DB, "consume_food",
+     "per-turn food consumption: decrements player._foodTurnCtr, and "
+     "on borrow decrements the 2-byte player._food (BCD). Death check "
+     "on underflow -- starving to 0 food kills the player. Called "
+     "from end_of_turn."),
+
+    (0x1143C, "check_monster_on_level",
+     "gates map_get_monster_at?/loc_11451 by dungeon level: if "
+     "byte_17435 (current depth) doesn't match the monster's "
+     "(_mapMonsters+80h)[di] level field, returns 0FFh (not found on "
+     "this level) instead of falling through to read its tile."),
+
+    (0x1147F, "spawn_dungeon_monster",
+     "wandering-monster spawner: loops all 32 monster slots looking "
+     "for an inactive one ((_mapMonsters+60h)[di]==0), then assigns a "
+     "random position (retrying via map_get_monster_at? if occupied), "
+     "monster type, and display tile, writing both the monster-data "
+     "arrays and the dungeon map tile itself. Called from end_of_turn."),
+
+    (0x1152E, "compute_monster_direction_to_player",
+     "sign(_mapX - _mapMonsters[di]) -> _circleDeltaX, sign(_mapY - "
+     "(_mapMonsters+20h)[di]) -> _circleDeltaY (reused scratch "
+     "direction-delta globals, same pattern as elsewhere in this "
+     "sweep) -- the direction vector from a monster toward the "
+     "player, monster AI movement targeting. Called from end_of_turn."),
+
+    (0x126F9, "update_patrol_marker",
+     "gated by player._disableSave. Cycles a map marker through 4 "
+     "fixed waypoints (a table at cs:[+2798h]) every 8 turns "
+     "(player+39h countdown, player.field_38 waypoint index 0/2/4/6), "
+     "preserving/restoring the underlying terrain tile "
+     "(player+3Ah) as it moves off/onto each waypoint, writing tile "
+     "0C0h to mark its current position. Functional name -- possibly "
+     "Minax's overworld movement per Ultima II lore, but not "
+     "independently confirmed which entity this represents."),
+
+    (0x1330C, "find_cursor_target_monster",
+     "cast's monster-finder (already referred to this way in earlier "
+     "docs/overview.md notes, never actually renamed): scans all 32 "
+     "monster slots for one active, on the current dungeon level "
+     "(byte_17435), and at the cursor-targeted position. Distinct "
+     "from the already-named find_target_monster (facing-direction- "
+     "based, used by attack/fire/offer/transact) -- this one is "
+     "cursor-based and cast-only."),
+
+    (0x1361C, "clear_picked_up_tile",
+     "only runs above ground (player._mapNum2<4): reads the tile at "
+     "_mapX/_mapY via get_player_tile then overwrites it with tile "
+     "value 8 (plain ground). Called twice from get -- clears a "
+     "picked-up item's tile off the overworld map."),
+
+    (0x14BE0, "draw_sprite_row",
+     "low-level sprite drawer: bp selects a byte mask from a "
+     "glyph-indexed table (cs:[bp+48D4h]), ax/bx give screen X/Y -- "
+     "same table-driven CGA addressing style as plot_point, but "
+     "writes a full byte (not a 2-bit pixel) across 2 rows (di and "
+     "di+50h) and both interleaved framebuffer banks per call. Only "
+     "caller is draw_dungeon_monster_sprite."),
+
+    (0x168A3, "draw_dungeon_monster_sprite",
+     "called directly from draw_dungeon_monster: byte_1788F (a "
+     "monster glyph ID) selects the sprite via bp, _mapOffsetX/"
+     "_mapOffsetY (x4) give the screen position, then draw_sprite_row "
+     "does the actual write -- the monster-sprite draw for the "
+     "dungeon corridor view."),
+
+    (0x14F11, "compute_monster_direction_scaled",
+     "same _circleDeltaX/_circleDeltaY output as "
+     "compute_monster_direction_to_player, but takes sign_byte() of a "
+     "x4-scaled delta instead of the raw delta -- called from "
+     "different sites (end_of_turn+D4, canMoveToTile-13A7) than the "
+     "x1 version (end_of_turn+764). Exact semantic distinction from "
+     "the x1 version not fully traced -- named for the structural "
+     "difference (scaling) rather than an unconfirmed purpose."),
+
+    (0x14F36, "compute_monster_delta",
+     "same delta computation as the two direction helpers above "
+     "(_mapX/_mapY minus a monster's position) but no sign_byte() "
+     "call -- stores the raw signed difference in _circleDeltaX/Y "
+     "instead of just its direction. Single caller, end_of_turn:"
+     "loc_10AA7 -- likely feeds a distance/range check rather than a "
+     "movement direction, not independently confirmed."),
+
+    (0x15E3B, "play_trap_sound",
+     "fixed play_tone_sweep params, called right after \"ARGH! A "
+     "TRAP!\" (rand_byte() < byte_17435 -- deeper dungeon levels are "
+     "more dangerous), clears byte_17436 (the dungeon-view-refresh "
+     "flag render_dungeon_view checks) and pauses twice. A dungeon "
+     "pit/trap encounter."),
+
+    (0x16999, "setup_rocket_launch_display",
+     "launch's post-rocket-launch setup: setPalette, positions the "
+     "ship marker at screen center (0x80,0x40), loads the 3 "
+     "destination coordinates from a table (indexed by "
+     "player._disableSave, reused as scratch here), decrements "
+     "player._triLithium (fuel), and starts drawing the FUEL=/XENO=/ "
+     "YAKO=/ZABO= HUD labels (continues into unnamed code after the "
+     "proc boundary)."),
+
+    (0x16A79, "space_travel_command_loop",
+     "space flight's main per-turn loop, parallel to play_game's "
+     "overworld loop: draw_hyperwarp_hud, \"CMD: \" prompt, "
+     "animate_starfield while waiting for a keypress, then dispatches "
+     "on the key (NORTH_KEYCODE and others) to movement/hyperwarp "
+     "commands."),
+
+    (0x16D3E, "init_starfield",
+     "seed_star_prng then initializes all 64 star positions via "
+     "next_star_coord (X then Y, masked to 0-127, si=63 downto 0). "
+     "Run once when entering the hyperwarp/space-travel view."),
+
+    (0x17242, "play_star_twinkle_sound",
+     "periodic chime scheduled from inside animate_starfield's "
+     "countdown (word_16994): plays a short random-frequency tone via "
+     "speaker_on_once/hold_tone, or silences via speaker_off_once if "
+     "byte_16998 is already set -- the ambient twinkling-star sound "
+     "during hyperwarp flight."),
+
+    (0x172A0, "minax_death_sequence",
+     "\"MINAX IS DEAD!! ALL HER WORKS SHALL DIE!\", called from "
+     "attack+13E -- a victory/destruction animation: repeated "
+     "play_hit_sound calls bracketing randomized _playerX/_playerY "
+     "positions (function chunk continues past the proc boundary)."),
 ]
 
 
