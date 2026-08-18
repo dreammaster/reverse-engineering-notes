@@ -2084,3 +2084,653 @@ Done. Expanded 7 function(s).
 [*] gen_file(OFILE_IDC) returned 1
 [*] saving database to C:\dev\ultima2\ultima2.idb
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'C:\\dev\\ultima2\\ida_scripts\\build_string_catalog.py']
+[*] reading C:\dev\ultima2\ida_scripts\build_string_catalog.py
+[*] executing C:\dev\ultima2\ida_scripts\build_string_catalog.py
+[*] captured stdout from target script:
+----- begin target script output -----
+332 call site(s) to write_string
+75 site(s) with a decoded-text comment, 257 without
+Sites missing a comment (not yet fixed, or a genuinely comment-less case):
+  102AA
+  102ED
+  103D5
+  1044F
+  104CC
+  104FB
+  1053C
+  1056F
+  105B9
+  105E9
+  10637
+  10669
+  107C3
+  1087E
+  108AC
+  10904
+  10945
+  10959
+  10980
+  10C82
+  10C8C
+  10F70
+  115E5
+  1162A
+  11652
+  1168A
+  1179A
+  117C5
+  117E9
+  117F2
+  11824
+  1184C
+  1186A
+  1187D
+  1188C
+  1189A
+  118EF
+  11912
+  11924
+  11942
+  11960
+  1197E
+  119BA
+  119D8
+  11A3A
+  11A59
+  11A6B
+  11A89
+  11AA7
+  11ACF
+  11AE1
+  11D1E
+  11D8F
+  11DB0
+  11DC6
+  11DEE
+  11E1B
+  11E2F
+  11E50
+  11EB5
+  11ED6
+  11EEE
+  11F14
+  11F41
+  11F55
+  11F76
+  11FC0
+  11FEF
+  1200A
+  123B0
+  123BE
+  123CC
+  123D9
+  124BC
+  124E0
+  127C8
+  127F2
+  128BA
+  12B8F
+  12BAD
+  12BEC
+  12C8F
+  12DA2
+  12DD6
+  12E09
+  12E8E
+  12F02
+  12F36
+  12F64
+  12F6F
+  12F7F
+  12FC0
+  12FD6
+  12FFE
+  13039
+  13061
+  13089
+  130AA
+  130BC
+  1310B
+  13167
+  1319C
+  131D0
+  13232
+  1334D
+  13363
+  13389
+  13399
+  133AE
+  13402
+  1340F
+  13447
+  1347C
+  134B5
+  134EC
+  13525
+  1354F
+  13565
+  1357A
+  13595
+  135AB
+  135C1
+  135D0
+  135DE
+  1363B
+  13658
+  13665
+  1368D
+  1369B
+  136CB
+  13719
+  13751
+  1375A
+  13782
+  13794
+  137B5
+  137DC
+  137F1
+  13805
+  1382A
+  138BF
+  138D2
+  138EB
+  13923
+  13981
+  139FA
+  13A12
+  13A50
+  13AE5
+  13B00
+  13B1B
+  13B36
+  13B5A
+  13B72
+  13B92
+  13BAF
+  13BCE
+  13BE4
+  13C10
+  13C2E
+  13C5C
+  13C71
+  13CB7
+  13CF4
+  13D1E
+  13D34
+  13D68
+  13DAC
+  13DBC
+  13DC7
+  13DE4
+  13E01
+  13E1E
+  13E33
+  13E50
+  13EC2
+  13F11
+  13F25
+  13F7E
+  13FDD
+  13FFA
+  14025
+  14050
+  140A6
+  140E0
+  14108
+  1412C
+  1415F
+  14188
+  141AA
+  141D9
+  1424A
+  14262
+  142F1
+  14310
+  14345
+  14385
+  1439D
+  143F3
+  14472
+  14493
+  144C0
+  144D4
+  144E3
+  14512
+  14542
+  14580
+  145C4
+  145E9
+  1460A
+  1462F
+  1464D
+  1466F
+  14748
+  14771
+  147A2
+  147CA
+  147FA
+  14822
+  14853
+  14881
+  14886
+  15066
+  1506F
+  15468
+  15486
+  1549B
+  154BC
+  154F1
+  15758
+  15785
+  157C6
+  157F4
+  15820
+  15851
+  1589B
+  158CB
+  158FA
+  1592C
+  1596B
+  15A40
+  15A96
+  169ED
+  16A07
+  16A21
+  16A3B
+  16A5B
+  16A7D
+  16EF2
+  16F0F
+  16F1F
+  16F2F
+  17046
+  170B6
+  172A6
+  17317
+  1734F
+
+Wrote 75 entries to C:\dev\ultima2\docs\game-text-catalog.txt
+----- end target script output -----
+[*] finished executing C:\dev\ultima2\ida_scripts\build_string_catalog.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 15416
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'C:\\dev\\ultima2\\ida_scripts\\investigate_uncommented_write_string.py']
+[*] reading C:\dev\ultima2\ida_scripts\investigate_uncommented_write_string.py
+[*] executing C:\dev\ultima2\ida_scripts\investigate_uncommented_write_string.py
+[*] captured stdout from target script:
+----- begin target script output -----
+257 uncommented sites total
+Already a correctly-terminated strlit (just uncommented): 256
+Not a correctly-terminated strlit (genuinely still broken): 1
+Couldn't decode CALL: 0
+
+Sample of genuinely-broken sites:
+  1734F: str_start=17352 is_code=False is_strlit=False is_unknown=True
+----- end target script output -----
+[*] finished executing C:\dev\ultima2\ida_scripts\investigate_uncommented_write_string.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 15416
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'C:\\dev\\ultima2\\ida_scripts\\investigate_uncommented_write_string.py']
+[*] reading C:\dev\ultima2\ida_scripts\investigate_uncommented_write_string.py
+[*] executing C:\dev\ultima2\ida_scripts\investigate_uncommented_write_string.py
+[*] captured stdout from target script:
+----- begin target script output -----
+Enclosing function: ?
+  1734F: E8 8D DC 8D 8D 59 4F 55 20 48 41 56 45 20 53 41  .....YOU HAVE SA
+  1735F: 56 45 44 20 54 48 45 20 55 4E 49 56 45 52 53 45  VED THE UNIVERSE
+  1736F: 2C 8D 41 4E 44 20 43 4F 4D 50 4C 45 54 45 44 20  ,.AND COMPLETED 
+  1737F: 55 4C 54 49 4D 41 20 5D 5B 21 20 53 45 45 4B 8D  ULTIMA ][! SEEK.
+----- end target script output -----
+[*] finished executing C:\dev\ultima2\ida_scripts\investigate_uncommented_write_string.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 15416
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'C:\\dev\\ultima2\\ida_scripts\\investigate_uncommented_write_string.py']
+[*] reading C:\dev\ultima2\ida_scripts\investigate_uncommented_write_string.py
+[*] executing C:\dev\ultima2\ida_scripts\investigate_uncommented_write_string.py
+[!] EXCEPTION:
+Traceback (most recent call last):
+  File "C:/dev/ultima2/ida_scripts/batch_run_and_export.py", line 80, in main
+    exec(compile(code, target_script, "exec"), g)
+  File "C:\dev\ultima2\ida_scripts\investigate_uncommented_write_string.py", line 19, in <module>
+    for xref in ida_xref.XrefsTo(ea, 0):
+AttributeError: module 'ida_xref' has no attribute 'XrefsTo'
+
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'C:\\dev\\ultima2\\ida_scripts\\investigate_uncommented_write_string.py']
+[*] reading C:\dev\ultima2\ida_scripts\investigate_uncommented_write_string.py
+[*] executing C:\dev\ultima2\ida_scripts\investigate_uncommented_write_string.py
+[*] captured stdout from target script:
+----- begin target script output -----
+  1734F: E8 8D DC 8D 8D 59 4F 55 20 48 41 56 45 20 53 41  .....YOU HAVE SA
+  1735F: 56 45 44 20 54 48 45 20 55 4E 49 56 45 52 53 45  VED THE UNIVERSE
+  1736F: 2C 8D 41 4E 44 20 43 4F 4D 50 4C 45 54 45 44 20  ,.AND COMPLETED 
+  1737F: 55 4C 54 49 4D 41 20 5D 5B 21 20 53 45 45 4B 8D  ULTIMA ][! SEEK.
+  1738F: 4E 4F 57 20 54 4F 20 43 4F 4E 51 55 45 52 20 57  NOW TO CONQUER W
+  1739F: 49 43 4B 45 44 20 45 58 4F 44 55 53 2C 8D 00 E8  ICKED EXODUS,...
+  173AF: 2E DC 46 4F 55 4E 44 20 49 4E 20 55 4C 54 49 4D  ..FOUND IN ULTIM
+  173BF: 41 20 5D 49 5B 2D 44 20 5D 49 49 5B 2D 50 21 00  A ]I[-D ]II[-P!.
+  173CF: B0 FF A2 12 00 B0 28 A2 13 00 B0 00 A2 00 00 A2  ......(.........
+  173DF: 01 00 F8 A0 01 00 14 01 24 3F A2 01 00 F8 D0 D8  ........$?......
+
+Code xrefs INTO the call site and the 16 bytes before it:
+  xref to 17341 from 1733D (type=21)
+  xref to 1734C from 17341 (type=19)
+  xref to 1734F from 1734C (type=21)
+----- end target script output -----
+[*] finished executing C:\dev\ultima2\ida_scripts\investigate_uncommented_write_string.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 15416
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'C:\\dev\\ultima2\\ida_scripts\\fix_ending_strings.py']
+[*] reading C:\dev\ultima2\ida_scripts\fix_ending_strings.py
+[*] executing C:\dev\ultima2\ida_scripts\fix_ending_strings.py
+[*] captured stdout from target script:
+----- begin target script output -----
+[+] 1734F: fixed, string @ 17352 len=92, resumes @ 173AE -- the game's actual victory/ending message
+[+] 173AE: fixed, string @ 173B1 len=30, resumes @ 173CF -- Easter-egg teaser for future Ultima games, reached by ordinary fallthrough right after site 1
+
+Done. Re-export the .asm/.idc and check the fixes took.
+----- end target script output -----
+[*] finished executing C:\dev\ultima2\ida_scripts\fix_ending_strings.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 15272
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'C:\\dev\\ultima2\\ida_scripts\\backfill_write_string_comments.py']
+[*] reading C:\dev\ultima2\ida_scripts\backfill_write_string_comments.py
+[*] executing C:\dev\ultima2\ida_scripts\backfill_write_string_comments.py
+[*] captured stdout from target script:
+----- begin target script output -----
+
+76 already had a comment, 257 backfilled, 0 genuinely still broken (not touched).
+----- end target script output -----
+[*] finished executing C:\dev\ultima2\ida_scripts\backfill_write_string_comments.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 15277
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'C:\\dev\\ultima2\\ida_scripts\\build_string_catalog.py']
+[*] reading C:\dev\ultima2\ida_scripts\build_string_catalog.py
+[*] executing C:\dev\ultima2\ida_scripts\build_string_catalog.py
+[*] captured stdout from target script:
+----- begin target script output -----
+333 call site(s) to write_string
+297 site(s) with a decoded-text comment, 36 without
+Sites missing a comment (not yet fixed, or a genuinely comment-less case):
+  10C82
+  117C5
+  1189A
+  11942
+  11A3A
+  11A89
+  1200A
+  124BC
+  124E0
+  128BA
+  12C8F
+  12F02
+  12F7F
+  130BC
+  13167
+  1319C
+  137B5
+  1382A
+  138EB
+  13923
+  13A12
+  13C10
+  13DE4
+  13E01
+  13E1E
+  13E33
+  14262
+  14310
+  14345
+  14580
+  16A5B
+  16F2F
+  17046
+  172A6
+  17317
+  1734F
+
+Wrote 297 entries to C:\dev\ultima2\docs\game-text-catalog.txt
+----- end target script output -----
+[*] finished executing C:\dev\ultima2\ida_scripts\build_string_catalog.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 15277
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'C:\\dev\\ultima2\\ida_scripts\\investigate_uncommented_write_string.py']
+[*] reading C:\dev\ultima2\ida_scripts\investigate_uncommented_write_string.py
+[*] executing C:\dev\ultima2\ida_scripts\investigate_uncommented_write_string.py
+[*] captured stdout from target script:
+----- begin target script output -----
+36 uncommented sites total
+Already fixed (just needs backfill): 36
+Genuinely broken: 0
+----- end target script output -----
+[*] finished executing C:\dev\ultima2\ida_scripts\investigate_uncommented_write_string.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 15277
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'C:\\dev\\ultima2\\ida_scripts\\backfill_write_string_comments.py']
+[*] reading C:\dev\ultima2\ida_scripts\backfill_write_string_comments.py
+[*] executing C:\dev\ultima2\ida_scripts\backfill_write_string_comments.py
+[*] captured stdout from target script:
+----- begin target script output -----
+
+297 already had a comment, 36 backfilled, 0 genuinely still broken (not touched).
+----- end target script output -----
+[*] finished executing C:\dev\ultima2\ida_scripts\backfill_write_string_comments.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 15277
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'C:\\dev\\ultima2\\ida_scripts\\build_string_catalog.py']
+[*] reading C:\dev\ultima2\ida_scripts\build_string_catalog.py
+[*] executing C:\dev\ultima2\ida_scripts\build_string_catalog.py
+[*] captured stdout from target script:
+----- begin target script output -----
+333 call site(s) to write_string
+297 site(s) with a decoded-text comment, 36 without
+Sites missing a comment (not yet fixed, or a genuinely comment-less case):
+  10C82
+  117C5
+  1189A
+  11942
+  11A3A
+  11A89
+  1200A
+  124BC
+  124E0
+  128BA
+  12C8F
+  12F02
+  12F7F
+  130BC
+  13167
+  1319C
+  137B5
+  1382A
+  138EB
+  13923
+  13A12
+  13C10
+  13DE4
+  13E01
+  13E1E
+  13E33
+  14262
+  14310
+  14345
+  14580
+  16A5B
+  16F2F
+  17046
+  172A6
+  17317
+  1734F
+
+Wrote 297 entries to C:\dev\ultima2\docs\game-text-catalog.txt
+----- end target script output -----
+[*] finished executing C:\dev\ultima2\ida_scripts\build_string_catalog.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 15277
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'C:\\dev\\ultima2\\ida_scripts\\investigate_uncommented_write_string.py']
+[*] reading C:\dev\ultima2\ida_scripts\investigate_uncommented_write_string.py
+[*] executing C:\dev\ultima2\ida_scripts\investigate_uncommented_write_string.py
+[*] captured stdout from target script:
+----- begin target script output -----
+comment before: None
+str_start=1382D item_len=11
+text=b''
+set_cmt returned: True
+comment after (same script): None
+----- end target script output -----
+[*] finished executing C:\dev\ultima2\ida_scripts\investigate_uncommented_write_string.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 15277
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'C:\\dev\\ultima2\\ida_scripts\\investigate_uncommented_write_string.py']
+[*] reading C:\dev\ultima2\ida_scripts\investigate_uncommented_write_string.py
+[*] executing C:\dev\ultima2\ida_scripts\investigate_uncommented_write_string.py
+[*] captured stdout from target script:
+----- begin target script output -----
+1382A: str_start=1382D item_len=11 raw=b'\x8dTO LEVEL \x00'
+138EB: str_start=138EE item_len=50 raw=b'\x8dA METALLIC VOICE SAYS:\x8dSHIP INCAPABLE OF LAUNCH!\x00'
+13923: str_start=13926 item_len=21 raw=b'\x8dPREPARE FOR LAUNCH!\x00'
+13A12: str_start=13A15 item_len=45 raw=b'\x8dFUNNY THIS PLANE IS\x8dMISSING A BRASS BUTTON!\x00'
+13C10: str_start=13C13 item_len=19 raw=b'\x8dYOU RUB A COIN...\x00'
+----- end target script output -----
+[*] finished executing C:\dev\ultima2\ida_scripts\investigate_uncommented_write_string.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 15277
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'C:\\dev\\ultima2\\ida_scripts\\backfill_write_string_comments.py']
+[*] reading C:\dev\ultima2\ida_scripts\backfill_write_string_comments.py
+[*] executing C:\dev\ultima2\ida_scripts\backfill_write_string_comments.py
+[*] captured stdout from target script:
+----- begin target script output -----
+
+297 already had a comment, 36 backfilled, 0 genuinely still broken (not touched).
+----- end target script output -----
+[*] finished executing C:\dev\ultima2\ida_scripts\backfill_write_string_comments.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 15277
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'C:\\dev\\ultima2\\ida_scripts\\build_string_catalog.py']
+[*] reading C:\dev\ultima2\ida_scripts\build_string_catalog.py
+[*] executing C:\dev\ultima2\ida_scripts\build_string_catalog.py
+[*] captured stdout from target script:
+----- begin target script output -----
+333 call site(s) to write_string
+333 site(s) with a decoded-text comment, 0 without
+
+Wrote 333 entries to C:\dev\ultima2\docs\game-text-catalog.txt
+----- end target script output -----
+[*] finished executing C:\dev\ultima2\ida_scripts\build_string_catalog.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 15277
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0

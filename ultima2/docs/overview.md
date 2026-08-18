@@ -1209,3 +1209,36 @@ session:
   forcefield animation. `animate_water` operates on `TILE_OFFSETS`
   itself (tile 0); `animate_forcefield` on `TILE_OFFSETS+0x2Eh`. Called
   from `play_game`'s main loop.
+
+### The game's actual ending, found while building the string catalog
+
+Building a full `write_string` text catalog
+([game-text-catalog.txt](game-text-catalog.txt), 333 entries — see
+`docs/roadmap.md` for the full story of how a mechanical "dump every
+comment" script turned into several real findings) turned up one
+genuinely broken site among 332: `0x1734F`, never fixed before,
+because it's reached by *ordinary fallthrough* rather than any
+recognized function's `CALL` — the general `fix_inline_strings.py`
+sweep only ever finds sites via `XrefsTo`, so a call reached this way
+was invisible to it no matter how many times it re-ran.
+
+It's a direct continuation of `minax_death_sequence`'s function chunk
+— the actual game-ending sequence, entirely undocumented until now:
+
+1. `minax_death_sequence` plays out (the "MINAX IS DEAD!!" animation).
+2. `"YOU FEEL A STRANGE FORCE!"`
+3. Loads a special final map via `access_file` — `MAPX30` (**level
+   30**, not a normal numbered map/dungeon file).
+4. `"YOU HAVE SAVED THE UNIVERSE,\` `AND COMPLETED ULTIMA ][! SEEK\`
+   `NOW TO CONQUER WICKED EXODUS,"` — the true victory message.
+5. Falls straight into a second orphaned `write_string` call
+   (`0x173AE`, same fallthrough pattern) printing `"FOUND IN ULTIMA
+   ]I[-D ]II[-P!"` — an Easter-egg teaser for future games in the
+   series (`]I[` = Ultima III, `]II[` = Ultima IV), styled with the
+   same bracket convention as this game's own "ULTIMA ][" branding.
+
+Fixed via `ida_scripts/fix_ending_strings.py` (identical technique to
+`fix_inline_strings.py`, scoped to these 2 specific sites). Both
+`play_bump_sound` calls bracketing this sequence are worth revisiting
+— see the open item in `docs/roadmap.md`, since their use here weakens
+that name's original "movement blocked" justification.

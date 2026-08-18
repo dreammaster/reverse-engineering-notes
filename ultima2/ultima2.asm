@@ -189,7 +189,7 @@ aEnchantress    db 'ENCHANTRESS',0
                 mov     text_y, al
                 mov     al, 6
                 mov     text_x, al
-                call    write_string
+                call    write_string    ; (C)-1983,1989 BY LORD BRITISH
 ; ---------------------------------------------------------------------------
 aC19831989ByLor db '(C)-1983,1989 BY LORD BRITISH',0
 ; ---------------------------------------------------------------------------
@@ -204,7 +204,7 @@ aAndOrigin      db 'AND ORIGIN',0
                 mov     text_y, al
                 mov     al, 5
                 mov     text_x, al
-                call    write_string
+                call    write_string    ; TYPE -
 ; ---------------------------------------------------------------------------
 aType           db 'TYPE -',0
 ; ---------------------------------------------------------------------------
@@ -281,7 +281,7 @@ aPicout         db 'PICOUT  '
 loc_103CB:                              ; CODE XREF: start_+2C0↑j
                 mov     text_y, 17h
                 mov     text_x, 0
-                call    write_string
+                call    write_string    ;         BATTLE STRANGE CREATURES
 ; ---------------------------------------------------------------------------
 aBattleStrangeC db '        BATTLE STRANGE CREATURES',0
 ; ---------------------------------------------------------------------------
@@ -307,7 +307,7 @@ aPictwn         db 'PICTWN  '
 loc_10445:                              ; CODE XREF: CODE:043A↑j
                 mov     text_x, 0
                 mov     text_y, 17h
-                call    write_string
+                call    write_string    ;    SEARCH FOR CLUES IN CARELESS WORDS
 ; ---------------------------------------------------------------------------
 aSearchForClues db '   SEARCH FOR CLUES IN CARELESS WORDS',0
 ; ---------------------------------------------------------------------------
@@ -334,13 +334,13 @@ aPiccas         db 'PICCAS  '
 loc_104C2:                              ; CODE XREF: CODE:04B7↑j
                 mov     text_x, 0
                 mov     text_y, 23
-                call    write_string
+                call    write_string    ;         PLEAD WITH MEDIEVAL KINGS
 ; ---------------------------------------------------------------------------
 aPleadWithMedie db '        PLEAD WITH MEDIEVAL KINGS',0
 ; ---------------------------------------------------------------------------
                 mov     text_x, 4
                 mov     text_y, 24
-                call    write_string
+                call    write_string    ;          FOR ASSISTANCE
 ; ---------------------------------------------------------------------------
 aForAssistance  db '         FOR ASSISTANCE',0
 ; ---------------------------------------------------------------------------
@@ -360,13 +360,13 @@ aPicdng         db 'PICDNG  '
 loc_10532:                              ; CODE XREF: CODE:0527↑j
                 mov     text_x, 0
                 mov     text_y, 23
-                call    write_string
+                call    write_string    ;    TRAVERSE DEEP DARK DEADLY DUNGEONS
 ; ---------------------------------------------------------------------------
 aTraverseDeepDa db '   TRAVERSE DEEP DARK DEADLY DUNGEONS',0
 ; ---------------------------------------------------------------------------
                 mov     text_x, 1
                 mov     text_y, 18h
-                call    write_string
+                call    write_string    ;       AND TALL TERRIFYING TOWERS
 ; ---------------------------------------------------------------------------
 aAndTallTerrify db '      AND TALL TERRIFYING TOWERS',0
 ; ---------------------------------------------------------------------------
@@ -384,13 +384,13 @@ aPicspa         db 'PICSPA  '
 loc_105AF:                              ; CODE XREF: CODE:05A4↑j
                 mov     text_x, 0
                 mov     text_y, 17h
-                call    write_string
+                call    write_string    ;       TRAVEL THROUGHOUT THE GALAXY
 ; ---------------------------------------------------------------------------
 aTravelThrougho db '      TRAVEL THROUGHOUT THE GALAXY',0
 ; ---------------------------------------------------------------------------
                 mov     text_x, 1
                 mov     text_y, 24
-                call    write_string
+                call    write_string    ;   TO THE PLANETS OF OUR SOLAR SYSTEM
 ; ---------------------------------------------------------------------------
 aToThePlanetsOf db '  TO THE PLANETS OF OUR SOLAR SYSTEM',0
 ; ---------------------------------------------------------------------------
@@ -408,13 +408,13 @@ aPicmin         db 'PICMIN  '
 loc_1062D:                              ; CODE XREF: CODE:0622↑j
                 mov     text_x, 0
                 mov     text_y, 23
-                call    write_string
+                call    write_string    ;    AND CONQUER TIME ITSELF TO BATTLE
 ; ---------------------------------------------------------------------------
 aAndConquerTime db '   AND CONQUER TIME ITSELF TO BATTLE',0
 ; ---------------------------------------------------------------------------
                 mov     text_x, 8
                 mov     text_y, 24
-                call    write_string
+                call    write_string    ; MINAX THE ENCHANTRESS
 ; ---------------------------------------------------------------------------
 aMinaxTheEnchan db 'MINAX THE ENCHANTRESS',0
 ; ---------------------------------------------------------------------------
@@ -662,7 +662,7 @@ loc_107AA:                              ; CODE XREF: play_game+3B↑j
                 mov     bl, 0Ah
                 mov     di, bx          ; x
                 call    set_text_pos
-                call    write_string
+                call    write_string    ; NO CHARACTER ON DISK
 ; ---------------------------------------------------------------------------
 aNoCharacterOnD db 'NO CHARACTER ON DISK',0
 ; ---------------------------------------------------------------------------
@@ -748,7 +748,7 @@ loc_1086F:                              ; CODE XREF: CODE:loc_10C5F↓j
 
 loc_1087D:                              ; CODE XREF: play_game+114↑j
                 nop
-                call    write_string
+                call    write_string    ; CMD:
 ; ---------------------------------------------------------------------------
 aCmd            db 'CMD: ',0
 ; ---------------------------------------------------------------------------
@@ -768,7 +768,7 @@ aCmd            db 'CMD: ',0
                 mov     byte ptr _sleepFlag2?, al
 
 loc_108AC:                              ; CODE XREF: play_game+15F↓j
-                call    write_string
+                call    write_string    ; Z
 ; ---------------------------------------------------------------------------
 aZ              db 'Z',0
 ; ---------------------------------------------------------------------------
@@ -815,7 +815,7 @@ loc_108E6:                              ; CODE XREF: play_game+17D↑j
                 jnz     short loc_108C8
                 mov     al, 0
                 mov     byte_17436, al
-                call    write_string
+                call    write_string    ; PASS
 ; ---------------------------------------------------------------------------
 aPass_0         db 'PASS',0
 ; ---------------------------------------------------------------------------
@@ -855,7 +855,7 @@ loc_10936:                              ; CODE XREF: play_game+170↑j
                 jnz     short loc_1094F
                 mov     al, 0
                 mov     byte_17436, al
-                call    write_string
+                call    write_string    ; PASS
 ; ---------------------------------------------------------------------------
 aPass           db 'PASS',0
 ; ---------------------------------------------------------------------------
@@ -866,7 +866,7 @@ loc_1094F:                              ; CODE XREF: play_game+1DA↑j
                 cmp     al, NORTH_KEYCODE
                 jnz     short loc_10976
                 dec     _mapY
-                call    write_string
+                call    write_string    ; NORTH
 ; ---------------------------------------------------------------------------
 aNorth          db 'NORTH',0
 ; ---------------------------------------------------------------------------
@@ -888,7 +888,7 @@ loc_10976:                              ; CODE XREF: play_game+1EF↑j
                 cmp     al, byte_1767F
                 jnz     short loc_1099D
                 inc     _mapY
-                call    write_string
+                call    write_string    ; SOUTH
 ; ---------------------------------------------------------------------------
 aSouth          db 'SOUTH',0
 ; ---------------------------------------------------------------------------
@@ -1376,12 +1376,12 @@ dead:                                   ; CODE XREF: end_of_turn+1D0↑j
                 mov     player._gold, al
                 mov     player._gold+1, al
                 call    write_stats
-                call    write_string
+                call    write_string    ; 
 ; ---------------------------------------------------------------------------
                 db 8Dh,8Dh,8Dh,0
 ; ---------------------------------------------------------------------------
                 call    write_player_name
-                call    write_string
+                call    write_string    ;  IS DEAD!
 ; ---------------------------------------------------------------------------
 aIsDead         db ' IS DEAD!',8Dh,0
 ; ---------------------------------------------------------------------------
@@ -1838,7 +1838,7 @@ aSleepSpell     db 'SLEEP SPELL!',0Dh,0
                 call    rand_byte
                 cmp     al, 40h ; '@'
                 jb      short loc_10F84
-                call    write_string
+                call    write_string    ; SAVED BY IDOL!
 ; ---------------------------------------------------------------------------
 aSavedByIdol    db 'SAVED BY IDOL!',8Dh,0
 ; ---------------------------------------------------------------------------
@@ -2824,7 +2824,7 @@ loc_115E1:                              ; CODE XREF: transact-2A74↑j
 
 loc_115E4:                              ; CODE XREF: transact-2A72↑j
                 nop
-                call    write_string
+                call    write_string    ; WELCOME TO THE PUB!1-BUY, 2-TIP ---
 ; END OF FUNCTION CHUNK FOR transact
 ; ---------------------------------------------------------------------------
 aWelcomeToThePu db 'WELCOME TO THE PUB!',0Dh,'1-BUY, 2-TIP --- ',0
@@ -2844,7 +2844,7 @@ loc_1161C:                              ; CODE XREF: CODE:1613↑j
                 mov     al, 0
                 mov     byte ptr _sleepFlag2?, al
                 call    try_spend_gold
-                call    write_string
+                call    write_string    ; HERE, HAVE A STRONG ONE!
 ; ---------------------------------------------------------------------------
 aHereHaveAStron db 'HERE, HAVE A STRONG ONE!',0Dh,0
 ; ---------------------------------------------------------------------------
@@ -2858,7 +2858,7 @@ aHereHaveAStron db 'HERE, HAVE A STRONG ONE!',0Dh,0
 
 loc_11651:                              ; CODE XREF: CODE:1617↑j
                 nop
-                call    write_string
+                call    write_string    ; TIP HOW MUCH?
 ; ---------------------------------------------------------------------------
 aTipHowMuch     db 'TIP HOW MUCH? ',0
 ; ---------------------------------------------------------------------------
@@ -2880,7 +2880,7 @@ loc_11686:                              ; CODE XREF: CODE:164E↑j
                                         ; CODE:1682↑j
                 nop
                 mov     byte_17435, al
-                call    write_string
+                call    write_string    ; THE BARKEEP SAYS:
 ; ---------------------------------------------------------------------------
 aTheBarkeepSays db 'THE BARKEEP SAYS:',0Dh,0
 ; ---------------------------------------------------------------------------
@@ -2913,7 +2913,7 @@ aPlanesNeedBras db 'PLANES NEED BRASS BUTTONS!',0
 
 loc_11799:                              ; CODE XREF: transact:loc_115B7↑j
                 nop
-                call    write_string
+                call    write_string    ; THE FOOD HERE COSTS
 ; END OF FUNCTION CHUNK FOR transact
 ; ---------------------------------------------------------------------------
 aTheFoodHereCos db 'THE FOOD HERE COSTS ',0
@@ -2925,7 +2925,7 @@ aTheFoodHereCos db 'THE FOOD HERE COSTS ',0
                 mov     bl, byte ptr _sleepFlag2?+1
                 mov     di, bx
                 call    write_two_numbers
-                call    write_string
+                call    write_string    ; PER 100, WANT ONE?
 ; ---------------------------------------------------------------------------
                 db 8Dh,'PER 100, WANT ONE? ',0
 ; ---------------------------------------------------------------------------
@@ -2936,7 +2936,7 @@ loc_117DD:                              ; CODE XREF: CODE:17E3↓j
                 jnz     short loc_117DD
                 cmp     al, 59h ; 'Y'
                 jz      short loc_117F2
-                call    write_string
+                call    write_string    ; NO
 ; ---------------------------------------------------------------------------
 aNo             db 'NO',0
 ; ---------------------------------------------------------------------------
@@ -2944,7 +2944,7 @@ aNo             db 'NO',0
 ; ---------------------------------------------------------------------------
 
 loc_117F2:                              ; CODE XREF: CODE:17E7↑j
-                call    write_string
+                call    write_string    ; YES,
 ; ---------------------------------------------------------------------------
 aYes            db 'YES,',8Dh,'NO ONIONS AND TO GO PLEASE!',8Dh,0
 ; ---------------------------------------------------------------------------
@@ -2954,7 +2954,7 @@ aYes            db 'YES,',8Dh,'NO ONIONS AND TO GO PLEASE!',8Dh,0
                 adc     al, 1
                 daa
                 mov     player._food, al
-                call    write_string
+                call    write_string    ; THANK YOU, COME AGAIN!
 ; ---------------------------------------------------------------------------
 aThankYouComeAg db 'THANK YOU, COME AGAIN!',0
 ; ---------------------------------------------------------------------------
@@ -2968,7 +2968,7 @@ loc_11841:                              ; CODE XREF: transact:loc_115D3↑j
                 cmp     al, 1
                 jz      short loc_11869
                 call    write_player_name
-                call    write_string
+                call    write_string    ;  YOU ARE NOT A CLERIC!
 ; END OF FUNCTION CHUNK FOR transact
 ; ---------------------------------------------------------------------------
 aYouAreNotACler db ' YOU ARE NOT A CLERIC!',0
@@ -2979,7 +2979,7 @@ aYouAreNotACler db ' YOU ARE NOT A CLERIC!',0
 
 loc_11869:                              ; CODE XREF: transact-2809↑j
                 nop
-                call    write_string
+                call    write_string    ; WELCOME
 ; END OF FUNCTION CHUNK FOR transact
 ; ---------------------------------------------------------------------------
 aWelcome        db 'WELCOME ',0
@@ -2987,7 +2987,7 @@ aWelcome        db 'WELCOME ',0
                 mov     al, player._sex
                 cmp     al, 1
                 jz      short loc_1188C
-                call    write_string
+                call    write_string    ; BROTHER
 ; ---------------------------------------------------------------------------
 aBrother        db 'BROTHER ',0
 ; ---------------------------------------------------------------------------
@@ -2997,14 +2997,14 @@ aBrother        db 'BROTHER ',0
 ; ---------------------------------------------------------------------------
 
 loc_1188C:                              ; CODE XREF: CODE:187B↑j
-                call    write_string
+                call    write_string    ; SISTER
 ; ---------------------------------------------------------------------------
 aSister         db 'SISTER ',0
 ; ---------------------------------------------------------------------------
 
 loc_11897:                              ; CODE XREF: CODE:1889↑j
                 call    write_player_name
-                call    write_string
+                call    write_string    ; 1-LIGHT, 2-L.D., 3-L.U.,4-PASS 5-SURFACE, 6-PRAYER.YOUR INTEREST?
 ; ---------------------------------------------------------------------------
                 db 8Dh,'1-LIGHT, 2-L.D., 3-L.U.,',8Dh,'4-PASS 5-SURFACE, 6-PRAYER.',8Dh
                 db 'YOUR INTEREST? ',0
@@ -3020,7 +3020,7 @@ loc_11897:                              ; CODE XREF: CODE:1889↑j
 
 loc_118EF:                              ; CODE XREF: CODE:18E6↑j
                                         ; CODE:18EA↑j
-                call    write_string
+                call    write_string    ; FOLLOW THE LIGHT, FRIEND!
 ; ---------------------------------------------------------------------------
 aFollowTheLight db 'FOLLOW THE LIGHT, FRIEND!',0
 ; ---------------------------------------------------------------------------
@@ -3029,7 +3029,7 @@ aFollowTheLight db 'FOLLOW THE LIGHT, FRIEND!',0
 
 loc_1190F:                              ; CODE XREF: CODE:18EC↑j
                 mov     byte_1742F, al
-                call    write_string
+                call    write_string    ; FIVE
 ; ---------------------------------------------------------------------------
 aFive           db 'FIVE ',0
 ; ---------------------------------------------------------------------------
@@ -3037,7 +3037,7 @@ aFive           db 'FIVE ',0
                 clc
                 adc     al, 24h ; '$'
                 call    print_indexed_menu_string
-                call    write_string
+                call    write_string    ; S FOR
 ; ---------------------------------------------------------------------------
 aSFor           db 'S FOR ',0
 ; ---------------------------------------------------------------------------
@@ -3048,7 +3048,7 @@ aSFor           db 'S FOR ',0
                 mov     bl, byte ptr _sleepFlag2?+1
                 mov     di, bx
                 call    write_two_numbers
-                call    write_string
+                call    write_string    ; YES, FRIEND?
 ; ---------------------------------------------------------------------------
                 db 8Dh,'YES, FRIEND? ',0
 ; ---------------------------------------------------------------------------
@@ -3059,7 +3059,7 @@ loc_11954:                              ; CODE XREF: CODE:195A↓j
                 jnz     short loc_11954
                 cmp     al, 59h ; 'Y'
                 jz      short loc_1197E
-                call    write_string
+                call    write_string    ; NO
 ; ---------------------------------------------------------------------------
 aNo_0           db 'NO',8Dh,'I',27h,'M SORRY, GOOD DAY.',0
 ; ---------------------------------------------------------------------------
@@ -3067,7 +3067,7 @@ aNo_0           db 'NO',8Dh,'I',27h,'M SORRY, GOOD DAY.',0
 ; ---------------------------------------------------------------------------
 
 loc_1197E:                              ; CODE XREF: CODE:195E↑j
-                call    write_string
+                call    write_string    ; YES,
 ; ---------------------------------------------------------------------------
 aYes_0          db 'YES,',8Dh,'I WILL TAKE 5!',0
 ; ---------------------------------------------------------------------------
@@ -3090,7 +3090,7 @@ loc_119AF:                              ; CODE XREF: transact:loc_115E1↑j
                 mov     al, player._class
                 cmp     al, 2
                 jz      short loc_119D7
-                call    write_string
+                call    write_string    ;  YOU ARE NOT A WIZARD!
 ; END OF FUNCTION CHUNK FOR transact
 ; ---------------------------------------------------------------------------
 aYouAreNotAWiza db ' YOU ARE NOT A WIZARD!',0
@@ -3101,7 +3101,7 @@ aYouAreNotAWiza db ' YOU ARE NOT A WIZARD!',0
 
 loc_119D7:                              ; CODE XREF: transact-2698↑j
                 nop
-                call    write_string
+                call    write_string    ;  MUSERREF OLDUM!
 ; END OF FUNCTION CHUNK FOR transact
 ; ---------------------------------------------------------------------------
 aMuserrefOldum  db ' MUSERREF OLDUM!',8Dh,'1-LIGHT, 2-L.D., 3-L.U.,',8Dh,'4-M.M., 5-B'
@@ -3118,7 +3118,7 @@ aMuserrefOldum  db ' MUSERREF OLDUM!',8Dh,'1-LIGHT, 2-L.D., 3-L.U.,',8Dh,'4-M.M.
 
 loc_11A3A:                              ; CODE XREF: CODE:1A31↑j
                                         ; CODE:1A35↑j ...
-                call    write_string
+                call    write_string    ; UGURLA OLSUN!
 ; ---------------------------------------------------------------------------
                 db 8Dh,'UGURLA OLSUN!',0
 ; ---------------------------------------------------------------------------
@@ -3133,7 +3133,7 @@ loc_11A4F:                              ; CODE XREF: CODE:1A37↑j
 
 loc_11A56:                              ; CODE XREF: CODE:1A51↑j
                 mov     byte_1742F, al
-                call    write_string
+                call    write_string    ; FIVE
 ; ---------------------------------------------------------------------------
 aFive_0         db 'FIVE ',0
 ; ---------------------------------------------------------------------------
@@ -3141,7 +3141,7 @@ aFive_0         db 'FIVE ',0
                 clc
                 adc     al, 24h ; '$'
                 call    print_indexed_menu_string
-                call    write_string
+                call    write_string    ; S FOR
 ; ---------------------------------------------------------------------------
 aSFor_0         db 'S FOR ',0
 ; ---------------------------------------------------------------------------
@@ -3152,7 +3152,7 @@ aSFor_0         db 'S FOR ',0
                 mov     bl, byte ptr _sleepFlag2?+1
                 mov     di, bx
                 call    write_two_numbers
-                call    write_string
+                call    write_string    ; LUTFEN EVET?
 ; ---------------------------------------------------------------------------
                 db 8Dh,'LUTFEN EVET? ',0
 ; ---------------------------------------------------------------------------
@@ -3163,7 +3163,7 @@ loc_11A9B:                              ; CODE XREF: CODE:1AA1↓j
                 jnz     short loc_11A9B
                 cmp     al, 59h ; 'Y'
                 jz      short loc_11AB0
-                call    write_string
+                call    write_string    ; NO!
 ; ---------------------------------------------------------------------------
 aNo_1           db 'NO!',0
 ; ---------------------------------------------------------------------------
@@ -3186,7 +3186,7 @@ loc_11AB8:                              ; CODE XREF: CODE:loc_11AB0↑j
                 adc     al, 5
                 daa
                 mov     [di+0B6h], al
-                call    write_string
+                call    write_string    ; GULE GULE!
 ; ---------------------------------------------------------------------------
 aGuleGule       db 'GULE GULE!',0
 ; ---------------------------------------------------------------------------
@@ -3196,7 +3196,7 @@ aGuleGule       db 'GULE GULE!',0
 
 loc_11AE0:                              ; CODE XREF: transact:loc_115C5↑j
                 nop
-                call    write_string
+                call    write_string    ; TIME AND TRAVEL MADE ME WISE,PRECIOUS GOLD, A CLUE IT BUYS!HOW MUCH WILL YOU PAY *100?
 ; END OF FUNCTION CHUNK FOR transact
 ; ---------------------------------------------------------------------------
 aTimeAndTravelM db 'TIME AND TRAVEL MADE ME WISE,',0Dh,'PRECIOUS GOLD, A CLUE IT BUYS'
@@ -3244,7 +3244,7 @@ aMayhapsIfYouFi db 'MAYHAPS IF YOU FIND HIM,'
 
 loc_11D1D:                              ; CODE XREF: transact-2A9C↑j
                 nop
-                call    write_string
+                call    write_string    ;      THE ARMOUR SHOPPE:1-CLOTH, 2-LEATHER, 3-CHAIN,4-PLATE, 5-REFLECT, 6-POWER,YOUR INTEREST?
 ; END OF FUNCTION CHUNK FOR transact
 ; ---------------------------------------------------------------------------
 aTheArmourShopp db '     THE ARMOUR SHOPPE:',0Dh,'1-CLOTH, 2-LEATHER, 3-CHAIN,',0Dh,'4'
@@ -3261,7 +3261,7 @@ aTheArmourShopp db '     THE ARMOUR SHOPPE:',0Dh,'1-CLOTH, 2-LEATHER, 3-CHAIN,',
 
 loc_11D8F:                              ; CODE XREF: CODE:1D86↑j
                                         ; CODE:1D8A↑j
-                call    write_string
+                call    write_string    ; THANKS FOR COMING BY...
 ; ---------------------------------------------------------------------------
 aThanksForComin_0 db 'THANKS FOR COMING BY...',0
 ; ---------------------------------------------------------------------------
@@ -3270,7 +3270,7 @@ aThanksForComin_0 db 'THANKS FOR COMING BY...',0
 
 loc_11DAD:                              ; CODE XREF: CODE:1D8C↑j
                 mov     byte_1742F, al
-                call    write_string
+                call    write_string    ; AH! YES!
 ; ---------------------------------------------------------------------------
 aAhYes          db 'AH! YES! ',0
 ; ---------------------------------------------------------------------------
@@ -3278,7 +3278,7 @@ aAhYes          db 'AH! YES! ',0
                 clc
                 adc     al, 1Dh
                 call    print_indexed_menu_string
-                call    write_string
+                call    write_string    ; FOR YOU ONLY
 ; ---------------------------------------------------------------------------
 aForYouOnly     db 0Dh,'FOR YOU ONLY ',0
 ; ---------------------------------------------------------------------------
@@ -3290,7 +3290,7 @@ aForYouOnly     db 0Dh,'FOR YOU ONLY ',0
                 mov     bl, byte ptr _sleepFlag2?+1
                 mov     di, bx
                 call    write_two_numbers
-                call    write_string
+                call    write_string    ; HOW 'BOUT IT?
 ; ---------------------------------------------------------------------------
 aHowBoutIt      db 0Dh,'HOW ',27h,'BOUT IT? ',0
 ; ---------------------------------------------------------------------------
@@ -3306,7 +3306,7 @@ loc_11E01:                              ; CODE XREF: CODE:1E07↓j
                 mov     al, _commandWaitCtr
                 cmp     al, 59h ; 'Y'
                 jz      short loc_11E2B
-                call    write_string
+                call    write_string    ; OH, WELL.
 ; ---------------------------------------------------------------------------
 aOhWell         db 'OH, WELL.',0
 ; ---------------------------------------------------------------------------
@@ -3316,7 +3316,7 @@ aOhWell         db 'OH, WELL.',0
 loc_11E2B:                              ; CODE XREF: CODE:1E19↑j
                 nop
                 call    try_spend_gold
-                call    write_string
+                call    write_string    ; SOLD!
 ; ---------------------------------------------------------------------------
 aSold           db 'SOLD!',0
 ; ---------------------------------------------------------------------------
@@ -3334,7 +3334,7 @@ aSold           db 'SOLD!',0
 
 loc_11E4F:                              ; CODE XREF: transact-2A8E↑j
                 nop
-                call    write_string
+                call    write_string    ;   THE WEAPONS SHOPPE:1-DA, 2-MA, 3-AX, 4-BO,5-SW, 6-GR, 7-LI, 8-PH.YOUR INTEREST?
 ; END OF FUNCTION CHUNK FOR transact
 ; ---------------------------------------------------------------------------
 aTheWeaponsShop db '  THE WEAPONS SHOPPE:',0Dh,'1-DA, 2-MA, 3-AX, 4-BO,',0Dh,'5-SW, 6'
@@ -3351,7 +3351,7 @@ aTheWeaponsShop db '  THE WEAPONS SHOPPE:',0Dh,'1-DA, 2-MA, 3-AX, 4-BO,',0Dh,'5-
 
 loc_11EB5:                              ; CODE XREF: CODE:1EAC↑j
                                         ; CODE:1EB0↑j
-                call    write_string
+                call    write_string    ; THANKS FOR COMING BY...
 ; ---------------------------------------------------------------------------
 aThanksForComin db 'THANKS FOR COMING BY...',0
 ; ---------------------------------------------------------------------------
@@ -3360,7 +3360,7 @@ aThanksForComin db 'THANKS FOR COMING BY...',0
 
 loc_11ED3:                              ; CODE XREF: CODE:1EB2↑j
                 mov     byte_1742F, al
-                call    write_string
+                call    write_string    ; AH! YES! A
 ; ---------------------------------------------------------------------------
 aAhYesA         db 'AH! YES! A ',0
 ; ---------------------------------------------------------------------------
@@ -3368,7 +3368,7 @@ aAhYesA         db 'AH! YES! A ',0
                 clc
                 adc     al, 13h
                 call    print_indexed_menu_string
-                call    write_string
+                call    write_string    ; FOR YOU ONLY
 ; ---------------------------------------------------------------------------
 aForYouOnly_0   db 0Dh,'FOR YOU ONLY ',0
 ; ---------------------------------------------------------------------------
@@ -3379,7 +3379,7 @@ aForYouOnly_0   db 0Dh,'FOR YOU ONLY ',0
                 mov     bl, byte ptr _sleepFlag2?+1
                 mov     di, bx
                 call    write_two_numbers
-                call    write_string
+                call    write_string    ; HOW 'BOUT IT?
 ; ---------------------------------------------------------------------------
 aHowBoutIt_0    db 0Dh,'HOW ',27h,'BOUT IT? ',0
 ; ---------------------------------------------------------------------------
@@ -3395,7 +3395,7 @@ loc_11F27:                              ; CODE XREF: CODE:1F2D↓j
                 mov     al, _commandWaitCtr
                 cmp     al, 59h ; 'Y'
                 jz      short loc_11F51
-                call    write_string
+                call    write_string    ; OH, WELL.
 ; ---------------------------------------------------------------------------
 aOhWell_0       db 'OH, WELL.',0
 ; ---------------------------------------------------------------------------
@@ -3405,7 +3405,7 @@ aOhWell_0       db 'OH, WELL.',0
 loc_11F51:                              ; CODE XREF: CODE:1F3F↑j
                 nop
                 call    try_spend_gold
-                call    write_string
+                call    write_string    ; SOLD!
 ; ---------------------------------------------------------------------------
 aSold_0         db 'SOLD!',0
 ; ---------------------------------------------------------------------------
@@ -3423,7 +3423,7 @@ aSold_0         db 'SOLD!',0
 
 loc_11F75:                              ; CODE XREF: transact-2A80↑j
                 nop
-                call    write_string
+                call    write_string    ; WELCOME, TO THE TRANSPORTSHOPPE. I SELL YOU HORSE
 ; END OF FUNCTION CHUNK FOR transact
 ; ---------------------------------------------------------------------------
 aWelcomeToTheTr db 'WELCOME, TO THE TRANSPORT',0Dh,'SHOPPE. I SELL YOU HORSE ',0
@@ -3435,7 +3435,7 @@ aWelcomeToTheTr db 'WELCOME, TO THE TRANSPORT',0Dh,'SHOPPE. I SELL YOU HORSE ',0
                 mov     bl, byte ptr _sleepFlag2?+1
                 mov     di, bx
                 call    write_two_numbers
-                call    write_string
+                call    write_string    ; GOLD, DEAL, OK? ---
 ; ---------------------------------------------------------------------------
 aGoldDealOk     db 0Dh,'GOLD, DEAL, OK? --- ',0
 ; ---------------------------------------------------------------------------
@@ -3451,7 +3451,7 @@ loc_11FD9:                              ; CODE XREF: CODE:1FDF↓j
                 pop     ax
                 cmp     al, 59h ; 'Y'
                 jz      short loc_12007
-                call    write_string
+                call    write_string    ; O.K. BYE THEN...
 ; ---------------------------------------------------------------------------
 aOKByeThen      db 0Dh,'O.K. BYE THEN...',0
 ; ---------------------------------------------------------------------------
@@ -3460,7 +3460,7 @@ aOKByeThen      db 0Dh,'O.K. BYE THEN...',0
 
 loc_12007:                              ; CODE XREF: CODE:1FED↑j
                 call    try_spend_gold
-                call    write_string
+                call    write_string    ; RIDE SWIFTLY!
 ; ---------------------------------------------------------------------------
                 db 8Dh,'RIDE SWIFTLY!',0
 ; ---------------------------------------------------------------------------
@@ -3990,7 +3990,7 @@ loc_12395:                              ; CODE XREF: read_direction_keypress+14�
 ; ---------------------------------------------------------------------------
 
 loc_123B0:                              ; CODE XREF: read_direction_keypress+38↑j
-                call    write_string
+                call    write_string    ; NORTH
 ; ---------------------------------------------------------------------------
 aNorth_0        db 'NORTH',0
 ; ---------------------------------------------------------------------------
@@ -3999,7 +3999,7 @@ aNorth_0        db 'NORTH',0
 ; ---------------------------------------------------------------------------
 
 loc_123BE:                              ; CODE XREF: read_direction_keypress+3E↑j
-                call    write_string
+                call    write_string    ; SOUTH
 ; ---------------------------------------------------------------------------
 aSouth_0        db 'SOUTH',0
 ; ---------------------------------------------------------------------------
@@ -4008,7 +4008,7 @@ aSouth_0        db 'SOUTH',0
 ; ---------------------------------------------------------------------------
 
 loc_123CC:                              ; CODE XREF: read_direction_keypress+44↑j
-                call    write_string
+                call    write_string    ; EAST
 ; ---------------------------------------------------------------------------
 aEast_0         db 'EAST',0
 ; ---------------------------------------------------------------------------
@@ -4017,7 +4017,7 @@ aEast_0         db 'EAST',0
 ; ---------------------------------------------------------------------------
 
 loc_123D9:                              ; CODE XREF: read_direction_keypress+4A↑j
-                call    write_string
+                call    write_string    ; WEST
 ; ---------------------------------------------------------------------------
 aWest_0         db 'WEST',0
 ; ---------------------------------------------------------------------------
@@ -4160,7 +4160,7 @@ loc_124B1:                              ; CODE XREF: canMoveToTile+70↑j
                 mov     al, player._ringOwned
                 cmp     al, 0
                 jz      short loc_124E0
-                call    write_string
+                call    write_string    ; RING PROTECTS FROM FIELD!
 ; ---------------------------------------------------------------------------
                 db 8Dh,'RING PROTECTS FROM FIELD!',0
 ; ---------------------------------------------------------------------------
@@ -4171,7 +4171,7 @@ loc_124B1:                              ; CODE XREF: canMoveToTile+70↑j
 ; ---------------------------------------------------------------------------
 
 loc_124E0:                              ; CODE XREF: canMoveToTile+97↑j
-                call    write_string
+                call    write_string    ; FIELD CAUSES 1000 DAMAGE!
 ; ---------------------------------------------------------------------------
                 db 8Dh,'FIELD CAUSES 1000 DAMAGE!',0
 ; ---------------------------------------------------------------------------
@@ -4630,7 +4630,7 @@ loc_127C0:                              ; CODE XREF: play_game+116↑j
                 mov     al, _sleepFlag
                 or      al, al
                 jz      short loc_127F1
-                call    write_string
+                call    write_string    ; CMD:
 ; END OF FUNCTION CHUNK FOR play_game
 ; ---------------------------------------------------------------------------
 aCmd_0          db 'CMD: ',0
@@ -4661,7 +4661,7 @@ loc_127E1:                              ; CODE XREF: CODE:27E2↓j
 
 loc_127F1:                              ; CODE XREF: play_game+2062↑j
                 nop
-                call    write_string
+                call    write_string    ; CMD:
 ; END OF FUNCTION CHUNK FOR play_game
 ; ---------------------------------------------------------------------------
 aCmd_1          db 'CMD: ',0
@@ -4785,7 +4785,7 @@ loc_128B1:                              ; CODE XREF: CODE:28AC↑j
                 call    clear_screen
                 mov     al, 0
                 mov     byte_17436, al
-                call    write_string
+                call    write_string    ; ARGH! A TRAP!
 ; ---------------------------------------------------------------------------
                 db 8Dh,'ARGH! A TRAP!',8Dh,0
 ; ---------------------------------------------------------------------------
@@ -5180,7 +5180,7 @@ plot_map_icon_point endp
 ; Attributes: noreturn
 
 attack          proc near               ; DATA XREF: CODE:command_jump_table↑o
-                call    write_string
+                call    write_string    ; ATTACK--
 ; ---------------------------------------------------------------------------
 aAttack         db 'ATTACK--',0
 ; ---------------------------------------------------------------------------
@@ -5195,7 +5195,7 @@ loc_12BA5:                              ; CODE XREF: attack+11↑j
                 mov     al, _flag3
                 or      al, al
                 jz      short loc_12BBE
-                call    write_string
+                call    write_string    ; PARALIZED!
 ; ---------------------------------------------------------------------------
 aParalized_0    db 'PARALIZED!',0
 ; ---------------------------------------------------------------------------
@@ -5226,7 +5226,7 @@ loc_12BD7:                              ; CODE XREF: attack+43↑j
 loc_12BE6:                              ; CODE XREF: attack+52↑j
                 call    xorDrawCircle
                 call    alert_town_guards
-                call    write_string
+                call    write_string    ; --HIT!!!
 ; ---------------------------------------------------------------------------
 aHit            db '--HIT!!!',0
 ; ---------------------------------------------------------------------------
@@ -5288,7 +5288,7 @@ loc_12C38:                              ; CODE XREF: attack+A4↑j
                 mov     [bx+si], al
                 mov     al, 84h
                 mov     [di+1D7h], al
-                call    write_string
+                call    write_string    ; SHE'S GONE!!!
 ; ---------------------------------------------------------------------------
                 db 8Dh,'SHE',27h,'S GONE!!!',0
 ; ---------------------------------------------------------------------------
@@ -5429,7 +5429,7 @@ loc_12D8C:                              ; CODE XREF: attack+153↑j
                 mov     _mapMonsters[di], al
                 mov     _monsterMapY[di], al
                 mov     _monsterType[di], al
-                call    write_string
+                call    write_string    ; KILLED--GOLD+
 ; ---------------------------------------------------------------------------
 aKilledGold     db 0Dh,'KILLED--GOLD+',0
 ; ---------------------------------------------------------------------------
@@ -5447,7 +5447,7 @@ aKilledGold     db 0Dh,'KILLED--GOLD+',0
                 adc     al, 0
                 daa
                 mov     player._gold, al
-                call    write_string
+                call    write_string    ; --EXP.+
 ; ---------------------------------------------------------------------------
 aExp_0          db '--EXP.+',0
 ; ---------------------------------------------------------------------------
@@ -5471,7 +5471,7 @@ aExp_0          db '--EXP.+',0
 
 loc_12E09:                              ; CODE XREF: attack+45↑j
                                         ; attack+54↑j ...
-                call    write_string
+                call    write_string    ; --MISS
 ; ---------------------------------------------------------------------------
 aMiss           db '--MISS',0
 ; ---------------------------------------------------------------------------
@@ -5541,7 +5541,7 @@ loc_12E7D:                              ; CODE XREF: attack+2D8↑j
 
 loc_12E8D:                              ; CODE XREF: attack+2F9↑j
                 nop
-                call    write_string
+                call    write_string    ; HIT!
 ; ---------------------------------------------------------------------------
 aHit_0          db 'HIT!',0
 ; ---------------------------------------------------------------------------
@@ -5589,7 +5589,7 @@ loc_12ED1:                              ; CODE XREF: attack+339↑j
                 and     al, 0F0h
                 mov     bx, word_17418
                 mov     [bx+si], al
-                call    write_string
+                call    write_string    ; KILLED--GOLD+
 ; ---------------------------------------------------------------------------
                 db 8Dh,'KILLED--GOLD+',0
 ; ---------------------------------------------------------------------------
@@ -5607,7 +5607,7 @@ loc_12ED1:                              ; CODE XREF: attack+339↑j
                 adc     al, 0
                 daa
                 mov     player._gold, al
-                call    write_string
+                call    write_string    ; --EXP.+
 ; ---------------------------------------------------------------------------
 aExp_1          db '--EXP.+',0
 ; ---------------------------------------------------------------------------
@@ -5629,7 +5629,7 @@ aExp_1          db '--EXP.+',0
 
 loc_12F64:                              ; CODE XREF: attack+2AB↑j
                                         ; attack+2EB↑j ...
-                call    write_string
+                call    write_string    ; MISS
 ; ---------------------------------------------------------------------------
 aMiss_0         db 'MISS',0
 ; ---------------------------------------------------------------------------
@@ -5642,7 +5642,7 @@ attack          endp
 ; Attributes: noreturn thunk
 
 board           proc near               ; DATA XREF: CODE:command_jump_table↑o
-                call    write_string
+                call    write_string    ; BOARD
 ; ---------------------------------------------------------------------------
 aBoard          db 'BOARD',0
 ; ---------------------------------------------------------------------------
@@ -5651,7 +5651,7 @@ aBoard          db 'BOARD',0
                 jb      short loc_12F96
 
 loc_12F7F:                              ; CODE XREF: board+2D↓j
-                call    write_string
+                call    write_string    ; THINK AGAIN
 ; ---------------------------------------------------------------------------
                 db 8Dh,'THINK AGAIN ',0
 ; ---------------------------------------------------------------------------
@@ -5678,7 +5678,7 @@ loc_12F96:                              ; CODE XREF: board+E↑j
                 jz      short loc_12FD0
                 cmp     al, 28h ; '('
                 jz      short loc_12FD3
-                call    write_string
+                call    write_string    ;  WHAT?
 ; ---------------------------------------------------------------------------
 aWhat           db ' WHAT?',0
 ; ---------------------------------------------------------------------------
@@ -5700,7 +5700,7 @@ loc_12FD3:                              ; CODE XREF: board+4F↑j
 ; ---------------------------------------------------------------------------
 
 loc_12FD6:                              ; CODE XREF: board+43↑j
-                call    write_string
+                call    write_string    ;  HORSE
 ; ---------------------------------------------------------------------------
 aHorse          db ' HORSE',0
 ; ---------------------------------------------------------------------------
@@ -5720,7 +5720,7 @@ loc_12FF6:                              ; CODE XREF: board:loc_12FCD↑j
                 mov     al, player._frigateAllowed
                 or      al, al
                 jnz     short loc_13038
-                call    write_string
+                call    write_string    ;  SHIP
 ; ---------------------------------------------------------------------------
 aShip           db ' SHIP',8Dh,'THE CREW OF THIS SHIP',8Dh,'WILL NOT LET YOU BOARD!',0
 ; ---------------------------------------------------------------------------
@@ -5729,7 +5729,7 @@ aShip           db ' SHIP',8Dh,'THE CREW OF THIS SHIP',8Dh,'WILL NOT LET YOU BOA
 
 loc_13038:                              ; CODE XREF: board+8D↑j
                 nop
-                call    write_string
+                call    write_string    ;  FRIGATE
 ; ---------------------------------------------------------------------------
 aFrigate        db ' FRIGATE',0
 ; ---------------------------------------------------------------------------
@@ -5748,7 +5748,7 @@ loc_13059:                              ; CODE XREF: board:loc_12FD0↑j
                 mov     al, player._planeAllowed
                 or      al, al
                 jnz     short loc_13088
-                call    write_string
+                call    write_string    ;  PLANE
 ; ---------------------------------------------------------------------------
 aPlane          db ' PLANE',8Dh,'STRANGE YOU CAN',27h,'T GET IN!',0
 ; ---------------------------------------------------------------------------
@@ -5757,7 +5757,7 @@ aPlane          db ' PLANE',8Dh,'STRANGE YOU CAN',27h,'T GET IN!',0
 
 loc_13088:                              ; CODE XREF: board+F0↑j
                 nop
-                call    write_string
+                call    write_string    ;  PLANE
 ; ---------------------------------------------------------------------------
 aPlane_0        db ' PLANE',0
 ; ---------------------------------------------------------------------------
@@ -5774,14 +5774,14 @@ aPlane_0        db ' PLANE',0
 
 loc_130A9:                              ; CODE XREF: board:loc_12FD3↑j
                 nop
-                call    write_string
+                call    write_string    ;  ROCKET
 ; ---------------------------------------------------------------------------
 aRocket         db ' ROCKET',0
 ; ---------------------------------------------------------------------------
                 mov     al, player._ankhOwned
                 or      al, al
                 jnz     short loc_130F4
-                call    write_string
+                call    write_string    ; A METALIC VOICE COMMANDS:YOU MUST HAVE AN ANKH!
 ; ---------------------------------------------------------------------------
                 db 8Dh,'A METALIC VOICE COMMANDS:',8Dh,'YOU MUST HAVE AN ANKH!',0
 ; ---------------------------------------------------------------------------
@@ -5814,7 +5814,7 @@ cast            proc near               ; DATA XREF: CODE:command_jump_table↑o
 ; FUNCTION CHUNK AT 3244 SIZE 00000068 BYTES
 ; FUNCTION CHUNK AT 32AD SIZE 0000005F BYTES
 
-                call    write_string
+                call    write_string    ; CAST-
 ; ---------------------------------------------------------------------------
 aCast           db 'CAST-',0
 ; ---------------------------------------------------------------------------
@@ -5896,7 +5896,7 @@ loc_13153:                              ; CODE XREF: cast+9↑j
                 clc
                 adc     al, player._staves
                 jnz     short loc_13185
-                call    write_string
+                call    write_string    ; NEED WAND OR STAFF!
 ; ---------------------------------------------------------------------------
                 db 8Dh,'NEED WAND OR STAFF!',0
 ; ---------------------------------------------------------------------------
@@ -5918,7 +5918,7 @@ loc_13190:                              ; CODE XREF: cast+80↑j
                 mov     al, player._spellCharges[di]
                 or      al, al
                 jnz     short loc_131B0
-                call    write_string
+                call    write_string    ; NO SPELL!
 ; END OF FUNCTION CHUNK FOR cast
 ; ---------------------------------------------------------------------------
                 db 8Dh,'NO SPELL!',0
@@ -5943,7 +5943,7 @@ loc_131B0:                              ; CODE XREF: cast+8F↑j
                 mov     al, player._mapNum2
                 cmp     al, 4
                 jnb     short loc_131E2
-                call    write_string
+                call    write_string    ; -FAILED!
 ; END OF FUNCTION CHUNK FOR cast
 ; ---------------------------------------------------------------------------
 aFailed         db '-FAILED!',0
@@ -6015,7 +6015,7 @@ loc_1322B:                              ; CODE XREF: cast+14D↓j
 
 loc_13232:                              ; CODE XREF: cast+13F↓j
                                         ; cast+15E↓j ...
-                call    write_string
+                call    write_string    ; -FAILED!
 ; END OF FUNCTION CHUNK FOR cast
 ; ---------------------------------------------------------------------------
 aFailed_0       db '-FAILED!',0
@@ -6192,7 +6192,7 @@ find_cursor_target_monster endp
 ; Attributes: noreturn
 
 descend         proc near               ; DATA XREF: CODE:command_jump_table↑o
-                call    write_string
+                call    write_string    ; DESCEND
 ; ---------------------------------------------------------------------------
 aDescend        db 'DESCEND',0
 ; ---------------------------------------------------------------------------
@@ -6203,7 +6203,7 @@ aDescend        db 'DESCEND',0
                 jz      short loc_13370
 
 loc_13363:                              ; CODE XREF: descend+28↓j
-                call    write_string
+                call    write_string    ; -WHAT?
 ; ---------------------------------------------------------------------------
 aWhat_7         db '-WHAT?',0
 ; ---------------------------------------------------------------------------
@@ -6234,14 +6234,14 @@ descend         endp
 ; Attributes: noreturn
 
 enter           proc near               ; DATA XREF: CODE:command_jump_table↑o
-                call    write_string
+                call    write_string    ; ENTER
 ; ---------------------------------------------------------------------------
 aEnter          db 'ENTER',0
 ; ---------------------------------------------------------------------------
                 mov     al, player._mapNum2
                 or      al, al
                 jz      short loc_133A6
-                call    write_string
+                call    write_string    ;  WHAT?
 ; ---------------------------------------------------------------------------
 aWhat_5         db ' WHAT?',0
 ; ---------------------------------------------------------------------------
@@ -6253,7 +6253,7 @@ loc_133A6:                              ; CODE XREF: enter+E↑j
                 mov     al, _playerTileId
                 cmp     al, 78h ; 'x'
                 jnb     short loc_133C3
-                call    write_string
+                call    write_string    ; -ONLY ON FOOT!
 ; ---------------------------------------------------------------------------
 aOnlyOnFoot     db '-ONLY ON FOOT!',0
 ; ---------------------------------------------------------------------------
@@ -6319,7 +6319,7 @@ loc_133F8:                              ; CODE XREF: enter+6A↑j
 
 loc_13401:                              ; CODE XREF: enter+73↑j
                 nop
-                call    write_string
+                call    write_string    ;  WHAT?
 ; ---------------------------------------------------------------------------
 aWhat_6         db ' WHAT?',0
 ; ---------------------------------------------------------------------------
@@ -6327,7 +6327,7 @@ aWhat_6         db ' WHAT?',0
 ; ---------------------------------------------------------------------------
 
 loc_1340F:                              ; CODE XREF: enter+48↑j
-                call    write_string
+                call    write_string    ; -VILLAGE
 ; ---------------------------------------------------------------------------
 aVillage        db '-VILLAGE',0
 ; ---------------------------------------------------------------------------
@@ -6350,7 +6350,7 @@ aVillage        db '-VILLAGE',0
 ; ---------------------------------------------------------------------------
 
 loc_13447:                              ; CODE XREF: enter+51↑j
-                call    write_string
+                call    write_string    ; -TOWN
 ; ---------------------------------------------------------------------------
 aTown           db '-TOWN',0
 ; ---------------------------------------------------------------------------
@@ -6373,7 +6373,7 @@ aTown           db '-TOWN',0
 ; ---------------------------------------------------------------------------
 
 loc_1347C:                              ; CODE XREF: enter+5A↑j
-                call    write_string
+                call    write_string    ; -TOWER
 ; ---------------------------------------------------------------------------
 aTower          db '-TOWER',0
 ; ---------------------------------------------------------------------------
@@ -6397,7 +6397,7 @@ aTower          db '-TOWER',0
 ; ---------------------------------------------------------------------------
 
 loc_134B5:                              ; CODE XREF: enter+63↑j
-                call    write_string
+                call    write_string    ; -CASTLE
 ; ---------------------------------------------------------------------------
 aCastle         db '-CASTLE',0
 ; ---------------------------------------------------------------------------
@@ -6420,7 +6420,7 @@ aCastle         db '-CASTLE',0
 ; ---------------------------------------------------------------------------
 
 loc_134EC:                              ; CODE XREF: enter+6C↑j
-                call    write_string
+                call    write_string    ; -DUNGEON
 ; ---------------------------------------------------------------------------
 aDungeon        db '-DUNGEON',0
 ; ---------------------------------------------------------------------------
@@ -6443,7 +6443,7 @@ aDungeon        db '-DUNGEON',0
 ; ---------------------------------------------------------------------------
 
 loc_13525:                              ; CODE XREF: enter+75↑j
-                call    write_string
+                call    write_string    ; -THE SIGN READS:
 ; ---------------------------------------------------------------------------
 aTheSignReads   db '-THE SIGN READS:',0Dh,0
 ; ---------------------------------------------------------------------------
@@ -6458,7 +6458,7 @@ aTheSignReads   db '-THE SIGN READS:',0Dh,0
                 jz      short loc_13595
                 dec     di
                 jz      short loc_135AB
-                call    write_string
+                call    write_string    ; ANOS: 2112 A.D.
 ; ---------------------------------------------------------------------------
 aAnos2112AD     db 'ANOS: 2112 A.D.',0
 ; ---------------------------------------------------------------------------
@@ -6466,7 +6466,7 @@ aAnos2112AD     db 'ANOS: 2112 A.D.',0
 ; ---------------------------------------------------------------------------
 
 loc_13565:                              ; CODE XREF: enter+1BB↑j
-                call    write_string
+                call    write_string    ; ANOS: LEGENDS!
 ; ---------------------------------------------------------------------------
 aAnosLegends    db 'ANOS: LEGENDS!',0
 ; ---------------------------------------------------------------------------
@@ -6474,7 +6474,7 @@ aAnosLegends    db 'ANOS: LEGENDS!',0
 ; ---------------------------------------------------------------------------
 
 loc_1357A:                              ; CODE XREF: enter+1BE↑j
-                call    write_string
+                call    write_string    ; ANOS: 9,000,000 B.C.
 ; ---------------------------------------------------------------------------
 aAnos9000000BC  db 'ANOS: 9,000,000 B.C.',0
 ; ---------------------------------------------------------------------------
@@ -6482,7 +6482,7 @@ aAnos9000000BC  db 'ANOS: 9,000,000 B.C.',0
 ; ---------------------------------------------------------------------------
 
 loc_13595:                              ; CODE XREF: enter+1C1↑j
-                call    write_string
+                call    write_string    ; ANOS: 1423 B.C.
 ; ---------------------------------------------------------------------------
 aAnos1423BC     db 'ANOS: 1423 B.C.',0
 ; ---------------------------------------------------------------------------
@@ -6490,7 +6490,7 @@ aAnos1423BC     db 'ANOS: 1423 B.C.',0
 ; ---------------------------------------------------------------------------
 
 loc_135AB:                              ; CODE XREF: enter+1C4↑j
-                call    write_string
+                call    write_string    ; ANOS: 1990 A.D.
 ; ---------------------------------------------------------------------------
 aAnos1990AD     db 'ANOS: 1990 A.D.',0
 ; ---------------------------------------------------------------------------
@@ -6503,14 +6503,14 @@ enter           endp
 ; Attributes: noreturn
 
 fire            proc near               ; DATA XREF: CODE:command_jump_table↑o
-                call    write_string
+                call    write_string    ; FIRE
 ; ---------------------------------------------------------------------------
 aFire           db 'FIRE',0
 ; ---------------------------------------------------------------------------
                 mov     al, _playerTileId
                 cmp     al, 24h ; '$'
                 jz      short loc_135DD
-                call    write_string
+                call    write_string    ;  WHAT?
 ; ---------------------------------------------------------------------------
 aWhat_4         db ' WHAT?',0
 ; ---------------------------------------------------------------------------
@@ -6519,7 +6519,7 @@ aWhat_4         db ' WHAT?',0
 
 loc_135DD:                              ; CODE XREF: fire+D↑j
                 nop
-                call    write_string
+                call    write_string    ;  DIRECT-
 ; ---------------------------------------------------------------------------
 aDirect         db ' DIRECT-',0
 ; ---------------------------------------------------------------------------
@@ -6572,7 +6572,7 @@ clear_picked_up_tile endp
 ; Attributes: noreturn
 
 get             proc near               ; DATA XREF: CODE:command_jump_table↑o
-                call    write_string
+                call    write_string    ; GET
 ; ---------------------------------------------------------------------------
 aGet            db 'GET',0
 ; ---------------------------------------------------------------------------
@@ -6591,7 +6591,7 @@ loc_1364C:                              ; CODE XREF: get+C↑j
                 jz      short loc_1369B
                 cmp     al, 2Ch ; ','
                 jz      short loc_13665
-                call    write_string
+                call    write_string    ;  WHAT?
 ; ---------------------------------------------------------------------------
 aWhat_2         db ' WHAT?',0
 ; ---------------------------------------------------------------------------
@@ -6600,7 +6600,7 @@ aWhat_2         db ' WHAT?',0
 
 loc_13665:                              ; CODE XREF: get+1B↑j
                                         ; get+11C↓j
-                call    write_string
+                call    write_string    ;  WEAPON
 ; ---------------------------------------------------------------------------
 aWeapon_0       db ' WEAPON',0
 ; ---------------------------------------------------------------------------
@@ -6619,7 +6619,7 @@ aWeapon_0       db ' WEAPON',0
 ; ---------------------------------------------------------------------------
 
 loc_1368D:                              ; CODE XREF: get+3D↑j get+73↓j
-                call    write_string
+                call    write_string    ;  EMPTY!
 ; ---------------------------------------------------------------------------
 aEmpty          db ' EMPTY!',0
 ; ---------------------------------------------------------------------------
@@ -6628,7 +6628,7 @@ aEmpty          db ' EMPTY!',0
 
 loc_1369B:                              ; CODE XREF: get+17↑j
                                         ; get+113↓j
-                call    write_string
+                call    write_string    ;  ARMOUR
 ; ---------------------------------------------------------------------------
 aArmour_1       db ' ARMOUR',0
 ; ---------------------------------------------------------------------------
@@ -6651,7 +6651,7 @@ loc_136C3:                              ; CODE XREF: get+E↑j
                 mov     al, _tilePlayerCenter
                 cmp     al, 40h ; '@'
                 jz      short loc_136D8
-                call    write_string
+                call    write_string    ;  WHAT?
 ; ---------------------------------------------------------------------------
 aWhat_3         db ' WHAT?',0
 ; ---------------------------------------------------------------------------
@@ -6679,7 +6679,7 @@ aChest          db ' CHEST!',8Dh,'IT CONTAINS ',0
                 call    rand_byte
                 cmp     al, 40h ; '@'
                 jb      short loc_13746
-                call    write_string
+                call    write_string    ; GOLD!
 ; ---------------------------------------------------------------------------
 aGold_0         db 'GOLD!',0
 ; ---------------------------------------------------------------------------
@@ -6708,7 +6708,7 @@ loc_13746:                              ; CODE XREF: get+DC↑j
 ; ---------------------------------------------------------------------------
 
 loc_13751:                              ; CODE XREF: get+111↑j
-                call    write_string
+                call    write_string    ; A
 ; ---------------------------------------------------------------------------
 aA              db 'A ',0
 ; ---------------------------------------------------------------------------
@@ -6716,7 +6716,7 @@ aA              db 'A ',0
 ; ---------------------------------------------------------------------------
 
 loc_1375A:                              ; CODE XREF: get+D5↑j
-                call    write_string
+                call    write_string    ; TRI-LITHIUM!
 ; ---------------------------------------------------------------------------
 aTriLithium     db 'TRI-LITHIUM!',0
 ; ---------------------------------------------------------------------------
@@ -6736,7 +6736,7 @@ get             endp
 ; Attributes: noreturn
 
 hyper           proc near               ; DATA XREF: CODE:command_jump_table↑o
-                call    write_string
+                call    write_string    ; HYPER WHAT?
 ; ---------------------------------------------------------------------------
 aHyperWhat      db 'HYPER WHAT?',0
 ; ---------------------------------------------------------------------------
@@ -6749,7 +6749,7 @@ hyper           endp
 ; Attributes: noreturn
 
 ignite_torch    proc near               ; DATA XREF: CODE:command_jump_table↑o
-                call    write_string
+                call    write_string    ; IGNITE TORCH
 ; ---------------------------------------------------------------------------
 aIgniteTorch    db 'IGNITE TORCH',0
 ; ---------------------------------------------------------------------------
@@ -6763,7 +6763,7 @@ loc_137AE:                              ; CODE XREF: ignite_torch+15↑j
                 mov     al, player._torches
                 or      al, al
                 jnz     short loc_137C8
-                call    write_string
+                call    write_string    ; NONE OWNED!
 ; ---------------------------------------------------------------------------
                 db 8Dh,'NONE OWNED!',0
 ; ---------------------------------------------------------------------------
@@ -6789,7 +6789,7 @@ ignite_torch    endp
 ; Attributes: noreturn thunk
 
 jump            proc near               ; DATA XREF: CODE:command_jump_table↑o
-                call    write_string
+                call    write_string    ; JUMP...WHEE...
 ; ---------------------------------------------------------------------------
 aJumpWhee       db 'JUMP...WHEE...',0
 ; ---------------------------------------------------------------------------
@@ -6802,7 +6802,7 @@ jump            endp
 ; Attributes: noreturn
 
 klimb           proc near               ; DATA XREF: CODE:command_jump_table↑o
-                call    write_string
+                call    write_string    ; KLIMB
 ; ---------------------------------------------------------------------------
 aKlimb          db 'KLIMB',0
 ; ---------------------------------------------------------------------------
@@ -6813,7 +6813,7 @@ aKlimb          db 'KLIMB',0
                 jz      short loc_13812
 
 loc_13805:                              ; CODE XREF: klimb+26↓j
-                call    write_string
+                call    write_string    ; -WHAT?
 ; ---------------------------------------------------------------------------
 aWhat_1         db '-WHAT?',0
 ; ---------------------------------------------------------------------------
@@ -6839,7 +6839,7 @@ loc_13823:                              ; CODE XREF: descend+31↑j
 
 loc_1382A:                              ; CODE XREF: cast+145↑j
                                         ; cast+164↑j ...
-                call    write_string
+                call    write_string    ; TO LEVEL
 ; ---------------------------------------------------------------------------
                 db 8Dh,'TO LEVEL ',0
 ; ---------------------------------------------------------------------------
@@ -6918,7 +6918,7 @@ loc_138BA:                              ; CODE XREF: launch+5↑j
                 nop
                 cmp     al, 28h ; '('
                 jz      short loc_138D2
-                call    write_string
+                call    write_string    ; LAUNCH WHAT?
 ; ---------------------------------------------------------------------------
 aLaunchWhat     db 'LAUNCH WHAT?',0
 ; ---------------------------------------------------------------------------
@@ -6926,14 +6926,14 @@ aLaunchWhat     db 'LAUNCH WHAT?',0
 ; ---------------------------------------------------------------------------
 
 loc_138D2:                              ; CODE XREF: launch+D↑j
-                call    write_string
+                call    write_string    ; LAUNCH--ROCKET
 ; ---------------------------------------------------------------------------
 aLaunchRocket   db 'LAUNCH--ROCKET',0
 ; ---------------------------------------------------------------------------
                 mov     al, player._triLithium
                 or      al, al
                 jnz     short loc_13923
-                call    write_string
+                call    write_string    ; A METALLIC VOICE SAYS:SHIP INCAPABLE OF LAUNCH!
 ; ---------------------------------------------------------------------------
                 db 8Dh,'A METALLIC VOICE SAYS:',8Dh,'SHIP INCAPABLE OF LAUNCH!',0
 ; ---------------------------------------------------------------------------
@@ -6941,7 +6941,7 @@ aLaunchRocket   db 'LAUNCH--ROCKET',0
 ; ---------------------------------------------------------------------------
 
 loc_13923:                              ; CODE XREF: launch+39↑j
-                call    write_string
+                call    write_string    ; PREPARE FOR LAUNCH!
 ; ---------------------------------------------------------------------------
                 db 8Dh,'PREPARE FOR LAUNCH!',0
 ; ---------------------------------------------------------------------------
@@ -6975,7 +6975,7 @@ loc_13969:                              ; CODE XREF: launch+C2↓j
                 mov     _mapX, 0
                 mov     _mapY, 0
                 mov     _outsideMapTile, al
-                call    write_string
+                call    write_string    ; (PRESS ANY KEY)
 ; ---------------------------------------------------------------------------
 aPressAnyKey    db '(PRESS ANY KEY)',0
 ; ---------------------------------------------------------------------------
@@ -7032,14 +7032,14 @@ loc_139E6:                              ; CODE XREF: launch+12C↑j
 ; ---------------------------------------------------------------------------
 
 loc_139FA:                              ; CODE XREF: launch+7↑j
-                call    write_string
+                call    write_string    ; LAUNCH--PLANE
 ; ---------------------------------------------------------------------------
 aLaunchPlane    db 'LAUNCH--PLANE',0
 ; ---------------------------------------------------------------------------
                 mov     al, player._brassButtonOwned
                 or      al, al
                 jnz     short loc_13A45
-                call    write_string
+                call    write_string    ; FUNNY THIS PLANE ISMISSING A BRASS BUTTON!
 ; ---------------------------------------------------------------------------
                 db 8Dh,'FUNNY THIS PLANE IS',8Dh,'MISSING A BRASS BUTTON!',0
 ; ---------------------------------------------------------------------------
@@ -7052,7 +7052,7 @@ loc_13A45:                              ; CODE XREF: launch+160↑j
                 mov     _commandWaitCtr, al
                 mov     al, 0FFh
                 mov     byte_17432, al
-                call    write_string
+                call    write_string    ; CMD:
 ; ---------------------------------------------------------------------------
 aCmd_2          db 0Dh,'CMD: ',0
 ; ---------------------------------------------------------------------------
@@ -7142,7 +7142,7 @@ loc_13ADB:                              ; CODE XREF: launch+1C6↑j
                 mov     _commandWaitCtr, al
                 mov     al, 0FFh
                 mov     byte_17432, al
-                call    write_string
+                call    write_string    ; NORTHCMD:
 ; ---------------------------------------------------------------------------
 aNorthCmd       db 'NORTH',0Dh,'CMD: ',0
 ; ---------------------------------------------------------------------------
@@ -7154,7 +7154,7 @@ loc_13AF6:                              ; CODE XREF: launch+1CF↑j
                 mov     _commandWaitCtr, al
                 mov     al, 1
                 mov     byte_17432, al
-                call    write_string
+                call    write_string    ; SOUTHCMD:
 ; ---------------------------------------------------------------------------
 aSouthCmd       db 'SOUTH',0Dh,'CMD: ',0
 ; ---------------------------------------------------------------------------
@@ -7166,7 +7166,7 @@ loc_13B11:                              ; CODE XREF: launch+1D8↑j
                 mov     _commandWaitCtr, al
                 mov     al, 0
                 mov     byte_17432, al
-                call    write_string
+                call    write_string    ; EASTCMD:
 ; ---------------------------------------------------------------------------
 aEastCmd        db 'EAST',0Dh,'CMD: ',0
 ; ---------------------------------------------------------------------------
@@ -7178,7 +7178,7 @@ loc_13B2C:                              ; CODE XREF: launch+1E1↑j
                 mov     _commandWaitCtr, al
                 mov     al, 0
                 mov     byte_17432, al
-                call    write_string
+                call    write_string    ; WESTCMD:
 ; ---------------------------------------------------------------------------
 aWestCmd        db 'WEST',0Dh,'CMD: ',0
 ; ---------------------------------------------------------------------------
@@ -7193,7 +7193,7 @@ loc_13B47:                              ; CODE XREF: launch+1E8↑j
                 call    get_player_tile
                 cmp     al, 8
                 jnz     short loc_13B71
-                call    write_string
+                call    write_string    ; LAND PLANE.
 ; ---------------------------------------------------------------------------
 aLandPlane      db 'LAND PLANE.',0
 ; ---------------------------------------------------------------------------
@@ -7203,7 +7203,7 @@ aLandPlane      db 'LAND PLANE.',0
 
 loc_13B71:                              ; CODE XREF: launch+2A8↑j
                 nop
-                call    write_string
+                call    write_string    ; LAND--NOT HERE!!!!!CMD:
 ; ---------------------------------------------------------------------------
 aLandNotHereCmd db 'LAND--NOT HERE!!!!!',0Dh,'CMD: ',0
 ; ---------------------------------------------------------------------------
@@ -7216,13 +7216,13 @@ launch          endp
 ; Attributes: noreturn
 
 magic           proc near               ; DATA XREF: CODE:command_jump_table↑o
-                call    write_string
+                call    write_string    ; MAGIC SPELL READY #
 ; ---------------------------------------------------------------------------
 aMagicSpellRead db 'MAGIC SPELL READY #',0
 ; ---------------------------------------------------------------------------
                 call    read_digit_keypress
                 mov     player._readiedSpell, al
-                call    write_string
+                call    write_string    ; SPELL READY =>
 ; ---------------------------------------------------------------------------
 aSpellReady     db 'SPELL READY => ',0
 ; ---------------------------------------------------------------------------
@@ -7239,14 +7239,14 @@ magic           endp
 ; Attributes: noreturn
 
 negate_time     proc near               ; DATA XREF: CODE:command_jump_table↑o
-                call    write_string
+                call    write_string    ; NEGATE TIME
 ; ---------------------------------------------------------------------------
 aNegateTime     db 'NEGATE TIME',0
 ; ---------------------------------------------------------------------------
                 mov     al, player._strangeCoin
                 or      al, al
                 jnz     short loc_13C04
-                call    write_string
+                call    write_string    ;  HOW?
 ; ---------------------------------------------------------------------------
 aHow            db ' HOW?',8Dh,'YOU',27h,'RE NOT EINSTEIN',0
 ; ---------------------------------------------------------------------------
@@ -7261,7 +7261,7 @@ loc_13C04:                              ; CODE XREF: negate_time+14↑j
                 das
                 cmc
                 mov     player._strangeCoin, al
-                call    write_string
+                call    write_string    ; YOU RUB A COIN...
 ; ---------------------------------------------------------------------------
                 db 8Dh,'YOU RUB A COIN...',0
 ; ---------------------------------------------------------------------------
@@ -7276,7 +7276,7 @@ negate_time     endp
 ; Attributes: noreturn
 
 offer           proc near               ; DATA XREF: CODE:command_jump_table↑o
-                call    write_string
+                call    write_string    ; OFFER GOLD DIRECT-
 ; ---------------------------------------------------------------------------
 aOfferGoldDirec db 'OFFER GOLD DIRECT-',0
 ; ---------------------------------------------------------------------------
@@ -7289,7 +7289,7 @@ aOfferGoldDirec db 'OFFER GOLD DIRECT-',0
                 mov     bx, di
                 cmp     bl, 0
                 jnz     short loc_13C71
-                call    write_string
+                call    write_string    ; OFFER TO WHOM?
 ; ---------------------------------------------------------------------------
 aOfferToWhom    db 'OFFER TO WHOM?',0
 ; ---------------------------------------------------------------------------
@@ -7297,7 +7297,7 @@ aOfferToWhom    db 'OFFER TO WHOM?',0
 ; ---------------------------------------------------------------------------
 
 loc_13C71:                              ; CODE XREF: offer+2C↑j
-                call    write_string
+                call    write_string    ; HOW MUCH (*100) ?
 ; ---------------------------------------------------------------------------
 aHowMuch100     db 'HOW MUCH (*100) ? ',0
 ; ---------------------------------------------------------------------------
@@ -7326,7 +7326,7 @@ aHowMuch100     db 'HOW MUCH (*100) ? ',0
 loc_13CB6:                              ; CODE XREF: offer+75↑j
                                         ; offer+7C↑j ...
                 nop
-                call    write_string
+                call    write_string    ; THANK YOU VERY MUCH!
 ; ---------------------------------------------------------------------------
 aThankYouVeryMu db 'THANK YOU VERY MUCH!',0
 ; ---------------------------------------------------------------------------
@@ -7351,7 +7351,7 @@ loc_13CED:                              ; CODE XREF: offer+B2↑j
                 mov     al, byte ptr _sleepFlag2?
                 cmp     al, 5
                 jb      short loc_13CB6
-                call    write_string
+                call    write_string    ; ENILNO IS YOURS!
 ; ---------------------------------------------------------------------------
 aEnilnoIsYours  db 'ENILNO IS YOURS!',0
 ; ---------------------------------------------------------------------------
@@ -7367,7 +7367,7 @@ loc_13D10:                              ; CODE XREF: offer+B6↑j
                 mov     al, player._ringQuestFlag
                 or      al, al
                 jnz     short loc_13D33
-                call    write_string
+                call    write_string    ; EARN THE RING!
 ; ---------------------------------------------------------------------------
 aEarnTheRing    db 'EARN THE RING!',0
 ; ---------------------------------------------------------------------------
@@ -7376,7 +7376,7 @@ aEarnTheRing    db 'EARN THE RING!',0
 
 loc_13D33:                              ; CODE XREF: offer+EE↑j
                 nop
-                call    write_string
+                call    write_string    ; THE RING IS YOURS!
 ; ---------------------------------------------------------------------------
 aTheRingIsYours db 'THE RING IS YOURS!',0
 ; ---------------------------------------------------------------------------
@@ -7396,7 +7396,7 @@ loc_13D52:                              ; CODE XREF: offer+BA↑j
                 adc     al, 1
                 daa
                 mov     player._offerRewardItems[di], al
-                call    write_string
+                call    write_string    ; HERE TAKE THIS!
 ; ---------------------------------------------------------------------------
 aHereTakeThis   db 'HERE TAKE THIS!',0
 ; ---------------------------------------------------------------------------
@@ -7426,7 +7426,7 @@ loc_13D8A:                              ; CODE XREF: offer+157↑j
                 adc     al, byte ptr _sleepFlag2?
                 daa
                 mov     [di+4Bh], al
-                call    write_string
+                call    write_string    ; ALAKAZAM!
 ; ---------------------------------------------------------------------------
 aAlakazam       db 'ALAKAZAM!',0
 ; ---------------------------------------------------------------------------
@@ -7439,7 +7439,7 @@ offer           endp
 ; Attributes: noreturn
 
 pass            proc near               ; DATA XREF: CODE:command_jump_table↑o
-                call    write_string
+                call    write_string    ; PASS
 ; ---------------------------------------------------------------------------
 aPass_4         db 'PASS',0
 ; ---------------------------------------------------------------------------
@@ -7455,14 +7455,14 @@ quit            proc near               ; DATA XREF: CODE:command_jump_table↑o
 
 ; FUNCTION CHUNK AT 3E4A SIZE 00000006 BYTES
 
-                call    write_string
+                call    write_string    ; QUIT OR SAVE GAME.
 ; ---------------------------------------------------------------------------
 aQuitOrSaveGame db 'QUIT OR SAVE GAME.',0
 ; ---------------------------------------------------------------------------
                 mov     al, player._mapNum2
                 or      al, al
                 jz      short loc_13DFA
-                call    write_string
+                call    write_string    ; ONLY OUTDOORS!
 ; ---------------------------------------------------------------------------
                 db 8Dh,'ONLY OUTDOORS!',0
 ; ---------------------------------------------------------------------------
@@ -7473,7 +7473,7 @@ loc_13DFA:                              ; CODE XREF: quit+1B↑j
                 mov     al, player._disableSave
                 or      al, al
                 jz      short loc_13E17
-                call    write_string
+                call    write_string    ; ONLY ON EARTH!
 ; ---------------------------------------------------------------------------
                 db 8Dh,'ONLY ON EARTH!',0
 ; ---------------------------------------------------------------------------
@@ -7484,7 +7484,7 @@ loc_13E17:                              ; CODE XREF: quit+38↑j
                 mov     al, _playerTileId
                 cmp     al, 78h ; 'x'
                 jnb     short loc_13E33
-                call    write_string
+                call    write_string    ; ONLY ON FOOT!
 ; ---------------------------------------------------------------------------
                 db 8Dh,'ONLY ON FOOT!',0
 ; ---------------------------------------------------------------------------
@@ -7492,7 +7492,7 @@ loc_13E17:                              ; CODE XREF: quit+38↑j
 ; ---------------------------------------------------------------------------
 
 loc_13E33:                              ; CODE XREF: quit+55↑j
-                call    write_string
+                call    write_string    ; ONE MOMENT PLEASE!
 quit            endp
 
 ; ---------------------------------------------------------------------------
@@ -7508,7 +7508,7 @@ quit            endp
 ; Attributes: noreturn
 
 ready           proc near               ; DATA XREF: CODE:command_jump_table↑o
-                call    write_string
+                call    write_string    ; READY WEAPON:1-DA, 2-MA, 3-AX, 4-BO,5-SW, 6-GR, 7-LI, 8-PH.9-QU, WHICH?
 ; ---------------------------------------------------------------------------
 aReadyWeapon1Da db 'READY WEAPON:',0Dh,'1-DA, 2-MA, 3-AX, 4-BO,',0Dh,'5-SW, 6-GR, 7-L'
                 db 'I, 8-PH.',0Dh,'9-QU, WHICH? ',0
@@ -7527,7 +7527,7 @@ aReadyWeapon1Da db 'READY WEAPON:',0Dh,'1-DA, 2-MA, 3-AX, 4-BO,',0Dh,'5-SW, 6-GR
                 mov     al, byte_1742F
                 or      al, al
                 jz      short loc_13ED4
-                call    write_string
+                call    write_string    ;  NOT OWNED!
 ; ---------------------------------------------------------------------------
 aNotOwned_0     db ' NOT OWNED!',0
 ; ---------------------------------------------------------------------------
@@ -7552,7 +7552,7 @@ loc_13F0E:                              ; CODE XREF: ready+93↑j
 ; ---------------------------------------------------------------------------
 
 loc_13F11:                              ; CODE XREF: ready+91↑j
-                call    write_string
+                call    write_string    ;  READY.
 ; ---------------------------------------------------------------------------
 aReady_0        db ' READY.',0
 ; ---------------------------------------------------------------------------
@@ -7567,7 +7567,7 @@ ready           endp
 ; Attributes: noreturn
 
 steal           proc near               ; DATA XREF: CODE:command_jump_table↑o
-                call    write_string
+                call    write_string    ; STEAL DIRECT-
 ; ---------------------------------------------------------------------------
 aStealDirect    db 'STEAL DIRECT-',0
 ; ---------------------------------------------------------------------------
@@ -7607,7 +7607,7 @@ loc_13F5D:                              ; CODE XREF: steal+32↑j
 
 loc_13F7E:                              ; CODE XREF: steal+36↑j
                                         ; steal+54↑j ...
-                call    write_string
+                call    write_string    ; NO LUCK!
 ; ---------------------------------------------------------------------------
 aNoLuck         db 'NO LUCK!',0
 ; ---------------------------------------------------------------------------
@@ -7660,7 +7660,7 @@ loc_13FCE:                              ; CODE XREF: steal+92↑j
                 cmp     al, 20h ; ' '
                 jb      short loc_13F7E
                 nop
-                call    write_string
+                call    write_string    ; STEAL FOOD!
 ; ---------------------------------------------------------------------------
 aStealFood      db 'STEAL FOOD!',0
 ; ---------------------------------------------------------------------------
@@ -7674,7 +7674,7 @@ aStealFood      db 'STEAL FOOD!',0
 
 loc_13FF9:                              ; CODE XREF: steal+A4↑j
                 nop
-                call    write_string
+                call    write_string    ; STEAL ARMOUR!
 ; ---------------------------------------------------------------------------
 aStealArmour    db 'STEAL ARMOUR!',0
 ; ---------------------------------------------------------------------------
@@ -7693,7 +7693,7 @@ aStealArmour    db 'STEAL ARMOUR!',0
 
 loc_14024:                              ; CODE XREF: steal+A6↑j
                 nop
-                call    write_string
+                call    write_string    ; STEAL WEAPONS!
 ; ---------------------------------------------------------------------------
 aStealWeapons   db 'STEAL WEAPONS!',0
 ; ---------------------------------------------------------------------------
@@ -7731,7 +7731,7 @@ transact        proc near               ; DATA XREF: CODE:command_jump_table↑o
 ; FUNCTION CHUNK AT 1E4F SIZE 00000004 BYTES
 ; FUNCTION CHUNK AT 1F75 SIZE 00000004 BYTES
 
-                call    write_string
+                call    write_string    ; TRANSACT-
 ; ---------------------------------------------------------------------------
 aTransact       db 'TRANSACT-',0
 ; ---------------------------------------------------------------------------
@@ -7770,7 +7770,7 @@ loc_14085:                              ; CODE XREF: transact+2F↑j
 
 loc_140A6:                              ; CODE XREF: transact+23↑j
                                         ; transact+33↑j ...
-                call    write_string
+                call    write_string    ; FUNNY, NO RESPONSE!
 ; ---------------------------------------------------------------------------
 aFunnyNoRespons db 'FUNNY, NO RESPONSE!',0
 ; ---------------------------------------------------------------------------
@@ -7797,7 +7797,7 @@ loc_140D7:                              ; CODE XREF: transact+82↑j
                 mov     al, _monsterType[di]
                 cmp     al, 60h ; '`'
                 jnz     short loc_14104
-                call    write_string
+                call    write_string    ; A GUARD SAYS:PAY YOUR TAXES!
 ; ---------------------------------------------------------------------------
 aAGuardSaysPayY db 'A GUARD SAYS:',0Dh,'PAY YOUR TAXES!',0
 ; ---------------------------------------------------------------------------
@@ -7807,7 +7807,7 @@ aAGuardSaysPayY db 'A GUARD SAYS:',0Dh,'PAY YOUR TAXES!',0
 loc_14104:                              ; CODE XREF: transact+8E↑j
                 cmp     al, 64h ; 'd'
                 jnz     short loc_14128
-                call    write_string
+                call    write_string    ; A JESTER SINGS:HO HO HO!
 ; ---------------------------------------------------------------------------
 aAJesterSingsHo db 'A JESTER SINGS:',0Dh,'HO HO HO!',0
 ; ---------------------------------------------------------------------------
@@ -7817,7 +7817,7 @@ aAJesterSingsHo db 'A JESTER SINGS:',0Dh,'HO HO HO!',0
 loc_14128:                              ; CODE XREF: transact+B6↑j
                 cmp     al, 68h ; 'h'
                 jnz     short loc_1415B
-                call    write_string
+                call    write_string    ; A MERCHANT SAYS:WILL YOU BUY MY APPLES?
 ; ---------------------------------------------------------------------------
 aAMerchantSaysW db 'A MERCHANT SAYS:',0Dh,'WILL YOU BUY MY APPLES?',0
 ; ---------------------------------------------------------------------------
@@ -7827,7 +7827,7 @@ aAMerchantSaysW db 'A MERCHANT SAYS:',0Dh,'WILL YOU BUY MY APPLES?',0
 loc_1415B:                              ; CODE XREF: transact+DA↑j
                 cmp     al, 0F0h
                 jnz     short loc_14184
-                call    write_string
+                call    write_string    ; A FIGHTER SAYS:UGH, ME TOUGH!
 ; ---------------------------------------------------------------------------
 aAFighterSaysUg db 'A FIGHTER SAYS:',0Dh,'UGH, ME TOUGH!',0
 ; ---------------------------------------------------------------------------
@@ -7837,7 +7837,7 @@ aAFighterSaysUg db 'A FIGHTER SAYS:',0Dh,'UGH, ME TOUGH!',0
 loc_14184:                              ; CODE XREF: transact+10D↑j
                 cmp     al, 0F4h
                 jnz     short loc_141A6
-                call    write_string
+                call    write_string    ; A CLERIC SAYS:BELIEVE!
 ; ---------------------------------------------------------------------------
 aAClericSaysBel db 'A CLERIC SAYS:',0Dh,'BELIEVE!',0
 ; ---------------------------------------------------------------------------
@@ -7847,7 +7847,7 @@ aAClericSaysBel db 'A CLERIC SAYS:',0Dh,'BELIEVE!',0
 loc_141A6:                              ; CODE XREF: transact+136↑j
                 cmp     al, 0F8h
                 jnz     short loc_141D5
-                call    write_string
+                call    write_string    ; A WIZARD SAYS:HEX-E-POO-HEX-ON-YOU!
 ; ---------------------------------------------------------------------------
 aAWizardSaysHex db 'A WIZARD SAYS:',0Dh,'HEX-E-POO-HEX-ON-YOU!',0
 ; ---------------------------------------------------------------------------
@@ -7857,7 +7857,7 @@ aAWizardSaysHex db 'A WIZARD SAYS:',0Dh,'HEX-E-POO-HEX-ON-YOU!',0
 loc_141D5:                              ; CODE XREF: transact+158↑j
                 cmp     al, 0FCh
                 jnz     short loc_14206
-                call    write_string
+                call    write_string    ; A THIEF SAYS:PSST, WANNA BUY A WATCH?
 ; ---------------------------------------------------------------------------
 aAThiefSaysPsst db 'A THIEF SAYS:',0Dh,'PSST, WANNA BUY A WATCH?',0
 ; ---------------------------------------------------------------------------
@@ -7908,12 +7908,12 @@ loc_14246:                              ; CODE XREF: transact+1E0↑j
 
 loc_14249:                              ; CODE XREF: transact+84↑j
                 nop
-                call    write_string
+                call    write_string    ; WELCOME MY CHILD
 ; ---------------------------------------------------------------------------
 aWelcomeMyChild db 'WELCOME MY CHILD ',0
 ; ---------------------------------------------------------------------------
                 call    write_player_name
-                call    write_string
+                call    write_string    ; FIRST MY 50 G.P. TRIBUTE!
 ; ---------------------------------------------------------------------------
                 db 8Dh,'FIRST MY 50 G.P. TRIBUTE!',8Dh,0
 ; ---------------------------------------------------------------------------
@@ -7969,7 +7969,7 @@ transact        endp
 ; Attributes: noreturn
 
 unlock          proc near               ; DATA XREF: CODE:command_jump_table↑o
-                call    write_string
+                call    write_string    ; UNLOCK DIRECTION-
 ; ---------------------------------------------------------------------------
 aUnlockDirectio db 'UNLOCK DIRECTION-',0
 ; ---------------------------------------------------------------------------
@@ -7979,7 +7979,7 @@ aUnlockDirectio db 'UNLOCK DIRECTION-',0
                 jnz     short loc_14326
 
 loc_14310:                              ; CODE XREF: unlock+4B↓j
-                call    write_string
+                call    write_string    ; NO DOOR THERE!
 ; ---------------------------------------------------------------------------
                 db 8Dh,'NO DOOR THERE!',0
 ; ---------------------------------------------------------------------------
@@ -7999,7 +7999,7 @@ loc_14326:                              ; CODE XREF: unlock+1D↑j
                 mov     al, player._keys
                 or      al, al
                 jnz     short loc_1435E
-                call    write_string
+                call    write_string    ; NO KEYS THAT FIT!
 ; ---------------------------------------------------------------------------
                 db 8Dh,'NO KEYS THAT FIT!',0
 ; ---------------------------------------------------------------------------
@@ -8035,7 +8035,7 @@ view            proc near               ; DATA XREF: CODE:command_jump_table↑o
                 jnz     short loc_14396
 
 loc_14385:                              ; CODE XREF: view+1D↓j
-                call    write_string
+                call    write_string    ; VIEW WHAT?
 ; ---------------------------------------------------------------------------
 aViewWhat       db 'VIEW WHAT?',0
 ; ---------------------------------------------------------------------------
@@ -8046,7 +8046,7 @@ loc_14396:                              ; CODE XREF: view+5↑j
                 mov     al, player._mapNum2
                 cmp     al, 4
                 jnb     short loc_14385
-                call    write_string
+                call    write_string    ; VIEW
 ; ---------------------------------------------------------------------------
 aView           db 'VIEW',8Dh,'WITH MAGICAL HELM!',0
 ; ---------------------------------------------------------------------------
@@ -8087,7 +8087,7 @@ view            endp
 ; Attributes: noreturn
 
 wear_armor      proc near               ; DATA XREF: CODE:command_jump_table↑o
-                call    write_string
+                call    write_string    ; WEAR ARMOUR:1-CLOTH, 2-LEATHER, 3-CHAIN,4-PLATE, 5-REFLECT, 6-POWER,WHICH?
 ; ---------------------------------------------------------------------------
 aWearArmour1Clo db 'WEAR ARMOUR:',0Dh,'1-CLOTH, 2-LEATHER, 3-CHAIN,',0Dh,'4-PLATE, 5-'
                 db 'REFLECT, 6-POWER,',0Dh,'WHICH? ',0
@@ -8113,7 +8113,7 @@ loc_14454:                              ; CODE XREF: wear_armor+5A↑j
                 mov     al, byte_1742F
                 or      al, al
                 jz      short loc_14484
-                call    write_string
+                call    write_string    ;  NOT OWNED!
 ; ---------------------------------------------------------------------------
 aNotOwned       db ' NOT OWNED!',0
 ; ---------------------------------------------------------------------------
@@ -8128,7 +8128,7 @@ loc_14484:                              ; CODE XREF: wear_armor+76↑j
                 add     al, al
                 cmp     al, player._strength
                 jb      short loc_144C0
-                call    write_string
+                call    write_string    ;  <-THOU ART NOTSTRONG ENOUGH TO WEAR!
 ; ---------------------------------------------------------------------------
 aThouArtNotStro db ' <-THOU ART NOT',0Dh,'STRONG ENOUGH TO WEAR!',0
 ; ---------------------------------------------------------------------------
@@ -8136,7 +8136,7 @@ aThouArtNotStro db ' <-THOU ART NOT',0Dh,'STRONG ENOUGH TO WEAR!',0
 ; ---------------------------------------------------------------------------
 
 loc_144C0:                              ; CODE XREF: wear_armor+9E↑j
-                call    write_string
+                call    write_string    ;  READY.
 ; ---------------------------------------------------------------------------
 aReady          db ' READY.',0
 ; ---------------------------------------------------------------------------
@@ -8151,14 +8151,14 @@ wear_armor      endp
 ; Attributes: noreturn
 
 x_it            proc near               ; DATA XREF: CODE:command_jump_table↑o
-                call    write_string
+                call    write_string    ; X-IT
 ; ---------------------------------------------------------------------------
 aXIt            db 'X-IT',0
 ; ---------------------------------------------------------------------------
                 mov     al, _playerTileId
                 cmp     al, 78h ; 'x'
                 jb      short loc_144F0
-                call    write_string
+                call    write_string    ;  WHAT?
 ; ---------------------------------------------------------------------------
 aWhat_0         db ' WHAT?',0
 ; ---------------------------------------------------------------------------
@@ -8182,7 +8182,7 @@ loc_144F0:                              ; CODE XREF: x_it+D↑j
                 jz      short loc_14523
 
 loc_14512:                              ; CODE XREF: x_it+35↑j
-                call    write_string
+                call    write_string    ; -NOT HERE!
 ; ---------------------------------------------------------------------------
 aNotHere        db '-NOT HERE!',0
 ; ---------------------------------------------------------------------------
@@ -8212,7 +8212,7 @@ x_it            endp
 ; Attributes: noreturn
 
 yell            proc near               ; DATA XREF: CODE:command_jump_table↑o
-                call    write_string
+                call    write_string    ; YELL WHAT?
 ; ---------------------------------------------------------------------------
 aYellWhat       db 'YELL WHAT?',8Dh,0
 ; ---------------------------------------------------------------------------
@@ -8245,7 +8245,7 @@ zstats          proc near               ; DATA XREF: CODE:command_jump_table↑o
                 mov     text_width?, 26h ; '&'
                 call    set_cursor_position
                 call    write_player_name
-                call    write_string
+                call    write_string    ; A LEVEL
 ; ---------------------------------------------------------------------------
                 db 8Dh,'A LEVEL ',0
 ; ---------------------------------------------------------------------------
@@ -8271,7 +8271,7 @@ zstats          proc near               ; DATA XREF: CODE:command_jump_table↑o
                 call    print_char
                 mov     al, 0Dh
                 call    print_char
-                call    write_string
+                call    write_string    ;   WEAPON-
 ; ---------------------------------------------------------------------------
 aWeapon         db '  WEAPON-',0
 ; ---------------------------------------------------------------------------
@@ -8286,7 +8286,7 @@ aWeapon         db '  WEAPON-',0
                 mov     bl, 3
                 mov     si, bx          ; y
                 call    set_text_pos
-                call    write_string
+                call    write_string    ; TORCHES-
 ; ---------------------------------------------------------------------------
 aTorches        db 'TORCHES-',0
 ; ---------------------------------------------------------------------------
@@ -8299,7 +8299,7 @@ aTorches        db 'TORCHES-',0
                 mov     bl, 4
                 mov     si, bx          ; y
                 call    set_text_pos
-                call    write_string
+                call    write_string    ;   ARMOUR-
 ; ---------------------------------------------------------------------------
 aArmour         db '  ARMOUR-',0
 ; ---------------------------------------------------------------------------
@@ -8314,7 +8314,7 @@ aArmour         db '  ARMOUR-',0
                 mov     bl, 4
                 mov     si, bx          ; y
                 call    set_text_pos
-                call    write_string
+                call    write_string    ; KEYS-
 ; ---------------------------------------------------------------------------
 aKeys           db 'KEYS-',0
 ; ---------------------------------------------------------------------------
@@ -8327,7 +8327,7 @@ aKeys           db 'KEYS-',0
                 mov     bl, 5
                 mov     si, bx          ; y
                 call    set_text_pos
-                call    write_string
+                call    write_string    ; SPELL-
 ; ---------------------------------------------------------------------------
 aSpell          db 'SPELL-',0
 ; ---------------------------------------------------------------------------
@@ -8342,7 +8342,7 @@ aSpell          db 'SPELL-',0
                 mov     bl, 5
                 mov     si, bx          ; y
                 call    set_text_pos
-                call    write_string
+                call    write_string    ; TOOLS-
 ; ---------------------------------------------------------------------------
 aTools          db 'TOOLS-',0
 ; ---------------------------------------------------------------------------
@@ -8433,7 +8433,7 @@ aTools          db 'TOOLS-',0
                 mov     bl, 9
                 mov     si, bx          ; y
                 call    set_text_pos
-                call    write_string
+                call    write_string    ; WEAPONS:
 ; ---------------------------------------------------------------------------
 aWeapons        db 'WEAPONS: ',0
 ; ---------------------------------------------------------------------------
@@ -8451,7 +8451,7 @@ loc_1475B:                              ; CODE XREF: zstats+229↓j
                 clc
                 adc     al, 13h
                 call    print_indexed_menu_string
-                call    write_string
+                call    write_string    ; S-
 ; ---------------------------------------------------------------------------
 aS              db 'S-',0
 ; ---------------------------------------------------------------------------
@@ -8475,7 +8475,7 @@ loc_1478B:                              ; CODE XREF: zstats+1F9↑j
                 mov     bl, 0Ch
                 mov     si, bx          ; y
                 call    set_text_pos
-                call    write_string
+                call    write_string    ; ARMOUR:
 ; ---------------------------------------------------------------------------
 aArmour_0       db 'ARMOUR: ',0
 ; ---------------------------------------------------------------------------
@@ -8493,7 +8493,7 @@ loc_147B4:                              ; CODE XREF: zstats+281↓j
                 clc
                 adc     al, 1Dh
                 call    print_indexed_menu_string
-                call    write_string
+                call    write_string    ; -
 ; ---------------------------------------------------------------------------
                 db '-',0
 ; ---------------------------------------------------------------------------
@@ -8517,7 +8517,7 @@ loc_147E3:                              ; CODE XREF: zstats+252↑j
                 mov     bl, 0Eh
                 mov     si, bx          ; y
                 call    set_text_pos
-                call    write_string
+                call    write_string    ; SPELLS:
 ; ---------------------------------------------------------------------------
 aSpells         db 'SPELLS: ',0
 ; ---------------------------------------------------------------------------
@@ -8535,7 +8535,7 @@ loc_1480C:                              ; CODE XREF: zstats+2DA↓j
                 clc
                 adc     al, 24h ; '$'
                 call    print_indexed_menu_string
-                call    write_string
+                call    write_string    ; S-
 ; ---------------------------------------------------------------------------
 aS_0            db 'S-',0
 ; ---------------------------------------------------------------------------
@@ -8559,7 +8559,7 @@ loc_1483C:                              ; CODE XREF: zstats+2AA↑j
                 mov     bl, 12h
                 mov     si, bx          ; y
                 call    set_text_pos
-                call    write_string
+                call    write_string    ; ITEMS:
 ; ---------------------------------------------------------------------------
 aItems          db 'ITEMS: ',0
 ; ---------------------------------------------------------------------------
@@ -8579,13 +8579,13 @@ loc_14864:                              ; CODE XREF: zstats+33D↓j
                 call    print_indexed_menu_string
                 cmp     byte_1742F, 3
                 jz      short loc_14886
-                call    write_string
+                call    write_string    ; S
 ; ---------------------------------------------------------------------------
 aS_1            db 'S',0
 ; ---------------------------------------------------------------------------
 
 loc_14886:                              ; CODE XREF: zstats+317↑j
-                call    write_string
+                call    write_string    ; -
 ; ---------------------------------------------------------------------------
                 db '-',0
 ; ---------------------------------------------------------------------------
@@ -9434,14 +9434,14 @@ write_player_sex proc near              ; CODE XREF: zstats+33↑p
                 mov     al, player._sex
                 cmp     al, 4Dh ; 'M'
                 jnz     short loc_1506F
-                call    write_string
+                call    write_string    ; MALE
 ; ---------------------------------------------------------------------------
 aMale_0         db 'MALE',0
                 db 0C3h
 ; ---------------------------------------------------------------------------
 
 loc_1506F:                              ; CODE XREF: write_player_sex+5↑j
-                call    write_string
+                call    write_string    ; FEMALE
 ; ---------------------------------------------------------------------------
 aFemale_0       db 'FEMALE',0
 ; ---------------------------------------------------------------------------
@@ -10145,7 +10145,7 @@ loc_1544F:                              ; CODE XREF: CODE:5444↑j
                 mov     bl, 0Eh
                 mov     di, bx
                 call    set_text_pos
-                call    write_string
+                call    write_string    ; NOT A BLANK
 ; ---------------------------------------------------------------------------
 aNotABlank      db 'NOT A BLANK',0
 ; ---------------------------------------------------------------------------
@@ -10156,7 +10156,7 @@ aNotABlank      db 'NOT A BLANK',0
                 mov     bl, 0Eh
                 mov     di, bx
                 call    set_text_pos
-                call    write_string
+                call    write_string    ; PLAYER DISK
 ; ---------------------------------------------------------------------------
 aPlayerDisk     db 'PLAYER DISK',0
 ; ---------------------------------------------------------------------------
@@ -10167,12 +10167,13 @@ aPlayerDisk     db 'PLAYER DISK',0
 loc_15498:                              ; CODE XREF: CODE:5454↑j
                                         ; CODE:59D5↓j ...
                 call    set_cga_mode
-                call    write_string
+                call    write_string    ;           PLAYER GENERATION :
 ; END OF FUNCTION CHUNK FOR update_points_remaining
 ; ---------------------------------------------------------------------------
 aPlayerGenerati db '          PLAYER GENERATION :',0
 ; ---------------------------------------------------------------------------
-                call    write_string
+                call    write_string    ; 
+                                        ;      POINTS LEFT TO DISTRIBUTE :
 ; ---------------------------------------------------------------------------
 aPointsLeftToDi db 0Dh,0Ah
                 db '     POINTS LEFT TO DISTRIBUTE : ',0
@@ -10182,7 +10183,11 @@ aPointsLeftToDi db 0Dh,0Ah
                 mov     points_to_distrubte, al
                 call    write_number
                 call    set_normal_text_color
-                call    write_string
+                call    write_string    ; 
+                                        ;            STRENGTH.......           AGILITY........           STAMINA........           CHARISMA.......           WISDOM.........           INTELLIGENCE...
+                                        ;                 M/F-               RACE-               TYPE-               NAME-
+                                        ;           SATISFACTORY (Y/N)-
+                                        ;         RACES:         TYPES:         1-HUMAN        1-FIGHTER         2-ELF          2-CLERIC         3-DWARF        3-WIZARD         4-HOBBIT       4-THIEF
 ; ---------------------------------------------------------------------------
 aStrengthAgilit db 0Dh,0Ah
                 db '           STRENGTH.......',0Dh,'           AGILITY........',0Dh,' '
@@ -10268,7 +10273,7 @@ loc_1574E:                              ; CODE XREF: CODE:5783↓j
                 mov     player._sex, al
                 cmp     al, 'M'
                 jnz     short loc_15781
-                call    write_string
+                call    write_string    ; MALE
 ; ---------------------------------------------------------------------------
 aMale           db 'MALE',0
 ; ---------------------------------------------------------------------------
@@ -10293,7 +10298,7 @@ aMale           db 'MALE',0
 loc_15781:                              ; CODE XREF: CODE:5756↑j
                 cmp     al, 'F'
                 jnz     short loc_1574E
-                call    write_string
+                call    write_string    ; FEMALE
 ; ---------------------------------------------------------------------------
 aFemale         db 'FEMALE',0
 ; ---------------------------------------------------------------------------
@@ -10324,7 +10329,7 @@ loc_157AD:                              ; CODE XREF: CODE:577E↑j
                 mov     player._race, al
                 cmp     al, '1'
                 jnz     short loc_157F0
-                call    write_string
+                call    write_string    ; HUMAN
 ; ---------------------------------------------------------------------------
 aHuman          db 'HUMAN',0
 ; ---------------------------------------------------------------------------
@@ -10347,7 +10352,7 @@ aHuman          db 'HUMAN',0
 loc_157F0:                              ; CODE XREF: CODE:57C4↑j
                 cmp     al, '2'
                 jnz     short loc_1581C
-                call    write_string
+                call    write_string    ; ELF
 ; ---------------------------------------------------------------------------
 aElf            db 'ELF',0
 ; ---------------------------------------------------------------------------
@@ -10372,7 +10377,7 @@ aElf            db 'ELF',0
 loc_1581C:                              ; CODE XREF: CODE:57F2↑j
                 cmp     al, '3'
                 jnz     short loc_1584A
-                call    write_string
+                call    write_string    ; DWARF
 ; ---------------------------------------------------------------------------
 aDwarf          db 'DWARF',0
 ; ---------------------------------------------------------------------------
@@ -10401,7 +10406,7 @@ loc_1584A:                              ; CODE XREF: CODE:581E↑j
 ; ---------------------------------------------------------------------------
 
 loc_15851:                              ; CODE XREF: CODE:584C↑j
-                call    write_string
+                call    write_string    ; HOBBIT
 ; ---------------------------------------------------------------------------
 aHobbit         db 'HOBBIT',0
 ; ---------------------------------------------------------------------------
@@ -10436,7 +10441,7 @@ loc_15879:                              ; CODE XREF: CODE:57ED↑j
                 mov     player._class, al
                 cmp     al, '1'
                 jnz     short loc_158C7
-                call    write_string
+                call    write_string    ; FIGHTER
 ; ---------------------------------------------------------------------------
 aFighter        db 'FIGHTER',0
 ; ---------------------------------------------------------------------------
@@ -10459,7 +10464,7 @@ aFighter        db 'FIGHTER',0
 loc_158C7:                              ; CODE XREF: CODE:5899↑j
                 cmp     al, '2'
                 jnz     short loc_158F6
-                call    write_string
+                call    write_string    ; CLERIC
 ; ---------------------------------------------------------------------------
 aCleric         db 'CLERIC',0
 ; ---------------------------------------------------------------------------
@@ -10484,7 +10489,7 @@ aCleric         db 'CLERIC',0
 loc_158F6:                              ; CODE XREF: CODE:58C9↑j
                 cmp     al, '3'
                 jnz     short loc_15925
-                call    write_string
+                call    write_string    ; WIZARD
 ; ---------------------------------------------------------------------------
 aWizard         db 'WIZARD',0
 ; ---------------------------------------------------------------------------
@@ -10513,7 +10518,7 @@ loc_15925:                              ; CODE XREF: CODE:58F8↑j
 ; ---------------------------------------------------------------------------
 
 loc_1592C:                              ; CODE XREF: CODE:5927↑j
-                call    write_string
+                call    write_string    ; THIEF
 ; ---------------------------------------------------------------------------
 aThief          db 'THIEF',0
 ; ---------------------------------------------------------------------------
@@ -10546,7 +10551,7 @@ loc_1595C:                              ; CODE XREF: CODE:59A7↓j
                 mov     bl, 20
                 mov     di, bx
                 call    set_text_pos
-                call    write_string
+                call    write_string    ;
 ; ---------------------------------------------------------------------------
                 db '               ',0
 ; ---------------------------------------------------------------------------
@@ -10641,7 +10646,7 @@ aToPlayUltima   db 'TO PLAY ULTIMA ][',0
                 mov     bl, 9
                 mov     di, bx
                 call    set_text_pos
-                call    write_string
+                call    write_string    ; INSERT PROGRAM MASTER
 ; ---------------------------------------------------------------------------
 aInsertProgramM db 'INSERT PROGRAM MASTER',0
 ; ---------------------------------------------------------------------------
@@ -10691,7 +10696,7 @@ update_points_remaining proc near       ; CODE XREF: CODE:56C4↑p
 
 loc_15A96:                              ; CODE XREF: update_points_remaining+5↑j
                                         ; update_points_remaining+F↑j
-                call    write_string
+                call    write_string    ; 
 ; ---------------------------------------------------------------------------
                 db 7,7,7,0
 ; ---------------------------------------------------------------------------
@@ -12993,7 +12998,7 @@ setup_rocket_launch_display proc near   ; CODE XREF: launch+AE↑p
                 mov     bl, 14h
                 mov     si, bx          ; y
                 call    set_text_pos
-                call    write_string
+                call    write_string    ;   FUEL=
 setup_rocket_launch_display endp
 
 ; ---------------------------------------------------------------------------
@@ -13006,7 +13011,7 @@ aFuel           db '  FUEL=',0
                 mov     bl, 15h
                 mov     si, bx
                 call    set_text_pos
-                call    write_string
+                call    write_string    ;   XENO=
 ; ---------------------------------------------------------------------------
 aXeno           db '  XENO=',0
 ; ---------------------------------------------------------------------------
@@ -13017,7 +13022,7 @@ aXeno           db '  XENO=',0
                 mov     bl, 16h
                 mov     si, bx
                 call    set_text_pos
-                call    write_string
+                call    write_string    ;   YAKO=
 ; ---------------------------------------------------------------------------
 aYako           db '  YAKO=',0
 ; ---------------------------------------------------------------------------
@@ -13028,7 +13033,7 @@ aYako           db '  YAKO=',0
                 mov     bl, 17h
                 mov     si, bx
                 call    set_text_pos
-                call    write_string
+                call    write_string    ;   ZABO=
 ; ---------------------------------------------------------------------------
 aZabo           db '  ZABO=',0
 ; ---------------------------------------------------------------------------
@@ -13040,7 +13045,7 @@ aZabo           db '  ZABO=',0
                 mov     al, player._readiedArmor
                 cmp     al, 5
                 jnb     short space_travel_command_loop
-                call    write_string
+                call    write_string    ; YOU HAVE EXPLODED!
 ; ---------------------------------------------------------------------------
                 db 8Dh,'YOU HAVE EXPLODED!',8Dh,8Dh,0
 ; ---------------------------------------------------------------------------
@@ -13064,7 +13069,7 @@ space_travel_command_loop proc near     ; CODE XREF: CODE:6A59↑j
 
                 nop
                 call    draw_hyperwarp_hud
-                call    write_string
+                call    write_string    ; CMD:
 ; ---------------------------------------------------------------------------
 aCmd_3          db 'CMD: ',0
 ; ---------------------------------------------------------------------------
@@ -13674,25 +13679,25 @@ loc_16EDC:                              ; CODE XREF: hyperwarp+CD↑j
                 mov     byte_1788B, al
                 mov     al, 40h ; '@'
                 mov     byte_1788C, al
-                call    write_string
+                call    write_string    ; HYPERWARP TO:
 ; ---------------------------------------------------------------------------
 aHyperwarpTo    db 'HYPERWARP TO:',8Dh,'XENO=',0
 ; ---------------------------------------------------------------------------
                 call    read_animated_digit_keypress
                 mov     byte_178DA, al
-                call    write_string
+                call    write_string    ;  YAKO=
 ; ---------------------------------------------------------------------------
 aYako_0         db ' YAKO=',0
 ; ---------------------------------------------------------------------------
                 call    read_animated_digit_keypress
                 mov     byte_178DB, al
-                call    write_string
+                call    write_string    ;  ZABO=
 ; ---------------------------------------------------------------------------
 aZabo_0         db ' ZABO=',0
 ; ---------------------------------------------------------------------------
                 call    read_animated_digit_keypress
                 mov     byte_178DC, al
-                call    write_string
+                call    write_string    ; PREPARE FOR HYPERWARP!
 ; ---------------------------------------------------------------------------
                 db 8Dh,'PREPARE FOR HYPERWARP!',8Dh,0
 ; ---------------------------------------------------------------------------
@@ -13832,7 +13837,7 @@ check_hyperwarp_sun_collision proc near ; CODE XREF: hyperwarp+C4↑p
                 mov     al, byte_178DC
                 cmp     al, 4
                 jnz     short loc_17063
-                call    write_string
+                call    write_string    ; YOU HIT THE SUN!
 ; ---------------------------------------------------------------------------
                 db 8Dh,8Dh,'YOU HIT THE SUN!',8Dh,0
 ; ---------------------------------------------------------------------------
@@ -13876,7 +13881,7 @@ loc_170A9:                              ; CODE XREF: check_hyperwarp_sun_collisi
 loc_170B1:                              ; CODE XREF: check_hyperwarp_sun_collision+59↑j
                 mov     ax, di
                 mov     player._disableSave, al
-                call    write_string
+                call    write_string    ; YOU ARE ORBITING
 ; ---------------------------------------------------------------------------
 aYouAreOrbiting db 'YOU ARE ORBITING ',0
 ; ---------------------------------------------------------------------------
@@ -14196,7 +14201,7 @@ minax_death_sequence proc near          ; CODE XREF: attack+13E↑p
 
                 nop
                 mov     text_width?, 28h ; '('
-                call    write_string
+                call    write_string    ;      MINAX IS DEAD!!ALL HER WORKS SHALL DIE!
 minax_death_sequence endp
 
 ; ---------------------------------------------------------------------------
@@ -14229,7 +14234,7 @@ loc_172E7:                              ; CODE XREF: minax_death_sequence+66↓j
                 call    delayFrames
                 dec     byte_1742F
                 jnz     short loc_172DF
-                call    write_string
+                call    write_string    ; YOU FEEL A STRANGE FORCE!
 ; END OF FUNCTION CHUNK FOR minax_death_sequence
 ; ---------------------------------------------------------------------------
                 db 8Dh,'YOU FEEL A STRANGE FORCE!',0
@@ -14254,193 +14259,49 @@ loc_17335:                              ; CODE XREF: minax_death_sequence+77↑j
 
 loc_1734C:                              ; CODE XREF: CODE:7341↑j
                 call    play_bump_sound
-                call    write_string
+                call    write_string    ; YOU HAVE SAVED THE UNIVERSE,AND COMPLETED ULTIMA ][! SEEKNOW TO CONQUER WICKED EXODUS,
 ; ---------------------------------------------------------------------------
-                db  8Dh
-                db  8Dh
-                db  59h ; Y
-                db  4Fh ; O
-                db  55h ; U
-                db  20h
-                db  48h ; H
-                db  41h ; A
-                db  56h ; V
-                db  45h ; E
-                db  20h
-                db  53h ; S
-                db  41h ; A
-                db  56h ; V
-                db  45h ; E
-                db  44h ; D
-                db  20h
-                db  54h ; T
-                db  48h ; H
-                db  45h ; E
-                db  20h
-                db  55h ; U
-                db  4Eh ; N
-                db  49h ; I
-                db  56h ; V
-                db  45h ; E
-                db  52h ; R
-                db  53h ; S
-                db  45h ; E
-                db  2Ch ; ,
-                db  8Dh
-                db  41h ; A
-                db  4Eh ; N
-                db  44h ; D
-                db  20h
-                db  43h ; C
-                db  4Fh ; O
-                db  4Dh ; M
-                db  50h ; P
-                db  4Ch ; L
-                db  45h ; E
-                db  54h ; T
-                db  45h ; E
-                db  44h ; D
-                db  20h
-                db  55h ; U
-                db  4Ch ; L
-                db  54h ; T
-                db  49h ; I
-                db  4Dh ; M
-                db  41h ; A
-                db  20h
-                db  5Dh ; ]
-                db  5Bh ; [
-                db  21h ; !
-                db  20h
-                db  53h ; S
-                db  45h ; E
-                db  45h ; E
-                db  4Bh ; K
-                db  8Dh
-                db  4Eh ; N
-                db  4Fh ; O
-                db  57h ; W
-                db  20h
-                db  54h ; T
-                db  4Fh ; O
-                db  20h
-                db  43h ; C
-                db  4Fh ; O
-                db  4Eh ; N
-                db  51h ; Q
-                db  55h ; U
-                db  45h ; E
-                db  52h ; R
-                db  20h
-                db  57h ; W
-                db  49h ; I
-                db  43h ; C
-                db  4Bh ; K
-                db  45h ; E
-                db  44h ; D
-                db  20h
-                db  45h ; E
-                db  58h ; X
-                db  4Fh ; O
-                db  44h ; D
-                db  55h ; U
-                db  53h ; S
-                db  2Ch ; ,
-                db  8Dh
-                db    0
-                db 0E8h
-                db  2Eh ; .
-                db 0DCh
-                db  46h ; F
-                db  4Fh ; O
-                db  55h ; U
-                db  4Eh ; N
-                db  44h ; D
-                db  20h
-                db  49h ; I
-                db  4Eh ; N
-                db  20h
-                db  55h ; U
-                db  4Ch ; L
-                db  54h ; T
-                db  49h ; I
-                db  4Dh ; M
-                db  41h ; A
-                db  20h
-                db  5Dh ; ]
-                db  49h ; I
-                db  5Bh ; [
-                db  2Dh ; -
-                db  44h ; D
-                db  20h
-                db  5Dh ; ]
-                db  49h ; I
-                db  49h ; I
-                db  5Bh ; [
-                db  2Dh ; -
-                db  50h ; P
-                db  21h ; !
-                db    0
-                db 0B0h
-                db 0FFh
-                db 0A2h
-                db  12h
-                db    0
-                db 0B0h
-                db  28h ; (
-                db 0A2h
-                db  13h
-                db    0
-                db 0B0h
-                db    0
-                db 0A2h
-                db    0
-                db    0
-                db 0A2h
-                db    1
-                db    0
-                db 0F8h
-                db 0A0h
-                db    1
-                db    0
-                db  14h
-                db    1
-                db  24h ; $
-                db  3Fh ; ?
-                db 0A2h
-                db    1
-                db    0
-                db 0F8h
-                db 0D0h
-                db 0D8h
-                db  72h ; r
-                db  0Fh
-                db 0F8h
-                db 0D0h
-                db 0D8h
-                db  72h ; r
-                db  0Ah
-                db 0A0h
-                db    0
-                db    0
-                db  14h
-                db    1
-                db  24h ; $
-                db  3Fh ; ?
-                db 0A2h
-                db    0
-                db    0
-                db 0E8h
-                db 0AEh
-                db 0E6h
-                db 0BBh
-                db    6
-                db    0
-                db 0E8h
-                db    8
-                db  93h
-                db 0EBh
-                db 0D6h
+                db 8Dh,8Dh,'YOU HAVE SAVED THE UNIVERSE,',8Dh,'AND COMPLETED ULTIMA ]'
+                db '[! SEEK',8Dh,'NOW TO CONQUER WICKED EXODUS,',8Dh,0
+; ---------------------------------------------------------------------------
+
+loc_173AE:                              ; CODE XREF: CODE:734F↑j
+                call    write_string    ; FOUND IN ULTIMA ]I[-D ]II[-P!
+; ---------------------------------------------------------------------------
+aFoundInUltimaI db 'FOUND IN ULTIMA ]I[-D ]II[-P!',0
+; ---------------------------------------------------------------------------
+                mov     al, 0FFh
+                mov     _outsideMapTile, al
+                mov     al, 28h ; '('
+                mov     _playerTileId, al
+                mov     al, 0
+                mov     _mapX, al
+                mov     _mapY, al
+
+loc_173E1:                              ; CODE XREF: CODE:7409↓j
+                clc
+                mov     al, _mapY
+                adc     al, 1
+                and     al, 3Fh
+                mov     _mapY, al
+                clc
+                rcr     al, 1
+                jb      short loc_17400
+                clc
+                rcr     al, 1
+                jb      short loc_17400
+                mov     al, _mapX
+                adc     al, 1
+                and     al, 3Fh
+                mov     _mapX, al
+
+loc_17400:                              ; CODE XREF: CODE:73EF↑j
+                                        ; CODE:73F4↑j
+                call    draw_map
+                mov     bx, 6
+                call    delayFrames
+                jmp     short loc_173E1
+; ---------------------------------------------------------------------------
                 db    0
                 db    0
                 db    0
