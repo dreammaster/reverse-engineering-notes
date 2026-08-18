@@ -23,7 +23,7 @@ Savegame        struc ; (sizeof=0x100, mappedto_2)
                                         ; XREF: end_of_turn+2CA/w
                                         ; end_of_turn+2CE/r ...
 _name           db 13 dup(?)            ; XREF: play_game+46/r
-                                        ; view+2B/w ...
+                                        ; write_player_name:loc_1507D/r ...
                 db ? ; undefined
                 db ? ; undefined
                 db ? ; undefined
@@ -3504,17 +3504,18 @@ aNo_1           db 'NO!',0
 ; ---------------------------------------------------------------------------
 
 loc_11AB0:                              ; CODE XREF: sg01a2:1AA5↑j
-                call    write_string
+                call    write_string    ; YES
 ; ---------------------------------------------------------------------------
-aYes_1          db 'YES'
+aYes_1          db 'YES',8Dh,0
 ; ---------------------------------------------------------------------------
-                lea     ax, [bx+si]
+
+loc_11AB8:                              ; CODE XREF: sg01a2:loc_11AB0↑j
                 call    try_spend_gold
                 clc
                 mov     bh, 0
                 mov     bl, byte_1742F
                 mov     di, bx
-                mov     al, player._spellCharges[di]
+                mov     al, [di+0B6h]
                 adc     al, 5
                 daa
                 mov     [di+0B6h], al
@@ -6978,19 +6979,10 @@ aWhat_3         db ' WHAT?',0
 
 loc_136D8:                              ; CODE XREF: get+8E↑j
                 nop
-                call    write_string
+                call    write_string    ;  CHEST!
 ; ---------------------------------------------------------------------------
-aChest          db ' CHEST!'
+aChest          db ' CHEST!',8Dh,'IT CONTAINS ',0
 ; ---------------------------------------------------------------------------
-                lea     cx, [bx+di+54h]
-                and     [bp+di+4Fh], al
-                dec     si
-                push    sp
-                inc     cx
-                dec     cx
-                dec     si
-                push    bx
-                and     [bx+si], al
                 mov     al, _mapX
                 mov     _playerX, al
                 mov     al, _mapY
@@ -7777,6 +7769,9 @@ pass            endp
 ; Attributes: noreturn
 
 quit            proc near               ; DATA XREF: sg01a2:command_jump_table↑o
+
+; FUNCTION CHUNK AT 3E4A SIZE 00000006 BYTES
+
                 call    write_string
 ; ---------------------------------------------------------------------------
 aQuitOrSaveGame db 'QUIT OR SAVE GAME.',0
@@ -7818,32 +7813,12 @@ loc_13E33:                              ; CODE XREF: quit+55↑j
 quit            endp
 
 ; ---------------------------------------------------------------------------
-                db  8Dh
-                db  4Fh ; O
-                db  4Eh ; N
-                db  45h ; E
-                db  20h
-                db  4Dh ; M
-                db  4Fh ; O
-                db  4Dh ; M
-                db  45h ; E
-                db  4Eh ; N
-                db  54h ; T
-                db  20h
-                db  50h ; P
-                db  4Ch ; L
-                db  45h ; E
-                db  41h ; A
-                db  53h ; S
-                db  45h ; E
-                db  21h ; !
-                db    0
-                db 0E8h
-                db 0B0h
-                db 0E4h
-                db 0E9h
-                db 0E3h
-                db 0CBh
+                db 8Dh,'ONE MOMENT PLEASE!',0
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR quit
+                call    save_game
+                jmp     end_of_turn2
+; END OF FUNCTION CHUNK FOR quit
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -7884,25 +7859,12 @@ loc_13ED4:                              ; CODE XREF: ready+69↑j
                 add     al, al
                 cmp     al, player._agility
                 jb      short loc_13F11
-                call    write_string
+                call    write_string    ;  <-THOU ART NOT
 ; ---------------------------------------------------------------------------
-aThouArtNot     db ' <-THOU ART NOT '
+aThouArtNot     db ' <-THOU ART NOT ',8Dh,'AGILE ENOUGH TO WIELD!',0
 ; ---------------------------------------------------------------------------
-                lea     ax, [bx+di+47h]
-                dec     cx
-                dec     sp
-                inc     bp
-                and     [di+4Eh], al
-                dec     di
-                push    bp
-                inc     di
-                dec     ax
-                and     [si+4Fh], dl
-                and     [bx+49h], dl
-                inc     bp
-                dec     sp
-                inc     sp
-                and     [bx+si], ax
+
+loc_13F0E:                              ; CODE XREF: ready+93↑j
                 jmp     end_of_turn2
 ; ---------------------------------------------------------------------------
 
@@ -8393,9 +8355,8 @@ loc_14385:                              ; CODE XREF: view+1D↓j
                 call    write_string
 ; ---------------------------------------------------------------------------
 aViewWhat       db 'VIEW WHAT?',0
-                db 0E9h
-                db  9Dh
-                db 0C6h
+; ---------------------------------------------------------------------------
+                jmp     end_of_turn2
 ; ---------------------------------------------------------------------------
 
 loc_14396:                              ; CODE XREF: view+5↑j
@@ -8404,21 +8365,8 @@ loc_14396:                              ; CODE XREF: view+5↑j
                 jnb     short loc_14385
                 call    write_string
 ; ---------------------------------------------------------------------------
-aView           db 'VIEW'
+aView           db 'VIEW',8Dh,'WITH MAGICAL HELM!',0
 ; ---------------------------------------------------------------------------
-                lea     dx, player._mapNum1[bx]
-                push    sp
-                dec     ax
-                and     (player._name+0Bh)[di], cl
-                inc     di
-                dec     cx
-                inc     bx
-                inc     cx
-                dec     sp
-                and     [bx+si+45h], cl
-                dec     sp
-                dec     bp
-                and     [bx+si], ax
                 stc
                 mov     al, player._gems
                 cmc
@@ -8944,7 +8892,7 @@ loc_14864:                              ; CODE XREF: zstats+33D↓j
                 mov     byte_1742F, bl
                 mov     ax, di
                 clc
-                adc     al, 2Eh ; '.'
+                adc     al, 46
                 call    print_indexed_menu_string
                 cmp     byte_1742F, 3
                 jz      short loc_14886
@@ -13310,11 +13258,10 @@ loc_16AC9:                              ; CODE XREF: sub_16A79+4B↑j
 ; ---------------------------------------------------------------------------
 
 loc_16AD8:                              ; CODE XREF: sub_16A79+24↑j
-                call    write_string
+                call    write_string    ; LEFT
 ; ---------------------------------------------------------------------------
-aLeft           db 'LEFT'
+aLeft           db 'LEFT',8Dh,0
 ; ---------------------------------------------------------------------------
-                lea     ax, [bx+si]
                 call    sub_16CC4
                 mov     al, 20h ; ' '
                 mov     byte_1788B, al
@@ -13324,11 +13271,10 @@ aLeft           db 'LEFT'
 ; ---------------------------------------------------------------------------
 
 loc_16AF0:                              ; CODE XREF: sub_16A79+2D↑j
-                call    write_string
+                call    write_string    ; RIGHT
 ; ---------------------------------------------------------------------------
-aRight          db 'RIGHT'
+aRight          db 'RIGHT',8Dh,0
 ; ---------------------------------------------------------------------------
-                lea     ax, [bx+si]
                 call    sub_16CC4
                 mov     al, 0DFh
                 mov     byte_1788B, al
@@ -13338,11 +13284,10 @@ aRight          db 'RIGHT'
 ; ---------------------------------------------------------------------------
 
 loc_16B0A:                              ; CODE XREF: sub_16A79+36↑j
-                call    write_string
+                call    write_string    ; CLIMB
 ; ---------------------------------------------------------------------------
-aClimb          db 'CLIMB'
+aClimb          db 'CLIMB',8Dh,0
 ; ---------------------------------------------------------------------------
-                lea     ax, [bx+si]
                 call    sub_16CC4
                 mov     al, 10h
                 mov     byte_1788C, al
@@ -13352,19 +13297,18 @@ aClimb          db 'CLIMB'
 ; ---------------------------------------------------------------------------
 
 loc_16B24:                              ; CODE XREF: sub_16A79+3F↑j
-                call    write_string
+                call    write_string    ; DIVE
 ; ---------------------------------------------------------------------------
-aDive           db 'DIVE'
+aDive           db 'DIVE',8Dh,0
+sub_16A79       endp
+
 ; ---------------------------------------------------------------------------
-                lea     ax, [bx+si]
                 call    sub_16CC4
                 mov     al, 6Fh ; 'o'
                 mov     byte_1788C, al
                 mov     al, 80h
                 mov     byte_1788B, al
                 jmp     sub_16A79
-sub_16A79       endp
-
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -13757,11 +13701,12 @@ sub_16D83       endp
 
 hyperwarp       proc near               ; CODE XREF: sg01a2:6A51↑p
                                         ; hyperwarp+17C↓p
-                call    write_string
+                call    write_string    ; HYPERWARP ENGAGED!
 ; ---------------------------------------------------------------------------
-aHyperwarpEngag db 'HYPERWARP ENGAGED!'
+aHyperwarpEngag db 'HYPERWARP ENGAGED!',8Dh,0
 ; ---------------------------------------------------------------------------
-                lea     ax, [bx+si]
+
+loc_16E14:                              ; CODE XREF: hyperwarp↑j
                 mov     al, 80h
                 mov     byte_178D8, al
                 mov     al, 0
@@ -13809,11 +13754,12 @@ loc_16E73:                              ; CODE XREF: hyperwarp+87↓j
                 clc
                 rcr     al, 1
                 jnb     short loc_16EC0
-                call    write_string
+                call    write_string    ; SHIP OFF COURSE!
 ; ---------------------------------------------------------------------------
-aShipOffCourse  db 'SHIP OFF COURSE!'
+aShipOffCourse  db 'SHIP OFF COURSE!',8Dh,0
 ; ---------------------------------------------------------------------------
-                lea     ax, [bx+si]
+
+loc_16EA8:                              ; CODE XREF: hyperwarp+96↑j
                 call    sub_16D68
                 and     al, 7
                 mov     byte_178DA, al
@@ -13835,11 +13781,12 @@ loc_16EC5:                              ; CODE XREF: sub_16A79+46↑j
                 mov     al, player.field_AF
                 or      al, al
                 jnz     short loc_16EDC
-                call    write_string
+                call    write_string    ; NO FUEL!
 ; ---------------------------------------------------------------------------
-aNoFuel         db 'NO FUEL!'
+aNoFuel         db 'NO FUEL!',8Dh,0
 ; ---------------------------------------------------------------------------
-                lea     ax, [bx+si]
+
+loc_16ED9:                              ; CODE XREF: hyperwarp+CF↑j
                 jmp     sub_16A79
 ; ---------------------------------------------------------------------------
 
@@ -14043,11 +13990,12 @@ loc_1708B:                              ; CODE XREF: sub_17030+43↑j
                                         ; sub_17030+4E↑j
                 dec     di
                 jns     short loc_1706A
-                call    write_string
+                call    write_string    ; YOU ARE IN DEEP SPACE.
 ; ---------------------------------------------------------------------------
-aYouAreInDeepSp db 'YOU ARE IN DEEP SPACE.'
+aYouAreInDeepSp db 'YOU ARE IN DEEP SPACE.',8Dh,0
 ; ---------------------------------------------------------------------------
-                lea     ax, [bx+si]
+
+loc_170A9:                              ; CODE XREF: sub_17030+5E↑j
                 mov     al, 0Ah
                 mov     player._disableSave, al
                 jmp     nullsub_2
@@ -14083,115 +14031,125 @@ aYouAreOrbiting db 'YOU ARE ORBITING ',0
 ; ---------------------------------------------------------------------------
 
 loc_170F5:                              ; CODE XREF: sub_17030+A0↑j
-                call    write_string
+                call    write_string    ; EARTH.
 ; ---------------------------------------------------------------------------
-aEarth          db 'EARTH.'
+aEarth          db 'EARTH.',8Dh,0
 ; ---------------------------------------------------------------------------
-                lea     ax, [bx+si]
+
+loc_17100:                              ; CODE XREF: sub_17030:loc_170F5↑j
                 jmp     nullsub_2
 ; ---------------------------------------------------------------------------
 
 loc_17103:                              ; CODE XREF: sub_17030+A4↑j
-                call    write_string
+                call    write_string    ; MERCURY.
 ; ---------------------------------------------------------------------------
-aMercury        db 'MERCURY.'
+aMercury        db 'MERCURY.',8Dh,0
 ; ---------------------------------------------------------------------------
-                lea     ax, [bx+si]
+
+loc_17110:                              ; CODE XREF: sub_17030:loc_17103↑j
                 jmp     short nullsub_2
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
 
 loc_17113:                              ; CODE XREF: sub_17030+A8↑j
-                call    write_string
+                call    write_string    ; VENUS.
 ; ---------------------------------------------------------------------------
-aVenus          db 'VENUS.'
+aVenus          db 'VENUS.',8Dh,0
 ; ---------------------------------------------------------------------------
-                lea     ax, [bx+si]
+
+loc_1711E:                              ; CODE XREF: sub_17030:loc_17113↑j
                 jmp     short nullsub_2
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
 
 loc_17121:                              ; CODE XREF: sub_17030+AC↑j
-                call    write_string
+                call    write_string    ; MARS.
 ; ---------------------------------------------------------------------------
-aMars           db 'MARS.'
+aMars           db 'MARS.',8Dh,0
 ; ---------------------------------------------------------------------------
-                lea     ax, [bx+si]
+
+loc_1712B:                              ; CODE XREF: sub_17030:loc_17121↑j
                 jmp     short nullsub_2
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
 
 loc_1712E:                              ; CODE XREF: sub_17030+B0↑j
-                call    write_string
+                call    write_string    ; JUPITER.
 ; ---------------------------------------------------------------------------
-aJupiter        db 'JUPITER.'
+aJupiter        db 'JUPITER.',8Dh,0
 ; ---------------------------------------------------------------------------
-                lea     ax, [bx+si]
+
+loc_1713B:                              ; CODE XREF: sub_17030:loc_1712E↑j
                 jmp     short nullsub_2
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
 
 loc_1713E:                              ; CODE XREF: sub_17030+B4↑j
-                call    write_string
+                call    write_string    ; SATURN.
 ; ---------------------------------------------------------------------------
-aSaturn         db 'SATURN.'
+aSaturn         db 'SATURN.',8Dh,0
 ; ---------------------------------------------------------------------------
-                lea     ax, [bx+si]
+
+loc_1714A:                              ; CODE XREF: sub_17030:loc_1713E↑j
                 jmp     short nullsub_2
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
 
 loc_1714D:                              ; CODE XREF: sub_17030+B8↑j
-                call    write_string
+                call    write_string    ; URANUS.
 ; ---------------------------------------------------------------------------
-aUranus         db 'URANUS.'
+aUranus         db 'URANUS.',8Dh,0
 ; ---------------------------------------------------------------------------
-                lea     ax, [bx+si]
+
+loc_17159:                              ; CODE XREF: sub_17030:loc_1714D↑j
                 jmp     short nullsub_2
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
 
 loc_1715C:                              ; CODE XREF: sub_17030+BC↑j
-                call    write_string
+                call    write_string    ; NEPTUNE.
 ; ---------------------------------------------------------------------------
-aNeptune        db 'NEPTUNE.'
+aNeptune        db 'NEPTUNE.',8Dh,0
 ; ---------------------------------------------------------------------------
-                lea     ax, [bx+si]
+
+loc_17169:                              ; CODE XREF: sub_17030:loc_1715C↑j
                 jmp     short nullsub_2
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
 
 loc_1716C:                              ; CODE XREF: sub_17030+C0↑j
-                call    write_string
+                call    write_string    ; PLUTO.
 ; ---------------------------------------------------------------------------
-aPluto          db 'PLUTO.'
+aPluto          db 'PLUTO.',8Dh,0
 ; ---------------------------------------------------------------------------
-                lea     ax, [bx+si]
+
+loc_17177:                              ; CODE XREF: sub_17030:loc_1716C↑j
                 jmp     short nullsub_2
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
 
 loc_1717A:                              ; CODE XREF: sub_17030+C2↑j
-                call    write_string
+                call    write_string    ; X.
 ; ---------------------------------------------------------------------------
-                db 'X.'
+                db 'X.',8Dh,0
 ; ---------------------------------------------------------------------------
-                lea     ax, [bx+si]
+
+loc_17181:                              ; CODE XREF: sub_17030:loc_1717A↑j
                 jmp     short nullsub_2
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
 
 nullsub_2:                              ; CODE XREF: sub_17030+7E↑j
-                                        ; sub_17030+D0↑j ...
+                                        ; sub_17030:loc_17100↑j ...
                 retn
 sub_17030       endp
 
@@ -14204,21 +14162,19 @@ loc_17185:                              ; CODE XREF: sub_16A79+4D↑j
                 mov     byte_1788B, al
                 mov     al, 40h ; '@'
                 mov     byte_1788C, al
-                call    write_string
+                call    write_string    ; LANDING REQUESTED!
 ; END OF FUNCTION CHUNK FOR sub_16A79
 ; ---------------------------------------------------------------------------
-aLandingRequest db 'LANDING REQUESTED!'
+aLandingRequest db 'LANDING REQUESTED!',8Dh,0
 ; ---------------------------------------------------------------------------
-                lea     ax, [bx+si]
                 call    sub_17030
                 mov     al, player._disableSave
                 cmp     al, 0Ah
                 jnz     short loc_171CA
-                call    write_string
+                call    write_string    ; REQUEST DENIED!
 ; ---------------------------------------------------------------------------
-aRequestDenied  db 'REQUEST DENIED!'
+aRequestDenied  db 'REQUEST DENIED!',8Dh,0
 ; ---------------------------------------------------------------------------
-                lea     ax, [bx+si]
                 jmp     sub_16A79
 ; ---------------------------------------------------------------------------
 
@@ -14363,167 +14319,57 @@ sub_17289       endp
 ; Attributes: noreturn
 
 sub_172A0       proc near               ; CODE XREF: attack+13E↑p
+
+; FUNCTION CHUNK AT 72DA SIZE 00000040 BYTES
+
                 nop
                 mov     text_width?, 28h ; '('
                 call    write_string
 sub_172A0       endp
 
 ; ---------------------------------------------------------------------------
-                db  8Dh
-                db  8Dh
-                db  20h
-                db  20h
-                db  20h
-                db  20h
-                db  20h
-                db  4Dh ; M
-                db  49h ; I
-                db  4Eh ; N
-                db  41h ; A
-                db  58h ; X
-                db  20h
-                db  49h ; I
-                db  53h ; S
-                db  20h
-                db  44h ; D
-                db  45h ; E
-                db  41h ; A
-                db  44h ; D
-                db  21h ; !
-                db  21h ; !
-                db  8Dh
-                db  41h ; A
-                db  4Ch ; L
-                db  4Ch ; L
-                db  20h
-                db  48h ; H
-                db  45h ; E
-                db  52h ; R
-                db  20h
-                db  57h ; W
-                db  4Fh ; O
-                db  52h ; R
-                db  4Bh ; K
-                db  53h ; S
-                db  20h
-                db  53h ; S
-                db  48h ; H
-                db  41h ; A
-                db  4Ch ; L
-                db  4Ch ; L
-                db  20h
-                db  44h ; D
-                db  49h ; I
-                db  45h ; E
-                db  21h ; !
-                db  8Dh
-                db    0
-                db 0B0h
-                db  40h ; @
-                db 0A2h
-                db  1Fh
-                db    0
-                db 0E8h
-                db 0F5h
-                db 0EBh
-                db 0B0h
-                db  40h ; @
-                db 0A2h
-                db  20h
-                db    0
-                db 0E8h
-                db  2Dh ; -
-                db 0DFh
-                db  24h ; $
-                db  3Fh ; ?
-                db 0A2h
-                db  23h ; #
-                db    0
-                db 0E8h
-                db  25h ; %
-                db 0DFh
-                db  24h ; $
-                db  3Fh ; ?
-                db 0A2h
-                db  24h ; $
-                db    0
-                db 0E8h
-                db 0B9h
-                db 0DDh
-                db 0B0h
-                db  74h ; t
-                db  8Bh
-                db  1Eh
-                db    6
-                db    0
-                db  88h
-                db    0
-                db 0FEh
-                db  0Eh
-                db  20h
-                db    0
-                db  75h ; u
-                db 0DFh
-                db 0E8h
-                db 0A6h
-                db 0E7h
-                db 0BBh
-                db  0Eh
-                db    0
-                db 0E8h
-                db    0
-                db  94h
-                db 0FEh
-                db  0Eh
-                db  1Fh
-                db    0
-                db  75h ; u
-                db 0C8h
-                db 0E8h
-                db 0C5h
-                db 0DCh
-                db  8Dh
-                db  59h ; Y
-                db  4Fh ; O
-                db  55h ; U
-                db  20h
-                db  46h ; F
-                db  45h ; E
-                db  45h ; E
-                db  4Ch ; L
-                db  20h
-                db  41h ; A
-                db  20h
-                db  53h ; S
-                db  54h ; T
-                db  52h ; R
-                db  41h ; A
-                db  4Eh ; N
-                db  47h ; G
-                db  45h ; E
-                db  20h
-                db  46h ; F
-                db  4Fh ; O
-                db  52h ; R
-                db  43h ; C
-                db  45h ; E
-                db  21h ; !
-                db    0
-                db 0E8h
-                db  6Eh ; n
-                db 0ECh
-                db 0B4h
-                db  27h ; '
-                db 0B9h
-                db    0
-                db  10h
-                db  8Bh
-                db  16h
-                db  72h ; r
-                db    4
-                db 0E8h
-                db  86h
-                db 0DFh
+                db 8Dh,8Dh,'     MINAX IS DEAD!!',8Dh,'ALL HER WORKS SHALL DIE!',8Dh,0
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR sub_172A0
+                mov     al, 40h ; '@'
+                mov     byte_1742F, al
+
+loc_172DF:                              ; CODE XREF: sub_172A0+75↓j
+                call    play_hit_sound
+                mov     al, 40h ; '@'
+                mov     byte_17430, al
+
+loc_172E7:                              ; CODE XREF: sub_172A0+66↓j
+                call    rand_byte
+                and     al, 3Fh
+                mov     _playerX, al
+                call    rand_byte
+                and     al, 3Fh
+                mov     _playerY, al
+                call    get_player_tile
+                mov     al, 74h ; 't'
+                mov     bx, current_tile_ptr
+                mov     [bx+si], al
+                dec     byte_17430
+                jnz     short loc_172E7
+                call    draw_map
+                mov     bx, 0Eh
+                call    delayFrames
+                dec     byte_1742F
+                jnz     short loc_172DF
+                call    write_string
+; END OF FUNCTION CHUNK FOR sub_172A0
+; ---------------------------------------------------------------------------
+                db 8Dh,'YOU FEEL A STRANGE FORCE!',0
+; ---------------------------------------------------------------------------
+
+loc_17335:                              ; CODE XREF: sub_172A0+77↑j
+                call    sub_15FA6
+                mov     ah, 27h ; '''
+                mov     cx, 1000h
+                mov     dx, map_ptr
+                call    access_file
+; ---------------------------------------------------------------------------
                 db  4Dh ; M
                 db  41h ; A
                 db  50h ; P
