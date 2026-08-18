@@ -2012,3 +2012,75 @@ Done: 18AE0 now a 1280-byte array, named seg002_unexplained_data.
 [*] gen_file(OFILE_IDC) returned 1
 [*] saving database to C:\dev\ultima2\ultima2.idb
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'C:\\dev\\ultima2\\ida_scripts\\uncollapse_functions.py']
+[*] reading C:\dev\ultima2\ida_scripts\uncollapse_functions.py
+[*] executing C:\dev\ultima2\ida_scripts\uncollapse_functions.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0 hidden range(s) total in the idb
+
+Done. Expanded 0 range(s).
+----- end target script output -----
+[*] finished executing C:\dev\ultima2\ida_scripts\uncollapse_functions.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 15227
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'C:\\dev\\ultima2\\ida_scripts\\uncollapse_functions.py']
+[*] reading C:\dev\ultima2\ida_scripts\uncollapse_functions.py
+[*] executing C:\dev\ultima2\ida_scripts\uncollapse_functions.py
+[*] captured stdout from target script:
+----- begin target script output -----
+ida_bytes: ['add_hidden_range', 'del_hidden_range', 'get_first_hidden_range', 'get_hidden_range', 'get_hidden_range_num', 'get_hidden_range_qty', 'get_last_hidden_range', 'get_next_hidden_range', 'get_prev_hidden_range', 'getn_hidden_range', 'hidden_range_t', 'update_hidden_range']
+ida_funcs: ['FUNC_HIDDEN']
+----- end target script output -----
+[*] finished executing C:\dev\ultima2\ida_scripts\uncollapse_functions.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 15227
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'C:\\dev\\ultima2\\ida_scripts\\uncollapse_functions.py']
+[*] reading C:\dev\ultima2\ida_scripts\uncollapse_functions.py
+[*] executing C:\dev\ultima2\ida_scripts\uncollapse_functions.py
+[*] captured stdout from target script:
+----- begin target script output -----
+'set_cga_mode' @ 14A1C: collapsed (FUNC_HIDDEN set)
+    expanded
+'setPalette' @ 14A3E: collapsed (FUNC_HIDDEN set)
+    expanded
+'draw_tile' @ 14A74: collapsed (FUNC_HIDDEN set)
+    expanded
+'draw_map_content' @ 14AAD: collapsed (FUNC_HIDDEN set)
+    expanded
+'animate_water' @ 14AE6: collapsed (FUNC_HIDDEN set)
+    expanded
+'animate_forcefield' @ 14AF1: collapsed (FUNC_HIDDEN set)
+    expanded
+'animate_tile' @ 14AFC: collapsed (FUNC_HIDDEN set)
+    expanded
+
+Done. Expanded 7 function(s).
+----- end target script output -----
+[*] finished executing C:\dev\ultima2\ida_scripts\uncollapse_functions.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 15416
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
