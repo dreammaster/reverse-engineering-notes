@@ -150,10 +150,15 @@ source to cross-check against.
     ("ESCAPED! BY USE OF TOOLS!", decremented on use, asm 7599-7631) —
     die instead if you have none. Thieves (`TILE_THIEF`, type `0xFC`)
     drop +1 on death.
-  - `field_A5` — also incremented +1 (BCD) on killing a Fighter
-    (`TILE_FIGHTER`, type `0xF0`), but no consumption site found yet
-    (only reference besides the struct declaration is this drop). Not
-    yet named.
+  - `_helmsOwned` (`field_A5`) — Magical Helm count. Unlike the three
+    above, the drop is *chance-based*, not a flat amount: killing a
+    Fighter (`TILE_FIGHTER`, type `0xF0`) rolls `rand_byte()`, and only
+    on `< 0x40` (25%) does it increment by 1 (BCD) (asm 5341-5348).
+    Consumption site found once `view`'s IDB inline-data gap was fixed:
+    `view` requires it nonzero ("VIEW WHAT?" otherwise) and decrements
+    it to show the world map ("VIEW WITH MAGICAL HELM!", asm
+    8002-8028) — see
+    [overview.md](overview.md#text_strings-treasure-item-block-traced--a-16-element-inventory-array-unifying-8-prior-findings).
   - All BCD-encoded (`daa` after the add), same style as `_hp`/`_food`.
   - The Thief/Fighter kill branches also touch a small array at
     `[[roll-derived index]+0D6h]` (asm 8161-8170, 8219-8228) — not
@@ -325,6 +330,23 @@ Full chain: `enter` (asm 9136/9159/9206, VILLAGE/TOWN/CASTLE) →
   `PIC`) switches DS to `0B800h` (the CGA framebuffer segment) before the
   `int 21h` read, i.e. picture files are read **directly into video
   memory**, no intermediate buffer.
+- All 7 read exactly `0x4000` (16384) bytes (`ah=27h` random-block read,
+  `cx=4000h`). Traced 2026-08-18 while re-running
+  `ida_scripts/fix_access_file_calls.py` (surfaced these 7 filenames as
+  a byproduct — none previously catalogued except `PICDRA`): they're
+  the title/demo attract-mode slideshow in `start_` (asm ~100-422), each
+  screen shown with a matching two-line caption via `write_string`,
+  looping back to the title:
+
+  | File | Caption |
+  |---|---|
+  | `PICDRA` | (title screen, shown before "BY LORD BRITISH") |
+  | `PICOUT` | "BATTLE STRANGE CREATURES / ACROSS THE FACE OF THE EARTH" |
+  | `PICTWN` | "SEARCH FOR CLUES IN CARELESS WORDS / SPOKEN AT THE LOCAL PUB" |
+  | `PICCAS` | "PLEAD WITH MEDIEVAL KINGS / FOR ASSISTANCE" |
+  | `PICDNG` | "TRAVERSE DEEP DARK DEADLY DUNGEONS / AND TALL TERRIFYING TOWERS" |
+  | `PICSPA` | "TRAVEL THROUGHOUT THE GALAXY / TO THE PLANETS OF OUR SOLAR SYSTEM" |
+  | `PICMIN` | "AND CONQUER TIME ITSELF TO BATTLE / MINAX THE ENCHANTRESS" |
 
 ## `player` — Save game
 

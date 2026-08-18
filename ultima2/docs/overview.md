@@ -393,17 +393,26 @@ in this cluster's neighborhood before:
 | 2 | `0xA2` | STAFF | `_staves` | ✓ consistent |
 | 3 | `0xA3` | BOOTS | `_bootsOwned` | ✓ consistent |
 | 4 | `0xA4` | CLOAK | `_cloakOwned` | ✓ consistent |
-| 5 | `0xA5` | HELM | `_gems` | **✗ conflict — see below** |
-| 6 | `0xA6` | GEM | *(no member)* | gap — never independently referenced elsewhere |
+| 5 | `0xA5` | HELM | `_helmsOwned` | ✓ resolved — was `_gems`, corrected once `view`'s IDB gap was fixed and the real "VIEW WITH MAGICAL HELM!" text came back |
+| 6 | `0xA6` | GEM | `_gemOwned` | added — no independent reference anywhere, named from array position only |
 | 7 | `0xA7` | ANKH | `_ankhOwned` | ✓ consistent (gates Rocket boarding) |
-| 8 | `0xA8` | RED GEM | *(no member)* | gap |
-| 9 | `0xA9` | SKULL KEY | `_planeAllowed` | structurally = Skull Key owned; explains *why* it gates the Airplane |
-| 10 | `0xAA` | GREEN GEM | *(no member)* | gap |
-| 11 | `0xAB` | BRASS BUTTON | *(unnamed, `field_AB`)* | **independently confirmed**: `launch` requires it nonzero to launch a Plane, else `"FUNNY THIS PLANE IS MISSING A BRASS BUTTON!"` (asm ~7359-7371) — exact match |
-| 12 | `0xAC` | BLUE TASSLE | `_frigateAllowed` | structurally = Blue Tassle owned; explains *why* it gates the Frigate |
-| 13 | `0xAD` | STRANGE COIN | *(unnamed, `field_AD`)* | not independently confirmed elsewhere yet |
+| 8 | `0xA8` | RED GEM | `_redGemOwned` | added — same as `_gemOwned`, array position only |
+| 9 | `0xA9` | SKULL KEY | `_planeAllowed` | kept functional (Paul's call) — structurally = Skull Key owned |
+| 10 | `0xAA` | GREEN GEM | `_greenGemOwned` | added — same as `_gemOwned`, array position only |
+| 11 | `0xAB` | BRASS BUTTON | `_brassButtonOwned` | traced and added — wasn't even a recognized struct member before (raw `player+0ABh`); gates launching the Plane, `"FUNNY THIS PLANE IS MISSING A BRASS BUTTON!"` if zero (asm ~7038-7043) |
+| 12 | `0xAC` | BLUE TASSLE | `_frigateAllowed` | kept functional (Paul's call) — structurally = Blue Tassle owned |
+| 13 | `0xAD` | STRANGE COIN | `_strangeCoin` | traced — spent by the `negate_time` command, `"YOU RUB A COIN..."` (asm ~7245-7268) |
 | 14 | `0xAE` | GREEN IDOL | `_idolOwned` | ✓ consistent (resists the sleep trap) |
-| 15 | `0xAF` | TRI-LITHIUM | *(unnamed, `field_AF`)* | many xrefs elsewhere (not traced) — plausibly a significant/quest-critical item given the reuse |
+| 15 | `0xAF` | TRI-LITHIUM | `_triLithium` | traced — Rocket *and* hyperwarp fuel (asm ~6717-6939, ~12790-13575) |
+
+**All 16 slots now named.** A bonus find while tracing the last 3: a
+barkeep "buy a rumor" hint table (`unk_116BC`, asm ~2899-2909, `TIP HOW
+MUCH?`/`THE BARKEEP SAYS:`) independently confirms nearly every
+item-requirement mapping in this whole arc — `"SOME FIGHTERS WEAR
+MAGIC HELMS!"`, `"AVIATORS USE SKULL KEYS!"`, `"SAYLORS WEAR BLUE
+TASSLES!"`, `"MAGES CARRY WANDS OR STAFFS!"`, `"GUARDS CARRY KEYS!"`,
+`"ANKHS OPEN SPACE!"`, `"PLANES NEED BRASS BUTTONS!"` — exact matches
+to the code-derived findings above.
 
 Two nice thematic unifications this explains: boarding vs. launching a
 Plane turn out to need **two different items** (Skull Key to board,
