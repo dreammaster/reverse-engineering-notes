@@ -150,37 +150,81 @@ source to cross-check against.
   to be claimed (`+0x177` "AI-wander cooldown", `+0x1B7` "cached
   terrain tile") don't appear anywhere in the current `.asm` and were
   dropped as unverifiable rather than carried forward.
-- **Bonus find while tracing `attack`'s kill-cleanup code**: three
-  `Savegame` fields turned out to be consumable resources, looted from
-  specific monster types on death and spent via specific commands —
-  cross-checked both ends (drop site in `attack`, spend site
-  elsewhere) for each:
-  - `_torches` — `ignite_torch` checks it ("NONE OWNED!" if zero) and
-    decrements on use. Dropped by *any* monster kill not covered by
-    the two entries below, random 1-4 (`(roll & 3) + 1`, BCD).
-  - `_keys` — `unlock` checks/decrements it ("NO KEYS THAT FIT!" if
-    zero). Guards (`_monsterType 0x60`) drop +2 on death.
-  - `_thievesTools` — saves you from a trap death ("ESCAPED! BY USE OF
-    TOOLS!", decremented on use) — die instead if you have none.
-    Thieves (`_monsterType 0xFC`) drop +1 on death.
-  - `_helmsOwned` — Magical Helm count. Unlike the three above, the
-    drop is *chance-based*, not a flat amount: killing a Fighter
-    (`_monsterType 0xF0`) rolls `rand_byte()`, and only on `< 0x40`
-    (25%) does it increment by 1 (BCD). Consumption site found once
-    `view`'s IDB inline-data gap was fixed: `view` requires it nonzero
-    ("VIEW WHAT?" otherwise) and decrements it to show the world map
-    ("VIEW WITH MAGICAL HELM!") — see
-    [overview.md](overview.md#text_strings-treasure-item-block-traced--a-16-element-inventory-array-unifying-8-prior-findings).
-  - All BCD-encoded (`daa` after the add), same style as `_hp`/`_food`.
-  - The Thief/Fighter kill branches also touch a small array at
-    `[[roll-derived index]+0D6h]` — not traced, flagged for later.
-  - One oddity worth double-checking later, not yet confirmed as a bug
-    or intentional: the "killed Minax" branch (`_monsterType == 0x40`,
-    prints "SHE'S GONE!!!") does a position lookup, then what reads
-    like an X/Y-transposed second lookup — writes the monster-type
-    byte to map position `(Y, X)` instead of `(X, Y)`. Possibly
-    intentional (unclear why), possibly a genuine bug in the original
-    1983 code.
+- **`attack`'s full monster-kill drop table, traced end to end
+  (2026-08-18)** — dispatches on `_monsterType`, one BCD-encoded drop
+  (or none) per branch, then falls through to shared cleanup that
+  zeroes the monster's slot (`_monsterGlyphTile`/`_monsterSpellHP`/
+  `_mapMonsters`/`_monsterMapY`/`_monsterType`):
+
+  | `_monsterType` | Monster | Drop |
+  |---|---|---|
+  | `0x40` | Minax | special — routes into `minax_death_sequence` instead of a drop |
+  | `0x60` | Guard | `_keys` +2, unconditional |
+  | `0xFC` | Thief | `_thievesTools` +1 on a 25% roll (`rand_byte()<0x40`), **then unconditionally** a 15/16 chance (`rand_byte()&0xF != 0`) to increment a *random* slot of `player._ringOwned[]` (any of the 16 treasure items) |
+  | `0xF0` | Fighter | `_helmsOwned` +1 on a 25% roll, **then unconditionally** `_torches` `+(rand_byte()&3)+1` (1-4) |
+  | `0xF8` | Wizard | unconditional 50/50 (`rand_byte()&1`) between `player._ringOwned[1]` (Wand) or `player._ringOwned[2]` (Staff) — matches the barkeep hint "MAGES CARRY WANDS OR STAFFS!" from the treasure-item block investigation |
+  | anything else (e.g. Cleric `0xF4`) | — | no drop, straight to cleanup |
+
+  This also resolves an old open item: what earlier notes described as
+  "the Thief/Fighter kill branches touch a small array at
+  `[idx+0D6h]`, not traced" is simply `player._ringOwned[]` (the
+  16-element treasure array — see the treasure-item block writeup),
+  addressed via `player._ringOwned[di]` in the actual code, not a
+  separate/mysterious array.
+
+  All the flat-amount drops (`_torches`/`_keys`/`_thievesTools`) are
+  BCD-encoded (`daa` after the add), same style as `_hp`/`_food`.
+  `_helmsOwned` (Fighter, 25% chance) was the first of these traced,
+  consumption site found once `view`'s IDB inline-data gap was fixed:
+  `view` requires it nonzero ("VIEW WHAT?" otherwise) and decrements it
+  to show the world map ("VIEW WITH MAGICAL HELM!") — see
+  [overview.md](overview.md#text_strings-treasure-item-block-traced--a-16-element-inventory-array-unifying-8-prior-findings).
+
+  `_monsterGlyphTile` (`+0x80`) vs. `_monsterType` (`+0x60`) are
+  confirmed genuine companions, not redundant: `_monsterType` is the
+  identity/dispatch value (compared against `0x40`/`0x60`/`0xFC`/etc.
+  throughout), while `_monsterGlyphTile` is the value actually written
+  onto the map as a display tile byte — a separate copy for rendering,
+  cleared together with the rest of the slot on death.
+
+  **The "killed Minax" transposition oddity, fully traced (2026-08-18)
+  — resolved as far as static analysis can settle it.** `attack` has
+  **two entirely separate "you killed Minax" code paths**, not one:
+  - **Melee-death path** (`loc_12CA4`, reached when a regular hit
+    drops `player._hp`-style melee HP below 0): does one
+    `get_player_tile` lookup at the monster's true position, writes
+    `_monsterGlyphTile` there (restoring the terrain glyph), then
+    checks `_monsterType==0x40` and calls the full
+    `minax_death_sequence` — "MINAX IS DEAD!! ALL HER WORKS SHALL
+    DIE!", the dramatic multi-line victory animation.
+  - **Spell-death path** (`loc_12C38`, reached only via the separate
+    `_monsterSpellHP` borrow branch — i.e. killing Minax with a spell
+    instead of melee): has its own simpler, self-contained handling,
+    *not* shared with the melee path and *not* calling
+    `minax_death_sequence` at all. It restores the glyph at Minax's
+    true position (same as the melee path), **then deliberately swaps
+    `_mapMonsters[di]` and `_monsterMapY[di]`'s values with each
+    other**, does a *second* `get_player_tile` lookup at the
+    now-swapped (transposed) coordinates, and writes `_monsterType`
+    there — then prints the shorter "SHE'S GONE!!!" and sets
+    `_monsterOfferFlag[di]=0x84` (an unusual value, likely a
+    dead/gone marker).
+
+  The swap is structured, deliberate code — two distinct
+  `get_player_tile` calls with genuinely different coordinate pairs,
+  different payloads written to each — not a disassembly artifact or
+  copy-paste mistake. Whether the *design intent* was really to leave
+  a marker at the transposed cell (a strange but real choice), or
+  whether swapping the fields was itself an authoring slip in the
+  original 1983 code, can't be settled from static analysis alone —
+  it would take either external documentation (none exists for this
+  port) or watching it happen live in-game to know for sure. Treating
+  this as closed for now: the mechanism is fully understood even
+  though the "was it a bug" verdict is inherently unknowable without
+  runtime observation. Worth noting as a fun side effect: spell-killing
+  Minax gives a *shorter* victory message than melee-killing her — an
+  asymmetry that may itself be intentional (different flavor per kill
+  method) rather than an oversight.
 
 ## `tlkx???` — shop/NPC response text (wiki: "NPC dialogue")
 
