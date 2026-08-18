@@ -782,6 +782,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	128,	0X17410);
 	set_cmt	(0X10E70,	"LEGS PARALIZED!\r",	0);
 	create_insn	(0X10E70);
+	set_name	(0X10E70,	"leg_paralysis_trap");
 	create_strlit	(0X10E73,	0X11);
 	set_name	(0X10E73,	"aLegsParalized");
 	create_insn	(0X10E84);
@@ -794,6 +795,7 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	set_cmt	(0X10EC2,	"ARMS PARALIZED!\r",	0);
 	create_insn	(0X10EC2);
+	set_name	(0X10EC2,	"arm_paralysis_trap");
 	create_strlit	(0X10EC5,	0X11);
 	set_name	(0X10EC5,	"aArmsParalized");
 	create_insn	(0X10ED6);
@@ -806,11 +808,13 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	set_cmt	(0X10F12,	"MAGIC MISSILE!\r",	0);
 	create_insn	(0X10F12);
+	set_name	(0X10F12,	"magic_missile_trap");
 	create_strlit	(0X10F15,	0X10);
 	set_name	(0X10F15,	"aMagicMissile");
 	create_insn	(0X10F25);
 	set_cmt	(0X10F48,	"SLEEP SPELL!\r",	0);
 	create_insn	(0X10F48);
+	set_name	(0X10F48,	"sleep_trap");
 	create_strlit	(0X10F4B,	0XE);
 	set_name	(0X10F4B,	"aSleepSpell");
 	create_insn	(0X10F59);
@@ -821,12 +825,14 @@ static Bytes_0(void) {
 	create_insn	(x=0X10F88);
 	op_hex		(x,	1);
 	create_insn	(0X10F8E);
+	set_name	(0X10F8E,	"minax_curse_trap");
 	set_cmt	(0X10F8F,	"MINAX CRIES: DIE FOOL!",	0);
 	create_strlit	(0X10F92,	0X18);
 	set_name	(0X10F92,	"aMinaxCriesDieF");
 	create_insn	(0X10FAA);
 	create_insn	(0X10FCC);
 	create_insn	(0X10FCD);
+	set_name	(0X10FCD,	"random_item_loss_trap");
 	create_insn	(0X10FD6);
 	create_insn	(x=0X10FDA);
 	op_hex		(x,	1);
@@ -952,6 +958,7 @@ static Bytes_0(void) {
 	set_name	(0X112B7,	"aTorchBurnedOut");
 	create_insn	(0X112CA);
 	create_insn	(0X112DB);
+	set_name	(0X112DB,	"consume_food");
 	create_insn	(0X11307);
 	create_insn	(0X11308);
 	create_insn	(x=0X1131B);
@@ -995,6 +1002,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X11434);
 	op_hex		(x,	1);
 	create_insn	(0X1143C);
+	set_name	(0X1143C,	"check_monster_on_level");
 	create_insn	(x=0X11440);
 	op_plain_offset	(x,	1,	0X17410);
 	op_plain_offset	(x,	129,	0X17410);
@@ -1005,6 +1013,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X17410);
 	op_plain_offset	(x,	129,	0X17410);
 	create_insn	(0X1147F);
+	set_name	(0X1147F,	"spawn_dungeon_monster");
 	create_insn	(x=0X1148C);
 	op_plain_offset	(x,	1,	0X17410);
 	op_plain_offset	(x,	129,	0X17410);
@@ -1051,6 +1060,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X17410);
 	op_plain_offset	(x,	129,	0X17410);
 	create_insn	(0X1152E);
+	set_name	(0X1152E,	"compute_monster_direction_to_player");
 	create_insn	(x=0X11534);
 	op_plain_offset	(x,	1,	0X17410);
 	op_plain_offset	(x,	129,	0X17410);
@@ -1344,6 +1354,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	129,	0X17410);
 	create_insn	(0X12195);
 	create_insn	(0X12199);
+	set_name	(0X12199,	"check_monster_collision");
 	create_insn	(x=0X121A6);
 	op_plain_offset	(x,	1,	0X17410);
 	op_plain_offset	(x,	129,	0X17410);
@@ -1545,6 +1556,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X126BB);
 	op_hex		(x,	1);
 	create_insn	(0X126F9);
+	set_name	(0X126F9,	"update_patrol_marker");
 	create_insn	(0X12701);
 	create_insn	(0X12708);
 	create_insn	(x=0X12754);
@@ -1941,6 +1953,7 @@ static Bytes_0(void) {
 	create_insn	(0X13301);
 	create_insn	(0X13309);
 	create_insn	(0X1330C);
+	set_name	(0X1330C,	"find_cursor_target_monster");
 	create_insn	(x=0X13312);
 	op_plain_offset	(x,	1,	0X17410);
 	op_plain_offset	(x,	129,	0X17410);
@@ -2048,6 +2061,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X13606);
 	op_hex		(x,	1);
 	create_insn	(0X1361C);
+	set_name	(0X1361C,	"clear_picked_up_tile");
 	create_insn	(0X1363B);
 	set_name	(0X1363B,	"get");
 	create_strlit	(0X1363E,	0X4);
@@ -2682,6 +2696,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X14BD9);
 	op_hex		(x,	1);
 	create_insn	(0X14BE0);
+	set_name	(0X14BE0,	"draw_sprite_row");
 	create_insn	(x=0X14BEA);
 	op_hex		(x,	1);
 	create_insn	(x=0X14BEC);
@@ -2861,6 +2876,7 @@ static Bytes_0(void) {
 	set_name	(0X14F09,	"KEYCODES");
 	create_byte	(0X14F0A);
 	create_insn	(0X14F11);
+	set_name	(0X14F11,	"compute_monster_direction_scaled");
 	create_insn	(x=0X14F15);
 	op_plain_offset	(x,	1,	0X17410);
 	op_plain_offset	(x,	129,	0X17410);
@@ -2868,6 +2884,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X17410);
 	op_plain_offset	(x,	129,	0X17410);
 	create_insn	(0X14F36);
+	set_name	(0X14F36,	"compute_monster_delta");
 	create_insn	(x=0X14F3A);
 	op_plain_offset	(x,	1,	0X17410);
 	op_plain_offset	(x,	129,	0X17410);
@@ -3482,6 +3499,7 @@ static Bytes_0(void) {
 	create_insn	(0X15DDE);
 	create_insn	(0X15E32);
 	create_insn	(0X15E3B);
+	set_name	(0X15E3B,	"play_trap_sound");
 	create_insn	(0X15E83);
 	set_name	(0X15E83,	"play_fail_sound");
 	create_insn	(0X15EAC);
@@ -3497,8 +3515,11 @@ static Bytes_0(void) {
 	create_insn	(0X15FC3);
 	set_name	(0X15FC3,	"play_magic_sound");
 	create_insn	(0X15FE0);
+	set_name	(0X15FE0,	"play_attack_sound");
 	create_insn	(0X16000);
+	set_name	(0X16000,	"render_dungeon_view");
 	create_insn	(0X16078);
+	set_name	(0X16078,	"precompute_dungeon_corridor");
 	create_insn	(x=0X160B7);
 	op_hex		(x,	1);
 	create_insn	(x=0X160C7);
@@ -3521,6 +3542,7 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X16143);
 	create_insn	(0X16144);
+	set_name	(0X16144,	"draw_dungeon_corridor");
 	create_insn	(x=0X16166);
 	op_hex		(x,	1);
 	create_insn	(0X1616D);
@@ -3864,6 +3886,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X16867);
 	op_hex		(x,	1);
 	create_insn	(0X168A3);
+	set_name	(0X168A3,	"draw_dungeon_monster_sprite");
 	create_insn	(x=0X168AE);
 	op_hex		(x,	1);
 	create_insn	(x=0X168B0);
@@ -3875,6 +3898,7 @@ static Bytes_0(void) {
 	create_insn	(0X168C0);
 	set_name	(0X168C0,	"get_dungeon_tile_at_player");
 	create_insn	(0X168ED);
+	set_name	(0X168ED,	"draw_dungeon_monster");
 	create_insn	(0X16902);
 	create_insn	(x=0X16916);
 	op_plain_offset	(x,	1,	0X10000);
@@ -3901,6 +3925,7 @@ static Bytes_0(void) {
 	create_byte	(0X16997);
 	create_byte	(0X16998);
 	create_insn	(0X16999);
+	set_name	(0X16999,	"setup_rocket_launch_display");
 	create_insn	(x=0X169B5);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -3927,6 +3952,7 @@ static Bytes_0(void) {
 	create_strlit	(0X16A5E,	0X16);
 	create_insn	(0X16A74);
 	create_insn	(0X16A79);
+	set_name	(0X16A79,	"space_travel_command_loop");
 	create_strlit	(0X16A80,	0X6);
 	set_name	(0X16A80,	"aCmd_3");
 	create_insn	(0X16A86);
@@ -4042,6 +4068,7 @@ static Bytes_0(void) {
 	create_insn	(0X16CC4);
 	set_name	(0X16CC4,	"erase_ship_marker");
 	create_insn	(0X16D3E);
+	set_name	(0X16D3E,	"init_starfield");
 	create_insn	(x=0X16D4A);
 	op_plain_offset	(x,	0,	0X17410);
 	op_plain_offset	(x,	128,	0X17410);
@@ -4096,6 +4123,7 @@ static Bytes_0(void) {
 	create_insn	(0X16F7F);
 	set_name	(0X16F7F,	"read_animated_digit_keypress");
 	create_insn	(0X16FA3);
+	set_name	(0X16FA3,	"draw_hyperwarp_hud");
 	set_cmt	(0X16FAD,	"x",	0);
 	set_cmt	(0X16FB3,	"y",	0);
 	set_cmt	(0X16FC2,	"x",	0);
@@ -4113,6 +4141,7 @@ static Bytes_0(void) {
 	create_byte	(0X17026);
 	make_array	(0X17026,	0XA);
 	create_insn	(0X17030);
+	set_name	(0X17030,	"check_hyperwarp_sun_collision");
 	create_strlit	(0X17049,	0X14);
 	create_insn	(0X1705D);
 	create_insn	(0X17063);
@@ -4201,17 +4230,21 @@ static Bytes_0(void) {
 	op_dec		(x,	1);
 	create_insn	(0X17207);
 	create_insn	(0X1720B);
+	set_name	(0X1720B,	"patch_map_filename");
 	create_strlit	(0X17219,	0X7);
 	set_name	(0X17219,	"aUdic");
 	create_insn	(0X17222);
 	create_insn	(0X17242);
+	set_name	(0X17242,	"play_star_twinkle_sound");
 	create_insn	(0X17258);
 	create_insn	(x=0X1725D);
 	op_hex		(x,	1);
 	create_insn	(0X17276);
+	set_name	(0X17276,	"speaker_on_once");
 	create_insn	(0X17289);
 	set_name	(0X17289,	"speaker_off_once");
 	create_insn	(0X172A0);
+	set_name	(0X172A0,	"minax_death_sequence");
 	create_strlit	(0X172A9,	0X31);
 	create_insn	(0X172DA);
 	create_insn	(x=0X172EA);
@@ -4305,7 +4338,7 @@ static Bytes_0(void) {
 	MakeStruct	(0X17655,	"FCB");
 	set_name	(0X17655,	"_picData");
 	create_byte	(0X1767A);
-	set_name	(0X1767A,	"_flag1");
+	set_name	(0X1767A,	"_negateTimeDuration");
 	create_byte	(0X1767B);
 	set_name	(0X1767B,	"player_paralyzedFlag");
 	create_byte	(0X1767C);
@@ -4496,6 +4529,15 @@ static Bytes_0(void) {
 	create_byte	(0X181BA);
 	make_array	(0X181BA,	0X42);
 	set_name	(0X181BA,	"tile_29");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X181FC,	"overworld tile 30: byte0=row width in bytes, byte1=row count, then 64 bytes CGA Linear 2bpp pixel data (16x16px)",	0);
 	create_byte	(0X181FC);
 	make_array	(0X181FC,	0X42);
@@ -4524,15 +4566,6 @@ static Bytes_0(void) {
 	create_byte	(0X18388);
 	make_array	(0X18388,	0X42);
 	set_name	(0X18388,	"tile_36");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X183CA,	"overworld tile 37: byte0=row width in bytes, byte1=row count, then 64 bytes CGA Linear 2bpp pixel data (16x16px)",	0);
 	create_byte	(0X183CA);
 	make_array	(0X183CA,	0X42);

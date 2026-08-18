@@ -698,7 +698,7 @@ loc_10807:                              ; CODE XREF: play_game+98↑j
                 adc     al, 78h ; 'x'
                 mov     _playerTileId, al
                 mov     al, 0
-                mov     _flag1, al
+                mov     _negateTimeDuration, al
                 mov     player_paralyzedFlag, al
                 mov     _flag3, al
                 mov     _sleepFlag, al
@@ -1114,7 +1114,7 @@ loc_10AA1:                              ; CODE XREF: end_of_turn+4A↑j
 
 loc_10AA7:                              ; CODE XREF: end_of_turn+51↑j
                                         ; end_of_turn+58↑j ...
-                call    sub_14F36
+                call    compute_monster_delta
                 mov     bx, di
                 mov     points_to_distrubte, bl
                 mov     al, _circleDeltaX
@@ -1134,7 +1134,7 @@ loc_10AA7:                              ; CODE XREF: end_of_turn+51↑j
                 mov     al, (_mapMonsters+60h)[di]
                 cmp     al, 34h ; '4'
                 jnz     short loc_10AE1
-                call    sub_10E70
+                call    leg_paralysis_trap
 ; ---------------------------------------------------------------------------
                 jmp     short loc_10AFC
 ; ---------------------------------------------------------------------------
@@ -1144,7 +1144,7 @@ loc_10AA7:                              ; CODE XREF: end_of_turn+51↑j
 loc_10AE1:                              ; CODE XREF: end_of_turn+A9↑j
                 cmp     al, 38h ; '8'
                 jnz     short loc_10AEB
-                call    sub_10EC2
+                call    arm_paralysis_trap
 ; ---------------------------------------------------------------------------
                 jmp     short loc_10AFC
 ; ---------------------------------------------------------------------------
@@ -1154,7 +1154,7 @@ loc_10AE1:                              ; CODE XREF: end_of_turn+A9↑j
 loc_10AEB:                              ; CODE XREF: end_of_turn+B3↑j
                 cmp     al, 0F8h
                 jnz     short loc_10AF5
-                call    sub_10F12
+                call    magic_missile_trap
 ; ---------------------------------------------------------------------------
                 jmp     short loc_10AFC
 ; ---------------------------------------------------------------------------
@@ -1164,7 +1164,7 @@ loc_10AEB:                              ; CODE XREF: end_of_turn+B3↑j
 loc_10AF5:                              ; CODE XREF: end_of_turn+BD↑j
                 cmp     al, 3Ch ; '<'
                 jnz     short loc_10AFC
-                call    near ptr sub_10F48
+                call    near ptr sleep_trap
 ; ---------------------------------------------------------------------------
 
 loc_10AFC:                              ; CODE XREF: end_of_turn+88↑j
@@ -1172,7 +1172,7 @@ loc_10AFC:                              ; CODE XREF: end_of_turn+88↑j
                 mov     bh, 0
                 mov     bl, points_to_distrubte
                 mov     di, bx
-                call    sub_14F11
+                call    compute_monster_direction_scaled
                 mov     al, (_mapMonsters+40h)[di]
                 cmp     al, 0Fh
                 jnb     short loc_10B25
@@ -1214,7 +1214,7 @@ loc_10B4D:                              ; CODE XREF: end_of_turn+118↑j
                 mov     al, (_mapMonsters+60h)[di]
                 cmp     al, 0FCh
                 jnz     short loc_10B62
-                call    sub_10FCD
+                call    random_item_loss_trap
 
 loc_10B62:                              ; CODE XREF: end_of_turn+12D↑j
                 call    rand_byte
@@ -1327,7 +1327,7 @@ end_of_turn     endp ; sp-analysis failed
                 jnz     short loc_10C33
                 mov     al, 0FFh
                 mov     _outsideMapTile, al
-                call    sub_126F9
+                call    update_patrol_marker
 
 loc_10C33:                              ; CODE XREF: sg01a2:0C29↑j
                 mov     al, player_paralyzedFlag
@@ -1348,17 +1348,17 @@ loc_10C49:                              ; CODE XREF: sg01a2:0C43↑j
                 dec     _sleepFlag
 
 loc_10C54:                              ; CODE XREF: sg01a2:0C4E↑j
-                mov     al, _flag1
+                mov     al, _negateTimeDuration
                 or      al, al
                 jz      short loc_10C5F
-                dec     _flag1
+                dec     _negateTimeDuration
 
 loc_10C5F:                              ; CODE XREF: sg01a2:0C59↑j
                 jmp     loc_1086F
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR sub_10F8E
+; START OF FUNCTION CHUNK FOR minax_curse_trap
 ;   ADDITIONAL PARENT FUNCTION end_of_turn
-;   ADDITIONAL PARENT FUNCTION sub_112DB
+;   ADDITIONAL PARENT FUNCTION consume_food
 ;   ADDITIONAL PARENT FUNCTION canMoveToTile
 ;   ADDITIONAL PARENT FUNCTION normal_movement
 ;   ADDITIONAL PARENT FUNCTION launch
@@ -1386,9 +1386,9 @@ dead:                                   ; CODE XREF: end_of_turn+1D0↑j
 aIsDead         db ' IS DEAD!',8Dh,0
 ; ---------------------------------------------------------------------------
 
-halt:                                   ; CODE XREF: sub_10F8E:halt↓j
+halt:                                   ; CODE XREF: minax_curse_trap:halt↓j
                 jmp     short halt
-; END OF FUNCTION CHUNK FOR sub_10F8E
+; END OF FUNCTION CHUNK FOR minax_curse_trap
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR end_of_turn
 
@@ -1722,7 +1722,7 @@ loc_10E5B:                              ; CODE XREF: end_of_turn+426↑j
 
 ; Attributes: noreturn
 
-sub_10E70       proc near               ; CODE XREF: end_of_turn+AB↑p
+leg_paralysis_trap proc near            ; CODE XREF: end_of_turn+AB↑p
 
 ; FUNCTION CHUNK AT 0EB8 SIZE 0000000A BYTES
 
@@ -1741,27 +1741,27 @@ aLegsParalized  db 'LEGS PARALIZED!',0Dh,0
                 call    write_string    ; SAVED BY MAGICAL BOOTS!
 ; ---------------------------------------------------------------------------
 aSavedByMagical db 'SAVED BY MAGICAL BOOTS!',8Dh,0
-sub_10E70       endp
+leg_paralysis_trap endp
 
 ; ---------------------------------------------------------------------------
                 retn
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR sub_10E70
+; START OF FUNCTION CHUNK FOR leg_paralysis_trap
 
-loc_10EB8:                              ; CODE XREF: sub_10E70+22↑j
-                                        ; sub_10E70+29↑j
+loc_10EB8:                              ; CODE XREF: leg_paralysis_trap+22↑j
+                                        ; leg_paralysis_trap+29↑j
                 nop
                 call    rand_byte
                 and     al, 0Fh
                 mov     player_paralyzedFlag, al
                 retn
-; END OF FUNCTION CHUNK FOR sub_10E70
+; END OF FUNCTION CHUNK FOR leg_paralysis_trap
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: noreturn
 
-sub_10EC2       proc near               ; CODE XREF: end_of_turn+B5↑p
+arm_paralysis_trap proc near            ; CODE XREF: end_of_turn+B5↑p
 
 ; FUNCTION CHUNK AT 0F09 SIZE 00000009 BYTES
 
@@ -1781,26 +1781,26 @@ aArmsParalized  db 'ARMS PARALIZED!',0Dh,0
                 call    write_string    ; SAVED BY MAGICAL CLOAK
 ; ---------------------------------------------------------------------------
 aSavedByMagical_0 db 'SAVED BY MAGICAL CLOAK',8Dh,0
-sub_10EC2       endp
+arm_paralysis_trap endp
 
 ; ---------------------------------------------------------------------------
                 retn
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR sub_10EC2
+; START OF FUNCTION CHUNK FOR arm_paralysis_trap
 
-loc_10F09:                              ; CODE XREF: sub_10EC2+22↑j
-                                        ; sub_10EC2+29↑j
+loc_10F09:                              ; CODE XREF: arm_paralysis_trap+22↑j
+                                        ; arm_paralysis_trap+29↑j
                 call    rand_byte
                 and     al, 0Fh
                 mov     _flag3, al
                 retn
-; END OF FUNCTION CHUNK FOR sub_10EC2
+; END OF FUNCTION CHUNK FOR arm_paralysis_trap
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: noreturn
 
-sub_10F12       proc near               ; CODE XREF: end_of_turn+BF↑p
+magic_missile_trap proc near            ; CODE XREF: end_of_turn+BF↑p
                 call    write_string    ; MAGIC MISSILE!
 ; ---------------------------------------------------------------------------
 aMagicMissile   db 'MAGIC MISSILE!',0Dh,0
@@ -1817,14 +1817,14 @@ aMagicMissile   db 'MAGIC MISSILE!',0Dh,0
                 adc     al, 40h ; '@'
                 mov     byte_17432, al
                 retn
-sub_10F12       endp
+magic_missile_trap endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: noreturn
 
-sub_10F48       proc far                ; CODE XREF: end_of_turn+C9↑p
+sleep_trap      proc far                ; CODE XREF: end_of_turn+C9↑p
                 call    write_string    ; SLEEP SPELL!
 ; ---------------------------------------------------------------------------
 aSleepSpell     db 'SLEEP SPELL!',0Dh,0
@@ -1845,20 +1845,20 @@ aSavedByIdol    db 'SAVED BY IDOL!',8Dh,0
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_10F84:                              ; CODE XREF: sub_10F48+1F↑j
-                                        ; sub_10F48+26↑j
+loc_10F84:                              ; CODE XREF: sleep_trap+1F↑j
+                                        ; sleep_trap+26↑j
                 nop
                 call    rand_byte
                 and     al, 0Fh
                 mov     _sleepFlag, al
                 retn
-sub_10F48       endp
+sleep_trap      endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_10F8E       proc near               ; CODE XREF: canMoveToTile-13B9↓p
+minax_curse_trap proc near              ; CODE XREF: canMoveToTile-13B9↓p
 
 ; FUNCTION CHUNK AT 0C62 SIZE 0000003A BYTES
 
@@ -1868,7 +1868,7 @@ sub_10F8E       proc near               ; CODE XREF: canMoveToTile-13B9↓p
 aMinaxCriesDieF db 'MINAX CRIES: DIE FOOL!',8Dh,0
 ; ---------------------------------------------------------------------------
 
-loc_10FAA:                              ; CODE XREF: sub_10F8E+1↑j
+loc_10FAA:                              ; CODE XREF: minax_curse_trap+1↑j
                 mov     al, 0
                 mov     _circleDeltaX, al
                 mov     _circleDeltaY, al
@@ -1886,15 +1886,15 @@ loc_10FAA:                              ; CODE XREF: sub_10F8E+1↑j
                 jmp     dead
 ; ---------------------------------------------------------------------------
 
-locret_10FCC:                           ; CODE XREF: sub_10F8E+39↑j
+locret_10FCC:                           ; CODE XREF: minax_curse_trap+39↑j
                 retn
-sub_10F8E       endp
+minax_curse_trap endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_10FCD       proc near               ; CODE XREF: end_of_turn+12F↑p
+random_item_loss_trap proc near         ; CODE XREF: end_of_turn+12F↑p
                 nop
                 call    rand_byte
                 cmp     al, 40h ; '@'
@@ -1902,7 +1902,7 @@ sub_10FCD       proc near               ; CODE XREF: end_of_turn+12F↑p
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_10FD6:                              ; CODE XREF: sub_10FCD+6↑j
+loc_10FD6:                              ; CODE XREF: random_item_loss_trap+6↑j
                 nop
                 call    rand_byte
                 and     ax, 0Fh
@@ -1922,9 +1922,9 @@ loc_10FD6:                              ; CODE XREF: sub_10FCD+6↑j
 aAThiefStoleSom db 'A THIEF STOLE SOMETHING!',8Dh,0
 ; ---------------------------------------------------------------------------
 
-nullsub_1:                              ; CODE XREF: sub_10FCD+18↑j
+nullsub_1:                              ; CODE XREF: random_item_loss_trap+18↑j
                 retn
-sub_10FCD       endp
+random_item_loss_trap endp
 
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR end_of_turn
@@ -1983,7 +1983,7 @@ loc_11040:                              ; CODE XREF: end_of_turn+178↑j
                 call    abs_byte
                 cmp     al, 4
                 jnb     short loc_1106D
-                call    sub_10F8E
+                call    minax_curse_trap
 
 loc_1106D:                              ; CODE XREF: canMoveToTile-13DD↑j
                                         ; canMoveToTile-13CC↑j ...
@@ -1997,7 +1997,7 @@ loc_1106D:                              ; CODE XREF: canMoveToTile-13DD↑j
 
 loc_1107B:                              ; CODE XREF: end_of_turn+60B↑j
                 nop
-                call    sub_14F11
+                call    compute_monster_direction_scaled
                 jmp     loc_12122
 ; ---------------------------------------------------------------------------
 
@@ -2136,7 +2136,7 @@ loc_1115E:                              ; CODE XREF: end_of_turn+3A↑j
 
 loc_1115F:                              ; CODE XREF: end_of_turn+33↑j
                 nop
-                call    sub_1147F
+                call    spawn_dungeon_monster
                 nop
                 mov     bh, 0
                 mov     bl, 1Fh
@@ -2165,7 +2165,7 @@ loc_1118B:                              ; CODE XREF: end_of_turn+746↑j
                 mov     bh, 0
                 mov     bl, byte_1742F
                 mov     di, bx
-                call    sub_1152E
+                call    compute_monster_direction_to_player
                 mov     al, (_mapMonsters+40h)[di]
                 cmp     al, 0Fh
                 jnb     short loc_111B5
@@ -2202,7 +2202,7 @@ loc_111B5:                              ; CODE XREF: end_of_turn+76D↑j
 loc_111E1:                              ; CODE XREF: end_of_turn+7A3↑j
                                         ; end_of_turn+7AC↑j
                 nop
-                call    sub_1143C
+                call    check_monster_on_level
                 jz      short loc_1122C
                 cmp     al, 0FFh
                 jz      short loc_111EF
@@ -2232,7 +2232,7 @@ loc_111EF:                              ; CODE XREF: end_of_turn+78B↑j
 loc_1121B:                              ; CODE XREF: end_of_turn+7DD↑j
                                         ; end_of_turn+7E6↑j
                 nop
-                call    sub_1143C
+                call    check_monster_on_level
                 jz      short loc_1122C
                 cmp     al, 0FFh
                 jz      short loc_11229
@@ -2304,9 +2304,9 @@ loc_112AC:                              ; CODE XREF: end_of_turn+867↑j
 aTorchBurnedOut db 'TORCH BURNED OUT!',8Dh,0
 ; ---------------------------------------------------------------------------
                 call    play_tick_sound
-                call    sub_16000
+                call    render_dungeon_view
                 mov     al, 10h
-                call    sub_112DB
+                call    consume_food
                 call    write_stats
                 jmp     loc_1086F
 ; END OF FUNCTION CHUNK FOR end_of_turn
@@ -2314,7 +2314,7 @@ aTorchBurnedOut db 'TORCH BURNED OUT!',8Dh,0
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_112DB       proc near               ; CODE XREF: end_of_turn+8A2↑p
+consume_food    proc near               ; CODE XREF: end_of_turn+8A2↑p
 
 ; FUNCTION CHUNK AT 0C62 SIZE 0000003A BYTES
 
@@ -2342,9 +2342,9 @@ sub_112DB       proc near               ; CODE XREF: end_of_turn+8A2↑p
                 jmp     dead
 ; ---------------------------------------------------------------------------
 
-locret_11307:                           ; CODE XREF: sub_112DB+27↑j
+locret_11307:                           ; CODE XREF: consume_food+27↑j
                 retn
-sub_112DB       endp ; sp-analysis failed
+consume_food    endp ; sp-analysis failed
 
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR end_of_turn
@@ -2506,7 +2506,7 @@ aYouFeelAStrong db 'YOU FEEL A STRONG MAGIC!',8Dh,0
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1143C       proc near               ; CODE XREF: end_of_turn+7B2↑p
+check_monster_on_level proc near        ; CODE XREF: end_of_turn+7B2↑p
                                         ; end_of_turn+7EC↑p
                 nop
                 mov     al, byte_17435
@@ -2517,9 +2517,9 @@ sub_1143C       proc near               ; CODE XREF: end_of_turn+7B2↑p
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1144B:                              ; CODE XREF: sub_1143C+8↑j
+loc_1144B:                              ; CODE XREF: check_monster_on_level+8↑j
                 nop
-sub_1143C       endp
+check_monster_on_level endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -2557,21 +2557,21 @@ map_get_monster_at? endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1147F       proc near               ; CODE XREF: end_of_turn+730↑p
+spawn_dungeon_monster proc near         ; CODE XREF: end_of_turn+730↑p
                 nop
                 mov     bh, 0
                 mov     bl, 1Fh
                 mov     di, bx
 
-loc_11486:                              ; CODE XREF: sub_1147F+1E↓j
+loc_11486:                              ; CODE XREF: spawn_dungeon_monster+1E↓j
                 mov     bx, di
                 mov     byte_1742F, bl
                 mov     al, (_mapMonsters+60h)[di]
                 or      al, al
                 jz      short loc_114A0
 
-loc_11494:                              ; CODE XREF: sub_1147F+5E↓j
-                                        ; sub_1147F:loc_114FA↓j ...
+loc_11494:                              ; CODE XREF: spawn_dungeon_monster+5E↓j
+                                        ; spawn_dungeon_monster:loc_114FA↓j ...
                 mov     bh, 0
                 mov     bl, byte_1742F
                 mov     di, bx
@@ -2580,7 +2580,7 @@ loc_11494:                              ; CODE XREF: sub_1147F+5E↓j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_114A0:                              ; CODE XREF: sub_1147F+13↑j
+loc_114A0:                              ; CODE XREF: spawn_dungeon_monster+13↑j
                 nop
                 call    rand_byte
                 mov     bh, 0
@@ -2618,12 +2618,12 @@ loc_114A0:                              ; CODE XREF: sub_1147F+13↑j
                 jz      short loc_114FC
                 jb      short loc_114FC
 
-loc_114FA:                              ; CODE XREF: sub_1147F+6F↑j
+loc_114FA:                              ; CODE XREF: spawn_dungeon_monster+6F↑j
                 jmp     short loc_11494
 ; ---------------------------------------------------------------------------
 
-loc_114FC:                              ; CODE XREF: sub_1147F+77↑j
-                                        ; sub_1147F+79↑j
+loc_114FC:                              ; CODE XREF: spawn_dungeon_monster+77↑j
+                                        ; spawn_dungeon_monster+79↑j
                 nop
                 clc
                 rcr     al, 1
@@ -2643,13 +2643,14 @@ loc_114FC:                              ; CODE XREF: sub_1147F+77↑j
                 mov     bx, word_17418
                 mov     [bx+si], al
                 jmp     loc_11494
-sub_1147F       endp
+spawn_dungeon_monster endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1152E       proc near               ; CODE XREF: end_of_turn+764↑p
+compute_monster_direction_to_player proc near
+                                        ; CODE XREF: end_of_turn+764↑p
                 nop
                 mov     al, _mapX
                 stc
@@ -2664,7 +2665,7 @@ sub_1152E       proc near               ; CODE XREF: end_of_turn+764↑p
                 call    sign_byte
                 mov     _circleDeltaY, al
                 retn
-sub_1152E       endp
+compute_monster_direction_to_player endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -3631,7 +3632,7 @@ loc_1212E:                              ; CODE XREF: canMoveToTile-2FB↑j
                 and     al, 3Fh
                 mov     _playerY, al
                 call    get_player_tile
-                call    sub_12199
+                call    check_monster_collision
                 jnz     short loc_12155
                 jmp     loc_12201
 ; ---------------------------------------------------------------------------
@@ -3643,7 +3644,7 @@ loc_12155:                              ; CODE XREF: canMoveToTile-2D3↑j
                 mov     al, _mapMonsters[di]
                 mov     _playerX, al
                 call    get_player_tile
-                call    sub_12199
+                call    check_monster_collision
                 jnz     short loc_1216E
                 jmp     loc_12201
 ; ---------------------------------------------------------------------------
@@ -3658,7 +3659,7 @@ loc_1216E:                              ; CODE XREF: canMoveToTile-2C9↑j
                 mov     al, (_mapMonsters+20h)[di]
                 mov     _playerY, al
                 call    get_player_tile
-                call    sub_12199
+                call    check_monster_collision
                 jz      short loc_12201
 
 loc_1218B:                              ; CODE XREF: canMoveToTile-210↓j
@@ -3676,10 +3677,10 @@ loc_12195:                              ; CODE XREF: canMoveToTile-293↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_12199       proc near               ; CODE XREF: canMoveToTile-2D6↑p
+check_monster_collision proc near       ; CODE XREF: canMoveToTile-2D6↑p
                                         ; canMoveToTile-2BD↑p ...
                 mov     byte_1742F, al
-                mov     al, _flag1
+                mov     al, _negateTimeDuration
                 cmp     al, 0
                 jz      short loc_121A6
                 jmp     short loc_121FC
@@ -3687,7 +3688,7 @@ sub_12199       proc near               ; CODE XREF: canMoveToTile-2D6↑p
                 db  90h
 ; ---------------------------------------------------------------------------
 
-loc_121A6:                              ; CODE XREF: sub_12199+8↑j
+loc_121A6:                              ; CODE XREF: check_monster_collision+8↑j
                 mov     al, (_mapMonsters+60h)[di]
                 cmp     al, 2Ch ; ','
                 jz      short loc_121D8
@@ -3699,7 +3700,7 @@ loc_121A6:                              ; CODE XREF: sub_12199+8↑j
                 cmp     al, 5Ch ; '\'
                 jz      short loc_121E2
 
-loc_121BD:                              ; CODE XREF: sub_12199+1B↑j
+loc_121BD:                              ; CODE XREF: check_monster_collision+1B↑j
                 nop
                 mov     al, byte_1742F
                 cmp     al, 10h
@@ -3717,8 +3718,8 @@ loc_121BD:                              ; CODE XREF: sub_12199+1B↑j
                 db  90h
 ; ---------------------------------------------------------------------------
 
-loc_121D8:                              ; CODE XREF: sub_12199+13↑j
-                                        ; sub_12199+17↑j
+loc_121D8:                              ; CODE XREF: check_monster_collision+13↑j
+                                        ; check_monster_collision+17↑j
                 mov     al, byte_1742F
                 cmp     al, 0
                 jnz     short loc_121FC
@@ -3727,8 +3728,8 @@ loc_121D8:                              ; CODE XREF: sub_12199+13↑j
                 db  90h
 ; ---------------------------------------------------------------------------
 
-loc_121E2:                              ; CODE XREF: sub_12199+22↑j
-                                        ; sub_12199+36↑j ...
+loc_121E2:                              ; CODE XREF: check_monster_collision+22↑j
+                                        ; check_monster_collision+36↑j ...
                 mov     al, player._mapNum2
                 cmp     al, 0
                 jz      short loc_121F7
@@ -3739,18 +3740,18 @@ loc_121E2:                              ; CODE XREF: sub_12199+22↑j
                 cmp     al, 0
                 jz      short loc_121FC
 
-loc_121F7:                              ; CODE XREF: sub_12199+4E↑j
+loc_121F7:                              ; CODE XREF: check_monster_collision+4E↑j
                 mov     al, 0
                 cmp     al, 0
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_121FC:                              ; CODE XREF: sub_12199+A↑j
-                                        ; sub_12199+2A↑j ...
+loc_121FC:                              ; CODE XREF: check_monster_collision+A↑j
+                                        ; check_monster_collision+2A↑j ...
                 mov     al, 0FFh
                 cmp     al, 0
                 retn
-sub_12199       endp
+check_monster_collision endp
 
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR canMoveToTile
@@ -3841,7 +3842,7 @@ load_map        proc near               ; CODE XREF: play_game:loc_10807↑p
                 mov     dx, map_ptr
                 call    access_file     ; MAPXFF
 ; ---------------------------------------------------------------------------
-aMapxff         db 'MAPXFF  '           ; DATA XREF: sub_1720B↓w
+aMapxff         db 'MAPXFF  '           ; DATA XREF: patch_map_filename↓w
                                         ; load_map+6↑w ...
 ; ---------------------------------------------------------------------------
 
@@ -3851,7 +3852,7 @@ loc_122BF:                              ; CODE XREF: load_map+24↑j
                 call    access_file     ; MONXFF
 ; ---------------------------------------------------------------------------
 byte_122C9      db    'M',   'O',   'N',   'X',   'F',   'F',   ' ',   ' '
-                                        ; DATA XREF: sub_1720B+4↓w
+                                        ; DATA XREF: patch_map_filename+4↓w
                                         ; load_map+A↑w ...
 ; ---------------------------------------------------------------------------
 
@@ -3878,7 +3879,7 @@ load_talk_file  proc near               ; CODE XREF: enter+B3↓p
                 mov     dx, word_17886
                 call    access_file     ; TLKXFF
 ; ---------------------------------------------------------------------------
-aTlkxff         db 'TLKXFF  '           ; DATA XREF: sub_1720B+8↓w
+aTlkxff         db 'TLKXFF  '           ; DATA XREF: patch_map_filename+8↓w
                                         ; load_talk_file+6↑w ...
 ; ---------------------------------------------------------------------------
 
@@ -4504,20 +4505,20 @@ loc_126C6:                              ; CODE XREF: normal_movement+14C↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_126F9       proc near               ; CODE XREF: sg01a2:0C30↑p
+update_patrol_marker proc near          ; CODE XREF: sg01a2:0C30↑p
                 mov     al, player._disableSave
                 cmp     al, 0
                 jz      short loc_12701
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_12701:                              ; CODE XREF: sub_126F9+5↑j
+loc_12701:                              ; CODE XREF: update_patrol_marker+5↑j
                 dec     byte ptr player+39h
                 jz      short loc_12708
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_12708:                              ; CODE XREF: sub_126F9+C↑j
+loc_12708:                              ; CODE XREF: update_patrol_marker+C↑j
                 clc
                 mov     al, player._mapNum1
                 add     al, al
@@ -4542,7 +4543,7 @@ loc_12708:                              ; CODE XREF: sub_126F9+C↑j
                 mov     bx, current_tile_ptr
                 mov     [bx+si], al
 
-loc_12744:                              ; CODE XREF: sub_126F9+3A↑j
+loc_12744:                              ; CODE XREF: update_patrol_marker+3A↑j
                 mov     al, 8
                 mov     byte ptr player+39h, al
                 inc     player.field_38
@@ -4565,7 +4566,7 @@ loc_12744:                              ; CODE XREF: sub_126F9+3A↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1277B:                              ; CODE XREF: sub_126F9+7F↑j
+loc_1277B:                              ; CODE XREF: update_patrol_marker+7F↑j
                 mov     byte ptr player+3Ah, al
                 mov     bh, 0
                 mov     bl, 0
@@ -4578,7 +4579,7 @@ loc_1277B:                              ; CODE XREF: sub_126F9+7F↑j
                 mov     bl, _playerY
                 mov     di, bx
                 retn
-sub_126F9       endp
+update_patrol_marker endp
 
 ; ---------------------------------------------------------------------------
                 db  1Dh
@@ -4788,7 +4789,7 @@ loc_128B1:                              ; CODE XREF: sg01a2:28AC↑j
 ; ---------------------------------------------------------------------------
                 db 8Dh,'ARGH! A TRAP!',8Dh,0
 ; ---------------------------------------------------------------------------
-                call    sub_15E3B
+                call    play_trap_sound
                 call    pause?
                 call    pause?
                 call    pause?
@@ -5203,7 +5204,7 @@ aParalized_0    db 'PARALIZED!',0
 
 loc_12BBE:                              ; CODE XREF: attack+1C↑j
                 call    read_direction_keypress
-                call    sub_15FE0
+                call    play_attack_sound
                 call    find_target_monster
                 mov     bx, di
                 mov     byte_17430, bl
@@ -5309,7 +5310,7 @@ loc_12CA4:                              ; CODE XREF: attack+95↑j
                 mov     al, (_mapMonsters+60h)[di]
                 cmp     al, 40h ; '@'
                 jnz     short loc_12CD3
-                call    sub_172A0
+                call    minax_death_sequence
 ; ---------------------------------------------------------------------------
                 jmp     end_of_turn2
 ; ---------------------------------------------------------------------------
@@ -5479,7 +5480,7 @@ aMiss           db '--MISS',0
 
 loc_12E16:                              ; CODE XREF: attack+13↑j
                 nop
-                call    sub_15FE0
+                call    play_attack_sound
                 mov     al, _mapX
                 clc
                 adc     al, _mapLeft
@@ -6089,7 +6090,7 @@ loc_132A5:                              ; CODE XREF: cast:loc_13213↑j
 ; START OF FUNCTION CHUNK FOR cast
 
 loc_132AD:                              ; CODE XREF: cast:loc_13216↑j
-                call    sub_1330C
+                call    find_cursor_target_monster
                 jz      short loc_13232
                 mov     al, player._experience
                 add     al, al
@@ -6134,7 +6135,7 @@ loc_132F1:                              ; CODE XREF: cast+1E1↑j
 
 loc_13301:                              ; CODE XREF: cast:loc_13219↑j
                                         ; cast+19F↑j
-                call    sub_1330C
+                call    find_cursor_target_monster
                 jnz     short loc_13309
                 jmp     loc_13232
 ; ---------------------------------------------------------------------------
@@ -6146,19 +6147,19 @@ loc_13309:                              ; CODE XREF: cast+1F9↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1330C       proc near               ; CODE XREF: cast:loc_132AD↑p
+find_cursor_target_monster proc near    ; CODE XREF: cast:loc_132AD↑p
                                         ; cast:loc_13301↑p
                 mov     bh, 0
                 mov     bl, 1Fh
                 mov     di, bx
 
-loc_13312:                              ; CODE XREF: sub_1330C+F↓j
+loc_13312:                              ; CODE XREF: find_cursor_target_monster+F↓j
                 mov     al, (_mapMonsters+60h)[di]
                 or      al, al
                 jnz     short loc_13322
 
-loc_1331A:                              ; CODE XREF: sub_1330C+1E↓j
-                                        ; sub_1330C+2C↓j ...
+loc_1331A:                              ; CODE XREF: find_cursor_target_monster+1E↓j
+                                        ; find_cursor_target_monster+2C↓j ...
                 dec     di
                 jnz     short loc_13312
                 mov     al, 0
@@ -6166,7 +6167,7 @@ loc_1331A:                              ; CODE XREF: sub_1330C+1E↓j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_13322:                              ; CODE XREF: sub_1330C+C↑j
+loc_13322:                              ; CODE XREF: find_cursor_target_monster+C↑j
                 mov     al, (_mapMonsters+80h)[di]
                 cmp     al, byte_17435
                 jnz     short loc_1331A
@@ -6183,7 +6184,7 @@ loc_13322:                              ; CODE XREF: sub_1330C+C↑j
                 mov     ax, di
                 or      al, al
                 retn
-sub_1330C       endp
+find_cursor_target_monster endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -6549,7 +6550,7 @@ fire            endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1361C       proc near               ; CODE XREF: get+35↓p get+6B↓p
+clear_picked_up_tile proc near          ; CODE XREF: get+35↓p get+6B↓p
                 cmp     player._mapNum2, 4
                 jnb     short locret_1363A
                 mov     al, _mapX
@@ -6561,9 +6562,9 @@ sub_1361C       proc near               ; CODE XREF: get+35↓p get+6B↓p
                 mov     bx, current_tile_ptr
                 mov     [bx+si], al
 
-locret_1363A:                           ; CODE XREF: sub_1361C+5↑j
+locret_1363A:                           ; CODE XREF: clear_picked_up_tile+5↑j
                 retn
-sub_1361C       endp
+clear_picked_up_tile endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -6603,7 +6604,7 @@ loc_13665:                              ; CODE XREF: get+1B↑j
 ; ---------------------------------------------------------------------------
 aWeapon_0       db ' WEAPON',0
 ; ---------------------------------------------------------------------------
-                call    sub_1361C
+                call    clear_picked_up_tile
                 call    rand_byte
                 and     al, 7
                 jz      short loc_1368D
@@ -6631,7 +6632,7 @@ loc_1369B:                              ; CODE XREF: get+17↑j
 ; ---------------------------------------------------------------------------
 aArmour_1       db ' ARMOUR',0
 ; ---------------------------------------------------------------------------
-                call    sub_1361C
+                call    clear_picked_up_tile
                 call    rand_byte
                 and     al, 3
                 jz      short loc_1368D
@@ -6961,7 +6962,7 @@ loc_13923:                              ; CODE XREF: launch+39↑j
 loc_1395D:                              ; CODE XREF: launch+90↑j
                                         ; launch+97↑j
                 nop
-                call    sub_16999
+                call    setup_rocket_launch_display
                 call    load_map
                 mov     di, 0FFh
                 mov     al, 0FFh
@@ -7265,7 +7266,7 @@ loc_13C04:                              ; CODE XREF: negate_time+14↑j
                 db 8Dh,'YOU RUB A COIN...',0
 ; ---------------------------------------------------------------------------
                 mov     al, 14h
-                mov     _flag1, al
+                mov     _negateTimeDuration, al
                 jmp     end_of_turn2
 negate_time     endp
 
@@ -8666,8 +8667,8 @@ screen_rows     dw 0B800h,0BA00h,0B805h,0BA05h,0B80Ah,0BA0Ah,0B80Fh,0BA0Fh
 ; =============== S U B R O U T I N E =======================================
 
 
-flash_screen    proc near               ; CODE XREF: sub_10E70+14↑p
-                                        ; sub_10E70+1A↑p ...
+flash_screen    proc near               ; CODE XREF: leg_paralysis_trap+14↑p
+                                        ; leg_paralysis_trap+1A↑p ...
                 push    ax
                 mov     ax, 0B800h
                 call    xor_invert_cga_bank
@@ -8797,7 +8798,7 @@ erase_point     endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14BE0       proc near               ; CODE XREF: sub_168A3+19↓p
+draw_sprite_row proc near               ; CODE XREF: draw_dungeon_monster_sprite+19↓p
                 push    ax
                 push    bx
                 push    bp
@@ -8826,7 +8827,7 @@ sub_14BE0       proc near               ; CODE XREF: sub_168A3+19↓p
                 pop     bx
                 pop     ax
                 retn
-sub_14BE0       endp
+draw_sprite_row endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -8970,7 +8971,7 @@ byte_14F0A      db 0Eh                  ; DATA XREF: keypress_check:loc_14FCC↓
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14F11       proc near               ; CODE XREF: end_of_turn+D4↑p
+compute_monster_direction_scaled proc near ; CODE XREF: end_of_turn+D4↑p
                                         ; canMoveToTile-13A7↑p
                 stc
                 mov     al, _mapX
@@ -8987,13 +8988,13 @@ sub_14F11       proc near               ; CODE XREF: end_of_turn+D4↑p
                 call    sign_byte
                 mov     _circleDeltaY, al
                 retn
-sub_14F11       endp
+compute_monster_direction_scaled endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14F36       proc near               ; CODE XREF: end_of_turn:loc_10AA7↑p
+compute_monster_delta proc near         ; CODE XREF: end_of_turn:loc_10AA7↑p
                 stc
                 mov     al, _mapX
                 sub     al, _mapMonsters[di]
@@ -9003,7 +9004,7 @@ sub_14F36       proc near               ; CODE XREF: end_of_turn:loc_10AA7↑p
                 sub     al, (_mapMonsters+20h)[di]
                 mov     _circleDeltaY, al
                 retn
-sub_14F36       endp
+compute_monster_delta endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -9262,7 +9263,7 @@ write_player_sex endp
 ; =============== S U B R O U T I N E =======================================
 
 
-write_player_name proc near             ; CODE XREF: sub_10F8E-305↑p
+write_player_name proc near             ; CODE XREF: minax_curse_trap-305↑p
                                         ; transact-2807↑p ...
                 mov     bx, 0
 
@@ -9593,8 +9594,8 @@ rand_byte       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-xorDrawCircle   proc near               ; CODE XREF: sub_10F8E+24↑p
-                                        ; sub_10F8E+2A↑p ...
+xorDrawCircle   proc near               ; CODE XREF: minax_curse_trap+24↑p
+                                        ; minax_curse_trap+2A↑p ...
                 nop
                 mov     al, _circleDeltaY
                 cmp     al, 1
@@ -11058,7 +11059,7 @@ word_15DA7      dw 0                    ; DATA XREF: play_tone_sweep+39↓w
 ; =============== S U B R O U T I N E =======================================
 
 
-play_tone_sweep proc near               ; CODE XREF: sub_15E3B+13↓p
+play_tone_sweep proc near               ; CODE XREF: play_trap_sound+13↓p
                                         ; play_cannon_sound+13↓p ...
                 cmp     byte_1795D, 0
                 jz      short loc_15DB3
@@ -11138,7 +11139,7 @@ play_tone_sweep endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_15E3B       proc near               ; CODE XREF: sg01a2:28CD↑p
+play_trap_sound proc near               ; CODE XREF: sg01a2:28CD↑p
                 push    ax
                 push    bx
                 push    cx
@@ -11154,7 +11155,7 @@ sub_15E3B       proc near               ; CODE XREF: sg01a2:28CD↑p
                 pop     bx
                 pop     ax
                 retn
-sub_15E3B       endp
+play_trap_sound endp
 
 ; ---------------------------------------------------------------------------
                 db  80h
@@ -11302,7 +11303,7 @@ play_hit_sound  endp
 
 
 pause?          proc near               ; CODE XREF: end_of_turn+199↑p
-                                        ; sub_10F8E+27↑p ...
+                                        ; minax_curse_trap+27↑p ...
                 push    ax
                 push    bx
                 push    cx
@@ -11503,8 +11504,8 @@ play_bump_sound endp
 ; =============== S U B R O U T I N E =======================================
 
 
-play_magic_sound proc near              ; CODE XREF: sub_10E70+17↑p
-                                        ; sub_10EC2+17↑p ...
+play_magic_sound proc near              ; CODE XREF: leg_paralysis_trap+17↑p
+                                        ; arm_paralysis_trap+17↑p ...
                 push    ax
                 push    bx
                 push    cx
@@ -11528,7 +11529,7 @@ play_magic_sound endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_15FE0       proc near               ; CODE XREF: attack+32↑p
+play_attack_sound proc near             ; CODE XREF: attack+32↑p
                                         ; attack+288↑p
                 push    ax
                 push    bx
@@ -11547,7 +11548,7 @@ sub_15FE0       proc near               ; CODE XREF: attack+32↑p
                 pop     bx
                 pop     ax
                 retn
-sub_15FE0       endp
+play_attack_sound endp
 
 ; ---------------------------------------------------------------------------
                 db    0
@@ -11557,7 +11558,7 @@ sub_15FE0       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16000       proc near               ; CODE XREF: end_of_turn+89D↑p
+render_dungeon_view proc near           ; CODE XREF: end_of_turn+89D↑p
                 nop
                 mov     al, _mapLeft
                 mov     byte_17893, al
@@ -11565,11 +11566,11 @@ sub_16000       proc near               ; CODE XREF: end_of_turn+89D↑p
                 mov     byte_17894, al
                 cmp     byte_17436, 0
                 jz      short loc_1601D
-                call    sub_16078
-                call    sub_16144
-                call    sub_168ED
+                call    precompute_dungeon_corridor
+                call    draw_dungeon_corridor
+                call    draw_dungeon_monster
 
-loc_1601D:                              ; CODE XREF: sub_16000+12↑j
+loc_1601D:                              ; CODE XREF: render_dungeon_view+12↑j
                 mov     al, _mapLeft
                 mov     byte_17893, al
                 mov     al, _mapTop
@@ -11605,13 +11606,13 @@ loc_1601D:                              ; CODE XREF: sub_16000+12↑j
                 call    get_dungeon_tile_at_player
                 mov     _tilePlayerDown, al
                 retn
-sub_16000       endp
+render_dungeon_view endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16078       proc near               ; CODE XREF: sub_16000+14↑p
+precompute_dungeon_corridor proc near   ; CODE XREF: render_dungeon_view+14↑p
                 clc
                 mov     al, _mapX
                 mov     byte_1788B, al
@@ -11638,7 +11639,7 @@ sub_16078       proc near               ; CODE XREF: sub_16000+14↑p
                 mov     bl, 0
                 mov     di, bx
 
-loc_160B4:                              ; CODE XREF: sub_16078+C8↓j
+loc_160B4:                              ; CODE XREF: precompute_dungeon_corridor+C8↓j
                 mov     al, byte_17889
                 and     al, 3Fh
                 mov     _playerX, al
@@ -11694,22 +11695,22 @@ loc_160B4:                              ; CODE XREF: sub_16078+C8↓j
                 jmp     loc_160B4
 ; ---------------------------------------------------------------------------
 
-locret_16143:                           ; CODE XREF: sub_16078+C6↑j
+locret_16143:                           ; CODE XREF: precompute_dungeon_corridor+C6↑j
                 retn
-sub_16078       endp
+precompute_dungeon_corridor endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16144       proc near               ; CODE XREF: sub_16000+17↑p
+draw_dungeon_corridor proc near         ; CODE XREF: render_dungeon_view+17↑p
                 call    clear_screen
                 mov     al, 0
                 mov     byte_17892, al
                 call    sub_16425
 
-loc_1614F:                              ; CODE XREF: sub_16144+4C↓j
-                                        ; sub_16144+C5↓j
+loc_1614F:                              ; CODE XREF: draw_dungeon_corridor+4C↓j
+                                        ; draw_dungeon_corridor+C5↓j
                 mov     bh, 0
                 mov     bl, byte_17892
                 mov     di, bx
@@ -11723,14 +11724,14 @@ loc_1614F:                              ; CODE XREF: sub_16144+4C↓j
                 jmp     locret_1620C
 ; ---------------------------------------------------------------------------
 
-loc_1616D:                              ; CODE XREF: sub_16144+24↑j
+loc_1616D:                              ; CODE XREF: draw_dungeon_corridor+24↑j
                 mov     al, [di+497h]
                 and     al, 20h
                 jz      short loc_16178
                 jmp     locret_1620C
 ; ---------------------------------------------------------------------------
 
-loc_16178:                              ; CODE XREF: sub_16144+2F↑j
+loc_16178:                              ; CODE XREF: draw_dungeon_corridor+2F↑j
                 call    sub_1648D
                 mov     al, byte_17892
                 or      al, al
@@ -11738,7 +11739,7 @@ loc_16178:                              ; CODE XREF: sub_16144+2F↑j
                 jmp     locret_1620C
 ; ---------------------------------------------------------------------------
 
-loc_16185:                              ; CODE XREF: sub_16144+3C↑j
+loc_16185:                              ; CODE XREF: draw_dungeon_corridor+3C↑j
                 inc     byte_17892
                 mov     al, byte_17892
                 cmp     al, 8
@@ -11746,13 +11747,13 @@ loc_16185:                              ; CODE XREF: sub_16144+3C↑j
                 jmp     short loc_1614F
 ; ---------------------------------------------------------------------------
 
-loc_16192:                              ; CODE XREF: sub_16144+19↑j
+loc_16192:                              ; CODE XREF: draw_dungeon_corridor+19↑j
                 mov     al, [di+497h]
                 and     al, 20h
                 jz      short loc_1619D
                 call    sub_16594
 
-loc_1619D:                              ; CODE XREF: sub_16144+54↑j
+loc_1619D:                              ; CODE XREF: draw_dungeon_corridor+54↑j
                 mov     al, [di+497h]
                 and     al, 10h
                 jz      short loc_161AB
@@ -11762,14 +11763,14 @@ loc_1619D:                              ; CODE XREF: sub_16144+54↑j
                 db  90h
 ; ---------------------------------------------------------------------------
 
-loc_161AB:                              ; CODE XREF: sub_16144+5F↑j
+loc_161AB:                              ; CODE XREF: draw_dungeon_corridor+5F↑j
                 mov     al, [di+497h]
                 and     al, 40h
                 jz      short loc_161B6
                 call    sub_166CB
 
-loc_161B6:                              ; CODE XREF: sub_16144+64↑j
-                                        ; sub_16144+6D↑j
+loc_161B6:                              ; CODE XREF: draw_dungeon_corridor+64↑j
+                                        ; draw_dungeon_corridor+6D↑j
                 mov     al, [di+48Fh]
                 or      al, al
                 jns     short loc_161D7
@@ -11786,11 +11787,11 @@ loc_161B6:                              ; CODE XREF: sub_16144+64↑j
                 db  90h
 ; ---------------------------------------------------------------------------
 
-loc_161D7:                              ; CODE XREF: sub_16144+78↑j
+loc_161D7:                              ; CODE XREF: draw_dungeon_corridor+78↑j
                 call    sub_16291
 
-loc_161DA:                              ; CODE XREF: sub_16144+83↑j
-                                        ; sub_16144+8B↑j ...
+loc_161DA:                              ; CODE XREF: draw_dungeon_corridor+83↑j
+                                        ; draw_dungeon_corridor+8B↑j ...
                 mov     al, [di+49Fh]
                 or      al, al
                 jns     short loc_161FB
@@ -11807,11 +11808,11 @@ loc_161DA:                              ; CODE XREF: sub_16144+83↑j
                 db  90h
 ; ---------------------------------------------------------------------------
 
-loc_161FB:                              ; CODE XREF: sub_16144+9C↑j
+loc_161FB:                              ; CODE XREF: draw_dungeon_corridor+9C↑j
                 call    sub_16304
 
-loc_161FE:                              ; CODE XREF: sub_16144+A7↑j
-                                        ; sub_16144+AF↑j ...
+loc_161FE:                              ; CODE XREF: draw_dungeon_corridor+A7↑j
+                                        ; draw_dungeon_corridor+AF↑j ...
                 inc     byte_17892
                 mov     al, byte_17892
                 cmp     al, 7
@@ -11819,10 +11820,10 @@ loc_161FE:                              ; CODE XREF: sub_16144+A7↑j
                 jmp     loc_1614F
 ; ---------------------------------------------------------------------------
 
-locret_1620C:                           ; CODE XREF: sub_16144+26↑j
-                                        ; sub_16144+31↑j ...
+locret_1620C:                           ; CODE XREF: draw_dungeon_corridor+26↑j
+                                        ; draw_dungeon_corridor+31↑j ...
                 retn
-sub_16144       endp
+draw_dungeon_corridor endp
 
 ; ---------------------------------------------------------------------------
 byte_1620D      db 0                    ; DATA XREF: sub_16291+8↓r
@@ -11982,7 +11983,7 @@ byte_16289      db 6Fh                  ; DATA XREF: sub_166CB+9↓r
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16291       proc near               ; CODE XREF: sub_16144:loc_161D7↑p
+sub_16291       proc near               ; CODE XREF: draw_dungeon_corridor:loc_161D7↑p
                 mov     bh, 0
                 mov     bl, byte_17892
                 mov     di, bx
@@ -12025,7 +12026,7 @@ sub_16291       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16304       proc near               ; CODE XREF: sub_16144:loc_161FB↑p
+sub_16304       proc near               ; CODE XREF: draw_dungeon_corridor:loc_161FB↑p
                 mov     bh, 0
                 mov     bl, byte_17892
                 mov     di, bx
@@ -12068,7 +12069,7 @@ sub_16304       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16377       proc near               ; CODE XREF: sub_16144+7A↑p
+sub_16377       proc near               ; CODE XREF: draw_dungeon_corridor+7A↑p
                 mov     bh, 0
                 mov     bl, byte_17892
                 mov     di, bx
@@ -12101,7 +12102,7 @@ sub_16377       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_163CE       proc near               ; CODE XREF: sub_16144+9E↑p
+sub_163CE       proc near               ; CODE XREF: draw_dungeon_corridor+9E↑p
                 mov     bh, 0
                 mov     bl, byte_17892
                 mov     di, bx
@@ -12134,8 +12135,8 @@ sub_163CE       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16425       proc near               ; CODE XREF: sub_16144+8↑p
-                                        ; sub_16144+1B↑p
+sub_16425       proc near               ; CODE XREF: draw_dungeon_corridor+8↑p
+                                        ; draw_dungeon_corridor+1B↑p
                 mov     bh, 0
                 mov     bl, byte_17892
                 mov     di, bx
@@ -12175,7 +12176,7 @@ sub_16425       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1648D       proc near               ; CODE XREF: sub_16144:loc_16178↑p
+sub_1648D       proc near               ; CODE XREF: draw_dungeon_corridor:loc_16178↑p
                 mov     bh, 0
                 mov     bl, byte_17892
                 mov     di, bx
@@ -12209,7 +12210,7 @@ sub_1648D       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_164E2       proc near               ; CODE XREF: sub_16144+8D↑p
+sub_164E2       proc near               ; CODE XREF: draw_dungeon_corridor+8D↑p
                 mov     bh, 0
                 mov     bl, byte_17892
                 mov     di, bx
@@ -12245,7 +12246,7 @@ sub_164E2       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1653F       proc near               ; CODE XREF: sub_16144+B1↑p
+sub_1653F       proc near               ; CODE XREF: draw_dungeon_corridor+B1↑p
                 mov     bh, 0
                 mov     bl, byte_17892
                 mov     di, bx
@@ -12278,7 +12279,7 @@ sub_1653F       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16594       proc near               ; CODE XREF: sub_16144+56↑p
+sub_16594       proc near               ; CODE XREF: draw_dungeon_corridor+56↑p
                 mov     bh, 0
                 mov     bl, byte_17892
                 mov     di, bx
@@ -12322,7 +12323,7 @@ sub_16594       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1660C       proc near               ; CODE XREF: sub_16144+61↑p
+sub_1660C       proc near               ; CODE XREF: draw_dungeon_corridor+61↑p
                 mov     bh, 0
                 mov     bl, byte_17892
                 mov     di, bx
@@ -12397,7 +12398,7 @@ sub_16684       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_166CB       proc near               ; CODE XREF: sub_16144+6F↑p
+sub_166CB       proc near               ; CODE XREF: draw_dungeon_corridor+6F↑p
                 nop
                 mov     al, cs:byte_1620F[di]
                 mov     byte_17889, al
@@ -12613,7 +12614,7 @@ draw_line       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_168A3       proc near               ; CODE XREF: sub_168ED+8C↓p
+draw_dungeon_monster_sprite proc near   ; CODE XREF: draw_dungeon_monster+8C↓p
                 nop
                 mov     ah, 0
                 mov     al, byte_1788F
@@ -12625,16 +12626,16 @@ sub_168A3       proc near               ; CODE XREF: sub_168ED+8C↓p
                 mov     bl, _mapOffsetY
                 shl     bx, 1
                 shl     bx, 1
-                call    sub_14BE0
+                call    draw_sprite_row
                 retn
-sub_168A3       endp
+draw_dungeon_monster_sprite endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-get_dungeon_tile_at_player proc near    ; CODE XREF: sub_16000+35↑p
-                                        ; sub_16000+51↑p ...
+get_dungeon_tile_at_player proc near    ; CODE XREF: render_dungeon_view+35↑p
+                                        ; render_dungeon_view+51↑p ...
                 mov     ah, byte_17435
                 mov     al, 0
                 add     ax, map_ptr
@@ -12658,14 +12659,14 @@ get_dungeon_tile_at_player endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_168ED       proc near               ; CODE XREF: sub_16000+1A↑p
+draw_dungeon_monster proc near          ; CODE XREF: render_dungeon_view+1A↑p
                 nop
                 inc     byte_17892
                 mov     bh, 0
                 mov     bl, 0
                 mov     di, bx
 
-loc_168F8:                              ; CODE XREF: sub_168ED+1B↓j
+loc_168F8:                              ; CODE XREF: draw_dungeon_monster+1B↓j
                 inc     di
                 mov     bx, di
                 cmp     bl, byte_17892
@@ -12673,7 +12674,7 @@ loc_168F8:                              ; CODE XREF: sub_168ED+1B↓j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_16902:                              ; CODE XREF: sub_168ED+12↑j
+loc_16902:                              ; CODE XREF: draw_dungeon_monster+12↑j
                 mov     ah, [di+4AFh]
                 or      ah, ah
                 jz      short loc_168F8
@@ -12692,14 +12693,14 @@ loc_16902:                              ; CODE XREF: sub_168ED+12↑j
                 db  90h
 ; ---------------------------------------------------------------------------
 
-loc_1692C:                              ; CODE XREF: sub_168ED+20↑j
+loc_1692C:                              ; CODE XREF: draw_dungeon_monster+20↑j
                 clc
                 add     ax, monsters_ptr
                 mov     byte ptr word_17899+1, ah
                 mov     byte ptr word_17899, 0
 
-loc_1693A:                              ; CODE XREF: sub_168ED+3C↑j
-                                        ; sub_168ED+8F↓j
+loc_1693A:                              ; CODE XREF: draw_dungeon_monster+3C↑j
+                                        ; draw_dungeon_monster+8F↓j
                 mov     bh, 0
                 mov     bl, 0
                 mov     si, bx
@@ -12710,7 +12711,7 @@ loc_1693A:                              ; CODE XREF: sub_168ED+3C↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1694B:                              ; CODE XREF: sub_168ED+5B↑j
+loc_1694B:                              ; CODE XREF: draw_dungeon_monster+5B↑j
                 mov     _mapOffsetX, al
                 inc     word_17899
                 mov     bx, word_17899
@@ -12731,12 +12732,12 @@ loc_1694B:                              ; CODE XREF: sub_168ED+5B↑j
                 rcr     al, 1
                 mov     byte_1788F, al
                 inc     word_17899
-                call    sub_168A3
+                call    draw_dungeon_monster_sprite
                 jmp     short loc_1693A
-sub_168ED       endp
+draw_dungeon_monster endp
 
 ; ---------------------------------------------------------------------------
-byte_1697E      db 0                    ; DATA XREF: sub_168ED+29↑r
+byte_1697E      db 0                    ; DATA XREF: draw_dungeon_monster+29↑r
                 db    0
                 db  80h
                 db 0C0h
@@ -12764,13 +12765,13 @@ byte_16996      db 0                    ; DATA XREF: seed_star_prng↓w
                                         ; next_star_coord+1↓r ...
 byte_16997      db 0                    ; DATA XREF: seed_star_prng+6↓w
                                         ; next_star_coord+7↓r ...
-byte_16998      db 0                    ; DATA XREF: sub_16999+4↓w
-                                        ; sub_17242+1↓r ...
+byte_16998      db 0                    ; DATA XREF: setup_rocket_launch_display+4↓w
+                                        ; play_star_twinkle_sound+1↓r ...
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16999       proc near               ; CODE XREF: launch+AE↑p
+setup_rocket_launch_display proc near   ; CODE XREF: launch+AE↑p
                 nop
                 call    setPalette
                 mov     cs:byte_16998, 0FFh
@@ -12804,7 +12805,7 @@ sub_16999       proc near               ; CODE XREF: launch+AE↑p
                 mov     si, bx          ; y
                 call    set_text_pos
                 call    write_string
-sub_16999       endp
+setup_rocket_launch_display endp
 
 ; ---------------------------------------------------------------------------
 aFuel           db '  FUEL=',0
@@ -12844,43 +12845,43 @@ aZabo           db '  ZABO=',0
 ; ---------------------------------------------------------------------------
                 mov     al, 20h ; ' '
                 mov     text_width?, al
-                call    sub_16FA3
-                call    sub_16D3E
+                call    draw_hyperwarp_hud
+                call    init_starfield
                 call    hyperwarp
                 mov     al, player._readiedArmor
                 cmp     al, 5
-                jnb     short sub_16A79
+                jnb     short space_travel_command_loop
                 call    write_string
 ; ---------------------------------------------------------------------------
                 db 8Dh,'YOU HAVE EXPLODED!',8Dh,8Dh,0
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR sub_17030
+; START OF FUNCTION CHUNK FOR check_hyperwarp_sun_collision
 
-loc_16A74:                              ; CODE XREF: sub_17030+30↓j
+loc_16A74:                              ; CODE XREF: check_hyperwarp_sun_collision+30↓j
                 call    speaker_off_once
 
-loc_16A77:                              ; CODE XREF: sub_17030:loc_16A77↓j
+loc_16A77:                              ; CODE XREF: check_hyperwarp_sun_collision:loc_16A77↓j
                 jmp     short loc_16A77
-; END OF FUNCTION CHUNK FOR sub_17030
+; END OF FUNCTION CHUNK FOR check_hyperwarp_sun_collision
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: noreturn
 
-sub_16A79       proc near               ; CODE XREF: sg01a2:6A59↑j
-                                        ; sub_16A79+75↓j ...
+space_travel_command_loop proc near     ; CODE XREF: sg01a2:6A59↑j
+                                        ; space_travel_command_loop+75↓j ...
 
 ; FUNCTION CHUNK AT 7185 SIZE 00000010 BYTES
 
                 nop
-                call    sub_16FA3
+                call    draw_hyperwarp_hud
                 call    write_string
 ; ---------------------------------------------------------------------------
 aCmd_3          db 'CMD: ',0
 ; ---------------------------------------------------------------------------
 
-loc_16A86:                              ; CODE XREF: sub_16A79+1C↓j
-                                        ; sub_16A79+5D↓j
+loc_16A86:                              ; CODE XREF: space_travel_command_loop+1C↓j
+                                        ; space_travel_command_loop+5D↓j
                 call    animate_starfield
                 mov     bx, 14h
                 call    delayFrames
@@ -12894,7 +12895,7 @@ loc_16A86:                              ; CODE XREF: sub_16A79+1C↓j
                 db  90h
 ; ---------------------------------------------------------------------------
 
-loc_16AA0:                              ; CODE XREF: sub_16A79+22↑j
+loc_16AA0:                              ; CODE XREF: space_travel_command_loop+22↑j
                 cmp     al, byte_17680
                 jnz     short loc_16AA9
                 jmp     short loc_16AF0
@@ -12902,7 +12903,7 @@ loc_16AA0:                              ; CODE XREF: sub_16A79+22↑j
                 db  90h
 ; ---------------------------------------------------------------------------
 
-loc_16AA9:                              ; CODE XREF: sub_16A79+2B↑j
+loc_16AA9:                              ; CODE XREF: space_travel_command_loop+2B↑j
                 cmp     al, NORTH_KEYCODE
                 jnz     short loc_16AB2
                 jmp     short loc_16B0A
@@ -12910,7 +12911,7 @@ loc_16AA9:                              ; CODE XREF: sub_16A79+2B↑j
                 db  90h
 ; ---------------------------------------------------------------------------
 
-loc_16AB2:                              ; CODE XREF: sub_16A79+34↑j
+loc_16AB2:                              ; CODE XREF: space_travel_command_loop+34↑j
                 cmp     al, byte_1767F
                 jnz     short loc_16ABB
                 jmp     short loc_16B24
@@ -12918,19 +12919,19 @@ loc_16AB2:                              ; CODE XREF: sub_16A79+34↑j
                 db  90h
 ; ---------------------------------------------------------------------------
 
-loc_16ABB:                              ; CODE XREF: sub_16A79+3D↑j
+loc_16ABB:                              ; CODE XREF: space_travel_command_loop+3D↑j
                 cmp     al, 48h ; 'H'
                 jnz     short loc_16AC2
                 jmp     loc_16EC5
 ; ---------------------------------------------------------------------------
 
-loc_16AC2:                              ; CODE XREF: sub_16A79+44↑j
+loc_16AC2:                              ; CODE XREF: space_travel_command_loop+44↑j
                 cmp     al, 4Ch ; 'L'
                 jnz     short loc_16AC9
                 jmp     loc_17185
 ; ---------------------------------------------------------------------------
 
-loc_16AC9:                              ; CODE XREF: sub_16A79+4B↑j
+loc_16AC9:                              ; CODE XREF: space_travel_command_loop+4B↑j
                 call    erase_ship_marker
                 mov     al, 80h
                 mov     byte_1788B, al
@@ -12939,7 +12940,7 @@ loc_16AC9:                              ; CODE XREF: sub_16A79+4B↑j
                 jmp     short loc_16A86
 ; ---------------------------------------------------------------------------
 
-loc_16AD8:                              ; CODE XREF: sub_16A79+24↑j
+loc_16AD8:                              ; CODE XREF: space_travel_command_loop+24↑j
                 call    write_string    ; LEFT
 ; ---------------------------------------------------------------------------
 aLeft           db 'LEFT',8Dh,0
@@ -12949,10 +12950,10 @@ aLeft           db 'LEFT',8Dh,0
                 mov     byte_1788B, al
                 mov     al, 40h ; '@'
                 mov     byte_1788C, al
-                jmp     short sub_16A79
+                jmp     short space_travel_command_loop
 ; ---------------------------------------------------------------------------
 
-loc_16AF0:                              ; CODE XREF: sub_16A79+2D↑j
+loc_16AF0:                              ; CODE XREF: space_travel_command_loop+2D↑j
                 call    write_string    ; RIGHT
 ; ---------------------------------------------------------------------------
 aRight          db 'RIGHT',8Dh,0
@@ -12962,10 +12963,10 @@ aRight          db 'RIGHT',8Dh,0
                 mov     byte_1788B, al
                 mov     al, 40h ; '@'
                 mov     byte_1788C, al
-                jmp     sub_16A79
+                jmp     space_travel_command_loop
 ; ---------------------------------------------------------------------------
 
-loc_16B0A:                              ; CODE XREF: sub_16A79+36↑j
+loc_16B0A:                              ; CODE XREF: space_travel_command_loop+36↑j
                 call    write_string    ; CLIMB
 ; ---------------------------------------------------------------------------
 aClimb          db 'CLIMB',8Dh,0
@@ -12975,14 +12976,14 @@ aClimb          db 'CLIMB',8Dh,0
                 mov     byte_1788C, al
                 mov     al, 80h
                 mov     byte_1788B, al
-                jmp     sub_16A79
+                jmp     space_travel_command_loop
 ; ---------------------------------------------------------------------------
 
-loc_16B24:                              ; CODE XREF: sub_16A79+3F↑j
+loc_16B24:                              ; CODE XREF: space_travel_command_loop+3F↑j
                 call    write_string    ; DIVE
 ; ---------------------------------------------------------------------------
 aDive           db 'DIVE',8Dh,0
-sub_16A79       endp
+space_travel_command_loop endp
 
 ; ---------------------------------------------------------------------------
                 call    erase_ship_marker
@@ -12990,12 +12991,12 @@ sub_16A79       endp
                 mov     byte_1788C, al
                 mov     al, 80h
                 mov     byte_1788B, al
-                jmp     sub_16A79
+                jmp     space_travel_command_loop
 
 ; =============== S U B R O U T I N E =======================================
 
 
-animate_starfield proc near             ; CODE XREF: sub_16A79:loc_16A86↑p
+animate_starfield proc near             ; CODE XREF: space_travel_command_loop:loc_16A86↑p
                                         ; hyperwarp:loc_16E33↓p ...
                 nop
                 call    draw_ship_marker
@@ -13147,7 +13148,7 @@ loc_16C14:                              ; CODE XREF: animate_starfield+C4↑j
 loc_16C52:                              ; CODE XREF: animate_starfield+FB↑j
                 dec     cs:word_16994
                 jnz     short loc_16C5C
-                call    sub_17242
+                call    play_star_twinkle_sound
 
 loc_16C5C:                              ; CODE XREF: animate_starfield+112↑j
                                         ; animate_starfield+11A↑j
@@ -13233,8 +13234,8 @@ byte_16CBC      db 1                    ; DATA XREF: animate_starfield+8A↑r
 ; =============== S U B R O U T I N E =======================================
 
 
-erase_ship_marker proc near             ; CODE XREF: sub_16A79:loc_16AC9↑p
-                                        ; sub_16A79+68↑p ...
+erase_ship_marker proc near             ; CODE XREF: space_travel_command_loop:loc_16AC9↑p
+                                        ; space_travel_command_loop+68↑p ...
                 mov     al, byte_1788B
                 mov     byte_17889, al
                 mov     al, byte_1788C
@@ -13283,13 +13284,13 @@ erase_ship_marker endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16D3E       proc near               ; CODE XREF: sg01a2:6A4E↑p
+init_starfield  proc near               ; CODE XREF: sg01a2:6A4E↑p
                 call    seed_star_prng
                 mov     bh, 0
                 mov     bl, 3Fh ; '?'
                 mov     si, bx
 
-loc_16D47:                              ; CODE XREF: sub_16D3E+1A↓j
+loc_16D47:                              ; CODE XREF: init_starfield+1A↓j
                 call    next_star_coord
                 mov     byte_178DD[si], al
                 call    next_star_coord
@@ -13298,13 +13299,13 @@ loc_16D47:                              ; CODE XREF: sub_16D3E+1A↓j
                 dec     si
                 jns     short loc_16D47
                 retn
-sub_16D3E       endp
+init_starfield  endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-seed_star_prng  proc near               ; CODE XREF: sub_16D3E↑p
+seed_star_prng  proc near               ; CODE XREF: init_starfield↑p
                                         ; hyperwarp+21↓p ...
                 mov     cs:byte_16996, 3Bh ; ';'
                 mov     cs:byte_16997, 67h ; 'g'
@@ -13397,7 +13398,7 @@ loc_16E14:                              ; CODE XREF: hyperwarp↑j
                 mov     bx, 2200h
                 mov     cs:word_16990, bx
                 mov     cs:word_16992, 0FFFFh
-                call    sub_17276
+                call    speaker_on_once
 
 loc_16E33:                              ; CODE XREF: hyperwarp+43↓j
                 call    animate_starfield
@@ -13409,7 +13410,7 @@ loc_16E33:                              ; CODE XREF: hyperwarp+43↓j
                 mov     byte_178D8, al
                 mov     al, 1
                 mov     byte_178D7, al
-                call    sub_16FA3
+                call    draw_hyperwarp_hud
                 call    seed_star_prng
                 mov     cs:word_16992, 1
 
@@ -13455,11 +13456,11 @@ loc_16EA8:                              ; CODE XREF: hyperwarp+96↑j
 loc_16EC0:                              ; CODE XREF: hyperwarp+8F↑j
                                         ; hyperwarp+94↑j
                 nop
-                call    sub_17030
+                call    check_hyperwarp_sun_collision
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_16EC5:                              ; CODE XREF: sub_16A79+46↑j
+loc_16EC5:                              ; CODE XREF: space_travel_command_loop+46↑j
                 mov     al, player._triLithium
                 or      al, al
                 jnz     short loc_16EDC
@@ -13469,7 +13470,7 @@ aNoFuel         db 'NO FUEL!',8Dh,0
 ; ---------------------------------------------------------------------------
 
 loc_16ED9:                              ; CODE XREF: hyperwarp+CF↑j
-                jmp     sub_16A79
+                jmp     space_travel_command_loop
 ; ---------------------------------------------------------------------------
 
 loc_16EDC:                              ; CODE XREF: hyperwarp+CD↑j
@@ -13527,7 +13528,7 @@ loc_16F6A:                              ; CODE XREF: hyperwarp+17A↓j
                 dec     byte_178D8
                 jnz     short loc_16F6A
                 call    hyperwarp
-                jmp     sub_16A79
+                jmp     space_travel_command_loop
 hyperwarp       endp
 
 
@@ -13560,8 +13561,8 @@ read_animated_digit_keypress endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16FA3       proc near               ; CODE XREF: sg01a2:6A4B↑p
-                                        ; sub_16A79+1↑p ...
+draw_hyperwarp_hud proc near            ; CODE XREF: sg01a2:6A4B↑p
+                                        ; space_travel_command_loop+1↑p ...
                 nop
                 mov     al, 28h ; '('
                 mov     text_width?, al
@@ -13611,23 +13612,23 @@ sub_16FA3       proc near               ; CODE XREF: sg01a2:6A4B↑p
                 mov     si, bx          ; y
                 call    set_text_pos
                 retn
-sub_16FA3       endp
+draw_hyperwarp_hud endp
 
 ; ---------------------------------------------------------------------------
 byte_17012      db 6, 5, 3, 6, 1, 2, 9, 4, 0, 9
-                                        ; DATA XREF: sub_16999+1C↑r
-                                        ; sub_17030:loc_1706A↓r
+                                        ; DATA XREF: setup_rocket_launch_display+1C↑r
+                                        ; check_hyperwarp_sun_collision:loc_1706A↓r
 byte_1701C      db 6, 4, 3, 2, 3, 8, 4, 0, 1, 9
-                                        ; DATA XREF: sub_16999+24↑r
-                                        ; sub_17030+45↓r
+                                        ; DATA XREF: setup_rocket_launch_display+24↑r
+                                        ; check_hyperwarp_sun_collision+45↓r
 byte_17026      db 6, 5, 4, 3, 4, 5, 6, 5, 4, 9
-                                        ; DATA XREF: sub_16999+2C↑r
-                                        ; sub_17030+50↓r
+                                        ; DATA XREF: setup_rocket_launch_display+2C↑r
+                                        ; check_hyperwarp_sun_collision+50↓r
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_17030       proc near               ; CODE XREF: hyperwarp+C4↑p
+check_hyperwarp_sun_collision proc near ; CODE XREF: hyperwarp+C4↑p
                                         ; sg01a2:71A9↓p
 
 ; FUNCTION CHUNK AT 6A74 SIZE 00000005 BYTES
@@ -13650,14 +13651,14 @@ sub_17030       proc near               ; CODE XREF: hyperwarp+C4↑p
                 jmp     loc_16A74
 ; ---------------------------------------------------------------------------
 
-loc_17063:                              ; CODE XREF: sub_17030+6↑j
-                                        ; sub_17030+D↑j ...
+loc_17063:                              ; CODE XREF: check_hyperwarp_sun_collision+6↑j
+                                        ; check_hyperwarp_sun_collision+D↑j ...
                 nop
                 mov     bh, 0
                 mov     bl, 9
                 mov     di, bx
 
-loc_1706A:                              ; CODE XREF: sub_17030+5C↓j
+loc_1706A:                              ; CODE XREF: check_hyperwarp_sun_collision+5C↓j
                 mov     al, cs:byte_17012[di]
                 cmp     al, byte_178DA
                 jnz     short loc_1708B
@@ -13668,8 +13669,8 @@ loc_1706A:                              ; CODE XREF: sub_17030+5C↓j
                 cmp     al, byte_178DC
                 jz      short loc_170B1
 
-loc_1708B:                              ; CODE XREF: sub_17030+43↑j
-                                        ; sub_17030+4E↑j
+loc_1708B:                              ; CODE XREF: check_hyperwarp_sun_collision+43↑j
+                                        ; check_hyperwarp_sun_collision+4E↑j
                 dec     di
                 jns     short loc_1706A
                 call    write_string    ; YOU ARE IN DEEP SPACE.
@@ -13677,13 +13678,13 @@ loc_1708B:                              ; CODE XREF: sub_17030+43↑j
 aYouAreInDeepSp db 'YOU ARE IN DEEP SPACE.',8Dh,0
 ; ---------------------------------------------------------------------------
 
-loc_170A9:                              ; CODE XREF: sub_17030+5E↑j
+loc_170A9:                              ; CODE XREF: check_hyperwarp_sun_collision+5E↑j
                 mov     al, 0Ah
                 mov     player._disableSave, al
                 jmp     nullsub_2
 ; ---------------------------------------------------------------------------
 
-loc_170B1:                              ; CODE XREF: sub_17030+59↑j
+loc_170B1:                              ; CODE XREF: check_hyperwarp_sun_collision+59↑j
                 mov     ax, di
                 mov     player._disableSave, al
                 call    write_string
@@ -13712,144 +13713,144 @@ aYouAreOrbiting db 'YOU ARE ORBITING ',0
                 jmp     loc_1717A
 ; ---------------------------------------------------------------------------
 
-loc_170F5:                              ; CODE XREF: sub_17030+A0↑j
+loc_170F5:                              ; CODE XREF: check_hyperwarp_sun_collision+A0↑j
                 call    write_string    ; EARTH.
 ; ---------------------------------------------------------------------------
 aEarth          db 'EARTH.',8Dh,0
 ; ---------------------------------------------------------------------------
 
-loc_17100:                              ; CODE XREF: sub_17030:loc_170F5↑j
+loc_17100:                              ; CODE XREF: check_hyperwarp_sun_collision:loc_170F5↑j
                 jmp     nullsub_2
 ; ---------------------------------------------------------------------------
 
-loc_17103:                              ; CODE XREF: sub_17030+A4↑j
+loc_17103:                              ; CODE XREF: check_hyperwarp_sun_collision+A4↑j
                 call    write_string    ; MERCURY.
 ; ---------------------------------------------------------------------------
 aMercury        db 'MERCURY.',8Dh,0
 ; ---------------------------------------------------------------------------
 
-loc_17110:                              ; CODE XREF: sub_17030:loc_17103↑j
+loc_17110:                              ; CODE XREF: check_hyperwarp_sun_collision:loc_17103↑j
                 jmp     short nullsub_2
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
 
-loc_17113:                              ; CODE XREF: sub_17030+A8↑j
+loc_17113:                              ; CODE XREF: check_hyperwarp_sun_collision+A8↑j
                 call    write_string    ; VENUS.
 ; ---------------------------------------------------------------------------
 aVenus          db 'VENUS.',8Dh,0
 ; ---------------------------------------------------------------------------
 
-loc_1711E:                              ; CODE XREF: sub_17030:loc_17113↑j
+loc_1711E:                              ; CODE XREF: check_hyperwarp_sun_collision:loc_17113↑j
                 jmp     short nullsub_2
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
 
-loc_17121:                              ; CODE XREF: sub_17030+AC↑j
+loc_17121:                              ; CODE XREF: check_hyperwarp_sun_collision+AC↑j
                 call    write_string    ; MARS.
 ; ---------------------------------------------------------------------------
 aMars           db 'MARS.',8Dh,0
 ; ---------------------------------------------------------------------------
 
-loc_1712B:                              ; CODE XREF: sub_17030:loc_17121↑j
+loc_1712B:                              ; CODE XREF: check_hyperwarp_sun_collision:loc_17121↑j
                 jmp     short nullsub_2
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
 
-loc_1712E:                              ; CODE XREF: sub_17030+B0↑j
+loc_1712E:                              ; CODE XREF: check_hyperwarp_sun_collision+B0↑j
                 call    write_string    ; JUPITER.
 ; ---------------------------------------------------------------------------
 aJupiter        db 'JUPITER.',8Dh,0
 ; ---------------------------------------------------------------------------
 
-loc_1713B:                              ; CODE XREF: sub_17030:loc_1712E↑j
+loc_1713B:                              ; CODE XREF: check_hyperwarp_sun_collision:loc_1712E↑j
                 jmp     short nullsub_2
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
 
-loc_1713E:                              ; CODE XREF: sub_17030+B4↑j
+loc_1713E:                              ; CODE XREF: check_hyperwarp_sun_collision+B4↑j
                 call    write_string    ; SATURN.
 ; ---------------------------------------------------------------------------
 aSaturn         db 'SATURN.',8Dh,0
 ; ---------------------------------------------------------------------------
 
-loc_1714A:                              ; CODE XREF: sub_17030:loc_1713E↑j
+loc_1714A:                              ; CODE XREF: check_hyperwarp_sun_collision:loc_1713E↑j
                 jmp     short nullsub_2
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
 
-loc_1714D:                              ; CODE XREF: sub_17030+B8↑j
+loc_1714D:                              ; CODE XREF: check_hyperwarp_sun_collision+B8↑j
                 call    write_string    ; URANUS.
 ; ---------------------------------------------------------------------------
 aUranus         db 'URANUS.',8Dh,0
 ; ---------------------------------------------------------------------------
 
-loc_17159:                              ; CODE XREF: sub_17030:loc_1714D↑j
+loc_17159:                              ; CODE XREF: check_hyperwarp_sun_collision:loc_1714D↑j
                 jmp     short nullsub_2
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
 
-loc_1715C:                              ; CODE XREF: sub_17030+BC↑j
+loc_1715C:                              ; CODE XREF: check_hyperwarp_sun_collision+BC↑j
                 call    write_string    ; NEPTUNE.
 ; ---------------------------------------------------------------------------
 aNeptune        db 'NEPTUNE.',8Dh,0
 ; ---------------------------------------------------------------------------
 
-loc_17169:                              ; CODE XREF: sub_17030:loc_1715C↑j
+loc_17169:                              ; CODE XREF: check_hyperwarp_sun_collision:loc_1715C↑j
                 jmp     short nullsub_2
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
 
-loc_1716C:                              ; CODE XREF: sub_17030+C0↑j
+loc_1716C:                              ; CODE XREF: check_hyperwarp_sun_collision+C0↑j
                 call    write_string    ; PLUTO.
 ; ---------------------------------------------------------------------------
 aPluto          db 'PLUTO.',8Dh,0
 ; ---------------------------------------------------------------------------
 
-loc_17177:                              ; CODE XREF: sub_17030:loc_1716C↑j
+loc_17177:                              ; CODE XREF: check_hyperwarp_sun_collision:loc_1716C↑j
                 jmp     short nullsub_2
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
 
-loc_1717A:                              ; CODE XREF: sub_17030+C2↑j
+loc_1717A:                              ; CODE XREF: check_hyperwarp_sun_collision+C2↑j
                 call    write_string    ; X.
 ; ---------------------------------------------------------------------------
                 db 'X.',8Dh,0
 ; ---------------------------------------------------------------------------
 
-loc_17181:                              ; CODE XREF: sub_17030:loc_1717A↑j
+loc_17181:                              ; CODE XREF: check_hyperwarp_sun_collision:loc_1717A↑j
                 jmp     short nullsub_2
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
 
-nullsub_2:                              ; CODE XREF: sub_17030+7E↑j
-                                        ; sub_17030:loc_17100↑j ...
+nullsub_2:                              ; CODE XREF: check_hyperwarp_sun_collision+7E↑j
+                                        ; check_hyperwarp_sun_collision:loc_17100↑j ...
                 retn
-sub_17030       endp
+check_hyperwarp_sun_collision endp
 
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR sub_16A79
+; START OF FUNCTION CHUNK FOR space_travel_command_loop
 
-loc_17185:                              ; CODE XREF: sub_16A79+4D↑j
+loc_17185:                              ; CODE XREF: space_travel_command_loop+4D↑j
                 call    erase_ship_marker
                 mov     al, 80h
                 mov     byte_1788B, al
                 mov     al, 40h ; '@'
                 mov     byte_1788C, al
                 call    write_string    ; LANDING REQUESTED!
-; END OF FUNCTION CHUNK FOR sub_16A79
+; END OF FUNCTION CHUNK FOR space_travel_command_loop
 ; ---------------------------------------------------------------------------
 aLandingRequest db 'LANDING REQUESTED!',8Dh,0
 ; ---------------------------------------------------------------------------
-                call    sub_17030
+                call    check_hyperwarp_sun_collision
                 mov     al, player._disableSave
                 cmp     al, 0Ah
                 jnz     short loc_171CA
@@ -13857,7 +13858,7 @@ aLandingRequest db 'LANDING REQUESTED!',8Dh,0
 ; ---------------------------------------------------------------------------
 aRequestDenied  db 'REQUEST DENIED!',8Dh,0
 ; ---------------------------------------------------------------------------
-                jmp     sub_16A79
+                jmp     space_travel_command_loop
 ; ---------------------------------------------------------------------------
 
 loc_171CA:                              ; CODE XREF: sg01a2:71B1↑j
@@ -13877,7 +13878,7 @@ loc_171E8:                              ; CODE XREF: sg01a2:71CF↑j
                 mov     bx, 20
                 call    delayFrames
                 mov     al, 58h ; 'X'
-                call    sub_1720B
+                call    patch_map_filename
                 nop
                 nop
                 nop
@@ -13898,13 +13899,13 @@ loc_17207:                              ; CODE XREF: sg01a2:71CD↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1720B       proc near               ; CODE XREF: sg01a2:71F3↑p
+patch_map_filename proc near            ; CODE XREF: sg01a2:71F3↑p
                                         ; sg01a2:722D↓p
                 mov     byte ptr cs:aMapxff+3, al ; "XFF  "
                 mov     cs:byte_122C9+3, al
                 mov     byte ptr cs:aTlkxff+3, al ; "XFF  "
                 retn
-sub_1720B       endp
+patch_map_filename endp
 
 ; ---------------------------------------------------------------------------
                 db    0
@@ -13918,7 +13919,7 @@ loc_17222:                              ; CODE XREF: sg01a2:loc_17207↑j
                 mov     bx, 14h
                 call    delayFrames
                 mov     al, 47h ; 'G'
-                call    sub_1720B
+                call    patch_map_filename
                 nop
                 nop
                 nop
@@ -13932,7 +13933,7 @@ loc_17222:                              ; CODE XREF: sg01a2:loc_17207↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_17242       proc near               ; CODE XREF: animate_starfield+11C↑p
+play_star_twinkle_sound proc near       ; CODE XREF: animate_starfield+11C↑p
                 nop
                 cmp     cs:byte_16998, 0FFh
                 jz      short loc_17258
@@ -13943,42 +13944,42 @@ sub_17242       proc near               ; CODE XREF: animate_starfield+11C↑p
                 db  90h
 ; ---------------------------------------------------------------------------
 
-loc_17258:                              ; CODE XREF: sub_17242+7↑j
+loc_17258:                              ; CODE XREF: play_star_twinkle_sound+7↑j
                 call    rand_byte
                 mov     ah, al
                 and     ax, 1F00h
                 add     ax, 100h
                 mov     bx, ax
                 mov     cx, 1
-                call    sub_17276
+                call    speaker_on_once
                 call    hold_tone
                 mov     cs:word_16994, 18h
 
-locret_17275:                           ; CODE XREF: sub_17242+13↑j
+locret_17275:                           ; CODE XREF: play_star_twinkle_sound+13↑j
                 retn
-sub_17242       endp
+play_star_twinkle_sound endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_17276       proc near               ; CODE XREF: hyperwarp+33↑p
-                                        ; sub_17242+26↑p
+speaker_on_once proc near               ; CODE XREF: hyperwarp+33↑p
+                                        ; play_star_twinkle_sound+26↑p
                 nop
                 cmp     cs:byte_16998, 0FFh
                 jnz     short locret_17288
                 call    speaker_on
                 mov     cs:byte_16998, 0
 
-locret_17288:                           ; CODE XREF: sub_17276+7↑j
+locret_17288:                           ; CODE XREF: speaker_on_once+7↑j
                 retn
-sub_17276       endp
+speaker_on_once endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-speaker_off_once proc near              ; CODE XREF: sub_17030:loc_16A74↑p
+speaker_off_once proc near              ; CODE XREF: check_hyperwarp_sun_collision:loc_16A74↑p
                                         ; sg01a2:7203↑p ...
                 nop
                 cmp     cs:byte_16998, 0
@@ -14000,28 +14001,28 @@ speaker_off_once endp
 
 ; Attributes: noreturn
 
-sub_172A0       proc near               ; CODE XREF: attack+13E↑p
+minax_death_sequence proc near          ; CODE XREF: attack+13E↑p
 
 ; FUNCTION CHUNK AT 72DA SIZE 00000040 BYTES
 
                 nop
                 mov     text_width?, 28h ; '('
                 call    write_string
-sub_172A0       endp
+minax_death_sequence endp
 
 ; ---------------------------------------------------------------------------
                 db 8Dh,8Dh,'     MINAX IS DEAD!!',8Dh,'ALL HER WORKS SHALL DIE!',8Dh,0
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR sub_172A0
+; START OF FUNCTION CHUNK FOR minax_death_sequence
                 mov     al, 40h ; '@'
                 mov     byte_1742F, al
 
-loc_172DF:                              ; CODE XREF: sub_172A0+75↓j
+loc_172DF:                              ; CODE XREF: minax_death_sequence+75↓j
                 call    play_hit_sound
                 mov     al, 40h ; '@'
                 mov     byte_17430, al
 
-loc_172E7:                              ; CODE XREF: sub_172A0+66↓j
+loc_172E7:                              ; CODE XREF: minax_death_sequence+66↓j
                 call    rand_byte
                 and     al, 3Fh
                 mov     _playerX, al
@@ -14040,12 +14041,12 @@ loc_172E7:                              ; CODE XREF: sub_172A0+66↓j
                 dec     byte_1742F
                 jnz     short loc_172DF
                 call    write_string
-; END OF FUNCTION CHUNK FOR sub_172A0
+; END OF FUNCTION CHUNK FOR minax_death_sequence
 ; ---------------------------------------------------------------------------
                 db 8Dh,'YOU FEEL A STRANGE FORCE!',0
 ; ---------------------------------------------------------------------------
 
-loc_17335:                              ; CODE XREF: sub_172A0+77↑j
+loc_17335:                              ; CODE XREF: minax_death_sequence+77↑j
                 call    play_bump_sound
                 mov     ah, 27h ; '''
                 mov     cx, 1000h
@@ -14443,7 +14444,7 @@ _timer6         db 0                    ; DATA XREF: start_+25↑w
                                         ; rand_byte+A↑r
 _picData        FCB <0>                 ; DATA XREF: access_file:loc_152E7↑w
                                         ; access_file+47↑o ...
-_flag1          db 0                    ; DATA XREF: play_game+B6↑w
+_negateTimeDuration db 0                ; DATA XREF: play_game+B6↑w
                                         ; sg01a2:loc_10C54↑r ...
 player_paralyzedFlag db 0               ; DATA XREF: play_game+B9↑w
                                         ; sg01a2:loc_10C33↑r ...
@@ -14466,7 +14467,7 @@ _priorMapTileIds db 100h dup(     0)    ; DATA XREF: play_game+FA↑w
 map_ptr         dw 1800h                ; DATA XREF: map_get_monster_at?+A↑r
                                         ; load_map+20↑r ...
 monsters_ptr    dw 2900h                ; DATA XREF: play_game+92↑r
-                                        ; sub_168ED+22↑r ...
+                                        ; draw_dungeon_monster+22↑r ...
 word_17886      dw 2800h                ; DATA XREF: print_indexed_shop_string+6↑r
                                         ; load_talk_file+18↑r
 text_mode?      db 0                    ; DATA XREF: set_cga_mode+18↑w
@@ -14475,32 +14476,32 @@ byte_17889      db 0                    ; DATA XREF: plot_map_icon_point+2↑w
                                         ; plot_map_icon_point+13↑r ...
 byte_1788A      db 0                    ; DATA XREF: plot_map_icon_point+8↑w
                                         ; plot_map_icon_point+1F↑r ...
-byte_1788B      db 0                    ; DATA XREF: sub_16078+4↑w
-                                        ; sub_16078+65↑r ...
-byte_1788C      db 0                    ; DATA XREF: sub_16078+12↑w
-                                        ; sub_16078+75↑r ...
-byte_1788D      db 0                    ; DATA XREF: sub_16078+28↑w
-                                        ; sub_16078+97↑r ...
-byte_1788E      db 0                    ; DATA XREF: sub_16078+33↑w
-                                        ; sub_16078+A7↑r ...
-byte_1788F      db 0                    ; DATA XREF: sub_168A3+3↑r
-                                        ; sub_168ED+85↑w
+byte_1788B      db 0                    ; DATA XREF: precompute_dungeon_corridor+4↑w
+                                        ; precompute_dungeon_corridor+65↑r ...
+byte_1788C      db 0                    ; DATA XREF: precompute_dungeon_corridor+12↑w
+                                        ; precompute_dungeon_corridor+75↑r ...
+byte_1788D      db 0                    ; DATA XREF: precompute_dungeon_corridor+28↑w
+                                        ; precompute_dungeon_corridor+97↑r ...
+byte_1788E      db 0                    ; DATA XREF: precompute_dungeon_corridor+33↑w
+                                        ; precompute_dungeon_corridor+A7↑r ...
+byte_1788F      db 0                    ; DATA XREF: draw_dungeon_monster_sprite+3↑r
+                                        ; draw_dungeon_monster+85↑w
 byte_17890      db 0                    ; DATA XREF: draw_line+6D↑w
                                         ; draw_line+A6↑w ...
 byte_17891      db 0                    ; DATA XREF: draw_line+73↑w
                                         ; draw_line+77↑r ...
-byte_17892      db 0                    ; DATA XREF: sub_16144+5↑w
-                                        ; sub_16144+D↑r ...
-byte_17893      db 0                    ; DATA XREF: sub_16000+4↑w
-                                        ; sub_16000+20↑w ...
-byte_17894      db 0                    ; DATA XREF: sub_16000+A↑w
-                                        ; sub_16000+26↑w ...
+byte_17892      db 0                    ; DATA XREF: draw_dungeon_corridor+5↑w
+                                        ; draw_dungeon_corridor+D↑r ...
+byte_17893      db 0                    ; DATA XREF: render_dungeon_view+4↑w
+                                        ; render_dungeon_view+20↑w ...
+byte_17894      db 0                    ; DATA XREF: render_dungeon_view+A↑w
+                                        ; render_dungeon_view+26↑w ...
                 db    0
                 db    0
 word_17897      dw 0                    ; DATA XREF: get_dungeon_tile_at_player+1D↑w
                                         ; get_dungeon_tile_at_player+26↑r ...
-word_17899      dw 0                    ; DATA XREF: sub_168ED+2E↑w
-                                        ; sub_168ED+36↑r ...
+word_17899      dw 0                    ; DATA XREF: draw_dungeon_monster+2E↑w
+                                        ; draw_dungeon_monster+36↑r ...
                 db    0
                 db    0
                 db    0
@@ -14571,11 +14572,11 @@ byte_178D8      db 0                    ; DATA XREF: hyperwarp+19↑w
                                         ; hyperwarp+3F↑w ...
 byte_178D9      db 0                    ; DATA XREF: animate_starfield+BB↑w
                                         ; animate_starfield+D9↑r ...
-byte_178DA      db 0                    ; DATA XREF: sub_16999+21↑w
+byte_178DA      db 0                    ; DATA XREF: setup_rocket_launch_display+21↑w
                                         ; hyperwarp+B0↑w ...
-byte_178DB      db 0                    ; DATA XREF: sub_16999+29↑w
+byte_178DB      db 0                    ; DATA XREF: setup_rocket_launch_display+29↑w
                                         ; hyperwarp+B8↑w ...
-byte_178DC      db 0                    ; DATA XREF: sub_16999+31↑w
+byte_178DC      db 0                    ; DATA XREF: setup_rocket_launch_display+31↑w
                                         ; hyperwarp+C0↑w ...
 byte_178DD      db 0                    ; DATA XREF: animate_starfield:loc_16B47↑r
                                         ; animate_starfield+C6↑r ...
