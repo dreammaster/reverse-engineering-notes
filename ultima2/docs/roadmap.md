@@ -166,26 +166,38 @@ sessions, unlike a one-off todo list.
       this), so both master scripts now default to applying
       immediately — still propose new entries and get sign-off in chat
       before adding them, same as `apply_renames.py`'s convention.
-- [ ] Follow-up leads from the decoding pass, not yet chased:
-      - ~~`field_A5` (Fighter-kill drop, +1 BCD) has no confirmed
-        consumption site~~ — **resolved**: it's `_helmsOwned`, spent by
-        `view` ("VIEW WITH MAGICAL HELM!"), see the treasure-item block
-        writeup above.
-      - The Thief/Fighter kill branches in `attack` touch a small
-        array at `[idx+0D6h]` (asm ~8161-8170, ~8219-8228) — not
-        traced at all yet.
-      - `+0x80` (display/glyph tile) vs. `+0x60` (type) — likely
-        redundant/companion fields, not fully distinguished.
-      - `+0xC0`-`+0xFF` (the remaining 64 bytes of the 256-byte file)
-        — no code found referencing this span yet; possibly 1-2 more
-        fields, possibly padding.
-      - The on-disk `+0x00`/`+0x20` (map X/Y) vs. the runtime-only
-        `+0x137`/`+0x157` (also map X/Y) — relationship between the
-        two not established (spawn vs. live copy? kept in sync?).
-      - A possible bug/oddity in the "killed Minax" branch of `attack`
-        (asm 8079-8111) — looks like it writes to a transposed (Y, X)
-        map position instead of (X, Y). Worth a closer look, not
-        confirmed as a real bug yet.
+- [x] Follow-up leads from the decoding pass — **all resolved**:
+      - `field_A5` (Fighter-kill drop) — resolved: it's `_helmsOwned`,
+        spent by `view` ("VIEW WITH MAGICAL HELM!").
+      - `+0xC0`-`+0xFF` (remaining 64 bytes) — resolved: they're
+        `_monsterTempX`/`_monsterTempY` (temp scratch during position
+        swaps), see the `_mapMonsters` split writeup.
+      - On-disk `+0x00`/`+0x20` vs. runtime-only `+0x137`/`+0x157` —
+        resolved, premise was wrong: same field, not two copies (see
+        the `_mapMonsters` split writeup's segment-offset correction).
+      - The Thief/Fighter kill branches touching `[idx+0D6h]` —
+        resolved: it's `player._ringOwned[]` (the 16-element treasure
+        array), and tracing it fully revealed `attack`'s complete
+        monster-kill drop table (Thief also drops a random treasure
+        item on top of tools; Fighter also drops torches on top of the
+        helm; Wizard kills drop a Wand or Staff, 50/50 — a whole new
+        finding, not previously documented at all). Full table in
+        [file-formats.md](file-formats.md#monx--monsternpc-data).
+      - `_monsterGlyphTile` (`+0x80`) vs. `_monsterType` (`+0x60`) —
+        resolved, confirmed genuine companions: type is the
+        identity/dispatch value, glyph is a separate copy for the map
+        display tile, cleared together on death.
+      - The "killed Minax" branch's transposed-(Y,X)-vs-(X,Y) map
+        write — fully traced: turns out `attack` has two entirely
+        separate "killed Minax" paths (melee vs. spell-death), and the
+        transposition is deliberate, structured code unique to the
+        spell-death path, not a disassembly artifact. Whether it
+        reflects real design intent or an authoring slip can't be
+        settled from static analysis alone (would need runtime
+        observation) — treating this as closed at the "mechanism fully
+        understood" level. Bonus find: spell-killing Minax gives a
+        shorter victory message ("SHE'S GONE!!!") than melee-killing
+        her (`minax_death_sequence`'s full "MINAX IS DEAD!!" text).
 - [x] **`_mapMonsters` struct-of-arrays fully split and named**
       (`ida_scripts/split_map_monsters.py`, dry-run then applied,
       2026-08-18) — bespoke splitting script as anticipated, similar
