@@ -1563,3 +1563,77 @@ Done. Re-export the .asm/.idc and check the new names took, then update docs/roa
 [*] gen_file(OFILE_IDC) returned 1
 [*] saving database to C:\dev\ultima2\ultima2.idb
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'C:\\dev\\ultima2\\ida_scripts\\split_map_monsters.py']
+[*] reading C:\dev\ultima2\ida_scripts\split_map_monsters.py
+[*] executing C:\dev\ultima2\ida_scripts\split_map_monsters.py
+[*] captured stdout from target script:
+----- begin target script output -----
+_mapMonsters base = 17547
+17547 (+0): '_mapMonsters' (188 bytes) -> '_mapMonsters' (32 bytes)
+    Map X position. Already the established name for offset 0 -- resized to exactly 32 bytes here (was a flat 0xBC=188-byte array covering all 6 original on-disk fields at once), not renamed. Evidence: sub_1330C/find_cursor_target_monster matches it against _mapX+_mapLeft when locating the monster under the cursor for cast.
+17567 (+20): '' (0 bytes) -> '_monsterMapY' (32 bytes)
+    Map Y position. Evidence: same routine, _mapY+_mapTop against this field.
+17587 (+40): '' (0 bytes) -> '_monsterSpellHP' (32 bytes)
+    Magic/spell HP. cast subtracts a computed spell-damage value from it and checks for borrow (death) -- separate pool from the runtime melee HP. Same borrowless-subtract idiom as player._hp.
+175A7 (+60): '' (0 bytes) -> '_monsterType' (32 bytes)
+    Monster type = TileId x4. attack's post-kill dispatch and transact's flavor-line dispatch ("A GUARD SAYS: PAY YOUR TAXES!"=0x60, "A JESTER SINGS..."=0x64, "A MERCHANT SAYS..."=0x68, plus 0xF0/0xF4/0xF8/0xFC) both confirm exact TileId x4 matches (Minax/Guard/Thief/Fighter).
+175C7 (+80): '' (0 bytes) -> '_monsterGlyphTile' (32 bytes)
+    Display/glyph tile ID. Written directly onto the map as a tile byte after a non-lethal hit; also compared against a caller- supplied value in find_cursor_target_monster (a 'match this specific glyph' parameter for cast's detection). Likely a companion/duplicate of _monsterType rather than something fully distinct -- both get zeroed together on death.
+175E7 (+A0): '' (0 bytes) -> '_monsterOfferFlag' (32 bytes)
+    Dual-use field, confirmed via 2 independent call sites: offer reads it as an offer-type (values 0x81/0x82/0x83, high bit + 1-3 index) gating a location-specific gold-offer script; transact checks the same high bit (cmp al,80h) to decide 'is this NPC a shopkeeper', and if not, falls through to the _monsterType flavor-line dispatch. Was mistakenly documented as two separate fields (on-disk 'Offer flag' + a supposed runtime-only 'shopkeeper flag' at +0x1D7) before the segment- offset correction above -- it's one field, accessed via two different addressing idioms in different code paths.
+17607 (+C0): 'byte_17607' (1 bytes) -> '_monsterTempX' (32 bytes)
+    Temporary scratch, not persistent monster data: holds a saved copy of _playerX during a position swap (asm ~2259, 2272-2274 -- 'mov al,_playerX / mov [di+1F7h],al' then later 'mov al,[di+1F7h] / mov _playerX,al / mov _mapMonsters[di],al'). Was documented as an unmapped/unreferenced byte range before the segment-offset correction above.
+17627 (+E0): 'byte_17627' (1 bytes) -> '_monsterTempY' (32 bytes)
+    Temporary scratch for _playerY, same swap pattern as _monsterTempX (asm ~2260-2261, 2275+).
+
+Done (DRY RUN -- nothing changed).
+Set DRY_RUN = False to apply.
+----- end target script output -----
+[*] finished executing C:\dev\ultima2\ida_scripts\split_map_monsters.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 16366
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] ARGV = ['C:\\dev\\ultima2\\ida_scripts\\batch_run_and_export.py', 'C:\\dev\\ultima2\\ida_scripts\\split_map_monsters.py']
+[*] reading C:\dev\ultima2\ida_scripts\split_map_monsters.py
+[*] executing C:\dev\ultima2\ida_scripts\split_map_monsters.py
+[*] captured stdout from target script:
+----- begin target script output -----
+_mapMonsters base = 17547
+17547 (+0): '_mapMonsters' (188 bytes) -> '_mapMonsters' (32 bytes)
+    Map X position. Already the established name for offset 0 -- resized to exactly 32 bytes here (was a flat 0xBC=188-byte array covering all 6 original on-disk fields at once), not renamed. Evidence: sub_1330C/find_cursor_target_monster matches it against _mapX+_mapLeft when locating the monster under the cursor for cast.
+17567 (+20): '' (0 bytes) -> '_monsterMapY' (32 bytes)
+    Map Y position. Evidence: same routine, _mapY+_mapTop against this field.
+17587 (+40): '' (0 bytes) -> '_monsterSpellHP' (32 bytes)
+    Magic/spell HP. cast subtracts a computed spell-damage value from it and checks for borrow (death) -- separate pool from the runtime melee HP. Same borrowless-subtract idiom as player._hp.
+175A7 (+60): '' (0 bytes) -> '_monsterType' (32 bytes)
+    Monster type = TileId x4. attack's post-kill dispatch and transact's flavor-line dispatch ("A GUARD SAYS: PAY YOUR TAXES!"=0x60, "A JESTER SINGS..."=0x64, "A MERCHANT SAYS..."=0x68, plus 0xF0/0xF4/0xF8/0xFC) both confirm exact TileId x4 matches (Minax/Guard/Thief/Fighter).
+175C7 (+80): '' (0 bytes) -> '_monsterGlyphTile' (32 bytes)
+    Display/glyph tile ID. Written directly onto the map as a tile byte after a non-lethal hit; also compared against a caller- supplied value in find_cursor_target_monster (a 'match this specific glyph' parameter for cast's detection). Likely a companion/duplicate of _monsterType rather than something fully distinct -- both get zeroed together on death.
+175E7 (+A0): '' (0 bytes) -> '_monsterOfferFlag' (32 bytes)
+    Dual-use field, confirmed via 2 independent call sites: offer reads it as an offer-type (values 0x81/0x82/0x83, high bit + 1-3 index) gating a location-specific gold-offer script; transact checks the same high bit (cmp al,80h) to decide 'is this NPC a shopkeeper', and if not, falls through to the _monsterType flavor-line dispatch. Was mistakenly documented as two separate fields (on-disk 'Offer flag' + a supposed runtime-only 'shopkeeper flag' at +0x1D7) before the segment- offset correction above -- it's one field, accessed via two different addressing idioms in different code paths.
+17607 (+C0): 'byte_17607' (1 bytes) -> '_monsterTempX' (32 bytes)
+    Temporary scratch, not persistent monster data: holds a saved copy of _playerX during a position swap (asm ~2259, 2272-2274 -- 'mov al,_playerX / mov [di+1F7h],al' then later 'mov al,[di+1F7h] / mov _playerX,al / mov _mapMonsters[di],al'). Was documented as an unmapped/unreferenced byte range before the segment-offset correction above.
+17627 (+E0): 'byte_17627' (1 bytes) -> '_monsterTempY' (32 bytes)
+    Temporary scratch for _playerY, same swap pattern as _monsterTempX (asm ~2260-2261, 2275+).
+
+Done (applied).
+Re-export the .asm/.idc and check the new names took, then update docs/roadmap.md's checklist.
+----- end target script output -----
+[*] finished executing C:\dev\ultima2\ida_scripts\split_map_monsters.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima2\ultima2.asm
+[*] gen_file(OFILE_ASM) returned 16310
+[*] exporting IDC to C:\dev\ultima2\ultima2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima2\ultima2.idb
+[*] done, exiting 0

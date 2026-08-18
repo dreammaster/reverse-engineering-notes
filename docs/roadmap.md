@@ -82,10 +82,11 @@ sessions, unlike a one-off todo list.
       overview.md) is the movement-key dispatcher, and that
       `canMoveToTile` itself only does terrain-legality/effect checks
       (fields, ships, rockets) with no monster/NPC special-casing.
-- [ ] Now that the 26 command-handler procs are exposed, most of their
+- [x] Now that the 26 command-handler procs are exposed, most of their
       internals are still unnamed `sub_XXXXX` helpers (proc/sub counts
       jumped from 93/58 to 145/79 after resolving the table) — sweep
-      these for names once a few are read through.
+      these for names once a few are read through. **Done** — see the
+      completed sweep entry further down (73/73 named).
 - [x] Locate the embedded overworld tile graphics — **found via a
       better path than the file-offset translation originally
       planned**. Paul spotted that the IDB already has a resolved
@@ -166,8 +167,10 @@ sessions, unlike a one-off todo list.
       immediately — still propose new entries and get sign-off in chat
       before adding them, same as `apply_renames.py`'s convention.
 - [ ] Follow-up leads from the decoding pass, not yet chased:
-      - `field_A5` (Fighter-kill drop, +1 BCD) has no confirmed
-        consumption site — find where else it's read.
+      - ~~`field_A5` (Fighter-kill drop, +1 BCD) has no confirmed
+        consumption site~~ — **resolved**: it's `_helmsOwned`, spent by
+        `view` ("VIEW WITH MAGICAL HELM!"), see the treasure-item block
+        writeup above.
       - The Thief/Fighter kill branches in `attack` touch a small
         array at `[idx+0D6h]` (asm ~8161-8170, ~8219-8228) — not
         traced at all yet.
@@ -183,12 +186,29 @@ sessions, unlike a one-off todo list.
         (asm 8079-8111) — looks like it writes to a transposed (Y, X)
         map position instead of (X, Y). Worth a closer look, not
         confirmed as a real bug yet.
-- [ ] Once the above settles, name the `_mapMonsters` sub-fields and
-      the 7 runtime-only per-monster fields (`+0x137` through
-      `+0x217`, see file-formats.md) in the IDB — needs a bespoke
-      splitting script similar to `resolve_command_jump_table.py`, not
-      a plain rename, per `ida_scripts/apply_structs.py`'s docstring
-      (struct-of-arrays doesn't fit an IDA struct type the normal way).
+- [x] **`_mapMonsters` struct-of-arrays fully split and named**
+      (`ida_scripts/split_map_monsters.py`, dry-run then applied,
+      2026-08-18) — bespoke splitting script as anticipated, similar
+      shape to `resolve_command_jump_table.py`. Along the way, caught
+      and corrected a real error in an earlier session's notes: the
+      "7 runtime-only per-monster fields at `+0x137` through `+0x217`,
+      not saved to disk" turned out to be a misunderstanding —
+      `_mapMonsters` itself sits at **segment-relative offset `0x137`**,
+      so those "runtime" offsets are exactly the same 6 on-disk fields
+      plus 2 more inside the previously-"unmapped" `+0xC0`-`+0xFF` span,
+      just reached via a different (raw segment-literal) addressing
+      idiom in some code paths. There's no separate unsaved region —
+      the entire 256-byte buffer is exactly 8 fields × 32 bytes, no
+      gaps. Two other claimed offsets (`+0x177` cooldown, `+0x1B7`
+      cached-tile) didn't appear anywhere in the current `.asm` and
+      were dropped as unverifiable rather than carried forward. All 8
+      fields now have clean names (`_mapMonsters`/`_monsterMapY`/
+      `_monsterSpellHP`/`_monsterType`/`_monsterGlyphTile`/
+      `_monsterOfferFlag`/`_monsterTempX`/`_monsterTempY`), confirmed
+      in the refreshed `.asm` — including the raw-literal sites, which
+      automatically picked up the new symbolic names once the data
+      items existed. Full writeup in
+      [file-formats.md](file-formats.md#monx--monsternpc-data).
 - [x] Decode the `sub_XXXXX` helpers shared across the 26 A-Z command
       handlers, ranked by reuse (functions called from more than one
       command are higher-confidence and higher-value to name first).
@@ -226,14 +246,15 @@ sessions, unlike a one-off todo list.
       message) and found that "cast Surface" and `klimb` share their
       entire return-to-surface implementation. Full table in
       [overview.md](overview.md#cast--how-_readiedspell-drives-spell-effects).
-- [ ] Three per-item "owned"/"charges" flag arrays surfaced this
+- [x] Three per-item "owned"/"charges" flag arrays surfaced this
       session (`ready`/`wear_armor`/`cast` tracing): `player.field_60[di]`
       (armor-owned, already a recognized struct member, just unnamed),
       `[di+76h]` (weapon-owned, **not even a recognized struct member
       yet** — raw displacement), and `player.field_80[di]` (per-spell
       charge count). Lower-hanging fruit than `_mapMonsters`'s
       struct-of-arrays fields since these are array-typed `Savegame`
-      members, not a separate loaded file.
+      members, not a separate loaded file. **Resolved by the two items
+      right below** (`_armorOwned`/`_weaponOwned`/`_spellCharges`).
 - [x] Extended `ida_scripts/apply_structs.py` to handle array-typed
       struct members — new `"add_member"` (now takes `element_size` +
       `count`) and `"resize_member"` ops (delete + recreate, for
@@ -445,13 +466,15 @@ sessions, unlike a one-off todo list.
       now does a pre-flight exclusive-open check on the `.idb` and
       refuses to launch `idat.exe` at all if something else already
       has it open.
-- [ ] Single-caller helpers inside the 26 command handlers, not chased
+- [x] Single-caller helpers inside the 26 command handlers, not chased
       this pass (lower priority — no cross-context confirmation
       available): `sub_15FE0`, `sub_15FA6`, `sub_172A0`
       (attack), `sub_15EAC` (fire), `sub_1361C` (get), `sub_16999`/
-      `sub_15EC7` (launch). (`sub_14B26` and `sub_129D2` were
-      originally in this list — both have since been traced: `sub_14B26`
-      → `flash_screen`, `sub_129D2` above.)
+      `sub_15EC7` (launch). **All since named** in the completed
+      `sub_XXXXX` sweep: `play_attack_sound`, `play_bump_sound`,
+      `minax_death_sequence`, `play_cannon_sound`,
+      `clear_picked_up_tile`, `setup_rocket_launch_display`,
+      `play_step_tick` respectively.
 
 ## Medium term
 
