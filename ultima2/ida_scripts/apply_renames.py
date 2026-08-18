@@ -671,6 +671,82 @@ RENAMES = [
      "attack+13E -- a victory/destruction animation: repeated "
      "play_hit_sound calls bracketing randomized _playerX/_playerY "
      "positions (function chunk continues past the proc boundary)."),
+
+    # -- the dungeon-view wall-segment cluster, the last 12 unnamed
+    # functions in the sub_XXXXX sweep. Precisely decoded (not
+    # guessed) by cross-referencing draw_dungeon_corridor's bit-check
+    # dispatch logic against the already-documented dungeon tile
+    # format (docs/file-formats.md#dungeontower-format-mapx-number-ends-4-5:
+    # 0x00 Floor, 0x10 Ladder up, 0x20 Ladder down, 0x30 both, 0x40
+    # Chest/Tri-Lithium, 0x80 Wall, 0xC0 Door, 0xE0 Secret door -- all
+    # multiples of 0x10 in the high nibble, sign bit set = Wall/Door/
+    # SecretDoor, clear = Floor/Ladder/Chest). Every mapping below
+    # cross-checked against each function's actual CODE XREF caller
+    # site in draw_dungeon_corridor, not just the bit logic alone. --
+
+    (0x16425, "draw_corridor_wall_segment",
+     "right-position wall-type case (sign bit set: Wall/Door/Secret "
+     "door). Also called unconditionally once before the render loop "
+     "starts, as the initial depth-0 frame. Draws the converging "
+     "perspective side-wall lines via draw_line, indexed by depth "
+     "(byte_17892) through lookup tables."),
+
+    (0x1648D, "draw_dungeon_door",
+     "reached only when the right-position tile is specifically a "
+     "Door (0xC0: sign bit set, 0x40 set, 0x20 clear) -- draws the "
+     "door icon itself, after draw_corridor_wall_segment already drew "
+     "the surrounding wall frame. Only caller: "
+     "draw_dungeon_corridor:loc_16178."),
+
+    (0x16594, "draw_ladder_down",
+     "right-position tile has the 0x20 bit set (Ladder down 0x20, or "
+     "Ladder up+down 0x30 -- which also triggers draw_ladder_up in "
+     "that case). Draws the ladder-down icon via draw_line, calls "
+     "draw_ladder_rail for the shared central-rail piece."),
+
+    (0x1660C, "draw_ladder_up",
+     "right-position tile has the 0x10 bit set (Ladder up 0x10, or "
+     "Ladder up+down 0x30). Same shape as draw_ladder_down (different "
+     "Y lookup tables), also calls draw_ladder_rail."),
+
+    (0x166CB, "draw_chest_icon",
+     "right-position tile is specifically a Chest (0x40: sign bit "
+     "clear, 0x20 clear, 0x10 clear, 0x40 set). Draws the chest icon "
+     "via draw_line."),
+
+    (0x16684, "draw_ladder_rail",
+     "shared sub-step called identically from both draw_ladder_down "
+     "and draw_ladder_up: fixed screen-center X (7Fh/80h, same "
+     "convention as plot_map_icon_point), draws the ladder's central "
+     "rail via draw_line, depth-indexed lookup tables."),
+
+    (0x16377, "draw_left_wall_segment",
+     "left-position wall-type case (sign bit set: Wall/Door/Secret "
+     "door) -- mirrors draw_corridor_wall_segment for the left probe "
+     "position ([di+48Fh])."),
+
+    (0x164E2, "draw_left_door",
+     "reached only when the left-position tile is specifically a "
+     "Door -- mirrors draw_dungeon_door for the left position."),
+
+    (0x16291, "draw_left_open",
+     "left-position tile has the sign bit clear (Floor/Ladder/Chest, "
+     "i.e. nothing blocking) -- the 'open' counterpart to "
+     "draw_left_wall_segment, no further bit dispatch (ladders/chests "
+     "aren't distinguished on the side positions, only on the right)."),
+
+    (0x163CE, "draw_ahead_wall_segment",
+     "straight-ahead wall-type case (sign bit set: Wall/Door/Secret "
+     "door) -- mirrors draw_corridor_wall_segment for the "
+     "straight-ahead probe position ([di+49Fh])."),
+
+    (0x1653F, "draw_ahead_door",
+     "reached only when the straight-ahead tile is specifically a "
+     "Door -- mirrors draw_dungeon_door for the ahead position."),
+
+    (0x16304, "draw_ahead_open",
+     "straight-ahead tile has the sign bit clear (Floor/Ladder/Chest) "
+     "-- the 'open' counterpart to draw_ahead_wall_segment."),
 ]
 
 

@@ -11707,7 +11707,7 @@ draw_dungeon_corridor proc near         ; CODE XREF: render_dungeon_view+17↑p
                 call    clear_screen
                 mov     al, 0
                 mov     byte_17892, al
-                call    sub_16425
+                call    draw_corridor_wall_segment
 
 loc_1614F:                              ; CODE XREF: draw_dungeon_corridor+4C↓j
                                         ; draw_dungeon_corridor+C5↓j
@@ -11717,7 +11717,7 @@ loc_1614F:                              ; CODE XREF: draw_dungeon_corridor+4C↓
                 mov     al, [di+497h]
                 or      al, al
                 jns     short loc_16192
-                call    sub_16425
+                call    draw_corridor_wall_segment
                 mov     al, [di+497h]
                 and     al, 40h
                 jnz     short loc_1616D
@@ -11732,7 +11732,7 @@ loc_1616D:                              ; CODE XREF: draw_dungeon_corridor+24↑
 ; ---------------------------------------------------------------------------
 
 loc_16178:                              ; CODE XREF: draw_dungeon_corridor+2F↑j
-                call    sub_1648D
+                call    draw_dungeon_door
                 mov     al, byte_17892
                 or      al, al
                 jz      short loc_16185
@@ -11751,13 +11751,13 @@ loc_16192:                              ; CODE XREF: draw_dungeon_corridor+19↑
                 mov     al, [di+497h]
                 and     al, 20h
                 jz      short loc_1619D
-                call    sub_16594
+                call    draw_ladder_down
 
 loc_1619D:                              ; CODE XREF: draw_dungeon_corridor+54↑j
                 mov     al, [di+497h]
                 and     al, 10h
                 jz      short loc_161AB
-                call    sub_1660C
+                call    draw_ladder_up
                 jmp     short loc_161B6
 ; ---------------------------------------------------------------------------
                 db  90h
@@ -11767,49 +11767,49 @@ loc_161AB:                              ; CODE XREF: draw_dungeon_corridor+5F↑
                 mov     al, [di+497h]
                 and     al, 40h
                 jz      short loc_161B6
-                call    sub_166CB
+                call    draw_chest_icon
 
 loc_161B6:                              ; CODE XREF: draw_dungeon_corridor+64↑j
                                         ; draw_dungeon_corridor+6D↑j
                 mov     al, [di+48Fh]
                 or      al, al
                 jns     short loc_161D7
-                call    sub_16377
+                call    draw_left_wall_segment
                 mov     al, [di+48Fh]
                 and     al, 40h
                 jz      short loc_161DA
                 mov     al, [di+48Fh]
                 and     al, 20h
                 jnz     short loc_161DA
-                call    sub_164E2
+                call    draw_left_door
                 jmp     short loc_161DA
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
 
 loc_161D7:                              ; CODE XREF: draw_dungeon_corridor+78↑j
-                call    sub_16291
+                call    draw_left_open
 
 loc_161DA:                              ; CODE XREF: draw_dungeon_corridor+83↑j
                                         ; draw_dungeon_corridor+8B↑j ...
                 mov     al, [di+49Fh]
                 or      al, al
                 jns     short loc_161FB
-                call    sub_163CE
+                call    draw_ahead_wall_segment
                 mov     al, [di+49Fh]
                 and     al, 40h
                 jz      short loc_161FE
                 mov     al, [di+49Fh]
                 and     al, 20h
                 jnz     short loc_161FE
-                call    sub_1653F
+                call    draw_ahead_door
                 jmp     short loc_161FE
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
 
 loc_161FB:                              ; CODE XREF: draw_dungeon_corridor+9C↑j
-                call    sub_16304
+                call    draw_ahead_open
 
 loc_161FE:                              ; CODE XREF: draw_dungeon_corridor+A7↑j
                                         ; draw_dungeon_corridor+AF↑j ...
@@ -11826,91 +11826,91 @@ locret_1620C:                           ; CODE XREF: draw_dungeon_corridor+26↑
 draw_dungeon_corridor endp
 
 ; ---------------------------------------------------------------------------
-byte_1620D      db 0                    ; DATA XREF: sub_16291+8↓r
-                                        ; sub_16291+5F↓r ...
-byte_1620E      db 40h                  ; DATA XREF: sub_16291+39↓r
-                                        ; sub_16377+10↓r ...
-byte_1620F      db 60h                  ; DATA XREF: sub_166CB+1↓r
-                                        ; sub_166CB+3A↓r
-byte_16210      db 70h                  ; DATA XREF: sub_166CB+60↓r
+byte_1620D      db 0                    ; DATA XREF: draw_left_open+8↓r
+                                        ; draw_left_open+5F↓r ...
+byte_1620E      db 40h                  ; DATA XREF: draw_left_open+39↓r
+                                        ; draw_left_wall_segment+10↓r ...
+byte_1620F      db 60h                  ; DATA XREF: draw_chest_icon+1↓r
+                                        ; draw_chest_icon+3A↓r
+byte_16210      db 70h                  ; DATA XREF: draw_chest_icon+60↓r
                 db  78h ; x
                 db  7Ch ; |
                 db  7Eh ; ~
                 db  7Fh ; 
                 db  7Fh ; 
                 db  7Fh ; 
-byte_16217      db 0FFh                 ; DATA XREF: sub_16304+8↓r
-                                        ; sub_16304+5F↓r ...
-byte_16218      db 0BFh                 ; DATA XREF: sub_16304+39↓r
-                                        ; sub_163CE+10↓r ...
-byte_16219      db 9Fh                  ; DATA XREF: sub_166CB+7B↓r
-                                        ; sub_166CB+CC↓r
-byte_1621A      db 8Fh                  ; DATA XREF: sub_166CB+14↓r
-                                        ; sub_166CB+A1↓r ...
+byte_16217      db 0FFh                 ; DATA XREF: draw_ahead_open+8↓r
+                                        ; draw_ahead_open+5F↓r ...
+byte_16218      db 0BFh                 ; DATA XREF: draw_ahead_open+39↓r
+                                        ; draw_ahead_wall_segment+10↓r ...
+byte_16219      db 9Fh                  ; DATA XREF: draw_chest_icon+7B↓r
+                                        ; draw_chest_icon+CC↓r
+byte_1621A      db 8Fh                  ; DATA XREF: draw_chest_icon+14↓r
+                                        ; draw_chest_icon+A1↓r ...
                 db  87h
                 db  83h
                 db  81h
                 db  80h
                 db  80h
                 db  80h
-byte_16221      db 0                    ; DATA XREF: sub_16291+13↓r
-                                        ; sub_16304+13↓r ...
-byte_16222      db 20h                  ; DATA XREF: sub_16291+2E↓r
-                                        ; sub_16304+2E↓r ...
+byte_16221      db 0                    ; DATA XREF: draw_left_open+13↓r
+                                        ; draw_ahead_open+13↓r ...
+byte_16222      db 20h                  ; DATA XREF: draw_left_open+2E↓r
+                                        ; draw_ahead_open+2E↓r ...
                 db  30h ; 0
                 db  38h ; 8
                 db  3Ch ; <
                 db  3Eh ; >
                 db  3Fh ; ?
                 db  3Fh ; ?
-byte_16229      db 7Fh                  ; DATA XREF: sub_16291+1B↓r
-                                        ; sub_16304+1B↓r ...
-byte_1622A      db 5Fh                  ; DATA XREF: sub_16291+4C↓r
-                                        ; sub_16304+4C↓r ...
+byte_16229      db 7Fh                  ; DATA XREF: draw_left_open+1B↓r
+                                        ; draw_ahead_open+1B↓r ...
+byte_1622A      db 5Fh                  ; DATA XREF: draw_left_open+4C↓r
+                                        ; draw_ahead_open+4C↓r ...
                 db  4Fh ; O
                 db  47h ; G
                 db  43h ; C
                 db  41h ; A
                 db  40h ; @
                 db  40h ; @
-byte_16231      db 10h                  ; DATA XREF: sub_164E2+8↓r
-byte_16232      db 48h                  ; DATA XREF: sub_16594+8↓r
-                                        ; sub_16594+61↓r ...
+byte_16231      db 10h                  ; DATA XREF: draw_left_door+8↓r
+byte_16232      db 48h                  ; DATA XREF: draw_ladder_down+8↓r
+                                        ; draw_ladder_down+61↓r ...
                 db  64h ; d
                 db  72h ; r
                 db  79h ; y
                 db  7Ch ; |
                 db  7Fh ; 
                 db  7Fh ; 
-byte_16239      db 30h                  ; DATA XREF: sub_164E2+2E↓r
-byte_1623A      db 58h                  ; DATA XREF: sub_16594+10↓r
-                                        ; sub_1660C+10↓r
+byte_16239      db 30h                  ; DATA XREF: draw_left_door+2E↓r
+byte_1623A      db 58h                  ; DATA XREF: draw_ladder_down+10↓r
+                                        ; draw_ladder_up+10↓r
                 db  6Ch ; l
                 db  76h ; v
                 db  7Bh ; {
                 db  7Ch ; |
                 db  7Fh ; 
                 db  7Fh ; 
-byte_16241      db 0EFh                 ; DATA XREF: sub_1653F+8↓r
-byte_16242      db 0B7h                 ; DATA XREF: sub_16594+46↓r
-                                        ; sub_1660C+46↓r
+byte_16241      db 0EFh                 ; DATA XREF: draw_ahead_door+8↓r
+byte_16242      db 0B7h                 ; DATA XREF: draw_ladder_down+46↓r
+                                        ; draw_ladder_up+46↓r
                 db  9Bh
                 db  8Dh
                 db  86h
                 db  83h
                 db  80h
                 db  80h
-byte_16249      db 0CFh                 ; DATA XREF: sub_1653F+2E↓r
-byte_1624A      db 0A7h                 ; DATA XREF: sub_16594+33↓r
-                                        ; sub_1660C+33↓r
+byte_16249      db 0CFh                 ; DATA XREF: draw_ahead_door+2E↓r
+byte_1624A      db 0A7h                 ; DATA XREF: draw_ladder_down+33↓r
+                                        ; draw_ladder_up+33↓r
                 db  93h
                 db  89h
                 db  84h
                 db  83h
                 db  80h
                 db  80h
-byte_16251      db 77h                  ; DATA XREF: sub_164E2+13↓r
-                                        ; sub_1653F+13↓r ...
+byte_16251      db 77h                  ; DATA XREF: draw_left_door+13↓r
+                                        ; draw_ahead_door+13↓r ...
                 db  5Bh ; [
                 db  4Dh ; M
                 db  46h ; F
@@ -11918,8 +11918,8 @@ byte_16251      db 77h                  ; DATA XREF: sub_164E2+13↓r
                 db  40h ; @
                 db  40h ; @
                 db  40h ; @
-byte_16259      db 67h                  ; DATA XREF: sub_164E2+49↓r
-                                        ; sub_1653F+49↓r ...
+byte_16259      db 67h                  ; DATA XREF: draw_left_door+49↓r
+                                        ; draw_ahead_door+49↓r ...
                 db  53h ; S
                 db  49h ; I
                 db  44h ; D
@@ -11927,8 +11927,8 @@ byte_16259      db 67h                  ; DATA XREF: sub_164E2+49↓r
                 db  40h ; @
                 db  40h ; @
                 db  40h ; @
-byte_16261      db 2Ah                  ; DATA XREF: sub_164E2+36↓r
-                                        ; sub_1653F+36↓r
+byte_16261      db 2Ah                  ; DATA XREF: draw_left_door+36↓r
+                                        ; draw_ahead_door+36↓r
                 db  35h ; 5
                 db  3Bh ; ;
                 db  3Dh ; =
@@ -11936,8 +11936,8 @@ byte_16261      db 2Ah                  ; DATA XREF: sub_164E2+36↓r
                 db  3Fh ; ?
                 db  3Fh ; ?
                 db  3Fh ; ?
-byte_16269      db 8                    ; DATA XREF: sub_1660C+18↓r
-                                        ; sub_1660C+4E↓r ...
+byte_16269      db 8                    ; DATA XREF: draw_ladder_up+18↓r
+                                        ; draw_ladder_up+4E↓r ...
                 db  24h ; $
                 db  32h ; 2
                 db  39h ; 9
@@ -11945,7 +11945,7 @@ byte_16269      db 8                    ; DATA XREF: sub_1660C+18↓r
                 db  3Eh ; >
                 db  3Fh ; ?
                 db  3Fh ; ?
-byte_16271      db 18h                  ; DATA XREF: sub_1660C+20↓r
+byte_16271      db 18h                  ; DATA XREF: draw_ladder_up+20↓r
                 db  2Ch ; ,
                 db  36h ; 6
                 db  3Ah ; :
@@ -11953,8 +11953,8 @@ byte_16271      db 18h                  ; DATA XREF: sub_1660C+20↓r
                 db  3Eh ; >
                 db  3Fh ; ?
                 db  3Fh ; ?
-byte_16279      db 77h                  ; DATA XREF: sub_16594+18↓r
-                                        ; sub_16594+4E↓r ...
+byte_16279      db 77h                  ; DATA XREF: draw_ladder_down+18↓r
+                                        ; draw_ladder_down+4E↓r ...
                 db  5Bh ; [
                 db  4Dh ; M
                 db  46h ; F
@@ -11962,7 +11962,7 @@ byte_16279      db 77h                  ; DATA XREF: sub_16594+18↓r
                 db  41h ; A
                 db  40h ; @
                 db  40h ; @
-byte_16281      db 67h                  ; DATA XREF: sub_16594+20↓r
+byte_16281      db 67h                  ; DATA XREF: draw_ladder_down+20↓r
                 db  53h ; S
                 db  49h ; I
                 db  45h ; E
@@ -11970,8 +11970,8 @@ byte_16281      db 67h                  ; DATA XREF: sub_16594+20↓r
                 db  41h ; A
                 db  40h ; @
                 db  40h ; @
-byte_16289      db 6Fh                  ; DATA XREF: sub_166CB+9↓r
-                                        ; sub_166CB+4D↓r ...
+byte_16289      db 6Fh                  ; DATA XREF: draw_chest_icon+9↓r
+                                        ; draw_chest_icon+4D↓r ...
                 db  57h ; W
                 db  4Bh ; K
                 db  45h ; E
@@ -11983,7 +11983,7 @@ byte_16289      db 6Fh                  ; DATA XREF: sub_166CB+9↓r
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16291       proc near               ; CODE XREF: draw_dungeon_corridor:loc_161D7↑p
+draw_left_open  proc near               ; CODE XREF: draw_dungeon_corridor:loc_161D7↑p
                 mov     bh, 0
                 mov     bl, byte_17892
                 mov     di, bx
@@ -12020,13 +12020,13 @@ sub_16291       proc near               ; CODE XREF: draw_dungeon_corridor:loc_1
                 mov     bl, byte_17892
                 mov     di, bx
                 retn
-sub_16291       endp
+draw_left_open  endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16304       proc near               ; CODE XREF: draw_dungeon_corridor:loc_161FB↑p
+draw_ahead_open proc near               ; CODE XREF: draw_dungeon_corridor:loc_161FB↑p
                 mov     bh, 0
                 mov     bl, byte_17892
                 mov     di, bx
@@ -12063,13 +12063,13 @@ sub_16304       proc near               ; CODE XREF: draw_dungeon_corridor:loc_1
                 mov     bl, byte_17892
                 mov     di, bx
                 retn
-sub_16304       endp
+draw_ahead_open endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16377       proc near               ; CODE XREF: draw_dungeon_corridor+7A↑p
+draw_left_wall_segment proc near        ; CODE XREF: draw_dungeon_corridor+7A↑p
                 mov     bh, 0
                 mov     bl, byte_17892
                 mov     di, bx
@@ -12096,13 +12096,13 @@ sub_16377       proc near               ; CODE XREF: draw_dungeon_corridor+7A↑
                 mov     bl, byte_17892
                 mov     di, bx
                 retn
-sub_16377       endp
+draw_left_wall_segment endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_163CE       proc near               ; CODE XREF: draw_dungeon_corridor+9E↑p
+draw_ahead_wall_segment proc near       ; CODE XREF: draw_dungeon_corridor+9E↑p
                 mov     bh, 0
                 mov     bl, byte_17892
                 mov     di, bx
@@ -12129,13 +12129,13 @@ sub_163CE       proc near               ; CODE XREF: draw_dungeon_corridor+9E↑
                 mov     bl, byte_17892
                 mov     di, bx
                 retn
-sub_163CE       endp
+draw_ahead_wall_segment endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16425       proc near               ; CODE XREF: draw_dungeon_corridor+8↑p
+draw_corridor_wall_segment proc near    ; CODE XREF: draw_dungeon_corridor+8↑p
                                         ; draw_dungeon_corridor+1B↑p
                 mov     bh, 0
                 mov     bl, byte_17892
@@ -12170,13 +12170,13 @@ sub_16425       proc near               ; CODE XREF: draw_dungeon_corridor+8↑p
                 mov     bl, byte_17892
                 mov     di, bx
                 retn
-sub_16425       endp
+draw_corridor_wall_segment endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1648D       proc near               ; CODE XREF: draw_dungeon_corridor:loc_16178↑p
+draw_dungeon_door proc near             ; CODE XREF: draw_dungeon_corridor:loc_16178↑p
                 mov     bh, 0
                 mov     bl, byte_17892
                 mov     di, bx
@@ -12204,13 +12204,13 @@ sub_1648D       proc near               ; CODE XREF: draw_dungeon_corridor:loc_1
                 mov     bl, byte_17892
                 mov     di, bx
                 retn
-sub_1648D       endp
+draw_dungeon_door endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_164E2       proc near               ; CODE XREF: draw_dungeon_corridor+8D↑p
+draw_left_door  proc near               ; CODE XREF: draw_dungeon_corridor+8D↑p
                 mov     bh, 0
                 mov     bl, byte_17892
                 mov     di, bx
@@ -12240,13 +12240,13 @@ sub_164E2       proc near               ; CODE XREF: draw_dungeon_corridor+8D↑
                 mov     bl, byte_17892
                 mov     di, bx
                 retn
-sub_164E2       endp
+draw_left_door  endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1653F       proc near               ; CODE XREF: draw_dungeon_corridor+B1↑p
+draw_ahead_door proc near               ; CODE XREF: draw_dungeon_corridor+B1↑p
                 mov     bh, 0
                 mov     bl, byte_17892
                 mov     di, bx
@@ -12273,13 +12273,13 @@ sub_1653F       proc near               ; CODE XREF: draw_dungeon_corridor+B1↑
                 mov     byte_1788C, al
                 call    draw_line
                 retn
-sub_1653F       endp
+draw_ahead_door endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16594       proc near               ; CODE XREF: draw_dungeon_corridor+56↑p
+draw_ladder_down proc near              ; CODE XREF: draw_dungeon_corridor+56↑p
                 mov     bh, 0
                 mov     bl, byte_17892
                 mov     di, bx
@@ -12312,18 +12312,18 @@ sub_16594       proc near               ; CODE XREF: draw_dungeon_corridor+56↑
                 mov     al, cs:byte_16232[di]
                 mov     byte_1788B, al
                 call    draw_line
-                call    sub_16684
+                call    draw_ladder_rail
                 mov     bh, 0
                 mov     bl, byte_17892
                 mov     di, bx
                 retn
-sub_16594       endp
+draw_ladder_down endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1660C       proc near               ; CODE XREF: draw_dungeon_corridor+61↑p
+draw_ladder_up  proc near               ; CODE XREF: draw_dungeon_corridor+61↑p
                 mov     bh, 0
                 mov     bl, byte_17892
                 mov     di, bx
@@ -12356,19 +12356,19 @@ sub_1660C       proc near               ; CODE XREF: draw_dungeon_corridor+61↑
                 mov     al, cs:byte_16232[di]
                 mov     byte_1788B, al
                 call    draw_line
-                call    sub_16684
+                call    draw_ladder_rail
                 mov     bh, 0
                 mov     bl, byte_17892
                 mov     di, bx
                 retn
-sub_1660C       endp
+draw_ladder_up  endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16684       proc near               ; CODE XREF: sub_16594+6C↑p
-                                        ; sub_1660C+6C↑p
+draw_ladder_rail proc near              ; CODE XREF: draw_ladder_down+6C↑p
+                                        ; draw_ladder_up+6C↑p
                 mov     bh, 0
                 mov     bl, byte_17892
                 mov     di, bx
@@ -12392,13 +12392,13 @@ sub_16684       proc near               ; CODE XREF: sub_16594+6C↑p
                 mov     byte_1788C, al
                 call    draw_line
                 retn
-sub_16684       endp
+draw_ladder_rail endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_166CB       proc near               ; CODE XREF: draw_dungeon_corridor+6F↑p
+draw_chest_icon proc near               ; CODE XREF: draw_dungeon_corridor+6F↑p
                 nop
                 mov     al, cs:byte_1620F[di]
                 mov     byte_17889, al
@@ -12470,14 +12470,14 @@ sub_166CB       proc near               ; CODE XREF: draw_dungeon_corridor+6F↑
                 mov     bl, byte_17892
                 mov     di, bx
                 retn
-sub_166CB       endp
+draw_chest_icon endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-draw_line       proc near               ; CODE XREF: sub_16291+23↑p
-                                        ; sub_16291+41↑p ...
+draw_line       proc near               ; CODE XREF: draw_left_open+23↑p
+                                        ; draw_left_open+41↑p ...
                 nop
                 mov     al, byte_1788B
                 cmp     al, byte_17889
