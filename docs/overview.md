@@ -360,6 +360,36 @@ Also named this pass:
 - **`drawSelectItemPanel`** — fills/outlines the item-list panel for
   the `selectItem` dialog.
 
+### Critical-error handler and heap init
+
+Seventh pass, same session. `setCriticalErrorHandler`/
+`criticalErrorHandler` (`0x1937F`/`0x193D7`) are a DOS `INT 24h`
+install/handler pair — `criticalErrorHandler` is `proc far` and ends
+in `iret`, which is why it showed 0 static callers: it's only ever
+reached through the interrupt vector, never called directly. This is
+what lets the program show its own "insert disk" prompt (the
+`insertDisk` retry logic documented under the CRT file-I/O layer
+above) instead of DOS's default Abort/Retry/Fail screen — a real,
+concrete link between two clusters found in different passes this
+session. `_nheapinit` (`0x19418`) is the one-time setup for the
+`_nmalloc`/`_nfree`/`_nheapgrow` free-list globals, called once from
+`start`.
+
+**CRT startup chain, not pursued further**: the rest of the
+`start`→`main` init chain (`sub_196AC`, `sub_19969`, `sub_199EA`,
+`sub_19BED`, `sub_19E18`, `sub_19E2C`, `sub_19E41`, `sub_19E58`,
+`sub_1908B`, `sub_1960C`, plus the remaining stdio internals
+`sub_1D126`/`sub_1D1ED`/`sub_1D3AB`) is standard Microsoft C runtime
+startup boilerplate (argv construction, environment parsing, and
+similar) — spot-checked enough to confirm the pattern, not traced
+function-by-function, since it's generic runtime plumbing the C++
+reimplementation won't reproduce. Genuinely **dead code** (0 callers,
+`proc near` not `proc far`, so not reachable via any interrupt vector
+either): `sub_190A6`, `sub_192AE`, `sub_19626`, `sub_1C34C`,
+`sub_1CC46` — almost certainly unused functions from the same linked
+library objects as the two dead siblings found inside `_nheapgrow`
+earlier. Left unnamed; see roadmap.md.
+
 ### `playSound` / `playFX` — sound-effect jump table, not yet decoded
 
 `playSound(effectNum)` (already named) dispatches through a 10-entry

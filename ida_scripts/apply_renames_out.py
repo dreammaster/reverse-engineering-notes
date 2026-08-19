@@ -367,6 +367,37 @@ RENAMES = [
      "layout of the EGA/Tandy 16-color modes -- called once per "
      "setVideoMode, before dispatching to whichever initVideoMode* "
      "matches _videoMode."),
+
+    # -- seventh pass: CRT startup chain, spot-checked rather than
+    # traced exhaustively (standard runtime init, not game logic --
+    # see roadmap.md for the rest of this cluster left un-named). --
+
+    (0x1937F, "setCriticalErrorHandler",
+     "toggles a custom DOS INT 24h (critical error) handler on/off: "
+     "arg_0!=0 installs criticalErrorHandler and saves the original "
+     "vector (dword_1EC46); arg_0==0 restores the saved original. "
+     "byte_1EC45 tracks whether it's currently installed. Called from "
+     "main. Ties into the insertDisk retry flow documented under the "
+     "CRT file-I/O layer above -- this is what lets the program show "
+     "its own 'insert disk' prompt instead of DOS's default "
+     "Abort/Retry/Fail."),
+
+    (0x193D7, "criticalErrorHandler",
+     "the actual INT 24h ISR (proc far, ends in iret -- explaining why "
+     "it shows 0 static callers: it's only ever reached via the "
+     "interrupt vector installed by setCriticalErrorHandler, never "
+     "called directly). Copies an 18-byte device-header structure from "
+     "the error context, sets byte_1ECC3=3 (an error-state flag "
+     "consumed elsewhere), returns AL=3 (DOS INT 24h 'Fail' action) or "
+     "0 ('Ignore') depending on word_1D482."),
+
+    (0x19418, "_nheapinit",
+     "one-time near-heap setup, called from `start`: extends the "
+     "program's memory block via DOS INT 21h/4Ah (SETBLOCK, same call "
+     "_nheapgrow uses later to grow it further) and zeroes the free-"
+     "list globals _nmalloc/_nfree/_nheapgrow operate on (word_1EC52, "
+     "word_1EC54, word_1EC56, word_1EC58, word_1EC5E). Underscore-"
+     "prefixed to match that cluster's naming."),
 ]
 
 # (ea, new_name, note) -- globals in the same CRT file-I/O cluster,

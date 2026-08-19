@@ -363,7 +363,7 @@ loc_10267:                              ; CODE XREF: start+25F↑j
                 push    cx
                 push    es
                 push    si
-                call    sub_19418
+                call    _nheapinit
                 pop     si
                 pop     es
                 pop     cx
@@ -19716,7 +19716,7 @@ envp            = dword ptr  8
                 mov     bp, sp
                 mov     ax, 1
                 push    ax
-                call    sub_1937F
+                call    setCriticalErrorHandler
                 mov     sp, bp
                 mov     si, word ptr [bp+8+argv]
                 mov     ax, [si+2]
@@ -20639,14 +20639,14 @@ loc_19378:                              ; CODE XREF: divmod32+9B↑j
 divmod32        endp
 
 ; ---------------------------------------------------------------------------
-word_1937D      dw 0                    ; DATA XREF: sub_1937F+3↓w
-                                        ; sub_193D7+5↓r
+word_1937D      dw 0                    ; DATA XREF: setCriticalErrorHandler+3↓w
+                                        ; criticalErrorHandler+5↓r
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-sub_1937F       proc near               ; CODE XREF: main+A↑p
+setCriticalErrorHandler proc near       ; CODE XREF: main+A↑p
 
 arg_0           = word ptr  4
 
@@ -20667,13 +20667,13 @@ arg_0           = word ptr  4
                 pop     ds
                 mov     byte_1EC45, 0
 
-loc_193A5:                              ; CODE XREF: sub_1937F+14↑j
+loc_193A5:                              ; CODE XREF: setCriticalErrorHandler+14↑j
                 pop     bp
                 xor     ax, ax
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_193A9:                              ; CODE XREF: sub_1937F+D↑j
+loc_193A9:                              ; CODE XREF: setCriticalErrorHandler+D↑j
                 test    byte_1EC45, 0FFh
                 jnz     short loc_193BF
                 push    es
@@ -20685,7 +20685,7 @@ loc_193A9:                              ; CODE XREF: sub_1937F+D↑j
                 mov     word ptr dword_1EC46+2, es
                 pop     es
 
-loc_193BF:                              ; CODE XREF: sub_1937F+2F↑j
+loc_193BF:                              ; CODE XREF: setCriticalErrorHandler+2F↑j
                 push    ds
                 mov     dx, 93D7h
                 mov     ax, seg sg013A
@@ -20701,14 +20701,14 @@ loc_193BF:                              ; CODE XREF: sub_1937F+2F↑j
                 pop     bp
                 xor     ax, ax
                 retn
-sub_1937F       endp
+setCriticalErrorHandler endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-sub_193D7       proc far
+criticalErrorHandler proc far
 
 var_s0          = word ptr  0
 
@@ -20746,19 +20746,19 @@ var_s0          = word ptr  0
                 jl      short loc_19414
                 mov     al, 3
 
-loc_19414:                              ; CODE XREF: sub_193D7+39↑j
+loc_19414:                              ; CODE XREF: criticalErrorHandler+39↑j
                 pop     bx
                 pop     ds
                 pop     bp
                 iret
-sub_193D7       endp
+criticalErrorHandler endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-sub_19418       proc near               ; CODE XREF: start+28B↑p
+_nheapinit      proc near               ; CODE XREF: start+28B↑p
 
 arg_4           = word ptr  8
 arg_6           = byte ptr  0Ah
@@ -20806,7 +20806,7 @@ arg_6           = byte ptr  0Ah
                 jb      short loc_19495
                 mov     seg_1D492, bx
 
-loc_1947B:                              ; CODE XREF: sub_19418+E↑j
+loc_1947B:                              ; CODE XREF: _nheapinit+E↑j
                 xor     ax, ax
                 mov     word_1EC52, ax
                 mov     word_1EC54, ax
@@ -20819,13 +20819,13 @@ loc_1947B:                              ; CODE XREF: sub_19418+E↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_19495:                              ; CODE XREF: sub_19418+5D↑j
+loc_19495:                              ; CODE XREF: _nheapinit+5D↑j
                 pop     bp
                 jmp     loc_1950D
 ; ---------------------------------------------------------------------------
 
-loc_19499:                              ; CODE XREF: sub_19418+29↑j
-                                        ; sub_19418+4B↑j
+loc_19499:                              ; CODE XREF: _nheapinit+29↑j
+                                        ; _nheapinit+4B↑j
                 mov     ax, 0FFFFh
                 pop     bp
                 retn
@@ -20836,7 +20836,7 @@ loc_19499:                              ; CODE XREF: sub_19418+29↑j
                 lea     ax, [bp+arg_6]
                 mov     [bp+2], ax
 
-loc_194AA:                              ; CODE XREF: sub_19418+9E↓j
+loc_194AA:                              ; CODE XREF: _nheapinit+9E↓j
                 mov     si, [bp+2]
                 cmp     word ptr [si], 0
                 jz      short loc_194B8
@@ -20844,7 +20844,7 @@ loc_194AA:                              ; CODE XREF: sub_19418+9E↓j
                 jmp     short loc_194AA
 ; ---------------------------------------------------------------------------
 
-loc_194B8:                              ; CODE XREF: sub_19418+98↑j
+loc_194B8:                              ; CODE XREF: _nheapinit+98↑j
                 mov     si, [bp+2]
                 push    word ptr [si+2]
                 lea     ax, [bp+arg_6]
@@ -20875,7 +20875,7 @@ loc_194CF:                              ; CODE XREF: sub_1908B+11↑p
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_194ED:                              ; CODE XREF: sub_19418+CB↑j
+loc_194ED:                              ; CODE XREF: _nheapinit+CB↑j
                 push    word ptr [bp+4Ah]
                 push    word ptr [bp+48h]
                 lea     ax, [bp+2]
@@ -20890,24 +20890,24 @@ loc_194ED:                              ; CODE XREF: sub_19418+CB↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_19508:                              ; CODE XREF: sub_19418+E6↑j
+loc_19508:                              ; CODE XREF: _nheapinit+E6↑j
                 add     sp, 42h
                 pop     bp
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1950D:                              ; CODE XREF: sub_19418+7E↑j
+loc_1950D:                              ; CODE XREF: _nheapinit+7E↑j
                                         ; _dos_open+E↓j ...
                 jnb     short loc_1955B
 
-loc_1950F:                              ; CODE XREF: sub_19418+148↓j
+loc_1950F:                              ; CODE XREF: _nheapinit+148↓j
                                         ; _dos_close:loc_19569↓j ...
                 test    byte_1ECC3, 2
                 jz      short loc_1951E
                 mov     ax, 53h ; 'S'
                 and     byte_1ECC3, 1
 
-loc_1951E:                              ; CODE XREF: sub_19418+FC↑j
+loc_1951E:                              ; CODE XREF: _nheapinit+FC↑j
                 mov     _doserrno, ax
                 cmp     byte ptr word_1D482, 3
                 jl      short loc_1953E
@@ -20923,13 +20923,13 @@ loc_1951E:                              ; CODE XREF: sub_19418+FC↑j
                 mov     byte_1ECC1, bl
                 mov     byte_1ECC2, ch
 
-loc_1953E:                              ; CODE XREF: sub_19418+10E↑j
+loc_1953E:                              ; CODE XREF: _nheapinit+10E↑j
                 mov     ax, _doserrno
                 cmp     al, 53h ; 'S'
                 jle     short loc_19547
                 xor     al, al
 
-loc_19547:                              ; CODE XREF: sub_19418+12B↑j
+loc_19547:                              ; CODE XREF: _nheapinit+12B↑j
                 mov     bx, 1844h
                 xlat
                 xor     ah, ah
@@ -20937,20 +20937,20 @@ loc_19547:                              ; CODE XREF: sub_19418+12B↑j
                 jnz     short loc_19552
                 dec     ax
 
-loc_19552:                              ; CODE XREF: sub_19418+137↑j
+loc_19552:                              ; CODE XREF: _nheapinit+137↑j
                 mov     errno, ax
                 mov     ax, 0FFFFh
                 mov     bx, ax
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1955B:                              ; CODE XREF: sub_19418:loc_1950D↑j
+loc_1955B:                              ; CODE XREF: _nheapinit:loc_1950D↑j
                                         ; _dos_close-13↓j
                 test    byte_1ECC3, 2
                 jnz     short loc_1950F
                 mov     _doserrno, 0
                 retn
-sub_19418       endp
+_nheapinit      endp
 
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR _dos_close
@@ -21177,7 +21177,7 @@ sub_19626       endp
 
 ; Attributes: fpd=4
 
-sub_19633       proc near               ; CODE XREF: sub_19418+C4↑p
+sub_19633       proc near               ; CODE XREF: _nheapinit+C4↑p
 
 arg_0           = word ptr  2
 arg_2           = word ptr  4
@@ -21248,7 +21248,7 @@ sub_19633       endp
 
 ; Attributes: fpd=97h
 
-sub_196AC       proc near               ; CODE XREF: sub_19418+DF↑p
+sub_196AC       proc near               ; CODE XREF: _nheapinit+DF↑p
 
 var_93          = word ptr -93h
 var_91          = word ptr -91h
@@ -31147,7 +31147,7 @@ dword_1D484     dd 0                    ; DATA XREF: start+AB↑r
                                         ; start+CC↑w ...
 word_1D488      dw 0                    ; DATA XREF: start:loc_100DD↑w
                                         ; start+35C↑r
-word_1D48A      dw 0                    ; DATA XREF: sub_19418+52↑r
+word_1D48A      dw 0                    ; DATA XREF: _nheapinit+52↑r
                                         ; _nheapgrow+78↑r
 word_1D48C      dw 0                    ; DATA XREF: start+10↑w
                                         ; start+26A↑r ...
@@ -31184,10 +31184,10 @@ word_1D4C8      dw 0                    ; DATA XREF: start+F5↑w
                                         ; start:loc_101CF↑r ...
                 align 4
 word_1D4CC      dw 0                    ; DATA XREF: start+249↑w
-                                        ; sub_19418+10↑r ...
+                                        ; _nheapinit+10↑r ...
 word_1D4CE      dw 0                    ; DATA XREF: start:loc_10204↑w
                                         ; start+24D↑r ...
-word_1D4D0      dw 0                    ; DATA XREF: sub_19418+78↑w
+word_1D4D0      dw 0                    ; DATA XREF: _nheapinit+78↑w
                                         ; _nheapgrow+52↑r ...
 word_1D4D2      dw 0                    ; DATA XREF: start+2F9↑w
                                         ; start+310↑w ...
@@ -31222,7 +31222,7 @@ word_1D4E9      dw 0FFFFh               ; DATA XREF: start+38D↑w
                 db    0
                 db    0
 _doserrno       dw 0                    ; DATA XREF: _flushall+B2↑r
-                                        ; sub_19418+3↑w ...
+                                        ; _nheapinit+3↑w ...
 aStackOverflowD db 'Stack overflow during arg parsing',0Dh,0Ah,'$'
 aIncompatibleDo db 'Incompatible DOS version',0Dh,0Ah,'$'
 aInvalidStackSi db 'Invalid stack size',0Dh,0Ah,'$'
@@ -32056,7 +32056,7 @@ word_1EC28      dw 0                    ; DATA XREF: start:loc_1017A↑w
 word_1EC2A      dw 0                    ; DATA XREF: start+17E↑w
                                         ; start+1DB↑r ...
                 align 8
-byte_1EC30      db 0                    ; DATA XREF: sub_193D7+C↑w
+byte_1EC30      db 0                    ; DATA XREF: criticalErrorHandler+C↑w
                 db    0
                 db    0
                 db    0
@@ -32075,27 +32075,27 @@ byte_1EC30      db 0                    ; DATA XREF: sub_193D7+C↑w
                 db    0
                 db    0
                 db    0
-word_1EC43      dw 0                    ; DATA XREF: sub_193D7+10↑w
-byte_1EC45      db 0                    ; DATA XREF: sub_1937F+F↑r
-                                        ; sub_1937F+21↑w ...
-dword_1EC46     dd 0                    ; DATA XREF: sub_1937F+17↑r
-                                        ; sub_1937F+37↑w ...
+word_1EC43      dw 0                    ; DATA XREF: criticalErrorHandler+10↑w
+byte_1EC45      db 0                    ; DATA XREF: setCriticalErrorHandler+F↑r
+                                        ; setCriticalErrorHandler+21↑w ...
+dword_1EC46     dd 0                    ; DATA XREF: setCriticalErrorHandler+17↑r
+                                        ; setCriticalErrorHandler+37↑w ...
                 align 8
 _fmode          dw 0                    ; DATA XREF: start2+6↑r
                                         ; _openfile:loc_1C7A6↑r
-word_1EC52      dw 0                    ; DATA XREF: sub_19418+65↑w
+word_1EC52      dw 0                    ; DATA XREF: _nheapinit+65↑w
                                         ; _nmalloc+78↑r ...
-word_1EC54      dw 0                    ; DATA XREF: sub_19418+68↑w
+word_1EC54      dw 0                    ; DATA XREF: _nheapinit+68↑w
                                         ; _nmalloc+83↑w
-word_1EC56      dw 0                    ; DATA XREF: sub_19418+6B↑w
+word_1EC56      dw 0                    ; DATA XREF: _nheapinit+6B↑w
                                         ; _nmalloc:loc_19877↑o ...
-word_1EC58      dw 0                    ; DATA XREF: sub_19418+6E↑w
+word_1EC58      dw 0                    ; DATA XREF: _nheapinit+6E↑w
                                         ; _nmalloc+2C↑w ...
 word_1EC5A      dw 17D6h                ; DATA XREF: _nmalloc:loc_19829↑r
                                         ; _nmalloc:loc_1986F↑w ...
 word_1EC5C      dw 1000h                ; DATA XREF: _nmalloc+66↑r
                                         ; _nmalloc+6C↑r
-word_1EC5E      dw 0                    ; DATA XREF: sub_19418+71↑w
+word_1EC5E      dw 0                    ; DATA XREF: _nheapinit+71↑w
 word_1EC60      dw 14h                  ; DATA XREF: _flushall+E4↑r
                                         ; _open+1D↑r ...
 word_1EC62      dw 8001h                ; DATA XREF: _flushall+F2↑r
@@ -32190,11 +32190,11 @@ word_1EC64      dw 0                    ; DATA XREF: _flushall+F9↑r
                 db    0
                 db    0
                 db    0
-byte_1ECC0      db 0                    ; DATA XREF: sub_19418+11A↑w
-byte_1ECC1      db 0                    ; DATA XREF: sub_19418+11E↑w
-byte_1ECC2      db 0                    ; DATA XREF: sub_19418+122↑w
-byte_1ECC3      db 0                    ; DATA XREF: sub_193D7+2D↑w
-                                        ; sub_19418:loc_1950F↑r ...
+byte_1ECC0      db 0                    ; DATA XREF: _nheapinit+11A↑w
+byte_1ECC1      db 0                    ; DATA XREF: _nheapinit+11E↑w
+byte_1ECC2      db 0                    ; DATA XREF: _nheapinit+122↑w
+byte_1ECC3      db 0                    ; DATA XREF: criticalErrorHandler+2D↑w
+                                        ; _nheapinit:loc_1950F↑r ...
                 db    0
                 db  16h
                 db    2
@@ -32289,7 +32289,7 @@ byte_1ECC3      db 0                    ; DATA XREF: sub_193D7+2D↑w
                 db    0
 word_1ED20      dw 0                    ; DATA XREF: sub_1960C+6↑r
                                         ; sub_1960C+E↑r ...
-errno           dw 0                    ; DATA XREF: sub_19418:loc_19552↑w
+errno           dw 0                    ; DATA XREF: _nheapinit:loc_19552↑w
                                         ; _dos_write+17↑w ...
 aCom            db 'COM',0
 aExe            db 'EXE',0

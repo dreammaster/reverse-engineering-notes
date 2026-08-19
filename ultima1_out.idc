@@ -13947,6 +13947,7 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_word	(0X1937D);
 	create_insn	(0X1937F);
+	set_name	(0X1937F,	"setCriticalErrorHandler");
 	create_insn	(x=0X19387);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1938E);
@@ -13971,9 +13972,11 @@ static Bytes_2(void) {
 	create_insn	(x=0X193CB);
 	op_hex		(x,	0);
 	create_insn	(0X193D7);
+	set_name	(0X193D7,	"criticalErrorHandler");
 	create_insn	(x=0X193F0);
 	op_stkvar	(x,	1);
 	create_insn	(0X19418);
+	set_name	(0X19418,	"_nheapinit");
 	create_insn	(x=0X19443);
 	op_hex		(x,	1);
 	create_insn	(x=0X19445);
