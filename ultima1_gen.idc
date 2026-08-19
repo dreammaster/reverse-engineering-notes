@@ -1343,6 +1343,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X10DBD);
 	op_hex		(x,	1);
 	create_insn	(0X10DC2);
+	set_name	(0X10DC2,	"clearSelectionArrows");
 	create_insn	(x=0X10DC3);
 	op_hex		(x,	1);
 	set_cmt	(0X10DCE,	"yp",	0);
@@ -1380,6 +1381,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X10E2D);
 	op_hex		(x,	1);
 	create_insn	(0X10E32);
+	set_name	(0X10E32,	"decreaseAttribute");
 	create_insn	(x=0X10E33);
 	op_hex		(x,	1);
 	create_insn	(x=0X10E3B);
@@ -1397,6 +1399,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X10E5C);
 	op_hex		(x,	1);
 	create_insn	(0X10E61);
+	set_name	(0X10E61,	"increaseAttribute");
 	create_insn	(x=0X10E62);
 	op_hex		(x,	1);
 	create_insn	(x=0X10E6A);
