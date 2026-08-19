@@ -24961,7 +24961,7 @@ playSound       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1AE65       proc near               ; CODE XREF: playSound+11↑p
+soundEffectBump proc near               ; CODE XREF: playSound+11↑p
                                         ; DATA XREF: sg0E82:off_1F94A↓o
                 in      al, 61h         ; PC/XT PPI port B bits:
                                         ; 0: Tmr 2 gate ═╦═ OR 03H=spkr ON
@@ -24975,7 +24975,7 @@ sub_1AE65       proc near               ; CODE XREF: playSound+11↑p
                 and     al, 0FCh
                 mov     cx, 10h
 
-loc_1AE6D:                              ; CODE XREF: sub_1AE65+12↓j
+loc_1AE6D:                              ; CODE XREF: soundEffectBump+12↓j
                 out     61h, al         ; PC/XT PPI port B bits:
                                         ; 0: Tmr 2 gate ═╦═ OR 03H=spkr ON
                                         ; 1: Tmr 2 data ═╝  AND 0fcH=spkr OFF
@@ -24987,7 +24987,7 @@ loc_1AE6D:                              ; CODE XREF: sub_1AE65+12↓j
                 xor     al, 2
                 mov     bx, 3E8h
 
-loc_1AE74:                              ; CODE XREF: sub_1AE65+10↓j
+loc_1AE74:                              ; CODE XREF: soundEffectBump+10↓j
                 dec     bx
                 jnz     short loc_1AE74
                 loop    loc_1AE6D
@@ -25001,13 +25001,13 @@ loc_1AE74:                              ; CODE XREF: sub_1AE65+10↓j
                                         ; 6: 0=hold keyboard clock low
                                         ; 7: 0=enable kbrd
                 retn
-sub_1AE65       endp
+soundEffectBump endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1AE7D       proc near               ; CODE XREF: playSound+11↑p
+soundEffectAck  proc near               ; CODE XREF: playSound+11↑p
                                         ; DATA XREF: sg0E82:24CC↓o
                 in      al, 61h         ; PC/XT PPI port B bits:
                                         ; 0: Tmr 2 gate ═╦═ OR 03H=spkr ON
@@ -25021,7 +25021,7 @@ sub_1AE7D       proc near               ; CODE XREF: playSound+11↑p
                 and     al, 0FCh
                 mov     cx, 30h ; '0'
 
-loc_1AE85:                              ; CODE XREF: sub_1AE7D+18↓j
+loc_1AE85:                              ; CODE XREF: soundEffectAck+18↓j
                 out     61h, al         ; PC/XT PPI port B bits:
                                         ; 0: Tmr 2 gate ═╦═ OR 03H=spkr ON
                                         ; 1: Tmr 2 data ═╝  AND 0fcH=spkr OFF
@@ -25033,10 +25033,10 @@ loc_1AE85:                              ; CODE XREF: sub_1AE7D+18↓j
                 xor     al, 2
                 mov     di, 1
 
-loc_1AE8C:                              ; CODE XREF: sub_1AE7D+16↓j
+loc_1AE8C:                              ; CODE XREF: soundEffectAck+16↓j
                 mov     bx, 163h
 
-loc_1AE8F:                              ; CODE XREF: sub_1AE7D+13↓j
+loc_1AE8F:                              ; CODE XREF: soundEffectAck+13↓j
                 dec     bx
                 jnz     short loc_1AE8F
                 dec     di
@@ -25052,18 +25052,18 @@ loc_1AE8F:                              ; CODE XREF: sub_1AE7D+13↓j
                                         ; 6: 0=hold keyboard clock low
                                         ; 7: 0=enable kbrd
                 retn
-sub_1AE7D       endp
+soundEffectAck  endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1AE9B       proc near               ; CODE XREF: playSound+11↑p
+soundEffectDamage proc near             ; CODE XREF: playSound+11↑p
                                         ; DATA XREF: sg0E82:24CE↓o
                 xor     bh, bh
                 mov     bl, 0C8h
                 jmp     short loc_1AEAD
-sub_1AE9B       endp
+soundEffectDamage endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -25071,12 +25071,12 @@ sub_1AE9B       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1AEA2       proc near               ; CODE XREF: playSound+11↑p
+soundEffectMonsterAttack proc near      ; CODE XREF: playSound+11↑p
                                         ; DATA XREF: sg0E82:24D0↓o
                 mov     bh, 7Fh
                 mov     bl, 0FFh
                 jmp     short loc_1AEAD
-sub_1AEA2       endp
+soundEffectMonsterAttack endp
 
 ; ---------------------------------------------------------------------------
                 db 90h
@@ -25084,13 +25084,13 @@ sub_1AEA2       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1AEA9       proc near               ; CODE XREF: playSound+11↑p
+soundEffectFootstep proc near           ; CODE XREF: playSound+11↑p
                                         ; DATA XREF: sg0E82:24D2↓o
                 xor     bh, bh
                 mov     bl, 8
 
-loc_1AEAD:                              ; CODE XREF: sub_1AE9B+4↑j
-                                        ; sub_1AEA2+4↑j
+loc_1AEAD:                              ; CODE XREF: soundEffectDamage+4↑j
+                                        ; soundEffectMonsterAttack+4↑j
                 in      al, 61h         ; PC/XT PPI port B bits:
                                         ; 0: Tmr 2 gate ═╦═ OR 03H=spkr ON
                                         ; 1: Tmr 2 data ═╝  AND 0fcH=spkr OFF
@@ -25103,11 +25103,11 @@ loc_1AEAD:                              ; CODE XREF: sub_1AE9B+4↑j
                 and     al, 0FCh
                 mov     dh, 7Eh ; '~'
 
-loc_1AEB4:                              ; CODE XREF: sub_1AEA9+1A↓j
+loc_1AEB4:                              ; CODE XREF: soundEffectFootstep+1A↓j
                 add     dh, 5
                 mov     dl, dh
 
-loc_1AEB9:                              ; CODE XREF: sub_1AEA9+12↓j
+loc_1AEB9:                              ; CODE XREF: soundEffectFootstep+12↓j
                 dec     dl
                 jnz     short loc_1AEB9
                 out     61h, al         ; PC/XT PPI port B bits:
@@ -25131,18 +25131,18 @@ loc_1AEB9:                              ; CODE XREF: sub_1AEA9+12↓j
                                         ; 6: 0=hold keyboard clock low
                                         ; 7: 0=enable kbrd
                 retn
-sub_1AEA9       endp
+soundEffectFootstep endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1AEC9       proc near               ; CODE XREF: playSound+11↑p
+soundEffectSuccess proc near            ; CODE XREF: playSound+11↑p
                                         ; DATA XREF: sg0E82:24D4↓o
                 mov     bl, 0C0h
                 mov     bh, 3Ch ; '<'
                 jmp     short loc_1AEEE
-sub_1AEC9       endp
+soundEffectSuccess endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -25150,7 +25150,7 @@ sub_1AEC9       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1AED0       proc near               ; CODE XREF: playSound+11↑p
+soundEffectFailure proc near            ; CODE XREF: playSound+11↑p
                                         ; DATA XREF: sg0E82:24D6↓o
                 in      al, 61h         ; PC/XT PPI port B bits:
                                         ; 0: Tmr 2 gate ═╦═ OR 03H=spkr ON
@@ -25165,10 +25165,10 @@ sub_1AED0       proc near               ; CODE XREF: playSound+11↑p
                 mov     bh, 0A0h
                 xor     ch, ch
 
-loc_1AED9:                              ; CODE XREF: sub_1AED0+14↓j
+loc_1AED9:                              ; CODE XREF: soundEffectFailure+14↓j
                 mov     cl, bh
 
-loc_1AEDB:                              ; CODE XREF: sub_1AED0+C↓j
+loc_1AEDB:                              ; CODE XREF: soundEffectFailure+C↓j
                 dec     cx
                 jnz     short loc_1AEDB
                 out     61h, al         ; PC/XT PPI port B bits:
@@ -25192,18 +25192,18 @@ loc_1AEDB:                              ; CODE XREF: sub_1AED0+C↓j
                                         ; 6: 0=hold keyboard clock low
                                         ; 7: 0=enable kbrd
                 retn
-sub_1AED0       endp
+soundEffectFailure endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1AEEA       proc near               ; CODE XREF: playSound+11↑p
+soundEffectAttack proc near             ; CODE XREF: playSound+11↑p
                                         ; DATA XREF: sg0E82:24D8↓o
                 mov     bl, 5
                 mov     bh, 0Fh
 
-loc_1AEEE:                              ; CODE XREF: sub_1AEC9+4↑j
+loc_1AEEE:                              ; CODE XREF: soundEffectSuccess+4↑j
                 in      al, 61h         ; PC/XT PPI port B bits:
                                         ; 0: Tmr 2 gate ═╦═ OR 03H=spkr ON
                                         ; 1: Tmr 2 data ═╝  AND 0fcH=spkr OFF
@@ -25217,13 +25217,13 @@ loc_1AEEE:                              ; CODE XREF: sub_1AEC9+4↑j
                 mov     ch, bl
                 mov     cl, 1
 
-loc_1AEF7:                              ; CODE XREF: sub_1AEEA+2E↓j
+loc_1AEF7:                              ; CODE XREF: soundEffectAttack+2E↓j
                 mov     dl, bh
 
-loc_1AEF9:                              ; CODE XREF: sub_1AEEA+25↓j
+loc_1AEF9:                              ; CODE XREF: soundEffectAttack+25↓j
                 mov     dh, ch
 
-loc_1AEFB:                              ; CODE XREF: sub_1AEEA+13↓j
+loc_1AEFB:                              ; CODE XREF: soundEffectAttack+13↓j
                 dec     dh
                 jnz     short loc_1AEFB
                 out     61h, al         ; PC/XT PPI port B bits:
@@ -25237,7 +25237,7 @@ loc_1AEFB:                              ; CODE XREF: sub_1AEEA+13↓j
                 xor     al, 2
                 mov     dh, cl
 
-loc_1AF05:                              ; CODE XREF: sub_1AEEA+1D↓j
+loc_1AF05:                              ; CODE XREF: soundEffectAttack+1D↓j
                 dec     dh
                 jnz     short loc_1AF05
                 out     61h, al         ; PC/XT PPI port B bits:
@@ -25265,13 +25265,13 @@ loc_1AF05:                              ; CODE XREF: sub_1AEEA+1D↓j
                                         ; 6: 0=hold keyboard clock low
                                         ; 7: 0=enable kbrd
                 retn
-sub_1AEEA       endp
+soundEffectAttack endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1AF1E       proc near               ; CODE XREF: playSound+11↑p
+soundEffect8    proc near               ; CODE XREF: playSound+11↑p
                                         ; DATA XREF: sg0E82:24DA↓o
                 in      al, 61h         ; PC/XT PPI port B bits:
                                         ; 0: Tmr 2 gate ═╦═ OR 03H=spkr ON
@@ -25285,7 +25285,7 @@ sub_1AF1E       proc near               ; CODE XREF: playSound+11↑p
                 and     al, 0FCh
                 mov     bl, 0FBh
 
-loc_1AF25:                              ; CODE XREF: sub_1AF1E+13↓j
+loc_1AF25:                              ; CODE XREF: soundEffect8+13↓j
                 out     61h, al         ; PC/XT PPI port B bits:
                                         ; 0: Tmr 2 gate ═╦═ OR 03H=spkr ON
                                         ; 1: Tmr 2 data ═╝  AND 0fcH=spkr OFF
@@ -25297,7 +25297,7 @@ loc_1AF25:                              ; CODE XREF: sub_1AF1E+13↓j
                 xor     al, 2
                 mov     bh, bl
 
-loc_1AF2B:                              ; CODE XREF: sub_1AF1E+F↓j
+loc_1AF2B:                              ; CODE XREF: soundEffect8+F↓j
                 inc     bh
                 jnz     short loc_1AF2B
                 dec     bl
@@ -25312,13 +25312,13 @@ loc_1AF2B:                              ; CODE XREF: sub_1AF1E+F↓j
                                         ; 6: 0=hold keyboard clock low
                                         ; 7: 0=enable kbrd
                 retn
-sub_1AF1E       endp
+soundEffect8    endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1AF37       proc near               ; CODE XREF: playSound+11↑p
+soundEffect9    proc near               ; CODE XREF: playSound+11↑p
                                         ; DATA XREF: sg0E82:24DC↓o
                 xor     bh, bh
                 mov     bl, 4
@@ -25334,11 +25334,11 @@ sub_1AF37       proc near               ; CODE XREF: playSound+11↑p
                 and     al, 0FCh
                 xor     dh, dh
 
-loc_1AF42:                              ; CODE XREF: sub_1AF37+1A↓j
+loc_1AF42:                              ; CODE XREF: soundEffect9+1A↓j
                 add     dh, 5
                 mov     dl, dh
 
-loc_1AF47:                              ; CODE XREF: sub_1AF37+12↓j
+loc_1AF47:                              ; CODE XREF: soundEffect9+12↓j
                 dec     dl
                 jnz     short loc_1AF47
                 out     61h, al         ; PC/XT PPI port B bits:
@@ -25362,7 +25362,7 @@ loc_1AF47:                              ; CODE XREF: sub_1AF37+12↓j
                                         ; 6: 0=hold keyboard clock low
                                         ; 7: 0=enable kbrd
                 retn
-sub_1AF37       endp
+soundEffect9    endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -33491,16 +33491,16 @@ _uwidgetOffsetY dw 0                    ; DATA XREF: dungeonDrawWidget+22↑w
 ; int widgetColor
 _widgetColor    dw 0                    ; DATA XREF: dungeonDrawWidget+A↑w
                                         ; dungeonDrawWidget+44↑r ...
-off_1F94A       dw offset sub_1AE65     ; DATA XREF: playSound+11↑r
-                dw offset sub_1AE7D
-                dw offset sub_1AE9B
-                dw offset sub_1AEA2
-                dw offset sub_1AEA9
-                dw offset sub_1AEC9
-                dw offset sub_1AED0
-                dw offset sub_1AEEA
-                dw offset sub_1AF1E
-                dw offset sub_1AF37
+off_1F94A       dw offset soundEffectBump ; DATA XREF: playSound+11↑r
+                dw offset soundEffectAck
+                dw offset soundEffectDamage
+                dw offset soundEffectMonsterAttack
+                dw offset soundEffectFootstep
+                dw offset soundEffectSuccess
+                dw offset soundEffectFailure
+                dw offset soundEffectAttack
+                dw offset soundEffect8
+                dw offset soundEffect9
 word_1F95E      dw 1                    ; DATA XREF: readAmount+BC↑r
                 db  0Ah
                 db    0

@@ -1606,3 +1606,231 @@ structs (11): STR15, DungeonCell, DungeonColumn, DungeonMap, Point, Rect, Creatu
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_renames_out.py', 'noexport']
+[*] reading apply_renames_out.py
+[*] executing apply_renames_out.py
+[*] captured stdout from target script:
+----- begin target script output -----
+1A81D: already 'getKeypressAndWaitRaw' -- skipping
+1A30C: already 'toLowerLetter' -- skipping
+1981D: already '_nmalloc' -- skipping
+198C0: already '_nfree' -- skipping
+19EA3: already '_nheapgrow' -- skipping
+1B0B5: already 'readAmount' -- skipping
+1B094: already 'isDigit' -- skipping
+1C8F2: already '_fread' -- skipping
+1C960: already '_fwrite' -- skipping
+1C6D4: already '_fclose' -- skipping
+1CC6B: already '_filbuf' -- skipping
+1CE05: already '_flsbuf' -- skipping
+1D30F: already 'allocFileBuffer' -- skipping
+1C791: already '_openfile' -- skipping
+1CA14: already '_open' -- skipping
+1C9CC: already 'releaseFileHandle' -- skipping
+1D0DD: already 'findFileHandleSlot' -- skipping
+190C0: already '_flushall' -- skipping
+19578: already '_dos_open' -- skipping
+19589: already '_dos_close' -- skipping
+19597: already '_dos_read' -- skipping
+195AB: already '_dos_lseek' -- skipping
+195CF: already '_dos_write' -- skipping
+195F8: already '_dos_ioctl_get' -- skipping
+1D36A: already '_dos_ioctl_set' -- skipping
+1D37C: already '_dos_creat' -- skipping
+1D38D: already '_dos_creatnew' -- skipping
+1D39A: already '_dos_creattemp' -- skipping
+163B3: already 'calcWeaponBuyPrice' -- skipping
+163D4: already 'calcWeaponSellPrice' -- skipping
+165CE: already 'drawWeaponShopLine' -- skipping
+163F2: already 'sellWeapons' -- skipping
+167F1: already 'calcArmorBuyPrice' -- skipping
+1680C: already 'calcArmorSellPrice' -- skipping
+169E8: already 'drawArmorShopLine' -- skipping
+16823: already 'sellArmor' -- skipping
+16BAC: already 'calcMagicBuyPrice' -- skipping
+16BC7: already 'drawMagicShopLine' -- skipping
+17052: already 'drawTransportShopLine' -- skipping
+192D4: already 'divmod32' -- skipping
+15469: already 'denyGetNoPermission' -- skipping
+15492: already 'getArmorTile' -- skipping
+154B5: already 'getWeaponTile' -- skipping
+154D8: already 'getFoodTile' -- skipping
+154FB: already 'getTownItem' -- skipping
+15B8A: already 'checkCaughtStealing' -- skipping
+14EA2: already 'showPillarInscription' -- skipping
+122F3: already 'findWidgetAtPosition' -- skipping
+1AB9D: already 'drawDeathGraphic' -- skipping
+1AC44: already 'waitTimerTicks' -- skipping
+1BA27: already 'drawSelectItemPanel' -- skipping
+19FF1: already 'initVideoModeCGA' -- skipping
+1C455: already 'initVideoModeEGA' -- skipping
+1C42E: already 'initVideoModeTandy' -- skipping
+1B231: already 'buildScanlineOffsetTable' -- skipping
+1937F: already 'setCriticalErrorHandler' -- skipping
+193D7: already 'criticalErrorHandler' -- skipping
+19418: already '_nheapinit' -- skipping
+1AE65: 'sub_1AE65' -> 'soundEffectBump'
+    effectNum 0. Sites: dungeonForward, impassable, moveCheck -- played when a move is blocked (wall/obstacle).
+1AE7D: 'sub_1AE7D' -> 'soundEffectAck'
+    effectNum 1, by far the most common (34 call sites) -- nearly every top-level player command (attack, drop, enter, fire, get, open, quit, transact, ...) plays it, including denial paths (denyGetNoPermission, cantAffordDialog). Reads as a generic 'command acknowledged' click rather than a true error sound, given how broadly it's used across both successful and denied actions.
+1AE9B: 'sub_1AE9B' -> 'soundEffectDamage'
+    effectNum 2. Sites: attackPerson, damage, death, dungeonMonsterAttack, guardAttack, monsterAttack, unlockDungeon -- played when the player takes damage or dies.
+1AEA2: 'sub_1AEA2' -> 'soundEffectMonsterAttack'
+    effectNum 3. Sites: dungeonMonsterAttack, monsterAttack -- narrower than soundEffectDamage, specifically a monster's attack swing rather than the resulting hit.
+1AEA9: 'sub_1AEA9' -> 'soundEffectFootstep'
+    effectNum 4. Sites: cityMove, guardMove, move, updateBardJester, updatePrincess, updateWench -- plays on player and NPC movement alike. Shortest delay-loop count of all 10 handlers (bl=8 vs. hundreds for the others), consistent with a quick tick sound.
+1AEC9: 'sub_1AEC9' -> 'soundEffectSuccess'
+    effectNum 5. Sites: castPrayer, castSpell, castSpellAttack, death, dropPence, dropPenceCastle, enterPillar, questCompleted. Confirmed precisely in castSpell: played on the 'not failed' branch, mirrored by soundEffectFailure (6) on the 'failed' branch right next to it -- a spell-success/spell-fail chime pair, also reused for other positive events (quest complete, paying money).
+1AED0: 'sub_1AED0' -> 'soundEffectFailure'
+    effectNum 6. Sites: cast, castPrayer, castSpell, castSpellAttack, enterPillar. See soundEffectSuccess -- castSpell plays this exact effect immediately before printing 'Failed!'.
+1AEEA: 'sub_1AEEA' -> 'soundEffectAttack'
+    effectNum 7. Sites: attackPerson, dungeonAttack, guardAttack -- the player's own weapon-swing sound, distinct from soundEffectMonsterAttack (3, a monster's swing) and soundEffectDamage (2, taking a hit).
+1AF1E: 'sub_1AF1E' -> 'soundEffect8'
+    effectNum 8 -- never reached by a literal effectNum anywhere in OUT.EXE's ~74 playFX call sites. Named only for consistency with the other 9 handlers in this jump table; role undetermined.
+1AF37: 'sub_1AF37' -> 'soundEffect9'
+    effectNum 9 -- same caveat as soundEffect8: not reached by any literal call site found in this executable.
+1D4F1: already '_doserrno' -- skipping
+1ED22: already 'errno' -- skipping
+1EC50: already '_fmode' -- skipping
+26024: already '_castleItemAllowance' -- skipping
+
+[dry] nothing changed. Set DRY_RUN = False to apply.
+----- end target script output -----
+[*] finished executing apply_renames_out.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_renames_out.py']
+[*] reading apply_renames_out.py
+[*] executing apply_renames_out.py
+[*] captured stdout from target script:
+----- begin target script output -----
+1A81D: already 'getKeypressAndWaitRaw' -- skipping
+1A30C: already 'toLowerLetter' -- skipping
+1981D: already '_nmalloc' -- skipping
+198C0: already '_nfree' -- skipping
+19EA3: already '_nheapgrow' -- skipping
+1B0B5: already 'readAmount' -- skipping
+1B094: already 'isDigit' -- skipping
+1C8F2: already '_fread' -- skipping
+1C960: already '_fwrite' -- skipping
+1C6D4: already '_fclose' -- skipping
+1CC6B: already '_filbuf' -- skipping
+1CE05: already '_flsbuf' -- skipping
+1D30F: already 'allocFileBuffer' -- skipping
+1C791: already '_openfile' -- skipping
+1CA14: already '_open' -- skipping
+1C9CC: already 'releaseFileHandle' -- skipping
+1D0DD: already 'findFileHandleSlot' -- skipping
+190C0: already '_flushall' -- skipping
+19578: already '_dos_open' -- skipping
+19589: already '_dos_close' -- skipping
+19597: already '_dos_read' -- skipping
+195AB: already '_dos_lseek' -- skipping
+195CF: already '_dos_write' -- skipping
+195F8: already '_dos_ioctl_get' -- skipping
+1D36A: already '_dos_ioctl_set' -- skipping
+1D37C: already '_dos_creat' -- skipping
+1D38D: already '_dos_creatnew' -- skipping
+1D39A: already '_dos_creattemp' -- skipping
+163B3: already 'calcWeaponBuyPrice' -- skipping
+163D4: already 'calcWeaponSellPrice' -- skipping
+165CE: already 'drawWeaponShopLine' -- skipping
+163F2: already 'sellWeapons' -- skipping
+167F1: already 'calcArmorBuyPrice' -- skipping
+1680C: already 'calcArmorSellPrice' -- skipping
+169E8: already 'drawArmorShopLine' -- skipping
+16823: already 'sellArmor' -- skipping
+16BAC: already 'calcMagicBuyPrice' -- skipping
+16BC7: already 'drawMagicShopLine' -- skipping
+17052: already 'drawTransportShopLine' -- skipping
+192D4: already 'divmod32' -- skipping
+15469: already 'denyGetNoPermission' -- skipping
+15492: already 'getArmorTile' -- skipping
+154B5: already 'getWeaponTile' -- skipping
+154D8: already 'getFoodTile' -- skipping
+154FB: already 'getTownItem' -- skipping
+15B8A: already 'checkCaughtStealing' -- skipping
+14EA2: already 'showPillarInscription' -- skipping
+122F3: already 'findWidgetAtPosition' -- skipping
+1AB9D: already 'drawDeathGraphic' -- skipping
+1AC44: already 'waitTimerTicks' -- skipping
+1BA27: already 'drawSelectItemPanel' -- skipping
+19FF1: already 'initVideoModeCGA' -- skipping
+1C455: already 'initVideoModeEGA' -- skipping
+1C42E: already 'initVideoModeTandy' -- skipping
+1B231: already 'buildScanlineOffsetTable' -- skipping
+1937F: already 'setCriticalErrorHandler' -- skipping
+193D7: already 'criticalErrorHandler' -- skipping
+19418: already '_nheapinit' -- skipping
+1AE65: 'sub_1AE65' -> 'soundEffectBump'
+    effectNum 0. Sites: dungeonForward, impassable, moveCheck -- played when a move is blocked (wall/obstacle).
+1AE7D: 'sub_1AE7D' -> 'soundEffectAck'
+    effectNum 1, by far the most common (34 call sites) -- nearly every top-level player command (attack, drop, enter, fire, get, open, quit, transact, ...) plays it, including denial paths (denyGetNoPermission, cantAffordDialog). Reads as a generic 'command acknowledged' click rather than a true error sound, given how broadly it's used across both successful and denied actions.
+1AE9B: 'sub_1AE9B' -> 'soundEffectDamage'
+    effectNum 2. Sites: attackPerson, damage, death, dungeonMonsterAttack, guardAttack, monsterAttack, unlockDungeon -- played when the player takes damage or dies.
+1AEA2: 'sub_1AEA2' -> 'soundEffectMonsterAttack'
+    effectNum 3. Sites: dungeonMonsterAttack, monsterAttack -- narrower than soundEffectDamage, specifically a monster's attack swing rather than the resulting hit.
+1AEA9: 'sub_1AEA9' -> 'soundEffectFootstep'
+    effectNum 4. Sites: cityMove, guardMove, move, updateBardJester, updatePrincess, updateWench -- plays on player and NPC movement alike. Shortest delay-loop count of all 10 handlers (bl=8 vs. hundreds for the others), consistent with a quick tick sound.
+1AEC9: 'sub_1AEC9' -> 'soundEffectSuccess'
+    effectNum 5. Sites: castPrayer, castSpell, castSpellAttack, death, dropPence, dropPenceCastle, enterPillar, questCompleted. Confirmed precisely in castSpell: played on the 'not failed' branch, mirrored by soundEffectFailure (6) on the 'failed' branch right next to it -- a spell-success/spell-fail chime pair, also reused for other positive events (quest complete, paying money).
+1AED0: 'sub_1AED0' -> 'soundEffectFailure'
+    effectNum 6. Sites: cast, castPrayer, castSpell, castSpellAttack, enterPillar. See soundEffectSuccess -- castSpell plays this exact effect immediately before printing 'Failed!'.
+1AEEA: 'sub_1AEEA' -> 'soundEffectAttack'
+    effectNum 7. Sites: attackPerson, dungeonAttack, guardAttack -- the player's own weapon-swing sound, distinct from soundEffectMonsterAttack (3, a monster's swing) and soundEffectDamage (2, taking a hit).
+1AF1E: 'sub_1AF1E' -> 'soundEffect8'
+    effectNum 8 -- never reached by a literal effectNum anywhere in OUT.EXE's ~74 playFX call sites. Named only for consistency with the other 9 handlers in this jump table; role undetermined.
+1AF37: 'sub_1AF37' -> 'soundEffect9'
+    effectNum 9 -- same caveat as soundEffect8: not reached by any literal call site found in this executable.
+1D4F1: already '_doserrno' -- skipping
+1ED22: already 'errno' -- skipping
+1EC50: already '_fmode' -- skipping
+26024: already '_castleItemAllowance' -- skipping
+
+Done. Re-export the .asm/.idc and check the new names took, then update docs/roadmap.md's checklist.
+----- end target script output -----
+[*] finished executing apply_renames_out.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima1\ultima1_out.asm
+[*] gen_file(OFILE_ASM) returned 41659
+[*] exporting IDC to C:\dev\ultima1\ultima1_out.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima1\ultima1_out.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'identify.py', 'noexport']
+[*] reading identify.py
+[*] executing identify.py
+[*] captured stdout from target script:
+----- begin target script output -----
+root filename : OUT.EXE
+input file    : D:\GOG Games\Ultima 1\OUT.EXE
+entry point   : 0x0 (cs=0x1000)
+input md5     : 6a3301183223faea538c953ce94649f2
+
+segments:
+  sg013A       0x010000-0x01d480  (54400 bytes)
+  sg0E82       0x01d480-0x0286c0  (45632 bytes)
+  seg002       0x0286c0-0x029ac0  (5120 bytes)
+  seg003       0x029ac0-0x029ac1  (1 bytes)
+
+functions: 353 total, 334 named, 19 still sub_XXXXX
+
+structs (11): STR15, DungeonCell, DungeonColumn, DungeonMap, Point, Rect, Creature, LocationWidget, Savegame, MapLine, Map
+----- end target script output -----
+[*] finished executing identify.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0

@@ -390,15 +390,27 @@ either): `sub_190A6`, `sub_192AE`, `sub_19626`, `sub_1C34C`,
 library objects as the two dead siblings found inside `_nheapgrow`
 earlier. Left unnamed; see roadmap.md.
 
-### `playSound` / `playFX` — sound-effect jump table, not yet decoded
+### `playSound` effect table, decoded
 
-`playSound(effectNum)` (already named) dispatches through a 10-entry
-jump table (`off_1F94A`, `effectNum` 0-9) to 10 short, single-caller
-`sub_XXXXX` handlers (`0x1AE65` through `0x1AF37`) — almost certainly
-individual PC-speaker effect routines (footstep, hit, death, etc.).
-`playFX(effectNum)` is a thin `_savegame._soundOn`-gated wrapper around
-it, called from ~40 sites across combat/movement/UI code. Left
-unnamed: figuring out which of the 10 is which requires cross-
-referencing every `playFX` call site's literal `effectNum` argument
-against its game context (or just listening in an emulator), which
-hasn't been done yet. Worth a dedicated pass — see roadmap.md.
+Eighth pass, same session. Resolved all 10 of `playSound`'s effect
+handlers by walking every one of `playFX`'s ~74 call sites back to its
+literal `effectNum` argument (script-assisted — a small Python pass
+over the exported `.asm`, not manual reading) and grouping by which
+game action each site belongs to:
+
+| # | Name | Evidence |
+|---|---|---|
+| 0 | `soundEffectBump` | `dungeonForward`, `impassable`, `moveCheck` — blocked-move sound |
+| 1 | `soundEffectAck` | 34 sites, nearly every top-level command incl. denials — generic "command acknowledged" click, not a true error tone |
+| 2 | `soundEffectDamage` | `attackPerson`, `damage`, `death`, `guardAttack`, ... — taking a hit |
+| 3 | `soundEffectMonsterAttack` | `dungeonMonsterAttack`, `monsterAttack` — a monster's swing, distinct from taking the hit |
+| 4 | `soundEffectFootstep` | `move`, `cityMove`, `guardMove`, NPC updates — shortest delay-loop of all 10 (`bl=8` vs. hundreds), consistent with a quick tick |
+| 5 | `soundEffectSuccess` | spell/quest/money success — confirmed exactly in `castSpell`'s "not failed" branch |
+| 6 | `soundEffectFailure` | spell failure — confirmed exactly in `castSpell`, played right before printing "Failed!" |
+| 7 | `soundEffectAttack` | `attackPerson`, `dungeonAttack`, `guardAttack` — the player's own weapon swing |
+| 8, 9 | `soundEffect8`/`9` | never reached by a literal `effectNum` anywhere in OUT.EXE — named only for index-consistency, role unknown |
+
+All 10 handlers directly bit-bang the PC speaker via port `61h`
+(square-wave toggle + busy-wait delay loop, no PIT channel 2
+involved), confirming they're independent tone effects rather than
+shared code with parameters.

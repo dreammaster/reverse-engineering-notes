@@ -398,6 +398,78 @@ RENAMES = [
      "list globals _nmalloc/_nfree/_nheapgrow operate on (word_1EC52, "
      "word_1EC54, word_1EC56, word_1EC58, word_1EC5E). Underscore-"
      "prefixed to match that cluster's naming."),
+
+    # -- eighth pass: playSound's 10-entry effect table (off_1F94A).
+    # Mapped by cross-referencing every literal effectNum pushed at
+    # playFX's ~74 call sites (script-assisted: walked every `call
+    # playFX` back to its `mov ax, N`/`xor ax, ax` argument and grouped
+    # by call-site context) against which game action each one plays
+    # in. All 10 handlers directly bit-bang the PC speaker via port
+    # 61h (square-wave toggling with a busy-wait delay loop, no PIT
+    # channel 2 involved) -- confirms these are genuinely independent
+    # tone effects, not shared code. Effects 8-9 are never reached by a
+    # literal effectNum anywhere in OUT.EXE's playFX call sites, so
+    # their semantic role couldn't be pinned down here -- named only
+    # for index-consistency with the other 8, not a confirmed meaning.
+    # See docs/overview.md#playsound-effect-table-decoded. --
+
+    (0x1AE65, "soundEffectBump",
+     "effectNum 0. Sites: dungeonForward, impassable, moveCheck -- "
+     "played when a move is blocked (wall/obstacle)."),
+
+    (0x1AE7D, "soundEffectAck",
+     "effectNum 1, by far the most common (34 call sites) -- nearly "
+     "every top-level player command (attack, drop, enter, fire, get, "
+     "open, quit, transact, ...) plays it, including denial paths "
+     "(denyGetNoPermission, cantAffordDialog). Reads as a generic "
+     "'command acknowledged' click rather than a true error sound, "
+     "given how broadly it's used across both successful and denied "
+     "actions."),
+
+    (0x1AE9B, "soundEffectDamage",
+     "effectNum 2. Sites: attackPerson, damage, death, "
+     "dungeonMonsterAttack, guardAttack, monsterAttack, unlockDungeon "
+     "-- played when the player takes damage or dies."),
+
+    (0x1AEA2, "soundEffectMonsterAttack",
+     "effectNum 3. Sites: dungeonMonsterAttack, monsterAttack -- "
+     "narrower than soundEffectDamage, specifically a monster's "
+     "attack swing rather than the resulting hit."),
+
+    (0x1AEA9, "soundEffectFootstep",
+     "effectNum 4. Sites: cityMove, guardMove, move, updateBardJester, "
+     "updatePrincess, updateWench -- plays on player and NPC movement "
+     "alike. Shortest delay-loop count of all 10 handlers (bl=8 vs. "
+     "hundreds for the others), consistent with a quick tick sound."),
+
+    (0x1AEC9, "soundEffectSuccess",
+     "effectNum 5. Sites: castPrayer, castSpell, castSpellAttack, "
+     "death, dropPence, dropPenceCastle, enterPillar, questCompleted. "
+     "Confirmed precisely in castSpell: played on the 'not failed' "
+     "branch, mirrored by soundEffectFailure (6) on the 'failed' "
+     "branch right next to it -- a spell-success/spell-fail chime "
+     "pair, also reused for other positive events (quest complete, "
+     "paying money)."),
+
+    (0x1AED0, "soundEffectFailure",
+     "effectNum 6. Sites: cast, castPrayer, castSpell, castSpellAttack, "
+     "enterPillar. See soundEffectSuccess -- castSpell plays this "
+     "exact effect immediately before printing 'Failed!'."),
+
+    (0x1AEEA, "soundEffectAttack",
+     "effectNum 7. Sites: attackPerson, dungeonAttack, guardAttack -- "
+     "the player's own weapon-swing sound, distinct from "
+     "soundEffectMonsterAttack (3, a monster's swing) and "
+     "soundEffectDamage (2, taking a hit)."),
+
+    (0x1AF1E, "soundEffect8",
+     "effectNum 8 -- never reached by a literal effectNum anywhere in "
+     "OUT.EXE's ~74 playFX call sites. Named only for consistency with "
+     "the other 9 handlers in this jump table; role undetermined."),
+
+    (0x1AF37, "soundEffect9",
+     "effectNum 9 -- same caveat as soundEffect8: not reached by any "
+     "literal call site found in this executable."),
 ]
 
 # (ea, new_name, note) -- globals in the same CRT file-I/O cluster,
