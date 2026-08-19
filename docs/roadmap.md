@@ -259,14 +259,30 @@ Started 2026-08-20 per Paul's direction. Was 44/113; exported
       (the video-mode letter and save-slot digit GEN.EXE passes via
       `launchGame`) — likely undocumented there since OUT.EXE's own
       argument parsing wasn't traced during that session.
-- [ ] Savegame-slot management cluster not yet traced:
-      `sub_11455`/`sub_114BB` (continuePreviousGame/main helpers),
-      `sub_11B9B` (readSavegameList helper), `sub_1197D`/`sub_11ED5`
-      (shared by generateCharacter/readSavegameList/`sub_11A3A`).
-- [ ] `sub_115B3` (called from `launchGame` on a failed chain attempt)
-      — likely the `insertDisk` equivalent; not yet confirmed.
+- [x] Third/fourth renaming passes: finished the CRT transfer
+      (`_dos_*` primitives, `_write`/`_nmalloc`/`_nheapgrow`/`_nfree`/
+      `_nheapinit`, `writeNumber`, `hasFileExtension`/
+      `ensureFileExtension`/`strcpy`/`strncpy`), named
+      `getKeypressRaw` (the real single-poll primitive — this IDB's
+      pre-existing `getKeypress` is actually the wait-loop wrapper,
+      left as-is since renaming it isn't worth the cross-reference
+      churn), `insertDisk`, and confirmed the 4-character roster limit
+      (`drawCharacterRoster`, `showCharacterReplacementMenu`). Full
+      writeup in [overview.md](overview.md#genexe-complete--113113-100).
+
+## GEN.EXE status: complete
+
+**113/113 functions named (100%)**, 44 → 113 across 4 passes
+(2026-08-20). Combined with ULTIMA.EXE and OUT.EXE, the full
+`ULTIMA.EXE` → `GEN.EXE` → `OUT.EXE` ↔ `SPACE.EXE` chain is now named
+end to end, plus the actual character-creation game rules (6
+attributes, 10-25 range, 30-point pool, 4-character roster limit).
+Remaining open item: the `_savegame._hits`/`_strength` struct-field
+mixup noted above needs a real struct-definition fix, not a rename —
+left for a future `apply_structs_gen.py` pass.
 
 ## Per-executable next steps (not yet started)
 
 `ultima1_space`, `ultima1_mondain` remain untouched beyond the initial
-`identify.py` cataloging — pick up after `ultima1_gen`.
+`identify.py` cataloging — pick up next (`ultima1_space` is furthest
+along of the two, per the original priority order).

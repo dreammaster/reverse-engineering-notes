@@ -138,6 +138,161 @@ RENAMES = [
      "attribute row (columns 0x0B and 0x1E) before "
      "moveSelectedAttrUp/Down redraws them at the new row via "
      "writeSelectionArrows."),
+
+    # -- third pass: finished the CRT cluster (raw _dos_* primitives,
+    # the near-heap allocator, and the last findExecutableFile
+    # helpers), all confirmed the same way as before -- exact byte-
+    # size matches to OUT.EXE plus direct-read confirmation for the
+    # ambiguous ones. --
+
+    (0x127D4, "_dos_ioctl_get", "AX=4400h IOCTL GET DEVICE INFORMATION."),
+    (0x12C5F, "_dos_ioctl_set", "AX=4401h IOCTL SET DEVICE INFORMATION."),
+    (0x12C71, "_dos_creat", "AH=3Ch CREATE A FILE WITH HANDLE (CREAT)."),
+    (0x12C82, "_dos_creatnew",
+     "AH=5Bh CREATE NEW FILE, confirmed by direct read (shares tail "
+     "with _dos_creat)."),
+    (0x12C8F, "_dos_open", "AH=3Dh OPEN DISK FILE WITH HANDLE."),
+    (0x12CA0, "_dos_close", "AH=3Eh CLOSE A FILE WITH HANDLE."),
+    (0x12CAE, "_dos_read", "AH=3Fh READ FROM FILE WITH HANDLE."),
+    (0x12CC2, "_dos_lseek", "AH=42h MOVE FILE READ/WRITE POINTER."),
+    (0x12CE6, "_dos_creattemp", "AH=5Ah CREATE UNIQUE FILE."),
+    (0x12CF7, "_dos_write", "AH=40h WRITE TO FILE WITH HANDLE."),
+    (0x12D20, "_exit", "runs the exit hook if set, then INT 21h/4Ch QUIT."),
+    (0x1336E, "_dos_getfileattr",
+     "AH=43h/AL=00h GET FILE ATTRIBUTES, used as the file-exists check "
+     "by findExecutableFile."),
+    (0x12971, "_write",
+     "text-mode-aware write underneath _flsbuf: seeks to end first "
+     "for append-mode streams via _lseek. Confirmed by direct read, "
+     "matching OUT.EXE's _write exactly in size (290 bytes)."),
+    (0x12EBF, "hasFileExtension",
+     "scans a filename backward for '.', matching OUT.EXE's "
+     "hasFileExtension exactly in size (129 bytes)."),
+    (0x12F40, "ensureFileExtension",
+     "appends a default extension if none found, matching OUT.EXE's "
+     "ensureFileExtension exactly in size (128 bytes)."),
+    (0x13382, "strcpy",
+     "plain lodsb/stosb copy-until-null, confirmed by direct read -- "
+     "called from findExecutableFile and ensureFileExtension, "
+     "matching OUT.EXE's strcpy usage pattern (not strncpy, despite "
+     "similar surrounding context)."),
+    (0x133AE, "strncpy",
+     "bounded copy, confirmed by direct read, called from "
+     "hasFileExtension -- matching OUT.EXE's strncpy usage exactly."),
+
+    (0x12D47, "_nmalloc",
+     "near-heap allocator: walks the free-list (sentinel word_14930), "
+     "splits a block if big enough, else calls _nheapgrow then _nfree "
+     "to extend and link in new space. Confirmed by direct read, "
+     "called from allocFileBuffer and buildAndChainExecutable -- same "
+     "pair of callers as OUT.EXE's _nmalloc."),
+    (0x133F9, "_nheapgrow",
+     "grows the near heap via SETBLOCK, matching OUT.EXE's "
+     "_nheapgrow exactly in size (198 bytes). Only called from "
+     "_nmalloc."),
+    (0x11E2C, "_nfree",
+     "near-heap free: coalesces into the free-list. Called from "
+     "_nmalloc (to link newly-grown space), _openfile-family code, "
+     "and _fclose-equivalent cleanup -- same role as OUT.EXE's "
+     "_nfree."),
+    (0x11DA6, "_nheapinit",
+     "one-time near-heap setup, matching OUT.EXE's _nheapinit exactly "
+     "in call site (CODE XREF: start+28B)."),
+
+    (0x13C8B, "writeNumber",
+     "signature matches OUT.EXE's writeNumber exactly at the call "
+     "site in updateAttribute: (value, maxDigits=2, paddingChar=' ', "
+     "color, isSigned=0). Draws the numeric attribute values and the "
+     "points-remaining counter during character creation."),
+
+    # -- fourth pass: remaining CRT/UI helpers plus real game-logic
+    # finds (the 4-slot character roster and its full/replace flow). --
+
+    (0x1197D, "_fclose",
+     "flushes via _flsbuf, frees the buffer via _nfree, releases the "
+     "handle via releaseFileHandle -- confirmed by direct read, "
+     "matching OUT.EXE's _fclose exactly. Called from generateCharacter "
+     "and readSavegameList directly as well as from _openfile (to "
+     "close any previously-open stream on the same FILE*)."),
+    (0x11ED5, "releaseFileHandle",
+     "looks up and closes the OS handle, clears the slot -- called "
+     "only from _fclose, matching OUT.EXE's releaseFileHandle."),
+    (0x11F8C, "exit",
+     "the real C-standard exit(): flushes/closes every FILE-table "
+     "entry (base 0xDB0) then calls _exit. noreturn, matching "
+     "ULTIMA.EXE's exit() exactly in shape. Not called from anywhere "
+     "visible in this executable (0 static callers) -- present but "
+     "apparently unused, like several other CRT siblings found this "
+     "session."),
+
+    (0x115B3, "insertDisk",
+     "prints 'Insert Ultima I diskette' / 'Hit space to continue...' "
+     "and blocks on a space keypress -- called from launchGame when "
+     "the exec-chain to OUT.EXE fails, matching the insertDisk retry "
+     "pattern from every other chain call found this project."),
+    (0x13EED, "clearMessageArea",
+     "INT 10h/AH=06h SCROLL PAGE UP to blank a fixed screen region "
+     "(rows 0x15-0x18) -- called once from insertDisk to clear space "
+     "for its message."),
+    (0x13AD7, "drawLoadingFrame",
+     "draws a border frame (4 fillRect calls covering the screen "
+     "edges) -- called from launchGame right before printing 'Please "
+     "wait whilst thy game loads'."),
+
+    (0x1413C, "getKeypressRaw",
+     "the real single-poll keypress primitive (cursor position via "
+     "INT 10h/AH=03h, then INT 21h/AH=06h direct console I/O) -- "
+     "matches OUT.EXE's getKeypress body exactly. The pre-existing "
+     "name 'getKeypress' in this IDB is actually the polling-loop "
+     "wrapper (matching OUT.EXE's getKeypressAndWait), left as-is "
+     "since it's already cross-referenced throughout this IDB and "
+     "isn't factually wrong (it does return a keypress, just via a "
+     "wait loop) -- unlike writeString2_mb's rename last pass, this "
+     "one wasn't misleading enough to justify the churn."),
+    (0x13E5E, "wait",
+     "outer wait wrapper (guards against amount=0, which busy-loops "
+     "forever -- a real inert edge case, not something exercised) "
+     "around waitTimerTicks."),
+    (0x13E77, "waitTimerTicks",
+     "the INT 1Ch tick-counting primitive, matching OUT.EXE's "
+     "waitTimerTicks exactly (install handler, busy-wait, restore)."),
+    (0x141D5, "textCursorAnimate",
+     "8x8 bitmap cursor blit with a frame counter, matching "
+     "ULTIMA.EXE's drawAnimatedCursor in shape -- named "
+     "textCursorAnimate here instead to match OUT.EXE's established "
+     "name for this exact role (called from within the raw keypress "
+     "primitive to animate the cursor while waiting)."),
+    (0x14234, "flushKeyboardBuffer",
+     "BIOS ROM ID check + keyboard buffer head/tail reset, matching "
+     "ULTIMA.EXE's flushKeyboardBuffer exactly."),
+
+    (0x11B9B, "_fread2",
+     "byte-for-byte identical to the already-named _fread at a "
+     "different address -- a second copy from a different linked "
+     "object file, same duplication pattern as ULTIMA.EXE's "
+     "strncpy2/toupper2. Called from readSavegameList."),
+    (0x13397, "strlen", "plain repne-scasb length count."),
+    (0x1357C, "writeCharacter",
+     "BIOS TTY character write (INT 10h/AH=0Eh) -- the low-level "
+     "primitive under getName/drawRightArrow/writeLeftArrow's text "
+     "output."),
+    (0x13D23, "writeNumberChar",
+     "BIOS write-char-at-cursor (INT 10h/AH=09h or 0Eh depending on a "
+     "flag) using color globals byte_14A64/65 -- writeNumber's "
+     "internal digit-output helper."),
+
+    (0x114BB, "showCharacterReplacementMenu",
+     "draws ' Character Replacement ' with left/right border arrows "
+     "and 'The roster is full.  Type the number of the character to "
+     "wish...' -- the flow triggered when starting a new character "
+     "and all roster slots are already full. Calls drawCharacterRoster "
+     "to list the existing 4 characters to choose a replacement from."),
+    (0x11455, "drawCharacterRoster",
+     "draws up to 4 numbered character names (slots 0-3, STR15-sized "
+     "entries from stru_14FC4) -- confirms the savegame roster holds "
+     "a maximum of 4 characters. Shared by continuePreviousGame (pick "
+     "who to play) and showCharacterReplacementMenu (pick who to "
+     "overwrite)."),
 ]
 
 # (ea, new_name, note)
