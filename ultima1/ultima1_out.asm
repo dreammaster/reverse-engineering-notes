@@ -4921,7 +4921,7 @@ hideDisabledWidgets endp
 
 ; Attributes: fpd=0Ah
 
-sub_122F3       proc near               ; CODE XREF: attackPerson+F1↓p
+findWidgetAtPosition proc near          ; CODE XREF: attackPerson+F1↓p
 
 var_6           = word ptr -6
 var_4           = word ptr -4
@@ -4934,7 +4934,7 @@ arg_2           = word ptr  4
                 mov     [bp+0Ah+var_6], 0
                 mov     [bp+0Ah+var_4], 0FFFFh
 
-loc_12303:                              ; CODE XREF: sub_122F3+3E↓j
+loc_12303:                              ; CODE XREF: findWidgetAtPosition+3E↓j
                 mov     cl, 3
                 mov     ax, [bp+0Ah+var_6]
                 shl     ax, cl
@@ -4948,15 +4948,15 @@ loc_12303:                              ; CODE XREF: sub_122F3+3E↓j
                 mov     ax, [bp+0Ah+var_6]
                 mov     [bp+0Ah+var_4], ax
 
-loc_12324:                              ; CODE XREF: sub_122F3+20↑j
-                                        ; sub_122F3+29↑j
+loc_12324:                              ; CODE XREF: findWidgetAtPosition+20↑j
+                                        ; findWidgetAtPosition+29↑j
                 inc     [bp+0Ah+var_6]
                 cmp     [bp+0Ah+var_4], 0FFFFh
                 jnz     short loc_12333
                 cmp     [bp+0Ah+var_6], 0Fh
                 jl      short loc_12303
 
-loc_12333:                              ; CODE XREF: sub_122F3+38↑j
+loc_12333:                              ; CODE XREF: findWidgetAtPosition+38↑j
                 mov     ax, [bp+0Ah+var_4]
                 cmp     ax, 0FFFFh
                 jz      short loc_1234D
@@ -4967,13 +4967,13 @@ loc_12333:                              ; CODE XREF: sub_122F3+38↑j
                 jnz     short loc_1234D
                 mov     [bp+0Ah+var_4], 0FFFFh
 
-loc_1234D:                              ; CODE XREF: sub_122F3+46↑j
-                                        ; sub_122F3+53↑j
+loc_1234D:                              ; CODE XREF: findWidgetAtPosition+46↑j
+                                        ; findWidgetAtPosition+53↑j
                 mov     ax, [bp+0Ah+var_4]
                 add     sp, 8
                 pop     bp
                 retn
-sub_122F3       endp
+findWidgetAtPosition endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -6301,7 +6301,7 @@ loc_12C4F:                              ; CODE XREF: attackPerson+B6↑j
                 add     bx, [bp+10h]
                 push    bx
                 push    ax
-                call    sub_122F3
+                call    findWidgetAtPosition
                 mov     sp, bp
                 mov     [bp+16h+var_12], ax
                 inc     ax
@@ -10751,7 +10751,7 @@ enterCity       endp
 
 ; Attributes: bp-based frame
 
-sub_14EA2       proc near               ; CODE XREF: enterPillar+12↓p
+showPillarInscription proc near         ; CODE XREF: enterPillar+12↓p
 
 arg_0           = word ptr  4
 
@@ -10767,11 +10767,11 @@ arg_0           = word ptr  4
                 jmp     loc_15076
 ; ---------------------------------------------------------------------------
 
-loc_14EBB:                              ; CODE XREF: sub_14EA2+14↑j
+loc_14EBB:                              ; CODE XREF: showPillarInscription+14↑j
                 shl     si, 1
                 jmp     cs:off_14EC2[si]
 ; ---------------------------------------------------------------------------
-off_14EC2       dw offset loc_14ED2     ; DATA XREF: sub_14EA2+1B↑r
+off_14EC2       dw offset loc_14ED2     ; DATA XREF: showPillarInscription+1B↑r
                 dw offset loc_14EF4
                 dw offset loc_14F19
                 dw offset loc_14F3E
@@ -10781,8 +10781,8 @@ off_14EC2       dw offset loc_14ED2     ; DATA XREF: sub_14EA2+1B↑r
                 dw offset loc_15054
 ; ---------------------------------------------------------------------------
 
-loc_14ED2:                              ; CODE XREF: sub_14EA2+1B↑j
-                                        ; DATA XREF: sub_14EA2:off_14EC2↑o
+loc_14ED2:                              ; CODE XREF: showPillarInscription+1B↑j
+                                        ; DATA XREF: showPillarInscription:off_14EC2↑o
                 mov     ax, offset aYouFeelAStrong ; "You feel a strong magic"
                 push    ax              ; msg
                 mov     ax, 8
@@ -10801,8 +10801,8 @@ loc_14ED2:                              ; CODE XREF: sub_14EA2+1B↑j
                 jmp     loc_15076
 ; ---------------------------------------------------------------------------
 
-loc_14EF4:                              ; CODE XREF: sub_14EA2+1B↑j
-                                        ; DATA XREF: sub_14EA2+22↑o
+loc_14EF4:                              ; CODE XREF: showPillarInscription+1B↑j
+                                        ; DATA XREF: showPillarInscription+22↑o
                 mov     ax, offset aYouHearSomeone ; "You hear someone say,"
                 push    ax              ; msg
                 mov     ax, 7
@@ -10822,8 +10822,8 @@ loc_14EF4:                              ; CODE XREF: sub_14EA2+1B↑j
                 jmp     loc_15076
 ; ---------------------------------------------------------------------------
 
-loc_14F19:                              ; CODE XREF: sub_14EA2+1B↑j
-                                        ; DATA XREF: sub_14EA2+24↑o
+loc_14F19:                              ; CODE XREF: showPillarInscription+1B↑j
+                                        ; DATA XREF: showPillarInscription+24↑o
                 mov     ax, offset aASignReads ; "A sign reads:"
                 push    ax              ; msg
                 mov     ax, 7
@@ -10843,8 +10843,8 @@ loc_14F19:                              ; CODE XREF: sub_14EA2+1B↑j
                 jmp     loc_15076
 ; ---------------------------------------------------------------------------
 
-loc_14F3E:                              ; CODE XREF: sub_14EA2+1B↑j
-                                        ; DATA XREF: sub_14EA2+26↑o
+loc_14F3E:                              ; CODE XREF: showPillarInscription+1B↑j
+                                        ; DATA XREF: showPillarInscription+26↑o
                 mov     ax, offset aOnAPedestal ; "On a pedestal,"
                 push    ax              ; msg
                 mov     ax, 5
@@ -10912,8 +10912,8 @@ loc_14F3E:                              ; CODE XREF: sub_14EA2+1B↑j
                 jmp     loc_15076
 ; ---------------------------------------------------------------------------
 
-loc_14FC9:                              ; CODE XREF: sub_14EA2+1B↑j
-                                        ; DATA XREF: sub_14EA2+28↑o
+loc_14FC9:                              ; CODE XREF: showPillarInscription+1B↑j
+                                        ; DATA XREF: showPillarInscription+28↑o
                 mov     ax, offset aTheSignReads ; "The sign reads:"
                 push    ax              ; msg
                 mov     ax, 6
@@ -10949,8 +10949,8 @@ loc_14FC9:                              ; CODE XREF: sub_14EA2+1B↑j
                 jmp     short loc_15076
 ; ---------------------------------------------------------------------------
 
-loc_1500F:                              ; CODE XREF: sub_14EA2+1B↑j
-                                        ; DATA XREF: sub_14EA2+2A↑o
+loc_1500F:                              ; CODE XREF: showPillarInscription+1B↑j
+                                        ; DATA XREF: showPillarInscription+2A↑o
                 mov     ax, offset aTheSignReads ; "The sign reads:"
                 push    ax              ; msg
                 mov     ax, 7
@@ -10970,8 +10970,8 @@ loc_1500F:                              ; CODE XREF: sub_14EA2+1B↑j
                 jmp     short loc_15076
 ; ---------------------------------------------------------------------------
 
-loc_15033:                              ; CODE XREF: sub_14EA2+1B↑j
-                                        ; DATA XREF: sub_14EA2+2C↑o
+loc_15033:                              ; CODE XREF: showPillarInscription+1B↑j
+                                        ; DATA XREF: showPillarInscription+2C↑o
                 mov     ax, offset aTheSignReads ; "The sign reads:"
                 push    ax              ; msg
                 mov     ax, 7
@@ -10990,8 +10990,8 @@ loc_15033:                              ; CODE XREF: sub_14EA2+1B↑j
                 jmp     short loc_15076
 ; ---------------------------------------------------------------------------
 
-loc_15054:                              ; CODE XREF: sub_14EA2+1B↑j
-                                        ; DATA XREF: sub_14EA2+2E↑o
+loc_15054:                              ; CODE XREF: showPillarInscription+1B↑j
+                                        ; DATA XREF: showPillarInscription+2E↑o
                 mov     ax, offset aTheGraveIsMark ; "The grave is marked:"
                 push    ax              ; msg
                 mov     ax, 7
@@ -11009,8 +11009,8 @@ loc_15054:                              ; CODE XREF: sub_14EA2+1B↑j
                 call    writeStringAt
                 mov     sp, bp
 
-loc_15076:                              ; CODE XREF: sub_14EA2+16↑j
-                                        ; sub_14EA2+4F↑j ...
+loc_15076:                              ; CODE XREF: showPillarInscription+16↑j
+                                        ; showPillarInscription+4F↑j ...
                 mov     ax, 24
                 push    ax              ; y
                 mov     ax, 1
@@ -11019,7 +11019,7 @@ loc_15076:                              ; CODE XREF: sub_14EA2+16↑j
                 mov     sp, bp
                 pop     bp
                 retn
-sub_14EA2       endp
+showPillarInscription endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -11081,7 +11081,7 @@ locationNum     = word ptr  2
                 mov     [bp+0Ch+var_4], 1
                 sub     [bp+0Ch+locationNum], 41
                 push    [bp+0Ch+locationNum]
-                call    sub_14EA2
+                call    showPillarInscription
                 mov     sp, bp
                 mov     ax, [bp+0Ch+locationNum]
                 test    ax, 1
@@ -31568,40 +31568,43 @@ aAndThatThereIs db '    and that there is a time',0
 aMachineFarToTh db ' machine far to the northwest!',0
                                         ; DATA XREF: princessSaved+F3↑o
 aYouFeelAStrong db 'You feel a strong magic',0
-                                        ; DATA XREF: sub_14EA2:loc_14ED2↑o
-aSurroundingYou db 'surrounding you!',0 ; DATA XREF: sub_14EA2+3E↑o
+                                        ; DATA XREF: showPillarInscription:loc_14ED2↑o
+aSurroundingYou db 'surrounding you!',0 ; DATA XREF: showPillarInscription+3E↑o
 aYouHearSomeone db 'You hear someone say,',0
-                                        ; DATA XREF: sub_14EA2:loc_14EF4↑o
+                                        ; DATA XREF: showPillarInscription:loc_14EF4↑o
 aTurisScientiaM db ' "TURIS-SCIENTIA-MAGNOPERE"',0
-                                        ; DATA XREF: sub_14EA2+63↑o
-aASignReads     db 'A sign reads:',0    ; DATA XREF: sub_14EA2:loc_14F19↑o
+                                        ; DATA XREF: showPillarInscription+63↑o
+aASignReads     db 'A sign reads:',0    ; DATA XREF: showPillarInscription:loc_14F19↑o
 aFortesFortunaA db '"FORTES FORTUNA ADIUVAT!"',0
-                                        ; DATA XREF: sub_14EA2+88↑o
-aOnAPedestal    db 'On a pedestal,',0   ; DATA XREF: sub_14EA2:loc_14F3E↑o
-aTheseWordsAppe db 'these words appear:',0 ; DATA XREF: sub_14EA2+AD↑o
+                                        ; DATA XREF: showPillarInscription+88↑o
+aOnAPedestal    db 'On a pedestal,',0   ; DATA XREF: showPillarInscription:loc_14F3E↑o
+aTheseWordsAppe db 'these words appear:',0
+                                        ; DATA XREF: showPillarInscription+AD↑o
 aMyNameIsOzyman db '"MY NAME IS OZYMANDIAS,',0
-                                        ; DATA XREF: sub_14EA2+BE↑o
-aKingOfKings    db 'KING OF KINGS:',0   ; DATA XREF: sub_14EA2+CF↑o
-aLookAtMyWorks  db 'LOOK AT MY WORKS,',0 ; DATA XREF: sub_14EA2+E0↑o
+                                        ; DATA XREF: showPillarInscription+BE↑o
+aKingOfKings    db 'KING OF KINGS:',0   ; DATA XREF: showPillarInscription+CF↑o
+aLookAtMyWorks  db 'LOOK AT MY WORKS,',0
+                                        ; DATA XREF: showPillarInscription+E0↑o
 aYeMightyAndDes db 'YE MIGHTY, AND DESPAIR!"',0
-                                        ; DATA XREF: sub_14EA2+F1↑o
+                                        ; DATA XREF: showPillarInscription+F1↑o
 aNothingBesideR db 'Nothing beside remains.',0
-                                        ; DATA XREF: sub_14EA2+102↑o
+                                        ; DATA XREF: showPillarInscription+102↑o
 aYouFeelAStrang db 'You feel a strange force!',0
-                                        ; DATA XREF: sub_14EA2+113↑o
-aTheSignReads   db 'The sign reads:',0  ; DATA XREF: sub_14EA2:loc_14FC9↑o
-                                        ; sub_14EA2:loc_1500F↑o ...
-aUltimaThule    db '"ULTIMA THULE!"',0  ; DATA XREF: sub_14EA2+138↑o
+                                        ; DATA XREF: showPillarInscription+113↑o
+aTheSignReads   db 'The sign reads:',0  ; DATA XREF: showPillarInscription:loc_14FC9↑o
+                                        ; showPillarInscription:loc_1500F↑o ...
+aUltimaThule    db '"ULTIMA THULE!"',0  ; DATA XREF: showPillarInscription+138↑o
 aTheSkyGrowsDar db 'The sky grows dark, and a',0
-                                        ; DATA XREF: sub_14EA2+149↑o
+                                        ; DATA XREF: showPillarInscription+149↑o
 aStrongMagicEng db 'strong magic engulfs you!',0
-                                        ; DATA XREF: sub_14EA2+15A↑o
-aOmniaMutantur  db '"OMNIA MUTANTUR!"',0 ; DATA XREF: sub_14EA2+17E↑o
+                                        ; DATA XREF: showPillarInscription+15A↑o
+aOmniaMutantur  db '"OMNIA MUTANTUR!"',0
+                                        ; DATA XREF: showPillarInscription+17E↑o
 aGoEastToGoEast db '"GO EAST TO GO EAST!"',0
-                                        ; DATA XREF: sub_14EA2+1A2↑o
+                                        ; DATA XREF: showPillarInscription+1A2↑o
 aTheGraveIsMark db 'The grave is marked:',0
-                                        ; DATA XREF: sub_14EA2:loc_15054↑o
-aVaeVictis      db '"VAE VICTIS"',0     ; DATA XREF: sub_14EA2+1C3↑o
+                                        ; DATA XREF: showPillarInscription:loc_15054↑o
+aVaeVictis      db '"VAE VICTIS"',0     ; DATA XREF: showPillarInscription+1C3↑o
 ; char aAQuestHasBeenC[]
 aAQuestHasBeenC db 'A quest has been completed!',0
                                         ; DATA XREF: questCompleted+21↑o

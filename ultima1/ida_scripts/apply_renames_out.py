@@ -300,6 +300,29 @@ RENAMES = [
      "the player's class is Thief (_savegame._class==3), which always "
      "succeeds silently. On a catch, prints \"Oh no!  Thou wert "
      "caught!\" and sets _guardsHostile."),
+
+    # -- fifth pass: a couple of standalone finds. --
+
+    (0x14EA2, "showPillarInscription",
+     "8-way jump table (off_14EC2) of flavor text for entering one of "
+     "the 8 pillars, keyed by locationNum. Includes a real-world "
+     "literary Easter egg -- one branch shows 'MY NAME IS OZYMANDIAS, "
+     "KING OF KINGS: LOOK AT MY WORKS, YE MIGHTY, AND DESPAIR!', the "
+     "closing line of Shelley's poem. Ends in a setCursorPos, presumably "
+     "positioning for the word-of-power prompt that follows in "
+     "enterPillar itself. Quest-completion tracking "
+     "(_savegame._quests[]) is handled by the already-named "
+     "questCompleted, called separately from enterPillar."),
+
+    (0x122F3, "findWidgetAtPosition",
+     "linear scan of the 15-slot _locationWidgets array for one whose "
+     "_position matches (x, y), returning its index or -1 if not found "
+     "or found-but-inactive (_type==-1). Used by attackPerson to "
+     "resolve who's standing at the attack's target square. Distinct "
+     "from the already-named getLocationWidgetAt (a different "
+     "implementation, called only from cityCheckAt) -- not merged/"
+     "renamed together since they're genuinely separate functions in "
+     "the binary, just doing a similar-shaped lookup."),
 ]
 
 # (ea, new_name, note) -- globals in the same CRT file-I/O cluster,

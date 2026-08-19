@@ -989,3 +989,175 @@ structs (11): STR15, DungeonCell, DungeonColumn, DungeonMap, Point, Rect, Creatu
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_renames_out.py', 'noexport']
+[*] reading apply_renames_out.py
+[*] executing apply_renames_out.py
+[*] captured stdout from target script:
+----- begin target script output -----
+1A81D: already 'getKeypressAndWaitRaw' -- skipping
+1A30C: already 'toLowerLetter' -- skipping
+1981D: already '_nmalloc' -- skipping
+198C0: already '_nfree' -- skipping
+19EA3: already '_nheapgrow' -- skipping
+1B0B5: already 'readAmount' -- skipping
+1B094: already 'isDigit' -- skipping
+1C8F2: already '_fread' -- skipping
+1C960: already '_fwrite' -- skipping
+1C6D4: already '_fclose' -- skipping
+1CC6B: already '_filbuf' -- skipping
+1CE05: already '_flsbuf' -- skipping
+1D30F: already 'allocFileBuffer' -- skipping
+1C791: already '_openfile' -- skipping
+1CA14: already '_open' -- skipping
+1C9CC: already 'releaseFileHandle' -- skipping
+1D0DD: already 'findFileHandleSlot' -- skipping
+190C0: already '_flushall' -- skipping
+19578: already '_dos_open' -- skipping
+19589: already '_dos_close' -- skipping
+19597: already '_dos_read' -- skipping
+195AB: already '_dos_lseek' -- skipping
+195CF: already '_dos_write' -- skipping
+195F8: already '_dos_ioctl_get' -- skipping
+1D36A: already '_dos_ioctl_set' -- skipping
+1D37C: already '_dos_creat' -- skipping
+1D38D: already '_dos_creatnew' -- skipping
+1D39A: already '_dos_creattemp' -- skipping
+163B3: already 'calcWeaponBuyPrice' -- skipping
+163D4: already 'calcWeaponSellPrice' -- skipping
+165CE: already 'drawWeaponShopLine' -- skipping
+163F2: already 'sellWeapons' -- skipping
+167F1: already 'calcArmorBuyPrice' -- skipping
+1680C: already 'calcArmorSellPrice' -- skipping
+169E8: already 'drawArmorShopLine' -- skipping
+16823: already 'sellArmor' -- skipping
+16BAC: already 'calcMagicBuyPrice' -- skipping
+16BC7: already 'drawMagicShopLine' -- skipping
+17052: already 'drawTransportShopLine' -- skipping
+192D4: already 'divmod32' -- skipping
+15469: already 'denyGetNoPermission' -- skipping
+15492: already 'getArmorTile' -- skipping
+154B5: already 'getWeaponTile' -- skipping
+154D8: already 'getFoodTile' -- skipping
+154FB: already 'getTownItem' -- skipping
+15B8A: already 'checkCaughtStealing' -- skipping
+14EA2: 'sub_14EA2' -> 'showPillarInscription'
+    8-way jump table (off_14EC2) of flavor text for entering one of the 8 pillars, keyed by locationNum. Includes a real-world literary Easter egg -- one branch shows 'MY NAME IS OZYMANDIAS, KING OF KINGS: LOOK AT MY WORKS, YE MIGHTY, AND DESPAIR!', the closing line of Shelley's poem. Ends in a setCursorPos, presumably positioning for the word-of-power prompt that follows in enterPillar itself. Quest-completion tracking (_savegame._quests[]) is handled by the already-named questCompleted, called separately from enterPillar.
+122F3: 'sub_122F3' -> 'findWidgetAtPosition'
+    linear scan of the 15-slot _locationWidgets array for one whose _position matches (x, y), returning its index or -1 if not found or found-but-inactive (_type==-1). Used by attackPerson to resolve who's standing at the attack's target square. Distinct from the already-named getLocationWidgetAt (a different implementation, called only from cityCheckAt) -- not merged/renamed together since they're genuinely separate functions in the binary, just doing a similar-shaped lookup.
+1D4F1: already '_doserrno' -- skipping
+1ED22: already 'errno' -- skipping
+1EC50: already '_fmode' -- skipping
+26024: already '_castleItemAllowance' -- skipping
+
+[dry] nothing changed. Set DRY_RUN = False to apply.
+----- end target script output -----
+[*] finished executing apply_renames_out.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_renames_out.py']
+[*] reading apply_renames_out.py
+[*] executing apply_renames_out.py
+[*] captured stdout from target script:
+----- begin target script output -----
+1A81D: already 'getKeypressAndWaitRaw' -- skipping
+1A30C: already 'toLowerLetter' -- skipping
+1981D: already '_nmalloc' -- skipping
+198C0: already '_nfree' -- skipping
+19EA3: already '_nheapgrow' -- skipping
+1B0B5: already 'readAmount' -- skipping
+1B094: already 'isDigit' -- skipping
+1C8F2: already '_fread' -- skipping
+1C960: already '_fwrite' -- skipping
+1C6D4: already '_fclose' -- skipping
+1CC6B: already '_filbuf' -- skipping
+1CE05: already '_flsbuf' -- skipping
+1D30F: already 'allocFileBuffer' -- skipping
+1C791: already '_openfile' -- skipping
+1CA14: already '_open' -- skipping
+1C9CC: already 'releaseFileHandle' -- skipping
+1D0DD: already 'findFileHandleSlot' -- skipping
+190C0: already '_flushall' -- skipping
+19578: already '_dos_open' -- skipping
+19589: already '_dos_close' -- skipping
+19597: already '_dos_read' -- skipping
+195AB: already '_dos_lseek' -- skipping
+195CF: already '_dos_write' -- skipping
+195F8: already '_dos_ioctl_get' -- skipping
+1D36A: already '_dos_ioctl_set' -- skipping
+1D37C: already '_dos_creat' -- skipping
+1D38D: already '_dos_creatnew' -- skipping
+1D39A: already '_dos_creattemp' -- skipping
+163B3: already 'calcWeaponBuyPrice' -- skipping
+163D4: already 'calcWeaponSellPrice' -- skipping
+165CE: already 'drawWeaponShopLine' -- skipping
+163F2: already 'sellWeapons' -- skipping
+167F1: already 'calcArmorBuyPrice' -- skipping
+1680C: already 'calcArmorSellPrice' -- skipping
+169E8: already 'drawArmorShopLine' -- skipping
+16823: already 'sellArmor' -- skipping
+16BAC: already 'calcMagicBuyPrice' -- skipping
+16BC7: already 'drawMagicShopLine' -- skipping
+17052: already 'drawTransportShopLine' -- skipping
+192D4: already 'divmod32' -- skipping
+15469: already 'denyGetNoPermission' -- skipping
+15492: already 'getArmorTile' -- skipping
+154B5: already 'getWeaponTile' -- skipping
+154D8: already 'getFoodTile' -- skipping
+154FB: already 'getTownItem' -- skipping
+15B8A: already 'checkCaughtStealing' -- skipping
+14EA2: 'sub_14EA2' -> 'showPillarInscription'
+    8-way jump table (off_14EC2) of flavor text for entering one of the 8 pillars, keyed by locationNum. Includes a real-world literary Easter egg -- one branch shows 'MY NAME IS OZYMANDIAS, KING OF KINGS: LOOK AT MY WORKS, YE MIGHTY, AND DESPAIR!', the closing line of Shelley's poem. Ends in a setCursorPos, presumably positioning for the word-of-power prompt that follows in enterPillar itself. Quest-completion tracking (_savegame._quests[]) is handled by the already-named questCompleted, called separately from enterPillar.
+122F3: 'sub_122F3' -> 'findWidgetAtPosition'
+    linear scan of the 15-slot _locationWidgets array for one whose _position matches (x, y), returning its index or -1 if not found or found-but-inactive (_type==-1). Used by attackPerson to resolve who's standing at the attack's target square. Distinct from the already-named getLocationWidgetAt (a different implementation, called only from cityCheckAt) -- not merged/renamed together since they're genuinely separate functions in the binary, just doing a similar-shaped lookup.
+1D4F1: already '_doserrno' -- skipping
+1ED22: already 'errno' -- skipping
+1EC50: already '_fmode' -- skipping
+26024: already '_castleItemAllowance' -- skipping
+
+Done. Re-export the .asm/.idc and check the new names took, then update docs/roadmap.md's checklist.
+----- end target script output -----
+[*] finished executing apply_renames_out.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima1\ultima1_out.asm
+[*] gen_file(OFILE_ASM) returned 41659
+[*] exporting IDC to C:\dev\ultima1\ultima1_out.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima1\ultima1_out.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'identify.py', 'noexport']
+[*] reading identify.py
+[*] executing identify.py
+[*] captured stdout from target script:
+----- begin target script output -----
+root filename : OUT.EXE
+input file    : D:\GOG Games\Ultima 1\OUT.EXE
+entry point   : 0x0 (cs=0x1000)
+input md5     : 6a3301183223faea538c953ce94649f2
+
+segments:
+  sg013A       0x010000-0x01d480  (54400 bytes)
+  sg0E82       0x01d480-0x0286c0  (45632 bytes)
+  seg002       0x0286c0-0x029ac0  (5120 bytes)
+  seg003       0x029ac0-0x029ac1  (1 bytes)
+
+functions: 353 total, 314 named, 39 still sub_XXXXX
+
+structs (11): STR15, DungeonCell, DungeonColumn, DungeonMap, Point, Rect, Creature, LocationWidget, Savegame, MapLine, Map
+----- end target script output -----
+[*] finished executing identify.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0

@@ -3462,6 +3462,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X122EE);
 	op_hex		(x,	1);
 	create_insn	(0X122F3);
+	set_name	(0X122F3,	"findWidgetAtPosition");
 	create_insn	(x=0X122F4);
 	op_hex		(x,	1);
 	create_insn	(x=0X122F9);
@@ -5813,8 +5814,6 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X1D480);
 	op_plain_offset	(x,	129,	0X1D480);
 	set_cmt	(0X13883,	"color",	0);
-	set_cmt	(0X13887,	"y2",	0);
-	set_cmt	(0X13888,	"x2",	0);
 }
 
 //------------------------------------------------------------------------
@@ -5824,6 +5823,8 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X13887,	"y2",	0);
+	set_cmt	(0X13888,	"x2",	0);
 	set_cmt	(0X13889,	"y1",	0);
 	set_cmt	(0X1388A,	"x1",	0);
 	create_insn	(x=0X1388A);
@@ -8068,6 +8069,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X14E9D);
 	op_hex		(x,	1);
 	create_insn	(0X14EA2);
+	set_name	(0X14EA2,	"showPillarInscription");
 	set_cmt	(0X14EA5,	"borderColor",	0);
 	create_insn	(x=0X14EAE);
 	op_stkvar	(x,	1);
@@ -11019,11 +11021,6 @@ static Bytes_1(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X17224);
 	op_stkvar	(x,	0);
-	set_cmt	(0X1722A,	"c",	0);
-	set_cmt	(0X1722B,	"yp",	0);
-	create_insn	(x=0X1722B);
-	op_stkvar	(x,	0);
-	set_cmt	(0X17231,	"transportId",	0);
 }
 
 //------------------------------------------------------------------------
@@ -11033,6 +11030,11 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X1722A,	"c",	0);
+	set_cmt	(0X1722B,	"yp",	0);
+	create_insn	(x=0X1722B);
+	op_stkvar	(x,	0);
+	set_cmt	(0X17231,	"transportId",	0);
 	create_insn	(x=0X17237);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X1723F);
