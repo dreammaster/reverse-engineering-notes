@@ -328,6 +328,38 @@ Distinct from the already-named `getLocationWidgetAt` (a different
 implementation, used only by `cityCheckAt`) — both exist independently
 in the binary rather than one calling the other.
 
+### Video-mode initializers and a few standalone finds
+
+Sixth pass, same session. `setVideoMode` (already named) dispatches to
+one of three hardware-specific initializers by `_videoMode`, now
+named by their actual `INT 10h` mode number:
+
+- **`initVideoModeCGA`** (`_videoMode==0`) — mode `4` (CGA 320×200
+  4-color), BIOS palette 1, plus a direct `OUT` to port `3D8h` (the
+  CGA mode-control register) toggling the composite-color/high-res
+  artifact trick.
+- **`initVideoModeEGA`** (`_videoMode==1`) — mode `0Dh` (EGA/VGA
+  320×200 16-color) with a full 17-byte palette-register load.
+- **`initVideoModeTandy`** (`_videoMode==2`) — mode `9` (Tandy/PCjr
+  320×200 16-color), same palette load as EGA.
+
+`buildScanlineOffsetTable` (called once per `setVideoMode`, before the
+dispatch above) precomputes a 200-entry row→framebuffer-offset table,
+with genuinely different address math per mode — CGA's interleaved
+even/odd scanline memory layout vs. the linear layout of the 16-color
+modes. Useful reference for the reimplementation's renderer: this
+program supports 3 real display targets, not just "CGA."
+
+Also named this pass:
+- **`waitTimerTicks`** — the real primitive under `wait`: installs a
+  custom `INT 1Ch` (system timer tick, ~18.2 Hz on real hardware)
+  handler, busy-waits for the requested tick count, restores the
+  original vector.
+- **`drawDeathGraphic`** — bitmap blitter for the death-screen graphic,
+  plotting points via `videoDrawPoint` from a 16-word bitmap table.
+- **`drawSelectItemPanel`** — fills/outlines the item-list panel for
+  the `selectItem` dialog.
+
 ### `playSound` / `playFX` — sound-effect jump table, not yet decoded
 
 `playSound(effectNum)` (already named) dispatches through a 10-entry
