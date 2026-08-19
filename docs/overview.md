@@ -22,7 +22,7 @@ identified and renamed in any other IDB it also happens to appear in.
 
 | IDB | Root file | Role (best guess, to confirm) | Functions named | Structs |
 |---|---|---|---|---|
-| `ultima1.idb` | `ULTIMA.EXE` | Title screen / attract mode, launches `GEN.EXE`/`OUT.EXE` | 61 / 100 | `STR15`, `Point`, `Rect`, `Savegame` |
+| `ultima1.idb` | `ULTIMA.EXE` | Title screen / attract mode, chains unconditionally to `GEN.EXE` | 70 / 100 | `STR15`, `Point`, `Rect`, `Savegame` |
 | `ultima1_gen.idb` | `GEN.EXE` | Character generation | 44 / 113 | + `Creature` |
 | `ultima1_out.idb` | `OUT.EXE` | Overworld/towns/dungeons (outdoor engine) | 352 / 353 | + `DungeonCell`, `DungeonColumn`, `DungeonMap`, `LocationWidget`, `MapLine`, `Map` |
 | `ultima1_space.idb` | `SPACE.EXE` | Space combat minigame | 156 / 210 | + `DuneonRow`, `DungeonMap` (space variant), `SpaceMapShip`, `SpaceMapCell`, `SpaceMapY`, `SpaceMap`, `FightData`, `JumpEntry` |
@@ -550,8 +550,50 @@ fixing the boundary, same tradeoff as before.
 **Not yet found here**: `_filbuf`, `_fwrite`, `allocFileBuffer`,
 `findFileHandleSlot`, `_flushall`, `_read`/`_write`/`_lseek` (the
 text-mode CRT layer), `atexit`, `_creat`. Likely present somewhere in
-the remaining 39 `sub_XXXXX` (this executable barely uses file I/O —
+the remaining 30 `sub_XXXXX` (this executable barely uses file I/O —
 just reading two fixed image files — so several of OUT.EXE's I/O
 functions may simply be unused/uncalled here, same as `atexit`/`_creat`
 turned out to be in OUT.EXE). Not chased further yet — see
 roadmap.md.
+
+### ULTIMA.EXE chains unconditionally to GEN.EXE
+
+Second pass, same session — confirms Paul's hunch about this
+executable's role and answers the open question from the OUT.EXE
+session about how the overlay-chaining mechanism gets *triggered* in
+the first place. Traced the exact same
+`chainToExecutable`→`execProgramEntry`→`findExecutableFile`+
+`buildAndChainExecutable`→`execProgram` shape found in OUT.EXE
+(`execProgram` even matches OUT.EXE's exact 555-byte size), and this
+time followed it all the way to the literal filename:
+
+```
+showTrademarks (displays the trademark screen, waits, slides logo)
+  chainToExecutable("gen.exe", &argv, envp)
+    execProgramEntry
+      findExecutableFile("gen.exe")
+      buildAndChainExecutable  -->  execProgram  -->  [far-JMP into GEN.EXE, never returns]
+  (only reached if the chain attempt failed)
+  "Insert ULTIMA I disk and press RETURN", loop back and retry
+```
+
+**`"gen.exe"` is the only executable filename referenced anywhere in
+this binary** (checked via string search — no `out.exe`, `space.exe`,
+or `mondain.exe` literal exists in ULTIMA.EXE). Combined with what's
+already known about the other executables, the game's overall
+structure is now clear:
+
+```
+ULTIMA.EXE (title/attract-mode screen)
+  --always chains to--> GEN.EXE (character creation / continue)
+                           --chains to--> OUT.EXE (main game: towns, dungeons, overworld)
+                                            <--chains to--> SPACE.EXE (space combat)
+```
+
+`GEN.EXE` must itself decide whether to run character creation or
+just load an existing save (or ULTIMA.EXE's `argv[1][0]=='C'` check
+may be involved in that decision — still unconfirmed, see roadmap.md)
+before chaining onward to `OUT.EXE`. Where `MONDAIN.EXE` fits into
+this chain isn't known yet — worth checking once `GEN.EXE` or
+`OUT.EXE` is worked on, since it may only be reachable from deep
+inside the dungeon/endgame rather than from this top-level chain.

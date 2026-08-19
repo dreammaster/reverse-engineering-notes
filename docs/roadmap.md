@@ -188,17 +188,15 @@ early. Was 39/100 named; exported `.asm`/`.idc` for the first time.
       the remaining 39 `sub_XXXXX` but not yet located; this executable
       does very little file I/O (just two fixed image reads) so some
       may simply be unused/uncalled here.
-- [ ] **Confirm the overlay-chaining hypothesis**: does ULTIMA.EXE
-      chain to `GEN.EXE` for character creation, using the same
-      no-DOS-EXEC overlay loader decoded in OUT.EXE
-      (`execProgram`/`findExecutableFile`/etc.)? `sub_11C93` (3
-      callers, two of them **data references** rather than code —
-      possibly a jump table, unlike OUT.EXE's plain-code-caller
-      pattern) calling `sub_12A1A` calling `sub_130F4` (555 bytes,
-      same size as OUT.EXE's `execProgram`) is the leading candidate —
-      not yet confirmed by reading, just flagged by the size/shape
-      match. This is probably the single highest-value remaining
-      finding for understanding the game's overall structure.
+- [x] **Overlay-chaining hypothesis confirmed**: `showTrademarks`
+      unconditionally chains to `"gen.exe"` (the only executable name
+      referenced anywhere in this binary) via the exact same
+      `chainToExecutable`/`execProgramEntry`/`findExecutableFile`/
+      `buildAndChainExecutable`/`execProgram` shape as OUT.EXE. Full
+      chain: `ULTIMA.EXE` → `GEN.EXE` → `OUT.EXE` ↔ `SPACE.EXE`.
+      9 functions named. 70/100 functions now named (70%). Full
+      writeup in
+      [overview.md](overview.md#ultimaexe-chains-unconditionally-to-genexe).
 - [ ] `sub_1153D` (1245 bytes, the single largest unnamed function in
       this executable, notably *larger* than anything found in
       OUT.EXE's whole CRT/game-logic sweep) is called from

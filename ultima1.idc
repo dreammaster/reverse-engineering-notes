@@ -1155,6 +1155,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X10E3B);
 	op_enum		(x,	1,	GetEnum("VIDEOMODE"),0);
 	create_insn	(0X10E4D);
+	set_name	(0X10E4D,	"chainToExecutable");
 	create_insn	(x=0X10E4E);
 	op_hex		(x,	1);
 	create_insn	(x=0X10E63);
@@ -1499,6 +1500,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X11C8E);
 	op_hex		(x,	1);
 	create_insn	(0X11C93);
+	set_name	(0X11C93,	"execProgramEntry");
 	create_insn	(x=0X11C94);
 	op_hex		(x,	1);
 	create_insn	(x=0X11CAC);
@@ -1848,6 +1850,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X12590);
 	op_hex		(x,	1);
 	create_insn	(0X12595);
+	set_name	(0X12595,	"findExecutableFile");
 	create_insn	(x=0X12596);
 	op_hex		(x,	1);
 	create_insn	(x=0X125C4);
@@ -1956,6 +1959,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X12A14);
 	op_hex		(x,	1);
 	create_insn	(0X12A1A);
+	set_name	(0X12A1A,	"buildAndChainExecutable");
 	create_insn	(x=0X12A1B);
 	op_hex		(x,	1);
 	create_insn	(x=0X12A2F);
@@ -2042,6 +2046,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X12C73);
 	op_hex		(x,	1);
 	create_insn	(0X12C8D);
+	set_name	(0X12C8D,	"strlen");
 	create_insn	(x=0X12C90);
 	op_stkvar	(x,	1);
 	create_insn	(0X12CA4);
@@ -2085,6 +2090,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X12E36);
 	op_hex		(x,	1);
 	create_insn	(0X12E3B);
+	set_name	(0X12E3B,	"hasFileExtension");
 	create_insn	(x=0X12E3C);
 	op_hex		(x,	1);
 	create_insn	(x=0X12E7D);
@@ -2106,6 +2112,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X12EB7);
 	op_hex		(x,	1);
 	create_insn	(0X12EBC);
+	set_name	(0X12EBC,	"ensureFileExtension");
 	create_insn	(x=0X12EBD);
 	op_hex		(x,	1);
 	create_insn	(0X12EF8);
@@ -2160,6 +2167,7 @@ static Bytes_0(void) {
 	create_byte	(0X130EF);
 	create_dword	(0X130F0);
 	create_insn	(0X130F4);
+	set_name	(0X130F4,	"execProgram");
 	create_insn	(x=0X1310C);
 	op_hex		(x,	1);
 	set_cmt	(0X1310E,	"DOS - 2+ - ADJUST MEMORY BLOCK SIZE (SETBLOCK)\nES = segment address of block to change\nBX = new size in paragraphs",	0);
@@ -2252,6 +2260,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X13ED0);
 	op_plain_offset	(x,	129,	0X13ED0);
 	create_insn	(0X1331F);
+	set_name	(0X1331F,	"_dos_getfileattr");
 	create_insn	(x=0X13322);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X13325);

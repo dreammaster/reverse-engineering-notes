@@ -90,6 +90,57 @@ RENAMES = [
     (0x11C1A, "releaseFileHandle",
      "closes the OS handle and clears the internal handle-table slot; "
      "called only from _fclose."),
+
+    # -- second pass: confirms and names the exec-chaining cluster,
+    # transferred from OUT.EXE the same way as the CRT cluster above,
+    # but with an extra payoff: traced all the way to the literal
+    # "gen.exe" string. showTrademarks unconditionally chains to
+    # GEN.EXE after displaying the trademark screen -- ULTIMA.EXE's
+    # entire job is the title/attract-mode sequence, then hand off.
+    # No other executable name (out.exe, space.exe, mondain.exe)
+    # appears anywhere in this binary's strings. See
+    # docs/overview.md#ultimaexe-chains-unconditionally-to-genexe. --
+
+    (0x10E4D, "chainToExecutable",
+     "pushes (filename, &argv, envp) and calls execProgramEntry. "
+     "Called from showTrademarks with filename='gen.exe' (literal "
+     "string aGen_exe) -- the only executable name referenced "
+     "anywhere in this binary. If it returns (chain attempt failed), "
+     "showTrademarks shows 'Insert ULTIMA I disk and press RETURN' "
+     "and loops back to retry, matching OUT.EXE's insertDisk pattern "
+     "exactly."),
+    (0x11C93, "execProgramEntry",
+     "findExecutableFile then buildAndChainExecutable -- same role as "
+     "OUT.EXE's execProgramEntry, and also nested inside _nheapinit's "
+     "proc range here (not renamed as a location since it already had "
+     "its own clean proc/endp boundary in this IDB, unlike OUT.EXE's "
+     "copy)."),
+    (0x12595, "findExecutableFile",
+     "tries the bare filename first (hasFileExtension check via "
+     "_dos_getfileattr), else tries two candidate extensions (offsets "
+     "0x4764/0x4768, presumably \"EXE\"/\"COM\" strings) via "
+     "ensureFileExtension."),
+    (0x12E3B, "hasFileExtension",
+     "scans a filename backward for '.' before a path separator, "
+     "matching OUT.EXE's hasFileExtension."),
+    (0x1331F, "_dos_getfileattr",
+     "AH=43h/AL=00h GET FILE ATTRIBUTES, used as a file-exists check "
+     "by findExecutableFile."),
+    (0x12EBC, "ensureFileExtension",
+     "appends a default extension if the filename doesn't already "
+     "have one, matching OUT.EXE's ensureFileExtension."),
+    (0x12A1A, "buildAndChainExecutable",
+     "measures and concatenates the argv array into a DOS command-"
+     "tail buffer via _nmalloc'd scratch space (strlen via sub_12C8D "
+     "below), then calls execProgram to load and jump to the target."),
+    (0x12C8D, "strlen", "plain length-count helper used while building the command tail."),
+    (0x130F4, "execProgram",
+     "the actual overlay loader -- 555 bytes, exactly matching "
+     "OUT.EXE's execProgram in size. Reads the target file directly "
+     "(open/read/close/lseek), resizes this process's own memory "
+     "block, and (per OUT.EXE's identical implementation) far-JMPs "
+     "into the loaded image without ever calling DOS INT 21h/4Bh EXEC "
+     "or returning control here."),
 ]
 
 # (ea, new_name, note) -- labeled locations, not proc-boundary
