@@ -175,7 +175,7 @@ loc_10115:                              ; CODE XREF: start+101\u2191j
                 align 2
 
 loc_10118:                              ; CODE XREF: start+109\u2191j
-                call    sub_103AE
+                call    parseParamNum
                 jb      short loc_1018E
                 test    bx, bx
                 jz      short loc_10140
@@ -208,7 +208,7 @@ loc_10140:                              ; CODE XREF: start+11F\u2191j
                 jz      short loc_10113
                 cmp     al, 2Fh ; '/'
                 jnz     short loc_1018E
-                call    sub_103AE
+                call    parseParamNum
                 jb      short loc_1018E
                 xor     dx, dx
                 test    bx, bx
@@ -547,11 +547,11 @@ start           endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_103AE       proc near               ; CODE XREF: start:loc_10118\u2191p
+parseParamNum   proc near               ; CODE XREF: start:loc_10118\u2191p
                                         ; start+150\u2191p
                 xor     bx, bx
 
-loc_103B0:                              ; CODE XREF: sub_103AE+29\u2193j
+loc_103B0:                              ; CODE XREF: parseParamNum+29\u2193j
                 dec     cx
                 jz      short loc_103DA
                 inc     si
@@ -574,16 +574,16 @@ loc_103B0:                              ; CODE XREF: sub_103AE+29\u2193j
                 add     bx, ax
                 jnb     short loc_103B0
 
-locret_103D9:                           ; CODE XREF: sub_103AE+15\u2191j
-                                        ; sub_103AE+1B\u2191j ...
+locret_103D9:                           ; CODE XREF: parseParamNum+15\u2191j
+                                        ; parseParamNum+1B\u2191j ...
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_103DA:                              ; CODE XREF: sub_103AE+3\u2191j
-                                        ; sub_103AE+B\u2191j ...
+loc_103DA:                              ; CODE XREF: parseParamNum+3\u2191j
+                                        ; parseParamNum+B\u2191j ...
                 clc
                 retn
-sub_103AE       endp
+parseParamNum   endp
 
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR start
@@ -2229,7 +2229,7 @@ death           endp
 
 ; Attributes: fpd=6
 
-sub_10F3B       proc near               ; CODE XREF: spaceAce+4E\u2193p
+waitForKeypressTimeout proc near        ; CODE XREF: spaceAce+4E\u2193p
 
 var_4           = word ptr -4
 
@@ -2238,7 +2238,7 @@ var_4           = word ptr -4
                 mov     bp, sp
                 mov     [bp+6+var_4], 0
 
-loc_10F46:                              ; CODE XREF: sub_10F3B+20\u2193j
+loc_10F46:                              ; CODE XREF: waitForKeypressTimeout+20\u2193j
                 xor     ax, ax
                 push    ax
                 call    getKeypress
@@ -2250,18 +2250,18 @@ loc_10F46:                              ; CODE XREF: sub_10F3B+20\u2193j
                 cmp     ax, 2710h
                 jl      short loc_10F46
 
-loc_10F5D:                              ; CODE XREF: sub_10F3B+15\u2191j
+loc_10F5D:                              ; CODE XREF: waitForKeypressTimeout+15\u2191j
                 add     sp, 4
                 pop     bp
                 retn
-sub_10F3B       endp
+waitForKeypressTimeout endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-sub_10F62       proc near               ; CODE XREF: sub_10FBC+1E\u2193p
+drawBorderBox   proc near               ; CODE XREF: drawDialogFrame+1E\u2193p
 
 arg_0           = word ptr  4
 
@@ -2307,14 +2307,14 @@ arg_0           = word ptr  4
                 mov     sp, bp
                 pop     bp
                 retn
-sub_10F62       endp
+drawBorderBox   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-sub_10FBC       proc near               ; CODE XREF: inform+17\u2193p
+drawDialogFrame proc near               ; CODE XREF: inform+17\u2193p
                                         ; spaceAce+A\u2193p
 
 arg_0           = word ptr  4
@@ -2334,11 +2334,11 @@ arg_0           = word ptr  4
                 call    fillRect
                 mov     sp, bp
                 push    [bp+arg_0]
-                call    sub_10F62
+                call    drawBorderBox
                 mov     sp, bp
                 pop     bp
                 retn
-sub_10FBC       endp
+drawDialogFrame endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -2371,8 +2371,8 @@ writestringAt   endp
 
 ; Attributes: fpd=4
 
-sub_10FFD       proc near               ; CODE XREF: sub_11031+20\u2193p
-                                        ; sub_11072+20\u2193p
+snapToNearestSector proc near           ; CODE XREF: updateSectorChangeX+20\u2193p
+                                        ; updateSectorChangeY+20\u2193p
 
 arg_0           = word ptr  2
 
@@ -2387,7 +2387,7 @@ arg_0           = word ptr  2
                 jle     short loc_11015
                 add     [bp+4+arg_0], 64h ; 'd'
 
-loc_11015:                              ; CODE XREF: sub_10FFD+12\u2191j
+loc_11015:                              ; CODE XREF: snapToNearestSector+12\u2191j
                 mov     ax, [bp+4+arg_0]
                 mov     bx, 3E8h
                 cwd
@@ -2396,19 +2396,19 @@ loc_11015:                              ; CODE XREF: sub_10FFD+12\u2191j
                 jle     short loc_11029
                 add     [bp+4+arg_0], 3E8h
 
-loc_11029:                              ; CODE XREF: sub_10FFD+25\u2191j
+loc_11029:                              ; CODE XREF: snapToNearestSector+25\u2191j
                 mov     ax, [bp+4+arg_0]
                 add     sp, 2
                 pop     bp
                 retn
-sub_10FFD       endp
+snapToNearestSector endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: fpd=6
 
-sub_11031       proc near               ; CODE XREF: view+157\u2193p
+updateSectorChangeX proc near           ; CODE XREF: view+157\u2193p
 
 var_4           = word ptr -4
 
@@ -2425,7 +2425,7 @@ var_4           = word ptr -4
                 imul    [bp+6+var_4]
                 mov     sectorChangeX, ax
                 push    ax
-                call    sub_10FFD
+                call    snapToNearestSector
                 mov     sp, bp
                 mov     sectorChangeX, ax
                 mov     bx, 3E8h
@@ -2436,18 +2436,18 @@ var_4           = word ptr -4
                 jle     short loc_1106D
                 mov     sectorChangeX, 6
 
-loc_1106D:                              ; CODE XREF: sub_11031+34\u2191j
+loc_1106D:                              ; CODE XREF: updateSectorChangeX+34\u2191j
                 add     sp, 4
                 pop     bp
                 retn
-sub_11031       endp
+updateSectorChangeX endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: fpd=6
 
-sub_11072       proc near               ; CODE XREF: view+15A\u2193p
+updateSectorChangeY proc near           ; CODE XREF: view+15A\u2193p
 
 var_4           = word ptr -4
 
@@ -2464,7 +2464,7 @@ var_4           = word ptr -4
                 imul    [bp+6+var_4]
                 mov     sectorChangeY, ax
                 push    ax
-                call    sub_10FFD
+                call    snapToNearestSector
                 mov     sp, bp
                 mov     sectorChangeY, ax
                 mov     bx, 3E8h
@@ -2475,11 +2475,11 @@ var_4           = word ptr -4
                 jle     short loc_110AE
                 mov     sectorChangeY, 6
 
-loc_110AE:                              ; CODE XREF: sub_11072+34\u2191j
+loc_110AE:                              ; CODE XREF: updateSectorChangeY+34\u2191j
                 add     sp, 4
                 pop     bp
                 retn
-sub_11072       endp
+updateSectorChangeY endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -2649,8 +2649,8 @@ loc_111F5:                              ; CODE XREF: view+122\u2191j
                 call    writeString
                 mov     sp, bp
                 mov     word_17404, 1
-                call    sub_11031
-                call    sub_11072
+                call    updateSectorChangeX
+                call    updateSectorChangeY
                 cmp     sectorChangeX, 0
                 jnz     short def_1124E ; jumptable 0001124E default case
                 cmp     sectorChangeY, 0
@@ -3074,7 +3074,7 @@ inform          proc near               ; CODE XREF: _main:jmp_inform\u2193p
                 call    writeString2
                 mov     sp, bp
                 push    _borderColor
-                call    sub_10FBC
+                call    drawDialogFrame
                 mov     sp, bp
                 mov     ax, offset aSectorScan ; "Sector Scan:"
                 push    ax
@@ -4929,7 +4929,7 @@ loc_12189:                              ; CODE XREF: hyperjump+1A4\u2193j
                 shl     ax, 1
                 mov     si, ax
                 push    word_17F6E[si]
-                call    sub_15CF7
+                call    waitVerticalRetrace
                 mov     sp, bp
                 inc     [bp+12h+var_C]
                 jmp     short loc_12189
@@ -4988,7 +4988,7 @@ spaceAce        proc near               ; CODE XREF: handleFireCommand+121\u2193
                 mov     bp, sp
                 call    resetKeyboardBufferWrapper
                 push    _borderColor
-                call    sub_10FBC
+                call    drawDialogFrame
                 mov     sp, bp
                 mov     ax, offset aThouHastAchiev ; "Thou hast achieved"
                 push    ax
@@ -5019,7 +5019,7 @@ spaceAce        proc near               ; CODE XREF: handleFireCommand+121\u2193
                 call    wait
                 mov     sp, bp
                 call    resetKeyboardBufferWrapper
-                call    sub_10F3B
+                call    waitForKeypressTimeout
                 call    setupView
                 pop     bp
                 retn
@@ -7280,7 +7280,7 @@ loc_13341:                              ; CODE XREF: cockpitPerFrame+B\u2191j
                 shl     ax, 1
                 mov     si, ax
                 push    word_17F6E[si]
-                call    sub_15CF7
+                call    waitVerticalRetrace
                 mov     sp, bp
 ;
                 mov     ax, _sectorX
@@ -8182,7 +8182,7 @@ promptDiskSwapRetry proc near           ; CODE XREF: exit+4C\u2191p
                 push    bp
                 sub     sp, 2
                 mov     bp, sp
-                call    sub_15C82
+                call    scrollTextArea
                 mov     ax, 17h
                 push    ax              ; y
                 mov     ax, 1
@@ -8208,7 +8208,7 @@ promptDiskSwapRetry proc near           ; CODE XREF: exit+4C\u2191p
 
 loc_139FB:                              ; CODE XREF: promptDiskSwapRetry+48\u2193j
                 push    _textColor
-                call    sub_157CC
+                call    getKeypressAndWaitRaw
                 mov     sp, bp
                 cmp     al, 20h ; ' '
                 jnz     short loc_139FB
@@ -8763,7 +8763,7 @@ invalidShipExit proc near               ; CODE XREF: checkOverlapFacing+40\u2191
                 mov     bp, sp
                 mov     ax, 0F80h
                 push    ax
-                call    sub_1416F
+                call    fputs
                 mov     sp, bp
                 mov     ax, 3
                 push    ax
@@ -8877,7 +8877,7 @@ loc_13E70:                              ; CODE XREF: main+3F\u2191j
 ;
                 xor     ax, ax
                 push    ax
-                call    sub_1405B
+                call    exit2
 main            endp
 
 ; ---------------------------------------------------------------------------
@@ -9077,20 +9077,20 @@ execProgramEntry endp
 
 ; Attributes: noreturn
 
-sub_1405B       proc near               ; CODE XREF: main+8C\u2191p
+exit2           proc near               ; CODE XREF: main+8C\u2191p
                 push    bp
                 sub     sp, 0Fh
                 mov     bp, sp
                 mov     word ptr [bp+5], 0
 
-loc_14066:                              ; CODE XREF: sub_1405B+D9\u2193j
+loc_14066:                              ; CODE XREF: exit2+D9\u2193j
                 mov     ax, [bp+5]
                 cmp     ax, 20
                 jl      short loc_14071
                 jmp     loc_14137
 ; ---------------------------------------------------------------------------
 
-loc_14071:                              ; CODE XREF: sub_1405B+11\u2191j
+loc_14071:                              ; CODE XREF: exit2+11\u2191j
                 mov     bx, 0Eh
                 imul    bx
                 mov     si, ax
@@ -9101,14 +9101,14 @@ loc_14071:                              ; CODE XREF: sub_1405B+11\u2191j
                 jmp     loc_14131
 ; ---------------------------------------------------------------------------
 
-loc_14089:                              ; CODE XREF: sub_1405B+29\u2191j
+loc_14089:                              ; CODE XREF: exit2+29\u2191j
                 mov     si, [bp+0Dh]
                 test    word ptr [si+0Ah], 2
                 jnz     short loc_14096
                 jmp     loc_14131
 ; ---------------------------------------------------------------------------
 
-loc_14096:                              ; CODE XREF: sub_1405B+36\u2191j
+loc_14096:                              ; CODE XREF: exit2+36\u2191j
                 mov     si, [bp+0Dh]
                 mov     ax, [si]
                 sub     ax, [si+6]
@@ -9117,7 +9117,7 @@ loc_14096:                              ; CODE XREF: sub_1405B+36\u2191j
                 jmp     loc_14131
 ; ---------------------------------------------------------------------------
 
-loc_140A6:                              ; CODE XREF: sub_1405B+46\u2191j
+loc_140A6:                              ; CODE XREF: exit2+46\u2191j
                 test    word ptr [si+0Ah], 4000h
                 jz      short loc_1411D
                 mov     al, [si+0Ch]
@@ -9137,7 +9137,7 @@ loc_140A6:                              ; CODE XREF: sub_1405B+46\u2191j
                 mov     [bp+9], bx
                 jz      short loc_1411D
 
-loc_140D2:                              ; CODE XREF: sub_1405B+BE\u2193j
+loc_140D2:                              ; CODE XREF: exit2+BE\u2193j
                 sub     word ptr [bp+9], 1
                 sbb     word ptr [bp+0Bh], 0
                 mov     ax, [bp+0Bh]
@@ -9172,8 +9172,8 @@ loc_140D2:                              ; CODE XREF: sub_1405B+BE\u2193j
                 jmp     short $+2
 ; ---------------------------------------------------------------------------
 
-loc_1411D:                              ; CODE XREF: sub_1405B+50\u2191j
-                                        ; sub_1405B+75\u2191j ...
+loc_1411D:                              ; CODE XREF: exit2+50\u2191j
+                                        ; exit2+75\u2191j ...
                 mov     si, [bp+0Dh]
                 mov     al, [si+0Ch]
                 xor     ah, ah
@@ -9183,16 +9183,16 @@ loc_1411D:                              ; CODE XREF: sub_1405B+50\u2191j
                 call    _dos_write
                 mov     sp, bp
 
-loc_14131:                              ; CODE XREF: sub_1405B+2B\u2191j
-                                        ; sub_1405B+38\u2191j ...
+loc_14131:                              ; CODE XREF: exit2+2B\u2191j
+                                        ; exit2+38\u2191j ...
                 inc     word ptr [bp+5]
                 jmp     loc_14066
 ; ---------------------------------------------------------------------------
 
-loc_14137:                              ; CODE XREF: sub_1405B+13\u2191j
+loc_14137:                              ; CODE XREF: exit2+13\u2191j
                 mov     word ptr [bp+5], 0
 
-loc_1413C:                              ; CODE XREF: sub_1405B+105\u2193j
+loc_1413C:                              ; CODE XREF: exit2+105\u2193j
                 mov     ax, [bp+5]
                 mov     bx, maxFileHandles ; Capacity of the low-level OS-handle table used by dosOpenOrCreate.
                 cmp     bx, ax
@@ -9206,15 +9206,15 @@ loc_1413C:                              ; CODE XREF: sub_1405B+105\u2193j
                 call    _dos_close
                 mov     sp, bp
 
-loc_1415D:                              ; CODE XREF: sub_1405B+F7\u2191j
+loc_1415D:                              ; CODE XREF: exit2+F7\u2191j
                 inc     word ptr [bp+5]
                 jmp     short loc_1413C
 ; ---------------------------------------------------------------------------
 
-loc_14162:                              ; CODE XREF: sub_1405B+EA\u2191j
+loc_14162:                              ; CODE XREF: exit2+EA\u2191j
                 push    word ptr [bp+13h]
                 call    exitWithCode
-sub_1405B       endp
+exit2           endp
 
 ; ---------------------------------------------------------------------------
                 mov     sp, bp
@@ -9226,7 +9226,7 @@ sub_1405B       endp
 
 ; Attributes: fpd=6
 
-sub_1416F       proc near               ; CODE XREF: invalidShipExit+7\u2191p
+fputs           proc near               ; CODE XREF: invalidShipExit+7\u2191p
 
 var_4           = word ptr -4
 arg_0           = word ptr  2
@@ -9235,8 +9235,8 @@ arg_0           = word ptr  2
                 sub     sp, 4
                 mov     bp, sp
 
-loc_14175:                              ; CODE XREF: sub_1416F+2F\u2193j
-                                        ; sub_1416F+3D\u2193j
+loc_14175:                              ; CODE XREF: fputs+2F\u2193j
+                                        ; fputs+3D\u2193j
                 mov     si, [bp+6+arg_0]
                 mov     al, [si]
                 xor     ah, ah
@@ -9255,7 +9255,7 @@ loc_14175:                              ; CODE XREF: sub_1416F+2F\u2193j
                 jmp     short loc_14175
 ; ---------------------------------------------------------------------------
 
-loc_141A0:                              ; CODE XREF: sub_1416F+21\u2191j
+loc_141A0:                              ; CODE XREF: fputs+21\u2191j
                 mov     ax, 6010h
                 push    ax
                 push    [bp+6+var_4]
@@ -9264,7 +9264,7 @@ loc_141A0:                              ; CODE XREF: sub_1416F+21\u2191j
                 jmp     short loc_14175
 ; ---------------------------------------------------------------------------
 
-loc_141AE:                              ; CODE XREF: sub_1416F+15\u2191j
+loc_141AE:                              ; CODE XREF: fputs+15\u2191j
                 dec     word_1D2E4
                 mov     ax, word_1D2E4
                 test    ax, ax
@@ -9277,7 +9277,7 @@ loc_141AE:                              ; CODE XREF: sub_1416F+15\u2191j
                 jmp     short loc_141D6
 ; ---------------------------------------------------------------------------
 
-loc_141C9:                              ; CODE XREF: sub_1416F+48\u2191j
+loc_141C9:                              ; CODE XREF: fputs+48\u2191j
                 mov     ax, 6010h
                 push    ax
                 mov     ax, 0Ah
@@ -9285,11 +9285,11 @@ loc_141C9:                              ; CODE XREF: sub_1416F+48\u2191j
                 call    _flsbuf
                 mov     sp, bp
 
-loc_141D6:                              ; CODE XREF: sub_1416F+58\u2191j
+loc_141D6:                              ; CODE XREF: fputs+58\u2191j
                 add     sp, 4
                 pop     bp
                 retn
-sub_1416F       endp
+fputs           endp
 
 ; ---------------------------------------------------------------------------
                 push    cx
@@ -9403,7 +9403,7 @@ _dos_ioctl_get  endp
 ; Attributes: library function noreturn bp-based frame
 
 exitWithCode    proc near               ; CODE XREF: invalidShipExit+10\u2191p
-                                        ; sub_1405B+10A\u2191p
+                                        ; exit2+10A\u2191p
 
 arg_0           = word ptr  4
 
@@ -9716,8 +9716,8 @@ buildAndChainExecutable endp
 
 ; Attributes: fpd=13h
 
-_flsbuf         proc near               ; CODE XREF: sub_1416F+38\u2191p
-                                        ; sub_1416F+62\u2191p ...
+_flsbuf         proc near               ; CODE XREF: fputs+38\u2191p
+                                        ; fputs+62\u2191p ...
 
 var_E           = byte ptr -0Eh
 var_D           = byte ptr -0Dh
@@ -10144,7 +10144,7 @@ _dos_open       endp
 
 ; Attributes: bp-based frame
 
-_dos_close      proc near               ; CODE XREF: sub_1405B+FD\u2191p
+_dos_close      proc near               ; CODE XREF: exit2+FD\u2191p
                                         ; fcloseHandle+28\u2193p ...
 
 arg_0           = word ptr  4
@@ -10164,7 +10164,7 @@ _dos_close      endp
 
 ; Attributes: bp-based frame
 
-_dos_read       proc near               ; CODE XREF: sub_1405B+AD\u2191p
+_dos_read       proc near               ; CODE XREF: exit2+AD\u2191p
                                         ; _flsbuf+207\u2191p ...
 
 arg_0           = word ptr  4
@@ -10189,8 +10189,8 @@ _dos_read       endp
 
 ; Attributes: bp-based frame
 
-_dos_lseek      proc near               ; CODE XREF: sub_1405B+62\u2191p
-                                        ; sub_1405B+97\u2191p ...
+_dos_lseek      proc near               ; CODE XREF: exit2+62\u2191p
+                                        ; exit2+97\u2191p ...
 
 arg_0           = word ptr  4
 arg_2           = word ptr  6
@@ -10224,7 +10224,7 @@ _dos_lseek      endp
 
 ; Attributes: bp-based frame
 
-_dos_write      proc near               ; CODE XREF: sub_1405B+D1\u2191p
+_dos_write      proc near               ; CODE XREF: exit2+D1\u2191p
                                         ; _write+53\u2193p ...
 
 arg_0           = word ptr  4
@@ -11998,7 +11998,7 @@ writeString2    endp
 ; Attributes: bp-based frame
 
 ; void __stdcall fillRect(int x1, int y1, int x2, int y2, int color)
-fillRect        proc near               ; CODE XREF: sub_10FBC+16\u2191p
+fillRect        proc near               ; CODE XREF: drawDialogFrame+16\u2191p
                                         ; pass+42\u2191p ...
 
 x1              = word ptr  4
@@ -12512,7 +12512,7 @@ drawPromptAt    endp
 
 ; Attributes: fpd=0Ch
 
-drawLeftArrow   proc near               ; CODE XREF: sub_164E6+25\u2193p
+drawLeftArrow   proc near               ; CODE XREF: showMorePrompt+25\u2193p
                                         ; status+51\u2193p
 
 var_C           = word ptr -0Ch
@@ -12597,7 +12597,7 @@ drawLeftArrow   endp
 
 ; Attributes: fpd=4
 
-sub_157A9       proc near               ; CODE XREF: sub_16586+74\u2193p
+strlen2         proc near               ; CODE XREF: drawStatusList+74\u2193p
 
 var_4           = word ptr -4
 arg_0           = word ptr  2
@@ -12607,7 +12607,7 @@ arg_0           = word ptr  2
                 mov     bp, sp
                 mov     [bp+4+var_4], 0
 
-loc_157B4:                              ; CODE XREF: sub_157A9+19\u2193j
+loc_157B4:                              ; CODE XREF: strlen2+19\u2193j
                 mov     si, [bp+4+arg_0]
                 cmp     byte ptr [si], 0
                 jz      short loc_157C4
@@ -12616,18 +12616,18 @@ loc_157B4:                              ; CODE XREF: sub_157A9+19\u2193j
                 jmp     short loc_157B4
 ; ---------------------------------------------------------------------------
 
-loc_157C4:                              ; CODE XREF: sub_157A9+11\u2191j
+loc_157C4:                              ; CODE XREF: strlen2+11\u2191j
                 mov     ax, [bp+4+var_4]
                 add     sp, 2
                 pop     bp
                 retn
-sub_157A9       endp
+strlen2         endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_157CC       proc near               ; CODE XREF: promptDiskSwapRetry+41\u2191p
+getKeypressAndWaitRaw proc near         ; CODE XREF: promptDiskSwapRetry+41\u2191p
                                         ; promptPressSpace+24\u2193p
 
 arg_0           = word ptr  2
@@ -12636,7 +12636,7 @@ arg_0           = word ptr  2
                 sub     sp, 4
                 mov     bp, sp
 
-loc_157D2:                              ; CODE XREF: sub_157CC+2D\u2193j
+loc_157D2:                              ; CODE XREF: getKeypressAndWaitRaw+2D\u2193j
                 push    word ptr [bp+8]
                 call    getKeypress
                 mov     sp, bp
@@ -12650,20 +12650,20 @@ loc_157D2:                              ; CODE XREF: sub_157CC+2D\u2193j
                 jmp     short loc_157F5
 ; ---------------------------------------------------------------------------
 
-loc_157EC:                              ; CODE XREF: sub_157CC+13\u2191j
+loc_157EC:                              ; CODE XREF: getKeypressAndWaitRaw+13\u2191j
                 mov     ax, 1
                 push    ax              ; ticks
                 call    wait
                 mov     sp, bp
 
-loc_157F5:                              ; CODE XREF: sub_157CC+1E\u2191j
+loc_157F5:                              ; CODE XREF: getKeypressAndWaitRaw+1E\u2191j
                 cmp     byte ptr [bp+arg_0], 0
                 jz      short loc_157D2
                 mov     al, byte ptr [bp+arg_0]
                 add     sp, 4
                 pop     bp
                 retn
-sub_157CC       endp
+getKeypressAndWaitRaw endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -12698,8 +12698,8 @@ setRandomSeed   endp
 ; drawLineTo(x,y,color) - draws a line from the endpoint of the last sub_1583A/sub_15818 call (word_183C2/word_183C4) to (x,y). "Line-to" counterpart of sub_1583A's "line".
 ; Attributes: bp-based frame
 
-drawLineTo      proc near               ; CODE XREF: sub_10F62+26\u2191p
-                                        ; sub_10F62+36\u2191p ...
+drawLineTo      proc near               ; CODE XREF: drawBorderBox+26\u2191p
+                                        ; drawBorderBox+36\u2191p ...
 
 arg_0           = word ptr  4
 arg_2           = word ptr  6
@@ -12731,7 +12731,7 @@ drawLineTo      endp
 ; drawLine(x1,y1,x2,y2,color) - thin wrapper over the Bresenham core (sub_1585B). Used throughout combat for the laser-bolt effects in handleFireCommand/alienFiresBack.
 ; Attributes: bp-based frame
 
-drawLine        proc near               ; CODE XREF: sub_10F62+16\u2191p
+drawLine        proc near               ; CODE XREF: drawBorderBox+16\u2191p
                                         ; drawEnemyMarker+28\u2191p ...
 
 arg_0           = word ptr  4
@@ -13165,7 +13165,7 @@ putPixelCore    endp ; sp-analysis failed
 ; Shows "Press Space to continue: " on the status line, waits for Space or Enter (sub_157CC), then clears that line. The generic counterpart of promptDiskSwapRetry's specific prompt - used by status() and elsewhere.
 ; Attributes: fpd=8
 
-promptPressSpace proc near              ; CODE XREF: sub_164E6+2A\u2193p
+promptPressSpace proc near              ; CODE XREF: showMorePrompt+2A\u2193p
                                         ; status+290\u2193p
 
 var_4           = byte ptr -4
@@ -13187,7 +13187,7 @@ var_4           = byte ptr -4
 
 loc_15B08:                              ; CODE XREF: promptPressSpace+39\u2193j
                 push    _textColor
-                call    sub_157CC
+                call    getKeypressAndWaitRaw
                 mov     sp, bp
                 mov     [bp+8+var_4], al
                 mov     al, [bp+8+var_4]
@@ -13237,7 +13237,7 @@ text            = word ptr  4
                 push    [bp+text]       ; text
                 call    writeString2
                 mov     sp, bp
-                call    sub_15C82
+                call    scrollTextArea
                 mov     ax, 18h
                 push    ax              ; y
                 mov     ax, 1
@@ -13257,7 +13257,7 @@ writeString     endp
 
 ; Attributes: bp-based frame
 
-clearBottomArea proc near               ; CODE XREF: sub_164E6+2D\u2193p
+clearBottomArea proc near               ; CODE XREF: showMorePrompt+2D\u2193p
                                         ; status:loc_1663F\u2193p
                 push    bp
                 mov     bp, sp
@@ -13337,7 +13337,7 @@ drawGameBorder  endp
 
 ; Attributes: bp-based frame
 
-sub_15C82       proc near               ; CODE XREF: promptDiskSwapRetry+6\u2191p
+scrollTextArea  proc near               ; CODE XREF: promptDiskSwapRetry+6\u2191p
                                         ; writeString+F\u2191p
                 push    bp
                 mov     bp, sp
@@ -13367,7 +13367,7 @@ sub_15C82       proc near               ; CODE XREF: promptDiskSwapRetry+6\u2191
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_15CA6:                              ; CODE XREF: sub_15C82+C\u2191j
+loc_15CA6:                              ; CODE XREF: scrollTextArea+C\u2191j
                 mov     ax, 0B800h
                 mov     es, ax
                 assume es:nothing
@@ -13375,7 +13375,7 @@ loc_15CA6:                              ; CODE XREF: sub_15C82+C\u2191j
                 mov     dx, 0A8h ; '¨'
                 mov     cx, 18h
 
-loc_15CB4:                              ; CODE XREF: sub_15C82+4F\u2193j
+loc_15CB4:                              ; CODE XREF: scrollTextArea+4F\u2193j
                 push    cx
                 push    ds
                 mov     si, bx
@@ -13399,7 +13399,7 @@ loc_15CB4:                              ; CODE XREF: sub_15C82+4F\u2193j
                 mov     bx, 0C0h ; 'À'
                 xor     ax, ax
 
-loc_15CDB:                              ; CODE XREF: sub_15C82+6D\u2193j
+loc_15CDB:                              ; CODE XREF: scrollTextArea+6D\u2193j
                 push    cx
                 push    ds
                 mov     di, bx
@@ -13422,14 +13422,14 @@ loc_15CDB:                              ; CODE XREF: sub_15C82+6D\u2193j
                 pop     si
                 pop     bp
                 retn
-sub_15C82       endp
+scrollTextArea  endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-sub_15CF7       proc near               ; CODE XREF: hyperjump+19C\u2191p
+waitVerticalRetrace proc near           ; CODE XREF: hyperjump+19C\u2191p
                                         ; cockpitPerFrame+25\u2191p
 
 arg_0           = word ptr  4
@@ -13447,8 +13447,8 @@ arg_0           = word ptr  4
                 xor     cx, cx
                 mov     dx, 3DAh
 
-loc_15D0D:                              ; CODE XREF: sub_15CF7+19\u2193j
-                                        ; sub_15CF7+25\u2193j
+loc_15D0D:                              ; CODE XREF: waitVerticalRetrace+19\u2193j
+                                        ; waitVerticalRetrace+25\u2193j
                 in      al, dx          ; Video status bits:
                                         ; 0: retrace.  1=display is in vert or horiz retrace.
                                         ; 1: 1=light pen is triggered; 0=armed
@@ -13457,7 +13457,7 @@ loc_15D0D:                              ; CODE XREF: sub_15CF7+19\u2193j
                 and     al, 8
                 jz      short loc_15D0D
 
-loc_15D12:                              ; CODE XREF: sub_15CF7+1E\u2193j
+loc_15D12:                              ; CODE XREF: waitVerticalRetrace+1E\u2193j
                 in      al, dx          ; Video status bits:
                                         ; 0: retrace.  1=display is in vert or horiz retrace.
                                         ; 1: 1=light pen is triggered; 0=armed
@@ -13469,14 +13469,14 @@ loc_15D12:                              ; CODE XREF: sub_15CF7+1E\u2193j
                 cmp     cx, word_18420
                 jnz     short loc_15D0D
 
-loc_15D1E:                              ; CODE XREF: sub_15CF7+C\u2191j
+loc_15D1E:                              ; CODE XREF: waitVerticalRetrace+C\u2191j
                 pop     es
                 pop     ds
                 pop     di
                 pop     si
                 pop     bp
                 retn    2
-sub_15CF7       endp
+waitVerticalRetrace endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -14046,7 +14046,7 @@ saveFile        endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_15EE1       proc near               ; CODE XREF: initVideo:loc_15FCF\u2193p
+buildScanlineOffsetTable proc near      ; CODE XREF: initVideo:loc_15FCF\u2193p
                 mov     bx, 12FAh
                 mov     cx, 0C7h ; 'Ç'
                 cmp     videoType, 0    ; 0=CGA, 1=EGA, 2=Tandy - selects the video-mode-specific path throughout the low-level graphics routines (xorPutPixel, blitShipSpriteXor, drawStarGraphic, ...).
@@ -14054,7 +14054,7 @@ sub_15EE1       proc near               ; CODE XREF: initVideo:loc_15FCF\u2193p
                 cmp     videoType, 1    ; 0=CGA, 1=EGA, 2=Tandy - selects the video-mode-specific path throughout the low-level graphics routines (xorPutPixel, blitShipSpriteXor, drawStarGraphic, ...).
                 jz      short loc_15F4A
 
-loc_15EF5:                              ; CODE XREF: sub_15EE1+40\u2193j
+loc_15EF5:                              ; CODE XREF: buildScanlineOffsetTable+40\u2193j
                 mov     word_18400, 4
                 push    cx
                 mov     ax, cx
@@ -14079,8 +14079,8 @@ loc_15EF5:                              ; CODE XREF: sub_15EE1+40\u2193j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_15F24:                              ; CODE XREF: sub_15EE1+B\u2191j
-                                        ; sub_15EE1+66\u2193j
+loc_15F24:                              ; CODE XREF: buildScanlineOffsetTable+B\u2191j
+                                        ; buildScanlineOffsetTable+66\u2193j
                 mov     word_18400, 2
                 mov     ax, cx
                 mov     ah, al
@@ -14099,17 +14099,17 @@ loc_15F24:                              ; CODE XREF: sub_15EE1+B\u2191j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_15F4A:                              ; CODE XREF: sub_15EE1+12\u2191j
+loc_15F4A:                              ; CODE XREF: buildScanlineOffsetTable+12\u2191j
                 mov     word_18400, 1
                 mov     ax, 1F18h
 
-loc_15F53:                              ; CODE XREF: sub_15EE1+7A\u2193j
+loc_15F53:                              ; CODE XREF: buildScanlineOffsetTable+7A\u2193j
                 mov     [bx], ax
                 sub     bx, 2
                 sub     ax, 28h ; '('
                 loop    loc_15F53
                 retn
-sub_15EE1       endp
+buildScanlineOffsetTable endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -14158,7 +14158,7 @@ loc_15FB0:                              ; CODE XREF: initVideo+15\u2191j
                 mov     _hilightColor, 1
 
 loc_15FCF:                              ; CODE XREF: initVideo+57\u2191j
-                call    sub_15EE1
+                call    buildScanlineOffsetTable
                 cmp     [bp+4+arg_0], 0
                 jz      short loc_15FFA
                 cmp     videoType, VIDEOMODE_CGA ; 0=CGA, 1=EGA, 2=Tandy - selects the video-mode-specific path throughout the low-level graphics routines (xorPutPixel, blitShipSpriteXor, drawStarGraphic, ...).
@@ -14553,7 +14553,7 @@ loc_16230:                              ; CODE XREF: sg01a2:6226\u2191j
 
 ; Attributes: fpd=4
 
-sub_16237       proc near               ; CODE XREF: status+94\u2193p
+calcExperienceLevel proc near           ; CODE XREF: status+94\u2193p
                 push    bp
                 sub     sp, 2
                 mov     bp, sp
@@ -14565,7 +14565,7 @@ sub_16237       proc near               ; CODE XREF: status+94\u2193p
                 add     sp, 2
                 pop     bp
                 retn
-sub_16237       endp
+calcExperienceLevel endp
 
 ; ---------------------------------------------------------------------------
                 db 55h, 83h, 0ECh, 4, 8Bh, 0ECh, 83h, 7Eh, 0Ah, 4Dh, 7Fh
@@ -14576,11 +14576,11 @@ sub_16237       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16272       proc near               ; CODE XREF: soundAction+11\u2191p
+remapSoundActionIndex proc near         ; CODE XREF: soundAction+11\u2191p
                                         ; DATA XREF: dseg:1166\u2193o
                 add     al, 5Dh
                 retn
-sub_16272       endp
+remapSoundActionIndex endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -14917,7 +14917,7 @@ writeCoins      endp
 
 ; Attributes: fpd=6
 
-sub_164BD       proc near               ; CODE XREF: sub_16586+82\u2193p
+writeDotFill    proc near               ; CODE XREF: drawStatusList+82\u2193p
 
 var_4           = word ptr -4
 arg_0           = word ptr  2
@@ -14928,7 +14928,7 @@ arg_2           = word ptr  4
                 mov     bp, sp
                 mov     [bp+6+var_4], 1
 
-loc_164C8:                              ; CODE XREF: sub_164BD+22\u2193j
+loc_164C8:                              ; CODE XREF: writeDotFill+22\u2193j
                 mov     ax, [bp+6+var_4]
                 cmp     ax, [bp+6+arg_0]
                 jg      short loc_164E1
@@ -14941,18 +14941,18 @@ loc_164C8:                              ; CODE XREF: sub_164BD+22\u2193j
                 jmp     short loc_164C8
 ; ---------------------------------------------------------------------------
 
-loc_164E1:                              ; CODE XREF: sub_164BD+11\u2191j
+loc_164E1:                              ; CODE XREF: writeDotFill+11\u2191j
                 add     sp, 4
                 pop     bp
                 retn
-sub_164BD       endp
+writeDotFill    endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-sub_164E6       proc near               ; CODE XREF: sub_16586+2B\u2193p
+showMorePrompt  proc near               ; CODE XREF: drawStatusList+2B\u2193p
                 push    bp
                 mov     bp, sp
                 mov     ax, 13h
@@ -14988,14 +14988,14 @@ sub_164E6       proc near               ; CODE XREF: sub_16586+2B\u2193p
                 mov     sp, bp
                 pop     bp
                 retn
-sub_164E6       endp
+showMorePrompt  endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: fpd=6
 
-sub_16530       proc near               ; CODE XREF: sub_16586+36\u2193p
+setStatusEntryPos proc near             ; CODE XREF: drawStatusList+36\u2193p
                                         ; status+133\u2193p ...
 
 var_6           = word ptr -6
@@ -15011,11 +15011,11 @@ arg_0           = word ptr  2
                 jmp     short loc_16545
 ; ---------------------------------------------------------------------------
 
-loc_16542:                              ; CODE XREF: sub_16530+C\u2191j
+loc_16542:                              ; CODE XREF: setStatusEntryPos+C\u2191j
                 xor     bx, bx
                 inc     bx
 
-loc_16545:                              ; CODE XREF: sub_16530+10\u2191j
+loc_16545:                              ; CODE XREF: setStatusEntryPos+10\u2191j
                 mov     ax, bx
                 mov     cx, 13h
                 imul    cx
@@ -15034,14 +15034,14 @@ loc_16545:                              ; CODE XREF: sub_16530+10\u2191j
                 add     sp, 4
                 pop     bp
                 retn
-sub_16530       endp
+setStatusEntryPos endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-sub_1656B       proc near               ; CODE XREF: sub_16586+96\u2193p
+writeStatusValue proc near              ; CODE XREF: drawStatusList+96\u2193p
                                         ; status+153\u2193p ...
 
 value           = word ptr  4
@@ -15061,14 +15061,14 @@ color           = byte ptr  6
                 mov     sp, bp
                 pop     bp
                 retn
-sub_1656B       endp
+writeStatusValue endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: fpd=8
 
-sub_16586       proc near               ; CODE XREF: status+11B\u2193p
+drawStatusList  proc near               ; CODE XREF: status+11B\u2193p
                                         ; status+215\u2193p ...
 
 var_6           = word ptr -6
@@ -15086,7 +15086,7 @@ arg_A           = word ptr  0Ch
                 mov     ax, [bp+8+arg_4]
                 mov     [bp+8+var_6], ax
 
-loc_16592:                              ; CODE XREF: sub_16586+9E\u2193j
+loc_16592:                              ; CODE XREF: drawStatusList+9E\u2193j
                 mov     ax, [bp+8+var_6]
                 mov     bx, [bp+8+arg_6]
                 cmp     bx, ax
@@ -15094,7 +15094,7 @@ loc_16592:                              ; CODE XREF: sub_16586+9E\u2193j
                 jmp     loc_16627
 ; ---------------------------------------------------------------------------
 
-loc_1659F:                              ; CODE XREF: sub_16586+14\u2191j
+loc_1659F:                              ; CODE XREF: drawStatusList+14\u2191j
                 shl     ax, 1
                 mov     si, [bp+8+arg_0]
                 add     si, ax
@@ -15102,12 +15102,12 @@ loc_1659F:                              ; CODE XREF: sub_16586+14\u2191j
                 jz      short loc_16621
                 cmp     [bp+8+arg_A], 19h
                 jle     short loc_165B9
-                call    sub_164E6
+                call    showMorePrompt
                 mov     [bp+8+arg_A], 0
 
-loc_165B9:                              ; CODE XREF: sub_16586+29\u2191j
+loc_165B9:                              ; CODE XREF: drawStatusList+29\u2191j
                 push    [bp+8+arg_A]
-                call    sub_16530
+                call    setStatusEntryPos
                 mov     sp, bp
                 inc     [bp+8+arg_A]
                 mov     ax, [bp+8+var_6]
@@ -15118,11 +15118,11 @@ loc_165B9:                              ; CODE XREF: sub_16586+29\u2191j
                 jmp     short loc_165DA
 ; ---------------------------------------------------------------------------
 
-loc_165D4:                              ; CODE XREF: sub_16586+44\u2191j
+loc_165D4:                              ; CODE XREF: drawStatusList+44\u2191j
                 mov     ax, _hilightColor
                 mov     [bp+8+var_4], ax
 
-loc_165DA:                              ; CODE XREF: sub_16586+4C\u2191j
+loc_165DA:                              ; CODE XREF: drawStatusList+4C\u2191j
                 mov     ax, [bp+8+var_6]
                 shl     ax, 1
                 mov     si, [bp+8+arg_2]
@@ -15136,13 +15136,13 @@ loc_165DA:                              ; CODE XREF: sub_16586+4C\u2191j
                 mov     si, [bp+8+arg_2]
                 add     si, ax
                 push    word ptr [si]
-                call    sub_157A9
+                call    strlen2
                 mov     sp, bp
                 mov     bx, 0Dh
                 sub     bx, ax
                 push    [bp+8+var_4]
                 push    bx
-                call    sub_164BD
+                call    writeDotFill
                 mov     sp, bp
                 mov     ax, [bp+8+var_6]
                 shl     ax, 1
@@ -15150,20 +15150,20 @@ loc_165DA:                              ; CODE XREF: sub_16586+4C\u2191j
                 add     si, ax
                 push    [bp+8+var_4]
                 push    word ptr [si]
-                call    sub_1656B
+                call    writeStatusValue
                 mov     sp, bp
 
-loc_16621:                              ; CODE XREF: sub_16586+23\u2191j
+loc_16621:                              ; CODE XREF: drawStatusList+23\u2191j
                 inc     [bp+8+var_6]
                 jmp     loc_16592
 ; ---------------------------------------------------------------------------
 
-loc_16627:                              ; CODE XREF: sub_16586+16\u2191j
+loc_16627:                              ; CODE XREF: drawStatusList+16\u2191j
                 mov     ax, [bp+8+arg_A]
                 add     sp, 6
                 pop     bp
                 retn
-sub_16586       endp
+drawStatusList  endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -15240,7 +15240,7 @@ loc_1663F:                              ; CODE XREF: status+B\u2191j
                 push    ax              ; text
                 call    writeString2
                 mov     sp, bp
-                call    sub_16237
+                call    calcExperienceLevel
                 mov     bx, 1
                 push    bx              ; int
                 push    _edgeColor      ; color
@@ -15300,7 +15300,7 @@ loc_166FF:                              ; CODE XREF: status+C1\u2191j
                 push    ax
                 mov     ax, offset _savegame._hits
                 push    ax
-                call    sub_16586
+                call    drawStatusList
                 mov     sp, bp
                 mov     [bp+arg_0], ax
                 mov     ax, _savegame._coins
@@ -15310,7 +15310,7 @@ loc_166FF:                              ; CODE XREF: status+C1\u2191j
                 test    dx, dx
                 jz      short loc_1678A
                 push    [bp+arg_0]
-                call    sub_16530
+                call    setStatusEntryPos
                 mov     sp, bp
                 push    _textColor      ; color
                 mov     ax, offset aCopperPence_ ; "Copper pence."
@@ -15323,7 +15323,7 @@ loc_166FF:                              ; CODE XREF: status+C1\u2191j
                 idiv    bx
                 push    _textColor
                 push    dx
-                call    sub_1656B
+                call    writeStatusValue
                 mov     sp, bp
                 inc     [bp+arg_0]
 
@@ -15335,7 +15335,7 @@ loc_1678A:                              ; CODE XREF: status+12E\u2191j
                 cmp     dx, 9
                 jle     short loc_167CF
                 push    [bp+arg_0]
-                call    sub_16530
+                call    setStatusEntryPos
                 mov     sp, bp
                 push    _textColor      ; color
                 mov     ax, offset aSilverPieces ; "Silver pieces"
@@ -15353,7 +15353,7 @@ loc_1678A:                              ; CODE XREF: status+12E\u2191j
                 idiv    bx
                 push    _textColor
                 push    ax
-                call    sub_1656B
+                call    writeStatusValue
                 mov     sp, bp
                 inc     [bp+arg_0]
 
@@ -15361,7 +15361,7 @@ loc_167CF:                              ; CODE XREF: status+167\u2191j
                 cmp     _savegame._coins, 63h ; 'c'
                 jle     short loc_16801
                 push    [bp+arg_0]
-                call    sub_16530
+                call    setStatusEntryPos
                 mov     sp, bp
                 push    _textColor      ; color
                 mov     ax, offset aGoldCrowns__ ; "Gold crowns.."
@@ -15374,7 +15374,7 @@ loc_167CF:                              ; CODE XREF: status+167\u2191j
                 idiv    bx
                 push    _textColor
                 push    ax
-                call    sub_1656B
+                call    writeStatusValue
                 mov     sp, bp
                 inc     [bp+arg_0]
 
@@ -15382,7 +15382,7 @@ loc_16801:                              ; CODE XREF: status+1A5\u2191j
                 cmp     _savegame._enemyVessels, 0
                 jz      short loc_1682D
                 push    [bp+arg_0]
-                call    sub_16530
+                call    setStatusEntryPos
                 mov     sp, bp
                 push    _textColor      ; color
                 mov     ax, offset aEnemyVessels ; "Enemy vessels"
@@ -15391,7 +15391,7 @@ loc_16801:                              ; CODE XREF: status+1A5\u2191j
                 mov     sp, bp
                 push    _textColor
                 push    _savegame._enemyVessels
-                call    sub_1656B
+                call    writeStatusValue
                 mov     sp, bp
                 inc     [bp+arg_0]
 
@@ -15406,7 +15406,7 @@ loc_1682D:                              ; CODE XREF: status+1D7\u2191j
                 push    ax
                 mov     ax, offset _savegame._armor_array
                 push    ax
-                call    sub_16586
+                call    drawStatusList
                 mov     sp, bp
                 push    ax
                 push    _savegame._readyWeapon
@@ -15419,7 +15419,7 @@ loc_1682D:                              ; CODE XREF: status+1D7\u2191j
                 mov     bx, offset _savegame._weapons_array
                 push    bx
                 mov     [bp+arg_0], ax
-                call    sub_16586
+                call    drawStatusList
                 mov     sp, bp
                 push    ax
                 push    _savegame._readySpell
@@ -15432,7 +15432,7 @@ loc_1682D:                              ; CODE XREF: status+1D7\u2191j
                 mov     bx, offset _savegame._spells_array
                 push    bx
                 mov     [bp+arg_0], ax
-                call    sub_16586
+                call    drawStatusList
                 mov     sp, bp
                 push    ax
                 push    _savegame._transportType
@@ -15445,7 +15445,7 @@ loc_1682D:                              ; CODE XREF: status+1D7\u2191j
                 mov     bx, offset _savegame._transports_array
                 push    bx
                 mov     [bp+arg_0], ax
-                call    sub_16586
+                call    drawStatusList
                 mov     sp, bp
                 push    ax
                 mov     bx, 0FFFFh
@@ -15459,7 +15459,7 @@ loc_1682D:                              ; CODE XREF: status+1D7\u2191j
                 mov     bx, offset _savegame._redGems
                 push    bx
                 mov     [bp+arg_0], ax
-                call    sub_16586
+                call    drawStatusList
                 mov     sp, bp
                 mov     [bp+arg_0], ax
                 call    promptPressSpace
@@ -15728,7 +15728,7 @@ initVideoEga    endp
 ; Reads the BIOS text-cursor position, converts it to pixel coordinates (textCursorX/textCursorY), draws the blinking cursor (drawTextCursorBlink) via showCursorFlag, then polls for a raw console character (INT 21h AH=6), decoding the two-byte extended/arrow-key sequences into small integer codes. Consuming a key resets the keyboard buffer and re-toggles the cursor.
 ; Attributes: bp-based frame
 
-getKeypress     proc near               ; CODE XREF: sub_10F3B+E\u2191p
+getKeypress     proc near               ; CODE XREF: waitForKeypressTimeout+E\u2191p
                                         ; inform+D4\u2191p ...
 
 arg_0           = word ptr  4
@@ -17234,7 +17234,7 @@ word_17339      dw 0FFFFh               ; DATA XREF: start+38D\u2191w
                 db    0
                 db    0
 lastIoError     dw 0                    ; DATA XREF: _nheapinit+3\u2191w
-                                        ; sub_1405B+B2\u2191r ...
+                                        ; exit2+B2\u2191r ...
                                         ; Set nonzero by the low-level FILE-stream helpers (fillReadBuffer, fcloseHandle, etc.) when an operation fails; loadData/save_file check this after each open/read-or-write/close to decide whether to retry via promptDiskSwapRetry.
 aStackOverflowD db 'Stack overflow during arg parsing',0Dh,0Ah,'$'
 aIncompatibleDo db 'Incompatible DOS version',0Dh,0Ah,'$'
@@ -17248,12 +17248,12 @@ aCorruptedEnvironment db 'Corrupted environment',0Dh,0Ah,'$'
 aInsufficientMemoryForS db 'Insufficient memory for specified heap size',0Dh,0Ah,'$'
                 db    0
 word_173F4      dw 4                    ; DATA XREF: status+6\u2191r
-_cockpitSpeed   dw 5                    ; DATA XREF: sub_11031+6\u2191r
-                                        ; sub_11072+6\u2191r ...
-sectorChangeX   dw 0                    ; DATA XREF: sub_11031+16\u2191r
-                                        ; sub_11031+1C\u2191w ...
-sectorChangeY   dw 0                    ; DATA XREF: sub_11072+16\u2191r
-                                        ; sub_11072+1C\u2191w ...
+_cockpitSpeed   dw 5                    ; DATA XREF: updateSectorChangeX+6\u2191r
+                                        ; updateSectorChangeY+6\u2191r ...
+sectorChangeX   dw 0                    ; DATA XREF: updateSectorChangeX+16\u2191r
+                                        ; updateSectorChangeX+1C\u2191w ...
+sectorChangeY   dw 0                    ; DATA XREF: updateSectorChangeY+16\u2191r
+                                        ; updateSectorChangeY+1C\u2191w ...
 _countdown      dw 0                    ; DATA XREF: handleOverheadArrows:loc_117B6\u2191r
                                         ; handleOverheadArrows+15B\u2191w ...
 word_173FE      dw 0                    ; DATA XREF: _main+258\u2191w
@@ -19985,11 +19985,11 @@ aCom            db 'COM',0
 aExe            db 'EXE',0
                 db 0Dh,0Ah,0
                 db    0
-maxFileHandles  dw 14h                  ; DATA XREF: sub_1405B+E4\u2191r
+maxFileHandles  dw 14h                  ; DATA XREF: exit2+E4\u2191r
                                         ; findFileHandleSlot+11\u2191r ...
                                         ; Capacity of the low-level OS-handle table used by dosOpenOrCreate.
-word_18322      dw 8001h                ; DATA XREF: sub_1405B+F2\u2191r
-word_18324      dw 0                    ; DATA XREF: sub_1405B+F9\u2191r
+word_18322      dw 8001h                ; DATA XREF: exit2+F2\u2191r
+word_18324      dw 0                    ; DATA XREF: exit2+F9\u2191r
                 db    2
                 db  80h ; €
                 db    1
@@ -20189,7 +20189,7 @@ videoType       dw 0                    ; DATA XREF: drawStarGraphic+10\u2191r
 word_183FE      dw 0                    ; DATA XREF: initVideo+2C\u2191w
                                         ; initVideo+4C\u2191w
 word_18400      dw 0                    ; DATA XREF: initVideoCga+7\u2191w
-                                        ; sub_15EE1:loc_15EF5\u2191w ...
+                                        ; buildScanlineOffsetTable:loc_15EF5\u2191w ...
 ; char aPressSpaceToCo[]
 aPressSpaceToCo db 'Press Space to continue: ',0
                                         ; DATA XREF: promptPressSpace+17\u2191o
@@ -20199,8 +20199,8 @@ _timerMax       dw 0                    ; DATA XREF: wait2\u2191w
 _timerCtr       dw 0                    ; DATA XREF: wait2+10\u2191w
                                         ; wait2+28\u2191r ...
                                         ; wait()/wait2()'s current tick counter, advanced by the timer ISR.
-word_18420      dw 0                    ; DATA XREF: sub_15CF7+E\u2191w
-                                        ; sub_15CF7+21\u2191r
+word_18420      dw 0                    ; DATA XREF: waitVerticalRetrace+E\u2191w
+                                        ; waitVerticalRetrace+21\u2191r
 SOUND_METHODS   dw offset soundCollision ; DATA XREF: soundAction+11\u2191r
                 dw offset soundError
                 dw offset soundHit
@@ -20211,7 +20211,7 @@ SOUND_METHODS   dw offset soundCollision ; DATA XREF: soundAction+11\u2191r
                 dw offset soundSirenCore
                 dw offset soundFire
                 dw offset soundWarpTick
-                dw offset sub_16272
+                dw offset remapSoundActionIndex
                 db    0
 aWb             db 'wb',0               ; DATA XREF: saveFile:loc_15E91\u2191o
 _lineStarts     dw 0C8h dup(0)          ; DATA XREF: putPixelCore+50\u2191r
@@ -22268,7 +22268,7 @@ aBalron         db 'Balron',0           ; DATA XREF: dseg:25CA\u2193o
                 dw offset aZorn         ; "Zorn"
                 dw offset aDaemon       ; "Daemon"
                 dw offset aBalron       ; "Balron"
-aMore           db ' More ',0           ; DATA XREF: sub_164E6+14\u2191o
+aMore           db ' More ',0           ; DATA XREF: showMorePrompt+14\u2191o
 ; char aZtats[]
 aZtats          db 'Ztats',0            ; DATA XREF: status+13\u2191o
 ; char aInventory[]
@@ -22450,8 +22450,8 @@ _shipIndex      dw ?                    ; DATA XREF: displayFuelNumber+1C\u2191r
 isHardDrive     dw ?                    ; DATA XREF: _main:loc_13B0A\u2191w
                                         ; initVideo:loc_15FB0\u2191r
                                         ; Set at startup; makes initVideo force CGA-style colors even under EGA/Tandy, and gates a couple of other install-specific behaviors.
-word_1D0E8      dw ?                    ; DATA XREF: sub_11031+F\u2191r
-                                        ; sub_11072+F\u2191r ...
+word_1D0E8      dw ?                    ; DATA XREF: updateSectorChangeX+F\u2191r
+                                        ; updateSectorChangeY+F\u2191r ...
 starsX          dw 28h dup(     ?)      ; DATA XREF: starsAdd+8E\u2191w
                                         ; X positions of the 40 warp-field stars (see starsAdd/advanceStarfield).
 starsY          dw 28h dup(     ?)      ; DATA XREF: starsAdd+95\u2191w
@@ -22799,12 +22799,12 @@ prevShipFacing  dw ?                    ; DATA XREF: dockAtStation+170\u2191w
 word_1D2DC      dw ?                    ; DATA XREF: main+1F\u2191w
 byte_1D2DE      db ?                    ; DATA XREF: main:loc_13E36\u2191w
                 db    ? ;
-word_1D2E0      dw ?                    ; DATA XREF: sub_1416F+23\u2191r
-                                        ; sub_1416F+27\u2191w ...
+word_1D2E0      dw ?                    ; DATA XREF: fputs+23\u2191r
+                                        ; fputs+27\u2191w ...
                 db    ? ;
                 db    ? ;
-word_1D2E4      dw ?                    ; DATA XREF: sub_1416F+17\u2191w
-                                        ; sub_1416F+1B\u2191r ...
+word_1D2E4      dw ?                    ; DATA XREF: fputs+17\u2191w
+                                        ; fputs+1B\u2191r ...
                 db    ? ;
                 db    ? ;
                 db    ? ;
