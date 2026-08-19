@@ -94,6 +94,15 @@ OUT.EXE**.
       writeup in
       [overview.md](overview.md#video-mode-initializers-and-a-few-standalone-finds).
       321/353 functions now named, 32 `sub_XXXXX` remain.
+- [x] Seventh renaming pass: `setCriticalErrorHandler`/
+      `criticalErrorHandler` (the DOS `INT 24h` handler pair behind
+      `insertDisk`'s custom disk-error prompt) and `_nheapinit`. Spot-
+      checked but didn't individually name the rest of the CRT startup
+      chain (10 functions) or 5 confirmed-dead (`proc near`, 0 callers,
+      not interrupt-reachable) functions — both are low-value for the
+      reimplementation. Full writeup in
+      [overview.md](overview.md#critical-error-handler-and-heap-init).
+      324/353 functions now named, 29 `sub_XXXXX` remain (92%).
 - [ ] Decode `playSound`'s 10-entry effect jump table (`off_1F94A`,
       handlers `0x1AE65`-`0x1AF37`) by cross-referencing `playFX` call
       sites' literal `effectNum` arguments against game context — see
