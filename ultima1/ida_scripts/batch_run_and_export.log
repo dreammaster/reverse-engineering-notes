@@ -1,0 +1,191 @@
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_space.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'identify.py', 'noexport']
+[*] reading identify.py
+[*] executing identify.py
+[!] EXCEPTION:
+Traceback (most recent call last):
+  File "C:/dev/ultima1/ida_scripts/batch_run_and_export.py", line 97, in main
+    exec(compile(code, target_script, "exec"), g)
+  File "identify.py", line 32, in <module>
+    for ea in idc.Functions():
+  File "C:\Program Files\IDA Pro 8.3\python\3\ida_ida.py", line 4269, in __getattribute__
+    return getattr(self.orig, name)
+AttributeError: module 'idc' has no attribute 'Functions'
+
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_space.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'identify.py', 'noexport']
+[*] reading identify.py
+[*] executing identify.py
+[*] captured stdout from target script:
+----- begin target script output -----
+root filename : SPACE.EXE
+input file    : D:\GOG Games\Ultima 1\SPACE.EXE
+entry point   : 0x0 (cs=0x1000)
+input md5     : 907aaf98e98c490c89e2b7acbbbb6a3f
+
+segments:
+  sg01a2       0x010000-0x0172d0  (29392 bytes)
+  dseg         0x0172d0-0x01d3f0  (24864 bytes)
+  seg002       0x01d3f0-0x01e7f0  (5120 bytes)
+  seg003       0x01e7f0-0x01e7f1  (1 bytes)
+
+functions: 210 total, 156 named, 54 still sub_XXXXX
+
+structs (16): STR15, DuneonRow, DungeonMap, Point, Rect, Creature, LocationWidget, Savegame, MapLine, Map, SpaceMapShip, SpaceMapCell, SpaceMapY, SpaceMap, FightData, JumpEntry
+----- end target script output -----
+[*] finished executing identify.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'identify.py', 'noexport']
+[*] reading identify.py
+[*] executing identify.py
+[*] captured stdout from target script:
+----- begin target script output -----
+root filename : ULTIMA.EXE
+input file    : D:\GOG Games\Ultima 1\ULTIMA.EXE
+entry point   : 0x0 (cs=0x188f)
+input md5     : ed19976a19a2794b8e3ac528e4f622a5
+
+segments:
+  sg0138       0x010000-0x013ed0  (16080 bytes)
+  sg0525       0x013ed0-0x019e10  (24384 bytes)
+  seg002       0x019e10-0x019e74  (100 bytes)
+  seg003       0x020720-0x020721  (1 bytes)
+  seg004       0x021b20-0x021b21  (1 bytes)
+
+functions: 100 total, 39 named, 61 still sub_XXXXX
+
+structs (4): STR15, Point, Rect, Savegame
+----- end target script output -----
+[*] finished executing identify.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_gen.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'identify.py', 'noexport']
+[*] reading identify.py
+[*] executing identify.py
+[*] captured stdout from target script:
+----- begin target script output -----
+root filename : GEN.EXE
+input file    : D:\GOG Games\Ultima 1\GEN.EXE
+entry point   : 0x0 (cs=0x1000)
+input md5     : e54871dbef88cf49d99b753089f6f5b4
+
+segments:
+  sg013A       0x010000-0x014260  (16992 bytes)
+  dseg         0x014260-0x015130  (3792 bytes)
+  sg064D       0x015130-0x016530  (5120 bytes)
+  sg078D       0x016530-0x016531  (1 bytes)
+
+functions: 113 total, 44 named, 69 still sub_XXXXX
+
+structs (5): STR15, Point, Rect, Creature, Savegame
+----- end target script output -----
+[*] finished executing identify.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_mondain.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'identify.py', 'noexport']
+[*] reading identify.py
+[*] executing identify.py
+[*] captured stdout from target script:
+----- begin target script output -----
+root filename : MONDAIN.EXE
+input file    : C:\games\ULTIMA1\MONDAIN.EXE
+entry point   : 0x0 (cs=0x1000)
+input md5     : fa08228eb5223cc1a6e2c647345a463b
+
+segments:
+  seg000       0x010000-0x015970  (22896 bytes)
+  dseg         0x015970-0x0179b0  (8256 bytes)
+  seg002       0x0179b0-0x01a330  (10624 bytes)
+  seg003       0x01a330-0x01b730  (5120 bytes)
+  seg004       0x01b730-0x01b731  (1 bytes)
+
+functions: 191 total, 1 named, 190 still sub_XXXXX
+
+structs (0): 
+----- end target script output -----
+[*] finished executing identify.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'identify.py', 'noexport']
+[*] reading identify.py
+[*] executing identify.py
+[*] captured stdout from target script:
+----- begin target script output -----
+root filename : OUT.EXE
+input file    : D:\GOG Games\Ultima 1\OUT.EXE
+entry point   : 0x0 (cs=0x1000)
+input md5     : 6a3301183223faea538c953ce94649f2
+
+segments:
+  sg013A       0x010000-0x01d480  (54400 bytes)
+  sg0E82       0x01d480-0x0286c0  (45632 bytes)
+  seg002       0x0286c0-0x029ac0  (5120 bytes)
+  seg003       0x029ac0-0x029ac1  (1 bytes)
+
+functions: 353 total, 266 named, 87 still sub_XXXXX
+
+structs (11): STR15, DungeonCell, DungeonColumn, DungeonMap, Point, Rect, Creature, LocationWidget, Savegame, MapLine, Map
+----- end target script output -----
+[*] finished executing identify.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_space.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'identify.py']
+[*] reading identify.py
+[*] executing identify.py
+[*] captured stdout from target script:
+----- begin target script output -----
+root filename : SPACE.EXE
+input file    : D:\GOG Games\Ultima 1\SPACE.EXE
+entry point   : 0x0 (cs=0x1000)
+input md5     : 907aaf98e98c490c89e2b7acbbbb6a3f
+
+segments:
+  sg01a2       0x010000-0x0172d0  (29392 bytes)
+  dseg         0x0172d0-0x01d3f0  (24864 bytes)
+  seg002       0x01d3f0-0x01e7f0  (5120 bytes)
+  seg003       0x01e7f0-0x01e7f1  (1 bytes)
+
+functions: 210 total, 156 named, 54 still sub_XXXXX
+
+structs (16): STR15, DuneonRow, DungeonMap, Point, Rect, Creature, LocationWidget, Savegame, MapLine, Map, SpaceMapShip, SpaceMapCell, SpaceMapY, SpaceMap, FightData, JumpEntry
+----- end target script output -----
+[*] finished executing identify.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima1\ultima1_space.asm
+[*] gen_file(OFILE_ASM) returned 23094
+[*] exporting IDC to C:\dev\ultima1\ultima1_space.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima1\ultima1_space.idb
+[*] done, exiting 0
