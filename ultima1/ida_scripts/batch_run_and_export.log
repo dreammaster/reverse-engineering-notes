@@ -2459,3 +2459,282 @@ structs (11): STR15, DungeonCell, DungeonColumn, DungeonMap, Point, Rect, Creatu
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'identify.py']
+[*] reading identify.py
+[*] executing identify.py
+[*] captured stdout from target script:
+----- begin target script output -----
+root filename : ULTIMA.EXE
+input file    : D:\GOG Games\Ultima 1\ULTIMA.EXE
+entry point   : 0x0 (cs=0x188f)
+input md5     : ed19976a19a2794b8e3ac528e4f622a5
+
+segments:
+  sg0138       0x010000-0x013ed0  (16080 bytes)
+  sg0525       0x013ed0-0x019e10  (24384 bytes)
+  seg002       0x019e10-0x019e74  (100 bytes)
+  seg003       0x020720-0x020721  (1 bytes)
+  seg004       0x021b20-0x021b21  (1 bytes)
+
+functions: 100 total, 39 named, 61 still sub_XXXXX
+
+structs (4): STR15, Point, Rect, Savegame
+----- end target script output -----
+[*] finished executing identify.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima1\ultima1.asm
+[*] gen_file(OFILE_ASM) returned 10721
+[*] exporting IDC to C:\dev\ultima1\ultima1.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima1\ultima1.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'rank_unnamed_functions.py', 'noexport']
+[*] reading rank_unnamed_functions.py
+[*] executing rank_unnamed_functions.py
+[*] captured stdout from target script:
+----- begin target script output -----
+61 unnamed functions total
+
+13333  sub_13333    callers=  5 size=  21  <- data/128B9, sub_12595, sub_12755, sub_127E0, sub_12EBC
+11B71  sub_11B71    callers=  4 size= 141  <- data/11C0D, sub_10F96, sub_12A1A, sub_12CA4
+120F4  sub_120F4    callers=  4 size= 728  <- sub_10F96, sub_11F5A, sub_120F4, sub_1253B
+124F2  sub_124F2    callers=  4 size=  73  <- sub_11C1A, sub_1260E, sub_128F8, sub_12D66
+138F5  sub_138F5    callers=  4 size=  32  <- animateFlag, fadeInLogo2, slideInLogo, sub_10744
+1134D  sub_1134D    callers=  3 size= 207  <- data/12882, data/1289C, fadeInLogo
+11C93  sub_11C93    callers=  3 size=  62  <- data/10E78, data/11C89, sub_10E4D
+12448  sub_12448    callers=  3 size=  14  <- sub_10E82, sub_11C1A, sub_11D03
+12456  sub_12456    callers=  3 size=  20  <- sub_10E82, sub_120F4, sub_1260E
+1246A  sub_1246A    callers=  3 size=  36  <- sub_10E82, sub_120F4, sub_12D66
+12C8D  sub_12C8D    callers=  3 size=  23  <- data/11A23, sub_12A1A, sub_12E3B
+13915  sub_13915    callers=  3 size= 253  <- fillRect, sub_1383B, sub_13E49
+10E82  sub_10E82    callers=  2 size= 269  <- checkMem, sub_104D0
+10F96  sub_10F96    callers=  2 size= 115  <- loadLogo, sub_11053
+11CD1  sub_11CD1    callers=  2 size=  50  <- data/1125D, writeString2_mb
+11D03  sub_11D03    callers=  2 size= 562  <- data/11F50, sub_11053
+11F5A  sub_11F5A    callers=  2 size= 410  <- sub_111B4, sub_11F5A
+1248E  sub_1248E    callers=  2 size=  41  <- sub_10E82, sub_128F8
+124B7  sub_124B7    callers=  2 size=  20  <- main, sub_11D03
+1260E  sub_1260E    callers=  2 size= 199  <- sub_11F5A, sub_12D66
+12B8B  sub_12B8B    callers=  2 size=  91  <- sub_11F5A, sub_120F4
+12CA4  sub_12CA4    callers=  2 size= 151  <- sub_12A1A, sub_12B8B
+12D66  sub_12D66    callers=  2 size= 213  <- sub_1260E, sub_128F8
+13EA8  sub_13EA8    callers=  2 size=  32  <- checkKeypresses, data/13E9F
+104D0  sub_104D0    callers=  1 size=  70  <- _main
+10744  sub_10744    callers=  1 size= 379  <- fadeInLogo
+10E4D  sub_10E4D    callers=  1 size=  27  <- showTrademarks
+11053  sub_11053    callers=  1 size= 353  <- fopen
+111B4  sub_111B4    callers=  1 size= 110  <- loadLogo
+1141E  sub_1141E    callers=  1 size=  88  <- _main
+114B7  sub_114B7    callers=  1 size= 134  <- start2
+1153D  sub_1153D    callers=  1 size=1245  <- sub_11AE7
+11AE7  sub_11AE7    callers=  1 size= 138  <- writeString2_mb
+11C1A  sub_11C1A    callers=  1 size=  72  <- sub_10F96
+12437  sub_12437    callers=  1 size=  17  <- sub_11D03
+124CB  sub_124CB    callers=  1 size=  24  <- sub_10E82
+1253B  sub_1253B    callers=  1 size=  90  <- sub_11CD1
+12595  sub_12595    callers=  1 size= 121  <- sub_11C93
+126D5  sub_126D5    callers=  1 size= 128  <- sub_1153D
+12755  sub_12755    callers=  1 size= 100  <- data/127D6
+127E0  sub_127E0    callers=  1 size= 102  <- data/1285B
+128F8  sub_128F8    callers=  1 size= 290  <- sub_120F4
+12A1A  sub_12A1A    callers=  1 size= 369  <- sub_11C93
+12BE6  sub_12BE6    callers=  1 size=  18  <- sub_11D03
+12BF8  sub_12BF8    callers=  1 size=  17  <- sub_11D03
+12C09  sub_12C09    callers=  1 size=  13  <- sub_11D03
+12C16  sub_12C16    callers=  1 size=  17  <- sub_11D03
+12D47  sub_12D47    callers=  1 size=  31  <- sub_126D5
+12E3B  sub_12E3B    callers=  1 size= 129  <- sub_12595
+12EBC  sub_12EBC    callers=  1 size= 128  <- sub_12595
+12F3C  sub_12F3C    callers=  1 size=  34  <- data/128E1
+130F4  sub_130F4    callers=  1 size= 555  <- sub_12A1A
+1331F  sub_1331F    callers=  1 size=  20  <- sub_12595
+13348  sub_13348    callers=  1 size=  31  <- sub_12F3C
+13367  sub_13367    callers=  1 size=  75  <- sub_12E3B
+133B2  sub_133B2    callers=  1 size= 198  <- sub_12CA4
+137FE  sub_137FE    callers=  1 size=  28  <- _main
+1383B  sub_1383B    callers=  1 size= 186  <- drawLine
+13A78  sub_13A78    callers=  1 size= 125  <- init_video
+13BD5  sub_13BD5    callers=  1 size=  73  <- sub_104D0
+13E49  sub_13E49    callers=  1 size=  79  <- checkKeypresses
+----- end target script output -----
+[*] finished executing rank_unnamed_functions.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_renames_ultima1.py', 'noexport']
+[*] reading apply_renames_ultima1.py
+[*] executing apply_renames_ultima1.py
+[*] captured stdout from target script:
+----- begin target script output -----
+12437: 'sub_12437' -> '_dos_open'
+    AH=3Dh OPEN DISK FILE WITH HANDLE.
+12448: 'sub_12448' -> '_dos_close'
+    AH=3Eh CLOSE A FILE WITH HANDLE.
+12456: 'sub_12456' -> '_dos_read'
+    AH=3Fh READ FROM FILE WITH HANDLE.
+1246A: 'sub_1246A' -> '_dos_lseek'
+    AH=42h MOVE FILE READ/WRITE POINTER.
+1248E: 'sub_1248E' -> '_dos_write'
+    AH=40h WRITE TO FILE WITH HANDLE; sets errno=0x1C (ENOSPC) on a short write, exactly matching OUT.EXE's _dos_write.
+124B7: 'sub_124B7' -> '_dos_ioctl_get'
+    AX=4400h IOCTL GET DEVICE INFORMATION.
+124CB: 'sub_124CB' -> '_exit'
+    calls the single registered exit hook (word_18530) if set, then INT 21h/4Ch QUIT WITH EXIT CODE.
+12BE6: 'sub_12BE6' -> '_dos_ioctl_set'
+    AX=4401h IOCTL SET DEVICE INFORMATION.
+12BF8: 'sub_12BF8' -> '_dos_creat'
+    AH=3Ch CREATE A FILE WITH HANDLE (CREAT).
+12C09: 'sub_12C09' -> '_dos_creatnew'
+    AH=5Bh CREATE NEW FILE.
+12C16: 'sub_12C16' -> '_dos_creattemp'
+    AH=5Ah CREATE UNIQUE FILE.
+114B7: 'sub_114B7' -> '_nheapinit'
+    one-time near-heap setup called from start2: extends the program's memory block via SETBLOCK and zeroes the free-list globals (word_18468/6A/6C/6E/74). Same IDB-hygiene situation as OUT.EXE's _nheapinit -- its 'FUNCTION CHUNK AT 23CC' is actually the shared translateDosErrorToErrno tail nested inside this proc's range, not real heap-init code.
+1141E: 'sub_1141E' -> 'setCriticalErrorHandler'
+    toggles a custom DOS INT 24h handler on/off, saving/restoring the original vector in dword_18446 (byte_18445 = installed flag). Called from _main.
+11D03: 'sub_11D03' -> '_open'
+    composite open: interprets O_CREAT/O_TRUNC/O_EXCL flag bits and dispatches to _dos_open/_dos_creat/_dos_creatnew/_dos_creattemp. Called only from _openfile.
+11053: 'sub_11053' -> '_openfile'
+    the real body of fopen (already named, thin wrapper): parses the mode string ('r'/'w'/'a', 'b', '+') and calls _open.
+111B4: 'sub_111B4' -> '_fread'
+    byte-at-a-time buffered read with automatic refill, called (buffer, size, count, stream) from loadLogo to read the raw castle.4/castle.16 CGA/EGA framebuffer images.
+10F96: 'sub_10F96' -> '_fclose'
+    flushes via _flsbuf if dirty, frees the stream buffer via _nfree, releases the OS handle via releaseFileHandle.
+120F4: 'sub_120F4' -> '_flsbuf'
+    flush-buffer-and-write-one-char, matching OUT.EXE's _flsbuf exactly in size (728 bytes) and call signature ((char, stream) -- confirmed by _fclose's call site pushing (0xFFFF, stream)).
+11B71: 'sub_11B71' -> '_nfree'
+    near-heap free: coalesces the freed block into the free-list (sentinel word_1846C/cursor word_18470), matching the call site in _fclose exactly.
+12CA4: 'sub_12CA4' -> '_nmalloc'
+    near-heap allocator: walks the free-list, splits a block if big enough, else calls _nheapgrow (0x133B2) to extend the heap and _nfree to link the new space in before retrying.
+133B2: 'sub_133B2' -> '_nheapgrow'
+    grows the near heap via DOS SETBLOCK. Only called from _nmalloc.
+11C1A: 'sub_11C1A' -> 'releaseFileHandle'
+    closes the OS handle and clears the internal handle-table slot; called only from _fclose.
+11476: 'loc_11476' -> 'criticalErrorHandler'
+    the INT 24h ISR installed by setCriticalErrorHandler. Not recognized as its own proc by IDA (no 'sub_'/'proc' boundary), unlike OUT.EXE's equivalent which at least got a proc far boundary -- named directly as a location instead.
+123CC: 'loc_123CC' -> 'translateDosErrorToErrno'
+    the shared failure tail nearly every _dos_* primitive jumps to, translating _doserrno to a POSIX-style errno. Lives inside _nheapinit's proc range purely because of contiguous layout, exactly matching OUT.EXE's translateDosErrorToErrno situation.
+13F41: 'word_13F41' -> '_doserrno'
+    set by every _dos_* primitive after a failed DOS call; matches OUT.EXE's _doserrno exactly in role.
+18460: 'word_18460' -> 'errno'
+    translated POSIX-style error code -- confirmed by _dos_write storing 0x1C (ENOSPC) into it on a short write, matching OUT.EXE's errno exactly.
+
+[dry] nothing changed. Set DRY_RUN = False to apply.
+----- end target script output -----
+[*] finished executing apply_renames_ultima1.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_renames_ultima1.py']
+[*] reading apply_renames_ultima1.py
+[*] executing apply_renames_ultima1.py
+[*] captured stdout from target script:
+----- begin target script output -----
+12437: 'sub_12437' -> '_dos_open'
+    AH=3Dh OPEN DISK FILE WITH HANDLE.
+12448: 'sub_12448' -> '_dos_close'
+    AH=3Eh CLOSE A FILE WITH HANDLE.
+12456: 'sub_12456' -> '_dos_read'
+    AH=3Fh READ FROM FILE WITH HANDLE.
+1246A: 'sub_1246A' -> '_dos_lseek'
+    AH=42h MOVE FILE READ/WRITE POINTER.
+1248E: 'sub_1248E' -> '_dos_write'
+    AH=40h WRITE TO FILE WITH HANDLE; sets errno=0x1C (ENOSPC) on a short write, exactly matching OUT.EXE's _dos_write.
+124B7: 'sub_124B7' -> '_dos_ioctl_get'
+    AX=4400h IOCTL GET DEVICE INFORMATION.
+124CB: 'sub_124CB' -> '_exit'
+    calls the single registered exit hook (word_18530) if set, then INT 21h/4Ch QUIT WITH EXIT CODE.
+12BE6: 'sub_12BE6' -> '_dos_ioctl_set'
+    AX=4401h IOCTL SET DEVICE INFORMATION.
+12BF8: 'sub_12BF8' -> '_dos_creat'
+    AH=3Ch CREATE A FILE WITH HANDLE (CREAT).
+12C09: 'sub_12C09' -> '_dos_creatnew'
+    AH=5Bh CREATE NEW FILE.
+12C16: 'sub_12C16' -> '_dos_creattemp'
+    AH=5Ah CREATE UNIQUE FILE.
+114B7: 'sub_114B7' -> '_nheapinit'
+    one-time near-heap setup called from start2: extends the program's memory block via SETBLOCK and zeroes the free-list globals (word_18468/6A/6C/6E/74). Same IDB-hygiene situation as OUT.EXE's _nheapinit -- its 'FUNCTION CHUNK AT 23CC' is actually the shared translateDosErrorToErrno tail nested inside this proc's range, not real heap-init code.
+1141E: 'sub_1141E' -> 'setCriticalErrorHandler'
+    toggles a custom DOS INT 24h handler on/off, saving/restoring the original vector in dword_18446 (byte_18445 = installed flag). Called from _main.
+11D03: 'sub_11D03' -> '_open'
+    composite open: interprets O_CREAT/O_TRUNC/O_EXCL flag bits and dispatches to _dos_open/_dos_creat/_dos_creatnew/_dos_creattemp. Called only from _openfile.
+11053: 'sub_11053' -> '_openfile'
+    the real body of fopen (already named, thin wrapper): parses the mode string ('r'/'w'/'a', 'b', '+') and calls _open.
+111B4: 'sub_111B4' -> '_fread'
+    byte-at-a-time buffered read with automatic refill, called (buffer, size, count, stream) from loadLogo to read the raw castle.4/castle.16 CGA/EGA framebuffer images.
+10F96: 'sub_10F96' -> '_fclose'
+    flushes via _flsbuf if dirty, frees the stream buffer via _nfree, releases the OS handle via releaseFileHandle.
+120F4: 'sub_120F4' -> '_flsbuf'
+    flush-buffer-and-write-one-char, matching OUT.EXE's _flsbuf exactly in size (728 bytes) and call signature ((char, stream) -- confirmed by _fclose's call site pushing (0xFFFF, stream)).
+11B71: 'sub_11B71' -> '_nfree'
+    near-heap free: coalesces the freed block into the free-list (sentinel word_1846C/cursor word_18470), matching the call site in _fclose exactly.
+12CA4: 'sub_12CA4' -> '_nmalloc'
+    near-heap allocator: walks the free-list, splits a block if big enough, else calls _nheapgrow (0x133B2) to extend the heap and _nfree to link the new space in before retrying.
+133B2: 'sub_133B2' -> '_nheapgrow'
+    grows the near heap via DOS SETBLOCK. Only called from _nmalloc.
+11C1A: 'sub_11C1A' -> 'releaseFileHandle'
+    closes the OS handle and clears the internal handle-table slot; called only from _fclose.
+11476: 'loc_11476' -> 'criticalErrorHandler'
+    the INT 24h ISR installed by setCriticalErrorHandler. Not recognized as its own proc by IDA (no 'sub_'/'proc' boundary), unlike OUT.EXE's equivalent which at least got a proc far boundary -- named directly as a location instead.
+123CC: 'loc_123CC' -> 'translateDosErrorToErrno'
+    the shared failure tail nearly every _dos_* primitive jumps to, translating _doserrno to a POSIX-style errno. Lives inside _nheapinit's proc range purely because of contiguous layout, exactly matching OUT.EXE's translateDosErrorToErrno situation.
+13F41: 'word_13F41' -> '_doserrno'
+    set by every _dos_* primitive after a failed DOS call; matches OUT.EXE's _doserrno exactly in role.
+18460: 'word_18460' -> 'errno'
+    translated POSIX-style error code -- confirmed by _dos_write storing 0x1C (ENOSPC) into it on a short write, matching OUT.EXE's errno exactly.
+
+Done. Re-export the .asm/.idc and check the new names took, then update docs/roadmap.md's checklist.
+----- end target script output -----
+[*] finished executing apply_renames_ultima1.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima1\ultima1.asm
+[*] gen_file(OFILE_ASM) returned 10721
+[*] exporting IDC to C:\dev\ultima1\ultima1.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima1\ultima1.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'identify.py', 'noexport']
+[*] reading identify.py
+[*] executing identify.py
+[*] captured stdout from target script:
+----- begin target script output -----
+root filename : ULTIMA.EXE
+input file    : D:\GOG Games\Ultima 1\ULTIMA.EXE
+entry point   : 0x0 (cs=0x188f)
+input md5     : ed19976a19a2794b8e3ac528e4f622a5
+
+segments:
+  sg0138       0x010000-0x013ed0  (16080 bytes)
+  sg0525       0x013ed0-0x019e10  (24384 bytes)
+  seg002       0x019e10-0x019e74  (100 bytes)
+  seg003       0x020720-0x020721  (1 bytes)
+  seg004       0x021b20-0x021b21  (1 bytes)
+
+functions: 100 total, 61 named, 39 still sub_XXXXX
+
+structs (4): STR15, Point, Rect, Savegame
+----- end target script output -----
+[*] finished executing identify.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
