@@ -324,7 +324,91 @@ from substantial prior work.
 (2026-08-20). All four of `ULTIMA.EXE`/`GEN.EXE`/`OUT.EXE`/`SPACE.EXE`
 are now fully or near-fully named.
 
-## Per-executable next steps (not yet started)
+## MONDAIN.EXE — next steps
 
-`ultima1_mondain` (1/191, essentially unstarted) is the only remaining
-executable — pick up next.
+Started 2026-08-20 per Paul's direction. Was 1/191, but Paul ran
+BinDiff against `ultima1_out` and applied the matches first, bringing
+it to 134/191 before this session's own work began.
+
+- [x] Ran `identify.py`/`rank_unnamed_functions.py`: confirmed the
+      remaining 57 `sub_XXXXX` were almost entirely one connected
+      cluster fanning out from a single 680-byte far proc called
+      directly by `start2`.
+- [x] Decoded the numeric "message id" immediates passed to
+      `writeString`/`writeStringNewline` as `dseg_base + offset` near
+      pointers (`ida_scripts/dump_msg_strings.py`), which let the whole
+      per-letter command dispatch table be named precisely from the
+      actual prompt text rather than guessed from code shape alone.
+- [x] Single renaming pass: **all 57 remaining functions renamed**,
+      plus one BinDiff-transferred name fixed (`viewChange` →
+      `cmdTransactDisabled` — matched by code shape, not content; the
+      real `"View?"` stub is the separate `cmdViewDisabled`), plus 18
+      globals (`playerHits`, `mondainHits`, `mondainPhase`,
+      `combatActiveFlag`, `gemDestroyedFlag`, etc.) via
+      `ida_scripts/apply_renames_mondain.py`. **191/191 functions named
+      (100%)**. Full writeup in
+      [overview.md](overview.md#mondainexe--findings-log).
+- [ ] **0 structs defined in this IDB** — none of `Point`/`Rect`/
+      `Savegame`/`Creature` have been imported here, unlike every other
+      executable. Not blocking (all renames were done against raw
+      offsets), but worth importing for readability and to type the
+      19×9 map's occupant-state array (`[si+194h]` byte accesses
+      throughout `mondainMainLoop`'s cluster) properly. Needs
+      `apply_structs_mondain.py`, not created yet.
+- [ ] `spellEffectInterficioNunc`'s exact kill condition isn't nailed
+      down — confirmed it backfires (doubles `mondainHits`) when out of
+      `isWithinRange7`, but what actually needs to be true for it to
+      succeed (gem destroyed first? a specific `mondainPhase`? both?)
+      wasn't traced. Matters for the reimplementation since this is
+      presumably the "correct" way to finish Mondain.
+- [ ] Whether `endEncounter`/`writeInUseAndExit` is reached identically
+      on both the win path (after `playMondainDefeatCutscene`) and the
+      lose path (`playerHits`/`playerFood` hitting 0), or whether the
+      win path has its own separate continuation, wasn't confirmed —
+      `playMondainDefeatCutscene`'s own tail wasn't traced past its
+      last `writeString` call.
+- [ ] `cmdHyperjumpDisabled`'s caller sets `word_15B00` (otherwise
+      identified as `mondainHitAnimFrame`) to 1 even though the command
+      itself is a flat "unusable here" stub — unexplained side effect,
+      possibly vestigial. Low priority.
+
+## MONDAIN.EXE status: complete
+
+**191/191 functions named (100%)**, 134 → 191 in one pass
+(2026-08-20). All five executables (`ULTIMA.EXE`/`GEN.EXE`/`OUT.EXE`/
+`SPACE.EXE`/`MONDAIN.EXE`) are now fully named — the entire game's
+function-naming sweep is done. Remaining open items are struct
+definitions (this IDB has none yet) and a handful of semantic
+questions noted above, not unidentified code.
+
+## Cross-IDB follow-ups (all executables now named — pick up next)
+
+With every executable's function-naming sweep complete, remaining work
+shifts to polish and cross-checking:
+
+- [ ] Rename each IDB's segments (`sg*`/`seg00*`/`dseg`) to the
+      `CODE`/`DATA` convention used in `ultima2` — not done for any of
+      the 5 IDBs yet.
+- [ ] Cross-check the structs shared by name across IDBs (`STR15`,
+      `Point`, `Rect`, `Savegame`, `Creature`) actually agree
+      field-for-field with their same-named counterparts in each other
+      IDB — flagged as unverified everywhere they appear.
+- [ ] `apply_structs_mondain.py` — import/define structs in the one IDB
+      that currently has none.
+- [ ] `apply_structs_gen.py` — fix the `_savegame._hits`/`_strength`
+      struct-field mixup flagged under GEN.EXE above.
+- [ ] Fix `word_1F95E` in OUT.EXE (should be a `dw 4 dup(?)` array, not
+      a single `dw` + raw bytes).
+- [ ] Split `_nheapinit`'s mis-scoped proc boundary in OUT.EXE (visually
+      contains `execProgramEntry`/`translateDosErrorToErrno`).
+- [ ] Confirm the SPACE.EXE "leave outer space" comment's "(DOS
+      EXEC...)" phrasing is loose wording, not a genuine architectural
+      difference from the custom-loader mechanism confirmed everywhere
+      else.
+- [ ] Create `docs/file-formats.md` once the first on-disk format is
+      actually traced (savegame layout, the 19×9 Mondain-encounter map
+      format loaded via `readFile` in `mondainMainLoop`, etc.).
+- [ ] Start the actual C++/ScummVM reimplementation — this was always
+      the end goal of the naming sweep; with all 5 executables fully
+      named and their major subsystems documented in overview.md, the
+      groundwork is in place to start designing the engine module.
