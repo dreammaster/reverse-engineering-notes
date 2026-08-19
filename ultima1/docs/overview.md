@@ -23,7 +23,7 @@ identified and renamed in any other IDB it also happens to appear in.
 | IDB | Root file | Role (best guess, to confirm) | Functions named | Structs |
 |---|---|---|---|---|
 | `ultima1.idb` | `ULTIMA.EXE` | Title screen / attract mode, chains unconditionally to `GEN.EXE` | 100 / 100 | `STR15`, `Point`, `Rect`, `Savegame` |
-| `ultima1_gen.idb` | `GEN.EXE` | Character generation / continue, chains to `OUT.EXE` | 71 / 113 | + `Creature` |
+| `ultima1_gen.idb` | `GEN.EXE` | Character generation / continue, chains to `OUT.EXE` | 74 / 113 | + `Creature` |
 | `ultima1_out.idb` | `OUT.EXE` | Overworld/towns/dungeons (outdoor engine) | 352 / 353 | + `DungeonCell`, `DungeonColumn`, `DungeonMap`, `LocationWidget`, `MapLine`, `Map` |
 | `ultima1_space.idb` | `SPACE.EXE` | Space combat minigame | 156 / 210 | + `DuneonRow`, `DungeonMap` (space variant), `SpaceMapShip`, `SpaceMapCell`, `SpaceMapY`, `SpaceMap`, `FightData`, `JumpEntry` |
 | `ultima1_mondain.idb` | `MONDAIN.EXE` | Unknown — essentially unstarted | 1 / 191 | none |
@@ -712,3 +712,42 @@ wasn't traced in detail during that session. On failure, `launchGame`
 calls `sub_115B3` (not yet named — likely the `insertDisk`
 equivalent, matching the retry pattern in every other chain call
 found so far) and retries.
+
+### Character-creation point-buy mechanic, decoded
+
+Second pass, same session — the highest-value finding for the
+reimplementation so far, since this is pure game rule logic with no
+CRT boilerplate involved.
+
+**Ultima I has six character attributes, not five**: `writeDefaultAttributes`
+(already named) displays them literally as `"Strength"`, `"Agility"`
+(not "Dexterity"), `"Stamina"`, `"Charisma"`, `"Wisdom"`,
+`"Intelligence"` — all starting at exactly **10**. The player then
+distributes a pool of **30 points** across them using the arrow keys,
+each point moving one attribute by 1, within a hard range of
+**10 to 25**:
+
+- **`decreaseAttribute`** (Left arrow) — refuses below 10; otherwise
+  decrements the attribute and refunds a point to `_pointsRemaining`.
+- **`increaseAttribute`** (Right arrow) — refuses above 25, and refuses
+  if `_pointsRemaining` is already 0; otherwise increments and spends
+  a point.
+- Both redraw via the already-named `updateAttribute`, which resolved
+  a small IDB oddity along the way: `_savegame._strength` is
+  confirmed (via `updateAttribute`'s own typed `Attribute attr`
+  parameter and its `(_savegame._strength-2)[si]` indexing) to be the
+  base of the real 6-element attribute array. `sub_10E32` (now
+  `decreaseAttribute`) separately indexes the *same* underlying memory
+  through a differently-resolved struct field, `_savegame._hits[si]`
+  — almost certainly a stale/incorrect alternate field name IDA's
+  struct-member resolution attached to that specific access, not a
+  real second array. Not fixed here (a struct-definition edit, out of
+  scope for a plain rename); flagged in roadmap.md.
+- **`clearSelectionArrows`** blanks the `<`/`>` cursor at the old
+  attribute row before `moveSelectedAttrUp`/`Down` (already named)
+  redraws it at the new one via `writeSelectionArrows` (already
+  named).
+
+This is a complete, concrete spec for the reimplementation's character
+creation screen: 6 named attributes, baseline 10, pool of 30, hard
+range [10, 25] per attribute — no guessing needed.

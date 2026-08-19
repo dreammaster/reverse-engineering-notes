@@ -1953,7 +1953,7 @@ saveQuery       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_10DC2       proc near               ; CODE XREF: moveSelectedAttrUp+9\u2193p
+clearSelectionArrows proc near          ; CODE XREF: moveSelectedAttrUp+9\u2193p
                                         ; moveSelectedAttrDown+9\u2193p ...
                 push    bp
                 sub     sp, 2
@@ -1985,7 +1985,7 @@ sub_10DC2       proc near               ; CODE XREF: moveSelectedAttrUp+9\u2193p
                 add     sp, 2
                 pop     bp
                 retn
-sub_10DC2       endp
+clearSelectionArrows endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -2024,7 +2024,7 @@ writeSelectionArrows endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_10E32       proc near               ; CODE XREF: generateCharacter+87\u2193p
+decreaseAttribute proc near             ; CODE XREF: generateCharacter+87\u2193p
                 push    bp
                 sub     sp, 4
                 mov     bp, sp
@@ -2043,18 +2043,18 @@ sub_10E32       proc near               ; CODE XREF: generateCharacter+87\u2193p
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_10E5A:                              ; CODE XREF: sub_10E32+12\u2191j
+loc_10E5A:                              ; CODE XREF: decreaseAttribute+12\u2191j
                 xor     ax, ax
                 add     sp, 4
                 pop     bp
                 retn
-sub_10E32       endp
+decreaseAttribute endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_10E61       proc near               ; CODE XREF: generateCharacter+99\u2193p
+increaseAttribute proc near             ; CODE XREF: generateCharacter+99\u2193p
                 push    bp
                 sub     sp, 2
                 mov     bp, sp
@@ -2078,13 +2078,13 @@ sub_10E61       proc near               ; CODE XREF: generateCharacter+99\u2193p
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_10E97:                              ; CODE XREF: sub_10E61+12\u2191j
-                                        ; sub_10E61+19\u2191j
+loc_10E97:                              ; CODE XREF: increaseAttribute+12\u2191j
+                                        ; increaseAttribute+19\u2191j
                 xor     ax, ax
                 add     sp, 2
                 pop     bp
                 retn
-sub_10E61       endp
+increaseAttribute endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -2098,7 +2098,7 @@ arg_4           = word ptr  6
                 sub     sp, 2
                 mov     bp, sp
                 push    [bp+arg_4]
-                call    sub_10DC2
+                call    clearSelectionArrows
                 mov     sp, bp
                 dec     [bp+arg_4]
                 cmp     [bp+arg_4], 1
@@ -2127,7 +2127,7 @@ arg_4           = word ptr  6
                 sub     sp, 2
                 mov     bp, sp
                 push    [bp+arg_4]
-                call    sub_10DC2
+                call    clearSelectionArrows
                 mov     sp, bp
                 inc     [bp+arg_4]
                 cmp     [bp+arg_4], 6
@@ -2405,7 +2405,7 @@ off_110D8       dw offset space         ; DATA XREF: generateCharacter+67\u2191r
 
 left:                                   ; DATA XREF: generateCharacter+82\u2191o
                 push    [bp+14h+attrNum]
-                call    sub_10E32
+                call    decreaseAttribute
                 mov     sp, bp
                 test    ax, ax
                 jz      short loc_1114B
@@ -2415,7 +2415,7 @@ left:                                   ; DATA XREF: generateCharacter+82\u2191o
 
 right:                                  ; DATA XREF: generateCharacter+7E\u2191o
                 push    [bp+14h+attrNum]
-                call    sub_10E61
+                call    increaseAttribute
                 mov     sp, bp
                 test    ax, ax
                 jz      short loc_1114B
@@ -2481,7 +2481,7 @@ loc_1115A:                              ; CODE XREF: generateCharacter+E5\u2191j
 
 loc_11163:                              ; CODE XREF: generateCharacter+F4\u2191j
                 push    [bp+14h+attrNum]
-                call    sub_10DC2
+                call    clearSelectionArrows
                 mov     sp, bp
                 call    selectRace
                 mov     _savegame._race, ax
@@ -10097,8 +10097,8 @@ aSaveThisCharac db 'Save this character? (Y-N) ',0
 ; char aYes[]
 aYes            db 'Yes',0              ; DATA XREF: saveQuery+54\u2191o
 ; char asc_14589[]
-asc_14589       db ' ',0                ; DATA XREF: sub_10DC2+1A\u2191o
-                                        ; sub_10DC2+37\u2191o
+asc_14589       db ' ',0                ; DATA XREF: clearSelectionArrows+1A\u2191o
+                                        ; clearSelectionArrows+37\u2191o
 ; char aPointsLeftToDi[]
 aPointsLeftToDi db 'Points left to distribute:',0
                                         ; DATA XREF: writeDefaultAttributes+2C\u2191o
@@ -10671,7 +10671,7 @@ _savegame       Savegame <?>            ; DATA XREF: updateAttribute+2C\u2191t
                                         ; getName+6C\u2191w ...
 stru_14FC4      STR15 4 dup(<?>)        ; DATA XREF: generateCharacter+2EB\u2191w
                                         ; readSavegameList+36\u2191o ...
-_pointsRemaining dw ?                   ; DATA XREF: sub_10E61+14\u2191r
+_pointsRemaining dw ?                   ; DATA XREF: increaseAttribute+14\u2191r
                                         ; generateCharacter+18\u2191w ...
                 db    ? ;
                 db    ? ;

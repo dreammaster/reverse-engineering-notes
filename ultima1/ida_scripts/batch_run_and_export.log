@@ -4013,3 +4013,133 @@ structs (5): STR15, Point, Rect, Creature, Savegame
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_gen.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_renames_gen.py', 'noexport']
+[*] reading apply_renames_gen.py
+[*] executing apply_renames_gen.py
+[*] captured stdout from target script:
+----- begin target script output -----
+12491: already '_flsbuf' -- skipping
+127E8: already 'findFileHandleSlot' -- skipping
+120A0: already '_open' -- skipping
+122F7: already '_filbuf' -- skipping
+128AA: already '_read' -- skipping
+12DEA: already '_lseek' -- skipping
+12C04: already 'allocFileBuffer' -- skipping
+11A3A: already '_openfile' -- skipping
+11948: already 'chainToExecutable' -- skipping
+11F4E: already 'execProgramEntry' -- skipping
+12831: already 'findExecutableFile' -- skipping
+12A93: already 'buildAndChainExecutable' -- skipping
+13143: already 'execProgram' -- skipping
+11643: already 'launchGame' -- skipping
+13F62: already 'playSound' -- skipping
+13F7F: already 'soundEffect0' -- skipping
+13F97: already 'soundEffect1' -- skipping
+13FB5: already 'soundEffect2' -- skipping
+13FBC: already 'soundEffect3' -- skipping
+13FC3: already 'soundEffect4' -- skipping
+13FE3: already 'soundEffect5' -- skipping
+13FEA: already 'soundEffect6' -- skipping
+14004: already 'soundEffect7' -- skipping
+14038: already 'soundEffect8' -- skipping
+14051: already 'soundEffect9' -- skipping
+13D61: already 'videoDrawPoint' -- skipping
+13A1D: already 'drawLineInternal' -- skipping
+10E32: 'sub_10E32' -> 'decreaseAttribute'
+    Left-arrow handler: decrements the given attribute (min 10) and refunds a point to _pointsRemaining, redrawing via updateAttribute. Returns 0/1 for whether the change was applied (at the floor, does nothing). Confirms the attribute range's floor is 10, matching writeDefaultAttributes' starting value.
+10E61: 'sub_10E61' -> 'increaseAttribute'
+    Right-arrow handler: increments the given attribute (max 25, only if _pointsRemaining > 0) and spends a point, redrawing via updateAttribute. Mirror of decreaseAttribute; together these define generateCharacter's point-buy range as 10-25.
+10DC2: 'sub_10DC2' -> 'clearSelectionArrows'
+    blanks the left/right selection-arrow characters at the given attribute row (columns 0x0B and 0x1E) before moveSelectedAttrUp/Down redraws them at the new row via writeSelectionArrows.
+
+[dry] nothing changed. Set DRY_RUN = False to apply.
+----- end target script output -----
+[*] finished executing apply_renames_gen.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_gen.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_renames_gen.py']
+[*] reading apply_renames_gen.py
+[*] executing apply_renames_gen.py
+[*] captured stdout from target script:
+----- begin target script output -----
+12491: already '_flsbuf' -- skipping
+127E8: already 'findFileHandleSlot' -- skipping
+120A0: already '_open' -- skipping
+122F7: already '_filbuf' -- skipping
+128AA: already '_read' -- skipping
+12DEA: already '_lseek' -- skipping
+12C04: already 'allocFileBuffer' -- skipping
+11A3A: already '_openfile' -- skipping
+11948: already 'chainToExecutable' -- skipping
+11F4E: already 'execProgramEntry' -- skipping
+12831: already 'findExecutableFile' -- skipping
+12A93: already 'buildAndChainExecutable' -- skipping
+13143: already 'execProgram' -- skipping
+11643: already 'launchGame' -- skipping
+13F62: already 'playSound' -- skipping
+13F7F: already 'soundEffect0' -- skipping
+13F97: already 'soundEffect1' -- skipping
+13FB5: already 'soundEffect2' -- skipping
+13FBC: already 'soundEffect3' -- skipping
+13FC3: already 'soundEffect4' -- skipping
+13FE3: already 'soundEffect5' -- skipping
+13FEA: already 'soundEffect6' -- skipping
+14004: already 'soundEffect7' -- skipping
+14038: already 'soundEffect8' -- skipping
+14051: already 'soundEffect9' -- skipping
+13D61: already 'videoDrawPoint' -- skipping
+13A1D: already 'drawLineInternal' -- skipping
+10E32: 'sub_10E32' -> 'decreaseAttribute'
+    Left-arrow handler: decrements the given attribute (min 10) and refunds a point to _pointsRemaining, redrawing via updateAttribute. Returns 0/1 for whether the change was applied (at the floor, does nothing). Confirms the attribute range's floor is 10, matching writeDefaultAttributes' starting value.
+10E61: 'sub_10E61' -> 'increaseAttribute'
+    Right-arrow handler: increments the given attribute (max 25, only if _pointsRemaining > 0) and spends a point, redrawing via updateAttribute. Mirror of decreaseAttribute; together these define generateCharacter's point-buy range as 10-25.
+10DC2: 'sub_10DC2' -> 'clearSelectionArrows'
+    blanks the left/right selection-arrow characters at the given attribute row (columns 0x0B and 0x1E) before moveSelectedAttrUp/Down redraws them at the new row via writeSelectionArrows.
+
+Done. Re-export the .asm/.idc and check the new names took, then update docs/roadmap.md's checklist.
+----- end target script output -----
+[*] finished executing apply_renames_gen.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima1\ultima1_gen.asm
+[*] gen_file(OFILE_ASM) returned 10993
+[*] exporting IDC to C:\dev\ultima1\ultima1_gen.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima1\ultima1_gen.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_gen.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'identify.py', 'noexport']
+[*] reading identify.py
+[*] executing identify.py
+[*] captured stdout from target script:
+----- begin target script output -----
+root filename : GEN.EXE
+input file    : D:\GOG Games\Ultima 1\GEN.EXE
+entry point   : 0x0 (cs=0x1000)
+input md5     : e54871dbef88cf49d99b753089f6f5b4
+
+segments:
+  sg013A       0x010000-0x014260  (16992 bytes)
+  dseg         0x014260-0x015130  (3792 bytes)
+  sg064D       0x015130-0x016530  (5120 bytes)
+  sg078D       0x016530-0x016531  (1 bytes)
+
+functions: 113 total, 74 named, 39 still sub_XXXXX
+
+structs (5): STR15, Point, Rect, Creature, Savegame
+----- end target script output -----
+[*] finished executing identify.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0

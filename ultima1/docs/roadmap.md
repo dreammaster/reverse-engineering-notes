@@ -241,12 +241,20 @@ Started 2026-08-20 per Paul's direction. Was 44/113; exported
       save-slot digit as `argv[1]`/`argv[2]`). 71/113 functions now
       named (63%). Full writeup in
       [overview.md](overview.md#genexe-crt-layer-and-exec-chain-to-outexe).
-- [ ] **Highest-value remaining work**: `generateCharacter`'s own
-      helpers (`sub_10DC2`, `sub_10E32`, `sub_10E61` — all called
-      directly from the already-named `generateCharacter`) almost
-      certainly hold the actual attribute-rolling/stat-generation
-      formulas. Not yet traced — this is probably the single most
-      reimplementation-relevant finding left in this executable.
+- [x] **Character-creation point-buy mechanic decoded**: 6 attributes
+      (Strength/Agility/Stamina/Charisma/Wisdom/Intelligence — not the
+      5 assumed), baseline 10, 30-point pool, hard range [10, 25].
+      Named `decreaseAttribute`/`increaseAttribute`/
+      `clearSelectionArrows`. 74/113 functions now named (65%). Full
+      writeup in
+      [overview.md](overview.md#character-creation-point-buy-mechanic-decoded).
+- [ ] **IDB hygiene**: `_savegame._hits[si]` (used in `decreaseAttribute`)
+      appears to be a stale/incorrect alternate struct-field name for
+      the same memory `_savegame._strength[]` (confirmed correct via
+      `updateAttribute`) actually resolves to — likely IDA attached
+      the wrong overlapping field name to that one access. Needs a
+      struct-definition fix (`apply_structs_gen.py`, not created yet),
+      not a plain rename. See overview.md.
 - [ ] Check OUT.EXE's `start`/`main` for `argv[1]`/`argv[2]` handling
       (the video-mode letter and save-slot digit GEN.EXE passes via
       `launchGame`) — likely undocumented there since OUT.EXE's own

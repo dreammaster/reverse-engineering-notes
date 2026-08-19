@@ -117,6 +117,27 @@ RENAMES = [
     (0x13A1D, "drawLineInternal",
      "Bresenham line rasterizer, matching ULTIMA.EXE's "
      "drawLineInternal exactly in size (186 bytes)."),
+
+    # -- second pass: generateCharacter's own point-buy attribute
+    # allocation logic -- the actual character-creation game mechanic.
+    # See docs/overview.md#character-creation-point-buy-mechanic-decoded. --
+
+    (0x10E32, "decreaseAttribute",
+     "Left-arrow handler: decrements the given attribute (min 10) and "
+     "refunds a point to _pointsRemaining, redrawing via "
+     "updateAttribute. Returns 0/1 for whether the change was applied "
+     "(at the floor, does nothing). Confirms the attribute range's "
+     "floor is 10, matching writeDefaultAttributes' starting value."),
+    (0x10E61, "increaseAttribute",
+     "Right-arrow handler: increments the given attribute (max 25, "
+     "only if _pointsRemaining > 0) and spends a point, redrawing via "
+     "updateAttribute. Mirror of decreaseAttribute; together these "
+     "define generateCharacter's point-buy range as 10-25."),
+    (0x10DC2, "clearSelectionArrows",
+     "blanks the left/right selection-arrow characters at the given "
+     "attribute row (columns 0x0B and 0x1E) before "
+     "moveSelectedAttrUp/Down redraws them at the new row via "
+     "writeSelectionArrows."),
 ]
 
 # (ea, new_name, note)
