@@ -181,6 +181,74 @@ immediately followed by raw `db` bytes rather than a proper 4-element
 array — IDA's auto-analysis didn't recognize the boundary. Not fixed
 yet; see roadmap.md.
 
+### OUT.EXE CRT file-I/O layer, decoded
+
+Second pass, same session. `readFile`/`writeFile`/`_fopen` were already
+named going in; traced the full layer underneath them by reading each
+function's body directly (not just caller/callee shape), confirming as
+I went via the exact `INT 21h` subfunction each one issues. The bottom
+layer matches Microsoft C's documented `<dos.h>` primitives closely
+enough (including which `AH=` subfunction each one uses) that I'm
+confident these are the right names even without symbol-table
+confirmation:
+
+```
+_fopen (was already named)
+  -> _openfile (0x1C791)         parses the "rb"/"wb"/"a+" mode string
+       -> _open (0x1CA14)         composite: O_CREAT/O_TRUNC/O_EXCL flag
+                                   dispatch (flag bit values match MSC's
+                                   fcntl.h exactly: 0x100/0x200/0x400)
+            -> _dos_open (0x19578)        AH=3Dh
+            -> _dos_creat (0x1D37C)       AH=3Ch
+            -> _dos_creatnew (0x1D38D)    AH=5Bh (O_CREAT|O_EXCL)
+            -> _dos_creattemp (0x1D39A)   AH=5Ah
+
+readFile -> _fread (0x1C8F2)  -\
+writeFile -> _fwrite (0x1C960) -+-> _filbuf (0x1CC6B) / _flsbuf (0x1CE05)
+                                        -> allocFileBuffer (0x1D30F)
+                                        -> _dos_read/_dos_write/_dos_lseek
+
+_fclose (0x1C6D4)
+  -> _flsbuf (flush if dirty), _nfree (release buffer)
+  -> releaseFileHandle (0x1C9CC)
+       -> findFileHandleSlot (0x1D0DD)   internal handle-table lookup
+       -> _dos_close (0x19589)           AH=3Eh
+
+_flushall (0x190C0)   iterates the 20-slot static FILE table (base
+                       0B124h, 14 bytes/slot -- almost certainly the
+                       classic CRT _iob[] array, though the address
+                       itself isn't renamed since IDA only sees it as
+                       an arithmetic literal, not a labeled operand);
+                       flushes any stream with unwritten data via
+                       _dos_lseek + _dos_write. Called from
+                       readSavegame's invalid-save-slot fallback and
+                       from start2 -- i.e. this program calls CRT
+                       _flushall directly at specific points, not just
+                       implicitly at exit.
+```
+
+Also renamed 3 globals in this cluster, identified by the exact
+numeric values stored into them:
+- **`_doserrno`** (`word_1D4F1`) — raw DOS error code, set after every
+  DOS-touching CRT call; `readFile`/`writeFile` poll it to decide
+  whether to prompt `insertDisk` and retry (this is the "please
+  reinsert the disk" floppy-era UX).
+- **`errno`** (`word_1ED22`) — translated POSIX-style code. Confirmed
+  by the values themselves: `9`=EBADF (handle not found),
+  `0x11`=EEXIST / `0x16`=EINVAL (in `_open`'s create-flag branches),
+  `0x18`=EMFILE (`_openfile`'s FILE table full), `0x1C`=ENOSPC (short
+  `_dos_write`) — all exactly right per MSC's `errno.h`.
+- **`_fmode`** (`word_1EC50`) — default text/binary mode, read by
+  `_openfile` before the mode string's `'b'`on overrides it.
+
+**Not pursued further**: `_dos_ioctl_get`/`_dos_ioctl_set` (the
+`isatty()`-style device-info calls) and `allocFileBuffer` don't map to
+a single confidently-known MSC symbol, so they got descriptive names
+instead of guessed CRT names. `word_1EC60`/the `17E2h`-based handle
+table itself isn't struct-ified yet — would need `apply_structs_out.py`
+to do properly (a `FileHandleSlot { inUse; dosHandle }`-shaped array),
+left for a future pass since it's CRT plumbing, not game logic.
+
 ### `playSound` / `playFX` — sound-effect jump table, not yet decoded
 
 `playSound(effectNum)` (already named) dispatches through a 10-entry

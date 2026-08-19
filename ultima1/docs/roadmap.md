@@ -54,19 +54,14 @@ OUT.EXE**.
       `ida_scripts/apply_renames_out.py` — `getKeypressAndWaitRaw`,
       `toLowerLetter`, `_nmalloc`, `_nfree`, `_nheapgrow`, `readAmount`,
       `isDigit`. Full writeup in
-      [overview.md](overview.md#outexe--findings-log). 80 `sub_XXXXX`
-      remain.
-- [ ] Continue the ranked sweep — next up by caller count (from the
-      `rank_unnamed_functions.py` run): the `198C0`/`1CE05`/`1D0DD`
-      cluster at `0x1CE05`/`0x1C6D4`/etc. is very likely the CRT
-      buffered stdio (`fopen`/`fread`/`fwrite`) implementation
-      underneath `readFile`/`writeFile`/`_fopen` (same reasoning as the
-      near-heap cluster: `readFile`/`writeFile` already call `_fopen`
-      then a `sub_XXXXX` that looks like `fread`/`fwrite`-alike, which
-      calls another `sub_XXXXX` that looks like a retry/close path).
-      Worth confirming and naming as a cluster, but lower priority than
-      game-logic functions since the C++ reimplementation won't
-      reproduce DOS-era buffered I/O internals byte-for-byte.
+      [overview.md](overview.md#outexe--findings-log).
+- [x] Second renaming pass: confirmed the full CRT file-I/O layer
+      underneath `readFile`/`writeFile`/`_fopen` was right — 21
+      functions + 3 globals (`_fread`, `_fwrite`, `_fclose`, `_filbuf`,
+      `_flsbuf`, `_openfile`, `_open`, `_flushall`, the `_dos_*` raw
+      DOS primitives, `errno`/`_doserrno`/`_fmode`). Full writeup in
+      [overview.md](overview.md#outexe-crt-file-io-layer-decoded).
+      294/353 functions now named, 59 `sub_XXXXX` remain.
 - [ ] Decode `playSound`'s 10-entry effect jump table (`off_1F94A`,
       handlers `0x1AE65`-`0x1AF37`) by cross-referencing `playFX` call
       sites' literal `effectNum` arguments against game context — see
