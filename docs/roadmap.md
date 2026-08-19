@@ -229,16 +229,36 @@ character-generation logic of its own. Nothing left to do here beyond
 the general cross-IDB follow-ups already logged under OUT.EXE (struct
 field cross-checks, segment renames).
 
-## Per-executable next steps
+## GEN.EXE — next steps
 
-Next: **`ultima1_gen` (GEN.EXE)**, per Paul's direction (2026-08-20)
-— confirmed by this session's work to be the actual character-
-creation/continue-game executable that `ULTIMA.EXE` chains to. Was
-44/113 functions named as of the initial catalog; expect the same CRT
-cluster (heap allocator, stdio, `_dos_*` primitives, exec-chaining) to
-transfer quickly by the same byte-size/shape-matching approach used
-for `ultima1`, leaving more time for the character-generation game
-logic itself.
+Started 2026-08-20 per Paul's direction. Was 44/113; exported
+`.asm`/`.idc` for the first time.
+
+- [x] First renaming pass: transferred the CRT cluster (8 functions,
+      several exact-byte-size matches to OUT.EXE) and the `playSound`
+      table, and confirmed + named the full exec-chain to `OUT.EXE`
+      (`launchGame` launches roughly `OUT C 0` — video-mode letter and
+      save-slot digit as `argv[1]`/`argv[2]`). 71/113 functions now
+      named (63%). Full writeup in
+      [overview.md](overview.md#genexe-crt-layer-and-exec-chain-to-outexe).
+- [ ] **Highest-value remaining work**: `generateCharacter`'s own
+      helpers (`sub_10DC2`, `sub_10E32`, `sub_10E61` — all called
+      directly from the already-named `generateCharacter`) almost
+      certainly hold the actual attribute-rolling/stat-generation
+      formulas. Not yet traced — this is probably the single most
+      reimplementation-relevant finding left in this executable.
+- [ ] Check OUT.EXE's `start`/`main` for `argv[1]`/`argv[2]` handling
+      (the video-mode letter and save-slot digit GEN.EXE passes via
+      `launchGame`) — likely undocumented there since OUT.EXE's own
+      argument parsing wasn't traced during that session.
+- [ ] Savegame-slot management cluster not yet traced:
+      `sub_11455`/`sub_114BB` (continuePreviousGame/main helpers),
+      `sub_11B9B` (readSavegameList helper), `sub_1197D`/`sub_11ED5`
+      (shared by generateCharacter/readSavegameList/`sub_11A3A`).
+- [ ] `sub_115B3` (called from `launchGame` on a failed chain attempt)
+      — likely the `insertDisk` equivalent; not yet confirmed.
+
+## Per-executable next steps (not yet started)
 
 `ultima1_space`, `ultima1_mondain` remain untouched beyond the initial
 `identify.py` cataloging — pick up after `ultima1_gen`.
