@@ -22,7 +22,7 @@ identified and renamed in any other IDB it also happens to appear in.
 
 | IDB | Root file | Role (best guess, to confirm) | Functions named | Structs |
 |---|---|---|---|---|
-| `ultima1.idb` | `ULTIMA.EXE` | Title screen / attract mode, chains unconditionally to `GEN.EXE` | 74 / 100 | `STR15`, `Point`, `Rect`, `Savegame` |
+| `ultima1.idb` | `ULTIMA.EXE` | Title screen / attract mode, chains unconditionally to `GEN.EXE` | 100 / 100 | `STR15`, `Point`, `Rect`, `Savegame` |
 | `ultima1_gen.idb` | `GEN.EXE` | Character generation | 44 / 113 | + `Creature` |
 | `ultima1_out.idb` | `OUT.EXE` | Overworld/towns/dungeons (outdoor engine) | 352 / 353 | + `DungeonCell`, `DungeonColumn`, `DungeonMap`, `LocationWidget`, `MapLine`, `Map` |
 | `ultima1_space.idb` | `SPACE.EXE` | Space combat minigame | 156 / 210 | + `DuneonRow`, `DungeonMap` (space variant), `SpaceMapShip`, `SpaceMapCell`, `SpaceMapY`, `SpaceMap`, `FightData`, `JumpEntry` |
@@ -547,14 +547,12 @@ range (IDA merged contiguous code with no gap) rather than being
 recognized as separate functions — named as locations rather than
 fixing the boundary, same tradeoff as before.
 
-**Not yet found here**: `_filbuf`, `_fwrite`, `allocFileBuffer`,
-`findFileHandleSlot`, `_flushall`, `_read`/`_write`/`_lseek` (the
-text-mode CRT layer), `atexit`, `_creat`. Likely present somewhere in
-the remaining 30 `sub_XXXXX` (this executable barely uses file I/O —
-just reading two fixed image files — so several of OUT.EXE's I/O
-functions may simply be unused/uncalled here, same as `atexit`/`_creat`
-turned out to be in OUT.EXE). Not chased further yet — see
-roadmap.md.
+**Not yet found here**: `_fwrite`, `_flushall`, `atexit`, `_creat` —
+this executable never writes files (just reads two fixed images) or
+registers an exit hook, so those CRT pieces are apparently just not
+linked in/reachable, consistent with OUT.EXE having several genuinely
+unused CRT siblings too. Everything else in the CRT layer was found
+in the fourth pass below.
 
 ### ULTIMA.EXE chains unconditionally to GEN.EXE
 
@@ -619,3 +617,50 @@ about a real capability (multi-byte text) this function doesn't have
 — worth double-checking any other pre-2026-08-19 names in this IDB
 with similar skepticism if they stop making sense once their callees
 are understood.
+
+### ULTIMA.EXE complete — 100/100 (100%)
+
+Fourth pass, same session, closes out ULTIMA.EXE entirely. Two
+categories of findings:
+
+**Completed the transferred CRT cluster** — the remaining stdio
+internals (`_filbuf`, `_read`, `_lseek`, `_write`, `allocFileBuffer`,
+`findFileHandleSlot`) all matched OUT.EXE's equivalents by **exact
+byte size** (e.g. `_filbuf` is 410 bytes in both executables), on top
+of the shape/role matches already established — strong enough evidence
+to name confidently without re-deriving each one from scratch. Also
+resolved the `argv[1][0]=='C'` mystery flagged at the end of the last
+pass: `toupper(argv[1]) == 'C'` sets a flag that `init_video` uses to
+force CGA mode, overriding hardware auto-detection — a command-line
+compatibility switch, not anything game-logic-related.
+
+**Found the same function duplicated at two addresses** — `strncpy`
+and `toupper` each exist as two byte-for-byte identical
+implementations at different addresses (`strncpy`/`strncpy2`,
+`toupper`/`toupper2` — IDA requires unique global names, hence the
+suffix). Not a bug or a naming mistake: static linking pulled in the
+same small CRT utility function from two different `.obj` files
+without deduplication, a real (if mildly wasteful) property of how
+this binary was built.
+
+**Rest of the printf family decoded**: `formatArg`'s `%x`/`%o`
+conversions (`formatHex`, `formatOctal`, reached via a jump table) and
+its width/precision parsing (`atoi`, `isdigit`). Also named
+`videoDrawPoint` (the CGA/Tandy/EGA-aware pixel primitive underneath
+`fillRect`/`drawLine`, matching OUT.EXE's equivalent in role) and its
+`videoDrawPointAlt` sibling entry point (used only by the flag/logo
+animation code, likely an XOR-style draw mode — not fully traced),
+`drawLineInternal` (the Bresenham rasterizer under `drawLine`),
+`buildScanlineOffsetTable` (matching OUT.EXE exactly), `divmod32`
+(matching OUT.EXE's shift-subtract 32-bit division exactly),
+`drawLogoPixelRow` (an ASCII-art-style bitmap renderer for the fading
+logo graphic), `flushKeyboardBuffer` (a BIOS-generation-dependent
+type-ahead-buffer clear), and `drawAnimatedCursor` (an 8×8, 4-frame
+sprite blit called from the title screen's input poll — almost
+certainly the blinking "press any key" prompt, though its exact glyph
+data wasn't decoded).
+
+**Session totals for ULTIMA.EXE**: 39 → 100 functions named (100%),
+across 4 passes. Combined with confirming the full `ULTIMA.EXE` →
+`GEN.EXE` → `OUT.EXE` ↔ `SPACE.EXE` chain architecture, this
+executable is fully documented.

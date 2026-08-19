@@ -204,21 +204,41 @@ early. Was 39/100 named; exported `.asm`/`.idc` for the first time.
       (`vsprintf`, `formatArg`, `fputs`, `putc`). 74/100 functions now
       named (74%). Full writeup in
       [overview.md](overview.md#writestring2_mb-was-a-misnamed-printf-not-multi-byte-text-handling).
-- [ ] `sub_1153D` (1245 bytes, the single largest unnamed function in
-      this executable, notably *larger* than anything found in
-      OUT.EXE's whole CRT/game-logic sweep) is called from
-      `writeString2_mb` (a name from prior work, "mb" suggesting
-      "multi-byte" — possibly a proportional/variable-width font
-      renderer for the title screen's text). Worth investigating early
-      since large text-rendering logic is directly useful for the
-      reimplementation's UI layer.
-- [ ] `argv[1][0] == 'C'` check in `_main` (sets `word_188F8`) not yet
-      understood — candidate hypothesis is a color/mono video-mode
-      command-line override, unconfirmed.
+- [x] Fourth renaming pass: completed the transferred CRT cluster
+      (`_filbuf`/`_read`/`_lseek`/`_write`/`allocFileBuffer`/
+      `findFileHandleSlot`, all matching OUT.EXE by exact byte size),
+      resolved the `argv[1][0]=='C'` mystery (forces CGA video mode,
+      overriding hardware auto-detection — confirmed via `init_video`),
+      discovered `strncpy`/`toupper` are each duplicated at two
+      addresses (`strncpy2`/`toupper2`, real static-linking artifact
+      not a bug), finished the printf family (`formatHex`,
+      `formatOctal`, `atoi`, `isdigit`), and named the remaining
+      graphics/animation helpers (`videoDrawPoint`,
+      `videoDrawPointAlt`, `drawLineInternal`,
+      `buildScanlineOffsetTable`, `divmod32`, `drawLogoPixelRow`,
+      `flushKeyboardBuffer`, `drawAnimatedCursor`). Full writeup in
+      [overview.md](overview.md#ultimaexe-complete--100100-100).
 
-## Per-executable next steps (not yet started)
+## ULTIMA.EXE status: complete
 
-`ultima1_space`, `ultima1_gen`, `ultima1_mondain` — untouched this
-session beyond the initial `identify.py` cataloging in overview.md.
-Pick up after `ultima1` (`ultima1_space` is furthest along of the
-remaining three).
+**100/100 functions named (100%)**, 39 → 100 across 4 passes this
+session (2026-08-19/20). Confirmed the full executable-chaining
+architecture (`ULTIMA.EXE` → `GEN.EXE` → `OUT.EXE` ↔ `SPACE.EXE`) and
+that this executable is purely the title/attract-mode screen with no
+character-generation logic of its own. Nothing left to do here beyond
+the general cross-IDB follow-ups already logged under OUT.EXE (struct
+field cross-checks, segment renames).
+
+## Per-executable next steps
+
+Next: **`ultima1_gen` (GEN.EXE)**, per Paul's direction (2026-08-20)
+— confirmed by this session's work to be the actual character-
+creation/continue-game executable that `ULTIMA.EXE` chains to. Was
+44/113 functions named as of the initial catalog; expect the same CRT
+cluster (heap allocator, stdio, `_dos_*` primitives, exec-chaining) to
+transfer quickly by the same byte-size/shape-matching approach used
+for `ultima1`, leaving more time for the character-generation game
+logic itself.
+
+`ultima1_space`, `ultima1_mondain` remain untouched beyond the initial
+`identify.py` cataloging — pick up after `ultima1_gen`.

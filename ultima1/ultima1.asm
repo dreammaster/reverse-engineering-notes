@@ -657,7 +657,7 @@ loc_1041A:                              ; CODE XREF: animateFlag+7E\u2193j
                 push    [bp+y1]
                 push    ax
                 push    bx
-                call    sub_138F5
+                call    videoDrawPointAlt
                 mov     sp, bp
                 jmp     short loc_10464
 ; ---------------------------------------------------------------------------
@@ -670,7 +670,7 @@ loc_1044E:                              ; CODE XREF: animateFlag+4C\u2191j
                 push    [bp+val1]
                 push    bx
                 push    ax
-                call    sub_138F5
+                call    videoDrawPointAlt
                 mov     sp, bp
 
 loc_10464:                              ; CODE XREF: animateFlag+63\u2191j
@@ -757,7 +757,7 @@ animateFlagRandom endp
 
 ; Attributes: fpd=6
 
-sub_104D0       proc near               ; CODE XREF: _main+36\u2193p
+checkVideoCard  proc near               ; CODE XREF: _main+36\u2193p
 
 var_4           = word ptr -4
 
@@ -774,34 +774,34 @@ var_4           = word ptr -4
                 mov     sp, bp
                 mov     ax, 1
                 push    ax
-                call    sub_10E82
+                call    exit
 ; ---------------------------------------------------------------------------
                 mov     sp, bp
 
-loc_104F1:                              ; CODE XREF: sub_104D0+D\u2191j
+loc_104F1:                              ; CODE XREF: checkVideoCard+D\u2191j
                 cmp     [bp+6+var_4], 2
                 jnz     short loc_10509
                 cmp     word_188F8, 0
                 jnz     short loc_10509
                 mov     ax, 1
                 push    ax
-                call    sub_13BD5
+                call    probeMemoryForVideoMode
                 mov     sp, bp
                 jmp     short loc_10511
 ; ---------------------------------------------------------------------------
 
-loc_10509:                              ; CODE XREF: sub_104D0+25\u2191j
-                                        ; sub_104D0+2C\u2191j
+loc_10509:                              ; CODE XREF: checkVideoCard+25\u2191j
+                                        ; checkVideoCard+2C\u2191j
                 xor     ax, ax
                 push    ax
-                call    sub_13BD5
+                call    probeMemoryForVideoMode
                 mov     sp, bp
 
-loc_10511:                              ; CODE XREF: sub_104D0+37\u2191j
+loc_10511:                              ; CODE XREF: checkVideoCard+37\u2191j
                 add     sp, 4
                 pop     bp
                 retn
-sub_104D0       endp
+checkVideoCard  endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -819,7 +819,7 @@ checkMem        proc near               ; CODE XREF: _main+39\u2193p
                 mov     sp, bp
                 mov     ax, 1
                 push    ax
-                call    sub_10E82
+                call    exit
 ; ---------------------------------------------------------------------------
                 mov     sp, bp
 
@@ -1023,13 +1023,13 @@ loc_1067C:                              ; CODE XREF: fadeInLogo+51\u2191j
                 mov     bx, [bp+1Eh+var_8]
                 mov     cx, [bp+1Eh+var_1C]
                 mov     dx, [bp+1Eh+var_1E]
-                call    sub_1134D
+                call    divmod32
                 mov     ax, [bp+1Eh+var_6]
                 mov     [bp+1Eh+var_10], bx
                 mov     bx, [bp+1Eh+var_8]
                 mov     cx, [bp+1Eh+var_1C]
                 mov     dx, [bp+1Eh+var_1E]
-                call    sub_1134D
+                call    divmod32
                 mov     ax, [bp+1Eh+var_10]
                 mov     bx, [bp+1Eh+arg_4]
                 cmp     bx, ax
@@ -1044,7 +1044,7 @@ loc_1067C:                              ; CODE XREF: fadeInLogo+51\u2191j
                 push    ax
                 push    [bp+1Eh+end]
                 push    [bp+1Eh+start]
-                call    sub_10744
+                call    drawLogoPixelRow
                 mov     sp, bp
 
 loc_106CA:                              ; CODE XREF: fadeInLogo+86\u2191j
@@ -1131,7 +1131,7 @@ findSetBit      endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_10744       proc near               ; CODE XREF: fadeInLogo+9D\u2191p
+drawLogoPixelRow proc near              ; CODE XREF: fadeInLogo+9D\u2191p
                 push    bp
                 sub     sp, 8
                 mov     bp, sp
@@ -1153,10 +1153,10 @@ sub_10744       proc near               ; CODE XREF: fadeInLogo+9D\u2191p
                 push    word ptr [bp+18h]
                 push    ax
                 push    bx
-                call    sub_138F5
+                call    videoDrawPointAlt
                 mov     sp, bp
 
-loc_1077C:                              ; CODE XREF: sub_10744+21\u2191j
+loc_1077C:                              ; CODE XREF: drawLogoPixelRow+21\u2191j
                 mov     ax, [bp+10h]
                 mov     bx, [bp+1Ch]
                 add     bx, ax
@@ -1177,17 +1177,17 @@ loc_1077C:                              ; CODE XREF: sub_10744+21\u2191j
                 push    word ptr [bp+18h]
                 push    bx
                 push    cx
-                call    sub_138F5
+                call    videoDrawPointAlt
                 mov     sp, bp
 
-loc_107B0:                              ; CODE XREF: sub_10744+53\u2191j
-                                        ; sub_10744+173\u2193j
+loc_107B0:                              ; CODE XREF: drawLogoPixelRow+53\u2191j
+                                        ; drawLogoPixelRow+173\u2193j
                 cmp     word ptr [bp+6], 3
                 jl      short loc_107B9
                 jmp     loc_108BA
 ; ---------------------------------------------------------------------------
 
-loc_107B9:                              ; CODE XREF: sub_10744+70\u2191j
+loc_107B9:                              ; CODE XREF: drawLogoPixelRow+70\u2191j
                 mov     ax, [bp+12h]
                 mov     bx, [bp+1Ah]
                 add     bx, ax
@@ -1211,10 +1211,10 @@ loc_107B9:                              ; CODE XREF: sub_10744+70\u2191j
                 push    word ptr [bp+18h]
                 push    ax
                 push    bx
-                call    sub_138F5
+                call    videoDrawPointAlt
                 mov     sp, bp
 
-loc_107F8:                              ; CODE XREF: sub_10744+9A\u2191j
+loc_107F8:                              ; CODE XREF: drawLogoPixelRow+9A\u2191j
                 mov     ax, [bp+10h]
                 mov     bx, [bp+1Ch]
                 add     bx, ax
@@ -1233,7 +1233,7 @@ loc_107F8:                              ; CODE XREF: sub_10744+9A\u2191j
                 jmp     loc_108AE
 ; ---------------------------------------------------------------------------
 
-loc_10821:                              ; CODE XREF: sub_10744+D8\u2191j
+loc_10821:                              ; CODE XREF: drawLogoPixelRow+D8\u2191j
                 mov     cx, [bp+14h]
                 add     cx, bx
                 add     cx, [bp+1Ah]
@@ -1243,12 +1243,12 @@ loc_10821:                              ; CODE XREF: sub_10744+D8\u2191j
                 push    word ptr [bp+18h]
                 push    bx
                 push    cx
-                call    sub_138F5
+                call    videoDrawPointAlt
                 mov     sp, bp
                 jmp     short loc_108AE
 ; ---------------------------------------------------------------------------
 
-loc_1083D:                              ; CODE XREF: sub_10744+81\u2191j
+loc_1083D:                              ; CODE XREF: drawLogoPixelRow+81\u2191j
                 mov     ax, [bp+10h]
                 shl     ax, 1
                 mov     si, [bp+0Ch]
@@ -1269,10 +1269,10 @@ loc_1083D:                              ; CODE XREF: sub_10744+81\u2191j
                 push    word ptr [bp+18h]
                 push    ax
                 push    bx
-                call    sub_138F5
+                call    videoDrawPointAlt
                 mov     sp, bp
 
-loc_10872:                              ; CODE XREF: sub_10744+114\u2191j
+loc_10872:                              ; CODE XREF: drawLogoPixelRow+114\u2191j
                 mov     ax, [bp+10h]
                 mov     bx, [bp+1Ch]
                 add     bx, ax
@@ -1296,22 +1296,22 @@ loc_10872:                              ; CODE XREF: sub_10744+114\u2191j
                 push    word ptr [bp+18h]
                 push    bx
                 push    cx
-                call    sub_138F5
+                call    videoDrawPointAlt
                 mov     sp, bp
 
-loc_108AE:                              ; CODE XREF: sub_10744+DA\u2191j
-                                        ; sub_10744+F7\u2191j ...
+loc_108AE:                              ; CODE XREF: drawLogoPixelRow+DA\u2191j
+                                        ; drawLogoPixelRow+F7\u2191j ...
                 mov     ax, [bp+1Ah]
                 add     [bp+12h], ax
                 inc     word ptr [bp+6]
                 jmp     loc_107B0
 ; ---------------------------------------------------------------------------
 
-loc_108BA:                              ; CODE XREF: sub_10744+72\u2191j
+loc_108BA:                              ; CODE XREF: drawLogoPixelRow+72\u2191j
                 add     sp, 8
                 pop     bp
                 retn
-sub_10744       endp
+drawLogoPixelRow endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -1454,7 +1454,7 @@ loc_109A5:                              ; CODE XREF: slideInLogo+65\u2191j
                 push    [bp+arg_C]
                 push    [bp+arg_8]
                 push    [bp+arg_6]
-                call    sub_138F5
+                call    videoDrawPointAlt
                 mov     sp, bp
 
 loc_109B9:                              ; CODE XREF: slideInLogo+83\u2191j
@@ -1489,7 +1489,7 @@ loc_109F1:                              ; CODE XREF: slideInLogo+AE\u2191j
                 push    [bp+arg_C]
                 push    [bp+arg_A]
                 push    [bp+arg_6]
-                call    sub_138F5
+                call    videoDrawPointAlt
                 mov     sp, bp
 
 loc_10A05:                              ; CODE XREF: slideInLogo+CF\u2191j
@@ -1998,7 +1998,7 @@ loc_10D78:                              ; CODE XREF: fadeInLogo2+24\u2191j
                 mov     bx, 89
                 push    bx
                 mov     [bp+4], ax
-                call    sub_138F5
+                call    videoDrawPointAlt
                 mov     sp, bp
                 mov     ax, [bp+4]
                 add     sp, 6
@@ -2077,7 +2077,7 @@ envp            = dword ptr  8
                 mov     bl, [si]
                 xor     bh, bh
                 push    bx
-                call    sub_137FE
+                call    toupper
                 mov     sp, bp
                 cmp     al, 43h ; 'C'
                 jz      short loc_10E28
@@ -2091,7 +2091,7 @@ loc_10E28:                              ; CODE XREF: _main+29\u2191j
 
 loc_10E2B:                              ; CODE XREF: _main+2D\u2191j
                 mov     word_188F8, bx
-                call    sub_104D0
+                call    checkVideoCard
                 call    checkMem
                 call    showCopyrightTitle
                 call    loadLogo
@@ -2142,21 +2142,21 @@ chainToExecutable endp
 
 ; Attributes: noreturn
 
-sub_10E82       proc near               ; CODE XREF: sub_104D0+1C\u2191p
+exit            proc near               ; CODE XREF: checkVideoCard+1C\u2191p
                                         ; checkMem+1B\u2191p
                 push    bp
                 sub     sp, 0Fh
                 mov     bp, sp
                 mov     word ptr [bp+5], 0
 
-loc_10E8D:                              ; CODE XREF: sub_10E82+D9\u2193j
+loc_10E8D:                              ; CODE XREF: exit+D9\u2193j
                 mov     ax, [bp+5]
                 cmp     ax, 14h
                 jl      short loc_10E98
                 jmp     loc_10F5E
 ; ---------------------------------------------------------------------------
 
-loc_10E98:                              ; CODE XREF: sub_10E82+11\u2191j
+loc_10E98:                              ; CODE XREF: exit+11\u2191j
                 mov     bx, 0Eh
                 imul    bx
                 mov     si, ax
@@ -2167,14 +2167,14 @@ loc_10E98:                              ; CODE XREF: sub_10E82+11\u2191j
                 jmp     loc_10F58
 ; ---------------------------------------------------------------------------
 
-loc_10EB0:                              ; CODE XREF: sub_10E82+29\u2191j
+loc_10EB0:                              ; CODE XREF: exit+29\u2191j
                 mov     si, [bp+0Dh]
                 test    word ptr [si+0Ah], 2
                 jnz     short loc_10EBD
                 jmp     loc_10F58
 ; ---------------------------------------------------------------------------
 
-loc_10EBD:                              ; CODE XREF: sub_10E82+36\u2191j
+loc_10EBD:                              ; CODE XREF: exit+36\u2191j
                 mov     si, [bp+0Dh]
                 mov     ax, [si]
                 sub     ax, [si+6]
@@ -2183,7 +2183,7 @@ loc_10EBD:                              ; CODE XREF: sub_10E82+36\u2191j
                 jmp     loc_10F58
 ; ---------------------------------------------------------------------------
 
-loc_10ECD:                              ; CODE XREF: sub_10E82+46\u2191j
+loc_10ECD:                              ; CODE XREF: exit+46\u2191j
                 test    word ptr [si+0Ah], 4000h
                 jz      short loc_10F44
                 mov     al, [si+0Ch]
@@ -2203,7 +2203,7 @@ loc_10ECD:                              ; CODE XREF: sub_10E82+46\u2191j
                 mov     [bp+9], bx
                 jz      short loc_10F44
 
-loc_10EF9:                              ; CODE XREF: sub_10E82+BE\u2193j
+loc_10EF9:                              ; CODE XREF: exit+BE\u2193j
                 sub     word ptr [bp+9], 1
                 sbb     word ptr [bp+0Bh], 0
                 mov     ax, [bp+0Bh]
@@ -2238,8 +2238,8 @@ loc_10EF9:                              ; CODE XREF: sub_10E82+BE\u2193j
                 jmp     short $+2
 ; ---------------------------------------------------------------------------
 
-loc_10F44:                              ; CODE XREF: sub_10E82+50\u2191j
-                                        ; sub_10E82+75\u2191j ...
+loc_10F44:                              ; CODE XREF: exit+50\u2191j
+                                        ; exit+75\u2191j ...
                 mov     si, [bp+0Dh]
                 mov     al, [si+0Ch]
                 xor     ah, ah
@@ -2249,16 +2249,16 @@ loc_10F44:                              ; CODE XREF: sub_10E82+50\u2191j
                 call    _dos_write
                 mov     sp, bp
 
-loc_10F58:                              ; CODE XREF: sub_10E82+2B\u2191j
-                                        ; sub_10E82+38\u2191j ...
+loc_10F58:                              ; CODE XREF: exit+2B\u2191j
+                                        ; exit+38\u2191j ...
                 inc     word ptr [bp+5]
                 jmp     loc_10E8D
 ; ---------------------------------------------------------------------------
 
-loc_10F5E:                              ; CODE XREF: sub_10E82+13\u2191j
+loc_10F5E:                              ; CODE XREF: exit+13\u2191j
                 mov     word ptr [bp+5], 0
 
-loc_10F63:                              ; CODE XREF: sub_10E82+105\u2193j
+loc_10F63:                              ; CODE XREF: exit+105\u2193j
                 mov     ax, [bp+5]
                 mov     bx, word_18476
                 cmp     bx, ax
@@ -2272,15 +2272,15 @@ loc_10F63:                              ; CODE XREF: sub_10E82+105\u2193j
                 call    _dos_close
                 mov     sp, bp
 
-loc_10F84:                              ; CODE XREF: sub_10E82+F7\u2191j
+loc_10F84:                              ; CODE XREF: exit+F7\u2191j
                 inc     word ptr [bp+5]
                 jmp     short loc_10F63
 ; ---------------------------------------------------------------------------
 
-loc_10F89:                              ; CODE XREF: sub_10E82+EA\u2191j
+loc_10F89:                              ; CODE XREF: exit+EA\u2191j
                 push    word ptr [bp+13h]
                 call    _exit
-sub_10E82       endp
+exit            endp
 
 ; ---------------------------------------------------------------------------
                 mov     sp, bp
@@ -2660,7 +2660,7 @@ loc_111CC:                              ; CODE XREF: _fread+5F\u2193j
 
 loc_111ED:                              ; CODE XREF: _fread+2B\u2191j
                 push    word ptr [bp+12h]
-                call    sub_11F5A
+                call    _filbuf
                 mov     sp, bp
                 mov     bx, ax
 
@@ -2736,7 +2736,7 @@ loc_1126A:                              ; CODE XREF: sg0138:1247\u2191j
 ; Attributes: fpd=108h
 
 ; int __stdcall printStartupMessage(const char near *msg)
-printStartupMessage proc near           ; CODE XREF: sub_104D0+13\u2191p
+printStartupMessage proc near           ; CODE XREF: checkVideoCard+13\u2191p
                                         ; checkMem+12\u2191p
 
 var_106         = word ptr -106h
@@ -2862,7 +2862,7 @@ main            endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1134D       proc near               ; CODE XREF: fadeInLogo+66\u2191p
+divmod32        proc near               ; CODE XREF: fadeInLogo+66\u2191p
                                         ; fadeInLogo+78\u2191p ...
                 push    bp
                 sub     sp, 4
@@ -2888,28 +2888,28 @@ sub_1134D       proc near               ; CODE XREF: fadeInLogo+66\u2191p
                 or      cx, dx
                 jnz     short loc_11389
 
-loc_11380:                              ; CODE XREF: sub_1134D+B\u2191j
+loc_11380:                              ; CODE XREF: divmod32+B\u2191j
                 xor     ax, ax
                 xor     bx, bx
 
-loc_11384:                              ; CODE XREF: sub_1134D+47\u2193j
+loc_11384:                              ; CODE XREF: divmod32+47\u2193j
                 add     sp, 4
                 pop     bp
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_11389:                              ; CODE XREF: sub_1134D+31\u2191j
+loc_11389:                              ; CODE XREF: divmod32+31\u2191j
                 mov     [bp+2], ax
                 or      ax, bx
                 jnz     short loc_11396
 
-loc_11390:                              ; CODE XREF: sub_1134D+12\u2191j
+loc_11390:                              ; CODE XREF: divmod32+12\u2191j
                 xor     cx, cx
                 xor     dx, dx
                 jmp     short loc_11384
 ; ---------------------------------------------------------------------------
 
-loc_11396:                              ; CODE XREF: sub_1134D+41\u2191j
+loc_11396:                              ; CODE XREF: divmod32+41\u2191j
                 mov     cx, [bp+0]
                 mov     ax, [bp+2]
                 mov     si, ax
@@ -2919,7 +2919,7 @@ loc_11396:                              ; CODE XREF: sub_1134D+41\u2191j
                 neg     bx
                 sbb     ax, 0FFFFh
 
-loc_113A9:                              ; CODE XREF: sub_1134D+53\u2191j
+loc_113A9:                              ; CODE XREF: divmod32+53\u2191j
                 xor     si, cx
                 mov     [bp+0], si
                 xor     si, si
@@ -2929,14 +2929,14 @@ loc_113A9:                              ; CODE XREF: sub_1134D+53\u2191j
                 neg     dx
                 sbb     cx, 0FFFFh
 
-loc_113BB:                              ; CODE XREF: sub_1134D+24\u2191j
-                                        ; sub_1134D+65\u2191j
+loc_113BB:                              ; CODE XREF: divmod32+24\u2191j
+                                        ; divmod32+65\u2191j
                 jnz     short loc_113DA
                 test    dx, dx
                 js      short loc_113DA
                 mov     di, 20h ; ' '
 
-loc_113C4:                              ; CODE XREF: sub_1134D+85\u2193j
+loc_113C4:                              ; CODE XREF: divmod32+85\u2193j
                 shl     bx, 1
                 rcl     ax, 1
                 rcl     si, 1
@@ -2945,7 +2945,7 @@ loc_113C4:                              ; CODE XREF: sub_1134D+85\u2193j
                 sub     si, dx
                 inc     bx
 
-loc_113D1:                              ; CODE XREF: sub_1134D+7F\u2191j
+loc_113D1:                              ; CODE XREF: divmod32+7F\u2191j
                 dec     di
                 jnz     short loc_113C4
                 xor     cx, cx
@@ -2953,11 +2953,11 @@ loc_113D1:                              ; CODE XREF: sub_1134D+7F\u2191j
                 jmp     short loc_113FB
 ; ---------------------------------------------------------------------------
 
-loc_113DA:                              ; CODE XREF: sub_1134D:loc_113BB\u2191j
-                                        ; sub_1134D+72\u2191j
+loc_113DA:                              ; CODE XREF: divmod32:loc_113BB\u2191j
+                                        ; divmod32+72\u2191j
                 mov     di, 10h
 
-loc_113DD:                              ; CODE XREF: sub_1134D+A6\u2193j
+loc_113DD:                              ; CODE XREF: divmod32+A6\u2193j
                 shl     bx, 1
                 rcl     ax, 1
                 rcl     si, 1
@@ -2967,38 +2967,38 @@ loc_113DD:                              ; CODE XREF: sub_1134D+A6\u2193j
                 cmp     ax, dx
                 jb      short loc_113F2
 
-loc_113ED:                              ; CODE XREF: sub_1134D+9A\u2191j
+loc_113ED:                              ; CODE XREF: divmod32+9A\u2191j
                 sub     ax, dx
                 sbb     si, cx
                 inc     bx
 
-loc_113F2:                              ; CODE XREF: sub_1134D+98\u2191j
-                                        ; sub_1134D+9E\u2191j
+loc_113F2:                              ; CODE XREF: divmod32+98\u2191j
+                                        ; divmod32+9E\u2191j
                 dec     di
                 jnz     short loc_113DD
                 mov     cx, si
                 mov     dx, ax
                 xor     ax, ax
 
-loc_113FB:                              ; CODE XREF: sub_1134D+8B\u2191j
+loc_113FB:                              ; CODE XREF: divmod32+8B\u2191j
                 test    word ptr [bp+0], 8000h
                 jz      short loc_11409
                 not     ax
                 neg     bx
                 sbb     ax, 0FFFFh
 
-loc_11409:                              ; CODE XREF: sub_1134D+B3\u2191j
+loc_11409:                              ; CODE XREF: divmod32+B3\u2191j
                 test    word ptr [bp+2], 8000h
                 jz      short loc_11417
                 not     cx
                 neg     dx
                 sbb     cx, 0FFFFh
 
-loc_11417:                              ; CODE XREF: sub_1134D+C1\u2191j
+loc_11417:                              ; CODE XREF: divmod32+C1\u2191j
                 add     sp, 4
                 pop     bp
                 retn
-sub_1134D       endp
+divmod32        endp
 
 ; ---------------------------------------------------------------------------
 word_1141C      dw 0                    ; DATA XREF: setCriticalErrorHandler+3\u2193w
@@ -3291,7 +3291,7 @@ loc_115F8:                              ; CODE XREF: formatArg+A5\u2191j
                 lea     ax, [bp+9]
                 push    ax
                 push    word ptr [bp+44h]
-                call    sub_126D5
+                call    atoi
                 mov     sp, bp
                 add     [bp+44h], ax
 
@@ -3319,7 +3319,7 @@ loc_11630:                              ; CODE XREF: formatArg+DD\u2191j
                 lea     ax, [bp+0Bh]
                 push    ax
                 push    word ptr [bp+44h]
-                call    sub_126D5
+                call    atoi
                 mov     sp, bp
                 add     [bp+44h], ax
 
@@ -3777,7 +3777,7 @@ releaseFileHandle proc near             ; CODE XREF: _fclose+52\u2191p
                 sub     sp, 6
                 mov     bp, sp
                 push    word ptr [bp+0Ah]
-                call    sub_124F2
+                call    findFileHandleSlot
                 mov     sp, bp
                 test    ax, ax
                 mov     [bp+4], ax
@@ -4217,8 +4217,8 @@ _open           endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_11F5A       proc near               ; CODE XREF: _fread+3C\u2191p
-                                        ; sub_11F5A+B9\u2193p ...
+_filbuf         proc near               ; CODE XREF: _fread+3C\u2191p
+                                        ; _filbuf+B9\u2193p ...
                 push    bp
                 sub     sp, 9
                 mov     bp, sp
@@ -4230,11 +4230,11 @@ sub_11F5A       proc near               ; CODE XREF: _fread+3C\u2191p
                 jmp     short loc_11F72
 ; ---------------------------------------------------------------------------
 
-loc_11F6F:                              ; CODE XREF: sub_11F5A+F\u2191j
+loc_11F6F:                              ; CODE XREF: _filbuf+F\u2191j
                 xor     bx, bx
                 inc     bx
 
-loc_11F72:                              ; CODE XREF: sub_11F5A+13\u2191j
+loc_11F72:                              ; CODE XREF: _filbuf+13\u2191j
                 test    word ptr [si+0Ah], 30h
                 mov     [bp+2], bl
                 jz      short loc_11F89
@@ -4245,7 +4245,7 @@ loc_11F72:                              ; CODE XREF: sub_11F5A+13\u2191j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_11F89:                              ; CODE XREF: sub_11F5A+20\u2191j
+loc_11F89:                              ; CODE XREF: _filbuf+20\u2191j
                 mov     si, [bp+0Dh]
                 mov     ax, [si+0Ah]
                 test    ax, 80h
@@ -4258,14 +4258,14 @@ loc_11F89:                              ; CODE XREF: sub_11F5A+20\u2191j
                 call    _flsbuf
                 mov     sp, bp
 
-loc_11FA5:                              ; CODE XREF: sub_11F5A+38\u2191j
-                                        ; sub_11F5A+3F\u2191j
+loc_11FA5:                              ; CODE XREF: _filbuf+38\u2191j
+                                        ; _filbuf+3F\u2191j
                 mov     si, [bp+0Dh]
                 cmp     word ptr [si+8], 0
                 jnz     short loc_11FCD
                 mov     word ptr [si+2], 0
                 push    si
-                call    sub_12B8B
+                call    allocFileBuffer
                 mov     sp, bp
                 test    ax, ax
                 jz      short loc_12039
@@ -4277,7 +4277,7 @@ loc_11FA5:                              ; CODE XREF: sub_11F5A+38\u2191j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_11FCD:                              ; CODE XREF: sub_11F5A+52\u2191j
+loc_11FCD:                              ; CODE XREF: _filbuf+52\u2191j
                 cmp     byte ptr [bp+2], 0
                 jz      short loc_12039
                 mov     si, [bp+0Dh]
@@ -4307,20 +4307,20 @@ loc_11FCD:                              ; CODE XREF: sub_11F5A+52\u2191j
                 jmp     short loc_1201A
 ; ---------------------------------------------------------------------------
 
-loc_12010:                              ; CODE XREF: sub_11F5A+A8\u2191j
+loc_12010:                              ; CODE XREF: _filbuf+A8\u2191j
                 push    word ptr [bp+0Dh]
-                call    sub_11F5A
+                call    _filbuf
                 mov     sp, bp
                 mov     bx, ax
 
-loc_1201A:                              ; CODE XREF: sub_11F5A+B4\u2191j
+loc_1201A:                              ; CODE XREF: _filbuf+B4\u2191j
                 mov     ax, bx
                 add     sp, 9
                 pop     bp
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_12021:                              ; CODE XREF: sub_11F5A+96\u2191j
+loc_12021:                              ; CODE XREF: _filbuf+96\u2191j
                 mov     si, [bp+0Dh]
                 or      word ptr [si+0Ah], 10h
                 mov     ax, 0FFFFh
@@ -4329,15 +4329,15 @@ loc_12021:                              ; CODE XREF: sub_11F5A+96\u2191j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_12031:                              ; CODE XREF: sub_11F5A+9B\u2191j
+loc_12031:                              ; CODE XREF: _filbuf+9B\u2191j
                 mov     ax, [bp+3]
                 add     sp, 9
                 pop     bp
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_12039:                              ; CODE XREF: sub_11F5A+61\u2191j
-                                        ; sub_11F5A+77\u2191j ...
+loc_12039:                              ; CODE XREF: _filbuf+61\u2191j
+                                        ; _filbuf+77\u2191j ...
                 mov     si, [bp+0Dh]
                 mov     ax, [si+0Ah]
                 test    ax, 2
@@ -4350,7 +4350,7 @@ loc_12039:                              ; CODE XREF: sub_11F5A+61\u2191j
                 push    word ptr [si+6]
                 push    bx
                 mov     [bp+7], ax
-                call    sub_1260E
+                call    _read
                 mov     sp, bp
                 test    ax, ax
                 mov     [bp+5], ax
@@ -4358,13 +4358,13 @@ loc_12039:                              ; CODE XREF: sub_11F5A+61\u2191j
                 mov     si, [bp+0Dh]
                 or      word ptr [si+0Ah], 20h
 
-loc_1206D:                              ; CODE XREF: sub_11F5A+109\u2191j
+loc_1206D:                              ; CODE XREF: _filbuf+109\u2191j
                 cmp     word ptr [bp+5], 0
                 jnz     short loc_1207B
                 mov     si, [bp+0Dh]
                 or      word ptr [si+0Ah], 10h
 
-loc_1207B:                              ; CODE XREF: sub_11F5A+117\u2191j
+loc_1207B:                              ; CODE XREF: _filbuf+117\u2191j
                 mov     ax, [bp+5]
                 test    ax, ax
                 jle     short loc_120A3
@@ -4376,18 +4376,18 @@ loc_1207B:                              ; CODE XREF: sub_11F5A+117\u2191j
                 jmp     short loc_1209B
 ; ---------------------------------------------------------------------------
 
-loc_12092:                              ; CODE XREF: sub_11F5A+12C\u2191j
+loc_12092:                              ; CODE XREF: _filbuf+12C\u2191j
                 mov     ax, [bp+5]
                 mov     si, [bp+0Dh]
                 mov     [si+2], ax
 
-loc_1209B:                              ; CODE XREF: sub_11F5A+136\u2191j
+loc_1209B:                              ; CODE XREF: _filbuf+136\u2191j
                 mov     si, [bp+0Dh]
                 mov     ax, [si+6]
                 mov     [si], ax
 
-loc_120A3:                              ; CODE XREF: sub_11F5A+E8\u2191j
-                                        ; sub_11F5A+126\u2191j
+loc_120A3:                              ; CODE XREF: _filbuf+E8\u2191j
+                                        ; _filbuf+126\u2191j
                 mov     si, [bp+0Dh]
                 test    word ptr [si+0Ah], 32h
                 jz      short loc_120CA
@@ -4397,18 +4397,18 @@ loc_120A3:                              ; CODE XREF: sub_11F5A+E8\u2191j
                 jmp     short loc_120C2
 ; ---------------------------------------------------------------------------
 
-loc_120BA:                              ; CODE XREF: sub_11F5A+157\u2191j
+loc_120BA:                              ; CODE XREF: _filbuf+157\u2191j
                 mov     si, [bp+0Dh]
                 mov     word ptr [si+2], 0
 
-loc_120C2:                              ; CODE XREF: sub_11F5A+15E\u2191j
+loc_120C2:                              ; CODE XREF: _filbuf+15E\u2191j
                 mov     ax, 0FFFFh
                 add     sp, 9
                 pop     bp
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_120CA:                              ; CODE XREF: sub_11F5A+151\u2191j
+loc_120CA:                              ; CODE XREF: _filbuf+151\u2191j
                 mov     si, [bp+0Dh]
                 dec     word ptr [si+2]
                 mov     ax, [si+2]
@@ -4422,25 +4422,25 @@ loc_120CA:                              ; CODE XREF: sub_11F5A+151\u2191j
                 jmp     short loc_120ED
 ; ---------------------------------------------------------------------------
 
-loc_120E3:                              ; CODE XREF: sub_11F5A+17B\u2191j
+loc_120E3:                              ; CODE XREF: _filbuf+17B\u2191j
                 push    word ptr [bp+0Dh]
-                call    sub_11F5A
+                call    _filbuf
                 mov     sp, bp
                 mov     bx, ax
 
-loc_120ED:                              ; CODE XREF: sub_11F5A+187\u2191j
+loc_120ED:                              ; CODE XREF: _filbuf+187\u2191j
                 mov     ax, bx
                 add     sp, 9
                 pop     bp
                 retn
-sub_11F5A       endp
+_filbuf         endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
 _flsbuf         proc near               ; CODE XREF: _fclose+15\u2191p
-                                        ; sub_11F5A+46\u2191p ...
+                                        ; _filbuf+46\u2191p ...
                 push    bp
                 sub     sp, 11h
                 mov     bp, sp
@@ -4494,7 +4494,7 @@ loc_1213F:                              ; CODE XREF: _flsbuf+46\u2191j
 
 loc_1214F:                              ; CODE XREF: _flsbuf+54\u2191j
                 push    word ptr [bp+17h]
-                call    sub_12B8B
+                call    allocFileBuffer
                 mov     sp, bp
                 test    ax, ax
                 jz      short loc_1216B
@@ -4580,7 +4580,7 @@ loc_121D3:                              ; CODE XREF: _flsbuf+D6\u2191j
                 push    cx
                 push    ax
                 mov     [bp+0Bh], bx
-                call    sub_128F8
+                call    _write
                 mov     sp, bp
                 mov     [bp+7], ax
                 jmp     short loc_1221E
@@ -4597,7 +4597,7 @@ loc_12202:                              ; CODE XREF: _flsbuf+E9\u2191j
                 push    cx
                 push    ax
                 mov     [bp+0Bh], bx
-                call    sub_128F8
+                call    _write
                 mov     sp, bp
                 mov     [bp+7], ax
 
@@ -4732,7 +4732,7 @@ loc_12310:                              ; CODE XREF: _flsbuf+1AE\u2191j
                 push    bx
                 push    ax
                 push    cx
-                call    sub_128F8
+                call    _write
                 mov     sp, bp
                 mov     [bp+7], ax
                 jmp     short loc_12336
@@ -4925,7 +4925,7 @@ _dos_open       endp
 
 ; Attributes: bp-based frame
 
-_dos_close      proc near               ; CODE XREF: sub_10E82+FD\u2191p
+_dos_close      proc near               ; CODE XREF: exit+FD\u2191p
                                         ; releaseFileHandle+28\u2191p ...
 
 arg_0           = word ptr  4
@@ -4947,7 +4947,7 @@ _dos_close      endp
 
 ; Attributes: bp-based frame
 
-_dos_read       proc near               ; CODE XREF: sub_10E82+AD\u2191p
+_dos_read       proc near               ; CODE XREF: exit+AD\u2191p
                                         ; _flsbuf+207\u2191p ...
 
 arg_0           = word ptr  4
@@ -4972,8 +4972,8 @@ _dos_read       endp
 
 ; Attributes: bp-based frame
 
-_dos_lseek      proc near               ; CODE XREF: sub_10E82+62\u2191p
-                                        ; sub_10E82+97\u2191p ...
+_dos_lseek      proc near               ; CODE XREF: exit+62\u2191p
+                                        ; exit+97\u2191p ...
 
 arg_0           = word ptr  4
 arg_2           = word ptr  6
@@ -5007,8 +5007,8 @@ _dos_lseek      endp
 
 ; Attributes: bp-based frame
 
-_dos_write      proc near               ; CODE XREF: sub_10E82+D1\u2191p
-                                        ; sub_128F8+53\u2193p ...
+_dos_write      proc near               ; CODE XREF: exit+D1\u2191p
+                                        ; _write+53\u2193p ...
 
 arg_0           = word ptr  4
 arg_2           = word ptr  6
@@ -5065,7 +5065,7 @@ _dos_ioctl_get  endp
 
 ; Attributes: noreturn bp-based frame
 
-_exit           proc near               ; CODE XREF: sub_10E82+10A\u2191p
+_exit           proc near               ; CODE XREF: exit+10A\u2191p
 
 arg_0           = word ptr  4
 
@@ -5098,8 +5098,8 @@ _exit           endp                    ; AL = exit code
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_124F2       proc near               ; CODE XREF: releaseFileHandle+9\u2191p
-                                        ; sub_1260E+9\u2193p ...
+findFileHandleSlot proc near            ; CODE XREF: releaseFileHandle+9\u2191p
+                                        ; _read+9\u2193p ...
                 push    bp
                 sub     sp, 6
                 mov     bp, sp
@@ -5107,7 +5107,7 @@ sub_124F2       proc near               ; CODE XREF: releaseFileHandle+9\u2191p
                 mov     _doserrno, ax
                 mov     [bp+4], ax
 
-loc_12500:                              ; CODE XREF: sub_124F2+3A\u2193j
+loc_12500:                              ; CODE XREF: findFileHandleSlot+3A\u2193j
                 mov     ax, [bp+4]
                 mov     bx, word_18476
                 cmp     bx, ax
@@ -5126,19 +5126,19 @@ loc_12500:                              ; CODE XREF: sub_124F2+3A\u2193j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_12529:                              ; CODE XREF: sub_124F2+24\u2191j
-                                        ; sub_124F2+2D\u2191j
+loc_12529:                              ; CODE XREF: findFileHandleSlot+24\u2191j
+                                        ; findFileHandleSlot+2D\u2191j
                 inc     word ptr [bp+4]
                 jmp     short loc_12500
 ; ---------------------------------------------------------------------------
 
-loc_1252E:                              ; CODE XREF: sub_124F2+17\u2191j
+loc_1252E:                              ; CODE XREF: findFileHandleSlot+17\u2191j
                 mov     errno, 9
                 xor     ax, ax
                 add     sp, 6
                 pop     bp
                 retn
-sub_124F2       endp
+findFileHandleSlot endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -5212,7 +5212,7 @@ findExecutableFile proc near            ; CODE XREF: execProgramEntry+D\u2191p
                 jz      short loc_125C9
                 push    word ptr [bp+8]
                 push    word ptr [bp+6]
-                call    sub_13333
+                call    strncpy
                 mov     sp, bp
                 push    word ptr [bp+6]
                 call    _dos_getfileattr
@@ -5266,13 +5266,13 @@ findExecutableFile endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1260E       proc near               ; CODE XREF: sub_11F5A+FF\u2191p
-                                        ; sub_12D66+A5\u2193p
+_read           proc near               ; CODE XREF: _filbuf+FF\u2191p
+                                        ; _lseek+A5\u2193p
                 push    bp
                 sub     sp, 0Dh
                 mov     bp, sp
                 push    word ptr [bp+11h]
-                call    sub_124F2
+                call    findFileHandleSlot
                 mov     sp, bp
                 test    ax, ax
                 mov     [bp+0Bh], ax
@@ -5283,8 +5283,8 @@ sub_1260E       proc near               ; CODE XREF: sub_11F5A+FF\u2191p
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1262B:                              ; CODE XREF: sub_1260E+13\u2191j
-                                        ; sub_1260E+BC\u2193j
+loc_1262B:                              ; CODE XREF: _read+13\u2191j
+                                        ; _read+BC\u2193j
                 push    word ptr [bp+15h]
                 push    word ptr [bp+13h]
                 mov     si, [bp+0Bh]
@@ -5300,7 +5300,7 @@ loc_1262B:                              ; CODE XREF: sub_1260E+13\u2191j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1264E:                              ; CODE XREF: sub_1260E+36\u2191j
+loc_1264E:                              ; CODE XREF: _read+36\u2191j
                 mov     si, [bp+0Bh]
                 test    word ptr [si], 8000h
                 jz      short loc_1265F
@@ -5310,13 +5310,13 @@ loc_1264E:                              ; CODE XREF: sub_1260E+36\u2191j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1265F:                              ; CODE XREF: sub_1260E+47\u2191j
+loc_1265F:                              ; CODE XREF: _read+47\u2191j
                 xor     ax, ax
                 mov     [bp+7], ax
                 mov     [bp+9], ax
 
-loc_12667:                              ; CODE XREF: sub_1260E+75\u2193j
-                                        ; sub_1260E+AE\u2193j
+loc_12667:                              ; CODE XREF: _read+75\u2193j
+                                        ; _read+AE\u2193j
                 mov     ax, [bp+7]
                 mov     bx, [bp+5]
                 cmp     bx, ax
@@ -5339,13 +5339,13 @@ loc_12667:                              ; CODE XREF: sub_1260E+75\u2193j
                 jns     short loc_12698
                 dec     bx
 
-loc_12698:                              ; CODE XREF: sub_1260E+87\u2191j
+loc_12698:                              ; CODE XREF: _read+87\u2191j
                 mov     cx, 1
                 push    cx
                 push    bx
                 push    ax
                 push    word ptr [bp+11h]
-                call    sub_12D66
+                call    _lseek
                 mov     sp, bp
                 mov     ax, [bp+9]
                 add     sp, 0Dh
@@ -5353,7 +5353,7 @@ loc_12698:                              ; CODE XREF: sub_1260E+87\u2191j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_126AE:                              ; CODE XREF: sub_1260E+7A\u2191j
+loc_126AE:                              ; CODE XREF: _read+7A\u2191j
                 mov     si, [bp+13h]
                 add     si, [bp+9]
                 inc     word ptr [bp+9]
@@ -5362,7 +5362,7 @@ loc_126AE:                              ; CODE XREF: sub_1260E+7A\u2191j
                 jmp     short loc_12667
 ; ---------------------------------------------------------------------------
 
-loc_126BE:                              ; CODE XREF: sub_1260E+61\u2191j
+loc_126BE:                              ; CODE XREF: _read+61\u2191j
                 cmp     word ptr [bp+9], 0
                 jnz     short loc_126CD
                 cmp     word ptr [bp+5], 0
@@ -5370,19 +5370,19 @@ loc_126BE:                              ; CODE XREF: sub_1260E+61\u2191j
                 jmp     loc_1262B
 ; ---------------------------------------------------------------------------
 
-loc_126CD:                              ; CODE XREF: sub_1260E+B4\u2191j
-                                        ; sub_1260E+BA\u2191j
+loc_126CD:                              ; CODE XREF: _read+B4\u2191j
+                                        ; _read+BA\u2191j
                 mov     ax, [bp+9]
                 add     sp, 0Dh
                 pop     bp
                 retn
-sub_1260E       endp
+_read           endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_126D5       proc near               ; CODE XREF: formatArg+C2\u2191p
+atoi            proc near               ; CODE XREF: formatArg+C2\u2191p
                                         ; formatArg+FA\u2191p
                 push    bp
                 sub     sp, 0Ch
@@ -5401,21 +5401,21 @@ sub_126D5       proc near               ; CODE XREF: formatArg+C2\u2191p
                 jmp     short loc_12709
 ; ---------------------------------------------------------------------------
 
-loc_126FB:                              ; CODE XREF: sub_126D5+19\u2191j
+loc_126FB:                              ; CODE XREF: atoi+19\u2191j
                 mov     si, [bp+10h]
                 mov     al, [si]
                 cmp     al, 2Bh ; '+'
                 jnz     short loc_12709
                 mov     word ptr [bp+6], 1
 
-loc_12709:                              ; CODE XREF: sub_126D5+24\u2191j
-                                        ; sub_126D5+2D\u2191j ...
+loc_12709:                              ; CODE XREF: atoi+24\u2191j
+                                        ; atoi+2D\u2191j ...
                 mov     si, [bp+10h]
                 add     si, [bp+6]
                 mov     al, [si]
                 xor     ah, ah
                 push    ax
-                call    sub_12D47
+                call    isdigit
                 mov     sp, bp
                 test    ax, ax
                 jz      short loc_1273C
@@ -5433,12 +5433,12 @@ loc_12709:                              ; CODE XREF: sub_126D5+24\u2191j
                 jmp     short loc_12709
 ; ---------------------------------------------------------------------------
 
-loc_1273C:                              ; CODE XREF: sub_126D5+46\u2191j
+loc_1273C:                              ; CODE XREF: atoi+46\u2191j
                 cmp     word ptr [bp+0Ah], 0
                 jz      short loc_12745
                 neg     word ptr [bp+4]
 
-loc_12745:                              ; CODE XREF: sub_126D5+6B\u2191j
+loc_12745:                              ; CODE XREF: atoi+6B\u2191j
                 mov     ax, [bp+4]
                 mov     si, [bp+12h]
                 mov     [si], ax
@@ -5446,20 +5446,20 @@ loc_12745:                              ; CODE XREF: sub_126D5+6B\u2191j
                 add     sp, 0Ch
                 pop     bp
                 retn
-sub_126D5       endp
+atoi            endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_12755       proc near               ; CODE XREF: sg0138:27D6\u2193p
+formatHex       proc near               ; CODE XREF: sg0138:27D6\u2193p
                 push    bp
                 sub     sp, 11h
                 mov     bp, sp
                 mov     byte ptr [bp+10h], 0
                 mov     word ptr [bp+6], 8
 
-loc_12764:                              ; CODE XREF: sub_12755+46\u2193j
+loc_12764:                              ; CODE XREF: formatHex+46\u2193j
                 dec     word ptr [bp+6]
                 mov     ax, [bp+19h]
                 mov     bx, [bp+17h]
@@ -5472,7 +5472,7 @@ loc_12764:                              ; CODE XREF: sub_12755+46\u2193j
                 mov     ax, [bp+19h]
                 mov     bx, [bp+17h]
 
-loc_12786:                              ; CODE XREF: sub_12755+35\u2193j
+loc_12786:                              ; CODE XREF: formatHex+35\u2193j
                 sar     ax, 1
                 rcr     bx, 1
                 loop    loc_12786
@@ -5487,14 +5487,14 @@ loc_12786:                              ; CODE XREF: sub_12755+35\u2193j
                 add     bx, ax
                 push    bx
                 push    word ptr [bp+15h]
-                call    sub_13333
+                call    strncpy
                 mov     sp, bp
                 mov     ax, 8
                 sub     ax, [bp+6]
                 add     sp, 11h
                 pop     bp
                 retn
-sub_12755       endp
+formatHex       endp
 
 ; ---------------------------------------------------------------------------
                 push    bp
@@ -5513,7 +5513,7 @@ loc_127C9:                              ; CODE XREF: sg0138:27C6\u2191j
                 push    word ptr [bp+0Ch]
                 mov     [bp+4], ax
                 mov     [bp+6], bx
-                call    sub_12755
+                call    formatHex
                 mov     sp, bp
                 add     sp, 8
                 pop     bp
@@ -5522,14 +5522,14 @@ loc_127C9:                              ; CODE XREF: sg0138:27C6\u2191j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_127E0       proc near               ; CODE XREF: sg0138:285B\u2193p
+formatOctal     proc near               ; CODE XREF: sg0138:285B\u2193p
                 push    bp
                 sub     sp, 14h
                 mov     bp, sp
                 mov     word ptr [bp+12h], 0Bh
                 mov     byte ptr [bp+11h], 0
 
-loc_127EF:                              ; CODE XREF: sub_127E0+48\u2193j
+loc_127EF:                              ; CODE XREF: formatOctal+48\u2193j
                 dec     word ptr [bp+12h]
                 mov     ax, [bp+1Ch]
                 mov     bx, [bp+1Ah]
@@ -5543,7 +5543,7 @@ loc_127EF:                              ; CODE XREF: sub_127E0+48\u2193j
                 mov     ax, [bp+1Ch]
                 mov     bx, [bp+1Ah]
 
-loc_12813:                              ; CODE XREF: sub_127E0+37\u2193j
+loc_12813:                              ; CODE XREF: formatOctal+37\u2193j
                 sar     ax, 1
                 rcr     bx, 1
                 loop    loc_12813
@@ -5558,14 +5558,14 @@ loc_12813:                              ; CODE XREF: sub_127E0+37\u2193j
                 add     bx, ax
                 push    bx
                 push    word ptr [bp+18h]
-                call    sub_13333
+                call    strncpy
                 mov     sp, bp
                 mov     ax, 0Bh
                 sub     ax, [bp+12h]
                 add     sp, 14h
                 pop     bp
                 retn
-sub_127E0       endp
+formatOctal     endp
 
 ; ---------------------------------------------------------------------------
                 push    bp
@@ -5581,7 +5581,7 @@ loc_12856:                              ; CODE XREF: sg0138:2853\u2191j
                 push    bx
                 push    ax
                 push    word ptr [bp+8]
-                call    sub_127E0
+                call    formatOctal
                 mov     sp, bp
                 add     sp, 4
                 pop     bp
@@ -5599,7 +5599,7 @@ loc_12874:                              ; CODE XREF: sg0138:28AB\u2193j
                 mov     bx, [bp+1Ah]
                 xor     cx, cx
                 mov     dx, 0Ah
-                call    sub_1134D
+                call    divmod32
                 add     dx, 30h ; '0'
                 adc     cx, 0
                 mov     si, [bp+12h]
@@ -5608,7 +5608,7 @@ loc_12874:                              ; CODE XREF: sg0138:28AB\u2193j
                 mov     bx, [bp+1Ah]
                 xor     cx, cx
                 mov     dx, 0Ah
-                call    sub_1134D
+                call    divmod32
                 mov     [bp+1Ch], ax
                 mov     [bp+1Ah], bx
                 mov     ax, [bp+1Ch]
@@ -5619,7 +5619,7 @@ loc_12874:                              ; CODE XREF: sg0138:28AB\u2193j
                 add     bx, ax
                 push    bx
                 push    word ptr [bp+18h]
-                call    sub_13333
+                call    strncpy
                 mov     sp, bp
                 mov     ax, 0Bh
                 sub     ax, [bp+12h]
@@ -5640,7 +5640,7 @@ loc_128D5:                              ; CODE XREF: sg0138:28EE\u2193j
                 jz      short loc_128F0
                 xor     ah, ah
                 push    ax
-                call    sub_12F3C
+                call    toupper2
                 mov     sp, bp
                 mov     si, [bp+2]
                 mov     [si], al
@@ -5657,13 +5657,13 @@ loc_128F0:                              ; CODE XREF: sg0138:28DC\u2191j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_128F8       proc near               ; CODE XREF: _flsbuf+104\u2191p
+_write          proc near               ; CODE XREF: _flsbuf+104\u2191p
                                         ; _flsbuf+122\u2191p ...
                 push    bp
                 sub     sp, 8Eh
                 mov     bp, sp
                 push    word ptr [bp+92h]
-                call    sub_124F2
+                call    findFileHandleSlot
                 mov     sp, bp
                 test    ax, ax
                 mov     [bp+8Ch], ax
@@ -5674,7 +5674,7 @@ sub_128F8       proc near               ; CODE XREF: _flsbuf+104\u2191p
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_12919:                              ; CODE XREF: sub_128F8+16\u2191j
+loc_12919:                              ; CODE XREF: _write+16\u2191j
                 mov     si, [bp+8Ch]
                 test    word ptr [si], 8
                 jz      short loc_12936
@@ -5685,10 +5685,10 @@ loc_12919:                              ; CODE XREF: sub_128F8+16\u2191j
                 xor     ax, ax
                 push    ax
                 push    word ptr [bp+92h]
-                call    sub_12D66
+                call    _lseek
                 mov     sp, bp
 
-loc_12936:                              ; CODE XREF: sub_128F8+29\u2191j
+loc_12936:                              ; CODE XREF: _write+29\u2191j
                 mov     si, [bp+8Ch]
                 test    word ptr [si], 8000h
                 jz      short loc_12956
@@ -5702,15 +5702,15 @@ loc_12936:                              ; CODE XREF: sub_128F8+29\u2191j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_12956:                              ; CODE XREF: sub_128F8+46\u2191j
+loc_12956:                              ; CODE XREF: _write+46\u2191j
                 mov     byte ptr [bp+3], 0
                 xor     ax, ax
                 mov     [bp+84h], ax
                 mov     [bp+86h], ax
                 mov     [bp+88h], ax
 
-loc_12968:                              ; CODE XREF: sub_128F8+B6\u2193j
-                                        ; sub_128F8+EC\u2193j
+loc_12968:                              ; CODE XREF: _write+B6\u2193j
+                                        ; _write+EC\u2193j
                 mov     ax, [bp+84h]
                 mov     bx, [bp+96h]
                 cmp     bx, ax
@@ -5727,8 +5727,8 @@ loc_12968:                              ; CODE XREF: sub_128F8+B6\u2193j
                 mov     byte ptr [bp+2], 0Dh
                 dec     word ptr [bp+84h]
 
-loc_12995:                              ; CODE XREF: sub_128F8+8D\u2191j
-                                        ; sub_128F8+93\u2191j
+loc_12995:                              ; CODE XREF: _write+8D\u2191j
+                                        ; _write+93\u2191j
                 mov     si, [bp+86h]
                 inc     word ptr [bp+86h]
                 mov     al, [bp+2]
@@ -5753,14 +5753,14 @@ loc_12995:                              ; CODE XREF: sub_128F8+8D\u2191j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_129D6:                              ; CODE XREF: sub_128F8+D2\u2191j
+loc_129D6:                              ; CODE XREF: _write+D2\u2191j
                 mov     word ptr [bp+86h], 0
                 mov     ax, [bp+84h]
                 mov     [bp+88h], ax
                 jmp     short loc_12968
 ; ---------------------------------------------------------------------------
 
-loc_129E6:                              ; CODE XREF: sub_128F8+7A\u2191j
+loc_129E6:                              ; CODE XREF: _write+7A\u2191j
                 mov     ax, [bp+86h]
                 test    ax, ax
                 jz      short loc_12A10
@@ -5779,13 +5779,13 @@ loc_129E6:                              ; CODE XREF: sub_128F8+7A\u2191j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_12A10:                              ; CODE XREF: sub_128F8+F4\u2191j
-                                        ; sub_128F8+10C\u2191j
+loc_12A10:                              ; CODE XREF: _write+F4\u2191j
+                                        ; _write+10C\u2191j
                 mov     ax, [bp+84h]
                 add     sp, 8Eh
                 pop     bp
                 retn
-sub_128F8       endp
+_write          endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -5973,7 +5973,7 @@ buildAndChainExecutable endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_12B8B       proc near               ; CODE XREF: sub_11F5A+5A\u2191p
+allocFileBuffer proc near               ; CODE XREF: _filbuf+5A\u2191p
                                         ; _flsbuf+5E\u2191p
                 push    bp
                 sub     sp, 2
@@ -5989,8 +5989,8 @@ sub_12B8B       proc near               ; CODE XREF: sub_11F5A+5A\u2191p
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_12BA8:                              ; CODE XREF: sub_12B8B+D\u2191j
-                                        ; sub_12B8B+14\u2191j
+loc_12BA8:                              ; CODE XREF: allocFileBuffer+D\u2191j
+                                        ; allocFileBuffer+14\u2191j
                 push    word_18660
                 call    _nmalloc
                 mov     sp, bp
@@ -6006,7 +6006,7 @@ loc_12BA8:                              ; CODE XREF: sub_12B8B+D\u2191j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_12BCB:                              ; CODE XREF: sub_12B8B+30\u2191j
+loc_12BCB:                              ; CODE XREF: allocFileBuffer+30\u2191j
                 mov     ax, word_18660
                 mov     si, [bp+6]
                 mov     [si+8], ax
@@ -6017,7 +6017,7 @@ loc_12BCB:                              ; CODE XREF: sub_12B8B+30\u2191j
                 add     sp, 2
                 pop     bp
                 retn
-sub_12B8B       endp
+allocFileBuffer endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -6203,7 +6203,7 @@ strlen          endp
 ; Attributes: bp-based frame
 
 _nmalloc        proc near               ; CODE XREF: buildAndChainExecutable+4E\u2191p
-                                        ; sub_12B8B+21\u2191p
+                                        ; allocFileBuffer+21\u2191p
 
 arg_0           = word ptr  4
 
@@ -6304,7 +6304,7 @@ _nmalloc        endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_12D47       proc near               ; CODE XREF: sub_126D5+3F\u2191p
+isdigit         proc near               ; CODE XREF: atoi+3F\u2191p
                 push    bp
                 sub     sp, 2
                 mov     bp, sp
@@ -6318,27 +6318,27 @@ sub_12D47       proc near               ; CODE XREF: sub_126D5+3F\u2191p
                 jmp     short loc_12D61
 ; ---------------------------------------------------------------------------
 
-loc_12D5F:                              ; CODE XREF: sub_12D47+C\u2191j
-                                        ; sub_12D47+11\u2191j
+loc_12D5F:                              ; CODE XREF: isdigit+C\u2191j
+                                        ; isdigit+11\u2191j
                 xor     ax, ax
 
-loc_12D61:                              ; CODE XREF: sub_12D47+16\u2191j
+loc_12D61:                              ; CODE XREF: isdigit+16\u2191j
                 add     sp, 2
                 pop     bp
                 retn
-sub_12D47       endp
+isdigit         endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_12D66       proc near               ; CODE XREF: sub_1260E+93\u2191p
-                                        ; sub_128F8+39\u2191p
+_lseek          proc near               ; CODE XREF: _read+93\u2191p
+                                        ; _write+39\u2191p
                 push    bp
                 sub     sp, 0Fh
                 mov     bp, sp
                 push    word ptr [bp+13h]
-                call    sub_124F2
+                call    findFileHandleSlot
                 mov     sp, bp
                 test    ax, ax
                 mov     [bp+0Dh], ax
@@ -6350,7 +6350,7 @@ sub_12D66       proc near               ; CODE XREF: sub_1260E+93\u2191p
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_12D86:                              ; CODE XREF: sub_12D66+13\u2191j
+loc_12D86:                              ; CODE XREF: _lseek+13\u2191j
                 push    word ptr [bp+19h]
                 push    word ptr [bp+17h]
                 push    word ptr [bp+15h]
@@ -6369,7 +6369,7 @@ loc_12D86:                              ; CODE XREF: sub_12D66+13\u2191j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_12DB2:                              ; CODE XREF: sub_12D66+3F\u2191j
+loc_12DB2:                              ; CODE XREF: _lseek+3F\u2191j
                 cmp     word ptr [bp+19h], 2
                 jnz     short loc_12E30
                 mov     ax, [bp+17h]
@@ -6388,7 +6388,7 @@ loc_12DB2:                              ; CODE XREF: sub_12D66+3F\u2191j
                 mov     [bp+9], ax
                 mov     [bp+0Bh], bx
 
-loc_12DE3:                              ; CODE XREF: sub_12D66+B6\u2193j
+loc_12DE3:                              ; CODE XREF: _lseek+B6\u2193j
                 mov     ax, [bp+0Bh]
                 test    ax, ax
                 js      short loc_12E1E
@@ -6407,7 +6407,7 @@ loc_12DE3:                              ; CODE XREF: sub_12D66+B6\u2193j
                 lea     ax, [bp+4]
                 push    ax
                 push    word ptr [bp+13h]
-                call    sub_1260E
+                call    _read
                 mov     sp, bp
                 test    ax, ax
                 jnz     short loc_12E1E
@@ -6416,8 +6416,8 @@ loc_12DE3:                              ; CODE XREF: sub_12D66+B6\u2193j
                 jmp     short loc_12DE3
 ; ---------------------------------------------------------------------------
 
-loc_12E1E:                              ; CODE XREF: sub_12D66+82\u2191j
-                                        ; sub_12D66+98\u2191j ...
+loc_12E1E:                              ; CODE XREF: _lseek+82\u2191j
+                                        ; _lseek+98\u2191j ...
                 mov     ax, [bp+9]
                 add     ax, 1
                 mov     bx, [bp+0Bh]
@@ -6428,14 +6428,14 @@ loc_12E1E:                              ; CODE XREF: sub_12D66+82\u2191j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_12E30:                              ; CODE XREF: sub_12D66+50\u2191j
-                                        ; sub_12D66+58\u2191j ...
+loc_12E30:                              ; CODE XREF: _lseek+50\u2191j
+                                        ; _lseek+58\u2191j ...
                 mov     ax, [bp+7]
                 mov     bx, [bp+5]
                 add     sp, 0Fh
                 pop     bp
                 retn
-sub_12D66       endp
+_lseek          endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -6486,7 +6486,7 @@ off_12E84       dw offset loc_12EA9     ; DATA XREF: hasFileExtension+42\u2191r
                 push    bx
                 push    ax
                 push    word ptr [bp+0Ah]
-                call    sub_13367
+                call    strncpy2
                 mov     sp, bp
                 dec     ax
                 add     sp, 6
@@ -6575,7 +6575,7 @@ loc_12F0C:                              ; CODE XREF: ensureFileExtension+47\u219
                 inc     word ptr [bp+4]
                 push    word ptr [bp+0Fh]
                 push    word ptr [bp+4]
-                call    sub_13333
+                call    strncpy
                 mov     sp, bp
                 jmp     short loc_12F37
 ; ---------------------------------------------------------------------------
@@ -6595,12 +6595,12 @@ ensureFileExtension endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_12F3C       proc near               ; CODE XREF: sg0138:28E1\u2191p
+toupper2        proc near               ; CODE XREF: sg0138:28E1\u2191p
                 push    bp
                 sub     sp, 2
                 mov     bp, sp
                 push    word ptr [bp+6]
-                call    sub_13348
+                call    islower
                 mov     sp, bp
                 test    ax, ax
                 jz      short loc_12F56
@@ -6609,14 +6609,14 @@ sub_12F3C       proc near               ; CODE XREF: sg0138:28E1\u2191p
                 jmp     short loc_12F59
 ; ---------------------------------------------------------------------------
 
-loc_12F56:                              ; CODE XREF: sub_12F3C+10\u2191j
+loc_12F56:                              ; CODE XREF: toupper2+10\u2191j
                 mov     ax, [bp+6]
 
-loc_12F59:                              ; CODE XREF: sub_12F3C+18\u2191j
+loc_12F59:                              ; CODE XREF: toupper2+18\u2191j
                 add     sp, 2
                 pop     bp
                 retn
-sub_12F3C       endp
+toupper2        endp
 
 ; ---------------------------------------------------------------------------
                 push    cx
@@ -6995,8 +6995,8 @@ _dos_getfileattr endp
 
 ; Attributes: bp-based frame
 
-sub_13333       proc near               ; CODE XREF: findExecutableFile+1B\u2191p
-                                        ; sub_12755+54\u2191p ...
+strncpy         proc near               ; CODE XREF: findExecutableFile+1B\u2191p
+                                        ; formatHex+54\u2191p ...
 
 arg_0           = word ptr  4
 arg_2           = word ptr  6
@@ -7007,7 +7007,7 @@ arg_2           = word ptr  6
                 mov     si, [bp+arg_2]
                 cld
 
-loc_1333D:                              ; CODE XREF: sub_13333+E\u2193j
+loc_1333D:                              ; CODE XREF: strncpy+E\u2193j
                 lodsb
                 stosb
                 or      al, al
@@ -7015,13 +7015,13 @@ loc_1333D:                              ; CODE XREF: sub_13333+E\u2193j
                 mov     ax, [bp+arg_0]
                 pop     bp
                 retn
-sub_13333       endp
+strncpy         endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_13348       proc near               ; CODE XREF: sub_12F3C+9\u2191p
+islower         proc near               ; CODE XREF: toupper2+9\u2191p
                 push    bp
                 sub     sp, 2
                 mov     bp, sp
@@ -7035,27 +7035,27 @@ sub_13348       proc near               ; CODE XREF: sub_12F3C+9\u2191p
                 jmp     short loc_13362
 ; ---------------------------------------------------------------------------
 
-loc_13360:                              ; CODE XREF: sub_13348+C\u2191j
-                                        ; sub_13348+11\u2191j
+loc_13360:                              ; CODE XREF: islower+C\u2191j
+                                        ; islower+11\u2191j
                 xor     ax, ax
 
-loc_13362:                              ; CODE XREF: sub_13348+16\u2191j
+loc_13362:                              ; CODE XREF: islower+16\u2191j
                 add     sp, 2
                 pop     bp
                 retn
-sub_13348       endp
+islower         endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_13367       proc near               ; CODE XREF: hasFileExtension+63\u2191p
+strncpy2        proc near               ; CODE XREF: hasFileExtension+63\u2191p
                 push    bp
                 sub     sp, 6
                 mov     bp, sp
                 mov     word ptr [bp+4], 0
 
-loc_13372:                              ; CODE XREF: sub_13367+2B\u2193j
+loc_13372:                              ; CODE XREF: strncpy2+2B\u2193j
                 mov     ax, [bp+0Eh]
                 dec     ax
                 mov     bx, [bp+4]
@@ -7073,8 +7073,8 @@ loc_13372:                              ; CODE XREF: sub_13367+2B\u2193j
                 jmp     short loc_13372
 ; ---------------------------------------------------------------------------
 
-loc_13394:                              ; CODE XREF: sub_13367+14\u2191j
-                                        ; sub_13367+26\u2191j
+loc_13394:                              ; CODE XREF: strncpy2+14\u2191j
+                                        ; strncpy2+26\u2191j
                 mov     ax, [bp+0Eh]
                 dec     ax
                 mov     bx, [bp+4]
@@ -7084,13 +7084,13 @@ loc_13394:                              ; CODE XREF: sub_13367+14\u2191j
                 add     si, bx
                 mov     byte ptr [si], 0
 
-loc_133A7:                              ; CODE XREF: sub_13367+36\u2191j
+loc_133A7:                              ; CODE XREF: strncpy2+36\u2191j
                 inc     word ptr [bp+4]
                 mov     ax, [bp+4]
                 add     sp, 6
                 pop     bp
                 retn
-sub_13367       endp
+strncpy2        endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -7225,7 +7225,7 @@ _nheapgrow      endp ; sp-analysis failed
 
 ; Attributes: bp-based frame
 
-detectVideoMode proc near               ; CODE XREF: sub_104D0+6\u2191p
+detectVideoMode proc near               ; CODE XREF: checkVideoCard+6\u2191p
                                         ; init_video+6\u2193p
                 push    bp
                 mov     bp, sp
@@ -7542,7 +7542,7 @@ loc_1360E:                              ; CODE XREF: fillRect+B8\u2193j
                 mov     di, word_18678
                 mov     dx, word_18684
                 push    cx
-                call    sub_13915
+                call    videoDrawPoint
                 pop     cx
                 pop     si
                 inc     si
@@ -7574,7 +7574,7 @@ loc_1364D:                              ; CODE XREF: fillRect+F7\u2193j
                 mov     dx, word_18684
                 push    si
                 push    di
-                call    sub_13915
+                call    videoDrawPoint
                 pop     di
                 pop     si
                 inc     si
@@ -7629,7 +7629,7 @@ loc_1369D:                              ; CODE XREF: fillRect+192\u2193j
                 mov     di, word_18678
                 mov     dx, word_18684
                 push    bx
-                call    sub_13915
+                call    videoDrawPoint
                 pop     bx
                 inc     bx
 
@@ -7648,7 +7648,7 @@ loc_136D4:                              ; CODE XREF: fillRect+161\u2191j
                 mov     si, word_1867C
                 mov     di, word_18678
                 mov     dx, word_18684
-                call    sub_13915
+                call    videoDrawPoint
 
 loc_136ED:                              ; CODE XREF: fillRect+176\u2191j
                 inc     word_18678
@@ -7696,7 +7696,7 @@ loc_13748:                              ; CODE XREF: fillRect+1EE\u2193j
                 push    si
                 push    di
                 push    dx
-                call    sub_13915
+                call    videoDrawPoint
                 pop     dx
                 pop     di
                 pop     si
@@ -7787,7 +7787,7 @@ loc_137DB:                              ; CODE XREF: fillRect+283\u2193j
                 push    dx
                 push    di
                 push    si
-                call    sub_13915
+                call    videoDrawPoint
                 pop     si
                 pop     di
                 pop     dx
@@ -7812,7 +7812,7 @@ fillRect        endp
 
 ; Attributes: bp-based frame
 
-sub_137FE       proc near               ; CODE XREF: _main+22\u2191p
+toupper         proc near               ; CODE XREF: _main+22\u2191p
 
 arg_0           = word ptr  4
 
@@ -7829,8 +7829,8 @@ arg_0           = word ptr  4
                 ja      short loc_13812
                 sub     al, 20h ; ' '
 
-loc_13812:                              ; CODE XREF: sub_137FE+C\u2191j
-                                        ; sub_137FE+10\u2191j
+loc_13812:                              ; CODE XREF: toupper+C\u2191j
+                                        ; toupper+10\u2191j
                 pop     es
                 assume es:nothing
                 pop     ds
@@ -7838,7 +7838,7 @@ loc_13812:                              ; CODE XREF: sub_137FE+C\u2191j
                 pop     si
                 pop     bp
                 retn    2
-sub_137FE       endp
+toupper         endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -7866,7 +7866,7 @@ color           = word ptr  0Ch
                 mov     si, [bp+x2]
                 mov     di, [bp+y2]
                 mov     dx, [bp+color]
-                call    sub_1383B
+                call    drawLineInternal
                 pop     es
                 pop     ds
                 pop     di
@@ -7879,7 +7879,7 @@ drawLine        endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1383B       proc near               ; CODE XREF: drawLine+16\u2191p
+drawLineInternal proc near              ; CODE XREF: drawLine+16\u2191p
                 mov     word_18688, ax
                 mov     word_1868A, bx
                 mov     word_1868C, si
@@ -7896,7 +7896,7 @@ sub_1383B       proc near               ; CODE XREF: drawLine+16\u2191p
                 neg     di
                 neg     dx
 
-loc_1386B:                              ; CODE XREF: sub_1383B+2A\u2191j
+loc_1386B:                              ; CODE XREF: drawLineInternal+2A\u2191j
                 mov     word_1869E, di
                 mov     cx, word_1868C
                 sub     cx, word_18688
@@ -7904,7 +7904,7 @@ loc_1386B:                              ; CODE XREF: sub_1383B+2A\u2191j
                 neg     si
                 neg     cx
 
-loc_1387D:                              ; CODE XREF: sub_1383B+3C\u2191j
+loc_1387D:                              ; CODE XREF: drawLineInternal+3C\u2191j
                 mov     word_1869C, si
                 cmp     cx, dx
                 jge     short loc_1388B
@@ -7913,10 +7913,10 @@ loc_1387D:                              ; CODE XREF: sub_1383B+3C\u2191j
                 jmp     short loc_1388D
 ; ---------------------------------------------------------------------------
 
-loc_1388B:                              ; CODE XREF: sub_1383B+48\u2191j
+loc_1388B:                              ; CODE XREF: drawLineInternal+48\u2191j
                 xor     di, di
 
-loc_1388D:                              ; CODE XREF: sub_1383B+4E\u2191j
+loc_1388D:                              ; CODE XREF: drawLineInternal+4E\u2191j
                 mov     word_18692, cx
                 mov     word_18694, dx
                 mov     word_18698, si
@@ -7934,14 +7934,14 @@ loc_1388D:                              ; CODE XREF: sub_1383B+4E\u2191j
                 inc     cx
                 mov     dx, word_18690
 
-loc_138BC:                              ; CODE XREF: sub_1383B+9F\u2193j
-                                        ; sub_1383B+B7\u2193j
+loc_138BC:                              ; CODE XREF: drawLineInternal+9F\u2193j
+                                        ; drawLineInternal+B7\u2193j
                 push    bx
                 push    cx
                 push    dx
                 push    si
                 push    di
-                call    sub_13915
+                call    videoDrawPoint
                 pop     di
                 pop     si
                 pop     dx
@@ -7958,22 +7958,22 @@ loc_138BC:                              ; CODE XREF: sub_1383B+9F\u2193j
                 jmp     short locret_138F4
 ; ---------------------------------------------------------------------------
 
-loc_138E6:                              ; CODE XREF: sub_1383B+91\u2191j
+loc_138E6:                              ; CODE XREF: drawLineInternal+91\u2191j
                 add     si, word_1869C
                 add     di, word_1869E
                 add     bx, word_186A0
                 loop    loc_138BC
 
-locret_138F4:                           ; CODE XREF: sub_1383B+A9\u2191j
+locret_138F4:                           ; CODE XREF: drawLineInternal+A9\u2191j
                 retn
-sub_1383B       endp
+drawLineInternal endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-sub_138F5       proc near               ; CODE XREF: animateFlag+5E\u2191p
+videoDrawPointAlt proc near             ; CODE XREF: animateFlag+5E\u2191p
                                         ; animateFlag+76\u2191p ...
 
 arg_0           = word ptr  4
@@ -7993,18 +7993,18 @@ arg_4           = word ptr  8
                 mov     word_186A2, si
                 mov     word_186A4, di
                 jmp     short loc_1391C
-sub_138F5       endp
+videoDrawPointAlt endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_13915       proc near               ; CODE XREF: fillRect+B2\u2191p
+videoDrawPoint  proc near               ; CODE XREF: fillRect+B2\u2191p
                                         ; fillRect+ED\u2191p ...
                 mov     word_186C6, 0
                 push    es
 
-loc_1391C:                              ; CODE XREF: sub_138F5+1E\u2191j
+loc_1391C:                              ; CODE XREF: videoDrawPointAlt+1E\u2191j
                 cmp     videoMode, VIDEOMODE_CGA
                 jz      short loc_1392D
                 cmp     videoMode, VIDEOMODE_TANDY
@@ -8014,7 +8014,7 @@ loc_1391C:                              ; CODE XREF: sub_138F5+1E\u2191j
                 db 90h
 ; ---------------------------------------------------------------------------
 
-loc_1392D:                              ; CODE XREF: sub_13915+C\u2191j
+loc_1392D:                              ; CODE XREF: videoDrawPoint+C\u2191j
                 and     dx, 3
                 shl     di, 1
                 mov     bx, word_186D2[di]
@@ -8037,7 +8037,7 @@ loc_1392D:                              ; CODE XREF: sub_13915+C\u2191j
                 jmp     loc_13A01
 ; ---------------------------------------------------------------------------
 
-loc_1395F:                              ; CODE XREF: sub_13915+13\u2191j
+loc_1395F:                              ; CODE XREF: videoDrawPoint+13\u2191j
                 and     dx, 0Fh
                 shl     di, 1
                 mov     bx, word_186D2[di]
@@ -8059,7 +8059,7 @@ loc_1395F:                              ; CODE XREF: sub_13915+13\u2191j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1398C:                              ; CODE XREF: sub_13915+5B\u2191j
+loc_1398C:                              ; CODE XREF: videoDrawPoint+5B\u2191j
                 add     bx, si
                 and     dl, 0Fh
                 mov     al, es:[bx]
@@ -8070,7 +8070,7 @@ loc_1398C:                              ; CODE XREF: sub_13915+5B\u2191j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1399E:                              ; CODE XREF: sub_13915+15\u2191j
+loc_1399E:                              ; CODE XREF: videoDrawPoint+15\u2191j
                 and     dx, 0Fh
                 push    dx
                 mov     bx, di
@@ -8125,8 +8125,8 @@ loc_1399E:                              ; CODE XREF: sub_13915+15\u2191j
                 mov     al, 0FFh
                 out     dx, al          ; EGA port: graphics controller data register
 
-loc_13A01:                              ; CODE XREF: sub_13915+47\u2191j
-                                        ; sub_13915+74\u2191j ...
+loc_13A01:                              ; CODE XREF: videoDrawPoint+47\u2191j
+                                        ; videoDrawPoint+74\u2191j ...
                 cmp     word_186C6, 1
                 jz      short loc_13A0A
                 pop     es
@@ -8134,14 +8134,14 @@ loc_13A01:                              ; CODE XREF: sub_13915+47\u2191j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_13A0A:                              ; CODE XREF: sub_13915+F1\u2191j
+loc_13A0A:                              ; CODE XREF: videoDrawPoint+F1\u2191j
                 pop     es
                 pop     ds
                 pop     di
                 pop     si
                 pop     bp
                 retn    6
-sub_13915       endp ; sp-analysis failed
+videoDrawPoint  endp ; sp-analysis failed
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -8239,7 +8239,7 @@ intChange2      endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_13A78       proc near               ; CODE XREF: init_video:loc_13B66\u2193p
+buildScanlineOffsetTable proc near      ; CODE XREF: init_video:loc_13B66\u2193p
                 mov     bx, 4990h
                 mov     cx, 0C7h ; 'Ç'
                 cmp     videoMode, 0
@@ -8247,7 +8247,7 @@ sub_13A78       proc near               ; CODE XREF: init_video:loc_13B66\u2193p
                 cmp     videoMode, 1
                 jz      short loc_13AE1
 
-loc_13A8C:                              ; CODE XREF: sub_13A78+40\u2193j
+loc_13A8C:                              ; CODE XREF: buildScanlineOffsetTable+40\u2193j
                 mov     word_186CC, 4
                 push    cx
                 mov     ax, cx
@@ -8272,8 +8272,8 @@ loc_13A8C:                              ; CODE XREF: sub_13A78+40\u2193j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_13ABB:                              ; CODE XREF: sub_13A78+B\u2191j
-                                        ; sub_13A78+66\u2193j
+loc_13ABB:                              ; CODE XREF: buildScanlineOffsetTable+B\u2191j
+                                        ; buildScanlineOffsetTable+66\u2193j
                 mov     word_186CC, 2
                 mov     ax, cx
                 mov     ah, al
@@ -8292,17 +8292,17 @@ loc_13ABB:                              ; CODE XREF: sub_13A78+B\u2191j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_13AE1:                              ; CODE XREF: sub_13A78+12\u2191j
+loc_13AE1:                              ; CODE XREF: buildScanlineOffsetTable+12\u2191j
                 mov     word_186CC, 1
                 mov     ax, 1F18h
 
-loc_13AEA:                              ; CODE XREF: sub_13A78+7A\u2193j
+loc_13AEA:                              ; CODE XREF: buildScanlineOffsetTable+7A\u2193j
                 mov     [bx], ax
                 sub     bx, 2
                 sub     ax, 28h ; '('
                 loop    loc_13AEA
                 retn
-sub_13A78       endp
+buildScanlineOffsetTable endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -8346,7 +8346,7 @@ loc_13B47:                              ; CODE XREF: init_video+15\u2191j
                 mov     word_188F2, 1
 
 loc_13B66:                              ; CODE XREF: init_video+57\u2191j
-                call    sub_13A78
+                call    buildScanlineOffsetTable
                 cmp     word ptr [bp+6], 0
                 jz      short loc_13B91
                 cmp     videoMode, VIDEOMODE_CGA
@@ -8430,8 +8430,8 @@ random          endp
 
 ; Attributes: bp-based frame
 
-sub_13BD5       proc near               ; CODE XREF: sub_104D0+32\u2191p
-                                        ; sub_104D0+3C\u2191p
+probeMemoryForVideoMode proc near       ; CODE XREF: checkVideoCard+32\u2191p
+                                        ; checkVideoCard+3C\u2191p
 
 arg_0           = word ptr  4
 
@@ -8451,7 +8451,7 @@ arg_0           = word ptr  4
                 jmp     short loc_13C16
 ; ---------------------------------------------------------------------------
 
-loc_13BEF:                              ; CODE XREF: sub_13BD5+12\u2191j
+loc_13BEF:                              ; CODE XREF: probeMemoryForVideoMode+12\u2191j
                 sub     bx, 401h
                 mov     word_18866, bx
                 mov     ah, 48h
@@ -8474,14 +8474,14 @@ loc_13BEF:                              ; CODE XREF: sub_13BD5+12\u2191j
                 int     21h             ; DOS - 2+ - FREE MEMORY
                                         ; ES = segment address of area to be freed
 
-loc_13C16:                              ; CODE XREF: sub_13BD5+18\u2191j
+loc_13C16:                              ; CODE XREF: probeMemoryForVideoMode+18\u2191j
                 pop     es
                 pop     ds
                 pop     di
                 pop     si
                 pop     bp
                 retn    2
-sub_13BD5       endp
+probeMemoryForVideoMode endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -8851,7 +8851,7 @@ arg_0           = word ptr  4
                 shl     ax, 1
                 shl     ax, 1
                 mov     word_188DC, ax
-                call    sub_13E49
+                call    drawAnimatedCursor
                 mov     ah, 6
                 mov     dl, 0FFh
                 int     21h             ; DOS - DIRECT CONSOLE I/O CHARACTER OUTPUT
@@ -8917,9 +8917,9 @@ loc_13E2F:                              ; CODE XREF: checkKeypresses+67\u2191j
                 or      ax, ax
                 jz      short loc_13E41
                 push    ax
-                call    sub_13EA8
+                call    flushKeyboardBuffer
                 mov     word_188DE, 4
-                call    sub_13E49
+                call    drawAnimatedCursor
                 pop     ax
 
 loc_13E41:                              ; CODE XREF: checkKeypresses+81\u2191j
@@ -8935,14 +8935,14 @@ checkKeypresses endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_13E49       proc near               ; CODE XREF: checkKeypresses+2D\u2191p
+drawAnimatedCursor proc near            ; CODE XREF: checkKeypresses+2D\u2191p
                                         ; checkKeypresses+8D\u2191p
                 cmp     word_188E2, 0
                 jnz     short loc_13E51
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_13E51:                              ; CODE XREF: sub_13E49+5\u2191j
+loc_13E51:                              ; CODE XREF: drawAnimatedCursor+5\u2191j
                 mov     cx, 8
                 mov     bx, word_188DE
                 shl     bx, 1
@@ -8950,7 +8950,7 @@ loc_13E51:                              ; CODE XREF: sub_13E49+5\u2191j
                 shl     bx, 1
                 mov     di, word_188DC
 
-loc_13E62:                              ; CODE XREF: sub_13E49+42\u2193j
+loc_13E62:                              ; CODE XREF: drawAnimatedCursor+42\u2193j
                 mov     al, byte_188B2[bx]
                 inc     bx
                 push    bx
@@ -8958,18 +8958,18 @@ loc_13E62:                              ; CODE XREF: sub_13E49+42\u2193j
                 mov     cx, 8
                 mov     si, word_188DA
 
-loc_13E70:                              ; CODE XREF: sub_13E49+3D\u2193j
+loc_13E70:                              ; CODE XREF: drawAnimatedCursor+3D\u2193j
                 push    cx
                 xor     dx, dx
                 shr     al, 1
                 jnb     short loc_13E7B
                 mov     dx, word_188E2
 
-loc_13E7B:                              ; CODE XREF: sub_13E49+2C\u2191j
+loc_13E7B:                              ; CODE XREF: drawAnimatedCursor+2C\u2191j
                 push    ax
                 push    si
                 push    di
-                call    sub_13915
+                call    videoDrawPoint
                 pop     di
                 pop     si
                 pop     ax
@@ -8985,7 +8985,7 @@ loc_13E7B:                              ; CODE XREF: sub_13E49+2C\u2191j
                 and     ax, 3
                 mov     word_188DE, ax
                 retn
-sub_13E49       endp
+drawAnimatedCursor endp
 
 ; ---------------------------------------------------------------------------
                 push    bp
@@ -8994,7 +8994,7 @@ sub_13E49       endp
                 push    di
                 push    ds
                 push    es
-                call    sub_13EA8
+                call    flushKeyboardBuffer
                 pop     es
                 pop     ds
                 pop     di
@@ -9005,7 +9005,7 @@ sub_13E49       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_13EA8       proc near               ; CODE XREF: checkKeypresses+84\u2191p
+flushKeyboardBuffer proc near           ; CODE XREF: checkKeypresses+84\u2191p
                                         ; sg0138:3E9F\u2191p
                 mov     ax, 0F000h
                 mov     es, ax
@@ -9022,9 +9022,9 @@ sub_13EA8       proc near               ; CODE XREF: checkKeypresses+84\u2191p
                 mov     di, 41Ah
                 mov     es:[di], al
 
-locret_13EC7:                           ; CODE XREF: sub_13EA8+D\u2191j
+locret_13EC7:                           ; CODE XREF: flushKeyboardBuffer+D\u2191j
                 retn
-sub_13EA8       endp
+flushKeyboardBuffer endp
 
 ; ---------------------------------------------------------------------------
                 align 10h
@@ -9116,7 +9116,7 @@ word_13F2C      dw 0                    ; DATA XREF: start2+B8\u2191w
                 db    0
                 db    0
                 db    0
-_doserrno       dw 0                    ; DATA XREF: sub_10E82+B2\u2191r
+_doserrno       dw 0                    ; DATA XREF: exit+B2\u2191r
                                         ; _nheapinit+3\u2191w ...
 aStackOverflowD db 'Stack overflow during arg parsing',0Dh,0Ah,'$'
 aIncompatibleDo db 'Incompatible DOS version',0Dh,0Ah,'$'
@@ -9145,7 +9145,7 @@ FLAG_DATA3      db 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0
                 db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
                 db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 ; char msg[]
-msg             db 0Ah                  ; DATA XREF: sub_104D0+F\u2191o
+msg             db 0Ah                  ; DATA XREF: checkVideoCard+F\u2191o
                 db 'Ultima I requires a Color Graphics Adapter.',0Ah,0
 ; char aNotEnoughMemor[]
 aNotEnoughMemor db 0Ah                  ; DATA XREF: checkMem+E\u2191o
@@ -9923,7 +9923,7 @@ word_18470      dw 459Ch                ; DATA XREF: _nfree+20\u2191r
 word_18472      dw 1000h                ; DATA XREF: _nmalloc+66\u2191r
                                         ; _nmalloc+6C\u2191r
 word_18474      dw 0                    ; DATA XREF: _nheapinit+71\u2191w
-word_18476      dw 14h                  ; DATA XREF: sub_10E82+E4\u2191r
+word_18476      dw 14h                  ; DATA XREF: exit+E4\u2191r
                                         ; _open+1D\u2191r ...
                 db    1
                 db  80h ; €
@@ -10380,8 +10380,8 @@ word_18650      dw 0                    ; DATA XREF: _open:loc_11D78\u2191r
                 db    0
                 db    0
                 db    0
-word_18660      dw 200h                 ; DATA XREF: sub_12B8B:loc_12BA8\u2191r
-                                        ; sub_12B8B:loc_12BCB\u2191r
+word_18660      dw 200h                 ; DATA XREF: allocFileBuffer:loc_12BA8\u2191r
+                                        ; allocFileBuffer:loc_12BCB\u2191r
                 db    0
                 db    0
                 db    0
@@ -10416,36 +10416,36 @@ word_18684      dw 0                    ; DATA XREF: fillRect+A\u2191w
 byte_18686      db 0                    ; DATA XREF: fillRect+82\u2191w
                                         ; fillRect+CD\u2191r ...
                 db    0
-word_18688      dw 0                    ; DATA XREF: sub_1383B\u2191w
-                                        ; sub_1383B+38\u2191r ...
-word_1868A      dw 0                    ; DATA XREF: sub_1383B+3\u2191w
-                                        ; sub_1383B+26\u2191r ...
-word_1868C      dw 0                    ; DATA XREF: sub_1383B+7\u2191w
-                                        ; sub_1383B+34\u2191r
-word_1868E      dw 0                    ; DATA XREF: sub_1383B+B\u2191w
-                                        ; sub_1383B+22\u2191r
-word_18690      dw 0                    ; DATA XREF: sub_1383B+F\u2191w
-                                        ; sub_1383B+7D\u2191r
-word_18692      dw 0                    ; DATA XREF: sub_1383B:loc_1388D\u2191w
-word_18694      dw 0                    ; DATA XREF: sub_1383B+56\u2191w
-                                        ; sub_1383B+6B\u2191r
-word_18696      dw 0                    ; DATA XREF: sub_1383B+70\u2191w
-                                        ; sub_1383B+9B\u2191r
-word_18698      dw 0                    ; DATA XREF: sub_1383B+5A\u2191w
-                                        ; sub_1383B+93\u2191r ...
-word_1869A      dw 0                    ; DATA XREF: sub_1383B+5E\u2191w
-                                        ; sub_1383B+97\u2191r ...
-word_1869C      dw 0                    ; DATA XREF: sub_1383B:loc_1387D\u2191w
-                                        ; sub_1383B:loc_138E6\u2191r
-word_1869E      dw 0                    ; DATA XREF: sub_1383B:loc_1386B\u2191w
-                                        ; sub_1383B+AF\u2191r
-word_186A0      dw 0                    ; DATA XREF: sub_1383B+79\u2191w
-                                        ; sub_1383B+B3\u2191r
-word_186A2      dw 0                    ; DATA XREF: sub_1383B+14\u2191w
-                                        ; sub_138F5+16\u2191w
-word_186A4      dw 0                    ; DATA XREF: sub_1383B+18\u2191w
-                                        ; sub_138F5+1A\u2191w
-word_186A6      dw 3Fh                  ; DATA XREF: sub_13915+3B\u2191r
+word_18688      dw 0                    ; DATA XREF: drawLineInternal\u2191w
+                                        ; drawLineInternal+38\u2191r ...
+word_1868A      dw 0                    ; DATA XREF: drawLineInternal+3\u2191w
+                                        ; drawLineInternal+26\u2191r ...
+word_1868C      dw 0                    ; DATA XREF: drawLineInternal+7\u2191w
+                                        ; drawLineInternal+34\u2191r
+word_1868E      dw 0                    ; DATA XREF: drawLineInternal+B\u2191w
+                                        ; drawLineInternal+22\u2191r
+word_18690      dw 0                    ; DATA XREF: drawLineInternal+F\u2191w
+                                        ; drawLineInternal+7D\u2191r
+word_18692      dw 0                    ; DATA XREF: drawLineInternal:loc_1388D\u2191w
+word_18694      dw 0                    ; DATA XREF: drawLineInternal+56\u2191w
+                                        ; drawLineInternal+6B\u2191r
+word_18696      dw 0                    ; DATA XREF: drawLineInternal+70\u2191w
+                                        ; drawLineInternal+9B\u2191r
+word_18698      dw 0                    ; DATA XREF: drawLineInternal+5A\u2191w
+                                        ; drawLineInternal+93\u2191r ...
+word_1869A      dw 0                    ; DATA XREF: drawLineInternal+5E\u2191w
+                                        ; drawLineInternal+97\u2191r ...
+word_1869C      dw 0                    ; DATA XREF: drawLineInternal:loc_1387D\u2191w
+                                        ; drawLineInternal:loc_138E6\u2191r
+word_1869E      dw 0                    ; DATA XREF: drawLineInternal:loc_1386B\u2191w
+                                        ; drawLineInternal+AF\u2191r
+word_186A0      dw 0                    ; DATA XREF: drawLineInternal+79\u2191w
+                                        ; drawLineInternal+B3\u2191r
+word_186A2      dw 0                    ; DATA XREF: drawLineInternal+14\u2191w
+                                        ; videoDrawPointAlt+16\u2191w
+word_186A4      dw 0                    ; DATA XREF: drawLineInternal+18\u2191w
+                                        ; videoDrawPointAlt+1A\u2191w
+word_186A6      dw 3Fh                  ; DATA XREF: videoDrawPoint+3B\u2191r
                 db  3Fh ; ?
                 db  40h ; @
                 db  3Fh ; ?
@@ -10476,26 +10476,26 @@ word_186A6      dw 3Fh                  ; DATA XREF: sub_13915+3B\u2191r
                 db    2
                 db 0FCh ; ü
                 db    3
-word_186C6      dw 0                    ; DATA XREF: sub_138F5\u2191w
-                                        ; sub_13915\u2191w ...
+word_186C6      dw 0                    ; DATA XREF: videoDrawPointAlt\u2191w
+                                        ; videoDrawPoint\u2191w ...
 ; VIDEOMODE videoMode
 videoMode       dw VIDEOMODE_CGA        ; DATA XREF: animateFlag+10\u2191r
                                         ; slideInLogo+28\u2191r ...
 word_186CA      dw 0                    ; DATA XREF: init_video+2C\u2191w
                                         ; init_video+4C\u2191w
 word_186CC      dw 0                    ; DATA XREF: int_cga_video+7\u2191w
-                                        ; sub_13A78:loc_13A8C\u2191w ...
+                                        ; buildScanlineOffsetTable:loc_13A8C\u2191w ...
 word_186CE      dw 0                    ; DATA XREF: intChange2\u2191w
                                         ; intChange2:loc_13A50\u2191r
 word_186D0      dw 0                    ; DATA XREF: intChange2+10\u2191w
                                         ; intChange2+28\u2191r
-word_186D2      dw 0C8h dup(0)          ; DATA XREF: sub_13915+1E\u2191r
-                                        ; sub_13915+50\u2191r ...
+word_186D2      dw 0C8h dup(0)          ; DATA XREF: videoDrawPoint+1E\u2191r
+                                        ; videoDrawPoint+50\u2191r ...
 _castleFlagSeed dw 0                    ; DATA XREF: random+7\u2191r
                                         ; random+13\u2191w
-word_18864      dw 0                    ; DATA XREF: sub_13BD5+2E\u2191w
+word_18864      dw 0                    ; DATA XREF: probeMemoryForVideoMode+2E\u2191w
 word_18866      dw 0                    ; DATA XREF: checkMem+6\u2191r
-                                        ; sub_13BD5+14\u2191w ...
+                                        ; probeMemoryForVideoMode+14\u2191w ...
                 db    0
                 db    1
                 db    2
@@ -10530,7 +10530,7 @@ CASTLE_LOOKUP_3 db 80h, 40h, 20h, 10h, 8, 4, 2, 1
                                         ; decodeCastleEGA+49\u2191r
 _castleImageSeg dw 0                    ; DATA XREF: decodeCastleEGA+16\u2191w
                                         ; decodeCastleEGA+6B\u2191r
-byte_188B2      db 66h                  ; DATA XREF: sub_13E49:loc_13E62\u2191r
+byte_188B2      db 66h                  ; DATA XREF: drawAnimatedCursor:loc_13E62\u2191r
                 db  3Ch ; <
                 db  18h
                 db  66h ; f
@@ -10571,15 +10571,15 @@ byte_188B2      db 66h                  ; DATA XREF: sub_13E49:loc_13E62\u2191r
                 db    0
                 db    0
 word_188DA      dw 0                    ; DATA XREF: checkKeypresses+1D\u2191w
-                                        ; sub_13E49+23\u2191r
+                                        ; drawAnimatedCursor+23\u2191r
 word_188DC      dw 0                    ; DATA XREF: checkKeypresses+2A\u2191w
-                                        ; sub_13E49+15\u2191r
+                                        ; drawAnimatedCursor+15\u2191r
 word_188DE      dw 0                    ; DATA XREF: checkKeypresses+87\u2191w
-                                        ; sub_13E49+B\u2191r ...
+                                        ; drawAnimatedCursor+B\u2191r ...
                 db    0
                 db    0
 word_188E2      dw 0                    ; DATA XREF: checkKeypresses+A\u2191w
-                                        ; sub_13E49\u2191r ...
+                                        ; drawAnimatedCursor\u2191r ...
                 db  20h
                 db  20h
                 db  20h
@@ -10604,7 +10604,7 @@ _lineColor      dw 8205h                ; DATA XREF: showCopyrightTitle+1F\u2191
 ; char textColor[]
 _textColor      dw 8E10h                ; DATA XREF: showTitle2+13\u2191r
                                         ; showTitle2+2D\u2191r ...
-word_188F8      dw 0BCD0h               ; DATA XREF: sub_104D0+27\u2191r
+word_188F8      dw 0BCD0h               ; DATA XREF: checkVideoCard+27\u2191r
                                         ; _main:loc_10E2B\u2191w ...
 word_188FA      dw 1400h                ; DATA XREF: showTrademarks+7D\u2191r
                                         ; _main+15\u2191w

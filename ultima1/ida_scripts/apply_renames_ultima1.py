@@ -166,6 +166,141 @@ RENAMES = [
      "writes a null-terminated string to a stream one character at a "
      "time via putc, stopping at the null terminator."),
     (0x1253B, "putc", "writes one character to a stream via _fwrite-family internals."),
+    (0x137FE, "toupper",
+     "classic 'a'-'z' -> subtract 0x20 uppercase check. Called from "
+     "_main on argv[1][0] right before comparing it to 'C' -- resolves "
+     "that mystery: it's a case-insensitive command-line flag."),
+
+    (0x10E82, "exit",
+     "the real C-standard exit(): flushes/closes every entry in the "
+     "FILE table (same 20-slot, 14-byte-stride table _flushall walks "
+     "in OUT.EXE) AND closes raw OS handles from an internal handle "
+     "table, then calls the already-named _exit (which just runs the "
+     "exit hook and INT 21h/4Ch -- no cleanup). This distinction "
+     "matches real ANSI C semantics: exit() cleans up, _exit() "
+     "doesn't. Called by checkMem/checkVideoCard on fatal startup "
+     "errors."),
+
+    (0x104D0, "checkVideoCard",
+     "calls detectVideoMode; if no supported adapter is found, prints "
+     "'Ultima I requires a Color Graphics Adapter...' and exit(1)s. "
+     "Otherwise calls probeMemoryForVideoMode with a flag for whether "
+     "EGA mode was detected (and no -C override), or 0 otherwise."),
+
+    (0x13BD5, "probeMemoryForVideoMode",
+     "queries total available memory via the classic DOS trick (INT "
+     "21h/48h ALLOCATE MEMORY with BX=0xFFFFh deliberately over-"
+     "requesting; the failure still returns the true max in BX) into "
+     "word_18866 -- the value checkMem later compares against 0x1900. "
+     "In EGA mode, additionally reserves a 16KB (0x400-paragraph) "
+     "block and pokes its segment into a fixed low-memory location "
+     "(physical 0x810, via es=0x50/[bx=0x10]) before freeing a "
+     "temporary larger reservation -- purpose of the fixed-address "
+     "poke not fully traced (possibly a video buffer other code reads "
+     "by convention); flagged as a loose end rather than asserted."),
+
+    (0x11F5A, "_filbuf",
+     "refill-buffer-and-return-one-char, matching OUT.EXE's _filbuf "
+     "exactly in size (410 bytes) and call site (_fread+3C)."),
+    (0x1260E, "_read",
+     "text-mode-aware read underneath _filbuf, matching OUT.EXE's "
+     "_read exactly in size (199 bytes)."),
+    (0x12D66, "_lseek",
+     "CRT-level seek used by _read/_write, matching OUT.EXE's _lseek "
+     "exactly in size (213 bytes)."),
+    (0x128F8, "_write",
+     "text-mode-aware write underneath _flsbuf, matching OUT.EXE's "
+     "_write exactly in size (290 bytes)."),
+    (0x12B8B, "allocFileBuffer",
+     "lazily allocates a stream's I/O buffer, matching OUT.EXE's "
+     "allocFileBuffer exactly in size (91 bytes)."),
+    (0x124F2, "findFileHandleSlot",
+     "internal handle-table lookup, matching OUT.EXE's "
+     "findFileHandleSlot exactly in size (73 bytes)."),
+    (0x13333, "strncpy",
+     "bounded copy helper, matching OUT.EXE's strncpy in role -- "
+     "called from ensureFileExtension and findExecutableFile, same as "
+     "OUT.EXE's equivalent cluster."),
+
+    (0x13915, "videoDrawPoint",
+     "plots a single pixel at (si=x, di=y) in color dx, directly into "
+     "video memory (segment 0xB800), with separate CGA/Tandy/EGA "
+     "bit-packing branches selected by videoMode. The underlying "
+     "primitive beneath the already-named fillRect/drawLine."),
+    (0x138F5, "videoDrawPointAlt",
+     "alternate entry into videoDrawPoint's shared body: sets "
+     "word_186C6=1 (videoDrawPoint's own entry sets it to 0) before "
+     "falling through to the same pixel-plot code, changing how the "
+     "combine step further down treats the target byte -- used by "
+     "the flag-animation code (animateFlag) and the logo fade/slide "
+     "sequence, consistent with drawing in an alternate (XOR/erase-"
+     "style) mode for animating a sprite over existing background. "
+     "Exact meaning of the mode bit not traced further."),
+    (0x13A78, "buildScanlineOffsetTable",
+     "precomputes the row-to-framebuffer-offset table, matching "
+     "OUT.EXE's buildScanlineOffsetTable in shape exactly (same CGA "
+     "interleaved-scanline vs. linear EGA/Tandy address math). Called "
+     "once from init_video."),
+    (0x1383B, "drawLineInternal",
+     "Bresenham line rasterizer (dx/dy deltas, sign determination, "
+     "error-term accumulation) -- the core drawLine calls after "
+     "argument setup."),
+    (0x10744, "drawLogoPixelRow",
+     "scans a row of glyph/logo bitmap data for '*' marker bytes and "
+     "plots each one via videoDrawPointAlt -- the ASCII-art-style "
+     "renderer for fadeInLogo's title graphic."),
+    (0x13EA8, "flushKeyboardBuffer",
+     "checks the BIOS ROM ID byte at F000:FFFEh (0xFF = classic PC/XT); "
+     "on any other (newer) BIOS, copies the BIOS keyboard buffer tail "
+     "pointer (0040:001C) over the head pointer (0040:001A), which "
+     "empties the type-ahead buffer -- a workaround for a BIOS "
+     "quirk/bug on non-PC/XT hardware. Called from checkKeypresses."),
+
+    (0x1134D, "divmod32",
+     "full signed 32-bit division: identical shift-subtract long-"
+     "division shape to OUT.EXE's divmod32 (same sign-normalization "
+     "via not/neg/sbb, same 32-iteration shl/rcl comparison loop). "
+     "Used by fadeInLogo's animation timing math."),
+    (0x126D5, "atoi",
+     "parses a decimal string (handles leading '-'/'+', accumulates "
+     "digits via isdigit), returns the value and chars consumed. "
+     "Called twice from formatArg -- parsing width/precision fields "
+     "in a format specifier like the '5' in '%5d'."),
+    (0x12D47, "isdigit", "'0'-'9' range check, used by atoi."),
+    (0x12755, "formatHex",
+     "hex-digit extraction via repeated shift + nibble lookup (table "
+     "at 0x476C, presumably \"0123456789ABCDEF\"), then strncpy's the "
+     "result out -- formatArg's %x conversion, reached via a jump "
+     "table (matching playSound-style dispatch elsewhere in this "
+     "codebase)."),
+    (0x127E0, "formatOctal",
+     "octal-digit extraction (3 bits at a time, '0'-'7'), the %o "
+     "counterpart to formatHex."),
+    (0x13367, "strncpy2",
+     "byte-for-byte identical to the already-named strncpy (0x13333) "
+     "at a different address -- a second copy from a different linked "
+     "object file, not a distinct implementation. Called from "
+     "hasFileExtension. Suffixed '2' since IDA requires unique global "
+     "names -- 'strncpy' was already taken by 0x13333."),
+    (0x12F3C, "toupper2",
+     "byte-for-byte identical role to the already-named toupper "
+     "(0x137FE) via a different code shape (islower-check + "
+     "conditional subtract instead of a range check) -- another "
+     "duplicate copy from a different object file. Suffixed '2' for "
+     "the same name-uniqueness reason as strncpy2."),
+    (0x13348, "islower", "'a'-'z' range check, used by the second toupper copy."),
+
+    (0x13E49, "drawAnimatedCursor",
+     "early-returns if word_188E2 (color) is 0; otherwise blits an "
+     "8x8 bitmap glyph (byte_188B2, one of 4 frames selected by "
+     "word_188DE) bit-by-bit via videoDrawPoint at (word_188DA, "
+     "word_188DC), then advances word_188DE through a 0-3 cycle for "
+     "next time. Called from checkKeypresses during the title-screen "
+     "input poll -- almost certainly the blinking 'press any key' "
+     "cursor/prompt indicator, though the exact glyph content wasn't "
+     "decoded. The last unnamed function in ULTIMA.EXE -- "
+     "100/100 (100%) once applied."),
+
     (0x1126F, "printStartupMessage",
      "renamed from the pre-existing 'writeString2_mb' -- confirmed "
      "this is a printf-style formatter (vsprintf + fputs to a fixed "

@@ -510,6 +510,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X104CB);
 	op_hex		(x,	1);
 	create_insn	(0X104D0);
+	set_name	(0X104D0,	"checkVideoCard");
 	create_insn	(x=0X104D1);
 	op_hex		(x,	1);
 	create_insn	(x=0X104D9);
@@ -756,6 +757,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1073F);
 	op_hex		(x,	1);
 	create_insn	(0X10744);
+	set_name	(0X10744,	"drawLogoPixelRow");
 	create_insn	(x=0X10745);
 	op_hex		(x,	1);
 	create_insn	(x=0X10752);
@@ -1166,6 +1168,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X10E7D);
 	op_hex		(x,	1);
 	create_insn	(0X10E82);
+	set_name	(0X10E82,	"exit");
 	create_insn	(x=0X10E83);
 	op_hex		(x,	1);
 	create_insn	(0X10E98);
@@ -1317,6 +1320,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X11348);
 	op_hex		(x,	1);
 	create_insn	(0X1134D);
+	set_name	(0X1134D,	"divmod32");
 	create_insn	(x=0X1134E);
 	op_hex		(x,	1);
 	create_insn	(0X11373);
@@ -1610,6 +1614,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X11F55);
 	op_hex		(x,	1);
 	create_insn	(0X11F5A);
+	set_name	(0X11F5A,	"_filbuf");
 	create_insn	(x=0X11F5B);
 	op_hex		(x,	1);
 	create_insn	(x=0X11F66);
@@ -1829,6 +1834,7 @@ static Bytes_0(void) {
 	create_insn	(0X124E3);
 	create_insn	(0X124E5);
 	create_insn	(0X124F2);
+	set_name	(0X124F2,	"findFileHandleSlot");
 	create_insn	(x=0X124F3);
 	op_hex		(x,	1);
 	create_insn	(x=0X1250B);
@@ -1866,6 +1872,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X12609);
 	op_hex		(x,	1);
 	create_insn	(0X1260E);
+	set_name	(0X1260E,	"_read");
 	create_insn	(x=0X1260F);
 	op_hex		(x,	1);
 	create_insn	(x=0X12626);
@@ -1887,6 +1894,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X126D0);
 	op_hex		(x,	1);
 	create_insn	(0X126D5);
+	set_name	(0X126D5,	"atoi");
 	create_insn	(x=0X126D6);
 	op_hex		(x,	1);
 	create_insn	(0X126FB);
@@ -1894,6 +1902,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X12750);
 	op_hex		(x,	1);
 	create_insn	(0X12755);
+	set_name	(0X12755,	"formatHex");
 	create_insn	(x=0X12756);
 	op_hex		(x,	1);
 	create_insn	(x=0X1276F);
@@ -1912,6 +1921,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X127DB);
 	op_hex		(x,	1);
 	create_insn	(0X127E0);
+	set_name	(0X127E0,	"formatOctal");
 	create_insn	(x=0X127E1);
 	op_hex		(x,	1);
 	create_insn	(x=0X127FA);
@@ -1941,6 +1951,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X128F3);
 	op_hex		(x,	1);
 	create_insn	(0X128F8);
+	set_name	(0X128F8,	"_write");
 	create_insn	(x=0X128F9);
 	op_hex		(x,	1);
 	create_insn	(x=0X12913);
@@ -1982,6 +1993,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X12B83);
 	op_hex		(x,	1);
 	create_insn	(0X12B8B);
+	set_name	(0X12B8B,	"allocFileBuffer");
 	create_insn	(x=0X12B8C);
 	op_hex		(x,	1);
 	create_insn	(x=0X12B9A);
@@ -2071,12 +2083,14 @@ static Bytes_0(void) {
 	create_insn	(0X12D36);
 	create_insn	(0X12D3B);
 	create_insn	(0X12D47);
+	set_name	(0X12D47,	"isdigit");
 	create_insn	(x=0X12D48);
 	op_hex		(x,	1);
 	create_insn	(0X12D5F);
 	create_insn	(x=0X12D61);
 	op_hex		(x,	1);
 	create_insn	(0X12D66);
+	set_name	(0X12D66,	"_lseek");
 	create_insn	(x=0X12D67);
 	op_hex		(x,	1);
 	create_insn	(x=0X12D81);
@@ -2125,6 +2139,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X12F37);
 	op_hex		(x,	1);
 	create_insn	(0X12F3C);
+	set_name	(0X12F3C,	"toupper2");
 	create_insn	(x=0X12F3D);
 	op_hex		(x,	1);
 	create_insn	(0X12F56);
@@ -2274,6 +2289,7 @@ static Bytes_0(void) {
 	op_hex		(x,	0);
 	create_insn	(0X13330);
 	create_insn	(0X13333);
+	set_name	(0X13333,	"strncpy");
 	create_insn	(x=0X13336);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X13339);
@@ -2281,12 +2297,14 @@ static Bytes_0(void) {
 	create_insn	(x=0X13343);
 	op_stkvar	(x,	1);
 	create_insn	(0X13348);
+	set_name	(0X13348,	"islower");
 	create_insn	(x=0X13349);
 	op_hex		(x,	1);
 	create_insn	(0X13360);
 	create_insn	(x=0X13362);
 	op_hex		(x,	1);
 	create_insn	(0X13367);
+	set_name	(0X13367,	"strncpy2");
 	create_insn	(x=0X13368);
 	op_hex		(x,	1);
 	create_insn	(0X13394);
@@ -2470,6 +2488,7 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X137FB);
 	create_insn	(0X137FE);
+	set_name	(0X137FE,	"toupper");
 	create_insn	(x=0X13805);
 	op_stkvar	(x,	1);
 	create_insn	(0X1381A);
@@ -2485,11 +2504,13 @@ static Bytes_0(void) {
 	create_insn	(x=0X1382D);
 	op_stkvar	(x,	1);
 	create_insn	(0X1383B);
+	set_name	(0X1383B,	"drawLineInternal");
 	create_insn	(0X1388B);
 	create_insn	(x=0X138A9);
 	op_hex		(x,	1);
 	create_insn	(0X138E6);
 	create_insn	(0X138F5);
+	set_name	(0X138F5,	"videoDrawPointAlt");
 	create_insn	(x=0X13902);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X13905);
@@ -2497,6 +2518,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X13908);
 	op_stkvar	(x,	1);
 	create_insn	(0X13915);
+	set_name	(0X13915,	"videoDrawPoint");
 	create_insn	(x=0X1391C);
 	op_enum		(x,	1,	GetEnum("VIDEOMODE"),0);
 	create_insn	(x=0X13923);
@@ -2597,6 +2619,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X13A6A);
 	op_seg		(x,	1);
 	create_insn	(0X13A78);
+	set_name	(0X13A78,	"buildScanlineOffsetTable");
 	create_insn	(x=0X13A97);
 	op_hex		(x,	1);
 	create_insn	(x=0X13AA2);
@@ -2654,6 +2677,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X13BCA);
 	op_hex		(x,	1);
 	create_insn	(0X13BD5);
+	set_name	(0X13BD5,	"probeMemoryForVideoMode");
 	set_cmt	(0X13BE1,	"DOS - 2+ - ALLOCATE MEMORY\nBX = number of 16-byte paragraphs desired",	0);
 	create_insn	(x=0X13BE1);
 	op_hex		(x,	0);
@@ -2813,6 +2837,7 @@ static Bytes_0(void) {
 	create_insn	(0X13E19);
 	create_insn	(0X13E1F);
 	create_insn	(0X13E49);
+	set_name	(0X13E49,	"drawAnimatedCursor");
 	create_insn	(0X13E51);
 	create_insn	(x=0X13E58);
 	op_hex		(x,	1);
@@ -2829,6 +2854,7 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X13E98);
 	create_insn	(0X13EA8);
+	set_name	(0X13EA8,	"flushKeyboardBuffer");
 	make_array	(0X13EC8,	0X8);
 	create_word	(0X13ED2);
 	create_dword	(0X13ED4);
