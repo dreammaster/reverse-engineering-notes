@@ -470,6 +470,162 @@ RENAMES = [
     (0x1AF37, "soundEffect9",
      "effectNum 9 -- same caveat as soundEffect8: not reached by any "
      "literal call site found in this executable."),
+
+    # -- ninth pass: the EXE-chaining cluster. Major finding -- this is
+    # NOT a DOS INT 21h/4Bh EXEC wrapper (no such call appears anywhere
+    # in it); it's a custom overlay loader that reads the target .EXE
+    # directly, builds a PSP by hand, and far-JMPs straight into it
+    # without ever returning to DOS. This is how OUT.EXE hands off to
+    # SPACE.EXE (boarding a ship) and presumably how all 5 executables
+    # chain to each other. See
+    # docs/overview.md#exe-chaining-mechanism-decoded for the full
+    # writeup -- this materially affects how the ScummVM
+    # reimplementation should model "switching modules" (in-process
+    # jump, not real process spawning, so shared low-memory state may
+    # matter). --
+
+    (0x1908B, "chainToExecutable",
+     "thin wrapper around execProgram (see below): pushes envp, "
+     "&arg_2 (by address -- vector-style), arg_0. The one actually "
+     "used -- called from writeInUseAndExit's retry loop when boarding "
+     "a ship (chains to SPACE.EXE)."),
+
+    (0x190A6, "chainToExecutableAlt",
+     "near-identical sibling of chainToExecutable, differing only in "
+     "pushing arg_2 by value instead of by address (list-style vs. "
+     "vector-style argument passing, echoing the classic execl/execv "
+     "distinction). Never called from anywhere in this executable -- "
+     "an unused linked-library variant, same pattern as the dead "
+     "siblings found inside _nheapgrow and divmod32 earlier."),
+
+    (0x19633, "findExecutableFile",
+     "locates the target program file: tries the bare filename first "
+     "(hasFileExtension check), then name+\".EXE\", then name+\".COM\" "
+     "(ensureFileExtension + _dos_getfileattr existence check each "
+     "time). Returns 0 on success, -1 if none of the three candidates "
+     "exist."),
+
+    (0x196AC, "buildAndChainExecutable",
+     "once findExecutableFile succeeds: measures and concatenates the "
+     "argv array into a single DOS command-tail buffer (length-byte + "
+     "chars + CR, the classic DOS EXEC parameter-block format) via "
+     "_nmalloc'd scratch space, then calls execProgram to actually "
+     "load and jump to it, then _nfree's the scratch buffer."),
+
+    (0x19BED, "execProgram",
+     "the actual overlay loader -- and the reason this cluster isn't a "
+     "simple DOS EXEC wrapper: computes the target file's size (seek-"
+     "to-end), validates it fits in available memory, resizes this "
+     "process's own memory block (INT 21h/4Ah), copies a 192-word PSP "
+     "template (unk_26EEA) into the new segment, copies the already-"
+     "read program image into place, then **far-JMPs directly into "
+     "it** (`jmp dword ptr cs:byte_19BE1`) -- no INT 21h/4Bh EXEC call "
+     "anywhere in this function. This confirms OUT.EXE, SPACE.EXE, "
+     "etc. chain to each other via a custom in-process overlay switch, "
+     "not real DOS child-process spawning."),
+
+    (0x19969, "hasFileExtension",
+     "scans a filename backward from the end for '.' before hitting "
+     "'\\'/'/' (i.e. within the last path component only) via a small "
+     "lookup table (word_26E30); calls strncpy to extract the found "
+     "extension via a helper. Used by findExecutableFile to decide "
+     "whether to try appending .EXE/.COM."),
+
+    (0x199EA, "ensureFileExtension",
+     "copies src to dest while tracking the last '.'/'/'/'\\' "
+     "position; if the source had no extension, appends '.' + the "
+     "given extension string via strcpy. The classic "
+     "_splitpath/_makepath-family 'default extension' helper."),
+
+    (0x19E18, "_dos_getfileattr",
+     "AH=43h/AL=00h GET FILE ATTRIBUTES -- used purely as a file-exists "
+     "check (return value discarded beyond success/fail) by "
+     "findExecutableFile. Named to match the existing _dos_* raw-DOS-"
+     "primitive convention."),
+
+    (0x19E2C, "strcpy", "plain lodsb/stosb copy-until-null, returns dest."),
+
+    (0x19E41, "strlen", "plain repne-scasb length count."),
+
+    (0x19E58, "strncpy",
+     "bounded copy (max length arg_4, null-terminates within bound); "
+     "called by hasFileExtension to extract just the found extension "
+     "substring."),
+
+    (0x1960C, "_exit",
+     "calls the single registered exit hook (word_1ED20, see atexit "
+     "below) if set, then INT 21h/4Ch QUIT WITH EXIT CODE. Called from "
+     "_flushall's caller chain -- program termination flushes all open "
+     "streams first."),
+
+    (0x19626, "atexit",
+     "registers a single exit-hook function pointer (word_1ED20, only "
+     "one slot -- no chained list) consumed by _exit. Confirmed "
+     "genuine functionality via that pairing, but never called from "
+     "anywhere in this executable -- OUT.EXE evidently doesn't "
+     "register an exit hook, even though the mechanism exists."),
+
+    (0x1CC46, "_creat",
+     "thin wrapper around _open: extracts the O_BINARY bit (0x8000, "
+     "matching MSC's fcntl.h) from arg_2 and ORs in a fixed "
+     "create/truncate flag combination. Never called from anywhere in "
+     "this executable -- another unused linked-library sibling, same "
+     "pattern as chainToExecutableAlt above."),
+
+    (0x1C34C, "checkRange19x9",
+     "validates arg_0 in [0,0x13) and arg_2 in [0,9), returning 1 if "
+     "both in range else 0. Never called from anywhere in this "
+     "executable and completely isolated (no other function even "
+     "shares tail code with it, unlike the other dead siblings found "
+     "this session) -- purpose genuinely unknown, name describes only "
+     "its confirmed mechanical behavior (two bounds checks), not a "
+     "real guess at intent. Low confidence -- flagged as such rather "
+     "than asserting a game-specific meaning."),
+
+    # -- tenth pass: the last 3 CRT I/O internals, completing the
+    # _filbuf/_flsbuf layer named in an earlier pass. --
+
+    (0x1D126, "_read",
+     "the text-mode-aware read underneath _filbuf: looks up the "
+     "handle slot, calls _dos_read, and for binary streams returns the "
+     "raw count -- but for text-mode streams, walks the buffer "
+     "stripping CR (0Dh) and stopping at Ctrl-Z (1Ah, DOS text EOF "
+     "marker), then calls _lseek to correct the file position for the "
+     "extra raw bytes consumed by the stripped CRs."),
+
+    (0x1D1ED, "_write",
+     "text-mode-aware write underneath _flsbuf, mirroring _read: for "
+     "append-mode streams (flag bit 8) seeks to end first via _lseek; "
+     "binary streams call _dos_write directly; text-mode streams "
+     "expand bare LF (0Ah) to CRLF before writing, tracking the "
+     "previous char to avoid doubling an already-present CR."),
+
+    (0x1D3AB, "_lseek",
+     "higher-level seek used by both _read (position correction after "
+     "CR-stripping) and _write (seek-to-end for append mode) -- the "
+     "CRT layer above _dos_lseek."),
+]
+
+# (ea, new_name, note) -- two labeled locations (not proc-boundary
+# functions) worth naming for readability even though the IDB's
+# function-boundary analysis incorrectly nested them inside
+# _nheapinit's proc range (a real IDB hygiene issue -- see
+# docs/roadmap.md -- not fixed here since splitting proc boundaries is
+# riskier structural surgery than a plain rename).
+LOCATION_RENAMES = [
+    (0x194CF, "execProgramEntry",
+     "entry point buildAndChainExecutable/chainToExecutable actually "
+     "call: findExecutableFile then buildAndChainExecutable. Lives at "
+     "a `loc_` label nested inside _nheapinit's proc range purely "
+     "because IDA's function-boundary analysis merged contiguous code "
+     "with no gap -- not logically part of heap init at all."),
+    (0x1950D, "translateDosErrorToErrno",
+     "the shared failure tail nearly every _dos_* primitive jumps to: "
+     "translates _doserrno to a POSIX-style errno via a byte lookup "
+     "table (xlat, table at 1844h) and sets the carry-flag-equivalent "
+     "failure return. Same IDB-hygiene caveat as execProgramEntry "
+     "above -- nested inside _nheapinit's proc range, not actually "
+     "heap-init code."),
 ]
 
 # (ea, new_name, note) -- globals in the same CRT file-I/O cluster,
@@ -520,6 +676,8 @@ def main():
     for ea, new_name, note in RENAMES:
         apply_rename(ea, new_name, note)
     for ea, new_name, note in GLOBAL_RENAMES:
+        apply_rename(ea, new_name, note)
+    for ea, new_name, note in LOCATION_RENAMES:
         apply_rename(ea, new_name, note)
     if DRY_RUN:
         print("\n[dry] nothing changed. Set DRY_RUN = False to apply.")

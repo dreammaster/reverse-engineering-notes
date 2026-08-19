@@ -390,6 +390,68 @@ either): `sub_190A6`, `sub_192AE`, `sub_19626`, `sub_1C34C`,
 library objects as the two dead siblings found inside `_nheapgrow`
 earlier. Left unnamed; see roadmap.md.
 
+### EXE-chaining mechanism, decoded
+
+Ninth pass, same session, and the most architecturally important
+finding of the whole OUT.EXE sweep. `writeInUseAndExit` (already
+named, called from `board`) turned out not to be a simple lock-file
+writer — it's the entry point into how this program hands off control
+to the game's *other* executables (e.g. boarding a ship chains to
+`SPACE.EXE`).
+
+**This is not DOS `INT 21h`/`4Bh` EXEC.** No such call appears anywhere
+in the chain. Instead:
+
+```
+writeInUseAndExit(filename, tileNum)
+  writes _savegame state to "inuse.u1" (a lock file)
+  loops: chainToExecutable(filename, filename, _param1, _param2, 0)
+           execProgramEntry(filename, &argv, envp)
+             findExecutableFile(filename)      -- tries bare name,
+                                                   then +".EXE", +".COM"
+             buildAndChainExecutable(filename, argv)
+               -- concatenates argv into a DOS command-tail buffer
+               execProgram(filename, cmdTail, envSeg)
+                 -- reads the target file directly (open/read/close,
+                    NOT exec), sizes it, resizes this process's own
+                    memory block, copies a 192-word PSP template into
+                    the new segment, copies the loaded image into
+                    place, then:
+                 far JMPs directly into the loaded program
+                 (`jmp dword ptr cs:byte_19BE1`) -- control never
+                 returns to DOS, let alone back here
+         (only reached if execProgram/findExecutableFile failed)
+         insertDisk()   -- "please insert disk" prompt, then retries
+```
+
+`writeInUseAndExit` is correctly marked `noreturn` by IDA's own
+analysis, consistent with control leaving via a raw far jump rather
+than a call/return.
+
+**Why this matters for the ScummVM reimplementation**: the 5
+executables aren't really separate DOS *processes* chained via child-
+process spawning — they're custom-loaded overlays that jump into each
+other while staying resident in the same running program, sharing
+whatever's in low memory at the jump. A faithful reimplementation
+should model "switching modules" as an in-engine mode change (much
+like ScummVM already does for other multi-executable games), not as
+launching a subprocess — and it's worth double-checking whether any
+state survives the overlay switch only via shared memory rather than
+through the `inuse.u1`/savegame file, since that would be easy to miss
+by only reading the savegame format.
+
+Named 15 functions/locations in this cluster: `chainToExecutable` /
+`chainToExecutableAlt` (unused sibling), `findExecutableFile`,
+`buildAndChainExecutable`, `execProgram`, `hasFileExtension`,
+`ensureFileExtension`, `_dos_getfileattr`, `strcpy`, `strlen`,
+`strncpy`, `_exit`, `atexit` (confirmed real but never called in this
+executable), `_creat` (ditto), plus two labeled locations
+(`execProgramEntry`, `translateDosErrorToErrno`) that IDA had nested
+inside `_nheapinit`'s proc range purely because they're contiguous
+with no gap — a real IDB hygiene issue (see roadmap.md) not fixed here
+since splitting proc boundaries is riskier surgery than a plain
+rename.
+
 ### `playSound` effect table, decoded
 
 Eighth pass, same session. Resolved all 10 of `playSound`'s effect
@@ -414,3 +476,30 @@ All 10 handlers directly bit-bang the PC speaker via port `61h`
 (square-wave toggle + busy-wait delay loop, no PIT channel 2
 involved), confirming they're independent tone effects rather than
 shared code with parameters.
+
+### OUT.EXE complete — final pass and dead code
+
+Tenth pass, same session, closing out OUT.EXE at **352/353 functions
+named (99.7%)**. Named the last 3 CRT I/O internals, completing the
+`_filbuf`/`_flsbuf` layer from an earlier pass: `_read` and `_write`
+(the text-mode-aware layer — CR-stripping and Ctrl-Z EOF detection on
+read, bare-LF→CRLF expansion on write — sitting above `_dos_read`/
+`_dos_write`) and `_lseek` (the CRT-level seek both of them call on to
+correct position after text-mode translation).
+
+**Confirmed-dead code, deliberately left unnamed**: `sub_192AE`, a
+sibling of `divmod32` sharing its tail code with zero incoming
+references of its own — same "unused variant from the same linked
+library object" pattern as the dead siblings found inside
+`_nheapgrow` in an earlier pass. This is the one remaining
+`sub_XXXXX` in OUT.EXE.
+
+**Confirmed-real-but-unused functions, named anyway**: `atexit`
+(registers `_exit`'s single exit-hook slot, but nothing in this
+executable ever calls it) and `_creat` (a thin `_open` wrapper, same
+situation) — genuine, identifiable CRT functionality that this
+particular program's code path just never exercises. `checkRange19x9`
+is the one exception with a hedged, low-confidence name: two clean
+bounds checks (`[0,0x13)` and `[0,9)`) with no callers and no shared
+tail code to lean on for context, so its actual purpose is genuinely
+unknown — named for its mechanical behavior only, not asserted intent.

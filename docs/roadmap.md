@@ -98,9 +98,12 @@ OUT.EXE**.
       `criticalErrorHandler` (the DOS `INT 24h` handler pair behind
       `insertDisk`'s custom disk-error prompt) and `_nheapinit`. Spot-
       checked but didn't individually name the rest of the CRT startup
-      chain (10 functions) or 5 confirmed-dead (`proc near`, 0 callers,
-      not interrupt-reachable) functions — both are low-value for the
-      reimplementation. Full writeup in
+      chain (10 functions) or 5 candidate-dead (`proc near`, 0 callers,
+      not interrupt-reachable) functions at the time — **correction**:
+      most of both groups turned out to be the EXE-chaining cluster
+      (see the ninth pass below) once `sub_1908B`/`sub_190A6`'s calls
+      into a mis-scoped chunk of `_nheapinit` were traced properly;
+      only `sub_192AE` is genuinely dead. Full writeup in
       [overview.md](overview.md#critical-error-handler-and-heap-init).
       324/353 functions now named, 29 `sub_XXXXX` remain (92%).
 - [x] Eighth renaming pass: decoded all 10 of `playSound`'s effect
@@ -109,6 +112,26 @@ OUT.EXE**.
       `playFX` call site back to its literal `effectNum`. Full writeup
       in [overview.md](overview.md#playsound-effect-table-decoded).
       334/353 functions now named, 19 `sub_XXXXX` remain (95%).
+- [x] Ninth renaming pass: decoded the EXE-chaining mechanism —
+      `writeInUseAndExit` chains to another executable via a **custom
+      overlay loader, not DOS `INT 21h`/`4Bh` EXEC** (reads the target
+      file directly, builds a PSP by hand, far-JMPs into it, never
+      returns to DOS). 15 functions/locations named
+      (`chainToExecutable`, `findExecutableFile`,
+      `buildAndChainExecutable`, `execProgram`, `hasFileExtension`,
+      `ensureFileExtension`, `_dos_getfileattr`, `strcpy`, `strlen`,
+      `strncpy`, `_exit`, `atexit`, `_creat`, plus 2 relabeled
+      locations). **Important for the reimplementation**: model
+      executable-switching as an in-engine mode change, not process
+      spawning — see
+      [overview.md](overview.md#exe-chaining-mechanism-decoded).
+- [x] Tenth renaming pass: `_read`/`_write`/`_lseek` (completing the
+      CRT I/O layer) plus the last standalone finds
+      (`checkRange19x9`, confirmed-dead `sub_192AE` left unnamed).
+      **OUT.EXE renaming sweep complete: 352/353 functions named
+      (99.7%)** — only one confirmed-dead function remains
+      unnamed. Full writeup in
+      [overview.md](overview.md#outexe-complete--final-pass-and-dead-code).
 - [ ] Fix `word_1F95E` — currently a single `dw 1` plus raw `db` bytes,
       should be a proper `dw 4 dup(?)` (or named) powers-of-ten array.
       Structural fix (needs `apply_structs_out.py` or a one-off script),
@@ -120,10 +143,34 @@ OUT.EXE**.
       (`STR15`, `Point`, `Rect`, `Savegame`, `Creature`) actually agree
       field-for-field with their same-named counterparts elsewhere —
       flagged as unverified in overview.md.
+- [ ] **IDB hygiene**: `_nheapinit`'s proc boundary is wrong — it
+      visually contains `execProgramEntry` and `translateDosErrorToErrno`
+      (both nested `loc_` labels, not real children) purely because
+      IDA merged contiguous code with no gap between them. Named the
+      two locations directly rather than fixing the boundary (lower
+      risk than `ida_funcs.add_func` structural surgery this session),
+      but a future pass should properly split `_nheapinit` /
+      `execProgramEntry` / `translateDosErrorToErrno` into 3 separate
+      functions so the call graph and function list read correctly.
+      See overview.md's EXE-chaining section.
+- [ ] Same IDB-hygiene family: `sub_192AE` (dead, shares tail code with
+      `divmod32`) confirms at least one more case of a linked-but-
+      unused sibling function; not worth chasing further unless a
+      future finding needs to call into the middle of one.
+
+## OUT.EXE status: essentially complete
+
+352/353 functions named (99.7%), all 11 pre-existing structs still in
+place. Remaining open items above are all follow-up polish (an array
+mis-typing, segment renames, struct cross-checks, 2 IDB-hygiene notes)
+rather than unresolved game logic — every command, dialog, shop,
+combat routine, and CRT subsystem in this executable has been traced
+and named. Good stopping point to call this executable done and move
+to the next one.
 
 ## Per-executable next steps (not yet started)
 
 `ultima1_space`, `ultima1_gen`, `ultima1`, `ultima1_mondain` — untouched
 this session beyond the initial `identify.py` cataloging in
-overview.md. Pick up after `ultima1_out` is fully documented, per the
-priority order above.
+overview.md. Pick up next, per the priority order above (`ultima1_space`
+is furthest along of the remaining four).

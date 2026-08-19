@@ -13750,6 +13750,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X19078);
 	op_enum		(x,	1,	GetEnum("LocationType"),0);
 	create_insn	(0X1908B);
+	set_name	(0X1908B,	"chainToExecutable");
 	create_insn	(x=0X1908C);
 	op_hex		(x,	1);
 	create_insn	(x=0X19095);
@@ -13759,6 +13760,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X190A1);
 	op_hex		(x,	1);
 	create_insn	(0X190A6);
+	set_name	(0X190A6,	"chainToExecutableAlt");
 	create_insn	(x=0X190A7);
 	op_hex		(x,	1);
 	create_insn	(x=0X190B0);
@@ -14020,6 +14022,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X194CA);
 	op_hex		(x,	1);
 	create_insn	(0X194CF);
+	set_name	(0X194CF,	"execProgramEntry");
 	create_insn	(x=0X194D0);
 	op_hex		(x,	1);
 	create_insn	(x=0X194D5);
@@ -14039,6 +14042,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X19508);
 	op_hex		(x,	1);
 	create_insn	(0X1950D);
+	set_name	(0X1950D,	"translateDosErrorToErrno");
 	create_insn	(x=0X1950F);
 	op_hex		(x,	1);
 	create_insn	(x=0X19519);
@@ -14128,6 +14132,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X19603);
 	op_stkvar	(x,	1);
 	create_insn	(0X1960C);
+	set_name	(0X1960C,	"_exit");
 	create_insn	(x=0X1960F);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X19620);
@@ -14137,9 +14142,11 @@ static Bytes_2(void) {
 	op_hex		(x,	0);
 	create_insn	(0X19624);
 	create_insn	(0X19626);
+	set_name	(0X19626,	"atexit");
 	create_insn	(x=0X19629);
 	op_stkvar	(x,	1);
 	create_insn	(0X19633);
+	set_name	(0X19633,	"findExecutableFile");
 	create_insn	(x=0X19634);
 	op_hex		(x,	1);
 	create_insn	(x=0X19639);
@@ -14173,6 +14180,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X196A7);
 	op_hex		(x,	1);
 	create_insn	(0X196AC);
+	set_name	(0X196AC,	"buildAndChainExecutable");
 	create_insn	(x=0X196AD);
 	op_hex		(x,	1);
 	create_insn	(x=0X196B3);
@@ -14349,6 +14357,7 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(0X19964);
 	create_insn	(0X19969);
+	set_name	(0X19969,	"hasFileExtension");
 	create_insn	(x=0X1996A);
 	op_hex		(x,	1);
 	create_insn	(x=0X1996F);
@@ -14394,6 +14403,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X199E5);
 	op_hex		(x,	1);
 	create_insn	(0X199EA);
+	set_name	(0X199EA,	"ensureFileExtension");
 	create_insn	(x=0X199EB);
 	op_hex		(x,	1);
 	create_insn	(x=0X199F0);
@@ -14469,6 +14479,7 @@ static Bytes_2(void) {
 	create_byte	(0X19BE8);
 	create_dword	(0X19BE9);
 	create_insn	(0X19BED);
+	set_name	(0X19BED,	"execProgram");
 	create_insn	(x=0X19C05);
 	op_hex		(x,	1);
 	set_cmt	(0X19C07,	"DOS - 2+ - ADJUST MEMORY BLOCK SIZE (SETBLOCK)\nES = segment address of block to change\nBX = new size in paragraphs",	0);
@@ -14562,6 +14573,7 @@ static Bytes_2(void) {
 	op_plain_offset	(x,	1,	0X1D480);
 	op_plain_offset	(x,	129,	0X1D480);
 	create_insn	(0X19E18);
+	set_name	(0X19E18,	"_dos_getfileattr");
 	create_insn	(x=0X19E1B);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X19E1E);
@@ -14571,6 +14583,7 @@ static Bytes_2(void) {
 	op_hex		(x,	0);
 	create_insn	(0X19E29);
 	create_insn	(0X19E2C);
+	set_name	(0X19E2C,	"strcpy");
 	create_insn	(x=0X19E2F);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X19E32);
@@ -14578,9 +14591,11 @@ static Bytes_2(void) {
 	create_insn	(x=0X19E3C);
 	op_stkvar	(x,	1);
 	create_insn	(0X19E41);
+	set_name	(0X19E41,	"strlen");
 	create_insn	(x=0X19E44);
 	op_stkvar	(x,	1);
 	create_insn	(0X19E58);
+	set_name	(0X19E58,	"strncpy");
 	create_insn	(x=0X19E59);
 	op_hex		(x,	1);
 	create_insn	(x=0X19E5E);
@@ -15833,11 +15848,6 @@ static Bytes_2(void) {
 	set_cmt	(0X1AEFF,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═\x10 OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
 	create_insn	(x=0X1AEFF);
 	op_hex		(x,	0);
-	create_insn	(x=0X1AF01);
-	op_hex		(x,	1);
-	set_cmt	(0X1AF09,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═\x10 OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
-	create_insn	(x=0X1AF09);
-	op_hex		(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -15847,6 +15857,11 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X1AF01);
+	op_hex		(x,	1);
+	set_cmt	(0X1AF09,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═\x10 OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
+	create_insn	(x=0X1AF09);
+	op_hex		(x,	0);
 	create_insn	(x=0X1AF0B);
 	op_hex		(x,	1);
 	set_cmt	(0X1AF1B,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═\x10 OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
@@ -17709,6 +17724,7 @@ static Bytes_3(void) {
 	create_insn	(x=0X1C347);
 	op_hex		(x,	1);
 	create_insn	(0X1C34C);
+	set_name	(0X1C34C,	"checkRange19x9");
 	create_insn	(x=0X1C34D);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C352);
@@ -18381,6 +18397,7 @@ static Bytes_3(void) {
 	create_insn	(x=0X1CC41);
 	op_hex		(x,	1);
 	create_insn	(0X1CC46);
+	set_name	(0X1CC46,	"_creat");
 	create_insn	(x=0X1CC47);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CC4C);
@@ -18706,6 +18723,7 @@ static Bytes_3(void) {
 	create_insn	(x=0X1D121);
 	op_hex		(x,	1);
 	create_insn	(0X1D126);
+	set_name	(0X1D126,	"_read");
 	create_insn	(x=0X1D127);
 	op_hex		(x,	1);
 	create_insn	(x=0X1D12C);
@@ -18773,6 +18791,7 @@ static Bytes_3(void) {
 	create_insn	(x=0X1D1E8);
 	op_hex		(x,	1);
 	create_insn	(0X1D1ED);
+	set_name	(0X1D1ED,	"_write");
 	create_insn	(x=0X1D1EE);
 	op_hex		(x,	1);
 	create_insn	(x=0X1D1F4);
@@ -18925,6 +18944,7 @@ static Bytes_3(void) {
 	create_insn	(x=0X1D3A5);
 	op_hex		(x,	0);
 	create_insn	(0X1D3AB);
+	set_name	(0X1D3AB,	"_lseek");
 	create_insn	(x=0X1D3AC);
 	op_hex		(x,	1);
 	create_insn	(x=0X1D3B1);
@@ -20469,6 +20489,15 @@ static Bytes_3(void) {
 	create_word	(x=0X1FE9C);
 	op_plain_offset	(x,	0,	0X1D480);
 	op_plain_offset	(x,	128,	0X1D480);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_word	(x=0X1FE9E);
 	op_plain_offset	(x,	0,	0X1D480);
 	op_plain_offset	(x,	128,	0X1D480);
@@ -20490,15 +20519,6 @@ static Bytes_3(void) {
 	set_name	(0X1FEEC,	"aDarkKnight");
 	create_strlit	(0X1FEF8,	0XB);
 	set_name	(0X1FEF8,	"aEvilTrent");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X1FF03,	0X4);
 	set_name	(0X1FF03,	"aOrc");
 	create_strlit	(0X1FF07,	0X7);
