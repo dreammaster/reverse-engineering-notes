@@ -61,7 +61,19 @@ OUT.EXE**.
       `_flsbuf`, `_openfile`, `_open`, `_flushall`, the `_dos_*` raw
       DOS primitives, `errno`/`_doserrno`/`_fmode`). Full writeup in
       [overview.md](overview.md#outexe-crt-file-io-layer-decoded).
-      294/353 functions now named, 59 `sub_XXXXX` remain.
+- [x] Third renaming pass: decoded the shop-transaction cluster behind
+      `transactWeapons`/`transactArmory`/`transactMagic`/
+      `transactTransport` — 12 functions (`calcWeaponBuyPrice`,
+      `calcWeaponSellPrice`, `drawWeaponShopLine`, `sellWeapons`, and
+      the armor/magic/transport equivalents, plus `divmod32`). Full
+      writeup in
+      [overview.md](overview.md#outexe-shop-transaction-cluster-decoded).
+      306/353 functions now named, 47 `sub_XXXXX` remain.
+- [ ] Figure out `divmod32`'s exact role in `transactWeapons`'
+      weapon-tier-availability gating (chained `divmod32` calls against
+      `_moveCtr`, `0x7FFF`, and `1500`) — mechanically confirmed as
+      32-bit division, but the game-mechanic meaning of the two chained
+      calls isn't nailed down. See overview.md.
 - [ ] Decode `playSound`'s 10-entry effect jump table (`off_1F94A`,
       handlers `0x1AE65`-`0x1AF37`) by cross-referencing `playFX` call
       sites' literal `effectNum` arguments against game context — see

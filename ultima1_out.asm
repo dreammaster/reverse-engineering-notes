@@ -13055,8 +13055,8 @@ soldDialog      endp
 
 ; Attributes: bp-based frame
 
-doneDialog      proc near               ; CODE XREF: sub_163F2+1D4↓p
-                                        ; sub_16823+1BD↓p
+doneDialog      proc near               ; CODE XREF: sellWeapons+1D4↓p
+                                        ; sellArmor+1BD↓p
                 push    bp
                 mov     bp, sp
                 call    drawDialogBase
@@ -13806,7 +13806,7 @@ transactTavern  endp
 
 ; Attributes: fpd=4
 
-sub_163B3       proc near               ; CODE XREF: sub_165CE+6F↓p
+calcWeaponBuyPrice proc near            ; CODE XREF: drawWeaponShopLine+6F↓p
                                         ; transactWeapons+120↓p ...
 
 arg_0           = word ptr  2
@@ -13825,15 +13825,15 @@ arg_0           = word ptr  2
                 add     sp, 2
                 pop     bp
                 retn
-sub_163B3       endp
+calcWeaponBuyPrice endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: fpd=4
 
-sub_163D4       proc near               ; CODE XREF: sub_163F2+E0↓p
-                                        ; sub_163F2+18E↓p
+calcWeaponSellPrice proc near           ; CODE XREF: sellWeapons+E0↓p
+                                        ; sellWeapons+18E↓p
 
 arg_0           = word ptr  2
 
@@ -13851,14 +13851,14 @@ arg_0           = word ptr  2
                 add     sp, 2
                 pop     bp
                 retn
-sub_163D4       endp
+calcWeaponSellPrice endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: fpd=0Eh
 
-sub_163F2       proc near               ; CODE XREF: transactWeapons+20↓p
+sellWeapons     proc near               ; CODE XREF: transactWeapons+20↓p
 
 var_E           = word ptr -0Eh
 var_A           = word ptr -0Ah
@@ -13876,7 +13876,7 @@ var_3           = byte ptr -3
                 mov     [bp+0Eh+var_6], ax
                 mov     [bp+0Eh+var_8], ax
 
-loc_16409:                              ; CODE XREF: sub_163F2+30↓j
+loc_16409:                              ; CODE XREF: sellWeapons+30↓j
                 mov     ax, [bp+4]
                 cmp     ax, 0Fh
                 jg      short loc_16424
@@ -13886,12 +13886,12 @@ loc_16409:                              ; CODE XREF: sub_163F2+30↓j
                 jz      short loc_1641F
                 inc     [bp+0Eh+var_8]
 
-loc_1641F:                              ; CODE XREF: sub_163F2+28↑j
+loc_1641F:                              ; CODE XREF: sellWeapons+28↑j
                 inc     [bp+0Eh+var_A]
                 jmp     short loc_16409
 ; ---------------------------------------------------------------------------
 
-loc_16424:                              ; CODE XREF: sub_163F2+1D↑j
+loc_16424:                              ; CODE XREF: sellWeapons+1D↑j
                 cmp     [bp+0Eh+var_8], 0
                 jnz     short loc_1645C
                 mov     ax, [bp+10h]
@@ -13918,10 +13918,10 @@ loc_16424:                              ; CODE XREF: sub_163F2+1D↑j
                 jmp     loc_165C9
 ; ---------------------------------------------------------------------------
 
-loc_1645C:                              ; CODE XREF: sub_163F2+36↑j
+loc_1645C:                              ; CODE XREF: sellWeapons+36↑j
                 mov     [bp+0Eh+var_A], 1
 
-loc_16461:                              ; CODE XREF: sub_163F2+110↓j
+loc_16461:                              ; CODE XREF: sellWeapons+110↓j
                 mov     ax, [bp+4]
                 shl     ax, 1
                 mov     si, ax
@@ -13930,7 +13930,7 @@ loc_16461:                              ; CODE XREF: sub_163F2+110↓j
                 jmp     loc_164F0
 ; ---------------------------------------------------------------------------
 
-loc_16472:                              ; CODE XREF: sub_163F2+7B↑j
+loc_16472:                              ; CODE XREF: sellWeapons+7B↑j
                 mov     ax, [bp+10h]
                 add     ax, [bp+8]
                 push    ax              ; y
@@ -13969,7 +13969,7 @@ loc_16472:                              ; CODE XREF: sub_163F2+7B↑j
                 call    writeString
                 mov     sp, bp
                 push    [bp+0Eh+var_A]
-                call    sub_163D4
+                call    calcWeaponSellPrice
                 mov     sp, bp
                 mov     bx, 1
                 push    bx              ; int
@@ -13983,7 +13983,7 @@ loc_16472:                              ; CODE XREF: sub_163F2+7B↑j
                 mov     sp, bp
                 inc     [bp+0Eh+var_6]
 
-loc_164F0:                              ; CODE XREF: sub_163F2+7D↑j
+loc_164F0:                              ; CODE XREF: sellWeapons+7D↑j
                 inc     [bp+0Eh+var_4]
                 inc     [bp+0Eh+var_A]
                 cmp     [bp+0Eh+var_A], 0Fh
@@ -13993,8 +13993,8 @@ loc_164F0:                              ; CODE XREF: sub_163F2+7D↑j
                 jmp     loc_16461
 ; ---------------------------------------------------------------------------
 
-loc_16505:                              ; CODE XREF: sub_163F2+108↑j
-                                        ; sub_163F2+10E↑j
+loc_16505:                              ; CODE XREF: sellWeapons+108↑j
+                                        ; sellWeapons+10E↑j
                 mov     al, [bp+0Ah]
                 xor     ah, ah
                 push    ax              ; c
@@ -14024,7 +14024,7 @@ loc_16505:                              ; CODE XREF: sub_163F2+108↑j
                 cmp     ax, bx
                 jbe     short loc_16555
 
-loc_16546:                              ; CODE XREF: sub_163F2+149↑j
+loc_16546:                              ; CODE XREF: sellWeapons+149↑j
                 push    _textColor      ; color
                 mov     ax, offset aNothing_0 ; "nothing"
                 push    ax              ; msg
@@ -14033,7 +14033,7 @@ loc_16546:                              ; CODE XREF: sub_163F2+149↑j
                 jmp     short loc_165C9
 ; ---------------------------------------------------------------------------
 
-loc_16555:                              ; CODE XREF: sub_163F2+152↑j
+loc_16555:                              ; CODE XREF: sellWeapons+152↑j
                 mov     al, [bp+0Ah]
                 xor     ah, ah
                 sub     ax, 65
@@ -14049,12 +14049,12 @@ loc_16555:                              ; CODE XREF: sub_163F2+152↑j
                 jmp     short loc_165C9
 ; ---------------------------------------------------------------------------
 
-loc_16577:                              ; CODE XREF: sub_163F2+174↑j
+loc_16577:                              ; CODE XREF: sellWeapons+174↑j
                 mov     al, [bp+0Ah]
                 xor     ah, ah
                 sub     ax, 65
                 push    ax
-                call    sub_163D4
+                call    calcWeaponSellPrice
                 mov     sp, bp
                 add     _savegame._coins, ax
                 mov     al, [bp+0Ah]
@@ -14069,7 +14069,7 @@ loc_16577:                              ; CODE XREF: sub_163F2+174↑j
                 jnz     short loc_165AA
                 mov     _savegame._equippedWeapon, 0
 
-loc_165AA:                              ; CODE XREF: sub_163F2+1B0↑j
+loc_165AA:                              ; CODE XREF: sellWeapons+1B0↑j
                 mov     al, [bp+0Ah]
                 xor     ah, ah
                 sub     ax, 65
@@ -14082,19 +14082,19 @@ loc_165AA:                              ; CODE XREF: sub_163F2+1B0↑j
                 call    updateCoins
                 call    doneDialog
 
-loc_165C9:                              ; CODE XREF: sub_163F2+67↑j
-                                        ; sub_163F2+161↑j ...
+loc_165C9:                              ; CODE XREF: sellWeapons+67↑j
+                                        ; sellWeapons+161↑j ...
                 add     sp, 0Ch
                 pop     bp
                 retn
-sub_163F2       endp
+sellWeapons     endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: fpd=6
 
-sub_165CE       proc near               ; CODE XREF: transactWeapons+9E↓p
+drawWeaponShopLine proc near            ; CODE XREF: transactWeapons+9E↓p
 
 var_4           = byte ptr -4
 arg_0           = word ptr  2
@@ -14146,7 +14146,7 @@ arg_8           = word ptr  0Ah
                 call    writeString
                 mov     sp, bp
                 push    [bp+6+arg_2]
-                call    sub_163B3
+                call    calcWeaponBuyPrice
                 mov     sp, bp
                 mov     bx, 1
                 push    bx              ; int
@@ -14161,7 +14161,7 @@ arg_8           = word ptr  0Ah
                 add     sp, 4
                 pop     bp
                 retn
-sub_165CE       endp
+drawWeaponShopLine endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -14193,7 +14193,7 @@ buySell         = byte ptr  2
                 mov     [bp+10h+var_C], ax
                 jnz     short loc_16685
                 push    ax
-                call    sub_163F2
+                call    sellWeapons
                 mov     sp, bp
                 jmp     loc_167E3
 ; ---------------------------------------------------------------------------
@@ -14208,12 +14208,12 @@ loc_16685:                              ; CODE XREF: transactWeapons+1D↑j
                 mov     bx, word ptr _moveCtr
                 xor     cx, cx
                 mov     dx, 7FFFh
-                call    sub_192D4
+                call    divmod32
                 mov     ax, cx
                 mov     bx, dx
                 xor     cx, cx
                 mov     dx, 1500
-                call    sub_192D4
+                call    divmod32
                 cmp     bx, 3
                 mov     [bp+10h+var_A], bx
                 jg      short loc_166C6
@@ -14249,7 +14249,7 @@ loc_166E5:                              ; CODE XREF: transactWeapons+AA↓j
                 push    [bp+10h+var_4]
                 push    bx
                 push    [bp+10h+var_C]
-                call    sub_165CE
+                call    drawWeaponShopLine
                 mov     sp, bp
                 inc     [bp+10h+var_4]
                 add     [bp+10h+var_A], 2
@@ -14312,7 +14312,7 @@ loc_16774:                              ; CODE XREF: transactWeapons+106↑j
                 xor     ah, ah
                 sub     ax, 61h ; 'a'
                 push    ax
-                call    sub_163B3
+                call    calcWeaponBuyPrice
                 mov     sp, bp
                 cmp     ax, _savegame._coins
                 jle     short loc_1679A
@@ -14330,7 +14330,7 @@ loc_1679A:                              ; CODE XREF: transactWeapons+129↑j
                 xor     ah, ah
                 sub     ax, 61h ; 'a'
                 push    ax
-                call    sub_163B3
+                call    calcWeaponBuyPrice
                 mov     sp, bp
                 sub     _savegame._coins, ax
                 mov     al, [bp+10h+var_8]
@@ -14371,7 +14371,7 @@ transactWeapons endp
 
 ; Attributes: fpd=4
 
-sub_167F1       proc near               ; CODE XREF: sub_169E8+6F↓p
+calcArmorBuyPrice proc near             ; CODE XREF: drawArmorShopLine+6F↓p
                                         ; transactArmory+C1↓p ...
 
 arg_0           = word ptr  2
@@ -14388,15 +14388,15 @@ arg_0           = word ptr  2
                 add     sp, 2
                 pop     bp
                 retn
-sub_167F1       endp
+calcArmorBuyPrice endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: fpd=4
 
-sub_1680C       proc near               ; CODE XREF: sub_16823+E9↓p
-                                        ; sub_16823+177↓p
+calcArmorSellPrice proc near            ; CODE XREF: sellArmor+E9↓p
+                                        ; sellArmor+177↓p
 
 arg_0           = word ptr  2
 
@@ -14411,14 +14411,14 @@ arg_0           = word ptr  2
                 add     sp, 2
                 pop     bp
                 retn
-sub_1680C       endp
+calcArmorSellPrice endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: fpd=0Eh
 
-sub_16823       proc near               ; CODE XREF: transactArmory+1F↓p
+sellArmor       proc near               ; CODE XREF: transactArmory+1F↓p
 
 var_E           = word ptr -0Eh
 var_A           = word ptr -0Ah
@@ -14435,7 +14435,7 @@ var_4           = byte ptr -4
                 mov     [bp+0Eh+var_A], ax
                 mov     [bp+0Eh+var_6], ax
 
-loc_1683B:                              ; CODE XREF: sub_16823+31↓j
+loc_1683B:                              ; CODE XREF: sellArmor+31↓j
                 mov     ax, [bp+4]
                 cmp     ax, 5
                 jg      short loc_16856
@@ -14445,12 +14445,12 @@ loc_1683B:                              ; CODE XREF: sub_16823+31↓j
                 jz      short loc_16851
                 inc     [bp+0Eh+var_8]
 
-loc_16851:                              ; CODE XREF: sub_16823+29↑j
+loc_16851:                              ; CODE XREF: sellArmor+29↑j
                 inc     [bp+0Eh+var_A]
                 jmp     short loc_1683B
 ; ---------------------------------------------------------------------------
 
-loc_16856:                              ; CODE XREF: sub_16823+1E↑j
+loc_16856:                              ; CODE XREF: sellArmor+1E↑j
                 cmp     [bp+0Eh+var_8], 0
                 jnz     short loc_1688E
                 mov     ax, [bp+10h]
@@ -14477,17 +14477,17 @@ loc_16856:                              ; CODE XREF: sub_16823+1E↑j
                 jmp     loc_169E3
 ; ---------------------------------------------------------------------------
 
-loc_1688E:                              ; CODE XREF: sub_16823+37↑j
+loc_1688E:                              ; CODE XREF: sellArmor+37↑j
                 mov     [bp+0Eh+var_A], 1
 
-loc_16893:                              ; CODE XREF: sub_16823+10D↓j
+loc_16893:                              ; CODE XREF: sellArmor+10D↓j
                 mov     ax, [bp+4]
                 cmp     ax, 5
                 jle     short loc_1689E
                 jmp     loc_16933
 ; ---------------------------------------------------------------------------
 
-loc_1689E:                              ; CODE XREF: sub_16823+76↑j
+loc_1689E:                              ; CODE XREF: sellArmor+76↑j
                 shl     ax, 1
                 mov     si, ax
                 cmp     _savegame._armor_array[si], 0
@@ -14495,7 +14495,7 @@ loc_1689E:                              ; CODE XREF: sub_16823+76↑j
                 jmp     loc_1692A
 ; ---------------------------------------------------------------------------
 
-loc_168AC:                              ; CODE XREF: sub_16823+84↑j
+loc_168AC:                              ; CODE XREF: sellArmor+84↑j
                 mov     ax, [bp+10h]
                 add     ax, [bp+8]
                 push    ax              ; y
@@ -14534,7 +14534,7 @@ loc_168AC:                              ; CODE XREF: sub_16823+84↑j
                 call    writeString
                 mov     sp, bp
                 push    [bp+0Eh+var_A]
-                call    sub_1680C
+                call    calcArmorSellPrice
                 mov     sp, bp
                 mov     bx, 1
                 push    bx              ; int
@@ -14548,13 +14548,13 @@ loc_168AC:                              ; CODE XREF: sub_16823+84↑j
                 mov     sp, bp
                 inc     [bp+0Eh+var_6]
 
-loc_1692A:                              ; CODE XREF: sub_16823+86↑j
+loc_1692A:                              ; CODE XREF: sellArmor+86↑j
                 inc     [bp+0Eh+var_4]
                 inc     [bp+0Eh+var_A]
                 jmp     loc_16893
 ; ---------------------------------------------------------------------------
 
-loc_16933:                              ; CODE XREF: sub_16823+78↑j
+loc_16933:                              ; CODE XREF: sellArmor+78↑j
                 mov     ax, 18h
                 push    ax              ; y
                 mov     ax, 10h
@@ -14575,7 +14575,7 @@ loc_16933:                              ; CODE XREF: sub_16823+78↑j
                 cmp     ax, 46h ; 'F'
                 jbe     short loc_1696F
 
-loc_16960:                              ; CODE XREF: sub_16823+136↑j
+loc_16960:                              ; CODE XREF: sellArmor+136↑j
                 push    _textColor      ; color
                 mov     ax, offset aNothing_0 ; "nothing"
                 push    ax              ; msg
@@ -14584,7 +14584,7 @@ loc_16960:                              ; CODE XREF: sub_16823+136↑j
                 jmp     short loc_169E3
 ; ---------------------------------------------------------------------------
 
-loc_1696F:                              ; CODE XREF: sub_16823+13B↑j
+loc_1696F:                              ; CODE XREF: sellArmor+13B↑j
                 mov     al, [bp+0Ah]
                 xor     ah, ah
                 sub     ax, 41h ; 'A'
@@ -14600,12 +14600,12 @@ loc_1696F:                              ; CODE XREF: sub_16823+13B↑j
                 jmp     short loc_169E3
 ; ---------------------------------------------------------------------------
 
-loc_16991:                              ; CODE XREF: sub_16823+15D↑j
+loc_16991:                              ; CODE XREF: sellArmor+15D↑j
                 mov     al, [bp+0Ah]
                 xor     ah, ah
                 sub     ax, 41h ; 'A'
                 push    ax
-                call    sub_1680C
+                call    calcArmorSellPrice
                 mov     sp, bp
                 add     _savegame._coins, ax
                 mov     al, [bp+0Ah]
@@ -14620,7 +14620,7 @@ loc_16991:                              ; CODE XREF: sub_16823+15D↑j
                 jnz     short loc_169C4
                 mov     _savegame._equippedArmor, 0
 
-loc_169C4:                              ; CODE XREF: sub_16823+199↑j
+loc_169C4:                              ; CODE XREF: sellArmor+199↑j
                 mov     al, [bp+0Ah]
                 xor     ah, ah
                 sub     ax, 41h ; 'A'
@@ -14633,19 +14633,19 @@ loc_169C4:                              ; CODE XREF: sub_16823+199↑j
                 call    updateCoins
                 call    doneDialog
 
-loc_169E3:                              ; CODE XREF: sub_16823+68↑j
-                                        ; sub_16823+14A↑j ...
+loc_169E3:                              ; CODE XREF: sellArmor+68↑j
+                                        ; sellArmor+14A↑j ...
                 add     sp, 0Ch
                 pop     bp
                 retn
-sub_16823       endp
+sellArmor       endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: fpd=6
 
-sub_169E8       proc near               ; CODE XREF: transactArmory+2E↓p
+drawArmorShopLine proc near             ; CODE XREF: transactArmory+2E↓p
                                         ; transactArmory+3A↓p ...
 
 var_4           = byte ptr -4
@@ -14696,7 +14696,7 @@ arg_2           = word ptr  4
                 call    writeString
                 mov     sp, bp
                 push    [bp+6+arg_2]
-                call    sub_167F1
+                call    calcArmorBuyPrice
                 mov     sp, bp
                 mov     bx, 1
                 push    bx              ; int
@@ -14711,7 +14711,7 @@ arg_2           = word ptr  4
                 add     sp, 4
                 pop     bp
                 retn
-sub_169E8       endp
+drawArmorShopLine endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -14740,7 +14740,7 @@ buySell         = byte ptr  2
                 mov     [bp+0Ah+var_6], ax
                 jnz     short loc_16A9E
                 push    ax
-                call    sub_16823
+                call    sellArmor
                 mov     sp, bp
                 jmp     loc_16B9E
 ; ---------------------------------------------------------------------------
@@ -14749,17 +14749,17 @@ loc_16A9E:                              ; CODE XREF: transactArmory+1C↑j
                 mov     ax, 1
                 push    ax
                 push    [bp+0Ah+var_6]
-                call    sub_169E8
+                call    drawArmorShopLine
                 mov     sp, bp
                 mov     ax, 2
                 push    ax
                 push    [bp+0Ah+var_6]
-                call    sub_169E8
+                call    drawArmorShopLine
                 mov     sp, bp
                 mov     ax, 3
                 push    ax
                 push    [bp+0Ah+var_6]
-                call    sub_169E8
+                call    drawArmorShopLine
                 mov     sp, bp
                 mov     ax, word ptr _moveCtr+2 ; val1
                 mov     bx, word ptr _moveCtr ; val1
@@ -14770,12 +14770,12 @@ loc_16A9E:                              ; CODE XREF: transactArmory+1C↑j
                 mov     ax, 4
                 push    ax
                 push    [bp+0Ah+var_6]
-                call    sub_169E8
+                call    drawArmorShopLine
                 mov     sp, bp
                 mov     ax, 5
                 push    ax
                 push    [bp+0Ah+var_6]
-                call    sub_169E8
+                call    drawArmorShopLine
                 mov     sp, bp
                 mov     [bp+0Ah+var_3], 102
 
@@ -14816,7 +14816,7 @@ loc_16B2F:                              ; CODE XREF: transactArmory+A7↑j
                 xor     ah, ah
                 sub     ax, 61h ; 'a'
                 push    ax
-                call    sub_167F1
+                call    calcArmorBuyPrice
                 mov     sp, bp
                 cmp     ax, _savegame._coins
                 jle     short loc_16B55
@@ -14834,7 +14834,7 @@ loc_16B55:                              ; CODE XREF: transactArmory+CA↑j
                 xor     ah, ah
                 sub     ax, 61h ; 'a'
                 push    ax
-                call    sub_167F1
+                call    calcArmorBuyPrice
                 mov     sp, bp
                 sub     _savegame._coins, ax
                 mov     al, [bp+0Ah+var_4]
@@ -14875,7 +14875,7 @@ transactArmory  endp
 
 ; Attributes: fpd=4
 
-sub_16BAC       proc near               ; CODE XREF: sub_16BC7+6C↓p
+calcMagicBuyPrice proc near             ; CODE XREF: drawMagicShopLine+6C↓p
                                         ; transactMagic+11C↓p ...
 
 arg_0           = word ptr  2
@@ -14892,14 +14892,14 @@ arg_0           = word ptr  2
                 add     sp, 2
                 pop     bp
                 retn
-sub_16BAC       endp
+calcMagicBuyPrice endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: fpd=6
 
-sub_16BC7       proc near               ; CODE XREF: transactMagic+9A↓p
+drawMagicShopLine proc near             ; CODE XREF: transactMagic+9A↓p
 
 var_4           = byte ptr -4
 arg_0           = word ptr  2
@@ -14949,7 +14949,7 @@ arg_4           = word ptr  6
                 call    writeString
                 mov     sp, bp
                 push    [bp+6+arg_2]
-                call    sub_16BAC
+                call    calcMagicBuyPrice
                 mov     sp, bp
                 mov     bx, 1
                 push    bx              ; int
@@ -14964,7 +14964,7 @@ arg_4           = word ptr  6
                 add     sp, 4
                 pop     bp
                 retn
-sub_16BC7       endp
+drawMagicShopLine endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -15051,7 +15051,7 @@ loc_16CD2:                              ; CODE XREF: transactMagic+A6↓j
                 push    [bp+10h+var_4]
                 push    bx
                 push    [bp+10h+var_C]
-                call    sub_16BC7
+                call    drawMagicShopLine
                 mov     sp, bp
                 inc     [bp+10h+var_4]
 
@@ -15116,7 +15116,7 @@ loc_16D66:                              ; CODE XREF: transactMagic+102↑j
                 xor     ah, ah
                 sub     ax, 61h ; 'a'
                 push    ax
-                call    sub_16BAC
+                call    calcMagicBuyPrice
                 mov     sp, bp
                 cmp     ax, _savegame._coins
                 jle     short loc_16D8C
@@ -15134,7 +15134,7 @@ loc_16D8C:                              ; CODE XREF: transactMagic+125↑j
                 xor     ah, ah
                 sub     ax, 61h ; 'a'
                 push    ax
-                call    sub_16BAC
+                call    calcMagicBuyPrice
                 mov     sp, bp
                 sub     _savegame._coins, ax
                 mov     al, [bp+10h+var_8]
@@ -15492,7 +15492,7 @@ transportPurchased endp
 ; Attributes: fpd=4
 
 ; void __cdecl getExpense(int factor)
-getExpense      proc near               ; CODE XREF: sub_17052+5E↓p
+getExpense      proc near               ; CODE XREF: drawTransportShopLine+5E↓p
                                         ; transactTransport+231↓p
 
 factor          = word ptr  2
@@ -15517,8 +15517,8 @@ getExpense      endp
 
 ; Attributes: fpd=4
 
-; void __cdecl sub_17052(int transportId, int yp, char c)
-sub_17052       proc near               ; CODE XREF: transactTransport+105↓p
+; void __cdecl drawTransportShopLine(int transportId, int yp, char c)
+drawTransportShopLine proc near         ; CODE XREF: transactTransport+105↓p
                                         ; transactTransport+120↓p ...
 
 transportId     = word ptr  2
@@ -15577,7 +15577,7 @@ c               = byte ptr  6
                 add     sp, 2
                 pop     bp
                 retn
-sub_17052       endp
+drawTransportShopLine endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -15735,7 +15735,7 @@ loc_171C3:                              ; CODE XREF: transactTransport+EB↑j
                 push    [bp+16h+yp]     ; yp
                 mov     ax, 1
                 push    ax              ; transportId
-                call    sub_17052
+                call    drawTransportShopLine
                 mov     sp, bp
                 inc     [bp+16h+yp]
                 mov     al, [bp+0Ch]
@@ -15746,7 +15746,7 @@ loc_171C3:                              ; CODE XREF: transactTransport+EB↑j
                 push    [bp+16h+yp]     ; yp
                 mov     ax, 2
                 push    ax              ; transportId
-                call    sub_17052
+                call    drawTransportShopLine
                 mov     sp, bp
                 inc     [bp+16h+yp]
                 mov     al, [bp+0Dh]
@@ -15764,7 +15764,7 @@ loc_171FF:                              ; CODE XREF: transactTransport+F2↑j
                 push    [bp+16h+yp]     ; yp
                 mov     ax, 3
                 push    ax              ; transportId
-                call    sub_17052
+                call    drawTransportShopLine
                 mov     sp, bp
                 inc     [bp+16h+yp]
                 mov     al, [bp+0Eh]
@@ -15775,7 +15775,7 @@ loc_171FF:                              ; CODE XREF: transactTransport+F2↑j
                 push    [bp+16h+yp]     ; yp
                 mov     ax, 4
                 push    ax              ; transportId
-                call    sub_17052
+                call    drawTransportShopLine
                 mov     sp, bp
                 inc     [bp+16h+yp]
                 mov     al, [bp+0Fh]
@@ -15799,7 +15799,7 @@ loc_17242:                              ; CODE XREF: transactTransport+135↑j
                 push    [bp+16h+yp]     ; yp
                 mov     ax, 5
                 push    ax              ; transportId
-                call    sub_17052
+                call    drawTransportShopLine
                 mov     sp, bp
                 inc     [bp+16h+yp]
                 mov     al, [bp+10h]
@@ -15814,7 +15814,7 @@ loc_1727B:                              ; CODE XREF: transactTransport+18F↑j
                 push    [bp+16h+yp]     ; yp
                 mov     ax, 6
                 push    ax              ; transportId
-                call    sub_17052
+                call    drawTransportShopLine
                 mov     sp, bp
 
 loc_17292:                              ; CODE XREF: transactTransport+1B1↑j
@@ -20513,7 +20513,7 @@ sub_192AE       endp
 
 ; Attributes: fpd=6
 
-sub_192D4       proc near               ; CODE XREF: transactWeapons+41↑p
+divmod32        proc near               ; CODE XREF: transactWeapons+41↑p
                                         ; transactWeapons+4D↑p
 
 var_6           = word ptr -6
@@ -20530,13 +20530,13 @@ loc_192E1:                              ; CODE XREF: sub_192AE+B↑j
                 xor     ax, ax
                 xor     bx, bx
 
-loc_192E5:                              ; CODE XREF: sub_192D4+21↓j
+loc_192E5:                              ; CODE XREF: divmod32+21↓j
                 add     sp, 4
                 pop     bp
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_192EA:                              ; CODE XREF: sub_192D4+B↑j
+loc_192EA:                              ; CODE XREF: divmod32+B↑j
                 mov     [bp+6+var_4], ax
                 or      ax, bx
                 jnz     short loc_192F7
@@ -20547,7 +20547,7 @@ loc_192F1:                              ; CODE XREF: sub_192AE+12↑j
                 jmp     short loc_192E5
 ; ---------------------------------------------------------------------------
 
-loc_192F7:                              ; CODE XREF: sub_192D4+1B↑j
+loc_192F7:                              ; CODE XREF: divmod32+1B↑j
                 mov     cx, [bp+6+var_6]
                 mov     ax, [bp+6+var_4]
                 mov     si, ax
@@ -20557,7 +20557,7 @@ loc_192F7:                              ; CODE XREF: sub_192D4+1B↑j
                 neg     bx
                 sbb     ax, 0FFFFh
 
-loc_1930A:                              ; CODE XREF: sub_192D4+2D↑j
+loc_1930A:                              ; CODE XREF: divmod32+2D↑j
                 xor     si, cx
                 mov     [bp+6+var_6], si
                 xor     si, si
@@ -20568,13 +20568,13 @@ loc_1930A:                              ; CODE XREF: sub_192D4+2D↑j
                 sbb     cx, 0FFFFh
 
 loc_1931C:                              ; CODE XREF: sub_192AE+24↑j
-                                        ; sub_192D4+3F↑j
+                                        ; divmod32+3F↑j
                 jnz     short loc_1933B
                 test    dx, dx
                 js      short loc_1933B
                 mov     di, 20h ; ' '
 
-loc_19325:                              ; CODE XREF: sub_192D4+5F↓j
+loc_19325:                              ; CODE XREF: divmod32+5F↓j
                 shl     bx, 1
                 rcl     ax, 1
                 rcl     si, 1
@@ -20583,7 +20583,7 @@ loc_19325:                              ; CODE XREF: sub_192D4+5F↓j
                 sub     si, dx
                 inc     bx
 
-loc_19332:                              ; CODE XREF: sub_192D4+59↑j
+loc_19332:                              ; CODE XREF: divmod32+59↑j
                 dec     di
                 jnz     short loc_19325
                 xor     cx, cx
@@ -20591,11 +20591,11 @@ loc_19332:                              ; CODE XREF: sub_192D4+59↑j
                 jmp     short loc_1935C
 ; ---------------------------------------------------------------------------
 
-loc_1933B:                              ; CODE XREF: sub_192D4:loc_1931C↑j
-                                        ; sub_192D4+4C↑j
+loc_1933B:                              ; CODE XREF: divmod32:loc_1931C↑j
+                                        ; divmod32+4C↑j
                 mov     di, 10h
 
-loc_1933E:                              ; CODE XREF: sub_192D4+80↓j
+loc_1933E:                              ; CODE XREF: divmod32+80↓j
                 shl     bx, 1
                 rcl     ax, 1
                 rcl     si, 1
@@ -20605,38 +20605,38 @@ loc_1933E:                              ; CODE XREF: sub_192D4+80↓j
                 cmp     ax, dx
                 jb      short loc_19353
 
-loc_1934E:                              ; CODE XREF: sub_192D4+74↑j
+loc_1934E:                              ; CODE XREF: divmod32+74↑j
                 sub     ax, dx
                 sbb     si, cx
                 inc     bx
 
-loc_19353:                              ; CODE XREF: sub_192D4+72↑j
-                                        ; sub_192D4+78↑j
+loc_19353:                              ; CODE XREF: divmod32+72↑j
+                                        ; divmod32+78↑j
                 dec     di
                 jnz     short loc_1933E
                 mov     cx, si
                 mov     dx, ax
                 xor     ax, ax
 
-loc_1935C:                              ; CODE XREF: sub_192D4+65↑j
+loc_1935C:                              ; CODE XREF: divmod32+65↑j
                 test    [bp+6+var_6], 8000h
                 jz      short loc_1936A
                 not     ax
                 neg     bx
                 sbb     ax, 0FFFFh
 
-loc_1936A:                              ; CODE XREF: sub_192D4+8D↑j
+loc_1936A:                              ; CODE XREF: divmod32+8D↑j
                 test    [bp+6+var_4], 8000h
                 jz      short loc_19378
                 not     cx
                 neg     dx
                 sbb     cx, 0FFFFh
 
-loc_19378:                              ; CODE XREF: sub_192D4+9B↑j
+loc_19378:                              ; CODE XREF: divmod32+9B↑j
                 add     sp, 4
                 pop     bp
                 retn
-sub_192D4       endp
+divmod32        endp
 
 ; ---------------------------------------------------------------------------
 word_1937D      dw 0                    ; DATA XREF: sub_1937F+3↓w
@@ -23087,7 +23087,7 @@ toLowerLetter   endp
 
 ; int __stdcall toupper(int c)
 _toupper        proc near               ; CODE XREF: drop+44↑p
-                                        ; sub_163F2+119↑p ...
+                                        ; sellWeapons+119↑p ...
 
 c               = word ptr  4
 
@@ -31823,13 +31823,13 @@ aWeHavePlentyOf db 'We have plenty of booze',0
 aAlready        db 'already!',0         ; DATA XREF: transactTavern+14E↑o
 ; char aThouHastNoWeap[]
 aThouHastNoWeap db 'Thou hast no weaponry to sell!',0
-                                        ; DATA XREF: sub_163F2+3C↑o
+                                        ; DATA XREF: sellWeapons+3C↑o
 ; char asc_1E603[]
-asc_1E603       db '- ',0               ; DATA XREF: sub_163F2+D4↑o
-                                        ; sub_165CE+63↑o ...
+asc_1E603       db '- ',0               ; DATA XREF: sellWeapons+D4↑o
+                                        ; drawWeaponShopLine+63↑o ...
 ; char aThouHastNoArmo[]
 aThouHastNoArmo db '  Thou hast no armour to sell!',0
-                                        ; DATA XREF: sub_16823+3D↑o
+                                        ; DATA XREF: sellArmor+3D↑o
 ; char aSorryWeDonTBuy[]
 aSorryWeDonTBuy db '  Sorry, we don',27h,'t buy spells!',0
                                         ; DATA XREF: transactMagic+21↑o
@@ -33655,7 +33655,7 @@ aKill           db 'Kill',0             ; DATA XREF: sg0E82:2924↓o
                 db    0
 ; char SPELL_NAMES[]
 SPELL_NAMES     dw offset aPrayer       ; DATA XREF: cast+52↑r
-                                        ; sub_16BC7+43↑r ...
+                                        ; drawMagicShopLine+43↑r ...
                                         ; "Prayer"
                 dw offset aOpen_0       ; "Open"
                 dw offset aUnlock_0     ; "Unlock"
@@ -33693,7 +33693,7 @@ aTimeMachine    db 'Time Machine',0     ; DATA XREF: sg0E82:29BC↓o
                 db    0
 ; char TRANSPORTS[]
 TRANSPORTS      dw offset aFoot         ; DATA XREF: board+C7↑r
-                                        ; sub_17052+39↑r ...
+                                        ; drawTransportShopLine+39↑r ...
                                         ; "Foot"
                 dw offset aHorse        ; "Horse"
                 dw offset aCart         ; "Cart"
