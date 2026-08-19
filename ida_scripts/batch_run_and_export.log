@@ -3046,3 +3046,681 @@ structs (4): STR15, Point, Rect, Savegame
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'rank_unnamed_functions.py', 'noexport']
+[*] reading rank_unnamed_functions.py
+[*] executing rank_unnamed_functions.py
+[*] captured stdout from target script:
+----- begin target script output -----
+26 unnamed functions total
+
+13333  sub_13333    callers=  5 size=  21  <- data/128B9, ensureFileExtension, findExecutableFile, sub_12755, sub_127E0
+124F2  sub_124F2    callers=  4 size=  73  <- releaseFileHandle, sub_1260E, sub_128F8, sub_12D66
+138F5  sub_138F5    callers=  4 size=  32  <- animateFlag, fadeInLogo2, slideInLogo, sub_10744
+1134D  sub_1134D    callers=  3 size= 207  <- data/12882, data/1289C, fadeInLogo
+13915  sub_13915    callers=  3 size= 253  <- fillRect, sub_1383B, sub_13E49
+10E82  sub_10E82    callers=  2 size= 269  <- checkMem, sub_104D0
+11F5A  sub_11F5A    callers=  2 size= 410  <- _fread, sub_11F5A
+1260E  sub_1260E    callers=  2 size= 199  <- sub_11F5A, sub_12D66
+12B8B  sub_12B8B    callers=  2 size=  91  <- _flsbuf, sub_11F5A
+12D66  sub_12D66    callers=  2 size= 213  <- sub_1260E, sub_128F8
+13EA8  sub_13EA8    callers=  2 size=  32  <- checkKeypresses, data/13E9F
+104D0  sub_104D0    callers=  1 size=  70  <- _main
+10744  sub_10744    callers=  1 size= 379  <- fadeInLogo
+126D5  sub_126D5    callers=  1 size= 128  <- formatArg
+12755  sub_12755    callers=  1 size= 100  <- data/127D6
+127E0  sub_127E0    callers=  1 size= 102  <- data/1285B
+128F8  sub_128F8    callers=  1 size= 290  <- _flsbuf
+12D47  sub_12D47    callers=  1 size=  31  <- sub_126D5
+12F3C  sub_12F3C    callers=  1 size=  34  <- data/128E1
+13348  sub_13348    callers=  1 size=  31  <- sub_12F3C
+13367  sub_13367    callers=  1 size=  75  <- hasFileExtension
+137FE  sub_137FE    callers=  1 size=  28  <- _main
+1383B  sub_1383B    callers=  1 size= 186  <- drawLine
+13A78  sub_13A78    callers=  1 size= 125  <- init_video
+13BD5  sub_13BD5    callers=  1 size=  73  <- sub_104D0
+13E49  sub_13E49    callers=  1 size=  79  <- checkKeypresses
+----- end target script output -----
+[*] finished executing rank_unnamed_functions.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_renames_ultima1.py', 'noexport']
+[*] reading apply_renames_ultima1.py
+[*] executing apply_renames_ultima1.py
+[*] captured stdout from target script:
+----- begin target script output -----
+12437: already '_dos_open' -- skipping
+12448: already '_dos_close' -- skipping
+12456: already '_dos_read' -- skipping
+1246A: already '_dos_lseek' -- skipping
+1248E: already '_dos_write' -- skipping
+124B7: already '_dos_ioctl_get' -- skipping
+124CB: already '_exit' -- skipping
+12BE6: already '_dos_ioctl_set' -- skipping
+12BF8: already '_dos_creat' -- skipping
+12C09: already '_dos_creatnew' -- skipping
+12C16: already '_dos_creattemp' -- skipping
+114B7: already '_nheapinit' -- skipping
+1141E: already 'setCriticalErrorHandler' -- skipping
+11D03: already '_open' -- skipping
+11053: already '_openfile' -- skipping
+111B4: already '_fread' -- skipping
+10F96: already '_fclose' -- skipping
+120F4: already '_flsbuf' -- skipping
+11B71: already '_nfree' -- skipping
+12CA4: already '_nmalloc' -- skipping
+133B2: already '_nheapgrow' -- skipping
+11C1A: already 'releaseFileHandle' -- skipping
+10E4D: already 'chainToExecutable' -- skipping
+11C93: already 'execProgramEntry' -- skipping
+12595: already 'findExecutableFile' -- skipping
+12E3B: already 'hasFileExtension' -- skipping
+1331F: already '_dos_getfileattr' -- skipping
+12EBC: already 'ensureFileExtension' -- skipping
+12A1A: already 'buildAndChainExecutable' -- skipping
+12C8D: already 'strlen' -- skipping
+130F4: already 'execProgram' -- skipping
+11AE7: already 'vsprintf' -- skipping
+1153D: already 'formatArg' -- skipping
+11CD1: already 'fputs' -- skipping
+1253B: already 'putc' -- skipping
+137FE: 'sub_137FE' -> 'toupper'
+    classic 'a'-'z' -> subtract 0x20 uppercase check. Called from _main on argv[1][0] right before comparing it to 'C' -- resolves that mystery: it's a case-insensitive command-line flag.
+10E82: 'sub_10E82' -> 'exit'
+    the real C-standard exit(): flushes/closes every entry in the FILE table (same 20-slot, 14-byte-stride table _flushall walks in OUT.EXE) AND closes raw OS handles from an internal handle table, then calls the already-named _exit (which just runs the exit hook and INT 21h/4Ch -- no cleanup). This distinction matches real ANSI C semantics: exit() cleans up, _exit() doesn't. Called by checkMem/checkVideoCard on fatal startup errors.
+104D0: 'sub_104D0' -> 'checkVideoCard'
+    calls detectVideoMode; if no supported adapter is found, prints 'Ultima I requires a Color Graphics Adapter...' and exit(1)s. Otherwise calls probeMemoryForVideoMode with a flag for whether EGA mode was detected (and no -C override), or 0 otherwise.
+13BD5: 'sub_13BD5' -> 'probeMemoryForVideoMode'
+    queries total available memory via the classic DOS trick (INT 21h/48h ALLOCATE MEMORY with BX=0xFFFFh deliberately over-requesting; the failure still returns the true max in BX) into word_18866 -- the value checkMem later compares against 0x1900. In EGA mode, additionally reserves a 16KB (0x400-paragraph) block and pokes its segment into a fixed low-memory location (physical 0x810, via es=0x50/[bx=0x10]) before freeing a temporary larger reservation -- purpose of the fixed-address poke not fully traced (possibly a video buffer other code reads by convention); flagged as a loose end rather than asserted.
+11F5A: 'sub_11F5A' -> '_filbuf'
+    refill-buffer-and-return-one-char, matching OUT.EXE's _filbuf exactly in size (410 bytes) and call site (_fread+3C).
+1260E: 'sub_1260E' -> '_read'
+    text-mode-aware read underneath _filbuf, matching OUT.EXE's _read exactly in size (199 bytes).
+12D66: 'sub_12D66' -> '_lseek'
+    CRT-level seek used by _read/_write, matching OUT.EXE's _lseek exactly in size (213 bytes).
+128F8: 'sub_128F8' -> '_write'
+    text-mode-aware write underneath _flsbuf, matching OUT.EXE's _write exactly in size (290 bytes).
+12B8B: 'sub_12B8B' -> 'allocFileBuffer'
+    lazily allocates a stream's I/O buffer, matching OUT.EXE's allocFileBuffer exactly in size (91 bytes).
+124F2: 'sub_124F2' -> 'findFileHandleSlot'
+    internal handle-table lookup, matching OUT.EXE's findFileHandleSlot exactly in size (73 bytes).
+13333: 'sub_13333' -> 'strncpy'
+    bounded copy helper, matching OUT.EXE's strncpy in role -- called from ensureFileExtension and findExecutableFile, same as OUT.EXE's equivalent cluster.
+1126F: already 'printStartupMessage' -- skipping
+11476: already 'criticalErrorHandler' -- skipping
+123CC: already 'translateDosErrorToErrno' -- skipping
+13F41: already '_doserrno' -- skipping
+18460: already 'errno' -- skipping
+
+[dry] nothing changed. Set DRY_RUN = False to apply.
+----- end target script output -----
+[*] finished executing apply_renames_ultima1.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_renames_ultima1.py']
+[*] reading apply_renames_ultima1.py
+[*] executing apply_renames_ultima1.py
+[*] captured stdout from target script:
+----- begin target script output -----
+12437: already '_dos_open' -- skipping
+12448: already '_dos_close' -- skipping
+12456: already '_dos_read' -- skipping
+1246A: already '_dos_lseek' -- skipping
+1248E: already '_dos_write' -- skipping
+124B7: already '_dos_ioctl_get' -- skipping
+124CB: already '_exit' -- skipping
+12BE6: already '_dos_ioctl_set' -- skipping
+12BF8: already '_dos_creat' -- skipping
+12C09: already '_dos_creatnew' -- skipping
+12C16: already '_dos_creattemp' -- skipping
+114B7: already '_nheapinit' -- skipping
+1141E: already 'setCriticalErrorHandler' -- skipping
+11D03: already '_open' -- skipping
+11053: already '_openfile' -- skipping
+111B4: already '_fread' -- skipping
+10F96: already '_fclose' -- skipping
+120F4: already '_flsbuf' -- skipping
+11B71: already '_nfree' -- skipping
+12CA4: already '_nmalloc' -- skipping
+133B2: already '_nheapgrow' -- skipping
+11C1A: already 'releaseFileHandle' -- skipping
+10E4D: already 'chainToExecutable' -- skipping
+11C93: already 'execProgramEntry' -- skipping
+12595: already 'findExecutableFile' -- skipping
+12E3B: already 'hasFileExtension' -- skipping
+1331F: already '_dos_getfileattr' -- skipping
+12EBC: already 'ensureFileExtension' -- skipping
+12A1A: already 'buildAndChainExecutable' -- skipping
+12C8D: already 'strlen' -- skipping
+130F4: already 'execProgram' -- skipping
+11AE7: already 'vsprintf' -- skipping
+1153D: already 'formatArg' -- skipping
+11CD1: already 'fputs' -- skipping
+1253B: already 'putc' -- skipping
+137FE: 'sub_137FE' -> 'toupper'
+    classic 'a'-'z' -> subtract 0x20 uppercase check. Called from _main on argv[1][0] right before comparing it to 'C' -- resolves that mystery: it's a case-insensitive command-line flag.
+10E82: 'sub_10E82' -> 'exit'
+    the real C-standard exit(): flushes/closes every entry in the FILE table (same 20-slot, 14-byte-stride table _flushall walks in OUT.EXE) AND closes raw OS handles from an internal handle table, then calls the already-named _exit (which just runs the exit hook and INT 21h/4Ch -- no cleanup). This distinction matches real ANSI C semantics: exit() cleans up, _exit() doesn't. Called by checkMem/checkVideoCard on fatal startup errors.
+104D0: 'sub_104D0' -> 'checkVideoCard'
+    calls detectVideoMode; if no supported adapter is found, prints 'Ultima I requires a Color Graphics Adapter...' and exit(1)s. Otherwise calls probeMemoryForVideoMode with a flag for whether EGA mode was detected (and no -C override), or 0 otherwise.
+13BD5: 'sub_13BD5' -> 'probeMemoryForVideoMode'
+    queries total available memory via the classic DOS trick (INT 21h/48h ALLOCATE MEMORY with BX=0xFFFFh deliberately over-requesting; the failure still returns the true max in BX) into word_18866 -- the value checkMem later compares against 0x1900. In EGA mode, additionally reserves a 16KB (0x400-paragraph) block and pokes its segment into a fixed low-memory location (physical 0x810, via es=0x50/[bx=0x10]) before freeing a temporary larger reservation -- purpose of the fixed-address poke not fully traced (possibly a video buffer other code reads by convention); flagged as a loose end rather than asserted.
+11F5A: 'sub_11F5A' -> '_filbuf'
+    refill-buffer-and-return-one-char, matching OUT.EXE's _filbuf exactly in size (410 bytes) and call site (_fread+3C).
+1260E: 'sub_1260E' -> '_read'
+    text-mode-aware read underneath _filbuf, matching OUT.EXE's _read exactly in size (199 bytes).
+12D66: 'sub_12D66' -> '_lseek'
+    CRT-level seek used by _read/_write, matching OUT.EXE's _lseek exactly in size (213 bytes).
+128F8: 'sub_128F8' -> '_write'
+    text-mode-aware write underneath _flsbuf, matching OUT.EXE's _write exactly in size (290 bytes).
+12B8B: 'sub_12B8B' -> 'allocFileBuffer'
+    lazily allocates a stream's I/O buffer, matching OUT.EXE's allocFileBuffer exactly in size (91 bytes).
+124F2: 'sub_124F2' -> 'findFileHandleSlot'
+    internal handle-table lookup, matching OUT.EXE's findFileHandleSlot exactly in size (73 bytes).
+13333: 'sub_13333' -> 'strncpy'
+    bounded copy helper, matching OUT.EXE's strncpy in role -- called from ensureFileExtension and findExecutableFile, same as OUT.EXE's equivalent cluster.
+1126F: already 'printStartupMessage' -- skipping
+11476: already 'criticalErrorHandler' -- skipping
+123CC: already 'translateDosErrorToErrno' -- skipping
+13F41: already '_doserrno' -- skipping
+18460: already 'errno' -- skipping
+
+Done. Re-export the .asm/.idc and check the new names took, then update docs/roadmap.md's checklist.
+----- end target script output -----
+[*] finished executing apply_renames_ultima1.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima1\ultima1.asm
+[*] gen_file(OFILE_ASM) returned 10721
+[*] exporting IDC to C:\dev\ultima1\ultima1.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima1\ultima1.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'rank_unnamed_functions.py', 'noexport']
+[*] reading rank_unnamed_functions.py
+[*] executing rank_unnamed_functions.py
+[*] captured stdout from target script:
+----- begin target script output -----
+15 unnamed functions total
+
+138F5  sub_138F5    callers=  4 size=  32  <- animateFlag, fadeInLogo2, slideInLogo, sub_10744
+1134D  sub_1134D    callers=  3 size= 207  <- data/12882, data/1289C, fadeInLogo
+13915  sub_13915    callers=  3 size= 253  <- fillRect, sub_1383B, sub_13E49
+13EA8  sub_13EA8    callers=  2 size=  32  <- checkKeypresses, data/13E9F
+10744  sub_10744    callers=  1 size= 379  <- fadeInLogo
+126D5  sub_126D5    callers=  1 size= 128  <- formatArg
+12755  sub_12755    callers=  1 size= 100  <- data/127D6
+127E0  sub_127E0    callers=  1 size= 102  <- data/1285B
+12D47  sub_12D47    callers=  1 size=  31  <- sub_126D5
+12F3C  sub_12F3C    callers=  1 size=  34  <- data/128E1
+13348  sub_13348    callers=  1 size=  31  <- sub_12F3C
+13367  sub_13367    callers=  1 size=  75  <- hasFileExtension
+1383B  sub_1383B    callers=  1 size= 186  <- drawLine
+13A78  sub_13A78    callers=  1 size= 125  <- init_video
+13E49  sub_13E49    callers=  1 size=  79  <- checkKeypresses
+----- end target script output -----
+[*] finished executing rank_unnamed_functions.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_renames_ultima1.py', 'noexport']
+[*] reading apply_renames_ultima1.py
+[*] executing apply_renames_ultima1.py
+[*] captured stdout from target script:
+----- begin target script output -----
+12437: already '_dos_open' -- skipping
+12448: already '_dos_close' -- skipping
+12456: already '_dos_read' -- skipping
+1246A: already '_dos_lseek' -- skipping
+1248E: already '_dos_write' -- skipping
+124B7: already '_dos_ioctl_get' -- skipping
+124CB: already '_exit' -- skipping
+12BE6: already '_dos_ioctl_set' -- skipping
+12BF8: already '_dos_creat' -- skipping
+12C09: already '_dos_creatnew' -- skipping
+12C16: already '_dos_creattemp' -- skipping
+114B7: already '_nheapinit' -- skipping
+1141E: already 'setCriticalErrorHandler' -- skipping
+11D03: already '_open' -- skipping
+11053: already '_openfile' -- skipping
+111B4: already '_fread' -- skipping
+10F96: already '_fclose' -- skipping
+120F4: already '_flsbuf' -- skipping
+11B71: already '_nfree' -- skipping
+12CA4: already '_nmalloc' -- skipping
+133B2: already '_nheapgrow' -- skipping
+11C1A: already 'releaseFileHandle' -- skipping
+10E4D: already 'chainToExecutable' -- skipping
+11C93: already 'execProgramEntry' -- skipping
+12595: already 'findExecutableFile' -- skipping
+12E3B: already 'hasFileExtension' -- skipping
+1331F: already '_dos_getfileattr' -- skipping
+12EBC: already 'ensureFileExtension' -- skipping
+12A1A: already 'buildAndChainExecutable' -- skipping
+12C8D: already 'strlen' -- skipping
+130F4: already 'execProgram' -- skipping
+11AE7: already 'vsprintf' -- skipping
+1153D: already 'formatArg' -- skipping
+11CD1: already 'fputs' -- skipping
+1253B: already 'putc' -- skipping
+137FE: already 'toupper' -- skipping
+10E82: already 'exit' -- skipping
+104D0: already 'checkVideoCard' -- skipping
+13BD5: already 'probeMemoryForVideoMode' -- skipping
+11F5A: already '_filbuf' -- skipping
+1260E: already '_read' -- skipping
+12D66: already '_lseek' -- skipping
+128F8: already '_write' -- skipping
+12B8B: already 'allocFileBuffer' -- skipping
+124F2: already 'findFileHandleSlot' -- skipping
+13333: already 'strncpy' -- skipping
+13915: 'sub_13915' -> 'videoDrawPoint'
+    plots a single pixel at (si=x, di=y) in color dx, directly into video memory (segment 0xB800), with separate CGA/Tandy/EGA bit-packing branches selected by videoMode. The underlying primitive beneath the already-named fillRect/drawLine.
+138F5: 'sub_138F5' -> 'videoDrawPointAlt'
+    alternate entry into videoDrawPoint's shared body: sets word_186C6=1 (videoDrawPoint's own entry sets it to 0) before falling through to the same pixel-plot code, changing how the combine step further down treats the target byte -- used by the flag-animation code (animateFlag) and the logo fade/slide sequence, consistent with drawing in an alternate (XOR/erase-style) mode for animating a sprite over existing background. Exact meaning of the mode bit not traced further.
+13A78: 'sub_13A78' -> 'buildScanlineOffsetTable'
+    precomputes the row-to-framebuffer-offset table, matching OUT.EXE's buildScanlineOffsetTable in shape exactly (same CGA interleaved-scanline vs. linear EGA/Tandy address math). Called once from init_video.
+1383B: 'sub_1383B' -> 'drawLineInternal'
+    Bresenham line rasterizer (dx/dy deltas, sign determination, error-term accumulation) -- the core drawLine calls after argument setup.
+10744: 'sub_10744' -> 'drawLogoPixelRow'
+    scans a row of glyph/logo bitmap data for '*' marker bytes and plots each one via videoDrawPointAlt -- the ASCII-art-style renderer for fadeInLogo's title graphic.
+13EA8: 'sub_13EA8' -> 'flushKeyboardBuffer'
+    checks the BIOS ROM ID byte at F000:FFFEh (0xFF = classic PC/XT); on any other (newer) BIOS, copies the BIOS keyboard buffer tail pointer (0040:001C) over the head pointer (0040:001A), which empties the type-ahead buffer -- a workaround for a BIOS quirk/bug on non-PC/XT hardware. Called from checkKeypresses.
+1134D: 'sub_1134D' -> 'divmod32'
+    full signed 32-bit division: identical shift-subtract long-division shape to OUT.EXE's divmod32 (same sign-normalization via not/neg/sbb, same 32-iteration shl/rcl comparison loop). Used by fadeInLogo's animation timing math.
+126D5: 'sub_126D5' -> 'atoi'
+    parses a decimal string (handles leading '-'/'+', accumulates digits via isdigit), returns the value and chars consumed. Called twice from formatArg -- parsing width/precision fields in a format specifier like the '5' in '%5d'.
+12D47: 'sub_12D47' -> 'isdigit'
+    '0'-'9' range check, used by atoi.
+12755: 'sub_12755' -> 'formatHex'
+    hex-digit extraction via repeated shift + nibble lookup (table at 0x476C, presumably "0123456789ABCDEF"), then strncpy's the result out -- formatArg's %x conversion, reached via a jump table (matching playSound-style dispatch elsewhere in this codebase).
+127E0: 'sub_127E0' -> 'formatOctal'
+    octal-digit extraction (3 bits at a time, '0'-'7'), the %o counterpart to formatHex.
+13367: 'sub_13367' -> 'strncpy'
+    byte-for-byte identical to the already-named strncpy (0x13333) at a different address -- a second copy from a different linked object file, not a distinct implementation. Called from hasFileExtension.
+12F3C: 'sub_12F3C' -> 'toupper'
+    byte-for-byte identical role to the already-named toupper (0x137FE) via a different code shape (islower-check + conditional subtract instead of a range check) -- another duplicate copy from a different object file.
+13348: 'sub_13348' -> 'islower'
+    'a'-'z' range check, used by the second toupper copy.
+1126F: already 'printStartupMessage' -- skipping
+11476: already 'criticalErrorHandler' -- skipping
+123CC: already 'translateDosErrorToErrno' -- skipping
+13F41: already '_doserrno' -- skipping
+18460: already 'errno' -- skipping
+
+[dry] nothing changed. Set DRY_RUN = False to apply.
+----- end target script output -----
+[*] finished executing apply_renames_ultima1.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_renames_ultima1.py']
+[*] reading apply_renames_ultima1.py
+[*] executing apply_renames_ultima1.py
+[*] captured stdout from target script:
+----- begin target script output -----
+12437: already '_dos_open' -- skipping
+12448: already '_dos_close' -- skipping
+12456: already '_dos_read' -- skipping
+1246A: already '_dos_lseek' -- skipping
+1248E: already '_dos_write' -- skipping
+124B7: already '_dos_ioctl_get' -- skipping
+124CB: already '_exit' -- skipping
+12BE6: already '_dos_ioctl_set' -- skipping
+12BF8: already '_dos_creat' -- skipping
+12C09: already '_dos_creatnew' -- skipping
+12C16: already '_dos_creattemp' -- skipping
+114B7: already '_nheapinit' -- skipping
+1141E: already 'setCriticalErrorHandler' -- skipping
+11D03: already '_open' -- skipping
+11053: already '_openfile' -- skipping
+111B4: already '_fread' -- skipping
+10F96: already '_fclose' -- skipping
+120F4: already '_flsbuf' -- skipping
+11B71: already '_nfree' -- skipping
+12CA4: already '_nmalloc' -- skipping
+133B2: already '_nheapgrow' -- skipping
+11C1A: already 'releaseFileHandle' -- skipping
+10E4D: already 'chainToExecutable' -- skipping
+11C93: already 'execProgramEntry' -- skipping
+12595: already 'findExecutableFile' -- skipping
+12E3B: already 'hasFileExtension' -- skipping
+1331F: already '_dos_getfileattr' -- skipping
+12EBC: already 'ensureFileExtension' -- skipping
+12A1A: already 'buildAndChainExecutable' -- skipping
+12C8D: already 'strlen' -- skipping
+130F4: already 'execProgram' -- skipping
+11AE7: already 'vsprintf' -- skipping
+1153D: already 'formatArg' -- skipping
+11CD1: already 'fputs' -- skipping
+1253B: already 'putc' -- skipping
+137FE: already 'toupper' -- skipping
+10E82: already 'exit' -- skipping
+104D0: already 'checkVideoCard' -- skipping
+13BD5: already 'probeMemoryForVideoMode' -- skipping
+11F5A: already '_filbuf' -- skipping
+1260E: already '_read' -- skipping
+12D66: already '_lseek' -- skipping
+128F8: already '_write' -- skipping
+12B8B: already 'allocFileBuffer' -- skipping
+124F2: already 'findFileHandleSlot' -- skipping
+13333: already 'strncpy' -- skipping
+13915: 'sub_13915' -> 'videoDrawPoint'
+    plots a single pixel at (si=x, di=y) in color dx, directly into video memory (segment 0xB800), with separate CGA/Tandy/EGA bit-packing branches selected by videoMode. The underlying primitive beneath the already-named fillRect/drawLine.
+138F5: 'sub_138F5' -> 'videoDrawPointAlt'
+    alternate entry into videoDrawPoint's shared body: sets word_186C6=1 (videoDrawPoint's own entry sets it to 0) before falling through to the same pixel-plot code, changing how the combine step further down treats the target byte -- used by the flag-animation code (animateFlag) and the logo fade/slide sequence, consistent with drawing in an alternate (XOR/erase-style) mode for animating a sprite over existing background. Exact meaning of the mode bit not traced further.
+13A78: 'sub_13A78' -> 'buildScanlineOffsetTable'
+    precomputes the row-to-framebuffer-offset table, matching OUT.EXE's buildScanlineOffsetTable in shape exactly (same CGA interleaved-scanline vs. linear EGA/Tandy address math). Called once from init_video.
+1383B: 'sub_1383B' -> 'drawLineInternal'
+    Bresenham line rasterizer (dx/dy deltas, sign determination, error-term accumulation) -- the core drawLine calls after argument setup.
+10744: 'sub_10744' -> 'drawLogoPixelRow'
+    scans a row of glyph/logo bitmap data for '*' marker bytes and plots each one via videoDrawPointAlt -- the ASCII-art-style renderer for fadeInLogo's title graphic.
+13EA8: 'sub_13EA8' -> 'flushKeyboardBuffer'
+    checks the BIOS ROM ID byte at F000:FFFEh (0xFF = classic PC/XT); on any other (newer) BIOS, copies the BIOS keyboard buffer tail pointer (0040:001C) over the head pointer (0040:001A), which empties the type-ahead buffer -- a workaround for a BIOS quirk/bug on non-PC/XT hardware. Called from checkKeypresses.
+1134D: 'sub_1134D' -> 'divmod32'
+    full signed 32-bit division: identical shift-subtract long-division shape to OUT.EXE's divmod32 (same sign-normalization via not/neg/sbb, same 32-iteration shl/rcl comparison loop). Used by fadeInLogo's animation timing math.
+126D5: 'sub_126D5' -> 'atoi'
+    parses a decimal string (handles leading '-'/'+', accumulates digits via isdigit), returns the value and chars consumed. Called twice from formatArg -- parsing width/precision fields in a format specifier like the '5' in '%5d'.
+12D47: 'sub_12D47' -> 'isdigit'
+    '0'-'9' range check, used by atoi.
+12755: 'sub_12755' -> 'formatHex'
+    hex-digit extraction via repeated shift + nibble lookup (table at 0x476C, presumably "0123456789ABCDEF"), then strncpy's the result out -- formatArg's %x conversion, reached via a jump table (matching playSound-style dispatch elsewhere in this codebase).
+127E0: 'sub_127E0' -> 'formatOctal'
+    octal-digit extraction (3 bits at a time, '0'-'7'), the %o counterpart to formatHex.
+13367: 'sub_13367' -> 'strncpy'
+    byte-for-byte identical to the already-named strncpy (0x13333) at a different address -- a second copy from a different linked object file, not a distinct implementation. Called from hasFileExtension.
+    [!] rename FAILED
+12F3C: 'sub_12F3C' -> 'toupper'
+    byte-for-byte identical role to the already-named toupper (0x137FE) via a different code shape (islower-check + conditional subtract instead of a range check) -- another duplicate copy from a different object file.
+    [!] rename FAILED
+13348: 'sub_13348' -> 'islower'
+    'a'-'z' range check, used by the second toupper copy.
+1126F: already 'printStartupMessage' -- skipping
+11476: already 'criticalErrorHandler' -- skipping
+123CC: already 'translateDosErrorToErrno' -- skipping
+13F41: already '_doserrno' -- skipping
+18460: already 'errno' -- skipping
+
+Done. Re-export the .asm/.idc and check the new names took, then update docs/roadmap.md's checklist.
+----- end target script output -----
+[*] finished executing apply_renames_ultima1.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima1\ultima1.asm
+[*] gen_file(OFILE_ASM) returned 10721
+[*] exporting IDC to C:\dev\ultima1\ultima1.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima1\ultima1.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_renames_ultima1.py']
+[*] reading apply_renames_ultima1.py
+[*] executing apply_renames_ultima1.py
+[*] captured stdout from target script:
+----- begin target script output -----
+12437: already '_dos_open' -- skipping
+12448: already '_dos_close' -- skipping
+12456: already '_dos_read' -- skipping
+1246A: already '_dos_lseek' -- skipping
+1248E: already '_dos_write' -- skipping
+124B7: already '_dos_ioctl_get' -- skipping
+124CB: already '_exit' -- skipping
+12BE6: already '_dos_ioctl_set' -- skipping
+12BF8: already '_dos_creat' -- skipping
+12C09: already '_dos_creatnew' -- skipping
+12C16: already '_dos_creattemp' -- skipping
+114B7: already '_nheapinit' -- skipping
+1141E: already 'setCriticalErrorHandler' -- skipping
+11D03: already '_open' -- skipping
+11053: already '_openfile' -- skipping
+111B4: already '_fread' -- skipping
+10F96: already '_fclose' -- skipping
+120F4: already '_flsbuf' -- skipping
+11B71: already '_nfree' -- skipping
+12CA4: already '_nmalloc' -- skipping
+133B2: already '_nheapgrow' -- skipping
+11C1A: already 'releaseFileHandle' -- skipping
+10E4D: already 'chainToExecutable' -- skipping
+11C93: already 'execProgramEntry' -- skipping
+12595: already 'findExecutableFile' -- skipping
+12E3B: already 'hasFileExtension' -- skipping
+1331F: already '_dos_getfileattr' -- skipping
+12EBC: already 'ensureFileExtension' -- skipping
+12A1A: already 'buildAndChainExecutable' -- skipping
+12C8D: already 'strlen' -- skipping
+130F4: already 'execProgram' -- skipping
+11AE7: already 'vsprintf' -- skipping
+1153D: already 'formatArg' -- skipping
+11CD1: already 'fputs' -- skipping
+1253B: already 'putc' -- skipping
+137FE: already 'toupper' -- skipping
+10E82: already 'exit' -- skipping
+104D0: already 'checkVideoCard' -- skipping
+13BD5: already 'probeMemoryForVideoMode' -- skipping
+11F5A: already '_filbuf' -- skipping
+1260E: already '_read' -- skipping
+12D66: already '_lseek' -- skipping
+128F8: already '_write' -- skipping
+12B8B: already 'allocFileBuffer' -- skipping
+124F2: already 'findFileHandleSlot' -- skipping
+13333: already 'strncpy' -- skipping
+13915: already 'videoDrawPoint' -- skipping
+138F5: already 'videoDrawPointAlt' -- skipping
+13A78: already 'buildScanlineOffsetTable' -- skipping
+1383B: already 'drawLineInternal' -- skipping
+10744: already 'drawLogoPixelRow' -- skipping
+13EA8: already 'flushKeyboardBuffer' -- skipping
+1134D: already 'divmod32' -- skipping
+126D5: already 'atoi' -- skipping
+12D47: already 'isdigit' -- skipping
+12755: already 'formatHex' -- skipping
+127E0: already 'formatOctal' -- skipping
+13367: 'sub_13367' -> 'strncpy2'
+    byte-for-byte identical to the already-named strncpy (0x13333) at a different address -- a second copy from a different linked object file, not a distinct implementation. Called from hasFileExtension. Suffixed '2' since IDA requires unique global names -- 'strncpy' was already taken by 0x13333.
+12F3C: 'sub_12F3C' -> 'toupper2'
+    byte-for-byte identical role to the already-named toupper (0x137FE) via a different code shape (islower-check + conditional subtract instead of a range check) -- another duplicate copy from a different object file. Suffixed '2' for the same name-uniqueness reason as strncpy2.
+13348: already 'islower' -- skipping
+1126F: already 'printStartupMessage' -- skipping
+11476: already 'criticalErrorHandler' -- skipping
+123CC: already 'translateDosErrorToErrno' -- skipping
+13F41: already '_doserrno' -- skipping
+18460: already 'errno' -- skipping
+
+Done. Re-export the .asm/.idc and check the new names took, then update docs/roadmap.md's checklist.
+----- end target script output -----
+[*] finished executing apply_renames_ultima1.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima1\ultima1.asm
+[*] gen_file(OFILE_ASM) returned 10721
+[*] exporting IDC to C:\dev\ultima1\ultima1.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima1\ultima1.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'identify.py', 'noexport']
+[*] reading identify.py
+[*] executing identify.py
+[*] captured stdout from target script:
+----- begin target script output -----
+root filename : ULTIMA.EXE
+input file    : D:\GOG Games\Ultima 1\ULTIMA.EXE
+entry point   : 0x0 (cs=0x188f)
+input md5     : ed19976a19a2794b8e3ac528e4f622a5
+
+segments:
+  sg0138       0x010000-0x013ed0  (16080 bytes)
+  sg0525       0x013ed0-0x019e10  (24384 bytes)
+  seg002       0x019e10-0x019e74  (100 bytes)
+  seg003       0x020720-0x020721  (1 bytes)
+  seg004       0x021b20-0x021b21  (1 bytes)
+
+functions: 100 total, 99 named, 1 still sub_XXXXX
+
+structs (4): STR15, Point, Rect, Savegame
+----- end target script output -----
+[*] finished executing identify.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'rank_unnamed_functions.py', 'noexport']
+[*] reading rank_unnamed_functions.py
+[*] executing rank_unnamed_functions.py
+[*] captured stdout from target script:
+----- begin target script output -----
+1 unnamed functions total
+
+13E49  sub_13E49    callers=  1 size=  79  <- checkKeypresses
+----- end target script output -----
+[*] finished executing rank_unnamed_functions.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_renames_ultima1.py']
+[*] reading apply_renames_ultima1.py
+[*] executing apply_renames_ultima1.py
+[*] captured stdout from target script:
+----- begin target script output -----
+12437: already '_dos_open' -- skipping
+12448: already '_dos_close' -- skipping
+12456: already '_dos_read' -- skipping
+1246A: already '_dos_lseek' -- skipping
+1248E: already '_dos_write' -- skipping
+124B7: already '_dos_ioctl_get' -- skipping
+124CB: already '_exit' -- skipping
+12BE6: already '_dos_ioctl_set' -- skipping
+12BF8: already '_dos_creat' -- skipping
+12C09: already '_dos_creatnew' -- skipping
+12C16: already '_dos_creattemp' -- skipping
+114B7: already '_nheapinit' -- skipping
+1141E: already 'setCriticalErrorHandler' -- skipping
+11D03: already '_open' -- skipping
+11053: already '_openfile' -- skipping
+111B4: already '_fread' -- skipping
+10F96: already '_fclose' -- skipping
+120F4: already '_flsbuf' -- skipping
+11B71: already '_nfree' -- skipping
+12CA4: already '_nmalloc' -- skipping
+133B2: already '_nheapgrow' -- skipping
+11C1A: already 'releaseFileHandle' -- skipping
+10E4D: already 'chainToExecutable' -- skipping
+11C93: already 'execProgramEntry' -- skipping
+12595: already 'findExecutableFile' -- skipping
+12E3B: already 'hasFileExtension' -- skipping
+1331F: already '_dos_getfileattr' -- skipping
+12EBC: already 'ensureFileExtension' -- skipping
+12A1A: already 'buildAndChainExecutable' -- skipping
+12C8D: already 'strlen' -- skipping
+130F4: already 'execProgram' -- skipping
+11AE7: already 'vsprintf' -- skipping
+1153D: already 'formatArg' -- skipping
+11CD1: already 'fputs' -- skipping
+1253B: already 'putc' -- skipping
+137FE: already 'toupper' -- skipping
+10E82: already 'exit' -- skipping
+104D0: already 'checkVideoCard' -- skipping
+13BD5: already 'probeMemoryForVideoMode' -- skipping
+11F5A: already '_filbuf' -- skipping
+1260E: already '_read' -- skipping
+12D66: already '_lseek' -- skipping
+128F8: already '_write' -- skipping
+12B8B: already 'allocFileBuffer' -- skipping
+124F2: already 'findFileHandleSlot' -- skipping
+13333: already 'strncpy' -- skipping
+13915: already 'videoDrawPoint' -- skipping
+138F5: already 'videoDrawPointAlt' -- skipping
+13A78: already 'buildScanlineOffsetTable' -- skipping
+1383B: already 'drawLineInternal' -- skipping
+10744: already 'drawLogoPixelRow' -- skipping
+13EA8: already 'flushKeyboardBuffer' -- skipping
+1134D: already 'divmod32' -- skipping
+126D5: already 'atoi' -- skipping
+12D47: already 'isdigit' -- skipping
+12755: already 'formatHex' -- skipping
+127E0: already 'formatOctal' -- skipping
+13367: already 'strncpy2' -- skipping
+12F3C: already 'toupper2' -- skipping
+13348: already 'islower' -- skipping
+13E49: 'sub_13E49' -> 'drawAnimatedCursor'
+    early-returns if word_188E2 (color) is 0; otherwise blits an 8x8 bitmap glyph (byte_188B2, one of 4 frames selected by word_188DE) bit-by-bit via videoDrawPoint at (word_188DA, word_188DC), then advances word_188DE through a 0-3 cycle for next time. Called from checkKeypresses during the title-screen input poll -- almost certainly the blinking 'press any key' cursor/prompt indicator, though the exact glyph content wasn't decoded. The last unnamed function in ULTIMA.EXE -- 100/100 (100%) once applied.
+1126F: already 'printStartupMessage' -- skipping
+11476: already 'criticalErrorHandler' -- skipping
+123CC: already 'translateDosErrorToErrno' -- skipping
+13F41: already '_doserrno' -- skipping
+18460: already 'errno' -- skipping
+
+Done. Re-export the .asm/.idc and check the new names took, then update docs/roadmap.md's checklist.
+----- end target script output -----
+[*] finished executing apply_renames_ultima1.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima1\ultima1.asm
+[*] gen_file(OFILE_ASM) returned 10721
+[*] exporting IDC to C:\dev\ultima1\ultima1.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima1\ultima1.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'identify.py', 'noexport']
+[*] reading identify.py
+[*] executing identify.py
+[*] captured stdout from target script:
+----- begin target script output -----
+root filename : ULTIMA.EXE
+input file    : D:\GOG Games\Ultima 1\ULTIMA.EXE
+entry point   : 0x0 (cs=0x188f)
+input md5     : ed19976a19a2794b8e3ac528e4f622a5
+
+segments:
+  sg0138       0x010000-0x013ed0  (16080 bytes)
+  sg0525       0x013ed0-0x019e10  (24384 bytes)
+  seg002       0x019e10-0x019e74  (100 bytes)
+  seg003       0x020720-0x020721  (1 bytes)
+  seg004       0x021b20-0x021b21  (1 bytes)
+
+functions: 100 total, 100 named, 0 still sub_XXXXX
+
+structs (4): STR15, Point, Rect, Savegame
+----- end target script output -----
+[*] finished executing identify.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
