@@ -103,10 +103,12 @@ OUT.EXE**.
       reimplementation. Full writeup in
       [overview.md](overview.md#critical-error-handler-and-heap-init).
       324/353 functions now named, 29 `sub_XXXXX` remain (92%).
-- [ ] Decode `playSound`'s 10-entry effect jump table (`off_1F94A`,
-      handlers `0x1AE65`-`0x1AF37`) by cross-referencing `playFX` call
-      sites' literal `effectNum` arguments against game context — see
-      overview.md.
+- [x] Eighth renaming pass: decoded all 10 of `playSound`'s effect
+      handlers (`soundEffectBump`/`Ack`/`Damage`/`MonsterAttack`/
+      `Footstep`/`Success`/`Failure`/`Attack`/`8`/`9`) by walking every
+      `playFX` call site back to its literal `effectNum`. Full writeup
+      in [overview.md](overview.md#playsound-effect-table-decoded).
+      334/353 functions now named, 19 `sub_XXXXX` remain (95%).
 - [ ] Fix `word_1F95E` — currently a single `dw 1` plus raw `db` bytes,
       should be a proper `dw 4 dup(?)` (or named) powers-of-ten array.
       Structural fix (needs `apply_structs_out.py` or a one-off script),

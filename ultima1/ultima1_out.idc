@@ -15762,6 +15762,7 @@ static Bytes_2(void) {
 	set_cmt	(0X1AE65,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═\x10 OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
 	create_insn	(x=0X1AE65);
 	op_hex		(x,	1);
+	set_name	(0X1AE65,	"soundEffectBump");
 	create_insn	(x=0X1AE68);
 	op_hex		(x,	1);
 	set_cmt	(0X1AE6D,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═\x10 OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
@@ -15775,6 +15776,7 @@ static Bytes_2(void) {
 	set_cmt	(0X1AE7D,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═\x10 OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
 	create_insn	(x=0X1AE7D);
 	op_hex		(x,	1);
+	set_name	(0X1AE7D,	"soundEffectAck");
 	create_insn	(x=0X1AE80);
 	op_hex		(x,	1);
 	set_cmt	(0X1AE85,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═\x10 OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
@@ -15786,9 +15788,12 @@ static Bytes_2(void) {
 	create_insn	(x=0X1AE98);
 	op_hex		(x,	0);
 	create_insn	(0X1AE9B);
+	set_name	(0X1AE9B,	"soundEffectDamage");
 	create_insn	(0X1AEA2);
+	set_name	(0X1AEA2,	"soundEffectMonsterAttack");
 	create_byte	(0X1AEA8);
 	create_insn	(0X1AEA9);
+	set_name	(0X1AEA9,	"soundEffectFootstep");
 	set_cmt	(0X1AEAD,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═\x10 OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
 	create_insn	(x=0X1AEAD);
 	op_hex		(x,	1);
@@ -15803,9 +15808,11 @@ static Bytes_2(void) {
 	create_insn	(x=0X1AEC6);
 	op_hex		(x,	0);
 	create_insn	(0X1AEC9);
+	set_name	(0X1AEC9,	"soundEffectSuccess");
 	set_cmt	(0X1AED0,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═\x10 OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
 	create_insn	(x=0X1AED0);
 	op_hex		(x,	1);
+	set_name	(0X1AED0,	"soundEffectFailure");
 	create_insn	(x=0X1AED3);
 	op_hex		(x,	1);
 	set_cmt	(0X1AEDE,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═\x10 OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
@@ -15817,6 +15824,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1AEE7);
 	op_hex		(x,	0);
 	create_insn	(0X1AEEA);
+	set_name	(0X1AEEA,	"soundEffectAttack");
 	set_cmt	(0X1AEEE,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═\x10 OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
 	create_insn	(x=0X1AEEE);
 	op_hex		(x,	1);
@@ -15830,11 +15838,6 @@ static Bytes_2(void) {
 	set_cmt	(0X1AF09,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═\x10 OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
 	create_insn	(x=0X1AF09);
 	op_hex		(x,	0);
-	create_insn	(x=0X1AF0B);
-	op_hex		(x,	1);
-	set_cmt	(0X1AF1B,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═\x10 OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
-	create_insn	(x=0X1AF1B);
-	op_hex		(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -15844,9 +15847,15 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X1AF0B);
+	op_hex		(x,	1);
+	set_cmt	(0X1AF1B,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═\x10 OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
+	create_insn	(x=0X1AF1B);
+	op_hex		(x,	0);
 	set_cmt	(0X1AF1E,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═\x10 OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
 	create_insn	(x=0X1AF1E);
 	op_hex		(x,	1);
+	set_name	(0X1AF1E,	"soundEffect8");
 	create_insn	(x=0X1AF21);
 	op_hex		(x,	1);
 	set_cmt	(0X1AF25,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═\x10 OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
@@ -15858,6 +15867,7 @@ static Bytes_3(void) {
 	create_insn	(x=0X1AF34);
 	op_hex		(x,	0);
 	create_insn	(0X1AF37);
+	set_name	(0X1AF37,	"soundEffect9");
 	set_cmt	(0X1AF3B,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═\x10 OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
 	create_insn	(x=0X1AF3B);
 	op_hex		(x,	1);
@@ -20480,6 +20490,15 @@ static Bytes_3(void) {
 	set_name	(0X1FEEC,	"aDarkKnight");
 	create_strlit	(0X1FEF8,	0XB);
 	set_name	(0X1FEF8,	"aEvilTrent");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X1FF03,	0X4);
 	set_name	(0X1FF03,	"aOrc");
 	create_strlit	(0X1FF07,	0X7);
@@ -20497,15 +20516,6 @@ static Bytes_3(void) {
 	create_word	(x=0X1FF3A);
 	op_plain_offset	(x,	0,	0X1D480);
 	op_plain_offset	(x,	128,	0X1D480);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_word	(x=0X1FF3C);
 	op_plain_offset	(x,	0,	0X1D480);
 	op_plain_offset	(x,	128,	0X1D480);
