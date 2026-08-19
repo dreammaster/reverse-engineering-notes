@@ -249,6 +249,47 @@ table itself isn't struct-ified yet — would need `apply_structs_out.py`
 to do properly (a `FileHandleSlot { inUse; dosHandle }`-shaped array),
 left for a future pass since it's CRT plumbing, not game logic.
 
+### OUT.EXE shop-transaction cluster, decoded
+
+Third pass, same session. Traced the buy/sell helper functions behind
+`transactWeapons`/`transactArmory`/`transactMagic`/`transactTransport`
+(all four already named going in). Each shop follows the same shape —
+a `calc*BuyPrice(itemIndex)` formula, a `draw*ShopLine(dialogResult,
+itemIndex)` line renderer for the buy list, and (except magic) a
+`sell*` flow with its own `calc*SellPrice` formula:
+
+| Shop | Buy price formula | Sell price formula |
+|---|---|---|
+| Weapons | `(255-INT) * index² / 256 + 5` | `(CHA+40) * index² / 256 + 1` |
+| Armor | `(200-INT) / 4 * index` | `CHA / 4 * index` |
+| Magic | `(200-WIS) / 32 * index` | *(not sellable)* |
+| Transport | via the already-named `getExpense` | *(not sellable)* |
+
+Notable: weapons price **quadratically** in item index (higher-tier
+weapons cost disproportionately more), while armor and magic price
+**linearly** — a genuine mechanic difference, not an IDB-reading
+artifact (confirmed by reading each formula's body directly). Magic
+has no sell path at all — `transactMagic`'s `'S'` branch prints
+`"Sorry, we don't buy spells!"` instead of calling a sell helper,
+which is why there's no `sellMagic` in this cluster.
+`drawTransportShopLine` breaks the pattern by reusing `getExpense`
+rather than having its own `calcTransportBuyPrice` — transport pricing
+was evidently already handled by earlier work in this IDB, before this
+session's pass.
+
+Also named `divmod32` (`0x192D4`) — a full signed 32-bit
+division/remainder routine (quotient in `ax:bx`, remainder in `cx:dx`,
+classic 8086 shift-subtract long division), almost certainly a
+compiler-emitted arithmetic helper rather than game logic. Named for
+its confirmed mechanical operation only, **not** a guessed toolchain
+symbol. Its actual role in `transactWeapons` — chained calls
+`divmod32(_moveCtr, 0x7FFF)` then `divmod32(<that remainder>, 1500)`
+feeding into the weapon-tier availability check — looks like a
+playtime-gated unlock calculation (echoing the simpler
+`compareTo(_moveCtr, 3000)` gate already seen in `drawArmorShopLine`'s
+caller), but the exact formula isn't pieced together yet. Follow-up in
+roadmap.md.
+
 ### `playSound` / `playFX` — sound-effect jump table, not yet decoded
 
 `playSound(effectNum)` (already named) dispatches through a 10-entry

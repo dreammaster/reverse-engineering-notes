@@ -9902,6 +9902,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X163AE);
 	op_hex		(x,	1);
 	create_insn	(0X163B3);
+	set_name	(0X163B3,	"calcWeaponBuyPrice");
 	create_insn	(x=0X163B4);
 	op_hex		(x,	1);
 	create_insn	(x=0X163C0);
@@ -9911,6 +9912,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X163CF);
 	op_hex		(x,	1);
 	create_insn	(0X163D4);
+	set_name	(0X163D4,	"calcWeaponSellPrice");
 	create_insn	(x=0X163D5);
 	op_hex		(x,	1);
 	create_insn	(x=0X163E0);
@@ -9920,6 +9922,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X163ED);
 	op_hex		(x,	1);
 	create_insn	(0X163F2);
+	set_name	(0X163F2,	"sellWeapons");
 	create_insn	(x=0X163F3);
 	op_hex		(x,	1);
 	create_insn	(x=0X163FA);
@@ -10065,6 +10068,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X165C9);
 	op_hex		(x,	1);
 	create_insn	(0X165CE);
+	set_name	(0X165CE,	"drawWeaponShopLine");
 	create_insn	(x=0X165CF);
 	op_hex		(x,	1);
 	create_insn	(x=0X165D4);
@@ -10236,6 +10240,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X167EC);
 	op_hex		(x,	1);
 	create_insn	(0X167F1);
+	set_name	(0X167F1,	"calcArmorBuyPrice");
 	create_insn	(x=0X167F2);
 	op_hex		(x,	1);
 	create_insn	(x=0X167F7);
@@ -10245,6 +10250,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X16807);
 	op_hex		(x,	1);
 	create_insn	(0X1680C);
+	set_name	(0X1680C,	"calcArmorSellPrice");
 	create_insn	(x=0X1680D);
 	op_hex		(x,	1);
 	create_insn	(x=0X1681B);
@@ -10252,6 +10258,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1681E);
 	op_hex		(x,	1);
 	create_insn	(0X16823);
+	set_name	(0X16823,	"sellArmor");
 	create_insn	(x=0X16824);
 	op_hex		(x,	1);
 	create_insn	(x=0X16829);
@@ -10370,6 +10377,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X169E3);
 	op_hex		(x,	1);
 	create_insn	(0X169E8);
+	set_name	(0X169E8,	"drawArmorShopLine");
 	create_insn	(x=0X169E9);
 	op_hex		(x,	1);
 	create_insn	(x=0X169EE);
@@ -10498,6 +10506,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X16BA7);
 	op_hex		(x,	1);
 	create_insn	(0X16BAC);
+	set_name	(0X16BAC,	"calcMagicBuyPrice");
 	create_insn	(x=0X16BAD);
 	op_hex		(x,	1);
 	create_insn	(x=0X16BBF);
@@ -10505,6 +10514,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X16BC2);
 	op_hex		(x,	1);
 	create_insn	(0X16BC7);
+	set_name	(0X16BC7,	"drawMagicShopLine");
 	create_insn	(x=0X16BC8);
 	op_hex		(x,	1);
 	create_insn	(x=0X16BCD);
@@ -10878,6 +10888,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1704D);
 	op_hex		(x,	1);
 	create_insn	(0X17052);
+	set_name	(0X17052,	"drawTransportShopLine");
 	create_insn	(x=0X17053);
 	op_hex		(x,	1);
 	set_cmt	(0X17058,	"y",	0);
@@ -11018,6 +11029,15 @@ static Bytes_1(void) {
 	create_insn	(x=0X1725A);
 	op_stkvar	(x,	0);
 	set_cmt	(0X17263,	"c",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X17264,	"yp",	0);
 	create_insn	(x=0X17264);
 	op_stkvar	(x,	0);
@@ -11044,15 +11064,6 @@ static Bytes_1(void) {
 	op_plain_offset	(x,	129,	0X1D480);
 	set_cmt	(0X172CE,	"msg",	0);
 	create_insn	(0X172D7);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X172E1);
 	op_stkvar	(x,	0);
 	set_cmt	(0X172E7,	"color",	0);
@@ -13890,6 +13901,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X192CD);
 	op_stkvar	(x,	0);
 	create_insn	(0X192D4);
+	set_name	(0X192D4,	"divmod32");
 	create_insn	(x=0X192D5);
 	op_hex		(x,	1);
 	create_insn	(x=0X192DA);
@@ -15814,14 +15826,6 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1AF21);
 	op_hex		(x,	1);
-	set_cmt	(0X1AF25,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═\x10 OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
-	create_insn	(x=0X1AF25);
-	op_hex		(x,	0);
-	create_insn	(x=0X1AF27);
-	op_hex		(x,	1);
-	set_cmt	(0X1AF34,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═\x10 OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
-	create_insn	(x=0X1AF34);
-	op_hex		(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -15831,6 +15835,14 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X1AF25,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═\x10 OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
+	create_insn	(x=0X1AF25);
+	op_hex		(x,	0);
+	create_insn	(x=0X1AF27);
+	op_hex		(x,	1);
+	set_cmt	(0X1AF34,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═\x10 OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
+	create_insn	(x=0X1AF34);
+	op_hex		(x,	0);
 	create_insn	(0X1AF37);
 	set_cmt	(0X1AF3B,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═\x10 OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
 	create_insn	(x=0X1AF3B);
@@ -20506,6 +20518,15 @@ static Bytes_3(void) {
 	create_word	(x=0X1FF54);
 	op_plain_offset	(x,	0,	0X1D480);
 	op_plain_offset	(x,	128,	0X1D480);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X1FF56,	0X13);
 	set_name	(0X1FF56,	"aPotentisLaudis");
 	create_strlit	(0X1FF69,	0XB);
@@ -20538,15 +20559,6 @@ static Bytes_3(void) {
 	create_word	(x=0X1FFDA);
 	op_plain_offset	(x,	0,	0X1D480);
 	op_plain_offset	(x,	128,	0X1D480);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_word	(x=0X1FFDC);
 	op_plain_offset	(x,	0,	0X1D480);
 	op_plain_offset	(x,	128,	0X1D480);
@@ -22282,7 +22294,7 @@ static Functions_0(void) {
 	define_local_var(0X17034, 0X17052, "[bp+0X2]", "factor");
 	add_func    (0X17052,0X170CF);
 	set_func_flags(0X17052,0x4400);
-	SetType(0X17052, "void __cdecl sub_17052(int transportId, int yp, char c);");
+	SetType(0X17052, "void __cdecl drawTransportShopLine(int transportId, int yp, char c);");
 	set_frame_size(0X17052, 0X4, 0, 0);
 	define_local_var(0X17052, 0X170CF, "[bp+0X2]", "transportId");
 	define_local_var(0X17052, 0X170CF, "[bp+0X4]", "yp");

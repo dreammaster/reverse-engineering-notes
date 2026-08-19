@@ -562,3 +562,252 @@ structs (11): STR15, DungeonCell, DungeonColumn, DungeonMap, Point, Rect, Creatu
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'rank_unnamed_functions.py', 'noexport']
+[*] reading rank_unnamed_functions.py
+[*] executing rank_unnamed_functions.py
+[*] captured stdout from target script:
+----- begin target script output -----
+59 unnamed functions total
+
+15469  sub_15469    callers=  3 size=  41  <- sub_15492, sub_154B5, sub_154D8
+15B8A  sub_15B8A    callers=  3 size= 112  <- findArmor, findFood, findWeapon
+163B3  sub_163B3    callers=  2 size=  33  <- sub_165CE, transactWeapons
+167F1  sub_167F1    callers=  2 size=  27  <- sub_169E8, transactArmory
+16BAC  sub_16BAC    callers=  2 size=  27  <- sub_16BC7, transactMagic
+19E2C  sub_19E2C    callers=  2 size=  21  <- sub_19633, sub_199EA
+19E41  sub_19E41    callers=  2 size=  23  <- sub_196AC, sub_19969
+1D126  sub_1D126    callers=  2 size= 199  <- _filbuf, sub_1D3AB
+1D3AB  sub_1D3AB    callers=  2 size= 213  <- sub_1D126, sub_1D1ED
+122F3  sub_122F3    callers=  1 size=  98  <- attackPerson
+14EA2  sub_14EA2    callers=  1 size= 483  <- enterPillar
+15492  sub_15492    callers=  1 size=  35  <- sub_154FB
+154B5  sub_154B5    callers=  1 size=  35  <- sub_154FB
+154D8  sub_154D8    callers=  1 size=  35  <- sub_154FB
+154FB  sub_154FB    callers=  1 size=  85  <- get
+163D4  sub_163D4    callers=  1 size=  30  <- sub_163F2
+163F2  sub_163F2    callers=  1 size= 476  <- transactWeapons
+165CE  sub_165CE    callers=  1 size= 143  <- transactWeapons
+1680C  sub_1680C    callers=  1 size=  23  <- sub_16823
+16823  sub_16823    callers=  1 size= 453  <- transactArmory
+169E8  sub_169E8    callers=  1 size= 143  <- transactArmory
+16BC7  sub_16BC7    callers=  1 size= 140  <- transactMagic
+17052  sub_17052    callers=  1 size= 125  <- transactTransport
+1908B  sub_1908B    callers=  1 size=  27  <- writeInUseAndExit
+192D4  sub_192D4    callers=  1 size= 169  <- transactWeapons
+1937F  sub_1937F    callers=  1 size=  88  <- main
+19418  sub_19418    callers=  1 size= 337  <- start
+1960C  sub_1960C    callers=  1 size=  24  <- _flushall
+19633  sub_19633    callers=  1 size= 121  <- sub_19418
+196AC  sub_196AC    callers=  1 size= 369  <- sub_19418
+19969  sub_19969    callers=  1 size= 129  <- sub_19633
+199EA  sub_199EA    callers=  1 size= 128  <- sub_19633
+19BED  sub_19BED    callers=  1 size= 555  <- sub_196AC
+19E18  sub_19E18    callers=  1 size=  20  <- sub_19633
+19E58  sub_19E58    callers=  1 size=  75  <- sub_19969
+19FF1  sub_19FF1    callers=  1 size=  53  <- setVideoMode
+1AB9D  sub_1AB9D    callers=  1 size= 109  <- death
+1AC44  sub_1AC44    callers=  1 size=  59  <- wait
+1AE65  sub_1AE65    callers=  1 size=  24  <- playSound
+1AE7D  sub_1AE7D    callers=  1 size=  30  <- playSound
+1AE9B  sub_1AE9B    callers=  1 size=   6  <- playSound
+1AEA2  sub_1AEA2    callers=  1 size=   6  <- playSound
+1AEA9  sub_1AEA9    callers=  1 size=  32  <- playSound
+1AEC9  sub_1AEC9    callers=  1 size=   6  <- playSound
+1AED0  sub_1AED0    callers=  1 size=  26  <- playSound
+1AEEA  sub_1AEEA    callers=  1 size=  52  <- playSound
+1AF1E  sub_1AF1E    callers=  1 size=  25  <- playSound
+1AF37  sub_1AF37    callers=  1 size=  32  <- playSound
+1B231  sub_1B231    callers=  1 size= 125  <- setVideoMode
+1BA27  sub_1BA27    callers=  1 size=  60  <- selectItem
+1C42E  sub_1C42E    callers=  1 size=  39  <- setVideoMode
+1C455  sub_1C455    callers=  1 size=  39  <- setVideoMode
+1D1ED  sub_1D1ED    callers=  1 size= 290  <- _flsbuf
+190A6  sub_190A6    callers=  0 size=  26  <- 
+192AE  sub_192AE    callers=  0 size=  38  <- 
+193D7  sub_193D7    callers=  0 size=  65  <- 
+19626  sub_19626    callers=  0 size=  13  <- 
+1C34C  sub_1C34C    callers=  0 size=  52  <- 
+1CC46  sub_1CC46    callers=  0 size=  37  <- 
+----- end target script output -----
+[*] finished executing rank_unnamed_functions.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_renames_out.py', 'noexport']
+[*] reading apply_renames_out.py
+[*] executing apply_renames_out.py
+[*] captured stdout from target script:
+----- begin target script output -----
+1A81D: already 'getKeypressAndWaitRaw' -- skipping
+1A30C: already 'toLowerLetter' -- skipping
+1981D: already '_nmalloc' -- skipping
+198C0: already '_nfree' -- skipping
+19EA3: already '_nheapgrow' -- skipping
+1B0B5: already 'readAmount' -- skipping
+1B094: already 'isDigit' -- skipping
+1C8F2: already '_fread' -- skipping
+1C960: already '_fwrite' -- skipping
+1C6D4: already '_fclose' -- skipping
+1CC6B: already '_filbuf' -- skipping
+1CE05: already '_flsbuf' -- skipping
+1D30F: already 'allocFileBuffer' -- skipping
+1C791: already '_openfile' -- skipping
+1CA14: already '_open' -- skipping
+1C9CC: already 'releaseFileHandle' -- skipping
+1D0DD: already 'findFileHandleSlot' -- skipping
+190C0: already '_flushall' -- skipping
+19578: already '_dos_open' -- skipping
+19589: already '_dos_close' -- skipping
+19597: already '_dos_read' -- skipping
+195AB: already '_dos_lseek' -- skipping
+195CF: already '_dos_write' -- skipping
+195F8: already '_dos_ioctl_get' -- skipping
+1D36A: already '_dos_ioctl_set' -- skipping
+1D37C: already '_dos_creat' -- skipping
+1D38D: already '_dos_creatnew' -- skipping
+1D39A: already '_dos_creattemp' -- skipping
+163B3: 'sub_163B3' -> 'calcWeaponBuyPrice'
+    (255 - _savegame._intelligence) * weaponIndex^2 / 256 + 5. Quadratic in weaponIndex -- higher-tier weapons cost disproportionately more. Called from drawWeaponShopLine and transactWeapons' purchase-confirm step.
+163D4: 'sub_163D4' -> 'calcWeaponSellPrice'
+    (_savegame._charisma + 40) * weaponIndex^2 / 256 + 1 -- sell price uses charisma instead of intelligence, and a different additive offset, but the same quadratic shape as calcWeaponBuyPrice. Called from sellWeapons.
+165CE: 'sub_165CE' -> 'drawWeaponShopLine'
+    draws one 'a) Weapon Name    - NNN' line in the weapons shop's buy list: letter, name (WEAPONS_UPPERCASE[]), price via calcWeaponBuyPrice. Called from transactWeapons' buy-loop.
+163F2: 'sub_163F2' -> 'sellWeapons'
+    the 'S' branch of transactWeapons: scans _savegame._weapons_array for owned weapons, shows 'Thou hast no weaponry to sell!' if none, else lists them with sell prices (calcWeaponSellPrice) and processes the chosen sale. Signature confirmed by transactWeapons comparing buySell against 83 ('S') before calling this.
+167F1: 'sub_167F1' -> 'calcArmorBuyPrice'
+    (200 - _savegame._intelligence) / 4 * armorIndex -- linear in armorIndex, unlike the weapon shop's quadratic formula.
+1680C: 'sub_1680C' -> 'calcArmorSellPrice'
+    (_savegame._charisma / 4) * armorIndex.
+169E8: 'sub_169E8' -> 'drawArmorShopLine'
+    armor-shop equivalent of drawWeaponShopLine, using calcArmorBuyPrice. transactArmory calls it for indices 1-3 always, 4-5 only once _moveCtr passes 3000 (same time-gated unlock pattern as the weapons shop).
+16823: 'sub_16823' -> 'sellArmor'
+    armor-shop equivalent of sellWeapons, using calcArmorSellPrice. Called from transactArmory's 'S' branch.
+16BAC: 'sub_16BAC' -> 'calcMagicBuyPrice'
+    (200 - _savegame._wisdom) / 32 * spellIndex -- linear, third stat (wisdom) used for the third shop type.
+16BC7: 'sub_16BC7' -> 'drawMagicShopLine'
+    magic-shop equivalent of drawWeaponShopLine, using calcMagicBuyPrice. No sell counterpart exists -- transactMagic's 'S' branch prints 'Sorry, we don't buy spells!' instead of calling a sell helper.
+17052: 'sub_17052' -> 'drawTransportShopLine'
+    transport-shop equivalent of drawWeaponShopLine, but reuses the already-named getExpense for its price instead of a dedicated calc*Price helper -- transport pricing was evidently handled elsewhere/earlier than this cluster. Signature comment was already present: void __cdecl(int transportId, int yp, char c).
+192D4: 'sub_192D4' -> 'divmod32'
+    full signed 32-bit division: quotient in ax:bx, remainder in cx:dx, both sign-corrected at the end -- the classic shift-subtract long-division algorithm (16 and 32 iteration loops for the two magnitude cases), almost certainly a compiler-emitted arithmetic helper rather than game logic (8086 has no native 32-bit divide). Named for its confirmed mechanical operation only -- NOT confident enough in the exact original toolchain symbol (e.g. Microsoft's _alldiv/_aNdiv naming varies by compiler version) to use one. Its role in transactWeapons -- chaining divmod32(_moveCtr, 0:0x7FFFh) then divmod32(<that remainder>, 0:1500) to help pick var_A -- looks like a playtime-gated weapon-tier-unlock calculation, but the exact formula's meaning isn't pieced together yet; flagged as a follow-up in roadmap.md rather than asserted here.
+1D4F1: already '_doserrno' -- skipping
+1ED22: already 'errno' -- skipping
+1EC50: already '_fmode' -- skipping
+
+[dry] nothing changed. Set DRY_RUN = False to apply.
+----- end target script output -----
+[*] finished executing apply_renames_out.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_renames_out.py']
+[*] reading apply_renames_out.py
+[*] executing apply_renames_out.py
+[*] captured stdout from target script:
+----- begin target script output -----
+1A81D: already 'getKeypressAndWaitRaw' -- skipping
+1A30C: already 'toLowerLetter' -- skipping
+1981D: already '_nmalloc' -- skipping
+198C0: already '_nfree' -- skipping
+19EA3: already '_nheapgrow' -- skipping
+1B0B5: already 'readAmount' -- skipping
+1B094: already 'isDigit' -- skipping
+1C8F2: already '_fread' -- skipping
+1C960: already '_fwrite' -- skipping
+1C6D4: already '_fclose' -- skipping
+1CC6B: already '_filbuf' -- skipping
+1CE05: already '_flsbuf' -- skipping
+1D30F: already 'allocFileBuffer' -- skipping
+1C791: already '_openfile' -- skipping
+1CA14: already '_open' -- skipping
+1C9CC: already 'releaseFileHandle' -- skipping
+1D0DD: already 'findFileHandleSlot' -- skipping
+190C0: already '_flushall' -- skipping
+19578: already '_dos_open' -- skipping
+19589: already '_dos_close' -- skipping
+19597: already '_dos_read' -- skipping
+195AB: already '_dos_lseek' -- skipping
+195CF: already '_dos_write' -- skipping
+195F8: already '_dos_ioctl_get' -- skipping
+1D36A: already '_dos_ioctl_set' -- skipping
+1D37C: already '_dos_creat' -- skipping
+1D38D: already '_dos_creatnew' -- skipping
+1D39A: already '_dos_creattemp' -- skipping
+163B3: 'sub_163B3' -> 'calcWeaponBuyPrice'
+    (255 - _savegame._intelligence) * weaponIndex^2 / 256 + 5. Quadratic in weaponIndex -- higher-tier weapons cost disproportionately more. Called from drawWeaponShopLine and transactWeapons' purchase-confirm step.
+163D4: 'sub_163D4' -> 'calcWeaponSellPrice'
+    (_savegame._charisma + 40) * weaponIndex^2 / 256 + 1 -- sell price uses charisma instead of intelligence, and a different additive offset, but the same quadratic shape as calcWeaponBuyPrice. Called from sellWeapons.
+165CE: 'sub_165CE' -> 'drawWeaponShopLine'
+    draws one 'a) Weapon Name    - NNN' line in the weapons shop's buy list: letter, name (WEAPONS_UPPERCASE[]), price via calcWeaponBuyPrice. Called from transactWeapons' buy-loop.
+163F2: 'sub_163F2' -> 'sellWeapons'
+    the 'S' branch of transactWeapons: scans _savegame._weapons_array for owned weapons, shows 'Thou hast no weaponry to sell!' if none, else lists them with sell prices (calcWeaponSellPrice) and processes the chosen sale. Signature confirmed by transactWeapons comparing buySell against 83 ('S') before calling this.
+167F1: 'sub_167F1' -> 'calcArmorBuyPrice'
+    (200 - _savegame._intelligence) / 4 * armorIndex -- linear in armorIndex, unlike the weapon shop's quadratic formula.
+1680C: 'sub_1680C' -> 'calcArmorSellPrice'
+    (_savegame._charisma / 4) * armorIndex.
+169E8: 'sub_169E8' -> 'drawArmorShopLine'
+    armor-shop equivalent of drawWeaponShopLine, using calcArmorBuyPrice. transactArmory calls it for indices 1-3 always, 4-5 only once _moveCtr passes 3000 (same time-gated unlock pattern as the weapons shop).
+16823: 'sub_16823' -> 'sellArmor'
+    armor-shop equivalent of sellWeapons, using calcArmorSellPrice. Called from transactArmory's 'S' branch.
+16BAC: 'sub_16BAC' -> 'calcMagicBuyPrice'
+    (200 - _savegame._wisdom) / 32 * spellIndex -- linear, third stat (wisdom) used for the third shop type.
+16BC7: 'sub_16BC7' -> 'drawMagicShopLine'
+    magic-shop equivalent of drawWeaponShopLine, using calcMagicBuyPrice. No sell counterpart exists -- transactMagic's 'S' branch prints 'Sorry, we don't buy spells!' instead of calling a sell helper.
+17052: 'sub_17052' -> 'drawTransportShopLine'
+    transport-shop equivalent of drawWeaponShopLine, but reuses the already-named getExpense for its price instead of a dedicated calc*Price helper -- transport pricing was evidently handled elsewhere/earlier than this cluster. Signature comment was already present: void __cdecl(int transportId, int yp, char c).
+192D4: 'sub_192D4' -> 'divmod32'
+    full signed 32-bit division: quotient in ax:bx, remainder in cx:dx, both sign-corrected at the end -- the classic shift-subtract long-division algorithm (16 and 32 iteration loops for the two magnitude cases), almost certainly a compiler-emitted arithmetic helper rather than game logic (8086 has no native 32-bit divide). Named for its confirmed mechanical operation only -- NOT confident enough in the exact original toolchain symbol (e.g. Microsoft's _alldiv/_aNdiv naming varies by compiler version) to use one. Its role in transactWeapons -- chaining divmod32(_moveCtr, 0:0x7FFFh) then divmod32(<that remainder>, 0:1500) to help pick var_A -- looks like a playtime-gated weapon-tier-unlock calculation, but the exact formula's meaning isn't pieced together yet; flagged as a follow-up in roadmap.md rather than asserted here.
+1D4F1: already '_doserrno' -- skipping
+1ED22: already 'errno' -- skipping
+1EC50: already '_fmode' -- skipping
+
+Done. Re-export the .asm/.idc and check the new names took, then update docs/roadmap.md's checklist.
+----- end target script output -----
+[*] finished executing apply_renames_out.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima1\ultima1_out.asm
+[*] gen_file(OFILE_ASM) returned 41656
+[*] exporting IDC to C:\dev\ultima1\ultima1_out.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima1\ultima1_out.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'identify.py', 'noexport']
+[*] reading identify.py
+[*] executing identify.py
+[*] captured stdout from target script:
+----- begin target script output -----
+root filename : OUT.EXE
+input file    : D:\GOG Games\Ultima 1\OUT.EXE
+entry point   : 0x0 (cs=0x1000)
+input md5     : 6a3301183223faea538c953ce94649f2
+
+segments:
+  sg013A       0x010000-0x01d480  (54400 bytes)
+  sg0E82       0x01d480-0x0286c0  (45632 bytes)
+  seg002       0x0286c0-0x029ac0  (5120 bytes)
+  seg003       0x029ac0-0x029ac1  (1 bytes)
+
+functions: 353 total, 306 named, 47 still sub_XXXXX
+
+structs (11): STR15, DungeonCell, DungeonColumn, DungeonMap, Point, Rect, Creature, LocationWidget, Savegame, MapLine, Map
+----- end target script output -----
+[*] finished executing identify.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0

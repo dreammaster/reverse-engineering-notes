@@ -185,6 +185,89 @@ RENAMES = [
      "AH=5Bh CREATE NEW FILE (fails if the file already exists -- the "
      "O_CREAT|O_EXCL case)."),
     (0x1D39A, "_dos_creattemp", "AH=5Ah CREATE UNIQUE FILE."),
+
+    # -- third pass: the shop-transaction cluster underneath
+    # transactWeapons/transactArmory/transactMagic/transactTransport.
+    # Each shop has its own buy-price formula, and weapons/armor also
+    # have a sell-price formula and a dedicated sell flow (magic can't
+    # be sold -- transactMagic prints "Sorry, we don't buy spells!" on
+    # the 'S' branch instead of calling a sell helper, which is why
+    # there's no sellMagic here). See
+    # docs/overview.md#outexe-shop-transaction-cluster-decoded. --
+
+    (0x163B3, "calcWeaponBuyPrice",
+     "(255 - _savegame._intelligence) * weaponIndex^2 / 256 + 5. "
+     "Quadratic in weaponIndex -- higher-tier weapons cost "
+     "disproportionately more. Called from drawWeaponShopLine and "
+     "transactWeapons' purchase-confirm step."),
+
+    (0x163D4, "calcWeaponSellPrice",
+     "(_savegame._charisma + 40) * weaponIndex^2 / 256 + 1 -- sell "
+     "price uses charisma instead of intelligence, and a different "
+     "additive offset, but the same quadratic shape as "
+     "calcWeaponBuyPrice. Called from sellWeapons."),
+
+    (0x165CE, "drawWeaponShopLine",
+     "draws one 'a) Weapon Name    - NNN' line in the weapons shop's "
+     "buy list: letter, name (WEAPONS_UPPERCASE[]), price via "
+     "calcWeaponBuyPrice. Called from transactWeapons' buy-loop."),
+
+    (0x163F2, "sellWeapons",
+     "the 'S' branch of transactWeapons: scans _savegame._weapons_array "
+     "for owned weapons, shows 'Thou hast no weaponry to sell!' if none, "
+     "else lists them with sell prices (calcWeaponSellPrice) and "
+     "processes the chosen sale. Signature confirmed by transactWeapons "
+     "comparing buySell against 83 ('S') before calling this."),
+
+    (0x167F1, "calcArmorBuyPrice",
+     "(200 - _savegame._intelligence) / 4 * armorIndex -- linear in "
+     "armorIndex, unlike the weapon shop's quadratic formula."),
+
+    (0x1680C, "calcArmorSellPrice",
+     "(_savegame._charisma / 4) * armorIndex."),
+
+    (0x169E8, "drawArmorShopLine",
+     "armor-shop equivalent of drawWeaponShopLine, using "
+     "calcArmorBuyPrice. transactArmory calls it for indices 1-3 "
+     "always, 4-5 only once _moveCtr passes 3000 (same time-gated "
+     "unlock pattern as the weapons shop)."),
+
+    (0x16823, "sellArmor",
+     "armor-shop equivalent of sellWeapons, using calcArmorSellPrice. "
+     "Called from transactArmory's 'S' branch."),
+
+    (0x16BAC, "calcMagicBuyPrice",
+     "(200 - _savegame._wisdom) / 32 * spellIndex -- linear, third stat "
+     "(wisdom) used for the third shop type."),
+
+    (0x16BC7, "drawMagicShopLine",
+     "magic-shop equivalent of drawWeaponShopLine, using "
+     "calcMagicBuyPrice. No sell counterpart exists -- transactMagic's "
+     "'S' branch prints 'Sorry, we don't buy spells!' instead of "
+     "calling a sell helper."),
+
+    (0x17052, "drawTransportShopLine",
+     "transport-shop equivalent of drawWeaponShopLine, but reuses the "
+     "already-named getExpense for its price instead of a dedicated "
+     "calc*Price helper -- transport pricing was evidently handled "
+     "elsewhere/earlier than this cluster. Signature comment was "
+     "already present: void __cdecl(int transportId, int yp, char c)."),
+
+    (0x192D4, "divmod32",
+     "full signed 32-bit division: quotient in ax:bx, remainder in "
+     "cx:dx, both sign-corrected at the end -- the classic shift-"
+     "subtract long-division algorithm (16 and 32 iteration loops for "
+     "the two magnitude cases), almost certainly a compiler-emitted "
+     "arithmetic helper rather than game logic (8086 has no native "
+     "32-bit divide). Named for its confirmed mechanical operation only "
+     "-- NOT confident enough in the exact original toolchain symbol "
+     "(e.g. Microsoft's _alldiv/_aNdiv naming varies by compiler "
+     "version) to use one. Its role in transactWeapons -- chaining "
+     "divmod32(_moveCtr, 0:0x7FFFh) then divmod32(<that remainder>, "
+     "0:1500) to help pick var_A -- looks like a playtime-gated "
+     "weapon-tier-unlock calculation, but the exact formula's meaning "
+     "isn't pieced together yet; flagged as a follow-up in "
+     "roadmap.md rather than asserted here."),
 ]
 
 # (ea, new_name, note) -- globals in the same CRT file-I/O cluster,
