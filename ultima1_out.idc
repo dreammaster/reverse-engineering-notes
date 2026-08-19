@@ -13749,6 +13749,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X190BB);
 	op_hex		(x,	1);
 	create_insn	(0X190C0);
+	set_name	(0X190C0,	"_flushall");
 	create_insn	(x=0X190C1);
 	op_hex		(x,	1);
 	create_insn	(x=0X190C6);
@@ -14030,6 +14031,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1956B);
 	op_hex		(x,	1);
 	create_insn	(0X19578);
+	set_name	(0X19578,	"_dos_open");
 	create_insn	(x=0X1957B);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1957E);
@@ -14040,6 +14042,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X19583);
 	op_hex		(x,	0);
 	create_insn	(0X19589);
+	set_name	(0X19589,	"_dos_close");
 	create_insn	(x=0X1958C);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1958F);
@@ -14048,6 +14051,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X19591);
 	op_hex		(x,	0);
 	create_insn	(0X19597);
+	set_name	(0X19597,	"_dos_read");
 	create_insn	(x=0X1959A);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1959D);
@@ -14060,6 +14064,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X195A5);
 	op_hex		(x,	0);
 	create_insn	(0X195AB);
+	set_name	(0X195AB,	"_dos_lseek");
 	create_insn	(x=0X195B4);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X195B9);
@@ -14073,6 +14078,7 @@ static Bytes_2(void) {
 	op_hex		(x,	0);
 	create_insn	(0X195CC);
 	create_insn	(0X195CF);
+	set_name	(0X195CF,	"_dos_write");
 	create_insn	(x=0X195D2);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X195D5);
@@ -14088,6 +14094,7 @@ static Bytes_2(void) {
 	op_stkvar	(x,	1);
 	create_insn	(0X195F4);
 	create_insn	(0X195F8);
+	set_name	(0X195F8,	"_dos_ioctl_get");
 	create_insn	(x=0X195FB);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X195FE);
@@ -17905,6 +17912,7 @@ static Bytes_3(void) {
 	create_insn	(0X1C6B4);
 	set_name	(0X1C6B4,	"keyboard_reset");
 	create_insn	(0X1C6D4);
+	set_name	(0X1C6D4,	"_fclose");
 	create_insn	(x=0X1C6D5);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C6DA);
@@ -17953,6 +17961,7 @@ static Bytes_3(void) {
 	create_insn	(x=0X1C78C);
 	op_hex		(x,	1);
 	create_insn	(0X1C791);
+	set_name	(0X1C791,	"_openfile");
 	create_insn	(x=0X1C792);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C797);
@@ -18044,6 +18053,7 @@ static Bytes_3(void) {
 	create_insn	(x=0X1C8ED);
 	op_hex		(x,	1);
 	create_insn	(0X1C8F2);
+	set_name	(0X1C8F2,	"_fread");
 	create_insn	(x=0X1C8F3);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C8F8);
@@ -18083,6 +18093,7 @@ static Bytes_3(void) {
 	create_insn	(x=0X1C95B);
 	op_hex		(x,	1);
 	create_insn	(0X1C960);
+	set_name	(0X1C960,	"_fwrite");
 	create_insn	(x=0X1C961);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C966);
@@ -18122,6 +18133,7 @@ static Bytes_3(void) {
 	create_insn	(x=0X1C9C7);
 	op_hex		(x,	1);
 	create_insn	(0X1C9CC);
+	set_name	(0X1C9CC,	"releaseFileHandle");
 	create_insn	(x=0X1C9CD);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C9D2);
@@ -18143,6 +18155,7 @@ static Bytes_3(void) {
 	create_insn	(x=0X1CA0F);
 	op_hex		(x,	1);
 	create_insn	(0X1CA14);
+	set_name	(0X1CA14,	"_open");
 	create_insn	(x=0X1CA15);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CA1A);
@@ -18345,6 +18358,7 @@ static Bytes_3(void) {
 	create_insn	(x=0X1CC66);
 	op_hex		(x,	1);
 	create_insn	(0X1CC6B);
+	set_name	(0X1CC6B,	"_filbuf");
 	create_insn	(x=0X1CC6C);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CC71);
@@ -18443,6 +18457,7 @@ static Bytes_3(void) {
 	create_insn	(x=0X1CE00);
 	op_hex		(x,	1);
 	create_insn	(0X1CE05);
+	set_name	(0X1CE05,	"_flsbuf");
 	create_insn	(x=0X1CE06);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CE0B);
@@ -18630,6 +18645,7 @@ static Bytes_3(void) {
 	create_insn	(x=0X1D0D8);
 	op_hex		(x,	1);
 	create_insn	(0X1D0DD);
+	set_name	(0X1D0DD,	"findFileHandleSlot");
 	create_insn	(x=0X1D0DE);
 	op_hex		(x,	1);
 	create_insn	(x=0X1D0E8);
@@ -18808,6 +18824,7 @@ static Bytes_3(void) {
 	create_insn	(x=0X1D309);
 	op_hex		(x,	1);
 	create_insn	(0X1D30F);
+	set_name	(0X1D30F,	"allocFileBuffer");
 	create_insn	(x=0X1D310);
 	op_hex		(x,	1);
 	create_insn	(x=0X1D315);
@@ -18829,6 +18846,7 @@ static Bytes_3(void) {
 	create_insn	(x=0X1D365);
 	op_hex		(x,	1);
 	create_insn	(0X1D36A);
+	set_name	(0X1D36A,	"_dos_ioctl_set");
 	create_insn	(x=0X1D36D);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1D370);
@@ -18839,6 +18857,7 @@ static Bytes_3(void) {
 	create_insn	(x=0X1D376);
 	op_hex		(x,	0);
 	create_insn	(0X1D37C);
+	set_name	(0X1D37C,	"_dos_creat");
 	create_insn	(x=0X1D37F);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1D382);
@@ -18849,11 +18868,13 @@ static Bytes_3(void) {
 	create_insn	(x=0X1D387);
 	op_hex		(x,	0);
 	create_insn	(0X1D38D);
+	set_name	(0X1D38D,	"_dos_creatnew");
 	create_insn	(x=0X1D390);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1D393);
 	op_stkvar	(x,	1);
 	create_insn	(0X1D39A);
+	set_name	(0X1D39A,	"_dos_creattemp");
 	create_insn	(x=0X1D39D);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1D3A0);
@@ -19000,6 +19021,7 @@ static Bytes_3(void) {
 	create_byte	(0X1D4E8);
 	create_word	(0X1D4E9);
 	create_word	(0X1D4F1);
+	set_name	(0X1D4F1,	"_doserrno");
 	create_strlit	(0X1D4F3,	0X24);
 	set_name	(0X1D4F3,	"aStackOverflowD");
 	create_strlit	(0X1D517,	0X1B);
@@ -19741,6 +19763,7 @@ static Bytes_3(void) {
 	create_dword	(0X1EC46);
 	make_array	(0X1EC4A,	0X6);
 	create_word	(0X1EC50);
+	set_name	(0X1EC50,	"_fmode");
 	create_word	(0X1EC52);
 	create_word	(0X1EC54);
 	create_word	(0X1EC56);
@@ -19757,6 +19780,7 @@ static Bytes_3(void) {
 	create_byte	(0X1ECC3);
 	create_word	(0X1ED20);
 	create_word	(0X1ED22);
+	set_name	(0X1ED22,	"errno");
 	create_strlit	(0X1ED24,	0X4);
 	set_name	(0X1ED24,	"aCom");
 	create_strlit	(0X1ED28,	0X4);
@@ -20514,6 +20538,15 @@ static Bytes_3(void) {
 	create_word	(x=0X1FFDA);
 	op_plain_offset	(x,	0,	0X1D480);
 	op_plain_offset	(x,	128,	0X1D480);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_word	(x=0X1FFDC);
 	op_plain_offset	(x,	0,	0X1D480);
 	op_plain_offset	(x,	128,	0X1D480);
@@ -20546,15 +20579,6 @@ static Bytes_3(void) {
 	set_name	(0X1FFF6,	"aMoon");
 	create_strlit	(0X1FFFB,	0X5);
 	set_name	(0X1FFFB,	"aFawn");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X20000,	0X5);
 	set_name	(0X20000,	"aPaws");
 	create_strlit	(0X20005,	0X7);
