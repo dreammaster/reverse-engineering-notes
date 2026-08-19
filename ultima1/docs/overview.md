@@ -23,7 +23,7 @@ identified and renamed in any other IDB it also happens to appear in.
 | IDB | Root file | Role (best guess, to confirm) | Functions named | Structs |
 |---|---|---|---|---|
 | `ultima1.idb` | `ULTIMA.EXE` | Title screen / attract mode, chains unconditionally to `GEN.EXE` | 100 / 100 | `STR15`, `Point`, `Rect`, `Savegame` |
-| `ultima1_gen.idb` | `GEN.EXE` | Character generation | 44 / 113 | + `Creature` |
+| `ultima1_gen.idb` | `GEN.EXE` | Character generation / continue, chains to `OUT.EXE` | 71 / 113 | + `Creature` |
 | `ultima1_out.idb` | `OUT.EXE` | Overworld/towns/dungeons (outdoor engine) | 352 / 353 | + `DungeonCell`, `DungeonColumn`, `DungeonMap`, `LocationWidget`, `MapLine`, `Map` |
 | `ultima1_space.idb` | `SPACE.EXE` | Space combat minigame | 156 / 210 | + `DuneonRow`, `DungeonMap` (space variant), `SpaceMapShip`, `SpaceMapCell`, `SpaceMapY`, `SpaceMap`, `FightData`, `JumpEntry` |
 | `ultima1_mondain.idb` | `MONDAIN.EXE` | Unknown — essentially unstarted | 1 / 191 | none |
@@ -664,3 +664,51 @@ data wasn't decoded).
 across 4 passes. Combined with confirming the full `ULTIMA.EXE` →
 `GEN.EXE` → `OUT.EXE` ↔ `SPACE.EXE` chain architecture, this
 executable is fully documented.
+
+## GEN.EXE — findings log
+
+Started 2026-08-20, per Paul's direction to move here after
+ULTIMA.EXE. Was 44/113 functions named before this pass. The
+already-named functions going in immediately confirmed this is the
+real character-creation/continue-game executable:
+`showMainMenu`, `selectRace`, `selectSex`, `selectClass`, `getName`,
+`generateCharacter`, `updateAttribute`, `moveSelectedAttrUp`/`Down`,
+`writeDefaultAttributes`, `readSavegameList`, `selectSaveSlot`,
+`continuePreviousGame`, `accessSavegame`, `saveQuery`.
+
+### GEN.EXE CRT layer and exec-chain to OUT.EXE
+
+First pass. Same story as ULTIMA.EXE: this executable links the
+identical Microsoft C runtime as OUT.EXE, confirmed by direct reads
+(free-handle-table-walk shape) plus several exact byte-size matches
+(`_flsbuf` 728 bytes, `_filbuf` 410 bytes, `_openfile` 353 bytes,
+`execProgram` 555 bytes — all matching OUT.EXE precisely). Named 8 CRT
+functions, the `playSound` 10-entry effect table (no semantic labels
+this time — only one ambiguous `playFX` call site in this executable,
+not enough evidence to name them like OUT.EXE's), and 2 graphics
+primitives (`videoDrawPoint`, `drawLineInternal`, both also exact
+byte-size matches to ULTIMA.EXE's copies).
+
+**Confirmed the full exec-chain to OUT.EXE**, and how it's invoked —
+this is the concrete mechanism behind what was only inferred from
+ULTIMA.EXE's side last session. `launchGame` (called from
+`continuePreviousGame`) prints "Please wait whilst thy game loads",
+then loops calling `chainToExecutable` with:
+- filename `"out"` (bare, no extension — `findExecutableFile` adds
+  `.EXE`)
+- `argv[1]` = a single video-mode letter: `'C'` (default/CGA), patched
+  to `'E'` (EGA) or `'T'` (Tandy) based on `_videoMode` right before
+  the call
+- `argv[2]` = a single digit `'0'` + the save slot number
+
+So GEN.EXE launches OUT.EXE roughly as **`OUT C 0`** (or `E`/`T`,
+and whatever slot digit) — meaning **OUT.EXE receives the video mode
+and save slot as command-line arguments** rather than rediscovering
+them itself or reading them from a shared file. Worth checking
+OUT.EXE's own `start`/`main` for how it parses `argv[1]`/`argv[2]`
+when that executable gets a later pass — this may currently be
+undocumented there since OUT.EXE's `main`'s `argc`/`argv` handling
+wasn't traced in detail during that session. On failure, `launchGame`
+calls `sub_115B3` (not yet named — likely the `insertDisk`
+equivalent, matching the retry pattern in every other chain call
+found so far) and retries.

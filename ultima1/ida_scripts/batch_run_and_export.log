@@ -3724,3 +3724,292 @@ structs (4): STR15, Point, Rect, Savegame
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_gen.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'identify.py']
+[*] reading identify.py
+[*] executing identify.py
+[*] captured stdout from target script:
+----- begin target script output -----
+root filename : GEN.EXE
+input file    : D:\GOG Games\Ultima 1\GEN.EXE
+entry point   : 0x0 (cs=0x1000)
+input md5     : e54871dbef88cf49d99b753089f6f5b4
+
+segments:
+  sg013A       0x010000-0x014260  (16992 bytes)
+  dseg         0x014260-0x015130  (3792 bytes)
+  sg064D       0x015130-0x016530  (5120 bytes)
+  sg078D       0x016530-0x016531  (1 bytes)
+
+functions: 113 total, 44 named, 69 still sub_XXXXX
+
+structs (5): STR15, Point, Rect, Creature, Savegame
+----- end target script output -----
+[*] finished executing identify.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima1\ultima1_gen.asm
+[*] gen_file(OFILE_ASM) returned 10993
+[*] exporting IDC to C:\dev\ultima1\ultima1_gen.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima1\ultima1_gen.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_gen.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'rank_unnamed_functions.py', 'noexport']
+[*] reading rank_unnamed_functions.py
+[*] executing rank_unnamed_functions.py
+[*] captured stdout from target script:
+----- begin target script output -----
+69 unnamed functions total
+
+11E2C  sub_11E2C    callers=  4 size= 141  <- data/11EC8, sub_1197D, sub_12A93, sub_12D47
+12491  sub_12491    callers=  4 size= 728  <- _fread, sub_1197D, sub_122F7, sub_12491
+127E8  sub_127E8    callers=  4 size=  73  <- sub_11ED5, sub_128AA, sub_12971, sub_12DEA
+10DC2  sub_10DC2    callers=  3 size=  69  <- generateCharacter, moveSelectedAttrDown, moveSelectedAttrUp
+1197D  sub_1197D    callers=  3 size= 115  <- generateCharacter, readSavegameList, sub_11A3A
+11F4E  sub_11F4E    callers=  3 size=  62  <- data/11973, data/11F44, sub_11948
+12CA0  sub_12CA0    callers=  3 size=  14  <- sub_11ED5, sub_11F8C, sub_120A0
+12CAE  sub_12CAE    callers=  3 size=  20  <- sub_11F8C, sub_12491, sub_128AA
+12CC2  sub_12CC2    callers=  3 size=  36  <- sub_11F8C, sub_12491, sub_12DEA
+1357C  sub_1357C    callers=  3 size=  29  <- drawRightArrow, getName, writeLeftArrow
+13C8B  sub_13C8B    callers=  3 size= 152  <- generateCharacter, sub_11455, updateAttribute
+13D61  sub_13D61    callers=  3 size= 253  <- fillRect, sub_13A1D, sub_141D5
+11455  sub_11455    callers=  2 size= 102  <- continuePreviousGame, sub_114BB
+120A0  sub_120A0    callers=  2 size= 562  <- data/122ED, sub_11A3A
+122F7  sub_122F7    callers=  2 size= 410  <- sub_11B9B, sub_122F7
+127D4  sub_127D4    callers=  2 size=  20  <- startup2, sub_120A0
+128AA  sub_128AA    callers=  2 size= 199  <- sub_122F7, sub_12DEA
+12C04  sub_12C04    callers=  2 size=  91  <- sub_122F7, sub_12491
+12CF7  sub_12CF7    callers=  2 size=  41  <- sub_11F8C, sub_12971
+12D47  sub_12D47    callers=  2 size= 151  <- sub_12A93, sub_12C04
+12DEA  sub_12DEA    callers=  2 size= 213  <- sub_128AA, sub_12971
+13382  sub_13382    callers=  2 size=  21  <- sub_12831, sub_12F40
+13397  sub_13397    callers=  2 size=  23  <- sub_12A93, sub_12EBF
+14234  sub_14234    callers=  2 size=  32  <- data/1422B, sub_1413C
+10E32  sub_10E32    callers=  1 size=  47  <- generateCharacter
+10E61  sub_10E61    callers=  1 size=  61  <- generateCharacter
+114BB  sub_114BB    callers=  1 size= 248  <- main
+115B3  sub_115B3    callers=  1 size= 144  <- sub_11643
+11643  sub_11643    callers=  1 size= 153  <- continuePreviousGame
+11948  sub_11948    callers=  1 size=  27  <- sub_11643
+11A3A  sub_11A3A    callers=  1 size= 353  <- accessSavegame
+11B9B  sub_11B9B    callers=  1 size= 110  <- readSavegameList
+11DA6  sub_11DA6    callers=  1 size= 134  <- start
+11ED5  sub_11ED5    callers=  1 size=  72  <- sub_1197D
+12831  sub_12831    callers=  1 size= 121  <- sub_11F4E
+12971  sub_12971    callers=  1 size= 290  <- sub_12491
+12A93  sub_12A93    callers=  1 size= 369  <- sub_11F4E
+12C5F  sub_12C5F    callers=  1 size=  18  <- sub_120A0
+12C71  sub_12C71    callers=  1 size=  17  <- sub_120A0
+12C82  sub_12C82    callers=  1 size=  13  <- sub_120A0
+12C8F  sub_12C8F    callers=  1 size=  17  <- sub_120A0
+12CE6  sub_12CE6    callers=  1 size=  17  <- sub_120A0
+12D20  sub_12D20    callers=  1 size=  24  <- sub_11F8C
+12EBF  sub_12EBF    callers=  1 size= 129  <- sub_12831
+12F40  sub_12F40    callers=  1 size= 128  <- sub_12831
+13143  sub_13143    callers=  1 size= 555  <- sub_12A93
+1336E  sub_1336E    callers=  1 size=  20  <- sub_12831
+133AE  sub_133AE    callers=  1 size=  75  <- sub_12EBF
+133F9  sub_133F9    callers=  1 size= 198  <- sub_12D47
+13A1D  sub_13A1D    callers=  1 size= 186  <- drawLine
+13AD7  sub_13AD7    callers=  1 size= 436  <- sub_11643
+13D23  sub_13D23    callers=  1 size=  30  <- sub_13C8B
+13E5E  sub_13E5E    callers=  1 size=  25  <- getKeypress
+13E77  sub_13E77    callers=  1 size=  59  <- sub_13E5E
+13EED  sub_13EED    callers=  1 size= 117  <- sub_115B3
+13F62  sub_13F62    callers=  1 size=  29  <- playFX
+13F7F  sub_13F7F    callers=  1 size=  24  <- sub_13F62
+13F97  sub_13F97    callers=  1 size=  30  <- sub_13F62
+13FB5  sub_13FB5    callers=  1 size=   6  <- sub_13F62
+13FBC  sub_13FBC    callers=  1 size=   6  <- sub_13F62
+13FC3  sub_13FC3    callers=  1 size=  32  <- sub_13F62
+13FE3  sub_13FE3    callers=  1 size=   6  <- sub_13F62
+13FEA  sub_13FEA    callers=  1 size=  26  <- sub_13F62
+14004  sub_14004    callers=  1 size=  52  <- sub_13F62
+14038  sub_14038    callers=  1 size=  25  <- sub_13F62
+14051  sub_14051    callers=  1 size=  32  <- sub_13F62
+1413C  sub_1413C    callers=  1 size= 153  <- getKeypress
+141D5  sub_141D5    callers=  1 size=  79  <- sub_1413C
+11F8C  sub_11F8C    callers=  0 size= 269  <- 
+----- end target script output -----
+[*] finished executing rank_unnamed_functions.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_gen.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_renames_gen.py', 'noexport']
+[*] reading apply_renames_gen.py
+[*] executing apply_renames_gen.py
+[*] captured stdout from target script:
+----- begin target script output -----
+12491: 'sub_12491' -> '_flsbuf'
+    flush-buffer-and-write-one-char, matching OUT.EXE's _flsbuf exactly in size (728 bytes).
+127E8: 'sub_127E8' -> 'findFileHandleSlot'
+    internal handle-table lookup, matching OUT.EXE's findFileHandleSlot exactly in size (73 bytes).
+120A0: 'sub_120A0' -> '_open'
+    composite open: walks a free-handle-table-slot search identical in shape to OUT.EXE's _open, confirmed by direct read. 562 bytes -- exact match to OUT.EXE's _open.
+122F7: 'sub_122F7' -> '_filbuf'
+    refill-buffer-and-return-one-char, matching OUT.EXE's _filbuf exactly in size (410 bytes).
+128AA: 'sub_128AA' -> '_read'
+    text-mode-aware read underneath _filbuf, matching OUT.EXE's _read exactly in size (199 bytes).
+12DEA: 'sub_12DEA' -> '_lseek'
+    CRT-level seek used by _read/_write, matching OUT.EXE's _lseek exactly in size (213 bytes).
+12C04: 'sub_12C04' -> 'allocFileBuffer'
+    lazily allocates a stream's I/O buffer, matching OUT.EXE's allocFileBuffer exactly in size (91 bytes).
+11A3A: 'sub_11A3A' -> '_openfile'
+    the real body of fopen: parses the mode string, called from accessSavegame (already named). 353 bytes -- exact match to OUT.EXE's _openfile.
+11948: 'sub_11948' -> 'chainToExecutable'
+    pushes (filename, &argv, envp) and calls execProgramEntry, matching OUT.EXE/ULTIMA.EXE's chainToExecutable exactly.
+11F4E: 'sub_11F4E' -> 'execProgramEntry'
+    findExecutableFile then buildAndChainExecutable, matching OUT.EXE/ULTIMA.EXE exactly.
+12831: 'sub_12831' -> 'findExecutableFile'
+    locates the target program file by trying the bare name then appending default extensions.
+12A93: 'sub_12A93' -> 'buildAndChainExecutable'
+    builds the DOS command-tail buffer from argv then calls execProgram.
+13143: 'sub_13143' -> 'execProgram'
+    the actual overlay loader -- 555 bytes, exactly matching OUT.EXE/ULTIMA.EXE's execProgram in size.
+11643: 'sub_11643' -> 'launchGame'
+    called from continuePreviousGame: prints 'Please wait whilst thy game loads', then loops calling chainToExecutable with filename "out" (extension added by findExecutableFile) and argv[1]/argv[2] set to a video-mode letter ('C' default, patched to 'E' for EGA or 'T' for Tandy based on _videoMode) and a save-slot digit ('0'+slot) -- i.e. GEN.EXE launches OUT.EXE as roughly 'OUT C 0'. On failure (chain returned), calls sub_115B3 (likely insertDisk-equivalent) and retries.
+13F62: 'sub_13F62' -> 'playSound'
+    dispatches through a 10-entry jump table (off_14A96) by effectNum, matching OUT.EXE/ULTIMA.EXE's playSound exactly.
+13F7F: 'sub_13F7F' -> 'soundEffect0'
+    PC-speaker tone handler, table index 0.
+13F97: 'sub_13F97' -> 'soundEffect1'
+    PC-speaker tone handler, table index 1.
+13FB5: 'sub_13FB5' -> 'soundEffect2'
+    PC-speaker tone handler, table index 2.
+13FBC: 'sub_13FBC' -> 'soundEffect3'
+    PC-speaker tone handler, table index 3.
+13FC3: 'sub_13FC3' -> 'soundEffect4'
+    PC-speaker tone handler, table index 4.
+13FE3: 'sub_13FE3' -> 'soundEffect5'
+    PC-speaker tone handler, table index 5.
+13FEA: 'sub_13FEA' -> 'soundEffect6'
+    PC-speaker tone handler, table index 6.
+14004: 'sub_14004' -> 'soundEffect7'
+    PC-speaker tone handler, table index 7.
+14038: 'sub_14038' -> 'soundEffect8'
+    PC-speaker tone handler, table index 8.
+14051: 'sub_14051' -> 'soundEffect9'
+    PC-speaker tone handler, table index 9.
+13D61: 'sub_13D61' -> 'videoDrawPoint'
+    plots a single pixel with CGA/Tandy/EGA-aware bit-packing, matching ULTIMA.EXE's videoDrawPoint exactly in size (253 bytes). Called from fillRect and the drawLine-family helpers.
+13A1D: 'sub_13A1D' -> 'drawLineInternal'
+    Bresenham line rasterizer, matching ULTIMA.EXE's drawLineInternal exactly in size (186 bytes).
+
+[dry] nothing changed. Set DRY_RUN = False to apply.
+----- end target script output -----
+[*] finished executing apply_renames_gen.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_gen.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_renames_gen.py']
+[*] reading apply_renames_gen.py
+[*] executing apply_renames_gen.py
+[*] captured stdout from target script:
+----- begin target script output -----
+12491: 'sub_12491' -> '_flsbuf'
+    flush-buffer-and-write-one-char, matching OUT.EXE's _flsbuf exactly in size (728 bytes).
+127E8: 'sub_127E8' -> 'findFileHandleSlot'
+    internal handle-table lookup, matching OUT.EXE's findFileHandleSlot exactly in size (73 bytes).
+120A0: 'sub_120A0' -> '_open'
+    composite open: walks a free-handle-table-slot search identical in shape to OUT.EXE's _open, confirmed by direct read. 562 bytes -- exact match to OUT.EXE's _open.
+122F7: 'sub_122F7' -> '_filbuf'
+    refill-buffer-and-return-one-char, matching OUT.EXE's _filbuf exactly in size (410 bytes).
+128AA: 'sub_128AA' -> '_read'
+    text-mode-aware read underneath _filbuf, matching OUT.EXE's _read exactly in size (199 bytes).
+12DEA: 'sub_12DEA' -> '_lseek'
+    CRT-level seek used by _read/_write, matching OUT.EXE's _lseek exactly in size (213 bytes).
+12C04: 'sub_12C04' -> 'allocFileBuffer'
+    lazily allocates a stream's I/O buffer, matching OUT.EXE's allocFileBuffer exactly in size (91 bytes).
+11A3A: 'sub_11A3A' -> '_openfile'
+    the real body of fopen: parses the mode string, called from accessSavegame (already named). 353 bytes -- exact match to OUT.EXE's _openfile.
+11948: 'sub_11948' -> 'chainToExecutable'
+    pushes (filename, &argv, envp) and calls execProgramEntry, matching OUT.EXE/ULTIMA.EXE's chainToExecutable exactly.
+11F4E: 'sub_11F4E' -> 'execProgramEntry'
+    findExecutableFile then buildAndChainExecutable, matching OUT.EXE/ULTIMA.EXE exactly.
+12831: 'sub_12831' -> 'findExecutableFile'
+    locates the target program file by trying the bare name then appending default extensions.
+12A93: 'sub_12A93' -> 'buildAndChainExecutable'
+    builds the DOS command-tail buffer from argv then calls execProgram.
+13143: 'sub_13143' -> 'execProgram'
+    the actual overlay loader -- 555 bytes, exactly matching OUT.EXE/ULTIMA.EXE's execProgram in size.
+11643: 'sub_11643' -> 'launchGame'
+    called from continuePreviousGame: prints 'Please wait whilst thy game loads', then loops calling chainToExecutable with filename "out" (extension added by findExecutableFile) and argv[1]/argv[2] set to a video-mode letter ('C' default, patched to 'E' for EGA or 'T' for Tandy based on _videoMode) and a save-slot digit ('0'+slot) -- i.e. GEN.EXE launches OUT.EXE as roughly 'OUT C 0'. On failure (chain returned), calls sub_115B3 (likely insertDisk-equivalent) and retries.
+13F62: 'sub_13F62' -> 'playSound'
+    dispatches through a 10-entry jump table (off_14A96) by effectNum, matching OUT.EXE/ULTIMA.EXE's playSound exactly.
+13F7F: 'sub_13F7F' -> 'soundEffect0'
+    PC-speaker tone handler, table index 0.
+13F97: 'sub_13F97' -> 'soundEffect1'
+    PC-speaker tone handler, table index 1.
+13FB5: 'sub_13FB5' -> 'soundEffect2'
+    PC-speaker tone handler, table index 2.
+13FBC: 'sub_13FBC' -> 'soundEffect3'
+    PC-speaker tone handler, table index 3.
+13FC3: 'sub_13FC3' -> 'soundEffect4'
+    PC-speaker tone handler, table index 4.
+13FE3: 'sub_13FE3' -> 'soundEffect5'
+    PC-speaker tone handler, table index 5.
+13FEA: 'sub_13FEA' -> 'soundEffect6'
+    PC-speaker tone handler, table index 6.
+14004: 'sub_14004' -> 'soundEffect7'
+    PC-speaker tone handler, table index 7.
+14038: 'sub_14038' -> 'soundEffect8'
+    PC-speaker tone handler, table index 8.
+14051: 'sub_14051' -> 'soundEffect9'
+    PC-speaker tone handler, table index 9.
+13D61: 'sub_13D61' -> 'videoDrawPoint'
+    plots a single pixel with CGA/Tandy/EGA-aware bit-packing, matching ULTIMA.EXE's videoDrawPoint exactly in size (253 bytes). Called from fillRect and the drawLine-family helpers.
+13A1D: 'sub_13A1D' -> 'drawLineInternal'
+    Bresenham line rasterizer, matching ULTIMA.EXE's drawLineInternal exactly in size (186 bytes).
+
+Done. Re-export the .asm/.idc and check the new names took, then update docs/roadmap.md's checklist.
+----- end target script output -----
+[*] finished executing apply_renames_gen.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima1\ultima1_gen.asm
+[*] gen_file(OFILE_ASM) returned 10993
+[*] exporting IDC to C:\dev\ultima1\ultima1_gen.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima1\ultima1_gen.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_gen.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'identify.py', 'noexport']
+[*] reading identify.py
+[*] executing identify.py
+[*] captured stdout from target script:
+----- begin target script output -----
+root filename : GEN.EXE
+input file    : D:\GOG Games\Ultima 1\GEN.EXE
+entry point   : 0x0 (cs=0x1000)
+input md5     : e54871dbef88cf49d99b753089f6f5b4
+
+segments:
+  sg013A       0x010000-0x014260  (16992 bytes)
+  dseg         0x014260-0x015130  (3792 bytes)
+  sg064D       0x015130-0x016530  (5120 bytes)
+  sg078D       0x016530-0x016531  (1 bytes)
+
+functions: 113 total, 71 named, 42 still sub_XXXXX
+
+structs (5): STR15, Point, Rect, Creature, Savegame
+----- end target script output -----
+[*] finished executing identify.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
