@@ -41,9 +41,51 @@ exists (i.e. how close each is to "fully documented" already):
    starting from scratch; role not yet confirmed (best guess: Mondain's
    castle / final confrontation, given the name).
 
-## Per-executable next steps
+Decided 2026-08-19 (Paul's call): start with **`ultima1_out` /
+OUT.EXE**.
 
-Not started yet for any executable this session — first task is to
-open the chosen starting IDB's existing `.asm` (or a targeted
-`ida_scripts` report script) and read through what prior sessions
-already established, rather than re-deriving it from scratch.
+## OUT.EXE — next steps
+
+- [x] Exported `.asm`/`.idc` for the first time this session (they
+      didn't exist yet — only `ultima1_space` had been exported before).
+- [x] Ran `ida_scripts/rank_unnamed_functions.py` to rank the 87
+      remaining `sub_XXXXX` by call-site count.
+- [x] First renaming pass: 7 functions confirmed and applied via
+      `ida_scripts/apply_renames_out.py` — `getKeypressAndWaitRaw`,
+      `toLowerLetter`, `_nmalloc`, `_nfree`, `_nheapgrow`, `readAmount`,
+      `isDigit`. Full writeup in
+      [overview.md](overview.md#outexe--findings-log). 80 `sub_XXXXX`
+      remain.
+- [ ] Continue the ranked sweep — next up by caller count (from the
+      `rank_unnamed_functions.py` run): the `198C0`/`1CE05`/`1D0DD`
+      cluster at `0x1CE05`/`0x1C6D4`/etc. is very likely the CRT
+      buffered stdio (`fopen`/`fread`/`fwrite`) implementation
+      underneath `readFile`/`writeFile`/`_fopen` (same reasoning as the
+      near-heap cluster: `readFile`/`writeFile` already call `_fopen`
+      then a `sub_XXXXX` that looks like `fread`/`fwrite`-alike, which
+      calls another `sub_XXXXX` that looks like a retry/close path).
+      Worth confirming and naming as a cluster, but lower priority than
+      game-logic functions since the C++ reimplementation won't
+      reproduce DOS-era buffered I/O internals byte-for-byte.
+- [ ] Decode `playSound`'s 10-entry effect jump table (`off_1F94A`,
+      handlers `0x1AE65`-`0x1AF37`) by cross-referencing `playFX` call
+      sites' literal `effectNum` arguments against game context — see
+      overview.md.
+- [ ] Fix `word_1F95E` — currently a single `dw 1` plus raw `db` bytes,
+      should be a proper `dw 4 dup(?)` (or named) powers-of-ten array.
+      Structural fix (needs `apply_structs_out.py` or a one-off script),
+      not a plain rename.
+- [ ] Rename the `sg013A`/`sg0E82`/`seg002`/`seg003` segments to the
+      `CODE`/`DATA`/... convention once their roles are confirmed (not
+      done yet for this IDB, unlike the naming sweep itself).
+- [ ] Cross-check the 5 structs shared by name with other IDBs
+      (`STR15`, `Point`, `Rect`, `Savegame`, `Creature`) actually agree
+      field-for-field with their same-named counterparts elsewhere —
+      flagged as unverified in overview.md.
+
+## Per-executable next steps (not yet started)
+
+`ultima1_space`, `ultima1_gen`, `ultima1`, `ultima1_mondain` — untouched
+this session beyond the initial `identify.py` cataloging in
+overview.md. Pick up after `ultima1_out` is fully documented, per the
+priority order above.

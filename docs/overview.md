@@ -101,3 +101,95 @@ re-running `identify.py` without `-NoExport`).
 - Findings get written up here (or in `file-formats.md` for on-disk
   formats) with enough detail that the `note` field in a rename entry
   can stay short and just point back to the section.
+
+## OUT.EXE — findings log
+
+Started 2026-08-19. Was 266/353 functions named before this pass;
+ranked the remaining 87 `sub_XXXXX` by call-site count
+(`ida_scripts/rank_unnamed_functions.py`) and worked top-down. First
+pass renamed 7 (`ida_scripts/apply_renames_out.py`, applied
+`DRY_RUN = False`), full detail below.
+
+### `getKeypressAndWaitRaw` and `getKeypressAndWait` — duplicated poll loop
+
+`getKeypressAndWait` (`0x1B94E`-ish, already named pre-session) and the
+newly-named `getKeypressAndWaitRaw` (`0x1A81D`) implement the *same*
+poll loop independently — not one wrapping the other:
+
+```
+loop:
+    key = getKeypress(textColor)
+    if key != 0: wait(1); break
+    wait(3)
+goto loop (implicit via the branch structure)
+return key
+```
+
+`getKeypressAndWait` inserts one extra step (`_toupper` on the result)
+that `getKeypressAndWaitRaw` doesn't. All 15 call sites of
+`getKeypressAndWaitRaw` push the global `_textColor` — never a literal
+or a different variable — even though the function takes `textColor` as
+a real parameter, so in practice it's always "wait for a key in the
+current text color." Some callers `_toupper` the raw result themselves
+right after (matching what `getKeypressAndWait` does inline); others use
+the raw case (e.g. before subtracting `'a'` for a menu index, where case
+matters). This is genuine code duplication in the original binary, not
+a naming artifact — both bodies exist independently in the disassembly.
+
+### Near-heap allocator: `_nmalloc` / `_nfree` / `_nheapgrow`
+
+A classic Microsoft C runtime near-heap allocator, not game logic.
+Named with a leading underscore to match this codebase's existing
+convention for runtime-library internals (`_fopen`, `_toupper`).
+
+- **`_nmalloc`** (`0x1981D`) — walks a singly-linked free-list
+  (`word_1EC56` = sentinel head, `word_1EC5A` = cursor/tail), splits a
+  free block if it's big enough for the request, otherwise calls
+  `_nheapgrow` to extend the heap and links the new space in via
+  `_nfree` before retrying the walk.
+- **`_nfree`** (`0x198C0`) — walks the same free-list, coalesces the
+  freed block with whichever neighbor(s) are adjacent in memory.
+- **`_nheapgrow`** (`0x19EA3`) — grows the near heap via DOS `INT 21h`/
+  `AH=4Ah` (SETBLOCK, "adjust memory block size"). Only called from
+  `_nmalloc`. Its disassembly has two extra `push bp; mov bp,sp; ...`
+  prologues immediately after the first `retn`, with **zero incoming
+  xrefs** — dead code, almost certainly sibling entry points (e.g. a
+  realloc/msize variant) from the same linked library object that this
+  program never calls. Left un-split since they're inert; worth
+  revisiting only if some future finding turns out to call into the
+  middle of this proc.
+
+Not pursuing the individual free-list globals (`word_1EC52`,
+`word_1EC54`, `word_1EC56`, `word_1EC58`, `word_1EC5A`, `word_1EC5C`)
+further for now — CRT allocator internals, low value for the C++
+reimplementation (which will just use normal `new`/`delete`), unlike
+the game-specific globals elsewhere in this IDB.
+
+### `readAmount` / `isDigit` — numeric text entry
+
+`readAmount` (`0x1B0B5`, callers: `dropPence`, `transactCastle`,
+`transactGrocer`) reads up to 4 digits at a screen position: filters
+keypresses through `isDigit` (`0x1B094`, simple `'0'`-`'9'` range
+check) via `getKeypressAndWaitRaw`, handles backspace (char `8`) to
+delete the last digit, and on any non-digit/non-backspace key converts
+the accumulated buffer to a number using `word_1F95E` and returns it.
+
+**IDB hygiene note**: `word_1F95E` is a `{1, 10, 100, 1000}`
+powers-of-ten table (confirmed by the multiply-and-sum loop that reads
+it), but it's currently mis-typed in the IDB as a single `dw 1` word
+immediately followed by raw `db` bytes rather than a proper 4-element
+array — IDA's auto-analysis didn't recognize the boundary. Not fixed
+yet; see roadmap.md.
+
+### `playSound` / `playFX` — sound-effect jump table, not yet decoded
+
+`playSound(effectNum)` (already named) dispatches through a 10-entry
+jump table (`off_1F94A`, `effectNum` 0-9) to 10 short, single-caller
+`sub_XXXXX` handlers (`0x1AE65` through `0x1AF37`) — almost certainly
+individual PC-speaker effect routines (footstep, hit, death, etc.).
+`playFX(effectNum)` is a thin `_savegame._soundOn`-gated wrapper around
+it, called from ~40 sites across combat/movement/UI code. Left
+unnamed: figuring out which of the 10 is which requires cross-
+referencing every `playFX` call site's literal `effectNum` argument
+against its game context (or just listening in an emulator), which
+hasn't been done yet. Worth a dedicated pass — see roadmap.md.
