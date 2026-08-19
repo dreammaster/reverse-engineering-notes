@@ -197,6 +197,13 @@ early. Was 39/100 named; exported `.asm`/`.idc` for the first time.
       9 functions named. 70/100 functions now named (70%). Full
       writeup in
       [overview.md](overview.md#ultimaexe-chains-unconditionally-to-genexe).
+- [x] Third renaming pass: `writeString2_mb` (a pre-existing but
+      misleading name from before this session) turned out to be a
+      `vsprintf`-family formatter, not multi-byte text handling —
+      renamed to `printStartupMessage` along with its 4 helpers
+      (`vsprintf`, `formatArg`, `fputs`, `putc`). 74/100 functions now
+      named (74%). Full writeup in
+      [overview.md](overview.md#writestring2_mb-was-a-misnamed-printf-not-multi-byte-text-handling).
 - [ ] `sub_1153D` (1245 bytes, the single largest unnamed function in
       this executable, notably *larger* than anything found in
       OUT.EXE's whole CRT/game-logic sweep) is called from
