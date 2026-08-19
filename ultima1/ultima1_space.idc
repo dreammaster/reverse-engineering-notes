@@ -621,6 +621,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X103E7);
 	op_hex		(x,	0);
 	create_insn	(0X103E9);
+	set_name	(0X103E9,	"isqrt");
 	create_insn	(x=0X103EA);
 	op_hex		(x,	1);
 	create_insn	(x=0X103EF);
@@ -1871,6 +1872,7 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	set_name	(0X11279,	"def_1124E");
 	create_insn	(0X1127E);
+	set_name	(0X1127E,	"drawEnemyMarker");
 	create_insn	(x=0X1127F);
 	op_hex		(x,	1);
 	create_insn	(x=0X11284);
@@ -1904,6 +1906,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X112EC);
 	op_hex		(x,	1);
 	create_insn	(0X112F1);
+	set_name	(0X112F1,	"drawStationMarker");
 	create_insn	(x=0X112F2);
 	op_hex		(x,	1);
 	create_insn	(x=0X112F7);
@@ -1929,6 +1932,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X11344);
 	op_hex		(x,	1);
 	create_insn	(0X11349);
+	set_name	(0X11349,	"drawStarMarker");
 	create_insn	(x=0X1134A);
 	op_hex		(x,	1);
 	create_insn	(x=0X1134F);
@@ -1962,6 +1966,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X113AE);
 	op_hex		(x,	1);
 	create_insn	(0X113B3);
+	set_name	(0X113B3,	"drawEmptyMarker");
 	create_insn	(x=0X113B4);
 	op_hex		(x,	1);
 	create_insn	(x=0X113B9);
@@ -1987,6 +1992,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X11426);
 	op_hex		(x,	1);
 	create_insn	(0X1142B);
+	set_name	(0X1142B,	"drawSectorMapIcon");
 	create_insn	(x=0X1142C);
 	op_hex		(x,	1);
 	create_insn	(x=0X11431);
@@ -4715,6 +4721,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X172D0);
 	op_plain_offset	(x,	129,	0X172D0);
 	create_insn	(0X13F66);
+	set_name	(0X13F66,	"_nheapinit");
 	create_insn	(x=0X13F91);
 	op_hex		(x,	1);
 	create_insn	(x=0X13F93);
@@ -4747,7 +4754,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X14018);
 	op_hex		(x,	1);
 	create_insn	(0X1401D);
-	set_name	(0X1401D,	"exec?");
+	set_name	(0X1401D,	"execProgramEntry");
 	create_insn	(x=0X1401E);
 	op_hex		(x,	1);
 	create_insn	(x=0X14023);
@@ -4841,6 +4848,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1424C);
 	op_hex		(x,	1);
 	create_insn	(0X14259);
+	set_name	(0X14259,	"_dos_ioctl_get");
 	create_insn	(x=0X1425F);
 	op_hex		(x,	1);
 	set_cmt	(0X14262,	"DOS - 2+ - IOCTL - GET DEVICE INFORMATION\nBX = file or device handle",	0);
@@ -4861,6 +4869,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1428A);
 	op_stkvar	(x,	1);
 	create_insn	(0X14294);
+	set_name	(0X14294,	"findExecutableFile");
 	create_insn	(x=0X14295);
 	op_hex		(x,	1);
 	create_insn	(x=0X1429A);
@@ -4894,6 +4903,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X14308);
 	op_hex		(x,	1);
 	create_insn	(0X1430D);
+	set_name	(0X1430D,	"buildAndChainExecutable");
 	create_insn	(x=0X1430E);
 	op_hex		(x,	1);
 	create_insn	(x=0X14314);
@@ -5028,6 +5038,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X14476);
 	op_hex		(x,	1);
 	create_insn	(0X1447E);
+	set_name	(0X1447E,	"_flsbuf");
 	create_insn	(x=0X1447F);
 	op_hex		(x,	1);
 	create_insn	(x=0X1448A);
@@ -5188,6 +5199,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X14751);
 	op_hex		(x,	1);
 	create_insn	(0X14756);
+	set_name	(0X14756,	"_dos_open");
 	create_insn	(x=0X14759);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1475C);
@@ -5198,6 +5210,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X14761);
 	op_hex		(x,	0);
 	create_insn	(0X14767);
+	set_name	(0X14767,	"_dos_close");
 	create_insn	(x=0X1476A);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1476D);
@@ -5206,6 +5219,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1476F);
 	op_hex		(x,	0);
 	create_insn	(0X14775);
+	set_name	(0X14775,	"_dos_read");
 	create_insn	(x=0X14778);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1477B);
@@ -5218,6 +5232,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X14783);
 	op_hex		(x,	0);
 	create_insn	(0X14789);
+	set_name	(0X14789,	"_dos_lseek");
 	create_insn	(x=0X14792);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X14797);
@@ -5231,6 +5246,7 @@ static Bytes_0(void) {
 	op_hex		(x,	0);
 	create_insn	(0X147AA);
 	create_insn	(0X147AD);
+	set_name	(0X147AD,	"_dos_write");
 	create_insn	(x=0X147B0);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X147B3);
@@ -5246,6 +5262,7 @@ static Bytes_0(void) {
 	op_stkvar	(x,	1);
 	create_insn	(0X147D2);
 	create_insn	(0X147D6);
+	set_name	(0X147D6,	"_nmalloc");
 	create_insn	(x=0X147D9);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X147DD);
@@ -5262,6 +5279,7 @@ static Bytes_0(void) {
 	create_insn	(0X14868);
 	create_insn	(0X1486D);
 	create_insn	(0X14879);
+	set_name	(0X14879,	"_nfree");
 	create_insn	(x=0X1487C);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X14880);
@@ -5284,6 +5302,7 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X1491D);
 	create_insn	(0X14922);
+	set_name	(0X14922,	"hasFileExtension");
 	create_insn	(x=0X14923);
 	op_hex		(x,	1);
 	create_insn	(x=0X14928);
@@ -5326,6 +5345,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1499E);
 	op_hex		(x,	1);
 	create_insn	(0X149A3);
+	set_name	(0X149A3,	"ensureFileExtension");
 	create_insn	(x=0X149A4);
 	op_hex		(x,	1);
 	create_insn	(x=0X149A9);
@@ -5369,6 +5389,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X14A1E);
 	op_hex		(x,	1);
 	create_insn	(0X14A23);
+	set_name	(0X14A23,	"_write");
 	create_insn	(x=0X14A24);
 	op_hex		(x,	1);
 	create_insn	(x=0X14A2A);
@@ -5460,6 +5481,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X14B3F);
 	op_hex		(x,	1);
 	create_insn	(0X14B45);
+	set_name	(0X14B45,	"allocFileBuffer");
 	create_insn	(x=0X14B46);
 	op_hex		(x,	1);
 	create_insn	(x=0X14B4B);
@@ -5513,6 +5535,7 @@ static Bytes_0(void) {
 	create_byte	(0X14D1E);
 	create_dword	(0X14D1F);
 	create_insn	(0X14D23);
+	set_name	(0X14D23,	"execProgram");
 	create_insn	(x=0X14D3B);
 	op_hex		(x,	1);
 	set_cmt	(0X14D3D,	"DOS - 2+ - ADJUST MEMORY BLOCK SIZE (SETBLOCK)\nES = segment address of block to change\nBX = new size in paragraphs",	0);
@@ -5600,6 +5623,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X172D0);
 	op_plain_offset	(x,	129,	0X172D0);
 	create_insn	(0X14F4E);
+	set_name	(0X14F4E,	"_dos_getfileattr");
 	create_insn	(x=0X14F51);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X14F54);
@@ -5607,8 +5631,18 @@ static Bytes_0(void) {
 	set_cmt	(0X14F57,	"DOS - 2+ - GET FILE ATTRIBUTES\nDS:DX -> ASCIZ file name or directory\nname without trailing slash",	0);
 	create_insn	(x=0X14F57);
 	op_hex		(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X14F5F);
 	create_insn	(0X14F62);
+	set_name	(0X14F62,	"strcpy");
 	create_insn	(x=0X14F65);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X14F68);
@@ -5616,9 +5650,11 @@ static Bytes_0(void) {
 	create_insn	(x=0X14F72);
 	op_stkvar	(x,	1);
 	create_insn	(0X14F77);
+	set_name	(0X14F77,	"strlen");
 	create_insn	(x=0X14F7A);
 	op_stkvar	(x,	1);
 	create_insn	(0X14F8E);
+	set_name	(0X14F8E,	"findFileHandleSlot");
 	create_insn	(x=0X14F8F);
 	op_hex		(x,	1);
 	create_insn	(x=0X14F99);
@@ -5639,6 +5675,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X14FD2);
 	op_hex		(x,	1);
 	create_insn	(0X14FD7);
+	set_name	(0X14FD7,	"_lseek");
 	create_insn	(x=0X14FD8);
 	op_hex		(x,	1);
 	create_insn	(x=0X14FDD);
@@ -5665,15 +5702,6 @@ static Bytes_0(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X15029);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X1502C);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X15031);
@@ -5719,6 +5747,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X150A7);
 	op_hex		(x,	1);
 	create_insn	(0X150AC);
+	set_name	(0X150AC,	"strncpy");
 	create_insn	(x=0X150AD);
 	op_hex		(x,	1);
 	create_insn	(x=0X150B2);
@@ -5746,6 +5775,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X150F2);
 	op_hex		(x,	1);
 	create_insn	(0X150F7);
+	set_name	(0X150F7,	"_nheapgrow");
 	create_insn	(x=0X150FA);
 	op_stkvar	(x,	1);
 	create_byte	(0X15104);
@@ -5795,7 +5825,7 @@ static Bytes_1(void) {
 	create_byte	(0X151AC);
 	create_insn	(0X151AD);
 	create_insn	(0X151BD);
-	set_name	(0X151BD,	"f");
+	set_name	(0X151BD,	"_filbuf");
 	create_insn	(x=0X151BE);
 	op_hex		(x,	1);
 	create_insn	(x=0X151C3);
@@ -6133,6 +6163,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1580A);
 	op_stkvar	(x,	1);
 	create_insn	(0X15818);
+	set_name	(0X15818,	"drawLineTo");
 	create_insn	(x=0X15826);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X15829);
@@ -6140,6 +6171,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1582C);
 	op_stkvar	(x,	1);
 	create_insn	(0X1583A);
+	set_name	(0X1583A,	"drawLine");
 	create_insn	(x=0X15841);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X15844);
@@ -6151,6 +6183,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1584D);
 	op_stkvar	(x,	1);
 	create_insn	(0X1585B);
+	set_name	(0X1585B,	"drawLineInternal");
 	create_insn	(0X158AB);
 	create_insn	(x=0X158C9);
 	op_hex		(x,	1);
@@ -9479,6 +9512,15 @@ static Bytes_1(void) {
 	set_name	(0X196C6,	"aBlockedByA");
 	create_strlit	(0X196D3,	0X14);
 	set_name	(0X196D3,	"aCanTMoveOnLand");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_word	(x=0X196E8);
 	op_plain_offset	(x,	0,	0X172D0);
 	op_plain_offset	(x,	128,	0X172D0);
@@ -9540,15 +9582,6 @@ static Bytes_1(void) {
 	op_plain_offset	(x,	128,	0X172D0);
 	create_strlit	(0X1979A,	0X7);
 	set_name	(0X1979A,	"aRanger");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X197A1,	0X9);
 	set_name	(0X197A1,	"aSkeleton");
 	create_strlit	(0X197AA,	0XA);

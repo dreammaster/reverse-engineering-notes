@@ -4651,3 +4651,305 @@ structs (5): STR15, Point, Rect, Creature, Savegame
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_space.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'identify.py', 'noexport']
+[*] reading identify.py
+[*] executing identify.py
+[*] captured stdout from target script:
+----- begin target script output -----
+root filename : SPACE.EXE
+input file    : D:\GOG Games\Ultima 1\SPACE.EXE
+entry point   : 0x0 (cs=0x1000)
+input md5     : 907aaf98e98c490c89e2b7acbbbb6a3f
+
+segments:
+  sg01a2       0x010000-0x0172d0  (29392 bytes)
+  dseg         0x0172d0-0x01d3f0  (24864 bytes)
+  seg002       0x01d3f0-0x01e7f0  (5120 bytes)
+  seg003       0x01e7f0-0x01e7f1  (1 bytes)
+
+functions: 210 total, 156 named, 54 still sub_XXXXX
+
+structs (16): STR15, DuneonRow, DungeonMap, Point, Rect, Creature, LocationWidget, Savegame, MapLine, Map, SpaceMapShip, SpaceMapCell, SpaceMapY, SpaceMap, FightData, JumpEntry
+----- end target script output -----
+[*] finished executing identify.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_space.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'rank_unnamed_functions.py', 'noexport']
+[*] reading rank_unnamed_functions.py
+[*] executing rank_unnamed_functions.py
+[*] captured stdout from target script:
+----- begin target script output -----
+54 unnamed functions total
+
+1583A  sub_1583A    callers= 13 size=  33  <- alienFiresBack, clearBottomArea, drawEdge?, drawGameBorder, drawLeftArrow, drawPromptAt, ... (+7 more)
+1447E  sub_1447E    callers=  5 size= 728  <- fclose, fillReadBuffer, fwriteRaw, sub_1416F, sub_1447E
+14879  sub_14879    callers=  4 size= 141  <- data/14915, fclose, sub_1430D, sub_147D6
+14F8E  sub_14F8E    callers=  4 size=  73  <- f, fcloseHandle, sub_14A23, sub_14FD7
+14767  sub_14767    callers=  3 size=  14  <- dosOpenOrCreate, fcloseHandle, sub_1405B
+14775  sub_14775    callers=  3 size=  20  <- f, sub_1405B, sub_1447E
+14789  sub_14789    callers=  3 size=  36  <- sub_1405B, sub_1447E, sub_14FD7
+10FBC  sub_10FBC    callers=  2 size=  37  <- inform, spaceAce
+10FFD  sub_10FFD    callers=  2 size=  52  <- sub_11031, sub_11072
+14259  sub_14259    callers=  2 size=  20  <- dosOpenOrCreate, main
+147AD  sub_147AD    callers=  2 size=  41  <- sub_1405B, sub_14A23
+147D6  sub_147D6    callers=  2 size= 151  <- sub_1430D, sub_14B45
+14B45  sub_14B45    callers=  2 size=  91  <- fillReadBuffer, sub_1447E
+14F62  sub_14F62    callers=  2 size=  21  <- sub_14294, sub_149A3
+14F77  sub_14F77    callers=  2 size=  23  <- sub_1430D, sub_14922
+14FD7  sub_14FD7    callers=  2 size= 213  <- f, sub_14A23
+157CC  sub_157CC    callers=  2 size=  55  <- promptDiskSwapRetry, promptPressSpace
+15818  sub_15818    callers=  2 size=  34  <- inform, sub_10F62
+1585B  sub_1585B    callers=  2 size= 186  <- sub_15818, sub_1583A
+15C82  sub_15C82    callers=  2 size= 117  <- promptDiskSwapRetry, writeString
+15CF7  sub_15CF7    callers=  2 size=  47  <- cockpitPerFrame, hyperjump
+16530  sub_16530    callers=  2 size=  59  <- status, sub_16586
+1656B  sub_1656B    callers=  2 size=  27  <- status, sub_16586
+103AE  sub_103AE    callers=  1 size=  46  <- start
+103E9  sub_103E9    callers=  1 size=  40  <- view
+10F3B  sub_10F3B    callers=  1 size=  39  <- spaceAce
+10F62  sub_10F62    callers=  1 size=  90  <- sub_10FBC
+11031  sub_11031    callers=  1 size=  65  <- view
+11072  sub_11072    callers=  1 size=  65  <- view
+1127E  sub_1127E    callers=  1 size= 115  <- sub_1142B
+112F1  sub_112F1    callers=  1 size=  88  <- sub_1142B
+11349  sub_11349    callers=  1 size= 106  <- sub_1142B
+113B3  sub_113B3    callers=  1 size= 120  <- sub_1142B
+1142B  sub_1142B    callers=  1 size= 186  <- inform
+13F66  sub_13F66    callers=  1 size= 134  <- start
+1405B  sub_1405B    callers=  1 size= 269  <- main
+1416F  sub_1416F    callers=  1 size= 108  <- invalidShipExit
+14294  sub_14294    callers=  1 size= 121  <- exec?
+1430D  sub_1430D    callers=  1 size= 369  <- exec?
+14756  sub_14756    callers=  1 size=  17  <- dosOpenOrCreate
+14922  sub_14922    callers=  1 size= 129  <- sub_14294
+149A3  sub_149A3    callers=  1 size= 128  <- sub_14294
+14A23  sub_14A23    callers=  1 size= 290  <- sub_1447E
+14D23  sub_14D23    callers=  1 size= 555  <- sub_1430D
+14F4E  sub_14F4E    callers=  1 size=  20  <- sub_14294
+150AC  sub_150AC    callers=  1 size=  75  <- sub_14922
+150F7  sub_150F7    callers=  1 size= 198  <- sub_147D6
+157A9  sub_157A9    callers=  1 size=  35  <- sub_16586
+15EE1  sub_15EE1    callers=  1 size= 125  <- initVideo
+16237  sub_16237    callers=  1 size=  21  <- status
+16272  sub_16272    callers=  1 size=   3  <- soundAction
+164BD  sub_164BD    callers=  1 size=  41  <- sub_16586
+164E6  sub_164E6    callers=  1 size=  74  <- sub_16586
+16586  sub_16586    callers=  1 size= 169  <- status
+----- end target script output -----
+[*] finished executing rank_unnamed_functions.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_space.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_renames_space.py', 'noexport']
+[*] reading apply_renames_space.py
+[*] executing apply_renames_space.py
+[*] captured stdout from target script:
+----- begin target script output -----
+14259: 'sub_14259' -> '_dos_ioctl_get'
+    AX=4400h IOCTL GET DEVICE INFORMATION.
+14756: 'sub_14756' -> '_dos_open'
+    AH=3Dh OPEN DISK FILE WITH HANDLE.
+14767: 'sub_14767' -> '_dos_close'
+    AH=3Eh CLOSE A FILE WITH HANDLE.
+14775: 'sub_14775' -> '_dos_read'
+    AH=3Fh READ FROM FILE WITH HANDLE.
+14789: 'sub_14789' -> '_dos_lseek'
+    AH=42h MOVE FILE READ/WRITE POINTER.
+147AD: 'sub_147AD' -> '_dos_write'
+    AH=40h WRITE TO FILE WITH HANDLE.
+14F4E: 'sub_14F4E' -> '_dos_getfileattr'
+    AH=43h/AL=00h GET FILE ATTRIBUTES.
+13F66: 'sub_13F66' -> '_nheapinit'
+    one-time near-heap setup (SETBLOCK), called from start -- matches the other three executables' _nheapinit exactly.
+150F7: 'sub_150F7' -> '_nheapgrow'
+    grows the near heap via SETBLOCK, confirmed by direct read.
+14D23: 'sub_14D23' -> 'execProgram'
+    the overlay loader -- 555 bytes, exactly matching the other three executables' execProgram, and containing the same SETBLOCK + PARSE FILENAME + OPEN/READ/CLOSE/LSEEK/CLOSE/SETBLOCK shape.
+1447E: 'sub_1447E' -> '_flsbuf'
+    flush-buffer-and-write-one-char, matching the other three executables' _flsbuf exactly in size (728 bytes). Called from the pre-existing fclose/fillReadBuffer/fwriteRaw.
+14879: 'sub_14879' -> '_nfree'
+    near-heap free, matching _nfree's role and size (141 bytes) elsewhere in this project.
+14F8E: 'sub_14F8E' -> 'findFileHandleSlot'
+    internal handle-table lookup, matching the established role and size (73 bytes).
+147D6: 'sub_147D6' -> '_nmalloc'
+    near-heap allocator, matching the established role and size (151 bytes).
+14B45: 'sub_14B45' -> 'allocFileBuffer'
+    lazily allocates a stream's I/O buffer, matching the established role and size (91 bytes).
+14F62: 'sub_14F62' -> 'strcpy'
+    plain unbounded lodsb/stosb copy, confirmed by direct read -- called from findExecutableFile/ensureFileExtension-equivalents, matching the strcpy (not strncpy) usage pattern seen in OUT.EXE/GEN.EXE.
+14F77: 'sub_14F77' -> 'strlen'
+    plain repne-scasb length count, confirmed by direct read.
+150AC: 'sub_150AC' -> 'strncpy'
+    bounded copy, confirmed by direct read, called from the hasFileExtension-equivalent.
+14FD7: 'sub_14FD7' -> '_lseek'
+    CRT-level seek, matching the established role and size (213 bytes).
+14294: 'sub_14294' -> 'findExecutableFile'
+    locates the target program file by trying the bare name then appending default extensions -- called from the pre-existing 'exec?' (see below).
+1430D: 'sub_1430D' -> 'buildAndChainExecutable'
+    builds the DOS command-tail buffer then calls execProgram.
+14922: 'sub_14922' -> 'hasFileExtension'
+    scans a filename backward for '.', matching the established role and size (129 bytes).
+149A3: 'sub_149A3' -> 'ensureFileExtension'
+    appends a default extension if none found, matching the established role and size (128 bytes).
+14A23: 'sub_14A23' -> '_write'
+    text-mode-aware write underneath _flsbuf, matching the established role and size (290 bytes).
+151BD: 'f' -> '_filbuf'
+    renamed from the placeholder name 'f' -- refill-buffer-and-return-one-char, called from the pre-existing fillReadBuffer/_lseek-equivalent exactly matching _filbuf's role elsewhere in this project.
+1401D: 'exec?' -> 'execProgramEntry'
+    renamed from the placeholder name 'exec?' -- findExecutableFile then buildAndChainExecutable, called from the pre-existing execWithEnvp (itself matching chainToExecutable's role).
+1583A: 'sub_1583A' -> 'drawLine'
+    thin wrapper over the Bresenham core (drawLineInternal) -- name and description came from a pre-existing but unpromoted analysis comment: 'Used throughout combat for the laser-bolt effects in handleFireCommand/alienFiresBack.'
+15818: 'sub_15818' -> 'drawLineTo'
+    draws a line from the cached endpoint of the last drawLine/drawLineTo call to a new point -- 'line-to' counterpart of drawLine, per a pre-existing but unpromoted analysis comment.
+1585B: 'sub_1585B' -> 'drawLineInternal'
+    the actual Bresenham line-drawing algorithm; plots via a putPixel helper and caches its endpoint so a subsequent drawLineTo call can continue from where it left off -- per a pre-existing but unpromoted analysis comment.
+1142B: 'sub_1142B' -> 'drawSectorMapIcon'
+    given sector coordinates, checks _spaceMap.x.y._enemyCount / field_6 (docking anchor) / field_2 (hazard/star) in that priority order and dispatches to the matching marker-drawing helper, else drawEmptyMarker. The per-cell renderer behind inform's long-range sector scan/map screen.
+1127E: 'sub_1127E' -> 'drawEnemyMarker'
+    drawn when _spaceMapCell._enemyCount > 0 for a sector, in drawSectorMapIcon's dispatch.
+112F1: 'sub_112F1' -> 'drawStationMarker'
+    drawn when a sector's docking/encounter anchor (field_6, per an existing inline comment) is set, in drawSectorMapIcon's dispatch.
+11349: 'sub_11349' -> 'drawStarMarker'
+    drawn when a sector's hazard/star position (field_2, per an existing inline comment) is set, in drawSectorMapIcon's dispatch.
+113B3: 'sub_113B3' -> 'drawEmptyMarker'
+    the default case in drawSectorMapIcon's dispatch -- an empty sector with no enemies, station, or star.
+103E9: 'sub_103E9' -> 'isqrt'
+    integer square root via repeated subtraction of consecutive odd numbers (1,3,5,7,... -- the classic sum-of-odds-equals-a-square identity), counting how many fit. Called from view, likely for a distance calculation (proximity to a star/hazard or targeting range).
+
+[dry] nothing changed. Set DRY_RUN = False to apply.
+----- end target script output -----
+[*] finished executing apply_renames_space.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_space.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_renames_space.py']
+[*] reading apply_renames_space.py
+[*] executing apply_renames_space.py
+[*] captured stdout from target script:
+----- begin target script output -----
+14259: 'sub_14259' -> '_dos_ioctl_get'
+    AX=4400h IOCTL GET DEVICE INFORMATION.
+14756: 'sub_14756' -> '_dos_open'
+    AH=3Dh OPEN DISK FILE WITH HANDLE.
+14767: 'sub_14767' -> '_dos_close'
+    AH=3Eh CLOSE A FILE WITH HANDLE.
+14775: 'sub_14775' -> '_dos_read'
+    AH=3Fh READ FROM FILE WITH HANDLE.
+14789: 'sub_14789' -> '_dos_lseek'
+    AH=42h MOVE FILE READ/WRITE POINTER.
+147AD: 'sub_147AD' -> '_dos_write'
+    AH=40h WRITE TO FILE WITH HANDLE.
+14F4E: 'sub_14F4E' -> '_dos_getfileattr'
+    AH=43h/AL=00h GET FILE ATTRIBUTES.
+13F66: 'sub_13F66' -> '_nheapinit'
+    one-time near-heap setup (SETBLOCK), called from start -- matches the other three executables' _nheapinit exactly.
+150F7: 'sub_150F7' -> '_nheapgrow'
+    grows the near heap via SETBLOCK, confirmed by direct read.
+14D23: 'sub_14D23' -> 'execProgram'
+    the overlay loader -- 555 bytes, exactly matching the other three executables' execProgram, and containing the same SETBLOCK + PARSE FILENAME + OPEN/READ/CLOSE/LSEEK/CLOSE/SETBLOCK shape.
+1447E: 'sub_1447E' -> '_flsbuf'
+    flush-buffer-and-write-one-char, matching the other three executables' _flsbuf exactly in size (728 bytes). Called from the pre-existing fclose/fillReadBuffer/fwriteRaw.
+14879: 'sub_14879' -> '_nfree'
+    near-heap free, matching _nfree's role and size (141 bytes) elsewhere in this project.
+14F8E: 'sub_14F8E' -> 'findFileHandleSlot'
+    internal handle-table lookup, matching the established role and size (73 bytes).
+147D6: 'sub_147D6' -> '_nmalloc'
+    near-heap allocator, matching the established role and size (151 bytes).
+14B45: 'sub_14B45' -> 'allocFileBuffer'
+    lazily allocates a stream's I/O buffer, matching the established role and size (91 bytes).
+14F62: 'sub_14F62' -> 'strcpy'
+    plain unbounded lodsb/stosb copy, confirmed by direct read -- called from findExecutableFile/ensureFileExtension-equivalents, matching the strcpy (not strncpy) usage pattern seen in OUT.EXE/GEN.EXE.
+14F77: 'sub_14F77' -> 'strlen'
+    plain repne-scasb length count, confirmed by direct read.
+150AC: 'sub_150AC' -> 'strncpy'
+    bounded copy, confirmed by direct read, called from the hasFileExtension-equivalent.
+14FD7: 'sub_14FD7' -> '_lseek'
+    CRT-level seek, matching the established role and size (213 bytes).
+14294: 'sub_14294' -> 'findExecutableFile'
+    locates the target program file by trying the bare name then appending default extensions -- called from the pre-existing 'exec?' (see below).
+1430D: 'sub_1430D' -> 'buildAndChainExecutable'
+    builds the DOS command-tail buffer then calls execProgram.
+14922: 'sub_14922' -> 'hasFileExtension'
+    scans a filename backward for '.', matching the established role and size (129 bytes).
+149A3: 'sub_149A3' -> 'ensureFileExtension'
+    appends a default extension if none found, matching the established role and size (128 bytes).
+14A23: 'sub_14A23' -> '_write'
+    text-mode-aware write underneath _flsbuf, matching the established role and size (290 bytes).
+151BD: 'f' -> '_filbuf'
+    renamed from the placeholder name 'f' -- refill-buffer-and-return-one-char, called from the pre-existing fillReadBuffer/_lseek-equivalent exactly matching _filbuf's role elsewhere in this project.
+1401D: 'exec?' -> 'execProgramEntry'
+    renamed from the placeholder name 'exec?' -- findExecutableFile then buildAndChainExecutable, called from the pre-existing execWithEnvp (itself matching chainToExecutable's role).
+1583A: 'sub_1583A' -> 'drawLine'
+    thin wrapper over the Bresenham core (drawLineInternal) -- name and description came from a pre-existing but unpromoted analysis comment: 'Used throughout combat for the laser-bolt effects in handleFireCommand/alienFiresBack.'
+15818: 'sub_15818' -> 'drawLineTo'
+    draws a line from the cached endpoint of the last drawLine/drawLineTo call to a new point -- 'line-to' counterpart of drawLine, per a pre-existing but unpromoted analysis comment.
+1585B: 'sub_1585B' -> 'drawLineInternal'
+    the actual Bresenham line-drawing algorithm; plots via a putPixel helper and caches its endpoint so a subsequent drawLineTo call can continue from where it left off -- per a pre-existing but unpromoted analysis comment.
+1142B: 'sub_1142B' -> 'drawSectorMapIcon'
+    given sector coordinates, checks _spaceMap.x.y._enemyCount / field_6 (docking anchor) / field_2 (hazard/star) in that priority order and dispatches to the matching marker-drawing helper, else drawEmptyMarker. The per-cell renderer behind inform's long-range sector scan/map screen.
+1127E: 'sub_1127E' -> 'drawEnemyMarker'
+    drawn when _spaceMapCell._enemyCount > 0 for a sector, in drawSectorMapIcon's dispatch.
+112F1: 'sub_112F1' -> 'drawStationMarker'
+    drawn when a sector's docking/encounter anchor (field_6, per an existing inline comment) is set, in drawSectorMapIcon's dispatch.
+11349: 'sub_11349' -> 'drawStarMarker'
+    drawn when a sector's hazard/star position (field_2, per an existing inline comment) is set, in drawSectorMapIcon's dispatch.
+113B3: 'sub_113B3' -> 'drawEmptyMarker'
+    the default case in drawSectorMapIcon's dispatch -- an empty sector with no enemies, station, or star.
+103E9: 'sub_103E9' -> 'isqrt'
+    integer square root via repeated subtraction of consecutive odd numbers (1,3,5,7,... -- the classic sum-of-odds-equals-a-square identity), counting how many fit. Called from view, likely for a distance calculation (proximity to a star/hazard or targeting range).
+
+Done. Re-export the .asm/.idc and check the new names took, then update docs/roadmap.md's checklist.
+----- end target script output -----
+[*] finished executing apply_renames_space.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima1\ultima1_space.asm
+[*] gen_file(OFILE_ASM) returned 23097
+[*] exporting IDC to C:\dev\ultima1\ultima1_space.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima1\ultima1_space.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_space.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'identify.py', 'noexport']
+[*] reading identify.py
+[*] executing identify.py
+[*] captured stdout from target script:
+----- begin target script output -----
+root filename : SPACE.EXE
+input file    : D:\GOG Games\Ultima 1\SPACE.EXE
+entry point   : 0x0 (cs=0x1000)
+input md5     : 907aaf98e98c490c89e2b7acbbbb6a3f
+
+segments:
+  sg01a2       0x010000-0x0172d0  (29392 bytes)
+  dseg         0x0172d0-0x01d3f0  (24864 bytes)
+  seg002       0x01d3f0-0x01e7f0  (5120 bytes)
+  seg003       0x01e7f0-0x01e7f1  (1 bytes)
+
+functions: 210 total, 189 named, 21 still sub_XXXXX
+
+structs (16): STR15, DuneonRow, DungeonMap, Point, Rect, Creature, LocationWidget, Savegame, MapLine, Map, SpaceMapShip, SpaceMapCell, SpaceMapY, SpaceMap, FightData, JumpEntry
+----- end target script output -----
+[*] finished executing identify.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
