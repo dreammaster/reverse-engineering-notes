@@ -2738,3 +2738,156 @@ structs (4): STR15, Point, Rect, Savegame
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_renames_ultima1.py', 'noexport']
+[*] reading apply_renames_ultima1.py
+[*] executing apply_renames_ultima1.py
+[*] captured stdout from target script:
+----- begin target script output -----
+12437: already '_dos_open' -- skipping
+12448: already '_dos_close' -- skipping
+12456: already '_dos_read' -- skipping
+1246A: already '_dos_lseek' -- skipping
+1248E: already '_dos_write' -- skipping
+124B7: already '_dos_ioctl_get' -- skipping
+124CB: already '_exit' -- skipping
+12BE6: already '_dos_ioctl_set' -- skipping
+12BF8: already '_dos_creat' -- skipping
+12C09: already '_dos_creatnew' -- skipping
+12C16: already '_dos_creattemp' -- skipping
+114B7: already '_nheapinit' -- skipping
+1141E: already 'setCriticalErrorHandler' -- skipping
+11D03: already '_open' -- skipping
+11053: already '_openfile' -- skipping
+111B4: already '_fread' -- skipping
+10F96: already '_fclose' -- skipping
+120F4: already '_flsbuf' -- skipping
+11B71: already '_nfree' -- skipping
+12CA4: already '_nmalloc' -- skipping
+133B2: already '_nheapgrow' -- skipping
+11C1A: already 'releaseFileHandle' -- skipping
+10E4D: 'sub_10E4D' -> 'chainToExecutable'
+    pushes (filename, &argv, envp) and calls execProgramEntry. Called from showTrademarks with filename='gen.exe' (literal string aGen_exe) -- the only executable name referenced anywhere in this binary. If it returns (chain attempt failed), showTrademarks shows 'Insert ULTIMA I disk and press RETURN' and loops back to retry, matching OUT.EXE's insertDisk pattern exactly.
+11C93: 'sub_11C93' -> 'execProgramEntry'
+    findExecutableFile then buildAndChainExecutable -- same role as OUT.EXE's execProgramEntry, and also nested inside _nheapinit's proc range here (not renamed as a location since it already had its own clean proc/endp boundary in this IDB, unlike OUT.EXE's copy).
+12595: 'sub_12595' -> 'findExecutableFile'
+    tries the bare filename first (hasFileExtension check via _dos_getfileattr), else tries two candidate extensions (offsets 0x4764/0x4768, presumably "EXE"/"COM" strings) via ensureFileExtension.
+12E3B: 'sub_12E3B' -> 'hasFileExtension'
+    scans a filename backward for '.' before a path separator, matching OUT.EXE's hasFileExtension.
+1331F: 'sub_1331F' -> '_dos_getfileattr'
+    AH=43h/AL=00h GET FILE ATTRIBUTES, used as a file-exists check by findExecutableFile.
+12EBC: 'sub_12EBC' -> 'ensureFileExtension'
+    appends a default extension if the filename doesn't already have one, matching OUT.EXE's ensureFileExtension.
+12A1A: 'sub_12A1A' -> 'buildAndChainExecutable'
+    measures and concatenates the argv array into a DOS command-tail buffer via _nmalloc'd scratch space (strlen via sub_12C8D below), then calls execProgram to load and jump to the target.
+12C8D: 'sub_12C8D' -> 'strlen'
+    plain length-count helper used while building the command tail.
+130F4: 'sub_130F4' -> 'execProgram'
+    the actual overlay loader -- 555 bytes, exactly matching OUT.EXE's execProgram in size. Reads the target file directly (open/read/close/lseek), resizes this process's own memory block, and (per OUT.EXE's identical implementation) far-JMPs into the loaded image without ever calling DOS INT 21h/4Bh EXEC or returning control here.
+11476: already 'criticalErrorHandler' -- skipping
+123CC: already 'translateDosErrorToErrno' -- skipping
+13F41: already '_doserrno' -- skipping
+18460: already 'errno' -- skipping
+
+[dry] nothing changed. Set DRY_RUN = False to apply.
+----- end target script output -----
+[*] finished executing apply_renames_ultima1.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_renames_ultima1.py']
+[*] reading apply_renames_ultima1.py
+[*] executing apply_renames_ultima1.py
+[*] captured stdout from target script:
+----- begin target script output -----
+12437: already '_dos_open' -- skipping
+12448: already '_dos_close' -- skipping
+12456: already '_dos_read' -- skipping
+1246A: already '_dos_lseek' -- skipping
+1248E: already '_dos_write' -- skipping
+124B7: already '_dos_ioctl_get' -- skipping
+124CB: already '_exit' -- skipping
+12BE6: already '_dos_ioctl_set' -- skipping
+12BF8: already '_dos_creat' -- skipping
+12C09: already '_dos_creatnew' -- skipping
+12C16: already '_dos_creattemp' -- skipping
+114B7: already '_nheapinit' -- skipping
+1141E: already 'setCriticalErrorHandler' -- skipping
+11D03: already '_open' -- skipping
+11053: already '_openfile' -- skipping
+111B4: already '_fread' -- skipping
+10F96: already '_fclose' -- skipping
+120F4: already '_flsbuf' -- skipping
+11B71: already '_nfree' -- skipping
+12CA4: already '_nmalloc' -- skipping
+133B2: already '_nheapgrow' -- skipping
+11C1A: already 'releaseFileHandle' -- skipping
+10E4D: 'sub_10E4D' -> 'chainToExecutable'
+    pushes (filename, &argv, envp) and calls execProgramEntry. Called from showTrademarks with filename='gen.exe' (literal string aGen_exe) -- the only executable name referenced anywhere in this binary. If it returns (chain attempt failed), showTrademarks shows 'Insert ULTIMA I disk and press RETURN' and loops back to retry, matching OUT.EXE's insertDisk pattern exactly.
+11C93: 'sub_11C93' -> 'execProgramEntry'
+    findExecutableFile then buildAndChainExecutable -- same role as OUT.EXE's execProgramEntry, and also nested inside _nheapinit's proc range here (not renamed as a location since it already had its own clean proc/endp boundary in this IDB, unlike OUT.EXE's copy).
+12595: 'sub_12595' -> 'findExecutableFile'
+    tries the bare filename first (hasFileExtension check via _dos_getfileattr), else tries two candidate extensions (offsets 0x4764/0x4768, presumably "EXE"/"COM" strings) via ensureFileExtension.
+12E3B: 'sub_12E3B' -> 'hasFileExtension'
+    scans a filename backward for '.' before a path separator, matching OUT.EXE's hasFileExtension.
+1331F: 'sub_1331F' -> '_dos_getfileattr'
+    AH=43h/AL=00h GET FILE ATTRIBUTES, used as a file-exists check by findExecutableFile.
+12EBC: 'sub_12EBC' -> 'ensureFileExtension'
+    appends a default extension if the filename doesn't already have one, matching OUT.EXE's ensureFileExtension.
+12A1A: 'sub_12A1A' -> 'buildAndChainExecutable'
+    measures and concatenates the argv array into a DOS command-tail buffer via _nmalloc'd scratch space (strlen via sub_12C8D below), then calls execProgram to load and jump to the target.
+12C8D: 'sub_12C8D' -> 'strlen'
+    plain length-count helper used while building the command tail.
+130F4: 'sub_130F4' -> 'execProgram'
+    the actual overlay loader -- 555 bytes, exactly matching OUT.EXE's execProgram in size. Reads the target file directly (open/read/close/lseek), resizes this process's own memory block, and (per OUT.EXE's identical implementation) far-JMPs into the loaded image without ever calling DOS INT 21h/4Bh EXEC or returning control here.
+11476: already 'criticalErrorHandler' -- skipping
+123CC: already 'translateDosErrorToErrno' -- skipping
+13F41: already '_doserrno' -- skipping
+18460: already 'errno' -- skipping
+
+Done. Re-export the .asm/.idc and check the new names took, then update docs/roadmap.md's checklist.
+----- end target script output -----
+[*] finished executing apply_renames_ultima1.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima1\ultima1.asm
+[*] gen_file(OFILE_ASM) returned 10721
+[*] exporting IDC to C:\dev\ultima1\ultima1.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima1\ultima1.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'identify.py', 'noexport']
+[*] reading identify.py
+[*] executing identify.py
+[*] captured stdout from target script:
+----- begin target script output -----
+root filename : ULTIMA.EXE
+input file    : D:\GOG Games\Ultima 1\ULTIMA.EXE
+entry point   : 0x0 (cs=0x188f)
+input md5     : ed19976a19a2794b8e3ac528e4f622a5
+
+segments:
+  sg0138       0x010000-0x013ed0  (16080 bytes)
+  sg0525       0x013ed0-0x019e10  (24384 bytes)
+  seg002       0x019e10-0x019e74  (100 bytes)
+  seg003       0x020720-0x020721  (1 bytes)
+  seg004       0x021b20-0x021b21  (1 bytes)
+
+functions: 100 total, 70 named, 30 still sub_XXXXX
+
+structs (4): STR15, Point, Rect, Savegame
+----- end target script output -----
+[*] finished executing identify.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
