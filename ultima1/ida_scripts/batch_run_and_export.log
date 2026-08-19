@@ -189,3 +189,202 @@ structs (16): STR15, DuneonRow, DungeonMap, Point, Rect, Creature, LocationWidge
 [*] gen_file(OFILE_IDC) returned 1
 [*] saving database to C:\dev\ultima1\ultima1_space.idb
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'identify.py']
+[*] reading identify.py
+[*] executing identify.py
+[*] captured stdout from target script:
+----- begin target script output -----
+root filename : OUT.EXE
+input file    : D:\GOG Games\Ultima 1\OUT.EXE
+entry point   : 0x0 (cs=0x1000)
+input md5     : 6a3301183223faea538c953ce94649f2
+
+segments:
+  sg013A       0x010000-0x01d480  (54400 bytes)
+  sg0E82       0x01d480-0x0286c0  (45632 bytes)
+  seg002       0x0286c0-0x029ac0  (5120 bytes)
+  seg003       0x029ac0-0x029ac1  (1 bytes)
+
+functions: 353 total, 266 named, 87 still sub_XXXXX
+
+structs (11): STR15, DungeonCell, DungeonColumn, DungeonMap, Point, Rect, Creature, LocationWidget, Savegame, MapLine, Map
+----- end target script output -----
+[*] finished executing identify.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima1\ultima1_out.asm
+[*] gen_file(OFILE_ASM) returned 41656
+[*] exporting IDC to C:\dev\ultima1\ultima1_out.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima1\ultima1_out.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'rank_unnamed_functions.py', 'noexport']
+[*] reading rank_unnamed_functions.py
+[*] executing rank_unnamed_functions.py
+[*] captured stdout from target script:
+----- begin target script output -----
+87 unnamed functions total
+
+1A81D  sub_1A81D    callers= 15 size=  55  <- drop, dropArmor, dropWeapon, insertDisk, selectItem, sub_163F2, ... (+9 more)
+1A30C  sub_1A30C    callers=  6 size=  28  <- dropArmor, dropWeapon, selectItem, transactArmory, transactMagic, transactWeapons
+198C0  sub_198C0    callers=  4 size= 141  <- data/1995C, sub_196AC, sub_1981D, sub_1C6D4
+1CE05  sub_1CE05    callers=  4 size= 728  <- sub_1C6D4, sub_1C960, sub_1CC6B, sub_1CE05
+1D0DD  sub_1D0DD    callers=  4 size=  73  <- sub_1C9CC, sub_1D126, sub_1D1ED, sub_1D3AB
+15469  sub_15469    callers=  3 size=  41  <- sub_15492, sub_154B5, sub_154D8
+15B8A  sub_15B8A    callers=  3 size= 112  <- findArmor, findFood, findWeapon
+19589  sub_19589    callers=  3 size=  14  <- sub_190C0, sub_1C9CC, sub_1CA14
+19597  sub_19597    callers=  3 size=  20  <- sub_190C0, sub_1CE05, sub_1D126
+195AB  sub_195AB    callers=  3 size=  36  <- sub_190C0, sub_1CE05, sub_1D3AB
+1B0B5  sub_1B0B5    callers=  3 size= 208  <- dropPence, transactCastle, transactGrocer
+1C6D4  sub_1C6D4    callers=  3 size= 115  <- readFile, sub_1C791, writeFile
+163B3  sub_163B3    callers=  2 size=  33  <- sub_165CE, transactWeapons
+167F1  sub_167F1    callers=  2 size=  27  <- sub_169E8, transactArmory
+16BAC  sub_16BAC    callers=  2 size=  27  <- sub_16BC7, transactMagic
+190C0  sub_190C0    callers=  2 size= 269  <- readSavegame, start2
+195CF  sub_195CF    callers=  2 size=  41  <- sub_190C0, sub_1D1ED
+195F8  sub_195F8    callers=  2 size=  20  <- start2, sub_1CA14
+1981D  sub_1981D    callers=  2 size= 151  <- sub_196AC, sub_1D30F
+19E2C  sub_19E2C    callers=  2 size=  21  <- sub_19633, sub_199EA
+19E41  sub_19E41    callers=  2 size=  23  <- sub_196AC, sub_19969
+1CA14  sub_1CA14    callers=  2 size= 562  <- sub_1C791, sub_1CC46
+1CC6B  sub_1CC6B    callers=  2 size= 410  <- sub_1C8F2, sub_1CC6B
+1D126  sub_1D126    callers=  2 size= 199  <- sub_1CC6B, sub_1D3AB
+1D30F  sub_1D30F    callers=  2 size=  91  <- sub_1CC6B, sub_1CE05
+1D3AB  sub_1D3AB    callers=  2 size= 213  <- sub_1D126, sub_1D1ED
+122F3  sub_122F3    callers=  1 size=  98  <- attackPerson
+14EA2  sub_14EA2    callers=  1 size= 483  <- enterPillar
+15492  sub_15492    callers=  1 size=  35  <- sub_154FB
+154B5  sub_154B5    callers=  1 size=  35  <- sub_154FB
+154D8  sub_154D8    callers=  1 size=  35  <- sub_154FB
+154FB  sub_154FB    callers=  1 size=  85  <- get
+163D4  sub_163D4    callers=  1 size=  30  <- sub_163F2
+163F2  sub_163F2    callers=  1 size= 476  <- transactWeapons
+165CE  sub_165CE    callers=  1 size= 143  <- transactWeapons
+1680C  sub_1680C    callers=  1 size=  23  <- sub_16823
+16823  sub_16823    callers=  1 size= 453  <- transactArmory
+169E8  sub_169E8    callers=  1 size= 143  <- transactArmory
+16BC7  sub_16BC7    callers=  1 size= 140  <- transactMagic
+17052  sub_17052    callers=  1 size= 125  <- transactTransport
+1908B  sub_1908B    callers=  1 size=  27  <- writeInUseAndExit
+192D4  sub_192D4    callers=  1 size= 169  <- transactWeapons
+1937F  sub_1937F    callers=  1 size=  88  <- main
+19418  sub_19418    callers=  1 size= 337  <- start
+19578  sub_19578    callers=  1 size=  17  <- sub_1CA14
+1960C  sub_1960C    callers=  1 size=  24  <- sub_190C0
+19633  sub_19633    callers=  1 size= 121  <- sub_19418
+196AC  sub_196AC    callers=  1 size= 369  <- sub_19418
+19969  sub_19969    callers=  1 size= 129  <- sub_19633
+199EA  sub_199EA    callers=  1 size= 128  <- sub_19633
+19BED  sub_19BED    callers=  1 size= 555  <- sub_196AC
+19E18  sub_19E18    callers=  1 size=  20  <- sub_19633
+19E58  sub_19E58    callers=  1 size=  75  <- sub_19969
+19EA3  sub_19EA3    callers=  1 size= 198  <- sub_1981D
+19FF1  sub_19FF1    callers=  1 size=  53  <- setVideoMode
+1AB9D  sub_1AB9D    callers=  1 size= 109  <- death
+1AC44  sub_1AC44    callers=  1 size=  59  <- wait
+1AE65  sub_1AE65    callers=  1 size=  24  <- playSound
+1AE7D  sub_1AE7D    callers=  1 size=  30  <- playSound
+1AE9B  sub_1AE9B    callers=  1 size=   6  <- playSound
+1AEA2  sub_1AEA2    callers=  1 size=   6  <- playSound
+1AEA9  sub_1AEA9    callers=  1 size=  32  <- playSound
+1AEC9  sub_1AEC9    callers=  1 size=   6  <- playSound
+1AED0  sub_1AED0    callers=  1 size=  26  <- playSound
+1AEEA  sub_1AEEA    callers=  1 size=  52  <- playSound
+1AF1E  sub_1AF1E    callers=  1 size=  25  <- playSound
+1AF37  sub_1AF37    callers=  1 size=  32  <- playSound
+1B094  sub_1B094    callers=  1 size=  33  <- sub_1B0B5
+1B231  sub_1B231    callers=  1 size= 125  <- setVideoMode
+1BA27  sub_1BA27    callers=  1 size=  60  <- selectItem
+1C42E  sub_1C42E    callers=  1 size=  39  <- setVideoMode
+1C455  sub_1C455    callers=  1 size=  39  <- setVideoMode
+1C791  sub_1C791    callers=  1 size= 353  <- _fopen
+1C8F2  sub_1C8F2    callers=  1 size= 110  <- readFile
+1C960  sub_1C960    callers=  1 size= 108  <- writeFile
+1C9CC  sub_1C9CC    callers=  1 size=  72  <- sub_1C6D4
+1D1ED  sub_1D1ED    callers=  1 size= 290  <- sub_1CE05
+1D36A  sub_1D36A    callers=  1 size=  18  <- sub_1CA14
+1D37C  sub_1D37C    callers=  1 size=  17  <- sub_1CA14
+1D38D  sub_1D38D    callers=  1 size=  13  <- sub_1CA14
+1D39A  sub_1D39A    callers=  1 size=  17  <- sub_1CA14
+190A6  sub_190A6    callers=  0 size=  26  <- 
+192AE  sub_192AE    callers=  0 size=  38  <- 
+193D7  sub_193D7    callers=  0 size=  65  <- 
+19626  sub_19626    callers=  0 size=  13  <- 
+1C34C  sub_1C34C    callers=  0 size=  52  <- 
+1CC46  sub_1CC46    callers=  0 size=  37  <- 
+----- end target script output -----
+[*] finished executing rank_unnamed_functions.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_renames_out.py', 'noexport']
+[*] reading apply_renames_out.py
+[*] executing apply_renames_out.py
+[*] captured stdout from target script:
+----- begin target script output -----
+1A81D: 'sub_1A81D' -> 'getKeypressAndWaitRaw'
+    poll-loop identical to getKeypressAndWait (getKeypress + wait(1) or wait(3) depending whether a key was ready) but WITHOUT the _toupper call -- getKeypressAndWait is a separate, independent copy of this same loop, not a wrapper around this. All 15 call sites push _textColor (never any other value); some callers _toupper the result themselves afterward, others don't. See docs/overview.md#getkeypressandwaitraw-and-getkeypressandwait-duplicated-poll-loop.
+1A30C: 'sub_1A30C' -> 'toLowerLetter'
+    hand-rolled tolower: if arg is 'A'-'Z' add 20h, else pass through unchanged. Called right after getKeypressAndWaitRaw in several menu-selection paths (drop/dropArmor/dropWeapon/etc.) to normalize a letter keypress before subtracting 'a' to get a menu index.
+1981D: 'sub_1981D' -> '_nmalloc'
+    near-heap allocator: walks a singly-linked free-list (word_1EC56=sentinel head, word_1EC5A=cursor), splits a free block if it's big enough, else calls _nheapgrow to extend the segment via DOS INT 21h/4Ah (SETBLOCK) and links the new space in via _nfree before retrying. Underscore-prefixed to match this codebase's existing convention for runtime-library internals (_fopen, _toupper) -- this is the classic Microsoft C near-heap allocator, not game-specific code. See docs/overview.md#near-heap-allocator-_nmalloc-_nfree-_nheapgrow.
+198C0: 'sub_198C0' -> '_nfree'
+    near-heap free: walks the same free-list as _nmalloc, coalesces the freed block with adjacent free blocks on either side. See _nmalloc entry above.
+19EA3: 'sub_19EA3' -> '_nheapgrow'
+    grows the near heap via DOS INT 21h/4Ah (ADJUST MEMORY BLOCK SIZE). Only called from _nmalloc. Note: this proc's disassembly contains two additional 'push bp; mov bp,sp; ...' prologues after the first RETN with NO incoming xrefs (dead/unreachable) -- almost certainly two sibling CRT entry points (e.g. a realloc/msize variant) from the same library object file that got linked in but never called by this program. Left un-split since they're inert; worth revisiting if a future finding calls into the middle of this proc.
+1B0B5: 'sub_1B0B5' -> 'readAmount'
+    up-to-4-digit numeric text entry at a screen position: isDigit-filters keypresses (via getKeypressAndWaitRaw), handles backspace (char 8) to delete the last digit, on Enter (or any non-digit/non-backspace key) converts the accumulated digit buffer to a number using word_1F95E (a {1,10,100,...} powers-of-ten table -- currently mis-typed in the IDB as one `dw 1` word followed by raw db bytes, not a proper array; see roadmap.md). Callers: dropPence, transactCastle, transactGrocer -- all 'how many/how much' prompts.
+1B094: 'sub_1B094' -> 'isDigit'
+    byte in ['0'..'9'] check, returns 1/0 in ax. Only caller is readAmount.
+
+[dry] nothing changed. Set DRY_RUN = False to apply.
+----- end target script output -----
+[*] finished executing apply_renames_out.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_renames_out.py']
+[*] reading apply_renames_out.py
+[*] executing apply_renames_out.py
+[*] captured stdout from target script:
+----- begin target script output -----
+1A81D: 'sub_1A81D' -> 'getKeypressAndWaitRaw'
+    poll-loop identical to getKeypressAndWait (getKeypress + wait(1) or wait(3) depending whether a key was ready) but WITHOUT the _toupper call -- getKeypressAndWait is a separate, independent copy of this same loop, not a wrapper around this. All 15 call sites push _textColor (never any other value); some callers _toupper the result themselves afterward, others don't. See docs/overview.md#getkeypressandwaitraw-and-getkeypressandwait-duplicated-poll-loop.
+1A30C: 'sub_1A30C' -> 'toLowerLetter'
+    hand-rolled tolower: if arg is 'A'-'Z' add 20h, else pass through unchanged. Called right after getKeypressAndWaitRaw in several menu-selection paths (drop/dropArmor/dropWeapon/etc.) to normalize a letter keypress before subtracting 'a' to get a menu index.
+1981D: 'sub_1981D' -> '_nmalloc'
+    near-heap allocator: walks a singly-linked free-list (word_1EC56=sentinel head, word_1EC5A=cursor), splits a free block if it's big enough, else calls _nheapgrow to extend the segment via DOS INT 21h/4Ah (SETBLOCK) and links the new space in via _nfree before retrying. Underscore-prefixed to match this codebase's existing convention for runtime-library internals (_fopen, _toupper) -- this is the classic Microsoft C near-heap allocator, not game-specific code. See docs/overview.md#near-heap-allocator-_nmalloc-_nfree-_nheapgrow.
+198C0: 'sub_198C0' -> '_nfree'
+    near-heap free: walks the same free-list as _nmalloc, coalesces the freed block with adjacent free blocks on either side. See _nmalloc entry above.
+19EA3: 'sub_19EA3' -> '_nheapgrow'
+    grows the near heap via DOS INT 21h/4Ah (ADJUST MEMORY BLOCK SIZE). Only called from _nmalloc. Note: this proc's disassembly contains two additional 'push bp; mov bp,sp; ...' prologues after the first RETN with NO incoming xrefs (dead/unreachable) -- almost certainly two sibling CRT entry points (e.g. a realloc/msize variant) from the same library object file that got linked in but never called by this program. Left un-split since they're inert; worth revisiting if a future finding calls into the middle of this proc.
+1B0B5: 'sub_1B0B5' -> 'readAmount'
+    up-to-4-digit numeric text entry at a screen position: isDigit-filters keypresses (via getKeypressAndWaitRaw), handles backspace (char 8) to delete the last digit, on Enter (or any non-digit/non-backspace key) converts the accumulated digit buffer to a number using word_1F95E (a {1,10,100,...} powers-of-ten table -- currently mis-typed in the IDB as one `dw 1` word followed by raw db bytes, not a proper array; see roadmap.md). Callers: dropPence, transactCastle, transactGrocer -- all 'how many/how much' prompts.
+1B094: 'sub_1B094' -> 'isDigit'
+    byte in ['0'..'9'] check, returns 1/0 in ax. Only caller is readAmount.
+
+Done. Re-export the .asm/.idc and check the new names took, then update docs/roadmap.md's checklist.
+----- end target script output -----
+[*] finished executing apply_renames_out.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima1\ultima1_out.asm
+[*] gen_file(OFILE_ASM) returned 41656
+[*] exporting IDC to C:\dev\ultima1\ultima1_out.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima1\ultima1_out.idb
+[*] done, exiting 0
