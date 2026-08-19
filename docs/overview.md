@@ -25,7 +25,7 @@ identified and renamed in any other IDB it also happens to appear in.
 | `ultima1.idb` | `ULTIMA.EXE` | Title screen / attract mode, chains unconditionally to `GEN.EXE` | 100 / 100 | `STR15`, `Point`, `Rect`, `Savegame` |
 | `ultima1_gen.idb` | `GEN.EXE` | Character generation / continue, chains to `OUT.EXE` | 113 / 113 | + `Creature` |
 | `ultima1_out.idb` | `OUT.EXE` | Overworld/towns/dungeons (outdoor engine) | 352 / 353 | + `DungeonCell`, `DungeonColumn`, `DungeonMap`, `LocationWidget`, `MapLine`, `Map` |
-| `ultima1_space.idb` | `SPACE.EXE` | Space combat minigame, chains back to `OUT.EXE` | 189 / 210 | + `DuneonRow`, `DungeonMap` (space variant), `SpaceMapShip`, `SpaceMapCell`, `SpaceMapY`, `SpaceMap`, `FightData`, `JumpEntry` |
+| `ultima1_space.idb` | `SPACE.EXE` | Space combat minigame, chains back to `OUT.EXE` | 210 / 210 | + `DuneonRow`, `DungeonMap` (space variant), `SpaceMapShip`, `SpaceMapCell`, `SpaceMapY`, `SpaceMap`, `FightData`, `JumpEntry` |
 | `ultima1_mondain.idb` | `MONDAIN.EXE` | Unknown — essentially unstarted | 1 / 191 | none |
 
 Counts captured 2026-08-19 via `ida_scripts/identify.py` (see below) —
@@ -838,3 +838,38 @@ distance calculation) and promoted the three already-commented
 `drawLine`/`drawLineTo`/`drawLineInternal` line-drawing functions.
 
 189/210 functions now named (90%).
+
+### SPACE.EXE complete — 210/210 (100%)
+
+Third and fourth passes, same session, close out SPACE.EXE entirely.
+
+**The `status` screen decoded**: a scrolling message-log with a
+two-column, 13-row grid layout (`setStatusEntryPos`), `.`-padded
+4-digit numeric values (`writeStatusValue`), a `-- More --`
+page-break prompt every 25 rows (`showMorePrompt`), and a genuine game
+formula — `calcExperienceLevel` is `_savegame._experience / 1000 + 1`.
+
+**The `view` cockpit screen's sector-tracking math**: `updateSectorChangeX`/`Y`
+compute the per-frame sector-boundary-crossing delta from
+`_cockpitSpeed`, snapped to the nearest sector via
+`snapToNearestSector` and clamped to a max of 6 — the core of how the
+ship's position updates as it flies.
+
+**`spaceAce` decoded** (an already-present but unpromoted comment did
+most of the work): the "Thou hast achieved the rank of Space Ace!"
+screen, triggered once `_savegame._enemyVessels` reaches 20. Named its
+two helpers, `drawDialogFrame`/`drawBorderBox`, shared with `inform`'s
+sector-map screen.
+
+**More duplicated CRT functions found**: `exit2` (byte-for-byte
+identical to the already-named `exit()` at a different address) and
+two placeholder-cleanup renames (`fputs`, `parseParamNum` — the latter
+matching the same-named, separately-implemented function role already
+established in ULTIMA.EXE/GEN.EXE for parsing a numeric command-line
+argument).
+
+**Session totals for SPACE.EXE**: 156 → 210 functions named (100%),
+across 4 passes. All four of `ULTIMA.EXE`/`GEN.EXE`/`OUT.EXE`/
+`SPACE.EXE` are now fully or near-fully named (only `OUT.EXE` has one
+deliberately-unnamed dead function left). Only `MONDAIN.EXE` (1/191)
+remains essentially unstarted.

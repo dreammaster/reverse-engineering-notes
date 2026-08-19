@@ -298,22 +298,33 @@ from substantial prior work.
       line-drawing functions. 189/210 functions now named (90%). Full
       writeup in
       [overview.md](overview.md#sector-map-icon-dispatch-and-other-game-specific-finds).
-- [ ] Remaining 21 `sub_XXXXX`: the `status` screen's helper cluster
-      (`sub_16530`/`sub_1656B`/`sub_16237`/`sub_16272`/`sub_164BD`/
-      `sub_164E6`/`sub_16586`/`sub_157A9`), the `view` cockpit screen's
-      remaining helpers (`sub_10FFD`), the `spaceAce`-related cluster
-      (`sub_10F3B`/`sub_10F62`/`sub_10FBC`/`sub_15818`-adjacent), and
-      `sub_157CC` (shared by `promptDiskSwapRetry`/`promptPressSpace`).
-- [ ] **Double-check** the already-existing comment on the "leave
-      outer space" function (already named, not touched this pass)
-      that describes the chain back to `OUT.EXE` as "(DOS EXEC...)" —
-      every other executable's equivalent turned out to use a custom
-      overlay loader, not real `INT 21h`/`4Bh` EXEC, so this phrasing
-      is probably just loose wording from whoever wrote the comment
-      rather than a genuine architectural difference, but worth a
-      quick read to confirm rather than assume.
+- [x] Third renaming pass: decoded the `status` screen (2-column
+      scrolling message log, `calcExperienceLevel` formula) and the
+      `view` cockpit's sector-boundary-crossing math
+      (`updateSectorChangeX`/`Y`, `snapToNearestSector`). 204/210
+      functions now named (97%).
+- [x] Fourth renaming pass: closed out the last 6 — `spaceAce`'s
+      dialog-frame helpers, `waitVerticalRetrace`, `parseParamNum`,
+      `fputs`, and `exit2` (another duplicated CRT function, same
+      pattern as `strncpy2`/`toupper2`/`_fread2`). **210/210 (100%)**.
+      Full writeup in
+      [overview.md](overview.md#spaceexe-complete--210210-100).
+- [ ] **Still open**: double-check the already-existing comment on the
+      "leave outer space" function (already named, not touched this
+      session) that describes the chain back to `OUT.EXE` as "(DOS
+      EXEC...)" — every other executable's equivalent turned out to
+      use a custom overlay loader, not real `INT 21h`/`4Bh` EXEC, so
+      this phrasing is probably just loose wording rather than a
+      genuine architectural difference, but worth a quick read to
+      confirm rather than assume.
+
+## SPACE.EXE status: complete
+
+**210/210 functions named (100%)**, 156 → 210 across 4 passes
+(2026-08-20). All four of `ULTIMA.EXE`/`GEN.EXE`/`OUT.EXE`/`SPACE.EXE`
+are now fully or near-fully named.
 
 ## Per-executable next steps (not yet started)
 
-`ultima1_mondain` remains untouched beyond the initial `identify.py`
-cataloging — pick up after `ultima1_space`.
+`ultima1_mondain` (1/191, essentially unstarted) is the only remaining
+executable — pick up next.

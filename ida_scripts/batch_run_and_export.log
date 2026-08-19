@@ -4953,3 +4953,485 @@ structs (16): STR15, DuneonRow, DungeonMap, Point, Rect, Creature, LocationWidge
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_space.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_renames_space.py', 'noexport']
+[*] reading apply_renames_space.py
+[*] executing apply_renames_space.py
+[*] captured stdout from target script:
+----- begin target script output -----
+14259: already '_dos_ioctl_get' -- skipping
+14756: already '_dos_open' -- skipping
+14767: already '_dos_close' -- skipping
+14775: already '_dos_read' -- skipping
+14789: already '_dos_lseek' -- skipping
+147AD: already '_dos_write' -- skipping
+14F4E: already '_dos_getfileattr' -- skipping
+13F66: already '_nheapinit' -- skipping
+150F7: already '_nheapgrow' -- skipping
+14D23: already 'execProgram' -- skipping
+1447E: already '_flsbuf' -- skipping
+14879: already '_nfree' -- skipping
+14F8E: already 'findFileHandleSlot' -- skipping
+147D6: already '_nmalloc' -- skipping
+14B45: already 'allocFileBuffer' -- skipping
+14F62: already 'strcpy' -- skipping
+14F77: already 'strlen' -- skipping
+150AC: already 'strncpy' -- skipping
+14FD7: already '_lseek' -- skipping
+14294: already 'findExecutableFile' -- skipping
+1430D: already 'buildAndChainExecutable' -- skipping
+14922: already 'hasFileExtension' -- skipping
+149A3: already 'ensureFileExtension' -- skipping
+14A23: already '_write' -- skipping
+151BD: already '_filbuf' -- skipping
+1401D: already 'execProgramEntry' -- skipping
+1583A: already 'drawLine' -- skipping
+15818: already 'drawLineTo' -- skipping
+1585B: already 'drawLineInternal' -- skipping
+1142B: already 'drawSectorMapIcon' -- skipping
+1127E: already 'drawEnemyMarker' -- skipping
+112F1: already 'drawStationMarker' -- skipping
+11349: already 'drawStarMarker' -- skipping
+113B3: already 'drawEmptyMarker' -- skipping
+103E9: already 'isqrt' -- skipping
+16530: 'sub_16530' -> 'setStatusEntryPos'
+    positions the text cursor for status-list entry `index` in a two-column grid (13 rows per column, x=2 or x=15) via setTextPos.
+1656B: 'sub_1656B' -> 'writeStatusValue'
+    writes a 4-digit, '.'-padded number via writeNumber -- the status screen's numeric stat display (fuel/shield/hits/etc.).
+16272: 'sub_16272' -> 'remapSoundActionIndex'
+    adds a fixed offset (0x5D) to al -- a tiny action-code-to-sound-effect-table-index remap, called from soundAction.
+164BD: 'sub_164BD' -> 'writeDotFill'
+    writes N '.' characters via writeCharTty -- a dotted-line/separator fill helper for the status display.
+16237: 'sub_16237' -> 'calcExperienceLevel'
+    _savegame._experience / 1000 + 1 -- the character-level formula, called once from status.
+157A9: 'sub_157A9' -> 'strlen2'
+    hand-coded character-count loop, functionally identical to the CRT strlen but a separate implementation -- used by the status list drawer (sub_16586), likely for text centering/padding.
+164E6: 'sub_164E6' -> 'showMorePrompt'
+    shows the ' More ' pagination prompt with arrows, waits for space via promptPressSpace, then clears the area -- the status list's page-break prompt when there are more entries than fit on screen.
+16586: 'sub_16586' -> 'drawStatusList'
+    iterates an array of status-log message indices from arg_4 to arg_6, drawing each nonzero entry via setStatusEntryPos, paging through showMorePrompt every 25 rows. The status screen's scrolling message-log renderer.
+157CC: 'sub_157CC' -> 'getKeypressAndWaitRaw'
+    poll-loop identical in shape to the same-named function in OUT.EXE: getKeypress + wait(3) if none, wait(1) if got one, loop until nonzero. Called from promptDiskSwapRetry and promptPressSpace (both already named).
+10FFD: 'sub_10FFD' -> 'snapToNearestSector'
+    rounds a coordinate up by 100 if its %100 remainder exceeds 49, then up by 1000 if its %1000 remainder exceeds 499 -- a grid-snapping helper shared by the X/Y sector-change trackers below.
+11031: 'sub_11031' -> 'updateSectorChangeX'
+    computes the per-frame X sector-boundary-crossing delta from _cockpitSpeed and the existing sectorChangeX (already named), snapping via snapToNearestSector and clamping to max 6. Called from view.
+11072: 'sub_11072' -> 'updateSectorChangeY'
+    Y counterpart of updateSectorChangeX, using sectorChangeY.
+10F3B: 'sub_10F3B' -> 'waitForKeypressTimeout'
+    polls getKeypress in a loop up to 0x2710 (10000) iterations, returning early on any keypress -- a wait-with-timeout, used by spaceAce's rank-achieved screen.
+10F62: 'sub_10F62' -> 'drawBorderBox'
+    draws a rectangular border via drawLine + 3x drawLineTo, then positions the text cursor inside it -- the box-drawing core behind drawDialogFrame.
+10FBC: 'sub_10FBC' -> 'drawDialogFrame'
+    calls drawBorderBox with the given color -- the dialog-frame helper shared by spaceAce's rank-achieved screen and inform's sector-map screen.
+
+[dry] nothing changed. Set DRY_RUN = False to apply.
+----- end target script output -----
+[*] finished executing apply_renames_space.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_space.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_renames_space.py']
+[*] reading apply_renames_space.py
+[*] executing apply_renames_space.py
+[*] captured stdout from target script:
+----- begin target script output -----
+14259: already '_dos_ioctl_get' -- skipping
+14756: already '_dos_open' -- skipping
+14767: already '_dos_close' -- skipping
+14775: already '_dos_read' -- skipping
+14789: already '_dos_lseek' -- skipping
+147AD: already '_dos_write' -- skipping
+14F4E: already '_dos_getfileattr' -- skipping
+13F66: already '_nheapinit' -- skipping
+150F7: already '_nheapgrow' -- skipping
+14D23: already 'execProgram' -- skipping
+1447E: already '_flsbuf' -- skipping
+14879: already '_nfree' -- skipping
+14F8E: already 'findFileHandleSlot' -- skipping
+147D6: already '_nmalloc' -- skipping
+14B45: already 'allocFileBuffer' -- skipping
+14F62: already 'strcpy' -- skipping
+14F77: already 'strlen' -- skipping
+150AC: already 'strncpy' -- skipping
+14FD7: already '_lseek' -- skipping
+14294: already 'findExecutableFile' -- skipping
+1430D: already 'buildAndChainExecutable' -- skipping
+14922: already 'hasFileExtension' -- skipping
+149A3: already 'ensureFileExtension' -- skipping
+14A23: already '_write' -- skipping
+151BD: already '_filbuf' -- skipping
+1401D: already 'execProgramEntry' -- skipping
+1583A: already 'drawLine' -- skipping
+15818: already 'drawLineTo' -- skipping
+1585B: already 'drawLineInternal' -- skipping
+1142B: already 'drawSectorMapIcon' -- skipping
+1127E: already 'drawEnemyMarker' -- skipping
+112F1: already 'drawStationMarker' -- skipping
+11349: already 'drawStarMarker' -- skipping
+113B3: already 'drawEmptyMarker' -- skipping
+103E9: already 'isqrt' -- skipping
+16530: 'sub_16530' -> 'setStatusEntryPos'
+    positions the text cursor for status-list entry `index` in a two-column grid (13 rows per column, x=2 or x=15) via setTextPos.
+1656B: 'sub_1656B' -> 'writeStatusValue'
+    writes a 4-digit, '.'-padded number via writeNumber -- the status screen's numeric stat display (fuel/shield/hits/etc.).
+16272: 'sub_16272' -> 'remapSoundActionIndex'
+    adds a fixed offset (0x5D) to al -- a tiny action-code-to-sound-effect-table-index remap, called from soundAction.
+164BD: 'sub_164BD' -> 'writeDotFill'
+    writes N '.' characters via writeCharTty -- a dotted-line/separator fill helper for the status display.
+16237: 'sub_16237' -> 'calcExperienceLevel'
+    _savegame._experience / 1000 + 1 -- the character-level formula, called once from status.
+157A9: 'sub_157A9' -> 'strlen2'
+    hand-coded character-count loop, functionally identical to the CRT strlen but a separate implementation -- used by the status list drawer (sub_16586), likely for text centering/padding.
+164E6: 'sub_164E6' -> 'showMorePrompt'
+    shows the ' More ' pagination prompt with arrows, waits for space via promptPressSpace, then clears the area -- the status list's page-break prompt when there are more entries than fit on screen.
+16586: 'sub_16586' -> 'drawStatusList'
+    iterates an array of status-log message indices from arg_4 to arg_6, drawing each nonzero entry via setStatusEntryPos, paging through showMorePrompt every 25 rows. The status screen's scrolling message-log renderer.
+157CC: 'sub_157CC' -> 'getKeypressAndWaitRaw'
+    poll-loop identical in shape to the same-named function in OUT.EXE: getKeypress + wait(3) if none, wait(1) if got one, loop until nonzero. Called from promptDiskSwapRetry and promptPressSpace (both already named).
+10FFD: 'sub_10FFD' -> 'snapToNearestSector'
+    rounds a coordinate up by 100 if its %100 remainder exceeds 49, then up by 1000 if its %1000 remainder exceeds 499 -- a grid-snapping helper shared by the X/Y sector-change trackers below.
+11031: 'sub_11031' -> 'updateSectorChangeX'
+    computes the per-frame X sector-boundary-crossing delta from _cockpitSpeed and the existing sectorChangeX (already named), snapping via snapToNearestSector and clamping to max 6. Called from view.
+11072: 'sub_11072' -> 'updateSectorChangeY'
+    Y counterpart of updateSectorChangeX, using sectorChangeY.
+10F3B: 'sub_10F3B' -> 'waitForKeypressTimeout'
+    polls getKeypress in a loop up to 0x2710 (10000) iterations, returning early on any keypress -- a wait-with-timeout, used by spaceAce's rank-achieved screen.
+10F62: 'sub_10F62' -> 'drawBorderBox'
+    draws a rectangular border via drawLine + 3x drawLineTo, then positions the text cursor inside it -- the box-drawing core behind drawDialogFrame.
+10FBC: 'sub_10FBC' -> 'drawDialogFrame'
+    calls drawBorderBox with the given color -- the dialog-frame helper shared by spaceAce's rank-achieved screen and inform's sector-map screen.
+
+Done. Re-export the .asm/.idc and check the new names took, then update docs/roadmap.md's checklist.
+----- end target script output -----
+[*] finished executing apply_renames_space.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima1\ultima1_space.asm
+[*] gen_file(OFILE_ASM) returned 23097
+[*] exporting IDC to C:\dev\ultima1\ultima1_space.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima1\ultima1_space.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_space.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'identify.py', 'noexport']
+[*] reading identify.py
+[*] executing identify.py
+[*] captured stdout from target script:
+----- begin target script output -----
+root filename : SPACE.EXE
+input file    : D:\GOG Games\Ultima 1\SPACE.EXE
+entry point   : 0x0 (cs=0x1000)
+input md5     : 907aaf98e98c490c89e2b7acbbbb6a3f
+
+segments:
+  sg01a2       0x010000-0x0172d0  (29392 bytes)
+  dseg         0x0172d0-0x01d3f0  (24864 bytes)
+  seg002       0x01d3f0-0x01e7f0  (5120 bytes)
+  seg003       0x01e7f0-0x01e7f1  (1 bytes)
+
+functions: 210 total, 204 named, 6 still sub_XXXXX
+
+structs (16): STR15, DuneonRow, DungeonMap, Point, Rect, Creature, LocationWidget, Savegame, MapLine, Map, SpaceMapShip, SpaceMapCell, SpaceMapY, SpaceMap, FightData, JumpEntry
+----- end target script output -----
+[*] finished executing identify.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_space.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'rank_unnamed_functions.py', 'noexport']
+[*] reading rank_unnamed_functions.py
+[*] executing rank_unnamed_functions.py
+[*] captured stdout from target script:
+----- begin target script output -----
+6 unnamed functions total
+
+15C82  sub_15C82    callers=  2 size= 117  <- promptDiskSwapRetry, writeString
+15CF7  sub_15CF7    callers=  2 size=  47  <- cockpitPerFrame, hyperjump
+103AE  sub_103AE    callers=  1 size=  46  <- start
+1405B  sub_1405B    callers=  1 size= 269  <- main
+1416F  sub_1416F    callers=  1 size= 108  <- invalidShipExit
+15EE1  sub_15EE1    callers=  1 size= 125  <- initVideo
+----- end target script output -----
+[*] finished executing rank_unnamed_functions.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_space.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_renames_space.py', 'noexport']
+[*] reading apply_renames_space.py
+[*] executing apply_renames_space.py
+[*] captured stdout from target script:
+----- begin target script output -----
+14259: already '_dos_ioctl_get' -- skipping
+14756: already '_dos_open' -- skipping
+14767: already '_dos_close' -- skipping
+14775: already '_dos_read' -- skipping
+14789: already '_dos_lseek' -- skipping
+147AD: already '_dos_write' -- skipping
+14F4E: already '_dos_getfileattr' -- skipping
+13F66: already '_nheapinit' -- skipping
+150F7: already '_nheapgrow' -- skipping
+14D23: already 'execProgram' -- skipping
+1447E: already '_flsbuf' -- skipping
+14879: already '_nfree' -- skipping
+14F8E: already 'findFileHandleSlot' -- skipping
+147D6: already '_nmalloc' -- skipping
+14B45: already 'allocFileBuffer' -- skipping
+14F62: already 'strcpy' -- skipping
+14F77: already 'strlen' -- skipping
+150AC: already 'strncpy' -- skipping
+14FD7: already '_lseek' -- skipping
+14294: already 'findExecutableFile' -- skipping
+1430D: already 'buildAndChainExecutable' -- skipping
+14922: already 'hasFileExtension' -- skipping
+149A3: already 'ensureFileExtension' -- skipping
+14A23: already '_write' -- skipping
+151BD: already '_filbuf' -- skipping
+1401D: already 'execProgramEntry' -- skipping
+1583A: already 'drawLine' -- skipping
+15818: already 'drawLineTo' -- skipping
+1585B: already 'drawLineInternal' -- skipping
+1142B: already 'drawSectorMapIcon' -- skipping
+1127E: already 'drawEnemyMarker' -- skipping
+112F1: already 'drawStationMarker' -- skipping
+11349: already 'drawStarMarker' -- skipping
+113B3: already 'drawEmptyMarker' -- skipping
+103E9: already 'isqrt' -- skipping
+16530: already 'setStatusEntryPos' -- skipping
+1656B: already 'writeStatusValue' -- skipping
+16272: already 'remapSoundActionIndex' -- skipping
+164BD: already 'writeDotFill' -- skipping
+16237: already 'calcExperienceLevel' -- skipping
+157A9: already 'strlen2' -- skipping
+164E6: already 'showMorePrompt' -- skipping
+16586: already 'drawStatusList' -- skipping
+157CC: already 'getKeypressAndWaitRaw' -- skipping
+10FFD: already 'snapToNearestSector' -- skipping
+11031: already 'updateSectorChangeX' -- skipping
+11072: already 'updateSectorChangeY' -- skipping
+10F3B: already 'waitForKeypressTimeout' -- skipping
+10F62: already 'drawBorderBox' -- skipping
+10FBC: already 'drawDialogFrame' -- skipping
+1416F: 'sub_1416F' -> 'fputs'
+    writes a string to a stream one char at a time via _flsbuf when the buffer count runs out (fixed stream value 0x6010) -- called from invalidShipExit, matching fputs's role elsewhere in this project.
+103AE: 'sub_103AE' -> 'parseParamNum'
+    parses a decimal number from a string char-by-char (bx = bx*10 + digit, with overflow checks via carry) -- called twice from start, matching the command-line numeric-argument parser named the same in ULTIMA.EXE/GEN.EXE (a separate implementation here, not literally shared code, but the same role).
+1405B: 'sub_1405B' -> 'exit'
+    the real C-standard exit(): flushes/closes every FILE-table entry (base 0x6002) then presumably calls the lower-level exit primitive. noreturn, matching exit()'s shape in ULTIMA.EXE/GEN.EXE exactly. Called from main.
+15EE1: 'sub_15EE1' -> 'buildScanlineOffsetTable'
+    precomputes the row-to-framebuffer-offset table, matching the same-named function's shape in OUT.EXE/ULTIMA.EXE/GEN.EXE exactly. Called from initVideo.
+15C82: 'sub_15C82' -> 'scrollTextArea'
+    scrolls/clears a bottom screen region (BIOS INT 10h/AH=06h for non-CGA, direct CGA memory manipulation otherwise) -- called from promptDiskSwapRetry and writeString, so likely a general 'scroll if at the bottom of the text area' helper rather than a single fixed message box.
+15CF7: 'sub_15CF7' -> 'waitVerticalRetrace'
+    polls the CGA status port (0x3DA) for the vertical-sync bit -- a frame-timing wait, called from cockpitPerFrame (per-frame update) and hyperjump (likely for a smooth jump animation).
+
+[dry] nothing changed. Set DRY_RUN = False to apply.
+----- end target script output -----
+[*] finished executing apply_renames_space.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_space.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_renames_space.py']
+[*] reading apply_renames_space.py
+[*] executing apply_renames_space.py
+[*] captured stdout from target script:
+----- begin target script output -----
+14259: already '_dos_ioctl_get' -- skipping
+14756: already '_dos_open' -- skipping
+14767: already '_dos_close' -- skipping
+14775: already '_dos_read' -- skipping
+14789: already '_dos_lseek' -- skipping
+147AD: already '_dos_write' -- skipping
+14F4E: already '_dos_getfileattr' -- skipping
+13F66: already '_nheapinit' -- skipping
+150F7: already '_nheapgrow' -- skipping
+14D23: already 'execProgram' -- skipping
+1447E: already '_flsbuf' -- skipping
+14879: already '_nfree' -- skipping
+14F8E: already 'findFileHandleSlot' -- skipping
+147D6: already '_nmalloc' -- skipping
+14B45: already 'allocFileBuffer' -- skipping
+14F62: already 'strcpy' -- skipping
+14F77: already 'strlen' -- skipping
+150AC: already 'strncpy' -- skipping
+14FD7: already '_lseek' -- skipping
+14294: already 'findExecutableFile' -- skipping
+1430D: already 'buildAndChainExecutable' -- skipping
+14922: already 'hasFileExtension' -- skipping
+149A3: already 'ensureFileExtension' -- skipping
+14A23: already '_write' -- skipping
+151BD: already '_filbuf' -- skipping
+1401D: already 'execProgramEntry' -- skipping
+1583A: already 'drawLine' -- skipping
+15818: already 'drawLineTo' -- skipping
+1585B: already 'drawLineInternal' -- skipping
+1142B: already 'drawSectorMapIcon' -- skipping
+1127E: already 'drawEnemyMarker' -- skipping
+112F1: already 'drawStationMarker' -- skipping
+11349: already 'drawStarMarker' -- skipping
+113B3: already 'drawEmptyMarker' -- skipping
+103E9: already 'isqrt' -- skipping
+16530: already 'setStatusEntryPos' -- skipping
+1656B: already 'writeStatusValue' -- skipping
+16272: already 'remapSoundActionIndex' -- skipping
+164BD: already 'writeDotFill' -- skipping
+16237: already 'calcExperienceLevel' -- skipping
+157A9: already 'strlen2' -- skipping
+164E6: already 'showMorePrompt' -- skipping
+16586: already 'drawStatusList' -- skipping
+157CC: already 'getKeypressAndWaitRaw' -- skipping
+10FFD: already 'snapToNearestSector' -- skipping
+11031: already 'updateSectorChangeX' -- skipping
+11072: already 'updateSectorChangeY' -- skipping
+10F3B: already 'waitForKeypressTimeout' -- skipping
+10F62: already 'drawBorderBox' -- skipping
+10FBC: already 'drawDialogFrame' -- skipping
+1416F: 'sub_1416F' -> 'fputs'
+    writes a string to a stream one char at a time via _flsbuf when the buffer count runs out (fixed stream value 0x6010) -- called from invalidShipExit, matching fputs's role elsewhere in this project.
+103AE: 'sub_103AE' -> 'parseParamNum'
+    parses a decimal number from a string char-by-char (bx = bx*10 + digit, with overflow checks via carry) -- called twice from start, matching the command-line numeric-argument parser named the same in ULTIMA.EXE/GEN.EXE (a separate implementation here, not literally shared code, but the same role).
+1405B: 'sub_1405B' -> 'exit'
+    the real C-standard exit(): flushes/closes every FILE-table entry (base 0x6002) then presumably calls the lower-level exit primitive. noreturn, matching exit()'s shape in ULTIMA.EXE/GEN.EXE exactly. Called from main.
+    [!] rename FAILED
+15EE1: 'sub_15EE1' -> 'buildScanlineOffsetTable'
+    precomputes the row-to-framebuffer-offset table, matching the same-named function's shape in OUT.EXE/ULTIMA.EXE/GEN.EXE exactly. Called from initVideo.
+15C82: 'sub_15C82' -> 'scrollTextArea'
+    scrolls/clears a bottom screen region (BIOS INT 10h/AH=06h for non-CGA, direct CGA memory manipulation otherwise) -- called from promptDiskSwapRetry and writeString, so likely a general 'scroll if at the bottom of the text area' helper rather than a single fixed message box.
+15CF7: 'sub_15CF7' -> 'waitVerticalRetrace'
+    polls the CGA status port (0x3DA) for the vertical-sync bit -- a frame-timing wait, called from cockpitPerFrame (per-frame update) and hyperjump (likely for a smooth jump animation).
+
+Done. Re-export the .asm/.idc and check the new names took, then update docs/roadmap.md's checklist.
+----- end target script output -----
+[*] finished executing apply_renames_space.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima1\ultima1_space.asm
+[*] gen_file(OFILE_ASM) returned 23097
+[*] exporting IDC to C:\dev\ultima1\ultima1_space.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima1\ultima1_space.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_space.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_renames_space.py']
+[*] reading apply_renames_space.py
+[*] executing apply_renames_space.py
+[*] captured stdout from target script:
+----- begin target script output -----
+14259: already '_dos_ioctl_get' -- skipping
+14756: already '_dos_open' -- skipping
+14767: already '_dos_close' -- skipping
+14775: already '_dos_read' -- skipping
+14789: already '_dos_lseek' -- skipping
+147AD: already '_dos_write' -- skipping
+14F4E: already '_dos_getfileattr' -- skipping
+13F66: already '_nheapinit' -- skipping
+150F7: already '_nheapgrow' -- skipping
+14D23: already 'execProgram' -- skipping
+1447E: already '_flsbuf' -- skipping
+14879: already '_nfree' -- skipping
+14F8E: already 'findFileHandleSlot' -- skipping
+147D6: already '_nmalloc' -- skipping
+14B45: already 'allocFileBuffer' -- skipping
+14F62: already 'strcpy' -- skipping
+14F77: already 'strlen' -- skipping
+150AC: already 'strncpy' -- skipping
+14FD7: already '_lseek' -- skipping
+14294: already 'findExecutableFile' -- skipping
+1430D: already 'buildAndChainExecutable' -- skipping
+14922: already 'hasFileExtension' -- skipping
+149A3: already 'ensureFileExtension' -- skipping
+14A23: already '_write' -- skipping
+151BD: already '_filbuf' -- skipping
+1401D: already 'execProgramEntry' -- skipping
+1583A: already 'drawLine' -- skipping
+15818: already 'drawLineTo' -- skipping
+1585B: already 'drawLineInternal' -- skipping
+1142B: already 'drawSectorMapIcon' -- skipping
+1127E: already 'drawEnemyMarker' -- skipping
+112F1: already 'drawStationMarker' -- skipping
+11349: already 'drawStarMarker' -- skipping
+113B3: already 'drawEmptyMarker' -- skipping
+103E9: already 'isqrt' -- skipping
+16530: already 'setStatusEntryPos' -- skipping
+1656B: already 'writeStatusValue' -- skipping
+16272: already 'remapSoundActionIndex' -- skipping
+164BD: already 'writeDotFill' -- skipping
+16237: already 'calcExperienceLevel' -- skipping
+157A9: already 'strlen2' -- skipping
+164E6: already 'showMorePrompt' -- skipping
+16586: already 'drawStatusList' -- skipping
+157CC: already 'getKeypressAndWaitRaw' -- skipping
+10FFD: already 'snapToNearestSector' -- skipping
+11031: already 'updateSectorChangeX' -- skipping
+11072: already 'updateSectorChangeY' -- skipping
+10F3B: already 'waitForKeypressTimeout' -- skipping
+10F62: already 'drawBorderBox' -- skipping
+10FBC: already 'drawDialogFrame' -- skipping
+1416F: already 'fputs' -- skipping
+103AE: already 'parseParamNum' -- skipping
+1405B: 'sub_1405B' -> 'exit2'
+    byte-for-byte identical role to the already-named exit() at 0x10EBD -- flushes/closes every FILE-table entry (base 0x6002) then presumably calls the lower-level exit primitive, noreturn. A second duplicate copy from a different linked object file, same pattern as strncpy2/toupper2/_fread2 seen elsewhere in this project. Called from main.
+15EE1: already 'buildScanlineOffsetTable' -- skipping
+15C82: already 'scrollTextArea' -- skipping
+15CF7: already 'waitVerticalRetrace' -- skipping
+
+Done. Re-export the .asm/.idc and check the new names took, then update docs/roadmap.md's checklist.
+----- end target script output -----
+[*] finished executing apply_renames_space.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima1\ultima1_space.asm
+[*] gen_file(OFILE_ASM) returned 23097
+[*] exporting IDC to C:\dev\ultima1\ultima1_space.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima1\ultima1_space.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_space.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'identify.py', 'noexport']
+[*] reading identify.py
+[*] executing identify.py
+[*] captured stdout from target script:
+----- begin target script output -----
+root filename : SPACE.EXE
+input file    : D:\GOG Games\Ultima 1\SPACE.EXE
+entry point   : 0x0 (cs=0x1000)
+input md5     : 907aaf98e98c490c89e2b7acbbbb6a3f
+
+segments:
+  sg01a2       0x010000-0x0172d0  (29392 bytes)
+  dseg         0x0172d0-0x01d3f0  (24864 bytes)
+  seg002       0x01d3f0-0x01e7f0  (5120 bytes)
+  seg003       0x01e7f0-0x01e7f1  (1 bytes)
+
+functions: 210 total, 210 named, 0 still sub_XXXXX
+
+structs (16): STR15, DuneonRow, DungeonMap, Point, Rect, Creature, LocationWidget, Savegame, MapLine, Map, SpaceMapShip, SpaceMapCell, SpaceMapY, SpaceMap, FightData, JumpEntry
+----- end target script output -----
+[*] finished executing identify.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0

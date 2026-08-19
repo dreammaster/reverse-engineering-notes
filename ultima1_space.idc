@@ -609,6 +609,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X10398);
 	op_hex		(x,	1);
 	create_insn	(0X103AE);
+	set_name	(0X103AE,	"parseParamNum");
 	create_insn	(0X103DA);
 	create_insn	(x=0X103DC);
 	op_hex		(x,	1);
@@ -1678,6 +1679,7 @@ static Bytes_0(void) {
 	create_insn	(0X10F25);
 	set_name	(0X10F25,	"death");
 	create_insn	(0X10F3B);
+	set_name	(0X10F3B,	"waitForKeypressTimeout");
 	create_insn	(x=0X10F3C);
 	op_hex		(x,	1);
 	create_insn	(x=0X10F41);
@@ -1689,6 +1691,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X10F5D);
 	op_hex		(x,	1);
 	create_insn	(0X10F62);
+	set_name	(0X10F62,	"drawBorderBox");
 	create_insn	(x=0X10F65);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X10F7D);
@@ -1700,6 +1703,7 @@ static Bytes_0(void) {
 	set_cmt	(0X10FB0,	"y",	0);
 	set_cmt	(0X10FB4,	"x",	0);
 	create_insn	(0X10FBC);
+	set_name	(0X10FBC,	"drawDialogFrame");
 	set_cmt	(0X10FC1,	"color",	0);
 	set_cmt	(0X10FC5,	"y2",	0);
 	set_cmt	(0X10FC9,	"x2",	0);
@@ -1720,6 +1724,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X10FF3);
 	op_stkvar	(x,	0);
 	create_insn	(0X10FFD);
+	set_name	(0X10FFD,	"snapToNearestSector");
 	create_insn	(x=0X10FFE);
 	op_hex		(x,	1);
 	create_insn	(x=0X11003);
@@ -1735,6 +1740,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1102C);
 	op_hex		(x,	1);
 	create_insn	(0X11031);
+	set_name	(0X11031,	"updateSectorChangeX");
 	create_insn	(x=0X11032);
 	op_hex		(x,	1);
 	create_insn	(x=0X11044);
@@ -1744,6 +1750,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1106D);
 	op_hex		(x,	1);
 	create_insn	(0X11072);
+	set_name	(0X11072,	"updateSectorChangeY");
 	create_insn	(x=0X11073);
 	op_hex		(x,	1);
 	create_insn	(x=0X11085);
@@ -4774,6 +4781,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X14056);
 	op_hex		(x,	1);
 	create_insn	(0X1405B);
+	set_name	(0X1405B,	"exit2");
 	create_insn	(x=0X1405C);
 	op_hex		(x,	1);
 	create_insn	(x=0X14069);
@@ -4806,6 +4814,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1416A);
 	op_hex		(x,	1);
 	create_insn	(0X1416F);
+	set_name	(0X1416F,	"fputs");
 	create_insn	(x=0X14170);
 	op_hex		(x,	1);
 	create_insn	(x=0X14175);
@@ -5618,6 +5627,15 @@ static Bytes_0(void) {
 	set_cmt	(0X14F14,	"DOS - 2+ - ADJUST MEMORY BLOCK SIZE (SETBLOCK)\nES = segment address of block to change\nBX = new size in paragraphs",	0);
 	create_insn	(x=0X14F14);
 	op_hex		(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X14F1B);
 	create_insn	(x=0X14F35);
 	op_plain_offset	(x,	1,	0X172D0);
@@ -5631,15 +5649,6 @@ static Bytes_0(void) {
 	set_cmt	(0X14F57,	"DOS - 2+ - GET FILE ATTRIBUTES\nDS:DX -> ASCIZ file name or directory\nname without trailing slash",	0);
 	create_insn	(x=0X14F57);
 	op_hex		(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X14F5F);
 	create_insn	(0X14F62);
 	set_name	(0X14F62,	"strcpy");
@@ -6130,6 +6139,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X157A4);
 	op_hex		(x,	1);
 	create_insn	(0X157A9);
+	set_name	(0X157A9,	"strlen2");
 	create_insn	(x=0X157AA);
 	op_hex		(x,	1);
 	create_insn	(x=0X157AF);
@@ -6145,6 +6155,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X157C7);
 	op_hex		(x,	1);
 	create_insn	(0X157CC);
+	set_name	(0X157CC,	"getKeypressAndWaitRaw");
 	create_insn	(x=0X157CD);
 	op_hex		(x,	1);
 	create_insn	(x=0X157DC);
@@ -6436,6 +6447,7 @@ static Bytes_1(void) {
 	set_cmt	(0X15C5D,	"y1",	0);
 	set_cmt	(0X15C61,	"x1",	0);
 	create_insn	(0X15C82);
+	set_name	(0X15C82,	"scrollTextArea");
 	set_cmt	(0X15C9E,	"- VIDEO - SCROLL PAGE UP\nAL = number of lines to scroll window (0 = blank whole window)\nBH = attributes to be used on blanked lines\nCH,CL = row,column of upper left corner of window to scroll\nDH,DL = row,column of lower right corner of window",	0);
 	create_insn	(x=0X15C9E);
 	op_hex		(x,	0);
@@ -6447,6 +6459,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X15CE0);
 	op_hex		(x,	1);
 	create_insn	(0X15CF7);
+	set_name	(0X15CF7,	"waitVerticalRetrace");
 	create_insn	(x=0X15CFE);
 	op_stkvar	(x,	1);
 	set_cmt	(0X15D0D,	"Video status bits:\n0: retrace.  1=display is in vert or horiz retrace.\n1: 1=light pen is triggered; 0=armed\n2: 1=light pen switch is open; 0=closed\n3: 1=vertical sync pulse is occurring.",	0);
@@ -6631,6 +6644,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X15EDC);
 	op_hex		(x,	1);
 	create_insn	(0X15EE1);
+	set_name	(0X15EE1,	"buildScanlineOffsetTable");
 	create_insn	(x=0X15F00);
 	op_hex		(x,	1);
 	create_insn	(x=0X15F0B);
@@ -6779,6 +6793,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X16232);
 	op_hex		(x,	1);
 	create_insn	(0X16237);
+	set_name	(0X16237,	"calcExperienceLevel");
 	create_insn	(x=0X16238);
 	op_hex		(x,	1);
 	create_insn	(x=0X16240);
@@ -6789,6 +6804,7 @@ static Bytes_1(void) {
 	make_array	(0X1624C,	0X26);
 	create_insn	(x=0X16272);
 	op_hex		(x,	1);
+	set_name	(0X16272,	"remapSoundActionIndex");
 	create_insn	(0X16275);
 	set_name	(0X16275,	"pollKeyUppercase");
 	create_insn	(x=0X16276);
@@ -6939,6 +6955,7 @@ static Bytes_1(void) {
 	op_plain_offset	(x,	1,	0X172D0);
 	op_plain_offset	(x,	129,	0X172D0);
 	create_insn	(0X164BD);
+	set_name	(0X164BD,	"writeDotFill");
 	create_insn	(x=0X164BE);
 	op_hex		(x,	1);
 	create_insn	(x=0X164C3);
@@ -6954,6 +6971,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X164E1);
 	op_hex		(x,	1);
 	create_insn	(0X164E6);
+	set_name	(0X164E6,	"showMorePrompt");
 	set_cmt	(0X164F6,	"color",	0);
 	create_insn	(x=0X164FA);
 	op_plain_offset	(x,	1,	0X172D0);
@@ -6971,6 +6989,7 @@ static Bytes_1(void) {
 	set_cmt	(0X16524,	"y1",	0);
 	set_cmt	(0X16528,	"x1",	0);
 	create_insn	(0X16530);
+	set_name	(0X16530,	"setStatusEntryPos");
 	create_insn	(x=0X16531);
 	op_hex		(x,	1);
 	create_insn	(x=0X16536);
@@ -6987,6 +7006,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X16566);
 	op_hex		(x,	1);
 	create_insn	(0X1656B);
+	set_name	(0X1656B,	"writeStatusValue");
 	set_cmt	(0X16570,	"int",	0);
 	set_cmt	(0X16571,	"color",	0);
 	create_insn	(x=0X16571);
@@ -6997,6 +7017,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1657C);
 	op_stkvar	(x,	0);
 	create_insn	(0X16586);
+	set_name	(0X16586,	"drawStatusList");
 	create_insn	(x=0X16587);
 	op_hex		(x,	1);
 	create_insn	(x=0X1658C);
@@ -9474,6 +9495,15 @@ static Bytes_1(void) {
 	create_word	(x=0X19108);
 	op_plain_offset	(x,	0,	0X172D0);
 	op_plain_offset	(x,	128,	0X172D0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_word	(x=0X1910A);
 	op_plain_offset	(x,	0,	0X172D0);
 	op_plain_offset	(x,	128,	0X172D0);
@@ -9512,15 +9542,6 @@ static Bytes_1(void) {
 	set_name	(0X196C6,	"aBlockedByA");
 	create_strlit	(0X196D3,	0X14);
 	set_name	(0X196D3,	"aCanTMoveOnLand");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_word	(x=0X196E8);
 	op_plain_offset	(x,	0,	0X172D0);
 	op_plain_offset	(x,	128,	0X172D0);

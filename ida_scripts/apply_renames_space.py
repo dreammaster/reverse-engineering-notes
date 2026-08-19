@@ -147,6 +147,107 @@ RENAMES = [
      "identity), counting how many fit. Called from view, likely for "
      "a distance calculation (proximity to a star/hazard or targeting "
      "range)."),
+
+    # -- third pass: the `status` screen's helper cluster, the `view`
+    # cockpit's sector-tracking helpers, and the `spaceAce`/`inform`
+    # dialog-frame helpers. --
+
+    (0x16530, "setStatusEntryPos",
+     "positions the text cursor for status-list entry `index` in a "
+     "two-column grid (13 rows per column, x=2 or x=15) via "
+     "setTextPos."),
+    (0x1656B, "writeStatusValue",
+     "writes a 4-digit, '.'-padded number via writeNumber -- the "
+     "status screen's numeric stat display (fuel/shield/hits/etc.)."),
+    (0x16272, "remapSoundActionIndex",
+     "adds a fixed offset (0x5D) to al -- a tiny action-code-to-sound-"
+     "effect-table-index remap, called from soundAction."),
+    (0x164BD, "writeDotFill",
+     "writes N '.' characters via writeCharTty -- a dotted-line/"
+     "separator fill helper for the status display."),
+    (0x16237, "calcExperienceLevel",
+     "_savegame._experience / 1000 + 1 -- the character-level "
+     "formula, called once from status."),
+    (0x157A9, "strlen2",
+     "hand-coded character-count loop, functionally identical to the "
+     "CRT strlen but a separate implementation -- used by the status "
+     "list drawer (sub_16586), likely for text centering/padding."),
+    (0x164E6, "showMorePrompt",
+     "shows the ' More ' pagination prompt with arrows, waits for "
+     "space via promptPressSpace, then clears the area -- the status "
+     "list's page-break prompt when there are more entries than fit "
+     "on screen."),
+    (0x16586, "drawStatusList",
+     "iterates an array of status-log message indices from arg_4 to "
+     "arg_6, drawing each nonzero entry via setStatusEntryPos, paging "
+     "through showMorePrompt every 25 rows. The status screen's "
+     "scrolling message-log renderer."),
+
+    (0x157CC, "getKeypressAndWaitRaw",
+     "poll-loop identical in shape to the same-named function in "
+     "OUT.EXE: getKeypress + wait(3) if none, wait(1) if got one, "
+     "loop until nonzero. Called from promptDiskSwapRetry and "
+     "promptPressSpace (both already named)."),
+
+    (0x10FFD, "snapToNearestSector",
+     "rounds a coordinate up by 100 if its %100 remainder exceeds 49, "
+     "then up by 1000 if its %1000 remainder exceeds 499 -- a grid-"
+     "snapping helper shared by the X/Y sector-change trackers below."),
+    (0x11031, "updateSectorChangeX",
+     "computes the per-frame X sector-boundary-crossing delta from "
+     "_cockpitSpeed and the existing sectorChangeX (already named), "
+     "snapping via snapToNearestSector and clamping to max 6. Called "
+     "from view."),
+    (0x11072, "updateSectorChangeY",
+     "Y counterpart of updateSectorChangeX, using sectorChangeY."),
+
+    (0x10F3B, "waitForKeypressTimeout",
+     "polls getKeypress in a loop up to 0x2710 (10000) iterations, "
+     "returning early on any keypress -- a wait-with-timeout, used by "
+     "spaceAce's rank-achieved screen."),
+    (0x10F62, "drawBorderBox",
+     "draws a rectangular border via drawLine + 3x drawLineTo, then "
+     "positions the text cursor inside it -- the box-drawing core "
+     "behind drawDialogFrame."),
+    (0x10FBC, "drawDialogFrame",
+     "calls drawBorderBox with the given color -- the dialog-frame "
+     "helper shared by spaceAce's rank-achieved screen and inform's "
+     "sector-map screen."),
+
+    # -- fourth pass: the last 6 functions, completing SPACE.EXE. --
+
+    (0x1416F, "fputs",
+     "writes a string to a stream one char at a time via _flsbuf when "
+     "the buffer count runs out (fixed stream value 0x6010) -- called "
+     "from invalidShipExit, matching fputs's role elsewhere in this "
+     "project."),
+    (0x103AE, "parseParamNum",
+     "parses a decimal number from a string char-by-char (bx = bx*10 "
+     "+ digit, with overflow checks via carry) -- called twice from "
+     "start, matching the command-line numeric-argument parser named "
+     "the same in ULTIMA.EXE/GEN.EXE (a separate implementation here, "
+     "not literally shared code, but the same role)."),
+    (0x1405B, "exit2",
+     "byte-for-byte identical role to the already-named exit() at "
+     "0x10EBD -- flushes/closes every FILE-table entry (base 0x6002) "
+     "then presumably calls the lower-level exit primitive, noreturn. "
+     "A second duplicate copy from a different linked object file, "
+     "same pattern as strncpy2/toupper2/_fread2 seen elsewhere in this "
+     "project. Called from main."),
+    (0x15EE1, "buildScanlineOffsetTable",
+     "precomputes the row-to-framebuffer-offset table, matching the "
+     "same-named function's shape in OUT.EXE/ULTIMA.EXE/GEN.EXE "
+     "exactly. Called from initVideo."),
+    (0x15C82, "scrollTextArea",
+     "scrolls/clears a bottom screen region (BIOS INT 10h/AH=06h for "
+     "non-CGA, direct CGA memory manipulation otherwise) -- called "
+     "from promptDiskSwapRetry and writeString, so likely a general "
+     "'scroll if at the bottom of the text area' helper rather than a "
+     "single fixed message box."),
+    (0x15CF7, "waitVerticalRetrace",
+     "polls the CGA status port (0x3DA) for the vertical-sync bit -- "
+     "a frame-timing wait, called from cockpitPerFrame (per-frame "
+     "update) and hyperjump (likely for a smooth jump animation)."),
 ]
 
 # (ea, new_name, note)
