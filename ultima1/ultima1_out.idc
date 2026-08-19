@@ -8628,6 +8628,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X15464);
 	op_hex		(x,	1);
 	create_insn	(0X15469);
+	set_name	(0X15469,	"denyGetNoPermission");
 	create_insn	(x=0X1546C);
 	op_plain_offset	(x,	1,	0X1D480);
 	op_plain_offset	(x,	129,	0X1D480);
@@ -8642,24 +8643,28 @@ static Bytes_1(void) {
 	set_cmt	(0X15481,	"msg",	0);
 	set_cmt	(0X1548A,	"effectNum",	0);
 	create_insn	(0X15492);
+	set_name	(0X15492,	"getArmorTile");
 	create_insn	(x=0X15493);
 	op_hex		(x,	1);
 	create_insn	(0X154A4);
 	create_insn	(x=0X154B0);
 	op_hex		(x,	1);
 	create_insn	(0X154B5);
+	set_name	(0X154B5,	"getWeaponTile");
 	create_insn	(x=0X154B6);
 	op_hex		(x,	1);
 	create_insn	(0X154C7);
 	create_insn	(x=0X154D3);
 	op_hex		(x,	1);
 	create_insn	(0X154D8);
+	set_name	(0X154D8,	"getFoodTile");
 	create_insn	(x=0X154D9);
 	op_hex		(x,	1);
 	create_insn	(0X154EA);
 	create_insn	(x=0X154F6);
 	op_hex		(x,	1);
 	create_insn	(0X154FB);
+	set_name	(0X154FB,	"getTownItem");
 	create_insn	(x=0X154FC);
 	op_hex		(x,	1);
 	create_insn	(x=0X1551B);
@@ -9210,6 +9215,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X15B85);
 	op_hex		(x,	1);
 	create_insn	(0X15B8A);
+	set_name	(0X15B8A,	"checkCaughtStealing");
 	create_insn	(x=0X15B8B);
 	op_hex		(x,	1);
 	create_insn	(x=0X15B90);
@@ -11018,6 +11024,15 @@ static Bytes_1(void) {
 	create_insn	(x=0X1722B);
 	op_stkvar	(x,	0);
 	set_cmt	(0X17231,	"transportId",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X17237);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X1723F);
@@ -11029,15 +11044,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X1725A);
 	op_stkvar	(x,	0);
 	set_cmt	(0X17263,	"c",	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X17264,	"yp",	0);
 	create_insn	(x=0X17264);
 	op_stkvar	(x,	0);
@@ -15824,8 +15830,6 @@ static Bytes_2(void) {
 	set_cmt	(0X1AF1E,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═\x10 OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
 	create_insn	(x=0X1AF1E);
 	op_hex		(x,	1);
-	create_insn	(x=0X1AF21);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -15835,6 +15839,8 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X1AF21);
+	op_hex		(x,	1);
 	set_cmt	(0X1AF25,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═\x10 OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
 	create_insn	(x=0X1AF25);
 	op_hex		(x,	0);
@@ -21394,6 +21400,7 @@ static Bytes_4(void) {
 	create_word	(0X26022);
 	set_name	(0X26022,	"_isLordBritishCastle");
 	create_word	(0X26024);
+	set_name	(0X26024,	"_castleItemAllowance");
 	create_word	(0X26026);
 	set_name	(0X26026,	"_creaturesCount");
 	create_dword	(0X26028);

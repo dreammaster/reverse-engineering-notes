@@ -268,6 +268,38 @@ RENAMES = [
      "weapon-tier-unlock calculation, but the exact formula's meaning "
      "isn't pieced together yet; flagged as a follow-up in "
      "roadmap.md rather than asserted here."),
+
+    # -- fourth pass: the `get` command's castle item-theft mechanic. --
+
+    (0x15469, "denyGetNoPermission",
+     "prints \"Thou hast not the king's permission!\" plus a failure "
+     "sound (playFX(1)). Called when _castleItemAllowance is exhausted."),
+
+    (0x15492, "getArmorTile",
+     "if _castleItemAllowance > 0, decrements it and calls findArmor; "
+     "else denyGetNoPermission. One of 3 near-identical wrappers "
+     "(getWeaponTile, getFoodTile) dispatched by getTownItem based on "
+     "the map tile under the player."),
+
+    (0x154B5, "getWeaponTile", "weapon counterpart of getArmorTile."),
+
+    (0x154D8, "getFoodTile", "food counterpart of getArmorTile."),
+
+    (0x154FB, "getTownItem",
+     "the `get` command's handler for town/castle maps: reads the "
+     "_townCityMap tile at the player's position and dispatches to "
+     "getFoodTile ('9'), getArmorTile ('7'), or getWeaponTile (';'), "
+     "else prints ' - nothing here!'. In practice these tile codes seem "
+     "to appear only in castle room layouts (matching the "
+     "'king's permission' framing), not ordinary town tiles."),
+
+    (0x15B8A, "checkCaughtStealing",
+     "guard-detection roll shared by findArmor/findWeapon/findFood "
+     "(all three already named): rolls 1-255, catches the player if "
+     "the roll is low (<0x26) or guards are already hostile -- unless "
+     "the player's class is Thief (_savegame._class==3), which always "
+     "succeeds silently. On a catch, prints \"Oh no!  Thou wert "
+     "caught!\" and sets _guardsHostile."),
 ]
 
 # (ea, new_name, note) -- globals in the same CRT file-I/O cluster,
@@ -290,6 +322,13 @@ GLOBAL_RENAMES = [
      "read by _openfile as the starting text/binary translation flag "
      "before the mode string's 'b'/'a' override it -- matches MSC's "
      "global default-file-mode variable."),
+
+    (0x26024, "_castleItemAllowance",
+     "set to 9 on entering a castle (in enterCastle) and to 0 on "
+     "entering other location types; decremented once per successful "
+     "getArmorTile/getWeaponTile/getFoodTile call, and once it hits 0 "
+     "further `get` attempts print \"Thou hast not the king's "
+     "permission!\" via denyGetNoPermission."),
 ]
 
 
