@@ -281,8 +281,39 @@ Remaining open item: the `_savegame._hits`/`_strength` struct-field
 mixup noted above needs a real struct-definition fix, not a rename —
 left for a future `apply_structs_gen.py` pass.
 
+## SPACE.EXE — next steps
+
+Started 2026-08-20 per Paul's direction. Was 156/210 already named
+from substantial prior work.
+
+- [x] First renaming pass: filled the remaining CRT cluster gaps (24
+      functions, confirmed via `INT 21h` mapping) and cleaned up 2
+      placeholder names (`"exec?"` → `execProgramEntry`, `"f"` →
+      `_filbuf`) left by prior work. Full writeup in
+      [overview.md](overview.md#spaceexe-crt-gaps-filled).
+- [x] Second renaming pass: decoded `inform`'s sector-map icon
+      dispatch (`drawSectorMapIcon`/`drawEnemyMarker`/
+      `drawStationMarker`/`drawStarMarker`/`drawEmptyMarker`), named
+      `isqrt`, and promoted 3 already-commented-but-unpromoted
+      line-drawing functions. 189/210 functions now named (90%). Full
+      writeup in
+      [overview.md](overview.md#sector-map-icon-dispatch-and-other-game-specific-finds).
+- [ ] Remaining 21 `sub_XXXXX`: the `status` screen's helper cluster
+      (`sub_16530`/`sub_1656B`/`sub_16237`/`sub_16272`/`sub_164BD`/
+      `sub_164E6`/`sub_16586`/`sub_157A9`), the `view` cockpit screen's
+      remaining helpers (`sub_10FFD`), the `spaceAce`-related cluster
+      (`sub_10F3B`/`sub_10F62`/`sub_10FBC`/`sub_15818`-adjacent), and
+      `sub_157CC` (shared by `promptDiskSwapRetry`/`promptPressSpace`).
+- [ ] **Double-check** the already-existing comment on the "leave
+      outer space" function (already named, not touched this pass)
+      that describes the chain back to `OUT.EXE` as "(DOS EXEC...)" —
+      every other executable's equivalent turned out to use a custom
+      overlay loader, not real `INT 21h`/`4Bh` EXEC, so this phrasing
+      is probably just loose wording from whoever wrote the comment
+      rather than a genuine architectural difference, but worth a
+      quick read to confirm rather than assume.
+
 ## Per-executable next steps (not yet started)
 
-`ultima1_space`, `ultima1_mondain` remain untouched beyond the initial
-`identify.py` cataloging — pick up next (`ultima1_space` is furthest
-along of the two, per the original priority order).
+`ultima1_mondain` remains untouched beyond the initial `identify.py`
+cataloging — pick up after `ultima1_space`.

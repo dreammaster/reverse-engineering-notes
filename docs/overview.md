@@ -25,7 +25,7 @@ identified and renamed in any other IDB it also happens to appear in.
 | `ultima1.idb` | `ULTIMA.EXE` | Title screen / attract mode, chains unconditionally to `GEN.EXE` | 100 / 100 | `STR15`, `Point`, `Rect`, `Savegame` |
 | `ultima1_gen.idb` | `GEN.EXE` | Character generation / continue, chains to `OUT.EXE` | 113 / 113 | + `Creature` |
 | `ultima1_out.idb` | `OUT.EXE` | Overworld/towns/dungeons (outdoor engine) | 352 / 353 | + `DungeonCell`, `DungeonColumn`, `DungeonMap`, `LocationWidget`, `MapLine`, `Map` |
-| `ultima1_space.idb` | `SPACE.EXE` | Space combat minigame | 156 / 210 | + `DuneonRow`, `DungeonMap` (space variant), `SpaceMapShip`, `SpaceMapCell`, `SpaceMapY`, `SpaceMap`, `FightData`, `JumpEntry` |
+| `ultima1_space.idb` | `SPACE.EXE` | Space combat minigame, chains back to `OUT.EXE` | 189 / 210 | + `DuneonRow`, `DungeonMap` (space variant), `SpaceMapShip`, `SpaceMapCell`, `SpaceMapY`, `SpaceMap`, `FightData`, `JumpEntry` |
 | `ultima1_mondain.idb` | `MONDAIN.EXE` | Unknown — essentially unstarted | 1 / 191 | none |
 
 Counts captured 2026-08-19 via `ida_scripts/identify.py` (see below) —
@@ -792,3 +792,49 @@ pattern already seen twice in ULTIMA.EXE (`strncpy2`/`toupper2`).
 across 4 passes. Combined with ULTIMA.EXE and OUT.EXE, the game's
 full startup-to-gameplay chain (title screen → character creation →
 main game ↔ space combat) is now completely named end to end.
+
+## SPACE.EXE — findings log
+
+Started 2026-08-20, per Paul's direction after GEN.EXE. Was 156/210
+already named from substantial prior work — including, notably, a
+`.asm`/`.idc` export that already carried rich **unpromoted analysis
+comments**: several `sub_XXXXX` functions had detailed multi-sentence
+descriptions written directly above their `proc` line (e.g. `"drawLine
+(x1,y1,x2,y2,color) - thin wrapper over the Bresenham core..."`) that
+had never actually been turned into a rename. Recognizing and
+promoting these was the fastest win of this pass. Also already
+confirmed by prior work, in an inline comment on the "leave outer
+space" function: SPACE.EXE hands control back to `OUT.EXE` the same
+overlay-jump way already decoded for the other three executables,
+passing `argv = {"out.exe", "S"}` — closing the loop on the
+`OUT.EXE` ↔ `SPACE.EXE` half of the chain diagram from the OUT.EXE
+session (that function was already named and wasn't touched this
+pass; worth double-checking its "(DOS EXEC...)" phrasing isn't taken
+too literally, since every other executable's equivalent function was
+confirmed to use a custom loader, not real DOS `INT 21h`/`4Bh` EXEC).
+
+### SPACE.EXE CRT gaps filled
+
+First pass. Filled the remaining CRT cluster gaps using the same `INT
+21h` subfunction mapping used throughout this project (not just
+size-matching, to avoid the `strcpy`/`strncpy` mixup risk seen once in
+GEN.EXE) — 24 renames. Also cleaned up two placeholder names left by
+prior work that were clearly tentative rather than final:
+`"exec?"` → `execProgramEntry` and the single-letter `"f"` →
+`_filbuf`.
+
+### Sector map icon dispatch and other game-specific finds
+
+Second pass. `inform` (already named, one of `_main`'s jump-table
+screens) turns out to be the space combat "long-range sensor" /
+sector-overview map: `drawSectorMapIcon`, given sector coordinates,
+checks `_spaceMapCell._enemyCount` / the docking anchor (`field_6`) /
+the hazard-star position (`field_2`) in that priority order and
+dispatches to `drawEnemyMarker` / `drawStationMarker` /
+`drawStarMarker`, falling back to `drawEmptyMarker` — the four icon
+types shown per sector on the scan screen. Also named `isqrt` (called
+from `view`, the main cockpit screen — likely a proximity/targeting
+distance calculation) and promoted the three already-commented
+`drawLine`/`drawLineTo`/`drawLineInternal` line-drawing functions.
+
+189/210 functions now named (90%).
