@@ -312,6 +312,22 @@ Two limits gate a successful `get`:
   and sets `_guardsHostile` — turning every guard in the castle
   hostile from that point on.
 
+### `showPillarInscription` — a literary Easter egg
+
+Fifth pass, same session. `enterPillar`'s flavor-text helper
+(`0x14EA2`, an 8-way jump table keyed by pillar/`locationNum`) turned
+out to include a real-world reference: one branch prints "MY NAME IS
+OZYMANDIAS, KING OF KINGS: LOOK AT MY WORKS, YE MIGHTY, AND DESPAIR!"
+— the closing line of Shelley's *Ozymandias*. Worth keeping in mind for
+the reimplementation's text assets. Quest-completion bookkeeping for
+pillars is separate, in the already-named `questCompleted`.
+
+Also named `findWidgetAtPosition` (`0x122F3`) — `attackPerson`'s lookup
+for "who's standing at this (x,y)", scanning `_locationWidgets`.
+Distinct from the already-named `getLocationWidgetAt` (a different
+implementation, used only by `cityCheckAt`) — both exist independently
+in the binary rather than one calling the other.
+
 ### `playSound` / `playFX` — sound-effect jump table, not yet decoded
 
 `playSound(effectNum)` (already named) dispatches through a 10-entry

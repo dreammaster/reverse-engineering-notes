@@ -81,6 +81,12 @@ OUT.EXE**.
       renames. Full writeup in
       [overview.md](overview.md#outexe-get-command--castle-item-theft-decoded).
       312/353 functions now named, 41 `sub_XXXXX` remain.
+- [x] Fifth renaming pass: `showPillarInscription` (an 8-way flavor-
+      text jump table for entering pillars, containing a Shelley
+      *Ozymandias* Easter egg) and `findWidgetAtPosition`
+      (`attackPerson`'s "who's at this position" lookup, distinct from
+      `getLocationWidgetAt`). 314/353 functions now named, 39
+      `sub_XXXXX` remain.
 - [ ] Decode `playSound`'s 10-entry effect jump table (`off_1F94A`,
       handlers `0x1AE65`-`0x1AF37`) by cross-referencing `playFX` call
       sites' literal `effectNum` arguments against game context — see
