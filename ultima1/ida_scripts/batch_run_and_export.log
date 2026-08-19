@@ -1834,3 +1834,628 @@ structs (11): STR15, DungeonCell, DungeonColumn, DungeonMap, Point, Rect, Creatu
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'rank_unnamed_functions.py', 'noexport']
+[*] reading rank_unnamed_functions.py
+[*] executing rank_unnamed_functions.py
+[*] captured stdout from target script:
+----- begin target script output -----
+19 unnamed functions total
+
+19E2C  sub_19E2C    callers=  2 size=  21  <- sub_19633, sub_199EA
+19E41  sub_19E41    callers=  2 size=  23  <- sub_196AC, sub_19969
+1D126  sub_1D126    callers=  2 size= 199  <- _filbuf, sub_1D3AB
+1D3AB  sub_1D3AB    callers=  2 size= 213  <- sub_1D126, sub_1D1ED
+1908B  sub_1908B    callers=  1 size=  27  <- writeInUseAndExit
+1960C  sub_1960C    callers=  1 size=  24  <- _flushall
+19633  sub_19633    callers=  1 size= 121  <- _nheapinit
+196AC  sub_196AC    callers=  1 size= 369  <- _nheapinit
+19969  sub_19969    callers=  1 size= 129  <- sub_19633
+199EA  sub_199EA    callers=  1 size= 128  <- sub_19633
+19BED  sub_19BED    callers=  1 size= 555  <- sub_196AC
+19E18  sub_19E18    callers=  1 size=  20  <- sub_19633
+19E58  sub_19E58    callers=  1 size=  75  <- sub_19969
+1D1ED  sub_1D1ED    callers=  1 size= 290  <- _flsbuf
+190A6  sub_190A6    callers=  0 size=  26  <- 
+192AE  sub_192AE    callers=  0 size=  38  <- 
+19626  sub_19626    callers=  0 size=  13  <- 
+1C34C  sub_1C34C    callers=  0 size=  52  <- 
+1CC46  sub_1CC46    callers=  0 size=  37  <- 
+----- end target script output -----
+[*] finished executing rank_unnamed_functions.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'dump_function.py', 'noexport']
+[*] reading dump_function.py
+[*] executing dump_function.py
+[*] captured stdout from target script:
+----- begin target script output -----
+function 1C34C - 1C380
+1C34C: push    bp
+1C34D: sub     sp, 2
+1C350: mov     bp, sp
+1C352: mov     ax, [bp+4+arg_0]
+1C355: test    ax, ax
+1C357: js      short loc_1C35E
+1C359: cmp     ax, 13h
+1C35C: jl      short loc_1C365
+1C35E: xor     ax, ax
+1C360: add     sp, 2
+1C363: pop     bp
+1C364: retn
+1C365: mov     ax, [bp+4+arg_2]
+1C368: test    ax, ax
+1C36A: js      short loc_1C371
+1C36C: cmp     ax, 9
+1C36F: jl      short loc_1C378
+1C371: xor     ax, ax
+1C373: add     sp, 2
+1C376: pop     bp
+1C377: retn
+1C378: mov     ax, 1
+1C37B: add     sp, 2
+1C37E: pop     bp
+1C37F: retn
+----- end target script output -----
+[*] finished executing dump_function.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_renames_out.py', 'noexport']
+[*] reading apply_renames_out.py
+[*] executing apply_renames_out.py
+[*] captured stdout from target script:
+----- begin target script output -----
+1A81D: already 'getKeypressAndWaitRaw' -- skipping
+1A30C: already 'toLowerLetter' -- skipping
+1981D: already '_nmalloc' -- skipping
+198C0: already '_nfree' -- skipping
+19EA3: already '_nheapgrow' -- skipping
+1B0B5: already 'readAmount' -- skipping
+1B094: already 'isDigit' -- skipping
+1C8F2: already '_fread' -- skipping
+1C960: already '_fwrite' -- skipping
+1C6D4: already '_fclose' -- skipping
+1CC6B: already '_filbuf' -- skipping
+1CE05: already '_flsbuf' -- skipping
+1D30F: already 'allocFileBuffer' -- skipping
+1C791: already '_openfile' -- skipping
+1CA14: already '_open' -- skipping
+1C9CC: already 'releaseFileHandle' -- skipping
+1D0DD: already 'findFileHandleSlot' -- skipping
+190C0: already '_flushall' -- skipping
+19578: already '_dos_open' -- skipping
+19589: already '_dos_close' -- skipping
+19597: already '_dos_read' -- skipping
+195AB: already '_dos_lseek' -- skipping
+195CF: already '_dos_write' -- skipping
+195F8: already '_dos_ioctl_get' -- skipping
+1D36A: already '_dos_ioctl_set' -- skipping
+1D37C: already '_dos_creat' -- skipping
+1D38D: already '_dos_creatnew' -- skipping
+1D39A: already '_dos_creattemp' -- skipping
+163B3: already 'calcWeaponBuyPrice' -- skipping
+163D4: already 'calcWeaponSellPrice' -- skipping
+165CE: already 'drawWeaponShopLine' -- skipping
+163F2: already 'sellWeapons' -- skipping
+167F1: already 'calcArmorBuyPrice' -- skipping
+1680C: already 'calcArmorSellPrice' -- skipping
+169E8: already 'drawArmorShopLine' -- skipping
+16823: already 'sellArmor' -- skipping
+16BAC: already 'calcMagicBuyPrice' -- skipping
+16BC7: already 'drawMagicShopLine' -- skipping
+17052: already 'drawTransportShopLine' -- skipping
+192D4: already 'divmod32' -- skipping
+15469: already 'denyGetNoPermission' -- skipping
+15492: already 'getArmorTile' -- skipping
+154B5: already 'getWeaponTile' -- skipping
+154D8: already 'getFoodTile' -- skipping
+154FB: already 'getTownItem' -- skipping
+15B8A: already 'checkCaughtStealing' -- skipping
+14EA2: already 'showPillarInscription' -- skipping
+122F3: already 'findWidgetAtPosition' -- skipping
+1AB9D: already 'drawDeathGraphic' -- skipping
+1AC44: already 'waitTimerTicks' -- skipping
+1BA27: already 'drawSelectItemPanel' -- skipping
+19FF1: already 'initVideoModeCGA' -- skipping
+1C455: already 'initVideoModeEGA' -- skipping
+1C42E: already 'initVideoModeTandy' -- skipping
+1B231: already 'buildScanlineOffsetTable' -- skipping
+1937F: already 'setCriticalErrorHandler' -- skipping
+193D7: already 'criticalErrorHandler' -- skipping
+19418: already '_nheapinit' -- skipping
+1AE65: already 'soundEffectBump' -- skipping
+1AE7D: already 'soundEffectAck' -- skipping
+1AE9B: already 'soundEffectDamage' -- skipping
+1AEA2: already 'soundEffectMonsterAttack' -- skipping
+1AEA9: already 'soundEffectFootstep' -- skipping
+1AEC9: already 'soundEffectSuccess' -- skipping
+1AED0: already 'soundEffectFailure' -- skipping
+1AEEA: already 'soundEffectAttack' -- skipping
+1AF1E: already 'soundEffect8' -- skipping
+1AF37: already 'soundEffect9' -- skipping
+1908B: 'sub_1908B' -> 'chainToExecutable'
+    thin wrapper around execProgram (see below): pushes envp, &arg_2 (by address -- vector-style), arg_0. The one actually used -- called from writeInUseAndExit's retry loop when boarding a ship (chains to SPACE.EXE).
+190A6: 'sub_190A6' -> 'chainToExecutableAlt'
+    near-identical sibling of chainToExecutable, differing only in pushing arg_2 by value instead of by address (list-style vs. vector-style argument passing, echoing the classic execl/execv distinction). Never called from anywhere in this executable -- an unused linked-library variant, same pattern as the dead siblings found inside _nheapgrow and divmod32 earlier.
+19633: 'sub_19633' -> 'findExecutableFile'
+    locates the target program file: tries the bare filename first (hasFileExtension check), then name+".EXE", then name+".COM" (ensureFileExtension + _dos_getfileattr existence check each time). Returns 0 on success, -1 if none of the three candidates exist.
+196AC: 'sub_196AC' -> 'buildAndChainExecutable'
+    once findExecutableFile succeeds: measures and concatenates the argv array into a single DOS command-tail buffer (length-byte + chars + CR, the classic DOS EXEC parameter-block format) via _nmalloc'd scratch space, then calls execProgram to actually load and jump to it, then _nfree's the scratch buffer.
+19BED: 'sub_19BED' -> 'execProgram'
+    the actual overlay loader -- and the reason this cluster isn't a simple DOS EXEC wrapper: computes the target file's size (seek-to-end), validates it fits in available memory, resizes this process's own memory block (INT 21h/4Ah), copies a 192-word PSP template (unk_26EEA) into the new segment, copies the already-read program image into place, then **far-JMPs directly into it** (`jmp dword ptr cs:byte_19BE1`) -- no INT 21h/4Bh EXEC call anywhere in this function. This confirms OUT.EXE, SPACE.EXE, etc. chain to each other via a custom in-process overlay switch, not real DOS child-process spawning.
+19969: 'sub_19969' -> 'hasFileExtension'
+    scans a filename backward from the end for '.' before hitting '\'/'/' (i.e. within the last path component only) via a small lookup table (word_26E30); calls strncpy to extract the found extension via a helper. Used by findExecutableFile to decide whether to try appending .EXE/.COM.
+199EA: 'sub_199EA' -> 'ensureFileExtension'
+    copies src to dest while tracking the last '.'/'/'/'\' position; if the source had no extension, appends '.' + the given extension string via strcpy. The classic _splitpath/_makepath-family 'default extension' helper.
+19E18: 'sub_19E18' -> '_dos_getfileattr'
+    AH=43h/AL=00h GET FILE ATTRIBUTES -- used purely as a file-exists check (return value discarded beyond success/fail) by findExecutableFile. Named to match the existing _dos_* raw-DOS-primitive convention.
+19E2C: 'sub_19E2C' -> 'strcpy'
+    plain lodsb/stosb copy-until-null, returns dest.
+19E41: 'sub_19E41' -> 'strlen'
+    plain repne-scasb length count.
+19E58: 'sub_19E58' -> 'strncpy'
+    bounded copy (max length arg_4, null-terminates within bound); called by hasFileExtension to extract just the found extension substring.
+1960C: 'sub_1960C' -> '_exit'
+    calls the single registered exit hook (word_1ED20, see atexit below) if set, then INT 21h/4Ch QUIT WITH EXIT CODE. Called from _flushall's caller chain -- program termination flushes all open streams first.
+19626: 'sub_19626' -> 'atexit'
+    registers a single exit-hook function pointer (word_1ED20, only one slot -- no chained list) consumed by _exit. Confirmed genuine functionality via that pairing, but never called from anywhere in this executable -- OUT.EXE evidently doesn't register an exit hook, even though the mechanism exists.
+1CC46: 'sub_1CC46' -> '_creat'
+    thin wrapper around _open: extracts the O_BINARY bit (0x8000, matching MSC's fcntl.h) from arg_2 and ORs in a fixed create/truncate flag combination. Never called from anywhere in this executable -- another unused linked-library sibling, same pattern as chainToExecutableAlt above.
+1C34C: 'sub_1C34C' -> 'checkRange19x9'
+    validates arg_0 in [0,0x13) and arg_2 in [0,9), returning 1 if both in range else 0. Never called from anywhere in this executable and completely isolated (no other function even shares tail code with it, unlike the other dead siblings found this session) -- purpose genuinely unknown, name describes only its confirmed mechanical behavior (two bounds checks), not a real guess at intent. Low confidence -- flagged as such rather than asserting a game-specific meaning.
+1D4F1: already '_doserrno' -- skipping
+1ED22: already 'errno' -- skipping
+1EC50: already '_fmode' -- skipping
+26024: already '_castleItemAllowance' -- skipping
+194CF: 'loc_194CF' -> 'execProgramEntry'
+    entry point buildAndChainExecutable/chainToExecutable actually call: findExecutableFile then buildAndChainExecutable. Lives at a `loc_` label nested inside _nheapinit's proc range purely because IDA's function-boundary analysis merged contiguous code with no gap -- not logically part of heap init at all.
+1950D: 'loc_1950D' -> 'translateDosErrorToErrno'
+    the shared failure tail nearly every _dos_* primitive jumps to: translates _doserrno to a POSIX-style errno via a byte lookup table (xlat, table at 1844h) and sets the carry-flag-equivalent failure return. Same IDB-hygiene caveat as execProgramEntry above -- nested inside _nheapinit's proc range, not actually heap-init code.
+
+[dry] nothing changed. Set DRY_RUN = False to apply.
+----- end target script output -----
+[*] finished executing apply_renames_out.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_renames_out.py']
+[*] reading apply_renames_out.py
+[*] executing apply_renames_out.py
+[*] captured stdout from target script:
+----- begin target script output -----
+1A81D: already 'getKeypressAndWaitRaw' -- skipping
+1A30C: already 'toLowerLetter' -- skipping
+1981D: already '_nmalloc' -- skipping
+198C0: already '_nfree' -- skipping
+19EA3: already '_nheapgrow' -- skipping
+1B0B5: already 'readAmount' -- skipping
+1B094: already 'isDigit' -- skipping
+1C8F2: already '_fread' -- skipping
+1C960: already '_fwrite' -- skipping
+1C6D4: already '_fclose' -- skipping
+1CC6B: already '_filbuf' -- skipping
+1CE05: already '_flsbuf' -- skipping
+1D30F: already 'allocFileBuffer' -- skipping
+1C791: already '_openfile' -- skipping
+1CA14: already '_open' -- skipping
+1C9CC: already 'releaseFileHandle' -- skipping
+1D0DD: already 'findFileHandleSlot' -- skipping
+190C0: already '_flushall' -- skipping
+19578: already '_dos_open' -- skipping
+19589: already '_dos_close' -- skipping
+19597: already '_dos_read' -- skipping
+195AB: already '_dos_lseek' -- skipping
+195CF: already '_dos_write' -- skipping
+195F8: already '_dos_ioctl_get' -- skipping
+1D36A: already '_dos_ioctl_set' -- skipping
+1D37C: already '_dos_creat' -- skipping
+1D38D: already '_dos_creatnew' -- skipping
+1D39A: already '_dos_creattemp' -- skipping
+163B3: already 'calcWeaponBuyPrice' -- skipping
+163D4: already 'calcWeaponSellPrice' -- skipping
+165CE: already 'drawWeaponShopLine' -- skipping
+163F2: already 'sellWeapons' -- skipping
+167F1: already 'calcArmorBuyPrice' -- skipping
+1680C: already 'calcArmorSellPrice' -- skipping
+169E8: already 'drawArmorShopLine' -- skipping
+16823: already 'sellArmor' -- skipping
+16BAC: already 'calcMagicBuyPrice' -- skipping
+16BC7: already 'drawMagicShopLine' -- skipping
+17052: already 'drawTransportShopLine' -- skipping
+192D4: already 'divmod32' -- skipping
+15469: already 'denyGetNoPermission' -- skipping
+15492: already 'getArmorTile' -- skipping
+154B5: already 'getWeaponTile' -- skipping
+154D8: already 'getFoodTile' -- skipping
+154FB: already 'getTownItem' -- skipping
+15B8A: already 'checkCaughtStealing' -- skipping
+14EA2: already 'showPillarInscription' -- skipping
+122F3: already 'findWidgetAtPosition' -- skipping
+1AB9D: already 'drawDeathGraphic' -- skipping
+1AC44: already 'waitTimerTicks' -- skipping
+1BA27: already 'drawSelectItemPanel' -- skipping
+19FF1: already 'initVideoModeCGA' -- skipping
+1C455: already 'initVideoModeEGA' -- skipping
+1C42E: already 'initVideoModeTandy' -- skipping
+1B231: already 'buildScanlineOffsetTable' -- skipping
+1937F: already 'setCriticalErrorHandler' -- skipping
+193D7: already 'criticalErrorHandler' -- skipping
+19418: already '_nheapinit' -- skipping
+1AE65: already 'soundEffectBump' -- skipping
+1AE7D: already 'soundEffectAck' -- skipping
+1AE9B: already 'soundEffectDamage' -- skipping
+1AEA2: already 'soundEffectMonsterAttack' -- skipping
+1AEA9: already 'soundEffectFootstep' -- skipping
+1AEC9: already 'soundEffectSuccess' -- skipping
+1AED0: already 'soundEffectFailure' -- skipping
+1AEEA: already 'soundEffectAttack' -- skipping
+1AF1E: already 'soundEffect8' -- skipping
+1AF37: already 'soundEffect9' -- skipping
+1908B: 'sub_1908B' -> 'chainToExecutable'
+    thin wrapper around execProgram (see below): pushes envp, &arg_2 (by address -- vector-style), arg_0. The one actually used -- called from writeInUseAndExit's retry loop when boarding a ship (chains to SPACE.EXE).
+190A6: 'sub_190A6' -> 'chainToExecutableAlt'
+    near-identical sibling of chainToExecutable, differing only in pushing arg_2 by value instead of by address (list-style vs. vector-style argument passing, echoing the classic execl/execv distinction). Never called from anywhere in this executable -- an unused linked-library variant, same pattern as the dead siblings found inside _nheapgrow and divmod32 earlier.
+19633: 'sub_19633' -> 'findExecutableFile'
+    locates the target program file: tries the bare filename first (hasFileExtension check), then name+".EXE", then name+".COM" (ensureFileExtension + _dos_getfileattr existence check each time). Returns 0 on success, -1 if none of the three candidates exist.
+196AC: 'sub_196AC' -> 'buildAndChainExecutable'
+    once findExecutableFile succeeds: measures and concatenates the argv array into a single DOS command-tail buffer (length-byte + chars + CR, the classic DOS EXEC parameter-block format) via _nmalloc'd scratch space, then calls execProgram to actually load and jump to it, then _nfree's the scratch buffer.
+19BED: 'sub_19BED' -> 'execProgram'
+    the actual overlay loader -- and the reason this cluster isn't a simple DOS EXEC wrapper: computes the target file's size (seek-to-end), validates it fits in available memory, resizes this process's own memory block (INT 21h/4Ah), copies a 192-word PSP template (unk_26EEA) into the new segment, copies the already-read program image into place, then **far-JMPs directly into it** (`jmp dword ptr cs:byte_19BE1`) -- no INT 21h/4Bh EXEC call anywhere in this function. This confirms OUT.EXE, SPACE.EXE, etc. chain to each other via a custom in-process overlay switch, not real DOS child-process spawning.
+19969: 'sub_19969' -> 'hasFileExtension'
+    scans a filename backward from the end for '.' before hitting '\'/'/' (i.e. within the last path component only) via a small lookup table (word_26E30); calls strncpy to extract the found extension via a helper. Used by findExecutableFile to decide whether to try appending .EXE/.COM.
+199EA: 'sub_199EA' -> 'ensureFileExtension'
+    copies src to dest while tracking the last '.'/'/'/'\' position; if the source had no extension, appends '.' + the given extension string via strcpy. The classic _splitpath/_makepath-family 'default extension' helper.
+19E18: 'sub_19E18' -> '_dos_getfileattr'
+    AH=43h/AL=00h GET FILE ATTRIBUTES -- used purely as a file-exists check (return value discarded beyond success/fail) by findExecutableFile. Named to match the existing _dos_* raw-DOS-primitive convention.
+19E2C: 'sub_19E2C' -> 'strcpy'
+    plain lodsb/stosb copy-until-null, returns dest.
+19E41: 'sub_19E41' -> 'strlen'
+    plain repne-scasb length count.
+19E58: 'sub_19E58' -> 'strncpy'
+    bounded copy (max length arg_4, null-terminates within bound); called by hasFileExtension to extract just the found extension substring.
+1960C: 'sub_1960C' -> '_exit'
+    calls the single registered exit hook (word_1ED20, see atexit below) if set, then INT 21h/4Ch QUIT WITH EXIT CODE. Called from _flushall's caller chain -- program termination flushes all open streams first.
+19626: 'sub_19626' -> 'atexit'
+    registers a single exit-hook function pointer (word_1ED20, only one slot -- no chained list) consumed by _exit. Confirmed genuine functionality via that pairing, but never called from anywhere in this executable -- OUT.EXE evidently doesn't register an exit hook, even though the mechanism exists.
+1CC46: 'sub_1CC46' -> '_creat'
+    thin wrapper around _open: extracts the O_BINARY bit (0x8000, matching MSC's fcntl.h) from arg_2 and ORs in a fixed create/truncate flag combination. Never called from anywhere in this executable -- another unused linked-library sibling, same pattern as chainToExecutableAlt above.
+1C34C: 'sub_1C34C' -> 'checkRange19x9'
+    validates arg_0 in [0,0x13) and arg_2 in [0,9), returning 1 if both in range else 0. Never called from anywhere in this executable and completely isolated (no other function even shares tail code with it, unlike the other dead siblings found this session) -- purpose genuinely unknown, name describes only its confirmed mechanical behavior (two bounds checks), not a real guess at intent. Low confidence -- flagged as such rather than asserting a game-specific meaning.
+1D4F1: already '_doserrno' -- skipping
+1ED22: already 'errno' -- skipping
+1EC50: already '_fmode' -- skipping
+26024: already '_castleItemAllowance' -- skipping
+194CF: 'loc_194CF' -> 'execProgramEntry'
+    entry point buildAndChainExecutable/chainToExecutable actually call: findExecutableFile then buildAndChainExecutable. Lives at a `loc_` label nested inside _nheapinit's proc range purely because IDA's function-boundary analysis merged contiguous code with no gap -- not logically part of heap init at all.
+1950D: 'loc_1950D' -> 'translateDosErrorToErrno'
+    the shared failure tail nearly every _dos_* primitive jumps to: translates _doserrno to a POSIX-style errno via a byte lookup table (xlat, table at 1844h) and sets the carry-flag-equivalent failure return. Same IDB-hygiene caveat as execProgramEntry above -- nested inside _nheapinit's proc range, not actually heap-init code.
+
+Done. Re-export the .asm/.idc and check the new names took, then update docs/roadmap.md's checklist.
+----- end target script output -----
+[*] finished executing apply_renames_out.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima1\ultima1_out.asm
+[*] gen_file(OFILE_ASM) returned 41659
+[*] exporting IDC to C:\dev\ultima1\ultima1_out.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima1\ultima1_out.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'identify.py', 'noexport']
+[*] reading identify.py
+[*] executing identify.py
+[*] captured stdout from target script:
+----- begin target script output -----
+root filename : OUT.EXE
+input file    : D:\GOG Games\Ultima 1\OUT.EXE
+entry point   : 0x0 (cs=0x1000)
+input md5     : 6a3301183223faea538c953ce94649f2
+
+segments:
+  sg013A       0x010000-0x01d480  (54400 bytes)
+  sg0E82       0x01d480-0x0286c0  (45632 bytes)
+  seg002       0x0286c0-0x029ac0  (5120 bytes)
+  seg003       0x029ac0-0x029ac1  (1 bytes)
+
+functions: 353 total, 349 named, 4 still sub_XXXXX
+
+structs (11): STR15, DungeonCell, DungeonColumn, DungeonMap, Point, Rect, Creature, LocationWidget, Savegame, MapLine, Map
+----- end target script output -----
+[*] finished executing identify.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'rank_unnamed_functions.py', 'noexport']
+[*] reading rank_unnamed_functions.py
+[*] executing rank_unnamed_functions.py
+[*] captured stdout from target script:
+----- begin target script output -----
+4 unnamed functions total
+
+1D126  sub_1D126    callers=  2 size= 199  <- _filbuf, sub_1D3AB
+1D3AB  sub_1D3AB    callers=  2 size= 213  <- sub_1D126, sub_1D1ED
+1D1ED  sub_1D1ED    callers=  1 size= 290  <- _flsbuf
+192AE  sub_192AE    callers=  0 size=  38  <- 
+----- end target script output -----
+[*] finished executing rank_unnamed_functions.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_renames_out.py', 'noexport']
+[*] reading apply_renames_out.py
+[*] executing apply_renames_out.py
+[*] captured stdout from target script:
+----- begin target script output -----
+1A81D: already 'getKeypressAndWaitRaw' -- skipping
+1A30C: already 'toLowerLetter' -- skipping
+1981D: already '_nmalloc' -- skipping
+198C0: already '_nfree' -- skipping
+19EA3: already '_nheapgrow' -- skipping
+1B0B5: already 'readAmount' -- skipping
+1B094: already 'isDigit' -- skipping
+1C8F2: already '_fread' -- skipping
+1C960: already '_fwrite' -- skipping
+1C6D4: already '_fclose' -- skipping
+1CC6B: already '_filbuf' -- skipping
+1CE05: already '_flsbuf' -- skipping
+1D30F: already 'allocFileBuffer' -- skipping
+1C791: already '_openfile' -- skipping
+1CA14: already '_open' -- skipping
+1C9CC: already 'releaseFileHandle' -- skipping
+1D0DD: already 'findFileHandleSlot' -- skipping
+190C0: already '_flushall' -- skipping
+19578: already '_dos_open' -- skipping
+19589: already '_dos_close' -- skipping
+19597: already '_dos_read' -- skipping
+195AB: already '_dos_lseek' -- skipping
+195CF: already '_dos_write' -- skipping
+195F8: already '_dos_ioctl_get' -- skipping
+1D36A: already '_dos_ioctl_set' -- skipping
+1D37C: already '_dos_creat' -- skipping
+1D38D: already '_dos_creatnew' -- skipping
+1D39A: already '_dos_creattemp' -- skipping
+163B3: already 'calcWeaponBuyPrice' -- skipping
+163D4: already 'calcWeaponSellPrice' -- skipping
+165CE: already 'drawWeaponShopLine' -- skipping
+163F2: already 'sellWeapons' -- skipping
+167F1: already 'calcArmorBuyPrice' -- skipping
+1680C: already 'calcArmorSellPrice' -- skipping
+169E8: already 'drawArmorShopLine' -- skipping
+16823: already 'sellArmor' -- skipping
+16BAC: already 'calcMagicBuyPrice' -- skipping
+16BC7: already 'drawMagicShopLine' -- skipping
+17052: already 'drawTransportShopLine' -- skipping
+192D4: already 'divmod32' -- skipping
+15469: already 'denyGetNoPermission' -- skipping
+15492: already 'getArmorTile' -- skipping
+154B5: already 'getWeaponTile' -- skipping
+154D8: already 'getFoodTile' -- skipping
+154FB: already 'getTownItem' -- skipping
+15B8A: already 'checkCaughtStealing' -- skipping
+14EA2: already 'showPillarInscription' -- skipping
+122F3: already 'findWidgetAtPosition' -- skipping
+1AB9D: already 'drawDeathGraphic' -- skipping
+1AC44: already 'waitTimerTicks' -- skipping
+1BA27: already 'drawSelectItemPanel' -- skipping
+19FF1: already 'initVideoModeCGA' -- skipping
+1C455: already 'initVideoModeEGA' -- skipping
+1C42E: already 'initVideoModeTandy' -- skipping
+1B231: already 'buildScanlineOffsetTable' -- skipping
+1937F: already 'setCriticalErrorHandler' -- skipping
+193D7: already 'criticalErrorHandler' -- skipping
+19418: already '_nheapinit' -- skipping
+1AE65: already 'soundEffectBump' -- skipping
+1AE7D: already 'soundEffectAck' -- skipping
+1AE9B: already 'soundEffectDamage' -- skipping
+1AEA2: already 'soundEffectMonsterAttack' -- skipping
+1AEA9: already 'soundEffectFootstep' -- skipping
+1AEC9: already 'soundEffectSuccess' -- skipping
+1AED0: already 'soundEffectFailure' -- skipping
+1AEEA: already 'soundEffectAttack' -- skipping
+1AF1E: already 'soundEffect8' -- skipping
+1AF37: already 'soundEffect9' -- skipping
+1908B: already 'chainToExecutable' -- skipping
+190A6: already 'chainToExecutableAlt' -- skipping
+19633: already 'findExecutableFile' -- skipping
+196AC: already 'buildAndChainExecutable' -- skipping
+19BED: already 'execProgram' -- skipping
+19969: already 'hasFileExtension' -- skipping
+199EA: already 'ensureFileExtension' -- skipping
+19E18: already '_dos_getfileattr' -- skipping
+19E2C: already 'strcpy' -- skipping
+19E41: already 'strlen' -- skipping
+19E58: already 'strncpy' -- skipping
+1960C: already '_exit' -- skipping
+19626: already 'atexit' -- skipping
+1CC46: already '_creat' -- skipping
+1C34C: already 'checkRange19x9' -- skipping
+1D126: 'sub_1D126' -> '_read'
+    the text-mode-aware read underneath _filbuf: looks up the handle slot, calls _dos_read, and for binary streams returns the raw count -- but for text-mode streams, walks the buffer stripping CR (0Dh) and stopping at Ctrl-Z (1Ah, DOS text EOF marker), then calls _lseek to correct the file position for the extra raw bytes consumed by the stripped CRs.
+1D1ED: 'sub_1D1ED' -> '_write'
+    text-mode-aware write underneath _flsbuf, mirroring _read: for append-mode streams (flag bit 8) seeks to end first via _lseek; binary streams call _dos_write directly; text-mode streams expand bare LF (0Ah) to CRLF before writing, tracking the previous char to avoid doubling an already-present CR.
+1D3AB: 'sub_1D3AB' -> '_lseek'
+    higher-level seek used by both _read (position correction after CR-stripping) and _write (seek-to-end for append mode) -- the CRT layer above _dos_lseek.
+1D4F1: already '_doserrno' -- skipping
+1ED22: already 'errno' -- skipping
+1EC50: already '_fmode' -- skipping
+26024: already '_castleItemAllowance' -- skipping
+194CF: already 'execProgramEntry' -- skipping
+1950D: already 'translateDosErrorToErrno' -- skipping
+
+[dry] nothing changed. Set DRY_RUN = False to apply.
+----- end target script output -----
+[*] finished executing apply_renames_out.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_renames_out.py']
+[*] reading apply_renames_out.py
+[*] executing apply_renames_out.py
+[*] captured stdout from target script:
+----- begin target script output -----
+1A81D: already 'getKeypressAndWaitRaw' -- skipping
+1A30C: already 'toLowerLetter' -- skipping
+1981D: already '_nmalloc' -- skipping
+198C0: already '_nfree' -- skipping
+19EA3: already '_nheapgrow' -- skipping
+1B0B5: already 'readAmount' -- skipping
+1B094: already 'isDigit' -- skipping
+1C8F2: already '_fread' -- skipping
+1C960: already '_fwrite' -- skipping
+1C6D4: already '_fclose' -- skipping
+1CC6B: already '_filbuf' -- skipping
+1CE05: already '_flsbuf' -- skipping
+1D30F: already 'allocFileBuffer' -- skipping
+1C791: already '_openfile' -- skipping
+1CA14: already '_open' -- skipping
+1C9CC: already 'releaseFileHandle' -- skipping
+1D0DD: already 'findFileHandleSlot' -- skipping
+190C0: already '_flushall' -- skipping
+19578: already '_dos_open' -- skipping
+19589: already '_dos_close' -- skipping
+19597: already '_dos_read' -- skipping
+195AB: already '_dos_lseek' -- skipping
+195CF: already '_dos_write' -- skipping
+195F8: already '_dos_ioctl_get' -- skipping
+1D36A: already '_dos_ioctl_set' -- skipping
+1D37C: already '_dos_creat' -- skipping
+1D38D: already '_dos_creatnew' -- skipping
+1D39A: already '_dos_creattemp' -- skipping
+163B3: already 'calcWeaponBuyPrice' -- skipping
+163D4: already 'calcWeaponSellPrice' -- skipping
+165CE: already 'drawWeaponShopLine' -- skipping
+163F2: already 'sellWeapons' -- skipping
+167F1: already 'calcArmorBuyPrice' -- skipping
+1680C: already 'calcArmorSellPrice' -- skipping
+169E8: already 'drawArmorShopLine' -- skipping
+16823: already 'sellArmor' -- skipping
+16BAC: already 'calcMagicBuyPrice' -- skipping
+16BC7: already 'drawMagicShopLine' -- skipping
+17052: already 'drawTransportShopLine' -- skipping
+192D4: already 'divmod32' -- skipping
+15469: already 'denyGetNoPermission' -- skipping
+15492: already 'getArmorTile' -- skipping
+154B5: already 'getWeaponTile' -- skipping
+154D8: already 'getFoodTile' -- skipping
+154FB: already 'getTownItem' -- skipping
+15B8A: already 'checkCaughtStealing' -- skipping
+14EA2: already 'showPillarInscription' -- skipping
+122F3: already 'findWidgetAtPosition' -- skipping
+1AB9D: already 'drawDeathGraphic' -- skipping
+1AC44: already 'waitTimerTicks' -- skipping
+1BA27: already 'drawSelectItemPanel' -- skipping
+19FF1: already 'initVideoModeCGA' -- skipping
+1C455: already 'initVideoModeEGA' -- skipping
+1C42E: already 'initVideoModeTandy' -- skipping
+1B231: already 'buildScanlineOffsetTable' -- skipping
+1937F: already 'setCriticalErrorHandler' -- skipping
+193D7: already 'criticalErrorHandler' -- skipping
+19418: already '_nheapinit' -- skipping
+1AE65: already 'soundEffectBump' -- skipping
+1AE7D: already 'soundEffectAck' -- skipping
+1AE9B: already 'soundEffectDamage' -- skipping
+1AEA2: already 'soundEffectMonsterAttack' -- skipping
+1AEA9: already 'soundEffectFootstep' -- skipping
+1AEC9: already 'soundEffectSuccess' -- skipping
+1AED0: already 'soundEffectFailure' -- skipping
+1AEEA: already 'soundEffectAttack' -- skipping
+1AF1E: already 'soundEffect8' -- skipping
+1AF37: already 'soundEffect9' -- skipping
+1908B: already 'chainToExecutable' -- skipping
+190A6: already 'chainToExecutableAlt' -- skipping
+19633: already 'findExecutableFile' -- skipping
+196AC: already 'buildAndChainExecutable' -- skipping
+19BED: already 'execProgram' -- skipping
+19969: already 'hasFileExtension' -- skipping
+199EA: already 'ensureFileExtension' -- skipping
+19E18: already '_dos_getfileattr' -- skipping
+19E2C: already 'strcpy' -- skipping
+19E41: already 'strlen' -- skipping
+19E58: already 'strncpy' -- skipping
+1960C: already '_exit' -- skipping
+19626: already 'atexit' -- skipping
+1CC46: already '_creat' -- skipping
+1C34C: already 'checkRange19x9' -- skipping
+1D126: 'sub_1D126' -> '_read'
+    the text-mode-aware read underneath _filbuf: looks up the handle slot, calls _dos_read, and for binary streams returns the raw count -- but for text-mode streams, walks the buffer stripping CR (0Dh) and stopping at Ctrl-Z (1Ah, DOS text EOF marker), then calls _lseek to correct the file position for the extra raw bytes consumed by the stripped CRs.
+1D1ED: 'sub_1D1ED' -> '_write'
+    text-mode-aware write underneath _flsbuf, mirroring _read: for append-mode streams (flag bit 8) seeks to end first via _lseek; binary streams call _dos_write directly; text-mode streams expand bare LF (0Ah) to CRLF before writing, tracking the previous char to avoid doubling an already-present CR.
+1D3AB: 'sub_1D3AB' -> '_lseek'
+    higher-level seek used by both _read (position correction after CR-stripping) and _write (seek-to-end for append mode) -- the CRT layer above _dos_lseek.
+1D4F1: already '_doserrno' -- skipping
+1ED22: already 'errno' -- skipping
+1EC50: already '_fmode' -- skipping
+26024: already '_castleItemAllowance' -- skipping
+194CF: already 'execProgramEntry' -- skipping
+1950D: already 'translateDosErrorToErrno' -- skipping
+
+Done. Re-export the .asm/.idc and check the new names took, then update docs/roadmap.md's checklist.
+----- end target script output -----
+[*] finished executing apply_renames_out.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima1\ultima1_out.asm
+[*] gen_file(OFILE_ASM) returned 41659
+[*] exporting IDC to C:\dev\ultima1\ultima1_out.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima1\ultima1_out.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'identify.py', 'noexport']
+[*] reading identify.py
+[*] executing identify.py
+[*] captured stdout from target script:
+----- begin target script output -----
+root filename : OUT.EXE
+input file    : D:\GOG Games\Ultima 1\OUT.EXE
+entry point   : 0x0 (cs=0x1000)
+input md5     : 6a3301183223faea538c953ce94649f2
+
+segments:
+  sg013A       0x010000-0x01d480  (54400 bytes)
+  sg0E82       0x01d480-0x0286c0  (45632 bytes)
+  seg002       0x0286c0-0x029ac0  (5120 bytes)
+  seg003       0x029ac0-0x029ac1  (1 bytes)
+
+functions: 353 total, 352 named, 1 still sub_XXXXX
+
+structs (11): STR15, DungeonCell, DungeonColumn, DungeonMap, Point, Rect, Creature, LocationWidget, Savegame, MapLine, Map
+----- end target script output -----
+[*] finished executing identify.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
