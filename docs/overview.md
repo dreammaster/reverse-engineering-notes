@@ -22,9 +22,9 @@ identified and renamed in any other IDB it also happens to appear in.
 
 | IDB | Root file | Role (best guess, to confirm) | Functions named | Structs |
 |---|---|---|---|---|
-| `ultima1.idb` | `ULTIMA.EXE` | Title/launcher — likely chains to the others | 39 / 100 | `STR15`, `Point`, `Rect`, `Savegame` |
+| `ultima1.idb` | `ULTIMA.EXE` | Title screen / attract mode, launches `GEN.EXE`/`OUT.EXE` | 61 / 100 | `STR15`, `Point`, `Rect`, `Savegame` |
 | `ultima1_gen.idb` | `GEN.EXE` | Character generation | 44 / 113 | + `Creature` |
-| `ultima1_out.idb` | `OUT.EXE` | Overworld/towns/dungeons (outdoor engine) | 266 / 353 | + `DungeonCell`, `DungeonColumn`, `DungeonMap`, `LocationWidget`, `MapLine`, `Map` |
+| `ultima1_out.idb` | `OUT.EXE` | Overworld/towns/dungeons (outdoor engine) | 352 / 353 | + `DungeonCell`, `DungeonColumn`, `DungeonMap`, `LocationWidget`, `MapLine`, `Map` |
 | `ultima1_space.idb` | `SPACE.EXE` | Space combat minigame | 156 / 210 | + `DuneonRow`, `DungeonMap` (space variant), `SpaceMapShip`, `SpaceMapCell`, `SpaceMapY`, `SpaceMap`, `FightData`, `JumpEntry` |
 | `ultima1_mondain.idb` | `MONDAIN.EXE` | Unknown — essentially unstarted | 1 / 191 | none |
 
@@ -503,3 +503,55 @@ is the one exception with a hedged, low-confidence name: two clean
 bounds checks (`[0,0x13)` and `[0,9)`) with no callers and no shared
 tail code to lean on for context, so its actual purpose is genuinely
 unknown — named for its mechanical behavior only, not asserted intent.
+
+## ULTIMA.EXE — findings log
+
+Started 2026-08-19, per Paul's request to switch focus here (title
+screen / character-creation launch logic, likely to give useful
+context before diving into GEN.EXE). Was 39/100 functions named
+before this pass. First read through `_main`'s top-level flow: builds
+the initial CRT `FILE` table for stdin/stdout/stderr, checks
+`argv[1][0] == 'C'` (likely a color/mono video-mode override flag,
+common for early-80s DOS games — not confirmed yet), then runs
+`checkMem`, `showCopyrightTitle`, `loadLogo`, conditionally
+`decodeCastleEGA`, then loops forever alternating `showTitle1`/
+`showTitle2` — the attract-mode title screen. No character-generation-
+specific names appear among the already-named functions, consistent
+with `GEN.EXE` (a separate executable) owning that instead; expect
+ULTIMA.EXE to hand off to `GEN.EXE` via the same overlay-chaining
+mechanism decoded in OUT.EXE once a key is pressed at the title
+screen.
+
+### ULTIMA.EXE CRT layer transferred from OUT.EXE
+
+`loadLogo` opens `"castle.4"`/`"castle.16"` (raw CGA/EGA framebuffer
+dumps of the castle image, not compressed) via a `fopen` whose body
+matched OUT.EXE's `_fopen`/`_openfile` FILE-table-walk shape exactly,
+which was the tell: **ULTIMA.EXE links the same Microsoft C runtime
+object files as OUT.EXE**, just at different addresses. Cross-checked
+by mapping every `INT 21h` call in the executable (same technique
+used for OUT.EXE) and confirmed by direct reads rather than shape
+inference alone — every single candidate matched byte-for-byte,
+several even matching OUT.EXE's exact function size (`_flsbuf`: 728
+bytes in both; `_open`: 562 bytes in both).
+
+Named 22 functions + 2 locations + 2 globals in one pass:
+`_dos_open/close/read/lseek/write/ioctl_get/ioctl_set/creat/creatnew/
+creattemp`, `_nheapinit`, `setCriticalErrorHandler`,
+`criticalErrorHandler`, `translateDosErrorToErrno`, `_open`,
+`_openfile`, `_fread`, `_fclose`, `_flsbuf`, `_nfree`, `_nmalloc`,
+`_nheapgrow`, `releaseFileHandle`, `_exit`, `errno`, `_doserrno`. Same
+IDB-hygiene quirk as OUT.EXE too: `criticalErrorHandler` and
+`translateDosErrorToErrno` are both nested inside `_nheapinit`'s proc
+range (IDA merged contiguous code with no gap) rather than being
+recognized as separate functions — named as locations rather than
+fixing the boundary, same tradeoff as before.
+
+**Not yet found here**: `_filbuf`, `_fwrite`, `allocFileBuffer`,
+`findFileHandleSlot`, `_flushall`, `_read`/`_write`/`_lseek` (the
+text-mode CRT layer), `atexit`, `_creat`. Likely present somewhere in
+the remaining 39 `sub_XXXXX` (this executable barely uses file I/O —
+just reading two fixed image files — so several of OUT.EXE's I/O
+functions may simply be unused/uncalled here, same as `atexit`/`_creat`
+turned out to be in OUT.EXE). Not chased further yet — see
+roadmap.md.

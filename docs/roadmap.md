@@ -168,9 +168,52 @@ combat routine, and CRT subsystem in this executable has been traced
 and named. Good stopping point to call this executable done and move
 to the next one.
 
+## ULTIMA.EXE — next steps
+
+Switched focus here 2026-08-19 per Paul's request — title screen/
+character-creation launch logic, likely to inform the reimplementation
+early. Was 39/100 named; exported `.asm`/`.idc` for the first time.
+
+- [x] First renaming pass: recognized this executable links the exact
+      same CRT object files as OUT.EXE and transferred 22 functions +
+      2 locations + 2 globals by direct-read confirmation (not just
+      shape inference) — the full `_dos_*`/`_n{malloc,free,heapgrow,
+      heapinit}`/`_open`/`_openfile`/`_fread`/`_fclose`/`_flsbuf`/
+      `errno`/`_doserrno` cluster, plus the critical-error-handler pair.
+      61/100 functions now named (61%). Full writeup in
+      [overview.md](overview.md#ultimaexe-crt-layer-transferred-from-outexe).
+- [ ] Still missing from the transferred CRT cluster: `_filbuf`,
+      `_fwrite`, `allocFileBuffer`, `findFileHandleSlot`, `_flushall`,
+      `_read`/`_write`/`_lseek`, `atexit`, `_creat` — likely present in
+      the remaining 39 `sub_XXXXX` but not yet located; this executable
+      does very little file I/O (just two fixed image reads) so some
+      may simply be unused/uncalled here.
+- [ ] **Confirm the overlay-chaining hypothesis**: does ULTIMA.EXE
+      chain to `GEN.EXE` for character creation, using the same
+      no-DOS-EXEC overlay loader decoded in OUT.EXE
+      (`execProgram`/`findExecutableFile`/etc.)? `sub_11C93` (3
+      callers, two of them **data references** rather than code —
+      possibly a jump table, unlike OUT.EXE's plain-code-caller
+      pattern) calling `sub_12A1A` calling `sub_130F4` (555 bytes,
+      same size as OUT.EXE's `execProgram`) is the leading candidate —
+      not yet confirmed by reading, just flagged by the size/shape
+      match. This is probably the single highest-value remaining
+      finding for understanding the game's overall structure.
+- [ ] `sub_1153D` (1245 bytes, the single largest unnamed function in
+      this executable, notably *larger* than anything found in
+      OUT.EXE's whole CRT/game-logic sweep) is called from
+      `writeString2_mb` (a name from prior work, "mb" suggesting
+      "multi-byte" — possibly a proportional/variable-width font
+      renderer for the title screen's text). Worth investigating early
+      since large text-rendering logic is directly useful for the
+      reimplementation's UI layer.
+- [ ] `argv[1][0] == 'C'` check in `_main` (sets `word_188F8`) not yet
+      understood — candidate hypothesis is a color/mono video-mode
+      command-line override, unconfirmed.
+
 ## Per-executable next steps (not yet started)
 
-`ultima1_space`, `ultima1_gen`, `ultima1`, `ultima1_mondain` — untouched
-this session beyond the initial `identify.py` cataloging in
-overview.md. Pick up next, per the priority order above (`ultima1_space`
-is furthest along of the remaining four).
+`ultima1_space`, `ultima1_gen`, `ultima1_mondain` — untouched this
+session beyond the initial `identify.py` cataloging in overview.md.
+Pick up after `ultima1` (`ultima1_space` is furthest along of the
+remaining three).
