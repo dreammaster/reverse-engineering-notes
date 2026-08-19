@@ -26,12 +26,14 @@ identified and renamed in any other IDB it also happens to appear in.
 | `ultima1_gen.idb` | `GEN.EXE` | Character generation / continue, chains to `OUT.EXE` | 113 / 113 | + `Creature` |
 | `ultima1_out.idb` | `OUT.EXE` | Overworld/towns/dungeons (outdoor engine) | 352 / 353 | + `DungeonCell`, `DungeonColumn`, `DungeonMap`, `LocationWidget`, `MapLine`, `Map` |
 | `ultima1_space.idb` | `SPACE.EXE` | Space combat minigame, chains back to `OUT.EXE` | 210 / 210 | + `DuneonRow`, `DungeonMap` (space variant), `SpaceMapShip`, `SpaceMapCell`, `SpaceMapY`, `SpaceMap`, `FightData`, `JumpEntry` |
-| `ultima1_mondain.idb` | `MONDAIN.EXE` | Unknown — essentially unstarted | 1 / 191 | none |
+| `ultima1_mondain.idb` | `MONDAIN.EXE` | The "confront Mondain" special encounter, chained from `OUT.EXE`'s `board` at the "Mondain's Gate to Hell" location, chains back to `OUT.EXE` on exit | 191 / 191 | none yet |
 
-Counts captured 2026-08-19 via `ida_scripts/identify.py` (see below) —
+Counts captured 2026-08-20 via `ida_scripts/identify.py` (see below) —
 `ultima1_out` and `ultima1_space` have substantial prior work from
 earlier sessions; `ultima1.idb` and `ultima1_gen.idb` have moderate
-partial work; `ultima1_mondain.idb` is effectively virgin territory.
+partial work; `ultima1_mondain.idb` went from 1/191 (a BinDiff pass
+against `ultima1_out` transferred 133 more names before this session's
+work started) to fully named in one pass — see below.
 
 All five are 16-bit real-mode MS-DOS `MZ` executables, consistent with
 the 1986/1987 DOS port. Each IDB's `dseg`/`sg*` segments haven't been
@@ -873,3 +875,116 @@ across 4 passes. All four of `ULTIMA.EXE`/`GEN.EXE`/`OUT.EXE`/
 `SPACE.EXE` are now fully or near-fully named (only `OUT.EXE` has one
 deliberately-unnamed dead function left). Only `MONDAIN.EXE` (1/191)
 remains essentially unstarted.
+
+## `MONDAIN.EXE` — findings log
+
+### The whole remaining cluster is one thing: the Mondain encounter
+
+Paul ran BinDiff against `ultima1_out` before this session and applied
+the matches, bringing this IDB from 1/191 to 134/191 named — all of it
+shared CRT/engine code byte-identical to OUT.EXE. The 57 functions
+BinDiff couldn't match turned out to be almost entirely **one
+self-contained cluster**: everything reachable from `start2`'s single
+callee, a 680-byte far proc now named `mondainMainLoop`. OUT.EXE's
+`board` function chains to `"mondain.exe"` (string `aMondain_exe`,
+xref `board+109`) — the special final-confrontation location "Mondain's
+Gate to Hell" (also present in SPACE.EXE's location table) boards into
+this executable instead of the normal town/castle overlay. On exit,
+`endEncounter` → `writeInUseAndExit` chains back to `"out.exe"`,
+confirming the round trip.
+
+### Decoding message text unlocked exact naming
+
+Early reads of this cluster showed lots of `mov ax, <small hex>; push
+ax; call writeString`-style calls where the "message" was just a bare
+numeric immediate — no `offset aXxx` operand for IDA to have turned
+into a string xref. Tracing `writeString`'s body
+(`mov si, [bp+arg_0]` then dereferencing `[si]` with the default `DS`)
+showed these immediates are meant to be read as near-pointer offsets
+into `dseg`, which stays the active data segment for the whole program.
+Wrote a throwaway helper (`ida_scripts/dump_msg_strings.py`, kept in
+the repo since it's generically reusable) to resolve `dseg_base +
+offset` and print the string — confirmed correct immediately (0x264 →
+`"Blocked!"`, 0x287 → `"Hit Mondain! "`, 0x3FE → `"Board?"`, etc.).
+
+This turned what would otherwise have been a lot of guesswork into
+precise naming: the entire per-letter command dispatch table in
+`mondainMainLoop` could be identified by the literal prompt text each
+handler prints (`"Board?"`, `"Drop?"`, `"Get (Gem)"`, `"Cast "`, `"Quit
+...is not allowed!"`, etc.), not just by structural shape.
+
+### The encounter, mechanically
+
+- A 19×9 (`0x13 × 9`) map, loaded via 3 `readFile` calls at startup,
+  with the player at `(playerMapX, playerMapY)` and Mondain at
+  `(mondainMapX, mondainMapY)` (his tile's occupant-state byte is
+  always 6).
+- Arrow-key movement (`moveOrMeleeAttack`) either walks into an empty
+  cell, is blocked by Mondain's own tile, or — if some other occupant
+  is there — deals damage and, once player and Mondain are adjacent
+  (`isAdjacentToMondain`), sets `combatActiveFlag`, which is the gate
+  that turns on Mondain's whole turn-based AI (`mondainTakeTurn`,
+  `updateMondainState`).
+- Most letter commands (`B`oard, `D`rop, `E`nter, `F`ire, `H`yperjump,
+  `K`limb, `O`pen, `Q`uit, `S`teal, `T`ransact, `U`nlock, `V`iew,
+  `X`it) are flatly disabled here — each just echoes its normal-game
+  prompt and beeps (`cmdBoardDisabled`, `cmdTransactDisabled`, etc.),
+  confirming this is a deliberately constrained arena distinct from
+  the normal town/dungeon command set.
+- Two real actions are functional: `G`et (`attackGem`, prompt `"Get
+  (Gem)"`) damages Mondain directly by 3/4 of his current HP once
+  standing next to him, eventually setting `gemDestroyedFlag`; and `C`
+  (`useSelectedItem`, "Cast") fires one of 5 usable spells
+  (`applySpellEffect` indices `{3,7,8,9,10}`: magic-missile attack,
+  teleport self, place/remove a barrier tile, or the killing
+  incantation `spellEffectInterficioNunc` — literally Latin for "I
+  kill now", which **backfires and doubles Mondain's HP** if the
+  player isn't close enough (`isWithinRange7`) — the exact precondition
+  for it to actually kill him wasn't fully pinned down, see
+  roadmap.md). `I`nform (`inspectMondainAura`) reports whether
+  Mondain's protective aura is weakened, keyed off `gemDestroyedFlag`.
+  Ranged attacks with the currently-readied wand (`attackWithWand`,
+  `cityCastleAttackDir`'s `dir==7` special case) are also available —
+  5 dispatch-table entries reach it with different tier arguments,
+  exact per-key mapping unconfirmed.
+- Mondain has his own HP-driven state machine (`updateMondainState`):
+  healthy (`mondainPhase`=2) → wounded below 500 HP (phase 0xB,
+  regenerates and tries to flee via `tryMoveMondain`) → dead at 0 HP
+  (phase 4, triggers `mondainDefeatedFlag` if `gemDestroyedFlag` was
+  also set, then `playMondainDefeatCutscene`). His turn
+  (`mondainTakeTurn`) picks between a direct attack (`dungeonAttack`,
+  pre-existing BinDiff-transferred name that turned out to still fit —
+  it damages the player) and a special ability roll
+  (`mondainSpecialAttack`: weak hit / drain-a-resource curse / a
+  screen-flash "big" hit).
+- Losing (`playerHits` or `playerFood` hitting 0) and presumably
+  winning both funnel through `endEncounter` →
+  `writeInUseAndExit`, which shows a disk-swap prompt loop
+  (`insertDisk`) and chains back to `out.exe`. Whether the win path
+  (`playMondainDefeatCutscene`) rejoins this same exit or has a
+  separate continuation wasn't confirmed — see roadmap.md.
+
+### One BinDiff-transferred name was wrong: `viewChange` → `cmdTransactDisabled`
+
+BinDiff matched a function here to OUT.EXE's real `viewChange` purely
+by code shape — `writeStringNewline` + a one-line-message-and-beep
+helper, the same shape as several genuinely-disabled command stubs in
+this cluster. Once the message text was decodable, it turned out to
+print `"Transact...Mondain will" / "not negotiate!"` — the `T`ransact
+command's refusal message, nothing to do with view-switching. Renamed
+to `cmdTransactDisabled`; the real, previously-unnamed `"View?"` stub
+is now `cmdViewDisabled`. Same category of issue as
+`writeString2_mb`→`printStartupMessage` in ULTIMA.EXE and the
+`_savegame._hits`/`_strength` mixup in GEN.EXE: a structurally-matched
+or coincidentally-plausible name that doesn't survive checking against
+what the function actually does. Worth this same skepticism check
+if any other BinDiff-transferred name in this IDB stops making sense.
+
+**Session total for MONDAIN.EXE**: 134 → 191 functions named (100%),
+in one pass, plus one name fix (`viewChange` → `cmdTransactDisabled`)
+and 18 global renames (`playerHits`, `mondainHits`, `mondainPhase`,
+`combatActiveFlag`, etc.) All five executables are now fully named.
+Remaining work: 0 structs defined in this IDB (see roadmap.md), and the
+few open semantic questions flagged above (`spellEffectInterficioNunc`'s
+real kill condition, the win-path exit sequence, `cmdHyperjumpDisabled`'s
+stray `word_15B00 = 1` side effect).
