@@ -290,6 +290,28 @@ playtime-gated unlock calculation (echoing the simpler
 caller), but the exact formula isn't pieced together yet. Follow-up in
 roadmap.md.
 
+### OUT.EXE `get` command — castle item theft, decoded
+
+Fourth pass, same session. The `get` command's town/castle handler
+(`getTownItem`, `0x154FB`) reads the `_townCityMap` tile under the
+player and dispatches to `getFoodTile`/`getArmorTile`/`getWeaponTile`
+by tile code (`'9'`/`'7'`/`';'`) — these tile codes appear to be
+castle-room dressing specifically (tables, armor stands, weapon
+racks), matching the "king's permission" framing, not ordinary town
+tiles.
+
+Two limits gate a successful `get`:
+- **`_castleItemAllowance`** (`word_26024`) — set to 9 on
+  `enterCastle`, 0 elsewhere; decremented per successful grab. Hits 0
+  → `denyGetNoPermission` ("Thou hast not the king's permission!").
+- **`checkCaughtStealing`** (`0x15B8A`, shared by the already-named
+  `findArmor`/`findWeapon`/`findFood`) — rolls 1-255; catches the
+  player if the roll is low (`<0x26`) or guards are already hostile,
+  **except** Thief-class characters (`_savegame._class==3`), who
+  always succeed silently. A catch prints "Oh no! Thou wert caught!"
+  and sets `_guardsHostile` — turning every guard in the castle
+  hostile from that point on.
+
 ### `playSound` / `playFX` — sound-effect jump table, not yet decoded
 
 `playSound(effectNum)` (already named) dispatches through a 10-entry

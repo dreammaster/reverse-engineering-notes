@@ -74,6 +74,13 @@ OUT.EXE**.
       `_moveCtr`, `0x7FFF`, and `1500`) — mechanically confirmed as
       32-bit division, but the game-mechanic meaning of the two chained
       calls isn't nailed down. See overview.md.
+- [x] Fourth renaming pass: decoded the `get` command's castle
+      item-theft mechanic — `getTownItem`, `getArmorTile`/
+      `getWeaponTile`/`getFoodTile`, `denyGetNoPermission`,
+      `checkCaughtStealing`, and the `_castleItemAllowance` global. 6
+      renames. Full writeup in
+      [overview.md](overview.md#outexe-get-command--castle-item-theft-decoded).
+      312/353 functions now named, 41 `sub_XXXXX` remain.
 - [ ] Decode `playSound`'s 10-entry effect jump table (`off_1F94A`,
       handlers `0x1AE65`-`0x1AF37`) by cross-referencing `playFX` call
       sites' literal `effectNum` arguments against game context — see

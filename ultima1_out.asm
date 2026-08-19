@@ -10664,7 +10664,7 @@ locationNum     = word ptr  2
                 mov     _guardsHostile, ax
                 mov     _hasCastleKey, ax
                 mov     _freeingPrincess, ax
-                mov     word_26024, ax
+                mov     _castleItemAllowance, ax
                 mov     ax, 684
                 imul    _mapStyle
                 mov     si, ax
@@ -11565,8 +11565,8 @@ fire            endp
 
 ; Attributes: bp-based frame
 
-sub_15469       proc near               ; CODE XREF: sub_15492+D↓p
-                                        ; sub_154B5+D↓p ...
+denyGetNoPermission proc near           ; CODE XREF: getArmorTile+D↓p
+                                        ; getWeaponTile+D↓p ...
                 push    bp
                 mov     bp, sp
                 mov     ax, offset aBlankLine
@@ -11587,98 +11587,98 @@ sub_15469       proc near               ; CODE XREF: sub_15492+D↓p
                 mov     sp, bp
                 pop     bp
                 retn
-sub_15469       endp
+denyGetNoPermission endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: fpd=4
 
-sub_15492       proc near               ; CODE XREF: sub_154FB:loc_15538↓p
+getArmorTile    proc near               ; CODE XREF: getTownItem:loc_15538↓p
                 push    bp
                 sub     sp, 2
                 mov     bp, sp
-                cmp     word_26024, 0
+                cmp     _castleItemAllowance, 0
                 jnz     short loc_154A4
-                call    sub_15469
+                call    denyGetNoPermission
                 jmp     short loc_154B0
 ; ---------------------------------------------------------------------------
 
-loc_154A4:                              ; CODE XREF: sub_15492+B↑j
-                dec     word_26024
+loc_154A4:                              ; CODE XREF: getArmorTile+B↑j
+                dec     _castleItemAllowance
                 xor     ax, ax
                 push    ax
                 call    findArmor
                 mov     sp, bp
 
-loc_154B0:                              ; CODE XREF: sub_15492+10↑j
+loc_154B0:                              ; CODE XREF: getArmorTile+10↑j
                 add     sp, 2
                 pop     bp
                 retn
-sub_15492       endp
+getArmorTile    endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: fpd=4
 
-sub_154B5       proc near               ; CODE XREF: sub_154FB:loc_1553D↓p
+getWeaponTile   proc near               ; CODE XREF: getTownItem:loc_1553D↓p
                 push    bp
                 sub     sp, 2
                 mov     bp, sp
-                cmp     word_26024, 0
+                cmp     _castleItemAllowance, 0
                 jnz     short loc_154C7
-                call    sub_15469
+                call    denyGetNoPermission
                 jmp     short loc_154D3
 ; ---------------------------------------------------------------------------
 
-loc_154C7:                              ; CODE XREF: sub_154B5+B↑j
-                dec     word_26024
+loc_154C7:                              ; CODE XREF: getWeaponTile+B↑j
+                dec     _castleItemAllowance
                 xor     ax, ax
                 push    ax
                 call    findWeapon
                 mov     sp, bp
 
-loc_154D3:                              ; CODE XREF: sub_154B5+10↑j
+loc_154D3:                              ; CODE XREF: getWeaponTile+10↑j
                 add     sp, 2
                 pop     bp
                 retn
-sub_154B5       endp
+getWeaponTile   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: fpd=4
 
-sub_154D8       proc near               ; CODE XREF: sub_154FB+38↓p
+getFoodTile     proc near               ; CODE XREF: getTownItem+38↓p
                 push    bp
                 sub     sp, 2
                 mov     bp, sp
-                cmp     word_26024, 0
+                cmp     _castleItemAllowance, 0
                 jnz     short loc_154EA
-                call    sub_15469
+                call    denyGetNoPermission
                 jmp     short loc_154F6
 ; ---------------------------------------------------------------------------
 
-loc_154EA:                              ; CODE XREF: sub_154D8+B↑j
-                dec     word_26024
+loc_154EA:                              ; CODE XREF: getFoodTile+B↑j
+                dec     _castleItemAllowance
                 xor     ax, ax
                 push    ax
                 call    findFood
                 mov     sp, bp
 
-loc_154F6:                              ; CODE XREF: sub_154D8+10↑j
+loc_154F6:                              ; CODE XREF: getFoodTile+10↑j
                 add     sp, 2
                 pop     bp
                 retn
-sub_154D8       endp
+getFoodTile     endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: fpd=8
 
-sub_154FB       proc near               ; CODE XREF: get+1A↓p
+getTownItem     proc near               ; CODE XREF: get+1A↓p
 
 var_4           = word ptr -4
 
@@ -11704,32 +11704,32 @@ var_4           = word ptr -4
                 jz      short loc_15538
                 cmp     ax, 39h ; '9'
                 jnz     short loc_15542
-                call    sub_154D8
+                call    getFoodTile
                 jmp     short loc_1554B
 ; ---------------------------------------------------------------------------
 
-loc_15538:                              ; CODE XREF: sub_154FB+31↑j
-                call    sub_15492
+loc_15538:                              ; CODE XREF: getTownItem+31↑j
+                call    getArmorTile
                 jmp     short loc_1554B
 ; ---------------------------------------------------------------------------
 
-loc_1553D:                              ; CODE XREF: sub_154FB+2C↑j
-                call    sub_154B5
+loc_1553D:                              ; CODE XREF: getTownItem+2C↑j
+                call    getWeaponTile
                 jmp     short loc_1554B
 ; ---------------------------------------------------------------------------
 
-loc_15542:                              ; CODE XREF: sub_154FB+36↑j
+loc_15542:                              ; CODE XREF: getTownItem+36↑j
                 mov     ax, offset aNothingHere ; " - nothing here!"
                 push    ax              ; msg
                 call    writeStringNewline
                 mov     sp, bp
 
-loc_1554B:                              ; CODE XREF: sub_154FB+3B↑j
-                                        ; sub_154FB+40↑j ...
+loc_1554B:                              ; CODE XREF: getTownItem+3B↑j
+                                        ; getTownItem+40↑j ...
                 add     sp, 6
                 pop     bp
                 retn
-sub_154FB       endp
+getTownItem     endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -11747,7 +11747,7 @@ get             proc near               ; CODE XREF: main:jmp_get↓p
                 mov     sp, bp
                 cmp     _mapType, LOCTYPE_CASTLE
                 jnz     short loc_1556F
-                call    sub_154FB
+                call    getTownItem
                 jmp     short loc_15595
 ; ---------------------------------------------------------------------------
 
@@ -12601,7 +12601,7 @@ quit            endp
 
 ; Attributes: fpd=8
 
-sub_15B8A       proc near               ; CODE XREF: findWeapon+11↓p
+checkCaughtStealing proc near           ; CODE XREF: findWeapon+11↓p
                                         ; findFood+11↓p ...
 
 var_6           = word ptr -6
@@ -12623,10 +12623,10 @@ var_4           = word ptr -4
                 cmp     ax, 26h ; '&'
                 jge     short loc_15BB6
 
-loc_15BB1:                              ; CODE XREF: sub_15B8A+20↑j
+loc_15BB1:                              ; CODE XREF: checkCaughtStealing+20↑j
                 mov     [bp+8+var_4], 1
 
-loc_15BB6:                              ; CODE XREF: sub_15B8A+25↑j
+loc_15BB6:                              ; CODE XREF: checkCaughtStealing+25↑j
                 cmp     [bp+8+var_4], 0
                 jnz     short loc_15BCA
                 cmp     _savegame._class, 3
@@ -12637,8 +12637,8 @@ loc_15BB6:                              ; CODE XREF: sub_15B8A+25↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_15BCA:                              ; CODE XREF: sub_15B8A+30↑j
-                                        ; sub_15B8A+37↑j
+loc_15BCA:                              ; CODE XREF: checkCaughtStealing+30↑j
+                                        ; checkCaughtStealing+37↑j
                 cmp     [bp+8+var_4], 0
                 jnz     short loc_15BDD
                 cmp     [bp+8+var_6], 4Dh ; 'M'
@@ -12649,8 +12649,8 @@ loc_15BCA:                              ; CODE XREF: sub_15B8A+30↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_15BDD:                              ; CODE XREF: sub_15B8A+44↑j
-                                        ; sub_15B8A+4A↑j
+loc_15BDD:                              ; CODE XREF: checkCaughtStealing+44↑j
+                                        ; checkCaughtStealing+4A↑j
                 mov     ax, offset aBlankLine
                 push    ax              ; msg
                 call    writeStringNewline
@@ -12664,14 +12664,14 @@ loc_15BDD:                              ; CODE XREF: sub_15B8A+44↑j
                 add     sp, 6
                 pop     bp
                 retn
-sub_15B8A       endp
+checkCaughtStealing endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: fpd=0Ah
 
-findWeapon      proc near               ; CODE XREF: sub_154B5+19↑p
+findWeapon      proc near               ; CODE XREF: getWeaponTile+19↑p
                                         ; steal+75↓p
 
 var_6           = word ptr -6
@@ -12684,7 +12684,7 @@ arg_0           = word ptr  2
                 mov     [bp+0Ah+var_4], 0
                 cmp     [bp+0Ah+arg_0], 0
                 jz      short loc_15C11
-                call    sub_15B8A
+                call    checkCaughtStealing
                 mov     [bp+0Ah+var_4], ax
 
 loc_15C11:                              ; CODE XREF: findWeapon+F↑j
@@ -12776,7 +12776,7 @@ findWeapon      endp
 
 ; Attributes: fpd=8
 
-findFood        proc near               ; CODE XREF: sub_154D8+19↑p
+findFood        proc near               ; CODE XREF: getFoodTile+19↑p
                                         ; steal+80↓p
 
 food            = word ptr -6
@@ -12789,7 +12789,7 @@ arg_0           = word ptr  2
                 mov     [bp+8+var_4], 0
                 cmp     [bp+8+arg_0], 0
                 jz      short loc_15CD1
-                call    sub_15B8A
+                call    checkCaughtStealing
                 mov     [bp+8+var_4], ax
 
 loc_15CD1:                              ; CODE XREF: findFood+F↑j
@@ -12844,7 +12844,7 @@ findFood        endp
 
 ; Attributes: fpd=0Ah
 
-findArmor       proc near               ; CODE XREF: sub_15492+19↑p
+findArmor       proc near               ; CODE XREF: getArmorTile+19↑p
                                         ; steal+6A↓p
 
 var_6           = word ptr -6
@@ -12857,7 +12857,7 @@ arg_0           = word ptr  2
                 mov     [bp+0Ah+var_4], 0
                 cmp     [bp+0Ah+arg_0], 0
                 jz      short loc_15D4B
-                call    sub_15B8A
+                call    checkCaughtStealing
                 mov     [bp+0Ah+var_4], ax
 
 loc_15D4B:                              ; CODE XREF: findArmor+F↑j
@@ -16661,7 +16661,7 @@ loc_1784A:                              ; CODE XREF: giveReward+36↑j
                 call    writeStringAt
                 mov     sp, bp
                 inc     _savegame._whiteGem
-                mov     word_26024, 9
+                mov     _castleItemAllowance, 9
 
 loc_17898:                              ; CODE XREF: giveReward+31↑j
                                         ; giveReward+7A↑j ...
@@ -31628,10 +31628,10 @@ aCannons        db 'cannons: ',0        ; DATA XREF: fire+65↑o
 ; char aLasers[]
 aLasers         db 'lasers: ',0         ; DATA XREF: fire+74↑o
 aThouHastNotThe db 'Thou hast not the king',27h,'s',0
-                                        ; DATA XREF: sub_15469+C↑o
-aPermission     db 'permission!',0      ; DATA XREF: sub_15469+15↑o
+                                        ; DATA XREF: denyGetNoPermission+C↑o
+aPermission     db 'permission!',0      ; DATA XREF: denyGetNoPermission+15↑o
 ; char aNothingHere[]
-aNothingHere    db ' - nothing here!',0 ; DATA XREF: sub_154FB:loc_15542↑o
+aNothingHere    db ' - nothing here!',0 ; DATA XREF: getTownItem:loc_15542↑o
                                         ; steal:loc_15E38↑o
 ; char aGet[]
 aGet            db 'Get',0              ; DATA XREF: get+A↑o
@@ -31693,7 +31693,7 @@ aQuit           db 'Quit - ',0          ; DATA XREF: quit+A↑o
 aOnlyAllowedOut db 'only allowed outdoors!',0 ; DATA XREF: quit+1A↑o
 ; char aOhNoThouWertCa[]
 aOhNoThouWertCa db 'Oh no!  Thou wert caught!',0
-                                        ; DATA XREF: sub_15B8A+5C↑o
+                                        ; DATA XREF: checkCaughtStealing+5C↑o
 ; char aThouDostFindA[]
 aThouDostFindA  db 'Thou dost find a',0 ; DATA XREF: findWeapon+2D↑o
 ; char aBagsOf[]
@@ -34481,8 +34481,8 @@ _hasCastleKey   dw ?                    ; DATA XREF: attackPerson+26A↑w
                                         ; enterCastle+3B↑w ...
 _isLordBritishCastle dw ?               ; DATA XREF: attackPerson+278↑r
                                         ; enter:loc_15377↑w
-word_26024      dw ?                    ; DATA XREF: enterCastle+41↑w
-                                        ; sub_15492+6↑r ...
+_castleItemAllowance dw ?               ; DATA XREF: enterCastle+41↑w
+                                        ; getArmorTile+6↑r ...
 _creaturesCount dw ?                    ; DATA XREF: writeInUseAndExit+16↑r
                                         ; castPrayer+BB↑r ...
 _moveCtr        dd ?                    ; DATA XREF: writeInUseAndExit+1F↑r

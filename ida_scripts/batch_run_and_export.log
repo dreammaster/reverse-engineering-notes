@@ -811,3 +811,181 @@ structs (11): STR15, DungeonCell, DungeonColumn, DungeonMap, Point, Rect, Creatu
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_renames_out.py', 'noexport']
+[*] reading apply_renames_out.py
+[*] executing apply_renames_out.py
+[*] captured stdout from target script:
+----- begin target script output -----
+1A81D: already 'getKeypressAndWaitRaw' -- skipping
+1A30C: already 'toLowerLetter' -- skipping
+1981D: already '_nmalloc' -- skipping
+198C0: already '_nfree' -- skipping
+19EA3: already '_nheapgrow' -- skipping
+1B0B5: already 'readAmount' -- skipping
+1B094: already 'isDigit' -- skipping
+1C8F2: already '_fread' -- skipping
+1C960: already '_fwrite' -- skipping
+1C6D4: already '_fclose' -- skipping
+1CC6B: already '_filbuf' -- skipping
+1CE05: already '_flsbuf' -- skipping
+1D30F: already 'allocFileBuffer' -- skipping
+1C791: already '_openfile' -- skipping
+1CA14: already '_open' -- skipping
+1C9CC: already 'releaseFileHandle' -- skipping
+1D0DD: already 'findFileHandleSlot' -- skipping
+190C0: already '_flushall' -- skipping
+19578: already '_dos_open' -- skipping
+19589: already '_dos_close' -- skipping
+19597: already '_dos_read' -- skipping
+195AB: already '_dos_lseek' -- skipping
+195CF: already '_dos_write' -- skipping
+195F8: already '_dos_ioctl_get' -- skipping
+1D36A: already '_dos_ioctl_set' -- skipping
+1D37C: already '_dos_creat' -- skipping
+1D38D: already '_dos_creatnew' -- skipping
+1D39A: already '_dos_creattemp' -- skipping
+163B3: already 'calcWeaponBuyPrice' -- skipping
+163D4: already 'calcWeaponSellPrice' -- skipping
+165CE: already 'drawWeaponShopLine' -- skipping
+163F2: already 'sellWeapons' -- skipping
+167F1: already 'calcArmorBuyPrice' -- skipping
+1680C: already 'calcArmorSellPrice' -- skipping
+169E8: already 'drawArmorShopLine' -- skipping
+16823: already 'sellArmor' -- skipping
+16BAC: already 'calcMagicBuyPrice' -- skipping
+16BC7: already 'drawMagicShopLine' -- skipping
+17052: already 'drawTransportShopLine' -- skipping
+192D4: already 'divmod32' -- skipping
+15469: 'sub_15469' -> 'denyGetNoPermission'
+    prints "Thou hast not the king's permission!" plus a failure sound (playFX(1)). Called when _castleItemAllowance is exhausted.
+15492: 'sub_15492' -> 'getArmorTile'
+    if _castleItemAllowance > 0, decrements it and calls findArmor; else denyGetNoPermission. One of 3 near-identical wrappers (getWeaponTile, getFoodTile) dispatched by getTownItem based on the map tile under the player.
+154B5: 'sub_154B5' -> 'getWeaponTile'
+    weapon counterpart of getArmorTile.
+154D8: 'sub_154D8' -> 'getFoodTile'
+    food counterpart of getArmorTile.
+154FB: 'sub_154FB' -> 'getTownItem'
+    the `get` command's handler for town/castle maps: reads the _townCityMap tile at the player's position and dispatches to getFoodTile ('9'), getArmorTile ('7'), or getWeaponTile (';'), else prints ' - nothing here!'. In practice these tile codes seem to appear only in castle room layouts (matching the 'king's permission' framing), not ordinary town tiles.
+15B8A: 'sub_15B8A' -> 'checkCaughtStealing'
+    guard-detection roll shared by findArmor/findWeapon/findFood (all three already named): rolls 1-255, catches the player if the roll is low (<0x26) or guards are already hostile -- unless the player's class is Thief (_savegame._class==3), which always succeeds silently. On a catch, prints "Oh no!  Thou wert caught!" and sets _guardsHostile.
+1D4F1: already '_doserrno' -- skipping
+1ED22: already 'errno' -- skipping
+1EC50: already '_fmode' -- skipping
+26024: 'word_26024' -> '_castleItemAllowance'
+    set to 9 on entering a castle (in enterCastle) and to 0 on entering other location types; decremented once per successful getArmorTile/getWeaponTile/getFoodTile call, and once it hits 0 further `get` attempts print "Thou hast not the king's permission!" via denyGetNoPermission.
+
+[dry] nothing changed. Set DRY_RUN = False to apply.
+----- end target script output -----
+[*] finished executing apply_renames_out.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_renames_out.py']
+[*] reading apply_renames_out.py
+[*] executing apply_renames_out.py
+[*] captured stdout from target script:
+----- begin target script output -----
+1A81D: already 'getKeypressAndWaitRaw' -- skipping
+1A30C: already 'toLowerLetter' -- skipping
+1981D: already '_nmalloc' -- skipping
+198C0: already '_nfree' -- skipping
+19EA3: already '_nheapgrow' -- skipping
+1B0B5: already 'readAmount' -- skipping
+1B094: already 'isDigit' -- skipping
+1C8F2: already '_fread' -- skipping
+1C960: already '_fwrite' -- skipping
+1C6D4: already '_fclose' -- skipping
+1CC6B: already '_filbuf' -- skipping
+1CE05: already '_flsbuf' -- skipping
+1D30F: already 'allocFileBuffer' -- skipping
+1C791: already '_openfile' -- skipping
+1CA14: already '_open' -- skipping
+1C9CC: already 'releaseFileHandle' -- skipping
+1D0DD: already 'findFileHandleSlot' -- skipping
+190C0: already '_flushall' -- skipping
+19578: already '_dos_open' -- skipping
+19589: already '_dos_close' -- skipping
+19597: already '_dos_read' -- skipping
+195AB: already '_dos_lseek' -- skipping
+195CF: already '_dos_write' -- skipping
+195F8: already '_dos_ioctl_get' -- skipping
+1D36A: already '_dos_ioctl_set' -- skipping
+1D37C: already '_dos_creat' -- skipping
+1D38D: already '_dos_creatnew' -- skipping
+1D39A: already '_dos_creattemp' -- skipping
+163B3: already 'calcWeaponBuyPrice' -- skipping
+163D4: already 'calcWeaponSellPrice' -- skipping
+165CE: already 'drawWeaponShopLine' -- skipping
+163F2: already 'sellWeapons' -- skipping
+167F1: already 'calcArmorBuyPrice' -- skipping
+1680C: already 'calcArmorSellPrice' -- skipping
+169E8: already 'drawArmorShopLine' -- skipping
+16823: already 'sellArmor' -- skipping
+16BAC: already 'calcMagicBuyPrice' -- skipping
+16BC7: already 'drawMagicShopLine' -- skipping
+17052: already 'drawTransportShopLine' -- skipping
+192D4: already 'divmod32' -- skipping
+15469: 'sub_15469' -> 'denyGetNoPermission'
+    prints "Thou hast not the king's permission!" plus a failure sound (playFX(1)). Called when _castleItemAllowance is exhausted.
+15492: 'sub_15492' -> 'getArmorTile'
+    if _castleItemAllowance > 0, decrements it and calls findArmor; else denyGetNoPermission. One of 3 near-identical wrappers (getWeaponTile, getFoodTile) dispatched by getTownItem based on the map tile under the player.
+154B5: 'sub_154B5' -> 'getWeaponTile'
+    weapon counterpart of getArmorTile.
+154D8: 'sub_154D8' -> 'getFoodTile'
+    food counterpart of getArmorTile.
+154FB: 'sub_154FB' -> 'getTownItem'
+    the `get` command's handler for town/castle maps: reads the _townCityMap tile at the player's position and dispatches to getFoodTile ('9'), getArmorTile ('7'), or getWeaponTile (';'), else prints ' - nothing here!'. In practice these tile codes seem to appear only in castle room layouts (matching the 'king's permission' framing), not ordinary town tiles.
+15B8A: 'sub_15B8A' -> 'checkCaughtStealing'
+    guard-detection roll shared by findArmor/findWeapon/findFood (all three already named): rolls 1-255, catches the player if the roll is low (<0x26) or guards are already hostile -- unless the player's class is Thief (_savegame._class==3), which always succeeds silently. On a catch, prints "Oh no!  Thou wert caught!" and sets _guardsHostile.
+1D4F1: already '_doserrno' -- skipping
+1ED22: already 'errno' -- skipping
+1EC50: already '_fmode' -- skipping
+26024: 'word_26024' -> '_castleItemAllowance'
+    set to 9 on entering a castle (in enterCastle) and to 0 on entering other location types; decremented once per successful getArmorTile/getWeaponTile/getFoodTile call, and once it hits 0 further `get` attempts print "Thou hast not the king's permission!" via denyGetNoPermission.
+
+Done. Re-export the .asm/.idc and check the new names took, then update docs/roadmap.md's checklist.
+----- end target script output -----
+[*] finished executing apply_renames_out.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima1\ultima1_out.asm
+[*] gen_file(OFILE_ASM) returned 41656
+[*] exporting IDC to C:\dev\ultima1\ultima1_out.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima1\ultima1_out.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'identify.py', 'noexport']
+[*] reading identify.py
+[*] executing identify.py
+[*] captured stdout from target script:
+----- begin target script output -----
+root filename : OUT.EXE
+input file    : D:\GOG Games\Ultima 1\OUT.EXE
+entry point   : 0x0 (cs=0x1000)
+input md5     : 6a3301183223faea538c953ce94649f2
+
+segments:
+  sg013A       0x010000-0x01d480  (54400 bytes)
+  sg0E82       0x01d480-0x0286c0  (45632 bytes)
+  seg002       0x0286c0-0x029ac0  (5120 bytes)
+  seg003       0x029ac0-0x029ac1  (1 bytes)
+
+functions: 353 total, 312 named, 41 still sub_XXXXX
+
+structs (11): STR15, DungeonCell, DungeonColumn, DungeonMap, Point, Rect, Creature, LocationWidget, Savegame, MapLine, Map
+----- end target script output -----
+[*] finished executing identify.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
