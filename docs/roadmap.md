@@ -87,6 +87,13 @@ OUT.EXE**.
       (`attackPerson`'s "who's at this position" lookup, distinct from
       `getLocationWidgetAt`). 314/353 functions now named, 39
       `sub_XXXXX` remain.
+- [x] Sixth renaming pass: the 3 hardware-specific `setVideoMode`
+      initializers (`initVideoModeCGA`/`EGA`/`Tandy`, matching real
+      `INT 10h` mode numbers 4/0Dh/9) plus `buildScanlineOffsetTable`,
+      `waitTimerTicks`, `drawDeathGraphic`, `drawSelectItemPanel`. Full
+      writeup in
+      [overview.md](overview.md#video-mode-initializers-and-a-few-standalone-finds).
+      321/353 functions now named, 32 `sub_XXXXX` remain.
 - [ ] Decode `playSound`'s 10-entry effect jump table (`off_1F94A`,
       handlers `0x1AE65`-`0x1AF37`) by cross-referencing `playFX` call
       sites' literal `effectNum` arguments against game context — see

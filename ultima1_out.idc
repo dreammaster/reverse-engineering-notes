@@ -14677,6 +14677,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X19FE7);
 	op_hex		(x,	0);
 	create_insn	(0X19FF1);
+	set_name	(0X19FF1,	"initVideoModeCGA");
 	set_cmt	(0X1A008,	"- VIDEO - SET VIDEO MODE\nAL = mode",	0);
 	create_insn	(x=0X1A008);
 	op_hex		(x,	0);
@@ -15567,6 +15568,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1AB98);
 	op_hex		(x,	1);
 	create_insn	(0X1AB9D);
+	set_name	(0X1AB9D,	"drawDeathGraphic");
 	create_insn	(x=0X1ABA4);
 	op_stkvar	(x,	1);
 	set_cmt	(0X1ABAA,	"yp",	0);
@@ -15592,6 +15594,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1AC32);
 	op_stkvar	(x,	1);
 	create_insn	(0X1AC44);
+	set_name	(0X1AC44,	"waitTimerTicks");
 	set_cmt	(0X1AC4C,	"DOS - 2+ - GET INTERRUPT VECTOR\nAL = interrupt number\nReturn: ES:BX = value of interrupt vector",	0);
 	create_insn	(x=0X1AC4C);
 	op_hex		(x,	0);
@@ -15829,9 +15832,6 @@ static Bytes_2(void) {
 	set_cmt	(0X1AF1B,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═\x10 OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
 	create_insn	(x=0X1AF1B);
 	op_hex		(x,	0);
-	set_cmt	(0X1AF1E,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═\x10 OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
-	create_insn	(x=0X1AF1E);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -15841,6 +15841,9 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X1AF1E,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═\x10 OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
+	create_insn	(x=0X1AF1E);
+	op_hex		(x,	1);
 	create_insn	(x=0X1AF21);
 	op_hex		(x,	1);
 	set_cmt	(0X1AF25,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═\x10 OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
@@ -16127,6 +16130,7 @@ static Bytes_3(void) {
 	create_insn	(x=0X1B231);
 	op_plain_offset	(x,	1,	0X1D480);
 	op_plain_offset	(x,	129,	0X1D480);
+	set_name	(0X1B231,	"buildScanlineOffsetTable");
 	create_insn	(x=0X1B234);
 	op_dec		(x,	1);
 	create_insn	(x=0X1B250);
@@ -16814,6 +16818,7 @@ static Bytes_3(void) {
 	set_cmt	(0X1BA1B,	"yp",	0);
 	set_cmt	(0X1BA1F,	"xp",	0);
 	create_insn	(0X1BA27);
+	set_name	(0X1BA27,	"drawSelectItemPanel");
 	set_cmt	(0X1BA2A,	"color",	0);
 	set_cmt	(0X1BA31,	"y2",	0);
 	create_insn	(x=0X1BA32);
@@ -17781,6 +17786,7 @@ static Bytes_3(void) {
 	create_insn	(x=0X1C429);
 	op_hex		(x,	1);
 	create_insn	(0X1C42E);
+	set_name	(0X1C42E,	"initVideoModeTandy");
 	set_cmt	(0X1C43F,	"- VIDEO - SET VIDEO MODE\nAL = mode",	0);
 	create_insn	(x=0X1C43F);
 	op_hex		(x,	0);
@@ -17793,6 +17799,7 @@ static Bytes_3(void) {
 	create_insn	(x=0X1C44D);
 	op_hex		(x,	0);
 	create_insn	(0X1C455);
+	set_name	(0X1C455,	"initVideoModeEGA");
 	set_cmt	(0X1C466,	"- VIDEO - SET VIDEO MODE\nAL = mode",	0);
 	create_insn	(x=0X1C466);
 	op_hex		(x,	0);
@@ -20487,6 +20494,15 @@ static Bytes_3(void) {
 	create_word	(x=0X1FF3A);
 	op_plain_offset	(x,	0,	0X1D480);
 	op_plain_offset	(x,	128,	0X1D480);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_word	(x=0X1FF3C);
 	op_plain_offset	(x,	0,	0X1D480);
 	op_plain_offset	(x,	128,	0X1D480);
@@ -20526,15 +20542,6 @@ static Bytes_3(void) {
 	create_word	(x=0X1FF54);
 	op_plain_offset	(x,	0,	0X1D480);
 	op_plain_offset	(x,	128,	0X1D480);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X1FF56,	0X13);
 	set_name	(0X1FF56,	"aPotentisLaudis");
 	create_strlit	(0X1FF69,	0XB);

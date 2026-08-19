@@ -22547,7 +22547,7 @@ setCursorPos    endp
 
 ; Attributes: bp-based frame
 
-sub_19FF1       proc near               ; CODE XREF: setVideoMode+81↓p
+initVideoModeCGA proc near              ; CODE XREF: setVideoMode+81↓p
                 push    bp
                 mov     bp, sp
                 push    si
@@ -22583,7 +22583,7 @@ sub_19FF1       proc near               ; CODE XREF: setVideoMode+81↓p
                 pop     si
                 pop     bp
                 retn
-sub_19FF1       endp
+initVideoModeCGA endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -24424,7 +24424,7 @@ viewportPagingWait endp
 
 ; Attributes: bp-based frame
 
-sub_1AB9D       proc near               ; CODE XREF: death+3C↓p
+drawDeathGraphic proc near              ; CODE XREF: death+3C↓p
 
 arg_0           = word ptr  4
 
@@ -24440,15 +24440,15 @@ arg_0           = word ptr  4
                 mov     word_1EE90, 5Fh ; '_'
                 mov     word_1EE8C, 1A14h
 
-loc_1ABB9:                              ; CODE XREF: sub_1AB9D+65↓j
+loc_1ABB9:                              ; CODE XREF: drawDeathGraphic+65↓j
                 mov     word_1EE8E, 4
                 mov     si, 80h         ; xp
 
-loc_1ABC2:                              ; CODE XREF: sub_1AB9D+59↓j
+loc_1ABC2:                              ; CODE XREF: drawDeathGraphic+59↓j
                 mov     cx, 10h
                 mov     bx, word_1EE8C
 
-loc_1ABC9:                              ; CODE XREF: sub_1AB9D+49↓j
+loc_1ABC9:                              ; CODE XREF: drawDeathGraphic+49↓j
                 mov     ax, [bx]
                 push    bx
                 mov     bx, cx
@@ -24465,7 +24465,7 @@ loc_1ABC9:                              ; CODE XREF: sub_1AB9D+49↓j
                 pop     di
                 pop     si
 
-loc_1ABE4:                              ; CODE XREF: sub_1AB9D+38↑j
+loc_1ABE4:                              ; CODE XREF: drawDeathGraphic+38↑j
                 pop     bx
                 inc     si
                 loop    loc_1ABC9
@@ -24483,7 +24483,7 @@ loc_1ABE4:                              ; CODE XREF: sub_1AB9D+38↑j
                 pop     si
                 pop     bp
                 retn
-sub_1AB9D       endp
+drawDeathGraphic endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -24535,7 +24535,7 @@ amount          = word ptr  4
 loc_1AC35:                              ; CODE XREF: wait+C↓j
                 or      ax, ax
                 jz      short loc_1AC35
-                call    sub_1AC44
+                call    waitTimerTicks
                 pop     es
                 pop     ds
                 pop     di
@@ -24548,7 +24548,7 @@ wait            endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1AC44       proc near               ; CODE XREF: wait+E↑p
+waitTimerTicks  proc near               ; CODE XREF: wait+E↑p
                 mov     word_1F18C, ax
                 push    es
                 mov     ah, 35h ; '5'
@@ -24574,7 +24574,7 @@ sub_1AC44       proc near               ; CODE XREF: wait+E↑p
                 pop     ds
                 assume ds:sg0E82
 
-loc_1AC69:                              ; CODE XREF: sub_1AC44+2C↓j
+loc_1AC69:                              ; CODE XREF: waitTimerTicks+2C↓j
                 mov     ax, word_1F18C
                 cmp     word_1F18E, ax
                 jb      short loc_1AC69
@@ -24589,7 +24589,7 @@ loc_1AC69:                              ; CODE XREF: sub_1AC44+2C↓j
                                         ; DS:DX = new vector to be used for specified interrupt
                 pop     ds
                 retn
-sub_1AC44       endp
+waitTimerTicks  endp
 
 ; ---------------------------------------------------------------------------
                 sti
@@ -25826,7 +25826,7 @@ writeFile       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B231       proc near               ; CODE XREF: setVideoMode:loc_1B31F↓p
+buildScanlineOffsetTable proc near      ; CODE XREF: setVideoMode:loc_1B31F↓p
                 mov     bx, offset unk_1FAFA
                 mov     cx, 199
                 cmp     _videoMode, 0
@@ -25834,7 +25834,7 @@ sub_1B231       proc near               ; CODE XREF: setVideoMode:loc_1B31F↓p
                 cmp     _videoMode, 1
                 jz      short loc_1B29A
 
-loc_1B245:                              ; CODE XREF: sub_1B231+40↓j
+loc_1B245:                              ; CODE XREF: buildScanlineOffsetTable+40↓j
                 mov     word_1EE50, 4
                 push    cx
                 mov     ax, cx
@@ -25859,8 +25859,8 @@ loc_1B245:                              ; CODE XREF: sub_1B231+40↓j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1B274:                              ; CODE XREF: sub_1B231+B↑j
-                                        ; sub_1B231+66↓j
+loc_1B274:                              ; CODE XREF: buildScanlineOffsetTable+B↑j
+                                        ; buildScanlineOffsetTable+66↓j
                 mov     word_1EE50, 2
                 mov     ax, cx
                 mov     ah, al
@@ -25879,17 +25879,17 @@ loc_1B274:                              ; CODE XREF: sub_1B231+B↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1B29A:                              ; CODE XREF: sub_1B231+12↑j
+loc_1B29A:                              ; CODE XREF: buildScanlineOffsetTable+12↑j
                 mov     word_1EE50, 1
                 mov     ax, 1F18h
 
-loc_1B2A3:                              ; CODE XREF: sub_1B231+7A↓j
+loc_1B2A3:                              ; CODE XREF: buildScanlineOffsetTable+7A↓j
                 mov     [bx], ax
                 sub     bx, 2
                 sub     ax, 28h ; '('
                 loop    loc_1B2A3
                 retn
-sub_1B231       endp
+buildScanlineOffsetTable endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -25937,26 +25937,26 @@ loc_1B300:                              ; CODE XREF: setVideoMode+15↑j
                 mov     _highlightColor, 1
 
 loc_1B31F:                              ; CODE XREF: setVideoMode+57↑j
-                call    sub_1B231
+                call    buildScanlineOffsetTable
                 cmp     [bp+4+arg_0], 0
                 jz      short loc_1B34A
                 cmp     _videoMode, 0
                 jnz     short loc_1B334
-                call    sub_19FF1
+                call    initVideoModeCGA
                 jmp     short loc_1B34A
 ; ---------------------------------------------------------------------------
 
 loc_1B334:                              ; CODE XREF: setVideoMode+7F↑j
                 cmp     _videoMode, 1
                 jnz     short loc_1B340
-                call    sub_1C455
+                call    initVideoModeEGA
                 jmp     short loc_1B34A
 ; ---------------------------------------------------------------------------
 
 loc_1B340:                              ; CODE XREF: setVideoMode+8B↑j
                 cmp     _videoMode, 2
                 jnz     short loc_1B34A
-                call    sub_1C42E
+                call    initVideoModeTandy
 
 loc_1B34A:                              ; CODE XREF: setVideoMode+78↑j
                                         ; setVideoMode+84↑j ...
@@ -27136,7 +27136,7 @@ drawReady       endp
 
 ; Attributes: bp-based frame
 
-sub_1BA27       proc near               ; CODE XREF: selectItem+12B↓p
+drawSelectItemPanel proc near           ; CODE XREF: selectItem+12B↓p
                 push    bp
                 mov     bp, sp
                 push    _borderColor    ; color
@@ -27164,7 +27164,7 @@ sub_1BA27       proc near               ; CODE XREF: selectItem+12B↓p
                 mov     _viewRedrawNeeded, 1
                 pop     bp
                 retn
-sub_1BA27       endp
+drawSelectItemPanel endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -27328,7 +27328,7 @@ loc_1BB7D:                              ; CODE XREF: selectItem+F6↑j
                 push    word ptr [si]   ; msg
                 call    writeStringNewline
                 mov     sp, bp
-                call    sub_1BA27
+                call    drawSelectItemPanel
                 mov     ax, [bp+0Eh+var_8]
                 add     sp, 0Ch
                 pop     bp
@@ -28586,7 +28586,7 @@ drawMap         endp
 
 ; Attributes: bp-based frame fpd=4
 
-sub_1C42E       proc near               ; CODE XREF: setVideoMode+99↑p
+initVideoModeTandy proc near            ; CODE XREF: setVideoMode+99↑p
                 push    bp
                 mov     bp, sp
                 push    si
@@ -28613,14 +28613,14 @@ sub_1C42E       proc near               ; CODE XREF: setVideoMode+99↑p
                 pop     si
                 pop     bp
                 retn
-sub_1C42E       endp
+initVideoModeTandy endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-sub_1C455       proc near               ; CODE XREF: setVideoMode+8D↑p
+initVideoModeEGA proc near              ; CODE XREF: setVideoMode+8D↑p
                 push    bp
                 mov     bp, sp
                 push    si
@@ -28647,7 +28647,7 @@ sub_1C455       proc near               ; CODE XREF: setVideoMode+8D↑p
                 pop     si
                 pop     bp
                 retn
-sub_1C455       endp
+initVideoModeEGA endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -28684,7 +28684,7 @@ idx             = word ptr -4
                 call    fillRect
                 mov     sp, bp
                 push    _edgeColor
-                call    sub_1AB9D
+                call    drawDeathGraphic
                 mov     sp, bp
                 mov     ax, 2
                 push    ax              ; effectNum
@@ -32428,12 +32428,12 @@ _videoMode      dw VIDEOMODE_CGA        ; DATA XREF: loadTiles+6↑r
                                         ; loadTiles:loc_1045A↑r ...
 _color1         dw 0                    ; DATA XREF: setVideoMode+2C↑w
                                         ; setVideoMode+4C↑w
-word_1EE50      dw 0                    ; DATA XREF: sub_19FF1+7↑w
+word_1EE50      dw 0                    ; DATA XREF: initVideoModeCGA+7↑w
                                         ; drawTile2+2↑r ...
 ; char aPressSpaceToCo[]
 aPressSpaceToCo db 'Press Space to continue: ',0
                                         ; DATA XREF: viewportPagingWait+17↑o
-word_1EE6C      dw 1                    ; DATA XREF: sub_1AB9D+34↑r
+word_1EE6C      dw 1                    ; DATA XREF: drawDeathGraphic+34↑r
                 db    2
                 db    0
                 db    4
@@ -32464,15 +32464,15 @@ word_1EE6C      dw 1                    ; DATA XREF: sub_1AB9D+34↑r
                 db  40h ; @
                 db    0
                 db  80h
-word_1EE8C      dw 0                    ; DATA XREF: sub_1AB9D+16↑w
-                                        ; sub_1AB9D+28↑r ...
-word_1EE8E      dw 0                    ; DATA XREF: sub_1AB9D:loc_1ABB9↑w
-                                        ; sub_1AB9D+50↑w ...
-word_1EE90      dw 0                    ; DATA XREF: sub_1AB9D+10↑w
-                                        ; sub_1AB9D+5C↑w ...
+word_1EE8C      dw 0                    ; DATA XREF: drawDeathGraphic+16↑w
+                                        ; drawDeathGraphic+28↑r ...
+word_1EE8E      dw 0                    ; DATA XREF: drawDeathGraphic:loc_1ABB9↑w
+                                        ; drawDeathGraphic+50↑w ...
+word_1EE90      dw 0                    ; DATA XREF: drawDeathGraphic+10↑w
+                                        ; drawDeathGraphic+5C↑w ...
 ; int word_1EE92
-word_1EE92      dw 0                    ; DATA XREF: sub_1AB9D+A↑w
-                                        ; sub_1AB9D+3A↑r
+word_1EE92      dw 0                    ; DATA XREF: drawDeathGraphic+A↑w
+                                        ; drawDeathGraphic+3A↑r
                 db    0
                 db    0
                 db  3Fh ; ?
@@ -33233,10 +33233,10 @@ _townCastleMaps db 0FFh
                 db 0FCh
                 db    0
                 db    0
-word_1F18C      dw 0                    ; DATA XREF: sub_1AC44↑w
-                                        ; sub_1AC44:loc_1AC69↑r
-word_1F18E      dw 0                    ; DATA XREF: sub_1AC44+10↑w
-                                        ; sub_1AC44+28↑r
+word_1F18C      dw 0                    ; DATA XREF: waitTimerTicks↑w
+                                        ; waitTimerTicks:loc_1AC69↑r
+word_1F18E      dw 0                    ; DATA XREF: waitTimerTicks+10↑w
+                                        ; waitTimerTicks+28↑r
 RANGER_DRAW_DATA db 7Eh, 0E1h, 0FCh, 1Eh, 0FCh, 0Ch, 0E0h, 0Ch, 0DBh, 12h
                                         ; DATA XREF: sg0E82:UWIDGET_DRAW_TABLE↓o
                 db 0D4h, 2Ah, 0DBh, 2Ah, 0CFh, 12h, 0CBh, 6, 0C3h, 0Ch
@@ -33512,7 +33512,7 @@ aRb             db 'rb',0               ; DATA XREF: readFile:loc_1B18B↑o
 aWb             db 'wb',0               ; DATA XREF: writeFile:loc_1B1E1↑o
 _lineStarts     dw 0C7h dup(0)          ; DATA XREF: fillRect+8C↑r
                                         ; fillRect+13D↑r ...
-unk_1FAFA       db    0                 ; DATA XREF: sub_1B231↑o
+unk_1FAFA       db    0                 ; DATA XREF: buildScanlineOffsetTable↑o
                 db    0
 _randomSeed     dw 0                    ; DATA XREF: setRandomSeed+A↑w
                                         ; getRandomNumber+7↑r ...
@@ -34384,8 +34384,8 @@ aEnemyVessels   db 'Enemy vessels',0    ; DATA XREF: showStats+1E5↑o
                 db  3Fh ; ?
                 db    0
                 db    0
-default_palette db    0                 ; DATA XREF: sub_1C42E+18↑o
-                                        ; sub_1C455+18↑o
+default_palette db    0                 ; DATA XREF: initVideoModeTandy+18↑o
+                                        ; initVideoModeEGA+18↑o
                 db    1
                 db    2
                 db    3

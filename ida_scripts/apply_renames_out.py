@@ -323,6 +323,50 @@ RENAMES = [
      "implementation, called only from cityCheckAt) -- not merged/"
      "renamed together since they're genuinely separate functions in "
      "the binary, just doing a similar-shaped lookup."),
+
+    # -- sixth pass: a few standalone single-caller helpers. --
+
+    (0x1AB9D, "drawDeathGraphic",
+     "bitmap blitter: for each set bit in a 16-word-wide bitmap table "
+     "(word_1EE6C), plots a point via videoDrawPoint in the given "
+     "color. Called once from `death` -- this is the death-screen "
+     "graphic (skull), not general-purpose bitmap code (no other "
+     "caller)."),
+
+    (0x1AC44, "waitTimerTicks",
+     "the actual tick-counting primitive behind `wait`: installs a "
+     "custom INT 1Ch (system timer tick) handler that increments "
+     "word_1F18E, busy-waits until it reaches the requested tick count, "
+     "then restores the original INT 1Ch vector. INT 1Ch fires ~18.2 "
+     "times/second on real PC hardware, so this is where `wait`'s "
+     "'amount' argument gets its real-world time meaning."),
+
+    (0x1BA27, "drawSelectItemPanel",
+     "fills and outlines the item-list panel (x 127-199) for the "
+     "selectItem dialog, then sets _viewRedrawNeeded. Called once."),
+
+    (0x19FF1, "initVideoModeCGA",
+     "INT 10h AL=4 (CGA 320x200 4-color), BIOS palette 1, plus a "
+     "direct out to port 3D8h (CGA mode-control register) toggling the "
+     "composite-color/high-res artifact trick. One of 3 hardware-"
+     "specific initializers setVideoMode dispatches to by _videoMode."),
+
+    (0x1C455, "initVideoModeEGA",
+     "INT 10h AL=0Dh (EGA/VGA 320x200 16-color) plus a 17-byte "
+     "SET ALL PALETTE REGISTERS call (default_palette). _videoMode==1."),
+
+    (0x1C42E, "initVideoModeTandy",
+     "INT 10h AL=9 (Tandy/PCjr 320x200 16-color) plus the same "
+     "SET ALL PALETTE REGISTERS call as initVideoModeEGA. "
+     "_videoMode==2."),
+
+    (0x1B231, "buildScanlineOffsetTable",
+     "precomputes a 200-entry (unk_1FAFA) row-to-framebuffer-offset "
+     "table, with 3 different address-math branches matching CGA's "
+     "interleaved even/odd scanline memory layout vs. the linear "
+     "layout of the EGA/Tandy 16-color modes -- called once per "
+     "setVideoMode, before dispatching to whichever initVideoMode* "
+     "matches _videoMode."),
 ]
 
 # (ea, new_name, note) -- globals in the same CRT file-I/O cluster,
