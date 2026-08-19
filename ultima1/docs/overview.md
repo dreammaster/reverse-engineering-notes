@@ -23,7 +23,7 @@ identified and renamed in any other IDB it also happens to appear in.
 | IDB | Root file | Role (best guess, to confirm) | Functions named | Structs |
 |---|---|---|---|---|
 | `ultima1.idb` | `ULTIMA.EXE` | Title screen / attract mode, chains unconditionally to `GEN.EXE` | 100 / 100 | `STR15`, `Point`, `Rect`, `Savegame` |
-| `ultima1_gen.idb` | `GEN.EXE` | Character generation / continue, chains to `OUT.EXE` | 74 / 113 | + `Creature` |
+| `ultima1_gen.idb` | `GEN.EXE` | Character generation / continue, chains to `OUT.EXE` | 113 / 113 | + `Creature` |
 | `ultima1_out.idb` | `OUT.EXE` | Overworld/towns/dungeons (outdoor engine) | 352 / 353 | + `DungeonCell`, `DungeonColumn`, `DungeonMap`, `LocationWidget`, `MapLine`, `Map` |
 | `ultima1_space.idb` | `SPACE.EXE` | Space combat minigame | 156 / 210 | + `DuneonRow`, `DungeonMap` (space variant), `SpaceMapShip`, `SpaceMapCell`, `SpaceMapY`, `SpaceMap`, `FightData`, `JumpEntry` |
 | `ultima1_mondain.idb` | `MONDAIN.EXE` | Unknown — essentially unstarted | 1 / 191 | none |
@@ -751,3 +751,44 @@ each point moving one attribute by 1, within a hard range of
 This is a complete, concrete spec for the reimplementation's character
 creation screen: 6 named attributes, baseline 10, pool of 30, hard
 range [10, 25] per attribute — no guessing needed.
+
+### GEN.EXE complete — 113/113 (100%)
+
+Third and fourth passes, same session, close out GEN.EXE entirely.
+
+**Finished the CRT transfer**: the remaining `_dos_*` raw primitives,
+`_write`/`_nmalloc`/`_nheapgrow`/`_nfree`/`_nheapinit`, `writeNumber`,
+`hasFileExtension`/`ensureFileExtension`/`strcpy`/`strncpy` — all
+confirmed by direct read and/or exact byte-size match to OUT.EXE, same
+methodology as every prior pass this session. One correction along the
+way: `sub_13382` looked at first like another `strncpy` copy, but a
+direct read showed an *unbounded* `lodsb`/`stosb` loop — it's `strcpy`,
+called from `findExecutableFile` and `ensureFileExtension` exactly like
+OUT.EXE's `strcpy` usage, not the bounded-copy pattern.
+
+**The `getKeypress` naming turned out inverted from OUT.EXE's
+convention** — this IDB's pre-existing `getKeypress` (from work
+before this session) is actually the *polling-loop* wrapper
+(OUT.EXE's `getKeypressAndWait` role), while the real single-poll
+primitive was unnamed. Named the primitive `getKeypressRaw` rather
+than renaming the well-established, heavily-cross-referenced
+`getKeypress` — unlike `writeString2_mb` in ULTIMA.EXE, this name
+isn't factually wrong (it does return a keypress), just conventionally
+different, so the churn wasn't justified.
+
+**Confirmed a second real game-mechanic**: the savegame roster holds
+a maximum of **4 characters**. `drawCharacterRoster` lists them
+(shared by `continuePreviousGame`'s "who do you want to play" and the
+new `showCharacterReplacementMenu`'s "the roster is full, choose who
+to replace" flow) — both draw from the same 4-slot, `STR15`-sized name
+array.
+
+**More CRT/library duplication**: `sub_11B9B` turned out to be a
+byte-for-byte second copy of the already-named `_fread` (named
+`_fread2`) — the same static-linking-pulls-in-duplicate-`.obj`-copies
+pattern already seen twice in ULTIMA.EXE (`strncpy2`/`toupper2`).
+
+**Session totals for GEN.EXE**: 44 → 113 functions named (100%),
+across 4 passes. Combined with ULTIMA.EXE and OUT.EXE, the game's
+full startup-to-gameplay chain (title screen → character creation →
+main game ↔ space combat) is now completely named end to end.

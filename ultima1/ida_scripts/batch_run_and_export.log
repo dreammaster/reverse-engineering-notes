@@ -4143,3 +4143,511 @@ structs (5): STR15, Point, Rect, Creature, Savegame
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_gen.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'rank_unnamed_functions.py', 'noexport']
+[*] reading rank_unnamed_functions.py
+[*] executing rank_unnamed_functions.py
+[*] captured stdout from target script:
+----- begin target script output -----
+39 unnamed functions total
+
+11E2C  sub_11E2C    callers=  4 size= 141  <- buildAndChainExecutable, data/11EC8, sub_1197D, sub_12D47
+1197D  sub_1197D    callers=  3 size= 115  <- _openfile, generateCharacter, readSavegameList
+12CA0  sub_12CA0    callers=  3 size=  14  <- _open, sub_11ED5, sub_11F8C
+12CAE  sub_12CAE    callers=  3 size=  20  <- _flsbuf, _read, sub_11F8C
+12CC2  sub_12CC2    callers=  3 size=  36  <- _flsbuf, _lseek, sub_11F8C
+1357C  sub_1357C    callers=  3 size=  29  <- drawRightArrow, getName, writeLeftArrow
+13C8B  sub_13C8B    callers=  3 size= 152  <- generateCharacter, sub_11455, updateAttribute
+11455  sub_11455    callers=  2 size= 102  <- continuePreviousGame, sub_114BB
+127D4  sub_127D4    callers=  2 size=  20  <- _open, startup2
+12CF7  sub_12CF7    callers=  2 size=  41  <- sub_11F8C, sub_12971
+12D47  sub_12D47    callers=  2 size= 151  <- allocFileBuffer, buildAndChainExecutable
+13382  sub_13382    callers=  2 size=  21  <- findExecutableFile, sub_12F40
+13397  sub_13397    callers=  2 size=  23  <- buildAndChainExecutable, sub_12EBF
+14234  sub_14234    callers=  2 size=  32  <- data/1422B, sub_1413C
+114BB  sub_114BB    callers=  1 size= 248  <- main
+115B3  sub_115B3    callers=  1 size= 144  <- launchGame
+11B9B  sub_11B9B    callers=  1 size= 110  <- readSavegameList
+11DA6  sub_11DA6    callers=  1 size= 134  <- start
+11ED5  sub_11ED5    callers=  1 size=  72  <- sub_1197D
+12971  sub_12971    callers=  1 size= 290  <- _flsbuf
+12C5F  sub_12C5F    callers=  1 size=  18  <- _open
+12C71  sub_12C71    callers=  1 size=  17  <- _open
+12C82  sub_12C82    callers=  1 size=  13  <- _open
+12C8F  sub_12C8F    callers=  1 size=  17  <- _open
+12CE6  sub_12CE6    callers=  1 size=  17  <- _open
+12D20  sub_12D20    callers=  1 size=  24  <- sub_11F8C
+12EBF  sub_12EBF    callers=  1 size= 129  <- findExecutableFile
+12F40  sub_12F40    callers=  1 size= 128  <- findExecutableFile
+1336E  sub_1336E    callers=  1 size=  20  <- findExecutableFile
+133AE  sub_133AE    callers=  1 size=  75  <- sub_12EBF
+133F9  sub_133F9    callers=  1 size= 198  <- sub_12D47
+13AD7  sub_13AD7    callers=  1 size= 436  <- launchGame
+13D23  sub_13D23    callers=  1 size=  30  <- sub_13C8B
+13E5E  sub_13E5E    callers=  1 size=  25  <- getKeypress
+13E77  sub_13E77    callers=  1 size=  59  <- sub_13E5E
+13EED  sub_13EED    callers=  1 size= 117  <- sub_115B3
+1413C  sub_1413C    callers=  1 size= 153  <- getKeypress
+141D5  sub_141D5    callers=  1 size=  79  <- sub_1413C
+11F8C  sub_11F8C    callers=  0 size= 269  <- 
+----- end target script output -----
+[*] finished executing rank_unnamed_functions.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_gen.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_renames_gen.py', 'noexport']
+[*] reading apply_renames_gen.py
+[*] executing apply_renames_gen.py
+[*] captured stdout from target script:
+----- begin target script output -----
+12491: already '_flsbuf' -- skipping
+127E8: already 'findFileHandleSlot' -- skipping
+120A0: already '_open' -- skipping
+122F7: already '_filbuf' -- skipping
+128AA: already '_read' -- skipping
+12DEA: already '_lseek' -- skipping
+12C04: already 'allocFileBuffer' -- skipping
+11A3A: already '_openfile' -- skipping
+11948: already 'chainToExecutable' -- skipping
+11F4E: already 'execProgramEntry' -- skipping
+12831: already 'findExecutableFile' -- skipping
+12A93: already 'buildAndChainExecutable' -- skipping
+13143: already 'execProgram' -- skipping
+11643: already 'launchGame' -- skipping
+13F62: already 'playSound' -- skipping
+13F7F: already 'soundEffect0' -- skipping
+13F97: already 'soundEffect1' -- skipping
+13FB5: already 'soundEffect2' -- skipping
+13FBC: already 'soundEffect3' -- skipping
+13FC3: already 'soundEffect4' -- skipping
+13FE3: already 'soundEffect5' -- skipping
+13FEA: already 'soundEffect6' -- skipping
+14004: already 'soundEffect7' -- skipping
+14038: already 'soundEffect8' -- skipping
+14051: already 'soundEffect9' -- skipping
+13D61: already 'videoDrawPoint' -- skipping
+13A1D: already 'drawLineInternal' -- skipping
+10E32: already 'decreaseAttribute' -- skipping
+10E61: already 'increaseAttribute' -- skipping
+10DC2: already 'clearSelectionArrows' -- skipping
+127D4: 'sub_127D4' -> '_dos_ioctl_get'
+    AX=4400h IOCTL GET DEVICE INFORMATION.
+12C5F: 'sub_12C5F' -> '_dos_ioctl_set'
+    AX=4401h IOCTL SET DEVICE INFORMATION.
+12C71: 'sub_12C71' -> '_dos_creat'
+    AH=3Ch CREATE A FILE WITH HANDLE (CREAT).
+12C82: 'sub_12C82' -> '_dos_creatnew'
+    AH=5Bh CREATE NEW FILE, confirmed by direct read (shares tail with _dos_creat).
+12C8F: 'sub_12C8F' -> '_dos_open'
+    AH=3Dh OPEN DISK FILE WITH HANDLE.
+12CA0: 'sub_12CA0' -> '_dos_close'
+    AH=3Eh CLOSE A FILE WITH HANDLE.
+12CAE: 'sub_12CAE' -> '_dos_read'
+    AH=3Fh READ FROM FILE WITH HANDLE.
+12CC2: 'sub_12CC2' -> '_dos_lseek'
+    AH=42h MOVE FILE READ/WRITE POINTER.
+12CE6: 'sub_12CE6' -> '_dos_creattemp'
+    AH=5Ah CREATE UNIQUE FILE.
+12CF7: 'sub_12CF7' -> '_dos_write'
+    AH=40h WRITE TO FILE WITH HANDLE.
+12D20: 'sub_12D20' -> '_exit'
+    runs the exit hook if set, then INT 21h/4Ch QUIT.
+1336E: 'sub_1336E' -> '_dos_getfileattr'
+    AH=43h/AL=00h GET FILE ATTRIBUTES, used as the file-exists check by findExecutableFile.
+12971: 'sub_12971' -> '_write'
+    text-mode-aware write underneath _flsbuf: seeks to end first for append-mode streams via _lseek. Confirmed by direct read, matching OUT.EXE's _write exactly in size (290 bytes).
+12EBF: 'sub_12EBF' -> 'hasFileExtension'
+    scans a filename backward for '.', matching OUT.EXE's hasFileExtension exactly in size (129 bytes).
+12F40: 'sub_12F40' -> 'ensureFileExtension'
+    appends a default extension if none found, matching OUT.EXE's ensureFileExtension exactly in size (128 bytes).
+13382: 'sub_13382' -> 'strcpy'
+    plain lodsb/stosb copy-until-null, confirmed by direct read -- called from findExecutableFile and ensureFileExtension, matching OUT.EXE's strcpy usage pattern (not strncpy, despite similar surrounding context).
+133AE: 'sub_133AE' -> 'strncpy'
+    bounded copy, confirmed by direct read, called from hasFileExtension -- matching OUT.EXE's strncpy usage exactly.
+12D47: 'sub_12D47' -> '_nmalloc'
+    near-heap allocator: walks the free-list (sentinel word_14930), splits a block if big enough, else calls _nheapgrow then _nfree to extend and link in new space. Confirmed by direct read, called from allocFileBuffer and buildAndChainExecutable -- same pair of callers as OUT.EXE's _nmalloc.
+133F9: 'sub_133F9' -> '_nheapgrow'
+    grows the near heap via SETBLOCK, matching OUT.EXE's _nheapgrow exactly in size (198 bytes). Only called from _nmalloc.
+11E2C: 'sub_11E2C' -> '_nfree'
+    near-heap free: coalesces into the free-list. Called from _nmalloc (to link newly-grown space), _openfile-family code, and _fclose-equivalent cleanup -- same role as OUT.EXE's _nfree.
+11DA6: 'sub_11DA6' -> '_nheapinit'
+    one-time near-heap setup, matching OUT.EXE's _nheapinit exactly in call site (CODE XREF: start+28B).
+13C8B: 'sub_13C8B' -> 'writeNumber'
+    signature matches OUT.EXE's writeNumber exactly at the call site in updateAttribute: (value, maxDigits=2, paddingChar=' ', color, isSigned=0). Draws the numeric attribute values and the points-remaining counter during character creation.
+
+[dry] nothing changed. Set DRY_RUN = False to apply.
+----- end target script output -----
+[*] finished executing apply_renames_gen.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_gen.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_renames_gen.py']
+[*] reading apply_renames_gen.py
+[*] executing apply_renames_gen.py
+[*] captured stdout from target script:
+----- begin target script output -----
+12491: already '_flsbuf' -- skipping
+127E8: already 'findFileHandleSlot' -- skipping
+120A0: already '_open' -- skipping
+122F7: already '_filbuf' -- skipping
+128AA: already '_read' -- skipping
+12DEA: already '_lseek' -- skipping
+12C04: already 'allocFileBuffer' -- skipping
+11A3A: already '_openfile' -- skipping
+11948: already 'chainToExecutable' -- skipping
+11F4E: already 'execProgramEntry' -- skipping
+12831: already 'findExecutableFile' -- skipping
+12A93: already 'buildAndChainExecutable' -- skipping
+13143: already 'execProgram' -- skipping
+11643: already 'launchGame' -- skipping
+13F62: already 'playSound' -- skipping
+13F7F: already 'soundEffect0' -- skipping
+13F97: already 'soundEffect1' -- skipping
+13FB5: already 'soundEffect2' -- skipping
+13FBC: already 'soundEffect3' -- skipping
+13FC3: already 'soundEffect4' -- skipping
+13FE3: already 'soundEffect5' -- skipping
+13FEA: already 'soundEffect6' -- skipping
+14004: already 'soundEffect7' -- skipping
+14038: already 'soundEffect8' -- skipping
+14051: already 'soundEffect9' -- skipping
+13D61: already 'videoDrawPoint' -- skipping
+13A1D: already 'drawLineInternal' -- skipping
+10E32: already 'decreaseAttribute' -- skipping
+10E61: already 'increaseAttribute' -- skipping
+10DC2: already 'clearSelectionArrows' -- skipping
+127D4: 'sub_127D4' -> '_dos_ioctl_get'
+    AX=4400h IOCTL GET DEVICE INFORMATION.
+12C5F: 'sub_12C5F' -> '_dos_ioctl_set'
+    AX=4401h IOCTL SET DEVICE INFORMATION.
+12C71: 'sub_12C71' -> '_dos_creat'
+    AH=3Ch CREATE A FILE WITH HANDLE (CREAT).
+12C82: 'sub_12C82' -> '_dos_creatnew'
+    AH=5Bh CREATE NEW FILE, confirmed by direct read (shares tail with _dos_creat).
+12C8F: 'sub_12C8F' -> '_dos_open'
+    AH=3Dh OPEN DISK FILE WITH HANDLE.
+12CA0: 'sub_12CA0' -> '_dos_close'
+    AH=3Eh CLOSE A FILE WITH HANDLE.
+12CAE: 'sub_12CAE' -> '_dos_read'
+    AH=3Fh READ FROM FILE WITH HANDLE.
+12CC2: 'sub_12CC2' -> '_dos_lseek'
+    AH=42h MOVE FILE READ/WRITE POINTER.
+12CE6: 'sub_12CE6' -> '_dos_creattemp'
+    AH=5Ah CREATE UNIQUE FILE.
+12CF7: 'sub_12CF7' -> '_dos_write'
+    AH=40h WRITE TO FILE WITH HANDLE.
+12D20: 'sub_12D20' -> '_exit'
+    runs the exit hook if set, then INT 21h/4Ch QUIT.
+1336E: 'sub_1336E' -> '_dos_getfileattr'
+    AH=43h/AL=00h GET FILE ATTRIBUTES, used as the file-exists check by findExecutableFile.
+12971: 'sub_12971' -> '_write'
+    text-mode-aware write underneath _flsbuf: seeks to end first for append-mode streams via _lseek. Confirmed by direct read, matching OUT.EXE's _write exactly in size (290 bytes).
+12EBF: 'sub_12EBF' -> 'hasFileExtension'
+    scans a filename backward for '.', matching OUT.EXE's hasFileExtension exactly in size (129 bytes).
+12F40: 'sub_12F40' -> 'ensureFileExtension'
+    appends a default extension if none found, matching OUT.EXE's ensureFileExtension exactly in size (128 bytes).
+13382: 'sub_13382' -> 'strcpy'
+    plain lodsb/stosb copy-until-null, confirmed by direct read -- called from findExecutableFile and ensureFileExtension, matching OUT.EXE's strcpy usage pattern (not strncpy, despite similar surrounding context).
+133AE: 'sub_133AE' -> 'strncpy'
+    bounded copy, confirmed by direct read, called from hasFileExtension -- matching OUT.EXE's strncpy usage exactly.
+12D47: 'sub_12D47' -> '_nmalloc'
+    near-heap allocator: walks the free-list (sentinel word_14930), splits a block if big enough, else calls _nheapgrow then _nfree to extend and link in new space. Confirmed by direct read, called from allocFileBuffer and buildAndChainExecutable -- same pair of callers as OUT.EXE's _nmalloc.
+133F9: 'sub_133F9' -> '_nheapgrow'
+    grows the near heap via SETBLOCK, matching OUT.EXE's _nheapgrow exactly in size (198 bytes). Only called from _nmalloc.
+11E2C: 'sub_11E2C' -> '_nfree'
+    near-heap free: coalesces into the free-list. Called from _nmalloc (to link newly-grown space), _openfile-family code, and _fclose-equivalent cleanup -- same role as OUT.EXE's _nfree.
+11DA6: 'sub_11DA6' -> '_nheapinit'
+    one-time near-heap setup, matching OUT.EXE's _nheapinit exactly in call site (CODE XREF: start+28B).
+13C8B: 'sub_13C8B' -> 'writeNumber'
+    signature matches OUT.EXE's writeNumber exactly at the call site in updateAttribute: (value, maxDigits=2, paddingChar=' ', color, isSigned=0). Draws the numeric attribute values and the points-remaining counter during character creation.
+
+Done. Re-export the .asm/.idc and check the new names took, then update docs/roadmap.md's checklist.
+----- end target script output -----
+[*] finished executing apply_renames_gen.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima1\ultima1_gen.asm
+[*] gen_file(OFILE_ASM) returned 10993
+[*] exporting IDC to C:\dev\ultima1\ultima1_gen.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima1\ultima1_gen.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_gen.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'rank_unnamed_functions.py', 'noexport']
+[*] reading rank_unnamed_functions.py
+[*] executing rank_unnamed_functions.py
+[*] captured stdout from target script:
+----- begin target script output -----
+17 unnamed functions total
+
+1197D  sub_1197D    callers=  3 size= 115  <- _openfile, generateCharacter, readSavegameList
+1357C  sub_1357C    callers=  3 size=  29  <- drawRightArrow, getName, writeLeftArrow
+11455  sub_11455    callers=  2 size= 102  <- continuePreviousGame, sub_114BB
+13397  sub_13397    callers=  2 size=  23  <- buildAndChainExecutable, hasFileExtension
+14234  sub_14234    callers=  2 size=  32  <- data/1422B, sub_1413C
+114BB  sub_114BB    callers=  1 size= 248  <- main
+115B3  sub_115B3    callers=  1 size= 144  <- launchGame
+11B9B  sub_11B9B    callers=  1 size= 110  <- readSavegameList
+11ED5  sub_11ED5    callers=  1 size=  72  <- sub_1197D
+13AD7  sub_13AD7    callers=  1 size= 436  <- launchGame
+13D23  sub_13D23    callers=  1 size=  30  <- writeNumber
+13E5E  sub_13E5E    callers=  1 size=  25  <- getKeypress
+13E77  sub_13E77    callers=  1 size=  59  <- sub_13E5E
+13EED  sub_13EED    callers=  1 size= 117  <- sub_115B3
+1413C  sub_1413C    callers=  1 size= 153  <- getKeypress
+141D5  sub_141D5    callers=  1 size=  79  <- sub_1413C
+11F8C  sub_11F8C    callers=  0 size= 269  <- 
+----- end target script output -----
+[*] finished executing rank_unnamed_functions.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_gen.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_renames_gen.py', 'noexport']
+[*] reading apply_renames_gen.py
+[*] executing apply_renames_gen.py
+[*] captured stdout from target script:
+----- begin target script output -----
+12491: already '_flsbuf' -- skipping
+127E8: already 'findFileHandleSlot' -- skipping
+120A0: already '_open' -- skipping
+122F7: already '_filbuf' -- skipping
+128AA: already '_read' -- skipping
+12DEA: already '_lseek' -- skipping
+12C04: already 'allocFileBuffer' -- skipping
+11A3A: already '_openfile' -- skipping
+11948: already 'chainToExecutable' -- skipping
+11F4E: already 'execProgramEntry' -- skipping
+12831: already 'findExecutableFile' -- skipping
+12A93: already 'buildAndChainExecutable' -- skipping
+13143: already 'execProgram' -- skipping
+11643: already 'launchGame' -- skipping
+13F62: already 'playSound' -- skipping
+13F7F: already 'soundEffect0' -- skipping
+13F97: already 'soundEffect1' -- skipping
+13FB5: already 'soundEffect2' -- skipping
+13FBC: already 'soundEffect3' -- skipping
+13FC3: already 'soundEffect4' -- skipping
+13FE3: already 'soundEffect5' -- skipping
+13FEA: already 'soundEffect6' -- skipping
+14004: already 'soundEffect7' -- skipping
+14038: already 'soundEffect8' -- skipping
+14051: already 'soundEffect9' -- skipping
+13D61: already 'videoDrawPoint' -- skipping
+13A1D: already 'drawLineInternal' -- skipping
+10E32: already 'decreaseAttribute' -- skipping
+10E61: already 'increaseAttribute' -- skipping
+10DC2: already 'clearSelectionArrows' -- skipping
+127D4: already '_dos_ioctl_get' -- skipping
+12C5F: already '_dos_ioctl_set' -- skipping
+12C71: already '_dos_creat' -- skipping
+12C82: already '_dos_creatnew' -- skipping
+12C8F: already '_dos_open' -- skipping
+12CA0: already '_dos_close' -- skipping
+12CAE: already '_dos_read' -- skipping
+12CC2: already '_dos_lseek' -- skipping
+12CE6: already '_dos_creattemp' -- skipping
+12CF7: already '_dos_write' -- skipping
+12D20: already '_exit' -- skipping
+1336E: already '_dos_getfileattr' -- skipping
+12971: already '_write' -- skipping
+12EBF: already 'hasFileExtension' -- skipping
+12F40: already 'ensureFileExtension' -- skipping
+13382: already 'strcpy' -- skipping
+133AE: already 'strncpy' -- skipping
+12D47: already '_nmalloc' -- skipping
+133F9: already '_nheapgrow' -- skipping
+11E2C: already '_nfree' -- skipping
+11DA6: already '_nheapinit' -- skipping
+13C8B: already 'writeNumber' -- skipping
+1197D: 'sub_1197D' -> '_fclose'
+    flushes via _flsbuf, frees the buffer via _nfree, releases the handle via releaseFileHandle -- confirmed by direct read, matching OUT.EXE's _fclose exactly. Called from generateCharacter and readSavegameList directly as well as from _openfile (to close any previously-open stream on the same FILE*).
+11ED5: 'sub_11ED5' -> 'releaseFileHandle'
+    looks up and closes the OS handle, clears the slot -- called only from _fclose, matching OUT.EXE's releaseFileHandle.
+11F8C: 'sub_11F8C' -> 'exit'
+    the real C-standard exit(): flushes/closes every FILE-table entry (base 0xDB0) then calls _exit. noreturn, matching ULTIMA.EXE's exit() exactly in shape. Not called from anywhere visible in this executable (0 static callers) -- present but apparently unused, like several other CRT siblings found this session.
+115B3: 'sub_115B3' -> 'insertDisk'
+    prints 'Insert Ultima I diskette' / 'Hit space to continue...' and blocks on a space keypress -- called from launchGame when the exec-chain to OUT.EXE fails, matching the insertDisk retry pattern from every other chain call found this project.
+13EED: 'sub_13EED' -> 'clearMessageArea'
+    INT 10h/AH=06h SCROLL PAGE UP to blank a fixed screen region (rows 0x15-0x18) -- called once from insertDisk to clear space for its message.
+13AD7: 'sub_13AD7' -> 'drawLoadingFrame'
+    draws a border frame (4 fillRect calls covering the screen edges) -- called from launchGame right before printing 'Please wait whilst thy game loads'.
+1413C: 'sub_1413C' -> 'getKeypressRaw'
+    the real single-poll keypress primitive (cursor position via INT 10h/AH=03h, then INT 21h/AH=06h direct console I/O) -- matches OUT.EXE's getKeypress body exactly. The pre-existing name 'getKeypress' in this IDB is actually the polling-loop wrapper (matching OUT.EXE's getKeypressAndWait), left as-is since it's already cross-referenced throughout this IDB and isn't factually wrong (it does return a keypress, just via a wait loop) -- unlike writeString2_mb's rename last pass, this one wasn't misleading enough to justify the churn.
+13E5E: 'sub_13E5E' -> 'wait'
+    outer wait wrapper (guards against amount=0, which busy-loops forever -- a real inert edge case, not something exercised) around waitTimerTicks.
+13E77: 'sub_13E77' -> 'waitTimerTicks'
+    the INT 1Ch tick-counting primitive, matching OUT.EXE's waitTimerTicks exactly (install handler, busy-wait, restore).
+141D5: 'sub_141D5' -> 'textCursorAnimate'
+    8x8 bitmap cursor blit with a frame counter, matching ULTIMA.EXE's drawAnimatedCursor in shape -- named textCursorAnimate here instead to match OUT.EXE's established name for this exact role (called from within the raw keypress primitive to animate the cursor while waiting).
+14234: 'sub_14234' -> 'flushKeyboardBuffer'
+    BIOS ROM ID check + keyboard buffer head/tail reset, matching ULTIMA.EXE's flushKeyboardBuffer exactly.
+11B9B: 'sub_11B9B' -> '_fread2'
+    byte-for-byte identical to the already-named _fread at a different address -- a second copy from a different linked object file, same duplication pattern as ULTIMA.EXE's strncpy2/toupper2. Called from readSavegameList.
+13397: 'sub_13397' -> 'strlen'
+    plain repne-scasb length count.
+1357C: 'sub_1357C' -> 'writeCharacter'
+    BIOS TTY character write (INT 10h/AH=0Eh) -- the low-level primitive under getName/drawRightArrow/writeLeftArrow's text output.
+13D23: 'sub_13D23' -> 'writeNumberChar'
+    BIOS write-char-at-cursor (INT 10h/AH=09h or 0Eh depending on a flag) using color globals byte_14A64/65 -- writeNumber's internal digit-output helper.
+114BB: 'sub_114BB' -> 'showCharacterReplacementMenu'
+    draws ' Character Replacement ' with left/right border arrows and 'The roster is full.  Type the number of the character to wish...' -- the flow triggered when starting a new character and all roster slots are already full. Calls drawCharacterRoster to list the existing 4 characters to choose a replacement from.
+11455: 'sub_11455' -> 'drawCharacterRoster'
+    draws up to 4 numbered character names (slots 0-3, STR15-sized entries from stru_14FC4) -- confirms the savegame roster holds a maximum of 4 characters. Shared by continuePreviousGame (pick who to play) and showCharacterReplacementMenu (pick who to overwrite).
+
+[dry] nothing changed. Set DRY_RUN = False to apply.
+----- end target script output -----
+[*] finished executing apply_renames_gen.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_gen.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_renames_gen.py']
+[*] reading apply_renames_gen.py
+[*] executing apply_renames_gen.py
+[*] captured stdout from target script:
+----- begin target script output -----
+12491: already '_flsbuf' -- skipping
+127E8: already 'findFileHandleSlot' -- skipping
+120A0: already '_open' -- skipping
+122F7: already '_filbuf' -- skipping
+128AA: already '_read' -- skipping
+12DEA: already '_lseek' -- skipping
+12C04: already 'allocFileBuffer' -- skipping
+11A3A: already '_openfile' -- skipping
+11948: already 'chainToExecutable' -- skipping
+11F4E: already 'execProgramEntry' -- skipping
+12831: already 'findExecutableFile' -- skipping
+12A93: already 'buildAndChainExecutable' -- skipping
+13143: already 'execProgram' -- skipping
+11643: already 'launchGame' -- skipping
+13F62: already 'playSound' -- skipping
+13F7F: already 'soundEffect0' -- skipping
+13F97: already 'soundEffect1' -- skipping
+13FB5: already 'soundEffect2' -- skipping
+13FBC: already 'soundEffect3' -- skipping
+13FC3: already 'soundEffect4' -- skipping
+13FE3: already 'soundEffect5' -- skipping
+13FEA: already 'soundEffect6' -- skipping
+14004: already 'soundEffect7' -- skipping
+14038: already 'soundEffect8' -- skipping
+14051: already 'soundEffect9' -- skipping
+13D61: already 'videoDrawPoint' -- skipping
+13A1D: already 'drawLineInternal' -- skipping
+10E32: already 'decreaseAttribute' -- skipping
+10E61: already 'increaseAttribute' -- skipping
+10DC2: already 'clearSelectionArrows' -- skipping
+127D4: already '_dos_ioctl_get' -- skipping
+12C5F: already '_dos_ioctl_set' -- skipping
+12C71: already '_dos_creat' -- skipping
+12C82: already '_dos_creatnew' -- skipping
+12C8F: already '_dos_open' -- skipping
+12CA0: already '_dos_close' -- skipping
+12CAE: already '_dos_read' -- skipping
+12CC2: already '_dos_lseek' -- skipping
+12CE6: already '_dos_creattemp' -- skipping
+12CF7: already '_dos_write' -- skipping
+12D20: already '_exit' -- skipping
+1336E: already '_dos_getfileattr' -- skipping
+12971: already '_write' -- skipping
+12EBF: already 'hasFileExtension' -- skipping
+12F40: already 'ensureFileExtension' -- skipping
+13382: already 'strcpy' -- skipping
+133AE: already 'strncpy' -- skipping
+12D47: already '_nmalloc' -- skipping
+133F9: already '_nheapgrow' -- skipping
+11E2C: already '_nfree' -- skipping
+11DA6: already '_nheapinit' -- skipping
+13C8B: already 'writeNumber' -- skipping
+1197D: 'sub_1197D' -> '_fclose'
+    flushes via _flsbuf, frees the buffer via _nfree, releases the handle via releaseFileHandle -- confirmed by direct read, matching OUT.EXE's _fclose exactly. Called from generateCharacter and readSavegameList directly as well as from _openfile (to close any previously-open stream on the same FILE*).
+11ED5: 'sub_11ED5' -> 'releaseFileHandle'
+    looks up and closes the OS handle, clears the slot -- called only from _fclose, matching OUT.EXE's releaseFileHandle.
+11F8C: 'sub_11F8C' -> 'exit'
+    the real C-standard exit(): flushes/closes every FILE-table entry (base 0xDB0) then calls _exit. noreturn, matching ULTIMA.EXE's exit() exactly in shape. Not called from anywhere visible in this executable (0 static callers) -- present but apparently unused, like several other CRT siblings found this session.
+115B3: 'sub_115B3' -> 'insertDisk'
+    prints 'Insert Ultima I diskette' / 'Hit space to continue...' and blocks on a space keypress -- called from launchGame when the exec-chain to OUT.EXE fails, matching the insertDisk retry pattern from every other chain call found this project.
+13EED: 'sub_13EED' -> 'clearMessageArea'
+    INT 10h/AH=06h SCROLL PAGE UP to blank a fixed screen region (rows 0x15-0x18) -- called once from insertDisk to clear space for its message.
+13AD7: 'sub_13AD7' -> 'drawLoadingFrame'
+    draws a border frame (4 fillRect calls covering the screen edges) -- called from launchGame right before printing 'Please wait whilst thy game loads'.
+1413C: 'sub_1413C' -> 'getKeypressRaw'
+    the real single-poll keypress primitive (cursor position via INT 10h/AH=03h, then INT 21h/AH=06h direct console I/O) -- matches OUT.EXE's getKeypress body exactly. The pre-existing name 'getKeypress' in this IDB is actually the polling-loop wrapper (matching OUT.EXE's getKeypressAndWait), left as-is since it's already cross-referenced throughout this IDB and isn't factually wrong (it does return a keypress, just via a wait loop) -- unlike writeString2_mb's rename last pass, this one wasn't misleading enough to justify the churn.
+13E5E: 'sub_13E5E' -> 'wait'
+    outer wait wrapper (guards against amount=0, which busy-loops forever -- a real inert edge case, not something exercised) around waitTimerTicks.
+13E77: 'sub_13E77' -> 'waitTimerTicks'
+    the INT 1Ch tick-counting primitive, matching OUT.EXE's waitTimerTicks exactly (install handler, busy-wait, restore).
+141D5: 'sub_141D5' -> 'textCursorAnimate'
+    8x8 bitmap cursor blit with a frame counter, matching ULTIMA.EXE's drawAnimatedCursor in shape -- named textCursorAnimate here instead to match OUT.EXE's established name for this exact role (called from within the raw keypress primitive to animate the cursor while waiting).
+14234: 'sub_14234' -> 'flushKeyboardBuffer'
+    BIOS ROM ID check + keyboard buffer head/tail reset, matching ULTIMA.EXE's flushKeyboardBuffer exactly.
+11B9B: 'sub_11B9B' -> '_fread2'
+    byte-for-byte identical to the already-named _fread at a different address -- a second copy from a different linked object file, same duplication pattern as ULTIMA.EXE's strncpy2/toupper2. Called from readSavegameList.
+13397: 'sub_13397' -> 'strlen'
+    plain repne-scasb length count.
+1357C: 'sub_1357C' -> 'writeCharacter'
+    BIOS TTY character write (INT 10h/AH=0Eh) -- the low-level primitive under getName/drawRightArrow/writeLeftArrow's text output.
+13D23: 'sub_13D23' -> 'writeNumberChar'
+    BIOS write-char-at-cursor (INT 10h/AH=09h or 0Eh depending on a flag) using color globals byte_14A64/65 -- writeNumber's internal digit-output helper.
+114BB: 'sub_114BB' -> 'showCharacterReplacementMenu'
+    draws ' Character Replacement ' with left/right border arrows and 'The roster is full.  Type the number of the character to wish...' -- the flow triggered when starting a new character and all roster slots are already full. Calls drawCharacterRoster to list the existing 4 characters to choose a replacement from.
+11455: 'sub_11455' -> 'drawCharacterRoster'
+    draws up to 4 numbered character names (slots 0-3, STR15-sized entries from stru_14FC4) -- confirms the savegame roster holds a maximum of 4 characters. Shared by continuePreviousGame (pick who to play) and showCharacterReplacementMenu (pick who to overwrite).
+
+Done. Re-export the .asm/.idc and check the new names took, then update docs/roadmap.md's checklist.
+----- end target script output -----
+[*] finished executing apply_renames_gen.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima1\ultima1_gen.asm
+[*] gen_file(OFILE_ASM) returned 10993
+[*] exporting IDC to C:\dev\ultima1\ultima1_gen.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima1\ultima1_gen.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_gen.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'identify.py', 'noexport']
+[*] reading identify.py
+[*] executing identify.py
+[*] captured stdout from target script:
+----- begin target script output -----
+root filename : GEN.EXE
+input file    : D:\GOG Games\Ultima 1\GEN.EXE
+entry point   : 0x0 (cs=0x1000)
+input md5     : e54871dbef88cf49d99b753089f6f5b4
+
+segments:
+  sg013A       0x010000-0x014260  (16992 bytes)
+  dseg         0x014260-0x015130  (3792 bytes)
+  sg064D       0x015130-0x016530  (5120 bytes)
+  sg078D       0x016530-0x016531  (1 bytes)
+
+functions: 113 total, 113 named, 0 still sub_XXXXX
+
+structs (5): STR15, Point, Rect, Creature, Savegame
+----- end target script output -----
+[*] finished executing identify.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0

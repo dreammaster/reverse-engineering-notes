@@ -1824,6 +1824,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X11450);
 	op_hex		(x,	1);
 	create_insn	(0X11455);
+	set_name	(0X11455,	"drawCharacterRoster");
 	create_insn	(x=0X11456);
 	op_hex		(x,	1);
 	set_cmt	(0X1146B,	"yp",	0);
@@ -1843,6 +1844,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X114B6);
 	op_hex		(x,	1);
 	create_insn	(0X114BB);
+	set_name	(0X114BB,	"showCharacterReplacementMenu");
 	create_insn	(x=0X114BC);
 	op_hex		(x,	1);
 	set_cmt	(0X114C3,	"color",	0);
@@ -1905,6 +1907,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X115AE);
 	op_hex		(x,	1);
 	create_insn	(0X115B3);
+	set_name	(0X115B3,	"insertDisk");
 	create_insn	(x=0X115B4);
 	op_hex		(x,	1);
 	set_cmt	(0X115BF,	"yp",	0);
@@ -2153,6 +2156,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X11978);
 	op_hex		(x,	1);
 	create_insn	(0X1197D);
+	set_name	(0X1197D,	"_fclose");
 	create_insn	(x=0X1197E);
 	op_hex		(x,	1);
 	create_insn	(x=0X11986);
@@ -2255,6 +2259,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X11B96);
 	op_hex		(x,	1);
 	create_insn	(0X11B9B);
+	set_name	(0X11B9B,	"_fread2");
 	create_insn	(x=0X11B9C);
 	op_hex		(x,	1);
 	create_insn	(0X11BD4);
@@ -2364,6 +2369,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X11D7E);
 	op_stkvar	(x,	1);
 	create_insn	(0X11DA6);
+	set_name	(0X11DA6,	"_nheapinit");
 	create_insn	(x=0X11DD1);
 	op_hex		(x,	1);
 	create_insn	(x=0X11DD3);
@@ -2390,6 +2396,7 @@ static Bytes_0(void) {
 	create_insn	(0X11E23);
 	create_insn	(0X11E27);
 	create_insn	(0X11E2C);
+	set_name	(0X11E2C,	"_nfree");
 	create_insn	(x=0X11E2F);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X11E33);
@@ -2411,6 +2418,7 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X11ED0);
 	create_insn	(0X11ED5);
+	set_name	(0X11ED5,	"releaseFileHandle");
 	create_insn	(x=0X11ED6);
 	op_hex		(x,	1);
 	create_insn	(x=0X11EED);
@@ -2436,6 +2444,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X11F87);
 	op_hex		(x,	1);
 	create_insn	(0X11F8C);
+	set_name	(0X11F8C,	"exit");
 	create_insn	(x=0X11F8D);
 	op_hex		(x,	1);
 	create_insn	(0X11FA2);
@@ -2682,6 +2691,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X127C7);
 	op_hex		(x,	1);
 	create_insn	(0X127D4);
+	set_name	(0X127D4,	"_dos_ioctl_get");
 	create_insn	(x=0X127D7);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X127DA);
@@ -2740,6 +2750,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1296C);
 	op_hex		(x,	1);
 	create_insn	(0X12971);
+	set_name	(0X12971,	"_write");
 	create_insn	(x=0X12972);
 	op_hex		(x,	1);
 	create_insn	(x=0X1298C);
@@ -2797,6 +2808,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X12C5A);
 	op_hex		(x,	1);
 	create_insn	(0X12C5F);
+	set_name	(0X12C5F,	"_dos_ioctl_set");
 	create_insn	(x=0X12C62);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X12C65);
@@ -2807,6 +2819,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X12C6B);
 	op_hex		(x,	0);
 	create_insn	(0X12C71);
+	set_name	(0X12C71,	"_dos_creat");
 	create_insn	(x=0X12C74);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X12C77);
@@ -2817,11 +2830,13 @@ static Bytes_0(void) {
 	create_insn	(x=0X12C7C);
 	op_hex		(x,	0);
 	create_insn	(0X12C82);
+	set_name	(0X12C82,	"_dos_creatnew");
 	create_insn	(x=0X12C85);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X12C88);
 	op_stkvar	(x,	1);
 	create_insn	(0X12C8F);
+	set_name	(0X12C8F,	"_dos_open");
 	create_insn	(x=0X12C92);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X12C95);
@@ -2832,6 +2847,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X12C9A);
 	op_hex		(x,	0);
 	create_insn	(0X12CA0);
+	set_name	(0X12CA0,	"_dos_close");
 	create_insn	(x=0X12CA3);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X12CA6);
@@ -2840,6 +2856,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X12CA8);
 	op_hex		(x,	0);
 	create_insn	(0X12CAE);
+	set_name	(0X12CAE,	"_dos_read");
 	create_insn	(x=0X12CB1);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X12CB4);
@@ -2852,6 +2869,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X12CBC);
 	op_hex		(x,	0);
 	create_insn	(0X12CC2);
+	set_name	(0X12CC2,	"_dos_lseek");
 	create_insn	(x=0X12CCB);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X12CD0);
@@ -2865,6 +2883,7 @@ static Bytes_0(void) {
 	op_hex		(x,	0);
 	create_insn	(0X12CE3);
 	create_insn	(0X12CE6);
+	set_name	(0X12CE6,	"_dos_creattemp");
 	create_insn	(x=0X12CE9);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X12CEC);
@@ -2875,6 +2894,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X12CF1);
 	op_hex		(x,	0);
 	create_insn	(0X12CF7);
+	set_name	(0X12CF7,	"_dos_write");
 	create_insn	(x=0X12CFA);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X12CFD);
@@ -2890,6 +2910,7 @@ static Bytes_0(void) {
 	op_stkvar	(x,	1);
 	create_insn	(0X12D1C);
 	create_insn	(0X12D20);
+	set_name	(0X12D20,	"_exit");
 	create_insn	(x=0X12D23);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X12D34);
@@ -2900,6 +2921,7 @@ static Bytes_0(void) {
 	create_insn	(0X12D38);
 	create_insn	(0X12D3A);
 	create_insn	(0X12D47);
+	set_name	(0X12D47,	"_nmalloc");
 	create_insn	(x=0X12D4A);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X12D4E);
@@ -2935,6 +2957,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X12EBA);
 	op_hex		(x,	1);
 	create_insn	(0X12EBF);
+	set_name	(0X12EBF,	"hasFileExtension");
 	create_insn	(x=0X12EC0);
 	op_hex		(x,	1);
 	create_insn	(x=0X12F01);
@@ -2956,6 +2979,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X12F3B);
 	op_hex		(x,	1);
 	create_insn	(0X12F40);
+	set_name	(0X12F40,	"ensureFileExtension");
 	create_insn	(x=0X12F41);
 	op_hex		(x,	1);
 	create_insn	(0X12F7C);
@@ -3079,6 +3103,7 @@ static Bytes_0(void) {
 	op_hex		(x,	0);
 	create_insn	(0X1333B);
 	create_insn	(0X1336E);
+	set_name	(0X1336E,	"_dos_getfileattr");
 	create_insn	(x=0X13371);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X13374);
@@ -3088,6 +3113,7 @@ static Bytes_0(void) {
 	op_hex		(x,	0);
 	create_insn	(0X1337F);
 	create_insn	(0X13382);
+	set_name	(0X13382,	"strcpy");
 	create_insn	(x=0X13385);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X13388);
@@ -3095,15 +3121,18 @@ static Bytes_0(void) {
 	create_insn	(x=0X13392);
 	op_stkvar	(x,	1);
 	create_insn	(0X13397);
+	set_name	(0X13397,	"strlen");
 	create_insn	(x=0X1339A);
 	op_stkvar	(x,	1);
 	create_insn	(0X133AE);
+	set_name	(0X133AE,	"strncpy");
 	create_insn	(x=0X133AF);
 	op_hex		(x,	1);
 	create_insn	(0X133DB);
 	create_insn	(x=0X133F4);
 	op_hex		(x,	1);
 	create_insn	(0X133F9);
+	set_name	(0X133F9,	"_nheapgrow");
 	create_insn	(x=0X133FC);
 	op_stkvar	(x,	1);
 	create_byte	(0X13406);
@@ -3187,6 +3216,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1356E);
 	op_hex		(x,	0);
 	create_insn	(0X1357C);
+	set_name	(0X1357C,	"writeCharacter");
 	set_cmt	(0X13585,	"- VIDEO - GET CURRENT VIDEO MODE\nReturn: AH = number of columns on screen\nAL = current video mode\nBH = current active display page",	0);
 	create_insn	(x=0X13585);
 	op_hex		(x,	0);
@@ -3416,6 +3446,7 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X13AC8);
 	create_insn	(0X13AD7);
+	set_name	(0X13AD7,	"drawLoadingFrame");
 	create_insn	(x=0X13AD8);
 	op_hex		(x,	1);
 	set_cmt	(0X13ADD,	"color",	0);
@@ -3510,6 +3541,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X13C86);
 	op_hex		(x,	1);
 	create_insn	(0X13C8B);
+	set_name	(0X13C8B,	"writeNumber");
 	create_insn	(x=0X13C92);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X13C98);
@@ -3538,6 +3570,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X14260);
 	op_plain_offset	(x,	129,	0X14260);
 	create_insn	(0X13D23);
+	set_name	(0X13D23,	"writeNumberChar");
 	set_cmt	(0X13D3E,	"- VIDEO - WRITE ATTRIBUTES/CHARACTERS AT CURSOR POSITION\nAL = character, BH = display page\nBL = attributes of character (alpha modes) or color (graphics modes)\nCX = number of times to write character",	0);
 	create_insn	(x=0X13D3E);
 	op_hex		(x,	0);
@@ -3627,9 +3660,11 @@ static Bytes_0(void) {
 	set_cmt	(0X13E4C,	"EGA port: graphics controller data register",	0);
 	create_insn	(0X13E56);
 	create_insn	(0X13E5E);
+	set_name	(0X13E5E,	"wait");
 	create_insn	(x=0X13E65);
 	op_stkvar	(x,	1);
 	create_insn	(0X13E77);
+	set_name	(0X13E77,	"waitTimerTicks");
 	set_cmt	(0X13E7F,	"DOS - 2+ - GET INTERRUPT VECTOR\nAL = interrupt number\nReturn: ES:BX = value of interrupt vector",	0);
 	create_insn	(x=0X13E7F);
 	op_hex		(x,	0);
@@ -3668,6 +3703,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X13EE4);
 	op_hex		(x,	1);
 	create_insn	(0X13EED);
+	set_name	(0X13EED,	"clearMessageArea");
 	set_cmt	(0X13F09,	"- VIDEO - SCROLL PAGE UP\nAL = number of lines to scroll window (0 = blank whole window)\nBH = attributes to be used on blanked lines\nCH,CL = row,column of upper left corner of window to scroll\nDH,DL = row,column of lower right corner of window",	0);
 	create_insn	(x=0X13F09);
 	op_hex		(x,	0);
@@ -3859,6 +3895,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X14134);
 	op_hex		(x,	0);
 	create_insn	(0X1413C);
+	set_name	(0X1413C,	"getKeypressRaw");
 	create_insn	(x=0X14143);
 	op_stkvar	(x,	1);
 	set_cmt	(0X1414D,	"- VIDEO - READ CURSOR POSITION\nBH = page number\nReturn: DH,DL = row,column, CH = cursor start line, CL = cursor end line",	0);
@@ -3885,6 +3922,7 @@ static Bytes_0(void) {
 	create_insn	(0X141A5);
 	create_insn	(0X141AB);
 	create_insn	(0X141D5);
+	set_name	(0X141D5,	"textCursorAnimate");
 	create_insn	(0X141DD);
 	create_insn	(x=0X141E4);
 	op_hex		(x,	1);
@@ -3898,6 +3936,7 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X14224);
 	create_insn	(0X14234);
+	set_name	(0X14234,	"flushKeyboardBuffer");
 	make_array	(0X14254,	0XC);
 	create_word	(0X14262);
 	create_dword	(0X14264);
