@@ -22,7 +22,7 @@ identified and renamed in any other IDB it also happens to appear in.
 
 | IDB | Root file | Role (best guess, to confirm) | Functions named | Structs |
 |---|---|---|---|---|
-| `ultima1.idb` | `ULTIMA.EXE` | Title screen / attract mode, chains unconditionally to `GEN.EXE` | 70 / 100 | `STR15`, `Point`, `Rect`, `Savegame` |
+| `ultima1.idb` | `ULTIMA.EXE` | Title screen / attract mode, chains unconditionally to `GEN.EXE` | 74 / 100 | `STR15`, `Point`, `Rect`, `Savegame` |
 | `ultima1_gen.idb` | `GEN.EXE` | Character generation | 44 / 113 | + `Creature` |
 | `ultima1_out.idb` | `OUT.EXE` | Overworld/towns/dungeons (outdoor engine) | 352 / 353 | + `DungeonCell`, `DungeonColumn`, `DungeonMap`, `LocationWidget`, `MapLine`, `Map` |
 | `ultima1_space.idb` | `SPACE.EXE` | Space combat minigame | 156 / 210 | + `DuneonRow`, `DungeonMap` (space variant), `SpaceMapShip`, `SpaceMapCell`, `SpaceMapY`, `SpaceMap`, `FightData`, `JumpEntry` |
@@ -597,3 +597,25 @@ before chaining onward to `OUT.EXE`. Where `MONDAIN.EXE` fits into
 this chain isn't known yet — worth checking once `GEN.EXE` or
 `OUT.EXE` is worked on, since it may only be reachable from deep
 inside the dungeon/endgame rather than from this top-level chain.
+
+### `writeString2_mb` was a misnamed printf, not multi-byte text handling
+
+Third pass, same session. The pre-existing name `writeString2_mb`
+(from earlier work, before this session) suggested multi-byte
+character-encoding handling. Tracing its two callees
+(`sub_11AE7`/`sub_1153D`, both previously unnamed) instead found a
+textbook C runtime `vsprintf` implementation: a `%`-format-string
+walker dispatching to a 1245-byte per-specifier conversion routine
+(`formatArg` — the largest function in this whole executable, sized
+consistently with real `%d`/`%s`/`%x`-style width/precision/flag
+handling), followed by `fputs`/`putc` writing the result to a fixed
+`FILE*` at `0xC73A` (presumably `stdout`). Renamed to
+`printStartupMessage` to reflect what it's actually for — its only
+two callers are `checkMem` and `sub_104D0`, both early `_main`
+startup diagnostics (e.g. a low-memory warning), not general in-game
+text. **Note for future sessions**: renamed an existing name here
+rather than leaving it, since the old name was actively misleading
+about a real capability (multi-byte text) this function doesn't have
+— worth double-checking any other pre-2026-08-19 names in this IDB
+with similar skepticism if they stop making sense once their callees
+are understood.

@@ -2891,3 +2891,158 @@ structs (4): STR15, Point, Rect, Savegame
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_renames_ultima1.py', 'noexport']
+[*] reading apply_renames_ultima1.py
+[*] executing apply_renames_ultima1.py
+[*] captured stdout from target script:
+----- begin target script output -----
+12437: already '_dos_open' -- skipping
+12448: already '_dos_close' -- skipping
+12456: already '_dos_read' -- skipping
+1246A: already '_dos_lseek' -- skipping
+1248E: already '_dos_write' -- skipping
+124B7: already '_dos_ioctl_get' -- skipping
+124CB: already '_exit' -- skipping
+12BE6: already '_dos_ioctl_set' -- skipping
+12BF8: already '_dos_creat' -- skipping
+12C09: already '_dos_creatnew' -- skipping
+12C16: already '_dos_creattemp' -- skipping
+114B7: already '_nheapinit' -- skipping
+1141E: already 'setCriticalErrorHandler' -- skipping
+11D03: already '_open' -- skipping
+11053: already '_openfile' -- skipping
+111B4: already '_fread' -- skipping
+10F96: already '_fclose' -- skipping
+120F4: already '_flsbuf' -- skipping
+11B71: already '_nfree' -- skipping
+12CA4: already '_nmalloc' -- skipping
+133B2: already '_nheapgrow' -- skipping
+11C1A: already 'releaseFileHandle' -- skipping
+10E4D: already 'chainToExecutable' -- skipping
+11C93: already 'execProgramEntry' -- skipping
+12595: already 'findExecutableFile' -- skipping
+12E3B: already 'hasFileExtension' -- skipping
+1331F: already '_dos_getfileattr' -- skipping
+12EBC: already 'ensureFileExtension' -- skipping
+12A1A: already 'buildAndChainExecutable' -- skipping
+12C8D: already 'strlen' -- skipping
+130F4: already 'execProgram' -- skipping
+11AE7: 'sub_11AE7' -> 'vsprintf'
+    walks a %-format string char by char (handling %% as a literal percent), dispatching each real specifier to formatArg. Matches the classic C runtime vsprintf loop shape exactly.
+1153D: 'sub_1153D' -> 'formatArg'
+    per-specifier conversion (width/precision/flags handling for %d/%s/%x/etc., matching MSC's internal _output-family size and shape) -- 1245 bytes, the largest function in this executable, confirming this is real format-conversion logic and not something simpler.
+11CD1: 'sub_11CD1' -> 'fputs'
+    writes a null-terminated string to a stream one character at a time via putc, stopping at the null terminator.
+1253B: 'sub_1253B' -> 'putc'
+    writes one character to a stream via _fwrite-family internals.
+1126F: 'writeString2_mb' -> 'printStartupMessage'
+    renamed from the pre-existing 'writeString2_mb' -- confirmed this is a printf-style formatter (vsprintf + fputs to a fixed stream at 0xC73A, presumably stdout), nothing to do with multi-byte character encoding as the old name implied. Called only from checkMem and sub_104D0 for early startup diagnostic messages (e.g. low-memory warnings), not general in-game text.
+11476: already 'criticalErrorHandler' -- skipping
+123CC: already 'translateDosErrorToErrno' -- skipping
+13F41: already '_doserrno' -- skipping
+18460: already 'errno' -- skipping
+
+[dry] nothing changed. Set DRY_RUN = False to apply.
+----- end target script output -----
+[*] finished executing apply_renames_ultima1.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_renames_ultima1.py']
+[*] reading apply_renames_ultima1.py
+[*] executing apply_renames_ultima1.py
+[*] captured stdout from target script:
+----- begin target script output -----
+12437: already '_dos_open' -- skipping
+12448: already '_dos_close' -- skipping
+12456: already '_dos_read' -- skipping
+1246A: already '_dos_lseek' -- skipping
+1248E: already '_dos_write' -- skipping
+124B7: already '_dos_ioctl_get' -- skipping
+124CB: already '_exit' -- skipping
+12BE6: already '_dos_ioctl_set' -- skipping
+12BF8: already '_dos_creat' -- skipping
+12C09: already '_dos_creatnew' -- skipping
+12C16: already '_dos_creattemp' -- skipping
+114B7: already '_nheapinit' -- skipping
+1141E: already 'setCriticalErrorHandler' -- skipping
+11D03: already '_open' -- skipping
+11053: already '_openfile' -- skipping
+111B4: already '_fread' -- skipping
+10F96: already '_fclose' -- skipping
+120F4: already '_flsbuf' -- skipping
+11B71: already '_nfree' -- skipping
+12CA4: already '_nmalloc' -- skipping
+133B2: already '_nheapgrow' -- skipping
+11C1A: already 'releaseFileHandle' -- skipping
+10E4D: already 'chainToExecutable' -- skipping
+11C93: already 'execProgramEntry' -- skipping
+12595: already 'findExecutableFile' -- skipping
+12E3B: already 'hasFileExtension' -- skipping
+1331F: already '_dos_getfileattr' -- skipping
+12EBC: already 'ensureFileExtension' -- skipping
+12A1A: already 'buildAndChainExecutable' -- skipping
+12C8D: already 'strlen' -- skipping
+130F4: already 'execProgram' -- skipping
+11AE7: 'sub_11AE7' -> 'vsprintf'
+    walks a %-format string char by char (handling %% as a literal percent), dispatching each real specifier to formatArg. Matches the classic C runtime vsprintf loop shape exactly.
+1153D: 'sub_1153D' -> 'formatArg'
+    per-specifier conversion (width/precision/flags handling for %d/%s/%x/etc., matching MSC's internal _output-family size and shape) -- 1245 bytes, the largest function in this executable, confirming this is real format-conversion logic and not something simpler.
+11CD1: 'sub_11CD1' -> 'fputs'
+    writes a null-terminated string to a stream one character at a time via putc, stopping at the null terminator.
+1253B: 'sub_1253B' -> 'putc'
+    writes one character to a stream via _fwrite-family internals.
+1126F: 'writeString2_mb' -> 'printStartupMessage'
+    renamed from the pre-existing 'writeString2_mb' -- confirmed this is a printf-style formatter (vsprintf + fputs to a fixed stream at 0xC73A, presumably stdout), nothing to do with multi-byte character encoding as the old name implied. Called only from checkMem and sub_104D0 for early startup diagnostic messages (e.g. low-memory warnings), not general in-game text.
+11476: already 'criticalErrorHandler' -- skipping
+123CC: already 'translateDosErrorToErrno' -- skipping
+13F41: already '_doserrno' -- skipping
+18460: already 'errno' -- skipping
+
+Done. Re-export the .asm/.idc and check the new names took, then update docs/roadmap.md's checklist.
+----- end target script output -----
+[*] finished executing apply_renames_ultima1.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima1\ultima1.asm
+[*] gen_file(OFILE_ASM) returned 10721
+[*] exporting IDC to C:\dev\ultima1\ultima1.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima1\ultima1.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'identify.py', 'noexport']
+[*] reading identify.py
+[*] executing identify.py
+[*] captured stdout from target script:
+----- begin target script output -----
+root filename : ULTIMA.EXE
+input file    : D:\GOG Games\Ultima 1\ULTIMA.EXE
+entry point   : 0x0 (cs=0x188f)
+input md5     : ed19976a19a2794b8e3ac528e4f622a5
+
+segments:
+  sg0138       0x010000-0x013ed0  (16080 bytes)
+  sg0525       0x013ed0-0x019e10  (24384 bytes)
+  seg002       0x019e10-0x019e74  (100 bytes)
+  seg003       0x020720-0x020721  (1 bytes)
+  seg004       0x021b20-0x021b21  (1 bytes)
+
+functions: 100 total, 74 named, 26 still sub_XXXXX
+
+structs (4): STR15, Point, Rect, Savegame
+----- end target script output -----
+[*] finished executing identify.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0

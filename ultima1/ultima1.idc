@@ -1275,7 +1275,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1126A);
 	op_hex		(x,	1);
 	create_insn	(0X1126F);
-	set_name	(0X1126F,	"writeString2_mb");
+	set_name	(0X1126F,	"printStartupMessage");
 	create_insn	(x=0X11270);
 	op_hex		(x,	1);
 	create_insn	(x=0X11281);
@@ -1404,6 +1404,7 @@ static Bytes_0(void) {
 	create_insn	(0X11534);
 	create_insn	(0X11538);
 	create_insn	(0X1153D);
+	set_name	(0X1153D,	"formatArg");
 	create_insn	(x=0X1153E);
 	op_hex		(x,	1);
 	create_insn	(x=0X1158B);
@@ -1453,6 +1454,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X11AE2);
 	op_hex		(x,	1);
 	create_insn	(0X11AE7);
+	set_name	(0X11AE7,	"vsprintf");
 	create_insn	(x=0X11AE8);
 	op_hex		(x,	1);
 	create_insn	(0X11B17);
@@ -1511,6 +1513,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X11CCC);
 	op_hex		(x,	1);
 	create_insn	(0X11CD1);
+	set_name	(0X11CD1,	"fputs");
 	create_insn	(x=0X11CD2);
 	op_hex		(x,	1);
 	create_insn	(x=0X11CF7);
@@ -1839,6 +1842,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X12536);
 	op_hex		(x,	1);
 	create_insn	(0X1253B);
+	set_name	(0X1253B,	"putc");
 	create_insn	(x=0X1253C);
 	op_hex		(x,	1);
 	create_insn	(x=0X12544);
@@ -3297,7 +3301,7 @@ static Functions_0(void) {
 	set_frame_size(0X111B4, 0XA, 0, 0);
 	add_func    (0X1126F,0X112B7);
 	set_func_flags(0X1126F,0x400);
-	SetType(0X1126F, "int __stdcall writeString2_mb(const char near *msg);");
+	SetType(0X1126F, "int __stdcall printStartupMessage(const char near *msg);");
 	set_frame_size(0X1126F, 0X108, 0, 0X2);
 	define_local_var(0X1126F, 0X112B7, "[bp+0X2]", "msg");
 	add_func    (0X112B7,0X1133E);

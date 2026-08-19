@@ -141,6 +141,38 @@ RENAMES = [
      "block, and (per OUT.EXE's identical implementation) far-JMPs "
      "into the loaded image without ever calling DOS INT 21h/4Bh EXEC "
      "or returning control here."),
+
+    # -- third pass: writeString2_mb (pre-existing name from earlier
+    # work) turned out to be a printf-family formatter, not anything
+    # multi-byte-encoding-related -- renamed along with its 3 helpers
+    # once the evidence was clear (walks a %-format string, dispatches
+    # per-specifier conversion, then fputs/putc's the result to a
+    # fixed FILE* at 0xC73A, presumably stdout). Called only from
+    # checkMem and sub_104D0, both early _main startup diagnostics --
+    # not a general in-game text routine (that's writeString/
+    # writeCharacter_0 elsewhere, already named). --
+
+    (0x11AE7, "vsprintf",
+     "walks a %-format string char by char (handling %% as a literal "
+     "percent), dispatching each real specifier to formatArg. Matches "
+     "the classic C runtime vsprintf loop shape exactly."),
+    (0x1153D, "formatArg",
+     "per-specifier conversion (width/precision/flags handling for "
+     "%d/%s/%x/etc., matching MSC's internal _output-family size and "
+     "shape) -- 1245 bytes, the largest function in this executable, "
+     "confirming this is real format-conversion logic and not "
+     "something simpler."),
+    (0x11CD1, "fputs",
+     "writes a null-terminated string to a stream one character at a "
+     "time via putc, stopping at the null terminator."),
+    (0x1253B, "putc", "writes one character to a stream via _fwrite-family internals."),
+    (0x1126F, "printStartupMessage",
+     "renamed from the pre-existing 'writeString2_mb' -- confirmed "
+     "this is a printf-style formatter (vsprintf + fputs to a fixed "
+     "stream at 0xC73A, presumably stdout), nothing to do with multi-"
+     "byte character encoding as the old name implied. Called only "
+     "from checkMem and sub_104D0 for early startup diagnostic "
+     "messages (e.g. low-memory warnings), not general in-game text."),
 ]
 
 # (ea, new_name, note) -- labeled locations, not proc-boundary
