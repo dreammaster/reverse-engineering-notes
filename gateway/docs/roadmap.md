@@ -505,6 +505,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       (tempo meta-event processing), and the already-flagged
       `sub_1FE5C` (periodic background-music-channel refresh) all need
       naming and unifying with `Midi_sendByte`.
+- [x] Named `sub_288F4` (14 callers) → `Clock_delayTicks` — a generic
+      clock-based busy-wait delay primitive, used by `Screen_fadeOut`
+      and others. Full writeup in
+      [overview.md](overview.md#clock_delayticks-named--a-simple-busy-wait-delay-primitive).
 - [ ] Cross-check the structs shared by name/concept with `gate.idb`
       (`VocabEntry`/`VOCAB_ENTRY`, `Str16`/`STR16`, `Point`/`POINT`,
       `Screen`/`SCREEN`, `Font`/`FONT`, `REGS`, `HandleEntry`/`HANDLE`)

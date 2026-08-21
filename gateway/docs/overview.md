@@ -1674,3 +1674,19 @@ MIDI playback engine writeup.
 
 Applied via `apply_renames_gatemain.py`'s eighteenth batch (three
 renames: `Midi_sendByte`, `_midiDataPort`, `_midiStatusPort`).
+
+### `Clock_delayTicks` named — a simple busy-wait delay primitive
+
+Re-ran `rank_unnamed_functions.py` again; `sub_26F2A`/`sub_15DB2`/
+`sub_4A69F` remain at the top for the reasons already documented.
+Moved to `sub_288F4` (14 callers), which resolved cleanly and simply.
+
+`Clock_delayTicks(loTicks, hiTicks)`: records the current `_clock()`
+value, then busy-loops calling `_clock()` again until the elapsed
+32-bit tick count (`current - start`) is `>=` the `(loTicks, hiTicks)`
+32-bit target. A generic timing/delay primitive — used by the
+already-named `Screen_fadeOut` to pace fade steps, and by `sub_26C0C`
+(part of the `Image_Init`/`AnimPics`-adjacent cluster, not renamed)
+for similar pacing.
+
+Applied via `apply_renames_gatemain.py`'s nineteenth batch.

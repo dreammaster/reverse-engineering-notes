@@ -612,6 +612,19 @@ RENAMES = [
      "Was word_C83AC: MPU-401 status port (base+1), set alongside "
      "_midiDataPort in sub_1D966 (not renamed); Midi_sendByte polls "
      "its bit 0x40 (output-not-ready/busy) before writing."),
+
+    # -- nineteenth pass: sub_288F4, a simple clock-based busy-wait
+    # delay utility. Confirmed directly by its body. See
+    # docs/overview.md#clock_delayticks-named. --
+
+    (0x288F4, "Clock_delayTicks",
+     "sub_288F4(loTicks, hiTicks): records the current _clock() value, "
+     "then busy-loops calling _clock() again until the elapsed 32-bit "
+     "tick count (current - start) is >= the (loTicks, hiTicks) 32-bit "
+     "target. A generic timing/delay primitive -- used by the "
+     "already-named Screen_fadeOut to pace fade steps, and by "
+     "sub_26C0C (part of the Image_Init/AnimPics-adjacent cluster, not "
+     "renamed) for similar pacing."),
 ]
 
 

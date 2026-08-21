@@ -51779,7 +51779,7 @@ loc_26384:                              ; CODE XREF: Screen_fadeOut+6F\u2193j
                 cwd
                 push    dx
                 push    ax
-                call    sub_288F4
+                call    Clock_delayTicks
                 add     sp, 4
                 dec     [bp+var_30C]
                 jz      short loc_26441
@@ -53008,7 +53008,7 @@ loc_26C32:                              ; CODE XREF: sub_26C0C+69\u2193j
                 sub     ax, ax
                 push    ax
                 push    dx
-                call    sub_288F4
+                call    Clock_delayTicks
                 add     sp, 4
                 add     word ptr [bp+img], 8Ch ; 'Œ'
                 dec     si
@@ -55456,7 +55456,7 @@ loc_27D65:                              ; CODE XREF: sub_27C31+A9\u2191j
                 cwd
                 push    dx
                 push    ax
-                call    sub_288F4
+                call    Clock_delayTicks
                 add     sp, 4
                 call    Mouse_WaitForRelease
                 call    Mouse_Hide
@@ -57118,7 +57118,7 @@ sub_2886F       endp
 
 ; Attributes: bp-based frame
 
-sub_288F4       proc far                ; CODE XREF: Screen_fadeOut+8A\u2191P
+Clock_delayTicks proc far               ; CODE XREF: Screen_fadeOut+8A\u2191P
                                         ; sub_26C0C+5B\u2191P ...
 
 var_4           = word ptr -4
@@ -57135,8 +57135,8 @@ loc_288FA:
                 mov     [bp+var_4], ax
                 mov     [bp+var_2], dx
 
-loc_28905:                              ; CODE XREF: sub_288F4+21\u2193j
-                                        ; sub_288F4+26\u2193j
+loc_28905:                              ; CODE XREF: Clock_delayTicks+21\u2193j
+                                        ; Clock_delayTicks+26\u2193j
                 call    _clock
                 sub     ax, [bp+var_4]
                 sbb     dx, [bp+var_2]
@@ -57146,11 +57146,11 @@ loc_28905:                              ; CODE XREF: sub_288F4+21\u2193j
                 cmp     ax, [bp+arg_0]
                 jb      short loc_28905
 
-loc_2891C:                              ; CODE XREF: sub_288F4+1F\u2191j
+loc_2891C:                              ; CODE XREF: Clock_delayTicks+1F\u2191j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_288F4       endp
+Clock_delayTicks endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -57202,7 +57202,7 @@ loc_2894B:
                 push    [bp+arg_4]
                 push    [bp+arg_2]
                 push    cs
-                call    near ptr sub_288F4
+                call    near ptr Clock_delayTicks
                 add     sp, 4
                 mov     ax, 61h ; 'a'
                 push    ax
@@ -57248,7 +57248,7 @@ loc_289B3:
                 push    cs
 
 loc_289B5:
-                call    near ptr sub_288F4
+                call    near ptr Clock_delayTicks
 
 loc_289B8:
                 add     sp, 4
@@ -191035,7 +191035,7 @@ loc_743C2:                              ; CODE XREF: sub_74149+260\u2191j
                 cwd
                 push    dx
                 push    ax
-                call    sub_288F4
+                call    Clock_delayTicks
                 add     sp, 4
 
 loc_743E6:                              ; CODE XREF: sub_74149+2A4\u2193j
@@ -314178,7 +314178,7 @@ sub_AA86F       proc far                ; CODE XREF: sub_AA8AE+6B\u2193p
                 cwd
                 push    dx
                 push    ax
-                call    sub_288F4
+                call    Clock_delayTicks
                 add     sp, 4
                 mov     ax, 32h ; '2'
                 cwd
@@ -320551,7 +320551,7 @@ loc_AD663:                              ; CODE XREF: sub_AD458+201\u2191j
                 cwd
                 push    dx
                 push    ax
-                call    sub_288F4
+                call    Clock_delayTicks
                 add     sp, 4
 
 loc_AD68D:                              ; CODE XREF: sub_AD458+23C\u2193j
@@ -320655,7 +320655,7 @@ loc_AD746:                              ; CODE XREF: sub_AD458+280\u2191j
                 cwd
                 push    dx
                 push    ax
-                call    sub_288F4
+                call    Clock_delayTicks
                 add     sp, 4
 
 loc_AD754:                              ; CODE XREF: sub_AD458+208\u2191j
@@ -327509,7 +327509,7 @@ sub_B04BF       proc far                ; CODE XREF: Commnet_proc1+6B\u2193p
                 cwd
                 push    dx
                 push    ax
-                call    sub_288F4
+                call    Clock_delayTicks
                 add     sp, 4
                 mov     ax, 32h ; '2'
                 cwd
@@ -328610,7 +328610,7 @@ loc_B0F0E:                              ; CODE XREF: Commset_show+494\u2191j
                 cwd
                 push    dx
                 push    ax
-                call    sub_288F4
+                call    Clock_delayTicks
                 add     sp, 4
                 cmp     Persisted_val238, 0
                 jz      short loc_B0FAD
@@ -328747,7 +328747,7 @@ loc_B104E:                              ; CODE XREF: Commset_show+5D7\u2191j
                 cwd
                 push    dx
                 push    ax
-                call    sub_288F4
+                call    Clock_delayTicks
                 add     sp, 4
                 mov     ax, 3448h
                 mov     dx, 0F000h
@@ -338887,7 +338887,7 @@ sub_B572F       proc far                ; CODE XREF: sub_B576E+6C\u2193p
                 cwd
                 push    dx
                 push    ax
-                call    sub_288F4
+                call    Clock_delayTicks
                 add     sp, 4
                 mov     ax, 32h ; '2'
                 cwd
@@ -339299,7 +339299,7 @@ loc_B5AC8:                              ; CODE XREF: sub_B58A3+43B\u2193j
                 cwd
                 push    dx
                 push    ax
-                call    sub_288F4
+                call    Clock_delayTicks
                 add     sp, 4
                 mov     ax, [bp+var_6]
                 mov     cx, ax
@@ -339358,7 +339358,7 @@ loc_B5B44:                              ; CODE XREF: sub_B58A3+29B\u2191j
                 cwd
                 push    dx
                 push    ax
-                call    sub_288F4
+                call    Clock_delayTicks
                 add     sp, 4
                 inc     [bp+var_A]
 
@@ -339548,7 +339548,7 @@ loc_B5CE1:                              ; CODE XREF: sub_B58A3+2B8\u2191j
                 cwd
                 push    dx
                 push    ax
-                call    sub_288F4
+                call    Clock_delayTicks
                 add     sp, 4
                 mov     ax, 1
                 push    ax              ; showFlag
@@ -363281,7 +363281,7 @@ sub_C0129       proc far                ; CODE XREF: sub_C0168+2EE\u2193p
                 cwd
                 push    dx
                 push    ax
-                call    sub_288F4
+                call    Clock_delayTicks
                 add     sp, 4
                 mov     ax, 32h ; '2'
                 cwd
@@ -363549,7 +363549,7 @@ loc_C0373:                              ; CODE XREF: sub_C0168+201\u2191j
                 cwd
                 push    dx
                 push    ax
-                call    sub_288F4
+                call    Clock_delayTicks
                 add     sp, 4
 
 loc_C039D:                              ; CODE XREF: sub_C0168+23C\u2193j
@@ -363660,7 +363660,7 @@ loc_C045E:                              ; CODE XREF: sub_C0168+26B\u2191j
                 cwd
                 push    dx
                 push    ax
-                call    sub_288F4
+                call    Clock_delayTicks
                 add     sp, 4
 
 loc_C046C:                              ; CODE XREF: sub_C0168+208\u2191j
