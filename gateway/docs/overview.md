@@ -2751,3 +2751,14 @@ clears the disabled flag. Called from the already-named `finish`/
 transcript/log-file close counterpart to whatever opens it.
 
 Applied via `apply_renames_gatemain.py`'s sixty-eighth batch.
+
+### `Video_getValidIndex` named
+
+Moved to `sub_2A597` (4 callers). Confirmed via the already-named
+`videoIndex`/`video_set_videoIndex` (distinct from the similarly-named
+but separate `_videoIndex` global used elsewhere) as a validated
+video-mode-index getter: returns `videoIndex` if in range `0`-`7`, or
+the sentinel `-6` otherwise. Called from `Surface_draw`/
+`Surface_draw2`/`Video_ClearScreen` at the start of drawing operations.
+
+Applied via `apply_renames_gatemain.py`'s sixty-ninth batch.

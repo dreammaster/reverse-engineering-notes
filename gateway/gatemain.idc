@@ -31516,6 +31516,7 @@ static Bytes_5(void) {
 	create_insn	(x=0X2A58A);
 	op_stkvar	(x,	1);
 	create_insn	(0X2A597);
+	set_name	(0X2A597,	"Video_getValidIndex");
 	create_insn	(x=0X2A59A);
 	op_hex		(x,	1);
 	create_insn	(x=0X2A5A1);

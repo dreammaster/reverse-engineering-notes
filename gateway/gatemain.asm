@@ -17144,7 +17144,7 @@ loc_17BA9:                              ; CODE XREF: sub_17B8E:loc_17BA2\u2191j
 loc_17BCF:                              ; CODE XREF: sub_17B8E+39\u2191j
                 mov     [bp+var_8], dx
                 mov     [bp+var_A], ax
-                call    sub_2A597
+                call    Video_getValidIndex
 
 loc_17BDA:
                 or      ax, ax
@@ -60863,7 +60863,7 @@ video_update_mode endp
 
 ; Attributes: bp-based frame
 
-sub_2A597       proc far                ; CODE XREF: sub_17B8E+47\u2191P
+Video_getValidIndex proc far            ; CODE XREF: sub_17B8E+47\u2191P
                                         ; Video_ClearScreen+21\u2193P ...
 
 var_2           = word ptr -2
@@ -60888,10 +60888,10 @@ loc_2A5AC:
                 cmp     ax, 7
                 jle     short loc_2A5BB
 
-loc_2A5B6:                              ; CODE XREF: sub_2A597+18\u2191j
+loc_2A5B6:                              ; CODE XREF: Video_getValidIndex+18\u2191j
                 mov     [bp+var_2], -6
 
-loc_2A5BB:                              ; CODE XREF: sub_2A597+1D\u2191j
+loc_2A5BB:                              ; CODE XREF: Video_getValidIndex+1D\u2191j
                 mov     ax, [bp+var_2]
                 pop     di
                 pop     si
@@ -60900,7 +60900,7 @@ loc_2A5BB:                              ; CODE XREF: sub_2A597+1D\u2191j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_2A597       endp
+Video_getValidIndex endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -62056,7 +62056,7 @@ loc_2AB32:
 loc_2AB37:                              ; CODE XREF: Video_ClearScreen+14\u2191j
                 mov     ax, word_C9802
                 mov     [bp+var_4], ax
-                call    sub_2A597
+                call    Video_getValidIndex
                 or      ax, ax
                 jge     short loc_2AB4B
                 mov     [bp+var_2], ax
@@ -62337,7 +62337,7 @@ loc_2AD29:                              ; CODE XREF: Surface_draw:loc_2AD22\u219
 ; ---------------------------------------------------------------------------
 
 loc_2AD4B:                              ; CODE XREF: Surface_draw+35\u2191j
-                call    sub_2A597
+                call    Video_getValidIndex
                 or      ax, ax
                 jge     short loc_2AD5A
                 mov     [bp+var_2], ax
@@ -63193,7 +63193,7 @@ loc_2B271:                              ; CODE XREF: Surface_draw2+14\u2191j
 ; ---------------------------------------------------------------------------
 
 loc_2B293:                              ; CODE XREF: Surface_draw2+35\u2191j
-                call    sub_2A597
+                call    Video_getValidIndex
                 or      ax, ax
                 jge     short loc_2B2A2
                 mov     [bp+var_2], ax

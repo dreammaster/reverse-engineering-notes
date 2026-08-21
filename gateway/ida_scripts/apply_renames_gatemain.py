@@ -1843,6 +1843,20 @@ RENAMES = [
      "Called from the already-named finish/shutdown exit routines "
      "plus sub_1057E/sub_2E8F1 (not renamed) -- the transcript/log-"
      "file close counterpart to whatever opens it."),
+
+    # -- sixty-ninth pass: sub_2A597, confirmed via the already-named
+    # videoIndex/video_set_videoIndex as a validated video-mode-index
+    # getter, called from several already-named drawing entry points.
+    # See docs/overview.md#video_getvalidindex-named. --
+
+    (0x2A597, "Video_getValidIndex",
+     "sub_2A597(): reads the already-named videoIndex global (set by "
+     "the already-named video_set_videoIndex; distinct from the "
+     "similarly-named but separate _videoIndex global used elsewhere) "
+     "and returns it if in range 0-7, or the sentinel -6 otherwise. "
+     "Called from Surface_draw/Surface_draw2/Video_ClearScreen/"
+     "sub_17B8E (not renamed) -- a validated video-mode-index getter "
+     "used at the start of drawing operations."),
 ]
 
 
