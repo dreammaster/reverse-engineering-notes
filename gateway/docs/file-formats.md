@@ -389,8 +389,84 @@ stops right after resolving the draw position, before ever reading
 palette/pixel data — used by whatever needs picture dimensions without
 displaying it.
 
-**Not yet decoded**: `PictureDecoder_load`'s actual pixel format/
-compression scheme, the exact `PICFLAG_BIT_DEPTH` bitmask value, `flags`
+**Not yet decoded**: the exact `PICFLAG_BIT_DEPTH` bitmask value, `flags`
 bit `0x40`, and `field_A`'s real meaning. Also not confirmed: whether
 bank 1-4 really correspond to the game's four story acts, or something
 else entirely.
+
+## Picture pixel compression — an LZ77+Huffman hybrid, plus per-video-mode blit
+
+Traced `PictureDecoder_load`/`PictureDecoder_load2`/
+`PictureDecoder_unpack`/`PictureDecoder_fetch` (`gatemain.asm:39727`
+onward) — the actual pixel payload format `.PIC`'s frame data decodes
+to, referenced but not opened in the section above. A proper
+LZ77-style sliding-window decompressor with Huffman-coded tokens (not
+unlike a simplified precursor to Deflate/LZH), not a simple RLE scheme —
+sophisticated for a 1992 title.
+
+**Setup** (`PictureDecoder_load2`, dispatched per video mode from
+`PictureDecoder_load` — see below): reads a small fixed header from the
+compressed stream (a code-size byte, used to build a bit-extraction mask
+`0xFFFF >> (16 - codeSize)`) then loads several small **static constant
+tables** (`PictureDecoder_DATA1`-`5`, sized 256/16/16/32/64 bytes) into
+per-decoder working arrays (`_array3`, `_array5`-`_array7`), building
+canonical-Huffman-style decode tables via a helper
+(`PictureDecoder_setupArray`) fed by two further constant "reference"
+tables (`PictureDecoder_REF1`/`REF2`). One header value (a version/mode
+byte) selects between two slightly different setups — not fully
+resolved which real files use which.
+
+**Token stream** (`PictureDecoder_fetch`): reads one bit to choose
+between two decode paths — a short canonical-Huffman lookup producing a
+**match-length token** (added to `0x100`, i.e. tokens `≥ 0x100` are
+matches) via `_array2`/`_array5`-`_array7`, or a longer, multi-level
+canonical-Huffman lookup (peeking 8 bits into `_array10`, and on a
+sentinel `0xFF` miss reading progressively more bits — 4, 6, or 8 —
+through `_array11`/`_array12`/`_array13` — before a final `_array3`
+lookup) producing a **literal byte value** (`< 0x100`). A terminator
+token (`0x305`/773) ends the stream.
+
+**LZ77 reconstruction** (`PictureDecoder_unpack`): literal tokens
+(`< 0x100`) are written straight to the output buffer; match tokens
+(`≥ 0x100`) give a length directly as `token - 0xFE` (so the minimum
+token, `0x100`, gives a minimum match length of 2) and fetch a separate
+back-reference **distance** via `PictureDecoder_getBlockOffset`
+(not traced in detail), then `rep movsb`-copy `length` bytes from
+`outputIndex - distance` — textbook LZ77. The output buffer is 8KB
+(`0x2000`), used as **two 4KB (`0x1000`) halves in a sliding-window
+double-buffer**: once the write cursor crosses the halfway point, the
+first half is flushed to the screen via the video-mode-specific
+`_copyFn` callback, and the second half is copied down to the start —
+keeping the full 4096-byte back-reference window available for future
+matches while streaming output incrementally, rather than requiring the
+whole decompressed picture to fit in memory at once.
+
+**Two blit strategies, selected by `_videoIndex`** (confirmed by
+direct read of both callbacks, `gatemain.asm:49526`/`49576`):
+- **`PicFile_copy_nonEga`** (`_videoIndex` 0 or 3) — a straight linear
+  byte copy into the framebuffer (`PictureDecoder_image`, advanced by
+  the copied count each call). Consistent with a chunky/packed
+  byte-per-pixel mode (VGA 256-color).
+- **`PicFile_copy_ega`** (`_videoIndex` 1, 2, or 4) — the classic 4-plane
+  EGA/Tandy **planar bit-unpacking** technique: each decompressed byte
+  is *not* pixel data but a **4-bit plane-membership mask** per pixel
+  group (bit 0 → OR the current color into bitplane 0 at
+  `PictureDecoder_image`, bit 1 → bitplane 1 at
+  `PictureDecoder_image + word_D22CA` — the per-plane scanline byte-width
+  computed in `ega_setup`'s width math above — bit 2/3 → the further
+  planes at `+word_D22CA*2`/`*3`), with a rotating bit-position mask
+  (`word_D22C4`, starting at `0x80`) selecting which pixel within the
+  current output byte each mask bit affects. This is the standard "write
+  mode 0, plane-serial" EGA pixel-plotting idiom used throughout early
+  1990s DOS graphics code, confirming the compressed stream really does
+  carry EGA-native plane data for those modes rather than a
+  device-independent pixel format decoded differently per mode.
+
+**Not yet decoded**: the exact semantics of `PictureDecoder_getBlockOffset`
+(the match-distance decode — presumably another Huffman-coded or
+fixed-width bit field, not traced), the precise roles of `_array1`
+through `_array13` individually (enough is understood to confirm the
+overall LZ77+Huffman architecture, not each table's exact bit-packing),
+and the header/version byte's second setup path (`ega_setup`'s
+alternate branch in `PictureDecoder_load`, only partially distinguished
+from the primary path).

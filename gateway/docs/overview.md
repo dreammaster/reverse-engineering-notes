@@ -724,8 +724,46 @@ mechanism, not just single static images. The real pixel payload
 (and an optional palette block) — its actual encoding wasn't traced this
 pass.
 
-**Not yet decoded**: `PictureDecoder_load`'s pixel format/compression
-(the single biggest remaining piece of the picture pipeline), whether
-the 4 non-zero picture banks really correspond to the game's four
-story acts, and a couple of still-unnamed header/flag bits in each
-format. `RegionIndex.field_2`'s meaning is also still open.
+**Not yet decoded**: whether the 4 non-zero picture banks really
+correspond to the game's four story acts, and a couple of still-unnamed
+header/flag bits in each format. `RegionIndex.field_2`'s meaning is also
+still open.
+
+### Picture pixel compression decoded — a real LZ77+Huffman hybrid
+
+Same session, immediate follow-on per Paul's direction — the one piece
+of the picture pipeline left open above. Traced
+`PictureDecoder_load2`/`_unpack`/`_fetch`
+(`gatemain.asm:39883` onward); full mechanical breakdown in
+[file-formats.md](file-formats.md#picture-pixel-compression--an-lz77huffman-hybrid-plus-per-video-mode-blit).
+More sophisticated than a simple RLE scheme — genuine LZ77-style
+sliding-window compression with **Huffman-coded tokens** (literal bytes
+and match lengths both decoded through canonical-Huffman lookup tables
+built from small static constant tables at setup, not fixed-width
+codes), similar in spirit to a simplified precursor of Deflate/LZH.
+Confirmed: a 4096-byte sliding window, an 8KB double-buffered output
+(flushed to the screen in two 4KB halves so the whole decompressed
+picture never needs to fit in memory at once), and a terminator token
+ending the stream.
+
+**Genuinely satisfying confirmation**: the two video-mode-specific
+final "blit" callbacks (`PicFile_copy_nonEga`/`PicFile_copy_ega`,
+dispatched from `PictureDecoder_load` by `_videoIndex`) turned out to be
+exactly the two pixel-format strategies you'd expect for this era's
+hardware — a straight linear byte copy for chunky/packed modes (VGA
+256-color), versus the classic 4-plane EGA/Tandy **planar bit-unpacking**
+technique (each decompressed byte is a 4-bit "which bitplane(s) does
+this pixel belong to" mask, OR'd into up to 4 separate framebuffer
+planes at a rotating bit position) for EGA/Tandy-class modes. This
+confirms the LZ77 stream itself carries **EGA-native plane data**
+directly for those modes, not a device-independent format reinterpreted
+per hardware — a real, concrete implementation detail for the ScummVM
+renderer to replicate faithfully (it can't just decompress to a generic
+RGB/indexed buffer and blit — for EGA modes it needs to reproduce this
+exact plane-serial write behavior, or reimplement equivalent semantics).
+
+**Not yet decoded**: `PictureDecoder_getBlockOffset`'s exact bit-packing
+for match distances, and the precise per-table semantics of
+`_array1`-`_array13` beyond confirming the overall architecture (enough
+is understood to describe the compression scheme accurately, not to
+reimplement every table from this write-up alone yet).

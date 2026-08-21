@@ -237,11 +237,27 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       Full writeup in
       [overview.md](overview.md#gate_xxxrgngate_xxxpic-decoded--regions-and-multi-frame-pictures)
       and file-formats.md.
-- [ ] `PictureDecoder_load`'s actual pixel format/compression — the
-      single biggest remaining piece of the picture pipeline, not
-      traced yet. Also open: whether picture banks 1-4 correspond to
-      the game's four story acts, `RegionIndex.field_2`'s meaning, and a
-      couple of still-unnamed flag bits in both formats.
+- [x] Traced `PictureDecoder_load2`/`_unpack`/`_fetch` — the actual
+      pixel compression is a real **LZ77+Huffman hybrid** (canonical
+      Huffman-coded literal/match tokens, 4096-byte sliding window, 8KB
+      double-buffered output), not a simple RLE scheme. Confirmed the
+      two video-mode-specific blit callbacks are exactly the two
+      expected pixel strategies for this era — a linear byte copy for
+      chunky/packed VGA modes, and classic 4-plane EGA/Tandy planar
+      bit-unpacking (each decompressed byte is a 4-bit plane-membership
+      mask, not raw pixel data) for EGA/Tandy modes — meaning the
+      ScummVM renderer needs to reproduce EGA's plane-serial write
+      behavior specifically, not just decompress to a generic pixel
+      buffer. Full writeup in
+      [overview.md](overview.md#picture-pixel-compression-decoded--a-real-lz77huffman-hybrid)
+      and [file-formats.md](file-formats.md#picture-pixel-compression--an-lz77huffman-hybrid-plus-per-video-mode-blit).
+- [ ] `PictureDecoder_getBlockOffset`'s match-distance bit-packing, and
+      the precise per-table semantics of `_array1`-`_array13`, weren't
+      fully traced — enough is understood to describe the compression
+      architecture accurately, not to reimplement every table yet. Also
+      still open: whether picture banks 1-4 correspond to the game's
+      four story acts, `RegionIndex.field_2`'s meaning, and a couple of
+      still-unnamed flag bits in the `.RGN`/`.PIC` formats.
 - [ ] Re-run `rank_unnamed_functions.py` now that the thunk noise is
       filtered out, to pick the next real targets from the 1769
       remaining unnamed functions.
