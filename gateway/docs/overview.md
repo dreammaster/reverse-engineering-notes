@@ -2250,3 +2250,40 @@ relationship wasn't confirmed). Left for a future pass rather than
 guessed under this much interlocking complexity.
 
 Applied via `apply_renames_gatemain.py`'s forty-second batch.
+
+### `Sb_detectDsp` named — a fourth sound backend: Sound Blaster
+
+Moved to `sub_186F0` (5 callers), which — together with three closely
+related helpers it's called alongside — resolved into a complete,
+textbook-exact **Sound Blaster DSP detection sequence**. A fourth
+sound-hardware backend, alongside the already-documented PC-speaker
+tone/sample engine, MPU-401/MIDI cluster, and OPL2/AdLib cluster, all
+reached from the already-named `Stream_selectHandler`.
+
+- **`Sb_writeByte(AL=byte)`** (was `sub_186F0`): polls the DSP
+  write-status port (`base+0xC`) for bit 7 clear (not busy), does the
+  standard short I/O delay (four `jmp $+2`), then writes the byte to
+  that same port — the write-status and write-command registers share
+  one address, exactly as on real SB hardware.
+- **`Sb_readByte`** (was `sub_186D4`): polls the DSP read-buffer-status
+  port (`base+0xE`) for bit 7 set (data available), then reads the
+  byte from the read-data port (`base+0xA`).
+- **`Sb_resetDsp`** (was `sub_186B2`): the exact standard SB reset
+  sequence — write `1` to the reset port (`base+6`), busy-wait ~256
+  iterations, write `0` to release reset, then poll (via `Sb_readByte`,
+  up to 32 tries) for the DSP to respond with the magic byte `0xAA`
+  confirming it's alive.
+- **`Sb_detectDsp`** (was `sub_18682`): calls `Sb_resetDsp`, then runs
+  the standard SB "DSP Identification" compatibility test — writes
+  command `0xE0` then test byte `0xC6`, reads back, and checks the
+  result equals `0x39`, the exact bitwise complement of `0xC6`. On
+  success calls `sub_18963(1)` (not renamed, plausibly "mark Sound
+  Blaster detected").
+
+The base port, **`_sbBasePort`** (was `word_C84F3`, typically `0x220`
+on real hardware), anchors all of these fixed offsets. Every piece of
+this matches the well-documented Sound Blaster DSP protocol exactly —
+conclusive proof this is real SB (or 100%-compatible) hardware
+detection, not a coincidental register shape.
+
+Applied via `apply_renames_gatemain.py`'s forty-third batch.

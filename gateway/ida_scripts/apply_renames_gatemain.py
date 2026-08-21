@@ -1237,6 +1237,54 @@ RENAMES = [
      "weapon-confiscation countdown from the "
      "Game_handleWeaponDischarge pass -- weren't nailed down this "
      "pass."),
+
+    # -- forty-third pass: sub_186F0/sub_186B2/sub_186D4/sub_18682, a
+    # complete and textbook-exact Sound Blaster DSP detection sequence
+    # -- a fourth sound-hardware backend (alongside the already-named
+    # PC-speaker, MPU-401/MIDI, and OPL2/AdLib clusters), reached from
+    # the already-named Stream_selectHandler. See
+    # docs/overview.md#sb_detectdsp-named--a-fourth-sound-backend-sound-blaster. --
+
+    (0x186F0, "Sb_writeByte",
+     "sub_186F0(AL=byte): polls the DSP write-status port (base+0xC) "
+     "for bit 7 clear (not busy) with a timeout, does the standard "
+     "short I/O delay (four `jmp $+2`), then writes the byte to that "
+     "same port -- textbook Sound Blaster DSP write protocol (the "
+     "write-status and write-command registers share one port "
+     "address). Returns via carry flag (clear = success, set = "
+     "timeout)."),
+    (0x186D4, "Sb_readByte",
+     "sub_186D4(): polls the DSP read-buffer-status port (base+0xE) "
+     "for bit 7 set (data available) with a timeout, then reads the "
+     "byte from the DSP read-data port (base+0xA) -- textbook Sound "
+     "Blaster DSP read protocol. Returns via carry flag."),
+    (0x186B2, "Sb_resetDsp",
+     "sub_186B2(): the exact standard Sound Blaster DSP reset "
+     "sequence -- writes 1 to the reset port (base+6), busy-waits "
+     "~256 iterations, writes 0 to release reset, then polls (via "
+     "Sb_readByte, up to 32 tries) for the DSP to respond with the "
+     "magic byte 0xAA confirming it's alive. An exact match for the "
+     "well-documented SB reset protocol -- conclusive proof this "
+     "cluster is real Sound Blaster (or 100%-compatible) hardware "
+     "detection, not a coincidental register shape."),
+    (0x18682, "Sb_detectDsp",
+     "sub_18682(): calls Sb_resetDsp, then performs the standard SB "
+     "'DSP Identification' compatibility test: writes command 0xE0 "
+     "then test byte 0xC6 via Sb_writeByte, reads back via "
+     "Sb_readByte, and checks the result equals 0x39 -- the exact "
+     "bitwise complement of 0xC6, confirming a genuine/compatible DSP "
+     "chip. On success calls sub_18963(1) (not renamed, plausibly "
+     "'mark Sound Blaster detected'). Reached from the already-named "
+     "Stream_selectHandler -- Sound Blaster digital-audio output is a "
+     "fourth sound-hardware backend this engine supports, alongside "
+     "the PC-speaker, MPU-401/MIDI, and OPL2/AdLib clusters already "
+     "documented."),
+    (0xC84F3, "_sbBasePort",
+     "Was word_C84F3: the Sound Blaster DSP base I/O port (typically "
+     "0x220 on real hardware), used as the base for all of "
+     "Sb_resetDsp/Sb_readByte/Sb_writeByte/Sb_detectDsp's fixed port "
+     "offsets (+6 reset, +0xA read-data, +0xC write-status/command, "
+     "+0xE read-status)."),
 ]
 
 

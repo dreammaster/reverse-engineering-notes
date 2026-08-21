@@ -641,6 +641,16 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       `sub_130D6` and `word_CB7F6`/`word_CB808`'s exact roles, and
       whether `word_CB808` is the same countdown mechanism as the
       weapon-confiscation timer from `Game_handleWeaponDischarge`.
+- [x] Named `Sb_detectDsp`/`Sb_resetDsp`/`Sb_readByte`/`Sb_writeByte`
+      (were `sub_18682`/`sub_186B2`/`sub_186D4`/`sub_186F0`), plus
+      `_sbBasePort` — a fourth sound-hardware backend, Sound Blaster
+      DSP detection, an exact match for the documented hardware
+      protocol. Full writeup in
+      [overview.md](overview.md#sb_detectdsp-named--a-fourth-sound-backend-sound-blaster).
+- [ ] Unify all four sound-hardware backends (PC-speaker, MPU-401/
+      MIDI, OPL2/AdLib, Sound Blaster) with the sound-track-selection
+      subsystem (`sub_15DB2` et al.) into one confirmed picture of how
+      the engine picks a backend at runtime.
 - [ ] Unify the whole music/sound-hardware picture: `Speaker_playTone`/
       `Speaker_playErrorBeep` (PC-speaker tones), `Midi_sendByte` +
       `sub_1D966`/`sub_1EE70`/`sub_1ECB6` (MPU-401/MIDI), and

@@ -17897,7 +17897,7 @@ loc_180AD:
 loc_180B9:                              ; CODE XREF: Stream_selectHandler+53\u2191j
                 cmp     bx, 4
                 jnz     short loc_180D5
-                call    sub_18682
+                call    Sb_detectDsp
                 jb      short loc_180D5
                 mov     word_C84D0, 6EEh
                 mov     word_C84D2, 956h
@@ -18834,19 +18834,19 @@ sub_1863B       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18682       proc near               ; CODE XREF: Stream_selectHandler+7C\u2191p
-                mov     dx, word_C84F3
-                call    sub_186B2
+Sb_detectDsp    proc near               ; CODE XREF: Stream_selectHandler+7C\u2191p
+                mov     dx, _sbBasePort
+                call    Sb_resetDsp
                 jb      short loc_186B0
-                mov     dx, word_C84F3
+                mov     dx, _sbBasePort
                 add     dl, 0Ch
                 mov     al, 0E0h ; 'à'
-                call    sub_186F0
+                call    Sb_writeByte
                 jb      short loc_186B0
                 mov     al, 0C6h ; 'Æ'
-                call    sub_186F0
+                call    Sb_writeByte
                 jb      short loc_186B0
-                call    sub_186D4
+                call    Sb_readByte
                 jb      short loc_186B0
                 cmp     al, 39h ; '9'
                 jnz     short loc_186B0
@@ -18856,31 +18856,31 @@ sub_18682       proc near               ; CODE XREF: Stream_selectHandler+7C\u21
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_186B0:                              ; CODE XREF: sub_18682+7\u2191j
-                                        ; sub_18682+15\u2191j ...
+loc_186B0:                              ; CODE XREF: Sb_detectDsp+7\u2191j
+                                        ; Sb_detectDsp+15\u2191j ...
                 stc
                 retn
-sub_18682       endp
+Sb_detectDsp    endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_186B2       proc near               ; CODE XREF: sub_18682+4\u2191p
-                mov     dx, word_C84F3
+Sb_resetDsp     proc near               ; CODE XREF: Sb_detectDsp+4\u2191p
+                mov     dx, _sbBasePort
                 add     dl, 6
                 mov     al, 1
                 out     dx, al
                 sub     al, al
 
-loc_186BE:                              ; CODE XREF: sub_186B2+E\u2193j
+loc_186BE:                              ; CODE XREF: Sb_resetDsp+E\u2193j
                 inc     al
                 jnz     short loc_186BE
                 out     dx, al
                 mov     cl, 20h ; ' '
 
-loc_186C5:                              ; CODE XREF: sub_186B2+1C\u2193j
-                call    sub_186D4
+loc_186C5:                              ; CODE XREF: Sb_resetDsp+1C\u2193j
+                call    Sb_readByte
                 cmp     al, 0AAh ; 'ª'
                 jz      short loc_186D2
                 dec     cl
@@ -18889,23 +18889,23 @@ loc_186C5:                              ; CODE XREF: sub_186B2+1C\u2193j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_186D2:                              ; CODE XREF: sub_186B2+18\u2191j
+loc_186D2:                              ; CODE XREF: Sb_resetDsp+18\u2191j
                 clc
                 retn
-sub_186B2       endp
+Sb_resetDsp     endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_186D4       proc near               ; CODE XREF: sub_18682+1E\u2191p
-                                        ; sub_186B2:loc_186C5\u2191p
+Sb_readByte     proc near               ; CODE XREF: Sb_detectDsp+1E\u2191p
+                                        ; Sb_resetDsp:loc_186C5\u2191p
                 push    cx
-                mov     dx, word_C84F3
+                mov     dx, _sbBasePort
                 add     dl, 0Eh
                 mov     cx, 200h
 
-loc_186DF:                              ; CODE XREF: sub_186D4+10\u2193j
+loc_186DF:                              ; CODE XREF: Sb_readByte+10\u2193j
                 in      al, dx
                 or      al, al
                 js      short loc_186E9
@@ -18915,25 +18915,25 @@ loc_186DF:                              ; CODE XREF: sub_186D4+10\u2193j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_186E9:                              ; CODE XREF: sub_186D4+E\u2191j
+loc_186E9:                              ; CODE XREF: Sb_readByte+E\u2191j
                 sub     dl, 4
                 in      al, dx
                 pop     cx
                 clc
                 retn
-sub_186D4       endp
+Sb_readByte     endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_186F0       proc near               ; CODE XREF: sub_18682+12\u2191p
-                                        ; sub_18682+19\u2191p ...
+Sb_writeByte    proc near               ; CODE XREF: Sb_detectDsp+12\u2191p
+                                        ; Sb_detectDsp+19\u2191p ...
                 push    cx
                 mov     ah, al
                 mov     cx, 200h
 
-loc_186F6:                              ; CODE XREF: sub_186F0+B\u2193j
+loc_186F6:                              ; CODE XREF: Sb_writeByte+B\u2193j
                 in      al, dx
                 or      al, al
                 jns     short loc_18700
@@ -18943,29 +18943,29 @@ loc_186F6:                              ; CODE XREF: sub_186F0+B\u2193j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_18700:                              ; CODE XREF: sub_186F0+9\u2191j
+loc_18700:                              ; CODE XREF: Sb_writeByte+9\u2191j
                 jmp     short $+2
 ; ---------------------------------------------------------------------------
 
-loc_18702:                              ; CODE XREF: sub_186F0:loc_18700\u2191j
+loc_18702:                              ; CODE XREF: Sb_writeByte:loc_18700\u2191j
                 jmp     short $+2
 ; ---------------------------------------------------------------------------
 
-loc_18704:                              ; CODE XREF: sub_186F0:loc_18702\u2191j
+loc_18704:                              ; CODE XREF: Sb_writeByte:loc_18702\u2191j
                 jmp     short $+2
 ; ---------------------------------------------------------------------------
 
-loc_18706:                              ; CODE XREF: sub_186F0:loc_18704\u2191j
+loc_18706:                              ; CODE XREF: Sb_writeByte:loc_18704\u2191j
                 jmp     short $+2
 ; ---------------------------------------------------------------------------
 
-loc_18708:                              ; CODE XREF: sub_186F0:loc_18706\u2191j
+loc_18708:                              ; CODE XREF: Sb_writeByte:loc_18706\u2191j
                 mov     al, ah
                 out     dx, al
                 pop     cx
                 clc
                 retn
-sub_186F0       endp
+Sb_writeByte    endp
 
 ; ---------------------------------------------------------------------------
                 cmp     byte ptr word_C84D4, 0
@@ -18991,10 +18991,10 @@ loc_1872B:                              ; CODE XREF: sg09a4:06FD\u2191j
                 mov     di, ax
                 mov     cl, [di+5CEh]
                 neg     cl
-                mov     dx, word_C84F3
+                mov     dx, _sbBasePort
                 add     dl, 0Ch
                 mov     al, 40h ; '@'
-                call    sub_186F0
+                call    Sb_writeByte
                 jnb     short loc_1874C
                 jmp     locret_187E0
 ; ---------------------------------------------------------------------------
@@ -19004,7 +19004,7 @@ loc_1874C:                              ; CODE XREF: sg09a4:0727\u2191j
 
 loc_1874F:                              ; CODE XREF: sg09a4:0737\u2193j
                 mov     al, cl
-                call    sub_186F0
+                call    Sb_writeByte
                 jnb     short loc_1875C
                 dec     bp
                 jnz     short loc_1874F
@@ -19090,7 +19090,7 @@ locret_187E0:                           ; CODE XREF: sg09a4:06F5\u2191j
                 push    ds
                 mov     ax, seg sg4d43
                 mov     ds, ax
-                mov     dx, word_C84F3
+                mov     dx, _sbBasePort
                 add     dl, 0Eh
                 in      al, dx
                 mov     ax, word_C84FC
@@ -19245,7 +19245,7 @@ loc_188B0:                              ; CODE XREF: sub_18883+26\u2191j
                 inc     byte_C84F6
                 mov     word_C84F7, 0
                 mov     cx, word_C84F9
-                mov     dx, word_C84F3
+                mov     dx, _sbBasePort
                 add     dl, 0Ch
                 mov     al, 14h
                 call    sub_18950
@@ -19307,7 +19307,7 @@ loc_18939:                              ; CODE XREF: sub_18905:loc_18937\u2191j
                 sti
                 mov     byte_C84CA, 0
                 mov     cs:byte_1803B, 0
-                mov     dx, word_C84F3
+                mov     dx, _sbBasePort
                 add     dl, 0Eh
                 in      al, dx
                 retn
@@ -19350,8 +19350,8 @@ sub_18950       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18963       proc near               ; CODE XREF: sub_18682+29\u2191p
-                mov     dx, word_C84F3
+sub_18963       proc near               ; CODE XREF: Sb_detectDsp+29\u2191p
+                mov     dx, _sbBasePort
                 add     dx, 0Ch
                 mov     ah, 0D1h ; 'Ñ'
                 or      al, al
@@ -19376,7 +19376,7 @@ sub_18976       proc near               ; CODE XREF: sg09a4:loc_18728\u2191p
                 mov     ah, 0D0h ; 'Ð'
                 mov     bx, 5AAh
                 sub     cx, cx
-                mov     dx, word_C84F3
+                mov     dx, _sbBasePort
                 add     dl, 0Ch
 
 loc_18989:                              ; CODE XREF: sub_18976+1C\u2193j
@@ -19409,10 +19409,10 @@ sub_18976       endp
 ; ---------------------------------------------------------------------------
                 cmp     byte_C84CA, 1
                 jnz     short locret_189B8
-                mov     dx, word_C84F3
+                mov     dx, _sbBasePort
                 add     dl, 0Ch
                 mov     al, 0D0h ; 'Ð'
-                jmp     sub_186F0
+                jmp     Sb_writeByte
 ; ---------------------------------------------------------------------------
 
 locret_189B8:                           ; CODE XREF: sg09a4:098A\u2191j
@@ -19420,10 +19420,10 @@ locret_189B8:                           ; CODE XREF: sg09a4:098A\u2191j
 ; ---------------------------------------------------------------------------
                 cmp     byte_C84CA, 1
                 jnz     short locret_189CC
-                mov     dx, word_C84F3
+                mov     dx, _sbBasePort
                 add     dl, 0Ch
                 mov     al, 0D4h ; 'Ô'
-                jmp     sub_186F0
+                jmp     Sb_writeByte
 ; ---------------------------------------------------------------------------
 
 locret_189CC:                           ; CODE XREF: sg09a4:099E\u2191j
@@ -32786,7 +32786,7 @@ loc_1DDC9:
                 mov     es, dseg_6
                 assume es:sg4d43
                 mov     ax, [bp+arg_2]
-                mov     es:word_C84F3, ax
+                mov     es:_sbBasePort, ax
                 mov     es, dseg_7
                 mov     al, [bp+arg_4]
                 mov     es:byte_C84F5, al
@@ -383704,8 +383704,8 @@ byte_C84E8      db 0                    ; DATA XREF: Cpu_measureSpeed:loc_18154\
                 db  78h ; x
                 db 0B5h ; µ
                 db 0F1h ; ñ
-word_C84F3      dw 220h                 ; DATA XREF: sub_18682\u2191r
-                                        ; sub_18682+9\u2191r ...
+_sbBasePort     dw 220h                 ; DATA XREF: Sb_detectDsp\u2191r
+                                        ; Sb_detectDsp+9\u2191r ...
 byte_C84F5      db 3                    ; DATA XREF: sg09a4:073D\u2191r
                                         ; sub_18905+4\u2191r ...
 byte_C84F6      db 0                    ; DATA XREF: sg09a4:0791\u2191w
