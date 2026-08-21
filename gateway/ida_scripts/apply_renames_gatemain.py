@@ -1755,6 +1755,21 @@ RENAMES = [
      "vertical retrace period. Called from Screen_setEGAPalette "
      "(avoiding palette-change tearing/snow) and Mouse_Hide/"
      "Mouse_show (avoiding cursor-draw flicker)."),
+
+    # -- sixty-fourth pass: sub_2384F, confirmed directly by its body
+    # (using the already-named get_keypress) as an uppercase-
+    # normalizing keypress reader -- likely the single-key menu-choice
+    # reader hinted at for sub_C48E4 (Game_endGameMenu's own prompt
+    # function, still not renamed). See
+    # docs/overview.md#getuppercasekeypress-named. --
+
+    (0x2384F, "getUppercaseKeypress",
+     "sub_2384F(): calls the already-named get_keypress(), and if the "
+     "result is a lowercase letter ('a'-'z'), converts it to "
+     "uppercase (subtracting 0x20). Returns the result unchanged "
+     "otherwise. A single-key menu-choice reader, named to match the "
+     "existing lowercase-underscore get_keypress/get_input_line_ptr "
+     "convention."),
 ]
 
 

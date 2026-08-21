@@ -22332,6 +22332,7 @@ static Bytes_3(void) {
 	create_insn	(x=0X23848);
 	op_stkvar	(x,	1);
 	create_insn	(0X2384F);
+	set_name	(0X2384F,	"getUppercaseKeypress");
 	create_insn	(x=0X23852);
 	op_hex		(x,	1);
 	create_insn	(x=0X23859);
@@ -23488,10 +23489,6 @@ static Bytes_3(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X2461C);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X24623);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X24626);
-	op_stroff	(x,	0,	GetStrucIdByName("HandleEntry"),	0);
 }
 
 //------------------------------------------------------------------------
@@ -23501,6 +23498,10 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X24623);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X24626);
+	op_stroff	(x,	0,	GetStrucIdByName("HandleEntry"),	0);
 	create_insn	(x=0X2462C);
 	op_stroff	(x,	0,	GetStrucIdByName("HandleEntry"),	0);
 	op_enum		(x,	1,	GetEnum("HFLAG"),0);
@@ -29187,10 +29188,6 @@ static Bytes_4(void) {
 	create_insn	(x=0X28BA0);
 	op_plain_offset	(x,	0,	0XC7F20);
 	op_plain_offset	(x,	128,	0XC7F20);
-	set_cmt	(0X28BA4,	"y1",	0);
-	create_insn	(x=0X28BA4);
-	op_plain_offset	(x,	0,	0XC7F20);
-	op_plain_offset	(x,	128,	0XC7F20);
 }
 
 //------------------------------------------------------------------------
@@ -29200,6 +29197,10 @@ static Bytes_5(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X28BA4,	"y1",	0);
+	create_insn	(x=0X28BA4);
+	op_plain_offset	(x,	0,	0XC7F20);
+	op_plain_offset	(x,	128,	0XC7F20);
 	set_cmt	(0X28BA8,	"x1",	0);
 	create_insn	(x=0X28BA8);
 	op_plain_offset	(x,	0,	0XC7F20);
@@ -34121,9 +34122,6 @@ static Bytes_5(void) {
 	op_stroff	(x,	0,	GetStrucIdByName("VideoMethod"),	0);
 	op_plain_offset	(x,	1,	0X2C660);
 	op_plain_offset	(x,	129,	0X2C660);
-	create_insn	(x=0X2C7C6);
-	op_stroff	(x,	0,	GetStrucIdByName("VideoMethod"),	0);
-	op_seg		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -34133,6 +34131,9 @@ static Bytes_6(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X2C7C6);
+	op_stroff	(x,	0,	GetStrucIdByName("VideoMethod"),	0);
+	op_seg		(x,	1);
 	create_insn	(x=0X2C7CB);
 	op_stroff	(x,	1,	GetStrucIdByName("VideoMethod"),	0);
 	create_insn	(x=0X2C7CE);
@@ -38268,9 +38269,6 @@ static Bytes_6(void) {
 	create_word	(0X31185);
 	create_insn	(0X31187);
 	set_name	(0X31187,	"j_nullsub_2");
-	create_word	(0X3118F);
-	create_insn	(0X31191);
-	set_name	(0X31191,	"j_room_load");
 }
 
 //------------------------------------------------------------------------
@@ -38280,6 +38278,9 @@ static Bytes_7(void) {
         auto x;
 #define id x
 
+	create_word	(0X3118F);
+	create_insn	(0X31191);
+	set_name	(0X31191,	"j_room_load");
 	create_word	(0X31199);
 	create_insn	(0X3119B);
 	set_name	(0X3119B,	"thunk_sub_5D9F3_2");
@@ -41667,9 +41668,6 @@ static Bytes_7(void) {
 	create_dword	(x=0X3F410);
 	op_plain_offset	(x,	0,	0X2CF40);
 	op_plain_offset	(x,	128,	0X2CF40);
-	create_dword	(x=0X3F414);
-	op_plain_offset	(x,	0,	0X2CF40);
-	op_plain_offset	(x,	128,	0X2CF40);
 }
 
 //------------------------------------------------------------------------
@@ -41679,6 +41677,9 @@ static Bytes_8(void) {
         auto x;
 #define id x
 
+	create_dword	(x=0X3F414);
+	op_plain_offset	(x,	0,	0X2CF40);
+	op_plain_offset	(x,	128,	0X2CF40);
 	create_dword	(x=0X3F418);
 	op_plain_offset	(x,	0,	0X2CF40);
 	op_plain_offset	(x,	128,	0X2CF40);

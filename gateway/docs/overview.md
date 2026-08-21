@@ -2679,3 +2679,13 @@ tearing/snow) and `Mouse_Hide`/`Mouse_show` (avoiding cursor-draw
 flicker).
 
 Applied via `apply_renames_gatemain.py`'s sixty-third batch.
+
+### `getUppercaseKeypress` named
+
+Moved to `sub_2384F` (4 callers). Confirmed directly by its body: calls
+the already-named `get_keypress()`, and if the result is a lowercase
+letter, converts it to uppercase. A single-key menu-choice reader,
+named to match the existing lowercase-underscore
+`get_keypress`/`get_input_line_ptr` convention.
+
+Applied via `apply_renames_gatemain.py`'s sixty-fourth batch.

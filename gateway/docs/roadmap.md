@@ -685,6 +685,9 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       — the classic EGA/VGA vertical-retrace sync primitive. Full
       writeup in
       [overview.md](overview.md#screen_waitforverticalretrace-named).
+- [x] Named `sub_2384F` (4 callers) → `getUppercaseKeypress` — a
+      single-key menu-choice reader. Full writeup in
+      [overview.md](overview.md#getuppercasekeypress-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

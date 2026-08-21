@@ -45330,7 +45330,7 @@ Events_isKeyPending endp
 ; Attributes: bp-based frame
 
 ; int __cdecl __far get_keypress()
-get_keypress    proc far                ; CODE XREF: sub_2384F+7\u2193p
+get_keypress    proc far                ; CODE XREF: getUppercaseKeypress+7\u2193p
                                         ; Events_checkKeypress+F\u2193p ...
 
 regs            = word ptr -10h
@@ -45419,7 +45419,7 @@ get_keypress    endp
 
 ; Attributes: bp-based frame
 
-sub_2384F       proc far                ; CODE XREF: Dialog_prompt+157\u2193P
+getUppercaseKeypress proc far           ; CODE XREF: Dialog_prompt+157\u2193P
                                         ; sub_74149+1EF\u2193P ...
 
 var_2           = word ptr -2
@@ -45436,13 +45436,13 @@ var_2           = word ptr -2
                 jg      short loc_2386A
                 add     [bp+var_2], 0FFE0h
 
-loc_2386A:                              ; CODE XREF: sub_2384F+10\u2191j
-                                        ; sub_2384F+15\u2191j
+loc_2386A:                              ; CODE XREF: getUppercaseKeypress+10\u2191j
+                                        ; getUppercaseKeypress+15\u2191j
                 mov     ax, [bp+var_2]
                 mov     sp, bp
                 pop     bp
                 retf
-sub_2384F       endp
+getUppercaseKeypress endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -60124,7 +60124,7 @@ loc_2A007:                              ; CODE XREF: Dialog_prompt+115\u2191j
                 call    Events_isKeyPending
                 or      ax, ax
                 jz      short loc_2A035
-                call    sub_2384F
+                call    getUppercaseKeypress
                 mov     [bp+var_64], ax
                 cmp     ax, 20h ; ' '
                 jz      short loc_2A06E
@@ -190947,7 +190947,7 @@ loc_7432F:                              ; CODE XREF: sub_74149+D0\u2191j
                 call    Events_isKeyPending
                 or      ax, ax
                 jz      short loc_7437E
-                call    sub_2384F
+                call    getUppercaseKeypress
                 mov     [bp+var_E], ax
                 mov     [bp+picNumber], 0
                 jmp     short loc_7434A
@@ -339025,7 +339025,7 @@ loc_B582C:                              ; CODE XREF: sub_B576E+30\u2191j
 ; ---------------------------------------------------------------------------
 
 loc_B5838:                              ; CODE XREF: sub_B576E+C5\u2191j
-                call    sub_2384F
+                call    getUppercaseKeypress
                 mov     [bp+var_C], ax
                 cmp     ax, 1Bh
                 jz      short loc_B584A
@@ -374087,7 +374087,7 @@ loc_C4A4E:                              ; CODE XREF: sub_C48E4+131\u2191j
                 call    Events_isKeyPending
                 or      ax, ax
                 jz      short loc_C4A84
-                call    sub_2384F
+                call    getUppercaseKeypress
                 mov     [bp+var_10], ax
                 cmp     ax, 3
                 jz      short loc_C4A7F
