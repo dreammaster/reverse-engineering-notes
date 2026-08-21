@@ -53380,7 +53380,7 @@ sub_26D7E       endp
                 mov     bp, sp
                 push    si
                 push    cs
-                call    near ptr sub_26EDC
+                call    near ptr AnimPics_resyncSlots
                 mov     si, [bp+6]
                 jmp     short loc_26ECC
 ; ---------------------------------------------------------------------------
@@ -53410,7 +53410,7 @@ loc_26ED5:                              ; CODE XREF: sg1692:192A\u2191j
 
 ; Attributes: bp-based frame
 
-sub_26EDC       proc far                ; CODE XREF: sg1692:1917\u2191p
+AnimPics_resyncSlots proc far           ; CODE XREF: sg1692:1917\u2191p
                                         ; room_load:loc_5D178\u2193P ...
 
 var_2           = word ptr -2
@@ -53426,7 +53426,7 @@ var_2           = word ptr -2
                 mov     di, 0A3E2h
                 mov     si, [bp+var_2]
 
-loc_26EF6:                              ; CODE XREF: sub_26EDC+42\u2193j
+loc_26EF6:                              ; CODE XREF: AnimPics_resyncSlots+42\u2193j
                 cmp     byte ptr [si-5C32h], 0FFh
                 jnz     short loc_26F06
                 mov     al, [si-5C50h]
@@ -53435,10 +53435,10 @@ loc_26EF6:                              ; CODE XREF: sub_26EDC+42\u2193j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_26F06:                              ; CODE XREF: sub_26EDC+1F\u2191j
+loc_26F06:                              ; CODE XREF: AnimPics_resyncSlots+1F\u2191j
                 sub     al, al
 
-loc_26F08:                              ; CODE XREF: sub_26EDC+27\u2191j
+loc_26F08:                              ; CODE XREF: AnimPics_resyncSlots+27\u2191j
                 mov     [si-5C24h], al
                 call    _clock
                 add     [di], ax
@@ -53449,13 +53449,13 @@ loc_26F08:                              ; CODE XREF: sub_26EDC+27\u2191j
                 jl      short loc_26EF6
                 mov     [bp+var_2], si
 
-loc_26F23:                              ; CODE XREF: sub_26EDC+12\u2191j
+loc_26F23:                              ; CODE XREF: AnimPics_resyncSlots+12\u2191j
                 pop     si
                 pop     di
                 mov     sp, bp
                 pop     bp
                 retf
-sub_26EDC       endp
+AnimPics_resyncSlots endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -143564,7 +143564,7 @@ loc_5D164:                              ; CODE XREF: room_load+1CC\u2191j
                 add     sp, 4
 
 loc_5D178:                              ; CODE XREF: room_load+216\u2191j
-                call    sub_26EDC
+                call    AnimPics_resyncSlots
 
 loc_5D17D:                              ; CODE XREF: room_load+19D\u2191j
                 push    word ptr [bp+showFlag] ; showFlag
@@ -145972,7 +145972,7 @@ loc_5E4A0:
                 add     sp, 4
 
 loc_5E4A3:
-                call    sub_26EDC
+                call    AnimPics_resyncSlots
 
 loc_5E4A8:                              ; CODE XREF: sub_5E426+8\u2191j
                                         ; sub_5E426+F\u2191j
@@ -200619,7 +200619,7 @@ loc_78596:                              ; CODE XREF: sub_78570:loc_78591\u2191j
 loc_785A7:
                 add     sp, 8
                 mov     byte_CD0CC, 1
-                call    sub_26EDC
+                call    AnimPics_resyncSlots
                 jmp     loc_78A3B
 ; ---------------------------------------------------------------------------
 
@@ -212237,7 +212237,7 @@ loc_7DCC7:
 loc_7DCD5:
                 add     sp, 8
                 mov     word_CD2C4, ax
-                call    sub_26EDC
+                call    AnimPics_resyncSlots
                 jmp     short loc_7DD2C
 ; ---------------------------------------------------------------------------
 
@@ -279610,7 +279610,7 @@ loc_9B9FA:
                 call    sub_26D7E
                 add     sp, 8
                 mov     byte_CE8C5, 1
-                call    sub_26EDC
+                call    AnimPics_resyncSlots
 
 loc_9BA37:                              ; CODE XREF: sub_9B946+28\u2191j
                                         ; sub_9B946+37\u2191j
@@ -280114,7 +280114,7 @@ loc_9BDCD:                              ; CODE XREF: sub_9BD7E+4A\u2191j
 
 loc_9BE4F:                              ; CODE XREF: sub_9BD7E+B8\u2191j
                 mov     byte_CE8D6, 1
-                call    sub_26EDC
+                call    AnimPics_resyncSlots
 
 loc_9BE59:                              ; CODE XREF: sub_9BD7E+4C\u2191j
                 sub     ax, ax
@@ -294219,7 +294219,7 @@ loc_A257C:                              ; CODE XREF: sub_A24BB+14\u2191j
                 call    sub_26D7E
                 add     sp, 8
                 mov     byte_CEC5F, 1
-                call    sub_26EDC
+                call    AnimPics_resyncSlots
 
 loc_A25D0:                              ; CODE XREF: sub_A24BB+C6\u2191j
                                         ; sub_A24BB+DE\u2191j ...
@@ -297979,7 +297979,7 @@ loc_A3ECC:                              ; CODE XREF: logic238+72\u2191j
 loc_A3EDD:
                 add     sp, 8
                 mov     word_CED40, ax
-                call    sub_26EDC
+                call    AnimPics_resyncSlots
                 jmp     default
 ; ---------------------------------------------------------------------------
 
@@ -329857,7 +329857,7 @@ loc_B18E8:                              ; CODE XREF: sub_B1730+1B1\u2191j
 
 loc_B18FB:                              ; CODE XREF: sub_B1730+196\u2191j
                 mov     word_CF57A, 1
-                call    sub_26EDC
+                call    AnimPics_resyncSlots
 
 loc_B1906:                              ; CODE XREF: sub_B1730+F0\u2191j
                 mov     ax, 0Ch
@@ -351135,7 +351135,7 @@ loc_BAA22:                              ; CODE XREF: sub_BA9A5+4A\u2191j
                 call    sub_26D7E
                 add     sp, 8
                 mov     byte_CFDF0, 1
-                call    sub_26EDC
+                call    AnimPics_resyncSlots
 
 loc_BAA34:                              ; CODE XREF: sub_BA9A5+21\u2191j
                                         ; sub_BA9A5+2D\u2191j
@@ -351719,7 +351719,7 @@ loc_BAEA8:                              ; CODE XREF: sub_BAE1F+4F\u2191j
 
 loc_BAEB1:                              ; CODE XREF: sub_BAE1F+57\u2191j
                 mov     byte_CFDFF, 1
-                call    sub_26EDC
+                call    AnimPics_resyncSlots
 
 loc_BAEBB:                              ; CODE XREF: sub_BAE1F+26\u2191j
                                         ; sub_BAE1F+3A\u2191j

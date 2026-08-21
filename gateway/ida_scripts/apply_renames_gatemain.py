@@ -723,6 +723,25 @@ RENAMES = [
      "of the gating preconditions' exact meanings were nailed down "
      "this pass (particularly prehandler type 7 and bit 0xA) -- "
      "flagged for a future pass rather than guessed."),
+
+    # -- twenty-third pass: sub_26EDC, another AnimPics-cluster function
+    # (uses the already-named _animPicsSlotCount and the same 0xA3BA-ish
+    # per-slot table sub_26D7E/sub_26F74 maintain). Confirmed via a
+    # real caller, room_load, as a timer-resync routine. See
+    # docs/overview.md#animpics_resyncslots-named. --
+
+    (0x26EDC, "AnimPics_resyncSlots",
+     "sub_26EDC(): for each active animated-picture slot (0.."
+     "_animPicsSlotCount), resets the per-slot frame-index byte (same "
+     "field sub_26F74 reads as its frame position) to either 0, or "
+     "frameCount-1 if the slot's loop-direction byte reads 0xFF "
+     "(playing in reverse) -- then adds the current _clock() value "
+     "into a per-slot 32-bit accumulator at 0xA3E2+slot*4, re-basing "
+     "each slot's animation-timing clock to now. Confirmed called from "
+     "room_load: this is the 'resync all active animation timers to "
+     "the current clock' step run after a room transition, preventing "
+     "animations from jumping forward using stale elapsed time "
+     "accumulated while the game was paused/loading."),
 ]
 
 

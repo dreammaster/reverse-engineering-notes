@@ -1783,3 +1783,23 @@ prehandler type `7` and bit `0xA` specifically are still open — flagged
 rather than guessed.
 
 Applied via `apply_renames_gatemain.py`'s twenty-second batch.
+
+### `AnimPics_resyncSlots` named — another piece of the animated-picture-overlay subsystem
+
+Moved to `sub_26EDC` (12 callers), which slotted straight into the
+already-documented `AnimPics_*` cluster: it uses the already-named
+`_animPicsSlotCount` and the same `0xA3BA`-ish per-slot table
+`AnimPics_resetForRoom`/`sub_26D7E`/`sub_26F74` maintain.
+
+`AnimPics_resyncSlots()`: for each active slot, resets the per-slot
+frame-index byte (the same field `sub_26F74` reads as its frame
+position) to either `0`, or `frameCount-1` if the slot's loop-direction
+byte reads `0xFF` (playing in reverse) — then adds the current
+`_clock()` value into a per-slot 32-bit accumulator, re-basing each
+slot's animation-timing clock to *now*. Confirmed called from the
+already-named `room_load`: this is the "resync all active animation
+timers to the current clock" step run after a room transition,
+preventing animations from jumping forward using stale elapsed time
+accumulated while the game was paused or loading.
+
+Applied via `apply_renames_gatemain.py`'s twenty-third batch.

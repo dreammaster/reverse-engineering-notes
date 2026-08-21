@@ -529,6 +529,11 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       take-mechanics tail behind several gating preconditions, not all
       of which were nailed down. Full writeup in
       [overview.md](overview.md#logics_autotakeobject-named--the-taking-the-key-first-mechanic).
+- [x] Named `sub_26EDC` (12 callers) → `AnimPics_resyncSlots` — another
+      `AnimPics_*`-cluster function, confirmed via `room_load` as the
+      "resync all active animation timers to now" step run after a
+      room transition. Full writeup in
+      [overview.md](overview.md#animpics_resyncslots-named--another-piece-of-the-animated-picture-overlay-subsystem).
 - [ ] Unify the whole music/sound-hardware picture: `Speaker_playTone`/
       `Speaker_playErrorBeep` (PC-speaker tones), `Midi_sendByte` +
       `sub_1D966`/`sub_1EE70`/`sub_1ECB6` (MPU-401/MIDI), and
