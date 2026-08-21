@@ -2806,3 +2806,18 @@ already seen in `Listbox_pushState` — the corresponding "push" half
 for dialogs isn't identified yet.
 
 Applied via `apply_renames_gatemain.py`'s seventy-second batch.
+
+### `Parser_askForClarification` named
+
+Moved to `sub_13CC7` (3 callers, including the already-named
+`GatewayParser_speakHandler`/`Parser_proc6`). Confirmed via its
+literal strings, already recognized by IDA: `"[Please be more
+specific."`, `" I'm not sure wh[at]"`, `" you mean by "`. The parser's
+**ambiguous-preposition clarification-request handler**: if a flag in
+the parse-result struct is set, does nothing; otherwise, if the
+struct's vocab-ID field matches one of 8 specific values (plausibly a
+set of ambiguous prepositions), builds and prints a "please be more
+specific, I'm not sure what you mean by..." prompt naming the
+referenced word.
+
+Applied via `apply_renames_gatemain.py`'s seventy-third batch.

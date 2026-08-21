@@ -1910,6 +1910,24 @@ RENAMES = [
      "The pop/restore half of a nested-dialog stack (the push half "
      "isn't identified yet), mirroring the same nested-state-stack "
      "pattern already seen in Listbox_pushState."),
+
+    # -- seventy-third pass: sub_13CC7, confirmed via its literal
+    # strings (already recognized by IDA: "[Please be more specific.",
+    # " I'm not sure wh[at]", " you mean by ") as the parser's
+    # ambiguous-preposition clarification-request handler. See
+    # docs/overview.md#parser_askforclarification-named. --
+
+    (0x13CC7, "Parser_askForClarification",
+     "sub_13CC7(data): if a flag byte in the parse-result struct "
+     "(data+4) is set, does nothing. Otherwise, if the struct's vocab "
+     "ID field (data+0x26) matches one of 8 specific values (0x491/"
+     "0x492/0x42E/0x42F/0x420/0x424/0x928/0x929 -- plausibly a set of "
+     "ambiguous prepositions), prints '[Please be more specific. I'm "
+     "not sure what you mean by <word> you mean by...' and continues "
+     "building a clarification prompt from the referenced word. The "
+     "parser's 'ambiguous preposition/reference' disambiguation-"
+     "request handler, called from the already-named "
+     "GatewayParser_speakHandler/Parser_proc6."),
 ]
 
 

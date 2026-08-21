@@ -8364,7 +8364,7 @@ sub_13CB1       endp
 
 ; Attributes: bp-based frame
 
-sub_13CC7       proc far                ; CODE XREF: GatewayParser_speakHandler+D7\u2193p
+Parser_askForClarification proc far     ; CODE XREF: GatewayParser_speakHandler+D7\u2193p
                                         ; Parser_proc6+204\u2193P ...
 
 var_4           = word ptr -4
@@ -8382,7 +8382,7 @@ data            = dword ptr  6
                 jmp     loc_13D93
 ; ---------------------------------------------------------------------------
 
-loc_13CDB:                              ; CODE XREF: sub_13CC7+F\u2191j
+loc_13CDB:                              ; CODE XREF: Parser_askForClarification+F\u2191j
                 cmp     word ptr es:[bx+26h], 491h
                 jz      short loc_13D1B
                 cmp     word ptr es:[bx+26h], 492h
@@ -8400,8 +8400,8 @@ loc_13CDB:                              ; CODE XREF: sub_13CC7+F\u2191j
                 cmp     word ptr es:[bx+26h], 929h
                 jnz     short loc_13D93
 
-loc_13D1B:                              ; CODE XREF: sub_13CC7+1A\u2191j
-                                        ; sub_13CC7+22\u2191j ...
+loc_13D1B:                              ; CODE XREF: Parser_askForClarification+1A\u2191j
+                                        ; Parser_askForClarification+22\u2191j ...
                 mov     ax, offset aIMNotSureWh ; " I'm not sure wh"
                 mov     dx, seg seg069
                 push    dx
@@ -8422,8 +8422,8 @@ loc_13D1B:                              ; CODE XREF: sub_13CC7+1A\u2191j
                 cmp     word ptr es:[bx+26h], 420h
                 jnz     short loc_13D64
 
-loc_13D56:                              ; CODE XREF: sub_13CC7+75\u2191j
-                                        ; sub_13CC7+7D\u2191j ...
+loc_13D56:                              ; CODE XREF: Parser_askForClarification+75\u2191j
+                                        ; Parser_askForClarification+7D\u2191j ...
                 mov     ax, 6Fh ; 'o'
                 push    ax              ; c
                 call    TextWindow_addChar
@@ -8431,14 +8431,14 @@ loc_13D56:                              ; CODE XREF: sub_13CC7+75\u2191j
                 jmp     short loc_13D71
 ; ---------------------------------------------------------------------------
 
-loc_13D64:                              ; CODE XREF: sub_13CC7+8D\u2191j
+loc_13D64:                              ; CODE XREF: Parser_askForClarification+8D\u2191j
                 mov     ax, offset aAt  ; "at"
                 push    ds
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
 
-loc_13D71:                              ; CODE XREF: sub_13CC7+9B\u2191j
+loc_13D71:                              ; CODE XREF: Parser_askForClarification+9B\u2191j
                 mov     ax, offset aYouMeanBy ; " you mean by "
                 push    ds
                 push    ax              ; msg
@@ -8452,8 +8452,8 @@ loc_13D71:                              ; CODE XREF: sub_13CC7+9B\u2191j
                 jmp     loc_13E6E
 ; ---------------------------------------------------------------------------
 
-loc_13D93:                              ; CODE XREF: sub_13CC7+11\u2191j
-                                        ; sub_13CC7+52\u2191j
+loc_13D93:                              ; CODE XREF: Parser_askForClarification+11\u2191j
+                                        ; Parser_askForClarification+52\u2191j
                 mov     ax, 5Bh ; '['
                 push    ax              ; c
                 call    TextWindow_addChar
@@ -8465,11 +8465,11 @@ loc_13DA4:
                 jmp     short loc_13DAE
 ; ---------------------------------------------------------------------------
 
-loc_13DAB:                              ; CODE XREF: sub_13CC7+110\u2193j
-                                        ; sub_13CC7+116\u2193j
+loc_13DAB:                              ; CODE XREF: Parser_askForClarification+110\u2193j
+                                        ; Parser_askForClarification+116\u2193j
                 inc     [bp+var_4]
 
-loc_13DAE:                              ; CODE XREF: sub_13CC7+E2\u2191j
+loc_13DAE:                              ; CODE XREF: Parser_askForClarification+E2\u2191j
                 mov     es, dseg_96
                 assume es:sg4d43
                 mov     ax, es:CAPITALIZE_VOCAB_COUNT
@@ -8489,10 +8489,10 @@ loc_13DAE:                              ; CODE XREF: sub_13CC7+E2\u2191j
                 cmp     es:[bx+6], si
                 jnz     short loc_13DAB
 
-loc_13DDF:                              ; CODE XREF: sub_13CC7+109\u2191j
+loc_13DDF:                              ; CODE XREF: Parser_askForClarification+109\u2191j
                 mov     [bp+var_2], 1
 
-loc_13DE4:                              ; CODE XREF: sub_13CC7+F2\u2191j
+loc_13DE4:                              ; CODE XREF: Parser_askForClarification+F2\u2191j
                 cmp     [bp+var_2], 0
                 jz      short loc_13DF7
                 push    word ptr [bp+data+2]
@@ -8501,13 +8501,13 @@ loc_13DE4:                              ; CODE XREF: sub_13CC7+F2\u2191j
                 jmp     short loc_13E01
 ; ---------------------------------------------------------------------------
 
-loc_13DF7:                              ; CODE XREF: sub_13CC7+121\u2191j
+loc_13DF7:                              ; CODE XREF: Parser_askForClarification+121\u2191j
                 mov     ax, offset aThere ; "There"
                 push    ds
                 push    ax              ; msg
                 call    TextWindow_add
 
-loc_13E01:                              ; CODE XREF: sub_13CC7+12E\u2191j
+loc_13E01:                              ; CODE XREF: Parser_askForClarification+12E\u2191j
                 add     sp, 4
                 mov     ax, offset aDo_3 ; " do"
                 push    ds
@@ -8530,8 +8530,8 @@ loc_13E01:                              ; CODE XREF: sub_13CC7+12E\u2191j
                 call    TextWindow_add
                 add     sp, 4
 
-loc_13E3D:                              ; CODE XREF: sub_13CC7+152\u2191j
-                                        ; sub_13CC7+167\u2191j
+loc_13E3D:                              ; CODE XREF: Parser_askForClarification+152\u2191j
+                                        ; Parser_askForClarification+167\u2191j
                 mov     ax, offset aNTSeemToBe ; "n't seem to be"
                 push    ds
                 push    ax              ; msg
@@ -8549,10 +8549,10 @@ loc_13E3D:                              ; CODE XREF: sub_13CC7+152\u2191j
                 call    j_VocabSet_display
                 add     sp, 4
 
-loc_13E6B:                              ; CODE XREF: sub_13CC7+187\u2191j
+loc_13E6B:                              ; CODE XREF: Parser_askForClarification+187\u2191j
                 mov     ax, offset aHere__0 ; " here.]\n"
 
-loc_13E6E:                              ; CODE XREF: sub_13CC7+C9\u2191j
+loc_13E6E:                              ; CODE XREF: Parser_askForClarification+C9\u2191j
                 push    ds
                 push    ax              ; msg
                 call    TextWindow_add
@@ -8561,7 +8561,7 @@ loc_13E6E:                              ; CODE XREF: sub_13CC7+C9\u2191j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_13CC7       endp
+Parser_askForClarification endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -8862,7 +8862,7 @@ loc_140AC:                              ; CODE XREF: GatewayParser_speakHandler+
                 push    word ptr [bp+var_4+2]
                 push    word ptr [bp+var_4]
                 push    cs
-                call    near ptr sub_13CC7
+                call    near ptr Parser_askForClarification
                 jmp     short loc_140A4
 ; ---------------------------------------------------------------------------
 
@@ -86374,9 +86374,9 @@ seg069          segment byte public 'UNK' use16
 ; char aPleaseBeMoreSp[]
 aPleaseBeMoreSp db '[Please be more specific.%s',0
                                         ; DATA XREF: sub_13CB1+5\u2191o
-                                        ; sub_13CC7+5C\u2191o
+                                        ; Parser_askForClarification+5C\u2191o
 aIMNotSureWh    db ' I',27h,'m not sure wh',0
-                                        ; DATA XREF: sub_13CC7:loc_13D1B\u2191o
+                                        ; DATA XREF: Parser_askForClarification:loc_13D1B\u2191o
                 db '"',0Ah,0
 seg069          ends
 
@@ -153376,7 +153376,7 @@ loc_61177:                              ; CODE XREF: Parser_proc6+1BB\u2191j
                 add     cx, ax
                 push    bx
                 push    cx
-                call    sub_13CC7
+                call    Parser_askForClarification
                 add     sp, 4
 
 loc_611A3:                              ; CODE XREF: Parser_proc6+1DE\u2191j
@@ -375854,7 +375854,7 @@ loc_C56A0:                              ; CODE XREF: sub_C5648+4E\u2191j
 loc_C56A6:                              ; CODE XREF: sub_C5648+56\u2191j
                 push    dx
                 push    ax
-                call    sub_13CC7
+                call    Parser_askForClarification
                 add     sp, 4
                 mov     ax, 1
                 jmp     loc_C5882
@@ -386997,7 +386997,7 @@ unk_CB909       db    0                 ; DATA XREF: sg4d43:off_CB942\u2193o
 SAVE_FIELDS_COUNT dw 261                ; DATA XREF: sub_62AE2+75\u2191r
                                         ; synchronize_save+102\u2191r
 CAPITALIZE_VOCAB_COUNT dw 12h           ; DATA XREF: whatDoYouWant+F9\u2191r
-                                        ; sub_13CC7+EB\u2191r ...
+                                        ; Parser_askForClarification+EB\u2191r ...
 ; Message aaCantRestart
 aaCantRestart   dd aSorryYouCanTUs      ; DATA XREF: sub_1057E+56\u2191r
                                         ; sub_1057E+51\u2191r
@@ -387075,23 +387075,23 @@ aThe_6          db 'the ',0             ; DATA XREF: sub_13BE2+A7\u2191o
 aS_7            db '%s]',0Ah,0          ; DATA XREF: sub_13BE2+C1\u2191o
 asc_CB97E       db ']',0Ah,0            ; DATA XREF: sub_13CB1\u2191o
 ; char aAt[]
-aAt             db 'at',0               ; DATA XREF: sub_13CC7:loc_13D64\u2191o
+aAt             db 'at',0               ; DATA XREF: Parser_askForClarification:loc_13D64\u2191o
 ; char aYouMeanBy[]
-aYouMeanBy      db ' you mean by ',0    ; DATA XREF: sub_13CC7:loc_13D71\u2191o
+aYouMeanBy      db ' you mean by ',0    ; DATA XREF: Parser_askForClarification:loc_13D71\u2191o
 ; char a__50[]
-a__50           db '.]',0Ah,0           ; DATA XREF: sub_13CC7+C6\u2191o
+a__50           db '.]',0Ah,0           ; DATA XREF: Parser_askForClarification+C6\u2191o
 ; char aThere[]
-aThere          db 'There',0            ; DATA XREF: sub_13CC7:loc_13DF7\u2191o
+aThere          db 'There',0            ; DATA XREF: Parser_askForClarification:loc_13DF7\u2191o
 ; char aDo_3[]
-aDo_3           db ' do',0              ; DATA XREF: sub_13CC7+13D\u2191o
+aDo_3           db ' do',0              ; DATA XREF: Parser_askForClarification+13D\u2191o
 ; char aEs_0[]
-aEs_0           db 'es',0               ; DATA XREF: sub_13CC7+169\u2191o
+aEs_0           db 'es',0               ; DATA XREF: Parser_askForClarification+169\u2191o
 ; char aNTSeemToBe[]
 aNTSeemToBe     db 'n',27h,'t seem to be',0
-                                        ; DATA XREF: sub_13CC7:loc_13E3D\u2191o
+                                        ; DATA XREF: Parser_askForClarification:loc_13E3D\u2191o
 ; char aAny[]
-aAny            db ' any ',0            ; DATA XREF: sub_13CC7+189\u2191o
-aHere__0        db ' here.]',0Ah,0      ; DATA XREF: sub_13CC7:loc_13E6B\u2191o
+aAny            db ' any ',0            ; DATA XREF: Parser_askForClarification+189\u2191o
+aHere__0        db ' here.]',0Ah,0      ; DATA XREF: Parser_askForClarification:loc_13E6B\u2191o
 ; char aWhich[]
 aWhich          db '[Which ',0          ; DATA XREF: VocabSet_whichDoYouMean+10\u2191o
 ; char aDoYouMean[]
@@ -393755,9 +393755,9 @@ dseg_94         dw seg sg4d43           ; DATA XREF: whatDoYouWant+1C\u2191r
 dseg_95         dw seg sg4d43           ; DATA XREF: whatDoYouWant+24\u2191r
                                         ; GatewayParser_speakHandler+10F\u2191r ...
 dseg_96         dw seg sg4d43           ; DATA XREF: whatDoYouWant:loc_139E9\u2191r
-                                        ; sub_13CC7:loc_13DAE\u2191r ...
+                                        ; Parser_askForClarification:loc_13DAE\u2191r ...
 seg068          dw seg seg068           ; DATA XREF: whatDoYouWant+107\u2191r
-                                        ; sub_13CC7+F9\u2191r ...
+                                        ; Parser_askForClarification+F9\u2191r ...
 seg_D10B0       dw seg sg3EDC           ; DATA XREF: whatDoYouWant+29F\u2191r
                                         ; sub_13BE2:loc_13C37\u2191r ...
 seg_D10B2       dw seg seg083           ; DATA XREF: whatDoYouWant+2B5\u2191r
@@ -393766,7 +393766,7 @@ seg_D10B4       dw seg sg3EDC           ; DATA XREF: sub_13BE2+34\u2191r
                                         ; seg098:0998\u2191r
 seg_D10B6       dw seg seg083           ; DATA XREF: sub_13BE2+4A\u2191r
                                         ; seg098:09AE\u2191r
-seg_D10B8       dw seg sg3EDC           ; DATA XREF: sub_13CC7+15D\u2191r
+seg_D10B8       dw seg sg3EDC           ; DATA XREF: Parser_askForClarification+15D\u2191r
                                         ; sub_48D59+15D\u2191r
 dseg_97         dw seg sg4d43           ; DATA XREF: sub_13F85+3B\u2191r
                                         ; sub_49017+3B\u2191r
