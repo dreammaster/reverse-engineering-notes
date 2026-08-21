@@ -34897,7 +34897,7 @@ seg027          segment byte public 'CODE' use16
 
 ; Attributes: bp-based frame
 
-sub_1ECB6       proc far                ; CODE XREF: sub_1ECDE+20\u2193p
+Midi_peekTrackByte proc far             ; CODE XREF: Midi_readVarLengthValue+20\u2193p
                                         ; sub_1EE70+C\u2193p ...
 
 arg_0           = word ptr  6
@@ -34927,14 +34927,14 @@ loc_1ECCF:
                 pop     si
                 pop     bp
                 retf
-sub_1ECB6       endp
+Midi_peekTrackByte endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-sub_1ECDE       proc far                ; CODE XREF: sub_1EDA0+1C\u2193p
+Midi_readVarLengthValue proc far        ; CODE XREF: sub_1EDA0+1C\u2193p
                                         ; sub_1EE70+D6\u2193p ...
 
 var_2           = word ptr -2
@@ -34952,12 +34952,12 @@ arg_0           = word ptr  6
                 shl     di, 1
                 add     di, 0A1A4h
 
-loc_1ECF7:                              ; CODE XREF: sub_1ECDE+56\u2193j
+loc_1ECF7:                              ; CODE XREF: Midi_readVarLengthValue+56\u2193j
                 sub     ax, ax
                 push    ax
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr sub_1ECB6
+                call    near ptr Midi_peekTrackByte
                 add     sp, 4
                 sub     ah, ah
                 mov     si, ax
@@ -34967,7 +34967,7 @@ loc_1ED0B:
                 mov     dx, word_D20FA
                 mov     cl, 7
 
-loc_1ED11:                              ; CODE XREF: sub_1ECDE:loc_1ED17\u2193j
+loc_1ED11:                              ; CODE XREF: Midi_readVarLengthValue:loc_1ED17\u2193j
                 shl     ax, 1
                 rcl     dx, 1
                 dec     cl
@@ -34996,7 +34996,7 @@ loc_1ED27:
                 mov     sp, bp
                 pop     bp
                 retf
-sub_1ECDE       endp
+Midi_readVarLengthValue endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -35080,7 +35080,7 @@ var_2           = word ptr -2
 loc_1EDBA:                              ; CODE XREF: sub_1EDA0+2F\u2193j
                 push    si
                 push    cs
-                call    near ptr sub_1ECDE
+                call    near ptr Midi_readVarLengthValue
                 add     sp, 2
                 mov     [di], ax
                 mov     [di+2], dx
@@ -35195,7 +35195,7 @@ arg_0           = word ptr  6
                 push    ax
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr sub_1ECB6
+                call    near ptr Midi_peekTrackByte
                 add     sp, 4
                 sub     ah, ah
                 mov     word_D20FC, ax
@@ -35209,7 +35209,7 @@ arg_0           = word ptr  6
                 push    ax
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr sub_1ECB6
+                call    near ptr Midi_peekTrackByte
                 add     sp, 4
                 sub     ah, ah
                 sub     dx, dx
@@ -35223,7 +35223,7 @@ arg_0           = word ptr  6
                 push    ax
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr sub_1ECB6
+                call    near ptr Midi_peekTrackByte
                 add     sp, 4
                 sub     ah, ah
                 or      word_D20FC, ax
@@ -35274,7 +35274,7 @@ loc_1EF29:                              ; CODE XREF: sub_1EE70+99\u2191j
                 inc     word ptr [si]
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr sub_1ECDE
+                call    near ptr Midi_readVarLengthValue
                 add     sp, 2
                 add     [si], ax
                 pop     si
@@ -35302,7 +35302,7 @@ arg_0           = word ptr  6
                 inc     word ptr [si]
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr sub_1ECDE
+                call    near ptr Midi_readVarLengthValue
                 add     sp, 2
                 add     [si], ax
                 mov     ax, 0F8h ; 'ø'
@@ -35332,7 +35332,7 @@ arg_0           = word ptr  6
                 inc     word ptr [si]
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr sub_1ECDE
+                call    near ptr Midi_readVarLengthValue
                 add     sp, 2
                 add     [si], ax
                 mov     ax, 0F8h ; 'ø'
@@ -35360,7 +35360,7 @@ arg_0           = word ptr  6
                 push    ax
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr sub_1ECB6
+                call    near ptr Midi_peekTrackByte
                 add     sp, 4
                 sub     ah, ah
                 cmp     ax, 3
@@ -35383,7 +35383,7 @@ loc_1EFCD:                              ; CODE XREF: sub_1EFA6+6B\u2193j
                 inc     word ptr [si]
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr sub_1ECDE
+                call    near ptr Midi_readVarLengthValue
                 add     sp, 2
                 add     [si], ax
 
@@ -35706,7 +35706,7 @@ loc_1F27C:                              ; CODE XREF: sub_1F1DE+7C\u2191j
                 jz      short loc_1F2B1
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr sub_1ECDE
+                call    near ptr Midi_readVarLengthValue
                 add     sp, 2
                 mov     [si], ax
                 mov     [si+2], dx
@@ -35736,7 +35736,7 @@ arg_0           = word ptr  6
                 push    ax
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr sub_1ECB6
+                call    near ptr Midi_peekTrackByte
                 add     sp, 4
                 mov     byte_D2103, al
                 mov     si, [bp+arg_0]
@@ -35762,7 +35762,7 @@ loc_1F2ED:                              ; CODE XREF: sub_1F2B4+33\u2191j
                 add     sp, 2
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr sub_1ECDE
+                call    near ptr Midi_readVarLengthValue
                 add     sp, 2
                 mov     bx, [bp+arg_0]
                 shl     bx, 1
@@ -35800,7 +35800,7 @@ loc_1F328:                              ; CODE XREF: sub_1F2B4+61\u2191j
                 push    ax
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr sub_1ECB6
+                call    near ptr Midi_peekTrackByte
                 add     sp, 4
                 or      al, al
                 jz      short loc_1F3B6
@@ -35808,7 +35808,7 @@ loc_1F328:                              ; CODE XREF: sub_1F2B4+61\u2191j
                 push    ax
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr sub_1ECB6
+                call    near ptr Midi_peekTrackByte
                 add     sp, 4
                 sub     ah, ah
                 push    ax
@@ -35818,7 +35818,7 @@ loc_1F328:                              ; CODE XREF: sub_1F2B4+61\u2191j
                 push    ax
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr sub_1ECB6
+                call    near ptr Midi_peekTrackByte
                 add     sp, 4
                 sub     ah, ah
                 mov     cx, ax
@@ -35868,7 +35868,7 @@ loc_1F3D7:                              ; CODE XREF: sub_1F2B4+141\u2193j
                 push    ax
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr sub_1ECB6
+                call    near ptr Midi_peekTrackByte
                 add     sp, 4
                 mov     byte_D2103, al
                 inc     word ptr [di]
@@ -35897,7 +35897,7 @@ loc_1F3FA:                              ; CODE XREF: sub_1F2B4+28\u2191j
                 push    ax
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr sub_1ECB6
+                call    near ptr Midi_peekTrackByte
                 add     sp, 4
                 or      al, al
                 jz      short loc_1F45E
@@ -35905,7 +35905,7 @@ loc_1F3FA:                              ; CODE XREF: sub_1F2B4+28\u2191j
                 push    ax
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr sub_1ECB6
+                call    near ptr Midi_peekTrackByte
                 add     sp, 4
                 sub     ah, ah
                 mov     cx, ax
@@ -35940,7 +35940,7 @@ loc_1F45E:                              ; CODE XREF: sub_1F2B4+161\u2191j
                 push    ax
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr sub_1ECB6
+                call    near ptr Midi_peekTrackByte
                 add     sp, 4
                 mov     byte_D2103, al
 
@@ -35987,7 +35987,7 @@ loc_1F4C4:                              ; CODE XREF: sub_1F4A0+62\u2193j
                 push    ax
                 push    ax
                 push    cs
-                call    near ptr sub_1ECB6
+                call    near ptr Midi_peekTrackByte
                 add     sp, 4
                 cmp     al, 0FFh
                 jnz     short loc_1F4E5
@@ -35996,7 +35996,7 @@ loc_1F4C4:                              ; CODE XREF: sub_1F4A0+62\u2193j
                 sub     ax, ax
                 push    ax
                 push    cs
-                call    near ptr sub_1ECB6
+                call    near ptr Midi_peekTrackByte
                 add     sp, 4
                 cmp     al, 51h ; 'Q'
                 jz      short loc_1F504
@@ -36006,13 +36006,13 @@ loc_1F4E5:                              ; CODE XREF: sub_1F4A0+31\u2191j
                 sub     ax, ax
                 push    ax
                 push    cs
-                call    near ptr sub_1ECDE
+                call    near ptr Midi_readVarLengthValue
                 add     sp, 2
                 add     word_D20C4, ax
                 sub     ax, ax
                 push    ax
                 push    cs
-                call    near ptr sub_1ECDE
+                call    near ptr Midi_readVarLengthValue
                 add     sp, 2
                 jmp     short loc_1F4C4
 ; ---------------------------------------------------------------------------
@@ -393442,7 +393442,7 @@ dseg_26         dw seg sg4d43           ; DATA XREF: sub_1EB9E+6E\u2191r
 dseg_27         dw seg sg4d43           ; DATA XREF: sub_1EB9E+76\u2191r
 seg126_18       dw seg sg3EDC           ; DATA XREF: sub_1EB9E+94\u2191r
 dseg_28         dw seg sg4d43           ; DATA XREF: sub_1EB9E+ED\u2191r
-seg126_19       dw seg sg3EDC           ; DATA XREF: sub_1ECB6+D\u2191r
+seg126_19       dw seg sg3EDC           ; DATA XREF: Midi_peekTrackByte+D\u2191r
                                         ; sub_1ED42+14\u2191r ...
 dseg_29         dw seg sg4d43           ; DATA XREF: sub_1EDA0:loc_1EDD4\u2191r
                                         ; sub_1F1DE+1C\u2191r ...
@@ -397132,10 +397132,10 @@ word_D20F4      dw 0                    ; DATA XREF: sub_1EE06+3A\u2191w
                                         ; sub_1EE70+6F\u2191r
 word_D20F6      dw 0                    ; DATA XREF: sub_1ED42+D\u2191r
                                         ; sub_1ED42+26\u2191r ...
-word_D20F8      dw 0                    ; DATA XREF: sub_1ECDE+D\u2191w
-                                        ; sub_1ECDE+2A\u2191r ...
-word_D20FA      dw 0                    ; DATA XREF: sub_1ECDE+A\u2191w
-                                        ; sub_1ECDE:loc_1ED0B\u2191r ...
+word_D20F8      dw 0                    ; DATA XREF: Midi_readVarLengthValue+D\u2191w
+                                        ; Midi_readVarLengthValue+2A\u2191r ...
+word_D20FA      dw 0                    ; DATA XREF: Midi_readVarLengthValue+A\u2191w
+                                        ; Midi_readVarLengthValue:loc_1ED0B\u2191r ...
 word_D20FC      dw 0                    ; DATA XREF: sub_1EE70+14\u2191w
                                         ; sub_1EE70+3B\u2191w ...
 word_D20FE      dw 0                    ; DATA XREF: sub_1EE70+17\u2191w

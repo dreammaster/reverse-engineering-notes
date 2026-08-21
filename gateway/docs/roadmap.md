@@ -572,6 +572,12 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       matching Standard MIDI status bytes almost exactly, a strong new
       lead for unifying the `.MUS`/MIDI thread. Full writeup in
       [overview.md](overview.md#midi_bufferbyte-named--a-midi-status-byte-state-machine-sighted).
+- [x] Named `sub_1ECDE` (8 callers) → `Midi_readVarLengthValue`, plus
+      its helper `sub_1ECB6` → `Midi_peekTrackByte` — a confirmed
+      Standard MIDI File variable-length-quantity decoder and its
+      per-track byte-peek primitive, further cementing the `.MUS`/MIDI
+      thread. Full writeup in
+      [overview.md](overview.md#midi_readvarlengthvalue-named--a-midi-vlq-decoder-confirmed).
 - [ ] Unify the whole music/sound-hardware picture: `Speaker_playTone`/
       `Speaker_playErrorBeep` (PC-speaker tones), `Midi_sendByte` +
       `sub_1D966`/`sub_1EE70`/`sub_1ECB6` (MPU-401/MIDI), and

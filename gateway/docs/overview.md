@@ -1960,3 +1960,30 @@ fully unified yet — the state machine itself is large and un-named —
 but a concrete, promising lead for that follow-up pass.
 
 Applied via `apply_renames_gatemain.py`'s thirtieth batch.
+
+### `Midi_readVarLengthValue` named — a MIDI VLQ decoder confirmed
+
+Moved to `sub_1ECDE` (8 callers, called from `sub_1EE70` — a name
+already familiar from the `Midi_sendByte` pass). Confirmed as a
+textbook **Standard MIDI File variable-length quantity (VLQ)
+decoder**: reads a byte, accumulates its low 7 bits into a growing
+32-bit value (shifting the accumulator left 7 bits each iteration),
+and continues while the byte's high bit (`0x80`) is set — exactly the
+well-known MIDI delta-time/VLQ encoding. Named
+**`Midi_readVarLengthValue(trackIndex)`**.
+
+This also finally confirms and names its helper, **`sub_1ECB6`** →
+**`Midi_peekTrackByte(trackIndex, byteOffset)`** — already
+characterized (but left unrenamed) in the `Midi_sendByte` writeup
+above as "a generic per-track stream-offset byte reader." Callers pass
+`byteOffset=0` to read at the track's current position (advanced
+separately by `Midi_readVarLengthValue`'s per-track position counter)
+or a small positive offset to peek ahead at a just-identified
+fixed-format payload without advancing — e.g. `sub_1EE70`'s 3-byte
+tempo meta-event read at offsets 2-4, from the earlier pass. The
+per-track base-offset table itself wasn't renamed — it's referenced
+via two different segment-relative names in different callers
+(`-0x5E5Ch` here vs. `0xA1A4` in `Midi_readVarLengthValue`) that may or
+may not be the same physical array; not confirmed either way.
+
+Applied via `apply_renames_gatemain.py`'s thirty-first batch.

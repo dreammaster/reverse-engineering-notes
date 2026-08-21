@@ -908,6 +908,41 @@ RENAMES = [
      "fixed offset (0x527) elsewhere in the same un-named MIDI-status-"
      "byte state machine; advanced one byte at a time by "
      "Midi_bufferByte."),
+
+    # -- thirty-first pass: sub_1ECDE, confirmed as a Standard MIDI
+    # File variable-length-quantity (VLQ) decoder -- textbook shape
+    # (accumulate 7 bits per byte, continue while the high bit is set).
+    # This also finally confirms and names its helper sub_1ECB6
+    # (already characterized, not renamed, in the Midi_sendByte pass).
+    # See docs/overview.md#midi_readvarlengthvalue-named--a-midi-vlq-decoder-confirmed. --
+
+    (0x1ECDE, "Midi_readVarLengthValue",
+     "sub_1ECDE(trackIndex): decodes a Standard MIDI File "
+     "variable-length quantity from track `trackIndex`'s current read "
+     "position -- reads a byte via Midi_peekTrackByte(trackIndex, 0), "
+     "accumulates its low 7 bits into a growing 32-bit value (shifting "
+     "the accumulator left 7 bits each iteration), increments the "
+     "track's position counter (word ptr [0xA1A4+trackIndex*2]) once "
+     "per byte consumed, and continues while the byte's high bit "
+     "(0x80) is set -- the textbook MIDI VLQ decode loop. Returns the "
+     "low 16 bits of the decoded value in ax (word_D20F8); the high "
+     "16 bits (word_D20FA) are available to callers that need the "
+     "full 32-bit value."),
+    (0x1ECB6, "Midi_peekTrackByte",
+     "sub_1ECB6(trackIndex, byteOffset): reads a single byte at "
+     "trackBase(trackIndex) + byteOffset, where trackBase is looked up "
+     "from a small per-track table and added to a far pointer "
+     "(_tmpSub._val10) to the loaded track data. Callers pass "
+     "byteOffset=0 to read at the track's current position (advanced "
+     "separately by Midi_readVarLengthValue's position counter) or a "
+     "small positive offset to peek ahead at a just-identified fixed-"
+     "format payload (e.g. the Midi_sendByte pass's sub_1EE70, reading "
+     "a 3-byte tempo meta-event at offsets 2-4 without advancing). The "
+     "per-track base-offset table itself wasn't "
+     "renamed -- it's referenced via two different segment-relative "
+     "names in different callers (-0x5E5Ch here vs. 0xA1A4 in "
+     "Midi_readVarLengthValue) that may or may not be the same "
+     "physical array; not confirmed either way."),
 ]
 
 
