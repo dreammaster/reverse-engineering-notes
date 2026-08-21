@@ -30062,7 +30062,7 @@ seg021          segment byte public 'CODE' use16
 
 ; Attributes: bp-based frame
 
-sub_1CD54       proc far                ; CODE XREF: sub_1FDB8:loc_1FE1C\u2193P
+Opl2_detectAndInit proc far             ; CODE XREF: Sound_selectDevice:loc_1FE1C\u2193P
 
 var_2           = word ptr -2
 
@@ -30085,14 +30085,14 @@ loc_1CD5A:
                 mov     sp, bp
                 pop     bp
                 retf
-sub_1CD54       endp
+Opl2_detectAndInit endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-sub_1CD72       proc far                ; CODE XREF: sub_1CD54+D\u2191p
+sub_1CD72       proc far                ; CODE XREF: Opl2_detectAndInit+D\u2191p
 
 var_6           = word ptr -6
 var_4           = word ptr -4
@@ -30193,7 +30193,7 @@ sub_1CD72       endp
 
 ; Attributes: bp-based frame
 
-sub_1CE20       proc far                ; CODE XREF: sub_1CD54+14\u2191p
+sub_1CE20       proc far                ; CODE XREF: Opl2_detectAndInit+14\u2191p
 
 var_2           = word ptr -2
 
@@ -31978,7 +31978,7 @@ loc_1D8BD:
 
 
 Midi_shutdown   proc far                ; CODE XREF: Midi_initDevice:loc_1D9F6\u2193P
-                                        ; sub_1FA5E+23\u2193P ...
+                                        ; Midi_detectDevice+23\u2193P ...
                 push    bp
                 cmp     byte_C83B6, 1
                 jnz     short loc_1D8F7
@@ -32102,7 +32102,7 @@ sub_1D953       endp
 ; Attributes: bp-based frame
 
 Midi_initDevice proc far                ; CODE XREF: sub_1F552+12\u2193P
-                                        ; sub_1FA5E:loc_1FA76\u2193P ...
+                                        ; Midi_detectDevice:loc_1FA76\u2193P ...
 
 arg_0           = word ptr  6
 arg_2           = byte ptr  8
@@ -36056,9 +36056,9 @@ sub_1F4A0       endp
 
 sub_1F552       proc far                ; CODE XREF: sub_1F63A+48\u2193p
                 mov     es, dseg_39
-                push    es:word_C8586
+                push    es:_midiBasePortConfig
                 mov     es, dseg_40
-                push    es:word_C8588
+                push    es:_midiIrqConfig
                 call    Midi_initDevice
                 add     sp, 4
                 or      ax, ax
@@ -36680,7 +36680,7 @@ sub_1F93E       endp
 
 ; Attributes: bp-based frame
 
-sub_1FA5E       proc far                ; CODE XREF: sub_1FDB8+3C\u2193P
+Midi_detectDevice proc far              ; CODE XREF: Sound_selectDevice+3C\u2193P
 
 var_2           = word ptr -2
 
@@ -36691,13 +36691,13 @@ var_2           = word ptr -2
                 assume es:sg4d43
 
 loc_1FA68:
-                push    es:word_C8586
+                push    es:_midiBasePortConfig
 
 loc_1FA6D:
                 mov     es, dseg_40
 
 loc_1FA71:
-                push    es:word_C8588
+                push    es:_midiIrqConfig
 
 loc_1FA76:
                 call    Midi_initDevice
@@ -36718,7 +36718,7 @@ loc_1FA89:
 loc_1FA8B:
                 pop     bp
                 retf
-sub_1FA5E       endp
+Midi_detectDevice endp
 
 seg027          ends
 
@@ -36738,9 +36738,9 @@ sub_1FA8E       proc far                ; CODE XREF: sub_1FB10+1\u2193p
                                         ; sub_1FB56+9\u2193p ...
                 mov     es, dseg_51
                 assume es:sg4d43
-                push    es:word_C8586
+                push    es:_midiBasePortConfig
                 mov     es, dseg_52
-                push    es:word_C8588
+                push    es:_midiIrqConfig
 
 loc_1FAA0:
                 call    Midi_initDevice
@@ -36837,7 +36837,7 @@ sub_1FB10       endp
 ; Attributes: bp-based frame
 
 ; int __cdecl __far sub_1FB56(const char *str)
-sub_1FB56       proc far                ; CODE XREF: sub_1FDB8+4D\u2193P
+sub_1FB56       proc far                ; CODE XREF: Sound_selectDevice+4D\u2193P
                                         ; sub_1FE30+1E\u2193P
 
 var_4           = word ptr -4
@@ -37012,7 +37012,7 @@ seg029          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1FC70       proc far                ; CODE XREF: sub_1FDB8+5B\u2193p
+sub_1FC70       proc far                ; CODE XREF: Sound_selectDevice+5B\u2193p
                 test    byte ptr word_C8582, 80h
 
 loc_1FC75:
@@ -37206,7 +37206,7 @@ loc_1FDA9:                              ; CODE XREF: seg029:0131\u2191j
 
 ; Attributes: bp-based frame
 
-sub_1FDB8       proc far                ; CODE XREF: seg029:0AA3\u2193p
+Sound_selectDevice proc far             ; CODE XREF: seg029:0AA3\u2193p
                                         ; gatemain_start+17E\u2193P ...
 
 arg_0           = word ptr  6
@@ -37216,9 +37216,9 @@ arg_4           = word ptr  0Ah
                 push    bp
                 mov     bp, sp
                 mov     ax, [bp+arg_2]
-                mov     word_C8586, ax
+                mov     _midiBasePortConfig, ax
                 mov     ax, [bp+arg_4]
-                mov     word_C8588, ax
+                mov     _midiIrqConfig, ax
                 push    cs
                 call    near ptr sub_1FE30
                 test    byte ptr [bp+arg_0], 8
@@ -37228,10 +37228,10 @@ arg_4           = word ptr  0Ah
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1FDDA:                              ; CODE XREF: sub_1FDB8+17\u2191j
+loc_1FDDA:                              ; CODE XREF: Sound_selectDevice+17\u2191j
                 mov     word_C8582, 0
 
-loc_1FDE0:                              ; CODE XREF: sub_1FDB8+1F\u2191j
+loc_1FDE0:                              ; CODE XREF: Sound_selectDevice+1F\u2191j
                 mov     ax, [bp+arg_0]
                 and     al, 0F7h
                 cmp     ax, 1
@@ -37240,7 +37240,7 @@ loc_1FDE0:                              ; CODE XREF: sub_1FDB8+1F\u2191j
                 jz      short loc_1FE1C
                 cmp     ax, 4
                 jnz     short loc_1FE2A
-                call    sub_1FA5E
+                call    Midi_detectDevice
                 or      ax, ax
                 jz      short loc_1FE2A
                 mov     ax, offset aGateway_1 ; "       Gateway      "
@@ -37258,19 +37258,19 @@ loc_1FDE0:                              ; CODE XREF: sub_1FDB8+1F\u2191j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1FE1C:                              ; CODE XREF: sub_1FDB8+30\u2191j
-                                        ; sub_1FDB8+35\u2191j
-                call    sub_1CD54
+loc_1FE1C:                              ; CODE XREF: Sound_selectDevice+30\u2191j
+                                        ; Sound_selectDevice+35\u2191j
+                call    Opl2_detectAndInit
                 or      ax, ax
                 jz      short loc_1FE2A
                 or      byte ptr word_C8582, 2
 
-loc_1FE2A:                              ; CODE XREF: sub_1FDB8+3A\u2191j
-                                        ; sub_1FDB8+43\u2191j ...
+loc_1FE2A:                              ; CODE XREF: Sound_selectDevice+3A\u2191j
+                                        ; Sound_selectDevice+43\u2191j ...
                 mov     ax, word_C8582
                 pop     bp
                 retf
-sub_1FDB8       endp
+Sound_selectDevice endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -37278,7 +37278,7 @@ sub_1FDB8       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1FE30       proc far                ; CODE XREF: sub_1FDB8+10\u2191p
+sub_1FE30       proc far                ; CODE XREF: Sound_selectDevice+10\u2191p
                                         ; finish:loc_28847\u2193P ...
                 mov     ax, 0FFFFh
                 push    ax
@@ -38458,7 +38458,7 @@ loc_2070A:
                 push    cmdline_param4
                 push    _soundMode
                 push    cs
-                call    near ptr sub_1FDB8
+                call    near ptr Sound_selectDevice
                 add     sp, 6
                 push    cmdline_param7
                 push    cmdline_param8
@@ -85832,7 +85832,8 @@ ALT_VOCAB_IDS   dw 1486, 1              ; DATA XREF: main+689\u2191r
                 dw 1130, 11
                 dw 1554, 12
 ; char aGateway_1[]
-aGateway_1      db '       Gateway      ',0 ; DATA XREF: sub_1FDB8+45\u2191o
+aGateway_1      db '       Gateway      ',0
+                                        ; DATA XREF: Sound_selectDevice+45\u2191o
 aLegendEntertainment db 'Legend Entertainment',0
 ROOM_PIC_NUMS   RoomPicNum <238, 527>   ; DATA XREF: Logics_getRoomPic+1C5\u2191r
                                         ; Logics_getRoomPic+1CC\u2191r
@@ -162467,7 +162468,7 @@ loc_65B3D:                              ; CODE XREF: gatemain_start+7\u2191j
                 push    es:cmdline_param4
                 mov     es, seg_D12A0
                 push    es:_soundMode
-                call    sub_1FDB8
+                call    Sound_selectDevice
                 add     sp, 6
 ;
                 mov     es, seg_D12A8
@@ -177053,7 +177054,7 @@ loc_6D7F2:                              ; CODE XREF: sub_6D7CD+16\u2191j
                 mov     es, seg_D1340
                 push    es:cmdline_param4
                 push    ax
-                call    sub_1FDB8
+                call    Sound_selectDevice
                 add     sp, 6
                 push    cs
                 call    near ptr sub_6D7A3
@@ -177117,7 +177118,7 @@ loc_6D860:                              ; CODE XREF: sub_2ECB1+3\u2191J
                 mov     ax, es:_soundMode
                 or      al, 8
                 push    ax
-                call    sub_1FDB8
+                call    Sound_selectDevice
                 add     sp, 6
                 mov     es, seg_D1342
                 push    es:cmdline_param7
@@ -177144,7 +177145,7 @@ loc_6D8B0:                              ; CODE XREF: sub_2ECA7+3\u2191J
                 mov     ax, es:_soundMode
                 and     al, 0F7h
                 push    ax
-                call    sub_1FDB8
+                call    Sound_selectDevice
                 add     sp, 6
                 push    cs
                 call    near ptr sub_6D836
@@ -383838,10 +383839,10 @@ word_C8582      dw 0                    ; DATA XREF: sub_15674+70\u2191r
                                         ; sub_15F35:loc_15F7A\u2191r ...
                 db    0
                 db    0
-word_C8586      dw 2                    ; DATA XREF: sub_1F552+4\u2191r
-                                        ; sub_1FA5E:loc_1FA68\u2191r ...
-word_C8588      dw 330h                 ; DATA XREF: sub_1F552+D\u2191r
-                                        ; sub_1FA5E:loc_1FA71\u2191r ...
+_midiBasePortConfig dw 2                ; DATA XREF: sub_1F552+4\u2191r
+                                        ; Midi_detectDevice:loc_1FA68\u2191r ...
+_midiIrqConfig  dw 330h                 ; DATA XREF: sub_1F552+D\u2191r
+                                        ; Midi_detectDevice:loc_1FA71\u2191r ...
 word_C858A      dw 0                    ; DATA XREF: sub_15BDA:loc_15C46\u2191r
                                         ; sub_15BDA+18E\u2191w ...
 word_C858C      dw 7Fh                  ; DATA XREF: sub_15BDA+199\u2191w
@@ -393466,9 +393467,9 @@ dseg_37         dw seg sg4d43           ; DATA XREF: sub_1F1DE+2D\u2191r
 dseg_38         dw seg sg4d43           ; DATA XREF: sub_1F2B4+CF\u2191r
                                         ; sub_1F2B4+18D\u2191r
 dseg_39         dw seg sg4d43           ; DATA XREF: sub_1F552\u2191r
-                                        ; sub_1FA5E+6\u2191r
+                                        ; Midi_detectDevice+6\u2191r
 dseg_40         dw seg sg4d43           ; DATA XREF: sub_1F552+9\u2191r
-                                        ; sub_1FA5E:loc_1FA6D\u2191r
+                                        ; Midi_detectDevice:loc_1FA6D\u2191r
 dseg_41         dw seg sg4d43           ; DATA XREF: sub_1F692:loc_1F75C\u2191r
 dseg_42         dw seg sg4d43           ; DATA XREF: sub_1F692+F2\u2191r
                                         ; sub_1F692+124\u2191r ...
@@ -400776,7 +400777,7 @@ dword_D3BC2     dd 0                    ; DATA XREF: exit+3\u2191o exit+6\u2191o
                 db    0
                 db    0
 _opl2BasePort   dw 0                    ; DATA XREF: Opl2_writeRegister:loc_1CAF9\u2191r
-                                        ; sub_1CD54:loc_1CD5A\u2191w ...
+                                        ; Opl2_detectAndInit:loc_1CD5A\u2191w ...
 word_D3BD2      dw 0                    ; DATA XREF: sub_1CB32+17\u2191r
                                         ; sub_1CF6E+1C\u2191w
 Persisted_struc24 Struct24 <0>          ; DATA XREF: show_startup+3F\u2191o

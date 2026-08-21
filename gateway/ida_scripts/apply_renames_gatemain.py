@@ -1316,7 +1316,7 @@ RENAMES = [
      "new Midi_shutdown; already characterized (but not renamed) in "
      "the Midi_sendByte pass -- finalizing the name now that its "
      "shutdown counterpart makes the whole picture unambiguous."),
-    ("startGame?", "Sound_stopTrack",
+    (0x20220, "Sound_stopTrack",
      "Renaming the long-flagged mislabeled tentative name for real. "
      "Full body confirms: only proceeds if word_C8582's streaming-"
      "active bits are set AND the given trackId (arg_0) matches the "
@@ -1341,6 +1341,51 @@ RENAMES = [
      "starting a new track -- 'change the currently playing sound/"
      "music track'. sub_15F35 (the two-resource-variant lookup "
      "helper) still not renamed."),
+
+    # -- forty-fifth pass: sub_1FDB8, called from gatemain_start --
+    # the sound-device SELECTION dispatcher (matching the soundMode
+    # command-line argument from the cross-IDB argv-mapping finding).
+    # Confirmed via its two callees, sub_1CD54 (sets the already-named
+    # _opl2BasePort to the real 0x388 before probing) and sub_1FA5E
+    # (calls the already-named Midi_initDevice then immediately
+    # Midi_shutdown -- a detect-only probe pattern). See
+    # docs/overview.md#sound_selectdevice-named--the-sound-mode-dispatcher-confirmed. --
+
+    (0x1FDB8, "Sound_selectDevice",
+     "sub_1FDB8(mode, midiBasePort, midiIrq): stores midiBasePort/"
+     "midiIrq into _midiBasePortConfig/_midiIrqConfig, then dispatches "
+     "on `mode` (masked to drop bit 3, a separate flag): mode 1 or 2 "
+     "probes for OPL2/AdLib via the new Opl2_detectAndInit; mode 4 "
+     "probes for MPU-401/MIDI via the new Midi_detectDevice, and on "
+     "success also prints the game's title ('       Gateway      ') "
+     "and calls two more setup routines (sub_1FB56/sub_1FC70, not "
+     "renamed). Sets word_C8582 flag bits recording which backend "
+     "probe succeeded (value 4 = MIDI, matching Sound_stopTrack's own "
+     "test of that same bit; value 2 = OPL2/AdLib). This is the "
+     "command-line soundMode argument's device-selection entry "
+     "point."),
+    (0x1CD54, "Opl2_detectAndInit",
+     "sub_1CD54(): sets _opl2BasePort to the real 0x388, then calls "
+     "sub_1CD72 (the actual presence-detection read, not renamed) "
+     "followed by sub_1CE20 (plausibly a channel-silencing init, not "
+     "renamed). Called from Sound_selectDevice for mode 1/2."),
+    (0x1FA5E, "Midi_detectDevice",
+     "sub_1FA5E(): calls the already-named Midi_initDevice(basePort, "
+     "irqLine) then immediately Midi_shutdown() again -- a detect-"
+     "only probe: initialize just long enough to see if the hardware "
+     "responds, capture the result, then tear it back down rather "
+     "than leaving it running. Called from Sound_selectDevice for "
+     "mode 4, using the config values it just stored."),
+    (0xC8586, "_midiBasePortConfig",
+     "Was word_C8586: the configured MPU-401 base port (e.g. from a "
+     "command-line argument or config value), passed to "
+     "Midi_initDevice by Midi_detectDevice -- distinct from the "
+     "already-named _midiDataPort, which is the port actually in use "
+     "once initialized."),
+    (0xC8588, "_midiIrqConfig",
+     "Was word_C8588: the configured MPU-401 IRQ line, passed to "
+     "Midi_initDevice by Midi_detectDevice alongside "
+     "_midiBasePortConfig."),
 ]
 
 

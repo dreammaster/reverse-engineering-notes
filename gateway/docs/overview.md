@@ -2327,3 +2327,32 @@ passes ago): it calls `Sound_stopTrack(0xFFFF)` — an unconditional stop
 two-resource-variant lookup helper) remains unrenamed.
 
 Applied via `apply_renames_gatemain.py`'s forty-fourth batch.
+
+### `Sound_selectDevice` named — the sound-mode dispatcher confirmed
+
+Moved to `sub_1FDB8`, called directly from `gatemain_start` — matching
+the `soundMode` command-line argument identified in the earlier
+cross-IDB argv-mapping finding. Confirmed via its two callees:
+
+- **`Opl2_detectAndInit`** (was `sub_1CD54`): sets `_opl2BasePort` to
+  the real `0x388` before probing for the chip's presence.
+- **`Midi_detectDevice`** (was `sub_1FA5E`): calls the already-named
+  `Midi_initDevice(basePort, irqLine)` then immediately
+  `Midi_shutdown()` again — a detect-only probe: initialize just long
+  enough to see if the hardware responds, capture the result, then
+  tear it back down rather than leaving it running.
+
+**`Sound_selectDevice(mode, midiBasePort, midiIrq)`**: stores
+`midiBasePort`/`midiIrq` into **`_midiBasePortConfig`**/
+**`_midiIrqConfig`** (distinct from the already-named `_midiDataPort`,
+which is the port actually in use once initialized), then dispatches
+on `mode`: `1`/`2` probes for OPL2/AdLib via `Opl2_detectAndInit`;
+`4` probes for MPU-401/MIDI via `Midi_detectDevice`, and on success
+also prints the game's title (`"       Gateway      "`) and runs two
+more setup routines. Sets `word_C8582` flag bits recording which
+backend probe succeeded — value `4` for MIDI (matching
+`Sound_stopTrack`'s own test of that same bit) and value `2` for
+OPL2/AdLib — tying this cleanly into the already-confirmed
+`Sound_stopTrack`/`Sound_selectTrack` architecture.
+
+Applied via `apply_renames_gatemain.py`'s forty-fifth batch.

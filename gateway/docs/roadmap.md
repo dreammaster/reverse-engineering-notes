@@ -652,12 +652,20 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       `startGame?` → `Sound_stopTrack`, plus `sub_15DB2` →
       `Sound_selectTrack`. Full writeup in
       [overview.md](overview.md#sound_stoptrack-named--the-startgame-mislabeling-finally-corrected).
+- [x] Named `Sound_selectDevice` (was `sub_1FDB8`, called from
+      `gatemain_start`) plus `Opl2_detectAndInit`/`Midi_detectDevice`/
+      `_midiBasePortConfig`/`_midiIrqConfig` — the `soundMode`
+      command-line argument's device-selection dispatcher, ties
+      cleanly into the already-confirmed `Sound_stopTrack` flag bits.
+      Full writeup in
+      [overview.md](overview.md#sound_selectdevice-named--the-sound-mode-dispatcher-confirmed).
 - [ ] Unify all four sound-hardware backends (PC-speaker, MPU-401/
-      MIDI, OPL2/AdLib, Sound Blaster) with `Sound_selectTrack`/
-      `Sound_stopTrack` into one confirmed picture of how the engine
-      picks a backend at runtime. `sub_1E974`/`sub_1F910` (the other
-      two backend-specific stop routines) and `sub_15F35` (the
-      resource-variant lookup helper) still need naming.
+      MIDI, OPL2/AdLib, Sound Blaster) with `Sound_selectDevice`/
+      `Sound_selectTrack`/`Sound_stopTrack` into one confirmed picture
+      of how the engine picks a backend at runtime. `sub_1E974`/
+      `sub_1F910` (the other two backend-specific stop routines) and
+      `sub_15F35` (the resource-variant lookup helper) still need
+      naming.
 - [ ] Unify the whole music/sound-hardware picture: `Speaker_playTone`/
       `Speaker_playErrorBeep` (PC-speaker tones), `Midi_sendByte` +
       `sub_1D966`/`sub_1EE70`/`sub_1ECB6` (MPU-401/MIDI), and
