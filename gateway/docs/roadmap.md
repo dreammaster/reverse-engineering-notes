@@ -695,6 +695,9 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       animation-timing/draw loop, closing out the `AnimPics_*` cluster
       entirely. Full writeup in
       [overview.md](overview.md#animpics_tick-named--the-animpics-clusters-last-piece).
+- [x] Named `sub_28231` (4 callers) → `Windows_setContentWindow` — a
+      trivial two-global window-tracking setter. Full writeup in
+      [overview.md](overview.md#windows_setcontentwindow-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

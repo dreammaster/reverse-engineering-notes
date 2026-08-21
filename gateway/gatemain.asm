@@ -56059,7 +56059,7 @@ Compass_getDirection endp
 
 ; Attributes: bp-based frame
 
-sub_28231       proc far                ; CODE XREF: room_load+22\u2193P
+Windows_setContentWindow proc far       ; CODE XREF: room_load+22\u2193P
                                         ; sub_73E5A+5C\u2193P ...
 
 arg_0           = word ptr  6
@@ -56073,7 +56073,7 @@ arg_2           = word ptr  8
                 mov     word_D2A96, ax
                 pop     bp
                 retf
-sub_28231       endp
+Windows_setContentWindow endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -143368,7 +143368,7 @@ showFlag        = byte ptr -2
 loc_5CF6D:                              ; CODE XREF: room_load+15\u2191j
                 push    Commset_winContent
                 push    Input_window_mb
-                call    sub_28231
+                call    Windows_setContentWindow
                 add     sp, 4
                 call    Windows_ReserveOneRegion
                 cmp     word_CBCFE, 1
@@ -190472,7 +190472,7 @@ loc_73EA2:                              ; CODE XREF: sub_73E5A+31\u2191j
                 mov     ax, 0FFFFh
                 push    ax
                 push    word_CCCE2
-                call    sub_28231
+                call    Windows_setContentWindow
                 add     sp, 4
                 mov     es, seg_D13FA
                 assume es:sg4d43
@@ -320384,7 +320384,7 @@ loc_AD4EE:                              ; CODE XREF: sub_AD458+5B\u2191j
                 mov     ax, 0FFFFh
                 push    ax
                 push    [bp+var_8]
-                call    sub_28231
+                call    Windows_setContentWindow
                 add     sp, 4
                 mov     ax, 0B00h
                 push    ax              ; regionNum
@@ -363384,7 +363384,7 @@ loc_C01FE:                              ; CODE XREF: sub_C0168+5B\u2191j
                 mov     ax, 0FFFFh
                 push    ax
                 push    [bp+var_8]
-                call    sub_28231
+                call    Windows_setContentWindow
                 add     sp, 4
                 mov     ax, 900h
                 push    ax              ; regionNum
@@ -397342,7 +397342,7 @@ Compass_height  dw 0                    ; DATA XREF: Compass_load+62\u2191w
 button_strings  dd 40h dup(0)           ; DATA XREF: Button_add+26F\u2191w
                                         ; Button_draw+A7\u2191r ...
 ; int winNumber
-winNumber       dw 0                    ; DATA XREF: sub_28231+6\u2191w
+winNumber       dw 0                    ; DATA XREF: Windows_setContentWindow+6\u2191w
                                         ; Windows_ReserveOneRegion+A\u2191r ...
 Regions_x1      dw 40h dup(0)           ; DATA XREF: Region_fill+32\u2191r
                                         ; Regions_addRegion+56\u2191w ...
@@ -397392,7 +397392,7 @@ Windows_regionIndexes db 23h dup(0)     ; DATA XREF: Regions_Reset+3D\u2191w
 Listbox_thumbnail dd 0                  ; DATA XREF: Listbox_setImages+20\u2191w
                                         ; Regions_addRegion+B2\u2191r ...
 ; int word_D2A96
-word_D2A96      dw 0                    ; DATA XREF: sub_28231+C\u2191w
+word_D2A96      dw 0                    ; DATA XREF: Windows_setContentWindow+C\u2191w
                                         ; sub_28595+56\u2191r
 ; int region_handle
 region_handle   dw 0                    ; DATA XREF: load_regions+45\u2191r

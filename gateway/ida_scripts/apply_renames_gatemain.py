@@ -1811,6 +1811,24 @@ RENAMES = [
      "characterized in detail in the AnimPics_freeAll writeup several "
      "passes ago; finalizing the name now as the last unnamed piece of "
      "that cluster."),
+
+    # -- sixty-seventh pass: sub_28231, a trivial two-global setter.
+    # Confirmed mechanically by direct read; the already-named globals
+    # it writes (winNumber, word_D2A96) don't have enough other context
+    # to pin down a more specific role beyond "window tracking", so
+    # named conservatively. See
+    # docs/overview.md#windows_setcontentwindow-named. --
+
+    (0x28231, "Windows_setContentWindow",
+     "sub_28231(winNumber, contentWinNum): sets the global "
+     "`winNumber` (already named, but otherwise only ever written "
+     "here) and `word_D2A96` (not renamed, but already known from the "
+     "Icon_drawButton-adjacent code to be read as a TextWindow_"
+     "addDirect target window number) from its two arguments. Called "
+     "from the already-named room_load plus three other room/UI-"
+     "adjacent functions -- consistent with selecting which window "
+     "receives a room's text output, but not confirmed beyond the "
+     "mechanical read/write shape."),
 ]
 
 

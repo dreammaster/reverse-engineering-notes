@@ -2725,3 +2725,17 @@ With this, `AnimPics_*` — register, free-all, reset-for-room,
 resync-slots, clear-frames, and now tick — is completely named.
 
 Applied via `apply_renames_gatemain.py`'s sixty-sixth batch.
+
+### `Windows_setContentWindow` named
+
+Moved to `sub_28231` (4 callers). A trivial two-global setter,
+confirmed mechanically by direct read: sets the global `winNumber`
+(already named, but otherwise only ever written here) and
+`word_D2A96` (not renamed, but already known from the
+`Icon_drawButton`-adjacent code to be read as a `TextWindow_addDirect`
+target window number) from its two arguments. Called from the
+already-named `room_load` plus three other room/UI-adjacent functions
+— consistent with selecting which window receives a room's text
+output, but not confirmed beyond the mechanical read/write shape.
+
+Applied via `apply_renames_gatemain.py`'s sixty-seventh batch.
