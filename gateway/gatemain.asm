@@ -31793,7 +31793,7 @@ seg022          segment byte public 'CODE' use16
 
 
 Midi_sendCommand_raw proc far           ; CODE XREF: Midi_sendCommand+8\u2193P
-                                        ; sub_1D85B+2\u2193P ...
+                                        ; Midi_resetDevice+2\u2193P ...
                 pushf
 
 loc_1D809:
@@ -31873,7 +31873,7 @@ Midi_sendCommand endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1D85B       proc far                ; CODE XREF: Midi_initDevice+37\u2193P
+Midi_resetDevice proc far               ; CODE XREF: Midi_initDevice+37\u2193P
                                         ; sub_1F552:loc_1F574\u2193P ...
                 mov     ah, 0FFh
                 call    Midi_sendCommand_raw
@@ -31884,7 +31884,7 @@ loc_1D867:
                 in      al, dx
                 pop     ax
                 retf
-sub_1D85B       endp
+Midi_resetDevice endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -32133,7 +32133,7 @@ loc_1D98B:
                 mov     ax, 9D78h
                 mov     word_C83B0, ax
                 mov     word_C83B2, ax
-                call    sub_1D85B
+                call    Midi_resetDevice
                 mov     ah, 0FFh
                 push    es
                 mov     ah, 35h ; '5'
@@ -36069,7 +36069,7 @@ sub_1F552       proc far                ; CODE XREF: sub_1F63A+48\u2193p
                 align 2
 
 loc_1F574:                              ; CODE XREF: sub_1F552+1C\u2191j
-                call    sub_1D85B
+                call    Midi_resetDevice
                 mov     ax, 139h
                 mov     dx, seg seg022
                 push    dx
@@ -36573,13 +36573,13 @@ loc_1F98D:                              ; CODE XREF: sub_1F93E+41\u2191j
 loc_1F98E:                              ; CODE XREF: sub_1F93E+34\u2191j
                 cmp     word_D20F6, si
                 jg      short loc_1F974
-                call    sub_1D85B
+                call    Midi_resetDevice
                 jmp     loc_1FA50
 ; ---------------------------------------------------------------------------
 
 loc_1F99C:                              ; CODE XREF: sub_1F93E+1A\u2191j
                                         ; DATA XREF: sub_1F93E+EE\u2193o
-                call    sub_1D85B
+                call    Midi_resetDevice
                 mov     ax, 139h
                 mov     dx, seg seg022
                 push    dx
@@ -36747,7 +36747,7 @@ loc_1FAA0:
                 add     sp, 4
                 or      ax, ax
                 jz      short locret_1FAFD
-                call    sub_1D85B
+                call    Midi_resetDevice
 
 loc_1FAB1:                              ; CODE XREF: sub_1FA8E+31\u2193j
                 mov     ax, 3Fh ; '?'
@@ -383433,7 +383433,7 @@ unk_C8152       db    4                 ; DATA XREF: sub_907ED:loc_90824\u2191o
                 db    1
                 db    0
 _midiDataPort   dw 330h                 ; DATA XREF: Midi_sendCommand_raw+27\u2191r
-                                        ; sub_1D85B+8\u2191r ...
+                                        ; Midi_resetDevice+8\u2191r ...
 _midiStatusPort dw 331h                 ; DATA XREF: Midi_sendCommand_raw:loc_1D809\u2191r
                                         ; Midi_sendCommand_raw:loc_1D826\u2191r ...
 _midiCommandPort dw 331h                ; DATA XREF: Midi_sendCommand_raw+16\u2191r

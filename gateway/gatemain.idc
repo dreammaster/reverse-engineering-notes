@@ -17327,6 +17327,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1D84F);
 	op_stkvar	(x,	1);
 	create_insn	(0X1D85B);
+	set_name	(0X1D85B,	"Midi_resetDevice");
 	create_insn	(0X1D86A);
 	create_insn	(0X1D874);
 	create_byte	(0X1D876);
@@ -18389,10 +18390,6 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1F46E);
 	op_hex		(x,	1);
-	create_insn	(x=0X1F47A);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X1F481);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -18402,6 +18399,10 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X1F47A);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X1F481);
+	op_hex		(x,	1);
 	create_insn	(x=0X1F493);
 	op_hex		(x,	1);
 	create_insn	(0X1F4A0);
@@ -23492,8 +23493,6 @@ static Bytes_3(void) {
 	op_enum		(x,	1,	GetEnum("HFLAG"),0);
 	create_insn	(x=0X24631);
 	op_stroff	(x,	1,	GetStrucIdByName("HandleEntry"),	0);
-	create_insn	(x=0X24634);
-	op_stroff	(x,	1,	GetStrucIdByName("HandleEntry"),	0);
 }
 
 //------------------------------------------------------------------------
@@ -23503,6 +23502,8 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X24634);
+	op_stroff	(x,	1,	GetStrucIdByName("HandleEntry"),	0);
 	create_insn	(0X2463C);
 	create_insn	(0X24644);
 	create_insn	(x=0X24647);
@@ -29194,12 +29195,6 @@ static Bytes_4(void) {
 	op_hex		(x,	1);
 	create_insn	(0X28BB7);
 	set_name	(0X28BB7,	"Window_destroy");
-	create_insn	(x=0X28BBA);
-	op_hex		(x,	1);
-	create_insn	(x=0X28BBE);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X28BC4);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -29209,6 +29204,12 @@ static Bytes_5(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X28BBA);
+	op_hex		(x,	1);
+	create_insn	(x=0X28BBE);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X28BC4);
+	op_stkvar	(x,	0);
 	set_cmt	(0X28BCA,	"winNumber",	0);
 	create_insn	(x=0X28BCA);
 	op_stkvar	(x,	0);

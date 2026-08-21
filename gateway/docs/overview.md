@@ -2620,3 +2620,14 @@ rhythm-mode channels, instead clears the corresponding bit in
 `_opl2RhythmInstruments` via `Opl2_writeRhythmRegister`.
 
 Applied via `apply_renames_gatemain.py`'s fifty-ninth batch.
+
+### `Midi_resetDevice` named
+
+Moved to `sub_1D85B` (4 callers). Confirmed via the already-named
+`Midi_sendCommand_raw`/`_midiDataPort`: sends MPU-401's standard reset
+command (`0xFF`), then reads and discards one byte directly from the
+data port — flushing any stray leftover byte right after a reset.
+Called from the already-named `Midi_initDevice` during setup, plus
+three other MIDI-adjacent call sites not renamed.
+
+Applied via `apply_renames_gatemain.py`'s sixtieth batch.

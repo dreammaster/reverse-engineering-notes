@@ -1685,6 +1685,20 @@ RENAMES = [
      "_opl2RhythmInstruments and calls the already-named "
      "Opl2_writeRhythmRegister. The 'stop playing a note' counterpart "
      "to Opl2_noteOn."),
+
+    # -- sixtieth pass: sub_1D85B, confirmed via the already-named
+    # Midi_sendCommand_raw/_midiDataPort as an MPU-401 reset-and-flush
+    # helper, called from the already-named Midi_initDevice. See
+    # docs/overview.md#midi_resetdevice-named. --
+
+    (0x1D85B, "Midi_resetDevice",
+     "sub_1D85B(): sends MPU-401's standard reset command (0xFF) via "
+     "the already-named Midi_sendCommand_raw, then reads and discards "
+     "one byte directly from _midiDataPort -- flushing any stray "
+     "leftover byte from the data buffer right after a reset. Called "
+     "from the already-named Midi_initDevice during setup, plus three "
+     "other MIDI-adjacent call sites (sub_1F552/sub_1F93E/sub_1FA8E, "
+     "not renamed)."),
 ]
 
 
