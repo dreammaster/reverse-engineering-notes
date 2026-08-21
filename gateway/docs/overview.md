@@ -2093,3 +2093,27 @@ rather than a coincidental register number. Named
 **`Opl2_writeRhythmRegister`**.
 
 Applied via `apply_renames_gatemain.py`'s thirty-fifth batch.
+
+### `Vocab_matchesAbbreviation` named — a parser abbreviation matcher
+
+Skipped `sub_1E2E3` (a single `nop` byte — a tail-merge artifact, not
+a real function) and `sub_1E315` (another `sp-analysis failed`
+chunked fragment in the same `seg098` neighborhood). Moved to
+`sub_255A8` (7 callers), which resolved cleanly.
+
+`Vocab_matchesAbbreviation(word, abbrev)`: walks `abbrev` while it's
+non-null, comparing each character (case-normalized) against the
+corresponding character of `word`, advancing both pointers on a match
+and stopping on a mismatch or once `abbrev` is exhausted. Returns 1
+only if every character of `abbrev` matched — i.e. `word` starts with
+`abbrev` — 0 otherwise. This is the classic parser "does the player's
+typed abbreviation match this longer vocabulary word" check (e.g.
+`n` matching `north`).
+
+This also confirms its character-normalization helper, **`sub_1AECE`**
+→ **`Char_toLower`**: looks up a per-character-code `ctype`-style flag
+table checking the "is uppercase" bit, adding `0x20` to fold it to
+lowercase (standard ASCII case-fold) if set. A generic utility, also
+used directly by `sub_204CE` (not renamed).
+
+Applied via `apply_renames_gatemain.py`'s thirty-sixth batch.

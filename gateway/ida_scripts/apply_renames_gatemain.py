@@ -1063,6 +1063,33 @@ RENAMES = [
      "Was byte_D1C59: bitmask contributing OPL2 register 0xBD's low 5 "
      "bits directly (individual rhythm-instrument enables: bass drum/"
      "snare/tom-tom/cymbal/hi-hat) via Opl2_writeRhythmRegister."),
+
+    # -- thirty-sixth pass: skipped sub_1E2E3 (single NOP byte, a
+    # tail-merge artifact, not a real function) and sub_1E315 (another
+    # "sp-analysis failed" chunked fragment in the same seg098
+    # neighborhood). Moved to sub_255A8, confirmed as a case-
+    # insensitive prefix-match string comparison -- the classic parser
+    # "does this abbreviation match this vocabulary word" check. This
+    # also confirms its character-normalization helper sub_1AECE. See
+    # docs/overview.md#vocab_matchesabbreviation-named--a-parser-abbreviation-matcher. --
+
+    (0x255A8, "Vocab_matchesAbbreviation",
+     "sub_255A8(word, abbrev): walks `abbrev` while it's non-null, "
+     "comparing each character (case-normalized via the new "
+     "Char_toLower) against the corresponding character of `word`; "
+     "advances both pointers on a match, stops on a mismatch or when "
+     "`abbrev` is exhausted. Returns 1 only if every character of "
+     "`abbrev` matched -- i.e. `word` starts with `abbrev` -- 0 "
+     "otherwise. The classic parser 'does the player's typed "
+     "abbreviation match this longer vocabulary word' check (e.g. "
+     "'n' matching 'north')."),
+    (0x1AECE, "Char_toLower",
+     "sub_1AECE(char): looks up a per-character-code table (a "
+     "ctype-style flag table at char+0x3707) checking bit 0x1 ('is "
+     "uppercase'); if set, adds 0x20 to lowercase it (standard ASCII "
+     "case-fold). Returns the character unchanged otherwise. A "
+     "generic character-normalization utility, also used directly by "
+     "sub_204CE (not renamed)."),
 ]
 
 

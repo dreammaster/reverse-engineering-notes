@@ -25073,7 +25073,7 @@ _ultoa          endp ; sp-analysis failed
 
 ; Attributes: bp-based frame
 
-sub_1AECE       proc far                ; CODE XREF: sub_204CE+F\u2193P
+Char_toLower    proc far                ; CODE XREF: sub_204CE+F\u2193P
                                         ; sub_204CE+22\u2193P ...
 
 arg_0           = word ptr  6
@@ -25088,13 +25088,13 @@ arg_0           = word ptr  6
                 jmp     short loc_1AEE4
 ; ---------------------------------------------------------------------------
 
-loc_1AEE2:                              ; CODE XREF: sub_1AECE+B\u2191j
+loc_1AEE2:                              ; CODE XREF: Char_toLower+B\u2191j
                 mov     ax, bx
 
-loc_1AEE4:                              ; CODE XREF: sub_1AECE+12\u2191j
+loc_1AEE4:                              ; CODE XREF: Char_toLower+12\u2191j
                 pop     bp
                 retf
-sub_1AECE       endp
+Char_toLower    endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -38178,14 +38178,14 @@ loc_204D4:                              ; CODE XREF: sub_204CE+3B\u2193j
                 mov     al, es:[bx]
                 sub     ah, ah
                 push    ax
-                call    sub_1AECE
+                call    Char_toLower
                 add     sp, 2
                 les     bx, [bp+arg_0]
                 mov     cl, es:[bx]
                 sub     ch, ch
                 push    cx
                 mov     si, ax
-                call    sub_1AECE
+                call    Char_toLower
                 add     sp, 2
                 cmp     ax, si
                 jnz     short loc_2050B
@@ -49846,7 +49846,7 @@ sg1692          segment byte public 'CODE' use16
 
 ; Attributes: bp-based frame
 
-sub_255A8       proc far                ; CODE XREF: sg1692:00AF\u2193p
+Vocab_matchesAbbreviation proc far      ; CODE XREF: sg1692:00AF\u2193p
                                         ; sg1692:00D4\u2193p ...
 
 arg_0           = dword ptr  6
@@ -49862,12 +49862,12 @@ loc_255AB:
                 jmp     short loc_255DC
 ; ---------------------------------------------------------------------------
 
-loc_255AE:                              ; CODE XREF: sub_255A8+3B\u2193j
+loc_255AE:                              ; CODE XREF: Vocab_matchesAbbreviation+3B\u2193j
                 les     bx, [bp+arg_4]
                 mov     al, es:[bx]
                 cbw
                 push    ax
-                call    sub_1AECE
+                call    Char_toLower
                 add     sp, 2
                 les     bx, [bp+arg_0]
 
@@ -49877,19 +49877,19 @@ loc_255C1:
                 cbw
                 push    ax
                 mov     si, cx
-                call    sub_1AECE
+                call    Char_toLower
                 add     sp, 2
                 cmp     ax, si
                 jnz     short loc_255E5
                 inc     word ptr [bp+arg_0]
                 inc     word ptr [bp+arg_4]
 
-loc_255DC:                              ; CODE XREF: sub_255A8+4\u2191j
+loc_255DC:                              ; CODE XREF: Vocab_matchesAbbreviation+4\u2191j
                 les     bx, [bp+arg_4]
                 cmp     byte ptr es:[bx], 0
                 jnz     short loc_255AE
 
-loc_255E5:                              ; CODE XREF: sub_255A8+2C\u2191j
+loc_255E5:                              ; CODE XREF: Vocab_matchesAbbreviation+2C\u2191j
                 les     bx, [bp+arg_4]
                 cmp     byte ptr es:[bx], 1
                 sbb     ax, ax
@@ -49897,7 +49897,7 @@ loc_255E5:                              ; CODE XREF: sub_255A8+2C\u2191j
                 pop     si
                 pop     bp
                 retf
-sub_255A8       endp
+Vocab_matchesAbbreviation endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -49945,7 +49945,7 @@ loc_25635:                              ; CODE XREF: sg1692:01A3\u2193j
                 push    dx
                 push    word ptr [bp-4]
                 push    cs
-                call    near ptr sub_255A8
+                call    near ptr Vocab_matchesAbbreviation
                 add     sp, 8
                 or      ax, ax
                 jz      short loc_25668
@@ -49965,7 +49965,7 @@ loc_25668:                              ; CODE XREF: sg1692:00B7\u2191j
                 push    word ptr [bp-2]
                 push    word ptr [bp-4]
                 push    cs
-                call    near ptr sub_255A8
+                call    near ptr Vocab_matchesAbbreviation
                 add     sp, 8
                 or      ax, ax
                 jz      short loc_2568C
@@ -49982,7 +49982,7 @@ loc_2568C:                              ; CODE XREF: sg1692:00DC\u2191j
                 push    word ptr [bp-2]
                 push    word ptr [bp-4]
                 push    cs
-                call    near ptr sub_255A8
+                call    near ptr Vocab_matchesAbbreviation
                 add     sp, 8
                 or      ax, ax
                 jz      short loc_256B0
@@ -49998,7 +49998,7 @@ loc_256B0:                              ; CODE XREF: sg1692:0100\u2191j
                 push    word ptr [bp-2]
                 push    word ptr [bp-4]
                 push    cs
-                call    near ptr sub_255A8
+                call    near ptr Vocab_matchesAbbreviation
                 add     sp, 8
                 or      ax, ax
                 jz      short loc_256D4
@@ -50015,7 +50015,7 @@ loc_256D4:                              ; CODE XREF: sg1692:0124\u2191j
                 push    word ptr [bp-2]
                 push    word ptr [bp-4]
                 push    cs
-                call    near ptr sub_255A8
+                call    near ptr Vocab_matchesAbbreviation
                 add     sp, 8
                 or      ax, ax
                 jz      short loc_256F8
@@ -50032,7 +50032,7 @@ loc_256F8:                              ; CODE XREF: sg1692:0148\u2191j
                 push    word ptr [bp-2]
                 push    word ptr [bp-4]
                 push    cs
-                call    near ptr sub_255A8
+                call    near ptr Vocab_matchesAbbreviation
                 add     sp, 8
                 or      ax, ax
                 jz      short loc_2571C
@@ -50051,7 +50051,7 @@ loc_2571C:                              ; CODE XREF: sg1692:016C\u2191j
                 push    word ptr [bp-2]
                 push    word ptr [bp-4]
                 push    cs
-                call    near ptr sub_255A8
+                call    near ptr Vocab_matchesAbbreviation
                 add     sp, 8
                 or      ax, ax
                 jz      short loc_2573C
@@ -157511,14 +157511,14 @@ loc_63230:                              ; CODE XREF: sub_63210+56\u2193j
                 mov     al, es:[bx]
                 cbw
                 push    ax
-                call    sub_1AECE
+                call    Char_toLower
                 add     sp, 2
                 mov     cx, ax
                 mov     al, [bp+var_E]
                 cbw
                 push    ax
                 mov     si, cx
-                call    sub_1AECE
+                call    Char_toLower
                 add     sp, 2
                 cmp     ax, si
                 jnz     short loc_63268

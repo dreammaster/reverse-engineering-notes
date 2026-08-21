@@ -603,6 +603,11 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       semantics) and `sub_1A0FC` (another corrupted-looking fragment).
       Full writeup in
       [overview.md](overview.md#opl2_writerhythmregister-named--the-opl2-subsystem-grows).
+- [x] Named `sub_255A8` (7 callers) → `Vocab_matchesAbbreviation`, plus
+      its helper `sub_1AECE` → `Char_toLower` — the classic parser
+      abbreviation-matching check (e.g. `n` matching `north`). Full
+      writeup in
+      [overview.md](overview.md#vocab_matchesabbreviation-named--a-parser-abbreviation-matcher).
 - [ ] Unify the whole music/sound-hardware picture: `Speaker_playTone`/
       `Speaker_playErrorBeep` (PC-speaker tones), `Midi_sendByte` +
       `sub_1D966`/`sub_1EE70`/`sub_1ECB6` (MPU-401/MIDI), and
