@@ -8072,6 +8072,7 @@ static Bytes_1(void) {
 	create_insn	(0X15359);
 	set_cmt	(0X1535E,	"char",	0);
 	create_insn	(0X1535E);
+	set_name	(0X1535E,	"Score_add");
 	create_insn	(x=0X15361);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X15367);
@@ -12583,8 +12584,6 @@ static Bytes_1(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X1907C);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X1907F);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -12594,6 +12593,8 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X1907F);
+	op_hex		(x,	1);
 	create_insn	(x=0X1908D);
 	op_hex		(x,	1);
 	create_insn	(x=0X19094);
@@ -47649,7 +47650,7 @@ static Bytes_8(void) {
 	create_word	(0X5668A);
 	set_name	(0X5668A,	"Persisted_val225");
 	create_word	(0X5668C);
-	set_name	(0X5668C,	"Persisted_val175");
+	set_name	(0X5668C,	"_gameTicks");
 	create_word	(0X5668E);
 	set_name	(0X5668E,	"Persisted_val20");
 	create_byte	(0X56690);
@@ -47827,6 +47828,8 @@ static Bytes_8(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X5C16F);
 	op_hex		(x,	1);
+	create_insn	(x=0X5C172);
+	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -47836,8 +47839,6 @@ static Bytes_9(void) {
         auto x;
 #define id x
 
-	create_insn	(x=0X5C172);
-	op_stkvar	(x,	0);
 	create_insn	(0X5C17C);
 	create_insn	(x=0X5C180);
 	op_stkvar	(x,	0);
@@ -53747,6 +53748,8 @@ static Bytes_9(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X62478);
 	op_stkvar	(x,	0);
+	create_insn	(x=0X6247D);
+	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -53756,8 +53759,6 @@ static Bytes_10(void) {
         auto x;
 #define id x
 
-	create_insn	(x=0X6247D);
-	op_stkvar	(x,	0);
 	create_insn	(x=0X62482);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X6248C);
@@ -59706,6 +59707,7 @@ static Bytes_10(void) {
 	op_stroff	(x,	0,	GetStrucIdByName("VocabSet"),	0);
 	create_insn	(x=0X672DD);
 	op_hex		(x,	1);
+	create_insn	(0X672E5);
 }
 
 //------------------------------------------------------------------------
@@ -59715,7 +59717,6 @@ static Bytes_11(void) {
         auto x;
 #define id x
 
-	create_insn	(0X672E5);
 	create_insn	(x=0X672E8);
 	op_hex		(x,	1);
 	create_insn	(x=0X672EC);
@@ -128551,7 +128552,7 @@ static Bytes_23(void) {
 	create_byte	(0XCB7FC);
 	set_name	(0XCB7FC,	"Persisted_val2");
 	create_word	(0XCB7FE);
-	set_name	(0XCB7FE,	"Persisted_val3");
+	set_name	(0XCB7FE,	"_turnCount");
 	create_word	(0XCB800);
 	set_name	(0XCB800,	"Persisted_val4");
 	create_word	(0XCB802);
@@ -128881,9 +128882,9 @@ static Bytes_23(void) {
 	create_byte	(0XCBB75);
 	create_byte	(0XCBB76);
 	create_word	(0XCBB78);
-	set_name	(0XCBB78,	"Persisted_val128");
+	set_name	(0XCBB78,	"_score");
 	create_byte	(0XCBB7A);
-	set_name	(0XCBB7A,	"Persisted_val12");
+	set_name	(0XCBB7A,	"_scoreNotifyTipShown");
 	create_strlit	(0XCBB7C,	0X9);
 	set_name	(0XCBB7C,	"aMore_1");
 	create_strlit	(0XCBB85,	0X9);
@@ -129636,7 +129637,7 @@ static Bytes_23(void) {
 	create_strlit	(0XCC6A3,	0X8);
 	set_name	(0XCC6A3,	"aLonger");
 	create_byte	(0XCC6AB);
-	set_name	(0XCC6AB,	"Persisted_val11");
+	set_name	(0XCC6AB,	"_scoreNotifyEnabled");
 	create_strlit	(0XCC6AC,	0X4);
 	set_name	(0XCC6AC,	"aAre_52");
 	create_strlit	(0XCC6B0,	0X5);

@@ -857,3 +857,49 @@ its callees (`sub_28E2C`/`sub_1DDF6`/`sub_1E052`/`sub_1E0E8`) are all
 themselves unnamed, so a confident name wasn't reachable without a
 deeper multi-function trace — left for a future pass rather than
 guessed from a generic-looking `filename`-typed parameter alone.
+
+### The scoring subsystem, confirmed by actually decoding real game text
+
+Same session, continuing down the ranked list. `sub_1535E` (92 callers)
+turned out to hinge on the exact wording of two `GATESTR.DAT` messages
+it prints (IDs `0x803`/`0x804`) — rather than guess from the message-id
+numbers alone, wrote `ida_scripts/dump_gatestr_messages.py`: a
+**standalone Python reimplementation of `huffman_decompress`** (not an
+IDA script — no `.idb` needed, just the file-formats.md write-up's
+confirmed algorithm applied directly to the file bytes) and ran it
+against Paul's real `c:\games\gw\GATESTR.DAT`. This is the same
+technique that unlocked `MONDAIN.EXE`'s naming in the sibling `ultima1`
+project (`dump_msg_strings.py` there) — decoding the actual text turns
+guesswork into certainty. Kept in the repo as a reusable tool, same as
+that precedent, for any future message-id ambiguity:
+`python dump_gatestr_messages.py <path-to-GATESTR.DAT> <msgId> [...]`.
+
+The decoded strings settled everything definitively:
+- `0x803` → `"[Your score has just gone up by %d."`
+- `0x804` → `" NOTE: You can activate and deactivate score-change
+  notification using the NOTIFY command."`
+- `0x2A` → `"You have achieved a score of %d out of 1600, in %d
+  turns."` (the two `%d` args at that call site are `_turnCount` then
+  `_score`, matching the message's order exactly)
+- `0x29` → `"It is Dorman day %d."` (computed as `_gameTicks/480 + 1`
+  right before printing — a real-time game clock, 480 ticks per
+  in-universe "Dorman day")
+
+Renamed 7 symbols via `apply_renames_gatemain.py`'s second batch:
+`sub_1535E` → **`Score_add`** (adds its argument to `_score`, prints the
+`0x803` notification if `_scoreNotifyEnabled`, with the `0x804`
+explanatory note shown only once via `_scoreNotifyTipShown`), plus the
+five underlying globals (`Persisted_val128`/`_3`/`_11`/`_12`/`_175` →
+`_score`/`_turnCount`/`_scoreNotifyEnabled`/`_scoreNotifyTipShown`/
+`_gameTicks`) — all of which came from an earlier session's
+`SaveField`-table enumeration and had never been given real names.
+`Score_add`'s naming follows this codebase's established subsystem-
+prefix convention (`Font_`, `Screen_`, `Windows_`, `Regions_`) rather
+than the `Logics_` prefix reserved for the core interpreter/dispatch
+layer, since this is genuinely a self-contained scoring subsystem, not
+part of the method-dispatch mechanism itself.
+
+Worth reaching for `dump_gatestr_messages.py` again any time a
+message-id argument to `TextWindow_add`/`get_message`-family calls needs
+disambiguating — decoding the real string directly beats inferring
+intent from surrounding code shape alone.

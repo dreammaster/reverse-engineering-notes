@@ -2161,7 +2161,7 @@ loc_11261:                              ; CODE XREF: main+AF7\u2191j
                 mov     es, dseg_84
                 mov     es:word_CB808, 1
                 mov     es, dseg_85
-                inc     es:Persisted_val3
+                inc     es:_turnCount
 
 loc_112B3:                              ; CODE XREF: main+B0C\u2191j
                 mov     es, dseg_83
@@ -7429,7 +7429,7 @@ arg_0           = word ptr  6
                 mov     es, seg126_97
                 assume es:sg3EDC
                 mov     ax, [bp+arg_0]
-                add     es:Persisted_val175, ax
+                add     es:_gameTicks, ax
 
 loc_13607:                              ; CODE XREF: sub_135EC+D\u2191j
                 mov     ax, [bp+arg_0]
@@ -9470,7 +9470,7 @@ loc_14495:                              ; CODE XREF: sub_143F3+9D\u2191j
                 or      ax, ax
                 jz      short loc_14518
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 sub     ax, ax
                 push    ax
@@ -10760,7 +10760,7 @@ loc_14DE7:                              ; CODE XREF: seg104:00E7\u2193P
                 jz      short loc_14E34
                 push    ax
                 push    cs
-                call    near ptr sub_1535E
+                call    near ptr Score_add
                 add     sp, 2
                 sub     ax, ax
                 push    ax
@@ -11469,7 +11469,7 @@ sub_152BA       endp
 
 ; Attributes: bp-based frame
 
-sub_1535E       proc far                ; CODE XREF: sub_143F3+10F\u2191P
+Score_add       proc far                ; CODE XREF: sub_143F3+10F\u2191P
                                         ; sub_14B64+2B6\u2191p ...
 
 arg_0           = byte ptr  6
@@ -11479,10 +11479,10 @@ arg_0           = byte ptr  6
                 cmp     word ptr [bp+arg_0], 0
                 jz      short loc_153B4
                 mov     ax, word ptr [bp+arg_0]
-                add     Persisted_val128, ax
+                add     _score, ax
                 mov     es, dseg_110
                 assume es:sg4d43
-                cmp     es:Persisted_val11, 0
+                cmp     es:_scoreNotifyEnabled, 0
                 jz      short loc_153B4
                 push    ax              ; char
                 mov     ax, 803h
@@ -11491,7 +11491,7 @@ arg_0           = byte ptr  6
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 6
-                cmp     Persisted_val12, 0
+                cmp     _scoreNotifyTipShown, 0
                 jnz     short loc_153A7
                 mov     ax, 804h
                 mov     dx, 0F000h
@@ -11499,20 +11499,20 @@ arg_0           = byte ptr  6
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
-                mov     Persisted_val12, 1
+                mov     _scoreNotifyTipShown, 1
 
-loc_153A7:                              ; CODE XREF: sub_1535E+32\u2191j
+loc_153A7:                              ; CODE XREF: Score_add+32\u2191j
                 mov     ax, offset asc_CBBD1 ; "]\n"
                 push    ds
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
 
-loc_153B4:                              ; CODE XREF: sub_1535E+7\u2191j
-                                        ; sub_1535E+1A\u2191j
+loc_153B4:                              ; CODE XREF: Score_add+7\u2191j
+                                        ; Score_add+1A\u2191j
                 pop     bp
                 retf
-sub_1535E       endp
+Score_add       endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -11561,7 +11561,7 @@ loc_153DB:                              ; CODE XREF: sub_153B6+20\u2191j
                 jz      short loc_15429
                 push    ax
                 push    cs
-                call    near ptr sub_1535E
+                call    near ptr Score_add
                 add     sp, 2
                 sub     ax, ax
                 push    ax
@@ -86070,7 +86070,7 @@ SAVE_FIELDS     SaveField <_roomLogicNum, 2>
                                         ; synchronize_save+EA\u2193r ...
                 SaveField <Persisted_val1, 2>
                 SaveField <Persisted_val2, 1>
-                SaveField <Persisted_val3, 2>
+                SaveField <_turnCount, 2>
                 SaveField <Persisted_val4, 2>
                 SaveField <Persisted_val5, 2>
                 SaveField <Persisted_val6, 2>
@@ -86080,8 +86080,8 @@ SAVE_FIELDS     SaveField <_roomLogicNum, 2>
                 SaveField <Persisted_val10, 2>
                 SaveField <Persisted_struc24, 18h>
                 SaveField <Persisted_array1, 8>
-                SaveField <Persisted_val11, 1>
-                SaveField <Persisted_val12, 1>
+                SaveField <_scoreNotifyEnabled, 1>
+                SaveField <_scoreNotifyTipShown, 1>
                 SaveField <Persisted_val13, 2>
                 SaveField <Persisted_val14, 1>
                 SaveField <Persisted_val15, 1>
@@ -86197,7 +86197,7 @@ SAVE_FIELDS     SaveField <_roomLogicNum, 2>
                 SaveField <Persisted_val125, 2>
                 SaveField <Persisted_val126, 1>
                 SaveField <Persisted_val127, 2>
-                SaveField <Persisted_val128, 2>
+                SaveField <_score, 2>
                 SaveField <Persisted_val129, 10h>
                 SaveField <Persisted_val130, 1>
                 SaveField <Persisted_val131, 2>
@@ -86244,7 +86244,7 @@ SAVE_FIELDS     SaveField <_roomLogicNum, 2>
                 SaveField <Persisted_val172, 1>
                 SaveField <Persisted_val173, 1>
                 SaveField <Persisted_val174, 1>
-                SaveField <Persisted_val175, 2>
+                SaveField <_gameTicks, 2>
                 SaveField <Persisted_val176, 1>
                 SaveField <Persisted_val177, 1>
                 SaveField <Persisted_val178, 1>
@@ -129008,7 +129008,7 @@ loc_48616:                              ; CODE XREF: seg098:02E9\u2191j
                 mov     es, seg126_97
                 assume es:sg3EDC
                 mov     ax, [bp+6]
-                add     es:Persisted_val175, ax
+                add     es:_gameTicks, ax
 
 loc_48635:                              ; CODE XREF: seg098:0317\u2191j
                 mov     ax, [bp+6]
@@ -132372,10 +132372,10 @@ loc_4A50F:
                 cmp     word ptr [bp+6], 0
                 jz      short loc_4A565
                 mov     ax, [bp+6]
-                add     Persisted_val128, ax
+                add     _score, ax
                 mov     es, dseg_110
                 assume es:sg4d43
-                cmp     es:Persisted_val11, 0
+                cmp     es:_scoreNotifyEnabled, 0
                 jz      short loc_4A565
                 push    ax
                 mov     ax, 803h
@@ -132384,7 +132384,7 @@ loc_4A50F:
                 push    ax
                 call    loc_19A27+2
                 add     sp, 6
-                cmp     Persisted_val12, 0
+                cmp     _scoreNotifyTipShown, 0
                 jnz     short loc_4A558
                 mov     ax, 804h
                 mov     dx, 0F000h
@@ -132398,7 +132398,7 @@ loc_4A550:
                 add     sp, 4
 
 loc_4A553:
-                mov     Persisted_val12, 1
+                mov     _scoreNotifyTipShown, 1
 
 loc_4A558:                              ; CODE XREF: seg100:0431\u2191j
                 mov     ax, 3CB1h
@@ -139323,7 +139323,7 @@ Persisted_val1  dw 0                    ; DATA XREF: sub_14B64+199\u2191w
                                         ; seg068:SAVE_FIELDS\u2191o ...
 Persisted_val225 dw 0                   ; DATA XREF: Logics_getRoomPic+B2\u2191r
                                         ; seg068:SAVE_FIELDS\u2191o ...
-Persisted_val175 dw 0                   ; DATA XREF: sub_135EC+16\u2191w
+_gameTicks      dw 0                    ; DATA XREF: sub_135EC+16\u2191w
                                         ; seg068:SAVE_FIELDS\u2191o ...
 Persisted_val20 dw 0                    ; DATA XREF: sub_159D5+1B\u2191r
                                         ; sub_159D5+95\u2191w ...
@@ -170229,7 +170229,7 @@ loc_69F33:                              ; CODE XREF: thunk_loc_69F33+3\u2191J
                 jnz     short loc_69F66
                 mov     es, seg_D12F2
                 assume es:sg3EDC
-                mov     ax, es:Persisted_val175
+                mov     ax, es:_gameTicks
                 sub     dx, dx
                 mov     cx, 1E0h
                 div     cx
@@ -170245,9 +170245,9 @@ loc_69F33:                              ; CODE XREF: thunk_loc_69F33+3\u2191J
 loc_69F66:                              ; CODE XREF: seg151:23E3\u2191j
                 mov     es, seg_D12F4
                 assume es:sg4d43
-                push    es:Persisted_val3
+                push    es:_turnCount
                 mov     es, seg_D12F6
-                push    es:Persisted_val128
+                push    es:_score
                 mov     ax, 2Ah ; '*'
                 mov     dx, 0F000h
                 push    dx
@@ -171179,7 +171179,7 @@ loc_6A794:                              ; CODE XREF: seg151:2BDB\u2191j
                 call    sub_12109
                 add     sp, 2
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 sub     ax, ax
                 push    ax
@@ -174335,10 +174335,10 @@ loc_6C1E4:                              ; CODE XREF: sub_2EBB7+3\u2191J
 ; START OF FUNCTION CHUNK FOR sub_2EBA3
 
 loc_6C1F8:                              ; CODE XREF: sub_2EBA3+3\u2191J
-                cmp     Persisted_val11, 1
+                cmp     _scoreNotifyEnabled, 1
                 sbb     ax, ax
                 neg     ax
-                mov     Persisted_val11, al
+                mov     _scoreNotifyEnabled, al
                 or      al, al
                 jz      short loc_6C20D
                 mov     ax, 4781h
@@ -186918,7 +186918,7 @@ loc_7238E:                              ; CODE XREF: sub_72260+82\u2191j
 loc_723D3:
                 mov     ax, 19h
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
 
 loc_723DF:                              ; CODE XREF: sub_72260+14D\u2191j
@@ -187388,7 +187388,7 @@ loc_7282A:                              ; CODE XREF: sub_72260+5C1\u2191j
                 add     sp, 4
                 mov     ax, 14h
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 jmp     loc_7246D
 ; ---------------------------------------------------------------------------
@@ -187896,7 +187896,7 @@ loc_72CBA:                              ; CODE XREF: sub_72260+82\u2191j
                 add     sp, 6
                 mov     es, seg_D13DA
                 assume es:sg3EDC
-                mov     es:Persisted_val175, 26Bh
+                mov     es:_gameTicks, 26Bh
                 mov     es, seg_D13DC
                 assume es:sg4d43
                 mov     es:Persisted_val9, 26Bh
@@ -195788,7 +195788,7 @@ loc_76666:                              ; CODE XREF: sub_765BB+8D\u2191j
                 mov     byte ptr [bx-434Ah], 1
                 mov     ax, 19h
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 push    cs
                 call    near ptr sub_75AE0
@@ -195921,7 +195921,7 @@ loc_7675D:                              ; CODE XREF: sub_766F5+61\u2191j
                 add     sp, 4
                 mov     ax, 32h ; '2'
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 jmp     loc_7673D
 ; ---------------------------------------------------------------------------
@@ -196072,7 +196072,7 @@ loc_768AA:                              ; CODE XREF: seg163:0075\u2191j
                 mov     es:Persisted_val177, 1
                 mov     ax, 14h
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 retf
 ; ---------------------------------------------------------------------------
@@ -197139,7 +197139,7 @@ loc_76F00:                              ; CODE XREF: sub_76EB4+2B\u2191j
                 add     sp, 2
                 mov     es, seg_D1460
                 assume es:sg3EDC
-                mov     ax, es:Persisted_val175
+                mov     ax, es:_gameTicks
                 sub     ax, 26Ch
                 sub     dx, dx
                 mov     cx, 1E0h
@@ -197151,7 +197151,7 @@ loc_76F00:                              ; CODE XREF: sub_76EB4+2B\u2191j
                 mov     es:Persisted_val9, ax
                 mov     es, seg_D1460
                 assume es:sg3EDC
-                mov     es:Persisted_val175, ax
+                mov     es:_gameTicks, ax
                 cmp     Persisted_val181, 3
                 jl      short locret_76F50
                 mov     es, seg_D1464
@@ -198409,14 +198409,14 @@ var_2           = word ptr -2
                 sub     sp, 0Ch
                 mov     es, seg_D1470
                 assume es:sg3EDC
-                mov     ax, es:Persisted_val175
+                mov     ax, es:_gameTicks
                 sub     ax, 26Ch
                 sub     dx, dx
                 mov     cx, 1E0h
                 div     cx
                 mul     cx
                 mov     cx, ax
-                mov     ax, es:Persisted_val175
+                mov     ax, es:_gameTicks
                 sub     ax, cx
                 sub     ax, 26Ch
                 sub     dx, dx
@@ -198447,7 +198447,7 @@ loc_7763B:                              ; CODE XREF: sub_77605+32\u2191j
                 add     sp, 8
                 mov     es, seg_D1470
                 assume es:sg3EDC
-                mov     ax, es:Persisted_val175
+                mov     ax, es:_gameTicks
                 mov     es, seg_D1474
                 assume es:sg4d43
                 sub     ax, es:Persisted_val9
@@ -198531,14 +198531,14 @@ loc_77711:                              ; CODE XREF: sub_77605+CB\u2191j
                                         ; sub_77605+FE\u2191j
                 mov     es, seg_D1470
                 assume es:sg3EDC
-                mov     ax, es:Persisted_val175
+                mov     ax, es:_gameTicks
                 sub     ax, 26Ch
                 sub     dx, dx
                 mov     cx, 1E0h
                 div     cx
                 mul     cx
                 mov     cx, ax
-                mov     ax, es:Persisted_val175
+                mov     ax, es:_gameTicks
                 sub     ax, cx
                 sub     ax, 26Ch
                 sub     dx, dx
@@ -198919,7 +198919,7 @@ loc_77A6C:                              ; CODE XREF: sub_77773+2CF\u2191j
                 jnz     short loc_77ABE
                 mov     ax, 6
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 mov     es, seg_D148C
                 mov     es:Persisted_val134, 1
@@ -200826,7 +200826,7 @@ loc_7870B:                              ; CODE XREF: sub_78570+196\u2191j
                 add     sp, 6
                 mov     ax, 14h
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 mov     ax, 9
                 push    ax              ; c
@@ -204831,7 +204831,7 @@ loc_7A294:                              ; CODE XREF: sub_79F66+329\u2191j
                 add     sp, 4
                 mov     ax, 8
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 jmp     loc_7A072
 ; ---------------------------------------------------------------------------
@@ -206973,7 +206973,7 @@ loc_7B17C:                              ; CODE XREF: sub_7AE5A+317\u2191j
                 add     sp, 6
                 mov     ax, 0Fh
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 mov     ax, 1
                 push    ax
@@ -207521,7 +207521,7 @@ loc_7B6B1:                              ; CODE XREF: sub_7AE5A+852\u2191j
                 add     sp, 4
                 mov     ax, 0Ch
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 jmp     loc_7B03F
 ; ---------------------------------------------------------------------------
 
@@ -210451,7 +210451,7 @@ loc_7CEC4:                              ; CODE XREF: sub_7C946+579\u2191j
                 add     sp, 4
                 mov     ax, 11h
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 jmp     loc_7CE2F
 ; ---------------------------------------------------------------------------
 
@@ -211642,7 +211642,7 @@ loc_7D883:                              ; CODE XREF: sub_7D57B+303\u2191j
                 add     sp, 4
                 mov     ax, 10h
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 jmp     loc_7D647
 ; ---------------------------------------------------------------------------
 
@@ -214240,7 +214240,7 @@ loc_7EAAD:                              ; CODE XREF: sub_7E97C+12C\u2191j
                 add     sp, 4
                 mov     ax, 0Eh
                 push    ax
-                call    sub_1535E
+                call    Score_add
 
 loc_7EB2A:                              ; CODE XREF: sub_7E97C+6F6\u2193j
                 add     sp, 2
@@ -217029,7 +217029,7 @@ loc_801FA:                              ; CODE XREF: sub_8014E+A3\u2191j
                 jnz     short loc_80212
                 mov     es, seg_D14EC
                 assume es:sg3EDC
-                mov     ax, es:Persisted_val175
+                mov     ax, es:_gameTicks
                 dec     ax
                 mov     es, seg_D14EE
                 assume es:sg4d43
@@ -217432,7 +217432,7 @@ loc_80525:                              ; CODE XREF: sub_8014E+3CB\u2191j
 loc_80571:                              ; CODE XREF: sub_8014E+41E\u2191j
                 mov     es, seg_D14EC
                 assume es:sg3EDC
-                mov     si, es:Persisted_val175
+                mov     si, es:_gameTicks
                 mov     es, seg_D14EE
                 assume es:sg4d43
                 sub     si, es:Persisted_val187
@@ -217773,7 +217773,7 @@ sub_80857       proc far                ; CODE XREF: sub_7DC6F+295\u2191p
                 add     sp, 4
                 mov     ax, 4
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 mov     ax, 9
                 push    ax
@@ -220064,7 +220064,7 @@ loc_81713:                              ; CODE XREF: sub_81613+7D\u2191j
                 add     sp, 6
                 mov     ax, 0Ch
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 jmp     short loc_8178C
 ; ---------------------------------------------------------------------------
@@ -221395,7 +221395,7 @@ loc_8212C:                              ; CODE XREF: sub_81CCC+45B\u2191j
                 add     sp, 4
                 mov     ax, 1
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 jmp     loc_8202C
 ; ---------------------------------------------------------------------------
 
@@ -222125,7 +222125,7 @@ loc_826B7:                              ; CODE XREF: sub_82520+192\u2191j
                 add     sp, 4
                 mov     ax, 14h
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 jmp     loc_825E4
 ; ---------------------------------------------------------------------------
@@ -222341,7 +222341,7 @@ loc_827EA:                              ; CODE XREF: sub_82715+D0\u2191j
                 add     sp, 4
                 mov     ax, 14h
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 jmp     loc_827D4
 ; ---------------------------------------------------------------------------
@@ -222666,7 +222666,7 @@ loc_82AE6:                              ; CODE XREF: sub_82878+269\u2191j
                 add     sp, 4
                 mov     ax, 1
                 push    ax
-                call    sub_1535E
+                call    Score_add
 
 loc_82AFF:                              ; CODE XREF: sub_82878+338\u2193j
                 add     sp, 2
@@ -226790,7 +226790,7 @@ loc_845F6:                              ; CODE XREF: sub_843E1+210\u2191j
                 add     sp, 4
                 mov     ax, 0Ah
                 push    ax
-                call    sub_1535E
+                call    Score_add
 
 loc_8460F:                              ; CODE XREF: sub_843E1+3D2\u2193j
                 add     sp, 2
@@ -227345,7 +227345,7 @@ loc_84A00:                              ; CODE XREF: sub_84913+E8\u2191j
                 call    sub_12109
                 add     sp, 2
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 sub     ax, ax
                 push    ax
@@ -230877,7 +230877,7 @@ loc_8630A:                              ; CODE XREF: sub_85C7C+686\u2191j
                 mov     Persisted_val136, 2
                 mov     ax, 1
                 push    ax
-                call    sub_1535E
+                call    Score_add
 
 loc_86355:                              ; CODE XREF: sub_85C7C+A0D\u2193j
                                         ; sub_85C7C+B09\u2193j
@@ -232697,7 +232697,7 @@ loc_87107:                              ; CODE XREF: sub_86D91+2E7\u2191j
                 jnz     short loc_87158
                 mov     ax, 1
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
 
 loc_87158:                              ; CODE XREF: sub_86D91+3B9\u2191j
@@ -234802,7 +234802,7 @@ loc_87EA8:                              ; CODE XREF: sub_87E37+52\u2191j
                 add     sp, 0Ch
                 mov     ax, 1
                 push    ax
-                call    sub_1535E
+                call    Score_add
 
 loc_87F06:                              ; CODE XREF: sub_87E37+1B6\u2193j
                 add     sp, 2
@@ -235684,7 +235684,7 @@ loc_884E4:                              ; CODE XREF: sub_8840F+D0\u2191j
                 mov     es:Persisted_val153, 1
                 mov     ax, 14h
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 jmp     short loc_884CE
 ; ---------------------------------------------------------------------------
@@ -237088,7 +237088,7 @@ loc_88E0E:                              ; CODE XREF: sub_88D50+B9\u2191j
                 call    j_scene_update?
                 mov     ax, 0Ch
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 jmp     short loc_88EEC
 ; ---------------------------------------------------------------------------
@@ -241614,7 +241614,7 @@ loc_8AD4A:                              ; CODE XREF: sub_8A9E8+35D\u2191j
                 mov     es:Persisted_val156, 1
                 mov     ax, 1
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
 
 loc_8ADC5:                              ; CODE XREF: sub_8A9E8+3C9\u2191j
@@ -242153,7 +242153,7 @@ loc_8B1A1:                              ; CODE XREF: sub_8AED5+2C7\u2191j
                 call    sub_12109
                 add     sp, 2
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 sub     ax, ax
                 push    ax
@@ -246270,7 +246270,7 @@ loc_8CE42:                              ; CODE XREF: sub_8CB20+31D\u2191j
                 add     sp, 4
                 mov     ax, 7
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 jmp     loc_8CBE6
 ; ---------------------------------------------------------------------------
@@ -247328,7 +247328,7 @@ loc_8D5DD:                              ; CODE XREF: sub_30D81+5C857\u2191j
                 add     sp, 4
                 mov     ax, 1
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 sub     ax, ax
                 push    ax              ; newId
@@ -251125,7 +251125,7 @@ loc_8F2DC:                              ; CODE XREF: sub_8F164+173\u2191j
                 mov     es:Persisted_val153, 1
                 mov     ax, 14h
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 jmp     loc_8F23C
 ; ---------------------------------------------------------------------------
@@ -254215,7 +254215,7 @@ loc_908E0:                              ; CODE XREF: sub_907ED+BD\u2191j
                 call    sub_12109
                 add     sp, 2
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 sub     ax, ax
                 push    ax
@@ -255915,7 +255915,7 @@ loc_915FA:                              ; CODE XREF: sub_91398+1F8\u2191j
                 add     sp, 4
                 mov     ax, 7
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
 
 loc_9163D:                              ; CODE XREF: sub_91398+273\u2191j
@@ -255946,7 +255946,7 @@ loc_9165D:                              ; CODE XREF: sub_91398+2C0\u2191j
                 add     sp, 4
                 mov     ax, 7
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 jmp     loc_91485
 ; ---------------------------------------------------------------------------
@@ -256742,7 +256742,7 @@ loc_91CC1:                              ; CODE XREF: sub_91A6F+1E8\u2191j
                 add     sp, 4
                 mov     ax, 7
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
 
 loc_91D04:                              ; CODE XREF: sub_91A6F+263\u2191j
@@ -256773,7 +256773,7 @@ loc_91D24:                              ; CODE XREF: sub_91A6F+2B0\u2191j
                 add     sp, 4
                 mov     ax, 7
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 jmp     loc_91B61
 ; ---------------------------------------------------------------------------
@@ -258501,7 +258501,7 @@ loc_928F4:                              ; CODE XREF: sub_9259E+320\u2191j
                 add     sp, 4
                 mov     ax, 0Eh
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
 
 loc_92937:                              ; CODE XREF: sub_9259E+367\u2191j
@@ -259034,7 +259034,7 @@ loc_92D77:                              ; CODE XREF: sub_92967+40B\u2191j
                 add     sp, 4
                 mov     ax, 13h
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 jmp     loc_92A2A
 ; ---------------------------------------------------------------------------
 
@@ -260046,7 +260046,7 @@ loc_93413:                              ; CODE XREF: sub_932CD+141\u2191j
                 call    sub_12109
                 add     sp, 2
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 sub     ax, ax
                 push    ax
@@ -260460,7 +260460,7 @@ loc_93722:                              ; CODE XREF: sub_934D9+244\u2191j
                 add     sp, 4
                 mov     ax, 7
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 jmp     loc_9358B
 ; ---------------------------------------------------------------------------
 
@@ -269590,7 +269590,7 @@ loc_9735C:                              ; CODE XREF: sub_9733B+A\u2191j
                 add     sp, 4
                 mov     ax, 19h
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 mov     ax, 449Fh
                 mov     dx, seg sg1e2c
@@ -278914,7 +278914,7 @@ loc_9B575:                              ; CODE XREF: sub_9AE9C+416\u2191j
                 add     sp, 4
                 mov     ax, 19h
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 push    cs
                 call    near ptr sub_9B5F9
@@ -285433,7 +285433,7 @@ loc_9E370:                              ; CODE XREF: sub_9E079+69\u2191j
                 add     sp, 4
                 mov     ax, 0Fh
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
 
 loc_9E3D6:                              ; CODE XREF: sub_9E079+33F\u2191j
@@ -289056,7 +289056,7 @@ loc_9FE88:                              ; CODE XREF: sub_9FCEC+197\u2191j
                 add     sp, 4
                 mov     ax, 0Ah
                 push    ax
-                call    sub_1535E
+                call    Score_add
 
 loc_9FEA1:                              ; CODE XREF: sub_9FCEC+320\u2193j
                 add     sp, 2
@@ -289146,7 +289146,7 @@ loc_9FF49:                              ; CODE XREF: sub_9FCEC+258\u2191j
                                         ; sub_9FCEC:loc_9FF94\u2193j
                 mov     ax, 5
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 mov     es, seg_D172A
                 inc     es:Persisted_val125
@@ -289445,7 +289445,7 @@ loc_A0166:                              ; CODE XREF: sub_A0045+11C\u2191j
                 add     sp, 4
                 mov     ax, 0Fh
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
 
 loc_A01A6:                              ; CODE XREF: sub_A0045+143\u2191j
@@ -289560,7 +289560,7 @@ loc_A027D:                              ; CODE XREF: sub_A0045+22B\u2191j
                 add     sp, 4
                 mov     ax, 5
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
 
 loc_A02BF:                              ; CODE XREF: sub_A0045+25C\u2191j
@@ -290187,7 +290187,7 @@ loc_A0781:                              ; CODE XREF: sub_A059C+1DD\u2191j
                 add     sp, 4
                 mov     ax, 32h ; '2'
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 mov     es, seg_D172E
                 cmp     es:word_CBCFC, 2
@@ -291161,7 +291161,7 @@ loc_A0EAC:                              ; CODE XREF: sub_A0C24+283\u2191j
                 mov     es:Persisted_val126, 1
                 mov     ax, 0Ah
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
 
 loc_A0EDC:                              ; CODE XREF: sub_A0C24+2A4\u2191j
@@ -291641,7 +291641,7 @@ loc_A11FB:                              ; CODE XREF: sub_A102A+1C9\u2191j
                 add     sp, 4
                 mov     ax, 5
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
 
 loc_A1268:                              ; CODE XREF: sub_A102A+220\u2191j
@@ -295047,7 +295047,7 @@ loc_A2B92:                              ; CODE XREF: sub_A292A+263\u2191j
                 add     sp, 4
                 mov     ax, 5
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 jmp     loc_A2A1F
 ; ---------------------------------------------------------------------------
@@ -295492,7 +295492,7 @@ loc_A2E7C:                              ; CODE XREF: sub_A2D8D+EA\u2191j
                 add     sp, 4
                 mov     ax, 0Fh
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
 
 loc_A2ECE:                              ; CODE XREF: sub_A2D8D+123\u2191j
@@ -295524,7 +295524,7 @@ loc_A2EE8:                              ; CODE XREF: sub_A2D8D+8A\u2191j
 loc_A2EF7:                              ; CODE XREF: sub_A2D8D+165\u2191j
                 mov     ax, 0Fh
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 mov     es, seg_D177E
                 assume es:sg3EDC
@@ -297697,7 +297697,7 @@ loc_A3D50:                              ; CODE XREF: seg211:0361\u2191j
                 jz      short loc_A3D94
                 mov     ax, 5
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 mov     ax, 9
                 push    ax
@@ -299174,7 +299174,7 @@ loc_A46D5:                              ; CODE XREF: sub_A465A+73\u2191j
                 mov     es:Persisted_val46, 1
                 mov     ax, 14h
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
 
 loc_A4781:                              ; CODE XREF: sub_A465A+BF\u2191j
@@ -300553,7 +300553,7 @@ loc_A5068:                              ; CODE XREF: sub_A4F49+10D\u2191j
                 add     sp, 4
                 mov     ax, 5
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
 
 loc_A50A8:                              ; CODE XREF: sub_A4F49+141\u2191j
@@ -300594,7 +300594,7 @@ loc_A50DF:                              ; CODE XREF: sub_A4F49+191\u2191j
 loc_A50F6:                              ; CODE XREF: sub_A4F49+1A8\u2191j
                 mov     ax, 5
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 mov     ax, 9
                 push    ax
@@ -301925,7 +301925,7 @@ loc_A58EC:                              ; CODE XREF: sub_A576B+17C\u2191j
                 add     sp, 4
                 mov     ax, 5
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 jmp     short loc_A5910
 ; ---------------------------------------------------------------------------
 
@@ -304049,7 +304049,7 @@ loc_A683D:
                 add     sp, 4
                 mov     ax, 0Ah
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
 
 locret_A686D:                           ; CODE XREF: sub_A6780+41\u2191j
@@ -304103,7 +304103,7 @@ sub_A686E       proc far                ; CODE XREF: sub_A6BD4+283\u2193p
                 add     sp, 4
                 mov     ax, 0Fh
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
 
 locret_A68D7:                           ; CODE XREF: sub_A686E+4B\u2191j
@@ -310309,7 +310309,7 @@ loc_A908E:                              ; CODE XREF: sub_A8EC2+19B\u2191j
                 mov     Persisted_val236, 1
                 mov     ax, 0Ah
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 mov     ax, 2
                 push    ax
@@ -310461,7 +310461,7 @@ loc_A91A1:
                 add     sp, 2
                 mov     ax, 0Ah
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 jmp     loc_A90A8
 ; ---------------------------------------------------------------------------
 
@@ -310759,7 +310759,7 @@ loc_A93E9:                              ; CODE XREF: sub_A92BF+115\u2191j
                 add     sp, 6
                 mov     ax, 5
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 sub     ax, ax
                 push    ax              ; newId
@@ -310820,7 +310820,7 @@ loc_A943D:                              ; CODE XREF: sub_A92BF+1F7\u2193j
                 add     sp, 4
                 mov     ax, 5
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 mov     ax, 13Ah
                 jmp     short loc_A942B
@@ -316166,7 +316166,7 @@ loc_AB6AF:                              ; CODE XREF: sub_AB5A8+14\u2191j
 loc_AB6D3:
                 mov     ax, 5
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 jmp     short loc_AB712
 ; ---------------------------------------------------------------------------
@@ -317326,7 +317326,7 @@ loc_ABEF0:                              ; CODE XREF: sub_ABDEF+14\u2191j
                 add     sp, 4
                 mov     ax, 0Ah
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 jmp     loc_ABEA1
 ; ---------------------------------------------------------------------------
@@ -318478,7 +318478,7 @@ loc_AC745:                              ; CODE XREF: sub_AC5B9+187\u2191j
                 add     sp, 4
                 mov     ax, 5
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 jmp     loc_AC5EE
 ; ---------------------------------------------------------------------------
@@ -318688,7 +318688,7 @@ loc_AC8CA:                              ; CODE XREF: sub_AC7D1+F4\u2191j
                 add     sp, 4
                 mov     ax, 5
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 jmp     loc_AC834
 ; ---------------------------------------------------------------------------
@@ -318905,7 +318905,7 @@ loc_ACA2C:                              ; CODE XREF: sub_AC95E+A1\u2191j
                 add     sp, 4
                 mov     ax, 3
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
 
 loc_ACA6C:                              ; CODE XREF: sub_AC95E+F0\u2191j
@@ -318956,7 +318956,7 @@ loc_ACA6C:                              ; CODE XREF: sub_AC95E+F0\u2191j
                 add     sp, 4
                 mov     ax, 0Ah
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
 
 loc_ACAF2:                              ; CODE XREF: sub_AC95E+12F\u2191j
@@ -320113,7 +320113,7 @@ loc_AD301:                              ; CODE XREF: sub_AD063+299\u2191j
                 add     sp, 4
                 mov     ax, 5
                 push    ax
-                call    sub_1535E
+                call    Score_add
 
 loc_AD31A:                              ; CODE XREF: sub_AD063+18C\u2191j
                 add     sp, 2
@@ -321597,7 +321597,7 @@ loc_ADCF1:                              ; CODE XREF: sub_ADB2A+1C2\u2191j
                 add     sp, 4
                 mov     ax, 0Fh
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 sub     ax, ax
                 push    ax
@@ -322034,7 +322034,7 @@ loc_ADFD1:
                 add     sp, 4
                 mov     ax, 5
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
 
 loc_AE060:                              ; CODE XREF: sub_ADF9F+67\u2191j
@@ -322788,7 +322788,7 @@ loc_AE589:                              ; CODE XREF: sub_AE317+26D\u2191j
                 add     sp, 4
                 mov     ax, 0Ah
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 jmp     loc_AE453
 ; ---------------------------------------------------------------------------
 
@@ -323011,7 +323011,7 @@ loc_AE6EE:                              ; CODE XREF: sub_AE5B2+137\u2191j
                 add     sp, 4
                 mov     ax, 5
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
 
 loc_AE770:                              ; CODE XREF: sub_AE5B2+1A0\u2191j
@@ -323077,7 +323077,7 @@ loc_AE7E5:                              ; CODE XREF: sub_AE5B2+22E\u2191j
                 add     sp, 4
                 mov     ax, 0Ah
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 jmp     loc_AE6A6
 ; ---------------------------------------------------------------------------
 
@@ -325073,7 +325073,7 @@ loc_AF5A3:                              ; CODE XREF: sub_AF467+127\u2191j
                 add     sp, 4
                 mov     ax, 5
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
 
 loc_AF5F0:                              ; CODE XREF: sub_AF467+16B\u2191j
@@ -325518,7 +325518,7 @@ loc_AF85F:                              ; CODE XREF: sub_AF81D+25\u2191j
                 add     sp, 4
                 mov     ax, 0Ah
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 jmp     loc_AF859
 ; ---------------------------------------------------------------------------
@@ -327089,7 +327089,7 @@ loc_B02F0:                              ; CODE XREF: sub_B00A6+244\u2191j
                 add     sp, 4
                 mov     ax, 0Ah
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
 
 loc_B033D:                              ; CODE XREF: sub_B00A6+265\u2191j
@@ -335245,7 +335245,7 @@ loc_B3E39:                              ; CODE XREF: sub_B3BF0+20C\u2191j
                 add     sp, 4
                 mov     ax, 5
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
 
 loc_B3E90:                              ; CODE XREF: sub_B3BF0+282\u2191j
@@ -337414,7 +337414,7 @@ loc_B4ED3:                              ; CODE XREF: sub_B4DF8+B8\u2191j
                 add     sp, 2
                 mov     ax, 0Ah
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 jmp     loc_B4FA3
 ; ---------------------------------------------------------------------------
@@ -337460,7 +337460,7 @@ loc_B4F2A:                              ; CODE XREF: sub_B4DF8+8B\u2191j
                 add     sp, 2
                 mov     ax, 1Eh
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 mov     es, seg_D18F4
                 mov     ax, es:Persisted_val5
@@ -339881,7 +339881,7 @@ loc_B5FB1:                              ; CODE XREF: sub_B5EF9+B3\u2191j
                 add     sp, 4
                 mov     ax, 5
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 jmp     loc_B6060
 ; ---------------------------------------------------------------------------
@@ -342265,7 +342265,7 @@ loc_B6E76:                              ; CODE XREF: sub_3114B+85D26\u2191j
                 add     sp, 4
                 mov     ax, 19h
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
 
 loc_B6F00:                              ; CODE XREF: sub_3114B+85D53\u2191j
@@ -345091,7 +345091,7 @@ loc_B817E:                              ; CODE XREF: sub_B8106+61\u2191j
                 jnz     short loc_B81B5
                 mov     ax, 0Ah
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 mov     ax, 9
                 push    ax
@@ -345519,7 +345519,7 @@ loc_B8461:                              ; CODE XREF: sub_B82EF+16D\u2191j
                 add     sp, 4
                 mov     ax, 0Fh
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 jmp     loc_B8393
 ; ---------------------------------------------------------------------------
@@ -345930,7 +345930,7 @@ loc_B874B:                              ; CODE XREF: sub_B8541+205\u2191j
                 add     sp, 4
                 mov     ax, 14h
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 jmp     loc_B85AF
 ; ---------------------------------------------------------------------------
@@ -346154,7 +346154,7 @@ loc_B88B8:                              ; CODE XREF: sub_B87AD+4D\u2191j
                 jnz     short loc_B890B
                 mov     ax, 64h ; 'd'
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
 
 loc_B890B:                              ; CODE XREF: sub_B87AD+149\u2191j
@@ -349677,7 +349677,7 @@ loc_BA0AB:                              ; CODE XREF: sub_B9F03+196\u2191j
                 jnz     short loc_BA114
                 mov     ax, 5
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 mov     ax, 9
                 push    ax
@@ -349899,7 +349899,7 @@ loc_BA28F:                              ; CODE XREF: sub_B9F03+377\u2191j
                 jnz     short loc_BA2CC
                 mov     ax, 0Ah
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
 
 loc_BA2CC:                              ; CODE XREF: sub_B9F03+3BB\u2191j
@@ -352817,7 +352817,7 @@ loc_BB6ED:                              ; CODE XREF: sub_BB498+24D\u2191j
                 jnz     short loc_BB734
                 mov     ax, 0Fh
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
 
 loc_BB734:                              ; CODE XREF: sub_BB498+28E\u2191j
@@ -354120,7 +354120,7 @@ loc_BC017:                              ; CODE XREF: sub_BBEC0+152\u2191j
                 add     sp, 4
                 mov     ax, 0Ah
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
 
 loc_BC06B:                              ; CODE XREF: sub_BBEC0+18D\u2191j
@@ -358550,7 +358550,7 @@ loc_BDE43:                              ; CODE XREF: sub_BDDBC+69\u2191j
                 mov     es:CommsetContent_arr1Ptr, 4
                 mov     es, seg_D19EE
                 assume es:sg4d43
-                push    es:Persisted_val128
+                push    es:_score
                 push    word ptr str+2
                 push    word ptr str    ; str
                 call    get_message
@@ -361990,7 +361990,7 @@ loc_BF773:                              ; CODE XREF: sub_BF410+327\u2191j
                 add     sp, 4
                 mov     ax, 5
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 mov     ax, 289h
                 push    ax
@@ -362050,7 +362050,7 @@ loc_BF850:                              ; CODE XREF: sub_BF410+43B\u2191j
                 add     sp, 4
                 mov     ax, 19h
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 sub     ax, ax
                 push    ax
@@ -364491,7 +364491,7 @@ loc_C0990:                              ; CODE XREF: sub_C08B1+B2\u2191j
                 add     sp, 4
                 mov     ax, 2
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 jmp     loc_C093B
 ; ---------------------------------------------------------------------------
@@ -364846,7 +364846,7 @@ loc_C0C1B:                              ; CODE XREF: sub_C0C05+11\u2191j
                 jnz     short loc_C0C4B
                 mov     ax, 2
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 mov     ax, 9
                 push    ax
@@ -366596,7 +366596,7 @@ loc_C17F6:                              ; CODE XREF: sub_C1484+2D6\u2191j
                 jnz     short loc_C186B
                 mov     ax, 0Ah
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 mov     ax, 9
                 push    ax
@@ -369730,7 +369730,7 @@ loc_C2D44:                              ; CODE XREF: sub_C2BEE+10A\u2191j
                 call    sub_12109
                 add     sp, 2
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 sub     ax, ax
                 push    ax
@@ -370419,7 +370419,7 @@ loc_C31DE:                              ; CODE XREF: sub_C3150+1B7\u2193j
                 call    sub_12109
                 add     sp, 2
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 sub     ax, ax
                 push    ax
@@ -370631,7 +370631,7 @@ loc_C336A:                              ; CODE XREF: sub_C3150+208\u2191j
                 call    sub_12109
                 add     sp, 2
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 sub     ax, ax
                 push    ax
@@ -371051,7 +371051,7 @@ loc_C368A:                              ; CODE XREF: sub_C360C+79\u2191j
                 call    sub_12109
                 add     sp, 2
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 sub     ax, ax
                 push    ax
@@ -371342,7 +371342,7 @@ loc_C3880:                              ; CODE XREF: sub_C37B5+AA\u2191j
                 call    sub_12109
                 add     sp, 2
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 sub     ax, ax
                 push    ax
@@ -371726,7 +371726,7 @@ loc_C3B2B:                              ; CODE XREF: sub_C3A79+A1\u2191j
                 call    sub_12109
                 add     sp, 2
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 sub     ax, ax
                 push    ax
@@ -374225,7 +374225,7 @@ loc_C4B23:                              ; CODE XREF: sub_312D1+3\u2191J
 
 loc_C4B41:                              ; CODE XREF: sub_312D1+9385C\u2191j
                 mov     es, seg_D1A7A
-                push    es:Persisted_val128 ; char
+                push    es:_score       ; char
                 mov     ax, 7817h
                 mov     dx, 0F000h
                 push    dx
@@ -381471,7 +381471,7 @@ loc_C78BD:                              ; CODE XREF: sub_C7842+2F\u2191j
                 mov     Persisted_val249, 1
                 mov     ax, 5
                 push    ax
-                call    sub_1535E
+                call    Score_add
                 add     sp, 2
                 sub     ax, ax
                 push    ax              ; newId
@@ -386894,7 +386894,7 @@ Logics_logicNum211 dw 211               ; DATA XREF: Logics_savedLogicHandler+B7
 Persisted_val2  db 1                    ; DATA XREF: sub_14B64+1E8\u2191r
                                         ; sub_14B64:loc_14D5B\u2191r ...
                 align 2
-Persisted_val3  dw 0                    ; DATA XREF: main+B5B\u2191w
+_turnCount      dw 0                    ; DATA XREF: main+B5B\u2191w
                                         ; seg068:SAVE_FIELDS\u2191o ...
 Persisted_val4  dw 0                    ; DATA XREF: sub_135EC+1E\u2191w
                                         ; sub_135EC+22\u2191r ...
@@ -387298,11 +387298,11 @@ byte_CBB75      db 0                    ; DATA XREF: sub_14B64:loc_14DB7\u2191r
 byte_CBB76      db 1                    ; DATA XREF: sub_14A5F+78\u2191r
                                         ; sub_14B64:loc_14DAB\u2191r ...
                 align 2
-; char Persisted_val128[]
-Persisted_val128 dw 0                   ; DATA XREF: sub_1535E+C\u2191w
+; char score[]
+_score          dw 0                    ; DATA XREF: Score_add+C\u2191w
                                         ; seg068:SAVE_FIELDS\u2191o ...
-Persisted_val12 db 0                    ; DATA XREF: sub_1535E+2D\u2191r
-                                        ; sub_1535E+44\u2191w ...
+_scoreNotifyTipShown db 0               ; DATA XREF: Score_add+2D\u2191r
+                                        ; Score_add+44\u2191w ...
 unk_CBB7B       db    0                 ; DATA XREF: sub_1496B+6\u2191o
 aMore_1         db '- MORE -',0
                 db '        ',0
@@ -387322,7 +387322,7 @@ aAre_0          db 'are',0              ; DATA XREF: sub_14ED6+10F\u2191o
 aSnTOpen_       db '%sn',27h,'t open.',0Ah,0
                                         ; DATA XREF: sub_14ED6+125\u2191o
 ; char asc_CBBD1[]
-asc_CBBD1       db ']',0Ah,0            ; DATA XREF: sub_1535E:loc_153A7\u2191o
+asc_CBBD1       db ']',0Ah,0            ; DATA XREF: Score_add:loc_153A7\u2191o
                 db    1
                 db    1
                 db  38h ; 8
@@ -388245,7 +388245,7 @@ aRemain         db 'remain',0           ; DATA XREF: sub_2EBC1+3D5F6\u2191o
 aSWhereS_       db '%s where%s.',0Ah,0  ; DATA XREF: sub_2EBC1+3D612\u2191o
 aW              db 'w',0
 aLonger         db ' longer',0
-Persisted_val11 db 1                    ; DATA XREF: sub_1535E+14\u2191r
+_scoreNotifyEnabled db 1                ; DATA XREF: Score_add+14\u2191r
                                         ; seg068:SAVE_FIELDS\u2191o ...
 aAre_52         db 'are',0
 aSeem_0         db 'seem',0
@@ -393834,7 +393834,7 @@ seg_D10FE       dw seg seg082           ; DATA XREF: sub_14ED6+8E\u2191r
                                         ; sub_14ED6+B4\u2191r ...
 dseg_109        dw seg sg4d43           ; DATA XREF: sub_14ED6+13F\u2191r
                                         ; sub_151A9+6A\u2191r ...
-dseg_110        dw seg sg4d43           ; DATA XREF: sub_1535E+10\u2191r
+dseg_110        dw seg sg4d43           ; DATA XREF: Score_add+10\u2191r
                                         ; seg100:040F\u2191r
 dseg_111        dw seg sg4d43           ; DATA XREF: seg009:loc_15488\u2191r
 seg_D1106       dw seg sg3EDC           ; DATA XREF: seg009:0BD2\u2191r

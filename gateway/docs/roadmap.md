@@ -288,9 +288,23 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       [overview.md](overview.md#prehandler-chain-primitives-named).
       Checked but didn't confidently name `sub_14A37` (80 callers) — its
       callees are all themselves unnamed.
-- [ ] Continue working down the re-ranked list — `sub_1535E` (92
-      callers), `sub_14A37` and its unnamed callees, and the rest of the
-      1767 still-unnamed functions.
+- [x] Named `sub_1535E` (92 callers) → `Score_add`, the scoring
+      subsystem's accumulator/notification function, plus 5 underlying
+      globals (`_score`, `_turnCount`, `_scoreNotifyEnabled`,
+      `_scoreNotifyTipShown`, `_gameTicks` — previously `Persisted_val*`
+      placeholder names left over from an earlier session's
+      `SaveField`-table enumeration). Confirmed definitively by writing
+      `ida_scripts/dump_gatestr_messages.py` — a standalone Python
+      `huffman_decompress` reimplementation — and decoding the actual
+      `GATESTR.DAT` message text those functions print, rather than
+      guessing from message-id numbers alone. Kept the script in the
+      repo as a reusable tool (same precedent as `ultima1`'s
+      `dump_msg_strings.py`) for future message-id ambiguity. Full
+      writeup in
+      [overview.md](overview.md#the-scoring-subsystem-confirmed-by-actually-decoding-real-game-text).
+- [ ] Continue working down the re-ranked list — `sub_14A37` (80
+      callers) and its unnamed callees, and the rest of the ~1760
+      still-unnamed functions.
 - [ ] Cross-check the structs shared by name/concept with `gate.idb`
       (`VocabEntry`/`VOCAB_ENTRY`, `Str16`/`STR16`, `Point`/`POINT`,
       `Screen`/`SCREEN`, `Font`/`FONT`, `REGS`, `HandleEntry`/`HANDLE`)
