@@ -211,3 +211,24 @@ with `VOCAB.DAT` above, since both use the same `huffman_decompress`
 mechanics even though each file's actual Huffman tree is independent —
 `VOCAB.DAT`'s is file-local, `GATESTR.DAT`'s is the global
 `huffmanTable`).
+
+## Room/logic "format" — there isn't one; it's compiled code
+
+Expected to find a third external resource format here, analogous to
+`VOCAB.DAT`/`GATESTR.DAT`, given the AGI/SCI-style struct names
+(`Room`, `LogicSection2`-`8`, `LogicIndexEntry`) — **that expectation was
+wrong**. Traced `Logic_call`/`Logic_getMethodIndex` (the dispatch
+mechanism the parser calls into) and confirmed `proc_table` — the
+`LogicIndexEntry` array these structs describe — is **static data linked
+directly into `gatemain.exe`/`gatemain.ovl`**, not read from any file at
+runtime. Every room/object/handler's actual behavior is compiled 8086
+machine code, reached via a `type`-tagged (1-8) metadata record whose
+shape varies per type (`Room` is type 1, not a separate concept from the
+`LogicSectionN` structs). Full writeup, since this is really an
+engine-architecture finding rather than a file format, is in
+[overview.md](overview.md#the-roomlogic-format--and-why-there-isnt-one-its-compiled-native-code-not-data).
+
+Recorded here mainly so a future session doesn't waste time looking for
+a `ROOM.DAT`/`LOGIC.DAT`-style file that doesn't exist — none of the
+files at `c:\games\gw` match that shape either (only per-room-number
+`.PIC`/`.RGN`/`.FNT`/`.MUS`, no generic logic/script resource).

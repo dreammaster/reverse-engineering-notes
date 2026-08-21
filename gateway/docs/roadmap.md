@@ -182,16 +182,33 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       and [file-formats.md](file-formats.md#gatestrdat--compressed-messagestring-resource-file).
       `makeRoomInTextCache`'s eviction policy and the shared base
       128-symbol alphabet are the two loose ends left from this pass.
-- [ ] Given the struct list, prioritize understanding the **room/logic
-      section format** next — likely the single highest-value target
-      for both the ScummVM engine and documenting the shared engine for
-      other Early-engine Legend titles (see the engine-lineage note in
-      overview.md). Not started; `logic238`-style already-named
-      functions seen throughout the codebase are a likely entry point
-      (probably one compiled logic script per room/number, echoing
-      AGI's `LOGIC.n` convention, not confirmed by reading one directly
-      yet). `OBJECT.DAT` (8,031 bytes, real file at `c:\games\gw`) is
-      also untraced — likely the `Thing` struct's on-disk form.
+- [x] Traced the room/logic dispatch mechanism (`Logic_call`/
+      `Logic_getMethodIndex`) expecting to find a `LOGIC.n`-style
+      bytecode resource file — **found there isn't one**. `proc_table`
+      (the `LogicIndexEntry` array) is static data linked directly into
+      `gatemain.exe`/`gatemain.ovl`; every room/object/handler's actual
+      logic is compiled 8086 machine code, not interpretable bytecode.
+      Confirmed `Room` is literally variant `type == 1` of the same
+      8-way tagged-union table the `LogicSection2`-`8` structs describe
+      (each type places its `_methodIndex` field at a different offset,
+      selected via a jump table). **Major scoping implication for the
+      eventual ScummVM reimplementation** — see the writeup in
+      [overview.md](overview.md#the-roomlogic-format--and-why-there-isnt-one-its-compiled-native-code-not-data)
+      and the closing note in
+      [file-formats.md](file-formats.md#roomlogic-format--there-isnt-one-its-compiled-code).
+- [ ] Follow-up from that pass: connect `MethodSectionMap` (data
+      immediately preceding `proc_table`, pairs like `<34, 2>`) to the
+      `METHOD_SECTION_INFO`/`sub_11635`/`Logics_getPrehandlerMode`
+      "prehandler chain" layer flagged two sessions ago — plausibly
+      related, not confirmed. Also: what the 8 types actually represent
+      semantically (only `Room` = type 1 is known), and the remaining
+      unnamed shared fields (`_val1`-`_val4`, `_unkHandlerId`,
+      `_prehandlerId`) across the 8 variant structs.
+- [ ] `OBJECT.DAT` (8,031 bytes, real file at `c:\games\gw`) is still
+      untraced — likely the `Thing` struct's on-disk form, and (unlike
+      the room/logic table) plausibly a real external format the way
+      `VOCAB.DAT`/`GATESTR.DAT` are, since `Thing` wasn't part of the
+      compiled-code table above.
 - [ ] Re-run `rank_unnamed_functions.py` now that the thunk noise is
       filtered out, to pick the next real targets from the 1769
       remaining unnamed functions.

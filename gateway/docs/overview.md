@@ -559,3 +559,86 @@ very DOS-memory-constrained-era design choice.
 when the cache or its buffer is full), and the base 128-symbol alphabet
 shared with `VOCAB.DAT`'s decoder (same mechanics, independent trees per
 file).
+
+### The room/logic "format" — and why there isn't one: it's compiled native code, not data
+
+Per Paul's direction, next target after `GATESTR.DAT`. Traced
+`Logic_call` (`gatemain.asm:9995`) and `Logic_getMethodIndex`
+(`gatemain.asm:4938`) — the core verb/method dispatch mechanism the
+parser's `Parser_perform` calls into — expecting to find an external
+resource file (a `LOGIC.n`-style bytecode file, per the AGI-inspired
+hypothesis in earlier sessions). **That hypothesis was wrong**: there is
+no such file. This is the single most important architectural finding
+for scoping the eventual ScummVM reimplementation.
+
+**`proc_table`** (`gatemain.asm:95668`) is the table `LogicIndexEntry`
+was defined for: a flat array of 6-byte `{u8 type, u8 pad, far ptr
+tableP}` records, one per "logic-bearing entity" (rooms, NPCs, items,
+global handlers — `METHODS_COUNT` of them, `734` in the real build),
+indexed 1-based (index 0 is a reserved/invalid sentinel — `type=0x40`,
+`tableP` a non-pointer garbage value that's never actually
+dereferenced, since both `Logic_call` and `Logic_getMethodIndex` reject
+`index == 0` before ever reading `proc_table[0]`). **Confirmed via
+direct read of the data segment**: `proc_table` is `db`/`dd`
+**static initialized data linked directly into `gatemain.exe`/
+`gatemain.ovl`**, not read from any file at runtime — e.g.
+`proc_table_001` (the first real entity, `_methodIndex = 1`) sits right
+there in the `.asm` as literal byte/word values, not populated by a
+loader function.
+
+**`type` (1-8) is a tag selecting which of 8 differently-shaped
+metadata records `tableP` points to** — confirmed by
+`Logic_getMethodIndex`'s `type-1`-indexed jump table
+(`off_12529`), one case per type, each reading a `_methodIndex` field
+from a *different* offset appropriate to that type's own struct:
+`Room` (type 1, `_methodIndex` at `+0x10`), `LogicSection2` (type 2,
+`+0x22`), `LogicSection3` (type 3, `+0xA`), `LogicSection4` (type 4,
+`+0x12`), `LogicSection5` (type 5, `+0x14`), `LogicSection6`/
+`LogicSection8` (types 6 and 8 — sharing one code path, `section68`,
+because both structs happen to place `_methodIndex` at the identical
+offset `+0x16`; a compiler/layout coincidence, not a semantic merging
+of the two types), `LogicSection7` (type 7, `+0x1E`). **`Room` is not a
+separate concept from the `LogicSectionN` structs — it's literally
+variant type 1 of the same tagged-union table.** Spot-checked
+`proc_table_001`/`002` against the `Room` struct's field layout
+byte-for-byte (26 bytes, matches exactly including the `_vocabArrIndex`/
+`_val4`/`_val3`/`_methodIndex`/etc. field positions already in the
+struct definition).
+
+**`Logic_call(index, param)`** resolves `index` through this table to a
+final `methodIndex` (0-695, i.e. 0-based and capped, confirmed via the
+`> 696` bounds check), splits it into `section = methodIndex >> 9`
+(0 or 1, given the range) and a 9-bit offset within that section, and
+calls one of two flat far-pointer arrays — `METHODS0`/`METHODS1`, 512
+slots each — passing `param` and returning whatever that function
+returns. **These 1024 far pointers are the actual compiled x86 code for
+every room/object/handler's logic** — real native functions, linked in
+via the RTLink mechanism already documented above, not bytecode for a
+VM to interpret.
+
+**Why this matters for the ScummVM reimplementation — significantly
+more than any other finding so far**: Sierra AGI-style engines store
+room/object logic as data (bytecode `LOGIC.n` files) precisely so a
+reimplementation can just write a new interpreter for that bytecode and
+immediately support all the original content. **Gateway cannot work that
+way.** Every room and object's actual behavior is compiled 8086 machine
+code baked into `gatemain.exe`/`gatemain.ovl` at Legend's own build time
+— there is no separate data format to parse and reinterpret. A faithful
+reimplementation has no shortcut around reading each of these ~734
+entities' compiled logic (via `tableP`, dispatched into `METHODS0`/
+`METHODS1`) and manually reimplementing its behavior in C++, entity by
+entity — closer in scope to `ultima1`'s per-command tracing work than to
+writing a generic bytecode VM. Worth flagging prominently in any future
+scoping discussion of this project's remaining size.
+
+**Not yet traced**: the `MethodSectionMap` array sitting immediately
+before `proc_table` in the same data segment (pairs like `<34, 2>`,
+`<7, 1>`, `<11, 64>`) — plausibly related to, but not confirmed to be,
+the `METHOD_SECTION_INFO` table `sub_11635`/`Logics_getPrehandlerMode`
+walk through (from the earlier `gatemain.idb` session) — that whole
+"prehandler chain" layer sits on top of this core dispatch mechanism and
+still isn't fully connected to it. Also not traced: what the 8 types
+actually represent semantically (room vs. NPC vs. item vs. global
+handler, etc. — inferred only from `Room` being type 1 so far) and the
+still-unnamed fields (`_val1`-`_val4`, `_unkHandlerId`, `_prehandlerId`)
+shared across the 8 variant structs.
