@@ -160,16 +160,28 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       traced mechanically (recursive prehandler-stage walk via
       `Logics_getPrehandlerMode`/`METHOD_SECTION_INFO`) but not
       confidently named yet.
+- [x] Paul pointed at his installed copies of Gateway (`c:\games\gw`)
+      and Gateway II (`c:\games\gw2`) for cross-checking real on-disk
+      data. First use of this: traced `vocab_load` (once readable —
+      needed the collapsed-function fix above) against the real
+      `VOCAB.DAT` (22,081 bytes) and fully decoded its format — a small
+      Huffman tree header, compressed text pool, word table, and
+      synonym/link table. **First real entry in the new
+      [file-formats.md](file-formats.md)**. Full writeup in
+      [overview.md](overview.md#vocabdat-decoded--the-first-real-on-disk-format-and-its-huffman-compressed).
+      The shared `huffman_decompress` primitive is also used by
+      `get_message` (presumably `GATESTR.DAT`'s loader) — worth tracing
+      that next given the primitive itself is already understood.
 - [ ] Given the struct list, prioritize understanding the **room/logic
       section format** next — likely the single highest-value target
       for both the ScummVM engine and documenting the shared engine for
       other Early-engine Legend titles (see the engine-lineage note in
-      overview.md) — analogous to how `ultima1`'s savegame/map formats
-      were flagged as the top `file-formats.md` candidates. Not started;
-      `logic238`-style already-named functions seen throughout the
-      codebase are a likely entry point (probably one compiled logic
-      script per room/number, echoing AGI's `LOGIC.n` convention, not
-      confirmed by reading one directly yet).
+      overview.md). Not started; `logic238`-style already-named
+      functions seen throughout the codebase are a likely entry point
+      (probably one compiled logic script per room/number, echoing
+      AGI's `LOGIC.n` convention, not confirmed by reading one directly
+      yet). `OBJECT.DAT` (8,031 bytes, real file at `c:\games\gw`) is
+      also untraced — likely the `Thing` struct's on-disk form.
 - [ ] Re-run `rank_unnamed_functions.py` now that the thunk noise is
       filtered out, to pick the next real targets from the 1769
       remaining unnamed functions.
@@ -203,13 +215,16 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       than any single `ultima1` executable had).
 - [ ] Reconcile the two IDBs' differently-cased same-concept structs
       (see above).
-- [ ] Create `docs/file-formats.md` once the first on-disk resource
-      format (room, logic section, picture, or vocab file) is actually
-      traced — don't stub it empty, same rule `ultima1` followed.
-- [ ] Confirm what produced the `_decoded` executables and whether the
-      original packed distribution `.exe`s are available/worth having
-      as a reference (may carry overlay/segment metadata the decoded
-      form doesn't).
+- [x] `docs/file-formats.md` created 2026-08-21 with the Huffman
+      compression primitive and `VOCAB.DAT`'s full format — room, logic
+      section, and picture formats still to come.
+- [x] Confirmed what produced the `_decoded` executables — see the
+      RTLink-flattening-tool section in overview.md (Paul's own custom
+      tool, not IDA-native). Whether the original packed distribution
+      files are worth having as a separate reference wasn't specifically
+      settled, but Paul's installed game copies at
+      `c:\games\gw`/`c:\games\gw2` now serve the same cross-referencing
+      purpose for on-disk resource data.
 - [ ] Eventually: start the actual C++/ScummVM reimplementation, and
       begin generalizing findings toward documenting the shared engine
       for Legend's other titles — both explicitly deferred until real

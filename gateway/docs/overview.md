@@ -141,11 +141,12 @@ a smoke-test export+save before the first real rename pass, same as
   given executable's pass is stable enough to flip it off.
 - **One-off structural scripts** (splitting an array, building a jump
   table, decoding a resource format) get their own dedicated script.
-- Findings get written up here (or in a future `file-formats.md` for
-  on-disk resource formats — rooms/logic/pictures/vocab, given the
-  AGI/SCI-like structure hypothesized above) with enough detail that the
-  `note` field in a rename entry can stay short and just point back to
-  the section.
+- Findings get written up here (or in
+  [file-formats.md](file-formats.md) for on-disk resource formats —
+  rooms/logic/pictures/vocab, given the AGI/SCI-like structure
+  hypothesized above; started 2026-08-21 with the Huffman compression
+  primitive and `VOCAB.DAT`) with enough detail that the `note` field in
+  a rename entry can stay short and just point back to the section.
 
 ## Open questions before the first real analysis pass
 
@@ -162,9 +163,9 @@ a smoke-test export+save before the first real rename pass, same as
   manual sessions before renaming over them — `ultima1`'s `SPACE.EXE`
   pass found several unpromoted-but-correct comments worth promoting to
   real names rather than re-deriving from scratch.
-- No `docs/file-formats.md` yet — worth starting once the room/logic/
-  picture/vocab resource formats implied by `gatemain.idb`'s struct list
-  are actually traced.
+- `docs/file-formats.md` started 2026-08-21 (Huffman compression +
+  `VOCAB.DAT`, see that file) — room/logic/picture formats implied by
+  `gatemain.idb`'s struct list still not traced.
 
 ## `gate.idb` — findings log
 
@@ -499,3 +500,33 @@ files**: anything that came back empty or was skipped as "not defined
 as a normal proc" earlier in this project might just have been
 collapsed, not actually absent — worth a second look with the current
 export before concluding something isn't there.
+
+### `VOCAB.DAT` decoded — the first real on-disk format, and it's Huffman-compressed
+
+With `vocab_load` finally readable, traced it directly against Paul's
+real installed copy of the game (`c:\games\gw\VOCAB.DAT`, 22,081 bytes).
+Full record-level format now in [file-formats.md](file-formats.md) — the
+short version: a small Huffman tree header, a compressed bitstream that
+decodes into a flat text pool, then a word table (text offset + flags)
+and a synonym/link table (surface-word → canonical vocab id, plus an
+optional per-vocab-id `_logicNum` hook) built from the same 4-byte
+`VocabFileRec` shape reused for two different meanings depending on
+which table it appears in.
+
+**Worth flagging as a methodology note**: an initial raw hex dump of
+`VOCAB.DAT`'s first 0x140 bytes (before `vocab_load` was readable) looked
+like it might be a plain offset/index table — small 16-bit values,
+several suspiciously negative-looking. That would have been the wrong
+conclusion entirely: those bytes are the Huffman node table followed
+immediately by compressed bitstream data, which just happens to look
+like plausible-but-meaningless small integers at a glance. Tracing the
+actual loader code first (once the collapsed-function blindspot above
+was fixed) avoided sinking time into reverse-engineering compressed
+bytes as if they were a literal structure.
+
+`huffman_decompress` itself (`gatemain.asm:5690`) is shared with
+`get_message` (presumably `GATESTR.DAT`'s loader — not traced yet), so
+this is a general engine-level compression primitive, not something
+`VOCAB.DAT`-specific — relevant if this project ever extends to another
+Early-engine Legend title (see the engine-lineage note at the top of
+this file).
