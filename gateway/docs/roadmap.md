@@ -28,6 +28,18 @@ the per-executable breakdown this is tracking against.
       and `gatemain` — already present and pattern-based (not filename-
       specific), so should just work, but not independently re-verified
       for this project.
+- [x] Fixed a real blind spot: some functions in both IDBs were left
+      GUI-"collapsed" (`FUNC_HIDDEN`) by earlier manual sessions, which
+      made `gen_file(OFILE_ASM)` print a one-line placeholder instead of
+      real instructions for them — invisible to every grep/Read of the
+      `.asm`. Wrote `ida_scripts/unfold_functions.py` and ran it against
+      both IDBs: 171 collapsed functions found in `gatemain.idb`
+      (including `vocab_load`, `objects_load`,
+      `Logics_getPrehandlerMode`), 108 in `gate.idb` (mostly CRT
+      internals). Both re-exported. Full writeup in
+      [overview.md](overview.md#fixed-a-pipeline-blind-spot-collapsed-functions-were-invisible-in-every-asm-export).
+      Worth re-running this any time a function search comes back
+      suspiciously empty.
 
 ## Executable order
 

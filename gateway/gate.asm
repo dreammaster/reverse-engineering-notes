@@ -4149,24 +4149,660 @@ locret_11CFF:                           ; CODE XREF: sub_11CED+2\u2191j
                 retn
 sub_11CED       endp
 
-; [00000024 BYTES: COLLAPSED FUNCTION __FF_MSGBANNER. PRESS NUMPAD+ TO EXPAND]
-; [00000006 BYTES: COLLAPSED FUNCTION __fptrap. PRESS NUMPAD+ TO EXPAND]
-; [00000024 BYTES: COLLAPSED FUNCTION __chkstk. PRESS NUMPAD+ TO EXPAND]
-; [00000026 BYTES: COLLAPSED FUNCTION __nullcheck. PRESS NUMPAD+ TO EXPAND]
-; [000001A7 BYTES: COLLAPSED FUNCTION __setargv. PRESS NUMPAD+ TO EXPAND]
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+__FF_MSGBANNER  proc far                ; CODE XREF: start+28\u2191P
+                                        ; start+BA\u2191P ...
+                push    bp
+                mov     bp, sp
+                mov     ax, 0FCh ; 'ü'
+                push    ax
+                call    __NMSG_WRITE
+                cmp     word_2CAFE, 0
+                jz      short loc_11D17
+                call    dword ptr unk_2CAFC
+
+loc_11D17:                              ; CODE XREF: __FF_MSGBANNER+11\u2191j
+                mov     ax, 0FFh
+                push    ax
+                call    __NMSG_WRITE
+                mov     sp, bp
+                pop     bp
+                retf
+__FF_MSGBANNER  endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function noreturn
+
+__fptrap        proc near               ; CODE XREF: seg001:0ABE\u2191j
+                                        ; fprint+66\u2193P ...
+                mov     ax, 2
+                jmp     __amsg_exit
+__fptrap        endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function
+
+__chkstk        proc far                ; CODE XREF: sub_10000+2\u2191P
+                                        ; sub_10008+2\u2191P ...
+                pop     cx
+                pop     dx
+                mov     bx, sp
+                sub     bx, ax
+                jb      short loc_11D3D
+                cmp     bx, word_2CB04
+                jb      short loc_11D3D
+                mov     sp, bx
+                push    dx
+                push    cx
+                retf
+; ---------------------------------------------------------------------------
+
+loc_11D3D:                              ; CODE XREF: __chkstk+6\u2191j
+                                        ; __chkstk+C\u2191j
+                mov     ax, word ptr dword_2CB00
+                inc     ax
+                jnz     short loc_11D48
+                xor     ax, ax
+                jmp     __amsg_exit
+; ---------------------------------------------------------------------------
+
+loc_11D48:                              ; CODE XREF: __chkstk+17\u2191j
+                push    dx
+                push    cx
+                jmp     dword_2CB00
+__chkstk        endp ; sp-analysis failed
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function
+
+__nullcheck     proc far                ; CODE XREF: sub_11C79+15\u2191P
+                push    si
+                xor     si, si
+                mov     cx, 42h ; 'B'
+                xor     ah, ah
+                cld
+
+loc_11D57:                              ; CODE XREF: __nullcheck+C\u2193j
+                lodsb
+                xor     ah, al
+                loop    loc_11D57
+                xor     ah, 55h
+                jz      short loc_11D72
+                call    __FF_MSGBANNER
+                mov     ax, 1
+                push    ax
+                call    __NMSG_WRITE
+                mov     ax, 1
+
+loc_11D72:                              ; CODE XREF: __nullcheck+11\u2191j
+                pop     si
+                retf
+__nullcheck     endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function
+
+__setargv       proc near               ; CODE XREF: start+84\u2191P
+                pop     word ptr dword_2CB06
+                pop     word ptr dword_2CB06+2
+                mov     dx, 2
+                cmp     byte_2CAC9, dl
+                jz      short loc_11DAE
+                mov     es, word_2CAC7
+                assume es:nothing
+                mov     es, word ptr es:2Ch
+                mov     seg_2CAF0, es
+                xor     ax, ax
+                cwd
+                mov     cx, 8000h
+                xor     di, di
+
+loc_11D9A:                              ; CODE XREF: __setargv+29\u2193j
+                repne scasb
+                scasb
+                jnz     short loc_11D9A
+                inc     di
+                inc     di
+                mov     word_2CAEE, di
+                mov     cx, 0FFFFh
+                repne scasb
+                not     cx
+                mov     dx, cx
+
+loc_11DAE:                              ; CODE XREF: __setargv+F\u2191j
+                mov     di, 1
+                mov     si, 81h
+                mov     ds, word_2CAC7
+
+loc_11DB8:                              ; CODE XREF: __setargv+47\u2193j
+                                        ; __setargv+4B\u2193j ...
+                lodsb
+                cmp     al, 20h ; ' '
+                jz      short loc_11DB8
+                cmp     al, 9
+                jz      short loc_11DB8
+                cmp     al, 0Dh
+                jz      short loc_11E34
+                or      al, al
+                jz      short loc_11E34
+                inc     di
+
+loc_11DCA:                              ; CODE XREF: __setargv+81\u2193j
+                dec     si
+
+loc_11DCB:                              ; CODE XREF: __setargv+71\u2193j
+                                        ; __setargv+8B\u2193j ...
+                lodsb
+                cmp     al, 20h ; ' '
+                jz      short loc_11DB8
+                cmp     al, 9
+                jz      short loc_11DB8
+                cmp     al, 0Dh
+                jz      short loc_11E34
+                or      al, al
+                jz      short loc_11E34
+                cmp     al, 22h ; '"'
+                jz      short loc_11E04
+                cmp     al, 5Ch ; '\'
+                jz      short loc_11DE7
+                inc     dx
+                jmp     short loc_11DCB
+; ---------------------------------------------------------------------------
+
+loc_11DE7:                              ; CODE XREF: __setargv+6E\u2191j
+                xor     cx, cx
+
+loc_11DE9:                              ; CODE XREF: __setargv+79\u2193j
+                inc     cx
+                lodsb
+                cmp     al, 5Ch ; '\'
+                jz      short loc_11DE9
+                cmp     al, 22h ; '"'
+                jz      short loc_11DF7
+                add     dx, cx
+                jmp     short loc_11DCA
+; ---------------------------------------------------------------------------
+
+loc_11DF7:                              ; CODE XREF: __setargv+7D\u2191j
+                mov     ax, cx
+                shr     cx, 1
+                adc     dx, cx
+                test    al, 1
+                jnz     short loc_11DCB
+                jmp     short loc_11E04
+; ---------------------------------------------------------------------------
+
+loc_11E03:                              ; CODE XREF: __setargv+B2\u2193j
+                dec     si
+
+loc_11E04:                              ; CODE XREF: __setargv+6A\u2191j
+                                        ; __setargv+8D\u2191j ...
+                lodsb
+                cmp     al, 0Dh
+                jz      short loc_11E34
+                or      al, al
+                jz      short loc_11E34
+                cmp     al, 22h ; '"'
+                jz      short loc_11DCB
+                cmp     al, 5Ch ; '\'
+                jz      short loc_11E18
+                inc     dx
+                jmp     short loc_11E04
+; ---------------------------------------------------------------------------
+
+loc_11E18:                              ; CODE XREF: __setargv+9F\u2191j
+                xor     cx, cx
+
+loc_11E1A:                              ; CODE XREF: __setargv+AA\u2193j
+                inc     cx
+                lodsb
+                cmp     al, 5Ch ; '\'
+                jz      short loc_11E1A
+                cmp     al, 22h ; '"'
+                jz      short loc_11E28
+                add     dx, cx
+                jmp     short loc_11E03
+; ---------------------------------------------------------------------------
+
+loc_11E28:                              ; CODE XREF: __setargv+AE\u2191j
+                mov     ax, cx
+                shr     cx, 1
+                adc     dx, cx
+                test    al, 1
+                jnz     short loc_11E04
+                jmp     short loc_11DCB
+; ---------------------------------------------------------------------------
+
+loc_11E34:                              ; CODE XREF: __setargv+4F\u2191j
+                                        ; __setargv+53\u2191j ...
+                push    ss
+                pop     ds
+                mov     argc, di
+                add     dx, di
+                inc     di
+                shl     di, 1
+                shl     di, 1
+                add     dx, di
+                and     dl, 0FEh
+                sub     sp, dx
+                mov     ax, sp
+                mov     word ptr argv, ax
+                mov     word ptr argv+2, ds
+                mov     bx, ax
+                add     di, bx
+                push    ss
+                pop     es
+                assume es:dseg
+                mov     ss:[bx], di
+                mov     word ptr ss:[bx+2], ss
+                add     bx, 4
+                lds     si, dword ptr word_2CAEE
+
+loc_11E65:                              ; CODE XREF: __setargv+F5\u2193j
+                lodsb
+                stosb
+                or      al, al
+                jnz     short loc_11E65
+                mov     si, 81h
+                mov     ds, ss:word_2CAC7
+                jmp     short loc_11E78
+; ---------------------------------------------------------------------------
+
+loc_11E75:                              ; CODE XREF: __setargv+129\u2193j
+                                        ; __setargv+12D\u2193j
+                xor     ax, ax
+                stosb
+
+loc_11E78:                              ; CODE XREF: __setargv+FF\u2191j
+                                        ; __setargv+107\u2193j ...
+                lodsb
+                cmp     al, 20h ; ' '
+                jz      short loc_11E78
+                cmp     al, 9
+                jz      short loc_11E78
+                cmp     al, 0Dh
+                jnz     short loc_11E88
+                jmp     loc_11F0C
+; ---------------------------------------------------------------------------
+
+loc_11E88:                              ; CODE XREF: __setargv+10F\u2191j
+                or      al, al
+                jnz     short loc_11E8F
+                jmp     short loc_11F0C
+; ---------------------------------------------------------------------------
+                db 90h
+; ---------------------------------------------------------------------------
+
+loc_11E8F:                              ; CODE XREF: __setargv+116\u2191j
+                mov     ss:[bx], di
+                mov     word ptr ss:[bx+2], ss
+                add     bx, 4
+
+loc_11E99:                              ; CODE XREF: __setargv+152\u2193j
+                dec     si
+
+loc_11E9A:                              ; CODE XREF: __setargv+140\u2193j
+                                        ; __setargv+15F\u2193j ...
+                lodsb
+                cmp     al, 20h ; ' '
+                jz      short loc_11E75
+                cmp     al, 9
+                jz      short loc_11E75
+                cmp     al, 0Dh
+                jz      short loc_11F09
+                or      al, al
+                jz      short loc_11F09
+                cmp     al, 22h ; '"'
+                jz      short loc_11ED6
+                cmp     al, 5Ch ; '\'
+                jz      short loc_11EB6
+                stosb
+                jmp     short loc_11E9A
+; ---------------------------------------------------------------------------
+
+loc_11EB6:                              ; CODE XREF: __setargv+13D\u2191j
+                xor     cx, cx
+
+loc_11EB8:                              ; CODE XREF: __setargv+148\u2193j
+                inc     cx
+                lodsb
+                cmp     al, 5Ch ; '\'
+                jz      short loc_11EB8
+                cmp     al, 22h ; '"'
+                jz      short loc_11EC8
+                mov     al, 5Ch ; '\'
+                rep stosb
+                jmp     short loc_11E99
+; ---------------------------------------------------------------------------
+
+loc_11EC8:                              ; CODE XREF: __setargv+14C\u2191j
+                mov     al, 5Ch ; '\'
+                shr     cx, 1
+                rep stosb
+                jnb     short loc_11ED6
+                mov     al, 22h ; '"'
+                stosb
+                jmp     short loc_11E9A
+; ---------------------------------------------------------------------------
+
+loc_11ED5:                              ; CODE XREF: __setargv+186\u2193j
+                dec     si
+
+loc_11ED6:                              ; CODE XREF: __setargv+139\u2191j
+                                        ; __setargv+15A\u2191j ...
+                lodsb
+                cmp     al, 0Dh
+                jz      short loc_11F09
+                or      al, al
+                jz      short loc_11F09
+                cmp     al, 22h ; '"'
+                jz      short loc_11E9A
+                cmp     al, 5Ch ; '\'
+                jz      short loc_11EEA
+                stosb
+                jmp     short loc_11ED6
+; ---------------------------------------------------------------------------
+
+loc_11EEA:                              ; CODE XREF: __setargv+171\u2191j
+                xor     cx, cx
+
+loc_11EEC:                              ; CODE XREF: __setargv+17C\u2193j
+                inc     cx
+                lodsb
+                cmp     al, 5Ch ; '\'
+                jz      short loc_11EEC
+                cmp     al, 22h ; '"'
+                jz      short loc_11EFC
+                mov     al, 5Ch ; '\'
+                rep stosb
+                jmp     short loc_11ED5
+; ---------------------------------------------------------------------------
+
+loc_11EFC:                              ; CODE XREF: __setargv+180\u2191j
+                mov     al, 5Ch ; '\'
+                shr     cx, 1
+                rep stosb
+                jnb     short loc_11E9A
+                mov     al, 22h ; '"'
+                stosb
+                jmp     short loc_11ED6
+; ---------------------------------------------------------------------------
+
+loc_11F09:                              ; CODE XREF: __setargv+131\u2191j
+                                        ; __setargv+135\u2191j ...
+                xor     ax, ax
+                stosb
+
+loc_11F0C:                              ; CODE XREF: __setargv+111\u2191j
+                                        ; __setargv+118\u2191j
+                push    ss
+                pop     ds
+                mov     word ptr [bx], 0
+                mov     word ptr [bx+2], 0
+                jmp     dword_2CB06
+__setargv       endp ; sp-analysis failed
+
+; ---------------------------------------------------------------------------
                 align 2
-; [0000007B BYTES: COLLAPSED FUNCTION __setenvp. PRESS NUMPAD+ TO EXPAND]
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+__setenvp       proc far                ; CODE XREF: start+7F\u2191P
+
+var_s0          = word ptr  0
+
+                push    bp
+                mov     bp, sp
+                push    bp
+                mov     ds, word_2CAC7
+                xor     cx, cx
+                mov     ax, cx
+                mov     bp, cx
+                mov     di, cx
+                dec     cx
+                mov     si, word ptr aMsRunTimeLibra+24h ; "1988, Microsoft Corp"
+                or      si, si
+                jz      short loc_11F45
+                mov     es, si
+                assume es:nothing
+                cmp     byte ptr es:0, 0
+                jz      short loc_11F45
+
+loc_11F3F:                              ; CODE XREF: __setenvp+27\u2193j
+                repne scasb
+                inc     bp
+                scasb
+                jnz     short loc_11F3F
+
+loc_11F45:                              ; CODE XREF: __setenvp+17\u2191j
+                                        ; __setenvp+21\u2191j
+                inc     bp
+                xchg    ax, di
+                inc     ax
+                and     al, 0FEh
+                mov     di, bp
+                shl     bp, 1
+                shl     bp, 1
+                add     ax, bp
+                push    ss
+                pop     ds
+                push    di
+                mov     di, 9
+                call    __myalloc
+                pop     di
+                mov     cx, di
+                mov     di, bp
+                add     di, ax
+                mov     word ptr envp, bp
+                mov     word ptr envp+2, ds
+                push    ds
+                pop     es
+                assume es:dseg
+                mov     ds, si
+                xor     si, si
+                dec     cx
+                jcxz    short loc_11F8A
+
+loc_11F73:                              ; CODE XREF: __setenvp+6C\u2193j
+                cmp     word ptr [si], 433Bh
+                jz      short loc_11F82
+                mov     [bp+var_s0], di
+                mov     word ptr [bp+2], es
+                add     bp, 4
+
+loc_11F82:                              ; CODE XREF: __setenvp+5B\u2191j
+                                        ; __setenvp+6A\u2193j
+                lodsb
+                stosb
+                or      al, al
+                jnz     short loc_11F82
+                loop    loc_11F73
+
+loc_11F8A:                              ; CODE XREF: __setenvp+55\u2191j
+                mov     [bp+var_s0], cx
+                mov     [bp+2], cx
+                push    ss
+                pop     ds
+                pop     bp
+                mov     sp, bp
+                pop     bp
+                retf
+__setenvp       endp
+
+; ---------------------------------------------------------------------------
                 align 2
-; [0000002B BYTES: COLLAPSED FUNCTION __NMSG_TEXT. PRESS NUMPAD+ TO EXPAND]
-; [0000002B BYTES: COLLAPSED FUNCTION __NMSG_WRITE. PRESS NUMPAD+ TO EXPAND]
-; [00000042 BYTES: COLLAPSED FUNCTION __myalloc. PRESS NUMPAD+ TO EXPAND]
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+__NMSG_TEXT     proc far                ; CODE XREF: __NMSG_WRITE+7\u2193P
+                                        ; __doexec+5D\u2193P
+
+arg_0           = word ptr  6
+
+                push    bp
+                mov     bp, sp
+                push    si
+                push    di
+                push    ds
+                pop     es
+                mov     dx, [bp+arg_0]
+                mov     si, 4E60h
+
+loc_11FA5:                              ; CODE XREF: __NMSG_TEXT+20\u2193j
+                lodsw
+                cmp     ax, dx
+                jz      short loc_11FBA
+                inc     ax
+                xchg    ax, si
+                jz      short loc_11FBA
+                xchg    ax, di
+                xor     ax, ax
+                mov     cx, 0FFFFh
+                repne scasb
+                mov     si, di
+                jmp     short loc_11FA5
+; ---------------------------------------------------------------------------
+
+loc_11FBA:                              ; CODE XREF: __NMSG_TEXT+10\u2191j
+                                        ; __NMSG_TEXT+14\u2191j
+                xchg    ax, si
+                pop     di
+                pop     si
+                mov     sp, bp
+                pop     bp
+                retf    2
+__NMSG_TEXT     endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+__NMSG_WRITE    proc far                ; CODE XREF: start+30\u2191P
+                                        ; start+BF\u2191P ...
+
+arg_0           = word ptr  6
+
+                push    bp
+                mov     bp, sp
+                push    di
+                push    [bp+arg_0]
+                call    __NMSG_TEXT
+                or      ax, ax
+                jz      short loc_11FE7
+                xchg    ax, dx
+                mov     di, dx
+                xor     ax, ax
+                mov     cx, 0FFFFh
+                repne scasb
+                not     cx
+                dec     cx
+                mov     bx, 2
+                mov     ah, 40h
+                int     21h             ; DOS - 2+ - WRITE TO FILE WITH HANDLE
+                                        ; BX = file handle, CX = number of bytes to write, DS:DX -> buffer
+
+loc_11FE7:                              ; CODE XREF: __NMSG_WRITE+E\u2191j
+                pop     di
+                mov     sp, bp
+                pop     bp
+                retf    2
+__NMSG_WRITE    endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function
+
+__myalloc       proc near               ; CODE XREF: __setenvp+3C\u2191p
+                mov     dx, ax
+                add     ax, word_2CA56
+                jb      short loc_1202B
+                cmp     word_2CA50, ax
+                jnb     short loc_12021
+                add     ax, 0Fh
+                push    ax
+                rcr     ax, 1
+                mov     cl, 3
+                shr     ax, cl
+                mov     cx, ds
+                mov     bx, word_2CAC7
+                sub     cx, bx
+                add     ax, cx
+                mov     es, bx
+                assume es:nothing
+                mov     bx, ax
+                mov     ah, 4Ah
+                int     21h             ; DOS - 2+ - ADJUST MEMORY BLOCK SIZE (SETBLOCK)
+                                        ; ES = segment address of block to change
+                                        ; BX = new size in paragraphs
+                pop     ax
+                jb      short loc_1202B
+                and     al, 0F0h
+                dec     ax
+                mov     word_2CA50, ax
+
+loc_12021:                              ; CODE XREF: __myalloc+C\u2191j
+                xchg    ax, bp
+                mov     bp, word_2CA56
+                add     word_2CA56, dx
+                retn
+; ---------------------------------------------------------------------------
+
+loc_1202B:                              ; CODE XREF: __myalloc+6\u2191j
+                                        ; __myalloc+2B\u2191j
+                mov     ax, di
+                jmp     __amsg_exit
+__myalloc       endp
+
 ; ---------------------------------------------------------------------------
 ; [00000008 BYTES: COLLAPSED CHUNK OF FUNCTION _close. PRESS NUMPAD+ TO EXPAND]
-; [0000000B BYTES: COLLAPSED FUNCTION __dosreturn. PRESS NUMPAD+ TO EXPAND]
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function
+
+__dosreturn     proc far
+                jnb     short loc_12032
+                push    ax
+                call    sub_12056
+                pop     ax
+                mov     sp, bp
+                pop     bp
+                retf
+__dosreturn     endp ; sp-analysis failed
+
 ; ---------------------------------------------------------------------------
 ; [00000002 BYTES: COLLAPSED CHUNK OF FUNCTION _open. PRESS NUMPAD+ TO EXPAND]
 ; [0000000B BYTES: COLLAPSED CHUNK OF FUNCTION _close. PRESS NUMPAD+ TO EXPAND]
-; [00000006 BYTES: COLLAPSED FUNCTION __maperror. PRESS NUMPAD+ TO EXPAND]
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function
+
+__maperror      proc far                ; CODE XREF: _int86+70\u2193P
+                                        ; _intdos+3B\u2193P
+                xor     ah, ah
+                call    sub_12056
+                retf
+__maperror      endp
+
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -4212,32 +4848,2429 @@ loc_12080:                              ; CODE XREF: sub_12056+5\u2191j
                 jmp     short loc_1207B
 sub_12056       endp
 
-; [000000E5 BYTES: COLLAPSED FUNCTION _fclose. PRESS NUMPAD+ TO EXPAND]
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; int __cdecl fclose(FILE *)
+_fclose         proc far                ; CODE XREF: seg009:0281\u2193P
+                                        ; sub_217C9+F\u2193P
+
+var_10          = byte ptr -10h
+var_E           = byte ptr -0Eh
+var_6           = word ptr -6
+var_4           = dword ptr -4
+arg_0           = dword ptr  6
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 12h
+                push    si
+                mov     si, 0FFFFh
+                les     bx, [bp+arg_0]
+                test    byte ptr es:[bx+0Ah], 83h
+                jnz     short loc_1209B
+                jmp     loc_1215A
+; ---------------------------------------------------------------------------
+
+loc_1209B:                              ; CODE XREF: _fclose+12\u2191j
+                test    byte ptr es:[bx+0Ah], 40h
+                jz      short loc_120A5
+                jmp     loc_1215A
+; ---------------------------------------------------------------------------
+
+loc_120A5:                              ; CODE XREF: _fclose+1C\u2191j
+                push    es
+                push    bx              ; FILE *
+                call    _fflush
+                add     sp, 4
+                mov     si, ax
+                mov     ax, word ptr [bp+arg_0]
+                sub     ax, 3554h
+                cwd
+                mov     cx, 0Ch
+                idiv    cx
+                mov     bx, ax
+                shl     bx, 1
+                add     bx, ax
+                shl     bx, 1
+                mov     ax, [bx+3648h]
+                mov     [bp+var_6], ax
+                push    word ptr [bp+arg_0+2]
+                push    word ptr [bp+arg_0]
+                call    __freebuf
+                add     sp, 4
+                les     bx, [bp+arg_0]
+                mov     al, es:[bx+0Bh]
+                cbw
+                push    ax              ; int
+                call    _close
+                add     sp, 2
+                or      ax, ax
+                jl      short loc_12157
+                cmp     [bp+var_6], 0
+                jz      short loc_1215A
+                mov     ax, 2F4Eh
+                push    ds
+                push    ax              ; char *
+                lea     ax, [bp+var_10]
+                push    ss
+                push    ax              ; char *
+                call    _strcpy
+                add     sp, 8
+                lea     ax, [bp+var_E]
+                mov     word ptr [bp+var_4], ax
+                mov     word ptr [bp+var_4+2], ss
+                les     bx, [bp+var_4]
+                cmp     byte ptr es:[bx-2], 5Ch ; '\'
+                jz      short loc_1212E
+                mov     ax, 2F50h
+                push    ds
+                push    ax              ; char *
+                lea     ax, [bp+var_10]
+                push    ss
+                push    ax              ; char *
+                call    _strcat
+                add     sp, 8
+                jmp     short loc_12131
+; ---------------------------------------------------------------------------
+
+loc_1212E:                              ; CODE XREF: _fclose+94\u2191j
+                dec     word ptr [bp+var_4]
+
+loc_12131:                              ; CODE XREF: _fclose+A8\u2191j
+                mov     ax, 0Ah
+                push    ax              ; int
+                push    word ptr [bp+var_4+2]
+                push    word ptr [bp+var_4] ; char *
+                push    [bp+var_6]      ; int
+                call    _itoa
+                add     sp, 8
+                lea     ax, [bp+var_10]
+                push    ss
+                push    ax              ; char *
+                call    _remove
+                add     sp, 4
+                or      ax, ax
+                jz      short loc_1215A
+
+loc_12157:                              ; CODE XREF: _fclose+69\u2191j
+                mov     si, 0FFFFh
+
+loc_1215A:                              ; CODE XREF: _fclose+14\u2191j
+                                        ; _fclose+1E\u2191j ...
+                les     bx, [bp+arg_0]
+                mov     byte ptr es:[bx+0Ah], 0
+                mov     ax, si
+                pop     si
+                mov     sp, bp
+                pop     bp
+                retf
+_fclose         endp
+
+; ---------------------------------------------------------------------------
                 align 2
-; [00000043 BYTES: COLLAPSED FUNCTION _flushall. PRESS NUMPAD+ TO EXPAND]
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; int flushall(void)
+_flushall       proc far                ; DATA XREF: dseg:4D0A\u2193o
+
+var_6           = dword ptr -6
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 6
+                push    si
+                mov     ax, 3554h
+                mov     word ptr [bp+var_6], ax
+                mov     word ptr [bp+var_6+2], ds
+                sub     si, si
+                jmp     short loc_1219A
+; ---------------------------------------------------------------------------
+
+loc_1217E:                              ; CODE XREF: _flushall+3A\u2193j
+                les     bx, [bp+var_6]
+                test    byte ptr es:[bx+0Ah], 83h
+                jz      short loc_12196
+                push    es
+                push    bx              ; FILE *
+                call    _fflush
+                add     sp, 4
+                inc     ax
+                jz      short loc_12196
+                inc     si
+
+loc_12196:                              ; CODE XREF: _flushall+1C\u2191j
+                                        ; _flushall+29\u2191j
+                add     word ptr [bp+var_6], 0Ch
+
+loc_1219A:                              ; CODE XREF: _flushall+12\u2191j
+                mov     ax, word_2D28C
+                mov     dx, seg_2D28E
+                cmp     word ptr [bp+var_6], ax
+                jbe     short loc_1217E
+                mov     ax, si
+                pop     si
+                mov     sp, bp
+                pop     bp
+                retf
+_flushall       endp
+
+; ---------------------------------------------------------------------------
                 align 2
-; [00000037 BYTES: COLLAPSED FUNCTION _fopen. PRESS NUMPAD+ TO EXPAND]
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; FILE *__cdecl fopen(const char *, const char *)
+_fopen          proc far                ; CODE XREF: seg009:007D\u2193P
+                                        ; seg027:0023\u2193P
+
+var_4           = word ptr -4
+var_2           = word ptr -2
+arg_0           = dword ptr  6
+arg_4           = dword ptr  0Ah
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 4
+                call    __getstream
+                mov     [bp+var_4], ax
+                mov     [bp+var_2], dx
+                or      dx, ax
+                jz      short loc_121DE
+                push    [bp+var_2]
+                push    ax              ; __int32
+                push    word ptr [bp+arg_4+2]
+                push    word ptr [bp+arg_4] ; __int32
+                push    word ptr [bp+arg_0+2]
+                push    word ptr [bp+arg_0] ; char *
+                call    __openfile
+                add     sp, 0Ch
+                jmp     short loc_121E1
+; ---------------------------------------------------------------------------
                 align 2
-; [00000277 BYTES: COLLAPSED FUNCTION _fread. PRESS NUMPAD+ TO EXPAND]
+
+loc_121DE:                              ; CODE XREF: _fopen+13\u2191j
+                sub     ax, ax
+                cwd
+
+loc_121E1:                              ; CODE XREF: _fopen+2D\u2191j
+                mov     sp, bp
+                pop     bp
+                retf
+_fopen          endp
+
+; ---------------------------------------------------------------------------
                 align 2
-; [0000005B BYTES: COLLAPSED FUNCTION _printf. PRESS NUMPAD+ TO EXPAND]
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; size_t __cdecl fread(void *, size_t, size_t, FILE *)
+_fread          proc far                ; CODE XREF: seg009:0186\u2193P
+                                        ; seg009:01FC\u2193P
+
+var_16          = dword ptr -16h
+var_12          = dword ptr -12h
+var_C           = word ptr -0Ch
+var_A           = word ptr -0Ah
+var_8           = word ptr -8
+var_6           = word ptr -6
+var_4           = word ptr -4
+var_2           = word ptr -2
+arg_0           = dword ptr  6
+arg_4           = word ptr  0Ah
+arg_6           = word ptr  0Ch
+arg_8           = dword ptr  0Eh
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 16h
+                push    si
+                sub     ax, ax
+                push    ax
+                push    [bp+arg_6]
+                push    ax
+                push    [bp+arg_4]
+                call    __aFlmul
+                mov     [bp+var_4], ax
+                mov     [bp+var_2], dx
+                mov     [bp+var_8], ax
+                mov     [bp+var_6], dx
+                cmp     [bp+arg_4], 0
+                jz      short loc_12214
+                cmp     [bp+arg_6], 0
+                jnz     short loc_1221A
+
+loc_12214:                              ; CODE XREF: _fread+26\u2191j
+                mov     ax, [bp+var_8]
+                jmp     loc_12458
+; ---------------------------------------------------------------------------
+
+loc_1221A:                              ; CODE XREF: _fread+2C\u2191j
+                les     bx, [bp+arg_8]
+                test    byte ptr es:[bx+0Ah], 0Ch
+                jnz     short loc_122A1
+                mov     ax, 3554h
+                push    ds
+                push    ax
+                push    es
+                push    bx
+                call    __aFahdiff
+                cwd
+                mov     cx, 0Ch
+                idiv    cx
+                mov     bx, ax
+                shl     bx, 1
+                add     bx, ax
+                shl     bx, 1
+                test    byte ptr [bx+3644h], 1
+                jnz     short loc_122A1
+                les     bx, [bp+arg_8]
+                dec     word ptr es:[bx+4]
+                js      short loc_1226E
+                mov     ax, es:[bx]
+                mov     dx, es:[bx+2]
+                add     word ptr es:[bx], 1
+                jnb     short loc_12261
+                add     word ptr es:[bx+2], 1000h
+
+loc_12261:                              ; CODE XREF: _fread+73\u2191j
+                mov     es, dx
+                mov     bx, ax
+                mov     al, es:[bx]
+                sub     ah, ah
+                jmp     short loc_1227C
+; ---------------------------------------------------------------------------
+                db 2 dup(90h)
+; ---------------------------------------------------------------------------
+
+loc_1226E:                              ; CODE XREF: _fread+66\u2191j
+                push    word ptr [bp+arg_8+2]
+                push    word ptr [bp+arg_8] ; FILE *
+                call    __filbuf
+                add     sp, 4
+
+loc_1227C:                              ; CODE XREF: _fread+84\u2191j
+                mov     si, ax
+                inc     ax
+                jnz     short loc_12286
+                sub     ax, ax
+                jmp     loc_12458
+; ---------------------------------------------------------------------------
+
+loc_12286:                              ; CODE XREF: _fread+99\u2191j
+                les     bx, [bp+arg_0]
+                add     word ptr [bp+arg_0], 1
+                jnb     short loc_12294
+                add     word ptr [bp+arg_0+2], 1000h
+
+loc_12294:                              ; CODE XREF: _fread+A7\u2191j
+                mov     ax, si
+                mov     es:[bx], al
+                sub     [bp+var_8], 1
+                sbb     [bp+var_6], 0
+
+loc_122A1:                              ; CODE XREF: _fread+3C\u2191j
+                                        ; _fread+5D\u2191j
+                les     bx, [bp+arg_8]
+                test    byte ptr es:[bx+0Ah], 8
+                jnz     short loc_122CF
+                mov     ax, 3554h
+                push    ds
+                push    ax
+                push    es
+                push    bx
+                call    __aFahdiff
+                cwd
+                mov     cx, 0Ch
+                idiv    cx
+                mov     bx, ax
+                shl     bx, 1
+                add     bx, ax
+                shl     bx, 1
+                test    byte ptr [bx+3644h], 1
+                jnz     short loc_122CF
+                jmp     loc_123AE
+; ---------------------------------------------------------------------------
+
+loc_122CF:                              ; CODE XREF: _fread+C3\u2191j
+                                        ; _fread+E4\u2191j
+                mov     ax, [bp+var_8]
+                or      ax, [bp+var_6]
+                jnz     short loc_122DA
+                jmp     loc_12414
+; ---------------------------------------------------------------------------
+
+loc_122DA:                              ; CODE XREF: _fread+EF\u2191j
+                mov     ax, word ptr [bp+arg_8]
+                mov     dx, word ptr [bp+arg_8+2]
+                add     ax, 4
+                mov     word ptr [bp+var_12], ax
+                mov     word ptr [bp+var_12+2], dx
+
+loc_122E9:                              ; CODE XREF: _fread+1C4\u2193j
+                les     bx, [bp+var_12]
+                cmp     word ptr es:[bx], 0
+                jz      short loc_12370
+                mov     ax, es:[bx]
+                sub     dx, dx
+                cmp     dx, [bp+var_6]
+                jb      short loc_1230A
+                ja      short loc_12303
+                cmp     ax, [bp+var_8]
+                jbe     short loc_1230A
+
+loc_12303:                              ; CODE XREF: _fread+116\u2191j
+                mov     ax, [bp+var_8]
+                jmp     short loc_12311
+; ---------------------------------------------------------------------------
+                db 2 dup(90h)
+; ---------------------------------------------------------------------------
+
+loc_1230A:                              ; CODE XREF: _fread+114\u2191j
+                                        ; _fread+11B\u2191j
+                les     bx, [bp+arg_8]
+                mov     ax, es:[bx+4]
+
+loc_12311:                              ; CODE XREF: _fread+120\u2191j
+                mov     [bp+var_C], ax
+                mov     [bp+var_A], 0
+                push    ax              ; size_t
+                les     bx, [bp+arg_8]
+                push    word ptr es:[bx+2]
+                push    word ptr es:[bx] ; void *
+                push    word ptr [bp+arg_0+2]
+                push    word ptr [bp+arg_0] ; void *
+                call    _memcpy
+                add     sp, 0Ah
+                les     bx, [bp+arg_8]
+                sub     ax, ax
+                mov     cx, [bp+var_C]
+                add     es:[bx], cx
+                adc     ax, [bp+var_A]
+                mov     cx, 0Ch
+                shl     ax, cl
+                add     es:[bx+2], ax
+                sub     ax, ax
+                mov     cx, [bp+var_C]
+                add     word ptr [bp+arg_0], cx
+                adc     ax, [bp+var_A]
+                mov     cx, 0Ch
+                shl     ax, cl
+                add     word ptr [bp+arg_0+2], ax
+                mov     ax, [bp+var_C]
+                mov     dx, [bp+var_A]
+                sub     [bp+var_8], ax
+                sbb     [bp+var_6], dx
+                les     bx, [bp+var_12]
+                sub     es:[bx], ax
+                jmp     short loc_123A2
+; ---------------------------------------------------------------------------
+
+loc_12370:                              ; CODE XREF: _fread+10A\u2191j
+                push    word ptr [bp+arg_8+2]
+                push    word ptr [bp+arg_8] ; FILE *
+                call    __filbuf
+                add     sp, 4
+                mov     si, ax
+                inc     ax
+                jnz     short loc_12386
+                jmp     loc_12414
+; ---------------------------------------------------------------------------
+
+loc_12386:                              ; CODE XREF: _fread+19B\u2191j
+                les     bx, [bp+arg_0]
+                mov     ax, si
+                mov     es:[bx], al
+                add     word ptr [bp+arg_0], 1
+                sbb     ax, ax
+                and     ax, 1000h
+                add     word ptr [bp+arg_0+2], ax
+                sub     [bp+var_8], 1
+                sbb     [bp+var_6], 0
+
+loc_123A2:                              ; CODE XREF: _fread+188\u2191j
+                mov     ax, [bp+var_8]
+                or      ax, [bp+var_6]
+                jz      short loc_12414
+                jmp     loc_122E9
+; ---------------------------------------------------------------------------
                 align 2
-; [000000FA BYTES: COLLAPSED FUNCTION __filbuf. PRESS NUMPAD+ TO EXPAND]
-; [000001BE BYTES: COLLAPSED FUNCTION __flsbuf. PRESS NUMPAD+ TO EXPAND]
-; [00000044 BYTES: COLLAPSED FUNCTION __freebuf. PRESS NUMPAD+ TO EXPAND]
-; [0000008A BYTES: COLLAPSED FUNCTION __getbuf. PRESS NUMPAD+ TO EXPAND]
-; [00000117 BYTES: COLLAPSED FUNCTION __openfile. PRESS NUMPAD+ TO EXPAND]
+
+loc_123AE:                              ; CODE XREF: _fread+E6\u2191j
+                mov     ax, [bp+var_8]
+                or      ax, [bp+var_6]
+                jz      short loc_12414
+                mov     ax, word ptr [bp+arg_8]
+                mov     dx, word ptr [bp+arg_8+2]
+                add     ax, 0Ah
+                mov     word ptr [bp+var_12], ax
+                mov     word ptr [bp+var_12+2], dx
+                mov     ax, word ptr [bp+arg_8]
+                add     ax, 4
+                mov     word ptr [bp+var_16], ax
+                mov     word ptr [bp+var_16+2], dx
+
+loc_123D1:                              ; CODE XREF: _fread+26E\u2193j
+                les     bx, [bp+var_16]
+                dec     word ptr es:[bx]
+                js      short loc_123FA
+                les     bx, [bp+arg_8]
+                mov     ax, es:[bx]
+                mov     dx, es:[bx+2]
+                add     word ptr es:[bx], 1
+                jnb     short loc_123EF
+                add     word ptr es:[bx+2], 1000h
+
+loc_123EF:                              ; CODE XREF: _fread+201\u2191j
+                mov     es, dx
+                mov     bx, ax
+                mov     al, es:[bx]
+                sub     ah, ah
+                jmp     short loc_12408
+; ---------------------------------------------------------------------------
+
+loc_123FA:                              ; CODE XREF: _fread+1F1\u2191j
+                push    word ptr [bp+arg_8+2]
+                push    word ptr [bp+arg_8] ; FILE *
+                call    __filbuf
+                add     sp, 4
+
+loc_12408:                              ; CODE XREF: _fread+212\u2191j
+                mov     si, ax
+                inc     ax
+                jnz     short loc_12430
+                les     bx, [bp+var_12]
+                or      byte ptr es:[bx], 10h
+
+loc_12414:                              ; CODE XREF: _fread+F1\u2191j
+                                        ; _fread+19D\u2191j ...
+                sub     ax, ax
+                push    ax
+                push    [bp+arg_4]
+                mov     ax, [bp+var_4]
+                mov     dx, [bp+var_2]
+                sub     ax, [bp+var_8]
+                sbb     dx, [bp+var_6]
+                push    dx
+                push    ax
+                call    __aFuldiv
+                jmp     short loc_12458
+; ---------------------------------------------------------------------------
                 align 2
-; [000000BA BYTES: COLLAPSED FUNCTION __stbuf. PRESS NUMPAD+ TO EXPAND]
-; [000000DF BYTES: COLLAPSED FUNCTION __ftbuf. PRESS NUMPAD+ TO EXPAND]
+
+loc_12430:                              ; CODE XREF: _fread+225\u2191j
+                les     bx, [bp+arg_0]
+                mov     ax, si
+                mov     es:[bx], al
+                add     word ptr [bp+arg_0], 1
+                sbb     ax, ax
+                and     ax, 1000h
+                add     word ptr [bp+arg_0+2], ax
+                sub     [bp+var_8], 1
+                sbb     [bp+var_6], 0
+                mov     ax, [bp+var_8]
+                or      ax, [bp+var_6]
+                jz      short loc_12414
+                jmp     loc_123D1
+; ---------------------------------------------------------------------------
                 align 2
-; [0000008E BYTES: COLLAPSED FUNCTION _fflush. PRESS NUMPAD+ TO EXPAND]
-; [000003AD BYTES: COLLAPSED FUNCTION __output. PRESS NUMPAD+ TO EXPAND]
+
+loc_12458:                              ; CODE XREF: _fread+31\u2191j
+                                        ; _fread+9D\u2191j ...
+                pop     si
+                mov     sp, bp
+                pop     bp
+                retf
+_fread          endp
+
+; ---------------------------------------------------------------------------
                 align 2
-; [00000176 BYTES: COLLAPSED FUNCTION iprint. PRESS NUMPAD+ TO EXPAND]
-; [000000F3 BYTES: COLLAPSED FUNCTION sprint. PRESS NUMPAD+ TO EXPAND]
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; int printf(const char *, ...)
+_printf         proc far                ; CODE XREF: get_master+154\u2193P
+                                        ; get_master+165\u2193P ...
+
+var_C           = word ptr -0Ch
+var_A           = dword ptr -0Ah
+var_6           = word ptr -6
+var_4           = word ptr -4
+arg_0           = dword ptr  6
+arg_4           = byte ptr  0Ah
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 0Ch
+                push    si
+                mov     ax, 3560h
+                mov     word ptr [bp+var_A], ax
+                mov     word ptr [bp+var_A+2], ds
+                lea     ax, [bp+arg_4]
+                mov     [bp+var_6], ax
+                mov     [bp+var_4], ss
+                push    ds
+                push    word ptr [bp+var_A]
+                call    __stbuf
+                add     sp, 4
+                mov     si, ax
+                push    [bp+var_4]
+                push    [bp+var_6]
+                push    word ptr [bp+arg_0+2]
+                push    word ptr [bp+arg_0]
+                push    word ptr [bp+var_A+2]
+                push    word ptr [bp+var_A]
+                call    __output
+                add     sp, 0Ch
+                mov     [bp+var_C], ax
+                push    word ptr [bp+var_A+2]
+                push    word ptr [bp+var_A] ; FILE *
+                push    si              ; int
+                call    __ftbuf
+                add     sp, 6
+                mov     ax, [bp+var_C]
+                pop     si
+                mov     sp, bp
+                pop     bp
+                retf
+_printf         endp
+
+; ---------------------------------------------------------------------------
                 align 2
-; [0000006B BYTES: COLLAPSED FUNCTION fprint. PRESS NUMPAD+ TO EXPAND]
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; int __cdecl _filbuf(FILE *)
+__filbuf        proc far                ; CODE XREF: _fread+8E\u2191P
+                                        ; _fread+190\u2191P ...
+
+var_2           = word ptr -2
+arg_0           = dword ptr  6
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 2
+                push    si
+                mov     ax, word ptr [bp+arg_0]
+                sub     ax, 3554h
+                cwd
+                mov     cx, 0Ch
+                idiv    cx
+                mov     cx, ax
+                shl     ax, 1
+                add     ax, cx
+                shl     ax, 1
+                add     ax, 3644h
+                mov     [bp+var_2], ax
+                les     bx, [bp+arg_0]
+                test    byte ptr es:[bx+0Ah], 83h
+                jz      short loc_124EC
+                test    byte ptr es:[bx+0Ah], 40h
+                jz      short loc_124F2
+
+loc_124EC:                              ; CODE XREF: __filbuf+29\u2191j
+                                        ; __filbuf+47\u2193j ...
+                mov     ax, 0FFFFh
+                jmp     loc_125AF
+; ---------------------------------------------------------------------------
+
+loc_124F2:                              ; CODE XREF: __filbuf+30\u2191j
+                les     bx, [bp+arg_0]
+                test    byte ptr es:[bx+0Ah], 2
+                jz      short loc_12504
+                or      byte ptr es:[bx+0Ah], 20h
+                jmp     short loc_124EC
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_12504:                              ; CODE XREF: __filbuf+40\u2191j
+                or      byte ptr es:[bx+0Ah], 1
+                mov     bx, [bp+var_2]
+                and     byte ptr [bx], 0FBh
+                mov     bx, word ptr [bp+arg_0]
+                test    byte ptr es:[bx+0Ah], 0Ch
+                jnz     short loc_12540
+                mov     ax, bx
+                sub     ax, 3554h
+                cwd
+                mov     cx, 0Ch
+                idiv    cx
+                mov     bx, ax
+                shl     bx, 1
+                add     bx, ax
+                shl     bx, 1
+                test    byte ptr [bx+3644h], 1
+                jnz     short loc_12540
+                push    es
+                push    word ptr [bp+arg_0]
+                call    __getbuf
+                add     sp, 4
+                jmp     short loc_12552
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_12540:                              ; CODE XREF: __filbuf+5D\u2191j
+                                        ; __filbuf+77\u2191j
+                les     bx, [bp+arg_0]
+                mov     ax, es:[bx+6]
+                mov     dx, es:[bx+8]
+                mov     es:[bx], ax
+                mov     es:[bx+2], dx
+
+loc_12552:                              ; CODE XREF: __filbuf+83\u2191j
+                mov     bx, [bp+var_2]
+                push    word ptr [bx+2] ; unsigned int
+                les     bx, [bp+arg_0]
+                push    word ptr es:[bx+8]
+                push    word ptr es:[bx+6] ; void *
+                mov     al, es:[bx+0Bh]
+                cbw
+                push    ax              ; int
+                call    _read
+                add     sp, 8
+                les     bx, [bp+arg_0]
+                mov     es:[bx+4], ax
+                or      ax, ax
+                jz      short loc_12581
+                cmp     ax, 0FFFFh
+                jnz     short loc_1259C
+
+loc_12581:                              ; CODE XREF: __filbuf+C0\u2191j
+                cmp     word ptr es:[bx+4], 0
+                jz      short loc_1258C
+                mov     al, 20h ; ' '
+                jmp     short loc_1258E
+; ---------------------------------------------------------------------------
+
+loc_1258C:                              ; CODE XREF: __filbuf+CC\u2191j
+                mov     al, 10h
+
+loc_1258E:                              ; CODE XREF: __filbuf+D0\u2191j
+                or      es:[bx+0Ah], al
+                mov     word ptr es:[bx+4], 0
+                jmp     loc_124EC
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_1259C:                              ; CODE XREF: __filbuf+C5\u2191j
+                dec     word ptr es:[bx+4]
+                mov     si, es:[bx]
+                inc     word ptr es:[bx]
+                mov     es, word ptr es:[bx+2]
+                mov     al, es:[si]
+                sub     ah, ah
+
+loc_125AF:                              ; CODE XREF: __filbuf+35\u2191j
+                pop     si
+                mov     sp, bp
+                pop     bp
+                retf
+__filbuf        endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; int __cdecl _flsbuf(int, FILE *)
+__flsbuf        proc far                ; CODE XREF: _outc+32\u2193P
+                                        ; putpad+24\u2193P ...
+
+var_8           = word ptr -8
+var_6           = word ptr -6
+var_4           = word ptr -4
+arg_0           = word ptr  6
+arg_2           = dword ptr  8
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 8
+                push    di
+                push    si
+                les     bx, [bp+arg_2]
+                mov     al, es:[bx+0Bh]
+                cbw
+                mov     [bp+var_6], ax
+                mov     ax, bx
+                sub     ax, 3554h
+                cwd
+                mov     cx, 0Ch
+                idiv    cx
+                mov     cx, ax
+                shl     ax, 1
+                add     ax, cx
+                shl     ax, 1
+                add     ax, 3644h
+                mov     [bp+var_8], ax
+                test    byte ptr es:[bx+0Ah], 83h
+                jz      short loc_125EE
+                test    byte ptr es:[bx+0Ah], 40h
+                jz      short loc_125FC
+
+loc_125EE:                              ; CODE XREF: __flsbuf+31\u2191j
+                                        ; __flsbuf+4D\u2193j ...
+                les     bx, [bp+arg_2]
+                or      byte ptr es:[bx+0Ah], 20h
+                mov     ax, 0FFFFh
+                jmp     loc_1276C
+; ---------------------------------------------------------------------------
+
+loc_125FC:                              ; CODE XREF: __flsbuf+38\u2191j
+                test    byte ptr es:[bx+0Ah], 1
+                jnz     short loc_125EE
+                or      byte ptr es:[bx+0Ah], 2
+                and     byte ptr es:[bx+0Ah], 0EFh
+                sub     ax, ax
+                mov     es:[bx+4], ax
+                mov     si, ax
+                mov     [bp+var_4], si
+                test    byte ptr es:[bx+0Ah], 0Ch
+                jz      short loc_12622
+                jmp     loc_126B8
+; ---------------------------------------------------------------------------
+
+loc_12622:                              ; CODE XREF: __flsbuf+69\u2191j
+                mov     ax, bx
+                sub     ax, 3554h
+                cwd
+                mov     cx, 0Ch
+                idiv    cx
+                mov     bx, ax
+                shl     bx, 1
+                add     bx, ax
+                shl     bx, 1
+                test    byte ptr [bx+3644h], 1
+                jnz     short loc_126B8
+                cmp     word ptr [bp+arg_2], 3560h
+                jnz     short loc_1264A
+                cmp     word ptr [bp+arg_2+2], seg dseg
+                jz      short loc_12658
+
+loc_1264A:                              ; CODE XREF: __flsbuf+8D\u2191j
+                cmp     word ptr [bp+arg_2], 356Ch
+                jnz     short loc_126AC
+                cmp     word ptr [bp+arg_2+2], seg dseg
+                jnz     short loc_126AC
+
+loc_12658:                              ; CODE XREF: __flsbuf+94\u2191j
+                push    [bp+var_6]      ; int
+                call    _isatty
+                add     sp, 2
+                or      ax, ax
+                jnz     short loc_126B8
+                inc     word_2CB22
+                cmp     word ptr [bp+arg_2], 3560h
+                jnz     short loc_12686
+                cmp     word ptr [bp+arg_2+2], seg dseg
+                jnz     short loc_12686
+                les     bx, [bp+arg_2]
+                mov     ax, 3154h
+                mov     dx, seg dseg
+                jmp     short loc_1268F
+; ---------------------------------------------------------------------------
+                db 2 dup(90h)
+; ---------------------------------------------------------------------------
+
+loc_12686:                              ; CODE XREF: __flsbuf+BC\u2191j
+                                        ; __flsbuf+C3\u2191j
+                les     bx, [bp+arg_2]
+                mov     ax, 3354h
+                mov     dx, seg dseg
+
+loc_1268F:                              ; CODE XREF: __flsbuf+CE\u2191j
+                mov     es:[bx+6], ax
+                mov     es:[bx+8], dx
+                mov     es:[bx], ax
+                mov     es:[bx+2], dx
+                mov     bx, [bp+var_8]
+                mov     word ptr [bx+2], 200h
+                mov     byte ptr [bx], 1
+                jmp     short loc_126B8
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_126AC:                              ; CODE XREF: __flsbuf+9B\u2191j
+                                        ; __flsbuf+A2\u2191j
+                push    word ptr [bp+arg_2+2]
+                push    word ptr [bp+arg_2]
+                call    __getbuf
+                add     sp, 4
+
+loc_126B8:                              ; CODE XREF: __flsbuf+6B\u2191j
+                                        ; __flsbuf+86\u2191j ...
+                les     bx, [bp+arg_2]
+                test    byte ptr es:[bx+0Ah], 8
+                jnz     short loc_126DC
+                mov     ax, bx
+                sub     ax, 3554h
+                cwd
+                mov     cx, 0Ch
+                idiv    cx
+                mov     bx, ax
+                shl     bx, 1
+                add     bx, ax
+                shl     bx, 1
+                test    byte ptr [bx+3644h], 1
+                jz      short loc_12746
+
+loc_126DC:                              ; CODE XREF: __flsbuf+10C\u2191j
+                mov     bx, word ptr [bp+arg_2]
+                mov     si, es:[bx]
+                sub     si, es:[bx+6]
+                mov     ax, es:[bx+6]
+                mov     dx, es:[bx+8]
+                inc     ax
+                mov     es:[bx], ax
+                mov     es:[bx+2], dx
+                mov     di, [bp+var_8]
+                mov     ax, [di+2]
+                dec     ax
+                mov     es:[bx+4], ax
+                or      si, si
+                jle     short loc_1271C
+                push    si              ; unsigned int
+                push    dx
+                push    word ptr es:[bx+6] ; void *
+                push    [bp+var_6]      ; int
+                call    _write
+                add     sp, 8
+                mov     [bp+var_4], ax
+                jmp     short loc_12737
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_1271C:                              ; CODE XREF: __flsbuf+14F\u2191j
+                mov     bx, [bp+var_6]
+                test    byte ptr [bx+2F00h], 20h
+                jz      short loc_12737
+                mov     ax, 2
+                push    ax              ; int
+                sub     ax, ax
+                push    ax
+                push    ax              ; __int32
+                push    bx              ; int
+                call    far ptr _lseek
+                add     sp, 8
+
+loc_12737:                              ; CODE XREF: __flsbuf+165\u2191j
+                                        ; __flsbuf+170\u2191j
+                les     bx, [bp+arg_2]
+                les     bx, es:[bx+6]
+                mov     al, byte ptr [bp+arg_0]
+                mov     es:[bx], al
+                jmp     short loc_1275F
+; ---------------------------------------------------------------------------
+
+loc_12746:                              ; CODE XREF: __flsbuf+126\u2191j
+                mov     si, 1
+                mov     ax, si
+                push    ax              ; unsigned int
+                lea     ax, [bp+arg_0]
+                push    ss
+                push    ax              ; void *
+                push    [bp+var_6]      ; int
+                call    _write
+                add     sp, 8
+                mov     [bp+var_4], ax
+
+loc_1275F:                              ; CODE XREF: __flsbuf+190\u2191j
+                cmp     [bp+var_4], si
+                jz      short loc_12767
+                jmp     loc_125EE
+; ---------------------------------------------------------------------------
+
+loc_12767:                              ; CODE XREF: __flsbuf+1AE\u2191j
+                mov     al, byte ptr [bp+arg_0]
+                sub     ah, ah
+
+loc_1276C:                              ; CODE XREF: __flsbuf+45\u2191j
+                pop     si
+                pop     di
+                mov     sp, bp
+                pop     bp
+                retf
+__flsbuf        endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+__freebuf       proc far                ; CODE XREF: _fclose+4E\u2191P
+
+arg_0           = dword ptr  6
+
+                push    bp
+                mov     bp, sp
+                les     bx, [bp+arg_0]
+                test    byte ptr es:[bx+0Ah], 83h
+                jz      short loc_127B4
+                test    byte ptr es:[bx+0Ah], 8
+                jz      short loc_127B4
+                push    word ptr es:[bx+8]
+                push    word ptr es:[bx+6] ; void far *
+                call    __ffree
+                add     sp, 4
+                les     bx, [bp+arg_0]
+                and     byte ptr es:[bx+0Ah], 0F7h
+                sub     ax, ax
+                cwd
+                mov     es:[bx], ax
+                mov     es:[bx+2], dx
+                mov     es:[bx+6], ax
+                mov     es:[bx+8], dx
+                mov     es:[bx+4], ax
+
+loc_127B4:                              ; CODE XREF: __freebuf+B\u2191j
+                                        ; __freebuf+12\u2191j
+                pop     bp
+                retf
+__freebuf       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+__getbuf        proc near               ; CODE XREF: __filbuf+7D\u2191p
+                                        ; __flsbuf+FE\u2191p ...
+
+var_4           = dword ptr -4
+arg_0           = dword ptr  4
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 4
+                mov     ax, word ptr [bp+arg_0]
+                sub     ax, 3554h
+                cwd
+                mov     cx, 0Ch
+                idiv    cx
+                mov     cx, ax
+                shl     ax, 1
+                add     ax, cx
+                shl     ax, 1
+                add     ax, 3644h
+                mov     word ptr [bp+var_4], ax
+                mov     word ptr [bp+var_4+2], ds
+                mov     ax, 200h
+                push    ax              ; size_t
+                call    _malloc
+                add     sp, 2
+                les     bx, [bp+arg_0]
+                mov     es:[bx+6], ax
+                mov     es:[bx+8], dx
+                or      dx, ax
+                jz      short loc_12804
+                or      byte ptr es:[bx+0Ah], 8
+                les     bx, [bp+var_4]
+                mov     word ptr es:[bx+2], 200h
+                jmp     short loc_12824
+; ---------------------------------------------------------------------------
+
+loc_12804:                              ; CODE XREF: __getbuf+3C\u2191j
+                les     bx, [bp+arg_0]
+                or      byte ptr es:[bx+0Ah], 4
+                mov     ax, word ptr [bp+var_4]
+                mov     dx, word ptr [bp+var_4+2]
+                inc     ax
+                mov     es:[bx+6], ax
+                mov     es:[bx+8], dx
+                les     bx, [bp+var_4]
+                mov     word ptr es:[bx+2], 1
+
+loc_12824:                              ; CODE XREF: __getbuf+4C\u2191j
+                les     bx, [bp+arg_0]
+                mov     ax, es:[bx+6]
+                mov     dx, es:[bx+8]
+                mov     es:[bx], ax
+                mov     es:[bx+2], dx
+                mov     word ptr es:[bx+4], 0
+                mov     sp, bp
+                pop     bp
+                retn
+__getbuf        endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; int __cdecl __far _openfile(char *, __int32, __int32)
+__openfile      proc far                ; CODE XREF: _fopen+25\u2191P
+
+var_8           = word ptr -8
+var_6           = word ptr -6
+var_4           = byte ptr -4
+var_2           = word ptr -2
+arg_0           = dword ptr  6
+arg_4           = dword ptr  0Ah
+arg_8           = dword ptr  0Eh
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 0Ah
+                push    si
+                les     bx, [bp+arg_4]
+                mov     al, es:[bx]
+                cbw
+                cmp     ax, 61h ; 'a'
+                jz      short loc_1287A
+                cmp     ax, 72h ; 'r'
+                jz      short loc_12864
+                cmp     ax, 77h ; 'w'
+                jz      short loc_12870
+
+loc_1285D:                              ; CODE XREF: __openfile+B1\u2193j
+                sub     ax, ax
+                cwd
+                jmp     loc_12952
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_12864:                              ; CODE XREF: __openfile+16\u2191j
+                sub     si, si
+                mov     [bp+var_4], 1
+
+loc_1286A:                              ; CODE XREF: __openfile+37\u2193j
+                mov     cx, 1
+                jmp     short loc_12891
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_12870:                              ; CODE XREF: __openfile+1B\u2191j
+                mov     si, 301h
+
+loc_12873:                              ; CODE XREF: __openfile+3D\u2193j
+                mov     [bp+var_4], 2
+                jmp     short loc_1286A
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_1287A:                              ; CODE XREF: __openfile+11\u2191j
+                mov     si, 109h
+                jmp     short loc_12873
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_12880:                              ; CODE XREF: __openfile+68\u2193j
+                test    si, 2
+                jnz     short loc_128C9
+                or      si, 2
+                and     si, 0FFFEh
+                mov     [bp+var_4], 80h ; '€'
+
+loc_12891:                              ; CODE XREF: __openfile+2D\u2191j
+                                        ; __openfile+7F\u2193j ...
+                inc     word ptr [bp+arg_4]
+                les     bx, [bp+arg_4]
+                cmp     byte ptr es:[bx], 0
+                jz      short loc_128D4
+                or      cx, cx
+                jz      short loc_128D4
+                mov     al, es:[bx]
+                cbw
+                cmp     ax, 2Bh ; '+'
+                jz      short loc_12880
+                cmp     ax, 62h ; 'b'
+                jz      short loc_128C2
+                cmp     ax, 74h ; 't'
+                jnz     short loc_128C9
+                mov     ax, si
+                test    ax, 0C000h
+                jnz     short loc_128C9
+                or      si, 4000h
+                jmp     short loc_12891
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_128C2:                              ; CODE XREF: __openfile+6D\u2191j
+                mov     ax, si
+                test    ax, 0C000h
+                jz      short loc_128CE
+
+loc_128C9:                              ; CODE XREF: __openfile+44\u2191j
+                                        ; __openfile+72\u2191j ...
+                sub     cx, cx
+                jmp     short loc_12891
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_128CE:                              ; CODE XREF: __openfile+87\u2191j
+                or      si, 8000h
+                jmp     short loc_12891
+; ---------------------------------------------------------------------------
+
+loc_128D4:                              ; CODE XREF: __openfile+5B\u2191j
+                                        ; __openfile+5F\u2191j
+                mov     [bp+var_2], cx
+                mov     ax, 1A4h
+                push    ax
+                push    si              ; int
+                push    word ptr [bp+arg_0+2]
+                push    word ptr [bp+arg_0] ; char *
+                call    _open
+                add     sp, 8
+                mov     [bp+var_6], ax
+                or      ax, ax
+                jge     short loc_128F4
+                jmp     loc_1285D
+; ---------------------------------------------------------------------------
+
+loc_128F4:                              ; CODE XREF: __openfile+AF\u2191j
+                les     bx, [bp+arg_8]
+                mov     al, [bp+var_4]
+                mov     es:[bx+0Ah], al
+                inc     word_2CB22
+                mov     ax, bx
+                sub     ax, 3554h
+                cwd
+                mov     cx, 0Ch
+                idiv    cx
+                mov     cx, ax
+                shl     ax, 1
+                add     ax, cx
+                shl     ax, 1
+                add     ax, 3644h
+                mov     [bp+var_8], ax
+                sub     al, al
+                mov     bx, [bp+var_8]
+                mov     [bx], al
+                cbw
+                mov     bx, word ptr [bp+arg_8]
+                mov     es:[bx+4], ax
+                mov     bx, [bp+var_8]
+                mov     word ptr [bx+4], 0
+                mov     bx, word ptr [bp+arg_8]
+                sub     ax, ax
+                cwd
+                mov     es:[bx], ax
+                mov     es:[bx+2], dx
+                mov     es:[bx+6], ax
+                mov     es:[bx+8], dx
+                mov     al, byte ptr [bp+var_6]
+                mov     es:[bx+0Bh], al
+                mov     ax, bx
+                mov     dx, es
+
+loc_12952:                              ; CODE XREF: __openfile+20\u2191j
+                pop     si
+                mov     sp, bp
+                pop     bp
+                retf
+__openfile      endp
+
+; ---------------------------------------------------------------------------
+                align 2
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+__stbuf         proc far                ; CODE XREF: _printf+1D\u2191P
+
+var_6           = word ptr -6
+var_4           = word ptr -4
+var_2           = word ptr -2
+arg_0           = dword ptr  6
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 6
+                push    si
+                inc     word_2CB22
+                cmp     word ptr [bp+arg_0], 3560h
+                jnz     short loc_1297E
+                cmp     word ptr [bp+arg_0+2], seg dseg
+                jnz     short loc_1297E
+                mov     [bp+var_4], offset unk_2CD24
+                mov     [bp+var_2], seg dseg
+                jmp     short loc_12996
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_1297E:                              ; CODE XREF: __stbuf+10\u2191j
+                                        ; __stbuf+17\u2191j
+                cmp     word ptr [bp+arg_0], 356Ch
+                jnz     short loc_129BA
+                cmp     word ptr [bp+arg_0+2], seg dseg
+                jnz     short loc_129BA
+                mov     [bp+var_4], offset unk_2CF24
+                mov     [bp+var_2], seg dseg
+
+loc_12996:                              ; CODE XREF: __stbuf+23\u2191j
+                les     bx, [bp+arg_0]
+                test    byte ptr es:[bx+0Ah], 0Ch
+                jnz     short loc_129BA
+                mov     ax, bx
+                sub     ax, 3554h
+                cwd
+                mov     cx, 0Ch
+                idiv    cx
+                mov     bx, ax
+                shl     bx, 1
+                add     bx, ax
+                shl     bx, 1
+                test    byte ptr [bx+3644h], 1
+                jz      short loc_129BE
+
+loc_129BA:                              ; CODE XREF: __stbuf+2B\u2191j
+                                        ; __stbuf+32\u2191j ...
+                sub     ax, ax
+                jmp     short loc_12A0D
+; ---------------------------------------------------------------------------
+
+loc_129BE:                              ; CODE XREF: __stbuf+60\u2191j
+                mov     ax, word ptr [bp+arg_0]
+                sub     ax, 3554h
+                cwd
+                mov     cx, 0Ch
+                idiv    cx
+                mov     cx, ax
+                shl     ax, 1
+                add     ax, cx
+                shl     ax, 1
+                add     ax, 3644h
+                mov     [bp+var_6], ax
+                les     bx, [bp+arg_0]
+                mov     ax, [bp+var_4]
+                mov     dx, [bp+var_2]
+                mov     es:[bx+6], ax
+                mov     es:[bx+8], dx
+                mov     es:[bx], ax
+                mov     es:[bx+2], dx
+                mov     si, [bp+var_6]
+                mov     ax, 200h
+                mov     [si+2], ax
+                mov     es:[bx+4], ax
+                mov     bx, si
+                mov     byte ptr [bx], 1
+                mov     bx, word ptr [bp+arg_0]
+                or      byte ptr es:[bx+0Ah], 2
+                mov     ax, 1
+
+loc_12A0D:                              ; CODE XREF: __stbuf+64\u2191j
+                pop     si
+                mov     sp, bp
+                pop     bp
+                retf
+__stbuf         endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; int __cdecl __far _ftbuf(int, FILE *)
+__ftbuf         proc far                ; CODE XREF: _printf+4B\u2191P
+
+var_4           = dword ptr -4
+arg_0           = word ptr  6
+arg_2           = dword ptr  8
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 4
+                cmp     [bp+arg_0], 0
+                jnz     short loc_12A21
+                jmp     loc_12AAA
+; ---------------------------------------------------------------------------
+
+loc_12A21:                              ; CODE XREF: __ftbuf+A\u2191j
+                cmp     word ptr [bp+arg_2], 3560h
+                jnz     short loc_12A2F
+                cmp     word ptr [bp+arg_2+2], seg dseg
+                jz      short loc_12A43
+
+loc_12A2F:                              ; CODE XREF: __ftbuf+14\u2191j
+                cmp     word ptr [bp+arg_2], 356Ch
+                jz      short loc_12A39
+                jmp     loc_12AED
+; ---------------------------------------------------------------------------
+
+loc_12A39:                              ; CODE XREF: __ftbuf+22\u2191j
+                cmp     word ptr [bp+arg_2+2], seg dseg
+                jz      short loc_12A43
+                jmp     loc_12AED
+; ---------------------------------------------------------------------------
+
+loc_12A43:                              ; CODE XREF: __ftbuf+1B\u2191j
+                                        ; __ftbuf+2C\u2191j
+                les     bx, [bp+arg_2]
+                mov     al, es:[bx+0Bh]
+                cbw
+                push    ax              ; int
+                call    _isatty
+                add     sp, 2
+                or      ax, ax
+                jnz     short loc_12A5B
+                jmp     loc_12AED
+; ---------------------------------------------------------------------------
+
+loc_12A5B:                              ; CODE XREF: __ftbuf+44\u2191j
+                mov     ax, word ptr [bp+arg_2]
+                sub     ax, 3554h
+                cwd
+                mov     cx, 0Ch
+                idiv    cx
+                mov     cx, ax
+                shl     ax, 1
+                add     ax, cx
+                shl     ax, 1
+                add     ax, 3644h
+                mov     word ptr [bp+var_4], ax
+                mov     word ptr [bp+var_4+2], ds
+                push    word ptr [bp+arg_2+2]
+                push    word ptr [bp+arg_2] ; FILE *
+                call    _fflush
+                add     sp, 4
+                les     bx, [bp+var_4]
+                mov     byte ptr es:[bx], 0
+                mov     word ptr es:[bx+2], 0
+                les     bx, [bp+arg_2]
+                sub     ax, ax
+                cwd
+                mov     es:[bx], ax
+                mov     es:[bx+2], dx
+                mov     es:[bx+6], ax
+                mov     es:[bx+8], dx
+                jmp     short loc_12AED
+; ---------------------------------------------------------------------------
+
+loc_12AAA:                              ; CODE XREF: __ftbuf+C\u2191j
+                les     bx, [bp+arg_2]
+                cmp     word ptr es:[bx+6], 3154h
+                jnz     short loc_12ABD
+                cmp     word ptr es:[bx+8], seg dseg
+                jz      short loc_12ACD
+
+loc_12ABD:                              ; CODE XREF: __ftbuf+A1\u2191j
+                cmp     word ptr es:[bx+6], 3354h
+                jnz     short loc_12AED
+                cmp     word ptr es:[bx+8], seg dseg
+                jnz     short loc_12AED
+
+loc_12ACD:                              ; CODE XREF: __ftbuf+A9\u2191j
+                mov     al, es:[bx+0Bh]
+                cbw
+                push    ax              ; int
+                call    _isatty
+                add     sp, 2
+                or      ax, ax
+                jz      short loc_12AED
+                push    word ptr [bp+arg_2+2]
+                push    word ptr [bp+arg_2] ; FILE *
+                call    _fflush
+                add     sp, 4
+
+loc_12AED:                              ; CODE XREF: __ftbuf+24\u2191j
+                                        ; __ftbuf+2E\u2191j ...
+                mov     sp, bp
+                pop     bp
+                retf
+__ftbuf         endp
+
+; ---------------------------------------------------------------------------
+                align 2
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; int __cdecl fflush(FILE *)
+_fflush         proc far                ; CODE XREF: _fclose+23\u2191P
+                                        ; _flushall+20\u2191P ...
+
+var_4           = word ptr -4
+arg_0           = dword ptr  6
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 4
+                push    si
+                sub     si, si
+                les     bx, [bp+arg_0]
+                mov     al, es:[bx+0Ah]
+                and     al, 3
+                cmp     al, 2
+                jnz     short loc_12B61
+                test    byte ptr es:[bx+0Ah], 8
+                jnz     short loc_12B29
+                mov     ax, bx
+                sub     ax, 3554h
+                cwd
+                mov     cx, 0Ch
+                idiv    cx
+                mov     bx, ax
+                shl     bx, 1
+                add     bx, ax
+                shl     bx, 1
+                test    byte ptr [bx+3644h], 1
+                jz      short loc_12B61
+
+loc_12B29:                              ; CODE XREF: _fflush+1B\u2191j
+                mov     bx, word ptr [bp+arg_0]
+                mov     ax, es:[bx]
+                sub     ax, es:[bx+6]
+                mov     [bp+var_4], ax
+                or      ax, ax
+                jle     short loc_12B61
+                push    ax              ; unsigned int
+                push    word ptr es:[bx+8]
+                push    word ptr es:[bx+6] ; void *
+                mov     al, es:[bx+0Bh]
+                cbw
+                push    ax              ; int
+                call    _write
+                add     sp, 8
+                cmp     ax, [bp+var_4]
+                jz      short loc_12B61
+                les     bx, [bp+arg_0]
+                or      byte ptr es:[bx+0Ah], 20h
+                mov     si, 0FFFFh
+
+loc_12B61:                              ; CODE XREF: _fflush+14\u2191j
+                                        ; _fflush+35\u2191j ...
+                les     bx, [bp+arg_0]
+                mov     ax, es:[bx+6]
+                mov     dx, es:[bx+8]
+                mov     es:[bx], ax
+                mov     es:[bx+2], dx
+                mov     word ptr es:[bx+4], 0
+                mov     ax, si
+                pop     si
+                mov     sp, bp
+                pop     bp
+                retf
+_fflush         endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+__output        proc far                ; CODE XREF: _printf+39\u2191P
+                                        ; _sprintf+49\u2193P ...
+
+var_A           = byte ptr -0Ah
+var_8           = word ptr -8
+var_6           = word ptr -6
+var_4           = dword ptr -4
+arg_0           = word ptr  6
+arg_2           = word ptr  8
+arg_4           = dword ptr  0Ah
+arg_8           = word ptr  0Eh
+arg_A           = word ptr  10h
+
+                push    bp
+                mov     bp, sp
+                mov     ax, 0Ah
+                call    __chkstk
+                mov     ax, 6020h
+                mov     word_2FBEA, ax
+                mov     word_2FBEC, ds
+                mov     ax, [bp+arg_8]
+                mov     dx, [bp+arg_A]
+                mov     word ptr dword_2FBD8, ax
+                mov     word ptr dword_2FBD8+2, dx
+                mov     ax, [bp+arg_0]
+                mov     dx, [bp+arg_2]
+                mov     word ptr dword_2FBBE, ax
+                mov     word ptr dword_2FBBE+2, dx
+                mov     word_2FBE4, 0
+                mov     word_2FBE2, 0
+                jmp     loc_12EFF
+; ---------------------------------------------------------------------------
+
+loc_12BBE:                              ; CODE XREF: __output+38C\u2193j
+                cmp     [bp+var_A], 25h ; '%'
+                jz      short loc_12BC7
+                jmp     loc_12E6E
+; ---------------------------------------------------------------------------
+
+loc_12BC7:                              ; CODE XREF: __output+42\u2191j
+                mov     word_2FBE6, 1
+                sub     ax, ax
+                mov     word_2FBC8, ax
+                mov     word_2FBC4, ax
+                mov     word_2FBE0, ax
+                mov     word_2FBC6, ax
+                mov     word_2FBDE, ax
+                mov     word_2FBDC, ax
+                mov     word_2FBC2, ax
+                mov     word_2FBBC, ax
+                mov     word_2FBD6, ax
+                mov     word_2FD50, 20h ; ' '
+                les     bx, [bp+arg_4]
+                cmp     byte ptr es:[bx+1], 30h ; '0'
+                jnz     short loc_12C43
+                inc     word ptr [bp+arg_4]
+                mov     word_2FD50, 30h ; '0'
+                jmp     short loc_12C43
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_12C06:                              ; CODE XREF: __output+BD\u2193j
+                mov     bx, word ptr [bp+arg_4]
+                cmp     byte ptr es:[bx], 2Bh ; '+'
+                jnz     short loc_12C1C
+                inc     word_2FBC8
+                mov     word_2FBDC, 0
+                jmp     short loc_12C43
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_12C1C:                              ; CODE XREF: __output+8D\u2191j
+                cmp     byte ptr es:[bx], 20h ; ' '
+                jnz     short loc_12C30
+                cmp     word_2FBC8, 0
+                jnz     short loc_12C43
+                inc     word_2FBDC
+                jmp     short loc_12C43
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_12C30:                              ; CODE XREF: __output+A0\u2191j
+                inc     word_2FBBC
+                jmp     short loc_12C43
+; ---------------------------------------------------------------------------
+
+loc_12C36:                              ; CODE XREF: __output+D7\u2193j
+                les     bx, [bp+arg_4]
+                cmp     byte ptr es:[bx], 2Dh ; '-'
+                jnz     short loc_12C06
+                inc     word_2FBD6
+
+loc_12C43:                              ; CODE XREF: __output+78\u2191j
+                                        ; __output+83\u2191j ...
+                inc     word ptr [bp+arg_4]
+                mov     bx, word ptr [bp+arg_4]
+                mov     al, es:[bx]
+                cbw
+                push    ax
+                push    cs
+                call    near ptr flagchar
+                add     sp, 2
+                or      ax, ax
+                jnz     short loc_12C36
+                push    word ptr [bp+arg_4+2]
+                push    word ptr [bp+arg_4]
+                mov     ax, 601Eh
+                push    ds
+                push    ax
+                push    cs
+                call    near ptr getnum
+                add     sp, 8
+                mov     word ptr [bp+arg_4], ax
+                mov     word ptr [bp+arg_4+2], dx
+                cmp     word_2FBEE, 0
+                jge     short loc_12C84
+                inc     word_2FBD6
+                mov     ax, word_2FBEE
+                neg     ax
+                mov     word_2FBEE, ax
+
+loc_12C84:                              ; CODE XREF: __output+F6\u2191j
+                les     bx, [bp+arg_4]
+                cmp     byte ptr es:[bx], 2Eh ; '.'
+                jnz     short loc_12CBB
+                inc     word_2FBDE
+                inc     word ptr [bp+arg_4]
+                push    es
+                push    word ptr [bp+arg_4]
+                mov     ax, 6016h
+                push    ds
+                push    ax
+                push    cs
+                call    near ptr getnum
+                add     sp, 8
+                mov     word ptr [bp+arg_4], ax
+                mov     word ptr [bp+arg_4+2], dx
+                cmp     word_2FBE6, 0
+                jge     short loc_12CBB
+                mov     word_2FBE6, 1
+                dec     word_2FBDE
+
+loc_12CBB:                              ; CODE XREF: __output+10B\u2191j
+                                        ; __output+12F\u2191j
+                les     bx, [bp+arg_4]
+                mov     al, es:[bx]
+                cbw
+                cmp     ax, 46h ; 'F'
+                jz      short loc_12D04
+                cmp     ax, 4Eh ; 'N'
+                jz      short loc_12D0C
+                cmp     ax, 68h ; 'h'
+                jz      short loc_12CFC
+                cmp     ax, 6Ch ; 'l'
+                jnz     short loc_12CDC
+                mov     word_2FBC6, 2
+
+loc_12CDC:                              ; CODE XREF: __output+154\u2191j
+                                        ; __output+182\u2193j ...
+                cmp     word_2FBC6, 0
+                jnz     short loc_12CEC
+                les     bx, [bp+arg_4]
+                cmp     byte ptr es:[bx], 4Ch ; 'L'
+                jnz     short loc_12CEF
+
+loc_12CEC:                              ; CODE XREF: __output+161\u2191j
+                inc     word ptr [bp+arg_4]
+
+loc_12CEF:                              ; CODE XREF: __output+16A\u2191j
+                les     bx, [bp+arg_4]
+                cmp     byte ptr es:[bx], 0
+                jnz     short loc_12D14
+                jmp     loc_12F0F
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_12CFC:                              ; CODE XREF: __output+14F\u2191j
+                mov     word_2FBC6, 1
+                jmp     short loc_12CDC
+; ---------------------------------------------------------------------------
+
+loc_12D04:                              ; CODE XREF: __output+145\u2191j
+                mov     word_2FBC6, 10h
+                jmp     short loc_12CDC
+; ---------------------------------------------------------------------------
+
+loc_12D0C:                              ; CODE XREF: __output+14A\u2191j
+                mov     word_2FBC6, 8
+                jmp     short loc_12CDC
+; ---------------------------------------------------------------------------
+
+loc_12D14:                              ; CODE XREF: __output+176\u2191j
+                mov     al, es:[bx]
+                cbw
+                mov     [bp+var_8], ax
+                cmp     ax, 45h ; 'E'
+                jz      short loc_12D2A
+                cmp     ax, 47h ; 'G'
+                jz      short loc_12D2A
+                cmp     ax, 58h ; 'X'
+                jnz     short loc_12D32
+
+loc_12D2A:                              ; CODE XREF: __output+19E\u2191j
+                                        ; __output+1A3\u2191j
+                inc     word_2FBC4
+                add     [bp+var_8], 20h ; ' '
+
+loc_12D32:                              ; CODE XREF: __output+1A8\u2191j
+                mov     ax, [bp+var_8]
+                sub     ax, 63h ; 'c'
+                cmp     ax, 15h
+                jbe     short loc_12D40
+                jmp     loc_12E5E
+; ---------------------------------------------------------------------------
+
+loc_12D40:                              ; CODE XREF: __output+1BB\u2191j
+                add     ax, ax
+                xchg    ax, bx
+                jmp     cs:off_12E7E[bx]
+; ---------------------------------------------------------------------------
+
+loc_12D48:                              ; CODE XREF: __output+1C3\u2191j
+                                        ; DATA XREF: __output+314\u2193o
+                les     bx, dword_2FBD8
+                les     bx, es:[bx]
+                mov     ax, word_2FBE2
+                mov     es:[bx], ax
+                add     word ptr dword_2FBD8, 4
+                jmp     loc_12EAA
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_12D5E:                              ; CODE XREF: __output+1C3\u2191j
+                                        ; DATA XREF: __output+322\u2193o
+                inc     word_2FBE0
+
+loc_12D62:                              ; CODE XREF: __output+1C3\u2191j
+                                        ; DATA XREF: __output+300\u2193o ...
+                mov     word_2FBBC, 0
+                mov     ax, 0Ah
+
+loc_12D6B:                              ; CODE XREF: __output+1F9\u2193j
+                                        ; __output+2C1\u2193j
+                push    ax
+                push    cs
+                call    near ptr iprint
+
+loc_12D70:                              ; CODE XREF: __output+2CB\u2193j
+                                        ; __output+2DB\u2193j
+                add     sp, 2
+                jmp     loc_12EAA
+; ---------------------------------------------------------------------------
+
+loc_12D76:                              ; CODE XREF: __output+1C3\u2191j
+                                        ; DATA XREF: __output+316\u2193o
+                mov     ax, 8
+                jmp     short loc_12D6B
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_12D7C:                              ; CODE XREF: __output+1C3\u2191j
+                                        ; DATA XREF: __output+318\u2193o
+                inc     word_2FBC2
+                inc     word_2FBC4
+                cmp     word_2FBDE, 0
+                jnz     short loc_12D94
+                mov     word_2FBE8, 1
+                jmp     short loc_12D9A
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_12D94:                              ; CODE XREF: __output+209\u2191j
+                mov     word_2FBE8, 0
+
+loc_12D9A:                              ; CODE XREF: __output+211\u2191j
+                inc     word_2FBDE
+                mov     word_2FBE6, 4
+                cmp     word_2FBC6, 8
+                jnz     short loc_12DAE
+                jmp     loc_12E3E
+; ---------------------------------------------------------------------------
+
+loc_12DAE:                              ; CODE XREF: __output+229\u2191j
+                sub     ax, ax
+                mov     word_2FBC6, ax
+                mov     [bp+var_6], ax
+                cmp     word_2FBEE, ax
+                jz      short loc_12DE3
+                mov     ax, word_2FBEE
+                mov     [bp+var_6], ax
+                cmp     word_2FBD6, 0
+                jz      short loc_12DD2
+                mov     word_2FBEE, 0
+                jmp     short loc_12DE3
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_12DD2:                              ; CODE XREF: __output+247\u2191j
+                sub     word_2FBEE, 5
+                mov     ax, word_2FBEE
+                or      ax, ax
+                jge     short loc_12DE0
+                sub     ax, ax
+
+loc_12DE0:                              ; CODE XREF: __output+25C\u2191j
+                mov     word_2FBEE, ax
+
+loc_12DE3:                              ; CODE XREF: __output+23A\u2191j
+                                        ; __output+24F\u2191j
+                add     word ptr dword_2FBD8, 2
+                mov     ax, 10h
+                push    ax
+                push    cs
+                call    near ptr iprint
+                add     sp, 2
+                mov     ax, 3Ah ; ':'
+                push    ax
+                push    cs
+                call    near ptr _outc
+                add     sp, 2
+                cmp     [bp+var_6], 0
+                jz      short loc_12E26
+                cmp     word_2FBD6, 0
+                jz      short loc_12E20
+                mov     ax, [bp+var_6]
+                sub     ax, 5
+                mov     word_2FBEE, ax
+                or      ax, ax
+                jge     short loc_12E1A
+                sub     ax, ax
+
+loc_12E1A:                              ; CODE XREF: __output+296\u2191j
+                mov     word_2FBEE, ax
+                jmp     short loc_12E26
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_12E20:                              ; CODE XREF: __output+289\u2191j
+                mov     word_2FBEE, 0
+
+loc_12E26:                              ; CODE XREF: __output+282\u2191j
+                                        ; __output+29D\u2191j
+                sub     word ptr dword_2FBD8, 4
+                mov     ax, 10h
+                push    ax
+                push    cs
+                call    near ptr iprint
+                add     sp, 2
+                add     word ptr dword_2FBD8, 2
+                jmp     short loc_12EAA
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_12E3E:                              ; CODE XREF: __output+1C3\u2191j
+                                        ; __output+22B\u2191j
+                                        ; DATA XREF: ...
+                mov     ax, 10h
+                jmp     loc_12D6B
+; ---------------------------------------------------------------------------
+
+loc_12E44:                              ; CODE XREF: __output+1C3\u2191j
+                                        ; DATA XREF: __output+31E\u2193o
+                sub     ax, ax
+
+loc_12E46:                              ; CODE XREF: __output+2D1\u2193j
+                push    ax
+                push    cs
+                call    near ptr sprint
+                jmp     loc_12D70
+; ---------------------------------------------------------------------------
+
+loc_12E4E:                              ; CODE XREF: __output+1C3\u2191j
+                                        ; DATA XREF: __output:off_12E7E\u2193o
+                mov     ax, 1
+                jmp     short loc_12E46
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_12E54:                              ; CODE XREF: __output+1C3\u2191j
+                                        ; DATA XREF: __output+302\u2193o ...
+                push    [bp+var_8]
+                push    cs
+                call    near ptr fprint
+; ---------------------------------------------------------------------------
+                jmp     loc_12D70
+; ---------------------------------------------------------------------------
+
+loc_12E5E:                              ; CODE XREF: __output+1BD\u2191j
+                                        ; __output+1C3\u2191j
+                                        ; DATA XREF: ...
+                cmp     word_2FBC6, 0
+                jz      short loc_12E6E
+                mov     ax, word ptr [bp+arg_4]
+                mov     dx, word ptr [bp+arg_4+2]
+                dec     word ptr [bp+arg_4]
+
+loc_12E6E:                              ; CODE XREF: __output+44\u2191j
+                                        ; __output+2E3\u2191j
+                mov     ax, word ptr [bp+arg_4]
+                mov     dx, word ptr [bp+arg_4+2]
+                inc     ax
+                mov     word ptr [bp+var_4], ax
+                mov     word ptr [bp+var_4+2], dx
+                jmp     short loc_12ECF
+; ---------------------------------------------------------------------------
+                align 2
+off_12E7E       dw offset loc_12E4E     ; DATA XREF: __output+1C3\u2191r
+                dw offset loc_12D62
+                dw offset loc_12E54
+                dw offset loc_12E54
+                dw offset loc_12E54
+                dw offset loc_12E5E
+                dw offset loc_12D62
+                dw offset loc_12E5E
+                dw offset loc_12E5E
+                dw offset loc_12E5E
+                dw offset loc_12E5E
+                dw offset loc_12D48
+                dw offset loc_12D76
+                dw offset loc_12D7C
+                dw offset loc_12E5E
+                dw offset loc_12E5E
+                dw offset loc_12E44
+                dw offset loc_12E5E
+                dw offset loc_12D5E
+                dw offset loc_12E5E
+                dw offset loc_12E5E
+                dw offset loc_12E3E
+; ---------------------------------------------------------------------------
+
+loc_12EAA:                              ; CODE XREF: __output+1DA\u2191j
+                                        ; __output+1F3\u2191j ...
+                cmp     word_2FBE4, 0
+                jz      short loc_12EC6
+                cmp     word_2FBE2, 0
+                jnz     short loc_12F26
+                les     bx, dword_2FBBE
+                test    byte ptr es:[bx+0Ah], 20h
+                jnz     short loc_12F21
+                jmp     short loc_12F26
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_12EC6:                              ; CODE XREF: __output+32F\u2191j
+                inc     word ptr [bp+arg_4]
+                jmp     short loc_12EFF
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_12ECC:                              ; CODE XREF: __output+35E\u2193j
+                inc     word ptr [bp+var_4]
+
+loc_12ECF:                              ; CODE XREF: __output+2FB\u2191j
+                les     bx, [bp+var_4]
+                mov     al, es:[bx]
+                mov     [bp+var_A], al
+                or      al, al
+                jz      short loc_12EE0
+                cmp     al, 25h ; '%'
+                jnz     short loc_12ECC
+
+loc_12EE0:                              ; CODE XREF: __output+35A\u2191j
+                mov     ax, bx
+                sub     ax, word ptr [bp+arg_4]
+                push    ax
+                push    word ptr [bp+arg_4+2]
+                push    word ptr [bp+arg_4]
+                push    cs
+                call    near ptr putbuf
+                add     sp, 6
+                mov     ax, word ptr [bp+var_4]
+                mov     dx, word ptr [bp+var_4+2]
+                mov     word ptr [bp+arg_4], ax
+                mov     word ptr [bp+arg_4+2], dx
+
+loc_12EFF:                              ; CODE XREF: __output+3B\u2191j
+                                        ; __output+349\u2191j
+                les     bx, [bp+arg_4]
+                mov     al, es:[bx]
+                mov     [bp+var_A], al
+                or      al, al
+                jz      short loc_12F0F
+                jmp     loc_12BBE
+; ---------------------------------------------------------------------------
+
+loc_12F0F:                              ; CODE XREF: __output+178\u2191j
+                                        ; __output+38A\u2191j
+                cmp     word_2FBE2, 0
+                jnz     short loc_12F26
+                les     bx, dword_2FBBE
+                test    byte ptr es:[bx+0Ah], 20h
+                jz      short loc_12F26
+
+loc_12F21:                              ; CODE XREF: __output+341\u2191j
+                mov     ax, 0FFFFh
+                jmp     short loc_12F29
+; ---------------------------------------------------------------------------
+
+loc_12F26:                              ; CODE XREF: __output+336\u2191j
+                                        ; __output+343\u2191j ...
+                mov     ax, word_2FBE2
+
+loc_12F29:                              ; CODE XREF: __output+3A4\u2191j
+                mov     sp, bp
+                pop     bp
+                retf
+__output        endp
+
+; ---------------------------------------------------------------------------
+                align 2
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function static bp-based frame
+
+iprint          proc far                ; CODE XREF: __output+1ED\u2191p
+                                        ; __output+26D\u2191p ...
+
+var_12          = word ptr -12h
+var_10          = word ptr -10h
+var_E           = dword ptr -0Eh
+var_A           = word ptr -0Ah
+var_8           = dword ptr -8
+var_4           = dword ptr -4
+arg_0           = word ptr  6
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 12h
+                push    di
+                push    si
+                cmp     [bp+arg_0], 0Ah
+                jz      short loc_12F40
+                inc     word_2FBE0
+
+loc_12F40:                              ; CODE XREF: iprint+C\u2191j
+                cmp     word_2FBC6, 2
+                jz      short loc_12F4E
+                cmp     word_2FBC6, 10h
+                jnz     short loc_12F66
+
+loc_12F4E:                              ; CODE XREF: iprint+17\u2191j
+                les     bx, dword_2FBD8
+                mov     ax, es:[bx]
+                mov     dx, es:[bx+2]
+                mov     word ptr [bp+var_4], ax
+                mov     word ptr [bp+var_4+2], dx
+                add     word ptr dword_2FBD8, 4
+                jmp     short loc_12F91
+; ---------------------------------------------------------------------------
+
+loc_12F66:                              ; CODE XREF: iprint+1E\u2191j
+                cmp     word_2FBE0, 0
+                jz      short loc_12F7E
+                les     bx, dword_2FBD8
+                mov     ax, es:[bx]
+                mov     word ptr [bp+var_4], ax
+                mov     word ptr [bp+var_4+2], 0
+                jmp     short loc_12F8C
+; ---------------------------------------------------------------------------
+
+loc_12F7E:                              ; CODE XREF: iprint+3D\u2191j
+                les     bx, dword_2FBD8
+                mov     ax, es:[bx]
+                cwd
+                mov     word ptr [bp+var_4], ax
+                mov     word ptr [bp+var_4+2], dx
+
+loc_12F8C:                              ; CODE XREF: iprint+4E\u2191j
+                add     word ptr dword_2FBD8, 2
+
+loc_12F91:                              ; CODE XREF: iprint+36\u2191j
+                cmp     word_2FBBC, 0
+                jz      short loc_12FA6
+                mov     ax, word ptr [bp+var_4]
+                or      ax, word ptr [bp+var_4+2]
+                jz      short loc_12FA6
+                mov     ax, [bp+arg_0]
+                jmp     short loc_12FA8
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_12FA6:                              ; CODE XREF: iprint+68\u2191j
+                                        ; iprint+70\u2191j
+                sub     ax, ax
+
+loc_12FA8:                              ; CODE XREF: iprint+75\u2191j
+                mov     word_2FD4E, ax
+                mov     ax, word_2FBEA
+                mov     dx, word_2FBEC
+                mov     word ptr [bp+var_E], ax
+                mov     word ptr [bp+var_E+2], dx
+                cmp     word_2FBE0, 0
+                jnz     short loc_12FF0
+                cmp     word ptr [bp+var_4+2], 0
+                jge     short loc_12FF0
+                cmp     [bp+arg_0], 0Ah
+                jnz     short loc_12FE8
+                les     bx, [bp+var_E]
+                inc     word ptr [bp+var_E]
+                mov     byte ptr es:[bx], 2Dh ; '-'
+                mov     ax, word ptr [bp+var_4]
+                mov     dx, word ptr [bp+var_4+2]
+                neg     ax
+                adc     dx, 0
+                neg     dx
+                mov     word ptr [bp+var_4], ax
+                mov     word ptr [bp+var_4+2], dx
+
+loc_12FE8:                              ; CODE XREF: iprint+9B\u2191j
+                mov     [bp+var_A], 1
+                jmp     short loc_12FF5
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_12FF0:                              ; CODE XREF: iprint+8F\u2191j
+                                        ; iprint+95\u2191j
+                mov     [bp+var_A], 0
+
+loc_12FF5:                              ; CODE XREF: iprint+BF\u2191j
+                mov     ax, 5FFAh
+                mov     word ptr [bp+var_8], ax
+                mov     word ptr [bp+var_8+2], ds
+                push    [bp+arg_0]      ; int
+                push    ds
+                push    ax              ; char *
+                push    word ptr [bp+var_4+2]
+                push    word ptr [bp+var_4] ; unsigned __int32
+                call    far ptr _ultoa
+                add     sp, 0Ah
+                cmp     word_2FBDE, 0
+                jz      short loc_13049
+                push    word ptr [bp+var_8+2]
+                push    word ptr [bp+var_8] ; char *
+                call    _strlen
+                add     sp, 4
+                mov     cx, word_2FBE6
+                sub     cx, ax
+                mov     [bp+var_10], cx
+                les     di, [bp+var_E]
+                jmp     short loc_13039
+; ---------------------------------------------------------------------------
+
+loc_13034:                              ; CODE XREF: iprint+110\u2193j
+                mov     byte ptr es:[di], 30h ; '0'
+                inc     di
+
+loc_13039:                              ; CODE XREF: iprint+104\u2191j
+                mov     ax, cx
+                dec     cx
+                or      ax, ax
+                jg      short loc_13034
+                mov     word ptr [bp+var_E], di
+                mov     word ptr [bp+var_E+2], es
+                mov     [bp+var_10], cx
+
+loc_13049:                              ; CODE XREF: iprint+E8\u2191j
+                mov     cx, word_2FBC4
+                mov     [bp+var_12], ds
+                lds     si, [bp+var_E]
+
+loc_13053:                              ; CODE XREF: iprint+140\u2193j
+                les     bx, [bp+var_8]
+                mov     al, es:[bx]
+                mov     [si], al
+                or      cx, cx
+                jz      short loc_13066
+                cmp     al, 61h ; 'a'
+                jl      short loc_13066
+                sub     byte ptr [si], 20h ; ' '
+
+loc_13066:                              ; CODE XREF: iprint+12F\u2191j
+                                        ; iprint+133\u2191j
+                inc     si
+                inc     word ptr [bp+var_8]
+                cmp     byte ptr es:[bx], 0
+                jnz     short loc_13053
+                mov     word ptr [bp+var_E], si
+                mov     word ptr [bp+var_E+2], ds
+                mov     ds, [bp+var_12]
+                cmp     word_2FBE0, 0
+                jnz     short loc_13094
+                mov     ax, word_2FBC8
+                or      ax, word_2FBDC
+                jz      short loc_13094
+                cmp     [bp+var_A], 0
+                jnz     short loc_13094
+                mov     ax, 1
+                jmp     short loc_13096
+; ---------------------------------------------------------------------------
+
+loc_13094:                              ; CODE XREF: iprint+150\u2191j
+                                        ; iprint+159\u2191j ...
+                sub     ax, ax
+
+loc_13096:                              ; CODE XREF: iprint+164\u2191j
+                push    ax
+                push    cs
+                call    near ptr _out
+                add     sp, 2
+                pop     si
+                pop     di
+                mov     sp, bp
+                pop     bp
+                retf
+iprint          endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function static bp-based frame
+
+sprint          proc far                ; CODE XREF: __output+2C8\u2191p
+
+var_E           = dword ptr -0Eh
+var_8           = word ptr -8
+var_6           = word ptr -6
+var_4           = word ptr -4
+arg_0           = word ptr  6
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 10h
+                push    di
+                push    si
+                cmp     [bp+arg_0], 0
+                jz      short loc_130CA
+                mov     si, 1
+                mov     ax, word ptr dword_2FBD8
+                mov     dx, word ptr dword_2FBD8+2
+                mov     [bp+var_8], ax
+                mov     [bp+var_6], dx
+                add     word ptr dword_2FBD8, 2
+                jmp     loc_1315F
+; ---------------------------------------------------------------------------
+
+loc_130CA:                              ; CODE XREF: sprint+C\u2191j
+                cmp     word_2FBC6, 8
+                jz      short loc_130EA
+                les     bx, dword_2FBD8
+                mov     ax, es:[bx]
+                mov     dx, es:[bx+2]
+                mov     [bp+var_8], ax
+                mov     [bp+var_6], dx
+                add     word ptr dword_2FBD8, 4
+                jmp     short loc_130FF
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_130EA:                              ; CODE XREF: sprint+2B\u2191j
+                les     bx, dword_2FBD8
+                mov     ax, es:[bx]
+                mov     [bp+var_4], ax
+                mov     [bp+var_8], ax
+                mov     [bp+var_6], ds
+                add     word ptr dword_2FBD8, 2
+
+loc_130FF:                              ; CODE XREF: sprint+43\u2191j
+                cmp     word_2FBC6, 8
+                jz      short loc_13114
+                mov     ax, [bp+var_8]
+                or      ax, [bp+var_6]
+                jnz     short loc_13123
+                mov     ax, 36C0h
+                jmp     short loc_1311D
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_13114:                              ; CODE XREF: sprint+60\u2191j
+                cmp     [bp+var_4], 0
+                jnz     short loc_13123
+                mov     ax, 36C7h
+
+loc_1311D:                              ; CODE XREF: sprint+6D\u2191j
+                mov     [bp+var_8], ax
+                mov     [bp+var_6], ds
+
+loc_13123:                              ; CODE XREF: sprint+68\u2191j
+                                        ; sprint+74\u2191j
+                mov     ax, [bp+var_8]
+                mov     dx, [bp+var_6]
+                mov     word ptr [bp+var_E], ax
+                mov     word ptr [bp+var_E+2], dx
+                sub     si, si
+                cmp     word_2FBDE, si
+                jz      short loc_13153
+                mov     cx, word_2FBE6
+                jmp     short loc_1314B
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_1313E:                              ; CODE XREF: sprint+AB\u2193j
+                les     bx, [bp+var_E]
+                inc     word ptr [bp+var_E]
+                cmp     byte ptr es:[bx], 0
+                jz      short loc_1315F
+                inc     si
+
+loc_1314B:                              ; CODE XREF: sprint+97\u2191j
+                cmp     cx, si
+                jle     short loc_1315F
+                jmp     short loc_1313E
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_13152:                              ; CODE XREF: sprint+B9\u2193j
+                inc     si
+
+loc_13153:                              ; CODE XREF: sprint+91\u2191j
+                les     bx, [bp+var_E]
+                inc     word ptr [bp+var_E]
+                cmp     byte ptr es:[bx], 0
+                jnz     short loc_13152
+
+loc_1315F:                              ; CODE XREF: sprint+23\u2191j
+                                        ; sprint+A4\u2191j ...
+                mov     di, word_2FBEE
+                sub     di, si
+                cmp     word_2FBD6, 0
+                jnz     short loc_13174
+                push    di
+                push    cs
+                call    near ptr putpad
+                add     sp, 2
+
+loc_13174:                              ; CODE XREF: sprint+C6\u2191j
+                push    si
+                push    [bp+var_6]
+                push    [bp+var_8]
+                push    cs
+                call    near ptr putbuf
+                add     sp, 6
+                cmp     word_2FBD6, 0
+                jz      short loc_13191
+                push    di
+                push    cs
+                call    near ptr putpad
+                add     sp, 2
+
+loc_13191:                              ; CODE XREF: sprint+E3\u2191j
+                pop     si
+                pop     di
+                mov     sp, bp
+                pop     bp
+                retf
+sprint          endp
+
+; ---------------------------------------------------------------------------
+                align 2
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function noreturn static bp-based frame
+
+fprint          proc far                ; CODE XREF: __output+2D8\u2191p
+
+var_6           = byte ptr -6
+var_4           = word ptr -4
+var_2           = word ptr -2
+arg_0           = word ptr  6
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 6
+                mov     ax, word ptr dword_2FBD8
+                mov     dx, word ptr dword_2FBD8+2
+                mov     [bp+var_4], ax
+                mov     [bp+var_2], dx
+                cmp     [bp+arg_0], 67h ; 'g'
+                jz      short loc_131B7
+                cmp     [bp+arg_0], 47h ; 'G'
+                jnz     short loc_131BC
+
+loc_131B7:                              ; CODE XREF: fprint+17\u2191j
+                mov     al, 1
+                jmp     short loc_131BE
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_131BC:                              ; CODE XREF: fprint+1D\u2191j
+                sub     al, al
+
+loc_131BE:                              ; CODE XREF: fprint+21\u2191j
+                mov     [bp+var_6], al
+                cmp     word_2FBDE, 0
+                jnz     short loc_131CE
+                mov     word_2FBE6, 6
+
+loc_131CE:                              ; CODE XREF: fprint+2E\u2191j
+                cmp     [bp+var_6], 0
+                jz      short loc_131E1
+                cmp     word_2FBE6, 0
+                jnz     short loc_131E1
+                mov     word_2FBE6, 1
+
+loc_131E1:                              ; CODE XREF: fprint+3A\u2191j
+                                        ; fprint+41\u2191j
+                push    word_2FBC4
+                push    word_2FBE6
+                push    [bp+arg_0]
+                push    word_2FBEC
+                push    word_2FBEA
+                push    [bp+var_2]
+                push    [bp+var_4]
+                mov     es, seg_2E9FA
+                assume es:dseg
+                call    es:off_2D2BC
+fprint          endp ; sp-analysis failed
+
                 add     sp, 0Eh
                 cmp     byte ptr [bp-6], 0
                 jz      short loc_13227
@@ -4292,66 +7325,2705 @@ loc_1327A:                              ; CODE XREF: seg001:2156\u2191j
                 retf
 ; ---------------------------------------------------------------------------
                 align 2
-; [0000004B BYTES: COLLAPSED FUNCTION _outc. PRESS NUMPAD+ TO EXPAND]
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function static bp-based frame
+
+_outc           proc far                ; CODE XREF: __output+278\u2191p
+                                        ; _out+75\u2193p ...
+
+arg_0           = word ptr  6
+
+                push    bp
+                mov     bp, sp
+                push    si
+                cmp     word_2FBE4, 0
+                jnz     short loc_132CC
+                les     bx, dword_2FBBE
+                assume es:nothing
+                dec     word ptr es:[bx+4]
+                js      short loc_132AE
+                mov     al, byte ptr [bp+arg_0]
+                mov     si, es:[bx]
+                inc     word ptr es:[bx]
+                mov     es, word ptr es:[bx+2]
+                mov     es:[si], al
+                sub     ah, ah
+                jmp     short loc_132BE
+; ---------------------------------------------------------------------------
                 align 2
-; [0000006C BYTES: COLLAPSED FUNCTION putpad. PRESS NUMPAD+ TO EXPAND]
-; [00000076 BYTES: COLLAPSED FUNCTION putbuf. PRESS NUMPAD+ TO EXPAND]
-; [00000105 BYTES: COLLAPSED FUNCTION _out. PRESS NUMPAD+ TO EXPAND]
+
+loc_132AE:                              ; CODE XREF: _outc+13\u2191j
+                push    word ptr dword_2FBBE+2
+                push    bx              ; FILE *
+                push    [bp+arg_0]      ; int
+                call    __flsbuf
+                add     sp, 6
+
+loc_132BE:                              ; CODE XREF: _outc+27\u2191j
+                inc     ax
+                jnz     short loc_132C8
+                inc     word_2FBE4
+                jmp     short loc_132CC
+; ---------------------------------------------------------------------------
                 align 2
-; [00000018 BYTES: COLLAPSED FUNCTION putsign. PRESS NUMPAD+ TO EXPAND]
-; [0000002A BYTES: COLLAPSED FUNCTION putprefix. PRESS NUMPAD+ TO EXPAND]
-; [000000A1 BYTES: COLLAPSED FUNCTION getnum. PRESS NUMPAD+ TO EXPAND]
+
+loc_132C8:                              ; CODE XREF: _outc+3B\u2191j
+                inc     word_2FBE2
+
+loc_132CC:                              ; CODE XREF: _outc+9\u2191j
+                                        ; _outc+41\u2191j
+                pop     si
+                pop     bp
+                retf
+_outc           endp
+
+; ---------------------------------------------------------------------------
                 align 2
-; [0000003D BYTES: COLLAPSED FUNCTION flagchar. PRESS NUMPAD+ TO EXPAND]
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function static bp-based frame
+
+putpad          proc far                ; CODE XREF: sprint+CA\u2191p
+                                        ; sprint+E7\u2191p ...
+
+arg_0           = word ptr  6
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 2
+                push    di
+                push    si
+                cmp     word_2FBE4, 0
+                jnz     short loc_13336
+                mov     si, [bp+arg_0]
+                or      si, si
+                jle     short loc_13336
+                jmp     short loc_13303
+; ---------------------------------------------------------------------------
+
+loc_132E8:                              ; CODE XREF: putpad+42\u2193j
+                push    word ptr dword_2FBBE+2
+                push    word ptr dword_2FBBE ; FILE *
+                push    word_2FD50      ; int
+                call    __flsbuf
+                add     sp, 6
+
+loc_132FC:                              ; CODE XREF: putpad+56\u2193j
+                inc     ax
+                jnz     short loc_13303
+                inc     word_2FBE4
+
+loc_13303:                              ; CODE XREF: putpad+16\u2191j
+                                        ; putpad+2D\u2191j
+                mov     ax, si
+                dec     si
+                or      ax, ax
+                jle     short loc_13328
+                les     bx, dword_2FBBE
+                dec     word ptr es:[bx+4]
+                js      short loc_132E8
+                mov     al, byte ptr word_2FD50
+                mov     di, es:[bx]
+                inc     word ptr es:[bx]
+                mov     es, word ptr es:[bx+2]
+                mov     es:[di], al
+                sub     ah, ah
+                jmp     short loc_132FC
+; ---------------------------------------------------------------------------
+
+loc_13328:                              ; CODE XREF: putpad+38\u2191j
+                cmp     word_2FBE4, 0
+                jnz     short loc_13336
+                mov     ax, [bp+arg_0]
+                add     word_2FBE2, ax
+
+loc_13336:                              ; CODE XREF: putpad+D\u2191j
+                                        ; putpad+14\u2191j ...
+                pop     si
+                pop     di
+                mov     sp, bp
+                pop     bp
+                retf
+putpad          endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function static bp-based frame
+
+putbuf          proc far                ; CODE XREF: __output+36D\u2191p
+                                        ; sprint+D8\u2191p ...
+
+arg_0           = dword ptr  6
+arg_4           = word ptr  0Ah
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 2
+                push    di
+                push    si
+                mov     si, [bp+arg_4]
+                cmp     word_2FBE4, 0
+                jnz     short loc_133AC
+                jmp     short loc_13372
+; ---------------------------------------------------------------------------
+
+loc_13350:                              ; CODE XREF: putbuf+45\u2193j
+                push    word ptr dword_2FBBE+2
+                push    word ptr dword_2FBBE ; FILE *
+                les     bx, [bp+arg_0]
+                mov     al, es:[bx]
+                cbw
+                push    ax              ; int
+                call    __flsbuf
+                add     sp, 6
+
+loc_13368:                              ; CODE XREF: putbuf+60\u2193j
+                inc     ax
+                jnz     short loc_1336F
+                inc     word_2FBE4
+
+loc_1336F:                              ; CODE XREF: putbuf+2D\u2191j
+                inc     word ptr [bp+arg_0]
+
+loc_13372:                              ; CODE XREF: putbuf+12\u2191j
+                mov     ax, si
+                dec     si
+                or      ax, ax
+                jz      short loc_1339E
+                les     bx, dword_2FBBE
+                dec     word ptr es:[bx+4]
+                js      short loc_13350
+                les     bx, [bp+arg_0]
+                mov     al, es:[bx]
+                les     bx, dword_2FBBE
+                mov     di, es:[bx]
+                inc     word ptr es:[bx]
+                mov     es, word ptr es:[bx+2]
+                mov     es:[di], al
+                sub     ah, ah
+                jmp     short loc_13368
+; ---------------------------------------------------------------------------
+
+loc_1339E:                              ; CODE XREF: putbuf+3B\u2191j
+                cmp     word_2FBE4, 0
+                jnz     short loc_133AC
+                mov     ax, [bp+arg_4]
+                add     word_2FBE2, ax
+
+loc_133AC:                              ; CODE XREF: putbuf+10\u2191j
+                                        ; putbuf+67\u2191j
+                pop     si
+                pop     di
+                mov     sp, bp
+                pop     bp
+                retf
+putbuf          endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function static bp-based frame
+
+_out            proc far                ; CODE XREF: iprint+16A\u2191p
+                                        ; seg001:215C\u2191p
+
+var_C           = dword ptr -0Ch
+var_8           = word ptr -8
+var_6           = word ptr -6
+var_4           = word ptr -4
+arg_0           = word ptr  6
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 0Ch
+                push    si
+                mov     ax, word_2FBEA
+                mov     dx, word_2FBEC
+                mov     word ptr [bp+var_C], ax
+                mov     word ptr [bp+var_C+2], dx
+                sub     ax, ax
+                mov     [bp+var_4], ax
+                mov     [bp+var_6], ax
+                cmp     word_2FD50, 30h ; '0'
+                jnz     short loc_133ED
+                cmp     word_2FBDE, ax
+                jz      short loc_133ED
+                cmp     word_2FBC2, ax
+                jz      short loc_133E7
+                cmp     word_2FBE8, ax
+                jnz     short loc_133ED
+
+loc_133E7:                              ; CODE XREF: _out+2D\u2191j
+                mov     word_2FD50, 20h ; ' '
+
+loc_133ED:                              ; CODE XREF: _out+21\u2191j
+                                        ; _out+27\u2191j ...
+                mov     si, word_2FBEE
+                push    word ptr [bp+var_C+2]
+                push    word ptr [bp+var_C] ; char *
+                call    _strlen
+                add     sp, 4
+                mov     [bp+var_8], ax
+                sub     si, ax
+                sub     si, [bp+arg_0]
+                cmp     word_2FBD6, 0
+                jnz     short loc_13430
+                les     bx, [bp+var_C]
+                cmp     byte ptr es:[bx], 2Dh ; '-'
+                jnz     short loc_13430
+                cmp     word_2FD50, 30h ; '0'
+                jnz     short loc_13430
+                inc     word ptr [bp+var_C]
+                mov     al, es:[bx]
+                cbw
+                push    ax
+                push    cs
+                call    near ptr _outc
+                add     sp, 2
+                dec     [bp+var_8]
+
+loc_13430:                              ; CODE XREF: _out+5A\u2191j
+                                        ; _out+63\u2191j ...
+                cmp     word_2FD50, 30h ; '0'
+                jz      short loc_13442
+                or      si, si
+                jle     short loc_13442
+                cmp     word_2FBD6, 0
+                jz      short loc_1345D
+
+loc_13442:                              ; CODE XREF: _out+83\u2191j
+                                        ; _out+87\u2191j
+                cmp     [bp+arg_0], 0
+                jz      short loc_1344F
+                inc     [bp+var_6]
+                push    cs
+                call    near ptr putsign
+
+loc_1344F:                              ; CODE XREF: _out+94\u2191j
+                cmp     word_2FD4E, 0
+                jz      short loc_1345D
+                inc     [bp+var_4]
+                push    cs
+                call    near ptr putprefix
+
+loc_1345D:                              ; CODE XREF: _out+8E\u2191j
+                                        ; _out+A2\u2191j
+                cmp     word_2FBD6, 0
+                jnz     short loc_1348D
+                push    si
+                push    cs
+                call    near ptr putpad
+                add     sp, 2
+                cmp     [bp+arg_0], 0
+                jz      short loc_1347C
+                cmp     [bp+var_6], 0
+                jnz     short loc_1347C
+                push    cs
+                call    near ptr putsign
+
+loc_1347C:                              ; CODE XREF: _out+BE\u2191j
+                                        ; _out+C4\u2191j
+                cmp     word_2FD4E, 0
+                jz      short loc_1348D
+                cmp     [bp+var_4], 0
+                jnz     short loc_1348D
+                push    cs
+                call    near ptr putprefix
+
+loc_1348D:                              ; CODE XREF: _out+B0\u2191j
+                                        ; _out+CF\u2191j ...
+                push    [bp+var_8]
+                push    word ptr [bp+var_C+2]
+                push    word ptr [bp+var_C]
+                push    cs
+                call    near ptr putbuf
+                add     sp, 6
+                cmp     word_2FBD6, 0
+                jz      short loc_134B2
+                mov     word_2FD50, 20h ; ' '
+                push    si
+                push    cs
+                call    near ptr putpad
+                add     sp, 2
+
+loc_134B2:                              ; CODE XREF: _out+F0\u2191j
+                pop     si
+                mov     sp, bp
+                pop     bp
+                retf
+_out            endp
+
+; ---------------------------------------------------------------------------
                 align 2
-; [00000059 BYTES: COLLAPSED FUNCTION __getstream. PRESS NUMPAD+ TO EXPAND]
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function static
+
+putsign         proc far                ; CODE XREF: _out+9A\u2191p
+                                        ; _out+C7\u2191p
+                cmp     word_2FBC8, 0
+                jz      short loc_134C4
+                mov     ax, 2Bh ; '+'
+                jmp     short loc_134C7
+; ---------------------------------------------------------------------------
+
+loc_134C4:                              ; CODE XREF: putsign+5\u2191j
+                mov     ax, 20h ; ' '
+
+loc_134C7:                              ; CODE XREF: putsign+A\u2191j
+                push    ax
+                push    cs
+                call    near ptr _outc
+                add     sp, 2
+                retf
+putsign         endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function static
+
+putprefix       proc far                ; CODE XREF: _out+A8\u2191p
+                                        ; _out+D8\u2191p
+                mov     ax, 30h ; '0'
+                push    ax
+                push    cs
+                call    near ptr _outc
+                add     sp, 2
+                cmp     word_2FD4E, 10h
+                jnz     short locret_134F9
+                cmp     word_2FBC4, 0
+                jz      short loc_134EE
+                mov     ax, 58h ; 'X'
+                jmp     short loc_134F1
+; ---------------------------------------------------------------------------
+
+loc_134EE:                              ; CODE XREF: putprefix+17\u2191j
+                mov     ax, 78h ; 'x'
+
+loc_134F1:                              ; CODE XREF: putprefix+1C\u2191j
+                push    ax
+                push    cs
+                call    near ptr _outc
+                add     sp, 2
+
+locret_134F9:                           ; CODE XREF: putprefix+10\u2191j
+                retf
+putprefix       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function static bp-based frame
+
+getnum          proc far                ; CODE XREF: __output+E5\u2191p
+                                        ; __output+11E\u2191p
+
+var_6           = byte ptr -6
+var_2           = word ptr -2
+arg_0           = dword ptr  6
+arg_4           = dword ptr  0Ah
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 6
+                push    di
+                push    si
+                mov     [bp+var_2], 1
+                les     bx, [bp+arg_4]
+                cmp     byte ptr es:[bx], 2Ah ; '*'
+                jnz     short loc_13522
+                les     bx, dword_2FBD8
+                mov     si, es:[bx]
+                add     word ptr dword_2FBD8, 2
+                inc     word ptr [bp+arg_4]
+                jmp     short loc_13582
+; ---------------------------------------------------------------------------
                 align 2
-; [00000035 BYTES: COLLAPSED FUNCTION _fputc. PRESS NUMPAD+ TO EXPAND]
+
+loc_13522:                              ; CODE XREF: getnum+14\u2191j
+                les     bx, [bp+arg_4]
+                cmp     byte ptr es:[bx], 2Dh ; '-'
+                jnz     short loc_13533
+                mov     [bp+var_2], 0FFFFh
+                inc     word ptr [bp+arg_4]
+
+loc_13533:                              ; CODE XREF: getnum+2F\u2191j
+                sub     si, si
+                mov     bx, word ptr [bp+arg_4]
+                mov     al, es:[bx]
+                mov     [bp+var_6], al
+                cmp     al, 30h ; '0'
+                jl      short loc_13582
+                cmp     al, 39h ; '9'
+                jg      short loc_13582
+                cmp     word_2FBDE, si
+                jnz     short loc_13556
+                cmp     al, 30h ; '0'
+                jnz     short loc_13556
+                mov     word_2FD50, 30h ; '0'
+
+loc_13556:                              ; CODE XREF: getnum+50\u2191j
+                                        ; getnum+54\u2191j
+                mov     di, bx
+                jmp     short loc_13560
+; ---------------------------------------------------------------------------
+
+loc_1355A:                              ; CODE XREF: getnum+80\u2193j
+                cmp     byte ptr es:[di], 39h ; '9'
+                jg      short loc_1357C
+
+loc_13560:                              ; CODE XREF: getnum+5E\u2191j
+                mov     al, es:[di]
+                cbw
+                mov     cx, si
+                shl     cx, 1
+                shl     cx, 1
+                add     cx, si
+                shl     cx, 1
+                add     cx, ax
+                sub     cx, 30h ; '0'
+                mov     si, cx
+                inc     di
+                cmp     byte ptr es:[di], 30h ; '0'
+                jge     short loc_1355A
+
+loc_1357C:                              ; CODE XREF: getnum+64\u2191j
+                mov     word ptr [bp+arg_4], di
+                mov     word ptr [bp+arg_4+2], es
+
+loc_13582:                              ; CODE XREF: getnum+25\u2191j
+                                        ; getnum+46\u2191j ...
+                mov     ax, [bp+var_2]
+                imul    si
+                mov     si, ax
+                les     bx, [bp+arg_0]
+                mov     es:[bx], si
+                mov     ax, word ptr [bp+arg_4]
+                mov     dx, word ptr [bp+arg_4+2]
+                pop     si
+                pop     di
+                mov     sp, bp
+                pop     bp
+                retf
+getnum          endp
+
+; ---------------------------------------------------------------------------
                 align 2
-; [00000020 BYTES: COLLAPSED FUNCTION _close. PRESS NUMPAD+ TO EXPAND]
-; [0000007A BYTES: COLLAPSED FUNCTION _lseek. PRESS NUMPAD+ TO EXPAND]
-; [0000019F BYTES: COLLAPSED FUNCTION _open. PRESS NUMPAD+ TO EXPAND]
-; [00000011 BYTES: COLLAPSED FUNCTION __cXENIXtoDOSmode. PRESS NUMPAD+ TO EXPAND]
-; [000000EA BYTES: COLLAPSED FUNCTION _read. PRESS NUMPAD+ TO EXPAND]
-; [000000B4 BYTES: COLLAPSED FUNCTION _write. PRESS NUMPAD+ TO EXPAND]
-; [0000005C BYTES: COLLAPSED FUNCTION sub_13A52. PRESS NUMPAD+ TO EXPAND]
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function static bp-based frame
+
+flagchar        proc far                ; CODE XREF: __output+CF\u2191p
+
+var_4           = dword ptr -4
+arg_0           = byte ptr  6
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 4
+                push    di
+                mov     ax, 36CEh
+                mov     word ptr [bp+var_4], ax
+                mov     word ptr [bp+var_4+2], ds
+                mov     cl, [bp+arg_0]
+                les     di, [bp+var_4]
+                jmp     short loc_135B5
+; ---------------------------------------------------------------------------
+
+loc_135B4:                              ; CODE XREF: flagchar+22\u2193j
+                inc     di
+
+loc_135B5:                              ; CODE XREF: flagchar+16\u2191j
+                cmp     byte ptr es:[di], 0
+                jz      short loc_135CC
+                cmp     es:[di], cl
+                jnz     short loc_135B4
+                mov     ax, 1
+                mov     word ptr [bp+var_4], di
+                mov     word ptr [bp+var_4+2], es
+                jmp     short loc_135D4
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_135CC:                              ; CODE XREF: flagchar+1D\u2191j
+                mov     word ptr [bp+var_4], di
+                mov     word ptr [bp+var_4+2], es
+                sub     ax, ax
+
+loc_135D4:                              ; CODE XREF: flagchar+2D\u2191j
+                pop     di
+                mov     sp, bp
+                pop     bp
+                retf
+flagchar        endp
+
+; ---------------------------------------------------------------------------
+                align 2
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+__getstream     proc far                ; CODE XREF: _fopen+6\u2191P
+
+var_4           = dword ptr -4
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 4
+                mov     ax, 3554h
+                mov     word ptr [bp+var_4], ax
+                mov     word ptr [bp+var_4+2], ds
+
+loc_135E9:                              ; CODE XREF: __getstream+4A\u2193j
+                                        ; __getstream+50\u2193j
+                les     bx, [bp+var_4]
+                test    byte ptr es:[bx+0Ah], 83h
+                jnz     short loc_13618
+                sub     ax, ax
+                mov     es:[bx+4], ax
+                mov     es:[bx+0Ah], al
+                cwd
+                mov     es:[bx+6], ax
+                mov     es:[bx+8], dx
+                mov     es:[bx], ax
+                mov     es:[bx+2], dx
+                mov     byte ptr es:[bx+0Bh], 0FFh
+                mov     ax, bx
+                mov     dx, es
+                jmp     short loc_1362F
+; ---------------------------------------------------------------------------
+
+loc_13618:                              ; CODE XREF: __getstream+17\u2191j
+                mov     ax, bx
+                mov     dx, es
+                add     word ptr [bp+var_4], 0Ch
+                cmp     ax, word_2D28C
+                jnz     short loc_135E9
+                cmp     dx, seg_2D28E
+                jnz     short loc_135E9
+                sub     ax, ax
+                cwd
+
+loc_1362F:                              ; CODE XREF: __getstream+3C\u2191j
+                mov     sp, bp
+                pop     bp
+                retf
+__getstream     endp
+
+; ---------------------------------------------------------------------------
+                align 2
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; int __cdecl fputc(int, FILE *)
+_fputc          proc far                ; CODE XREF: sub_21637+1A\u2193P
+                                        ; sub_21664+A7\u2193P ...
+
+arg_0           = word ptr  6
+arg_2           = dword ptr  8
+
+                push    bp
+                mov     bp, sp
+                push    di
+                push    si
+                mov     si, [bp+arg_0]
+                les     bx, [bp+arg_2]
+                dec     word ptr es:[bx+4]
+                js      short loc_13658
+                mov     ax, si
+                mov     di, es:[bx]
+                inc     word ptr es:[bx]
+                mov     es, word ptr es:[bx+2]
+                mov     es:[di], al
+                sub     ah, ah
+                jmp     short loc_13665
+; ---------------------------------------------------------------------------
+
+loc_13658:                              ; CODE XREF: _fputc+F\u2191j
+                push    word ptr [bp+arg_2+2]
+                push    bx              ; FILE *
+                push    si              ; int
+                call    __flsbuf
+                add     sp, 6
+
+loc_13665:                              ; CODE XREF: _fputc+22\u2191j
+                pop     si
+                pop     di
+                pop     bp
+                retf
+_fputc          endp
+
+; ---------------------------------------------------------------------------
+                align 2
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; int __cdecl close(int)
+_close          proc far                ; CODE XREF: _fclose+5F\u2191P
+                                        ; _execve+18E\u2193P ...
+
+arg_0           = word ptr  6
+
+; FUNCTION CHUNK AT 0F10 SIZE 00000008 BYTES
+; FUNCTION CHUNK AT 0F25 SIZE 0000000B BYTES
+
+                push    bp
+                mov     bp, sp
+                mov     bx, [bp+arg_0]
+                cmp     bx, word_2CACE
+                jb      short loc_1367C
+                mov     ax, 900h
+                stc
+                jmp     short loc_13687
+; ---------------------------------------------------------------------------
+
+loc_1367C:                              ; CODE XREF: _close+A\u2191j
+                mov     ah, 3Eh
+                int     21h             ; DOS - 2+ - CLOSE A FILE WITH HANDLE
+                                        ; BX = file handle
+                jb      short loc_13687
+                mov     byte ptr [bx+2F00h], 0
+
+loc_13687:                              ; CODE XREF: _close+10\u2191j
+                                        ; _close+16\u2191j
+                jmp     __dosret0
+_close          endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; __int32 __cdecl lseek(int, __int32, int)
+_lseek          proc near               ; CODE XREF: __flsbuf+17B\u2191P
+                                        ; _fseek+A0\u2193P ...
+
+var_4           = word ptr -4
+var_2           = word ptr -2
+arg_2           = dword ptr  6
+arg_6           = word ptr  0Ah
+arg_8           = word ptr  0Ch
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 4
+                mov     bx, word ptr [bp+arg_2]
+                cmp     bx, word_2CACE
+                jb      short loc_1369E
+                mov     ax, 900h
+                jmp     short loc_136C8
+; ---------------------------------------------------------------------------
+
+loc_1369E:                              ; CODE XREF: _lseek+D\u2191j
+                test    [bp+arg_6], 8000h
+                jz      short loc_136ED
+                cmp     [bp+arg_8], 0
+                jz      short loc_136C5
+                xor     cx, cx
+                mov     dx, cx
+                mov     ax, 4201h
+                int     21h             ; DOS - 2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
+                                        ; AL = method: offset from present location
+                jb      short loc_13701
+                test    [bp+arg_8], 2
+                jnz     short loc_136CB
+                add     ax, word ptr [bp+arg_2+2]
+                adc     dx, [bp+arg_6]
+                jns     short loc_136ED
+
+loc_136C5:                              ; CODE XREF: _lseek+1F\u2191j
+                                        ; _lseek+61\u2193j
+                mov     ax, 1600h
+
+loc_136C8:                              ; CODE XREF: _lseek+12\u2191j
+                stc
+                jmp     short loc_13701
+; ---------------------------------------------------------------------------
+
+loc_136CB:                              ; CODE XREF: _lseek+31\u2191j
+                mov     [bp+var_2], dx
+                mov     [bp+var_4], ax
+                mov     dx, cx
+                mov     ax, 4202h
+                int     21h             ; DOS - 2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
+                                        ; AL = method: offset from end of file
+                add     ax, word ptr [bp+arg_2+2]
+                adc     dx, [bp+arg_6]
+                jns     short loc_136ED
+                mov     cx, [bp+var_2]
+                mov     dx, [bp+var_4]
+                mov     ax, 4200h
+                int     21h             ; DOS - 2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
+                                        ; AL = method: offset from beginning of file
+                jmp     short loc_136C5
+; ---------------------------------------------------------------------------
+
+loc_136ED:                              ; CODE XREF: _lseek+19\u2191j
+                                        ; _lseek+39\u2191j ...
+                mov     dx, word ptr [bp+arg_2+2]
+                mov     cx, [bp+arg_6]
+                mov     al, byte ptr [bp+arg_8]
+                mov     ah, 42h
+                int     21h             ; DOS - 2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
+                                        ; AL = method:
+                                        ; 0-from beginnig,1-from current,2-from end
+                jb      short loc_13701
+                and     byte ptr [bx+2F00h], 0FDh
+
+loc_13701:                              ; CODE XREF: _lseek+2A\u2191j
+                                        ; _lseek+3F\u2191j ...
+                jmp     __dosretax
+_lseek          endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; int open(const char *, int, ...)
+_open           proc far                ; CODE XREF: __openfile+A2\u2191P
+
+var_4           = byte ptr -4
+var_3           = byte ptr -3
+var_2           = byte ptr -2
+var_1           = byte ptr -1
+arg_0           = dword ptr  6
+arg_4           = word ptr  0Ah
+arg_6           = word ptr  0Ch
+
+; FUNCTION CHUNK AT 0F23 SIZE 00000002 BYTES
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 4
+                xor     bh, bh
+
+__copensub:                             ; CODE XREF: _sopen+18\u2193j
+                mov     [bp+var_2], bh
+                mov     ax, [bp+arg_4]
+                mov     cx, ax
+                mov     [bp+var_4], 0
+                test    ax, 8000h
+                jnz     short loc_1372D
+                test    ax, 4000h
+                jnz     short loc_13729
+                test    byte_2D2A5, 80h
+                jnz     short loc_1372D
+
+loc_13729:                              ; CODE XREF: _open+1C\u2191j
+                mov     [bp+var_4], 80h ; '€'
+
+loc_1372D:                              ; CODE XREF: _open+17\u2191j
+                                        ; _open+23\u2191j
+                push    ds
+                lds     dx, [bp+arg_0]
+                and     al, 3
+                or      al, bh
+                mov     ah, 3Dh
+                int     21h             ; DOS - 2+ - OPEN DISK FILE WITH HANDLE
+                                        ; DS:DX -> ASCIZ filename
+                                        ; AL = access mode
+                                        ; 0 - read, 1 - write, 2 - read & write
+                pop     ds
+                jnb     short loc_1374E
+                cmp     ax, 2
+                jnz     short loc_1374A
+                test    cx, 100h
+                jz      short loc_1374A
+                jmp     loc_137ED
+; ---------------------------------------------------------------------------
+
+loc_1374A:                              ; CODE XREF: _open+3B\u2191j
+                                        ; _open+41\u2191j ...
+                stc
+                jmp     __dosretax
+; ---------------------------------------------------------------------------
+
+loc_1374E:                              ; CODE XREF: _open+36\u2191j
+                xchg    ax, bx
+                mov     ax, cx
+                and     ax, 500h
+                cmp     ax, 500h
+                jnz     short loc_13762
+                mov     ah, 3Eh
+                int     21h             ; DOS - 2+ - CLOSE A FILE WITH HANDLE
+                                        ; BX = file handle
+                mov     ax, 1100h
+                jmp     short loc_1374A
+; ---------------------------------------------------------------------------
+
+loc_13762:                              ; CODE XREF: _open+53\u2191j
+                mov     [bp+var_3], 1
+                mov     ax, 4400h
+                int     21h             ; DOS - 2+ - IOCTL - GET DEVICE INFORMATION
+                                        ; BX = file or device handle
+                test    dl, 80h
+                jz      short loc_13774
+                or      [bp+var_4], 40h
+
+loc_13774:                              ; CODE XREF: _open+6A\u2191j
+                test    [bp+var_4], 40h
+                jz      short loc_1377D
+                jmp     loc_1385A
+; ---------------------------------------------------------------------------
+
+loc_1377D:                              ; CODE XREF: _open+74\u2191j
+                mov     ax, [bp+arg_4]
+                test    ax, 200h
+                jz      short loc_137A4
+                test    ax, 3
+                jz      short loc_13793
+                xor     cx, cx
+                mov     ah, 40h
+                int     21h             ; DOS - 2+ - WRITE TO FILE WITH HANDLE
+                                        ; BX = file handle, CX = number of bytes to write, DS:DX -> buffer
+                jmp     loc_1385A
+; ---------------------------------------------------------------------------
+
+loc_13793:                              ; CODE XREF: _open+84\u2191j
+                mov     ah, 3Eh
+                int     21h             ; DOS - 2+ - CLOSE A FILE WITH HANDLE
+                                        ; BX = file handle
+                push    ds
+                lds     dx, [bp+arg_0]
+                mov     ax, 4300h
+                int     21h             ; DOS - 2+ - GET FILE ATTRIBUTES
+                                        ; DS:DX -> ASCIZ file name or directory
+                                        ; name without trailing slash
+                pop     ds
+                jmp     short loc_1380A
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_137A4:                              ; CODE XREF: _open+7F\u2191j
+                test    [bp+var_4], 80h
+                jnz     short loc_137AD
+                jmp     loc_1385A
+; ---------------------------------------------------------------------------
+
+loc_137AD:                              ; CODE XREF: _open+A4\u2191j
+                test    ax, 2
+                jnz     short loc_137B5
+                jmp     loc_1385A
+; ---------------------------------------------------------------------------
+
+loc_137B5:                              ; CODE XREF: _open+AC\u2191j
+                mov     cx, 0FFFFh
+                mov     dx, cx
+                mov     ax, 4202h
+                int     21h             ; DOS - 2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
+                                        ; AL = method: offset from end of file
+                neg     cx
+                lea     dx, [bp+var_1]
+                mov     ah, 3Fh
+                int     21h             ; DOS - 2+ - READ FROM FILE WITH HANDLE
+                                        ; BX = file handle, CX = number of bytes to read
+                                        ; DS:DX -> buffer
+                or      ax, ax
+                jz      short loc_137E1
+                cmp     [bp+var_1], 1Ah
+                jnz     short loc_137E1
+                neg     cx
+                mov     dx, cx
+                mov     ax, 4202h
+                int     21h             ; DOS - 2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
+                                        ; AL = method: offset from end of file
+                xor     cx, cx
+                mov     ah, 40h
+                int     21h             ; DOS - 2+ - WRITE TO FILE WITH HANDLE
+                                        ; BX = file handle, CX = number of bytes to write, DS:DX -> buffer
+
+loc_137E1:                              ; CODE XREF: _open+C6\u2191j
+                                        ; _open+CC\u2191j
+                xor     cx, cx
+                mov     dx, cx
+                mov     ax, 4200h
+                int     21h             ; DOS - 2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
+                                        ; AL = method: offset from beginning of file
+                jmp     short loc_1385A
+; ---------------------------------------------------------------------------
+                db 90h
+; ---------------------------------------------------------------------------
+
+loc_137ED:                              ; CODE XREF: _open+43\u2191j
+                mov     [bp+var_3], 0
+                mov     cx, [bp+arg_6]
+                call    __cXENIXtoDOSmode
+                mov     [bp+arg_6], cx
+                test    [bp+var_2], 0FFh
+                jnz     short loc_13807
+                test    [bp+arg_4], 2
+                jnz     short loc_1380A
+
+loc_13807:                              ; CODE XREF: _open+FA\u2191j
+                and     cl, 0FEh
+
+loc_1380A:                              ; CODE XREF: _open+9D\u2191j
+                                        ; _open+101\u2191j
+                push    ds
+                lds     dx, [bp+arg_0]
+                mov     ah, 3Ch
+                int     21h             ; DOS - 2+ - CREATE A FILE WITH HANDLE (CREAT)
+                                        ; CX = attributes for file
+                                        ; DS:DX -> ASCIZ filename (may include drive and path)
+                pop     ds
+                jnb     short loc_13818
+
+loc_13815:                              ; CODE XREF: _open+137\u2193j
+                                        ; _open+154\u2193j
+                jmp     __dosretax
+; ---------------------------------------------------------------------------
+
+loc_13818:                              ; CODE XREF: _open+10F\u2191j
+                xchg    ax, bx
+                test    [bp+var_2], 0FFh
+                jnz     short loc_13826
+                test    [bp+arg_4], 2
+                jnz     short loc_1385A
+
+loc_13826:                              ; CODE XREF: _open+119\u2191j
+                mov     ah, 3Eh
+                int     21h             ; DOS - 2+ - CLOSE A FILE WITH HANDLE
+                                        ; BX = file handle
+                mov     al, byte ptr [bp+arg_4]
+                and     al, 3
+                or      al, [bp+var_2]
+                push    ds
+                lds     dx, [bp+arg_0]
+                mov     ah, 3Dh
+                int     21h             ; DOS - 2+ - OPEN DISK FILE WITH HANDLE
+                                        ; DS:DX -> ASCIZ filename
+                                        ; AL = access mode
+                                        ; 0 - read, 1 - write, 2 - read & write
+                pop     ds
+                jb      short loc_13815
+                xchg    ax, bx
+                test    [bp+var_3], 1
+                jnz     short loc_1385A
+                test    [bp+arg_6], 1
+                jz      short loc_1385A
+                or      cl, 1
+                push    ds
+                lds     dx, [bp+arg_0]
+                mov     ax, 4301h
+                int     21h             ; DOS - 2+ - SET FILE ATTRIBUTES
+                                        ; DS:DX -> ASCIZ file name
+                                        ; CX = file attribute bits
+                pop     ds
+                jb      short loc_13815
+
+loc_1385A:                              ; CODE XREF: _open+76\u2191j
+                                        ; _open+8C\u2191j ...
+                test    [bp+var_4], 40h
+                jnz     short loc_1389F
+                push    ds
+                lds     dx, [bp+arg_0]
+                mov     ax, 4300h
+                int     21h             ; DOS - 2+ - GET FILE ATTRIBUTES
+                                        ; DS:DX -> ASCIZ file name or directory
+                                        ; name without trailing slash
+                pop     ds
+                mov     ax, cx
+                xor     cl, cl
+                and     ax, 1
+                jz      short loc_13875
+                mov     cl, 10h
+
+loc_13875:                              ; CODE XREF: _open+16D\u2191j
+                test    [bp+arg_4], 8
+                jz      short loc_1387F
+                or      cl, 20h
+
+loc_1387F:                              ; CODE XREF: _open+176\u2191j
+                                        ; _open+19D\u2193j
+                cmp     bx, word_2CACE
+                jb      short loc_1388F
+                mov     ah, 3Eh
+                int     21h             ; DOS - 2+ - CLOSE A FILE WITH HANDLE
+                                        ; BX = file handle
+                mov     ax, 1800h
+                jmp     loc_1374A
+; ---------------------------------------------------------------------------
+
+loc_1388F:                              ; CODE XREF: _open+17F\u2191j
+                or      cl, [bp+var_4]
+                or      cl, 1
+                mov     [bx+2F00h], cl
+                mov     ax, bx
+                mov     sp, bp
+                pop     bp
+                retf
+; ---------------------------------------------------------------------------
+
+loc_1389F:                              ; CODE XREF: _open+15A\u2191j
+                xor     cl, cl
+                jmp     short loc_1387F
+_open           endp ; sp-analysis failed
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function
+
+__cXENIXtoDOSmode proc near             ; CODE XREF: _open+F0\u2191p
+                mov     ax, word_2CAC3
+                not     ax
+                and     ax, cx
+                xor     cx, cx
+                test    al, 80h
+                jnz     short locret_138B3
+                or      cl, 1
+
+locret_138B3:                           ; CODE XREF: __cXENIXtoDOSmode+B\u2191j
+                retn
+__cXENIXtoDOSmode endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; int __cdecl read(int, void *, unsigned int)
+_read           proc far                ; CODE XREF: __filbuf+AF\u2191P
+                                        ; _fseek+2C3\u2193P ...
+
+var_1           = byte ptr -1
+arg_2           = word ptr  6
+arg_4           = dword ptr  8
+arg_8           = word ptr  0Ch
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 2
+                mov     bx, [bp+arg_2]
+                cmp     bx, word_2CACE
+                jb      short loc_138C9
+                stc
+                mov     ax, 900h
+                jmp     short loc_13930
+; ---------------------------------------------------------------------------
+
+loc_138C9:                              ; CODE XREF: _read+D\u2191j
+                xor     ax, ax
+                mov     cx, [bp+arg_8]
+                jcxz    short loc_13930
+                test    byte ptr [bx+2F00h], 2
+                jnz     short loc_13930
+                mov     cx, [bp+arg_8]
+                push    ds
+                lds     dx, [bp+arg_4]
+                mov     ah, 3Fh
+                int     21h             ; DOS - 2+ - READ FROM FILE WITH HANDLE
+                                        ; BX = file handle, CX = number of bytes to read
+                                        ; DS:DX -> buffer
+                pop     ds
+                jnb     short loc_138E9
+                mov     ah, 9
+                jmp     short loc_13930
+; ---------------------------------------------------------------------------
+
+loc_138E9:                              ; CODE XREF: _read+2F\u2191j
+                test    byte ptr [bx+2F00h], 80h
+                jz      short loc_13930
+                and     byte ptr [bx+2F00h], 0FBh
+                push    si
+                push    di
+                push    ds
+                pop     es
+                assume es:dseg
+                mov     ds, word ptr [bp+arg_4+2]
+                cld
+                mov     si, dx
+                mov     di, dx
+                mov     cx, ax
+                jcxz    short loc_1392C
+                mov     ah, 0Dh
+                cmp     byte ptr [si], 0Ah
+                jnz     short loc_13912
+                or      byte ptr es:[bx+2F00h], 4
+
+loc_13912:                              ; CODE XREF: _read+56\u2191j
+                                        ; _read:loc_13926\u2193j
+                lodsb
+                cmp     al, ah
+                jz      short loc_13933
+                cmp     al, 1Ah
+                jnz     short loc_13923
+                or      byte ptr es:[bx+2F00h], 2
+                jmp     short loc_13928
+; ---------------------------------------------------------------------------
+
+loc_13923:                              ; CODE XREF: _read+65\u2191j
+                                        ; _read+89\u2193j ...
+                mov     [di], al
+                inc     di
+
+loc_13926:                              ; CODE XREF: _read+87\u2193j
+                                        ; _read+E0\u2193j
+                loop    loc_13912
+
+loc_13928:                              ; CODE XREF: _read+6D\u2191j
+                mov     ax, di
+                sub     ax, dx
+
+loc_1392C:                              ; CODE XREF: _read+4F\u2191j
+                push    es
+                pop     ds
+
+loc_1392E:                              ; CODE XREF: _read+A6\u2193j
+                                        ; _read+B7\u2193j
+                pop     di
+                pop     si
+
+loc_13930:                              ; CODE XREF: _read+13\u2191j
+                                        ; _read+1A\u2191j ...
+                jmp     __dosretax
+; ---------------------------------------------------------------------------
+
+loc_13933:                              ; CODE XREF: _read+61\u2191j
+                cmp     cx, 1
+                jz      short loc_1393F
+                cmp     byte ptr [si], 0Ah
+                jz      short loc_13926
+                jmp     short loc_13923
+; ---------------------------------------------------------------------------
+
+loc_1393F:                              ; CODE XREF: _read+82\u2191j
+                push    es
+                pop     ds
+                test    byte ptr [bx+2F00h], 40h
+                jz      short loc_13960
+                mov     ax, 4400h
+                int     21h             ; DOS - 2+ - IOCTL - GET DEVICE INFORMATION
+                                        ; BX = file or device handle
+                test    dx, 20h
+                jnz     short loc_1395C
+                lea     dx, [bp+var_1]
+                mov     ah, 3Fh
+                int     21h             ; DOS - 2+ - READ FROM FILE WITH HANDLE
+                                        ; BX = file handle, CX = number of bytes to read
+                                        ; DS:DX -> buffer
+                jb      short loc_1392E
+
+loc_1395C:                              ; CODE XREF: _read+9D\u2191j
+                                        ; _read+E8\u2193j
+                mov     al, 0Ah
+                jmp     short loc_1398C
+; ---------------------------------------------------------------------------
+
+loc_13960:                              ; CODE XREF: _read+92\u2191j
+                mov     [bp+var_1], 0
+                lea     dx, [bp+var_1]
+                mov     ah, 3Fh
+                int     21h             ; DOS - 2+ - READ FROM FILE WITH HANDLE
+                                        ; BX = file handle, CX = number of bytes to read
+                                        ; DS:DX -> buffer
+                jb      short loc_1392E
+                or      ax, ax
+                jz      short loc_1398A
+                cmp     [bp+arg_8], 1
+                jz      short loc_13996
+
+loc_13977:                              ; CODE XREF: _read+E6\u2193j
+                mov     cx, 0FFFFh
+                mov     dx, cx
+                mov     ax, 4201h
+                int     21h             ; DOS - 2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
+                                        ; AL = method: offset from present location
+                mov     cx, 1
+                cmp     [bp+var_1], 0Ah
+                jz      short loc_13991
+
+loc_1398A:                              ; CODE XREF: _read+BB\u2191j
+                mov     al, 0Dh
+
+loc_1398C:                              ; CODE XREF: _read+AA\u2191j
+                lds     dx, [bp+arg_4]
+                jmp     short loc_13923
+; ---------------------------------------------------------------------------
+
+loc_13991:                              ; CODE XREF: _read+D4\u2191j
+                lds     dx, [bp+arg_4]
+                jmp     short loc_13926
+; ---------------------------------------------------------------------------
+
+loc_13996:                              ; CODE XREF: _read+C1\u2191j
+                cmp     [bp+var_1], 0Ah
+                jnz     short loc_13977
+                jmp     short loc_1395C
+_read           endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; int __cdecl write(int, const void *, unsigned int)
+_write          proc far                ; CODE XREF: __flsbuf+15A\u2191P
+                                        ; __flsbuf+1A0\u2191P ...
+
+var_8           = word ptr -8
+var_6           = word ptr -6
+var_4           = word ptr -4
+var_2           = word ptr -2
+arg_2           = word ptr  6
+arg_4           = word ptr  0Ah
+arg_6           = word ptr  0Ch
+
+; FUNCTION CHUNK AT 298E SIZE 00000039 BYTES
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 8
+                mov     bx, [bp+arg_2]
+                cmp     bx, word_2CACE
+                jb      short loc_139B4
+                mov     ax, 900h
+                stc
+
+loc_139B1:                              ; CODE XREF: _write+26\u2193j
+                jmp     __dosretax
+; ---------------------------------------------------------------------------
+
+loc_139B4:                              ; CODE XREF: _write+D\u2191j
+                test    byte ptr [bx+2F00h], 20h
+                jz      short loc_139C6
+                mov     ax, 4202h
+                xor     cx, cx
+                mov     dx, cx
+                int     21h             ; DOS - 2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
+                                        ; AL = method: offset from end of file
+                jb      short loc_139B1
+
+loc_139C6:                              ; CODE XREF: _write+1B\u2191j
+                test    byte ptr [bx+2F00h], 80h
+                jz      short loc_13A49
+                mov     [bp+var_6], ds
+                mov     es, [bp+arg_4]
+                assume es:nothing
+                lds     dx, [bp+8]
+                xor     ax, ax
+                mov     [bp+var_2], ax
+                mov     [bp+var_4], ax
+                cld
+                push    di
+                push    si
+                mov     di, dx
+                mov     si, dx
+                mov     [bp+var_8], sp
+                mov     cx, [bp+arg_6]
+                jcxz    short loc_13A4B
+                mov     al, 0Ah
+                repne scasb
+                jnz     short loc_13A44
+                push    ds
+                mov     ds, [bp+var_6]
+                call    _stackavail
+                pop     ds
+                cmp     ax, 0A8h ; '¨'
+                jbe     short loc_13A4D
+                sub     sp, 2
+                mov     bx, sp
+                mov     dx, 200h
+                cmp     ax, 228h
+                jnb     short loc_13A12
+                mov     dx, 80h ; '€'
+
+loc_13A12:                              ; CODE XREF: _write+6F\u2191j
+                sub     sp, dx
+                mov     dx, sp
+                mov     di, dx
+                push    ss
+                pop     es
+                assume es:dseg
+                mov     cx, [bp+arg_6]
+
+loc_13A1D:                              ; CODE XREF: _write+89\u2193j
+                lodsb
+                cmp     al, 0Ah
+                jz      short loc_13A2E
+
+loc_13A22:                              ; CODE XREF: _write+9F\u2193j
+                cmp     di, bx
+                jz      short loc_13A3F
+
+loc_13A26:                              ; CODE XREF: _write+A4\u2193j
+                stosb
+                loop    loc_13A1D
+                call    near ptr sub_13A52
+                jmp     short loc_13A9D
+; ---------------------------------------------------------------------------
+
+loc_13A2E:                              ; CODE XREF: _write+82\u2191j
+                mov     al, 0Dh
+                cmp     di, bx
+                jnz     short loc_13A37
+                call    near ptr sub_13A52
+
+loc_13A37:                              ; CODE XREF: _write+94\u2191j
+                stosb
+                mov     al, 0Ah
+                inc     [bp+var_4]
+                jmp     short loc_13A22
+; ---------------------------------------------------------------------------
+
+loc_13A3F:                              ; CODE XREF: _write+86\u2191j
+                call    near ptr sub_13A52
+                jmp     short loc_13A26
+; ---------------------------------------------------------------------------
+
+loc_13A44:                              ; CODE XREF: _write+53\u2191j
+                pop     si
+                pop     di
+                mov     ds, [bp+var_6]
+
+loc_13A49:                              ; CODE XREF: _write+2D\u2191j
+                jmp     short loc_13AAE
+; ---------------------------------------------------------------------------
+
+loc_13A4B:                              ; CODE XREF: _write+4D\u2191j
+                jmp     short loc_13A9D
+; ---------------------------------------------------------------------------
+
+loc_13A4D:                              ; CODE XREF: _write+62\u2191j
+                xor     ax, ax
+                jmp     __amsg_exit
+_write          endp ; sp-analysis failed
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function
+
+sub_13A52       proc far                ; CODE XREF: _write+8B\u2191p
+                                        ; _write+96\u2191p ...
+                push    ax
+                push    bx
+                push    cx
+                push    ds
+                push    es
+                pop     ds
+                mov     cx, di
+                sub     cx, dx
+                jcxz    short loc_13A6E
+                mov     bx, [bp+6]
+                mov     ah, 40h
+                int     21h             ; DOS - 2+ - WRITE TO FILE WITH HANDLE
+                                        ; BX = file handle, CX = number of bytes to write, DS:DX -> buffer
+                jb      short loc_13A75
+                add     [bp-2], ax
+                or      ax, ax
+                jz      short loc_13A75
+
+loc_13A6E:                              ; CODE XREF: sub_13A52+A\u2191j
+                pop     ds
+                pop     cx
+                pop     bx
+                pop     ax
+                mov     di, dx
+                retn
+; ---------------------------------------------------------------------------
+
+loc_13A75:                              ; CODE XREF: sub_13A52+13\u2191j
+                                        ; sub_13A52+1A\u2191j
+                pop     ds
+                add     sp, 8
+                jnb     short loc_13A7F
+                mov     ah, 9
+                jmp     short loc_13AA3
+; ---------------------------------------------------------------------------
+
+loc_13A7F:                              ; CODE XREF: sub_13A52+27\u2191j
+                mov     ds, word ptr [bp-2]
+                test    byte ptr [bx+2F00h], 40h
+                jz      short loc_13A97
+                mov     ds, word ptr [bp+0Ah]
+                mov     bx, [bp+8]
+                cmp     byte ptr [bx], 1Ah
+                jnz     short loc_13A97
+                clc
+                jmp     short loc_13AA3
+; ---------------------------------------------------------------------------
+
+loc_13A97:                              ; CODE XREF: sub_13A52+35\u2191j
+                                        ; sub_13A52+40\u2191j
+                stc
+                mov     ax, 1C00h
+                jmp     short loc_13AA3
+; ---------------------------------------------------------------------------
+
+loc_13A9D:                              ; CODE XREF: _write+8E\u2191j
+                                        ; _write:loc_13A4B\u2191j
+                mov     ax, [bp-2]
+                sub     ax, [bp-4]
+
+loc_13AA3:                              ; CODE XREF: sub_13A52+2B\u2191j
+                                        ; sub_13A52+43\u2191j ...
+                mov     sp, [bp-8]
+                pop     si
+                pop     di
+                mov     ds, word ptr [bp-6]
+
+loc_13AAB:                              ; CODE XREF: _write+12B\u2193j
+                                        ; _write+12F\u2193j ...
+                jmp     __dosretax
+sub_13A52       endp ; sp-analysis failed
+
 ; ---------------------------------------------------------------------------
 ; [00000039 BYTES: COLLAPSED CHUNK OF FUNCTION _write. PRESS NUMPAD+ TO EXPAND]
                 align 2
-; [00000014 BYTES: COLLAPSED FUNCTION _stackavail. PRESS NUMPAD+ TO EXPAND]
-; [00000012 BYTES: COLLAPSED FUNCTION unknown_libname_4. PRESS NUMPAD+ TO EXPAND]
-; [00000046 BYTES: COLLAPSED FUNCTION unknown_libname_5. PRESS NUMPAD+ TO EXPAND]
-; [00000015 BYTES: COLLAPSED FUNCTION __ffree. PRESS NUMPAD+ TO EXPAND]
-; [0000003F BYTES: COLLAPSED FUNCTION _malloc. PRESS NUMPAD+ TO EXPAND]
-; [0000006E BYTES: COLLAPSED FUNCTION sub_13BA8. PRESS NUMPAD+ TO EXPAND]
-; [00000017 BYTES: COLLAPSED FUNCTION sub_13C16. PRESS NUMPAD+ TO EXPAND]
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function
+
+; size_t stackavail(void)
+_stackavail     proc far                ; CODE XREF: _write+59\u2191P
+                pop     cx
+                pop     dx
+                mov     ax, word_2CB04
+                cmp     ax, sp
+                jnb     short loc_13AF8
+                sub     ax, sp
+                neg     ax
+
+loc_13AF5:                              ; CODE XREF: _stackavail+12\u2193j
+                push    dx
+                push    cx
+                retf
+; ---------------------------------------------------------------------------
+
+loc_13AF8:                              ; CODE XREF: _stackavail+7\u2191j
+                xor     ax, ax
+                jmp     short loc_13AF5
+_stackavail     endp ; sp-analysis failed
+
+
+; =============== S U B R O U T I N E =======================================
+
+; MS Quick C v1.0/v2.01 & MSC v5.1 DOS run-time & graphic
+; MS Quick C v1.0/v2.01 & MSC v5.1 DOS run-time & graphic
+; Attributes: library function bp-based frame
+
+unknown_libname_4 proc far
+
+arg_0           = word ptr  6
+
+                push    bp
+                mov     bp, sp
+                mov     bx, [bp+arg_0]
+                or      bx, bx
+                jz      short loc_13B0A
+                or      byte ptr [bx-2], 1
+
+loc_13B0A:                              ; CODE XREF: unknown_libname_4+8\u2191j
+                mov     sp, bp
+                pop     bp
+                retf
+unknown_libname_4 endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; MS Quick C v1.0/v2.01 & MSC v5.1 DOS run-time & graphic
+; MS Quick C v1.0/v2.01 & MSC v5.1 DOS run-time & graphic
+; Attributes: library function bp-based frame
+
+unknown_libname_5 proc far              ; CODE XREF: _malloc+31\u2193P
+                                        ; __cenvarg+D1\u2193P
+
+arg_0           = word ptr  6
+
+                push    bp
+                mov     bp, sp
+                push    si
+                push    di
+                mov     bx, 36D6h
+                cmp     word ptr [bx], 0
+                jnz     short loc_13B44
+                push    ds
+                pop     es
+                mov     ax, 5
+                call    __amallocbrk
+                jnz     short loc_13B2A
+                xor     ax, ax
+                cwd
+                jmp     short loc_13B4E
+; ---------------------------------------------------------------------------
+
+loc_13B2A:                              ; CODE XREF: unknown_libname_5+15\u2191j
+                inc     ax
+                and     al, 0FEh
+                mov     word_2D2A6, ax
+                mov     word_2D2A8, ax
+                xchg    ax, si
+                mov     word ptr [si], 1
+                add     si, 4
+                mov     word ptr [si-2], 0FFFEh
+                mov     word_2D2AC, si
+
+loc_13B44:                              ; CODE XREF: unknown_libname_5+B\u2191j
+                mov     cx, [bp+arg_0]
+                mov     ax, ds
+                mov     es, ax
+                call    __amalloc
+
+loc_13B4E:                              ; CODE XREF: unknown_libname_5+1A\u2191j
+                pop     di
+                pop     si
+                mov     sp, bp
+                pop     bp
+                retf
+unknown_libname_5 endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; void __cdecl _ffree(void far *)
+__ffree         proc far                ; CODE XREF: __freebuf+1C\u2191P
+                                        ; __cenvarg+2FC\u2193P ...
+
+arg_0           = dword ptr  6
+
+                push    bp
+                mov     bp, sp
+                les     bx, [bp+arg_0]
+                assume es:nothing
+                mov     ax, es
+                or      ax, bx
+                jz      short loc_13B65
+                or      byte ptr es:[bx-2], 1
+
+loc_13B65:                              ; CODE XREF: __ffree+A\u2191j
+                mov     sp, bp
+                pop     bp
+                retf
+__ffree         endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; void *__cdecl malloc(size_t)
+_malloc         proc far                ; CODE XREF: __getbuf+27\u2191P
+                                        ; __cenvarg+E1\u2193P ...
+
+arg_0           = word ptr  6
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 2
+                push    si
+                push    di
+                mov     ax, [bp+arg_0]
+                cmp     ax, 0FFF1h
+                jnb     short loc_13B97
+                cmp     word_2D2B0, 0
+                jnz     short loc_13B88
+                call    sub_13BA8
+                jz      short loc_13B97
+                mov     word_2D2B0, ax
+
+loc_13B88:                              ; CODE XREF: _malloc+15\u2191j
+                call    sub_13C16
+                jnz     short loc_13BA2
+                call    sub_13BA8
+                jz      short loc_13B97
+                call    sub_13C16
+                jnz     short loc_13BA2
+
+loc_13B97:                              ; CODE XREF: _malloc+E\u2191j
+                                        ; _malloc+1A\u2191j ...
+                push    [bp+arg_0]
+                call    unknown_libname_5 ; MS Quick C v1.0/v2.01 & MSC v5.1 DOS run-time & graphic
+                                        ; MS Quick C v1.0/v2.01 & MSC v5.1 DOS run-time & graphic
+                add     sp, 2
+
+loc_13BA2:                              ; CODE XREF: _malloc+22\u2191j
+                                        ; _malloc+2C\u2191j
+                pop     di
+                pop     si
+                mov     sp, bp
+                pop     bp
+                retf
+_malloc         endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function
+
+sub_13BA8       proc near               ; CODE XREF: _malloc+17\u2191p
+                                        ; _malloc+24\u2191p
+                mov     bx, 0F0h ; 'ð'
+                cmp     [bp+6], bx
+                jbe     short loc_13BB7
+                mov     bx, [bp+6]
+                inc     bx
+                and     bx, 0FFFEh
+
+loc_13BB7:                              ; CODE XREF: sub_13BA8+6\u2191j
+                mov     [bp-2], bx
+                xor     ax, ax
+                push    ds
+                push    ax
+                push    ax
+                lea     cx, [bx+0Eh]
+                push    cx
+                mov     al, 2
+                push    ax
+                call    _brkctl
+                add     sp, 8
+                cmp     dx, 0FFFFh
+                jz      short loc_13C14
+                mov     ax, dx
+                xchg    dx, word_2D2B2
+                mov     word_2D2B4, ax
+                cmp     ax, word_2D2B8
+                jbe     short loc_13BE5
+                mov     word_2D2B8, ax
+
+loc_13BE5:                              ; CODE XREF: sub_13BA8+38\u2191j
+                or      dx, dx
+                jz      short loc_13BEE
+                mov     ds, dx
+                mov     word ptr aMsRunTimeLibra, ax ; "MS Run-Time Library - Copyright (c) 198"...
+
+loc_13BEE:                              ; CODE XREF: sub_13BA8+3F\u2191j
+                mov     bx, [bp-2]
+                mov     ds, ax
+                xor     ax, ax
+                mov     word ptr aMsRunTimeLibra, ax ; "MS Run-Time Library - Copyright (c) 198"...
+                dec     ax
+                dec     ax
+                mov     [bx+0Ch], ax
+                mov     ax, 0Ah
+                mov     word_29BD0, ax
+                mov     word_29BD2, ax
+                lea     ax, [bx+1]
+                mov     word ptr aMsRunTimeLibra+2, ax ; " Run-Time Library - Copyright (c) 1988,"...
+                add     ax, 0Dh
+                mov     word_29BD6, ax
+                mov     ax, ds
+
+loc_13C14:                              ; CODE XREF: sub_13BA8+29\u2191j
+                pop     ds
+                retn
+sub_13BA8       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function
+
+sub_13C16       proc near               ; CODE XREF: _malloc:loc_13B88\u2191p
+                                        ; _malloc+29\u2191p
+                mov     ax, ds
+                mov     es, ax
+                assume es:dseg
+                mov     cx, [bp+6]
+                xor     bx, bx
+                mov     ds, word_2D2B4
+                call    __amalloc
+                or      dx, dx
+                mov     cx, es
+                mov     ds, cx
+                retn
+sub_13C16       endp
+
+; ---------------------------------------------------------------------------
                 align 2
 ; [00000003 BYTES: COLLAPSED CHUNK OF FUNCTION __amalloc. PRESS NUMPAD+ TO EXPAND]
-; [000000E3 BYTES: COLLAPSED FUNCTION __amalloc. PRESS NUMPAD+ TO EXPAND]
-; [0000003A BYTES: COLLAPSED FUNCTION __amexpand. PRESS NUMPAD+ TO EXPAND]
-; [00000022 BYTES: COLLAPSED FUNCTION __amlink. PRESS NUMPAD+ TO EXPAND]
-; [00000021 BYTES: COLLAPSED FUNCTION __amallocbrk. PRESS NUMPAD+ TO EXPAND]
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function
+
+__amalloc       proc near               ; CODE XREF: unknown_libname_5+3D\u2191p
+                                        ; sub_13C16+D\u2191p
+
+; FUNCTION CHUNK AT 2B0E SIZE 00000003 BYTES
+
+                inc     cx
+                jz      short loc_13C2E
+                and     cl, 0FEh
+                cmp     cx, 0FFEEh
+                jnb     short loc_13C2E
+                mov     si, [bx+2]
+                cld
+                lodsw
+                mov     di, si
+                test    al, 1
+                jz      short loc_13C89
+
+loc_13C47:                              ; CODE XREF: __amalloc+2E\u2193j
+                dec     ax
+                cmp     ax, cx
+                jnb     short loc_13C61
+                mov     dx, ax
+                add     si, ax
+                lodsw
+                test    al, 1
+                jz      short loc_13C89
+                add     ax, dx
+                add     ax, 2
+                mov     si, di
+                mov     [si-2], ax
+                jmp     short loc_13C47
+; ---------------------------------------------------------------------------
+
+loc_13C61:                              ; CODE XREF: __amalloc+19\u2191j
+                                        ; __amalloc+71\u2193j
+                mov     di, si
+                jz      short loc_13C71
+                add     di, cx
+                mov     [si-2], cx
+                sub     ax, cx
+                dec     ax
+                mov     [di], ax
+                jmp     short loc_13C76
+; ---------------------------------------------------------------------------
+
+loc_13C71:                              ; CODE XREF: __amalloc+32\u2191j
+                add     di, cx
+                dec     byte ptr [si-2]
+
+loc_13C76:                              ; CODE XREF: __amalloc+3E\u2191j
+                mov     ax, si
+                mov     dx, ds
+                mov     cx, ss
+                cmp     dx, cx
+                jz      short loc_13C85
+                mov     es:word_2D2B4, ds
+
+loc_13C85:                              ; CODE XREF: __amalloc+4D\u2191j
+                mov     [bx+2], di
+                retn
+; ---------------------------------------------------------------------------
+
+loc_13C89:                              ; CODE XREF: __amalloc+14\u2191j
+                                        ; __amalloc+22\u2191j
+                mov     es:byte_2D2BA, 2
+
+loc_13C8F:                              ; CODE XREF: __amalloc+6A\u2193j
+                                        ; __amalloc+7A\u2193j
+                cmp     ax, 0FFFEh
+                jz      short loc_13CB9
+                mov     di, si
+                add     si, ax
+
+loc_13C98:                              ; CODE XREF: __amalloc+A9\u2193j
+                                        ; __amalloc+CC\u2193j
+                lodsw
+                test    al, 1
+                jz      short loc_13C8F
+                mov     di, si
+
+loc_13C9F:                              ; CODE XREF: __amalloc+86\u2193j
+                dec     ax
+                cmp     ax, cx
+                jnb     short loc_13C61
+                mov     dx, ax
+                add     si, ax
+                lodsw
+                test    al, 1
+                jz      short loc_13C8F
+                add     ax, dx
+                add     ax, 2
+                mov     si, di
+                mov     [si-2], ax
+                jmp     short loc_13C9F
+; ---------------------------------------------------------------------------
+
+loc_13CB9:                              ; CODE XREF: __amalloc+61\u2191j
+                mov     ax, [bx+8]
+                or      ax, ax
+                jz      short loc_13CC4
+                mov     ds, ax
+                jmp     short loc_13CD8
+; ---------------------------------------------------------------------------
+
+loc_13CC4:                              ; CODE XREF: __amalloc+8D\u2191j
+                dec     es:byte_2D2BA
+                jz      short loc_13CDC
+                mov     ax, ds
+                mov     di, ss
+                cmp     ax, di
+                jz      short loc_13CD8
+                mov     ds, es:word_2D2B0
+
+loc_13CD8:                              ; CODE XREF: __amalloc+91\u2191j
+                                        ; __amalloc+A0\u2191j
+                mov     si, [bx]
+                jmp     short loc_13C98
+; ---------------------------------------------------------------------------
+
+loc_13CDC:                              ; CODE XREF: __amalloc+98\u2191j
+                mov     si, [bx+6]
+                xor     ax, ax
+                call    __amlink
+                cmp     ax, si
+                jz      short loc_13CF5
+                and     al, 1
+                inc     ax
+                inc     ax
+                cbw
+                call    __amlink
+                jz      short loc_13CFF
+                dec     byte ptr [di-2]
+
+loc_13CF5:                              ; CODE XREF: __amalloc+B5\u2191j
+                call    __amexpand
+                jz      short loc_13CFF
+                xchg    ax, si
+                dec     si
+                dec     si
+                jmp     short loc_13C98
+; ---------------------------------------------------------------------------
+
+loc_13CFF:                              ; CODE XREF: __amalloc:loc_13C2E\u2191j
+                                        ; __amalloc+BF\u2191j ...
+                mov     ax, ds
+                mov     cx, ss
+                cmp     ax, cx
+                jz      short loc_13D0B
+                mov     es:word_2D2B4, ax
+
+loc_13D0B:                              ; CODE XREF: __amalloc+D4\u2191j
+                mov     ax, [bx]
+                mov     [bx+2], ax
+                xor     ax, ax
+                cwd
+                retn
+__amalloc       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function
+
+__amexpand      proc near               ; CODE XREF: __amalloc:loc_13CF5\u2191p
+                push    cx
+                mov     ax, [di-2]
+                test    al, 1
+                jz      short loc_13D1F
+                sub     cx, ax
+                dec     cx
+
+loc_13D1F:                              ; CODE XREF: __amexpand+6\u2191j
+                inc     cx
+                inc     cx
+                mov     dx, 7FFFh
+
+loc_13D24:                              ; CODE XREF: __amexpand+19\u2193j
+                cmp     dx, es:word_2D2B6
+                jbe     short loc_13D2F
+                shr     dx, 1
+                jnz     short loc_13D24
+
+loc_13D2F:                              ; CODE XREF: __amexpand+15\u2191j
+                                        ; __amexpand+34\u2193j
+                mov     ax, cx
+                add     ax, si
+                jb      short loc_13D4A
+                add     ax, dx
+                jb      short loc_13D46
+                not     dx
+                and     ax, dx
+                sub     ax, si
+                call    __amlink
+                jnz     short loc_13D4C
+                not     dx
+
+loc_13D46:                              ; CODE XREF: __amexpand+23\u2191j
+                shr     dx, 1
+                jnz     short loc_13D2F
+
+loc_13D4A:                              ; CODE XREF: __amexpand+1F\u2191j
+                xor     ax, ax
+
+loc_13D4C:                              ; CODE XREF: __amexpand+2E\u2191j
+                pop     cx
+                retn
+__amexpand      endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function
+
+__amlink        proc near               ; CODE XREF: __amalloc+B0\u2191p
+                                        ; __amalloc+BC\u2191p ...
+                push    dx
+                push    cx
+                call    __amallocbrk
+                jz      short loc_13D6D
+                push    di
+                mov     di, si
+                mov     si, ax
+                add     si, dx
+                mov     word ptr [si-2], 0FFFEh
+                mov     [bx+6], si
+                mov     dx, si
+                sub     dx, di
+                dec     dx
+                mov     [di-2], dx
+                pop     ax
+
+loc_13D6D:                              ; CODE XREF: __amlink+5\u2191j
+                pop     cx
+                pop     dx
+                retn
+__amlink        endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function
+
+__amallocbrk    proc near               ; CODE XREF: unknown_libname_5+12\u2191p
+                                        ; __amlink+2\u2191p
+                push    bx
+                push    ax
+                xor     dx, dx
+                push    ds
+                push    dx
+                push    dx
+                push    ax
+                mov     ax, 1
+                push    ax
+                push    es
+                pop     ds
+                call    _brkctl
+                add     sp, 8
+                cmp     dx, 0FFFFh
+                pop     ds
+                pop     dx
+                pop     bx
+                jz      short locret_13D90
+                or      dx, dx
+
+locret_13D90:                           ; CODE XREF: __amallocbrk+1C\u2191j
+                retn
+__amallocbrk    endp
+
+; ---------------------------------------------------------------------------
                 align 2
-; [0000006E BYTES: COLLAPSED FUNCTION _brkctl. PRESS NUMPAD+ TO EXPAND]
-; [00000056 BYTES: COLLAPSED FUNCTION sub_13E00. PRESS NUMPAD+ TO EXPAND]
-; [00000046 BYTES: COLLAPSED FUNCTION _strcat. PRESS NUMPAD+ TO EXPAND]
-; [00000036 BYTES: COLLAPSED FUNCTION _strcpy. PRESS NUMPAD+ TO EXPAND]
-; [00000017 BYTES: COLLAPSED FUNCTION _strlen. PRESS NUMPAD+ TO EXPAND]
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+_brkctl         proc far                ; CODE XREF: sub_13BA8+1E\u2191P
+                                        ; __amallocbrk+E\u2191P
+
+arg_0           = word ptr  6
+arg_2           = word ptr  8
+arg_4           = word ptr  0Ah
+arg_8           = word ptr  0Eh
+
+                push    bp
+                mov     bp, sp
+                push    si
+                push    di
+                push    es
+                cmp     [bp+arg_4], 0
+                jnz     short loc_13DD6
+                mov     di, 2E86h
+                mov     dx, [bp+arg_2]
+                mov     ax, [bp+arg_0]
+                dec     ax
+                jnz     short loc_13DB1
+                call    sub_13E00
+                jb      short loc_13DD6
+                jmp     short loc_13DF9
+; ---------------------------------------------------------------------------
+
+loc_13DB1:                              ; CODE XREF: _brkctl+16\u2191j
+                mov     si, word_2CAA6
+                dec     ax
+                jz      short loc_13DC9
+                cmp     si, di
+                jz      short loc_13DC9
+                mov     ax, [si+2]
+                mov     [bp+arg_8], ax
+                push    si
+                call    sub_13E00
+                pop     si
+                jnb     short loc_13DF9
+
+loc_13DC9:                              ; CODE XREF: _brkctl+24\u2191j
+                                        ; _brkctl+28\u2191j
+                add     si, 4
+                cmp     si, 2ED6h
+                jnb     short loc_13DD6
+                or      dx, dx
+                jnz     short loc_13DDC
+
+loc_13DD6:                              ; CODE XREF: _brkctl+A\u2191j
+                                        ; _brkctl+1B\u2191j ...
+                mov     ax, 0FFFFh
+                cwd
+                jmp     short loc_13DF9
+; ---------------------------------------------------------------------------
+
+loc_13DDC:                              ; CODE XREF: _brkctl+42\u2191j
+                mov     bx, dx
+                add     bx, 0Fh
+                rcr     bx, 1
+                mov     cl, 3
+                shr     bx, cl
+                mov     ah, 48h
+                int     21h             ; DOS - 2+ - ALLOCATE MEMORY
+                                        ; BX = number of 16-byte paragraphs desired
+                jb      short loc_13DD6
+                xchg    ax, dx
+                mov     [si], ax
+                mov     [si+2], dx
+                mov     word_2CAA6, si
+                xor     ax, ax
+
+loc_13DF9:                              ; CODE XREF: _brkctl+1D\u2191j
+                                        ; _brkctl+35\u2191j ...
+                pop     es
+                assume es:nothing
+                pop     di
+                pop     si
+                mov     sp, bp
+                pop     bp
+                retf
+_brkctl         endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function
+
+sub_13E00       proc near               ; CODE XREF: _brkctl+18\u2191p
+                                        ; _brkctl+31\u2191p
+                mov     cx, [bp+0Eh]
+                mov     si, di
+
+loc_13E05:                              ; CODE XREF: sub_13E00+11\u2193j
+                cmp     [si+2], cx
+                jz      short loc_13E16
+                add     si, 4
+                cmp     si, 2ED6h
+                jnz     short loc_13E05
+                stc
+                jmp     short locret_13E55
+; ---------------------------------------------------------------------------
+
+loc_13E16:                              ; CODE XREF: sub_13E00+8\u2191j
+                mov     bx, dx
+                add     bx, [si]
+                jb      short locret_13E55
+                mov     dx, bx
+                mov     es, cx
+                cmp     si, di
+                jnz     short loc_13E2A
+                cmp     word_2CA50, bx
+                jnb     short loc_13E50
+
+loc_13E2A:                              ; CODE XREF: sub_13E00+22\u2191j
+                add     bx, 0Fh
+                rcr     bx, 1
+                shr     bx, 1
+                shr     bx, 1
+                shr     bx, 1
+                cmp     si, di
+                jnz     short loc_13E42
+                add     bx, cx
+                mov     ax, word_2CAC7
+                sub     bx, ax
+                mov     es, ax
+
+loc_13E42:                              ; CODE XREF: sub_13E00+37\u2191j
+                mov     ah, 4Ah
+                int     21h             ; DOS - 2+ - ADJUST MEMORY BLOCK SIZE (SETBLOCK)
+                                        ; ES = segment address of block to change
+                                        ; BX = new size in paragraphs
+                jb      short locret_13E55
+                cmp     si, di
+                jnz     short loc_13E50
+                mov     word_2CA50, dx
+
+loc_13E50:                              ; CODE XREF: sub_13E00+28\u2191j
+                                        ; sub_13E00+4A\u2191j
+                xchg    ax, dx
+                xchg    ax, [si]
+                mov     dx, cx
+
+locret_13E55:                           ; CODE XREF: sub_13E00+14\u2191j
+                                        ; sub_13E00+1A\u2191j ...
+                retn
+sub_13E00       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; char *__cdecl strcat(char *, const char *)
+_strcat         proc far                ; CODE XREF: _fclose+A0\u2191P
+                                        ; _execve+F5\u2193P ...
+
+arg_0           = dword ptr  6
+arg_4           = dword ptr  0Ah
+
+                push    bp
+                mov     bp, sp
+                mov     dx, di
+                mov     bx, si
+                push    ds
+                les     di, [bp+arg_0]
+                xor     ax, ax
+                mov     cx, 0FFFFh
+                repne scasb
+                lea     si, [di-1]
+                les     di, [bp+arg_4]
+                mov     cx, 0FFFFh
+                repne scasb
+                not     cx
+                sub     di, cx
+                mov     ax, es
+                mov     ds, ax
+                mov     es, word ptr [bp+arg_0+2]
+                xchg    di, si
+                mov     ax, word ptr [bp+arg_0]
+                test    si, 1
+                jz      short loc_13E8B
+                movsb
+                dec     cx
+
+loc_13E8B:                              ; CODE XREF: _strcat+31\u2191j
+                shr     cx, 1
+                rep movsw
+                adc     cx, cx
+                rep movsb
+                mov     si, bx
+                mov     di, dx
+                pop     ds
+                mov     dx, es
+                pop     bp
+                retf
+_strcat         endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; char *__cdecl strcpy(char *, const char *)
+_strcpy         proc far                ; CODE XREF: _fclose+7B\u2191P
+                                        ; __cenvarg+167\u2193P ...
+
+arg_0           = dword ptr  6
+arg_4           = dword ptr  0Ah
+
+                push    bp
+                mov     bp, sp
+                mov     dx, di
+                mov     bx, si
+                push    ds
+                lds     si, [bp+arg_4]
+                mov     di, si
+                mov     ax, ds
+                mov     es, ax
+                assume es:dseg
+                xor     ax, ax
+                mov     cx, 0FFFFh
+                repne scasb
+                not     cx
+                les     di, [bp+arg_0]
+                assume es:nothing
+                mov     ax, di
+                test    al, 1
+                jz      short loc_13EC1
+                movsb
+                dec     cx
+
+loc_13EC1:                              ; CODE XREF: _strcpy+21\u2191j
+                shr     cx, 1
+                rep movsw
+                adc     cx, cx
+                rep movsb
+                mov     si, bx
+                mov     di, dx
+                pop     ds
+                mov     dx, es
+                pop     bp
+                retf
+_strcpy         endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; size_t __cdecl strlen(const char *)
+_strlen         proc far                ; CODE XREF: show_text_dialog+16B\u2191P
+                                        ; iprint+F0\u2191P ...
+
+arg_0           = dword ptr  6
+
+                push    bp
+                mov     bp, sp
+                mov     dx, di
+                les     di, [bp+arg_0]
+                xor     ax, ax
+                mov     cx, 0FFFFh
+                repne scasb
+                not     cx
+                dec     cx
+                xchg    ax, cx
+                mov     di, dx
+                pop     bp
+                retf
+_strlen         endp
+
+; ---------------------------------------------------------------------------
                 align 2
-; [0000002A BYTES: COLLAPSED FUNCTION _strncpy. PRESS NUMPAD+ TO EXPAND]
-; [0000003B BYTES: COLLAPSED FUNCTION _strncmp. PRESS NUMPAD+ TO EXPAND]
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; char *__cdecl strncpy(char *, const char *, size_t)
+_strncpy        proc far                ; CODE XREF: sub_1491E+3B\u2193P
+                                        ; sub_1491E+AD\u2193P
+
+arg_0           = dword ptr  6
+arg_4           = dword ptr  0Ah
+arg_8           = word ptr  0Eh
+
+                push    bp
+                mov     bp, sp
+                push    di
+                push    si
+                push    ds
+                les     di, [bp+arg_0]
+                lds     si, [bp+arg_4]
+                mov     bx, di
+                mov     cx, [bp+arg_8]
+                jcxz    short loc_13F09
+
+loc_13EFD:                              ; CODE XREF: _strncpy+19\u2193j
+                lodsb
+                or      al, al
+                jz      short loc_13F05
+                stosb
+                loop    loc_13EFD
+
+loc_13F05:                              ; CODE XREF: _strncpy+16\u2191j
+                xor     al, al
+                rep stosb
+
+loc_13F09:                              ; CODE XREF: _strncpy+11\u2191j
+                mov     ax, bx
+                mov     dx, es
+                pop     ds
+                pop     si
+                pop     di
+                mov     sp, bp
+                pop     bp
+                retf
+_strncpy        endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; int __cdecl strncmp(const char *, const char *, size_t)
+_strncmp        proc far                ; CODE XREF: _getenv+74\u2193P
+
+arg_0           = dword ptr  6
+arg_4           = dword ptr  0Ah
+arg_8           = word ptr  0Eh
+
+                push    bp
+                mov     bp, sp
+                push    di
+                push    si
+                push    ds
+                mov     cx, [bp+arg_8]
+                jcxz    short loc_13F46
+                mov     bx, cx
+                les     di, [bp+arg_0]
+                mov     si, di
+                xor     ax, ax
+                repne scasb
+                neg     cx
+                add     cx, bx
+                mov     di, si
+                lds     si, [bp+arg_4]
+                repe cmpsb
+                mov     al, [si-1]
+                xor     cx, cx
+                cmp     al, es:[di-1]
+                ja      short loc_13F44
+                jz      short loc_13F46
+                dec     cx
+                dec     cx
+
+loc_13F44:                              ; CODE XREF: _strncmp+2A\u2191j
+                not     cx
+
+loc_13F46:                              ; CODE XREF: _strncmp+9\u2191j
+                                        ; _strncmp+2C\u2191j
+                mov     ax, cx
+                pop     ds
+                pop     si
+                pop     di
+                mov     sp, bp
+                pop     bp
+                retf
+_strncmp        endp
+
+; ---------------------------------------------------------------------------
                 align 2
-; [00000003 BYTES: COLLAPSED FUNCTION j___catox. PRESS NUMPAD+ TO EXPAND]
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: thunk
+
+j___catox       proc far                ; CODE XREF: sub_1491E+53\u2193P
+                jmp     near ptr __catox
+j___catox       endp
+
+; ---------------------------------------------------------------------------
                 align 2
-; [00000056 BYTES: COLLAPSED FUNCTION __catox. PRESS NUMPAD+ TO EXPAND]
-; [0000001C BYTES: COLLAPSED FUNCTION _itoa. PRESS NUMPAD+ TO EXPAND]
-; [0000000A BYTES: COLLAPSED FUNCTION _ultoa. PRESS NUMPAD+ TO EXPAND]
-; [00000018 BYTES: COLLAPSED FUNCTION _tolower. PRESS NUMPAD+ TO EXPAND]
-; [00000096 BYTES: COLLAPSED FUNCTION _getenv. PRESS NUMPAD+ TO EXPAND]
-; [00000023 BYTES: COLLAPSED FUNCTION _isatty. PRESS NUMPAD+ TO EXPAND]
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+__catox         proc far                ; CODE XREF: j___catox\u2191j
+
+arg_0           = dword ptr  6
+
+                push    bp
+                mov     bp, sp
+                push    di
+                push    si
+                push    ds
+                lds     si, [bp+arg_0]
+                xor     ax, ax
+                cwd
+                xor     bx, bx
+
+loc_13F62:                              ; CODE XREF: __catox+11\u2193j
+                                        ; __catox+15\u2193j
+                lodsb
+                cmp     al, 20h ; ' '
+                jz      short loc_13F62
+                cmp     al, 9
+                jz      short loc_13F62
+                push    ax
+                cmp     al, 2Dh ; '-'
+                jz      short loc_13F74
+                cmp     al, 2Bh ; '+'
+                jnz     short loc_13F75
+
+loc_13F74:                              ; CODE XREF: __catox+1A\u2191j
+                                        ; __catox+42\u2193j
+                lodsb
+
+loc_13F75:                              ; CODE XREF: __catox+1E\u2191j
+                cmp     al, 39h ; '9'
+                ja      short loc_13F98
+                sub     al, 30h ; '0'
+                jb      short loc_13F98
+                shl     bx, 1
+                rcl     dx, 1
+                mov     cx, bx
+                mov     di, dx
+                shl     bx, 1
+                rcl     dx, 1
+                shl     bx, 1
+                rcl     dx, 1
+                add     bx, cx
+                adc     dx, di
+                add     bx, ax
+                adc     dx, 0
+                jmp     short loc_13F74
+; ---------------------------------------------------------------------------
+
+loc_13F98:                              ; CODE XREF: __catox+23\u2191j
+                                        ; __catox+27\u2191j
+                pop     ax
+                cmp     al, 2Dh ; '-'
+                xchg    ax, bx
+                jnz     short loc_13FA5
+                neg     ax
+                adc     dx, 0
+                neg     dx
+
+loc_13FA5:                              ; CODE XREF: __catox+48\u2191j
+                pop     ds
+                pop     si
+                pop     di
+                pop     bp
+                retf
+__catox         endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; char *__cdecl itoa(int, char *, int)
+_itoa           proc far                ; CODE XREF: _main+158\u2191P
+                                        ; _main+172\u2191P ...
+
+arg_2           = word ptr  6
+arg_4           = dword ptr  8
+arg_8           = word ptr  0Ch
+
+; FUNCTION CHUNK AT 3CA1 SIZE 00000056 BYTES
+
+                push    bp
+                mov     bp, sp
+                push    si
+                push    di
+                mov     bl, 1
+                mov     cx, [bp+arg_8]
+                mov     ax, [bp+arg_2]
+                xor     dx, dx
+                cmp     cx, 0Ah
+                jnz     short loc_13FBF
+                cwd
+
+loc_13FBF:                              ; CODE XREF: _itoa+12\u2191j
+                push    ds
+                lds     di, [bp+arg_4]
+                jmp     __cxtoa
+_itoa           endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; char *__cdecl ultoa(unsigned __int32, char *, int)
+_ultoa          proc near               ; CODE XREF: iprint+DB\u2191P
+
+arg_2           = word ptr  6
+arg_4           = dword ptr  8
+arg_A           = word ptr  0Eh
+
+; FUNCTION CHUNK AT 3C94 SIZE 0000000D BYTES
+
+                push    bp
+                mov     bp, sp
+                push    si
+                push    di
+                mov     bl, 0
+                jmp     __cltoasub
+_ultoa          endp ; sp-analysis failed
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; int __cdecl tolower(int)
+_tolower        proc far                ; CODE XREF: istrcmp+F\u2193P
+                                        ; istrcmp+22\u2193P ...
+
+arg_0           = word ptr  6
+
+                push    bp
+                mov     bp, sp
+                mov     bx, [bp+arg_0]
+                test    (__ctype+1)[bx], 1
+                jz      short loc_13FE4
+                mov     ax, bx
+                add     ax, 20h ; ' '
+                jmp     short loc_13FE6
+; ---------------------------------------------------------------------------
+
+loc_13FE4:                              ; CODE XREF: _tolower+B\u2191j
+                mov     ax, bx
+
+loc_13FE6:                              ; CODE XREF: _tolower+12\u2191j
+                pop     bp
+                retf
+_tolower        endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; char *__cdecl getenv(const char *)
+_getenv         proc far                ; CODE XREF: sub_1491E+C\u2193P
+
+var_6           = dword ptr -6
+arg_0           = dword ptr  6
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 6
+                push    si
+                mov     ax, word ptr envp
+                mov     dx, word ptr envp+2
+                mov     word ptr [bp+var_6], ax
+                mov     word ptr [bp+var_6+2], dx
+                or      ax, dx
+                jz      short loc_14076
+                mov     ax, word ptr [bp+arg_0]
+                or      ax, word ptr [bp+arg_0+2]
+                jz      short loc_14076
+                push    word ptr [bp+arg_0+2]
+                push    word ptr [bp+arg_0] ; char *
+                call    _strlen
+                add     sp, 4
+                mov     si, ax
+                jmp     short loc_14020
+; ---------------------------------------------------------------------------
+                align 4
+
+loc_1401C:                              ; CODE XREF: _getenv+55\u2193j
+                                        ; _getenv+61\u2193j ...
+                add     word ptr [bp+var_6], 4
+
+loc_14020:                              ; CODE XREF: _getenv+30\u2191j
+                les     bx, [bp+var_6]
+                mov     ax, es:[bx]
+                or      ax, es:[bx+2]
+                jz      short loc_14076
+                push    word ptr es:[bx+2]
+                push    word ptr es:[bx] ; char *
+                call    _strlen
+                add     sp, 4
+                cmp     ax, si
+                jle     short loc_1401C
+                les     bx, [bp+var_6]
+                les     bx, es:[bx]
+                cmp     byte ptr es:[bx+si], 3Dh ; '='
+                jnz     short loc_1401C
+                push    si              ; size_t
+                push    word ptr [bp+arg_0+2]
+                push    word ptr [bp+arg_0] ; char *
+                les     bx, [bp+var_6]
+                push    word ptr es:[bx+2]
+                push    word ptr es:[bx] ; char *
+                call    _strncmp
+                add     sp, 0Ah
+                or      ax, ax
+                jnz     short loc_1401C
+                les     bx, [bp+var_6]
+                les     bx, es:[bx]
+                lea     ax, [bx+si+1]
+                mov     dx, es
+                jmp     short loc_14079
+; ---------------------------------------------------------------------------
                 align 2
-; [00000004 BYTES: COLLAPSED FUNCTION _getche. PRESS NUMPAD+ TO EXPAND]
-; [00000017 BYTES: COLLAPSED FUNCTION _getch. PRESS NUMPAD+ TO EXPAND]
+
+loc_14076:                              ; CODE XREF: _getenv+16\u2191j
+                                        ; _getenv+1E\u2191j ...
+                sub     ax, ax
+                cwd
+
+loc_14079:                              ; CODE XREF: _getenv+8B\u2191j
+                pop     si
+                mov     sp, bp
+                pop     bp
+                retf
+_getenv         endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; int __cdecl isatty(int)
+_isatty         proc far                ; CODE XREF: __flsbuf+A7\u2191P
+                                        ; __ftbuf+3A\u2191P ...
+
+arg_0           = word ptr  6
+
+                push    bp
+                mov     bp, sp
+                mov     bx, [bp+arg_0]
+                cmp     bx, word_2CACE
+                jge     short loc_1409B
+                cmp     bx, 0
+                jl      short loc_1409B
+                test    byte ptr [bx+2F00h], 40h
+                jz      short loc_1409B
+                mov     ax, 1
+                jmp     short loc_1409D
+; ---------------------------------------------------------------------------
+
+loc_1409B:                              ; CODE XREF: _isatty+A\u2191j
+                                        ; _isatty+F\u2191j ...
+                xor     ax, ax
+
+loc_1409D:                              ; CODE XREF: _isatty+1B\u2191j
+                mov     sp, bp
+                pop     bp
+                retf
+_isatty         endp
+
+; ---------------------------------------------------------------------------
+                align 2
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function
+
+; int getche(void)
+_getche         proc far
+                mov     dh, 1
+                jmp     short loc_140A8
+_getche         endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function
+
+; int getch(void)
+_getch          proc far                ; CODE XREF: get_master:loc_1CEDD\u2193P
+                                        ; compact_memory+11F\u2193P ...
+                mov     dh, 8
+
+loc_140A8:                              ; CODE XREF: _getche+2\u2191j
+                mov     ax, word_2D3D8
+                or      ah, ah
+                jnz     short loc_140B7
+                mov     word_2D3D8, 0FFFFh
+                jmp     short locret_140BC
+; ---------------------------------------------------------------------------
+
+loc_140B7:                              ; CODE XREF: _getch+7\u2191j
+                xchg    ax, dx
+                int     21h             ; DOS -
+                mov     ah, 0
+
+locret_140BC:                           ; CODE XREF: _getch+F\u2191j
+                retf
+_getch          endp
+
+; ---------------------------------------------------------------------------
                 align 2
 
 ; =============== S U B R O U T I N E =======================================
@@ -4445,20 +10117,1103 @@ loc_14139:                              ; CODE XREF: _int86+6B\u2191j
                 retf
 _int86          endp
 
-; [0000002D BYTES: COLLAPSED FUNCTION __aFahdiff. PRESS NUMPAD+ TO EXPAND]
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+__aFahdiff      proc far                ; CODE XREF: _fread+45\u2191P
+                                        ; _fread+CC\u2191P ...
+
+arg_0           = word ptr  6
+arg_2           = word ptr  8
+arg_4           = word ptr  0Ah
+arg_6           = word ptr  0Ch
+
+                push    bp
+                mov     bp, sp
+                mov     ax, [bp+arg_2]
+                sub     ax, [bp+arg_6]
+                sbb     dx, dx
+                add     ax, ax
+                adc     dx, dx
+                add     ax, ax
+                adc     dx, dx
+                add     ax, ax
+                adc     dx, dx
+                add     ax, ax
+                adc     dx, dx
+                add     ax, [bp+arg_0]
+                adc     dx, 0
+                sub     ax, [bp+arg_4]
+                sbb     dx, 0
+                mov     sp, bp
+                pop     bp
+                retf    8
+__aFahdiff      endp
+
+; ---------------------------------------------------------------------------
                 align 2
-; [00000317 BYTES: COLLAPSED FUNCTION _fseek. PRESS NUMPAD+ TO EXPAND]
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; int __cdecl fseek(FILE *, __int32, int)
+_fseek          proc far                ; CODE XREF: seg009:00A0\u2193P
+                                        ; seg009:00C7\u2193P
+
+var_16          = word ptr -16h
+var_14          = word ptr -14h
+var_12          = word ptr -12h
+var_10          = word ptr -10h
+var_E           = word ptr -0Eh
+var_A           = dword ptr -0Ah
+var_6           = dword ptr -6
+var_2           = word ptr -2
+arg_0           = dword ptr  6
+arg_4           = dword ptr  0Ah
+arg_8           = word ptr  0Eh
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 16h
+                push    si
+                mov     [bp+var_2], 0
+                les     bx, [bp+arg_0]
+                test    byte ptr es:[bx+0Ah], 83h
+                jz      short loc_14196
+                cmp     [bp+arg_8], 2
+                jg      short loc_14196
+                cmp     [bp+arg_8], 0
+                jge     short loc_141A0
+
+loc_14196:                              ; CODE XREF: _fseek+14\u2191j
+                                        ; _fseek+1A\u2191j ...
+                mov     word_2CAC1, 16h
+                jmp     loc_1422C
+; ---------------------------------------------------------------------------
                 align 2
-; [0000020E BYTES: COLLAPSED FUNCTION _ftell. PRESS NUMPAD+ TO EXPAND]
-; [00000085 BYTES: COLLAPSED FUNCTION _sprintf. PRESS NUMPAD+ TO EXPAND]
+
+loc_141A0:                              ; CODE XREF: _fseek+20\u2191j
+                les     bx, [bp+arg_0]
+                mov     al, es:[bx+0Bh]
+                cbw
+                mov     [bp+var_12], ax
+                mov     ax, bx
+                sub     ax, 3554h
+                cwd
+                mov     cx, 0Ch
+                idiv    cx
+                mov     cx, ax
+                shl     ax, 1
+                add     ax, cx
+                shl     ax, 1
+                add     ax, 3644h
+                mov     [bp+var_14], ax
+                and     byte ptr es:[bx+0Ah], 0EFh
+                test    byte ptr es:[bx+0Ah], 82h
+                jz      short loc_14232
+                cmp     [bp+arg_8], 1
+                jnz     short loc_141EB
+                push    es
+                push    bx              ; FILE *
+                call    _ftell
+                add     sp, 4
+                add     word ptr [bp+arg_4], ax
+                adc     word ptr [bp+arg_4+2], dx
+
+loc_141E6:                              ; CODE XREF: _fseek+1E4\u2193j
+                                        ; _fseek+1F1\u2193j
+                mov     [bp+arg_8], 0
+
+loc_141EB:                              ; CODE XREF: _fseek+60\u2191j
+                push    word ptr [bp+arg_0+2]
+                push    word ptr [bp+arg_0] ; FILE *
+                call    _fflush
+                add     sp, 4
+                les     bx, [bp+arg_0]
+                test    byte ptr es:[bx+0Ah], 80h
+                jz      short loc_14208
+                and     byte ptr es:[bx+0Ah], 0FCh
+
+loc_14208:                              ; CODE XREF: _fseek+8D\u2191j
+                push    [bp+arg_8]      ; int
+                push    word ptr [bp+arg_4+2]
+                push    word ptr [bp+arg_4] ; __int32
+                push    [bp+var_12]     ; int
+                call    far ptr _lseek
+                add     sp, 8
+                cmp     ax, 0FFFFh
+                jz      short loc_14224
+                jmp     loc_14484
+; ---------------------------------------------------------------------------
+
+loc_14224:                              ; CODE XREF: _fseek+AB\u2191j
+                cmp     dx, 0FFFFh
+                jz      short loc_1422C
+                jmp     loc_14484
+; ---------------------------------------------------------------------------
+
+loc_1422C:                              ; CODE XREF: _fseek+28\u2191j
+                                        ; _fseek+B3\u2191j ...
+                mov     ax, 0FFFFh
+                jmp     loc_14486
+; ---------------------------------------------------------------------------
+
+loc_14232:                              ; CODE XREF: _fseek+5A\u2191j
+                les     bx, [bp+arg_0]
+                test    byte ptr es:[bx+0Ah], 0Ch
+                jnz     short loc_14262
+                mov     ax, bx
+                sub     ax, 3554h
+                cwd
+                mov     cx, 0Ch
+                idiv    cx
+                mov     bx, ax
+                shl     bx, 1
+                add     bx, ax
+                shl     bx, 1
+                test    byte ptr [bx+3644h], 1
+                jnz     short loc_14262
+                push    es
+                push    word ptr [bp+arg_0]
+                call    __getbuf
+                add     sp, 4
+                jmp     short loc_14272
+; ---------------------------------------------------------------------------
+
+loc_14262:                              ; CODE XREF: _fseek+C6\u2191j
+                                        ; _fseek+E0\u2191j
+                mov     bx, [bp+var_14]
+                test    byte ptr [bx], 4
+                jz      short loc_14272
+                mov     [bp+var_2], 1
+                and     byte ptr [bx], 0FBh
+
+loc_14272:                              ; CODE XREF: _fseek+EC\u2191j
+                                        ; _fseek+F4\u2191j
+                mov     ax, 1
+                push    ax              ; int
+                sub     ax, ax
+                push    ax
+                push    ax              ; __int32
+                push    [bp+var_12]     ; int
+                call    far ptr _lseek
+                add     sp, 8
+                mov     word ptr [bp+var_A], ax
+                mov     word ptr [bp+var_A+2], dx
+                cmp     ax, 0FFFFh
+                jnz     short loc_14295
+                cmp     dx, 0FFFFh
+                jz      short loc_1422C
+
+loc_14295:                              ; CODE XREF: _fseek+11A\u2191j
+                cmp     [bp+arg_8], 1
+                jnz     short loc_142C4
+                mov     ax, word ptr [bp+arg_4]
+                or      ax, word ptr [bp+arg_4+2]
+                jnz     short loc_142AC
+                cmp     [bp+var_2], 0
+                jnz     short loc_142AC
+                jmp     loc_14484
+; ---------------------------------------------------------------------------
+
+loc_142AC:                              ; CODE XREF: _fseek+12D\u2191j
+                                        ; _fseek+133\u2191j
+                les     bx, [bp+arg_0]
+                mov     ax, es:[bx+4]
+                cwd
+                mov     cx, word ptr [bp+var_A]
+                mov     bx, word ptr [bp+var_A+2]
+                sub     cx, ax
+                sbb     bx, dx
+                add     word ptr [bp+arg_4], cx
+                adc     word ptr [bp+arg_4+2], bx
+
+loc_142C4:                              ; CODE XREF: _fseek+125\u2191j
+                cmp     [bp+arg_8], 2
+                jz      short loc_142E4
+                mov     bx, [bp+var_14]
+                test    byte ptr [bx], 8
+                jnz     short loc_142E4
+                mov     ax, word ptr [bp+var_A]
+                mov     dx, word ptr [bp+var_A+2]
+                cmp     word ptr [bp+arg_4+2], dx
+                jl      short loc_14344
+                jg      short loc_142E4
+                cmp     word ptr [bp+arg_4], ax
+                jbe     short loc_14344
+
+loc_142E4:                              ; CODE XREF: _fseek+154\u2191j
+                                        ; _fseek+15C\u2191j ...
+                mov     ax, 2
+                push    ax              ; int
+                sub     ax, ax
+                push    ax
+                push    ax              ; __int32
+                push    [bp+var_12]     ; int
+                call    far ptr _lseek
+                add     sp, 8
+                mov     [bp+var_10], ax
+                mov     [bp+var_E], dx
+                sub     ax, ax
+                push    ax              ; int
+                push    word ptr [bp+var_A+2]
+                push    word ptr [bp+var_A] ; __int32
+                push    [bp+var_12]     ; int
+                call    far ptr _lseek
+                add     sp, 8
+                cmp     [bp+arg_8], 2
+                jnz     short loc_14323
+                mov     ax, [bp+var_10]
+                mov     dx, [bp+var_E]
+                add     word ptr [bp+arg_4], ax
+                adc     word ptr [bp+arg_4+2], dx
+
+loc_14323:                              ; CODE XREF: _fseek+1A1\u2191j
+                mov     ax, [bp+var_10]
+                mov     dx, [bp+var_E]
+                cmp     word ptr [bp+arg_4+2], dx
+                jg      short loc_1433E
+                jl      short loc_14335
+                cmp     word ptr [bp+arg_4], ax
+                ja      short loc_1433E
+
+loc_14335:                              ; CODE XREF: _fseek+1BA\u2191j
+                mov     bx, [bp+var_14]
+                and     byte ptr [bx], 0F7h
+                jmp     short loc_14344
+; ---------------------------------------------------------------------------
                 align 2
-; [0000007D BYTES: COLLAPSED FUNCTION _vsprintf. PRESS NUMPAD+ TO EXPAND]
+
+loc_1433E:                              ; CODE XREF: _fseek+1B8\u2191j
+                                        ; _fseek+1BF\u2191j
+                mov     bx, [bp+var_14]
+                or      byte ptr [bx], 8
+
+loc_14344:                              ; CODE XREF: _fseek+167\u2191j
+                                        ; _fseek+16E\u2191j ...
+                mov     ax, [bx+2]
+                mov     [bp+var_16], ax
+                cmp     word ptr [bp+arg_4+2], 0
+                jge     short loc_14353
+                jmp     loc_14196
+; ---------------------------------------------------------------------------
+
+loc_14353:                              ; CODE XREF: _fseek+1DA\u2191j
+                test    byte ptr [bx], 8
+                jz      short loc_1435B
+                jmp     loc_141E6
+; ---------------------------------------------------------------------------
+
+loc_1435B:                              ; CODE XREF: _fseek+1E2\u2191j
+                les     bx, [bp+arg_0]
+                test    byte ptr es:[bx+0Ah], 4
+                jz      short loc_14368
+                jmp     loc_141E6
+; ---------------------------------------------------------------------------
+
+loc_14368:                              ; CODE XREF: _fseek+1EF\u2191j
+                cwd
+                push    dx
+                push    ax
+                push    word ptr [bp+arg_4+2]
+                push    word ptr [bp+arg_4]
+                call    __aFlrem
+                mov     si, ax
+                cwd
+                mov     cx, word ptr [bp+arg_4]
+                mov     bx, word ptr [bp+arg_4+2]
+                sub     cx, ax
+                sbb     bx, dx
+                mov     word ptr [bp+var_6], cx
+                mov     word ptr [bp+var_6+2], bx
+                les     bx, [bp+arg_0]
+                cmp     word ptr es:[bx+4], 0
+                jz      short loc_14402
+                cmp     [bp+var_2], 0
+                jnz     short loc_14402
+                mov     ax, [bp+var_16]
+                cwd
+                push    dx
+                push    ax
+                cwd
+                push    dx
+                push    ax
+                mov     ax, word ptr [bp+var_A]
+                mov     dx, word ptr [bp+var_A+2]
+                sub     ax, 1
+                sbb     dx, 0
+                push    dx
+                push    ax
+                call    __aFldiv
+                push    dx
+                push    ax
+                call    __aFlmul
+                cmp     ax, word ptr [bp+var_6]
+                jnz     short loc_14402
+                cmp     dx, word ptr [bp+var_6+2]
+                jnz     short loc_14402
+                les     bx, [bp+arg_0]
+                mov     ax, es:[bx]
+                sub     ax, es:[bx+6]
+                add     es:[bx+4], ax
+
+loc_143D4:                              ; CODE XREF: _fseek+2D3\u2193j
+                mov     bx, [bp+var_12]
+                test    byte ptr [bx+2F00h], 80h
+                jnz     short loc_143E1
+                jmp     loc_1446C
+; ---------------------------------------------------------------------------
+
+loc_143E1:                              ; CODE XREF: _fseek+268\u2191j
+                test    byte ptr [bx+2F00h], 4
+                jz      short loc_143ED
+                or      si, si
+                jz      short loc_143ED
+                inc     si
+
+loc_143ED:                              ; CODE XREF: _fseek+272\u2191j
+                                        ; _fseek+276\u2191j
+                les     bx, [bp+arg_0]
+                mov     ax, es:[bx+6]
+                mov     dx, es:[bx+8]
+                mov     es:[bx], ax
+                mov     es:[bx+2], dx
+                jmp     short loc_14463
+; ---------------------------------------------------------------------------
                 align 2
-; [00000052 BYTES: COLLAPSED FUNCTION _intdos. PRESS NUMPAD+ TO EXPAND]
-; [0000000D BYTES: COLLAPSED FUNCTION _inp. PRESS NUMPAD+ TO EXPAND]
+
+loc_14402:                              ; CODE XREF: _fseek+21D\u2191j
+                                        ; _fseek+223\u2191j ...
+                sub     ax, ax
+                push    ax              ; int
+                push    word ptr [bp+var_6+2]
+                push    word ptr [bp+var_6] ; __int32
+                push    [bp+var_12]     ; int
+                call    far ptr _lseek
+                add     sp, 8
+                cmp     ax, 0FFFFh
+                jnz     short loc_14423
+                cmp     dx, 0FFFFh
+                jnz     short loc_14423
+                jmp     loc_14196
+; ---------------------------------------------------------------------------
+
+loc_14423:                              ; CODE XREF: _fseek+2A5\u2191j
+                                        ; _fseek+2AA\u2191j
+                mov     bx, [bp+var_14]
+                push    word ptr [bx+2] ; unsigned int
+                les     bx, [bp+arg_0]
+                push    word ptr es:[bx+8]
+                push    word ptr es:[bx+6] ; void *
+                push    [bp+var_12]     ; int
+                call    _read
+                add     sp, 8
+                les     bx, [bp+arg_0]
+                mov     es:[bx+4], ax
+                inc     ax
+                jnz     short loc_143D4
+                jmp     loc_14196
+; ---------------------------------------------------------------------------
+
+loc_1444C:                              ; CODE XREF: _fseek+2F6\u2193j
+                les     bx, [bp+arg_0]
+                les     bx, es:[bx]
+                cmp     byte ptr es:[bx], 0Ah
+                jnz     short loc_14459
+                dec     si
+
+loc_14459:                              ; CODE XREF: _fseek+2E2\u2191j
+                les     bx, [bp+arg_0]
+                dec     word ptr es:[bx+4]
+                inc     word ptr es:[bx]
+
+loc_14463:                              ; CODE XREF: _fseek+28B\u2191j
+                mov     ax, si
+                dec     si
+                or      ax, ax
+                jle     short loc_14484
+                jmp     short loc_1444C
+; ---------------------------------------------------------------------------
+
+loc_1446C:                              ; CODE XREF: _fseek+26A\u2191j
+                les     bx, [bp+arg_0]
+                mov     ax, es:[bx+6]
+                mov     dx, es:[bx+8]
+                add     ax, si
+                mov     es:[bx], ax
+                mov     es:[bx+2], dx
+                sub     es:[bx+4], si
+
+loc_14484:                              ; CODE XREF: _fseek+AD\u2191j
+                                        ; _fseek+B5\u2191j ...
+                sub     ax, ax
+
+loc_14486:                              ; CODE XREF: _fseek+BB\u2191j
+                pop     si
+                mov     sp, bp
+                pop     bp
+                retf
+_fseek          endp
+
+; ---------------------------------------------------------------------------
                 align 2
-; [0000000E BYTES: COLLAPSED FUNCTION _outp. PRESS NUMPAD+ TO EXPAND]
-; [00000102 BYTES: COLLAPSED FUNCTION _ftime. PRESS NUMPAD+ TO EXPAND]
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; __int32 __cdecl ftell(FILE *)
+_ftell          proc far                ; CODE XREF: _fseek+64\u2191P
+                                        ; seg009:00AE\u2193P
+
+var_18          = word ptr -18h
+var_16          = dword ptr -16h
+var_12          = word ptr -12h
+var_10          = word ptr -10h
+var_E           = word ptr -0Eh
+var_C           = dword ptr -0Ch
+var_8           = dword ptr -8
+var_4           = dword ptr -4
+arg_0           = dword ptr  6
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 18h
+                push    di
+                push    si
+                les     bx, [bp+arg_0]
+                cmp     word ptr es:[bx+4], 0
+                jge     short loc_144A4
+                mov     word ptr es:[bx+4], 0
+
+loc_144A4:                              ; CODE XREF: _ftell+10\u2191j
+                mov     al, es:[bx+0Bh]
+                cbw
+                mov     [bp+var_10], ax
+                mov     ax, 1
+                push    ax              ; int
+                sub     ax, ax
+                push    ax
+                push    ax              ; __int32
+                push    [bp+var_10]     ; int
+                call    far ptr _lseek
+                add     sp, 8
+                mov     word ptr [bp+var_8], ax
+                mov     word ptr [bp+var_8+2], dx
+                or      dx, dx
+                jge     short loc_144D0
+
+loc_144C9:                              ; CODE XREF: _ftell+10E\u2193j
+                mov     ax, 0FFFFh
+
+loc_144CC:                              ; CODE XREF: _ftell+FA\u2193j
+                cwd
+                jmp     loc_14694
+; ---------------------------------------------------------------------------
+
+loc_144D0:                              ; CODE XREF: _ftell+3B\u2191j
+                les     bx, [bp+arg_0]
+                test    byte ptr es:[bx+0Ah], 8
+                jnz     short loc_1450E
+                mov     ax, bx
+                sub     ax, 3554h
+                cwd
+                mov     cx, 0Ch
+                idiv    cx
+                mov     bx, ax
+                shl     bx, 1
+                add     bx, ax
+                shl     bx, 1
+                test    byte ptr [bx+3644h], 1
+                jnz     short loc_1450E
+                mov     bx, word ptr [bp+arg_0]
+                mov     ax, es:[bx+4]
+                cwd
+                mov     cx, ax
+                mov     bx, dx
+                mov     ax, word ptr [bp+var_8]
+                mov     dx, word ptr [bp+var_8+2]
+                sub     ax, cx
+                sbb     dx, bx
+                jmp     loc_14694
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_1450E:                              ; CODE XREF: _ftell+4C\u2191j
+                                        ; _ftell+66\u2191j
+                mov     bx, word ptr [bp+arg_0]
+                mov     ax, es:[bx]
+                sub     ax, es:[bx+6]
+                mov     [bp+var_E], ax
+                test    byte ptr es:[bx+0Ah], 3
+                jz      short loc_1458A
+                mov     bx, [bp+var_10]
+                test    byte ptr [bx+2F00h], 80h
+                jz      short loc_1457B
+                mov     bx, word ptr [bp+arg_0]
+                mov     ax, es:[bx+6]
+                mov     dx, es:[bx+8]
+                mov     word ptr [bp+var_4], ax
+                mov     word ptr [bp+var_4+2], dx
+                cmp     es:[bx], ax
+                jbe     short loc_1457B
+                mov     ax, es:[bx]
+                mov     dx, es:[bx+2]
+                mov     word ptr [bp+var_16], ax
+                mov     word ptr [bp+var_16+2], dx
+                mov     cx, [bp+var_E]
+                les     di, [bp+var_4]
+                mov     [bp+var_18], ds
+                lds     si, [bp+var_16]
+
+loc_1455B:                              ; CODE XREF: _ftell+DD\u2193j
+                                        ; _ftell+E1\u2193j
+                cmp     byte ptr es:[di], 0Ah
+                jnz     short loc_14562
+                inc     cx
+
+loc_14562:                              ; CODE XREF: _ftell+D3\u2191j
+                inc     di
+                mov     ax, es
+                mov     dx, ds
+                cmp     di, si
+                jnz     short loc_1455B
+                cmp     ax, dx
+                jnz     short loc_1455B
+                mov     ds, [bp+var_18]
+                mov     word ptr [bp+var_4], di
+                mov     word ptr [bp+var_4+2], es
+                mov     [bp+var_E], cx
+
+loc_1457B:                              ; CODE XREF: _ftell+9E\u2191j
+                                        ; _ftell+B4\u2191j ...
+                mov     ax, word ptr [bp+var_8]
+                or      ax, word ptr [bp+var_8+2]
+                jnz     short loc_1459E
+                mov     ax, [bp+var_E]
+                jmp     loc_144CC
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_1458A:                              ; CODE XREF: _ftell+94\u2191j
+                les     bx, [bp+arg_0]
+                test    byte ptr es:[bx+0Ah], 80h
+                jnz     short loc_1457B
+                mov     word_2CAC1, 16h
+                jmp     loc_144C9
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_1459E:                              ; CODE XREF: _ftell+F5\u2191j
+                les     bx, [bp+arg_0]
+                test    byte ptr es:[bx+0Ah], 1
+                jnz     short loc_145AB
+                jmp     loc_1468A
+; ---------------------------------------------------------------------------
+
+loc_145AB:                              ; CODE XREF: _ftell+11A\u2191j
+                cmp     word ptr es:[bx+4], 0
+                jnz     short loc_145BA
+                mov     [bp+var_E], 0
+                jmp     loc_1468A
+; ---------------------------------------------------------------------------
+
+loc_145BA:                              ; CODE XREF: _ftell+124\u2191j
+                mov     ax, es:[bx]
+                sub     ax, es:[bx+6]
+                add     ax, es:[bx+4]
+                mov     [bp+var_12], ax
+                mov     bx, [bp+var_10]
+                test    byte ptr [bx+2F00h], 80h
+                jnz     short loc_145D5
+                jmp     loc_14680
+; ---------------------------------------------------------------------------
+
+loc_145D5:                              ; CODE XREF: _ftell+144\u2191j
+                mov     ax, 2
+                push    ax              ; int
+                sub     ax, ax
+                push    ax
+                push    ax              ; __int32
+                push    bx              ; int
+                call    far ptr _lseek
+                add     sp, 8
+                cmp     ax, word ptr [bp+var_8]
+                jnz     short loc_14644
+                cmp     dx, word ptr [bp+var_8+2]
+                jnz     short loc_14644
+                les     bx, [bp+arg_0]
+                mov     ax, es:[bx+6]
+                mov     dx, es:[bx+8]
+                add     ax, [bp+var_12]
+                mov     word ptr [bp+var_C], ax
+                mov     word ptr [bp+var_C+2], dx
+                mov     ax, es:[bx+6]
+                mov     word ptr [bp+var_4], ax
+                mov     word ptr [bp+var_4+2], dx
+                mov     ax, word ptr [bp+var_C]
+                cmp     word ptr [bp+var_4], ax
+                jnb     short loc_14680
+                mov     cx, [bp+var_12]
+                les     di, [bp+var_4]
+                mov     [bp+var_18], ds
+                lds     si, [bp+var_C]
+
+loc_14622:                              ; CODE XREF: _ftell+1A4\u2193j
+                                        ; _ftell+1A8\u2193j
+                cmp     byte ptr es:[di], 0Ah
+                jnz     short loc_14629
+                inc     cx
+
+loc_14629:                              ; CODE XREF: _ftell+19A\u2191j
+                inc     di
+                mov     ax, es
+                mov     dx, ds
+                cmp     di, si
+                jnz     short loc_14622
+                cmp     ax, dx
+                jnz     short loc_14622
+                mov     ds, [bp+var_18]
+                mov     word ptr [bp+var_4], di
+                mov     word ptr [bp+var_4+2], es
+                mov     [bp+var_12], cx
+                jmp     short loc_14680
+; ---------------------------------------------------------------------------
+
+loc_14644:                              ; CODE XREF: _ftell+15D\u2191j
+                                        ; _ftell+162\u2191j
+                sub     ax, ax
+                push    ax              ; int
+                push    word ptr [bp+var_8+2]
+                push    word ptr [bp+var_8] ; __int32
+                push    [bp+var_10]     ; int
+                call    far ptr _lseek
+                add     sp, 8
+                mov     ax, word ptr [bp+arg_0]
+                sub     ax, 3554h
+                cwd
+                mov     cx, 0Ch
+                idiv    cx
+                mov     bx, ax
+                shl     bx, 1
+                add     bx, ax
+                shl     bx, 1
+                mov     ax, [bx+3646h]
+                mov     [bp+var_12], ax
+                mov     bx, [bp+var_10]
+                test    byte ptr [bx+2F00h], 4
+                jz      short loc_14680
+                inc     [bp+var_12]
+
+loc_14680:                              ; CODE XREF: _ftell+146\u2191j
+                                        ; _ftell+188\u2191j ...
+                mov     ax, [bp+var_12]
+                cwd
+                sub     word ptr [bp+var_8], ax
+                sbb     word ptr [bp+var_8+2], dx
+
+loc_1468A:                              ; CODE XREF: _ftell+11C\u2191j
+                                        ; _ftell+12B\u2191j
+                mov     ax, [bp+var_E]
+                cwd
+                add     ax, word ptr [bp+var_8]
+                adc     dx, word ptr [bp+var_8+2]
+
+loc_14694:                              ; CODE XREF: _ftell+41\u2191j
+                                        ; _ftell+7E\u2191j
+                pop     si
+                pop     di
+                mov     sp, bp
+                pop     bp
+                retf
+_ftell          endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; int sprintf(char *, const char *, ...)
+_sprintf        proc far                ; CODE XREF: open_file2+2A\u2193P
+                                        ; sub_229D5+190\u2193P ...
+
+var_14          = byte ptr -14h
+var_8           = dword ptr -8
+var_4           = word ptr -4
+var_2           = word ptr -2
+arg_0           = dword ptr  6
+arg_4           = dword ptr  0Ah
+arg_8           = byte ptr  0Eh
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 16h
+                push    di
+                push    si
+                lea     ax, [bp+var_14]
+                mov     word ptr [bp+var_8], ax
+                mov     word ptr [bp+var_8+2], ss
+                lea     ax, [bp+arg_8]
+                mov     [bp+var_4], ax
+                mov     [bp+var_2], ss
+                les     bx, [bp+var_8]
+                mov     byte ptr es:[bx+0Ah], 42h ; 'B'
+                mov     ax, word ptr [bp+arg_0]
+                mov     dx, word ptr [bp+arg_0+2]
+                mov     es:[bx+6], ax
+                mov     es:[bx+8], dx
+                mov     es:[bx], ax
+                mov     es:[bx+2], dx
+                mov     word ptr es:[bx+4], 7FFFh
+                push    ss
+                push    [bp+var_4]
+                push    word ptr [bp+arg_4+2]
+                push    word ptr [bp+arg_4]
+                push    es
+                push    bx
+                call    __output
+                add     sp, 0Ch
+                mov     si, ax
+                les     bx, [bp+var_8]
+                dec     word ptr es:[bx+4]
+                js      short loc_14708
+                sub     al, al
+                mov     di, es:[bx]
+                inc     word ptr es:[bx]
+                mov     es, word ptr es:[bx+2]
+                mov     es:[di], al
+                jmp     short loc_14717
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_14708:                              ; CODE XREF: _sprintf+5A\u2191j
+                push    word ptr [bp+var_8+2]
+                push    bx              ; FILE *
+                sub     ax, ax
+                push    ax              ; int
+                call    __flsbuf
+                add     sp, 6
+
+loc_14717:                              ; CODE XREF: _sprintf+6B\u2191j
+                mov     ax, si
+                pop     si
+                pop     di
+                mov     sp, bp
+                pop     bp
+                retf
+_sprintf        endp
+
+; ---------------------------------------------------------------------------
+                align 2
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; int __cdecl vsprintf(char *, const char *, va_list)
+_vsprintf       proc far                ; CODE XREF: printf+1D\u2193P
+                                        ; sub_2310F+2B\u2193P
+
+var_10          = byte ptr -10h
+var_4           = dword ptr -4
+arg_0           = dword ptr  6
+arg_4           = dword ptr  0Ah
+arg_8           = dword ptr  0Eh
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 12h
+                push    di
+                push    si
+                lea     ax, [bp+var_10]
+                mov     word ptr [bp+var_4], ax
+                mov     word ptr [bp+var_4+2], ss
+                les     bx, [bp+var_4]
+                mov     byte ptr es:[bx+0Ah], 42h ; 'B'
+                mov     ax, word ptr [bp+arg_0]
+                mov     dx, word ptr [bp+arg_0+2]
+                mov     es:[bx+6], ax
+                mov     es:[bx+8], dx
+                mov     es:[bx], ax
+                mov     es:[bx+2], dx
+                mov     word ptr es:[bx+4], 7FFFh
+                push    word ptr [bp+arg_8+2]
+                push    word ptr [bp+arg_8]
+                push    word ptr [bp+arg_4+2]
+                push    word ptr [bp+arg_4]
+                push    es
+                push    bx
+                call    __output
+                add     sp, 0Ch
+                mov     si, ax
+                les     bx, [bp+var_4]
+                dec     word ptr es:[bx+4]
+                js      short loc_14786
+                sub     al, al
+                mov     di, es:[bx]
+                inc     word ptr es:[bx]
+                mov     es, word ptr es:[bx+2]
+                mov     es:[di], al
+                jmp     short loc_14795
+; ---------------------------------------------------------------------------
+
+loc_14786:                              ; CODE XREF: _vsprintf+53\u2191j
+                push    word ptr [bp+var_4+2]
+                push    bx              ; FILE *
+                sub     ax, ax
+                push    ax              ; int
+                call    __flsbuf
+                add     sp, 6
+
+loc_14795:                              ; CODE XREF: _vsprintf+64\u2191j
+                mov     ax, si
+                pop     si
+                pop     di
+                mov     sp, bp
+                pop     bp
+                retf
+_vsprintf       endp
+
+; ---------------------------------------------------------------------------
+                align 2
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; int __cdecl intdos(union REGS *, union REGS *)
+_intdos         proc far                ; CODE XREF: _ftime+34\u2193P
+                                        ; _ftime+8B\u2193P
+
+arg_0           = dword ptr  6
+arg_4           = dword ptr  0Ah
+
+                push    bp
+                mov     bp, sp
+                push    si
+                push    di
+                push    ds
+                lds     di, [bp+arg_0]
+                mov     ax, [di]
+                mov     bx, [di+2]
+                mov     cx, [di+4]
+                mov     dx, [di+6]
+                mov     si, [di+8]
+                mov     di, [di+0Ah]
+                pop     ds
+                int     21h             ; DOS -
+                push    ds
+                push    di
+                lds     di, [bp+arg_4]
+                mov     [di], ax
+                mov     [di+2], bx
+                mov     [di+4], cx
+                mov     [di+6], dx
+                mov     [di+8], si
+                pop     word ptr [di+0Ah]
+                jb      short loc_147D7
+                xor     si, si
+                jmp     short loc_147E6
+; ---------------------------------------------------------------------------
+
+loc_147D7:                              ; CODE XREF: _intdos+33\u2191j
+                pop     ds
+                push    ds
+                call    __maperror
+                lds     di, [bp+arg_4]
+                mov     si, 1
+                mov     ax, [di]
+
+loc_147E6:                              ; CODE XREF: _intdos+37\u2191j
+                mov     [di+0Ch], si
+                pop     ds
+                pop     di
+                pop     si
+                mov     sp, bp
+                pop     bp
+                retf
+_intdos         endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; int __cdecl inp(unsigned int)
+_inp            proc far                ; CODE XREF: seg021:01CB\u2193P
+                                        ; seg021:01DA\u2193P ...
+
+arg_0           = word ptr  6
+
+                push    bp
+                mov     bp, sp
+                mov     dx, [bp+arg_0]
+                in      al, dx
+                xor     ah, ah
+                mov     sp, bp
+                pop     bp
+                retf
+_inp            endp
+
+; ---------------------------------------------------------------------------
+                align 2
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; int __cdecl outp(unsigned int, int)
+_outp           proc far                ; CODE XREF: seg021:01EC\u2193P
+                                        ; seg021:01FB\u2193P ...
+
+arg_0           = word ptr  6
+arg_2           = word ptr  8
+
+                push    bp
+                mov     bp, sp
+                mov     dx, [bp+arg_0]
+                mov     al, byte ptr [bp+arg_2]
+                out     dx, al
+                mov     ah, 0
+                pop     bp
+                retf
+_outp           endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; void __cdecl ftime(struct timeb *)
+_ftime          proc far                ; CODE XREF: _clock+16\u2193P
+                                        ; seg001:3B35\u2193P
+
+var_34          = word ptr -34h
+var_32          = word ptr -32h
+var_30          = word ptr -30h
+var_2E          = REGS ptr -2Eh
+var_20          = REGS ptr -20h
+var_12          = byte ptr -12h
+var_E           = word ptr -0Eh
+var_C           = word ptr -0Ch
+var_A           = word ptr -0Ah
+var_8           = word ptr -8
+var_4           = word ptr -4
+arg_0           = dword ptr  6
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 38h
+                push    si
+                call    sub_1490E
+                mov     ax, 3Ch ; '<'
+                cwd
+                push    dx
+                push    ax
+                push    word_2D41C
+                push    word_2D41A
+                call    __aFldiv
+                les     bx, [bp+arg_0]
+                mov     es:[bx+6], ax
+                mov     byte ptr [bp+var_20+1], 2Ah ; '*'
+                lea     ax, [bp+var_2E]
+                push    ss
+                push    ax              ; union REGS *
+                lea     ax, [bp+var_20]
+                push    ss
+                push    ax              ; union REGS *
+                call    _intdos
+                add     sp, 8
+                mov     ax, word ptr [bp+var_2E+4]
+                sub     ax, 7BCh
+                mov     [bp+var_32], ax
+                add     ax, 50h ; 'P'
+                mov     [bp+var_8], ax
+                mov     al, byte ptr [bp+var_2E+6]
+                sub     ah, ah
+                mov     [bp+var_34], ax
+                mov     [bp+var_C], ax
+                mov     al, byte ptr [bp+var_2E+7]
+                mov     [bp+var_30], ax
+                dec     ax
+                mov     [bp+var_A], ax
+                mov     bx, ax
+                shl     bx, 1
+                mov     ax, [bx+3824h]
+                add     ax, [bp+var_34]
+                mov     [bp+var_4], ax
+                test    byte ptr [bp+var_32], 3
+                jnz     short loc_14889
+                cmp     [bp+var_30], 2
+                jle     short loc_14889
+                inc     [bp+var_4]
+
+loc_14889:                              ; CODE XREF: _ftime+72\u2191j
+                                        ; _ftime+78\u2191j
+                mov     byte ptr [bp+var_20+1], 2Ch ; ','
+                lea     ax, [bp+var_2E]
+                push    ss
+                push    ax              ; union REGS *
+                lea     ax, [bp+var_20]
+                push    ss
+                push    ax              ; union REGS *
+                call    _intdos
+                add     sp, 8
+                mov     al, byte ptr [bp+var_2E+6]
+                sub     ah, ah
+                mov     cx, ax
+                shl     ax, 1
+                shl     ax, 1
+                add     ax, cx
+                shl     ax, 1
+                les     bx, [bp+arg_0]
+                mov     es:[bx+4], ax
+                mov     al, byte ptr [bp+var_2E+7]
+                sub     ah, ah
+                mov     si, ax
+                push    si
+                mov     al, byte ptr [bp+var_2E+4]
+                push    ax
+                mov     al, byte ptr [bp+var_2E+5]
+                push    ax
+                push    [bp+var_34]
+                push    [bp+var_30]
+                push    [bp+var_32]
+                call    __dtoxtime
+                add     sp, 0Ch
+                les     bx, [bp+arg_0]
+                mov     es:[bx], ax
+                mov     es:[bx+2], dx
+                mov     [bp+var_E], si
+                cmp     word_2D41E, 0
+                jz      short loc_14900
+                lea     ax, [bp+var_12]
+                push    ss
+                push    ax
+                call    sub_149F2
+                add     sp, 4
+                or      ax, ax
+                jz      short loc_14900
+                mov     ax, 1
+                jmp     short loc_14902
+; ---------------------------------------------------------------------------
+
+loc_14900:                              ; CODE XREF: _ftime+DC\u2191j
+                                        ; _ftime+ED\u2191j
+                sub     ax, ax
+
+loc_14902:                              ; CODE XREF: _ftime+F2\u2191j
+                les     bx, [bp+arg_0]
+                mov     es:[bx+8], ax
+                pop     si
+                mov     sp, bp
+                pop     bp
+                retf
+_ftime          endp
+
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -4717,9 +11472,214 @@ loc_14ACF:                              ; CODE XREF: sub_149F2+C3\u2191j
                 retf
 sub_149F2       endp
 
-; [00000123 BYTES: COLLAPSED FUNCTION __dtoxtime. PRESS NUMPAD+ TO EXPAND]
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+__dtoxtime      proc far                ; CODE XREF: _ftime+C2\u2191P
+
+var_20          = word ptr -20h
+var_1E          = word ptr -1Eh
+var_1C          = word ptr -1Ch
+var_1A          = word ptr -1Ah
+var_16          = word ptr -16h
+var_14          = word ptr -14h
+var_12          = byte ptr -12h
+var_E           = word ptr -0Eh
+var_A           = word ptr -0Ah
+var_8           = word ptr -8
+var_4           = word ptr -4
+arg_0           = word ptr  6
+arg_2           = word ptr  8
+arg_4           = word ptr  0Ah
+arg_6           = word ptr  0Ch
+arg_8           = word ptr  0Eh
+arg_A           = word ptr  10h
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 20h
+                push    di
+                push    si
+                mov     si, [bp+arg_0]
+                mov     ax, 5180h
+                mov     dx, 1
+                push    dx
+                push    ax
+                lea     ax, [si+3]
+                cwd
+                xor     ax, dx
+                sub     ax, dx
+                mov     cx, 2
+                sar     ax, cl
+                xor     ax, dx
+                sub     ax, dx
+                cwd
+                push    dx
+                push    ax
+                call    __aFlmul
+                mov     [bp+var_16], ax
+                mov     [bp+var_14], dx
+                mov     bx, [bp+arg_2]
+                shl     bx, 1
+                mov     di, [bx+3822h]
+                mov     ax, si
+                cwd
+                mov     cx, 4
+                idiv    cx
+                or      dx, dx
+                jnz     short loc_14B22
+                cmp     [bp+arg_2], 2
+                jle     short loc_14B22
+                inc     di
+
+loc_14B22:                              ; CODE XREF: __dtoxtime+45\u2191j
+                                        ; __dtoxtime+4B\u2191j
+                mov     ax, 3Ch ; '<'
+                cwd
+                push    dx
+                push    ax
+                mov     ax, [bp+arg_8]
+                cwd
+                push    dx
+                push    ax
+                call    __aFlmul
+                mov     cx, 0E10h
+                sub     bx, bx
+                push    bx
+                push    cx
+                mov     cx, ax
+                mov     ax, [bp+arg_6]
+                mov     bx, dx
+                cwd
+                push    dx
+                push    ax
+                mov     [bp+var_1C], cx
+                mov     [bp+var_1A], bx
+                call    __aFlmul
+                mov     cx, 5180h
+                mov     bx, 1
+                push    bx
+                push    cx
+                mov     cx, ax
+                mov     ax, 16Dh
+                mov     bx, dx
+                imul    si
+                mov     dx, ax
+                mov     ax, [bp+arg_4]
+                add     ax, dx
+                add     ax, di
+                cwd
+                push    dx
+                push    ax
+                mov     [bp+var_20], cx
+                mov     [bp+var_1E], bx
+                call    __aFlmul
+                add     ax, [bp+var_20]
+                adc     dx, [bp+var_1E]
+                add     ax, [bp+var_1C]
+                adc     dx, [bp+var_1A]
+                mov     cx, ax
+                mov     ax, [bp+arg_A]
+                mov     bx, dx
+                cwd
+                add     cx, ax
+                adc     bx, dx
+                add     cx, 0A600h
+                adc     bx, 12CEh
+                add     [bp+var_16], cx
+                adc     [bp+var_14], bx
+                mov     ax, [bp+arg_4]
+                add     ax, di
+                mov     [bp+var_4], ax
+                call    sub_1490E
+                mov     ax, word_2D41A
+                mov     dx, word_2D41C
+                add     [bp+var_16], ax
+                adc     [bp+var_14], dx
+                lea     ax, [si+50h]
+                mov     [bp+var_8], ax
+                mov     ax, [bp+arg_2]
+                dec     ax
+                mov     [bp+var_A], ax
+                mov     ax, [bp+arg_6]
+                mov     [bp+var_E], ax
+                cmp     word_2D41E, 0
+                jz      short loc_14BEB
+                lea     ax, [bp+var_12]
+                push    ss
+                push    ax
+                call    sub_149F2
+                add     sp, 4
+                or      ax, ax
+                jz      short loc_14BEB
+                sub     [bp+var_16], 0E10h
+                sbb     [bp+var_14], 0
+
+loc_14BEB:                              ; CODE XREF: __dtoxtime+FB\u2191j
+                                        ; __dtoxtime+10C\u2191j
+                mov     ax, [bp+var_16]
+                mov     dx, [bp+var_14]
+                pop     si
+                pop     di
+                mov     sp, bp
+                pop     bp
+                retf
+__dtoxtime      endp
+
+; ---------------------------------------------------------------------------
                 align 2
-; [00000057 BYTES: COLLAPSED FUNCTION _clock. PRESS NUMPAD+ TO EXPAND]
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; clock_t clock(void)
+_clock          proc far                ; CODE XREF: delay+B\u2191P
+                                        ; delay:loc_103BB\u2191P ...
+
+var_E           = word ptr -0Eh
+var_C           = word ptr -0Ch
+var_A           = timeb ptr -0Ah
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 0Eh
+                mov     es, seg_2E9FC
+                assume es:dseg
+                mov     es:word_2D464, 0
+                lea     ax, [bp+var_A]
+                push    ss
+                push    ax              ; struct timeb *
+                call    _ftime
+                add     sp, 4
+                mov     ax, 3E8h
+                cwd
+                push    dx
+                push    ax
+                mov     ax, word ptr [bp+var_A.time]
+                mov     dx, word ptr [bp+var_A.time+2]
+                sub     ax, word_2D466
+                sbb     dx, word_2D468
+                push    dx
+                push    ax
+                call    __aFlmul
+                mov     [bp+var_E], ax
+                mov     [bp+var_C], dx
+                mov     ax, [bp+var_A.millitm]
+                sub     ax, word_2D46A
+                cwd
+                add     [bp+var_E], ax
+                adc     [bp+var_C], dx
+                mov     ax, [bp+var_E]
+                mov     dx, [bp+var_C]
+                mov     sp, bp
+                pop     bp
+                retf
+_clock          endp
+
+; ---------------------------------------------------------------------------
                 align 2
 
 __inittime:                             ; DATA XREF: dseg:4D06\u2193o
@@ -4729,44 +11689,1812 @@ __inittime:                             ; DATA XREF: dseg:4D06\u2193o
                 call    _ftime
                 add     sp, 4
                 retf
-; [0000002D BYTES: COLLAPSED FUNCTION _strchr. PRESS NUMPAD+ TO EXPAND]
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; char *__cdecl strchr(const char *, int)
+_strchr         proc far                ; CODE XREF: __cenvarg+171\u2193P
+                                        ; __cenvarg+1AE\u2193P ...
+
+arg_0           = dword ptr  6
+arg_4           = word ptr  0Ah
+
+                push    bp
+                mov     bp, sp
+                push    di
+                les     di, [bp+arg_0]
+                assume es:nothing
+                mov     bx, di
+                xor     ax, ax
+                mov     cx, 0FFFFh
+                repne scasb
+                inc     cx
+                neg     cx
+                mov     al, byte ptr [bp+arg_4]
+                mov     di, bx
+                repne scasb
+                dec     di
+                cmp     es:[di], al
+                jz      short loc_14C82
+                xor     di, di
+                mov     es, di
+                assume es:nothing
+
+loc_14C82:                              ; CODE XREF: _strchr+1E\u2191j
+                mov     ax, di
+                mov     dx, es
+                pop     di
+                mov     sp, bp
+                pop     bp
+                retf
+_strchr         endp
+
+; ---------------------------------------------------------------------------
                 align 2
-; [000000CA BYTES: COLLAPSED FUNCTION _memmove. PRESS NUMPAD+ TO EXPAND]
-; [0000005E BYTES: COLLAPSED FUNCTION _memcpy. PRESS NUMPAD+ TO EXPAND]
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; void *__cdecl memmove(void *, const void *, size_t)
+_memmove        proc far                ; CODE XREF: sub_1CC20+8E\u2193P
+                                        ; sub_1CCE8+3C\u2193P ...
+
+arg_0           = dword ptr  6
+arg_4           = dword ptr  0Ah
+arg_8           = word ptr  0Eh
+
+                push    bp
+                mov     bp, sp
+                mov     cx, [bp+arg_8]
+                or      cx, cx
+                jnz     short loc_14C99
+                jmp     loc_14D4E
+; ---------------------------------------------------------------------------
+
+loc_14C99:                              ; CODE XREF: _memmove+8\u2191j
+                push    ds
+                push    di
+                push    si
+                lds     si, [bp+arg_4]
+                les     di, [bp+arg_0]
+                assume es:nothing
+                push    ds
+                push    si
+                push    es
+                push    di
+                call    __aFahdiff
+                mov     cx, [bp+arg_8]
+                or      dx, dx
+                js      short loc_14D09
+                sub     ax, cx
+                sbb     dx, 0
+                jnb     short loc_14D09
+                dec     cx
+                add     si, cx
+                jnb     short loc_14CC5
+                mov     ax, ds
+                add     ax, 1000h
+                mov     ds, ax
+                assume ds:nothing
+
+loc_14CC5:                              ; CODE XREF: _memmove+30\u2191j
+                add     di, cx
+                jnb     short loc_14CD0
+                mov     ax, es
+                add     ax, 1000h
+                mov     es, ax
+                assume es:nothing
+
+loc_14CD0:                              ; CODE XREF: _memmove+3B\u2191j
+                inc     cx
+
+loc_14CD1:                              ; CODE XREF: _memmove+72\u2193j
+                                        ; _memmove+7B\u2193j
+                mov     ax, cx
+                dec     ax
+                sub     ax, di
+                sbb     bx, bx
+                and     ax, bx
+                add     ax, di
+                sub     ax, si
+                sbb     bx, bx
+                and     ax, bx
+                add     ax, si
+                inc     ax
+                xchg    ax, cx
+                sub     ax, cx
+                std
+                rep movsb
+                cld
+                xchg    ax, cx
+                jcxz    short loc_14D4B
+                cmp     si, 0FFFFh
+                jnz     short loc_14CFB
+                mov     ax, ds
+                sub     ax, 1000h
+                mov     ds, ax
+                assume ds:dseg
+
+loc_14CFB:                              ; CODE XREF: _memmove+66\u2191j
+                cmp     di, 0FFFFh
+                jnz     short loc_14CD1
+                mov     ax, es
+                sub     ax, 1000h
+                mov     es, ax
+                assume es:nothing
+                jmp     short loc_14CD1
+; ---------------------------------------------------------------------------
+
+loc_14D09:                              ; CODE XREF: _memmove+24\u2191j
+                                        ; _memmove+2B\u2191j ...
+                mov     ax, cx
+                dec     ax
+                mov     dx, di
+                not     dx
+                sub     ax, dx
+                sbb     bx, bx
+                and     ax, bx
+                add     ax, dx
+                mov     dx, si
+                not     dx
+                sub     ax, dx
+                sbb     bx, bx
+                and     ax, bx
+                add     ax, dx
+                inc     ax
+                xchg    ax, cx
+                sub     ax, cx
+                shr     cx, 1
+                rep movsw
+                adc     cx, cx
+                rep movsb
+                xchg    ax, cx
+                jcxz    short loc_14D4B
+                or      si, si
+                jnz     short loc_14D3E
+                mov     ax, ds
+                add     ax, 1000h
+                mov     ds, ax
+                assume ds:nothing
+
+loc_14D3E:                              ; CODE XREF: _memmove+A9\u2191j
+                or      di, di
+                jnz     short loc_14D09
+                mov     ax, es
+                add     ax, 1000h
+                mov     es, ax
+                assume es:nothing
+                jmp     short loc_14D09
+; ---------------------------------------------------------------------------
+
+loc_14D4B:                              ; CODE XREF: _memmove+61\u2191j
+                                        ; _memmove+A5\u2191j
+                pop     si
+                pop     di
+                pop     ds
+                assume ds:dseg
+
+loc_14D4E:                              ; CODE XREF: _memmove+A\u2191j
+                mov     ax, word ptr [bp+arg_0]
+                mov     dx, word ptr [bp+arg_0+2]
+                pop     bp
+                retf
+_memmove        endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; void *__cdecl memcpy(void *, const void *, size_t)
+_memcpy         proc far                ; CODE XREF: _fread+144\u2191P
+
+arg_0           = dword ptr  6
+arg_4           = dword ptr  0Ah
+arg_8           = word ptr  0Eh
+
+                push    bp
+                mov     bp, sp
+                mov     cx, [bp+arg_8]
+                jcxz    short loc_14DAC
+                push    ds
+                push    di
+                push    si
+                lds     si, [bp+arg_4]
+                les     di, [bp+arg_0]
+                assume es:nothing
+
+loc_14D67:                              ; CODE XREF: _memcpy+48\u2193j
+                                        ; _memcpy+51\u2193j
+                mov     ax, cx
+                dec     ax
+                mov     dx, di
+                not     dx
+                sub     ax, dx
+                sbb     bx, bx
+                and     ax, bx
+                add     ax, dx
+                mov     dx, si
+                not     dx
+                sub     ax, dx
+                sbb     bx, bx
+                and     ax, bx
+                add     ax, dx
+                inc     ax
+                xchg    ax, cx
+                sub     ax, cx
+                shr     cx, 1
+                rep movsw
+                adc     cx, cx
+                rep movsb
+                xchg    ax, cx
+                jcxz    short loc_14DA9
+                or      si, si
+                jnz     short loc_14D9C
+                mov     ax, ds
+                add     ax, 1000h
+                mov     ds, ax
+                assume ds:nothing
+
+loc_14D9C:                              ; CODE XREF: _memcpy+3D\u2191j
+                or      di, di
+                jnz     short loc_14D67
+                mov     ax, es
+                add     ax, 1000h
+                mov     es, ax
+                assume es:nothing
+                jmp     short loc_14D67
+; ---------------------------------------------------------------------------
+
+loc_14DA9:                              ; CODE XREF: _memcpy+39\u2191j
+                pop     si
+                pop     di
+                pop     ds
+                assume ds:dseg
+
+loc_14DAC:                              ; CODE XREF: _memcpy+6\u2191j
+                mov     ax, word ptr [bp+arg_0]
+                mov     dx, word ptr [bp+arg_0+2]
+                pop     bp
+                retf
+_memcpy         endp
+
 ; ---------------------------------------------------------------------------
 ; [0000000D BYTES: COLLAPSED CHUNK OF FUNCTION _ultoa. PRESS NUMPAD+ TO EXPAND]
 ; [00000056 BYTES: COLLAPSED CHUNK OF FUNCTION _itoa. PRESS NUMPAD+ TO EXPAND]
                 align 2
-; [00000015 BYTES: COLLAPSED FUNCTION _abs. PRESS NUMPAD+ TO EXPAND]
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; int __cdecl abs(int)
+_abs            proc far                ; CODE XREF: sub_2181B+2C\u2193P
+                                        ; sub_2181B+3B\u2193P
+
+arg_0           = word ptr  6
+
+                push    bp
+                mov     bp, sp
+                cmp     [bp+arg_0], 0
+                jl      short loc_14E26
+                mov     ax, [bp+arg_0]
+                jmp     short loc_14E2B
+; ---------------------------------------------------------------------------
+
+loc_14E26:                              ; CODE XREF: _abs+7\u2191j
+                mov     ax, [bp+arg_0]
+                neg     ax
+
+loc_14E2B:                              ; CODE XREF: _abs+C\u2191j
+                pop     bp
+                retf
+_abs            endp
+
+; ---------------------------------------------------------------------------
                 align 2
-; [00000011 BYTES: COLLAPSED FUNCTION _srand. PRESS NUMPAD+ TO EXPAND]
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; void __cdecl srand(unsigned int)
+_srand          proc far
+
+arg_0           = word ptr  6
+
+                push    bp
+                mov     bp, sp
+                mov     ax, [bp+arg_0]
+                mov     word_2D470, ax
+                mov     word_2D472, 0
+                pop     bp
+                retf
+_srand          endp
+
+; ---------------------------------------------------------------------------
                 align 2
-; [00000028 BYTES: COLLAPSED FUNCTION _rand. PRESS NUMPAD+ TO EXPAND]
-; [0000001E BYTES: COLLAPSED FUNCTION __lrotl. PRESS NUMPAD+ TO EXPAND]
-; [00000021 BYTES: COLLAPSED FUNCTION _access. PRESS NUMPAD+ TO EXPAND]
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function
+
+; int rand(void)
+_rand           proc far                ; CODE XREF: sub_1FA0E+ED\u2193P
+                                        ; sub_1FBB8+33\u2193P ...
+                mov     ax, 43FDh
+                mov     dx, 3
+                push    dx
+                push    ax
+                push    word_2D472
+                push    word_2D470
+                call    __aFlmul
+                add     ax, 9EC3h
+                adc     dx, 26h ; '&'
+                mov     word_2D470, ax
+                mov     word_2D472, dx
+                mov     ax, dx
+                and     ah, 7Fh
+                retf
+_rand           endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; unsigned __int32 __cdecl _lrotl(unsigned __int32, int)
+__lrotl         proc far                ; CODE XREF: sub_1DABF+FB\u2193P
+
+arg_0           = dword ptr  6
+arg_4           = word ptr  0Ah
+
+                push    bp
+                mov     bp, sp
+                mov     ax, word ptr [bp+arg_0]
+                mov     dx, word ptr [bp+arg_0+2]
+                mov     cx, [bp+arg_4]
+                and     cx, 1Fh
+                jcxz    short loc_14E82
+
+loc_14E79:                              ; CODE XREF: __lrotl+18\u2193j
+                shl     ax, 1
+                rcl     dx, 1
+                adc     ax, 0
+                loop    loc_14E79
+
+loc_14E82:                              ; CODE XREF: __lrotl+F\u2191j
+                mov     sp, bp
+                pop     bp
+                retf
+__lrotl         endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; int __cdecl access(const char *, int)
+_access         proc far                ; CODE XREF: seg017:0029\u2193P
+
+arg_2           = dword ptr  6
+arg_6           = word ptr  0Ah
+
+                push    bp
+                mov     bp, sp
+                push    ds
+                lds     dx, [bp+arg_2]
+                mov     ax, 4300h
+                int     21h             ; DOS - 2+ - GET FILE ATTRIBUTES
+                                        ; DS:DX -> ASCIZ file name or directory
+                                        ; name without trailing slash
+                pop     ds
+                jb      short loc_14EA4
+                test    byte ptr [bp+arg_6], 2
+                jz      short loc_14EA4
+                test    cl, 1
+                jz      short loc_14EA4
+                mov     ax, 0D00h
+                stc
+
+loc_14EA4:                              ; CODE XREF: _access+D\u2191j
+                                        ; _access+13\u2191j ...
+                jmp     __dosret0
+_access         endp
+
+; ---------------------------------------------------------------------------
                 align 2
-; [0000000F BYTES: COLLAPSED FUNCTION _remove. PRESS NUMPAD+ TO EXPAND]
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; int __cdecl remove(const char *)
+_remove         proc far                ; CODE XREF: _fclose+C7\u2191P
+
+arg_2           = dword ptr  6
+
+                push    bp
+                mov     bp, sp
+                push    ds
+                lds     dx, [bp+arg_2]
+                mov     ah, 41h
+                int     21h             ; DOS - 2+ - DELETE A FILE (UNLINK)
+                                        ; DS:DX -> ASCIZ pathname of file to delete (no wildcards allowed)
+                pop     ds
+                jmp     __dosret0
+_remove         endp
+
+; ---------------------------------------------------------------------------
                 align 2
-; [00000014 BYTES: COLLAPSED FUNCTION __bios_keybrd. PRESS NUMPAD+ TO EXPAND]
-; [00000012 BYTES: COLLAPSED FUNCTION __dos_getvect. PRESS NUMPAD+ TO EXPAND]
-; [00000015 BYTES: COLLAPSED FUNCTION __dos_setvect. PRESS NUMPAD+ TO EXPAND]
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; unsigned int __cdecl _bios_keybrd(unsigned int)
+__bios_keybrd   proc far                ; CODE XREF: check_for_keypress+4\u2193P
+                                        ; seg021:0131\u2193P
+
+arg_0           = word ptr  6
+
+                push    bp
+                mov     bp, sp
+                mov     ah, byte ptr [bp+arg_0]
+                int     16h             ; KEYBOARD -
+                jnz     short loc_14ECA
+                cmp     byte ptr [bp+arg_0], 1
+                jnz     short loc_14ECA
+                xor     ax, ax
+
+loc_14ECA:                              ; CODE XREF: __bios_keybrd+8\u2191j
+                                        ; __bios_keybrd+E\u2191j
+                pop     bp
+                retf
+__bios_keybrd   endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; void (__cdecl __far far *__cdecl _dos_getvect(unsigned int))()
+__dos_getvect   proc far                ; CODE XREF: sub_18C1A+B\u2193P
+                                        ; sub_1C87D+11\u2193P ...
+
+arg_0           = word ptr  6
+
+                push    bp
+                mov     bp, sp
+                mov     ax, [bp+arg_0]
+                mov     ah, 35h
+                int     21h             ; DOS - 2+ - GET INTERRUPT VECTOR
+                                        ; AL = interrupt number
+                                        ; Return: ES:BX = value of interrupt vector
+                mov     dx, es
+                mov     ax, bx
+                mov     sp, bp
+                pop     bp
+                retf
+__dos_getvect   endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; void __cdecl _dos_setvect(unsigned int, void (__cdecl __far far *)())
+__dos_setvect   proc far                ; CODE XREF: sub_18C1A+2C\u2193P
+                                        ; sub_18C54+2B\u2193P ...
+
+arg_0           = word ptr  6
+arg_2           = dword ptr  8
+
+                push    bp
+                mov     bp, sp
+                mov     ax, [bp+arg_0]
+                push    ds
+                lds     dx, [bp+arg_2]
+                mov     ah, 25h
+                int     21h             ; DOS - SET INTERRUPT VECTOR
+                                        ; AL = interrupt number
+                                        ; DS:DX = new vector to be used for specified interrupt
+                pop     ds
+                xor     ax, ax
+                mov     sp, bp
+                pop     bp
+                retf
+__dos_setvect   endp
+
+; ---------------------------------------------------------------------------
                 align 2
-; [0000009C BYTES: COLLAPSED FUNCTION __aFldiv. PRESS NUMPAD+ TO EXPAND]
-; [00000034 BYTES: COLLAPSED FUNCTION __aFlmul. PRESS NUMPAD+ TO EXPAND]
-; [000000A2 BYTES: COLLAPSED FUNCTION __aFlrem. PRESS NUMPAD+ TO EXPAND]
-; [0000000B BYTES: COLLAPSED FUNCTION __aFlshl. PRESS NUMPAD+ TO EXPAND]
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+__aFldiv        proc far                ; CODE XREF: _fseek+23C\u2191P
+                                        ; _ftime+1A\u2191P ...
+
+arg_0           = word ptr  6
+arg_2           = word ptr  8
+arg_4           = word ptr  0Ah
+arg_6           = word ptr  0Ch
+
+                push    bp
+                mov     bp, sp
+                push    di
+                push    si
+                push    bx
+                xor     di, di
+                mov     ax, [bp+arg_2]
+                or      ax, ax
+                jge     short loc_14F14
+                inc     di
+                mov     dx, [bp+arg_0]
+                neg     ax
+                neg     dx
+                sbb     ax, 0
+                mov     [bp+arg_2], ax
+                mov     [bp+arg_0], dx
+
+loc_14F14:                              ; CODE XREF: __aFldiv+D\u2191j
+                mov     ax, [bp+arg_6]
+                or      ax, ax
+                jge     short loc_14F2C
+                inc     di
+                mov     dx, [bp+arg_4]
+                neg     ax
+                neg     dx
+                sbb     ax, 0
+                mov     [bp+arg_6], ax
+                mov     [bp+arg_4], dx
+
+loc_14F2C:                              ; CODE XREF: __aFldiv+25\u2191j
+                or      ax, ax
+                jnz     short loc_14F45
+                mov     cx, [bp+arg_4]
+                mov     ax, [bp+arg_2]
+                xor     dx, dx
+                div     cx
+                mov     bx, ax
+                mov     ax, [bp+arg_0]
+                div     cx
+                mov     dx, bx
+                jmp     short loc_14F7D
+; ---------------------------------------------------------------------------
+
+loc_14F45:                              ; CODE XREF: __aFldiv+3A\u2191j
+                mov     bx, ax
+                mov     cx, [bp+arg_4]
+                mov     dx, [bp+arg_2]
+                mov     ax, [bp+arg_0]
+
+loc_14F50:                              ; CODE XREF: __aFldiv+66\u2193j
+                shr     bx, 1
+                rcr     cx, 1
+                shr     dx, 1
+                rcr     ax, 1
+                or      bx, bx
+                jnz     short loc_14F50
+                div     cx
+                mov     si, ax
+                mul     [bp+arg_6]
+                xchg    ax, cx
+                mov     ax, [bp+arg_4]
+                mul     si
+                add     dx, cx
+                jb      short loc_14F79
+                cmp     dx, [bp+arg_2]
+                ja      short loc_14F79
+                jb      short loc_14F7A
+                cmp     ax, [bp+arg_0]
+                jbe     short loc_14F7A
+
+loc_14F79:                              ; CODE XREF: __aFldiv+77\u2191j
+                                        ; __aFldiv+7C\u2191j
+                dec     si
+
+loc_14F7A:                              ; CODE XREF: __aFldiv+7E\u2191j
+                                        ; __aFldiv+83\u2191j
+                xor     dx, dx
+                xchg    ax, si
+
+loc_14F7D:                              ; CODE XREF: __aFldiv+4F\u2191j
+                dec     di
+                jnz     short loc_14F87
+                neg     dx
+                neg     ax
+                sbb     dx, 0
+
+loc_14F87:                              ; CODE XREF: __aFldiv+8A\u2191j
+                pop     bx
+                pop     si
+                pop     di
+                mov     sp, bp
+                pop     bp
+                retf    8
+__aFldiv        endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+__aFlmul        proc far                ; CODE XREF: _fread+11\u2191P
+                                        ; _fseek+243\u2191P ...
+
+arg_0           = word ptr  6
+arg_2           = word ptr  8
+arg_4           = word ptr  0Ah
+arg_6           = word ptr  0Ch
+
+                push    bp
+                mov     bp, sp
+                mov     ax, [bp+arg_2]
+                mov     bx, [bp+arg_6]
+                or      bx, ax
+                mov     bx, [bp+arg_4]
+                jnz     short loc_14FAB
+                mov     ax, [bp+arg_0]
+
+loc_14FA3:                              ; CODE XREF: __output+1C3\u2191j
+                mul     bx
+                mov     sp, bp
+                pop     bp
+                retf    8
+; ---------------------------------------------------------------------------
+
+loc_14FAB:                              ; CODE XREF: __aFlmul+E\u2191j
+                mul     bx
+                mov     cx, ax
+                mov     ax, [bp+arg_0]
+                mul     [bp+arg_6]
+                add     cx, ax
+                mov     ax, [bp+arg_0]
+                mul     bx
+                add     dx, cx
+                mov     sp, bp
+                pop     bp
+                retf    8
+__aFlmul        endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+__aFlrem        proc far                ; CODE XREF: _fseek+1FD\u2191P
+
+arg_0           = word ptr  6
+arg_2           = word ptr  8
+arg_4           = word ptr  0Ah
+arg_6           = word ptr  0Ch
+
+                push    bp
+                mov     bp, sp
+                push    bx
+                push    di
+                xor     di, di
+                mov     ax, [bp+arg_2]
+                or      ax, ax
+                jge     short loc_14FE3
+                inc     di
+                mov     dx, [bp+arg_0]
+                neg     ax
+                neg     dx
+                sbb     ax, 0
+                mov     [bp+arg_2], ax
+                mov     [bp+arg_0], dx
+
+loc_14FE3:                              ; CODE XREF: __aFlrem+C\u2191j
+                mov     ax, [bp+arg_6]
+                or      ax, ax
+                jge     short loc_14FFA
+                mov     dx, [bp+arg_4]
+                neg     ax
+                neg     dx
+                sbb     ax, 0
+                mov     [bp+arg_6], ax
+                mov     [bp+arg_4], dx
+
+loc_14FFA:                              ; CODE XREF: __aFlrem+24\u2191j
+                or      ax, ax
+                jnz     short loc_15016
+                mov     cx, [bp+arg_4]
+                mov     ax, [bp+arg_2]
+                xor     dx, dx
+                div     cx
+                mov     ax, [bp+arg_0]
+                div     cx
+                mov     ax, dx
+                xor     dx, dx
+                dec     di
+                jns     short loc_15057
+                jmp     short loc_1505E
+; ---------------------------------------------------------------------------
+
+loc_15016:                              ; CODE XREF: __aFlrem+38\u2191j
+                mov     bx, ax
+                mov     cx, [bp+arg_4]
+                mov     dx, [bp+arg_2]
+                mov     ax, [bp+arg_0]
+
+loc_15021:                              ; CODE XREF: __aFlrem+67\u2193j
+                shr     bx, 1
+                rcr     cx, 1
+                shr     dx, 1
+                rcr     ax, 1
+                or      bx, bx
+                jnz     short loc_15021
+                div     cx
+                mov     cx, ax
+                mul     [bp+arg_6]
+                xchg    ax, cx
+                mul     [bp+arg_4]
+                add     dx, cx
+                jb      short loc_15048
+                cmp     dx, [bp+arg_2]
+                ja      short loc_15048
+                jb      short loc_1504E
+                cmp     ax, [bp+arg_0]
+                jbe     short loc_1504E
+
+loc_15048:                              ; CODE XREF: __aFlrem+76\u2191j
+                                        ; __aFlrem+7B\u2191j
+                sub     ax, [bp+arg_4]
+                sbb     dx, [bp+arg_6]
+
+loc_1504E:                              ; CODE XREF: __aFlrem+7D\u2191j
+                                        ; __aFlrem+82\u2191j
+                sub     ax, [bp+arg_0]
+                sbb     dx, [bp+arg_2]
+                dec     di
+                jns     short loc_1505E
+
+loc_15057:                              ; CODE XREF: __aFlrem+4E\u2191j
+                neg     dx
+                neg     ax
+                sbb     dx, 0
+
+loc_1505E:                              ; CODE XREF: __aFlrem+50\u2191j
+                                        ; __aFlrem+91\u2191j
+                pop     di
+                pop     bx
+                mov     sp, bp
+                pop     bp
+                retf    8
+__aFlrem        endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function
+
+__aFlshl        proc far                ; CODE XREF: unknown_libname_6+E\u2193P
+                                        ; sub_1DABF+117\u2193P
+                xor     ch, ch
+                jcxz    short locret_15070
+
+loc_1506A:                              ; CODE XREF: __aFlshl+8\u2193j
+                shl     ax, 1
+                rcl     dx, 1
+                loop    loc_1506A
+
+locret_15070:                           ; CODE XREF: __aFlshl+2\u2191j
+                retf
+__aFlshl        endp
+
+; ---------------------------------------------------------------------------
                 align 2
-; [00000021 BYTES: COLLAPSED FUNCTION unknown_libname_6. PRESS NUMPAD+ TO EXPAND]
+
+; =============== S U B R O U T I N E =======================================
+
+; MS Quick C v1.0/v2.01 & MSC v5.1 DOS run-time & graphic
+; MS Quick C v1.0/v2.01 & MSC v5.1 DOS run-time & graphic
+; Attributes: library function bp-based frame
+
+unknown_libname_6 proc far              ; CODE XREF: sub_17E1A+24\u2193P
+                                        ; sub_17E1A+46\u2193P ...
+
+arg_0           = word ptr  6
+arg_2           = word ptr  8
+
+                push    bp
+                mov     bp, sp
+                mov     bx, [bp+arg_0]
+                mov     ax, [bx]
+                mov     dx, [bx+2]
+                mov     cx, [bp+arg_2]
+                call    __aFlshl
+                mov     bx, [bp+arg_0]
+                mov     [bx], ax
+                mov     [bx+2], dx
+                mov     sp, bp
+                pop     bp
+                retf    4
+unknown_libname_6 endp
+
+; ---------------------------------------------------------------------------
                 align 2
-; [00000061 BYTES: COLLAPSED FUNCTION __aFuldiv. PRESS NUMPAD+ TO EXPAND]
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+__aFuldiv       proc far                ; CODE XREF: _fread+242\u2191P
+                                        ; sub_172BC+5B\u2193P ...
+
+arg_0           = word ptr  6
+arg_2           = word ptr  8
+arg_4           = word ptr  0Ah
+arg_6           = word ptr  0Ch
+
+                push    bp
+                mov     bp, sp
+                push    bx
+                push    si
+                mov     ax, [bp+arg_6]
+                or      ax, ax
+                jnz     short loc_150B5
+                mov     cx, [bp+arg_4]
+                mov     ax, [bp+arg_2]
+                xor     dx, dx
+                div     cx
+                mov     bx, ax
+                mov     ax, [bp+arg_0]
+                div     cx
+                mov     dx, bx
+                jmp     short loc_150ED
+; ---------------------------------------------------------------------------
+
+loc_150B5:                              ; CODE XREF: __aFuldiv+A\u2191j
+                mov     cx, ax
+                mov     bx, [bp+arg_4]
+                mov     dx, [bp+arg_2]
+                mov     ax, [bp+arg_0]
+
+loc_150C0:                              ; CODE XREF: __aFuldiv+36\u2193j
+                shr     cx, 1
+                rcr     bx, 1
+                shr     dx, 1
+                rcr     ax, 1
+                or      cx, cx
+                jnz     short loc_150C0
+                div     bx
+                mov     si, ax
+                mul     [bp+arg_6]
+                xchg    ax, cx
+                mov     ax, [bp+arg_4]
+                mul     si
+                add     dx, cx
+                jb      short loc_150E9
+                cmp     dx, [bp+arg_2]
+                ja      short loc_150E9
+                jb      short loc_150EA
+                cmp     ax, [bp+arg_0]
+                jbe     short loc_150EA
+
+loc_150E9:                              ; CODE XREF: __aFuldiv+47\u2191j
+                                        ; __aFuldiv+4C\u2191j
+                dec     si
+
+loc_150EA:                              ; CODE XREF: __aFuldiv+4E\u2191j
+                                        ; __aFuldiv+53\u2191j
+                xor     dx, dx
+                xchg    ax, si
+
+loc_150ED:                              ; CODE XREF: __aFuldiv+1F\u2191j
+                pop     si
+                pop     bx
+                mov     sp, bp
+                pop     bp
+                retf    8
+__aFuldiv       endp
+
+; ---------------------------------------------------------------------------
                 align 2
-; [0000001B BYTES: COLLAPSED FUNCTION _sopen. PRESS NUMPAD+ TO EXPAND]
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; int sopen(const char *, int, int, ...)
+_sopen          proc far                ; CODE XREF: _execve+9F\u2193P
+                                        ; _execve+10B\u2193P ...
+
+arg_6           = word ptr  0Ch
+arg_8           = word ptr  0Eh
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 4
+                xor     bh, bh
+                cmp     byte_2CAC9, 3
+                jb      short loc_15108
+                mov     bh, byte ptr [bp+arg_6]
+
+loc_15108:                              ; CODE XREF: _sopen+D\u2191j
+                mov     ax, [bp+arg_8]
+                mov     [bp+arg_6], ax
+                jmp     __copensub
+_sopen          endp
+
+; ---------------------------------------------------------------------------
                 align 2
-; [0000002E BYTES: COLLAPSED FUNCTION _strrchr. PRESS NUMPAD+ TO EXPAND]
-; [00000327 BYTES: COLLAPSED FUNCTION __cenvarg. PRESS NUMPAD+ TO EXPAND]
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; char *__cdecl strrchr(const char *, int)
+_strrchr        proc far                ; CODE XREF: _execve+1A\u2193P
+                                        ; _execve+32\u2193P ...
+
+arg_0           = dword ptr  6
+arg_4           = word ptr  0Ah
+
+                push    bp
+                mov     bp, sp
+                push    di
+                les     di, [bp+arg_0]
+                assume es:nothing
+                xor     ax, ax
+                mov     cx, 0FFFFh
+                repne scasb
+                inc     cx
+                neg     cx
+                dec     di
+                mov     al, byte ptr [bp+arg_4]
+                std
+                repne scasb
+                inc     di
+                cmp     es:[di], al
+                jz      short loc_15136
+                xor     ax, ax
+                mov     dx, ax
+                jmp     short loc_1513A
+; ---------------------------------------------------------------------------
+
+loc_15136:                              ; CODE XREF: _strrchr+1C\u2191j
+                mov     ax, di
+                mov     dx, es
+
+loc_1513A:                              ; CODE XREF: _strrchr+22\u2191j
+                cld
+                pop     di
+                mov     sp, bp
+                pop     bp
+                retf
+_strrchr        endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; int __cdecl __far _cenvarg(__int32, int, int, __int32, __int32, __int32, char *)
+__cenvarg       proc far                ; CODE XREF: _execve+217\u2193P
+
+var_16          = word ptr -16h
+var_14          = word ptr -14h
+var_12          = word ptr -12h
+var_10          = dword ptr -10h
+var_A           = word ptr -0Ah
+var_8           = word ptr -8
+var_6           = dword ptr -6
+var_2           = word ptr -2
+arg_0           = dword ptr  6
+arg_4           = word ptr  0Ah
+arg_6           = word ptr  0Ch
+arg_8           = dword ptr  0Eh
+arg_C           = dword ptr  12h
+arg_10          = dword ptr  16h
+arg_14          = dword ptr  1Ah
+
+                push    bp
+                mov     bp, sp
+                sub     sp, 16h
+                push    di
+                push    si
+                sub     si, si
+                mov     ax, [bp+arg_4]
+                or      ax, [bp+arg_6]
+                jnz     short loc_1515F
+                mov     ax, word ptr envp
+                mov     dx, word ptr envp+2
+                mov     [bp+arg_4], ax
+                mov     [bp+arg_6], dx
+
+loc_1515F:                              ; CODE XREF: __cenvarg+10\u2191j
+                mov     ax, [bp+arg_4]
+                or      ax, [bp+arg_6]
+                jz      short loc_151A1
+                mov     ax, [bp+arg_4]
+                mov     dx, [bp+arg_6]
+                mov     word ptr [bp+var_10], ax
+                mov     word ptr [bp+var_10+2], dx
+                jmp     short loc_1518F
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_15176:                              ; CODE XREF: __cenvarg+5F\u2193j
+                les     bx, [bp+var_10]
+                add     word ptr [bp+var_10], 4
+                push    word ptr es:[bx+2]
+                push    word ptr es:[bx] ; char *
+                call    _strlen
+                add     sp, 4
+                inc     ax
+                add     si, ax
+
+loc_1518F:                              ; CODE XREF: __cenvarg+33\u2191j
+                les     bx, [bp+var_10]
+                mov     ax, es:[bx]
+                or      ax, es:[bx+2]
+                jz      short loc_151A1
+                cmp     si, 7FFFh
+                jbe     short loc_15176
+
+loc_151A1:                              ; CODE XREF: __cenvarg+25\u2191j
+                                        ; __cenvarg+59\u2191j
+                mov     ax, word_2CACE
+                mov     [bp+var_2], ax
+                or      ax, ax
+                jz      short loc_151BA
+                mov     di, ax
+
+loc_151AD:                              ; CODE XREF: __cenvarg+75\u2193j
+                cmp     byte ptr [di+2EFFh], 0
+                jnz     short loc_151B7
+                dec     di
+                jnz     short loc_151AD
+
+loc_151B7:                              ; CODE XREF: __cenvarg+72\u2191j
+                mov     [bp+var_2], di
+
+loc_151BA:                              ; CODE XREF: __cenvarg+69\u2191j
+                cmp     [bp+var_2], 0
+                jz      short loc_151C8
+                mov     ax, [bp+var_2]
+                add     ax, 0Eh
+                add     si, ax
+
+loc_151C8:                              ; CODE XREF: __cenvarg+7E\u2191j
+                mov     ax, word ptr [bp+arg_14]
+                or      ax, word ptr [bp+arg_14+2]
+                jz      short loc_151E3
+                push    word ptr [bp+arg_14+2]
+                push    word ptr [bp+arg_14] ; char *
+                call    _strlen
+                add     sp, 4
+                add     ax, 3
+                add     si, ax
+
+loc_151E3:                              ; CODE XREF: __cenvarg+8E\u2191j
+                inc     si
+                mov     [bp+var_12], si
+                cmp     si, 7FFFh
+                jbe     short loc_15200
+                mov     word_2CAC1, 7
+                mov     word_2CACC, 0Ah
+
+loc_151F9:                              ; CODE XREF: __cenvarg+103\u2193j
+                mov     ax, 0FFFFh
+                jmp     loc_15461
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_15200:                              ; CODE XREF: __cenvarg+AB\u2191j
+                mov     si, word_2D2B6
+                mov     word_2D2B6, 10h
+                mov     di, [bp+var_12]
+                add     di, 0Fh
+                push    di
+                call    unknown_libname_5 ; MS Quick C v1.0/v2.01 & MSC v5.1 DOS run-time & graphic
+                                        ; MS Quick C v1.0/v2.01 & MSC v5.1 DOS run-time & graphic
+                add     sp, 2
+                mov     [bp+var_16], ax
+                or      ax, ax
+                jnz     short loc_15246
+                push    di              ; size_t
+                call    _malloc
+                add     sp, 2
+                mov     word ptr [bp+var_6], ax
+                mov     word ptr [bp+var_6+2], dx
+                or      dx, ax
+                jnz     short loc_1524F
+                mov     word_2CAC1, 0Ch
+                mov     word_2CACC, 8
+                mov     word_2D2B6, si
+                jmp     short loc_151F9
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_15246:                              ; CODE XREF: __cenvarg+DE\u2191j
+                mov     ax, [bp+var_16]
+                mov     word ptr [bp+var_6], ax
+                mov     word ptr [bp+var_6+2], ds
+
+loc_1524F:                              ; CODE XREF: __cenvarg+F1\u2191j
+                mov     word_2D2B6, si
+                les     bx, [bp+arg_8]
+                mov     ax, word ptr [bp+var_6]
+                mov     dx, word ptr [bp+var_6+2]
+                mov     [bp+var_A], ax
+                mov     [bp+var_8], dx
+                mov     es:[bx], ax
+                mov     es:[bx+2], dx
+                add     ax, 0Fh
+                and     al, 0F0h
+                mov     [bp+var_A], ax
+                les     bx, [bp+arg_C]
+                mov     word ptr [bp+var_6], ax
+                mov     es:[bx], ax
+                mov     es:[bx+2], dx
+                mov     ax, [bp+arg_4]
+                or      ax, [bp+arg_6]
+                jz      short loc_152D0
+                mov     ax, [bp+arg_4]
+                mov     dx, [bp+arg_6]
+                mov     word ptr [bp+var_10], ax
+                mov     word ptr [bp+var_10+2], dx
+                jmp     short loc_152C4
+; ---------------------------------------------------------------------------
+
+loc_15294:                              ; CODE XREF: __cenvarg+18E\u2193j
+                sub     ax, ax
+                push    ax              ; int
+                les     bx, [bp+var_10]
+                push    word ptr es:[bx+2]
+                push    word ptr es:[bx] ; char *
+                push    word ptr [bp+var_6+2]
+                push    word ptr [bp+var_6] ; char *
+                call    _strcpy
+                add     sp, 8
+                push    dx
+                push    ax              ; char *
+                call    _strchr
+                add     sp, 6
+                inc     ax
+                mov     word ptr [bp+var_6], ax
+                mov     word ptr [bp+var_6+2], dx
+                add     word ptr [bp+var_10], 4
+
+loc_152C4:                              ; CODE XREF: __cenvarg+152\u2191j
+                les     bx, [bp+var_10]
+                mov     ax, es:[bx]
+                or      ax, es:[bx+2]
+                jnz     short loc_15294
+
+loc_152D0:                              ; CODE XREF: __cenvarg+144\u2191j
+                cmp     [bp+var_2], 0
+                jz      short loc_15339
+                sub     ax, ax
+                push    ax              ; int
+                mov     ax, 4CD0h
+                push    ds
+                push    ax              ; char *
+                push    word ptr [bp+var_6+2]
+                push    word ptr [bp+var_6] ; char *
+                call    _strcpy
+                add     sp, 8
+                push    dx
+                push    ax              ; char *
+                call    _strchr
+                add     sp, 6
+                mov     word ptr [bp+var_6], ax
+                mov     word ptr [bp+var_6+2], dx
+                les     bx, [bp+var_6]
+                inc     word ptr [bp+var_6]
+                mov     al, byte ptr [bp+var_2]
+                mov     es:[bx], al
+                sub     si, si
+                mov     cx, [bp+var_2]
+                mov     di, word ptr [bp+var_6]
+
+loc_15310:                              ; CODE XREF: __cenvarg+1E5\u2193j
+                cmp     byte ptr [si+2F00h], 0
+                jz      short loc_1531E
+                mov     al, [si+2F00h]
+                jmp     short loc_15320
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_1531E:                              ; CODE XREF: __cenvarg+1D5\u2191j
+                mov     al, 0FFh
+
+loc_15320:                              ; CODE XREF: __cenvarg+1DB\u2191j
+                mov     es:[di], al
+                inc     di
+                inc     si
+                loop    loc_15310
+                mov     word ptr [bp+var_6], di
+                mov     word ptr [bp+var_6+2], es
+                mov     [bp+var_2], cx
+                mov     bx, di
+                inc     word ptr [bp+var_6]
+                mov     byte ptr es:[bx], 0
+
+loc_15339:                              ; CODE XREF: __cenvarg+194\u2191j
+                les     bx, [bp+var_6]
+                inc     word ptr [bp+var_6]
+                mov     byte ptr es:[bx], 0
+                mov     ax, word ptr [bp+arg_14]
+                or      ax, word ptr [bp+arg_14+2]
+                jz      short loc_15371
+                mov     bx, word ptr [bp+var_6]
+                inc     word ptr [bp+var_6]
+                mov     byte ptr es:[bx], 1
+                mov     bx, word ptr [bp+var_6]
+                inc     word ptr [bp+var_6]
+                mov     byte ptr es:[bx], 0
+                push    word ptr [bp+arg_14+2]
+                push    word ptr [bp+arg_14] ; char *
+                push    es
+                push    word ptr [bp+var_6] ; char *
+                call    _strcpy
+                add     sp, 8
+
+loc_15371:                              ; CODE XREF: __cenvarg+209\u2191j
+                sub     si, si
+                mov     ax, word ptr [bp+arg_10]
+                mov     dx, word ptr [bp+arg_10+2]
+                inc     ax
+                mov     word ptr [bp+var_6], ax
+                mov     word ptr [bp+var_6+2], dx
+                les     bx, [bp+arg_0]
+                mov     ax, es:[bx]
+                or      ax, es:[bx+2]
+                jnz     short loc_1538F
+                jmp     loc_1544F
+; ---------------------------------------------------------------------------
+
+loc_1538F:                              ; CODE XREF: __cenvarg+24A\u2191j
+                mov     ax, es:[bx+4]
+                or      ax, es:[bx+6]
+                jz      short loc_153A4
+                les     bx, [bp+var_6]
+                inc     word ptr [bp+var_6]
+                mov     byte ptr es:[bx], 20h ; ' '
+                inc     si
+
+loc_153A4:                              ; CODE XREF: __cenvarg+257\u2191j
+                mov     ax, word ptr [bp+arg_0]
+                mov     dx, word ptr [bp+arg_0+2]
+                add     ax, 4
+                mov     word ptr [bp+var_10], ax
+                mov     word ptr [bp+var_10+2], dx
+                mov     di, [bp+var_14]
+                jmp     short loc_15402
+; ---------------------------------------------------------------------------
+                db 2 dup(90h)
+; ---------------------------------------------------------------------------
+
+loc_153BA:                              ; CODE XREF: __cenvarg+2E4\u2193j
+                add     si, di
+                sub     ax, ax
+                push    ax              ; int
+                les     bx, [bp+var_10]
+                push    word ptr es:[bx+2]
+                push    word ptr es:[bx] ; char *
+                push    word ptr [bp+var_6+2]
+                push    word ptr [bp+var_6] ; char *
+                call    _strcpy
+                add     sp, 8
+                push    dx
+                push    ax              ; char *
+                call    _strchr
+                add     sp, 6
+                mov     word ptr [bp+var_6], ax
+                mov     word ptr [bp+var_6+2], dx
+                add     word ptr [bp+var_10], 4
+                les     bx, [bp+var_10]
+                mov     ax, es:[bx]
+                or      ax, es:[bx+2]
+                jz      short loc_15402
+                les     bx, [bp+var_6]
+                mov     byte ptr es:[bx], 20h ; ' '
+                inc     word ptr [bp+var_6]
+                inc     si
+
+loc_15402:                              ; CODE XREF: __cenvarg+276\u2191j
+                                        ; __cenvarg+2B5\u2191j
+                les     bx, [bp+var_10]
+                mov     ax, es:[bx]
+                or      ax, es:[bx+2]
+                jz      short loc_1544C
+                push    word ptr es:[bx+2]
+                push    word ptr es:[bx] ; char *
+                call    _strlen
+                add     sp, 4
+                mov     di, ax
+                add     ax, si
+                cmp     ax, 7Dh ; '}'
+                jbe     short loc_153BA
+                mov     word_2CAC1, 7
+                mov     word_2CACC, 0Ah
+                les     bx, [bp+arg_8]
+                push    word ptr es:[bx+2]
+                push    word ptr es:[bx] ; void far *
+                call    __ffree
+                add     sp, 4
+                mov     ax, 0FFFFh
+                mov     [bp+var_14], di
+                jmp     short loc_15461
+; ---------------------------------------------------------------------------
+
+loc_1544C:                              ; CODE XREF: __cenvarg+2CC\u2191j
+                mov     [bp+var_14], di
+
+loc_1544F:                              ; CODE XREF: __cenvarg+24C\u2191j
+                les     bx, [bp+var_6]
+                mov     byte ptr es:[bx], 0Dh
+                les     bx, [bp+arg_10]
+                mov     ax, si
+                mov     es:[bx], al
+                mov     ax, [bp+var_12]
+
+loc_15461:                              ; CODE XREF: __cenvarg+BC\u2191j
+                                        ; __cenvarg+30A\u2191j
+                pop     si
+                pop     di
+                mov     sp, bp
+                pop     bp
+                retf
+__cenvarg       endp
+
+; ---------------------------------------------------------------------------
                 db 90h
                 db 2 dup(0)
-; [000002B3 BYTES: COLLAPSED FUNCTION __doexec. PRESS NUMPAD+ TO EXPAND]
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+__doexec        proc far                ; CODE XREF: _execve+279\u2193P
+
+arg_0           = word ptr  6
+arg_2           = dword ptr  8
+arg_6           = word ptr  0Ch
+arg_8           = dword ptr  0Eh
+arg_C           = dword ptr  12h
+arg_10          = word ptr  16h
+arg_12          = word ptr  18h
+arg_14          = word ptr  1Ah
+arg_16          = word ptr  1Ch
+arg_18          = word ptr  1Eh
+arg_1A          = word ptr  20h
+arg_1C          = word ptr  22h
+
+                push    bp
+                mov     bp, sp
+                push    si
+                push    di
+                push    ds
+
+loc_15470:                              ; CODE XREF: __doexec+30\u2193j
+                                        ; __doexec+3B\u2193j
+                pop     ds
+                mov     bx, 0FFFFh
+                mov     ah, 48h
+                int     21h             ; DOS - 2+ - ALLOCATE MEMORY
+                                        ; BX = number of 16-byte paragraphs desired
+                cmp     al, 7
+                jz      short loc_154BE
+                mov     bx, word_2CAC7
+                mov     dx, bx
+                dec     bx
+                xor     cx, cx
+                push    ds
+
+loc_15486:                              ; CODE XREF: __doexec+37\u2193j
+                mov     ds, bx
+                mov     ax, word_29BD0+1
+                cmp     ax, dx
+                jz      short loc_15495
+                or      ax, ax
+                jnz     short loc_154A7
+                mov     cx, bx
+
+loc_15495:                              ; CODE XREF: __doexec+23\u2191j
+                inc     bx
+                add     bx, word_29BD2+1
+                jb      short loc_15470
+                mov     al, byte ptr word_29BD0
+                cmp     al, 4Dh ; 'M'
+                jz      short loc_15486
+                cmp     al, 5Ah ; 'Z'
+                jnz     short loc_15470
+
+loc_154A7:                              ; CODE XREF: __doexec+27\u2191j
+                sub     bx, dx
+                pop     ds
+                mov     word_2E8B0, cx
+                cmp     byte_2CAC9, 2
+                ja      short loc_154C2
+                sub     bx, 281h
+                jnb     short loc_154C2
+
+loc_154BB:                              ; CODE XREF: __doexec+A0\u2193j
+                                        ; __doexec+A5\u2193j ...
+                mov     ax, 8
+
+loc_154BE:                              ; CODE XREF: __doexec+10\u2191j
+                stc
+                jmp     __dosretax
+; ---------------------------------------------------------------------------
+
+loc_154C2:                              ; CODE XREF: __doexec+49\u2191j
+                                        ; __doexec+4F\u2191j
+                push    bx
+                mov     ax, 5
+                push    ax
+                call    __NMSG_TEXT
+                mov     word_2E8B2, ax
+                xchg    ax, di
+                mov     si, di
+                xor     ax, ax
+                mov     cx, 0FFFFh
+                repne scasb
+                inc     di
+                inc     di
+                repne scasb
+                inc     di
+                inc     di
+                repne scasb
+                xchg    ax, di
+                sub     ax, si
+                mov     word_2E8B4, ax
+                add     ax, 0FCh ; 'ü'
+                nop
+                cmp     [bp+arg_0], 0
+                jz      short loc_154F5
+                add     ax, 13h
+                nop
+
+loc_154F5:                              ; CODE XREF: __doexec+85\u2191j
+                mov     cl, 4
+                add     ax, [bp+arg_6]
+                add     ax, 0Fh
+                shr     ax, cl
+                mov     dx, [bp+arg_10]
+                add     dx, 0Fh
+                shr     dx, cl
+                pop     bx
+                sub     bx, dx
+                jbe     short loc_154BB
+                sub     bx, 2
+                jb      short loc_154BB
+                mov     cx, [bp+arg_12]
+                cmp     [bp+arg_0], 0
+                jz      short loc_15520
+                mov     cx, [bp+arg_1C]
+                inc     cx
+                jz      short loc_154BB
+
+loc_15520:                              ; CODE XREF: __doexec+AE\u2191j
+                add     cx, 10h
+                jb      short loc_154BB
+                cmp     bx, cx
+                jb      short loc_154BB
+                push    ax
+                push    dx
+                xor     cx, cx
+
+loc_1552D:                              ; CODE XREF: __doexec+E0\u2193j
+                mov     bx, 1
+                mov     ah, 48h
+                int     21h             ; DOS - 2+ - ALLOCATE MEMORY
+                                        ; BX = number of 16-byte paragraphs desired
+                jb      short loc_1554C
+                mov     es, ax
+                mov     bx, 0FFFFh
+
+loc_1553B:                              ; CODE XREF: __doexec+D5\u2193j
+                mov     ah, 4Ah
+                int     21h             ; DOS - 2+ - ADJUST MEMORY BLOCK SIZE (SETBLOCK)
+                                        ; ES = segment address of block to change
+                                        ; BX = new size in paragraphs
+                jb      short loc_1553B
+                mov     es:0, cx
+                mov     cx, es
+                mov     dx, bx
+                jmp     short loc_1552D
+; ---------------------------------------------------------------------------
+
+loc_1554C:                              ; CODE XREF: __doexec+CA\u2191j
+                mov     bx, dx
+                cmp     byte_2CAC9, 2
+                jnz     short loc_15573
+                sub     bx, 281h
+                jnb     short loc_1556D
+
+loc_1555B:                              ; CODE XREF: __doexec+FE\u2193j
+                                        ; __doexec+107\u2193j ...
+                jcxz    short loc_1556A
+                mov     es, cx
+                mov     cx, es:0
+                mov     ah, 49h
+                int     21h             ; DOS - 2+ - FREE MEMORY
+                                        ; ES = segment address of area to be freed
+                jnb     short loc_1555B
+
+loc_1556A:                              ; CODE XREF: __doexec:loc_1555B\u2191j
+                                        ; __doexec:loc_15594\u2193j
+                jmp     loc_154BB
+; ---------------------------------------------------------------------------
+
+loc_1556D:                              ; CODE XREF: __doexec+EF\u2191j
+                mov     ah, 4Ah
+                int     21h             ; DOS - 2+ - ADJUST MEMORY BLOCK SIZE (SETBLOCK)
+                                        ; ES = segment address of block to change
+                                        ; BX = new size in paragraphs
+                jb      short loc_1555B
+
+loc_15573:                              ; CODE XREF: __doexec+E9\u2191j
+                pop     dx
+                push    dx
+                inc     dx
+                inc     dx
+                sub     bx, dx
+                jnb     short loc_155B1
+                mov     ax, word_2E8B0
+                or      ax, ax
+                jz      short loc_15594
+                inc     ax
+                mov     es, ax
+                mov     bx, 0FFFFh
+                mov     ah, 4Ah
+                int     21h             ; DOS - 2+ - ADJUST MEMORY BLOCK SIZE (SETBLOCK)
+                                        ; ES = segment address of block to change
+                                        ; BX = new size in paragraphs
+                cmp     al, 8
+                jnz     short loc_1555B
+                sub     bx, dx
+                jnb     short loc_155B1
+
+loc_15594:                              ; CODE XREF: __doexec+116\u2191j
+                jcxz    short loc_1556A
+                mov     ax, cx
+
+loc_15598:                              ; CODE XREF: __doexec+145\u2193j
+                dec     ax
+                mov     es, ax
+                mov     bx, es:3
+                inc     ax
+                mov     es, ax
+                sub     bx, dx
+                jnb     short loc_155B1
+                mov     ax, es:0
+                or      ax, ax
+                jz      short loc_1555B
+                jmp     short loc_15598
+; ---------------------------------------------------------------------------
+
+loc_155B1:                              ; CODE XREF: __doexec+10F\u2191j
+                                        ; __doexec+128\u2191j ...
+                mov     ah, 4Ah
+                int     21h             ; DOS - 2+ - ADJUST MEMORY BLOCK SIZE (SETBLOCK)
+                                        ; ES = segment address of block to change
+                                        ; BX = new size in paragraphs
+                jb      short loc_1555B
+                pop     bx
+                mov     ah, 48h
+                int     21h             ; DOS - 2+ - ALLOCATE MEMORY
+                                        ; BX = number of 16-byte paragraphs desired
+                jb      short loc_1555B
+                mov     es, word_2CAC7
+                mov     bx, es
+                mov     es:2Ch, ax
+                mov     es, ax
+                xor     di, di
+                push    ds
+                lds     si, [bp+arg_C]
+                mov     cx, [bp+arg_10]
+                rep movsb
+                pop     ds
+                mov     dx, es
+                push    dx
+                push    bx
+                cmp     word_2D2D0, 0
+                jz      short loc_155F0
+                push    ds
+                mov     dx, word_2D2D2
+                mov     ds, word_2D2D0
+                assume ds:nothing
+                mov     ax, 2523h
+                int     21h             ; DOS - SET INTERRUPT VECTOR
+                                        ; AL = interrupt number
+                                        ; DS:DX = new vector to be used for specified interrupt
+                pop     ds
+                assume ds:dseg
+
+loc_155F0:                              ; CODE XREF: __doexec+175\u2191j
+                call    sub_11CC0
+                pop     bx
+                pop     dx
+
+loc_155F5:                              ; CODE XREF: __doexec+1AD\u2193j
+                                        ; __doexec+1B4\u2193j
+                push    bx
+                mov     ah, 52h
+                int     21h             ; DOS - 2+ internal - GET LIST OF LISTS
+                                        ; Return: ES:BX -> DOS list of lists
+                mov     ax, es:[bx-2]
+                pop     bx
+
+loc_155FF:                              ; CODE XREF: __doexec+1BC\u2193j
+                mov     es, ax
+                inc     ax
+                cmp     ax, bx
+                jz      short loc_15619
+                cmp     ax, dx
+                jz      short loc_15619
+                cmp     es:1, bx
+                jnz     short loc_15619
+                mov     es, ax
+                mov     ah, 49h
+                int     21h             ; DOS - 2+ - FREE MEMORY
+                                        ; ES = segment address of area to be freed
+                jmp     short loc_155F5
+; ---------------------------------------------------------------------------
+
+loc_15619:                              ; CODE XREF: __doexec+19A\u2191j
+                                        ; __doexec+19E\u2191j ...
+                add     ax, es:3
+                jb      short loc_155F5
+                cmp     byte ptr es:0, 5Ah ; 'Z'
+                jnz     short loc_155FF
+                mov     es, bx
+                mov     bx, 0FFFFh
+                mov     ah, 4Ah
+                int     21h             ; DOS - 2+ - ADJUST MEMORY BLOCK SIZE (SETBLOCK)
+                                        ; ES = segment address of block to change
+                                        ; BX = new size in paragraphs
+                mov     ah, 4Ah
+                int     21h             ; DOS - 2+ - ADJUST MEMORY BLOCK SIZE (SETBLOCK)
+                                        ; ES = segment address of block to change
+                                        ; BX = new size in paragraphs
+                jnb     short loc_15644
+
+loc_15637:                              ; CODE XREF: __doexec+1E5\u2193j
+                mov     dx, word_2E8B2
+                mov     ah, 9
+                int     21h             ; DOS - PRINT STRING
+                                        ; DS:DX -> string terminated by "$"
+                mov     ax, 4CFFh
+                int     21h             ; DOS - 2+ - QUIT WITH EXIT CODE (EXIT)
+                                        ; AL = exit code
+; ---------------------------------------------------------------------------
+
+loc_15644:                              ; CODE XREF: __doexec+1CB\u2191j
+                mov     ax, es
+                add     ax, bx
+                mov     es:2, ax
+                pop     cx
+                sub     bx, cx
+                jb      short loc_15637
+                sub     ax, cx
+                mov     word_2E8B8, ax
+                mov     es, ax
+                push    es
+                push    ds
+                push    cs
+                pop     ds
+                assume ds:seg001
+                xor     di, di
+                mov     cx, 5Ch ; '\'
+                nop
+                mov     si, 45FDh
+                cmp     [bp+arg_0], 0
+                jz      short loc_15672
+                mov     cx, 6Fh ; 'o'
+                nop
+                mov     si, 4659h
+
+loc_15672:                              ; CODE XREF: __doexec+1FF\u2191j
+                rep movsb
+                pop     ds
+                assume ds:dseg
+                mov     si, word_2E8B2
+                mov     cx, word_2E8B4
+                rep movsb
+                mov     bx, di
+                cmp     [bp+arg_0], 0
+                jnz     short loc_15697
+                mov     ax, [bp+arg_14]
+                stosw
+                mov     ax, [bp+arg_16]
+                stosw
+                mov     ax, [bp+arg_18]
+                stosw
+                mov     ax, [bp+arg_1A]
+                stosw
+
+loc_15697:                              ; CODE XREF: __doexec+21B\u2191j
+                push    ds
+                lds     si, [bp+arg_2]
+                mov     cx, [bp+arg_6]
+                rep movsb
+                pop     ds
+                mov     es, word_2CAC7
+                push    ds
+                push    es
+                pop     ds
+                mov     dx, 80h ; '€'
+                mov     ah, 1Ah
+                int     21h             ; DOS - SET DISK TRANSFER AREA ADDRESS
+                                        ; DS:DX -> disk transfer buffer
+                pop     ds
+                mov     di, 80h ; '€'
+                push    ds
+                lds     si, [bp+arg_8]
+                mov     cl, [si]
+                inc     cx
+                inc     cx
+                rep movsb
+                mov     dx, bx
+                mov     di, 5Ch ; '\'
+                xchg    ax, cx
+                mov     cx, 20h ; ' '
+                rep stosb
+                mov     di, 5Ch ; '\'
+                lds     si, [bp+arg_8]
+                inc     si
+                mov     ax, 2901h
+                int     21h             ; DOS - PARSE FILENAME
+                                        ; DS:SI -> string to parse
+                                        ; ES:DI -> buffer to fill with unopened FCB
+                                        ; AL = bit mask to control parsing
+                cmp     al, 0FFh
+                jz      short loc_156DA
+                xor     al, al
+
+loc_156DA:                              ; CODE XREF: __doexec+26C\u2191j
+                mov     bl, al
+                mov     di, 6Ch ; 'l'
+                mov     ax, 2901h
+                int     21h             ; DOS - PARSE FILENAME
+                                        ; DS:SI -> string to parse
+                                        ; ES:DI -> buffer to fill with unopened FCB
+                                        ; AL = bit mask to control parsing
+                cmp     al, 0FFh
+                jz      short loc_156EA
+                xor     al, al
+
+loc_156EA:                              ; CODE XREF: __doexec+27C\u2191j
+                mov     bh, al
+                pop     ds
+                pop     cx
+                mov     si, dx
+                add     si, 0A0h ; ' '
+                cmp     [bp+arg_0], 0
+                mov     bp, bx
+                cli
+                mov     ss, cx
+                assume ss:nothing
+                mov     sp, si
+                sti
+                jnz     short loc_15706
+                push    dx
+                add     dx, 8
+
+loc_15706:                              ; CODE XREF: __doexec+296\u2191j
+                mov     ax, es
+                add     ax, 10h
+                mov     bx, 100h
+                mov     es:[bx], ax
+                mov     es:[bx+2], ax
+                push    ax
+                mov     ax, 4B03h
+                jmp     dword ptr unk_2E8B6
+__doexec        endp ; sp-analysis failed
+
+; ---------------------------------------------------------------------------
                 db 0Eh, 1Fh, 0CDh, 21h, 73h, 3Eh, 0BBh, 1, 0, 3Ch, 1, 74h
                 db 0Eh, 0B3h, 2, 3Ch, 0Ah, 74h, 8, 0B3h, 1, 3Ch, 0Bh, 74h
                 db 2, 33h, 0DBh, 0Eh, 7, 33h, 0C0h, 0B9h, 2 dup(0FFh)
@@ -4785,8 +13513,356 @@ __inittime:                             ; DATA XREF: dseg:4D06\u2193o
                 db 0F0h, 74h, 3, 0BBh, 0, 10h, 0D3h, 0E3h, 2 dup(4Bh)
                 db 0FAh, 8Eh, 0D0h, 8Bh, 0E3h, 0FBh, 36h, 0C7h, 7, 2 dup(0)
                 db 6, 0B8h, 0, 1, 50h, 6, 1Fh, 8Bh, 0C5h, 0CBh
-; [00000020 BYTES: COLLAPSED FUNCTION _execl. PRESS NUMPAD+ TO EXPAND]
-; [00000296 BYTES: COLLAPSED FUNCTION _execve. PRESS NUMPAD+ TO EXPAND]
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; int execl(const char *, const char *, ...)
+_execl          proc far                ; CODE XREF: _main+249\u2191P
+
+arg_0           = dword ptr  6
+arg_4           = dword ptr  0Ah
+
+                push    bp
+                mov     bp, sp
+                push    word ptr envp+2
+                push    word ptr envp   ; char **
+                lea     ax, [bp+arg_4]
+                push    ss
+                push    ax              ; char **
+                push    word ptr [bp+arg_0+2]
+                push    word ptr [bp+arg_0] ; char *
+                call    _execve
+                add     sp, 0Ch
+                pop     bp
+                retf
+_execl          endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: library function bp-based frame
+
+; int __cdecl execve(const char *, const char *const *, const char *const *)
+_execve         proc far                ; CODE XREF: _execl+16\u2191P
+                                        ; DATA XREF: dseg:4CF4\u2193o
+
+var_BC          = dword ptr -0BCh
+var_3C          = dword ptr -3Ch
+var_38          = word ptr -38h
+var_36          = word ptr -36h
+var_34          = word ptr -34h
+var_32          = word ptr -32h
+var_30          = word ptr -30h
+var_2A          = dword ptr -2Ah
+var_26          = dword ptr -26h
+var_22          = word ptr -22h
+var_20          = word ptr -20h
+var_1E          = word ptr -1Eh
+var_1A          = word ptr -1Ah
+var_18          = word ptr -18h
+var_14          = word ptr -14h
+var_12          = word ptr -12h
+var_E           = word ptr -0Eh
+var_C           = word ptr -0Ch
+var_4           = dword ptr -4
+arg_0           = dword ptr  6
+arg_4           = dword ptr  0Ah
+arg_8           = dword ptr  0Eh
+
+                push    bp
+                mov     bp, sp
+                mov     ax, 0BCh
+                call    __chkstk
+                mov     [bp+var_32], 1
+                mov     ax, 5Ch ; '\'
+                push    ax              ; int
+                push    word ptr [bp+arg_0+2]
+                push    word ptr [bp+arg_0] ; char *
+                call    _strrchr
+                add     sp, 6
+                mov     word ptr [bp+var_4], ax
+                mov     word ptr [bp+var_4+2], dx
+                mov     ax, 2Fh ; '/'
+                push    ax              ; int
+                push    word ptr [bp+arg_0+2]
+                push    word ptr [bp+arg_0] ; char *
+                call    _strrchr
+                add     sp, 6
+                mov     word ptr [bp+var_26], ax
+                mov     word ptr [bp+var_26+2], dx
+                or      ax, dx
+                jnz     short loc_1585C
+                mov     ax, word ptr [bp+var_4]
+                or      ax, word ptr [bp+var_4+2]
+                jnz     short loc_1587B
+                mov     ax, word ptr [bp+arg_0]
+                mov     dx, word ptr [bp+arg_0+2]
+                jmp     short loc_15875
+; ---------------------------------------------------------------------------
+
+loc_1585C:                              ; CODE XREF: _execve+42\u2191j
+                mov     ax, word ptr [bp+var_4]
+                or      ax, word ptr [bp+var_4+2]
+                jz      short loc_1586F
+                mov     ax, word ptr [bp+var_4]
+                mov     dx, word ptr [bp+var_4+2]
+                cmp     word ptr [bp+var_26], ax
+                jbe     short loc_1587B
+
+loc_1586F:                              ; CODE XREF: _execve+5A\u2191j
+                mov     ax, word ptr [bp+var_26]
+                mov     dx, word ptr [bp+var_26+2]
+
+loc_15875:                              ; CODE XREF: _execve+52\u2191j
+                mov     word ptr [bp+var_4], ax
+                mov     word ptr [bp+var_4+2], dx
+
+loc_1587B:                              ; CODE XREF: _execve+4A\u2191j
+                                        ; _execve+65\u2191j
+                sub     ax, ax
+                mov     word ptr [bp+var_26+2], ax
+                mov     word ptr [bp+var_26], ax
+                mov     ax, 2Eh ; '.'
+                push    ax              ; int
+                push    word ptr [bp+var_4+2]
+                push    word ptr [bp+var_4] ; char *
+                call    _strchr
+                add     sp, 6
+                or      dx, ax
+                jz      short loc_158BE
+                mov     ax, 20h ; ' '
+                push    ax              ; int
+                mov     ax, 8000h
+                push    ax              ; int
+                push    word ptr [bp+arg_0+2]
+                push    word ptr [bp+arg_0] ; char *
+                call    _sopen
+                add     sp, 8
+                mov     [bp+var_34], ax
+                inc     ax
+                jz      short loc_158B8
+                jmp     loc_1597C
+; ---------------------------------------------------------------------------
+
+loc_158B8:                              ; CODE XREF: _execve+AB\u2191j
+                                        ; _execve+D8\u2193j ...
+                mov     ax, 0FFFFh
+                jmp     loc_15A9A
+; ---------------------------------------------------------------------------
+
+loc_158BE:                              ; CODE XREF: _execve+8F\u2191j
+                push    word ptr [bp+arg_0+2]
+                push    word ptr [bp+arg_0] ; char *
+                call    _strlen
+                add     sp, 4
+                add     ax, 5
+                push    ax              ; size_t
+                call    _malloc
+                add     sp, 2
+                mov     word ptr [bp+var_26], ax
+                mov     word ptr [bp+var_26+2], dx
+                or      dx, ax
+                jz      short loc_158B8
+                mov     ax, 4CEAh
+                push    ds
+                push    ax              ; char *
+                push    word ptr [bp+arg_0+2]
+                push    word ptr [bp+arg_0] ; char *
+                push    word ptr [bp+var_26+2]
+                push    word ptr [bp+var_26] ; char *
+                call    _strcpy
+                add     sp, 8
+                push    dx
+                push    ax              ; char *
+                call    _strcat
+                add     sp, 8
+                mov     ax, 20h ; ' '
+                push    ax              ; int
+                mov     ax, 8000h
+                push    ax              ; int
+                push    word ptr [bp+var_26+2]
+                push    word ptr [bp+var_26] ; char *
+                call    _sopen
+                add     sp, 8
+                mov     [bp+var_34], ax
+                inc     ax
+                jnz     short loc_15970
+                mov     ax, 4CEFh
+                push    ds
+                push    ax              ; char *
+                mov     ax, 2Eh ; '.'
+                push    ax              ; int
+                push    word ptr [bp+var_26+2]
+                push    word ptr [bp+var_26] ; char *
+                call    _strrchr
+                add     sp, 6
+                push    dx
+                push    ax              ; char *
+                call    _strcpy
+                add     sp, 8
+                mov     ax, 20h ; ' '
+                push    ax              ; int
+                mov     ax, 8000h
+                push    ax              ; int
+                push    word ptr [bp+var_26+2]
+                push    word ptr [bp+var_26] ; char *
+                call    _sopen
+                add     sp, 8
+                mov     [bp+var_34], ax
+                inc     ax
+                jnz     short loc_15970
+
+loc_1595E:                              ; CODE XREF: _execve:loc_159B5\u2193j
+                push    word ptr [bp+var_26+2]
+                push    word ptr [bp+var_26] ; void far *
+                call    __ffree
+                add     sp, 4
+                jmp     loc_158B8
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_15970:                              ; CODE XREF: _execve+117\u2191j
+                                        ; _execve+154\u2191j
+                mov     ax, word ptr [bp+var_26]
+                mov     dx, word ptr [bp+var_26+2]
+                mov     word ptr [bp+arg_0], ax
+                mov     word ptr [bp+arg_0+2], dx
+
+loc_1597C:                              ; CODE XREF: _execve+AD\u2191j
+                mov     ax, 18h
+                push    ax              ; unsigned int
+                lea     ax, [bp+var_22]
+                push    ss
+                push    ax              ; void *
+                push    [bp+var_34]     ; int
+                call    _read
+                add     sp, 8
+                inc     ax
+                jnz     short loc_159B8
+                push    [bp+var_34]     ; int
+                call    _close
+                add     sp, 2
+                mov     word_2CAC1, 8
+                mov     word_2CACC, 0Bh
+
+loc_159AA:                              ; CODE XREF: _execve+225\u2193j
+                                        ; _execve+28F\u2193j
+                mov     ax, word ptr [bp+var_26]
+                or      ax, word ptr [bp+var_26+2]
+                jnz     short loc_159B5
+                jmp     loc_158B8
+; ---------------------------------------------------------------------------
+
+loc_159B5:                              ; CODE XREF: _execve+1A8\u2191j
+                jmp     short loc_1595E
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_159B8:                              ; CODE XREF: _execve+189\u2191j
+                mov     ax, 2
+                push    ax              ; int
+                sub     ax, ax
+                push    ax
+                push    ax              ; __int32
+                push    [bp+var_34]     ; int
+                call    far ptr _lseek
+                add     sp, 8
+                add     ax, 0Fh
+                adc     dx, 0
+                mov     cl, 4
+
+loc_159D3:                              ; CODE XREF: _execve+1D1\u2193j
+                sar     dx, 1
+                rcr     ax, 1
+                dec     cl
+                jnz     short loc_159D3
+                mov     [bp+var_38], ax
+                mov     [bp+var_36], dx
+                push    [bp+var_34]     ; int
+                call    _close
+                add     sp, 2
+                cmp     [bp+var_22], 4D5Ah
+                jz      short loc_159FA
+                cmp     [bp+var_22], 5A4Dh
+                jnz     short loc_159FD
+
+loc_159FA:                              ; CODE XREF: _execve+1E9\u2191j
+                dec     [bp+var_32]
+
+loc_159FD:                              ; CODE XREF: _execve+1F0\u2191j
+                push    word ptr [bp+arg_0+2]
+                push    word ptr [bp+arg_0] ; char *
+                lea     ax, [bp+var_BC]
+                push    ss
+                push    ax              ; __int32
+                lea     ax, [bp+var_2A]
+                push    ss
+                push    ax              ; __int32
+                lea     ax, [bp+var_3C]
+                push    ss
+                push    ax              ; __int32
+                push    word ptr [bp+arg_8+2] ; int
+                push    word ptr [bp+arg_8] ; int
+                push    word ptr [bp+arg_4+2]
+                push    word ptr [bp+arg_4] ; __int32
+                call    __cenvarg
+                add     sp, 18h
+                mov     [bp+var_30], ax
+                inc     ax
+                jnz     short loc_15A30
+                jmp     loc_159AA
+; ---------------------------------------------------------------------------
+
+loc_15A30:                              ; CODE XREF: _execve+223\u2191j
+                push    [bp+var_38]
+                push    [bp+var_E]
+                push    [bp+var_C]
+                push    [bp+var_12]
+                push    [bp+var_14]
+                mov     ax, 200h
+                sub     ax, [bp+var_20]
+                mov     cl, 4
+                shr     ax, cl
+                mov     dx, [bp+var_1E]
+                mov     cl, 5
+                shl     dx, cl
+                add     ax, dx
+                add     ax, [bp+var_18]
+                sub     ax, [bp+var_1A]
+                push    ax
+                push    [bp+var_30]
+                push    word ptr [bp+var_2A+2]
+                push    word ptr [bp+var_2A]
+                lea     ax, [bp+var_BC]
+                push    ss
+                push    ax
+                push    word ptr [bp+arg_0+2]
+                push    word ptr [bp+arg_0] ; char *
+                call    _strlen
+                add     sp, 4
+                inc     ax
+                push    ax
+                push    word ptr [bp+arg_0+2]
+                push    word ptr [bp+arg_0]
+                push    [bp+var_32]
+                call    __doexec
+                add     sp, 1Eh
+                push    word ptr [bp+var_3C+2]
+                push    word ptr [bp+var_3C] ; void far *
+                call    __ffree
+                add     sp, 4
+                jmp     loc_159AA
+; ---------------------------------------------------------------------------
+
+loc_15A9A:                              ; CODE XREF: _execve+B3\u2191j
+                mov     sp, bp
+                pop     bp
+                retf
+_execve         endp
+
+; ---------------------------------------------------------------------------
                 align 4
 seg001          ends
 
@@ -7194,7 +16270,16 @@ loc_168CC:                              ; CODE XREF: seg006:010D\u2191j
                 pop     es
                 pop     ds
                 iret
-; [00000001 BYTES: COLLAPSED FUNCTION nullsub_1. PRESS NUMPAD+ TO EXPAND]
+
+; =============== S U B R O U T I N E =======================================
+
+
+nullsub_1       proc far                ; CODE XREF: sub_167B2+31\u2191P
+                                        ; seg006:0121\u2191P
+                                        ; DATA XREF: ...
+                retf
+nullsub_1       endp
+
 ; ---------------------------------------------------------------------------
 
 loc_168E4:                              ; DATA XREF: sub_16910+6D\u2193o

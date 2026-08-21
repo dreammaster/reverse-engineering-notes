@@ -5964,3 +5964,320 @@ thunk=0x2e577 jmp_ea=0x2e57a target=0x69e59 raw_bytes=EA F9 22 B6 67 opcode=0xea
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\legend\gateway\gatemain.idb
+[*] ARGV = ['C:\\dev\\legend\\gateway\\ida_scripts\\batch_run_and_export.py', 'unfold_functions.py']
+[*] reading unfold_functions.py
+[*] executing unfold_functions.py
+[*] captured stdout from target script:
+----- begin target script output -----
+unfolded 171 collapsed functions
+  Logics_getBits
+  Logics_getVal4
+  Logics_getVal3
+  Logics_getPrehandler
+  Logics_getPrehandlerMode
+  Logics_setPrehandler
+  Logics_setPrehandlerMode
+  __FF_MSGBANNER
+  __fptrap
+  __chkstk
+  __nullcheck
+  sub_18C6D
+  __setargv
+  __setenvp
+  __NMSG_TEXT
+  __NMSG_WRITE
+  __myalloc
+  __maperror
+  _flushall
+  _fread
+  sub_191D0
+  __filbuf
+  __flsbuf
+  sub_1964F
+  __freebuf
+  __getbuf
+  __stbuf
+  __ftbuf
+  _fflush
+  __output
+  iprint
+  fprint
+  sub_1A0FC
+  _outc
+  putpad
+  putbuf
+  _out
+  putsign
+  putprefix
+  getnum
+  flagchar
+  __getstream
+  _fputc
+  _close
+  _open
+  __cXENIXtoDOSmode
+  _read
+  _write
+  _stackavail
+  unknown_libname_1
+  unknown_libname_2
+  __ffree
+  _malloc
+  sub_1AAA6
+  sub_1AB14
+  __amalloc
+  __amexpand
+  __amlink
+  __amallocbrk
+  _brkctl
+  sub_1ACFE
+  _strlen
+  _strncpy
+  _strncmp
+  atoi
+  _itoa
+  _ultoa
+  _getenv
+  _isatty
+  _getche
+  _getch
+  __aFahdiff
+  _ftell
+  _sprintf
+  _vsprintf
+  _intdos
+  _inp
+  _outp
+  _ftime
+  __dtoxtime
+  _clock
+  __inittime
+  _strchr
+  _abs
+  _srand
+  _rand
+  __lrotl
+  _access
+  __dos_getvect
+  __dos_setvect
+  __aFldiv
+  __aFlmul
+  __aFlrem
+  __aFlshl
+  shl32
+  __aFuldiv
+  _fwrite
+  _strcmp
+  _gmtime
+  _localtime
+  _time
+  _stricmp
+  _strlwr
+  _strupr
+  _memset
+  _setjmp
+  __splitpath
+  __makepath
+  __dos_findfirst
+  unknown_libname_4
+  unknown_libname_5
+  __aFulrem
+  nullsub_1
+  Font_writeChar
+  allocate_mem
+  deallocate_mem
+  get_max_memory
+  init_memory
+  add_ptr
+  insert_handle
+  delete_handle
+  get_master
+  get_handle
+  memmgr_info
+  compact_memory
+  deinit_memory
+  find_free_handle
+  new_handle
+  kill_handle
+  lock_handle
+  unlock_handle
+  new_fixed_handle_
+  kill_pointer_
+  new_fixed_handle
+  sub_24644
+  kill_pointer
+  get_largest_free_block_1
+  get_largest_free_block_2
+  sub_2485E
+  sub_24892
+  PicFile_copy_nonEga
+  Image_setImageOffset
+  Windows_SetImageOffsetPos
+  Listbox_drawScrollbar
+  Listbox_scrollerMouseDown
+  Windows_findRegion
+  Window_getRegionTopLeft
+  Button_add
+  Button_draw
+  Windows_fillRegion
+  Compass_unused
+  Windows_getPosition
+  Video_ClearScreen
+  Video_InitClearScreen
+  sub_2AC2C
+  sub_2ACE9
+  start
+  _fwrite_0
+  _time_0
+  nullsub_2
+  vocab_load
+  objects_load
+  setRandomSeed
+  nullsub_7
+  nullsub_4
+  LogicStrings36
+  LogicStrings44
+  LogicStrings43
+  nullsub_6
+  nullsub_5
+  nullsub_3
+----- end target script output -----
+[*] finished executing unfold_functions.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\legend\gateway\gatemain.asm
+[*] gen_file(OFILE_ASM) returned 407163
+[*] exporting IDC to C:\dev\legend\gateway\gatemain.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\legend\gateway\gatemain.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\legend\gateway\gate.idb
+[*] ARGV = ['C:\\dev\\legend\\gateway\\ida_scripts\\batch_run_and_export.py', 'unfold_functions.py']
+[*] reading unfold_functions.py
+[*] executing unfold_functions.py
+[*] captured stdout from target script:
+----- begin target script output -----
+unfolded 108 collapsed functions
+  __FF_MSGBANNER
+  __fptrap
+  __chkstk
+  __nullcheck
+  __setargv
+  __setenvp
+  __NMSG_TEXT
+  __NMSG_WRITE
+  __myalloc
+  __dosreturn
+  __maperror
+  _fclose
+  _flushall
+  _fopen
+  _fread
+  _printf
+  __filbuf
+  __flsbuf
+  __freebuf
+  __getbuf
+  __openfile
+  __stbuf
+  __ftbuf
+  _fflush
+  __output
+  iprint
+  sprint
+  fprint
+  _outc
+  putpad
+  putbuf
+  _out
+  putsign
+  putprefix
+  getnum
+  flagchar
+  __getstream
+  _fputc
+  _close
+  _lseek
+  _open
+  __cXENIXtoDOSmode
+  _read
+  _write
+  sub_13A52
+  _stackavail
+  unknown_libname_4
+  unknown_libname_5
+  __ffree
+  _malloc
+  sub_13BA8
+  sub_13C16
+  __amalloc
+  __amexpand
+  __amlink
+  __amallocbrk
+  _brkctl
+  sub_13E00
+  _strcat
+  _strcpy
+  _strlen
+  _strncpy
+  _strncmp
+  j___catox
+  __catox
+  _itoa
+  _ultoa
+  _tolower
+  _getenv
+  _isatty
+  _getche
+  _getch
+  __aFahdiff
+  _fseek
+  _ftell
+  _sprintf
+  _vsprintf
+  _intdos
+  _inp
+  _outp
+  _ftime
+  __dtoxtime
+  _clock
+  _strchr
+  _memmove
+  _memcpy
+  _abs
+  _srand
+  _rand
+  __lrotl
+  _access
+  _remove
+  __bios_keybrd
+  __dos_getvect
+  __dos_setvect
+  __aFldiv
+  __aFlmul
+  __aFlrem
+  __aFlshl
+  unknown_libname_6
+  __aFuldiv
+  _sopen
+  _strrchr
+  __cenvarg
+  __doexec
+  _execl
+  _execve
+  nullsub_1
+----- end target script output -----
+[*] finished executing unfold_functions.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\legend\gateway\gate.asm
+[*] gen_file(OFILE_ASM) returned 87028
+[*] exporting IDC to C:\dev\legend\gateway\gate.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\legend\gateway\gate.idb
+[*] done, exiting 0

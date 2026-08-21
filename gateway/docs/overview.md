@@ -462,3 +462,40 @@ sanity-checker in case a genuine instance of the bug turns up elsewhere
 during future passes (any far call/jmp resolving to something
 implausible is worth re-running this style of check against before
 assuming it's a real code oddity).
+
+### Fixed a pipeline blind spot: collapsed functions were invisible in every `.asm` export
+
+Discovered while trying to read `vocab_load` (wanted to cross-check
+`VOCAB.DAT`'s on-disk format against real game data — Paul pointed at
+his installed copies at `c:\games\gw`/`c:\games\gw2`): the exported
+`.asm` showed only a one-line placeholder,
+`[00000210 BYTES: COLLAPSED FUNCTION vocab_load. PRESS NUMPAD+ TO EXPAND]`,
+instead of any real instructions. This is `ida_funcs.FUNC_HIDDEN` — a
+purely cosmetic GUI "collapse" state (Numpad-) that some earlier manual
+session left set on a fair number of functions in both IDBs, and
+`ida_loader.gen_file(OFILE_ASM)` respects it, silently hiding that
+function's body from every grep/Read of the `.asm` this whole pipeline
+relies on. `Logics_getPrehandlerMode` (referenced but not readable
+during the `sub_11635` trace in the previous session) was hit by this
+exact same issue and is almost certainly why it couldn't be inspected
+directly at the time.
+
+Wrote `ida_scripts/unfold_functions.py` — clears `FUNC_HIDDEN` on every
+collapsed function in the current IDB, no curation needed (purely
+mechanical, always safe to run). Found **171 collapsed functions in
+`gatemain.idb`** (including `vocab_load`, `objects_load`,
+`Logics_getPrehandlerMode` and several other `Logics_get*` interpreter
+internals, `LogicStrings36`/`43`/`44`, `start`) and **108 in `gate.idb`**
+(mostly CRT/library internals, including `_execl`/`_execve`/`__doexec`
+from the earlier gate→gatemain EXEC-handoff finding — that finding
+itself wasn't affected since it only ever needed to observe the *call
+site*, not read inside those functions' own bodies). Ran against both
+IDBs and re-exported; both `.asm` files are substantially larger now
+with real disassembly where placeholders used to be
+(`gatemain.asm` +36k lines, `gate.asm` +10k lines).
+
+**Practical implication for all prior and future greps of these `.asm`
+files**: anything that came back empty or was skipped as "not defined
+as a normal proc" earlier in this project might just have been
+collapsed, not actually absent — worth a second look with the current
+export before concluding something isn't there.
