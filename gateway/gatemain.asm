@@ -57564,7 +57564,7 @@ Window_frameRect endp
 
 ; void __cdecl __far Window_destroy(int windowNum)
 Window_destroy  proc far                ; CODE XREF: sg1a3e:1734\u2193p
-                                        ; sub_2A41D+27\u2193p ...
+                                        ; Dialog_restorePrevious+27\u2193p ...
 
 windowNum       = word ptr  6
 
@@ -60155,7 +60155,7 @@ loc_2A03E:                              ; CODE XREF: Dialog_prompt+180\u2191j
                 call    Icon_drawButton
                 add     sp, 4
                 push    cs
-                call    near ptr sub_2A41D
+                call    near ptr Dialog_restorePrevious
                 cmp     [bp+var_8], 0
                 jnz     short loc_2A05B
                 call    Mouse_Hide
@@ -60307,7 +60307,7 @@ loc_2A152:                              ; CODE XREF: printf+4C\u2191j
 
 loc_2A158:                              ; CODE XREF: printf+43\u2191j
                 push    cs
-                call    near ptr sub_2A41D
+                call    near ptr Dialog_restorePrevious
                 mov     ax, [bp+var_2]
                 mov     sp, bp
                 pop     bp
@@ -60350,7 +60350,7 @@ arg_8           = byte ptr  0Eh
                 cmp     word_C97AA, 1
                 jnz     short loc_2A175
                 push    cs
-                call    near ptr sub_2A41D
+                call    near ptr Dialog_restorePrevious
 
 loc_2A175:                              ; CODE XREF: Dialog_showFormattedPrompt+C\u2191j
                 call    Mouse_Hide
@@ -60620,7 +60620,7 @@ Dialog_showFormattedPrompt endp
 
 ; Attributes: bp-based frame
 
-sub_2A41D       proc far                ; CODE XREF: Dialog_prompt+194\u2191p
+Dialog_restorePrevious proc far         ; CODE XREF: Dialog_prompt+194\u2191p
                                         ; printf+5D\u2191p ...
 
 var_6           = word ptr -6
@@ -60635,7 +60635,7 @@ showFlag        = byte ptr -2
                 jmp     loc_2A4E2
 ; ---------------------------------------------------------------------------
 
-loc_2A42D:                              ; CODE XREF: sub_2A41D+B\u2191j
+loc_2A42D:                              ; CODE XREF: Dialog_restorePrevious+B\u2191j
                 dec     word_C97AA
                 call    Mouse_Hide
                 mov     word ptr [bp+showFlag], ax
@@ -60697,7 +60697,7 @@ loc_2A4CF:
 loc_2A4D4:
                 add     sp, 2
 
-loc_2A4D7:                              ; CODE XREF: sub_2A41D+AC\u2191j
+loc_2A4D7:                              ; CODE XREF: Dialog_restorePrevious+AC\u2191j
                 push    word ptr [bp+showFlag] ; showFlag
 
 loc_2A4DA:
@@ -60706,11 +60706,11 @@ loc_2A4DA:
 loc_2A4DF:
                 add     sp, 2
 
-loc_2A4E2:                              ; CODE XREF: sub_2A41D+D\u2191j
+loc_2A4E2:                              ; CODE XREF: Dialog_restorePrevious+D\u2191j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_2A41D       endp
+Dialog_restorePrevious endp
 
 sg1a3e          ends
 
@@ -374121,7 +374121,7 @@ loc_C4A8D:                              ; CODE XREF: sub_C48E4+1A4\u2191j
                 push    [bp+windowNum]
                 call    Icon_drawButton
                 add     sp, 4
-                call    sub_2A41D
+                call    Dialog_restorePrevious
                 cmp     [bp+var_6], 0
                 jnz     short loc_C4AAB
                 call    Mouse_Hide
@@ -384414,7 +384414,7 @@ word_C97AA      dw 0                    ; DATA XREF: sg1a3e:170A\u2191r
                                         ; sg1a3e:1711\u2191w ...
 ; bool word_C97AC
 word_C97AC      dw 0                    ; DATA XREF: Dialog_showFormattedPrompt+17C\u2191w
-                                        ; sub_2A41D:loc_2A4CB\u2191r
+                                        ; Dialog_restorePrevious:loc_2A4CB\u2191r
 aMore           db '- MORE -',0         ; DATA XREF: Windows_newLine+116\u2191o
 aMore_0         db '- MORE -',0         ; DATA XREF: Windows_newLine+1BA\u2191o
 ; bool showMouse
@@ -384441,7 +384441,7 @@ word_C97EA      dw 148h                 ; DATA XREF: Dialog_prompt+F0\u2191r
                 db  98h ; ˜
                 db    1
 aLoading____0   db ' Loading... ',0     ; DATA XREF: sg1a3e:16E8\u2191o
-unk_C97FB       db    0                 ; DATA XREF: sub_2A41D+97\u2191o
+unk_C97FB       db    0                 ; DATA XREF: Dialog_restorePrevious+97\u2191o
 ; int videoIndex
 videoIndex      dw 0FFFFh               ; DATA XREF: video_set_videoIndex+21\u2191w
                                         ; video_update_mode+14\u2191r ...

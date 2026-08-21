@@ -2791,3 +2791,18 @@ of the function (actually creating/positioning the window and
 displaying the text) wasn't traced in full this pass.
 
 Applied via `apply_renames_gatemain.py`'s seventy-first batch.
+
+### `Dialog_restorePrevious` named
+
+Moved to `sub_2A41D` (4 callers, including the just-named
+`Dialog_showFormattedPrompt`, which calls it conditionally right at
+the top). Confirmed via direct read as the **pop/restore half of a
+nested-dialog stack**: no-ops if a nesting-depth counter is 0;
+otherwise decrements it, destroys the just-closed dialog's window,
+restores the saved image offset, redraws the previous dialog's
+background image and saved text, optionally shows the text cursor,
+and shows the mouse again. Mirrors the same nested-state-stack pattern
+already seen in `Listbox_pushState` — the corresponding "push" half
+for dialogs isn't identified yet.
+
+Applied via `apply_renames_gatemain.py`'s seventy-second batch.

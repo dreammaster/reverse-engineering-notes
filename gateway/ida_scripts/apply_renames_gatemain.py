@@ -1892,6 +1892,24 @@ RENAMES = [
      "Dialog_prompt wraps. The remainder of the function (actually "
      "creating/positioning the window and displaying the text) wasn't "
      "traced in full this pass."),
+
+    # -- seventy-second pass: sub_2A41D, confirmed via direct read as
+    # the nested-dialog "pop/restore previous" counterpart -- called
+    # conditionally at the top of the just-named
+    # Dialog_showFormattedPrompt, and from Dialog_prompt/printf. See
+    # docs/overview.md#dialog_restoreprevious-named. --
+
+    (0x2A41D, "Dialog_restorePrevious",
+     "sub_2A41D(): no-ops if word_C97AA (a nested-dialog depth "
+     "counter) is 0. Otherwise decrements it, destroys the "
+     "just-closed dialog's window (the already-named Window_destroy), "
+     "restores the saved Image_OffsetPos, redraws the previous "
+     "dialog's background image from a per-depth array (Image_draw + "
+     "Image_Free), redraws its saved text (TextWindow_addDirect), "
+     "optionally shows the text cursor, and shows the mouse again. "
+     "The pop/restore half of a nested-dialog stack (the push half "
+     "isn't identified yet), mirroring the same nested-state-stack "
+     "pattern already seen in Listbox_pushState."),
 ]
 
 
