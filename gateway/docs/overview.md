@@ -2434,3 +2434,36 @@ literal string `aSunS` = `"sun's"` for the final possessive reflection
 phrase).
 
 Applied via `apply_renames_gatemain.py`'s fiftieth batch.
+
+### `Logics_describeBeastApproach` named — a crystal-shard beast-deterrence puzzle
+
+Moved to `sub_80894` (5 callers). Confirmed via **five** real decoded
+`GATESTR.DAT` messages as the turn-by-turn handler for a hostile-
+creature encounter shared across a cluster of 4 related rooms
+(`_roomLogicNum` `0x98`-`0x9B`) — a full crystal-shard deterrence
+puzzle.
+
+Every call prints a room-specific "beast notices you" message. Then,
+gated on `Persisted_val177`:
+
+- **Set** — *"He immediately becomes transfixed by the light
+  reflecting off the...crystal shard and stands motionless."* Sets
+  `Persisted_val178 = 1`, clears a bit on object `0x9D`, and removes
+  queue item 3 — the shard (clean and displayed) is holding the beast
+  at bay.
+- **Clear** — *"You freeze..."* and (except in room `0x98`) *"a glint
+  from the...shard...crosses his face. He stops dead...then resumes
+  walking toward you,"* followed by *"He grabs you...and slams you
+  head first into the %s wall"* — the beast attacks, and a queue item
+  is scheduled (plausibly a damage/consequence follow-up). **Or**,
+  specifically in room `0x98`, the successful-escape resolution
+  instead fires: *"...he becomes momentarily motionless...lets out a
+  deafening shriek...quickly exits the clearing"* — the shard (this
+  time apparently displayed at just the right moment, or with a clean
+  spot catching the light) fully dazzles and routs the beast.
+
+Confirms a genuine multi-outcome puzzle: held/clean-shard vs.
+mud-covered-shard vs. no-shard-shown, each producing a distinct
+narrative resolution.
+
+Applied via `apply_renames_gatemain.py`'s fifty-first batch.

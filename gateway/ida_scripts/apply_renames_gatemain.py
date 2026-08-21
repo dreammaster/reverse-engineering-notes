@@ -1482,6 +1482,34 @@ RENAMES = [
      "reflection phrase when it's daytime and the direction matches). "
      "A single room's detailed environmental description generator, "
      "not a generic utility."),
+
+    # -- fifty-first pass: sub_80894, confirmed via three real decoded
+    # GATESTR.DAT messages as a "hostile beast notices you" encounter
+    # handler shared by a cluster of 4 related rooms (_roomLogicNum
+    # 0x98-0x9B), with a shard-based distraction mechanic. See
+    # docs/overview.md#logics_describebeastapproach-named. --
+
+    (0x80894, "Logics_describeBeastApproach",
+     "sub_80894(arg_0): the beast-encounter turn handler for a cluster "
+     "of 4 related rooms (_roomLogicNum 0x98-0x9B). Prints a room-"
+     "specific 'beast notices you' message (msgId 0x508C). Then, "
+     "gated on Persisted_val177: if SET, prints msgId 0x5091 ('He "
+     "immediately becomes transfixed by the light reflecting off the "
+     "...crystal shard and stands motionless'), sets Persisted_val178 "
+     "= 1, clears a bit on object 0x9D, and Queue_removes item 3 -- "
+     "the shard is holding the beast at bay. If CLEAR, prints msgId "
+     "0x508D ('You freeze...') and (except in room 0x98) 0x508E ('a "
+     "glint from the...shard...crosses his face. He stops dead...then "
+     "resumes walking toward you.') followed by 0x508F ('He grabs "
+     "you...and slams you head first into the %s wall.') and "
+     "Queue_adds item 0x15 -- the beast attacks; OR, specifically in "
+     "room 0x98, prints the successful-escape resolution msgId 0x5090 "
+     "('...he becomes momentarily motionless...lets out a deafening "
+     "shriek...quickly exits the clearing') and updates object 0x9D's "
+     "handler, clears Persisted_val182, and Queue_adds item 3. "
+     "Confirms a full crystal-shard-based deterrence puzzle against a "
+     "hostile creature, with distinct held/clean-shard vs. mud-"
+     "covered-shard vs. no-shard outcomes."),
 ]
 
 

@@ -689,6 +689,11 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       already-recognized direction-name string constants. Full
       writeup in
       [overview.md](overview.md#logics_describepondview-named--a-single-rooms-environmental-description-generator).
+- [x] Named `sub_80894` (5 callers) → `Logics_describeBeastApproach` —
+      a crystal-shard beast-deterrence puzzle handler shared across 4
+      rooms, confirmed via five real decoded GATESTR.DAT messages.
+      Full writeup in
+      [overview.md](overview.md#logics_describebeastapproach-named--a-crystal-shard-beast-deterrence-puzzle).
 - [ ] Unify the whole music/sound-hardware picture: `Speaker_playTone`/
       `Speaker_playErrorBeep` (PC-speaker tones), `Midi_sendByte` +
       `sub_1D966`/`sub_1EE70`/`sub_1ECB6` (MPU-401/MIDI), and

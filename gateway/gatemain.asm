@@ -212977,7 +212977,7 @@ loc_7E252:                              ; CODE XREF: sub_7E0AB+19F\u2191j
                 sub     ax, ax
                 push    ax
                 push    cs
-                call    near ptr sub_80894
+                call    near ptr Logics_describeBeastApproach
                 jmp     loc_7E1E0
 ; ---------------------------------------------------------------------------
 off_7E27C       dw offset loc_7E174     ; DATA XREF: sub_7E0AB+14\u2191r
@@ -213297,7 +213297,7 @@ loc_7E46D:                              ; CODE XREF: sub_7E36F+14\u2191j
                 sub     ax, ax
                 push    ax
                 push    cs
-                call    near ptr sub_80894
+                call    near ptr Logics_describeBeastApproach
                 jmp     short loc_7E441
 ; ---------------------------------------------------------------------------
 off_7E4AF       dw offset loc_7E3CD     ; DATA XREF: sub_7E36F+14\u2191r
@@ -213548,7 +213548,7 @@ loc_7E60C:                              ; CODE XREF: sub_7E592+11\u2191j
                 sub     ax, ax
                 push    ax
                 push    cs
-                call    near ptr sub_80894
+                call    near ptr Logics_describeBeastApproach
                 add     sp, 2
                 mov     ax, 1
                 jmp     short loc_7E677
@@ -213854,7 +213854,7 @@ loc_7E83B:                              ; CODE XREF: sub_7E73D+14\u2191j
                 sub     ax, ax
                 push    ax
                 push    cs
-                call    near ptr sub_80894
+                call    near ptr Logics_describeBeastApproach
                 add     sp, 2
                 jmp     short loc_7E812
 ; ---------------------------------------------------------------------------
@@ -217275,7 +217275,7 @@ loc_80405:                              ; CODE XREF: sub_8014E+221\u2191j
                 mov     ax, 1
                 push    ax
                 push    cs
-                call    near ptr sub_80894
+                call    near ptr Logics_describeBeastApproach
 
 loc_80421:                              ; CODE XREF: sub_8014E+512\u2193j
                 add     sp, 2
@@ -217797,7 +217797,7 @@ sub_80857       endp
 
 ; Attributes: bp-based frame
 
-sub_80894       proc far                ; CODE XREF: sub_7E0AB+1CB\u2191p
+Logics_describeBeastApproach proc far   ; CODE XREF: sub_7E0AB+1CB\u2191p
                                         ; sub_7E36F+13B\u2191p ...
 
 var_4           = word ptr -4
@@ -217821,11 +217821,11 @@ arg_0           = word ptr  6
                 jmp     short loc_808BE
 ; ---------------------------------------------------------------------------
 
-loc_808BB:                              ; CODE XREF: sub_80894+1B\u2191j
+loc_808BB:                              ; CODE XREF: Logics_describeBeastApproach+1B\u2191j
                 mov     ax, 553Fh
 
-loc_808BE:                              ; CODE XREF: sub_80894+25\u2191j
-                                        ; sub_80894+40\u2193j ...
+loc_808BE:                              ; CODE XREF: Logics_describeBeastApproach+25\u2191j
+                                        ; Logics_describeBeastApproach+40\u2193j ...
                 mov     [bp+var_4], ax
                 mov     [bp+var_2], ds
                 push    ds
@@ -217836,25 +217836,25 @@ loc_808BE:                              ; CODE XREF: sub_80894+25\u2191j
                 jmp     short loc_808E3
 ; ---------------------------------------------------------------------------
 
-loc_808D1:                              ; CODE XREF: sub_80894+16\u2191j
+loc_808D1:                              ; CODE XREF: Logics_describeBeastApproach+16\u2191j
                 mov     ax, 554Dh
                 jmp     short loc_808BE
 ; ---------------------------------------------------------------------------
 
-loc_808D6:                              ; CODE XREF: sub_80894+20\u2191j
+loc_808D6:                              ; CODE XREF: Logics_describeBeastApproach+20\u2191j
                 mov     ax, 5552h
                 jmp     short loc_808BE
 ; ---------------------------------------------------------------------------
 
-loc_808DB:                              ; CODE XREF: sub_80894+11\u2191j
+loc_808DB:                              ; CODE XREF: Logics_describeBeastApproach+11\u2191j
                 mov     ax, 5559h
                 jmp     short loc_808BE
 ; ---------------------------------------------------------------------------
 
-loc_808E0:                              ; CODE XREF: sub_80894+36\u2191j
+loc_808E0:                              ; CODE XREF: Logics_describeBeastApproach+36\u2191j
                 mov     ax, 5571h
 
-loc_808E3:                              ; CODE XREF: sub_80894+3B\u2191j
+loc_808E3:                              ; CODE XREF: Logics_describeBeastApproach+3B\u2191j
                 push    ds
                 push    ax              ; char
                 mov     ax, 508Ch
@@ -217869,7 +217869,7 @@ loc_808E3:                              ; CODE XREF: sub_80894+3B\u2191j
                 jmp     loc_809A7
 ; ---------------------------------------------------------------------------
 
-loc_80904:                              ; CODE XREF: sub_80894+6B\u2191j
+loc_80904:                              ; CODE XREF: Logics_describeBeastApproach+6B\u2191j
                 mov     ax, 508Dh
                 mov     dx, 0F000h
                 push    dx
@@ -217892,10 +217892,10 @@ loc_80904:                              ; CODE XREF: sub_80894+6B\u2191j
                 jmp     short loc_80946
 ; ---------------------------------------------------------------------------
 
-loc_80943:                              ; CODE XREF: sub_80894+A8\u2191j
+loc_80943:                              ; CODE XREF: Logics_describeBeastApproach+A8\u2191j
                 mov     ax, 5582h
 
-loc_80946:                              ; CODE XREF: sub_80894+AD\u2191j
+loc_80946:                              ; CODE XREF: Logics_describeBeastApproach+AD\u2191j
                 push    ds
                 push    ax              ; char
                 mov     ax, 508Fh
@@ -217912,7 +217912,7 @@ loc_80946:                              ; CODE XREF: sub_80894+AD\u2191j
                 jmp     short loc_809CE
 ; ---------------------------------------------------------------------------
 
-loc_80967:                              ; CODE XREF: sub_80894+8B\u2191j
+loc_80967:                              ; CODE XREF: Logics_describeBeastApproach+8B\u2191j
                 mov     ax, 5090h
                 mov     dx, 0F000h
                 push    dx
@@ -217938,7 +217938,7 @@ loc_80967:                              ; CODE XREF: sub_80894+8B\u2191j
                 jmp     short loc_809DD
 ; ---------------------------------------------------------------------------
 
-loc_809A7:                              ; CODE XREF: sub_80894+6D\u2191j
+loc_809A7:                              ; CODE XREF: Logics_describeBeastApproach+6D\u2191j
                 mov     ax, 5091h
                 mov     dx, 0F000h
                 push    dx
@@ -217953,18 +217953,18 @@ loc_809A7:                              ; CODE XREF: sub_80894+6D\u2191j
                 push    ax              ; logicNum
                 call    Logics_clearBit
 
-loc_809CE:                              ; CODE XREF: sub_80894+D1\u2191j
+loc_809CE:                              ; CODE XREF: Logics_describeBeastApproach+D1\u2191j
                 add     sp, 4
                 mov     ax, 3
                 push    ax
                 call    far ptr Queue_remove
                 add     sp, 2
 
-loc_809DD:                              ; CODE XREF: sub_80894+111\u2191j
+loc_809DD:                              ; CODE XREF: Logics_describeBeastApproach+111\u2191j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_80894       endp
+Logics_describeBeastApproach endp
 
 
 ; =============== S U B R O U T I N E =======================================
