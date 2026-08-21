@@ -24,7 +24,7 @@ actually reading the code).
 
 | IDB | Root file | Functions named | Structs | Segments |
 |---|---|---|---|---|
-| `gate.idb` | `gate_decoded.exe` (entry `0x9b0`, cs=`0x1112`) | 177 / 502 (35%) | 21 | 32 |
+| `gate.idb` | `gate_decoded.exe` (entry `0x9b0`, cs=`0x1112`) | 180 / 502 (36%) | 21 | 32 |
 | `gatemain.idb` | `gatemain_decoded.exe` (entry `0x76c`, cs=`0x2cf4`) | 807 / 3288 (25%) | 49 | 308 |
 
 Counts captured 2026-08-21 via `ida_scripts/identify.py`. The `_decoded`
@@ -222,3 +222,68 @@ via a file (savegame-like) the way `ultima1` used `inuse.u1`.
   suggesting a real "draw message text at the current cursor position"
   primitive, not a trivial wrapper. Worth a real trace before naming it
   confidently — flagged rather than guessed.
+
+### `gate.idb` color cluster, decoded
+
+Second pass, same session. Ran `rank_unnamed_functions.py` for the first
+time against this IDB (325 unnamed functions) and picked the two
+functions `_main` calls directly right after `show_intro`/the
+`current_section` dispatch (`sub_1C082`, `sub_1C0C4`, both 13-caller
+targets) as the starting point, since they're both reachable from
+already-understood code.
+
+Traced a 5-function/2-global cluster shared between `_main`'s startup
+screen-clear and the already-named `Font_writeChar` glyph renderer:
+
+- **`max_color_index`** (`word_29B80`) — set inside the already-named
+  `init_graphics` per detected video mode: `1` (2-color), `0Fh`
+  (16-color EGA), `0FFh` (256-color VGA), confirmed by direct read of
+  the 3-way mode dispatch. Used everywhere else in this cluster purely
+  as a clamp ceiling for color values — i.e. this is genuinely
+  `numColors - 1`, not a guess.
+- **`current_draw_color`** (`word_2F0B0`) — initialized to
+  `max_color_index` in `init_graphics`, then read/written by
+  `setDrawColor`. Confirmed **distinct** from the already-named
+  `Font_fgColor`/`Font_bgColor` — this is the color used by the
+  non-text box/fill primitives (`sub_1C0C4` and its callees), not glyph
+  rendering, even though both clusters share the same clamp ceiling and
+  get initialized together in `init_graphics`.
+- **`Font_setColors`** (`sub_1B300`, ex-8-caller target) — trivial
+  2-line setter directly writing the already-named `Font_fgColor`/
+  `Font_bgColor` globals, no clamping. The "root" color setter that
+  everything else in the font-color half of this cluster funnels
+  through.
+- **`Font_setColorsClamped`** (`sub_1BEA4`) — stores its first arg raw
+  and its second (background) arg clamped to `max_color_index`, then
+  calls `Font_setColors` with the clamped pair. Called from `_main`'s
+  DOS-EXEC-failure path immediately before the "`GATEMAIN.EXE` could not
+  be started" message print (`sub_1BED2`) — i.e. this sets that error
+  message's text colors.
+- **`setDrawColor`** (`sub_1C082`) — clamps its argument to
+  `max_color_index`, returns the previous `current_draw_color` value,
+  updates it, then calls `sub_24F42` (not yet named — mirrors the new
+  color into offset `0x22`/`0xC` of what looks like a `SCREEN`-typed
+  struct instance living at a fixed `dseg+0x2CEE`, confirmed by a second
+  writer at the same base, `sub_24E26`, itself called from both
+  `sub_1C0C4` and `Font_writeChar`). Called directly from `_main` with
+  `0Fh` (white) immediately before the box-fill call now understood to
+  be `sub_1C0C4`.
+
+**Not renamed yet, flagged instead of guessed**: `word_2F0AE`/
+`word_2F0AC` (the raw/clamped shadow copies `Font_setColorsClamped`
+stores alongside the real `Font_fgColor`/`Font_bgColor` write — their
+purpose beyond "shadow copy" isn't confirmed); `sub_1C0C4` itself (the
+actual box-fill/draw-rect primitive `_main` calls with `(mode=2, x=0,
+y=0, w=word_29B6A, h=word_29B6E)` — traced enough to know it dispatches
+through `sub_24E26`/`sub_25D7A`, both **also** called directly from
+`Font_writeChar`, meaning this is a shared box/glyph-cell rasterizer,
+not two independent things — but the exact draw semantics per mode bit
+`0x80` of its first argument weren't fully pinned down); the `SCREEN`
+struct itself (all 21 words/`0x2C` bytes are still unnamed
+`field_0`..`field_2A` placeholders — a real target for a future
+`apply_structs_gate.py` pass, now that at least 2 of its fields
+(`0xC`, `0x22`, `0x24`) have confirmed roles from this pass).
+
+5 renames applied via `ida_scripts/apply_renames_gate.py` (3 functions:
+`Font_setColors`, `Font_setColorsClamped`, `setDrawColor`; 2 globals:
+`max_color_index`, `current_draw_color`). 180/502 functions now named.

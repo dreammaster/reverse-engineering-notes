@@ -435,3 +435,388 @@ structs (21): REGS, RGB8, WORDREGS, BYTEREGS, timeb, VIDEO_MODE, RTLINK_SEG, HAN
 [*] gen_file(OFILE_IDC) returned 1
 [*] saving database to C:\dev\legend\gateway\gate.idb
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\legend\gateway\gate.idb
+[*] ARGV = ['C:\\dev\\legend\\gateway\\ida_scripts\\batch_run_and_export.py', 'rank_unnamed_functions.py', 'noexport']
+[*] reading rank_unnamed_functions.py
+[*] executing rank_unnamed_functions.py
+[*] captured stdout from target script:
+----- begin target script output -----
+325 unnamed functions total
+
+1DD94  sub_1DD94    callers= 19 size= 186  <- data/21155, data/21192, data/22856, data/22E99, data/23002, sub_1D9AB, ... (+13 more)
+1DC5C  sub_1DC5C    callers= 16 size= 312  <- data/21185, data/211C0, data/2290D, data/22E8F, sub_1DE98, sub_1F83E, ... (+10 more)
+16840  sub_16840    callers= 14 size=  35  <- print_error, sub_17E1A, sub_17EFC, sub_17F26, sub_17F50, sub_18188, ... (+8 more)
+238BA  sub_238BA    callers= 14 size=  37  <- data/25453, data/2546B, data/25485, data/254A8, data/254C0, data/254DA, ... (+8 more)
+15AA0  sub_15AA0    callers= 13 size=  60  <- sub_15ADC, sub_15D1C, sub_15DCA, sub_15EC6, sub_1614E, sub_1643C, ... (+7 more)
+1C082  sub_1C082    callers= 13 size=  46  <- _main, data/205A5, show_intro, sub_1C426, sub_1FA0E, sub_201E9, ... (+7 more)
+1C0C4  sub_1C0C4    callers= 13 size=  74  <- _main, data/205CA, show_intro, sub_1C426, sub_1FA0E, sub_201E9, ... (+7 more)
+1F964  sub_1F964    callers= 11 size= 105  <- data/1F9FB, data/2101F, data/21179, data/211A8, sub_103E2, sub_1F57A, ... (+5 more)
+229D5  sub_229D5    callers=  9 size=1168  <- data/1CF71, data/1CFA9, data/1CFBA, data/1CFCB, data/1D05B, data/1D0CC, ... (+3 more)
+23572  sub_23572    callers=  9 size=  91  <- Video_RestoreMode, sub_23973, sub_23AC8, sub_23B60, sub_23CBA, sub_23DCE, ... (+3 more)
+16CEB  sub_16CEB    callers=  8 size=  11  <- data/16B1D, data/16B2E, data/16B7B, data/16B93, data/16BB7, data/16BF4, ... (+2 more)
+17C88  sub_17C88    callers=  8 size= 100  <- sub_17D4A, sub_17E1A, sub_17EFC, sub_17F26, sub_17F50, sub_18188, ... (+2 more)
+1B300  sub_1B300    callers=  8 size=  17  <- data/21B25, show_text_dialog, sub_102B8, sub_1BEA4, sub_20A27, sub_2217C, ... (+2 more)
+1BDC4  sub_1BDC4    callers=  8 size=  34  <- data/22871, data/22902, data/22959, data/2298A, data/229A5, sub_2217C, ... (+2 more)
+2217C  sub_2217C    callers=  8 size=1151  <- data/2159B, data/2289C, data/228F9, sub_21D8E, sub_21DD8, sub_229BC, ... (+2 more)
+167F4  sub_167F4    callers=  7 size=  17  <- sub_17E1A, sub_1844A, sub_184FC, sub_1863C, sub_18780, sub_188E8, ... (+1 more)
+1F69C  sub_1F69C    callers=  7 size= 301  <- data/1F5E1, data/1FDC2, sub_103E2, sub_1F57A, sub_1F7CA, sub_1FA0E, ... (+1 more)
+238DF  sub_238DF    callers=  7 size= 148  <- data/25369, data/253F8, data/255C6, sub_239D0, sub_23CBA, sub_24202, ... (+1 more)
+166DC  sub_166DC    callers=  6 size=  83  <- sub_15E6A, sub_15F3A, sub_160B6, sub_1614E, sub_1636E, sub_163F2
+167B2  sub_167B2    callers=  6 size=  66  <- data/169D8, data/169F5, sub_167F4, sub_16805, sub_16875, sub_16910
+1C766  sub_1C766    callers=  6 size= 149  <- data/228A2, printf, sub_102B8, sub_1C7FB, sub_1C82E, sub_1C85E
+1CC04  sub_1CC04    callers=  6 size=  27  <- compact_memory, data/1D073, data/1D08F, get_master, sub_1D6AC, sub_1D754
+117F2  sub_117F2    callers=  5 size=  30  <- data/11846, data/11853, data/11AB7, data/11ACB, sub_11784
+11CED  sub_11CED    callers=  5 size=  19  <- data/11C55, data/11C5E, sub_11C62, sub_11C79, sub_11CED
+170F2  sub_170F2    callers=  5 size=  31  <- sub_17112, sub_171A8, sub_1746E, sub_1763E, sub_1777E
+17C60  sub_17C60    callers=  5 size=  40  <- sub_17C88, sub_17E1A, sub_17F50, sub_1825E, sub_1844A
+1A2FE  sub_1A2FE    callers=  5 size=  39  <- data/19CAA, data/19CBD, sub_19CCE, sub_1A3D6, sub_1A529
+1F922  sub_1F922    callers=  5 size=  43  <- data/20606, data/2066D, data/20FB1, sub_202C8, sub_20BDD
+218A0  sub_218A0    callers=  5 size=  44  <- sub_1F2F4, sub_1FBB8, sub_20BDD, sub_218CC, sub_21949
+16004  sub_16004    callers=  4 size= 119  <- sub_171A8, sub_17406, sub_1746E, sub_1791E
+1614E  sub_1614E    callers=  4 size=  90  <- sub_171A8, sub_17406, sub_1746E, sub_1791E
+16805  sub_16805    callers=  4 size=  15  <- sub_16910, sub_184FC, sub_188E8, sub_18A38
+16875  sub_16875    callers=  4 size=  51  <- sub_16910, sub_18A08, sub_18AA8, sub_191CA
+17112  sub_17112    callers=  4 size=  84  <- sub_171A8, sub_1737A, sub_1763E, sub_17774
+1AAC1  sub_1AAC1    callers=  4 size=  31  <- data/1AC48, data/1AC61, data/1AC7A, data/1AC97
+1BD78  sub_1BD78    callers=  4 size=  54  <- set_text_position, sub_1BDAE, sub_1BDC4, sub_1BED2
+1CEEE  sub_1CEEE    callers=  4 size= 109  <- kill_handle, kill_pointer, lock_handle, unlock_handle
+1E109  sub_1E109    callers=  4 size=   9  <- data/2118D, sub_1E109, sub_20BDD, sub_21EF6
+1F2F4  sub_1F2F4    callers=  4 size= 259  <- _main, show_intro, sub_103E2, sub_1FA0E
+1F3F8  sub_1F3F8    callers=  4 size=  17  <- data/20FE9, data/21038, data/21160, data/211B4
+202C8  sub_202C8    callers=  4 size= 246  <- data/20F9A, data/214B7, sub_20790, sub_219A3
+21949  sub_21949    callers=  4 size=  48  <- data/2154F, data/229B0, data/22FA7, data/23021
+24508  sub_24508    callers=  4 size=  40  <- data/251E4, data/25988, data/259C2, data/259F6
+24551  sub_24551    callers=  4 size=  18  <- data/252AC, data/25CE5, data/25D0E, data/25D28
+10008  sub_10008    callers=  3 size=  22  <- data/1FE78, sub_1FA0E, sub_21EF6
+114E5  sub_114E5    callers=  3 size=  50  <- data/114A2, data/114CE, data/11706
+11721  sub_11721    callers=  3 size=  28  <- data/1161A, sub_11534, sub_1173D
+11C62  sub_11C62    callers=  3 size=  23  <- graphics_init, start, sub_217EE
+12056  sub_12056    callers=  3 size=  46  <- __dosreturn, __maperror, _close
+15BBF  sub_15BBF    callers=  3 size=  15  <- sub_15BDE, sub_15C02, sub_15C4A
+1643C  sub_1643C    callers=  3 size= 221  <- sub_16004, sub_1636E, sub_163F2
+1651A  sub_1651A    callers=  3 size=  28  <- sub_15F3A, sub_1636E, sub_163F2
+16784  sub_16784    callers=  3 size=  45  <- sub_15E6A, sub_1607C, sub_160B6
+16910  sub_16910    callers=  3 size= 168  <- sub_184FC, sub_18A08, sub_18A38
+171A8  sub_171A8    callers=  3 size= 229  <- sub_17166, sub_1737A, sub_17B48
+18A38  sub_18A38    callers=  3 size= 112  <- print_error, sub_18ABA, sub_18B78
+18AA8  sub_18AA8    callers=  3 size=  18  <- print_error, sub_18ABA, sub_18B78
+1933A  sub_1933A    callers=  3 size=  69  <- sub_1777E, sub_18188, sub_191CA
+19380  sub_19380    callers=  3 size=  40  <- data/193DC, sub_1777E, sub_18188
+1BED2  sub_1BED2    callers=  3 size= 431  <- Font_writeString, _main, graphics_init
+1C82E  sub_1C82E    callers=  3 size=  48  <- sub_102B8, sub_1FED6, sub_21EF6
+1D5AE  sub_1D5AE    callers=  3 size=  65  <- data/1D607, memory_init, sub_1D58C
+1EB3C  sub_1EB3C    callers=  3 size=  61  <- data/1F56D, get_picture, scale_pic
+1F284  sub_1F284    callers=  3 size= 111  <- _main, show_intro, sub_1F2F4
+1F57A  sub_1F57A    callers=  3 size=  78  <- _main, show_intro, show_legend_title
+1FCB4  sub_1FCB4    callers=  3 size=  72  <- animate, data/20F46, sub_200E0
+201E9  sub_201E9    callers=  3 size= 223  <- data/2056E, data/205DA, sub_202C8
+203BE  sub_203BE    callers=  3 size= 140  <- data/211FD, sub_21B63, sub_21BCC
+2067B  sub_2067B    callers=  3 size= 191  <- data/20F6B, data/22F91, sub_20790
+21664  sub_21664    callers=  3 size= 357  <- data/22935, data/22946, sub_2217C
+2310F  sub_2310F    callers=  3 size= 698  <- data/22EF7, printf, sub_23051
+233C9  sub_233C9    callers=  3 size= 201  <- data/22FF9, printf, sub_2310F
+23543  sub_23543    callers=  3 size=  47  <- sub_23AC8, sub_23CBA, sub_24202
+23CBA  sub_23CBA    callers=  3 size= 276  <- sub_1DC5C, sub_1DD94, sub_1F964
+24C51  sub_24C51    callers=  3 size= 115  <- sub_1D9EE, sub_1F69C, sub_1F83E
+25612  sub_25612    callers=  3 size=  48  <- sub_1C426, sub_20790, sub_20BDD
+25642  sub_25642    callers=  3 size=  59  <- sub_1C426, sub_20790, sub_20BDD
+25ACB  sub_25ACB    callers=  3 size=  33  <- data/25B5A, data/25B8A, data/25BAF
+10030  sub_10030    callers=  2 size=  12  <- sub_21B63, sub_21BCC
+11517  sub_11517    callers=  2 size=  29  <- data/113B9, data/11614
+117D6  sub_117D6    callers=  2 size=  28  <- sub_11784, sub_117B4
+11985  sub_11985    callers=  2 size= 129  <- data/118DA, data/11977
+11A07  sub_11A07    callers=  2 size=  75  <- data/11971, sub_11A78
+11A52  sub_11A52    callers=  2 size=  19  <- sub_11985, sub_11A65
+11CC0  sub_11CC0    callers=  2 size=  45  <- __doexec, sub_11C79
+1490E  sub_1490E    callers=  2 size=  16  <- __dtoxtime, _ftime
+149F2  sub_149F2    callers=  2 size= 226  <- __dtoxtime, _ftime
+15BDE  sub_15BDE    callers=  2 size=  36  <- sub_172BC, sub_1791E
+15E6A  sub_15E6A    callers=  2 size=  91  <- sub_15DCA, sub_175B6
+15F18  sub_15F18    callers=  2 size=  33  <- sub_15DCA, sub_175B6
+162A6  sub_162A6    callers=  2 size= 105  <- sub_15F5A, sub_16310
+16536  sub_16536    callers=  2 size=  92  <- sub_1636E, sub_163F2
+16592  sub_16592    callers=  2 size=  85  <- sub_1636E, sub_163F2
+165E8  sub_165E8    callers=  2 size=  85  <- sub_1636E, sub_163F2
+1663E  sub_1663E    callers=  2 size= 158  <- sub_1636E, sub_163F2
+16730  sub_16730    callers=  2 size=  83  <- sub_1636E, sub_163F2
+168FD  sub_168FD    callers=  2 size=  19  <- sub_184FC, sub_188E8
+16D38  sub_16D38    callers=  2 size=  22  <- sub_18188, sub_188E8
+17092  sub_17092    callers=  2 size=  60  <- data/16DA9, data/16FF3
+1728E  sub_1728E    callers=  2 size=  45  <- sub_17166, sub_17B48
+172BC  sub_172BC    callers=  2 size= 189  <- sub_1728E, sub_1763E
+1791E  sub_1791E    callers=  2 size= 127  <- sub_178FA, sub_191CA
+1799E  sub_1799E    callers=  2 size= 425  <- sub_1777E, sub_178FA
+17E1A  sub_17E1A    callers=  2 size= 225  <- sub_17F50, sub_1844A
+185E4  sub_185E4    callers=  2 size=  88  <- sub_18780, sub_18E06
+1863C  sub_1863C    callers=  2 size= 323  <- sub_18E06, sub_1916A
+188BA  sub_188BA    callers=  2 size=  45  <- sub_1863C, sub_191CA
+188E8  sub_188E8    callers=  2 size= 288  <- sub_1863C, sub_188BA
+18BF8  sub_18BF8    callers=  2 size=  33  <- print_error, sub_18ABA
+197AE  sub_197AE    callers=  2 size=   8  <- data/19BF6, sub_1A42F
+1A1FA  sub_1A1FA    callers=  2 size= 118  <- sub_19CCE, sub_1A1FA
+1A326  sub_1A326    callers=  2 size=  34  <- sub_19CCE, sub_1A349
+1A79A  sub_1A79A    callers=  2 size= 130  <- sub_1A5F4, sub_1A732
+1A8C2  sub_1A8C2    callers=  2 size=  60  <- data/22814, data/22830
+1A9FE  sub_1A9FE    callers=  2 size=  72  <- data/22961, data/2297B
+1AA46  sub_1AA46    callers=  2 size=   8  <- data/21584, data/2292A
+1BDAE  sub_1BDAE    callers=  2 size=  21  <- show_intro, sub_21BCC
+1BEA4  sub_1BEA4    callers=  2 size=  46  <- _main, sub_2310F
+1C426  sub_1C426    callers=  2 size= 775  <- show_text_dialog, sub_21B30
+1C85E  sub_1C85E    callers=  2 size=  15  <- show_intro, sub_1E1C2
+1CCE8  sub_1CCE8    callers=  2 size= 105  <- kill_handle, kill_pointer
+1D754  sub_1D754    callers=  2 size= 180  <- data/1CF90, show_intro
+1D9EE  sub_1D9EE    callers=  2 size= 138  <- mouse_init, sub_1D9AB
+1DA78  sub_1DA78    callers=  2 size=  49  <- sub_1D9AB, sub_1DAA9
+1DAA9  sub_1DAA9    callers=  2 size=  22  <- _main, sub_217EE
+1DE98  sub_1DE98    callers=  2 size= 194  <- sub_1DF5A, sub_1E1C2
+1DF5A  sub_1DF5A    callers=  2 size=  77  <- get_mouse_buttons, sub_1DFA7
+1EB7A  sub_1EB7A    callers=  2 size= 132  <- data/1F572, scale_pic
+1EBFE  sub_1EBFE    callers=  2 size=  79  <- get_picture, scale_pic
+1F0D0  sub_1F0D0    callers=  2 size= 259  <- sub_1F57A, sub_1FA0E
+1F40A  sub_1F40A    callers=  2 size= 105  <- data/2138F, sub_20BDD
+1F7CA  sub_1F7CA    callers=  2 size= 116  <- animate, sub_20ED1
+1F83E  sub_1F83E    callers=  2 size= 228  <- sub_20BDD, sub_2310F
+1FC34  sub_1FC34    callers=  2 size=  56  <- animate, data/1FD84
+20790  sub_20790    callers=  2 size= 663  <- data/22F3B, data/22F59
+20A27  sub_20A27    callers=  2 size= 281  <- data/21092, sub_20790
+217EE  sub_217EE    callers=  2 size=  41  <- data/22FDC, sub_102B8
+21A83  sub_21A83    callers=  2 size= 103  <- _main, sub_2310F
+21B63  sub_21B63    callers=  2 size= 105  <- sub_23051, sub_233C9
+225FB  sub_225FB    callers=  2 size= 491  <- data/22973, data/2299B
+238AA  sub_238AA    callers=  2 size=  16  <- sub_237EE, sub_2383E
+24202  sub_24202    callers=  2 size= 330  <- sub_1DC5C, sub_1F83E
+24E26  sub_24E26    callers=  2 size=  82  <- Font_writeChar, sub_1C0C4
+2567D  sub_2567D    callers=  2 size= 211  <- sub_25642, sub_25D7A
+25D7A  sub_25D7A    callers=  2 size= 355  <- Font_writeChar, sub_1C0C4
+10000  sub_10000    callers=  1 size=   8  <- data/2157C
+102B8  sub_102B8    callers=  1 size= 225  <- show_intro
+103E2  sub_103E2    callers=  1 size= 217  <- show_intro
+104BB  sub_104BB    callers=  1 size= 324  <- show_text_dialog
+11092  sub_11092    callers=  1 size=  91  <- show_intro
+110ED  sub_110ED    callers=  1 size=  63  <- show_intro
+11144  sub_11144    callers=  1 size= 161  <- sub_16D6A
+111E5  sub_111E5    callers=  1 size=  38  <- data/1706A
+1120B  sub_1120B    callers=  1 size=  43  <- data/16FB0
+11236  sub_11236    callers=  1 size=  20  <- sub_17092
+1124A  sub_1124A    callers=  1 size=  58  <- sub_11144
+11284  sub_11284    callers=  1 size=  86  <- sub_11144
+112DA  sub_112DA    callers=  1 size=  76  <- sub_11144
+11344  sub_11344    callers=  1 size=  22  <- sub_11144
+11534  sub_11534    callers=  1 size= 129  <- sub_11144
+1173D  sub_1173D    callers=  1 size=  71  <- sub_11534
+11784  sub_11784    callers=  1 size=  48  <- sub_11144
+117B4  sub_117B4    callers=  1 size=  34  <- sub_11784
+11A65  sub_11A65    callers=  1 size=  19  <- sub_11784
+11A78  sub_11A78    callers=  1 size=  47  <- data/1182A
+11C79  sub_11C79    callers=  1 size=  71  <- start
+13A52  sub_13A52    callers=  1 size=  92  <- _write
+13BA8  sub_13BA8    callers=  1 size= 110  <- _malloc
+13C16  sub_13C16    callers=  1 size=  23  <- _malloc
+13E00  sub_13E00    callers=  1 size=  86  <- _brkctl
+1491E  sub_1491E    callers=  1 size= 211  <- sub_1490E
+15ADC  sub_15ADC    callers=  1 size= 208  <- sub_16784
+15C02  sub_15C02    callers=  1 size=  72  <- sub_170CE
+15C4A  sub_15C4A    callers=  1 size=  21  <- sub_170E0
+15C5F  sub_15C5F    callers=  1 size=  15  <- sub_1728E
+15CFE  sub_15CFE    callers=  1 size=  30  <- sub_18D62
+15D1C  sub_15D1C    callers=  1 size= 174  <- sub_15CFE
+15DCA  sub_15DCA    callers=  1 size= 160  <- sub_15CFE
+15EC6  sub_15EC6    callers=  1 size=  81  <- sub_15DCA
+15F3A  sub_15F3A    callers=  1 size=  31  <- sub_15DCA
+15F5A  sub_15F5A    callers=  1 size= 170  <- sub_175B6
+1607C  sub_1607C    callers=  1 size=  58  <- sub_1746E
+160B6  sub_160B6    callers=  1 size= 152  <- sub_17406
+161A8  sub_161A8    callers=  1 size= 207  <- sub_15E6A
+16310  sub_16310    callers=  1 size=  92  <- sub_161A8
+1636E  sub_1636E    callers=  1 size= 132  <- data/1629E
+163F2  sub_163F2    callers=  1 size=  73  <- sub_162A6
+16814  sub_16814    callers=  1 size=  44  <- sub_16910
+16A0B  sub_16A0B    callers=  1 size=  49  <- data/16BE3
+16CF6  sub_16CF6    callers=  1 size=  66  <- data/16CE1
+16D4E  sub_16D4E    callers=  1 size=  12  <- sub_1863C
+16D6A  sub_16D6A    callers=  1 size=  53  <- check_sound_params
+170CE  sub_170CE    callers=  1 size=  18  <- sub_1728E
+170E0  sub_170E0    callers=  1 size=  18  <- sub_1791E
+17166  sub_17166    callers=  1 size=  65  <- sub_18E06
+1737A  sub_1737A    callers=  1 size= 140  <- sub_1777E
+17406  sub_17406    callers=  1 size= 104  <- sub_1746E
+1746E  sub_1746E    callers=  1 size= 327  <- sub_1777E
+175B6  sub_175B6    callers=  1 size= 135  <- sub_1763E
+1763E  sub_1763E    callers=  1 size= 310  <- sub_1777E
+17774  sub_17774    callers=  1 size=   9  <- sub_1777E
+1777E  sub_1777E    callers=  1 size= 380  <- data/15CC2
+178FA  sub_178FA    callers=  1 size=  35  <- sub_1916A
+17B48  sub_17B48    callers=  1 size= 279  <- sub_1777E
+17CEC  sub_17CEC    callers=  1 size=  93  <- sub_17DB0
+17D4A  sub_17D4A    callers=  1 size= 102  <- sub_17DB0
+17DB0  sub_17DB0    callers=  1 size= 105  <- sub_185E4
+17EFC  sub_17EFC    callers=  1 size=  42  <- sub_17F50
+17F26  sub_17F26    callers=  1 size=  42  <- sub_17F50
+17F50  sub_17F50    callers=  1 size= 141  <- sub_1825E
+17FDE  sub_17FDE    callers=  1 size= 425  <- sub_18188
+18188  sub_18188    callers=  1 size= 214  <- sub_1863C
+1825E  sub_1825E    callers=  1 size= 491  <- sub_18188
+1844A  sub_1844A    callers=  1 size= 178  <- sub_185E4
+184FC  sub_184FC    callers=  1 size= 231  <- sub_185E4
+18780  sub_18780    callers=  1 size= 313  <- sub_1863C
+18A08  sub_18A08    callers=  1 size=  47  <- sub_18D62
+18ABA  sub_18ABA    callers=  1 size=  70  <- sub_18B78
+18B78  sub_18B78    callers=  1 size= 128  <- sub_185E4
+18C1A  sub_18C1A    callers=  1 size=  58  <- sub_18D62
+18C54  sub_18C54    callers=  1 size=  52  <- print_legend_entertainment
+18D62  sub_18D62    callers=  1 size= 119  <- check_sound_params
+18E06  sub_18E06    callers=  1 size= 868  <- show_intro
+1916A  sub_1916A    callers=  1 size=  96  <- data/18CDE
+191CA  sub_191CA    callers=  1 size= 367  <- print_legend_entertainment
+193F2  sub_193F2    callers=  1 size= 134  <- check_sound_params
+19CCE  sub_19CCE    callers=  1 size= 701  <- data/19CC0
+19F8C  sub_19F8C    callers=  1 size= 620  <- sub_19CCE
+1A271  sub_1A271    callers=  1 size= 140  <- sub_19CCE
+1A349  sub_1A349    callers=  1 size= 141  <- sub_1A1FA
+1A42F  sub_1A42F    callers=  1 size=  12  <- sub_1E498
+1A529  sub_1A529    callers=  1 size= 203  <- sub_1A3D6
+1A5F4  sub_1A5F4    callers=  1 size= 317  <- sub_1A529
+1A732  sub_1A732    callers=  1 size= 102  <- sub_1A529
+1A81D  sub_1A81D    callers=  1 size=  53  <- sub_1A3D6
+1A853  sub_1A853    callers=  1 size= 111  <- sub_1A3D6
+1A8FE  sub_1A8FE    callers=  1 size=  30  <- data/2294E
+1A91C  sub_1A91C    callers=  1 size=  85  <- data/228DA
+1AA4E  sub_1AA4E    callers=  1 size=  30  <- data/21568
+1B2E9  sub_1B2E9    callers=  1 size=  23  <- sub_219A3
+1B852  sub_1B852    callers=  1 size= 174  <- sub_1C10E
+1B928  sub_1B928    callers=  1 size=  68  <- init_graphics
+1B96C  sub_1B96C    callers=  1 size= 153  <- sub_1EB7A
+1BA06  sub_1BA06    callers=  1 size= 161  <- sub_1EB7A
+1BCB4  sub_1BCB4    callers=  1 size= 195  <- printf
+1C10E  sub_1C10E    callers=  1 size= 792  <- sub_21EF6
+1C7FB  sub_1C7FB    callers=  1 size=  34  <- data/22FBC
+1C81D  sub_1C81D    callers=  1 size=  17  <- sub_1DFA7
+1C87D  sub_1C87D    callers=  1 size=  77  <- sub_1E1C2
+1C8CA  sub_1C8CA    callers=  1 size=  40  <- sub_1E1C2
+1CA8C  sub_1CA8C    callers=  1 size=  81  <- sub_1E1C2
+1CB00  sub_1CB00    callers=  1 size=  36  <- memory_deinit
+1CC20  sub_1CC20    callers=  1 size= 199  <- get_master
+1D25E  sub_1D25E    callers=  1 size=  69  <- new_handle
+1D58C  sub_1D58C    callers=  1 size=  15  <- data/16E97
+1D59C  sub_1D59C    callers=  1 size=  18  <- sub_17092
+1D6AC  sub_1D6AC    callers=  1 size= 166  <- data/1CF7A
+1D80A  sub_1D80A    callers=  1 size=  51  <- data/1D87D
+1D9AB  sub_1D9AB    callers=  1 size=  67  <- show_intro
+1DABF  sub_1DABF    callers=  1 size= 413  <- sub_1DC5C
+1DFA7  sub_1DFA7    callers=  1 size= 292  <- data/22F70
+1E155  sub_1E155    callers=  1 size= 109  <- data/21570
+1E1C2  sub_1E1C2    callers=  1 size= 335  <- sub_1DFA7
+1E498  sub_1E498    callers=  1 size= 187  <- sub_1F69C
+1EDE4  sub_1EDE4    callers=  1 size=  81  <- scale_pic
+1F61A  sub_1F61A    callers=  1 size= 129  <- data/1F5FF
+1FA0E  sub_1FA0E    callers=  1 size= 319  <- show_intro
+1FBB8  sub_1FBB8    callers=  1 size= 112  <- animate
+1FCFC  sub_1FCFC    callers=  1 size=  46  <- graphics_init
+1FE88  sub_1FE88    callers=  1 size=  77  <- data/1FE63
+1FED6  sub_1FED6    callers=  1 size=  73  <- data/1FE82
+1FF20  sub_1FF20    callers=  1 size= 448  <- data/1FE6E
+200E0  sub_200E0    callers=  1 size=  91  <- sub_1FCFC
+2013C  sub_2013C    callers=  1 size=  95  <- unk1_init
+2044A  sub_2044A    callers=  1 size= 130  <- data/21C63
+204CC  sub_204CC    callers=  1 size=  98  <- data/21CB8
+20B40  sub_20B40    callers=  1 size= 157  <- data/21059
+20BDD  sub_20BDD    callers=  1 size= 756  <- data/22FF0
+21614  sub_21614    callers=  1 size=  11  <- data/22922
+2161F  sub_2161F    callers=  1 size=  24  <- data/22865
+21637  sub_21637    callers=  1 size=  45  <- sub_21664
+217C9  sub_217C9    callers=  1 size=  36  <- sub_217EE
+2181B  sub_2181B    callers=  1 size= 133  <- data/21134
+218CC  sub_218CC    callers=  1 size= 125  <- sub_21949
+219A3  sub_219A3    callers=  1 size= 224  <- sub_21A83
+21B30  sub_21B30    callers=  1 size=  51  <- sub_2310F
+21BCC  sub_21BCC    callers=  1 size=  77  <- sub_2310F
+21CC3  sub_21CC3    callers=  1 size=  97  <- sub_1F40A
+21D77  sub_21D77    callers=  1 size=  23  <- data/22919
+21D8E  sub_21D8E    callers=  1 size=  74  <- data/2285F
+21DD8  sub_21DD8    callers=  1 size=  70  <- data/21E7A
+21EF6  sub_21EF6    callers=  1 size= 519  <- sub_2217C
+220FD  sub_220FD    callers=  1 size=  57  <- sub_2217C
+229BC  sub_229BC    callers=  1 size=  25  <- sub_229D5
+23051  sub_23051    callers=  1 size=  87  <- _main
+235CE  sub_235CE    callers=  1 size= 214  <- init_graphics
+236A4  sub_236A4    callers=  1 size= 101  <- init_graphics
+23709  sub_23709    callers=  1 size= 229  <- sub_236A4
+237EE  sub_237EE    callers=  1 size=  80  <- sub_236A4
+2383E  sub_2383E    callers=  1 size=  20  <- sub_236A4
+23852  sub_23852    callers=  1 size=  29  <- sub_2383E
+2386F  sub_2386F    callers=  1 size=  59  <- sub_236A4
+23973  sub_23973    callers=  1 size=  92  <- sub_24C51
+239D0  sub_239D0    callers=  1 size= 248  <- sub_1F69C
+23AC8  sub_23AC8    callers=  1 size= 152  <- sub_1BDAE
+23B60  sub_23B60    callers=  1 size= 120  <- sub_23AC8
+23DCE  sub_23DCE    callers=  1 size= 120  <- sub_23CBA
+2434C  sub_2434C    callers=  1 size= 120  <- sub_24202
+24530  sub_24530    callers=  1 size=  33  <- data/2524F
+24563  sub_24563    callers=  1 size=  33  <- data/25302
+24680  sub_24680    callers=  1 size=1254  <- sub_1F61A
+24B66  sub_24B66    callers=  1 size= 235  <- sub_24C51
+24F42  sub_24F42    callers=  1 size=  42  <- sub_1C082
+24F6C  sub_24F6C    callers=  1 size=  50  <- init_graphics
+24F9E  sub_24F9E    callers=  1 size=  60  <- init_graphics
+24FDA  sub_24FDA    callers=  1 size=  39  <- sub_25168
+25001  sub_25001    callers=  1 size= 283  <- sub_2567D
+2511C  sub_2511C    callers=  1 size=  75  <- sub_25001
+25168  sub_25168    callers=  1 size= 103  <- Font_writeChar
+25750  sub_25750    callers=  1 size= 152  <- sub_2567D
+1A3D6  sub_1A3D6    callers=  0 size=  88  <- 
+1C731  sub_1C731    callers=  0 size=  14  <- 
+1E336  sub_1E336    callers=  0 size=  63  <- 
+1E376  sub_1E376    callers=  0 size= 289  <- 
+20ED1  sub_20ED1    callers=  0 size= 105  <- 
+----- end target script output -----
+[*] finished executing rank_unnamed_functions.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\legend\gateway\gate.idb
+[*] ARGV = ['C:\\dev\\legend\\gateway\\ida_scripts\\batch_run_and_export.py', 'apply_renames_gate.py', 'noexport']
+[*] reading apply_renames_gate.py
+[*] executing apply_renames_gate.py
+[*] captured stdout from target script:
+----- begin target script output -----
+DRY_RUN = True
+0x29b80: 'word_29B80' -> 'max_color_index'   (Set in init_graphics per video mode: 1 (2-color), 0Fh (16-color EGA), 0FFh (256-color VGA) -- confirmed by direct read of the 3-way mode dispatch. Used everywhere else in this cluster purely as a clamp ceiling for color values.)
+0x2f0b0: 'word_2F0B0' -> 'current_draw_color'   (Initialized to max_color_index in init_graphics; the value clamped-and-stored by setDrawColor (0x1C082). Distinct from Font_fgColor/Font_bgColor (already named) -- this is the color used by the non-text box/fill primitives (sub_1C0C4 and its callees), not glyph rendering.)
+0x1b300: 'sub_1B300' -> 'Font_setColors'   (Trivial two-line setter: arg_0 -> Font_fgColor, arg_2 -> Font_bgColor (both already-named globals). Confirmed by direct read -- no clamping or other logic.)
+0x1bea4: 'sub_1BEA4' -> 'Font_setColorsClamped'   (Stores arg_0 raw (word_2F0AE, not renamed yet -- see roadmap.md) and arg_2 clamped to max_color_index (word_2F0AC, also not renamed), then calls Font_setColors(arg_0, clamped arg_2). Called from _main's EXEC-failure path right before the error-message print (sub_1BED2) -- i.e. this sets the error text's colors.)
+0x1c082: 'sub_1C082' -> 'setDrawColor'   (Clamps its one argument to max_color_index, stores the previous value of current_draw_color in a local (returned in ax), updates current_draw_color, then calls sub_24F42 (unnamed -- mirrors the new color into a field of the SCREEN-typed struct instance at dseg+2CEEh, see roadmap.md). Called directly from _main with 0Fh (white) right before the box-fill call now understood to be sub_1C0C4.)
+----- end target script output -----
+[*] finished executing apply_renames_gate.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\legend\gateway\gate.idb
+[*] ARGV = ['C:\\dev\\legend\\gateway\\ida_scripts\\batch_run_and_export.py', 'apply_renames_gate.py']
+[*] reading apply_renames_gate.py
+[*] executing apply_renames_gate.py
+[*] captured stdout from target script:
+----- begin target script output -----
+DRY_RUN = False
+0x29b80: 'word_29B80' -> 'max_color_index'   ok=True
+0x2f0b0: 'word_2F0B0' -> 'current_draw_color'   ok=True
+0x1b300: 'sub_1B300' -> 'Font_setColors'   ok=True
+0x1bea4: 'sub_1BEA4' -> 'Font_setColorsClamped'   ok=True
+0x1c082: 'sub_1C082' -> 'setDrawColor'   ok=True
+----- end target script output -----
+[*] finished executing apply_renames_gate.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\legend\gateway\gate.asm
+[*] gen_file(OFILE_ASM) returned 77943
+[*] exporting IDC to C:\dev\legend\gateway\gate.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\legend\gateway\gate.idb
+[*] done, exiting 0

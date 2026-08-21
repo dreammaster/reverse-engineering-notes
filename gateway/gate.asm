@@ -182,7 +182,7 @@ loc_100CF:                              ; CODE XREF: _main+6B\u2191j
 loc_10108:                              ; CODE XREF: _main+B2\u2191j
                 mov     ax, 0Fh
                 push    ax
-                call    sub_1C082
+                call    setDrawColor
                 add     sp, 2
                 mov     es, seg_2EA06
                 push    es:word_29B6E
@@ -341,7 +341,7 @@ loc_10157:                              ; CODE XREF: _main+A1\u2191j
                 push    ax
                 mov     ax, 0Fh
                 push    ax
-                call    sub_1BEA4
+                call    Font_setColorsClamped
                 add     sp, 4
                 mov     ax, offset aGatemain_exeCo ; "GATEMAIN.EXE could not be started...\n"
                 push    ds
@@ -412,8 +412,8 @@ loc_102FA:                              ; CODE XREF: sub_102B8+3D\u2191j
                 push    ax
                 mov     es, seg_2EA18
                 assume es:seg049
-                push    es:word_29B80
-                call    sub_1B300
+                push    es:max_color_index
+                call    Font_setColors
                 add     sp, 4
                 mov     ax, 3910h
                 push    ds
@@ -822,7 +822,7 @@ msg             = dword ptr  0Ch
                 mov     es, seg_2EA1C
                 assume es:seg049
                 push    es:word_29B78
-                call    sub_1B300
+                call    Font_setColors
                 add     sp, 4
                 push    word ptr [bp+msg+2]
                 push    word ptr [bp+msg]
@@ -1047,7 +1047,7 @@ loc_1080F:                              ; CODE XREF: show_intro+86\u2191j
                 jnz     short loc_1085F
                 mov     ax, 0Fh
                 push    ax
-                call    sub_1C082
+                call    setDrawColor
                 add     sp, 2
                 mov     es, seg_2EA06
                 assume es:seg049
@@ -17052,7 +17052,7 @@ sub_1B2E9       endp
 
 ; Attributes: bp-based frame
 
-sub_1B300       proc far                ; CODE XREF: sub_102B8+61\u2191P
+Font_setColors  proc far                ; CODE XREF: sub_102B8+61\u2191P
                                         ; show_text_dialog+24\u2191P ...
 
 arg_0           = word ptr  6
@@ -17066,7 +17066,7 @@ arg_2           = word ptr  8
                 mov     Font_bgColor, ax
                 pop     bp
                 retf
-sub_1B300       endp
+Font_setColors  endp
 
 ; ---------------------------------------------------------------------------
                 push    bp
@@ -17672,7 +17672,7 @@ loc_1B765:                              ; CODE XREF: init_graphics+186\u2191j
                 mov     es, seg_2E97E
                 mov     es:word_29B7E, 0
                 mov     es, seg_2E980
-                mov     es:word_29B80, 0Fh
+                mov     es:max_color_index, 0Fh
                 jmp     short loc_1B7D5
 ; ---------------------------------------------------------------------------
 
@@ -17686,12 +17686,12 @@ loc_1B79E:                              ; CODE XREF: init_graphics+181\u2191j
                 mov     es, seg_2E97E
                 mov     es:word_29B7E, 1
                 mov     es, seg_2E980
-                mov     es:word_29B80, 1
+                mov     es:max_color_index, 1
 
 loc_1B7D5:                              ; CODE XREF: init_graphics+1C2\u2191j
                                         ; init_graphics+275\u2193j
-                mov     ax, es:word_29B80
-                mov     word_2F0B0, ax
+                mov     ax, es:max_color_index
+                mov     current_draw_color, ax
                 mov     word_2F0AE, ax
                 mov     word_2F0AC, 0
                 mov     word_2AEAC, 0
@@ -17724,7 +17724,7 @@ loc_1B818:                              ; CODE XREF: init_graphics+188\u2191j
                 mov     es, seg_2E97E
                 mov     es:word_29B7E, 0FFh
                 mov     es, seg_2E980
-                mov     es:word_29B80, 0FFh
+                mov     es:max_color_index, 0FFh
                 jmp     short loc_1B7D5
 init_graphics   endp
 
@@ -18765,7 +18765,7 @@ set_text_position endp
 
 ; Attributes: bp-based frame
 
-sub_1BEA4       proc far                ; CODE XREF: _main+260\u2191P
+Font_setColorsClamped proc far          ; CODE XREF: _main+260\u2191P
                                         ; sub_2310F+278\u2193P ...
 
 arg_0           = word ptr  6
@@ -18778,19 +18778,19 @@ arg_2           = word ptr  8
                 mov     ax, [bp+arg_2]
                 mov     es, seg_2E980
                 assume es:seg049
-                cmp     ax, es:word_29B80
+                cmp     ax, es:max_color_index
                 jle     short loc_1BEBF
-                mov     ax, es:word_29B80
+                mov     ax, es:max_color_index
 
-loc_1BEBF:                              ; CODE XREF: sub_1BEA4+15\u2191j
+loc_1BEBF:                              ; CODE XREF: Font_setColorsClamped+15\u2191j
                 mov     word_2F0AC, ax
                 push    [bp+arg_2]
                 push    [bp+arg_0]
-                call    sub_1B300
+                call    Font_setColors
                 add     sp, 4
                 pop     bp
                 retf
-sub_1BEA4       endp
+Font_setColorsClamped endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -19022,7 +19022,7 @@ sub_1BED2       endp
 
 ; Attributes: bp-based frame
 
-sub_1C082       proc far                ; CODE XREF: _main+D0\u2191P
+setDrawColor    proc far                ; CODE XREF: _main+D0\u2191P
                                         ; show_intro+B2\u2191P ...
 
 var_2           = word ptr -2
@@ -19031,24 +19031,24 @@ arg_0           = word ptr  6
                 push    bp
                 mov     bp, sp
                 sub     sp, 2
-                mov     ax, word_2F0B0
+                mov     ax, current_draw_color
                 mov     [bp+var_2], ax
                 mov     ax, [bp+arg_0]
                 mov     es, seg_2E980
                 assume es:seg049
-                cmp     ax, es:word_29B80
+                cmp     ax, es:max_color_index
                 jle     short loc_1C0A0
-                mov     ax, es:word_29B80
+                mov     ax, es:max_color_index
 
-loc_1C0A0:                              ; CODE XREF: sub_1C082+18\u2191j
-                mov     word_2F0B0, ax
+loc_1C0A0:                              ; CODE XREF: setDrawColor+18\u2191j
+                mov     current_draw_color, ax
                 push    ax
                 call    sub_24F42
                 mov     ax, [bp+var_2]
                 mov     sp, bp
                 pop     bp
                 retf
-sub_1C082       endp
+setDrawColor    endp
 
 ; ---------------------------------------------------------------------------
                 push    bp
@@ -19081,7 +19081,7 @@ arg_8           = word ptr  0Eh
                 jz      short loc_1C0DC
                 mov     ax, 0Ah
                 push    ax
-                push    word_2F0B0
+                push    current_draw_color
                 mov     ax, 1
                 push    ax
                 jmp     short loc_1C0E8
@@ -19090,7 +19090,7 @@ arg_8           = word ptr  0Eh
 
 loc_1C0DC:                              ; CODE XREF: sub_1C0C4+7\u2191j
                 push    word_2AEAE
-                push    word_2F0B0
+                push    current_draw_color
                 push    word_2AEB0
 
 loc_1C0E8:                              ; CODE XREF: sub_1C0C4+15\u2191j
@@ -19610,7 +19610,7 @@ loc_1C43C:                              ; CODE XREF: sub_1C426+A\u2191j
 loc_1C444:                              ; CODE XREF: sub_1C426+14\u2191j
                 push    ax
                 push    cs
-                call    near ptr sub_1C082
+                call    near ptr setDrawColor
                 add     sp, 2
                 test    [bp+arg_8], 2
                 jz      short loc_1C4AC
@@ -19694,7 +19694,7 @@ loc_1C4FE:                              ; CODE XREF: sub_1C426+AB\u2191j
                 mov     es, seg_2E97C
                 push    es:word_29B7C
                 push    cs
-                call    near ptr sub_1C082
+                call    near ptr setDrawColor
                 add     sp, 2
                 mov     si, [bp+arg_0]
                 inc     si
@@ -19716,7 +19716,7 @@ loc_1C4FE:                              ; CODE XREF: sub_1C426+AB\u2191j
                 mov     es, seg_2E97E
                 push    es:word_29B7E
                 push    cs
-                call    near ptr sub_1C082
+                call    near ptr setDrawColor
                 add     sp, 2
                 push    si
                 mov     ax, [bp+arg_6]
@@ -19755,7 +19755,7 @@ loc_1C592:                              ; CODE XREF: sub_1C426+15D\u2191j
                 mov     es, seg_2E97A
                 push    es:word_29B7A
                 push    cs
-                call    near ptr sub_1C082
+                call    near ptr setDrawColor
                 add     sp, 2
                 mov     si, [bp+arg_6]
                 dec     si
@@ -19837,7 +19837,7 @@ loc_1C642:                              ; CODE XREF: sub_1C426+1FC\u2191j
                 mov     es, seg_2E97A
                 push    es:word_29B7A
                 push    cs
-                call    near ptr sub_1C082
+                call    near ptr setDrawColor
                 add     sp, 2
                 mov     si, [bp+arg_0]
                 dec     si
@@ -19885,7 +19885,7 @@ loc_1C6B2:                              ; CODE XREF: sub_1C426+270\u2191j
                 mov     es, seg_2E97E
                 push    es:word_29B7E
                 push    cs
-                call    near ptr sub_1C082
+                call    near ptr setDrawColor
                 add     sp, 2
                 mov     si, [bp+arg_6]
                 inc     si
@@ -27166,7 +27166,7 @@ arg_4           = word ptr  0Ah
                 mov     es, seg_2E9BE
                 assume es:seg049
                 push    es:word_29B78
-                call    sub_1C082
+                call    setDrawColor
                 add     sp, 2
                 mov     es, seg_2E9C0
                 push    es:word_29B6E
@@ -28368,7 +28368,7 @@ loc_20217:                              ; CODE XREF: sub_201E9+29\u2191j
                 cmp     [bp+var_A], 1
                 jnz     short loc_20262
                 push    word_2F90E
-                call    sub_1C082
+                call    setDrawColor
                 add     sp, 2
                 mov     ax, [bp+var_8]
                 dec     ax
@@ -28392,7 +28392,7 @@ loc_20262:                              ; CODE XREF: sub_201E9+52\u2191j
                 mov     es, seg_2E9C6
                 assume es:seg049
                 push    es:word_29B7C
-                call    sub_1C082
+                call    setDrawColor
                 add     sp, 2
                 mov     ax, [bp+var_8]
                 dec     ax
@@ -28413,8 +28413,8 @@ loc_20290:                              ; CODE XREF: sub_201E9+77\u2191j
                 call    sub_1C0C4
                 add     sp, 0Ah
                 mov     es, seg_2E9C4
-                push    es:word_29B80
-                call    sub_1C082
+                push    es:max_color_index
+                call    setDrawColor
                 add     sp, 2
                 push    [bp+var_8]
                 push    [bp+var_4]
@@ -28704,7 +28704,7 @@ arg_2           = word ptr  8
                 dec     ax
                 mov     [bp+var_8], ax
                 push    word_2F90E
-                call    sub_1C082
+                call    setDrawColor
                 add     sp, 2
                 push    [bp+var_8]
                 push    [bp+var_4]
@@ -28752,7 +28752,7 @@ arg_2           = word ptr  8
                 cbw
                 mov     [bp+var_2], ax
                 push    word_2F90E
-                call    sub_1C082
+                call    setDrawColor
                 add     sp, 2
                 mov     si, [bp+var_2]
                 shl     si, 1
@@ -28838,7 +28838,7 @@ loc_20589:                              ; CODE XREF: seg026:0454\u2191j
                 jnz     short loc_2060E
                 sub     ax, ax
                 push    ax
-                call    sub_1C082
+                call    setDrawColor
                 add     sp, 2
                 mov     si, [bp-2]
                 shl     si, 1
@@ -29135,8 +29135,8 @@ arg_8           = word ptr  0Eh
                 mov     [bp+var_6], ax
                 mov     es, seg_2E9C4
                 assume es:seg049
-                push    es:word_29B80
-                call    sub_1C082
+                push    es:max_color_index
+                call    setDrawColor
                 add     sp, 2
                 mov     ax, [bp+arg_0]
                 inc     ax
@@ -29201,7 +29201,7 @@ loc_2087E:                              ; CODE XREF: sub_20790+CD\u2191j
                 mov     es, seg_2E9C6
                 assume es:seg049
                 push    es:word_29B7C
-                call    sub_1C082
+                call    setDrawColor
                 add     sp, 2
                 mov     ax, [bp+var_C]
                 dec     ax
@@ -29221,7 +29221,7 @@ loc_2087E:                              ; CODE XREF: sub_20790+CD\u2191j
                 add     sp, 0Ah
                 mov     es, seg_2E9CE
                 push    es:word_29B7E
-                call    sub_1C082
+                call    setDrawColor
                 add     sp, 2
                 mov     ax, [bp+arg_0]
                 inc     ax
@@ -29280,7 +29280,7 @@ loc_20930:                              ; CODE XREF: sub_20790+18C\u2191j
                 mov     es, seg_2E9D0
                 assume es:seg049
                 push    es:word_29B7A
-                call    sub_1C082
+                call    setDrawColor
                 add     sp, 2
                 mov     ax, [bp+arg_0]
                 inc     ax
@@ -29429,7 +29429,7 @@ arg_2           = word ptr  8
                 mov     es, seg_2E9D2
                 assume es:seg049
                 push    es:word_29B78
-                call    sub_1C082
+                call    setDrawColor
                 add     sp, 2
                 mov     si, [bp+var_6]
                 shl     si, 1
@@ -29460,8 +29460,8 @@ loc_20A9D:                              ; CODE XREF: sub_20A27+34\u2191j
                 mov     ax, 0FFFFh
                 push    ax
                 mov     es, seg_2E9C4
-                push    es:word_29B80
-                call    sub_1B300
+                push    es:max_color_index
+                call    Font_setColors
                 add     sp, 4
                 mov     si, [bp+var_6]
                 shl     si, 1
@@ -29543,7 +29543,7 @@ arg_2           = word ptr  8
                 mov     es, seg_2E9C6
                 assume es:seg049
                 push    es:word_29B7C
-                call    sub_1C082
+                call    setDrawColor
                 add     sp, 2
                 mov     si, [bp+var_4]
                 shl     si, 1
@@ -29683,7 +29683,7 @@ loc_20C89:                              ; CODE XREF: sub_20BDD+A7\u2191j
                 mov     es, seg_2E9C6
                 assume es:seg049
                 push    es:word_29B7C
-                call    sub_1C082
+                call    setDrawColor
                 add     sp, 2
                 mov     ax, [bp+var_8]
                 dec     ax
@@ -29721,7 +29721,7 @@ loc_20C89:                              ; CODE XREF: sub_20BDD+A7\u2191j
                 add     sp, 0Ah
                 mov     es, seg_2E9D0
                 push    es:word_29B7A
-                call    sub_1C082
+                call    setDrawColor
                 add     sp, 2
                 mov     ax, [bp+var_8]
                 dec     ax
@@ -29777,7 +29777,7 @@ loc_20D11:                              ; CODE XREF: sub_20BDD+A9\u2191j
                 mov     es, seg_2E9D2
                 assume es:seg049
                 push    es:word_29B78
-                call    sub_1C082
+                call    setDrawColor
                 add     sp, 2
                 mov     ax, [bp+var_8]
                 dec     ax
@@ -29803,7 +29803,7 @@ loc_20D11:                              ; CODE XREF: sub_20BDD+A9\u2191j
 loc_20D9E:                              ; CODE XREF: sub_20BDD+189\u2191j
                 mov     es, seg_2E9CE
                 push    es:word_29B7E
-                call    sub_1C082
+                call    setDrawColor
                 add     sp, 2
                 mov     ax, [bp+var_2]
                 inc     ax
@@ -29862,7 +29862,7 @@ loc_20E1F:                              ; CODE XREF: sub_20BDD+22E\u2191j
                 mov     es, seg_2E9D0
                 assume es:seg049
                 push    es:word_29B7A
-                call    sub_1C082
+                call    setDrawColor
                 add     sp, 2
                 mov     ax, [bp+var_2]
                 inc     ax
@@ -31562,7 +31562,7 @@ sub_21A83       endp
                 add     sp, 2
                 push    word ptr [bp+0Ch]
                 push    word ptr [bp+0Ah]
-                call    sub_1B300
+                call    Font_setColors
                 add     sp, 4
 
 loc_21B2D:                              ; CODE XREF: seg029:0182\u2191j
@@ -32218,7 +32218,7 @@ loc_220A0:                              ; CODE XREF: sub_21EF6+150\u2191j
                 call    sub_1DD94
                 sub     ax, ax
                 push    ax
-                call    sub_1C082
+                call    setDrawColor
                 add     sp, 2
                 mov     ax, offset aMore_0 ; "- MORE -"
                 push    ds
@@ -32435,7 +32435,7 @@ loc_22213:                              ; CODE XREF: sub_2217C+81\u2191j
                 shl     si, 1
                 push    word_2FA62[si]
                 push    word_2FA6E[si]
-                call    sub_1B300
+                call    Font_setColors
                 add     sp, 4
                 mov     si, [bp+arg_0]
                 shl     si, 1
@@ -32867,7 +32867,7 @@ loc_2260C:                              ; CODE XREF: sub_225FB+C\u2191j
                 shl     si, 1
                 push    word ptr [si+5E92h]
                 push    word ptr [si+5E9Eh]
-                call    sub_1B300
+                call    Font_setColors
                 add     sp, 4
                 mov     si, [bp+arg_0]
                 shl     si, 1
@@ -34476,8 +34476,8 @@ loc_23317:                              ; CODE XREF: sub_2310F+1FC\u2191j
                 assume es:seg049
                 push    es:word_29B7C
                 mov     es, seg_2E9F8
-                push    es:word_29B80
-                call    sub_1B300
+                push    es:max_color_index
+                call    Font_setColors
                 add     sp, 4
                 mov     ax, [bp+arg_2]
                 add     ax, [bp+var_11C]
@@ -34507,8 +34507,8 @@ loc_23317:                              ; CODE XREF: sub_2310F+1FC\u2191j
                 mov     es, seg_2E9F6
                 push    es:word_29B7C
                 mov     es, seg_2E9F8
-                push    es:word_29B80
-                call    sub_1BEA4
+                push    es:max_color_index
+                call    Font_setColorsClamped
                 add     sp, 4
                 lea     ax, [bp+var_112]
                 push    ss
@@ -34519,8 +34519,8 @@ loc_23317:                              ; CODE XREF: sub_2310F+1FC\u2191j
                 sub     ax, ax
                 push    ax
                 mov     es, seg_2E9F8
-                push    es:word_29B80
-                call    sub_1BEA4
+                push    es:max_color_index
+                call    Font_setColorsClamped
                 add     sp, 4
                 mov     ax, [bp+var_8]
                 mov     word_2B458, ax
@@ -38896,7 +38896,7 @@ locret_24ECF:
 
 ; Attributes: bp-based frame
 
-sub_24F42       proc far                ; CODE XREF: sub_1C082+22\u2191P
+sub_24F42       proc far                ; CODE XREF: setDrawColor+22\u2191P
 
 var_2           = word ptr -2
 arg_0           = word ptr  6
@@ -56723,7 +56723,7 @@ word_29B7C      dw 0                    ; DATA XREF: init_graphics+1A5\u2191w
                                         ; init_graphics+1DE\u2191w ...
 word_29B7E      dw 0                    ; DATA XREF: init_graphics+1B0\u2191w
                                         ; init_graphics+1E9\u2191w ...
-word_29B80      dw 0                    ; DATA XREF: sub_102B8+5C\u2191r
+max_color_index dw 0                    ; DATA XREF: sub_102B8+5C\u2191r
                                         ; init_graphics+1BB\u2191w ...
 dword_29B82     dd 0                    ; DATA XREF: sub_1C87D+3F\u2191w
                                         ; sub_1E1C2+26\u2191r ...
@@ -70728,11 +70728,11 @@ font_list       FONT <0>                ; DATA XREF: Font_init+11\u2191o
 Font_text       POINT <0>               ; DATA XREF: Font_init+72\u2191w
                                         ; sg0C03:066F\u2191r ...
 word_2F0AC      dw 0                    ; DATA XREF: init_graphics+205\u2191w
-                                        ; sub_1BEA4:loc_1BEBF\u2191w ...
+                                        ; Font_setColorsClamped:loc_1BEBF\u2191w ...
 word_2F0AE      dw 0                    ; DATA XREF: init_graphics+202\u2191w
                                         ; sub_1BD78+12\u2191r ...
-word_2F0B0      dw 0                    ; DATA XREF: init_graphics+1FF\u2191w
-                                        ; sub_1C082+6\u2191r ...
+current_draw_color dw 0                 ; DATA XREF: init_graphics+1FF\u2191w
+                                        ; setDrawColor+6\u2191r ...
 video_status_reg dw 0                   ; DATA XREF: init_graphics:loc_1B6BF\u2191w
                                         ; gfx_status_wait+8\u2191r ...
 word_2F0B4      dw 0                    ; DATA XREF: init_graphics+2F\u2191w

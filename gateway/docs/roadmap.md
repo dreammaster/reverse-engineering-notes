@@ -86,14 +86,29 @@ DOS/CRT-shaped ones like `RTLINK_SEG`, `HANDLE`, `timeb`,
       resolves a message ID via `get_message` and reads BIOS cursor
       position via `_int86`/`INT 10h`), but its exact role wasn't fully
       pinned down this pass.
+- [x] Ran `rank_unnamed_functions.py` for the first time against this IDB
+      (325 unnamed). Used it to pick the first real rename targets.
+- [x] First renaming pass: decoded a 5-function/2-global color cluster
+      shared between `_main`'s startup screen-clear and
+      `Font_writeChar`'s glyph rendering — `max_color_index`,
+      `current_draw_color`, `Font_setColors`, `Font_setColorsClamped`,
+      `setDrawColor`, applied via `ida_scripts/apply_renames_gate.py`.
+      180/502 functions now named. Full writeup in
+      [overview.md](overview.md#gateidb-color-cluster-decoded).
+- [ ] Follow-ups surfaced by this pass: name `sub_1C0C4` (the actual
+      box-fill/draw-rect primitive, shared with `Font_writeChar` via
+      `sub_24E26`/`sub_25D7A` — traced enough to know the call shape,
+      not enough to name confidently yet); decide what `word_2F0AE`/
+      `word_2F0AC` (raw/clamped shadow copies of fg/bg color) are for;
+      and consider an `apply_structs_gate.py` pass on the `SCREEN`
+      struct now that 3 of its fields (`0xC`, `0x22`, `0x24`) have
+      confirmed roles from this session (all 21 fields are still
+      `field_0`..`field_2A` placeholders).
 - [ ] Still need a CRT/engine-layer cross-check against `gatemain.idb`
       (same `_fopen`/`_nmalloc`/DOS-primitive cluster pattern `ultima1`
       found identical across all five of its executables) — not done
       yet; likely the fastest next win once `gatemain.idb` gets its own
       pass, transferring names in whichever direction is missing them.
-- [ ] `rank_unnamed_functions.py` hasn't been run against this IDB yet —
-      do that before picking further targets, same approach as
-      `ultima1`'s `OUT.EXE` first pass.
 
 ## `gatemain.idb` — next steps
 

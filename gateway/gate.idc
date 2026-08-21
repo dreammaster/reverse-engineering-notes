@@ -10216,6 +10216,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1B2F5);
 	op_stkvar	(x,	1);
 	create_insn	(0X1B300);
+	set_name	(0X1B300,	"Font_setColors");
 	create_insn	(x=0X1B303);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1B309);
@@ -10958,6 +10959,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1BE92);
 	op_hex		(x,	1);
 	create_insn	(0X1BEA4);
+	set_name	(0X1BEA4,	"Font_setColorsClamped");
 	create_insn	(x=0X1BEA7);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1BEAD);
@@ -11112,6 +11114,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1C06D);
 	op_hex		(x,	1);
 	create_insn	(0X1C082);
+	set_name	(0X1C082,	"setDrawColor");
 	create_insn	(x=0X1C085);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C08B);
@@ -11544,15 +11547,6 @@ static Bytes_1(void) {
 	op_stkvar	(x,	0);
 	op_hex		(x,	1);
 	create_insn	(0X1C61D);
-	create_insn	(x=0X1C624);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X1C629);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X1C632);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X1C63A);
-	op_stkvar	(x,	1);
-	create_insn	(0X1C642);
 }
 
 //------------------------------------------------------------------------
@@ -11562,6 +11556,15 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X1C624);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X1C629);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X1C632);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X1C63A);
+	op_stkvar	(x,	1);
+	create_insn	(0X1C642);
 	create_insn	(x=0X1C64F);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C652);
@@ -17674,14 +17677,6 @@ static Bytes_2(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X2278C);
 	op_stkvar	(x,	1);
-	set_cmt	(0X22790,	"xp",	0);
-	create_insn	(x=0X22796);
-	op_hex		(x,	1);
-	create_insn	(x=0X22799);
-	op_stkvar	(x,	1);
-	set_cmt	(0X2279D,	"msg",	0);
-	create_insn	(x=0X227A3);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -17691,6 +17686,14 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X22790,	"xp",	0);
+	create_insn	(x=0X22796);
+	op_hex		(x,	1);
+	create_insn	(x=0X22799);
+	op_stkvar	(x,	1);
+	set_cmt	(0X2279D,	"msg",	0);
+	create_insn	(x=0X227A3);
+	op_hex		(x,	1);
 	create_insn	(x=0X227A6);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X227AA);
@@ -20847,6 +20850,7 @@ static Bytes_3(void) {
 	create_word	(0X29B7C);
 	create_word	(0X29B7E);
 	create_word	(0X29B80);
+	set_name	(0X29B80,	"max_color_index");
 	create_dword	(0X29B82);
 	create_word	(0X29B86);
 	set_name	(0X29B86,	"pic_file_handle");
@@ -21889,6 +21893,7 @@ static Bytes_3(void) {
 	create_word	(0X2F0AC);
 	create_word	(0X2F0AE);
 	create_word	(0X2F0B0);
+	set_name	(0X2F0B0,	"current_draw_color");
 	create_word	(0X2F0B2);
 	set_name	(0X2F0B2,	"video_status_reg");
 	create_word	(0X2F0B4);
