@@ -403,12 +403,21 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       [overview.md](overview.md#logics_getroommoveenabled-logics_getroomexitcount-logics_callspecialexit-named).
       The room-exit/movement cluster is now reasonably well documented
       end to end.
+- [x] Re-ran `rank_unnamed_functions.py` (1749 unnamed) — top target
+      `sub_312D1` (38 callers) turned out to be the game's actual
+      win/lose ending, confirmed by decoding its own message text
+      ("You have failed." / "You have won the game, scoring %d out of
+      1500 points."). Named `Game_showEndingMessage` and its follow-on
+      `Game_endGameMenu` (the classic Infocom-style restart/restore/
+      undo/quit post-ending prompt). Full writeup in
+      [overview.md](overview.md#game_showendingmessagegame_endgamemenu-named--the-actual-winlose-ending).
 - [ ] Continue working down the re-ranked list — the rest of the ~1750
       still-unnamed functions. Also open: `Room.field_16`/`field_18`'s
       deeper semantics (a future `apply_structs_gatemain.py` target),
-      the 44 individual `Logics_callSpecialExit` handler routines, and
-      the two still-undistinguished exit-type branches in
-      `Logics_tryMoveDirection`.
+      the 44 individual `Logics_callSpecialExit` handler routines, the
+      two still-undistinguished exit-type branches in
+      `Logics_tryMoveDirection`, and `sub_C48E4` (`Game_endGameMenu`'s
+      actual prompt/choice-reading function).
 - [ ] Cross-check the structs shared by name/concept with `gate.idb`
       (`VocabEntry`/`VOCAB_ENTRY`, `Str16`/`STR16`, `Point`/`POINT`,
       `Screen`/`SCREEN`, `Font`/`FONT`, `REGS`, `HandleEntry`/`HANDLE`)

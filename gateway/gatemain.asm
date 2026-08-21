@@ -722,7 +722,7 @@ get_buff_size?  endp
 
 
 sub_1057E       proc far                ; CODE XREF: sub_69EDA+1E\u2193P
-                                        ; sub_C4AE6+1A\u2193P
+                                        ; Game_endGameMenu+1A\u2193P
                 call    sub_2881D
                 mov     ax, offset img
                 push    ds
@@ -760,7 +760,7 @@ sub_1057E       endp
 
 
 Parser_performUndo proc far             ; CODE XREF: main+299\u2193p
-                                        ; sub_C4AE6:loc_C4B15\u2193P
+                                        ; Game_endGameMenu:loc_C4B15\u2193P
                 mov     es, dseg_73
                 cmp     es:Parser_val6, 0
                 jz      short loc_10609
@@ -84115,14 +84115,14 @@ thunk_sub_76EB4 endp ; sp-analysis failed
 
 ; Attributes: noreturn
 
-sub_312D1       proc far                ; CODE XREF: sub_7005F:loc_7031E\u2193P
+Game_showEndingMessage proc far         ; CODE XREF: sub_7005F:loc_7031E\u2193P
                                         ; sub_7005F+35E\u2193P ...
 
 ; FUNCTION CHUNK AT 0673 SIZE 00000046 BYTES
 
                 call    near ptr rtlink_thunk
                 jmp     loc_C4B23
-sub_312D1       endp ; sp-analysis failed
+Game_showEndingMessage endp ; sp-analysis failed
 
 ; ---------------------------------------------------------------------------
                 dw 38h
@@ -182264,7 +182264,7 @@ loc_7030A:                              ; CODE XREF: sub_7005F+4DC\u2193j
 ; ---------------------------------------------------------------------------
 
 loc_7031E:                              ; CODE XREF: sub_7005F+2B5\u2191j
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; ---------------------------------------------------------------------------
                 jmp     loc_705BF
 ; ---------------------------------------------------------------------------
@@ -182344,7 +182344,7 @@ loc_703AB:                              ; CODE XREF: sub_7005F+347\u2191j
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 8
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; ---------------------------------------------------------------------------
 
 loc_703C2:                              ; CODE XREF: sub_7005F+515\u2193j
@@ -182378,7 +182378,7 @@ loc_703F4:                              ; CODE XREF: sub_7005F+515\u2193j
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; ---------------------------------------------------------------------------
 
 loc_70409:                              ; CODE XREF: sub_7005F+515\u2193j
@@ -182482,7 +182482,7 @@ loc_704EE:                              ; CODE XREF: sub_7005F+4ED\u2193j
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; ---------------------------------------------------------------------------
 
 loc_70503:                              ; CODE XREF: sub_7005F+515\u2193j
@@ -182492,7 +182492,7 @@ loc_70503:                              ; CODE XREF: sub_7005F+515\u2193j
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; ---------------------------------------------------------------------------
 
 loc_70515:                              ; CODE XREF: sub_7005F+4F2\u2193j
@@ -182966,7 +182966,7 @@ loc_7088A:                              ; CODE XREF: sub_705FE+334\u2193j
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 8
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; ---------------------------------------------------------------------------
                 jmp     loc_706B9
 ; ---------------------------------------------------------------------------
@@ -189928,7 +189928,7 @@ arg_0           = word ptr  6
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; ---------------------------------------------------------------------------
 
 loc_73BD6:                              ; CODE XREF: sub_73B98+21\u2191j
@@ -191133,7 +191133,7 @@ loc_744BA:                              ; CODE XREF: sub_74149+31F\u2191j
                 jz      short loc_744F1
                 cmp     Persisted_val244, 0
                 jge     short loc_744E5
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; ---------------------------------------------------------------------------
                 jmp     short loc_744F1
 ; ---------------------------------------------------------------------------
@@ -198615,7 +198615,7 @@ loc_77795:                              ; CODE XREF: sub_77773+D\u2191j
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; ---------------------------------------------------------------------------
 
 loc_777C7:                              ; CODE XREF: sub_77773+30\u2191j
@@ -198844,7 +198844,7 @@ loc_779F4:                              ; CODE XREF: sub_77773+249\u2191j
 
 loc_77A14:
                 add     sp, 8
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; ---------------------------------------------------------------------------
 
 loc_77A1C:                              ; CODE XREF: sub_77773+23D\u2191j
@@ -202195,7 +202195,7 @@ loc_790E7:                              ; CODE XREF: sub_79064+7E\u2191j
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; ---------------------------------------------------------------------------
                 jmp     short loc_79175
 ; ---------------------------------------------------------------------------
@@ -205636,7 +205636,7 @@ loc_7A8C7:                              ; CODE XREF: sub_310B5+3\u2191J
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; ---------------------------------------------------------------------------
 
 loc_7A8F0:                              ; CODE XREF: sub_310B5+49824\u2191j
@@ -207209,7 +207209,7 @@ loc_7B3F7:                              ; CODE XREF: sub_7AE5A+4B8\u2191j
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; ---------------------------------------------------------------------------
                 jmp     loc_7B042
 ; ---------------------------------------------------------------------------
@@ -215750,7 +215750,7 @@ loc_7F7C8:                              ; CODE XREF: sub_7E97C+E20\u2191j
                 push    ax              ; filename
                 call    Stream_loadFile
                 add     sp, 4
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; ---------------------------------------------------------------------------
 
 loc_7F7EA:                              ; CODE XREF: sub_7E97C+E4A\u2191j
@@ -216244,7 +216244,7 @@ loc_7FC03:                              ; CODE XREF: sub_7E97C+12AC\u2193j
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; ---------------------------------------------------------------------------
                 jmp     loc_7F704
 ; ---------------------------------------------------------------------------
@@ -219249,7 +219249,7 @@ loc_811EC:                              ; CODE XREF: sub_810A0+147\u2191j
                 push    ax              ; filename
                 call    Stream_loadFile
                 add     sp, 4
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; ---------------------------------------------------------------------------
                 jmp     loc_812A7
 ; ---------------------------------------------------------------------------
@@ -223198,7 +223198,7 @@ loc_82E76:                              ; CODE XREF: sub_82DA2+C2\u2191j
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; ---------------------------------------------------------------------------
 
 loc_82E88:                              ; CODE XREF: sub_82DA2+A6\u2191j
@@ -228293,7 +228293,7 @@ loc_850D3:                              ; CODE XREF: sub_30D59+54375\u2191j
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; END OF FUNCTION CHUNK FOR sub_30D59
 ; ---------------------------------------------------------------------------
                 mov     ax, 1
@@ -231071,7 +231071,7 @@ loc_864B8:                              ; CODE XREF: sub_85C7C+82D\u2191j
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; ---------------------------------------------------------------------------
                 jmp     loc_85D0C
 ; ---------------------------------------------------------------------------
@@ -247309,7 +247309,7 @@ loc_8D57D:                              ; CODE XREF: sub_30D81+3\u2191J
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; ---------------------------------------------------------------------------
 
 loc_8D5CE:                              ; CODE XREF: sub_30D81+5C81A\u2191j
@@ -252776,7 +252776,7 @@ loc_8FF31:                              ; CODE XREF: sub_30EF3+5EFDE\u2191j
                 push    ax              ; filename
                 call    Stream_loadFile
                 add     sp, 4
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; END OF FUNCTION CHUNK FOR sub_30EF3
 ; ---------------------------------------------------------------------------
                 jmp     short loc_8FEF7
@@ -261197,7 +261197,7 @@ loc_93C64:                              ; CODE XREF: sub_30E17+62DD0\u2191j
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; END OF FUNCTION CHUNK FOR sub_30E17
 ; ---------------------------------------------------------------------------
                 jmp     short loc_93C0E
@@ -296866,7 +296866,7 @@ loc_A380C:                              ; CODE XREF: sub_30D77+72A90\u2191j
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; END OF FUNCTION CHUNK FOR sub_30D77
 ; ---------------------------------------------------------------------------
                 mov     ax, 1
@@ -303527,7 +303527,7 @@ loc_A642F:                              ; CODE XREF: sub_A60CE+35A\u2191j
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; ---------------------------------------------------------------------------
 
 loc_A645F:                              ; CODE XREF: sub_A60CE+37A\u2191j
@@ -305164,7 +305164,7 @@ loc_A70C5:                              ; CODE XREF: sub_A7045+71\u2191j
                 push    ax              ; filename
                 call    Stream_loadFile
                 add     sp, 4
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; ---------------------------------------------------------------------------
 
 loc_A70E7:                              ; CODE XREF: sub_A7045+7E\u2191j
@@ -308618,7 +308618,7 @@ arg_0           = word ptr  6
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; ---------------------------------------------------------------------------
 
 loc_A85A2:                              ; CODE XREF: sub_A8577+7\u2191j
@@ -308690,7 +308690,7 @@ loc_A8626:                              ; CODE XREF: sub_A8577+A4\u2191j
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; ---------------------------------------------------------------------------
 
 loc_A863B:                              ; CODE XREF: sub_A8577+A2\u2191j
@@ -317671,7 +317671,7 @@ loc_AC171:                              ; CODE XREF: sub_AC0F4+51\u2191j
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; ---------------------------------------------------------------------------
                 jmp     short loc_AC1CC
 ; ---------------------------------------------------------------------------
@@ -318099,7 +318099,7 @@ loc_AC47A:                              ; CODE XREF: sub_AC425+23\u2191j
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; ---------------------------------------------------------------------------
                 jmp     short loc_AC508
 ; ---------------------------------------------------------------------------
@@ -323449,7 +323449,7 @@ loc_AEA30:                              ; CODE XREF: sub_AE989+78\u2191j
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; ---------------------------------------------------------------------------
 
 loc_AEA45:                              ; CODE XREF: sub_AE989+91\u2191j
@@ -323489,7 +323489,7 @@ loc_AEA5C:                              ; char
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; ---------------------------------------------------------------------------
                 jmp     loc_AEB3D
 ; ---------------------------------------------------------------------------
@@ -356141,10 +356141,10 @@ loc_BCD98:
 
 loc_BCDA6:
                 mov     es, seg_D19B6
-                mov     es:byte_CBB6E, 1
+                mov     es:_hasWonGame, 1
 
 loc_BCDB0:
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; END OF FUNCTION CHUNK FOR sub_3141B
 ; ---------------------------------------------------------------------------
                 jmp     locret_BD173
@@ -356885,7 +356885,7 @@ loc_BD3CC:                              ; CODE XREF: sub_3112D+8C25B\u2191j
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; END OF FUNCTION CHUNK FOR sub_3112D
 ; ---------------------------------------------------------------------------
                 jmp     short loc_BD39C
@@ -364674,7 +364674,7 @@ loc_C0AD2:                              ; CODE XREF: sub_C0A65+4B\u2191j
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; ---------------------------------------------------------------------------
                 jmp     short loc_C0B4E
 ; ---------------------------------------------------------------------------
@@ -364896,7 +364896,7 @@ loc_C0C79:                              ; CODE XREF: sub_C0C05+55\u2191j
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; ---------------------------------------------------------------------------
                 jmp     short loc_C0C4B
 ; ---------------------------------------------------------------------------
@@ -366065,7 +366065,7 @@ loc_C1402:                              ; CODE XREF: sub_C121D+1B0\u2191j
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; ---------------------------------------------------------------------------
                 jmp     loc_C128F
 ; ---------------------------------------------------------------------------
@@ -366622,7 +366622,7 @@ loc_C1881:                              ; CODE XREF: sub_C1484+24E\u2191j
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; ---------------------------------------------------------------------------
                 jmp     loc_C16B9
 ; ---------------------------------------------------------------------------
@@ -366813,7 +366813,7 @@ loc_C19C0:                              ; CODE XREF: sub_C1984+A8\u2193j
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; ---------------------------------------------------------------------------
 
 loc_C19F2:                              ; CODE XREF: sub_C1984+E\u2191j
@@ -369149,7 +369149,7 @@ loc_C2991:
 loc_C2993:
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; ---------------------------------------------------------------------------
                 mov     ax, 1
 
@@ -370888,7 +370888,7 @@ loc_C354F:                              ; CODE XREF: sub_C352D+9\u2191j
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; ---------------------------------------------------------------------------
 
 loc_C3599:                              ; CODE XREF: sub_C352D+B8\u2193j
@@ -371594,7 +371594,7 @@ loc_C3A60:                              ; CODE XREF: sub_C39F6+2E\u2191j
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; ---------------------------------------------------------------------------
                 jmp     short loc_C3A5B
 ; ---------------------------------------------------------------------------
@@ -372279,7 +372279,7 @@ sub_C3E91       proc far                ; CODE XREF: thunk_sub_C3E91+3\u2191J
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; ---------------------------------------------------------------------------
                 mov     ax, 1
 
@@ -372302,7 +372302,7 @@ sub_C3EB7       proc far                ; CODE XREF: thunk_sub_C3EB7+3\u2191J
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; ---------------------------------------------------------------------------
                 mov     ax, 1
 
@@ -372405,7 +372405,7 @@ loc_C3F7B:                              ; CODE XREF: sub_30EB7+9309F\u2191j
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; END OF FUNCTION CHUNK FOR sub_30EB7
 ; ---------------------------------------------------------------------------
                 jmp     short loc_C3F6C
@@ -372511,7 +372511,7 @@ loc_C403C:                              ; CODE XREF: sub_30E99+3\u2191J
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; END OF FUNCTION CHUNK FOR sub_30E99
 ; ---------------------------------------------------------------------------
                 mov     ax, 1
@@ -372617,7 +372617,7 @@ loc_C410D:                              ; CODE XREF: sub_30DEF+9328E\u2191j
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_312D1
+                call    Game_showEndingMessage
 ; END OF FUNCTION CHUNK FOR sub_30DEF
 ; ---------------------------------------------------------------------------
                 jmp     short loc_C40C0
@@ -373917,7 +373917,7 @@ sub_C44B0       endp
 
 ; Attributes: bp-based frame
 
-sub_C48E4       proc far                ; CODE XREF: sub_C4AE6+12\u2193p
+sub_C48E4       proc far                ; CODE XREF: Game_endGameMenu+12\u2193p
 
 windowNum       = word ptr -12h
 var_10          = word ptr -10h
@@ -374165,11 +374165,11 @@ sub_C48E4       endp
 
 ; Attributes: noreturn
 
-sub_C4AE6       proc near               ; CODE XREF: sub_312D1+93894\u2193p
+Game_endGameMenu proc near              ; CODE XREF: Game_showEndingMessage+93894\u2193p
                 jmp     short loc_C4AF7
 ; ---------------------------------------------------------------------------
 
-loc_C4AE8:                              ; CODE XREF: sub_C4AE6+18\u2193j
+loc_C4AE8:                              ; CODE XREF: Game_endGameMenu+18\u2193j
                 cmp     ax, 2
                 jz      short loc_C4B07
                 cmp     ax, 3
@@ -374177,8 +374177,8 @@ loc_C4AE8:                              ; CODE XREF: sub_C4AE6+18\u2193j
                 cmp     ax, 4
                 jz      short loc_C4B1C
 
-loc_C4AF7:                              ; CODE XREF: sub_C4AE6\u2191j
-                                        ; sub_C4AE6+1F\u2193j ...
+loc_C4AF7:                              ; CODE XREF: Game_endGameMenu\u2191j
+                                        ; Game_endGameMenu+1F\u2193j ...
                 push    cs
                 call    near ptr sub_C48E4
                 cmp     ax, 1
@@ -374187,7 +374187,7 @@ loc_C4AF7:                              ; CODE XREF: sub_C4AE6\u2191j
                 jmp     short loc_C4AF7
 ; ---------------------------------------------------------------------------
 
-loc_C4B07:                              ; CODE XREF: sub_C4AE6+5\u2191j
+loc_C4B07:                              ; CODE XREF: Game_endGameMenu+5\u2191j
                 mov     ax, 2
                 push    ax
                 call    j_load_game
@@ -374195,24 +374195,24 @@ loc_C4B07:                              ; CODE XREF: sub_C4AE6+5\u2191j
                 jmp     short loc_C4AF7
 ; ---------------------------------------------------------------------------
 
-loc_C4B15:                              ; CODE XREF: sub_C4AE6+A\u2191j
+loc_C4B15:                              ; CODE XREF: Game_endGameMenu+A\u2191j
                 call    Parser_performUndo
                 jmp     short loc_C4AF7
 ; ---------------------------------------------------------------------------
 
-loc_C4B1C:                              ; CODE XREF: sub_C4AE6+F\u2191j
+loc_C4B1C:                              ; CODE XREF: Game_endGameMenu+F\u2191j
                 call    j_shutdown
-sub_C4AE6       endp
+Game_endGameMenu endp
 
 ; ---------------------------------------------------------------------------
                 db 0EBh ; ë
                 db 0D4h ; Ô
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR sub_312D1
+; START OF FUNCTION CHUNK FOR Game_showEndingMessage
 
-loc_C4B23:                              ; CODE XREF: sub_312D1+3\u2191J
+loc_C4B23:                              ; CODE XREF: Game_showEndingMessage+3\u2191J
                 mov     es, seg_D1A78
-                cmp     es:byte_CBB6E, 0
+                cmp     es:_hasWonGame, 0
                 jnz     short loc_C4B41
                 mov     ax, 7816h
                 mov     dx, 0F000h
@@ -374223,7 +374223,7 @@ loc_C4B23:                              ; CODE XREF: sub_312D1+3\u2191J
                 jmp     short loc_C4B5A
 ; ---------------------------------------------------------------------------
 
-loc_C4B41:                              ; CODE XREF: sub_312D1+9385C\u2191j
+loc_C4B41:                              ; CODE XREF: Game_showEndingMessage+9385C\u2191j
                 mov     es, seg_D1A7A
                 push    es:_score       ; char
                 mov     ax, 7817h
@@ -374233,14 +374233,14 @@ loc_C4B41:                              ; CODE XREF: sub_312D1+9385C\u2191j
                 call    TextWindow_add
                 add     sp, 6
 
-loc_C4B5A:                              ; CODE XREF: sub_312D1+9386E\u2191j
+loc_C4B5A:                              ; CODE XREF: Game_showEndingMessage+9386E\u2191j
                 mov     es, seg_D1A78
-                mov     es:byte_CBB6E, 0
+                mov     es:_hasWonGame, 0
                 push    cs
-                call    sub_C4AE6
+                call    Game_endGameMenu
 ; ---------------------------------------------------------------------------
                 retf
-; END OF FUNCTION CHUNK FOR sub_312D1
+; END OF FUNCTION CHUNK FOR Game_showEndingMessage
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -387282,8 +387282,8 @@ aNortheast      db 'northeast',0        ; DATA XREF: seg086:0010\u2191o
 aNorthwest      db 'northwest',0        ; DATA XREF: seg086:0014\u2191o
 aSoutheast      db 'southeast',0        ; DATA XREF: seg086:0018\u2191o
 aSouthwest      db 'southwest',0        ; DATA XREF: seg086:001C\u2191o
-byte_CBB6E      db 0                    ; DATA XREF: sub_3141B+8B98F\u2191w
-                                        ; sub_312D1+93856\u2191r ...
+_hasWonGame     db 0                    ; DATA XREF: sub_3141B+8B98F\u2191w
+                                        ; Game_showEndingMessage+93856\u2191r ...
 Persisted_val7  db 0                    ; DATA XREF: sub_136AF+100\u2191r
                                         ; seg068:SAVE_FIELDS\u2191o ...
 Persisted_val194 dw 0FFFFh              ; DATA XREF: Logics_getRoomPic+13D\u2191r
@@ -395805,9 +395805,9 @@ seg_D1A72       dw seg sg4d43           ; DATA XREF: sub_C48E4+59\u2191r
 seg_D1A74       dw seg sg3EDC           ; DATA XREF: sub_C48E4+6F\u2191r
 seg_D1A76       dw seg sg4d43           ; DATA XREF: sub_C48E4+E0\u2191r
                                         ; sub_C48E4:loc_C4ACF\u2191r
-seg_D1A78       dw seg sg4d43           ; DATA XREF: sub_312D1:loc_C4B23\u2191r
-                                        ; sub_312D1:loc_C4B5A\u2191r
-seg_D1A7A       dw seg sg4d43           ; DATA XREF: sub_312D1:loc_C4B41\u2191r
+seg_D1A78       dw seg sg4d43           ; DATA XREF: Game_showEndingMessage:loc_C4B23\u2191r
+                                        ; Game_showEndingMessage:loc_C4B5A\u2191r
+seg_D1A7A       dw seg sg4d43           ; DATA XREF: Game_showEndingMessage:loc_C4B41\u2191r
 seg_D1A7C       dw seg sg4d43           ; DATA XREF: sub_C4EC8+5E\u2191r
 seg_D1A7E       dw seg sg4d43           ; DATA XREF: sub_C4EC8:loc_C5022\u2191r
                                         ; sub_C4EC8:loc_C50C7\u2191r ...

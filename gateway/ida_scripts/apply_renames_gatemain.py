@@ -309,6 +309,28 @@ RENAMES = [
      "action-code convention already seen elsewhere (e.g. "
      "Logic_call/room_load's action arguments). Individual handler "
      "routines in the dispatch table not traced."),
+
+    # -- ninth pass, same session: back to rank_unnamed_functions.py's
+    # top of the list -- turned out to be the game's actual win/lose
+    # ending. See docs/overview.md#game_showendingmessage-and-game_endgamemenu-named. --
+
+    (0x312D1, "Game_showEndingMessage",
+     "Confirmed by decoding its own message text: msgId 0x7816 = "
+     "\"You have failed.\", 0x7817 = \"You have won the game, scoring "
+     "%d out of 1500 points.\" (using _score as the %d). Branches on "
+     "_hasWonGame (was byte_CBB6E), prints the appropriate ending "
+     "message, resets that flag, then calls Game_endGameMenu."),
+    (0xCBB6E, "_hasWonGame",
+     "Gates which of the two ending messages Game_showEndingMessage "
+     "prints -- confirmed by the message text itself (fail vs. win)."),
+    (0xC4AE6, "Game_endGameMenu",
+     "The classic post-ending prompt loop: calls sub_C48E4 repeatedly "
+     "for a choice, dispatching 1=restart (sub_1057E), "
+     "2=restore-a-save (j_load_game(2)), 3=undo "
+     "(Parser_performUndo), 4=quit (j_shutdown) -- the textbook "
+     "Infocom-style \"RESTART, RESTORE, UNDO, or QUIT?\" menu shown "
+     "after winning or losing. sub_C48E4 (the actual prompt/choice "
+     "getter) not traced."),
 ]
 
 

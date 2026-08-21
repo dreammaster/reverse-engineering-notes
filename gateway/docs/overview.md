@@ -1237,3 +1237,34 @@ and the two previous passes, the room-exit/movement cluster
 (`Logics_tryMoveDirection` and everything it calls) is now reasonably
 well documented end to end, short of the 44 individual special-exit
 handlers and the two remaining untraced exit-type branches.
+
+### `Game_showEndingMessage`/`Game_endGameMenu` named — the actual win/lose ending
+
+Same session, back to the top of a freshly re-ranked list. `sub_312D1`
+(38 callers) turned out to be the game's real win/lose ending, confirmed
+definitively by decoding its own message text:
+
+- `0x7816` → `"You have failed.\n"`
+- `0x7817` → `"You have won the game, scoring %d out of 1500 points.\n"`
+  (the `%d` is `_score`)
+
+`Game_showEndingMessage` branches on `_hasWonGame` (was `byte_CBB6E`),
+prints whichever message applies, resets the flag, then calls
+**`Game_endGameMenu`** (was `sub_C4AE6`) — the textbook Infocom-style
+post-ending prompt: repeatedly asks for a choice and dispatches
+`1`=restart, `2`=restore a save (`j_load_game(2)`), `3`=undo
+(`Parser_performUndo`), `4`=quit (`j_shutdown`). Called from 38
+different places throughout the compiled logic — presumably one call
+site per way the player can actually win or lose the game.
+
+Minor curiosity worth a note rather than a rename: this ending message's
+`1500`-point max doesn't match the earlier-decoded status message's
+`1600`-point max (`"You have achieved a score of %d out of 1600, in %d
+turns."`, from the `Score_add`/`_score` session) — plausibly a real
+distinction (points needed *to win* vs. the absolute ceiling including
+bonus points) rather than an inconsistency, but not independently
+confirmed.
+
+Applied via `apply_renames_gatemain.py`'s ninth batch. **Not traced**:
+`sub_C48E4`, the actual prompt/choice-reading function
+`Game_endGameMenu` calls.
