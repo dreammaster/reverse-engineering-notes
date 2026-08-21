@@ -18813,6 +18813,7 @@ static Bytes_3(void) {
 	create_insn	(x=0X1FE25);
 	op_hex		(x,	1);
 	create_insn	(0X1FE30);
+	set_name	(0X1FE30,	"Sound_shutdown");
 	create_insn	(x=0X1FE38);
 	op_hex		(x,	1);
 	create_insn	(x=0X1FE3B);

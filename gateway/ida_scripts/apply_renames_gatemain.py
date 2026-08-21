@@ -1722,6 +1722,24 @@ RENAMES = [
      "continues while the high bit is set. A second compiled copy for "
      "this stream, the same duplication pattern already seen with "
      "Vocab_matchesAbbreviation/String_matchesPrefixCI."),
+
+    # -- sixty-second pass: sub_1FE30, called from the already-named
+    # Sound_selectDevice, finish, and shutdown -- confirmed as the
+    # sound subsystem's own full teardown function, the counterpart to
+    # Sound_selectDevice's device-selection init. See
+    # docs/overview.md#sound_shutdown-named. --
+
+    (0x1FE30, "Sound_shutdown",
+     "sub_1FE30(): unconditionally stops the current track (the "
+     "already-named Sound_stopTrack(0xFFFF)); if word_C8582's MIDI-"
+     "active bit (value 4, the same bit Sound_selectDevice sets on a "
+     "successful MPU-401 probe) is set, calls sub_1FCAA and prints a "
+     "short literal string via sub_1FB56 (both not renamed -- "
+     "plausibly clearing an on-screen device indicator); finally "
+     "masks word_C8582 down to just bit 8, clearing all backend-"
+     "selection state. Called from the already-named `finish` and "
+     "`shutdown` top-level exit routines -- the sound subsystem's own "
+     "full teardown, counterpart to Sound_selectDevice's init."),
 ]
 
 

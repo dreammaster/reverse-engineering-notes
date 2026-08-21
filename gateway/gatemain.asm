@@ -36838,7 +36838,7 @@ sub_1FB10       endp
 
 ; int __cdecl __far sub_1FB56(const char *str)
 sub_1FB56       proc far                ; CODE XREF: Sound_selectDevice+4D\u2193P
-                                        ; sub_1FE30+1E\u2193P
+                                        ; Sound_shutdown+1E\u2193P
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -37051,7 +37051,7 @@ sub_1FC70       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1FCAA       proc far                ; CODE XREF: sub_1FE30+13\u2193p
+sub_1FCAA       proc far                ; CODE XREF: Sound_shutdown+13\u2193p
                 test    byte ptr word_C8582, 80h
                 jz      short locret_1FCDD
                 and     byte ptr word_C8582, 7Fh
@@ -37220,7 +37220,7 @@ arg_4           = word ptr  0Ah
                 mov     ax, [bp+arg_4]
                 mov     _midiIrqConfig, ax
                 push    cs
-                call    near ptr sub_1FE30
+                call    near ptr Sound_shutdown
                 test    byte ptr [bp+arg_0], 8
                 jz      short loc_1FDDA
                 mov     word_C8582, 8
@@ -37278,7 +37278,7 @@ Sound_selectDevice endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1FE30       proc far                ; CODE XREF: Sound_selectDevice+10\u2191p
+Sound_shutdown  proc far                ; CODE XREF: Sound_selectDevice+10\u2191p
                                         ; finish:loc_28847\u2193P ...
                 mov     ax, 0FFFFh
                 push    ax
@@ -37296,10 +37296,10 @@ sub_1FE30       proc far                ; CODE XREF: Sound_selectDevice+10\u2191
                 call    sub_1FB56
                 add     sp, 4
 
-loc_1FE56:                              ; CODE XREF: sub_1FE30+10\u2191j
+loc_1FE56:                              ; CODE XREF: Sound_shutdown+10\u2191j
                 and     word_C8582, 8
                 retf
-sub_1FE30       endp
+Sound_shutdown  endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -57004,7 +57004,7 @@ finish          proc far                ; CODE XREF: gatestr_load+E3\u2191P
                 call    sub_2881D
 
 loc_28847:
-                call    sub_1FE30
+                call    Sound_shutdown
                 call    sub_24AFD
                 call    Font_deinit
                 mov     ax, 1
@@ -165969,7 +165969,7 @@ sub_67980       endp
 
 shutdown        proc far                ; CODE XREF: j_shutdown+3\u2191J
                 call    sub_2881D
-                call    sub_1FE30
+                call    Sound_shutdown
                 mov     ax, 1
                 push    ax
                 call    restore_handlers
@@ -177071,7 +177071,7 @@ sub_6D7CD       endp
 ; START OF FUNCTION CHUNK FOR sub_2ECC5
 
 loc_6D829:                              ; CODE XREF: sub_2ECC5+3\u2191J
-                call    sub_1FE30
+                call    Sound_shutdown
                 push    cs
                 call    near ptr sub_6D7A3
                 mov     ax, 1

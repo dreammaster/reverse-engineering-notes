@@ -2651,3 +2651,18 @@ same Standard MIDI File VLQ decode loop as `Midi_readVarLengthValue`,
 just using `Midi_peekByte` and incrementing `word_D20A0` instead.
 
 Applied via `apply_renames_gatemain.py`'s sixty-first batch.
+
+### `Sound_shutdown` named
+
+Moved to `sub_1FE30` (4 callers, called from the already-named
+`Sound_selectDevice`, `finish`, and `shutdown`). Confirmed as the
+sound subsystem's own full teardown function — the counterpart to
+`Sound_selectDevice`'s device-selection init: unconditionally stops
+the current track (`Sound_stopTrack(0xFFFF)`); if `word_C8582`'s
+MIDI-active bit is set (the same bit `Sound_selectDevice` sets on a
+successful MPU-401 probe), clears an on-screen device indicator
+(plausibly); then masks `word_C8582` down to just bit `8`, clearing
+all backend-selection state. Called from the game's top-level exit
+routines.
+
+Applied via `apply_renames_gatemain.py`'s sixty-second batch.
