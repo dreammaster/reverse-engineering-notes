@@ -469,6 +469,13 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       generic via two call sites passing unrelated key sources and
       tables. Full writeup in
       [overview.md](overview.md#logics_printkeyedmessage-named--a-generic-keyed-message-table-lookupprint-utility).
+- [x] Named `sub_27134` (17 callers) → `AnimPics_freeAll`, plus
+      `Image_freeFrames`/`AnimPics_resetForRoom`/`_animPicsSlotCount`/
+      `animPicsHandles` — the animated-picture-overlay subsystem's
+      teardown routine and supporting globals, correcting last pass's
+      mischaracterization of `sub_27134` as a per-tick driver. Full
+      writeup in
+      [overview.md](overview.md#animpics_freeall-named--correcting-last-passs-guess-about-sub_27134).
 - [ ] Cross-check the structs shared by name/concept with `gate.idb`
       (`VocabEntry`/`VOCAB_ENTRY`, `Str16`/`STR16`, `Point`/`POINT`,
       `Screen`/`SCREEN`, `Font`/`FONT`, `REGS`, `HandleEntry`/`HANDLE`)

@@ -506,6 +506,49 @@ RENAMES = [
      "55-entry table. This is the same 'per-object special-response "
      "override table, falling back to generic text' pattern seen "
      "elsewhere in the compiled room/object logic."),
+
+    # -- sixteenth pass: sub_27134, confirming and CORRECTING last
+    # pass's guess about it. It's not a per-tick animation driver --
+    # it's the animated-picture-overlay subsystem's teardown/free-all
+    # routine. Confirmed mechanically via sub_26D08 (itself confirmed
+    # as a trivial "Image_Free N consecutive Image records" helper) and
+    # kill_handle. See
+    # docs/overview.md#animpics_freeall-named--correcting-last-passs-guess-about-sub_27134. --
+
+    (0x27134, "AnimPics_freeAll",
+     "sub_27134(): for each active animated-picture slot (0.."
+     "_animPicsSlotCount, was word_C9658), frees its 20 Image records "
+     "via the new Image_freeFrames(handle, 20) and then kill_handle()s "
+     "the slot's own handle (animPicsHandles[i], was byte_D22DA -- a "
+     "5-slot array of dword handles), zeroing it. Finally resets "
+     "_animPicsSlotCount to 0. CORRECTS last pass's overview.md guess "
+     "that this was 'the already-initialized per-tick driver' -- it's "
+     "the teardown/free-all routine, called from AnimPics_resetForRoom "
+     "(was sub_26D50) specifically when slots are already active."),
+    (0x26D08, "Image_freeFrames",
+     "sub_26D08(imgFarPtr, frameCount): trivial helper -- calls "
+     "Image_Free on frameCount consecutive Image-sized records "
+     "starting at imgFarPtr. Confirmed directly by its body; used by "
+     "AnimPics_freeAll to release a slot's up-to-20 loaded frames."),
+    (0x26D50, "AnimPics_resetForRoom",
+     "sub_26D50(): if _animPicsSlotCount (was word_C9658) is already "
+     "nonzero, tears down every active slot via AnimPics_freeAll; "
+     "otherwise (first-ever call) just zeroes the 10-word per-slot "
+     "frame-duration/timing table at 0xA3BA that AnimPics_freeAll's "
+     "sibling slot-register/draw functions (sub_26D7E/sub_26F74, not "
+     "renamed this pass) maintain. Called from graphics_init -- the "
+     "room-transition reset point for the animated-picture-overlay "
+     "subsystem sighted last pass."),
+    (0xC9658, "_animPicsSlotCount",
+     "Was word_C9658: count of active animated-picture-overlay slots "
+     "(0-5), shared by AnimPics_freeAll/AnimPics_resetForRoom and the "
+     "not-yet-renamed sub_26D7E (registers a new slot, capped at 5)/"
+     "sub_26F74 (per-slot timing/draw loop)."),
+    (0xD22DA, "animPicsHandles",
+     "Was byte_D22DA: 5-slot array of dword memory handles, one per "
+     "active animated-picture-overlay slot -- allocated in sub_26D7E "
+     "(not renamed this pass) via new_handle, freed in AnimPics_freeAll "
+     "via kill_handle."),
 ]
 
 

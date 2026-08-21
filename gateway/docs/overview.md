@@ -1518,3 +1518,39 @@ single reusable engine primitive rather than duplicated inline in every
 method.
 
 Applied via `apply_renames_gatemain.py`'s fifteenth batch.
+
+### `AnimPics_freeAll` named — correcting last pass's guess about `sub_27134`
+
+Re-ran `rank_unnamed_functions.py` again; `sub_26F2A` still tops the
+list, still left unnamed. Moved down to `sub_27134` (17 callers) — the
+same function last pass's writeup mentioned in passing (and
+mischaracterized) while sighting the animated-picture-overlay
+subsystem.
+
+Direct read shows `sub_27134` is **not** a per-tick driver — it's the
+subsystem's **teardown/free-all** routine: for each active slot (`0..
+_animPicsSlotCount`, was `word_C9658`), it frees the slot's 20 `Image`
+records via the new **`Image_freeFrames`** (was `sub_26D08`, confirmed
+as a trivial "`Image_Free` on N consecutive `Image`-sized records"
+helper) and then `kill_handle()`s the slot's own memory handle
+(**`animPicsHandles[i]`**, was `byte_D22DA` — confirmed as a 5-slot
+array of dword handles), zeroing it. Finally resets
+`_animPicsSlotCount` to 0. Renamed as **`AnimPics_freeAll`**.
+
+Its caller, `sub_26D50`, is now **`AnimPics_resetForRoom`**: if
+`_animPicsSlotCount` is already nonzero, it tears everything down via
+`AnimPics_freeAll`; otherwise (first-ever call) it just zeroes the
+10-word per-slot frame-duration/timing table at `0xA3BA` that the
+still-unnamed `sub_26D7E`/`sub_26F74` (slot-register and per-slot
+timing/draw loop, respectively — both already characterized in the
+previous pass's investigation) maintain. Called from `graphics_init` —
+the room-transition reset point for the whole subsystem.
+
+**Correction to last pass's overview.md entry**: it described
+`sub_27134` as "the 'already initialized' per-tick driver `sub_26D50`
+calls once `word_C9658 != 0`" — mechanically accurate about *when*
+it's called, but wrong about *what it does*: it tears down, it doesn't
+drive per-tick updates. That per-tick timing/draw role belongs to
+`sub_26F74` instead (still unnamed).
+
+Applied via `apply_renames_gatemain.py`'s sixteenth batch.
