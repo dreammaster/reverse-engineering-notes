@@ -549,6 +549,28 @@ RENAMES = [
      "active animated-picture-overlay slot -- allocated in sub_26D7E "
      "(not renamed this pass) via new_handle, freed in AnimPics_freeAll "
      "via kill_handle."),
+
+    # -- seventeenth pass: investigated sub_15DB2 (15 callers, top of
+    # the re-ranked list), which turns out to be a "change the current
+    # sound/music track" function tangled up with the already-documented
+    # Stream_*/digitized-sound engine (same word_C8582 config-flags
+    # global). Confidently confirmed exactly one piece of it:
+    # get_buff_size? really is what its tentative name says. Everything
+    # else -- including the discovery that the existing tentative name
+    # "startGame?" is almost certainly WRONG (it's actually a
+    # stop-current-sound-before-switching function, not anything to do
+    # with starting a game) -- is left unrenamed pending a dedicated
+    # future pass. See
+    # docs/overview.md#sound-track-selection-subsystem-sighted--get_buffer_size-confirmed-startgame-flagged-as-mislabeled. --
+
+    ("get_buff_size?", "get_buffer_size",
+     "get_buff_size?(): confirmed exactly as its tentative name says -- "
+     "finds the largest free memory block (get_largest_free_block_2), "
+     "reserves a fixed amount depending on video mode (halved if "
+     "img._active), and returns whatever's left (0 if not enough). "
+     "Simply dropping the uncertainty-marking '?' now that it's "
+     "directly confirmed; not part of the broader rename-worthy finding "
+     "below."),
 ]
 
 

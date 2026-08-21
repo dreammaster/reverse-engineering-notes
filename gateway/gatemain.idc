@@ -2301,7 +2301,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X10523);
 	op_stkvar	(x,	1);
 	create_insn	(0X1052C);
-	set_name	(0X1052C,	"get_buff_size?");
+	set_name	(0X1052C,	"get_buffer_size");
 	create_insn	(x=0X1052F);
 	op_hex		(x,	1);
 	set_cmt	(0X10535,	"int",	0);

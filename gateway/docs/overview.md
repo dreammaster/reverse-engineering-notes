@@ -1554,3 +1554,59 @@ drive per-tick updates. That per-tick timing/draw role belongs to
 `sub_26F74` instead (still unnamed).
 
 Applied via `apply_renames_gatemain.py`'s sixteenth batch.
+
+### Sound-track-selection subsystem sighted — `get_buffer_size` confirmed, `startGame?` flagged as mislabeled
+
+Re-ran `rank_unnamed_functions.py` again; `sub_26F2A` still tops the
+list, still left unnamed. Moved down to `sub_15DB2` (15 callers, called
+from many different compiled logic routines — consistent with "change
+the current room/scene's music or sound" being invoked from many room
+scripts).
+
+Tracing it led straight back into the already-documented `Stream_*`/
+digitized-sound-engine subsystem — it reads and writes the very same
+`word_C8582` config-flags global already established there. Mechanics
+(not renamed, see below): compares two requested track/section IDs
+against the currently-playing ones (`word_C856E`/`word_C8580`),
+no-ops if either already matches; otherwise calls the already-flagged
+`startGame?(0xFFFF)` (see below), looks up up to 4 associated
+sub-resource IDs per section via a table at `+0x3D8E` and
+**`sub_15F35`** (itself a small lookup: given a cue ID, scans a
+37-entry table by key and returns one of two associated resource
+variants depending on `word_C8582` bit 4 — plausibly a streamed-vs-
+preloaded or quality-tier choice), then resets several buffer-
+bookkeeping globals and calls `get_buffer_size`/`sub_1FE5C`.
+
+Two concrete findings, one confirmed and applied, one flagged for a
+future pass:
+
+- **`get_buffer_size`** (was `get_buff_size?`): confirmed exactly as
+  its tentative name already said — finds the largest free memory
+  block, reserves a fixed amount depending on video mode (halved if
+  an image is currently active), returns whatever's left. Simply
+  dropped the uncertainty-marking `?` now that it's directly verified.
+  Applied.
+- **`startGame?` is almost certainly mislabeled** — a leftover guess
+  from an earlier, less-confident pass, per the standing "nothing
+  should be presumed accurate" caution. Its real body (called from
+  `sub_15DB2` with the literal argument `-1`) has nothing to do with
+  starting a new game: it tests the same `word_C8582` stream-config
+  bits, compares its argument against the currently-playing track ID
+  `word_C8580` (proceeding only on an exact match or `-1` = "any"),
+  and — under interrupts disabled (`cli`/`sti`) — calls `sub_20390`
+  and `sub_1F910` and busy-waits on buffer-drain-looking conditions.
+  This reads far more like **"stop the currently playing sound/music
+  stream (or force-stop unconditionally if `-1`)"** than anything
+  game-start-related. **Not renamed** this pass — the exact semantics
+  of `sub_20390`/`sub_1F910` and the two resource-variant meanings in
+  `sub_15F35` aren't confirmed yet, and this deserves a dedicated pass
+  rather than a rushed guess replacing one wrong tentative name with
+  another.
+
+`sub_15DB2` itself also left unrenamed pending that same follow-up
+pass — its own role (something like `Sound_selectTrack`) is reasonably
+clear at the architecture level, but not yet nailed down precisely
+enough for a confident name.
+
+Applied via `apply_renames_gatemain.py`'s seventeenth batch (one
+rename: `get_buffer_size`).

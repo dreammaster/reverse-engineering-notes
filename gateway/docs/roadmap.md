@@ -476,6 +476,19 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       mischaracterization of `sub_27134` as a per-tick driver. Full
       writeup in
       [overview.md](overview.md#animpics_freeall-named--correcting-last-passs-guess-about-sub_27134).
+- [x] Investigated `sub_15DB2` (15 callers) — a sound-track-selection
+      function tangled up with the already-documented `Stream_*`
+      subsystem. Confirmed and renamed `get_buff_size?` →
+      `get_buffer_size`. Flagged the existing tentative name
+      `startGame?` as almost certainly **mislabeled** (it reads as
+      "stop the currently playing sound stream", not anything
+      game-start-related) but left it and `sub_15DB2`/`sub_15F35`
+      unrenamed pending a dedicated follow-up pass. Full writeup in
+      [overview.md](overview.md#sound-track-selection-subsystem-sighted--get_buffer_size-confirmed-startgame-flagged-as-mislabeled).
+- [ ] Follow up on the sound-track-selection subsystem: nail down
+      `sub_15DB2`/`sub_15F35`/`startGame?`'s exact semantics (the
+      latter needs correcting, not just naming) and their two
+      resource-variant IDs' meaning.
 - [ ] Cross-check the structs shared by name/concept with `gate.idb`
       (`VocabEntry`/`VOCAB_ENTRY`, `Str16`/`STR16`, `Point`/`POINT`,
       `Screen`/`SCREEN`, `Font`/`FONT`, `REGS`, `HandleEntry`/`HANDLE`)

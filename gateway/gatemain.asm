@@ -667,7 +667,7 @@ Parser_perform  endp
 
 ; Attributes: bp-based frame
 
-get_buff_size?  proc far                ; CODE XREF: sub_15BDA+1C1\u2193P
+get_buffer_size proc far                ; CODE XREF: sub_15BDA+1C1\u2193P
                                         ; sub_15DB2+16C\u2193P ...
 
 var_4           = word ptr -4
@@ -689,16 +689,16 @@ var_2           = word ptr -2
                 jmp     short loc_10555
 ; ---------------------------------------------------------------------------
 
-loc_10552:                              ; CODE XREF: get_buff_size?+1F\u2191j
+loc_10552:                              ; CODE XREF: get_buffer_size+1F\u2191j
                 mov     ax, 0A80h
 
-loc_10555:                              ; CODE XREF: get_buff_size?+24\u2191j
+loc_10555:                              ; CODE XREF: get_buffer_size+24\u2191j
                 mov     [bp+var_4], ax
                 cmp     img._active, 0
                 jz      short loc_10562
                 shr     [bp+var_4], 1
 
-loc_10562:                              ; CODE XREF: get_buff_size?+31\u2191j
+loc_10562:                              ; CODE XREF: get_buffer_size+31\u2191j
                 mov     ax, [bp+var_4]
                 cmp     [bp+var_2], ax
                 jnb     short loc_10571
@@ -706,16 +706,16 @@ loc_10562:                              ; CODE XREF: get_buff_size?+31\u2191j
                 jmp     short loc_10577
 ; ---------------------------------------------------------------------------
 
-loc_10571:                              ; CODE XREF: get_buff_size?+3C\u2191j
+loc_10571:                              ; CODE XREF: get_buffer_size+3C\u2191j
                 mov     ax, [bp+var_4]
                 sub     [bp+var_2], ax
 
-loc_10577:                              ; CODE XREF: get_buff_size?+43\u2191j
+loc_10577:                              ; CODE XREF: get_buffer_size+43\u2191j
                 mov     ax, [bp+var_2]
                 mov     sp, bp
                 pop     bp
                 retf
-get_buff_size?  endp
+get_buffer_size endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -12852,7 +12852,7 @@ loc_15D64:                              ; CODE XREF: sub_15BDA+14A\u2191j
                 mov     es:word_C8576, ax
                 mov     es, dseg_119
                 mov     es:word_C857C, ax
-                call    get_buff_size?
+                call    get_buffer_size
                 mov     es, dseg_131
                 mov     es:word_C8578, ax
                 call    sub_1FE5C
@@ -13006,7 +13006,7 @@ loc_15EE7:                              ; CODE XREF: sub_15DB2+F5\u2191j
 
 loc_15F1A:
                 mov     es:word_C857C, ax
-                call    get_buff_size?
+                call    get_buffer_size
                 mov     es, dseg_131
                 mov     es:word_C8578, ax
                 call    sub_1FE5C
@@ -47768,7 +47768,7 @@ get_largest_free_block_1 endp
 ; Attributes: bp-based frame
 
 ; int __cdecl __far get_largest_free_block_2(int)
-get_largest_free_block_2 proc far       ; CODE XREF: get_buff_size?+A\u2191P
+get_largest_free_block_2 proc far       ; CODE XREF: get_buffer_size+A\u2191P
                                         ; memmgr_info+34\u2191p ...
 
 var_18          = word ptr -18h
@@ -156588,7 +156588,7 @@ loc_62B53:                              ; CODE XREF: sub_62AE2+57\u2191j
                 cmp     [bp+var_4], ax
                 jb      short loc_62B3B
                 add     word_CBFE8, 42h ; 'B'
-                call    get_buff_size?
+                call    get_buffer_size
                 mov     [bp+var_2], ax
                 mov     ax, word_CBFE8
                 add     ax, 0Fh
@@ -162153,7 +162153,7 @@ var_2           = word ptr -2
                 mov     bp, sp
                 sub     sp, 414h
                 push    si
-                call    get_buff_size?
+                call    get_buffer_size
                 mov     [bp+bufferMax], ax
                 cmp     ax, 1E00h
                 jb      short loc_65940
@@ -383984,7 +383984,7 @@ FILE_TYPES      dd aPic                 ; DATA XREF: open_file2+11\u2191r
                 dd aSav                 ; "SAV"
                 dd aSav_0               ; "SAV"
 ; int videoIndex
-_videoIndex     dw -1                   ; DATA XREF: get_buff_size?+19\u2191r
+_videoIndex     dw -1                   ; DATA XREF: get_buffer_size+19\u2191r
                                         ; sub_15674+20\u2191r ...
 word_C8EF0      dw 0                    ; DATA XREF: sub_15674+A\u2191r
                                         ; init_graphics:loc_226D4\u2191w ...
@@ -387614,7 +387614,7 @@ word_CBCFE      dw 1                    ; DATA XREF: sub_1338B+2C\u2191r
 is_mouse_input_mode dw 0                ; DATA XREF: Events_waitForPress:loc_5C7EE\u2191r
                                         ; Events_waitForPress+6F\u2191w ...
 ; Image img
-img             db 20h dup(0)           ; DATA XREF: get_buff_size?+2C\u2191r
+img             db 20h dup(0)           ; DATA XREF: get_buffer_size+2C\u2191r
                                         ; sub_1057E+5\u2191o ...
 word_CBD22      dw 0                    ; DATA XREF: show_memory_info:loc_6AC76\u2191r
 word_CBD24      dw 0                    ; DATA XREF: show_memory_info+72\u2191r
@@ -393655,7 +393655,7 @@ dseg_69         dw seg sg4d43           ; DATA XREF: Parser_perform+1BE\u2191r
                                         ; Parser_perform+21F\u2191r ...
 dseg_70         dw seg sg4d43           ; DATA XREF: Parser_perform:loc_1037D\u2191r
                                         ; Parser_perform+1F0\u2191r ...
-dseg_71         dw seg sg4d43           ; DATA XREF: get_buff_size?+15\u2191r
+dseg_71         dw seg sg4d43           ; DATA XREF: get_buffer_size+15\u2191r
                                         ; seg092:1F13\u2191r
 dseg_72         dw seg sg4d43           ; DATA XREF: sub_1057E+4D\u2191r
 dseg_73         dw seg sg4d43           ; DATA XREF: Parser_performUndo\u2191r
