@@ -279,3 +279,118 @@ instead of a fixed one — e.g. something whose description changes with
 game state. Not traced further (would mean reading each of the 44
 `LogicStringsNN`-named handler functions individually); flagged as a
 minor, self-contained follow-up, not blocking.
+
+## Numbered resource files — shared naming convention
+
+Every `GATE_XXX.<ext>`-style file (pictures, regions, fonts, music) goes
+through one common helper, `open_file2` (`gatemain.asm:41209`):
+`sprintf("%s_%03d.%s", filename_prefix, fileNumber, FILE_TYPES[fileType])`
+— `filename_prefix` is a global (`"GATE"` for this game), `fileType` is a
+small enum indexing a `FILE_TYPES` string table for the actual extension
+(`FILETYPE_PIC`, `FILETYPE_RGN`, `FILETYPE_SAV2`, others not enumerated
+yet), and `fileNumber` is the 3-digit number seen throughout the real
+install (`GATE_000.PIC`, `GATE_101.FNT`, etc.).
+
+## `GATE_XXX.RGN` — clickable-region files
+
+Traced via `load_regions` (`gatemain.asm:56308`), matching the already
+partially-defined `RegionIndex`/`RegionEntry` structs. A region file
+holds clickable/hotspot rectangles for one picture, used for
+point-and-click item interaction (Gateway's late-Early-engine hybrid
+between full parser input and direct mouse targeting — see the
+engine-lineage note at the top of this file). Confirmed by direct
+read of the loader, not yet cross-checked against a real `.RGN` file's
+raw bytes (the struct-level format is unambiguous from the code alone).
+
+- The file begins with a flat, fixed-position array of `RegionIndex`
+  (6 bytes: `u16 fileOffset`, `u16 field_2`, `u16 regionCount`) —
+  addressed by direct seek to `entryNumber * 6` from the start (no count
+  prefix needed since callers already know which entry they want). Each
+  entry describes one **region set** for the picture (plausibly
+  different game states of the same scene — e.g. before/after some
+  event — though not confirmed which numbering scheme picks the entry).
+- `RegionIndex.fileOffset` points elsewhere in the same file to that
+  set's `regionCount` × `RegionEntry` records (6 bytes each: `u16
+  itemId`, `u8 x1`, `u8 y1`, `u8 x2`, `u8 y2` — matching the struct
+  definition exactly). Coordinates are stored in a small byte range and
+  scaled up at load time: `x1`/`x2` are simply doubled; `y1`/`y2` are
+  scaled by `96/224` or `168/224` depending on the active video mode
+  (`_videoIndex` 0 or 1 respectively — EGA/Tandy-class modes with a
+  shorter physical display height than the 224-line design/logical
+  resolution), or used unscaled for higher-resolution modes (`_videoIndex`
+  ≥ 2, e.g. VGA) that can show the full 224 lines directly. Each parsed
+  region becomes one clickable hit-rect (`Regions_addRegion`, given the
+  scaled coordinates plus the current window's screen offset) and its
+  `itemId` is recorded in a `regionList[]` array for later lookup by
+  region-slot index.
+
+**Not yet decoded**: `RegionIndex.field_2`'s meaning (stored into a
+global on load, not otherwise referenced in this function), and exactly
+what numbering scheme selects which `RegionIndex` entry for a given
+picture/state.
+
+## `GATE_XXX.PIC` — picture/image files
+
+Traced via `load_picture` (`gatemain.asm:50322`) and `Image_load`
+(`gatemain.asm:52262`); confirms and extends the existing `PIC_HEADER`/
+`PicIndexEntry`/`Picture`/`PictureDecoder` struct family. This is the
+richest format traced so far — multi-frame pictures, an optional
+embedded palette, and a picture-numbering scheme that exactly explains
+the file groupings seen in the real install
+(`GATE_0xx`/`1xx`/`2xx`/`3xx`/`4xx.PIC`).
+
+**Picture numbering**: a picture is addressed by one 16-bit `picNumber`.
+Bit `0x8000` set is a special case (use the current hardware
+`_videoIndex` directly as the bank number, bypassing the normal
+derivation below). Otherwise: `bank = picNumber >> 12` (top nibble); if
+that's `0` *and* the hardware isn't the base video mode
+(`_videoIndex != 0`), `bank` is forced to `1` instead — i.e. bank 0's
+pictures need a hardware-specific substitute bank 1 on non-default video
+hardware, while banks 1-4 don't. The on-disk **file number** is then
+`bank*100 + ((picNumber >> 8) & 0xF)` — exactly matching the real
+install's five file groups (`GATE_0xx.PIC` through `GATE_4xx.PIC`, each
+covering up to 16 files) once resolved through `open_file2` (see above).
+Whether `bank` 1-4 represent the game's four acts/areas (matching the
+struct/file-numbering hints — plausible, given each bank groups a
+contiguous run of picture files) or something else isn't independently
+confirmed yet, only inferred from this numbering scheme and the file
+listing.
+
+**Within one physical file**, the low byte of `picNumber` selects a
+**12-byte `PicIndexEntry`** at a direct seek to `(picNumber & 0xFF) *
+12` from the start of the file — no count prefix, addressed directly
+like `RegionIndex` above. Confirmed exactly 12 bytes via the seek-offset
+math (`lowByte * 12`) matching what gets `fread`-loaded into the global
+`pic_header`, whose fields resolved from usage:
+`{ fileOffset: u32, flags: u8, frameCount: u8, field_A: u16 (a
+2-byte value later split into two per-`Image` bytes — hotspot or offset
+pair, not confirmed), width: u16, height: u16 }` (4+1+1+2+2+2 = 12).
+`fileOffset == 0` means "no picture at this slot" (load fails cleanly).
+`flags` bit `0x10` = has an embedded palette following the frame table
+(`PICFLAG_HAS_PALETTE`, name already present from earlier work);
+another bit selects pixel bit-depth (`PICFLAG_BIT_DEPTH`, mask not
+pinned down to an exact value this pass); bit `0x40`'s role wasn't
+traced (only that `Image_load` reads it to set one field byte).
+
+**A picture can hold multiple frames** (`frameCount`, up to 255):
+starting exactly at `fileOffset` sits a flat array of `frameCount` **4-byte
+draw-position entries** (`{u16 x, u16 y}` each, read via two
+`freadWord` calls) — frame 0 defaults to `(0, 0)` without needing a
+table entry; frames 1+ read their `(x, y)` from `fileOffset +
+(frameNumber-1)*4`. Right after this whole frame-offset table (`fileOffset
++ frameCount*4`) comes the real payload: an optional palette block (only
+if the `0x10` flag is set, sized via a `video_palette_sizes[bitDepth]`
+lookup) followed by the actual pixel data, handed off to
+`PictureDecoder_load` for decompression/rasterizing (not traced this
+pass — the actual pixel encoding is still unknown).
+
+If the caller only wants metadata (`pic_headers_only_flag` set), loading
+stops right after resolving the draw position, before ever reading
+palette/pixel data — used by whatever needs picture dimensions without
+displaying it.
+
+**Not yet decoded**: `PictureDecoder_load`'s actual pixel format/
+compression scheme, the exact `PICFLAG_BIT_DEPTH` bitmask value, `flags`
+bit `0x40`, and `field_A`'s real meaning. Also not confirmed: whether
+bank 1-4 really correspond to the game's four story acts, or something
+else entirely.

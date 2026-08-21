@@ -222,6 +222,26 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       confirmed against any on-disk data; may just be an in-memory
       runtime structure built from these pieces rather than something
       read directly off disk.
+- [x] Traced `GATE_XXX.RGN` (`load_regions`) and `GATE_XXX.PIC`
+      (`load_picture`/`Image_load`). Regions: direct-seek `RegionIndex`
+      → `RegionEntry` hit-rects, with a video-mode-dependent Y-coordinate
+      rescale (96/224, 168/224, or unscaled depending on display height)
+      confirming a fixed authoring resolution adapted per hardware mode
+      at runtime. Pictures: derived the exact picture-numbering scheme
+      from code (`bank = picNumber>>12` forced to 1 on non-default video
+      hardware when 0; `fileNumber = bank*100 + ((picNumber>>8)&0xF)`)
+      and it **exactly** reproduces the five real `GATE_0xx`-`4xx.PIC`
+      file groupings — strong independent confirmation. Decoded the
+      12-byte `PicIndexEntry` (direct-seek, no count prefix, same style
+      as `.RGN`) and the multi-frame draw-position table following it.
+      Full writeup in
+      [overview.md](overview.md#gate_xxxrgngate_xxxpic-decoded--regions-and-multi-frame-pictures)
+      and file-formats.md.
+- [ ] `PictureDecoder_load`'s actual pixel format/compression — the
+      single biggest remaining piece of the picture pipeline, not
+      traced yet. Also open: whether picture banks 1-4 correspond to
+      the game's four story acts, `RegionIndex.field_2`'s meaning, and a
+      couple of still-unnamed flag bits in both formats.
 - [ ] Re-run `rank_unnamed_functions.py` now that the thunk noise is
       filtered out, to pick the next real targets from the 1769
       remaining unnamed functions.

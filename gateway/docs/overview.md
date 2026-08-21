@@ -676,3 +676,56 @@ oddly-named `LogicStrings36`/`43`/`44` functions surfaced by last
 session's collapsed-function fix. Not traced further — each handler
 would need individual reading, and this is a narrow, self-contained
 mechanism rather than a blocking architectural question.
+
+### `GATE_XXX.RGN`/`GATE_XXX.PIC` decoded — regions and multi-frame pictures
+
+Same session, per Paul's direction to trace the picture/region formats
+next. Full record-level layouts in
+[file-formats.md](file-formats.md#gate_xxxrgn--clickable-region-files)
+(regions) and
+[file-formats.md](file-formats.md#gate_xxxpic--pictureimage-files)
+(pictures) — narrative highlights below.
+
+**Shared groundwork**: every numbered resource file (`GATE_XXX.<ext>`)
+goes through one helper, `open_file2`, which is literally
+`sprintf("%s_%03d.%s", filename_prefix, fileNumber, FILE_TYPES[fileType])`
+— confirms the naming convention visible in the real install directly
+from code, not just pattern-matched from file names.
+
+**`.RGN` (traced via `load_regions`)**: a direct-seek (no count prefix)
+array of 6-byte `RegionIndex` records, each pointing to its own array of
+6-byte `RegionEntry` hit-rects (`itemId` + 4 byte-sized coordinates).
+Confirms and extends the pre-existing struct definitions exactly.
+**Genuinely interesting mechanic surfaced along the way**: stored
+coordinates get rescaled at load time based on the active video mode —
+`x` is simply doubled, but `y` is scaled by `96/224` or `168/224`
+depending on whether the hardware is a shorter-than-224-line mode (EGA/
+Tandy-class) or left unscaled for modes that can show the full 224-line
+design resolution (VGA-class) — concrete evidence Gateway's region/hit-
+test coordinates were authored once at a fixed logical resolution and
+adapted per video mode at runtime, not re-authored per mode.
+
+**`.PIC` (traced via `load_picture`/`Image_load`)**: considerably richer
+— the picture-numbering scheme derived directly from the code
+(`bank = picNumber>>12`, forced to 1 instead of 0 on non-default video
+hardware; `fileNumber = bank*100 + ((picNumber>>8)&0xF)`) reproduces
+**exactly** the five `GATE_0xx`-`4xx.PIC` file groupings seen in the
+real install — strong independent confirmation that the numbering
+scheme was decoded correctly, not just guessed from the file names.
+Within one physical file, pictures are indexed by a **12-byte
+`PicIndexEntry`** at a direct seek (`lowByte * 12`, no count prefix, same
+addressing style as `.RGN`'s index), giving a file offset, flags
+(embedded palette bit, bit-depth bits, one still-unexplained bit),
+frame count, and dimensions. **Pictures can hold multiple frames**, each
+with its own `(x, y)` draw-position entry in a small table starting
+right at the picture's file offset — a lightweight sprite-sheet-like
+mechanism, not just single static images. The real pixel payload
+(handed to `PictureDecoder_load`) comes right after that offset table
+(and an optional palette block) — its actual encoding wasn't traced this
+pass.
+
+**Not yet decoded**: `PictureDecoder_load`'s pixel format/compression
+(the single biggest remaining piece of the picture pipeline), whether
+the 4 non-zero picture banks really correspond to the game's four
+story acts, and a couple of still-unnamed header/flag bits in each
+format. `RegionIndex.field_2`'s meaning is also still open.
