@@ -1880,3 +1880,47 @@ clears `Windows_activeWindow` to `-1` if this was the active window —
 a strict superset of `Window_close`, not a synonym for it.
 
 Applied via `apply_renames_gatemain.py`'s twenty-seventh batch.
+
+### `Game_restartAfterDeath` named — the player-death handler
+
+Skipped two more candidates that turned out to be more of the same
+trouble already flagged: `sub_474F8` (10 callers — unresolved far
+calls to segment `0x802` and a jump into the middle of a local label)
+and `sub_4A722` (9 callers — a bare mid-function fragment with no
+prologue, in the same `0x4A6xx`/`0x4A7xx` neighborhood as the
+already-flagged `sub_4A69F` cluster). Neither renamed.
+
+Moved to `sub_9E8DF` (9 callers, 1007 bytes, reached via a real thunk
+— a substantial function). Confirmed conclusively via **two separate
+real call sites**, each printing a decoded `GATESTR.DAT` death message
+immediately before calling it:
+
+- `msgId 0x41E`: *"Possessed by some crazed notion, you leap from the
+  cliff walkway into the abyss."* — a `JUMP`-off-a-cliff easter egg.
+- `msgId 0x4008`: *"...he slices off a bit more of your neck than you
+  can afford to lose."* — killed by an enemy's axe.
+
+Both lead directly into this same function — it's the **player-death
+handler**. `Game_restartAfterDeath()`: calls the still-unconfirmed
+`sub_26F2A` and the already-named `AnimPics_freeAll`, then — gated on
+whether this is the player's first death or a repeat one
+(**`_deathCount`**, was `word_CE8A8`) — either shows a "you have died"
+picture directly, or pauses (`TextWindow_showMorePrompt`) and routes
+through `sub_15674` (a major hub function seen repeatedly throughout
+this project but still not renamed) with a death picture/message pair.
+Afterward it resets `_roomLogicNum`'s handler, object `0x28`'s
+handler, a large swath of `Persisted_valNNN` globals (95 through at
+least 124), and roughly a dozen individual objects' handlers
+(logicNums `0x21`-`0x40`) back to their initial values — effectively
+restarting the game's state in place after the player dies, with no
+separate confirmation prompt visible in this function itself (any
+"play again?" framing likely happens in whatever calls it, or isn't
+offered at all for these particular sudden-death scenarios).
+
+This sits alongside the already-documented `Game_showEndingMessage`/
+`Game_endGameMenu` (the "official" win/lose ending) as a second,
+simpler death-handling path — used for the game's many scattered
+instant-death scenarios (traps, monsters, misadventures) rather than
+the deliberate ending sequence.
+
+Applied via `apply_renames_gatemain.py`'s twenty-eighth batch.

@@ -11879,7 +11879,7 @@ printObjLower   endp
 ; Attributes: bp-based frame
 
 sub_15674       proc far                ; CODE XREF: sub_9B5F9+131\u2193P
-                                        ; sub_9E8DF+57\u2193P ...
+                                        ; Game_restartAfterDeath+57\u2193P ...
 
 var_2           = word ptr -2
 picNumber       = word ptr  6
@@ -84048,7 +84048,7 @@ thunk_sub_71F59 endp ; sp-analysis failed
 thunk_sub_9E8DF proc far                ; CODE XREF: sub_2E527+3D09B\u2193P
                                         ; sub_7005F+2B7\u2193P ...
                 call    near ptr rtlink_thunk
-                jmp     sub_9E8DF
+                jmp     Game_restartAfterDeath
 thunk_sub_9E8DF endp ; sp-analysis failed
 
 ; ---------------------------------------------------------------------------
@@ -280215,7 +280215,7 @@ loc_9BEF1:
                 push    cs
 
 loc_9BEF5:
-                call    near ptr sub_9E8DF
+                call    near ptr Game_restartAfterDeath
 
 loc_9BEF8:
                 jmp     short loc_9BED7
@@ -281411,7 +281411,7 @@ loc_9C7AF:                              ; CODE XREF: sub_9C542+268\u2191j
                 call    TextWindow_add
                 add     sp, 4
                 push    cs
-                call    near ptr sub_9E8DF
+                call    near ptr Game_restartAfterDeath
                 jmp     loc_9C584
 ; ---------------------------------------------------------------------------
 
@@ -281965,7 +281965,7 @@ loc_9CB5E:                              ; CODE XREF: sub_9C970+1D7\u2191j
                 call    TextWindow_add
                 add     sp, 4
                 push    cs
-                call    near ptr sub_9E8DF
+                call    near ptr Game_restartAfterDeath
                 mov     ax, 2
                 jmp     loc_9CC5E
 ; ---------------------------------------------------------------------------
@@ -282696,7 +282696,7 @@ loc_9D044:                              ; CODE XREF: sub_9CE22+4A0\u2193j
 
 loc_9D051:                              ; CODE XREF: sub_9CE22+417\u2193j
                 push    cs
-                call    near ptr sub_9E8DF
+                call    near ptr Game_restartAfterDeath
                 mov     ax, 2
                 jmp     loc_9D33B
 ; ---------------------------------------------------------------------------
@@ -283931,7 +283931,7 @@ loc_9D911:                              ; CODE XREF: sub_9D856+77\u2191j
                 call    TextWindow_add
                 add     sp, 4
                 push    cs
-                call    near ptr sub_9E8DF
+                call    near ptr Game_restartAfterDeath
                 jmp     short loc_9D8BB
 ; ---------------------------------------------------------------------------
 
@@ -284859,7 +284859,7 @@ loc_9DEFB:                              ; CODE XREF: sub_31097+6CE5E\u2191j
 
 loc_9DF30:                              ; CODE XREF: sub_31097+6CE16\u2191j
                 push    cs
-                call    near ptr sub_9E8DF
+                call    near ptr Game_restartAfterDeath
                 jmp     loc_9DDF2
 ; ---------------------------------------------------------------------------
 
@@ -284933,7 +284933,7 @@ loc_9DF90:                              ; CODE XREF: sub_31065+6CF14\u2191j
                 cmp     Persisted_val113, 6
                 jnz     short loc_9DFCB
                 push    cs
-                call    near ptr sub_9E8DF
+                call    near ptr Game_restartAfterDeath
                 jmp     short loc_9DF8B
 ; ---------------------------------------------------------------------------
 
@@ -285368,7 +285368,7 @@ loc_9E2A6:                              ; CODE XREF: sub_9E079+228\u2191j
                 call    thunk_sub_5E426
                 add     sp, 4
                 push    cs
-                call    near ptr sub_9E8DF
+                call    near ptr Game_restartAfterDeath
 
 loc_9E330:                              ; CODE XREF: sub_9E079+393\u2193j
                 mov     ax, 1
@@ -286102,7 +286102,7 @@ sub_9E7EF       endp
 
 ; Attributes: bp-based frame
 
-sub_9E8DF       proc far                ; CODE XREF: thunk_sub_9E8DF+3\u2191J
+Game_restartAfterDeath proc far         ; CODE XREF: thunk_sub_9E8DF+3\u2191J
                                         ; sub_9BD7E:loc_9BEF5\u2191p ...
 
 var_4           = word ptr -4
@@ -286114,7 +286114,7 @@ var_2           = word ptr -2
                 mov     [bp+var_4], 0
                 call    sub_26F2A
                 call    AnimPics_freeAll
-                cmp     word_CE8A8, 1
+                cmp     _deathCount, 1
                 jle     short loc_9E90D
                 mov     ax, 126h
                 mov     dx, seg seg206
@@ -286125,14 +286125,14 @@ var_2           = word ptr -2
                 jmp     short loc_9E941
 ; ---------------------------------------------------------------------------
 
-loc_9E90D:                              ; CODE XREF: sub_9E8DF+1A\u2191j
-                inc     word_CE8A8
+loc_9E90D:                              ; CODE XREF: Game_restartAfterDeath+1A\u2191j
+                inc     _deathCount
                 mov     es, seg_D1706
                 cmp     es:word_C8EF0, 0
                 jz      short loc_9E922
                 call    TextWindow_showMorePrompt
 
-loc_9E922:                              ; CODE XREF: sub_9E8DF+3C\u2191j
+loc_9E922:                              ; CODE XREF: Game_restartAfterDeath+3C\u2191j
                 mov     ax, 50h ; 'P'
                 push    ax
                 mov     ax, 32h ; '2'
@@ -286147,7 +286147,7 @@ loc_9E922:                              ; CODE XREF: sub_9E8DF+3C\u2191j
                 add     sp, 0Ah
                 mov     [bp+var_4], ax
 
-loc_9E941:                              ; CODE XREF: sub_9E8DF+2C\u2191j
+loc_9E941:                              ; CODE XREF: Game_restartAfterDeath+2C\u2191j
                 sub     ax, ax
                 push    ax              ; newId
                 mov     es, seg_D16EA
@@ -286169,7 +286169,7 @@ loc_9E941:                              ; CODE XREF: sub_9E8DF+2C\u2191j
                 mov     Persisted_val97, 0
                 mov     [bp+var_2], 0
 
-loc_9E981:                              ; CODE XREF: sub_9E8DF+B4\u2193j
+loc_9E981:                              ; CODE XREF: Game_restartAfterDeath+B4\u2193j
                 mov     bx, [bp+var_2]
                 shl     bx, 1
                 mov     word ptr [bx+6950h], 0
@@ -286443,7 +286443,7 @@ loc_9E981:                              ; CODE XREF: sub_9E8DF+B4\u2193j
                 assume es:sg4d43
                 mov     es:_roomLogicNum, ax
 
-loc_9EC9F:                              ; CODE XREF: sub_9E8DF+382\u2191j
+loc_9EC9F:                              ; CODE XREF: Game_restartAfterDeath+382\u2191j
                 mov     ax, 3DE2h
                 push    ds
                 push    ax              ; img
@@ -286462,7 +286462,7 @@ loc_9EC9F:                              ; CODE XREF: sub_9E8DF+382\u2191j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_9E8DF       endp
+Game_restartAfterDeath endp
 
 ; ---------------------------------------------------------------------------
                 align 4
@@ -390643,7 +390643,7 @@ aWhlbeep2_rs_0  db 'whlbeep2.rs',0
 aAppetizing_    db 'appetizing."',0
                 db    0
 Persisted_val95 db 0                    ; DATA XREF: seg068:SAVE_FIELDS\u2191o
-                                        ; sub_9E8DF+8D\u2191w ...
+                                        ; Game_restartAfterDeath+8D\u2191w ...
                 align 2
 Persisted_val96 dw 0                    ; DATA XREF: seg068:SAVE_FIELDS\u2191o
                                         ; sub_9B946+3DD\u2191w ...
@@ -390666,11 +390666,11 @@ Persisted_val99 db 0                    ; DATA XREF: seg068:SAVE_FIELDS\u2191o
                                         ; sub_9B946+264\u2191w ...
                 align 2
 Persisted_val100 dw 0                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
-                                        ; sub_9E8DF+BB\u2191w ...
+                                        ; Game_restartAfterDeath+BB\u2191w ...
 Persisted_val101 dw 2                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
-                                        ; sub_9E8DF+C1\u2191w ...
+                                        ; Game_restartAfterDeath+C1\u2191w ...
 Persisted_val102 dw 1                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
-                                        ; sub_9E8DF+C7\u2191w ...
+                                        ; Game_restartAfterDeath+C7\u2191w ...
 Persisted_val103 db 0                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
                                         ; seg205:loc_9B940\u2191r ...
                 align 2
@@ -390684,11 +390684,11 @@ Persisted_val106 db 0                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
 Persisted_val107 dw 0                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
                                         ; sub_9C970+2B9\u2191w ...
 Persisted_val108 db 0                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
-                                        ; sub_9E8DF+EF\u2191w ...
+                                        ; Game_restartAfterDeath+EF\u2191w ...
 Persisted_val109 db 0                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
-                                        ; sub_9E8DF+F4\u2191w ...
+                                        ; Game_restartAfterDeath+F4\u2191w ...
 Persisted_val110 db 0                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
-                                        ; sub_9E8DF+F9\u2191w ...
+                                        ; Game_restartAfterDeath+F9\u2191w ...
 Persisted_val111 db 0                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
                                         ; sub_9C542+68\u2191r ...
 Persisted_val112 db 0                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
@@ -390697,7 +390697,7 @@ Persisted_val112 db 0                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
 Persisted_val113 dw 0                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
                                         ; sub_9B946+256\u2191r ...
 Persisted_val114 db 0                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
-                                        ; sub_9E8DF+118\u2191w ...
+                                        ; Game_restartAfterDeath+118\u2191w ...
 Persisted_val115 db 0                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
                                         ; sub_9C0EE:loc_9C204\u2191w ...
 Persisted_val116 dw 0                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
@@ -390710,9 +390710,9 @@ Persisted_val118 db 0                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
 Persisted_val119 dw 0                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
                                         ; sub_9DBFD+DB\u2191r ...
 Persisted_val120 db 0                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
-                                        ; sub_9E8DF+139\u2191w ...
+                                        ; Game_restartAfterDeath+139\u2191w ...
 Persisted_val121 db 0                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
-                                        ; sub_9E8DF+13E\u2191w ...
+                                        ; Game_restartAfterDeath+13E\u2191w ...
 Persisted_val122 dw 0                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
                                         ; sub_30F1B:loc_9E458\u2191r ...
 Persisted_val125 dw 0                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
@@ -390720,8 +390720,8 @@ Persisted_val125 dw 0                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
 Persisted_val126 db 0                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
                                         ; sub_A0C24+29E\u2191r ...
                 align 2
-word_CE8A8      dw 0                    ; DATA XREF: sub_9E8DF+15\u2191r
-                                        ; sub_9E8DF:loc_9E90D\u2191w
+_deathCount     dw 0                    ; DATA XREF: Game_restartAfterDeath+15\u2191r
+                                        ; Game_restartAfterDeath:loc_9E90D\u2191w
 Persisted_val127 dw 0                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
                                         ; sub_9C347+AD\u2191r ...
 aTakingYouIn    db 'taking you in',0
@@ -390898,7 +390898,7 @@ aAhriman        db 'Ahriman',0          ; DATA XREF: sg4d43:6B5C\u2193o
 Persisted_val123 db 0                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
                                         ; sub_9C0EE+124\u2191w ...
 Persisted_val124 db 0                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
-                                        ; sub_9E8DF+10C\u2191w ...
+                                        ; Game_restartAfterDeath+10C\u2191w ...
 aBlack_1        db 'black',0
 aGrey_0         db 'grey',0
 aWild_0         db 'wild',0
@@ -395101,10 +395101,10 @@ seg_D1700       dw seg seg125           ; DATA XREF: sub_31097+6CD7C\u2191r
                 dw seg seg125
 seg_D1704       dw seg sg4d43           ; DATA XREF: sub_9E079+A4\u2191r
                                         ; sub_9E079+16B\u2191r ...
-seg_D1706       dw seg sg4d43           ; DATA XREF: sub_9E8DF+32\u2191r
-seg_D1708       dw seg sg4d43           ; DATA XREF: sub_9E8DF+108\u2191r
-seg_D170A       dw seg sg3EDC           ; DATA XREF: sub_9E8DF+38C\u2191r
-                                        ; sub_9E8DF+3B0\u2191r
+seg_D1706       dw seg sg4d43           ; DATA XREF: Game_restartAfterDeath+32\u2191r
+seg_D1708       dw seg sg4d43           ; DATA XREF: Game_restartAfterDeath+108\u2191r
+seg_D170A       dw seg sg3EDC           ; DATA XREF: Game_restartAfterDeath+38C\u2191r
+                                        ; Game_restartAfterDeath+3B0\u2191r
 seg_D170C       dw seg sg4d43           ; DATA XREF: seg207:005D\u2191r
                                         ; seg207:013A\u2191r ...
 seg_D170E       dw seg sg4d43           ; DATA XREF: sub_9F08E:loc_9F0CA\u2191r

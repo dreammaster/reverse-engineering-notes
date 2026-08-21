@@ -554,6 +554,15 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       window count + clear active-window), a strict superset of the
       already-named `Window_close`. Full writeup in
       [overview.md](overview.md#window_destroy-named).
+- [x] Named `sub_9E8DF` (9 callers) → `Game_restartAfterDeath`, plus
+      `_deathCount` (was `word_CE8A8`) — the player-death handler,
+      confirmed via two real call sites each printing a decoded
+      death message (cliff-jump easter egg; killed by an axe) right
+      before calling it. Resets a large swath of persisted state and
+      per-object handlers to restart the game after death. Skipped
+      `sub_474F8`/`sub_4A722`, more corrupted-looking code near the
+      already-flagged `sub_4A69F` cluster. Full writeup in
+      [overview.md](overview.md#game_restartafterdeath-named--the-player-death-handler).
 - [ ] Unify the whole music/sound-hardware picture: `Speaker_playTone`/
       `Speaker_playErrorBeep` (PC-speaker tones), `Midi_sendByte` +
       `sub_1D966`/`sub_1EE70`/`sub_1ECB6` (MPU-401/MIDI), and

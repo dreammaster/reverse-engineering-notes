@@ -822,6 +822,47 @@ RENAMES = [
      "1), and clears Windows_activeWindow to -1 if this was the "
      "active window. A superset of Window_close, not a synonym for "
      "it."),
+
+    # -- twenty-eighth pass: skipped sub_474F8 (10 callers, unresolved
+    # far calls to segment 0x802, a jump into the middle of a local
+    # label -- likely another corrupted-looking area near the
+    # already-flagged sub_4A69F cluster) and sub_4A722 (9 callers, a
+    # bare mid-function fragment with no prologue, same neighborhood).
+    # Moved to sub_9E8DF (9 callers, 1007 bytes, reached via a real
+    # thunk). Confirmed via TWO separate real call sites, each printing
+    # a decoded GATESTR.DAT death message right before calling it (msgId
+    # 0x41E: "you leap from the cliff walkway into the abyss" after a
+    # JUMP-off-a-cliff easter egg; msgId 0x4008: killed by an axe blow
+    # to the neck) as the player-death handler: shows a "you have died"
+    # picture/message, then resets a large swath of Persisted_valNNN
+    # globals and per-object handlers back to their initial values --
+    # effectively restarting the game's state after death. See
+    # docs/overview.md#game_restartafterdeath-named--the-player-death-handler. --
+
+    (0x9E8DF, "Game_restartAfterDeath",
+     "sub_9E8DF(): confirmed via two real call sites, each printing a "
+     "decoded GATESTR.DAT death message immediately before calling it "
+     "(msgId 0x41E, 'you leap from the cliff walkway into the abyss' "
+     "-- a JUMP-off-a-cliff easter egg; msgId 0x4008, killed by an "
+     "axe blow). Calls the still-unconfirmed sub_26F2A and the "
+     "already-named AnimPics_freeAll, then -- gated on whether this is "
+     "the player's first death or a repeat one (_deathCount, was "
+     "word_CE8A8) -- either shows a 'you have died' picture directly "
+     "or pauses (TextWindow_showMorePrompt) and routes through "
+     "sub_15674 (a major hub function, not renamed) with a death "
+     "picture/message pair. Afterward resets _roomLogicNum's handler, "
+     "object 0x28's handler, and a large swath of Persisted_valNNN "
+     "globals (95 through at least 124) plus roughly a dozen "
+     "individual objects' handlers (logicNums 0x21-0x40) back to "
+     "their initial values -- effectively restarting the game's state "
+     "in place after the player dies, without a separate confirmation "
+     "prompt visible in this function itself."),
+    (0xCE8A8, "_deathCount",
+     "Was word_CE8A8: incremented once per call to "
+     "Game_restartAfterDeath; gates whether that function shows the "
+     "death picture directly (repeat death) or pauses with a message "
+     "first (first death) -- effectively a 'has the player died "
+     "before' counter."),
 ]
 
 
