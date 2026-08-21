@@ -172,6 +172,16 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       The shared `huffman_decompress` primitive is also used by
       `get_message` (presumably `GATESTR.DAT`'s loader) — worth tracing
       that next given the primitive itself is already understood.
+- [x] Traced `gatestr_load`/`get_message` and fully decoded
+      `GATESTR.DAT`'s format — sections, per-string (not per-file)
+      Huffman compression against one global tree, a common-word
+      dictionary extension, and a 32-entry LRU decompressed-string
+      cache. Confirmed against the real file (56 sections, header
+      matches exactly). Full writeup in
+      [overview.md](overview.md#gatestrdat-decoded--sectioned-per-string-compression-with-an-lru-cache)
+      and [file-formats.md](file-formats.md#gatestrdat--compressed-messagestring-resource-file).
+      `makeRoomInTextCache`'s eviction policy and the shared base
+      128-symbol alphabet are the two loose ends left from this pass.
 - [ ] Given the struct list, prioritize understanding the **room/logic
       section format** next — likely the single highest-value target
       for both the ScummVM engine and documenting the shared engine for

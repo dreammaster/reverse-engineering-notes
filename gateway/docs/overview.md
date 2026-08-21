@@ -525,8 +525,37 @@ was fixed) avoided sinking time into reverse-engineering compressed
 bytes as if they were a literal structure.
 
 `huffman_decompress` itself (`gatemain.asm:5690`) is shared with
-`get_message` (presumably `GATESTR.DAT`'s loader — not traced yet), so
+`get_message` (`GATESTR.DAT`'s loader, traced next — see below), so
 this is a general engine-level compression primitive, not something
 `VOCAB.DAT`-specific — relevant if this project ever extends to another
 Early-engine Legend title (see the engine-lineage note at the top of
 this file).
+
+### `GATESTR.DAT` decoded — sectioned, per-string compression with an LRU cache
+
+Same session, per Paul's direction. Traced `gatestr_load` and
+`get_message` fully; complete record-level format now in
+[file-formats.md](file-formats.md#gatestrdat--compressed-messagestring-resource-file).
+Confirmed against the real file (`c:\games\gw\GATESTR.DAT`, 349,805
+bytes) — its header decodes exactly as predicted (`0x0038` = 56
+sections, followed by immediately-plausible `{stringsCount, streamSize}`
+pairs like `{61, 1063}`, `{142, 3119}`, `{11, 256}`).
+
+Considerably more sophisticated than `VOCAB.DAT`: strings are grouped
+into sections (matching the `(sectionId << 10) | index` bit-packed
+message-id scheme `main`'s parser and presumably every logic script
+use), each string **individually** Huffman-compressed against one
+**global** shared tree (not a per-file tree like `VOCAB.DAT`'s), plus an
+extended "common strings" dictionary — Huffman symbols `0x80`+ each
+expand to a whole cached word/phrase rather than one raw byte, a neat
+two-level scheme for compressing English prose specifically. A 32-entry
+LRU cache (`_textCache`) of already-decompressed strings avoids
+re-decompressing anything requested twice, backed by a shared working
+buffer (`gatestr_buffer`) that grows from a soft target down to a hard
+floor depending on what memory is actually available at runtime — a
+very DOS-memory-constrained-era design choice.
+
+**Not yet traced**: `makeRoomInTextCache`'s eviction policy (called
+when the cache or its buffer is full), and the base 128-symbol alphabet
+shared with `VOCAB.DAT`'s decoder (same mechanics, independent trees per
+file).
