@@ -760,6 +760,26 @@ RENAMES = [
      "the same key byte at entry+0). Returns the entry's stored word "
      "(entry+2) if found, or the sentinel 0x7FFF if not -- a find/peek "
      "operation where Queue_remove additionally deletes the match."),
+
+    # -- twenty-fifth pass: sub_265B0, confirmed via its two helpers'
+    # OWN caller list -- both are also called directly by the
+    # already-named scale_pic (itself reached from Image_load), so this
+    # function is doing the same load-and-scale-to-fit sequence as
+    # scale_pic, just starting from a picture number instead of an
+    # already-loaded picture. See
+    # docs/overview.md#load_and_scale_pic-named. --
+
+    (0x265B0, "load_and_scale_pic",
+     "sub_265B0(picNumber): calls the already-named load_picture"
+     "(picNumber, frameNumber=0), then sub_25B90() and "
+     "sub_25BCE(result) (not renamed) -- the exact same two-helper "
+     "sequence the already-named scale_pic (reached from Image_load) "
+     "uses to scale a picture to fit its target area. Named to match "
+     "that existing lowercase-underscore convention rather than "
+     "invent a new one for this small, closely-related cluster. Many "
+     "unrelated callers (Commset_show, sub_7179E, sub_74149, and 8 "
+     "more) confirm this is a generic 'load and display picture N, "
+     "scaled' entry point, not owned by one subsystem."),
 ]
 
 

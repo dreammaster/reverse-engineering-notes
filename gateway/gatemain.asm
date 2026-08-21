@@ -50617,7 +50617,7 @@ sub_25B90       endp
 ; Attributes: bp-based frame
 
 sub_25BCE       proc far                ; CODE XREF: scale_pic+16\u2193p
-                                        ; sub_265B0+16\u2193p
+                                        ; load_and_scale_pic+16\u2193p
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -52059,7 +52059,7 @@ Picture_Load    endp
 
 ; Attributes: bp-based frame
 
-sub_265B0       proc far                ; CODE XREF: sub_7179E+6A5\u2193P
+load_and_scale_pic proc far             ; CODE XREF: sub_7179E+6A5\u2193P
                                         ; sub_74149+35A\u2193P ...
 
 picNumber       = word ptr  6
@@ -52080,7 +52080,7 @@ picNumber       = word ptr  6
                 add     sp, 2
                 pop     bp
                 retf
-sub_265B0       endp
+load_and_scale_pic endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -186112,7 +186112,7 @@ loc_71E3A:                              ; CODE XREF: sub_7179E+5F6\u2191j
                 mov     es, seg_D13B4
                 assume es:sg4d43
                 push    es:_picNumber
-                call    sub_265B0
+                call    load_and_scale_pic
                 add     sp, 2
 
 loc_71E4B:                              ; CODE XREF: sub_7179E+5FE\u2191j
@@ -191115,7 +191115,7 @@ loc_74471:                              ; CODE XREF: sub_74149+313\u2191j
 loc_7449A:                              ; CODE XREF: sub_74149+348\u2191j
                 mov     es, seg_D1414
                 push    es:_picNumber
-                call    sub_265B0
+                call    load_and_scale_pic
                 add     sp, 2
 
 loc_744AB:                              ; CODE XREF: sub_74149+34F\u2191j
@@ -258101,7 +258101,7 @@ loc_925CE:                              ; CODE XREF: sub_9259E+17\u2191j
                 mov     ax, Persisted_val131
                 add     ax, 0C0Fh
                 push    ax
-                call    sub_265B0
+                call    load_and_scale_pic
                 add     sp, 2
                 mov     ax, 2
                 push    ax
@@ -279032,7 +279032,7 @@ loc_9B680:                              ; CODE XREF: sub_9B5F9+82\u2191j
                 add     sp, 0Ah
                 mov     ax, 3A06h
                 push    ax
-                call    sub_265B0
+                call    load_and_scale_pic
                 add     sp, 2
                 call    Screen_backupPalette
                 sub     ax, ax
@@ -313900,7 +313900,7 @@ loc_AA5B2:
                 add     sp, 0Ah
                 mov     ax, 535h
                 push    ax
-                call    sub_265B0
+                call    load_and_scale_pic
                 add     sp, 2
                 mov     es, seg_D1802
                 assume es:sg4d43
@@ -314876,7 +314876,7 @@ loc_AAEE4:                              ; CODE XREF: sub_AA9E3+1CB\u2191j
                 mov     es, seg_D1828
                 assume es:sg4d43
                 push    es:_picNumber
-                call    sub_265B0
+                call    load_and_scale_pic
                 add     sp, 2
 
 loc_AAEF5:                              ; CODE XREF: sub_AA9E3+1D3\u2191j
@@ -320692,7 +320692,7 @@ loc_AD754:                              ; CODE XREF: sub_AD458+208\u2191j
 loc_AD7AF:                              ; CODE XREF: sub_AD458+34E\u2191j
                 mov     es, seg_D1858
                 push    es:_picNumber
-                call    sub_265B0
+                call    load_and_scale_pic
                 add     sp, 2
 
 loc_AD7C0:                              ; CODE XREF: sub_AD458+355\u2191j
@@ -329095,7 +329095,7 @@ loc_B1372:                              ; CODE XREF: Commset_show+908\u2191j
 loc_B1378:                              ; CODE XREF: Commset_show+219\u2191j
                 mov     es, seg_D18AE
                 push    es:_picNumber
-                call    sub_265B0
+                call    load_and_scale_pic
                 add     sp, 2
 
 loc_B1389:                              ; CODE XREF: Commset_show+221\u2191j
@@ -338564,7 +338564,7 @@ loc_B5401:
 loc_B5431:                              ; CODE XREF: sub_B53E0+44\u2191j
                 mov     ax, 535h
                 push    ax
-                call    sub_265B0
+                call    load_and_scale_pic
 
 loc_B543A:
                 add     sp, 2
@@ -339564,7 +339564,7 @@ loc_B5D58:                              ; CODE XREF: sub_B58A3+1FB\u2191j
                 mov     es, seg_D1924
                 assume es:sg4d43
                 push    es:_picNumber
-                call    sub_265B0
+                call    load_and_scale_pic
                 add     sp, 2
 
 loc_B5D69:                              ; CODE XREF: sub_B58A3+203\u2191j
@@ -363696,7 +363696,7 @@ loc_C046C:                              ; CODE XREF: sub_C0168+208\u2191j
 loc_C04C7:                              ; CODE XREF: sub_C0168+356\u2191j
                 mov     es, seg_D1A3C
                 push    es:_picNumber
-                call    sub_265B0
+                call    load_and_scale_pic
                 add     sp, 2
 
 loc_C04D8:                              ; CODE XREF: sub_C0168+35D\u2191j

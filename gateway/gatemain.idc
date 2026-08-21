@@ -25755,6 +25755,7 @@ static Bytes_4(void) {
 	create_insn	(x=0X265A0);
 	op_stroff	(x,	0,	GetStrucIdByName("Picture"),	0);
 	create_insn	(0X265B0);
+	set_name	(0X265B0,	"load_and_scale_pic");
 	set_cmt	(0X265B5,	"frameNumber",	0);
 	set_cmt	(0X265B6,	"picNumber",	0);
 	create_insn	(x=0X265B6);

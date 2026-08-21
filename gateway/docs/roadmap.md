@@ -539,6 +539,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       match. Skipped `sub_4A616` (12 callers) — another corrupted-
       looking stub in the `sub_4A69F` neighborhood. Full writeup in
       [overview.md](overview.md#queue_find-named--a-companion-to-queue_remove).
+- [x] Named `sub_265B0` (11 callers) → `load_and_scale_pic`, confirmed
+      via its two helpers' own caller lists matching the already-named
+      `scale_pic`/`Image_load`. Full writeup in
+      [overview.md](overview.md#load_and_scale_pic-named).
 - [ ] Unify the whole music/sound-hardware picture: `Speaker_playTone`/
       `Speaker_playErrorBeep` (PC-speaker tones), `Midi_sendByte` +
       `sub_1D966`/`sub_1EE70`/`sub_1ECB6` (MPU-401/MIDI), and

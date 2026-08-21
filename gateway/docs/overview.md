@@ -1824,3 +1824,21 @@ not — a find/peek operation where `Queue_remove` additionally deletes
 the match. Named **`Queue_find`**.
 
 Applied via `apply_renames_gatemain.py`'s twenty-fourth batch.
+
+### `load_and_scale_pic` named
+
+Moved to `sub_265B0` (11 callers). Resolved via its two helper calls'
+own caller lists: both `sub_25B90` and `sub_25BCE` are also called
+directly by the already-named `scale_pic` (itself reached from
+`Image_load`), so `sub_265B0` is running the exact same load-and-
+scale-to-fit sequence `scale_pic` uses, just starting from a picture
+number (via the already-named `load_picture`) instead of an
+already-loaded picture. Named **`load_and_scale_pic`**, matching the
+existing lowercase-underscore convention of its immediate neighbors
+rather than inventing a new style for this small, closely-related
+cluster. Many unrelated callers (`Commset_show`, `sub_7179E`,
+`sub_74149`, and 8 more) confirm it's a generic "load and display
+picture N, scaled" entry point, not owned by one subsystem.
+`sub_25B90`/`sub_25BCE` themselves left unrenamed.
+
+Applied via `apply_renames_gatemain.py`'s twenty-fifth batch.
