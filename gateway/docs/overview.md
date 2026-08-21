@@ -1803,3 +1803,24 @@ preventing animations from jumping forward using stale elapsed time
 accumulated while the game was paused or loading.
 
 Applied via `apply_renames_gatemain.py`'s twenty-third batch.
+
+### `Queue_find` named — a companion to `Queue_remove`
+
+Skipped `sub_4A616` (12 callers) — another `sp-analysis failed` tiny
+stub in the same suspicious `0x4A6xx` neighborhood as the `sub_4A69F`
+cluster flagged two passes ago, reached both by a normal `call` and by
+a cross-segment `jmp` from a different overlay (`seg101:0029`)
+straight into its body. It just sets a return value of 0 or 1 with no
+arguments, so its semantic role is entirely caller-dependent; not
+pursued further.
+
+Moved to `sub_12F81` (11 callers), which resolved immediately via a
+direct structural comparison: it's the read-only companion to the
+already-named `Queue_remove` — the exact same `_queueCount`-bounded
+scan over the exact same 4-byte-entry table at the exact same
+`seg126_93`-relative offsets, matching on the same key byte. Returns
+the matching entry's stored word if found, or the sentinel `0x7FFF` if
+not — a find/peek operation where `Queue_remove` additionally deletes
+the match. Named **`Queue_find`**.
+
+Applied via `apply_renames_gatemain.py`'s twenty-fourth batch.

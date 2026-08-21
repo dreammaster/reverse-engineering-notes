@@ -742,6 +742,24 @@ RENAMES = [
      "the current clock' step run after a room transition, preventing "
      "animations from jumping forward using stale elapsed time "
      "accumulated while the game was paused/loading."),
+
+    # -- twenty-fourth pass: skipped sub_4A616 (12 callers) -- another
+    # "sp-analysis failed" tiny stub in the same suspicious 0x4A6xx
+    # neighborhood as the sub_4A69F cluster flagged two passes ago,
+    # reached both by normal `call` and by a cross-segment `jmp` from a
+    # different overlay (seg101:0029) straight into its body; it just
+    # sets a return value of 0 or 1 with no arguments, so its semantic
+    # role is entirely caller-dependent and wasn't pursued further. See
+    # docs/overview.md#queue_find-named--a-companion-to-queue_remove. --
+
+    (0x12F81, "Queue_find",
+     "sub_12F81(key): read-only companion to the already-named "
+     "Queue_remove -- confirmed via a direct structural match against "
+     "its body (same _queueCount-bounded scan over the same 4-byte-"
+     "entry table at the same seg126_93-relative offsets, matching on "
+     "the same key byte at entry+0). Returns the entry's stored word "
+     "(entry+2) if found, or the sentinel 0x7FFF if not -- a find/peek "
+     "operation where Queue_remove additionally deletes the match."),
 ]
 
 

@@ -534,6 +534,11 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       "resync all active animation timers to now" step run after a
       room transition. Full writeup in
       [overview.md](overview.md#animpics_resyncslots-named--another-piece-of-the-animated-picture-overlay-subsystem).
+- [x] Named `sub_12F81` (11 callers) → `Queue_find`, a read-only
+      companion to `Queue_remove` confirmed via direct structural
+      match. Skipped `sub_4A616` (12 callers) — another corrupted-
+      looking stub in the `sub_4A69F` neighborhood. Full writeup in
+      [overview.md](overview.md#queue_find-named--a-companion-to-queue_remove).
 - [ ] Unify the whole music/sound-hardware picture: `Speaker_playTone`/
       `Speaker_playErrorBeep` (PC-speaker tones), `Midi_sendByte` +
       `sub_1D966`/`sub_1EE70`/`sub_1ECB6` (MPU-401/MIDI), and

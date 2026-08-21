@@ -5648,6 +5648,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	128,	0XC7F20);
 	create_insn	(0X12F7B);
 	create_insn	(0X12F81);
+	set_name	(0X12F81,	"Queue_find");
 	create_insn	(x=0X12F8D);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X12F94);
@@ -7415,8 +7416,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X148B4);
 	op_plain_offset	(x,	1,	0X3F100);
 	op_plain_offset	(x,	129,	0X3F100);
-	create_insn	(x=0X148B9);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -7426,6 +7425,8 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X148B9);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X148BC);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X148BF);
@@ -12535,8 +12536,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X18FC3);
 	op_plain_offset	(x,	1,	0XC7F20);
 	op_plain_offset	(x,	129,	0XC7F20);
-	create_insn	(x=0X18FC7);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -12546,6 +12545,8 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X18FC7);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X18FCA);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X18FCD);
@@ -18457,8 +18458,6 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1F70B);
 	op_hex		(x,	1);
-	create_insn	(x=0X1F718);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -18468,6 +18467,8 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X1F718);
+	op_hex		(x,	1);
 	create_insn	(x=0X1F71A);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X1F720);

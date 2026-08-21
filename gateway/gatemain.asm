@@ -6423,7 +6423,7 @@ Queue_exists    endp
 
 ; Attributes: bp-based frame
 
-sub_12F81       proc far                ; CODE XREF: seg151:2586\u2193P
+Queue_find      proc far                ; CODE XREF: seg151:2586\u2193P
                                         ; sub_A60CE+3B\u2193P ...
 
 var_2           = word ptr -2
@@ -6438,10 +6438,10 @@ arg_0           = byte ptr  6
                 jmp     short loc_12F97
 ; ---------------------------------------------------------------------------
 
-loc_12F94:                              ; CODE XREF: sub_12F81+31\u2193j
+loc_12F94:                              ; CODE XREF: Queue_find+31\u2193j
                 inc     [bp+var_2]
 
-loc_12F97:                              ; CODE XREF: sub_12F81+11\u2191j
+loc_12F97:                              ; CODE XREF: Queue_find+11\u2191j
                 mov     ax, _queueCount
                 cmp     [bp+var_2], ax
                 jnb     short loc_12FBB
@@ -6458,15 +6458,15 @@ loc_12FA2:
                 jmp     short loc_12FBE
 ; ---------------------------------------------------------------------------
 
-loc_12FBB:                              ; CODE XREF: sub_12F81+1C\u2191j
+loc_12FBB:                              ; CODE XREF: Queue_find+1C\u2191j
                 mov     ax, 7FFFh
 
-loc_12FBE:                              ; CODE XREF: sub_12F81+38\u2191j
+loc_12FBE:                              ; CODE XREF: Queue_find+38\u2191j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_12F81       endp
+Queue_find      endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -170414,7 +170414,7 @@ loc_6A0D5:                              ; CODE XREF: seg151:2570\u2191j
                 add     sp, 4
                 mov     ax, 60h ; '`'
                 push    ax
-                call    sub_12F81
+                call    Queue_find
                 add     sp, 2
                 mov     [bp-2], ax
                 cwd
@@ -303183,7 +303183,7 @@ loc_A60E8:                              ; CODE XREF: sub_A60CE+16\u2191j
 loc_A6105:                              ; CODE XREF: sub_A60CE+32\u2191j
                 mov     ax, 2Ah ; '*'
                 push    ax
-                call    sub_12F81
+                call    Queue_find
                 add     sp, 2
                 cmp     ax, 1Eh
                 jl      short loc_A6119
@@ -304444,7 +304444,7 @@ loc_A6B65:                              ; CODE XREF: sub_A68D8+288\u2191j
                 call    near ptr sub_A6780
                 mov     ax, 22h ; '"'
                 push    ax
-                call    sub_12F81
+                call    Queue_find
                 add     sp, 2
                 mov     es, seg_D17D8
                 mov     es:word_CB808, ax
@@ -304827,7 +304827,7 @@ loc_A6E51:                              ; CODE XREF: sub_A6BD4+278\u2191j
                 call    near ptr sub_A686E
                 mov     ax, 24h ; '$'
                 push    ax
-                call    sub_12F81
+                call    Queue_find
                 add     sp, 2
                 mov     es, seg_D17D8
                 mov     es:word_CB808, ax
@@ -308730,7 +308730,7 @@ loc_A863B:                              ; CODE XREF: sub_A8577+A2\u2191j
                 jz      short loc_A86BF
                 mov     ax, 2Ah ; '*'
                 push    ax
-                call    sub_12F81
+                call    Queue_find
                 add     sp, 2
                 add     ax, 1Eh
                 push    ax
@@ -310283,7 +310283,7 @@ loc_A9012:                              ; CODE XREF: sub_A8EC2+14B\u2191j
                 jz      short loc_A908E
                 mov     ax, 2Ah ; '*'
                 push    ax
-                call    sub_12F81
+                call    Queue_find
                 add     sp, 2
                 cmp     ax, 1Eh
                 jge     short loc_A9075
@@ -310359,7 +310359,7 @@ loc_A90B8:                              ; CODE XREF: sub_A8EC2+1F1\u2191j
                 jz      short loc_A9134
                 mov     ax, 2Ah ; '*'
                 push    ax
-                call    sub_12F81
+                call    Queue_find
                 add     sp, 2
                 cmp     ax, 1Eh
                 jge     short loc_A911B
@@ -310410,7 +310410,7 @@ loc_A9153:                              ; CODE XREF: sub_A8EC2+28C\u2191j
                 jz      short loc_A919D
                 mov     ax, 2Ah ; '*'
                 push    ax
-                call    sub_12F81
+                call    Queue_find
                 add     sp, 2
                 cmp     ax, 1Eh
                 jge     short loc_A9184
@@ -323536,7 +323536,7 @@ loc_AEA90:                              ; CODE XREF: sub_AE989+ED\u2191j
                 jz      short loc_AEB26
                 mov     ax, 2Ah ; '*'
                 push    ax
-                call    sub_12F81
+                call    Queue_find
                 add     sp, 2
                 add     ax, 1Eh
                 push    ax
@@ -328707,7 +328707,7 @@ loc_B1009:                              ; CODE XREF: Commset_show+579\u2191j
 loc_B100E:                              ; CODE XREF: Commset_show+4A6\u2191j
                 mov     ax, 18h
                 push    ax
-                call    sub_12F81
+                call    Queue_find
                 add     sp, 2
                 mov     [bp+var_80], ax
                 cmp     ax, 1Eh
@@ -336474,7 +336474,7 @@ loc_B470E:                              ; CODE XREF: sub_B46BF+4A\u2191j
 loc_B473F:                              ; CODE XREF: sub_B46BF+13A\u2193j
                 mov     ax, 19h
                 push    ax
-                call    sub_12F81
+                call    Queue_find
                 add     sp, 2
                 mov     [bp+var_4], ax
                 cmp     ax, 2
@@ -363056,7 +363056,7 @@ loc_BFF86:                              ; CODE XREF: sub_30E3F+8F0C2\u2191j
                 call    near ptr sub_BFCA8
                 mov     ax, 4Eh ; 'N'
                 push    ax
-                call    sub_12F81
+                call    Queue_find
                 add     sp, 2
                 inc     ax
                 mov     es, seg_D1A26
@@ -364771,7 +364771,7 @@ loc_C0BA4:                              ; CODE XREF: sub_C0A65+14\u2191j
                 jz      short loc_C0B4E
                 mov     ax, 4Eh ; 'N'
                 push    ax
-                call    sub_12F81
+                call    Queue_find
                 add     sp, 2
                 cmp     ax, 1
                 jnz     short loc_C0B4E
