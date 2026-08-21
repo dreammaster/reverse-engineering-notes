@@ -1268,3 +1268,43 @@ confirmed.
 Applied via `apply_renames_gatemain.py`'s ninth batch. **Not traced**:
 `sub_C48E4`, the actual prompt/choice-reading function
 `Game_endGameMenu` calls.
+
+### `Logics_describeContents`/`Logics_countVisibleContents`/`Logics_listContents` named
+
+Same session, back to the top of a freshly re-ranked list again.
+`sub_149D8` (28 callers) turned out to be the classic "On/In the X you
+see: ..." container/surface description sentence, confirmed by its own
+message text: `"\t%cn%s you see"`, where `%c` is `'O'` (`"On"`, when
+`prepositionType == 1`) or `'I'` (`"In"`, otherwise), and `%s` is the
+far-pointer string `j_printObj` returns for the container/surface
+object's own name.
+
+**`Logics_describeContents`** first calls **`Logics_countVisibleContents`**
+(was `sub_66DFD`) purely as a gate — prints nothing at all if it returns
+`0` — then prints `"On/In <object> you see"`, calls
+**`Logics_listContents`** (was `sub_667D0`) to print the actual
+comma-separated content list, and closes with `".\n"`. Both helpers walk
+the *same* linked list of contained items (`Logics_getUnkHandler` for
+the first entry, then `Logics_getVal1` repeatedly for each next one,
+terminated at `0`), filtering on `Logics_getBit(item, 8)` — consistently
+used across this cluster as a visibility/hidden flag, though not
+independently confirmed beyond this usage. `Logics_countVisibleContents`
+just counts matches; `Logics_listContents` prints each one's name,
+inserting `","` between entries via `TextWindow_addChar`.
+
+Applied via `apply_renames_gatemain.py`'s tenth batch.
+
+**Tooling bug found and fixed while refreshing the two thunks these
+renames made stale** (`thunk_sub_66DFD`/`thunk_sub_667D0`, now pointing
+to newly-named targets): `apply_rtlink_thunks_gatemain.py`'s discovery
+filter only accepted function names still starting with `sub_`, which
+worked for the very first pass but meant **every one of the 712 already-
+renamed `thunk_*` functions became invisible to the script on any later
+re-run** — the "safe to re-run this script" claim in its own maintenance
+note was actually broken the whole time, silently reporting "0 thunks
+renamed" instead of refreshing anything. Fixed by also accepting names
+already starting with `thunk_` as scan candidates, in both
+`apply_rtlink_thunks_gatemain.py` and `find_rtlink_thunks.py` (for
+consistency). Confirmed working: the fixed re-run found and updated
+exactly the 2 stale thunks from this session, leaving the other 710
+correctly untouched.

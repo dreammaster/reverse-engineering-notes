@@ -33,7 +33,11 @@ matches = []
 non_matches_examined = 0
 for ea in idautils.Functions():
     fname = idc.get_func_name(ea)
-    if not fname.startswith("sub_"):
+    # Accept previously-renamed thunks too (thunk_*), not just sub_* --
+    # otherwise a re-run after apply_rtlink_thunks_gatemain.py has
+    # already renamed a batch silently stops finding them. Bug found
+    # and fixed 2026-08-21, second gatemain naming session.
+    if not (fname.startswith("sub_") or fname.startswith("thunk_")):
         continue
     end = idc.get_func_attr(ea, idc.FUNCATTR_END)
     size = end - ea

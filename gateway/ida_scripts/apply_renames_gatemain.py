@@ -331,6 +331,39 @@ RENAMES = [
      "Infocom-style \"RESTART, RESTORE, UNDO, or QUIT?\" menu shown "
      "after winning or losing. sub_C48E4 (the actual prompt/choice "
      "getter) not traced."),
+
+    # -- tenth pass, same session: the container/surface "you see"
+    # description cluster. See
+    # docs/overview.md#logics_describecontents-logics_countvisiblecontents-logics_listcontents-named. --
+
+    (0x149D8, "Logics_describeContents",
+     "sub_149D8(logicNum, prepositionType): confirmed by its own "
+     "message text, \"\\t%cn%s you see\" -- %c is 'O' (prepositionType "
+     "== 1, \"On\") or 'I' (otherwise, \"In\"), %s is the far-pointer "
+     "string j_printObj(logicNum, 2) returns (the object's own printed "
+     "name). First calls thunk_sub_66DFD (Logics_countVisibleContents) "
+     "as a gate -- prints nothing at all if it returns 0 -- then builds "
+     "\"On/In <object> you see\", calls thunk_sub_667D0 "
+     "(Logics_listContents) to print the actual comma-separated "
+     "content list, and closes with \".\\n\". The classic container/"
+     "surface description sentence."),
+    (0x66DFD, "Logics_countVisibleContents",
+     "sub_66DFD(logicNum, handlerId): walks a linked list of contained "
+     "items (Logics_getUnkHandler for the first, then Logics_getVal1 "
+     "repeatedly for each next item, terminated at 0), counting only "
+     "those where Logics_getBit(item, 8) is false (bit 8 -- not "
+     "individually confirmed, but consistently used as a visibility/"
+     "hidden flag across this cluster). Used by "
+     "Logics_describeContents purely as a \"is there anything to show\" "
+     "gate."),
+    (0x667D0, "Logics_listContents",
+     "sub_667D0(logicNum, handlerId): the same linked-list walk as "
+     "Logics_countVisibleContents, but instead of counting, prints each "
+     "visible item's name (via Logics_getVal1-chased entries), "
+     "inserting \",\" (TextWindow_addChar) between entries -- the "
+     "actual comma-separated content listing "
+     "Logics_describeContents prints after \"On/In <object> you "
+     "see\"."),
 ]
 
 

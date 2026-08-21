@@ -411,13 +411,28 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       `Game_endGameMenu` (the classic Infocom-style restart/restore/
       undo/quit post-ending prompt). Full writeup in
       [overview.md](overview.md#game_showendingmessagegame_endgamemenu-named--the-actual-winlose-ending).
+- [x] Named `sub_149D8` (28 callers) → `Logics_describeContents` — the
+      classic "On/In the X you see: ..." container/surface description
+      sentence, plus its two helpers `Logics_countVisibleContents`/
+      `Logics_listContents` (were `sub_66DFD`/`sub_667D0`). Full writeup
+      in [overview.md](overview.md#logics_describecontents-logics_countvisiblecontents-logics_listcontents-named).
+      **Also fixed a real tooling bug** found while refreshing the two
+      thunks these renames made stale: `apply_rtlink_thunks_gatemain.py`
+      (and `find_rtlink_thunks.py`) only recognized `sub_*`-named
+      functions as thunk candidates, so every one of the 712
+      already-renamed `thunk_*` functions was silently invisible to any
+      later re-run — the script's own "safe to re-run" maintenance note
+      was wrong the whole time. Fixed and confirmed working (found and
+      updated exactly the 2 stale thunks, left the other 710 alone).
 - [ ] Continue working down the re-ranked list — the rest of the ~1750
       still-unnamed functions. Also open: `Room.field_16`/`field_18`'s
       deeper semantics (a future `apply_structs_gatemain.py` target),
       the 44 individual `Logics_callSpecialExit` handler routines, the
       two still-undistinguished exit-type branches in
-      `Logics_tryMoveDirection`, and `sub_C48E4` (`Game_endGameMenu`'s
-      actual prompt/choice-reading function).
+      `Logics_tryMoveDirection`, `sub_C48E4` (`Game_endGameMenu`'s
+      actual prompt/choice-reading function), and bit 8's exact meaning
+      on contained items (used as a visibility/hidden flag throughout
+      the `Logics_*Contents` cluster, not independently confirmed).
 - [ ] Cross-check the structs shared by name/concept with `gate.idb`
       (`VocabEntry`/`VOCAB_ENTRY`, `Str16`/`STR16`, `Point`/`POINT`,
       `Screen`/`SCREEN`, `Font`/`FONT`, `REGS`, `HandleEntry`/`HANDLE`)

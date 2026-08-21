@@ -22,6 +22,16 @@ already-renamed thunks get harmlessly re-set to the same or an updated
 name (idc.set_name is idempotent here since the scan re-derives the
 target fresh each time).
 
+**Bug found and fixed 2026-08-21, second gatemain naming session**:
+the discovery filter originally required the CURRENT name to start
+with "sub_", which only worked on the very first run -- every thunk
+this script had already renamed to "thunk_*" no longer matched on a
+later re-run, silently excluding all 712 of them (a re-run reported
+"0 thunks renamed" instead of refreshing stale thunk_sub_XXXXX names).
+Fixed by also accepting names already starting with "thunk_" as
+candidates for the discovery scan, so a re-run actually re-derives and
+updates them as the maintenance note above always intended.
+
 Convention: DRY_RUN starts True. Run once with DRY_RUN True, check the
 output, then flip and re-run.
 
@@ -41,7 +51,7 @@ assert rtlink_thunk_ea != idc.BADADDR, "rtlink_thunk not found -- wrong IDB?"
 def find_thunks():
     for ea in idautils.Functions():
         fname = idc.get_func_name(ea)
-        if not fname.startswith("sub_"):
+        if not (fname.startswith("sub_") or fname.startswith("thunk_")):
             continue
         end = idc.get_func_attr(ea, idc.FUNCATTR_END)
         size = end - ea

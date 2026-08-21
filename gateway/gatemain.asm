@@ -10252,7 +10252,7 @@ sub_1496B       endp
 
 ; Attributes: bp-based frame
 
-sub_149D8       proc far                ; CODE XREF: logic238+24C\u2193P
+Logics_describeContents proc far        ; CODE XREF: logic238+24C\u2193P
                                         ; sub_A4271+64\u2193P ...
 
 logicNum        = word ptr  6
@@ -10262,7 +10262,7 @@ arg_2           = word ptr  8
                 mov     bp, sp
                 push    [bp+arg_2]
                 push    [bp+logicNum]
-                call    thunk_sub_66DFD
+                call    thunk_Logics_countVisibleContents
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_14A35
@@ -10279,10 +10279,10 @@ arg_2           = word ptr  8
                 jmp     short loc_14A0C
 ; ---------------------------------------------------------------------------
 
-loc_14A09:                              ; CODE XREF: sub_149D8+2A\u2191j
+loc_14A09:                              ; CODE XREF: Logics_describeContents+2A\u2191j
                 mov     ax, 49h ; 'I'
 
-loc_14A0C:                              ; CODE XREF: sub_149D8+2F\u2191j
+loc_14A0C:                              ; CODE XREF: Logics_describeContents+2F\u2191j
                 push    ax              ; char
                 mov     ax, offset aCnSYouSee ; "\t%cn%s you see"
                 push    ds
@@ -10291,7 +10291,7 @@ loc_14A0C:                              ; CODE XREF: sub_149D8+2F\u2191j
                 add     sp, 0Ah
                 push    [bp+arg_2]
                 push    [bp+logicNum]
-                call    thunk_sub_667D0
+                call    thunk_Logics_listContents
                 add     sp, 4
                 mov     ax, offset a_   ; ".\n"
                 push    ds
@@ -10299,10 +10299,10 @@ loc_14A0C:                              ; CODE XREF: sub_149D8+2F\u2191j
                 call    TextWindow_add
                 add     sp, 4
 
-loc_14A35:                              ; CODE XREF: sub_149D8+13\u2191j
+loc_14A35:                              ; CODE XREF: Logics_describeContents+13\u2191j
                 pop     bp
                 retf
-sub_149D8       endp
+Logics_describeContents endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -82187,11 +82187,11 @@ thunk_sub_BEEFB endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_667D0 proc far                ; CODE XREF: sub_149D8+48\u2191P
+thunk_Logics_listContents proc far      ; CODE XREF: Logics_describeContents+48\u2191P
                                         ; sub_2E617+3A526\u2193P ...
                 call    near ptr rtlink_thunk
-                jmp     sub_667D0
-thunk_sub_667D0 endp ; sp-analysis failed
+                jmp     Logics_listContents
+thunk_Logics_listContents endp ; sp-analysis failed
 
 ; ---------------------------------------------------------------------------
                 dw 4
@@ -82199,11 +82199,12 @@ thunk_sub_667D0 endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_66DFD proc far                ; CODE XREF: sub_149D8+9\u2191P
+thunk_Logics_countVisibleContents proc far
+                                        ; CODE XREF: Logics_describeContents+9\u2191P
                                         ; sub_2E617+3A4E5\u2193P ...
                 call    near ptr rtlink_thunk
-                jmp     sub_66DFD
-thunk_sub_66DFD endp ; sp-analysis failed
+                jmp     Logics_countVisibleContents
+thunk_Logics_countVisibleContents endp ; sp-analysis failed
 
 ; ---------------------------------------------------------------------------
                 dw 4
@@ -162577,7 +162578,7 @@ seg149          segment byte public 'CODE' use16
 
 ; const char *__cdecl __far printObj(int val1, int logicNum, const char *str)
 printObj        proc far                ; CODE XREF: j_printObj+3\u2191J
-                                        ; sub_667D0+9F\u2193p ...
+                                        ; Logics_listContents+9F\u2193p ...
 
 strLength2      = word ptr -0A0h
 str2            = dword ptr -9Eh
@@ -163451,7 +163452,7 @@ printObj        endp
 
 ; Attributes: bp-based frame
 
-sub_667D0       proc far                ; CODE XREF: thunk_sub_667D0+3\u2191J
+Logics_listContents proc far            ; CODE XREF: thunk_Logics_listContents+3\u2191J
 
 logicNum        = word ptr -6
 var_4           = word ptr -4
@@ -163470,7 +163471,7 @@ handlerId       = word ptr  8
                 jmp     short loc_66809
 ; ---------------------------------------------------------------------------
 
-loc_667EB:                              ; CODE XREF: sub_667D0+3E\u2193j
+loc_667EB:                              ; CODE XREF: Logics_listContents+3E\u2193j
                 mov     ax, 8
                 push    ax              ; index
                 push    [bp+logicNum]   ; logicNum
@@ -163482,19 +163483,19 @@ loc_667EB:                              ; CODE XREF: sub_667D0+3E\u2193j
                 call    Logics_getVal1
                 add     sp, 2
 
-loc_66809:                              ; CODE XREF: sub_667D0+19\u2191j
+loc_66809:                              ; CODE XREF: Logics_listContents+19\u2191j
                 mov     [bp+logicNum], ax
                 or      ax, ax
                 jnz     short loc_667EB
 
-loc_66810:                              ; CODE XREF: sub_667D0+2C\u2191j
+loc_66810:                              ; CODE XREF: Logics_listContents+2C\u2191j
                 mov     ax, [bp+logicNum]
                 mov     [bp+var_2], ax
                 jmp     short loc_6687B
 ; ---------------------------------------------------------------------------
 
-loc_66818:                              ; CODE XREF: sub_667D0+6B\u2193j
-                                        ; sub_667D0+AF\u2193j
+loc_66818:                              ; CODE XREF: Logics_listContents+6B\u2193j
+                                        ; Logics_listContents+AF\u2193j
                 push    [bp+var_2]      ; logicNum
                 call    Logics_getVal1
                 add     sp, 2
@@ -163509,7 +163510,7 @@ loc_66818:                              ; CODE XREF: sub_667D0+6B\u2193j
                 or      ax, ax
                 jnz     short loc_66818
 
-loc_6683D:                              ; CODE XREF: sub_667D0+58\u2191j
+loc_6683D:                              ; CODE XREF: Logics_listContents+58\u2191j
                 cmp     [bp+var_4], 0
                 jle     short loc_66864
                 cmp     [bp+var_2], 0
@@ -163521,15 +163522,15 @@ loc_6683D:                              ; CODE XREF: sub_667D0+58\u2191j
                 jmp     short loc_66864
 ; ---------------------------------------------------------------------------
 
-loc_66857:                              ; CODE XREF: sub_667D0+77\u2191j
+loc_66857:                              ; CODE XREF: Logics_listContents+77\u2191j
                 mov     ax, offset aAnd_0 ; " and"
                 push    ds
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
 
-loc_66864:                              ; CODE XREF: sub_667D0+71\u2191j
-                                        ; sub_667D0+85\u2191j
+loc_66864:                              ; CODE XREF: Logics_listContents+71\u2191j
+                                        ; Logics_listContents+85\u2191j
                 inc     [bp+var_4]
                 push    [bp+logicNum]   ; logicNum
                 mov     ax, 131
@@ -163540,14 +163541,14 @@ loc_66864:                              ; CODE XREF: sub_667D0+71\u2191j
                 mov     ax, [bp+var_2]
                 mov     [bp+logicNum], ax
 
-loc_6687B:                              ; CODE XREF: sub_667D0+46\u2191j
+loc_6687B:                              ; CODE XREF: Logics_listContents+46\u2191j
                 cmp     [bp+logicNum], 0
                 jnz     short loc_66818
                 mov     ax, [bp+var_4]
                 mov     sp, bp
                 pop     bp
                 retf
-sub_667D0       endp
+Logics_listContents endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -164266,7 +164267,7 @@ sub_669E3       endp
 
 ; Attributes: bp-based frame
 
-sub_66DFD       proc far                ; CODE XREF: thunk_sub_66DFD+3\u2191J
+Logics_countVisibleContents proc far    ; CODE XREF: thunk_Logics_countVisibleContents+3\u2191J
 
 logicNum        = word ptr -4
 var_2           = word ptr -2
@@ -164284,7 +164285,7 @@ handlerId       = word ptr  8
                 jmp     short loc_66E39
 ; ---------------------------------------------------------------------------
 
-loc_66E18:                              ; CODE XREF: sub_66DFD+41\u2193j
+loc_66E18:                              ; CODE XREF: Logics_countVisibleContents+41\u2193j
                 mov     ax, 8
                 push    ax              ; index
                 push    [bp+logicNum]   ; logicNum
@@ -164294,12 +164295,12 @@ loc_66E18:                              ; CODE XREF: sub_66DFD+41\u2193j
                 jnz     short loc_66E2E
                 inc     [bp+var_2]
 
-loc_66E2E:                              ; CODE XREF: sub_66DFD+2C\u2191j
+loc_66E2E:                              ; CODE XREF: Logics_countVisibleContents+2C\u2191j
                 push    [bp+logicNum]   ; logicNum
                 call    Logics_getVal1
                 add     sp, 2
 
-loc_66E39:                              ; CODE XREF: sub_66DFD+19\u2191j
+loc_66E39:                              ; CODE XREF: Logics_countVisibleContents+19\u2191j
                 mov     [bp+logicNum], ax
                 or      ax, ax
                 jnz     short loc_66E18
@@ -164307,7 +164308,7 @@ loc_66E39:                              ; CODE XREF: sub_66DFD+19\u2191j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_66DFD       endp
+Logics_countVisibleContents endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -168000,7 +168001,7 @@ loc_68AE4:                              ; CODE XREF: sub_2E617+3A4C3\u2191j
                 push    ax
                 mov     es, seg_D12D8
                 push    es:vocab_list_0._logicNum
-                call    thunk_sub_66DFD
+                call    thunk_Logics_countVisibleContents
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_68B55
@@ -168028,7 +168029,7 @@ loc_68B31:
 
 loc_68B38:
                 push    es:vocab_list_0._logicNum
-                call    thunk_sub_667D0
+                call    thunk_Logics_listContents
                 add     sp, 4
                 mov     ax, offset a__51 ; ".\n"
 
@@ -168100,7 +168101,7 @@ loc_68BBD:                              ; CODE XREF: sub_2E617+3A555\u2191j
                 push    ax
                 mov     es, seg_D12D8
                 push    es:vocab_list_0._logicNum
-                call    thunk_sub_66DFD
+                call    thunk_Logics_countVisibleContents
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_68C0C
@@ -168135,7 +168136,7 @@ loc_68C0C:                              ; CODE XREF: sub_2E617+3A5D6\u2191j
                 push    ax
                 mov     es, seg_D12D8
                 push    es:vocab_list_0._logicNum
-                call    thunk_sub_667D0
+                call    thunk_Logics_listContents
                 add     sp, 4
                 mov     ax, offset a__52 ; ".\n"
                 jmp     loc_68B48
@@ -168895,7 +168896,7 @@ loc_69287:                              ; CODE XREF: seg151:1722\u2191j
                 push    ax
                 mov     es, seg_D12D8
                 push    es:vocab_list_0._logicNum
-                call    thunk_sub_66DFD
+                call    thunk_Logics_countVisibleContents
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_69345
@@ -168908,7 +168909,7 @@ loc_69287:                              ; CODE XREF: seg151:1722\u2191j
                 push    ax
                 mov     es, seg_D12D8
                 push    es:vocab_list_0._logicNum
-                call    thunk_sub_667D0
+                call    thunk_Logics_listContents
                 add     sp, 4
                 mov     word ptr [bp-2], 1
 
@@ -173694,7 +173695,7 @@ loc_6BCB2:                              ; CODE XREF: sub_2EC11+3D09C\u2191j
                 push    ax
                 mov     es, seg_D1312
                 push    es:vocab_list_0._logicNum
-                call    thunk_sub_66DFD
+                call    thunk_Logics_countVisibleContents
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_6BD43
@@ -173740,7 +173741,7 @@ loc_6BD01:                              ; CODE XREF: sub_2EC11+3D0E2\u2191j
                 push    ax
                 mov     es, seg_D1312
                 push    es:vocab_list_0._logicNum
-                call    thunk_sub_667D0
+                call    thunk_Logics_listContents
                 add     sp, 4
                 mov     ax, 4722h
                 push    ds
@@ -173852,7 +173853,7 @@ loc_6BE0B:                              ; CODE XREF: sub_2EC11+3D1F4\u2191j
                 push    ax
                 mov     es, seg_D1312
                 push    es:vocab_list_0._logicNum
-                call    thunk_sub_66DFD
+                call    thunk_Logics_countVisibleContents
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_6BE4A
@@ -173878,7 +173879,7 @@ loc_6BE4A:                              ; CODE XREF: sub_2EC11+3D21A\u2191j
                 push    ax
                 mov     es, seg_D1312
                 push    es:vocab_list_0._logicNum
-                call    thunk_sub_667D0
+                call    thunk_Logics_listContents
                 add     sp, 4
                 mov     es, seg_D1312
                 push    es:vocab_list_0._logicNum ; logicNum
@@ -175906,7 +175907,7 @@ loc_6CEC7:                              ; CODE XREF: sub_2E581+3E8EE\u2191j
                 push    ax
                 mov     ax, 0D3h ; 'Ó'
                 push    ax
-                call    thunk_sub_66DFD
+                call    thunk_Logics_countVisibleContents
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_6CEED
@@ -263105,7 +263106,7 @@ loc_947E5:
                 push    ax
                 mov     ax, 71h ; 'q'
                 push    ax
-                call    thunk_sub_66DFD
+                call    thunk_Logics_countVisibleContents
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_9481E
@@ -268044,7 +268045,7 @@ loc_96878:                              ; CODE XREF: sub_967D2+A1\u2191j
                 push    ax
                 mov     ax, 83h ; 'ƒ'
                 push    ax
-                call    thunk_sub_66DFD
+                call    thunk_Logics_countVisibleContents
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_96835
@@ -269817,7 +269818,7 @@ loc_974F2:                              ; CODE XREF: sub_974C0+19\u2191j
                 push    ax
                 mov     ax, 71h ; 'q'
                 push    ax
-                call    thunk_sub_66DFD
+                call    thunk_Logics_countVisibleContents
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_97533
@@ -270141,7 +270142,7 @@ loc_97756:                              ; CODE XREF: sub_97716+14\u2191j
                 push    ax
                 mov     ax, 71h ; 'q'
                 push    ax
-                call    thunk_sub_66DFD
+                call    thunk_Logics_countVisibleContents
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_977A7
@@ -271874,7 +271875,7 @@ loc_98427:                              ; CODE XREF: sub_9832F+E6\u2191j
                 push    ax
                 mov     ax, 71h ; 'q'
                 push    ax
-                call    thunk_sub_66DFD
+                call    thunk_Logics_countVisibleContents
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_9843E
@@ -274890,7 +274891,7 @@ loc_998E0:                              ; CODE XREF: sub_9989F+3C\u2191j
                 push    ax
                 mov     ax, 71h ; 'q'
                 push    ax
-                call    thunk_sub_66DFD
+                call    thunk_Logics_countVisibleContents
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_99923
@@ -281051,7 +281052,7 @@ loc_9C507:                              ; CODE XREF: sub_9C347+105\u2191j
                 push    ax
                 mov     ax, 28h ; '('
                 push    ax
-                call    thunk_sub_66DFD
+                call    thunk_Logics_countVisibleContents
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_9C538
@@ -282023,7 +282024,7 @@ loc_9CBE0:                              ; CODE XREF: sub_9C970+269\u2191j
                 push    ax
                 mov     ax, 2Ah ; '*'
                 push    ax
-                call    thunk_sub_66DFD
+                call    thunk_Logics_countVisibleContents
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_9CC06
@@ -282355,7 +282356,7 @@ loc_9CDDC:                              ; CODE XREF: sub_9CD7A+55\u2191j
                 push    ax
                 mov     ax, 28h ; '('
                 push    ax
-                call    thunk_sub_66DFD
+                call    thunk_Logics_countVisibleContents
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_9CE1D
@@ -285090,7 +285091,7 @@ loc_9E0BB:                              ; CODE XREF: sub_9E079+3D\u2191j
                 push    ax
                 mov     ax, 2Ah ; '*'
                 push    ax
-                call    thunk_sub_66DFD
+                call    thunk_Logics_countVisibleContents
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_9E0E5
@@ -285120,7 +285121,7 @@ loc_9E0FF:                              ; CODE XREF: sub_9E079+81\u2191j
                 push    ax
                 mov     ax, 2Ah ; '*'
                 push    ax
-                call    thunk_sub_66DFD
+                call    thunk_Logics_countVisibleContents
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_9E115
@@ -288545,14 +288546,14 @@ loc_9FAEB:                              ; CODE XREF: sub_9F55E+580\u2191j
                 push    ax
                 mov     ax, 26h ; '&'
                 push    ax
-                call    thunk_sub_66DFD
+                call    thunk_Logics_countVisibleContents
                 add     sp, 4
                 mov     [bp+var_4], al
                 mov     ax, 1
                 push    ax
                 mov     ax, 26h ; '&'
                 push    ax
-                call    thunk_sub_66DFD
+                call    thunk_Logics_countVisibleContents
                 add     sp, 4
                 mov     [bp+var_6], al
                 cmp     [bp+var_4], 0
@@ -288580,7 +288581,7 @@ loc_9FB27:                              ; CODE XREF: sub_9F55E+5C0\u2191j
                 push    ax
                 mov     ax, 26h ; '&'
                 push    ax
-                call    thunk_sub_667D0
+                call    thunk_Logics_listContents
                 add     sp, 4
                 mov     [bp+var_2], ax
 
@@ -288633,7 +288634,7 @@ loc_9FB9F:                              ; CODE XREF: sub_9F55E+605\u2191j
                 push    ax
                 mov     ax, 26h ; '&'
                 push    ax
-                call    thunk_sub_667D0
+                call    thunk_Logics_listContents
                 add     sp, 4
 
 loc_9FBBC:                              ; CODE XREF: sub_9F55E+5FF\u2191j
@@ -289635,7 +289636,7 @@ loc_A034D:                              ; CODE XREF: sub_A0045+2F6\u2191j
                 push    ax
                 mov     ax, 2Ah ; '*'
                 push    ax
-                call    thunk_sub_66DFD
+                call    thunk_Logics_countVisibleContents
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_A03AC
@@ -289953,7 +289954,7 @@ loc_A05B1:                              ; CODE XREF: sub_A059C+10\u2191j
                 push    ax
                 mov     ax, 2Ah ; '*'
                 push    ax
-                call    thunk_sub_66DFD
+                call    thunk_Logics_countVisibleContents
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_A05DB
@@ -290289,7 +290290,7 @@ loc_A084F:                              ; CODE XREF: sub_A0840+A\u2191j
                 push    ax
                 mov     ax, 2Ah ; '*'
                 push    ax
-                call    thunk_sub_66DFD
+                call    thunk_Logics_countVisibleContents
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_A0898
@@ -290670,7 +290671,7 @@ loc_A0B1B:                              ; CODE XREF: sub_A0992+170\u2191j
                 push    ax
                 mov     ax, 2Ah ; '*'
                 push    ax
-                call    thunk_sub_66DFD
+                call    thunk_Logics_countVisibleContents
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_A0B31
@@ -290716,7 +290717,7 @@ loc_A0B6C:                              ; CODE XREF: sub_A0992+26C\u2193j
                 push    ax
                 mov     ax, 2Ah ; '*'
                 push    ax
-                call    thunk_sub_66DFD
+                call    thunk_Logics_countVisibleContents
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_A0B84
@@ -290759,7 +290760,7 @@ loc_A0BB3:                              ; CODE XREF: sub_A0992+20\u2191j
                 push    ax
                 mov     ax, 2Ah ; '*'
                 push    ax
-                call    thunk_sub_66DFD
+                call    thunk_Logics_countVisibleContents
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_A0BD9
@@ -291853,7 +291854,7 @@ loc_A1416:                              ; CODE XREF: sub_A102A+3E4\u2191j
                 push    ax
                 mov     ax, 2Ah ; '*'
                 push    ax
-                call    thunk_sub_66DFD
+                call    thunk_Logics_countVisibleContents
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_A142F
@@ -292087,7 +292088,7 @@ loc_A15A3:                              ; CODE XREF: sub_A153D+54\u2191j
                 push    ax
                 mov     ax, 31h ; '1'
                 push    ax
-                call    thunk_sub_66DFD
+                call    thunk_Logics_countVisibleContents
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_A1572
@@ -298189,7 +298190,7 @@ action10:                               ; CODE XREF: logic238+14\u2191j
                 push    ax
                 mov     ax, 161h
                 push    ax
-                call    sub_149D8
+                call    Logics_describeContents
 
 loc_A40A6:                              ; CODE XREF: logic238+102\u2191j
                 add     sp, 4
@@ -298486,7 +298487,7 @@ loc_A42BE:                              ; CODE XREF: sub_A4271+22\u2191j
                 push    ax
                 mov     ax, 14Bh
                 push    ax
-                call    sub_149D8
+                call    Logics_describeContents
                 jmp     short loc_A42B6
 ; ---------------------------------------------------------------------------
 
@@ -298547,7 +298548,7 @@ arg_0           = word ptr  6
                 push    ax
                 mov     ax, 14Bh
                 push    ax
-                call    sub_149D8
+                call    Logics_describeContents
                 add     sp, 4
                 mov     ax, 1
                 jmp     short loc_A4350
@@ -298762,7 +298763,7 @@ loc_A4464:                              ; CODE XREF: sub_A4418+47\u2191j
                 push    ax
                 mov     ax, 124h
                 push    ax
-                call    sub_149D8
+                call    Logics_describeContents
 
 loc_A4496:                              ; CODE XREF: sub_A4418+C5\u2193j
                 add     sp, 4
@@ -298927,7 +298928,7 @@ loc_A457E:                              ; CODE XREF: sub_A4521+58\u2191j
                 push    ax
                 mov     ax, 125h
                 push    ax
-                call    sub_149D8
+                call    Logics_describeContents
 
 loc_A459D:                              ; CODE XREF: sub_A4521+B5\u2193j
                 add     sp, 4
@@ -299727,7 +299728,7 @@ loc_A4AF0:                              ; CODE XREF: sub_A4A86+5C\u2191j
                 push    ax
                 mov     ax, 14Eh
                 push    ax
-                call    sub_149D8
+                call    Logics_describeContents
 
 loc_A4B0D:                              ; CODE XREF: sub_A4A86+9D\u2193j
                 add     sp, 4
@@ -299980,7 +299981,7 @@ loc_A4CCB:                              ; CODE XREF: sub_A4B9F+11E\u2191j
                 push    ax
                 mov     ax, 14Fh
                 push    ax
-                call    sub_149D8
+                call    Logics_describeContents
 
 loc_A4CE8:                              ; CODE XREF: sub_A4B9F+15F\u2193j
                 add     sp, 4
@@ -300125,7 +300126,7 @@ arg_0           = word ptr  6
                 push    ax
                 mov     ax, 150h
                 push    ax
-                call    sub_149D8
+                call    Logics_describeContents
 
 loc_A4DDD:                              ; CODE XREF: sub_A4D8C:loc_A4DF2\u2193j
                 add     sp, 4
@@ -301689,7 +301690,7 @@ loc_A5728:                              ; CODE XREF: sub_A56B0+73\u2191j
                 push    ax
                 mov     ax, 161h
                 push    ax
-                call    sub_149D8
+                call    Logics_describeContents
                 add     sp, 4
                 mov     ax, 1
                 jmp     short loc_A5769
@@ -302767,7 +302768,7 @@ loc_A5D50:                              ; CODE XREF: sub_A5D13+38\u2191j
                 push    ax
                 mov     ax, 14Bh
                 push    ax
-                call    thunk_sub_66DFD
+                call    thunk_Logics_countVisibleContents
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_A5DDB
@@ -302781,7 +302782,7 @@ loc_A5D50:                              ; CODE XREF: sub_A5D13+38\u2191j
                 push    ax
                 mov     ax, 14Bh
                 push    ax
-                call    thunk_sub_667D0
+                call    thunk_Logics_listContents
                 add     sp, 4
                 mov     ax, 2Eh ; '.'
                 push    ax              ; c
@@ -304359,7 +304360,7 @@ loc_A6AA7:                              ; CODE XREF: sub_A68D8+14\u2191j
                 push    ax
                 mov     ax, 161h
                 push    ax
-                call    sub_149D8
+                call    Logics_describeContents
                 add     sp, 4
 
 loc_A6ACA:                              ; CODE XREF: sub_A68D8+E\u2191j
@@ -304742,7 +304743,7 @@ loc_A6D93:                              ; CODE XREF: sub_A6BD4+14\u2191j
                 push    ax
                 mov     ax, 161h
                 push    ax
-                call    sub_149D8
+                call    Logics_describeContents
                 add     sp, 4
 
 loc_A6DB6:                              ; CODE XREF: sub_A6BD4+E\u2191j
@@ -304978,7 +304979,7 @@ loc_A6F4B:                              ; CODE XREF: sub_A6EC0+14\u2191j
                 push    ax
                 mov     ax, 161h
                 push    ax
-                call    sub_149D8
+                call    Logics_describeContents
                 add     sp, 4
 
 loc_A6F6E:                              ; CODE XREF: sub_A6EC0+E\u2191j
@@ -306758,7 +306759,7 @@ loc_A7ACF:                              ; CODE XREF: sub_A7A9E+27\u2191j
                 push    ax
                 mov     ax, 14Dh
                 push    ax
-                call    sub_149D8
+                call    Logics_describeContents
 
 loc_A7AEC:                              ; CODE XREF: sub_A7A9E+60\u2193j
                 add     sp, 4
@@ -306992,7 +306993,7 @@ loc_A7C24:                              ; CODE XREF: sub_A7BF9+22\u2191j
                 push    ax
                 mov     ax, 143h
                 push    ax
-                call    sub_149D8
+                call    Logics_describeContents
 
 loc_A7C41:                              ; CODE XREF: sub_A7BF9+5D\u2193j
                 add     sp, 4
@@ -307104,7 +307105,7 @@ loc_A7CCE:                              ; CODE XREF: sub_A7CA3+22\u2191j
                 push    ax
                 mov     ax, 144h
                 push    ax
-                call    sub_149D8
+                call    Logics_describeContents
 
 loc_A7CEB:                              ; CODE XREF: sub_A7CA3+5D\u2193j
                 add     sp, 4
@@ -311632,7 +311633,7 @@ loc_A99D5:                              ; CODE XREF: sub_A99AA+22\u2191j
                 push    ax
                 mov     ax, 142h
                 push    ax
-                call    sub_149D8
+                call    Logics_describeContents
 
 loc_A99F2:                              ; CODE XREF: sub_A99AA+5D\u2193j
                 add     sp, 4
@@ -319231,7 +319232,7 @@ loc_ACCDB:                              ; CODE XREF: sub_ACB7F+157\u2191j
                 push    ax
                 mov     ax, 151h
                 push    ax
-                call    sub_149D8
+                call    Logics_describeContents
 
 loc_ACCE7:                              ; CODE XREF: sub_ACB7F+195\u2193j
                 add     sp, 4
@@ -322528,13 +322529,13 @@ loc_AE352:                              ; CODE XREF: sub_AE317+2D\u2191j
                 push    ax
                 mov     ax, 12Bh
                 push    ax
-                call    sub_149D8
+                call    Logics_describeContents
                 add     sp, 4
                 sub     ax, ax
                 push    ax
                 mov     ax, 12Ch
                 push    ax
-                call    sub_149D8
+                call    Logics_describeContents
 
 loc_AE37D:                              ; CODE XREF: sub_AE317+7C\u2193j
                 add     sp, 4
@@ -322858,7 +322859,7 @@ loc_AE5E8:                              ; CODE XREF: sub_AE5B2+2D\u2191j
                 push    ax
                 mov     ax, 12Ch
                 push    ax
-                call    sub_149D8
+                call    Logics_describeContents
 
 loc_AE604:                              ; CODE XREF: sub_AE5B2+68\u2193j
                 add     sp, 4
@@ -325399,7 +325400,7 @@ loc_AF7E6:                              ; CODE XREF: sub_AF7BB+18\u2191j
                 push    ax
                 mov     ax, 11Ah
                 push    ax
-                call    sub_149D8
+                call    Logics_describeContents
 
 loc_AF802:                              ; CODE XREF: sub_AF7BB+5C\u2193j
                 add     sp, 4
@@ -326360,13 +326361,13 @@ loc_AFD72:                              ; CODE XREF: sub_AFD42+80\u2193j
                 push    ax
                 mov     ax, 187h
                 push    ax
-                call    sub_149D8
+                call    Logics_describeContents
                 add     sp, 4
                 mov     ax, 1
                 push    ax
                 mov     ax, 187h
                 push    ax
-                call    sub_149D8
+                call    Logics_describeContents
 
 loc_AFD9E:                              ; CODE XREF: sub_AFD42+71\u2193j
                 add     sp, 4
@@ -331281,7 +331282,7 @@ loc_B2361:                              ; CODE XREF: sub_B22CA+86\u2191j
                 push    ax
                 mov     ax, 136h
                 push    ax
-                call    thunk_sub_66DFD
+                call    thunk_Logics_countVisibleContents
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B23C6
@@ -331297,7 +331298,7 @@ loc_B2361:                              ; CODE XREF: sub_B22CA+86\u2191j
                 push    ax
 
 loc_B23B1:
-                call    thunk_sub_667D0
+                call    thunk_Logics_listContents
                 add     sp, 4
                 mov     ax, 76B9h
                 push    ds
@@ -331983,7 +331984,7 @@ loc_B27E9:                              ; CODE XREF: sub_B277C+5B\u2191j
                 push    ax
                 mov     ax, 13Ch
                 push    ax
-                call    sub_149D8
+                call    Logics_describeContents
 
 loc_B2802:                              ; CODE XREF: sub_B277C+A8\u2193j
                 add     sp, 4
@@ -340616,7 +340617,7 @@ loc_B6453:                              ; CODE XREF: sub_B6395+B9\u2191j
                 push    ax
                 mov     ax, 148h
                 push    ax
-                call    sub_149D8
+                call    Logics_describeContents
 
 loc_B6471:                              ; CODE XREF: sub_B6395+106\u2193j
                 add     sp, 4
@@ -341728,7 +341729,7 @@ loc_B6B64:                              ; CODE XREF: sub_B6B39+22\u2191j
                 push    ax
                 mov     ax, 1A0h
                 push    ax
-                call    sub_149D8
+                call    Logics_describeContents
 
 loc_B6B81:                              ; CODE XREF: sub_B6B39+5D\u2193j
                 add     sp, 4
@@ -344895,7 +344896,7 @@ arg_0           = word ptr  6
                 push    ax
                 mov     ax, 2A2h
                 push    ax
-                call    thunk_sub_66DFD
+                call    thunk_Logics_countVisibleContents
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B8064
@@ -349150,7 +349151,7 @@ loc_B9D46:                              ; CODE XREF: sub_B9C0D+134\u2191j
                 push    ax
                 mov     ax, 2B1h
                 push    ax
-                call    thunk_sub_66DFD
+                call    thunk_Logics_countVisibleContents
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B9D8E
@@ -360590,7 +360591,7 @@ loc_BED62:                              ; CODE XREF: sub_BED22+30\u2191j
                 push    ax
                 mov     ax, 280h
                 push    ax
-                call    sub_149D8
+                call    Logics_describeContents
 
 loc_BED7E:                              ; CODE XREF: sub_BED22+D4\u2193j
                 add     sp, 4
@@ -361321,19 +361322,19 @@ loc_BF2A1:                              ; CODE XREF: sub_BF1CE+8C\u2191j
                 push    ax
                 mov     ax, 289h
                 push    ax
-                call    sub_149D8
+                call    Logics_describeContents
                 add     sp, 4
                 sub     ax, ax
                 push    ax
                 mov     ax, 28Ah
                 push    ax
-                call    sub_149D8
+                call    Logics_describeContents
                 add     sp, 4
                 sub     ax, ax
                 push    ax
                 mov     ax, 28Bh
                 push    ax
-                call    sub_149D8
+                call    Logics_describeContents
 
 loc_BF2D7:                              ; CODE XREF: sub_BF1CE+13D\u2193j
                 add     sp, 4
@@ -361674,13 +361675,13 @@ loc_BF4EC:                              ; CODE XREF: sub_BF410+74\u2191j
                 push    ax
                 mov     ax, 289h
                 push    ax
-                call    sub_149D8
+                call    Logics_describeContents
                 add     sp, 4
                 sub     ax, ax
                 push    ax
                 mov     ax, 28Ah
                 push    ax
-                call    sub_149D8
+                call    Logics_describeContents
                 add     sp, 4
                 sub     ax, ax
                 push    ax
@@ -361688,7 +361689,7 @@ loc_BF4EC:                              ; CODE XREF: sub_BF410+74\u2191j
                 push    ax
 
 loc_BF544:                              ; CODE XREF: sub_BF410+164\u2193j
-                call    sub_149D8
+                call    Logics_describeContents
                 jmp     loc_BF8F3
 ; ---------------------------------------------------------------------------
 
@@ -362282,7 +362283,7 @@ loc_BF9D3:                              ; CODE XREF: sub_BF94C+A9\u2193j
                 push    ax
                 mov     ax, 27Ah
                 push    ax
-                call    sub_149D8
+                call    Logics_describeContents
 
 loc_BF9ED:                              ; CODE XREF: sub_BF94C+B8\u2193j
                 add     sp, 4
@@ -377033,7 +377034,7 @@ loc_C5E60:                              ; CODE XREF: sub_C5C49+1EB\u2191j
                 push    ax
                 mov     es, seg_D1A6C
                 push    es:vocab_list_0._altVocabId
-                call    thunk_sub_66DFD
+                call    thunk_Logics_countVisibleContents
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_C5EB2
@@ -377041,7 +377042,7 @@ loc_C5E60:                              ; CODE XREF: sub_C5C49+1EB\u2191j
                 push    ax
                 mov     es, seg_D1A6C
                 push    es:vocab_list_0._altVocabId
-                call    thunk_sub_667D0
+                call    thunk_Logics_listContents
                 jmp     short loc_C5EBC
 ; ---------------------------------------------------------------------------
 
@@ -387307,9 +387308,9 @@ unk_CBB7B       db    0                 ; DATA XREF: sub_1496B+6\u2191o
 aMore_1         db '- MORE -',0
                 db '        ',0
 ; char aCnSYouSee[]
-aCnSYouSee      db 9,'%cn%s you see',0  ; DATA XREF: sub_149D8+35\u2191o
+aCnSYouSee      db 9,'%cn%s you see',0  ; DATA XREF: Logics_describeContents+35\u2191o
 ; char a_[]
-a_              db '.',0Ah,0            ; DATA XREF: sub_149D8+50\u2191o
+a_              db '.',0Ah,0            ; DATA XREF: Logics_describeContents+50\u2191o
 ; char aCnS[]
 aCnS            db ', %cn%s',0          ; DATA XREF: sub_14A5F+5F\u2191o
                 db 'f',0
@@ -387964,7 +387965,7 @@ aIes            db 'ies',0              ; DATA XREF: printObj+613\u2191o
 printObj_size   dw 0                    ; DATA XREF: printObj+6DD\u2191r
                                         ; printObj+6E7\u2191w ...
 ; char aAnd_0[]
-aAnd_0          db ' and',0             ; DATA XREF: sub_667D0:loc_66857\u2191o
+aAnd_0          db ' and',0             ; DATA XREF: Logics_listContents:loc_66857\u2191o
 ; char aS_0[]
 aS_0            db 9,'%s',0Ah,0         ; DATA XREF: sub_66888+A8\u2191o
 word_CC138      dw 0                    ; DATA XREF: sub_66888+6\u2191r
