@@ -420,6 +420,41 @@ RENAMES = [
      "again. 24 callers, scattered across many different logic/method "
      "routines -- i.e. invoked wherever paginated text output fills "
      "the window, not owned by one subsystem."),
+
+    # -- thirteenth pass: the TAKE-command mechanics, confirmed by a real
+    # call site printing the literal string "You take%s" right before
+    # calling sub_153B6. See
+    # docs/overview.md#logics_takeobject-named--the-take-command-mechanics. --
+
+    (0x153B6, "Logics_takeObject",
+     "sub_153B6(logicNum): confirmed by its one real call site "
+     "(sub_6AD19, the TAKE verb's dispatcher), which prints the "
+     "literal message \"You take%s\" (aYouTakeS) immediately before "
+     "calling this. Bails out (returns 0) if "
+     "thunk_sub_67662(logicNum, Logics_logicNum211, 0) returns 2 "
+     "(object can't be taken, e.g. fixed/scenery). Otherwise: "
+     "reassigns the object's handler to Logics_logicNum211 "
+     "(Logics_updateHandler), clears bit 8 (the same 'hidden/visible' "
+     "bit seen in the Logics_*Contents cluster), awards a one-time "
+     "pickup score bonus via Logics_getTakeScore/Score_add/"
+     "Logics_setTakeScore(logicNum, 0) (zeroing it so it isn't paid "
+     "out again), then sets bit 2 ('taken'), clears bit 0xA, sets bit "
+     "0x1D, clears bit 8 again, and returns 1."),
+    (0x12109, "Logics_getTakeScore",
+     "sub_12109(logicNum): bounds-checked (against METHODS_COUNT) "
+     "proc_table lookup returning the type-tagged struct's "
+     "field_E/field_20/field_14 (Room/LogicSection2/LogicSection8 -- "
+     "same field slot across all three type shapes, same dispatch "
+     "idiom as the already-named Logics_getVal2_2 family). Confirmed "
+     "as a one-time take-score value: every call site immediately "
+     "Score_add()s a nonzero result and then zeroes it via "
+     "Logics_setTakeScore, both in Logics_takeObject and in the "
+     "similarly-shaped take logic inside sub_143F3 (not itself "
+     "renamed this pass)."),
+    (0x12179, "Logics_setTakeScore",
+     "sub_12179(logicNum, value): setter half of Logics_getTakeScore "
+     "-- same bounds-checked proc_table field_E/field_20/field_14 "
+     "dispatch, just storing instead of loading."),
 ]
 
 

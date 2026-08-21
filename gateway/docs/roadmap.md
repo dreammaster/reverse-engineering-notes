@@ -448,6 +448,13 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       restores cursor, blanks the prompt, resets the page-line budget.
       Full writeup in
       [overview.md](overview.md#textwindow_showmoreprompt-named--the-classic---more----pagination-prompt).
+- [x] Named `sub_153B6` (22 callers) → `Logics_takeObject` — the TAKE
+      command mechanics, confirmed by a real call site printing the
+      literal `"You take%s"` right before calling it. Also named its
+      one-time pickup-score accessor pair `Logics_getTakeScore`/
+      `Logics_setTakeScore` (were `sub_12109`/`sub_12179`). Full writeup
+      in
+      [overview.md](overview.md#logics_takeobject-named--the-take-command-mechanics).
 - [ ] Cross-check the structs shared by name/concept with `gate.idb`
       (`VocabEntry`/`VOCAB_ENTRY`, `Str16`/`STR16`, `Point`/`POINT`,
       `Screen`/`SCREEN`, `Font`/`FONT`, `REGS`, `HandleEntry`/`HANDLE`)

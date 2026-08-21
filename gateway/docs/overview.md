@@ -1385,3 +1385,53 @@ against an IDB where they'd already been renamed to
 `_gameMinutes`/`_gameDayNumber`/`_statusTimeHidden` — fixed by switching
 those three entries to their confirmed hex EAs (`0xcb800`, `0xcb802`,
 `0xcbb6f`), same fix pattern as every prior occurrence of this bug.
+
+### `Logics_takeObject` named — the TAKE-command mechanics
+
+Re-ran `rank_unnamed_functions.py` again; new top target `sub_153B6`
+(22 callers). Confirmed directly and conclusively: its **one real call
+site** (`sub_6AD19`, the TAKE verb's top-level dispatcher) prints the
+literal message `"You take%s"` (`aYouTakeS`) immediately before calling
+it — this is the actual TAKE command mechanics.
+
+`Logics_takeObject(logicNum)`:
+
+1. Bails out (returns 0) if `thunk_sub_67662(logicNum,
+   Logics_logicNum211, 0)` returns 2 — object can't be taken (e.g.
+   fixed scenery).
+2. Otherwise reassigns the object's handler to `Logics_logicNum211`
+   (via the already-named `Logics_updateHandler`) and clears bit 8 —
+   the same "hidden/visible" bit already established in the
+   `Logics_*Contents` cluster.
+3. Awards a one-time pickup score bonus: reads a per-object score value
+   via the new **`Logics_getTakeScore`** (was `sub_12109`), adds it to
+   `_score` via `Score_add` if nonzero, then zeroes it via
+   **`Logics_setTakeScore`** (was `sub_12179`) so the same item can't be
+   scored twice.
+4. Sets bit 2 ("taken"), clears bit 0xA, sets bit 0x1D, clears bit 8
+   again, and returns 1.
+
+`Logics_getTakeScore`/`Logics_setTakeScore` are a bounds-checked
+(against `METHODS_COUNT`) getter/setter pair over the same `proc_table`
+type-tagged-struct field (`Room.field_E` / `LogicSection2.field_20` /
+`LogicSection8.field_14` — one field slot, three struct shapes, same
+dispatch idiom as the already-named `Logics_getVal2_2` family).
+Confirmed generic (not take-specific plumbing) since every call site —
+both here and in the similarly-shaped take logic inside `sub_143F3`
+(itself not renamed this pass, a plausible "take from container/other
+room" generalization worth tracing next) — immediately `Score_add()`s a
+nonzero result and zeroes it right after, the identical one-time-bonus
+pattern.
+
+`sub_6AD19` itself (the TAKE verb dispatcher) wasn't renamed this pass:
+alongside the plain single-object TAKE path just described, it has two
+other branches whose exact semantics aren't yet confirmed — a
+`vocab_list_0._logicNum == 0xD8` / `Parser_number == '*'` special case
+that loops calling `thunk_sub_71F59` up to 4 times (plausibly a
+multi-object or "take all" form, not confirmed), and a
+`vocab_list_0._textP+2 == 1` branch that swaps `_roomLogicNum` and
+fires `Logic_call` actions `0xF`/`0xD`/`0xE` (plausibly taking a
+room-logic-driven "exit" object rather than a normal item, not
+confirmed). Left open for a future pass.
+
+Applied via `apply_renames_gatemain.py`'s thirteenth batch.
