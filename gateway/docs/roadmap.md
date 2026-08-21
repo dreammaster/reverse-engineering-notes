@@ -670,6 +670,11 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       redraws the parser prompt + typed-so-far input line. Full
       writeup in
       [overview.md](overview.md#inputwindow_redrawpromptline-named).
+- [x] Named `sub_204CE` (5 callers) → `String_matchesPrefixCI` — a
+      separate compiled copy of `Vocab_matchesAbbreviation`'s exact
+      algorithm, used in the sound-config-parsing startup area (likely
+      `BLASTER`-style env/command-line parsing). Full writeup in
+      [overview.md](overview.md#string_matchesprefixci-named).
 - [ ] Unify the whole music/sound-hardware picture: `Speaker_playTone`/
       `Speaker_playErrorBeep` (PC-speaker tones), `Midi_sendByte` +
       `sub_1D966`/`sub_1EE70`/`sub_1ECB6` (MPU-401/MIDI), and

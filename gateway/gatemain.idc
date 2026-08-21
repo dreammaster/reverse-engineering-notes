@@ -19160,6 +19160,7 @@ static Bytes_3(void) {
 	create_insn	(x=0X204C5);
 	op_stkvar	(x,	1);
 	create_insn	(0X204CE);
+	set_name	(0X204CE,	"String_matchesPrefixCI");
 	create_insn	(x=0X204D4);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X204E2);
@@ -23505,10 +23506,6 @@ static Bytes_3(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X2466B);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X2466E);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X24671);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -23518,6 +23515,10 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X2466E);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X24671);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X24676);
 	op_stkvar	(x,	0);
 	set_cmt	(0X2467B,	"count",	0);
@@ -29212,15 +29213,6 @@ static Bytes_4(void) {
 	op_plain_offset	(x,	128,	0XC7F20);
 	create_insn	(x=0X28C10);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X28C15);
-	toggle_sign		(x,	1);
-	op_hex		(x,	1);
-	toggle_sign		(x,	2);
-	toggle_sign		(x,	3);
-	toggle_sign		(x,	4);
-	toggle_sign		(x,	5);
-	toggle_sign		(x,	6);
-	toggle_sign		(x,	7);
 }
 
 //------------------------------------------------------------------------
@@ -29230,6 +29222,15 @@ static Bytes_5(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X28C15);
+	toggle_sign		(x,	1);
+	op_hex		(x,	1);
+	toggle_sign		(x,	2);
+	toggle_sign		(x,	3);
+	toggle_sign		(x,	4);
+	toggle_sign		(x,	5);
+	toggle_sign		(x,	6);
+	toggle_sign		(x,	7);
 	create_insn	(0X28C20);
 	set_name	(0X28C20,	"Windows_clear");
 	create_insn	(x=0X28C23);

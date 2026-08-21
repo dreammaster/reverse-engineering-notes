@@ -25073,8 +25073,8 @@ _ultoa          endp ; sp-analysis failed
 
 ; Attributes: bp-based frame
 
-Char_toLower    proc far                ; CODE XREF: sub_204CE+F\u2193P
-                                        ; sub_204CE+22\u2193P ...
+Char_toLower    proc far                ; CODE XREF: String_matchesPrefixCI+F\u2193P
+                                        ; String_matchesPrefixCI+22\u2193P ...
 
 arg_0           = word ptr  6
 
@@ -38161,7 +38161,7 @@ sub_20448       endp
 
 ; Attributes: bp-based frame
 
-sub_204CE       proc far                ; CODE XREF: seg029:08C8\u2193p
+String_matchesPrefixCI proc far         ; CODE XREF: seg029:08C8\u2193p
                                         ; seg029:08E6\u2193p ...
 
 arg_0           = dword ptr  6
@@ -38173,7 +38173,7 @@ arg_4           = dword ptr  0Ah
                 jmp     short loc_20502
 ; ---------------------------------------------------------------------------
 
-loc_204D4:                              ; CODE XREF: sub_204CE+3B\u2193j
+loc_204D4:                              ; CODE XREF: String_matchesPrefixCI+3B\u2193j
                 les     bx, [bp+arg_4]
                 mov     al, es:[bx]
                 sub     ah, ah
@@ -38192,12 +38192,12 @@ loc_204D4:                              ; CODE XREF: sub_204CE+3B\u2193j
                 inc     word ptr [bp+arg_0]
                 inc     word ptr [bp+arg_4]
 
-loc_20502:                              ; CODE XREF: sub_204CE+4\u2191j
+loc_20502:                              ; CODE XREF: String_matchesPrefixCI+4\u2191j
                 les     bx, [bp+arg_4]
                 cmp     byte ptr es:[bx], 0
                 jnz     short loc_204D4
 
-loc_2050B:                              ; CODE XREF: sub_204CE+2C\u2191j
+loc_2050B:                              ; CODE XREF: String_matchesPrefixCI+2C\u2191j
                 les     bx, [bp+arg_4]
                 cmp     byte ptr es:[bx], 1
                 sbb     ax, ax
@@ -38205,7 +38205,7 @@ loc_2050B:                              ; CODE XREF: sub_204CE+2C\u2191j
                 pop     si
                 pop     bp
                 retf
-sub_204CE       endp
+String_matchesPrefixCI endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -38227,7 +38227,7 @@ loc_2052C:                              ; CODE XREF: seg029:0A84\u2193j
                 push    word ptr [bp-2]
                 push    word ptr [bp-4]
                 push    cs
-                call    near ptr sub_204CE
+                call    near ptr String_matchesPrefixCI
                 add     sp, 8
                 or      ax, ax
                 jz      short loc_2054A
@@ -38242,7 +38242,7 @@ loc_2054A:                              ; CODE XREF: seg029:08D0\u2191j
                 push    word ptr [bp-2]
                 push    word ptr [bp-4]
                 push    cs
-                call    near ptr sub_204CE
+                call    near ptr String_matchesPrefixCI
                 add     sp, 8
                 or      ax, ax
                 jz      short loc_2056A
@@ -38258,7 +38258,7 @@ loc_2056A:                              ; CODE XREF: seg029:08EE\u2191j
                 push    word ptr [bp-2]
                 push    word ptr [bp-4]
                 push    cs
-                call    near ptr sub_204CE
+                call    near ptr String_matchesPrefixCI
                 add     sp, 8
                 or      ax, ax
                 jnz     short loc_20583
@@ -38348,7 +38348,7 @@ loc_2061A:                              ; CODE XREF: seg029:0910\u2191j
                 push    word ptr [bp-2]
                 push    word ptr [bp-4]
                 push    cs
-                call    near ptr sub_204CE
+                call    near ptr String_matchesPrefixCI
                 add     sp, 8
                 or      ax, ax
                 jnz     short loc_20633
@@ -38436,7 +38436,7 @@ loc_206C2:                              ; CODE XREF: seg029:08B8\u2191j
                 push    dx
                 push    word ptr [bp-4]
                 push    cs
-                call    near ptr sub_204CE
+                call    near ptr String_matchesPrefixCI
                 add     sp, 8
                 or      ax, ax
                 jnz     short loc_206F7

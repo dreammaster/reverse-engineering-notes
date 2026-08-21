@@ -2367,3 +2367,20 @@ hides the mouse cursor if mouse input mode is off, or shows it
 (waiting for button release first if needed) otherwise.
 
 Applied via `apply_renames_gatemain.py`'s forty-sixth batch.
+
+### `String_matchesPrefixCI` named
+
+Moved to `sub_204CE` (5 callers). Byte-for-byte the same algorithm as
+the already-named `Vocab_matchesAbbreviation` (same case-insensitive
+prefix check via `Char_toLower`, same `0`/`1` sentinel-byte return
+convention), but a separate compiled copy used in the startup/sound-
+config-parsing area — right next to `Sound_selectDevice`/
+`Opl2_detectAndInit`/`Midi_detectDevice`, and immediately preceded by
+`sub_204CE`'s neighbor `sub_20448` (a hex-digit-string parser, not
+renamed) — consistent with parsing a `BLASTER`-style environment/
+command-line config string (sound card base address/IRQ/DMA settings)
+rather than in-game parser vocabulary. Named generically
+(`String_matchesPrefixCI`) rather than reusing the game-vocabulary-
+specific `Vocab_` prefix.
+
+Applied via `apply_renames_gatemain.py`'s forty-seventh batch.

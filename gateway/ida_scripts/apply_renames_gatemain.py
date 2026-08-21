@@ -1401,6 +1401,28 @@ RENAMES = [
      "input mode is off, hides the mouse cursor; otherwise shows it "
      "(waiting for button release first if a button was already "
      "held)."),
+
+    # -- forty-seventh pass: sub_204CE, byte-for-byte the same
+    # algorithm as the already-named Vocab_matchesAbbreviation, but
+    # compiled separately in the startup/config-parsing area (seg029,
+    # right next to Sound_selectDevice/Opl2_detectAndInit/
+    # Midi_detectDevice, and immediately preceded by sub_20448, a
+    # hex-digit-string parser -- consistent with parsing a BLASTER-
+    # style environment/command-line config string, e.g. sound card
+    # base address/IRQ/DMA settings). Named generically rather than
+    # with the game-vocabulary-specific "Vocab_" prefix since this
+    # instance operates on config text, not parser vocabulary. See
+    # docs/overview.md#string_matchesprefixci-named. --
+
+    (0x204CE, "String_matchesPrefixCI",
+     "sub_204CE(word, abbrev): identical algorithm to the already-"
+     "named Vocab_matchesAbbreviation (same case-insensitive prefix "
+     "check via Char_toLower, same 0/1 sentinel-byte return "
+     "convention) but a separate compiled copy used in the startup/"
+     "sound-config-parsing area, immediately after sub_20448 (a hex-"
+     "digit-string parser, not renamed) -- consistent with parsing a "
+     "BLASTER-style config string rather than in-game parser "
+     "vocabulary."),
 ]
 
 
