@@ -2356,3 +2356,14 @@ OPL2/AdLib — tying this cleanly into the already-confirmed
 `Sound_stopTrack`/`Sound_selectTrack` architecture.
 
 Applied via `apply_renames_gatemain.py`'s forty-fifth batch.
+
+### `InputWindow_redrawPromptLine` named
+
+Moved to `sub_5C91C` (5 callers). Confirmed via the already-named
+`aaInputPrompt`/`get_input_line_ptr`/`Commset_winContent`: writes the
+prompt string followed by the current input buffer's text into the
+content window — redrawing the "prompt-plus-typed-so-far" line — then
+hides the mouse cursor if mouse input mode is off, or shows it
+(waiting for button release first if needed) otherwise.
+
+Applied via `apply_renames_gatemain.py`'s forty-sixth batch.

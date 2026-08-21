@@ -142669,7 +142669,7 @@ delay           endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_5C91C       proc far                ; CODE XREF: sub_5CD81+37\u2193p
+InputWindow_redrawPromptLine proc far   ; CODE XREF: sub_5CD81+37\u2193p
                                         ; sub_5D18C+4D\u2193p ...
                 mov     es, dseg_143
                 push    word ptr es:aaInputPrompt+2
@@ -142689,7 +142689,7 @@ sub_5C91C       proc far                ; CODE XREF: sub_5CD81+37\u2193p
                 jmp     short locret_5C978
 ; ---------------------------------------------------------------------------
 
-loc_5C957:                              ; CODE XREF: sub_5C91C+32\u2191j
+loc_5C957:                              ; CODE XREF: InputWindow_redrawPromptLine+32\u2191j
                 mov     es, dseg_144
                 test    byte ptr es:mouseState, 2Ah
                 jz      short locret_5C978
@@ -142701,10 +142701,10 @@ loc_5C957:                              ; CODE XREF: sub_5C91C+32\u2191j
                 jnz     short locret_5C978
                 call    Mouse_WaitForRelease
 
-locret_5C978:                           ; CODE XREF: sub_5C91C+39\u2191j
-                                        ; sub_5C91C+45\u2191j ...
+locret_5C978:                           ; CODE XREF: InputWindow_redrawPromptLine+39\u2191j
+                                        ; InputWindow_redrawPromptLine+45\u2191j ...
                 retf
-sub_5C91C       endp
+InputWindow_redrawPromptLine endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -143171,7 +143171,7 @@ loc_5CD92:                              ; CODE XREF: sub_5CD81+A\u2191j
                 call    near ptr Scene_draw
                 add     sp, 2
                 push    cs
-                call    near ptr sub_5C91C
+                call    near ptr InputWindow_redrawPromptLine
                 jmp     short loc_5CDE0
 ; ---------------------------------------------------------------------------
 
@@ -143621,7 +143621,7 @@ loc_5D1CE:                              ; CODE XREF: sub_5D18C+3D\u2191j
                 call    near ptr Scene_draw
                 add     sp, 2
                 push    cs
-                call    near ptr sub_5C91C
+                call    near ptr InputWindow_redrawPromptLine
                 jmp     locret_5D297
 ; ---------------------------------------------------------------------------
 
@@ -143727,7 +143727,7 @@ enabled         = word ptr -2
                 push    cs
                 call    near ptr scene_update?
                 push    cs
-                call    near ptr sub_5C91C
+                call    near ptr InputWindow_redrawPromptLine
                 cmp     is_mouse_input_mode, 0
                 jnz     short loc_5D2D8
                 call    Mouse_Hide
@@ -143808,7 +143808,7 @@ loc_5D341:                              ; CODE XREF: InputWindow_getLine+150\u21
 
 loc_5D356:                              ; CODE XREF: InputWindow_getLine+B9\u2191j
                 push    cs
-                call    near ptr sub_5C91C
+                call    near ptr InputWindow_redrawPromptLine
                 jmp     loc_5D43C
 ; ---------------------------------------------------------------------------
 
@@ -144409,7 +144409,7 @@ loc_5D7F8:                              ; CODE XREF: get_mouse_input+1BA\u2191j
 
 loc_5D810:                              ; CODE XREF: get_mouse_input+1DA\u2191j
                 push    cs
-                call    near ptr sub_5C91C
+                call    near ptr InputWindow_redrawPromptLine
                 jmp     loc_5D722
 ; ---------------------------------------------------------------------------
 
@@ -146314,7 +146314,7 @@ loc_5E6C4:                              ; CODE XREF: HelpScreen_Show+197\u2191j
                 add     sp, 2
                 call    Events_ClearPendingKey
                 call    Screen_backupPalette
-                call    sub_5C91C
+                call    InputWindow_redrawPromptLine
                 mov     sp, bp
                 pop     bp
                 retf
@@ -386917,7 +386917,7 @@ aInputPrompt    db 0Ah                  ; DATA XREF: sg4d43:aaInputPrompt\u2193o
                 db '>',0
                 db    0
 ; Message aaInputPrompt
-aaInputPrompt   dd aInputPrompt         ; DATA XREF: sub_5C91C+9\u2191r
+aaInputPrompt   dd aInputPrompt         ; DATA XREF: InputWindow_redrawPromptLine+9\u2191r
                                         ; InputWindow_getLine+1C7\u2191r ...
                                         ; "\n>"
 aGate           db 'GATE',0             ; DATA XREF: gatemain_start+111\u2191o
@@ -393946,9 +393946,9 @@ dseg_141        dw seg sg4d43           ; DATA XREF: Events_waitForPress+6\u2191
                                         ; Scene_draw+13\u2191r ...
 dseg_142        dw seg sg4d43           ; DATA XREF: Events_waitForPress+CD\u2191r
                                         ; Scene_draw+20B\u2191r ...
-dseg_143        dw seg sg4d43           ; DATA XREF: sub_5C91C\u2191r
+dseg_143        dw seg sg4d43           ; DATA XREF: InputWindow_redrawPromptLine\u2191r
                                         ; InputWindow_getLine+1BE\u2191r
-dseg_144        dw seg sg4d43           ; DATA XREF: sub_5C91C:loc_5C957\u2191r
+dseg_144        dw seg sg4d43           ; DATA XREF: InputWindow_redrawPromptLine:loc_5C957\u2191r
                                         ; sub_5D18C:loc_5D1A7\u2191r ...
 dseg_145        dw seg sg4d43           ; DATA XREF: Scene_draw+7\u2191r
                                         ; Scene_draw:loc_5C9B8\u2191r

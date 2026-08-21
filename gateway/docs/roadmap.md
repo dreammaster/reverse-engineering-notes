@@ -666,6 +666,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       `sub_1F910` (the other two backend-specific stop routines) and
       `sub_15F35` (the resource-variant lookup helper) still need
       naming.
+- [x] Named `sub_5C91C` (5 callers) → `InputWindow_redrawPromptLine` —
+      redraws the parser prompt + typed-so-far input line. Full
+      writeup in
+      [overview.md](overview.md#inputwindow_redrawpromptline-named).
 - [ ] Unify the whole music/sound-hardware picture: `Speaker_playTone`/
       `Speaker_playErrorBeep` (PC-speaker tones), `Midi_sendByte` +
       `sub_1D966`/`sub_1EE70`/`sub_1ECB6` (MPU-401/MIDI), and

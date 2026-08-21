@@ -1386,6 +1386,21 @@ RENAMES = [
      "Was word_C8588: the configured MPU-401 IRQ line, passed to "
      "Midi_initDevice by Midi_detectDevice alongside "
      "_midiBasePortConfig."),
+
+    # -- forty-sixth pass: sub_5C91C, confirmed via the already-named
+    # aaInputPrompt/get_input_line_ptr/Commset_winContent as the input-
+    # line redraw routine. See
+    # docs/overview.md#inputwindow_redrawpromptline-named. --
+
+    (0x5C91C, "InputWindow_redrawPromptLine",
+     "sub_5C91C(): writes the already-named aaInputPrompt string (the "
+     "parser's prompt, e.g. a leading character) followed by the "
+     "current input buffer's text (get_input_line_ptr) into the "
+     "content window (TextWindow_addDirect, Commset_winContent) -- "
+     "redrawing the prompt-plus-typed-so-far line. Then, if mouse "
+     "input mode is off, hides the mouse cursor; otherwise shows it "
+     "(waiting for button release first if a button was already "
+     "held)."),
 ]
 
 
