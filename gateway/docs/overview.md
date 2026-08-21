@@ -2552,3 +2552,26 @@ to it; always returns the *previous* current window, letting callers
 temporarily switch windows and restore the old one afterward.
 
 Applied via `apply_renames_gatemain.py`'s fifty-sixth batch.
+
+### `Listbox_resetStateStack`/`Listbox_pushState` named — a nested-listbox stack
+
+Moved to `sub_17A12` (4 callers), a one-line "reset a counter to 0"
+function. Confirmed via the immediately-following function's body,
+which pushes the current listbox's items/divider-index onto a 20-deep
+stack (indexed by that same counter, `word_D0766`) before calling the
+already-named `Listbox_reset` with new items — a **nested-listbox
+state stack**, used to open a listbox/menu on top of the current one
+and later restore it.
+
+- **`Listbox_resetStateStack`** (was `sub_17A12`): sets the stack's
+  depth counter to 0. Called from several already-named entry points
+  (`Events_waitForPress`, `InputWindow_getLine`, `Scene_draw`) —
+  consistent with clearing any nested-dialog stack state at the start
+  of a fresh top-level input/display session.
+- **`Listbox_pushState`** (was `sub_17A19`): saves a window's current
+  items, divider index, and a third value onto the stack, increments
+  the depth, then calls `Listbox_reset` with the new items — pushing
+  the current listbox state before replacing it. No-ops if the stack
+  is already full (20 deep).
+
+Applied via `apply_renames_gatemain.py`'s fifty-seventh batch.

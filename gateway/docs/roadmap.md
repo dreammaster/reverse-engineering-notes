@@ -658,6 +658,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       switches the active window, returning the previous one for
       save/restore use. Full writeup in
       [overview.md](overview.md#windows_setcurrentwindow-named).
+- [x] Named `sub_17A12`/`sub_17A19` → `Listbox_resetStateStack`/
+      `Listbox_pushState` — a nested-listbox state stack used to open
+      a menu on top of the current one. Full writeup in
+      [overview.md](overview.md#listbox_resetstatestacklistbox_pushstate-named--a-nested-listbox-stack).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

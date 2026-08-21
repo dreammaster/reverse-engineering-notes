@@ -14122,7 +14122,7 @@ Listbox_add     endp
 ; Attributes: bp-based frame
 
 ; int __cdecl __far Listbox_reset(int widowNum, Message *items, int dividerIndex, int argE)
-Listbox_reset   proc far                ; CODE XREF: sub_17A19+91\u2193P
+Listbox_reset   proc far                ; CODE XREF: Listbox_pushState+91\u2193P
                                         ; sub_17AB8+5B\u2193P ...
 
 var_C           = word ptr -0Ch
@@ -14400,7 +14400,7 @@ Windows_getListboxIndex endp
 ; Attributes: bp-based frame
 
 ; Message *__cdecl __far Listbox_getItems(int winNumber)
-Listbox_getItems proc far               ; CODE XREF: sub_17A19+1D\u2193P
+Listbox_getItems proc far               ; CODE XREF: Listbox_pushState+1D\u2193P
                                         ; Events_waitForPress+85\u2193P ...
 
 index           = word ptr -2
@@ -14685,7 +14685,7 @@ sub_16AB2       endp
 ; Attributes: bp-based frame
 
 ; int __cdecl __far Listbox_getDividerIndex(int winNumber)
-Listbox_getDividerIndex proc far        ; CODE XREF: sub_17A19+38\u2193P
+Listbox_getDividerIndex proc far        ; CODE XREF: Listbox_pushState+38\u2193P
 
 var_2           = word ptr -2
 winNumber       = word ptr  6
@@ -14720,7 +14720,7 @@ Listbox_getDividerIndex endp
 
 ; Attributes: bp-based frame
 
-sub_16B01       proc far                ; CODE XREF: sub_17A19+4D\u2193P
+sub_16B01       proc far                ; CODE XREF: Listbox_pushState+4D\u2193P
 
 var_2           = word ptr -2
 winNumber       = word ptr  6
@@ -16838,18 +16838,18 @@ seg015          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_17A12       proc far                ; CODE XREF: Events_waitForPress+7C\u2193P
+Listbox_resetStateStack proc far        ; CODE XREF: Events_waitForPress+7C\u2193P
                                         ; Scene_draw+79\u2193P ...
                 mov     word_D0766, 0
                 retf
-sub_17A12       endp
+Listbox_resetStateStack endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-sub_17A19       proc far                ; CODE XREF: sub_5D9F3+16B\u2193P
+Listbox_pushState proc far              ; CODE XREF: sub_5D9F3+16B\u2193P
                                         ; sub_5D9F3+24B\u2193P ...
 
 winNumber       = word ptr  6
@@ -16865,7 +16865,7 @@ loc_17A1A:
                 jmp     loc_17AB6
 ; ---------------------------------------------------------------------------
 
-loc_17A26:                              ; CODE XREF: sub_17A19+8\u2191j
+loc_17A26:                              ; CODE XREF: Listbox_pushState+8\u2191j
                 mov     bx, word_D0766
                 shl     bx, 1
                 mov     ax, [bp+winNumber]
@@ -16919,13 +16919,13 @@ loc_17A86:
                 call    Listbox_reset
                 add     sp, 0Ah
 
-loc_17AB2:                              ; CODE XREF: sub_17A19+7B\u2191j
+loc_17AB2:                              ; CODE XREF: Listbox_pushState+7B\u2191j
                 inc     word_D0766
 
-loc_17AB6:                              ; CODE XREF: sub_17A19+A\u2191j
+loc_17AB6:                              ; CODE XREF: Listbox_pushState+A\u2191j
                 pop     bp
                 retf
-sub_17A19       endp
+Listbox_pushState endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -142529,7 +142529,7 @@ loc_5C802:                              ; CODE XREF: Events_waitForPress+5F\u219
                 mov     is_mouse_input_mode, 1
                 cmp     word_CBCFC, 0
                 jnz     short loc_5C896
-                call    sub_17A12
+                call    Listbox_resetStateStack
                 push    LIstbox_index2  ; winNumber
                 call    Listbox_getItems
                 add     sp, 2
@@ -142799,7 +142799,7 @@ loc_5C9F7:                              ; CODE XREF: Scene_draw+4D\u2191j
 loc_5CA07:                              ; CODE XREF: Scene_draw+45\u2191j
                 mov     ax, [bp+arg_0]
                 mov     word_CBCFC, ax
-                call    sub_17A12
+                call    Listbox_resetStateStack
                 mov     ax, 1
                 push    ax              ; clearScreen
                 call    Windows_clear
@@ -143626,7 +143626,7 @@ loc_5D1CE:                              ; CODE XREF: sub_5D18C+3D\u2191j
 ; ---------------------------------------------------------------------------
 
 loc_5D1DF:                              ; CODE XREF: sub_5D18C+38\u2191j
-                call    sub_17A12
+                call    Listbox_resetStateStack
                 push    LIstbox_index2  ; winNumber
                 call    Listbox_getItems
                 add     sp, 2
@@ -143686,7 +143686,7 @@ loc_5D270:                              ; CODE XREF: sub_5D18C+DB\u2191j
                 mov     is_mouse_input_mode, 0
                 cmp     word_CBCFC, 0
                 jnz     short loc_5D28D
-                call    sub_17A12
+                call    Listbox_resetStateStack
                 sub     ax, ax
                 push    ax
                 call    Listbox_draw
@@ -143723,7 +143723,7 @@ enabled         = word ptr -2
                 push    ax              ; line
                 call    InputArea_setLine
                 add     sp, 6
-                call    sub_17A12
+                call    Listbox_resetStateStack
                 push    cs
                 call    near ptr scene_update?
                 push    cs
@@ -143853,7 +143853,7 @@ loc_5D38B:                              ; CODE XREF: InputWindow_getLine+E1\u219
                 push    ax              ; line
                 call    InputArea_setLine
                 add     sp, 6
-                call    sub_17A12
+                call    Listbox_resetStateStack
                 mov     ax, offset _inputLineCopy
                 mov     dx, seg sg3EDC
                 push    dx
@@ -143909,7 +143909,7 @@ loc_5D400:                              ; CODE XREF: InputWindow_getLine:loc_5D3
                 mov     es, dseg_144
                 assume es:sg4d43
                 and     byte ptr es:mouseState, 0FDh
-                call    sub_17A12
+                call    Listbox_resetStateStack
                 sub     ax, ax
                 push    ax
                 call    Listbox_draw
@@ -144844,7 +144844,7 @@ loc_5DB55:                              ; CODE XREF: sub_5D9F3+17B\u2193j
                 push    ax
                 push    ax
                 push    Commset_winContent
-                call    sub_17A19
+                call    Listbox_pushState
                 add     sp, 8
 
 loc_5DB66:                              ; CODE XREF: sub_5D9F3+160\u2191j
@@ -144935,7 +144935,7 @@ loc_5DC19:                              ; CODE XREF: sub_5D9F3+20A\u2191j
                 push    word ptr off_CBCCC+2
                 push    word ptr off_CBCCC
                 push    LIstbox_index1
-                call    sub_17A19
+                call    Listbox_pushState
                 add     sp, 8
                 mov     es, seg_D1158
                 cmp     es:word_5B0E6, 0
@@ -144981,7 +144981,7 @@ loc_5DC7E:                              ; CODE XREF: sub_5D9F3+284\u2191j
                 push    ax
                 mov     ax, 0FFFFh
                 push    ax
-                call    sub_17A19
+                call    Listbox_pushState
                 add     sp, 8
                 sub     ax, ax
                 push    ax
@@ -145000,7 +145000,7 @@ loc_5DCC8:                              ; CODE XREF: sub_5D9F3+2B6\u2191j
                 push    ax
                 mov     ax, 0FFFFh
                 push    ax
-                call    sub_17A19
+                call    Listbox_pushState
                 add     sp, 8
                 sub     ax, ax
                 push    ax
@@ -145029,7 +145029,7 @@ loc_5DD01:                              ; CODE XREF: sub_5D9F3+305\u2191j
                 push    ax
                 mov     ax, 0FFFFh
                 push    ax
-                call    sub_17A19
+                call    Listbox_pushState
                 add     sp, 8
                 sub     ax, ax
                 push    ax
@@ -145065,7 +145065,7 @@ loc_5DD4F:                              ; CODE XREF: sub_5D9F3+357\u2191j
                 push    ax
                 mov     ax, 0FFFFh
                 push    ax
-                call    sub_17A19
+                call    Listbox_pushState
                 add     sp, 8
                 sub     ax, ax
                 push    ax
@@ -145084,7 +145084,7 @@ loc_5DD6B:                              ; CODE XREF: sub_5D9F3+4A1\u2193j
                 push    LIstbox_index2
 
 loc_5DD6F:                              ; CODE XREF: sub_5D9F3+3E3\u2193j
-                call    sub_17A19
+                call    Listbox_pushState
                 add     sp, 8
                 jmp     loc_5DFDF
 ; ---------------------------------------------------------------------------
@@ -145216,7 +145216,7 @@ loc_5DE78:                              ; CODE XREF: sub_5D9F3+480\u2191j
                 push    ax
                 mov     ax, 0FFFFh
                 push    ax
-                call    sub_17A19
+                call    Listbox_pushState
                 add     sp, 8
                 sub     ax, ax
                 push    ax
@@ -145260,7 +145260,7 @@ loc_5DEC5:                              ; CODE XREF: sub_5D9F3+4C7\u2191j
                 push    ax
                 mov     ax, 0FFFFh
                 push    ax
-                call    sub_17A19
+                call    Listbox_pushState
                 add     sp, 8
                 mov     [bp+var_3A], offset unk_5E732
                 mov     [bp+var_38], seg sg377B
@@ -145340,7 +145340,7 @@ loc_5DF52:                              ; CODE XREF: sub_5D9F3+55A\u2191j
                 push    word ptr off_CBCCC+2
                 push    word ptr off_CBCCC
                 push    LIstbox_index1
-                call    sub_17A19
+                call    Listbox_pushState
                 add     sp, 8
                 cmp     [bp+var_3A], 0D6ECh
                 jnz     short loc_5DFDF
@@ -392528,8 +392528,8 @@ asc_D075E       db ' ',0                ; DATA XREF: Listbox_draw+2E1\u2191o
 asc_D0762       db ' ',0                ; DATA XREF: Listbox_draw+4A1\u2191o
 ; char asc_D0764[]
 asc_D0764       db ' ',0                ; DATA XREF: Listbox_draw+52E\u2191o
-word_D0766      dw 0                    ; DATA XREF: sub_17A12\u2191w
-                                        ; sub_17A19+3\u2191r ...
+word_D0766      dw 0                    ; DATA XREF: Listbox_resetStateStack\u2191w
+                                        ; Listbox_pushState+3\u2191r ...
 unk_D0768       db    0                 ; DATA XREF: Parser_parseLine:loc_626AA\u2191o
                                         ; sg4d43:off_D080A\u2193o
                 db    0

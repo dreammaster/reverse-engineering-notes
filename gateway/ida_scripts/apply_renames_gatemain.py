@@ -1609,6 +1609,30 @@ RENAMES = [
      "Always returns the PREVIOUS current window number, letting "
      "callers temporarily switch windows and restore the old one "
      "afterward."),
+
+    # -- fifty-seventh pass: sub_17A12/sub_17A19, a listbox nested-
+    # state stack -- confirmed via the immediately-following function's
+    # body, which pushes the current listbox's items/divider-index onto
+    # a 20-deep stack (indexed by the same word_D0766 this function
+    # resets to 0) before calling the already-named Listbox_reset with
+    # new items. See docs/overview.md#listbox_resetstatestack-named. --
+
+    (0x17A12, "Listbox_resetStateStack",
+     "sub_17A12(): sets word_D0766 (the listbox nested-state stack's "
+     "depth counter) to 0. Called from several already-named entry "
+     "points (Events_waitForPress, InputWindow_getLine, Scene_draw) -- "
+     "consistent with clearing any nested-dialog stack state at the "
+     "start of a fresh top-level input/display session."),
+    (0x17A19, "Listbox_pushState",
+     "sub_17A19(winNumber, items, dividerIndex): saves winNumber's "
+     "current items (Listbox_getItems), divider index "
+     "(Listbox_getDividerIndex), and a value from sub_16B01 (not "
+     "renamed) into a 20-deep stack indexed by word_D0766, increments "
+     "the stack depth, then calls the already-named Listbox_reset "
+     "with the new items/dividerIndex -- pushing the current listbox "
+     "state before replacing it, i.e. opening a nested listbox/menu "
+     "on top of the current one. Bails out early (no-op) if the "
+     "stack is already full (word_D0766 == 0x14)."),
 ]
 
 
