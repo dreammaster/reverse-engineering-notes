@@ -2631,3 +2631,23 @@ Called from the already-named `Midi_initDevice` during setup, plus
 three other MIDI-adjacent call sites not renamed.
 
 Applied via `apply_renames_gatemain.py`'s sixtieth batch.
+
+### `Midi_peekByte`/`Midi_readVarLengthValue2` named
+
+Moved to `sub_1E168` (4 callers) and its helper `sub_1E148`. Both turn
+out to be a **second compiled copy** of the already-named
+`Midi_peekTrackByte`/`Midi_readVarLengthValue` pair — the same
+duplicate-copy pattern already seen with `Vocab_matchesAbbreviation`/
+`String_matchesPrefixCI` — operating on a different base pointer
+(`_tmpSub._sub._set1`) and position counter (`word_D20A0`) for what's
+presumably a single implicit stream rather than an array of tracks
+indexed by `trackIndex`.
+
+**`Midi_peekByte(byteOffset)`** (was `sub_1E148`): reads a byte at
+`*(_tmpSub._sub._set1) + byteOffset + word_D20A0`.
+
+**`Midi_readVarLengthValue2`** (was `sub_1E168`): byte-for-byte the
+same Standard MIDI File VLQ decode loop as `Midi_readVarLengthValue`,
+just using `Midi_peekByte` and incrementing `word_D20A0` instead.
+
+Applied via `apply_renames_gatemain.py`'s sixty-first batch.

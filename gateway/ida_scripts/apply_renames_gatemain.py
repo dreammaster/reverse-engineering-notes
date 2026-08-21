@@ -1699,6 +1699,29 @@ RENAMES = [
      "from the already-named Midi_initDevice during setup, plus three "
      "other MIDI-adjacent call sites (sub_1F552/sub_1F93E/sub_1FA8E, "
      "not renamed)."),
+
+    # -- sixty-first pass: sub_1E148/sub_1E168, a second compiled copy
+    # of the Midi_peekTrackByte/Midi_readVarLengthValue pair, operating
+    # on a different base pointer (_tmpSub._sub._set1) and position
+    # counter (word_D20A0) -- same shape as the earlier Vocab_
+    # matchesAbbreviation/String_matchesPrefixCI duplicate-copy finding.
+    # See docs/overview.md#midi_peekbyte--midi_readvarlengthvalue2-named. --
+
+    (0x1E148, "Midi_peekByte",
+     "sub_1E148(byteOffset): reads a byte at "
+     "*(_tmpSub._sub._set1) + byteOffset + word_D20A0 -- the same "
+     "shape as the already-named Midi_peekTrackByte (base pointer + "
+     "offset + running position counter), just for a single implicit "
+     "stream rather than an array of tracks indexed by trackIndex."),
+    (0x1E168, "Midi_readVarLengthValue2",
+     "sub_1E168(): byte-for-byte the same Standard MIDI File "
+     "variable-length-quantity decode loop as the already-named "
+     "Midi_readVarLengthValue -- reads a byte via the new "
+     "Midi_peekByte(0), accumulates 7 bits per byte, increments "
+     "word_D20A0 (this copy's position counter) once per byte, and "
+     "continues while the high bit is set. A second compiled copy for "
+     "this stream, the same duplication pattern already seen with "
+     "Vocab_matchesAbbreviation/String_matchesPrefixCI."),
 ]
 
 

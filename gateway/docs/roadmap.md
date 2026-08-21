@@ -673,6 +673,11 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
 - [x] Named `sub_1D85B` (4 callers) → `Midi_resetDevice` — an MPU-401
       reset-and-flush helper called from `Midi_initDevice`. Full
       writeup in [overview.md](overview.md#midi_resetdevice-named).
+- [x] Named `sub_1E148`/`sub_1E168` → `Midi_peekByte`/
+      `Midi_readVarLengthValue2` — a second compiled copy of the
+      already-named `Midi_peekTrackByte`/`Midi_readVarLengthValue`
+      pair. Full writeup in
+      [overview.md](overview.md#midi_peekbytemidi_readvarlengthvalue2-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-
