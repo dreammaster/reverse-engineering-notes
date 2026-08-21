@@ -618,6 +618,11 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       earlier batch pass due to an IDA function-chunk-merging quirk.
       Full writeup in
       [overview.md](overview.md#thunk_sub_5d9f3thunk_sub_5d9f3_2-named--stragglers-from-the-rtlink-thunk-batch-pass-caught).
+- [x] Named `sub_2A90E` (6 callers) → `Surface_advanceSegmentOnCarry`
+      — a low-level far-pointer-overflow fixup (add `0x1000` to ES or
+      DS based on the caller's carry flag), in the same graphics
+      neighborhood as `Surface_getPixelOffset`. Full writeup in
+      [overview.md](overview.md#surface_advancesegmentoncarry-named).
 - [ ] Unify the whole music/sound-hardware picture: `Speaker_playTone`/
       `Speaker_playErrorBeep` (PC-speaker tones), `Midi_sendByte` +
       `sub_1D966`/`sub_1EE70`/`sub_1ECB6` (MPU-401/MIDI), and

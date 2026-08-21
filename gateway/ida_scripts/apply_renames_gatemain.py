@@ -1144,6 +1144,28 @@ RENAMES = [
      "one-thunk-per-caller-segment pattern already documented for "
      "this codebase's RTLink thunks). Suffixed _2 since IDA requires "
      "unique names and thunk_sub_5D9F3 is already taken."),
+
+    # -- fortieth pass: sub_2A90E, a low-level far-pointer segment-
+    # overflow fixup utility. Confirmed by its unusual implicit
+    # calling convention (no formal stack args -- takes an ax:dx far
+    # pointer and tests the CPU carry flag as set by the caller's
+    # preceding arithmetic) and its callers, all in the same graphics/
+    # Surface-drawing neighborhood as the already-named
+    # Surface_getPixelOffset. See
+    # docs/overview.md#surface_advancesegmentoncarry-named. --
+
+    (0x2A90E, "Surface_advanceSegmentOnCarry",
+     "sub_2A90E(ax=offset, dx=segment, implicit CF from caller's "
+     "preceding add): the classic 8086 far-pointer-offset-overflow "
+     "fixup -- if the caller's arithmetic on the offset carried "
+     "(CF set), adds 0x1000 to ES (the segment half of the ax:dx "
+     "pair as loaded into es:di); otherwise adds 0x1000 to DS "
+     "instead. This is the standard 'advance to the next 64KB bank' "
+     "segment adjustment needed after adding to a raw video-memory/"
+     "picture-buffer offset that might cross a 64KB boundary. Callers "
+     "(sub_17D6A/sub_17E31/sub_17FB8/sub_2AA24/sub_2B6D4/sub_2C42A, "
+     "none renamed) sit in the same graphics/Surface-drawing "
+     "neighborhood as the already-named Surface_getPixelOffset."),
 ]
 
 

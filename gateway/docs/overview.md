@@ -2167,3 +2167,19 @@ whole batch script for two stragglers.
 
 Applied via `apply_renames_gatemain.py`'s thirty-eighth and
 thirty-ninth batches.
+
+### `Surface_advanceSegmentOnCarry` named
+
+Moved to `sub_2A90E` (6 callers). An unusual, low-level function with
+no formal stack arguments at all — it takes an implicit `ax:dx` far
+pointer and reads the CPU carry flag exactly as the *caller* left it
+after some preceding arithmetic on the offset. This is the classic
+8086 far-pointer-offset-overflow fixup: if the caller's addition
+carried (offset wrapped past `0xFFFF`), add `0x1000` to `ES`;
+otherwise add `0x1000` to `DS` — the standard "advance to the next
+64KB bank" segment adjustment needed after adding to a raw video-
+memory/picture-buffer offset that might cross a 64KB boundary. Its
+callers (`sub_17D6A`/`sub_17E31`/`sub_17FB8`/`sub_2AA24`/`sub_2B6D4`/
+`sub_2C42A`, none renamed) sit in the same graphics/`Surface`-drawing
+neighborhood as the already-named `Surface_getPixelOffset`. Named
+**`Surface_advanceSegmentOnCarry`**.

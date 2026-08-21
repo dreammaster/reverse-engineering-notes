@@ -17380,7 +17380,7 @@ loc_17DA0:                              ; CODE XREF: sub_17D6A+2E\u2191j
                 mov     dx, [bp+16h]
                 mov     ax, [bp+14h]
                 clc
-                call    sub_2A90E
+                call    Surface_advanceSegmentOnCarry
                 jnb     short loc_17DCB
                 mov     [bp-2], ax
                 jmp     short loc_17E24
@@ -17416,7 +17416,7 @@ loc_17DD7:                              ; CODE XREF: sub_17D6A+29\u2191j
                 mov     dx, [bp+16h]
                 mov     ax, [bp+14h]
                 clc
-                call    sub_2A90E
+                call    Surface_advanceSegmentOnCarry
                 jnb     short loc_17E05
                 mov     [bp-2], ax
                 jmp     short loc_17E24
@@ -17565,7 +17565,7 @@ loc_17EBC:                              ; CODE XREF: sub_17E31+84\u2191j
                 mov     dx, [bp+16h]
                 mov     ax, [bp+14h]
                 clc
-                call    sub_2A90E
+                call    Surface_advanceSegmentOnCarry
                 jnb     short loc_17EF0
                 mov     [bp-2], ax
                 jmp     loc_17F79
@@ -17602,7 +17602,7 @@ loc_17EFC:                              ; CODE XREF: sub_17E31+7E\u2191j
                 mov     dx, [bp+16h]
                 mov     ax, [bp+14h]
                 clc
-                call    sub_2A90E
+                call    Surface_advanceSegmentOnCarry
                 jnb     short loc_17F32
                 mov     [bp-2], ax
                 jmp     short loc_17F79
@@ -17733,7 +17733,7 @@ loc_17FD3:                              ; CODE XREF: sub_17FB8:loc_17FEB\u2193j
                 mov     dx, [bp+16h]
                 mov     ax, [bp+14h]
                 clc
-                call    sub_2A90E
+                call    Surface_advanceSegmentOnCarry
                 jnb     short loc_17FEB
                 mov     [bp-2], ax
                 jmp     short loc_1801D
@@ -17757,7 +17757,7 @@ loc_17FF7:                              ; CODE XREF: sub_17FB8+35\u2191j
                 mov     dx, [bp+16h]
                 mov     ax, [bp+14h]
                 clc
-                call    sub_2A90E
+                call    Surface_advanceSegmentOnCarry
                 jnb     short loc_1800F
 
 loc_1800A:
@@ -61571,7 +61571,7 @@ seg049          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2A90E       proc far                ; CODE XREF: sub_17D6A+55\u2191P
+Surface_advanceSegmentOnCarry proc far  ; CODE XREF: sub_17D6A+55\u2191P
                                         ; sub_17D6A+8F\u2191P ...
                 push    bx
                 push    cx
@@ -61593,23 +61593,23 @@ loc_2A921:
                 jmp     short loc_2A92C
 ; ---------------------------------------------------------------------------
 
-loc_2A925:                              ; CODE XREF: sub_2A90E+C\u2191j
+loc_2A925:                              ; CODE XREF: Surface_advanceSegmentOnCarry+C\u2191j
                 mov     ax, es
                 add     ax, 1000h
                 mov     es, ax
                 assume es:nothing
 
-loc_2A92C:                              ; CODE XREF: sub_2A90E+15\u2191j
+loc_2A92C:                              ; CODE XREF: Surface_advanceSegmentOnCarry+15\u2191j
                 clc
                 jmp     short loc_2A930
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_2A930:                              ; CODE XREF: sub_2A90E+1F\u2191j
+loc_2A930:                              ; CODE XREF: Surface_advanceSegmentOnCarry+1F\u2191j
                 pop     cx
                 pop     bx
                 retf
-sub_2A90E       endp
+Surface_advanceSegmentOnCarry endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -61951,7 +61951,7 @@ loc_2AAD3:                              ; CODE XREF: sub_2AA24:loc_2AAEF\u2193j
 loc_2AADD:
                 mov     ax, word ptr [bp+surface]
                 stc
-                call    sub_2A90E
+                call    Surface_advanceSegmentOnCarry
                 pop     ax
                 pop     dx
                 jnb     short loc_2AAEF
@@ -64306,7 +64306,7 @@ loc_2B9AB:                              ; CODE XREF: sub_2B6D4:loc_2BB89\u2193j
                 mov     dx, word ptr [bp+surface+2]
                 mov     ax, word ptr [bp+surface]
                 clc
-                call    sub_2A90E
+                call    Surface_advanceSegmentOnCarry
                 mov     [bp+var_2], ax
                 pop     ax
                 jnb     short loc_2B9D2
@@ -64363,7 +64363,7 @@ loc_2BA19:                              ; CODE XREF: sub_2B6D4+335\u2191j
                 mov     dx, word ptr [bp+arg_6+2]
                 mov     ax, word ptr [bp+arg_6]
                 stc
-                call    sub_2A90E
+                call    Surface_advanceSegmentOnCarry
                 jnb     short loc_2BA32
                 mov     [bp+var_2], ax
                 jmp     loc_2BB91
@@ -64376,7 +64376,7 @@ loc_2BA32:                              ; CODE XREF: sub_2B6D4+348\u2191j
                 mov     dx, word ptr [bp+surface+2]
                 mov     ax, word ptr [bp+surface]
                 clc
-                call    sub_2A90E
+                call    Surface_advanceSegmentOnCarry
                 jnb     short loc_2BA4B
                 mov     [bp+var_2], ax
                 jmp     loc_2BB91
@@ -64415,7 +64415,7 @@ loc_2BA6D:                              ; CODE XREF: sub_2B6D4+343\u2191j
                 mov     dx, word ptr [bp+arg_6+2]
                 mov     ax, word ptr [bp+arg_6]
                 stc
-                call    sub_2A90E
+                call    Surface_advanceSegmentOnCarry
                 jnb     short loc_2BA86
                 mov     [bp+var_2], ax
                 jmp     loc_2BB91
@@ -64428,7 +64428,7 @@ loc_2BA86:                              ; CODE XREF: sub_2B6D4+39C\u2191j
                 mov     dx, word ptr [bp+surface+2]
                 mov     ax, word ptr [bp+surface]
                 clc
-                call    sub_2A90E
+                call    Surface_advanceSegmentOnCarry
                 jnb     short loc_2BA9F
                 mov     [bp+var_2], ax
                 jmp     loc_2BB91
@@ -64452,7 +64452,7 @@ loc_2BAA9:                              ; CODE XREF: sub_2B6D4+32E\u2191j
                 mov     dx, word ptr [bp+arg_6+2]
                 mov     ax, word ptr [bp+arg_6]
                 stc
-                call    sub_2A90E
+                call    Surface_advanceSegmentOnCarry
                 jnb     short loc_2BAC9
                 mov     [bp+var_2], ax
                 jmp     loc_2BB91
@@ -64467,7 +64467,7 @@ loc_2BAC9:                              ; CODE XREF: sub_2B6D4+3DF\u2191j
                 mov     dx, word ptr [bp+surface+2]
                 mov     ax, word ptr [bp+surface]
                 clc
-                call    sub_2A90E
+                call    Surface_advanceSegmentOnCarry
                 jnb     short loc_2BAE8
                 mov     [bp+var_2], ax
                 jmp     loc_2BB91
@@ -64510,7 +64510,7 @@ loc_2BB0E:                              ; CODE XREF: sub_2B6D4+3DA\u2191j
                 mov     dx, word ptr [bp+arg_6+2]
                 mov     ax, word ptr [bp+arg_6]
                 stc
-                call    sub_2A90E
+                call    Surface_advanceSegmentOnCarry
                 jnb     short loc_2BB2B
                 mov     [bp+var_2], ax
                 jmp     short loc_2BB91
@@ -64523,7 +64523,7 @@ loc_2BB2B:                              ; CODE XREF: sub_2B6D4+442\u2191j
                 mov     dx, word ptr [bp+surface+2]
                 mov     ax, word ptr [bp+surface]
                 clc
-                call    sub_2A90E
+                call    Surface_advanceSegmentOnCarry
 
 loc_2BB3C:
                 jnb     short loc_2BB43
@@ -64544,7 +64544,7 @@ loc_2BB53:                              ; CODE XREF: sub_2B6D4+472\u2191j
                 mov     dx, word ptr [bp+surface+2]
                 mov     ax, word ptr [bp+surface]
                 clc
-                call    sub_2A90E
+                call    Surface_advanceSegmentOnCarry
                 jnb     short loc_2BB66
                 mov     [bp+var_2], ax
                 jmp     short loc_2BB91
@@ -64563,7 +64563,7 @@ loc_2BB76:                              ; CODE XREF: sub_2B6D4+495\u2191j
                 mov     dx, word ptr [bp+arg_6+2]
                 mov     ax, word ptr [bp+arg_6]
                 stc
-                call    sub_2A90E
+                call    Surface_advanceSegmentOnCarry
                 jnb     short loc_2BB89
                 mov     [bp+var_2], ax
                 jmp     short loc_2BB91
@@ -66233,7 +66233,7 @@ loc_2C496:                              ; CODE XREF: sub_2C42A+67\u2191j
                 add     di, si
                 jnb     short loc_2C4AC
                 stc
-                call    sub_2A90E
+                call    Surface_advanceSegmentOnCarry
 
 loc_2C4AC:                              ; CODE XREF: sub_2C42A+7A\u2191j
                 or      es:[di], al
@@ -66245,7 +66245,7 @@ loc_2C4AC:                              ; CODE XREF: sub_2C42A+7A\u2191j
                 add     di, si
                 jnb     short loc_2C4C4
                 stc
-                call    sub_2A90E
+                call    Surface_advanceSegmentOnCarry
 
 loc_2C4C4:                              ; CODE XREF: sub_2C42A+92\u2191j
                 or      es:[di], al
@@ -66258,7 +66258,7 @@ loc_2C4C4:                              ; CODE XREF: sub_2C42A+92\u2191j
                 add     di, si
                 jnb     short loc_2C4DE
                 stc
-                call    sub_2A90E
+                call    Surface_advanceSegmentOnCarry
 
 loc_2C4DE:                              ; CODE XREF: sub_2C42A+AC\u2191j
                 or      es:[di], al
@@ -66280,7 +66280,7 @@ loc_2C4EB:                              ; CODE XREF: sub_2C42A+BC\u2191j
                 add     di, si
                 jnb     short loc_2C501
                 stc
-                call    sub_2A90E
+                call    Surface_advanceSegmentOnCarry
 
 loc_2C501:                              ; CODE XREF: sub_2C42A+CF\u2191j
                 and     es:[di], al
@@ -66292,7 +66292,7 @@ loc_2C501:                              ; CODE XREF: sub_2C42A+CF\u2191j
                 add     di, si
                 jnb     short loc_2C519
                 stc
-                call    sub_2A90E
+                call    Surface_advanceSegmentOnCarry
 
 loc_2C519:                              ; CODE XREF: sub_2C42A+E7\u2191j
                 and     es:[di], al
@@ -66305,7 +66305,7 @@ loc_2C519:                              ; CODE XREF: sub_2C42A+E7\u2191j
                 add     di, si
                 jnb     short loc_2C533
                 stc
-                call    sub_2A90E
+                call    Surface_advanceSegmentOnCarry
 
 loc_2C533:                              ; CODE XREF: sub_2C42A+101\u2191j
                 and     es:[di], al
@@ -66327,7 +66327,7 @@ loc_2C540:                              ; CODE XREF: sub_2C42A+111\u2191j
                 add     di, si
                 jnb     short loc_2C556
                 stc
-                call    sub_2A90E
+                call    Surface_advanceSegmentOnCarry
 
 loc_2C556:                              ; CODE XREF: sub_2C42A+124\u2191j
                 xor     es:[di], al
@@ -66339,7 +66339,7 @@ loc_2C556:                              ; CODE XREF: sub_2C42A+124\u2191j
                 add     di, si
                 jnb     short loc_2C56E
                 stc
-                call    sub_2A90E
+                call    Surface_advanceSegmentOnCarry
 
 loc_2C56E:                              ; CODE XREF: sub_2C42A+13C\u2191j
                 xor     es:[di], al
@@ -66352,7 +66352,7 @@ loc_2C56E:                              ; CODE XREF: sub_2C42A+13C\u2191j
                 add     di, si
                 jnb     short loc_2C588
                 stc
-                call    sub_2A90E
+                call    Surface_advanceSegmentOnCarry
 
 loc_2C588:                              ; CODE XREF: sub_2C42A+156\u2191j
                 xor     es:[di], al
@@ -66370,7 +66370,7 @@ loc_2C58D:                              ; CODE XREF: sub_2C42A+55\u2191j
                 add     di, si
                 jnb     short loc_2C5A8
                 stc
-                call    sub_2A90E
+                call    Surface_advanceSegmentOnCarry
 
 loc_2C5A8:                              ; CODE XREF: sub_2C42A+176\u2191j
                 and     es:[di], ah
@@ -66383,7 +66383,7 @@ loc_2C5A8:                              ; CODE XREF: sub_2C42A+176\u2191j
                 add     di, si
                 jnb     short loc_2C5C3
                 stc
-                call    sub_2A90E
+                call    Surface_advanceSegmentOnCarry
 
 loc_2C5C3:                              ; CODE XREF: sub_2C42A+191\u2191j
                 and     es:[di], ah
@@ -66397,7 +66397,7 @@ loc_2C5C3:                              ; CODE XREF: sub_2C42A+191\u2191j
                 add     di, si
                 jnb     short loc_2C5E0
                 stc
-                call    sub_2A90E
+                call    Surface_advanceSegmentOnCarry
 
 loc_2C5E0:                              ; CODE XREF: sub_2C42A+1AE\u2191j
                 and     es:[di], ah
