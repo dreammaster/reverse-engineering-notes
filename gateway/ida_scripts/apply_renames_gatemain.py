@@ -66,34 +66,83 @@ RENAMES = [
     # not deliberately chosen -- renamed to their real meaning now that
     # it's confirmed. --
 
-    ("sub_1535E", "Score_add",
+    (0x1535E, "Score_add",
      "Confirmed by decoding msgId 0x803/0x804 from real GATESTR.DAT: "
      "'[Your score has just gone up by %d.' / ' NOTE: You can activate "
      "and deactivate score-change notification using the NOTIFY "
      "command.'. Adds its argument to _score, and if _scoreNotifyEnabled "
      "is set, prints the above (the NOTE only once, gated by "
      "_scoreNotifyTipShown)."),
-    ("Persisted_val128", "_score",
+    (0xCBB78, "_score",
      "Confirmed via Score_add (adds to this) and msgId 0x2A: 'You have "
      "achieved a score of %d out of 1600, in %d turns.' -- the two "
      "printf args at that call site are (_turnCount, _score) in that "
      "order, matching the message's two %d's."),
-    ("Persisted_val3", "_turnCount",
+    (0xCB7FE, "_turnCount",
      "Incremented once per main() game-loop iteration (a classic turn "
      "counter); confirmed as the first %d in msgId 0x2A's "
      "score-and-turns status message, paired with _score -- see above."),
-    ("Persisted_val11", "_scoreNotifyEnabled",
+    (0xCC6AB, "_scoreNotifyEnabled",
      "Gates whether Score_add prints its notification at all -- the "
      "in-game NOTIFY command's persisted toggle, per msgId 0x804's "
      "text (see Score_add's note)."),
-    ("Persisted_val12", "_scoreNotifyTipShown",
+    (0xCBB7A, "_scoreNotifyTipShown",
      "One-time flag: Score_add prints the NOTIFY-command explanation "
      "(msgId 0x804) only the first time a score notification fires, "
      "then sets this so it isn't repeated."),
-    ("Persisted_val175", "_gameTicks",
+    (0x5668C, "_gameTicks",
      "Confirmed via msgId 0x29: 'It is Dorman day %d.', computed as "
      "_gameTicks/480 + 1 right before that message -- a real-time game "
      "clock in ticks, 480 ticks per in-universe 'Dorman day'."),
+
+    # -- third pass, same session: sub_14A37 (80 callers) and its four
+    # previously-unnamed callees turn out to be a generic chunked
+    # streaming file loader, not anything filename-specific. Confirmed
+    # mechanically: reads a whole file into up to 8 RAM buffers (32-byte
+    # header + payload each, since a single DOS allocation can't span
+    # the whole file), abortable at any point via Events_isKeyPending
+    # and two word_C8582 config-flag bits, then dispatches each filled
+    # buffer through a CALLBACK function pointer (word_C8582 -- set by
+    # whichever caller configured this run, not traced further), then
+    # frees every buffer. High confidence on the mechanical architecture
+    # (a real streaming/chunked loader with a pluggable per-chunk
+    # handler and player-interruptible loading, era-typical for hiding
+    # disk latency behind something else like on-screen text); lower
+    # confidence on the exact end use since the callback target itself
+    # wasn't traced. See docs/overview.md#stream-subsystem-named. --
+
+    ("sub_14A37", "Stream_loadFile",
+     "Top-level entry: flushes the active window's pending text "
+     "(TextWindow_flushPendingText), then reads (Stream_readChunks), "
+     "processes (Stream_processChunks), and frees "
+     "(Stream_freeChunks) a whole file's worth of chunked buffers."),
+    ("sub_28E2C", "TextWindow_flushPendingText",
+     "Flushes Windows_pendingText for the current Windows_activeWindow "
+     "via TextWindow_addDirect if that window has buffered/queued text "
+     "waiting -- distinct from the already-named TextWindow_flushText."),
+    ("sub_1DDF6", "Stream_readChunks",
+     "Opens filename, seeks to find its total size, then reads it into "
+     "up to 8 separately-allocated RAM buffers (dword_C84A6[] array, "
+     "each up to ~64KB since one DOS allocation can't hold an arbitrary "
+     "file), aborting the whole read early if a key is pressed "
+     "(Events_isKeyPending) or if word_C8582 bit 8 is clear or bit "
+     "0x40 is set."),
+    ("sub_1E052", "Stream_processChunks",
+     "Walks the same buffer array Stream_readChunks filled, dispatching "
+     "each non-empty one through Stream_processChunk -- again "
+     "abortable via Events_isKeyPending between chunks, and gated by "
+     "the same word_C8582 bits."),
+    ("sub_1E0E8", "Stream_freeChunks",
+     "Frees all 8 of the buffer-array slots via kill_pointer_ -- the "
+     "cleanup step after Stream_readChunks/Stream_processChunks."),
+    ("sub_180E3", "Stream_processChunk",
+     "Per-chunk handler: reads a couple of header bytes from the "
+     "buffer (offsets 5 and 7, before the 32-byte header/payload "
+     "boundary already established) into cx/bx, then calls the actual "
+     "processing logic through a configurable callback function "
+     "pointer (word_C84D0) with the payload pointer (buffer+0x20) -- "
+     "not traced further since the callback's actual target varies by "
+     "caller and wasn't identified this pass."),
 ]
 
 

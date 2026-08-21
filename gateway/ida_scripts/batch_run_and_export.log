@@ -8154,3 +8154,103 @@ DRY_RUN = False
 [*] gen_file(OFILE_IDC) returned 1
 [*] saving database to C:\dev\legend\gateway\gatemain.idb
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\legend\gateway\gatemain.idb
+[*] ARGV = ['C:\\dev\\legend\\gateway\\ida_scripts\\batch_run_and_export.py', 'apply_renames_gatemain.py', 'noexport']
+[*] reading apply_renames_gatemain.py
+[*] executing apply_renames_gatemain.py
+[!] EXCEPTION:
+Traceback (most recent call last):
+  File "C:/dev/legend/gateway/ida_scripts/batch_run_and_export.py", line 95, in main
+    exec(compile(code, target_script, "exec"), g)
+  File "apply_renames_gatemain.py", line 169, in <module>
+    main()
+  File "apply_renames_gatemain.py", line 160, in main
+    ea = resolve(ref)
+  File "apply_renames_gatemain.py", line 152, in resolve
+    assert ea != idc.BADADDR, f"name not found: {ref!r}"
+AssertionError: name not found: 'sub_1535E'
+
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\legend\gateway\gatemain.idb
+[*] ARGV = ['C:\\dev\\legend\\gateway\\ida_scripts\\batch_run_and_export.py', 'apply_renames_gatemain.py', 'noexport']
+[*] reading apply_renames_gatemain.py
+[*] executing apply_renames_gatemain.py
+[!] EXCEPTION:
+Traceback (most recent call last):
+  File "C:/dev/legend/gateway/ida_scripts/batch_run_and_export.py", line 95, in main
+    exec(compile(code, target_script, "exec"), g)
+  File "apply_renames_gatemain.py", line 169, in <module>
+    main()
+  File "apply_renames_gatemain.py", line 160, in main
+    ea = resolve(ref)
+  File "apply_renames_gatemain.py", line 152, in resolve
+    assert ea != idc.BADADDR, f"name not found: {ref!r}"
+AssertionError: name not found: 'Persisted_val128'
+
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\legend\gateway\gatemain.idb
+[*] ARGV = ['C:\\dev\\legend\\gateway\\ida_scripts\\batch_run_and_export.py', 'apply_renames_gatemain.py', 'noexport']
+[*] reading apply_renames_gatemain.py
+[*] executing apply_renames_gatemain.py
+[*] captured stdout from target script:
+----- begin target script output -----
+DRY_RUN = True
+0x11635: 'Logics_prehandlerChainReaches' -> 'Logics_prehandlerChainReaches'   (sub_11635(logicNum, targetLogicNum): walks logicNum's prehandler chain stage by stage (bounded per-type by METHOD_SECTION_INFO, same table Logics_getPrehandlerMode consults) -- each stage's Logics_getPrehandlerMode result, if nonzero, is itself an object index the search recurses into with the SAME targetLogicNum (the recursive call is sub_11635(mode, targetLogicNum), not sub_11635(targetLogicNum, mode) -- confirmed by the exact push order). Returns 1 as soon as any stage's delegate chain eventually reaches targetLogicNum, 0 if every stage is exhausted without a match. Confirmed real call site in main() (main+0xA9E-ish): sub_11635(vocab_list_0._logicNum, Logics_logicNum211) -- both arguments are logicNum-shaped (proc_table indices), not one vocab id and one logicNum as an earlier guess assumed.)
+0x115ce: 'Logics_prehandlerHasMode' -> 'Logics_prehandlerHasMode'   (sub_115CE(logicNum, mode, requiredVal2): sibling to Logics_prehandlerChainReaches but checks EXACT equality against each stage's Logics_getPrehandlerMode result (no recursion into a delegate object) -- returns 1 as soon as any stage's mode equals the given mode value, 0 otherwise. requiredVal2, if >= 0, gates the whole check on Logics_getVal2_2(logicNum) first matching it (skipped entirely if requiredVal2 < 0).)
+0x1535e: 'Score_add' -> 'Score_add'   (Confirmed by decoding msgId 0x803/0x804 from real GATESTR.DAT: '[Your score has just gone up by %d.' / ' NOTE: You can activate and deactivate score-change notification using the NOTIFY command.'. Adds its argument to _score, and if _scoreNotifyEnabled is set, prints the above (the NOTE only once, gated by _scoreNotifyTipShown).)
+0xcbb78: '_score' -> '_score'   (Confirmed via Score_add (adds to this) and msgId 0x2A: 'You have achieved a score of %d out of 1600, in %d turns.' -- the two printf args at that call site are (_turnCount, _score) in that order, matching the message's two %d's.)
+0xcb7fe: '_turnCount' -> '_turnCount'   (Incremented once per main() game-loop iteration (a classic turn counter); confirmed as the first %d in msgId 0x2A's score-and-turns status message, paired with _score -- see above.)
+0xcc6ab: '_scoreNotifyEnabled' -> '_scoreNotifyEnabled'   (Gates whether Score_add prints its notification at all -- the in-game NOTIFY command's persisted toggle, per msgId 0x804's text (see Score_add's note).)
+0xcbb7a: '_scoreNotifyTipShown' -> '_scoreNotifyTipShown'   (One-time flag: Score_add prints the NOTIFY-command explanation (msgId 0x804) only the first time a score notification fires, then sets this so it isn't repeated.)
+0x5668c: '_gameTicks' -> '_gameTicks'   (Confirmed via msgId 0x29: 'It is Dorman day %d.', computed as _gameTicks/480 + 1 right before that message -- a real-time game clock in ticks, 480 ticks per in-universe 'Dorman day'.)
+0x14a37: 'sub_14A37' -> 'Stream_loadFile'   (Top-level entry: flushes the active window's pending text (TextWindow_flushPendingText), then reads (Stream_readChunks), processes (Stream_processChunks), and frees (Stream_freeChunks) a whole file's worth of chunked buffers.)
+0x28e2c: 'sub_28E2C' -> 'TextWindow_flushPendingText'   (Flushes Windows_pendingText for the current Windows_activeWindow via TextWindow_addDirect if that window has buffered/queued text waiting -- distinct from the already-named TextWindow_flushText.)
+0x1ddf6: 'sub_1DDF6' -> 'Stream_readChunks'   (Opens filename, seeks to find its total size, then reads it into up to 8 separately-allocated RAM buffers (dword_C84A6[] array, each up to ~64KB since one DOS allocation can't hold an arbitrary file), aborting the whole read early if a key is pressed (Events_isKeyPending) or if word_C8582 bit 8 is clear or bit 0x40 is set.)
+0x1e052: 'sub_1E052' -> 'Stream_processChunks'   (Walks the same buffer array Stream_readChunks filled, dispatching each non-empty one through Stream_processChunk -- again abortable via Events_isKeyPending between chunks, and gated by the same word_C8582 bits.)
+0x1e0e8: 'sub_1E0E8' -> 'Stream_freeChunks'   (Frees all 8 of the buffer-array slots via kill_pointer_ -- the cleanup step after Stream_readChunks/Stream_processChunks.)
+0x180e3: 'sub_180E3' -> 'Stream_processChunk'   (Per-chunk handler: reads a couple of header bytes from the buffer (offsets 5 and 7, before the 32-byte header/payload boundary already established) into cx/bx, then calls the actual processing logic through a configurable callback function pointer (word_C84D0) with the payload pointer (buffer+0x20) -- not traced further since the callback's actual target varies by caller and wasn't identified this pass.)
+----- end target script output -----
+[*] finished executing apply_renames_gatemain.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\legend\gateway\gatemain.idb
+[*] ARGV = ['C:\\dev\\legend\\gateway\\ida_scripts\\batch_run_and_export.py', 'apply_renames_gatemain.py']
+[*] reading apply_renames_gatemain.py
+[*] executing apply_renames_gatemain.py
+[*] captured stdout from target script:
+----- begin target script output -----
+DRY_RUN = False
+0x11635: 'Logics_prehandlerChainReaches' -> 'Logics_prehandlerChainReaches'   ok=True
+0x115ce: 'Logics_prehandlerHasMode' -> 'Logics_prehandlerHasMode'   ok=True
+0x1535e: 'Score_add' -> 'Score_add'   ok=True
+0xcbb78: '_score' -> '_score'   ok=True
+0xcb7fe: '_turnCount' -> '_turnCount'   ok=True
+0xcc6ab: '_scoreNotifyEnabled' -> '_scoreNotifyEnabled'   ok=True
+0xcbb7a: '_scoreNotifyTipShown' -> '_scoreNotifyTipShown'   ok=True
+0x5668c: '_gameTicks' -> '_gameTicks'   ok=True
+0x14a37: 'sub_14A37' -> 'Stream_loadFile'   ok=True
+0x28e2c: 'sub_28E2C' -> 'TextWindow_flushPendingText'   ok=True
+0x1ddf6: 'sub_1DDF6' -> 'Stream_readChunks'   ok=True
+0x1e052: 'sub_1E052' -> 'Stream_processChunks'   ok=True
+0x1e0e8: 'sub_1E0E8' -> 'Stream_freeChunks'   ok=True
+0x180e3: 'sub_180E3' -> 'Stream_processChunk'   ok=True
+----- end target script output -----
+[*] finished executing apply_renames_gatemain.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\legend\gateway\gatemain.asm
+[*] gen_file(OFILE_ASM) returned 407163
+[*] exporting IDC to C:\dev\legend\gateway\gatemain.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\legend\gateway\gatemain.idb
+[*] done, exiting 0

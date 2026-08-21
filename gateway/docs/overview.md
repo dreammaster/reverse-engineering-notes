@@ -903,3 +903,57 @@ Worth reaching for `dump_gatestr_messages.py` again any time a
 message-id argument to `TextWindow_add`/`get_message`-family calls needs
 disambiguating — decoding the real string directly beats inferring
 intent from surrounding code shape alone.
+
+### `Stream_*` subsystem named — a generic chunked file loader
+
+Same session, per Paul's direction to trace `sub_14A37` (80 callers)
+and its four then-unnamed callees. Turned out to be a self-contained,
+reusable subsystem, not anything specific to whatever file happens to
+be passed in:
+
+- **`sub_14A37` → `Stream_loadFile(filename)`** — the top-level entry:
+  flush the active window's pending text, then read, process, and free
+  a whole file's worth of chunked buffers.
+- **`sub_1DDF6` → `Stream_readChunks(filename)`** — opens the file,
+  `fseek`/`ftell`s to find its total size, then reads it into **up to 8
+  separately-allocated RAM buffers** (each up to ~64KB, since a single
+  DOS memory allocation can't span an arbitrary-sized file) — a
+  32-byte header plus payload per buffer. Abortable at any point via
+  `Events_isKeyPending` (a keypress cancels the whole load) or two
+  `word_C8582` config-flag bits.
+- **`sub_1E052` → `Stream_processChunks()`** — walks the same buffer
+  array, dispatching each filled slot to `Stream_processChunk`,
+  abortable the same way between chunks.
+- **`sub_180E3` → `Stream_processChunk`** — the actual per-chunk
+  handler: pulls a couple of header bytes out of the buffer, then calls
+  the real processing logic through a **configurable callback function
+  pointer** (`word_C84D0`) with the payload — meaning this whole
+  mechanism is a generic pluggable streaming framework, not
+  hardcoded to one resource type. The callback's actual target wasn't
+  identified this pass.
+- **`sub_1E0E8` → `Stream_freeChunks()`** — frees all 8 buffer slots
+  (`kill_pointer_`), the cleanup step.
+- **`sub_28E2C` → `TextWindow_flushPendingText()`** — a smaller, mostly
+  independent finding picked up along the way: flushes
+  `Windows_pendingText` for the active window via `TextWindow_addDirect`
+  if there's anything queued, distinct from the already-named
+  `TextWindow_flushText`.
+
+**Confidence note**: the mechanical architecture (chunked buffered
+read, player-interruptible via keypress, callback-dispatched
+processing, then cleanup) is confirmed with high confidence by direct
+read. The *purpose* — era-typical for hiding disk latency behind
+something else the player is doing, most plausibly reading on-screen
+text given the abort-on-keypress behavior — is a reasonable inference
+from that mechanism, not independently confirmed by finding what the
+callback actually does with each chunk. `Stream_` is a new subsystem
+prefix (this codebase already groups functions by subsystem —
+`Font_`/`Screen_`/`Windows_`/`Regions_`/`Score_`/etc. — and nothing
+existing fit this one).
+
+Applied all 6 renames via `apply_renames_gatemain.py`'s third batch.
+Note for future re-runs of this script: entries referencing an
+already-renamed symbol by its *old* name break once that rename has
+been applied for real (`idc.get_name_ea_simple` can't find a name that
+no longer exists) — every entry in this script now keys by hex address
+instead, once confirmed, to avoid exactly that trap.

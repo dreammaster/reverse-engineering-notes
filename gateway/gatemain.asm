@@ -10309,29 +10309,29 @@ sub_149D8       endp
 
 ; Attributes: bp-based frame
 
-; int __cdecl __far sub_14A37(char *filename)
-sub_14A37       proc far                ; CODE XREF: sub_2EA63+3E153\u2193P
+; int __cdecl __far Stream_loadFile(char *filename)
+Stream_loadFile proc far                ; CODE XREF: sub_2EA63+3E153\u2193P
                                         ; sub_7382B+179\u2193P ...
 
 filename        = dword ptr  6
 
                 push    bp
                 mov     bp, sp
-                call    sub_28E2C
+                call    TextWindow_flushPendingText
                 push    word ptr [bp+filename+2]
                 push    word ptr [bp+filename] ; filename
-                call    sub_1DDF6
+                call    Stream_readChunks
                 add     sp, 4
                 sub     ax, ax
                 push    ax
 
 loc_14A50:
-                call    sub_1E052
+                call    Stream_processChunks
                 add     sp, 2
-                call    sub_1E0E8
+                call    Stream_freeChunks
                 pop     bp
                 retf
-sub_14A37       endp
+Stream_loadFile endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -17810,7 +17810,7 @@ sg09a4          segment byte public 'CODE' use16
                 ;org 0Ah
                 assume es:nothing, ss:nothing, ds:sg4d43, fs:nothing, gs:nothing
 byte_1802A      db 10h dup(0), 1
-byte_1803B      db 0                    ; DATA XREF: sub_180E3+C\u2193w
+byte_1803B      db 0                    ; DATA XREF: Stream_processChunk+C\u2193w
                                         ; sub_18242+5\u2193w ...
 byte_1803C      db 6 dup(0)             ; DATA XREF: sg09a4:07E3\u2193w
                                         ; sg09a4:07E9\u2193r ...
@@ -17932,7 +17932,7 @@ sub_18042       endp
 
 ; Attributes: bp-based frame
 
-sub_180E3       proc far                ; CODE XREF: sub_1E052+6E\u2193P
+Stream_processChunk proc far            ; CODE XREF: Stream_processChunks+6E\u2193P
 
 arg_0           = dword ptr  6
 arg_4           = byte ptr  0Ah
@@ -17954,14 +17954,14 @@ arg_4           = byte ptr  0Ah
                 pop     si
                 pop     bp
                 retf
-sub_180E3       endp
+Stream_processChunk endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-sub_18109       proc far                ; CODE XREF: sub_1DDF6+210\u2193P
+sub_18109       proc far                ; CODE XREF: Stream_readChunks+210\u2193P
 
 arg_0           = dword ptr  6
 
@@ -18003,7 +18003,7 @@ sub_18109       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18134       proc far                ; CODE XREF: sub_1E0E8+8\u2193P
+sub_18134       proc far                ; CODE XREF: Stream_freeChunks+8\u2193P
                 cmp     byte_C84CA, 1
                 jnz     short locret_18147
                 push    es
@@ -20115,7 +20115,7 @@ sub_18F54       endp
 
 ; void __cdecl __far fclose(__int32 fileHandle)
 _fclose         proc far                ; CODE XREF: sub_128E6+11\u2191P
-                                        ; sub_1DDF6+241\u2193P ...
+                                        ; Stream_readChunks+241\u2193P ...
 
 name1           = byte ptr -10h
 var_E           = byte ptr -0Eh
@@ -20292,7 +20292,7 @@ _flushall       endp
 
 ; int __cdecl __far fopen(char *filename, __int32 mode)
 _fopen          proc far                ; CODE XREF: gatestr_load+15\u2191P
-                                        ; sub_1DDF6:loc_1DE33\u2193P ...
+                                        ; Stream_readChunks:loc_1DE33\u2193P ...
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -20337,7 +20337,7 @@ _fopen          endp
 ; Attributes: library function bp-based frame
 
 _fread          proc far                ; CODE XREF: fread+18\u2191P
-                                        ; sub_1DDF6+146\u2193P ...
+                                        ; Stream_readChunks+146\u2193P ...
 
 var_8           = word ptr -8
 var_6           = word ptr -6
@@ -32812,8 +32812,8 @@ sub_1DDC0       endp
 
 ; Attributes: bp-based frame
 
-; int __cdecl __far sub_1DDF6(char *filename)
-sub_1DDF6       proc far                ; CODE XREF: sub_14A37+E\u2191P
+; int __cdecl __far Stream_readChunks(char *filename)
+Stream_readChunks proc far              ; CODE XREF: Stream_loadFile+E\u2191P
                                         ; sub_97EAD+236\u2193P ...
 
 var_12          = word ptr -12h
@@ -32832,14 +32832,14 @@ filename        = dword ptr  6
                 push    di
                 push    si
                 push    cs
-                call    near ptr sub_1E0E8
+                call    near ptr Stream_freeChunks
                 call    Events_isKeyPending
                 or      ax, ax
                 jz      short loc_1DE0E
                 jmp     loc_1E04C
 ; ---------------------------------------------------------------------------
 
-loc_1DE0E:                              ; CODE XREF: sub_1DDF6+13\u2191j
+loc_1DE0E:                              ; CODE XREF: Stream_readChunks+13\u2191j
                 mov     es, dseg_8
                 test    byte ptr es:word_C8582, 8
                 jnz     short loc_1DE1D
@@ -32848,7 +32848,7 @@ loc_1DE1A:
                 jmp     loc_1E04C
 ; ---------------------------------------------------------------------------
 
-loc_1DE1D:                              ; CODE XREF: sub_1DDF6+22\u2191j
+loc_1DE1D:                              ; CODE XREF: Stream_readChunks+22\u2191j
                 test    byte ptr es:word_C8582, 40h
                 jz      short loc_1DE28
 
@@ -32856,7 +32856,7 @@ loc_1DE25:
                 jmp     loc_1E04C
 ; ---------------------------------------------------------------------------
 
-loc_1DE28:                              ; CODE XREF: sub_1DDF6+2D\u2191j
+loc_1DE28:                              ; CODE XREF: Stream_readChunks+2D\u2191j
                 mov     ax, offset aRb_3 ; "rb"
                 push    ds
                 push    ax              ; mode
@@ -32873,7 +32873,7 @@ loc_1DE33:
                 jmp     loc_1E04C
 ; ---------------------------------------------------------------------------
 
-loc_1DE48:                              ; CODE XREF: sub_1DDF6+4D\u2191j
+loc_1DE48:                              ; CODE XREF: Stream_readChunks+4D\u2191j
                 mov     ax, 2
                 push    ax              ; origin
                 sub     ax, ax
@@ -32901,44 +32901,44 @@ loc_1DE7D:
                 add     sp, 0Ah
                 mov     [bp+var_8], 0
 
-loc_1DE8A:                              ; CODE XREF: sub_1DDF6+226\u2193j
+loc_1DE8A:                              ; CODE XREF: Stream_readChunks+226\u2193j
                 cmp     [bp+var_C], 0
                 jge     short loc_1DE93
                 jmp     loc_1E020
 ; ---------------------------------------------------------------------------
 
-loc_1DE93:                              ; CODE XREF: sub_1DDF6+98\u2191j
+loc_1DE93:                              ; CODE XREF: Stream_readChunks+98\u2191j
                 jg      short loc_1DE9E
                 cmp     [bp+var_E], 0
                 jnz     short loc_1DE9E
                 jmp     loc_1E020
 ; ---------------------------------------------------------------------------
 
-loc_1DE9E:                              ; CODE XREF: sub_1DDF6:loc_1DE93\u2191j
-                                        ; sub_1DDF6+A3\u2191j
+loc_1DE9E:                              ; CODE XREF: Stream_readChunks:loc_1DE93\u2191j
+                                        ; Stream_readChunks+A3\u2191j
                 cmp     [bp+var_8], 7
                 jb      short loc_1DEA7
                 jmp     loc_1E020
 ; ---------------------------------------------------------------------------
 
-loc_1DEA7:                              ; CODE XREF: sub_1DDF6+AC\u2191j
+loc_1DEA7:                              ; CODE XREF: Stream_readChunks+AC\u2191j
                 call    Events_isKeyPending
                 or      ax, ax
                 jz      short loc_1DEB3
                 jmp     loc_1E020
 ; ---------------------------------------------------------------------------
 
-loc_1DEB3:                              ; CODE XREF: sub_1DDF6+B8\u2191j
+loc_1DEB3:                              ; CODE XREF: Stream_readChunks+B8\u2191j
                 cmp     [bp+var_8], 0
                 jz      short loc_1DEBE
                 mov     ax, 20h ; ' '
                 jmp     short loc_1DEC0
 ; ---------------------------------------------------------------------------
 
-loc_1DEBE:                              ; CODE XREF: sub_1DDF6+C1\u2191j
+loc_1DEBE:                              ; CODE XREF: Stream_readChunks+C1\u2191j
                 sub     ax, ax
 
-loc_1DEC0:                              ; CODE XREF: sub_1DDF6+C6\u2191j
+loc_1DEC0:                              ; CODE XREF: Stream_readChunks+C6\u2191j
                 mov     [bp+var_2], ax
                 mov     ax, 0FFFFh
                 sub     ax, [bp+var_2]
@@ -32949,21 +32949,21 @@ loc_1DEC0:                              ; CODE XREF: sub_1DDF6+C6\u2191j
                 cmp     ax, [bp+var_E]
                 jnb     short loc_1DEE0
 
-loc_1DED7:                              ; CODE XREF: sub_1DDF6+DA\u2191j
+loc_1DED7:                              ; CODE XREF: Stream_readChunks+DA\u2191j
                 mov     ax, 0FFFFh
                 sub     ax, [bp+var_2]
                 jmp     short loc_1DEE3
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1DEE0:                              ; CODE XREF: sub_1DDF6+D8\u2191j
-                                        ; sub_1DDF6+DF\u2191j
+loc_1DEE0:                              ; CODE XREF: Stream_readChunks+D8\u2191j
+                                        ; Stream_readChunks+DF\u2191j
                 mov     ax, [bp+var_E]
 
-loc_1DEE3:                              ; CODE XREF: sub_1DDF6+E7\u2191j
+loc_1DEE3:                              ; CODE XREF: Stream_readChunks+E7\u2191j
                 mov     [bp+var_A], ax
 
-loc_1DEE6:                              ; CODE XREF: sub_1DDF6:loc_1DF93\u2193j
+loc_1DEE6:                              ; CODE XREF: Stream_readChunks:loc_1DF93\u2193j
                 mov     ax, [bp+var_A]
                 add     ax, [bp+var_2]
                 push    ax              ; size
@@ -33030,18 +33030,18 @@ loc_1DF33:
                 jmp     short loc_1DFCD
 ; ---------------------------------------------------------------------------
 
-loc_1DF86:                              ; CODE XREF: sub_1DDF6+11D\u2191j
+loc_1DF86:                              ; CODE XREF: Stream_readChunks+11D\u2191j
                 shr     [bp+var_A], 1
                 cmp     [bp+var_A], 1000h
                 jnb     short loc_1DF93
                 jmp     loc_1E031
 ; ---------------------------------------------------------------------------
 
-loc_1DF93:                              ; CODE XREF: sub_1DDF6+198\u2191j
+loc_1DF93:                              ; CODE XREF: Stream_readChunks+198\u2191j
                 jmp     loc_1DEE6
 ; ---------------------------------------------------------------------------
 
-loc_1DF96:                              ; CODE XREF: sub_1DDF6+123\u2191j
+loc_1DF96:                              ; CODE XREF: Stream_readChunks+123\u2191j
                 push    word ptr [bp+fileHandle+2]
                 push    word ptr [bp+fileHandle]
                 mov     ax, 1
@@ -33061,7 +33061,7 @@ loc_1DF96:                              ; CODE XREF: sub_1DDF6+123\u2191j
                 les     si, [si+586h]
                 mov     byte ptr es:[bx+si-2], 0
 
-loc_1DFCD:                              ; CODE XREF: sub_1DDF6+18E\u2191j
+loc_1DFCD:                              ; CODE XREF: Stream_readChunks+18E\u2191j
                 mov     bx, [bp+var_8]
                 shl     bx, 1
                 shl     bx, 1
@@ -33083,7 +33083,7 @@ loc_1DFCD:                              ; CODE XREF: sub_1DDF6+18E\u2191j
                 call    sub_18109
                 add     sp, 4
 
-loc_1E00E:                              ; CODE XREF: sub_1DDF6+1FF\u2191j
+loc_1E00E:                              ; CODE XREF: Stream_readChunks+1FF\u2191j
                 mov     ax, [bp+var_A]
                 sub     dx, dx
                 sub     [bp+var_E], ax
@@ -33093,8 +33093,8 @@ loc_1E00E:                              ; CODE XREF: sub_1DDF6+1FF\u2191j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1E020:                              ; CODE XREF: sub_1DDF6+9A\u2191j
-                                        ; sub_1DDF6+A5\u2191j ...
+loc_1E020:                              ; CODE XREF: Stream_readChunks+9A\u2191j
+                                        ; Stream_readChunks+A5\u2191j ...
                 mov     bx, [bp+var_8]
                 shl     bx, 1
                 shl     bx, 1
@@ -33102,7 +33102,7 @@ loc_1E020:                              ; CODE XREF: sub_1DDF6+9A\u2191j
                 mov     [bx+588h], ax
                 mov     [bx+586h], ax
 
-loc_1E031:                              ; CODE XREF: sub_1DDF6+19A\u2191j
+loc_1E031:                              ; CODE XREF: Stream_readChunks+19A\u2191j
                 push    word ptr [bp+fileHandle+2]
                 push    word ptr [bp+fileHandle] ; fileHandle
                 call    _fclose
@@ -33111,23 +33111,23 @@ loc_1E031:                              ; CODE XREF: sub_1DDF6+19A\u2191j
                 or      ax, ax
                 jz      short loc_1E04C
                 push    cs
-                call    near ptr sub_1E0E8
+                call    near ptr Stream_freeChunks
 
-loc_1E04C:                              ; CODE XREF: sub_1DDF6+15\u2191j
-                                        ; sub_1DDF6:loc_1DE1A\u2191j ...
+loc_1E04C:                              ; CODE XREF: Stream_readChunks+15\u2191j
+                                        ; Stream_readChunks:loc_1DE1A\u2191j ...
                 pop     si
                 pop     di
                 mov     sp, bp
                 pop     bp
                 retf
-sub_1DDF6       endp
+Stream_readChunks endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-sub_1E052       proc far                ; CODE XREF: sub_14A37:loc_14A50\u2191P
+Stream_processChunks proc far           ; CODE XREF: Stream_loadFile:loc_14A50\u2191P
                                         ; sub_97EAD+24B\u2193P ...
 
 arg_0           = word ptr  6
@@ -33150,8 +33150,8 @@ arg_0           = word ptr  6
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1E080:                              ; CODE XREF: sub_1E052+41\u2193j
-                                        ; sub_1E052+80\u2193j
+loc_1E080:                              ; CODE XREF: Stream_processChunks+41\u2193j
+                                        ; Stream_processChunks+80\u2193j
                 mov     es, dseg_10
                 cmp     es:byte_C84CA, 0
                 jz      short loc_1E095
@@ -33159,11 +33159,11 @@ loc_1E080:                              ; CODE XREF: sub_1E052+41\u2193j
                 or      ax, ax
                 jz      short loc_1E080
 
-loc_1E095:                              ; CODE XREF: sub_1E052+38\u2191j
-                                        ; sub_1E052+8C\u2193j
+loc_1E095:                              ; CODE XREF: Stream_processChunks+38\u2191j
+                                        ; Stream_processChunks+8C\u2193j
                 inc     si
 
-loc_1E096:                              ; CODE XREF: sub_1E052+2B\u2191j
+loc_1E096:                              ; CODE XREF: Stream_processChunks+2B\u2191j
                 mov     bx, si
                 shl     bx, 1
                 shl     bx, 1
@@ -33182,26 +33182,26 @@ loc_1E0AB:
                 shl     bx, 1
                 push    word ptr [bx+588h]
                 push    word ptr [bx+586h]
-                call    sub_180E3
+                call    Stream_processChunk
                 add     sp, 6
                 mov     es, dseg_9
                 cmp     es:byte_C84CB, 1
                 jnz     short loc_1E080
 
-loc_1E0D4:                              ; CODE XREF: sub_1E052+8E\u2193j
+loc_1E0D4:                              ; CODE XREF: Stream_processChunks+8E\u2193j
                 mov     es, dseg_10
                 cmp     es:byte_C84CA, 0
                 jz      short loc_1E095
                 jmp     short loc_1E0D4
 ; ---------------------------------------------------------------------------
 
-loc_1E0E2:                              ; CODE XREF: sub_1E052+13\u2191j
-                                        ; sub_1E052+1F\u2191j ...
+loc_1E0E2:                              ; CODE XREF: Stream_processChunks+13\u2191j
+                                        ; Stream_processChunks+1F\u2191j ...
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_1E052       endp
+Stream_processChunks endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -33210,8 +33210,8 @@ sub_1E052       endp
 
 ; Attributes: bp-based frame
 
-sub_1E0E8       proc far                ; CODE XREF: sub_14A37+21\u2191P
-                                        ; sub_1DDF6+9\u2191p ...
+Stream_freeChunks proc far              ; CODE XREF: Stream_loadFile+21\u2191P
+                                        ; Stream_readChunks+9\u2191p ...
 
 var_6           = word ptr -6
 
@@ -33226,7 +33226,7 @@ var_6           = word ptr -6
                 mov     [bp+var_6], 8
                 add     si, 8
 
-loc_1E102:                              ; CODE XREF: sub_1E0E8:loc_1E11C\u2193j
+loc_1E102:                              ; CODE XREF: Stream_freeChunks:loc_1E11C\u2193j
                 push    word ptr [di+2] ; int
                 push    word ptr [di]   ; ptr
                 call    kill_pointer_
@@ -33258,7 +33258,7 @@ loc_1E120:
                 mov     sp, bp
                 pop     bp
                 retf
-sub_1E0E8       endp
+Stream_freeChunks endp
 
 seg025          ends
 
@@ -45296,8 +45296,8 @@ loc_23790:
 
 
 ; int __cdecl __far Events_isKeyPending()
-Events_isKeyPending proc far            ; CODE XREF: sub_1DDF6+C\u2191P
-                                        ; sub_1DDF6:loc_1DEA7\u2191P ...
+Events_isKeyPending proc far            ; CODE XREF: Stream_readChunks+C\u2191P
+                                        ; Stream_readChunks:loc_1DEA7\u2191P ...
                 mov     ax, 1
                 push    ax
 
@@ -57953,7 +57953,7 @@ TextWindow_flushText endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_28E2C       proc far                ; CODE XREF: sub_14A37+3\u2191P
+TextWindow_flushPendingText proc far    ; CODE XREF: Stream_loadFile+3\u2191P
                                         ; sg1a3e:050E\u2193p ...
                 push    si
                 mov     si, Windows_activeWindow
@@ -57980,10 +57980,10 @@ sub_28E2C       proc far                ; CODE XREF: sub_14A37+3\u2191P
                 shl     bx, 1
                 mov     word ptr [bx-52C2h], 1
 
-loc_28E70:                              ; CODE XREF: sub_28E2C+E\u2191j
+loc_28E70:                              ; CODE XREF: TextWindow_flushPendingText+E\u2191j
                 pop     si
                 retf
-sub_28E2C       endp
+TextWindow_flushPendingText endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -58035,7 +58035,7 @@ TextWindow_resetLinesRemaining endp
                 call    Font_LoadFont
                 add     sp, 2
                 push    cs
-                call    near ptr sub_28E2C
+                call    near ptr TextWindow_flushPendingText
                 cmp     word ptr [bp+6], 0
                 jl      short loc_28F1B
                 mov     si, Windows_activeWindow
@@ -175501,7 +175501,7 @@ loc_6CBB1:                              ; CODE XREF: sub_2EA63+3E124\u2191j
                 mov     ax, 47C6h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     es, seg_D1312
                 push    es:vocab_list_0._logicNum ; logicNum
@@ -189608,7 +189608,7 @@ loc_73992:                              ; CODE XREF: sub_7382B+144\u2191j
                 mov     ax, 4D79h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 0Ch
                 push    ax
@@ -189695,7 +189695,7 @@ loc_73A57:                              ; CODE XREF: sub_7382B+1FD\u2191j
                 mov     ax, 4D80h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 0Ch
                 push    ax              ; index
@@ -194902,7 +194902,7 @@ loc_76031:
                 mov     ax, offset aTrex2_rs_0 ; "trex2.rs"
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 jmp     loc_75F92
 ; ---------------------------------------------------------------------------
 
@@ -195184,7 +195184,7 @@ loc_7625F:                              ; CODE XREF: sub_760F0+15A\u2191j
                 mov     ax, 4E80h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     es, seg_D1444
                 mov     ax, 3
@@ -195456,7 +195456,7 @@ loc_76468:                              ; CODE XREF: sub_76326+126\u2191j
                 mov     ax, offset filename ; "machnois.rs"
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     es, seg_D1446
                 assume es:sg3EDC
@@ -195754,7 +195754,7 @@ loc_76666:                              ; CODE XREF: sub_765BB+8D\u2191j
                 mov     ax, 4EEAh
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 sub     ax, ax
                 push    ax
@@ -214264,7 +214264,7 @@ loc_7EB40:                              ; CODE XREF: sub_7E97C+1BF\u2191j
                 mov     ax, 540Fh
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 sub     ax, ax
                 push    ax              ; newId
@@ -214491,7 +214491,7 @@ loc_7ED10:                              ; CODE XREF: sub_7E97C+38F\u2191j
                 mov     ax, 541Bh
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 sub     ax, ax
                 push    ax              ; newId
@@ -215039,7 +215039,7 @@ loc_7F1FA:                              ; CODE XREF: sub_7E97C+86C\u2191j
                 mov     ax, offset aMonster2_rs ; "monster2.rs"
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 jmp     loc_7EA94
 ; ---------------------------------------------------------------------------
 
@@ -215432,7 +215432,7 @@ loc_7F52D:                              ; CODE XREF: sub_7E97C+B84\u2191j
                 mov     ax, 546Dh
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 jmp     short loc_7F512
 ; ---------------------------------------------------------------------------
 
@@ -215748,7 +215748,7 @@ loc_7F7C8:                              ; CODE XREF: sub_7E97C+E20\u2191j
                 mov     ax, 547Ch
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 call    sub_312D1
 ; ---------------------------------------------------------------------------
@@ -216253,7 +216253,7 @@ loc_7FC18:                              ; CODE XREF: sub_7E97C+1381\u2193j
                 mov     ax, 5488h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 505Fh
                 jmp     short loc_7FC03
@@ -217312,7 +217312,7 @@ loc_8043B:                              ; CODE XREF: sub_8014E+2C9\u2191j
                 mov     ax, 551Dh
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 0A5h ; '¥'
                 push    ax
@@ -219247,7 +219247,7 @@ loc_811EC:                              ; CODE XREF: sub_810A0+147\u2191j
                 mov     ax, 579Ah
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 call    sub_312D1
 ; ---------------------------------------------------------------------------
@@ -221360,7 +221360,7 @@ loc_820C1:                              ; CODE XREF: sub_81CCC+3F0\u2191j
                 mov     ax, 58B2h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 sub     ax, ax
                 push    ax              ; newId
@@ -225094,7 +225094,7 @@ loc_83933:                              ; CODE XREF: sub_83842+8C\u2191j
                 mov     ax, 5984h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
 
 loc_83994:                              ; CODE XREF: sub_83842+EF\u2191j
@@ -225341,7 +225341,7 @@ loc_83B6A:                              ; CODE XREF: sub_83842+323\u2191j
 loc_83BCC:                              ; CODE XREF: sub_83842+454\u2193j
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
 
 loc_83BD3:                              ; CODE XREF: sub_83842+3A7\u2193j
                 add     sp, 4
@@ -226328,7 +226328,7 @@ loc_84296:                              ; CODE XREF: sub_84243+D0\u2193j
                 mov     ax, 5A1Ah
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
 
 loc_842B0:                              ; CODE XREF: sub_84243+8B\u2193j
                 add     sp, 4
@@ -226710,12 +226710,12 @@ loc_844F6:                              ; CODE XREF: sub_843E1+110\u2191j
                 mov     ax, 5A41h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 5A49h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 sub     ax, ax
                 push    ax              ; newId
@@ -227894,7 +227894,7 @@ loc_84D65:                              ; CODE XREF: sub_84D59+7\u2191j
                 mov     ax, 5A96h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 sub     ax, ax
                 jmp     loc_84E90
@@ -228074,7 +228074,7 @@ loc_84F00:                              ; CODE XREF: sub_30DC7+3\u2191J
                 mov     ax, 5AB4h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 1
                 push    ax              ; newId
@@ -228975,7 +228975,7 @@ var_2           = word ptr -2
                 mov     ax, 5B8Ch
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     word_D3C14, 3
                 mov     ax, 1
@@ -229036,7 +229036,7 @@ loc_8561C:                              ; CODE XREF: sub_8555B+B4\u2191j
                 mov     ax, 5BA1h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 cmp     Persisted_val143, 4
                 jnz     short loc_85685
@@ -229065,7 +229065,7 @@ loc_8561C:                              ; CODE XREF: sub_8555B+B4\u2191j
                 mov     ax, 5BA9h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
 
 loc_85685:                              ; CODE XREF: sub_8555B+E5\u2191j
@@ -231063,7 +231063,7 @@ loc_864B8:                              ; CODE XREF: sub_85C7C+82D\u2191j
                 mov     ax, 5BE8h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 9C39h
                 mov     dx, 0F000h
@@ -231080,7 +231080,7 @@ loc_864EA:                              ; CODE XREF: sub_85C7C+847\u2191j
                 mov     ax, 5BEFh
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 9C3Ah
                 mov     dx, 0F000h
@@ -231684,7 +231684,7 @@ loc_869B2:                              ; CODE XREF: sub_85C7C+FD1\u2193j
                 mov     ax, 5BF6h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 jmp     loc_85D09
 ; ---------------------------------------------------------------------------
 
@@ -240286,7 +240286,7 @@ loc_8A370:                              ; CODE XREF: sub_8A260+2D\u2191j
                 mov     ax, 5EFEh
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     word_D3C10, 3
                 jmp     short loc_8A36B
@@ -240475,7 +240475,7 @@ loc_8A4B3:                              ; CODE XREF: sub_8A3ED+AD\u2191j
                 mov     ax, 5F05h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 jmp     short loc_8A482
 ; ---------------------------------------------------------------------------
 
@@ -240551,7 +240551,7 @@ loc_8A51B:                              ; CODE XREF: sub_8A3ED+407\u2193j
 loc_8A572:                              ; CODE XREF: sub_8A3ED+2D5\u2193j
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 jmp     short loc_8A512
 ; ---------------------------------------------------------------------------
 
@@ -240795,7 +240795,7 @@ loc_8A77A:                              ; CODE XREF: sub_8A3ED+37B\u2191j
                 mov     ax, 5F24h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 15h
                 push    ax              ; index
@@ -240898,7 +240898,7 @@ loc_8A818:                              ; CODE XREF: sub_8A3ED+426\u2191j
                 mov     ax, 5F2Bh
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     es, seg_D15C6
                 assume es:sg4d43
@@ -241605,7 +241605,7 @@ loc_8AD4A:                              ; CODE XREF: sub_8A9E8+35D\u2191j
                 mov     ax, 5F33h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     es, seg_D15C8
                 assume es:sg4d43
@@ -242031,7 +242031,7 @@ loc_8B09D:                              ; CODE XREF: sub_8AED5+1C1\u2191j
                 mov     ax, 5F51h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 1FDh
                 push    ax              ; logicNum
@@ -243215,7 +243215,7 @@ loc_8B870:                              ; CODE XREF: sub_8B771+FA\u2191j
                 mov     ax, 5F83h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 jmp     short loc_8B82D
 ; ---------------------------------------------------------------------------
 
@@ -243296,7 +243296,7 @@ loc_8B944:                              ; CODE XREF: sub_8B771+1A9\u2191j
                 mov     ax, 5F8Bh
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 885Dh
                 mov     dx, 0F000h
@@ -243596,7 +243596,7 @@ loc_8BB7D:                              ; CODE XREF: sub_8B9E9+188\u2191j
                 mov     ax, 5FA2h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     es, seg_D15BE
                 assume es:sg3EDC
@@ -243994,7 +243994,7 @@ loc_8BE2B:                              ; CODE XREF: sub_8BD75+1C5\u2193j
                 mov     ax, 5FB9h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     es, seg_D15BE
                 push    es:vocab_list_0._logicNum ; logicNum
@@ -244299,7 +244299,7 @@ loc_8C01C:                              ; CODE XREF: sub_8BF66+1BC\u2193j
                 mov     ax, 5FD9h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     es, seg_D15BE
                 push    es:vocab_list_0._logicNum ; logicNum
@@ -252774,7 +252774,7 @@ loc_8FF31:                              ; CODE XREF: sub_30EF3+5EFDE\u2191j
                 mov     ax, 61A6h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 call    sub_312D1
 ; END OF FUNCTION CHUNK FOR sub_30EF3
@@ -253654,7 +253654,7 @@ loc_9052B:                              ; CODE XREF: sub_9046F+A3\u2191j
                 mov     ax, 61D8h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     es, seg_D1604
                 push    es:vocab_list_0._logicNum ; logicNum
@@ -255773,7 +255773,7 @@ loc_914D2:                              ; CODE XREF: sub_91398+12C\u2191j
                 mov     ax, 6289h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
 
 loc_914E7:                              ; CODE XREF: sub_91398+140\u2191j
@@ -257946,7 +257946,7 @@ loc_924D0:                              ; CODE XREF: sub_9240C+B2\u2191j
                 mov     ax, 634Bh
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 jmp     short loc_9250D
 ; ---------------------------------------------------------------------------
 
@@ -257990,7 +257990,7 @@ loc_92514:                              ; CODE XREF: sub_9240C:loc_92420\u2191j
                 mov     ax, 6354h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 1
                 jmp     short loc_9257F
@@ -259345,7 +259345,7 @@ loc_92F7A:                              ; CODE XREF: sub_92F02+66\u2191j
 loc_92F9E:                              ; CODE XREF: sub_92F02+124\u2193j
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
 
 loc_92FA5:                              ; CODE XREF: sub_92F02+E1\u2193j
                 add     sp, 4
@@ -259931,7 +259931,7 @@ loc_9333E:                              ; CODE XREF: sub_932CD+186\u2193j
                 mov     ax, 63EFh
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 9436h
                 jmp     short loc_933CD
@@ -260424,7 +260424,7 @@ loc_936AD:                              ; CODE XREF: sub_934D9+1CF\u2191j
                 mov     ax, 63F8h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 sub     ax, ax
                 push    ax              ; newId
@@ -260615,7 +260615,7 @@ loc_9381E:                              ; CODE XREF: sub_937FC+9\u2191j
 loc_93842:                              ; CODE XREF: sub_937FC+8E\u2193j
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 9447h
 
@@ -268258,7 +268258,7 @@ loc_969F2:                              ; CODE XREF: sub_968C7+126\u2191j
                 mov     ax, 6552h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 jmp     short loc_969BC
 ; ---------------------------------------------------------------------------
 
@@ -268368,7 +268368,7 @@ loc_96B0F:                              ; CODE XREF: sub_968C7+228\u2191j
                 mov     ax, 656Dh
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 call    _rand
                 cwd
@@ -271428,20 +271428,20 @@ loc_980C8:                              ; CODE XREF: sub_97EAD+216\u2191j
                 mov     ax, 66C1h
                 push    ds
                 push    ax              ; filename
-                call    sub_1DDF6
+                call    Stream_readChunks
                 add     sp, 4
                 mov     [bp+var_2], 0
 
 loc_980F0:                              ; CODE XREF: sub_97EAD+25A\u2193j
-                call    sub_28E2C
+                call    TextWindow_flushPendingText
                 sub     ax, ax
                 push    ax
-                call    sub_1E052
+                call    Stream_processChunks
                 add     sp, 2
                 inc     [bp+var_2]
                 cmp     [bp+var_2], 6
                 jl      short loc_980F0
-                call    sub_1E0E8
+                call    Stream_freeChunks
                 mov     Persisted_val55, 0
                 mov     Persisted_val56, 0
                 add     Persisted_val52, 14h
@@ -271582,7 +271582,7 @@ loc_981D9:                              ; CODE XREF: sub_98159+7B\u2191j
                 mov     ax, 66C9h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 cmp     Persisted_val80, 0
                 jnz     short loc_9821F
@@ -271605,20 +271605,20 @@ loc_98222:                              ; CODE XREF: sub_98159+C4\u2191j
                 mov     ax, 66E2h
                 push    ds
                 push    ax              ; filename
-                call    sub_1DDF6
+                call    Stream_readChunks
                 add     sp, 4
                 mov     [bp+var_2], 0
 
 loc_98246:                              ; CODE XREF: sub_98159+104\u2193j
-                call    sub_28E2C
+                call    TextWindow_flushPendingText
                 sub     ax, ax
                 push    ax
-                call    sub_1E052
+                call    Stream_processChunks
                 add     sp, 2
                 inc     [bp+var_2]
                 cmp     [bp+var_2], 6
                 jl      short loc_98246
-                call    sub_1E0E8
+                call    Stream_freeChunks
                 add     Persisted_val52, 28h ; '('
                 adc     word_CE4DA, 0
                 mov     ax, 1
@@ -272296,7 +272296,7 @@ loc_98721:                              ; CODE XREF: sub_98471+2AB\u2191j
 loc_98731:                              ; CODE XREF: sub_98471+351\u2193j
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 jmp     loc_984CF
 ; ---------------------------------------------------------------------------
 
@@ -272317,7 +272317,7 @@ loc_9873B:                              ; CODE XREF: sub_98471+291\u2191j
                 mov     ax, 673Bh
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     Persisted_val56, 1
 
@@ -272338,7 +272338,7 @@ loc_9877D:                              ; CODE XREF: sub_98471+296\u2191j
                 mov     ax, 6747h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 sub     ax, ax
                 push    ax              ; newId
@@ -272371,7 +272371,7 @@ loc_987C5:                              ; CODE XREF: sub_98471:loc_98716\u2191j
                 mov     ax, 6763h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 7Fh
                 push    ax
@@ -272603,7 +272603,7 @@ loc_989B2:                              ; CODE XREF: sub_98471+539\u2191j
                 mov     ax, 676Fh
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 2056h
                 jmp     loc_9881E
@@ -272613,7 +272613,7 @@ loc_989CC:                              ; CODE XREF: sub_98471+546\u2191j
                 mov     ax, 677Bh
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 push    [bp+var_4]
                 call    thunk_sub_651B3
@@ -278352,11 +278352,11 @@ loc_9B03A:                              ; CODE XREF: sub_9AE9C+199\u2191j
                 push    ax              ; img
                 call    Image_draw
                 add     sp, 4
-                call    sub_28E2C
+                call    TextWindow_flushPendingText
                 mov     ax, 68E3h
                 push    ds
                 push    ax              ; filename
-                call    sub_1DDF6
+                call    Stream_readChunks
                 add     sp, 4
 
 loc_9B07C:                              ; CODE XREF: sub_9AE9C+287\u2193j
@@ -278429,13 +278429,13 @@ loc_9B102:                              ; CODE XREF: sub_9AE9C+260\u2191j
                 add     sp, 4
                 sub     ax, ax
                 push    ax
-                call    sub_1E052
+                call    Stream_processChunks
                 add     sp, 2
                 jmp     loc_9B07C
 ; ---------------------------------------------------------------------------
 
 loc_9B126:                              ; CODE XREF: sub_9AE9C+1F5\u2191j
-                call    sub_1E0E8
+                call    Stream_freeChunks
                 mov     [bp+var_4F4], 0
 
 loc_9B131:                              ; CODE XREF: sub_9AE9C+2B5\u2193j
@@ -278465,24 +278465,24 @@ loc_9B153:                              ; CODE XREF: sub_9AE9C+18C\u2191j
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 8
-                call    sub_28E2C
-                call    sub_28E2C
+                call    TextWindow_flushPendingText
+                call    TextWindow_flushPendingText
                 mov     ax, 68EFh
                 push    ds
                 push    ax              ; filename
-                call    sub_1DDF6
+                call    Stream_readChunks
                 add     sp, 4
                 mov     [bp+var_4F4], 0
 
 loc_9B193:                              ; CODE XREF: sub_9AE9C+30B\u2193j
                 sub     ax, ax
                 push    ax
-                call    sub_1E052
+                call    Stream_processChunks
                 add     sp, 2
                 inc     [bp+var_4F4]
                 cmp     [bp+var_4F4], 6
                 jl      short loc_9B193
-                call    sub_1E0E8
+                call    Stream_freeChunks
                 mov     ax, 6881h
                 mov     dx, 0F000h
                 push    dx
@@ -278584,7 +278584,7 @@ loc_9B2C4:                              ; CODE XREF: sub_9AE9C+423\u2191j
                 mov     ax, 68F7h
                 push    ds
                 push    ax              ; filename
-                call    sub_1DDF6
+                call    Stream_readChunks
                 add     sp, 4
                 mov     ax, 8Ch ; 'Œ'
                 imul    [bp+var_2]
@@ -278594,12 +278594,12 @@ loc_9B2C4:                              ; CODE XREF: sub_9AE9C+423\u2191j
                 push    ax              ; img
                 call    Image_draw
                 add     sp, 4
-                call    sub_28E2C
+                call    TextWindow_flushPendingText
 
 loc_9B306:                              ; CODE XREF: sub_9AE9C+511\u2193j
                 sub     ax, ax
                 push    ax
-                call    sub_1E052
+                call    Stream_processChunks
                 add     sp, 2
                 cmp     [bp+var_4F6], 3
                 jl      short loc_9B329
@@ -278753,7 +278753,7 @@ loc_9B44E:                              ; CODE XREF: sub_9AE9C+5AB\u2191j
                 add     sp, 4
                 sub     ax, ax
                 push    ax
-                call    sub_1E052
+                call    Stream_processChunks
                 add     sp, 2
 
 loc_9B46F:                              ; CODE XREF: sub_9AE9C+544\u2191j
@@ -278848,7 +278848,7 @@ loc_9B4F8:                              ; CODE XREF: sub_9AE9C+652\u2191j
                 add     sp, 4
                 sub     ax, ax
                 push    ax
-                call    sub_1E052
+                call    Stream_processChunks
                 add     sp, 2
 
 loc_9B53F:                              ; CODE XREF: sub_9AE9C+614\u2191j
@@ -278871,7 +278871,7 @@ loc_9B554:                              ; CODE XREF: sub_9AE9C+48A\u2191j
 ; ---------------------------------------------------------------------------
 
 loc_9B55E:                              ; CODE XREF: sub_9AE9C+6BD\u2191j
-                call    sub_1E0E8
+                call    Stream_freeChunks
                 mov     ax, 9
                 push    ax
                 lea     ax, [bp+img]
@@ -291030,7 +291030,7 @@ loc_A0DA8:                              ; CODE XREF: sub_A0C24+11C\u2191j
                 mov     es, seg_D1714
                 cmp     es:Persisted_val118, 0
                 jz      short loc_A0DDA
-                call    sub_28E2C
+                call    TextWindow_flushPendingText
                 mov     es, seg_D1736
                 mov     es:Persisted_val115, 1
                 mov     es, seg_D1714
@@ -296093,7 +296093,7 @@ loc_A32D3:                              ; CODE XREF: method025_Start+4D\u2191j
                 mov     ax, 6DC9h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     es, seg_D1788
                 assume es:sg4d43
@@ -299130,7 +299130,7 @@ loc_A46D5:                              ; CODE XREF: sub_A465A+73\u2191j
                 mov     ax, 6E3Ah
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 call    sub_1496B
                 call    thunk_Commset_show
@@ -301897,7 +301897,7 @@ loc_A5874:                              ; CODE XREF: sub_A576B+FB\u2191j
                 mov     ax, 6E9Ah
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 0C78h
                 mov     dx, 0F000h
@@ -301980,7 +301980,7 @@ loc_A5936:                              ; CODE XREF: sub_A576B+1C3\u2191j
                 mov     ax, 6EA3h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 0C7Bh
                 jmp     loc_A5819
@@ -302746,7 +302746,7 @@ loc_A5D50:                              ; CODE XREF: sub_A5D13+38\u2191j
                 mov     ax, 6EACh
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 0Ch
                 push    ax              ; index
@@ -303076,7 +303076,7 @@ loc_A6014:                              ; CODE XREF: sub_A5F92+62\u2191j
                 mov     ax, 6ECEh
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 0C80h
                 mov     dx, 0F000h
@@ -305015,7 +305015,7 @@ loc_A6FA9:                              ; CODE XREF: sub_A6EC0+BD\u2191j
                 mov     ax, 6F4Ch
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 1C17h
                 mov     dx, 0F000h
@@ -305162,7 +305162,7 @@ loc_A70C5:                              ; CODE XREF: sub_A7045+71\u2191j
                 mov     ax, 6F6Ch
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 call    sub_312D1
 ; ---------------------------------------------------------------------------
@@ -306685,7 +306685,7 @@ loc_A7A22:                              ; CODE XREF: sub_A7907+D6\u2191j
                 mov     ax, 6FDCh
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 jmp     loc_A7969
 ; ---------------------------------------------------------------------------
 
@@ -308610,7 +308610,7 @@ arg_0           = word ptr  6
                 mov     ax, 7034h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 1CCFh
                 mov     dx, 0F000h
@@ -308627,7 +308627,7 @@ loc_A85A2:                              ; CODE XREF: sub_A8577+7\u2191j
                 mov     ax, 703Bh
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 1CD0h
 
@@ -308645,7 +308645,7 @@ loc_A85C5:                              ; CODE XREF: sub_A8577+2F\u2191j
                 mov     ax, 7042h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 1CD1h
                 jmp     short loc_A85B8
@@ -308666,7 +308666,7 @@ loc_A85EC:                              ; CODE XREF: sub_A8577+6A\u2191j
                 mov     ax, 7049h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 1CD2h
                 mov     dx, 0F000h
@@ -316726,7 +316726,7 @@ loc_ABADD:                              ; CODE XREF: sub_ABA21+14\u2191j
                 mov     ax, 7215h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 jmp     short loc_ABAD0
 ; ---------------------------------------------------------------------------
 
@@ -317296,7 +317296,7 @@ loc_ABED2:                              ; CODE XREF: sub_ABDEF+DE\u2191j
                 mov     ax, 7224h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 jmp     short loc_ABE9E
 ; ---------------------------------------------------------------------------
 
@@ -317954,7 +317954,7 @@ loc_AC373:                              ; CODE XREF: sub_AC2B7+14\u2191j
                 mov     ax, 722Bh
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 jmp     short loc_AC366
 ; ---------------------------------------------------------------------------
 
@@ -321644,11 +321644,11 @@ loc_ADDAE:                              ; CODE XREF: sub_ADB2A+272\u2191j
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_28E2C
+                call    TextWindow_flushPendingText
                 mov     ax, 7288h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 inc     Persisted_val222
                 mov     ax, 2Ch ; ','
@@ -321991,7 +321991,7 @@ loc_ADFD1:
                 mov     ax, 72C5h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     es, seg_D1862
                 assume es:sg4d43
@@ -322743,7 +322743,7 @@ loc_AE4DE:                              ; CODE XREF: sub_AE317+1C2\u2191j
                 mov     ax, 72D4h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     es, seg_D185C
                 mov     ax, es:vocab_list_0._logicNum
@@ -323902,7 +323902,7 @@ loc_AED72:                              ; CODE XREF: sub_AEBC0+14D\u2191j
                 mov     ax, 7308h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 6002h
                 mov     dx, 0F000h
@@ -325055,7 +325055,7 @@ loc_AF5A3:                              ; CODE XREF: sub_AF467+127\u2191j
                 mov     ax, 734Bh
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 9
                 push    ax              ; index
@@ -328771,19 +328771,19 @@ loc_B1065:                              ; CODE XREF: Commset_show+42C\u2191j
                 mov     ax, offset aBusy_rs ; "busy.rs"
                 push    ds
                 push    ax              ; filename
-                call    sub_1DDF6
+                call    Stream_readChunks
                 add     sp, 4
                 mov     [bp+var_80], 0
 
 loc_B1097:                              ; CODE XREF: Commset_show+644\u2193j
                 sub     ax, ax
                 push    ax
-                call    sub_1E052
+                call    Stream_processChunks
                 add     sp, 2
                 inc     [bp+var_80]
                 cmp     [bp+var_80], 6
                 jl      short loc_B1097
-                call    sub_1E0E8
+                call    Stream_freeChunks
                 jmp     short loc_B10BF
 ; ---------------------------------------------------------------------------
 
@@ -330219,7 +330219,7 @@ loc_B1C0D:                              ; CODE XREF: sub_B1730+4C6\u2191j
                 mov     ax, 764Dh
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     Persisted_val205, 0
                 mov     Persisted_val204, 1
@@ -332004,7 +332004,7 @@ loc_B280A:                              ; CODE XREF: sub_B277C+1B\u2191j
                 mov     ax, 76FEh
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 jmp     short loc_B2802
 ; ---------------------------------------------------------------------------
 
@@ -332207,7 +332207,7 @@ loc_B2905:                              ; CODE XREF: sub_B28A8+1B\u2191j
                 mov     ax, 7707h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 1Ah
                 push    ax
@@ -332670,7 +332670,7 @@ loc_B2D40:                              ; CODE XREF: sub_B28A8+48C\u2191j
                 mov     ax, 7710h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 1850h
                 mov     dx, 0F000h
@@ -334112,7 +334112,7 @@ loc_B364F:                              ; CODE XREF: sub_3101F+3\u2191J
                 mov     ax, 77BAh
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 1
                 jmp     short locret_B36A9
@@ -336287,7 +336287,7 @@ loc_B45A8:                              ; CODE XREF: sub_31047+83545\u2191j
                 mov     ax, 782Fh
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     es, seg_D18D0
                 mov     es:Persisted_val204, 1
@@ -345894,7 +345894,7 @@ loc_B870E:                              ; CODE XREF: sub_B8541+1C6\u2191j
 loc_B8711:                              ; CODE XREF: sub_B8541+1CB\u2191j
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     es, seg_D1956
                 assume es:sg4d43
@@ -345960,7 +345960,7 @@ loc_B8786:                              ; CODE XREF: sub_B8541+23B\u2191j
                 mov     ax, offset aBuzz_rs ; "buzz.rs"
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 jmp     loc_B85AC
 ; ---------------------------------------------------------------------------
 
@@ -346116,7 +346116,7 @@ loc_B888A:                              ; CODE XREF: sub_B87AD+81\u2191j
                 mov     ax, offset aBuzz_rs_1 ; "buzz.rs"
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
 
 loc_B88B0:                              ; CODE XREF: sub_B87AD+16B\u2193j
                                         ; sub_B87AD+17A\u2193j
@@ -346270,7 +346270,7 @@ loc_B8982:                              ; CODE XREF: sub_B8932+18C\u2193j
                 mov     ax, 7DB7h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, Persisted_val36
                 inc     ax
@@ -346386,7 +346386,7 @@ loc_B8A6F:                              ; CODE XREF: sub_B8932+11A\u2191j
                 mov     ax, 7DC1h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, [bp+var_2]
                 mov     Persisted_val36, ax
@@ -361981,12 +361981,12 @@ loc_BF773:                              ; CODE XREF: sub_BF410+327\u2191j
                 mov     ax, 819Bh
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 81A3h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 5
                 push    ax
@@ -362095,7 +362095,7 @@ loc_BF8C6:                              ; CODE XREF: sub_BF410+4A2\u2191j
                 mov     ax, 81ADh
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
 
 loc_BF8F3:                              ; CODE XREF: sub_BF410+139\u2191j
                                         ; sub_BF410+20B\u2191j
@@ -362486,7 +362486,7 @@ loc_BFB15:                              ; CODE XREF: sub_30E53+3\u2191J
                 mov     ax, 81C4h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     es, seg_D19FE
                 mov     ax, es:_roomLogicNum
@@ -362634,7 +362634,7 @@ loc_BFC16:                              ; CODE XREF: sub_30E49+8EDBB\u2191j
                 mov     ax, 81D2h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     es, seg_D19FE
                 mov     ax, es:_roomLogicNum
@@ -362976,7 +362976,7 @@ loc_BFF19:                              ; CODE XREF: sub_30E3F+8F0FD\u2193j
                                         ; sub_30E3F+8F112\u2193j
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
 
 loc_BFF23:                              ; CODE XREF: sub_30E3F+8F145\u2193j
@@ -363049,7 +363049,7 @@ loc_BFF86:                              ; CODE XREF: sub_30E3F+8F0C2\u2191j
                 mov     ax, 8211h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 push    cs
                 call    near ptr sub_BFCA8
@@ -364666,7 +364666,7 @@ loc_C0AD2:                              ; CODE XREF: sub_C0A65+4B\u2191j
                 mov     ax, 8234h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 0B412h
                 mov     dx, 0F000h
@@ -364888,7 +364888,7 @@ loc_C0C79:                              ; CODE XREF: sub_C0C05+55\u2191j
                 mov     ax, 8254h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 0B419h
                 mov     dx, 0F000h
@@ -365629,7 +365629,7 @@ loc_C1118:                              ; CODE XREF: sub_C10D0+43\u2191j
                 mov     ax, 825Bh
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 0B42Eh
                 mov     dx, 0F000h
@@ -365845,7 +365845,7 @@ loc_C1272:                              ; CODE XREF: sub_C121D+50\u2191j
                 mov     ax, 8262h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 0B435h
 
@@ -365917,7 +365917,7 @@ loc_C12CB:                              ; CODE XREF: sub_C121D+25\u2191j
                 mov     ax, 8269h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 jmp     short loc_C128C
 ; ---------------------------------------------------------------------------
 
@@ -366446,7 +366446,7 @@ loc_C16ED:                              ; CODE XREF: sub_C1484+36F\u2193j
                                         ; sub_C1484+3EA\u2193j ...
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 jmp     short loc_C16B6
 ; ---------------------------------------------------------------------------
 
@@ -366712,7 +366712,7 @@ loc_C1930:                              ; CODE XREF: sub_C1908+76\u2193j
                 mov     ax, 829Eh
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 0B451h
 
@@ -366805,7 +366805,7 @@ loc_C19C0:                              ; CODE XREF: sub_C1984+A8\u2193j
                 mov     ax, 82ABh
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 0B454h
                 mov     dx, 0F000h
@@ -366914,7 +366914,7 @@ loc_C1A41:                              ; CODE XREF: sub_C1A32+9\u2191j
                 mov     ax, 82B2h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 0B459h
 
@@ -366995,7 +366995,7 @@ loc_C1AD4:                              ; CODE XREF: sub_C1AA2+84\u2193j
                 mov     ax, 82B9h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 0B45Ch
 
@@ -369695,7 +369695,7 @@ loc_C2CF3:                              ; CODE XREF: sub_C2BEE+FA\u2191j
                 mov     ax, 834Bh
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 3Ch ; '<'
                 push    ax
@@ -369723,7 +369723,7 @@ loc_C2D44:                              ; CODE XREF: sub_C2BEE+10A\u2191j
                 mov     ax, 8352h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 25Bh
                 push    ax
@@ -369866,7 +369866,7 @@ loc_C2E3B:                              ; CODE XREF: sub_C2E1D+19\u2191j
                 mov     ax, 8359h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 1
                 push    ax              ; newId
@@ -369928,7 +369928,7 @@ loc_C2EB4:                              ; CODE XREF: sub_C2E1D+B\u2191j
                 mov     ax, 8363h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 1
                 push    ax              ; newId
@@ -370304,7 +370304,7 @@ loc_C3130:                              ; CODE XREF: sub_C3077+87\u2191j
                 mov     ax, 8382h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 jmp     short loc_C312B
 ; ---------------------------------------------------------------------------
 
@@ -370387,7 +370387,7 @@ loc_C3198:                              ; CODE XREF: sub_C3150+3CE\u2193j
                 mov     ax, 8389h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
 
 loc_C31B2:                              ; CODE XREF: sub_C3150+127\u2193j
                 add     sp, 4
@@ -381252,7 +381252,7 @@ loc_C7771:                              ; CODE XREF: sub_C76EB+34\u2191j
                 mov     ax, 84D8h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 7C26h
                 jmp     short loc_C774B
@@ -381783,7 +381783,7 @@ loc_C7ABD:                              ; CODE XREF: sub_C7A7D+7D\u2193j
                 mov     ax, 84E4h
                 push    ds
                 push    ax              ; filename
-                call    sub_14A37
+                call    Stream_loadFile
                 add     sp, 4
                 mov     ax, 7C38h
                 jmp     short loc_C7AAB
@@ -383657,14 +383657,14 @@ word_C849F      dw 0                    ; DATA XREF: seg024:01CE\u2191w
 word_C84A1      dw 0                    ; DATA XREF: seg024:0198\u2191w
 word_C84A3      dw 0                    ; DATA XREF: seg024:019E\u2191w
                 align 2
-dword_C84A6     dd 8 dup(0)             ; DATA XREF: sub_1DDF6+14E\u2191r
-                                        ; sub_1E052+4A\u2191r ...
-aRb_3           db 'rb',0               ; DATA XREF: sub_1DDF6:loc_1DE28\u2191o
+dword_C84A6     dd 8 dup(0)             ; DATA XREF: Stream_readChunks+14E\u2191r
+                                        ; Stream_processChunks+4A\u2191r ...
+aRb_3           db 'rb',0               ; DATA XREF: Stream_readChunks:loc_1DE28\u2191o
                 db    0
 byte_C84CA      db 0                    ; DATA XREF: sub_18134\u2191r
                                         ; sub_18242\u2191w ...
 byte_C84CB      db 0                    ; DATA XREF: sub_18042:loc_1804B\u2191w
-                                        ; sub_1DDF6+1F9\u2191r ...
+                                        ; Stream_readChunks+1F9\u2191r ...
 word_C84CC      dw 0FFFFh               ; DATA XREF: sub_181D8:loc_181F8\u2191r
                                         ; sub_183E3:loc_183FD\u2191r
 word_C84CE      dw 38Eh                 ; DATA XREF: sg09a4:027D\u2191r
@@ -393396,12 +393396,12 @@ seg_D0F06       dw seg seg090           ; DATA XREF: exit2:exit_jump\u2191o
                                         ; exit2+6\u2191o ...
 dseg_6          dw seg sg4d43           ; DATA XREF: sub_1DDC0:loc_1DDC9\u2191r
 dseg_7          dw seg sg4d43           ; DATA XREF: sub_1DDC0+14\u2191r
-dseg_8          dw seg sg4d43           ; DATA XREF: sub_1DDF6:loc_1DE0E\u2191r
-                                        ; sub_1E052+15\u2191r
-dseg_9          dw seg sg4d43           ; DATA XREF: sub_1DDF6+1F5\u2191r
-                                        ; sub_1E052+76\u2191r
-dseg_10         dw seg sg4d43           ; DATA XREF: sub_1E052:loc_1E080\u2191r
-                                        ; sub_1E052:loc_1E0D4\u2191r
+dseg_8          dw seg sg4d43           ; DATA XREF: Stream_readChunks:loc_1DE0E\u2191r
+                                        ; Stream_processChunks+15\u2191r
+dseg_9          dw seg sg4d43           ; DATA XREF: Stream_readChunks+1F5\u2191r
+                                        ; Stream_processChunks+76\u2191r
+dseg_10         dw seg sg4d43           ; DATA XREF: Stream_processChunks:loc_1E080\u2191r
+                                        ; Stream_processChunks:loc_1E0D4\u2191r
 seg126_14       dw seg sg3EDC           ; DATA XREF: sub_1E148+4\u2191r
                                         ; sub_1E1BC+8\u2191r ...
 dseg_11         dw seg sg4d43           ; DATA XREF: sub_1E1BC+2C\u2191r

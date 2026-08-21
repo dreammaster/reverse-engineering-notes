@@ -302,9 +302,28 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       `dump_msg_strings.py`) for future message-id ambiguity. Full
       writeup in
       [overview.md](overview.md#the-scoring-subsystem-confirmed-by-actually-decoding-real-game-text).
-- [ ] Continue working down the re-ranked list — `sub_14A37` (80
-      callers) and its unnamed callees, and the rest of the ~1760
-      still-unnamed functions.
+- [x] Traced `sub_14A37` (80 callers) and its four then-unnamed
+      callees — a generic, reusable **chunked file-streaming
+      subsystem**, not filename-specific logic: reads a whole file into
+      up to 8 RAM buffers (~64KB each, since one DOS allocation can't
+      span an arbitrary file), abortable at any point via a keypress or
+      config flags, dispatching each chunk through a **configurable
+      callback function pointer** for actual processing. Named
+      `Stream_loadFile`/`Stream_readChunks`/`Stream_processChunks`/
+      `Stream_processChunk`/`Stream_freeChunks` (a new subsystem
+      prefix) plus `TextWindow_flushPendingText` (a smaller finding
+      picked up along the way). High confidence on the mechanism, lower
+      confidence on the exact end-use since the callback target itself
+      wasn't traced. Full writeup in
+      [overview.md](overview.md#stream_-subsystem-named--a-generic-chunked-file-loader).
+      **Tooling note**: hit and fixed a real fragility in
+      `apply_renames_gatemain.py` — entries that key by a symbol's *old*
+      name break once that rename is actually applied, since the name
+      no longer exists to look up. Every entry now keys by hex address.
+- [ ] Continue working down the re-ranked list — the rest of the ~1750
+      still-unnamed functions. `Stream_processChunk`'s callback target
+      (`word_C84D0`) would be a good next thread to pull, since it'd
+      clarify what this whole streaming subsystem is actually used for.
 - [ ] Cross-check the structs shared by name/concept with `gate.idb`
       (`VocabEntry`/`VOCAB_ENTRY`, `Str16`/`STR16`, `Point`/`POINT`,
       `Screen`/`SCREEN`, `Font`/`FONT`, `REGS`, `HandleEntry`/`HANDLE`)
