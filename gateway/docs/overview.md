@@ -2777,3 +2777,17 @@ display. Named to match the project's lowercase-underscore convention
 for custom C-runtime-adjacent utilities.
 
 Applied via `apply_renames_gatemain.py`'s seventieth batch.
+
+### `Dialog_showFormattedPrompt` named
+
+Moved to `sub_2A163` (4 callers, called directly from the already-named
+`Dialog_prompt`). Confirmed via a real call to the C runtime's
+`_vsprintf` as the core "format a message and show it in an auto-sized
+dialog box" implementation `Dialog_prompt` wraps: formats its
+printf-style arguments into a local buffer, then walks the resulting
+text measuring line count (capped at 24) and max line width (capped at
+79, i.e. an 80x25 text screen) to auto-size the dialog. The remainder
+of the function (actually creating/positioning the window and
+displaying the text) wasn't traced in full this pass.
+
+Applied via `apply_renames_gatemain.py`'s seventy-first batch.

@@ -1875,6 +1875,23 @@ RENAMES = [
      "used for score/turn-count/credits display), named to match the "
      "project's lowercase-underscore convention for custom C-runtime-"
      "adjacent utilities."),
+
+    # -- seventy-first pass: sub_2A163, confirmed via a real call to
+    # the C runtime's _vsprintf as the core "format a message and show
+    # it in an auto-sized dialog box" implementation that Dialog_prompt
+    # wraps. See docs/overview.md#dialog_showformattedprompt-named. --
+
+    (0x2A163, "Dialog_showFormattedPrompt",
+     "sub_2A163(x1, y1, format, args, ...): formats its printf-style "
+     "arguments into a local message buffer via the real C runtime "
+     "_vsprintf, then walks the resulting text measuring line count "
+     "(capped at 0x18=24) and max line width (capped at 0x4F=79, i.e. "
+     "an 80x25 text screen) to auto-size a dialog box for the "
+     "message. Called directly from the already-named Dialog_prompt -- "
+     "this is the core formatted-message-dialog implementation "
+     "Dialog_prompt wraps. The remainder of the function (actually "
+     "creating/positioning the window and displaying the text) wasn't "
+     "traced in full this pass."),
 ]
 
 

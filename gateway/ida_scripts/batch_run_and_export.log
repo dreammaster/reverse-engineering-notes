@@ -68843,3 +68843,1991 @@ DRY_RUN = False
 [*] gen_file(OFILE_IDC) returned 1
 [*] saving database to C:\dev\legend\gateway\gatemain.idb
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\legend\gateway\gatemain.idb
+[*] ARGV = ['C:\\dev\\legend\\gateway\\ida_scripts\\batch_run_and_export.py', 'rank_unnamed_functions.py', 'noexport']
+[*] reading rank_unnamed_functions.py
+[*] executing rank_unnamed_functions.py
+[*] captured stdout from target script:
+----- begin target script output -----
+1666 unnamed functions total
+
+26F2A  sub_26F2A    callers= 19 size=  73  <- Game_restartAfterDeath, data/26ED6, logic238, room_load, sub_15674, sub_5E426, ... (+13 more)
+4A69F  sub_4A69F    callers= 15 size=  39  <- sub_819E6, sub_81CCC, sub_82348, sub_8241D, sub_82878, sub_84319, ... (+9 more)
+4A616  sub_4A616    callers= 12 size=  11  <- sub_78C68, sub_79064, sub_79364, sub_7941D, sub_79490, sub_79534, ... (+6 more)
+474F8  sub_474F8    callers= 10 size=  86  <- data/475FC, data/4761B, data/476DA, data/47727, data/47743, data/4776A, ... (+4 more)
+4A722  sub_4A722    callers=  9 size=  43  <- sub_31137, sub_31141, sub_313B7, sub_8342B, sub_85100, sub_85C7C, ... (+3 more)
+2609A  sub_2609A    callers=  8 size=  67  <- sub_7E36F, sub_993B4, sub_9B946, sub_9BD7E, sub_9C0EE, sub_9F08E, ... (+2 more)
+1E2E3  sub_1E2E3    callers=  7 size=   1  <- data/4891B, data/48944, data/489DC, data/48A02, data/48C5A, data/48CF4, ... (+1 more)
+1E315  sub_1E315    callers=  7 size=  14  <- data/49557, data/49ECE, data/4A02A, data/4A59B, data/4ABC8, data/4AC00, ... (+1 more)
+4A65C  sub_4A65C    callers=  7 size=   7  <- logic238, sub_30EFD, sub_A5D13, sub_A5F92, sub_A68D8, sub_A6BD4, ... (+1 more)
+4A663  sub_4A663    callers=  7 size=  60  <- sub_81CCC, sub_8A260, sub_8AED5, sub_8B35D, sub_8BC38, sub_8C501, ... (+1 more)
+14A5F  sub_14A5F    callers=  6 size= 261  <- Logics_checkMoveRestriction, Logics_lookAtCurrentRoom, sub_82DA2, sub_907ED, sub_93922, sub_A60CE
+1A0FC  sub_1A0FC    callers=  6 size= 133  <- data/4560A, data/47683, data/47701, data/477AB, data/47869, data/47D38
+2D15C  sub_2D15C    callers=  5 size= 605  <- rtlink_thunk, sub_2D15C, sub_2D645, sub_2D766, sub_2D8CB
+1234F  sub_1234F    callers=  4 size=   6  <- sub_5C263, sub_60082, sub_66E47, sub_679EF
+123A1  sub_123A1    callers=  4 size=  48  <- data/67A53, sub_5C263, sub_60082, sub_66E47
+12F26  sub_12F26    callers=  4 size=  30  <- data/49B4F, data/49B78, data/4C674, data/4C844
+13629  sub_13629    callers=  4 size= 134  <- sub_72260, sub_A60CE, sub_AA9E3, sub_B8235
+21B15  sub_21B15    callers=  4 size=  31  <- data/21C9C, data/21CB5, data/21CCE, data/21CEB
+2A163  sub_2A163    callers=  4 size= 698  <- Dialog_prompt, data/2A0BE, printf, sub_C48E4
+2A41D  sub_2A41D    callers=  4 size= 201  <- Dialog_prompt, printf, sub_2A163, sub_C48E4
+4A7DC  sub_4A7DC    callers=  4 size=  73  <- logic238, sub_A68D8, sub_A6BD4, sub_A6EC0
+836B1  sub_836B1    callers=  4 size=  26  <- data/836CC, data/836F1, data/83716, data/8373B
+9E7EF  sub_9E7EF    callers=  4 size= 240  <- sub_9B946, sub_9BD7E, sub_9C0EE, sub_9C347
+13CC7  sub_13CC7    callers=  3 size= 438  <- GatewayParser_speakHandler, Parser_proc6, sub_C5648
+1452B  sub_1452B    callers=  3 size=  87  <- main, sub_6E0D3, sub_A576B
+15515  sub_15515    callers=  3 size=  20  <- data/1550E, data/155F5, sub_68864
+15674  sub_15674    callers=  3 size= 309  <- Game_restartAfterDeath, method025_Start, sub_9B5F9
+158C3  sub_158C3    callers=  3 size= 111  <- Game_restartAfterDeath, sub_15674, sub_9B5F9
+15A7A  sub_15A7A    callers=  3 size=  94  <- sub_159D5, sub_3141B, sub_9B5F9
+183E3  sub_183E3    callers=  3 size=  50  <- data/183A0, data/183CC, data/18604
+1861F  sub_1861F    callers=  3 size=  28  <- data/18518, sub_18432, sub_1863B
+18F54  sub_18F54    callers=  3 size=  46  <- __dos_findfirst, __maperror, _close
+1A5C6  sub_1A5C6    callers=  3 size=  60  <- data/4CFF7, data/4D104, sub_1A597
+1B80C  sub_1B80C    callers=  3 size=  16  <- __dtoxtime, _ftime, _localtime
+1B8F0  sub_1B8F0    callers=  3 size= 226  <- __dtoxtime, _ftime, _localtime
+1CC15  sub_1CC15    callers=  3 size=  15  <- sub_1CC34, sub_1CC58, sub_1CCA0
+1D492  sub_1D492    callers=  3 size= 221  <- Opl2_noteOn, sub_1D3C4, sub_1D448
+1D570  sub_1D570    callers=  3 size=  28  <- sub_1CF90, sub_1D3C4, sub_1D448
+1D7DA  sub_1D7DA    callers=  3 size=  45  <- sub_1CEC0, sub_1D0D2, sub_1D10C
+1E1FE  sub_1E1FE    callers=  3 size=  11  <- sub_1E1BC, sub_1E3D0, sub_1EB9E
+1E21B  sub_1E21B    callers=  3 size=  71  <- data/4811C, data/49F63, sub_49C10
+1FA8E  sub_1FA8E    callers=  3 size= 112  <- sub_1FB10, sub_1FB56, sub_1FBCE
+1FAFE  sub_1FAFE    callers=  3 size=  18  <- sub_1FB10, sub_1FB56, sub_1FBCE
+20390  sub_20390    callers=  3 size=  69  <- Sound_stopTrack, sub_1E7D4, sub_1F1DE
+203D6  sub_203D6    callers=  3 size=  40  <- data/20432, sub_1E7D4, sub_1F1DE
+25B90  sub_25B90    callers=  3 size=  61  <- Picture_Load, load_and_scale_pic, scale_pic
+2BCA5  sub_2BCA5    callers=  3 size= 115  <- Image_load, sub_24A42, sub_26892
+2C83C  sub_2C83C    callers=  3 size= 298  <- sub_2C6D1, sub_2C966, sub_2CCD9
+2D550  sub_2D550    callers=  3 size=  16  <- sub_2D15C, sub_2D6F5, sub_2D8CB
+3142F  sub_3142F    callers=  3 size=   2  <- sub_2D0F2, sub_2D15C, sub_2D6F5
+46803  sub_46803    callers=  3 size= 153  <- data/468AE, data/468E8, data/4691B
+4A6E0  sub_4A6E0    callers=  3 size=  66  <- sub_313B7, sub_85100, sub_85C7C
+5CD81  sub_5CD81    callers=  3 size=  99  <- InputWindow_getLine, get_mouse_input, thunk_sub_5CD81
+62AB0  sub_62AB0    callers=  3 size=  50  <- save_game, sub_62AE2, thunk_sub_62AB0
+6D7A3  sub_6D7A3    callers=  3 size=  42  <- sub_2ECC5, sub_6D7CD, thunk_sub_6D7A3
+6D836  sub_6D836    callers=  3 size=  42  <- sub_2ECA7, sub_2ECB1, thunk_sub_6D836
+749C9  sub_749C9    callers=  3 size=  90  <- sub_73E5A, sub_74149, sub_74D38
+755AF  sub_755AF    callers=  3 size= 186  <- sub_73E5A, sub_74149, sub_74D38
+78BC7  sub_78BC7    callers=  3 size=  13  <- data/78BD5, data/78BF7, data/78C1B
+7D203  sub_7D203    callers=  3 size= 104  <- sub_7AE5A, sub_7D26B, sub_7D57B
+85100  sub_85100    callers=  3 size=1115  <- sub_312E5, sub_313B7, thunk_sub_85100
+8D517  sub_8D517    callers=  3 size= 102  <- sub_8CB20, sub_8D38C, thunk_sub_8D517
+907ED  sub_907ED    callers=  3 size= 358  <- sub_90953, sub_91398, sub_91A6F
+9C347  sub_9C347    callers=  3 size= 507  <- sub_9CC60, sub_9CCED, thunk_sub_9C347
+B466E  sub_B466E    callers=  3 size=  81  <- sub_30FA7, sub_B46BF, thunk_sub_B466E
+B49DE  sub_B49DE    callers=  3 size=  81  <- sub_30F9D, sub_B4B07, thunk_sub_B49DE
+B4DA7  sub_B4DA7    callers=  3 size=  81  <- sub_30F93, sub_B4DF8, thunk_sub_B4DA7
+BF003  sub_BF003    callers=  3 size= 414  <- sub_BF1A1, sub_BF1B0, sub_BF1BF
+BF410  sub_BF410    callers=  3 size=1295  <- sub_BF91F, sub_BF92E, sub_BF93D
+1057E  sub_1057E    callers=  2 size= 103  <- Game_endGameMenu, sub_69EDA
+13CB1  sub_13CB1    callers=  2 size=  22  <- GatewayParser_speakHandler, Parser_proc6
+13F85  sub_13F85    callers=  2 size=  87  <- GatewayParser_speakHandler, sub_2E9F5
+147A6  sub_147A6    callers=  2 size=  37  <- Parser_perform, sub_13820
+157A9  sub_157A9    callers=  2 size= 282  <- sub_15674, sub_9B5F9
+15932  sub_15932    callers=  2 size= 163  <- sub_3141B, sub_A2D8D
+159D5  sub_159D5    callers=  2 size= 165  <- sub_A1E0B, sub_BD174
+15B56  sub_15B56    callers=  2 size=  88  <- sub_75EFE, sub_84B08
+15F35  sub_15F35    callers=  2 size= 102  <- Sound_selectTrack, Sound_selectTrackForRoom
+16124  sub_16124    callers=  2 size= 251  <- data/4A90A, data/4B3CD
+169A6  sub_169A6    callers=  2 size=  83  <- get_mouse_input, sub_1796D
+16A89  sub_16A89    callers=  2 size=  41  <- Listbox_mouseButtonDown, sub_5D9F3
+16B53  sub_16B53    callers=  2 size= 363  <- prompt_for_filename, sub_5D9F3
+1796D  sub_1796D    callers=  2 size= 164  <- get_mouse_input, prompt_for_filename
+18415  sub_18415    callers=  2 size=  29  <- data/182B7, data/18512
+18883  sub_18883    callers=  2 size= 129  <- Speaker_sampleIsr, data/187D8
+18905  sub_18905    callers=  2 size=  75  <- Speaker_sampleIsr, sub_18976
+18950  sub_18950    callers=  2 size=  19  <- sub_18883, sub_18963
+1CC34  sub_1CC34    callers=  2 size=  36  <- sub_1E329, sub_1E974
+1CEC0  sub_1CEC0    callers=  2 size=  91  <- sub_1CE20, sub_1E60C
+1CF6E  sub_1CF6E    callers=  2 size=  33  <- sub_1CE20, sub_1E60C
+1D2FC  sub_1D2FC    callers=  2 size= 105  <- sub_1CFB0, sub_1D366
+1D58C  sub_1D58C    callers=  2 size=  92  <- sub_1D3C4, sub_1D448
+1D5E8  sub_1D5E8    callers=  2 size=  85  <- sub_1D3C4, sub_1D448
+1D63E  sub_1D63E    callers=  2 size=  85  <- sub_1D3C4, sub_1D448
+1D694  sub_1D694    callers=  2 size= 158  <- sub_1D3C4, sub_1D448
+1D786  sub_1D786    callers=  2 size=  83  <- sub_1D3C4, sub_1D448
+1D953  sub_1D953    callers=  2 size=  19  <- sub_1F552, sub_1F93E
+1DD8E  sub_1DD8E    callers=  2 size=  22  <- sub_1F1DE, sub_1F93E
+1E211  sub_1E211    callers=  2 size=  10  <- data/451B7, data/451C8
+1E2E4  sub_1E2E4    callers=  2 size=  10  <- sub_1E1BC, sub_1EB9E
+1E312  sub_1E312    callers=  2 size=   3  <- data/1E2FA, sub_1E694
+1E974  sub_1E974    callers=  2 size= 127  <- Sound_stopTrack, sub_1E950
+1E9F4  sub_1E9F4    callers=  2 size= 425  <- sub_1E7D4, sub_1E950
+1EE70  sub_1EE70    callers=  2 size= 225  <- sub_1EFA6, sub_1F4A0
+1F63A  sub_1F63A    callers=  2 size=  88  <- sub_1F7D6, sub_1FE5C
+1F692  sub_1F692    callers=  2 size= 323  <- sub_1FE5C, sub_201C0
+1F910  sub_1F910    callers=  2 size=  45  <- Sound_stopTrack, sub_1F692
+1F93E  sub_1F93E    callers=  2 size= 288  <- sub_1F692, sub_1F910
+1FB56  sub_1FB56    callers=  2 size= 119  <- Sound_selectDevice, Sound_shutdown
+1FC4E  sub_1FC4E    callers=  2 size=  33  <- sub_1FB10, sub_1FB56
+1FE5C  sub_1FE5C    callers=  2 size= 868  <- Sound_selectTrack, Sound_selectTrackForRoom
+201C0  sub_201C0    callers=  2 size=  96  <- data/1FD34, room_load
+20448  sub_20448    callers=  2 size= 134  <- data/20604, data/206B1
+2124E  sub_2124E    callers=  2 size= 118  <- sub_20D4F, sub_2124E
+2137A  sub_2137A    callers=  2 size=  34  <- sub_20D4F, sub_2139D
+238B2  sub_238B2    callers=  2 size=  15  <- delay, sub_25216
+24A42  sub_24A42    callers=  2 size= 138  <- Mouse_init, Mouse_shutdown
+24FAE  sub_24FAE    callers=  2 size=  77  <- Mouse_pollPosition, get_mouse_buttons
+25BCE  sub_25BCE    callers=  2 size= 132  <- load_and_scale_pic, scale_pic
+25C52  sub_25C52    callers=  2 size=  79  <- Picture_Load, scale_pic
+26892  sub_26892    callers=  2 size= 228  <- Icon_drawButton, sub_2A163
+26A62  sub_26A62    callers=  2 size= 319  <- sub_74C45, sub_74D38
+27582  sub_27582    callers=  2 size=  75  <- Listbox_add, Listbox_reset
+2983A  sub_2983A    callers=  2 size= 470  <- prompt_for_filename, sub_64550
+2A8FE  sub_2A8FE    callers=  2 size=  16  <- sub_2A842, sub_2A892
+2B55C  sub_2B55C    callers=  2 size=  40  <- sub_2C223, sub_2C966
+2B5A5  sub_2B5A5    callers=  2 size=  18  <- sub_2C2EB, sub_2CCD9
+2BE7A  sub_2BE7A    callers=  2 size=  82  <- Font_writeChar, fillRect
+2C6D1  sub_2C6D1    callers=  2 size= 211  <- Screen_drawLine, Screen_fillRect
+2D3B9  sub_2D3B9    callers=  2 size= 276  <- sub_2D15C, sub_2D766
+2D560  sub_2D560    callers=  2 size=  56  <- sub_2D15C, sub_2D766
+2D615  sub_2D615    callers=  2 size=  40  <- sub_2D598, sub_2D5CF
+2D98E  sub_2D98E    callers=  2 size=  29  <- sub_2D15C, sub_2D3B9
+2E2CF  sub_2E2CF    callers=  2 size=   8  <- Logics_checkMoveRestriction, main
+31431  sub_31431    callers=  2 size=  18  <- sub_2D15C, sub_2D5CF
+31609  sub_31609    callers=  2 size=  33  <- data/314D7, data/315E1
+31802  sub_31802    callers=  2 size=  62  <- sub_316FA, sub_318FA
+31840  sub_31840    callers=  2 size= 105  <- sub_2D3B9, sub_316FA
+318BD  sub_318BD    callers=  2 size=  60  <- sub_318A9, sub_318FA
+478DD  sub_478DD    callers=  2 size= 290  <- data/47D2B, data/47D4D
+4B22B  sub_4B22B    callers=  2 size= 102  <- data/4B144, data/4B1CF
+4B2A8  sub_4B2A8    callers=  2 size= 126  <- data/4B3A1, data/4B3AC
+5C0B0  sub_5C0B0    callers=  2 size= 413  <- sub_5C24D, sub_5C263
+5C263  sub_5C263    callers=  2 size= 464  <- Scene_draw, scene_update?
+5FC4A  sub_5FC4A    callers=  2 size= 372  <- sub_5FDBE, sub_6069A
+5FDBE  sub_5FDBE    callers=  2 size= 151  <- data/5FFB4, sub_60082
+5FE55  sub_5FE55    callers=  2 size= 266  <- data/5FFD3, sub_60082
+60082  sub_60082    callers=  2 size=1559  <- Parser_proc6, thunk_sub_60082
+608AA  sub_608AA    callers=  2 size=  97  <- Parser_proc4, sub_60F21
+61C72  sub_61C72    callers=  2 size=1934  <- sub_61C22, sub_61C72
+62AE2  sub_62AE2    callers=  2 size= 186  <- save_game, thunk_sub_62AE2
+632B9  sub_632B9    callers=  2 size=  60  <- prompt_for_filename, sub_632F5
+66888  sub_66888    callers=  2 size= 347  <- sub_66888, sub_669E3
+669E3  sub_669E3    callers=  2 size=1050  <- sub_669E3, thunk_sub_669E3
+66E47  sub_66E47    callers=  2 size= 570  <- sub_67081, sub_67094
+67081  sub_67081    callers=  2 size=  19  <- sub_2E2CF, thunk_sub_67081
+67814  sub_67814    callers=  2 size=  83  <- sub_67867, thunk_sub_67814
+678A6  sub_678A6    callers=  2 size= 129  <- data/6794D, thunk_sub_678A6
+6AEFD  sub_6AEFD    callers=  2 size= 107  <- sub_2E81F, sub_2E833
+70F07  sub_70F07    callers=  2 size=  67  <- Commset_printText, thunk_sub_70F07
+712FE  sub_712FE    callers=  2 size= 130  <- sub_71380, thunk_sub_712FE
+71625  sub_71625    callers=  2 size= 305  <- sub_7179E, thunk_sub_71625
+744F6  sub_744F6    callers=  2 size=  24  <- sub_73E5A, sub_74D38
+7450E  sub_7450E    callers=  2 size= 927  <- sub_73E5A, sub_74D38
+749B4  sub_749B4    callers=  2 size=  21  <- sub_73E5A, sub_74D38
+76EB4  sub_76EB4    callers=  2 size= 157  <- sub_310F1, thunk_sub_76EB4
+7E328  sub_7E328    callers=  2 size=  26  <- data/7E35D, data/7E362
+7E54B  sub_7E54B    callers=  2 size=  26  <- data/7E580, data/7E585
+7E6F1  sub_7E6F1    callers=  2 size=  26  <- data/7E72B, data/7E730
+82DA2  sub_82DA2    callers=  2 size= 336  <- sub_30DA9, thunk_sub_82DA2
+8326E  sub_8326E    callers=  2 size=  46  <- sub_83094, thunk_sub_8326E
+84019  sub_84019    callers=  2 size=  32  <- sub_3117D, thunk_sub_84019
+88B2F  sub_88B2F    callers=  2 size=  79  <- sub_874C0, sub_87766
+90059  sub_90059    callers=  2 size=  17  <- data/9006B, data/90079
+90953  sub_90953    callers=  2 size= 200  <- sub_90A1B, sub_90BE4
+91368  sub_91368    callers=  2 size=  48  <- sub_91398, sub_91A6F
+9733B  sub_9733B    callers=  2 size= 110  <- sub_968C7, thunk_sub_9733B
+9B5F9  sub_9B5F9    callers=  2 size= 426  <- sub_9AE9C, thunk_sub_9B5F9
+A4927  sub_A4927    callers=  2 size= 166  <- sub_A49CD, sub_A4A1C
+A5F92  sub_A5F92    callers=  2 size= 211  <- sub_A4F49, thunk_sub_A5F92
+A60CE  sub_A60CE    callers=  2 size=1487  <- sub_30F89, thunk_sub_A60CE
+A6780  sub_A6780    callers=  2 size= 238  <- sub_A68D8, sub_A877B
+A686E  sub_A686E    callers=  2 size= 106  <- sub_A6BD4, sub_A894F
+B572F  sub_B572F    callers=  2 size=  63  <- sub_B576E, sub_B58A3
+BD174  sub_BD174    callers=  2 size= 484  <- sub_BCA95, thunk_sub_BD174
+C3E91  sub_C3E91    callers=  2 size=  38  <- sub_C2BEE, thunk_sub_C3E91
+C3EB7  sub_C3EB7    callers=  2 size=  38  <- sub_C2BEE, thunk_sub_C3EB7
+119B8  sub_119B8    callers=  1 size=  13  <- sub_5FC4A
+12024  sub_12024    callers=  1 size= 112  <- sub_67662
+121EE  sub_121EE    callers=  1 size= 171  <- sub_67662
+1238C  sub_1238C    callers=  1 size=  21  <- sub_4A95A
+123D1  sub_123D1    callers=  1 size=  34  <- sub_4A95A
+128E6  sub_128E6    callers=  1 size=  96  <- shutdown
+12E3A  sub_12E3A    callers=  1 size=  33  <- data/49B42
+1317C  sub_1317C    callers=  1 size=   8  <- main
+13193  sub_13193    callers=  1 size=  18  <- main
+1338B  sub_1338B    callers=  1 size= 609  <- sub_28595
+135EC  sub_135EC    callers=  1 size=  61  <- Queue_tickCountdowns
+13820  sub_13820    callers=  1 size=  49  <- scene_update?
+13852  sub_13852    callers=  1 size= 118  <- main
+13BE2  sub_13BE2    callers=  1 size= 207  <- main
+14111  sub_14111    callers=  1 size= 473  <- sub_5FC4A
+14768  sub_14768    callers=  1 size=  62  <- Parser_perform
+15189  sub_15189    callers=  1 size=  32  <- sub_68864
+151A9  sub_151A9    callers=  1 size= 273  <- data/4CBB5
+152BA  sub_152BA    callers=  1 size= 164  <- sub_68864
+15BAE  sub_15BAE    callers=  1 size=  44  <- Queue_tickCountdowns
+160CA  sub_160CA    callers=  1 size=  23  <- Scene_draw
+160E1  sub_160E1    callers=  1 size=  67  <- Game_updateStatusLine
+16394  sub_16394    callers=  1 size= 128  <- Listbox_draw
+169F9  sub_169F9    callers=  1 size= 144  <- Listbox_mouseButtonDown
+16AB2  sub_16AB2    callers=  1 size=  40  <- Listbox_mouseButtonDown
+16B01  sub_16B01    callers=  1 size=  41  <- Listbox_pushState
+16CBE  sub_16CBE    callers=  1 size= 208  <- Listbox_mouseButtonDown
+16F73  sub_16F73    callers=  1 size=  49  <- prompt_for_filename
+17AB8  sub_17AB8    callers=  1 size= 144  <- get_mouse_input
+17B48  sub_17B48    callers=  1 size=  69  <- get_mouse_input
+17B8E  sub_17B8E    callers=  1 size= 356  <- sub_7450E
+18109  sub_18109    callers=  1 size=  43  <- Stream_readChunks
+18134  sub_18134    callers=  1 size=  20  <- Stream_freeChunks
+18242  sub_18242    callers=  1 size=  22  <- Stream_selectHandler
+18432  sub_18432    callers=  1 size= 129  <- Stream_selectHandler
+1863B  sub_1863B    callers=  1 size=  71  <- sub_18432
+18963  sub_18963    callers=  1 size=  19  <- Sb_detectDsp
+18976  sub_18976    callers=  1 size=  47  <- data/18728
+18BBE  sub_18BBE    callers=  1 size=  45  <- exit2
+18C6D  sub_18C6D    callers=  1 size=   5  <- data/49775
+191D0  sub_191D0    callers=  1 size= 395  <- data/49B30
+1964F  sub_1964F    callers=  1 size=  33  <- data/4CF33
+1A597  sub_1A597    callers=  1 size=   5  <- data/4CFE4
+1A950  sub_1A950    callers=  1 size=  92  <- _write
+1AAA6  sub_1AAA6    callers=  1 size= 110  <- _malloc
+1AB14  sub_1AB14    callers=  1 size=  23  <- _malloc
+1ACFE  sub_1ACFE    callers=  1 size=  86  <- _brkctl
+1B81C  sub_1B81C    callers=  1 size= 211  <- sub_1B80C
+1CB32  sub_1CB32    callers=  1 size= 208  <- sub_1D7DA
+1CC58  sub_1CC58    callers=  1 size=  72  <- sub_1E124
+1CCA0  sub_1CCA0    callers=  1 size=  21  <- sub_1E136
+1CCB5  sub_1CCB5    callers=  1 size=  15  <- data/1E304
+1CD72  sub_1CD72    callers=  1 size= 174  <- Opl2_detectAndInit
+1CE20  sub_1CE20    callers=  1 size= 160  <- Opl2_detectAndInit
+1CF1C  sub_1CF1C    callers=  1 size=  81  <- sub_1CE20
+1CF90  sub_1CF90    callers=  1 size=  31  <- sub_1CE20
+1CFB0  sub_1CFB0    callers=  1 size= 170  <- sub_1E60C
+1D0D2  sub_1D0D2    callers=  1 size=  58  <- sub_1E4C4
+1D10C  sub_1D10C    callers=  1 size= 152  <- sub_1E45C
+1D1FE  sub_1D1FE    callers=  1 size= 207  <- sub_1CEC0
+1D366  sub_1D366    callers=  1 size=  92  <- sub_1D1FE
+1D3C4  sub_1D3C4    callers=  1 size= 132  <- data/1D2F4
+1D448  sub_1D448    callers=  1 size=  73  <- sub_1D2FC
+1D86A  sub_1D86A    callers=  1 size=  10  <- Midi_initDevice
+1D874  sub_1D874    callers=  1 size=  34  <- data/481AE
+1DA61  sub_1DA61    callers=  1 size=  49  <- data/1DC39
+1DD4C  sub_1DD4C    callers=  1 size=  66  <- data/1DD37
+1DDA4  sub_1DDA4    callers=  1 size=  12  <- sub_1F692
+1E124  sub_1E124    callers=  1 size=  18  <- data/1E30D
+1E136  sub_1E136    callers=  1 size=  18  <- sub_1E974
+1E1BC  sub_1E1BC    callers=  1 size=  65  <- sub_1FE5C
+1E329  sub_1E329    callers=  1 size= 166  <- data/49624
+1E3D0  sub_1E3D0    callers=  1 size= 140  <- sub_1E7D4
+1E45C  sub_1E45C    callers=  1 size= 104  <- sub_1E4C4
+1E4C4  sub_1E4C4    callers=  1 size= 327  <- sub_1E7D4
+1E60C  sub_1E60C    callers=  1 size= 135  <- sub_1E694
+1E694  sub_1E694    callers=  1 size= 310  <- sub_1E7D4
+1E7CA  sub_1E7CA    callers=  1 size=   9  <- sub_1E7D4
+1E7D4  sub_1E7D4    callers=  1 size= 380  <- data/1CD18
+1E950  sub_1E950    callers=  1 size=  35  <- sub_201C0
+1EB9E  sub_1EB9E    callers=  1 size= 279  <- sub_1E7D4
+1ED42  sub_1ED42    callers=  1 size=  93  <- sub_1EE06
+1EDA0  sub_1EDA0    callers=  1 size= 102  <- sub_1EE06
+1EE06  sub_1EE06    callers=  1 size= 105  <- sub_1F63A
+1EF52  sub_1EF52    callers=  1 size=  42  <- sub_1EFA6
+1EF7C  sub_1EF7C    callers=  1 size=  42  <- sub_1EFA6
+1EFA6  sub_1EFA6    callers=  1 size= 141  <- sub_1F2B4
+1F034  sub_1F034    callers=  1 size= 425  <- sub_1F1DE
+1F1DE  sub_1F1DE    callers=  1 size= 214  <- sub_1F692
+1F2B4  sub_1F2B4    callers=  1 size= 491  <- sub_1F1DE
+1F4A0  sub_1F4A0    callers=  1 size= 178  <- sub_1F63A
+1F552  sub_1F552    callers=  1 size= 231  <- sub_1F63A
+1F7D6  sub_1F7D6    callers=  1 size= 313  <- sub_1F692
+1FB10  sub_1FB10    callers=  1 size=  70  <- sub_1FBCE
+1FBCE  sub_1FBCE    callers=  1 size= 128  <- sub_1F63A
+1FC70  sub_1FC70    callers=  1 size=  58  <- Sound_selectDevice
+1FCAA  sub_1FCAA    callers=  1 size=  52  <- Sound_shutdown
+20CF5  sub_20CF5    callers=  1 size=  12  <- data/49BD1
+20D09  sub_20D09    callers=  1 size=  11  <- sub_49C10
+20D1D  sub_20D1D    callers=  1 size=   4  <- data/49E9D
+20D22  sub_20D22    callers=  1 size=   6  <- data/20D14
+20D4F  sub_20D4F    callers=  1 size= 656  <- data/4A84D
+20FE0  sub_20FE0    callers=  1 size= 620  <- sub_20D4F
+212C5  sub_212C5    callers=  1 size= 140  <- sub_20D4F
+2139D  sub_2139D    callers=  1 size= 141  <- sub_2124E
+21952  sub_21952    callers=  1 size=  30  <- sub_2983A
+219C5  sub_219C5    callers=  1 size= 141  <- sub_17AB8
+21AE8  sub_21AE8    callers=  1 size=  14  <- close_file2
+228A6  sub_228A6    callers=  1 size= 174  <- sub_23162
+2297C  sub_2297C    callers=  1 size=  68  <- init_graphics
+229C0  sub_229C0    callers=  1 size= 153  <- sub_25BCE
+22A5A  sub_22A5A    callers=  1 size= 161  <- sub_25BCE
+23162  sub_23162    callers=  1 size= 792  <- Windows_newLine
+238C1  sub_238C1    callers=  1 size=  16  <- sub_1796D
+238D1  sub_238D1    callers=  1 size=  77  <- sub_25216
+2391E  sub_2391E    callers=  1 size=  40  <- sub_25216
+23AE0  sub_23AE0    callers=  1 size=  81  <- sub_25216
+2485E  sub_2485E    callers=  1 size=  51  <- sub_24892
+24AFD  sub_24AFD    callers=  1 size=  22  <- finish
+24B13  sub_24B13    callers=  1 size= 413  <- Mouse_show
+25216  sub_25216    callers=  1 size= 335  <- Mouse_pollPosition
+25E38  sub_25E38    callers=  1 size=  81  <- scale_pic
+264C8  sub_264C8    callers=  1 size=  42  <- sub_5E247
+2666E  sub_2666E    callers=  1 size= 129  <- load_and_draw_pic
+26BA2  sub_26BA2    callers=  1 size= 106  <- sub_5E073
+26C0C  sub_26C0C    callers=  1 size= 112  <- sub_26BA2
+2829A  sub_2829A    callers=  1 size=  66  <- sub_5E0A0
+2830E  sub_2830E    callers=  1 size=  50  <- sub_5E0A0
+28595  sub_28595    callers=  1 size= 105  <- get_mouse_input
+285FE  sub_285FE    callers=  1 size=  88  <- sub_6D953
+28656  sub_28656    callers=  1 size=  18  <- Scene_draw
+2868B  sub_2868B    callers=  1 size=  45  <- LogFile_write
+2886F  sub_2886F    callers=  1 size= 133  <- Compass_getDirection
+28D78  sub_28D78    callers=  1 size=  50  <- sub_7450E
+2A622  sub_2A622    callers=  1 size= 214  <- init_graphics
+2A6F8  sub_2A6F8    callers=  1 size= 101  <- init_graphics
+2A75D  sub_2A75D    callers=  1 size= 229  <- sub_2A6F8
+2A842  sub_2A842    callers=  1 size=  80  <- sub_2A6F8
+2A892  sub_2A892    callers=  1 size=  20  <- sub_2A6F8
+2A8A6  sub_2A8A6    callers=  1 size=  29  <- sub_2A892
+2A8C3  sub_2A8C3    callers=  1 size=  59  <- sub_2A6F8
+2A9C7  sub_2A9C7    callers=  1 size=  92  <- sub_2BCA5
+2AA24  sub_2AA24    callers=  1 size= 248  <- Image_load
+2B584  sub_2B584    callers=  1 size=  33  <- sub_2C28E
+2B5B7  sub_2B5B7    callers=  1 size=  33  <- sub_2C341
+2B6D4  sub_2B6D4    callers=  1 size=1254  <- sub_2666E
+2BBBA  sub_2BBBA    callers=  1 size= 235  <- sub_2BCA5
+2BECC  sub_2BECC    callers=  1 size=  48  <- Listbox_draw
+2BFC0  sub_2BFC0    callers=  1 size=  50  <- init_graphics
+2BFF2  sub_2BFF2    callers=  1 size=  60  <- init_graphics
+2C02E  sub_2C02E    callers=  1 size=  39  <- sub_2C1BC
+2C055  sub_2C055    callers=  1 size= 283  <- sub_2C6D1
+2C170  sub_2C170    callers=  1 size=  75  <- sub_2C055
+2C1BC  sub_2C1BC    callers=  1 size= 103  <- Font_writeChar
+2CB1F  sub_2CB1F    callers=  1 size=  33  <- sub_2CB40
+2D0F0  sub_2D0F0    callers=  1 size=   2  <- sub_2D15C
+2D0F2  sub_2D0F2    callers=  1 size= 106  <- sub_2D15C
+2D598  sub_2D598    callers=  1 size=  55  <- sub_2D766
+2D5CF  sub_2D5CF    callers=  1 size=  70  <- rtlink_thunk
+2D645  sub_2D645    callers=  1 size= 103  <- data/2D641
+2D6F5  sub_2D6F5    callers=  1 size= 113  <- start
+2D766  sub_2D766    callers=  1 size= 213  <- start
+2D83B  sub_2D83B    callers=  1 size=  48  <- sub_1317C
+2D8CB  sub_2D8CB    callers=  1 size= 105  <- sub_13193
+2E577  sub_2E577    callers=  1 size=   8  <- continue_waiting
+30D1D  sub_30D1D    callers=  1 size=   8  <- Logics_checkMoveRestriction
+30D27  sub_30D27    callers=  1 size=   8  <- data/14CC0
+31105  sub_31105    callers=  1 size=   8  <- sub_76EB4
+312DB  sub_312DB    callers=  1 size=   8  <- sub_7005F
+312E5  sub_312E5    callers=  1 size=   8  <- sub_7005F
+3137B  sub_3137B    callers=  1 size=   8  <- sub_A7199
+313AD  sub_313AD    callers=  1 size=   8  <- sub_874C0
+313B7  sub_313B7    callers=  1 size=   8  <- sub_874C0
+31443  sub_31443    callers=  1 size=   7  <- sub_31431
+3144A  sub_3144A    callers=  1 size=  13  <- sub_31443
+31457  sub_31457    callers=  1 size=  10  <- sub_3144A
+314FB  sub_314FB    callers=  1 size=  37  <- sub_2D6F5
+315AC  sub_315AC    callers=  1 size=  43  <- data/31575
+3169E  sub_3169E    callers=  1 size=  92  <- sub_316FA
+316FA  sub_316FA    callers=  1 size= 264  <- sub_2D3B9
+318A9  sub_318A9    callers=  1 size=  20  <- sub_316FA
+318FA  sub_318FA    callers=  1 size= 216  <- sub_316FA
+465BB  sub_465BB    callers=  1 size= 109  <- sub_465BB
+46793  sub_46793    callers=  1 size= 112  <- sub_46803
+46A3C  sub_46A3C    callers=  1 size= 123  <- sub_46AB7
+46B41  sub_46B41    callers=  1 size= 128  <- sub_46BC1
+479FF  sub_479FF    callers=  1 size= 238  <- data/47D0D
+48D43  sub_48D43    callers=  1 size=  22  <- sub_4906E
+48D59  sub_48D59    callers=  1 size= 438  <- sub_4906E
+49017  sub_49017    callers=  1 size=  87  <- sub_4906E
+49C10  sub_49C10    callers=  1 size= 261  <- data/49F54
+4A6C6  sub_4A6C6    callers=  1 size=  20  <- sub_4A69F
+4A95A  sub_4A95A    callers=  1 size= 282  <- data/4A937
+4AA74  sub_4AA74    callers=  1 size= 111  <- data/4A950
+4AC2B  sub_4AC2B    callers=  1 size=  94  <- data/4ABAA
+4BC88  sub_4BC88    callers=  1 size=  25  <- data/4BCAB
+5C433  sub_5C433    callers=  1 size= 138  <- sub_5C4BD
+5C4BD  sub_5C4BD    callers=  1 size= 417  <- sub_5D9F3
+5D18C  sub_5D18C    callers=  1 size= 268  <- InputWindow_getLine
+5D9F3  sub_5D9F3    callers=  1 size=1523  <- get_mouse_input
+5E073  sub_5E073    callers=  1 size=  45  <- thunk_sub_5E073
+5E0A0  sub_5E0A0    callers=  1 size= 172  <- thunk_sub_5E0A0
+5E14C  sub_5E14C    callers=  1 size= 251  <- sub_5E247
+5E247  sub_5E247    callers=  1 size= 479  <- thunk_sub_5E247
+5E426  sub_5E426    callers=  1 size= 132  <- thunk_sub_5E426
+5E4AA  sub_5E4AA    callers=  1 size= 120  <- sub_5D9F3
+5FFDF  sub_5FFDF    callers=  1 size=  41  <- sub_60082
+60008  sub_60008    callers=  1 size= 122  <- sub_60082
+6069A  sub_6069A    callers=  1 size= 120  <- sub_62400
+60712  sub_60712    callers=  1 size=  93  <- sub_6076F
+6076F  sub_6076F    callers=  1 size= 315  <- Parser_proc4
+6090B  sub_6090B    callers=  1 size= 415  <- Parser_proc4
+60F21  sub_60F21    callers=  1 size= 118  <- thunk_sub_60F21
+61345  sub_61345    callers=  1 size=  62  <- thunk_sub_61345
+6176C  sub_6176C    callers=  1 size=1198  <- Parser_parseLine
+61C1A  sub_61C1A    callers=  1 size=   8  <- sub_6069A
+61C22  sub_61C22    callers=  1 size=  79  <- Parser_parseLine
+62400  sub_62400    callers=  1 size=  91  <- Parser_parseLine
+62A26  sub_62A26    callers=  1 size= 138  <- thunk_sub_62A26
+63210  sub_63210    callers=  1 size= 169  <- prompt_for_filename
+632F5  sub_632F5    callers=  1 size= 374  <- prompt_for_filename
+6346B  sub_6346B    callers=  1 size=  92  <- prompt_for_filename
+64550  sub_64550    callers=  1 size= 194  <- thunk_sub_64550
+64F74  sub_64F74    callers=  1 size= 575  <- thunk_sub_64F74
+651B3  sub_651B3    callers=  1 size= 837  <- thunk_sub_651B3
+654F8  sub_654F8    callers=  1 size= 372  <- thunk_sub_654F8
+65927  sub_65927    callers=  1 size= 497  <- gatemain_start
+67094  sub_67094    callers=  1 size=  18  <- thunk_sub_67094
+670A6  sub_670A6    callers=  1 size=  28  <- thunk_sub_670A6
+672E5  sub_672E5    callers=  1 size=  58  <- thunk_sub_672E5
+6737B  sub_6737B    callers=  1 size= 163  <- thunk_sub_6737B
+674A7  sub_674A7    callers=  1 size= 138  <- thunk_sub_674A7
+67662  sub_67662    callers=  1 size= 142  <- thunk_sub_67662
+677D2  sub_677D2    callers=  1 size=  66  <- thunk_sub_677D2
+67867  sub_67867    callers=  1 size=  63  <- thunk_sub_67867
+67966  sub_67966    callers=  1 size=  26  <- thunk_sub_67966
+67980  sub_67980    callers=  1 size=  55  <- thunk_sub_67980
+679EF  sub_679EF    callers=  1 size=  90  <- thunk_sub_679EF
+67DFB  sub_67DFB    callers=  1 size= 409  <- thunk_sub_67DFB
+68137  sub_68137    callers=  1 size= 251  <- thunk_sub_68137
+68232  sub_68232    callers=  1 size= 919  <- thunk_sub_68232
+686B8  sub_686B8    callers=  1 size= 428  <- thunk_sub_686B8
+68864  sub_68864    callers=  1 size= 610  <- thunk_sub_68864
+6990D  sub_6990D    callers=  1 size= 668  <- thunk_sub_6990D
+69BA9  sub_69BA9    callers=  1 size= 688  <- thunk_sub_69BA9
+69EDA  sub_69EDA    callers=  1 size=  57  <- thunk_sub_69EDA
+6AD19  sub_6AD19    callers=  1 size= 252  <- thunk_sub_6AD19
+6B2B0  sub_6B2B0    callers=  1 size= 253  <- thunk_sub_6B2B0
+6B3F4  sub_6B3F4    callers=  1 size= 197  <- thunk_sub_6B3F4
+6B606  sub_6B606    callers=  1 size= 159  <- thunk_sub_6B606
+6B788  sub_6B788    callers=  1 size= 252  <- thunk_sub_6B788
+6C581  sub_6C581    callers=  1 size= 203  <- thunk_sub_6C581
+6C81E  sub_6C81E    callers=  1 size= 118  <- thunk_sub_6C81E
+6CC83  sub_6CC83    callers=  1 size= 200  <- thunk_sub_6CC83
+6CDF6  sub_6CDF6    callers=  1 size= 111  <- thunk_sub_6CDF6
+6D144  sub_6D144    callers=  1 size= 207  <- thunk_sub_6D144
+6D715  sub_6D715    callers=  1 size= 142  <- thunk_sub_6D715
+6D7CD  sub_6D7CD    callers=  1 size=  92  <- thunk_sub_6D7CD
+6D953  sub_6D953    callers=  1 size= 134  <- thunk_sub_6D953
+6DAF0  sub_6DAF0    callers=  1 size= 197  <- thunk_sub_6DAF0
+6DBB5  sub_6DBB5    callers=  1 size= 171  <- thunk_sub_6DBB5
+6DC60  sub_6DC60    callers=  1 size= 420  <- thunk_sub_6DC60
+6E0D3  sub_6E0D3    callers=  1 size= 302  <- thunk_sub_6E0D3
+6E201  sub_6E201    callers=  1 size= 334  <- thunk_sub_6E201
+6E7E7  sub_6E7E7    callers=  1 size= 344  <- thunk_sub_6E7E7
+6EB5D  sub_6EB5D    callers=  1 size= 327  <- thunk_sub_6EB5D
+6F60B  sub_6F60B    callers=  1 size= 191  <- thunk_sub_6F60B
+6F6EF  sub_6F6EF    callers=  1 size= 207  <- thunk_sub_6F6EF
+7005F  sub_7005F    callers=  1 size=1439  <- thunk_sub_7005F
+705FE  sub_705FE    callers=  1 size= 906  <- thunk_sub_705FE
+70DE0  sub_70DE0    callers=  1 size= 138  <- thunk_sub_70DE0
+70E6A  sub_70E6A    callers=  1 size= 103  <- thunk_sub_70E6A
+70ED1  sub_70ED1    callers=  1 size=  54  <- thunk_sub_70ED1
+71380  sub_71380    callers=  1 size=  45  <- thunk_sub_71380
+71756  sub_71756    callers=  1 size=  72  <- thunk_sub_71756
+7179E  sub_7179E    callers=  1 size=1753  <- thunk_sub_7179E
+71E80  sub_71E80    callers=  1 size=  97  <- sub_71F59
+71EE1  sub_71EE1    callers=  1 size= 120  <- sub_71F59
+71F59  sub_71F59    callers=  1 size= 282  <- thunk_sub_71F59
+72073  sub_72073    callers=  1 size= 493  <- sub_72260
+72260  sub_72260    callers=  1 size=3370  <- thunk_sub_72260
+72F8A  sub_72F8A    callers=  1 size=1309  <- thunk_sub_72F8A
+734D5  sub_734D5    callers=  1 size= 515  <- thunk_sub_734D5
+736D8  sub_736D8    callers=  1 size= 141  <- thunk_sub_736D8
+73765  sub_73765    callers=  1 size=  71  <- thunk_sub_73765
+737AC  sub_737AC    callers=  1 size=  56  <- thunk_sub_737AC
+737E4  sub_737E4    callers=  1 size=  71  <- thunk_sub_737E4
+7382B  sub_7382B    callers=  1 size= 736  <- thunk_sub_7382B
+73B0B  sub_73B0B    callers=  1 size=  51  <- thunk_sub_73B0B
+73B3E  sub_73B3E    callers=  1 size=  90  <- thunk_sub_73B3E
+73B98  sub_73B98    callers=  1 size= 137  <- thunk_sub_73B98
+73C21  sub_73C21    callers=  1 size=  74  <- thunk_sub_73C21
+73C6B  sub_73C6B    callers=  1 size=  22  <- thunk_sub_73C6B
+73C81  sub_73C81    callers=  1 size= 208  <- j_method209
+73E5A  sub_73E5A    callers=  1 size= 751  <- sub_74149
+74149  sub_74149    callers=  1 size= 941  <- thunk_sub_74149
+748AD  sub_748AD    callers=  1 size= 263  <- sub_7450E
+74A23  sub_74A23    callers=  1 size= 546  <- sub_74D38
+74C45  sub_74C45    callers=  1 size= 243  <- sub_74D38
+74D38  sub_74D38    callers=  1 size=2167  <- sub_74149
+75AE0  sub_75AE0    callers=  1 size= 810  <- sub_765BB
+75E34  sub_75E34    callers=  1 size= 202  <- thunk_sub_75E34
+75EFE  sub_75EFE    callers=  1 size= 424  <- thunk_sub_75EFE
+760A6  sub_760A6    callers=  1 size=  74  <- thunk_sub_760A6
+760F0  sub_760F0    callers=  1 size= 479  <- thunk_sub_760F0
+762CF  sub_762CF    callers=  1 size=  87  <- thunk_sub_762CF
+76326  sub_76326    callers=  1 size= 566  <- thunk_sub_76326
+7655C  sub_7655C    callers=  1 size=  95  <- thunk_sub_7655C
+765BB  sub_765BB    callers=  1 size= 314  <- thunk_sub_765BB
+766F5  sub_766F5    callers=  1 size= 217  <- j_method022
+767CE  sub_767CE    callers=  1 size=  40  <- thunk_sub_767CE
+767F6  sub_767F6    callers=  1 size=  49  <- thunk_sub_767F6
+76960  sub_76960    callers=  1 size= 281  <- j_method156
+76A79  sub_76A79    callers=  1 size= 481  <- j_method158
+76C5A  sub_76C5A    callers=  1 size=  71  <- j_method172
+76CA1  sub_76CA1    callers=  1 size=  51  <- j_method177
+76CD4  sub_76CD4    callers=  1 size=  51  <- j_method181
+76D07  sub_76D07    callers=  1 size=  51  <- j_method178
+76D3A  sub_76D3A    callers=  1 size=  51  <- j_method179
+76D6D  sub_76D6D    callers=  1 size=  51  <- j_method180
+76DA0  sub_76DA0    callers=  1 size=  51  <- j_method173
+76DD3  sub_76DD3    callers=  1 size=  51  <- j_method174
+76E06  sub_76E06    callers=  1 size=  51  <- j_method176
+76E39  sub_76E39    callers=  1 size=  51  <- j_method175
+76E6C  sub_76E6C    callers=  1 size=  49  <- j_method195
+76F51  sub_76F51    callers=  1 size=  88  <- j_method193
+76FA9  sub_76FA9    callers=  1 size=  81  <- j_method194
+76FFA  sub_76FFA    callers=  1 size=  85  <- j_method189
+7704F  sub_7704F    callers=  1 size=  51  <- j_method159
+77082  sub_77082    callers=  1 size=  51  <- j_method160
+770B5  sub_770B5    callers=  1 size=  51  <- j_method188
+770E8  sub_770E8    callers=  1 size=  29  <- thunk_sub_770E8
+77105  sub_77105    callers=  1 size=  90  <- thunk_sub_77105
+7715F  sub_7715F    callers=  1 size=  95  <- thunk_sub_7715F
+771BE  sub_771BE    callers=  1 size=  29  <- thunk_sub_771BE
+771DB  sub_771DB    callers=  1 size=  29  <- thunk_sub_771DB
+771F8  sub_771F8    callers=  1 size= 197  <- thunk_sub_771F8
+772BD  sub_772BD    callers=  1 size=  40  <- thunk_sub_772BD
+772E5  sub_772E5    callers=  1 size=  39  <- thunk_sub_772E5
+7730C  sub_7730C    callers=  1 size=  57  <- thunk_sub_7730C
+77345  sub_77345    callers=  1 size=  64  <- thunk_sub_77345
+77385  sub_77385    callers=  1 size=  39  <- thunk_sub_77385
+773AC  sub_773AC    callers=  1 size= 109  <- thunk_sub_773AC
+77419  sub_77419    callers=  1 size=  40  <- thunk_sub_77419
+77441  sub_77441    callers=  1 size=  39  <- thunk_sub_77441
+774C0  sub_774C0    callers=  1 size= 178  <- sub_77773
+77572  sub_77572    callers=  1 size= 147  <- thunk_sub_77572
+77605  sub_77605    callers=  1 size= 366  <- thunk_sub_77605
+77773  sub_77773    callers=  1 size=1157  <- thunk_sub_77773
+77D79  sub_77D79    callers=  1 size= 368  <- j_method198
+77EE9  sub_77EE9    callers=  1 size= 109  <- j_method199
+77F56  sub_77F56    callers=  1 size= 120  <- j_method203
+77FCE  sub_77FCE    callers=  1 size= 120  <- j_method201
+78046  sub_78046    callers=  1 size= 120  <- j_method200
+780BE  sub_780BE    callers=  1 size=  97  <- j_method202
+7811F  sub_7811F    callers=  1 size=  51  <- j_method196
+78152  sub_78152    callers=  1 size= 115  <- j_method205
+781C5  sub_781C5    callers=  1 size=  88  <- j_method206
+7821D  sub_7821D    callers=  1 size= 163  <- j_method207
+782C0  sub_782C0    callers=  1 size= 528  <- j_method208
+784D0  sub_784D0    callers=  1 size=  95  <- j_method192
+78570  sub_78570    callers=  1 size=1623  <- j_method148
+78C2A  sub_78C2A    callers=  1 size=  48  <- data/78C5B
+78C68  sub_78C68    callers=  1 size= 878  <- j_method149
+79064  sub_79064    callers=  1 size= 382  <- j_method142
+79293  sub_79293    callers=  1 size= 209  <- j_method143
+79364  sub_79364    callers=  1 size= 185  <- j_method144
+7941D  sub_7941D    callers=  1 size= 115  <- j_method145
+79490  sub_79490    callers=  1 size= 164  <- j_method146
+79534  sub_79534    callers=  1 size= 115  <- j_method147
+795A7  sub_795A7    callers=  1 size= 143  <- j_method141
+79636  sub_79636    callers=  1 size= 187  <- j_method150
+796F1  sub_796F1    callers=  1 size= 333  <- sub_7A9A7
+7983E  sub_7983E    callers=  1 size= 131  <- j_method169
+798C1  sub_798C1    callers=  1 size= 114  <- j_method191
+79933  sub_79933    callers=  1 size= 110  <- j_method197
+799A1  sub_799A1    callers=  1 size= 130  <- j_method182
+79A23  sub_79A23    callers=  1 size=  70  <- j_method183
+79A69  sub_79A69    callers=  1 size=  81  <- j_method184
+79ABA  sub_79ABA    callers=  1 size=  77  <- j_method186
+79B07  sub_79B07    callers=  1 size= 195  <- j_method187
+79BCA  sub_79BCA    callers=  1 size= 333  <- j_method190
+79DCA  sub_79DCA    callers=  1 size= 261  <- j_method171
+79F66  sub_79F66    callers=  1 size=1634  <- j_method170
+7A5C8  sub_7A5C8    callers=  1 size= 582  <- j_method185
+7A950  sub_7A950    callers=  1 size=  60  <- sub_78570
+7A98C  sub_7A98C    callers=  1 size=  27  <- thunk_sub_7A98C
+7A9A7  sub_7A9A7    callers=  1 size=  42  <- thunk_sub_7A9A7
+7AC20  sub_7AC20    callers=  1 size= 570  <- j_method161
+7AE5A  sub_7AE5A    callers=  1 size=3648  <- j_method162
+7BD01  sub_7BD01    callers=  1 size=1920  <- j_method163
+7C481  sub_7C481    callers=  1 size=1087  <- j_method164
+7C8C0  sub_7C8C0    callers=  1 size= 134  <- sub_7C946
+7C946  sub_7C946    callers=  1 size=2237  <- j_method165
+7D26B  sub_7D26B    callers=  1 size= 784  <- j_method166
+7D57B  sub_7D57B    callers=  1 size=1556  <- j_method167
+7DB8F  sub_7DB8F    callers=  1 size= 165  <- j_method168
+7DC6F  sub_7DC6F    callers=  1 size= 770  <- j_method151
+7DFAD  sub_7DFAD    callers=  1 size=  80  <- data/7E068
+7DFFD  sub_7DFFD    callers=  1 size=  80  <- data/7E076
+7E083  sub_7E083    callers=  1 size=  26  <- data/7E09E
+7E0AB  sub_7E0AB    callers=  1 size= 506  <- j_method152
+7E36F  sub_7E36F    callers=  1 size= 356  <- j_method153
+7E592  sub_7E592    callers=  1 size= 231  <- j_method154
+7E73D  sub_7E73D    callers=  1 size= 359  <- j_method155
+7E8A4  sub_7E8A4    callers=  1 size= 216  <- sub_7E97C
+7E97C  sub_7E97C    callers=  1 size=5801  <- j_method157
+80025  sub_80025    callers=  1 size= 177  <- j_method210
+800D6  sub_800D6    callers=  1 size=  29  <- thunk_sub_800D6
+800F3  sub_800F3    callers=  1 size=  75  <- thunk_sub_800F3
+8014E  sub_8014E    callers=  1 size=1393  <- thunk_sub_8014E
+80857  sub_80857    callers=  1 size=  61  <- sub_7DC6F
+809E1  sub_809E1    callers=  1 size= 129  <- sub_7E0AB
+81010  sub_81010    callers=  1 size=  66  <- sub_312DB
+810A0  sub_810A0    callers=  1 size= 523  <- thunk_sub_810A0
+812AB  sub_812AB    callers=  1 size= 173  <- thunk_sub_812AB
+81358  sub_81358    callers=  1 size= 263  <- thunk_sub_81358
+8148C  sub_8148C    callers=  1 size= 301  <- thunk_sub_8148C
+81613  sub_81613    callers=  1 size= 784  <- thunk_sub_81613
+81923  sub_81923    callers=  1 size= 114  <- thunk_sub_81923
+81995  sub_81995    callers=  1 size=  81  <- thunk_sub_81995
+819E6  sub_819E6    callers=  1 size= 257  <- thunk_sub_819E6
+81AE7  sub_81AE7    callers=  1 size= 178  <- thunk_sub_81AE7
+81B99  sub_81B99    callers=  1 size= 307  <- thunk_sub_81B99
+81CCC  sub_81CCC    callers=  1 size=1389  <- thunk_sub_81CCC
+82239  sub_82239    callers=  1 size= 236  <- thunk_sub_82239
+82348  sub_82348    callers=  1 size= 213  <- thunk_sub_82348
+8241D  sub_8241D    callers=  1 size= 259  <- thunk_sub_8241D
+82520  sub_82520    callers=  1 size= 448  <- thunk_sub_82520
+82715  sub_82715    callers=  1 size= 355  <- thunk_sub_82715
+82878  sub_82878    callers=  1 size= 890  <- thunk_sub_82878
+82C27  sub_82C27    callers=  1 size=  66  <- thunk_sub_82C27
+82C69  sub_82C69    callers=  1 size= 236  <- thunk_sub_82C69
+82EF2  sub_82EF2    callers=  1 size=  56  <- thunk_sub_82EF2
+82F2A  sub_82F2A    callers=  1 size=  29  <- thunk_sub_82F2A
+82F47  sub_82F47    callers=  1 size=  56  <- thunk_sub_82F47
+82F7F  sub_82F7F    callers=  1 size=  29  <- thunk_sub_82F7F
+82F9C  sub_82F9C    callers=  1 size=  30  <- thunk_sub_82F9C
+82FBA  sub_82FBA    callers=  1 size=  29  <- thunk_sub_82FBA
+82FD7  sub_82FD7    callers=  1 size=  29  <- thunk_sub_82FD7
+82FF4  sub_82FF4    callers=  1 size=  29  <- thunk_sub_82FF4
+83011  sub_83011    callers=  1 size= 131  <- thunk_sub_83011
+83094  sub_83094    callers=  1 size=  58  <- thunk_sub_83094
+830CE  sub_830CE    callers=  1 size=  41  <- thunk_sub_830CE
+830F7  sub_830F7    callers=  1 size=  22  <- thunk_sub_830F7
+8310D  sub_8310D    callers=  1 size=  39  <- thunk_sub_8310D
+83134  sub_83134    callers=  1 size=  47  <- thunk_sub_83134
+83163  sub_83163    callers=  1 size=  40  <- thunk_sub_83163
+8318B  sub_8318B    callers=  1 size=  40  <- thunk_sub_8318B
+831B3  sub_831B3    callers=  1 size=  22  <- thunk_sub_831B3
+831C9  sub_831C9    callers=  1 size=  47  <- thunk_sub_831C9
+831F8  sub_831F8    callers=  1 size=  52  <- thunk_sub_831F8
+8322C  sub_8322C    callers=  1 size=  66  <- thunk_sub_8322C
+8329C  sub_8329C    callers=  1 size=  22  <- thunk_sub_8329C
+832B2  sub_832B2    callers=  1 size=  44  <- thunk_sub_832B2
+832DE  sub_832DE    callers=  1 size=  22  <- thunk_sub_832DE
+832F4  sub_832F4    callers=  1 size=  39  <- thunk_sub_832F4
+8331B  sub_8331B    callers=  1 size=  22  <- thunk_sub_8331B
+8342B  sub_8342B    callers=  1 size= 646  <- thunk_sub_8342B
+837B5  sub_837B5    callers=  1 size=  26  <- data/837FB
+837CF  sub_837CF    callers=  1 size=  26  <- data/8381F
+83842  sub_83842    callers=  1 size=1795  <- thunk_sub_83842
+83F45  sub_83F45    callers=  1 size= 102  <- thunk_sub_83F45
+83FAB  sub_83FAB    callers=  1 size= 110  <- thunk_sub_83FAB
+84039  sub_84039    callers=  1 size= 338  <- thunk_sub_84039
+8418B  sub_8418B    callers=  1 size= 184  <- thunk_sub_8418B
+84243  sub_84243    callers=  1 size= 214  <- thunk_sub_84243
+84319  sub_84319    callers=  1 size= 200  <- thunk_sub_84319
+843E1  sub_843E1    callers=  1 size=1027  <- thunk_sub_843E1
+847E4  sub_847E4    callers=  1 size= 174  <- thunk_sub_847E4
+84892  sub_84892    callers=  1 size= 129  <- thunk_sub_84892
+84913  sub_84913    callers=  1 size= 339  <- thunk_sub_84913
+84A66  sub_84A66    callers=  1 size=  81  <- thunk_sub_84A66
+84AB7  sub_84AB7    callers=  1 size=  81  <- thunk_sub_84AB7
+84B08  sub_84B08    callers=  1 size= 593  <- thunk_sub_84B08
+84D59  sub_84D59    callers=  1 size= 313  <- thunk_sub_84D59
+8555B  sub_8555B    callers=  1 size= 530  <- thunk_sub_8555B
+85C50  sub_85C50    callers=  1 size=  44  <- sub_85C7C
+85C7C  sub_85C7C    callers=  1 size=4373  <- thunk_sub_85C7C
+86D91  sub_86D91    callers=  1 size=1392  <- sub_85C7C
+87302  sub_87302    callers=  1 size=  28  <- sub_85C7C
+874C0  sub_874C0    callers=  1 size= 592  <- thunk_sub_874C0
+87766  sub_87766    callers=  1 size= 637  <- thunk_sub_87766
+87A17  sub_87A17    callers=  1 size= 520  <- thunk_sub_87A17
+87C1F  sub_87C1F    callers=  1 size=  72  <- thunk_sub_87C1F
+87C67  sub_87C67    callers=  1 size= 120  <- thunk_sub_87C67
+87CDF  sub_87CDF    callers=  1 size= 171  <- thunk_sub_87CDF
+87D8A  sub_87D8A    callers=  1 size= 173  <- thunk_sub_87D8A
+87E37  sub_87E37    callers=  1 size= 446  <- thunk_sub_87E37
+880C5  sub_880C5    callers=  1 size= 478  <- thunk_sub_880C5
+882A3  sub_882A3    callers=  1 size= 141  <- thunk_sub_882A3
+88330  sub_88330    callers=  1 size= 177  <- thunk_sub_88330
+8840F  sub_8840F    callers=  1 size= 351  <- thunk_sub_8840F
+885A3  sub_885A3    callers=  1 size= 377  <- thunk_sub_885A3
+8871C  sub_8871C    callers=  1 size= 147  <- thunk_sub_8871C
+887AF  sub_887AF    callers=  1 size=  51  <- thunk_sub_887AF
+887E2  sub_887E2    callers=  1 size= 311  <- thunk_sub_887E2
+88919  sub_88919    callers=  1 size= 534  <- thunk_sub_88919
+88D50  sub_88D50    callers=  1 size= 412  <- thunk_sub_88D50
+88FCD  sub_88FCD    callers=  1 size=  17  <- data/88FDF
+88FEC  sub_88FEC    callers=  1 size= 680  <- thunk_sub_88FEC
+892FE  sub_892FE    callers=  1 size= 247  <- thunk_sub_892FE
+893F5  sub_893F5    callers=  1 size= 159  <- thunk_sub_893F5
+89494  sub_89494    callers=  1 size= 356  <- thunk_sub_89494
+895F8  sub_895F8    callers=  1 size= 386  <- thunk_sub_895F8
+8977A  sub_8977A    callers=  1 size= 339  <- thunk_sub_8977A
+898CD  sub_898CD    callers=  1 size= 241  <- thunk_sub_898CD
+899BE  sub_899BE    callers=  1 size= 141  <- thunk_sub_899BE
+89A4B  sub_89A4B    callers=  1 size=  97  <- thunk_sub_89A4B
+89AAC  sub_89AAC    callers=  1 size= 510  <- thunk_sub_89AAC
+89CAA  sub_89CAA    callers=  1 size= 803  <- thunk_sub_89CAA
+8A260  sub_8A260    callers=  1 size= 362  <- thunk_sub_8A260
+8A3ED  sub_8A3ED    callers=  1 size=1217  <- thunk_sub_8A3ED
+8A8D1  sub_8A8D1    callers=  1 size= 244  <- thunk_sub_8A8D1
+8A9E8  sub_8A9E8    callers=  1 size=1162  <- thunk_sub_8A9E8
+8AED5  sub_8AED5    callers=  1 size= 839  <- thunk_sub_8AED5
+8B23F  sub_8B23F    callers=  1 size= 196  <- thunk_sub_8B23F
+8B35D  sub_8B35D    callers=  1 size= 214  <- thunk_sub_8B35D
+8B48D  sub_8B48D    callers=  1 size= 246  <- thunk_sub_8B48D
+8B5A6  sub_8B5A6    callers=  1 size=  42  <- thunk_sub_8B5A6
+8B5F3  sub_8B5F3    callers=  1 size= 292  <- thunk_sub_8B5F3
+8B771  sub_8B771    callers=  1 size= 542  <- thunk_sub_8B771
+8B9E9  sub_8B9E9    callers=  1 size= 556  <- thunk_sub_8B9E9
+8BC38  sub_8BC38    callers=  1 size= 282  <- thunk_sub_8BC38
+8BD75  sub_8BD75    callers=  1 size= 462  <- thunk_sub_8BD75
+8BF66  sub_8BF66    callers=  1 size= 453  <- thunk_sub_8BF66
+8C14E  sub_8C14E    callers=  1 size= 308  <- thunk_sub_8C14E
+8C396  sub_8C396    callers=  1 size= 146  <- thunk_sub_8C396
+8C428  sub_8C428    callers=  1 size= 146  <- thunk_sub_8C428
+8C501  sub_8C501    callers=  1 size= 140  <- thunk_sub_8C501
+8C58D  sub_8C58D    callers=  1 size= 150  <- thunk_sub_8C58D
+8C630  sub_8C630    callers=  1 size= 468  <- thunk_sub_8C630
+8C804  sub_8C804    callers=  1 size= 231  <- thunk_sub_8C804
+8C8EB  sub_8C8EB    callers=  1 size= 244  <- thunk_sub_8C8EB
+8C9DF  sub_8C9DF    callers=  1 size=  41  <- thunk_sub_8C9DF
+8CA08  sub_8CA08    callers=  1 size= 218  <- thunk_sub_8CA08
+8CB20  sub_8CB20    callers=  1 size= 992  <- thunk_sub_8CB20
+8CF00  sub_8CF00    callers=  1 size= 514  <- thunk_sub_8CF00
+8D137  sub_8D137    callers=  1 size= 429  <- thunk_sub_8D137
+8D2E4  sub_8D2E4    callers=  1 size=  54  <- thunk_sub_8D2E4
+8D31A  sub_8D31A    callers=  1 size=  56  <- thunk_sub_8D31A
+8D352  sub_8D352    callers=  1 size=  29  <- thunk_sub_8D352
+8D36F  sub_8D36F    callers=  1 size=  29  <- thunk_sub_8D36F
+8D38C  sub_8D38C    callers=  1 size= 395  <- thunk_sub_8D38C
+8D850  sub_8D850    callers=  1 size= 207  <- thunk_sub_8D850
+8D91F  sub_8D91F    callers=  1 size=  51  <- thunk_sub_8D91F
+8D952  sub_8D952    callers=  1 size= 239  <- thunk_sub_8D952
+8DA41  sub_8DA41    callers=  1 size= 173  <- thunk_sub_8DA41
+8DAEE  sub_8DAEE    callers=  1 size= 351  <- thunk_sub_8DAEE
+8DC4D  sub_8DC4D    callers=  1 size= 194  <- thunk_sub_8DC4D
+8DD0F  sub_8DD0F    callers=  1 size= 788  <- thunk_sub_8DD0F
+8E023  sub_8E023    callers=  1 size= 356  <- thunk_sub_8E023
+8E187  sub_8E187    callers=  1 size= 986  <- thunk_sub_8E187
+8E561  sub_8E561    callers=  1 size= 339  <- thunk_sub_8E561
+8E6B4  sub_8E6B4    callers=  1 size= 388  <- thunk_sub_8E6B4
+8E838  sub_8E838    callers=  1 size= 203  <- thunk_sub_8E838
+8E903  sub_8E903    callers=  1 size= 152  <- thunk_sub_8E903
+8E99B  sub_8E99B    callers=  1 size= 152  <- thunk_sub_8E99B
+8EA33  sub_8EA33    callers=  1 size= 128  <- thunk_sub_8EA33
+8EAB3  sub_8EAB3    callers=  1 size= 806  <- thunk_sub_8EAB3
+8EDD9  sub_8EDD9    callers=  1 size= 907  <- thunk_sub_8EDD9
+8F164  sub_8F164    callers=  1 size= 455  <- thunk_sub_8F164
+8F32B  sub_8F32B    callers=  1 size=  51  <- j_method541
+8F35E  sub_8F35E    callers=  1 size=  74  <- thunk_sub_8F35E
+8F3A8  sub_8F3A8    callers=  1 size= 313  <- thunk_sub_8F3A8
+8F4E1  sub_8F4E1    callers=  1 size= 772  <- thunk_sub_8F4E1
+8F7E5  sub_8F7E5    callers=  1 size= 772  <- thunk_sub_8F7E5
+8FAE9  sub_8FAE9    callers=  1 size=  74  <- thunk_sub_8FAE9
+8FB33  sub_8FB33    callers=  1 size= 124  <- thunk_sub_8FB33
+8FBAF  sub_8FBAF    callers=  1 size= 114  <- thunk_sub_8FBAF
+8FC21  sub_8FC21    callers=  1 size= 126  <- thunk_sub_8FC21
+8FC9F  sub_8FC9F    callers=  1 size= 131  <- thunk_sub_8FC9F
+8FD22  sub_8FD22    callers=  1 size= 114  <- thunk_sub_8FD22
+8FD94  sub_8FD94    callers=  1 size= 114  <- thunk_sub_8FD94
+8FE06  sub_8FE06    callers=  1 size= 114  <- thunk_sub_8FE06
+8FF90  sub_8FF90    callers=  1 size= 201  <- thunk_sub_8FF90
+9007D  sub_9007D    callers=  1 size= 168  <- thunk_sub_9007D
+90125  sub_90125    callers=  1 size=  43  <- thunk_sub_90125
+90150  sub_90150    callers=  1 size= 799  <- thunk_sub_90150
+9046F  sub_9046F    callers=  1 size= 493  <- thunk_sub_9046F
+9065C  sub_9065C    callers=  1 size= 127  <- thunk_sub_9065C
+906DB  sub_906DB    callers=  1 size=  90  <- thunk_sub_906DB
+90735  sub_90735    callers=  1 size= 121  <- thunk_sub_90735
+907AE  sub_907AE    callers=  1 size=  63  <- thunk_sub_907AE
+90A1B  sub_90A1B    callers=  1 size= 457  <- thunk_sub_90A1B
+90BE4  sub_90BE4    callers=  1 size= 158  <- thunk_sub_90BE4
+90C82  sub_90C82    callers=  1 size= 208  <- thunk_sub_90C82
+90D52  sub_90D52    callers=  1 size= 376  <- thunk_sub_90D52
+90ECA  sub_90ECA    callers=  1 size= 394  <- thunk_sub_90ECA
+91054  sub_91054    callers=  1 size= 394  <- thunk_sub_91054
+911DE  sub_911DE    callers=  1 size= 394  <- thunk_sub_911DE
+91398  sub_91398    callers=  1 size=1062  <- thunk_sub_91398
+917BE  sub_917BE    callers=  1 size= 689  <- thunk_sub_917BE
+91A6F  sub_91A6F    callers=  1 size=1043  <- thunk_sub_91A6F
+91E82  sub_91E82    callers=  1 size= 688  <- thunk_sub_91E82
+92132  sub_92132    callers=  1 size=  93  <- thunk_sub_92132
+9218F  sub_9218F    callers=  1 size=  92  <- thunk_sub_9218F
+921EB  sub_921EB    callers=  1 size=  92  <- thunk_sub_921EB
+92247  sub_92247    callers=  1 size=  57  <- thunk_sub_92247
+9240C  sub_9240C    callers=  1 size= 373  <- thunk_sub_9240C
+92581  sub_92581    callers=  1 size=  15  <- data/92591
+9259E  sub_9259E    callers=  1 size= 969  <- thunk_sub_9259E
+92967  sub_92967    callers=  1 size=1112  <- thunk_sub_92967
+92DBF  sub_92DBF    callers=  1 size= 323  <- thunk_sub_92DBF
+92F02  sub_92F02    callers=  1 size= 297  <- thunk_sub_92F02
+9302B  sub_9302B    callers=  1 size=  81  <- thunk_sub_9302B
+9307C  sub_9307C    callers=  1 size= 207  <- thunk_sub_9307C
+9314B  sub_9314B    callers=  1 size= 126  <- thunk_sub_9314B
+931C9  sub_931C9    callers=  1 size= 147  <- thunk_sub_931C9
+9325C  sub_9325C    callers=  1 size= 113  <- thunk_sub_9325C
+932CD  sub_932CD    callers=  1 size= 405  <- thunk_sub_932CD
+934D9  sub_934D9    callers=  1 size= 803  <- thunk_sub_934D9
+937FC  sub_937FC    callers=  1 size= 169  <- thunk_sub_937FC
+938A5  sub_938A5    callers=  1 size=  51  <- thunk_sub_938A5
+938D8  sub_938D8    callers=  1 size=  74  <- thunk_sub_938D8
+93922  sub_93922    callers=  1 size= 599  <- thunk_sub_93922
+93B79  sub_93B79    callers=  1 size=  63  <- sub_93922
+93BB8  sub_93BB8    callers=  1 size=  22  <- thunk_sub_93BB8
+93DA0  sub_93DA0    callers=  1 size= 759  <- j_method078
+94097  sub_94097    callers=  1 size=1738  <- j_method081
+9478A  sub_9478A    callers=  1 size=1099  <- j_method074
+94BD5  sub_94BD5    callers=  1 size= 137  <- thunk_sub_94BD5
+94C5E  sub_94C5E    callers=  1 size= 482  <- j_method118
+94E40  sub_94E40    callers=  1 size= 135  <- j_method119
+94EC7  sub_94EC7    callers=  1 size= 120  <- j_method121
+94F3F  sub_94F3F    callers=  1 size= 172  <- j_method111
+94FEB  sub_94FEB    callers=  1 size= 351  <- j_method122
+9514A  sub_9514A    callers=  1 size= 408  <- j_method097
+952E2  sub_952E2    callers=  1 size=  82  <- j_method095
+95334  sub_95334    callers=  1 size=  59  <- j_method076
+9536F  sub_9536F    callers=  1 size=  58  <- thunk_sub_9536F
+953A9  sub_953A9    callers=  1 size=  25  <- thunk_sub_953A9
+953C2  sub_953C2    callers=  1 size=  33  <- thunk_sub_953C2
+953E3  sub_953E3    callers=  1 size=   6  <- thunk_sub_953E3
+953E9  sub_953E9    callers=  1 size=  25  <- thunk_sub_953E9
+95446  sub_95446    callers=  1 size= 405  <- j_method087
+955DB  sub_955DB    callers=  1 size= 513  <- j_method127
+957DC  sub_957DC    callers=  1 size= 406  <- j_method126
+95ABF  sub_95ABF    callers=  1 size= 637  <- j_method075
+95D3C  sub_95D3C    callers=  1 size= 162  <- thunk_sub_95D3C
+95DDE  sub_95DDE    callers=  1 size=  46  <- thunk_sub_95DDE
+95E0C  sub_95E0C    callers=  1 size= 563  <- j_method082
+9603F  sub_9603F    callers=  1 size= 880  <- j_method083
+963AF  sub_963AF    callers=  1 size= 706  <- j_method084
+96671  sub_96671    callers=  1 size= 297  <- j_method085
+9679A  sub_9679A    callers=  1 size=  56  <- j_method123
+967D2  sub_967D2    callers=  1 size= 245  <- j_method131
+968C7  sub_968C7    callers=  1 size= 835  <- j_method134
+96C0A  sub_96C0A    callers=  1 size=  97  <- j_method128
+96C6B  sub_96C6B    callers=  1 size=  87  <- j_method125
+96CC2  sub_96CC2    callers=  1 size= 223  <- j_method112
+96DA1  sub_96DA1    callers=  1 size= 407  <- j_method105
+96F38  sub_96F38    callers=  1 size= 173  <- j_method106
+96FE5  sub_96FE5    callers=  1 size=  71  <- j_method107
+9702C  sub_9702C    callers=  1 size= 120  <- j_method137
+970A4  sub_970A4    callers=  1 size=  35  <- thunk_sub_970A4
+970C7  sub_970C7    callers=  1 size=  32  <- thunk_sub_970C7
+970E7  sub_970E7    callers=  1 size=   5  <- j_method136
+970EC  sub_970EC    callers=  1 size= 591  <- thunk_sub_970EC
+974C0  sub_974C0    callers=  1 size= 598  <- j_method071
+97716  sub_97716    callers=  1 size= 575  <- j_method072
+97955  sub_97955    callers=  1 size= 390  <- thunk_sub_97955
+97ADB  sub_97ADB    callers=  1 size= 978  <- j_method077
+97EAD  sub_97EAD    callers=  1 size= 684  <- j_method135
+98159  sub_98159    callers=  1 size= 419  <- j_method133
+982FC  sub_982FC    callers=  1 size=  51  <- j_method109
+9832F  sub_9832F    callers=  1 size= 322  <- j_method113
+98471  sub_98471    callers=  1 size=1859  <- j_method115
+98BB4  sub_98BB4    callers=  1 size= 154  <- j_method116
+98C4E  sub_98C4E    callers=  1 size= 521  <- j_method117
+98E57  sub_98E57    callers=  1 size= 153  <- j_method120
+98EF0  sub_98EF0    callers=  1 size= 129  <- j_method094
+98F71  sub_98F71    callers=  1 size=  61  <- j_method093
+98FAE  sub_98FAE    callers=  1 size=  56  <- j_method103
+98FE6  sub_98FE6    callers=  1 size=  91  <- j_method108
+99041  sub_99041    callers=  1 size=  34  <- thunk_sub_99041
+99063  sub_99063    callers=  1 size=  36  <- thunk_sub_99063
+99087  sub_99087    callers=  1 size= 487  <- thunk_sub_99087
+993B4  sub_993B4    callers=  1 size= 776  <- j_method070
+9989F  sub_9989F    callers=  1 size= 537  <- j_method073
+99AB8  sub_99AB8    callers=  1 size=  50  <- thunk_sub_99AB8
+99AEA  sub_99AEA    callers=  1 size= 345  <- j_method079
+99C43  sub_99C43    callers=  1 size= 964  <- j_method080
+9A007  sub_9A007    callers=  1 size= 426  <- j_method086
+9A1B1  sub_9A1B1    callers=  1 size= 171  <- j_method088
+9A25C  sub_9A25C    callers=  1 size= 166  <- j_method089
+9A302  sub_9A302    callers=  1 size= 228  <- j_method090
+9A3E6  sub_9A3E6    callers=  1 size= 217  <- j_method091
+9A4BF  sub_9A4BF    callers=  1 size=  56  <- j_method124
+9A4F7  sub_9A4F7    callers=  1 size=  82  <- j_method129
+9A549  sub_9A549    callers=  1 size= 113  <- j_method130
+9A5BA  sub_9A5BA    callers=  1 size= 723  <- j_method132
+9A88D  sub_9A88D    callers=  1 size= 113  <- j_method114
+9A8FE  sub_9A8FE    callers=  1 size= 243  <- j_method096
+9A9F1  sub_9A9F1    callers=  1 size=  51  <- j_method092
+9AA24  sub_9AA24    callers=  1 size=  93  <- j_method110
+9AA81  sub_9AA81    callers=  1 size= 278  <- j_method098
+9AB97  sub_9AB97    callers=  1 size= 293  <- j_method099
+9ACBC  sub_9ACBC    callers=  1 size=  98  <- j_method100
+9AD1E  sub_9AD1E    callers=  1 size= 113  <- j_method101
+9AD8F  sub_9AD8F    callers=  1 size=  93  <- j_method102
+9ADEC  sub_9ADEC    callers=  1 size= 128  <- j_method139
+9AE9C  sub_9AE9C    callers=  1 size=1863  <- thunk_sub_9AE9C
+9B5E3  sub_9B5E3    callers=  1 size=  22  <- sub_31123
+9B946  sub_9B946    callers=  1 size=1080  <- j_method033
+9BD7E  sub_9BD7E    callers=  1 size= 703  <- j_method034
+9C0EE  sub_9C0EE    callers=  1 size= 601  <- j_method035
+9C542  sub_9C542    callers=  1 size= 936  <- j_method037
+9C8EA  sub_9C8EA    callers=  1 size= 134  <- j_method041
+9C970  sub_9C970    callers=  1 size= 752  <- j_method048
+9CC60  sub_9CC60    callers=  1 size= 141  <- j_method050
+9CCED  sub_9CCED    callers=  1 size= 141  <- j_method051
+9CD7A  sub_9CD7A    callers=  1 size= 168  <- j_method040
+9CE22  sub_9CE22    callers=  1 size=1309  <- j_method047
+9D33F  sub_9D33F    callers=  1 size= 280  <- j_method052
+9D457  sub_9D457    callers=  1 size= 280  <- j_method053
+9D56F  sub_9D56F    callers=  1 size= 280  <- j_method054
+9D687  sub_9D687    callers=  1 size= 280  <- j_method055
+9D79F  sub_9D79F    callers=  1 size= 183  <- j_method068
+9D856  sub_9D856    callers=  1 size= 211  <- j_method065
+9D929  sub_9D929    callers=  1 size= 110  <- j_method067
+9D997  sub_9D997    callers=  1 size= 123  <- j_method058
+9DA12  sub_9DA12    callers=  1 size=  81  <- j_method057
+9DA63  sub_9DA63    callers=  1 size= 100  <- j_method059
+9DAC7  sub_9DAC7    callers=  1 size= 254  <- j_method060
+9DBC5  sub_9DBC5    callers=  1 size=  56  <- j_method056
+9DBFD  sub_9DBFD    callers=  1 size= 283  <- j_method061
+9DD18  sub_9DD18    callers=  1 size=  81  <- j_method140
+9DFE4  sub_9DFE4    callers=  1 size= 149  <- thunk_sub_9DFE4
+9E079  sub_9E079    callers=  1 size= 991  <- thunk_sub_9E079
+9E7B3  sub_9E7B3    callers=  1 size=   6  <- thunk_sub_9E7B3
+9E7B9  sub_9E7B9    callers=  1 size=   6  <- thunk_sub_9E7B9
+9EE91  sub_9EE91    callers=  1 size=  48  <- sub_9F08E
+9F08E  sub_9F08E    callers=  1 size=1005  <- j_method036
+9F47B  sub_9F47B    callers=  1 size= 143  <- sub_9F55E
+9F50A  sub_9F50A    callers=  1 size=  84  <- sub_9F55E
+9F55E  sub_9F55E    callers=  1 size=1826  <- j_method038
+9FC80  sub_9FC80    callers=  1 size= 108  <- j_method045
+9FCEC  sub_9FCEC    callers=  1 size= 857  <- j_method043
+A0045  sub_A0045    callers=  1 size=1367  <- sub_A0992
+A059C  sub_A059C    callers=  1 size= 676  <- sub_A0992
+A0840  sub_A0840    callers=  1 size= 338  <- sub_A0992
+A0992  sub_A0992    callers=  1 size= 658  <- j_method042
+A0C24  sub_A0C24    callers=  1 size=1030  <- j_method044
+A102A  sub_A102A    callers=  1 size=1299  <- j_method046
+A153D  sub_A153D    callers=  1 size= 169  <- j_method049
+A15E6  sub_A15E6    callers=  1 size= 138  <- j_method069
+A1670  sub_A1670    callers=  1 size=  51  <- j_method066
+A16A3  sub_A16A3    callers=  1 size= 163  <- j_method039
+A1746  sub_A1746    callers=  1 size=  98  <- j_method064
+A17A8  sub_A17A8    callers=  1 size=  51  <- j_method062
+A17DB  sub_A17DB    callers=  1 size=  51  <- j_method063
+A180E  sub_A180E    callers=  1 size=   6  <- thunk_sub_A180E
+A1814  sub_A1814    callers=  1 size=   6  <- thunk_sub_A1814
+A1E0B  sub_A1E0B    callers=  1 size= 481  <- sub_A059C
+A2110  sub_A2110    callers=  1 size= 367  <- sub_A3744
+A227F  sub_A227F    callers=  1 size= 529  <- sub_A3744
+A24BB  sub_A24BB    callers=  1 size= 800  <- j_method018
+A27E1  sub_A27E1    callers=  1 size= 277  <- j_method019
+A28F6  sub_A28F6    callers=  1 size=  52  <- thunk_sub_A28F6
+A292A  sub_A292A    callers=  1 size= 683  <- j_method020
+A2BD5  sub_A2BD5    callers=  1 size= 440  <- j_method021
+A2D8D  sub_A2D8D    callers=  1 size=1161  <- j_method029
+A3216  sub_A3216    callers=  1 size=  56  <- j_method030
+A324E  sub_A324E    callers=  1 size=  51  <- j_method031
+A34FB  sub_A34FB    callers=  1 size=  51  <- j_method138
+A352E  sub_A352E    callers=  1 size=  83  <- j_method027
+A3581  sub_A3581    callers=  1 size=  81  <- j_method028
+A35D2  sub_A35D2    callers=  1 size=  91  <- j_method023
+A362D  sub_A362D    callers=  1 size=  91  <- j_method024
+A3688  sub_A3688    callers=  1 size= 188  <- j_method032
+A3744  sub_A3744    callers=  1 size= 172  <- thunk_sub_A3744
+A3822  sub_A3822    callers=  1 size= 108  <- thunk_sub_A3822
+A388E  sub_A388E    callers=  1 size=   6  <- thunk_sub_A388E
+A41F7  sub_A41F7    callers=  1 size= 122  <- j_method241
+A4271  sub_A4271    callers=  1 size= 159  <- thunk_sub_A4271
+A4310  sub_A4310    callers=  1 size=  66  <- thunk_sub_A4310
+A4352  sub_A4352    callers=  1 size= 198  <- thunk_sub_A4352
+A4418  sub_A4418    callers=  1 size= 265  <- thunk_sub_A4418
+A4521  sub_A4521    callers=  1 size= 313  <- thunk_sub_A4521
+A465A  sub_A465A    callers=  1 size= 717  <- thunk_sub_A465A
+A49CD  sub_A49CD    callers=  1 size=  79  <- j_method213
+A4A1C  sub_A4A1C    callers=  1 size= 106  <- thunk_sub_A4A1C
+A4A86  sub_A4A86    callers=  1 size= 281  <- thunk_sub_A4A86
+A4B9F  sub_A4B9F    callers=  1 size= 493  <- thunk_sub_A4B9F
+A4D8C  sub_A4D8C    callers=  1 size= 128  <- thunk_sub_A4D8C
+A4E0C  sub_A4E0C    callers=  1 size= 205  <- thunk_sub_A4E0C
+A4ED9  sub_A4ED9    callers=  1 size= 112  <- thunk_sub_A4ED9
+A4F49  sub_A4F49    callers=  1 size= 459  <- thunk_sub_A4F49
+A5114  sub_A5114    callers=  1 size= 123  <- thunk_sub_A5114
+A518F  sub_A518F    callers=  1 size= 133  <- thunk_sub_A518F
+A5214  sub_A5214    callers=  1 size=  51  <- thunk_sub_A5214
+A5247  sub_A5247    callers=  1 size=  51  <- thunk_sub_A5247
+A527A  sub_A527A    callers=  1 size=  69  <- thunk_sub_A527A
+A52BF  sub_A52BF    callers=  1 size= 159  <- thunk_sub_A52BF
+A535E  sub_A535E    callers=  1 size= 559  <- thunk_sub_A535E
+A558D  sub_A558D    callers=  1 size=  88  <- thunk_sub_A558D
+A55E5  sub_A55E5    callers=  1 size= 152  <- thunk_sub_A55E5
+A567D  sub_A567D    callers=  1 size=  51  <- thunk_sub_A567D
+A56B0  sub_A56B0    callers=  1 size= 187  <- thunk_sub_A56B0
+A576B  sub_A576B    callers=  1 size= 590  <- thunk_sub_A576B
+A59B9  sub_A59B9    callers=  1 size=  48  <- thunk_sub_A59B9
+A59E9  sub_A59E9    callers=  1 size=  48  <- thunk_sub_A59E9
+A5A19  sub_A5A19    callers=  1 size=  21  <- thunk_sub_A5A19
+A5A2E  sub_A5A2E    callers=  1 size=  38  <- thunk_sub_A5A2E
+A5A54  sub_A5A54    callers=  1 size=  58  <- thunk_sub_A5A54
+A5A8E  sub_A5A8E    callers=  1 size=  90  <- thunk_sub_A5A8E
+A5AE8  sub_A5AE8    callers=  1 size= 121  <- thunk_sub_A5AE8
+A5B61  sub_A5B61    callers=  1 size=  61  <- thunk_sub_A5B61
+A5B9E  sub_A5B9E    callers=  1 size=  55  <- thunk_sub_A5B9E
+A5BD5  sub_A5BD5    callers=  1 size=  58  <- thunk_sub_A5BD5
+A5C0F  sub_A5C0F    callers=  1 size=  38  <- thunk_sub_A5C0F
+A5C35  sub_A5C35    callers=  1 size=  60  <- thunk_sub_A5C35
+A5C71  sub_A5C71    callers=  1 size=  38  <- thunk_sub_A5C71
+A5C97  sub_A5C97    callers=  1 size=  40  <- thunk_sub_A5C97
+A5CBF  sub_A5CBF    callers=  1 size=  84  <- thunk_sub_A5CBF
+A5D13  sub_A5D13    callers=  1 size= 639  <- thunk_sub_A5D13
+A68D8  sub_A68D8    callers=  1 size= 764  <- j_method247
+A6BD4  sub_A6BD4    callers=  1 size= 748  <- j_method248
+A6EC0  sub_A6EC0    callers=  1 size= 389  <- j_method249
+A7045  sub_A7045    callers=  1 size= 340  <- j_method253
+A7199  sub_A7199    callers=  1 size= 206  <- j_method254
+A7267  sub_A7267    callers=  1 size= 278  <- thunk_sub_A7267
+A737D  sub_A737D    callers=  1 size= 271  <- thunk_sub_A737D
+A748C  sub_A748C    callers=  1 size= 326  <- thunk_sub_A748C
+A75D2  sub_A75D2    callers=  1 size= 393  <- thunk_sub_A75D2
+A775B  sub_A775B    callers=  1 size= 181  <- thunk_sub_A775B
+A7810  sub_A7810    callers=  1 size= 169  <- thunk_sub_A7810
+A78B9  sub_A78B9    callers=  1 size=  78  <- thunk_sub_A78B9
+A7907  sub_A7907    callers=  1 size= 407  <- thunk_sub_A7907
+A7A9E  sub_A7A9E    callers=  1 size= 188  <- thunk_sub_A7A9E
+A7B5A  sub_A7B5A    callers=  1 size= 159  <- thunk_sub_A7B5A
+A7BF9  sub_A7BF9    callers=  1 size= 170  <- thunk_sub_A7BF9
+A7CA3  sub_A7CA3    callers=  1 size= 170  <- thunk_sub_A7CA3
+A7D4D  sub_A7D4D    callers=  1 size= 278  <- thunk_sub_A7D4D
+A7E63  sub_A7E63    callers=  1 size= 278  <- thunk_sub_A7E63
+A7F79  sub_A7F79    callers=  1 size=  73  <- thunk_sub_A7F79
+A7FC2  sub_A7FC2    callers=  1 size= 104  <- thunk_sub_A7FC2
+A802A  sub_A802A    callers=  1 size= 104  <- thunk_sub_A802A
+A8092  sub_A8092    callers=  1 size=  68  <- thunk_sub_A8092
+A80D6  sub_A80D6    callers=  1 size=  68  <- thunk_sub_A80D6
+A811A  sub_A811A    callers=  1 size=  73  <- thunk_sub_A811A
+A8163  sub_A8163    callers=  1 size=  73  <- thunk_sub_A8163
+A81AC  sub_A81AC    callers=  1 size= 175  <- thunk_sub_A81AC
+A825B  sub_A825B    callers=  1 size= 111  <- thunk_sub_A825B
+A82CA  sub_A82CA    callers=  1 size=  68  <- thunk_sub_A82CA
+A830E  sub_A830E    callers=  1 size=  68  <- thunk_sub_A830E
+A8352  sub_A8352    callers=  1 size=  84  <- thunk_sub_A8352
+A83A6  sub_A83A6    callers=  1 size=  87  <- thunk_sub_A83A6
+A83FD  sub_A83FD    callers=  1 size=  87  <- thunk_sub_A83FD
+A8454  sub_A8454    callers=  1 size=  69  <- thunk_sub_A8454
+A8499  sub_A8499    callers=  1 size=  86  <- thunk_sub_A8499
+A84EF  sub_A84EF    callers=  1 size= 136  <- thunk_sub_A84EF
+A86C1  sub_A86C1    callers=  1 size=  48  <- thunk_sub_A86C1
+A877B  sub_A877B    callers=  1 size= 258  <- thunk_sub_A877B
+A894F  sub_A894F    callers=  1 size= 238  <- thunk_sub_A894F
+A8C50  sub_A8C50    callers=  1 size= 626  <- j_method236
+A8EC2  sub_A8EC2    callers=  1 size=1021  <- j_method237
+A92BF  sub_A92BF    callers=  1 size= 820  <- j_method255
+A95F3  sub_A95F3    callers=  1 size= 378  <- thunk_sub_A95F3
+A976D  sub_A976D    callers=  1 size= 321  <- thunk_sub_A976D
+A98AE  sub_A98AE    callers=  1 size= 252  <- thunk_sub_A98AE
+A99AA  sub_A99AA    callers=  1 size= 170  <- thunk_sub_A99AA
+A9A54  sub_A9A54    callers=  1 size= 308  <- thunk_sub_A9A54
+A9B88  sub_A9B88    callers=  1 size= 220  <- thunk_sub_A9B88
+A9C64  sub_A9C64    callers=  1 size= 310  <- thunk_sub_A9C64
+A9D9A  sub_A9D9A    callers=  1 size= 200  <- thunk_sub_A9D9A
+A9E62  sub_A9E62    callers=  1 size=  88  <- thunk_sub_A9E62
+A9EBA  sub_A9EBA    callers=  1 size= 102  <- thunk_sub_A9EBA
+A9F20  sub_A9F20    callers=  1 size= 168  <- thunk_sub_A9F20
+A9FC8  sub_A9FC8    callers=  1 size=  63  <- thunk_sub_A9FC8
+AA007  sub_AA007    callers=  1 size= 123  <- thunk_sub_AA007
+AA082  sub_AA082    callers=  1 size=  93  <- thunk_sub_AA082
+AA0DF  sub_AA0DF    callers=  1 size=  68  <- thunk_sub_AA0DF
+AA123  sub_AA123    callers=  1 size= 107  <- thunk_sub_AA123
+AA1E5  sub_AA1E5    callers=  1 size=  87  <- thunk_sub_AA1E5
+AA23C  sub_AA23C    callers=  1 size=  51  <- thunk_sub_AA23C
+AA26F  sub_AA26F    callers=  1 size=  48  <- thunk_sub_AA26F
+AA590  sub_AA590    callers=  1 size= 704  <- sub_AA9E3
+AA850  sub_AA850    callers=  1 size=  31  <- sub_AA8AE
+AA86F  sub_AA86F    callers=  1 size=  63  <- sub_AA8AE
+AA8AE  sub_AA8AE    callers=  1 size= 309  <- sub_AA9E3
+AA9E3  sub_AA9E3    callers=  1 size=1331  <- sub_AAF16
+AAF16  sub_AAF16    callers=  1 size= 346  <- thunk_sub_AAF16
+AB53C  sub_AB53C    callers=  1 size=  48  <- data/AB56D
+AB5A8  sub_AB5A8    callers=  1 size= 416  <- j_method231
+AB748  sub_AB748    callers=  1 size= 729  <- j_method232
+ABA21  sub_ABA21    callers=  1 size= 366  <- j_method233
+ABB8F  sub_ABB8F    callers=  1 size= 309  <- j_method234
+ABCC4  sub_ABCC4    callers=  1 size= 299  <- j_method235
+ABDEF  sub_ABDEF    callers=  1 size= 469  <- j_method240
+ABFC4  sub_ABFC4    callers=  1 size= 304  <- j_method242
+AC0F4  sub_AC0F4    callers=  1 size= 451  <- j_method250
+AC2B7  sub_AC2B7    callers=  1 size= 366  <- j_method251
+AC425  sub_AC425    callers=  1 size= 404  <- j_method252
+AC5B9  sub_AC5B9    callers=  1 size= 536  <- thunk_sub_AC5B9
+AC7D1  sub_AC7D1    callers=  1 size= 284  <- thunk_sub_AC7D1
+AC8ED  sub_AC8ED    callers=  1 size= 113  <- thunk_sub_AC8ED
+AC95E  sub_AC95E    callers=  1 size= 466  <- thunk_sub_AC95E
+ACB30  sub_ACB30    callers=  1 size=  79  <- thunk_sub_ACB30
+ACB7F  sub_ACB7F    callers=  1 size= 450  <- thunk_sub_ACB7F
+ACD41  sub_ACD41    callers=  1 size= 199  <- thunk_sub_ACD41
+ACE08  sub_ACE08    callers=  1 size= 106  <- thunk_sub_ACE08
+ACE72  sub_ACE72    callers=  1 size= 105  <- thunk_sub_ACE72
+ACEDB  sub_ACEDB    callers=  1 size=  93  <- thunk_sub_ACEDB
+ACF38  sub_ACF38    callers=  1 size= 112  <- thunk_sub_ACF38
+ACFA8  sub_ACFA8    callers=  1 size=  71  <- thunk_sub_ACFA8
+AD063  sub_AD063    callers=  1 size= 909  <- thunk_sub_AD063
+AD458  sub_AD458    callers=  1 size= 906  <- sub_AC95E
+ADB2A  sub_ADB2A    callers=  1 size= 746  <- j_method243
+ADE14  sub_ADE14    callers=  1 size= 312  <- thunk_sub_ADE14
+ADF4C  sub_ADF4C    callers=  1 size=  83  <- thunk_sub_ADF4C
+ADF9F  sub_ADF9F    callers=  1 size= 213  <- sub_AE074
+AE074  sub_AE074    callers=  1 size= 371  <- thunk_sub_AE074
+AE1E7  sub_AE1E7    callers=  1 size= 221  <- thunk_sub_AE1E7
+AE2C4  sub_AE2C4    callers=  1 size=  83  <- thunk_sub_AE2C4
+AE317  sub_AE317    callers=  1 size= 667  <- thunk_sub_AE317
+AE5B2  sub_AE5B2    callers=  1 size= 642  <- thunk_sub_AE5B2
+AE875  sub_AE875    callers=  1 size= 122  <- thunk_sub_AE875
+AE8EF  sub_AE8EF    callers=  1 size=  88  <- thunk_sub_AE8EF
+AE947  sub_AE947    callers=  1 size=  66  <- thunk_sub_AE947
+AE989  sub_AE989    callers=  1 size= 443  <- thunk_sub_AE989
+AEBC0  sub_AEBC0    callers=  1 size=1321  <- j_method239
+AF0E9  sub_AF0E9    callers=  1 size= 439  <- j_method257
+AF2A0  sub_AF2A0    callers=  1 size= 222  <- thunk_sub_AF2A0
+AF37E  sub_AF37E    callers=  1 size= 150  <- thunk_sub_AF37E
+AF414  sub_AF414    callers=  1 size=  83  <- thunk_sub_AF414
+AF467  sub_AF467    callers=  1 size= 503  <- thunk_sub_AF467
+AF65E  sub_AF65E    callers=  1 size= 349  <- thunk_sub_AF65E
+AF7BB  sub_AF7BB    callers=  1 size=  98  <- thunk_sub_AF7BB
+AF81D  sub_AF81D    callers=  1 size= 312  <- thunk_sub_AF81D
+AF955  sub_AF955    callers=  1 size= 203  <- thunk_sub_AF955
+AFA20  sub_AFA20    callers=  1 size=  68  <- thunk_sub_AFA20
+AFA64  sub_AFA64    callers=  1 size=  83  <- thunk_sub_AFA64
+AFAB7  sub_AFAB7    callers=  1 size= 115  <- thunk_sub_AFAB7
+AFB2A  sub_AFB2A    callers=  1 size= 219  <- thunk_sub_AFB2A
+AFC05  sub_AFC05    callers=  1 size= 101  <- thunk_sub_AFC05
+AFC6A  sub_AFC6A    callers=  1 size= 111  <- thunk_sub_AFC6A
+AFCD9  sub_AFCD9    callers=  1 size= 105  <- thunk_sub_AFCD9
+AFD42  sub_AFD42    callers=  1 size= 149  <- thunk_sub_AFD42
+AFF00  sub_AFF00    callers=  1 size= 422  <- thunk_sub_AFF00
+B00A6  sub_B00A6    callers=  1 size= 674  <- thunk_sub_B00A6
+B04A0  sub_B04A0    callers=  1 size=  31  <- Commnet_proc1
+B04BF  sub_B04BF    callers=  1 size=  63  <- Commnet_proc1
+B1670  sub_B1670    callers=  1 size=  48  <- sub_B1730
+B1730  sub_B1730    callers=  1 size=2076  <- j_method244
+B1F4C  sub_B1F4C    callers=  1 size= 271  <- thunk_sub_B1F4C
+B205B  sub_B205B    callers=  1 size= 181  <- thunk_sub_B205B
+B2110  sub_B2110    callers=  1 size= 314  <- thunk_sub_B2110
+B22CA  sub_B22CA    callers=  1 size= 481  <- thunk_sub_B22CA
+B2526  sub_B2526    callers=  1 size= 446  <- j_method300
+B26E4  sub_B26E4    callers=  1 size= 152  <- thunk_sub_B26E4
+B277C  sub_B277C    callers=  1 size= 256  <- thunk_sub_B277C
+B28A8  sub_B28A8    callers=  1 size=1515  <- thunk_sub_B28A8
+B2EFA  sub_B2EFA    callers=  1 size= 199  <- thunk_sub_B2EFA
+B2FC1  sub_B2FC1    callers=  1 size=  69  <- thunk_sub_B2FC1
+B3006  sub_B3006    callers=  1 size=  76  <- thunk_sub_B3006
+B3052  sub_B3052    callers=  1 size= 150  <- thunk_sub_B3052
+B30E8  sub_B30E8    callers=  1 size=  83  <- thunk_sub_B30E8
+B313B  sub_B313B    callers=  1 size=  83  <- thunk_sub_B313B
+B318E  sub_B318E    callers=  1 size= 103  <- thunk_sub_B318E
+B31F5  sub_B31F5    callers=  1 size=  93  <- thunk_sub_B31F5
+B3252  sub_B3252    callers=  1 size=  83  <- thunk_sub_B3252
+B32A5  sub_B32A5    callers=  1 size= 156  <- thunk_sub_B32A5
+B3341  sub_B3341    callers=  1 size= 198  <- thunk_sub_B3341
+B3407  sub_B3407    callers=  1 size=  20  <- thunk_sub_B3407
+B343B  sub_B343B    callers=  1 size= 532  <- thunk_sub_B343B
+B3850  sub_B3850    callers=  1 size= 928  <- j_method256
+B3BF0  sub_B3BF0    callers=  1 size= 860  <- thunk_sub_B3BF0
+B3F4C  sub_B3F4C    callers=  1 size= 931  <- thunk_sub_B3F4C
+B42EF  sub_B42EF    callers=  1 size= 151  <- thunk_sub_B42EF
+B4386  sub_B4386    callers=  1 size=  64  <- thunk_sub_B4386
+B43C6  sub_B43C6    callers=  1 size= 215  <- thunk_sub_B43C6
+B449D  sub_B449D    callers=  1 size=  68  <- thunk_sub_B449D
+B44E1  sub_B44E1    callers=  1 size=  71  <- thunk_sub_B44E1
+B46BF  sub_B46BF    callers=  1 size= 759  <- thunk_sub_B46BF
+B4B07  sub_B4B07    callers=  1 size= 355  <- thunk_sub_B4B07
+B4DF8  sub_B4DF8    callers=  1 size= 447  <- thunk_sub_B4DF8
+B53E0  sub_B53E0    callers=  1 size= 785  <- sub_B58A3
+B56F1  sub_B56F1    callers=  1 size=  31  <- sub_B576E
+B5710  sub_B5710    callers=  1 size=  31  <- sub_B58A3
+B576E  sub_B576E    callers=  1 size= 309  <- sub_B58A3
+B58A3  sub_B58A3    callers=  1 size=1254  <- sub_B650A
+B5D89  sub_B5D89    callers=  1 size= 368  <- j_method245
+B5EF9  sub_B5EF9    callers=  1 size= 395  <- j_method246
+B6084  sub_B6084    callers=  1 size= 161  <- thunk_sub_B6084
+B6125  sub_B6125    callers=  1 size= 161  <- thunk_sub_B6125
+B61C6  sub_B61C6    callers=  1 size= 353  <- thunk_sub_B61C6
+B6327  sub_B6327    callers=  1 size= 110  <- thunk_sub_B6327
+B6395  sub_B6395    callers=  1 size= 290  <- thunk_sub_B6395
+B64B7  sub_B64B7    callers=  1 size=  83  <- thunk_sub_B64B7
+B650A  sub_B650A    callers=  1 size= 388  <- thunk_sub_B650A
+B668E  sub_B668E    callers=  1 size= 344  <- thunk_sub_B668E
+B67E6  sub_B67E6    callers=  1 size= 295  <- thunk_sub_B67E6
+B690D  sub_B690D    callers=  1 size= 259  <- thunk_sub_B690D
+B6A10  sub_B6A10    callers=  1 size=  83  <- thunk_sub_B6A10
+B6A63  sub_B6A63    callers=  1 size=  93  <- thunk_sub_B6A63
+B6AC0  sub_B6AC0    callers=  1 size= 121  <- thunk_sub_B6AC0
+B6B39  sub_B6B39    callers=  1 size= 170  <- thunk_sub_B6B39
+B6BE3  sub_B6BE3    callers=  1 size= 112  <- thunk_sub_B6BE3
+B6C53  sub_B6C53    callers=  1 size= 265  <- thunk_sub_B6C53
+B6D5C  sub_B6D5C    callers=  1 size= 157  <- thunk_sub_B6D5C
+B6DF9  sub_B6DF9    callers=  1 size=  86  <- thunk_sub_B6DF9
+B7364  sub_B7364    callers=  1 size= 820  <- thunk_sub_B7364
+B7698  sub_B7698    callers=  1 size= 342  <- thunk_sub_B7698
+B77EE  sub_B77EE    callers=  1 size= 864  <- thunk_sub_B77EE
+B7B4E  sub_B7B4E    callers=  1 size= 158  <- thunk_sub_B7B4E
+B7BEC  sub_B7BEC    callers=  1 size= 285  <- thunk_sub_B7BEC
+B7D09  sub_B7D09    callers=  1 size= 151  <- thunk_sub_B7D09
+B7DA0  sub_B7DA0    callers=  1 size=  67  <- thunk_sub_B7DA0
+B7DE3  sub_B7DE3    callers=  1 size= 231  <- thunk_sub_B7DE3
+B7ECA  sub_B7ECA    callers=  1 size= 319  <- thunk_sub_B7ECA
+B8009  sub_B8009    callers=  1 size= 100  <- thunk_sub_B8009
+B806D  sub_B806D    callers=  1 size= 153  <- thunk_sub_B806D
+B8106  sub_B8106    callers=  1 size= 179  <- thunk_sub_B8106
+B81B9  sub_B81B9    callers=  1 size= 124  <- thunk_sub_B81B9
+B8235  sub_B8235    callers=  1 size= 186  <- thunk_sub_B8235
+B82EF  sub_B82EF    callers=  1 size= 472  <- thunk_sub_B82EF
+B84C7  sub_B84C7    callers=  1 size=  61  <- thunk_sub_B84C7
+B8504  sub_B8504    callers=  1 size=  61  <- thunk_sub_B8504
+B8541  sub_B8541    callers=  1 size= 620  <- thunk_sub_B8541
+B87AD  sub_B87AD    callers=  1 size= 389  <- thunk_sub_B87AD
+B8932  sub_B8932    callers=  1 size= 441  <- thunk_sub_B8932
+B8AEB  sub_B8AEB    callers=  1 size= 393  <- thunk_sub_B8AEB
+B8C74  sub_B8C74    callers=  1 size=  94  <- thunk_sub_B8C74
+B90CC  sub_B90CC    callers=  1 size= 116  <- thunk_sub_B90CC
+B9140  sub_B9140    callers=  1 size=  92  <- thunk_sub_B9140
+B919C  sub_B919C    callers=  1 size=  25  <- thunk_sub_B919C
+B91B5  sub_B91B5    callers=  1 size=  26  <- thunk_sub_B91B5
+B91CF  sub_B91CF    callers=  1 size=   6  <- thunk_sub_B91CF
+B91D5  sub_B91D5    callers=  1 size=   6  <- thunk_sub_B91D5
+B92B0  sub_B92B0    callers=  1 size=  20  <- data/B92E5
+B92C4  sub_B92C4    callers=  1 size=  20  <- data/B9301
+B9310  sub_B9310    callers=  1 size= 652  <- thunk_sub_B9310
+B959C  sub_B959C    callers=  1 size= 401  <- thunk_sub_B959C
+B972D  sub_B972D    callers=  1 size= 188  <- thunk_sub_B972D
+B97E9  sub_B97E9    callers=  1 size= 910  <- thunk_sub_B97E9
+B9B77  sub_B9B77    callers=  1 size= 150  <- thunk_sub_B9B77
+B9C0D  sub_B9C0D    callers=  1 size= 455  <- thunk_sub_B9C0D
+B9DD4  sub_B9DD4    callers=  1 size= 157  <- thunk_sub_B9DD4
+B9E71  sub_B9E71    callers=  1 size= 146  <- thunk_sub_B9E71
+B9F03  sub_B9F03    callers=  1 size=1224  <- thunk_sub_B9F03
+BA3CB  sub_BA3CB    callers=  1 size= 216  <- thunk_sub_BA3CB
+BA4A3  sub_BA4A3    callers=  1 size= 269  <- thunk_sub_BA4A3
+BA5B0  sub_BA5B0    callers=  1 size=  61  <- thunk_sub_BA5B0
+BA5ED  sub_BA5ED    callers=  1 size=  61  <- thunk_sub_BA5ED
+BA62A  sub_BA62A    callers=  1 size=  61  <- thunk_sub_BA62A
+BA667  sub_BA667    callers=  1 size= 121  <- thunk_sub_BA667
+BA6E0  sub_BA6E0    callers=  1 size= 212  <- thunk_sub_BA6E0
+BA9A5  sub_BA9A5    callers=  1 size= 992  <- thunk_sub_BA9A5
+BAE1F  sub_BAE1F    callers=  1 size= 769  <- thunk_sub_BAE1F
+BB131  sub_BB131    callers=  1 size= 871  <- thunk_sub_BB131
+BB498  sub_BB498    callers=  1 size= 952  <- thunk_sub_BB498
+BB850  sub_BB850    callers=  1 size= 354  <- thunk_sub_BB850
+BB9B2  sub_BB9B2    callers=  1 size= 269  <- thunk_sub_BB9B2
+BBABF  sub_BBABF    callers=  1 size= 446  <- thunk_sub_BBABF
+BBC7D  sub_BBC7D    callers=  1 size=  83  <- thunk_sub_BBC7D
+BBCD0  sub_BBCD0    callers=  1 size= 496  <- thunk_sub_BBCD0
+BBEC0  sub_BBEC0    callers=  1 size= 572  <- thunk_sub_BBEC0
+BC0FC  sub_BC0FC    callers=  1 size= 157  <- thunk_sub_BC0FC
+BC199  sub_BC199    callers=  1 size=  51  <- thunk_sub_BC199
+BC1CC  sub_BC1CC    callers=  1 size=  81  <- thunk_sub_BC1CC
+BC21D  sub_BC21D    callers=  1 size=  94  <- thunk_sub_BC21D
+BC27B  sub_BC27B    callers=  1 size= 173  <- thunk_sub_BC27B
+BC328  sub_BC328    callers=  1 size= 407  <- thunk_sub_BC328
+BC4BF  sub_BC4BF    callers=  1 size=  99  <- thunk_sub_BC4BF
+BC522  sub_BC522    callers=  1 size=  68  <- thunk_sub_BC522
+BC566  sub_BC566    callers=  1 size= 111  <- thunk_sub_BC566
+BC5D5  sub_BC5D5    callers=  1 size= 109  <- thunk_sub_BC5D5
+BC642  sub_BC642    callers=  1 size= 122  <- thunk_sub_BC642
+BC6BC  sub_BC6BC    callers=  1 size= 104  <- thunk_sub_BC6BC
+BC724  sub_BC724    callers=  1 size=  61  <- thunk_sub_BC724
+BC761  sub_BC761    callers=  1 size=  61  <- thunk_sub_BC761
+BC79E  sub_BC79E    callers=  1 size= 124  <- thunk_sub_BC79E
+BCA95  sub_BCA95    callers=  1 size= 457  <- thunk_sub_BCA95
+BCC5E  sub_BCC5E    callers=  1 size=  82  <- thunk_sub_BCC5E
+BCCB0  sub_BCCB0    callers=  1 size=  87  <- thunk_sub_BCCB0
+BCD07  sub_BCD07    callers=  1 size=  47  <- thunk_sub_BCD07
+BD840  sub_BD840    callers=  1 size= 827  <- sub_BDF6C
+BDB7B  sub_BDB7B    callers=  1 size= 577  <- sub_BDF6C
+BDDBC  sub_BDDBC    callers=  1 size= 432  <- sub_BDF6C
+BDF6C  sub_BDF6C    callers=  1 size= 941  <- thunk_sub_BDF6C
+BE390  sub_BE390    callers=  1 size= 412  <- thunk_sub_BE390
+BE52C  sub_BE52C    callers=  1 size= 114  <- thunk_sub_BE52C
+BE59E  sub_BE59E    callers=  1 size= 243  <- thunk_sub_BE59E
+BE6DF  sub_BE6DF    callers=  1 size= 510  <- thunk_sub_BE6DF
+BE998  sub_BE998    callers=  1 size= 308  <- thunk_sub_BE998
+BEACC  sub_BEACC    callers=  1 size= 314  <- thunk_sub_BEACC
+BEC06  sub_BEC06    callers=  1 size= 284  <- thunk_sub_BEC06
+BED22  sub_BED22    callers=  1 size= 473  <- thunk_sub_BED22
+BEEFB  sub_BEEFB    callers=  1 size= 264  <- thunk_sub_BEEFB
+BF1A1  sub_BF1A1    callers=  1 size=  15  <- thunk_sub_BF1A1
+BF1B0  sub_BF1B0    callers=  1 size=  15  <- thunk_sub_BF1B0
+BF1BF  sub_BF1BF    callers=  1 size=  15  <- thunk_sub_BF1BF
+BF1CE  sub_BF1CE    callers=  1 size= 578  <- thunk_sub_BF1CE
+BF91F  sub_BF91F    callers=  1 size=  15  <- thunk_sub_BF91F
+BF92E  sub_BF92E    callers=  1 size=  15  <- thunk_sub_BF92E
+BF93D  sub_BF93D    callers=  1 size=  15  <- thunk_sub_BF93D
+BF94C  sub_BF94C    callers=  1 size= 365  <- thunk_sub_BF94C
+BFAB9  sub_BFAB9    callers=  1 size=  92  <- thunk_sub_BFAB9
+BFCA8  sub_BFCA8    callers=  1 size= 514  <- sub_30E3F
+C010A  sub_C010A    callers=  1 size=  31  <- sub_C0168
+C0129  sub_C0129    callers=  1 size=  63  <- sub_C0168
+C0168  sub_C0168    callers=  1 size= 914  <- sub_BED22
+C05D0  sub_C05D0    callers=  1 size= 180  <- thunk_sub_C05D0
+C0684  sub_C0684    callers=  1 size= 269  <- thunk_sub_C0684
+C0791  sub_C0791    callers=  1 size= 288  <- thunk_sub_C0791
+C08B1  sub_C08B1    callers=  1 size= 436  <- thunk_sub_C08B1
+C0A65  sub_C0A65    callers=  1 size= 416  <- thunk_sub_C0A65
+C0C05  sub_C0C05    callers=  1 size= 316  <- thunk_sub_C0C05
+C0D41  sub_C0D41    callers=  1 size= 318  <- thunk_sub_C0D41
+C0E7F  sub_C0E7F    callers=  1 size= 213  <- thunk_sub_C0E7F
+C0F54  sub_C0F54    callers=  1 size= 152  <- thunk_sub_C0F54
+C0FEC  sub_C0FEC    callers=  1 size=  51  <- thunk_sub_C0FEC
+C101F  sub_C101F    callers=  1 size= 177  <- thunk_sub_C101F
+C10D0  sub_C10D0    callers=  1 size= 333  <- thunk_sub_C10D0
+C121D  sub_C121D    callers=  1 size= 615  <- thunk_sub_C121D
+C1484  sub_C1484    callers=  1 size=1156  <- thunk_sub_C1484
+C1908  sub_C1908    callers=  1 size= 124  <- thunk_sub_C1908
+C1984  sub_C1984    callers=  1 size= 174  <- thunk_sub_C1984
+C1A32  sub_C1A32    callers=  1 size= 112  <- thunk_sub_C1A32
+C1AA2  sub_C1AA2    callers=  1 size= 146  <- thunk_sub_C1AA2
+C1B34  sub_C1B34    callers=  1 size= 278  <- thunk_sub_C1B34
+C1C94  sub_C1C94    callers=  1 size= 312  <- thunk_sub_C1C94
+C1E20  sub_C1E20    callers=  1 size= 184  <- thunk_sub_C1E20
+C1FB1  sub_C1FB1    callers=  1 size= 591  <- thunk_sub_C1FB1
+C2245  sub_C2245    callers=  1 size= 289  <- thunk_sub_C2245
+C2391  sub_C2391    callers=  1 size= 315  <- thunk_sub_C2391
+C24F7  sub_C24F7    callers=  1 size= 336  <- thunk_sub_C24F7
+C295A  sub_C295A    callers=  1 size= 136  <- thunk_sub_C295A
+C29E2  sub_C29E2    callers=  1 size=  70  <- thunk_sub_C29E2
+C2A28  sub_C2A28    callers=  1 size= 203  <- thunk_sub_C2A28
+C2AF3  sub_C2AF3    callers=  1 size= 198  <- thunk_sub_C2AF3
+C2BEE  sub_C2BEE    callers=  1 size= 559  <- thunk_sub_C2BEE
+C2E1D  sub_C2E1D    callers=  1 size= 257  <- thunk_sub_C2E1D
+C2F1E  sub_C2F1E    callers=  1 size=  51  <- thunk_sub_C2F1E
+C2F51  sub_C2F51    callers=  1 size=  22  <- thunk_sub_C2F51
+C2F67  sub_C2F67    callers=  1 size= 219  <- thunk_sub_C2F67
+C3077  sub_C3077    callers=  1 size= 217  <- thunk_sub_C3077
+C3150  sub_C3150    callers=  1 size= 989  <- thunk_sub_C3150
+C352D  sub_C352D    callers=  1 size= 223  <- thunk_sub_C352D
+C360C  sub_C360C    callers=  1 size= 263  <- thunk_sub_C360C
+C3713  sub_C3713    callers=  1 size= 162  <- thunk_sub_C3713
+C37B5  sub_C37B5    callers=  1 size= 577  <- thunk_sub_C37B5
+C39F6  sub_C39F6    callers=  1 size= 131  <- thunk_sub_C39F6
+C3A79  sub_C3A79    callers=  1 size= 382  <- thunk_sub_C3A79
+C3BF7  sub_C3BF7    callers=  1 size= 109  <- thunk_sub_C3BF7
+C3C64  sub_C3C64    callers=  1 size=  63  <- thunk_sub_C3C64
+C3CA3  sub_C3CA3    callers=  1 size=  68  <- thunk_sub_C3CA3
+C3CE7  sub_C3CE7    callers=  1 size=  89  <- thunk_sub_C3CE7
+C3D40  sub_C3D40    callers=  1 size=  51  <- thunk_sub_C3D40
+C3D73  sub_C3D73    callers=  1 size= 116  <- thunk_sub_C3D73
+C3DE7  sub_C3DE7    callers=  1 size=  48  <- thunk_sub_C3DE7
+C44B0  sub_C44B0    callers=  1 size=1076  <- j_method211
+C48E4  sub_C48E4    callers=  1 size= 514  <- Game_endGameMenu
+C4BA3  sub_C4BA3    callers=  1 size= 800  <- j_method224
+C4EC3  sub_C4EC3    callers=  1 size=   5  <- j_method217
+C4EC8  sub_C4EC8    callers=  1 size= 872  <- j_method212
+C5230  sub_C5230    callers=  1 size= 448  <- j_method215
+C53F0  sub_C53F0    callers=  1 size= 600  <- j_method214
+C5648  sub_C5648    callers=  1 size= 574  <- j_method216
+C5886  sub_C5886    callers=  1 size=  48  <- j_method221
+C58F0  sub_C58F0    callers=  1 size= 423  <- j_method222
+C5A97  sub_C5A97    callers=  1 size= 434  <- j_method223
+C5C49  sub_C5C49    callers=  1 size= 808  <- j_method227_228
+C5F71  sub_C5F71    callers=  1 size= 146  <- j_method218
+C6003  sub_C6003    callers=  1 size= 261  <- j_method219
+C6108  sub_C6108    callers=  1 size= 113  <- j_method226
+C6179  sub_C6179    callers=  1 size= 807  <- j_method220
+C64A0  sub_C64A0    callers=  1 size= 602  <- j_method204
+C66FA  sub_C66FA    callers=  1 size=  87  <- thunk_sub_C66FA
+C6751  sub_C6751    callers=  1 size=  22  <- thunk_sub_C6751
+C6767  sub_C6767    callers=  1 size=  39  <- thunk_sub_C6767
+C678E  sub_C678E    callers=  1 size= 182  <- thunk_sub_C678E
+C6844  sub_C6844    callers=  1 size=  81  <- thunk_sub_C6844
+C6895  sub_C6895    callers=  1 size=  22  <- thunk_sub_C6895
+C68AB  sub_C68AB    callers=  1 size=  39  <- thunk_sub_C68AB
+C68D2  sub_C68D2    callers=  1 size=  39  <- thunk_sub_C68D2
+C6C3C  sub_C6C3C    callers=  1 size= 168  <- j_method001
+C6CE4  sub_C6CE4    callers=  1 size= 138  <- j_method002
+C6D96  sub_C6D96    callers=  1 size= 257  <- j_method006
+C6E97  sub_C6E97    callers=  1 size= 245  <- j_method007
+C6F8C  sub_C6F8C    callers=  1 size= 312  <- j_method008
+C711B  sub_C711B    callers=  1 size= 375  <- j_method005
+C7292  sub_C7292    callers=  1 size= 282  <- j_method004
+C73AC  sub_C73AC    callers=  1 size= 325  <- j_method003
+C74F1  sub_C74F1    callers=  1 size= 330  <- j_method009
+C763B  sub_C763B    callers=  1 size= 176  <- j_method010
+C76EB  sub_C76EB    callers=  1 size= 175  <- j_method013
+C779A  sub_C779A    callers=  1 size= 168  <- j_method012
+C7842  sub_C7842    callers=  1 size= 262  <- j_method011
+C7948  sub_C7948    callers=  1 size= 309  <- j_method014
+C7A7D  sub_C7A7D    callers=  1 size= 141  <- j_method015
+C7B0A  sub_C7B0A    callers=  1 size= 139  <- j_method016
+C7B95  sub_C7B95    callers=  1 size= 137  <- j_method017
+C7C1E  sub_C7C1E    callers=  1 size=  81  <- thunk_sub_C7C1E
+12094  sub_12094    callers=  0 size= 117  <- 
+12299  sub_12299    callers=  0 size= 182  <- 
+17D6A  sub_17D6A    callers=  0 size= 199  <- 
+17E31  sub_17E31    callers=  0 size= 391  <- 
+17FB8  sub_17FB8    callers=  0 size= 114  <- 
+24644  sub_24644    callers=  0 size=  88  <- 
+24892  sub_24892    callers=  0 size=  81  <- 
+26A22  sub_26A22    callers=  0 size=  64  <- 
+2AC2C  sub_2AC2C    callers=  0 size=  79  <- 
+2ACE9  sub_2ACE9    callers=  0 size=  37  <- 
+2AE9A  sub_2AE9A    callers=  0 size= 358  <- 
+2B1C6  sub_2B1C6    callers=  0 size= 143  <- 
+2B418  sub_2B418    callers=  0 size= 108  <- 
+2B484  sub_2B484    callers=  0 size= 149  <- 
+2B519  sub_2B519    callers=  0 size=  66  <- 
+2BEFC  sub_2BEFC    callers=  0 size=  42  <- 
+2BF26  sub_2BF26    callers=  0 size=  35  <- 
+2BF49  sub_2BF49    callers=  0 size=  42  <- 
+2BF73  sub_2BF73    callers=  0 size=  35  <- 
+2C223  sub_2C223    callers=  0 size= 107  <- 
+2C28E  sub_2C28E    callers=  0 size=  93  <- 
+2C2EB  sub_2C2EB    callers=  0 size=  86  <- 
+2C341  sub_2C341    callers=  0 size=  90  <- 
+2C39B  sub_2C39B    callers=  0 size= 143  <- 
+2C42A  sub_2C42A    callers=  0 size= 462  <- 
+2C5F8  sub_2C5F8    callers=  0 size= 109  <- 
+2C966  sub_2C966    callers=  0 size= 441  <- 
+2CB40  sub_2CB40    callers=  0 size= 409  <- 
+2CCD9  sub_2CCD9    callers=  0 size= 244  <- 
+2E4EB  sub_2E4EB    callers=  0 size=   8  <- 
+2E4FF  sub_2E4FF    callers=  0 size=   8  <- 
+2E509  sub_2E509    callers=  0 size=   8  <- 
+2E513  sub_2E513    callers=  0 size=   8  <- 
+2E51D  sub_2E51D    callers=  0 size=   8  <- 
+2E527  sub_2E527    callers=  0 size=   8  <- 
+2E531  sub_2E531    callers=  0 size=   8  <- 
+2E53B  sub_2E53B    callers=  0 size=   8  <- 
+2E545  sub_2E545    callers=  0 size=   8  <- 
+2E54F  sub_2E54F    callers=  0 size=   8  <- 
+2E559  sub_2E559    callers=  0 size=   8  <- 
+2E563  sub_2E563    callers=  0 size=   8  <- 
+2E56D  sub_2E56D    callers=  0 size=   8  <- 
+2E581  sub_2E581    callers=  0 size=   8  <- 
+2E58B  sub_2E58B    callers=  0 size=   8  <- 
+2E5A9  sub_2E5A9    callers=  0 size=   8  <- 
+2E5B3  sub_2E5B3    callers=  0 size=   8  <- 
+2E5BD  sub_2E5BD    callers=  0 size=   8  <- 
+2E5C7  sub_2E5C7    callers=  0 size=   8  <- 
+2E5D1  sub_2E5D1    callers=  0 size=   8  <- 
+2E5DB  sub_2E5DB    callers=  0 size=   8  <- 
+2E5E5  sub_2E5E5    callers=  0 size=   8  <- 
+2E5EF  sub_2E5EF    callers=  0 size=   8  <- 
+2E5F9  sub_2E5F9    callers=  0 size=   8  <- 
+2E603  sub_2E603    callers=  0 size=   8  <- 
+2E617  sub_2E617    callers=  0 size=   8  <- 
+2E621  sub_2E621    callers=  0 size=   8  <- 
+2E62B  sub_2E62B    callers=  0 size=   8  <- 
+2E63F  sub_2E63F    callers=  0 size=   8  <- 
+2E653  sub_2E653    callers=  0 size=   8  <- 
+2E671  sub_2E671    callers=  0 size=   8  <- 
+2E68F  sub_2E68F    callers=  0 size=   8  <- 
+2E699  sub_2E699    callers=  0 size=   8  <- 
+2E6AD  sub_2E6AD    callers=  0 size=   8  <- 
+2E6B7  sub_2E6B7    callers=  0 size=   8  <- 
+2E6C1  sub_2E6C1    callers=  0 size=   8  <- 
+2E6CB  sub_2E6CB    callers=  0 size=   8  <- 
+2E6D5  sub_2E6D5    callers=  0 size=   8  <- 
+2E6DF  sub_2E6DF    callers=  0 size=   8  <- 
+2E6E9  sub_2E6E9    callers=  0 size=   8  <- 
+2E6FD  sub_2E6FD    callers=  0 size=   8  <- 
+2E711  sub_2E711    callers=  0 size=   8  <- 
+2E725  sub_2E725    callers=  0 size=   8  <- 
+2E72F  sub_2E72F    callers=  0 size=   8  <- 
+2E743  sub_2E743    callers=  0 size=   8  <- 
+2E74D  sub_2E74D    callers=  0 size=   8  <- 
+2E757  sub_2E757    callers=  0 size=   8  <- 
+2E761  sub_2E761    callers=  0 size=   8  <- 
+2E775  sub_2E775    callers=  0 size=   8  <- 
+2E77F  sub_2E77F    callers=  0 size=   8  <- 
+2E789  sub_2E789    callers=  0 size=   8  <- 
+2E79D  sub_2E79D    callers=  0 size=   8  <- 
+2E7A7  sub_2E7A7    callers=  0 size=   8  <- 
+2E7B1  sub_2E7B1    callers=  0 size=   8  <- 
+2E7BB  sub_2E7BB    callers=  0 size=   8  <- 
+2E7C5  sub_2E7C5    callers=  0 size=   8  <- 
+2E7CF  sub_2E7CF    callers=  0 size=   8  <- 
+2E7D9  sub_2E7D9    callers=  0 size=   8  <- 
+2E7F7  sub_2E7F7    callers=  0 size=   8  <- 
+2E801  sub_2E801    callers=  0 size=   8  <- 
+2E80B  sub_2E80B    callers=  0 size=   8  <- 
+2E815  sub_2E815    callers=  0 size=   8  <- 
+2E81F  sub_2E81F    callers=  0 size=   8  <- 
+2E829  sub_2E829    callers=  0 size=   8  <- 
+2E833  sub_2E833    callers=  0 size=   8  <- 
+2E83D  sub_2E83D    callers=  0 size=   8  <- 
+2E851  sub_2E851    callers=  0 size=   8  <- 
+2E865  sub_2E865    callers=  0 size=   8  <- 
+2E86F  sub_2E86F    callers=  0 size=   8  <- 
+2E883  sub_2E883    callers=  0 size=   8  <- 
+2E88D  sub_2E88D    callers=  0 size=   8  <- 
+2E897  sub_2E897    callers=  0 size=   8  <- 
+2E8A1  sub_2E8A1    callers=  0 size=   8  <- 
+2E8E7  sub_2E8E7    callers=  0 size=   8  <- 
+2E8F1  sub_2E8F1    callers=  0 size=   8  <- 
+2E92D  sub_2E92D    callers=  0 size=   8  <- 
+2E937  sub_2E937    callers=  0 size=   8  <- 
+2E95F  sub_2E95F    callers=  0 size=   8  <- 
+2E969  sub_2E969    callers=  0 size=   8  <- 
+2E973  sub_2E973    callers=  0 size=   8  <- 
+2E97D  sub_2E97D    callers=  0 size=   8  <- 
+2E987  sub_2E987    callers=  0 size=   8  <- 
+2E991  sub_2E991    callers=  0 size=   8  <- 
+2E99B  sub_2E99B    callers=  0 size=   8  <- 
+2E9AF  sub_2E9AF    callers=  0 size=   8  <- 
+2E9B9  sub_2E9B9    callers=  0 size=   8  <- 
+2E9C3  sub_2E9C3    callers=  0 size=   8  <- 
+2E9CD  sub_2E9CD    callers=  0 size=   8  <- 
+2E9D7  sub_2E9D7    callers=  0 size=   8  <- 
+2E9E1  sub_2E9E1    callers=  0 size=   8  <- 
+2E9EB  sub_2E9EB    callers=  0 size=   8  <- 
+2E9F5  sub_2E9F5    callers=  0 size=   8  <- 
+2E9FF  sub_2E9FF    callers=  0 size=   8  <- 
+2EA09  sub_2EA09    callers=  0 size=   8  <- 
+2EA13  sub_2EA13    callers=  0 size=   8  <- 
+2EA27  sub_2EA27    callers=  0 size=   8  <- 
+2EA31  sub_2EA31    callers=  0 size=   8  <- 
+2EA3B  sub_2EA3B    callers=  0 size=   8  <- 
+2EA45  sub_2EA45    callers=  0 size=   8  <- 
+2EA59  sub_2EA59    callers=  0 size=   8  <- 
+2EA63  sub_2EA63    callers=  0 size=   8  <- 
+2EA6D  sub_2EA6D    callers=  0 size=   8  <- 
+2EA77  sub_2EA77    callers=  0 size=   8  <- 
+2EA8B  sub_2EA8B    callers=  0 size=   8  <- 
+2EA95  sub_2EA95    callers=  0 size=   8  <- 
+2EAA9  sub_2EAA9    callers=  0 size=   8  <- 
+2EAB3  sub_2EAB3    callers=  0 size=   8  <- 
+2EABD  sub_2EABD    callers=  0 size=   8  <- 
+2EAC7  sub_2EAC7    callers=  0 size=   8  <- 
+2EAD1  sub_2EAD1    callers=  0 size=   8  <- 
+2EADB  sub_2EADB    callers=  0 size=   8  <- 
+2EAEF  sub_2EAEF    callers=  0 size=   8  <- 
+2EAF9  sub_2EAF9    callers=  0 size=   8  <- 
+2EB03  sub_2EB03    callers=  0 size=   8  <- 
+2EB0D  sub_2EB0D    callers=  0 size=   8  <- 
+2EB17  sub_2EB17    callers=  0 size=   8  <- 
+2EB21  sub_2EB21    callers=  0 size=   8  <- 
+2EB2B  sub_2EB2B    callers=  0 size=   8  <- 
+2EB35  sub_2EB35    callers=  0 size=   8  <- 
+2EB3F  sub_2EB3F    callers=  0 size=   8  <- 
+2EB49  sub_2EB49    callers=  0 size=   8  <- 
+2EB53  sub_2EB53    callers=  0 size=   8  <- 
+2EB5D  sub_2EB5D    callers=  0 size=   8  <- 
+2EB67  sub_2EB67    callers=  0 size=   8  <- 
+2EB71  sub_2EB71    callers=  0 size=   8  <- 
+2EB7B  sub_2EB7B    callers=  0 size=   8  <- 
+2EB85  sub_2EB85    callers=  0 size=   8  <- 
+2EB8F  sub_2EB8F    callers=  0 size=   8  <- 
+2EBA3  sub_2EBA3    callers=  0 size=   8  <- 
+2EBB7  sub_2EBB7    callers=  0 size=   8  <- 
+2EBC1  sub_2EBC1    callers=  0 size=   8  <- 
+2EBCB  sub_2EBCB    callers=  0 size=   8  <- 
+2EBD5  sub_2EBD5    callers=  0 size=   8  <- 
+2EBDF  sub_2EBDF    callers=  0 size=   8  <- 
+2EBE9  sub_2EBE9    callers=  0 size=   8  <- 
+2EBF3  sub_2EBF3    callers=  0 size=   8  <- 
+2EBFD  sub_2EBFD    callers=  0 size=   8  <- 
+2EC07  sub_2EC07    callers=  0 size=   8  <- 
+2EC11  sub_2EC11    callers=  0 size=   8  <- 
+2EC1B  sub_2EC1B    callers=  0 size=   8  <- 
+2EC25  sub_2EC25    callers=  0 size=   8  <- 
+2EC2F  sub_2EC2F    callers=  0 size=   8  <- 
+2EC39  sub_2EC39    callers=  0 size=   8  <- 
+2EC43  sub_2EC43    callers=  0 size=   8  <- 
+2EC4D  sub_2EC4D    callers=  0 size=   8  <- 
+2EC57  sub_2EC57    callers=  0 size=   8  <- 
+2EC61  sub_2EC61    callers=  0 size=   8  <- 
+2EC6B  sub_2EC6B    callers=  0 size=   8  <- 
+2EC75  sub_2EC75    callers=  0 size=   8  <- 
+2EC7F  sub_2EC7F    callers=  0 size=   8  <- 
+2EC9D  sub_2EC9D    callers=  0 size=   8  <- 
+2ECA7  sub_2ECA7    callers=  0 size=   8  <- 
+2ECB1  sub_2ECB1    callers=  0 size=   8  <- 
+2ECC5  sub_2ECC5    callers=  0 size=   8  <- 
+30D59  sub_30D59    callers=  0 size=   8  <- 
+30D63  sub_30D63    callers=  0 size=   8  <- 
+30D6D  sub_30D6D    callers=  0 size=   8  <- 
+30D77  sub_30D77    callers=  0 size=   8  <- 
+30D81  sub_30D81    callers=  0 size=   8  <- 
+30D9F  sub_30D9F    callers=  0 size=   8  <- 
+30DA9  sub_30DA9    callers=  0 size=   8  <- 
+30DC7  sub_30DC7    callers=  0 size=   8  <- 
+30DD1  sub_30DD1    callers=  0 size=   8  <- 
+30DDB  sub_30DDB    callers=  0 size=   8  <- 
+30DEF  sub_30DEF    callers=  0 size=   8  <- 
+30DF9  sub_30DF9    callers=  0 size=   8  <- 
+30E03  sub_30E03    callers=  0 size=   8  <- 
+30E0D  sub_30E0D    callers=  0 size=   8  <- 
+30E17  sub_30E17    callers=  0 size=   8  <- 
+30E2B  sub_30E2B    callers=  0 size=   8  <- 
+30E35  sub_30E35    callers=  0 size=   8  <- 
+30E3F  sub_30E3F    callers=  0 size=   8  <- 
+30E49  sub_30E49    callers=  0 size=   8  <- 
+30E53  sub_30E53    callers=  0 size=   8  <- 
+30E5D  sub_30E5D    callers=  0 size=   8  <- 
+30E8F  sub_30E8F    callers=  0 size=   8  <- 
+30E99  sub_30E99    callers=  0 size=   8  <- 
+30EA3  sub_30EA3    callers=  0 size=   8  <- 
+30EAD  sub_30EAD    callers=  0 size=   8  <- 
+30EB7  sub_30EB7    callers=  0 size=   8  <- 
+30EC1  sub_30EC1    callers=  0 size=   8  <- 
+30EDF  sub_30EDF    callers=  0 size=   8  <- 
+30EE9  sub_30EE9    callers=  0 size=   8  <- 
+30EF3  sub_30EF3    callers=  0 size=   8  <- 
+30EFD  sub_30EFD    callers=  0 size=   8  <- 
+30F1B  sub_30F1B    callers=  0 size=   8  <- 
+30F25  sub_30F25    callers=  0 size=   8  <- 
+30F43  sub_30F43    callers=  0 size=   8  <- 
+30F4D  sub_30F4D    callers=  0 size=   8  <- 
+30F57  sub_30F57    callers=  0 size=   8  <- 
+30F6B  sub_30F6B    callers=  0 size=   8  <- 
+30F75  sub_30F75    callers=  0 size=   8  <- 
+30F89  sub_30F89    callers=  0 size=   8  <- 
+30F93  sub_30F93    callers=  0 size=   8  <- 
+30F9D  sub_30F9D    callers=  0 size=   8  <- 
+30FA7  sub_30FA7    callers=  0 size=   8  <- 
+30FB1  sub_30FB1    callers=  0 size=   8  <- 
+30FCF  sub_30FCF    callers=  0 size=   8  <- 
+30FE3  sub_30FE3    callers=  0 size=   8  <- 
+30FED  sub_30FED    callers=  0 size=   8  <- 
+30FF7  sub_30FF7    callers=  0 size=   8  <- 
+3101F  sub_3101F    callers=  0 size=   8  <- 
+31029  sub_31029    callers=  0 size=   8  <- 
+3103D  sub_3103D    callers=  0 size=   8  <- 
+31047  sub_31047    callers=  0 size=   8  <- 
+3105B  sub_3105B    callers=  0 size=   8  <- 
+31065  sub_31065    callers=  0 size=   8  <- 
+31079  sub_31079    callers=  0 size=   8  <- 
+31083  sub_31083    callers=  0 size=   8  <- 
+31097  sub_31097    callers=  0 size=   8  <- 
+310A1  sub_310A1    callers=  0 size=   8  <- 
+310AB  sub_310AB    callers=  0 size=   8  <- 
+310B5  sub_310B5    callers=  0 size=   8  <- 
+310BF  sub_310BF    callers=  0 size=   8  <- 
+310DD  sub_310DD    callers=  0 size=   8  <- 
+310E7  sub_310E7    callers=  0 size=   8  <- 
+310F1  sub_310F1    callers=  0 size=   8  <- 
+310FB  sub_310FB    callers=  0 size=   8  <- 
+31123  sub_31123    callers=  0 size=   8  <- 
+3112D  sub_3112D    callers=  0 size=   8  <- 
+31137  sub_31137    callers=  0 size=   8  <- 
+31141  sub_31141    callers=  0 size=   8  <- 
+3114B  sub_3114B    callers=  0 size=   8  <- 
+31155  sub_31155    callers=  0 size=   8  <- 
+31169  sub_31169    callers=  0 size=   8  <- 
+3117D  sub_3117D    callers=  0 size=   8  <- 
+3138F  sub_3138F    callers=  0 size=   8  <- 
+313CB  sub_313CB    callers=  0 size=   8  <- 
+313D5  sub_313D5    callers=  0 size=   8  <- 
+3141B  sub_3141B    callers=  0 size=   8  <- 
+3162A  sub_3162A    callers=  0 size=   4  <- 
+46502  sub_46502    callers=  0 size=  82  <- 
+466DD  sub_466DD    callers=  0 size= 182  <- 
+4693E  sub_4693E    callers=  0 size= 127  <- 
+469BD  sub_469BD    callers=  0 size= 127  <- 
+46AB7  sub_46AB7    callers=  0 size= 138  <- 
+46BC1  sub_46BC1    callers=  0 size= 136  <- 
+46CB2  sub_46CB2    callers=  0 size= 105  <- 
+46D1B  sub_46D1B    callers=  0 size= 215  <- 
+46DF2  sub_46DF2    callers=  0 size= 232  <- 
+46EDA  sub_46EDA    callers=  0 size= 103  <- 
+46F41  sub_46F41    callers=  0 size= 105  <- 
+46FAA  sub_46FAA    callers=  0 size= 112  <- 
+4701A  sub_4701A    callers=  0 size= 117  <- 
+4708F  sub_4708F    callers=  0 size=  96  <- 
+470FF  sub_470FF    callers=  0 size= 117  <- 
+47174  sub_47174    callers=  0 size= 171  <- 
+4721F  sub_4721F    callers=  0 size= 182  <- 
+472D5  sub_472D5    callers=  0 size=  82  <- 
+47327  sub_47327    callers=  0 size=  82  <- 
+47379  sub_47379    callers=  0 size=  82  <- 
+473CB  sub_473CB    callers=  0 size=  82  <- 
+4906E  sub_4906E    callers=  0 size= 309  <- 
+5C24D  sub_5C24D    callers=  0 size=  22  <- 
+----- end target script output -----
+[*] finished executing rank_unnamed_functions.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\legend\gateway\gatemain.idb
+[*] ARGV = ['C:\\dev\\legend\\gateway\\ida_scripts\\batch_run_and_export.py', 'apply_renames_gatemain.py', 'noexport']
+[*] reading apply_renames_gatemain.py
+[*] executing apply_renames_gatemain.py
+[*] captured stdout from target script:
+----- begin target script output -----
+DRY_RUN = True
+0x11635: 'Logics_prehandlerChainReaches' -> 'Logics_prehandlerChainReaches'   (sub_11635(logicNum, targetLogicNum): walks logicNum's prehandler chain stage by stage (bounded per-type by METHOD_SECTION_INFO, same table Logics_getPrehandlerMode consults) -- each stage's Logics_getPrehandlerMode result, if nonzero, is itself an object index the search recurses into with the SAME targetLogicNum (the recursive call is sub_11635(mode, targetLogicNum), not sub_11635(targetLogicNum, mode) -- confirmed by the exact push order). Returns 1 as soon as any stage's delegate chain eventually reaches targetLogicNum, 0 if every stage is exhausted without a match. Confirmed real call site in main() (main+0xA9E-ish): sub_11635(vocab_list_0._logicNum, Logics_logicNum211) -- both arguments are logicNum-shaped (proc_table indices), not one vocab id and one logicNum as an earlier guess assumed.)
+0x115ce: 'Logics_prehandlerHasMode' -> 'Logics_prehandlerHasMode'   (sub_115CE(logicNum, mode, requiredVal2): sibling to Logics_prehandlerChainReaches but checks EXACT equality against each stage's Logics_getPrehandlerMode result (no recursion into a delegate object) -- returns 1 as soon as any stage's mode equals the given mode value, 0 otherwise. requiredVal2, if >= 0, gates the whole check on Logics_getVal2_2(logicNum) first matching it (skipped entirely if requiredVal2 < 0).)
+0x1535e: 'Score_add' -> 'Score_add'   (Confirmed by decoding msgId 0x803/0x804 from real GATESTR.DAT: '[Your score has just gone up by %d.' / ' NOTE: You can activate and deactivate score-change notification using the NOTIFY command.'. Adds its argument to _score, and if _scoreNotifyEnabled is set, prints the above (the NOTE only once, gated by _scoreNotifyTipShown).)
+0xcbb78: '_score' -> '_score'   (Confirmed via Score_add (adds to this) and msgId 0x2A: 'You have achieved a score of %d out of 1600, in %d turns.' -- the two printf args at that call site are (_turnCount, _score) in that order, matching the message's two %d's.)
+0xcb7fe: '_turnCount' -> '_turnCount'   (Incremented once per main() game-loop iteration (a classic turn counter); confirmed as the first %d in msgId 0x2A's score-and-turns status message, paired with _score -- see above.)
+0xcc6ab: '_scoreNotifyEnabled' -> '_scoreNotifyEnabled'   (Gates whether Score_add prints its notification at all -- the in-game NOTIFY command's persisted toggle, per msgId 0x804's text (see Score_add's note).)
+0xcbb7a: '_scoreNotifyTipShown' -> '_scoreNotifyTipShown'   (One-time flag: Score_add prints the NOTIFY-command explanation (msgId 0x804) only the first time a score notification fires, then sets this so it isn't repeated.)
+0x5668c: '_gameTicks' -> '_gameTicks'   (Confirmed via msgId 0x29: 'It is Dorman day %d.', computed as _gameTicks/480 + 1 right before that message -- a real-time game clock in ticks, 480 ticks per in-universe 'Dorman day'.)
+0x14a37: 'Stream_loadFile' -> 'Stream_loadFile'   (Top-level entry: flushes the active window's pending text (TextWindow_flushPendingText), then reads (Stream_readChunks), processes (Stream_processChunks), and frees (Stream_freeChunks) a whole file's worth of chunked buffers.)
+0x28e2c: 'TextWindow_flushPendingText' -> 'TextWindow_flushPendingText'   (Flushes Windows_pendingText for the current Windows_activeWindow via TextWindow_addDirect if that window has buffered/queued text waiting -- distinct from the already-named TextWindow_flushText.)
+0x1ddf6: 'Stream_readChunks' -> 'Stream_readChunks'   (Opens filename, seeks to find its total size, then reads it into up to 8 separately-allocated RAM buffers (dword_C84A6[] array, each up to ~64KB since one DOS allocation can't hold an arbitrary file), aborting the whole read early if a key is pressed (Events_isKeyPending) or if word_C8582 bit 8 is clear or bit 0x40 is set.)
+0x1e052: 'Stream_processChunks' -> 'Stream_processChunks'   (Walks the same buffer array Stream_readChunks filled, dispatching each non-empty one through Stream_processChunk -- again abortable via Events_isKeyPending between chunks, and gated by the same word_C8582 bits.)
+0x1e0e8: 'Stream_freeChunks' -> 'Stream_freeChunks'   (Frees all 8 of the buffer-array slots via kill_pointer_ -- the cleanup step after Stream_readChunks/Stream_processChunks.)
+0x180e3: 'Stream_processChunk' -> 'Stream_processChunk'   (Per-chunk handler: reads a couple of header bytes from the buffer (offsets 5 and 7, before the 32-byte header/payload boundary already established) into cx/bx, then calls the actual processing logic through a configurable callback function pointer (word_C84D0) with the payload pointer (buffer+0x20) -- not traced further since the callback's actual target varies by caller and wasn't identified this pass.)
+0x1ddc0: 'Stream_configure' -> 'Stream_configure'   (Called once from gatemain_start with argv[6]/[7]/[8] (as cmdline_param6/7/8), i.e. purely launch-time configuration, not anything computed during play. If cmdline_param6==4: stashes cmdline_param7/8 into word_C84F3/byte_C84F5 (role not traced), then always calls Stream_selectHandler(cmdline_param6).)
+0x18042: 'Stream_selectHandler' -> 'Stream_selectHandler'   (Dispatches on its mode argument (0/1/2/4, confirmed as cmdline_param6 by its only caller, Stream_configure) to wire up word_C84D0/word_C84D2/word_C84D4 -- NOT 4 independent callback functions, but several different NEAR-call entry points into one shared decoder continuation body (spanning what IDA shows as several separate small subs -- e.g. mode 1's target is 32 bytes into what IDA calls sub_18242, skipping a precondition check mode 0's target doesn't skip). The actual decoded resource type wasn't identified this pass -- deferred, see roadmap.md.)
+0xc85a4: '_soundMode' -> '_soundMode'   (argv[3] (via atoi) in gatemain_start's own parameter parsing -- confirmed positionally to be the same soundMode argument gate.idb's _main passes as arg3 to _execl (that session left it named only as 'soundMode' locally, not cross-referenced to this global). Manipulated with bit tests/masks elsewhere (e.g. 'and cmdline_param3, 0F7h'), so it's a bitflag word, not a plain enum.)
+0xc85aa: '_streamMode' -> '_streamMode'   (argv[6] -- confirmed as Stream_configure/Stream_selectHandler's mode argument (0/1/2/4), a pure launch-time configuration value, not anything computed during play.)
+0x18182: 'Cpu_beginSpeedTest' -> 'Cpu_beginSpeedTest'   (Saves the real INT 70h/72h vectors and current DOS date/time, installs a temporary ISR (just decrements byte_C84E8 and irets), and reprograms the 8253/8254 PIT (port 43h mode/command, port 40h count) to a known frequency for Cpu_measureSpeed's busy-loop to count against.)
+0x18148: 'Cpu_measureSpeed' -> 'Cpu_measureSpeed'   (Sets byte_C84E8=1, then runs a fixed imul-based busy loop (8 outer iterations) until Cpu_beginSpeedTest's temporary ISR decrements byte_C84E8 to 0 on a timer tick; the iteration count reached (shifted right 3) becomes word_C84DA -- a CPU speed rating, faster CPUs completing more busy-work per fixed-length timer tick.)
+0x181d8: 'Cpu_endSpeedTest' -> 'Cpu_endSpeedTest'   (Restores the real INT 70h/72h vectors and PIT divisor Cpu_beginSpeedTest saved, then re-sets DOS's date/time from the same saved values -- correcting for clock drift caused by running the PIT at the calibration frequency in between.)
+0xc84da: 'cpuSpeedRating' -> 'cpuSpeedRating'   (Cpu_measureSpeed's result; Stream_selectHandler compares this against 0x160 to choose between performance-tier code paths -- the actual criterion behind that mode dispatch, not a resource-type distinction as hedged in the fourth-pass notes above.)
+0x12ed2: 'Queue_remove' -> 'Queue_remove'   (Sibling to the already-named Queue_add: searches _queueTable (the same array Queue_add appends to, confirmed by the identical seg126_93/-0x73FCh offset access) for an entry whose _id matches its argument, and if found, memmove-compacts every later entry down by one slot -- classic remove-and-compact on a flat array.)
+0x14b64: 'Logics_checkMoveRestriction' -> 'Logics_checkMoveRestriction'   (Confirmed by decoding its own message text (GATESTR.DAT 0x800: "You can't move while you're wearing the collar."; 0x801: "[You get o%sf%s first.]", i.e. a dismount/disembark-first message): a shared movement-precondition gate checked before letting the player move, gating on several hardcoded plot-item logicNums (0xD3/211 = the collar; others, e.g. 0xA2/0xA8/0x9D, not individually identified -- plausibly mount/vehicle-related given the dismount message) via Logics_prehandlerChainReaches/Logics_IsPrehandler1/Logics_prehandlerHasMode, plus a Logic_call(_roomLogicNum, action=0xF) room-override hook. Returns nonzero (with the blocking message already printed) if movement is currently disallowed.)
+0x14ed6: 'Logics_tryMoveDirection' -> 'Logics_tryMoveDirection'   (sub_14ED6(directionChar): the core room-exit resolution function. arg_0 is the parsed direction character ('n'/'s'/'e'/'w'/etc, confirmed by direct comparison against a per-room exit-table entry field and by setting Parser_val21 to the same byte on a match). Walks the current room's exit table (var_6 entries, count from sub_12445(_roomLogicNum)), each entry a small variant record (direction char + a 1-5 type tag + type-specific data) dispatching to 5 different exit-resolution shapes -- a direct room link, a Logics_getBit-gated door (bits 0xC/0x10, printing the locally-embedded string "%sn't open.\n" when closed -- not a GATESTR.DAT message, a literal string constant in this executable's own data segment), a fixed blocked-message table lookup, a sub_14742-computed dynamic destination, and one more table-based lookup not fully distinguished from the others. Calls the already-named Logics_checkMoveRestriction before actually moving, and falls back to "You can't go that way.\n" when no exit matches. Not fully traced: sub_123F3/sub_12445/sub_14742's individual roles, and the exact semantics of each of the 5 exit-type branches.)
+0x123f3: 'Logics_getRoomMoveEnabled' -> 'Logics_getRoomMoveEnabled'   (sub_123F3(logicNum): validates range and proc_table.type==1 (must be a Room), then returns the low byte of Room.field_16 (0 for anything else). Logics_tryMoveDirection treats this as an overall gate -- if zero, movement processing is skipped entirely for the room regardless of its exit table -- distinct from (and checked independently of) Logics_checkMoveRestriction's item-based gating. Exact semantics of Room.field_16 itself not confirmed beyond this usage.)
+0x12445: 'Logics_getRoomExitCount' -> 'Logics_getRoomExitCount'   (sub_12445(logicNum): identical shape/guard to Logics_getRoomMoveEnabled, but returns the full word at Room.field_18 -- used directly as the exit-table entry count in Logics_tryMoveDirection (decremented once there for 0-based indexing, then drives the direction-matching loop).)
+0x14742: 'Logics_callSpecialExit' -> 'Logics_callSpecialExit'   (sub_14742(exitId, action): a function-pointer dispatch table (off_3C862[exitId*4], bounds-checked exitId < 0x2C/44), calling whichever handler is selected with a single action-code argument. This is Logics_tryMoveDirection's exit-type-4 branch (a per-exit "special" handler rather than a plain room link or gated door) -- called there as Logics_callSpecialExit(exitTableEntryId, 0xF), matching the action-code convention already seen elsewhere (e.g. Logic_call/room_load's action arguments). Individual handler routines in the dispatch table not traced.)
+0x312d1: 'Game_showEndingMessage' -> 'Game_showEndingMessage'   (Confirmed by decoding its own message text: msgId 0x7816 = "You have failed.", 0x7817 = "You have won the game, scoring %d out of 1500 points." (using _score as the %d). Branches on _hasWonGame (was byte_CBB6E), prints the appropriate ending message, resets that flag, then calls Game_endGameMenu.)
+0xcbb6e: '_hasWonGame' -> '_hasWonGame'   (Gates which of the two ending messages Game_showEndingMessage prints -- confirmed by the message text itself (fail vs. win).)
+0xc4ae6: 'Game_endGameMenu' -> 'Game_endGameMenu'   (The classic post-ending prompt loop: calls sub_C48E4 repeatedly for a choice, dispatching 1=restart (sub_1057E), 2=restore-a-save (j_load_game(2)), 3=undo (Parser_performUndo), 4=quit (j_shutdown) -- the textbook Infocom-style "RESTART, RESTORE, UNDO, or QUIT?" menu shown after winning or losing. sub_C48E4 (the actual prompt/choice getter) not traced.)
+0x149d8: 'Logics_describeContents' -> 'Logics_describeContents'   (sub_149D8(logicNum, prepositionType): confirmed by its own message text, "\t%cn%s you see" -- %c is 'O' (prepositionType == 1, "On") or 'I' (otherwise, "In"), %s is the far-pointer string j_printObj(logicNum, 2) returns (the object's own printed name). First calls thunk_sub_66DFD (Logics_countVisibleContents) as a gate -- prints nothing at all if it returns 0 -- then builds "On/In <object> you see", calls thunk_sub_667D0 (Logics_listContents) to print the actual comma-separated content list, and closes with ".\n". The classic container/surface description sentence.)
+0x66dfd: 'Logics_countVisibleContents' -> 'Logics_countVisibleContents'   (sub_66DFD(logicNum, handlerId): walks a linked list of contained items (Logics_getUnkHandler for the first, then Logics_getVal1 repeatedly for each next item, terminated at 0), counting only those where Logics_getBit(item, 8) is false (bit 8 -- not individually confirmed, but consistently used as a visibility/hidden flag across this cluster). Used by Logics_describeContents purely as a "is there anything to show" gate.)
+0x667d0: 'Logics_listContents' -> 'Logics_listContents'   (sub_667D0(logicNum, handlerId): the same linked-list walk as Logics_countVisibleContents, but instead of counting, prints each visible item's name (via Logics_getVal1-chased entries), inserting "," (TextWindow_addChar) between entries -- the actual comma-separated content listing Logics_describeContents prints after "On/In <object> you see".)
+0x136af: 'Game_updateStatusLine' -> 'Game_updateStatusLine'   (Confirmed by reading its two literal (non-GATESTR.DAT) format strings at seg067+0x227/+0x238: "%s %d, %02d:%02d" (24-hour) and "%s %d, %d:%02d%c" (12-hour, %c = 'a'/'p' for am/pm). Computes hour-of-day/minute from _gameMinutes (was Persisted_val4: /60 then %24 for hour, %60 for minute) and a day number from _gameDayNumber+0x10 (was Persisted_val5), formats "<name> <day>, <time>" (name via a 12-entry lookup table at seg067_0+0x1FEh, not itself decoded), appends the current room's name (Logics_getObjectString(_roomLogicNum)), and passes the combined string through sub_160E1 (a bounded string-copy utility, not confidently a "set title" function on its own -- not renamed). Blanked entirely (spaces instead of a real time) when _statusTimeHidden (was Persisted_val7) is set. Persisted_val194's role in selecting the 24-hour vs. 12-hour format (compared against the literal value 8) wasn't confirmed beyond that comparison -- left unrenamed.)
+0xcb800: '_gameMinutes' -> '_gameMinutes'   (Elapsed in-game minutes -- confirmed via Game_updateStatusLine's hour/minute-of-day math (/60 then %24 for hour, %60 for minute). A separate, more granular clock from _gameTicks (480 ticks/day, used for the 'Dorman day %d' message) -- both track real-time progression but at different resolutions for different displays.)
+0xcb802: '_gameDayNumber' -> '_gameDayNumber'   (Elapsed in-game day count -- confirmed via Game_updateStatusLine (added to a fixed +0x10 offset, plausibly a calendar-epoch shift, before being formatted as the day number).)
+0xcbb6f: '_statusTimeHidden' -> '_statusTimeHidden'   (Nonzero blanks Game_updateStatusLine's time portion (spaces instead of a real "day, time" string) -- confirmed directly by that branch's code.)
+0x1496b: 'TextWindow_showMorePrompt' -> 'TextWindow_showMorePrompt'   (sub_1496B(): the classic "-- MORE --" screen-pagination prompt. Flushes an (always-empty here) buffer via TextWindow_addDirect, saves the cursor position (get_text_cursorPos), writes the literal string "- MORE -" (aMore_1 at 0xCBB7C, immediately after the already-named _scoreNotifyTipShown/unk_CBB7B bytes), polls j_Events_waitForPress/Events_checkKeypress until a key is pressed, restores the cursor position, overwrites the prompt with 8 literal spaces (0xCBB85), then calls TextWindow_resetFontLinesRemaining to reset the page-line counter so the next screenful can accumulate before prompting again. 24 callers, scattered across many different logic/method routines -- i.e. invoked wherever paginated text output fills the window, not owned by one subsystem.)
+0x153b6: 'Logics_takeObject' -> 'Logics_takeObject'   (sub_153B6(logicNum): confirmed by its one real call site (sub_6AD19, the TAKE verb's dispatcher), which prints the literal message "You take%s" (aYouTakeS) immediately before calling this. Bails out (returns 0) if thunk_sub_67662(logicNum, Logics_logicNum211, 0) returns 2 (object can't be taken, e.g. fixed/scenery). Otherwise: reassigns the object's handler to Logics_logicNum211 (Logics_updateHandler), clears bit 8 (the same 'hidden/visible' bit seen in the Logics_*Contents cluster), awards a one-time pickup score bonus via Logics_getTakeScore/Score_add/Logics_setTakeScore(logicNum, 0) (zeroing it so it isn't paid out again), then sets bit 2 ('taken'), clears bit 0xA, sets bit 0x1D, clears bit 8 again, and returns 1.)
+0x12109: 'Logics_getTakeScore' -> 'Logics_getTakeScore'   (sub_12109(logicNum): bounds-checked (against METHODS_COUNT) proc_table lookup returning the type-tagged struct's field_E/field_20/field_14 (Room/LogicSection2/LogicSection8 -- same field slot across all three type shapes, same dispatch idiom as the already-named Logics_getVal2_2 family). Confirmed as a one-time take-score value: every call site immediately Score_add()s a nonzero result and then zeroes it via Logics_setTakeScore, both in Logics_takeObject and in the similarly-shaped take logic inside sub_143F3 (not itself renamed this pass).)
+0x12179: 'Logics_setTakeScore' -> 'Logics_setTakeScore'   (sub_12179(logicNum, value): setter half of Logics_getTakeScore -- same bounds-checked proc_table field_E/field_20/field_14 dispatch, just storing instead of loading.)
+0x24ffb: 'Mouse_pollPosition' -> 'Mouse_pollPosition'   (sub_24FFB(xPtr, yPtr): confirmed via its one real caller, get_mouse_input, which passes &x/&y straight through. If both pointers are null, just forwards to the already-named get_mouse_buttons(). Otherwise: if mouseState's keyboard-cursor-emulation bits are set, reads one key via sub_25216 (not renamed -- single caller, private helper) to move a keyboard-driven cursor and feeds Enter/Space through addCharacter as a click; else reads the real mouse position/buttons via INT 33h (AH=3), waiting out an already-held button via sub_24FAE (not renamed -- single caller, private helper) first. Writes the resulting x/y through the two far-pointer arguments and returns a button/click code.)
+0x148e8: 'Logics_printKeyedMessage' -> 'Logics_printKeyedMessage'   (sub_148E8(key, table, count): table is a far pointer to `count` 6-byte records (word key, dword far-pointer-to-message-string). Scans for a record whose key equals `key` OR is 0 (a wildcard/default entry); once found, if that record's message pointer is non-null, prints it via TextWindow_add and returns 1; if the message is null, keeps scanning forward through SUBSEQUENT records (regardless of their own key) for the first one with a non-null message and prints that instead -- i.e. a match with an empty message is a placeholder pointing at a shared fallback message a little further down the same table. Returns 0 if no matching record is ever found. Confirmed generic (not tied to one particular key source) via two call sites: sub_76A79 (a compiled logic method) passes vocab_list_0._altVocabId against a 6-entry table; sub_87302 is a thin wrapper passing its own single argument straight through against an unrelated 55-entry table. This is the same 'per-object special-response override table, falling back to generic text' pattern seen elsewhere in the compiled room/object logic.)
+0x27134: 'AnimPics_freeAll' -> 'AnimPics_freeAll'   (sub_27134(): for each active animated-picture slot (0.._animPicsSlotCount, was word_C9658), frees its 20 Image records via the new Image_freeFrames(handle, 20) and then kill_handle()s the slot's own handle (animPicsHandles[i], was byte_D22DA -- a 5-slot array of dword handles), zeroing it. Finally resets _animPicsSlotCount to 0. CORRECTS last pass's overview.md guess that this was 'the already-initialized per-tick driver' -- it's the teardown/free-all routine, called from AnimPics_resetForRoom (was sub_26D50) specifically when slots are already active.)
+0x26d08: 'Image_freeFrames' -> 'Image_freeFrames'   (sub_26D08(imgFarPtr, frameCount): trivial helper -- calls Image_Free on frameCount consecutive Image-sized records starting at imgFarPtr. Confirmed directly by its body; used by AnimPics_freeAll to release a slot's up-to-20 loaded frames.)
+0x26d50: 'AnimPics_resetForRoom' -> 'AnimPics_resetForRoom'   (sub_26D50(): if _animPicsSlotCount (was word_C9658) is already nonzero, tears down every active slot via AnimPics_freeAll; otherwise (first-ever call) just zeroes the 10-word per-slot frame-duration/timing table at 0xA3BA that AnimPics_freeAll's sibling slot-register/draw functions (sub_26D7E/sub_26F74, not renamed this pass) maintain. Called from graphics_init -- the room-transition reset point for the animated-picture-overlay subsystem sighted last pass.)
+0xc9658: '_animPicsSlotCount' -> '_animPicsSlotCount'   (Was word_C9658: count of active animated-picture-overlay slots (0-5), shared by AnimPics_freeAll/AnimPics_resetForRoom and the not-yet-renamed sub_26D7E (registers a new slot, capped at 5)/sub_26F74 (per-slot timing/draw loop).)
+0xd22da: 'animPicsHandles' -> 'animPicsHandles'   (Was byte_D22DA: 5-slot array of dword memory handles, one per active animated-picture-overlay slot -- allocated in sub_26D7E (not renamed this pass) via new_handle, freed in AnimPics_freeAll via kill_handle.)
+0x1052c: 'get_buffer_size' -> 'get_buffer_size'   (get_buff_size?(): confirmed exactly as its tentative name says -- finds the largest free memory block (get_largest_free_block_2), reserves a fixed amount depending on video mode (halved if img._active), and returns whatever's left (0 if not enough). Simply dropping the uncertainty-marking '?' now that it's directly confirmed; not part of the broader rename-worthy finding below.)
+0x1d896: 'Midi_sendByte' -> 'Midi_sendByte'   (sub_1D896(byte): polls the status port (_midiStatusPort, was word_C83AC) for bit 0x40 clear (MPU-401's 'output not ready/busy' bit) with a 0xFFFF-iteration timeout; once clear, writes `byte` to the data port (_midiDataPort, was word_C83AA) and returns 1, or 0 on timeout. Confirmed as MPU-401 UART-mode MIDI output (not e.g. a printer, an earlier hypothesis) via the surrounding cluster: sub_1D966 (not renamed) configures these same two ports from a caller-supplied base port and installs a DOS interrupt vector at IRQ+8 with 8259 unmasking -- classic MPU-401 IRQ-driven setup; sub_1EE70 (not renamed) reads a 3-byte big-endian value via sub_1ECB6 (a generic per-track stream-offset byte reader) at offsets 2/3/4 -- the exact shape of a Standard MIDI File tempo meta-event (FF 51 03 tt tt tt) -- and its arithmetic involves the literal constant 500000, MIDI's default microseconds-per-quarter-note unit, before calling this function to actually transmit the resulting byte(s). This is the hardware-output-side entry into the same `.MUS` background-music engine already reached from the memory-management side via the previously-flagged sub_1FE5C (see file-formats.md's 'honestly murky' .MUS section) -- not fully unified into one confirmed picture yet, but a real breakthrough on the piece that was explicitly flagged as needing exactly this angle.)
+0xc83aa: '_midiDataPort' -> '_midiDataPort'   (Was word_C83AA: MPU-401 data port, set from a caller-supplied base port in sub_1D966 (not renamed), read by Midi_sendByte.)
+0xc83ac: '_midiStatusPort' -> '_midiStatusPort'   (Was word_C83AC: MPU-401 status port (base+1), set alongside _midiDataPort in sub_1D966 (not renamed); Midi_sendByte polls its bit 0x40 (output-not-ready/busy) before writing.)
+0x288f4: 'Clock_delayTicks' -> 'Clock_delayTicks'   (sub_288F4(loTicks, hiTicks): records the current _clock() value, then busy-loops calling _clock() again until the elapsed 32-bit tick count (current - start) is >= the (loTicks, hiTicks) 32-bit target. A generic timing/delay primitive -- used by the already-named Screen_fadeOut to pace fade steps, and by sub_26C0C (part of the Image_Init/AnimPics-adjacent cluster, not renamed) for similar pacing.)
+0x28920: 'Speaker_playTone' -> 'Speaker_playTone'   (sub_28920(freqLo, freqHi, durationLo, durationHi): the classic PC-speaker square-wave tone sequence -- enable the speaker (in al,61h; or al,3; out al,61h), program PIT counter 2 for square-wave mode (out 43h,0B6h), write the 16-bit frequency divisor as two sequential bytes to the counter's data port (out 42h, freqLo/freqHi), hold for (durationLo, durationHi) ticks via the already-named Clock_delayTicks, then disable the speaker again (in al,61h; and al,0FCh; out al,61h). A separate, simpler primitive from the digitized-sample PC-speaker playback engine documented earlier -- this one generates a plain tone, no sample data involved.)
+0x2899d: 'Speaker_playErrorBeep' -> 'Speaker_playErrorBeep'   (sub_2899D(): plays a short ~4004Hz tone (divisor 298) for 50 ticks via Speaker_playTone, waits 50 ticks (Clock_delayTicks), then plays the same tone again -- a double-beep. Confirmed as specifically an 'invalid selection' error sound via its real call site in sub_28595 (itself reached from the already-named get_mouse_input): played and returns 0 when the clicked region index is out of range or maps to an empty/invalid table entry, vs. the normal path which inserts the selected character into the input line and returns 1.)
+0x1caf6: 'Opl2_writeRegister' -> 'Opl2_writeRegister'   (sub_1CAF6(reg, value): writes `reg` to the OPL2 address port (_opl2BasePort, was word_D3BD0 -- confirmed assigned the literal 0x388, the standard AdLib/OPL2 base address, elsewhere in this same overlay), does several dummy port reads (the chip's required inter-write settling delay), writes `value` to the data port (_opl2BasePort+1), then several more dummy reads (a longer delay, matching the OPL2's well-documented longer settling time after a data write than after an address write). IDA's inline comment on this exact 'out dx,al' ('DMA controller, 8237A-5, channel 0 base address and word count') is a stale auto-annotation matching the literal port VALUE 0 in isolation -- misleading here, since the actual port comes from a variable confirmed set to 0x388, not 0. Its only caller, sub_1CB32 (not renamed), computes and writes OPL2 registers 0xA0+channel/0xB0+channel -- the per-channel frequency-LSB and octave/key-on/frequency-MSB registers -- strongly suggesting an 'Opl2_setChannelFrequency'-shaped function, left for a future pass.)
+0xd3bd0: '_opl2BasePort' -> '_opl2BasePort'   (Was word_D3BD0: confirmed assigned the literal 0x388 elsewhere in this overlay -- the standard AdLib/OPL2 FM synthesizer base I/O address. Read by Opl2_writeRegister.)
+0x143f3: 'Logics_autoTakeObject' -> 'Logics_autoTakeObject'   (sub_143F3(logicNum): only proceeds if logicNum matches the current parser subject (Logics_logicNum211 == Parser_val2), the object's prehandler type (proc_table-shaped lookup via Logics_getPrehandler) is 7, bit 0x1D is set (a flag Logics_takeObject itself sets on a normal take -- plausibly 'portable'/'auto-takeable'), bit 0xA is clear, Logics_prehandlerChainReaches(logicNum, Logics_logicNum211) is FALSE, and thunk_sub_67662(logicNum, Logics_logicNum211, 0) returns 0. If all hold: prints the object's name then the real, decoded GATESTR.DAT message 0xC406 -- '[Taking%s first.]' -- then performs the exact same take-mechanics tail as Logics_takeObject (Logics_updateHandler, clear bit 8, one-time Logics_getTakeScore/Score_add/Logics_setTakeScore gated on bit 2, then set bit 2). The classic parser-adventure 'auto-take a needed object before performing the real command' idiom. Not all of the gating preconditions' exact meanings were nailed down this pass (particularly prehandler type 7 and bit 0xA) -- flagged for a future pass rather than guessed.)
+0x26edc: 'AnimPics_resyncSlots' -> 'AnimPics_resyncSlots'   (sub_26EDC(): for each active animated-picture slot (0.._animPicsSlotCount), resets the per-slot frame-index byte (same field sub_26F74 reads as its frame position) to either 0, or frameCount-1 if the slot's loop-direction byte reads 0xFF (playing in reverse) -- then adds the current _clock() value into a per-slot 32-bit accumulator at 0xA3E2+slot*4, re-basing each slot's animation-timing clock to now. Confirmed called from room_load: this is the 'resync all active animation timers to the current clock' step run after a room transition, preventing animations from jumping forward using stale elapsed time accumulated while the game was paused/loading.)
+0x12f81: 'Queue_find' -> 'Queue_find'   (sub_12F81(key): read-only companion to the already-named Queue_remove -- confirmed via a direct structural match against its body (same _queueCount-bounded scan over the same 4-byte-entry table at the same seg126_93-relative offsets, matching on the same key byte at entry+0). Returns the entry's stored word (entry+2) if found, or the sentinel 0x7FFF if not -- a find/peek operation where Queue_remove additionally deletes the match.)
+0x265b0: 'load_and_scale_pic' -> 'load_and_scale_pic'   (sub_265B0(picNumber): calls the already-named load_picture(picNumber, frameNumber=0), then sub_25B90() and sub_25BCE(result) (not renamed) -- the exact same two-helper sequence the already-named scale_pic (reached from Image_load) uses to scale a picture to fit its target area. Named to match that existing lowercase-underscore convention rather than invent a new one for this small, closely-related cluster. Many unrelated callers (Commset_show, sub_7179E, sub_74149, and 8 more) confirm this is a generic 'load and display picture N, scaled' entry point, not owned by one subsystem.)
+0x26d7e: 'AnimPics_registerSlot' -> 'AnimPics_registerSlot'   (sub_26D7E(picNumber, frameCount, loopDirection, duration): registers a new active animated-picture slot (capped at 5 via _animPicsSlotCount, frameCount capped at 20) -- allocates a handle (new_handle), clears frameCount Image records via the new Image_clearFrames, loads each frame via the already-named Image_load (bailing out and freeing everything if any frame fails to load), then stores frameCount/loopDirection/duration into the same per-slot table AnimPics_resetForRoom/sub_26F74 maintain and increments _animPicsSlotCount. Already fully characterized in the AnimPics_freeAll writeup; finalizing the name now.)
+0x26c88: 'Image_clearFrames' -> 'Image_clearFrames'   (sub_26C88(imgFarPtr, count): zeroes the first byte (the active/loaded flag, per the already-referenced img._active) of each of `count` consecutive Image-sized records -- the initialization counterpart to the already-named Image_freeFrames, used by AnimPics_registerSlot to blank a slot's frame table before loading real frames into it.)
+0x28bb7: 'Window_destroy' -> 'Window_destroy'   (sub_28BB7(windowNum): validates windowNum in [0,6) (no-op otherwise), then does full teardown: the already-named Window_close, releases any reserved regions (Windows_ReserveRegions(windowNum, 0)), zeroes Windows_x2[windowNum] (the per-slot 'in use' flag), rescans all 6 slots to recompute Wndows_numWindows (highest active index + 1), and clears Windows_activeWindow to -1 if this was the active window. A superset of Window_close, not a synonym for it.)
+0x9e8df: 'Game_restartAfterDeath' -> 'Game_restartAfterDeath'   (sub_9E8DF(): confirmed via two real call sites, each printing a decoded GATESTR.DAT death message immediately before calling it (msgId 0x41E, 'you leap from the cliff walkway into the abyss' -- a JUMP-off-a-cliff easter egg; msgId 0x4008, killed by an axe blow). Calls the still-unconfirmed sub_26F2A and the already-named AnimPics_freeAll, then -- gated on whether this is the player's first death or a repeat one (_deathCount, was word_CE8A8) -- either shows a 'you have died' picture directly or pauses (TextWindow_showMorePrompt) and routes through sub_15674 (a major hub function, not renamed) with a death picture/message pair. Afterward resets _roomLogicNum's handler, object 0x28's handler, and a large swath of Persisted_valNNN globals (95 through at least 124) plus roughly a dozen individual objects' handlers (logicNums 0x21-0x40) back to their initial values -- effectively restarting the game's state in place after the player dies, without a separate confirmation prompt visible in this function itself.)
+0xce8a8: '_deathCount' -> '_deathCount'   (Was word_CE8A8: incremented once per call to Game_restartAfterDeath; gates whether that function shows the death picture directly (repeat death) or pauses with a message first (first death) -- effectively a 'has the player died before' counter.)
+0x1019c: 'invoke_callback' -> 'invoke_callback'   (sub_1019C(fnPtr): calls the far function pointer passed as its only argument, with no further arguments of its own -- a minimal indirect-call trampoline. 8 callers across unrelated functions confirm it's generic plumbing, not tied to one callback's specific signature beyond 'takes no arguments'.)
+0x1dd41: 'Midi_bufferByte' -> 'Midi_bufferByte'   (sub_1DD41(): implicit-AL-argument primitive -- writes AL to *_midiBufferPos (was word_C8445) and advances the pointer. Trivial in isolation, but its only callers are all within one un-named data-driven state machine (labeled only as 'seg024:XXXX' locations, not a normal function -- the same 'compiled logic, not a clean function' shape seen elsewhere in this codebase) that branches on incoming byte values matching Standard MIDI status bytes almost exactly: 0xF0 (SysEx start), 0xF2 (Song Position Pointer), 0xF3 (Song Select), a checked range 0xFA-0xFD (System Realtime Start/Continue/Stop), and 0xFF (Meta-event/Reset). Strongly suggests this state machine is the .MUS format's MIDI event-stream parser, buffering bytes via this function before eventual dispatch -- not fully unified with the Midi_sendByte/sub_1D966/sub_1EE70 cluster yet, but a significant new clue for that still-open thread.)
+0xc8445: '_midiBufferPos' -> '_midiBufferPos'   (Was word_C8445: a growing buffer-position pointer, reset to a fixed offset (0x527) elsewhere in the same un-named MIDI-status-byte state machine; advanced one byte at a time by Midi_bufferByte.)
+0x1ecde: 'Midi_readVarLengthValue' -> 'Midi_readVarLengthValue'   (sub_1ECDE(trackIndex): decodes a Standard MIDI File variable-length quantity from track `trackIndex`'s current read position -- reads a byte via Midi_peekTrackByte(trackIndex, 0), accumulates its low 7 bits into a growing 32-bit value (shifting the accumulator left 7 bits each iteration), increments the track's position counter (word ptr [0xA1A4+trackIndex*2]) once per byte consumed, and continues while the byte's high bit (0x80) is set -- the textbook MIDI VLQ decode loop. Returns the low 16 bits of the decoded value in ax (word_D20F8); the high 16 bits (word_D20FA) are available to callers that need the full 32-bit value.)
+0x1ecb6: 'Midi_peekTrackByte' -> 'Midi_peekTrackByte'   (sub_1ECB6(trackIndex, byteOffset): reads a single byte at trackBase(trackIndex) + byteOffset, where trackBase is looked up from a small per-track table and added to a far pointer (_tmpSub._val10) to the loaded track data. Callers pass byteOffset=0 to read at the track's current position (advanced separately by Midi_readVarLengthValue's position counter) or a small positive offset to peek ahead at a just-identified fixed-format payload (e.g. the Midi_sendByte pass's sub_1EE70, reading a 3-byte tempo meta-event at offsets 2-4 without advancing). The per-track base-offset table itself wasn't renamed -- it's referenced via two different segment-relative names in different callers (-0x5E5Ch here vs. 0xA1A4 in Midi_readVarLengthValue) that may or may not be the same physical array; not confirmed either way.)
+0x2a933: 'Surface_getPixelOffset' -> 'Surface_getPixelOffset'   (sub_2A933(surface, x, y): returns a small negative error code (0xFFE4) if surface.field_0 is the 0xCA00 sentinel (a special/null surface), or (0xFFE5) if y or x are out of bounds against surface.field_A/field_C (height/width). Otherwise computes a byte offset from surface.field_12 (a packed bytes-per-line-shaped field, split into two bytes) and field_14, combining the x/y contributions into a 32-bit value, dividing by 16 (repacking into a paragraph-relative far offset), and adding surface._image (the surface's base far pointer) -- the core bounds-checked pixel/byte-address primitive underlying the already-named Surface_draw/Surface_draw2 drawing routines.)
+0x1d808: 'Midi_sendCommand_raw' -> 'Midi_sendCommand_raw'   (sub_1D808(): implicit-AH-argument primitive. Polls _midiStatusPort for 'not busy' (bit 0x40 clear) with a timeout (returns 0 on timeout); if ready, disables interrupts (cli), writes AH to _midiCommandPort (was word_C83AE -- confirmed the SAME physical port as _midiStatusPort, set alongside it in sub_1D966: MPU-401's status register doubles as the command register on write), then polls for a response: if a byte arrives and it's 0xFE (MPU-401's standard command-ACK byte), returns 1 (success); if it's anything else (real incoming MIDI data arriving mid-command), dispatches it through _midiDataCallback (was off_C83BD, a callback pointer configured elsewhere) and keeps waiting for the real ACK. Returns 0 if the ACK never arrives before timeout. Interrupts are restored via pushf/popf bracketing regardless of outcome.)
+0x1d84a: 'Midi_sendCommand' -> 'Midi_sendCommand'   (sub_1D84A(command): normal-calling-convention wrapper -- loads `command` into AH and calls Midi_sendCommand_raw. Called from sub_1EE70 (the tempo-processing function from the Midi_sendByte pass) among others.)
+0xc83ae: '_midiCommandPort' -> '_midiCommandPort'   (Was word_C83AE: the MPU-401 command register -- confirmed the same physical port as _midiStatusPort (both set from the same base+1 value in sub_1D966), just used for writes (send a command) instead of reads (poll status).)
+0xc83bd: '_midiDataCallback' -> '_midiDataCallback'   (Was off_C83BD: a far function pointer, configured elsewhere (sub_1D953) and invoked by Midi_sendCommand_raw whenever a non-ACK byte arrives while waiting for a command's acknowledgment -- the handler for real incoming MIDI data arriving out-of-band during command handshaking.)
+0xab180: 'Logics_describeCorridorOnce' -> 'Logics_describeCorridorOnce'   (sub_AB180(): if byte_CF114 is set, clears it and prints the decoded GATESTR.DAT message 0x3C00 -- 'This is one of the many corridors that wind their way through the occupied portions of Gateway...' -- via TextWindow_add; otherwise does nothing. A one-time-description gate shared by multiple different rooms' compiled logic (7 callers, including sub_ABA21 via the already-named j_method233), consistent with several physically distinct maze-like corridor rooms reusing identical flavor text and one shared first-visit flag.)
+0x1d732: 'Opl2_writeRhythmRegister' -> 'Opl2_writeRhythmRegister'   (sub_1D732(): builds a byte from four flag globals -- bit 0x80 from _opl2TremoloDepth (was byte_D1C52), bit 0x40 from _opl2VibratoDepth (was byte_D1C58), bit 0x20 from _opl2RhythmEnabled (was byte_D1C53), and the low bits directly from _opl2RhythmInstruments (was byte_D1C59) -- then writes it via the already-named Opl2_writeRegister(0xBD, value). OPL2's real hardware register 0xBD is exactly this: bit 7 tremolo (AM) depth, bit 6 vibrato depth, bit 5 rhythm-mode enable, and bits 4-0 individual rhythm-instrument enables (bass drum/snare/tom-tom/cymbal/hi-hat) -- an exact match confirming this is real OPL2 hardware programming, not a coincidental register number.)
+0xd1c52: '_opl2TremoloDepth' -> '_opl2TremoloDepth'   (Was byte_D1C52: boolean flag contributing OPL2 register 0xBD's bit 0x80 (tremolo/AM depth) via Opl2_writeRhythmRegister.)
+0xd1c58: '_opl2VibratoDepth' -> '_opl2VibratoDepth'   (Was byte_D1C58: boolean flag contributing OPL2 register 0xBD's bit 0x40 (vibrato depth) via Opl2_writeRhythmRegister.)
+0xd1c53: '_opl2RhythmEnabled' -> '_opl2RhythmEnabled'   (Was byte_D1C53: boolean flag contributing OPL2 register 0xBD's bit 0x20 (rhythm mode enable) via Opl2_writeRhythmRegister.)
+0xd1c59: '_opl2RhythmInstruments' -> '_opl2RhythmInstruments'   (Was byte_D1C59: bitmask contributing OPL2 register 0xBD's low 5 bits directly (individual rhythm-instrument enables: bass drum/snare/tom-tom/cymbal/hi-hat) via Opl2_writeRhythmRegister.)
+0x255a8: 'Vocab_matchesAbbreviation' -> 'Vocab_matchesAbbreviation'   (sub_255A8(word, abbrev): walks `abbrev` while it's non-null, comparing each character (case-normalized via the new Char_toLower) against the corresponding character of `word`; advances both pointers on a match, stops on a mismatch or when `abbrev` is exhausted. Returns 1 only if every character of `abbrev` matched -- i.e. `word` starts with `abbrev` -- 0 otherwise. The classic parser 'does the player's typed abbreviation match this longer vocabulary word' check (e.g. 'n' matching 'north').)
+0x1aece: 'Char_toLower' -> 'Char_toLower'   (sub_1AECE(char): looks up a per-character-code table (a ctype-style flag table at char+0x3707) checking bit 0x1 ('is uppercase'); if set, adds 0x20 to lowercase it (standard ASCII case-fold). Returns the character unchanged otherwise. A generic character-normalization utility, also used directly by sub_204CE (not renamed).)
+0x27c31: 'Icon_drawButton' -> 'Icon_drawButton'   (sub_27C31(buttonIndex, stateArray): looks up buttonIndex's current state byte from stateArray (a per-icon status/highlight value), uses it to index a 4-parallel-word rectangle-bounds table (x1/y1/x2/y2-shaped) for this button's screen position, loads and draws the button's icon image (Image_Init/Image_drawAt), then -- in graphics mode -- draws a 3D-beveled border around it (light-gray/dark-gray fillRect and Screen_drawLine calls, the classic raised-button look). Returns the button's associated string from the already-named button_strings[stateByte] -- the vocabulary word or label corresponding to this icon/state, handed back to the caller (e.g. to feed into the parser as if typed). Confirmed generic via its callers: Dialog_prompt, get_mouse_input, prompt_for_filename, Commnet_proc1 -- all part of the mouse-driven icon toolbar (e.g. a compass rose) used alongside the text parser.)
+0x30d4f: 'thunk_sub_5D9F3' -> 'thunk_sub_5D9F3'   (sub_30D4F: call rtlink_thunk; jmp loc_5DFE6 (inside sub_5D9F3, itself not renamed). A genuine RTLink call-site thunk, missed by the earlier batch pass because IDA's own function-chunk merging made it look like a same-function tail chunk to the automated same-function-start check.)
+0x3119b: 'thunk_sub_5D9F3_2' -> 'thunk_sub_5D9F3_2'   (sub_3119B: same shape and same target (sub_5D9F3, via loc_5E049) as thunk_sub_5D9F3 above -- a second call-site thunk to the same target from a different overlay segment (the usual one-thunk-per-caller-segment pattern already documented for this codebase's RTLink thunks). Suffixed _2 since IDA requires unique names and thunk_sub_5D9F3 is already taken.)
+0x2a90e: 'Surface_advanceSegmentOnCarry' -> 'Surface_advanceSegmentOnCarry'   (sub_2A90E(ax=offset, dx=segment, implicit CF from caller's preceding add): the classic 8086 far-pointer-offset-overflow fixup -- if the caller's arithmetic on the offset carried (CF set), adds 0x1000 to ES (the segment half of the ax:dx pair as loaded into es:di); otherwise adds 0x1000 to DS instead. This is the standard 'advance to the next 64KB bank' segment adjustment needed after adding to a raw video-memory/picture-buffer offset that might cross a 64KB boundary. Callers (sub_17D6A/sub_17E31/sub_17FB8/sub_2AA24/sub_2B6D4/sub_2C42A, none renamed) sit in the same graphics/Surface-drawing neighborhood as the already-named Surface_getPixelOffset.)
+0xa8577: 'Game_handleWeaponDischarge' -> 'Game_handleWeaponDischarge'   (sub_A8577(outcomeType): dispatches on outcomeType (0-4), each branch loading a distinct .RS sound file (Stream_loadFile) and printing a distinct decoded GATESTR.DAT message: 1 = a fatal hit ('...you are riddled with energy bolts and bullets', msgId 0x1CCF) leading straight into Game_showEndingMessage; 3/4 = a miss that ricochets dangerously vs. safely (0x1CD0/0x1CD1); 0/2 = a miss witnessed by soldiers, leading to arrest -- if the player can't afford the 1000-credit fine (checked against the 32-bit _playerCreditsLo/_playerCreditsHi pair), they're executed by expulsion into vacuum (0x1CD3 + Game_showEndingMessage); otherwise they pay the fine (0x1CD4, credits -= 1000), have their weapon confiscated (a handler update on logicNum 0x14C, word_CB808 set to 0x1Eh -- not itself renamed), and a follow-up event is queued via the already-named Queue_exists/Queue_find/Queue_add. The classic 'weapons are illegal on Gateway station' consequence path for the FIRE/SHOOT command.)
+0xcf34c: '_playerCreditsHi' -> '_playerCreditsHi'   (Was word_CF34C: high word of the 32-bit player-credits/money field (SaveField <Persisted_val213, 4> confirms the pair is saved as one 4-byte field). Added to/subtracted from at several points in the game (earning and spending money); checked in Game_handleWeaponDischarge against the 1000-credit weapons fine.)
+0xcf34a: '_playerCreditsLo' -> '_playerCreditsLo'   (Was Persisted_val213: low word of the 32-bit player-credits/money field, paired with _playerCreditsHi.)
+0x12fc3: 'Queue_processTurn' -> 'Queue_processTurn'   (sub_12FC3(prevValue, currentValue): called from main() right before _turnCount is incremented -- i.e. once per game turn. Gates on a one-shot skip flag (byte_CB7F2, not renamed), then either fires action 0x1B on the current room (Logic_call) or falls through into a shared chunk (also reached from sub_130D6) that walks the same 4-byte-entry scheduled-event table the already-named Queue_add/Queue_remove/Queue_find operate on, bounded by the already-named _queueCount. That shared code also references the already-named waitMsg ('Do you want to continue waiting?') and j_continue_waiting, confirming this is the per-turn queued-event-processing loop reused as the WAIT command's inner loop. word_CB7F6/word_CB808 (not renamed) look like a queue-walk index and a countdown value respectively, but their precise roles -- and word_CB808's relationship to the weapon-confiscation countdown from the Game_handleWeaponDischarge pass -- weren't nailed down this pass.)
+0x186f0: 'Sb_writeByte' -> 'Sb_writeByte'   (sub_186F0(AL=byte): polls the DSP write-status port (base+0xC) for bit 7 clear (not busy) with a timeout, does the standard short I/O delay (four `jmp $+2`), then writes the byte to that same port -- textbook Sound Blaster DSP write protocol (the write-status and write-command registers share one port address). Returns via carry flag (clear = success, set = timeout).)
+0x186d4: 'Sb_readByte' -> 'Sb_readByte'   (sub_186D4(): polls the DSP read-buffer-status port (base+0xE) for bit 7 set (data available) with a timeout, then reads the byte from the DSP read-data port (base+0xA) -- textbook Sound Blaster DSP read protocol. Returns via carry flag.)
+0x186b2: 'Sb_resetDsp' -> 'Sb_resetDsp'   (sub_186B2(): the exact standard Sound Blaster DSP reset sequence -- writes 1 to the reset port (base+6), busy-waits ~256 iterations, writes 0 to release reset, then polls (via Sb_readByte, up to 32 tries) for the DSP to respond with the magic byte 0xAA confirming it's alive. An exact match for the well-documented SB reset protocol -- conclusive proof this cluster is real Sound Blaster (or 100%-compatible) hardware detection, not a coincidental register shape.)
+0x18682: 'Sb_detectDsp' -> 'Sb_detectDsp'   (sub_18682(): calls Sb_resetDsp, then performs the standard SB 'DSP Identification' compatibility test: writes command 0xE0 then test byte 0xC6 via Sb_writeByte, reads back via Sb_readByte, and checks the result equals 0x39 -- the exact bitwise complement of 0xC6, confirming a genuine/compatible DSP chip. On success calls sub_18963(1) (not renamed, plausibly 'mark Sound Blaster detected'). Reached from the already-named Stream_selectHandler -- Sound Blaster digital-audio output is a fourth sound-hardware backend this engine supports, alongside the PC-speaker, MPU-401/MIDI, and OPL2/AdLib clusters already documented.)
+0xc84f3: '_sbBasePort' -> '_sbBasePort'   (Was word_C84F3: the Sound Blaster DSP base I/O port (typically 0x220 on real hardware), used as the base for all of Sb_resetDsp/Sb_readByte/Sb_writeByte/Sb_detectDsp's fixed port offsets (+6 reset, +0xA read-data, +0xC write-status/command, +0xE read-status).)
+0x1d8cb: 'Midi_shutdown' -> 'Midi_shutdown'   (sub_1D8CB(): the exact reverse of sub_1D966's install -- if byte_C83B6 (the 'initialized' flag sub_1D966 sets) is 1: restores the original 8259 IRQ mask, sends MPU-401's standard reset command 0xFF via Midi_sendCommand_raw, and restores the original interrupt vector (dword_C83B9, saved by sub_1D966 before installing its own handler) via DOS INT 21h AH=25h. Always clears byte_C83B6 to 0 at the end.)
+0x1d966: 'Midi_initDevice' -> 'Midi_initDevice'   (sub_1D966(basePort, irqLine): sets up _midiDataPort/_midiCommandPort/_midiStatusPort from basePort, installs a DOS interrupt vector at IRQ+8 with 8259 unmasking, and sets byte_C83B6=1 on success. The install-side counterpart to the new Midi_shutdown; already characterized (but not renamed) in the Midi_sendByte pass -- finalizing the name now that its shutdown counterpart makes the whole picture unambiguous.)
+0x20220: 'Sound_stopTrack' -> 'Sound_stopTrack'   (Renaming the long-flagged mislabeled tentative name for real. Full body confirms: only proceeds if word_C8582's streaming-active bits are set AND the given trackId (arg_0) matches the currently-playing track (word_C8580) or is 0xFFFF ('stop whatever's playing'). Waits for the active buffer to drain, then dispatches a backend-specific stop based on word_C8582's mode bits -- MIDI via the new Midi_shutdown, or one of two other not-yet-renamed backend stop routines (sub_1E974/sub_1F910) -- clears the backend-selector bits, resets the current-track globals, then falls into an UNCONDITIONAL tail (reached even if the initial guards failed) that frees 4 buffer handles plus one more and resets every Stream-buffer bookkeeping global to its idle state -- the exact same reset sequence already observed at the tail of sub_15DB2 (now renamed Sound_selectTrack below). This is 'stop the currently playing sound/music track', not anything related to starting a new game.)
+0x15db2: 'Sound_selectTrack' -> 'Sound_selectTrack'   (Finalizing the name floated (but not applied) several passes ago in the sound-track-selection-subsystem writeup, now that Sound_stopTrack's real role is confirmed: sub_15DB2 calls Sound_stopTrack(0xFFFF) (unconditional stop) before loading and starting a new track -- 'change the currently playing sound/music track'. sub_15F35 (the two-resource-variant lookup helper) still not renamed.)
+0x1fdb8: 'Sound_selectDevice' -> 'Sound_selectDevice'   (sub_1FDB8(mode, midiBasePort, midiIrq): stores midiBasePort/midiIrq into _midiBasePortConfig/_midiIrqConfig, then dispatches on `mode` (masked to drop bit 3, a separate flag): mode 1 or 2 probes for OPL2/AdLib via the new Opl2_detectAndInit; mode 4 probes for MPU-401/MIDI via the new Midi_detectDevice, and on success also prints the game's title ('       Gateway      ') and calls two more setup routines (sub_1FB56/sub_1FC70, not renamed). Sets word_C8582 flag bits recording which backend probe succeeded (value 4 = MIDI, matching Sound_stopTrack's own test of that same bit; value 2 = OPL2/AdLib). This is the command-line soundMode argument's device-selection entry point.)
+0x1cd54: 'Opl2_detectAndInit' -> 'Opl2_detectAndInit'   (sub_1CD54(): sets _opl2BasePort to the real 0x388, then calls sub_1CD72 (the actual presence-detection read, not renamed) followed by sub_1CE20 (plausibly a channel-silencing init, not renamed). Called from Sound_selectDevice for mode 1/2.)
+0x1fa5e: 'Midi_detectDevice' -> 'Midi_detectDevice'   (sub_1FA5E(): calls the already-named Midi_initDevice(basePort, irqLine) then immediately Midi_shutdown() again -- a detect-only probe: initialize just long enough to see if the hardware responds, capture the result, then tear it back down rather than leaving it running. Called from Sound_selectDevice for mode 4, using the config values it just stored.)
+0xc8586: '_midiBasePortConfig' -> '_midiBasePortConfig'   (Was word_C8586: the configured MPU-401 base port (e.g. from a command-line argument or config value), passed to Midi_initDevice by Midi_detectDevice -- distinct from the already-named _midiDataPort, which is the port actually in use once initialized.)
+0xc8588: '_midiIrqConfig' -> '_midiIrqConfig'   (Was word_C8588: the configured MPU-401 IRQ line, passed to Midi_initDevice by Midi_detectDevice alongside _midiBasePortConfig.)
+0x5c91c: 'InputWindow_redrawPromptLine' -> 'InputWindow_redrawPromptLine'   (sub_5C91C(): writes the already-named aaInputPrompt string (the parser's prompt, e.g. a leading character) followed by the current input buffer's text (get_input_line_ptr) into the content window (TextWindow_addDirect, Commset_winContent) -- redrawing the prompt-plus-typed-so-far line. Then, if mouse input mode is off, hides the mouse cursor; otherwise shows it (waiting for button release first if a button was already held).)
+0x204ce: 'String_matchesPrefixCI' -> 'String_matchesPrefixCI'   (sub_204CE(word, abbrev): identical algorithm to the already-named Vocab_matchesAbbreviation (same case-insensitive prefix check via Char_toLower, same 0/1 sentinel-byte return convention) but a separate compiled copy used in the startup/sound-config-parsing area, immediately after sub_20448 (a hex-digit-string parser, not renamed) -- consistent with parsing a BLASTER-style config string rather than in-game parser vocabulary.)
+0x249ff: 'Mouse_shutdown' -> 'Mouse_shutdown'   (sub_249FF(): if mouseState bit 0x38 is set, hides the mouse (Mouse_Hide), resets the mouse driver (INT 33h AX=0 -- IDA's own comment already reads 'Reset mouse driver'), and restores the cursor range (set_mouse_range). If mouseState bit 0xC is set, frees mouse resources (Mouse_free) and calls sub_24A42 (not renamed, also called from the already-named Mouse_init -- a shared init/shutdown helper).)
+0x2661c: 'load_and_draw_pic' -> 'load_and_draw_pic'   (sub_2661C(x, y, picNumber, frameNumber): loads the given picture frame into a temporary local Image (the already-named Image_load), returning 0 immediately if that fails; otherwise calls sub_2666E(x, y, img) (not renamed -- its own body's exact coordinate/offset handling wasn't fully unpicked, but it eventually calls sub_2B6D4, a drawing/blit routine) to draw it at the given position, frees the temporary Image (Image_Free), and returns 1. Named to match the established load_and_scale_pic convention for this small cluster of one-shot picture-loading entry points.)
+0x791e2: 'Logics_describePondView' -> 'Logics_describePondView'   (sub_791E2(directionIndex): looks up directionIndex (0-4) in a 5-entry table to find matching shore/direction data, then prints the decoded GATESTR.DAT message 0x4824 -- "You're standing on the %sern shore of the pond. %slight gently reflects off the calm %s surface of the pond. A leaf occasionally falls into the pond to the %s and causes a small ripple, distorting the %s reflection." -- filling its five %s placeholders from: a direction name (the already-recognized aNorth/aSouth/aEast/aWest/aNortheast/etc. constants, confirming the table holds direction-string references), and, gated on Persisted_val183 (a day/night flag), either 'Sun'/sun-flavored text or a 'Moon'/moon-flavored equivalent (including the literal string aSunS = 'sun's' for the final possessive reflection phrase when it's daytime and the direction matches). A single room's detailed environmental description generator, not a generic utility.)
+0x80894: 'Logics_describeBeastApproach' -> 'Logics_describeBeastApproach'   (sub_80894(arg_0): the beast-encounter turn handler for a cluster of 4 related rooms (_roomLogicNum 0x98-0x9B). Prints a room-specific 'beast notices you' message (msgId 0x508C). Then, gated on Persisted_val177: if SET, prints msgId 0x5091 ('He immediately becomes transfixed by the light reflecting off the ...crystal shard and stands motionless'), sets Persisted_val178 = 1, clears a bit on object 0x9D, and Queue_removes item 3 -- the shard is holding the beast at bay. If CLEAR, prints msgId 0x508D ('You freeze...') and (except in room 0x98) 0x508E ('a glint from the...shard...crosses his face. He stops dead...then resumes walking toward you.') followed by 0x508F ('He grabs you...and slams you head first into the %s wall.') and Queue_adds item 0x15 -- the beast attacks; OR, specifically in room 0x98, prints the successful-escape resolution msgId 0x5090 ('...he becomes momentarily motionless...lets out a deafening shriek...quickly exits the clearing') and updates object 0x9D's handler, clears Persisted_val182, and Queue_adds item 3. Confirms a full crystal-shard-based deterrence puzzle against a hostile creature, with distinct held/clean-shard vs. mud-covered-shard vs. no-shard outcomes.)
+0x130d6: 'Queue_tickCountdowns' -> 'Queue_tickCountdowns'   (sub_130D6(): walks the same _queueCount-bounded, 4-byte-entry scheduled-event table Queue_add/Queue_remove/Queue_find/Queue_processTurn operate on, decrementing each entry's countdown value; when an entry's countdown reaches zero, memmove-compacts it out of the table (the same removal shape as Queue_remove, just triggered by expiry rather than an explicit call) and applies its associated logicNum-8/index-3 update via the already-named Logics_updateHandler-adjacent machinery. After a full pass, if a caller-supplied flag indicates this is running as part of the WAIT command (and other conditions on the current wait count are met), checks byte_CC530 and -- if set -- calls the already-named j_scene_update? then j_continue_waiting(waitMsg) to ask 'Do you want to continue waiting?'. This confirms and closes the loop on the mechanism flagged (but not fully named) when Queue_processTurn was named: the turn-advance and WAIT-command loops share this exact countdown-tick code.)
+0x15470: 'Logics_lookAtCurrentRoom' -> 'Logics_lookAtCurrentRoom'   (sub_15470(): calls sub_14A5F(_roomLogicNum, action=8) (sub_14A5F itself not renamed -- a generic 'print object header, invoke its logic for an action' dispatcher whose exact verb semantics vary per call site) and always returns 1. Called directly from main() and the already-named show_startup -- consistent with action 8 being 'describe/look at this room', invoked once at game startup and once per the main loop's LOOK-equivalent point.)
+0x15ad8: 'Logics_saveOrRestoreHandler' -> 'Logics_saveOrRestoreHandler'   (sub_15AD8(key, mode): finds (or allocates, up to 4 slots) a slot matching `key` in a small table. If mode==0 (save): reads object 0x71's handler-index-1 value (Logics_getUnkHandler) and stores it into the slot. If mode!=0 (restore): reads the previously-stored value back out of the slot and writes it back via Logics_setUnkHandler -- a push/pop-style save-and-restore of one object's handler state, keyed by caller context. The specific significance of logicNum 0x71/handler index 1 wasn't determined -- no message-string anchor was available, and its one caller (sub_9478A, reached via j_method074) wasn't itself investigated.)
+0x15bda: 'Sound_selectTrackForRoom' -> 'Sound_selectTrackForRoom'   (sub_15BDA(roomNum): looks up roomNum in a 106-entry per-room table to find its music config (section id, track id, a duration/volume-ish byte, and a flag byte); if the found section/track already match what's currently playing (word_C856E/word_C8580), does nothing. Otherwise calls the already-named Sound_stopTrack(0xFFFF) and then runs essentially the same track-loading tail already documented in Sound_selectTrack (same globals, same sub_15F35 resource-variant lookup) to start the new room's music. The room-to-music mapping entry point, called directly from main() and the already-named show_startup.)
+0x16978: 'Windows_setCurrentWindow' -> 'Windows_setCurrentWindow'   (sub_16978(windowNum): saves the current Windows_currentWindow to return later. If windowNum is valid (>=0) and different from the current window, redraws the current listbox as deselected (Listbox_draw(0)) and sets Windows_currentWindow = windowNum. Always returns the PREVIOUS current window number, letting callers temporarily switch windows and restore the old one afterward.)
+0x17a12: 'Listbox_resetStateStack' -> 'Listbox_resetStateStack'   (sub_17A12(): sets word_D0766 (the listbox nested-state stack's depth counter) to 0. Called from several already-named entry points (Events_waitForPress, InputWindow_getLine, Scene_draw) -- consistent with clearing any nested-dialog stack state at the start of a fresh top-level input/display session.)
+0x17a19: 'Listbox_pushState' -> 'Listbox_pushState'   (sub_17A19(winNumber, items, dividerIndex): saves winNumber's current items (Listbox_getItems), divider index (Listbox_getDividerIndex), and a value from sub_16B01 (not renamed) into a 20-deep stack indexed by word_D0766, increments the stack depth, then calls the already-named Listbox_reset with the new items/dividerIndex -- pushing the current listbox state before replacing it, i.e. opening a nested listbox/menu on top of the current one. Bails out early (no-op) if the stack is already full (word_D0766 == 0x14).)
+0x18842: 'Speaker_sampleIsr' -> 'Speaker_sampleIsr'   (sub_18842(): a real hardware ISR -- initializes several playback-state globals (byte_C84F6/word_C84F7/word_C84FC/word_C84FE/word_C8500/byte_C84FB, not renamed: buffer length/position/end-marker-shaped values, matching the already-documented 'digitized PC-speaker sound-effect engine'), then dispatches to one of two continuation routines (sub_18905 or sub_18883, not renamed -- plausibly double-buffered 'next sample byte' handlers), sends the PIC end-of-interrupt (out 20h,20h), restores all registers, and returns via iret. This is the actual timer-ISR body flagged as 'not traced further' when the digitized PC-speaker engine was first documented -- not fully unpicked here either (the two continuation routines and exact sample-decoding scheme remain open), but confirms the ISR is a real, complete interrupt handler rather than a plain subroutine.)
+0x1d05a: 'Opl2_noteOn' -> 'Opl2_noteOn'   (sub_1D05A(channel, velocity): clamps velocity to 0x7F (the MIDI velocity range) and stores it per-channel; looks up that channel's operator-register offsets from one of two tables depending on _opl2RhythmEnabled (melodic vs. rhythm/percussion channel-to-operator mapping, since OPL2's 2-operator FM voices are wired differently for the 5 fixed rhythm instruments), then calls sub_1D492 (not renamed) for each of up to 2 operators (carrier + modulator) to apply the volume. The 'start playing a note' half of an OPL2 FM-synth voice primitive pair.)
+0x1d1a4: 'Opl2_noteOff' -> 'Opl2_noteOff'   (sub_1D1A4(channel): for melodic channels, clears the key-on bit (0x20) in OPL2 register 0xB0+channel via the already-named Opl2_writeRegister -- the standard OPL2 note-off. For rhythm-mode channels (when _opl2RhythmEnabled is set and channel <= 0xA), instead clears the corresponding bit in _opl2RhythmInstruments and calls the already-named Opl2_writeRhythmRegister. The 'stop playing a note' counterpart to Opl2_noteOn.)
+0x1d85b: 'Midi_resetDevice' -> 'Midi_resetDevice'   (sub_1D85B(): sends MPU-401's standard reset command (0xFF) via the already-named Midi_sendCommand_raw, then reads and discards one byte directly from _midiDataPort -- flushing any stray leftover byte from the data buffer right after a reset. Called from the already-named Midi_initDevice during setup, plus three other MIDI-adjacent call sites (sub_1F552/sub_1F93E/sub_1FA8E, not renamed).)
+0x1e148: 'Midi_peekByte' -> 'Midi_peekByte'   (sub_1E148(byteOffset): reads a byte at *(_tmpSub._sub._set1) + byteOffset + word_D20A0 -- the same shape as the already-named Midi_peekTrackByte (base pointer + offset + running position counter), just for a single implicit stream rather than an array of tracks indexed by trackIndex.)
+0x1e168: 'Midi_readVarLengthValue2' -> 'Midi_readVarLengthValue2'   (sub_1E168(): byte-for-byte the same Standard MIDI File variable-length-quantity decode loop as the already-named Midi_readVarLengthValue -- reads a byte via the new Midi_peekByte(0), accumulates 7 bits per byte, increments word_D20A0 (this copy's position counter) once per byte, and continues while the high bit is set. A second compiled copy for this stream, the same duplication pattern already seen with Vocab_matchesAbbreviation/String_matchesPrefixCI.)
+0x1fe30: 'Sound_shutdown' -> 'Sound_shutdown'   (sub_1FE30(): unconditionally stops the current track (the already-named Sound_stopTrack(0xFFFF)); if word_C8582's MIDI-active bit (value 4, the same bit Sound_selectDevice sets on a successful MPU-401 probe) is set, calls sub_1FCAA and prints a short literal string via sub_1FB56 (both not renamed -- plausibly clearing an on-screen device indicator); finally masks word_C8582 down to just bit 8, clearing all backend-selection state. Called from the already-named `finish` and `shutdown` top-level exit routines -- the sound subsystem's own full teardown, counterpart to Sound_selectDevice's init.)
+0x22954: 'Screen_waitForVerticalRetrace' -> 'Screen_waitForVerticalRetrace'   (sub_22954(): reads the already-named video_status_reg and busy-waits for bit 3 (the EGA/VGA vertical-retrace bit) to clear, then busy-waits again for it to become set -- the standard technique to synchronize to the very start of a new vertical retrace period. Called from Screen_setEGAPalette (avoiding palette-change tearing/snow) and Mouse_Hide/Mouse_show (avoiding cursor-draw flicker).)
+0x2384f: 'getUppercaseKeypress' -> 'getUppercaseKeypress'   (sub_2384F(): calls the already-named get_keypress(), and if the result is a lowercase letter ('a'-'z'), converts it to uppercase (subtracting 0x20). Returns the result unchanged otherwise. A single-key menu-choice reader, named to match the existing lowercase-underscore get_keypress/get_input_line_ptr convention.)
+0x26228: 'Screen_fadeIn' -> 'Screen_fadeIn'   (sub_26228(): in text mode, does nothing. In basic EGA mode (_videoIndex==1), just sets a fixed reference palette directly (no gradual ramp). Otherwise (VGA/other), builds a scaled-down copy of the reference palette in a local buffer -- each color component multiplied by a growing fraction (0 up to 64/64, stepping by 4) -- calling the already-named Screen_setEGAPalette after each step, ramping the screen up from black to full brightness. The fade-IN counterpart to the already-named Screen_fadeOut.)
+0x26f74: 'AnimPics_tick' -> 'AnimPics_tick'   (sub_26F74(mode): if _animPicsSlotCount is 0, returns immediately. Otherwise walks every active animated-picture slot, comparing the current _clock() against a per-slot randomized deadline (computed from _rand() scaled by the slot's registered duration parameters, from AnimPics_registerSlot); when a slot's deadline passes, advances its frame index (forward or backward per the slot's loop-direction byte) and draws the new frame via the already-named Image_draw, then computes the next randomized deadline. `mode` affects what gets recorded as a slot's completion state (0 vs -1) when it finishes a non-looping animation. Called from input-polling loops (Events_waitForPress, get_input_character, get_mouse_input) so animations keep advancing while the game waits for the player. Already characterized in detail in the AnimPics_freeAll writeup several passes ago; finalizing the name now as the last unnamed piece of that cluster.)
+0x28231: 'Windows_setContentWindow' -> 'Windows_setContentWindow'   (sub_28231(winNumber, contentWinNum): sets the global `winNumber` (already named, but otherwise only ever written here) and `word_D2A96` (not renamed, but already known from the Icon_drawButton-adjacent code to be read as a TextWindow_addDirect target window number) from its two arguments. Called from the already-named room_load plus three other room/UI-adjacent functions -- consistent with selecting which window receives a room's text output, but not confirmed beyond the mechanical read/write shape.)
+0x2881d: 'LogFile_close' -> 'LogFile_close'   (sub_2881D(): if LogFile_windowNum is >= 0 (a transcript log file is currently open), closes it (_fclose(LogFile_handle)), resets LogFile_windowNum to -1, and clears LogFile_disabled. Called from the already-named finish/shutdown exit routines plus sub_1057E/sub_2E8F1 (not renamed) -- the transcript/log-file close counterpart to whatever opens it.)
+0x2a597: 'Video_getValidIndex' -> 'Video_getValidIndex'   (sub_2A597(): reads the already-named videoIndex global (set by the already-named video_set_videoIndex; distinct from the similarly-named but separate _videoIndex global used elsewhere) and returns it if in range 0-7, or the sentinel -6 otherwise. Called from Surface_draw/Surface_draw2/Video_ClearScreen/sub_17B8E (not renamed) -- a validated video-mode-index getter used at the start of drawing operations.)
+0x1063f: 'format_long_decimal' -> 'format_long_decimal'   (sub_1063F(loWord, hiWord): formats the signed 32-bit value (loWord:hiWord) as a decimal string into a local buffer -- special-cases exactly zero ('0'), negates and prefixes '-' for negative values, then repeatedly divides by progressively smaller powers of ten (via the MS Quick C/MSC runtime's 32-bit long-division helper, `unknown_libname_5`) to extract each decimal digit. A generic number-formatting utility (plausibly used for score/turn-count/credits display), named to match the project's lowercase-underscore convention for custom C-runtime-adjacent utilities.)
+0x2a163: 'sub_2A163' -> 'Dialog_showFormattedPrompt'   (sub_2A163(x1, y1, format, args, ...): formats its printf-style arguments into a local message buffer via the real C runtime _vsprintf, then walks the resulting text measuring line count (capped at 0x18=24) and max line width (capped at 0x4F=79, i.e. an 80x25 text screen) to auto-size a dialog box for the message. Called directly from the already-named Dialog_prompt -- this is the core formatted-message-dialog implementation Dialog_prompt wraps. The remainder of the function (actually creating/positioning the window and displaying the text) wasn't traced in full this pass.)
+----- end target script output -----
+[*] finished executing apply_renames_gatemain.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\legend\gateway\gatemain.idb
+[*] ARGV = ['C:\\dev\\legend\\gateway\\ida_scripts\\batch_run_and_export.py', 'apply_renames_gatemain.py']
+[*] reading apply_renames_gatemain.py
+[*] executing apply_renames_gatemain.py
+[*] captured stdout from target script:
+----- begin target script output -----
+DRY_RUN = False
+0x11635: 'Logics_prehandlerChainReaches' -> 'Logics_prehandlerChainReaches'   ok=True
+0x115ce: 'Logics_prehandlerHasMode' -> 'Logics_prehandlerHasMode'   ok=True
+0x1535e: 'Score_add' -> 'Score_add'   ok=True
+0xcbb78: '_score' -> '_score'   ok=True
+0xcb7fe: '_turnCount' -> '_turnCount'   ok=True
+0xcc6ab: '_scoreNotifyEnabled' -> '_scoreNotifyEnabled'   ok=True
+0xcbb7a: '_scoreNotifyTipShown' -> '_scoreNotifyTipShown'   ok=True
+0x5668c: '_gameTicks' -> '_gameTicks'   ok=True
+0x14a37: 'Stream_loadFile' -> 'Stream_loadFile'   ok=True
+0x28e2c: 'TextWindow_flushPendingText' -> 'TextWindow_flushPendingText'   ok=True
+0x1ddf6: 'Stream_readChunks' -> 'Stream_readChunks'   ok=True
+0x1e052: 'Stream_processChunks' -> 'Stream_processChunks'   ok=True
+0x1e0e8: 'Stream_freeChunks' -> 'Stream_freeChunks'   ok=True
+0x180e3: 'Stream_processChunk' -> 'Stream_processChunk'   ok=True
+0x1ddc0: 'Stream_configure' -> 'Stream_configure'   ok=True
+0x18042: 'Stream_selectHandler' -> 'Stream_selectHandler'   ok=True
+0xc85a4: '_soundMode' -> '_soundMode'   ok=True
+0xc85aa: '_streamMode' -> '_streamMode'   ok=True
+0x18182: 'Cpu_beginSpeedTest' -> 'Cpu_beginSpeedTest'   ok=True
+0x18148: 'Cpu_measureSpeed' -> 'Cpu_measureSpeed'   ok=True
+0x181d8: 'Cpu_endSpeedTest' -> 'Cpu_endSpeedTest'   ok=True
+0xc84da: 'cpuSpeedRating' -> 'cpuSpeedRating'   ok=True
+0x12ed2: 'Queue_remove' -> 'Queue_remove'   ok=True
+0x14b64: 'Logics_checkMoveRestriction' -> 'Logics_checkMoveRestriction'   ok=True
+0x14ed6: 'Logics_tryMoveDirection' -> 'Logics_tryMoveDirection'   ok=True
+0x123f3: 'Logics_getRoomMoveEnabled' -> 'Logics_getRoomMoveEnabled'   ok=True
+0x12445: 'Logics_getRoomExitCount' -> 'Logics_getRoomExitCount'   ok=True
+0x14742: 'Logics_callSpecialExit' -> 'Logics_callSpecialExit'   ok=True
+0x312d1: 'Game_showEndingMessage' -> 'Game_showEndingMessage'   ok=True
+0xcbb6e: '_hasWonGame' -> '_hasWonGame'   ok=True
+0xc4ae6: 'Game_endGameMenu' -> 'Game_endGameMenu'   ok=True
+0x149d8: 'Logics_describeContents' -> 'Logics_describeContents'   ok=True
+0x66dfd: 'Logics_countVisibleContents' -> 'Logics_countVisibleContents'   ok=True
+0x667d0: 'Logics_listContents' -> 'Logics_listContents'   ok=True
+0x136af: 'Game_updateStatusLine' -> 'Game_updateStatusLine'   ok=True
+0xcb800: '_gameMinutes' -> '_gameMinutes'   ok=True
+0xcb802: '_gameDayNumber' -> '_gameDayNumber'   ok=True
+0xcbb6f: '_statusTimeHidden' -> '_statusTimeHidden'   ok=True
+0x1496b: 'TextWindow_showMorePrompt' -> 'TextWindow_showMorePrompt'   ok=True
+0x153b6: 'Logics_takeObject' -> 'Logics_takeObject'   ok=True
+0x12109: 'Logics_getTakeScore' -> 'Logics_getTakeScore'   ok=True
+0x12179: 'Logics_setTakeScore' -> 'Logics_setTakeScore'   ok=True
+0x24ffb: 'Mouse_pollPosition' -> 'Mouse_pollPosition'   ok=True
+0x148e8: 'Logics_printKeyedMessage' -> 'Logics_printKeyedMessage'   ok=True
+0x27134: 'AnimPics_freeAll' -> 'AnimPics_freeAll'   ok=True
+0x26d08: 'Image_freeFrames' -> 'Image_freeFrames'   ok=True
+0x26d50: 'AnimPics_resetForRoom' -> 'AnimPics_resetForRoom'   ok=True
+0xc9658: '_animPicsSlotCount' -> '_animPicsSlotCount'   ok=True
+0xd22da: 'animPicsHandles' -> 'animPicsHandles'   ok=True
+0x1052c: 'get_buffer_size' -> 'get_buffer_size'   ok=True
+0x1d896: 'Midi_sendByte' -> 'Midi_sendByte'   ok=True
+0xc83aa: '_midiDataPort' -> '_midiDataPort'   ok=True
+0xc83ac: '_midiStatusPort' -> '_midiStatusPort'   ok=True
+0x288f4: 'Clock_delayTicks' -> 'Clock_delayTicks'   ok=True
+0x28920: 'Speaker_playTone' -> 'Speaker_playTone'   ok=True
+0x2899d: 'Speaker_playErrorBeep' -> 'Speaker_playErrorBeep'   ok=True
+0x1caf6: 'Opl2_writeRegister' -> 'Opl2_writeRegister'   ok=True
+0xd3bd0: '_opl2BasePort' -> '_opl2BasePort'   ok=True
+0x143f3: 'Logics_autoTakeObject' -> 'Logics_autoTakeObject'   ok=True
+0x26edc: 'AnimPics_resyncSlots' -> 'AnimPics_resyncSlots'   ok=True
+0x12f81: 'Queue_find' -> 'Queue_find'   ok=True
+0x265b0: 'load_and_scale_pic' -> 'load_and_scale_pic'   ok=True
+0x26d7e: 'AnimPics_registerSlot' -> 'AnimPics_registerSlot'   ok=True
+0x26c88: 'Image_clearFrames' -> 'Image_clearFrames'   ok=True
+0x28bb7: 'Window_destroy' -> 'Window_destroy'   ok=True
+0x9e8df: 'Game_restartAfterDeath' -> 'Game_restartAfterDeath'   ok=True
+0xce8a8: '_deathCount' -> '_deathCount'   ok=True
+0x1019c: 'invoke_callback' -> 'invoke_callback'   ok=True
+0x1dd41: 'Midi_bufferByte' -> 'Midi_bufferByte'   ok=True
+0xc8445: '_midiBufferPos' -> '_midiBufferPos'   ok=True
+0x1ecde: 'Midi_readVarLengthValue' -> 'Midi_readVarLengthValue'   ok=True
+0x1ecb6: 'Midi_peekTrackByte' -> 'Midi_peekTrackByte'   ok=True
+0x2a933: 'Surface_getPixelOffset' -> 'Surface_getPixelOffset'   ok=True
+0x1d808: 'Midi_sendCommand_raw' -> 'Midi_sendCommand_raw'   ok=True
+0x1d84a: 'Midi_sendCommand' -> 'Midi_sendCommand'   ok=True
+0xc83ae: '_midiCommandPort' -> '_midiCommandPort'   ok=True
+0xc83bd: '_midiDataCallback' -> '_midiDataCallback'   ok=True
+0xab180: 'Logics_describeCorridorOnce' -> 'Logics_describeCorridorOnce'   ok=True
+0x1d732: 'Opl2_writeRhythmRegister' -> 'Opl2_writeRhythmRegister'   ok=True
+0xd1c52: '_opl2TremoloDepth' -> '_opl2TremoloDepth'   ok=True
+0xd1c58: '_opl2VibratoDepth' -> '_opl2VibratoDepth'   ok=True
+0xd1c53: '_opl2RhythmEnabled' -> '_opl2RhythmEnabled'   ok=True
+0xd1c59: '_opl2RhythmInstruments' -> '_opl2RhythmInstruments'   ok=True
+0x255a8: 'Vocab_matchesAbbreviation' -> 'Vocab_matchesAbbreviation'   ok=True
+0x1aece: 'Char_toLower' -> 'Char_toLower'   ok=True
+0x27c31: 'Icon_drawButton' -> 'Icon_drawButton'   ok=True
+0x30d4f: 'thunk_sub_5D9F3' -> 'thunk_sub_5D9F3'   ok=True
+0x3119b: 'thunk_sub_5D9F3_2' -> 'thunk_sub_5D9F3_2'   ok=True
+0x2a90e: 'Surface_advanceSegmentOnCarry' -> 'Surface_advanceSegmentOnCarry'   ok=True
+0xa8577: 'Game_handleWeaponDischarge' -> 'Game_handleWeaponDischarge'   ok=True
+0xcf34c: '_playerCreditsHi' -> '_playerCreditsHi'   ok=True
+0xcf34a: '_playerCreditsLo' -> '_playerCreditsLo'   ok=True
+0x12fc3: 'Queue_processTurn' -> 'Queue_processTurn'   ok=True
+0x186f0: 'Sb_writeByte' -> 'Sb_writeByte'   ok=True
+0x186d4: 'Sb_readByte' -> 'Sb_readByte'   ok=True
+0x186b2: 'Sb_resetDsp' -> 'Sb_resetDsp'   ok=True
+0x18682: 'Sb_detectDsp' -> 'Sb_detectDsp'   ok=True
+0xc84f3: '_sbBasePort' -> '_sbBasePort'   ok=True
+0x1d8cb: 'Midi_shutdown' -> 'Midi_shutdown'   ok=True
+0x1d966: 'Midi_initDevice' -> 'Midi_initDevice'   ok=True
+0x20220: 'Sound_stopTrack' -> 'Sound_stopTrack'   ok=True
+0x15db2: 'Sound_selectTrack' -> 'Sound_selectTrack'   ok=True
+0x1fdb8: 'Sound_selectDevice' -> 'Sound_selectDevice'   ok=True
+0x1cd54: 'Opl2_detectAndInit' -> 'Opl2_detectAndInit'   ok=True
+0x1fa5e: 'Midi_detectDevice' -> 'Midi_detectDevice'   ok=True
+0xc8586: '_midiBasePortConfig' -> '_midiBasePortConfig'   ok=True
+0xc8588: '_midiIrqConfig' -> '_midiIrqConfig'   ok=True
+0x5c91c: 'InputWindow_redrawPromptLine' -> 'InputWindow_redrawPromptLine'   ok=True
+0x204ce: 'String_matchesPrefixCI' -> 'String_matchesPrefixCI'   ok=True
+0x249ff: 'Mouse_shutdown' -> 'Mouse_shutdown'   ok=True
+0x2661c: 'load_and_draw_pic' -> 'load_and_draw_pic'   ok=True
+0x791e2: 'Logics_describePondView' -> 'Logics_describePondView'   ok=True
+0x80894: 'Logics_describeBeastApproach' -> 'Logics_describeBeastApproach'   ok=True
+0x130d6: 'Queue_tickCountdowns' -> 'Queue_tickCountdowns'   ok=True
+0x15470: 'Logics_lookAtCurrentRoom' -> 'Logics_lookAtCurrentRoom'   ok=True
+0x15ad8: 'Logics_saveOrRestoreHandler' -> 'Logics_saveOrRestoreHandler'   ok=True
+0x15bda: 'Sound_selectTrackForRoom' -> 'Sound_selectTrackForRoom'   ok=True
+0x16978: 'Windows_setCurrentWindow' -> 'Windows_setCurrentWindow'   ok=True
+0x17a12: 'Listbox_resetStateStack' -> 'Listbox_resetStateStack'   ok=True
+0x17a19: 'Listbox_pushState' -> 'Listbox_pushState'   ok=True
+0x18842: 'Speaker_sampleIsr' -> 'Speaker_sampleIsr'   ok=True
+0x1d05a: 'Opl2_noteOn' -> 'Opl2_noteOn'   ok=True
+0x1d1a4: 'Opl2_noteOff' -> 'Opl2_noteOff'   ok=True
+0x1d85b: 'Midi_resetDevice' -> 'Midi_resetDevice'   ok=True
+0x1e148: 'Midi_peekByte' -> 'Midi_peekByte'   ok=True
+0x1e168: 'Midi_readVarLengthValue2' -> 'Midi_readVarLengthValue2'   ok=True
+0x1fe30: 'Sound_shutdown' -> 'Sound_shutdown'   ok=True
+0x22954: 'Screen_waitForVerticalRetrace' -> 'Screen_waitForVerticalRetrace'   ok=True
+0x2384f: 'getUppercaseKeypress' -> 'getUppercaseKeypress'   ok=True
+0x26228: 'Screen_fadeIn' -> 'Screen_fadeIn'   ok=True
+0x26f74: 'AnimPics_tick' -> 'AnimPics_tick'   ok=True
+0x28231: 'Windows_setContentWindow' -> 'Windows_setContentWindow'   ok=True
+0x2881d: 'LogFile_close' -> 'LogFile_close'   ok=True
+0x2a597: 'Video_getValidIndex' -> 'Video_getValidIndex'   ok=True
+0x1063f: 'format_long_decimal' -> 'format_long_decimal'   ok=True
+0x2a163: 'sub_2A163' -> 'Dialog_showFormattedPrompt'   ok=True
+----- end target script output -----
+[*] finished executing apply_renames_gatemain.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\legend\gateway\gatemain.asm
+[*] gen_file(OFILE_ASM) returned 407165
+[*] exporting IDC to C:\dev\legend\gateway\gatemain.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\legend\gateway\gatemain.idb
+[*] done, exiting 0

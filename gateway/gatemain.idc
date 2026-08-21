@@ -31218,6 +31218,7 @@ static Bytes_5(void) {
 	create_insn	(x=0X2A15C);
 	op_stkvar	(x,	1);
 	create_insn	(0X2A163);
+	set_name	(0X2A163,	"Dialog_showFormattedPrompt");
 	create_insn	(x=0X2A166);
 	op_hex		(x,	1);
 	create_insn	(x=0X2A17A);
@@ -34115,10 +34116,6 @@ static Bytes_5(void) {
 	op_seg		(x,	1);
 	create_insn	(x=0X2C7B1);
 	op_stroff	(x,	1,	GetStrucIdByName("VideoMethod"),	0);
-	create_insn	(x=0X2C7B4);
-	op_stroff	(x,	0,	GetStrucIdByName("VideoMethod"),	0);
-	op_plain_offset	(x,	1,	0X2C660);
-	op_plain_offset	(x,	129,	0X2C660);
 }
 
 //------------------------------------------------------------------------
@@ -34128,6 +34125,10 @@ static Bytes_6(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X2C7B4);
+	op_stroff	(x,	0,	GetStrucIdByName("VideoMethod"),	0);
+	op_plain_offset	(x,	1,	0X2C660);
+	op_plain_offset	(x,	129,	0X2C660);
 	create_insn	(x=0X2C7B9);
 	op_stroff	(x,	0,	GetStrucIdByName("VideoMethod"),	0);
 	op_seg		(x,	1);
@@ -38256,13 +38257,6 @@ static Bytes_6(void) {
 	create_insn	(0X3112D);
 	create_word	(0X31135);
 	create_insn	(0X31137);
-	create_word	(0X3113F);
-	create_insn	(0X31141);
-	create_word	(0X31149);
-	create_insn	(0X3114B);
-	create_word	(0X31153);
-	create_insn	(0X31155);
-	create_word	(0X3115D);
 }
 
 //------------------------------------------------------------------------
@@ -38272,6 +38266,13 @@ static Bytes_7(void) {
         auto x;
 #define id x
 
+	create_word	(0X3113F);
+	create_insn	(0X31141);
+	create_word	(0X31149);
+	create_insn	(0X3114B);
+	create_word	(0X31153);
+	create_insn	(0X31155);
+	create_word	(0X3115D);
 	create_insn	(0X3115F);
 	set_name	(0X3115F,	"thunk_sub_A3822");
 	create_word	(0X31167);
@@ -41650,12 +41651,6 @@ static Bytes_7(void) {
 	create_dword	(x=0X3F3F0);
 	op_plain_offset	(x,	0,	0X2CF40);
 	op_plain_offset	(x,	128,	0X2CF40);
-	create_dword	(x=0X3F3F4);
-	op_plain_offset	(x,	0,	0X2CF40);
-	op_plain_offset	(x,	128,	0X2CF40);
-	create_dword	(x=0X3F3F8);
-	op_plain_offset	(x,	0,	0X2CF40);
-	op_plain_offset	(x,	128,	0X2CF40);
 }
 
 //------------------------------------------------------------------------
@@ -41665,6 +41660,12 @@ static Bytes_8(void) {
         auto x;
 #define id x
 
+	create_dword	(x=0X3F3F4);
+	op_plain_offset	(x,	0,	0X2CF40);
+	op_plain_offset	(x,	128,	0X2CF40);
+	create_dword	(x=0X3F3F8);
+	op_plain_offset	(x,	0,	0X2CF40);
+	op_plain_offset	(x,	128,	0X2CF40);
 	create_dword	(x=0X3F3FC);
 	op_plain_offset	(x,	0,	0X2CF40);
 	op_plain_offset	(x,	128,	0X2CF40);

@@ -26143,7 +26143,7 @@ _sprintf        endp
 ; Attributes: library function bp-based frame
 
 _vsprintf       proc far                ; CODE XREF: printf+1D\u2193P
-                                        ; sub_2A163+2B\u2193P
+                                        ; Dialog_showFormattedPrompt+2B\u2193P
 
 var_10          = byte ptr -10h
 var_4           = dword ptr -4
@@ -44042,8 +44042,8 @@ set_text_position endp
 ; Attributes: bp-based frame
 
 ; void __cdecl __far Screen_setTextColor(int fgColor, int bgColor)
-Screen_setTextColor proc far            ; CODE XREF: sub_2A163+278\u2193P
-                                        ; sub_2A163+299\u2193P ...
+Screen_setTextColor proc far            ; CODE XREF: Dialog_showFormattedPrompt+278\u2193P
+                                        ; Dialog_showFormattedPrompt+299\u2193P ...
 
 fgColor         = word ptr  6
 bgColor         = word ptr  8
@@ -52475,7 +52475,7 @@ Image_loadRange endp
 ; Attributes: bp-based frame
 
 sub_26892       proc far                ; CODE XREF: Icon_drawButton+7A\u2193P
-                                        ; sub_2A163+1D3\u2193P
+                                        ; Dialog_showFormattedPrompt+1D3\u2193P
 
 var_4           = word ptr -4
 showFlag        = byte ptr -2
@@ -57430,7 +57430,7 @@ Windows_addWindow endp
 
 ; int __cdecl __far Windows_addWindow2(int x1b, int y1b, int x2b, int y2b)
 Windows_addWindow2 proc far             ; CODE XREF: Listbox_add+A5\u2191P
-                                        ; sub_2A163+239\u2193p ...
+                                        ; Dialog_showFormattedPrompt+239\u2193p ...
 
 x1              = word ptr  6
 y1              = word ptr  8
@@ -57527,7 +57527,7 @@ Window_loadFont2 endp
 ; Attributes: bp-based frame
 
 ; int __cdecl __far Window_frameRect(int winNumber, char flags)
-Window_frameRect proc far               ; CODE XREF: sub_2A163+260\u2193p
+Window_frameRect proc far               ; CODE XREF: Dialog_showFormattedPrompt+260\u2193p
                                         ; Dialog_showCornerMessage+60\u2193P ...
 
 winNumber       = word ptr  6
@@ -57621,7 +57621,7 @@ Window_destroy  endp
 ; Attributes: bp-based frame
 
 ; void __cdecl __far Windows_clear(bool clearScreen)
-Windows_clear   proc far                ; CODE XREF: sub_2A163+202\u2193p
+Windows_clear   proc far                ; CODE XREF: Dialog_showFormattedPrompt+202\u2193p
                                         ; Scene_draw+82\u2193P ...
 
 clearScreen     = byte ptr  6
@@ -60041,7 +60041,7 @@ loc_29EF2:                              ; CODE XREF: Dialog_prompt+32\u2191j
                 sar     ax, 1
                 push    ax
                 push    cs
-                call    near ptr sub_2A163
+                call    near ptr Dialog_showFormattedPrompt
                 add     sp, 8
                 mov     [bp+var_66], ax
                 mov     es, dseg_63
@@ -60226,7 +60226,7 @@ Dialog_prompt   endp
                 sub     ax, 0Eh
                 push    ax
                 push    cs
-                call    near ptr sub_2A163
+                call    near ptr Dialog_showFormattedPrompt
                 add     sp, 8
                 cmp     word ptr [bp+6], 0
                 jz      short loc_2A0FA
@@ -60287,7 +60287,7 @@ arg_4           = byte ptr  0Ah
                 push    ax
                 push    ax
                 push    cs
-                call    near ptr sub_2A163
+                call    near ptr Dialog_showFormattedPrompt
                 add     sp, 8
                 mov     [bp+var_2], 0
 
@@ -60319,7 +60319,7 @@ printf          endp
 
 ; Attributes: bp-based frame
 
-sub_2A163       proc far                ; CODE XREF: Dialog_prompt+92\u2191p
+Dialog_showFormattedPrompt proc far     ; CODE XREF: Dialog_prompt+92\u2191p
                                         ; sg1a3e:16FE\u2191p ...
 
 var_120         = byte ptr -120h
@@ -60352,7 +60352,7 @@ arg_8           = byte ptr  0Eh
                 push    cs
                 call    near ptr sub_2A41D
 
-loc_2A175:                              ; CODE XREF: sub_2A163+C\u2191j
+loc_2A175:                              ; CODE XREF: Dialog_showFormattedPrompt+C\u2191j
                 call    Mouse_Hide
                 mov     word ptr [bp+showFlag], ax
                 lea     ax, [bp+arg_8]
@@ -60374,7 +60374,7 @@ loc_2A175:                              ; CODE XREF: sub_2A163+C\u2191j
                 jmp     short loc_2A1C9
 ; ---------------------------------------------------------------------------
 
-loc_2A1B3:                              ; CODE XREF: sub_2A163+76\u2193j
+loc_2A1B3:                              ; CODE XREF: Dialog_showFormattedPrompt+76\u2193j
                 inc     [bp+var_2]
                 mov     ax, [bp+var_11A]
                 cmp     [bp+var_2], ax
@@ -60382,11 +60382,11 @@ loc_2A1B3:                              ; CODE XREF: sub_2A163+76\u2193j
                 mov     ax, [bp+var_2]
                 mov     [bp+var_11A], ax
 
-loc_2A1C6:                              ; CODE XREF: sub_2A163+5A\u2191j
-                                        ; sub_2A163+81\u2193j
+loc_2A1C6:                              ; CODE XREF: Dialog_showFormattedPrompt+5A\u2191j
+                                        ; Dialog_showFormattedPrompt+81\u2193j
                 inc     word ptr [bp+var_6]
 
-loc_2A1C9:                              ; CODE XREF: sub_2A163+4E\u2191j
+loc_2A1C9:                              ; CODE XREF: Dialog_showFormattedPrompt+4E\u2191j
                 les     bx, [bp+var_6]
                 assume es:nothing
                 mov     al, es:[bx]
@@ -60400,24 +60400,24 @@ loc_2A1C9:                              ; CODE XREF: sub_2A163+4E\u2191j
                 jmp     short loc_2A1C6
 ; ---------------------------------------------------------------------------
 
-loc_2A1E6:                              ; CODE XREF: sub_2A163+72\u2191j
+loc_2A1E6:                              ; CODE XREF: Dialog_showFormattedPrompt+72\u2191j
                 inc     [bp+var_11A]
                 cmp     [bp+var_11A], 4Fh ; 'O'
                 jle     short loc_2A1F7
                 mov     [bp+var_11A], 4Fh ; 'O'
 
-loc_2A1F7:                              ; CODE XREF: sub_2A163+8C\u2191j
+loc_2A1F7:                              ; CODE XREF: Dialog_showFormattedPrompt+8C\u2191j
                 cmp     [bp+var_11C], 18h
                 jle     short loc_2A204
                 mov     [bp+var_11C], 18h
 
-loc_2A204:                              ; CODE XREF: sub_2A163+99\u2191j
+loc_2A204:                              ; CODE XREF: Dialog_showFormattedPrompt+99\u2191j
                 cmp     [bp+x1], 0
                 jl      short loc_2A210
                 cmp     [bp+y1], 0
                 jge     short loc_2A23E
 
-loc_2A210:                              ; CODE XREF: sub_2A163+A5\u2191j
+loc_2A210:                              ; CODE XREF: Dialog_showFormattedPrompt+A5\u2191j
                 mov     es, seg126_74
                 assume es:sg3EDC
                 mov     ax, es:_Screen_TEXT_COLUMNS_80
@@ -60436,11 +60436,11 @@ loc_2A210:                              ; CODE XREF: sub_2A163+A5\u2191j
                 jmp     short loc_2A23E
 ; ---------------------------------------------------------------------------
 
-loc_2A23B:                              ; CODE XREF: sub_2A163+EB\u2193j
+loc_2A23B:                              ; CODE XREF: Dialog_showFormattedPrompt+EB\u2193j
                 dec     [bp+x1]
 
-loc_2A23E:                              ; CODE XREF: sub_2A163+AB\u2191j
-                                        ; sub_2A163+D6\u2191j
+loc_2A23E:                              ; CODE XREF: Dialog_showFormattedPrompt+AB\u2191j
+                                        ; Dialog_showFormattedPrompt+D6\u2191j
                 mov     ax, [bp+x1]
                 add     ax, [bp+var_11A]
                 mov     es, seg126_74
@@ -60449,19 +60449,19 @@ loc_2A23E:                              ; CODE XREF: sub_2A163+AB\u2191j
                 jmp     short loc_2A255
 ; ---------------------------------------------------------------------------
 
-loc_2A252:                              ; CODE XREF: sub_2A163+F6\u2193j
+loc_2A252:                              ; CODE XREF: Dialog_showFormattedPrompt+F6\u2193j
                 inc     [bp+x1]
 
-loc_2A255:                              ; CODE XREF: sub_2A163+ED\u2191j
+loc_2A255:                              ; CODE XREF: Dialog_showFormattedPrompt+ED\u2191j
                 cmp     [bp+x1], 1
                 jl      short loc_2A252
                 jmp     short loc_2A260
 ; ---------------------------------------------------------------------------
 
-loc_2A25D:                              ; CODE XREF: sub_2A163+10D\u2193j
+loc_2A25D:                              ; CODE XREF: Dialog_showFormattedPrompt+10D\u2193j
                 dec     [bp+y1]
 
-loc_2A260:                              ; CODE XREF: sub_2A163+F8\u2191j
+loc_2A260:                              ; CODE XREF: Dialog_showFormattedPrompt+F8\u2191j
                 mov     ax, [bp+y1]
                 add     ax, [bp+var_11C]
                 mov     es, seg126_75
@@ -60470,10 +60470,10 @@ loc_2A260:                              ; CODE XREF: sub_2A163+F8\u2191j
                 jmp     short loc_2A277
 ; ---------------------------------------------------------------------------
 
-loc_2A274:                              ; CODE XREF: sub_2A163+118\u2193j
+loc_2A274:                              ; CODE XREF: Dialog_showFormattedPrompt+118\u2193j
                 inc     [bp+y1]
 
-loc_2A277:                              ; CODE XREF: sub_2A163+10F\u2191j
+loc_2A277:                              ; CODE XREF: Dialog_showFormattedPrompt+10F\u2191j
                 cmp     [bp+y1], 1
                 jl      short loc_2A274
                 mov     ax, [bp+x1]
@@ -60509,13 +60509,13 @@ loc_2A277:                              ; CODE XREF: sub_2A163+10F\u2191j
                 jmp     short loc_2A2EF
 ; ---------------------------------------------------------------------------
 
-loc_2A2E4:                              ; CODE XREF: sub_2A163+16F\u2191j
+loc_2A2E4:                              ; CODE XREF: Dialog_showFormattedPrompt+16F\u2191j
                 sub     ax, ax
                 push    ax              ; flag
                 call    Font_showTextCursor
                 add     sp, 2
 
-loc_2A2EF:                              ; CODE XREF: sub_2A163+17F\u2191j
+loc_2A2EF:                              ; CODE XREF: Dialog_showFormattedPrompt+17F\u2191j
                 mov     es, dseg_64
                 assume es:sg4d43
                 mov     ax, es:Image_OffsetPos.x
@@ -60553,7 +60553,7 @@ loc_2A2EF:                              ; CODE XREF: sub_2A163+17F\u2191j
                 call    near ptr Windows_clear
                 add     sp, 2
 
-loc_2A36B:                              ; CODE XREF: sub_2A163+1FC\u2191j
+loc_2A36B:                              ; CODE XREF: Dialog_showFormattedPrompt+1FC\u2191j
                 mov     es, seg126_76
                 assume es:sg3EDC
                 push    es:LIGHT_GRAY   ; bgColor
@@ -60613,7 +60613,7 @@ loc_2A36B:                              ; CODE XREF: sub_2A163+1FC\u2191j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_2A163       endp
+Dialog_showFormattedPrompt endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -373964,7 +373964,7 @@ loc_C48FC:                              ; CODE XREF: sub_C48E4+10\u2191j
                 sub     ax, dx
                 sar     ax, 1
                 push    ax
-                call    sub_2A163
+                call    Dialog_showFormattedPrompt
                 add     sp, 8
                 mov     [bp+windowNum], ax
                 mov     es, seg_D1A72
@@ -384413,7 +384413,7 @@ Windows_activeWindow dw 0FFFFh          ; DATA XREF: Windows_addWindow+CB\u2191r
 word_C97AA      dw 0                    ; DATA XREF: sg1a3e:170A\u2191r
                                         ; sg1a3e:1711\u2191w ...
 ; bool word_C97AC
-word_C97AC      dw 0                    ; DATA XREF: sub_2A163+17C\u2191w
+word_C97AC      dw 0                    ; DATA XREF: Dialog_showFormattedPrompt+17C\u2191w
                                         ; sub_2A41D:loc_2A4CB\u2191r
 aMore           db '- MORE -',0         ; DATA XREF: Windows_newLine+116\u2191o
 aMore_0         db '- MORE -',0         ; DATA XREF: Windows_newLine+1BA\u2191o
@@ -393619,16 +393619,16 @@ dseg_62         dw seg sg4d43           ; DATA XREF: Dialog_prompt+1A\u2191r
 seg126_74       dw seg sg3EDC           ; DATA XREF: Dialog_prompt+80\u2191r
                                         ; sg1a3e:16F1\u2191r ...
 dseg_63         dw seg sg4d43           ; DATA XREF: Dialog_prompt+9B\u2191r
-seg126_75       dw seg sg3EDC           ; DATA XREF: sub_2A163+C1\u2191r
-                                        ; sub_2A163+104\u2191r
-dseg_64         dw seg sg4d43           ; DATA XREF: sub_2A163:loc_2A2EF\u2191r
-                                        ; sub_2A163+1A4\u2191r ...
-dseg_65         dw seg sg4d43           ; DATA XREF: sub_2A163+198\u2191r
-                                        ; sub_2A163+1AF\u2191r ...
-seg126_76       dw seg sg3EDC           ; DATA XREF: sub_2A163:loc_2A36B\u2191r
-                                        ; sub_2A163+266\u2191r
-seg126_77       dw seg sg3EDC           ; DATA XREF: sub_2A163+211\u2191r
-                                        ; sub_2A163+26F\u2191r ...
+seg126_75       dw seg sg3EDC           ; DATA XREF: Dialog_showFormattedPrompt+C1\u2191r
+                                        ; Dialog_showFormattedPrompt+104\u2191r
+dseg_64         dw seg sg4d43           ; DATA XREF: Dialog_showFormattedPrompt:loc_2A2EF\u2191r
+                                        ; Dialog_showFormattedPrompt+1A4\u2191r ...
+dseg_65         dw seg sg4d43           ; DATA XREF: Dialog_showFormattedPrompt+198\u2191r
+                                        ; Dialog_showFormattedPrompt+1AF\u2191r ...
+seg126_76       dw seg sg3EDC           ; DATA XREF: Dialog_showFormattedPrompt:loc_2A36B\u2191r
+                                        ; Dialog_showFormattedPrompt+266\u2191r
+seg126_77       dw seg sg3EDC           ; DATA XREF: Dialog_showFormattedPrompt+211\u2191r
+                                        ; Dialog_showFormattedPrompt+26F\u2191r ...
 dseg_66         dw seg sg4d43           ; DATA XREF: fprint+62\u2191r
                                         ; sub_1A0FC+1D\u2191r ...
 dseg_67         dw seg sg4d43           ; DATA XREF: _clock+6\u2191r

@@ -709,6 +709,11 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
 - [x] Named `sub_1063F` (3 callers) → `format_long_decimal` — a
       generic signed 32-bit integer-to-decimal-string formatter. Full
       writeup in [overview.md](overview.md#format_long_decimal-named).
+- [x] Named `sub_2A163` (4 callers) → `Dialog_showFormattedPrompt` —
+      the core formatted-message auto-sized dialog implementation
+      `Dialog_prompt` wraps, confirmed via a real `_vsprintf` call.
+      Full writeup in
+      [overview.md](overview.md#dialog_showformattedprompt-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-
