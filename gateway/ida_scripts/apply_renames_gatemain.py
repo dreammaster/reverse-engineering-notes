@@ -111,31 +111,31 @@ RENAMES = [
     # confidence on the exact end use since the callback target itself
     # wasn't traced. See docs/overview.md#stream-subsystem-named. --
 
-    ("sub_14A37", "Stream_loadFile",
+    (0x14A37, "Stream_loadFile",
      "Top-level entry: flushes the active window's pending text "
      "(TextWindow_flushPendingText), then reads (Stream_readChunks), "
      "processes (Stream_processChunks), and frees "
      "(Stream_freeChunks) a whole file's worth of chunked buffers."),
-    ("sub_28E2C", "TextWindow_flushPendingText",
+    (0x28E2C, "TextWindow_flushPendingText",
      "Flushes Windows_pendingText for the current Windows_activeWindow "
      "via TextWindow_addDirect if that window has buffered/queued text "
      "waiting -- distinct from the already-named TextWindow_flushText."),
-    ("sub_1DDF6", "Stream_readChunks",
+    (0x1DDF6, "Stream_readChunks",
      "Opens filename, seeks to find its total size, then reads it into "
      "up to 8 separately-allocated RAM buffers (dword_C84A6[] array, "
      "each up to ~64KB since one DOS allocation can't hold an arbitrary "
      "file), aborting the whole read early if a key is pressed "
      "(Events_isKeyPending) or if word_C8582 bit 8 is clear or bit "
      "0x40 is set."),
-    ("sub_1E052", "Stream_processChunks",
+    (0x1E052, "Stream_processChunks",
      "Walks the same buffer array Stream_readChunks filled, dispatching "
      "each non-empty one through Stream_processChunk -- again "
      "abortable via Events_isKeyPending between chunks, and gated by "
      "the same word_C8582 bits."),
-    ("sub_1E0E8", "Stream_freeChunks",
+    (0x1E0E8, "Stream_freeChunks",
      "Frees all 8 of the buffer-array slots via kill_pointer_ -- the "
      "cleanup step after Stream_readChunks/Stream_processChunks."),
-    ("sub_180E3", "Stream_processChunk",
+    (0x180E3, "Stream_processChunk",
      "Per-chunk handler: reads a couple of header bytes from the "
      "buffer (offsets 5 and 7, before the 32-byte header/payload "
      "boundary already established) into cx/bx, then calls the actual "
@@ -143,6 +143,53 @@ RENAMES = [
      "pointer (word_C84D0) with the payload pointer (buffer+0x20) -- "
      "not traced further since the callback's actual target varies by "
      "caller and wasn't identified this pass."),
+
+    # -- fourth pass, same session: pulled on the word_C84D0 callback
+    # thread. word_C84D0 isn't 4 independent functions -- it's several
+    # NEAR-call entry points into one shared decoder continuation body
+    # (confirmed by resolving the raw offsets 0x220/0x238/0x493/0x6EE
+    # against segment sg09a4's base, 0x1802A -- 3 of the 4 land exactly
+    # on loc_ labels *inside* other already-existing functions, not
+    # function starts, matching the same "no clean chunk boundary"
+    # pattern seen with RTLink thunks two sessions ago). Traced back to
+    # its own configuration call, sub_1DDC0, and from there to
+    # gatemain_start's own argv-parsing code -- which turned out to
+    # directly resolve gate.idb's long-standing "5 unidentified globals
+    # passed to GATEMAIN.EXE" open item from the very first gate.idb
+    # session: argv[1]->Mouse_enablement, argv[2]->videoMode,
+    # argv[3]->cmdline_param3 (renamed here), argv[4..8]->
+    # cmdline_param4..8. gate.idb's word_2A256/58/5A/5C/5E are exactly
+    # cmdline_param4/5/6/7/8 on this side -- worth a gate.idb pass to
+    # rename them there too using this same confirmed mapping. See
+    # docs/overview.md#word_c84d0-traced--a-shared-decoder-continuation-not-4-functions. --
+
+    ("sub_1DDC0", "Stream_configure",
+     "Called once from gatemain_start with argv[6]/[7]/[8] (as "
+     "cmdline_param6/7/8), i.e. purely launch-time configuration, not "
+     "anything computed during play. If cmdline_param6==4: stashes "
+     "cmdline_param7/8 into word_C84F3/byte_C84F5 (role not traced), "
+     "then always calls Stream_selectHandler(cmdline_param6)."),
+    ("sub_18042", "Stream_selectHandler",
+     "Dispatches on its mode argument (0/1/2/4, confirmed as "
+     "cmdline_param6 by its only caller, Stream_configure) to wire up "
+     "word_C84D0/word_C84D2/word_C84D4 -- NOT 4 independent callback "
+     "functions, but several different NEAR-call entry points into one "
+     "shared decoder continuation body (spanning what IDA shows as "
+     "several separate small subs -- e.g. mode 1's target is 32 bytes "
+     "into what IDA calls sub_18242, skipping a precondition check mode "
+     "0's target doesn't skip). The actual decoded resource type "
+     "wasn't identified this pass -- deferred, see roadmap.md."),
+    ("cmdline_param3", "_soundMode",
+     "argv[3] (via atoi) in gatemain_start's own parameter parsing -- "
+     "confirmed positionally to be the same soundMode argument gate.idb's "
+     "_main passes as arg3 to _execl (that session left it named only "
+     "as 'soundMode' locally, not cross-referenced to this global). "
+     "Manipulated with bit tests/masks elsewhere (e.g. 'and "
+     "cmdline_param3, 0F7h'), so it's a bitflag word, not a plain enum."),
+    ("cmdline_param6", "_streamMode",
+     "argv[6] -- confirmed as Stream_configure/Stream_selectHandler's "
+     "mode argument (0/1/2/4), a pure launch-time configuration value, "
+     "not anything computed during play."),
 ]
 
 

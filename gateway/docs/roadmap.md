@@ -86,9 +86,18 @@ DOS/CRT-shaped ones like `RTLINK_SEG`, `HANDLE`, `timeb`,
       naming-convention difference. Simplifies the ScummVM
       reimplementation's job (no in-engine "mode switch" needed for this
       handoff). Full writeup in overview.md.
-- [ ] Identify the 5 unknown globals (`word_2A256`/`58`/`5A`/`5C`/`5E`)
+- [x] Identified the 5 unknown globals (`word_2A256`/`58`/`5A`/`5C`/`5E`)
       passed as `argv[4]`-`argv[8]` to `GATEMAIN.EXE` alongside the
-      confirmed `xmouse`/`videoMode`/`soundMode`.
+      confirmed `xmouse`/`videoMode`/`soundMode` — resolved from the
+      `gatemain.idb` side while tracing that IDB's `word_C84D0` callback
+      thread: they're `gatemain_start`'s `cmdline_param4`-`8`, and
+      `word_2A25A` specifically is `_streamMode` (a decoder-subsystem
+      mode selector, confirmed on that side). See
+      `gatemain`'s `overview.md#word_c84d0-traced--a-shared-decoder-continuation-not-4-functions`.
+      **Not yet done**: actually applying matching renames here in
+      `gate.idb` for the other four (`word_2A256`/`58`/`5C`/`5E`) —
+      this item just confirms what they *are*, not a completed rename
+      pass on this IDB.
 - [ ] Trace `current_section`'s value meanings (0/1/2/3 confirmed as
       real/load-bearing via ~30 xrefs, semantics not yet decoded) and the
       `show_intro` cluster's functions (`0x1F000`-`0x23000` range,
@@ -320,10 +329,28 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       `apply_renames_gatemain.py` — entries that key by a symbol's *old*
       name break once that rename is actually applied, since the name
       no longer exists to look up. Every entry now keys by hex address.
+- [x] Pulled on the `word_C84D0` callback thread. Turned out to be
+      several NEAR-call entry points into **one shared decoder
+      continuation body** (not 4 independent functions — same "no clean
+      chunk boundary" pattern as the RTLink thunks), selected by
+      `_streamMode` (was `cmdline_param6`), traced through
+      `Stream_selectHandler`/`Stream_configure` (were `sub_18042`/
+      `sub_1DDC0`) all the way back to `gatemain_start`'s own `argv`
+      parsing. **Major cross-IDB find**: this directly resolves
+      `gate.idb`'s long-standing "5 unidentified globals passed to
+      `GATEMAIN.EXE`" open item from its very first session —
+      `cmdline_param3`/`4`/`5`/`6`/`7`/`8` are `argv[3]`-`[8]`, matching
+      `gate.idb`'s `soundMode`/`word_2A256`/`58`/`5A`/`5C`/`5E` exactly
+      (`word_2A25A` = `_streamMode`). Renamed `_soundMode`/`_streamMode`
+      here; the other four `gate.idb` globals are a good target for a
+      `gate.idb` pass using this confirmed mapping. Full writeup in
+      [overview.md](overview.md#word_c84d0-traced--a-shared-decoder-continuation-not-4-functions).
+      **Not resolved**: what resource type the decoder continuation
+      actually processes (needs `sub_18148`/`sub_18182`/`sub_181D8`/
+      `sub_18432`/`sub_18682`/`sub_186F0` traced), and
+      `cmdline_param4`/`5`/`7`/`8`'s individual roles.
 - [ ] Continue working down the re-ranked list — the rest of the ~1750
-      still-unnamed functions. `Stream_processChunk`'s callback target
-      (`word_C84D0`) would be a good next thread to pull, since it'd
-      clarify what this whole streaming subsystem is actually used for.
+      still-unnamed functions.
 - [ ] Cross-check the structs shared by name/concept with `gate.idb`
       (`VocabEntry`/`VOCAB_ENTRY`, `Str16`/`STR16`, `Point`/`POINT`,
       `Screen`/`SCREEN`, `Font`/`FONT`, `REGS`, `HandleEntry`/`HANDLE`)

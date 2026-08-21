@@ -17819,7 +17819,7 @@ byte_1803C      db 6 dup(0)             ; DATA XREF: sg09a4:07E3\u2193w
 
 ; Attributes: bp-based frame
 
-sub_18042       proc far                ; CODE XREF: sub_1DDC0:loc_1DDE2\u2193P
+Stream_selectHandler proc far           ; CODE XREF: Stream_configure:loc_1DDE2\u2193P
 
 arg_0           = word ptr  6
 
@@ -17848,7 +17848,7 @@ loc_18062:
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_18070:                              ; CODE XREF: sub_18042+18\u2191j
+loc_18070:                              ; CODE XREF: Stream_selectHandler+18\u2191j
                 cmp     bx, 1
                 jnz     short loc_18092
                 cmp     word_C84DA, 160h
@@ -17859,7 +17859,7 @@ loc_1807B:
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_18080:                              ; CODE XREF: sub_18042:loc_1807B\u2191j
+loc_18080:                              ; CODE XREF: Stream_selectHandler:loc_1807B\u2191j
                 mov     word_C84D0, 238h
 
 loc_18086:
@@ -17869,7 +17869,7 @@ loc_18086:
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_18092:                              ; CODE XREF: sub_18042+31\u2191j
+loc_18092:                              ; CODE XREF: Stream_selectHandler+31\u2191j
                 cmp     bx, 2
                 jnz     short loc_180B9
 
@@ -17881,7 +17881,7 @@ loc_18097:
                 db 90h
 ; ---------------------------------------------------------------------------
 
-loc_1809F:                              ; CODE XREF: sub_18042+58\u2191j
+loc_1809F:                              ; CODE XREF: Stream_selectHandler+58\u2191j
                 cmp     word_C84DA, 160h
                 jbe     short loc_180D5
                 mov     word_C84D0, 493h
@@ -17894,7 +17894,7 @@ loc_180AD:
                 db 90h
 ; ---------------------------------------------------------------------------
 
-loc_180B9:                              ; CODE XREF: sub_18042+53\u2191j
+loc_180B9:                              ; CODE XREF: Stream_selectHandler+53\u2191j
                 cmp     bx, 4
                 jnz     short loc_180D5
                 call    sub_18682
@@ -17907,25 +17907,25 @@ loc_180B9:                              ; CODE XREF: sub_18042+53\u2191j
                 db 90h
 ; ---------------------------------------------------------------------------
 
-loc_180D5:                              ; CODE XREF: sub_18042+3B\u2191j
-                                        ; sub_18042+5A\u2191j ...
+loc_180D5:                              ; CODE XREF: Stream_selectHandler+3B\u2191j
+                                        ; Stream_selectHandler+5A\u2191j ...
                 mov     ax, 0
                 jmp     short loc_180DE
 ; ---------------------------------------------------------------------------
                 db 90h
 ; ---------------------------------------------------------------------------
 
-loc_180DB:                              ; CODE XREF: sub_18042+2B\u2191j
-                                        ; sub_18042+4D\u2191j ...
+loc_180DB:                              ; CODE XREF: Stream_selectHandler+2B\u2191j
+                                        ; Stream_selectHandler+4D\u2191j ...
                 mov     ax, 1
 
-loc_180DE:                              ; CODE XREF: sub_18042+96\u2191j
+loc_180DE:                              ; CODE XREF: Stream_selectHandler+96\u2191j
                 pop     es
                 pop     di
                 pop     si
                 pop     bp
                 retf
-sub_18042       endp
+Stream_selectHandler endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -18024,7 +18024,7 @@ sub_18134       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18148       proc near               ; CODE XREF: sub_18042+10\u2191p
+sub_18148       proc near               ; CODE XREF: Stream_selectHandler+10\u2191p
                 push    ax
                 push    cx
                 push    dx
@@ -18064,7 +18064,7 @@ sub_18148       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18182       proc near               ; CODE XREF: sub_18042+D\u2191p
+sub_18182       proc near               ; CODE XREF: Stream_selectHandler+D\u2191p
                 push    ax
                 push    es
                 push    di
@@ -18126,7 +18126,7 @@ sub_18182       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_181D8       proc near               ; CODE XREF: sub_18042:loc_18055\u2191p
+sub_181D8       proc near               ; CODE XREF: Stream_selectHandler:loc_18055\u2191p
                 push    ax
                 push    cx
                 push    dx
@@ -18217,8 +18217,8 @@ loc_18224:                              ; DATA XREF: sub_18182+2E\u2191o
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18242       proc near               ; CODE XREF: sub_18042+4A\u2191p
-                                        ; sub_18042+71\u2191p ...
+sub_18242       proc near               ; CODE XREF: Stream_selectHandler+4A\u2191p
+                                        ; Stream_selectHandler+71\u2191p ...
                 mov     byte_C84CA, 0
                 mov     cs:byte_1803B, 0
                 mov     byte ptr word_C84D4+1, 7
@@ -18540,7 +18540,7 @@ sub_18415       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18432       proc near               ; CODE XREF: sub_18042:loc_18097\u2191p
+sub_18432       proc near               ; CODE XREF: Stream_selectHandler:loc_18097\u2191p
                 call    sub_1863B
                 jb      short locret_184B2
                 mov     al, 36h ; '6'
@@ -18834,7 +18834,7 @@ sub_1863B       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18682       proc near               ; CODE XREF: sub_18042+7C\u2191p
+sub_18682       proc near               ; CODE XREF: Stream_selectHandler+7C\u2191p
                 mov     dx, word_C84F3
                 call    sub_186B2
                 jb      short loc_186B0
@@ -32766,7 +32766,7 @@ seg025          segment byte public 'CODE' use16
 
 ; Attributes: bp-based frame
 
-sub_1DDC0       proc far                ; CODE XREF: seg029:0AB5\u2193P
+Stream_configure proc far               ; CODE XREF: seg029:0AB5\u2193P
                                         ; gatemain_start+1A1\u2193P ...
 
 arg_0           = word ptr  6
@@ -32791,11 +32791,11 @@ loc_1DDC9:
                 mov     al, [bp+arg_4]
                 mov     es:byte_C84F5, al
 
-loc_1DDDF:                              ; CODE XREF: sub_1DDC0:loc_1DDC7\u2191j
+loc_1DDDF:                              ; CODE XREF: Stream_configure:loc_1DDC7\u2191j
                 push    [bp+arg_0]
 
 loc_1DDE2:
-                call    sub_18042
+                call    Stream_selectHandler
                 add     sp, 2
                 mov     cx, ax
                 cmp     cx, 1
@@ -32803,7 +32803,7 @@ loc_1DDE2:
                 neg     ax
                 pop     bp
                 retf
-sub_1DDC0       endp
+Stream_configure endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -38231,7 +38231,7 @@ loc_2052C:                              ; CODE XREF: seg029:0A84\u2193j
                 add     sp, 8
                 or      ax, ax
                 jz      short loc_2054A
-                and     byte ptr cmdline_param3, 0F7h
+                and     byte ptr _soundMode, 0F7h
                 jmp     loc_206C1
 ; ---------------------------------------------------------------------------
 
@@ -38246,7 +38246,7 @@ loc_2054A:                              ; CODE XREF: seg029:08D0\u2191j
                 add     sp, 8
                 or      ax, ax
                 jz      short loc_2056A
-                mov     cmdline_param3, 0Ah
+                mov     _soundMode, 0Ah
                 jmp     loc_206C1
 ; ---------------------------------------------------------------------------
                 align 2
@@ -38266,7 +38266,7 @@ loc_2056A:                              ; CODE XREF: seg029:08EE\u2191j
 ; ---------------------------------------------------------------------------
 
 loc_20583:                              ; CODE XREF: seg029:090E\u2191j
-                mov     cmdline_param3, 0Ch
+                mov     _soundMode, 0Ch
                 mov     bx, di
                 shl     bx, 1
                 shl     bx, 1
@@ -38356,8 +38356,8 @@ loc_2061A:                              ; CODE XREF: seg029:0910\u2191j
 ; ---------------------------------------------------------------------------
 
 loc_20633:                              ; CODE XREF: seg029:09BE\u2191j
-                mov     cmdline_param3, 0Ah
-                mov     cmdline_param6, 4
+                mov     _soundMode, 0Ah
+                mov     _streamMode, 4
                 mov     bx, di
                 shl     bx, 1
                 shl     bx, 1
@@ -38444,7 +38444,7 @@ loc_206C2:                              ; CODE XREF: seg029:08B8\u2191j
 ; ---------------------------------------------------------------------------
 
 loc_206F7:                              ; CODE XREF: seg029:0A82\u2191j
-                mov     cmdline_param3, 8
+                mov     _soundMode, 8
                 jmp     short loc_206C1
 ; ---------------------------------------------------------------------------
                 align 2
@@ -38456,16 +38456,16 @@ loc_20700:                              ; CODE XREF: seg029:0A55\u2191j
 
 loc_2070A:
                 push    cmdline_param4
-                push    cmdline_param3
+                push    _soundMode
                 push    cs
                 call    near ptr sub_1FDB8
                 add     sp, 6
                 push    cmdline_param7
                 push    cmdline_param8
-                push    cmdline_param6
-                call    sub_1DDC0
+                push    _streamMode
+                call    Stream_configure
                 add     sp, 6
-                test    byte ptr cmdline_param3, 4
+                test    byte ptr _soundMode, 4
                 jz      short loc_2075E
                 test    byte ptr word_C8582, 4
                 jnz     short loc_2075E
@@ -38492,7 +38492,7 @@ loc_20755:                              ; CODE XREF: seg029:loc_2077C\u2193j
 
 loc_2075E:                              ; CODE XREF: seg029:0AC2\u2191j
                                         ; seg029:0AC9\u2191j ...
-                test    byte ptr cmdline_param3, 2
+                test    byte ptr _soundMode, 2
                 jz      short loc_2077E
                 test    byte ptr word_C8582, 2
                 jnz     short loc_2077E
@@ -162386,7 +162386,7 @@ loc_65B3D:                              ; CODE XREF: gatemain_start+7\u2191j
                 add     sp, 4
                 mov     es, seg_D12A0
                 assume es:sg4d43
-                mov     es:cmdline_param3, ax
+                mov     es:_soundMode, ax
                 les     bx, [bp+argv]
                 assume es:nothing
                 push    word ptr es:[bx+12h]
@@ -162413,7 +162413,7 @@ loc_65B3D:                              ; CODE XREF: gatemain_start+7\u2191j
                 add     sp, 4
                 mov     es, seg_D12A6
                 assume es:sg4d43
-                mov     es:cmdline_param6, ax
+                mov     es:_streamMode, ax
                 les     bx, [bp+argv]
                 assume es:nothing
                 push    word ptr es:[bx+1Eh]
@@ -162465,7 +162465,7 @@ loc_65B3D:                              ; CODE XREF: gatemain_start+7\u2191j
                 mov     es, seg_D12A2
                 push    es:cmdline_param4
                 mov     es, seg_D12A0
-                push    es:cmdline_param3
+                push    es:_soundMode
                 call    sub_1FDB8
                 add     sp, 6
 ;
@@ -162474,8 +162474,8 @@ loc_65B3D:                              ; CODE XREF: gatemain_start+7\u2191j
                 mov     es, seg_D12AA
                 push    es:cmdline_param8
                 mov     es, seg_D12A6
-                push    es:cmdline_param6
-                call    sub_1DDC0
+                push    es:_streamMode
+                call    Stream_configure
                 add     sp, 6
 ;
                 mov     ax, 100h
@@ -177033,9 +177033,9 @@ var_2           = word ptr -2
                 mov     bp, sp
                 sub     sp, 2
                 mov     es, seg_D133C
-                test    byte ptr es:cmdline_param3, 6
+                test    byte ptr es:_soundMode, 6
                 jz      short loc_6D7E5
-                mov     ax, es:cmdline_param3
+                mov     ax, es:_soundMode
                 jmp     short loc_6D7F2
 ; ---------------------------------------------------------------------------
 
@@ -177113,7 +177113,7 @@ loc_6D860:                              ; CODE XREF: sub_2ECB1+3\u2191J
                 mov     es, seg_D1340
                 push    es:cmdline_param4
                 mov     es, seg_D133C
-                mov     ax, es:cmdline_param3
+                mov     ax, es:_soundMode
                 or      al, 8
                 push    ax
                 call    sub_1FDB8
@@ -177123,8 +177123,8 @@ loc_6D860:                              ; CODE XREF: sub_2ECB1+3\u2191J
                 mov     es, seg_D1344
                 push    es:cmdline_param8
                 mov     es, seg_D1346
-                push    es:cmdline_param6
-                call    sub_1DDC0
+                push    es:_streamMode
+                call    Stream_configure
                 add     sp, 6
                 push    cs
                 call    near ptr sub_6D836
@@ -177140,7 +177140,7 @@ loc_6D8B0:                              ; CODE XREF: sub_2ECA7+3\u2191J
                 mov     es, seg_D1340
                 push    es:cmdline_param4
                 mov     es, seg_D133C
-                mov     ax, es:cmdline_param3
+                mov     ax, es:_soundMode
                 and     al, 0F7h
                 push    ax
                 call    sub_1FDB8
@@ -383663,22 +383663,22 @@ aRb_3           db 'rb',0               ; DATA XREF: Stream_readChunks:loc_1DE28
                 db    0
 byte_C84CA      db 0                    ; DATA XREF: sub_18134\u2191r
                                         ; sub_18242\u2191w ...
-byte_C84CB      db 0                    ; DATA XREF: sub_18042:loc_1804B\u2191w
+byte_C84CB      db 0                    ; DATA XREF: Stream_selectHandler:loc_1804B\u2191w
                                         ; Stream_readChunks+1F9\u2191r ...
 word_C84CC      dw 0FFFFh               ; DATA XREF: sub_181D8:loc_181F8\u2191r
                                         ; sub_183E3:loc_183FD\u2191r
 word_C84CE      dw 38Eh                 ; DATA XREF: sg09a4:027D\u2191r
                                         ; sg09a4:04D8\u2191r
-word_C84D0      dw 0                    ; DATA XREF: sub_18042+1A\u2191w
-                                        ; sub_18042:loc_18080\u2191w ...
-word_C84D2      dw 0                    ; DATA XREF: sub_18042:loc_18062\u2191w
-                                        ; sub_18042:loc_18086\u2191w ...
-word_C84D4      dw 0                    ; DATA XREF: sub_18042+26\u2191w
+word_C84D0      dw 0                    ; DATA XREF: Stream_selectHandler+1A\u2191w
+                                        ; Stream_selectHandler:loc_18080\u2191w ...
+word_C84D2      dw 0                    ; DATA XREF: Stream_selectHandler:loc_18062\u2191w
+                                        ; Stream_selectHandler:loc_18086\u2191w ...
+word_C84D4      dw 0                    ; DATA XREF: Stream_selectHandler+26\u2191w
                                         ; sub_18109+9\u2191r ...
 dword_C84D6     dd 0                    ; DATA XREF: sg09a4:02A6\u2191w
                                         ; sg09a4:0327\u2191r ...
-word_C84DA      dw 0FFFFh               ; DATA XREF: sub_18042+33\u2191r
-                                        ; sub_18042:loc_1809F\u2191r ...
+word_C84DA      dw 0FFFFh               ; DATA XREF: Stream_selectHandler+33\u2191r
+                                        ; Stream_selectHandler:loc_1809F\u2191r ...
 word_C84DC      dw 0                    ; DATA XREF: sub_18182+B\u2191w
                                         ; sub_181D8+A\u2191r
 word_C84DE      dw 0                    ; DATA XREF: sub_18182+12\u2191w
@@ -383867,13 +383867,13 @@ word_C85A0      dw 0                    ; DATA XREF: sub_1FCAA+C\u2191w
                                         ; seg029:00CF\u2191w ...
 word_C85A2      dw 0                    ; DATA XREF: seg029:00B5\u2191r
                                         ; sub_201C0+6\u2191r ...
-cmdline_param3  dw 9                    ; DATA XREF: seg029:08D2\u2191w
+_soundMode      dw 9                    ; DATA XREF: seg029:08D2\u2191w
                                         ; seg029:08F0\u2191w ...
 cmdline_param4  dw 2                    ; DATA XREF: seg029:0948\u2191w
                                         ; seg029:loc_2070A\u2191r ...
 cmdline_param5  dw 816                  ; DATA XREF: seg029:loc_20613\u2191w
                                         ; seg029:0A96\u2191r ...
-cmdline_param6  dw 1                    ; DATA XREF: seg029:09C9\u2191w
+_streamMode     dw 1                    ; DATA XREF: seg029:09C9\u2191w
                                         ; seg029:0AB1\u2191r ...
 cmdline_param7  dw 7                    ; DATA XREF: seg029:09FE\u2191w
                                         ; seg029:0AA9\u2191r ...
@@ -393394,8 +393394,8 @@ dword_D0EFA     dd 0                    ; DATA XREF: __fptrap:loc_18ADF\u2191r
 exit_method_list dd _flushall           ; DATA XREF: exit+C\u2191o exit+F\u2191t
 seg_D0F06       dw seg seg090           ; DATA XREF: exit2:exit_jump\u2191o
                                         ; exit2+6\u2191o ...
-dseg_6          dw seg sg4d43           ; DATA XREF: sub_1DDC0:loc_1DDC9\u2191r
-dseg_7          dw seg sg4d43           ; DATA XREF: sub_1DDC0+14\u2191r
+dseg_6          dw seg sg4d43           ; DATA XREF: Stream_configure:loc_1DDC9\u2191r
+dseg_7          dw seg sg4d43           ; DATA XREF: Stream_configure+14\u2191r
 dseg_8          dw seg sg4d43           ; DATA XREF: Stream_readChunks:loc_1DE0E\u2191r
                                         ; Stream_processChunks+15\u2191r
 dseg_9          dw seg sg4d43           ; DATA XREF: Stream_readChunks+1F5\u2191r

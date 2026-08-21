@@ -957,3 +957,55 @@ already-renamed symbol by its *old* name break once that rename has
 been applied for real (`idc.get_name_ea_simple` can't find a name that
 no longer exists) — every entry in this script now keys by hex address
 instead, once confirmed, to avoid exactly that trap.
+
+### `word_C84D0` traced — a shared decoder continuation, not 4 functions
+
+Same session, pulling on the `Stream_processChunk` callback thread per
+Paul's direction. `word_C84D0` isn't 4 independent handler functions —
+resolving its 4 possible values (`0x220`/`0x238`/`0x493`/`0x6EE`) against
+their enclosing segment (`sg09a4`, base `0x1802A`) showed 3 of the 4
+land exactly on `loc_` labels **inside** other already-defined
+functions, not at function starts (e.g. the `0x238` target sits exactly
+32 bytes into what IDA calls `sub_18242`, skipping a precondition check
+the `0x220` entry point doesn't skip). This is the same "no clean chunk
+boundary" pattern already seen with the RTLink thunks two sessions ago —
+several real entry points into **one shared decoder continuation body**,
+not separate functions, which is exactly why they'd never gotten real
+names: nothing about their shape looked like an independent function to
+begin with.
+
+Traced the selector back through `Stream_selectHandler` (was
+`sub_18042`, dispatches on mode 0/1/2/4 to wire up
+`word_C84D0`/`word_C84D2`/`word_C84D4`) to its only caller,
+`Stream_configure` (was `sub_1DDC0`), called exactly once from
+`gatemain_start` — and from there straight into `gatemain_start`'s own
+`argv` parsing.
+
+**This directly resolves a loose end from the very first `gate.idb`
+session**: `gatemain_start` parses `argv[1]`→`Mouse_enablement`,
+`argv[2]`→`videoMode` (both already named, confirming the mapping),
+`argv[3]`→`cmdline_param3` (now `_soundMode`), and `argv[4]`-`[8]`→
+`cmdline_param4`-`8`. That's **exactly** the shape of `gate.idb`'s
+`_execl("GATEMAIN.EXE", "GATEMAIN.EXE", xmouse, videoMode, soundMode,
+word_2A256, word_2A258, word_2A25A, word_2A25C, word_2A25E, NULL)` call
+from three sessions ago — meaning `gate.idb`'s 5 then-unidentified
+globals (`word_2A256`/`58`/`5A`/`5C`/`5E`) are precisely
+`cmdline_param4`/`5`/`6`/`7`/`8` on this side. `cmdline_param6` (→
+`_streamMode`) is confirmed as `Stream_selectHandler`'s mode selector —
+**a pure launch-time configuration value**, fixed for the whole game
+session, not anything computed during play.
+
+**Not resolved this pass**: what resource type this decoder continuation
+actually processes (would need tracing `sub_18148`/`sub_18182`/
+`sub_181D8`/`sub_18432`/`sub_18682`/`sub_186F0`, several more unnamed
+functions this cluster touches), and what `cmdline_param4`/`5`/`7`/`8`
+individually control (only `cmdline_param6`'s role as the mode selector
+was pinned down this pass, since it's the one that traces cleanly to
+`Stream_selectHandler`).
+
+**Worth a `gate.idb` follow-up pass**: that IDB's `word_2A256`/`58`/
+`5A`/`5C`/`5E` (`argv[4]`/`[5]`/`[6]`/`[7]`/`[8]` respectively) can now
+be renamed using this confirmed mapping — `word_2A25A` specifically
+corresponds to `_streamMode` (`argv[6]`) — closing out that IDB's own
+long-standing "5 unidentified globals passed to `GATEMAIN.EXE`" open
+item from its very first session.
