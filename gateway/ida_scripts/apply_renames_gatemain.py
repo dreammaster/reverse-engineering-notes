@@ -385,20 +385,41 @@ RENAMES = [
      "role in selecting the 24-hour vs. 12-hour format (compared "
      "against the literal value 8) wasn't confirmed beyond that "
      "comparison -- left unrenamed."),
-    ("Persisted_val4", "_gameMinutes",
+    (0xcb800, "_gameMinutes",
      "Elapsed in-game minutes -- confirmed via Game_updateStatusLine's "
      "hour/minute-of-day math (/60 then %24 for hour, %60 for minute). "
      "A separate, more granular clock from _gameTicks (480 ticks/day, "
      "used for the 'Dorman day %d' message) -- both track real-time "
      "progression but at different resolutions for different displays."),
-    ("Persisted_val5", "_gameDayNumber",
+    (0xcb802, "_gameDayNumber",
      "Elapsed in-game day count -- confirmed via Game_updateStatusLine "
      "(added to a fixed +0x10 offset, plausibly a calendar-epoch shift, "
      "before being formatted as the day number)."),
-    ("Persisted_val7", "_statusTimeHidden",
+    (0xcbb6f, "_statusTimeHidden",
      "Nonzero blanks Game_updateStatusLine's time portion (spaces "
      "instead of a real \"day, time\" string) -- confirmed directly by "
      "that branch's code."),
+
+    # -- twelfth pass: the "-- MORE --" pagination prompt, picked up as
+    # rank_unnamed_functions.py's new top target (24 callers) after
+    # Game_updateStatusLine was named. Confirmed by direct read plus the
+    # two literal strings it displays. See
+    # docs/overview.md#textwindow_showmoreprompt-named. --
+
+    (0x1496B, "TextWindow_showMorePrompt",
+     "sub_1496B(): the classic \"-- MORE --\" screen-pagination prompt. "
+     "Flushes an (always-empty here) buffer via TextWindow_addDirect, "
+     "saves the cursor position (get_text_cursorPos), writes the "
+     "literal string \"- MORE -\" (aMore_1 at 0xCBB7C, immediately "
+     "after the already-named _scoreNotifyTipShown/unk_CBB7B bytes), "
+     "polls j_Events_waitForPress/Events_checkKeypress until a key is "
+     "pressed, restores the cursor position, overwrites the prompt "
+     "with 8 literal spaces (0xCBB85), then calls "
+     "TextWindow_resetFontLinesRemaining to reset the page-line "
+     "counter so the next screenful can accumulate before prompting "
+     "again. 24 callers, scattered across many different logic/method "
+     "routines -- i.e. invoked wherever paginated text output fills "
+     "the window, not owned by one subsystem."),
 ]
 
 

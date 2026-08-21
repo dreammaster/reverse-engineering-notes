@@ -10194,7 +10194,7 @@ sub_148E8       endp
 
 ; Attributes: bp-based frame
 
-sub_1496B       proc far                ; CODE XREF: sub_72260+2A1\u2193P
+TextWindow_showMorePrompt proc far      ; CODE XREF: sub_72260+2A1\u2193P
                                         ; sub_72260+7BC\u2193P ...
 
 yp              = word ptr -4
@@ -10227,7 +10227,7 @@ loc_1499D:
                 call    Text_writeString
                 add     sp, 4
 
-loc_149A6:                              ; CODE XREF: sub_1496B+42\u2193j
+loc_149A6:                              ; CODE XREF: TextWindow_showMorePrompt+42\u2193j
                 call    j_Events_waitForPress
                 or      ax, ax
                 jnz     short loc_149A6
@@ -10245,7 +10245,7 @@ loc_149A6:                              ; CODE XREF: sub_1496B+42\u2193j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_1496B       endp
+TextWindow_showMorePrompt endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -43925,7 +43925,7 @@ Font_showTextCursor endp
 ; Attributes: bp-based frame
 
 ; void __cdecl __far get_text_cursorPos(int *xp, int *yp)
-get_text_cursorPos proc far             ; CODE XREF: sub_1496B+26\u2191P
+get_text_cursorPos proc far             ; CODE XREF: TextWindow_showMorePrompt+26\u2191P
                                         ; Font_writeString+39\u2191P
 
 regs            = REGS ptr -0Eh
@@ -43969,7 +43969,7 @@ get_text_cursorPos endp
 ; Attributes: bp-based frame
 
 ; void __cdecl __far set_text_position(int xp, int yp)
-set_text_position proc far              ; CODE XREF: sub_1496B+4F\u2191P
+set_text_position proc far              ; CODE XREF: TextWindow_showMorePrompt+4F\u2191P
                                         ; Listbox_draw+219\u2191P ...
 
 regs            = REGS ptr -0Eh
@@ -44074,8 +44074,8 @@ Screen_setTextColor endp
 
 ; Attributes: bp-based frame
 
-Text_writeString proc far               ; CODE XREF: sub_1496B+33\u2191P
-                                        ; sub_1496B+5C\u2191P ...
+Text_writeString proc far               ; CODE XREF: TextWindow_showMorePrompt+33\u2191P
+                                        ; TextWindow_showMorePrompt+5C\u2191P ...
 
 var_16          = word ptr -16h
 var_14          = byte ptr -14h
@@ -45472,7 +45472,7 @@ addCharacter    endp
 
 ; Attributes: bp-based frame
 
-Events_checkKeypress proc far           ; CODE XREF: sub_1496B+44\u2191P
+Events_checkKeypress proc far           ; CODE XREF: TextWindow_showMorePrompt+44\u2191P
                                         ; sub_26F2A:loc_26F68\u2193P ...
 
 var_2           = word ptr -2
@@ -58375,7 +58375,7 @@ Font_substringWidth endp
 ; Attributes: bp-based frame
 
 ; int __cdecl __far TextWindow_addDirect(int wndowNum, const char *text)
-TextWindow_addDirect proc far           ; CODE XREF: sub_1496B+14\u2191P
+TextWindow_addDirect proc far           ; CODE XREF: TextWindow_showMorePrompt+14\u2191P
                                         ; sub_28595+5A\u2191P ...
 
 currentChar     = byte ptr -96h
@@ -69492,7 +69492,7 @@ aGatemain_exe   db 'GATEMAIN.EXE',0
 ; =============== S U B R O U T I N E =======================================
 
 
-j_Events_waitForPress proc far          ; CODE XREF: sub_1496B:loc_149A6\u2191P
+j_Events_waitForPress proc far          ; CODE XREF: TextWindow_showMorePrompt:loc_149A6\u2191P
                                         ; sub_26A62:loc_26B01\u2191P ...
                 call    near ptr rtlink_thunk
                 jmp     Events_waitForPress
@@ -187050,7 +187050,7 @@ loc_724C6:                              ; CODE XREF: sub_72260+241\u2191j
 loc_724F6:                              ; CODE XREF: sub_72260+291\u2191j
                 mov     es, seg_D13D4
                 mov     es:_roomLogicNum, 238
-                call    sub_1496B
+                call    TextWindow_showMorePrompt
                 mov     ax, 1
                 push    ax              ; partNum
                 call    PartTitle_Show
@@ -187584,7 +187584,7 @@ loc_72A05:                              ; CODE XREF: sub_72260+7A0\u2191j
                 jnz     short loc_72A86
                 mov     es, seg_D13D4
                 mov     es:_roomLogicNum, 0FDh ; 'ý'
-                call    sub_1496B
+                call    TextWindow_showMorePrompt
                 mov     ax, 2
                 push    ax              ; partNum
                 call    PartTitle_Show
@@ -189140,7 +189140,7 @@ loc_73658:                              ; CODE XREF: sub_734D5+161\u2191j
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 8
-                call    sub_1496B
+                call    TextWindow_showMorePrompt
                 call    thunk_sub_74149
                 jmp     loc_735D1
 ; ---------------------------------------------------------------------------
@@ -189250,7 +189250,7 @@ loc_73746:                              ; CODE XREF: sub_736D8+4C\u2191j
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_1496B
+                call    TextWindow_showMorePrompt
                 call    thunk_sub_74149
                 mov     ax, 1
 
@@ -194258,7 +194258,7 @@ loc_75AE9:
 ; ---------------------------------------------------------------------------
 
 loc_75AFE:                              ; CODE XREF: sub_75AE0+19\u2191j
-                call    sub_1496B
+                call    TextWindow_showMorePrompt
                 call    sub_30D4F
                 lea     ax, [bp-98h]
                 push    ss
@@ -198895,7 +198895,7 @@ loc_77A69:                              ; CODE XREF: sub_77773+2F1\u2191j
 ; ---------------------------------------------------------------------------
 
 loc_77A6C:                              ; CODE XREF: sub_77773+2CF\u2191j
-                call    sub_1496B
+                call    TextWindow_showMorePrompt
                 mov     ax, 1
                 push    ax
                 mov     ax, 7Fh
@@ -198932,7 +198932,7 @@ loc_77ABE:                              ; CODE XREF: sub_77773+333\u2191j
 ; ---------------------------------------------------------------------------
 
 loc_77AC6:                              ; CODE XREF: sub_77773+2D4\u2191j
-                call    sub_1496B
+                call    TextWindow_showMorePrompt
                 mov     ax, 1
                 push    ax
                 mov     ax, 7Fh
@@ -198959,7 +198959,7 @@ loc_77AEC:                              ; CODE XREF: sub_77773+3AB\u2193j
 ; ---------------------------------------------------------------------------
 
 loc_77AFB:                              ; CODE XREF: sub_77773+2DB\u2191j
-                call    sub_1496B
+                call    TextWindow_showMorePrompt
                 mov     ax, 1
                 push    ax
                 mov     ax, 7Fh
@@ -198994,7 +198994,7 @@ loc_77B20:                              ; CODE XREF: sub_77773+2E3\u2191j
                 push    ax              ; logicNum
                 call    j_Logics_updateHandler
                 add     sp, 6
-                call    sub_1496B
+                call    TextWindow_showMorePrompt
                 mov     ax, 1
                 push    ax
                 mov     ax, 7Fh
@@ -199040,7 +199040,7 @@ loc_77B86:                              ; CODE XREF: sub_77773+2EB\u2191j
                 push    ax              ; logicNum
                 call    j_Logics_updateHandler
                 add     sp, 6
-                call    sub_1496B
+                call    TextWindow_showMorePrompt
                 mov     ax, 1
                 push    ax
                 mov     ax, 7Fh
@@ -205694,7 +205694,7 @@ locret_7A94F:                           ; CODE XREF: sub_30FF7+49941\u2191j
 
 
 sub_7A950       proc far                ; CODE XREF: sub_78570+224\u2191p
-                call    sub_1496B
+                call    TextWindow_showMorePrompt
                 mov     ax, 224h
                 mov     dx, seg seg169
                 push    dx
@@ -278132,7 +278132,7 @@ sub_9ADEC       endp
 ; START OF FUNCTION CHUNK FOR sub_31123
 
 loc_9AE6C:                              ; CODE XREF: sub_31123+3\u2191J
-                call    sub_1496B
+                call    TextWindow_showMorePrompt
                 push    cs
                 call    near ptr sub_9B5E3
                 sub     ax, ax
@@ -279005,7 +279005,7 @@ var_2           = word ptr -2
 ; ---------------------------------------------------------------------------
 
 loc_9B680:                              ; CODE XREF: sub_9B5F9+82\u2191j
-                call    sub_1496B
+                call    TextWindow_showMorePrompt
                 call    sub_26F2A
                 call    sub_27134
                 call    sub_30D4F
@@ -286130,7 +286130,7 @@ loc_9E90D:                              ; CODE XREF: sub_9E8DF+1A\u2191j
                 mov     es, seg_D1706
                 cmp     es:word_C8EF0, 0
                 jz      short loc_9E922
-                call    sub_1496B
+                call    TextWindow_showMorePrompt
 
 loc_9E922:                              ; CODE XREF: sub_9E8DF+3C\u2191j
                 mov     ax, 50h ; 'P'
@@ -293308,7 +293308,7 @@ sub_A1E0B       proc far                ; CODE XREF: sub_A059C+296\u2191p
                 mov     es:byte_CBB74, 1
                 mov     es, seg_D1750
                 mov     es:byte_CBB75, 1
-                call    sub_1496B
+                call    TextWindow_showMorePrompt
                 mov     ax, 40BCh
                 mov     dx, 0F000h
                 push    dx
@@ -293338,7 +293338,7 @@ sub_A1E0B       proc far                ; CODE XREF: sub_A059C+296\u2191p
                 push    ax              ; logicNum
                 call    j_Logics_updateHandler
                 add     sp, 6
-                call    sub_1496B
+                call    TextWindow_showMorePrompt
                 mov     es, seg_D1752
                 inc     es:_gameDayNumber
                 mov     es, seg_D1754
@@ -296100,7 +296100,7 @@ loc_A32D3:                              ; CODE XREF: method025_Start+4D\u2191j
                 assume es:sg4d43
                 cmp     es:word_C8EF0, 0
                 jz      short loc_A3301
-                call    sub_1496B
+                call    TextWindow_showMorePrompt
 
 loc_A3301:                              ; CODE XREF: method025_Start+79\u2191j
                 mov     ax, 32h ; '2'
@@ -296788,7 +296788,7 @@ var_2           = word ptr -2
                 mov     es, seg_D1788
                 cmp     es:word_C8EF0, 0
                 jz      short loc_A3792
-                call    sub_1496B
+                call    TextWindow_showMorePrompt
                 call    sub_30D4F
                 call    sub_249FF
                 push    cs
@@ -299133,7 +299133,7 @@ loc_A46D5:                              ; CODE XREF: sub_A465A+73\u2191j
                 push    ax              ; filename
                 call    Stream_loadFile
                 add     sp, 4
-                call    sub_1496B
+                call    TextWindow_showMorePrompt
                 call    thunk_Commset_show
                 mov     es, seg_D179C
                 assume es:sg4d43
@@ -304439,7 +304439,7 @@ loc_A6B5B:                              ; CODE XREF: sub_A68D8+27E\u2191j
 ; ---------------------------------------------------------------------------
 
 loc_A6B65:                              ; CODE XREF: sub_A68D8+288\u2191j
-                call    sub_1496B
+                call    TextWindow_showMorePrompt
                 push    cs
                 call    near ptr sub_A6780
                 mov     ax, 22h ; '"'
@@ -304822,7 +304822,7 @@ loc_A6E47:                              ; CODE XREF: sub_A6BD4+26E\u2191j
 ; ---------------------------------------------------------------------------
 
 loc_A6E51:                              ; CODE XREF: sub_A6BD4+278\u2191j
-                call    sub_1496B
+                call    TextWindow_showMorePrompt
                 push    cs
                 call    near ptr sub_A686E
                 mov     ax, 24h ; '$'
@@ -308964,7 +308964,7 @@ loc_A8828:                              ; CODE XREF: sub_A877B+71\u2191j
                 add     sp, 4
                 cmp     [bp+var_2], 0
                 jnz     short loc_A8823
-                call    sub_1496B
+                call    TextWindow_showMorePrompt
                 push    cs
                 call    near ptr sub_A6780
                 mov     es, seg_D17E4
@@ -309179,7 +309179,7 @@ loc_A89ED:                              ; CODE XREF: sub_A894F+77\u2191j
                 add     sp, 4
                 cmp     [bp+var_2], 0
                 jnz     short loc_A89E8
-                call    sub_1496B
+                call    TextWindow_showMorePrompt
                 push    cs
                 call    near ptr sub_A686E
                 mov     es, seg_D17E4
@@ -310251,7 +310251,7 @@ loc_A8FF4:                              ; CODE XREF: sub_A8EC2+17\u2191j
 ; ---------------------------------------------------------------------------
 
 loc_A9012:                              ; CODE XREF: sub_A8EC2+14B\u2191j
-                call    sub_1496B
+                call    TextWindow_showMorePrompt
                 sub     ax, ax
                 push    ax
                 mov     ax, 7Fh
@@ -310328,7 +310328,7 @@ loc_A90AE:                              ; CODE XREF: sub_A8EC2+14D\u2191j
 ; ---------------------------------------------------------------------------
 
 loc_A90B8:                              ; CODE XREF: sub_A8EC2+1F1\u2191j
-                call    sub_1496B
+                call    TextWindow_showMorePrompt
                 sub     ax, ax
                 push    ax
                 mov     ax, 7Fh
@@ -315031,7 +315031,7 @@ loc_AB00F:                              ; CODE XREF: sub_AAF16+13F\u2193j
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_1496B
+                call    TextWindow_showMorePrompt
 
 loc_AB024:                              ; CODE XREF: sub_AAF16+C3\u2191j
                                         ; sub_AAF16+14E\u2193j
@@ -318910,7 +318910,7 @@ loc_ACA2C:                              ; CODE XREF: sub_AC95E+A1\u2191j
                 add     sp, 2
 
 loc_ACA6C:                              ; CODE XREF: sub_AC95E+F0\u2191j
-                call    sub_1496B
+                call    TextWindow_showMorePrompt
                 call    sub_AD458
                 mov     [bp+var_2], ax
                 mov     ax, 3C2Ch
@@ -347213,7 +347213,7 @@ loc_B9065:                              ; CODE XREF: sub_31169+3\u2191J
 ; START OF FUNCTION CHUNK FOR sub_30E0D
 
 loc_B9089:                              ; CODE XREF: sub_30E0D+3\u2191J
-                call    sub_1496B
+                call    TextWindow_showMorePrompt
                 mov     bx, Persisted_val38
                 shl     bx, 1
                 shl     bx, 1
@@ -358627,7 +358627,7 @@ var_2           = word ptr -2
 ; ---------------------------------------------------------------------------
 
 loc_BDF82:                              ; CODE XREF: sub_BDF6C+11\u2191j
-                call    sub_1496B
+                call    TextWindow_showMorePrompt
                 call    sub_30D4F
                 call    sub_249FF
                 mov     ax, 5
@@ -360714,7 +360714,7 @@ loc_BEE48:                              ; CODE XREF: sub_BED22+121\u2191j
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_1496B
+                call    TextWindow_showMorePrompt
                 call    sub_C0168
                 mov     [bp+var_2], ax
                 or      ax, ax
@@ -372488,7 +372488,7 @@ loc_C4022:                              ; CODE XREF: sub_30EAD+93170\u2191j
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_1496B
+                call    TextWindow_showMorePrompt
                 mov     ax, 1
                 jmp     short locret_C403B
 ; ---------------------------------------------------------------------------
@@ -387304,7 +387304,7 @@ _score          dw 0                    ; DATA XREF: Score_add+C\u2191w
                                         ; seg068:SAVE_FIELDS\u2191o ...
 _scoreNotifyTipShown db 0               ; DATA XREF: Score_add+2D\u2191r
                                         ; Score_add+44\u2191w ...
-unk_CBB7B       db    0                 ; DATA XREF: sub_1496B+6\u2191o
+unk_CBB7B       db    0                 ; DATA XREF: TextWindow_showMorePrompt+6\u2191o
 aMore_1         db '- MORE -',0
                 db '        ',0
 ; char aCnSYouSee[]
@@ -387600,7 +387600,7 @@ Input_window_mb dw 0FFFFh               ; DATA XREF: Windows_newLine+14B\u2191r
                                         ; Windows_newLine+180\u2191r ...
 ; int Commset_winContent
 Commset_winContent dw 0FFFFh            ; DATA XREF: show_startup+15C\u2191r
-                                        ; sub_1496B+F\u2191r ...
+                                        ; TextWindow_showMorePrompt+F\u2191r ...
 ; int LIstbox_index1
 LIstbox_index1  dw 0FFFFh               ; DATA XREF: Events_waitForPress:loc_5C84F\u2191r
                                         ; Events_waitForPress+DE\u2191r ...
@@ -393805,7 +393805,7 @@ seg_D10E0       dw seg seg084           ; DATA XREF: Logic_call+53\u2191r
                                         ; seg098:1741\u2191r
 seg_D10E2       dw seg seg085           ; DATA XREF: Logic_call+79\u2191r
                                         ; seg098:1767\u2191r
-dseg_101        dw seg sg4d43           ; DATA XREF: sub_1496B+B\u2191r
+dseg_101        dw seg sg4d43           ; DATA XREF: TextWindow_showMorePrompt+B\u2191r
                                         ; seg098:1817\u2191r
 dseg_102        dw seg sg4d43           ; DATA XREF: sub_14A5F+29\u2191r
                                         ; Logics_checkMoveRestriction+32\u2191r ...

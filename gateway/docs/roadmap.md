@@ -442,6 +442,12 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       more granular clock distinct from the already-named `_gameTicks`.
       Full writeup in
       [overview.md](overview.md#game_updatestatusline-named--the-in-game-clockstatus-bar-builder).
+- [x] Named `sub_1496B` (24 callers) → `TextWindow_showMorePrompt` — the
+      classic "-- MORE --" screen-pagination prompt: flushes pending
+      text, saves cursor, shows `"- MORE -"`, waits for a keypress,
+      restores cursor, blanks the prompt, resets the page-line budget.
+      Full writeup in
+      [overview.md](overview.md#textwindow_showmoreprompt-named--the-classic---more----pagination-prompt).
 - [ ] Cross-check the structs shared by name/concept with `gate.idb`
       (`VocabEntry`/`VOCAB_ENTRY`, `Str16`/`STR16`, `Point`/`POINT`,
       `Screen`/`SCREEN`, `Font`/`FONT`, `REGS`, `HandleEntry`/`HANDLE`)

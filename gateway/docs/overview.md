@@ -1343,3 +1343,45 @@ role in selecting the 24-hour vs. 12-hour format (only confirmed as
 "compared against the literal value 8," not what that value represents).
 
 Applied via `apply_renames_gatemain.py`'s eleventh batch.
+
+### `TextWindow_showMorePrompt` named — the classic "-- MORE --" pagination prompt
+
+Re-ran `rank_unnamed_functions.py` again; new top target `sub_1496B` (24
+callers, 109 bytes). Direct read confirms the well-known "-- MORE --"
+screen-pagination idiom:
+
+1. Flushes an (always-empty, in this binary's data) buffer via the
+   already-named `TextWindow_addDirect` — `unk_CBB7B` is a single `db 0`
+   immediately after the already-named `_scoreNotifyTipShown` global.
+2. Saves the current text cursor position (`get_text_cursorPos`).
+3. Writes the literal string `"- MORE -"` (`aMore_1`, at `0xCBB7C` —
+   confirmed to be the very next byte after `unk_CBB7B`) via
+   `Text_writeString`.
+4. Polls `j_Events_waitForPress`/`Events_checkKeypress` in a tight loop
+   until a key is actually pressed.
+5. Restores the saved cursor position.
+6. Overwrites the prompt with 8 literal space characters (the string
+   right after `aMore_1` in the data segment, at `0xCBB85`), blanking it.
+7. Calls `TextWindow_resetFontLinesRemaining` to reset the page's
+   line-count budget so another screenful can accumulate before the next
+   prompt.
+
+24 callers scattered across many unrelated logic/method routines —
+confirms this is generic pagination plumbing invoked wherever paginated
+text output fills the active window, not something owned by one
+subsystem. `Text_writeString`'s calling convention was also clarified in
+passing: it takes a real `ds:offset` far pointer to a string (confirmed
+against an existing call site passing `offset aCriticalErrorU`), not a
+`GATESTR.DAT` message ID — the earlier `Game_updateStatusLine` finding's
+"literal format strings" pattern is the same mechanism, just via a
+different code path (`seg067` there vs. the default `ds` segment
+`sg4d43` here).
+
+Applied via `apply_renames_gatemain.py`'s twelfth batch. Hit the
+recurring stale-old-name gotcha again: the batch's `Persisted_val4/5/7`
+entries (added last pass as string lookups, before their rename had
+landed) failed with `name not found` once the twelfth-batch dry-run ran
+against an IDB where they'd already been renamed to
+`_gameMinutes`/`_gameDayNumber`/`_statusTimeHidden` — fixed by switching
+those three entries to their confirmed hex EAs (`0xcb800`, `0xcb802`,
+`0xcbb6f`), same fix pattern as every prior occurrence of this bug.
