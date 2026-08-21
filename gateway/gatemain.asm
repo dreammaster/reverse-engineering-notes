@@ -2110,7 +2110,7 @@ loc_111F6:                              ; CODE XREF: main+A9E\u2191j
 loc_11217:                              ; CODE XREF: main+ABF\u2191j
                 mov     es, seg126_79
                 push    es:vocab_list_0._logicNum
-                call    sub_1452B
+                call    Logics_checkIsHolding
                 add     sp, 2
                 or      ax, ax
                 jnz     short loc_1122F
@@ -2259,7 +2259,7 @@ loc_11372:                              ; CODE XREF: main+BEE\u2191j
                 jnz     short loc_113BD
                 mov     es, seg126_80
                 push    es:vocab_list_0._altVocabId
-                call    sub_1452B
+                call    Logics_checkIsHolding
                 add     sp, 2
                 or      ax, ax
                 jz      short loc_113BD
@@ -9497,7 +9497,7 @@ Logics_autoTakeObject endp
 
 ; Attributes: bp-based frame
 
-sub_1452B       proc far                ; CODE XREF: main+ACD\u2191P
+Logics_checkIsHolding proc far          ; CODE XREF: main+ACD\u2191P
                                         ; main+C52\u2191P ...
 
 logicNum        = word ptr  6
@@ -9536,14 +9536,14 @@ logicNum        = word ptr  6
                 jmp     short loc_14580
 ; ---------------------------------------------------------------------------
 
-loc_1457E:                              ; CODE XREF: sub_1452B+8\u2191j
-                                        ; sub_1452B+F\u2191j
+loc_1457E:                              ; CODE XREF: Logics_checkIsHolding+8\u2191j
+                                        ; Logics_checkIsHolding+F\u2191j
                 sub     ax, ax
 
-loc_14580:                              ; CODE XREF: sub_1452B+51\u2191j
+loc_14580:                              ; CODE XREF: Logics_checkIsHolding+51\u2191j
                 pop     bp
                 retf
-sub_1452B       endp
+Logics_checkIsHolding endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -178210,7 +178210,7 @@ loc_6E1BB:                              ; CODE XREF: sub_6E0D3+B7\u2191j
                 jnz     short loc_6E1FB
                 mov     es, seg_D1356
                 push    es:vocab_list_0._altVocabId
-                call    sub_1452B
+                call    Logics_checkIsHolding
                 add     sp, 2
                 mov     ax, 1
                 jmp     short loc_6E1FD
@@ -301934,7 +301934,7 @@ loc_A58EC:                              ; CODE XREF: sub_A576B+17C\u2191j
 loc_A5907:                              ; CODE XREF: sub_A576B+11B\u2191j
                 mov     ax, 11Bh
                 push    ax
-                call    sub_1452B
+                call    Logics_checkIsHolding
 
 loc_A5910:                              ; CODE XREF: sub_A576B+19A\u2191j
                 add     sp, 2

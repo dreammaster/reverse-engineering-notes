@@ -2821,3 +2821,18 @@ specific, I'm not sure what you mean by..." prompt naming the
 referenced word.
 
 Applied via `apply_renames_gatemain.py`'s seventy-third batch.
+
+### `Logics_checkIsHolding` named
+
+Moved to `sub_1452B` (3 callers, called directly from `main()`).
+Confirmed via a real decoded `GATESTR.DAT` message (`msgId 0xC407`:
+`"[%sn't holding%s.]"`) as an implicit **"is `<subject>` holding
+`<object>`?"** precondition check: if `logicNum` is one of two
+special-cased values (`0xE3`/`0xE4`), the check passes unconditionally
+(returns 0); otherwise it prints the subject's name, the failure
+message, and the referenced object's name (`Logics_logicNum211`), and
+returns 1 (check failed — not holding). The two special-cased values
+presumably bypass the check for specific NPCs/contexts where it
+doesn't apply.
+
+Applied via `apply_renames_gatemain.py`'s seventy-fourth batch.

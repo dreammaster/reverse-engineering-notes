@@ -1928,6 +1928,25 @@ RENAMES = [
      "parser's 'ambiguous preposition/reference' disambiguation-"
      "request handler, called from the already-named "
      "GatewayParser_speakHandler/Parser_proc6."),
+
+    # -- seventy-fourth pass: sub_1452B, confirmed via a real decoded
+    # GATESTR.DAT message ("[%sn't holding%s.]") as the "is this object
+    # currently holding the referenced object?" implicit-precondition
+    # check, called directly from main(). See
+    # docs/overview.md#logics_checkisholding-named. --
+
+    (0x1452B, "Logics_checkIsHolding",
+     "sub_1452B(logicNum): if logicNum is one of two special-cased "
+     "values (0xE3/0xE4), returns 0 (check passes) unconditionally. "
+     "Otherwise prints logicNum's name, then decoded GATESTR.DAT "
+     "message 0xC407 -- '[%sn't holding%s.]' -- filling in "
+     "logicNum's name and the referenced object's name "
+     "(Logics_logicNum211), and returns 1. This reads as an implicit "
+     "'is <subject> holding <object>?' precondition check used "
+     "before some action, printing a failure message and signaling "
+     "failure (1) when it doesn't hold; the two special-cased values "
+     "presumably bypass the check for specific NPCs/contexts where it "
+     "doesn't apply."),
 ]
 
 

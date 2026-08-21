@@ -7136,6 +7136,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X14524);
 	op_hex		(x,	1);
 	create_insn	(0X1452B);
+	set_name	(0X1452B,	"Logics_checkIsHolding");
 	create_insn	(x=0X1452E);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X14535);
@@ -7398,10 +7399,6 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1487C);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X14883);
-	op_dec		(x,	1);
-	create_insn	(x=0X14888);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -7411,6 +7408,10 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X14883);
+	op_dec		(x,	1);
+	create_insn	(x=0X14888);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X1488B);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X14892);
@@ -12509,8 +12510,6 @@ static Bytes_1(void) {
 	op_hex		(x,	0);
 	create_insn	(0X18EEC);
 	set_name	(0X18EEC,	"__myalloc");
-	create_insn	(x=0X18EFE);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -12520,6 +12519,8 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X18EFE);
+	op_hex		(x,	1);
 	create_insn	(x=0X18F12);
 	op_hex		(x,	1);
 	set_cmt	(0X18F14,	"DOS - 2+ - ADJUST MEMORY BLOCK SIZE (SETBLOCK)\nES = segment address of block to change\nBX = new size in paragraphs",	0);
@@ -18365,8 +18366,6 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1F3DA);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X1F3E1);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -18376,6 +18375,8 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X1F3E1);
+	op_hex		(x,	1);
 	create_insn	(x=0X1F3F1);
 	op_hex		(x,	1);
 	create_insn	(0X1F3FA);
@@ -23475,8 +23476,6 @@ static Bytes_3(void) {
 	set_cmt	(0X245F6,	"ptr",	0);
 	create_insn	(x=0X245F6);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X245FD);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -23486,6 +23485,8 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X245FD);
+	op_hex		(x,	1);
 	create_insn	(0X24602);
 	set_name	(0X24602,	"new_fixed_handle");
 	create_insn	(x=0X24605);
