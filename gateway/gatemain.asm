@@ -52924,7 +52924,7 @@ loc_26BC0:                              ; CODE XREF: sub_26BA2+B\u2191j
                 push    ss
                 push    ax
                 push    cs
-                call    near ptr sub_26C88
+                call    near ptr Image_clearFrames
                 add     sp, 6
                 mov     ax, 1
                 push    ax              ; frameNumber
@@ -53045,8 +53045,8 @@ Image_Init      endp
 
 ; Attributes: bp-based frame
 
-sub_26C88       proc far                ; CODE XREF: sub_26BA2+28\u2191p
-                                        ; sub_26D7E+5A\u2193p ...
+Image_clearFrames proc far              ; CODE XREF: sub_26BA2+28\u2191p
+                                        ; AnimPics_registerSlot+5A\u2193p ...
 
 var_6           = dword ptr -6
 var_2           = word ptr -2
@@ -53070,17 +53070,17 @@ arg_4           = word ptr  0Ah
                 add     [bp+var_2], ax
                 les     di, [bp+var_6]
 
-loc_26CB1:                              ; CODE XREF: sub_26C88+31\u2193j
+loc_26CB1:                              ; CODE XREF: Image_clearFrames+31\u2193j
                 mov     byte ptr es:[di], 0
                 add     di, 8Ch ; 'Œ'
                 loop    loc_26CB1
 
-loc_26CBB:                              ; CODE XREF: sub_26C88+10\u2191j
+loc_26CBB:                              ; CODE XREF: Image_clearFrames+10\u2191j
                 pop     di
                 mov     sp, bp
                 pop     bp
                 retf
-sub_26C88       endp
+Image_clearFrames endp
 
 ; ---------------------------------------------------------------------------
                 db 2 dup(90h)
@@ -53222,7 +53222,7 @@ AnimPics_resetForRoom endp
 
 ; Attributes: bp-based frame
 
-sub_26D7E       proc far                ; CODE XREF: sub_78570+32\u2193P
+AnimPics_registerSlot proc far          ; CODE XREF: sub_78570+32\u2193P
                                         ; sub_7DC6F+61\u2193P ...
 
 var_6           = word ptr -6
@@ -53243,8 +53243,8 @@ arg_6           = word ptr  0Ch
                 cmp     [bp+arg_2], 14h
                 jle     short loc_26D9C
 
-loc_26D93:                              ; CODE XREF: sub_26D7E+D\u2191j
-                                        ; sub_26D7E+41\u2193j ...
+loc_26D93:                              ; CODE XREF: AnimPics_registerSlot+D\u2191j
+                                        ; AnimPics_registerSlot+41\u2193j ...
                 mov     ax, 0FFFFh
                 pop     si
                 pop     di
@@ -53253,7 +53253,7 @@ loc_26D93:                              ; CODE XREF: sub_26D7E+D\u2191j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_26D9C:                              ; CODE XREF: sub_26D7E+13\u2191j
+loc_26D9C:                              ; CODE XREF: AnimPics_registerSlot+13\u2191j
                 mov     ax, _animPicsSlotCount
                 mov     [bp+var_2], ax
                 mov     ax, 0AF0h
@@ -53277,7 +53277,7 @@ loc_26D9C:                              ; CODE XREF: sub_26D7E+13\u2191j
                 push    word ptr es:[bx+2]
                 push    word ptr es:[bx]
                 push    cs
-                call    near ptr sub_26C88
+                call    near ptr Image_clearFrames
                 add     sp, 6
                 mov     [bp+var_4], 0
                 cmp     [bp+arg_2], 0
@@ -53290,7 +53290,7 @@ loc_26D9C:                              ; CODE XREF: sub_26D7E+13\u2191j
                 sub     si, si
                 mov     di, [bp+var_4]
 
-loc_26DFB:                              ; CODE XREF: sub_26D7E+AA\u2193j
+loc_26DFB:                              ; CODE XREF: AnimPics_registerSlot+AA\u2193j
                 mov     ax, 1
                 push    ax              ; frameNumber
                 push    [bp+picNumber]  ; picNumber
@@ -53312,10 +53312,10 @@ loc_26DFB:                              ; CODE XREF: sub_26D7E+AA\u2193j
                 cmp     di, [bp+arg_2]
                 jl      short loc_26DFB
 
-loc_26E2A:                              ; CODE XREF: sub_26D7E+A0\u2191j
+loc_26E2A:                              ; CODE XREF: AnimPics_registerSlot+A0\u2191j
                 mov     [bp+var_4], di
 
-loc_26E2D:                              ; CODE XREF: sub_26D7E+69\u2191j
+loc_26E2D:                              ; CODE XREF: AnimPics_registerSlot+69\u2191j
                 cmp     [bp+var_4], 0
                 jnz     short loc_26E56
                 mov     si, [bp+var_2]
@@ -53333,7 +53333,7 @@ loc_26E2D:                              ; CODE XREF: sub_26D7E+69\u2191j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_26E56:                              ; CODE XREF: sub_26D7E+B3\u2191j
+loc_26E56:                              ; CODE XREF: AnimPics_registerSlot+B3\u2191j
                 mov     bx, [bp+var_2]
                 mov     al, byte ptr [bp+var_4]
                 mov     [bx-5C50h], al
@@ -53352,7 +53352,7 @@ loc_26E56:                              ; CODE XREF: sub_26D7E+B3\u2191j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_26D7E       endp
+AnimPics_registerSlot endp
 
 ; ---------------------------------------------------------------------------
                 push    bp
@@ -200614,7 +200614,7 @@ loc_78596:                              ; CODE XREF: sub_78570:loc_78591\u2191j
                 push    ax
                 mov     ax, 415h
                 push    ax
-                call    sub_26D7E
+                call    AnimPics_registerSlot
 
 loc_785A7:
                 add     sp, 8
@@ -212232,7 +212232,7 @@ loc_7DCC7:
                 push    ax
                 mov     ax, 418h
                 push    ax
-                call    sub_26D7E
+                call    AnimPics_registerSlot
 
 loc_7DCD5:
                 add     sp, 8
@@ -278289,7 +278289,7 @@ loc_9AFB9:                              ; CODE XREF: sub_9AE9C+1E\u2191j
                 lea     ax, [bp+img]
                 push    ss
                 push    ax
-                call    sub_26C88
+                call    Image_clearFrames
                 add     sp, 6
                 mov     es, seg_D16D8
                 cmp     es:word_CBCFC, 2
@@ -279529,7 +279529,7 @@ loc_9B980:                              ; CODE XREF: sub_9B946+35\u2191j
                 push    ax
                 mov     ax, 606h
                 push    ax
-                call    sub_26D7E
+                call    AnimPics_registerSlot
                 add     sp, 8
                 mov     es, seg_D16EA
 
@@ -279575,7 +279575,7 @@ loc_9B9C7:                              ; CODE XREF: sub_9B946+68\u2191j
 
 loc_9B9E5:                              ; CODE XREF: sub_9B946+7F\u2191j
                 push    ax
-                call    sub_26D7E
+                call    AnimPics_registerSlot
                 add     sp, 8
 
 loc_9B9EE:                              ; CODE XREF: sub_9B946+8F\u2191j
@@ -279588,7 +279588,7 @@ loc_9B9EE:                              ; CODE XREF: sub_9B946+8F\u2191j
                 push    ax
 
 loc_9B9FA:
-                call    sub_26D7E
+                call    AnimPics_registerSlot
                 add     sp, 8
                 sub     ax, ax
                 push    ax
@@ -279597,7 +279597,7 @@ loc_9B9FA:
                 push    ax
                 mov     ax, 613h
                 push    ax
-                call    sub_26D7E
+                call    AnimPics_registerSlot
                 add     sp, 8
                 sub     ax, ax
                 push    ax
@@ -279607,7 +279607,7 @@ loc_9B9FA:
                 push    ax
                 mov     ax, 615h
                 push    ax
-                call    sub_26D7E
+                call    AnimPics_registerSlot
                 add     sp, 8
                 mov     byte_CE8C5, 1
                 call    AnimPics_resyncSlots
@@ -280062,7 +280062,7 @@ loc_9BDCD:                              ; CODE XREF: sub_9BD7E+4A\u2191j
                 push    ax
                 mov     ax, 63Bh
                 push    ax
-                call    sub_26D7E
+                call    AnimPics_registerSlot
                 add     sp, 8
                 sub     ax, ax
                 push    ax
@@ -280071,7 +280071,7 @@ loc_9BDCD:                              ; CODE XREF: sub_9BD7E+4A\u2191j
                 push    ax
                 mov     ax, 649h
                 push    ax
-                call    sub_26D7E
+                call    AnimPics_registerSlot
                 add     sp, 8
                 sub     ax, ax
                 push    ax
@@ -280080,7 +280080,7 @@ loc_9BDCD:                              ; CODE XREF: sub_9BD7E+4A\u2191j
                 push    ax
                 mov     ax, 652h
                 push    ax
-                call    sub_26D7E
+                call    AnimPics_registerSlot
                 add     sp, 8
                 sub     ax, ax
                 push    ax
@@ -280089,7 +280089,7 @@ loc_9BDCD:                              ; CODE XREF: sub_9BD7E+4A\u2191j
                 push    ax
                 mov     ax, 64Eh
                 push    ax
-                call    sub_26D7E
+                call    AnimPics_registerSlot
                 add     sp, 8
                 mov     ax, 1
                 push    ax
@@ -280109,7 +280109,7 @@ loc_9BDCD:                              ; CODE XREF: sub_9BD7E+4A\u2191j
                 push    ax
                 mov     ax, 642h
                 push    ax
-                call    sub_26D7E
+                call    AnimPics_registerSlot
                 add     sp, 8
 
 loc_9BE4F:                              ; CODE XREF: sub_9BD7E+B8\u2191j
@@ -287280,7 +287280,7 @@ loc_9F134:                              ; CODE XREF: sub_9F08E+A2\u2191j
                 push    ax
                 mov     ax, 660h
                 push    ax
-                call    sub_26D7E
+                call    AnimPics_registerSlot
                 add     sp, 8
                 jmp     short loc_9F174
 ; ---------------------------------------------------------------------------
@@ -294216,7 +294216,7 @@ loc_A257C:                              ; CODE XREF: sub_A24BB+14\u2191j
                 push    ax
                 mov     ax, 0D0Bh
                 push    ax
-                call    sub_26D7E
+                call    AnimPics_registerSlot
                 add     sp, 8
                 mov     byte_CEC5F, 1
                 call    AnimPics_resyncSlots
@@ -297974,7 +297974,7 @@ loc_A3ECC:                              ; CODE XREF: logic238+72\u2191j
                 push    ax
                 mov     ax, 529
                 push    ax
-                call    sub_26D7E
+                call    AnimPics_registerSlot
 
 loc_A3EDD:
                 add     sp, 8
@@ -329763,7 +329763,7 @@ loc_B1823:                              ; CODE XREF: sub_B1730+EE\u2191j
                 push    ax
                 mov     ax, 501h
                 push    ax
-                call    sub_26D7E
+                call    AnimPics_registerSlot
                 add     sp, 8
                 sub     ax, ax
                 push    ax
@@ -329772,7 +329772,7 @@ loc_B1823:                              ; CODE XREF: sub_B1730+EE\u2191j
                 push    ax
                 mov     ax, 508h
                 push    ax
-                call    sub_26D7E
+                call    AnimPics_registerSlot
                 add     sp, 8
                 sub     ax, ax
                 push    ax
@@ -329781,7 +329781,7 @@ loc_B1823:                              ; CODE XREF: sub_B1730+EE\u2191j
                 push    ax
                 mov     ax, 50Dh
                 push    ax
-                call    sub_26D7E
+                call    AnimPics_registerSlot
                 add     sp, 8
                 mov     ax, 137h
                 push    ax
@@ -329820,7 +329820,7 @@ loc_B189A:                              ; CODE XREF: sub_B1730+148\u2191j
                 push    ax
                 push    [bp+var_2]
                 push    [bp+var_4]
-                call    sub_26D7E
+                call    AnimPics_registerSlot
                 add     sp, 8
                 mov     ax, 137h
                 push    ax
@@ -329852,7 +329852,7 @@ loc_B18E8:                              ; CODE XREF: sub_B1730+1B1\u2191j
                 mov     ax, 1
                 push    ax
                 push    [bp+var_4]
-                call    sub_26D7E
+                call    AnimPics_registerSlot
                 add     sp, 8
 
 loc_B18FB:                              ; CODE XREF: sub_B1730+196\u2191j
@@ -351132,7 +351132,7 @@ loc_BA9F1:                              ; CODE XREF: sub_BA9A5+35\u2191j
                 push    ax
 
 loc_BAA22:                              ; CODE XREF: sub_BA9A5+4A\u2191j
-                call    sub_26D7E
+                call    AnimPics_registerSlot
                 add     sp, 8
                 mov     byte_CFDF0, 1
                 call    AnimPics_resyncSlots
@@ -351714,7 +351714,7 @@ loc_BAE70:                              ; CODE XREF: sub_BAE1F+42\u2191j
 
 loc_BAEA8:                              ; CODE XREF: sub_BAE1F+4F\u2191j
                 push    ax
-                call    sub_26D7E
+                call    AnimPics_registerSlot
                 add     sp, 8
 
 loc_BAEB1:                              ; CODE XREF: sub_BAE1F+57\u2191j
@@ -384328,7 +384328,7 @@ Image_suppressErrors dw 0               ; DATA XREF: load_picture+10D\u2191r
 pic_headers_only_flag dw 0              ; DATA XREF: load_picture:loc_25AFE\u2191r
                                         ; Picture_Load+6\u2191w ...
 _animPicsSlotCount dw 0                 ; DATA XREF: AnimPics_resetForRoom+7\u2191r
-                                        ; sub_26D7E+8\u2191r ...
+                                        ; AnimPics_registerSlot+8\u2191r ...
 aXmouse         db 'xmouse',0
 aMono           db 'mono',0
 aCga            db 'cga',0

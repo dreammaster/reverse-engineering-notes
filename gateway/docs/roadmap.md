@@ -543,6 +543,12 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       via its two helpers' own caller lists matching the already-named
       `scale_pic`/`Image_load`. Full writeup in
       [overview.md](overview.md#load_and_scale_pic-named).
+- [x] Named `sub_26D7E` (10 callers) → `AnimPics_registerSlot`, plus
+      `Image_clearFrames` (was `sub_26C88`) — closing out the
+      `AnimPics_*` cluster (register/free-all/reset-for-room/resync).
+      Only `sub_26F74` (per-slot timing/draw loop) and `sub_26F2A`
+      remain open in this subsystem. Full writeup in
+      [overview.md](overview.md#animpics_registerslot-named--the-last-piece-of-the-animpics-cluster).
 - [ ] Unify the whole music/sound-hardware picture: `Speaker_playTone`/
       `Speaker_playErrorBeep` (PC-speaker tones), `Midi_sendByte` +
       `sub_1D966`/`sub_1EE70`/`sub_1ECB6` (MPU-401/MIDI), and

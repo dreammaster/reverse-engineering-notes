@@ -780,6 +780,32 @@ RENAMES = [
      "unrelated callers (Commset_show, sub_7179E, sub_74149, and 8 "
      "more) confirm this is a generic 'load and display picture N, "
      "scaled' entry point, not owned by one subsystem."),
+
+    # -- twenty-sixth pass: sub_26D7E, the AnimPics slot-registration
+    # function already fully characterized (but not renamed) when
+    # AnimPics_freeAll/AnimPics_resetForRoom were named. Finalizing it
+    # now, plus its own helper sub_26C88. See
+    # docs/overview.md#animpics_registerslot-named--the-last-piece-of-the-animpics-cluster. --
+
+    (0x26D7E, "AnimPics_registerSlot",
+     "sub_26D7E(picNumber, frameCount, loopDirection, duration): "
+     "registers a new active animated-picture slot (capped at 5 via "
+     "_animPicsSlotCount, frameCount capped at 20) -- allocates a "
+     "handle (new_handle), clears frameCount Image records via the "
+     "new Image_clearFrames, loads each frame via the already-named "
+     "Image_load (bailing out and freeing everything if any frame "
+     "fails to load), then stores frameCount/loopDirection/duration "
+     "into the same per-slot table AnimPics_resetForRoom/sub_26F74 "
+     "maintain and increments _animPicsSlotCount. Already fully "
+     "characterized in the AnimPics_freeAll writeup; finalizing the "
+     "name now."),
+    (0x26C88, "Image_clearFrames",
+     "sub_26C88(imgFarPtr, count): zeroes the first byte (the active/"
+     "loaded flag, per the already-referenced img._active) of each of "
+     "`count` consecutive Image-sized records -- the initialization "
+     "counterpart to the already-named Image_freeFrames, used by "
+     "AnimPics_registerSlot to blank a slot's frame table before "
+     "loading real frames into it."),
 ]
 
 

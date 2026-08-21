@@ -1842,3 +1842,27 @@ picture N, scaled" entry point, not owned by one subsystem.
 `sub_25B90`/`sub_25BCE` themselves left unrenamed.
 
 Applied via `apply_renames_gatemain.py`'s twenty-fifth batch.
+
+### `AnimPics_registerSlot` named — the last piece of the `AnimPics` cluster
+
+Moved to `sub_26D7E` (10 callers) — already fully characterized (but
+left unrenamed) back when `AnimPics_freeAll`/`AnimPics_resetForRoom`
+were named. Finalizing it now closes out the `AnimPics_*` cluster.
+
+**`AnimPics_registerSlot(picNumber, frameCount, loopDirection,
+duration)`**: registers a new active animated-picture slot (capped at
+5 via `_animPicsSlotCount`, `frameCount` capped at 20) — allocates a
+handle (`new_handle`), clears `frameCount` `Image` records via the new
+**`Image_clearFrames`** (was `sub_26C88` — the zero/init counterpart to
+the already-named `Image_freeFrames`), loads each frame via the
+already-named `Image_load` (bailing out and freeing everything if any
+frame fails to load), then stores `frameCount`/`loopDirection`/
+`duration` into the same per-slot table `AnimPics_resetForRoom`/
+`sub_26F74` maintain, and increments `_animPicsSlotCount`.
+
+With this, the `AnimPics_*` cluster — register, free-all, reset-for-
+room, resync-slots, and now clear-frames — is fully named. Only
+`sub_26F74` (the per-slot timing/draw loop) and the still-unconfirmed
+`sub_26F2A` remain open in this subsystem.
+
+Applied via `apply_renames_gatemain.py`'s twenty-sixth batch.
