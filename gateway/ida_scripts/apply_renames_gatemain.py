@@ -211,29 +211,53 @@ RENAMES = [
     # handler, just gated on CPU speed rather than resource type as
     # hedged before -- see docs/overview.md's updated note. --
 
-    ("sub_18182", "Cpu_beginSpeedTest",
+    (0x18182, "Cpu_beginSpeedTest",
      "Saves the real INT 70h/72h vectors and current DOS date/time, "
      "installs a temporary ISR (just decrements byte_C84E8 and irets), "
      "and reprograms the 8253/8254 PIT (port 43h mode/command, port "
      "40h count) to a known frequency for Cpu_measureSpeed's busy-loop "
      "to count against."),
-    ("sub_18148", "Cpu_measureSpeed",
+    (0x18148, "Cpu_measureSpeed",
      "Sets byte_C84E8=1, then runs a fixed imul-based busy loop "
      "(8 outer iterations) until Cpu_beginSpeedTest's temporary ISR "
      "decrements byte_C84E8 to 0 on a timer tick; the iteration count "
      "reached (shifted right 3) becomes word_C84DA -- a CPU speed "
      "rating, faster CPUs completing more busy-work per fixed-length "
      "timer tick."),
-    ("sub_181D8", "Cpu_endSpeedTest",
+    (0x181D8, "Cpu_endSpeedTest",
      "Restores the real INT 70h/72h vectors and PIT divisor "
      "Cpu_beginSpeedTest saved, then re-sets DOS's date/time from the "
      "same saved values -- correcting for clock drift caused by "
      "running the PIT at the calibration frequency in between."),
-    ("word_C84DA", "cpuSpeedRating",
+    (0xC84DA, "cpuSpeedRating",
      "Cpu_measureSpeed's result; Stream_selectHandler compares this "
      "against 0x160 to choose between performance-tier code paths -- "
      "the actual criterion behind that mode dispatch, not a resource-"
      "type distinction as hedged in the fourth-pass notes above."),
+
+    # -- sixth pass, same session: back to rank_unnamed_functions.py's
+    # top of the (now-shorter) list. See
+    # docs/overview.md#queue_remove-and-logics_checkmoverestriction-named. --
+
+    (0x12ED2, "Queue_remove",
+     "Sibling to the already-named Queue_add: searches _queueTable "
+     "(the same array Queue_add appends to, confirmed by the identical "
+     "seg126_93/-0x73FCh offset access) for an entry whose _id matches "
+     "its argument, and if found, memmove-compacts every later entry "
+     "down by one slot -- classic remove-and-compact on a flat array."),
+    (0x14B64, "Logics_checkMoveRestriction",
+     "Confirmed by decoding its own message text (GATESTR.DAT 0x800: "
+     "\"You can't move while you're wearing the collar.\"; 0x801: "
+     "\"[You get o%sf%s first.]\", i.e. a dismount/disembark-first "
+     "message): a shared movement-precondition gate checked before "
+     "letting the player move, gating on several hardcoded plot-item "
+     "logicNums (0xD3/211 = the collar; others, e.g. 0xA2/0xA8/0x9D, "
+     "not individually identified -- plausibly mount/vehicle-related "
+     "given the dismount message) via Logics_prehandlerChainReaches/"
+     "Logics_IsPrehandler1/Logics_prehandlerHasMode, plus a "
+     "Logic_call(_roomLogicNum, action=0xF) room-override hook. Returns "
+     "nonzero (with the blocking message already printed) if movement "
+     "is currently disallowed."),
 ]
 
 

@@ -1136,3 +1136,40 @@ this pass — the remaining pieces live inside the same unlabeled shared
 continuation body as before (no clean function boundaries to rename)
 or in functions whose exact role wasn't confirmed confidently enough
 yet (`sub_18415`/`sub_18432`/`sub_1861F`/`sub_1863B`).
+
+### `Queue_remove` and `Logics_checkMoveRestriction` named
+
+Same session, per Paul's direction to continue down the (freshly
+re-ranked) unnamed-function list. Two clean wins:
+
+- **`sub_12ED2` → `Queue_remove`** — the sibling to the already-named
+  `Queue_add`: searches `_queueTable` (confirmed as the same array via
+  an identical `seg126_93`/`-0x73FCh` offset access) for a matching
+  `_id`, then `memmove`-compacts every later entry down one slot if
+  found. A textbook remove-and-compact on a flat array, high confidence
+  purely from the shared data access with an already-named sibling.
+- **`sub_14B64` → `Logics_checkMoveRestriction`** — confirmed by
+  decoding its own printed text via `dump_gatestr_messages.py`:
+  `0x800` = `"You can't move while you're wearing the collar."`,
+  `0x801` = `"[You get o%sf%s first.]"` (a dismount/disembark-first
+  message, `%s` placeholders presumably filling in a vehicle/mount
+  name). A shared movement-precondition gate, checked before letting the
+  player move, that tests several hardcoded plot-item `logicNum`s
+  (`0xD3`/211 confirmed as **the collar**; a couple more — `0xA2`,
+  `0xA8`, `0x9D` — not individually identified, plausibly mount/vehicle
+  related given the dismount message) through
+  `Logics_prehandlerChainReaches`/`Logics_IsPrehandler1`/
+  `Logics_prehandlerHasMode`, plus a room-override hook via
+  `Logic_call(_roomLogicNum, action=0xF)`. Returns nonzero (with the
+  blocking message already printed) if movement is currently
+  disallowed — genuinely useful narrative content confirmation: Gateway
+  has an in-story restraint item (a collar) that can prevent the player
+  from moving, and at least one mount/vehicle situation with the same
+  kind of gate.
+
+Applied both via `apply_renames_gatemain.py`'s sixth batch. Also fixed
+several more instances of the "stale old-name lookup" fragility flagged
+two sessions ago — every entry added since then that had *already* been
+applied for real in an earlier turn needed converting to its hex
+address before this script would run again; worth double-checking for
+this whenever re-running the script after a gap.

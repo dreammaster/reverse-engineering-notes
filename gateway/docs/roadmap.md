@@ -380,8 +380,15 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       function to rename) or functions (`sub_18415`/`sub_18432`/
       `sub_1861F`/`sub_1863B`) whose exact role isn't confident enough
       yet.
-- [ ] Continue working down the re-ranked list — the rest of the ~1750
-      still-unnamed functions.
+- [x] Re-ran `rank_unnamed_functions.py` (1755 unnamed remaining) and
+      named the top 2: `Queue_remove` (was `sub_12ED2`, the sibling to
+      the already-named `Queue_add`) and `Logics_checkMoveRestriction`
+      (was `sub_14B64`, confirmed by decoding its own printed messages —
+      the collar-restraint and dismount-first checks). Full writeup in
+      [overview.md](overview.md#queue_remove-and-logics_checkmoverestriction-named).
+- [ ] Continue working down the re-ranked list — `sub_14ED6` (44
+      callers) is next, plus the rest of the ~1750 still-unnamed
+      functions.
 - [ ] Cross-check the structs shared by name/concept with `gate.idb`
       (`VocabEntry`/`VOCAB_ENTRY`, `Str16`/`STR16`, `Point`/`POINT`,
       `Screen`/`SCREEN`, `Font`/`FONT`, `REGS`, `HandleEntry`/`HANDLE`)

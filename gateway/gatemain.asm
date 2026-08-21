@@ -3117,7 +3117,7 @@ Logics_getBit   endp
 ; Attributes: bp-based frame
 
 Logics_setBit   proc far                ; CODE XREF: sub_143F3+12C\u2193P
-                                        ; sub_14B64+2DD\u2193P ...
+                                        ; Logics_checkMoveRestriction+2DD\u2193P ...
 
 bit             = byte ptr -6
 bitPtr          = dword ptr -4
@@ -4355,7 +4355,7 @@ sub_12094       endp
 ; Attributes: bp-based frame
 
 sub_12109       proc far                ; CODE XREF: sub_143F3+FF\u2193P
-                                        ; sub_14B64+2A5\u2193P ...
+                                        ; Logics_checkMoveRestriction+2A5\u2193P ...
 
 var_4           = dword ptr -4
 arg_0           = word ptr  6
@@ -4428,7 +4428,7 @@ sub_12109       endp
 ; Attributes: bp-based frame
 
 sub_12179       proc far                ; CODE XREF: sub_143F3+11D\u2193P
-                                        ; sub_14B64+2C8\u2193P ...
+                                        ; Logics_checkMoveRestriction+2C8\u2193P ...
 
 var_4           = dword ptr -4
 arg_0           = word ptr  6
@@ -6293,7 +6293,7 @@ Queue_add       endp
 
 ; Attributes: bp-based frame
 
-sub_12ED2       proc near               ; CODE XREF: sub_2E937+41705\u2193P
+Queue_remove    proc near               ; CODE XREF: sub_2E937+41705\u2193P
                                         ; sub_7005F+17\u2193P ...
 
 var_4           = word ptr -4
@@ -6311,10 +6311,10 @@ loc_12ED5:
                 jmp     short loc_12EE8
 ; ---------------------------------------------------------------------------
 
-loc_12EE5:                              ; CODE XREF: sub_12ED2+31\u2193j
+loc_12EE5:                              ; CODE XREF: Queue_remove+31\u2193j
                 inc     [bp+var_2]
 
-loc_12EE8:                              ; CODE XREF: sub_12ED2+11\u2191j
+loc_12EE8:                              ; CODE XREF: Queue_remove+11\u2191j
                 mov     ax, _queueCount
 
 loc_12EEB:
@@ -6342,7 +6342,7 @@ loc_12EEB:
                 push    ax
                 lea     ax, [si-73FCh]
                 push    dx
-sub_12ED2       endp ; sp-analysis failed
+Queue_remove    endp ; sp-analysis failed
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -6356,7 +6356,7 @@ sub_12F26       proc far                ; CODE XREF: seg098:183F\u2193P
 loc_12F2C:
                 add     sp, 0Ah
 
-loc_12F2F:                              ; CODE XREF: sub_12ED2+3F\u2191j
+loc_12F2F:                              ; CODE XREF: Queue_remove+3F\u2191j
                 mov     ax, word_CB7F6
                 cmp     [bp-2], ax
                 jg      short loc_12F3B
@@ -6365,7 +6365,7 @@ loc_12F2F:                              ; CODE XREF: sub_12ED2+3F\u2191j
 loc_12F3B:                              ; CODE XREF: sub_12F26+F\u2191j
                 dec     _queueCount
 
-loc_12F3F:                              ; CODE XREF: sub_12ED2+1C\u2191j
+loc_12F3F:                              ; CODE XREF: Queue_remove+1C\u2191j
                 pop     si
                 mov     sp, bp
                 pop     bp
@@ -10338,7 +10338,7 @@ Stream_loadFile endp
 
 ; Attributes: bp-based frame
 
-sub_14A5F       proc far                ; CODE XREF: sub_14B64+23F\u2193p
+sub_14A5F       proc far                ; CODE XREF: Logics_checkMoveRestriction+23F\u2193p
                                         ; sub_15470+E\u2193p ...
 
 var_4           = word ptr -4
@@ -10461,7 +10461,7 @@ sub_14A5F       endp
 
 ; Attributes: bp-based frame
 
-sub_14B64       proc far                ; CODE XREF: sub_14ED6+61\u2193p
+Logics_checkMoveRestriction proc far    ; CODE XREF: sub_14ED6+61\u2193p
                                         ; seg151:loc_6A291\u2193P ...
 
 var_8           = word ptr -8
@@ -10483,13 +10483,13 @@ arg_2           = word ptr  6
                 cmp     [bp+arg_2], ax
                 jbe     short loc_14B87
 
-loc_14B82:                              ; CODE XREF: sub_14B64+F\u2191j
-                                        ; sub_14B64+E5\u2193j
+loc_14B82:                              ; CODE XREF: Logics_checkMoveRestriction+F\u2191j
+                                        ; Logics_checkMoveRestriction+E5\u2193j
                 sub     ax, ax
                 jmp     loc_14ED2
 ; ---------------------------------------------------------------------------
 
-loc_14B87:                              ; CODE XREF: sub_14B64+1C\u2191j
+loc_14B87:                              ; CODE XREF: Logics_checkMoveRestriction+1C\u2191j
                 mov     ax, 0D3h ; 'Ó'
                 push    ax
                 call    Logics_getPrehandler
@@ -10520,12 +10520,12 @@ loc_14B87:                              ; CODE XREF: sub_14B64+1C\u2191j
                 call    TextWindow_add
                 add     sp, 4
 
-loc_14BD7:                              ; CODE XREF: sub_14B64+36B\u2193j
+loc_14BD7:                              ; CODE XREF: Logics_checkMoveRestriction+36B\u2193j
                 mov     ax, 1
                 jmp     loc_14ED2
 ; ---------------------------------------------------------------------------
 
-loc_14BDD:                              ; CODE XREF: sub_14B64+61\u2191j
+loc_14BDD:                              ; CODE XREF: Logics_checkMoveRestriction+61\u2191j
                 cmp     [bp+logicNum], 1FBh
                 jz      short loc_14C22
                 push    [bp+logicNum]   ; logicNum
@@ -10546,10 +10546,10 @@ loc_14BDD:                              ; CODE XREF: sub_14B64+61\u2191j
                 jmp     short loc_14C10
 ; ---------------------------------------------------------------------------
 
-loc_14C0D:                              ; CODE XREF: sub_14B64+A2\u2191j
+loc_14C0D:                              ; CODE XREF: Logics_checkMoveRestriction+A2\u2191j
                 mov     ax, 3C8Ah
 
-loc_14C10:                              ; CODE XREF: sub_14B64+A7\u2191j
+loc_14C10:                              ; CODE XREF: Logics_checkMoveRestriction+A7\u2191j
                 push    ds
                 push    ax              ; char
                 mov     ax, 801h
@@ -10559,8 +10559,8 @@ loc_14C10:                              ; CODE XREF: sub_14B64+A7\u2191j
                 call    TextWindow_add
                 add     sp, 0Ch
 
-loc_14C22:                              ; CODE XREF: sub_14B64+49\u2191j
-                                        ; sub_14B64+7E\u2191j
+loc_14C22:                              ; CODE XREF: Logics_checkMoveRestriction+49\u2191j
+                                        ; Logics_checkMoveRestriction+7E\u2191j
                 mov     es, seg_D10EE
                 assume es:sg3EDC
                 mov     ax, [bp+arg_2]
@@ -10578,7 +10578,7 @@ loc_14C22:                              ; CODE XREF: sub_14B64+49\u2191j
                 jmp     loc_14B82
 ; ---------------------------------------------------------------------------
 
-loc_14C4C:                              ; CODE XREF: sub_14B64+E3\u2191j
+loc_14C4C:                              ; CODE XREF: Logics_checkMoveRestriction+E3\u2191j
                 mov     ax, 0D3h ; 'Ó'
                 push    ax
                 mov     ax, 0A2h ; '¢'
@@ -10616,7 +10616,7 @@ loc_14C4C:                              ; CODE XREF: sub_14B64+E3\u2191j
 loc_14CAA:                              ; CODE XREF: seg104:loc_4B6BD\u2193P
                                         ; seg108:01A4\u2193P
                 cmp     es:_roomLogicNum, 8Eh ; 'Ž'
-sub_14B64       endp ; sp-analysis failed
+Logics_checkMoveRestriction endp ; sp-analysis failed
 
                 jnz     short loc_14CC0
                 mov     es, seg_D10EE
@@ -10628,10 +10628,10 @@ loc_14CC0:                              ; CODE XREF: seg009:03D1\u2191j
                 call    sub_30D27
                 jmp     short loc_14CF1
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR sub_14B64
+; START OF FUNCTION CHUNK FOR Logics_checkMoveRestriction
 
-loc_14CC7:                              ; CODE XREF: sub_14B64+FA\u2191j
-                                        ; sub_14B64+10E\u2191j ...
+loc_14CC7:                              ; CODE XREF: Logics_checkMoveRestriction+FA\u2191j
+                                        ; Logics_checkMoveRestriction+10E\u2191j ...
                 mov     es, dseg_102
                 assume es:sg4d43
                 push    es:_roomLogicNum
@@ -10647,7 +10647,7 @@ loc_14CC7:                              ; CODE XREF: sub_14B64+FA\u2191j
                 call    sub_30D1D
 
 loc_14CF1:                              ; CODE XREF: seg009:03E5\u2191j
-                                        ; sub_14B64+17A\u2191j ...
+                                        ; Logics_checkMoveRestriction+17A\u2191j ...
                 mov     es, dseg_102
                 mov     ax, es:_roomLogicNum
                 mov     es, seg_D10F2
@@ -10682,14 +10682,14 @@ loc_14CF1:                              ; CODE XREF: seg009:03E5\u2191j
                 jmp     short loc_14D8F
 ; ---------------------------------------------------------------------------
 
-loc_14D5B:                              ; CODE XREF: sub_14B64+1EE\u2191j
+loc_14D5B:                              ; CODE XREF: Logics_checkMoveRestriction+1EE\u2191j
                 cmp     es:Persisted_val2, 0
                 jnz     short loc_14D6A
                 mov     [bp+var_4], 0Ch
                 jmp     short loc_14D8F
 ; ---------------------------------------------------------------------------
 
-loc_14D6A:                              ; CODE XREF: sub_14B64+1FD\u2191j
+loc_14D6A:                              ; CODE XREF: Logics_checkMoveRestriction+1FD\u2191j
                 mov     ax, 2
                 push    ax              ; index
                 mov     es, dseg_102
@@ -10702,11 +10702,11 @@ loc_14D6A:                              ; CODE XREF: sub_14B64+1FD\u2191j
                 jmp     short loc_14D8F
 ; ---------------------------------------------------------------------------
 
-loc_14D8A:                              ; CODE XREF: sub_14B64+21D\u2191j
+loc_14D8A:                              ; CODE XREF: Logics_checkMoveRestriction+21D\u2191j
                 mov     [bp+var_4], 9
 
-loc_14D8F:                              ; CODE XREF: sub_14B64+1F5\u2191j
-                                        ; sub_14B64+204\u2191j ...
+loc_14D8F:                              ; CODE XREF: Logics_checkMoveRestriction+1F5\u2191j
+                                        ; Logics_checkMoveRestriction+204\u2191j ...
                 cmp     byte_CBB74, 0
                 jnz     short loc_14DAB
                 push    [bp+var_4]
@@ -10718,13 +10718,13 @@ loc_14D8F:                              ; CODE XREF: sub_14B64+1F5\u2191j
                 jmp     short loc_14DB7
 ; ---------------------------------------------------------------------------
 
-loc_14DAB:                              ; CODE XREF: sub_14B64+230\u2191j
+loc_14DAB:                              ; CODE XREF: Logics_checkMoveRestriction+230\u2191j
                 cmp     byte_CBB76, 0
                 jz      short loc_14DB7
                 call    j_scene_update?
 
-loc_14DB7:                              ; CODE XREF: sub_14B64+245\u2191j
-                                        ; sub_14B64+24C\u2191j
+loc_14DB7:                              ; CODE XREF: Logics_checkMoveRestriction+245\u2191j
+                                        ; Logics_checkMoveRestriction+24C\u2191j
                 cmp     byte_CBB75, 0
                 jnz     short loc_14DCF
                 mov     es, dseg_102
@@ -10732,7 +10732,7 @@ loc_14DB7:                              ; CODE XREF: sub_14B64+245\u2191j
                 call    sub_15BDA
                 add     sp, 2
 
-loc_14DCF:                              ; CODE XREF: sub_14B64+258\u2191j
+loc_14DCF:                              ; CODE XREF: Logics_checkMoveRestriction+258\u2191j
                 mov     ax, 0Eh
                 push    ax              ; action
                 mov     es, dseg_102
@@ -10769,7 +10769,7 @@ loc_14DE7:                              ; CODE XREF: seg104:00E7\u2193P
                 call    sub_12179
                 add     sp, 4
 
-loc_14E34:                              ; CODE XREF: sub_14B64+2B2\u2191j
+loc_14E34:                              ; CODE XREF: Logics_checkMoveRestriction+2B2\u2191j
                 mov     ax, 2
                 push    ax
                 mov     es, dseg_102
@@ -10777,7 +10777,7 @@ loc_14E34:                              ; CODE XREF: sub_14B64+2B2\u2191j
                 call    Logics_setBit
                 add     sp, 4
 
-loc_14E49:                              ; CODE XREF: sub_14B64+29A\u2191j
+loc_14E49:                              ; CODE XREF: Logics_checkMoveRestriction+29A\u2191j
                 cmp     Persisted_val193, 0
                 jz      short loc_14EC0
                 mov     es, dseg_102
@@ -10819,20 +10819,20 @@ loc_14E49:                              ; CODE XREF: sub_14B64+29A\u2191j
                 call    TextWindow_add
                 add     sp, 8
 
-loc_14EC0:                              ; CODE XREF: sub_14B64+2EA\u2191j
-                                        ; sub_14B64+303\u2191j ...
+loc_14EC0:                              ; CODE XREF: Logics_checkMoveRestriction+2EA\u2191j
+                                        ; Logics_checkMoveRestriction+303\u2191j ...
                 call    sub_2E2CF
                 mov     byte_CBB74, 0
                 mov     byte_CBB75, 0
                 jmp     loc_14BD7
 ; ---------------------------------------------------------------------------
 
-loc_14ED2:                              ; CODE XREF: sub_14B64+20\u2191j
-                                        ; sub_14B64+76\u2191j
+loc_14ED2:                              ; CODE XREF: Logics_checkMoveRestriction+20\u2191j
+                                        ; Logics_checkMoveRestriction+76\u2191j
                 mov     sp, bp
                 pop     bp
                 retf
-; END OF FUNCTION CHUNK FOR sub_14B64
+; END OF FUNCTION CHUNK FOR Logics_checkMoveRestriction
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -10899,7 +10899,7 @@ loc_14F2A:                              ; CODE XREF: sub_14ED6+85\u2193j
 loc_14F33:                              ; CODE XREF: sub_14ED6+58\u2191j
                 push    [bp+var_12]
                 push    cs
-                call    near ptr sub_14B64
+                call    near ptr Logics_checkMoveRestriction
 
 loc_14F3A:                              ; CODE XREF: sub_14ED6+230\u2193j
                 add     sp, 2
@@ -11470,7 +11470,7 @@ sub_152BA       endp
 ; Attributes: bp-based frame
 
 Score_add       proc far                ; CODE XREF: sub_143F3+10F\u2191P
-                                        ; sub_14B64+2B6\u2191p ...
+                                        ; Logics_checkMoveRestriction+2B6\u2191p ...
 
 arg_0           = byte ptr  6
 
@@ -19617,7 +19617,7 @@ __fptrap        endp
 ; Attributes: library function
 
 __chkstk        proc far                ; CODE XREF: Queue_add+6\u2191P
-                                        ; sub_12ED2+6\u2191P ...
+                                        ; Queue_remove+6\u2191P ...
                 pop     cx
                 pop     dx
                 mov     bx, sp
@@ -69726,7 +69726,7 @@ j_ParserHandlers_arrayGetIndex endp ; sp-analysis failed
 
 
 sub_2E2CF       proc far                ; CODE XREF: main+B6A\u2191P
-                                        ; sub_14B64:loc_14EC0\u2191P
+                                        ; Logics_checkMoveRestriction:loc_14EC0\u2191P
 
 ; FUNCTION CHUNK AT 1491 SIZE 0000007D BYTES
 
@@ -69826,7 +69826,7 @@ thunk_sub_67662 endp ; sp-analysis failed
 
 ; int __cdecl __far j_Logics_updateHandler(int logicNum, int handlerId, int newId)
 j_Logics_updateHandler proc far         ; CODE XREF: sub_143F3+D2\u2191P
-                                        ; sub_14B64+1B9\u2191P ...
+                                        ; Logics_checkMoveRestriction+1B9\u2191P ...
 
 logicNum        = word ptr  4
 handlerId       = word ptr  6
@@ -82223,7 +82223,7 @@ thunk_sub_669E3 endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_6737B proc far                ; CODE XREF: sub_14B64+1C4\u2191P
+thunk_sub_6737B proc far                ; CODE XREF: Logics_checkMoveRestriction+1C4\u2191P
                                         ; seg151:17FC\u2193P ...
                 call    near ptr rtlink_thunk
                 jmp     sub_6737B
@@ -82235,7 +82235,7 @@ thunk_sub_6737B endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_30D1D       proc far                ; CODE XREF: sub_14B64+188\u2191P
+sub_30D1D       proc far                ; CODE XREF: Logics_checkMoveRestriction+188\u2191P
 
 ; FUNCTION CHUNK AT 2E98 SIZE 000000A4 BYTES
 
@@ -139316,10 +139316,10 @@ objects_array   db 1F5Eh dup(0)         ; DATA XREF: Logics_getObjectString+9A\u
 byte_56644      db 40h dup(0)           ; DATA XREF: sub_12E3A+A\u2191o
 word_56684      dw 0                    ; DATA XREF: sub_1338B+48\u2191w
                                         ; seg098:00F1\u2191w ...
-word_56686      dw 0                    ; DATA XREF: sub_14B64+C5\u2191w
+word_56686      dw 0                    ; DATA XREF: Logics_checkMoveRestriction+C5\u2191w
                                         ; seg009:03D7\u2191r ...
 ; int Persisted_val1
-Persisted_val1  dw 0                    ; DATA XREF: sub_14B64+199\u2191w
+Persisted_val1  dw 0                    ; DATA XREF: Logics_checkMoveRestriction+199\u2191w
                                         ; seg068:SAVE_FIELDS\u2191o ...
 Persisted_val225 dw 0                   ; DATA XREF: Logics_getRoomPic+B2\u2191r
                                         ; seg068:SAVE_FIELDS\u2191o ...
@@ -170597,7 +170597,7 @@ loc_6A28C:                              ; CODE XREF: seg151:26E2\u2191j
                 push    es:vocab_list_0._logicNum
 
 loc_6A291:                              ; CODE XREF: seg151:2781\u2193j
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 add     sp, 2
                 jmp     loc_6A33B
 ; ---------------------------------------------------------------------------
@@ -181873,7 +181873,7 @@ loc_70013:                              ; CODE XREF: sub_2E937+3\u2191J
                 add     sp, 4
                 mov     ax, 6
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 call    thunk_sub_76EB4
                 jmp     short loc_7005B
@@ -181911,7 +181911,7 @@ var_2           = word ptr -2
                 mov     Persisted_val6, 0
                 mov     ax, 2Bh ; '+'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     [bp+var_4], 0
                 jmp     short loc_70088
@@ -182212,7 +182212,7 @@ loc_7027A:                              ; CODE XREF: sub_7005F+515\u2193j
                 mov     es:Persisted_val146, 0
                 mov     ax, 6Ah ; 'j'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 sub     ax, ax
                 push    ax
@@ -182305,7 +182305,7 @@ loc_70334:                              ; CODE XREF: sub_7005F+515\u2193j
 loc_70368:                              ; CODE XREF: sub_7005F+2F7\u2191j
                 mov     ax, 0F5h ; 'õ'
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 add     sp, 2
                 sub     ax, ax
                 push    ax              ; newId
@@ -182653,7 +182653,7 @@ var_2           = word ptr -2
                 mov     Persisted_val6, 0
                 mov     ax, 2Bh ; '+'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     [bp+var_4], 0
                 jmp     short loc_70627
@@ -182738,7 +182738,7 @@ loc_70698:                              ; CODE XREF: sub_705FE+34C\u2193j
                 call    thunk_sub_B49DE
                 mov     ax, 28h ; '('
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
 
 loc_706B9:                              ; CODE XREF: sub_705FE+88\u2191j
@@ -186732,7 +186732,7 @@ arg_0           = word ptr  6
                 mov     [bp+var_4], ax
                 mov     ax, 2Ah ; '*'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     es, seg_D13B6
                 mov     ax, es:Persisted_val194
@@ -186768,7 +186768,7 @@ loc_722B0:                              ; CODE XREF: sub_72260+47\u2191j
 
 loc_722B3:                              ; CODE XREF: sub_72260+100\u2193j
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
 
 loc_722BC:                              ; CODE XREF: sub_72260+4E\u2191j
@@ -186808,7 +186808,7 @@ loc_722F1:                              ; CODE XREF: sub_72260+8C\u2191j
                 mov     bx, [bp+var_6]
                 shl     bx, 1
                 push    word ptr [bx+4CC4h]
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 jmp     short loc_722EE
 ; ---------------------------------------------------------------------------
@@ -186829,7 +186829,7 @@ loc_72314:                              ; CODE XREF: sub_72260+AF\u2191j
                 mov     es, seg_D13B8
                 assume es:seg119
                 push    word ptr es:[bx+0]
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 jmp     short loc_72311
 ; ---------------------------------------------------------------------------
@@ -186853,7 +186853,7 @@ loc_72345:                              ; CODE XREF: sub_72260+E0\u2191j
                 shl     bx, 1
                 mov     es, seg_D13B8
                 push    word ptr es:[bx+1Ah]
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 jmp     short loc_72339
 ; ---------------------------------------------------------------------------
@@ -186882,7 +186882,7 @@ loc_72376:                              ; CODE XREF: sub_72260+111\u2191j
                 shl     bx, 1
                 mov     es, seg_D13B8
                 push    word ptr es:[bx+40h]
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 jmp     short loc_7236A
 ; ---------------------------------------------------------------------------
@@ -187637,7 +187637,7 @@ loc_72A86:                              ; CODE XREF: sub_72260+784\u2191j
 loc_72A99:                              ; CODE XREF: sub_72260+2E1\u2191j
                                         ; sub_72260+824\u2191j
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 add     sp, 2
                 mov     ax, 0Ch
                 push    ax
@@ -188637,11 +188637,11 @@ loc_732F9:                              ; CODE XREF: sub_72F8A+18\u2191j
                 jnz     short loc_73368
                 mov     ax, 54h ; 'T'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 3Fh ; '?'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 sub     ax, ax
                 push    ax              ; newId
@@ -197156,7 +197156,7 @@ loc_76F00:                              ; CODE XREF: sub_76EB4+2B\u2191j
                 jl      short locret_76F50
                 mov     es, seg_D1464
                 push    es:Persisted_val1
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 add     sp, 2
 
 locret_76F50:                           ; CODE XREF: sub_76EB4+89\u2191j
@@ -198622,17 +198622,17 @@ loc_777C7:                              ; CODE XREF: sub_77773+30\u2191j
                                         ; sub_77773+3D\u2191j
                 mov     ax, 31h ; '1'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 7
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     es, seg_D147A
                 mov     es:Persisted_val184, 0
                 mov     ax, 8
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     es, seg_D147C
                 mov     es:Persisted_val185, 0
@@ -198642,7 +198642,7 @@ loc_777C7:                              ; CODE XREF: sub_77773+30\u2191j
                 jz      short loc_7781B
                 mov     ax, 5
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
 
 loc_7781B:                              ; CODE XREF: sub_77773+9A\u2191j
@@ -198672,7 +198672,7 @@ loc_77846:                              ; CODE XREF: sub_77773+B9\u2191j
                 jz      short loc_778A5
                 mov     ax, 0Bh
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 sub     ax, ax
                 push    ax              ; newId
@@ -198747,7 +198747,7 @@ loc_77920:                              ; CODE XREF: sub_77773+1A5\u2191j
 
 loc_77923:                              ; CODE XREF: sub_77773+1AB\u2191j
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 add     sp, 2
                 jmp     short loc_7793B
 ; ---------------------------------------------------------------------------
@@ -198854,7 +198854,7 @@ loc_77A1C:                              ; CODE XREF: sub_77773+23D\u2191j
                 jl      short loc_77A34
                 mov     ax, 9Ch ; 'œ'
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 add     sp, 2
 
 loc_77A34:                              ; CODE XREF: sub_77773+2B3\u2191j
@@ -199139,7 +199139,7 @@ loc_77C5D:                              ; CODE XREF: sub_31105+46B46\u2191j
                 add     sp, 4
                 mov     ax, 13h
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     es, seg_D148E
                 mov     es:Persisted_val183, 0
@@ -200716,11 +200716,11 @@ loc_7866E:                              ; CODE XREF: sub_78570:loc_78587\u2191j
                                         ; DATA XREF: sub_78570+638\u2193o
                 mov     ax, 7
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 8
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 jmp     loc_78A3B
 ; ---------------------------------------------------------------------------
@@ -200801,7 +200801,7 @@ loc_7870B:                              ; CODE XREF: sub_78570+196\u2191j
                 add     sp, 4
                 mov     ax, 0Ch
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 sub     ax, ax
                 push    ax              ; newId
@@ -201826,7 +201826,7 @@ loc_78EA3:                              ; CODE XREF: sub_78C68+14A\u2191j
                 jz      short loc_78EBE
                 mov     ax, 95h ; '•'
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 add     sp, 2
                 jmp     short loc_78E52
 ; ---------------------------------------------------------------------------
@@ -205710,7 +205710,7 @@ sub_7A950       proc far                ; CODE XREF: sub_78570+224\u2191p
                 inc     es:Persisted_val181
                 mov     ax, 290h
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 add     sp, 2
                 retf
 sub_7A950       endp
@@ -207187,7 +207187,7 @@ loc_7B315:                              ; CODE XREF: sub_7AE5A+4B6\u2191j
 
 loc_7B3D9:                              ; CODE XREF: sub_7AE5A+59B\u2193j
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 jmp     loc_7B03F
 ; ---------------------------------------------------------------------------
 
@@ -211620,7 +211620,7 @@ loc_7D82E:                              ; CODE XREF: sub_7D57B+2AC\u2191j
                 mov     es:Persisted_val193, 9Dh
                 mov     ax, 3
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 9
                 push    ax              ; index
@@ -213245,7 +213245,7 @@ loc_7E428:                              ; CODE XREF: sub_7E36F+68\u2191j
                 add     sp, 4
                 mov     ax, 9Ah ; 'š'
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
 
 loc_7E441:                              ; CODE XREF: sub_7E36F+13E\u2193j
                 add     sp, 2
@@ -214926,7 +214926,7 @@ loc_7F0B7:                              ; CODE XREF: sub_7E97C+71A\u2191j
                 add     sp, 6
                 mov     ax, 3
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     es, seg_D14DC
                 push    es:_roomLogicNum
@@ -214980,7 +214980,7 @@ loc_7F176:                              ; CODE XREF: sub_7E97C+7AC\u2191j
                 add     sp, 4
                 mov     ax, 96h ; '–'
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 add     sp, 2
                 sub     ax, ax
                 push    ax
@@ -216943,7 +216943,7 @@ sub_800F3       endp
 loc_8013E:                              ; CODE XREF: sub_30DF9+3\u2191J
                 mov     ax, 98h ; '˜'
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 add     sp, 2
                 mov     ax, 1
                 retf
@@ -217356,7 +217356,7 @@ loc_804BB:                              ; CODE XREF: sub_8014E+326\u2191j
                 add     sp, 2
                 mov     ax, 96h ; '–'
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 add     sp, 2
                 sub     ax, ax
                 push    ax              ; newId
@@ -217653,7 +217653,7 @@ loc_80743:                              ; CODE XREF: sub_3105B+4F6B5\u2191j
                 add     sp, 2
                 mov     ax, 96h ; '–'
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 add     sp, 2
                 sub     ax, ax
                 push    ax              ; newId
@@ -217955,7 +217955,7 @@ loc_809CE:                              ; CODE XREF: sub_80894+D1\u2191j
                 add     sp, 4
                 mov     ax, 3
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
 
 loc_809DD:                              ; CODE XREF: sub_80894+111\u2191j
@@ -218014,7 +218014,7 @@ loc_80A49:                              ; CODE XREF: sub_809E1+35\u2191j
                 add     sp, 2
                 mov     ax, 96h ; '–'
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 add     sp, 2
                 retf
 sub_809E1       endp
@@ -219520,7 +219520,7 @@ loc_813C0:                              ; CODE XREF: sub_81358+14\u2191j
                                         ; DATA XREF: sub_81358+F1\u2193o
                 mov     ax, 5Eh ; '^'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 jmp     short loc_81437
 ; ---------------------------------------------------------------------------
@@ -220179,7 +220179,7 @@ loc_81841:                              ; CODE XREF: sub_81613+14\u2191j
                                         ; DATA XREF: sub_81613+2F6\u2193o
                 mov     ax, 5Eh ; '^'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 jmp     loc_818E9
 ; ---------------------------------------------------------------------------
@@ -221372,7 +221372,7 @@ loc_820C1:                              ; CODE XREF: sub_81CCC+3F0\u2191j
                 add     sp, 6
                 mov     ax, 56h ; 'V'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     word_D3C02, 2
                 mov     ax, 9
@@ -225112,11 +225112,11 @@ loc_839A4:                              ; CODE XREF: sub_83842+17\u2191j
                 mov     Persisted_val171, 1
                 mov     ax, 6Ah ; 'j'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 6Bh ; 'k'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 5Dh ; ']'
                 push    ax
@@ -225126,7 +225126,7 @@ loc_839A4:                              ; CODE XREF: sub_83842+17\u2191j
                 jz      short loc_83A48
                 mov     ax, 5Dh ; ']'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 980Eh
                 mov     dx, 0F000h
@@ -226744,7 +226744,7 @@ loc_844F6:                              ; CODE XREF: sub_843E1+110\u2191j
                 add     sp, 6
                 mov     ax, 5Ah ; 'Z'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     word_D3C06, 2
                 mov     ax, 1Dh
@@ -229279,7 +229279,7 @@ locret_8584C:                           ; CODE XREF: sub_31141+54649\u2191j
 loc_8584D:                              ; CODE XREF: sub_31137+3\u2191J
                 mov     ax, 6Ah ; 'j'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     Persisted_val171, 1
                 mov     ax, 98A3h
@@ -230866,7 +230866,7 @@ loc_8630A:                              ; CODE XREF: sub_85C7C+686\u2191j
                 add     sp, 4
                 mov     ax, 57h ; 'W'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 1
                 push    ax
@@ -231098,15 +231098,15 @@ loc_864EA:                              ; CODE XREF: sub_85C7C+847\u2191j
                 mov     es:Persisted_val193, 0
                 mov     ax, 64h ; 'd'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 58h ; 'X'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 57h ; 'W'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 1
                 push    ax
@@ -232803,11 +232803,11 @@ loc_871E5:                              ; CODE XREF: sub_86D91+44F\u2191j
                 mov     es:Persisted_val171, 1
                 mov     ax, 6Ah ; 'j'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 6Bh ; 'k'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 jmp     loc_86E1F
 ; ---------------------------------------------------------------------------
@@ -233564,11 +233564,11 @@ loc_87635:                              ; CODE XREF: sub_874C0+17\u2191j
 loc_87645:                              ; CODE XREF: sub_874C0+180\u2191j
                 mov     ax, 2Dh ; '-'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 2Eh ; '.'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 jmp     short loc_876D8
 ; ---------------------------------------------------------------------------
@@ -234256,7 +234256,7 @@ loc_87B44:                              ; CODE XREF: sub_87A17+1C\u2191j
                                         ; DATA XREF: sub_87A17+1EC\u2193o
                 mov     ax, 59h ; 'Y'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 jmp     loc_87BE3
 ; ---------------------------------------------------------------------------
@@ -236551,11 +236551,11 @@ sub_88B2F       proc far                ; CODE XREF: sub_874C0+117\u2191p
                 add     sp, 6
                 mov     ax, 57h ; 'W'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 58h ; 'X'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 retf
 sub_88B2F       endp
@@ -243314,7 +243314,7 @@ loc_8B944:                              ; CODE XREF: sub_8B771+1A9\u2191j
                 mov     word_D3C04, 3
                 mov     ax, 56h ; 'V'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 jmp     loc_8B806
 ; ---------------------------------------------------------------------------
@@ -246236,7 +246236,7 @@ loc_8CDA1:                              ; CODE XREF: sub_8CB20+27C\u2191j
                 mov     es:Persisted_val141, 0
                 mov     ax, 1C7h
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 add     sp, 2
                 mov     ax, 1
                 push    ax
@@ -247377,7 +247377,7 @@ loc_8D64B:                              ; CODE XREF: sub_30D81+5C8B8\u2191j
                 add     sp, 4
                 mov     ax, 1C6h
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 add     sp, 2
                 mov     ax, 8
                 push    ax              ; index
@@ -247455,7 +247455,7 @@ loc_8D6D5:                              ; CODE XREF: sub_30D81+5C94F\u2191j
                 mov     word_D3C0E, 2
                 mov     ax, 1C8h
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 add     sp, 2
                 sub     ax, ax
                 push    ax              ; newId
@@ -278967,19 +278967,19 @@ var_2           = word ptr -2
                 call    sub_15A7A
                 mov     ax, 9
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 2
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 0Ah
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 30h ; '0'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 1
                 push    ax              ; newId
@@ -279108,7 +279108,7 @@ loc_9B76D:                              ; CODE XREF: sub_9B5F9+169\u2191j
 loc_9B786:                              ; CODE XREF: sub_9B5F9+17B\u2191j
                 mov     ax, 21h ; '!'
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 add     sp, 2
                 mov     ax, 689Eh
                 mov     dx, 0F000h
@@ -279958,7 +279958,7 @@ loc_9BD17:                              ; CODE XREF: sub_9B946+3BF\u2191j
 loc_9BD38:                              ; CODE XREF: sub_9B946+3DB\u2191j
                 mov     ax, 14h
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 jmp     loc_9BB31
 ; ---------------------------------------------------------------------------
@@ -280352,7 +280352,7 @@ loc_9BFC1:                              ; CODE XREF: sub_9BD7E+14\u2191j
                 mov     byte_CE8D6, 0
                 mov     ax, 0Fh
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     Persisted_val97, 0
                 mov     ax, 63h ; 'c'
@@ -280730,7 +280730,7 @@ loc_9C27E:                              ; CODE XREF: sub_9C0EE+16B\u2191j
 loc_9C29E:                              ; CODE XREF: sub_9C0EE+19A\u2191j
                 mov     ax, 16h
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     Persisted_val115, 0
                 jmp     loc_9C17E
@@ -286380,39 +286380,39 @@ loc_9E981:                              ; CODE XREF: sub_9E8DF+B4\u2193j
                 add     sp, 4
                 mov     ax, 0Dh
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 0Fh
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 0Eh
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 11h
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 12h
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 14h
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 10h
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 16h
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 20h ; ' '
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 19h
                 push    ax
@@ -286457,7 +286457,7 @@ loc_9EC9F:                              ; CODE XREF: sub_9E8DF+382\u2191j
                 call    j_TextWindow_clearInputLIne
                 mov     ax, 21h ; '!'
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 mov     sp, bp
                 pop     bp
                 retf
@@ -287587,7 +287587,7 @@ loc_9F3DC:                              ; CODE XREF: sub_9F08E+20\u2191j
 loc_9F3F4:                              ; CODE XREF: sub_9F08E+361\u2191j
                 mov     ax, 0Eh
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 jmp     loc_9F20C
 ; ---------------------------------------------------------------------------
 
@@ -288950,7 +288950,7 @@ loc_9FD9E:                              ; CODE XREF: sub_9FCEC+AD\u2191j
                 mov     es:Persisted_val109, 0
                 mov     ax, 12h
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 sub     ax, ax
                 push    ax
@@ -289208,7 +289208,7 @@ loc_9FFA8:                              ; CODE XREF: sub_9FCEC+2B4\u2191j
                 mov     es:Persisted_val109, 0
                 mov     ax, 12h
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 sub     ax, ax
                 push    ax
@@ -293264,43 +293264,43 @@ sub_A1E0B       proc far                ; CODE XREF: sub_A059C+296\u2191p
                 add     sp, 8
                 mov     ax, 0Dh
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 0Fh
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 0Eh
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 11h
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 12h
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 14h
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 10h
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 16h
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 20h ; ' '
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 36h ; '6'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 call    sub_159D5
                 mov     es, seg_D174E
@@ -293316,7 +293316,7 @@ sub_A1E0B       proc far                ; CODE XREF: sub_A059C+296\u2191p
                 add     sp, 4
                 mov     ax, 13h
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 add     sp, 2
                 mov     ax, 1
                 push    ax
@@ -293363,7 +293363,7 @@ loc_A1F2C:                              ; CODE XREF: sub_A1E0B+116\u2191j
                 add     sp, 6
                 mov     ax, 0F4h ; 'ô'
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 add     sp, 2
                 mov     ax, 40BEh
                 mov     dx, 0F000h
@@ -295715,7 +295715,7 @@ loc_A3042:                              ; CODE XREF: sub_A2D8D+2A3\u2191j
 loc_A308A:                              ; CODE XREF: sub_A2D8D+2EB\u2191j
                 mov     ax, 46h ; 'F'
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 add     sp, 2
                 jmp     loc_A2EE2
 ; ---------------------------------------------------------------------------
@@ -300525,7 +300525,7 @@ loc_A5048:                              ; CODE XREF: sub_A4F49+C7\u2191j
                 jz      short loc_A5068
                 mov     ax, 38h ; '8'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 push    cs
                 call    near ptr sub_A5F92
@@ -302729,7 +302729,7 @@ var_2           = word ptr -2
                 add     sp, 4
                 mov     ax, 39h ; '9'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     es, seg_D17AC
                 assume es:sg3EDC
@@ -303256,7 +303256,7 @@ loc_A6198:                              ; CODE XREF: sub_A60CE+B2\u2191j
                 add     sp, 4
                 mov     ax, 2Ah ; '*'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 2Ah ; '*'
                 push    ax
@@ -303464,7 +303464,7 @@ loc_A6361:                              ; CODE XREF: sub_A60CE+289\u2191j
                 mov     Persisted_val221, 1
                 mov     ax, 0EEh ; 'î'
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 add     sp, 2
                 jmp     short loc_A63CD
 ; ---------------------------------------------------------------------------
@@ -303653,27 +303653,27 @@ loc_A656D:                              ; CODE XREF: sub_A60CE+479\u2191j
 loc_A6589:                              ; CODE XREF: sub_A60CE+32F\u2191j
                 mov     ax, 23h ; '#'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 21h ; '!'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 17h
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 68h ; 'h'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 18h
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 25h ; '%'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 cmp     Persisted_val242, 0
                 jz      short loc_A65DB
@@ -306145,7 +306145,7 @@ loc_A770E:                              ; CODE XREF: sub_A75D2+C3\u2191j
                 add     sp, 4
                 mov     ax, 0FCh ; 'ü'
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 jmp     loc_A7638
 ; ---------------------------------------------------------------------------
 
@@ -308716,7 +308716,7 @@ loc_A863B:                              ; CODE XREF: sub_A8577+A2\u2191j
                 mov     es:word_CB808, 1Eh
                 mov     ax, 0EEh ; 'î'
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 add     sp, 2
                 mov     es, seg_D17E2
                 cmp     es:Persisted_val216, 0
@@ -309040,7 +309040,7 @@ loc_A887D:                              ; CODE XREF: sub_30FCF+3\u2191J
                 add     sp, 4
                 mov     ax, 0FCh ; 'ü'
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 add     sp, 2
                 jmp     short loc_A8922
 ; ---------------------------------------------------------------------------
@@ -310036,7 +310036,7 @@ loc_A8E36:                              ; CODE XREF: sub_A8C50+1DE\u2191j
 loc_A8E80:                              ; CODE XREF: sub_A8C50+208\u2191j
                 mov     ax, 0EDh ; 'í'
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 add     sp, 2
                 jmp     loc_A8DAD
 ; ---------------------------------------------------------------------------
@@ -310457,7 +310457,7 @@ loc_A91A1:
                 add     sp, 4
                 mov     ax, 0ECh ; 'ì'
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 add     sp, 2
                 mov     ax, 0Ah
                 push    ax
@@ -310973,7 +310973,7 @@ loc_A95A1:                              ; CODE XREF: sub_A92BF+225\u2191j
                 add     sp, 4
                 mov     ax, 0F1h ; 'ñ'
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 jmp     loc_A9431
 ; ---------------------------------------------------------------------------
 
@@ -311201,7 +311201,7 @@ loc_A971D:                              ; CODE XREF: sub_A95F3+125\u2191j
                 add     sp, 4
                 mov     ax, 0FCh ; 'ü'
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 add     sp, 2
                 jmp     loc_A961D
 ; ---------------------------------------------------------------------------
@@ -316130,7 +316130,7 @@ loc_AB651:                              ; CODE XREF: sub_AB5A8+14\u2191j
                 add     sp, 6
                 mov     ax, 25h ; '%'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     Persisted_val212, 0
 
@@ -316182,7 +316182,7 @@ loc_AB6E1:                              ; CODE XREF: sub_AB5A8+14\u2191j
                 add     sp, 6
                 mov     ax, 35h ; '5'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 3C02h
                 jmp     short loc_AB705
@@ -318429,7 +318429,7 @@ loc_AC6B5:                              ; CODE XREF: sub_AC5B9+1E9\u2193j
                 add     sp, 6
                 mov     ax, 25h ; '%'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     Persisted_val212, 0
                 mov     ax, 2
@@ -318643,7 +318643,7 @@ loc_AC83A:                              ; CODE XREF: sub_AC7D1+20\u2191j
                 add     sp, 6
                 mov     ax, 25h ; '%'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     Persisted_val212, 0
                 mov     ax, 2
@@ -320063,7 +320063,7 @@ loc_AD27B:                              ; CODE XREF: sub_AD063+213\u2191j
                 add     sp, 6
                 mov     ax, 5Ch ; '\'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 2
                 push    ax              ; index
@@ -321615,7 +321615,7 @@ loc_ADD72:                              ; CODE XREF: sub_ADB2A+1F9\u2191j
                 mov     Persisted_val222, 0
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 jmp     loc_ADC9F
 ; ---------------------------------------------------------------------------
@@ -323550,7 +323550,7 @@ loc_AEB26:                              ; CODE XREF: sub_AE989+16F\u2191j
                 mov     es:_roomLogicNum, 0F3h ; 'ó'
                 mov     ax, 0EEh ; 'î'
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 add     sp, 2
 
 loc_AEB3D:                              ; CODE XREF: sub_AE989+104\u2191j
@@ -326821,7 +326821,7 @@ var_2           = word ptr -2
                 add     sp, 6
                 mov     ax, 33h ; '3'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 21h ; '!'
                 push    ax
@@ -330162,7 +330162,7 @@ loc_B1B70:                              ; CODE XREF: sub_B1730+17\u2191j
 loc_B1B87:                              ; CODE XREF: sub_B1730+452\u2191j
                 mov     ax, 27h ; '''
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 sub     ax, ax
                 push    ax
@@ -330270,7 +330270,7 @@ loc_B1C6C:                              ; CODE XREF: sub_B1730+454\u2191j
 loc_B1C83:                              ; CODE XREF: sub_B1730+54E\u2191j
                 mov     ax, 29h ; ')'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 sub     ax, ax
                 push    ax
@@ -330339,7 +330339,7 @@ loc_B1D05:                              ; CODE XREF: sub_B1730+550\u2191j
 loc_B1D1C:                              ; CODE XREF: sub_B1730+5E7\u2191j
                 mov     ax, 28h ; '('
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 1809h
                 mov     dx, 0F000h
@@ -332211,11 +332211,11 @@ loc_B2905:                              ; CODE XREF: sub_B28A8+1B\u2191j
                 add     sp, 4
                 mov     ax, 1Ah
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 1Bh
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 1
                 push    ax
@@ -334131,7 +334131,7 @@ locret_B36A9:                           ; CODE XREF: sub_3101F+82686\u2191j
 loc_B36AA:                              ; CODE XREF: sub_31029+3\u2191J
                 mov     ax, 1Bh
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 sub     ax, ax
                 push    ax              ; newId
@@ -336405,7 +336405,7 @@ sub_B466E       proc far                ; CODE XREF: thunk_sub_B466E:loc_3140A\u
 loc_B46B2:                              ; CODE XREF: sub_B466E+32\u2191j
                 mov     ax, 1Ch
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 retf
 sub_B466E       endp
@@ -336688,7 +336688,7 @@ loc_B48F1:                              ; CODE XREF: sub_B46BF+1DB\u2191j
                 add     sp, 6
                 mov     ax, 1Ch
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 1
                 push    ax
@@ -336816,7 +336816,7 @@ sub_B49DE       proc far                ; CODE XREF: thunk_sub_B49DE+3\u2191J
 loc_B4A22:                              ; CODE XREF: sub_B49DE+32\u2191j
                 mov     ax, 1Dh
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 retf
 sub_B49DE       endp
@@ -337046,7 +337046,7 @@ loc_B4BF3:                              ; CODE XREF: sub_B4B07+E5\u2191j
 loc_B4C17:                              ; CODE XREF: sub_B4B07+FE\u2191j
                 mov     ax, 0F5h ; 'õ'
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 add     sp, 2
                 sub     ax, ax
                 push    ax              ; newId
@@ -337274,7 +337274,7 @@ sub_B4DA7       proc far                ; CODE XREF: thunk_sub_B4DA7+3\u2191J
 loc_B4DEB:                              ; CODE XREF: sub_B4DA7+32\u2191j
                 mov     ax, 1Eh
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 retf
 sub_B4DA7       endp
@@ -340870,7 +340870,7 @@ loc_B65DD:                              ; CODE XREF: sub_B650A+8E\u2191j
                 add     sp, 4
                 mov     ax, 28h ; '('
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 jmp     loc_B6566
 ; ---------------------------------------------------------------------------
@@ -342232,7 +342232,7 @@ loc_B6E76:                              ; CODE XREF: sub_3114B+85D26\u2191j
                 jl      short loc_B6F00
                 mov     ax, 69h ; 'i'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 sub     ax, ax
                 push    ax              ; newId
@@ -354138,7 +354138,7 @@ loc_BC06B:                              ; CODE XREF: sub_BBEC0+18D\u2191j
                 add     sp, 6
                 mov     ax, 2CDh
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 add     sp, 2
                 jmp     loc_BBF68
 ; ---------------------------------------------------------------------------
@@ -356361,7 +356361,7 @@ loc_BCF23:                              ; CODE XREF: sub_3141B+8BAFA\u2191j
                 push    ax
 
 loc_BCF27:
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 add     sp, 2
                 mov     ax, 1
                 push    ax              ; newId
@@ -356481,7 +356481,7 @@ loc_BCF9A:
                 mov     es:Persisted_val33, 0
                 mov     ax, 2BCh
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 add     sp, 2
                 mov     ax, 1
                 push    ax
@@ -356599,7 +356599,7 @@ loc_BD09F:                              ; CODE XREF: sub_3141B+8BC76\u2191j
                 add     sp, 4
                 mov     ax, 2CBh
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 add     sp, 2
 
 locret_BD173:                           ; CODE XREF: seg240:24D5\u2191j
@@ -356771,23 +356771,23 @@ loc_BD2B9:                              ; CODE XREF: sub_BD174+29\u2191j
                 add     sp, 4
                 mov     ax, 44h ; 'D'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 47h ; 'G'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 4Fh ; 'O'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 52h ; 'R'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 66h ; 'f'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 sub     ax, ax
                 push    ax              ; newId
@@ -356799,7 +356799,7 @@ loc_BD2B9:                              ; CODE XREF: sub_BD174+29\u2191j
                 add     sp, 6
                 mov     ax, 29Bh
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 add     sp, 2
                 mov     ax, 1
                 push    ax              ; newId
@@ -359255,7 +359255,7 @@ loc_BE482:                              ; CODE XREF: sub_BE390+14\u2191j
                 add     sp, 4
                 mov     ax, 26Eh
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 jmp     loc_BE421
 ; ---------------------------------------------------------------------------
 
@@ -360726,7 +360726,7 @@ loc_BEE48:                              ; CODE XREF: sub_BED22+121\u2191j
                 add     sp, 4
                 mov     ax, 272h
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 jmp     loc_BEDA0
 ; ---------------------------------------------------------------------------
 
@@ -362341,7 +362341,7 @@ loc_BFA46:                              ; CODE XREF: sub_BF94C+EF\u2191j
 
 loc_BFA59:                              ; CODE XREF: sub_BF94C+129\u2193j
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 jmp     loc_BF9BA
 ; ---------------------------------------------------------------------------
 
@@ -362577,7 +362577,7 @@ loc_BFBB3:                              ; CODE XREF: sub_30E53+8ECF5\u2191j
                 add     sp, 8
                 mov     ax, 26Dh
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 add     sp, 2
                 jmp     short loc_BFB5D
 ; END OF FUNCTION CHUNK FOR sub_30E53
@@ -363026,7 +363026,7 @@ loc_BFF53:                              ; CODE XREF: sub_30E3F+8F0C2\u2191j
                 add     sp, 4
                 mov     ax, 26Eh
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 add     sp, 2
                 jmp     short loc_BFF23
 ; ---------------------------------------------------------------------------
@@ -363134,7 +363134,7 @@ loc_C0040:                              ; CODE XREF: sub_30E2B+8F1DA\u2191j
                 add     sp, 6
                 mov     ax, 4Dh ; 'M'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 5Ah ; 'Z'
                 push    ax
@@ -363186,7 +363186,7 @@ loc_C00BC:                              ; CODE XREF: sub_30E2B+8F286\u2191j
                 add     sp, 4
                 mov     ax, 26Eh
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 add     sp, 2
 
 loc_C00DD:                              ; CODE XREF: sub_30E2B+8F2D9\u2193j
@@ -364470,7 +364470,7 @@ loc_C0951:                              ; CODE XREF: sub_C08B1+11\u2191j
                 add     sp, 4
                 mov     ax, 26Eh
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 jmp     short loc_C0915
 ; ---------------------------------------------------------------------------
 
@@ -364932,7 +364932,7 @@ loc_C0CCE:                              ; CODE XREF: sub_C0C05+C4\u2191j
 loc_C0CDB:                              ; CODE XREF: sub_C0C05+CC\u2191j
                 mov     ax, 277h
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 add     sp, 2
 
 loc_C0CE7:                              ; CODE XREF: sub_C0C05+104\u2193j
@@ -365656,7 +365656,7 @@ loc_C1142:
 
 loc_C1148:
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
 
 loc_C1151:                              ; CODE XREF: sub_C10D0+AB\u2193j
@@ -365721,7 +365721,7 @@ loc_C11AB:                              ; CODE XREF: sub_C10D0+C4\u2191j
                 add     sp, 4
                 mov     ax, 49h ; 'I'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
 
 loc_C11C7:                              ; CODE XREF: sub_C10D0+B\u2191j
@@ -367995,7 +367995,7 @@ loc_C219D:                              ; CODE XREF: sub_C1FB1+1E5\u2191j
 loc_C21B0:                              ; CODE XREF: sub_C1FB1+1C0\u2191j
                                         ; sub_C1FB1+1D5\u2191j ...
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
 
 loc_C21B9:                              ; CODE XREF: sub_C1FB1+1FA\u2191j
@@ -368545,7 +368545,7 @@ loc_C253B:                              ; CODE XREF: sub_C24F7+14\u2191j
                 add     sp, 6
                 mov     ax, 54h ; 'T'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 9
                 push    ax              ; index
@@ -368571,7 +368571,7 @@ loc_C2584:                              ; CODE XREF: sub_C24F7+14\u2191j
                                         ; DATA XREF: sub_C24F7+13A\u2193o
                 mov     ax, 43h ; 'C'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 jmp     loc_C261F
 ; ---------------------------------------------------------------------------
@@ -368803,7 +368803,7 @@ loc_C270E:                              ; CODE XREF: seg249:08BB\u2191j
                                         ; DATA XREF: seg249:0B1F\u2193o
                 mov     ax, 3Fh ; '?'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 sub     ax, ax
                 push    ax
@@ -369699,11 +369699,11 @@ loc_C2CF3:                              ; CODE XREF: sub_C2BEE+FA\u2191j
                 add     sp, 4
                 mov     ax, 3Ch ; '<'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 3Dh ; '='
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 1
                 push    ax
@@ -369766,7 +369766,7 @@ loc_C2D44:                              ; CODE XREF: sub_C2BEE+10A\u2191j
                 add     sp, 4
                 mov     ax, 3Eh ; '>'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 sub     ax, ax
                 push    ax              ; newId
@@ -370402,7 +370402,7 @@ loc_C31B5:                              ; CODE XREF: sub_C3150+2C8\u2193j
                 add     sp, 6
                 mov     ax, 40h ; '@'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
 
 loc_C31D1:                              ; CODE XREF: sub_C3150+349\u2193j
@@ -370516,7 +370516,7 @@ loc_C3295:                              ; CODE XREF: sub_C3150+13E\u2191j
                 add     sp, 6
                 mov     ax, 40h ; '@'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 2442h
                 mov     dx, 0F000h
@@ -370579,7 +370579,7 @@ loc_C331A:                              ; CODE XREF: sub_C3150+1C5\u2191j
                 add     sp, 6
                 mov     ax, 40h ; '@'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 5
                 push    ax
@@ -370686,7 +370686,7 @@ loc_C341B:                              ; CODE XREF: sub_C3150+3BC\u2193j
                 add     sp, 6
                 mov     ax, 40h ; '@'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     ax, 2448h
                 mov     dx, 0F000h
@@ -370751,7 +370751,7 @@ loc_C349C:                              ; CODE XREF: sub_C3150+32\u2191j
                 add     sp, 6
                 mov     ax, 40h ; '@'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 mov     es, seg_D1A50
                 mov     ax, es:_roomLogicNum
@@ -371067,7 +371067,7 @@ loc_C368A:                              ; CODE XREF: sub_C360C+79\u2191j
                 add     sp, 4
                 mov     ax, 43h ; 'C'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 sub     ax, ax
                 push    ax              ; newId
@@ -374987,7 +374987,7 @@ loc_C5040:                              ; CODE XREF: sub_C4EC8+173\u2191j
 loc_C504B:                              ; CODE XREF: sub_C4EC8+17E\u2191j
                 mov     ax, 30h ; '0'
                 push    ax
-                call    far ptr sub_12ED2
+                call    far ptr Queue_remove
                 add     sp, 2
                 jmp     loc_C4EDB
 ; ---------------------------------------------------------------------------
@@ -380142,7 +380142,7 @@ loc_C7069:                              ; CODE XREF: sub_C6F8C+BD\u2191j
 
 loc_C7078:                              ; CODE XREF: sub_C6F8C+103\u2193j
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 jmp     short loc_C7019
 ; ---------------------------------------------------------------------------
 
@@ -380967,7 +380967,7 @@ loc_C75A6:                              ; CODE XREF: sub_C74F1+A2\u2191j
 loc_C75B2:                              ; CODE XREF: sub_C74F1+DE\u2193j
                 mov     ax, 9
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
                 jmp     loc_C752C
 ; ---------------------------------------------------------------------------
 
@@ -381324,7 +381324,7 @@ loc_C77DD:                              ; CODE XREF: sub_C779A+22\u2191j
 
 loc_C77EC:                              ; CODE XREF: sub_C779A+60\u2193j
                 push    ax
-                call    sub_14B64
+                call    Logics_checkMoveRestriction
 
 loc_C77F2:                              ; CODE XREF: sub_C779A+7B\u2193j
                 add     sp, 2
@@ -386891,8 +386891,8 @@ _roomLogicNum   dw 238                  ; DATA XREF: Parser_perform+1C2\u2191r
 ; int Logics_logicNum211
 Logics_logicNum211 dw 211               ; DATA XREF: Logics_savedLogicHandler+B7\u2191r
                                         ; Parser_perform+1E5\u2191r ...
-Persisted_val2  db 1                    ; DATA XREF: sub_14B64+1E8\u2191r
-                                        ; sub_14B64:loc_14D5B\u2191r ...
+Persisted_val2  db 1                    ; DATA XREF: Logics_checkMoveRestriction+1E8\u2191r
+                                        ; Logics_checkMoveRestriction:loc_14D5B\u2191r ...
                 align 2
 _turnCount      dw 0                    ; DATA XREF: main+B5B\u2191w
                                         ; seg068:SAVE_FIELDS\u2191o ...
@@ -387289,14 +387289,14 @@ Persisted_val7  db 0                    ; DATA XREF: sub_136AF+100\u2191r
 Persisted_val194 dw 0FFFFh              ; DATA XREF: Logics_getRoomPic+13D\u2191r
                                         ; Logics_getRoomPic+177\u2191r ...
 ; int Persisted_val193
-Persisted_val193 dw 0                   ; DATA XREF: sub_14B64:loc_14E49\u2191r
-                                        ; sub_14B64+2F5\u2191r ...
-byte_CBB74      db 0                    ; DATA XREF: sub_14B64:loc_14D8F\u2191r
-                                        ; sub_14B64+331\u2191r ...
-byte_CBB75      db 0                    ; DATA XREF: sub_14B64:loc_14DB7\u2191r
-                                        ; sub_14B64+366\u2191w ...
+Persisted_val193 dw 0                   ; DATA XREF: Logics_checkMoveRestriction:loc_14E49\u2191r
+                                        ; Logics_checkMoveRestriction+2F5\u2191r ...
+byte_CBB74      db 0                    ; DATA XREF: Logics_checkMoveRestriction:loc_14D8F\u2191r
+                                        ; Logics_checkMoveRestriction+331\u2191r ...
+byte_CBB75      db 0                    ; DATA XREF: Logics_checkMoveRestriction:loc_14DB7\u2191r
+                                        ; Logics_checkMoveRestriction+366\u2191w ...
 byte_CBB76      db 1                    ; DATA XREF: sub_14A5F+78\u2191r
-                                        ; sub_14B64:loc_14DAB\u2191r ...
+                                        ; Logics_checkMoveRestriction:loc_14DAB\u2191r ...
                 align 2
 ; char score[]
 _score          dw 0                    ; DATA XREF: Score_add+C\u2191w
@@ -387314,9 +387314,9 @@ a_              db '.',0Ah,0            ; DATA XREF: sub_149D8+50\u2191o
 aCnS            db ', %cn%s',0          ; DATA XREF: sub_14A5F+5F\u2191o
                 db 'f',0
 aUtO            db 'ut o',0
-aFollow         db 'follow',0           ; DATA XREF: sub_14B64+338\u2191o
+aFollow         db 'follow',0           ; DATA XREF: Logics_checkMoveRestriction+338\u2191o
 ; char aSYou_[]
-aSYou_          db 9,'%s you.',0Ah,0    ; DATA XREF: sub_14B64+34F\u2191o
+aSYou_          db 9,'%s you.',0Ah,0    ; DATA XREF: Logics_checkMoveRestriction+34F\u2191o
 aAre_0          db 'are',0              ; DATA XREF: sub_14ED6+10F\u2191o
 ; char aSnTOpen_[]
 aSnTOpen_       db '%sn',27h,'t open.',0Ah,0
@@ -389046,7 +389046,7 @@ aSink_1         db 'sink',0
 aStrike_0       db 'strike',0
 Persisted_val176 db 0                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
                                         ; sub_784D0+3D\u2191r ...
-Persisted_val177 db 0                   ; DATA XREF: sub_14B64+180\u2191r
+Persisted_val177 db 0                   ; DATA XREF: Logics_checkMoveRestriction+180\u2191r
                                         ; seg068:SAVE_FIELDS\u2191o ...
 Persisted_val178 db 0                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
                                         ; sub_7D57B+26B\u2191r ...
@@ -393807,22 +393807,22 @@ seg_D10E2       dw seg seg085           ; DATA XREF: Logic_call+79\u2191r
 dseg_101        dw seg sg4d43           ; DATA XREF: sub_1496B+B\u2191r
                                         ; seg098:1817\u2191r
 dseg_102        dw seg sg4d43           ; DATA XREF: sub_14A5F+29\u2191r
-                                        ; sub_14B64+32\u2191r ...
+                                        ; Logics_checkMoveRestriction+32\u2191r ...
 dseg_103        dw seg sg4d43           ; DATA XREF: sub_14A5F+8A\u2191r
                                         ; sub_49C10+8A\u2191r
 dseg_104        dw seg sg4d43           ; DATA XREF: sub_14A5F+95\u2191r
                                         ; sub_49C10+95\u2191r
-dseg_105        dw seg sg4d43           ; DATA XREF: sub_14B64+11\u2191r
+dseg_105        dw seg sg4d43           ; DATA XREF: Logics_checkMoveRestriction+11\u2191r
                                         ; sub_14ED6+1AC\u2191r ...
-seg_D10EE       dw seg sg3EDC           ; DATA XREF: sub_14B64:loc_14C22\u2191r
+seg_D10EE       dw seg sg3EDC           ; DATA XREF: Logics_checkMoveRestriction:loc_14C22\u2191r
                                         ; seg009:03D3\u2191r ...
-dseg_106        dw seg sg4d43           ; DATA XREF: sub_14B64+17C\u2191r
+dseg_106        dw seg sg4d43           ; DATA XREF: Logics_checkMoveRestriction+17C\u2191r
                                         ; seg098:1B81\u2191r
-seg_D10F2       dw seg sg3EDC           ; DATA XREF: sub_14B64+195\u2191r
+seg_D10F2       dw seg sg3EDC           ; DATA XREF: Logics_checkMoveRestriction+195\u2191r
                                         ; seg098:1B9A\u2191r
-dseg_107        dw seg sg4d43           ; DATA XREF: sub_14B64+1B0\u2191r
+dseg_107        dw seg sg4d43           ; DATA XREF: Logics_checkMoveRestriction+1B0\u2191r
                                         ; sub_153B6+9\u2191r ...
-dseg_108        dw seg sg4d43           ; DATA XREF: sub_14B64+1E4\u2191r
+dseg_108        dw seg sg4d43           ; DATA XREF: Logics_checkMoveRestriction+1E4\u2191r
                                         ; seg098:1BE9\u2191r
 seg_D10F8       dw seg seg082           ; DATA XREF: sub_14ED6+25D\u2191r
                                         ; sub_14ED6+270\u2191r ...

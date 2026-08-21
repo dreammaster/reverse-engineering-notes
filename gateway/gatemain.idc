@@ -5598,6 +5598,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X12EC4);
 	op_stkvar	(x,	0);
 	create_insn	(0X12ED2);
+	set_name	(0X12ED2,	"Queue_remove");
 	create_insn	(x=0X12EDE);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X12EE5);
@@ -7433,10 +7434,6 @@ static Bytes_0(void) {
 	create_insn	(0X148E8);
 	create_insn	(x=0X148EB);
 	op_hex		(x,	1);
-	create_insn	(x=0X148F0);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X148F7);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -7446,6 +7443,10 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X148F0);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X148F7);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X148FA);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X14902);
@@ -7632,6 +7633,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X14B5D);
 	op_hex		(x,	1);
 	create_insn	(0X14B64);
+	set_name	(0X14B64,	"Logics_checkMoveRestriction");
 	create_insn	(x=0X14B67);
 	op_hex		(x,	1);
 	create_insn	(x=0X14B6A);
@@ -12565,14 +12567,6 @@ static Bytes_1(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X1902F);
 	op_dec		(x,	1);
-	create_insn	(x=0X19033);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X19036);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X19039);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X19041);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -12582,6 +12576,14 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X19033);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X19036);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X19039);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X19041);
+	op_hex		(x,	1);
 	create_insn	(x=0X19044);
 	op_stkvar	(x,	1);
 	set_cmt	(0X19048,	"filename",	0);
@@ -18497,15 +18499,6 @@ static Bytes_2(void) {
 	create_insn	(x=0X1F958);
 	op_plain_offset	(x,	0,	0X1ECB0);
 	op_plain_offset	(x,	128,	0X1ECB0);
-	create_insn	(0X1F95D);
-	create_insn	(0X1F960);
-	create_insn	(0X1F96A);
-	create_insn	(0X1F974);
-	create_insn	(x=0X1F97A);
-	op_hex		(x,	1);
-	create_insn	(x=0X1F98A);
-	op_hex		(x,	1);
-	create_insn	(0X1F99C);
 }
 
 //------------------------------------------------------------------------
@@ -18515,6 +18508,15 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(0X1F95D);
+	create_insn	(0X1F960);
+	create_insn	(0X1F96A);
+	create_insn	(0X1F974);
+	create_insn	(x=0X1F97A);
+	op_hex		(x,	1);
+	create_insn	(x=0X1F98A);
+	op_hex		(x,	1);
+	create_insn	(0X1F99C);
 	create_insn	(x=0X1F9A4);
 	op_seg		(x,	1);
 	create_insn	(x=0X1F9AE);
@@ -23561,9 +23563,6 @@ static Bytes_3(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X24737);
 	op_stkvar	(x,	0);
-	set_cmt	(0X2473C,	"offset",	0);
-	create_insn	(x=0X24741);
-	op_man		(x,	0,	"word ptr es:[bx+si+size HANDLE+(HANDLE._ptr+2)]");
 }
 
 //------------------------------------------------------------------------
@@ -23573,6 +23572,9 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X2473C,	"offset",	0);
+	create_insn	(x=0X24741);
+	op_man		(x,	0,	"word ptr es:[bx+si+size HANDLE+(HANDLE._ptr+2)]");
 	set_cmt	(0X24745,	"ptr",	0);
 	create_insn	(x=0X24745);
 	op_man		(x,	0,	"word ptr es:[bx+si+size HANDLE+HANDLE._ptr]");
@@ -29312,15 +29314,6 @@ static Bytes_4(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X28D8E);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X28D94);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X28D97);
-	op_hex		(x,	1);
-	create_insn	(x=0X28D99);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X28D9C);
-	op_plain_offset	(x,	0,	0XC7F20);
-	op_plain_offset	(x,	128,	0XC7F20);
 }
 
 //------------------------------------------------------------------------
@@ -29330,6 +29323,15 @@ static Bytes_5(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X28D94);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X28D97);
+	op_hex		(x,	1);
+	create_insn	(x=0X28D99);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X28D9C);
+	op_plain_offset	(x,	0,	0XC7F20);
+	op_plain_offset	(x,	128,	0XC7F20);
 	create_insn	(x=0X28DA0);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X28DA3);
