@@ -2008,3 +2008,39 @@ the surface's base far pointer (`_image`). Named
 **`Surface_getPixelOffset(surface, x, y)`**.
 
 Applied via `apply_renames_gatemain.py`'s thirty-second batch.
+
+### `Midi_sendCommand` named — the MPU-401 command/acknowledge protocol
+
+Moved to `sub_1D84A` (7 callers, called from `sub_1EE70` — familiar
+from the `Midi_sendByte`/`Midi_readVarLengthValue` passes) and its
+implicit-register-argument helper `sub_1D808`. Together these resolved
+into another textbook MPU-401 confirmation: the standard UART-mode
+**command-and-acknowledge protocol**.
+
+**`Midi_sendCommand_raw`** (was `sub_1D808`, an implicit-`AH`-argument
+primitive): polls `_midiStatusPort` for "not busy" with a timeout;
+once ready, disables interrupts, writes the command byte to
+**`_midiCommandPort`** (was `word_C83AE` — confirmed the *same physical
+port* as `_midiStatusPort`, set alongside it in `sub_1D966`: MPU-401's
+status register doubles as the command register on write, a classic
+quirk of the chip), then polls for a response. If the response byte is
+`0xFE` — MPU-401's standard command-acknowledge byte — returns success.
+If it's anything else (real incoming MIDI data arriving mid-command,
+since the UART is bidirectional), it's dispatched through
+**`_midiDataCallback`** (was `off_C83BD`, a callback pointer configured
+by `sub_1D953`) and the function keeps waiting for the real `0xFE`.
+Returns failure if the ACK never arrives before timeout. Interrupts are
+restored via `pushf`/`popf` bracketing regardless of outcome.
+
+**`Midi_sendCommand`** (was `sub_1D84A`) is simply the normal-
+calling-convention wrapper: loads its `command` argument into `AH` and
+calls `Midi_sendCommand_raw`.
+
+Another clean, mechanically-certain piece of the growing MPU-401/MIDI
+picture — now covering byte output (`Midi_sendByte`), command
+handshaking (`Midi_sendCommand`/`_raw`), VLQ decoding
+(`Midi_readVarLengthValue`), track-byte peeking (`Midi_peekTrackByte`),
+and output buffering (`Midi_bufferByte`), still short of a single
+unifying writeup but steadily converging.
+
+Applied via `apply_renames_gatemain.py`'s thirty-third batch.

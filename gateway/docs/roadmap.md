@@ -584,6 +584,13 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       a graphics-mode color/position setter, insufficient confirmation
       available). Full writeup in
       [overview.md](overview.md#surface_getpixeloffset-named).
+- [x] Named `sub_1D84A`/`sub_1D808` → `Midi_sendCommand`/
+      `Midi_sendCommand_raw`, plus `_midiCommandPort`/
+      `_midiDataCallback` — the MPU-401 command/acknowledge protocol,
+      another clean confirmed piece of the growing MIDI cluster
+      (byte output, command handshake, VLQ decode, track-byte peek,
+      output buffering). Full writeup in
+      [overview.md](overview.md#midi_sendcommand-named--the-mpu-401-commandacknowledge-protocol).
 - [ ] Unify the whole music/sound-hardware picture: `Speaker_playTone`/
       `Speaker_playErrorBeep` (PC-speaker tones), `Midi_sendByte` +
       `sub_1D966`/`sub_1EE70`/`sub_1ECB6` (MPU-401/MIDI), and

@@ -964,6 +964,45 @@ RENAMES = [
      "surface._image (the surface's base far pointer) -- the core "
      "bounds-checked pixel/byte-address primitive underlying the "
      "already-named Surface_draw/Surface_draw2 drawing routines."),
+
+    # -- thirty-third pass: sub_1D808/sub_1D84A, confirmed as the
+    # textbook MPU-401 UART-mode command-and-acknowledge protocol --
+    # another clean piece of the MIDI cluster, called (among others)
+    # from sub_1EE70, already familiar from the Midi_sendByte/
+    # Midi_readVarLengthValue passes. See
+    # docs/overview.md#midi_sendcommand-named--the-mpu-401-commandack-protocol. --
+
+    (0x1D808, "Midi_sendCommand_raw",
+     "sub_1D808(): implicit-AH-argument primitive. Polls "
+     "_midiStatusPort for 'not busy' (bit 0x40 clear) with a timeout "
+     "(returns 0 on timeout); if ready, disables interrupts (cli), "
+     "writes AH to _midiCommandPort (was word_C83AE -- confirmed the "
+     "SAME physical port as _midiStatusPort, set alongside it in "
+     "sub_1D966: MPU-401's status register doubles as the command "
+     "register on write), then polls for a response: if a byte "
+     "arrives and it's 0xFE (MPU-401's standard command-ACK byte), "
+     "returns 1 (success); if it's anything else (real incoming MIDI "
+     "data arriving mid-command), dispatches it through "
+     "_midiDataCallback (was off_C83BD, a callback pointer configured "
+     "elsewhere) and keeps waiting for the real ACK. Returns 0 if the "
+     "ACK never arrives before timeout. Interrupts are restored via "
+     "pushf/popf bracketing regardless of outcome."),
+    (0x1D84A, "Midi_sendCommand",
+     "sub_1D84A(command): normal-calling-convention wrapper -- loads "
+     "`command` into AH and calls Midi_sendCommand_raw. Called from "
+     "sub_1EE70 (the tempo-processing function from the Midi_sendByte "
+     "pass) among others."),
+    (0xC83AE, "_midiCommandPort",
+     "Was word_C83AE: the MPU-401 command register -- confirmed the "
+     "same physical port as _midiStatusPort (both set from the same "
+     "base+1 value in sub_1D966), just used for writes (send a "
+     "command) instead of reads (poll status)."),
+    (0xC83BD, "_midiDataCallback",
+     "Was off_C83BD: a far function pointer, configured elsewhere "
+     "(sub_1D953) and invoked by Midi_sendCommand_raw whenever a "
+     "non-ACK byte arrives while waiting for a command's "
+     "acknowledgment -- the handler for real incoming MIDI data "
+     "arriving out-of-band during command handshaking."),
 ]
 
 

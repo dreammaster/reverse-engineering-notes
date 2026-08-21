@@ -31792,7 +31792,7 @@ seg022          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1D808       proc far                ; CODE XREF: sub_1D84A+8\u2193P
+Midi_sendCommand_raw proc far           ; CODE XREF: Midi_sendCommand+8\u2193P
                                         ; sub_1D85B+2\u2193P ...
                 pushf
 
@@ -31800,7 +31800,7 @@ loc_1D809:
                 mov     dx, _midiStatusPort
                 mov     cx, 0FFFFh
 
-loc_1D810:                              ; CODE XREF: sub_1D808+D\u2193j
+loc_1D810:                              ; CODE XREF: Midi_sendCommand_raw+D\u2193j
                 in      al, dx
                 test    al, 40h
                 jz      short loc_1D81B
@@ -31809,16 +31809,16 @@ loc_1D810:                              ; CODE XREF: sub_1D808+D\u2193j
                 jmp     short loc_1D848
 ; ---------------------------------------------------------------------------
 
-loc_1D81B:                              ; CODE XREF: sub_1D808+B\u2191j
+loc_1D81B:                              ; CODE XREF: Midi_sendCommand_raw+B\u2191j
                 cli
                 mov     al, ah
-                mov     dx, word_C83AE
+                mov     dx, _midiCommandPort
 
 loc_1D822:
                 out     dx, al
                 mov     cx, 0FFFFh
 
-loc_1D826:                              ; CODE XREF: sub_1D808:loc_1D83E\u2193j
+loc_1D826:                              ; CODE XREF: Midi_sendCommand_raw:loc_1D83E\u2193j
                 mov     dx, _midiStatusPort
                 in      al, dx
                 test    al, 80h
@@ -31828,31 +31828,31 @@ loc_1D826:                              ; CODE XREF: sub_1D808:loc_1D83E\u2193j
                 cmp     al, 0FEh ; 'þ'
                 jz      short loc_1D845
                 push    cx
-                call    off_C83BD
+                call    _midiDataCallback
                 pop     cx
 
-loc_1D83E:                              ; CODE XREF: sub_1D808+25\u2191j
+loc_1D83E:                              ; CODE XREF: Midi_sendCommand_raw+25\u2191j
                 loop    loc_1D826
                 sti
                 sub     ax, ax
                 jmp     short loc_1D848
 ; ---------------------------------------------------------------------------
 
-loc_1D845:                              ; CODE XREF: sub_1D808+2E\u2191j
+loc_1D845:                              ; CODE XREF: Midi_sendCommand_raw+2E\u2191j
                 mov     ax, 1
 
-loc_1D848:                              ; CODE XREF: sub_1D808+11\u2191j
-                                        ; sub_1D808+3B\u2191j
+loc_1D848:                              ; CODE XREF: Midi_sendCommand_raw+11\u2191j
+                                        ; Midi_sendCommand_raw+3B\u2191j
                 popf
                 retf
-sub_1D808       endp
+Midi_sendCommand_raw endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-sub_1D84A       proc far                ; CODE XREF: sub_1EE70+8F\u2193P
+Midi_sendCommand proc far               ; CODE XREF: sub_1EE70+8F\u2193P
                                         ; sub_1EE70+B1\u2193P ...
 
 arg_0           = byte ptr  6
@@ -31862,12 +31862,12 @@ arg_0           = byte ptr  6
                 push    di
                 push    si
                 mov     ah, [bp+arg_0]
-                call    sub_1D808
+                call    Midi_sendCommand_raw
                 pop     si
                 pop     di
                 pop     bp
                 retf
-sub_1D84A       endp
+Midi_sendCommand endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -31876,7 +31876,7 @@ sub_1D84A       endp
 sub_1D85B       proc far                ; CODE XREF: sub_1D966+37\u2193P
                                         ; sub_1F552:loc_1F574\u2193P ...
                 mov     ah, 0FFh
-                call    sub_1D808
+                call    Midi_sendCommand_raw
                 push    ax
                 mov     dx, _midiDataPort
 
@@ -31988,7 +31988,7 @@ sub_1D8CB       proc far                ; CODE XREF: sub_1D966:loc_1D9F6\u2193P
                 or      al, bl
                 out     21h, al         ; Interrupt controller, 8259A.
                 mov     ah, 0FFh
-                call    sub_1D808
+                call    Midi_sendCommand_raw
                 push    ds
                 mov     ah, 25h ; '%'
                 mov     al, byte_C83B8
@@ -32036,7 +32036,7 @@ sub_1D8CB       endp
 loc_1D922:                              ; CODE XREF: seg022:0113\u2191j
                 mov     dx, _midiDataPort
                 in      al, dx
-                call    off_C83BD
+                call    _midiDataCallback
                 mov     al, 20h ; ' '
                 out     20h, al         ; Interrupt controller, 8259A.
                 pop     ax
@@ -32053,7 +32053,7 @@ loc_1D922:                              ; CODE XREF: seg022:0113\u2191j
 ; =============== S U B R O U T I N E =======================================
 
 
-nullsub_1       proc far                ; CODE XREF: sub_1D808+31\u2191P
+nullsub_1       proc far                ; CODE XREF: Midi_sendCommand_raw+31\u2191P
                                         ; seg022:0127\u2191P
                                         ; DATA XREF: ...
                 retf
@@ -32088,9 +32088,9 @@ arg_2           = word ptr  8
                 mov     bp, sp
                 cli
                 mov     ax, [bp+arg_0]
-                mov     word ptr off_C83BD, ax
+                mov     word ptr _midiDataCallback, ax
                 mov     ax, [bp+arg_2]
-                mov     word ptr off_C83BD+2, ax
+                mov     word ptr _midiDataCallback+2, ax
                 sti
                 pop     bp
                 retf
@@ -32119,7 +32119,7 @@ loc_1D973:                              ; CODE XREF: sub_1D966+8\u2191j
                 mov     _midiDataPort, ax
                 inc     ax
                 mov     _midiStatusPort, ax
-                mov     word_C83AE, ax
+                mov     _midiCommandPort, ax
                 mov     al, [bp+arg_2]
                 add     al, 8
                 mov     byte_C83B8, al
@@ -32161,10 +32161,10 @@ loc_1D98B:
                 out     21h, al         ; Interrupt controller, 8259A.
                 mov     ax, 1
                 mov     byte_C83B6, 1
-                mov     word ptr off_C83BD, offset loc_1D93A
-                mov     word ptr off_C83BD+2, seg seg022
+                mov     word ptr _midiDataCallback, offset loc_1D93A
+                mov     word ptr _midiDataCallback+2, seg seg022
                 mov     ah, 0ACh ; '¬'
-                call    sub_1D808
+                call    Midi_sendCommand_raw
                 mov     cx, 0FFFFh
 
 loc_1D9E9:                              ; CODE XREF: sub_1D966+8E\u2193j
@@ -32184,10 +32184,10 @@ loc_1D9F6:
 
 loc_1D9FB:                              ; CODE XREF: sub_1D966+A\u2191j
                                         ; sub_1D966+8C\u2191j
-                mov     word ptr off_C83BD, offset nullsub_1
+                mov     word ptr _midiDataCallback, offset nullsub_1
 
 loc_1DA01:
-                mov     word ptr off_C83BD+2, seg seg022
+                mov     word ptr _midiDataCallback+2, seg seg022
 
 loc_1DA07:
                 sub     ah, ah
@@ -32223,7 +32223,7 @@ loc_1DA22:
                 mov     word_C8433, 0
                 inc     byte_C8432
                 mov     ah, 95h ; '•'
-                call    sub_1D808
+                call    Midi_sendCommand_raw
                 mov     cx, 0FFFFh
 
 loc_1DA36:                              ; CODE XREF: seg023:003D\u2193j
@@ -32239,7 +32239,7 @@ loc_1DA3F:                              ; CODE XREF: seg023:003B\u2191j
                 retf
 ; ---------------------------------------------------------------------------
                 mov     ah, 94h ; '”'
-                call    sub_1D808
+                call    Midi_sendCommand_raw
                 dec     byte_C8432
                 retf
 ; ---------------------------------------------------------------------------
@@ -35246,7 +35246,7 @@ arg_0           = word ptr  6
                 jnz     short loc_1EF0B
                 mov     ax, 0E0h ; 'à'
                 push    ax
-                call    sub_1D84A
+                call    Midi_sendCommand
                 add     sp, 2
                 or      ax, ax
                 jnz     short loc_1EF29
@@ -35259,7 +35259,7 @@ loc_1EF0B:                              ; CODE XREF: sub_1EE70+89\u2191j
                 add     sp, 2
                 mov     ax, 0E0h ; 'à'
                 push    ax
-                call    sub_1D84A
+                call    Midi_sendCommand
                 add     sp, 2
 
 loc_1EF29:                              ; CODE XREF: sub_1EE70+99\u2191j
@@ -36028,7 +36028,7 @@ loc_1F504:                              ; CODE XREF: sub_1F4A0+43\u2191j
                 mov     word_D20C4, ax
                 mov     ax, 0ECh ; 'ì'
                 push    ax
-                call    sub_1D84A
+                call    Midi_sendCommand
                 add     sp, 2
                 mov     al, 0FFh
                 mov     cl, byte ptr word_D20F6
@@ -36040,11 +36040,11 @@ loc_1F504:                              ; CODE XREF: sub_1F4A0+43\u2191j
                 add     sp, 2
                 mov     ax, 0B8h ; '¸'
                 push    ax
-                call    sub_1D84A
+                call    Midi_sendCommand
                 add     sp, 2
                 mov     ax, 0Ah
                 push    ax
-                call    sub_1D84A
+                call    Midi_sendCommand
                 mov     sp, bp
                 pop     bp
                 retf
@@ -36078,55 +36078,55 @@ loc_1F574:                              ; CODE XREF: sub_1F552+1C\u2191j
                 add     sp, 4
                 mov     ax, 0C5h ; 'Å'
                 push    ax
-                call    sub_1D84A
+                call    Midi_sendCommand
                 add     sp, 2
                 mov     ax, 80h ; '€'
                 push    ax
-                call    sub_1D84A
+                call    Midi_sendCommand
                 add     sp, 2
                 mov     ax, 84h ; '„'
                 push    ax
-                call    sub_1D84A
+                call    Midi_sendCommand
                 add     sp, 2
                 mov     ax, 8Ch ; 'Œ'
                 push    ax
-                call    sub_1D84A
+                call    Midi_sendCommand
                 add     sp, 2
                 mov     ax, 8Eh ; 'Ž'
                 push    ax
-                call    sub_1D84A
+                call    Midi_sendCommand
                 add     sp, 2
                 mov     ax, 33h ; '3'
                 push    ax
-                call    sub_1D84A
+                call    Midi_sendCommand
                 add     sp, 2
                 mov     ax, 88h ; 'ˆ'
                 push    ax
-                call    sub_1D84A
+                call    Midi_sendCommand
                 add     sp, 2
                 mov     ax, 31h ; '1'
                 push    ax
-                call    sub_1D84A
+                call    Midi_sendCommand
                 add     sp, 2
                 mov     ax, 3Ah ; ':'
                 push    ax
-                call    sub_1D84A
+                call    Midi_sendCommand
                 add     sp, 2
                 mov     ax, 8Ah ; 'Š'
                 push    ax
-                call    sub_1D84A
+                call    Midi_sendCommand
                 add     sp, 2
                 mov     ax, 90h
                 push    ax
-                call    sub_1D84A
+                call    Midi_sendCommand
                 add     sp, 2
                 mov     ax, 96h ; '–'
                 push    ax
-                call    sub_1D84A
+                call    Midi_sendCommand
                 add     sp, 2
                 mov     ax, 87h ; '‡'
                 push    ax
-                call    sub_1D84A
+                call    Midi_sendCommand
                 add     sp, 2
                 mov     ax, 4
                 mov     dx, seg seg024
@@ -36257,13 +36257,13 @@ loc_1F6D1:                              ; CODE XREF: sub_1F692+3A\u2191j
 loc_1F6DD:                              ; CODE XREF: sub_1F692+59\u2193j
                 mov     ax, 5
                 push    ax
-                call    sub_1D84A
+                call    Midi_sendCommand
                 add     sp, 2
                 or      ax, ax
                 jz      short loc_1F6DD
                 mov     ax, 0ECh ; 'ì'
                 push    ax
-                call    sub_1D84A
+                call    Midi_sendCommand
                 add     sp, 2
                 mov     al, 0FFh
                 mov     cl, byte ptr word_D20F6
@@ -36298,11 +36298,11 @@ loc_1F6DD:                              ; CODE XREF: sub_1F692+59\u2193j
 loc_1F741:                              ; CODE XREF: sub_1F692+82\u2191j
                 mov     ax, 0B8h ; '¸'
                 push    ax
-                call    sub_1D84A
+                call    Midi_sendCommand
                 add     sp, 2
                 mov     ax, 0Ah
                 push    ax
-                call    sub_1D84A
+                call    Midi_sendCommand
                 add     sp, 2
                 jmp     short loc_1F7A8
 ; ---------------------------------------------------------------------------
@@ -36321,7 +36321,7 @@ loc_1F76E:                              ; CODE XREF: sub_1F692+D4\u2191j
                                         ; sub_1F692+EA\u2193j
                 mov     ax, 5
                 push    ax
-                call    sub_1D84A
+                call    Midi_sendCommand
                 add     sp, 2
                 or      ax, ax
                 jz      short loc_1F76E
@@ -36384,7 +36384,7 @@ var_2           = word ptr -2
 loc_1F7DE:                              ; CODE XREF: sub_1F7D6+16\u2193j
                 mov     ax, 5
                 push    ax
-                call    sub_1D84A
+                call    Midi_sendCommand
                 add     sp, 2
                 or      ax, ax
                 jz      short loc_1F7DE
@@ -36590,7 +36590,7 @@ loc_1F99C:                              ; CODE XREF: sub_1F93E+1A\u2191j
 loc_1F9B1:                              ; CODE XREF: sub_1F93E:loc_1F9C4\u2193j
                 mov     ax, 3Fh ; '?'
                 push    ax
-                call    sub_1D84A
+                call    Midi_sendCommand
                 add     sp, 2
                 or      ax, ax
                 jz      short loc_1F9C4
@@ -36752,7 +36752,7 @@ loc_1FAA0:
 loc_1FAB1:                              ; CODE XREF: sub_1FA8E+31\u2193j
                 mov     ax, 3Fh ; '?'
                 push    ax
-                call    sub_1D84A
+                call    Midi_sendCommand
                 add     sp, 2
                 or      ax, ax
                 jz      short loc_1FAB1
@@ -383431,11 +383431,11 @@ unk_C8152       db    4                 ; DATA XREF: sub_907ED:loc_90824\u2191o
                 db    2
                 db    1
                 db    0
-_midiDataPort   dw 330h                 ; DATA XREF: sub_1D808+27\u2191r
+_midiDataPort   dw 330h                 ; DATA XREF: Midi_sendCommand_raw+27\u2191r
                                         ; sub_1D85B+8\u2191r ...
-_midiStatusPort dw 331h                 ; DATA XREF: sub_1D808:loc_1D809\u2191r
-                                        ; sub_1D808:loc_1D826\u2191r ...
-word_C83AE      dw 331h                 ; DATA XREF: sub_1D808+16\u2191r
+_midiStatusPort dw 331h                 ; DATA XREF: Midi_sendCommand_raw:loc_1D809\u2191r
+                                        ; Midi_sendCommand_raw:loc_1D826\u2191r ...
+_midiCommandPort dw 331h                ; DATA XREF: Midi_sendCommand_raw+16\u2191r
                                         ; sub_1D966+17\u2191w
 word_C83B0      dw 0                    ; DATA XREF: sub_1D874+8\u2191r
                                         ; sub_1D874:loc_1D88C\u2191w ...
@@ -383451,7 +383451,7 @@ byte_C83B8      db 0Ah                  ; DATA XREF: sub_1D8CB+1E\u2191r
                                         ; sub_1D966+1F\u2191w ...
 dword_C83B9     dd 0                    ; DATA XREF: sub_1D8CB+21\u2191r
                                         ; seg022:011E\u2191r ...
-off_C83BD       dd nullsub_1            ; DATA XREF: sub_1D808+31\u2191r
+_midiDataCallback dd nullsub_1          ; DATA XREF: Midi_sendCommand_raw+31\u2191r
                                         ; seg022:0127\u2191r ...
                 db    0
                 db    0
