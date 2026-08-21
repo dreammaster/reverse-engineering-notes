@@ -6149,6 +6149,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0XC7F20);
 	op_plain_offset	(x,	129,	0XC7F20);
 	create_insn	(0X136AF);
+	set_name	(0X136AF,	"Game_updateStatusLine");
 	create_insn	(x=0X136B2);
 	op_hex		(x,	1);
 	create_insn	(x=0X136BB);
@@ -7423,10 +7424,6 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X148CA);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X148CD);
-	op_hex		(x,	1);
-	create_insn	(x=0X148CF);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -7436,6 +7433,10 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X148CD);
+	op_hex		(x,	1);
+	create_insn	(x=0X148CF);
+	op_hex		(x,	1);
 	create_insn	(x=0X148D5);
 	op_plain_offset	(x,	1,	0X3F900);
 	op_plain_offset	(x,	129,	0X3F900);
@@ -12549,10 +12550,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X18FF8);
 	op_stkvar	(x,	1);
 	set_cmt	(0X18FFC,	"dest",	0);
-	create_insn	(x=0X19002);
-	op_hex		(x,	1);
-	create_insn	(x=0X19005);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -12562,6 +12559,10 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X19002);
+	op_hex		(x,	1);
+	create_insn	(x=0X19005);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X19008);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X1900B);
@@ -18480,10 +18481,6 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1F829);
 	op_hex		(x,	1);
-	create_insn	(x=0X1F82B);
-	op_hex		(x,	1);
-	create_insn	(x=0X1F83D);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -18493,6 +18490,10 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X1F82B);
+	op_hex		(x,	1);
+	create_insn	(x=0X1F83D);
+	op_stkvar	(x,	0);
 	create_insn	(0X1F84C);
 	create_insn	(0X1F85E);
 	create_insn	(x=0X1F867);
@@ -128577,9 +128578,9 @@ static Bytes_23(void) {
 	create_word	(0XCB7FE);
 	set_name	(0XCB7FE,	"_turnCount");
 	create_word	(0XCB800);
-	set_name	(0XCB800,	"Persisted_val4");
+	set_name	(0XCB800,	"_gameMinutes");
 	create_word	(0XCB802);
-	set_name	(0XCB802,	"Persisted_val5");
+	set_name	(0XCB802,	"_gameDayNumber");
 	create_word	(0XCB804);
 	create_word	(0XCB806);
 	create_word	(0XCB808);
@@ -128897,7 +128898,7 @@ static Bytes_23(void) {
 	create_byte	(0XCBB6E);
 	set_name	(0XCBB6E,	"_hasWonGame");
 	create_byte	(0XCBB6F);
-	set_name	(0XCBB6F,	"Persisted_val7");
+	set_name	(0XCBB6F,	"_statusTimeHidden");
 	create_word	(0XCBB70);
 	set_name	(0XCBB70,	"Persisted_val194");
 	create_word	(0XCBB72);

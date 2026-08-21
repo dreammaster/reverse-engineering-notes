@@ -433,6 +433,15 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       actual prompt/choice-reading function), and bit 8's exact meaning
       on contained items (used as a visibility/hidden flag throughout
       the `Logics_*Contents` cluster, not independently confirmed).
+- [x] Named `sub_136AF` (27 callers) → `Game_updateStatusLine` — builds
+      the status-line text combining the room name with an in-game
+      date/time, confirmed by reading its two literal format strings
+      directly (`seg067`-embedded, not `GATESTR.DAT`). Also named the
+      underlying clock globals `_gameMinutes`/`_gameDayNumber`/
+      `_statusTimeHidden` (were `Persisted_val4`/`5`/`7`) — a second,
+      more granular clock distinct from the already-named `_gameTicks`.
+      Full writeup in
+      [overview.md](overview.md#game_updatestatusline-named--the-in-game-clockstatus-bar-builder).
 - [ ] Cross-check the structs shared by name/concept with `gate.idb`
       (`VocabEntry`/`VOCAB_ENTRY`, `Str16`/`STR16`, `Point`/`POINT`,
       `Screen`/`SCREEN`, `Font`/`FONT`, `REGS`, `HandleEntry`/`HANDLE`)

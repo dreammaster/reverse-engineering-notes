@@ -7433,16 +7433,16 @@ arg_0           = word ptr  6
 
 loc_13607:                              ; CODE XREF: sub_135EC+D\u2191j
                 mov     ax, [bp+arg_0]
-                add     Persisted_val4, ax
-                mov     ax, Persisted_val4
+                add     _gameMinutes, ax
+                mov     ax, _gameMinutes
                 sub     dx, dx
                 mov     cx, 5A0h
                 div     cx
-                add     Persisted_val5, ax
-                mov     ax, Persisted_val4
+                add     _gameDayNumber, ax
+                mov     ax, _gameMinutes
                 sub     dx, dx
                 div     cx
-                mov     Persisted_val4, dx
+                mov     _gameMinutes, dx
                 pop     bp
                 retf
 sub_135EC       endp
@@ -7531,7 +7531,7 @@ sub_13629       endp
 
 ; Attributes: bp-based frame
 
-sub_136AF       proc far                ; CODE XREF: scene_update?+1B\u2193P
+Game_updateStatusLine proc far          ; CODE XREF: scene_update?+1B\u2193P
                                         ; sub_A5D13:loc_A5D50\u2193P ...
 
 var_70          = word ptr -70h
@@ -7548,10 +7548,10 @@ var_2           = word ptr -2
                 push    bp
                 mov     bp, sp
                 sub     sp, 70h
-                mov     ax, Persisted_val5
+                mov     ax, _gameDayNumber
                 add     ax, 10h
                 mov     [bp+var_70], ax
-                mov     ax, Persisted_val4
+                mov     ax, _gameMinutes
                 sub     dx, dx
                 mov     cx, 3Ch ; '<'
                 div     cx
@@ -7559,7 +7559,7 @@ var_2           = word ptr -2
                 mov     cx, 18h
                 div     cx
                 mov     [bp+var_6E], dx
-                mov     ax, Persisted_val4
+                mov     ax, _gameMinutes
                 sub     dx, dx
                 mov     cx, 3Ch ; '<'
                 div     cx
@@ -7570,10 +7570,10 @@ var_2           = word ptr -2
                 jmp     short loc_136ED
 ; ---------------------------------------------------------------------------
 
-loc_136EA:                              ; CODE XREF: sub_136AF+34\u2191j
+loc_136EA:                              ; CODE XREF: Game_updateStatusLine+34\u2191j
                 mov     ax, 61h ; 'a'
 
-loc_136ED:                              ; CODE XREF: sub_136AF+39\u2191j
+loc_136ED:                              ; CODE XREF: Game_updateStatusLine+39\u2191j
                 mov     [bp+var_6C], ax
 
 loc_136F0:
@@ -7582,7 +7582,7 @@ loc_136F0:
                 jmp     short loc_1371F
 ; ---------------------------------------------------------------------------
 
-loc_136FC:                              ; CODE XREF: sub_136AF+87\u2193j
+loc_136FC:                              ; CODE XREF: Game_updateStatusLine+87\u2193j
                 mov     bx, [bp+var_8]
                 shl     bx, 1
                 mov     es, seg067_0
@@ -7596,7 +7596,7 @@ loc_136FC:                              ; CODE XREF: sub_136AF+87\u2193j
                 idiv    cx
                 mov     [bp+var_8], dx
 
-loc_1371F:                              ; CODE XREF: sub_136AF+4B\u2191j
+loc_1371F:                              ; CODE XREF: Game_updateStatusLine+4B\u2191j
                 cmp     [bp+var_4A], 0Ch
                 jge     short loc_1374F
                 mov     ax, [bp+var_70]
@@ -7613,7 +7613,7 @@ loc_1371F:                              ; CODE XREF: sub_136AF+4B\u2191j
                 mov     [bp+var_6], ax
                 mov     [bp+var_4], dx
 
-loc_1374F:                              ; CODE XREF: sub_136AF+74\u2191j
+loc_1374F:                              ; CODE XREF: Game_updateStatusLine+74\u2191j
                 inc     [bp+var_70]
                 mov     es, dseg_90
                 assume es:sg4d43
@@ -7628,8 +7628,8 @@ loc_1374F:                              ; CODE XREF: sub_136AF+74\u2191j
                 jnz     short loc_13771
                 mov     [bp+var_6E], cx
 
-loc_13771:                              ; CODE XREF: sub_136AF+AD\u2191j
-                                        ; sub_136AF+BD\u2191j
+loc_13771:                              ; CODE XREF: Game_updateStatusLine+AD\u2191j
+                                        ; Game_updateStatusLine+BD\u2191j
                 mov     ax, [bp+var_70]
                 mov     word_CB804, ax
                 mov     ax, [bp+var_8]
@@ -7653,9 +7653,9 @@ loc_13771:                              ; CODE XREF: sub_136AF+AD\u2191j
                 jmp     short loc_137F2
 ; ---------------------------------------------------------------------------
 
-loc_137AB:                              ; CODE XREF: sub_136AF+D4\u2191j
+loc_137AB:                              ; CODE XREF: Game_updateStatusLine+D4\u2191j
                 mov     es, dseg_93
-                cmp     es:Persisted_val7, 0
+                cmp     es:_statusTimeHidden, 0
                 jz      short loc_137CB
                 mov     ax, offset asc_CB900 ; "       "
                 push    ds
@@ -7668,7 +7668,7 @@ loc_137AB:                              ; CODE XREF: sub_136AF+D4\u2191j
                 jmp     short loc_137F2
 ; ---------------------------------------------------------------------------
 
-loc_137CB:                              ; CODE XREF: sub_136AF+106\u2191j
+loc_137CB:                              ; CODE XREF: Game_updateStatusLine+106\u2191j
                 push    [bp+var_6C]
                 push    [bp+var_2]
                 push    [bp+var_6E]
@@ -7687,8 +7687,8 @@ loc_137DA:
                 call    _sprintf
                 add     sp, 14h
 
-loc_137F2:                              ; CODE XREF: sub_136AF+FA\u2191j
-                                        ; sub_136AF+11A\u2191j
+loc_137F2:                              ; CODE XREF: Game_updateStatusLine+FA\u2191j
+                                        ; Game_updateStatusLine+11A\u2191j
                 push    _roomLogicNum   ; int
                 call    Logics_getObjectString
                 add     sp, 2
@@ -7709,7 +7709,7 @@ loc_137F2:                              ; CODE XREF: sub_136AF+FA\u2191j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_136AF       endp
+Game_updateStatusLine endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -9612,7 +9612,7 @@ loc_145EA:                              ; CODE XREF: show_startup+85\u2193j
                 assume es:sg4d43
                 mov     es:Persisted_val194, 8
                 mov     es, dseg_2
-                mov     es:Persisted_val4, 720
+                mov     es:_gameMinutes, 720
 ;
                 mov     ax, 179
                 push    ax
@@ -9623,7 +9623,7 @@ loc_145EA:                              ; CODE XREF: show_startup+85\u2193j
 ;
                 mov     es, dseg_2
                 mov     ax, 1200
-                sub     ax, es:Persisted_val4
+                sub     ax, es:_gameMinutes
                 push    ax
                 mov     ax, 23
                 push    ax
@@ -9632,7 +9632,7 @@ loc_145EA:                              ; CODE XREF: show_startup+85\u2193j
 ;
                 mov     es, dseg_2
                 mov     ax, 1320
-                sub     ax, es:Persisted_val4
+                sub     ax, es:_gameMinutes
                 push    ax
                 mov     ax, 24
                 push    ax
@@ -9640,7 +9640,7 @@ loc_145EA:                              ; CODE XREF: show_startup+85\u2193j
                 add     sp, 4
                 mov     es, dseg_2
                 mov     ax, 1440
-                sub     ax, es:Persisted_val4
+                sub     ax, es:_gameMinutes
                 push    ax
                 mov     ax, 37
                 push    ax
@@ -9648,7 +9648,7 @@ loc_145EA:                              ; CODE XREF: show_startup+85\u2193j
                 add     sp, 4
                 mov     es, dseg_2
                 mov     ax, 1500
-                sub     ax, es:Persisted_val4
+                sub     ax, es:_gameMinutes
                 push    ax
                 mov     ax, 42
                 push    ax
@@ -13307,7 +13307,7 @@ sub_160CA       endp
 
 ; Attributes: bp-based frame
 
-sub_160E1       proc near               ; CODE XREF: sub_136AF+168\u2191P
+sub_160E1       proc near               ; CODE XREF: Game_updateStatusLine+168\u2191P
 
 var_7A          = dword ptr -7Ah
 var_E           = word ptr -0Eh
@@ -24763,7 +24763,7 @@ _strcat         endp
 
 ; void __cdecl __far strcpy(char *dest, char *src)
 _strcpy         proc far                ; CODE XREF: get_message:loc_12E16\u2191P
-                                        ; sub_136AF+112\u2191P ...
+                                        ; Game_updateStatusLine+112\u2191P ...
 
 dest            = dword ptr  6
 src             = dword ptr  0Ah
@@ -26065,7 +26065,7 @@ _ftell          endp
 ; Attributes: library function bp-based frame
 
 _sprintf        proc far                ; CODE XREF: sub_13629+78\u2191P
-                                        ; sub_136AF+F2\u2191P ...
+                                        ; Game_updateStatusLine+F2\u2191P ...
 
 var_14          = byte ptr -14h
 var_8           = dword ptr -8
@@ -86072,10 +86072,10 @@ SAVE_FIELDS     SaveField <_roomLogicNum, 2>
                 SaveField <Persisted_val1, 2>
                 SaveField <Persisted_val2, 1>
                 SaveField <_turnCount, 2>
-                SaveField <Persisted_val4, 2>
-                SaveField <Persisted_val5, 2>
+                SaveField <_gameMinutes, 2>
+                SaveField <_gameDayNumber, 2>
                 SaveField <Persisted_val6, 2>
-                SaveField <Persisted_val7, 1>
+                SaveField <_statusTimeHidden, 1>
                 SaveField <Persisted_val8, 1>
                 SaveField <Persisted_val9, 2>
                 SaveField <Persisted_val10, 2>
@@ -129013,16 +129013,16 @@ loc_48616:                              ; CODE XREF: seg098:02E9\u2191j
 
 loc_48635:                              ; CODE XREF: seg098:0317\u2191j
                 mov     ax, [bp+6]
-                add     Persisted_val4, ax
-                mov     ax, Persisted_val4
+                add     _gameMinutes, ax
+                mov     ax, _gameMinutes
                 sub     dx, dx
                 mov     cx, 5A0h
                 div     cx
-                add     Persisted_val5, ax
-                mov     ax, Persisted_val4
+                add     _gameDayNumber, ax
+                mov     ax, _gameMinutes
                 sub     dx, dx
                 div     cx
-                mov     Persisted_val4, dx
+                mov     _gameMinutes, dx
                 pop     bp
                 retf
 ; ---------------------------------------------------------------------------
@@ -129095,10 +129095,10 @@ loc_486B7:                              ; CODE XREF: seg098:03A2\u2191j
                 push    bp
                 mov     bp, sp
                 sub     sp, 70h
-                mov     ax, Persisted_val5
+                mov     ax, _gameDayNumber
                 add     ax, 10h
                 mov     [bp-70h], ax
-                mov     ax, Persisted_val4
+                mov     ax, _gameMinutes
                 sub     dx, dx
                 mov     cx, 3Ch ; '<'
                 div     cx
@@ -129106,7 +129106,7 @@ loc_486B7:                              ; CODE XREF: seg098:03A2\u2191j
                 mov     cx, 18h
                 div     cx
                 mov     [bp-6Eh], dx
-                mov     ax, Persisted_val4
+                mov     ax, _gameMinutes
                 sub     dx, dx
                 mov     cx, 3Ch ; '<'
                 div     cx
@@ -129200,7 +129200,7 @@ loc_4879F:                              ; CODE XREF: seg098:047A\u2191j
 
 loc_487D9:                              ; CODE XREF: seg098:04A1\u2191j
                 mov     es, dseg_93
-                cmp     es:Persisted_val7, 0
+                cmp     es:_statusTimeHidden, 0
                 jz      short loc_487F9
                 mov     ax, 39E0h
                 push    ds
@@ -130971,7 +130971,7 @@ loc_4967C:                              ; CODE XREF: seg098:1389\u2193j
                 assume es:sg4d43
                 mov     es:Persisted_val194, 8
                 mov     es, dseg_2
-                mov     es:Persisted_val4, 2D0h
+                mov     es:_gameMinutes, 2D0h
                 mov     ax, 0B3h ; '³'
                 push    ax
                 mov     ax, 21h ; '!'
@@ -130980,7 +130980,7 @@ loc_4967C:                              ; CODE XREF: seg098:1389\u2193j
                 add     sp, 4
                 mov     es, dseg_2
                 mov     ax, 4B0h
-                sub     ax, es:Persisted_val4
+                sub     ax, es:_gameMinutes
                 push    ax
                 mov     ax, 17h
                 push    ax
@@ -130988,7 +130988,7 @@ loc_4967C:                              ; CODE XREF: seg098:1389\u2193j
                 add     sp, 4
                 mov     es, dseg_2
                 mov     ax, 528h
-                sub     ax, es:Persisted_val4
+                sub     ax, es:_gameMinutes
                 push    ax
                 mov     ax, 18h
                 push    ax
@@ -130996,7 +130996,7 @@ loc_4967C:                              ; CODE XREF: seg098:1389\u2193j
                 add     sp, 4
                 mov     es, dseg_2
                 mov     ax, 5A0h
-                sub     ax, es:Persisted_val4
+                sub     ax, es:_gameMinutes
                 push    ax
                 mov     ax, 25h ; '%'
                 push    ax
@@ -131004,7 +131004,7 @@ loc_4967C:                              ; CODE XREF: seg098:1389\u2193j
                 add     sp, 4
                 mov     es, dseg_2
                 mov     ax, 5DCh
-                sub     ax, es:Persisted_val4
+                sub     ax, es:_gameMinutes
                 push    ax
                 mov     ax, 2Ah ; '*'
                 push    ax
@@ -143210,7 +143210,7 @@ scene_update?   proc far                ; CODE XREF: j_scene_update?+3\u2191J
 loc_5CDF8:                              ; CODE XREF: scene_update?+5\u2191j
                 cmp     word_CBCFE, 0
                 jz      short loc_5CE04
-                call    sub_136AF
+                call    Game_updateStatusLine
 
 loc_5CE04:                              ; CODE XREF: scene_update?+19\u2191j
                 cmp     word_CBCFC, 0
@@ -171291,7 +171291,7 @@ loc_6A8C0:                              ; CODE XREF: thunk_loc_6A8C0+3\u2191J
                 mov     [bp-4], ax
                 mov     es, seg_D1302
                 assume es:sg4d43
-                mov     ax, es:Persisted_val4
+                mov     ax, es:_gameMinutes
                 mov     [bp-6], ax
                 mov     byte ptr [bp-8], 0
                 mov     es, seg_D12E6
@@ -181861,7 +181861,7 @@ loc_6FFE8:                              ; CODE XREF: sub_2E987+3\u2191J
 loc_70013:                              ; CODE XREF: sub_2E937+3\u2191J
                 mov     es, seg_D136A
                 assume es:sg4d43
-                cmp     es:Persisted_val7, 0
+                cmp     es:_statusTimeHidden, 0
                 jz      short loc_7004B
                 mov     es, seg_D1364
                 mov     ax, es:Persisted_val194
@@ -186983,7 +186983,7 @@ loc_72415:                              ; CODE XREF: sub_72260+1A9\u2191j
 loc_72444:                              ; CODE XREF: sub_72260+1CE\u2191j
                 mov     Persisted_val238, 1
                 mov     es, seg_D13C0
-                mov     ax, es:Persisted_val5
+                mov     ax, es:_gameDayNumber
                 mov     word_CCB24, ax
                 add     [bp+var_4], 61A8h
                 adc     [bp+var_2], 0
@@ -187095,7 +187095,7 @@ loc_72573:                              ; CODE XREF: sub_72260+2FD\u2191j
                 adc     [bp+var_2], 0
                 mov     byte_CCB26, 1
                 mov     es, seg_D13C0
-                mov     ax, es:Persisted_val5
+                mov     ax, es:_gameDayNumber
                 mov     word_CCB28, ax
                 mov     ax, 140Bh
                 mov     dx, 0F000h
@@ -187139,7 +187139,7 @@ loc_725CE:
 loc_725D6:
                 mov     byte_CCB2A, 1
                 mov     es, seg_D13C0
-                mov     ax, es:Persisted_val5
+                mov     ax, es:_gameDayNumber
                 mov     word_CCB2C, ax
                 mov     ax, 140Ch
                 mov     dx, 0F000h
@@ -187149,11 +187149,11 @@ loc_725D6:
                 add     sp, 4
                 mov     [bp+var_8], 1
                 mov     es, seg_D13C0
-                add     es:Persisted_val5, 2Ah ; '*'
+                add     es:_gameDayNumber, 2Ah ; '*'
                 mov     es, seg_D13C2
 
 loc_72609:
-                mov     es:Persisted_val4, 1E0h
+                mov     es:_gameMinutes, 1E0h
                 mov     ax, 2
                 push    ax
                 mov     ax, 104h
@@ -187193,7 +187193,7 @@ loc_7263E:
                 call    j_Logics_updateHandler
                 add     sp, 6
                 mov     es, seg_D13C0
-                push    es:Persisted_val5
+                push    es:_gameDayNumber
                 call    sub_13629
                 add     sp, 2
                 push    dx
@@ -187309,7 +187309,7 @@ loc_72760:                              ; CODE XREF: sub_72260+4FB\u2191j
 loc_72778:                              ; CODE XREF: sub_72260+513\u2191j
                 mov     byte_CCB32, 1
                 mov     es, seg_D13C0
-                mov     ax, es:Persisted_val5
+                mov     ax, es:_gameDayNumber
                 mov     word_CCB34, ax
 
 loc_72788:                              ; CODE XREF: sub_72260+62B\u2193j
@@ -187331,7 +187331,7 @@ loc_72797:                              ; CODE XREF: sub_72260+193\u2191j
                 jz      short loc_727DC
                 mov     byte_CCB36, 1
                 mov     es, seg_D13C0
-                mov     ax, es:Persisted_val5
+                mov     ax, es:_gameDayNumber
                 mov     word_CCB38, ax
                 add     [bp+var_4], 4B40h
                 adc     [bp+var_2], 4Ch ; 'L'
@@ -187379,7 +187379,7 @@ loc_727FD:                              ; CODE XREF: sub_72260+598\u2191j
 loc_7282A:                              ; CODE XREF: sub_72260+5C1\u2191j
                 mov     byte_CCB2E, 1
                 mov     es, seg_D13C0
-                mov     ax, es:Persisted_val5
+                mov     ax, es:_gameDayNumber
                 mov     word_CCB30, ax
                 mov     ax, 140Eh
                 mov     dx, 0F000h
@@ -187413,7 +187413,7 @@ loc_72863:                              ; CODE XREF: sub_72260+5FE\u2191j
 loc_7287B:                              ; CODE XREF: sub_72260+616\u2191j
                 mov     byte_CCB3A, 1
                 mov     es, seg_D13C0
-                mov     ax, es:Persisted_val5
+                mov     ax, es:_gameDayNumber
                 mov     word_CCB3C, ax
                 jmp     loc_72788
 ; ---------------------------------------------------------------------------
@@ -187549,7 +187549,7 @@ loc_729B2:                              ; CODE XREF: sub_72260+74D\u2191j
 loc_729CA:                              ; CODE XREF: sub_72260+765\u2191j
                 mov     byte_CCB3E, 1
                 mov     es, seg_D13C0
-                mov     ax, es:Persisted_val5
+                mov     ax, es:_gameDayNumber
                 mov     word_CCB40, ax
                 jmp     loc_72788
 ; ---------------------------------------------------------------------------
@@ -187647,7 +187647,7 @@ loc_72A99:                              ; CODE XREF: sub_72260+2E1\u2191j
                 call    Logics_setBit
                 add     sp, 4
                 mov     es, seg_D13C2
-                cmp     es:Persisted_val4, 21Bh
+                cmp     es:_gameMinutes, 21Bh
                 ja      short loc_72AEC
                 mov     ax, 2
                 push    ax              ; index
@@ -187659,7 +187659,7 @@ loc_72A99:                              ; CODE XREF: sub_72260+2E1\u2191j
                 jnz     short loc_72AEC
                 mov     es, seg_D13C2
                 mov     ax, 21Bh
-                sub     ax, es:Persisted_val4
+                sub     ax, es:_gameMinutes
                 push    ax
                 mov     ax, 23h ; '#'
                 push    ax
@@ -187669,10 +187669,10 @@ loc_72A99:                              ; CODE XREF: sub_72260+2E1\u2191j
 loc_72AEC:                              ; CODE XREF: sub_72260+85D\u2191j
                                         ; sub_72260+871\u2191j
                 mov     es, seg_D13C2
-                cmp     es:Persisted_val4, 383h
+                cmp     es:_gameMinutes, 383h
                 ja      short loc_72B0E
                 mov     ax, 383h
-                sub     ax, es:Persisted_val4
+                sub     ax, es:_gameMinutes
                 push    ax
                 mov     ax, 21h ; '!'
                 push    ax
@@ -187681,7 +187681,7 @@ loc_72AEC:                              ; CODE XREF: sub_72260+85D\u2191j
 
 loc_72B0E:                              ; CODE XREF: sub_72260+897\u2191j
                 mov     es, seg_D13C2
-                cmp     es:Persisted_val4, 4B0h
+                cmp     es:_gameMinutes, 4B0h
                 ja      short loc_72B48
                 mov     ax, 2
                 push    ax              ; index
@@ -187693,7 +187693,7 @@ loc_72B0E:                              ; CODE XREF: sub_72260+897\u2191j
                 jnz     short loc_72B48
                 mov     es, seg_D13C2
                 mov     ax, 4B0h
-                sub     ax, es:Persisted_val4
+                sub     ax, es:_gameMinutes
                 push    ax
                 mov     ax, 17h
                 push    ax
@@ -187703,7 +187703,7 @@ loc_72B0E:                              ; CODE XREF: sub_72260+897\u2191j
 loc_72B48:                              ; CODE XREF: sub_72260+8B9\u2191j
                                         ; sub_72260+8CD\u2191j
                 mov     es, seg_D13C2
-                cmp     es:Persisted_val4, 4ECh
+                cmp     es:_gameMinutes, 4ECh
                 ja      short loc_72B96
                 mov     ax, 2
                 push    ax              ; index
@@ -187723,7 +187723,7 @@ loc_72B48:                              ; CODE XREF: sub_72260+8B9\u2191j
                 jnz     short loc_72B96
                 mov     es, seg_D13C2
                 mov     ax, 4ECh
-                sub     ax, es:Persisted_val4
+                sub     ax, es:_gameMinutes
                 push    ax
                 mov     ax, 68h ; 'h'
                 push    ax
@@ -187733,7 +187733,7 @@ loc_72B48:                              ; CODE XREF: sub_72260+8B9\u2191j
 loc_72B96:                              ; CODE XREF: sub_72260+8F3\u2191j
                                         ; sub_72260+907\u2191j ...
                 mov     es, seg_D13C2
-                cmp     es:Persisted_val4, 528h
+                cmp     es:_gameMinutes, 528h
                 ja      short loc_72BD0
                 mov     ax, 2
                 push    ax              ; index
@@ -187745,7 +187745,7 @@ loc_72B96:                              ; CODE XREF: sub_72260+8F3\u2191j
                 jnz     short loc_72BD0
                 mov     es, seg_D13C2
                 mov     ax, 528h
-                sub     ax, es:Persisted_val4
+                sub     ax, es:_gameMinutes
                 push    ax
                 mov     ax, 18h
                 push    ax
@@ -187764,7 +187764,7 @@ loc_72BD0:                              ; CODE XREF: sub_72260+941\u2191j
                 jnz     short loc_72BFD
                 mov     es, seg_D13C2
                 mov     ax, 5A0h
-                sub     ax, es:Persisted_val4
+                sub     ax, es:_gameMinutes
                 push    ax
                 mov     ax, 25h ; '%'
                 push    ax
@@ -187773,17 +187773,17 @@ loc_72BD0:                              ; CODE XREF: sub_72260+941\u2191j
 
 loc_72BFD:                              ; CODE XREF: sub_72260+982\u2191j
                 mov     es, seg_D13C2
-                cmp     es:Persisted_val4, 3Ch ; '<'
+                cmp     es:_gameMinutes, 3Ch ; '<'
                 ja      short loc_72C0E
                 mov     ax, 3Ch ; '<'
                 jmp     short loc_72C4B
 ; ---------------------------------------------------------------------------
 
 loc_72C0E:                              ; CODE XREF: sub_72260+9A7\u2191j
-                cmp     es:Persisted_val4, 96h ; '–'
+                cmp     es:_gameMinutes, 96h ; '–'
                 ja      short loc_72C44
                 mov     cx, 1Eh
-                mov     ax, es:Persisted_val4
+                mov     ax, es:_gameMinutes
                 sub     dx, dx
                 div     cx
                 mov     ax, dx
@@ -187792,7 +187792,7 @@ loc_72C0E:                              ; CODE XREF: sub_72260+9A7\u2191j
                 sub     dx, dx
                 div     cx
                 mov     [bp+var_6], dx
-                mov     ax, es:Persisted_val4
+                mov     ax, es:_gameMinutes
                 sub     ax, 3Ch ; '<'
                 sub     dx, dx
                 div     cx
@@ -187806,7 +187806,7 @@ loc_72C44:                              ; CODE XREF: sub_72260+9B5\u2191j
                 mov     ax, 5DCh
 
 loc_72C4B:                              ; CODE XREF: sub_72260+9AC\u2191j
-                sub     ax, es:Persisted_val4
+                sub     ax, es:_gameMinutes
                 mov     [bp+var_6], ax
 
 loc_72C53:                              ; CODE XREF: sub_72260+9E2\u2191j
@@ -187963,7 +187963,7 @@ loc_72D83:                              ; CODE XREF: sub_72260+82\u2191j
                 call    j_Logics_updateHandler
                 add     sp, 6
                 mov     es, seg_D13C2
-                mov     es:Persisted_val4, 17h
+                mov     es:_gameMinutes, 17h
 
 loc_72DC6:                              ; CODE XREF: sub_72260+C9C\u2193j
                 mov     es, seg_D13B6
@@ -188012,14 +188012,14 @@ loc_72DEF:                              ; CODE XREF: sub_72260+82\u2191j
                 assume es:sg4d43
                 mov     es:Persisted_val135, 0
                 mov     es, seg_D13C2
-                mov     ax, es:Persisted_val4
+                mov     ax, es:_gameMinutes
                 sub     dx, dx
                 mov     cx, 5A0h
                 div     cx
                 sub     dx, 348h
                 neg     dx
-                add     es:Persisted_val4, dx
-                mov     ax, es:Persisted_val4
+                add     es:_gameMinutes, dx
+                mov     ax, es:_gameMinutes
                 sub     dx, dx
                 div     cx
 
@@ -197108,7 +197108,7 @@ sub_76EB4       proc far                ; CODE XREF: thunk_sub_76EB4+3\u2191J
                                         ; sub_310F1+45DBC\u2191p
                 mov     es, seg_D145A
                 assume es:sg4d43
-                mov     es:Persisted_val7, 0
+                mov     es:_statusTimeHidden, 0
                 mov     es, seg_D145C
                 mov     es:Persisted_val183, 0
                 call    thunk_sub_77572
@@ -197900,7 +197900,7 @@ arg_6           = word ptr  0Ch
 
 loc_77356:                              ; CODE XREF: sub_77345+9\u2191j
                 mov     es, seg_D145A
-                cmp     es:Persisted_val7, 0
+                cmp     es:_statusTimeHidden, 0
                 jz      short loc_77367
                 mov     ax, 0B4h ; '´'
                 jmp     short loc_77383
@@ -198587,7 +198587,7 @@ arg_0           = byte ptr  6
                 mov     bp, sp
                 mov     es, seg_D1476
                 assume es:sg4d43
-                cmp     es:Persisted_val7, 0
+                cmp     es:_statusTimeHidden, 0
                 jz      short loc_77795
                 mov     ax, 0D018h
                 mov     dx, 0F000h
@@ -198638,7 +198638,7 @@ loc_777C7:                              ; CODE XREF: sub_77773+30\u2191j
                 mov     es, seg_D147C
                 mov     es:Persisted_val185, 0
                 mov     es, seg_D1476
-                mov     es:Persisted_val7, 1
+                mov     es:_statusTimeHidden, 1
                 cmp     [bp+arg_0], 0
                 jz      short loc_7781B
                 mov     ax, 5
@@ -216966,7 +216966,7 @@ var_2           = word ptr -2
                 sub     sp, 8
                 push    si              ; char
                 mov     es, seg_D14EA
-                cmp     es:Persisted_val7, 0
+                cmp     es:_statusTimeHidden, 0
                 jz      short loc_80166
 
 loc_80161:                              ; CODE XREF: sub_8014E+3C3\u2193j
@@ -223107,7 +223107,7 @@ arg_0           = word ptr  6
                 push    bp              ; char
                 mov     bp, sp
                 mov     es, seg_D1514
-                mov     ax, es:Persisted_val4
+                mov     ax, es:_gameMinutes
                 sub     dx, dx
                 mov     cx, 5A0h
                 div     cx
@@ -223204,23 +223204,23 @@ loc_82E76:                              ; CODE XREF: sub_82DA2+C2\u2191j
 
 loc_82E88:                              ; CODE XREF: sub_82DA2+A6\u2191j
                 mov     es, seg_D1514
-                mov     ax, es:Persisted_val4
+                mov     ax, es:_gameMinutes
                 sub     dx, dx
                 mov     cx, 5A0h
                 div     cx
                 cmp     dx, 21Ch
                 jbe     short loc_82EA4
-                add     es:Persisted_val4, 5A0h
+                add     es:_gameMinutes, 5A0h
 
 loc_82EA4:                              ; CODE XREF: sub_82DA2+F9\u2191j
-                mov     ax, es:Persisted_val4
+                mov     ax, es:_gameMinutes
                 sub     dx, dx
                 mov     cx, 5A0h
                 div     cx
                 sub     dx, 21Ch
                 neg     dx
-                add     es:Persisted_val4, dx
-                mov     ax, es:Persisted_val4
+                add     es:_gameMinutes, dx
+                mov     ax, es:_gameMinutes
                 sub     dx, dx
                 div     cx
                 sub     dx, 438h
@@ -230148,7 +230148,7 @@ loc_85D6E:                              ; CODE XREF: sub_85C7C+ED\u2191j
                 jnz     short loc_85D9D
                 mov     es, seg_D153A
                 assume es:sg4d43
-                cmp     es:Persisted_val4, 44Ch
+                cmp     es:_gameMinutes, 44Ch
                 jbe     short loc_85D9D
                 call    far ptr sub_4A722
                 push    dx
@@ -293340,14 +293340,14 @@ sub_A1E0B       proc far                ; CODE XREF: sub_A059C+296\u2191p
                 add     sp, 6
                 call    sub_1496B
                 mov     es, seg_D1752
-                inc     es:Persisted_val5
+                inc     es:_gameDayNumber
                 mov     es, seg_D1754
                 mov     ax, es:Persisted_val49
                 mov     es, seg_D1756
                 cmp     es:word_CB804, ax
                 jnz     short loc_A1F2C
                 mov     es, seg_D1752
-                inc     es:Persisted_val5
+                inc     es:_gameDayNumber
 
 loc_A1F2C:                              ; CODE XREF: sub_A1E0B+116\u2191j
                 mov     es, seg_D174E
@@ -302743,7 +302743,7 @@ var_2           = word ptr -2
 ; ---------------------------------------------------------------------------
 
 loc_A5D50:                              ; CODE XREF: sub_A5D13+38\u2191j
-                call    sub_136AF
+                call    Game_updateStatusLine
                 mov     ax, 6EACh
                 push    ds
                 push    ax              ; filename
@@ -303073,7 +303073,7 @@ loc_A6014:                              ; CODE XREF: sub_A5F92+62\u2191j
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_A6062
-                call    sub_136AF
+                call    Game_updateStatusLine
                 mov     ax, 6ECEh
                 push    ds
                 push    ax              ; filename
@@ -303420,10 +303420,10 @@ loc_A632B:                              ; CODE XREF: sub_A60CE+258\u2191j
                 sub     es:Persisted_val213, 64h ; 'd'
                 sbb     es:word_CF34C, 0
                 mov     es, seg_D17B8
-                mov     ax, es:Persisted_val5
+                mov     ax, es:_gameDayNumber
                 mov     [bp+var_A], ax
                 mov     es, seg_D17BA
-                mov     ax, es:Persisted_val4
+                mov     ax, es:_gameMinutes
                 add     ax, 87h ; '‡'
                 mov     [bp+var_4], ax
                 cmp     ax, 5A0h
@@ -303507,7 +303507,7 @@ loc_A6400:                              ; CODE XREF: sub_A60CE+32D\u2191j
 loc_A6417:                              ; CODE XREF: sub_A60CE+33C\u2191j
                 mov     es, seg_D17BA
                 mov     ax, 1E0h
-                sub     ax, es:Persisted_val4
+                sub     ax, es:_gameMinutes
                 mov     [bp+var_6], ax
                 or      ax, ax
                 jge     short loc_A642F
@@ -303520,7 +303520,7 @@ loc_A642F:                              ; CODE XREF: sub_A60CE+35A\u2191j
                 call    sub_12FC3
                 add     sp, 4
                 mov     es, seg_D17B8
-                cmp     es:Persisted_val5, 0B4h ; '´'
+                cmp     es:_gameDayNumber, 0B4h ; '´'
                 jb      short loc_A645F
                 mov     ax, 0C84h
                 mov     dx, 0F000h
@@ -303542,7 +303542,7 @@ loc_A645F:                              ; CODE XREF: sub_A60CE+37A\u2191j
                 jnz     short loc_A648C
                 mov     es, seg_D17BA
                 mov     ax, 21Bh
-                sub     ax, es:Persisted_val4
+                sub     ax, es:_gameMinutes
                 push    ax
                 mov     ax, 23h ; '#'
                 push    ax
@@ -303552,7 +303552,7 @@ loc_A645F:                              ; CODE XREF: sub_A60CE+37A\u2191j
 loc_A648C:                              ; CODE XREF: sub_A60CE+3A3\u2191j
                 mov     es, seg_D17BA
                 mov     ax, 383h
-                sub     ax, es:Persisted_val4
+                sub     ax, es:_gameMinutes
                 push    ax
                 mov     ax, 21h ; '!'
                 push    ax
@@ -303568,7 +303568,7 @@ loc_A648C:                              ; CODE XREF: sub_A60CE+3A3\u2191j
                 jnz     short loc_A64CB
                 mov     es, seg_D17BA
                 mov     ax, 4B0h
-                sub     ax, es:Persisted_val4
+                sub     ax, es:_gameMinutes
                 push    ax
                 mov     ax, 17h
                 jmp     short loc_A64EF
@@ -303585,7 +303585,7 @@ loc_A64CB:                              ; CODE XREF: sub_A60CE+3E9\u2191j
                 jnz     short loc_A64F8
                 mov     es, seg_D17BA
                 mov     ax, 4ECh
-                sub     ax, es:Persisted_val4
+                sub     ax, es:_gameMinutes
                 push    ax
                 mov     ax, 68h ; 'h'
 
@@ -303611,7 +303611,7 @@ loc_A64F8:                              ; CODE XREF: sub_A60CE+40F\u2191j
                 jnz     short loc_A6535
                 mov     es, seg_D17BA
                 mov     ax, 528h
-                sub     ax, es:Persisted_val4
+                sub     ax, es:_gameMinutes
                 push    ax
                 mov     ax, 18h
                 push    ax
@@ -303632,7 +303632,7 @@ loc_A6535:                              ; CODE XREF: sub_A60CE+43C\u2191j
                 mov     es:Persisted_val212, 0
                 mov     es, seg_D17BA
                 mov     ax, 5A0h
-                sub     ax, es:Persisted_val4
+                sub     ax, es:_gameMinutes
                 push    ax
                 mov     ax, 25h ; '%'
                 push    ax
@@ -303642,7 +303642,7 @@ loc_A6535:                              ; CODE XREF: sub_A60CE+43C\u2191j
 loc_A656D:                              ; CODE XREF: sub_A60CE+479\u2191j
                 mov     es, seg_D17BA
                 mov     ax, 5DCh
-                sub     ax, es:Persisted_val4
+                sub     ax, es:_gameMinutes
                 push    ax
                 mov     ax, 2Ah ; '*'
                 push    ax
@@ -303689,10 +303689,10 @@ loc_A65DB:                              ; CODE XREF: sub_A60CE+508\u2191j
                 call    sub_12FC3
                 add     sp, 4
                 mov     es, seg_D17B8
-                mov     ax, es:Persisted_val5
+                mov     ax, es:_gameDayNumber
                 mov     [bp+var_A], ax
                 mov     es, seg_D17BA
-                mov     ax, es:Persisted_val4
+                mov     ax, es:_gameMinutes
                 sub     ax, 2Dh ; '-'
                 mov     [bp+var_4], ax
                 or      ax, ax
@@ -303770,7 +303770,7 @@ sub_A60CE       endp
 ; START OF FUNCTION CHUNK FOR sub_30F89
 
 loc_A669D:                              ; CODE XREF: sub_30F89+3\u2191J
-                call    sub_136AF
+                call    Game_updateStatusLine
                 mov     es, seg_D1798
                 cmp     es:_roomLogicNum, 2AEh
                 jz      short loc_A66CA
@@ -304024,7 +304024,7 @@ loc_A67F4:
                 add     sp, 4
                 mov     es, seg_D17C8
                 assume es:sg4d43
-                mov     ax, es:Persisted_val5
+                mov     ax, es:_gameDayNumber
                 mov     es, seg_D17CA
                 mov     es:Persisted_val251, ax
                 sub     ax, ax
@@ -308916,7 +308916,7 @@ loc_A87E1:                              ; CODE XREF: sub_A877B+54\u2191j
                 jnz     short loc_A8828
                 cmp     [bp+var_2], 0
                 jnz     short loc_A8808
-                call    sub_136AF
+                call    Game_updateStatusLine
                 mov     ax, 1CDBh
                 jmp     short loc_A8816
 ; ---------------------------------------------------------------------------
@@ -308934,7 +308934,7 @@ loc_A8803:                              ; CODE XREF: sub_A877B+1C\u2191j
 loc_A8808:                              ; CODE XREF: sub_A877B+77\u2191j
                 cmp     [bp+var_2], 3
                 jnz     short loc_A8877
-                call    sub_136AF
+                call    Game_updateStatusLine
                 mov     ax, 1CDCh
 
 loc_A8816:                              ; CODE XREF: sub_A877B+81\u2191j
@@ -308954,7 +308954,7 @@ loc_A8828:                              ; CODE XREF: sub_A877B+71\u2191j
                 mov     es, seg_D17D6
                 cmp     es:_roomLogicNum, 0F7h ; '÷'
                 jnz     short loc_A8877
-                call    sub_136AF
+                call    Game_updateStatusLine
                 mov     bx, [bp+var_2]
                 shl     bx, 1
                 shl     bx, 1
@@ -309143,7 +309143,7 @@ loc_A89BB:                              ; CODE XREF: sub_A894F+24\u2191j
                 mov     es, seg_D17D6
                 cmp     es:_roomLogicNum, 0FCh ; 'ü'
                 jnz     short loc_A89ED
-                call    sub_136AF
+                call    Game_updateStatusLine
                 cmp     [bp+var_2], 0
                 jnz     short loc_A89D8
                 mov     ax, 1CE3h
@@ -319756,7 +319756,7 @@ loc_ACFEF:                              ; CODE XREF: sub_30D9F+3\u2191J
                 assume es:sg4d43
                 cmp     es:_roomLogicNum, 0E8h ; 'è'
                 jnz     short loc_AD026
-                call    sub_136AF
+                call    Game_updateStatusLine
                 mov     ax, 3C42h
                 mov     dx, 0F000h
                 push    dx
@@ -319787,7 +319787,7 @@ loc_AD029:                              ; CODE XREF: sub_30F25+3\u2191J
                 mov     es, seg_D1836
                 cmp     es:_roomLogicNum, 0E8h ; 'è'
                 jnz     short loc_AD060
-                call    sub_136AF
+                call    Game_updateStatusLine
                 mov     ax, 3C43h
                 mov     dx, 0F000h
                 push    dx
@@ -319857,7 +319857,7 @@ loc_AD099:                              ; CODE XREF: sub_AD063+19\u2191j
                 mov     es, seg_D1836
                 cmp     es:_roomLogicNum, 0E8h ; 'è'
                 jnz     short loc_AD11D
-                call    sub_136AF
+                call    Game_updateStatusLine
                 sub     ax, ax
                 push    ax
                 mov     ax, 7Fh
@@ -319907,7 +319907,7 @@ loc_AD11D:                              ; CODE XREF: sub_AD063+59\u2191j
                 mov     es, seg_D1836
                 cmp     es:_roomLogicNum, 0E9h ; 'é'
                 jnz     short loc_AD144
-                call    sub_136AF
+                call    Game_updateStatusLine
                 mov     [bp+var_4], 1
                 mov     ax, 3C46h
 
@@ -319938,7 +319938,7 @@ loc_AD15F:                              ; CODE XREF: sub_AD063+20\u2191j
                 mov     es, seg_D1836
                 cmp     es:_roomLogicNum, 0E8h ; 'è'
                 jnz     short loc_AD144
-                call    sub_136AF
+                call    Game_updateStatusLine
                 mov     [bp+var_4], 1
                 mov     ax, 151h
                 push    ax
@@ -320021,7 +320021,7 @@ loc_AD215:                              ; CODE XREF: sub_AD063+28\u2191j
                 mov     es, seg_D1836
                 cmp     es:_roomLogicNum, 0E7h ; 'ç'
                 jnz     short loc_AD24A
-                call    sub_136AF
+                call    Game_updateStatusLine
                 mov     [bp+var_4], 1
                 mov     ax, 3C4Ah
                 jmp     loc_AD0F9
@@ -320035,7 +320035,7 @@ loc_AD24A:                              ; CODE XREF: sub_AD063+1D5\u2191j
 ; ---------------------------------------------------------------------------
 
 loc_AD25A:                              ; CODE XREF: sub_AD063+1F2\u2191j
-                call    sub_136AF
+                call    Game_updateStatusLine
                 mov     [bp+var_4], 1
                 mov     ax, 151h
                 push    ax
@@ -320234,7 +320234,7 @@ loc_AD3F0:                              ; CODE XREF: sub_30FB1+3\u2191J
                 mov     es, seg_D1836
                 cmp     es:_roomLogicNum, 0E8h ; 'è'
                 jnz     short loc_AD427
-                call    sub_136AF
+                call    Game_updateStatusLine
                 mov     ax, 3C4Fh
 
 loc_AD415:                              ; CODE XREF: sub_30FB1:loc_AD43C\u2193j
@@ -320252,7 +320252,7 @@ loc_AD427:                              ; CODE XREF: sub_30FB1+7C45A\u2191j
                 mov     es, seg_D1836
                 cmp     es:_roomLogicNum, 0E9h ; 'é'
                 jnz     short loc_AD43E
-                call    sub_136AF
+                call    Game_updateStatusLine
                 mov     ax, 3C50h
 
 loc_AD43C:
@@ -320269,7 +320269,7 @@ loc_AD449:
                 jnz     short loc_AD455
 
 loc_AD44B:
-                call    sub_136AF
+                call    Game_updateStatusLine
 
 loc_AD450:
                 mov     ax, 3C51h
@@ -323400,7 +323400,7 @@ loc_AE9BC:                              ; CODE XREF: sub_AE989+18\u2191j
 
 loc_AE9BE:                              ; CODE XREF: sub_AE989+31\u2191j
                 mov     [bp+var_2], ax
-                call    sub_136AF
+                call    Game_updateStatusLine
                 mov     ax, 6C28h
                 mov     dx, 0F000h
                 push    dx
@@ -326514,7 +326514,7 @@ loc_AFEB0:                              ; CODE XREF: sub_30F43+7EF48\u2191j
                 assume es:sg4d43
                 cmp     es:_roomLogicNum, 0EFh ; 'ï'
                 jnz     short loc_AFEEA
-                call    sub_136AF
+                call    Game_updateStatusLine
                 sub     ax, ax
                 push    ax              ; newId
                 mov     ax, 0D3h ; 'Ó'
@@ -326740,7 +326740,7 @@ loc_B0026:                              ; CODE XREF: sub_AFF00+E\u2191j
                 jnz     short loc_B00A0
                 cmp     Persisted_val224, 0Dh
                 jge     short loc_B00A0
-                call    sub_136AF
+                call    Game_updateStatusLine
                 cmp     Persisted_val224, 0
                 jnz     short loc_B0079
                 mov     ax, 739Ah
@@ -327029,7 +327029,7 @@ loc_B02A5:                              ; CODE XREF: sub_B00A6+1D6\u2191j
 ; ---------------------------------------------------------------------------
 
 loc_B02B5:                              ; CODE XREF: sub_B00A6+20A\u2191j
-                call    sub_136AF
+                call    Game_updateStatusLine
                 cmp     [bp+var_2], 0
                 jz      short loc_B02C8
                 mov     ax, 6083h
@@ -328626,9 +328626,9 @@ loc_B0F0E:                              ; CODE XREF: Commset_show+494\u2191j
                 call    j_Commset_displayText
                 add     sp, 4
                 mov     es, seg_D18A2
-                cmp     es:Persisted_val4, 1E0h
+                cmp     es:_gameMinutes, 1E0h
                 jnb     short loc_B0F6F
-                cmp     es:Persisted_val4, 3Ch ; '<'
+                cmp     es:_gameMinutes, 3Ch ; '<'
                 ja      short loc_B0F81
 
 loc_B0F6F:                              ; CODE XREF: Commset_show+500\u2191j
@@ -328649,7 +328649,7 @@ loc_B0F81:                              ; CODE XREF: Commset_show+508\u2191j
                 add     sp, 4
                 mov     es, seg_D18A2
                 mov     ax, 1FEh
-                sub     ax, es:Persisted_val4
+                sub     ax, es:_gameMinutes
 
 loc_B0F9A:                              ; CODE XREF: Commset_show+51A\u2191j
                 push    ax
@@ -333910,7 +333910,7 @@ loc_B350C:                              ; CODE XREF: sub_B343B+9C\u2191j
 ; ---------------------------------------------------------------------------
 
 loc_B351C:                              ; CODE XREF: sub_B343B+DC\u2191j
-                call    sub_136AF
+                call    Game_updateStatusLine
                 cmp     Persisted_val202, 0
                 jz      short loc_B353B
                 cmp     [bp+var_2], 0
@@ -334103,7 +334103,7 @@ loc_B364F:                              ; CODE XREF: sub_3101F+3\u2191J
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B36A7
-                call    sub_136AF
+                call    Game_updateStatusLine
                 mov     ax, 1876h
                 mov     dx, 0F000h
                 push    dx
@@ -334180,7 +334180,7 @@ loc_B3719:                              ; CODE XREF: sub_31029+826D8\u2191j
                 mov     es, seg_D18BA
                 cmp     es:_roomLogicNum, 0F4h ; 'ô'
                 jnz     short loc_B3740
-                call    sub_136AF
+                call    Game_updateStatusLine
                 mov     ax, 1877h
                 mov     dx, 0F000h
                 push    dx
@@ -336242,7 +336242,7 @@ loc_B4528:                              ; CODE XREF: sub_31047+3\u2191J
 ; ---------------------------------------------------------------------------
 
 loc_B4538:                              ; CODE XREF: sub_31047+834EC\u2191j
-                call    sub_136AF
+                call    Game_updateStatusLine
                 mov     ax, 2
                 push    ax
                 mov     ax, 100h
@@ -336312,7 +336312,7 @@ loc_B45EA:                              ; CODE XREF: sub_31047+834EE\u2191j
                 mov     es, seg_D18E2
                 cmp     es:_roomLogicNum, 0F1h ; 'ñ'
                 jnz     short loc_B460C
-                call    sub_136AF
+                call    Game_updateStatusLine
                 mov     ax, 0B0AFh
                 mov     dx, 0F000h
                 push    dx
@@ -336439,7 +336439,7 @@ var_2           = word ptr -2
 ; ---------------------------------------------------------------------------
 
 loc_B46EA:                              ; CODE XREF: sub_B46BF+26\u2191j
-                call    sub_136AF
+                call    Game_updateStatusLine
                 mov     ax, 2
                 push    ax
                 mov     ax, 100h
@@ -336952,7 +336952,7 @@ loc_B4B39:                              ; CODE XREF: sub_B4B07+2D\u2191j
                 push    ax
                 call    Logics_setBit
                 add     sp, 4
-                call    sub_136AF
+                call    Game_updateStatusLine
                 mov     es, seg_D18DE
                 cmp     es:Persisted_val206, 0Ah
                 jge     short loc_B4BBC
@@ -337161,7 +337161,7 @@ loc_B4D04:                              ; CODE XREF: sub_3103D+83CB5\u2191j
                 mov     es, seg_D18E2
                 cmp     es:_roomLogicNum, 0F4h ; 'ô'
                 jnz     short loc_B4D64
-                call    sub_136AF
+                call    Game_updateStatusLine
                 mov     ax, 1
                 push    ax
                 mov     ax, 1Eh
@@ -337204,7 +337204,7 @@ loc_B4D64:                              ; CODE XREF: sub_3103D+83CD2\u2191j
                 mov     es, seg_D18E2
                 cmp     es:_roomLogicNum, 0F1h ; 'ñ'
                 jnz     short loc_B4DA4
-                call    sub_136AF
+                call    Game_updateStatusLine
                 mov     ax, 2
                 push    ax              ; index
                 mov     ax, 10Ah
@@ -337299,7 +337299,7 @@ var_2           = word ptr -2
 ; ---------------------------------------------------------------------------
 
 loc_B4E0E:                              ; CODE XREF: sub_B4DF8+11\u2191j
-                call    sub_136AF
+                call    Game_updateStatusLine
                 mov     ax, 1
                 push    ax
                 mov     ax, 1Eh
@@ -337464,7 +337464,7 @@ loc_B4F2A:                              ; CODE XREF: sub_B4DF8+8B\u2191j
                 call    Score_add
                 add     sp, 2
                 mov     es, seg_D18F4
-                mov     ax, es:Persisted_val5
+                mov     ax, es:_gameDayNumber
                 mov     es, seg_D18F6
                 mov     es:Persisted_val252, ax
 
@@ -337512,7 +337512,7 @@ loc_B4FDC:                              ; CODE XREF: sub_30F93+8402F\u2191j
                 mov     es, seg_D18E2
                 cmp     es:_roomLogicNum, 0F1h ; 'ñ'
                 jnz     short loc_B5003
-                call    sub_136AF
+                call    Game_updateStatusLine
                 mov     ax, 0B0F1h
                 mov     dx, 0F000h
                 push    dx
@@ -342219,7 +342219,7 @@ loc_B6E4F:                              ; CODE XREF: sub_3114B+3\u2191J
 ; ---------------------------------------------------------------------------
 
 loc_B6E76:                              ; CODE XREF: sub_3114B+85D26\u2191j
-                call    sub_136AF
+                call    Game_updateStatusLine
                 mov     bx, Persisted_val253
                 shl     bx, 1
                 shl     bx, 1
@@ -345257,7 +345257,7 @@ loc_B8274:                              ; CODE XREF: sub_B8235+1B\u2191j
                 cmp     ax, 6
                 jz      short loc_B82D3
                 mov     es, seg_D1954
-                push    es:Persisted_val5
+                push    es:_gameDayNumber
                 call    sub_13629
                 add     sp, 2
                 push    dx
@@ -345268,7 +345268,7 @@ loc_B8274:                              ; CODE XREF: sub_B8235+1B\u2191j
 
 loc_B82AE:                              ; CODE XREF: sub_B8235+5A\u2191j
                 mov     es, seg_D1954
-                push    es:Persisted_val5
+                push    es:_gameDayNumber
                 call    sub_13629
                 add     sp, 2
                 push    dx
@@ -345287,7 +345287,7 @@ loc_B82C4:                              ; CODE XREF: sub_B8235+77\u2191j
 
 loc_B82D3:                              ; CODE XREF: sub_B8235+5F\u2191j
                 mov     es, seg_D1954
-                push    es:Persisted_val5
+                push    es:_gameDayNumber
                 call    sub_13629
                 add     sp, 2
                 push    dx
@@ -363110,7 +363110,7 @@ loc_BFFFA:                              ; CODE XREF: sub_30E2B+3\u2191J
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_C0040
-                call    sub_136AF
+                call    Game_updateStatusLine
                 mov     ax, 7
                 push    ax
                 mov     ax, 279h
@@ -363178,7 +363178,7 @@ loc_C00A6:                              ; CODE XREF: sub_30E2B+8F266\u2191j
                 jnz     short loc_C00E2
 
 loc_C00BC:                              ; CODE XREF: sub_30E2B+8F286\u2191j
-                call    sub_136AF
+                call    Game_updateStatusLine
                 mov     ax, 2853h
                 mov     dx, 0F000h
                 push    dx
@@ -363205,7 +363205,7 @@ loc_C00ED:
                 jnz     short loc_C0106
 
 loc_C00EF:
-                call    sub_136AF
+                call    Game_updateStatusLine
 
 loc_C00F4:
                 mov     ax, 2854h
@@ -367118,7 +367118,7 @@ loc_C1B7F:                              ; CODE XREF: sub_C1B34+1B\u2191j
 ; ---------------------------------------------------------------------------
 
 loc_C1BC1:                              ; CODE XREF: sub_C1B34+88\u2191j
-                call    sub_136AF
+                call    Game_updateStatusLine
                 push    [bp+logicNum]   ; logicNum
                 mov     ax, 2
                 push    ax              ; val1
@@ -367163,7 +367163,7 @@ loc_C1BFD:                              ; CODE XREF: sub_C1B34+49\u2191j
                 mov     es, seg_D1A42
                 cmp     es:_roomLogicNum, 274h
                 jnz     short loc_C1C44
-                call    sub_136AF
+                call    Game_updateStatusLine
                 mov     ax, 0B460h
                 mov     dx, 0F000h
                 push    dx
@@ -367203,7 +367203,7 @@ loc_C1C4A:                              ; CODE XREF: sub_30E5D+3\u2191J
                 mov     es, seg_D1A42
                 cmp     es:_roomLogicNum, 274h
                 jnz     short loc_C1C91
-                call    sub_136AF
+                call    Game_updateStatusLine
                 mov     ax, 0B461h
                 mov     dx, 0F000h
                 push    dx
@@ -386897,13 +386897,13 @@ Persisted_val2  db 1                    ; DATA XREF: Logics_checkMoveRestriction
                 align 2
 _turnCount      dw 0                    ; DATA XREF: main+B5B\u2191w
                                         ; seg068:SAVE_FIELDS\u2191o ...
-Persisted_val4  dw 0                    ; DATA XREF: sub_135EC+1E\u2191w
+_gameMinutes    dw 0                    ; DATA XREF: sub_135EC+1E\u2191w
                                         ; sub_135EC+22\u2191r ...
-Persisted_val5  dw 0                    ; DATA XREF: sub_135EC+2C\u2191w
-                                        ; sub_136AF+6\u2191r ...
-word_CB804      dw 0                    ; DATA XREF: sub_136AF+C5\u2191w
+_gameDayNumber  dw 0                    ; DATA XREF: sub_135EC+2C\u2191w
+                                        ; Game_updateStatusLine+6\u2191r ...
+word_CB804      dw 0                    ; DATA XREF: Game_updateStatusLine+C5\u2191w
                                         ; seg098:0492\u2191w ...
-word_CB806      dw 0                    ; DATA XREF: sub_136AF+CB\u2191w
+word_CB806      dw 0                    ; DATA XREF: Game_updateStatusLine+CB\u2191w
                                         ; seg098:0498\u2191w ...
 word_CB808      dw 1                    ; DATA XREF: main+B3C\u2191r
                                         ; main+B50\u2191w ...
@@ -386990,7 +386990,7 @@ aSeptember      db 'September',0        ; DATA XREF: seg067:0269\u2191o
 aOctober        db 'October',0          ; DATA XREF: seg067:026D\u2191o
 aNovember       db 'November',0         ; DATA XREF: seg067:0271\u2191o
 aDecember       db 'December',0         ; DATA XREF: seg067:0275\u2191o
-asc_CB900       db '       ',0          ; DATA XREF: sub_136AF+108\u2191o
+asc_CB900       db '       ',0          ; DATA XREF: Game_updateStatusLine+108\u2191o
 unk_CB908       db    0                 ; DATA XREF: sg4d43:off_CB93E\u2193o
 unk_CB909       db    0                 ; DATA XREF: sg4d43:off_CB942\u2193o
 SAVE_FIELDS_COUNT dw 261                ; DATA XREF: sub_62AE2+75\u2191r
@@ -387285,7 +387285,7 @@ aSoutheast      db 'southeast',0        ; DATA XREF: seg086:0018\u2191o
 aSouthwest      db 'southwest',0        ; DATA XREF: seg086:001C\u2191o
 _hasWonGame     db 0                    ; DATA XREF: sub_3141B+8B98F\u2191w
                                         ; Game_showEndingMessage+93856\u2191r ...
-Persisted_val7  db 0                    ; DATA XREF: sub_136AF+100\u2191r
+_statusTimeHidden db 0                  ; DATA XREF: Game_updateStatusLine+100\u2191r
                                         ; seg068:SAVE_FIELDS\u2191o ...
 Persisted_val194 dw 0FFFFh              ; DATA XREF: Logics_getRoomPic+13D\u2191r
                                         ; Logics_getRoomPic+177\u2191r ...
@@ -393745,7 +393745,7 @@ seg126_97       dw seg sg3EDC           ; DATA XREF: sub_135EC+F\u2191r
                                         ; seg098:0319\u2191r
 seg067_1        dw seg seg067
 seg067_2        dw seg seg067
-dseg_93         dw seg sg4d43           ; DATA XREF: sub_136AF:loc_137AB\u2191r
+dseg_93         dw seg sg4d43           ; DATA XREF: Game_updateStatusLine:loc_137AB\u2191r
                                         ; seg098:loc_487D9\u2191r
 seg126_98       dw seg sg3EDC           ; DATA XREF: sub_13852:loc_13880\u2191r
                                         ; sub_13852+3F\u2191r ...

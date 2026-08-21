@@ -364,6 +364,41 @@ RENAMES = [
      "actual comma-separated content listing "
      "Logics_describeContents prints after \"On/In <object> you "
      "see\"."),
+
+    # -- eleventh pass, same session: the in-game clock/status-line
+    # builder. See docs/overview.md#game_updatestatusline-named. --
+
+    (0x136AF, "Game_updateStatusLine",
+     "Confirmed by reading its two literal (non-GATESTR.DAT) format "
+     "strings at seg067+0x227/+0x238: \"%s %d, %02d:%02d\" (24-hour) "
+     "and \"%s %d, %d:%02d%c\" (12-hour, %c = 'a'/'p' for am/pm). "
+     "Computes hour-of-day/minute from _gameMinutes (was "
+     "Persisted_val4: /60 then %24 for hour, %60 for minute) and a day "
+     "number from _gameDayNumber+0x10 (was Persisted_val5), formats "
+     "\"<name> <day>, <time>\" (name via a 12-entry lookup table at "
+     "seg067_0+0x1FEh, not itself decoded), appends the current room's "
+     "name (Logics_getObjectString(_roomLogicNum)), and passes the "
+     "combined string through sub_160E1 (a bounded string-copy utility, "
+     "not confidently a \"set title\" function on its own -- not "
+     "renamed). Blanked entirely (spaces instead of a real time) when "
+     "_statusTimeHidden (was Persisted_val7) is set. Persisted_val194's "
+     "role in selecting the 24-hour vs. 12-hour format (compared "
+     "against the literal value 8) wasn't confirmed beyond that "
+     "comparison -- left unrenamed."),
+    ("Persisted_val4", "_gameMinutes",
+     "Elapsed in-game minutes -- confirmed via Game_updateStatusLine's "
+     "hour/minute-of-day math (/60 then %24 for hour, %60 for minute). "
+     "A separate, more granular clock from _gameTicks (480 ticks/day, "
+     "used for the 'Dorman day %d' message) -- both track real-time "
+     "progression but at different resolutions for different displays."),
+    ("Persisted_val5", "_gameDayNumber",
+     "Elapsed in-game day count -- confirmed via Game_updateStatusLine "
+     "(added to a fixed +0x10 offset, plausibly a calendar-epoch shift, "
+     "before being formatted as the day number)."),
+    ("Persisted_val7", "_statusTimeHidden",
+     "Nonzero blanks Game_updateStatusLine's time portion (spaces "
+     "instead of a real \"day, time\" string) -- confirmed directly by "
+     "that branch's code."),
 ]
 
 

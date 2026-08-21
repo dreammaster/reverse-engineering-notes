@@ -1308,3 +1308,38 @@ already starting with `thunk_` as scan candidates, in both
 consistency). Confirmed working: the fixed re-run found and updated
 exactly the 2 stale thunks from this session, leaving the other 710
 correctly untouched.
+
+### `Game_updateStatusLine` named — the in-game clock/status-bar builder
+
+Same session, top of the list again. `sub_136AF` (27 callers) builds and
+displays the game's status-line text combining the current room's name
+with an in-game date/time — confirmed by reading its two literal format
+strings directly (embedded in `gatemain.exe`'s own data segment at
+`seg067+0x227`/`+0x238`, **not** `GATESTR.DAT` messages — resolved with a
+small throwaway IDA script rather than `dump_gatestr_messages.py`, since
+the far pointer's segment wasn't the `0xF000` sentinel):
+
+- `"%s %d, %02d:%02d"` — 24-hour format
+- `"%s %d, %d:%02d%c"` — 12-hour format, `%c` is `'a'`/`'p'` for am/pm
+
+Computes hour-of-day and minute from **`_gameMinutes`** (was
+`Persisted_val4`: `/60` then `%24` for the hour, `%60` for the minute)
+and a day number from **`_gameDayNumber`** (was `Persisted_val5`, plus a
+fixed `+0x10` offset — plausibly a calendar-epoch shift). This is a
+**second, more granular clock** distinct from the already-named
+`_gameTicks` (480 ticks/day, used only for the simpler "It is Dorman day
+%d." narrative message) — both track the same underlying real-time
+progression, just at different resolutions for different displays.
+Entirely blanked (spaces instead of a real time) when **`_statusTimeHidden`**
+(was `Persisted_val7`) is set.
+
+**Not renamed**: `sub_160E1` (the function `Game_updateStatusLine` hands
+its finished string to) turned out to be a generic bounded string-copy
+utility on inspection, not confidently a "set title/status bar" function
+in its own right — left alone rather than mis-attributing a role to it.
+Also left open: the 12-entry name lookup table `Game_updateStatusLine`
+consults (`seg067_0+0x1FEh`, not decoded), and `Persisted_val194`'s exact
+role in selecting the 24-hour vs. 12-hour format (only confirmed as
+"compared against the literal value 8," not what that value represents).
+
+Applied via `apply_renames_gatemain.py`'s eleventh batch.
