@@ -668,7 +668,7 @@ Parser_perform  endp
 ; Attributes: bp-based frame
 
 get_buffer_size proc far                ; CODE XREF: sub_15BDA+1C1\u2193P
-                                        ; sub_15DB2+16C\u2193P ...
+                                        ; Sound_selectTrack+16C\u2193P ...
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -1040,7 +1040,7 @@ loc_107ED:                              ; CODE XREF: main+83\u2191j
                 jz      short loc_107FF
                 mov     ax, 0FFFFh
                 push    ax
-                call    startGame?
+                call    Sound_stopTrack
                 add     sp, 2
 
 loc_107FF:                              ; CODE XREF: main+9E\u2191j
@@ -11942,7 +11942,7 @@ loc_156C9:                              ; CODE XREF: sub_15674+50\u2191j
                 jz      short loc_1570B
                 mov     ax, 0FFFFh
                 push    ax
-                call    startGame?
+                call    Sound_stopTrack
                 add     sp, 2
                 sub     ax, ax
                 push    ax              ; frameNumber
@@ -12770,7 +12770,7 @@ loc_15C8F:                              ; CODE XREF: sub_15BDA+A2\u2191j
                                         ; sub_15BDA+B0\u2191j
                 mov     ax, 0FFFFh
                 push    ax
-                call    startGame?
+                call    Sound_stopTrack
                 add     sp, 2
                 cmp     [bp+var_C], 0
                 jnz     short loc_15CA4
@@ -12870,7 +12870,7 @@ sub_15BDA       endp
 
 ; Attributes: bp-based frame
 
-sub_15DB2       proc far                ; CODE XREF: sub_74D38+13D\u2193P
+Sound_selectTrack proc far              ; CODE XREF: sub_74D38+13D\u2193P
                                         ; sub_74D38+6F5\u2193P ...
 
 var_6           = word ptr -6
@@ -12898,8 +12898,8 @@ arg_6           = word ptr  0Ch
                 mov     ax, [bp+arg_4]
                 mov     es:word_C857C, ax
 
-loc_15DE4:                              ; CODE XREF: sub_15DB2+1D\u2191j
-                                        ; sub_15DB2+29\u2191j
+loc_15DE4:                              ; CODE XREF: Sound_selectTrack+1D\u2191j
+                                        ; Sound_selectTrack+29\u2191j
                 cmp     [bp+var_6], 0
                 jz      short loc_15DFB
                 mov     es, dseg_120
@@ -12909,8 +12909,8 @@ loc_15DE4:                              ; CODE XREF: sub_15DB2+1D\u2191j
                 jmp     loc_15F30
 ; ---------------------------------------------------------------------------
 
-loc_15DFB:                              ; CODE XREF: sub_15DB2+36\u2191j
-                                        ; sub_15DB2+44\u2191j
+loc_15DFB:                              ; CODE XREF: Sound_selectTrack+36\u2191j
+                                        ; Sound_selectTrack+44\u2191j
                 cmp     [bp+var_2], 0
                 jz      short loc_15E12
                 mov     es, dseg_121
@@ -12920,21 +12920,21 @@ loc_15DFB:                              ; CODE XREF: sub_15DB2+36\u2191j
                 jmp     loc_15F30
 ; ---------------------------------------------------------------------------
 
-loc_15E12:                              ; CODE XREF: sub_15DB2+4D\u2191j
-                                        ; sub_15DB2+5B\u2191j
+loc_15E12:                              ; CODE XREF: Sound_selectTrack+4D\u2191j
+                                        ; Sound_selectTrack+5B\u2191j
                 mov     ax, 0FFFFh
                 push    ax
-                call    startGame?
+                call    Sound_stopTrack
                 add     sp, 2
                 cmp     [bp+var_6], 0
                 jnz     short loc_15E27
                 jmp     loc_15EA9
 ; ---------------------------------------------------------------------------
 
-loc_15E27:                              ; CODE XREF: sub_15DB2+70\u2191j
+loc_15E27:                              ; CODE XREF: Sound_selectTrack+70\u2191j
                 mov     [bp+var_4], 0
 
-loc_15E2C:                              ; CODE XREF: sub_15DB2+B2\u2193j
+loc_15E2C:                              ; CODE XREF: Sound_selectTrack+B2\u2193j
                 mov     si, [bp+var_4]
                 shl     si, 1
                 mov     bx, [bp+var_6]
@@ -12972,7 +12972,7 @@ loc_15E2C:                              ; CODE XREF: sub_15DB2+B2\u2193j
                 jmp     short loc_15EE7
 ; ---------------------------------------------------------------------------
 
-loc_15EA9:                              ; CODE XREF: sub_15DB2+72\u2191j
+loc_15EA9:                              ; CODE XREF: Sound_selectTrack+72\u2191j
                 mov     es, dseg_120
                 mov     es:word_C856E, 0
                 mov     es, dseg_125
@@ -12990,7 +12990,7 @@ loc_15EA9:                              ; CODE XREF: sub_15DB2+72\u2191j
                 mov     es, dseg_126
                 mov     es:word_C857A, ax
 
-loc_15EE7:                              ; CODE XREF: sub_15DB2+F5\u2191j
+loc_15EE7:                              ; CODE XREF: Sound_selectTrack+F5\u2191j
                 mov     es, dseg_118
                 mov     es:word_C858A, 0
                 mov     es, dseg_128
@@ -13011,13 +13011,13 @@ loc_15F1A:
                 mov     es:word_C8578, ax
                 call    sub_1FE5C
 
-loc_15F30:                              ; CODE XREF: sub_15DB2+46\u2191j
-                                        ; sub_15DB2+5D\u2191j
+loc_15F30:                              ; CODE XREF: Sound_selectTrack+46\u2191j
+                                        ; Sound_selectTrack+5D\u2191j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_15DB2       endp
+Sound_selectTrack endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -31873,7 +31873,7 @@ Midi_sendCommand endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1D85B       proc far                ; CODE XREF: sub_1D966+37\u2193P
+sub_1D85B       proc far                ; CODE XREF: Midi_initDevice+37\u2193P
                                         ; sub_1F552:loc_1F574\u2193P ...
                 mov     ah, 0FFh
                 call    Midi_sendCommand_raw
@@ -31890,7 +31890,7 @@ sub_1D85B       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1D86A       proc near               ; CODE XREF: sub_1D966:loc_1D9EA\u2193P
+sub_1D86A       proc near               ; CODE XREF: Midi_initDevice:loc_1D9EA\u2193P
                 mov     ax, word_C83B4
                 or      ax, ax
                 jnz     short loc_1D877
@@ -31977,7 +31977,7 @@ loc_1D8BD:
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1D8CB       proc far                ; CODE XREF: sub_1D966:loc_1D9F6\u2193P
+Midi_shutdown   proc far                ; CODE XREF: Midi_initDevice:loc_1D9F6\u2193P
                                         ; sub_1FA5E+23\u2193P ...
                 push    bp
                 cmp     byte_C83B6, 1
@@ -31999,11 +31999,11 @@ sub_1D8CB       proc far                ; CODE XREF: sub_1D966:loc_1D9F6\u2193P
                                         ; DS:DX = new vector to be used for specified interrupt
                 pop     ds
 
-loc_1D8F7:                              ; CODE XREF: sub_1D8CB+6\u2191j
+loc_1D8F7:                              ; CODE XREF: Midi_shutdown+6\u2191j
                 mov     byte_C83B6, 0
                 pop     bp
                 retf
-sub_1D8CB       endp
+Midi_shutdown   endp
 
 ; ---------------------------------------------------------------------------
                 push    ds
@@ -32061,7 +32061,7 @@ nullsub_1       endp
 
 ; ---------------------------------------------------------------------------
 
-loc_1D93A:                              ; DATA XREF: sub_1D966+6D\u2193o
+loc_1D93A:                              ; DATA XREF: Midi_initDevice+6D\u2193o
                 mov     bx, word_C83B2
                 mov     [bx], al
                 inc     bx
@@ -32101,7 +32101,7 @@ sub_1D953       endp
 
 ; Attributes: bp-based frame
 
-sub_1D966       proc far                ; CODE XREF: sub_1F552+12\u2193P
+Midi_initDevice proc far                ; CODE XREF: sub_1F552+12\u2193P
                                         ; sub_1FA5E:loc_1FA76\u2193P ...
 
 arg_0           = word ptr  6
@@ -32114,7 +32114,7 @@ arg_2           = byte ptr  8
                 jmp     loc_1D9FB
 ; ---------------------------------------------------------------------------
 
-loc_1D973:                              ; CODE XREF: sub_1D966+8\u2191j
+loc_1D973:                              ; CODE XREF: Midi_initDevice+8\u2191j
                 mov     ax, [bp+arg_0]
                 mov     _midiDataPort, ax
                 inc     ax
@@ -32167,7 +32167,7 @@ loc_1D98B:
                 call    Midi_sendCommand_raw
                 mov     cx, 0FFFFh
 
-loc_1D9E9:                              ; CODE XREF: sub_1D966+8E\u2193j
+loc_1D9E9:                              ; CODE XREF: Midi_initDevice+8E\u2193j
                 push    cx
 
 loc_1D9EA:
@@ -32180,10 +32180,10 @@ loc_1D9F0:
                 loop    loc_1D9E9
 
 loc_1D9F6:
-                call    sub_1D8CB
+                call    Midi_shutdown
 
-loc_1D9FB:                              ; CODE XREF: sub_1D966+A\u2191j
-                                        ; sub_1D966+8C\u2191j
+loc_1D9FB:                              ; CODE XREF: Midi_initDevice+A\u2191j
+                                        ; Midi_initDevice+8C\u2191j
                 mov     word ptr _midiDataCallback, offset nullsub_1
 
 loc_1DA01:
@@ -32196,7 +32196,7 @@ loc_1DA09:
                 mov     al, byte_C83B6
                 pop     bp
                 retf
-sub_1D966       endp
+Midi_initDevice endp
 
 seg022          ends
 
@@ -34524,7 +34524,7 @@ sub_1E950       endp
 ; Attributes: bp-based frame
 
 sub_1E974       proc far                ; CODE XREF: sub_1E950+1D\u2191p
-                                        ; startGame?+B9\u2193P
+                                        ; Sound_stopTrack+B9\u2193P
 
 var_6           = dword ptr -6
 var_2           = word ptr -2
@@ -36059,7 +36059,7 @@ sub_1F552       proc far                ; CODE XREF: sub_1F63A+48\u2193p
                 push    es:word_C8586
                 mov     es, dseg_40
                 push    es:word_C8588
-                call    sub_1D966
+                call    Midi_initDevice
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_1F574
@@ -36495,7 +36495,7 @@ sub_1F7D6       endp
 
 
 sub_1F910       proc far                ; CODE XREF: sub_1F692+113\u2191p
-                                        ; startGame?:loc_202B2\u2193P
+                                        ; Sound_stopTrack:loc_202B2\u2193P
                 mov     es, seg126_21
                 assume es:sg3EDC
                 mov     es:_tmpSub._val9, 0
@@ -36700,14 +36700,14 @@ loc_1FA71:
                 push    es:word_C8588
 
 loc_1FA76:
-                call    sub_1D966
+                call    Midi_initDevice
 
 loc_1FA7B:
                 add     sp, 4
 
 loc_1FA7E:
                 mov     [bp+var_2], ax
-                call    sub_1D8CB
+                call    Midi_shutdown
 
 loc_1FA86:
                 mov     ax, [bp+var_2]
@@ -36743,7 +36743,7 @@ sub_1FA8E       proc far                ; CODE XREF: sub_1FB10+1\u2193p
                 push    es:word_C8588
 
 loc_1FAA0:
-                call    sub_1D966
+                call    Midi_initDevice
                 add     sp, 4
                 or      ax, ax
                 jz      short locret_1FAFD
@@ -36791,7 +36791,7 @@ sub_1FAFE       proc far                ; CODE XREF: sub_1FB10+3E\u2193p
                 push    ax
                 call    Midi_sendByte
                 add     sp, 2
-                call    sub_1D8CB
+                call    Midi_shutdown
                 retf
 sub_1FAFE       endp
 
@@ -37283,7 +37283,7 @@ sub_1FE30       proc far                ; CODE XREF: sub_1FDB8+10\u2191p
                 mov     ax, 0FFFFh
                 push    ax
                 push    cs
-                call    near ptr startGame?
+                call    near ptr Sound_stopTrack
                 add     sp, 2
                 test    byte ptr word_C8582, 4
                 jz      short loc_1FE56
@@ -37307,7 +37307,7 @@ sub_1FE30       endp
 ; Attributes: bp-based frame
 
 sub_1FE5C       proc far                ; CODE XREF: sub_15BDA+1CE\u2191P
-                                        ; sub_15DB2+179\u2191P
+                                        ; Sound_selectTrack+179\u2191P
 
 var_1C          = word ptr -1Ch
 var_1A          = word ptr -1Ah
@@ -37783,7 +37783,7 @@ sub_201C0       endp
 
 ; Attributes: bp-based frame
 
-startGame?      proc far                ; CODE XREF: main+A4\u2191P
+Sound_stopTrack proc far                ; CODE XREF: main+A4\u2191P
                                         ; sub_15674+7C\u2191P ...
 
 var_8           = word ptr -8
@@ -37800,7 +37800,7 @@ arg_0           = word ptr  6
                 jmp     loc_202EF
 ; ---------------------------------------------------------------------------
 
-loc_20232:                              ; CODE XREF: startGame?+D\u2191j
+loc_20232:                              ; CODE XREF: Sound_stopTrack+D\u2191j
                 mov     ax, word_C8580
                 cmp     [bp+arg_0], ax
                 jz      short loc_20243
@@ -37809,14 +37809,14 @@ loc_20232:                              ; CODE XREF: startGame?+D\u2191j
                 jmp     loc_202EF
 ; ---------------------------------------------------------------------------
 
-loc_20243:                              ; CODE XREF: startGame?+18\u2191j
-                                        ; startGame?+1E\u2191j
+loc_20243:                              ; CODE XREF: Sound_stopTrack+18\u2191j
+                                        ; Sound_stopTrack+1E\u2191j
                 cmp     word_C858A, 2
                 jnz     short loc_20251
                 cmp     word_C858C, 0
                 jz      short loc_20262
 
-loc_20251:                              ; CODE XREF: startGame?+28\u2191j
+loc_20251:                              ; CODE XREF: Sound_stopTrack+28\u2191j
                 cli
                 sub     ax, ax
                 push    ax
@@ -37828,8 +37828,8 @@ loc_20251:                              ; CODE XREF: startGame?+28\u2191j
                 add     sp, 6
                 sti
 
-loc_20262:                              ; CODE XREF: startGame?+2F\u2191j
-                                        ; startGame?+55\u2193j
+loc_20262:                              ; CODE XREF: Sound_stopTrack+2F\u2191j
+                                        ; Sound_stopTrack+55\u2193j
                 cmp     word_C858A, 2
                 jnz     short loc_20277
                 cmp     word_C858C, 0
@@ -37837,8 +37837,8 @@ loc_20262:                              ; CODE XREF: startGame?+2F\u2191j
                 cmp     word_C857C, 0
                 jg      short loc_20262
 
-loc_20277:                              ; CODE XREF: startGame?+47\u2191j
-                                        ; startGame?+4E\u2191j
+loc_20277:                              ; CODE XREF: Sound_stopTrack+47\u2191j
+                                        ; Sound_stopTrack+4E\u2191j
                 test    byte ptr word_C8582, 4
                 jz      short loc_202D2
                 test    byte ptr word_C8582, 80h
@@ -37853,49 +37853,49 @@ loc_20277:                              ; CODE XREF: startGame?+47\u2191j
                 assume es:sg4d43
                 mov     es:word_C8532, 1
 
-loc_202A9:                              ; CODE XREF: startGame?+90\u2193j
+loc_202A9:                              ; CODE XREF: Sound_stopTrack+90\u2193j
                 test    byte ptr word_C8582, 10h
                 jz      short loc_202B7
                 jmp     short loc_202A9
 ; ---------------------------------------------------------------------------
 
-loc_202B2:                              ; CODE XREF: startGame?+63\u2191j
-                                        ; startGame?+6A\u2191j ...
+loc_202B2:                              ; CODE XREF: Sound_stopTrack+63\u2191j
+                                        ; Sound_stopTrack+6A\u2191j ...
                 call    sub_1F910
 
-loc_202B7:                              ; CODE XREF: startGame?+8E\u2191j
+loc_202B7:                              ; CODE XREF: Sound_stopTrack+8E\u2191j
                 test    byte ptr word_C8582, 80h
                 jz      short loc_202CB
                 mov     word_C85A0, 0
 
-loc_202C4:                              ; CODE XREF: startGame?+A9\u2193j
+loc_202C4:                              ; CODE XREF: Sound_stopTrack+A9\u2193j
                 cmp     word_C859E, 0
                 jnz     short loc_202C4
 
-loc_202CB:                              ; CODE XREF: startGame?+9C\u2191j
-                call    sub_1D8CB
+loc_202CB:                              ; CODE XREF: Sound_stopTrack+9C\u2191j
+                call    Midi_shutdown
                 jmp     short loc_202DE
 ; ---------------------------------------------------------------------------
 
-loc_202D2:                              ; CODE XREF: startGame?+5C\u2191j
+loc_202D2:                              ; CODE XREF: Sound_stopTrack+5C\u2191j
                 test    byte ptr word_C8582, 2
                 jz      short loc_202DE
                 call    sub_1E974
 
-loc_202DE:                              ; CODE XREF: startGame?+B0\u2191j
-                                        ; startGame?+B7\u2191j
+loc_202DE:                              ; CODE XREF: Sound_stopTrack+B0\u2191j
+                                        ; Sound_stopTrack+B7\u2191j
                 and     byte ptr word_C8582, 8Fh
                 mov     word_C8580, 0
                 mov     word_C856E, 0
 
-loc_202EF:                              ; CODE XREF: startGame?+F\u2191j
-                                        ; startGame?+20\u2191j
+loc_202EF:                              ; CODE XREF: Sound_stopTrack+F\u2191j
+                                        ; Sound_stopTrack+20\u2191j
                 mov     [bp+var_2], 4
                 mov     si, 628h
                 mov     di, si
                 mov     [bp+var_8], 4
 
-loc_202FE:                              ; CODE XREF: startGame?+11A\u2193j
+loc_202FE:                              ; CODE XREF: Sound_stopTrack+11A\u2193j
                 mov     ax, [si]
                 or      ax, [si+2]
                 jz      short loc_20331
@@ -37913,13 +37913,13 @@ loc_202FE:                              ; CODE XREF: startGame?+11A\u2193j
                 mov     word ptr ptr+2, ax
                 mov     word ptr ptr, ax
 
-loc_2032A:                              ; CODE XREF: startGame?+FB\u2191j
-                                        ; startGame?+100\u2191j
+loc_2032A:                              ; CODE XREF: Sound_stopTrack+FB\u2191j
+                                        ; Sound_stopTrack+100\u2191j
                 sub     ax, ax
                 mov     [di+2], ax
                 mov     [di], ax
 
-loc_20331:                              ; CODE XREF: startGame?+E3\u2191j
+loc_20331:                              ; CODE XREF: Sound_stopTrack+E3\u2191j
                 add     si, 4
                 add     di, 4
                 dec     [bp+var_8]
@@ -37935,7 +37935,7 @@ loc_20331:                              ; CODE XREF: startGame?+E3\u2191j
                 mov     word ptr ptr+2, ax
                 mov     word ptr ptr, ax
 
-loc_2035D:                              ; CODE XREF: startGame?+123\u2191j
+loc_2035D:                              ; CODE XREF: Sound_stopTrack+123\u2191j
                 mov     word_C858A, 0
                 sub     ax, ax
                 mov     word_C8590, ax
@@ -37952,7 +37952,7 @@ loc_2035D:                              ; CODE XREF: startGame?+123\u2191j
                 mov     sp, bp
                 pop     bp
                 retf
-startGame?      endp
+Sound_stopTrack endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -47146,8 +47146,8 @@ new_handle      endp
 ; Attributes: bp-based frame
 
 ; int __cdecl __far kill_handle(void **ptr)
-kill_handle     proc far                ; CODE XREF: startGame?+EA\u2191P
-                                        ; startGame?+12D\u2191P ...
+kill_handle     proc far                ; CODE XREF: Sound_stopTrack+EA\u2191P
+                                        ; Sound_stopTrack+12D\u2191P ...
 
 masterPtr       = dword ptr -0Ch
 result          = word ptr -8
@@ -128411,7 +128411,7 @@ loc_4816F:                              ; CODE XREF: seg097:0EF4\u2191j
                 push    ds
                 lds     dx, [bp+6]
                 mov     ax, [bp+0Ah]
-                call    sub_1D8CB
+                call    Midi_shutdown
                 pop     ds
                 pop     bp
                 retf
@@ -143458,7 +143458,7 @@ loc_5D040:                              ; CODE XREF: room_load+B6\u2191j
                 jz      short loc_5D090
                 mov     ax, 0FFFFh
                 push    ax
-                call    startGame?
+                call    Sound_stopTrack
                 add     sp, 2
                 sub     ax, ax
                 push    ax              ; frameNumber
@@ -145766,7 +145766,7 @@ loc_5E283:                              ; CODE XREF: sub_5E247+37\u2191j
                 jz      short loc_5E32E
                 mov     ax, 0FFFFh
                 push    ax
-                call    startGame?
+                call    Sound_stopTrack
                 add     sp, 2
                 mov     ax, 1
                 push    ax
@@ -145860,7 +145860,7 @@ loc_5E383:                              ; CODE XREF: sub_5E247+137\u2191j
                 jz      short loc_5E403
                 mov     ax, 0FFFFh
                 push    ax
-                call    startGame?
+                call    Sound_stopTrack
                 add     sp, 2
                 mov     ax, 1
                 push    ax
@@ -145940,7 +145940,7 @@ loc_5E429:
                 jz      short loc_5E491
                 mov     ax, 0FFFFh
                 push    ax
-                call    startGame?
+                call    Sound_stopTrack
                 add     sp, 2
                 push    [bp+arg_2]
                 push    [bp+arg_0]
@@ -190634,7 +190634,7 @@ loc_7407E:                              ; CODE XREF: sub_73E5A+216\u2191j
                 jz      short loc_740D8
                 mov     ax, 0FFFFh
                 push    ax
-                call    startGame?
+                call    Sound_stopTrack
                 add     sp, 2
                 sub     ax, ax
                 push    ax              ; frameNumber
@@ -190722,7 +190722,7 @@ regionNum       = word ptr -2
                 push    si
                 mov     ax, 0FFFFh
                 push    ax
-                call    startGame?
+                call    Sound_stopTrack
                 add     sp, 2
                 mov     es, seg_D140A
                 cmp     es:word_C8EF0, 0
@@ -192360,7 +192360,7 @@ loc_74E63:                              ; CODE XREF: sub_74D38+CC\u2191j
                 cwd
                 push    dx
                 push    ax
-                call    sub_15DB2
+                call    Sound_selectTrack
                 add     sp, 8
                 mov     img._active, 0
                 mov     es, seg_D13FA
@@ -192953,7 +192953,7 @@ loc_7542A:                              ; CODE XREF: sub_74D38+5BA\u2191j
                 cwd
                 push    dx
                 push    ax
-                call    sub_15DB2
+                call    Sound_selectTrack
                 add     sp, 8
                 mov     img._active, 0
                 mov     ax, 300h
@@ -194278,7 +194278,7 @@ loc_75B18:                              ; CODE XREF: sub_75AE0+64\u2193j
 loc_75B27:                              ; CODE XREF: sub_75AE0+42\u2191j
                 mov     ax, 0FFFFh
                 push    ax
-                call    startGame?
+                call    Sound_stopTrack
                 add     sp, 2
 
 loc_75B33:                              ; CODE XREF: sub_75AE0+36\u2191j
@@ -195765,7 +195765,7 @@ loc_76666:                              ; CODE XREF: sub_765BB+8D\u2191j
                 cwd
                 push    dx
                 push    ax
-                call    sub_15DB2
+                call    Sound_selectTrack
                 add     sp, 8
                 mov     es, seg_D144A
                 push    es:vocab_list_0._logicNum ; logicNum
@@ -198904,7 +198904,7 @@ loc_77A6C:                              ; CODE XREF: sub_77773+2CF\u2191j
                 cwd
                 push    dx
                 push    ax
-                call    sub_15DB2
+                call    Sound_selectTrack
                 add     sp, 8
                 mov     ax, offset asc_CCF74 ; "\t–"
                 push    ds
@@ -198941,7 +198941,7 @@ loc_77AC6:                              ; CODE XREF: sub_77773+2D4\u2191j
                 cwd
                 push    dx
                 push    ax
-                call    sub_15DB2
+                call    Sound_selectTrack
                 add     sp, 8
                 mov     ax, offset unk_78550
                 mov     dx, seg seg167
@@ -198968,7 +198968,7 @@ loc_77AFB:                              ; CODE XREF: sub_77773+2DB\u2191j
                 cwd
                 push    dx
                 push    ax
-                call    sub_15DB2
+                call    Sound_selectTrack
                 add     sp, 8
                 mov     ax, offset unk_CCF84
                 push    ds
@@ -199003,7 +199003,7 @@ loc_77B20:                              ; CODE XREF: sub_77773+2E3\u2191j
                 cwd
                 push    dx
                 push    ax
-                call    sub_15DB2
+                call    Sound_selectTrack
                 add     sp, 8
                 mov     ax, 5070h
                 push    ds
@@ -199049,7 +199049,7 @@ loc_77B86:                              ; CODE XREF: sub_77773+2EB\u2191j
                 cwd
                 push    dx
                 push    ax
-                call    sub_15DB2
+                call    Sound_selectTrack
                 add     sp, 8
                 mov     ax, 5078h
                 push    ds
@@ -278963,7 +278963,7 @@ var_2           = word ptr -2
                 mov     [bp+var_2], 0
                 mov     ax, 0FFFFh
                 push    ax
-                call    startGame?
+                call    Sound_stopTrack
                 add     sp, 2
                 call    sub_15A7A
                 mov     ax, 9
@@ -293261,7 +293261,7 @@ sub_A1E0B       proc far                ; CODE XREF: sub_A059C+296\u2191p
                 cwd
                 push    dx
                 push    ax
-                call    sub_15DB2
+                call    Sound_selectTrack
                 add     sp, 8
                 mov     ax, 0Dh
                 push    ax
@@ -293705,7 +293705,7 @@ loc_A2130:
                 jz      short loc_A2167
                 mov     ax, 0FFFFh
                 push    ax
-                call    startGame?
+                call    Sound_stopTrack
                 add     sp, 2
                 sub     ax, ax
                 push    ax              ; frameNumber
@@ -293882,7 +293882,7 @@ loc_A2282:
                 jz      short loc_A22DA
                 mov     ax, 0FFFFh
                 push    ax
-                call    startGame?
+                call    Sound_stopTrack
                 add     sp, 2
                 sub     ax, ax
                 push    ax              ; frameNumber
@@ -295582,7 +295582,7 @@ loc_A2F3D:                              ; CODE XREF: sub_A2D8D+1AB\u2191j
                 cwd
                 push    dx
                 push    ax
-                call    sub_15DB2
+                call    Sound_selectTrack
                 add     sp, 8
                 mov     ax, 2C2Dh
                 mov     dx, 0F000h
@@ -296783,7 +296783,7 @@ var_2           = word ptr -2
                 cwd
                 push    dx
                 push    ax
-                call    sub_15DB2
+                call    Sound_selectTrack
                 add     sp, 8
                 mov     es, seg_D1788
                 cmp     es:word_C8EF0, 0
@@ -303949,7 +303949,7 @@ loc_A678A:
 loc_A678B:
                 push    dx
                 push    ax
-                call    sub_15DB2
+                call    Sound_selectTrack
                 add     sp, 8
 
 loc_A6795:
@@ -304072,7 +304072,7 @@ sub_A686E       proc far                ; CODE XREF: sub_A6BD4+283\u2193p
                 cwd
                 push    dx
                 push    ax
-                call    sub_15DB2
+                call    Sound_selectTrack
                 add     sp, 8
                 mov     ax, 24h ; '$'
                 mov     dx, seg seg216
@@ -310260,7 +310260,7 @@ loc_A9012:                              ; CODE XREF: sub_A8EC2+14B\u2191j
                 cwd
                 push    dx
                 push    ax
-                call    sub_15DB2
+                call    Sound_selectTrack
                 add     sp, 8
                 mov     ax, 14h
                 mov     dx, seg seg218
@@ -310337,7 +310337,7 @@ loc_A90B8:                              ; CODE XREF: sub_A8EC2+1F1\u2191j
                 cwd
                 push    dx
                 push    ax
-                call    sub_15DB2
+                call    Sound_selectTrack
                 add     sp, 8
                 mov     ax, 58h ; 'X'
                 mov     dx, seg seg218
@@ -319866,7 +319866,7 @@ loc_AD099:                              ; CODE XREF: sub_AD063+19\u2191j
                 cwd
                 push    dx
                 push    ax
-                call    sub_15DB2
+                call    Sound_selectTrack
                 add     sp, 8
                 mov     [bp+var_4], 1
                 mov     ax, 151h
@@ -321608,7 +321608,7 @@ loc_ADCF1:                              ; CODE XREF: sub_ADB2A+1C2\u2191j
                 cwd
                 push    dx
                 push    ax
-                call    sub_15DB2
+                call    Sound_selectTrack
                 add     sp, 8
 
 loc_ADD72:                              ; CODE XREF: sub_ADB2A+1F9\u2191j
@@ -343571,7 +343571,7 @@ loc_B7710:                              ; CODE XREF: sub_B7698+11\u2191j
                 cwd
                 push    dx
                 push    ax
-                call    sub_15DB2
+                call    Sound_selectTrack
                 jmp     loc_B7708
 ; ---------------------------------------------------------------------------
 
@@ -356136,7 +356136,7 @@ loc_BCD8E:
 
 loc_BCD98:
                 push    ax
-                call    sub_15DB2
+                call    Sound_selectTrack
                 add     sp, 8
                 call    thunk_sub_BDF6C
 
@@ -357844,7 +357844,7 @@ loc_BD861:
                 push    ax
 
 loc_BD897:
-                call    startGame?
+                call    Sound_stopTrack
                 add     sp, 2
                 sub     ax, ax
                 push    ax              ; frameNumber
@@ -358225,7 +358225,7 @@ loc_BDBAA:                              ; CODE XREF: sub_BDB7B+2A\u2191j
                 jz      short loc_BDBF5
                 mov     ax, 0FFFFh
                 push    ax
-                call    startGame?
+                call    Sound_stopTrack
                 add     sp, 2
                 sub     ax, ax
                 push    ax              ; frameNumber
@@ -362061,7 +362061,7 @@ loc_BF850:                              ; CODE XREF: sub_BF410+43B\u2191j
                 cwd
                 push    dx
                 push    ax
-                call    sub_15DB2
+                call    Sound_selectTrack
 
 loc_BF8A1:                              ; CODE XREF: sub_BF410+255\u2191j
                 add     sp, 8
@@ -362731,7 +362731,7 @@ var_2           = word ptr -2
                 cwd
                 push    dx
                 push    ax
-                call    sub_15DB2
+                call    Sound_selectTrack
                 add     sp, 8
                 mov     es, seg_D1A08
                 cmp     es:word_C8EF0, 0
@@ -362768,7 +362768,7 @@ loc_BFCDF:                              ; CODE XREF: sub_BFCA8+32\u2191j
                 jz      short loc_BFD33
                 mov     ax, 0FFFFh
                 push    ax
-                call    startGame?
+                call    Sound_stopTrack
                 add     sp, 2
                 sub     ax, ax
                 push    ax              ; frameNumber
@@ -383436,20 +383436,20 @@ _midiDataPort   dw 330h                 ; DATA XREF: Midi_sendCommand_raw+27\u21
 _midiStatusPort dw 331h                 ; DATA XREF: Midi_sendCommand_raw:loc_1D809\u2191r
                                         ; Midi_sendCommand_raw:loc_1D826\u2191r ...
 _midiCommandPort dw 331h                ; DATA XREF: Midi_sendCommand_raw+16\u2191r
-                                        ; sub_1D966+17\u2191w
+                                        ; Midi_initDevice+17\u2191w
 word_C83B0      dw 0                    ; DATA XREF: sub_1D874+8\u2191r
                                         ; sub_1D874:loc_1D88C\u2191w ...
 word_C83B2      dw 0                    ; DATA XREF: seg022:00C0\u2191w
                                         ; seg022:loc_1D93A\u2191r ...
 word_C83B4      dw 0                    ; DATA XREF: sub_1D86A\u2191r
                                         ; sub_1D874+4\u2191w ...
-byte_C83B6      db 0                    ; DATA XREF: sub_1D8CB+1\u2191r
-                                        ; sub_1D8CB:loc_1D8F7\u2191w ...
-byte_C83B7      db 0                    ; DATA XREF: sub_1D8CB+A\u2191r
-                                        ; sub_1D966+2B\u2191w ...
-byte_C83B8      db 0Ah                  ; DATA XREF: sub_1D8CB+1E\u2191r
-                                        ; sub_1D966+1F\u2191w ...
-dword_C83B9     dd 0                    ; DATA XREF: sub_1D8CB+21\u2191r
+byte_C83B6      db 0                    ; DATA XREF: Midi_shutdown+1\u2191r
+                                        ; Midi_shutdown:loc_1D8F7\u2191w ...
+byte_C83B7      db 0                    ; DATA XREF: Midi_shutdown+A\u2191r
+                                        ; Midi_initDevice+2B\u2191w ...
+byte_C83B8      db 0Ah                  ; DATA XREF: Midi_shutdown+1E\u2191r
+                                        ; Midi_initDevice+1F\u2191w ...
+dword_C83B9     dd 0                    ; DATA XREF: Midi_shutdown+21\u2191r
                                         ; seg022:011E\u2191r ...
 _midiDataCallback dd nullsub_1          ; DATA XREF: Midi_sendCommand_raw+31\u2191r
                                         ; seg022:0127\u2191r ...
@@ -383777,10 +383777,10 @@ word_C8534      dw 0                    ; DATA XREF: sub_1EE70+84\u2191r
 word_C8536      dw 0                    ; DATA XREF: sub_1EFA6:loc_1F008\u2191w
                                         ; sub_1EFA6+66\u2191r ...
 word_C8538      dw 0                    ; DATA XREF: sub_15BDA+123\u2191r
-                                        ; sub_15DB2+CE\u2191r ...
+                                        ; Sound_selectTrack+CE\u2191r ...
                 align 8
 word_C8540      dw 0                    ; DATA XREF: sub_15BDA+133\u2191r
-                                        ; sub_15DB2+DE\u2191r ...
+                                        ; Sound_selectTrack+DE\u2191r ...
                 align 8
 word_C8548      dw 0                    ; DATA XREF: sub_1FE5C+195\u2191r
 word_C854A      dw 0                    ; DATA XREF: sub_1FE5C+198\u2191r
@@ -383823,9 +383823,9 @@ word_C8572      dw 0                    ; DATA XREF: sub_1FE5C+1A6\u2191w
                                         ; sub_1FE5C+2B7\u2191w ...
 word_C8574      dw 0                    ; DATA XREF: sub_1FE5C:loc_20119\u2191w
 word_C8576      dw 7Fh                  ; DATA XREF: sub_15BDA+1B5\u2191w
-                                        ; sub_15DB2+160\u2191w ...
+                                        ; Sound_selectTrack+160\u2191w ...
 word_C8578      dw 0                    ; DATA XREF: sub_15BDA+1CA\u2191w
-                                        ; sub_15DB2+175\u2191w ...
+                                        ; Sound_selectTrack+175\u2191w ...
 word_C857A      dw 0                    ; DATA XREF: sub_15BDA+13B\u2191w
                                         ; sub_15BDA+186\u2191w ...
 word_C857C      dw 7Fh                  ; DATA XREF: sub_15BDA+78\u2191r
@@ -383845,11 +383845,11 @@ word_C8588      dw 330h                 ; DATA XREF: sub_1F552+D\u2191r
 word_C858A      dw 0                    ; DATA XREF: sub_15BDA:loc_15C46\u2191r
                                         ; sub_15BDA+18E\u2191w ...
 word_C858C      dw 7Fh                  ; DATA XREF: sub_15BDA+199\u2191w
-                                        ; sub_15DB2+144\u2191w ...
+                                        ; Sound_selectTrack+144\u2191w ...
 word_C858E      dw 0                    ; DATA XREF: sub_15BDA+1AA\u2191w
-                                        ; sub_15DB2+155\u2191w ...
+                                        ; Sound_selectTrack+155\u2191w ...
 word_C8590      dw 0                    ; DATA XREF: sub_15BDA+1A6\u2191w
-                                        ; sub_15DB2+151\u2191w ...
+                                        ; Sound_selectTrack+151\u2191w ...
 word_C8592      dw 0                    ; DATA XREF: sub_1E9F4+5A\u2191r
                                         ; sub_1F034+5A\u2191r ...
 word_C8594      dw 0                    ; DATA XREF: sub_1E9F4+5E\u2191r
@@ -393491,8 +393491,8 @@ seg126_22       dw seg sg3EDC           ; DATA XREF: sub_1FC70+13\u2191r
                                         ; sub_1FCAA+19\u2191r ...
 seg126_23       dw seg sg3EDC           ; DATA XREF: sub_1FE5C+24\u2191r
                                         ; sub_1FE5C+2F5\u2191r ...
-seg126_24       dw seg sg3EDC           ; DATA XREF: startGame?+73\u2191r
-dseg_153        dw seg sg4d43           ; DATA XREF: startGame?+7E\u2191r
+seg126_24       dw seg sg3EDC           ; DATA XREF: Sound_stopTrack+73\u2191r
+dseg_153        dw seg sg4d43           ; DATA XREF: Sound_stopTrack+7E\u2191r
 dseg_154        dw seg sg4d43           ; DATA XREF: seg029:07A2\u2191r
                                         ; seg029:07B5\u2191r
 seg216          dw seg sg3EDC           ; DATA XREF: Font_init+5E\u2191r
@@ -393876,7 +393876,7 @@ dseg_120        dw seg sg4d43           ; DATA XREF: sub_15BDA+8D\u2191r
 dseg_121        dw seg sg4d43           ; DATA XREF: sub_15BDA+A4\u2191r
                                         ; sub_15BDA+127\u2191r ...
 dseg_122        dw seg sg4d43           ; DATA XREF: sub_15BDA+DD\u2191r
-                                        ; sub_15DB2+88\u2191r ...
+                                        ; Sound_selectTrack+88\u2191r ...
 dseg_123        dw seg sg4d43           ; DATA XREF: sub_15BDA+E6\u2191r
                                         ; sub_15BDA+11F\u2191r ...
 dseg_124        dw seg sg4d43           ; DATA XREF: sub_15BDA+F7\u2191r
@@ -393888,13 +393888,13 @@ dseg_126        dw seg sg4d43           ; DATA XREF: sub_15BDA+137\u2191r
 dseg_127        dw seg sg4d43           ; DATA XREF: sub_15BDA+13F\u2191r
                                         ; sub_15BDA+16D\u2191r ...
 dseg_128        dw seg sg4d43           ; DATA XREF: sub_15BDA+195\u2191r
-                                        ; sub_15DB2+140\u2191r ...
+                                        ; Sound_selectTrack+140\u2191r ...
 dseg_129        dw seg sg4d43           ; DATA XREF: sub_15BDA+1A0\u2191r
-                                        ; sub_15DB2+14B\u2191r ...
+                                        ; Sound_selectTrack+14B\u2191r ...
 dseg_130        dw seg sg4d43           ; DATA XREF: sub_15BDA+1AE\u2191r
-                                        ; sub_15DB2+159\u2191r ...
+                                        ; Sound_selectTrack+159\u2191r ...
 dseg_131        dw seg sg4d43           ; DATA XREF: sub_15BDA+1C6\u2191r
-                                        ; sub_15DB2+171\u2191r ...
+                                        ; Sound_selectTrack+171\u2191r ...
 dseg_132        dw seg sg4d43           ; DATA XREF: sub_15F35+15\u2191r
                                         ; sub_15F35+36\u2191r ...
 dseg_133        dw seg sg4d43           ; DATA XREF: sub_15F35+41\u2191r

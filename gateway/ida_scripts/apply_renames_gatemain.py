@@ -1285,6 +1285,62 @@ RENAMES = [
      "Sb_resetDsp/Sb_readByte/Sb_writeByte/Sb_detectDsp's fixed port "
      "offsets (+6 reset, +0xA read-data, +0xC write-status/command, "
      "+0xE read-status)."),
+
+    # -- forty-fourth pass: sub_1D8CB, the MPU-401 shutdown/uninstall
+    # function -- the exact reverse of sub_1D966's IRQ-driven install
+    # (restores the original interrupt vector sub_1D966 saved, remasks
+    # the IRQ, sends MPU-401's standard 0xFF reset command via the
+    # already-named Midi_sendCommand_raw). This finally lets the
+    # long-flagged "startGame?" mislabeling (see the sound-track-
+    # selection-subsystem-sighted section several passes back) be
+    # corrected for real: its full body is now unmistakably "stop the
+    # currently playing track", dispatching to whichever backend is
+    # active and resetting exactly the same buffer-bookkeeping tail
+    # already seen in sub_15DB2 -- which can now also be confidently
+    # renamed as the track-selection function that calls it. See
+    # docs/overview.md#sound_stoptrack-named--the-startgame-mislabeling-finally-corrected. --
+
+    (0x1D8CB, "Midi_shutdown",
+     "sub_1D8CB(): the exact reverse of sub_1D966's install -- if "
+     "byte_C83B6 (the 'initialized' flag sub_1D966 sets) is 1: "
+     "restores the original 8259 IRQ mask, sends MPU-401's standard "
+     "reset command 0xFF via Midi_sendCommand_raw, and restores the "
+     "original interrupt vector (dword_C83B9, saved by sub_1D966 "
+     "before installing its own handler) via DOS INT 21h AH=25h. "
+     "Always clears byte_C83B6 to 0 at the end."),
+    (0x1D966, "Midi_initDevice",
+     "sub_1D966(basePort, irqLine): sets up _midiDataPort/"
+     "_midiCommandPort/_midiStatusPort from basePort, installs a DOS "
+     "interrupt vector at IRQ+8 with 8259 unmasking, and sets "
+     "byte_C83B6=1 on success. The install-side counterpart to the "
+     "new Midi_shutdown; already characterized (but not renamed) in "
+     "the Midi_sendByte pass -- finalizing the name now that its "
+     "shutdown counterpart makes the whole picture unambiguous."),
+    ("startGame?", "Sound_stopTrack",
+     "Renaming the long-flagged mislabeled tentative name for real. "
+     "Full body confirms: only proceeds if word_C8582's streaming-"
+     "active bits are set AND the given trackId (arg_0) matches the "
+     "currently-playing track (word_C8580) or is 0xFFFF ('stop "
+     "whatever's playing'). Waits for the active buffer to drain, "
+     "then dispatches a backend-specific stop based on word_C8582's "
+     "mode bits -- MIDI via the new Midi_shutdown, or one of two other "
+     "not-yet-renamed backend stop routines (sub_1E974/sub_1F910) -- "
+     "clears the backend-selector bits, resets the current-track "
+     "globals, then falls into an UNCONDITIONAL tail (reached even if "
+     "the initial guards failed) that frees 4 buffer handles plus one "
+     "more and resets every Stream-buffer bookkeeping global to its "
+     "idle state -- the exact same reset sequence already observed at "
+     "the tail of sub_15DB2 (now renamed Sound_selectTrack below). "
+     "This is 'stop the currently playing sound/music track', not "
+     "anything related to starting a new game."),
+    (0x15DB2, "Sound_selectTrack",
+     "Finalizing the name floated (but not applied) several passes "
+     "ago in the sound-track-selection-subsystem writeup, now that "
+     "Sound_stopTrack's real role is confirmed: sub_15DB2 calls "
+     "Sound_stopTrack(0xFFFF) (unconditional stop) before loading and "
+     "starting a new track -- 'change the currently playing sound/"
+     "music track'. sub_15F35 (the two-resource-variant lookup "
+     "helper) still not renamed."),
 ]
 
 

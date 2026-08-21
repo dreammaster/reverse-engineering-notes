@@ -2287,3 +2287,43 @@ conclusive proof this is real SB (or 100%-compatible) hardware
 detection, not a coincidental register shape.
 
 Applied via `apply_renames_gatemain.py`'s forty-third batch.
+
+### `Sound_stopTrack` named — the `startGame?` mislabeling finally corrected
+
+Moved to `sub_1D8CB` (5 callers, called from `sub_1D966` and from
+`startGame?`). It resolved into the **MPU-401 shutdown/uninstall
+function** — the exact reverse of `sub_1D966`'s IRQ-driven install:
+restores the original 8259 IRQ mask, sends MPU-401's standard `0xFF`
+reset command via the already-named `Midi_sendCommand_raw`, and
+restores the original DOS interrupt vector `sub_1D966` had saved
+before installing its own handler. Named **`Midi_shutdown`**. This
+also finally justifies naming **`sub_1D966`** itself —
+**`Midi_initDevice`** — already characterized (but left unrenamed) in
+the `Midi_sendByte` pass; its shutdown counterpart makes the whole
+picture unambiguous.
+
+Tracing `Midi_shutdown`'s caller `startGame?` all the way through
+finally let the long-standing flag from several passes ago (see "a
+mislabeled tentative name" in the sound-track-selection-subsystem
+section above) be corrected for real, instead of just flagged. Its
+full body confirms: it only proceeds if `word_C8582`'s streaming-
+active bits are set **and** the given `trackId` matches the currently-
+playing track or is `0xFFFF` ("stop whatever's playing"). It waits for
+the active buffer to drain, dispatches a backend-specific stop based on
+`word_C8582`'s mode bits (MIDI via the new `Midi_shutdown`, or one of
+two other not-yet-renamed backend stop routines), clears the backend-
+selector bits, resets the current-track globals, then falls into an
+**unconditional tail** (reached even when the initial guards fail)
+that frees buffer handles and resets every `Stream`-buffer bookkeeping
+global to its idle state — the *exact same* reset sequence already
+observed at the tail of `sub_15DB2`. Renamed **`Sound_stopTrack`**:
+this is "stop the currently playing sound/music track," nothing to do
+with starting a new game.
+
+That exact-match tail also finally justifies renaming `sub_15DB2` →
+**`Sound_selectTrack`** (the name floated but not applied several
+passes ago): it calls `Sound_stopTrack(0xFFFF)` — an unconditional stop
+— before loading and starting a new track. `sub_15F35` (the
+two-resource-variant lookup helper) remains unrenamed.
+
+Applied via `apply_renames_gatemain.py`'s forty-fourth batch.

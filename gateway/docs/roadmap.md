@@ -647,10 +647,17 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       DSP detection, an exact match for the documented hardware
       protocol. Full writeup in
       [overview.md](overview.md#sb_detectdsp-named--a-fourth-sound-backend-sound-blaster).
+- [x] Named `Midi_shutdown`/`Midi_initDevice` (were `sub_1D8CB`/
+      `sub_1D966`), and finally corrected the long-flagged mislabeled
+      `startGame?` → `Sound_stopTrack`, plus `sub_15DB2` →
+      `Sound_selectTrack`. Full writeup in
+      [overview.md](overview.md#sound_stoptrack-named--the-startgame-mislabeling-finally-corrected).
 - [ ] Unify all four sound-hardware backends (PC-speaker, MPU-401/
-      MIDI, OPL2/AdLib, Sound Blaster) with the sound-track-selection
-      subsystem (`sub_15DB2` et al.) into one confirmed picture of how
-      the engine picks a backend at runtime.
+      MIDI, OPL2/AdLib, Sound Blaster) with `Sound_selectTrack`/
+      `Sound_stopTrack` into one confirmed picture of how the engine
+      picks a backend at runtime. `sub_1E974`/`sub_1F910` (the other
+      two backend-specific stop routines) and `sub_15F35` (the
+      resource-variant lookup helper) still need naming.
 - [ ] Unify the whole music/sound-hardware picture: `Speaker_playTone`/
       `Speaker_playErrorBeep` (PC-speaker tones), `Midi_sendByte` +
       `sub_1D966`/`sub_1EE70`/`sub_1ECB6` (MPU-401/MIDI), and
