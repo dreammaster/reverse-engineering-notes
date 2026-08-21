@@ -863,6 +863,18 @@ RENAMES = [
      "death picture directly (repeat death) or pauses with a message "
      "first (first death) -- effectively a 'has the player died "
      "before' counter."),
+
+    # -- twenty-ninth pass: sub_1019C, a trivial far-function-pointer
+    # call trampoline. Confirmed directly by its body (8 bytes: push
+    # bp, call [far ptr arg], pop bp, retf). See
+    # docs/overview.md#invoke_callback-named. --
+
+    (0x1019C, "invoke_callback",
+     "sub_1019C(fnPtr): calls the far function pointer passed as its "
+     "only argument, with no further arguments of its own -- a "
+     "minimal indirect-call trampoline. 8 callers across unrelated "
+     "functions confirm it's generic plumbing, not tied to one "
+     "callback's specific signature beyond 'takes no arguments'."),
 ]
 
 

@@ -258,7 +258,7 @@ Logics_savedLogicHandler endp
 
 ; Attributes: bp-based frame
 
-sub_1019C       proc far                ; CODE XREF: sub_9733B+61\u2193P
+invoke_callback proc far                ; CODE XREF: sub_9733B+61\u2193P
                                         ; sub_B806D+7D\u2193P ...
 
 arg_0           = dword ptr  6
@@ -268,7 +268,7 @@ arg_0           = dword ptr  6
                 call    [bp+arg_0]
                 pop     bp
                 retf
-sub_1019C       endp
+invoke_callback endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -269597,7 +269597,7 @@ loc_9735C:                              ; CODE XREF: sub_9733B+A\u2191j
                 mov     dx, seg sg1e2c
                 push    dx
                 push    ax
-                call    sub_1019C
+                call    invoke_callback
                 jmp     short loc_97354
 ; ---------------------------------------------------------------------------
 
@@ -344990,7 +344990,7 @@ loc_B80E2:                              ; CODE XREF: sub_B806D+6D\u2191j
                 mov     dx, seg sg1e2c
                 push    dx
                 push    ax
-                call    sub_1019C
+                call    invoke_callback
                 jmp     short loc_B80FE
 ; ---------------------------------------------------------------------------
 
@@ -346164,7 +346164,7 @@ loc_B890B:                              ; CODE XREF: sub_B87AD+149\u2191j
                 mov     dx, seg sg1e2c
                 push    dx
                 push    ax
-                call    sub_1019C
+                call    invoke_callback
                 jmp     short loc_B88B0
 ; ---------------------------------------------------------------------------
 
@@ -347204,7 +347204,7 @@ loc_B9065:                              ; CODE XREF: sub_31169+3\u2191J
                 mov     dx, seg sg1e2c
                 push    dx
                 push    ax
-                call    sub_1019C
+                call    invoke_callback
                 add     sp, 4
                 mov     ax, 1
                 retf
@@ -352553,7 +352553,7 @@ loc_BB50E:                              ; CODE XREF: sub_BB498+2B7\u2193j
                 mov     dx, seg seg240
                 push    dx
                 push    ax
-                call    sub_1019C
+                call    invoke_callback
                 jmp     short loc_BB4C0
 ; ---------------------------------------------------------------------------
 
@@ -354062,7 +354062,7 @@ loc_BBFDC:                              ; CODE XREF: sub_BBEC0+1FC\u2193j
                 mov     dx, seg seg240
                 push    dx
                 push    ax
-                call    sub_1019C
+                call    invoke_callback
                 jmp     short loc_BBFAB
 ; ---------------------------------------------------------------------------
 
@@ -354741,7 +354741,7 @@ loc_BC460:                              ; CODE XREF: sub_BC328+12B\u2191j
                 mov     dx, seg seg240
                 push    dx
                 push    ax
-                call    sub_1019C
+                call    invoke_callback
                 jmp     loc_BC3E5
 ; ---------------------------------------------------------------------------
 
@@ -355424,7 +355424,7 @@ loc_BC852:                              ; CODE XREF: sub_30E03+8BB28\u2193j
                 mov     dx, seg seg240
                 push    dx
                 push    ax
-                call    sub_1019C
+                call    invoke_callback
 
 loc_BC85F:                              ; CODE XREF: sub_30E03+8BADA\u2193j
                 add     sp, 4

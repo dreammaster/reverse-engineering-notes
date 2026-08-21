@@ -1924,3 +1924,14 @@ instant-death scenarios (traps, monsters, misadventures) rather than
 the deliberate ending sequence.
 
 Applied via `apply_renames_gatemain.py`'s twenty-eighth batch.
+
+### `invoke_callback` named
+
+Moved to `sub_1019C` (8 callers), a trivial one-liner: `push bp; call
+[far ptr arg]; pop bp; retf` — calls the far function pointer passed
+as its only argument, no further arguments forwarded. A minimal
+indirect-call trampoline. 8 callers across otherwise-unrelated
+functions confirm it's generic plumbing rather than anything tied to
+one specific callback's role. Named **`invoke_callback`**.
+
+Applied via `apply_renames_gatemain.py`'s twenty-ninth batch.

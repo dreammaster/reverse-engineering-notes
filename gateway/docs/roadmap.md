@@ -563,6 +563,9 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       `sub_474F8`/`sub_4A722`, more corrupted-looking code near the
       already-flagged `sub_4A69F` cluster. Full writeup in
       [overview.md](overview.md#game_restartafterdeath-named--the-player-death-handler).
+- [x] Named `sub_1019C` (8 callers) → `invoke_callback` — a trivial
+      far-function-pointer call trampoline. Full writeup in
+      [overview.md](overview.md#invoke_callback-named).
 - [ ] Unify the whole music/sound-hardware picture: `Speaker_playTone`/
       `Speaker_playErrorBeep` (PC-speaker tones), `Midi_sendByte` +
       `sub_1D966`/`sub_1EE70`/`sub_1ECB6` (MPU-401/MIDI), and
