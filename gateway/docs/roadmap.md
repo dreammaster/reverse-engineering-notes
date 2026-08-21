@@ -679,6 +679,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       mouse driver and frees resources, confirmed via IDA's own inline
       comment plus several already-named `Mouse_*` helpers. Full
       writeup in [overview.md](overview.md#mouse_shutdown-named).
+- [x] Named `sub_2661C` (5 callers) → `load_and_draw_pic` — a one-shot
+      load/draw/free picture utility, matching the established
+      `load_and_scale_pic` convention. Full writeup in
+      [overview.md](overview.md#load_and_draw_pic-named).
 - [ ] Unify the whole music/sound-hardware picture: `Speaker_playTone`/
       `Speaker_playErrorBeep` (PC-speaker tones), `Midi_sendByte` +
       `sub_1D966`/`sub_1EE70`/`sub_1ECB6` (MPU-401/MIDI), and

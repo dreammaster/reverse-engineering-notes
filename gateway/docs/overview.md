@@ -2396,3 +2396,18 @@ including IDA's own inline comment ("Reset mouse driver") on the
 the already-named `Mouse_init`, a shared init/shutdown helper).
 
 Applied via `apply_renames_gatemain.py`'s forty-eighth batch.
+
+### `load_and_draw_pic` named
+
+Moved to `sub_2661C` (5 callers). A one-shot "load a picture frame,
+draw it, then free it" utility, confirmed directly by its body:
+`Image_load`s the given picture/frame into a temporary local `Image`
+(returning `0` immediately on failure), calls `sub_2666E(x, y, img)`
+(not renamed — its exact coordinate/offset handling wasn't fully
+unpicked, but it eventually calls a drawing/blit routine,
+`sub_2B6D4`) to draw it at the given position, frees the temporary
+`Image`, and returns `1`. Named **`load_and_draw_pic`** to match the
+established `load_and_scale_pic` convention for this small cluster of
+one-shot picture-loading entry points.
+
+Applied via `apply_renames_gatemain.py`'s forty-ninth batch.

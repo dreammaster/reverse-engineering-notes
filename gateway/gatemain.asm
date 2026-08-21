@@ -52141,7 +52141,7 @@ Image_display   endp
 
 ; Attributes: bp-based frame
 
-sub_2661C       proc far                ; CODE XREF: sub_5E247+97\u2193P
+load_and_draw_pic proc far              ; CODE XREF: sub_5E247+97\u2193P
                                         ; sub_5E247+DF\u2193P ...
 
 img             = Image ptr -8Ch
@@ -52171,7 +52171,7 @@ frameNumber     = word ptr  0Ch
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_26646:                              ; CODE XREF: sub_2661C+21\u2191j
+loc_26646:                              ; CODE XREF: load_and_draw_pic+21\u2191j
                 lea     ax, [bp+img]
                 push    ss
                 push    ax
@@ -52190,7 +52190,7 @@ loc_26646:                              ; CODE XREF: sub_2661C+21\u2191j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_2661C       endp
+load_and_draw_pic endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -52199,7 +52199,7 @@ sub_2661C       endp
 
 ; Attributes: bp-based frame
 
-sub_2666E       proc far                ; CODE XREF: sub_2661C+37\u2191p
+sub_2666E       proc far                ; CODE XREF: load_and_draw_pic+37\u2191p
 
 var_4           = dword ptr -4
 arg_0           = dword ptr  6
@@ -145754,7 +145754,7 @@ loc_5E283:                              ; CODE XREF: sub_5E247+37\u2191j
                 mov     ax, 3DE2h
                 push    ds
                 push    ax
-                call    sub_2661C
+                call    load_and_draw_pic
                 add     sp, 8
                 or      ax, ax
                 jnz     short loc_5E32E
@@ -145780,7 +145780,7 @@ loc_5E283:                              ; CODE XREF: sub_5E247+37\u2191j
                 mov     ax, 3DE2h
                 push    ds
                 push    ax
-                call    sub_2661C
+                call    load_and_draw_pic
                 add     sp, 8
 
 loc_5E32E:                              ; CODE XREF: sub_5E247+A1\u2191j
@@ -145848,7 +145848,7 @@ loc_5E383:                              ; CODE XREF: sub_5E247+137\u2191j
                 mov     ax, 3DE2h
                 push    ds
                 push    ax
-                call    sub_2661C
+                call    load_and_draw_pic
                 add     sp, 8
                 or      ax, ax
                 jnz     short loc_5E403
@@ -145874,7 +145874,7 @@ loc_5E383:                              ; CODE XREF: sub_5E247+137\u2191j
                 mov     ax, 3DE2h
                 push    ds
                 push    ax
-                call    sub_2661C
+                call    load_and_draw_pic
                 add     sp, 8
 
 loc_5E403:                              ; CODE XREF: sub_5E247+176\u2191j
@@ -145928,7 +145928,7 @@ loc_5E429:
                 mov     ax, 3DE2h
                 push    ds
                 push    ax
-                call    sub_2661C
+                call    load_and_draw_pic
                 add     sp, 8
                 or      ax, ax
                 jnz     short loc_5E491
@@ -145950,7 +145950,7 @@ loc_5E429:
                 push    ax
 
 loc_5E489:
-                call    sub_2661C
+                call    load_and_draw_pic
 
 loc_5E48E:
                 add     sp, 8
@@ -290227,7 +290227,7 @@ loc_A0781:                              ; CODE XREF: sub_A059C+1DD\u2191j
                 mov     ax, 3DE2h
                 push    ds
                 push    ax
-                call    sub_2661C
+                call    load_and_draw_pic
                 add     sp, 8
                 mov     ax, 3DE2h
                 push    ds
@@ -351122,7 +351122,7 @@ loc_BA9F1:                              ; CODE XREF: sub_BA9A5+35\u2191j
                 mov     ax, 3DE2h
                 push    ds
                 push    ax
-                call    sub_2661C
+                call    load_and_draw_pic
                 add     sp, 8
                 sub     ax, ax
                 push    ax
@@ -351704,7 +351704,7 @@ loc_BAE70:                              ; CODE XREF: sub_BAE1F+42\u2191j
                 mov     ax, 3DE2h
                 push    ds
                 push    ax
-                call    sub_2661C
+                call    load_and_draw_pic
                 add     sp, 8
                 sub     ax, ax
                 push    ax

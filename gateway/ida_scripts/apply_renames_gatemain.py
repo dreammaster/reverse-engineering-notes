@@ -1438,6 +1438,25 @@ RENAMES = [
      "set, frees mouse resources (Mouse_free) and calls sub_24A42 "
      "(not renamed, also called from the already-named Mouse_init -- "
      "a shared init/shutdown helper)."),
+
+    # -- forty-ninth pass: sub_2661C, a one-shot "load a picture frame,
+    # draw it, then free it" utility -- confirmed directly by its body
+    # (Image_load -> draw helper -> Image_Free), matching the
+    # established load_and_scale_pic naming convention for this small
+    # cluster of picture-loading entry points. See
+    # docs/overview.md#load_and_draw_pic-named. --
+
+    (0x2661C, "load_and_draw_pic",
+     "sub_2661C(x, y, picNumber, frameNumber): loads the given "
+     "picture frame into a temporary local Image (the already-named "
+     "Image_load), returning 0 immediately if that fails; otherwise "
+     "calls sub_2666E(x, y, img) (not renamed -- its own body's exact "
+     "coordinate/offset handling wasn't fully unpicked, but it "
+     "eventually calls sub_2B6D4, a drawing/blit routine) to draw it "
+     "at the given position, frees the temporary Image (Image_Free), "
+     "and returns 1. Named to match the established "
+     "load_and_scale_pic convention for this small cluster of one-"
+     "shot picture-loading entry points."),
 ]
 
 
