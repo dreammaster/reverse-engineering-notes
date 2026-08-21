@@ -56545,7 +56545,7 @@ arg_0           = word ptr  6
                 jl      short loc_285AC
 
 loc_285A3:                              ; CODE XREF: sub_28595+25\u2193j
-                call    sub_2899D
+                call    Speaker_playErrorBeep
                 sub     ax, ax
                 jmp     short loc_285FA
 ; ---------------------------------------------------------------------------
@@ -57157,8 +57157,8 @@ Clock_delayTicks endp
 
 ; Attributes: bp-based frame
 
-sub_28920       proc far                ; CODE XREF: sub_2899D+B\u2193p
-                                        ; sub_2899D:loc_289C6\u2193p ...
+Speaker_playTone proc far               ; CODE XREF: Speaker_playErrorBeep+B\u2193p
+                                        ; Speaker_playErrorBeep:loc_289C6\u2193p ...
 
 arg_0           = byte ptr  6
 arg_1           = byte ptr  7
@@ -57216,13 +57216,13 @@ loc_2894B:
                 add     sp, 4
                 pop     bp
                 retf
-sub_28920       endp
+Speaker_playTone endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2899D       proc far                ; CODE XREF: sub_28595:loc_285A3\u2191P
+Speaker_playErrorBeep proc far          ; CODE XREF: sub_28595:loc_285A3\u2191P
                                         ; sub_2983A:loc_29A04\u2193P ...
                 mov     ax, 50
                 cwd
@@ -57231,7 +57231,7 @@ sub_2899D       proc far                ; CODE XREF: sub_28595:loc_285A3\u2191P
                 mov     ax, 298
                 push    ax
                 push    cs
-                call    near ptr sub_28920
+                call    near ptr Speaker_playTone
 
 loc_289AB:
                 add     sp, 6
@@ -57267,12 +57267,12 @@ loc_289C0:
                 push    cs
 
 loc_289C6:
-                call    near ptr sub_28920
+                call    near ptr Speaker_playTone
 
 loc_289C9:
                 add     sp, 6
                 retf
-sub_2899D       endp
+Speaker_playErrorBeep endp
 
 seg044          ends
 
@@ -59304,7 +59304,7 @@ loc_299DB:                              ; CODE XREF: sub_2983A+19C\u2191j
 ; ---------------------------------------------------------------------------
 
 loc_29A04:                              ; CODE XREF: sub_2983A+100\u2191j
-                call    sub_2899D
+                call    Speaker_playErrorBeep
                 jmp     loc_298F6
 ; ---------------------------------------------------------------------------
 
@@ -60115,7 +60115,7 @@ loc_29FBA:                              ; CODE XREF: Dialog_prompt+182\u2193j
                 jz      short loc_2A035
 
 loc_29FFB:                              ; CODE XREF: Dialog_prompt+13A\u2191j
-                call    sub_2899D
+                call    Speaker_playErrorBeep
                 mov     [bp+regionIndex], 0
                 jmp     short loc_2A035
 ; ---------------------------------------------------------------------------
@@ -60179,7 +60179,7 @@ loc_2A06E:                              ; CODE XREF: Dialog_prompt+162\u2191j
 ; ---------------------------------------------------------------------------
 
 loc_2A075:                              ; CODE XREF: Dialog_prompt+1B3\u2191j
-                call    sub_2899D
+                call    Speaker_playErrorBeep
                 jmp     short loc_2A035
 ; ---------------------------------------------------------------------------
 
@@ -143592,7 +143592,7 @@ loc_5D196:                              ; CODE XREF: sub_5D18C+5\u2191j
                 call    get_input_line_length
                 or      ax, ax
                 jz      short loc_5D1A7
-                call    sub_2899D
+                call    Speaker_playErrorBeep
                 jmp     locret_5D297
 ; ---------------------------------------------------------------------------
 
@@ -144151,7 +144151,7 @@ backspace:                              ; CODE XREF: get_input_character+C0\u219
 ; ---------------------------------------------------------------------------
 
 loc_5D613:                              ; CODE XREF: get_input_character+15C\u2191j
-                call    sub_2899D
+                call    Speaker_playErrorBeep
                 jmp     short loc_5D5C1
 ; ---------------------------------------------------------------------------
 
@@ -158996,7 +158996,7 @@ loc_63EB0:                              ; CODE XREF: prompt_for_filename+963\u21
                 jnz     short loc_63EC6
                 cmp     [bp+var_14E], 0
                 jz      short loc_63EC6
-                call    sub_2899D
+                call    Speaker_playErrorBeep
                 jmp     loc_63D0C
 ; ---------------------------------------------------------------------------
 
@@ -162165,12 +162165,12 @@ loc_65940:                              ; CODE XREF: sub_65927+14\u2191j
                 push    ax              ; flag
                 call    TextWindow_allowPendingText
                 add     sp, 2
-                call    sub_2899D
-                call    sub_2899D
+                call    Speaker_playErrorBeep
+                call    Speaker_playErrorBeep
                 cmp     [bp+bufferMax], 1200h
                 jnb     short loc_65968
-                call    sub_2899D
-                call    sub_2899D
+                call    Speaker_playErrorBeep
+                call    Speaker_playErrorBeep
 
 loc_65968:                              ; CODE XREF: sub_65927+35\u2191j
                 cmp     [bp+bufferMax], 1200h
@@ -190928,7 +190928,7 @@ loc_742A7:                              ; CODE XREF: sub_74149+14A\u2191j
 ; ---------------------------------------------------------------------------
 
 loc_7431B:                              ; CODE XREF: sub_74149+17F\u2191j
-                call    sub_2899D
+                call    Speaker_playErrorBeep
 
 loc_74320:                              ; CODE XREF: sub_74149+1D0\u2191j
                 mov     [bp+regionNum], 0
@@ -190978,7 +190978,7 @@ loc_74373:                              ; CODE XREF: sub_74149+205\u2191j
                 jnz     short loc_7437E
 
 loc_74379:                              ; CODE XREF: sub_74149+1E4\u2191j
-                call    sub_2899D
+                call    Speaker_playErrorBeep
 
 loc_7437E:                              ; CODE XREF: sub_74149+1DC\u2191j
                                         ; sub_74149+1E2\u2191j ...
@@ -314150,7 +314150,7 @@ sub_AA850       proc far                ; CODE XREF: sub_AA8AE+AC\u2193p
                 push    ax
                 mov     ax, 174Eh
                 push    ax
-                call    sub_28920
+                call    Speaker_playTone
                 add     sp, 6
 
 locret_AA86E:                           ; CODE XREF: sub_AA850+A\u2191j
@@ -314172,7 +314172,7 @@ sub_AA86F       proc far                ; CODE XREF: sub_AA8AE+6B\u2193p
                 push    ax
                 mov     ax, 4A9h
                 push    ax
-                call    sub_28920
+                call    Speaker_playTone
                 add     sp, 6
                 mov     ax, 32h ; '2'
                 cwd
@@ -314186,7 +314186,7 @@ sub_AA86F       proc far                ; CODE XREF: sub_AA8AE+6B\u2193p
                 push    ax
                 mov     ax, 5D3h
                 push    ax
-                call    sub_28920
+                call    Speaker_playTone
                 add     sp, 6
 
 locret_AA8AD:                           ; CODE XREF: sub_AA86F+A\u2191j
@@ -314301,7 +314301,7 @@ loc_AA959:                              ; CODE XREF: sub_AA8AE+12D\u2193j
 
 loc_AA962:                              ; CODE XREF: sub_AA8AE+5B\u2191j
                                         ; sub_AA8AE+61\u2191j
-                call    sub_2899D
+                call    Speaker_playErrorBeep
 
 loc_AA967:                              ; CODE XREF: sub_AA8AE+6E\u2191j
                 mov     [bp+regionIndex], 0
@@ -320525,7 +320525,7 @@ loc_AD644:                              ; CODE XREF: sub_AD458+1E2\u2191j
 
 loc_AD64D:                              ; CODE XREF: sub_AD458+1F0\u2191j
                                         ; sub_AD458+2DB\u2193j
-                call    sub_2899D
+                call    Speaker_playErrorBeep
                 jmp     loc_AD6DF
 ; ---------------------------------------------------------------------------
 
@@ -327481,7 +327481,7 @@ loc_B04AA:
                 push    ax
                 mov     ax, 174Eh
                 push    ax
-                call    sub_28920
+                call    Speaker_playTone
                 add     sp, 6
 
 locret_B04BE:                           ; CODE XREF: sub_B04A0:loc_B04AA\u2191j
@@ -327503,7 +327503,7 @@ sub_B04BF       proc far                ; CODE XREF: Commnet_proc1+6B\u2193p
                 push    ax
                 mov     ax, 4A9h
                 push    ax
-                call    sub_28920
+                call    Speaker_playTone
                 add     sp, 6
                 mov     ax, 32h ; '2'
                 cwd
@@ -327517,7 +327517,7 @@ sub_B04BF       proc far                ; CODE XREF: Commnet_proc1+6B\u2193p
                 push    ax
                 mov     ax, 5D3h
                 push    ax
-                call    sub_28920
+                call    Speaker_playTone
 
 loc_B04FA:
                 add     sp, 6
@@ -327638,7 +327638,7 @@ loc_B05A9:                              ; CODE XREF: Commnet_proc1+1A6\u2193j
 
 loc_B05B3:                              ; CODE XREF: Commnet_proc1+5B\u2191j
                                         ; Commnet_proc1+61\u2191j
-                call    sub_2899D
+                call    Speaker_playErrorBeep
 
 loc_B05B8:                              ; CODE XREF: Commnet_proc1+6E\u2191j
                 mov     [bp+regionIndex], 0
@@ -338838,7 +338838,7 @@ sub_B56F1       proc far                ; CODE XREF: sub_B576E+A9\u2193p
                 push    ax
                 mov     ax, 174Eh
                 push    ax
-                call    sub_28920
+                call    Speaker_playTone
                 add     sp, 6
 
 locret_B570F:                           ; CODE XREF: sub_B56F1+A\u2191j
@@ -338859,7 +338859,7 @@ sub_B5710       proc far                ; CODE XREF: sub_B58A3+295\u2193p
                 push    ax
                 mov     ax, 4A9h
                 push    ax
-                call    sub_28920
+                call    Speaker_playTone
                 add     sp, 6
 
 locret_B572E:                           ; CODE XREF: sub_B5710+A\u2191j
@@ -338881,7 +338881,7 @@ sub_B572F       proc far                ; CODE XREF: sub_B576E+6C\u2193p
                 push    ax
                 mov     ax, 4A9h
                 push    ax
-                call    sub_28920
+                call    Speaker_playTone
                 add     sp, 6
                 mov     ax, 32h ; '2'
                 cwd
@@ -338895,7 +338895,7 @@ sub_B572F       proc far                ; CODE XREF: sub_B576E+6C\u2193p
                 push    ax
                 mov     ax, 5D3h
                 push    ax
-                call    sub_28920
+                call    Speaker_playTone
                 add     sp, 6
 
 locret_B576D:                           ; CODE XREF: sub_B572F+A\u2191j
@@ -339009,7 +339009,7 @@ loc_B5816:                              ; CODE XREF: sub_B576E+12C\u2193j
 
 loc_B581F:                              ; CODE XREF: sub_B576E+5C\u2191j
                                         ; sub_B576E+62\u2191j
-                call    sub_2899D
+                call    Speaker_playErrorBeep
 
 loc_B5824:                              ; CODE XREF: sub_B576E+6F\u2191j
                 mov     [bp+regionIndex], 0
@@ -363254,7 +363254,7 @@ sub_C010A       proc far                ; CODE XREF: sub_C0168+25F\u2193p
                 push    ax
 
 loc_C0120:
-                call    sub_28920
+                call    Speaker_playTone
                 add     sp, 6
 
 locret_C0128:                           ; CODE XREF: sub_C010A+A\u2191j
@@ -363275,7 +363275,7 @@ sub_C0129       proc far                ; CODE XREF: sub_C0168+2EE\u2193p
                 push    ax
                 mov     ax, 4A9h
                 push    ax
-                call    sub_28920
+                call    Speaker_playTone
                 add     sp, 6
                 mov     ax, 32h ; '2'
                 cwd
@@ -363291,7 +363291,7 @@ sub_C0129       proc far                ; CODE XREF: sub_C0168+2EE\u2193p
 loc_C015B:
                 mov     ax, 5D3h
                 push    ax
-                call    sub_28920
+                call    Speaker_playTone
                 add     sp, 6
 
 locret_C0167:                           ; CODE XREF: sub_C0129+A\u2191j
@@ -363523,7 +363523,7 @@ loc_C0354:                              ; CODE XREF: sub_C0168+1E2\u2191j
 
 loc_C035D:                              ; CODE XREF: sub_C0168+1F0\u2191j
                                         ; sub_C0168+2DA\u2193j
-                call    sub_2899D
+                call    Speaker_playErrorBeep
                 jmp     loc_C03EE
 ; ---------------------------------------------------------------------------
 
@@ -374077,7 +374077,7 @@ loc_C4A04:
                 jz      short loc_C4A84
 
 loc_C4A42:                              ; CODE XREF: sub_C48E4+156\u2191j
-                call    sub_2899D
+                call    Speaker_playErrorBeep
                 mov     [bp+regionIndex], 0
                 jmp     short loc_C4A84
 ; ---------------------------------------------------------------------------
@@ -374100,7 +374100,7 @@ loc_C4A4E:                              ; CODE XREF: sub_C48E4+131\u2191j
                 jz      short loc_C4ACF
 
 loc_C4A78:                              ; CODE XREF: sub_C48E4+1F5\u2193j
-                call    sub_2899D
+                call    Speaker_playErrorBeep
                 jmp     short loc_C4A84
 ; ---------------------------------------------------------------------------
 

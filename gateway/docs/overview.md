@@ -1690,3 +1690,31 @@ already-named `Screen_fadeOut` to pace fade steps, and by `sub_26C0C`
 for similar pacing.
 
 Applied via `apply_renames_gatemain.py`'s nineteenth batch.
+
+### `Speaker_playErrorBeep` named — PC-speaker tone generation confirmed
+
+Moved to `sub_2899D` (14 callers), which resolved into another clean
+win: a real, distinct **PC-speaker square-wave tone generator**,
+separate from the digitized-sample PC-speaker playback engine
+documented earlier.
+
+**`Speaker_playTone(freqLo, freqHi, durationLo, durationHi)`** (was
+`sub_28920`) is the classic sequence: enable the speaker (`in al,61h;
+or al,3; out al,61h` — the exact idiom already flagged in project
+memory), program PIT counter 2 for square-wave mode (`out 43h, 0B6h`),
+write the 16-bit frequency divisor as two sequential bytes to the
+counter's data port (`out 42h`), hold for the given duration via the
+just-named `Clock_delayTicks`, then disable the speaker again (`in
+al,61h; and al,0FCh; out al,61h`).
+
+**`Speaker_playErrorBeep`** (was `sub_2899D`) calls it twice — a short
+~4004Hz tone (divisor 298) for 50 ticks, a 50-tick gap, then the same
+tone again — a double-beep. Confirmed as specifically an **"invalid
+selection" error sound** via a real call site: `sub_28595` (itself
+reached from the already-named `get_mouse_input`) plays it and returns
+0 exactly when a clicked region index is out of range or maps to an
+empty/invalid table entry, versus its normal path (a valid click),
+which inserts the selected character into the input line and returns
+1.
+
+Applied via `apply_renames_gatemain.py`'s twentieth batch.

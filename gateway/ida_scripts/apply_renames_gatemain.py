@@ -625,6 +625,37 @@ RENAMES = [
      "already-named Screen_fadeOut to pace fade steps, and by "
      "sub_26C0C (part of the Image_Init/AnimPics-adjacent cluster, not "
      "renamed) for similar pacing."),
+
+    # -- twentieth pass: sub_2899D, confirmed as the "invalid mouse
+    # click target" error-beep UI feedback sound, and its underlying
+    # tone-generation primitive sub_28920. Confirmed via a real call
+    # site (sub_28595, itself called from the already-named
+    # get_mouse_input) that plays it specifically on an out-of-range/
+    # empty clickable-region selection. See
+    # docs/overview.md#speaker_playerrorbeep-named--pc-speaker-tone-generation-confirmed. --
+
+    (0x28920, "Speaker_playTone",
+     "sub_28920(freqLo, freqHi, durationLo, durationHi): the classic "
+     "PC-speaker square-wave tone sequence -- enable the speaker (in "
+     "al,61h; or al,3; out al,61h), program PIT counter 2 for square-"
+     "wave mode (out 43h,0B6h), write the 16-bit frequency divisor as "
+     "two sequential bytes to the counter's data port (out 42h, "
+     "freqLo/freqHi), hold for (durationLo, durationHi) ticks via the "
+     "already-named Clock_delayTicks, then disable the speaker again "
+     "(in al,61h; and al,0FCh; out al,61h). A separate, simpler "
+     "primitive from the digitized-sample PC-speaker playback engine "
+     "documented earlier -- this one generates a plain tone, no "
+     "sample data involved."),
+    (0x2899D, "Speaker_playErrorBeep",
+     "sub_2899D(): plays a short ~4004Hz tone (divisor 298) for 50 "
+     "ticks via Speaker_playTone, waits 50 ticks (Clock_delayTicks), "
+     "then plays the same tone again -- a double-beep. Confirmed as "
+     "specifically an 'invalid selection' error sound via its real "
+     "call site in sub_28595 (itself reached from the already-named "
+     "get_mouse_input): played and returns 0 when the clicked region "
+     "index is out of range or maps to an empty/invalid table entry, "
+     "vs. the normal path which inserts the selected character into "
+     "the input line and returns 1."),
 ]
 
 

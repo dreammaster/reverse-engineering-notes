@@ -509,6 +509,12 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       clock-based busy-wait delay primitive, used by `Screen_fadeOut`
       and others. Full writeup in
       [overview.md](overview.md#clock_delayticks-named--a-simple-busy-wait-delay-primitive).
+- [x] Named `sub_2899D` (14 callers) → `Speaker_playErrorBeep`, plus
+      its underlying tone-generation primitive `Speaker_playTone` (was
+      `sub_28920`) — a real PC-speaker square-wave beep, confirmed as
+      the "invalid mouse-click selection" error sound via a real call
+      site reached from `get_mouse_input`. Full writeup in
+      [overview.md](overview.md#speaker_playerrorbeep-named--pc-speaker-tone-generation-confirmed).
 - [ ] Cross-check the structs shared by name/concept with `gate.idb`
       (`VocabEntry`/`VOCAB_ENTRY`, `Str16`/`STR16`, `Point`/`POINT`,
       `Screen`/`SCREEN`, `Font`/`FONT`, `REGS`, `HandleEntry`/`HANDLE`)
