@@ -362,6 +362,24 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       **Still open**: what operation is actually being performance-tiered
       (needs `sub_18242`/`sub_18432`/`sub_18682`/`sub_186F0` traced),
       and `cmdline_param4`/`5`/`7`/`8`'s individual roles.
+- [x] Resolved the above: it's a **digitized PC-speaker sound-effect
+      playback engine** — a self-modifying `INT 8` timer ISR that
+      bit-bangs the classic speaker-enable port sequence
+      (`in al,61h`/`or al,3`/`out al,61h`), CPU-speed-tiered because
+      single-bit PC-speaker audio is notoriously sensitive to the ISR's
+      own execution time. Almost certainly the playback engine for the
+      real install's `.RS` sound-effect files (`AIR.RS`, `ALARM.RS`,
+      `BIRD.RS`, etc.) — confirmed a `"STEVE"`-magic header format
+      against 5 real files, with an exact `dataLength == fileSize - 32`
+      match in every case. New entry in
+      [file-formats.md](file-formats.md#rs--digitized-pc-speaker-sound-effect-files);
+      full writeup in
+      [overview.md](overview.md#its-a-digitized-pc-speaker-sound-effect-engine--and-the-rs-files-are-its-samples).
+      No further renames this pass — the remaining pieces are either
+      unlabeled inline code within the shared continuation (no clean
+      function to rename) or functions (`sub_18415`/`sub_18432`/
+      `sub_1861F`/`sub_1863B`) whose exact role isn't confident enough
+      yet.
 - [ ] Continue working down the re-ranked list — the rest of the ~1750
       still-unnamed functions.
 - [ ] Cross-check the structs shared by name/concept with `gate.idb`

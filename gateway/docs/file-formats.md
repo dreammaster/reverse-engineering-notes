@@ -233,6 +233,60 @@ a `ROOM.DAT`/`LOGIC.DAT`-style file that doesn't exist — none of the
 files at `c:\games\gw` match that shape either (only per-room-number
 `.PIC`/`.RGN`/`.FNT`/`.MUS`, no generic logic/script resource).
 
+## `.RS` — digitized PC-speaker sound effect files
+
+Found by tracing what the `Stream_*`/`Cpu_*Speed` cluster (see
+`overview.md`'s writeup) actually plays back: a complete PC-speaker
+digitized-audio engine — a properly bracketed CPU-speed calibration
+(`Cpu_beginSpeedTest`/`Cpu_measureSpeed`/`Cpu_endSpeedTest`) gates which
+variant of a **self-modifying timer-interrupt handler** gets installed,
+which then bit-bangs the classic PC speaker port sequence (`in al,61h;
+or al,3; out al,61h` — the textbook two-instruction "gate Timer 2 to the
+speaker and turn the speaker on" idiom) to output sampled audio one bit
+at a time. This is almost certainly the playback engine for the
+`.RS`-extension files seen throughout the real install
+(`AIR.RS`, `ALARM.RS`, `BIRD.RS`, `BOTTLES.RS`, `BUSY.RS`, `CAMERA.RS`,
+etc. — short sound effects, not the numbered/banked resources every
+other format above uses).
+
+**Header, confirmed by direct byte inspection of 5 real files** (not yet
+cross-checked against the loader code itself, since the loader lives in
+the same unlabeled shared-continuation code as the rest of this
+cluster — see below):
+
+1. `"STEVE"` (5-byte ASCII magic, byte offset 0).
+2. `0x02` (1 byte, offset 5) — a version/type byte, identical across all
+   5 files checked.
+3. `0x48` (1 byte, offset 6) — identical across all 5 files checked too.
+   Plausibly the engine's fixed PC-speaker PIT playback-rate constant:
+   the same literal value `0x48` is loaded into the 8253/8254 PIT's
+   count register (port `40h`) by a function in this cluster (traced as
+   part of the surrounding investigation, see `overview.md`) — a real
+   numeric match, though not confirmed as a causal read-this-byte
+   relationship (that function hardcodes `0x48` in its own code rather
+   than visibly reading it from a loaded file buffer).
+4. `dataLength` (`u16`, offset 7) — confirmed **exactly** against every
+   file checked: `dataLength == fileSize - 32` in all 5 cases
+   (`AIR.RS`: `17920 == 17952-32`; `BIRD.RS`: `4480 == 4512-32`;
+   `ALARM.RS`: `8800 == 8832-32`; `BOTTLES.RS`: `8320 == 8352-32`;
+   `BUSY.RS`: `8288 == 8320-32`) — i.e. a fixed 32-byte header regardless
+   of sample length, matching the same "fixed small header, then a
+   payload sized to fill it out" convention already seen in `.PIC`'s
+   `PicIndexEntry` and `.RGN`'s `RegionIndex`.
+5. 2 more bytes (offset 9-10, both `0x00` in every file checked) and
+   presumably further reserved bytes up to the 32-byte boundary — not
+   individually decoded.
+6. `dataLength` bytes of raw digitized sample data (played back one bit
+   at a time through the PC speaker by the timer ISR).
+
+**Not yet decoded**: the exact sample encoding (1-bit PC-speaker
+"RealSound"-style techniques typically encode more dynamic range than a
+literal 1-bit-per-sample stream through pulse-width/duty-cycle tricks,
+not confirmed here), bytes 9-10 and anything else in the reserved
+header space, and the loader code itself (still inside the same
+unlabeled shared continuation as the rest of the `Stream_*`/`Cpu_*Speed`
+cluster, not independently traced).
+
 ## `OBJECT.DAT` — object/room/NPC name strings
 
 Traced via `objects_load` (`gatemain.asm:162038`) and

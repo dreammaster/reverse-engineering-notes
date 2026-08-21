@@ -1081,3 +1081,58 @@ how the mode dispatch and the buffer mechanism share so much state, but
 not independently confirmed) — would need `sub_18242`/`sub_18432`/
 `sub_18682`/`sub_186F0` and the `word_182FB`/`word_1832F`/`word_1833B`-
 family locals traced to close that out.
+
+### It's a digitized PC-speaker sound-effect engine — and the `.RS` files are its samples
+
+Same session, kept reading past the calibration routine into the actual
+mode-1 continuation body. This resolves the "still open" question right
+above. Full record-level file format in
+[file-formats.md](file-formats.md#rs--digitized-pc-speaker-sound-effect-files).
+
+Right after the calibration and mode dispatch, the continuation:
+installs a **self-modifying timer-interrupt handler** (writes a source
+segment/offset and a couple of parameter bytes directly into immediate
+operands of a pre-existing `INT 8` handler template sitting inline in
+the same code — classic tight-ISR self-modifying-code technique, not
+reading its parameters from memory each interrupt for speed), computes
+a PIT divisor from a fixed base-clock constant divided by a rate value,
+and then executes the textbook two-instruction PC speaker enable
+sequence: `in al, 61h` / `or al, 3` / `out al, 61h` (gates Timer 2 to
+the speaker and turns the speaker driver on). This is a **digitized
+audio playback engine**, toggling the PC speaker one bit at a time under
+interrupt control — precisely the kind of thing 1990s DOS games used for
+speech/sound-effect playback without a sound card (the well-known
+"RealSound"-style single-bit PC-speaker DAC technique).
+
+**This is almost certainly the playback engine for the real install's
+`.RS` files** (`AIR.RS`, `ALARM.RS`, `BIRD.RS`, `BOTTLES.RS`, `BUSY.RS`,
+`CAMERA.RS`, etc. — short sound-effect samples, distinct from every
+numbered/banked resource type documented above). Checked the header of
+5 real `.RS` files directly: all start with a `"STEVE"` ASCII magic,
+followed by a version byte (`0x02`) and a second constant byte (`0x48`)
+identical across all 5 — and a 16-bit length field that matches
+**exactly** `fileSize - 32` in every single case checked, confirming a
+fixed 32-byte header. The `0x48` constant is intriguing: the *same*
+literal value gets loaded into the 8253/8254 PIT's count register by a
+function in this cluster — a real numeric match, worth remembering even
+though it wasn't confirmed as a direct "read this header byte into the
+PIT" relationship (that function hardcodes the value in its own code).
+
+**This also gives the CPU-speed-tiering its obvious motivation**:
+single-bit PC-speaker digitized audio is notoriously sensitive to the
+ISR's own execution time — the interrupt handler's code path has to
+fit within a precisely known number of cycles to keep sample timing
+correct, so a faster or slower CPU genuinely needs a different-shaped
+handler (or different timing constants) to play back the same sample
+stream correctly. The mystery from the previous section is resolved:
+CPU speed gates *which digitized-audio ISR variant* gets installed, not
+resource type or file format.
+
+**Not traced further this pass**: the self-modifying ISR's individual
+patched fields, `sub_18432`'s mode-2-specific setup (calls `sub_1861F`/
+`sub_1863B`, itself doing more PIT/port work not fully read), and the
+exact 1-bit sample encoding/decoding scheme. No further renames applied
+this pass — the remaining pieces live inside the same unlabeled shared
+continuation body as before (no clean function boundaries to rename)
+or in functions whose exact role wasn't confirmed confidently enough
+yet (`sub_18415`/`sub_18432`/`sub_1861F`/`sub_1863B`).
