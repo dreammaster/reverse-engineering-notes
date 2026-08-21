@@ -11902,7 +11902,7 @@ loc_15690:                              ; CODE XREF: sub_15674+10\u2191j
                 mov     es, dseg_114
                 cmp     es:_videoIndex, 3
                 jz      short loc_156A6
-                call    sub_30D4F
+                call    thunk_sub_5D9F3
                 mov     [bp+var_2], ax
                 jmp     short loc_156AB
 ; ---------------------------------------------------------------------------
@@ -48162,8 +48162,8 @@ set_mouse_range endp
 
 ; Attributes: bp-based frame
 
-sub_249FF       proc far                ; CODE XREF: sub_30D4F+2D2F1\u2193P
-                                        ; sub_3119B+2CEC4\u2193P ...
+sub_249FF       proc far                ; CODE XREF: thunk_sub_5D9F3+2D2F1\u2193P
+                                        ; thunk_sub_5D9F3_2+2CEC4\u2193P ...
 
 regs            = REGS ptr -0Eh
 
@@ -51656,7 +51656,7 @@ sub_26228       endp
 ; Attributes: bp-based frame
 
 Screen_resetPalette proc far            ; CODE XREF: Screen_fadeOut+FA\u2193p
-                                        ; sub_30D4F+2D2EC\u2193P
+                                        ; thunk_sub_5D9F3+2D2EC\u2193P
 
 palSize         = word ptr -4
 var_2           = word ptr -2
@@ -69612,7 +69612,7 @@ j_Events_ClearPendingKey endp ; sp-analysis failed
 
 
 thunk_sub_62AE2 proc far                ; CODE XREF: main+D8\u2191P
-                                        ; sub_3119B+2CEC9\u2193P ...
+                                        ; thunk_sub_5D9F3_2+2CEC9\u2193P ...
                 call    near ptr rtlink_thunk
                 jmp     sub_62AE2
 thunk_sub_62AE2 endp ; sp-analysis failed
@@ -69624,7 +69624,7 @@ thunk_sub_62AE2 endp ; sp-analysis failed
 
 
 thunk_sub_62AB0 proc far                ; CODE XREF: main+B9\u2191P
-                                        ; sub_30D4F+2D2C0\u2193P ...
+                                        ; thunk_sub_5D9F3+2D2C0\u2193P ...
                 call    near ptr rtlink_thunk
                 jmp     sub_62AB0
 thunk_sub_62AB0 endp ; sp-analysis failed
@@ -82301,14 +82301,14 @@ j_delay         endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_30D4F       proc far                ; CODE XREF: sub_15674+28\u2191P
+thunk_sub_5D9F3 proc far                ; CODE XREF: sub_15674+28\u2191P
                                         ; sub_74149+1F\u2193P ...
 
 ; FUNCTION CHUNK AT 1F36 SIZE 00000063 BYTES
 
                 call    near ptr rtlink_thunk
                 jmp     loc_5DFE6
-sub_30D4F       endp ; sp-analysis failed
+thunk_sub_5D9F3 endp ; sp-analysis failed
 
 ; ---------------------------------------------------------------------------
 word_30D57      dw 0
@@ -83742,14 +83742,14 @@ j_room_load     endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_3119B       proc far                ; CODE XREF: sub_74149+315\u2193P
+thunk_sub_5D9F3_2 proc far              ; CODE XREF: sub_74149+315\u2193P
                                         ; sub_75AE0+281\u2193P ...
 
 ; FUNCTION CHUNK AT 1F99 SIZE 0000002A BYTES
 
                 call    near ptr rtlink_thunk
                 jmp     loc_5E049
-sub_3119B       endp ; sp-analysis failed
+thunk_sub_5D9F3_2 endp ; sp-analysis failed
 
 ; ---------------------------------------------------------------------------
                 dw 0
@@ -142711,7 +142711,7 @@ sub_5C91C       endp
 ; Attributes: bp-based frame
 
 Events_ClearPendingKey proc far         ; CODE XREF: j_Events_ClearPendingKey+3\u2191J
-                                        ; sub_3119B+2CECF\u2193p ...
+                                        ; thunk_sub_5D9F3_2+2CECF\u2193p ...
 
 var_2           = word ptr -2
 
@@ -145371,9 +145371,9 @@ loc_5DFE1:                              ; CODE XREF: sub_5D9F3+8D\u2191j
 sub_5D9F3       endp
 
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR sub_30D4F
+; START OF FUNCTION CHUNK FOR thunk_sub_5D9F3
 
-loc_5DFE6:                              ; CODE XREF: sub_30D4F+3\u2191J
+loc_5DFE6:                              ; CODE XREF: thunk_sub_5D9F3+3\u2191J
                 mov     es, seg_D11A0
                 assume es:sg4d43
                 cmp     es:word_C8EF0, 0
@@ -145382,7 +145382,7 @@ loc_5DFE6:                              ; CODE XREF: sub_30D4F+3\u2191J
                 jmp     short locret_5E048
 ; ---------------------------------------------------------------------------
 
-loc_5DFF6:                              ; CODE XREF: sub_30D4F+2D2A1\u2191j
+loc_5DFF6:                              ; CODE XREF: thunk_sub_5D9F3+2D2A1\u2191j
                 mov     ax, 0FFFFh
                 push    ax              ; winNumber
                 call    Windows_SetImageOffsetPos
@@ -145409,13 +145409,13 @@ loc_5DFF6:                              ; CODE XREF: sub_30D4F+2D2A1\u2191j
                 call    sub_249FF
                 mov     ax, 1
 
-locret_5E048:                           ; CODE XREF: sub_30D4F+2D2A5\u2191j
+locret_5E048:                           ; CODE XREF: thunk_sub_5D9F3+2D2A5\u2191j
                 retf
-; END OF FUNCTION CHUNK FOR sub_30D4F
+; END OF FUNCTION CHUNK FOR thunk_sub_5D9F3
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR sub_3119B
+; START OF FUNCTION CHUNK FOR thunk_sub_5D9F3_2
 
-loc_5E049:                              ; CODE XREF: sub_3119B+3\u2191J
+loc_5E049:                              ; CODE XREF: thunk_sub_5D9F3_2+3\u2191J
                 call    Screen_fadeOut
                 push    flag            ; videoIndex
                 call    init_graphics
@@ -145427,7 +145427,7 @@ loc_5E049:                              ; CODE XREF: sub_3119B+3\u2191J
                 call    near ptr Events_ClearPendingKey
                 call    Screen_backupPalette
                 retf
-; END OF FUNCTION CHUNK FOR sub_3119B
+; END OF FUNCTION CHUNK FOR thunk_sub_5D9F3_2
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -190727,7 +190727,7 @@ regionNum       = word ptr -2
                 mov     es, seg_D140A
                 cmp     es:word_C8EF0, 0
                 jz      short loc_74178
-                call    sub_30D4F
+                call    thunk_sub_5D9F3
                 or      ax, ax
                 jz      short loc_74178
                 call    sub_249FF
@@ -191087,7 +191087,7 @@ loc_7442B:                              ; CODE XREF: sub_74149+244\u2191j
                 mov     es, seg_D13FA
                 cmp     es:_videoIndex, 3
                 jnz     short loc_74471
-                call    sub_3119B
+                call    thunk_sub_5D9F3_2
                 call    sub_249FF
                 jmp     short loc_744BA
 ; ---------------------------------------------------------------------------
@@ -194259,7 +194259,7 @@ loc_75AE9:
 
 loc_75AFE:                              ; CODE XREF: sub_75AE0+19\u2191j
                 call    TextWindow_showMorePrompt
-                call    sub_30D4F
+                call    thunk_sub_5D9F3
                 lea     ax, [bp-98h]
                 push    ss
                 push    ax              ; img
@@ -194489,7 +194489,7 @@ loc_75D56:                              ; CODE XREF: sub_75AE0+44\u2191j
                 mov     es, seg_D1430
                 assume es:sg4d43
                 mov     es:word_CCA90, 0
-                call    sub_3119B
+                call    thunk_sub_5D9F3_2
                 jmp     loc_75E04
 ; ---------------------------------------------------------------------------
 
@@ -279008,7 +279008,7 @@ loc_9B680:                              ; CODE XREF: sub_9B5F9+82\u2191j
                 call    TextWindow_showMorePrompt
                 call    sub_26F2A
                 call    AnimPics_freeAll
-                call    sub_30D4F
+                call    thunk_sub_5D9F3
                 mov     [bp+var_A], ax
                 mov     ax, 5
                 push    ax              ; fontNumber
@@ -279083,7 +279083,7 @@ loc_9B716:                              ; CODE XREF: sub_9B5F9+10B\u2191j
                 mov     es, seg_D16AC
                 assume es:sg4d43
                 mov     es:_roomLogicNum, 21h ; '!'
-                call    sub_3119B
+                call    thunk_sub_5D9F3_2
                 mov     ax, 1
                 push    ax              ; fontNumber
                 call    Font_LoadFont
@@ -286431,7 +286431,7 @@ loc_9E981:                              ; CODE XREF: Game_restartAfterDeath+B4\u
                 mov     es, seg_D16EA
                 assume es:sg4d43
                 mov     es:_roomLogicNum, 21h ; '!'
-                call    sub_3119B
+                call    thunk_sub_5D9F3_2
                 mov     ax, 1
                 push    ax              ; fontNumber
                 call    Font_LoadFont
@@ -296119,7 +296119,7 @@ loc_A3301:                              ; CODE XREF: method025_Start+79\u2191j
                 mov     Persisted_val14, 1
                 or      ax, ax
                 jz      short loc_A333A
-                call    sub_3119B
+                call    thunk_sub_5D9F3_2
                 mov     ax, 1
                 push    ax              ; fontNumber
                 call    Font_LoadFont
@@ -296205,7 +296205,7 @@ loc_A33E3:                              ; CODE XREF: method025_Start+154\u2191j
                 mov     [bp+var_2], ax
                 or      ax, ax
                 jz      short loc_A340B
-                call    sub_3119B
+                call    thunk_sub_5D9F3_2
 
 loc_A340B:                              ; CODE XREF: method025_Start+183\u2191j
                 mov     ax, 2C59h
@@ -296789,7 +296789,7 @@ var_2           = word ptr -2
                 cmp     es:word_C8EF0, 0
                 jz      short loc_A3792
                 call    TextWindow_showMorePrompt
-                call    sub_30D4F
+                call    thunk_sub_5D9F3
                 call    sub_249FF
                 push    cs
                 call    near ptr sub_A2110
@@ -296797,7 +296797,7 @@ var_2           = word ptr -2
                 call    near ptr sub_A227F
                 push    cs
                 call    near ptr sub_A2110
-                call    sub_3119B
+                call    thunk_sub_5D9F3_2
                 call    sub_249FF
                 jmp     short loc_A37C2
 ; ---------------------------------------------------------------------------
@@ -358628,7 +358628,7 @@ var_2           = word ptr -2
 
 loc_BDF82:                              ; CODE XREF: sub_BDF6C+11\u2191j
                 call    TextWindow_showMorePrompt
-                call    sub_30D4F
+                call    thunk_sub_5D9F3
                 call    sub_249FF
                 mov     ax, 5
                 push    ax              ; fontNumber
@@ -362740,7 +362740,7 @@ var_2           = word ptr -2
 ; ---------------------------------------------------------------------------
 
 loc_BFCD3:                              ; CODE XREF: sub_BFCA8+26\u2191j
-                call    sub_30D4F
+                call    thunk_sub_5D9F3
                 or      ax, ax
                 jnz     short loc_BFCDF
                 jmp     loc_BFE7C
@@ -362892,7 +362892,7 @@ loc_BFE5C:                              ; CODE XREF: sub_BFCA8+F2\u2191j
                 mov     es, seg_D1A12
                 assume es:sg4d43
                 mov     es:word_CCA90, 0
-                call    sub_3119B
+                call    thunk_sub_5D9F3_2
                 jmp     short loc_BFEA6
 ; ---------------------------------------------------------------------------
 
@@ -393977,7 +393977,7 @@ dseg_150        dw seg sg4d43           ; DATA XREF: sub_5D9F3+298\u2191r
                                         ; sub_5D9F3:loc_5DCC8\u2191r
 seg_D119E       dw seg sg3EDC           ; DATA XREF: sub_5D9F3+4D9\u2191r
                                         ; sub_5D9F3:loc_5DF18\u2191r ...
-seg_D11A0       dw seg sg4d43           ; DATA XREF: sub_30D4F:loc_5DFE6\u2191r
+seg_D11A0       dw seg sg4d43           ; DATA XREF: thunk_sub_5D9F3:loc_5DFE6\u2191r
 seg_D11A2       dw seg sg4d43           ; DATA XREF: sub_5E4AA+D\u2191r
 seg_D11A4       dw seg seg096           ; DATA XREF: sub_5E4AA+59\u2191r
 seg_D11A6       dw seg sg3EDC           ; DATA XREF: HelpScreen_Show+28\u2191r
@@ -397961,8 +397961,8 @@ unk_D2E3A       db    0                 ; DATA XREF: sub_13629+7D\u2191o
                 db    0
                 db    0
 ; int flag
-flag            dw 0                    ; DATA XREF: sub_30D4F+2D2D8\u2191w
-                                        ; sub_3119B+2CEB3\u2191r
+flag            dw 0                    ; DATA XREF: thunk_sub_5D9F3+2D2D8\u2191w
+                                        ; thunk_sub_5D9F3_2+2CEB3\u2191r
                 db    0
                 db    0
                 db    0

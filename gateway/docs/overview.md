@@ -2143,3 +2143,27 @@ plausibly a compass rose for movement) that these Legend "Early
 engine" games offered alongside their primary text parser.
 
 Applied via `apply_renames_gatemain.py`'s thirty-seventh batch.
+
+### `thunk_sub_5D9F3`/`thunk_sub_5D9F3_2` named — stragglers from the RTLink-thunk batch pass caught
+
+`sub_30D4F` and `sub_3119B` (7 callers each) both turned out to be
+genuine RTLink call-site thunks (`call rtlink_thunk; jmp <target>`)
+that the earlier batch rename (`apply_rtlink_thunks_gatemain.py`)
+missed. Both target the same unnamed function, `sub_5D9F3` (reached
+from `get_mouse_input`), from two different overlay segments — the
+usual one-thunk-per-caller-segment pattern already documented for this
+codebase's RTLink thunks.
+
+They were missed because IDA had merged each thunk's `jmp` target back
+in as a "FUNCTION CHUNK" of the thunk itself, which made
+`find_rtlink_thunks.py`/`rank_unnamed_functions.py`'s same-function-
+start check (`get_func_attr(target, FUNCATTR_START) != ea`) treat them
+as split-body false negatives rather than real thunks — a new, subtler
+variant of the "real function with a split body" exclusion case those
+scripts were already built to handle. Renamed by hand following the
+established `thunk_<target>` convention (with a `_2` suffix on the
+second, since IDA requires unique names) rather than re-running the
+whole batch script for two stragglers.
+
+Applied via `apply_renames_gatemain.py`'s thirty-eighth and
+thirty-ninth batches.

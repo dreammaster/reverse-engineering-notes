@@ -1119,6 +1119,31 @@ RENAMES = [
      "prompt_for_filename, Commnet_proc1 -- all part of the mouse-"
      "driven icon toolbar (e.g. a compass rose) used alongside the "
      "text parser."),
+
+    # -- thirty-eighth pass: sub_30D4F, a genuine RTLink-thunk-shaped
+    # function ("call rtlink_thunk; jmp <target>") that the earlier
+    # batch rtlink-thunk rename passed over -- IDA merged its jmp
+    # target's code back in as a "FUNCTION CHUNK" of this same
+    # function, which made the is_rtlink_thunk() same-function check in
+    # find_rtlink_thunks.py/rank_unnamed_functions.py treat it as a
+    # split-body false negative rather than a real thunk. Renamed by
+    # hand following the established thunk_<target> convention rather
+    # than re-running the whole batch script for one straggler. See
+    # docs/overview.md#thunk_sub_5d9f3-named--a-straggler-rtlink-thunk-caught. --
+
+    (0x30D4F, "thunk_sub_5D9F3",
+     "sub_30D4F: call rtlink_thunk; jmp loc_5DFE6 (inside sub_5D9F3, "
+     "itself not renamed). A genuine RTLink call-site thunk, missed by "
+     "the earlier batch pass because IDA's own function-chunk merging "
+     "made it look like a same-function tail chunk to the automated "
+     "same-function-start check."),
+    (0x3119B, "thunk_sub_5D9F3_2",
+     "sub_3119B: same shape and same target (sub_5D9F3, via "
+     "loc_5E049) as thunk_sub_5D9F3 above -- a second call-site thunk "
+     "to the same target from a different overlay segment (the usual "
+     "one-thunk-per-caller-segment pattern already documented for "
+     "this codebase's RTLink thunks). Suffixed _2 since IDA requires "
+     "unique names and thunk_sub_5D9F3 is already taken."),
 ]
 
 

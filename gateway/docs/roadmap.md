@@ -613,6 +613,11 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       confirmed via the already-named `button_strings` global. Full
       writeup in
       [overview.md](overview.md#icon_drawbutton-named--the-mouse-driven-icon-toolbar).
+- [x] Named `sub_30D4F`/`sub_3119B` → `thunk_sub_5D9F3`/
+      `thunk_sub_5D9F3_2` — two genuine RTLink thunks missed by the
+      earlier batch pass due to an IDA function-chunk-merging quirk.
+      Full writeup in
+      [overview.md](overview.md#thunk_sub_5d9f3thunk_sub_5d9f3_2-named--stragglers-from-the-rtlink-thunk-batch-pass-caught).
 - [ ] Unify the whole music/sound-hardware picture: `Speaker_playTone`/
       `Speaker_playErrorBeep` (PC-speaker tones), `Midi_sendByte` +
       `sub_1D966`/`sub_1EE70`/`sub_1ECB6` (MPU-401/MIDI), and
