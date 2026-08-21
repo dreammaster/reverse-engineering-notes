@@ -112,29 +112,55 @@ DOS/CRT-shaped ones like `RTLINK_SEG`, `HANDLE`, `timeb`,
 
 ## `gatemain.idb` — next steps
 
-Not started. 807/3288 functions already named from earlier tentative
-manual work (untrusted — re-verify). 49 structs already defined,
-including what looks like a full AGI/SCI-style adventure-engine resource
-layer: `Room`, `LogicIndexEntry`/`LogicSectionEntry`/`LogicSection2`
-through `LogicSection8`, `VocabFileRec`/`VocabEntry`/`VocabSet`/
-`StateVocab`, `Parser_Data1`/`ParserHandlerEntry`/`ParserHandlerData`/
+Started 2026-08-21. 1519/3288 functions now named (was 807 at session
+start). 49 structs already defined, including what looks like a full
+AGI/SCI-style adventure-engine resource layer: `Room`,
+`LogicIndexEntry`/`LogicSectionEntry`/`LogicSection2` through
+`LogicSection8`, `VocabFileRec`/`VocabEntry`/`VocabSet`/`StateVocab`,
+`Parser_Data1`/`ParserHandlerEntry`/`ParserHandlerData`/
 `ParserHandlerArrEntry1`/`ParserHandlerArrEntry2`, `Picture`/
 `PictureDecoder`/`PicIndexEntry`/`Image`/`Surface`, `Thing`,
 `FunctionEntry`, `SaveField`, `MethodSectionMap`, `RegionIndex`/
 `RegionEntry`, `QueueEntry`, `TempSavedEntry`.
 
-- [ ] Read `_main`'s top-level flow to confirm the main-game-engine role
-      hypothesis.
+- [x] Smoke-tested/performed the full export+save round-trip for this
+      IDB for the first time — `gatemain.asm`/`gatemain.idc` now exist
+      and are committed (15MB/394k-line `.asm`).
+- [x] Read `main`'s top-level flow, confirming the main-game-engine role
+      hypothesis and the Early-engine text-parser architecture directly:
+      `setjmp`/`longjmp`-based save/load/undo restart, `PARSER_OOPS`/
+      `PARSER_UNDO`/`PARSER_AGAIN` meta-command handling, the classic
+      "I beg your pardon?" did-not-understand response. Full writeup in
+      [overview.md](overview.md#mains-top-level-flow-confirms-the-early-engine-text-parser).
+- [x] Ran `rank_unnamed_functions.py` for the first time (2481 unnamed).
+      Top target `sub_11635` (196 callers) traced but not named yet — a
+      real `Logics_getPrehandlerMode`-driven interpreter internal,
+      deferred rather than guessed.
+- [x] **Major finding**: decoded gatemain's RTLink overlay-linker
+      call-thunk mechanism and batch-renamed all 712 genuine
+      cross-function thunks via the new
+      `ida_scripts/apply_rtlink_thunks_gatemain.py` — moved this IDB
+      from 807/3288 (25%) to **1519/3288 (46%)** functions named in one
+      pass. Also hardened `rank_unnamed_functions.py` to auto-exclude
+      this IDB's thunk boilerplate from future rankings. Full writeup in
+      [overview.md](overview.md#rtlink-overlay-architecture-decoded--and-a-major-function-count-correction).
+- [ ] Name the real interpreter internal `sub_11635` (196 callers) —
+      traced mechanically (recursive prehandler-stage walk via
+      `Logics_getPrehandlerMode`/`METHOD_SECTION_INFO`) but not
+      confidently named yet.
 - [ ] Given the struct list, prioritize understanding the **room/logic
-      section format** first — likely the single highest-value target
+      section format** next — likely the single highest-value target
       for both the ScummVM engine and documenting the shared engine for
-      Legend's other titles, analogous to how `ultima1`'s savegame/map
-      formats were flagged as the top `file-formats.md` candidates.
-- [ ] `rank_unnamed_functions.py` hasn't been run against this IDB yet.
-      2481 unnamed functions is a lot more than any single `ultima1`
-      executable (max was 353) — worth deciding a sub-scoping strategy
-      (e.g. by segment/module, or by which struct's accessors) rather
-      than one flat ranked list, before actually working through it.
+      other Early-engine Legend titles (see the engine-lineage note in
+      overview.md) — analogous to how `ultima1`'s savegame/map formats
+      were flagged as the top `file-formats.md` candidates. Not started;
+      `logic238`-style already-named functions seen throughout the
+      codebase are a likely entry point (probably one compiled logic
+      script per room/number, echoing AGI's `LOGIC.n` convention, not
+      confirmed by reading one directly yet).
+- [ ] Re-run `rank_unnamed_functions.py` now that the thunk noise is
+      filtered out, to pick the next real targets from the 1769
+      remaining unnamed functions.
 - [ ] Cross-check the structs shared by name/concept with `gate.idb`
       (`VocabEntry`/`VOCAB_ENTRY`, `Str16`/`STR16`, `Point`/`POINT`,
       `Screen`/`SCREEN`, `Font`/`FONT`, `REGS`, `HandleEntry`/`HANDLE`)
@@ -142,6 +168,9 @@ through `LogicSection8`, `VocabFileRec`/`VocabEntry`/`VocabSet`/
       between the two IDBs suggest they were defined independently in
       separate sessions, same open item `ultima1` has for its own
       cross-IDB structs.
+- [ ] Periodically re-run `apply_rtlink_thunks_gatemain.py` (idempotent)
+      as more thunk targets get real names, so `thunk_sub_XXXXX`-style
+      names stay in sync rather than going stale.
 
 ## Cross-IDB follow-ups (parking lot, revisit once both executables have real passes)
 

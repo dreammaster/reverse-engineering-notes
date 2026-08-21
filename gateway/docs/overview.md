@@ -1,11 +1,31 @@
 # Gateway (DOS) — Disassembly Overview
 
 Working notes on the reverse-engineering effort for Legend Entertainment's
-*Gateway* (1992), the first release on Legend's shared game engine. Goal:
-fully document both DOS executables well enough to write a clean C++
-reimplementation, then a ScummVM engine module — and to document the
-underlying engine generally enough to ease reversing the other Legend
-titles built on it (later goal, not started).
+*Gateway* (1992). Goal: fully document both DOS executables well enough
+to write a clean C++ reimplementation, then a ScummVM engine module —
+and to document the underlying engine generally enough to ease reversing
+the other Legend titles built on it (later goal, not started).
+
+**Engine lineage (per Paul, correcting an earlier draft of this file):**
+Legend Entertainment shipped two distinct shared engines across its
+adventure game catalog, not one:
+- **"Early" engine** — a hybrid of text-adventure parser input with
+  graphics. In release order: *Spellcasting 101* (1990, the earliest),
+  *Spellcasting 201*, *Timequest*, *Spellcasting 301*, **Gateway**,
+  *Gateway II*, and *Eric the Unready*.
+- **"Later" engine** — more graphically oriented: still a static scene
+  view, but action selection from a menu/verb list and point-and-click
+  on visible inventory/scene items, no text parser. *Companions of
+  Xanth*, *Death Gate*, *Superhero League of Hoboken*, *Shannara*.
+
+*Gateway* was chosen for this project as one of the **last** Early-engine
+titles (not the first — an earlier draft of this file had that backwards)
+released, plus personal preference for the game's setting. Worth keeping
+this lineage in mind once cross-referencing findings against any other
+Legend title: `gatemain.idb`'s parser/vocab-shaped structs
+(`VocabEntry`/`Parser_Data1`/`ParserHandlerEntry`/etc., see below) are
+consistent with an Early-engine game specifically — the Later engine's
+titles would not be expected to share that same parser layer.
 
 This file is the entry point into `docs/`. See also:
 - [roadmap.md](roadmap.md) — prioritized list of what's investigated vs.
@@ -25,7 +45,7 @@ actually reading the code).
 | IDB | Root file | Functions named | Structs | Segments |
 |---|---|---|---|---|
 | `gate.idb` | `gate_decoded.exe` (entry `0x9b0`, cs=`0x1112`) | 180 / 502 (36%) | 21 | 32 |
-| `gatemain.idb` | `gatemain_decoded.exe` (entry `0x76c`, cs=`0x2cf4`) | 807 / 3288 (25%) | 49 | 308 |
+| `gatemain.idb` | `gatemain_decoded.exe` (entry `0x76c`, cs=`0x2cf4`) | 1519 / 3288 (46%) | 49 | 308 |
 
 Counts captured 2026-08-21 via `ida_scripts/identify.py`. The `_decoded`
 suffix on both input filenames suggests the on-disk `.exe`s were unpacked/
@@ -287,3 +307,113 @@ struct itself (all 21 words/`0x2C` bytes are still unnamed
 5 renames applied via `ida_scripts/apply_renames_gate.py` (3 functions:
 `Font_setColors`, `Font_setColorsClamped`, `setDrawColor`; 2 globals:
 `max_color_index`, `current_draw_color`). 180/502 functions now named.
+
+## `gatemain.idb` — findings log
+
+Started 2026-08-21, same session, pivoting here from `gate.idb` since
+tracing the box-fill primitive further was turning into a deep
+font-rendering rabbit hole for modest confidence gain. First full
+export+save round-trip for this IDB (`gatemain.asm`/`gatemain.idc` —
+15MB/394k lines, 4.5MB `.idc`, both committed alongside this writeup).
+
+### `main`'s top-level flow confirms the Early-engine text parser
+
+Read `main` directly (`gatemain.asm:960`, `proc near` — note the
+different name/calling-convention style from `gate.idb`'s `_main proc
+far`, consistent with these being two separately-compiled programs, not
+two halves of one build). The prior tentative work already covering this
+function turned out to be extensive and internally consistent — a good
+sign, though still independently spot-checked rather than assumed:
+
+- Calls `j_gatemain_start`, then `_setjmp` against `main_jump_regs` —
+  the classic C `setjmp`/`longjmp` restart point. `restartType`
+  (the `setjmp` return value) is compared against `LOAD_UNDO`/
+  `LOAD_SAVE` enum constants (already defined) to decide what to restore
+  before entering `game_loop`, meaning save/load/undo are implemented as
+  a `longjmp` back to this exact point in `main`, not a separate code
+  path.
+- `game_loop` reads a line via `j_InputWindow_getLine`, lowercases it
+  (`_strlwr`), and special-cases three parser meta-words *before*
+  general parsing: `PARSER_OOPS` (corrects the previous misunderstood
+  word via `j_Parser_oops`), `PARSER_UNDO` (`Parser_performUndo`), and
+  `PARSER_AGAIN` (repeats the last command) — each resolved through
+  `vocab_list` (a `VocabEntry` array) and its `_flags`/`_altVocabId`
+  fields. This is a textbook Infocom-style parser meta-command layer,
+  confirming the Early-engine parser hypothesis directly (see the
+  engine-lineage note at the top of this file) — not just implied by
+  the struct list as before.
+- `nothing_entered` prints `"I beg your pardon?\n"` — the classic
+  parser did-not-understand response — when the line is empty.
+- General parsing goes through `j_Parser_parseWord`, then dispatches
+  into the room/logic system via `_roomLogicNum` and further calls not
+  yet traced past this first read.
+
+**Not traced yet**: the actual verb/object dispatch after parsing
+succeeds, the room/logic section format itself (`Room`,
+`LogicSection2`-`8`, `LogicIndexEntry`), and what `logic238`-style
+already-named functions (seen as callers throughout the codebase, e.g.
+in the RTLink-thunk survey below) actually represent structurally —
+almost certainly one compiled logic script per room/number, echoing
+AGI's `LOGIC.n` convention, but not confirmed by reading one directly
+yet.
+
+### RTLink overlay architecture, decoded — and a major function-count correction
+
+Ran `rank_unnamed_functions.py` for the first time against this IDB
+(2481 unnamed). The single highest-ranked target, `sub_11635` (196
+distinct callers), turned out to be a real interpreter-internal function
+(a recursive walk through `METHOD_SECTION_INFO`-driven "prehandler"
+stages via the already-named `Logics_getPrehandlerMode`) — traced enough
+to understand its mechanics but not confidently named this pass (left
+for a future session rather than guessing on a 196-xref function).
+
+**Far more consequential finding**: a huge fraction of the *next* tier
+of "high caller count" entries were all exactly 8 bytes and shared one
+body shape:
+```
+call near ptr rtlink_thunk
+jmp  <target, in a different overlay segment>
+```
+This is the commercial **RTLink** DOS overlay linker's call-gate
+mechanism (Polytron/Blinker-era; already hinted at by the pre-existing
+`RTLinkSeg` struct and `rtlink_check_filenames2` function seen in
+`main`) — a linker-generated trampoline emitted at every cross-overlay
+call site, not independent game logic. **This is a third distinct
+code-loading architecture in this project**, next to `ultima1`'s custom
+overlay loader and `gate.idb`'s real DOS `EXEC` handoff: gatemain uses a
+proper commercial overlay manager with per-call-site thunks rather than
+whole-program chaining.
+
+Wrote `ida_scripts/find_rtlink_thunks.py` (read-only survey) to size
+this up before touching anything. First pass found 955 candidates by
+shape alone; a second look caught a real false-positive class — some far
+`jmp`s land in a tail chunk IDA attributes back to the *same* function
+(a legitimately split/relocated function body, not a call to a different
+function) — `get_func_name` on the jump target then just returns the
+thunk's own name, which would have produced nonsense self-referencing
+renames (`sub_312DB` → `thunk_sub_312DB`) if not caught. Fixed by
+comparing the jump target's owning-function start address against the
+thunk's own address; **712 genuine cross-function thunks** remained
+after excluding 243 same-function tail chunks.
+
+Batch-renamed all 712 via the new `ida_scripts/apply_rtlink_thunks_gatemain.py`
+(a one-off structural script generating `thunk_<target-name>` names
+programmatically, not a curated list — see its docstring) — DRY_RUN
+verified first, then applied for real with full export+save. **This
+alone moved `gatemain.idb` from 807/3288 (25%) to 1519/3288 (46%)
+functions named** — the single highest-value action taken on either IDB
+so far, and it was pure bookkeeping/pattern-recognition, not case-by-case
+tracing.
+
+**Follow-on fix applied to the shared tooling**: `rank_unnamed_functions.py`
+now auto-detects an IDB's `rtlink_thunk` symbol (present in `gatemain.idb`,
+absent in `gate.idb`/all of `ultima1`'s IDBs, so this is a no-op
+everywhere else) and excludes thunk-shaped functions from its ranking, so
+future passes see genuine unranked logic first instead of overlay
+boilerplate.
+
+**Maintenance note for later sessions**: many of the 712 thunks' targets
+are themselves still-unnamed (`thunk_sub_674A7`-style), so their names
+will go stale-but-harmless once those targets get real names later.
+`apply_rtlink_thunks_gatemain.py` is idempotent and safe to re-run
+periodically to refresh them — not done on a schedule, just noted here.
