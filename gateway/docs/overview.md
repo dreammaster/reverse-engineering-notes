@@ -2666,3 +2666,16 @@ all backend-selection state. Called from the game's top-level exit
 routines.
 
 Applied via `apply_renames_gatemain.py`'s sixty-second batch.
+
+### `Screen_waitForVerticalRetrace` named
+
+Moved to `sub_22954` (4 callers). Confirmed via the already-named
+`video_status_reg` as the classic "wait for vertical retrace"
+synchronization primitive: busy-waits for the EGA/VGA vertical-retrace
+status bit to clear, then busy-waits again for it to become set — the
+standard technique to synchronize to the very start of a new retrace
+period. Called from `Screen_setEGAPalette` (avoiding palette-change
+tearing/snow) and `Mouse_Hide`/`Mouse_show` (avoiding cursor-draw
+flicker).
+
+Applied via `apply_renames_gatemain.py`'s sixty-third batch.

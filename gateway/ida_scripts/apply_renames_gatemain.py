@@ -1740,6 +1740,21 @@ RENAMES = [
      "selection state. Called from the already-named `finish` and "
      "`shutdown` top-level exit routines -- the sound subsystem's own "
      "full teardown, counterpart to Sound_selectDevice's init."),
+
+    # -- sixty-third pass: sub_22954, confirmed via the already-named
+    # video_status_reg as the classic "wait for vertical retrace"
+    # synchronization primitive, used before palette changes and mouse
+    # cursor show/hide to avoid tearing/flicker. See
+    # docs/overview.md#screen_waitforverticalretrace-named. --
+
+    (0x22954, "Screen_waitForVerticalRetrace",
+     "sub_22954(): reads the already-named video_status_reg and "
+     "busy-waits for bit 3 (the EGA/VGA vertical-retrace bit) to "
+     "clear, then busy-waits again for it to become set -- the "
+     "standard technique to synchronize to the very start of a new "
+     "vertical retrace period. Called from Screen_setEGAPalette "
+     "(avoiding palette-change tearing/snow) and Mouse_Hide/"
+     "Mouse_show (avoiding cursor-draw flicker)."),
 ]
 
 

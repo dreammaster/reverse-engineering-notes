@@ -681,6 +681,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
 - [x] Named `sub_1FE30` (4 callers) → `Sound_shutdown` — the sound
       subsystem's own full teardown, called from `finish`/`shutdown`.
       Full writeup in [overview.md](overview.md#sound_shutdown-named).
+- [x] Named `sub_22954` (4 callers) → `Screen_waitForVerticalRetrace`
+      — the classic EGA/VGA vertical-retrace sync primitive. Full
+      writeup in
+      [overview.md](overview.md#screen_waitforverticalretrace-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

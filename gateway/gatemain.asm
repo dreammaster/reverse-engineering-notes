@@ -43130,7 +43130,7 @@ sub_228A6       endp
 
 ; Attributes: bp-based frame
 
-sub_22954       proc far                ; CODE XREF: sub_2297C+1D\u2193p
+Screen_waitForVerticalRetrace proc far  ; CODE XREF: sub_2297C+1D\u2193p
                                         ; Screen_setEGAPalette+13\u2193p ...
                 push    bp
                 mov     bp, sp
@@ -43139,7 +43139,7 @@ sub_22954       proc far                ; CODE XREF: sub_2297C+1D\u2193p
                 push    si
                 mov     di, video_status_reg
 
-loc_22960:                              ; CODE XREF: sub_22954+13\u2193j
+loc_22960:                              ; CODE XREF: Screen_waitForVerticalRetrace+13\u2193j
                 mov     si, di
                 mov     dx, si
                 in      al, dx
@@ -43147,7 +43147,7 @@ loc_22960:                              ; CODE XREF: sub_22954+13\u2193j
                 jnz     short loc_22960
                 mov     di, video_status_reg
 
-loc_2296D:                              ; CODE XREF: sub_22954+20\u2193j
+loc_2296D:                              ; CODE XREF: Screen_waitForVerticalRetrace+20\u2193j
                 mov     si, di
                 mov     dx, si
                 in      al, dx
@@ -43158,7 +43158,7 @@ loc_2296D:                              ; CODE XREF: sub_22954+20\u2193j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_22954       endp
+Screen_waitForVerticalRetrace endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -43181,7 +43181,7 @@ var_2           = word ptr -2
                 cmp     _videoIndex, 3
                 jz      short loc_229BB
                 push    cs
-                call    near ptr sub_22954
+                call    near ptr Screen_waitForVerticalRetrace
                 mov     ax, video_status_reg
                 mov     [bp+var_4], ax
                 mov     dx, ax
@@ -43437,7 +43437,7 @@ palette         = dword ptr  6
 
 loc_22B0E:                              ; CODE XREF: Screen_setEGAPalette+D\u2191j
                 push    cs
-                call    near ptr sub_22954
+                call    near ptr Screen_waitForVerticalRetrace
                 cmp     word_D2162, 5
                 jz      short loc_22B1C
                 jmp     loc_22CC8
@@ -48651,7 +48651,7 @@ loc_24D45:                              ; CODE XREF: Mouse_show+8D\u2191j
                 push    cs
                 call    near ptr sub_24B13
                 add     sp, 0Ch
-                call    sub_22954
+                call    Screen_waitForVerticalRetrace
 ;
                 mov     ax, offset mouse_surface
                 push    ds
@@ -48753,7 +48753,7 @@ loc_24E69:                              ; CODE XREF: Mouse_Hide+7A\u2191j
                 mov     [bp+yp], ax
 
 loc_24E6F:                              ; CODE XREF: Mouse_Hide+7F\u2191j
-                call    sub_22954
+                call    Screen_waitForVerticalRetrace
                 les     bx, dword_D21B0
                 assume es:nothing
                 mov     ax, es:[bx]
@@ -397187,7 +397187,7 @@ text_color_attribute dw 0               ; DATA XREF: init_graphics+202\u2191w
 Screen_penColor dw 0                    ; DATA XREF: init_graphics+1FF\u2191w
                                         ; Screen_setPenColor+6\u2191r ...
 video_status_reg dw 0                   ; DATA XREF: init_graphics:loc_22713\u2191w
-                                        ; sub_22954+8\u2191r ...
+                                        ; Screen_waitForVerticalRetrace+8\u2191r ...
 word_D2162      dw 0                    ; DATA XREF: init_graphics+2F\u2191w
                                         ; init_graphics+43\u2191r ...
 unk_D2164       db    0                 ; DATA XREF: sub_229C0+8E\u2191o
