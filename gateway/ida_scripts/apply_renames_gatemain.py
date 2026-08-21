@@ -563,7 +563,7 @@ RENAMES = [
     # future pass. See
     # docs/overview.md#sound-track-selection-subsystem-sighted--get_buffer_size-confirmed-startgame-flagged-as-mislabeled. --
 
-    ("get_buff_size?", "get_buffer_size",
+    (0x1052c, "get_buffer_size",
      "get_buff_size?(): confirmed exactly as its tentative name says -- "
      "finds the largest free memory block (get_largest_free_block_2), "
      "reserves a fixed amount depending on video mode (halved if "
@@ -571,6 +571,47 @@ RENAMES = [
      "Simply dropping the uncertainty-marking '?' now that it's "
      "directly confirmed; not part of the broader rename-worthy finding "
      "below."),
+
+    # -- eighteenth pass: sub_1D896, the top confidently-traceable
+    # target after sub_26F2A (still unnamed) and sub_4A69F (skipped --
+    # landed in a corrupted-looking cluster with "sp-analysis failed"
+    # functions and bad far-call targets, a suspected new instance of
+    # the known RTLink-flattening segment-word bug, not renamed). This
+    # is the long-sought hardware-output-side entry into the .MUS/MIDI
+    # playback engine flagged in docs/overview.md's earlier "honestly
+    # murky" .MUS writeup. See
+    # docs/overview.md#midi_sendbyte-named--the-mus-engines-hardware-output-side-finally-traced. --
+
+    (0x1D896, "Midi_sendByte",
+     "sub_1D896(byte): polls the status port (_midiStatusPort, was "
+     "word_C83AC) for bit 0x40 clear (MPU-401's 'output not ready/"
+     "busy' bit) with a 0xFFFF-iteration timeout; once clear, writes "
+     "`byte` to the data port (_midiDataPort, was word_C83AA) and "
+     "returns 1, or 0 on timeout. Confirmed as MPU-401 UART-mode MIDI "
+     "output (not e.g. a printer, an earlier hypothesis) via the "
+     "surrounding cluster: sub_1D966 (not renamed) configures these "
+     "same two ports from a caller-supplied base port and installs a "
+     "DOS interrupt vector at IRQ+8 with 8259 unmasking -- classic "
+     "MPU-401 IRQ-driven setup; sub_1EE70 (not renamed) reads a 3-byte "
+     "big-endian value via sub_1ECB6 (a generic per-track "
+     "stream-offset byte reader) at offsets 2/3/4 -- the exact shape "
+     "of a Standard MIDI File tempo meta-event (FF 51 03 tt tt tt) -- "
+     "and its arithmetic involves the literal constant 500000, MIDI's "
+     "default microseconds-per-quarter-note unit, before calling this "
+     "function to actually transmit the resulting byte(s). This is the "
+     "hardware-output-side entry into the same `.MUS` background-music "
+     "engine already reached from the memory-management side via the "
+     "previously-flagged sub_1FE5C (see file-formats.md's 'honestly "
+     "murky' .MUS section) -- not fully unified into one confirmed "
+     "picture yet, but a real breakthrough on the piece that was "
+     "explicitly flagged as needing exactly this angle."),
+    (0xC83AA, "_midiDataPort",
+     "Was word_C83AA: MPU-401 data port, set from a caller-supplied "
+     "base port in sub_1D966 (not renamed), read by Midi_sendByte."),
+    (0xC83AC, "_midiStatusPort",
+     "Was word_C83AC: MPU-401 status port (base+1), set alongside "
+     "_midiDataPort in sub_1D966 (not renamed); Midi_sendByte polls "
+     "its bit 0x40 (output-not-ready/busy) before writing."),
 ]
 
 

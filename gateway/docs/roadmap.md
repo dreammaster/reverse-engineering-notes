@@ -489,6 +489,22 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       `sub_15DB2`/`sub_15F35`/`startGame?`'s exact semantics (the
       latter needs correcting, not just naming) and their two
       resource-variant IDs' meaning.
+- [ ] Sighted a suspected new RTLink-flattening-bug instance at
+      `sub_4A65C`/`sub_4A663`/`sub_4A69F` (jumbled labels,
+      `sp-analysis failed`, far calls to unresolved literal targets) —
+      not confirmed further, not renamed. Full note in
+      [overview.md](overview.md#a-suspected-new-rtlink-flattening-bug-instance-sighted-and-skipped).
+- [x] Named `sub_1D896` (15 callers) → `Midi_sendByte` — the MPU-401
+      MIDI byte-output primitive, finally tracing the `.MUS` engine's
+      hardware-output side flagged as needed several passes ago. Also
+      named `_midiDataPort`/`_midiStatusPort` (were `word_C83AA`/
+      `word_C83AC`). Full writeup in
+      [overview.md](overview.md#midi_sendbyte-named--the-mus-engines-hardware-output-side-finally-traced).
+- [ ] Unify the `.MUS`/MIDI playback engine into one confirmed writeup:
+      `sub_1D966` (MPU-401 IRQ-driven init), `sub_1EE70`/`sub_1ECB6`
+      (tempo meta-event processing), and the already-flagged
+      `sub_1FE5C` (periodic background-music-channel refresh) all need
+      naming and unifying with `Midi_sendByte`.
 - [ ] Cross-check the structs shared by name/concept with `gate.idb`
       (`VocabEntry`/`VOCAB_ENTRY`, `Str16`/`STR16`, `Point`/`POINT`,
       `Screen`/`SCREEN`, `Font`/`FONT`, `REGS`, `HandleEntry`/`HANDLE`)

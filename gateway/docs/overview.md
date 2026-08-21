@@ -836,6 +836,11 @@ full confidence in one pass. Consistent with the project's discipline
 throughout — better to document the real uncertainty than to backfill a
 clean-looking but unverified record layout.
 
+**Update**: the recommended next angle — hardware-output side — was
+picked up several passes later and paid off; see
+[`Midi_sendByte` named](#midi_sendbyte-named--the-mus-engines-hardware-output-side-finally-traced)
+below.
+
 ### Prehandler-chain primitives named
 
 Same session, per Paul's direction to re-run `rank_unnamed_functions.py`
@@ -1610,3 +1615,62 @@ enough for a confident name.
 
 Applied via `apply_renames_gatemain.py`'s seventeenth batch (one
 rename: `get_buffer_size`).
+
+### A suspected new RTLink-flattening-bug instance sighted, and skipped
+
+Re-ran `rank_unnamed_functions.py` again. `sub_26F2A` still tops the
+list (still left unnamed). Next was `sub_4A69F` (15 callers) — but its
+disassembly is unreliable: it and its immediate neighbors `sub_4A65C`/
+`sub_4A663` all show `; sp-analysis failed`, share jumbled/overlapping
+labels, and contain far calls to suspicious literal targets (`call far
+ptr 0:1A4h`, `call far ptr 2E3h:114h`) that don't resolve to any real
+symbol — exactly the shape the project's known RTLink-flattening-tool
+bug would produce (an intra-segment far call whose segment word didn't
+get patched, leaving the offset reliable but the segment wrong/blank).
+Not confirmed further and not renamed — the function boundaries
+themselves are suspect here, so any name would rest on unreliable
+disassembly. Flagged for whoever eventually audits the flattening
+tool's output more broadly; moved on to a different target.
+
+### `Midi_sendByte` named — the `.MUS` engine's hardware-output side, finally traced
+
+Moved down to `sub_1D896` (15 callers), which resolved cleanly into a
+genuine breakthrough. This is the exact angle the earlier `.MUS`
+investigation explicitly flagged as needed next ("starting from the
+sound-hardware-output side rather than the memory-management side" —
+see the "one clean win, one honestly murky one" section above).
+
+`Midi_sendByte(byte)`: polls the status port (**`_midiStatusPort`**,
+was `word_C83AC`) for bit `0x40` clear — MPU-401's "output not ready/
+busy" bit — with a `0xFFFF`-iteration timeout; once clear, writes
+`byte` to the data port (**`_midiDataPort`**, was `word_C83AA`) and
+returns 1, or 0 on timeout.
+
+Confirmed as genuine MPU-401 UART-mode MIDI hardware output (ruling out
+an earlier passing hypothesis of a printer, which the port-polling
+shape alone couldn't distinguish) via the surrounding cluster:
+
+- **`sub_1D966`** (not renamed) configures `_midiDataPort`/
+  `_midiStatusPort` from a caller-supplied base port, then installs a
+  real DOS interrupt vector at `IRQ+8` and unmasks it in the 8259 PIC —
+  textbook MPU-401 IRQ-driven setup.
+- **`sub_1EE70`** (not renamed) reads a 3-byte big-endian value via
+  **`sub_1ECB6`** (a generic "read byte at offset N from track #X's
+  current stream position" accessor) at offsets 2/3/4 — exactly the
+  shape of a Standard MIDI File tempo meta-event (`FF 51 03 tt tt
+  tt`) — and its subsequent 32-bit arithmetic involves the literal
+  constant `500000`, which is MIDI's standard default
+  microseconds-per-quarter-note unit, before calling `Midi_sendByte` to
+  actually transmit the result.
+
+Not fully unified into one complete confirmed picture yet (the exact
+tempo-to-port-byte-sequence formula in `sub_1EE70` wasn't nailed down
+precisely, and `sub_1D966`/`sub_1ECB6`/`sub_1EE70` weren't renamed this
+pass), but this is real, concrete progress on the piece the earlier
+`.MUS` writeup explicitly called murky — worth a dedicated follow-up
+pass to finish unifying with `sub_1FE5C` (the already-flagged periodic
+background-music-channel refresh routine) into one confirmed `.MUS`/
+MIDI playback engine writeup.
+
+Applied via `apply_renames_gatemain.py`'s eighteenth batch (three
+renames: `Midi_sendByte`, `_midiDataPort`, `_midiStatusPort`).
