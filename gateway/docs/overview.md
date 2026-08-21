@@ -145,3 +145,80 @@ a smoke-test export+save before the first real rename pass, same as
 - No `docs/file-formats.md` yet — worth starting once the room/logic/
   picture/vocab resource formats implied by `gatemain.idb`'s struct list
   are actually traced.
+
+## `gate.idb` — findings log
+
+Started 2026-08-21, per Paul's direction to start with the smaller
+executable first. First full export+save round-trip for this IDB
+(`gate.asm`/`gate.idc`, committed alongside this writeup).
+
+### `_main` confirms the title/intro role, and the gate→gatemain handoff is real DOS EXEC
+
+Read `_main`'s full body directly (`gate.asm:97`). Flow: `memory_init` →
+`set_file_prefix("GATE")` → `check_graphic_params`/`Font_init`/
+`unk1_init` → `check_sound_params` → (if sound check fails) print
+copyright and exit early, else → `show_intro` → branch on
+`current_section` to run additional per-section setup (`sub_1F2F4`,
+conditionally `init_graphics` + `sub_1F284` when
+`current_section==3`) → draw/message calls → **hand off to
+`GATEMAIN.EXE`**.
+
+**This confirms Paul's working hypothesis that `gate.idb` is the title-
+screen/cutscene executable.** `set_file_prefix("GATE")` and the whole
+`show_intro`/`current_section` dispatch (already-named going in, and
+genuinely used throughout a large cluster of functions in the
+`0x1F000`-`0x23000` range per its ~30 xrefs) are consistent with a
+scripted intro/cutscene sequencer, not gameplay.
+
+**The gate→gatemain handoff is a real DOS `EXEC` call — architecturally
+different from `ultima1`'s custom overlay loader.** `_main` builds 8
+numeric command-line arguments via `_itoa` (`xmouse`, `videoMode`,
+`soundMode`, plus 5 more globals — `word_2A256`/`58`/`5A`/`5C`/`5E`,
+roles not yet identified) and calls:
+```
+_execl("GATEMAIN.EXE", "GATEMAIN.EXE", arg1..arg8, NULL)
+```
+via the genuine Microsoft C runtime `_execl`/`_execve`/`__doexec` CRT
+cluster (confirmed present in `gate.asm`, not a hand-rolled loader like
+`ultima1`'s `chainToExecutable`/`execProgram`). The code immediately
+following the `call _execl` (restore video mode, print `"GATEMAIN.EXE
+could not be started..."`, return 1) is a **failure-only path**: real
+DOS `EXEC` semantics for the C runtime's `exec*()` family mean the
+calling process is torn down when the child successfully starts, so
+this fallback is only reached if `EXEC` itself fails to launch the
+child — it is not a "gatemain returned control to gate" path. Worth
+double-checking this assumption once `gatemain.idb`'s own `_main` is
+read, but it matches the standard DOS CRT `exec()` emulation model.
+
+**Implication for the ScummVM reimplementation**: unlike `ultima1` (5
+executables stayed resident in one continuously-running process, jumping
+between each other via a custom loader — a real design decision to
+avoid DOS's `EXEC` memory/reentrancy costs), Gateway's 2 executables use
+plain DOS `EXEC`, meaning `gate.exe` and `gatemain.exe` really are
+separate OS-level processes/loads with no implied shared-memory state
+across the handoff — only whatever's passed via the 8 command-line
+arguments and/or a file on disk. Modeling this in ScummVM should be
+simpler than `ultima1`'s case (no in-engine "mode switch" trick needed,
+just launching into `gatemain`'s engine state fresh, informed by the 8
+passed arguments) — but worth confirming no additional state is shared
+via a file (savegame-like) the way `ultima1` used `inuse.u1`.
+
+**Open follow-ups, not resolved this pass**:
+- The 5 unidentified globals passed as `arg4`-`arg8` to `GATEMAIN.EXE`
+  (`word_2A256`/`58`/`5A`/`5C`/`5E`) — likely more hardware/config state
+  (joystick? additional video/sound detail?) alongside the confirmed
+  `xmouse`/`videoMode`/`soundMode`.
+- `current_section`'s exact value meanings (0/1/2/3 seen so far) and what
+  each actually shows — `show_intro`'s cluster is large (dozens of
+  functions in the `0x1F000`-`0x23000` range) and wasn't traced function-
+  by-function this pass, just confirmed as real and load-bearing via its
+  ~30 `current_section` xrefs.
+- `sub_1BED2` (called from `_main`'s failure path to print the
+  "could not be started" message, and also from `Font_writeString`) is
+  **not** a simple `fputs`-equivalent — it calls `get_message` (resolving
+  a message ID to a string, same mechanism named in `gate.idb`'s
+  `MESSAGE`/`get_message` already-named cluster) and issues a raw
+  `_int86` `INT 10h` call reading BIOS cursor position before drawing,
+  suggesting a real "draw message text at the current cursor position"
+  primitive, not a trivial wrapper. Worth a real trace before naming it
+  confidently — flagged rather than guessed.

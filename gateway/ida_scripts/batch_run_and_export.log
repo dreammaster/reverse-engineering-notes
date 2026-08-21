@@ -355,3 +355,83 @@ structs (49): RTLinkSeg, REGS, HandleEntry, Font, Screen, VideoMode, VideoMethod
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\legend\gateway\gate.idb
+[*] ARGV = ['C:\\dev\\legend\\gateway\\ida_scripts\\batch_run_and_export.py', 'identify.py']
+[*] reading identify.py
+[*] executing identify.py
+[*] captured stdout from target script:
+----- begin target script output -----
+root filename : gate_decoded.exe
+input file    : D:\Games\gateway\gate_decoded.exe
+entry point   : 0x9b0 (cs=0x1112)
+input md5     : 2ccf5d2d553c90f94287e81ea2d525bd
+
+segments:
+  sg0138       0x010000-0x01112c  (4396 bytes)
+  seg001       0x01112c-0x015aa0  (18804 bytes)
+  seg002       0x015aa0-0x015adc  (60 bytes)
+  seg003       0x015adc-0x015bac  (208 bytes)
+  seg004       0x015bac-0x015cfd  (337 bytes)
+  seg005       0x015cfd-0x0167b1  (2740 bytes)
+  seg006       0x0167b1-0x0169b8  (519 bytes)
+  seg007       0x0169b8-0x016ade  (294 bytes)
+  seg008       0x016ade-0x016d6a  (652 bytes)
+  seg009       0x016d6a-0x0170ce  (868 bytes)
+  seg010       0x0170ce-0x017c60  (2962 bytes)
+  seg011       0x017c60-0x018a37  (3543 bytes)
+  seg012       0x018a37-0x018c19  (482 bytes)
+  seg013       0x018c19-0x019731  (2840 bytes)
+  seg014       0x019731-0x01a8c2  (4497 bytes)
+  seg015       0x01a8c2-0x01aa6c  (426 bytes)
+  seg016       0x01aa6c-0x01ab1a  (174 bytes)
+  seg017       0x01ab1a-0x01acb6  (412 bytes)
+  sg0C03       0x01acb6-0x01b5d9  (2339 bytes)
+  seg019       0x01b5d9-0x01c72d  (4436 bytes)
+  seg020       0x01c72d-0x01c740  (19 bytes)
+  seg021       0x01c740-0x01cadd  (925 bytes)
+  seg022       0x01cadd-0x01d890  (3507 bytes)
+  seg023       0x01d890-0x01e311  (2689 bytes)
+  seg024       0x01e311-0x01e553  (578 bytes)
+  sg0F8D       0x01e553-0x02013b  (7144 bytes)
+  seg026       0x02013b-0x0215aa  (5231 bytes)
+  seg027       0x0215aa-0x0217ed  (579 bytes)
+  seg028       0x0217ed-0x021979  (396 bytes)
+  seg029       0x021979-0x023492  (6937 bytes)
+  seg030       0x023492-0x0235cd  (315 bytes)
+  seg031       0x0235cd-0x0236a4  (215 bytes)
+  seg032       0x0236a4-0x0238ba  (534 bytes)
+  seg033       0x0238ba-0x0239d0  (278 bytes)
+  seg034       0x0239d0-0x023ac8  (248 bytes)
+  seg035       0x023ac8-0x023cba  (498 bytes)
+  seg036       0x023cba-0x024201  (1351 bytes)
+  seg037       0x024201-0x024507  (774 bytes)
+  seg038       0x024507-0x024680  (377 bytes)
+  seg039       0x024680-0x024b66  (1254 bytes)
+  seg040       0x024b66-0x024e26  (704 bytes)
+  seg041       0x024e26-0x024f6c  (326 bytes)
+  seg042       0x024f6c-0x025167  (507 bytes)
+  seg043       0x025167-0x025611  (1194 bytes)
+  seg044       0x025611-0x025d79  (1896 bytes)
+  seg045       0x025d79-0x025ee0  (359 bytes)
+  seg046       0x025ee0-0x0260c0  (480 bytes)
+  seg047       0x0260c0-0x0291e0  (12576 bytes)
+  seg048       0x0291e0-0x029b30  (2384 bytes)
+  seg049       0x029b30-0x029bd0  (160 bytes)
+  dseg         0x029bd0-0x031370  (30624 bytes)
+  seg051       0x031370-0x031770  (1024 bytes)
+
+functions: 502 total, 177 named, 325 still sub_XXXXX
+
+structs (21): REGS, RGB8, WORDREGS, BYTEREGS, timeb, VIDEO_MODE, RTLINK_SEG, HANDLE, DIRECTION_DATA, FONT, SCREEN, MESSAGE, VOCAB_FILE_REC, VOCAB_ENTRY, STR_HEADER_ENTRY, STR_ENTRY6, STR16, POINT, PIC_HEADER, PIC_DATA2, PIC_DATA
+----- end target script output -----
+[*] finished executing identify.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\legend\gateway\gate.asm
+[*] gen_file(OFILE_ASM) returned 77943
+[*] exporting IDC to C:\dev\legend\gateway\gate.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\legend\gateway\gate.idb
+[*] done, exiting 0

@@ -52,32 +52,48 @@ no smaller executable's findings to transfer in first).
 
 ## `gate.idb` — next steps
 
-Not started. 177/502 functions already named from earlier tentative
-manual work (untrusted — re-verify, don't assume). 21 structs already
-defined, likely including shared engine plumbing (`REGS`, `VIDEO_MODE`,
-`FONT`, `SCREEN`, `PIC_HEADER`/`PIC_DATA2`/`PIC_DATA`, `MESSAGE`,
-`VOCAB_FILE_REC`, `VOCAB_ENTRY`, `STR16`, `POINT`, plus DOS/CRT-shaped
-ones like `RTLINK_SEG`, `HANDLE`, `timeb`, `WORDREGS`/`BYTEREGS`).
+Started 2026-08-21. 177/502 functions already named from earlier
+tentative manual work (untrusted — re-verify, don't assume). 21 structs
+already defined, likely including shared engine plumbing (`REGS`,
+`VIDEO_MODE`, `FONT`, `SCREEN`, `PIC_HEADER`/`PIC_DATA2`/`PIC_DATA`,
+`MESSAGE`, `VOCAB_FILE_REC`, `VOCAB_ENTRY`, `STR16`, `POINT`, plus
+DOS/CRT-shaped ones like `RTLINK_SEG`, `HANDLE`, `timeb`,
+`WORDREGS`/`BYTEREGS`).
 
-- [ ] Read `_main`'s top-level flow to confirm the title-screen/cutscene
-      role hypothesis (same first move as `ultima1`'s `ULTIMA.EXE` pass).
-- [ ] Check for a CRT/engine layer shared with `gatemain.idb` (same
-      `_fopen`/`_nmalloc`/DOS-primitive cluster pattern found identical
-      across all five `ultima1` executables) — if present, transferring
-      already-known names from whichever executable gets analyzed first
-      is the fastest early win, same as every `ultima1` pass after the
-      first one.
-- [ ] Check whether `gate.idb` chains to `gatemain.idb` (or vice versa)
-      via a custom overlay loader, matching `ultima1`'s
-      `writeInUseAndExit`/`chainToExecutable`/`execProgram` mechanism —
-      important for how the ScummVM engine module should model switching
-      between the two, if it needs to at all (`ultima1`'s `.EXE`s were
-      launched as an actual DOS command-tail chain; Gateway's `_decoded`
-      executables may instead reflect a single combined runtime split
-      only for IDA's convenience — not yet known).
+- [x] Smoke-tested the full export+save round-trip against this IDB —
+      `gate.asm`/`gate.idc` now exist and are committed.
+- [x] Read `_main`'s top-level flow, confirming the title-screen/
+      cutscene role hypothesis: `set_file_prefix("GATE")`, `show_intro`,
+      a `current_section`-keyed dispatch, then handoff to `GATEMAIN.EXE`.
+      Full writeup in
+      [overview.md](overview.md#_main-confirms-the-titleintro-role-and-the-gategatemain-handoff-is-real-dos-exec).
+- [x] Confirmed the gate→gatemain handoff mechanism: **real DOS `EXEC`**
+      (`_execl`/`_execve`/`__doexec`, genuine MSC CRT), not a custom
+      overlay loader like every `ultima1` executable used — a real
+      architectural difference between the two projects, not just a
+      naming-convention difference. Simplifies the ScummVM
+      reimplementation's job (no in-engine "mode switch" needed for this
+      handoff). Full writeup in overview.md.
+- [ ] Identify the 5 unknown globals (`word_2A256`/`58`/`5A`/`5C`/`5E`)
+      passed as `argv[4]`-`argv[8]` to `GATEMAIN.EXE` alongside the
+      confirmed `xmouse`/`videoMode`/`soundMode`.
+- [ ] Trace `current_section`'s value meanings (0/1/2/3 confirmed as
+      real/load-bearing via ~30 xrefs, semantics not yet decoded) and the
+      `show_intro` cluster's functions (`0x1F000`-`0x23000` range,
+      dozens of functions, not traced function-by-function yet).
+- [ ] Trace `sub_1BED2` (called from `_main`'s EXEC-failure path and from
+      `Font_writeString`) — confirmed **not** a simple print wrapper (it
+      resolves a message ID via `get_message` and reads BIOS cursor
+      position via `_int86`/`INT 10h`), but its exact role wasn't fully
+      pinned down this pass.
+- [ ] Still need a CRT/engine-layer cross-check against `gatemain.idb`
+      (same `_fopen`/`_nmalloc`/DOS-primitive cluster pattern `ultima1`
+      found identical across all five of its executables) — not done
+      yet; likely the fastest next win once `gatemain.idb` gets its own
+      pass, transferring names in whichever direction is missing them.
 - [ ] `rank_unnamed_functions.py` hasn't been run against this IDB yet —
-      do that before picking targets, same approach as `ultima1`'s
-      `OUT.EXE` first pass.
+      do that before picking further targets, same approach as
+      `ultima1`'s `OUT.EXE` first pass.
 
 ## `gatemain.idb` — next steps
 
