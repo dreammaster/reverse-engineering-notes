@@ -6503,10 +6503,10 @@ loc_12FDE:                              ; CODE XREF: Queue_processTurn+11\u2191j
 Queue_processTurn endp
 
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR sub_130D6
+; START OF FUNCTION CHUNK FOR Queue_tickCountdowns
 
-loc_12FEC:                              ; CODE XREF: sub_130D6-24\u2193j
-                                        ; sub_130D6-1B\u2193j
+loc_12FEC:                              ; CODE XREF: Queue_tickCountdowns-24\u2193j
+                                        ; Queue_tickCountdowns-1B\u2193j
                 mov     bx, word_CB7F6
                 shl     bx, 1
                 shl     bx, 1
@@ -6516,19 +6516,19 @@ loc_12FEC:                              ; CODE XREF: sub_130D6-24\u2193j
                 cmp     word ptr [bp-6], 0
                 jg      short loc_13019
 
-loc_13006:                              ; CODE XREF: sub_130D6+17\u2193j
+loc_13006:                              ; CODE XREF: Queue_tickCountdowns+17\u2193j
                 dec     word_CB7F6
                 jmp     short loc_13019
 ; ---------------------------------------------------------------------------
 
-loc_1300C:                              ; CODE XREF: sub_130D6-9B\u2193j
+loc_1300C:                              ; CODE XREF: Queue_tickCountdowns-9B\u2193j
                 mov     bx, word_CB7F6
                 shl     bx, 1
                 shl     bx, 1
                 dec     word ptr es:[bx-73FAh]
 
-loc_13019:                              ; CODE XREF: sub_130D6-D8\u2191j
-                                        ; sub_130D6-D2\u2191j ...
+loc_13019:                              ; CODE XREF: Queue_tickCountdowns-D8\u2191j
+                                        ; Queue_tickCountdowns-D2\u2191j ...
                 inc     word_CB7F6
 
 loc_1301D:                              ; CODE XREF: Queue_processTurn:loc_1316D\u2193j
@@ -6538,7 +6538,7 @@ loc_1301D:                              ; CODE XREF: Queue_processTurn:loc_1316D
                 jmp     loc_130F0
 ; ---------------------------------------------------------------------------
 
-loc_13029:                              ; CODE XREF: sub_130D6-B2\u2191j
+loc_13029:                              ; CODE XREF: Queue_tickCountdowns-B2\u2191j
                 mov     si, word_CB7F6
                 mov     cl, 2
                 shl     si, cl
@@ -6557,7 +6557,7 @@ loc_13029:                              ; CODE XREF: sub_130D6-B2\u2191j
                 jz      short loc_13061
                 inc     word ptr [bp-8]
 
-loc_13061:                              ; CODE XREF: sub_130D6-7A\u2191j
+loc_13061:                              ; CODE XREF: Queue_tickCountdowns-7A\u2191j
                 mov     es, dseg_88
                 assume es:sg4d43
                 cmp     es:word_CB808, 1
@@ -6568,11 +6568,11 @@ loc_13061:                              ; CODE XREF: sub_130D6-7A\u2191j
                 mov     ax, es:word_CB808
                 mov     [bp+8], ax
 
-loc_1307E:                              ; CODE XREF: sub_130D6-61\u2191j
+loc_1307E:                              ; CODE XREF: Queue_tickCountdowns-61\u2191j
                 mov     es:word_CB808, 1
                 mov     word ptr [bp+6], 0
 
-loc_1308A:                              ; CODE XREF: sub_130D6-6B\u2191j
+loc_1308A:                              ; CODE XREF: Queue_tickCountdowns-6B\u2191j
                 cmp     word_CB7F6, 0
                 jl      short loc_13019
                 mov     si, word_CB7F6
@@ -6586,19 +6586,19 @@ loc_1308A:                              ; CODE XREF: sub_130D6-6B\u2191j
                 jmp     loc_13019
 ; ---------------------------------------------------------------------------
 
-loc_130AA:                              ; CODE XREF: sub_130D6-31\u2191j
+loc_130AA:                              ; CODE XREF: Queue_tickCountdowns-31\u2191j
                 cmp     word ptr es:[si-73FAh], 0
                 jz      short loc_130B5
                 jmp     loc_12FEC
 ; ---------------------------------------------------------------------------
 
-loc_130B5:                              ; CODE XREF: sub_130D6-26\u2191j
+loc_130B5:                              ; CODE XREF: Queue_tickCountdowns-26\u2191j
                 cmp     word ptr [bp-6], 0
                 jz      short loc_130BE
                 jmp     loc_12FEC
 ; ---------------------------------------------------------------------------
 
-loc_130BE:                              ; CODE XREF: sub_130D6-1D\u2191j
+loc_130BE:                              ; CODE XREF: Queue_tickCountdowns-1D\u2191j
                 mov     ax, _queueCount
                 sub     ax, word_CB7F6
                 dec     ax
@@ -6609,12 +6609,12 @@ loc_130BE:                              ; CODE XREF: sub_130D6-1D\u2191j
                 shl     ax, 1
                 push    ax
                 lea     ax, [si-73F8h]
-; END OF FUNCTION CHUNK FOR sub_130D6
+; END OF FUNCTION CHUNK FOR Queue_tickCountdowns
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_130D6       proc near               ; CODE XREF: seg102:01A0\u2193P
+Queue_tickCountdowns proc near          ; CODE XREF: seg102:01A0\u2193P
                                         ; sub_4A95A+E8\u2193P ...
 
 ; FUNCTION CHUNK AT 01BC SIZE 000000EA BYTES
@@ -6628,12 +6628,12 @@ sub_130D6       proc near               ; CODE XREF: seg102:01A0\u2193P
                 call    _memmove
                 add     sp, 0Ah
 
-loc_130E9:                              ; CODE XREF: sub_130D6-B\u2191j
+loc_130E9:                              ; CODE XREF: Queue_tickCountdowns-B\u2191j
                 dec     _queueCount
                 jmp     loc_13006
 ; ---------------------------------------------------------------------------
 
-loc_130F0:                              ; CODE XREF: sub_130D6-B0\u2191j
+loc_130F0:                              ; CODE XREF: Queue_tickCountdowns-B0\u2191j
                 mov     ax, 1
                 push    ax
                 call    sub_135EC
@@ -6651,7 +6651,7 @@ loc_130FC:
                 cmp     word ptr [bp-0Ah], 0
                 jz      short loc_1313F
 
-loc_13117:                              ; CODE XREF: sub_130D6+39\u2191j
+loc_13117:                              ; CODE XREF: Queue_tickCountdowns+39\u2191j
                                         ; seg102:01C2\u2193P ...
                 mov     es, dseg_89
                 assume es:sg4d43
@@ -6668,10 +6668,10 @@ loc_13117:                              ; CODE XREF: sub_130D6+39\u2191j
                 or      ax, ax
                 jz      short loc_13170
 
-loc_1313F:                              ; CODE XREF: sub_130D6+2A\u2191j
-                                        ; sub_130D6+33\u2191j ...
+loc_1313F:                              ; CODE XREF: Queue_tickCountdowns+2A\u2191j
+                                        ; Queue_tickCountdowns+33\u2191j ...
                 inc     word ptr [bp-0Ch]
-sub_130D6       endp ; sp-analysis failed
+Queue_tickCountdowns endp ; sp-analysis failed
 
 ; START OF FUNCTION CHUNK FOR Queue_processTurn
 
@@ -6701,8 +6701,8 @@ loc_1316D:
                 jmp     loc_1301D
 ; ---------------------------------------------------------------------------
 
-loc_13170:                              ; CODE XREF: sub_130D6+4B\u2191j
-                                        ; sub_130D6+67\u2191j ...
+loc_13170:                              ; CODE XREF: Queue_tickCountdowns+4B\u2191j
+                                        ; Queue_tickCountdowns+67\u2191j ...
                 mov     ax, [bp+var_2]
                 mov     word_CB7F6, ax
 
@@ -7417,7 +7417,7 @@ sub_1338B       endp
 
 ; Attributes: bp-based frame
 
-sub_135EC       proc far                ; CODE XREF: sub_130D6+1E\u2191P
+sub_135EC       proc far                ; CODE XREF: Queue_tickCountdowns+1E\u2191P
 
 arg_0           = word ptr  6
 
@@ -12607,7 +12607,7 @@ seg010          segment byte public 'CODE' use16
 
 ; Attributes: bp-based frame
 
-sub_15BAE       proc far                ; CODE XREF: sub_130D6-84\u2191P
+sub_15BAE       proc far                ; CODE XREF: Queue_tickCountdowns-84\u2191P
 
 arg_0           = word ptr  6
 
@@ -69741,7 +69741,7 @@ sub_2E2CF       endp ; sp-analysis failed
 
 
 ; int __cdecl __far j_continue_waiting(const char *waitMsg)
-j_continue_waiting proc far             ; CODE XREF: sub_130D6+5A\u2191P
+j_continue_waiting proc far             ; CODE XREF: Queue_tickCountdowns+5A\u2191P
                 call    near ptr rtlink_thunk
                 jmp     continue_waiting
 j_continue_waiting endp ; sp-analysis failed
@@ -85804,7 +85804,7 @@ aErrorQueueOver db '[ERROR: Queue overflow]',0Ah,0
                                         ; DATA XREF: Queue_add+39\u2191o
 ; char waitMsg[]
 waitMsg         db 'Do you want to continue waiting?',0
-                                        ; DATA XREF: sub_130D6+52\u2191o
+                                        ; DATA XREF: Queue_tickCountdowns+52\u2191o
                 db    0
                 db  3Ah ; :
                 db    6
@@ -132936,7 +132936,7 @@ loc_4A8D2:                              ; CODE XREF: seg102:0181\u2191j
                 mov     es, seg_D1114
                 assume es:sg3EDC
                 push    es:BLACK
-                call    far ptr sub_130D6
+                call    far ptr Queue_tickCountdowns
                 add     sp, 2
                 mov     es, seg_D1116
                 push    es:_ScreenBottom
@@ -133100,7 +133100,7 @@ loc_4AA39:                              ; CODE XREF: sub_4A95A+CD\u2191j
                 mov     es, seg_D1114
                 assume es:sg3EDC
                 push    es:BLACK
-                call    far ptr sub_130D6
+                call    far ptr Queue_tickCountdowns
                 add     sp, 2
                 mov     es, seg_D1116
                 push    es:_ScreenBottom
@@ -134209,7 +134209,7 @@ loc_4B581:                              ; CODE XREF: seg104:00FE\u2191j
                 mov     [bp-18h], ax
                 mov     es, seg_D1AB0
                 push    es:Screen_maxColor
-                call    far ptr sub_130D6
+                call    far ptr Queue_tickCountdowns
                 add     sp, 2
                 push    word ptr [bp-18h]
                 push    word ptr [bp-16h]
@@ -134391,7 +134391,7 @@ loc_4B722:                              ; CODE XREF: seg105:0059\u2191j
                 push    ax
 
 loc_4B725:
-                call    far ptr sub_130D6
+                call    far ptr Queue_tickCountdowns
                 add     sp, 2
                 push    word ptr [bp-8]
                 push    word ptr [bp-4]
@@ -388171,7 +388171,7 @@ aSayWhat?       db 'Say what?',0Ah,0
                 db    0
 aNot            db ' not',0
 aNot_0          db ' not',0
-byte_CC530      db 0                    ; DATA XREF: sub_130D6+45\u2191r
+byte_CC530      db 0                    ; DATA XREF: Queue_tickCountdowns+45\u2191r
                                         ; seg097:1034\u2191r ...
                 align 2
 ; char aOkay_[]
@@ -393722,9 +393722,9 @@ seg126_93       dw seg sg3EDC           ; DATA XREF: Queue_add+28\u2191r
                                         ; Queue_add+55\u2191r ...
 dseg_87         dw seg sg4d43           ; DATA XREF: Queue_processTurn+190\u2191r
                                         ; seg097:106C\u2191r
-dseg_88         dw seg sg4d43           ; DATA XREF: sub_130D6:loc_13061\u2191r
+dseg_88         dw seg sg4d43           ; DATA XREF: Queue_tickCountdowns:loc_13061\u2191r
                                         ; seg097:loc_4805A\u2191r
-dseg_89         dw seg sg4d43           ; DATA XREF: sub_130D6:loc_13117\u2191r
+dseg_89         dw seg sg4d43           ; DATA XREF: Queue_tickCountdowns:loc_13117\u2191r
                                         ; seg097:loc_48110\u2191r
 seg126_94       dw seg sg3EDC           ; DATA XREF: Logics_getRoomPic:loc_13251\u2191r
                                         ; seg097:loc_4827F\u2191r

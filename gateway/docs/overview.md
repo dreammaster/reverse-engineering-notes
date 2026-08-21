@@ -2467,3 +2467,29 @@ mud-covered-shard vs. no-shard-shown, each producing a distinct
 narrative resolution.
 
 Applied via `apply_renames_gatemain.py`'s fifty-first batch.
+
+### `Queue_tickCountdowns` named — closing the loop on `Queue_processTurn`
+
+Moved to `sub_130D6` — the companion function explicitly flagged for a
+future pass when `Queue_processTurn` was named. Multi-chunk and
+`sp-analysis failed`, but its mechanism is now clear from reading both
+of its chunks: it's the actual countdown-queue tick that
+`Queue_processTurn` falls into.
+
+`Queue_tickCountdowns()`: walks the same `_queueCount`-bounded,
+4-byte-entry scheduled-event table `Queue_add`/`Queue_remove`/
+`Queue_find`/`Queue_processTurn` operate on, decrementing each entry's
+countdown value; when an entry's countdown reaches zero, it
+memmove-compacts the entry out of the table (the same removal shape as
+`Queue_remove`, just triggered by expiry rather than an explicit call)
+and applies its associated handler update. After a full pass, if a
+caller-supplied flag indicates this is running as part of the WAIT
+command, it checks `byte_CC530` and — if set — calls the already-named
+`j_scene_update?` then `j_continue_waiting(waitMsg)` to ask *"Do you
+want to continue waiting?"*.
+
+This confirms and closes the loop on the mechanism flagged (but not
+fully named) back when `Queue_processTurn` was named: the turn-advance
+and WAIT-command loops share this exact countdown-tick code.
+
+Applied via `apply_renames_gatemain.py`'s fifty-second batch.

@@ -637,10 +637,14 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       companion `sub_130D6` and the exact roles of `word_CB7F6`/
       `word_CB808` left for a future pass. Full writeup in
       [overview.md](overview.md#queue_processturn-named--the-turnwait-event-queue-loop-sighted).
-- [ ] Follow up on the turn/WAIT event-queue loop: nail down
-      `sub_130D6` and `word_CB7F6`/`word_CB808`'s exact roles, and
-      whether `word_CB808` is the same countdown mechanism as the
-      weapon-confiscation timer from `Game_handleWeaponDischarge`.
+- [x] Named `sub_130D6` → `Queue_tickCountdowns` — the countdown-queue
+      tick shared by `Queue_processTurn` and the WAIT command loop,
+      closing the loop flagged in that earlier pass. Full writeup in
+      [overview.md](overview.md#queue_tickcountdowns-named--closing-the-loop-on-queue_processturn).
+- [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
+      `word_CB808`'s exact roles still aren't nailed down, and whether
+      `word_CB808` is the same countdown mechanism as the weapon-
+      confiscation timer from `Game_handleWeaponDischarge`.
 - [x] Named `Sb_detectDsp`/`Sb_resetDsp`/`Sb_readByte`/`Sb_writeByte`
       (were `sub_18682`/`sub_186B2`/`sub_186D4`/`sub_186F0`), plus
       `_sbBasePort` — a fourth sound-hardware backend, Sound Blaster

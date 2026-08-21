@@ -1510,6 +1510,32 @@ RENAMES = [
      "Confirms a full crystal-shard-based deterrence puzzle against a "
      "hostile creature, with distinct held/clean-shard vs. mud-"
      "covered-shard vs. no-shard outcomes."),
+
+    # -- fifty-second pass: sub_130D6, the companion function flagged
+    # for follow-up when Queue_processTurn was named -- a multi-chunk,
+    # "sp-analysis failed" function, but its mechanism is now clear
+    # from reading both chunks: it's the actual countdown-queue tick
+    # that Queue_processTurn falls into. See
+    # docs/overview.md#queue_tickcountdowns-named--closing-the-loop-on-queue_processturn. --
+
+    (0x130D6, "Queue_tickCountdowns",
+     "sub_130D6(): walks the same _queueCount-bounded, 4-byte-entry "
+     "scheduled-event table Queue_add/Queue_remove/Queue_find/"
+     "Queue_processTurn operate on, decrementing each entry's "
+     "countdown value; when an entry's countdown reaches zero, "
+     "memmove-compacts it out of the table (the same removal shape as "
+     "Queue_remove, just triggered by expiry rather than an explicit "
+     "call) and applies its associated logicNum-8/index-3 update via "
+     "the already-named Logics_updateHandler-adjacent machinery. After "
+     "a full pass, if a caller-supplied flag indicates this is running "
+     "as part of the WAIT command (and other conditions on the "
+     "current wait count are met), checks byte_CC530 and -- if set -- "
+     "calls the already-named j_scene_update? then "
+     "j_continue_waiting(waitMsg) to ask 'Do you want to continue "
+     "waiting?'. This confirms and closes the loop on the mechanism "
+     "flagged (but not fully named) when Queue_processTurn was named: "
+     "the turn-advance and WAIT-command loops share this exact "
+     "countdown-tick code."),
 ]
 
 
