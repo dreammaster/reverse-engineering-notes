@@ -48102,7 +48102,7 @@ Mouse_init      endp
 
 ; void __cdecl __far set_mouse_range()
 set_mouse_range proc far                ; CODE XREF: Mouse_init+A6\u2191p
-                                        ; sub_249FF+2D\u2193p
+                                        ; Mouse_shutdown+2D\u2193p
 
 regs            = REGS ptr -0Eh
 
@@ -48162,7 +48162,7 @@ set_mouse_range endp
 
 ; Attributes: bp-based frame
 
-sub_249FF       proc far                ; CODE XREF: thunk_sub_5D9F3+2D2F1\u2193P
+Mouse_shutdown  proc far                ; CODE XREF: thunk_sub_5D9F3+2D2F1\u2193P
                                         ; thunk_sub_5D9F3_2+2CEC4\u2193P ...
 
 regs            = REGS ptr -0Eh
@@ -48188,7 +48188,7 @@ regs            = REGS ptr -0Eh
                 push    cs
                 call    near ptr set_mouse_range
 
-loc_24A2F:                              ; CODE XREF: sub_249FF+B\u2191j
+loc_24A2F:                              ; CODE XREF: Mouse_shutdown+B\u2191j
                 test    byte ptr mouseState, 0Ch
                 jz      short loc_24A3E
                 push    cs
@@ -48196,11 +48196,11 @@ loc_24A2F:                              ; CODE XREF: sub_249FF+B\u2191j
                 push    cs
                 call    near ptr sub_24A42
 
-loc_24A3E:                              ; CODE XREF: sub_249FF+35\u2191j
+loc_24A3E:                              ; CODE XREF: Mouse_shutdown+35\u2191j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_249FF       endp
+Mouse_shutdown  endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -48273,7 +48273,7 @@ sub_24A42       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-Mouse_free      proc far                ; CODE XREF: sub_249FF+38\u2191p
+Mouse_free      proc far                ; CODE XREF: Mouse_shutdown+38\u2191p
                                         ; sub_24AFD+C\u2193p
                 mov     ax, word ptr dword_D21B0
                 mov     dx, word ptr dword_D21B0+2
@@ -145407,7 +145407,7 @@ loc_5DFF6:                              ; CODE XREF: thunk_sub_5D9F3+2D2A1\u2191
                 call    init_graphics
                 add     sp, 2
                 call    Screen_resetPalette
-                call    sub_249FF
+                call    Mouse_shutdown
                 mov     ax, 1
 
 locret_5E048:                           ; CODE XREF: thunk_sub_5D9F3+2D2A5\u2191j
@@ -145422,7 +145422,7 @@ loc_5E049:                              ; CODE XREF: thunk_sub_5D9F3_2+3\u2191J
                 call    init_graphics
                 add     sp, 2
                 call    Screen_DefaultPalette
-                call    sub_249FF
+                call    Mouse_shutdown
                 call    thunk_sub_62AE2
                 push    cs
                 call    near ptr Events_ClearPendingKey
@@ -190731,7 +190731,7 @@ regionNum       = word ptr -2
                 call    thunk_sub_5D9F3
                 or      ax, ax
                 jz      short loc_74178
-                call    sub_249FF
+                call    Mouse_shutdown
                 jmp     short loc_741A0
 ; ---------------------------------------------------------------------------
 
@@ -191089,7 +191089,7 @@ loc_7442B:                              ; CODE XREF: sub_74149+244\u2191j
                 cmp     es:_videoIndex, 3
                 jnz     short loc_74471
                 call    thunk_sub_5D9F3_2
-                call    sub_249FF
+                call    Mouse_shutdown
                 jmp     short loc_744BA
 ; ---------------------------------------------------------------------------
 
@@ -296791,7 +296791,7 @@ var_2           = word ptr -2
                 jz      short loc_A3792
                 call    TextWindow_showMorePrompt
                 call    thunk_sub_5D9F3
-                call    sub_249FF
+                call    Mouse_shutdown
                 push    cs
                 call    near ptr sub_A2110
                 push    cs
@@ -296799,7 +296799,7 @@ var_2           = word ptr -2
                 push    cs
                 call    near ptr sub_A2110
                 call    thunk_sub_5D9F3_2
-                call    sub_249FF
+                call    Mouse_shutdown
                 jmp     short loc_A37C2
 ; ---------------------------------------------------------------------------
 
@@ -358630,7 +358630,7 @@ var_2           = word ptr -2
 loc_BDF82:                              ; CODE XREF: sub_BDF6C+11\u2191j
                 call    TextWindow_showMorePrompt
                 call    thunk_sub_5D9F3
-                call    sub_249FF
+                call    Mouse_shutdown
                 mov     ax, 5
                 push    ax              ; fontNumber
                 call    Font_LoadFont

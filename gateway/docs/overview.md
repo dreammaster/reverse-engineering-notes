@@ -2384,3 +2384,15 @@ rather than in-game parser vocabulary. Named generically
 specific `Vocab_` prefix.
 
 Applied via `apply_renames_gatemain.py`'s forty-seventh batch.
+
+### `Mouse_shutdown` named
+
+Moved to `sub_249FF` (5 callers). Confirmed directly by its body,
+including IDA's own inline comment ("Reset mouse driver") on the
+`INT 33h AX=0` call: if `mouseState` bit `0x38` is set, hides the mouse
+(`Mouse_Hide`), resets the mouse driver, and restores the cursor range
+(`set_mouse_range`); if bit `0xC` is set, frees mouse resources
+(`Mouse_free`) and calls `sub_24A42` (not renamed — also called from
+the already-named `Mouse_init`, a shared init/shutdown helper).
+
+Applied via `apply_renames_gatemain.py`'s forty-eighth batch.

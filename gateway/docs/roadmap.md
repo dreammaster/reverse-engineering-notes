@@ -675,6 +675,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       algorithm, used in the sound-config-parsing startup area (likely
       `BLASTER`-style env/command-line parsing). Full writeup in
       [overview.md](overview.md#string_matchesprefixci-named).
+- [x] Named `sub_249FF` (5 callers) → `Mouse_shutdown` — resets the
+      mouse driver and frees resources, confirmed via IDA's own inline
+      comment plus several already-named `Mouse_*` helpers. Full
+      writeup in [overview.md](overview.md#mouse_shutdown-named).
 - [ ] Unify the whole music/sound-hardware picture: `Speaker_playTone`/
       `Speaker_playErrorBeep` (PC-speaker tones), `Midi_sendByte` +
       `sub_1D966`/`sub_1EE70`/`sub_1ECB6` (MPU-401/MIDI), and

@@ -1423,6 +1423,21 @@ RENAMES = [
      "digit-string parser, not renamed) -- consistent with parsing a "
      "BLASTER-style config string rather than in-game parser "
      "vocabulary."),
+
+    # -- forty-eighth pass: sub_249FF, confirmed directly by its body
+    # (including IDA's own "Reset mouse driver" comment on the INT 33h
+    # call) as the mouse subsystem's shutdown/reset routine, using
+    # several already-named Mouse_* helpers. See
+    # docs/overview.md#mouse_shutdown-named. --
+
+    (0x249FF, "Mouse_shutdown",
+     "sub_249FF(): if mouseState bit 0x38 is set, hides the mouse "
+     "(Mouse_Hide), resets the mouse driver (INT 33h AX=0 -- IDA's "
+     "own comment already reads 'Reset mouse driver'), and restores "
+     "the cursor range (set_mouse_range). If mouseState bit 0xC is "
+     "set, frees mouse resources (Mouse_free) and calls sub_24A42 "
+     "(not renamed, also called from the already-named Mouse_init -- "
+     "a shared init/shutdown helper)."),
 ]
 
 
