@@ -1753,3 +1753,33 @@ worked out), a natural next step alongside unifying the whole
 music-engine picture with the still-open `Midi_sendByte` cluster.
 
 Applied via `apply_renames_gatemain.py`'s twenty-first batch.
+
+### `Logics_autoTakeObject` named — the "Taking the key first" mechanic
+
+Moved to `sub_143F3` (12 callers, called directly from `main()`) — this
+was already flagged as a suspected relative of `Logics_takeObject` when
+that pass named `Logics_getTakeScore`/`Logics_setTakeScore`. Confirmed
+conclusively by decoding the real `GATESTR.DAT` message it prints:
+`msgId 0xC406` → **`"[Taking%s first.]\n"`** — the classic
+parser-adventure idiom where, say, `UNLOCK DOOR` with the key lying on
+the floor first auto-picks it up and announces `"[Taking the key
+first.]"` before the real command proceeds.
+
+`Logics_autoTakeObject(logicNum)` only proceeds if all of: `logicNum`
+matches the current parser subject (`Logics_logicNum211 ==
+Parser_val2`), the object's prehandler type is `7`, bit `0x1D` is set
+(a flag `Logics_takeObject` itself sets on a normal take — plausibly
+"portable"/"auto-takeable"), bit `0xA` is clear,
+`Logics_prehandlerChainReaches(logicNum, Logics_logicNum211)` is
+**false**, and `thunk_sub_67662(logicNum, Logics_logicNum211, 0)`
+returns 0. If every condition holds, it prints the object's name plus
+the `"[Taking%s first.]"` message, then runs the **exact same
+take-mechanics tail as `Logics_takeObject`** — handler reassignment,
+clearing bit 8, the one-time `Logics_getTakeScore`/`Score_add`/
+`Logics_setTakeScore` bonus gated on bit 2, then setting bit 2.
+
+Not every precondition's exact meaning was pinned down this pass —
+prehandler type `7` and bit `0xA` specifically are still open — flagged
+rather than guessed.
+
+Applied via `apply_renames_gatemain.py`'s twenty-second batch.

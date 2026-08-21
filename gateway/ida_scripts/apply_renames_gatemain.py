@@ -691,6 +691,38 @@ RENAMES = [
      "Was word_D3BD0: confirmed assigned the literal 0x388 elsewhere "
      "in this overlay -- the standard AdLib/OPL2 FM synthesizer base "
      "I/O address. Read by Opl2_writeRegister."),
+
+    # -- twenty-second pass: sub_143F3, called directly from main().
+    # Confirmed via real decoded GATESTR.DAT text (msgId 0xC406:
+    # "[Taking%s first.]\n") as the "automatically take a prerequisite
+    # object" mechanic -- the classic parser-adventure idiom where e.g.
+    # "unlock door" with the key on the floor first prints
+    # "[Taking the key first.]" and picks it up before the real action
+    # proceeds. Reuses the same take-mechanics tail as the already-named
+    # Logics_takeObject (Logics_updateHandler/Logics_getTakeScore/
+    # Score_add/Logics_setTakeScore/bit twiddling), gated behind several
+    # preconditions this pass didn't fully unpick. See
+    # docs/overview.md#logics_autotakeobject-named--the-take-the-key-first-mechanic. --
+
+    (0x143F3, "Logics_autoTakeObject",
+     "sub_143F3(logicNum): only proceeds if logicNum matches the "
+     "current parser subject (Logics_logicNum211 == Parser_val2), the "
+     "object's prehandler type (proc_table-shaped lookup via "
+     "Logics_getPrehandler) is 7, bit 0x1D is set (a flag "
+     "Logics_takeObject itself sets on a normal take -- plausibly "
+     "'portable'/'auto-takeable'), bit 0xA is clear, "
+     "Logics_prehandlerChainReaches(logicNum, Logics_logicNum211) is "
+     "FALSE, and thunk_sub_67662(logicNum, Logics_logicNum211, 0) "
+     "returns 0. If all hold: prints the object's name then the real, "
+     "decoded GATESTR.DAT message 0xC406 -- '[Taking%s first.]' -- "
+     "then performs the exact same take-mechanics tail as "
+     "Logics_takeObject (Logics_updateHandler, clear bit 8, one-time "
+     "Logics_getTakeScore/Score_add/Logics_setTakeScore gated on bit "
+     "2, then set bit 2). The classic parser-adventure 'auto-take a "
+     "needed object before performing the real command' idiom. Not all "
+     "of the gating preconditions' exact meanings were nailed down "
+     "this pass (particularly prehandler type 7 and bit 0xA) -- "
+     "flagged for a future pass rather than guessed."),
 ]
 
 

@@ -522,6 +522,13 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       caught a stale/misleading IDA auto-comment on the same
       instruction. Full writeup in
       [overview.md](overview.md#opl2_writeregister-named--an-adlibopl2-fm-synthesis-subsystem-sighted).
+- [x] Named `sub_143F3` (12 callers, called from `main()`) →
+      `Logics_autoTakeObject` — the "Taking the key first" auto-take
+      mechanic, confirmed by decoding real `GATESTR.DAT` text
+      (`"[Taking%s first.]"`). Reuses `Logics_takeObject`'s
+      take-mechanics tail behind several gating preconditions, not all
+      of which were nailed down. Full writeup in
+      [overview.md](overview.md#logics_autotakeobject-named--the-taking-the-key-first-mechanic).
 - [ ] Unify the whole music/sound-hardware picture: `Speaker_playTone`/
       `Speaker_playErrorBeep` (PC-speaker tones), `Midi_sendByte` +
       `sub_1D966`/`sub_1EE70`/`sub_1ECB6` (MPU-401/MIDI), and

@@ -2082,7 +2082,7 @@ loc_111AC:                              ; CODE XREF: main+A54\u2191j
                 jnz     short loc_111E7
                 mov     es, seg126_79
                 push    es:vocab_list_0._logicNum
-                call    sub_143F3
+                call    Logics_autoTakeObject
                 add     sp, 2
 
 loc_111E7:                              ; CODE XREF: main+A63\u2191j
@@ -2239,7 +2239,7 @@ loc_11337:                              ; CODE XREF: main+BDF\u2191j
                 jnz     short loc_11372
                 mov     es, seg126_80
                 push    es:vocab_list_0._altVocabId
-                call    sub_143F3
+                call    Logics_autoTakeObject
                 add     sp, 2
 
 loc_11372:                              ; CODE XREF: main+BEE\u2191j
@@ -3116,7 +3116,7 @@ Logics_getBit   endp
 
 ; Attributes: bp-based frame
 
-Logics_setBit   proc far                ; CODE XREF: sub_143F3+12C\u2193P
+Logics_setBit   proc far                ; CODE XREF: Logics_autoTakeObject+12C\u2193P
                                         ; Logics_checkMoveRestriction+2DD\u2193P ...
 
 bit             = byte ptr -6
@@ -3160,7 +3160,7 @@ Logics_setBit   endp
 ; Attributes: bp-based frame
 
 ; void __cdecl __far Logics_clearBit(int logicNum, int index)
-Logics_clearBit proc far                ; CODE XREF: sub_143F3+E1\u2193P
+Logics_clearBit proc far                ; CODE XREF: Logics_autoTakeObject+E1\u2193P
                                         ; Logics_takeObject+43\u2193P ...
 
 bit             = byte ptr -6
@@ -4354,7 +4354,7 @@ sub_12094       endp
 
 ; Attributes: bp-based frame
 
-Logics_getTakeScore proc far            ; CODE XREF: sub_143F3+FF\u2193P
+Logics_getTakeScore proc far            ; CODE XREF: Logics_autoTakeObject+FF\u2193P
                                         ; Logics_checkMoveRestriction+2A5\u2193P ...
 
 var_4           = dword ptr -4
@@ -4427,7 +4427,7 @@ Logics_getTakeScore endp
 
 ; Attributes: bp-based frame
 
-Logics_setTakeScore proc far            ; CODE XREF: sub_143F3+11D\u2193P
+Logics_setTakeScore proc far            ; CODE XREF: Logics_autoTakeObject+11D\u2193P
                                         ; Logics_checkMoveRestriction+2C8\u2193P ...
 
 var_4           = dword ptr -4
@@ -9352,7 +9352,7 @@ loc_143F1:                              ; CODE XREF: sg0527:0B8C\u2191j
 
 ; Attributes: bp-based frame
 
-sub_143F3       proc far                ; CODE XREF: main+A8C\u2191P
+Logics_autoTakeObject proc far          ; CODE XREF: main+A8C\u2191P
                                         ; main+C17\u2191P ...
 
 var_2           = word ptr -2
@@ -9369,7 +9369,7 @@ logicNum        = word ptr  6
                 jmp     loc_14527
 ; ---------------------------------------------------------------------------
 
-loc_1440F:                              ; CODE XREF: sub_143F3+17\u2191j
+loc_1440F:                              ; CODE XREF: Logics_autoTakeObject+17\u2191j
                 push    [bp+logicNum]
                 call    Logics_getPrehandler
                 add     sp, 2
@@ -9383,7 +9383,7 @@ loc_1440F:                              ; CODE XREF: sub_143F3+17\u2191j
                 jmp     loc_14527
 ; ---------------------------------------------------------------------------
 
-loc_14430:                              ; CODE XREF: sub_143F3+38\u2191j
+loc_14430:                              ; CODE XREF: Logics_autoTakeObject+38\u2191j
                 mov     ax, 1Dh
                 push    ax              ; index
                 push    [bp+logicNum]   ; logicNum
@@ -9394,7 +9394,7 @@ loc_14430:                              ; CODE XREF: sub_143F3+38\u2191j
                 jmp     loc_14527
 ; ---------------------------------------------------------------------------
 
-loc_14446:                              ; CODE XREF: sub_143F3+4E\u2191j
+loc_14446:                              ; CODE XREF: Logics_autoTakeObject+4E\u2191j
                 mov     ax, 0Ah
                 push    ax              ; index
                 push    [bp+logicNum]   ; logicNum
@@ -9405,7 +9405,7 @@ loc_14446:                              ; CODE XREF: sub_143F3+4E\u2191j
                 jmp     loc_14527
 ; ---------------------------------------------------------------------------
 
-loc_1445C:                              ; CODE XREF: sub_143F3+64\u2191j
+loc_1445C:                              ; CODE XREF: Logics_autoTakeObject+64\u2191j
                 push    [bp+logicNum]
                 mov     es, dseg_95
                 assume es:sg4d43
@@ -9417,7 +9417,7 @@ loc_1445C:                              ; CODE XREF: sub_143F3+64\u2191j
                 jmp     loc_14527
 ; ---------------------------------------------------------------------------
 
-loc_14477:                              ; CODE XREF: sub_143F3+7F\u2191j
+loc_14477:                              ; CODE XREF: Logics_autoTakeObject+7F\u2191j
                 sub     ax, ax
                 push    ax
                 mov     es, dseg_95
@@ -9430,7 +9430,7 @@ loc_14477:                              ; CODE XREF: sub_143F3+7F\u2191j
                 jmp     loc_14527
 ; ---------------------------------------------------------------------------
 
-loc_14495:                              ; CODE XREF: sub_143F3+9D\u2191j
+loc_14495:                              ; CODE XREF: Logics_autoTakeObject+9D\u2191j
                 push    [bp+logicNum]   ; logicNum
                 mov     ax, 2
                 push    ax              ; val1
@@ -9478,19 +9478,19 @@ loc_14495:                              ; CODE XREF: sub_143F3+9D\u2191j
                 call    Logics_setTakeScore
                 add     sp, 4
 
-loc_14518:                              ; CODE XREF: sub_143F3+10C\u2191j
+loc_14518:                              ; CODE XREF: Logics_autoTakeObject+10C\u2191j
                 mov     ax, 2
                 push    ax
                 push    [bp+logicNum]
                 call    Logics_setBit
                 add     sp, 4
 
-loc_14527:                              ; CODE XREF: sub_143F3+19\u2191j
-                                        ; sub_143F3+3A\u2191j ...
+loc_14527:                              ; CODE XREF: Logics_autoTakeObject+19\u2191j
+                                        ; Logics_autoTakeObject+3A\u2191j ...
                 mov     sp, bp
                 pop     bp
                 retf
-sub_143F3       endp
+Logics_autoTakeObject endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -11469,7 +11469,7 @@ sub_152BA       endp
 
 ; Attributes: bp-based frame
 
-Score_add       proc far                ; CODE XREF: sub_143F3+10F\u2191P
+Score_add       proc far                ; CODE XREF: Logics_autoTakeObject+10F\u2191P
                                         ; Logics_checkMoveRestriction+2B6\u2191p ...
 
 arg_0           = byte ptr  6
@@ -69812,7 +69812,7 @@ thunk_sub_60082 endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_67662 proc far                ; CODE XREF: sub_143F3+93\u2191P
+thunk_sub_67662 proc far                ; CODE XREF: Logics_autoTakeObject+93\u2191P
                                         ; Logics_takeObject+15\u2191P ...
                 call    near ptr rtlink_thunk
                 jmp     sub_67662
@@ -69825,7 +69825,7 @@ thunk_sub_67662 endp ; sp-analysis failed
 
 
 ; int __cdecl __far j_Logics_updateHandler(int logicNum, int handlerId, int newId)
-j_Logics_updateHandler proc far         ; CODE XREF: sub_143F3+D2\u2191P
+j_Logics_updateHandler proc far         ; CODE XREF: Logics_autoTakeObject+D2\u2191P
                                         ; Logics_checkMoveRestriction+1B9\u2191P ...
 
 logicNum        = word ptr  4
@@ -178189,7 +178189,7 @@ loc_6E180:                              ; CODE XREF: sub_6E0D3+12\u2191j
                 jnz     short loc_6E1BB
                 mov     es, seg_D1356
                 push    es:vocab_list_0._altVocabId
-                call    sub_143F3
+                call    Logics_autoTakeObject
                 add     sp, 2
 
 loc_6E1BB:                              ; CODE XREF: sub_6E0D3+B7\u2191j
@@ -208824,7 +208824,7 @@ loc_7C123:                              ; CODE XREF: sub_7BD01+76F\u2193j
                 jz      short loc_7C15D
                 mov     ax, 0A3h ; '£'
                 push    ax
-                call    sub_143F3
+                call    Logics_autoTakeObject
                 add     sp, 2
 
 loc_7C15D:                              ; CODE XREF: sub_7BD01+439\u2191j
@@ -209534,7 +209534,7 @@ loc_7C731:                              ; CODE XREF: sub_7C481+430\u2193j
                 jz      short loc_7C770
                 mov     es, seg_D14BA
                 push    es:vocab_list_0._logicNum
-                call    sub_143F3
+                call    Logics_autoTakeObject
                 add     sp, 2
 
 loc_7C770:                              ; CODE XREF: sub_7C481+2C7\u2191j
@@ -226847,7 +226847,7 @@ loc_84663:                              ; CODE XREF: sub_843E1+20\u2191j
                 jz      short loc_846C3
                 mov     es, seg_D151C
                 push    es:vocab_list_0._logicNum
-                call    sub_143F3
+                call    Logics_autoTakeObject
                 add     sp, 2
 
 loc_846A2:                              ; CODE XREF: sub_843E1+299\u2191j
@@ -227306,7 +227306,7 @@ loc_84963:                              ; CODE XREF: sub_84913+28\u2191j
                 add     sp, 4
                 mov     es, seg_D151C
                 push    es:vocab_list_0._logicNum
-                call    sub_143F3
+                call    Logics_autoTakeObject
                 add     sp, 2
 
 loc_849B7:                              ; CODE XREF: sub_84913+67\u2191j
@@ -239061,7 +239061,7 @@ loc_89B04:                              ; CODE XREF: sub_89AAC+21\u2191j
                 jz      short loc_89B87
                 mov     es, seg_D159E
                 push    es:vocab_list_0._logicNum
-                call    sub_143F3
+                call    Logics_autoTakeObject
                 add     sp, 2
 
 loc_89B43:                              ; CODE XREF: sub_89AAC+6F\u2191j
@@ -298618,7 +298618,7 @@ loc_A4389:                              ; CODE XREF: sub_A4352+32\u2191j
                 jnz     short loc_A43A9
                 mov     ax, 123h
                 push    ax
-                call    sub_143F3
+                call    Logics_autoTakeObject
                 add     sp, 2
 
 loc_A43A9:                              ; CODE XREF: sub_A4352+49\u2191j
@@ -299087,7 +299087,7 @@ loc_A4672:                              ; CODE XREF: sub_A465A+9\u2191j
                 jnz     short loc_A46AE
                 mov     ax, 126h
                 push    ax
-                call    sub_143F3
+                call    Logics_autoTakeObject
                 add     sp, 2
 
 loc_A46AE:                              ; CODE XREF: sub_A465A+46\u2191j
@@ -301865,7 +301865,7 @@ loc_A5854:                              ; CODE XREF: sub_A576B+D7\u2191j
                 jnz     short loc_A5874
                 mov     ax, 11Bh
                 push    ax
-                call    sub_143F3
+                call    Logics_autoTakeObject
                 add     sp, 2
 
 loc_A5874:                              ; CODE XREF: sub_A576B+FB\u2191j
@@ -331064,7 +331064,7 @@ loc_B2211:                              ; CODE XREF: sub_B2110+FA\u2191j
                 jz      short loc_B2241
                 mov     ax, 126h
                 push    ax
-                call    sub_143F3
+                call    Logics_autoTakeObject
                 add     sp, 2
 
 loc_B2241:                              ; CODE XREF: sub_B2110+113\u2191j
@@ -332297,7 +332297,7 @@ loc_B29F1:                              ; CODE XREF: sub_B28A8+129\u2191j
                 jnz     short loc_B2A11
                 mov     ax, 13Dh
                 push    ax
-                call    sub_143F3
+                call    Logics_autoTakeObject
 
 loc_B2A0E:                              ; CODE XREF: sub_B28A8+147\u2191j
                 add     sp, 2
@@ -332415,7 +332415,7 @@ loc_B2AF8:                              ; CODE XREF: sub_B28A8+248\u2191j
                 jnz     short loc_B2B18
                 mov     ax, 126h
                 push    ax
-                call    sub_143F3
+                call    Logics_autoTakeObject
                 add     sp, 2
 
 loc_B2B18:                              ; CODE XREF: sub_B28A8+262\u2191j
@@ -393750,7 +393750,7 @@ dseg_93         dw seg sg4d43           ; DATA XREF: Game_updateStatusLine:loc_1
 seg126_98       dw seg sg3EDC           ; DATA XREF: sub_13852:loc_13880\u2191r
                                         ; sub_13852+3F\u2191r ...
 dseg_94         dw seg sg4d43           ; DATA XREF: whatDoYouWant+1C\u2191r
-                                        ; sub_143F3+6\u2191r ...
+                                        ; Logics_autoTakeObject+6\u2191r ...
 dseg_95         dw seg sg4d43           ; DATA XREF: whatDoYouWant+24\u2191r
                                         ; GatewayParser_speakHandler+10F\u2191r ...
 dseg_96         dw seg sg4d43           ; DATA XREF: whatDoYouWant:loc_139E9\u2191r
