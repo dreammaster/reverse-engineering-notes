@@ -723,7 +723,7 @@ get_buffer_size endp
 
 sub_1057E       proc far                ; CODE XREF: sub_69EDA+1E\u2193P
                                         ; Game_endGameMenu+1A\u2193P
-                call    sub_2881D
+                call    LogFile_close
                 mov     ax, offset img
                 push    ds
                 push    ax              ; img
@@ -56960,7 +56960,7 @@ LogFile_write   endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2881D       proc far                ; CODE XREF: sub_1057E\u2191P
+LogFile_close   proc far                ; CODE XREF: sub_1057E\u2191P
                                         ; finish\u2193P ...
                 cmp     LogFile_windowNum, 0
                 jl      short locret_28840
@@ -56979,9 +56979,9 @@ loc_28834:
 loc_2883A:
                 mov     LogFile_disabled, 0
 
-locret_28840:                           ; CODE XREF: sub_2881D+5\u2191j
+locret_28840:                           ; CODE XREF: LogFile_close+5\u2191j
                 retf
-sub_2881D       endp
+LogFile_close   endp
 
 seg043          ends
 
@@ -57001,7 +57001,7 @@ seg044          segment byte public 'CODE' use16
 ; void __cdecl __far finish()
 finish          proc far                ; CODE XREF: gatestr_load+E3\u2191P
                                         ; gatestr_load+161\u2191P ...
-                call    sub_2881D
+                call    LogFile_close
 
 loc_28847:
                 call    Sound_shutdown
@@ -165968,7 +165968,7 @@ sub_67980       endp
 ; Attributes: noreturn
 
 shutdown        proc far                ; CODE XREF: j_shutdown+3\u2191J
-                call    sub_2881D
+                call    LogFile_close
                 call    Sound_shutdown
                 mov     ax, 1
                 push    ax
@@ -177284,7 +177284,7 @@ loc_6D9D9:                              ; CODE XREF: sub_2E8F1+3\u2191J
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_2881D
+                call    LogFile_close
                 mov     ax, 1
                 retf
 ; END OF FUNCTION CHUNK FOR sub_2E8F1

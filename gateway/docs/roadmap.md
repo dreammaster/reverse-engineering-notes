@@ -698,6 +698,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
 - [x] Named `sub_28231` (4 callers) → `Windows_setContentWindow` — a
       trivial two-global window-tracking setter. Full writeup in
       [overview.md](overview.md#windows_setcontentwindow-named).
+- [x] Named `sub_2881D` (4 callers) → `LogFile_close` — the
+      transcript/log-file close function, called from `finish`/
+      `shutdown`. Full writeup in
+      [overview.md](overview.md#logfile_close-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

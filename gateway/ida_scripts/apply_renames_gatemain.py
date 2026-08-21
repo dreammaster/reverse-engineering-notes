@@ -1829,6 +1829,20 @@ RENAMES = [
      "adjacent functions -- consistent with selecting which window "
      "receives a room's text output, but not confirmed beyond the "
      "mechanical read/write shape."),
+
+    # -- sixty-eighth pass: sub_2881D, confirmed directly by its body
+    # (using the already-named LogFile_windowNum/LogFile_handle/
+    # LogFile_disabled globals) as the transcript/log-file close
+    # function, called from the already-named finish/shutdown exit
+    # routines. See docs/overview.md#logfile_close-named. --
+
+    (0x2881D, "LogFile_close",
+     "sub_2881D(): if LogFile_windowNum is >= 0 (a transcript log "
+     "file is currently open), closes it (_fclose(LogFile_handle)), "
+     "resets LogFile_windowNum to -1, and clears LogFile_disabled. "
+     "Called from the already-named finish/shutdown exit routines "
+     "plus sub_1057E/sub_2E8F1 (not renamed) -- the transcript/log-"
+     "file close counterpart to whatever opens it."),
 ]
 
 

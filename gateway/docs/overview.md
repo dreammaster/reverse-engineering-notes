@@ -2739,3 +2739,15 @@ already-named `room_load` plus three other room/UI-adjacent functions
 output, but not confirmed beyond the mechanical read/write shape.
 
 Applied via `apply_renames_gatemain.py`'s sixty-seventh batch.
+
+### `LogFile_close` named
+
+Moved to `sub_2881D` (4 callers). Confirmed directly by its body,
+using the already-named `LogFile_windowNum`/`LogFile_handle`/
+`LogFile_disabled` globals: if a transcript log file is currently
+open, closes it, resets the window-number tracking to "none", and
+clears the disabled flag. Called from the already-named `finish`/
+`shutdown` exit routines plus two other not-renamed functions — the
+transcript/log-file close counterpart to whatever opens it.
+
+Applied via `apply_renames_gatemain.py`'s sixty-eighth batch.
