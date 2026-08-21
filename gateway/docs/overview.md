@@ -806,3 +806,54 @@ in the whole `file-formats.md` set where the investigation didn't reach
 full confidence in one pass. Consistent with the project's discipline
 throughout — better to document the real uncertainty than to backfill a
 clean-looking but unverified record layout.
+
+### Prehandler-chain primitives named
+
+Same session, per Paul's direction to re-run `rank_unnamed_functions.py`
+(now that the RTLink-thunk noise is filtered out) and resume general
+naming. `sub_11635` (196 callers) was still the single highest-ranked
+unnamed target — the same function flagged but left unnamed several
+sessions ago, when `Logics_getPrehandlerMode` was still hidden behind
+the collapsed-function issue fixed since then. With that fixed, both it
+and its sibling `Logics_getPrehandler` are now directly readable, and
+between them they fully explain the "prehandler chain" mechanism first
+guessed at during the room/logic architecture session:
+
+- **`Logics_getPrehandlerMode(logicNum, stageIndex)`** (already named) —
+  for type-6 objects specifically, indexes an **array** of prehandler
+  IDs starting at the `LogicSection6._prehandlerId` struct field
+  (confirming `_prehandlerId`/`_prehandlerId2`, previously listed as two
+  separate struct fields, are actually **one 2-element array** — type-6
+  objects support exactly 2 prehandler stages). For every other type, it
+  falls through to `Logics_getPrehandler(logicNum)`, which returns a
+  single prehandler ID for types `2`/`6`/`7`/`8` only (confirmed via the
+  already-named `LOGICTYPE_2`/`_6`/`_7`/`_8` constants) — types `1`
+  (`Room`), `3`, `4`, `5` have no prehandler concept at all. Both
+  functions return `0` for "no prehandler at this stage."
+- **`sub_11635` → `Logics_prehandlerChainReaches`** — walks
+  `logicNum`'s prehandler chain stage by stage (bounded per-type via
+  `METHOD_SECTION_INFO`, the same table `Logics_getPrehandlerMode`
+  consults), and whenever a stage's mode is nonzero, **recurses**,
+  treating that mode value as *another* `logicNum` to check against the
+  *same* target — i.e. "does `logicNum`, or anything it delegates to
+  through its prehandler chain, eventually reach `targetLogicNum`."
+  Confirmed via a real call site in `main()`:
+  `sub_11635(vocab_list_0._logicNum, Logics_logicNum211)` — both
+  arguments are `logicNum`-shaped `proc_table` indices, not "a vocab id
+  and a logicNum" as an earlier session's hedge had guessed.
+- **`sub_115CE` → `Logics_prehandlerHasMode`** — a sibling doing
+  **exact-match** checking instead of recursive delegation: walks the
+  same stage-bounded loop, returning `1` as soon as some stage's
+  `Logics_getPrehandlerMode` result equals a given `mode` value exactly
+  (no recursion), with an optional `Logics_getVal2_2` precondition gate.
+
+Applied both renames via the new `ida_scripts/apply_renames_gatemain.py`
+(gatemain.idb's first accumulating rename script, mirroring
+`apply_renames_gate.py`'s convention) — DRY_RUN verified, then applied
+for real with full export+save.
+
+**Not renamed yet**: `sub_14A37` (80 callers, tiny) was checked next but
+its callees (`sub_28E2C`/`sub_1DDF6`/`sub_1E052`/`sub_1E0E8`) are all
+themselves unnamed, so a confident name wasn't reachable without a
+deeper multi-function trace — left for a future pass rather than
+guessed from a generic-looking `filename`-typed parameter alone.

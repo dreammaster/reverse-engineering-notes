@@ -273,9 +273,24 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       honestly rather than backfilled. Next attempt should start from
       the sound-hardware-output side, not the memory-management side.
       Same writeup links as `.FNT` above.
-- [ ] Re-run `rank_unnamed_functions.py` now that the thunk noise is
-      filtered out, to pick the next real targets from the 1769
-      remaining unnamed functions.
+- [x] Re-ran `rank_unnamed_functions.py` (thunk noise filtered out,
+      1769 unnamed remaining). Top target `sub_11635` (196 callers) was
+      the same one flagged two sessions ago — now readable end-to-end
+      since `Logics_getPrehandlerMode` is no longer hidden by the
+      collapsed-function issue. Named it `Logics_prehandlerChainReaches`
+      plus its exact-match sibling `sub_115CE` →
+      `Logics_prehandlerHasMode`, fully explaining the "prehandler
+      chain" mechanism (including confirming `LogicSection6`'s
+      `_prehandlerId`/`_prehandlerId2` are one 2-element array, not two
+      separate fields). Applied via the new
+      `ida_scripts/apply_renames_gatemain.py` (gatemain.idb's first
+      accumulating rename script). Full writeup in
+      [overview.md](overview.md#prehandler-chain-primitives-named).
+      Checked but didn't confidently name `sub_14A37` (80 callers) — its
+      callees are all themselves unnamed.
+- [ ] Continue working down the re-ranked list — `sub_1535E` (92
+      callers), `sub_14A37` and its unnamed callees, and the rest of the
+      1767 still-unnamed functions.
 - [ ] Cross-check the structs shared by name/concept with `gate.idb`
       (`VocabEntry`/`VOCAB_ENTRY`, `Str16`/`STR16`, `Point`/`POINT`,
       `Screen`/`SCREEN`, `Font`/`FONT`, `REGS`, `HandleEntry`/`HANDLE`)

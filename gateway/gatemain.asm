@@ -2100,7 +2100,7 @@ loc_111F6:                              ; CODE XREF: main+A9E\u2191j
                 mov     es, seg126_79
                 assume es:sg3EDC
                 push    es:vocab_list_0._logicNum
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_11217
@@ -2253,7 +2253,7 @@ loc_11372:                              ; CODE XREF: main+BEE\u2191j
                 mov     es, seg126_80
                 assume es:sg3EDC
                 push    es:vocab_list_0._altVocabId
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_113BD
@@ -2544,7 +2544,7 @@ Logics_IsPrehandler1 endp
 
 ; Attributes: bp-based frame
 
-sub_115CE       proc far                ; CODE XREF: sub_14111+174\u2193P
+Logics_prehandlerHasMode proc far       ; CODE XREF: sub_14111+174\u2193P
                                         ; sub_14111+1A6\u2193P ...
 
 var_2           = word ptr -2
@@ -2568,15 +2568,15 @@ loc_115D4:
 loc_115E7:
                 jnz     short loc_1162F
 
-loc_115E9:                              ; CODE XREF: sub_115CE+A\u2191j
+loc_115E9:                              ; CODE XREF: Logics_prehandlerHasMode+A\u2191j
                 mov     [bp+var_2], 0
                 jmp     short loc_115F3
 ; ---------------------------------------------------------------------------
 
-loc_115F0:                              ; CODE XREF: sub_115CE+5A\u2193j
+loc_115F0:                              ; CODE XREF: Logics_prehandlerHasMode+5A\u2193j
                 inc     [bp+var_2]
 
-loc_115F3:                              ; CODE XREF: sub_115CE+20\u2191j
+loc_115F3:                              ; CODE XREF: Logics_prehandlerHasMode+20\u2191j
                 mov     ax, 6
                 imul    [bp+logicNum]
                 mov     bx, ax
@@ -2602,22 +2602,22 @@ loc_1162D:
                 jmp     short loc_11631
 ; ---------------------------------------------------------------------------
 
-loc_1162F:                              ; CODE XREF: sub_115CE:loc_115E7\u2191j
-                                        ; sub_115CE+48\u2191j
+loc_1162F:                              ; CODE XREF: Logics_prehandlerHasMode:loc_115E7\u2191j
+                                        ; Logics_prehandlerHasMode+48\u2191j
                 sub     ax, ax
 
-loc_11631:                              ; CODE XREF: sub_115CE:loc_1162D\u2191j
+loc_11631:                              ; CODE XREF: Logics_prehandlerHasMode:loc_1162D\u2191j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_115CE       endp
+Logics_prehandlerHasMode endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-sub_11635       proc far                ; CODE XREF: main+AB5\u2191P
+Logics_prehandlerChainReaches proc far  ; CODE XREF: main+AB5\u2191P
                                         ; main+C3D\u2191P ...
 
 var_4           = word ptr -4
@@ -2632,27 +2632,27 @@ arg_2           = word ptr  8
                 jmp     short loc_11663
 ; ---------------------------------------------------------------------------
 
-loc_11642:                              ; CODE XREF: sub_11635+65\u2193j
+loc_11642:                              ; CODE XREF: Logics_prehandlerChainReaches+65\u2193j
                 mov     ax, [bp+arg_2]
                 cmp     [bp+var_2], ax
                 jnz     short loc_1164F
 
-loc_1164A:                              ; CODE XREF: sub_11635+29\u2193j
+loc_1164A:                              ; CODE XREF: Logics_prehandlerChainReaches+29\u2193j
                 mov     ax, 1
                 jmp     short loc_1169E
 ; ---------------------------------------------------------------------------
 
-loc_1164F:                              ; CODE XREF: sub_11635+13\u2191j
+loc_1164F:                              ; CODE XREF: Logics_prehandlerChainReaches+13\u2191j
                 push    [bp+arg_2]
                 push    [bp+var_2]
                 push    cs
-                call    near ptr sub_11635
+                call    near ptr Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_1164A
                 inc     [bp+var_4]
 
-loc_11663:                              ; CODE XREF: sub_11635+B\u2191j
+loc_11663:                              ; CODE XREF: Logics_prehandlerChainReaches+B\u2191j
                 mov     ax, 6
                 imul    [bp+arg_0]
                 mov     bx, ax
@@ -2674,14 +2674,14 @@ loc_11663:                              ; CODE XREF: sub_11635+B\u2191j
                 or      ax, ax
                 jnz     short loc_11642
 
-loc_1169C:                              ; CODE XREF: sub_11635+51\u2191j
+loc_1169C:                              ; CODE XREF: Logics_prehandlerChainReaches+51\u2191j
                 sub     ax, ax
 
-loc_1169E:                              ; CODE XREF: sub_11635+18\u2191j
+loc_1169E:                              ; CODE XREF: Logics_prehandlerChainReaches+18\u2191j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_11635       endp
+Logics_prehandlerChainReaches endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -3448,7 +3448,7 @@ Logics_getPrehandler endp
 ; Attributes: bp-based frame
 
 Logics_getPrehandlerMode proc far       ; CODE XREF: Logics_IsPrehandler1+3C\u2191p
-                                        ; sub_115CE+51\u2191p ...
+                                        ; Logics_prehandlerHasMode+51\u2191p ...
 
 logicType       = word ptr -6
 dataPtr         = dword ptr -4
@@ -3679,7 +3679,7 @@ Logics_setPrehandlerMode endp
 ; Attributes: bp-based frame
 
 ; int __cdecl __far Logics_getVal2_2(int logicNum)
-Logics_getVal2_2 proc far               ; CODE XREF: sub_115CE+10\u2191p
+Logics_getVal2_2 proc far               ; CODE XREF: Logics_prehandlerHasMode+10\u2191p
                                         ; sub_5C263+3F\u2193P ...
 
 dataPtr         = dword ptr -4
@@ -9126,7 +9126,7 @@ loc_14275:                              ; CODE XREF: sub_14111+15F\u2191j
                 mov     es, dseg_95
                 push    es:Logics_logicNum211
                 push    [bp+logicNum]
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jmp     loc_141EF
@@ -9152,7 +9152,7 @@ loc_142AA:                              ; CODE XREF: sub_14111+136\u2191j
                 mov     es, dseg_95
                 push    es:Logics_logicNum211
                 push    [bp+logicNum]
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
 
@@ -9410,7 +9410,7 @@ loc_1445C:                              ; CODE XREF: sub_143F3+64\u2191j
                 mov     es, dseg_95
                 assume es:sg4d43
                 push    es:Logics_logicNum211
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_14477
@@ -10509,7 +10509,7 @@ loc_14B87:                              ; CODE XREF: sub_14B64+1C\u2191j
                 push    ax
                 mov     ax, 2A8h
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_14BDD
@@ -10583,7 +10583,7 @@ loc_14C4C:                              ; CODE XREF: sub_14B64+E3\u2191j
                 push    ax
                 mov     ax, 0A2h ; '¢'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_14CC7
@@ -95615,7 +95615,7 @@ seg082          segment byte public 'UNK' use16
                 assume es:nothing, ss:nothing, ds:sg4d43, fs:nothing, gs:nothing
 METHOD_SECTION_INFO LogicSectionEntry <0, 1, 26>
                                         ; DATA XREF: Logics_IsPrehandler1+29\u2191t
-                                        ; sub_115CE+3E\u2191t ...
+                                        ; Logics_prehandlerHasMode+3E\u2191t ...
                 LogicSectionEntry <1, 3, 36>
                 LogicSectionEntry <0, 0, 12>
                 LogicSectionEntry <0, 2, 20>
@@ -166708,7 +166708,7 @@ loc_67F94:                              ; CODE XREF: sub_2E8A1+3\u2191J
                 mov     es, seg_D12D8
                 assume es:sg3EDC
                 push    es:vocab_list_0._logicNum
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_67FEB
@@ -166740,7 +166740,7 @@ loc_67FEB:                              ; CODE XREF: sub_2E8A1+396FD\u2191j
                 push    ax
                 mov     es, seg_D12D8
                 push    es:vocab_list_0._logicNum
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_6800B
@@ -166894,7 +166894,7 @@ v2              = word ptr -2
                 mov     es, seg_D12D8
                 assume es:sg3EDC
                 push    es:vocab_list_0._logicNum
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_681B5
@@ -167020,7 +167020,7 @@ loc_68267:                              ; CODE XREF: sub_68232+2C\u2191j
                 push    ax
                 mov     es, seg_D12D8
                 push    es:vocab_list_0._logicNum
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_682A1
@@ -167106,7 +167106,7 @@ loc_68335:                              ; CODE XREF: sub_68232+E5\u2191j
                 push    es:vocab_list_0._logicNum
                 mov     es, seg_D12E6
                 push    es:vocab_list_0._altVocabId
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_68396
@@ -167394,7 +167394,7 @@ loc_685C9:                              ; CODE XREF: sub_2E62B+3\u2191J
                 push    ax
                 mov     es, seg_D12E6
                 push    es:vocab_list_0._altVocabId
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_6860C
@@ -167639,7 +167639,7 @@ loc_687F6:                              ; CODE XREF: sub_686B8+138\u2191j
                 push    ax
                 mov     es, seg_D12D8
                 push    es:vocab_list_0._logicNum
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_687F2
@@ -167657,7 +167657,7 @@ loc_687F6:                              ; CODE XREF: sub_686B8+138\u2191j
                 push    ax
                 mov     es, seg_D12D8
                 push    es:vocab_list_0._logicNum
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_68848
@@ -168430,7 +168430,7 @@ locret_68EBE:                           ; CODE XREF: sub_2E74D+3A654\u2191j
                 push    ax
                 mov     es, seg_D12D8
                 push    es:vocab_list_0._logicNum
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_68F04
@@ -168461,7 +168461,7 @@ loc_68F04:                              ; CODE XREF: seg151:1376\u2191j
                 push    ax
                 mov     es, seg_D12D8
                 push    es:vocab_list_0._logicNum
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_68F40
@@ -168652,7 +168652,7 @@ loc_690AA:                              ; CODE XREF: sub_2E51D+3AB7F\u2191j
                 push    ax
                 mov     ax, 260h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_690CE
@@ -168964,7 +168964,7 @@ loc_69394:                              ; CODE XREF: sub_2EB49+3\u2191J
                 push    ax
                 mov     es, seg_D12D8
                 push    es:vocab_list_0._logicNum
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_693D7
@@ -169347,7 +169347,7 @@ loc_6972E:                              ; CODE XREF: sub_2E897+3AE3B\u2191j
                 push    es:vocab_list_0._altVocabId
                 mov     es, seg_D12D8
                 push    es:vocab_list_0._logicNum
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_6976C
@@ -169387,7 +169387,7 @@ loc_6979F:                              ; CODE XREF: sub_2E897+3AE2E\u2191j
                 push    ax
                 mov     es, seg_D12D8
                 push    es:vocab_list_0._logicNum
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_69818
@@ -169436,7 +169436,7 @@ loc_69818:                              ; CODE XREF: sub_2E897+3AF23\u2191j
                 push    ax
                 mov     es, seg_D12D8
                 push    es:vocab_list_0._logicNum
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_69879
@@ -169474,7 +169474,7 @@ loc_69879:                              ; CODE XREF: sub_2E897+3AF9C\u2191j
                 push    ax
                 mov     es, seg_D12D8
                 push    es:vocab_list_0._logicNum
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_69874
@@ -169557,7 +169557,7 @@ loc_6994A:                              ; CODE XREF: sub_6990D+20\u2191j
                 push    ax
                 mov     es, seg_D12D8
                 push    es:vocab_list_0._logicNum
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_6998D
@@ -170691,7 +170691,7 @@ loc_6A33F:                              ; CODE XREF: thunk_loc_6A33F+3\u2191J
                 push    ax
                 mov     ax, 264h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_6A376
@@ -170716,7 +170716,7 @@ loc_6A376:                              ; CODE XREF: seg151:27EA\u2191j
                 push    ax
                 mov     es, seg_D12D8
                 push    es:vocab_list_0._logicNum
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_6A3C3
@@ -172547,7 +172547,7 @@ sub_6B2B0       endp
                 mov     ax, 0D3h ; 'Ó'
                 push    ax
                 push    word ptr [bp+6]
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_6B3F0
@@ -173052,7 +173052,7 @@ var_2           = word ptr -2
                 push    ax
                 mov     ax, 0D6h ; 'Ö'
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_6B7B9
@@ -173353,7 +173353,7 @@ loc_6B9E6:                              ; CODE XREF: sub_2EC4D+3\u2191J
                 push    ax
                 mov     ax, 264h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_6BA1C
@@ -173409,7 +173409,7 @@ loc_6BA50:                              ; CODE XREF: sub_2EC61+3\u2191J
                 mov     es, seg_D1312
                 assume es:sg3EDC
                 push    es:vocab_list_0._logicNum
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_6BA88
@@ -173437,7 +173437,7 @@ loc_6BA88:                              ; CODE XREF: sub_2EC61+3CE06\u2191j
                 push    ax
                 mov     es, seg_D1312
                 push    es:vocab_list_0._logicNum
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_6BAD0
@@ -174394,7 +174394,7 @@ loc_6C24E:                              ; CODE XREF: sub_2EB21+3\u2191J
                 push    ax
                 mov     es, seg_D1312
                 push    es:vocab_list_0._logicNum
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_6C29A
@@ -174889,7 +174889,7 @@ loc_6C64C:                              ; CODE XREF: sub_2E86F+3\u2191J
                 push    ax
                 mov     es, seg_D1312
                 push    es:vocab_list_0._logicNum
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_6C6AE
@@ -174930,7 +174930,7 @@ loc_6C6B1:                              ; CODE XREF: sub_2EAD1+3\u2191J
                 mov     es, seg_D1312
                 assume es:sg3EDC
                 push    es:vocab_list_0._logicNum
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_6C73A
@@ -174995,7 +174995,7 @@ loc_6C73A:                              ; CODE XREF: sub_2EAD1+3DC00\u2191j
                 mov     es, seg_D1312
                 assume es:sg3EDC
                 push    es:vocab_list_0._logicNum
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_6C79F
@@ -175360,7 +175360,7 @@ loc_6CA77:                              ; CODE XREF: sub_2E865+3\u2191J
                 push    ax
                 mov     ax, 14Ch
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_6CABB
@@ -175734,7 +175734,7 @@ loc_6CD76:                              ; CODE XREF: sub_2EA27+3\u2191J
                 push    ax
                 mov     ax, 0D6h ; 'Ö'
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_6CDA3
@@ -175989,7 +175989,7 @@ locret_6CF6D:                           ; CODE XREF: sub_2E581+3E914\u2191j
                 mov     es, seg_D1312
                 assume es:sg3EDC
                 push    es:vocab_list_0._logicNum
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_6CFD1
@@ -176810,7 +176810,7 @@ loc_6D618:                              ; CODE XREF: sub_2EB17+3\u2191J
                 mov     es, seg_D1312
                 assume es:sg3EDC
                 push    es:vocab_list_0._logicNum
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_6D65C
@@ -176829,7 +176829,7 @@ loc_6D65C:                              ; CODE XREF: sub_2EB17+3EB3A\u2191j
                 mov     es, seg_D1312
                 assume es:sg3EDC
                 push    es:vocab_list_0._logicNum
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_6D682
@@ -178535,7 +178535,7 @@ loc_6E47A:                              ; CODE XREF: sub_2E6B7+3FDA1\u2191j
                 mov     ax, 214h
                 push    ax
                 push    es:vocab_list_0._logicNum
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_6E4AC
@@ -178949,7 +178949,7 @@ logicNum        = word ptr -2
                 push    ax
                 mov     ax, 0D6h ; 'Ö'
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_6E81B
@@ -179248,7 +179248,7 @@ loc_6EA74:                              ; CODE XREF: sub_2E63F+3\u2191J
                 push    ax
                 mov     ax, 0D6h ; 'Ö'
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_6EA9F
@@ -180713,7 +180713,7 @@ logicNum        = word ptr -2
                 push    ax
                 mov     ax, 2A8h
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_6F63F
@@ -181042,7 +181042,7 @@ loc_6F87A:                              ; CODE XREF: sub_2E88D+3\u2191J
                 mov     es, seg_D1350
                 assume es:sg3EDC
                 push    es:vocab_list_0._logicNum
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_6F8AA
@@ -181059,7 +181059,7 @@ loc_6F8AA:                              ; CODE XREF: sub_2E88D+40FF8\u2191j
                 push    ax
                 mov     es, seg_D1350
                 push    es:vocab_list_0._logicNum
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_6F933
@@ -181109,7 +181109,7 @@ loc_6F933:                              ; CODE XREF: sub_2E88D+41034\u2191j
                 push    ax
                 mov     es, seg_D1350
                 push    es:vocab_list_0._logicNum
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_6F953
@@ -181256,7 +181256,7 @@ loc_6FA8C:                              ; CODE XREF: sub_2E9AF+410C5\u2191j
                 push    ax
                 mov     es, seg_D1350
                 push    es:vocab_list_0._logicNum
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_6FAD2
@@ -186966,7 +186966,7 @@ loc_72415:                              ; CODE XREF: sub_72260+1A9\u2191j
                 push    ax
                 mov     ax, 0Dh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_72444
@@ -186974,7 +186974,7 @@ loc_72415:                              ; CODE XREF: sub_72260+1A9\u2191j
                 push    ax
                 mov     ax, 0Dh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_7246D
@@ -187115,7 +187115,7 @@ loc_725A6:                              ; CODE XREF: sub_72260+341\u2191j
                 push    ax
                 mov     ax, 288h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_725BD
@@ -188361,7 +188361,7 @@ loc_730CD:                              ; CODE XREF: sub_72F8A+138\u2191j
                 push    ax
                 mov     ax, 0D6h ; 'Ö'
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_730EA
@@ -188601,7 +188601,7 @@ loc_732B1:                              ; CODE XREF: sub_72F8A+315\u2191j
                 push    ax
                 mov     ax, 260h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_732E5
@@ -189505,7 +189505,7 @@ loc_738AA:                              ; CODE XREF: sub_7382B+73\u2191j
                 push    ax
                 mov     ax, 0D6h ; 'Ö'
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_73940
@@ -189946,7 +189946,7 @@ loc_73BDB:                              ; CODE XREF: sub_73B98+15\u2191j
                 push    ax
                 mov     ax, 0D3h ; 'Ó'
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_73C0D
@@ -190160,7 +190160,7 @@ loc_73D0F:                              ; CODE XREF: sub_73C81+26\u2191j
                 push    ax
                 mov     ax, 0D7h ; '×'
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_73D39
@@ -192768,7 +192768,7 @@ loc_752A6:                              ; CODE XREF: sub_74D38+55B\u2191j
                 push    ax
                 mov     ax, 0Dh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_752E8
@@ -192785,7 +192785,7 @@ loc_752D1:                              ; CODE XREF: sub_74D38+594\u2191j
                 push    ax
                 mov     ax, 288h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_752E8
@@ -197988,7 +197988,7 @@ loc_773BD:                              ; CODE XREF: sub_773AC+9\u2191j
                 push    es:_roomLogicNum
                 mov     ax, 0AAh ; 'ª'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_773DB
@@ -198813,7 +198813,7 @@ loc_779B2:                              ; CODE XREF: sub_77773+222\u2191j
                 push    es:_roomLogicNum
                 mov     ax, 0A2h ; '¢'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_77A1C
@@ -198824,7 +198824,7 @@ loc_779B2:                              ; CODE XREF: sub_77773+222\u2191j
                 push    ax
                 mov     ax, 0A2h ; '¢'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_77A1C
@@ -200906,7 +200906,7 @@ loc_787F0:                              ; CODE XREF: sub_78570+263\u2191j
                 push    ax
                 mov     ax, 0A2h ; '¢'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_7880B
@@ -201475,7 +201475,7 @@ sub_78C2A       proc far                ; CODE XREF: seg168:06EB\u2193p
                 push    ax
                 mov     ax, 0A2h ; '¢'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_78C57
@@ -201483,7 +201483,7 @@ sub_78C2A       proc far                ; CODE XREF: seg168:06EB\u2193p
                 push    ax
                 mov     ax, 0A2h ; '¢'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_78C57
@@ -203615,7 +203615,7 @@ arg_0           = word ptr  6
                 mov     es, seg_D14A0
                 assume es:sg3EDC
                 push    es:vocab_list_0._logicNum
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_79AB6
@@ -204675,7 +204675,7 @@ loc_7A14F:                              ; CODE XREF: sub_79F66+170\u2191j
                 push    ax
                 mov     ax, 0A5h ; '¥'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_7A183
@@ -205359,7 +205359,7 @@ loc_7A6D1:                              ; CODE XREF: sub_7A5C8+104\u2191j
                 push    ax
                 mov     ax, 0A3h ; '£'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_7A72A
@@ -207674,7 +207674,7 @@ loc_7B7FC:                              ; CODE XREF: sub_7AE5A+AD8\u2193j
                 mov     es, seg_D14BC
                 assume es:sg3EDC
                 push    es:vocab_list_0._altVocabId
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_7B858
@@ -207950,7 +207950,7 @@ loc_7BA62:                              ; CODE XREF: sub_7AE5A+BEE\u2191j
                 push    ax
                 mov     ax, 0A6h ; '¦'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_7BAAA
@@ -208958,7 +208958,7 @@ loc_7C28B:                              ; CODE XREF: sub_7BD01+475\u2191j
                 push    ax
                 mov     ax, 0A3h ; '£'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_7C2B2
@@ -208976,7 +208976,7 @@ loc_7C2B2:                              ; CODE XREF: sub_7BD01+59C\u2191j
                 push    ax
                 mov     ax, 0A3h ; '£'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_7C32C
@@ -210084,7 +210084,7 @@ loc_7CB6A:                              ; CODE XREF: sub_7C946+81B\u2193j
                 mov     es, seg_D14BA
                 assume es:sg3EDC
                 push    es:vocab_list_0._logicNum
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_7CB8E
@@ -210964,7 +210964,7 @@ loc_7D2E5:                              ; CODE XREF: sub_7D26B+2D\u2191j
                 push    ax
                 mov     es, seg_D14BA
                 push    es:vocab_list_0._logicNum
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_7D327
@@ -211379,7 +211379,7 @@ loc_7D650:                              ; CODE XREF: sub_7D57B+5E2\u2193j
                 push    ax
                 mov     ax, 0A7h ; '§'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_7D68D
@@ -212411,7 +212411,7 @@ loc_7DE00:                              ; CODE XREF: sub_7DC6F+14\u2191j
                 push    ax
                 mov     ax, 0A5h ; '¥'
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 push    ax
                 mov     ax, 0A5h ; '¥'
@@ -212552,7 +212552,7 @@ loc_7DF71:                              ; DATA XREF: seg173:0018\u2193o
                 push    ax
                 mov     ax, 0A2h ; '¢'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_7DFAA
@@ -212560,7 +212560,7 @@ loc_7DF71:                              ; DATA XREF: seg173:0018\u2193o
                 push    ax
                 mov     ax, 0A2h ; '¢'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_7DFAA
@@ -212603,7 +212603,7 @@ sub_7DFAD       proc far                ; CODE XREF: seg172:0408\u2193p
                 push    ax
                 mov     ax, 0A2h ; '¢'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_7DFFA
@@ -212648,7 +212648,7 @@ sub_7DFFD       proc far                ; CODE XREF: seg172:0416\u2193p
                 push    ax
                 mov     ax, 0A2h ; '¢'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_7E04A
@@ -212674,7 +212674,7 @@ loc_7E04D:                              ; DATA XREF: seg173:0042\u2193o
                 push    ax
                 mov     ax, 0A2h ; '¢'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 mov     cx, ax
                 cmp     cx, 1
@@ -212965,7 +212965,7 @@ loc_7E252:                              ; CODE XREF: sub_7E0AB+19F\u2191j
                 push    ax
                 mov     ax, 0A2h ; '¢'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_7E1F5
@@ -213020,7 +213020,7 @@ loc_7E2B0:                              ; DATA XREF: seg173:0160\u2193o
                 push    ax
                 mov     ax, 0A2h ; '¢'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_7E2E9
@@ -213028,7 +213028,7 @@ loc_7E2B0:                              ; DATA XREF: seg173:0160\u2193o
                 push    ax
                 mov     ax, 0A2h ; '¢'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_7E2E9
@@ -213060,7 +213060,7 @@ loc_7E2EC:                              ; DATA XREF: seg173:016E\u2193o
                 push    ax
                 mov     ax, 0A2h ; '¢'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_7E325
@@ -213088,7 +213088,7 @@ sub_7E328       proc far                ; CODE XREF: seg172:06FD\u2193p
                 push    ax
                 mov     ax, 0A2h ; '¢'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 mov     cx, ax
                 cmp     cx, 1
@@ -213285,7 +213285,7 @@ loc_7E46D:                              ; CODE XREF: sub_7E36F+14\u2191j
                 push    ax
                 mov     ax, 0A2h ; '¢'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_7E4CF
@@ -213333,7 +213333,7 @@ loc_7E4D3:                              ; DATA XREF: seg173:01F2\u2193o
                 push    ax
                 mov     ax, 0A2h ; '¢'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_7E50C
@@ -213341,7 +213341,7 @@ loc_7E4D3:                              ; DATA XREF: seg173:01F2\u2193o
                 push    ax
                 mov     ax, 0A2h ; '¢'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_7E50C
@@ -213373,7 +213373,7 @@ loc_7E50F:                              ; DATA XREF: seg173:0200\u2193o
                 push    ax
                 mov     ax, 0A2h ; '¢'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_7E548
@@ -213401,7 +213401,7 @@ sub_7E54B       proc far                ; CODE XREF: seg172:0920\u2193p
                 push    ax
                 mov     ax, 0A2h ; '¢'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 mov     cx, ax
                 cmp     cx, 1
@@ -213536,7 +213536,7 @@ loc_7E60C:                              ; CODE XREF: sub_7E592+11\u2191j
                 push    ax
                 mov     ax, 0A2h ; '¢'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_7E5E5
@@ -213584,7 +213584,7 @@ loc_7E679:                              ; DATA XREF: seg173:0274\u2193o
                 push    ax
                 mov     ax, 0A2h ; '¢'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_7E6B2
@@ -213592,7 +213592,7 @@ loc_7E679:                              ; DATA XREF: seg173:0274\u2193o
                 push    ax
                 mov     ax, 0A2h ; '¢'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_7E6B2
@@ -213624,7 +213624,7 @@ loc_7E6B5:                              ; DATA XREF: seg173:0282\u2193o
                 push    ax
                 mov     ax, 0A2h ; '¢'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_7E6EE
@@ -213652,7 +213652,7 @@ sub_7E6F1       proc far                ; CODE XREF: seg172:0ACB\u2193p
                 push    ax
                 mov     ax, 0A2h ; '¢'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 mov     cx, ax
                 cmp     cx, 1
@@ -213842,7 +213842,7 @@ loc_7E83B:                              ; CODE XREF: sub_7E73D+14\u2191j
                 push    ax
                 mov     ax, 0A2h ; '¢'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_7E8A0
@@ -214835,7 +214835,7 @@ loc_7F00B:                              ; CODE XREF: sub_7E97C+136E\u2193j
                 push    es:_roomLogicNum
                 mov     ax, 9Dh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_7F075
@@ -214852,7 +214852,7 @@ loc_7F00B:                              ; CODE XREF: sub_7E97C+136E\u2193j
                 push    es:_roomLogicNum
                 mov     ax, 0A2h ; '¢'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_7F069
@@ -214932,7 +214932,7 @@ loc_7F0B7:                              ; CODE XREF: sub_7E97C+71A\u2191j
                 push    es:_roomLogicNum
                 mov     ax, 0A2h ; '¢'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_7F176
@@ -215019,7 +215019,7 @@ loc_7F1C1:                              ; CODE XREF: sub_7E97C+560\u2191j
                 push    es:_roomLogicNum
                 mov     ax, 0A2h ; '¢'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_7F1FA
@@ -215281,7 +215281,7 @@ loc_7F404:                              ; CODE XREF: sub_7E97C+A71\u2191j
                 push    es:_roomLogicNum
                 mov     ax, 0A2h ; '¢'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_7F441
@@ -215310,7 +215310,7 @@ loc_7F447:                              ; CODE XREF: sub_7E97C+1376\u2193j
                 push    es:_roomLogicNum
                 mov     ax, 0A2h ; '¢'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_7F485
@@ -215556,7 +215556,7 @@ loc_7F637:                              ; CODE XREF: sub_7E97C+D78\u2193j
                 push    ax
                 mov     es, seg_D14E6
                 push    es:vocab_list_0._altVocabId
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_7F693
@@ -215864,7 +215864,7 @@ loc_7F8CE:                              ; CODE XREF: sub_7E97C+102B\u2193j
                 mov     es, seg_D14E6
                 assume es:sg3EDC
                 push    es:vocab_list_0._altVocabId
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_7F912
@@ -215903,7 +215903,7 @@ loc_7F92F:                              ; CODE XREF: sub_7E97C+1033\u2193j
                 push    ax
                 mov     es, seg_D14E6
                 push    es:vocab_list_0._altVocabId
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_7F973
@@ -216151,7 +216151,7 @@ loc_7FB30:                              ; CODE XREF: sub_7E97C+122B\u2193j
                 push    ax
                 mov     es, seg_D14E6
                 push    es:vocab_list_0._altVocabId
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_7FB74
@@ -216305,7 +216305,7 @@ loc_7FC7C:                              ; CODE XREF: sub_7E97C+12FB\u2191j
                 push    es:_roomLogicNum
                 mov     ax, 0A2h ; '¢'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_7FCC1
@@ -216696,7 +216696,7 @@ loc_7FF8F:                              ; CODE XREF: sub_7E97C+1465\u2191j
                 push    ax
                 mov     es, seg_D14E4
                 push    es:vocab_list_0._logicNum
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_7FFCA
@@ -217093,7 +217093,7 @@ loc_80272:                              ; CODE XREF: sub_8014E+C9\u2191j
                 push    ax
                 mov     ax, 0AAh ; 'ª'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_802F9
@@ -217266,7 +217266,7 @@ loc_80405:                              ; CODE XREF: sub_8014E+221\u2191j
                 push    ax
                 mov     ax, 0A2h ; '¢'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_8043B
@@ -217624,7 +217624,7 @@ loc_806DB:                              ; CODE XREF: sub_3105B+4F67B\u2191j
                 push    ax
                 mov     ax, 0AAh ; 'ª'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_80743
@@ -217985,7 +217985,7 @@ sub_809E1       proc far                ; CODE XREF: sub_7E0AB+1A2\u2191p
                 push    ax
                 mov     ax, 0AAh ; 'ª'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_80A49
@@ -220986,7 +220986,7 @@ loc_81DB2:                              ; CODE XREF: sub_81CCC+AD\u2191j
                 mov     es, seg_D150A
                 assume es:sg3EDC
                 push    es:vocab_list_0._logicNum
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_81DDB
@@ -224992,7 +224992,7 @@ loc_8388C:                              ; CODE XREF: sub_83842+17\u2191j
                 push    ax
                 mov     ax, 1CCh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_838BC
@@ -225020,7 +225020,7 @@ loc_838BC:                              ; CODE XREF: sub_83842+5C\u2191j
                 push    es:_roomLogicNum
                 mov     ax, 1E1h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_83933
@@ -225065,7 +225065,7 @@ loc_83933:                              ; CODE XREF: sub_83842+8C\u2191j
                 push    es:_roomLogicNum
                 mov     ax, 1E1h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_83994
@@ -230824,7 +230824,7 @@ loc_862C6:                              ; CODE XREF: sub_85C7C+642\u2191j
                 push    es:_roomLogicNum
                 mov     ax, 1CCh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_862E5
@@ -232237,7 +232237,7 @@ loc_86DBC:                              ; CODE XREF: sub_86D91+24\u2191j
                 mov     ax, 0D3h ; 'Ó'
                 push    ax
                 push    [bp+logicNum]
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_86DF9
@@ -236127,7 +236127,7 @@ loc_88826:                              ; CODE XREF: sub_887E2+3F\u2191j
                 mov     es, seg_D155E
                 assume es:sg3EDC
                 push    es:vocab_list_0._logicNum
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_88847
@@ -237285,7 +237285,7 @@ loc_88FB8:                              ; DATA XREF: seg186:0078\u2193o
                 push    ax
                 mov     ax, 1F6h
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 retf
 
@@ -239304,7 +239304,7 @@ loc_89D38:                              ; CODE XREF: sub_89CAA+7A\u2191j
                 push    es:_roomLogicNum
                 mov     ax, 1CCh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_89D54
@@ -240520,7 +240520,7 @@ loc_8A51B:                              ; CODE XREF: sub_8A3ED+407\u2193j
                 push    ax
                 mov     es, seg_D15BE
                 push    es:vocab_list_0._logicNum
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_8A57B
@@ -240727,7 +240727,7 @@ loc_8A6E1:                              ; CODE XREF: sub_8A3ED+2EF\u2191j
                 push    es:_roomLogicNum
                 mov     ax, 1CCh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_8A70A
@@ -241364,7 +241364,7 @@ loc_8AB90:                              ; CODE XREF: sub_8A9E8+1A3\u2191j
                 push    es:_roomLogicNum
                 mov     ax, 1E1h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_8ABA8
@@ -241495,7 +241495,7 @@ loc_8ACA0:                              ; CODE XREF: sub_8A9E8+2B3\u2191j
                 push    ax
                 mov     ax, 1E1h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_8ACCC
@@ -245236,7 +245236,7 @@ loc_8C6EC:
                 push    ax
                 mov     ax, 1FBh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_8C78B
@@ -247080,7 +247080,7 @@ loc_8D3A0:                              ; CODE XREF: sub_8D38C+F\u2191j
                 push    es:_roomLogicNum
                 mov     ax, 1FCh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_8D40A
@@ -247088,7 +247088,7 @@ loc_8D3A0:                              ; CODE XREF: sub_8D38C+F\u2191j
                 push    es:_roomLogicNum
                 mov     ax, 204h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_8D40A
@@ -247128,7 +247128,7 @@ loc_8D449:                              ; CODE XREF: sub_8D38C+A2\u2191j
                 push    es:_roomLogicNum
                 mov     ax, 1FCh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_8D48E
@@ -247160,7 +247160,7 @@ loc_8D48E:                              ; CODE XREF: sub_8D38C+D4\u2191j
                 push    es:_roomLogicNum
                 mov     ax, 204h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_8D4D6
@@ -249025,7 +249025,7 @@ loc_8E261:                              ; CODE XREF: sub_8E187+3B3\u2193j
                 push    ax
                 mov     ax, 213h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_8E299
@@ -250733,7 +250733,7 @@ loc_8EF7A:                              ; CODE XREF: sub_8EDD9+19C\u2191j
                 mov     es, seg_D15F2
                 assume es:sg3EDC
                 push    es:vocab_list_0._logicNum
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_8EFA2
@@ -252675,7 +252675,7 @@ loc_8FE78:                              ; CODE XREF: sub_30EF3+3\u2191J
                 push    es:_roomLogicNum
                 mov     ax, 214h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_8FEA6
@@ -262400,7 +262400,7 @@ loc_9439B:                              ; CODE XREF: sub_94097+298\u2191j
                 push    ax
                 mov     ax, 0D4h ; 'Ô'
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_943C7
@@ -263179,7 +263179,7 @@ loc_94882:                              ; CODE XREF: sub_9478A+14\u2191j
                 push    ax
                 mov     ax, 0D4h ; 'Ô'
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_94901
@@ -263189,7 +263189,7 @@ loc_94882:                              ; CODE XREF: sub_9478A+14\u2191j
                 push    ax
                 mov     ax, 5Fh ; '_'
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_948C4
@@ -263777,7 +263777,7 @@ loc_94D4D:                              ; CODE XREF: sub_94C5E+EA\u2191j
                 push    ax
                 mov     ax, 85h ; '…'
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_94D67
@@ -264447,7 +264447,7 @@ loc_951CC:                              ; CODE XREF: sub_9514A+68\u2191j
                 push    es:_roomLogicNum
                 mov     ax, 7Fh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_9520B
@@ -264462,7 +264462,7 @@ loc_951F4:                              ; CODE XREF: sub_9514A+A5\u2191j
                 push    ax
                 mov     ax, 7Fh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_9520B
@@ -264839,7 +264839,7 @@ loc_95402:                              ; CODE XREF: sub_30F57+3\u2191J
                 push    ax
                 mov     ax, 0D4h ; 'Ô'
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_9541E
@@ -265442,7 +265442,7 @@ loc_9584C:                              ; CODE XREF: sub_957DC+55\u2191j
                 mov     ax, 71h ; 'q'
                 push    ax
                 push    es:vocab_list_0._logicNum
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_95879
@@ -265462,7 +265462,7 @@ loc_95888:                              ; CODE XREF: sub_957DC+A7\u2191j
                 mov     ax, 71h ; 'q'
                 push    ax
                 push    es:vocab_list_0._altVocabId
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_958A0
@@ -265484,7 +265484,7 @@ loc_958AF:                              ; CODE XREF: sub_957DC+9B\u2191j
                 mov     ax, 7Eh ; '~'
                 push    ax
                 push    es:vocab_list_0._logicNum
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_958DC
@@ -265504,7 +265504,7 @@ loc_958EB:                              ; CODE XREF: sub_957DC+10A\u2191j
                 mov     ax, 7Eh ; '~'
                 push    ax
                 push    es:vocab_list_0._altVocabId
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_95903
@@ -266028,7 +266028,7 @@ loc_95C90:                              ; CODE XREF: sub_95ABF+182\u2191j
                 push    ax
                 mov     ax, 86h ; '†'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_95CB4
@@ -270249,7 +270249,7 @@ loc_9784F:                              ; CODE XREF: sub_97716+107\u2191j
                 push    ax
                 mov     ax, 85h ; '…'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_97890
@@ -272194,7 +272194,7 @@ loc_98661:                              ; CODE XREF: sub_98471+1EB\u2191j
                 push    ax
                 mov     ax, 84h ; '„'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_98678
@@ -277642,7 +277642,7 @@ loc_9AB12:                              ; CODE XREF: sub_9AA81+82\u2191j
                 mov     ax, 0D3h ; 'Ó'
                 push    ax
                 push    [bp+logicNum]
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_9AB91
@@ -277784,7 +277784,7 @@ loc_9AC2B:                              ; CODE XREF: sub_9AB97+82\u2191j
                 mov     ax, 0D3h ; 'Ó'
                 push    ax
                 push    [bp+logicNum]
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_9ACB6
@@ -279690,7 +279690,7 @@ loc_9BAD6:                              ; CODE XREF: sub_9B946:loc_9B962\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_9BAFB
@@ -280096,7 +280096,7 @@ loc_9BDCD:                              ; CODE XREF: sub_9BD7E+4A\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_9BE4F
@@ -280146,7 +280146,7 @@ loc_9BE84:                              ; CODE XREF: sub_9BD7E+14\u2191j
                 push    ax
 
 loc_9BE90:
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_9BEA1
@@ -280415,7 +280415,7 @@ loc_9C03D:                              ; DATA XREF: seg206:0060\u2193o
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_9C061
@@ -280440,7 +280440,7 @@ loc_9C064:                              ; DATA XREF: seg206:006E\u2193o
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_9C088
@@ -280465,7 +280465,7 @@ loc_9C08B:                              ; DATA XREF: seg206:007C\u2193o
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_9C0AF
@@ -280490,7 +280490,7 @@ loc_9C0B2:                              ; DATA XREF: seg206:008A\u2193o
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_9C0D6
@@ -280513,7 +280513,7 @@ loc_9C0D9:                              ; DATA XREF: seg206:0098\u2193o
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 retf
 
@@ -281290,7 +281290,7 @@ loc_9C6B7:                              ; CODE XREF: sub_9C542+16C\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_9C6D7
@@ -281344,7 +281344,7 @@ loc_9C725:                              ; CODE XREF: sub_9C542+15B\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_9C7AC
@@ -281438,7 +281438,7 @@ loc_9C7E4:                              ; CODE XREF: sub_9C542+29A\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_9C801
@@ -281515,7 +281515,7 @@ loc_9C86E:                              ; CODE XREF: sub_9C542+327\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_9C88C
@@ -281741,7 +281741,7 @@ loc_9C9B5:                              ; CODE XREF: sub_9C970+2E1\u2193j
                 push    ax
                 mov     ax, 30h ; '0'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_9C9CC
@@ -281941,7 +281941,7 @@ loc_9CB31:                              ; CODE XREF: sub_9C970+1B9\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_9CB5E
@@ -282657,7 +282657,7 @@ loc_9D005:                              ; CODE XREF: sub_9CE22+1DB\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_9D023
@@ -282955,7 +282955,7 @@ loc_9D26B:                              ; CODE XREF: sub_9CE22+42F\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_9D288
@@ -282981,7 +282981,7 @@ loc_9D28B:                              ; CODE XREF: sub_9CE22+464\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_9D2BA
@@ -284304,7 +284304,7 @@ loc_9DB45:                              ; CODE XREF: sub_9DAC7+5E\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_9DB62
@@ -284538,7 +284538,7 @@ loc_9DCAB:                              ; CODE XREF: sub_9DBFD+8F\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_9DCC8
@@ -284716,7 +284716,7 @@ loc_9DDCA:                              ; CODE XREF: sub_31097+3\u2191J
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_9DDF8
@@ -284897,7 +284897,7 @@ loc_9DF63:                              ; CODE XREF: sub_31065+6CEE7\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_9DF90
@@ -284984,7 +284984,7 @@ var_2           = word ptr -2
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_9E02B
@@ -285071,7 +285071,7 @@ loc_9E089:                              ; CODE XREF: sub_9E079+B\u2191j
                 push    word ptr es:[bx+6B60h]
                 mov     ax, 2Ah ; '*'
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_9E086
@@ -285313,7 +285313,7 @@ loc_9E27B:                              ; CODE XREF: sub_9E079+1F6\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_9E2A6
@@ -286892,7 +286892,7 @@ loc_9EE95:
                 push    ax
                 mov     ax, 2Bh ; '+'
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_9EEBE
@@ -286917,7 +286917,7 @@ loc_9EEC1:                              ; DATA XREF: seg208:0026\u2193o
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_9EEF6
@@ -286929,7 +286929,7 @@ loc_9EEDD:
                 push    ax
                 mov     ax, 2Bh ; '+'
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_9EEF6
@@ -286952,7 +286952,7 @@ loc_9EEF9:                              ; DATA XREF: seg208:0034\u2193o
                 push    ax
                 mov     ax, 2Bh ; '+'
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 retf
 ; ---------------------------------------------------------------------------
@@ -286964,7 +286964,7 @@ loc_9EF0E:                              ; DATA XREF: seg208:0042\u2193o
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_9EF43
@@ -286974,7 +286974,7 @@ loc_9EF0E:                              ; DATA XREF: seg208:0042\u2193o
                 push    ax
                 mov     ax, 2Bh ; '+'
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_9EF43
@@ -287439,7 +287439,7 @@ loc_9F29F:                              ; CODE XREF: sub_9F08E+1AC\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_9F2BC
@@ -287465,7 +287465,7 @@ loc_9F2BF:                              ; CODE XREF: sub_9F08E+22C\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_9F2EE
@@ -287524,7 +287524,7 @@ loc_9F30E:                              ; CODE XREF: sub_9F08E+20\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 cmp     ax, 1
                 sbb     cx, cx
@@ -287685,7 +287685,7 @@ loc_9F48C:                              ; CODE XREF: sub_9F47B+A\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_9F4D3
@@ -287764,7 +287764,7 @@ loc_9F51B:                              ; CODE XREF: sub_9F50A+A\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_9F538
@@ -287972,7 +287972,7 @@ loc_9F685:                              ; CODE XREF: sub_9F55E+112\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_9F6C6
@@ -288156,7 +288156,7 @@ loc_9F806:                              ; CODE XREF: sub_9F55E+2A3\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_9F821
@@ -288212,7 +288212,7 @@ loc_9F871:                              ; CODE XREF: sub_9F55E+30B\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_9F89C
@@ -288262,7 +288262,7 @@ loc_9F8CD:                              ; CODE XREF: sub_9F55E+36A\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_9F8EA
@@ -288354,7 +288354,7 @@ loc_9F96F:                              ; CODE XREF: sub_9F55E+36C\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_9F9DC
@@ -288430,7 +288430,7 @@ loc_9FA03:                              ; CODE XREF: sub_9F55E+49D\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_9FA21
@@ -288506,7 +288506,7 @@ loc_9FA98:                              ; CODE XREF: sub_9F55E+528\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_9FACC
@@ -288774,7 +288774,7 @@ loc_9FC8B:
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_9FCBC
@@ -289651,7 +289651,7 @@ loc_A034D:                              ; CODE XREF: sub_A0045+2F6\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_A03A6
@@ -289699,7 +289699,7 @@ loc_A03C3:                              ; CODE XREF: sub_A0045+379\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_A0444
@@ -289780,7 +289780,7 @@ loc_A0461:                              ; CODE XREF: sub_A0045+417\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_A04F5
@@ -289867,7 +289867,7 @@ loc_A0512:                              ; CODE XREF: sub_A0045+4C8\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_A0565
@@ -290026,7 +290026,7 @@ loc_A0628:                              ; CODE XREF: sub_A059C+7F\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_A067D
@@ -290108,7 +290108,7 @@ loc_A06CB:                              ; CODE XREF: sub_A059C+12A\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_A072F
@@ -290170,7 +290170,7 @@ loc_A0751:                              ; CODE XREF: sub_A059C+1B0\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_A0781
@@ -290409,7 +290409,7 @@ loc_A0942:                              ; CODE XREF: sub_A0840+FD\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_A096F
@@ -290740,7 +290740,7 @@ loc_A0B96:                              ; CODE XREF: sub_A0992+27A\u2193j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_A0C1E
@@ -290928,7 +290928,7 @@ loc_A0CE0:                              ; CODE XREF: sub_A0C24+99\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_A0D08
@@ -291055,7 +291055,7 @@ loc_A0DE9:                              ; CODE XREF: sub_A0C24+32\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_A0E14
@@ -291078,7 +291078,7 @@ loc_A0E14:                              ; CODE XREF: sub_A0C24+1D7\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_A0E51
@@ -291177,7 +291177,7 @@ loc_A0EE9:                              ; CODE XREF: sub_A0C24+2A\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_A0F0E
@@ -291252,7 +291252,7 @@ loc_A0F8B:                              ; CODE XREF: sub_A0C24+1D\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_A0FC6
@@ -291285,7 +291285,7 @@ loc_A0FC6:                              ; CODE XREF: sub_A0C24+37C\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_A0FE4
@@ -291300,7 +291300,7 @@ loc_A0FE4:                              ; CODE XREF: sub_A0C24+3B8\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_A1002
@@ -291681,7 +291681,7 @@ loc_A12A4:                              ; CODE XREF: sub_A102A+272\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_A12CF
@@ -291893,7 +291893,7 @@ loc_A1470:                              ; CODE XREF: sub_A102A+4F3\u2193j
                 push    ax
                 mov     ax, 2Eh ; '.'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_A14A8
@@ -292548,7 +292548,7 @@ loc_A184F:                              ; CODE XREF: sub_310A1+70797\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_A187A
@@ -292572,7 +292572,7 @@ loc_A187A:                              ; CODE XREF: sub_310A1+707C4\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_A18C7
@@ -292608,7 +292608,7 @@ loc_A18C7:                              ; CODE XREF: sub_310A1+707FB\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_A1920
@@ -292654,7 +292654,7 @@ loc_A1920:                              ; CODE XREF: sub_310A1+70830\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_A1956
@@ -292841,7 +292841,7 @@ loc_A1AFA:                              ; CODE XREF: sub_31083+3\u2191J
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_A1B7D
@@ -292961,7 +292961,7 @@ loc_A1BEC:                              ; CODE XREF: sub_31079+3\u2191J
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_A1C37
@@ -293013,7 +293013,7 @@ loc_A1C6D:                              ; CODE XREF: sub_31079+70B7D\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_A1C96
@@ -293032,7 +293032,7 @@ loc_A1C96:                              ; CODE XREF: sub_31079+70BFE\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_A1CE1
@@ -293086,7 +293086,7 @@ loc_A1CE1:                              ; CODE XREF: sub_31079+70C27\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_A1D5D
@@ -294113,7 +294113,7 @@ loc_A24D4:                              ; CODE XREF: sub_A24BB+14\u2191j
                 push    ax
                 mov     ax, 14h
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_A2503
@@ -294138,7 +294138,7 @@ loc_A250B:                              ; CODE XREF: sub_A24BB+23\u2191j
                 push    ax
                 mov     ax, 14h
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_A252E
@@ -294196,7 +294196,7 @@ loc_A257C:                              ; CODE XREF: sub_A24BB+14\u2191j
                 push    ax
                 mov     ax, 14h
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_A25D0
@@ -294263,7 +294263,7 @@ loc_A25E7:                              ; CODE XREF: sub_A24BB+14\u2191j
                 push    ax
                 mov     ax, 14h
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_A264A
@@ -294836,7 +294836,7 @@ loc_A29F2:                              ; CODE XREF: sub_A292A+C1\u2191j
                 push    ax
                 mov     ax, 14h
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_A2A0F
@@ -294868,7 +294868,7 @@ loc_A2A25:                              ; CODE XREF: sub_A292A+294\u2193j
                 push    ax
                 mov     ax, 14h
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_A2A4A
@@ -294897,7 +294897,7 @@ loc_A2A54:                              ; CODE XREF: sub_A292A+2A4\u2193j
                 push    ax
                 mov     ax, 14h
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_A2A6F
@@ -294954,7 +294954,7 @@ loc_A2AC9:                              ; CODE XREF: sub_A292A+29C\u2193j
                 push    ax
                 mov     ax, 14h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_A2B02
@@ -294982,7 +294982,7 @@ loc_A2B02:                              ; CODE XREF: sub_A292A+1B1\u2191j
                 push    ax
                 mov     ax, 14h
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_A2B20
@@ -295183,7 +295183,7 @@ loc_A2C50:                              ; CODE XREF: sub_A2BD5+74\u2191j
                 push    ax
                 mov     ax, 14h
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_A2C8F
@@ -295251,7 +295251,7 @@ loc_A2CDE:                              ; CODE XREF: sub_A2BD5+101\u2191j
                 push    ax
                 mov     ax, 14h
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_A2D1D
@@ -295390,7 +295390,7 @@ loc_A2DF0:                              ; CODE XREF: sub_A2D8D+56\u2191j
                 push    ax
                 mov     ax, 14h
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_A2E0B
@@ -295621,7 +295621,7 @@ loc_A2FA3:                              ; CODE XREF: sub_A2D8D+211\u2191j
                 push    ax
                 mov     ax, 0D4h ; 'Ô'
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_A3009
@@ -295631,7 +295631,7 @@ loc_A2FA3:                              ; CODE XREF: sub_A2D8D+211\u2191j
                 push    ax
                 mov     ax, 0D4h ; 'Ô'
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_A2FEC
@@ -295840,7 +295840,7 @@ loc_A3150:                              ; CODE XREF: sub_A2D8D+338\u2191j
                 push    ax
                 mov     ax, 14h
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_A317B
@@ -295906,7 +295906,7 @@ loc_A31C9:                              ; CODE XREF: sub_A2D8D+323\u2191j
                 push    ax
                 mov     ax, 14h
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_A31FC
@@ -299509,7 +299509,7 @@ loc_A49A2:                              ; CODE XREF: sub_A4927+63\u2191j
                 mov     ax, 0D3h ; 'Ó'
                 push    ax
                 push    [bp+arg_0]
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_A49C9
@@ -299629,7 +299629,7 @@ loc_A4A57:                              ; CODE XREF: sub_A4A1C+1D\u2191j
                 push    es:_roomLogicNum
                 mov     ax, 10Ah
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_A4A82
@@ -299896,7 +299896,7 @@ loc_A4BFF:                              ; CODE XREF: sub_A4B9F+5B\u2191j
                 mov     ax, 14Fh
                 push    ax
                 push    es:vocab_list_0._logicNum
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_A4C68
@@ -299911,7 +299911,7 @@ loc_A4C3E:                              ; CODE XREF: sub_A4B9F+7F\u2191j
                 mov     ax, 14Fh
                 push    ax
                 push    es:vocab_list_0._altVocabId
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_A4C90
@@ -302191,7 +302191,7 @@ loc_A5A65:                              ; CODE XREF: sub_A5A54+9\u2191j
                 push    ax
                 mov     ax, 112h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_A5A8A
@@ -302393,7 +302393,7 @@ loc_A5B72:                              ; CODE XREF: sub_A5B61+9\u2191j
                 push    es:_roomLogicNum
                 mov     ax, 14Ch
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_A5B99
@@ -302481,7 +302481,7 @@ loc_A5BE6:                              ; CODE XREF: sub_A5BD5+9\u2191j
                 push    ax
                 mov     ax, 130h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_A5C0B
@@ -303197,7 +303197,7 @@ loc_A6119:                              ; CODE XREF: sub_A60CE+22\u2191j
                 push    ax
                 mov     ax, 2A8h
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_A6155
@@ -303269,7 +303269,7 @@ loc_A6198:                              ; CODE XREF: sub_A60CE+B2\u2191j
                 push    ax
                 mov     ax, 13Dh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_A61EB
@@ -303980,7 +303980,7 @@ loc_A67C4:                              ; CODE XREF: sub_A6780+3F\u2191j
                 push    ax
                 mov     ax, 0D5h ; 'Õ'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_A67E8
@@ -304190,7 +304190,7 @@ loc_A6969:                              ; CODE XREF: sub_A68D8+65\u2191j
                 push    ax
                 mov     ax, 14Ch
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_A69B6
@@ -304206,7 +304206,7 @@ loc_A6997:                              ; CODE XREF: sub_A68D8+B0\u2191j
                 push    ax
                 mov     ax, 102h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_A69FA
@@ -304255,7 +304255,7 @@ loc_A69FA:                              ; CODE XREF: sub_A68D8+BD\u2191j
                 push    ax
                 mov     ax, 102h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_A6A1E
@@ -304579,7 +304579,7 @@ loc_A6C65:                              ; CODE XREF: sub_A6BD4+65\u2191j
                 push    ax
                 mov     ax, 14Ch
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_A6CB2
@@ -304595,7 +304595,7 @@ loc_A6C93:                              ; CODE XREF: sub_A6BD4+B0\u2191j
                 push    ax
                 mov     ax, 104h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_A6CE6
@@ -304640,7 +304640,7 @@ loc_A6CE6:                              ; CODE XREF: sub_A6BD4+BD\u2191j
                 push    ax
                 mov     ax, 104h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_A6D0A
@@ -305141,7 +305141,7 @@ loc_A7097:                              ; CODE XREF: sub_A7045+23\u2191j
                 push    ax
                 mov     ax, 14Ch
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_A7116
@@ -305311,7 +305311,7 @@ loc_A71C1:                              ; CODE XREF: sub_A7199+23\u2191j
                 push    ax
                 mov     ax, 14Ch
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_A7245
@@ -307992,7 +307992,7 @@ loc_A8208:                              ; CODE XREF: sub_A81AC+2F\u2191j
                 push    ax
                 mov     ax, 132h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_A8232
@@ -308014,7 +308014,7 @@ loc_A8232:                              ; CODE XREF: sub_A81AC+6E\u2191j
                 push    ax
                 mov     ax, 133h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_A824F
@@ -308481,7 +308481,7 @@ arg_0           = word ptr  6
                 push    ax
                 mov     ax, 133h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_A84DB
@@ -308546,7 +308546,7 @@ loc_A8518:                              ; CODE XREF: sub_A84EF+13\u2191j
                 push    ax
                 mov     ax, 132h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_A8545
@@ -309028,7 +309028,7 @@ loc_A887D:                              ; CODE XREF: sub_30FCF+3\u2191J
                 push    ax
                 mov     ax, 133h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_A8912
@@ -309915,7 +309915,7 @@ loc_A8D84:                              ; CODE XREF: sub_A8C50+120\u2191j
                 push    ax
                 mov     ax, 133h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_A8DAD
@@ -309967,7 +309967,7 @@ loc_A8DD3:                              ; CODE XREF: sub_A8C50+14\u2191j
                 push    ax
                 mov     ax, 140h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_A8E1C
@@ -309993,7 +309993,7 @@ loc_A8E1C:                              ; CODE XREF: sub_A8C50+1A2\u2191j
                 push    ax
                 mov     ax, 133h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_A8E36
@@ -310012,7 +310012,7 @@ loc_A8E36:                              ; CODE XREF: sub_A8C50+1DE\u2191j
                 push    ax
                 mov     ax, 140h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_A8E80
@@ -310200,7 +310200,7 @@ loc_A8FB7:                              ; CODE XREF: sub_A8EC2+D0\u2191j
                 push    ax
                 mov     ax, 104h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_A8FDA
@@ -310391,7 +310391,7 @@ loc_A913C:                              ; CODE XREF: sub_A8EC2+1F3\u2191j
                 push    ax
                 mov     ax, 140h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_A9153
@@ -310910,7 +310910,7 @@ loc_A952C:                              ; CODE XREF: sub_A92BF+265\u2191j
                 push    ax
                 mov     ax, 123h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_A9546
@@ -310943,7 +310943,7 @@ loc_A9566:                              ; CODE XREF: sub_A92BF+25E\u2191j
                 push    ax
                 mov     ax, 130h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_A9546
@@ -311491,7 +311491,7 @@ loc_A98F1:                              ; CODE XREF: sub_A98AE+2D\u2191j
                 push    ax
                 mov     ax, 0FFh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_A992E
@@ -311536,7 +311536,7 @@ loc_A9955:                              ; CODE XREF: sub_A98AE+EC\u2193j
                 push    ax
                 mov     ax, 13Ah
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_A997E
@@ -312085,7 +312085,7 @@ loc_A9C86:                              ; CODE XREF: sub_A9C64+9\u2191j
                 push    ax
                 mov     ax, 0FFh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_A9CF9
@@ -312251,7 +312251,7 @@ loc_A9DA8:                              ; CODE XREF: sub_A9D9A+9\u2191j
                 push    ax
                 mov     ax, 0FFh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_A9E1A
@@ -315886,7 +315886,7 @@ loc_AB4F9:                              ; DATA XREF: seg223:0118\u2193o
                 push    ax
                 mov     ax, 16Ch
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_AB51A
@@ -316089,7 +316089,7 @@ loc_AB628:                              ; CODE XREF: sub_AB5A8+4E\u2191j
                 push    ax
                 mov     ax, 14Ch
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_AB63F
@@ -316111,7 +316111,7 @@ loc_AB651:                              ; CODE XREF: sub_AB5A8+14\u2191j
                 push    ax
                 mov     ax, 107h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_AB697
@@ -316332,7 +316332,7 @@ loc_AB7CD:                              ; CODE XREF: sub_AB748+5E\u2191j
                 push    ax
                 mov     ax, 0D3h ; 'Ó'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_AB80D
@@ -316340,7 +316340,7 @@ loc_AB7CD:                              ; CODE XREF: sub_AB748+5E\u2191j
                 push    ax
                 mov     ax, 107h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_AB80D
@@ -316380,7 +316380,7 @@ loc_AB849:                              ; CODE XREF: sub_AB748+CF\u2191j
                 push    ax
                 mov     ax, 14Ch
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_AB860
@@ -316400,7 +316400,7 @@ loc_AB87A:                              ; CODE XREF: sub_AB748+123\u2191j
                 push    ax
                 mov     ax, 107h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_AB89D
@@ -316512,7 +316512,7 @@ loc_AB976:                              ; CODE XREF: sub_AB748+1A6\u2191j
                 push    ax
                 mov     ax, 107h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_AB9B7
@@ -317306,7 +317306,7 @@ loc_ABEF0:                              ; CODE XREF: sub_ABDEF+14\u2191j
                 push    ax
                 mov     ax, 11Bh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_ABEA1
@@ -317772,7 +317772,7 @@ loc_AC23C:                              ; CODE XREF: sub_AC0F4+14\u2191j
                 push    ax
                 mov     ax, 14Ch
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_AC260
@@ -318089,7 +318089,7 @@ loc_AC47A:                              ; CODE XREF: sub_AC425+23\u2191j
                 push    ax
                 mov     ax, 103h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_AC4B5
@@ -318397,7 +318397,7 @@ loc_AC69B:                              ; CODE XREF: sub_AC5B9+B5\u2191j
                 push    ax
                 mov     ax, 0D3h ; 'Ó'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_AC6B2
@@ -318502,7 +318502,7 @@ loc_AC781:                              ; CODE XREF: sub_AC5B9+AA\u2191j
                 push    ax
                 mov     ax, 0D3h ; 'Ó'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_AC798
@@ -319141,7 +319141,7 @@ loc_ACBED:                              ; CODE XREF: sub_ACB7F+2A\u2191j
                 mov     ax, 151h
                 push    ax
                 push    es:vocab_list_0._logicNum
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_ACC6B
@@ -319164,7 +319164,7 @@ loc_ACC53:                              ; CODE XREF: sub_ACB7F+CF\u2191j
                 mov     ax, 151h
                 push    ax
                 push    es:vocab_list_0._altVocabId
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_ACC6B
@@ -319662,7 +319662,7 @@ loc_ACF78:                              ; CODE XREF: sub_ACF38+1D\u2191j
                 push    ax
                 mov     ax, 0D3h ; 'Ó'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_ACF9F
@@ -319872,7 +319872,7 @@ loc_AD099:                              ; CODE XREF: sub_AD063+19\u2191j
                 push    ax
                 mov     ax, 0D3h ; 'Ó'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_AD0F6
@@ -319943,7 +319943,7 @@ loc_AD15F:                              ; CODE XREF: sub_AD063+20\u2191j
                 push    ax
                 mov     ax, 0D3h ; 'Ó'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_AD1F2
@@ -320040,7 +320040,7 @@ loc_AD25A:                              ; CODE XREF: sub_AD063+1F2\u2191j
                 push    ax
                 mov     ax, 0D3h ; 'Ó'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_AD27B
@@ -320164,7 +320164,7 @@ loc_AD34B:                              ; CODE XREF: sub_AD063+30\u2191j
                 push    ax
                 mov     ax, 0D3h ; 'Ó'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_AD3A1
@@ -321453,7 +321453,7 @@ loc_ADC1F:                              ; CODE XREF: sub_ADB2A+DE\u2191j
                 push    ax
                 mov     ax, 12Dh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_ADC9F
@@ -321800,7 +321800,7 @@ loc_ADE9E:                              ; CODE XREF: sub_ADE14+85\u2191j
                 push    ax
                 mov     ax, 127h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_ADED4
@@ -322120,7 +322120,7 @@ loc_AE0C4:                              ; CODE XREF: sub_AE074+23\u2191j
                 push    ax
                 mov     ax, 127h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_AE0DB
@@ -322145,7 +322145,7 @@ loc_AE0F0:                              ; CODE XREF: sub_AE074+130\u2193j
                 push    ax
                 mov     ax, 127h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_AE0DB
@@ -322325,7 +322325,7 @@ loc_AE218:                              ; CODE XREF: sub_AE1E7+2A\u2191j
                 push    ax
                 mov     ax, 12Bh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_AE24C
@@ -323411,7 +323411,7 @@ loc_AE9BE:                              ; CODE XREF: sub_AE989+31\u2191j
                 push    es:_roomLogicNum
                 mov     ax, 12Bh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_AEA03
@@ -323419,7 +323419,7 @@ loc_AE9BE:                              ; CODE XREF: sub_AE989+31\u2191j
                 push    ax
                 mov     ax, 12Bh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_AEA30
@@ -323429,7 +323429,7 @@ loc_AEA03:                              ; CODE XREF: sub_AE989+64\u2191j
                 push    es:_roomLogicNum
                 mov     ax, 127h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_AEA45
@@ -323437,7 +323437,7 @@ loc_AEA03:                              ; CODE XREF: sub_AE989+64\u2191j
                 push    ax
                 mov     ax, 127h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_AEA45
@@ -323757,7 +323757,7 @@ loc_AEC27:
                 push    ax
                 mov     ax, 101h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
 
 loc_AEC37:
                 add     sp, 4
@@ -323792,7 +323792,7 @@ loc_AEC72:                              ; CODE XREF: sub_AEBC0+7C\u2191j
                 push    ax
 
 loc_AEC7A:
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_AECAA
@@ -323856,7 +323856,7 @@ loc_AED0F:                              ; CODE XREF: sub_AEBC0+140\u2191j
                 push    ax
                 mov     ax, 101h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_AED72
@@ -323961,7 +323961,7 @@ loc_AEDEE:                              ; CODE XREF: sub_AEBC0+1EB\u2191j
                 push    ax
                 mov     ax, 101h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_AEE20
@@ -324067,7 +324067,7 @@ loc_AEEE1:                              ; CODE XREF: sub_AEBC0+17\u2191j
                 push    ax
                 mov     ax, 11Dh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_AEF02
@@ -324079,7 +324079,7 @@ loc_AEF02:                              ; CODE XREF: sub_AEBC0+338\u2191j
                 push    ax
                 mov     ax, 11Eh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_AEF1E
@@ -324091,7 +324091,7 @@ loc_AEF1E:                              ; CODE XREF: sub_AEBC0+354\u2191j
                 push    ax
                 mov     ax, 11Ch
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_AEF3A
@@ -324103,7 +324103,7 @@ loc_AEF3A:                              ; CODE XREF: sub_AEBC0+370\u2191j
                 push    ax
                 mov     ax, 11Ah
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_AEF56
@@ -324171,7 +324171,7 @@ loc_AEF5F:                              ; CODE XREF: sub_AEBC0+39A\u2191j
                 push    ax
                 mov     ax, 11Bh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 cmp     ax, 1
                 sbb     cx, cx
@@ -324179,7 +324179,7 @@ loc_AEF5F:                              ; CODE XREF: sub_AEBC0+39A\u2191j
                 push    cx
                 mov     ax, 11Bh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_AF026
@@ -326975,7 +326975,7 @@ loc_B01B5:                              ; CODE XREF: sub_B00A6+E2\u2191j
                 push    ax
                 mov     ax, 11Bh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B0271
@@ -326983,7 +326983,7 @@ loc_B01B5:                              ; CODE XREF: sub_B00A6+E2\u2191j
                 push    ax
                 mov     ax, 11Bh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_B0271
@@ -327069,7 +327069,7 @@ loc_B02F0:                              ; CODE XREF: sub_B00A6+244\u2191j
                 push    ax
                 mov     ax, 11Bh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B033D
@@ -328558,7 +328558,7 @@ loc_B0EB1:                              ; CODE XREF: Commset_show+447\u2191j
                 push    ax
                 mov     ax, 10Ah
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B0EC8
@@ -329567,7 +329567,7 @@ loc_B16D0:                              ; DATA XREF: seg231:0094\u2193o
                 push    ax
                 mov     ax, 13Dh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B16F8
@@ -329577,7 +329577,7 @@ loc_B16D0:                              ; DATA XREF: seg231:0094\u2193o
                 push    ax
 
 loc_B16EC:
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_B16FD
@@ -329603,7 +329603,7 @@ loc_B1700:                              ; DATA XREF: seg231:009E\u2193o
                 push    ax
 
 loc_B1708:
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B1728
@@ -329613,7 +329613,7 @@ loc_B1708:
 loc_B1718:
                 mov     ax, 10Bh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_B172D
@@ -329925,7 +329925,7 @@ loc_B199F:                              ; CODE XREF: sub_B1730+260\u2191j
                 push    ax
                 mov     ax, 100h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_B1A0F
@@ -329943,7 +329943,7 @@ loc_B19CD:                              ; CODE XREF: sub_B1730+28E\u2191j
                 push    ax
                 mov     ax, 10Bh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_B1A0F
@@ -329961,7 +329961,7 @@ loc_B19FB:                              ; CODE XREF: sub_B1730+2BC\u2191j
                 push    ax
                 mov     ax, 10Ah
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B1A14
@@ -330152,7 +330152,7 @@ loc_B1B70:                              ; CODE XREF: sub_B1730+17\u2191j
                 push    ax
                 mov     ax, 100h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_B1B87
@@ -330193,7 +330193,7 @@ loc_B1BAC:                              ; CODE XREF: sub_B1730+477\u2191j
                 push    ax
                 mov     ax, 13Dh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B1BF8
@@ -330260,7 +330260,7 @@ loc_B1C6C:                              ; CODE XREF: sub_B1730+454\u2191j
                 push    ax
                 mov     ax, 10Ah
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_B1C83
@@ -330329,7 +330329,7 @@ loc_B1D05:                              ; CODE XREF: sub_B1730+550\u2191j
                 push    ax
                 mov     ax, 10Bh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_B1D1C
@@ -330412,7 +330412,7 @@ loc_B1DC9:                              ; CODE XREF: sub_B1730+694\u2191j
                 push    ax
                 mov     ax, 13Dh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B1DED
@@ -330428,7 +330428,7 @@ loc_B1DED:                              ; CODE XREF: sub_B1730+6AB\u2191j
                 push    ax
                 mov     ax, 13Dh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B1E25
@@ -330436,7 +330436,7 @@ loc_B1DED:                              ; CODE XREF: sub_B1730+6AB\u2191j
                 push    ax
                 mov     ax, 13Dh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_B1E25
@@ -330454,7 +330454,7 @@ loc_B1E25:                              ; CODE XREF: sub_B1730+6CF\u2191j
                 push    ax
                 mov     ax, 100h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B1E49
@@ -330470,7 +330470,7 @@ loc_B1E49:                              ; CODE XREF: sub_B1730+707\u2191j
                 push    ax
                 mov     ax, 10Ah
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B1E6D
@@ -330486,7 +330486,7 @@ loc_B1E6D:                              ; CODE XREF: sub_B1730+72B\u2191j
                 push    ax
                 mov     ax, 10Bh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B1EB0
@@ -331051,7 +331051,7 @@ loc_B2211:                              ; CODE XREF: sub_B2110+FA\u2191j
                 push    ax
                 mov     ax, 126h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_B2241
@@ -331963,7 +331963,7 @@ loc_B27B5:                              ; CODE XREF: sub_B277C+2A\u2191j
                 push    ax
                 mov     ax, 13Dh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B27E9
@@ -332179,7 +332179,7 @@ loc_B2905:                              ; CODE XREF: sub_B28A8+1B\u2191j
                 push    ax
                 mov     ax, 13Dh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B2986
@@ -332232,7 +332232,7 @@ loc_B2986:                              ; CODE XREF: sub_B28A8+6F\u2191j
                 push    ax
                 mov     ax, 13Dh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_B299D
@@ -332267,7 +332267,7 @@ loc_B29BF:                              ; CODE XREF: sub_B28A8+2F\u2191j
                 push    ax
                 mov     ax, 13Dh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B29F1
@@ -332320,7 +332320,7 @@ loc_B2A11:                              ; CODE XREF: sub_B28A8+15B\u2191j
                 push    es:_roomLogicNum
                 mov     ax, 100h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B2A5A
@@ -332433,7 +332433,7 @@ loc_B2B2E:                              ; CODE XREF: sub_B28A8+27E\u2191j
                 push    ax
                 mov     ax, 13Dh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B2B5C
@@ -332441,7 +332441,7 @@ loc_B2B2E:                              ; CODE XREF: sub_B28A8+27E\u2191j
                 push    ax
                 mov     ax, 13Eh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B2B5C
@@ -332455,7 +332455,7 @@ loc_B2B5C:                              ; CODE XREF: sub_B28A8+298\u2191j
                 push    ax
                 mov     ax, 13Dh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B2BB2
@@ -332463,7 +332463,7 @@ loc_B2B5C:                              ; CODE XREF: sub_B28A8+298\u2191j
                 push    ax
                 mov     ax, 100h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_B2BB2
@@ -332471,7 +332471,7 @@ loc_B2B5C:                              ; CODE XREF: sub_B28A8+298\u2191j
                 push    ax
                 mov     ax, 10Bh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_B2BB2
@@ -332479,7 +332479,7 @@ loc_B2B5C:                              ; CODE XREF: sub_B28A8+298\u2191j
                 push    ax
                 mov     ax, 10Ah
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_B2BB2
@@ -332493,7 +332493,7 @@ loc_B2BB2:                              ; CODE XREF: sub_B28A8+2C6\u2191j
                 push    ax
                 mov     ax, 13Ch
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B2BE0
@@ -332501,7 +332501,7 @@ loc_B2BB2:                              ; CODE XREF: sub_B28A8+2C6\u2191j
                 push    ax
                 mov     ax, 13Dh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B2BE0
@@ -332550,7 +332550,7 @@ loc_B2C38:                              ; CODE XREF: sub_B28A8+385\u2191j
                 push    ax
                 mov     ax, 13Eh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B2C68
@@ -332598,7 +332598,7 @@ loc_B2C9A:                              ; CODE XREF: sub_B28A8+34F\u2191j
                 push    ax
                 mov     ax, 13Eh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_B2CE4
@@ -332606,7 +332606,7 @@ loc_B2C9A:                              ; CODE XREF: sub_B28A8+34F\u2191j
                 push    ax
                 mov     ax, 100h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B2CCA
@@ -332619,7 +332619,7 @@ loc_B2CCA:                              ; CODE XREF: sub_B28A8+418\u2191j
                 push    ax
                 mov     ax, 10Bh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B2CE4
@@ -332638,7 +332638,7 @@ loc_B2CF9:                              ; CODE XREF: sub_B28A8+446\u2191j
                 push    ax
                 mov     ax, 13Dh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_B2D2F
@@ -333183,7 +333183,7 @@ loc_B30A5:                              ; CODE XREF: sub_B3052+4C\u2191j
                 push    ax
                 mov     ax, 13Ch
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B30BE
@@ -333884,7 +333884,7 @@ loc_B34C9:                              ; CODE XREF: sub_B343B+85\u2191j
                 mov     ax, 0F4h ; 'ô'
                 push    ax
                 push    Persisted_val203
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B350C
@@ -333977,7 +333977,7 @@ loc_B358E:                              ; CODE XREF: sub_B343B+14E\u2191j
                 mov     ax, 0F4h ; 'ô'
                 push    ax
                 push    [bp+var_2]
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_B35A4
@@ -334098,7 +334098,7 @@ loc_B364F:                              ; CODE XREF: sub_3101F+3\u2191J
                 push    ax
                 mov     ax, 13Dh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B36A7
@@ -334144,7 +334144,7 @@ loc_B36AA:                              ; CODE XREF: sub_31029+3\u2191J
                 push    ax
                 mov     ax, 13Dh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B36EF
@@ -334162,7 +334162,7 @@ loc_B36EF:                              ; CODE XREF: sub_31029+826AF\u2191j
                 push    ax
                 mov     ax, 13Eh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B3719
@@ -334648,7 +334648,7 @@ loc_B39FA:                              ; CODE XREF: sub_B3850+16D\u2191j
                 push    ax
                 mov     ax, 13Eh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B3A14
@@ -334800,7 +334800,7 @@ loc_B3B2B:                              ; CODE XREF: sub_B3850+2AB\u2191j
                 push    ax
                 mov     ax, 138h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B3B45
@@ -335545,7 +335545,7 @@ loc_B40AF:                              ; CODE XREF: sub_B3F4C+C4\u2191j
                 push    ax
                 mov     ax, 13Eh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B40CD
@@ -336045,7 +336045,7 @@ loc_B4400:                              ; CODE XREF: sub_B43C6+1B\u2191j
                 push    ax
                 mov     ax, 134h
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_B4438
@@ -336081,7 +336081,7 @@ loc_B4449:                              ; CODE XREF: sub_B43C6+28\u2191j
                 push    ax
                 mov     ax, 135h
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_B4481
@@ -336260,7 +336260,7 @@ loc_B4538:                              ; CODE XREF: sub_31047+834EC\u2191j
                 push    ax
                 mov     ax, 13Dh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B458E
@@ -336456,7 +336456,7 @@ loc_B470E:                              ; CODE XREF: sub_B46BF+4A\u2191j
                 push    ax
                 mov     ax, 13Eh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_B4774
@@ -336540,7 +336540,7 @@ loc_B47C8:                              ; CODE XREF: sub_B46BF+104\u2191j
                 push    ax
                 mov     ax, 13Eh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_B47FC
@@ -336765,7 +336765,7 @@ loc_B49B6:                              ; CODE XREF: sub_30FA7+3\u2191J
                 push    ax
                 mov     ax, 100h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B49DB
@@ -336937,7 +336937,7 @@ var_2           = word ptr -2
                 push    es:_roomLogicNum
                 mov     ax, 10Bh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_B4B39
@@ -337100,7 +337100,7 @@ loc_B4C6A:                              ; CODE XREF: sub_30F9D+3\u2191J
                 push    ax
                 mov     ax, 10Bh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B4C8F
@@ -337499,7 +337499,7 @@ loc_B4FB7:                              ; CODE XREF: sub_30F93+3\u2191J
                 push    ax
                 mov     ax, 10Ah
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B4FDC
@@ -339633,7 +339633,7 @@ loc_B5DDE:                              ; CODE XREF: sub_B5D89+3A\u2191j
                 push    ax
                 mov     ax, 14Ch
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_B5DF5
@@ -339654,7 +339654,7 @@ loc_B5E0F:                              ; CODE XREF: sub_B5D89+77\u2191j
                 push    ax
                 mov     ax, 10Bh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B5E28
@@ -339826,7 +339826,7 @@ loc_B5F4E:                              ; CODE XREF: sub_B5EF9+3A\u2191j
                 push    ax
                 mov     ax, 14Ch
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_B5F65
@@ -339849,7 +339849,7 @@ loc_B5F76:                              ; CODE XREF: sub_B5EF9+14\u2191j
                 push    ax
                 mov     ax, 106h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B5F9A
@@ -342210,7 +342210,7 @@ loc_B6E4F:                              ; CODE XREF: sub_3114B+3\u2191J
                 push    ax
                 mov     ax, 106h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_B6E76
@@ -343172,7 +343172,7 @@ loc_B743C:                              ; CODE XREF: sub_B7364+B4\u2191j
                 push    es:_roomLogicNum
                 mov     ax, 2A3h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B7480
@@ -343483,7 +343483,7 @@ loc_B76D5:                              ; CODE XREF: sub_B7698+11\u2191j
                 push    es:_roomLogicNum
                 mov     ax, 106h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B76F6
@@ -343538,7 +343538,7 @@ loc_B7710:                              ; CODE XREF: sub_B7698+11\u2191j
                 push    ax
                 mov     ax, 106h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B770B
@@ -343580,7 +343580,7 @@ loc_B779D:                              ; CODE XREF: sub_B7698+11\u2191j
                 push    ax
                 mov     ax, 106h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_B77B4
@@ -343795,7 +343795,7 @@ loc_B78E2:                              ; CODE XREF: sub_B77EE+4E\u2191j
                 push    ax
                 mov     ax, 2A9h
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
 
 loc_B78F6:
@@ -344382,7 +344382,7 @@ loc_B7C59:                              ; CODE XREF: sub_B7BEC+9\u2191j
                 mov     ax, 29Ch
                 push    ax
                 push    es:vocab_list_0._logicNum
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_B7CA8
@@ -344402,7 +344402,7 @@ loc_B7CB7:                              ; CODE XREF: sub_B7BEC+C6\u2191j
                 mov     ax, 29Ch
                 push    ax
                 push    es:vocab_list_0._altVocabId
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B7CCF
@@ -344791,7 +344791,7 @@ loc_B7F2F:                              ; CODE XREF: sub_B7ECA+56\u2191j
                 mov     ax, 2A1h
                 push    ax
                 push    es:vocab_list_0._logicNum
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_B7F8A
@@ -344811,7 +344811,7 @@ loc_B7F99:                              ; CODE XREF: sub_B7ECA+CA\u2191j
                 mov     ax, 2A1h
                 push    ax
                 push    es:vocab_list_0._altVocabId
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B7FB1
@@ -344833,7 +344833,7 @@ loc_B7FC1:                              ; CODE XREF: sub_B7ECA+BE\u2191j
                 push    ax
                 mov     ax, 2A8h
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_B7FDF
@@ -345160,7 +345160,7 @@ loc_B81F0:                              ; CODE XREF: sub_B81B9+1B\u2191j
                 push    ax
                 mov     ax, 2A9h
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_B8210
@@ -345358,7 +345358,7 @@ loc_B8327:                              ; CODE XREF: sub_B82EF+2B\u2191j
 loc_B832B:
                 mov     ax, 2A3h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_B8351
@@ -345379,7 +345379,7 @@ loc_B8351:                              ; CODE XREF: sub_B82EF+26\u2191j
                 push    ax
                 mov     ax, 2A3h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_B8368
@@ -345533,7 +345533,7 @@ loc_B8480:                              ; CODE XREF: sub_B82EF+CD\u2191j
                 push    ax
                 mov     ax, 2A3h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B84A9
@@ -345708,7 +345708,7 @@ loc_B8564:                              ; CODE XREF: sub_B8541+14\u2191j
                 push    es:_roomLogicNum
                 mov     ax, 2A3h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B85B5
@@ -346049,7 +346049,7 @@ loc_B8807:                              ; CODE XREF: sub_B87AD+55\u2191j
                 push    es:_roomLogicNum
                 mov     ax, 2A3h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B888A
@@ -346139,7 +346139,7 @@ loc_B88B8:                              ; CODE XREF: sub_B87AD+4D\u2191j
                 push    ax
                 mov     ax, 2A8h
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_B891A
@@ -346493,7 +346493,7 @@ loc_B8B28:                              ; CODE XREF: sub_B8AEB+38\u2191j
                 push    ax
                 mov     ax, 2A8h
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_B8B46
@@ -346536,7 +346536,7 @@ loc_B8B80:                              ; CODE XREF: sub_B8AEB+2B\u2191j
                 push    ax
                 mov     ax, 2A8h
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_B8BAE
@@ -346581,7 +346581,7 @@ loc_B8BD1:                              ; CODE XREF: sub_B8AEB+DF\u2191j
                 push    ax
                 mov     ax, 2A8h
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_B8BF9
@@ -346643,7 +346643,7 @@ loc_B8C4D:                              ; CODE XREF: sub_B8AEB+15B\u2191j
                 push    ax
                 mov     ax, 2A8h
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_B8C6A
@@ -348273,7 +348273,7 @@ loc_B96EF:                              ; CODE XREF: sub_B959C+23\u2191j
                 push    ax
                 mov     ax, 2A8h
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_B970C
@@ -349057,7 +349057,7 @@ loc_B9C71:                              ; CODE XREF: sub_B9C0D+49\u2191j
                 mov     ax, 2B1h
                 push    ax
                 push    es:vocab_list_0._logicNum
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_B9C9F
@@ -349073,7 +349073,7 @@ loc_B9C9F:                              ; CODE XREF: sub_B9C0D+6E\u2191j
                 mov     ax, 2B1h
                 push    ax
                 push    es:vocab_list_0._altVocabId
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_B9CC3
@@ -351266,7 +351266,7 @@ loc_BAB0B:                              ; CODE XREF: sub_BA9A5+17\u2191j
                 mov     es, seg_D1986
                 assume es:sg3EDC
                 push    es:vocab_list_0._logicNum
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_BAB87
@@ -351297,7 +351297,7 @@ loc_BAB96:                              ; CODE XREF: sub_BA9A5+1EC\u2191j
                 mov     es, seg_D198A
                 assume es:sg3EDC
                 push    es:vocab_list_0._altVocabId
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_BABB7
@@ -351343,7 +351343,7 @@ loc_BABE5:                              ; CODE XREF: sub_BA9A5+1E0\u2191j
                 mov     es, seg_D1986
                 assume es:sg3EDC
                 push    es:vocab_list_0._logicNum
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_BAC35
@@ -351862,7 +351862,7 @@ loc_BAF99:                              ; CODE XREF: sub_BAE1F+1C\u2191j
                 mov     es, seg_D1986
                 assume es:sg3EDC
                 push    es:vocab_list_0._logicNum
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_BB009
@@ -351897,7 +351897,7 @@ loc_BB021:
                 mov     es, seg_D198A
                 assume es:sg3EDC
                 push    es:vocab_list_0._altVocabId
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_BB039
@@ -351942,7 +351942,7 @@ loc_BB067:                              ; CODE XREF: sub_BAE1F+1E8\u2191j
                 mov     es, seg_D1986
                 assume es:sg3EDC
                 push    es:vocab_list_0._logicNum
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_BB0AB
@@ -353511,7 +353511,7 @@ loc_BBBD1:                              ; CODE XREF: sub_BBABF+10D\u2191j
                 mov     ax, 2BEh
                 push    ax
                 push    es:vocab_list_0._logicNum
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_BBBFF
@@ -353531,7 +353531,7 @@ loc_BBC0E:                              ; CODE XREF: sub_BBABF+14A\u2191j
                 mov     ax, 2BEh
                 push    ax
                 push    es:vocab_list_0._altVocabId
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_BBC26
@@ -353834,7 +353834,7 @@ loc_BBE15:                              ; CODE XREF: sub_BBCD0+140\u2191j
                 mov     ax, 2BFh
                 push    ax
                 push    es:vocab_list_0._logicNum
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_BBE43
@@ -353854,7 +353854,7 @@ loc_BBE52:                              ; CODE XREF: sub_BBCD0+17D\u2191j
                 mov     ax, 2BFh
                 push    ax
                 push    es:vocab_list_0._altVocabId
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_BBE6A
@@ -356623,7 +356623,7 @@ sub_BD174       proc far                ; CODE XREF: thunk_sub_BD174:loc_31414\u
                 push    ax
                 mov     ax, 2A3h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_BD1A0
@@ -359697,7 +359697,7 @@ loc_BE78C:                              ; CODE XREF: sub_BE6DF+B\u2191j
                 push    ax
                 mov     ax, 288h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_BE7C0
@@ -359762,7 +359762,7 @@ loc_BE825:                              ; CODE XREF: sub_BE6DF+1E6\u2193j
                 push    ax
                 mov     ax, 285h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_BE85A
@@ -359770,7 +359770,7 @@ loc_BE825:                              ; CODE XREF: sub_BE6DF+1E6\u2193j
                 push    ax
                 mov     ax, 285h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_BE8AD
@@ -359780,7 +359780,7 @@ loc_BE85A:                              ; CODE XREF: sub_BE6DF+165\u2191j
                 push    ax
                 mov     ax, 286h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_BE882
@@ -359788,7 +359788,7 @@ loc_BE85A:                              ; CODE XREF: sub_BE6DF+165\u2191j
                 push    ax
                 mov     ax, 286h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_BE8AD
@@ -359798,7 +359798,7 @@ loc_BE882:                              ; CODE XREF: sub_BE6DF+18D\u2191j
                 push    ax
                 mov     ax, 287h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_BE820
@@ -359806,7 +359806,7 @@ loc_BE882:                              ; CODE XREF: sub_BE6DF+18D\u2191j
                 push    ax
                 mov     ax, 287h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_BE8AD
@@ -360439,7 +360439,7 @@ loc_BEC79:                              ; CODE XREF: sub_BEC06+6C\u2191j
                 push    ax
                 mov     ax, 281h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_BECA3
@@ -360691,7 +360691,7 @@ loc_BEE30:                              ; CODE XREF: sub_BED22+109\u2191j
                 mov     ax, 281h
                 push    ax
                 push    es:vocab_list_0._logicNum
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_BEE48
@@ -360816,7 +360816,7 @@ loc_BEF2A:                              ; CODE XREF: sub_BEEFB+2A\u2191j
                 push    ax
                 mov     ax, 281h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_BEF54
@@ -360865,7 +360865,7 @@ loc_BEF7A:                              ; CODE XREF: sub_BEEFB+1B\u2191j
                 push    ax
                 mov     ax, 281h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_BEFA3
@@ -360885,7 +360885,7 @@ loc_BEFA3:                              ; CODE XREF: sub_BEEFB+91\u2191j
                 push    ax
                 mov     ax, 281h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_BEFDF
@@ -360893,7 +360893,7 @@ loc_BEFA3:                              ; CODE XREF: sub_BEEFB+91\u2191j
                 push    ax
                 mov     ax, 281h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_BEFFF
@@ -360901,7 +360901,7 @@ loc_BEFA3:                              ; CODE XREF: sub_BEEFB+91\u2191j
                 push    ax
                 mov     ax, 278h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_BEFFF
@@ -361074,7 +361074,7 @@ loc_BF0F7:                              ; CODE XREF: sub_BF003+C8\u2191j
                 push    ax
                 mov     es, seg_D19F8
                 push    es:vocab_list_0._logicNum
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_BF15C
@@ -361288,7 +361288,7 @@ loc_BF238:                              ; CODE XREF: sub_BF1CE+38\u2191j
                 push    ax
                 mov     ax, 288h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_BF2A1
@@ -361349,7 +361349,7 @@ loc_BF2DD:                              ; CODE XREF: sub_BF1CE+25\u2191j
                 push    ax
                 mov     ax, 288h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_BF357
@@ -361376,7 +361376,7 @@ loc_BF30D:                              ; CODE XREF: sub_BF1CE+3F\u2191j
                 push    ax
                 mov     ax, 288h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_BF2FE
@@ -361488,7 +361488,7 @@ loc_BF3D1:                              ; CODE XREF: sub_BF1CE+1FA\u2191j
                 push    ax
                 mov     ax, 288h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_BF3F5
@@ -362454,7 +362454,7 @@ loc_BFAEB:                              ; CODE XREF: sub_BFAB9+1C\u2191j
                 push    ax
                 mov     ax, 278h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_BFB11
@@ -362552,7 +362552,7 @@ loc_BFB6D:                              ; CODE XREF: sub_30E53+8ECF5\u2191j
                 push    ax
                 mov     ax, 281h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_BFBAE
@@ -362612,7 +362612,7 @@ loc_BFBF2:                              ; CODE XREF: sub_30E49+3\u2191J
                 push    ax
                 mov     ax, 281h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_BFC16
@@ -363105,7 +363105,7 @@ loc_BFFFA:                              ; CODE XREF: sub_30E2B+3\u2191J
                 push    ax
                 mov     ax, 281h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_C0040
@@ -364452,7 +364452,7 @@ loc_C0951:                              ; CODE XREF: sub_C08B1+11\u2191j
                 push    ax
                 mov     ax, 278h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_C0990
@@ -364694,7 +364694,7 @@ loc_C0B16:                              ; CODE XREF: sub_C0A65+14\u2191j
                 push    ax
                 mov     ax, 278h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
 
 loc_C0B23:
                 add     sp, 4
@@ -364704,7 +364704,7 @@ loc_C0B23:
                 push    ax
                 mov     ax, 281h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_C0B4E
@@ -365364,7 +365364,7 @@ loc_C0F8C:                              ; CODE XREF: sub_C0F54+20\u2191j
                 push    ax
                 mov     ax, 284h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_C0FB5
@@ -365394,7 +365394,7 @@ loc_C0FBA:                              ; CODE XREF: sub_C0F54+1B\u2191j
                 push    ax
                 mov     ax, 284h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_C0FE3
@@ -366252,7 +366252,7 @@ loc_C1568:                              ; CODE XREF: sub_C1484+D2\u2191j
                 push    ax
                 mov     ax, 281h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_C15A7
@@ -366291,7 +366291,7 @@ loc_C15AA:
                 push    ax
                 mov     ax, 278h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_C15DB
@@ -366307,7 +366307,7 @@ loc_C15DB:                              ; CODE XREF: sub_C1484+145\u2191j
                 push    ax
                 mov     ax, 281h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_C15FF
@@ -367242,7 +367242,7 @@ logicNum        = word ptr -2
                 mov     ax, 281h
                 mov     [bp+logicNum], ax
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_C1CF2
@@ -367251,7 +367251,7 @@ logicNum        = word ptr -2
                 mov     ax, 127h
                 mov     [bp+logicNum], ax
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_C1CF2
@@ -367260,7 +367260,7 @@ logicNum        = word ptr -2
                 mov     ax, 12Dh
                 mov     [bp+logicNum], ax
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_C1CF2
@@ -367883,7 +367883,7 @@ loc_C20C8:                              ; CODE XREF: sub_C1FB1+B3\u2191j
                 push    ax
                 mov     ax, 264h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_C20EC
@@ -368185,7 +368185,7 @@ loc_C22DF:                              ; CODE XREF: sub_C2245+95\u2191j
                 push    ax
                 mov     ax, 264h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_C2315
@@ -368416,7 +368416,7 @@ loc_C2473:                              ; CODE XREF: sub_C2391+D0\u2191j
                 push    ax
                 mov     ax, 264h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_C24A4
@@ -368639,7 +368639,7 @@ loc_C25EE:                              ; CODE XREF: sub_C24F7+ED\u2191j
                 push    ax
                 mov     ax, 264h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_C261F
@@ -368843,7 +368843,7 @@ loc_C2753:                              ; CODE XREF: seg249:092E\u2191j
                 mov     ax, 291h
                 push    ax
                 push    es:vocab_list_0._logicNum
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_C2778
@@ -368856,7 +368856,7 @@ loc_C2778:                              ; CODE XREF: seg249:093E\u2191j
                 push    ax
                 mov     ax, 266h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_C278F
@@ -368919,7 +368919,7 @@ loc_C27E8:                              ; CODE XREF: seg249:08BB\u2191j
                 push    ax
                 mov     ax, 260h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_C2860
@@ -368944,7 +368944,7 @@ loc_C280E:                              ; CODE XREF: seg249:08BB\u2191j
                 push    ax
                 mov     ax, 266h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_C2860
@@ -369163,7 +369163,7 @@ loc_C29A5:                              ; CODE XREF: sub_C295A+1B\u2191j
                 push    ax
                 mov     ax, 25Dh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
 
 loc_C29B2:
                 add     sp, 4
@@ -369445,7 +369445,7 @@ loc_C2B82:                              ; CODE XREF: sub_C2AF3+79\u2191j
                 push    ax
                 mov     ax, 25Dh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_C2B9B
@@ -369660,7 +369660,7 @@ loc_C2CBC:                              ; CODE XREF: sub_C2BEE+75\u2191j
                 push    ax
                 mov     ax, 14Ch
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_C2CD6
@@ -369915,7 +369915,7 @@ loc_C2EB4:                              ; CODE XREF: sub_C2E1D+B\u2191j
                 push    ax
                 mov     ax, 25Dh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_C2F1A
@@ -371419,7 +371419,7 @@ loc_C393E:                              ; CODE XREF: sub_C37B5+37\u2191j
                 push    ax
                 mov     ax, 264h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_C3958
@@ -371443,7 +371443,7 @@ loc_C3964:                              ; CODE XREF: sub_C37B5+1D\u2191j
                 push    ax
                 mov     ax, 264h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_C397E
@@ -372352,7 +372352,7 @@ loc_C3F19:                              ; CODE XREF: sub_30EB7+3\u2191J
                 push    ax
                 mov     ax, 260h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_C3F58
@@ -372450,7 +372450,7 @@ loc_C3FC5:                              ; CODE XREF: sub_30EAD+930F1\u2191j
                 push    ax
                 mov     ax, 262h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_C3FF9
@@ -372470,7 +372470,7 @@ loc_C3FF9:                              ; CODE XREF: sub_30EAD+9313A\u2191j
                 push    ax
                 mov     ax, 262h
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_C401F
@@ -373405,7 +373405,7 @@ loc_C44E6:                              ; CODE XREF: sub_C44B0:loc_C44B9\u2191j
                 push    ax
                 mov     es, seg_D1A5C
                 push    es:vocab_list_0._logicNum
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_C456C
@@ -373419,7 +373419,7 @@ loc_C450B:
                 push    ax
 
 loc_C4517:
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_C456C
@@ -373660,7 +373660,7 @@ loc_C4703:                              ; CODE XREF: sub_C44B0+209\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_C4721
@@ -373681,7 +373681,7 @@ loc_C4721:                              ; CODE XREF: sub_C44B0+269\u2191j
                 push    ax
                 mov     ax, 0D6h ; 'Ö'
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_C474E
@@ -373696,7 +373696,7 @@ loc_C474E:                              ; CODE XREF: sub_C44B0+297\u2191j
                 push    ax
                 mov     ax, 0D4h ; 'Ô'
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_C4776
@@ -373779,7 +373779,7 @@ loc_C47D4:                              ; CODE XREF: sub_C44B0:loc_C44D0\u2191j
                 push    ax
                 mov     ax, 0D6h ; 'Ö'
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_C47EF
@@ -373819,7 +373819,7 @@ loc_C4826:                              ; CODE XREF: sub_C44B0+371\u2191j
                 mov     ax, 0D3h ; 'Ó'
                 push    ax
                 push    es:vocab_list_0._logicNum
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_C4842
@@ -373852,7 +373852,7 @@ loc_C4864:                              ; CODE XREF: sub_C44B0+10\u2191j
                 push    ax
                 mov     ax, 0D6h ; 'Ö'
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_C487F
@@ -373891,7 +373891,7 @@ loc_C48B6:                              ; CODE XREF: sub_C44B0+401\u2191j
                 mov     ax, 0D3h ; 'Ó'
                 push    ax
                 push    es:vocab_list_0._altVocabId
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_C48D2
@@ -374849,7 +374849,7 @@ loc_C4F23:                              ; CODE XREF: sub_C4EC8+3E\u2191j
                 mov     es, seg_D1A5C
                 assume es:sg3EDC
                 push    es:vocab_list_0._logicNum
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_C4EDB
@@ -374917,7 +374917,7 @@ loc_C4FB2:                              ; CODE XREF: sub_C4EC8+350\u2193j
                 push    ax
                 mov     ax, 0D4h ; 'Ô'
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_C4FF3
@@ -374947,7 +374947,7 @@ loc_C4FF3:                              ; CODE XREF: sub_C4EC8+100\u2191j
                 push    ax
                 mov     ax, 0D6h ; 'Ö'
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_C5022
@@ -374999,7 +374999,7 @@ loc_C505A:                              ; CODE XREF: sub_C4EC8+358\u2193j
                 push    ax
                 mov     ax, 0D6h ; 'Ö'
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_C5085
@@ -375025,7 +375025,7 @@ loc_C5085:                              ; CODE XREF: sub_C4EC8+1A8\u2191j
                 push    ax
                 mov     ax, 0D4h ; 'Ô'
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_C50C7
@@ -375094,7 +375094,7 @@ loc_C5118:                              ; CODE XREF: sub_C4EC8+E4\u2191j
                 push    ax
                 mov     ax, 0D4h ; 'Ô'
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_C5135
@@ -375139,7 +375139,7 @@ loc_C5175:                              ; CODE XREF: sub_C4EC8+DC\u2191j
                 push    ax
                 mov     ax, 0D4h ; 'Ô'
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_C5193
@@ -375288,7 +375288,7 @@ loc_C5270:                              ; CODE XREF: sub_C5230+23\u2191j
                 push    ax
                 mov     ax, 0D7h ; '×'
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_C52B5
@@ -375323,7 +375323,7 @@ loc_C52B5:                              ; CODE XREF: sub_C5230+56\u2191j
                 push    ax
                 mov     ax, 0D6h ; 'Ö'
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_C52D0
@@ -375384,7 +375384,7 @@ loc_C5339:                              ; CODE XREF: sub_C5230+2A\u2191j
                 push    ax
                 mov     ax, 0D6h ; 'Ö'
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_C5354
@@ -375526,7 +375526,7 @@ loc_C5439:                              ; CODE XREF: sub_C53F0+246\u2193j
                 push    ax
                 mov     ax, 0D6h ; 'Ö'
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_C545B
@@ -375636,7 +375636,7 @@ loc_C5516:                              ; CODE XREF: sub_C53F0+19E\u2193j
                 push    ax
                 mov     ax, 0D6h ; 'Ö'
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_C5531
@@ -375750,7 +375750,7 @@ loc_C55F7:                              ; CODE XREF: sub_C53F0+3C\u2191j
                 push    ax
                 mov     ax, 0D4h ; 'Ô'
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jz      short loc_C5616
@@ -376779,7 +376779,7 @@ loc_C5C9C:                              ; CODE XREF: sub_C5C49+4E\u2191j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    sub_115CE
+                call    Logics_prehandlerHasMode
                 add     sp, 6
                 or      ax, ax
                 jnz     short loc_C5CCA
@@ -377694,7 +377694,7 @@ loc_C62D5:                              ; CODE XREF: sub_C6179+144\u2191j
                 push    ax
                 mov     ax, 0A5h ; '¥'
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_C6304
@@ -377726,7 +377726,7 @@ loc_C631C:                              ; CODE XREF: sub_C6179+195\u2191j
                 push    ax
                 mov     ax, 7Fh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_C6339
@@ -378457,7 +378457,7 @@ loc_C6812:                              ; CODE XREF: sub_C678E+67\u2191j
                 push    ax
                 mov     ax, 13Dh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_C683A
@@ -378465,7 +378465,7 @@ loc_C6812:                              ; CODE XREF: sub_C678E+67\u2191j
                 push    ax
                 mov     ax, 13Dh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_C683F
@@ -380397,7 +380397,7 @@ loc_C71FD:                              ; CODE XREF: sub_C711B+D8\u2191j
                 push    ax
                 mov     ax, 0Bh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_C7216
@@ -380775,7 +380775,7 @@ loc_C7465:                              ; CODE XREF: sub_C73AC+11\u2191j
                 push    ax
                 mov     ax, 0Bh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_C748C
@@ -381200,7 +381200,7 @@ loc_C7723:                              ; CODE XREF: sub_C76EB+20\u2191j
                 push    ax
                 mov     ax, 0Dh
                 push    ax
-                call    sub_11635
+                call    Logics_prehandlerChainReaches
                 add     sp, 4
                 or      ax, ax
                 jnz     short loc_C7748
@@ -393707,9 +393707,9 @@ dseg_84         dw seg sg4d43           ; DATA XREF: main+B38\u2191r
                                         ; main+B4C\u2191r
 dseg_85         dw seg sg4d43           ; DATA XREF: main+B57\u2191r
 seg082_1        dw seg seg082           ; DATA XREF: Logics_IsPrehandler1+18\u2191r
-                                        ; sub_115CE+2D\u2191r ...
+                                        ; Logics_prehandlerHasMode+2D\u2191r ...
 seg082_2        dw seg seg082           ; DATA XREF: Logics_IsPrehandler1+25\u2191r
-                                        ; sub_115CE+3A\u2191r ...
+                                        ; Logics_prehandlerHasMode+3A\u2191r ...
 dseg_86         dw seg sg4d43           ; DATA XREF: Logics_getObjectString:loc_116BC\u2191r
                                         ; Logics_getName:loc_11771\u2191r ...
 seg082_3        dw seg seg082           ; DATA XREF: Logics_getBitPtr+42\u2191r
