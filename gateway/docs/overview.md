@@ -2702,3 +2702,26 @@ multiplied by a growing fraction stepping from 0 up to full — calling
 black to full brightness.
 
 Applied via `apply_renames_gatemain.py`'s sixty-fifth batch.
+
+### `AnimPics_tick` named — the AnimPics cluster's last piece
+
+Moved to `sub_26F74` (4 callers) — already fully characterized (but
+left unrenamed) back when `AnimPics_freeAll` was named, several passes
+ago. Finalizing the name now closes out the `AnimPics_*` cluster
+entirely.
+
+`AnimPics_tick(mode)`: if `_animPicsSlotCount` is 0, returns
+immediately. Otherwise walks every active animated-picture slot,
+comparing the current `_clock()` against a per-slot randomized
+deadline (computed from `_rand()` scaled by the slot's registered
+duration parameters); when a slot's deadline passes, advances its
+frame index (forward or backward per the slot's loop-direction byte)
+and draws the new frame via the already-named `Image_draw`, then
+computes the next randomized deadline. Called from input-polling loops
+(`Events_waitForPress`, `get_input_character`, `get_mouse_input`) so
+animations keep advancing while the game waits for the player.
+
+With this, `AnimPics_*` — register, free-all, reset-for-room,
+resync-slots, clear-frames, and now tick — is completely named.
+
+Applied via `apply_renames_gatemain.py`'s sixty-sixth batch.

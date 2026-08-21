@@ -26549,6 +26549,7 @@ static Bytes_4(void) {
 	create_insn	(x=0X26F65);
 	op_stkvar	(x,	0);
 	create_insn	(0X26F74);
+	set_name	(0X26F74,	"AnimPics_tick");
 	create_insn	(x=0X26F77);
 	op_hex		(x,	1);
 	create_insn	(x=0X26F7F);

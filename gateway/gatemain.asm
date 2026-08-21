@@ -53389,7 +53389,7 @@ AnimPics_registerSlot endp
 loc_26EC0:                              ; CODE XREF: sg1692:1933\u2193j
                 push    si
                 push    cs
-                call    near ptr sub_26F74
+                call    near ptr AnimPics_tick
                 add     sp, 2
                 or      ax, ax
                 jz      short loc_26ED5
@@ -53515,7 +53515,7 @@ sub_26F2A       endp
 
 ; Attributes: bp-based frame
 
-sub_26F74       proc far                ; CODE XREF: sg1692:1922\u2191p
+AnimPics_tick   proc far                ; CODE XREF: sg1692:1922\u2191p
                                         ; Events_waitForPress+30\u2193P ...
 
 var_18          = dword ptr -18h
@@ -53547,17 +53547,17 @@ arg_0           = word ptr  6
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_26F8E:                              ; CODE XREF: sub_26F74+10\u2191j
+loc_26F8E:                              ; CODE XREF: AnimPics_tick+10\u2191j
                 mov     [bp+var_A], 0
                 mov     [bp+var_6], 0
                 jmp     short loc_27011
 ; ---------------------------------------------------------------------------
                 align 4
 
-loc_26F9C:                              ; CODE XREF: sub_26F74+1A9\u2193j
+loc_26F9C:                              ; CODE XREF: AnimPics_tick+1A9\u2193j
                 mov     cx, 2
 
-loc_26F9F:                              ; CODE XREF: sub_26F74+1AF\u2193j
+loc_26F9F:                              ; CODE XREF: AnimPics_tick+1AF\u2193j
                 mov     ax, [bp+var_14]
                 neg     ax
                 mov     [bp+var_14], ax
@@ -53569,13 +53569,13 @@ loc_26F9F:                              ; CODE XREF: sub_26F74+1AF\u2193j
                 jmp     short loc_26FE0
 ; ---------------------------------------------------------------------------
 
-loc_26FB8:                              ; CODE XREF: sub_26F74+1A0\u2193j
+loc_26FB8:                              ; CODE XREF: AnimPics_tick+1A0\u2193j
                 mov     [bp+var_C], 0FFFFh
                 jmp     short loc_26FE0
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_26FC0:                              ; CODE XREF: sub_26F74+17F\u2193j
+loc_26FC0:                              ; CODE XREF: AnimPics_tick+17F\u2193j
                 mov     bx, [bp+var_6]
                 mov     al, [bx-5C50h]
                 cbw
@@ -53588,14 +53588,14 @@ loc_26FC0:                              ; CODE XREF: sub_26F74+17F\u2193j
                 jmp     short loc_26FDD
 ; ---------------------------------------------------------------------------
 
-loc_26FDA:                              ; CODE XREF: sub_26F74+60\u2191j
+loc_26FDA:                              ; CODE XREF: AnimPics_tick+60\u2191j
                 mov     ax, 0FFFFh
 
-loc_26FDD:                              ; CODE XREF: sub_26F74+64\u2191j
+loc_26FDD:                              ; CODE XREF: AnimPics_tick+64\u2191j
                 mov     [bp+var_C], ax
 
-loc_26FE0:                              ; CODE XREF: sub_26F74+42\u2191j
-                                        ; sub_26F74+49\u2191j ...
+loc_26FE0:                              ; CODE XREF: AnimPics_tick+42\u2191j
+                                        ; AnimPics_tick+49\u2191j ...
                 mov     bx, [bp+var_6]
                 mov     al, byte ptr [bp+var_C]
                 mov     [bx-5C24h], al
@@ -53607,32 +53607,32 @@ loc_26FE0:                              ; CODE XREF: sub_26F74+42\u2191j
                 jmp     short loc_27004
 ; ---------------------------------------------------------------------------
 
-loc_26FFA:                              ; CODE XREF: sub_26F74+92\u2193j
+loc_26FFA:                              ; CODE XREF: AnimPics_tick+92\u2193j
                 cmp     byte ptr [si-5C24h], 0
                 jl      short loc_27003
                 sub     dx, dx
 
-loc_27003:                              ; CODE XREF: sub_26F74+8B\u2191j
+loc_27003:                              ; CODE XREF: AnimPics_tick+8B\u2191j
                 inc     si
 
-loc_27004:                              ; CODE XREF: sub_26F74+84\u2191j
+loc_27004:                              ; CODE XREF: AnimPics_tick+84\u2191j
                 cmp     si, cx
                 jl      short loc_26FFA
                 mov     [bp+var_8], si
                 mov     [bp+var_A], dx
 
-loc_2700E:                              ; CODE XREF: sub_26F74+7A\u2191j
-                                        ; sub_26F74+CD\u2193j ...
+loc_2700E:                              ; CODE XREF: AnimPics_tick+7A\u2191j
+                                        ; AnimPics_tick+CD\u2193j ...
                 inc     [bp+var_6]
 
-loc_27011:                              ; CODE XREF: sub_26F74+24\u2191j
+loc_27011:                              ; CODE XREF: AnimPics_tick+24\u2191j
                 mov     ax, [bp+var_E]
                 cmp     [bp+var_6], ax
                 jl      short loc_2701C
                 jmp     loc_27126
 ; ---------------------------------------------------------------------------
 
-loc_2701C:                              ; CODE XREF: sub_26F74+A3\u2191j
+loc_2701C:                              ; CODE XREF: AnimPics_tick+A3\u2191j
                 mov     si, [bp+var_6]
                 mov     cl, 2
                 shl     si, cl
@@ -53655,7 +53655,7 @@ loc_2701C:                              ; CODE XREF: sub_26F74+A3\u2191j
                 cmp     [si-5C1Eh], ax
                 ja      short loc_2700E
 
-loc_27056:                              ; CODE XREF: sub_26F74+DA\u2191j
+loc_27056:                              ; CODE XREF: AnimPics_tick+DA\u2191j
                 les     bx, [bp+var_12]
                 mov     al, es:[bx+1]
                 cbw
@@ -53674,8 +53674,8 @@ loc_27056:                              ; CODE XREF: sub_26F74+DA\u2191j
                 jnz     short loc_27085
                 dec     [bp+var_4]
 
-loc_27085:                              ; CODE XREF: sub_26F74+100\u2191j
-                                        ; sub_26F74+106\u2191j ...
+loc_27085:                              ; CODE XREF: AnimPics_tick+100\u2191j
+                                        ; AnimPics_tick+106\u2191j ...
                 mov     ax, 8Ch ; 'Œ'
                 imul    [bp+var_4]
                 add     ax, word ptr [bp+var_12]
@@ -53721,7 +53721,7 @@ loc_27085:                              ; CODE XREF: sub_26F74+100\u2191j
                 jmp     loc_26FC0
 ; ---------------------------------------------------------------------------
 
-loc_270F6:                              ; CODE XREF: sub_26F74+17D\u2191j
+loc_270F6:                              ; CODE XREF: AnimPics_tick+17D\u2191j
                 mov     ax, [bp+var_14]
                 add     [bp+var_C], ax
                 js      short loc_2710E
@@ -53733,25 +53733,25 @@ loc_270F6:                              ; CODE XREF: sub_26F74+17D\u2191j
                 jmp     loc_26FE0
 ; ---------------------------------------------------------------------------
 
-loc_2710E:                              ; CODE XREF: sub_26F74+188\u2191j
-                                        ; sub_26F74+195\u2191j
+loc_2710E:                              ; CODE XREF: AnimPics_tick+188\u2191j
+                                        ; AnimPics_tick+195\u2191j
                 cmp     [bp+arg_0], 1
                 jz      short loc_27117
                 jmp     loc_26FB8
 ; ---------------------------------------------------------------------------
 
-loc_27117:                              ; CODE XREF: sub_26F74+19E\u2191j
+loc_27117:                              ; CODE XREF: AnimPics_tick+19E\u2191j
                 cmp     [bp+var_2], 3
                 jz      short loc_27120
                 jmp     loc_26F9C
 ; ---------------------------------------------------------------------------
 
-loc_27120:                              ; CODE XREF: sub_26F74+1A7\u2191j
+loc_27120:                              ; CODE XREF: AnimPics_tick+1A7\u2191j
                 mov     cx, 1
                 jmp     loc_26F9F
 ; ---------------------------------------------------------------------------
 
-loc_27126:                              ; CODE XREF: sub_26F74+A5\u2191j
+loc_27126:                              ; CODE XREF: AnimPics_tick+A5\u2191j
                 cmp     [bp+var_A], 1
                 sbb     ax, ax
                 neg     ax
@@ -53760,7 +53760,7 @@ loc_27126:                              ; CODE XREF: sub_26F74+A5\u2191j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_26F74       endp
+AnimPics_tick   endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -142491,7 +142491,7 @@ var_2           = word ptr -2
                 add     sp, 2
                 mov     ax, 1
                 push    ax
-                call    sub_26F74
+                call    AnimPics_tick
                 add     sp, 2
 
 loc_5C7D6:                              ; CODE XREF: Events_waitForPress+10\u2191j
@@ -144019,7 +144019,7 @@ loc_5D4EB:                              ; CODE XREF: get_input_character+97\u219
                 add     sp, 2
                 mov     ax, 1
                 push    ax
-                call    sub_26F74
+                call    AnimPics_tick
                 add     sp, 2
 
 loc_5D517:                              ; CODE XREF: get_input_character+5E\u2191j
@@ -144225,7 +144225,7 @@ loc_5D672:                              ; CODE XREF: get_mouse_input+33\u2191j
                 add     sp, 2
                 mov     ax, 1
                 push    ax
-                call    sub_26F74
+                call    AnimPics_tick
                 add     sp, 2
 
 loc_5D698:                              ; CODE XREF: get_mouse_input+46\u2191j

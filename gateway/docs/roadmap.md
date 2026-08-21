@@ -691,6 +691,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
 - [x] Named `sub_26228` (4 callers) → `Screen_fadeIn` — the fade-IN
       counterpart to the already-named `Screen_fadeOut`. Full writeup
       in [overview.md](overview.md#screen_fadein-named).
+- [x] Named `sub_26F74` (4 callers) → `AnimPics_tick` — the per-slot
+      animation-timing/draw loop, closing out the `AnimPics_*` cluster
+      entirely. Full writeup in
+      [overview.md](overview.md#animpics_tick-named--the-animpics-clusters-last-piece).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

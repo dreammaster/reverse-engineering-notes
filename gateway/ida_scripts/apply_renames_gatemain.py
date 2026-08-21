@@ -1787,6 +1787,30 @@ RENAMES = [
      "after each step, ramping the screen up from black to full "
      "brightness. The fade-IN counterpart to the already-named "
      "Screen_fadeOut."),
+
+    # -- sixty-sixth pass: sub_26F74, finalizing the name for the
+    # AnimPics per-slot animation-timing/draw loop already fully
+    # characterized (but left unrenamed) back when AnimPics_freeAll was
+    # named several passes ago -- the last unnamed piece of that
+    # cluster. See docs/overview.md#animpics_tick-named--the-animpics-clusters-last-piece. --
+
+    (0x26F74, "AnimPics_tick",
+     "sub_26F74(mode): if _animPicsSlotCount is 0, returns "
+     "immediately. Otherwise walks every active animated-picture slot, "
+     "comparing the current _clock() against a per-slot randomized "
+     "deadline (computed from _rand() scaled by the slot's registered "
+     "duration parameters, from AnimPics_registerSlot); when a slot's "
+     "deadline passes, advances its frame index (forward or backward "
+     "per the slot's loop-direction byte) and draws the new frame via "
+     "the already-named Image_draw, then computes the next randomized "
+     "deadline. `mode` affects what gets recorded as a slot's "
+     "completion state (0 vs -1) when it finishes a non-looping "
+     "animation. Called from input-polling loops (Events_waitForPress, "
+     "get_input_character, get_mouse_input) so animations keep "
+     "advancing while the game waits for the player. Already "
+     "characterized in detail in the AnimPics_freeAll writeup several "
+     "passes ago; finalizing the name now as the last unnamed piece of "
+     "that cluster."),
 ]
 
 
