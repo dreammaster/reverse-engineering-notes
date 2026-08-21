@@ -86,18 +86,20 @@ DOS/CRT-shaped ones like `RTLINK_SEG`, `HANDLE`, `timeb`,
       naming-convention difference. Simplifies the ScummVM
       reimplementation's job (no in-engine "mode switch" needed for this
       handoff). Full writeup in overview.md.
-- [x] Identified the 5 unknown globals (`word_2A256`/`58`/`5A`/`5C`/`5E`)
-      passed as `argv[4]`-`argv[8]` to `GATEMAIN.EXE` alongside the
-      confirmed `xmouse`/`videoMode`/`soundMode` — resolved from the
-      `gatemain.idb` side while tracing that IDB's `word_C84D0` callback
-      thread: they're `gatemain_start`'s `cmdline_param4`-`8`, and
-      `word_2A25A` specifically is `_streamMode` (a decoder-subsystem
-      mode selector, confirmed on that side). See
-      `gatemain`'s `overview.md#word_c84d0-traced--a-shared-decoder-continuation-not-4-functions`.
-      **Not yet done**: actually applying matching renames here in
-      `gate.idb` for the other four (`word_2A256`/`58`/`5C`/`5E`) —
-      this item just confirms what they *are*, not a completed rename
-      pass on this IDB.
+- [x] Identified **and renamed** the 5 unknown globals (`word_2A256`/
+      `58`/`5A`/`5C`/`5E`) passed as `argv[4]`-`argv[8]` to
+      `GATEMAIN.EXE` alongside the confirmed `xmouse`/`videoMode`/
+      `soundMode`. Resolved from the `gatemain.idb` side while tracing
+      that IDB's `word_C84D0` callback thread (they're
+      `gatemain_start`'s `cmdline_param4`-`8`), then applied here:
+      `word_2A25A` → `streamMode` (`argv[6]`, corroborated
+      independently on *this* side — it's set to the literal value `4`
+      in one code path, matching `gatemain.idb`'s `Stream_configure`
+      mode==4 special case exactly), and `word_2A256`/`58`/`5C`/`5E` →
+      `gatemainArg4`/`5`/`7`/`8` (position-only, neither side decoded
+      what these four individually control). Applied via
+      `apply_renames_gate.py`'s second batch. Full writeup in
+      [overview.md](overview.md#word_2a256-58-5a-5c-5e-named-to-match-gatemainidbs-argv-parsing).
 - [ ] Trace `current_section`'s value meanings (0/1/2/3 confirmed as
       real/load-bearing via ~30 xrefs, semantics not yet decoded) and the
       `show_intro` cluster's functions (`0x1F000`-`0x23000` range,

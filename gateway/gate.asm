@@ -261,7 +261,7 @@ loc_10157:                              ; CODE XREF: _main+A1\u2191j
                 push    ss
                 push    ax              ; char *
                 mov     es, seg_2EA0E
-                push    es:word_2A256   ; int
+                push    es:gatemainArg4 ; int
                 call    _itoa
                 add     sp, 8
                 mov     ax, 0Ah
@@ -270,7 +270,7 @@ loc_10157:                              ; CODE XREF: _main+A1\u2191j
                 push    ss
                 push    ax              ; char *
                 mov     es, seg_2EA10
-                push    es:word_2A258   ; int
+                push    es:gatemainArg5 ; int
                 call    _itoa
                 add     sp, 8
                 mov     ax, 0Ah
@@ -279,7 +279,7 @@ loc_10157:                              ; CODE XREF: _main+A1\u2191j
                 push    ss
                 push    ax              ; char *
                 mov     es, seg_2EA12
-                push    es:word_2A25A   ; int
+                push    es:streamMode   ; int
                 call    _itoa
                 add     sp, 8
                 mov     ax, 0Ah
@@ -288,7 +288,7 @@ loc_10157:                              ; CODE XREF: _main+A1\u2191j
                 push    ss
                 push    ax              ; char *
                 mov     es, seg_2EA14
-                push    es:word_2A25C   ; int
+                push    es:gatemainArg7 ; int
                 call    _itoa
                 add     sp, 8
                 mov     ax, 0Ah
@@ -297,7 +297,7 @@ loc_10157:                              ; CODE XREF: _main+A1\u2191j
                 push    ss
                 push    ax              ; char *
                 mov     es, seg_2EA16
-                push    es:word_2A25E   ; int
+                push    es:gatemainArg8 ; int
                 call    _itoa
                 add     sp, 8
                 sub     ax, ax
@@ -22284,7 +22284,7 @@ loc_1952D:                              ; CODE XREF: check_sound_params+64\u2191
                 ja      short loc_19565
                 inc     di
                 sub     ax, 30h ; '0'
-                mov     word_2A256, ax
+                mov     gatemainArg4, ax
 
 loc_19565:                              ; CODE XREF: check_sound_params+8C\u2191j
                                         ; check_sound_params+93\u2191j ...
@@ -22335,7 +22335,7 @@ loc_19599:                              ; CODE XREF: check_sound_params+D0\u2191
 ; ---------------------------------------------------------------------------
 
 loc_195BD:                              ; CODE XREF: check_sound_params+F4\u2191j
-                mov     word_2A258, si
+                mov     gatemainArg5, si
                 jmp     loc_1966B
 ; ---------------------------------------------------------------------------
 
@@ -22355,7 +22355,7 @@ loc_195C4:                              ; CODE XREF: check_sound_params+66\u2191
 
 loc_195DD:                              ; CODE XREF: check_sound_params+114\u2191j
                 mov     soundMode, 0Ah
-                mov     word_2A25A, 4
+                mov     streamMode, 4
                 mov     bx, di
                 shl     bx, 1
                 shl     bx, 1
@@ -22375,7 +22375,7 @@ loc_195DD:                              ; CODE XREF: check_sound_params+114\u219
                 ja      short loc_1961B
                 inc     di
                 sub     ax, 30h ; '0'
-                mov     word_2A25C, ax
+                mov     gatemainArg7, ax
 
 loc_1961B:                              ; CODE XREF: check_sound_params+142\u2191j
                                         ; check_sound_params+149\u2191j ...
@@ -22410,7 +22410,7 @@ loc_1961B:                              ; CODE XREF: check_sound_params+142\u219
                 mov     [bp+var_A], ax
                 or      ax, ax
                 jz      short loc_1966B
-                mov     word_2A25E, ax
+                mov     gatemainArg8, ax
 
 loc_1966B:                              ; CODE XREF: check_sound_params+2D\u2191j
                                         ; check_sound_params+4C\u2191j ...
@@ -22452,22 +22452,22 @@ loc_196A1:                              ; CODE XREF: check_sound_params+1D8\u219
 loc_196AA:                              ; CODE XREF: check_sound_params+1AB\u2191j
                 mov     [bp+var_8], di
                 mov     [bp+var_6], si
-                push    word_2A258
-                push    word_2A256
+                push    gatemainArg5
+                push    gatemainArg4
                 push    soundMode
                 push    cs
                 call    near ptr sub_18D62
                 add     sp, 6
-                push    word_2A25C
-                push    word_2A25E
-                push    word_2A25A
+                push    gatemainArg7
+                push    gatemainArg8
+                push    streamMode
                 call    sub_16D6A
                 add     sp, 6
                 test    byte ptr soundMode, 4
                 jz      short loc_19708
                 test    byte ptr word_2A232, 4
                 jnz     short loc_19708
-                mov     al, byte ptr word_2A256
+                mov     al, byte ptr gatemainArg4
                 add     al, 30h ; '0'
                 mov     byte ptr aUnableToAcce_0+2Ah, al ; "2.\n Press <Esc> to abort, any other ke"...
                 mov     ax, offset aUnableToAcce_0 ; " Unable to access the MT32 on IRQ chann"...
@@ -67090,20 +67090,20 @@ word_2A252      dw 0                    ; DATA XREF: seg013:00BF\u2191r
 ; int soundMode
 soundMode       dw 9                    ; DATA XREF: _main+187\u2191r
                                         ; check_sound_params+28\u2191w ...
-; int word_2A256
-word_2A256      dw 2                    ; DATA XREF: _main+1A1\u2191r
+; int gatemainArg4
+gatemainArg4    dw 2                    ; DATA XREF: _main+1A1\u2191r
                                         ; check_sound_params+9E\u2191w ...
-; int word_2A258
-word_2A258      dw 330h                 ; DATA XREF: _main+1BB\u2191r
+; int gatemainArg5
+gatemainArg5    dw 330h                 ; DATA XREF: _main+1BB\u2191r
                                         ; check_sound_params:loc_195BD\u2191w ...
-; int word_2A25A
-word_2A25A      dw 1                    ; DATA XREF: _main+1D5\u2191r
+; int streamMode
+streamMode      dw 1                    ; DATA XREF: _main+1D5\u2191r
                                         ; check_sound_params+11F\u2191w ...
-; int word_2A25C
-word_2A25C      dw 7                    ; DATA XREF: _main+1EF\u2191r
+; int gatemainArg7
+gatemainArg7    dw 7                    ; DATA XREF: _main+1EF\u2191r
                                         ; check_sound_params+154\u2191w ...
-; int word_2A25E
-word_2A25E      dw 220h                 ; DATA XREF: _main+209\u2191r
+; int gatemainArg8
+gatemainArg8    dw 220h                 ; DATA XREF: _main+209\u2191r
                                         ; check_sound_params+1A4\u2191w ...
 aUnableToAcce_0 db ' Unable to access the MT32 on IRQ channel 2.',0Ah
                                         ; DATA XREF: check_sound_params+229\u2191o

@@ -21018,10 +21018,15 @@ static Bytes_3(void) {
 	create_word	(0X2A254);
 	set_name	(0X2A254,	"soundMode");
 	create_word	(0X2A256);
+	set_name	(0X2A256,	"gatemainArg4");
 	create_word	(0X2A258);
+	set_name	(0X2A258,	"gatemainArg5");
 	create_word	(0X2A25A);
+	set_name	(0X2A25A,	"streamMode");
 	create_word	(0X2A25C);
+	set_name	(0X2A25C,	"gatemainArg7");
 	create_word	(0X2A25E);
+	set_name	(0X2A25E,	"gatemainArg8");
 	create_strlit	(0X2A260,	0X60);
 	set_name	(0X2A260,	"aUnableToAcce_0");
 	create_strlit	(0X2A2C0,	0X5C);

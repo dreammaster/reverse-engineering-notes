@@ -8343,3 +8343,57 @@ DRY_RUN = False
 [*] gen_file(OFILE_IDC) returned 1
 [*] saving database to C:\dev\legend\gateway\gatemain.idb
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\legend\gateway\gate.idb
+[*] ARGV = ['C:\\dev\\legend\\gateway\\ida_scripts\\batch_run_and_export.py', 'apply_renames_gate.py', 'noexport']
+[*] reading apply_renames_gate.py
+[*] executing apply_renames_gate.py
+[*] captured stdout from target script:
+----- begin target script output -----
+DRY_RUN = True
+0x29b80: 'max_color_index' -> 'max_color_index'   (Set in init_graphics per video mode: 1 (2-color), 0Fh (16-color EGA), 0FFh (256-color VGA) -- confirmed by direct read of the 3-way mode dispatch. Used everywhere else in this cluster purely as a clamp ceiling for color values.)
+0x2f0b0: 'current_draw_color' -> 'current_draw_color'   (Initialized to max_color_index in init_graphics; the value clamped-and-stored by setDrawColor (0x1C082). Distinct from Font_fgColor/Font_bgColor (already named) -- this is the color used by the non-text box/fill primitives (sub_1C0C4 and its callees), not glyph rendering.)
+0x1b300: 'Font_setColors' -> 'Font_setColors'   (Trivial two-line setter: arg_0 -> Font_fgColor, arg_2 -> Font_bgColor (both already-named globals). Confirmed by direct read -- no clamping or other logic.)
+0x1bea4: 'Font_setColorsClamped' -> 'Font_setColorsClamped'   (Stores arg_0 raw (word_2F0AE, not renamed yet -- see roadmap.md) and arg_2 clamped to max_color_index (word_2F0AC, also not renamed), then calls Font_setColors(arg_0, clamped arg_2). Called from _main's EXEC-failure path right before the error-message print (sub_1BED2) -- i.e. this sets the error text's colors.)
+0x1c082: 'setDrawColor' -> 'setDrawColor'   (Clamps its one argument to max_color_index, stores the previous value of current_draw_color in a local (returned in ax), updates current_draw_color, then calls sub_24F42 (unnamed -- mirrors the new color into a field of the SCREEN-typed struct instance at dseg+2CEEh, see roadmap.md). Called directly from _main with 0Fh (white) right before the box-fill call now understood to be sub_1C0C4.)
+0x2a25a: 'word_2A25A' -> 'streamMode'   (argv[6] to GATEMAIN.EXE. Confirmed as gatemain.idb's _streamMode (the Stream_selectHandler/Stream_configure mode selector, 0/1/2/4) -- corroborated here by this exact global being set to the literal value 4 in one code path, matching Stream_configure's special-cased mode==4 branch traced on the gatemain.idb side.)
+0x2a256: 'word_2A256' -> 'gatemainArg4'   (argv[4] to GATEMAIN.EXE, positionally matching gatemain.idb's still-unrenamed cmdline_param4 -- named only for the confirmed cross-IDB position, not a decoded meaning (gatemain.idb's own session didn't resolve what this one controls either).)
+0x2a258: 'word_2A258' -> 'gatemainArg5'   (argv[5] to GATEMAIN.EXE, positionally matching gatemain.idb's still-unrenamed cmdline_param5 -- same caveat as gatemainArg4.)
+0x2a25c: 'word_2A25C' -> 'gatemainArg7'   (argv[7] to GATEMAIN.EXE, positionally matching gatemain.idb's still-unrenamed cmdline_param7 -- same caveat as gatemainArg4. (Also feeds Stream_configure's mode==4 branch there, alongside gatemainArg8, as its second/third parameters -- roles not individually decoded on either side.))
+0x2a25e: 'word_2A25E' -> 'gatemainArg8'   (argv[8] to GATEMAIN.EXE, positionally matching gatemain.idb's still-unrenamed cmdline_param8 -- same caveat as gatemainArg4.)
+----- end target script output -----
+[*] finished executing apply_renames_gate.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\legend\gateway\gate.idb
+[*] ARGV = ['C:\\dev\\legend\\gateway\\ida_scripts\\batch_run_and_export.py', 'apply_renames_gate.py']
+[*] reading apply_renames_gate.py
+[*] executing apply_renames_gate.py
+[*] captured stdout from target script:
+----- begin target script output -----
+DRY_RUN = False
+0x29b80: 'max_color_index' -> 'max_color_index'   ok=True
+0x2f0b0: 'current_draw_color' -> 'current_draw_color'   ok=True
+0x1b300: 'Font_setColors' -> 'Font_setColors'   ok=True
+0x1bea4: 'Font_setColorsClamped' -> 'Font_setColorsClamped'   ok=True
+0x1c082: 'setDrawColor' -> 'setDrawColor'   ok=True
+0x2a25a: 'word_2A25A' -> 'streamMode'   ok=True
+0x2a256: 'word_2A256' -> 'gatemainArg4'   ok=True
+0x2a258: 'word_2A258' -> 'gatemainArg5'   ok=True
+0x2a25c: 'word_2A25C' -> 'gatemainArg7'   ok=True
+0x2a25e: 'word_2A25E' -> 'gatemainArg8'   ok=True
+----- end target script output -----
+[*] finished executing apply_renames_gate.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\legend\gateway\gate.asm
+[*] gen_file(OFILE_ASM) returned 87028
+[*] exporting IDC to C:\dev\legend\gateway\gate.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\legend\gateway\gate.idb
+[*] done, exiting 0

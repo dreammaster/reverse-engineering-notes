@@ -225,10 +225,9 @@ passed arguments) — but worth confirming no additional state is shared
 via a file (savegame-like) the way `ultima1` used `inuse.u1`.
 
 **Open follow-ups, not resolved this pass**:
-- The 5 unidentified globals passed as `arg4`-`arg8` to `GATEMAIN.EXE`
-  (`word_2A256`/`58`/`5A`/`5C`/`5E`) — likely more hardware/config state
-  (joystick? additional video/sound detail?) alongside the confirmed
-  `xmouse`/`videoMode`/`soundMode`.
+- ~~The 5 unidentified globals passed as `arg4`-`arg8` to
+  `GATEMAIN.EXE`~~ — resolved in a later session, see
+  [below](#word_2a256-58-5a-5c-5e-named-to-match-gatemainidbs-argv-parsing).
 - `current_section`'s exact value meanings (0/1/2/3 seen so far) and what
   each actually shows — `show_intro`'s cluster is large (dozens of
   functions in the `0x1F000`-`0x23000` range) and wasn't traced function-
@@ -308,6 +307,36 @@ struct itself (all 21 words/`0x2C` bytes are still unnamed
 5 renames applied via `ida_scripts/apply_renames_gate.py` (3 functions:
 `Font_setColors`, `Font_setColorsClamped`, `setDrawColor`; 2 globals:
 `max_color_index`, `current_draw_color`). 180/502 functions now named.
+
+### `word_2A256`/`58`/`5A`/`5C`/`5E` named to match `gatemain.idb`'s `argv` parsing
+
+Much later session, closing out the open item from the very first pass
+above. `gatemain.idb`'s own session (tracing its `word_C84D0` decoder
+callback back to `gatemain_start`'s `argv` parsing) confirmed the exact
+positional mapping: `argv[1]`→`Mouse_enablement`, `argv[2]`→`videoMode`
+(both matching this IDB's already-named `xmouse`/`videoMode`, confirming
+the two sides really do line up), `argv[3]`→`soundMode` (already named
+here too), and `argv[4]`-`[8]`→`gatemain.idb`'s `cmdline_param4`-`8`.
+
+**`argv[6]` (`word_2A25A`) → `streamMode`** — confirmed with real
+corroboration on *this* side, not just positional inference:
+`gatemain.idb` traced it as `Stream_selectHandler`/`Stream_configure`'s
+mode-selector argument (0/1/2/4), and this exact global is set to the
+literal value `4` in one code path here (`gate.asm` line ~22358),
+matching `Stream_configure`'s special-cased `mode==4` branch precisely —
+independent confirmation from both sides of the same cross-process
+handoff.
+
+**`argv[4]`/`[5]`/`[7]`/`[8]` (`word_2A256`/`58`/`5C`/`5E`) →
+`gatemainArg4`/`5`/`7`/`8`** — renamed for the confirmed cross-IDB
+*position* only; neither session decoded what these four individually
+control (`gatemain.idb`'s own `cmdline_param4`/`5`/`7`/`8` are likewise
+still unrenamed placeholders). Named this way rather than left as
+`word_XXXXX` so a reader on either side can immediately see which
+`cmdline_paramN` global on the other side is the same value, without
+implying more understanding than actually exists.
+
+Applied via `ida_scripts/apply_renames_gate.py`'s second batch.
 
 ## `gatemain.idb` — findings log
 

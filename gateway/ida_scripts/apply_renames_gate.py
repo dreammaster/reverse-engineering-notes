@@ -54,6 +54,44 @@ RENAMES = [
      "dseg+2CEEh, see roadmap.md). Called directly from _main with 0Fh "
      "(white) right before the box-fill call now understood to be "
      "sub_1C0C4."),
+
+    # -- second pass: the 5 globals _main passes as argv[4]-argv[8] to
+    # GATEMAIN.EXE (via _execl -- see docs/overview.md's EXE-chaining
+    # section), left unidentified in the first gate.idb session.
+    # Resolved from the gatemain.idb side: gatemain_start's own argv
+    # parsing (argv[1]->Mouse_enablement, argv[2]->videoMode, both
+    # already-named globals there, confirming the positional mapping)
+    # showed argv[6] specifically is gatemain's "_streamMode" --
+    # confirmed there as Stream_selectHandler's mode-selector argument.
+    # Directly corroborated on THIS side too: word_2A25A is set to the
+    # literal constant 4 in one code path (line ~22358 of gate.asm),
+    # exactly matching Stream_configure's special-cased
+    # "cmdline_param6==4" branch on the gatemain.idb side. See
+    # docs/overview.md#word_2a256-58-5a-5c-5e-named-to-match-gatemainidbs-argv-parsing. --
+
+    (0x2A25A, "streamMode",
+     "argv[6] to GATEMAIN.EXE. Confirmed as gatemain.idb's _streamMode "
+     "(the Stream_selectHandler/Stream_configure mode selector, 0/1/2/4) "
+     "-- corroborated here by this exact global being set to the "
+     "literal value 4 in one code path, matching Stream_configure's "
+     "special-cased mode==4 branch traced on the gatemain.idb side."),
+    (0x2A256, "gatemainArg4",
+     "argv[4] to GATEMAIN.EXE, positionally matching gatemain.idb's "
+     "still-unrenamed cmdline_param4 -- named only for the confirmed "
+     "cross-IDB position, not a decoded meaning (gatemain.idb's own "
+     "session didn't resolve what this one controls either)."),
+    (0x2A258, "gatemainArg5",
+     "argv[5] to GATEMAIN.EXE, positionally matching gatemain.idb's "
+     "still-unrenamed cmdline_param5 -- same caveat as gatemainArg4."),
+    (0x2A25C, "gatemainArg7",
+     "argv[7] to GATEMAIN.EXE, positionally matching gatemain.idb's "
+     "still-unrenamed cmdline_param7 -- same caveat as gatemainArg4. "
+     "(Also feeds Stream_configure's mode==4 branch there, alongside "
+     "gatemainArg8, as its second/third parameters -- roles not "
+     "individually decoded on either side.)"),
+    (0x2A25E, "gatemainArg8",
+     "argv[8] to GATEMAIN.EXE, positionally matching gatemain.idb's "
+     "still-unrenamed cmdline_param8 -- same caveat as gatemainArg4."),
 ]
 
 
