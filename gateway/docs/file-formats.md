@@ -232,3 +232,50 @@ Recorded here mainly so a future session doesn't waste time looking for
 a `ROOM.DAT`/`LOGIC.DAT`-style file that doesn't exist — none of the
 files at `c:\games\gw` match that shape either (only per-room-number
 `.PIC`/`.RGN`/`.FNT`/`.MUS`, no generic logic/script resource).
+
+## `OBJECT.DAT` — object/room/NPC name strings
+
+Traced via `objects_load` (`gatemain.asm:162038`) and
+`Logics_getObjectString` (`gatemain.asm:2692`), confirmed against the
+real file at `c:\games\gw\OBJECT.DAT` (8,031 bytes). The simplest of the
+three real external formats found so far — no compression, no sections:
+
+1. `byteLength` (`u16`) — length in bytes of the blob that follows. Real
+   file: `0x1F5D` = 8029, and `8029 + 2 (header) = 8031` = the file's
+   exact total size.
+2. `byteLength` raw bytes, read verbatim in one `fread` straight into a
+   fixed `objects_array db 1F5Eh dup(0)` buffer (8,030 bytes — one more
+   than the real header value, presumably headroom/alignment rather than
+   anything meaningful). This blob is simply **concatenated
+   NUL-terminated ASCII strings** — the real file starts
+   `"Blast Zone\0Gray Plain\0Plateau\0..."`, immediately recognizable as
+   room/location names, no framing needed since each string carries its
+   own terminator.
+
+**No index table exists in this file at all.** Confirmed by
+`Logics_getObjectString(entityIndex)`: it looks up `entityIndex` in
+`proc_table` — the *same* `LogicIndexEntry` tagged-union table from the
+room/logic finding above — and, notably, **every one of the 8 per-type
+variant structs (`Room`/`LogicSection2`-`8`) has one word in common at
+offset 0** (not previously named/described, since neither struct
+definition labels it — sits right before `_vocabArrIndex` at offset 2):
+a **1-based byte offset into `objects_array`**. The final string address
+is computed as simply `objects_array + offset - 1`. So the
+offset-into-the-string-blob for every object's name is baked into
+`proc_table`'s static compiled data (see the room/logic section above),
+while only the actual string *bytes* live in this external, easily
+re-editable file — a sensible split for a text adventure where prose
+gets tweaked far more often during development than dispatch logic.
+
+**Dynamic override layer, spotted in passing**: before consulting
+`objects_array` at all, `Logics_getObjectString` first calls
+`LogicStrings_call(entityIndex, action=16)` — a linear scan over a
+small fixed 44-entry `LOGIC_STRINGS` table (`FunctionEntry` structs:
+`{u16 id, far ptr fnPtr}`), and if `entityIndex` matches one of the 44
+`id`s, calls that entry's own compiled function instead of ever touching
+the static string blob. This is how a handful of specific objects (only
+44 of `METHODS_COUNT` = 734 total) get a **computed** name/string
+instead of a fixed one — e.g. something whose description changes with
+game state. Not traced further (would mean reading each of the 44
+`LogicStringsNN`-named handler functions individually); flagged as a
+minor, self-contained follow-up, not blocking.

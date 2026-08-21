@@ -204,11 +204,24 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       semantically (only `Room` = type 1 is known), and the remaining
       unnamed shared fields (`_val1`-`_val4`, `_unkHandlerId`,
       `_prehandlerId`) across the 8 variant structs.
-- [ ] `OBJECT.DAT` (8,031 bytes, real file at `c:\games\gw`) is still
-      untraced — likely the `Thing` struct's on-disk form, and (unlike
-      the room/logic table) plausibly a real external format the way
-      `VOCAB.DAT`/`GATESTR.DAT` are, since `Thing` wasn't part of the
-      compiled-code table above.
+- [x] Traced `OBJECT.DAT` (`objects_load`/`Logics_getObjectString`) —
+      the simplest of the three real external formats: a `u16`
+      byte-length header + a raw blob of concatenated NUL-terminated
+      ASCII strings (object/room/NPC names), confirmed against the real
+      8,031-byte file. No index table in the file — each entity's name
+      offset is a previously-unlabeled common field (offset 0) shared by
+      all 8 `LogicIndexEntry` variant structs, itself part of
+      `proc_table`'s static compiled data. Also found a 44-entry dynamic
+      name-override table (`LOGIC_STRINGS`/`LogicStrings_call`,
+      explaining the odd `LogicStringsNN` function names from the
+      collapsed-function fix). Full writeup in
+      [overview.md](overview.md#objectdat-decoded--plain-string-blob-offsets-baked-into-proc_table)
+      and [file-formats.md](file-formats.md#objectdat--objectroomnpc-name-strings).
+      Turned out **not** to be the `Thing` struct's on-disk form after
+      all — `Thing` itself (`{id, str1, str2, str3}`) still isn't
+      confirmed against any on-disk data; may just be an in-memory
+      runtime structure built from these pieces rather than something
+      read directly off disk.
 - [ ] Re-run `rank_unnamed_functions.py` now that the thunk noise is
       filtered out, to pick the next real targets from the 1769
       remaining unnamed functions.

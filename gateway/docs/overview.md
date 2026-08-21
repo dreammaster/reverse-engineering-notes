@@ -642,3 +642,37 @@ actually represent semantically (room vs. NPC vs. item vs. global
 handler, etc. — inferred only from `Room` being type 1 so far) and the
 still-unnamed fields (`_val1`-`_val4`, `_unkHandlerId`, `_prehandlerId`)
 shared across the 8 variant structs.
+
+### `OBJECT.DAT` decoded — plain string blob, offsets baked into `proc_table`
+
+Same session, immediate follow-on from the room/logic finding above.
+Traced `objects_load`/`Logics_getObjectString`; full format in
+[file-formats.md](file-formats.md#objectdat--objectroomnpc-name-strings).
+Confirmed against the real file (`c:\games\gw\OBJECT.DAT`, 8,031 bytes
+— header `0x1F5D` = 8029 = file size minus 2, exactly).
+
+The simplest of the three real external formats found this session: a
+`u16` byte-length followed by that many raw bytes, loaded verbatim into
+a fixed buffer — the bytes are just concatenated NUL-terminated ASCII
+strings (room/object/NPC names; the real file starts `"Blast Zone\0Gray
+Plain\0Plateau\0..."`). **No index table in the file at all** — the
+byte offset into this blob for any given entity's name is a field
+common to *all 8* `LogicIndexEntry` variant structs (`Room`/
+`LogicSection2`-`8`), sitting at offset 0, one word before
+`_vocabArrIndex` — previously present in every struct definition but
+unlabeled/unexplained until this pass. This offset is itself part of
+`proc_table`'s static compiled data (per the finding above), so the
+*mapping* of object → name is compiled in, while only the name *text*
+is externally editable — a sensible split for content that gets tweaked
+far more often than program logic during development.
+
+**Bonus find along the way**: a small **dynamic name-override layer** —
+`Logics_getObjectString` checks a fixed 44-entry `LOGIC_STRINGS` table
+(`FunctionEntry` structs, `{id, fnPtr}`) via `LogicStrings_call` before
+ever touching the static string blob; a match calls that entry's own
+compiled function instead, letting a handful of specific objects (44 out
+of 734) have a computed rather than fixed name/description. Explains the
+oddly-named `LogicStrings36`/`43`/`44` functions surfaced by last
+session's collapsed-function fix. Not traced further — each handler
+would need individual reading, and this is a narrow, self-contained
+mechanism rather than a blocking architectural question.
