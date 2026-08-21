@@ -10090,7 +10090,7 @@ seg009          segment byte public 'CODE' use16
 
 ; Attributes: bp-based frame
 
-sub_148E8       proc far                ; CODE XREF: sub_76A79+18A\u2193P
+Logics_printKeyedMessage proc far       ; CODE XREF: sub_76A79+18A\u2193P
                                         ; sub_87302+12\u2193P ...
 
 var_2           = word ptr -2
@@ -10111,8 +10111,8 @@ loc_148EB:
                 jmp     short loc_14922
 ; ---------------------------------------------------------------------------
 
-loc_148F7:                              ; CODE XREF: sub_148E8+6C\u2193j
-                                        ; sub_148E8:loc_1495C\u2193j
+loc_148F7:                              ; CODE XREF: Logics_printKeyedMessage+6C\u2193j
+                                        ; Logics_printKeyedMessage:loc_1495C\u2193j
                 mov     ax, [bp+arg_6]
 
 loc_148FA:
@@ -10136,11 +10136,11 @@ loc_14917:
                 jmp     short loc_14965
 ; ---------------------------------------------------------------------------
 
-loc_1491F:                              ; CODE XREF: sub_148E8+15\u2191j
-                                        ; sub_148E8+57\u2193j
+loc_1491F:                              ; CODE XREF: Logics_printKeyedMessage+15\u2191j
+                                        ; Logics_printKeyedMessage+57\u2193j
                 inc     [bp+var_2]
 
-loc_14922:                              ; CODE XREF: sub_148E8+D\u2191j
+loc_14922:                              ; CODE XREF: Logics_printKeyedMessage+D\u2191j
                 mov     ax, [bp+arg_6]
                 cmp     [bp+var_2], ax
                 jnb     short loc_14963
@@ -10156,8 +10156,8 @@ loc_1493A:
                 cmp     [bp+arg_0], si
                 jnz     short loc_1491F
 
-loc_14941:                              ; CODE XREF: sub_148E8:loc_1493A\u2191j
-                                        ; sub_148E8+79\u2193j
+loc_14941:                              ; CODE XREF: Logics_printKeyedMessage:loc_1493A\u2191j
+                                        ; Logics_printKeyedMessage+79\u2193j
                 mov     ax, 6
                 imul    [bp+var_2]
 
@@ -10178,16 +10178,16 @@ loc_1495C:
                 jmp     short loc_14941
 ; ---------------------------------------------------------------------------
 
-loc_14963:                              ; CODE XREF: sub_148E8+40\u2191j
+loc_14963:                              ; CODE XREF: Logics_printKeyedMessage+40\u2191j
                 sub     ax, ax
 
-loc_14965:                              ; CODE XREF: sub_148E8+35\u2191j
+loc_14965:                              ; CODE XREF: Logics_printKeyedMessage+35\u2191j
                 pop     si
                 pop     di
                 mov     sp, bp
                 pop     bp
                 retf
-sub_148E8       endp
+Logics_printKeyedMessage endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -196592,7 +196592,7 @@ loc_76BEE:                              ; CODE XREF: sub_76A79+135\u2191j
                 push    ax
                 mov     es, seg_D1456
                 push    es:vocab_list_0._altVocabId
-                call    sub_148E8
+                call    Logics_printKeyedMessage
                 add     sp, 8
                 or      ax, ax
                 jz      short loc_76C12
@@ -232944,7 +232944,7 @@ loc_87309:
                 push    dx
                 push    ax
                 push    [bp+arg_0]
-                call    sub_148E8
+                call    Logics_printKeyedMessage
                 add     sp, 8
                 pop     bp
                 retf
@@ -270908,7 +270908,7 @@ loc_97D00:                              ; CODE XREF: sub_97ADB+21E\u2191j
                 push    ax
                 mov     es, seg_D1696
                 push    es:vocab_list_0._altVocabId
-                call    sub_148E8
+                call    Logics_printKeyedMessage
                 add     sp, 8
                 or      ax, ax
                 jnz     short loc_97D24
@@ -305459,7 +305459,7 @@ loc_A72B3:                              ; CODE XREF: sub_A7267+69\u2193j
                 push    es:vocab_list_0._logicNum
 
 loc_A72BD:                              ; CODE XREF: sub_A7267+D1\u2193j
-                call    sub_148E8
+                call    Logics_printKeyedMessage
                 add     sp, 8
                 jmp     loc_A737B
 ; ---------------------------------------------------------------------------
@@ -306042,7 +306042,7 @@ loc_A763D:                              ; CODE XREF: sub_A75D2+5B\u2191j
                 push    ax
                 mov     es, seg_D17D2
                 push    es:vocab_list_0._logicNum
-                call    sub_148E8
+                call    Logics_printKeyedMessage
                 add     sp, 8
                 or      ax, ax
                 jnz     short loc_A75FF
@@ -306115,7 +306115,7 @@ loc_A76DC:                              ; CODE XREF: sub_A75D2+F2\u2191j
                 push    ax
                 mov     es, seg_D17D0
                 push    es:vocab_list_0._altVocabId
-                call    sub_148E8
+                call    Logics_printKeyedMessage
                 add     sp, 8
                 jmp     short loc_A7759
 ; ---------------------------------------------------------------------------
@@ -310695,7 +310695,7 @@ loc_A937B:                              ; CODE XREF: sub_A92BF+99\u2191j
                 push    ax
                 mov     es, seg_D17E8
                 push    es:vocab_list_0._logicNum
-                call    sub_148E8
+                call    Logics_printKeyedMessage
                 add     sp, 8
                 or      ax, ax
                 jz      short loc_A939F
@@ -310929,7 +310929,7 @@ loc_A9546:                              ; CODE XREF: sub_A92BF+27F\u2191j
                 push    ax
                 mov     es, seg_D17EA
                 push    es:vocab_list_0._altVocabId
-                call    sub_148E8
+                call    Logics_printKeyedMessage
                 add     sp, 8
                 jmp     loc_A95F1
 ; ---------------------------------------------------------------------------
@@ -311079,7 +311079,7 @@ loc_A9623:                              ; CODE XREF: sub_A95F3+E\u2191j
                 push    ax
                 mov     es, seg_D17E8
                 push    es:vocab_list_0._logicNum
-                call    sub_148E8
+                call    Logics_printKeyedMessage
 
 loc_A9651:                              ; CODE XREF: sub_A95F3+8C\u2193j
                 add     sp, 8
@@ -311163,7 +311163,7 @@ loc_A96DB:                              ; CODE XREF: sub_A95F3+CF\u2191j
                 push    ax
                 mov     es, seg_D17EA
                 push    es:vocab_list_0._altVocabId
-                call    sub_148E8
+                call    Logics_printKeyedMessage
                 add     sp, 8
                 jmp     short loc_A976B
 ; ---------------------------------------------------------------------------
@@ -311303,7 +311303,7 @@ loc_A979D:                              ; CODE XREF: sub_A976D+E\u2191j
                 push    ax
                 mov     es, seg_D17E8
                 push    es:vocab_list_0._logicNum
-                call    sub_148E8
+                call    Logics_printKeyedMessage
 
 loc_A97CB:                              ; CODE XREF: sub_A976D+8C\u2193j
                 add     sp, 8
@@ -311383,7 +311383,7 @@ loc_A984C:                              ; CODE XREF: sub_A976D+C7\u2191j
                 push    ax
                 mov     es, seg_D17EA
                 push    es:vocab_list_0._altVocabId
-                call    sub_148E8
+                call    Logics_printKeyedMessage
                 add     sp, 8
                 jmp     short loc_A98AC
 ; ---------------------------------------------------------------------------
@@ -318318,7 +318318,7 @@ loc_AC612:                              ; CODE XREF: sub_AC5B9+99\u2193j
                 push    ax
                 mov     es, seg_D183C
                 push    es:vocab_list_0._logicNum
-                call    sub_148E8
+                call    Logics_printKeyedMessage
                 add     sp, 8
                 jmp     loc_AC7CF
 ; ---------------------------------------------------------------------------
@@ -318493,7 +318493,7 @@ loc_AC764:                              ; CODE XREF: sub_AC5B9+F6\u2191j
                 push    ax
                 mov     es, seg_D183A
                 push    es:vocab_list_0._altVocabId
-                call    sub_148E8
+                call    Logics_printKeyedMessage
                 jmp     loc_AC5EB
 ; ---------------------------------------------------------------------------
 
@@ -324378,7 +324378,7 @@ loc_AF131:                              ; CODE XREF: sub_AF0E9+1E\u2191j
                 push    ax
                 mov     es, seg_D1870
                 push    es:vocab_list_0._logicNum
-                call    sub_148E8
+                call    Logics_printKeyedMessage
                 add     sp, 8
                 or      ax, ax
                 jnz     short loc_AF12B
@@ -324507,7 +324507,7 @@ loc_AF241:                              ; CODE XREF: sub_AF0E9+13A\u2191j
                 push    ax
                 mov     es, seg_D186E
                 push    es:vocab_list_0._altVocabId
-                call    sub_148E8
+                call    Logics_printKeyedMessage
                 jmp     loc_AF18A
 ; ---------------------------------------------------------------------------
 
@@ -334575,7 +334575,7 @@ loc_B3955:                              ; CODE XREF: sub_B3850+60\u2191j
                 push    ax
                 mov     es, seg_D18C8
                 push    es:vocab_list_0._logicNum
-                call    sub_148E8
+                call    Logics_printKeyedMessage
                 add     sp, 8
                 or      ax, ax
                 jz      short loc_B3979
@@ -334776,7 +334776,7 @@ loc_B3AD7:                              ; CODE XREF: sub_B3850+26A\u2191j
                 push    dx
                 push    ax
                 push    es:vocab_list_0._altVocabId
-                call    sub_148E8
+                call    Logics_printKeyedMessage
                 add     sp, 8
                 jmp     loc_B3BEE
 ; ---------------------------------------------------------------------------
@@ -335037,7 +335037,7 @@ loc_B3CA8:                              ; CODE XREF: sub_B3BF0+A4\u2191j
                 mov     es, seg_D18C8
                 assume es:sg3EDC
                 push    es:vocab_list_0._logicNum
-                call    sub_148E8
+                call    Logics_printKeyedMessage
                 add     sp, 8
                 or      ax, ax
                 jz      short loc_B3CCC
@@ -335203,7 +335203,7 @@ loc_B3DF1:                              ; CODE XREF: sub_B3BF0+1E4\u2191j
                 push    dx
                 push    ax
                 push    es:vocab_list_0._altVocabId
-                call    sub_148E8
+                call    Logics_printKeyedMessage
                 add     sp, 8
                 jmp     loc_B3F4A
 ; ---------------------------------------------------------------------------
@@ -335428,7 +335428,7 @@ loc_B3F84:                              ; CODE XREF: sub_B3F4C+E\u2191j
                 push    ax
                 mov     es, seg_D18C8
                 push    es:vocab_list_0._logicNum
-                call    sub_148E8
+                call    Logics_printKeyedMessage
                 add     sp, 8
                 or      ax, ax
                 jnz     short loc_B3F7E
@@ -335783,7 +335783,7 @@ loc_B4285:                              ; CODE XREF: sub_B3F4C+2FE\u2191j
                 mov     es, seg_D18CC
                 assume es:sg3EDC
                 push    es:vocab_list_0._altVocabId
-                call    sub_148E8
+                call    Logics_printKeyedMessage
                 add     sp, 8
                 jmp     short loc_B42ED
 ; ---------------------------------------------------------------------------
@@ -340334,7 +340334,7 @@ loc_B629D:                              ; CODE XREF: sub_B61C6+BE\u2191j
                 push    ax
                 mov     es, seg_D1928
                 push    es:vocab_list_0._altVocabId
-                call    sub_148E8
+                call    Logics_printKeyedMessage
                 add     sp, 8
                 jmp     short loc_B6325
 ; ---------------------------------------------------------------------------
@@ -374355,7 +374355,7 @@ loc_C4BEB:                              ; CODE XREF: sub_C4BA3+3B\u2191j
                 mov     es, seg_D1A64
                 assume es:sg4d43
                 push    es:_roomLogicNum
-                call    sub_148E8
+                call    Logics_printKeyedMessage
                 add     sp, 8
                 or      ax, ax
                 jz      short loc_C4C12
@@ -376282,7 +376282,7 @@ loc_C597E:                              ; CODE XREF: sub_C58F0+6D\u2191j
                 push    ax
                 mov     es, seg_D1A64
                 push    es:_roomLogicNum
-                call    sub_148E8
+                call    Logics_printKeyedMessage
                 add     sp, 8
                 jmp     loc_C5A95
 ; ---------------------------------------------------------------------------
@@ -378157,7 +378157,7 @@ loc_C6647:                              ; CODE XREF: sub_C64A0+12C\u2191j
                 push    ax
                 mov     es, seg_D1A64
                 push    es:_roomLogicNum
-                call    sub_148E8
+                call    Logics_printKeyedMessage
                 add     sp, 8
                 or      ax, ax
                 jnz     short loc_C668A

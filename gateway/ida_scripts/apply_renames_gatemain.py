@@ -477,6 +477,35 @@ RENAMES = [
      "via sub_24FAE (not renamed -- single caller, private helper) "
      "first. Writes the resulting x/y through the two far-pointer "
      "arguments and returns a button/click code."),
+
+    # -- fifteenth pass: sub_148E8, a generic keyed-message lookup+print
+    # utility reused by many different compiled logic routines with
+    # their own local static tables. Confirmed by reading two different
+    # call sites (sub_76A79/method158, and sub_87302 -- a thin
+    # single-arg wrapper passing its own arg straight through with a
+    # different table/count), which rules out any one-call-site-specific
+    # meaning for the key argument. See
+    # docs/overview.md#logics_printkeyedmessage-named. --
+
+    (0x148E8, "Logics_printKeyedMessage",
+     "sub_148E8(key, table, count): table is a far pointer to `count` "
+     "6-byte records (word key, dword far-pointer-to-message-string). "
+     "Scans for a record whose key equals `key` OR is 0 (a wildcard/"
+     "default entry); once found, if that record's message pointer is "
+     "non-null, prints it via TextWindow_add and returns 1; if the "
+     "message is null, keeps scanning forward through SUBSEQUENT "
+     "records (regardless of their own key) for the first one with a "
+     "non-null message and prints that instead -- i.e. a match with an "
+     "empty message is a placeholder pointing at a shared fallback "
+     "message a little further down the same table. Returns 0 if no "
+     "matching record is ever found. Confirmed generic (not tied to "
+     "one particular key source) via two call sites: sub_76A79 "
+     "(a compiled logic method) passes vocab_list_0._altVocabId "
+     "against a 6-entry table; sub_87302 is a thin wrapper passing its "
+     "own single argument straight through against an unrelated "
+     "55-entry table. This is the same 'per-object special-response "
+     "override table, falling back to generic text' pattern seen "
+     "elsewhere in the compiled room/object logic."),
 ]
 
 

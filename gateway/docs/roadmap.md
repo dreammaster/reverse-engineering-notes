@@ -463,6 +463,12 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       left that one unnamed, insufficient confidence in two of its
       arrays' downstream consumers. Full writeup in
       [overview.md](overview.md#mouse_pollposition-named--and-an-animated-picture-overlay-subsystem-sighted-but-left-unnamed).
+- [x] Named `sub_148E8` (17 callers) → `Logics_printKeyedMessage` — a
+      generic keyed-message-table lookup+print utility (with a
+      forward-scanning fallback for empty-message matches), confirmed
+      generic via two call sites passing unrelated key sources and
+      tables. Full writeup in
+      [overview.md](overview.md#logics_printkeyedmessage-named--a-generic-keyed-message-table-lookupprint-utility).
 - [ ] Cross-check the structs shared by name/concept with `gate.idb`
       (`VocabEntry`/`VOCAB_ENTRY`, `Str16`/`STR16`, `Point`/`POINT`,
       `Screen`/`SCREEN`, `Font`/`FONT`, `REGS`, `HandleEntry`/`HANDLE`)

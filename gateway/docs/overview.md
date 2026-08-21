@@ -1480,3 +1480,41 @@ animation-timing loop above) is invoked directly from
 while polling for input, not on a separate timer/thread.
 
 Applied via `apply_renames_gatemain.py`'s fourteenth batch.
+
+### `Logics_printKeyedMessage` named — a generic keyed-message-table lookup+print utility
+
+Re-ran `rank_unnamed_functions.py` again; `sub_26F2A` (19 callers)
+still tops the list but remains left unnamed for the same reason as
+last pass. Moved down to `sub_148E8` (17 callers), which resolved
+cleanly.
+
+`Logics_printKeyedMessage(key, table, count)`: `table` is a far
+pointer to `count` 6-byte records — `(word key, dword
+far-pointer-to-message-string)`. Scans for a record whose key equals
+`key` **or is `0`** (a wildcard/default entry); if that record's
+message pointer is non-null, prints it (`TextWindow_add`) and returns
+1. If the matched record's message is null, it keeps scanning
+**forward** through subsequent records — regardless of their own key —
+for the first one with a non-null message, and prints that instead:
+an empty-message match is effectively a placeholder pointing at a
+shared fallback message stored a little further down the same table.
+Returns 0 if nothing ever matches.
+
+Confirmed generic (the `key` argument isn't tied to one particular
+source) via two different call sites:
+
+- `sub_76A79` (a compiled logic method, reached through
+  `j_method158`) passes `vocab_list_0._altVocabId` against a 6-entry
+  table.
+- `sub_87302` is a thin one-argument wrapper — `sub_87302(x)` just
+  calls `Logics_printKeyedMessage(x, seg182:0, 0x37)` — passing its own
+  argument straight through against a completely different, 55-entry
+  table.
+
+This is the same "per-object special-response override table, falling
+back to shared generic text" pattern already familiar from the
+compiled room/object logic architecture — just factored out as a
+single reusable engine primitive rather than duplicated inline in every
+method.
+
+Applied via `apply_renames_gatemain.py`'s fifteenth batch.
