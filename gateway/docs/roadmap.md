@@ -683,6 +683,12 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       load/draw/free picture utility, matching the established
       `load_and_scale_pic` convention. Full writeup in
       [overview.md](overview.md#load_and_draw_pic-named).
+- [x] Named `sub_791E2` (5 callers) → `Logics_describePondView` — the
+      pond room's detailed environmental description generator,
+      confirmed via a real decoded GATESTR.DAT message plus
+      already-recognized direction-name string constants. Full
+      writeup in
+      [overview.md](overview.md#logics_describepondview-named--a-single-rooms-environmental-description-generator).
 - [ ] Unify the whole music/sound-hardware picture: `Speaker_playTone`/
       `Speaker_playErrorBeep` (PC-speaker tones), `Midi_sendByte` +
       `sub_1D966`/`sub_1EE70`/`sub_1ECB6` (MPU-401/MIDI), and

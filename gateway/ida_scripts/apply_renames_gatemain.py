@@ -1457,6 +1457,31 @@ RENAMES = [
      "and returns 1. Named to match the established "
      "load_and_scale_pic convention for this small cluster of one-"
      "shot picture-loading entry points."),
+
+    # -- fiftieth pass: sub_791E2, confirmed via its real GATESTR.DAT
+    # message and the already-recognized lowercase direction-name
+    # string constants (aNorth/aSouth/aEast/aWest etc., at addresses in
+    # the same seg086) as the pond room's detailed reflection/shore
+    # description generator. See
+    # docs/overview.md#logics_describepondview-named. --
+
+    (0x791E2, "Logics_describePondView",
+     "sub_791E2(directionIndex): looks up directionIndex (0-4) in a "
+     "5-entry table to find matching shore/direction data, then "
+     "prints the decoded GATESTR.DAT message 0x4824 -- \"You're "
+     "standing on the %sern shore of the pond. %slight gently "
+     "reflects off the calm %s surface of the pond. A leaf "
+     "occasionally falls into the pond to the %s and causes a small "
+     "ripple, distorting the %s reflection.\" -- filling its five %s "
+     "placeholders from: a direction name (the already-recognized "
+     "aNorth/aSouth/aEast/aWest/aNortheast/etc. constants, confirming "
+     "the table holds direction-string references), and, gated on "
+     "Persisted_val183 (a day/night flag), either 'Sun'/sun-flavored "
+     "text or a 'Moon'/moon-flavored equivalent (including the "
+     "literal string aSunS = 'sun's' for the final possessive "
+     "reflection phrase when it's daytime and the direction matches). "
+     "A single room's detailed environmental description generator, "
+     "not a generic utility."),
 ]
 
 

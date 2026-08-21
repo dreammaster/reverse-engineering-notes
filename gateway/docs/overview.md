@@ -2411,3 +2411,26 @@ established `load_and_scale_pic` convention for this small cluster of
 one-shot picture-loading entry points.
 
 Applied via `apply_renames_gatemain.py`'s forty-ninth batch.
+
+### `Logics_describePondView` named — a single room's environmental description generator
+
+Moved to `sub_791E2` (5 callers). Confirmed via its real decoded
+`GATESTR.DAT` message and the already-recognized lowercase direction-
+name string constants (`aNorth`/`aSouth`/`aEast`/`aWest`/
+`aNortheast`/etc., in the same `seg086`) as a single room's — the
+pond's — detailed environmental description generator, not a generic
+utility.
+
+`Logics_describePondView(directionIndex)`: looks up `directionIndex`
+(0-4) in a 5-entry table to find matching shore/direction data, then
+prints message `0x4824`: *"You're standing on the %sern shore of the
+pond. %slight gently reflects off the calm %s surface of the pond. A
+leaf occasionally falls into the pond to the %s and causes a small
+ripple, distorting the %s reflection."* — filling its five `%s`
+placeholders from a direction name (confirming the table holds
+direction-string references) and, gated on `Persisted_val183` (a
+day/night flag), either sun- or moon-flavored text (including the
+literal string `aSunS` = `"sun's"` for the final possessive reflection
+phrase).
+
+Applied via `apply_renames_gatemain.py`'s fiftieth batch.

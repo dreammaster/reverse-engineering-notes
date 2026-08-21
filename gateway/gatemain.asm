@@ -202293,7 +202293,7 @@ sub_79064       endp
 
 ; Attributes: bp-based frame
 
-sub_791E2       proc far                ; CODE XREF: sub_79293+A4\u2193p
+Logics_describePondView proc far        ; CODE XREF: sub_79293+A4\u2193p
                                         ; sub_79364+68\u2193p ...
 
 var_2           = word ptr -2
@@ -202307,10 +202307,10 @@ arg_0           = word ptr  6
                 jmp     short loc_79262
 ; ---------------------------------------------------------------------------
 
-loc_791F0:                              ; CODE XREF: sub_791E2+A3\u2193j
+loc_791F0:                              ; CODE XREF: Logics_describePondView+A3\u2193j
                 mov     ax, 51BFh
 
-loc_791F3:                              ; CODE XREF: sub_791E2+A9\u2193j
+loc_791F3:                              ; CODE XREF: Logics_describePondView+A9\u2193j
                 push    ds
                 push    ax
                 mov     es, seg_D14B0
@@ -202328,10 +202328,10 @@ loc_791F3:                              ; CODE XREF: sub_791E2+A9\u2193j
                 jmp     short loc_7921F
 ; ---------------------------------------------------------------------------
 
-loc_7921C:                              ; CODE XREF: sub_791E2+33\u2191j
+loc_7921C:                              ; CODE XREF: Logics_describePondView+33\u2191j
                 mov     ax, 51CBh
 
-loc_7921F:                              ; CODE XREF: sub_791E2+38\u2191j
+loc_7921F:                              ; CODE XREF: Logics_describePondView+38\u2191j
                 push    ds
                 push    ax
                 cmp     Persisted_val183, 0
@@ -202340,10 +202340,10 @@ loc_7921F:                              ; CODE XREF: sub_791E2+38\u2191j
                 jmp     short loc_79230
 ; ---------------------------------------------------------------------------
 
-loc_7922D:                              ; CODE XREF: sub_791E2+44\u2191j
+loc_7922D:                              ; CODE XREF: Logics_describePondView+44\u2191j
                 mov     ax, 51D5h
 
-loc_79230:                              ; CODE XREF: sub_791E2+49\u2191j
+loc_79230:                              ; CODE XREF: Logics_describePondView+49\u2191j
                 push    ds
                 push    ax
                 mov     es, seg_D14B0
@@ -202364,10 +202364,10 @@ loc_79230:                              ; CODE XREF: sub_791E2+49\u2191j
                 jmp     short loc_7928E
 ; ---------------------------------------------------------------------------
 
-loc_7925F:                              ; CODE XREF: sub_791E2+9A\u2193j
+loc_7925F:                              ; CODE XREF: Logics_describePondView+9A\u2193j
                 inc     [bp+var_2]
 
-loc_79262:                              ; CODE XREF: sub_791E2+C\u2191j
+loc_79262:                              ; CODE XREF: Logics_describePondView+C\u2191j
                 cmp     [bp+var_2], 5
                 jge     short loc_7928E
                 mov     ax, 6
@@ -202383,18 +202383,18 @@ loc_79262:                              ; CODE XREF: sub_791E2+C\u2191j
                 jmp     loc_791F0
 ; ---------------------------------------------------------------------------
 
-loc_79288:                              ; CODE XREF: sub_791E2+A1\u2191j
+loc_79288:                              ; CODE XREF: Logics_describePondView+A1\u2191j
                 mov     ax, offset aSunS ; "sun's"
                 jmp     loc_791F3
 ; ---------------------------------------------------------------------------
 
-loc_7928E:                              ; CODE XREF: sub_791E2+7B\u2191j
-                                        ; sub_791E2+84\u2191j
+loc_7928E:                              ; CODE XREF: Logics_describePondView+7B\u2191j
+                                        ; Logics_describePondView+84\u2191j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_791E2       endp
+Logics_describePondView endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -202482,7 +202482,7 @@ loc_7932D:                              ; CODE XREF: sub_79293+13\u2191j
                 mov     es, seg_D14A8
                 push    es:_roomLogicNum
                 push    cs
-                call    near ptr sub_791E2
+                call    near ptr Logics_describePondView
                 add     sp, 2
                 mov     ax, 4825h
                 mov     dx, 0F000h
@@ -202578,7 +202578,7 @@ loc_793C2:                              ; CODE XREF: sub_79364+14\u2191j
                 mov     es, seg_D14A8
                 push    es:_roomLogicNum
                 push    cs
-                call    near ptr sub_791E2
+                call    near ptr Logics_describePondView
                 add     sp, 2
                 mov     ax, 4826h
                 mov     dx, 0F000h
@@ -202670,7 +202670,7 @@ loc_79459:                              ; CODE XREF: sub_7941D+E\u2191j
                 mov     es, seg_D14A8
                 push    es:_roomLogicNum
                 push    cs
-                call    near ptr sub_791E2
+                call    near ptr Logics_describePondView
                 add     sp, 2
                 mov     ax, 4827h
                 mov     dx, 0F000h
@@ -202751,7 +202751,7 @@ loc_794DB:                              ; CODE XREF: sub_79490+11\u2191j
                 mov     es, seg_D14A8
                 push    es:_roomLogicNum
                 push    cs
-                call    near ptr sub_791E2
+                call    near ptr Logics_describePondView
                 add     sp, 2
                 mov     ax, 4828h
                 mov     dx, 0F000h
@@ -202845,7 +202845,7 @@ loc_79570:                              ; CODE XREF: sub_79534:loc_79542\u2191j
                 mov     es, seg_D14A8
                 push    es:_roomLogicNum
                 push    cs
-                call    near ptr sub_791E2
+                call    near ptr Logics_describePondView
                 add     sp, 2
                 mov     ax, 4829h
                 mov     dx, 0F000h
@@ -389142,7 +389142,7 @@ Persisted_val191 db  8Dh                ; DATA XREF: seg068:SAVE_FIELDS\u2191o
 byte_CD0CC      db 0                    ; DATA XREF: sub_78570:loc_7858C\u2191r
                                         ; sub_78570+3A\u2191w ...
 aToTheEast      db 'to the east',0
-aSunS           db 'sun',27h,'s',0      ; DATA XREF: sub_791E2:loc_79288\u2191o
+aSunS           db 'sun',27h,'s',0      ; DATA XREF: Logics_describePondView:loc_79288\u2191o
 aStars          db 'stars',27h,0
 aBlue           db 'blue',0
 aBlack          db 'black',0
@@ -394599,10 +394599,10 @@ seg_D14AA       dw seg sg4d43           ; DATA XREF: sub_78C68+E6\u2191r
 seg_D14AC       dw seg sg3EDC           ; DATA XREF: sub_78C68:loc_78E71\u2191r
                                         ; sub_79B07:loc_79BB0\u2191r ...
 seg_D14AE       dw seg sg4d43           ; DATA XREF: sub_78C68+26B\u2191r
-seg_D14B0       dw seg seg121           ; DATA XREF: sub_791E2+13\u2191r
-                                        ; sub_791E2+50\u2191r ...
-seg_D14B2       dw seg seg086           ; DATA XREF: sub_791E2+20\u2191r
-                                        ; sub_791E2+5D\u2191r
+seg_D14B0       dw seg seg121           ; DATA XREF: Logics_describePondView+13\u2191r
+                                        ; Logics_describePondView+50\u2191r ...
+seg_D14B2       dw seg seg086           ; DATA XREF: Logics_describePondView+20\u2191r
+                                        ; Logics_describePondView+5D\u2191r
 seg_D14B4       dw seg sg4d43           ; DATA XREF: sub_79F66+2C5\u2191r
 seg_D14B6       dw seg sg3EDC           ; DATA XREF: sub_7AC20:loc_7AC31\u2191r
                                         ; sub_7AE5A:loc_7AE6B\u2191r ...
