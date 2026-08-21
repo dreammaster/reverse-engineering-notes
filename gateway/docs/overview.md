@@ -1935,3 +1935,28 @@ functions confirm it's generic plumbing rather than anything tied to
 one specific callback's role. Named **`invoke_callback`**.
 
 Applied via `apply_renames_gatemain.py`'s twenty-ninth batch.
+
+### `Midi_bufferByte` named — a MIDI status-byte state machine sighted
+
+Moved to `sub_1DD41` (8 callers), a trivial "append byte to buffer"
+primitive — writes `AL` to `*_midiBufferPos` (was `word_C8445`) and
+advances the pointer. Mechanically nothing more than that, but its
+*caller context* is a significant new clue for the still-open `.MUS`/
+MIDI unification thread flagged several passes ago.
+
+All of its callers sit inside one un-named data-driven state machine
+(visible only as bare `seg024:XXXX` locations — the same "compiled
+logic, not a clean function" shape already established elsewhere in
+this codebase, not itself renamed). That state machine branches on
+incoming byte values that match **Standard MIDI status bytes almost
+exactly**: `0xF0` (SysEx start), `0xF2` (Song Position Pointer), `0xF3`
+(Song Select), a checked range `0xFA`-`0xFD` (System Realtime
+Start/Continue/Stop), and `0xFF` (Meta-event/Reset). This strongly
+suggests the state machine *is* the `.MUS` format's MIDI event-stream
+parser — buffering bytes via `Midi_bufferByte` (reset to a fixed
+offset `0x527` elsewhere in the same code) before eventual dispatch,
+presumably down to the already-named `Midi_sendByte` cluster. Not
+fully unified yet — the state machine itself is large and un-named —
+but a concrete, promising lead for that follow-up pass.
+
+Applied via `apply_renames_gatemain.py`'s thirtieth batch.

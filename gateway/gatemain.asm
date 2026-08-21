@@ -32436,14 +32436,14 @@ loc_1DB6A:                              ; CODE XREF: seg024:0034\u2191j
 ; ---------------------------------------------------------------------------
 
 loc_1DB73:                              ; CODE XREF: seg024:0011\u2191j
-                call    sub_1DD41
+                call    Midi_bufferByte
                 mov     off_C8438, 4Fh ; 'O'
                 jmp     locret_1DD40
 ; ---------------------------------------------------------------------------
                 test    al, 80h
                 jz      short loc_1DBE6
                 push    ax
-                call    sub_1DD41
+                call    Midi_bufferByte
                 pop     bx
                 cmp     bl, 0F0h ; 'ð'
 
@@ -32478,7 +32478,7 @@ loc_1DBC2:                              ; CODE XREF: seg024:0060\u2191j
                 mov     off_C8438, 0Fh
                 jmp     loc_1DD37
 ; ---------------------------------------------------------------------------
-                call    sub_1DD41
+                call    Midi_bufferByte
                 dec     byte_C8443
                 jz      short loc_1DBDD
                 jmp     locret_1DD40
@@ -32491,7 +32491,7 @@ loc_1DBDD:                              ; CODE XREF: seg024:00A8\u2191j
 
 loc_1DBE6:                              ; CODE XREF: seg024:0051\u2191j
                 mov     al, byte_C8444
-                call    sub_1DD41
+                call    Midi_bufferByte
 
 loc_1DBEC:
                 mov     ah, byte_C843A
@@ -32510,7 +32510,7 @@ loc_1DC01:                              ; CODE XREF: seg024:00C2\u2191j
 loc_1DC0A:                              ; CODE XREF: seg024:001E\u2191j
                                         ; DATA XREF: sg4d43:off_C8467\u2193o
                 mov     al, byte_C8444
-                call    sub_1DD41
+                call    Midi_bufferByte
                 mov     off_C8438, 0Fh
                 jmp     loc_1DD37
 ; ---------------------------------------------------------------------------
@@ -32540,11 +32540,11 @@ loc_1DC35:                              ; CODE XREF: seg024:001E\u2191j
 loc_1DC47:                              ; CODE XREF: seg024:001E\u2191j
                                         ; DATA XREF: sg4d43:0555\u2193o
                 mov     al, byte_C8444
-                call    sub_1DD41
+                call    Midi_bufferByte
                 mov     off_C8438, 126h
                 jmp     locret_1DD40
 ; ---------------------------------------------------------------------------
-                call    sub_1DD41
+                call    Midi_bufferByte
                 cmp     al, 0FFh
                 jnz     short loc_1DC66
                 mov     off_C8438, 1DFh
@@ -32587,7 +32587,7 @@ loc_1DCA0:                              ; CODE XREF: seg024:0165\u2191j
                 mov     off_C8438, 0Fh
                 jmp     loc_1DD3A
 ; ---------------------------------------------------------------------------
-                call    sub_1DD41
+                call    Midi_bufferByte
                 test    byte_C8444, 80h
                 jnz     short loc_1DCB6
                 jmp     locret_1DD40
@@ -32661,7 +32661,7 @@ loc_1DD37:                              ; CODE XREF: seg024:008F\u2191j
 
 loc_1DD3A:                              ; CODE XREF: seg024:0176\u2191j
                                         ; seg024:01AD\u2191j ...
-                mov     word_C8445, 527h
+                mov     _midiBufferPos, 527h
 
 locret_1DD40:                           ; CODE XREF: seg024:0040\u2191j
                                         ; seg024:004C\u2191j ...
@@ -32670,13 +32670,13 @@ locret_1DD40:                           ; CODE XREF: seg024:0040\u2191j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1DD41       proc near               ; CODE XREF: seg024:loc_1DB73\u2191p
+Midi_bufferByte proc near               ; CODE XREF: seg024:loc_1DB73\u2191p
                                         ; seg024:0054\u2191p ...
-                mov     bx, word_C8445
+                mov     bx, _midiBufferPos
                 mov     [bx], al
-                inc     word_C8445
+                inc     _midiBufferPos
                 retn
-sub_1DD41       endp
+Midi_bufferByte endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -32691,7 +32691,7 @@ sub_1DD4C       proc near               ; CODE XREF: seg024:loc_1DD37\u2191p
                 mov     di, word_C845A
                 add     di, word_C845E
                 mov     si, 527h
-                mov     cx, word_C8445
+                mov     cx, _midiBufferPos
                 sub     cx, si
                 add     word_C845E, cx
                 sub     word_C8460, cx
@@ -383589,8 +383589,8 @@ byte_C8443      db 0                    ; DATA XREF: seg024:0072\u2191w
                                         ; seg024:00A4\u2191w ...
 byte_C8444      db 0                    ; DATA XREF: seg024:loc_1DB36\u2191w
                                         ; seg024:loc_1DBE6\u2191r ...
-word_C8445      dw 527h                 ; DATA XREF: seg024:loc_1DD3A\u2191w
-                                        ; sub_1DD41\u2191r ...
+_midiBufferPos  dw 527h                 ; DATA XREF: seg024:loc_1DD3A\u2191w
+                                        ; Midi_bufferByte\u2191r ...
                 db    0
                 db    0
 byte_C8449      db 0                    ; DATA XREF: seg024:loc_1DCB6\u2191r

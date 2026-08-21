@@ -566,6 +566,12 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
 - [x] Named `sub_1019C` (8 callers) → `invoke_callback` — a trivial
       far-function-pointer call trampoline. Full writeup in
       [overview.md](overview.md#invoke_callback-named).
+- [x] Named `sub_1DD41` (8 callers) → `Midi_bufferByte`, plus
+      `_midiBufferPos` (was `word_C8445`) — trivial in itself, but its
+      caller is an un-named state machine branching on byte values
+      matching Standard MIDI status bytes almost exactly, a strong new
+      lead for unifying the `.MUS`/MIDI thread. Full writeup in
+      [overview.md](overview.md#midi_bufferbyte-named--a-midi-status-byte-state-machine-sighted).
 - [ ] Unify the whole music/sound-hardware picture: `Speaker_playTone`/
       `Speaker_playErrorBeep` (PC-speaker tones), `Midi_sendByte` +
       `sub_1D966`/`sub_1EE70`/`sub_1ECB6` (MPU-401/MIDI), and

@@ -875,6 +875,39 @@ RENAMES = [
      "minimal indirect-call trampoline. 8 callers across unrelated "
      "functions confirm it's generic plumbing, not tied to one "
      "callback's specific signature beyond 'takes no arguments'."),
+
+    # -- thirtieth pass: sub_1DD41, a trivial "append byte to buffer"
+    # primitive -- but its caller context is a major new clue for the
+    # still-open .MUS/MIDI unification thread. The un-named "seg024"
+    # state machine that calls it (data-driven compiled code, not a
+    # normal function boundary -- not itself renamed) branches on
+    # incoming byte values 0xF0, 0xF2, 0xF3, 0xFA-0xFD, 0xFF -- exactly
+    # the Standard MIDI status-byte ranges (SysEx start, Song Position
+    # Pointer, Song Select, System Realtime Start/Continue/Stop,
+    # Meta-event/Reset). See
+    # docs/overview.md#midi_bufferbyte-named--a-midi-status-byte-state-machine-sighted. --
+
+    (0x1DD41, "Midi_bufferByte",
+     "sub_1DD41(): implicit-AL-argument primitive -- writes AL to "
+     "*_midiBufferPos (was word_C8445) and advances the pointer. "
+     "Trivial in isolation, but its only callers are all within one "
+     "un-named data-driven state machine (labeled only as "
+     "'seg024:XXXX' locations, not a normal function -- the same "
+     "'compiled logic, not a clean function' shape seen elsewhere in "
+     "this codebase) that branches on incoming byte values matching "
+     "Standard MIDI status bytes almost exactly: 0xF0 (SysEx start), "
+     "0xF2 (Song Position Pointer), 0xF3 (Song Select), a checked "
+     "range 0xFA-0xFD (System Realtime Start/Continue/Stop), and 0xFF "
+     "(Meta-event/Reset). Strongly suggests this state machine is the "
+     ".MUS format's MIDI event-stream parser, buffering bytes via this "
+     "function before eventual dispatch -- not fully unified with the "
+     "Midi_sendByte/sub_1D966/sub_1EE70 cluster yet, but a significant "
+     "new clue for that still-open thread."),
+    (0xC8445, "_midiBufferPos",
+     "Was word_C8445: a growing buffer-position pointer, reset to a "
+     "fixed offset (0x527) elsewhere in the same un-named MIDI-status-"
+     "byte state machine; advanced one byte at a time by "
+     "Midi_bufferByte."),
 ]
 
 
