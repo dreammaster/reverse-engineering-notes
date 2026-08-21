@@ -578,6 +578,12 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       per-track byte-peek primitive, further cementing the `.MUS`/MIDI
       thread. Full writeup in
       [overview.md](overview.md#midi_readvarlengthvalue-named--a-midi-vlq-decoder-confirmed).
+- [x] Named `sub_2A933` (8 callers) → `Surface_getPixelOffset` — the
+      bounds-checked pixel/byte-address primitive underlying
+      `Surface_draw`/`Surface_draw2`. Skipped `sub_2609A` (8 callers,
+      a graphics-mode color/position setter, insufficient confirmation
+      available). Full writeup in
+      [overview.md](overview.md#surface_getpixeloffset-named).
 - [ ] Unify the whole music/sound-hardware picture: `Speaker_playTone`/
       `Speaker_playErrorBeep` (PC-speaker tones), `Midi_sendByte` +
       `sub_1D966`/`sub_1EE70`/`sub_1ECB6` (MPU-401/MIDI), and

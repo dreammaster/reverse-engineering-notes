@@ -943,6 +943,27 @@ RENAMES = [
      "names in different callers (-0x5E5Ch here vs. 0xA1A4 in "
      "Midi_readVarLengthValue) that may or may not be the same "
      "physical array; not confirmed either way."),
+
+    # -- thirty-second pass: skipped sub_2609A (8 callers, a graphics-
+    # mode-only per-slot color/position setter with no message/string
+    # confirmation available -- args plausible but not confident enough
+    # to name). Moved to sub_2A933 (8 callers), called from the
+    # already-named Surface_draw/Surface_draw2. Confirmed directly by
+    # its body as a bounds-checked pixel-address computation. See
+    # docs/overview.md#surface_getpixeloffset-named. --
+
+    (0x2A933, "Surface_getPixelOffset",
+     "sub_2A933(surface, x, y): returns a small negative error code "
+     "(0xFFE4) if surface.field_0 is the 0xCA00 sentinel (a special/"
+     "null surface), or (0xFFE5) if y or x are out of bounds against "
+     "surface.field_A/field_C (height/width). Otherwise computes a "
+     "byte offset from surface.field_12 (a packed bytes-per-line-"
+     "shaped field, split into two bytes) and field_14, combining the "
+     "x/y contributions into a 32-bit value, dividing by 16 (repacking "
+     "into a paragraph-relative far offset), and adding "
+     "surface._image (the surface's base far pointer) -- the core "
+     "bounds-checked pixel/byte-address primitive underlying the "
+     "already-named Surface_draw/Surface_draw2 drawing routines."),
 ]
 
 

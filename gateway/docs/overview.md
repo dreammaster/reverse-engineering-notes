@@ -1987,3 +1987,24 @@ via two different segment-relative names in different callers
 may not be the same physical array; not confirmed either way.
 
 Applied via `apply_renames_gatemain.py`'s thirty-first batch.
+
+### `Surface_getPixelOffset` named
+
+Skipped `sub_2609A` (8 callers) — a graphics-mode-only per-slot
+color/position setter (gated on `_videoIndex != 0`, storing a word and
+two bytes into a 2-entry table) with no message/string confirmation
+available to pin down its exact purpose; the plausible guesses (cursor
+color pair, hotspot color/position) weren't confident enough to commit
+to. Not renamed.
+
+Moved to `sub_2A933` (8 callers), called from the already-named
+`Surface_draw`/`Surface_draw2`. Confirmed directly by its body as the
+bounds-checked pixel/byte-address primitive underlying those drawing
+routines: returns a small negative error code if the surface is a
+special `0xCA00`-sentinel surface, or if the given `x`/`y` are out of
+bounds against the surface's width/height; otherwise computes a byte
+offset from the surface's bytes-per-line-shaped fields and adds it to
+the surface's base far pointer (`_image`). Named
+**`Surface_getPixelOffset(surface, x, y)`**.
+
+Applied via `apply_renames_gatemain.py`'s thirty-second batch.

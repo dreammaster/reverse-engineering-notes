@@ -17134,7 +17134,7 @@ loc_17BA9:                              ; CODE XREF: sub_17B8E:loc_17BA2\u2191j
                 push    ax              ; int
                 mov     ax, 1
                 push    ax              ; int
-                call    sub_2A933
+                call    Surface_getPixelOffset
                 or      dx, dx
                 jnz     short loc_17BCF
                 mov     [bp+var_2], ax
@@ -61616,8 +61616,8 @@ sub_2A90E       endp
 
 ; Attributes: bp-based frame
 
-; int __stdcall __far sub_2A933(int, int, int, Surface *surface)
-sub_2A933       proc far                ; CODE XREF: sub_17B8E+32\u2191P
+; int __stdcall __far Surface_getPixelOffset(int, int, int, Surface *surface)
+Surface_getPixelOffset proc far         ; CODE XREF: sub_17B8E+32\u2191P
                                         ; sub_2AA24:loc_2AA40\u2193P ...
 
 var_6           = word ptr -6
@@ -61647,7 +61647,7 @@ surface         = dword ptr  0Ch
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_2A956:                              ; CODE XREF: sub_2A933+17\u2191j
+loc_2A956:                              ; CODE XREF: Surface_getPixelOffset+17\u2191j
                 mov     ax, es:[di+Surface.field_A]
 
 loc_2A95A:
@@ -61662,7 +61662,7 @@ loc_2A966:
                 db 90h
 ; ---------------------------------------------------------------------------
 
-loc_2A969:                              ; CODE XREF: sub_2A933+2A\u2191j
+loc_2A969:                              ; CODE XREF: Surface_getPixelOffset+2A\u2191j
                 mov     ax, es:[di+Surface.field_C]
                 cmp     [bp+arg_2], ax
                 jbe     short loc_2A97C
@@ -61674,7 +61674,7 @@ loc_2A974:
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_2A97C:                              ; CODE XREF: sub_2A933+3D\u2191j
+loc_2A97C:                              ; CODE XREF: Surface_getPixelOffset+3D\u2191j
                 xor     ax, ax
                 mov     al, byte ptr es:[di+(Surface.field_12+1)]
                 mul     [bp+arg_4]
@@ -61703,8 +61703,8 @@ loc_2A9A9:
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_2A9BA:                              ; CODE XREF: sub_2A933+20\u2191j
-                                        ; sub_2A933:loc_2A966\u2191j ...
+loc_2A9BA:                              ; CODE XREF: Surface_getPixelOffset+20\u2191j
+                                        ; Surface_getPixelOffset:loc_2A966\u2191j ...
                 mov     ax, [bp+var_2]
 
 loc_2A9BD:
@@ -61715,7 +61715,7 @@ loc_2A9BD:
                 mov     sp, bp
                 pop     bp
                 retf    0Ah
-sub_2A933       endp
+Surface_getPixelOffset endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -61857,7 +61857,7 @@ loc_2AA2B:
                 push    ax              ; int
 
 loc_2AA40:
-                call    sub_2A933
+                call    Surface_getPixelOffset
                 or      dx, dx
                 jnz     short loc_2AA4F
                 mov     [bp+var_2], ax
@@ -62329,7 +62329,7 @@ loc_2AD29:                              ; CODE XREF: Surface_draw:loc_2AD22\u219
                 push    ax              ; int
                 mov     ax, 0
                 push    ax              ; int
-                call    sub_2A933
+                call    Surface_getPixelOffset
                 or      dx, dx
                 jnz     short loc_2AD4B
                 mov     [bp+var_2], ax
@@ -63185,7 +63185,7 @@ loc_2B271:                              ; CODE XREF: Surface_draw2+14\u2191j
                 push    ax              ; int
                 mov     ax, 1
                 push    ax              ; int
-                call    sub_2A933
+                call    Surface_getPixelOffset
                 or      dx, dx
                 jnz     short loc_2B293
                 mov     [bp+var_2], ax
@@ -64266,7 +64266,7 @@ loc_2B96C:                              ; CODE XREF: sub_2B6D4+265\u2191j
                 push    [bp+arg_E]      ; int
                 mov     ax, 1
                 push    ax              ; int
-                call    sub_2A933
+                call    Surface_getPixelOffset
                 or      dx, dx
                 jnz     short loc_2B987
                 mov     [bp+var_2], ax
@@ -64282,7 +64282,7 @@ loc_2B987:                              ; CODE XREF: sub_2B6D4+2AB\u2191j
                 push    [bp+arg_2]      ; int
                 mov     ax, 1
                 push    ax              ; int
-                call    sub_2A933
+                call    Surface_getPixelOffset
                 or      dx, dx
                 jnz     short loc_2B9A6
                 mov     [bp+var_2], ax
@@ -66092,7 +66092,7 @@ arg_4           = word ptr  0Ah
                 push    [bp+arg_2]      ; int
                 mov     ax, 1
                 push    ax              ; int
-                call    sub_2A933
+                call    Surface_getPixelOffset
                 or      dx, dx
                 jnz     short loc_2C3CB
                 mov     [bp+var_2], ax
@@ -66185,7 +66185,7 @@ arg_4           = word ptr  0Ah
                 push    [bp+arg_2]      ; int
                 mov     ax, 1
                 push    ax              ; int
-                call    sub_2A933
+                call    Surface_getPixelOffset
                 or      dx, dx
                 jnz     short loc_2C45B
                 mov     [bp+var_2], ax
@@ -66446,7 +66446,7 @@ arg_4           = word ptr  0Ah
                 push    [bp+arg_2]      ; int
                 mov     ax, 1
                 push    ax              ; int
-                call    sub_2A933
+                call    Surface_getPixelOffset
                 or      dx, dx
                 jnz     short loc_2C628
                 mov     [bp+var_2], ax

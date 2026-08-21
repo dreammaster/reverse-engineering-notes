@@ -31628,6 +31628,7 @@ static Bytes_5(void) {
 	create_insn	(0X2A925);
 	create_insn	(0X2A930);
 	create_insn	(0X2A933);
+	set_name	(0X2A933,	"Surface_getPixelOffset");
 	create_insn	(x=0X2A936);
 	op_hex		(x,	1);
 	create_insn	(x=0X2A93D);
@@ -141048,7 +141049,7 @@ static Functions_1(void) {
 	set_frame_size(0X2A90E, 0X2, 0, 0);
 	add_func    (0X2A933,0X2A9C7);
 	set_func_flags(0X2A933,0x4412);
-	SetType(0X2A933, "int __stdcall __far sub_2A933(int, int, int, Surface *surface);");
+	SetType(0X2A933, "int __stdcall __far Surface_getPixelOffset(int, int, int, Surface *surface);");
 	set_frame_size(0X2A933, 0X8, 2, 0XA);
 	define_local_var(0X2A933, 0X2A9C7, "[bp+0XC]", "surface");
 	add_func    (0X2A9C7,0X2AA23);
