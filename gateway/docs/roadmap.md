@@ -662,6 +662,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       `Listbox_pushState` — a nested-listbox state stack used to open
       a menu on top of the current one. Full writeup in
       [overview.md](overview.md#listbox_resetstatestacklistbox_pushstate-named--a-nested-listbox-stack).
+- [x] Named `sub_18842` (4 callers) → `Speaker_sampleIsr` — the actual
+      digitized PC-speaker sample-playback ISR body, closing a small
+      piece of an earlier "not traced further" gap. Full writeup in
+      [overview.md](overview.md#speaker_sampleisr-named--the-digitized-sample-isr-body-traced).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

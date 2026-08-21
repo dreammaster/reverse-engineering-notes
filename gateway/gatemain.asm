@@ -19132,7 +19132,7 @@ loc_18825:                              ; CODE XREF: sg09a4:07FC\u2191j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18842       proc far                ; CODE XREF: seg097:05AB\u2193P
+Speaker_sampleIsr proc far              ; CODE XREF: seg097:05AB\u2193P
                                         ; seg097:0629\u2193P ...
                 adc     dx, 0
                 mov     byte_C84F6, dl
@@ -19160,10 +19160,10 @@ loc_1886F:                              ; CODE XREF: sg09a4:07E1\u2191j
 ; ---------------------------------------------------------------------------
 
 loc_18875:                              ; CODE XREF: sg09a4:07D9\u2191j
-                                        ; sub_18842+2A\u2191j
+                                        ; Speaker_sampleIsr+2A\u2191j
                 call    sub_18883
 
-loc_18878:                              ; CODE XREF: sub_18842+30\u2191j
+loc_18878:                              ; CODE XREF: Speaker_sampleIsr+30\u2191j
                 mov     al, 20h ; ' '
                 out     20h, al         ; Interrupt controller, 8259A.
                 pop     ds
@@ -19173,14 +19173,14 @@ loc_18878:                              ; CODE XREF: sub_18842+30\u2191j
                 pop     bx
                 pop     ax
                 iret
-sub_18842       endp ; sp-analysis failed
+Speaker_sampleIsr endp ; sp-analysis failed
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
 sub_18883       proc near               ; CODE XREF: sg09a4:07B8\u2191p
-                                        ; sub_18842:loc_18875\u2191p
+                                        ; Speaker_sampleIsr:loc_18875\u2191p
                 mov     cx, 0FFFFh
                 cmp     byte_C84FB, 0
                 jnz     short loc_18895
@@ -19261,7 +19261,7 @@ sub_18883       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18905       proc near               ; CODE XREF: sub_18842:loc_1886F\u2191p
+sub_18905       proc near               ; CODE XREF: Speaker_sampleIsr:loc_1886F\u2191p
                                         ; sub_18976+26\u2193p
                 mov     al, 5
                 out     0Ah, al         ; DMA controller, 8237A-5.
@@ -127161,7 +127161,7 @@ loc_47659:                              ; CODE XREF: seg097:0547\u2191j
                 push    ax
                 call    sub_1A0FC
                 add     sp, 4
-                call    sub_18842
+                call    Speaker_sampleIsr
 
 loc_47690:                              ; CODE XREF: seg097:0599\u2191j
                 push    word ptr gatestr_file+2
@@ -127208,7 +127208,7 @@ loc_47690:                              ; CODE XREF: seg097:0599\u2191j
                 push    ax
                 call    sub_1A0FC
                 add     sp, 4
-                call    sub_18842
+                call    Speaker_sampleIsr
 
 loc_4770E:                              ; CODE XREF: seg097:0617\u2191j
                 push    word ptr gatestr_file+2
@@ -127275,7 +127275,7 @@ loc_47753:                              ; CODE XREF: seg097:066E\u2191j
                 push    ax
                 call    sub_1A0FC
                 add     sp, 4
-                call    sub_18842
+                call    Speaker_sampleIsr
 
 loc_477B8:                              ; CODE XREF: seg097:06C1\u2191j
                 push    word ptr gatestr_file+2
@@ -127346,7 +127346,7 @@ loc_47858:                              ; CODE XREF: seg097:075F\u2191j
                 push    ax
                 call    sub_1A0FC
                 add     sp, 4
-                call    sub_18842
+                call    Speaker_sampleIsr
 
 loc_47876:                              ; CODE XREF: seg097:077F\u2191j
                 sub     ax, ax
@@ -383712,17 +383712,17 @@ byte_C84F5      db 3                    ; DATA XREF: sg09a4:073D\u2191r
 byte_C84F6      db 0                    ; DATA XREF: sg09a4:0791\u2191w
                                         ; sg09a4:07B0\u2191r ...
 word_C84F7      dw 0                    ; DATA XREF: sg09a4:0795\u2191w
-                                        ; sub_18842+7\u2191w ...
+                                        ; Speaker_sampleIsr+7\u2191w ...
 word_C84F9      dw 0                    ; DATA XREF: sub_18883+16\u2191w
                                         ; sub_18883+31\u2191r ...
 byte_C84FB      db 0                    ; DATA XREF: sg09a4:07B4\u2191w
-                                        ; sub_18842+26\u2191w ...
+                                        ; Speaker_sampleIsr+26\u2191w ...
 word_C84FC      dw 0                    ; DATA XREF: sg09a4:0798\u2191w
                                         ; sg09a4:07D4\u2191r ...
 word_C84FE      dw 0                    ; DATA XREF: sg09a4:079C\u2191w
-                                        ; sub_18842+E\u2191w ...
+                                        ; Speaker_sampleIsr+E\u2191w ...
 word_C8500      dw 0                    ; DATA XREF: sg09a4:07AD\u2191w
-                                        ; sub_18842+1F\u2191w ...
+                                        ; Speaker_sampleIsr+1F\u2191w ...
 word_C8502      dw 0                    ; DATA XREF: sg09a4:0753\u2191w
                                         ; sub_18905+17\u2191r
 word_C8504      dw 0                    ; DATA XREF: sg09a4:075F\u2191w

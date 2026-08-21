@@ -2575,3 +2575,24 @@ and later restore it.
   is already full (20 deep).
 
 Applied via `apply_renames_gatemain.py`'s fifty-seventh batch.
+
+### `Speaker_sampleIsr` named — the digitized-sample ISR body traced
+
+Moved to `sub_18842` (4 callers). Confirmed directly by its body — a
+real hardware interrupt service routine (PIC end-of-interrupt `out
+20h,20h`, full register save/restore, `iret`) — continuing the
+"digitized PC-speaker sound-effect engine" thread from several passes
+ago, whose self-modifying ISR body was explicitly flagged then as "not
+traced further."
+
+`Speaker_sampleIsr()`: initializes several playback-state globals
+(buffer length/position/end-marker-shaped values, not renamed), then
+dispatches to one of two continuation routines (`sub_18905` or
+`sub_18883`, not renamed — plausibly double-buffered "next sample
+byte" handlers) before signaling end-of-interrupt and returning. Not
+fully unpicked — the two continuation routines and the exact 1-bit
+sample-decoding scheme remain open — but this confirms the ISR is a
+real, complete interrupt handler, closing a small piece of that
+earlier "not traced further" gap.
+
+Applied via `apply_renames_gatemain.py`'s fifty-eighth batch.

@@ -12250,6 +12250,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1883D);
 	op_hex		(x,	1);
 	create_insn	(0X18842);
+	set_name	(0X18842,	"Speaker_sampleIsr");
 	create_byte	(0X1886E);
 	create_insn	(0X1886F);
 	create_byte	(0X18874);

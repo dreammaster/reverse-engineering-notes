@@ -1633,6 +1633,31 @@ RENAMES = [
      "state before replacing it, i.e. opening a nested listbox/menu "
      "on top of the current one. Bails out early (no-op) if the "
      "stack is already full (word_D0766 == 0x14)."),
+
+    # -- fifty-eighth pass: sub_18842, confirmed directly by its body
+    # (PIC end-of-interrupt out 20h,20h + iret, full register
+    # save/restore) as a real hardware interrupt service routine --
+    # continuing the "digitized PC-speaker sound-effect engine" thread
+    # from several passes ago, whose self-modifying ISR body was
+    # explicitly flagged then as "not traced further". See
+    # docs/overview.md#speaker_sampleisr-named--the-digitized-sample-isr-body-traced. --
+
+    (0x18842, "Speaker_sampleIsr",
+     "sub_18842(): a real hardware ISR -- initializes several "
+     "playback-state globals (byte_C84F6/word_C84F7/word_C84FC/"
+     "word_C84FE/word_C8500/byte_C84FB, not renamed: buffer length/"
+     "position/end-marker-shaped values, matching the already-"
+     "documented 'digitized PC-speaker sound-effect engine'), then "
+     "dispatches to one of two continuation routines (sub_18905 or "
+     "sub_18883, not renamed -- plausibly double-buffered 'next "
+     "sample byte' handlers), sends the PIC end-of-interrupt (out "
+     "20h,20h), restores all registers, and returns via iret. This is "
+     "the actual timer-ISR body flagged as 'not traced further' when "
+     "the digitized PC-speaker engine was first documented -- not "
+     "fully unpicked here either (the two continuation routines and "
+     "exact sample-decoding scheme remain open), but confirms the ISR "
+     "is a real, complete interrupt handler rather than a plain "
+     "subroutine."),
 ]
 
 
