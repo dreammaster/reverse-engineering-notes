@@ -8254,6 +8254,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1566D);
 	op_seg		(x,	1);
 	create_insn	(0X15674);
+	set_name	(0X15674,	"Game_showIllustration");
 	create_insn	(x=0X15677);
 	op_hex		(x,	1);
 	create_insn	(x=0X156A1);
@@ -12508,8 +12509,6 @@ static Bytes_1(void) {
 	set_cmt	(0X18EE3,	"DOS - 2+ - WRITE TO FILE WITH HANDLE\nBX = file handle, CX = number of bytes to write, DS:DX -> buffer",	0);
 	create_insn	(x=0X18EE3);
 	op_hex		(x,	0);
-	create_insn	(0X18EEC);
-	set_name	(0X18EEC,	"__myalloc");
 }
 
 //------------------------------------------------------------------------
@@ -12519,6 +12518,8 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(0X18EEC);
+	set_name	(0X18EEC,	"__myalloc");
 	create_insn	(x=0X18EFE);
 	op_hex		(x,	1);
 	create_insn	(x=0X18F12);
@@ -18364,8 +18365,6 @@ static Bytes_2(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1F3D1);
 	op_hex		(x,	1);
-	create_insn	(x=0X1F3DA);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -18375,6 +18374,8 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X1F3DA);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X1F3E1);
 	op_hex		(x,	1);
 	create_insn	(x=0X1F3F1);

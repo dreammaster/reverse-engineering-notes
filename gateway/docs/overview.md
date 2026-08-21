@@ -2836,3 +2836,30 @@ presumably bypass the check for specific NPCs/contexts where it
 doesn't apply.
 
 Applied via `apply_renames_gatemain.py`'s seventy-fourth batch.
+
+### `Game_showIllustration` named — the cutscene/illustration display sequence
+
+Moved to `sub_15674` (3 direct callers, but referenced *in passing* by
+name throughout many earlier passes as "a major hub function" —
+`AnimPics_freeAll`, `Sound_stopTrack`, `Screen_fadeIn`, and
+`Game_restartAfterDeath` all mentioned it without tracing it). Finally
+traced and named directly.
+
+`Game_showIllustration(picNumber, arg2, arg4, arg6, arg8)`: if a
+"picture currently shown" flag is set, tears down any active animated-
+picture overlays (`AnimPics_freeAll`). Checks whether graphics display
+is available; if not, falls back to a text-only path (`sub_158C3`, not
+renamed). Otherwise, if `picNumber != 0`, loads and draws the picture
+(stopping the current sound track first if a specific mode bit is set,
+to avoid audio glitching during picture display), or fills the screen
+black if the picture fails to load; either way calls the already-named
+`Screen_fadeIn`, delays 3 seconds, then calls `sub_157A9` (not renamed
+— plausibly the caption-text display) with its message arguments, and
+frees the loaded image.
+
+This is the game's full-screen illustration/cutscene display sequence
+— confirmed as the hub `Game_restartAfterDeath` and others route
+through for "show a picture with fade-in, delay, and caption text,"
+e.g. death/ending scenes and other major story beats.
+
+Applied via `apply_renames_gatemain.py`'s seventy-fifth batch.

@@ -1947,6 +1947,30 @@ RENAMES = [
      "failure (1) when it doesn't hold; the two special-cased values "
      "presumably bypass the check for specific NPCs/contexts where it "
      "doesn't apply."),
+
+    # -- seventy-fifth pass: sub_15674, the long-referenced "major hub
+    # function" mentioned in passing throughout many earlier passes
+    # (AnimPics_freeAll, Sound_stopTrack, Screen_fadeIn, Game_
+    # restartAfterDeath) -- finally traced and named directly. See
+    # docs/overview.md#game_showillustration-named--the-cutsceneillustration-display-sequence. --
+
+    (0x15674, "Game_showIllustration",
+     "sub_15674(picNumber, arg2, arg4, arg6, arg8): if a 'picture currently "
+     "shown' flag (word_C8EF0) is set, tears down any active animated-"
+     "picture overlays (sub_26F2A, the already-named AnimPics_freeAll). "
+     "Checks whether graphics display is available (thunk_sub_5D9F3, "
+     "forced true if _videoIndex==3); if not, falls back to a text-"
+     "only path (sub_158C3, not renamed). Otherwise, if picNumber != 0, "
+     "loads and draws the picture (stopping the current sound track "
+     "first if a specific mode bit is set, to avoid audio glitching "
+     "during picture display), or fills the screen black if the "
+     "picture fails to load; either way calls the already-named "
+     "Screen_fadeIn, delays 3 seconds, then calls sub_157A9 (not "
+     "renamed -- plausibly the caption-text display) with its message "
+     "arguments, and frees the loaded image. This is the game's "
+     "full-screen illustration/cutscene display sequence -- confirmed "
+     "as the hub Game_restartAfterDeath and others route through for "
+     "'show a picture with fade-in, delay, and caption text'."),
 ]
 
 

@@ -726,6 +726,12 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       implicit "is subject holding object?" precondition check,
       confirmed via a real decoded GATESTR.DAT message. Full writeup
       in [overview.md](overview.md#logics_checkisholding-named).
+- [x] Named `sub_15674` (3 callers) → `Game_showIllustration` — the
+      full-screen illustration/cutscene display sequence (picture +
+      fade-in + delay + caption text), the "major hub function"
+      referenced in passing throughout several earlier passes. Full
+      writeup in
+      [overview.md](overview.md#game_showillustration-named--the-cutsceneillustration-display-sequence).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-
