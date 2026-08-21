@@ -11987,7 +11987,7 @@ loc_15721:                              ; CODE XREF: sub_15674+9C\u2191j
 
 loc_1575E:                              ; CODE XREF: sub_15674+52\u2191j
                                         ; sub_15674+AB\u2191j
-                call    sub_26228
+                call    Screen_fadeIn
                 mov     ax, 3
                 push    ax              ; seconds
                 call    j_delay
@@ -51548,7 +51548,7 @@ Screen_backupPalette endp
 
 ; Attributes: bp-based frame
 
-sub_26228       proc far                ; CODE XREF: sub_15674:loc_1575E\u2191P
+Screen_fadeIn   proc far                ; CODE XREF: sub_15674:loc_1575E\u2191P
                                         ; sub_26A62+6C\u2193p ...
 
 palette         = byte ptr -306h
@@ -51568,7 +51568,7 @@ var_2           = word ptr -2
                 jmp     loc_262D1
 ; ---------------------------------------------------------------------------
 
-loc_26240:                              ; CODE XREF: sub_26228+13\u2191j
+loc_26240:                              ; CODE XREF: Screen_fadeIn+13\u2191j
                 mov     es, seg126_52
                 assume es:sg3EDC
                 mov     es:word_4DAAC, 0
@@ -51590,7 +51590,7 @@ loc_26240:                              ; CODE XREF: sub_26228+13\u2191j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_2626E:                              ; CODE XREF: sub_26228+2D\u2191j
+loc_2626E:                              ; CODE XREF: Screen_fadeIn+2D\u2191j
                 mov     es, dseg_55
                 cmp     es:_videoIndex, 3
                 jnz     short loc_26280
@@ -51599,20 +51599,20 @@ loc_2626E:                              ; CODE XREF: sub_26228+2D\u2191j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_26280:                              ; CODE XREF: sub_26228+50\u2191j
+loc_26280:                              ; CODE XREF: Screen_fadeIn+50\u2191j
                 mov     ax, 30h ; '0'
 
-loc_26283:                              ; CODE XREF: sub_26228+55\u2191j
+loc_26283:                              ; CODE XREF: Screen_fadeIn+55\u2191j
                 mov     [bp+var_6], ax
                 mov     [bp+var_2], 0
 
-loc_2628B:                              ; CODE XREF: sub_26228+A7\u2193j
+loc_2628B:                              ; CODE XREF: Screen_fadeIn+A7\u2193j
                 sub     si, si
                 mov     di, [bp+var_6]
                 jmp     short loc_262B2
 ; ---------------------------------------------------------------------------
 
-loc_26292:                              ; CODE XREF: sub_26228+8C\u2193j
+loc_26292:                              ; CODE XREF: Screen_fadeIn+8C\u2193j
                 mov     es, dseg_57
                 mov     al, es:[si+0FDCh]
                 cbw
@@ -51627,7 +51627,7 @@ loc_26292:                              ; CODE XREF: sub_26228+8C\u2193j
                 mov     [bp+si+palette], al
                 inc     si
 
-loc_262B2:                              ; CODE XREF: sub_26228+68\u2191j
+loc_262B2:                              ; CODE XREF: Screen_fadeIn+68\u2191j
                 cmp     si, di
                 jl      short loc_26292
                 mov     [bp+var_4], si
@@ -51640,13 +51640,13 @@ loc_262B2:                              ; CODE XREF: sub_26228+68\u2191j
                 cmp     [bp+var_2], 40h ; '@'
                 jle     short loc_2628B
 
-loc_262D1:                              ; CODE XREF: sub_26228+15\u2191j
+loc_262D1:                              ; CODE XREF: Screen_fadeIn+15\u2191j
                 pop     si
                 pop     di
                 mov     sp, bp
                 pop     bp
                 retf
-sub_26228       endp
+Screen_fadeIn   endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -52779,7 +52779,7 @@ arg_4           = word ptr  0Ah
                 call    near ptr Image_draw
                 add     sp, 4
                 push    cs
-                call    near ptr sub_26228
+                call    near ptr Screen_fadeIn
                 lea     ax, [bp+var_90]
                 push    ss
                 push    ax              ; img
@@ -357951,7 +357951,7 @@ loc_BD982:                              ; CODE XREF: sub_BD840+131\u2191j
 ; ---------------------------------------------------------------------------
 
 loc_BD990:                              ; CODE XREF: sub_BD840+147\u2191j
-                call    sub_26228
+                call    Screen_fadeIn
                 jmp     short loc_BD9DA
 ; ---------------------------------------------------------------------------
 
@@ -358512,7 +358512,7 @@ loc_BDE27:                              ; CODE XREF: sub_BDDBC+2A\u2191j
                 add     sp, 4
 
 loc_BDE43:                              ; CODE XREF: sub_BDDBC+69\u2191j
-                call    sub_26228
+                call    Screen_fadeIn
                 mov     es, seg_D19E8
                 sub     ax, ax
                 mov     es:Commset_xp2, ax

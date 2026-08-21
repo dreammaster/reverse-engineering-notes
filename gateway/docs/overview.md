@@ -2689,3 +2689,16 @@ named to match the existing lowercase-underscore
 `get_keypress`/`get_input_line_ptr` convention.
 
 Applied via `apply_renames_gatemain.py`'s sixty-fourth batch.
+
+### `Screen_fadeIn` named
+
+Moved to `sub_26228` (4 callers). Confirmed directly by its body as
+the fade-IN counterpart to the already-named `Screen_fadeOut`: in text
+mode it does nothing; in basic EGA mode it just sets a fixed reference
+palette directly; otherwise (VGA/other) it builds a scaled-down copy
+of the reference palette in a local buffer — each color component
+multiplied by a growing fraction stepping from 0 up to full — calling
+`Screen_setEGAPalette` after each step, ramping the screen up from
+black to full brightness.
+
+Applied via `apply_renames_gatemain.py`'s sixty-fifth batch.

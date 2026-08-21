@@ -1770,6 +1770,23 @@ RENAMES = [
      "otherwise. A single-key menu-choice reader, named to match the "
      "existing lowercase-underscore get_keypress/get_input_line_ptr "
      "convention."),
+
+    # -- sixty-fifth pass: sub_26228, confirmed directly by its body
+    # (a gradual palette-brightness ramp via repeated
+    # Screen_setEGAPalette calls) as the fade-IN counterpart to the
+    # already-named Screen_fadeOut. See
+    # docs/overview.md#screen_fadein-named. --
+
+    (0x26228, "Screen_fadeIn",
+     "sub_26228(): in text mode, does nothing. In basic EGA mode "
+     "(_videoIndex==1), just sets a fixed reference palette directly "
+     "(no gradual ramp). Otherwise (VGA/other), builds a scaled-down "
+     "copy of the reference palette in a local buffer -- each color "
+     "component multiplied by a growing fraction (0 up to 64/64, "
+     "stepping by 4) -- calling the already-named Screen_setEGAPalette "
+     "after each step, ramping the screen up from black to full "
+     "brightness. The fade-IN counterpart to the already-named "
+     "Screen_fadeOut."),
 ]
 
 
