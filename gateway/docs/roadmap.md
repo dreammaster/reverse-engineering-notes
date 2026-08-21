@@ -650,6 +650,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       the exact significance of the hardcoded object/handler index
       wasn't determined (no message anchor). Full writeup in
       [overview.md](overview.md#logics_saveorrestorehandler-named).
+- [x] Named `sub_15BDA` (4 callers) → `Sound_selectTrackForRoom` — the
+      room-to-background-music mapping entry point, called from
+      `main()` and `show_startup`. Full writeup in
+      [overview.md](overview.md#sound_selecttrackforroom-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

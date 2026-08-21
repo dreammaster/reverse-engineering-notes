@@ -667,7 +667,7 @@ Parser_perform  endp
 
 ; Attributes: bp-based frame
 
-get_buffer_size proc far                ; CODE XREF: sub_15BDA+1C1\u2193P
+get_buffer_size proc far                ; CODE XREF: Sound_selectTrackForRoom+1C1\u2193P
                                         ; Sound_selectTrack+16C\u2193P ...
 
 var_4           = word ptr -4
@@ -1084,7 +1084,7 @@ loc_1085A:                              ; CODE XREF: main+F8\u2191j
                 mov     es, dseg_69
                 assume es:sg4d43
                 push    es:_roomLogicNum
-                call    sub_15BDA
+                call    Sound_selectTrackForRoom
                 add     sp, 2
                 call    Logics_lookAtCurrentRoom
                 jmp     short loc_10877
@@ -9701,7 +9701,7 @@ loc_146CB:
 ;
                 mov     es, dseg_98
                 push    es:_roomLogicNum
-                call    sub_15BDA
+                call    Sound_selectTrackForRoom
                 add     sp, 2
                 call    Logics_lookAtCurrentRoom
 
@@ -10729,7 +10729,7 @@ loc_14DB7:                              ; CODE XREF: Logics_checkMoveRestriction
                 jnz     short loc_14DCF
                 mov     es, dseg_102
                 push    es:_roomLogicNum
-                call    sub_15BDA
+                call    Sound_selectTrackForRoom
                 add     sp, 2
 
 loc_14DCF:                              ; CODE XREF: Logics_checkMoveRestriction+258\u2191j
@@ -12665,7 +12665,7 @@ seg011          segment byte public 'CODE' use16
 
 ; Attributes: bp-based frame
 
-sub_15BDA       proc far                ; CODE XREF: main+110\u2191P
+Sound_selectTrackForRoom proc far       ; CODE XREF: main+110\u2191P
                                         ; show_startup+19D\u2191P ...
 
 var_C           = word ptr -0Ch
@@ -12686,10 +12686,10 @@ loc_15BDB:
                 jmp     short loc_15BEB
 ; ---------------------------------------------------------------------------
 
-loc_15BE8:                              ; CODE XREF: sub_15BDA+2A\u2193j
+loc_15BE8:                              ; CODE XREF: Sound_selectTrackForRoom+2A\u2193j
                 inc     [bp+var_8]
 
-loc_15BEB:                              ; CODE XREF: sub_15BDA+C\u2191j
+loc_15BEB:                              ; CODE XREF: Sound_selectTrackForRoom+C\u2191j
                 cmp     [bp+var_8], 6Ah ; 'j'
                 jge     short loc_15C0C
 
@@ -12705,13 +12705,13 @@ loc_15BF1:
                 mov     ax, [bp+var_8]
                 mov     [bp+var_2], ax
 
-loc_15C0C:                              ; CODE XREF: sub_15BDA+15\u2191j
+loc_15C0C:                              ; CODE XREF: Sound_selectTrackForRoom+15\u2191j
                 cmp     [bp+var_8], 106
                 jl      short loc_15C15
                 jmp     loc_15DAD
 ; ---------------------------------------------------------------------------
 
-loc_15C15:                              ; CODE XREF: sub_15BDA+36\u2191j
+loc_15C15:                              ; CODE XREF: Sound_selectTrackForRoom+36\u2191j
                 mov     si, [bp+var_2]
                 mov     cl, 3
                 shl     si, cl
@@ -12742,8 +12742,8 @@ loc_15C46:
                 mov     ax, [bp+var_6]
                 mov     es:word_C857C, ax
 
-loc_15C61:                              ; CODE XREF: sub_15BDA+72\u2191j
-                                        ; sub_15BDA+7E\u2191j
+loc_15C61:                              ; CODE XREF: Sound_selectTrackForRoom+72\u2191j
+                                        ; Sound_selectTrackForRoom+7E\u2191j
                 cmp     [bp+var_C], 0
                 jz      short loc_15C78
                 mov     es, dseg_120
@@ -12753,8 +12753,8 @@ loc_15C61:                              ; CODE XREF: sub_15BDA+72\u2191j
                 jmp     loc_15DAD
 ; ---------------------------------------------------------------------------
 
-loc_15C78:                              ; CODE XREF: sub_15BDA+8B\u2191j
-                                        ; sub_15BDA+99\u2191j
+loc_15C78:                              ; CODE XREF: Sound_selectTrackForRoom+8B\u2191j
+                                        ; Sound_selectTrackForRoom+99\u2191j
                 cmp     [bp+var_4], 0
                 jz      short loc_15C8F
                 mov     es, dseg_121
@@ -12766,8 +12766,8 @@ loc_15C8C:
                 jmp     loc_15DAD
 ; ---------------------------------------------------------------------------
 
-loc_15C8F:                              ; CODE XREF: sub_15BDA+A2\u2191j
-                                        ; sub_15BDA+B0\u2191j
+loc_15C8F:                              ; CODE XREF: Sound_selectTrackForRoom+A2\u2191j
+                                        ; Sound_selectTrackForRoom+B0\u2191j
                 mov     ax, 0FFFFh
                 push    ax
                 call    Sound_stopTrack
@@ -12777,10 +12777,10 @@ loc_15C8F:                              ; CODE XREF: sub_15BDA+A2\u2191j
                 jmp     loc_15D26
 ; ---------------------------------------------------------------------------
 
-loc_15CA4:                              ; CODE XREF: sub_15BDA+C5\u2191j
+loc_15CA4:                              ; CODE XREF: Sound_selectTrackForRoom+C5\u2191j
                 mov     [bp+var_8], 0
 
-loc_15CA9:                              ; CODE XREF: sub_15BDA+107\u2193j
+loc_15CA9:                              ; CODE XREF: Sound_selectTrackForRoom+107\u2193j
                 mov     si, [bp+var_8]
                 shl     si, 1
                 mov     bx, [bp+var_C]
@@ -12818,7 +12818,7 @@ loc_15CA9:                              ; CODE XREF: sub_15BDA+107\u2193j
                 jmp     short loc_15D64
 ; ---------------------------------------------------------------------------
 
-loc_15D26:                              ; CODE XREF: sub_15BDA+C7\u2191j
+loc_15D26:                              ; CODE XREF: Sound_selectTrackForRoom+C7\u2191j
                 mov     es, dseg_120
                 mov     es:word_C856E, 0
                 mov     es, dseg_125
@@ -12838,7 +12838,7 @@ loc_15D43:
                 mov     es, dseg_126
                 mov     es:word_C857A, ax
 
-loc_15D64:                              ; CODE XREF: sub_15BDA+14A\u2191j
+loc_15D64:                              ; CODE XREF: Sound_selectTrackForRoom+14A\u2191j
                 mov     es, dseg_118
                 mov     es:word_C858A, 0
                 mov     es, dseg_128
@@ -12857,13 +12857,13 @@ loc_15D64:                              ; CODE XREF: sub_15BDA+14A\u2191j
                 mov     es:word_C8578, ax
                 call    sub_1FE5C
 
-loc_15DAD:                              ; CODE XREF: sub_15BDA+38\u2191j
-                                        ; sub_15BDA+9B\u2191j ...
+loc_15DAD:                              ; CODE XREF: Sound_selectTrackForRoom+38\u2191j
+                                        ; Sound_selectTrackForRoom+9B\u2191j ...
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_15BDA       endp
+Sound_selectTrackForRoom endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -13024,8 +13024,8 @@ Sound_selectTrack endp
 
 ; Attributes: bp-based frame
 
-sub_15F35       proc far                ; CODE XREF: sub_15BDA+F1\u2191p
-                                        ; sub_15BDA+17C\u2191p ...
+sub_15F35       proc far                ; CODE XREF: Sound_selectTrackForRoom+F1\u2191p
+                                        ; Sound_selectTrackForRoom+17C\u2191p ...
 
 var_2           = word ptr -2
 arg_0           = word ptr  6
@@ -37306,7 +37306,7 @@ sub_1FE30       endp
 
 ; Attributes: bp-based frame
 
-sub_1FE5C       proc far                ; CODE XREF: sub_15BDA+1CE\u2191P
+sub_1FE5C       proc far                ; CODE XREF: Sound_selectTrackForRoom+1CE\u2191P
                                         ; Sound_selectTrack+179\u2191P
 
 var_1C          = word ptr -1Ch
@@ -177060,7 +177060,7 @@ loc_6D7F2:                              ; CODE XREF: sub_6D7CD+16\u2191j
                 call    near ptr sub_6D7A3
                 mov     es, seg_D1318
                 push    es:_roomLogicNum
-                call    sub_15BDA
+                call    Sound_selectTrackForRoom
                 mov     ax, 1
                 mov     sp, bp
                 pop     bp
@@ -383777,10 +383777,10 @@ word_C8534      dw 0                    ; DATA XREF: sub_1EE70+84\u2191r
                                         ; sub_1EE70:loc_1EF0B\u2191w
 word_C8536      dw 0                    ; DATA XREF: sub_1EFA6:loc_1F008\u2191w
                                         ; sub_1EFA6+66\u2191r ...
-word_C8538      dw 0                    ; DATA XREF: sub_15BDA+123\u2191r
+word_C8538      dw 0                    ; DATA XREF: Sound_selectTrackForRoom+123\u2191r
                                         ; Sound_selectTrack+CE\u2191r ...
                 align 8
-word_C8540      dw 0                    ; DATA XREF: sub_15BDA+133\u2191r
+word_C8540      dw 0                    ; DATA XREF: Sound_selectTrackForRoom+133\u2191r
                                         ; Sound_selectTrack+DE\u2191r ...
                 align 8
 word_C8548      dw 0                    ; DATA XREF: sub_1FE5C+195\u2191r
@@ -383814,27 +383814,27 @@ word_C8564      dw 0                    ; DATA XREF: sub_1FE5C+1A9\u2191r
                 db    0
                 db    0
                 db    0
-word_C856C      dw 0                    ; DATA XREF: sub_15BDA+118\u2191w
-                                        ; sub_15BDA+15B\u2191w ...
-word_C856E      dw 0                    ; DATA XREF: sub_15BDA+94\u2191r
-                                        ; sub_15BDA+110\u2191w ...
+word_C856C      dw 0                    ; DATA XREF: Sound_selectTrackForRoom+118\u2191w
+                                        ; Sound_selectTrackForRoom+15B\u2191w ...
+word_C856E      dw 0                    ; DATA XREF: Sound_selectTrackForRoom+94\u2191r
+                                        ; Sound_selectTrackForRoom+110\u2191w ...
                 db    0
                 db    0
 word_C8572      dw 0                    ; DATA XREF: sub_1FE5C+1A6\u2191w
                                         ; sub_1FE5C+2B7\u2191w ...
 word_C8574      dw 0                    ; DATA XREF: sub_1FE5C:loc_20119\u2191w
-word_C8576      dw 7Fh                  ; DATA XREF: sub_15BDA+1B5\u2191w
+word_C8576      dw 7Fh                  ; DATA XREF: Sound_selectTrackForRoom+1B5\u2191w
                                         ; Sound_selectTrack+160\u2191w ...
-word_C8578      dw 0                    ; DATA XREF: sub_15BDA+1CA\u2191w
+word_C8578      dw 0                    ; DATA XREF: Sound_selectTrackForRoom+1CA\u2191w
                                         ; Sound_selectTrack+175\u2191w ...
-word_C857A      dw 0                    ; DATA XREF: sub_15BDA+13B\u2191w
-                                        ; sub_15BDA+186\u2191w ...
-word_C857C      dw 7Fh                  ; DATA XREF: sub_15BDA+78\u2191r
-                                        ; sub_15BDA+83\u2191w ...
-word_C857E      dw 0                    ; DATA XREF: sub_15BDA+143\u2191w
-                                        ; sub_15BDA+174\u2191w ...
-word_C8580      dw 0                    ; DATA XREF: sub_15BDA+AB\u2191r
-                                        ; sub_15BDA+12B\u2191w ...
+word_C857A      dw 0                    ; DATA XREF: Sound_selectTrackForRoom+13B\u2191w
+                                        ; Sound_selectTrackForRoom+186\u2191w ...
+word_C857C      dw 7Fh                  ; DATA XREF: Sound_selectTrackForRoom+78\u2191r
+                                        ; Sound_selectTrackForRoom+83\u2191w ...
+word_C857E      dw 0                    ; DATA XREF: Sound_selectTrackForRoom+143\u2191w
+                                        ; Sound_selectTrackForRoom+174\u2191w ...
+word_C8580      dw 0                    ; DATA XREF: Sound_selectTrackForRoom+AB\u2191r
+                                        ; Sound_selectTrackForRoom+12B\u2191w ...
 word_C8582      dw 0                    ; DATA XREF: sub_15674+70\u2191r
                                         ; sub_15F35:loc_15F7A\u2191r ...
                 db    0
@@ -383843,13 +383843,13 @@ _midiBasePortConfig dw 2                ; DATA XREF: sub_1F552+4\u2191r
                                         ; Midi_detectDevice:loc_1FA68\u2191r ...
 _midiIrqConfig  dw 330h                 ; DATA XREF: sub_1F552+D\u2191r
                                         ; Midi_detectDevice:loc_1FA71\u2191r ...
-word_C858A      dw 0                    ; DATA XREF: sub_15BDA:loc_15C46\u2191r
-                                        ; sub_15BDA+18E\u2191w ...
-word_C858C      dw 7Fh                  ; DATA XREF: sub_15BDA+199\u2191w
+word_C858A      dw 0                    ; DATA XREF: Sound_selectTrackForRoom:loc_15C46\u2191r
+                                        ; Sound_selectTrackForRoom+18E\u2191w ...
+word_C858C      dw 7Fh                  ; DATA XREF: Sound_selectTrackForRoom+199\u2191w
                                         ; Sound_selectTrack+144\u2191w ...
-word_C858E      dw 0                    ; DATA XREF: sub_15BDA+1AA\u2191w
+word_C858E      dw 0                    ; DATA XREF: Sound_selectTrackForRoom+1AA\u2191w
                                         ; Sound_selectTrack+155\u2191w ...
-word_C8590      dw 0                    ; DATA XREF: sub_15BDA+1A6\u2191w
+word_C8590      dw 0                    ; DATA XREF: Sound_selectTrackForRoom+1A6\u2191w
                                         ; Sound_selectTrack+151\u2191w ...
 word_C8592      dw 0                    ; DATA XREF: sub_1E9F4+5A\u2191r
                                         ; sub_1F034+5A\u2191r ...
@@ -393866,35 +393866,35 @@ dseg_117        dw seg sg4d43           ; DATA XREF: Logics_saveOrRestoreHandler
                                         ; Logics_saveOrRestoreHandler+4B\u2191r ...
 seg_D1120       dw seg seg087           ; DATA XREF: sub_15BAE:loc_15BCB\u2191r
                                         ; seg102:0777\u2191r
-seg_D1122       dw seg seg088           ; DATA XREF: sub_15BDA+21\u2191r
-                                        ; sub_15BDA+42\u2191r ...
-dseg_118        dw seg sg4d43           ; DATA XREF: sub_15BDA+68\u2191r
-                                        ; sub_15BDA:loc_15D64\u2191r ...
-dseg_119        dw seg sg4d43           ; DATA XREF: sub_15BDA+74\u2191r
-                                        ; sub_15BDA+1B9\u2191r ...
-dseg_120        dw seg sg4d43           ; DATA XREF: sub_15BDA+8D\u2191r
-                                        ; sub_15BDA+109\u2191r ...
-dseg_121        dw seg sg4d43           ; DATA XREF: sub_15BDA+A4\u2191r
-                                        ; sub_15BDA+127\u2191r ...
-dseg_122        dw seg sg4d43           ; DATA XREF: sub_15BDA+DD\u2191r
+seg_D1122       dw seg seg088           ; DATA XREF: Sound_selectTrackForRoom+21\u2191r
+                                        ; Sound_selectTrackForRoom+42\u2191r ...
+dseg_118        dw seg sg4d43           ; DATA XREF: Sound_selectTrackForRoom+68\u2191r
+                                        ; Sound_selectTrackForRoom:loc_15D64\u2191r ...
+dseg_119        dw seg sg4d43           ; DATA XREF: Sound_selectTrackForRoom+74\u2191r
+                                        ; Sound_selectTrackForRoom+1B9\u2191r ...
+dseg_120        dw seg sg4d43           ; DATA XREF: Sound_selectTrackForRoom+8D\u2191r
+                                        ; Sound_selectTrackForRoom+109\u2191r ...
+dseg_121        dw seg sg4d43           ; DATA XREF: Sound_selectTrackForRoom+A4\u2191r
+                                        ; Sound_selectTrackForRoom+127\u2191r ...
+dseg_122        dw seg sg4d43           ; DATA XREF: Sound_selectTrackForRoom+DD\u2191r
                                         ; Sound_selectTrack+88\u2191r ...
-dseg_123        dw seg sg4d43           ; DATA XREF: sub_15BDA+E6\u2191r
-                                        ; sub_15BDA+11F\u2191r ...
-dseg_124        dw seg sg4d43           ; DATA XREF: sub_15BDA+F7\u2191r
-                                        ; sub_15BDA+12F\u2191r ...
-dseg_125        dw seg sg4d43           ; DATA XREF: sub_15BDA+114\u2191r
-                                        ; sub_15BDA+157\u2191r ...
-dseg_126        dw seg sg4d43           ; DATA XREF: sub_15BDA+137\u2191r
-                                        ; sub_15BDA+182\u2191r ...
-dseg_127        dw seg sg4d43           ; DATA XREF: sub_15BDA+13F\u2191r
-                                        ; sub_15BDA+16D\u2191r ...
-dseg_128        dw seg sg4d43           ; DATA XREF: sub_15BDA+195\u2191r
+dseg_123        dw seg sg4d43           ; DATA XREF: Sound_selectTrackForRoom+E6\u2191r
+                                        ; Sound_selectTrackForRoom+11F\u2191r ...
+dseg_124        dw seg sg4d43           ; DATA XREF: Sound_selectTrackForRoom+F7\u2191r
+                                        ; Sound_selectTrackForRoom+12F\u2191r ...
+dseg_125        dw seg sg4d43           ; DATA XREF: Sound_selectTrackForRoom+114\u2191r
+                                        ; Sound_selectTrackForRoom+157\u2191r ...
+dseg_126        dw seg sg4d43           ; DATA XREF: Sound_selectTrackForRoom+137\u2191r
+                                        ; Sound_selectTrackForRoom+182\u2191r ...
+dseg_127        dw seg sg4d43           ; DATA XREF: Sound_selectTrackForRoom+13F\u2191r
+                                        ; Sound_selectTrackForRoom+16D\u2191r ...
+dseg_128        dw seg sg4d43           ; DATA XREF: Sound_selectTrackForRoom+195\u2191r
                                         ; Sound_selectTrack+140\u2191r ...
-dseg_129        dw seg sg4d43           ; DATA XREF: sub_15BDA+1A0\u2191r
+dseg_129        dw seg sg4d43           ; DATA XREF: Sound_selectTrackForRoom+1A0\u2191r
                                         ; Sound_selectTrack+14B\u2191r ...
-dseg_130        dw seg sg4d43           ; DATA XREF: sub_15BDA+1AE\u2191r
+dseg_130        dw seg sg4d43           ; DATA XREF: Sound_selectTrackForRoom+1AE\u2191r
                                         ; Sound_selectTrack+159\u2191r ...
-dseg_131        dw seg sg4d43           ; DATA XREF: sub_15BDA+1C6\u2191r
+dseg_131        dw seg sg4d43           ; DATA XREF: Sound_selectTrackForRoom+1C6\u2191r
                                         ; Sound_selectTrack+171\u2191r ...
 dseg_132        dw seg sg4d43           ; DATA XREF: sub_15F35+15\u2191r
                                         ; sub_15F35+36\u2191r ...

@@ -2522,3 +2522,22 @@ for this one. Named **`Logics_saveOrRestoreHandler`** for the
 confirmed mechanism.
 
 Applied via `apply_renames_gatemain.py`'s fifty-fourth batch.
+
+### `Sound_selectTrackForRoom` named
+
+Moved to `sub_15BDA` (4 callers, called directly from `main()` and the
+already-named `show_startup`). Confirmed as the **room-to-background-
+music mapping entry point** via a real call to the already-named
+`Sound_stopTrack` and a body that otherwise duplicates
+`Sound_selectTrack`'s own tail logic (the same `word_C856E`/
+`word_C8580`/`word_C857A`/`word_C857E` globals, the same `+0x3D8E`
+table, the same `sub_15F35` resource-variant-lookup calls).
+
+`Sound_selectTrackForRoom(roomNum)`: looks up `roomNum` in a 106-entry
+per-room table to find its music config (section id, track id, a
+duration/volume-ish byte, and a flag byte); if the found section/track
+already match what's currently playing, does nothing. Otherwise stops
+the current track and runs the same track-loading sequence
+`Sound_selectTrack` uses to start the new room's music.
+
+Applied via `apply_renames_gatemain.py`'s fifty-fifth batch.

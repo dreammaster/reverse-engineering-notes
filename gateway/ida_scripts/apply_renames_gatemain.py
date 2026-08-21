@@ -1573,6 +1573,27 @@ RENAMES = [
      "determined -- no message-string anchor was available, and its "
      "one caller (sub_9478A, reached via j_method074) wasn't itself "
      "investigated."),
+
+    # -- fifty-fifth pass: sub_15BDA, called directly from main() and
+    # show_startup -- confirmed as the room-to-background-music mapping
+    # entry point, via a real call to the already-named Sound_stopTrack
+    # and a body that otherwise duplicates Sound_selectTrack's own tail
+    # logic (same word_C856E/word_C8580/word_C857A/word_C857E globals,
+    # same +0x3D8E table, same sub_15F35 helper calls). See
+    # docs/overview.md#sound_selecttrackforroom-named. --
+
+    (0x15BDA, "Sound_selectTrackForRoom",
+     "sub_15BDA(roomNum): looks up roomNum in a 106-entry per-room "
+     "table to find its music config (section id, track id, a "
+     "duration/volume-ish byte, and a flag byte); if the found "
+     "section/track already match what's currently playing "
+     "(word_C856E/word_C8580), does nothing. Otherwise calls the "
+     "already-named Sound_stopTrack(0xFFFF) and then runs essentially "
+     "the same track-loading tail already documented in "
+     "Sound_selectTrack (same globals, same sub_15F35 resource-variant "
+     "lookup) to start the new room's music. The room-to-music "
+     "mapping entry point, called directly from main() and the "
+     "already-named show_startup."),
 ]
 
 
