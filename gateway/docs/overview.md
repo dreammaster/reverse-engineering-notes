@@ -767,3 +767,42 @@ for match distances, and the precise per-table semantics of
 `_array1`-`_array13` beyond confirming the overall architecture (enough
 is understood to describe the compression scheme accurately, not to
 reimplement every table from this write-up alone yet).
+
+### `GATE_XXX.FNT`/`GATE_XXX.MUS` traced — one clean win, one honestly murky one
+
+Same session, per Paul's direction to close out the remaining resource
+types. Full record-level layouts in
+[file-formats.md](file-formats.md#gate_xxxfnt--bitmap-font-files) and
+[file-formats.md](file-formats.md#gate_xxxmus--background-music-files-partial-low-confidence).
+
+**`.FNT` (traced via `Font_LoadFont`)**: a clean, simple format —
+10-byte header (glyph height/width-in-bytes, printable-char range,
+optional-table flags), optional 128-byte variable-width and
+variable-spacing tables, then a flat packed 1-bit-per-pixel glyph
+bitmap covering only the font's declared printable range. Same
+`_videoIndex*100 + number` banking convention as `.PIC`. `fontNumber ==
+0` is special — no file at all, a hardcoded default description whose
+zero `bytesPerLine` suggests it defers to some other built-in rendering
+path rather than an actual loaded bitmap (plausible, not confirmed).
+
+**`.MUS` (traced via `sub_1FE5C`, the periodic background-music-channel
+refresh routine)**: considerably murkier, and documented as such rather
+than forced into false precision. No struct was pre-defined for this
+format going in — the first resource type in this whole session where
+that was true. Confirmed the file-numbering convention (same
+packed-byte-pair style as pictures/regions) and a **general
+architecture**: a small per-song directory record read first to get a
+byte-length, checked against an available-memory budget, and only if it
+fits, the full track loaded wholesale in a second read — a
+lazy/memory-gated full-residency model, philosophically different from
+`GATESTR.DAT`'s LRU-cache-of-partial-data approach. The exact 12-byte
+record's field-by-field layout wasn't nailed down — flagged as needing a
+different approach next time (starting from the sound-hardware-output
+side rather than the memory-management side that this pass approached
+it from).
+
+**Worth noting for future sessions**: this is the first resource format
+in the whole `file-formats.md` set where the investigation didn't reach
+full confidence in one pass. Consistent with the project's discipline
+throughout — better to document the real uncertainty than to backfill a
+clean-looking but unverified record layout.

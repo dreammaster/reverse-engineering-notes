@@ -258,6 +258,21 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       still open: whether picture banks 1-4 correspond to the game's
       four story acts, `RegionIndex.field_2`'s meaning, and a couple of
       still-unnamed flag bits in the `.RGN`/`.PIC` formats.
+- [x] Traced `GATE_XXX.FNT` (`Font_LoadFont`) — clean, complete: 10-byte
+      header, optional 128-byte variable-width/spacing tables, packed
+      1bpp glyph bitmap over the declared printable-char range. Same
+      banking convention as `.PIC`. Full writeup in
+      [overview.md](overview.md#gate_xxxfntgate_xxxmus-traced--one-clean-win-one-honestly-murky-one)
+      and [file-formats.md](file-formats.md#gate_xxxfnt--bitmap-font-files).
+- [~] Traced `GATE_XXX.MUS` (`sub_1FE5C`) partially — confirmed the
+      file-numbering convention and a general lazy/memory-budget-gated
+      full-track-loading architecture, but **not** the exact per-song
+      12-byte directory record layout (no pre-existing struct for this
+      format, unlike every other resource type). First format in the
+      whole project where a pass didn't reach full confidence — flagged
+      honestly rather than backfilled. Next attempt should start from
+      the sound-hardware-output side, not the memory-management side.
+      Same writeup links as `.FNT` above.
 - [ ] Re-run `rank_unnamed_functions.py` now that the thunk noise is
       filtered out, to pick the next real targets from the 1769
       remaining unnamed functions.

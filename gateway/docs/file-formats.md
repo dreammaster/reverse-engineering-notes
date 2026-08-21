@@ -470,3 +470,95 @@ overall LZ77+Huffman architecture, not each table's exact bit-packing),
 and the header/version byte's second setup path (`ega_setup`'s
 alternate branch in `PictureDecoder_load`, only partially distinguished
 from the primary path).
+
+## `GATE_XXX.FNT` — bitmap font files
+
+Traced via `Font_LoadFont` (`gatemain.asm:41729`), matching the
+already-defined `Font` struct. File number is `_videoIndex*100 +
+fontNumber` — the same banking convention as `.PIC` (and matching the
+real install's `GATE_1xx`/`2xx`/`3xx`/`4xx.FNT` groupings). `fontNumber
+== 0` is special-cased entirely in memory with **no file opened at
+all** — a hardcoded default font description (`bytesPerLine = 0`,
+`minPrintableChar = 0`, `maxPrintableChar = 0xFF`, `linesPerChar =` the
+global `_fontLineHeight`, `fixedWidth = 8`, `fixedSpacing = 0`, no
+per-character tables) — plausibly meaning "defer to some other built-in
+rendering path (e.g. the BIOS's own hardware font)" rather than a
+loaded bitmap, though not confirmed beyond the mechanical defaults
+themselves.
+
+For `fontNumber != 0`, the file is a clean, simple format, read one
+byte at a time via `file_readByte` in this exact order:
+
+1. `field_4`, `field_5` (`u8` each, roles not identified).
+2. `bytesPerLine` (`u8`) — bytes per scanline of each glyph's packed
+   1-bit-per-pixel bitmap (so glyph width in pixels is
+   `bytesPerLine * 8`).
+3. `minPrintableChar`, `maxPrintableChar` (`u8` each) — the inclusive
+   character-code range this font actually covers (not necessarily
+   0-255).
+4. `_linesOffset` (`u8`, role not identified).
+5. `linesPerChar` (`u8`) — glyph height in scanlines.
+6. `fixedWidth` (**signed** `i8`) — a non-negative value is a literal
+   fixed pixel width for every character; a **negative** value means
+   "variable width" and triggers reading a separate 128-byte
+   `charWidths` table (one byte per character code 0-127, regardless of
+   `minPrintableChar`/`maxPrintableChar`) immediately following the
+   header.
+7. `fixedSpacing` (**signed** `i8`) — same convention as `fixedWidth`:
+   negative triggers a separate 128-byte `charSpacings` table.
+8. `field_D` (`u8`, role not identified).
+
+After the header and any variable-width/spacing tables, the rest of the
+file is the **glyph bitmap blob**: `(maxPrintableChar -
+minPrintableChar + 1) * linesPerChar * bytesPerLine` bytes, read in one
+shot — a flat, packed 1-bit-per-pixel bitmap covering only the declared
+printable-character range (not the full 256-entry byte range), stored
+glyph-by-glyph, scanline-by-scanline.
+
+**Not yet decoded**: `field_4`/`field_5`/`_linesOffset`/`field_D`'s
+actual roles (read but not yet seen consumed anywhere in this pass).
+
+## `GATE_XXX.MUS` — background music files (partial, low confidence)
+
+Traced the file-numbering convention and general loading architecture
+via `sub_1FE5C` (`gatemain.asm:37309`, the periodic "refresh loaded
+background music channels" routine, gated on a sound-enabled flag and
+an "any song selected" check) — **considerably murkier** than every
+other format in this file, and flagged as such rather than presented
+with false confidence. No struct was pre-defined for this format
+(unlike every other resource type traced so far), and this pass didn't
+reach the same level of certainty.
+
+**Confirmed**: file numbering follows the same packed-word convention
+as pictures/regions — a table of up to 4 active-channel song selectors
+(`{fileNumber: u8, songIndex: u8}` packed into one word each, in a
+zero-terminated 4-entry list), opened via `open_file2(FILETYPE_MUS,
+fileNumber)`, matching the real install's `GATE_00x`-`00x.MUS`
+numbering (only bank 0 has `.MUS` files in the real install, unlike
+`.PIC`/`.FNT`'s multiple banks).
+
+**Plausible, not fully confirmed**: for each active channel, the code
+seeks to a computed offset (`(songIndex*2 - capabilityFlag) * 8` bytes
+from the start of the file — `capabilityFlag` derived from a hardware/
+sound-capability bit) and reads a small fixed-size (12-byte) record from
+there into a shared scratch buffer, extracting at least a byte-length
+value (`count`) plus two other fields at fixed offsets from it. `count`
+is then compared against an available-memory budget
+(`word_C8578`, scaled) — **only if the full track fits** does the code
+do a *second* seek+read, pulling `count` bytes of the actual track data
+into a freshly allocated buffer for playback; otherwise that channel is
+left unloaded this pass. This reads as a **lazy, memory-budget-gated
+full-track-residency model** — load a song's data wholesale only when
+there's room, rather than streaming or caching partial data the way
+`GATESTR.DAT`'s LRU cache does — but the exact byte-level layout of the
+12-byte per-song directory record (and what its non-`count` fields
+mean) wasn't pinned down this pass.
+
+**Follow-up needed**: a proper trace of this format would benefit from
+finding whichever code actually feeds bytes to the sound hardware
+(PC speaker / Ad Lib / whatever `word_C8582`'s bits select) rather than
+starting from the memory-management side as this pass did — that would
+likely clarify the per-song record's fields (probably includes a tempo
+or loop-point value, given the shape of the surrounding code) much
+faster than continuing to infer them from the allocator-adjacent logic
+alone.
