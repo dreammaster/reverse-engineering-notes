@@ -1086,7 +1086,7 @@ loc_1085A:                              ; CODE XREF: main+F8\u2191j
                 push    es:_roomLogicNum
                 call    sub_15BDA
                 add     sp, 2
-                call    sub_15470
+                call    Logics_lookAtCurrentRoom
                 jmp     short loc_10877
 ; ---------------------------------------------------------------------------
 
@@ -9703,7 +9703,7 @@ loc_146CB:
                 push    es:_roomLogicNum
                 call    sub_15BDA
                 add     sp, 2
-                call    sub_15470
+                call    Logics_lookAtCurrentRoom
 
 loc_1472C:
                 mov     ax, 7
@@ -10339,7 +10339,7 @@ Stream_loadFile endp
 ; Attributes: bp-based frame
 
 sub_14A5F       proc far                ; CODE XREF: Logics_checkMoveRestriction+23F\u2193p
-                                        ; sub_15470+E\u2193p ...
+                                        ; Logics_lookAtCurrentRoom+E\u2193p ...
 
 var_4           = word ptr -4
 roomNum         = word ptr -2
@@ -11607,7 +11607,7 @@ Logics_takeObject endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_15470       proc far                ; CODE XREF: main+118\u2191P
+Logics_lookAtCurrentRoom proc far       ; CODE XREF: main+118\u2191P
                                         ; show_startup+1A5\u2191P ...
                 mov     ax, 8
                 push    ax
@@ -11618,7 +11618,7 @@ sub_15470       proc far                ; CODE XREF: main+118\u2191P
                 add     sp, 4
                 mov     ax, 1
                 retf
-sub_15470       endp
+Logics_lookAtCurrentRoom endp
 
 ; ---------------------------------------------------------------------------
 
@@ -112633,7 +112633,7 @@ off_3CAC2       dd thunk_sub_68232
                 dd sub_2EC43
                 db    8
                 db    0
-                dd sub_15470
+                dd Logics_lookAtCurrentRoom
                 db    8
                 db    0
                 dd sub_2EC39
@@ -165089,7 +165089,7 @@ arg_0           = word ptr  6
                 push    word ptr es:off_CB93E ; msg
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_15470
+                call    Logics_lookAtCurrentRoom
                 jmp     short loc_67412
 ; ---------------------------------------------------------------------------
 
@@ -167990,7 +167990,7 @@ loc_68AC9:                              ; CODE XREF: sub_2E617+3\u2191J
                 assume es:sg3EDC
                 cmp     es:vocab_list_0._logicNum, ax
                 jnz     short loc_68AE4
-                call    sub_15470
+                call    Logics_lookAtCurrentRoom
                 jmp     loc_68D4D
 ; ---------------------------------------------------------------------------
 

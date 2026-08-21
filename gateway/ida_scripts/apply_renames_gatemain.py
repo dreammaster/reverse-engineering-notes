@@ -1536,6 +1536,21 @@ RENAMES = [
      "flagged (but not fully named) when Queue_processTurn was named: "
      "the turn-advance and WAIT-command loops share this exact "
      "countdown-tick code."),
+
+    # -- fifty-third pass: sub_15470, a thin wrapper always invoking
+    # the still-unnamed sub_14A5F's action 8 on the current room,
+    # called directly from main() and the already-named show_startup.
+    # See docs/overview.md#logics_lookatcurrentroom-named. --
+
+    (0x15470, "Logics_lookAtCurrentRoom",
+     "sub_15470(): calls sub_14A5F(_roomLogicNum, action=8) (sub_14A5F "
+     "itself not renamed -- a generic 'print object header, invoke "
+     "its logic for an action' dispatcher whose exact verb semantics "
+     "vary per call site) and always returns 1. Called directly from "
+     "main() and the already-named show_startup -- consistent with "
+     "action 8 being 'describe/look at this room', invoked once at "
+     "game startup and once per the main loop's LOOK-equivalent "
+     "point."),
 ]
 
 

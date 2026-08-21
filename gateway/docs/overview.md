@@ -2493,3 +2493,16 @@ fully named) back when `Queue_processTurn` was named: the turn-advance
 and WAIT-command loops share this exact countdown-tick code.
 
 Applied via `apply_renames_gatemain.py`'s fifty-second batch.
+
+### `Logics_lookAtCurrentRoom` named
+
+Moved to `sub_15470` (4 callers). A thin wrapper: calls
+`sub_14A5F(_roomLogicNum, action=8)` (`sub_14A5F` itself not renamed —
+a generic "print object header, invoke its logic for an action"
+dispatcher whose exact verb semantics vary per call site) and always
+returns 1. Called directly from `main()` and the already-named
+`show_startup` — consistent with action `8` being "describe/look at
+this room," invoked once at game startup and once per the main loop's
+LOOK-equivalent point. Named **`Logics_lookAtCurrentRoom`**.
+
+Applied via `apply_renames_gatemain.py`'s fifty-third batch.

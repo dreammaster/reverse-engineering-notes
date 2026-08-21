@@ -641,6 +641,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       tick shared by `Queue_processTurn` and the WAIT command loop,
       closing the loop flagged in that earlier pass. Full writeup in
       [overview.md](overview.md#queue_tickcountdowns-named--closing-the-loop-on-queue_processturn).
+- [x] Named `sub_15470` (4 callers) → `Logics_lookAtCurrentRoom` — a
+      thin wrapper invoking action 8 on the current room, called from
+      `main()` and `show_startup`. Full writeup in
+      [overview.md](overview.md#logics_lookatcurrentroom-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-
