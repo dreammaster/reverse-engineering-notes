@@ -27859,6 +27859,7 @@ static Bytes_4(void) {
 	create_insn	(x=0X27C28);
 	op_hex		(x,	1);
 	create_insn	(0X27C31);
+	set_name	(0X27C31,	"Icon_drawButton");
 	create_insn	(x=0X27C34);
 	op_hex		(x,	1);
 	create_insn	(x=0X27C3D);
@@ -29239,8 +29240,6 @@ static Bytes_4(void) {
 	toggle_sign		(x,	7);
 	create_insn	(0X28C6D);
 	set_name	(0X28C6D,	"WindowText_clear");
-	create_insn	(x=0X28C71);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -29250,6 +29249,8 @@ static Bytes_5(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X28C71);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X28C7A);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X28C7D);

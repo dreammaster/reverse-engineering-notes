@@ -51874,7 +51874,7 @@ Image_setImageOffset endp
 
 ; int __cdecl __far Windows_SetImageOffsetPos(int winNumber)
 Windows_SetImageOffsetPos proc far      ; CODE XREF: PartTitle_Show+15\u2191P
-                                        ; sub_27C31+54\u2193P ...
+                                        ; Icon_drawButton+54\u2193P ...
 
 yp              = word ptr -4
 xp              = word ptr -2
@@ -52474,7 +52474,7 @@ Image_loadRange endp
 
 ; Attributes: bp-based frame
 
-sub_26892       proc far                ; CODE XREF: sub_27C31+7A\u2193P
+sub_26892       proc far                ; CODE XREF: Icon_drawButton+7A\u2193P
                                         ; sub_2A163+1D3\u2193P
 
 var_4           = word ptr -4
@@ -53028,7 +53028,7 @@ sub_26C0C       endp
 
 ; void __cdecl __far Image_Init(Image *img)
 Image_Init      proc far                ; CODE XREF: PartTitle_Show+23\u2191P
-                                        ; sub_27C31+48\u2193P ...
+                                        ; Icon_drawButton+48\u2193P ...
 
 img             = dword ptr  6
 
@@ -55305,7 +55305,7 @@ Windows_fillRegion endp
 
 ; Attributes: bp-based frame
 
-sub_27C31       proc far                ; CODE XREF: Dialog_prompt+18B\u2193P
+Icon_drawButton proc far                ; CODE XREF: Dialog_prompt+18B\u2193P
                                         ; get_mouse_input+19E\u2193P ...
 
 var_96          = word ptr -96h
@@ -55386,7 +55386,7 @@ arg_2           = word ptr  8
                 jmp     loc_27D65
 ; ---------------------------------------------------------------------------
 
-loc_27CDD:                              ; CODE XREF: sub_27C31+A7\u2191j
+loc_27CDD:                              ; CODE XREF: Icon_drawButton+A7\u2191j
                 mov     es, seg126_62
                 assume es:sg3EDC
                 push    es:LIGHT_GRAY   ; color
@@ -55447,7 +55447,7 @@ loc_27CDD:                              ; CODE XREF: sub_27C31+A7\u2191j
                 call    fillRect
                 add     sp, 0Ah
 
-loc_27D65:                              ; CODE XREF: sub_27C31+A9\u2191j
+loc_27D65:                              ; CODE XREF: Icon_drawButton+A9\u2191j
                 mov     ax, 1
                 push    ax              ; showFlag
                 call    Mouse_show
@@ -55507,7 +55507,7 @@ loc_27D65:                              ; CODE XREF: sub_27C31+A9\u2191j
                 jmp     loc_27F03
 ; ---------------------------------------------------------------------------
 
-loc_27DF2:                              ; CODE XREF: sub_27C31+189\u2191j
+loc_27DF2:                              ; CODE XREF: Icon_drawButton+189\u2191j
                 mov     es, seg126_64
                 push    es:WHITE        ; color
                 call    Screen_setPenColor
@@ -55565,7 +55565,7 @@ loc_27DF2:                              ; CODE XREF: sub_27C31+189\u2191j
                 push    ax              ; yp
                 call    Screen_drawLine
 
-loc_27E73:                              ; CODE XREF: sub_27C31+22E\u2191j
+loc_27E73:                              ; CODE XREF: Icon_drawButton+22E\u2191j
                 mov     es, seg126_65
                 assume es:sg3EDC
                 push    es:DARK_GRAY    ; color
@@ -55608,7 +55608,7 @@ loc_27E73:                              ; CODE XREF: sub_27C31+22E\u2191j
                 jmp     short loc_27EF2
 ; ---------------------------------------------------------------------------
 
-loc_27ED0:                              ; CODE XREF: sub_27C31+28A\u2191j
+loc_27ED0:                              ; CODE XREF: Icon_drawButton+28A\u2191j
                 mov     ax, [bp+var_2]
                 inc     ax
                 inc     ax
@@ -55628,7 +55628,7 @@ loc_27ED0:                              ; CODE XREF: sub_27C31+28A\u2191j
                 push    ax              ; yp
                 call    Screen_drawLine
 
-loc_27EF2:                              ; CODE XREF: sub_27C31+29D\u2191j
+loc_27EF2:                              ; CODE XREF: Icon_drawButton+29D\u2191j
                 mov     ax, [bp+var_4]
                 dec     ax
                 dec     ax
@@ -55639,7 +55639,7 @@ loc_27EF2:                              ; CODE XREF: sub_27C31+29D\u2191j
                 push    ax              ; yp
                 call    Screen_drawLine
 
-loc_27F03:                              ; CODE XREF: sub_27C31+1BE\u2191j
+loc_27F03:                              ; CODE XREF: Icon_drawButton+1BE\u2191j
                 mov     ax, 1
                 push    ax              ; showFlag
                 call    Mouse_show
@@ -55654,7 +55654,7 @@ loc_27F03:                              ; CODE XREF: sub_27C31+1BE\u2191j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_27C31       endp
+Icon_drawButton endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -60152,7 +60152,7 @@ loc_2A035:                              ; CODE XREF: Dialog_prompt+140\u2191j
 loc_2A03E:                              ; CODE XREF: Dialog_prompt+180\u2191j
                 push    [bp+regionIndex]
                 push    [bp+var_66]
-                call    sub_27C31
+                call    Icon_drawButton
                 add     sp, 4
                 push    cs
                 call    near ptr sub_2A41D
@@ -144373,7 +144373,7 @@ loc_5D7C1:                              ; CODE XREF: get_mouse_input+1BA\u2193j
 loc_5D7C9:                              ; CODE XREF: get_mouse_input+CE\u2191j
                 push    [bp+regionIndex]
                 push    [bp+winNumber]
-                call    sub_27C31
+                call    Icon_drawButton
                 add     sp, 4
                 mov     word ptr [bp+dest], ax
                 mov     word ptr [bp+dest+2], dx
@@ -158778,7 +158778,7 @@ loc_63C8B:                              ; CODE XREF: prompt_for_filename+7BF\u21
 loc_63CB0:                              ; CODE XREF: prompt_for_filename+721\u2191j
                 push    [bp+regionIndex]
                 push    [bp+winNumber]
-                call    sub_27C31
+                call    Icon_drawButton
                 add     sp, 4
                 cmp     [bp+regionIndex], 2
                 jnz     short loc_63CCC
@@ -314284,7 +314284,7 @@ loc_AA921:                              ; CODE XREF: sub_AA8AE+68\u2191j
                 mov     es, seg_D1808
                 assume es:sg4d43
                 push    es:Commset_winFrame
-                call    sub_27C31
+                call    Icon_drawButton
                 add     sp, 4
                 mov     ax, 1
                 mov     cl, byte ptr [bp+var_E]
@@ -314352,7 +314352,7 @@ loc_AA99E:                              ; CODE XREF: sub_AA8AE+E4\u2191j
                 mov     es, seg_D1808
                 assume es:sg4d43
                 push    es:Commset_winFrame
-                call    sub_27C31
+                call    Icon_drawButton
                 add     sp, 4
                 mov     ax, 1
                 mov     cl, byte ptr [bp+var_E]
@@ -327621,7 +327621,7 @@ loc_B0571:                              ; CODE XREF: Commnet_proc1+68\u2191j
                 mov     es, seg_D187A
                 assume es:sg4d43
                 push    es:Commset_winFrame
-                call    sub_27C31
+                call    Icon_drawButton
                 add     sp, 4
                 mov     ax, 1
                 mov     cl, byte ptr [bp+var_E]
@@ -327744,7 +327744,7 @@ loc_B0665:                              ; CODE XREF: Commnet_proc1+15B\u2191j
                 mov     es, seg_D187A
                 assume es:sg4d43
                 push    es:Commset_winFrame
-                call    sub_27C31
+                call    Icon_drawButton
                 add     sp, 4
                 mov     ax, 1
                 mov     cl, byte ptr [bp+var_E]
@@ -338991,7 +338991,7 @@ loc_B57E2:                              ; CODE XREF: sub_B576E+69\u2191j
                 push    si
                 mov     es, seg_D1906
                 push    es:Commset_winFrame
-                call    sub_27C31
+                call    Icon_drawButton
                 add     sp, 4
                 mov     bx, [bp+var_E]
                 shl     bx, 1
@@ -339063,7 +339063,7 @@ loc_B5860:                              ; CODE XREF: sub_B576E+E6\u2191j
                 mov     es, seg_D1906
                 assume es:sg4d43
                 push    es:Commset_winFrame
-                call    sub_27C31
+                call    Icon_drawButton
                 add     sp, 4
                 mov     bx, [bp+var_E]
                 shl     bx, 1
@@ -374118,7 +374118,7 @@ loc_C4A84:                              ; CODE XREF: sub_C48E4+15C\u2191j
 loc_C4A8D:                              ; CODE XREF: sub_C48E4+1A4\u2191j
                 push    [bp+regionIndex]
                 push    [bp+windowNum]
-                call    sub_27C31
+                call    Icon_drawButton
                 add     sp, 4
                 call    sub_2A41D
                 cmp     [bp+var_6], 0
@@ -393588,11 +393588,11 @@ dseg_58         dw seg sg4d43           ; DATA XREF: Windows_findRegion:loc_2776
 dseg_59         dw seg sg4d43           ; DATA XREF: Button_add+2D\u2191r
                                         ; Button_add+C3\u2191r ...
 seg126_64       dw seg sg3EDC           ; DATA XREF: Button_add+11F\u2191r
-                                        ; sub_27C31:loc_27DF2\u2191r
+                                        ; Icon_drawButton:loc_27DF2\u2191r
 seg126_65       dw seg sg3EDC           ; DATA XREF: Button_add:loc_27984\u2191r
-                                        ; sub_27C31+103\u2191r ...
+                                        ; Icon_drawButton+103\u2191r ...
 seg126_66       dw seg sg3EDC           ; DATA XREF: Button_draw+36\u2191r
-                                        ; sub_27C31+18B\u2191r
+                                        ; Icon_drawButton+18B\u2191r
 dseg_1          dw seg sg4d43           ; DATA XREF: load_regions+A\u2191r
 dseg_60         dw seg sg4d43           ; DATA XREF: load_regions+11C\u2191r
                                         ; load_regions+134\u2191r

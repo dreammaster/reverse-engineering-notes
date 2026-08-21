@@ -608,6 +608,11 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       abbreviation-matching check (e.g. `n` matching `north`). Full
       writeup in
       [overview.md](overview.md#vocab_matchesabbreviation-named--a-parser-abbreviation-matcher).
+- [x] Named `sub_27C31` (7 callers) → `Icon_drawButton` — the mouse-
+      driven icon-toolbar drawing function (icon + 3D bevel border),
+      confirmed via the already-named `button_strings` global. Full
+      writeup in
+      [overview.md](overview.md#icon_drawbutton-named--the-mouse-driven-icon-toolbar).
 - [ ] Unify the whole music/sound-hardware picture: `Speaker_playTone`/
       `Speaker_playErrorBeep` (PC-speaker tones), `Midi_sendByte` +
       `sub_1D966`/`sub_1EE70`/`sub_1ECB6` (MPU-401/MIDI), and

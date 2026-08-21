@@ -1090,6 +1090,35 @@ RENAMES = [
      "case-fold). Returns the character unchanged otherwise. A "
      "generic character-normalization utility, also used directly by "
      "sub_204CE (not renamed)."),
+
+    # -- thirty-seventh pass: sub_27C31, confirmed via the already-
+    # named global `button_strings` array as the on-screen clickable-
+    # icon-button drawing function -- draws a 3D-beveled button (light/
+    # dark gray fillRect + drawLine border) with an icon image inside,
+    # positioned from a per-state rectangle-bounds table, and returns
+    # the button's associated vocabulary/label string. Called from
+    # Dialog_prompt/get_mouse_input/prompt_for_filename/Commnet_proc1
+    # -- the mouse-driven icon toolbar (e.g. a compass rose) used
+    # alongside the parser's text input. See
+    # docs/overview.md#icon_drawbutton-named. --
+
+    (0x27C31, "Icon_drawButton",
+     "sub_27C31(buttonIndex, stateArray): looks up buttonIndex's "
+     "current state byte from stateArray (a per-icon status/highlight "
+     "value), uses it to index a 4-parallel-word rectangle-bounds "
+     "table (x1/y1/x2/y2-shaped) for this button's screen position, "
+     "loads and draws the button's icon image (Image_Init/"
+     "Image_drawAt), then -- in graphics mode -- draws a 3D-beveled "
+     "border around it (light-gray/dark-gray fillRect and "
+     "Screen_drawLine calls, the classic raised-button look). Returns "
+     "the button's associated string from the already-named "
+     "button_strings[stateByte] -- the vocabulary word or label "
+     "corresponding to this icon/state, handed back to the caller "
+     "(e.g. to feed into the parser as if typed). Confirmed generic "
+     "via its callers: Dialog_prompt, get_mouse_input, "
+     "prompt_for_filename, Commnet_proc1 -- all part of the mouse-"
+     "driven icon toolbar (e.g. a compass rose) used alongside the "
+     "text parser."),
 ]
 
 

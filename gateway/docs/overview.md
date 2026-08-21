@@ -2117,3 +2117,29 @@ lowercase (standard ASCII case-fold) if set. A generic utility, also
 used directly by `sub_204CE` (not renamed).
 
 Applied via `apply_renames_gatemain.py`'s thirty-sixth batch.
+
+### `Icon_drawButton` named — the mouse-driven icon toolbar
+
+Moved to `sub_27C31` (7 callers, 756 bytes). Confirmed via the
+already-named global `button_strings` array: this is the on-screen
+**clickable-icon-button drawing function**.
+
+`Icon_drawButton(buttonIndex, stateArray)`: looks up `buttonIndex`'s
+current state byte from `stateArray` (a per-icon status/highlight
+value), uses it to index a 4-parallel-word rectangle-bounds table for
+this button's screen position, loads and draws the button's icon
+image (`Image_Init`/`Image_drawAt`), then — in graphics mode — draws a
+3D-beveled border around it (light-gray/dark-gray `fillRect` and
+`Screen_drawLine` calls, the classic raised-button look). Returns the
+button's associated string from `button_strings[stateByte]` — the
+vocabulary word or label corresponding to this icon/state, handed back
+to the caller (presumably fed into the parser as if the player had
+typed it).
+
+Confirmed generic — not owned by one dialog — via its callers:
+`Dialog_prompt`, `get_mouse_input`, `prompt_for_filename`,
+`Commnet_proc1`. All part of the mouse-driven icon toolbar (most
+plausibly a compass rose for movement) that these Legend "Early
+engine" games offered alongside their primary text parser.
+
+Applied via `apply_renames_gatemain.py`'s thirty-seventh batch.
