@@ -29542,7 +29542,7 @@ seg018          segment byte public 'CODE' use16
 
 ; Attributes: bp-based frame
 
-sub_1CAF6       proc far                ; CODE XREF: sub_1CB32+A3\u2193P
+Opl2_writeRegister proc far             ; CODE XREF: sub_1CB32+A3\u2193P
                                         ; sub_1CB32:loc_1CBF7\u2193P ...
 
 arg_0           = word ptr  6
@@ -29554,7 +29554,7 @@ loc_1CAF7:
                 mov     bp, sp
 
 loc_1CAF9:
-                mov     dx, word_D3BD0
+                mov     dx, _opl2BasePort
                 mov     ax, [bp+arg_0]
                 out     dx, al
                 in      al, dx
@@ -29625,7 +29625,7 @@ loc_1CB2E:
 loc_1CB30:
                 pop     bp
                 retf
-sub_1CAF6       endp
+Opl2_writeRegister endp
 
 seg018          ends
 
@@ -29750,7 +29750,7 @@ loc_1CBCA:                              ; CODE XREF: sub_1CB32+92\u2191j
                 mov     al, 0A0h ; ' '
                 add     al, byte ptr [bp+arg_0]
                 push    ax
-                call    sub_1CAF6
+                call    Opl2_writeRegister
                 add     sp, 4
                 pop     ax
                 pop     bx
@@ -29776,7 +29776,7 @@ loc_1CBF6:
                 push    ax
 
 loc_1CBF7:
-                call    sub_1CAF6
+                call    Opl2_writeRegister
 
 loc_1CBFC:
                 add     sp, 4
@@ -30075,7 +30075,7 @@ loc_1CD57:
                 sub     sp, 2
 
 loc_1CD5A:
-                mov     word_D3BD0, 388h
+                mov     _opl2BasePort, 388h
                 push    cs
                 call    near ptr sub_1CD72
                 mov     [bp+var_2], ax
@@ -30107,15 +30107,15 @@ var_2           = word ptr -2
                 push    ax
                 mov     ax, 4
                 push    ax
-                call    sub_1CAF6
+                call    Opl2_writeRegister
                 add     sp, 4
                 mov     ax, 80h ; '€'
                 push    ax
                 mov     ax, 4
                 push    ax
-                call    sub_1CAF6
+                call    Opl2_writeRegister
                 add     sp, 4
-                mov     dx, word_D3BD0
+                mov     dx, _opl2BasePort
                 in      al, dx
                 sub     ah, ah
                 mov     [bp+var_2], ax
@@ -30125,7 +30125,7 @@ var_2           = word ptr -2
 
 loc_1CDAB:
                 push    ax
-                call    sub_1CAF6
+                call    Opl2_writeRegister
                 add     sp, 4
                 mov     ax, 21h ; '!'
 
@@ -30133,20 +30133,20 @@ loc_1CDB7:
                 push    ax
                 mov     ax, 4
                 push    ax
-                call    sub_1CAF6
+                call    Opl2_writeRegister
                 add     sp, 4
 
 loc_1CDC4:
                 mov     [bp+var_6], 0C8h ; 'È'
                 mov     si, 0C8h ; 'È'
-                mov     di, word_D3BD0
+                mov     di, _opl2BasePort
 
 loc_1CDD0:                              ; CODE XREF: sub_1CD72+62\u2193j
                 mov     dx, di
                 in      al, dx
                 dec     si
                 jnz     short loc_1CDD0
-                mov     dx, word_D3BD0
+                mov     dx, _opl2BasePort
                 in      al, dx
                 sub     ah, ah
                 mov     [bp+var_4], ax
@@ -30154,13 +30154,13 @@ loc_1CDD0:                              ; CODE XREF: sub_1CD72+62\u2193j
                 push    ax
                 mov     ax, 4
                 push    ax
-                call    sub_1CAF6
+                call    Opl2_writeRegister
                 add     sp, 4
                 mov     ax, 80h ; '€'
                 push    ax
                 mov     ax, 4
                 push    ax
-                call    sub_1CAF6
+                call    Opl2_writeRegister
                 add     sp, 4
                 test    byte ptr [bp+var_2], 0E0h
                 jnz     short loc_1CE18
@@ -30208,7 +30208,7 @@ loc_1CE2B:                              ; CODE XREF: sub_1CE20+1C\u2193j
                 sub     ax, ax
                 push    ax
                 push    si
-                call    sub_1CAF6
+                call    Opl2_writeRegister
                 add     sp, 4
                 inc     si
                 cmp     si, 0F5h ; 'õ'
@@ -30218,7 +30218,7 @@ loc_1CE2B:                              ; CODE XREF: sub_1CE20+1C\u2193j
                 push    ax
                 mov     ax, 4
                 push    ax
-                call    sub_1CAF6
+                call    Opl2_writeRegister
                 add     sp, 4
                 mov     [bp+var_2], 0
                 mov     ax, 2000h
@@ -30366,7 +30366,7 @@ loc_1CF35:                              ; CODE XREF: sub_1CF1C+37\u2193j
                 sub     ah, ah
                 add     ax, 0E0h ; 'à'
                 push    ax
-                call    sub_1CAF6
+                call    Opl2_writeRegister
                 add     sp, 4
                 inc     si
                 cmp     si, 12h
@@ -30375,7 +30375,7 @@ loc_1CF35:                              ; CODE XREF: sub_1CF1C+37\u2193j
                 push    word_D1C56
                 mov     ax, 1
                 push    ax
-                call    sub_1CAF6
+                call    Opl2_writeRegister
                 add     sp, 4
                 pop     si
                 mov     sp, bp
@@ -30769,7 +30769,7 @@ loc_1D1BA:                              ; CODE XREF: sub_1D1A4+E\u2191j
                 mov     ax, bx
                 add     ax, 0B0h ; '°'
                 push    ax
-                call    sub_1CAF6
+                call    Opl2_writeRegister
                 add     sp, 4
                 pop     bp
                 retf
@@ -31339,7 +31339,7 @@ loc_1D52B:                              ; CODE XREF: sub_1D492+81\u2191j
                 sub     ah, ah
                 add     ax, 40h ; '@'
                 push    ax
-                call    sub_1CAF6
+                call    Opl2_writeRegister
                 add     sp, 4
                 pop     si
                 mov     sp, bp
@@ -31368,7 +31368,7 @@ loc_1D57E:                              ; CODE XREF: sub_1D570+A\u2191j
                 push    ax
                 mov     ax, 8
                 push    ax
-                call    sub_1CAF6
+                call    Opl2_writeRegister
                 add     sp, 4
                 retf
 sub_1D570       endp
@@ -31414,7 +31414,7 @@ arg_0           = word ptr  6
                 mov     al, es:[bx+1B8h]
                 add     ax, 0C0h ; 'À'
                 push    ax
-                call    sub_1CAF6
+                call    Opl2_writeRegister
                 add     sp, 4
 
 loc_1D5E3:                              ; CODE XREF: sub_1D58C+14\u2191j
@@ -31463,7 +31463,7 @@ arg_0           = word ptr  6
                 sub     ah, ah
                 add     ax, 60h ; '`'
                 push    ax
-                call    sub_1CAF6
+                call    Opl2_writeRegister
                 add     sp, 4
                 pop     si
                 mov     sp, bp
@@ -31512,7 +31512,7 @@ arg_0           = word ptr  6
                 sub     ah, ah
                 add     ax, 80h ; '€'
                 push    ax
-                call    sub_1CAF6
+                call    Opl2_writeRegister
                 add     sp, 4
                 pop     si
                 mov     sp, bp
@@ -31611,7 +31611,7 @@ loc_1D704:                              ; CODE XREF: sub_1D694+6B\u2191j
                 sub     ah, ah
                 add     ax, 20h ; ' '
                 push    ax
-                call    sub_1CAF6
+                call    Opl2_writeRegister
                 add     sp, 4
                 pop     si
                 mov     sp, bp
@@ -31673,7 +31673,7 @@ loc_1D76A:                              ; CODE XREF: sub_1D732+33\u2191j
                 push    [bp+var_2]
                 mov     ax, 0BDh ; '½'
                 push    ax
-                call    sub_1CAF6
+                call    Opl2_writeRegister
                 mov     sp, bp
                 pop     bp
                 retf
@@ -31726,7 +31726,7 @@ loc_1D7BB:                              ; CODE XREF: sub_1D786+2D\u2191j
                 sub     ah, ah
                 add     ax, 0E0h ; 'à'
                 push    ax
-                call    sub_1CAF6
+                call    Opl2_writeRegister
                 mov     sp, bp
                 pop     bp
                 retf
@@ -400775,7 +400775,7 @@ dword_D3BC2     dd 0                    ; DATA XREF: exit+3\u2191o exit+6\u2191o
                 db    0
                 db    0
                 db    0
-word_D3BD0      dw 0                    ; DATA XREF: sub_1CAF6:loc_1CAF9\u2191r
+_opl2BasePort   dw 0                    ; DATA XREF: Opl2_writeRegister:loc_1CAF9\u2191r
                                         ; sub_1CD54:loc_1CD5A\u2191w ...
 word_D3BD2      dw 0                    ; DATA XREF: sub_1CB32+17\u2191r
                                         ; sub_1CF6E+1C\u2191w

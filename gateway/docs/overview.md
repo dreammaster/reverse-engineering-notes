@@ -1718,3 +1718,38 @@ which inserts the selected character into the input line and returns
 1.
 
 Applied via `apply_renames_gatemain.py`'s twentieth batch.
+
+### `Opl2_writeRegister` named — an AdLib/OPL2 FM-synthesis subsystem sighted
+
+Moved to `sub_1CAF6` (13 callers), which uncovered a genuinely new
+sound-hardware subsystem in one shot: **AdLib/OPL2 FM synthesis**,
+distinct from both the digitized-sample PC-speaker engine and the
+`Midi_sendByte`/MPU-401 cluster documented earlier.
+
+**`Opl2_writeRegister(reg, value)`** (was `sub_1CAF6`): writes `reg`
+to the OPL2 address port, does several dummy port reads (the chip's
+required inter-write settling delay), writes `value` to the data port
+(address port + 1), then several more dummy reads — a longer delay,
+matching the OPL2's well-documented longer settling time after a data
+write than after an address write. The port variable it uses
+(**`_opl2BasePort`**, was `word_D3BD0`) is confirmed assigned the
+literal `0x388` elsewhere in the same overlay — the standard AdLib/
+OPL2 base I/O address. Notably, **IDA's own inline comment on this
+exact `out dx,al` instruction ("DMA controller, 8237A-5, channel 0
+base address and word count") is a stale auto-annotation** — it
+matches the literal port value `0` in isolation (IDA's hardware-port
+database default guess for a bare `out 0,al`), but the actual runtime
+port comes from `_opl2BasePort`, confirmed `0x388`, not `0`. A good
+reminder that IDA's automatic port/register comments describe what an
+immediate operand *could* mean in isolation, not necessarily what a
+variable-driven I/O actually targets at runtime.
+
+Its only caller, `sub_1CB32` (not renamed), computes and writes OPL2
+registers `0xA0+channel`/`0xB0+channel` — the chip's real per-channel
+frequency-LSB and octave/key-on/frequency-MSB registers — strongly
+suggesting an `Opl2_setChannelFrequency`-shaped function. Left
+unrenamed this pass (the exact frequency/octave-table math wasn't
+worked out), a natural next step alongside unifying the whole
+music-engine picture with the still-open `Midi_sendByte` cluster.
+
+Applied via `apply_renames_gatemain.py`'s twenty-first batch.

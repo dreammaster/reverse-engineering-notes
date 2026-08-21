@@ -656,6 +656,41 @@ RENAMES = [
      "index is out of range or maps to an empty/invalid table entry, "
      "vs. the normal path which inserts the selected character into "
      "the input line and returns 1."),
+
+    # -- twenty-first pass: sub_1CAF6, confirmed as the fundamental
+    # AdLib/OPL2 FM-synthesis chip register-write primitive -- a whole
+    # new sound-hardware subsystem (distinct from the PC-speaker beep/
+    # digitized-sample engines already documented) sighted via this
+    # single function. Confirmed conclusively: the port variable it
+    # writes through is assigned the literal 0x388 elsewhere -- the
+    # standard AdLib/OPL2 base I/O address, not a coincidental DMA-
+    # controller address as IDA's stale auto-comment on the same "out"
+    # instruction suggested. See
+    # docs/overview.md#opl2_writeregister-named--an-adlibopl2-fm-synthesis-subsystem-sighted. --
+
+    (0x1CAF6, "Opl2_writeRegister",
+     "sub_1CAF6(reg, value): writes `reg` to the OPL2 address port "
+     "(_opl2BasePort, was word_D3BD0 -- confirmed assigned the literal "
+     "0x388, the standard AdLib/OPL2 base address, elsewhere in this "
+     "same overlay), does several dummy port reads (the chip's "
+     "required inter-write settling delay), writes `value` to the "
+     "data port (_opl2BasePort+1), then several more dummy reads (a "
+     "longer delay, matching the OPL2's well-documented longer "
+     "settling time after a data write than after an address write). "
+     "IDA's inline comment on this exact 'out dx,al' ('DMA controller, "
+     "8237A-5, channel 0 base address and word count') is a stale "
+     "auto-annotation matching the literal port VALUE 0 in isolation -- "
+     "misleading here, since the actual port comes from a variable "
+     "confirmed set to 0x388, not 0. Its only caller, sub_1CB32 (not "
+     "renamed), computes and writes OPL2 registers 0xA0+channel/"
+     "0xB0+channel -- the per-channel frequency-LSB and octave/key-on/"
+     "frequency-MSB registers -- strongly suggesting an "
+     "'Opl2_setChannelFrequency'-shaped function, left for a future "
+     "pass."),
+    (0xD3BD0, "_opl2BasePort",
+     "Was word_D3BD0: confirmed assigned the literal 0x388 elsewhere "
+     "in this overlay -- the standard AdLib/OPL2 FM synthesizer base "
+     "I/O address. Read by Opl2_writeRegister."),
 ]
 
 

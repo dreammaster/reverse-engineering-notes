@@ -515,6 +515,20 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       the "invalid mouse-click selection" error sound via a real call
       site reached from `get_mouse_input`. Full writeup in
       [overview.md](overview.md#speaker_playerrorbeep-named--pc-speaker-tone-generation-confirmed).
+- [x] Named `sub_1CAF6` (13 callers) → `Opl2_writeRegister`, plus
+      `_opl2BasePort` (was `word_D3BD0`, confirmed `0x388`) — a whole
+      new AdLib/OPL2 FM-synthesis subsystem, distinct from the
+      PC-speaker and MPU-401/MIDI engines already documented. Also
+      caught a stale/misleading IDA auto-comment on the same
+      instruction. Full writeup in
+      [overview.md](overview.md#opl2_writeregister-named--an-adlibopl2-fm-synthesis-subsystem-sighted).
+- [ ] Unify the whole music/sound-hardware picture: `Speaker_playTone`/
+      `Speaker_playErrorBeep` (PC-speaker tones), `Midi_sendByte` +
+      `sub_1D966`/`sub_1EE70`/`sub_1ECB6` (MPU-401/MIDI), and
+      `Opl2_writeRegister` + `sub_1CB32` (AdLib/OPL2) are three
+      separate confirmed sound-hardware backends, likely selected via
+      the sound-track-selection subsystem (`sub_15DB2` et al., still
+      flagged above) based on detected hardware.
 - [ ] Cross-check the structs shared by name/concept with `gate.idb`
       (`VocabEntry`/`VOCAB_ENTRY`, `Str16`/`STR16`, `Point`/`POINT`,
       `Screen`/`SCREEN`, `Font`/`FONT`, `REGS`, `HandleEntry`/`HANDLE`)
