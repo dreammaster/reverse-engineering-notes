@@ -8600,6 +8600,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X15ACD);
 	op_stkvar	(x,	0);
 	create_insn	(0X15AD8);
+	set_name	(0X15AD8,	"Logics_saveOrRestoreHandler");
 	create_insn	(x=0X15ADB);
 	op_hex		(x,	1);
 	create_insn	(x=0X15ADE);
@@ -12517,8 +12518,6 @@ static Bytes_1(void) {
 	set_name	(0X18F36,	"__dosreturn");
 	create_insn	(0X18F41);
 	set_name	(0X18F41,	"__dosretax");
-	create_insn	(0X18F4E);
-	set_name	(0X18F4E,	"__maperror");
 }
 
 //------------------------------------------------------------------------
@@ -12528,6 +12527,8 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(0X18F4E);
+	set_name	(0X18F4E,	"__maperror");
 	create_insn	(0X18F54);
 	create_byte	(0X18F6E);
 	create_insn	(0X18F6F);
@@ -18405,10 +18406,6 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1F512);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X1F521);
-	op_hex		(x,	1);
-	create_insn	(x=0X1F536);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -18418,6 +18415,10 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X1F521);
+	op_hex		(x,	1);
+	create_insn	(x=0X1F536);
+	op_hex		(x,	1);
 	create_insn	(x=0X1F542);
 	op_hex		(x,	1);
 	create_insn	(0X1F552);
@@ -23500,10 +23501,6 @@ static Bytes_3(void) {
 	set_cmt	(0X24657,	"size",	0);
 	create_insn	(x=0X24657);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X2465E);
-	op_hex		(x,	1);
-	create_insn	(x=0X24661);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -23513,6 +23510,10 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X2465E);
+	op_hex		(x,	1);
+	create_insn	(x=0X24661);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X24664);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X2466B);
@@ -29203,10 +29204,6 @@ static Bytes_4(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X28BE0);
 	op_hex		(x,	1);
-	create_insn	(x=0X28BE3);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X28BE6);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -29216,6 +29213,10 @@ static Bytes_5(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X28BE3);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X28BE6);
+	op_hex		(x,	1);
 	create_insn	(x=0X28BE8);
 	op_plain_offset	(x,	0,	0XC7F20);
 	op_plain_offset	(x,	128,	0XC7F20);

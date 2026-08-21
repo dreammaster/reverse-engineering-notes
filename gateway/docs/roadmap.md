@@ -645,6 +645,11 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       thin wrapper invoking action 8 on the current room, called from
       `main()` and `show_startup`. Full writeup in
       [overview.md](overview.md#logics_lookatcurrentroom-named).
+- [x] Named `sub_15AD8` (4 callers) → `Logics_saveOrRestoreHandler` —
+      a keyed push/pop save-and-restore of one object's handler state;
+      the exact significance of the hardcoded object/handler index
+      wasn't determined (no message anchor). Full writeup in
+      [overview.md](overview.md#logics_saveorrestorehandler-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

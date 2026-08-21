@@ -2506,3 +2506,19 @@ this room," invoked once at game startup and once per the main loop's
 LOOK-equivalent point. Named **`Logics_lookAtCurrentRoom`**.
 
 Applied via `apply_renames_gatemain.py`'s fifty-third batch.
+
+### `Logics_saveOrRestoreHandler` named
+
+Moved to `sub_15AD8` (4 callers, all from a single caller `sub_9478A`
+via `j_method074`, not itself investigated). Confirmed mechanically by
+direct read as a small push/pop-style save-and-restore mechanism for
+one specific object's handler state, keyed by a caller-supplied
+context value against a 4-slot table: with `mode==0` it reads object
+`0x71`'s handler-index-1 value and stores it into the matching slot;
+with `mode!=0` it reads the previously-stored value back out and
+writes it back. The specific significance of `logicNum 0x71`/handler
+index `1` wasn't determined — no message-string anchor was available
+for this one. Named **`Logics_saveOrRestoreHandler`** for the
+confirmed mechanism.
+
+Applied via `apply_renames_gatemain.py`'s fifty-fourth batch.

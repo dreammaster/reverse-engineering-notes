@@ -3942,7 +3942,7 @@ Logics_getUnkHandler endp
 ; Attributes: bp-based frame
 
 ; void __cdecl __far Logics_setUnkHandler(int logicNum, int handlerIndex, int newId)
-Logics_setUnkHandler proc far           ; CODE XREF: sub_15AD8+72\u2193P
+Logics_setUnkHandler proc far           ; CODE XREF: Logics_saveOrRestoreHandler+72\u2193P
                                         ; Logics_updateHandler+49\u2193P ...
 
 var_6           = word ptr -6
@@ -12456,7 +12456,7 @@ sub_15A7A       endp
 
 ; Attributes: bp-based frame
 
-sub_15AD8       proc far                ; CODE XREF: sub_9478A+293\u2193P
+Logics_saveOrRestoreHandler proc far    ; CODE XREF: sub_9478A+293\u2193P
                                         ; sub_9478A+304\u2193P ...
 
 var_4           = word ptr -4
@@ -12471,10 +12471,10 @@ arg_2           = byte ptr  8
                 jmp     short loc_15AE8
 ; ---------------------------------------------------------------------------
 
-loc_15AE5:                              ; CODE XREF: sub_15AD8+29\u2193j
+loc_15AE5:                              ; CODE XREF: Logics_saveOrRestoreHandler+29\u2193j
                 inc     [bp+var_4]
 
-loc_15AE8:                              ; CODE XREF: sub_15AD8+B\u2191j
+loc_15AE8:                              ; CODE XREF: Logics_saveOrRestoreHandler+B\u2191j
                 cmp     [bp+var_4], 4
                 jge     short loc_15B03
                 mov     ax, [bp+arg_0]
@@ -12486,7 +12486,7 @@ loc_15AE8:                              ; CODE XREF: sub_15AD8+B\u2191j
                 cmp     es:[bx+65E0h], ax
                 jnz     short loc_15AE5
 
-loc_15B03:                              ; CODE XREF: sub_15AD8+14\u2191j
+loc_15B03:                              ; CODE XREF: Logics_saveOrRestoreHandler+14\u2191j
                 cmp     [bp+arg_2], 0
                 jnz     short loc_15B2E
                 mov     ax, 1
@@ -12506,7 +12506,7 @@ loc_15B2C:
                 jmp     short loc_15B52
 ; ---------------------------------------------------------------------------
 
-loc_15B2E:                              ; CODE XREF: sub_15AD8+2F\u2191j
+loc_15B2E:                              ; CODE XREF: Logics_saveOrRestoreHandler+2F\u2191j
                 mov     bx, [bp+var_4]
                 shl     bx, 1
                 shl     bx, 1
@@ -12521,11 +12521,11 @@ loc_15B2E:                              ; CODE XREF: sub_15AD8+2F\u2191j
                 call    Logics_setUnkHandler
                 add     sp, 6
 
-loc_15B52:                              ; CODE XREF: sub_15AD8:loc_15B2C\u2191j
+loc_15B52:                              ; CODE XREF: Logics_saveOrRestoreHandler:loc_15B2C\u2191j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_15AD8       endp
+Logics_saveOrRestoreHandler endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -263345,7 +263345,7 @@ loc_94A01:                              ; CODE XREF: sub_9478A+14\u2191j
                 push    ax
                 mov     ax, 4Ah ; 'J'
                 push    ax
-                call    sub_15AD8
+                call    Logics_saveOrRestoreHandler
                 jmp     loc_94844
 ; ---------------------------------------------------------------------------
 
@@ -263394,7 +263394,7 @@ loc_94A87:                              ; CODE XREF: sub_9478A+2B8\u2191j
                 push    ax
                 mov     ax, 4Ah ; 'J'
                 push    ax
-                call    sub_15AD8
+                call    Logics_saveOrRestoreHandler
                 add     sp, 4
                 mov     es, seg_D1638
                 cmp     es:Persisted_val71, 0
@@ -269957,7 +269957,7 @@ loc_97613:                              ; CODE XREF: sub_974C0+7B\u2191j
                 push    ax
                 mov     ax, 47h ; 'G'
                 push    ax
-                call    sub_15AD8
+                call    Logics_saveOrRestoreHandler
                 jmp     loc_976C3
 ; ---------------------------------------------------------------------------
 
@@ -270323,7 +270323,7 @@ loc_978FD:                              ; CODE XREF: sub_97716+99\u2191j
                 push    ax
                 mov     ax, 48h ; 'H'
                 push    ax
-                call    sub_15AD8
+                call    Logics_saveOrRestoreHandler
                 add     sp, 4
                 jmp     loc_977A7
 ; ---------------------------------------------------------------------------
@@ -274920,7 +274920,7 @@ loc_99928:                              ; CODE XREF: sub_9989F+11\u2191j
                 push    ax
                 mov     ax, 49h ; 'I'
                 push    ax
-                call    sub_15AD8
+                call    Logics_saveOrRestoreHandler
                 jmp     short loc_99984
 ; ---------------------------------------------------------------------------
 
@@ -275051,7 +275051,7 @@ loc_99A51:                              ; CODE XREF: sub_9989F+123\u2191j
                 push    ax
                 mov     ax, 49h ; 'I'
                 push    ax
-                call    sub_15AD8
+                call    Logics_saveOrRestoreHandler
                 add     sp, 4
                 mov     es, seg_D16BC
                 mov     es:Persisted_val92, 0
@@ -393862,8 +393862,8 @@ seg_D111A       dw seg sg3EDC           ; DATA XREF: sub_15932+28\u2191r
                                         ; sub_15932+48\u2191r ...
 seg_D111C       dw seg sg3EDC           ; DATA XREF: sub_15932+74\u2191r
                                         ; sub_15932+94\u2191r ...
-dseg_117        dw seg sg4d43           ; DATA XREF: sub_15AD8+20\u2191r
-                                        ; sub_15AD8+4B\u2191r ...
+dseg_117        dw seg sg4d43           ; DATA XREF: Logics_saveOrRestoreHandler+20\u2191r
+                                        ; Logics_saveOrRestoreHandler+4B\u2191r ...
 seg_D1120       dw seg seg087           ; DATA XREF: sub_15BAE:loc_15BCB\u2191r
                                         ; seg102:0777\u2191r
 seg_D1122       dw seg seg088           ; DATA XREF: sub_15BDA+21\u2191r

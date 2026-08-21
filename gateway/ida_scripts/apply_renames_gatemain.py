@@ -1551,6 +1551,28 @@ RENAMES = [
      "action 8 being 'describe/look at this room', invoked once at "
      "game startup and once per the main loop's LOOK-equivalent "
      "point."),
+
+    # -- fifty-fourth pass: sub_15AD8, a small save/restore mechanism
+    # for one specific object's handler, keyed by a caller-supplied
+    # context value against a 4-slot table. Confirmed mechanically by
+    # direct read; the exact significance of the hardcoded object
+    # (logicNum 0x71) and handler index (1) wasn't determined (no
+    # message/string anchor available, single caller sub_9478A via
+    # j_method074, not itself investigated). See
+    # docs/overview.md#logics_saveorrestorehandler-named. --
+
+    (0x15AD8, "Logics_saveOrRestoreHandler",
+     "sub_15AD8(key, mode): finds (or allocates, up to 4 slots) a "
+     "slot matching `key` in a small table. If mode==0 (save): reads "
+     "object 0x71's handler-index-1 value (Logics_getUnkHandler) and "
+     "stores it into the slot. If mode!=0 (restore): reads the "
+     "previously-stored value back out of the slot and writes it back "
+     "via Logics_setUnkHandler -- a push/pop-style save-and-restore of "
+     "one object's handler state, keyed by caller context. The "
+     "specific significance of logicNum 0x71/handler index 1 wasn't "
+     "determined -- no message-string anchor was available, and its "
+     "one caller (sub_9478A, reached via j_method074) wasn't itself "
+     "investigated."),
 ]
 
 
