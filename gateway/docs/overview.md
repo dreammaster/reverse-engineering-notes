@@ -1435,3 +1435,48 @@ room-logic-driven "exit" object rather than a normal item, not
 confirmed). Left open for a future pass.
 
 Applied via `apply_renames_gatemain.py`'s thirteenth batch.
+
+### `Mouse_pollPosition` named — and an animated-picture-overlay subsystem sighted but left unnamed
+
+Re-ran `rank_unnamed_functions.py` again. New top target was actually
+`sub_26F2A` (19 callers) — investigated first, but ultimately **left
+unrenamed**. It zeroes a `word_C9658`-sized array (`unk_D2302`, 2 words
+per entry) and clamps another parallel array (`byte_D22EE`) to 0/1 for
+the same count, then calls `Events_checkKeypress`. Tracing `word_C9658`
+led into a real subsystem — `Image_Init`/`Image_Free`/`Image_load`/
+`Image_draw`, plus three still-unnamed neighbors (`sub_26D7E`
+registers a new slot with up to 20 frames into a fixed 5-slot table at
+`0xA3BA`, capped by `word_C9658`; `sub_26F74` is a real per-slot
+animation-timing/draw loop using `_clock`/`_rand` and `Image_draw`;
+`sub_27134` is the "already initialized" per-tick driver `sub_26D50`
+calls once `word_C9658 != 0`) — clearly an **animated picture-overlay
+engine** (randomly-timed multi-frame sprite animations layered on room
+scenes, up to 5 concurrent, up to 20 frames each). Confidently
+characterized at the architecture level, but `byte_D22EE`/`unk_D2302`
+specifically (`sub_26F2A`'s own two arrays, at addresses far from the
+`0xA3BA` per-slot table the other three functions share) have no
+downstream reader visible in this IDB — their consumer is presumably
+inline in the data-driven compiled room/object logic itself, per the
+established "room/logic is compiled machine code" architecture finding.
+Not confident enough to name `sub_26F2A` or its two arrays yet — left
+open for a future pass that traces actual compiled room logic bytes,
+not just engine-side plumbing.
+
+Moved down the list to `sub_24FFB` (16 callers) instead, which resolved
+cleanly. Confirmed via its one real caller — the already-named
+`get_mouse_input`, which passes `&x`/`&y` straight through at a real
+call site. **`Mouse_pollPosition(xPtr, yPtr)`**: if both pointers are
+null, just forwards to the already-named `get_mouse_buttons()`.
+Otherwise, if `mouseState`'s keyboard-cursor-emulation bits are set,
+reads one key (`sub_25216`, a private single-caller helper, not
+renamed) to move a keyboard-driven pointer and feeds Enter/Space
+through `addCharacter` as a click; else reads the real mouse position/
+buttons via `INT 33h` (`AH=3`), first waiting out an already-held
+button via `sub_24FAE` (also private/single-caller, not renamed).
+Writes the resulting x/y through the two far-pointer arguments and
+returns a button/click code. In passing, confirmed `sub_26F74` (the
+animation-timing loop above) is invoked directly from
+`get_mouse_input`'s own body — the engine advances room animations
+while polling for input, not on a separate timer/thread.
+
+Applied via `apply_renames_gatemain.py`'s fourteenth batch.

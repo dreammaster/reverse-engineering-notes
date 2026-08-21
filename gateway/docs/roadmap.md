@@ -455,6 +455,14 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       `Logics_setTakeScore` (were `sub_12109`/`sub_12179`). Full writeup
       in
       [overview.md](overview.md#logics_takeobject-named--the-take-command-mechanics).
+- [x] Named `sub_24FFB` (16 callers) → `Mouse_pollPosition`, confirmed
+      via its one real caller `get_mouse_input`. Sighted a real
+      animated-picture-overlay engine (`Image_Init`/`Image_load`/
+      `Image_draw` + three still-unnamed slot-table functions) while
+      investigating the actual top target `sub_26F2A` (19 callers) —
+      left that one unnamed, insufficient confidence in two of its
+      arrays' downstream consumers. Full writeup in
+      [overview.md](overview.md#mouse_pollposition-named--and-an-animated-picture-overlay-subsystem-sighted-but-left-unnamed).
 - [ ] Cross-check the structs shared by name/concept with `gate.idb`
       (`VocabEntry`/`VOCAB_ENTRY`, `Str16`/`STR16`, `Point`/`POINT`,
       `Screen`/`SCREEN`, `Font`/`FONT`, `REGS`, `HandleEntry`/`HANDLE`)

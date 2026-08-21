@@ -455,6 +455,28 @@ RENAMES = [
      "sub_12179(logicNum, value): setter half of Logics_getTakeScore "
      "-- same bounds-checked proc_table field_E/field_20/field_14 "
      "dispatch, just storing instead of loading."),
+
+    # -- fourteenth pass: sub_24FFB, confirmed as the low-level mouse/
+    # keyboard-emulated pointer-polling primitive that the already-named
+    # get_mouse_input wraps (a real call site at get_mouse_input+0xB6
+    # passes &x, &y straight through to it). sub_26F2A (19 callers, the
+    # actual top of this pass's re-ranked list) was investigated but
+    # left unnamed -- see docs/overview.md for why. See
+    # docs/overview.md#mouse_pollposition-named. --
+
+    (0x24FFB, "Mouse_pollPosition",
+     "sub_24FFB(xPtr, yPtr): confirmed via its one real caller, "
+     "get_mouse_input, which passes &x/&y straight through. If both "
+     "pointers are null, just forwards to the already-named "
+     "get_mouse_buttons(). Otherwise: if mouseState's keyboard-cursor-"
+     "emulation bits are set, reads one key via sub_25216 (not "
+     "renamed -- single caller, private helper) to move a "
+     "keyboard-driven cursor and feeds Enter/Space through "
+     "addCharacter as a click; else reads the real mouse position/"
+     "buttons via INT 33h (AH=3), waiting out an already-held button "
+     "via sub_24FAE (not renamed -- single caller, private helper) "
+     "first. Writes the resulting x/y through the two far-pointer "
+     "arguments and returns a button/click code."),
 ]
 
 

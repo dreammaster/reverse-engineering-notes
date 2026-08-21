@@ -15038,7 +15038,7 @@ loc_16D1A:                              ; CODE XREF: sub_16CBE+C9\u2193j
                 lea     ax, [bp+var_6]
                 push    ss
                 push    ax
-                call    sub_24FFB
+                call    Mouse_pollPosition
                 add     sp, 8
                 mov     [bp+var_A], ax
                 mov     ax, [bp+yp]
@@ -45450,7 +45450,7 @@ sub_2384F       endp
 ; Attributes: bp-based frame
 
 ; void __cdecl __far addCharacter(int c)
-addCharacter    proc far                ; CODE XREF: sub_24FFB+8B\u2193P
+addCharacter    proc far                ; CODE XREF: Mouse_pollPosition+8B\u2193P
                                         ; InputWindow_getLine+19C\u2193P ...
 
 c               = word ptr  6
@@ -48945,7 +48945,7 @@ Commset_btn_setMouse endp
 
 ; Attributes: bp-based frame
 
-sub_24FAE       proc far                ; CODE XREF: sub_24FFB+A0\u2193p
+sub_24FAE       proc far                ; CODE XREF: Mouse_pollPosition+A0\u2193p
                                         ; get_mouse_buttons+13\u2193p
 
 regs            = REGS ptr -0Eh
@@ -48996,7 +48996,7 @@ sub_24FAE       endp
 
 ; Attributes: bp-based frame
 
-sub_24FFB       proc far                ; CODE XREF: sub_16CBE+66\u2191P
+Mouse_pollPosition proc far             ; CODE XREF: sub_16CBE+66\u2191P
                                         ; Dialog_prompt+10B\u2193P ...
 
 c               = word ptr -10h
@@ -49014,13 +49014,13 @@ arg_4           = dword ptr  0Ah
                 or      ax, word ptr [bp+arg_4+2]
                 jnz     short loc_25018
 
-loc_25011:                              ; CODE XREF: sub_24FFB+C\u2191j
+loc_25011:                              ; CODE XREF: Mouse_pollPosition+C\u2191j
                 push    cs
                 call    near ptr get_mouse_buttons
                 jmp     loc_2511B
 ; ---------------------------------------------------------------------------
 
-loc_25018:                              ; CODE XREF: sub_24FFB+14\u2191j
+loc_25018:                              ; CODE XREF: Mouse_pollPosition+14\u2191j
                 mov     [bp+c], 0
                 test    byte ptr mouseState, 2
                 jz      short loc_25093
@@ -49045,15 +49045,15 @@ loc_25018:                              ; CODE XREF: sub_24FFB+14\u2191j
                 jmp     short loc_2505C
 ; ---------------------------------------------------------------------------
 
-loc_25059:                              ; CODE XREF: sub_24FFB+55\u2191j
+loc_25059:                              ; CODE XREF: Mouse_pollPosition+55\u2191j
                 mov     ax, [bp+regs._cx]
 
-loc_2505C:                              ; CODE XREF: sub_24FFB+5C\u2191j
+loc_2505C:                              ; CODE XREF: Mouse_pollPosition+5C\u2191j
                 mov     mousePos.x, ax
                 mov     ax, [bp+regs._dx]
                 mov     mousePos.y, ax
 
-loc_25065:                              ; CODE XREF: sub_24FFB+2E\u2191j
+loc_25065:                              ; CODE XREF: Mouse_pollPosition+2E\u2191j
                 push    cs
                 call    near ptr sub_25216
                 mov     [bp+c], ax
@@ -49062,12 +49062,12 @@ loc_25065:                              ; CODE XREF: sub_24FFB+2E\u2191j
                 cmp     ax, 20h ; ' '
                 jnz     short loc_2507D
 
-loc_25076:                              ; CODE XREF: sub_24FFB+74\u2191j
+loc_25076:                              ; CODE XREF: Mouse_pollPosition+74\u2191j
                 mov     [bp+c], 1
                 jmp     short loc_25093
 ; ---------------------------------------------------------------------------
 
-loc_2507D:                              ; CODE XREF: sub_24FFB+79\u2191j
+loc_2507D:                              ; CODE XREF: Mouse_pollPosition+79\u2191j
                 cmp     [bp+c], 0
                 jz      short loc_25093
                 push    [bp+c]          ; c
@@ -49075,8 +49075,8 @@ loc_2507D:                              ; CODE XREF: sub_24FFB+79\u2191j
                 add     sp, 2
                 mov     [bp+c], 0
 
-loc_25093:                              ; CODE XREF: sub_24FFB+27\u2191j
-                                        ; sub_24FFB+80\u2191j ...
+loc_25093:                              ; CODE XREF: Mouse_pollPosition+27\u2191j
+                                        ; Mouse_pollPosition+80\u2191j ...
                 test    byte ptr mouseState, 38h
                 jz      short loc_250ED
                 push    cs
@@ -49100,10 +49100,10 @@ loc_25093:                              ; CODE XREF: sub_24FFB+27\u2191j
                 jmp     short loc_250CF
 ; ---------------------------------------------------------------------------
 
-loc_250CC:                              ; CODE XREF: sub_24FFB+C8\u2191j
+loc_250CC:                              ; CODE XREF: Mouse_pollPosition+C8\u2191j
                 mov     ax, [bp+regs._cx]
 
-loc_250CF:                              ; CODE XREF: sub_24FFB+CF\u2191j
+loc_250CF:                              ; CODE XREF: Mouse_pollPosition+CF\u2191j
                 les     bx, [bp+arg_0]
                 assume es:nothing
                 mov     es:[bx], ax
@@ -49117,7 +49117,7 @@ loc_250CF:                              ; CODE XREF: sub_24FFB+CF\u2191j
                 jmp     short loc_25118
 ; ---------------------------------------------------------------------------
 
-loc_250ED:                              ; CODE XREF: sub_24FFB+9D\u2191j
+loc_250ED:                              ; CODE XREF: Mouse_pollPosition+9D\u2191j
                 test    byte ptr mouseState, 4
                 jz      short loc_25108
                 les     bx, [bp+arg_0]
@@ -49129,21 +49129,21 @@ loc_250ED:                              ; CODE XREF: sub_24FFB+9D\u2191j
                 jmp     short loc_25118
 ; ---------------------------------------------------------------------------
 
-loc_25108:                              ; CODE XREF: sub_24FFB+F7\u2191j
+loc_25108:                              ; CODE XREF: Mouse_pollPosition+F7\u2191j
                 les     bx, [bp+arg_0]
                 mov     word ptr es:[bx], 0
                 les     bx, [bp+arg_4]
                 mov     word ptr es:[bx], 0
 
-loc_25118:                              ; CODE XREF: sub_24FFB+E8\u2191j
-                                        ; sub_24FFB+F0\u2191j ...
+loc_25118:                              ; CODE XREF: Mouse_pollPosition+E8\u2191j
+                                        ; Mouse_pollPosition+F0\u2191j ...
                 mov     ax, [bp+c]
 
-loc_2511B:                              ; CODE XREF: sub_24FFB+1A\u2191j
+loc_2511B:                              ; CODE XREF: Mouse_pollPosition+1A\u2191j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_24FFB       endp
+Mouse_pollPosition endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -49306,7 +49306,7 @@ interruptable_delay endp
 
 ; Attributes: bp-based frame
 
-sub_25216       proc far                ; CODE XREF: sub_24FFB+6B\u2191p
+sub_25216       proc far                ; CODE XREF: Mouse_pollPosition+6B\u2191p
 
 var_C           = word ptr -0Ch
 var_A           = word ptr -0Ah
@@ -60091,7 +60091,7 @@ loc_29FBA:                              ; CODE XREF: Dialog_prompt+182\u2193j
                 lea     ax, [bp+index]
                 push    ss
                 push    ax
-                call    sub_24FFB
+                call    Mouse_pollPosition
                 add     sp, 8
                 or      ax, ax
                 jz      short loc_2A007
@@ -142500,7 +142500,7 @@ loc_5C7D6:                              ; CODE XREF: Events_waitForPress+10\u219
                 push    ax
                 push    ax
                 push    ax
-                call    sub_24FFB
+                call    Mouse_pollPosition
                 add     sp, 8
                 mov     [bp+var_2], ax
                 or      ax, ax
@@ -144028,7 +144028,7 @@ loc_5D517:                              ; CODE XREF: get_input_character+5E\u219
                 push    ax
                 push    ax
                 push    ax
-                call    sub_24FFB
+                call    Mouse_pollPosition
                 add     sp, 8
                 mov     [bp+var_4], ax
 
@@ -144235,7 +144235,7 @@ loc_5D698:                              ; CODE XREF: get_mouse_input+46\u2191j
                 lea     ax, [bp+x]
                 push    ss
                 push    ax
-                call    sub_24FFB
+                call    Mouse_pollPosition
                 add     sp, 8
                 or      ax, ax
                 jz      short loc_5D722
@@ -158655,7 +158655,7 @@ loc_63B80:                              ; CODE XREF: prompt_for_filename+868\u21
                 lea     ax, [bp+x]
                 push    ss
                 push    ax
-                call    sub_24FFB
+                call    Mouse_pollPosition
                 add     sp, 8
                 or      ax, ax
                 jz      short loc_63C25
@@ -185352,7 +185352,7 @@ loc_71759:                              ; CODE XREF: sub_71756+3B\u2193j
                 push    ax
                 push    ax
                 push    ax
-                call    sub_24FFB
+                call    Mouse_pollPosition
                 add     sp, 8
                 or      ax, ax
                 jz      short loc_71789
@@ -185869,7 +185869,7 @@ loc_71BFD:                              ; CODE XREF: sub_7179E+557\u2193j
                 push    ax
                 push    ax
                 push    ax
-                call    sub_24FFB
+                call    Mouse_pollPosition
                 add     sp, 8
                 or      ax, ax
                 jz      short loc_71C12
@@ -190792,7 +190792,7 @@ loc_741F9:                              ; CODE XREF: sub_74149+23B\u2193j
                 lea     ax, [bp+x]
                 push    ss
                 push    ax
-                call    sub_24FFB
+                call    Mouse_pollPosition
                 add     sp, 8
                 or      ax, ax
                 jnz     short loc_7421C
@@ -314229,7 +314229,7 @@ loc_AA8C7:                              ; CODE XREF: sub_AA8AE+BE\u2193j
                 lea     ax, [bp+x]
                 push    ss
                 push    ax
-                call    sub_24FFB
+                call    Mouse_pollPosition
                 add     sp, 8
                 or      ax, ax
                 jnz     short loc_AA8E0
@@ -320613,7 +320613,7 @@ loc_AD6F7:                              ; CODE XREF: sub_AD458:loc_AD6F2\u2191j
                 lea     ax, [bp+x]
                 push    ss
                 push    ax
-                call    sub_24FFB
+                call    Mouse_pollPosition
                 add     sp, 8
                 or      ax, ax
                 jnz     short loc_AD710
@@ -327564,7 +327564,7 @@ loc_B0517:                              ; CODE XREF: Commnet_proc1+BF\u2193j
                 lea     ax, [bp+x]
                 push    ss
                 push    ax
-                call    sub_24FFB
+                call    Mouse_pollPosition
                 add     sp, 8
                 or      ax, ax
                 jnz     short loc_B0530
@@ -338939,7 +338939,7 @@ loc_B5788:                              ; CODE XREF: sub_B576E+BB\u2193j
                 lea     ax, [bp+x]
                 push    ss
                 push    ax
-                call    sub_24FFB
+                call    Mouse_pollPosition
                 add     sp, 8
                 or      ax, ax
                 jnz     short loc_B57A1
@@ -358366,7 +358366,7 @@ loc_BDD0F:                              ; CODE XREF: sub_BDB7B+14E\u2191j
                 push    ax
                 push    ax
                 push    ax
-                call    sub_24FFB
+                call    Mouse_pollPosition
                 add     sp, 8
                 or      ax, ax
                 jz      short loc_BDD4D
@@ -363613,7 +363613,7 @@ loc_C0406:                              ; CODE XREF: sub_C0168+299\u2191j
                 lea     ax, [bp+x]
                 push    ss
                 push    ax
-                call    sub_24FFB
+                call    Mouse_pollPosition
                 add     sp, 8
                 or      ax, ax
                 jnz     short loc_C041F
@@ -374053,7 +374053,7 @@ loc_C4A04:
                 lea     ax, [bp+x]
                 push    ss
                 push    ax
-                call    sub_24FFB
+                call    Mouse_pollPosition
                 add     sp, 8
                 or      ax, ax
                 jz      short loc_C4A4E
