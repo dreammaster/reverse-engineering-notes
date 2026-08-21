@@ -2361,6 +2361,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X10638);
 	op_hex		(x,	1);
 	create_insn	(0X1063F);
+	set_name	(0X1063F,	"format_long_decimal");
 	create_insn	(x=0X10642);
 	op_hex		(x,	1);
 	create_insn	(x=0X10645);
@@ -7404,11 +7405,6 @@ static Bytes_0(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X14892);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X14895);
-	op_stkvar	(x,	0);
-	op_hex		(x,	1);
-	create_insn	(x=0X148A4);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -7418,6 +7414,11 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X14895);
+	op_stkvar	(x,	0);
+	op_hex		(x,	1);
+	create_insn	(x=0X148A4);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X148A7);
 	op_hex		(x,	1);
 	create_insn	(x=0X148A9);

@@ -800,7 +800,7 @@ Parser_performUndo endp
 
 ; Attributes: bp-based frame
 
-sub_1063F       proc far                ; CODE XREF: sub_65927+71\u2193P
+format_long_decimal proc far            ; CODE XREF: sub_65927+71\u2193P
                                         ; seg151:2436\u2193P ...
 
 var_E           = word ptr -0Eh
@@ -827,7 +827,7 @@ arg_2           = word ptr  8
                 jmp     loc_1073F
 ; ---------------------------------------------------------------------------
 
-loc_10665:                              ; CODE XREF: sub_1063F+16\u2191j
+loc_10665:                              ; CODE XREF: format_long_decimal+16\u2191j
                 cmp     [bp+arg_2], 0
                 jge     short loc_10689
                 mov     ax, [bp+arg_0]
@@ -841,14 +841,14 @@ loc_10665:                              ; CODE XREF: sub_1063F+16\u2191j
                 inc     [bp+var_A]
                 mov     byte ptr [bx-511Ch], 2Dh ; '-'
 
-loc_10689:                              ; CODE XREF: sub_1063F+2A\u2191j
+loc_10689:                              ; CODE XREF: format_long_decimal+2A\u2191j
                 mov     [bp+var_E], 0CA00h
                 mov     [bp+var_C], 3B9Ah
                 jmp     short loc_106A4
 ; ---------------------------------------------------------------------------
 
-loc_10695:                              ; CODE XREF: sub_1063F+7D\u2193j
-                                        ; sub_1063F+84\u2193j ...
+loc_10695:                              ; CODE XREF: format_long_decimal+7D\u2193j
+                                        ; format_long_decimal+84\u2193j ...
                 mov     ax, 3E8h
                 cwd
                 push    dx
@@ -857,7 +857,7 @@ loc_10695:                              ; CODE XREF: sub_1063F+7D\u2193j
                 push    ax
                 call    unknown_libname_5 ; MS Quick C v1.0/v2.01 & MSC v5.1 DOS run-time & graphic
 
-loc_106A4:                              ; CODE XREF: sub_1063F+54\u2191j
+loc_106A4:                              ; CODE XREF: format_long_decimal+54\u2191j
                 cmp     [bp+var_C], 0
                 jnz     short loc_106B3
                 cmp     [bp+var_E], 0
@@ -865,8 +865,8 @@ loc_106A4:                              ; CODE XREF: sub_1063F+54\u2191j
                 jmp     loc_1073F
 ; ---------------------------------------------------------------------------
 
-loc_106B3:                              ; CODE XREF: sub_1063F+69\u2191j
-                                        ; sub_1063F+6F\u2191j
+loc_106B3:                              ; CODE XREF: format_long_decimal+69\u2191j
+                                        ; format_long_decimal+6F\u2191j
                 mov     ax, [bp+var_E]
                 mov     dx, [bp+var_C]
                 cmp     [bp+arg_2], dx
@@ -875,7 +875,7 @@ loc_106B3:                              ; CODE XREF: sub_1063F+69\u2191j
                 cmp     [bp+arg_0], ax
                 jb      short loc_10695
 
-loc_106C5:                              ; CODE XREF: sub_1063F+7F\u2191j
+loc_106C5:                              ; CODE XREF: format_long_decimal+7F\u2191j
                 mov     ax, 3E8h
                 cwd
                 push    dx
@@ -895,10 +895,10 @@ loc_106C5:                              ; CODE XREF: sub_1063F+7F\u2191j
                 inc     [bp+var_A]
                 mov     byte ptr [bx-511Ch], 2Ch ; ','
 
-loc_106F7:                              ; CODE XREF: sub_1063F+AB\u2191j
+loc_106F7:                              ; CODE XREF: format_long_decimal+AB\u2191j
                 mov     [bp+var_2], 64h ; 'd'
 
-loc_106FC:                              ; CODE XREF: sub_1063F+FB\u2193j
+loc_106FC:                              ; CODE XREF: format_long_decimal+FB\u2193j
                 mov     ax, [bp+var_8]
                 cwd
                 mov     cx, [bp+var_2]
@@ -912,7 +912,7 @@ loc_106FC:                              ; CODE XREF: sub_1063F+FB\u2193j
                 or      dx, dx
                 jz      short loc_1072C
 
-loc_10718:                              ; CODE XREF: sub_1063F+D3\u2191j
+loc_10718:                              ; CODE XREF: format_long_decimal+D3\u2191j
                 mov     bx, [bp+var_A]
                 inc     [bp+var_A]
                 mov     al, byte ptr [bp+var_4]
@@ -920,7 +920,7 @@ loc_10718:                              ; CODE XREF: sub_1063F+D3\u2191j
                 mov     [bx-511Ch], al
                 mov     [bp+var_6], 0
 
-loc_1072C:                              ; CODE XREF: sub_1063F+D7\u2191j
+loc_1072C:                              ; CODE XREF: format_long_decimal+D7\u2191j
                 mov     cx, 0Ah
                 mov     ax, [bp+var_2]
                 cwd
@@ -931,8 +931,8 @@ loc_1072C:                              ; CODE XREF: sub_1063F+D7\u2191j
                 jmp     loc_10695
 ; ---------------------------------------------------------------------------
 
-loc_1073F:                              ; CODE XREF: sub_1063F+23\u2191j
-                                        ; sub_1063F+71\u2191j
+loc_1073F:                              ; CODE XREF: format_long_decimal+23\u2191j
+                                        ; format_long_decimal+71\u2191j
                 mov     bx, [bp+var_A]
                 mov     byte ptr [bx-511Ch], 0
                 mov     ax, offset unk_D2E04
@@ -940,7 +940,7 @@ loc_1073F:                              ; CODE XREF: sub_1063F+23\u2191j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_1063F       endp
+format_long_decimal endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -27757,7 +27757,7 @@ shl32           endp
 
 ; Attributes: library function bp-based frame
 
-__aFuldiv       proc far                ; CODE XREF: sub_1063F+98\u2191P
+__aFuldiv       proc far                ; CODE XREF: format_long_decimal+98\u2191P
                                         ; sub_191D0+156\u2191P ...
 
 arg_0           = word ptr  6
@@ -29417,7 +29417,7 @@ unknown_libname_4 endp
 ; MS Quick C v1.0/v2.01 & MSC v5.1 DOS run-time & graphic
 ; Attributes: library function bp-based frame
 
-unknown_libname_5 proc far              ; CODE XREF: sub_1063F+60\u2191P
+unknown_libname_5 proc far              ; CODE XREF: format_long_decimal+60\u2191P
 
 arg_0           = word ptr  6
 arg_2           = word ptr  8
@@ -29446,7 +29446,7 @@ unknown_libname_5 endp
 
 ; Attributes: library function bp-based frame
 
-__aFulrem       proc far                ; CODE XREF: sub_1063F+9F\u2191P
+__aFulrem       proc far                ; CODE XREF: format_long_decimal+9F\u2191P
 
 arg_0           = word ptr  6
 arg_2           = word ptr  8
@@ -162193,7 +162193,7 @@ loc_65986:                              ; CODE XREF: sub_65927+53\u2191j
                 call    __aFlshl
                 push    dx
                 push    ax
-                call    sub_1063F
+                call    format_long_decimal
                 add     sp, 4
                 push    dx
                 push    ax
@@ -170259,7 +170259,7 @@ loc_69F66:                              ; CODE XREF: seg151:23E3\u2191j
                 mov     es, seg_D12F8
                 push    es:_playerCreditsHi
                 push    es:_playerCreditsLo
-                call    sub_1063F
+                call    format_long_decimal
                 add     sp, 4
                 push    dx
                 push    ax
@@ -328382,7 +328382,7 @@ loc_B0C92:                              ; CODE XREF: Commset_show+228\u2191j
                 mov     [bp+yp], ax
                 push    word_CF350
                 push    Persisted_val214
-                call    sub_1063F
+                call    format_long_decimal
                 add     sp, 4
                 push    dx
                 push    ax
@@ -328402,7 +328402,7 @@ loc_B0C92:                              ; CODE XREF: Commset_show+228\u2191j
                 sbb     dx, _playerCreditsHi
                 push    dx
                 push    ax
-                call    sub_1063F
+                call    format_long_decimal
                 add     sp, 4
                 push    dx
                 push    ax
@@ -328435,7 +328435,7 @@ loc_B0C92:                              ; CODE XREF: Commset_show+228\u2191j
                 add     sp, 0Ah
                 push    _playerCreditsHi
                 push    _playerCreditsLo
-                call    sub_1063F
+                call    format_long_decimal
                 add     sp, 4
                 push    dx
                 push    ax
@@ -397898,7 +397898,7 @@ word_D2E00      dw 0                    ; DATA XREF: sub_1B80C\u2191r
                                         ; sub_1B80C+B\u2191w
 word_D2E02      dw 0                    ; DATA XREF: Parser_perform+3D\u2191w
                                         ; Parser_perform+41\u2191r ...
-unk_D2E04       db    0                 ; DATA XREF: sub_1063F+108\u2191o
+unk_D2E04       db    0                 ; DATA XREF: format_long_decimal+108\u2191o
                                         ; seg092:2119\u2191o
                 db    0
                 db    0

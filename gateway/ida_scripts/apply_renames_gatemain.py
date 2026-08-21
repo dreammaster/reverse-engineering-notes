@@ -1857,6 +1857,24 @@ RENAMES = [
      "Called from Surface_draw/Surface_draw2/Video_ClearScreen/"
      "sub_17B8E (not renamed) -- a validated video-mode-index getter "
      "used at the start of drawing operations."),
+
+    # -- seventieth pass: sub_1063F, confirmed via the repeated
+    # divide-by-1000 calls (through the MS Quick C runtime's 32-bit
+    # long-division helper) as a signed 32-bit integer to decimal
+    # string formatter. See
+    # docs/overview.md#format_long_decimal-named. --
+
+    (0x1063F, "format_long_decimal",
+     "sub_1063F(loWord, hiWord): formats the signed 32-bit value "
+     "(loWord:hiWord) as a decimal string into a local buffer -- "
+     "special-cases exactly zero ('0'), negates and prefixes '-' for "
+     "negative values, then repeatedly divides by progressively "
+     "smaller powers of ten (via the MS Quick C/MSC runtime's 32-bit "
+     "long-division helper, `unknown_libname_5`) to extract each "
+     "decimal digit. A generic number-formatting utility (plausibly "
+     "used for score/turn-count/credits display), named to match the "
+     "project's lowercase-underscore convention for custom C-runtime-"
+     "adjacent utilities."),
 ]
 
 

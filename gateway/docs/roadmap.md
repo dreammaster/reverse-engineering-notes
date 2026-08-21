@@ -706,6 +706,9 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       validated video-mode-index getter used by several drawing
       entry points. Full writeup in
       [overview.md](overview.md#video_getvalidindex-named).
+- [x] Named `sub_1063F` (3 callers) → `format_long_decimal` — a
+      generic signed 32-bit integer-to-decimal-string formatter. Full
+      writeup in [overview.md](overview.md#format_long_decimal-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

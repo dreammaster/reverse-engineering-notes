@@ -2762,3 +2762,18 @@ the sentinel `-6` otherwise. Called from `Surface_draw`/
 `Surface_draw2`/`Video_ClearScreen` at the start of drawing operations.
 
 Applied via `apply_renames_gatemain.py`'s sixty-ninth batch.
+
+### `format_long_decimal` named
+
+Moved to `sub_1063F` (3 callers, called from the already-named
+`Commset_show`). Confirmed via repeated calls to the MS Quick C/MSC
+runtime's 32-bit long-division helper (`unknown_libname_5`, dividing
+by 1000) as a signed 32-bit integer-to-decimal-string formatter:
+special-cases exactly zero, negates and prefixes `-` for negative
+values, then repeatedly divides by progressively smaller powers of ten
+to extract each decimal digit into a local buffer. A generic number-
+formatting utility, plausibly used for score/turn-count/credits
+display. Named to match the project's lowercase-underscore convention
+for custom C-runtime-adjacent utilities.
+
+Applied via `apply_renames_gatemain.py`'s seventieth batch.
