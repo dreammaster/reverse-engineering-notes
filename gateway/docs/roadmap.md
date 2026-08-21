@@ -596,6 +596,13 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       message, shared as a one-time-description gate across several
       distinct maze corridor rooms. Full writeup in
       [overview.md](overview.md#logics_describecorridoronce-named).
+- [x] Named `sub_1D732` (6 callers) → `Opl2_writeRhythmRegister`, plus
+      `_opl2TremoloDepth`/`_opl2VibratoDepth`/`_opl2RhythmEnabled`/
+      `_opl2RhythmInstruments` — an exact match for OPL2's real
+      hardware register `0xBD`. Skipped `sub_14A5F` (unclear verb
+      semantics) and `sub_1A0FC` (another corrupted-looking fragment).
+      Full writeup in
+      [overview.md](overview.md#opl2_writerhythmregister-named--the-opl2-subsystem-grows).
 - [ ] Unify the whole music/sound-hardware picture: `Speaker_playTone`/
       `Speaker_playErrorBeep` (PC-speaker tones), `Midi_sendByte` +
       `sub_1D966`/`sub_1EE70`/`sub_1ECB6` (MPU-401/MIDI), and

@@ -1022,6 +1022,47 @@ RENAMES = [
      "already-named j_method233), consistent with several physically "
      "distinct maze-like corridor rooms reusing identical flavor "
      "text and one shared first-visit flag."),
+
+    # -- thirty-fifth pass: investigated but skipped sub_14A5F (6
+    # callers, called from Logics_checkMoveRestriction -- a generic
+    # "print object header, invoke its logic for an action" dispatcher
+    # with several unclear pieces: j_scene_update? and thunk_sub_669E3
+    # weren't traced, and the exact verb/action semantics stayed
+    # ambiguous; not renamed) and sub_1A0FC (6 callers, another
+    # "sp-analysis failed" mid-function fragment, a separate instance
+    # of the same disassembly-boundary problem seen elsewhere in this
+    # binary). Moved to sub_1D732, which resolved into a clean
+    # continuation of the already-sighted OPL2/AdLib subsystem: it
+    # writes the OPL2's real hardware register 0xBD (AM depth/Vibrato
+    # depth/Rhythm mode enable/rhythm instrument bits), built from four
+    # flag globals. See
+    # docs/overview.md#opl2_writerhythmregister-named--the-opl2-subsystem-grows. --
+
+    (0x1D732, "Opl2_writeRhythmRegister",
+     "sub_1D732(): builds a byte from four flag globals -- bit 0x80 "
+     "from _opl2TremoloDepth (was byte_D1C52), bit 0x40 from "
+     "_opl2VibratoDepth (was byte_D1C58), bit 0x20 from "
+     "_opl2RhythmEnabled (was byte_D1C53), and the low bits directly "
+     "from _opl2RhythmInstruments (was byte_D1C59) -- then writes it "
+     "via the already-named Opl2_writeRegister(0xBD, value). OPL2's "
+     "real hardware register 0xBD is exactly this: bit 7 tremolo (AM) "
+     "depth, bit 6 vibrato depth, bit 5 rhythm-mode enable, and bits "
+     "4-0 individual rhythm-instrument enables (bass drum/snare/tom-"
+     "tom/cymbal/hi-hat) -- an exact match confirming this is real "
+     "OPL2 hardware programming, not a coincidental register number."),
+    (0xD1C52, "_opl2TremoloDepth",
+     "Was byte_D1C52: boolean flag contributing OPL2 register 0xBD's "
+     "bit 0x80 (tremolo/AM depth) via Opl2_writeRhythmRegister."),
+    (0xD1C58, "_opl2VibratoDepth",
+     "Was byte_D1C58: boolean flag contributing OPL2 register 0xBD's "
+     "bit 0x40 (vibrato depth) via Opl2_writeRhythmRegister."),
+    (0xD1C53, "_opl2RhythmEnabled",
+     "Was byte_D1C53: boolean flag contributing OPL2 register 0xBD's "
+     "bit 0x20 (rhythm mode enable) via Opl2_writeRhythmRegister."),
+    (0xD1C59, "_opl2RhythmInstruments",
+     "Was byte_D1C59: bitmask contributing OPL2 register 0xBD's low 5 "
+     "bits directly (individual rhythm-instrument enables: bass drum/"
+     "snare/tom-tom/cymbal/hi-hat) via Opl2_writeRhythmRegister."),
 ]
 
 

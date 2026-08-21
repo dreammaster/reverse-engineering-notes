@@ -30307,7 +30307,7 @@ loc_1CEC3:
 
 loc_1CEF5:                              ; CODE XREF: sub_1CEC0+7\u2191j
                 mov     al, byte ptr [bp+arg_0]
-                mov     byte_D1C53, al
+                mov     _opl2RhythmEnabled, al
                 cmp     [bp+arg_0], 0
                 jz      short loc_1CF06
                 mov     ax, 0Bh
@@ -30319,11 +30319,11 @@ loc_1CF06:                              ; CODE XREF: sub_1CEC0+3F\u2191j
 
 loc_1CF09:                              ; CODE XREF: sub_1CEC0+44\u2191j
                 mov     word_D1C82, ax
-                mov     byte_D1C59, 0
+                mov     _opl2RhythmInstruments, 0
                 push    cs
                 call    near ptr sub_1D1FE
                 push    cs
-                call    near ptr sub_1D732
+                call    near ptr Opl2_writeRhythmRegister
                 pop     bp
                 retf
 sub_1CEC0       endp
@@ -30429,13 +30429,13 @@ arg_4           = byte ptr  0Ah
                 push    bp
                 mov     bp, sp
                 mov     al, [bp+arg_0]
-                mov     byte_D1C52, al
+                mov     _opl2TremoloDepth, al
                 mov     al, [bp+arg_2]
-                mov     byte_D1C58, al
+                mov     _opl2VibratoDepth, al
                 mov     al, [bp+arg_4]
                 mov     byte_D1C54, al
                 push    cs
-                call    near ptr sub_1D732
+                call    near ptr Opl2_writeRhythmRegister
                 push    cs
                 call    near ptr sub_1D570
                 pop     bp
@@ -30488,7 +30488,7 @@ loc_1CFC1:                              ; CODE XREF: sub_1CFB0+C\u2191j
                 add     ax, 1Ah
                 mov     [bp+var_4], ax
                 mov     [bp+var_2], dx
-                cmp     byte_D1C53, 0
+                cmp     _opl2RhythmEnabled, 0
                 jz      short loc_1D00C
                 mov     ax, [bp+arg_0]
                 shl     ax, 1
@@ -30563,7 +30563,7 @@ loc_1D073:                              ; CODE XREF: sub_1D05A+12\u2191j
                 mov     bx, [bp+arg_0]
                 mov     al, byte ptr [bp+arg_2]
                 mov     [bx-62C6h], al
-                cmp     byte_D1C53, 0
+                cmp     _opl2RhythmEnabled, 0
                 jz      short loc_1D096
                 mov     ax, bx
                 shl     ax, 1
@@ -30620,7 +30620,7 @@ arg_2           = word ptr  8
 
                 push    bp
                 mov     bp, sp
-                cmp     byte_D1C53, 0
+                cmp     _opl2RhythmEnabled, 0
                 jnz     short loc_1D0E2
                 cmp     [bp+arg_0], 9
                 jb      short loc_1D0E8
@@ -30666,7 +30666,7 @@ arg_2           = word ptr  8
                 mov     [bp+arg_2], 0
 
 loc_1D11A:                              ; CODE XREF: sub_1D10C+7\u2191j
-                cmp     byte_D1C53, 0
+                cmp     _opl2RhythmEnabled, 0
                 jnz     short loc_1D127
                 cmp     [bp+arg_0], 9
                 jb      short loc_1D12D
@@ -30689,7 +30689,7 @@ loc_1D12D:                              ; CODE XREF: sub_1D10C+19\u2191j
 ; ---------------------------------------------------------------------------
 
 loc_1D146:                              ; CODE XREF: sub_1D10C+1F\u2191j
-                cmp     byte_D1C53, 0
+                cmp     _opl2RhythmEnabled, 0
                 jz      short loc_1D1A2
                 cmp     [bp+arg_0], 0Ah
                 ja      short loc_1D1A2
@@ -30728,9 +30728,9 @@ loc_1D193:                              ; CODE XREF: sub_1D10C+5C\u2191j
                                         ; sub_1D10C+64\u2191j
                 mov     bx, [bp+arg_0]
                 mov     al, [bx+47Eh]
-                or      byte_D1C59, al
+                or      _opl2RhythmInstruments, al
                 push    cs
-                call    near ptr sub_1D732
+                call    near ptr Opl2_writeRhythmRegister
 
 loc_1D1A2:                              ; CODE XREF: sub_1D10C+3F\u2191j
                                         ; sub_1D10C+45\u2191j
@@ -30750,7 +30750,7 @@ arg_0           = word ptr  6
 
                 push    bp
                 mov     bp, sp
-                cmp     byte_D1C53, 0
+                cmp     _opl2RhythmEnabled, 0
                 jnz     short loc_1D1B4
                 cmp     [bp+arg_0], 9
                 jb      short loc_1D1BA
@@ -30776,16 +30776,16 @@ loc_1D1BA:                              ; CODE XREF: sub_1D1A4+E\u2191j
 ; ---------------------------------------------------------------------------
 
 loc_1D1DE:                              ; CODE XREF: sub_1D1A4+14\u2191j
-                cmp     byte_D1C53, 0
+                cmp     _opl2RhythmEnabled, 0
                 jz      short loc_1D1FC
                 cmp     [bp+arg_0], 0Ah
                 ja      short loc_1D1FC
                 mov     bx, [bp+arg_0]
                 mov     al, [bx+47Eh]
                 not     al
-                and     byte_D1C59, al
+                and     _opl2RhythmInstruments, al
                 push    cs
-                call    near ptr sub_1D732
+                call    near ptr Opl2_writeRhythmRegister
 
 loc_1D1FC:                              ; CODE XREF: sub_1D1A4+3F\u2191j
                                         ; sub_1D1A4+45\u2191j
@@ -30837,7 +30837,7 @@ loc_1D227:                              ; CODE XREF: sub_1D1FE+1E\u2191j
                 cmp     si, 12h
                 jl      short loc_1D207
                 mov     [bp+var_2], si
-                cmp     byte_D1C53, 0
+                cmp     _opl2RhythmEnabled, 0
                 jnz     short loc_1D244
                 jmp     loc_1D2C8
 ; ---------------------------------------------------------------------------
@@ -31093,7 +31093,7 @@ arg_2           = word ptr  8
 loc_1D3D8:                              ; CODE XREF: sub_1D3C4+E\u2191j
                                         ; DATA XREF: sub_1D3C4+7A\u2193o ...
                 push    cs
-                call    near ptr sub_1D732
+                call    near ptr Opl2_writeRhythmRegister
                 pop     bp
                 retf
 ; ---------------------------------------------------------------------------
@@ -31200,7 +31200,7 @@ arg_0           = word ptr  6
                 push    bp
                 mov     bp, sp
                 push    cs
-                call    near ptr sub_1D732
+                call    near ptr Opl2_writeRhythmRegister
                 push    cs
                 call    near ptr sub_1D570
                 push    [bp+arg_0]
@@ -31250,7 +31250,7 @@ arg_0           = word ptr  6
                 mov     bp, sp
                 sub     sp, 6
                 push    si
-                cmp     byte_D1C53, 0
+                cmp     _opl2RhythmEnabled, 0
                 jz      short loc_1D4AE
                 mov     bx, [bp+arg_0]
                 mov     es, seg_D0F06
@@ -31281,7 +31281,7 @@ loc_1D4BA:                              ; CODE XREF: sub_1D492+1A\u2191j
                 sub     ax, 3Fh ; '?'
                 neg     ax
                 mov     [bp+var_4], ax
-                cmp     byte_D1C53, 0
+                cmp     _opl2RhythmEnabled, 0
                 jz      short loc_1D4F4
                 cmp     [bp+var_6], 6
                 jbe     short loc_1D4F4
@@ -31624,7 +31624,7 @@ sub_1D694       endp
 
 ; Attributes: bp-based frame
 
-sub_1D732       proc far                ; CODE XREF: sub_1CEC0+56\u2191p
+Opl2_writeRhythmRegister proc far       ; CODE XREF: sub_1CEC0+56\u2191p
                                         ; sub_1CF90+16\u2191p ...
 
 var_2           = word ptr -2
@@ -31632,42 +31632,42 @@ var_2           = word ptr -2
                 push    bp
                 mov     bp, sp
                 sub     sp, 2
-                cmp     byte_D1C52, 0
+                cmp     _opl2TremoloDepth, 0
                 jz      short loc_1D744
                 mov     ax, 80h ; '€'
                 jmp     short loc_1D746
 ; ---------------------------------------------------------------------------
 
-loc_1D744:                              ; CODE XREF: sub_1D732+B\u2191j
+loc_1D744:                              ; CODE XREF: Opl2_writeRhythmRegister+B\u2191j
                 sub     ax, ax
 
-loc_1D746:                              ; CODE XREF: sub_1D732+10\u2191j
+loc_1D746:                              ; CODE XREF: Opl2_writeRhythmRegister+10\u2191j
                 mov     [bp+var_2], ax
-                cmp     byte_D1C58, 0
+                cmp     _opl2VibratoDepth, 0
                 jz      short loc_1D756
                 mov     ax, 40h ; '@'
                 jmp     short loc_1D758
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1D756:                              ; CODE XREF: sub_1D732+1C\u2191j
+loc_1D756:                              ; CODE XREF: Opl2_writeRhythmRegister+1C\u2191j
                 sub     ax, ax
 
-loc_1D758:                              ; CODE XREF: sub_1D732+21\u2191j
+loc_1D758:                              ; CODE XREF: Opl2_writeRhythmRegister+21\u2191j
                 or      [bp+var_2], ax
-                cmp     byte_D1C53, 0
+                cmp     _opl2RhythmEnabled, 0
                 jz      short loc_1D768
                 mov     ax, 20h ; ' '
                 jmp     short loc_1D76A
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1D768:                              ; CODE XREF: sub_1D732+2E\u2191j
+loc_1D768:                              ; CODE XREF: Opl2_writeRhythmRegister+2E\u2191j
                 sub     ax, ax
 
-loc_1D76A:                              ; CODE XREF: sub_1D732+33\u2191j
+loc_1D76A:                              ; CODE XREF: Opl2_writeRhythmRegister+33\u2191j
                 or      [bp+var_2], ax
-                mov     al, byte_D1C59
+                mov     al, _opl2RhythmInstruments
                 sub     ah, ah
                 or      [bp+var_2], ax
                 push    [bp+var_2]
@@ -31677,7 +31677,7 @@ loc_1D76A:                              ; CODE XREF: sub_1D732+33\u2191j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_1D732       endp
+Opl2_writeRhythmRegister endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -395934,18 +395934,18 @@ aRunTimeErrorR6007BadEnv db 0Dh,0Ah
                 db 0FFh ; ÿ
                 db 0FFh ; ÿ
                 db  79h ; y
-byte_D1C52      db 0                    ; DATA XREF: sub_1CF90+6\u2191w
-                                        ; sub_1D732+6\u2191r
-byte_D1C53      db 0                    ; DATA XREF: sub_1CEC0+38\u2191w
+_opl2TremoloDepth db 0                  ; DATA XREF: sub_1CF90+6\u2191w
+                                        ; Opl2_writeRhythmRegister+6\u2191r
+_opl2RhythmEnabled db 0                 ; DATA XREF: sub_1CEC0+38\u2191w
                                         ; sub_1CFB0+42\u2191r ...
 byte_D1C54      db 0                    ; DATA XREF: sub_1CF90+12\u2191w
                                         ; sub_1D570\u2191r
                 align 2
 word_D1C56      dw 0                    ; DATA XREF: sub_1CF1C:loc_1CF30\u2191w
                                         ; sub_1CF1C+3C\u2191r ...
-byte_D1C58      db 0                    ; DATA XREF: sub_1CF90+C\u2191w
-                                        ; sub_1D732+17\u2191r
-byte_D1C59      db 0                    ; DATA XREF: sub_1CEC0+4C\u2191w
+_opl2VibratoDepth db 0                  ; DATA XREF: sub_1CF90+C\u2191w
+                                        ; Opl2_writeRhythmRegister+17\u2191r
+_opl2RhythmInstruments db 0             ; DATA XREF: sub_1CEC0+4C\u2191w
                                         ; sub_1D10C+8E\u2191w ...
                 db    0
                 db    0

@@ -2061,3 +2061,35 @@ distinct maze-like corridor rooms in the game reusing identical
 flavor text and one shared first-visit flag.
 
 Applied via `apply_renames_gatemain.py`'s thirty-fourth batch.
+
+### `Opl2_writeRhythmRegister` named — the OPL2 subsystem grows
+
+Investigated but skipped `sub_14A5F` (6 callers, called from
+`Logics_checkMoveRestriction`) — a generic-looking "print an object's
+header (name + location preposition), then invoke its own logic for a
+given action" dispatcher, but several pieces stayed unclear
+(`j_scene_update?` and `thunk_sub_669E3` weren't traced, and the exact
+verb/action semantics behind its `param` argument remained ambiguous).
+Not renamed. Also skipped `sub_1A0FC` (6 callers) — another
+`sp-analysis failed` mid-function fragment, a separate instance of the
+same disassembly-boundary problem seen elsewhere in this binary, not
+part of the already-flagged `sub_4A69F` cluster specifically.
+
+Moved to `sub_1D732`, which resolved cleanly into a continuation of
+the OPL2/AdLib subsystem sighted a few passes ago. It writes the
+OPL2's real hardware register `0xBD` via the already-named
+`Opl2_writeRegister`, building the byte from four flag globals:
+
+- bit `0x80` — **`_opl2TremoloDepth`** (was `byte_D1C52`)
+- bit `0x40` — **`_opl2VibratoDepth`** (was `byte_D1C58`)
+- bit `0x20` — **`_opl2RhythmEnabled`** (was `byte_D1C53`)
+- bits `4-0` — **`_opl2RhythmInstruments`** (was `byte_D1C59`)
+
+This is an *exact* match for OPL2's documented register `0xBD`: bit 7
+tremolo (AM) depth, bit 6 vibrato depth, bit 5 rhythm-mode enable, and
+bits 4-0 individual rhythm-instrument enables (bass drum, snare,
+tom-tom, cymbal, hi-hat) — confirming real OPL2 hardware programming
+rather than a coincidental register number. Named
+**`Opl2_writeRhythmRegister`**.
+
+Applied via `apply_renames_gatemain.py`'s thirty-fifth batch.

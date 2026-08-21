@@ -17248,6 +17248,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1D72A);
 	op_hex		(x,	1);
 	create_insn	(0X1D732);
+	set_name	(0X1D732,	"Opl2_writeRhythmRegister");
 	create_insn	(x=0X1D735);
 	op_hex		(x,	1);
 	create_insn	(0X1D744);
@@ -18439,10 +18440,6 @@ static Bytes_2(void) {
 	create_insn	(0X1F63A);
 	create_insn	(x=0X1F641);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X1F644);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X1F658);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -18452,6 +18449,10 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X1F644);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X1F658);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X1F65B);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X1F663);
@@ -23529,9 +23530,6 @@ static Bytes_3(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X246AF);
 	op_stkvar	(x,	0);
-	set_cmt	(0X246B2,	"ptr",	0);
-	create_insn	(x=0X246B2);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -23541,6 +23539,9 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X246B2,	"ptr",	0);
+	create_insn	(x=0X246B2);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X246B9);
 	op_hex		(x,	1);
 	create_insn	(x=0X246BC);
@@ -137776,11 +137777,15 @@ static Bytes_25(void) {
 	create_strlit	(0XD1C19,	0X35);
 	set_name	(0XD1C19,	"aRunTimeErrorR6007BadEnv");
 	create_byte	(0XD1C52);
+	set_name	(0XD1C52,	"_opl2TremoloDepth");
 	create_byte	(0XD1C53);
+	set_name	(0XD1C53,	"_opl2RhythmEnabled");
 	create_byte	(0XD1C54);
 	create_word	(0XD1C56);
 	create_byte	(0XD1C58);
+	set_name	(0XD1C58,	"_opl2VibratoDepth");
 	create_byte	(0XD1C59);
+	set_name	(0XD1C59,	"_opl2RhythmInstruments");
 	create_byte	(0XD1C6C);
 	create_byte	(0XD1C6D);
 	create_byte	(0XD1C6E);
