@@ -14439,7 +14439,7 @@ Listbox_getItems endp
 
 ; Attributes: bp-based frame
 
-sub_16978       proc far                ; CODE XREF: Listbox_mouseButtonDown+10\u2193p
+Windows_setCurrentWindow proc far       ; CODE XREF: Listbox_mouseButtonDown+10\u2193p
                                         ; sub_17AB8+3C\u2193P ...
 
 var_2           = word ptr -2
@@ -14462,13 +14462,13 @@ arg_0           = word ptr  6
                 mov     ax, [bp+arg_0]
                 mov     Windows_currentWindow, ax
 
-loc_1699F:                              ; CODE XREF: sub_16978+10\u2191j
-                                        ; sub_16978+15\u2191j
+loc_1699F:                              ; CODE XREF: Windows_setCurrentWindow+10\u2191j
+                                        ; Windows_setCurrentWindow+15\u2191j
                 mov     ax, [bp+var_2]
                 mov     sp, bp
                 pop     bp
                 retf
-sub_16978       endp
+Windows_setCurrentWindow endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -16487,7 +16487,7 @@ yp              = word ptr  0Ah
                 mov     [bp+var_4], 0
                 push    [bp+winNumber]
                 push    cs
-                call    near ptr sub_16978
+                call    near ptr Windows_setCurrentWindow
                 add     sp, 2
                 mov     ax, [bp+regionIndex]
                 or      ax, ax
@@ -16961,7 +16961,7 @@ loc_17ACA:
                 or      ax, dx
                 jz      short loc_17B2C
                 push    [bp+widowNum]
-                call    sub_16978
+                call    Windows_setCurrentWindow
                 add     sp, 2
                 mov     si, word_D0766
                 shl     si, 1
@@ -143260,7 +143260,7 @@ loc_5CE78:                              ; CODE XREF: scene_update?+7E\u2191j
                 mov     ax, es:word_CB948
                 mov     word_CBCC6, ax
                 push    LIstbox_index1
-                call    sub_16978
+                call    Windows_setCurrentWindow
                 add     sp, 2
                 mov     ax, 1
                 push    ax              ; argE
@@ -143279,7 +143279,7 @@ loc_5CE78:                              ; CODE XREF: scene_update?+7E\u2191j
 
 loc_5CEBB:                              ; CODE XREF: scene_update?+92\u2191j
                 push    LIstbox_index1
-                call    sub_16978
+                call    Windows_setCurrentWindow
                 add     sp, 2
                 cmp     ax, LIstbox_index1
                 jz      short loc_5CEE0
@@ -158636,7 +158636,7 @@ loc_63B08:                              ; CODE XREF: prompt_for_filename:loc_63D
 
 loc_63B69:                              ; CODE XREF: prompt_for_filename+675\u2191j
                 push    [bp+windowNum]
-                call    sub_16978
+                call    Windows_setCurrentWindow
                 add     sp, 2
                 sub     ax, ax
                 push    ax              ; delta

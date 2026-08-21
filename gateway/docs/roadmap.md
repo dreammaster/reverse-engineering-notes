@@ -654,6 +654,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       room-to-background-music mapping entry point, called from
       `main()` and `show_startup`. Full writeup in
       [overview.md](overview.md#sound_selecttrackforroom-named).
+- [x] Named `sub_16978` (4 callers) → `Windows_setCurrentWindow` —
+      switches the active window, returning the previous one for
+      save/restore use. Full writeup in
+      [overview.md](overview.md#windows_setcurrentwindow-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

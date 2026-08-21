@@ -1594,6 +1594,21 @@ RENAMES = [
      "lookup) to start the new room's music. The room-to-music "
      "mapping entry point, called directly from main() and the "
      "already-named show_startup."),
+
+    # -- fifty-sixth pass: sub_16978, confirmed directly by its body
+    # (using the already-named Windows_currentWindow/Listbox_draw) as
+    # the "switch active window" primitive, returning the previous
+    # window for save/restore use. See
+    # docs/overview.md#windows_setcurrentwindow-named. --
+
+    (0x16978, "Windows_setCurrentWindow",
+     "sub_16978(windowNum): saves the current Windows_currentWindow "
+     "to return later. If windowNum is valid (>=0) and different from "
+     "the current window, redraws the current listbox as deselected "
+     "(Listbox_draw(0)) and sets Windows_currentWindow = windowNum. "
+     "Always returns the PREVIOUS current window number, letting "
+     "callers temporarily switch windows and restore the old one "
+     "afterward."),
 ]
 
 

@@ -2541,3 +2541,14 @@ the current track and runs the same track-loading sequence
 `Sound_selectTrack` uses to start the new room's music.
 
 Applied via `apply_renames_gatemain.py`'s fifty-fifth batch.
+
+### `Windows_setCurrentWindow` named
+
+Moved to `sub_16978` (4 callers). Confirmed directly by its body,
+using the already-named `Windows_currentWindow`/`Listbox_draw`: saves
+the current window to return later; if the requested window is valid
+and different, redraws the current listbox as deselected and switches
+to it; always returns the *previous* current window, letting callers
+temporarily switch windows and restore the old one afterward.
+
+Applied via `apply_renames_gatemain.py`'s fifty-sixth batch.
