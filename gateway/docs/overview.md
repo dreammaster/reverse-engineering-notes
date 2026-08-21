@@ -2044,3 +2044,20 @@ and output buffering (`Midi_bufferByte`), still short of a single
 unifying writeup but steadily converging.
 
 Applied via `apply_renames_gatemain.py`'s thirty-third batch.
+
+### `Logics_describeCorridorOnce` named
+
+Moved to `sub_AB180` (7 callers). Confirmed by decoding its real
+`GATESTR.DAT` message (`msgId 0x3C00`): *"This is one of the many
+corridors that wind their way through the occupied portions of
+Gateway. These man-made hallways are nested inside the original
+tunnels that were dug by the Heechee..."* — a generic Gateway-station
+corridor description. `Logics_describeCorridorOnce()`: if `byte_CF114`
+is set, clears it and prints that message; otherwise does nothing — a
+one-time-description gate. Confirmed shared across multiple different
+rooms' compiled logic (7 callers, including `sub_ABA21` via the
+already-named `j_method233`), consistent with several physically
+distinct maze-like corridor rooms in the game reusing identical
+flavor text and one shared first-visit flag.
+
+Applied via `apply_renames_gatemain.py`'s thirty-fourth batch.

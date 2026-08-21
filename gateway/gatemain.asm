@@ -315345,7 +315345,7 @@ seg221          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_AB180       proc far                ; CODE XREF: sub_ABA21+9F\u2193p
+Logics_describeCorridorOnce proc far    ; CODE XREF: sub_ABA21+9F\u2193p
                                         ; sub_ABB8F+AF\u2193p ...
                 cmp     byte_CF114, 0
 
@@ -315361,9 +315361,9 @@ loc_AB187:
                 call    TextWindow_add
                 add     sp, 4
 
-locret_AB19C:                           ; CODE XREF: sub_AB180:loc_AB185\u2191j
+locret_AB19C:                           ; CODE XREF: Logics_describeCorridorOnce:loc_AB185\u2191j
                 retf
-sub_AB180       endp
+Logics_describeCorridorOnce endp
 
 ; ---------------------------------------------------------------------------
 
@@ -316689,7 +316689,7 @@ loc_ABAB9:                              ; CODE XREF: sub_ABA21+118\u2193j
 loc_ABABF:                              ; CODE XREF: sub_ABA21+14\u2191j
                                         ; DATA XREF: sub_ABA21+149\u2193o ...
                 push    cs
-                call    near ptr sub_AB180
+                call    near ptr Logics_describeCorridorOnce
                 mov     ax, 3C09h
 
 loc_ABAC6:                              ; CODE XREF: sub_ABA21+BA\u2193j
@@ -316904,7 +316904,7 @@ loc_ABC27:                              ; CODE XREF: sub_ABB8F+12E\u2193j
 loc_ABC3D:                              ; CODE XREF: sub_ABB8F+13\u2191j
                                         ; sub_ABB8F+11F\u2193j
                 push    cs
-                call    near ptr sub_AB180
+                call    near ptr Logics_describeCorridorOnce
                 mov     ax, 3C0Ch
                 mov     dx, 0F000h
                 push    dx
@@ -317243,7 +317243,7 @@ loc_ABE87:                              ; CODE XREF: sub_ABDEF+19F\u2193j
 loc_ABE8D:                              ; CODE XREF: sub_ABDEF+14\u2191j
                                         ; DATA XREF: sub_ABDEF+1B0\u2193o ...
                 push    cs
-                call    near ptr sub_AB180
+                call    near ptr Logics_describeCorridorOnce
                 mov     ax, 3C0Eh
 
 loc_ABE94:                              ; CODE XREF: sub_ABDEF+BA\u2193j
@@ -317508,7 +317508,7 @@ loc_AC069:                              ; CODE XREF: sub_ABFC4+F6\u2193j
 loc_AC06F:                              ; CODE XREF: sub_ABFC4+13\u2191j
                                         ; sub_ABFC4+11A\u2193j
                 push    cs
-                call    near ptr sub_AB180
+                call    near ptr Logics_describeCorridorOnce
                 mov     ax, 3C11h
                 mov     dx, 0F000h
                 push    dx
@@ -317680,7 +317680,7 @@ loc_AC171:                              ; CODE XREF: sub_AC0F4+51\u2191j
 loc_AC198:                              ; CODE XREF: sub_AC0F4+14\u2191j
                                         ; DATA XREF: sub_AC0F4+19E\u2193o ...
                 push    cs
-                call    near ptr sub_AB180
+                call    near ptr Logics_describeCorridorOnce
                 mov     ax, 3C13h
                 mov     dx, 0F000h
                 push    dx
@@ -317917,7 +317917,7 @@ loc_AC34F:                              ; CODE XREF: sub_AC2B7+118\u2193j
 loc_AC355:                              ; CODE XREF: sub_AC2B7+14\u2191j
                                         ; DATA XREF: sub_AC2B7+149\u2193o ...
                 push    cs
-                call    near ptr sub_AB180
+                call    near ptr Logics_describeCorridorOnce
                 mov     ax, 3C15h
 
 loc_AC35C:                              ; CODE XREF: sub_AC2B7+BA\u2193j
@@ -318148,7 +318148,7 @@ loc_AC4EF:                              ; CODE XREF: sub_AC425+15E\u2193j
 loc_AC4F4:                              ; CODE XREF: sub_AC425+14\u2191j
                                         ; DATA XREF: sub_AC425+16F\u2193o ...
                 push    cs
-                call    near ptr sub_AB180
+                call    near ptr Logics_describeCorridorOnce
                 mov     ax, 3C18h
                 mov     dx, 0F000h
                 push    dx
@@ -391317,8 +391317,8 @@ aSS_4           db 9,'%s; %s',0Ah,0
                 db    0
 Persisted_val212 dw 0                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
                                         ; sub_A60CE+47F\u2191w ...
-byte_CF114      db 1                    ; DATA XREF: sub_AB180\u2191r
-                                        ; sub_AB180:loc_AB187\u2191w
+byte_CF114      db 1                    ; DATA XREF: Logics_describeCorridorOnce\u2191r
+                                        ; Logics_describeCorridorOnce:loc_AB187\u2191w
                 align 2
                 db  40h ; @
                 db    1

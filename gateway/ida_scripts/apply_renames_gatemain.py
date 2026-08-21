@@ -1003,6 +1003,25 @@ RENAMES = [
      "non-ACK byte arrives while waiting for a command's "
      "acknowledgment -- the handler for real incoming MIDI data "
      "arriving out-of-band during command handshaking."),
+
+    # -- thirty-fourth pass: sub_AB180, confirmed by decoding its real
+    # GATESTR.DAT message (msgId 0x3C00, a Gateway-station corridor
+    # description) as a "show this description only the first time"
+    # helper, reused by several different rooms' compiled logic
+    # (confirmed one real caller, sub_ABA21, reached via j_method233)
+    # that apparently share this identical corridor flavor text. See
+    # docs/overview.md#logics_describecorridoronce-named. --
+
+    (0xAB180, "Logics_describeCorridorOnce",
+     "sub_AB180(): if byte_CF114 is set, clears it and prints the "
+     "decoded GATESTR.DAT message 0x3C00 -- 'This is one of the many "
+     "corridors that wind their way through the occupied portions of "
+     "Gateway...' -- via TextWindow_add; otherwise does nothing. A "
+     "one-time-description gate shared by multiple different rooms' "
+     "compiled logic (7 callers, including sub_ABA21 via the "
+     "already-named j_method233), consistent with several physically "
+     "distinct maze-like corridor rooms reusing identical flavor "
+     "text and one shared first-visit flag."),
 ]
 
 

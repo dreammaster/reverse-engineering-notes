@@ -591,6 +591,11 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       (byte output, command handshake, VLQ decode, track-byte peek,
       output buffering). Full writeup in
       [overview.md](overview.md#midi_sendcommand-named--the-mpu-401-commandacknowledge-protocol).
+- [x] Named `sub_AB180` (7 callers) → `Logics_describeCorridorOnce`,
+      confirmed by decoding its real GATESTR.DAT corridor-description
+      message, shared as a one-time-description gate across several
+      distinct maze corridor rooms. Full writeup in
+      [overview.md](overview.md#logics_describecorridoronce-named).
 - [ ] Unify the whole music/sound-hardware picture: `Speaker_playTone`/
       `Speaker_playErrorBeep` (PC-speaker tones), `Midi_sendByte` +
       `sub_1D966`/`sub_1EE70`/`sub_1ECB6` (MPU-401/MIDI), and
