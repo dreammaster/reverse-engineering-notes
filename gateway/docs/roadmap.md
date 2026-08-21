@@ -344,13 +344,24 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       `cmdline_param3`/`4`/`5`/`6`/`7`/`8` are `argv[3]`-`[8]`, matching
       `gate.idb`'s `soundMode`/`word_2A256`/`58`/`5A`/`5C`/`5E` exactly
       (`word_2A25A` = `_streamMode`). Renamed `_soundMode`/`_streamMode`
-      here; the other four `gate.idb` globals are a good target for a
-      `gate.idb` pass using this confirmed mapping. Full writeup in
+      here; the other four `gate.idb` globals were renamed in a
+      following session using this confirmed mapping. Full writeup in
       [overview.md](overview.md#word_c84d0-traced--a-shared-decoder-continuation-not-4-functions).
-      **Not resolved**: what resource type the decoder continuation
-      actually processes (needs `sub_18148`/`sub_18182`/`sub_181D8`/
-      `sub_18432`/`sub_18682`/`sub_186F0` traced), and
-      `cmdline_param4`/`5`/`7`/`8`'s individual roles.
+- [x] Kept pulling on the same thread and found the real gating
+      criterion behind `Stream_selectHandler`'s mode branches: not
+      resource type (that was only ever a hedge, never confirmed) but a
+      **CPU speed rating**, measured fresh via a complete, correctly-
+      bracketed calibration routine — `Cpu_beginSpeedTest` (reprograms
+      the PIT, installs a temporary tick-counting ISR), `Cpu_measureSpeed`
+      (a busy loop timed against it, producing `cpuSpeedRating`), and
+      `Cpu_endSpeedTest` (restores the PIT, the ISR vectors, *and* DOS's
+      date/time to correct for clock drift — were `sub_18182`/
+      `sub_18148`/`sub_181D8`). This refines rather than replaces the
+      earlier `Stream_*` naming. Full writeup in
+      [overview.md](overview.md#cpu-speed-calibration-decoded--refines-the-stream_-mode-dispatch).
+      **Still open**: what operation is actually being performance-tiered
+      (needs `sub_18242`/`sub_18432`/`sub_18682`/`sub_186F0` traced),
+      and `cmdline_param4`/`5`/`7`/`8`'s individual roles.
 - [ ] Continue working down the re-ranked list — the rest of the ~1750
       still-unnamed functions.
 - [ ] Cross-check the structs shared by name/concept with `gate.idb`

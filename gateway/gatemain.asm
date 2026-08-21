@@ -17832,11 +17832,11 @@ arg_0           = word ptr  6
 
 loc_1804B:
                 mov     byte_C84CB, bl
-                call    sub_18182
-                call    sub_18148
+                call    Cpu_beginSpeedTest
+                call    Cpu_measureSpeed
 
 loc_18055:
-                call    sub_181D8
+                call    Cpu_endSpeedTest
                 or      bx, bx
                 jnz     short loc_18070
                 mov     word_C84D0, 220h
@@ -17851,7 +17851,7 @@ loc_18062:
 loc_18070:                              ; CODE XREF: Stream_selectHandler+18\u2191j
                 cmp     bx, 1
                 jnz     short loc_18092
-                cmp     word_C84DA, 160h
+                cmp     cpuSpeedRating, 160h
 
 loc_1807B:
                 ja      short loc_18080
@@ -17882,7 +17882,7 @@ loc_18097:
 ; ---------------------------------------------------------------------------
 
 loc_1809F:                              ; CODE XREF: Stream_selectHandler+58\u2191j
-                cmp     word_C84DA, 160h
+                cmp     cpuSpeedRating, 160h
                 jbe     short loc_180D5
                 mov     word_C84D0, 493h
 
@@ -18024,7 +18024,7 @@ sub_18134       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18148       proc near               ; CODE XREF: Stream_selectHandler+10\u2191p
+Cpu_measureSpeed proc near              ; CODE XREF: Stream_selectHandler+10\u2191p
                 push    ax
                 push    cx
                 push    dx
@@ -18034,10 +18034,10 @@ sub_18148       proc near               ; CODE XREF: Stream_selectHandler+10\u21
                 sub     di, di
                 sub     si, si
 
-loc_18154:                              ; CODE XREF: sub_18148+22\u2193j
+loc_18154:                              ; CODE XREF: Cpu_measureSpeed+22\u2193j
                 mov     byte_C84E8, 1
 
-loc_18159:                              ; CODE XREF: sub_18148+20\u2193j
+loc_18159:                              ; CODE XREF: Cpu_measureSpeed+20\u2193j
                 imul    cx
                 imul    cx
                 add     di, 1
@@ -18051,20 +18051,20 @@ loc_18159:                              ; CODE XREF: sub_18148+20\u2193j
                 rcr     di, 1
                 shr     si, 1
                 rcr     di, 1
-                mov     word_C84DA, di
+                mov     cpuSpeedRating, di
                 pop     si
                 pop     di
                 pop     dx
                 pop     cx
                 pop     ax
                 retn
-sub_18148       endp
+Cpu_measureSpeed endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18182       proc near               ; CODE XREF: Stream_selectHandler+D\u2191p
+Cpu_beginSpeedTest proc near            ; CODE XREF: Stream_selectHandler+D\u2191p
                 push    ax
                 push    es
                 push    di
@@ -18097,21 +18097,21 @@ loc_18190:
                 jmp     short $+2
 ; ---------------------------------------------------------------------------
 
-loc_181C4:                              ; CODE XREF: sub_18182+40\u2191j
+loc_181C4:                              ; CODE XREF: Cpu_beginSpeedTest+40\u2191j
                 jmp     short $+2
 ; ---------------------------------------------------------------------------
 
-loc_181C6:                              ; CODE XREF: sub_18182:loc_181C4\u2191j
+loc_181C6:                              ; CODE XREF: Cpu_beginSpeedTest:loc_181C4\u2191j
                 mov     ax, 4DAEh
                 out     40h, al         ; Timer 8253-5 (AT: 8254.2).
                 jmp     short $+2
 ; ---------------------------------------------------------------------------
 
-loc_181CD:                              ; CODE XREF: sub_18182+49\u2191j
+loc_181CD:                              ; CODE XREF: Cpu_beginSpeedTest+49\u2191j
                 jmp     short $+2
 ; ---------------------------------------------------------------------------
 
-loc_181CF:                              ; CODE XREF: sub_18182:loc_181CD\u2191j
+loc_181CF:                              ; CODE XREF: Cpu_beginSpeedTest:loc_181CD\u2191j
                 mov     al, ah
                 out     40h, al         ; Timer 8253-5 (AT: 8254.2).
                 sti
@@ -18120,13 +18120,13 @@ loc_181CF:                              ; CODE XREF: sub_18182:loc_181CD\u2191j
                 assume es:nothing
                 pop     ax
                 retn
-sub_18182       endp
+Cpu_beginSpeedTest endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_181D8       proc near               ; CODE XREF: Stream_selectHandler:loc_18055\u2191p
+Cpu_endSpeedTest proc near              ; CODE XREF: Stream_selectHandler:loc_18055\u2191p
                 push    ax
                 push    cx
                 push    dx
@@ -18145,21 +18145,21 @@ sub_181D8       proc near               ; CODE XREF: Stream_selectHandler:loc_18
                 jmp     short $+2
 ; ---------------------------------------------------------------------------
 
-loc_181F6:                              ; CODE XREF: sub_181D8+1C\u2191j
+loc_181F6:                              ; CODE XREF: Cpu_endSpeedTest+1C\u2191j
                 jmp     short $+2
 ; ---------------------------------------------------------------------------
 
-loc_181F8:                              ; CODE XREF: sub_181D8:loc_181F6\u2191j
+loc_181F8:                              ; CODE XREF: Cpu_endSpeedTest:loc_181F6\u2191j
                 mov     ax, word_C84CC
                 out     40h, al         ; Timer 8253-5 (AT: 8254.2).
                 jmp     short $+2
 ; ---------------------------------------------------------------------------
 
-loc_181FF:                              ; CODE XREF: sub_181D8+25\u2191j
+loc_181FF:                              ; CODE XREF: Cpu_endSpeedTest+25\u2191j
                 jmp     short $+2
 ; ---------------------------------------------------------------------------
 
-loc_18201:                              ; CODE XREF: sub_181D8:loc_181FF\u2191j
+loc_18201:                              ; CODE XREF: Cpu_endSpeedTest:loc_181FF\u2191j
                 xchg    al, ah
                 out     40h, al         ; Timer 8253-5 (AT: 8254.2).
                 sti
@@ -18182,11 +18182,11 @@ loc_18201:                              ; CODE XREF: sub_181D8:loc_181FF\u2191j
                 pop     cx
                 pop     ax
                 retn
-sub_181D8       endp
+Cpu_endSpeedTest endp
 
 ; ---------------------------------------------------------------------------
 
-loc_18224:                              ; DATA XREF: sub_18182+2E\u2191o
+loc_18224:                              ; DATA XREF: Cpu_beginSpeedTest+2E\u2191o
                 push    ax
                 push    bx
                 push    cx
@@ -18233,7 +18233,7 @@ sub_18242       endp
 ; ---------------------------------------------------------------------------
 
 loc_18262:                              ; CODE XREF: sg09a4:023D\u2191j
-                cmp     word_C84DA, 160h
+                cmp     cpuSpeedRating, 160h
                 jnb     short loc_1826D
                 jmp     locret_182F3
 ; ---------------------------------------------------------------------------
@@ -18605,7 +18605,7 @@ sub_18432       endp
 ; ---------------------------------------------------------------------------
 
 loc_184BD:                              ; CODE XREF: sg09a4:0498\u2191j
-                cmp     word_C84DA, 160h
+                cmp     cpuSpeedRating, 160h
                 ja      short loc_184C8
                 jmp     locret_18554
 ; ---------------------------------------------------------------------------
@@ -383665,7 +383665,7 @@ byte_C84CA      db 0                    ; DATA XREF: sub_18134\u2191r
                                         ; sub_18242\u2191w ...
 byte_C84CB      db 0                    ; DATA XREF: Stream_selectHandler:loc_1804B\u2191w
                                         ; Stream_readChunks+1F9\u2191r ...
-word_C84CC      dw 0FFFFh               ; DATA XREF: sub_181D8:loc_181F8\u2191r
+word_C84CC      dw 0FFFFh               ; DATA XREF: Cpu_endSpeedTest:loc_181F8\u2191r
                                         ; sub_183E3:loc_183FD\u2191r
 word_C84CE      dw 38Eh                 ; DATA XREF: sg09a4:027D\u2191r
                                         ; sg09a4:04D8\u2191r
@@ -383677,22 +383677,22 @@ word_C84D4      dw 0                    ; DATA XREF: Stream_selectHandler+26\u21
                                         ; sub_18109+9\u2191r ...
 dword_C84D6     dd 0                    ; DATA XREF: sg09a4:02A6\u2191w
                                         ; sg09a4:0327\u2191r ...
-word_C84DA      dw 0FFFFh               ; DATA XREF: Stream_selectHandler+33\u2191r
+cpuSpeedRating  dw 0FFFFh               ; DATA XREF: Stream_selectHandler+33\u2191r
                                         ; Stream_selectHandler:loc_1809F\u2191r ...
-word_C84DC      dw 0                    ; DATA XREF: sub_18182+B\u2191w
-                                        ; sub_181D8+A\u2191r
-word_C84DE      dw 0                    ; DATA XREF: sub_18182+12\u2191w
-                                        ; sub_181D8+11\u2191r
-word_C84E0      dw 0                    ; DATA XREF: sub_18182+19\u2191w
-                                        ; sub_181D8+30\u2191r
-word_C84E2      dw 0                    ; DATA XREF: sub_18182+1D\u2191w
-                                        ; sub_181D8+34\u2191r
-word_C84E4      dw 0                    ; DATA XREF: sub_18182+25\u2191w
-                                        ; sub_181D8+3C\u2191r
-word_C84E6      dw 0                    ; DATA XREF: sub_18182+29\u2191w
-                                        ; sub_181D8+40\u2191r
-byte_C84E8      db 0                    ; DATA XREF: sub_18148:loc_18154\u2191w
-                                        ; sub_18148+1B\u2191r ...
+word_C84DC      dw 0                    ; DATA XREF: Cpu_beginSpeedTest+B\u2191w
+                                        ; Cpu_endSpeedTest+A\u2191r
+word_C84DE      dw 0                    ; DATA XREF: Cpu_beginSpeedTest+12\u2191w
+                                        ; Cpu_endSpeedTest+11\u2191r
+word_C84E0      dw 0                    ; DATA XREF: Cpu_beginSpeedTest+19\u2191w
+                                        ; Cpu_endSpeedTest+30\u2191r
+word_C84E2      dw 0                    ; DATA XREF: Cpu_beginSpeedTest+1D\u2191w
+                                        ; Cpu_endSpeedTest+34\u2191r
+word_C84E4      dw 0                    ; DATA XREF: Cpu_beginSpeedTest+25\u2191w
+                                        ; Cpu_endSpeedTest+3C\u2191r
+word_C84E6      dw 0                    ; DATA XREF: Cpu_beginSpeedTest+29\u2191w
+                                        ; Cpu_endSpeedTest+40\u2191r
+byte_C84E8      db 0                    ; DATA XREF: Cpu_measureSpeed:loc_18154\u2191w
+                                        ; Cpu_measureSpeed+1B\u2191r ...
                 db    0
                 db    0
                 db    0

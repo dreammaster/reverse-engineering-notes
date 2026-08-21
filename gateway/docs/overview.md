@@ -1032,9 +1032,52 @@ individually control (only `cmdline_param6`'s role as the mode selector
 was pinned down this pass, since it's the one that traces cleanly to
 `Stream_selectHandler`).
 
-**Worth a `gate.idb` follow-up pass**: that IDB's `word_2A256`/`58`/
-`5A`/`5C`/`5E` (`argv[4]`/`[5]`/`[6]`/`[7]`/`[8]` respectively) can now
-be renamed using this confirmed mapping — `word_2A25A` specifically
-corresponds to `_streamMode` (`argv[6]`) — closing out that IDB's own
+**`gate.idb` follow-up applied in a later session**: that IDB's
+`word_2A256`/`58`/`5A`/`5C`/`5E` (`argv[4]`/`[5]`/`[6]`/`[7]`/`[8]`
+respectively) were renamed using this confirmed mapping —
+`streamMode`/`gatemainArg4`/`5`/`7`/`8` — closing out that IDB's own
 long-standing "5 unidentified globals passed to `GATEMAIN.EXE`" open
-item from its very first session.
+item from its very first session. See that IDB's own findings-log
+section above.
+
+### CPU speed calibration decoded — refines the `Stream_*` mode dispatch
+
+Same session, kept pulling on the `word_C84D0` thread past the point
+above. Turns out `Stream_selectHandler`'s mode branches aren't gated by
+resource type at all (as hedged in the previous section) — they're
+gated by a **CPU speed rating**, measured fresh via a complete,
+self-contained calibration routine using a classic DOS-era technique:
+
+- **`Cpu_beginSpeedTest`** (was `sub_18182`, called unconditionally at
+  the top of `Stream_selectHandler`) — saves the real `INT 70h`/`72h`
+  vectors and the current DOS date/time, installs a trivial temporary
+  ISR (just decrements a counter and `iret`s), and reprograms the
+  8253/8254 PIT (ports `43h`/`40h`) to a known frequency.
+- **`Cpu_measureSpeed`** (was `sub_18148`) — runs a fixed `imul`-based
+  busy loop until the temporary ISR's tick counter hits zero; however
+  many loop iterations completed (scaled down) becomes
+  **`cpuSpeedRating`** (was `word_C84DA`) — faster CPUs simply get more
+  busy-work done per fixed-length timer tick.
+- **`Cpu_endSpeedTest`** (was `sub_181D8`) — restores the original `INT
+  70h`/`72h` vectors and PIT divisor, then **re-sets DOS's date/time**
+  from the values saved at the start — correcting for the clock drift
+  that running the PIT at a different frequency would otherwise cause.
+  A properly bracketed calibrate/restore pair, not a permanent hook.
+
+`Stream_selectHandler`'s `cmp cpuSpeedRating, 0x160` checks gating each
+mode branch are this rating being compared against a fixed threshold —
+i.e. genuinely a **performance-tier selector** ("is this CPU fast enough
+for the nicer code path"), not a resource-type dispatch as the previous
+section's lower-confidence note speculated. This refines rather than
+invalidates that earlier naming: `Stream_selectHandler` does select a
+handler, `Stream_configure` does configure it — just gated on CPU speed,
+now confirmed, rather than resource type, which was never actually
+confirmed, only guessed.
+
+**Still open**: what operation is actually being performance-tiered
+(still most plausibly something in the chunked file-read/process
+pipeline `Stream_readChunks`/`Stream_processChunk` already cover, given
+how the mode dispatch and the buffer mechanism share so much state, but
+not independently confirmed) — would need `sub_18242`/`sub_18432`/
+`sub_18682`/`sub_186F0` and the `word_182FB`/`word_1832F`/`word_1833B`-
+family locals traced to close that out.

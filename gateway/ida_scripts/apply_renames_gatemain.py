@@ -163,13 +163,13 @@ RENAMES = [
     # rename them there too using this same confirmed mapping. See
     # docs/overview.md#word_c84d0-traced--a-shared-decoder-continuation-not-4-functions. --
 
-    ("sub_1DDC0", "Stream_configure",
+    (0x1DDC0, "Stream_configure",
      "Called once from gatemain_start with argv[6]/[7]/[8] (as "
      "cmdline_param6/7/8), i.e. purely launch-time configuration, not "
      "anything computed during play. If cmdline_param6==4: stashes "
      "cmdline_param7/8 into word_C84F3/byte_C84F5 (role not traced), "
      "then always calls Stream_selectHandler(cmdline_param6)."),
-    ("sub_18042", "Stream_selectHandler",
+    (0x18042, "Stream_selectHandler",
      "Dispatches on its mode argument (0/1/2/4, confirmed as "
      "cmdline_param6 by its only caller, Stream_configure) to wire up "
      "word_C84D0/word_C84D2/word_C84D4 -- NOT 4 independent callback "
@@ -179,17 +179,61 @@ RENAMES = [
      "into what IDA calls sub_18242, skipping a precondition check mode "
      "0's target doesn't skip). The actual decoded resource type "
      "wasn't identified this pass -- deferred, see roadmap.md."),
-    ("cmdline_param3", "_soundMode",
+    (0xC85A4, "_soundMode",
      "argv[3] (via atoi) in gatemain_start's own parameter parsing -- "
      "confirmed positionally to be the same soundMode argument gate.idb's "
      "_main passes as arg3 to _execl (that session left it named only "
      "as 'soundMode' locally, not cross-referenced to this global). "
      "Manipulated with bit tests/masks elsewhere (e.g. 'and "
      "cmdline_param3, 0F7h'), so it's a bitflag word, not a plain enum."),
-    ("cmdline_param6", "_streamMode",
+    (0xC85AA, "_streamMode",
      "argv[6] -- confirmed as Stream_configure/Stream_selectHandler's "
      "mode argument (0/1/2/4), a pure launch-time configuration value, "
      "not anything computed during play."),
+
+    # -- fifth pass, same session: kept pulling on the word_C84D0
+    # thread and found something more fundamental than "resource type" --
+    # Stream_selectHandler's mode branches are gated by a CPU SPEED
+    # RATING, not a file/resource format. sub_18182 (called
+    # unconditionally at Stream_selectHandler's start) installs a
+    # temporary custom INT 70h handler and reprograms the 8253/8254 PIT
+    # to a known frequency; sub_18148 then runs a fixed CPU-bound
+    # busy-loop (imul-based) until that ISR has decremented a tick
+    # counter to 0, and the number of loop iterations completed becomes
+    # word_C84DA, this whole cluster's CPU speed rating -- exactly the
+    # value Stream_selectHandler compares against 0x160 to pick a
+    # performance-tier code path. sub_181D8 restores the original INT
+    # 70h/72h vectors, the PIT's original divisor, AND the system
+    # date/time (since running the PIT at a different frequency drifts
+    # DOS's own clock) -- a complete, correctly-bracketed calibrate/
+    # restore pair. This refines rather than replaces the earlier
+    # Stream_* naming: Stream_selectHandler genuinely does select a
+    # handler, just gated on CPU speed rather than resource type as
+    # hedged before -- see docs/overview.md's updated note. --
+
+    ("sub_18182", "Cpu_beginSpeedTest",
+     "Saves the real INT 70h/72h vectors and current DOS date/time, "
+     "installs a temporary ISR (just decrements byte_C84E8 and irets), "
+     "and reprograms the 8253/8254 PIT (port 43h mode/command, port "
+     "40h count) to a known frequency for Cpu_measureSpeed's busy-loop "
+     "to count against."),
+    ("sub_18148", "Cpu_measureSpeed",
+     "Sets byte_C84E8=1, then runs a fixed imul-based busy loop "
+     "(8 outer iterations) until Cpu_beginSpeedTest's temporary ISR "
+     "decrements byte_C84E8 to 0 on a timer tick; the iteration count "
+     "reached (shifted right 3) becomes word_C84DA -- a CPU speed "
+     "rating, faster CPUs completing more busy-work per fixed-length "
+     "timer tick."),
+    ("sub_181D8", "Cpu_endSpeedTest",
+     "Restores the real INT 70h/72h vectors and PIT divisor "
+     "Cpu_beginSpeedTest saved, then re-sets DOS's date/time from the "
+     "same saved values -- correcting for clock drift caused by "
+     "running the PIT at the calibration frequency in between."),
+    ("word_C84DA", "cpuSpeedRating",
+     "Cpu_measureSpeed's result; Stream_selectHandler compares this "
+     "against 0x160 to choose between performance-tier code paths -- "
+     "the actual criterion behind that mode dispatch, not a resource-"
+     "type distinction as hedged in the fourth-pass notes above."),
 ]
 
 

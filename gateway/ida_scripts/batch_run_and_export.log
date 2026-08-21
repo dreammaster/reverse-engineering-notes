@@ -8397,3 +8397,100 @@ DRY_RUN = False
 [*] gen_file(OFILE_IDC) returned 1
 [*] saving database to C:\dev\legend\gateway\gate.idb
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\legend\gateway\gatemain.idb
+[*] ARGV = ['C:\\dev\\legend\\gateway\\ida_scripts\\batch_run_and_export.py', 'apply_renames_gatemain.py', 'noexport']
+[*] reading apply_renames_gatemain.py
+[*] executing apply_renames_gatemain.py
+[!] EXCEPTION:
+Traceback (most recent call last):
+  File "C:/dev/legend/gateway/ida_scripts/batch_run_and_export.py", line 95, in main
+    exec(compile(code, target_script, "exec"), g)
+  File "apply_renames_gatemain.py", line 260, in <module>
+    main()
+  File "apply_renames_gatemain.py", line 251, in main
+    ea = resolve(ref)
+  File "apply_renames_gatemain.py", line 243, in resolve
+    assert ea != idc.BADADDR, f"name not found: {ref!r}"
+AssertionError: name not found: 'sub_1DDC0'
+
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\legend\gateway\gatemain.idb
+[*] ARGV = ['C:\\dev\\legend\\gateway\\ida_scripts\\batch_run_and_export.py', 'apply_renames_gatemain.py', 'noexport']
+[*] reading apply_renames_gatemain.py
+[*] executing apply_renames_gatemain.py
+[*] captured stdout from target script:
+----- begin target script output -----
+DRY_RUN = True
+0x11635: 'Logics_prehandlerChainReaches' -> 'Logics_prehandlerChainReaches'   (sub_11635(logicNum, targetLogicNum): walks logicNum's prehandler chain stage by stage (bounded per-type by METHOD_SECTION_INFO, same table Logics_getPrehandlerMode consults) -- each stage's Logics_getPrehandlerMode result, if nonzero, is itself an object index the search recurses into with the SAME targetLogicNum (the recursive call is sub_11635(mode, targetLogicNum), not sub_11635(targetLogicNum, mode) -- confirmed by the exact push order). Returns 1 as soon as any stage's delegate chain eventually reaches targetLogicNum, 0 if every stage is exhausted without a match. Confirmed real call site in main() (main+0xA9E-ish): sub_11635(vocab_list_0._logicNum, Logics_logicNum211) -- both arguments are logicNum-shaped (proc_table indices), not one vocab id and one logicNum as an earlier guess assumed.)
+0x115ce: 'Logics_prehandlerHasMode' -> 'Logics_prehandlerHasMode'   (sub_115CE(logicNum, mode, requiredVal2): sibling to Logics_prehandlerChainReaches but checks EXACT equality against each stage's Logics_getPrehandlerMode result (no recursion into a delegate object) -- returns 1 as soon as any stage's mode equals the given mode value, 0 otherwise. requiredVal2, if >= 0, gates the whole check on Logics_getVal2_2(logicNum) first matching it (skipped entirely if requiredVal2 < 0).)
+0x1535e: 'Score_add' -> 'Score_add'   (Confirmed by decoding msgId 0x803/0x804 from real GATESTR.DAT: '[Your score has just gone up by %d.' / ' NOTE: You can activate and deactivate score-change notification using the NOTIFY command.'. Adds its argument to _score, and if _scoreNotifyEnabled is set, prints the above (the NOTE only once, gated by _scoreNotifyTipShown).)
+0xcbb78: '_score' -> '_score'   (Confirmed via Score_add (adds to this) and msgId 0x2A: 'You have achieved a score of %d out of 1600, in %d turns.' -- the two printf args at that call site are (_turnCount, _score) in that order, matching the message's two %d's.)
+0xcb7fe: '_turnCount' -> '_turnCount'   (Incremented once per main() game-loop iteration (a classic turn counter); confirmed as the first %d in msgId 0x2A's score-and-turns status message, paired with _score -- see above.)
+0xcc6ab: '_scoreNotifyEnabled' -> '_scoreNotifyEnabled'   (Gates whether Score_add prints its notification at all -- the in-game NOTIFY command's persisted toggle, per msgId 0x804's text (see Score_add's note).)
+0xcbb7a: '_scoreNotifyTipShown' -> '_scoreNotifyTipShown'   (One-time flag: Score_add prints the NOTIFY-command explanation (msgId 0x804) only the first time a score notification fires, then sets this so it isn't repeated.)
+0x5668c: '_gameTicks' -> '_gameTicks'   (Confirmed via msgId 0x29: 'It is Dorman day %d.', computed as _gameTicks/480 + 1 right before that message -- a real-time game clock in ticks, 480 ticks per in-universe 'Dorman day'.)
+0x14a37: 'Stream_loadFile' -> 'Stream_loadFile'   (Top-level entry: flushes the active window's pending text (TextWindow_flushPendingText), then reads (Stream_readChunks), processes (Stream_processChunks), and frees (Stream_freeChunks) a whole file's worth of chunked buffers.)
+0x28e2c: 'TextWindow_flushPendingText' -> 'TextWindow_flushPendingText'   (Flushes Windows_pendingText for the current Windows_activeWindow via TextWindow_addDirect if that window has buffered/queued text waiting -- distinct from the already-named TextWindow_flushText.)
+0x1ddf6: 'Stream_readChunks' -> 'Stream_readChunks'   (Opens filename, seeks to find its total size, then reads it into up to 8 separately-allocated RAM buffers (dword_C84A6[] array, each up to ~64KB since one DOS allocation can't hold an arbitrary file), aborting the whole read early if a key is pressed (Events_isKeyPending) or if word_C8582 bit 8 is clear or bit 0x40 is set.)
+0x1e052: 'Stream_processChunks' -> 'Stream_processChunks'   (Walks the same buffer array Stream_readChunks filled, dispatching each non-empty one through Stream_processChunk -- again abortable via Events_isKeyPending between chunks, and gated by the same word_C8582 bits.)
+0x1e0e8: 'Stream_freeChunks' -> 'Stream_freeChunks'   (Frees all 8 of the buffer-array slots via kill_pointer_ -- the cleanup step after Stream_readChunks/Stream_processChunks.)
+0x180e3: 'Stream_processChunk' -> 'Stream_processChunk'   (Per-chunk handler: reads a couple of header bytes from the buffer (offsets 5 and 7, before the 32-byte header/payload boundary already established) into cx/bx, then calls the actual processing logic through a configurable callback function pointer (word_C84D0) with the payload pointer (buffer+0x20) -- not traced further since the callback's actual target varies by caller and wasn't identified this pass.)
+0x1ddc0: 'Stream_configure' -> 'Stream_configure'   (Called once from gatemain_start with argv[6]/[7]/[8] (as cmdline_param6/7/8), i.e. purely launch-time configuration, not anything computed during play. If cmdline_param6==4: stashes cmdline_param7/8 into word_C84F3/byte_C84F5 (role not traced), then always calls Stream_selectHandler(cmdline_param6).)
+0x18042: 'Stream_selectHandler' -> 'Stream_selectHandler'   (Dispatches on its mode argument (0/1/2/4, confirmed as cmdline_param6 by its only caller, Stream_configure) to wire up word_C84D0/word_C84D2/word_C84D4 -- NOT 4 independent callback functions, but several different NEAR-call entry points into one shared decoder continuation body (spanning what IDA shows as several separate small subs -- e.g. mode 1's target is 32 bytes into what IDA calls sub_18242, skipping a precondition check mode 0's target doesn't skip). The actual decoded resource type wasn't identified this pass -- deferred, see roadmap.md.)
+0xc85a4: '_soundMode' -> '_soundMode'   (argv[3] (via atoi) in gatemain_start's own parameter parsing -- confirmed positionally to be the same soundMode argument gate.idb's _main passes as arg3 to _execl (that session left it named only as 'soundMode' locally, not cross-referenced to this global). Manipulated with bit tests/masks elsewhere (e.g. 'and cmdline_param3, 0F7h'), so it's a bitflag word, not a plain enum.)
+0xc85aa: '_streamMode' -> '_streamMode'   (argv[6] -- confirmed as Stream_configure/Stream_selectHandler's mode argument (0/1/2/4), a pure launch-time configuration value, not anything computed during play.)
+0x18182: 'sub_18182' -> 'Cpu_beginSpeedTest'   (Saves the real INT 70h/72h vectors and current DOS date/time, installs a temporary ISR (just decrements byte_C84E8 and irets), and reprograms the 8253/8254 PIT (port 43h mode/command, port 40h count) to a known frequency for Cpu_measureSpeed's busy-loop to count against.)
+0x18148: 'sub_18148' -> 'Cpu_measureSpeed'   (Sets byte_C84E8=1, then runs a fixed imul-based busy loop (8 outer iterations) until Cpu_beginSpeedTest's temporary ISR decrements byte_C84E8 to 0 on a timer tick; the iteration count reached (shifted right 3) becomes word_C84DA -- a CPU speed rating, faster CPUs completing more busy-work per fixed-length timer tick.)
+0x181d8: 'sub_181D8' -> 'Cpu_endSpeedTest'   (Restores the real INT 70h/72h vectors and PIT divisor Cpu_beginSpeedTest saved, then re-sets DOS's date/time from the same saved values -- correcting for clock drift caused by running the PIT at the calibration frequency in between.)
+0xc84da: 'word_C84DA' -> 'cpuSpeedRating'   (Cpu_measureSpeed's result; Stream_selectHandler compares this against 0x160 to choose between performance-tier code paths -- the actual criterion behind that mode dispatch, not a resource-type distinction as hedged in the fourth-pass notes above.)
+----- end target script output -----
+[*] finished executing apply_renames_gatemain.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\legend\gateway\gatemain.idb
+[*] ARGV = ['C:\\dev\\legend\\gateway\\ida_scripts\\batch_run_and_export.py', 'apply_renames_gatemain.py']
+[*] reading apply_renames_gatemain.py
+[*] executing apply_renames_gatemain.py
+[*] captured stdout from target script:
+----- begin target script output -----
+DRY_RUN = False
+0x11635: 'Logics_prehandlerChainReaches' -> 'Logics_prehandlerChainReaches'   ok=True
+0x115ce: 'Logics_prehandlerHasMode' -> 'Logics_prehandlerHasMode'   ok=True
+0x1535e: 'Score_add' -> 'Score_add'   ok=True
+0xcbb78: '_score' -> '_score'   ok=True
+0xcb7fe: '_turnCount' -> '_turnCount'   ok=True
+0xcc6ab: '_scoreNotifyEnabled' -> '_scoreNotifyEnabled'   ok=True
+0xcbb7a: '_scoreNotifyTipShown' -> '_scoreNotifyTipShown'   ok=True
+0x5668c: '_gameTicks' -> '_gameTicks'   ok=True
+0x14a37: 'Stream_loadFile' -> 'Stream_loadFile'   ok=True
+0x28e2c: 'TextWindow_flushPendingText' -> 'TextWindow_flushPendingText'   ok=True
+0x1ddf6: 'Stream_readChunks' -> 'Stream_readChunks'   ok=True
+0x1e052: 'Stream_processChunks' -> 'Stream_processChunks'   ok=True
+0x1e0e8: 'Stream_freeChunks' -> 'Stream_freeChunks'   ok=True
+0x180e3: 'Stream_processChunk' -> 'Stream_processChunk'   ok=True
+0x1ddc0: 'Stream_configure' -> 'Stream_configure'   ok=True
+0x18042: 'Stream_selectHandler' -> 'Stream_selectHandler'   ok=True
+0xc85a4: '_soundMode' -> '_soundMode'   ok=True
+0xc85aa: '_streamMode' -> '_streamMode'   ok=True
+0x18182: 'sub_18182' -> 'Cpu_beginSpeedTest'   ok=True
+0x18148: 'sub_18148' -> 'Cpu_measureSpeed'   ok=True
+0x181d8: 'sub_181D8' -> 'Cpu_endSpeedTest'   ok=True
+0xc84da: 'word_C84DA' -> 'cpuSpeedRating'   ok=True
+----- end target script output -----
+[*] finished executing apply_renames_gatemain.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\legend\gateway\gatemain.asm
+[*] gen_file(OFILE_ASM) returned 407163
+[*] exporting IDC to C:\dev\legend\gateway\gatemain.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\legend\gateway\gatemain.idb
+[*] done, exiting 0
