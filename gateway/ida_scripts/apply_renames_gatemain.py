@@ -278,6 +278,37 @@ RENAMES = [
      "back to \"You can't go that way.\\n\" when no exit matches. Not "
      "fully traced: sub_123F3/sub_12445/sub_14742's individual roles, "
      "and the exact semantics of each of the 5 exit-type branches."),
+
+    # -- eighth pass, same session: the three Logics_tryMoveDirection
+    # helpers, per Paul's direction. See
+    # docs/overview.md#logics_getroommoveenabled-logics_getroomexitcount-logics_callspecialexit-named. --
+
+    (0x123F3, "Logics_getRoomMoveEnabled",
+     "sub_123F3(logicNum): validates range and proc_table.type==1 "
+     "(must be a Room), then returns the low byte of Room.field_16 "
+     "(0 for anything else). Logics_tryMoveDirection treats this as an "
+     "overall gate -- if zero, movement processing is skipped entirely "
+     "for the room regardless of its exit table -- distinct from (and "
+     "checked independently of) Logics_checkMoveRestriction's "
+     "item-based gating. Exact semantics of Room.field_16 itself not "
+     "confirmed beyond this usage."),
+    (0x12445, "Logics_getRoomExitCount",
+     "sub_12445(logicNum): identical shape/guard to "
+     "Logics_getRoomMoveEnabled, but returns the full word at "
+     "Room.field_18 -- used directly as the exit-table entry count in "
+     "Logics_tryMoveDirection (decremented once there for 0-based "
+     "indexing, then drives the direction-matching loop)."),
+    (0x14742, "Logics_callSpecialExit",
+     "sub_14742(exitId, action): a function-pointer dispatch table "
+     "(off_3C862[exitId*4], bounds-checked exitId < 0x2C/44), calling "
+     "whichever handler is selected with a single action-code "
+     "argument. This is Logics_tryMoveDirection's exit-type-4 branch "
+     "(a per-exit \"special\" handler rather than a plain room link or "
+     "gated door) -- called there as "
+     "Logics_callSpecialExit(exitTableEntryId, 0xF), matching the "
+     "action-code convention already seen elsewhere (e.g. "
+     "Logic_call/room_load's action arguments). Individual handler "
+     "routines in the dispatch table not traced."),
 ]
 
 

@@ -4830,7 +4830,7 @@ sub_123D1       endp ; sp-analysis failed
 
 ; Attributes: bp-based frame
 
-sub_123F3       proc far                ; CODE XREF: Logics_tryMoveDirection+22\u2193P
+Logics_getRoomMoveEnabled proc far      ; CODE XREF: Logics_tryMoveDirection+22\u2193P
                                         ; sub_15189+15\u2193P ...
 
 var_4           = dword ptr -4
@@ -4866,23 +4866,23 @@ arg_0           = word ptr  6
                 jmp     short loc_12440
 ; ---------------------------------------------------------------------------
 
-loc_1243E:                              ; CODE XREF: sub_123F3+B\u2191j
-                                        ; sub_123F3+18\u2191j ...
+loc_1243E:                              ; CODE XREF: Logics_getRoomMoveEnabled+B\u2191j
+                                        ; Logics_getRoomMoveEnabled+18\u2191j ...
                 sub     ax, ax
 
-loc_12440:                              ; CODE XREF: sub_123F3+49\u2191j
+loc_12440:                              ; CODE XREF: Logics_getRoomMoveEnabled+49\u2191j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_123F3       endp
+Logics_getRoomMoveEnabled endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-sub_12445       proc far                ; CODE XREF: Logics_tryMoveDirection+36\u2193P
+Logics_getRoomExitCount proc far        ; CODE XREF: Logics_tryMoveDirection+36\u2193P
                                         ; sub_151A9+9\u2193P ...
 
 var_4           = dword ptr -4
@@ -4918,16 +4918,16 @@ arg_0           = word ptr  6
                 jmp     short loc_12492
 ; ---------------------------------------------------------------------------
 
-loc_12490:                              ; CODE XREF: sub_12445+B\u2191j
-                                        ; sub_12445+18\u2191j ...
+loc_12490:                              ; CODE XREF: Logics_getRoomExitCount+B\u2191j
+                                        ; Logics_getRoomExitCount+18\u2191j ...
                 sub     ax, ax
 
-loc_12492:                              ; CODE XREF: sub_12445+49\u2191j
+loc_12492:                              ; CODE XREF: Logics_getRoomExitCount+49\u2191j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_12445       endp
+Logics_getRoomExitCount endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -9732,7 +9732,7 @@ seg007          segment byte public 'CODE' use16
 
 ; Attributes: bp-based frame
 
-sub_14742       proc far                ; CODE XREF: Logics_tryMoveDirection+1A1\u2193P
+Logics_callSpecialExit proc far         ; CODE XREF: Logics_tryMoveDirection+1A1\u2193P
                                         ; sub_151A9+9A\u2193P ...
 
 arg_0           = word ptr  6
@@ -9771,15 +9771,15 @@ loc_14761:
                 jmp     short loc_14765
 ; ---------------------------------------------------------------------------
 
-loc_14763:                              ; CODE XREF: sub_14742:loc_14749\u2191j
+loc_14763:                              ; CODE XREF: Logics_callSpecialExit:loc_14749\u2191j
                 sub     ax, ax
 
-loc_14765:                              ; CODE XREF: sub_14742:loc_14761\u2191j
+loc_14765:                              ; CODE XREF: Logics_callSpecialExit:loc_14761\u2191j
                 pop     bp
 
 locret_14766:
                 retf
-sub_14742       endp
+Logics_callSpecialExit endp
 
 seg007          ends
 
@@ -10864,12 +10864,12 @@ arg_0           = byte ptr  6
                 mov     word ptr [bp+msg], ax
                 mov     es, dseg_102
                 push    es:_roomLogicNum
-                call    sub_123F3
+                call    Logics_getRoomMoveEnabled
                 add     sp, 2
                 mov     [bp+var_2], ax
                 mov     es, dseg_102
                 push    es:_roomLogicNum
-                call    sub_12445
+                call    Logics_getRoomExitCount
                 add     sp, 2
                 mov     [bp+var_6], ax
                 or      ax, ax
@@ -11046,7 +11046,7 @@ loc_15070:                              ; CODE XREF: Logics_tryMoveDirection+2A0
                 mov     ax, 0Fh
                 push    ax
                 push    [bp+var_E]
-                call    sub_14742
+                call    Logics_callSpecialExit
                 add     sp, 4
                 mov     [bp+logicNum], ax
                 mov     es, dseg_105
@@ -11219,7 +11219,7 @@ var_2           = word ptr -2
                 mov     es, dseg_102
                 assume es:sg4d43
                 push    es:_roomLogicNum
-                call    sub_123F3
+                call    Logics_getRoomMoveEnabled
                 add     sp, 2
                 mov     [bp+var_2], ax
 sub_15189       endp ; sp-analysis failed
@@ -11231,7 +11231,7 @@ sub_15189       endp ; sp-analysis failed
 sub_151A9       proc far                ; CODE XREF: seg121:00F5\u2193P
                 mov     es, dseg_102
                 push    es:_roomLogicNum
-                call    sub_12445
+                call    Logics_getRoomExitCount
                 add     sp, 2
                 mov     [bp-4], ax
                 or      ax, ax
@@ -11306,7 +11306,7 @@ loc_1522A:                              ; CODE XREF: sub_151A9+FC\u2193j
                 mov     ax, 1
                 push    ax
                 push    word ptr [bp-8]
-                call    sub_14742
+                call    Logics_callSpecialExit
                 add     sp, 4
                 mov     [bp-0Ah], ax
                 mov     es, seg_D10FA
@@ -11391,12 +11391,12 @@ arg_0           = word ptr  6
                 mov     es, dseg_102
                 assume es:sg4d43
                 push    es:_roomLogicNum
-                call    sub_123F3
+                call    Logics_getRoomMoveEnabled
                 add     sp, 2
                 mov     [bp+var_2], ax
                 mov     es, dseg_102
                 push    es:_roomLogicNum
-                call    sub_12445
+                call    Logics_getRoomExitCount
                 add     sp, 2
                 mov     [bp+var_4], ax
                 or      ax, ax
@@ -69865,7 +69865,7 @@ thunk_sub_62A26 endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_B959C proc far                ; CODE XREF: sub_14742:loc_14759\u2191P
+thunk_sub_B959C proc far                ; CODE XREF: Logics_callSpecialExit:loc_14759\u2191P
                                         ; seg098:15E9\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
@@ -69878,7 +69878,7 @@ thunk_sub_B959C endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_767CE proc far                ; CODE XREF: sub_14742:loc_14759\u2191P
+thunk_sub_767CE proc far                ; CODE XREF: Logics_callSpecialExit:loc_14759\u2191P
                                         ; seg098:15E9\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
@@ -69891,7 +69891,7 @@ thunk_sub_767CE endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_C29E2 proc far                ; CODE XREF: sub_14742:loc_14759\u2191P
+thunk_sub_C29E2 proc far                ; CODE XREF: Logics_callSpecialExit:loc_14759\u2191P
                                         ; seg098:15E9\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
@@ -69904,7 +69904,7 @@ thunk_sub_C29E2 endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_C295A proc far                ; CODE XREF: sub_14742:loc_14759\u2191P
+thunk_sub_C295A proc far                ; CODE XREF: Logics_callSpecialExit:loc_14759\u2191P
                                         ; seg098:15E9\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
@@ -69917,7 +69917,7 @@ thunk_sub_C295A endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_93922 proc far                ; CODE XREF: sub_14742:loc_14759\u2191P
+thunk_sub_93922 proc far                ; CODE XREF: Logics_callSpecialExit:loc_14759\u2191P
                                         ; seg098:15E9\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
@@ -69930,7 +69930,7 @@ thunk_sub_93922 endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_84D59 proc far                ; CODE XREF: sub_14742:loc_14759\u2191P
+thunk_sub_84D59 proc far                ; CODE XREF: Logics_callSpecialExit:loc_14759\u2191P
                                         ; seg098:15E9\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
@@ -69943,7 +69943,7 @@ thunk_sub_84D59 endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_8D36F proc far                ; CODE XREF: sub_14742:loc_14759\u2191P
+thunk_sub_8D36F proc far                ; CODE XREF: Logics_callSpecialExit:loc_14759\u2191P
                                         ; seg098:15E9\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
@@ -69956,7 +69956,7 @@ thunk_sub_8D36F endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_8D31A proc far                ; CODE XREF: sub_14742:loc_14759\u2191P
+thunk_sub_8D31A proc far                ; CODE XREF: Logics_callSpecialExit:loc_14759\u2191P
                                         ; seg098:15E9\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
@@ -69969,7 +69969,7 @@ thunk_sub_8D31A endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_8D352 proc far                ; CODE XREF: sub_14742:loc_14759\u2191P
+thunk_sub_8D352 proc far                ; CODE XREF: Logics_callSpecialExit:loc_14759\u2191P
                                         ; seg098:15E9\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
@@ -69982,7 +69982,7 @@ thunk_sub_8D352 endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_8D2E4 proc far                ; CODE XREF: sub_14742:loc_14759\u2191P
+thunk_sub_8D2E4 proc far                ; CODE XREF: Logics_callSpecialExit:loc_14759\u2191P
                                         ; seg098:15E9\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
@@ -69995,7 +69995,7 @@ thunk_sub_8D2E4 endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_82F9C proc far                ; CODE XREF: sub_14742:loc_14759\u2191P
+thunk_sub_82F9C proc far                ; CODE XREF: Logics_callSpecialExit:loc_14759\u2191P
                                         ; seg098:15E9\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
@@ -70008,7 +70008,7 @@ thunk_sub_82F9C endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_82FF4 proc far                ; CODE XREF: sub_14742:loc_14759\u2191P
+thunk_sub_82FF4 proc far                ; CODE XREF: Logics_callSpecialExit:loc_14759\u2191P
                                         ; seg098:15E9\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
@@ -70021,7 +70021,7 @@ thunk_sub_82FF4 endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_83011 proc far                ; CODE XREF: sub_14742:loc_14759\u2191P
+thunk_sub_83011 proc far                ; CODE XREF: Logics_callSpecialExit:loc_14759\u2191P
                                         ; seg098:15E9\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
@@ -70034,7 +70034,7 @@ thunk_sub_83011 endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_82FBA proc far                ; CODE XREF: sub_14742:loc_14759\u2191P
+thunk_sub_82FBA proc far                ; CODE XREF: Logics_callSpecialExit:loc_14759\u2191P
                                         ; seg098:15E9\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
@@ -70047,7 +70047,7 @@ thunk_sub_82FBA endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_82EF2 proc far                ; CODE XREF: sub_14742:loc_14759\u2191P
+thunk_sub_82EF2 proc far                ; CODE XREF: Logics_callSpecialExit:loc_14759\u2191P
                                         ; seg098:15E9\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
@@ -70060,7 +70060,7 @@ thunk_sub_82EF2 endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_82F2A proc far                ; CODE XREF: sub_14742:loc_14759\u2191P
+thunk_sub_82F2A proc far                ; CODE XREF: Logics_callSpecialExit:loc_14759\u2191P
                                         ; seg098:15E9\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
@@ -70073,7 +70073,7 @@ thunk_sub_82F2A endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_82FD7 proc far                ; CODE XREF: sub_14742:loc_14759\u2191P
+thunk_sub_82FD7 proc far                ; CODE XREF: Logics_callSpecialExit:loc_14759\u2191P
                                         ; seg098:15E9\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
@@ -70086,7 +70086,7 @@ thunk_sub_82FD7 endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_82F7F proc far                ; CODE XREF: sub_14742:loc_14759\u2191P
+thunk_sub_82F7F proc far                ; CODE XREF: Logics_callSpecialExit:loc_14759\u2191P
                                         ; seg098:15E9\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
@@ -70099,7 +70099,7 @@ thunk_sub_82F7F endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_88919 proc far                ; CODE XREF: sub_14742:loc_14759\u2191P
+thunk_sub_88919 proc far                ; CODE XREF: Logics_callSpecialExit:loc_14759\u2191P
                                         ; seg098:15E9\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
@@ -70112,7 +70112,7 @@ thunk_sub_88919 endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_82F47 proc far                ; CODE XREF: sub_14742:loc_14759\u2191P
+thunk_sub_82F47 proc far                ; CODE XREF: Logics_callSpecialExit:loc_14759\u2191P
                                         ; seg098:15E9\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
@@ -70125,7 +70125,7 @@ thunk_sub_82F47 endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_73B98 proc far                ; CODE XREF: sub_14742:loc_14759\u2191P
+thunk_sub_73B98 proc far                ; CODE XREF: Logics_callSpecialExit:loc_14759\u2191P
                                         ; seg098:15E9\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
@@ -70138,7 +70138,7 @@ thunk_sub_73B98 endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_A84EF proc far                ; CODE XREF: sub_14742:loc_14759\u2191P
+thunk_sub_A84EF proc far                ; CODE XREF: Logics_callSpecialExit:loc_14759\u2191P
                                         ; seg098:15E9\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
@@ -70151,7 +70151,7 @@ thunk_sub_A84EF endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_A8499 proc far                ; CODE XREF: sub_14742:loc_14759\u2191P
+thunk_sub_A8499 proc far                ; CODE XREF: Logics_callSpecialExit:loc_14759\u2191P
                                         ; seg098:15E9\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
@@ -70164,7 +70164,7 @@ thunk_sub_A8499 endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_B6DF9 proc far                ; CODE XREF: sub_14742:loc_14759\u2191P
+thunk_sub_B6DF9 proc far                ; CODE XREF: Logics_callSpecialExit:loc_14759\u2191P
                                         ; seg098:15E9\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
@@ -70177,7 +70177,7 @@ thunk_sub_B6DF9 endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_ACFA8 proc far                ; CODE XREF: sub_14742:loc_14759\u2191P
+thunk_sub_ACFA8 proc far                ; CODE XREF: Logics_callSpecialExit:loc_14759\u2191P
                                         ; seg098:15E9\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
@@ -70190,7 +70190,7 @@ thunk_sub_ACFA8 endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_800F3 proc far                ; CODE XREF: sub_14742:loc_14759\u2191P
+thunk_sub_800F3 proc far                ; CODE XREF: Logics_callSpecialExit:loc_14759\u2191P
                                         ; seg098:15E9\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
@@ -70203,7 +70203,7 @@ thunk_sub_800F3 endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_800D6 proc far                ; CODE XREF: sub_14742:loc_14759\u2191P
+thunk_sub_800D6 proc far                ; CODE XREF: Logics_callSpecialExit:loc_14759\u2191P
                                         ; seg098:15E9\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
@@ -70216,7 +70216,7 @@ thunk_sub_800D6 endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_771DB proc far                ; CODE XREF: sub_14742:loc_14759\u2191P
+thunk_sub_771DB proc far                ; CODE XREF: Logics_callSpecialExit:loc_14759\u2191P
                                         ; seg098:15E9\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
@@ -70229,7 +70229,7 @@ thunk_sub_771DB endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_771BE proc far                ; CODE XREF: sub_14742:loc_14759\u2191P
+thunk_sub_771BE proc far                ; CODE XREF: Logics_callSpecialExit:loc_14759\u2191P
                                         ; seg098:15E9\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
@@ -70242,7 +70242,7 @@ thunk_sub_771BE endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_7A98C proc far                ; CODE XREF: sub_14742:loc_14759\u2191P
+thunk_sub_7A98C proc far                ; CODE XREF: Logics_callSpecialExit:loc_14759\u2191P
                                         ; seg098:15E9\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
@@ -70255,7 +70255,7 @@ thunk_sub_7A98C endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_7A9A7 proc far                ; CODE XREF: sub_14742:loc_14759\u2191P
+thunk_sub_7A9A7 proc far                ; CODE XREF: Logics_callSpecialExit:loc_14759\u2191P
                                         ; seg098:15E9\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
@@ -70268,7 +70268,7 @@ thunk_sub_7A9A7 endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_77105 proc far                ; CODE XREF: sub_14742:loc_14759\u2191P
+thunk_sub_77105 proc far                ; CODE XREF: Logics_callSpecialExit:loc_14759\u2191P
                                         ; seg098:15E9\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
@@ -70281,7 +70281,7 @@ thunk_sub_77105 endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_7715F proc far                ; CODE XREF: sub_14742:loc_14759\u2191P
+thunk_sub_7715F proc far                ; CODE XREF: Logics_callSpecialExit:loc_14759\u2191P
                                         ; seg098:15E9\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
@@ -70294,7 +70294,7 @@ thunk_sub_7715F endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_770E8 proc far                ; CODE XREF: sub_14742:loc_14759\u2191P
+thunk_sub_770E8 proc far                ; CODE XREF: Logics_callSpecialExit:loc_14759\u2191P
                                         ; seg098:15E9\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
@@ -70307,7 +70307,7 @@ thunk_sub_770E8 endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_95DDE proc far                ; CODE XREF: sub_14742:loc_14759\u2191P
+thunk_sub_95DDE proc far                ; CODE XREF: Logics_callSpecialExit:loc_14759\u2191P
                                         ; seg098:15E9\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
@@ -70320,7 +70320,7 @@ thunk_sub_95DDE endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_95D3C proc far                ; CODE XREF: sub_14742:loc_14759\u2191P
+thunk_sub_95D3C proc far                ; CODE XREF: Logics_callSpecialExit:loc_14759\u2191P
                                         ; seg098:15E9\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
@@ -70333,7 +70333,7 @@ thunk_sub_95D3C endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_94BD5 proc far                ; CODE XREF: sub_14742:loc_14759\u2191P
+thunk_sub_94BD5 proc far                ; CODE XREF: Logics_callSpecialExit:loc_14759\u2191P
                                         ; seg098:15E9\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
@@ -70346,7 +70346,7 @@ thunk_sub_94BD5 endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_99AB8 proc far                ; CODE XREF: sub_14742:loc_14759\u2191P
+thunk_sub_99AB8 proc far                ; CODE XREF: Logics_callSpecialExit:loc_14759\u2191P
                                         ; seg098:15E9\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
@@ -70359,7 +70359,7 @@ thunk_sub_99AB8 endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_B972D proc far                ; CODE XREF: sub_14742:loc_14759\u2191P
+thunk_sub_B972D proc far                ; CODE XREF: Logics_callSpecialExit:loc_14759\u2191P
                                         ; seg098:15E9\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
@@ -70372,7 +70372,7 @@ thunk_sub_B972D endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_97955 proc far                ; CODE XREF: sub_14742:loc_14759\u2191P
+thunk_sub_97955 proc far                ; CODE XREF: Logics_callSpecialExit:loc_14759\u2191P
                                         ; seg098:15E9\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
@@ -70385,7 +70385,7 @@ thunk_sub_97955 endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_9C347 proc far                ; CODE XREF: sub_14742:loc_14759\u2191P
+thunk_sub_9C347 proc far                ; CODE XREF: Logics_callSpecialExit:loc_14759\u2191P
                                         ; seg098:15E9\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
@@ -70398,7 +70398,7 @@ thunk_sub_9C347 endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_A28F6 proc far                ; CODE XREF: sub_14742:loc_14759\u2191P
+thunk_sub_A28F6 proc far                ; CODE XREF: Logics_callSpecialExit:loc_14759\u2191P
                                         ; seg098:15E9\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
@@ -70411,7 +70411,7 @@ thunk_sub_A28F6 endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_C7C1E proc far                ; CODE XREF: sub_14742:loc_14759\u2191P
+thunk_sub_C7C1E proc far                ; CODE XREF: Logics_callSpecialExit:loc_14759\u2191P
                                         ; seg098:15E9\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
@@ -70424,7 +70424,7 @@ thunk_sub_C7C1E endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_73C21 proc far                ; CODE XREF: sub_14742:loc_14759\u2191P
+thunk_sub_73C21 proc far                ; CODE XREF: Logics_callSpecialExit:loc_14759\u2191P
                                         ; seg098:15E9\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
@@ -112245,7 +112245,7 @@ byte_39310      db 0F0h                 ; DATA XREF: sg09a4:0E15\u2191r
                 db    2
                 db  59h ; Y
                 db    2
-off_3C862       dd thunk_sub_73C21      ; DATA XREF: sub_14742:loc_14759\u2191r
+off_3C862       dd thunk_sub_73C21      ; DATA XREF: Logics_callSpecialExit:loc_14759\u2191r
                                         ; seg098:15E9\u2193r
                 dd thunk_sub_C7C1E
                 dd thunk_sub_A28F6
@@ -142328,12 +142328,12 @@ var_2           = word ptr -2
                 mov     es, dseg_135
                 assume es:sg4d43
                 push    es:_roomLogicNum
-                call    sub_123F3
+                call    Logics_getRoomMoveEnabled
                 add     sp, 2
                 mov     [bp+var_2], ax
                 mov     es, dseg_135
                 push    es:_roomLogicNum
-                call    sub_12445
+                call    Logics_getRoomExitCount
                 add     sp, 2
                 mov     [bp+var_4], ax
                 or      ax, ax
@@ -142441,7 +142441,7 @@ loc_5C744:                              ; CODE XREF: Scene_getDirectionBits+A7\u
                 mov     ax, 1
                 push    ax
                 push    [bp+var_8]
-                call    sub_14742
+                call    Logics_callSpecialExit
                 add     sp, 4
                 mov     [bp+var_C], ax
                 mov     es, seg_D1170
@@ -393790,7 +393790,7 @@ dseg_2          dw seg sg4d43           ; DATA XREF: show_startup+92\u2191r
                                         ; show_startup+AD\u2191r ...
 dseg_100        dw seg sg4d43           ; DATA XREF: show_startup+158\u2191r
                                         ; seg098:145C\u2191r
-seg_D10D2       dw seg seg082           ; DATA XREF: sub_14742:loc_14755\u2191r
+seg_D10D2       dw seg seg082           ; DATA XREF: Logics_callSpecialExit:loc_14755\u2191r
                                         ; seg098:15E5\u2191r
 seg_D10D4       dw seg seg083           ; DATA XREF: sub_14768:loc_14781\u2191r
                                         ; sub_147A6+16\u2191r ...

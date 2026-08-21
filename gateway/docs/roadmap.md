@@ -394,10 +394,21 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       `Logics_checkMoveRestriction` before committing, falls back to
       `"You can't go that way."` on no match. Full writeup in
       [overview.md](overview.md#logics_trymovedirection-named--the-room-exit-resolution-function).
+- [x] Named `Logics_tryMoveDirection`'s three helpers:
+      `Logics_getRoomMoveEnabled`/`Logics_getRoomExitCount` (were
+      `sub_123F3`/`sub_12445`, matching `Room` struct field accessors)
+      and `Logics_callSpecialExit` (was `sub_14742`, a 44-entry
+      function-pointer dispatch table for the exit-type-4 "special
+      exit" branch). Full writeup in
+      [overview.md](overview.md#logics_getroommoveenabled-logics_getroomexitcount-logics_callspecialexit-named).
+      The room-exit/movement cluster is now reasonably well documented
+      end to end.
 - [ ] Continue working down the re-ranked list — the rest of the ~1750
-      still-unnamed functions. `sub_123F3`/`sub_12445`/`sub_14742`
-      (called from `Logics_tryMoveDirection`) are good next targets
-      given they're already load-bearing in a now-named function.
+      still-unnamed functions. Also open: `Room.field_16`/`field_18`'s
+      deeper semantics (a future `apply_structs_gatemain.py` target),
+      the 44 individual `Logics_callSpecialExit` handler routines, and
+      the two still-undistinguished exit-type branches in
+      `Logics_tryMoveDirection`.
 - [ ] Cross-check the structs shared by name/concept with `gate.idb`
       (`VocabEntry`/`VOCAB_ENTRY`, `Str16`/`STR16`, `Point`/`POINT`,
       `Screen`/`SCREEN`, `Font`/`FONT`, `REGS`, `HandleEntry`/`HANDLE`)

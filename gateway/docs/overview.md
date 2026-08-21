@@ -1203,3 +1203,37 @@ Applied via `apply_renames_gatemain.py`'s seventh batch. **Not traced
 further**: `sub_123F3`/`sub_12445`/`sub_14742`'s individual roles, and
 the precise distinction between the 5 exit-type branches (only the
 door-gated one was read in enough detail to describe confidently).
+
+### `Logics_getRoomMoveEnabled`/`Logics_getRoomExitCount`/`Logics_callSpecialExit` named
+
+Same session, per Paul's direction to trace `Logics_tryMoveDirection`'s
+three helpers directly. All three confirmed cleanly:
+
+- **`sub_123F3` → `Logics_getRoomMoveEnabled`** and **`sub_12445` →
+  `Logics_getRoomExitCount`** — identical shape: validate the argument
+  as a `logicNum`, confirm `proc_table.type == 1` (must be a `Room`, not
+  any of the other `LogicSectionN` variants), then return one `Room`
+  field — the low byte of `field_16` for the first, the full word at
+  `field_18` for the second. `Logics_tryMoveDirection` uses the first as
+  an **overall room-level movement gate** (independent of, and checked
+  before, `Logics_checkMoveRestriction`'s item-based gating — e.g. the
+  collar) and the second directly as the exit-table's entry count.
+  Neither `Room.field_16`'s nor `field_18`'s deeper semantics were
+  confirmed beyond this mechanical usage — struct field renames left for
+  a future `apply_structs_gatemain.py` pass rather than guessed here.
+- **`sub_14742` → `Logics_callSpecialExit`** — a function-pointer
+  dispatch table (`off_3C862`, bounds-checked to 44 entries), calling
+  whichever handler is selected with a single action-code argument.
+  This is `Logics_tryMoveDirection`'s exit-type-4 branch — a per-exit
+  "special" handler distinct from a plain room link or a
+  `Logics_getBit`-gated door, called as
+  `Logics_callSpecialExit(exitTableEntryId, 0xF)`, matching the
+  action-code convention already established elsewhere (`Logic_call`,
+  `room_load`'s action arguments). The individual handler routines in
+  the dispatch table weren't traced.
+
+Applied via `apply_renames_gatemain.py`'s eighth batch. Between this
+and the two previous passes, the room-exit/movement cluster
+(`Logics_tryMoveDirection` and everything it calls) is now reasonably
+well documented end to end, short of the 44 individual special-exit
+handlers and the two remaining untraced exit-type branches.
