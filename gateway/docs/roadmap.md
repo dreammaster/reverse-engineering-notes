@@ -623,6 +623,13 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       DS based on the caller's carry flag), in the same graphics
       neighborhood as `Surface_getPixelOffset`. Full writeup in
       [overview.md](overview.md#surface_advancesegmentoncarry-named).
+- [x] Named `sub_A8577` (6 callers) → `Game_handleWeaponDischarge` —
+      the "consequences of firing a gun" handler (Gateway station
+      bans weapons), confirmed by decoding all six of its real
+      GATESTR.DAT messages. Also named the 32-bit player-money field
+      `_playerCreditsLo`/`_playerCreditsHi` (were `Persisted_val213`/
+      `word_CF34C`). Full writeup in
+      [overview.md](overview.md#game_handleweapondischarge-named--the-consequences-of-firing-a-gun).
 - [ ] Unify the whole music/sound-hardware picture: `Speaker_playTone`/
       `Speaker_playErrorBeep` (PC-speaker tones), `Midi_sendByte` +
       `sub_1D966`/`sub_1EE70`/`sub_1ECB6` (MPU-401/MIDI), and

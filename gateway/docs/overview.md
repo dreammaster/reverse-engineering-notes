@@ -2183,3 +2183,39 @@ callers (`sub_17D6A`/`sub_17E31`/`sub_17FB8`/`sub_2AA24`/`sub_2B6D4`/
 `sub_2C42A`, none renamed) sit in the same graphics/`Surface`-drawing
 neighborhood as the already-named `Surface_getPixelOffset`. Named
 **`Surface_advanceSegmentOnCarry`**.
+
+Applied via `apply_renames_gatemain.py`'s fortieth batch.
+
+### `Game_handleWeaponDischarge` named — the consequences of firing a gun
+
+Moved to `sub_A8577` (6 callers, reached via a real thunk). Confirmed
+conclusively by decoding all six of its real `GATESTR.DAT` messages: on
+Gateway station, weapons are illegal, and this is the **"consequences
+of firing a gun"** handler.
+
+`Game_handleWeaponDischarge(outcomeType)` dispatches on `outcomeType`
+(0-4), each branch loading a distinct `.RS` sound effect
+(`Stream_loadFile`) and printing a distinct message:
+
+- **1** — a fatal hit: *"...you are riddled with energy bolts and
+  bullets."* — straight into the already-named `Game_showEndingMessage`.
+- **3** / **4** — a miss, the bolt ricocheting dangerously vs. safely.
+- **0** / **2** — a miss witnessed by soldiers, leading to arrest. If
+  the player can't afford the 1000-credit fine (checked against a
+  32-bit player-money field), they're executed by expulsion into
+  vacuum (another `Game_showEndingMessage` call) — *"I'm going to have
+  to sentence you to expulsion from Gateway - without a vac suit."*
+  Otherwise they pay the fine, have their weapon confiscated (a
+  handler update on a specific object, `logicNum 0x14C`), and a
+  follow-up event is queued via the already-named
+  `Queue_exists`/`Queue_find`/`Queue_add`.
+
+This also confirms the 32-bit **player-credits/money field** it reads
+and writes: `Persisted_val213`/`word_CF34C` (confirmed adjacent —
+`0xCF34A`/`0xCF34C` — and saved together as one 4-byte `SaveField`),
+renamed **`_playerCreditsLo`**/**`_playerCreditsHi`**. Seen added to
+and subtracted from at several other points in the game (earning and
+spending money), and checked here against the 1000-credit weapons
+fine.
+
+Applied via `apply_renames_gatemain.py`'s forty-first batch.

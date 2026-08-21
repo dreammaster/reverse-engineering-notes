@@ -1166,6 +1166,42 @@ RENAMES = [
      "(sub_17D6A/sub_17E31/sub_17FB8/sub_2AA24/sub_2B6D4/sub_2C42A, "
      "none renamed) sit in the same graphics/Surface-drawing "
      "neighborhood as the already-named Surface_getPixelOffset."),
+
+    # -- forty-first pass: sub_A8577, confirmed by decoding all six of
+    # its real GATESTR.DAT messages as the "consequences of firing a
+    # weapon" handler -- Gateway station bans weapons, so shooting one
+    # (successfully or not) triggers arrest, a fine, or death depending
+    # on the outcome. This also confirms the 32-bit player-money field
+    # it reads/writes. See
+    # docs/overview.md#game_handleweapondischarge-named--the-consequences-of-firing-a-gun. --
+
+    (0xA8577, "Game_handleWeaponDischarge",
+     "sub_A8577(outcomeType): dispatches on outcomeType (0-4), each "
+     "branch loading a distinct .RS sound file (Stream_loadFile) and "
+     "printing a distinct decoded GATESTR.DAT message: 1 = a fatal "
+     "hit ('...you are riddled with energy bolts and bullets', msgId "
+     "0x1CCF) leading straight into Game_showEndingMessage; 3/4 = a "
+     "miss that ricochets dangerously vs. safely (0x1CD0/0x1CD1); "
+     "0/2 = a miss witnessed by soldiers, leading to arrest -- if the "
+     "player can't afford the 1000-credit fine (checked against the "
+     "32-bit _playerCreditsLo/_playerCreditsHi pair), they're executed "
+     "by expulsion into vacuum (0x1CD3 + Game_showEndingMessage); "
+     "otherwise they pay the fine (0x1CD4, credits -= 1000), have "
+     "their weapon confiscated (a handler update on logicNum 0x14C, "
+     "word_CB808 set to 0x1Eh -- not itself renamed), and a follow-up "
+     "event is queued via the already-named Queue_exists/Queue_find/"
+     "Queue_add. The classic 'weapons are illegal on Gateway station' "
+     "consequence path for the FIRE/SHOOT command."),
+    (0xCF34C, "_playerCreditsHi",
+     "Was word_CF34C: high word of the 32-bit player-credits/money "
+     "field (SaveField <Persisted_val213, 4> confirms the pair is "
+     "saved as one 4-byte field). Added to/subtracted from at several "
+     "points in the game (earning and spending money); checked in "
+     "Game_handleWeaponDischarge against the 1000-credit weapons "
+     "fine."),
+    ("Persisted_val213", "_playerCreditsLo",
+     "Was Persisted_val213: low word of the 32-bit player-credits/"
+     "money field, paired with _playerCreditsHi."),
 ]
 
 

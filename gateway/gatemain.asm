@@ -84467,7 +84467,7 @@ thunk_sub_9B5F9 endp ; sp-analysis failed
 thunk_sub_A8577 proc far                ; CODE XREF: logic238+34D\u2193P
                                         ; sub_A41F7+59\u2193P ...
                 call    near ptr rtlink_thunk
-                jmp     sub_A8577
+                jmp     Game_handleWeaponDischarge
 thunk_sub_A8577 endp ; sp-analysis failed
 
 ; ---------------------------------------------------------------------------
@@ -86284,7 +86284,7 @@ SAVE_FIELDS     SaveField <_roomLogicNum, 2>
                 SaveField <Persisted_val211, 2>
                 SaveField <Persisted_val212, 2>
                 SaveField <Persisted_random04, 5>
-                SaveField <Persisted_val213, 4>
+                SaveField <_playerCreditsLo, 4>
                 SaveField <Persisted_val214, 4>
                 SaveField <Persisted_val215, 2>
                 SaveField <Persisted_val216, 2>
@@ -170256,8 +170256,8 @@ loc_69F66:                              ; CODE XREF: seg151:23E3\u2191j
                 call    TextWindow_add
                 add     sp, 8
                 mov     es, seg_D12F8
-                push    es:word_CF34C
-                push    es:Persisted_val213
+                push    es:_playerCreditsHi
+                push    es:_playerCreditsLo
                 call    sub_1063F
                 add     sp, 4
                 push    dx
@@ -187001,8 +187001,8 @@ loc_7246D:                              ; CODE XREF: sub_72260:loc_72413\u2191j
                 mov     es, seg_D13D0
                 mov     ax, [bp+var_4]
                 mov     dx, [bp+var_2]
-                add     es:Persisted_val213, ax
-                adc     es:word_CF34C, dx
+                add     es:_playerCreditsLo, ax
+                adc     es:_playerCreditsHi, dx
                 mov     es, seg_D13D2
                 add     es:Persisted_val214, ax
                 adc     es:word_CF350, dx
@@ -187064,8 +187064,8 @@ loc_724F6:                              ; CODE XREF: sub_72260+291\u2191j
                 call    TextWindow_add
                 add     sp, 4
                 mov     es, seg_D13D0
-                sub     es:Persisted_val213, 88B8h
-                sbb     es:word_CF34C, 0
+                sub     es:_playerCreditsLo, 88B8h
+                sbb     es:_playerCreditsHi, 0
                 mov     ax, 0EEh ; 'î'
                 jmp     loc_72A99
 ; ---------------------------------------------------------------------------
@@ -303417,8 +303417,8 @@ loc_A6300:                              ; CODE XREF: sub_A60CE+22D\u2191j
 
 loc_A632B:                              ; CODE XREF: sub_A60CE+258\u2191j
                 mov     es, seg_D17B6
-                sub     es:Persisted_val213, 64h ; 'd'
-                sbb     es:word_CF34C, 0
+                sub     es:_playerCreditsLo, 64h ; 'd'
+                sbb     es:_playerCreditsHi, 0
                 mov     es, seg_D17B8
                 mov     ax, es:_gameDayNumber
                 mov     [bp+var_A], ax
@@ -304214,7 +304214,7 @@ loc_A6997:                              ; CODE XREF: sub_A68D8+B0\u2191j
                 mov     ax, 1
                 push    ax
                 push    cs
-                call    near ptr sub_A8577
+                call    near ptr Game_handleWeaponDischarge
                 add     sp, 2
 
 loc_A69B6:                              ; CODE XREF: sub_A68D8+6D\u2191j
@@ -304265,7 +304265,7 @@ loc_A69FA:                              ; CODE XREF: sub_A68D8+BD\u2191j
 loc_A6A10:                              ; CODE XREF: sub_A68D8+149\u2193j
                 push    ax
                 push    cs
-                call    near ptr sub_A8577
+                call    near ptr Game_handleWeaponDischarge
                 add     sp, 2
 
 loc_A6A18:                              ; CODE XREF: sub_A68D8+120\u2191j
@@ -304603,7 +304603,7 @@ loc_A6C93:                              ; CODE XREF: sub_A6BD4+B0\u2191j
                 mov     ax, 1
                 push    ax
                 push    cs
-                call    near ptr sub_A8577
+                call    near ptr Game_handleWeaponDischarge
                 add     sp, 2
 
 loc_A6CB2:                              ; CODE XREF: sub_A6BD4+6D\u2191j
@@ -304650,7 +304650,7 @@ loc_A6CE6:                              ; CODE XREF: sub_A6BD4+BD\u2191j
 loc_A6CFC:                              ; CODE XREF: sub_A6BD4+139\u2193j
                 push    ax
                 push    cs
-                call    near ptr sub_A8577
+                call    near ptr Game_handleWeaponDischarge
                 add     sp, 2
                 mov     ax, 1
                 jmp     loc_A6EBE
@@ -305027,7 +305027,7 @@ loc_A6FA9:                              ; CODE XREF: sub_A6EC0+BD\u2191j
                 mov     ax, 2
                 push    ax
                 push    cs
-                call    near ptr sub_A8577
+                call    near ptr Game_handleWeaponDischarge
                 add     sp, 2
                 mov     ax, 1
                 jmp     short loc_A7043
@@ -305187,7 +305187,7 @@ loc_A7106:                              ; CODE XREF: sub_A7045+BA\u2191j
 loc_A7108:                              ; CODE XREF: sub_A7045+BF\u2191j
                 push    ax
                 push    cs
-                call    near ptr sub_A8577
+                call    near ptr Game_handleWeaponDischarge
                 add     sp, 2
 
 loc_A7110:                              ; CODE XREF: sub_A7045+ED\u2193j
@@ -305319,7 +305319,7 @@ loc_A71C1:                              ; CODE XREF: sub_A7199+23\u2191j
                 sub     ax, ax
                 push    ax
                 push    cs
-                call    near ptr sub_A8577
+                call    near ptr Game_handleWeaponDischarge
                 add     sp, 2
                 mov     ax, 1
                 jmp     loc_A7265
@@ -308599,7 +308599,7 @@ sub_A84EF       endp
 
 ; Attributes: bp-based frame
 
-sub_A8577       proc far                ; CODE XREF: thunk_sub_A8577+3\u2191J
+Game_handleWeaponDischarge proc far     ; CODE XREF: thunk_sub_A8577+3\u2191J
                                         ; sub_A68D8+D8\u2191p ...
 
 arg_0           = word ptr  6
@@ -308622,7 +308622,7 @@ arg_0           = word ptr  6
                 call    Game_showEndingMessage
 ; ---------------------------------------------------------------------------
 
-loc_A85A2:                              ; CODE XREF: sub_A8577+7\u2191j
+loc_A85A2:                              ; CODE XREF: Game_handleWeaponDischarge+7\u2191j
                 cmp     [bp+arg_0], 3
                 jnz     short loc_A85C5
                 mov     ax, 703Bh
@@ -308632,7 +308632,7 @@ loc_A85A2:                              ; CODE XREF: sub_A8577+7\u2191j
                 add     sp, 4
                 mov     ax, 1CD0h
 
-loc_A85B8:                              ; CODE XREF: sub_A8577+64\u2193j
+loc_A85B8:                              ; CODE XREF: Game_handleWeaponDischarge+64\u2193j
                 mov     dx, 0F000h
                 push    dx
                 push    ax              ; msg
@@ -308640,7 +308640,7 @@ loc_A85B8:                              ; CODE XREF: sub_A8577+64\u2193j
                 jmp     loc_A86BC
 ; ---------------------------------------------------------------------------
 
-loc_A85C5:                              ; CODE XREF: sub_A8577+2F\u2191j
+loc_A85C5:                              ; CODE XREF: Game_handleWeaponDischarge+2F\u2191j
                 cmp     [bp+arg_0], 4
                 jnz     short loc_A85DD
                 mov     ax, 7042h
@@ -308652,7 +308652,7 @@ loc_A85C5:                              ; CODE XREF: sub_A8577+2F\u2191j
                 jmp     short loc_A85B8
 ; ---------------------------------------------------------------------------
 
-loc_A85DD:                              ; CODE XREF: sub_A8577+52\u2191j
+loc_A85DD:                              ; CODE XREF: Game_handleWeaponDischarge+52\u2191j
                 cmp     [bp+arg_0], 0
                 jz      short loc_A85EC
                 cmp     [bp+arg_0], 2
@@ -308660,8 +308660,8 @@ loc_A85DD:                              ; CODE XREF: sub_A8577+52\u2191j
                 jmp     loc_A86BF
 ; ---------------------------------------------------------------------------
 
-loc_A85EC:                              ; CODE XREF: sub_A8577+6A\u2191j
-                                        ; sub_A8577+70\u2191j
+loc_A85EC:                              ; CODE XREF: Game_handleWeaponDischarge+6A\u2191j
+                                        ; Game_handleWeaponDischarge+70\u2191j
                 cmp     [bp+arg_0], 0
                 jnz     short loc_A860F
                 mov     ax, 7049h
@@ -308676,15 +308676,15 @@ loc_A85EC:                              ; CODE XREF: sub_A8577+6A\u2191j
                 call    TextWindow_add
                 add     sp, 4
 
-loc_A860F:                              ; CODE XREF: sub_A8577+79\u2191j
+loc_A860F:                              ; CODE XREF: Game_handleWeaponDischarge+79\u2191j
                 mov     es, seg_D17E0
-                cmp     es:word_CF34C, 0
+                cmp     es:_playerCreditsHi, 0
                 jg      short loc_A863B
                 jl      short loc_A8626
-                cmp     es:Persisted_val213, 3E8h
+                cmp     es:_playerCreditsLo, 3E8h
                 jnb     short loc_A863B
 
-loc_A8626:                              ; CODE XREF: sub_A8577+A4\u2191j
+loc_A8626:                              ; CODE XREF: Game_handleWeaponDischarge+A4\u2191j
                 mov     ax, 1CD3h
                 mov     dx, 0F000h
                 push    dx
@@ -308694,8 +308694,8 @@ loc_A8626:                              ; CODE XREF: sub_A8577+A4\u2191j
                 call    Game_showEndingMessage
 ; ---------------------------------------------------------------------------
 
-loc_A863B:                              ; CODE XREF: sub_A8577+A2\u2191j
-                                        ; sub_A8577+AD\u2191j
+loc_A863B:                              ; CODE XREF: Game_handleWeaponDischarge+A2\u2191j
+                                        ; Game_handleWeaponDischarge+AD\u2191j
                 mov     ax, 1CD4h
                 mov     dx, 0F000h
                 push    dx
@@ -308711,8 +308711,8 @@ loc_A863B:                              ; CODE XREF: sub_A8577+A2\u2191j
                 call    j_Logics_updateHandler
                 add     sp, 6
                 mov     es, seg_D17E0
-                sub     es:Persisted_val213, 3E8h
-                sbb     es:word_CF34C, 0
+                sub     es:_playerCreditsLo, 3E8h
+                sbb     es:_playerCreditsHi, 0
                 mov     es, seg_D17D8
                 mov     es:word_CB808, 1Eh
                 mov     ax, 0EEh ; 'î'
@@ -308738,14 +308738,14 @@ loc_A863B:                              ; CODE XREF: sub_A8577+A2\u2191j
                 push    ax
                 call    Queue_add
 
-loc_A86BC:                              ; CODE XREF: sub_A8577+4B\u2191j
+loc_A86BC:                              ; CODE XREF: Game_handleWeaponDischarge+4B\u2191j
                 add     sp, 4
 
-loc_A86BF:                              ; CODE XREF: sub_A8577+72\u2191j
-                                        ; sub_A8577+11A\u2191j ...
+loc_A86BF:                              ; CODE XREF: Game_handleWeaponDischarge+72\u2191j
+                                        ; Game_handleWeaponDischarge+11A\u2191j ...
                 pop     bp
                 retf
-sub_A8577       endp
+Game_handleWeaponDischarge endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -323503,8 +323503,8 @@ loc_AEA90:                              ; CODE XREF: sub_AE989+ED\u2191j
                 call    TextWindow_add
                 add     sp, 4
                 mov     es, seg_D1864
-                sub     es:Persisted_val213, 3E8h
-                sbb     es:word_CF34C, 0
+                sub     es:_playerCreditsLo, 3E8h
+                sbb     es:_playerCreditsHi, 0
                 mov     ax, 1
                 push    ax              ; newId
                 mov     ax, 129h
@@ -328397,8 +328397,8 @@ loc_B0C92:                              ; CODE XREF: Commset_show+228\u2191j
                 add     sp, 10h
                 mov     ax, Persisted_val214
                 mov     dx, word_CF350
-                sub     ax, Persisted_val213
-                sbb     dx, word_CF34C
+                sub     ax, _playerCreditsLo
+                sbb     dx, _playerCreditsHi
                 push    dx
                 push    ax
                 call    sub_1063F
@@ -328432,8 +328432,8 @@ loc_B0C92:                              ; CODE XREF: Commset_show+228\u2191j
                 push    ax              ; str
                 call    j_Commset_displayText
                 add     sp, 0Ah
-                push    word_CF34C
-                push    Persisted_val213
+                push    _playerCreditsHi
+                push    _playerCreditsLo
                 call    sub_1063F
                 add     sp, 4
                 push    dx
@@ -332647,10 +332647,10 @@ loc_B2CF9:                              ; CODE XREF: sub_B28A8+446\u2191j
                 jz      short loc_B2D2A
                 mov     es, seg_D18C4
                 assume es:sg4d43
-                cmp     es:word_CF34C, 0
+                cmp     es:_playerCreditsHi, 0
                 jl      short loc_B2D2F
                 jg      short loc_B2D2A
-                cmp     es:Persisted_val213, 14h
+                cmp     es:_playerCreditsLo, 14h
                 jb      short loc_B2D2F
 
 loc_B2D2A:                              ; CODE XREF: sub_B28A8+46A\u2191j
@@ -332680,10 +332680,10 @@ loc_B2D40:                              ; CODE XREF: sub_B28A8+48C\u2191j
                 call    TextWindow_add
                 add     sp, 4
                 mov     es, seg_D18C4
-                cmp     es:word_CF34C, 0
+                cmp     es:_playerCreditsHi, 0
                 jg      short loc_B2D79
                 jl      short loc_B2D73
-                cmp     es:Persisted_val213, 0Ah
+                cmp     es:_playerCreditsLo, 0Ah
                 jnb     short loc_B2D79
 
 loc_B2D73:                              ; CODE XREF: sub_B28A8+4C1\u2191j
@@ -332702,8 +332702,8 @@ loc_B2D79:                              ; CODE XREF: sub_B28A8+4BF\u2191j
                 cmp     Persisted_val202, 0
                 jz      short loc_B2DC1
                 mov     es, seg_D18C4
-                sub     es:Persisted_val213, 0Ah
-                sbb     es:word_CF34C, 0
+                sub     es:_playerCreditsLo, 0Ah
+                sbb     es:_playerCreditsHi, 0
                 mov     ax, 771Ch
                 push    ds
                 push    ax              ; msg
@@ -332726,8 +332726,8 @@ loc_B2DC1:                              ; CODE XREF: sub_B28A8+4E6\u2191j
 
 loc_B2DCB:                              ; CODE XREF: sub_B28A8+51E\u2191j
                 mov     es, seg_D18C4
-                sub     es:Persisted_val213, 0Ah
-                sbb     es:word_CF34C, 0
+                sub     es:_playerCreditsLo, 0Ah
+                sbb     es:_playerCreditsHi, 0
                 cmp     Persisted_val203, 100h
                 jnz     short loc_B2E07
                 mov     ax, 1853h
@@ -335514,10 +335514,10 @@ loc_B405F:                              ; CODE XREF: sub_B3F4C+B8\u2191j
                 add     sp, 4
                 mov     es, seg_D18DC
                 assume es:sg4d43
-                cmp     es:word_CF34C, 0
+                cmp     es:_playerCreditsHi, 0
                 jg      short loc_B408A
                 jl      short loc_B4085
-                cmp     es:Persisted_val213, 64h ; 'd'
+                cmp     es:_playerCreditsLo, 64h ; 'd'
                 jnb     short loc_B408A
 
 loc_B4085:                              ; CODE XREF: sub_B3F4C+12F\u2191j
@@ -335536,8 +335536,8 @@ loc_B408D:                              ; CODE XREF: sub_B3F4C+13C\u2191j
                 call    TextWindow_add
                 add     sp, 4
                 mov     es, seg_D18DC
-                mov     es:Persisted_val213, 64h ; 'd'
-                mov     es:word_CF34C, 0
+                mov     es:_playerCreditsLo, 64h ; 'd'
+                mov     es:_playerCreditsHi, 0
                 jmp     loc_B3F7E
 ; ---------------------------------------------------------------------------
 
@@ -341079,8 +341079,8 @@ loc_B6796:                              ; CODE XREF: sub_B668E+F9\u2191j
                 mov     ax, [bp+var_2]
                 cwd
                 mov     es, seg_D1932
-                add     es:Persisted_val213, ax
-                adc     es:word_CF34C, dx
+                add     es:_playerCreditsLo, ax
+                adc     es:_playerCreditsHi, dx
                 jmp     loc_B66E8
 ; ---------------------------------------------------------------------------
 
@@ -341264,8 +341264,8 @@ loc_B68C1:                              ; CODE XREF: sub_B67E6+CC\u2191j
                 mov     ax, [bp+var_2]
                 cwd
                 mov     es, seg_D1932
-                add     es:Persisted_val213, ax
-                adc     es:word_CF34C, dx
+                add     es:_playerCreditsLo, ax
+                adc     es:_playerCreditsHi, dx
                 jmp     loc_B682D
 ; ---------------------------------------------------------------------------
 
@@ -341435,8 +341435,8 @@ loc_B69CC:                              ; CODE XREF: sub_B690D+B0\u2191j
                 cwd
                 mov     es, seg_D1932
                 assume es:sg4d43
-                add     es:Persisted_val213, ax
-                adc     es:word_CF34C, dx
+                add     es:_playerCreditsLo, ax
+                adc     es:_playerCreditsHi, dx
                 jmp     loc_B6962
 ; ---------------------------------------------------------------------------
 
@@ -391410,9 +391410,9 @@ a9              db '9',0                ; DATA XREF: sg3C7F:Commset_BUTTON_TEXT\
 aPrev           db 'Prev',0             ; DATA XREF: sg3C7F:Commset_BUTTON_TEXT\u2191o
 a0              db '0',0                ; DATA XREF: sg3C7F:Commset_BUTTON_TEXT\u2191o
 aNext           db 'Next',0             ; DATA XREF: sg3C7F:Commset_BUTTON_TEXT\u2191o
-Persisted_val213 dw 5DCh                ; DATA XREF: seg068:SAVE_FIELDS\u2191o
+_playerCreditsLo dw 5DCh                ; DATA XREF: seg068:SAVE_FIELDS\u2191o
                                         ; seg151:2431\u2191r ...
-word_CF34C      dw 0                    ; DATA XREF: seg151:242C\u2191r
+_playerCreditsHi dw 0                   ; DATA XREF: seg151:242C\u2191r
                                         ; sub_72260+21C\u2191w ...
 Persisted_val214 dw 5DCh                ; DATA XREF: seg068:SAVE_FIELDS\u2191o
                                         ; sub_72260+225\u2191w ...
@@ -395276,9 +395276,9 @@ seg_D17DA       dw seg sg3EDC           ; DATA XREF: sub_A7045:loc_A7134\u2191r
 seg_D17DC       dw seg sg3EDC           ; DATA XREF: sub_A7D4D+29\u2191r
                                         ; sub_A7E63+29\u2191r
 seg_D17DE       dw seg sg4d43           ; DATA XREF: sub_A84EF+6D\u2191r
-seg_D17E0       dw seg sg4d43           ; DATA XREF: sub_A8577:loc_A860F\u2191r
-                                        ; sub_A8577+E8\u2191r
-seg_D17E2       dw seg sg4d43           ; DATA XREF: sub_A8577+110\u2191r
+seg_D17E0       dw seg sg4d43           ; DATA XREF: Game_handleWeaponDischarge:loc_A860F\u2191r
+                                        ; Game_handleWeaponDischarge+E8\u2191r
+seg_D17E2       dw seg sg4d43           ; DATA XREF: Game_handleWeaponDischarge+110\u2191r
 seg_D17E4       dw seg sg4d43           ; DATA XREF: sub_A877B+E5\u2191r
                                         ; sub_A894F+D1\u2191r
 seg_D17E6       dw seg sg3EDC           ; DATA XREF: sub_A8C50:loc_A8C94\u2191r
