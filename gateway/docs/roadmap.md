@@ -171,6 +171,18 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
 - [ ] Periodically re-run `apply_rtlink_thunks_gatemain.py` (idempotent)
       as more thunk targets get real names, so `thunk_sub_XXXXX`-style
       names stay in sync rather than going stale.
+- [x] Checked the 243 same-owning-function thunk-shaped cases against
+      Paul's known rare bug in the RTLink-flattening tool (unpatched
+      segment word on an intra-segment far call) using the new
+      `ida_scripts/diagnose_thunk_chunks.py` — all 243 came back clean
+      (plausible segment values, valid decoded targets), confirming
+      they're genuine split multi-chunk functions, not flattening
+      artifacts. Full writeup in
+      [overview.md](overview.md#the-_decoded-executables-are-pauls-own-rtlink-flattening-tools-output-not-ida-native).
+      Keep `diagnose_thunk_chunks.py` around — worth re-running this
+      style of check any time a far call/jmp elsewhere resolves to
+      something implausible, since the bug is confirmed real even
+      though it didn't hit this particular case.
 
 ## Cross-IDB follow-ups (parking lot, revisit once both executables have real passes)
 

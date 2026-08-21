@@ -417,3 +417,48 @@ are themselves still-unnamed (`thunk_sub_674A7`-style), so their names
 will go stale-but-harmless once those targets get real names later.
 `apply_rtlink_thunks_gatemain.py` is idempotent and safe to re-run
 periodically to refresh them — not done on a schedule, just noted here.
+
+### The `_decoded` executables are Paul's own RTLink-flattening tool's output, not IDA-native
+
+Per Paul: `gate_decoded.exe`/`gatemain_decoded.exe` weren't produced by
+pointing IDA straight at the original RTLink-linked executable plus its
+overlay files. Paul wrote a **custom tool** that flattens the original
+RTLink binary + overlays into a single static executable suitable for
+ordinary disassembly — adjusting the far jumps following each
+`rtlink_thunk` call site to point at the right place in the new flat
+layout, and moving the data segment to the end of the image. This
+explains the `_decoded` suffix on both IDBs' input filenames, and why
+gatemain's overlay-call mechanism shows up as a flat, disassemblable
+`call rtlink_thunk; jmp <target>` pattern at all rather than needing
+actual overlay-swap emulation to trace through.
+
+**A known rare bug in that tool**: when a far call/jmp targets another
+routine *within the same original RTLink segment* (i.e. doesn't go
+through `rtlink_thunk` at all, since that's only for cross-segment
+calls), the tool has occasionally failed to correctly patch that far
+pointer's **segment** word during flattening. Per Paul, the **offset**
+word of such a pointer should still be trustworthy even when broken this
+way — recoverable by finding which segment makes the offset land on
+something sensible, rather than trusting the encoded segment as-is.
+
+**Checked for this specifically**: the 243 "same owning function" cases
+excluded from the RTLink-thunk batch rename above (a thunk-shaped stub
+whose far `jmp` IDA attributes back to its *own* function as a tail
+chunk, rather than to an independently-named target function) were the
+natural place this bug could have been hiding, so they got a full
+programmatic recheck (`ida_scripts/diagnose_thunk_chunks.py`) rather than
+being accepted on the strength of the sample already spot-checked when
+they were first found: decoded each far `jmp`'s raw bytes directly,
+checked the encoded segment word wasn't implausibly small/stale, and
+confirmed the target actually decodes as real code. **All 243 came back
+clean** — large, plausible segment values (matching the general
+magnitude of other legitimately-named segments elsewhere in this IDB),
+landing on genuine decoded instructions. These are real split
+(multi-chunk) functions — a short stub chunk whose body lives
+elsewhere with no other caller establishing it as an independent named
+function — not manifestations of the flattening bug. No fix needed for
+this class; kept `diagnose_thunk_chunks.py` in the repo as a reusable
+sanity-checker in case a genuine instance of the bug turns up elsewhere
+during future passes (any far call/jmp resolving to something
+implausible is worth re-running this style of check against before
+assuming it's a real code oddity).

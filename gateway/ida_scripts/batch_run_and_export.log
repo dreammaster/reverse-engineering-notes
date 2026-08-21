@@ -5747,3 +5747,220 @@ structs (49): RTLinkSeg, REGS, HandleEntry, Font, Screen, VideoMode, VideoMethod
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\legend\gateway\gatemain.idb
+[*] ARGV = ['C:\\dev\\legend\\gateway\\ida_scripts\\batch_run_and_export.py', 'diagnose_thunk_chunks.py', 'noexport']
+[*] reading diagnose_thunk_chunks.py
+[*] executing diagnose_thunk_chunks.py
+[*] captured stdout from target script:
+----- begin target script output -----
+rtlink_thunk = 0x2d4cd
+
+243 same-owning-function cases found
+
+thunk=0x2e2cf jmp_ea=0x2e2d2 target=0x67531 raw_bytes=EA 91 14 0A 66 opcode=0xea
+    far jmp direct: encoded offset=0x1491 encoded segment=0x660a (para 0x660a = byte addr 0x660a0)
+    target label='loc_67531' func='sub_2E2CF' disasm='mov     es, seg_D12D2'
+    chunk: 0x2e2cf-0x2e2d7
+    chunk: 0x67531-0x675ae
+
+thunk=0x2e4eb jmp_ea=0x2e4ee target=0x6f048 raw_bytes=EA 58 15 AF 6D opcode=0xea
+    far jmp direct: encoded offset=0x1558 encoded segment=0x6daf (para 0x6daf = byte addr 0x6daf0)
+    target label='loc_6F048' func='sub_2E4EB' disasm='mov     ax, offset aYouCanTLaunch; "You can\'t launch"'
+    chunk: 0x2e4eb-0x2e4f3
+    chunk: 0x6f048-0x6f082
+
+thunk=0x2e4ff jmp_ea=0x2e502 target=0x6b6a5 raw_bytes=EA A5 0A C0 6A opcode=0xea
+    far jmp direct: encoded offset=0x0aa5 encoded segment=0x6ac0 (para 0x6ac0 = byte addr 0x6ac00)
+    target label='loc_6B6A5' func='sub_2E4FF' disasm='mov     es, seg_D1312'
+    chunk: 0x2e4ff-0x2e507
+    chunk: 0x6b6a5-0x6b788
+
+thunk=0x2e509 jmp_ea=0x2e50c target=0x6b5e7 raw_bytes=EA E7 09 C0 6A opcode=0xea
+    far jmp direct: encoded offset=0x09e7 encoded segment=0x6ac0 (para 0x6ac0 = byte addr 0x6ac00)
+    target label='loc_6B5E7' func='sub_2E509' disasm='mov     es, seg_D1320'
+    chunk: 0x2e509-0x2e511
+    chunk: 0x6b5e7-0x6b606
+
+thunk=0x2e513 jmp_ea=0x2e516 target=0x6b529 raw_bytes=EA 29 09 C0 6A opcode=0xea
+    far jmp direct: encoded offset=0x0929 encoded segment=0x6ac0 (para 0x6ac0 = byte addr 0x6ac00)
+    target label='loc_6B529' func='sub_2E513' disasm='mov     ax, 3'
+    chunk: 0x2e513-0x2e51b
+    chunk: 0x6b529-0x6b546
+
+thunk=0x2e51d jmp_ea=0x2e520 target=0x69054 raw_bytes=EA F4 14 B6 67 opcode=0xea
+    far jmp direct: encoded offset=0x14f4 encoded segment=0x67b6 (para 0x67b6 = byte addr 0x67b60)
+    target label='loc_69054' func='sub_2E51D' disasm='sub     ax, ax'
+    chunk: 0x2e51d-0x2e525
+    chunk: 0x69054-0x690d2
+
+thunk=0x2e527 jmp_ea=0x2e52a target=0x6b546 raw_bytes=EA 46 09 C0 6A opcode=0xea
+    far jmp direct: encoded offset=0x0946 encoded segment=0x6ac0 (para 0x6ac0 = byte addr 0x6ac00)
+    target label='loc_6B546' func='sub_2E527' disasm='mov     es, seg_D1312'
+    chunk: 0x2e527-0x2e52f
+    chunk: 0x6b546-0x6b5e7
+
+thunk=0x2e531 jmp_ea=0x2e534 target=0x6b510 raw_bytes=EA 10 09 C0 6A opcode=0xea
+    far jmp direct: encoded offset=0x0910 encoded segment=0x6ac0 (para 0x6ac0 = byte addr 0x6ac00)
+    target label='loc_6B510' func='sub_2E531' disasm='sub     ax, ax'
+    chunk: 0x2e531-0x2e539
+    chunk: 0x6b510-0x6b529
+
+thunk=0x2e53b jmp_ea=0x2e53e target=0x6b507 raw_bytes=EA 07 09 C0 6A opcode=0xea
+    far jmp direct: encoded offset=0x0907 encoded segment=0x6ac0 (para 0x6ac0 = byte addr 0x6ac00)
+    target label='loc_6B507' func='sub_2E53B' disasm='call    Parser_pleaseRephrase'
+    chunk: 0x2e53b-0x2e543
+    chunk: 0x6b507-0x6b510
+
+thunk=0x2e545 jmp_ea=0x2e548 target=0x6f034 raw_bytes=EA 44 15 AF 6D opcode=0xea
+    far jmp direct: encoded offset=0x1544 encoded segment=0x6daf (para 0x6daf = byte addr 0x6daf0)
+    target label='loc_6F034' func='sub_2E545' disasm='mov     ax, 583Bh'
+    chunk: 0x2e545-0x2e54d
+    chunk: 0x6f034-0x6f048
+
+thunk=0x2e54f jmp_ea=0x2e552 target=0x6b4f3 raw_bytes=EA F3 08 C0 6A opcode=0xea
+    far jmp direct: encoded offset=0x08f3 encoded segment=0x6ac0 (para 0x6ac0 = byte addr 0x6ac00)
+    target label='loc_6B4F3' func='sub_2E54F' disasm='mov     ax, 41Dh'
+    chunk: 0x2e54f-0x2e557
+    chunk: 0x6b4f3-0x6b507
+
+thunk=0x2e559 jmp_ea=0x2e55c target=0x6efe8 raw_bytes=EA F8 14 AF 6D opcode=0xea
+    far jmp direct: encoded offset=0x14f8 encoded segment=0x6daf (para 0x6daf = byte addr 0x6daf0)
+    target label='loc_6EFE8' func='sub_2E559' disasm='mov     es, seg_D1350'
+    chunk: 0x2e559-0x2e561
+    chunk: 0x6efe8-0x6f020
+
+thunk=0x2e563 jmp_ea=0x2e566 target=0x6b4d6 raw_bytes=EA D6 08 C0 6A opcode=0xea
+    far jmp direct: encoded offset=0x08d6 encoded segment=0x6ac0 (para 0x6ac0 = byte addr 0x6ac00)
+    target label='loc_6B4D6' func='sub_2E563' disasm='mov     ax, 1'
+    chunk: 0x2e563-0x2e56b
+    chunk: 0x6b4d6-0x6b4f3
+
+thunk=0x2e56d jmp_ea=0x2e570 target=0x6ef46 raw_bytes=EA 56 14 AF 6D opcode=0xea
+    far jmp direct: encoded offset=0x1456 encoded segment=0x6daf (para 0x6daf = byte addr 0x6daf0)
+    target label='loc_6EF46' func='sub_2E56D' disasm="mov     ax, 29h ; ')'"
+    chunk: 0x2e56d-0x2e575
+    chunk: 0x6ef46-0x6efe8
+
+thunk=0x2e577 jmp_ea=0x2e57a target=0x69e59 raw_bytes=EA F9 22 B6 67 opcode=0xea
+    far jmp direct: encoded offset=0x22f9 encoded segment=0x67b6 (para 0x67b6 = byte addr 0x67b60)
+    target label='loc_69E59' func='sub_2E577' disasm='mov     es, seg_D12E8'
+    chunk: 0x2e577-0x2e57f
+    chunk: 0x69e59-0x69eda
+----- end target script output -----
+[*] finished executing diagnose_thunk_chunks.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\legend\gateway\gatemain.idb
+[*] ARGV = ['C:\\dev\\legend\\gateway\\ida_scripts\\batch_run_and_export.py', 'diagnose_thunk_chunks.py', 'noexport']
+[*] reading diagnose_thunk_chunks.py
+[*] executing diagnose_thunk_chunks.py
+[*] captured stdout from target script:
+----- begin target script output -----
+rtlink_thunk = 0x2d4cd
+
+243 same-owning-function cases found
+
+full scan of all 243: 243 clean (plausible split function), 0 suspicious
+
+
+thunk=0x2e2cf jmp_ea=0x2e2d2 target=0x67531 raw_bytes=EA 91 14 0A 66 opcode=0xea
+    far jmp direct: encoded offset=0x1491 encoded segment=0x660a (para 0x660a = byte addr 0x660a0)
+    target label='loc_67531' func='sub_2E2CF' disasm='mov     es, seg_D12D2'
+    chunk: 0x2e2cf-0x2e2d7
+    chunk: 0x67531-0x675ae
+
+thunk=0x2e4eb jmp_ea=0x2e4ee target=0x6f048 raw_bytes=EA 58 15 AF 6D opcode=0xea
+    far jmp direct: encoded offset=0x1558 encoded segment=0x6daf (para 0x6daf = byte addr 0x6daf0)
+    target label='loc_6F048' func='sub_2E4EB' disasm='mov     ax, offset aYouCanTLaunch; "You can\'t launch"'
+    chunk: 0x2e4eb-0x2e4f3
+    chunk: 0x6f048-0x6f082
+
+thunk=0x2e4ff jmp_ea=0x2e502 target=0x6b6a5 raw_bytes=EA A5 0A C0 6A opcode=0xea
+    far jmp direct: encoded offset=0x0aa5 encoded segment=0x6ac0 (para 0x6ac0 = byte addr 0x6ac00)
+    target label='loc_6B6A5' func='sub_2E4FF' disasm='mov     es, seg_D1312'
+    chunk: 0x2e4ff-0x2e507
+    chunk: 0x6b6a5-0x6b788
+
+thunk=0x2e509 jmp_ea=0x2e50c target=0x6b5e7 raw_bytes=EA E7 09 C0 6A opcode=0xea
+    far jmp direct: encoded offset=0x09e7 encoded segment=0x6ac0 (para 0x6ac0 = byte addr 0x6ac00)
+    target label='loc_6B5E7' func='sub_2E509' disasm='mov     es, seg_D1320'
+    chunk: 0x2e509-0x2e511
+    chunk: 0x6b5e7-0x6b606
+
+thunk=0x2e513 jmp_ea=0x2e516 target=0x6b529 raw_bytes=EA 29 09 C0 6A opcode=0xea
+    far jmp direct: encoded offset=0x0929 encoded segment=0x6ac0 (para 0x6ac0 = byte addr 0x6ac00)
+    target label='loc_6B529' func='sub_2E513' disasm='mov     ax, 3'
+    chunk: 0x2e513-0x2e51b
+    chunk: 0x6b529-0x6b546
+
+thunk=0x2e51d jmp_ea=0x2e520 target=0x69054 raw_bytes=EA F4 14 B6 67 opcode=0xea
+    far jmp direct: encoded offset=0x14f4 encoded segment=0x67b6 (para 0x67b6 = byte addr 0x67b60)
+    target label='loc_69054' func='sub_2E51D' disasm='sub     ax, ax'
+    chunk: 0x2e51d-0x2e525
+    chunk: 0x69054-0x690d2
+
+thunk=0x2e527 jmp_ea=0x2e52a target=0x6b546 raw_bytes=EA 46 09 C0 6A opcode=0xea
+    far jmp direct: encoded offset=0x0946 encoded segment=0x6ac0 (para 0x6ac0 = byte addr 0x6ac00)
+    target label='loc_6B546' func='sub_2E527' disasm='mov     es, seg_D1312'
+    chunk: 0x2e527-0x2e52f
+    chunk: 0x6b546-0x6b5e7
+
+thunk=0x2e531 jmp_ea=0x2e534 target=0x6b510 raw_bytes=EA 10 09 C0 6A opcode=0xea
+    far jmp direct: encoded offset=0x0910 encoded segment=0x6ac0 (para 0x6ac0 = byte addr 0x6ac00)
+    target label='loc_6B510' func='sub_2E531' disasm='sub     ax, ax'
+    chunk: 0x2e531-0x2e539
+    chunk: 0x6b510-0x6b529
+
+thunk=0x2e53b jmp_ea=0x2e53e target=0x6b507 raw_bytes=EA 07 09 C0 6A opcode=0xea
+    far jmp direct: encoded offset=0x0907 encoded segment=0x6ac0 (para 0x6ac0 = byte addr 0x6ac00)
+    target label='loc_6B507' func='sub_2E53B' disasm='call    Parser_pleaseRephrase'
+    chunk: 0x2e53b-0x2e543
+    chunk: 0x6b507-0x6b510
+
+thunk=0x2e545 jmp_ea=0x2e548 target=0x6f034 raw_bytes=EA 44 15 AF 6D opcode=0xea
+    far jmp direct: encoded offset=0x1544 encoded segment=0x6daf (para 0x6daf = byte addr 0x6daf0)
+    target label='loc_6F034' func='sub_2E545' disasm='mov     ax, 583Bh'
+    chunk: 0x2e545-0x2e54d
+    chunk: 0x6f034-0x6f048
+
+thunk=0x2e54f jmp_ea=0x2e552 target=0x6b4f3 raw_bytes=EA F3 08 C0 6A opcode=0xea
+    far jmp direct: encoded offset=0x08f3 encoded segment=0x6ac0 (para 0x6ac0 = byte addr 0x6ac00)
+    target label='loc_6B4F3' func='sub_2E54F' disasm='mov     ax, 41Dh'
+    chunk: 0x2e54f-0x2e557
+    chunk: 0x6b4f3-0x6b507
+
+thunk=0x2e559 jmp_ea=0x2e55c target=0x6efe8 raw_bytes=EA F8 14 AF 6D opcode=0xea
+    far jmp direct: encoded offset=0x14f8 encoded segment=0x6daf (para 0x6daf = byte addr 0x6daf0)
+    target label='loc_6EFE8' func='sub_2E559' disasm='mov     es, seg_D1350'
+    chunk: 0x2e559-0x2e561
+    chunk: 0x6efe8-0x6f020
+
+thunk=0x2e563 jmp_ea=0x2e566 target=0x6b4d6 raw_bytes=EA D6 08 C0 6A opcode=0xea
+    far jmp direct: encoded offset=0x08d6 encoded segment=0x6ac0 (para 0x6ac0 = byte addr 0x6ac00)
+    target label='loc_6B4D6' func='sub_2E563' disasm='mov     ax, 1'
+    chunk: 0x2e563-0x2e56b
+    chunk: 0x6b4d6-0x6b4f3
+
+thunk=0x2e56d jmp_ea=0x2e570 target=0x6ef46 raw_bytes=EA 56 14 AF 6D opcode=0xea
+    far jmp direct: encoded offset=0x1456 encoded segment=0x6daf (para 0x6daf = byte addr 0x6daf0)
+    target label='loc_6EF46' func='sub_2E56D' disasm="mov     ax, 29h ; ')'"
+    chunk: 0x2e56d-0x2e575
+    chunk: 0x6ef46-0x6efe8
+
+thunk=0x2e577 jmp_ea=0x2e57a target=0x69e59 raw_bytes=EA F9 22 B6 67 opcode=0xea
+    far jmp direct: encoded offset=0x22f9 encoded segment=0x67b6 (para 0x67b6 = byte addr 0x67b60)
+    target label='loc_69E59' func='sub_2E577' disasm='mov     es, seg_D12E8'
+    chunk: 0x2e577-0x2e57f
+    chunk: 0x69e59-0x69eda
+----- end target script output -----
+[*] finished executing diagnose_thunk_chunks.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
