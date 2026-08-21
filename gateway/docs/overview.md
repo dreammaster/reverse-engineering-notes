@@ -2596,3 +2596,27 @@ real, complete interrupt handler, closing a small piece of that
 earlier "not traced further" gap.
 
 Applied via `apply_renames_gatemain.py`'s fifty-eighth batch.
+
+### `Opl2_noteOn`/`Opl2_noteOff` named
+
+Moved to `sub_1D05A`/`sub_1D1A4` (4 callers each — `sub_1E21B`/
+`sub_1E45C`/`sub_1E4C4`, not renamed, plausibly the MIDI-to-OPL2
+translation layer that converts MIDI note events into FM-synth
+register writes). Confirmed via the already-named
+`_opl2RhythmEnabled`/`Opl2_writeRegister`/`Opl2_writeRhythmRegister` as
+the OPL2 FM-synth's fundamental note-on/note-off primitives.
+
+**`Opl2_noteOn(channel, velocity)`**: clamps `velocity` to `0x7F` (the
+MIDI velocity range) and stores it per-channel; looks up that
+channel's operator-register offsets from one of two tables depending
+on `_opl2RhythmEnabled` (melodic vs. rhythm/percussion channel-to-
+operator mapping, since OPL2's 2-operator FM voices are wired
+differently for the 5 fixed rhythm instruments), then applies the
+volume to each of up to 2 operators (carrier + modulator).
+
+**`Opl2_noteOff(channel)`**: for melodic channels, clears the key-on
+bit in OPL2 register `0xB0+channel` — the standard OPL2 note-off. For
+rhythm-mode channels, instead clears the corresponding bit in
+`_opl2RhythmInstruments` via `Opl2_writeRhythmRegister`.
+
+Applied via `apply_renames_gatemain.py`'s fifty-ninth batch.

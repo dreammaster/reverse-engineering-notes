@@ -30542,7 +30542,7 @@ sub_1CFB0       endp
 
 ; Attributes: bp-based frame
 
-sub_1D05A       proc far                ; CODE XREF: sub_1E21B+18\u2193P
+Opl2_noteOn     proc far                ; CODE XREF: sub_1E21B+18\u2193P
                                         ; sub_1E45C+3F\u2193P ...
 
 var_4           = dword ptr -4
@@ -30559,7 +30559,7 @@ arg_2           = word ptr  8
                 jbe     short loc_1D073
                 mov     [bp+arg_2], 7Fh
 
-loc_1D073:                              ; CODE XREF: sub_1D05A+12\u2191j
+loc_1D073:                              ; CODE XREF: Opl2_noteOn+12\u2191j
                 mov     bx, [bp+arg_0]
                 mov     al, byte ptr [bp+arg_2]
                 mov     [bx-62C6h], al
@@ -30574,14 +30574,14 @@ loc_1D073:                              ; CODE XREF: sub_1D05A+12\u2191j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1D096:                              ; CODE XREF: sub_1D05A+28\u2191j
+loc_1D096:                              ; CODE XREF: Opl2_noteOn+28\u2191j
                 mov     ax, bx
                 shl     ax, 1
                 add     ax, 16Ch
                 mov     word ptr [bp+var_4], ax
                 mov     word ptr [bp+var_4+2], seg seg090
 
-loc_1D0A5:                              ; CODE XREF: sub_1D05A+39\u2191j
+loc_1D0A5:                              ; CODE XREF: Opl2_noteOn+39\u2191j
                 les     bx, [bp+var_4]
                 mov     al, es:[bx]
                 sub     ah, ah
@@ -30599,12 +30599,12 @@ loc_1D0A5:                              ; CODE XREF: sub_1D05A+39\u2191j
                 call    near ptr sub_1D492
                 add     sp, 2
 
-loc_1D0CD:                              ; CODE XREF: sub_1D05A+C\u2191j
-                                        ; sub_1D05A+63\u2191j
+loc_1D0CD:                              ; CODE XREF: Opl2_noteOn+C\u2191j
+                                        ; Opl2_noteOn+63\u2191j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_1D05A       endp
+Opl2_noteOn     endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -30743,7 +30743,7 @@ sub_1D10C       endp
 
 ; Attributes: bp-based frame
 
-sub_1D1A4       proc far                ; CODE XREF: sub_1E21B+21\u2193P
+Opl2_noteOff    proc far                ; CODE XREF: sub_1E21B+21\u2193P
                                         ; sub_1E45C+C\u2193P ...
 
 arg_0           = word ptr  6
@@ -30755,11 +30755,11 @@ arg_0           = word ptr  6
                 cmp     [bp+arg_0], 9
                 jb      short loc_1D1BA
 
-loc_1D1B4:                              ; CODE XREF: sub_1D1A4+8\u2191j
+loc_1D1B4:                              ; CODE XREF: Opl2_noteOff+8\u2191j
                 cmp     [bp+arg_0], 6
                 jnb     short loc_1D1DE
 
-loc_1D1BA:                              ; CODE XREF: sub_1D1A4+E\u2191j
+loc_1D1BA:                              ; CODE XREF: Opl2_noteOff+E\u2191j
                 mov     bx, [bp+arg_0]
                 mov     byte ptr [bx-629Ch], 0
                 and     byte ptr [bx-6292h], 0DFh
@@ -30775,7 +30775,7 @@ loc_1D1BA:                              ; CODE XREF: sub_1D1A4+E\u2191j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1D1DE:                              ; CODE XREF: sub_1D1A4+14\u2191j
+loc_1D1DE:                              ; CODE XREF: Opl2_noteOff+14\u2191j
                 cmp     _opl2RhythmEnabled, 0
                 jz      short loc_1D1FC
                 cmp     [bp+arg_0], 0Ah
@@ -30787,11 +30787,11 @@ loc_1D1DE:                              ; CODE XREF: sub_1D1A4+14\u2191j
                 push    cs
                 call    near ptr Opl2_writeRhythmRegister
 
-loc_1D1FC:                              ; CODE XREF: sub_1D1A4+3F\u2191j
-                                        ; sub_1D1A4+45\u2191j
+loc_1D1FC:                              ; CODE XREF: Opl2_noteOff+3F\u2191j
+                                        ; Opl2_noteOff+45\u2191j
                 pop     bp
                 retf
-sub_1D1A4       endp
+Opl2_noteOff    endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -31238,8 +31238,8 @@ sub_1D448       endp
 
 ; Attributes: bp-based frame
 
-sub_1D492       proc far                ; CODE XREF: sub_1D05A+55\u2191p
-                                        ; sub_1D05A+6D\u2191p ...
+sub_1D492       proc far                ; CODE XREF: Opl2_noteOn+55\u2191p
+                                        ; Opl2_noteOn+6D\u2191p ...
 
 var_6           = word ptr -6
 var_4           = word ptr -4
@@ -33486,10 +33486,10 @@ loc_1E227:                              ; CODE XREF: sub_1E21B+31\u2193j
                 sub     ax, ax
                 push    ax
                 push    si
-                call    sub_1D05A
+                call    Opl2_noteOn
                 add     sp, 4
                 push    si
-                call    sub_1D1A4
+                call    Opl2_noteOff
                 add     sp, 2
                 add     word ptr [bp-10h], 2
                 inc     si
@@ -33819,7 +33819,7 @@ arg_4           = word ptr  0Ah
                 cmp     [bp+arg_4], 0
                 jnz     short loc_1E484
                 push    [bp+arg_0]
-                call    sub_1D1A4
+                call    Opl2_noteOff
                 add     sp, 2
                 mov     ax, [bp+arg_4]
                 mov     bx, [bp+arg_0]
@@ -33841,7 +33841,7 @@ loc_1E484:                              ; CODE XREF: sub_1E45C+7\u2191j
                 jz      short loc_1E4B4
                 push    ax
                 push    [bp+arg_0]
-                call    sub_1D05A
+                call    Opl2_noteOn
                 add     sp, 4
                 mov     ax, [bp+arg_4]
                 mov     bx, [bp+arg_0]
@@ -33913,7 +33913,7 @@ loc_1E50A:                              ; CODE XREF: sub_1E4C4+41\u2191j
 
 loc_1E50E:                              ; CODE XREF: sub_1E4C4+2A\u2191j
                 push    [bp+var_4]
-                call    sub_1D1A4
+                call    Opl2_noteOff
                 add     sp, 2
                 jmp     loc_1E5F9
 ; ---------------------------------------------------------------------------
@@ -33984,7 +33984,7 @@ loc_1E56B:                              ; CODE XREF: sub_1E4C4+106\u2193j
                 jz      short loc_1E5F9
                 push    ax
                 push    [bp+var_4]
-                call    sub_1D05A
+                call    Opl2_noteOn
                 add     sp, 4
                 mov     ax, [bp+var_2]
                 mov     bx, [bp+var_4]
@@ -34558,10 +34558,10 @@ loc_1E9AD:                              ; CODE XREF: sub_1E974+5E\u2193j
                 sub     ax, ax
                 push    ax
                 push    si
-                call    sub_1D05A
+                call    Opl2_noteOn
                 add     sp, 4
                 push    si
-                call    sub_1D1A4
+                call    Opl2_noteOff
                 add     sp, 2
                 add     word ptr [bp+var_6], 2
                 inc     si

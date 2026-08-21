@@ -16768,6 +16768,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1D053);
 	op_hex		(x,	1);
 	create_insn	(0X1D05A);
+	set_name	(0X1D05A,	"Opl2_noteOn");
 	create_insn	(x=0X1D05D);
 	op_hex		(x,	1);
 	create_insn	(x=0X1D063);
@@ -16859,6 +16860,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1D193);
 	op_stkvar	(x,	1);
 	create_insn	(0X1D1A4);
+	set_name	(0X1D1A4,	"Opl2_noteOff");
 	create_insn	(x=0X1D1AE);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X1D1B4);
@@ -18391,11 +18393,6 @@ static Bytes_2(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X1F481);
 	op_hex		(x,	1);
-	create_insn	(x=0X1F493);
-	op_hex		(x,	1);
-	create_insn	(0X1F4A0);
-	create_insn	(x=0X1F4A3);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -18405,6 +18402,11 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X1F493);
+	op_hex		(x,	1);
+	create_insn	(0X1F4A0);
+	create_insn	(x=0X1F4A3);
+	op_hex		(x,	1);
 	create_insn	(x=0X1F4C1);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X1F4CC);
@@ -23492,7 +23494,6 @@ static Bytes_3(void) {
 	op_stroff	(x,	1,	GetStrucIdByName("HandleEntry"),	0);
 	create_insn	(x=0X24634);
 	op_stroff	(x,	1,	GetStrucIdByName("HandleEntry"),	0);
-	create_insn	(0X2463C);
 }
 
 //------------------------------------------------------------------------
@@ -23502,6 +23503,7 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_insn	(0X2463C);
 	create_insn	(0X24644);
 	create_insn	(x=0X24647);
 	op_hex		(x,	1);

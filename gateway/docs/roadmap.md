@@ -666,6 +666,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       digitized PC-speaker sample-playback ISR body, closing a small
       piece of an earlier "not traced further" gap. Full writeup in
       [overview.md](overview.md#speaker_sampleisr-named--the-digitized-sample-isr-body-traced).
+- [x] Named `sub_1D05A`/`sub_1D1A4` → `Opl2_noteOn`/`Opl2_noteOff` —
+      the OPL2 FM-synth's fundamental note-on/note-off primitives,
+      confirming a MIDI-to-OPL2 translation layer. Full writeup in
+      [overview.md](overview.md#opl2_noteonopl2_noteoff-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

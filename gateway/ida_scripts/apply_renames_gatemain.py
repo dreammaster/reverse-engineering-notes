@@ -1658,6 +1658,33 @@ RENAMES = [
      "exact sample-decoding scheme remain open), but confirms the ISR "
      "is a real, complete interrupt handler rather than a plain "
      "subroutine."),
+
+    # -- fifty-ninth pass: sub_1D05A/sub_1D1A4, confirmed via the
+    # already-named _opl2RhythmEnabled/Opl2_writeRegister/
+    # Opl2_writeRhythmRegister as the OPL2 FM-synth note-on/note-off
+    # primitives -- part of a MIDI-to-OPL2 translation layer (callers
+    # sub_1E21B/sub_1E45C/sub_1E4C4, not renamed). See
+    # docs/overview.md#opl2_noteon--opl2_noteoff-named. --
+
+    (0x1D05A, "Opl2_noteOn",
+     "sub_1D05A(channel, velocity): clamps velocity to 0x7F (the "
+     "MIDI velocity range) and stores it per-channel; looks up that "
+     "channel's operator-register offsets from one of two tables "
+     "depending on _opl2RhythmEnabled (melodic vs. rhythm/percussion "
+     "channel-to-operator mapping, since OPL2's 2-operator FM voices "
+     "are wired differently for the 5 fixed rhythm instruments), then "
+     "calls sub_1D492 (not renamed) for each of up to 2 operators "
+     "(carrier + modulator) to apply the volume. The 'start playing a "
+     "note' half of an OPL2 FM-synth voice primitive pair."),
+    (0x1D1A4, "Opl2_noteOff",
+     "sub_1D1A4(channel): for melodic channels, clears the key-on bit "
+     "(0x20) in OPL2 register 0xB0+channel via the already-named "
+     "Opl2_writeRegister -- the standard OPL2 note-off. For rhythm-"
+     "mode channels (when _opl2RhythmEnabled is set and channel <= "
+     "0xA), instead clears the corresponding bit in "
+     "_opl2RhythmInstruments and calls the already-named "
+     "Opl2_writeRhythmRegister. The 'stop playing a note' counterpart "
+     "to Opl2_noteOn."),
 ]
 
 
