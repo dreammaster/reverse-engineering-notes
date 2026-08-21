@@ -386,9 +386,18 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       (was `sub_14B64`, confirmed by decoding its own printed messages —
       the collar-restraint and dismount-first checks). Full writeup in
       [overview.md](overview.md#queue_remove-and-logics_checkmoverestriction-named).
-- [ ] Continue working down the re-ranked list — `sub_14ED6` (44
-      callers) is next, plus the rest of the ~1750 still-unnamed
-      functions.
+- [x] Named `sub_14ED6` (44 callers) → `Logics_tryMoveDirection` — the
+      core room-exit resolution function: takes a parsed direction
+      character, walks the current room's exit table (5 distinct
+      exit-type shapes: direct link, `Logics_getBit`-gated door, fixed
+      blocked-message, computed destination, and one more), calls
+      `Logics_checkMoveRestriction` before committing, falls back to
+      `"You can't go that way."` on no match. Full writeup in
+      [overview.md](overview.md#logics_trymovedirection-named--the-room-exit-resolution-function).
+- [ ] Continue working down the re-ranked list — the rest of the ~1750
+      still-unnamed functions. `sub_123F3`/`sub_12445`/`sub_14742`
+      (called from `Logics_tryMoveDirection`) are good next targets
+      given they're already load-bearing in a now-named function.
 - [ ] Cross-check the structs shared by name/concept with `gate.idb`
       (`VocabEntry`/`VOCAB_ENTRY`, `Str16`/`STR16`, `Point`/`POINT`,
       `Screen`/`SCREEN`, `Font`/`FONT`, `REGS`, `HandleEntry`/`HANDLE`)

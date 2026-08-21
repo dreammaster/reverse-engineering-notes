@@ -4830,7 +4830,7 @@ sub_123D1       endp ; sp-analysis failed
 
 ; Attributes: bp-based frame
 
-sub_123F3       proc far                ; CODE XREF: sub_14ED6+22\u2193P
+sub_123F3       proc far                ; CODE XREF: Logics_tryMoveDirection+22\u2193P
                                         ; sub_15189+15\u2193P ...
 
 var_4           = dword ptr -4
@@ -4882,7 +4882,7 @@ sub_123F3       endp
 
 ; Attributes: bp-based frame
 
-sub_12445       proc far                ; CODE XREF: sub_14ED6+36\u2193P
+sub_12445       proc far                ; CODE XREF: Logics_tryMoveDirection+36\u2193P
                                         ; sub_151A9+9\u2193P ...
 
 var_4           = dword ptr -4
@@ -5832,7 +5832,7 @@ huffman_decompress endp
 ; Attributes: bp-based frame
 
 ; const char *__cdecl __far get_message(Message str)
-get_message     proc far                ; CODE XREF: sub_14ED6+1F5\u2193P
+get_message     proc far                ; CODE XREF: Logics_tryMoveDirection+1F5\u2193P
                                         ; Font_stringWidth+C\u2193P ...
 
 buffer          = byte ptr -1014h
@@ -9732,7 +9732,7 @@ seg007          segment byte public 'CODE' use16
 
 ; Attributes: bp-based frame
 
-sub_14742       proc far                ; CODE XREF: sub_14ED6+1A1\u2193P
+sub_14742       proc far                ; CODE XREF: Logics_tryMoveDirection+1A1\u2193P
                                         ; sub_151A9+9A\u2193P ...
 
 arg_0           = word ptr  6
@@ -10461,7 +10461,7 @@ sub_14A5F       endp
 
 ; Attributes: bp-based frame
 
-Logics_checkMoveRestriction proc far    ; CODE XREF: sub_14ED6+61\u2193p
+Logics_checkMoveRestriction proc far    ; CODE XREF: Logics_tryMoveDirection+61\u2193p
                                         ; seg151:loc_6A291\u2193P ...
 
 var_8           = word ptr -8
@@ -10838,7 +10838,7 @@ loc_14ED2:                              ; CODE XREF: Logics_checkMoveRestriction
 
 ; Attributes: bp-based frame
 
-sub_14ED6       proc far                ; CODE XREF: sub_151A9+42\u2193p
+Logics_tryMoveDirection proc far        ; CODE XREF: sub_151A9+42\u2193p
                                         ; sub_152BA+5D\u2193p ...
 
 var_12          = word ptr -12h
@@ -10877,36 +10877,36 @@ arg_0           = byte ptr  6
                 jmp     loc_15109
 ; ---------------------------------------------------------------------------
 
-loc_14F1E:                              ; CODE XREF: sub_14ED6+43\u2191j
+loc_14F1E:                              ; CODE XREF: Logics_tryMoveDirection+43\u2191j
                 dec     [bp+var_6]
                 jmp     loc_15123
 ; ---------------------------------------------------------------------------
 
-loc_14F24:                              ; CODE XREF: sub_14ED6+288\u2193j
+loc_14F24:                              ; CODE XREF: Logics_tryMoveDirection+288\u2193j
                 mov     ax, [bp+var_E]
 
-loc_14F27:                              ; CODE XREF: sub_14ED6+BD\u2193j
-                                        ; sub_14ED6+152\u2193j ...
+loc_14F27:                              ; CODE XREF: Logics_tryMoveDirection+BD\u2193j
+                                        ; Logics_tryMoveDirection+152\u2193j ...
                 mov     [bp+var_12], ax
 
-loc_14F2A:                              ; CODE XREF: sub_14ED6+85\u2193j
-                                        ; sub_14ED6+18A\u2193j ...
+loc_14F2A:                              ; CODE XREF: Logics_tryMoveDirection+85\u2193j
+                                        ; Logics_tryMoveDirection+18A\u2193j ...
                 cmp     [bp+var_12], 0
                 jnz     short loc_14F33
                 jmp     loc_150AF
 ; ---------------------------------------------------------------------------
 
-loc_14F33:                              ; CODE XREF: sub_14ED6+58\u2191j
+loc_14F33:                              ; CODE XREF: Logics_tryMoveDirection+58\u2191j
                 push    [bp+var_12]
                 push    cs
                 call    near ptr Logics_checkMoveRestriction
 
-loc_14F3A:                              ; CODE XREF: sub_14ED6+230\u2193j
+loc_14F3A:                              ; CODE XREF: Logics_tryMoveDirection+230\u2193j
                 add     sp, 2
                 jmp     loc_15008
 ; ---------------------------------------------------------------------------
 
-loc_14F40:                              ; CODE XREF: sub_14ED6+298\u2193j
+loc_14F40:                              ; CODE XREF: Logics_tryMoveDirection+298\u2193j
                 mov     bx, [bp+var_E]
                 shl     bx, 1
                 shl     bx, 1
@@ -10919,7 +10919,7 @@ loc_14F40:                              ; CODE XREF: sub_14ED6+298\u2193j
                 jmp     short loc_14F2A
 ; ---------------------------------------------------------------------------
 
-loc_14F5D:                              ; CODE XREF: sub_14ED6+290\u2193j
+loc_14F5D:                              ; CODE XREF: Logics_tryMoveDirection+290\u2193j
                 mov     bx, [bp+var_E]
                 shl     bx, 1
                 shl     bx, 1
@@ -10934,7 +10934,7 @@ loc_14F5D:                              ; CODE XREF: sub_14ED6+290\u2193j
                 or      ax, ax
                 jz      short loc_14F95
 
-loc_14F83:                              ; CODE XREF: sub_14ED6+102\u2193j
+loc_14F83:                              ; CODE XREF: Logics_tryMoveDirection+102\u2193j
                 mov     bx, [bp+var_E]
                 shl     bx, 1
                 shl     bx, 1
@@ -10943,7 +10943,7 @@ loc_14F83:                              ; CODE XREF: sub_14ED6+102\u2193j
                 jmp     short loc_14F27
 ; ---------------------------------------------------------------------------
 
-loc_14F95:                              ; CODE XREF: sub_14ED6+AB\u2191j
+loc_14F95:                              ; CODE XREF: Logics_tryMoveDirection+AB\u2191j
                 mov     ax, 10h
                 push    ax              ; index
                 push    [bp+logicNum]   ; logicNum
@@ -10972,7 +10972,7 @@ loc_14F95:                              ; CODE XREF: sub_14ED6+AB\u2191j
                 jmp     short loc_14F83
 ; ---------------------------------------------------------------------------
 
-loc_14FDA:                              ; CODE XREF: sub_14ED6+D0\u2191j
+loc_14FDA:                              ; CODE XREF: Logics_tryMoveDirection+D0\u2191j
                 push    [bp+logicNum]
                 call    thunk_sub_674A7
                 add     sp, 2
@@ -10992,13 +10992,13 @@ loc_14FDA:                              ; CODE XREF: sub_14ED6+D0\u2191j
                 call    TextWindow_add
                 add     sp, 8
 
-loc_15008:                              ; CODE XREF: sub_14ED6+67\u2191j
-                                        ; sub_14ED6+1C2\u2193j ...
+loc_15008:                              ; CODE XREF: Logics_tryMoveDirection+67\u2191j
+                                        ; Logics_tryMoveDirection+1C2\u2193j ...
                 mov     ax, 1
                 jmp     loc_15184
 ; ---------------------------------------------------------------------------
 
-loc_1500E:                              ; CODE XREF: sub_14ED6+2A8\u2193j
+loc_1500E:                              ; CODE XREF: Logics_tryMoveDirection+2A8\u2193j
                 mov     si, [bp+var_E]
                 mov     cl, 3
                 shl     si, cl
@@ -11011,7 +11011,7 @@ loc_1500E:                              ; CODE XREF: sub_14ED6+2A8\u2193j
                 jmp     loc_14F27
 ; ---------------------------------------------------------------------------
 
-loc_1502B:                              ; CODE XREF: sub_14ED6+14B\u2191j
+loc_1502B:                              ; CODE XREF: Logics_tryMoveDirection+14B\u2191j
                 mov     bx, [bp+var_E]
                 mov     cl, 3
                 shl     bx, cl
@@ -11029,20 +11029,20 @@ loc_1502B:                              ; CODE XREF: sub_14ED6+14B\u2191j
                 mov     word ptr [bp+msg], ax
                 mov     word ptr [bp+msg+2], dx
 
-loc_15058:                              ; CODE XREF: sub_14ED6+166\u2191j
+loc_15058:                              ; CODE XREF: Logics_tryMoveDirection+166\u2191j
                 mov     ax, word ptr [bp+msg]
                 or      ax, word ptr [bp+msg+2]
                 jz      short loc_15063
                 jmp     loc_14F2A
 ; ---------------------------------------------------------------------------
 
-loc_15063:                              ; CODE XREF: sub_14ED6+188\u2191j
+loc_15063:                              ; CODE XREF: Logics_tryMoveDirection+188\u2191j
                 mov     word ptr [bp+msg], offset aYouCanTGoThatW ; "You can't go that way.\n"
                 mov     word ptr [bp+msg+2], seg seg086
                 jmp     loc_14F2A
 ; ---------------------------------------------------------------------------
 
-loc_15070:                              ; CODE XREF: sub_14ED6+2A0\u2193j
+loc_15070:                              ; CODE XREF: Logics_tryMoveDirection+2A0\u2193j
                 mov     ax, 0Fh
                 push    ax
                 push    [bp+var_E]
@@ -11057,13 +11057,13 @@ loc_15070:                              ; CODE XREF: sub_14ED6+2A0\u2193j
                 jmp     loc_14F2A
 ; ---------------------------------------------------------------------------
 
-loc_15092:                              ; CODE XREF: sub_14ED6+1B7\u2191j
+loc_15092:                              ; CODE XREF: Logics_tryMoveDirection+1B7\u2191j
                 cmp     [bp+logicNum], 0
                 jnz     short loc_1509B
                 jmp     loc_15008
 ; ---------------------------------------------------------------------------
 
-loc_1509B:                              ; CODE XREF: sub_14ED6+1C0\u2191j
+loc_1509B:                              ; CODE XREF: Logics_tryMoveDirection+1C0\u2191j
                 mov     es, dseg_102
                 mov     ax, [bp+logicNum]
                 cmp     es:_roomLogicNum, ax
@@ -11071,11 +11071,11 @@ loc_1509B:                              ; CODE XREF: sub_14ED6+1C0\u2191j
                 jmp     loc_15008
 ; ---------------------------------------------------------------------------
 
-loc_150AC:                              ; CODE XREF: sub_14ED6+1D1\u2191j
+loc_150AC:                              ; CODE XREF: Logics_tryMoveDirection+1D1\u2191j
                 jmp     loc_14F27
 ; ---------------------------------------------------------------------------
 
-loc_150AF:                              ; CODE XREF: sub_14ED6+5A\u2191j
+loc_150AF:                              ; CODE XREF: Logics_tryMoveDirection+5A\u2191j
                 mov     ax, word ptr [bp+msg]
                 or      ax, word ptr [bp+msg+2]
                 jz      short loc_15109
@@ -11096,14 +11096,14 @@ loc_150AF:                              ; CODE XREF: sub_14ED6+5A\u2191j
                 jmp     loc_15008
 ; ---------------------------------------------------------------------------
 
-loc_150E5:                              ; CODE XREF: sub_14ED6+20A\u2191j
+loc_150E5:                              ; CODE XREF: Logics_tryMoveDirection+20A\u2191j
                 jmp     short loc_150EA
 ; ---------------------------------------------------------------------------
 
-loc_150E7:                              ; CODE XREF: sub_14ED6+21C\u2193j
+loc_150E7:                              ; CODE XREF: Logics_tryMoveDirection+21C\u2193j
                 inc     word ptr [bp+msg]
 
-loc_150EA:                              ; CODE XREF: sub_14ED6:loc_150E5\u2191j
+loc_150EA:                              ; CODE XREF: Logics_tryMoveDirection:loc_150E5\u2191j
                 les     bx, dword ptr [bp+msg]
                 cmp     byte ptr es:[bx+1], 0
                 jnz     short loc_150E7
@@ -11112,15 +11112,15 @@ loc_150EA:                              ; CODE XREF: sub_14ED6:loc_150E5\u2191j
                 jmp     loc_15008
 ; ---------------------------------------------------------------------------
 
-loc_150FD:                              ; CODE XREF: sub_14ED6+222\u2191j
+loc_150FD:                              ; CODE XREF: Logics_tryMoveDirection+222\u2191j
                 mov     ax, 0Ah
                 push    ax              ; c
                 call    TextWindow_addChar
                 jmp     loc_14F3A
 ; ---------------------------------------------------------------------------
 
-loc_15109:                              ; CODE XREF: sub_14ED6+45\u2191j
-                                        ; sub_14ED6+1DF\u2191j ...
+loc_15109:                              ; CODE XREF: Logics_tryMoveDirection+45\u2191j
+                                        ; Logics_tryMoveDirection+1DF\u2191j ...
                 mov     ax, offset aYouCanTGoThatW ; "You can't go that way.\n"
                 mov     dx, seg seg086
                 push    dx
@@ -11131,15 +11131,15 @@ loc_15109:                              ; CODE XREF: sub_14ED6+45\u2191j
                 jmp     short loc_15184
 ; ---------------------------------------------------------------------------
 
-loc_1511D:                              ; CODE XREF: sub_14ED6+266\u2193j
+loc_1511D:                              ; CODE XREF: Logics_tryMoveDirection+266\u2193j
                                         ; seg121:0198\u2193P ...
                 dec     [bp+var_2]
                 inc     [bp+var_6]
-sub_14ED6       endp
+Logics_tryMoveDirection endp
 
-; START OF FUNCTION CHUNK FOR sub_14ED6
+; START OF FUNCTION CHUNK FOR Logics_tryMoveDirection
 
-loc_15123:                              ; CODE XREF: sub_14ED6+4B\u2191j
+loc_15123:                              ; CODE XREF: Logics_tryMoveDirection+4B\u2191j
                 cmp     [bp+var_2], 0
                 jz      short loc_15109
                 mov     si, [bp+var_6]
@@ -11166,41 +11166,41 @@ loc_1515C:                              ; CODE XREF: seg121:loc_4CBCA\u2193P
                 jmp     loc_14F24
 ; ---------------------------------------------------------------------------
 
-loc_15161:                              ; CODE XREF: sub_14ED6:loc_1515C\u2191j
+loc_15161:                              ; CODE XREF: Logics_tryMoveDirection:loc_1515C\u2191j
                 cmp     ax, 2
                 jnz     short loc_15169
                 jmp     loc_14F5D
 ; ---------------------------------------------------------------------------
 
-loc_15169:                              ; CODE XREF: sub_14ED6+28E\u2191j
+loc_15169:                              ; CODE XREF: Logics_tryMoveDirection+28E\u2191j
                 cmp     ax, 3
                 jnz     short loc_15171
                 jmp     loc_14F40
 ; ---------------------------------------------------------------------------
 
-loc_15171:                              ; CODE XREF: sub_14ED6+296\u2191j
+loc_15171:                              ; CODE XREF: Logics_tryMoveDirection+296\u2191j
                 cmp     ax, 4
                 jnz     short loc_15179
                 jmp     loc_15070
 ; ---------------------------------------------------------------------------
 
-loc_15179:                              ; CODE XREF: sub_14ED6+29E\u2191j
+loc_15179:                              ; CODE XREF: Logics_tryMoveDirection+29E\u2191j
                 cmp     ax, 5
                 jnz     short loc_15181
                 jmp     loc_1500E
 ; ---------------------------------------------------------------------------
 
-loc_15181:                              ; CODE XREF: sub_14ED6+2A6\u2191j
+loc_15181:                              ; CODE XREF: Logics_tryMoveDirection+2A6\u2191j
                 jmp     loc_14F2A
 ; ---------------------------------------------------------------------------
 
-loc_15184:                              ; CODE XREF: sub_14ED6+135\u2191j
-                                        ; sub_14ED6+245\u2191j
+loc_15184:                              ; CODE XREF: Logics_tryMoveDirection+135\u2191j
+                                        ; Logics_tryMoveDirection+245\u2191j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-; END OF FUNCTION CHUNK FOR sub_14ED6
+; END OF FUNCTION CHUNK FOR Logics_tryMoveDirection
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -11265,7 +11265,7 @@ loc_151DE:                              ; CODE XREF: sub_151A9:loc_151D7\u2191j
                 sub     ah, ah
                 push    ax
                 push    cs
-                call    near ptr sub_14ED6
+                call    near ptr Logics_tryMoveDirection
                 add     sp, 2
                 jmp     loc_152B2
 ; ---------------------------------------------------------------------------
@@ -11426,7 +11426,7 @@ loc_152FB:                              ; CODE XREF: sub_152BA+9B\u2193j
                 sub     ah, ah
                 push    ax
                 push    cs
-                call    near ptr sub_14ED6
+                call    near ptr Logics_tryMoveDirection
                 add     sp, 2
                 mov     ax, 1
                 jmp     short loc_15359
@@ -11676,7 +11676,7 @@ loc_154F9:                              ; CODE XREF: seg009:0BF5\u2191j
                 sub     ah, ah
                 push    ax
                 push    cs
-                call    near ptr sub_14ED6
+                call    near ptr Logics_tryMoveDirection
                 add     sp, 2
                 jmp     short loc_15511
 ; ---------------------------------------------------------------------------
@@ -11750,7 +11750,7 @@ loc_1556B:                              ; CODE XREF: seg009:0C86\u2191j
                 jnz     short loc_15568
                 push    word ptr es:[si+22h]
                 push    cs
-                call    near ptr sub_14ED6
+                call    near ptr Logics_tryMoveDirection
                 add     sp, 2
 
 loc_15597:                              ; CODE XREF: seg009:0CD4\u2193j
@@ -118562,8 +118562,8 @@ unk_3FC02       db    7
                 db    0
 ; char aYouCanTGoThatW[]
 aYouCanTGoThatW db 'You can',27h,'t go that way.',0Ah,0
-                                        ; DATA XREF: sub_14ED6:loc_15063\u2191o
-                                        ; sub_14ED6:loc_15109\u2191o
+                                        ; DATA XREF: Logics_tryMoveDirection:loc_15063\u2191o
+                                        ; Logics_tryMoveDirection:loc_15109\u2191o
 ; char name1[]
 _name1          db 44h dup(0)           ; DATA XREF: printObjLower+17\u2191o
                                         ; printObjLower+35\u2191r ...
@@ -167704,7 +167704,7 @@ var_2           = word ptr -2
                 jnz     short loc_68885
                 mov     ax, 0Bh
                 push    ax
-                call    sub_14ED6
+                call    Logics_tryMoveDirection
                 add     sp, 2
                 jmp     loc_68ABF
 ; ---------------------------------------------------------------------------
@@ -168279,7 +168279,7 @@ loc_68D51:                              ; CODE XREF: sub_2E74D+3\u2191J
 loc_68D76:                              ; CODE XREF: sub_2E74D+3A668\u2193j
                 mov     ax, 0Ch
                 push    ax
-                call    sub_14ED6
+                call    Logics_tryMoveDirection
                 add     sp, 2
                 jmp     loc_68EBB
 ; ---------------------------------------------------------------------------
@@ -172832,7 +172832,7 @@ loc_6B5CC:                              ; CODE XREF: sub_2E527+3D06D\u2191j
 loc_6B5D8:                              ; CODE XREF: sub_2E527+3D077\u2191j
                 mov     ax, 9
                 push    ax
-                call    sub_14ED6
+                call    Logics_tryMoveDirection
                 add     sp, 2
                 jmp     short loc_6B5C7
 ; ---------------------------------------------------------------------------
@@ -177977,7 +177977,7 @@ loc_6DFE1:                              ; CODE XREF: sub_2E775+3\u2191J
                 jnz     short loc_6DFFB
                 mov     ax, 0Ah
                 push    ax
-                call    sub_14ED6
+                call    Logics_tryMoveDirection
                 add     sp, 2
                 jmp     short loc_6E022
 ; ---------------------------------------------------------------------------
@@ -178059,7 +178059,7 @@ loc_6E072:                              ; CODE XREF: sub_2E711+3\u2191J
                 jnz     short loc_6E098
                 mov     ax, 3
                 push    ax
-                call    sub_14ED6
+                call    Logics_tryMoveDirection
                 add     sp, 2
 
 loc_6E098:                              ; CODE XREF: sub_2E711+3F96C\u2191j
@@ -180223,7 +180223,7 @@ loc_6F252:                              ; CODE XREF: sub_2EB5D+406DE\u2191j
                 push    ax
 
 loc_6F262:
-                call    sub_14ED6
+                call    Logics_tryMoveDirection
                 add     sp, 2
 
 loc_6F26A:                              ; CODE XREF: sub_2EB5D:loc_6F27F\u2193j
@@ -189470,7 +189470,7 @@ loc_7387A:                              ; CODE XREF: sub_7382B+48\u2191j
 
 loc_7387D:                              ; CODE XREF: sub_7382B+4D\u2191j
                 push    ax
-                call    sub_14ED6
+                call    Logics_tryMoveDirection
                 add     sp, 2
 
 loc_73886:                              ; CODE XREF: sub_7382B+112\u2193j
@@ -189886,7 +189886,7 @@ loc_73B83:                              ; CODE XREF: sub_73B3E+56\u2193j
 loc_73B88:                              ; CODE XREF: sub_73B3E+2E\u2191j
                 mov     ax, 9
                 push    ax
-                call    sub_14ED6
+                call    Logics_tryMoveDirection
                 add     sp, 2
                 jmp     short loc_73B83
 ; ---------------------------------------------------------------------------
@@ -199410,7 +199410,7 @@ loc_77E4B:                              ; CODE XREF: sub_77D79+123\u2193j
 loc_77E76:                              ; CODE XREF: sub_77D79+11E\u2193j
                 mov     ax, 9
                 push    ax
-                call    sub_14ED6
+                call    Logics_tryMoveDirection
                 jmp     short loc_77EC3
 ; ---------------------------------------------------------------------------
 
@@ -200639,7 +200639,7 @@ loc_785CF:                              ; CODE XREF: sub_78570+5D7\u2193j
                 push    ax
 
 loc_785D3:
-                call    sub_14ED6
+                call    Logics_tryMoveDirection
                 add     sp, 2
 
 loc_785DB:                              ; CODE XREF: sub_78570+E6\u2193j
@@ -203295,7 +203295,7 @@ loc_7985D:                              ; CODE XREF: sub_7983E+18\u2191j
                 jz      short loc_79891
                 mov     ax, 0Ah
                 push    ax
-                call    sub_14ED6
+                call    Logics_tryMoveDirection
                 add     sp, 2
                 jmp     short loc_798B8
 ; ---------------------------------------------------------------------------
@@ -203449,7 +203449,7 @@ loc_7998F:                              ; CODE XREF: sub_79933+1D\u2191j
                                         ; sub_79933+22\u2191j
                 mov     ax, 0Ah
                 push    ax
-                call    sub_14ED6
+                call    Logics_tryMoveDirection
                 add     sp, 2
                 jmp     short loc_7998A
 ; ---------------------------------------------------------------------------
@@ -203681,7 +203681,7 @@ loc_79AF5:                              ; CODE XREF: sub_79ABA+18\u2191j
                                         ; sub_79ABA+22\u2191j
                 mov     ax, 0Ch
                 push    ax
-                call    sub_14ED6
+                call    Logics_tryMoveDirection
                 add     sp, 2
                 jmp     short loc_79AF0
 ; ---------------------------------------------------------------------------
@@ -222951,7 +222951,7 @@ loc_82CAA:                              ; CODE XREF: sub_82C69+3A\u2191j
 
 loc_82CAD:                              ; CODE XREF: sub_82C69+3F\u2191j
                 push    ax
-                call    sub_14ED6
+                call    Logics_tryMoveDirection
                 add     sp, 2
 
 loc_82CB6:                              ; CODE XREF: sub_82C69+7A\u2193j
@@ -225847,7 +225847,7 @@ loc_83F9B:                              ; CODE XREF: sub_83F45+2E\u2191j
                                         ; sub_83F45+33\u2191j ...
                 mov     ax, 4
                 push    ax
-                call    sub_14ED6
+                call    Logics_tryMoveDirection
                 add     sp, 2
                 jmp     short loc_83F96
 ; ---------------------------------------------------------------------------
@@ -226309,7 +226309,7 @@ loc_84284:                              ; CODE XREF: sub_84243+3A\u2191j
 
 loc_84287:                              ; CODE XREF: sub_84243+3F\u2191j
                 push    ax
-                call    sub_14ED6
+                call    Logics_tryMoveDirection
                 add     sp, 2
 
 loc_84290:                              ; CODE XREF: sub_84243+70\u2193j
@@ -235849,7 +235849,7 @@ loc_88614:                              ; CODE XREF: sub_885A3+2F\u2191j
 loc_88634:                              ; CODE XREF: sub_885A3+7B\u2191j
                 mov     ax, 3
                 push    ax
-                call    sub_14ED6
+                call    Logics_tryMoveDirection
                 add     sp, 2
                 jmp     short loc_8860E
 ; ---------------------------------------------------------------------------
@@ -237635,7 +237635,7 @@ loc_89226:                              ; CODE XREF: sub_88FEC+213\u2191j
 loc_8922B:                              ; CODE XREF: sub_88FEC+9A\u2191j
                 mov     ax, 9
                 push    ax
-                call    sub_14ED6
+                call    Logics_tryMoveDirection
                 add     sp, 2
                 jmp     short loc_891BE
 ; ---------------------------------------------------------------------------
@@ -238116,7 +238116,7 @@ loc_894F9:                              ; CODE XREF: sub_89494+5E\u2191j
 
 loc_894FC:                              ; CODE XREF: sub_89494+63\u2191j
                 push    ax
-                call    sub_14ED6
+                call    Logics_tryMoveDirection
                 add     sp, 2
 
 loc_89505:                              ; CODE XREF: sub_89494+9E\u2193j
@@ -245217,7 +245217,7 @@ loc_8C6CC:                              ; CODE XREF: sub_8C630+84\u2191j
 loc_8C6DB:                              ; CODE XREF: sub_8C630+A6\u2191j
                 mov     ax, 1
                 push    ax
-                call    sub_14ED6
+                call    Logics_tryMoveDirection
                 add     sp, 2
                 jmp     short loc_8C6C6
 ; ---------------------------------------------------------------------------
@@ -253923,7 +253923,7 @@ loc_90720:                              ; CODE XREF: sub_906DB+56\u2193j
 loc_90725:                              ; CODE XREF: sub_906DB+2E\u2191j
                 mov     ax, 7
                 push    ax
-                call    sub_14ED6
+                call    Logics_tryMoveDirection
                 add     sp, 2
                 jmp     short loc_90720
 ; ---------------------------------------------------------------------------
@@ -259585,7 +259585,7 @@ loc_9310F:                              ; CODE XREF: sub_9307C+8E\u2191j
                 cmp     es:[bx+1Ch], cx
                 jnz     short loc_9310C
                 push    word ptr [si+63CAh]
-                call    sub_14ED6
+                call    Logics_tryMoveDirection
                 add     sp, 2
                 jmp     loc_930BA
 ; ---------------------------------------------------------------------------
@@ -259674,7 +259674,7 @@ loc_931B9:                              ; CODE XREF: sub_9314B+67\u2191j
 
 loc_931BC:                              ; CODE XREF: sub_9314B+6C\u2191j
                 push    ax
-                call    sub_14ED6
+                call    Logics_tryMoveDirection
                 add     sp, 2
                 jmp     short loc_931A2
 ; ---------------------------------------------------------------------------
@@ -259766,7 +259766,7 @@ loc_9324C:                              ; CODE XREF: sub_931C9+7C\u2191j
 
 loc_9324F:                              ; CODE XREF: sub_931C9+81\u2191j
                 push    ax
-                call    sub_14ED6
+                call    Logics_tryMoveDirection
                 add     sp, 2
                 jmp     short loc_93235
 ; ---------------------------------------------------------------------------
@@ -259840,7 +259840,7 @@ loc_932BD:                              ; CODE XREF: sub_9325C+2E\u2191j
                                         ; sub_9325C+33\u2191j
                 mov     ax, 9
                 push    ax
-                call    sub_14ED6
+                call    Logics_tryMoveDirection
                 add     sp, 2
                 jmp     short loc_932B8
 ; ---------------------------------------------------------------------------
@@ -262273,7 +262273,7 @@ loc_942BE:                              ; CODE XREF: sub_94097+212\u2191j
                                         ; sub_94097+21A\u2191j ...
                 mov     ax, 1
                 push    ax
-                call    sub_14ED6
+                call    Logics_tryMoveDirection
                 add     sp, 2
                 jmp     short loc_942FF
 ; ---------------------------------------------------------------------------
@@ -263163,7 +263163,7 @@ loc_9484C:                              ; CODE XREF: sub_9478A+14\u2191j
                 jle     short loc_94847
                 mov     ax, 7
                 push    ax
-                call    sub_14ED6
+                call    Logics_tryMoveDirection
                 add     sp, 2
 
 loc_9487C:                              ; CODE XREF: sub_9478A+3BD\u2193j
@@ -264687,7 +264687,7 @@ arg_0           = word ptr  6
                 jnz     short loc_9536B
                 mov     ax, 1
                 push    ax
-                call    sub_14ED6
+                call    Logics_tryMoveDirection
                 add     sp, 2
                 mov     ax, 1
                 jmp     short loc_9536D
@@ -268602,7 +268602,7 @@ loc_96C8F:                              ; CODE XREF: sub_96C6B+18\u2191j
                 jnz     short loc_96CBE
                 mov     ax, 7
                 push    ax
-                call    sub_14ED6
+                call    Logics_tryMoveDirection
                 add     sp, 2
 
 loc_96CA7:                              ; CODE XREF: sub_96C6B+51\u2193j
@@ -269183,7 +269183,7 @@ loc_97050:                              ; CODE XREF: sub_9702C+18\u2191j
 loc_97067:                              ; CODE XREF: sub_9702C+2F\u2191j
                 mov     ax, 7
                 push    ax
-                call    sub_14ED6
+                call    Logics_tryMoveDirection
                 add     sp, 2
                 jmp     short loc_9709B
 ; ---------------------------------------------------------------------------
@@ -276831,7 +276831,7 @@ loc_9A59C:                              ; CODE XREF: sub_9A549+18\u2191j
                 jnz     short loc_9A5B6
                 mov     ax, 1
                 push    ax
-                call    sub_14ED6
+                call    Logics_tryMoveDirection
                 add     sp, 2
                 jmp     short loc_9A597
 ; ---------------------------------------------------------------------------
@@ -277977,7 +277977,7 @@ loc_9AD71:                              ; CODE XREF: sub_9AD1E+18\u2191j
                 jnz     short loc_9AD8B
                 mov     ax, 1
                 push    ax
-                call    sub_14ED6
+                call    Logics_tryMoveDirection
                 add     sp, 2
                 jmp     short loc_9AD57
 ; ---------------------------------------------------------------------------
@@ -282173,7 +282173,7 @@ loc_9CCD8:                              ; CODE XREF: sub_9CC60+41\u2191j
                                         ; sub_9CC60+61\u2191j
                 mov     ax, 1
                 push    ax
-                call    sub_14ED6
+                call    Logics_tryMoveDirection
                 add     sp, 2
                 jmp     short loc_9CCD3
 ; ---------------------------------------------------------------------------
@@ -282264,7 +282264,7 @@ loc_9CD65:                              ; CODE XREF: sub_9CCED+41\u2191j
                                         ; sub_9CCED+61\u2191j
                 mov     ax, 5
                 push    ax
-                call    sub_14ED6
+                call    Logics_tryMoveDirection
                 add     sp, 2
                 jmp     short loc_9CD60
 ; ---------------------------------------------------------------------------
@@ -296683,7 +296683,7 @@ loc_A36C8:                              ; CODE XREF: sub_A3688+39\u2191j
 
 loc_A36CB:                              ; CODE XREF: sub_A3688+3E\u2191j
                 push    ax
-                call    sub_14ED6
+                call    Logics_tryMoveDirection
                 add     sp, 2
 
 loc_A36D4:                              ; CODE XREF: sub_A3688+7A\u2193j
@@ -301541,7 +301541,7 @@ loc_A563B:                              ; CODE XREF: sub_A55E5+2E\u2191j
 
 loc_A564B:                              ; CODE XREF: sub_A55E5+81\u2193j
                 push    ax
-                call    sub_14ED6
+                call    Logics_tryMoveDirection
                 add     sp, 2
                 jmp     short loc_A5631
 ; ---------------------------------------------------------------------------
@@ -306025,7 +306025,7 @@ loc_A7619:                              ; CODE XREF: sub_A75D2+40\u2191j
 loc_A762F:                              ; CODE XREF: sub_A75D2+52\u2191j
                 mov     ax, 5
                 push    ax
-                call    sub_14ED6
+                call    Logics_tryMoveDirection
 
 loc_A7638:                              ; CODE XREF: sub_A75D2+155\u2193j
                 add     sp, 2
@@ -308107,7 +308107,7 @@ loc_A82AB:                              ; CODE XREF: sub_A825B+2C\u2191j
                 jnz     short loc_A82C6
                 mov     ax, 3
                 push    ax
-                call    sub_14ED6
+                call    Logics_tryMoveDirection
                 add     sp, 2
                 jmp     short loc_A829B
 ; ---------------------------------------------------------------------------
@@ -319470,7 +319470,7 @@ loc_ACE62:                              ; CODE XREF: sub_ACE08+53\u2191j
 
 loc_ACE65:                              ; CODE XREF: sub_ACE08+58\u2191j
                 push    ax
-                call    sub_14ED6
+                call    Logics_tryMoveDirection
                 add     sp, 2
                 jmp     short loc_ACE4B
 ; ---------------------------------------------------------------------------
@@ -378222,7 +378222,7 @@ loc_C66CF:                              ; CODE XREF: sub_C64A0+228\u2191j
 
 loc_C66D2:                              ; CODE XREF: sub_C64A0+22D\u2191j
                 push    ax
-                call    sub_14ED6
+                call    Logics_tryMoveDirection
                 add     sp, 2
                 jmp     short loc_C668A
 ; ---------------------------------------------------------------------------
@@ -387247,11 +387247,11 @@ proc_table_230  db 22h, 9               ; DATA XREF: seg082:proc_table\u2191o
 word_CBB0C      dw 2Ah                  ; DATA XREF: debug_info+89\u2191r
 METHODS_COUNT   dw 734                  ; DATA XREF: main+607\u2191r
                                         ; Logics_getObjectString+1E\u2191r ...
-word_CBB10      dw 9                    ; DATA XREF: sub_14ED6+14D\u2191r
+word_CBB10      dw 9                    ; DATA XREF: Logics_tryMoveDirection+14D\u2191r
                 db    1
                 db    0
-word_CBB14      dw 84BEh                ; DATA XREF: sub_14ED6+143\u2191r
-word_CBB16      dw 3                    ; DATA XREF: sub_14ED6+15C\u2191r
+word_CBB14      dw 84BEh                ; DATA XREF: Logics_tryMoveDirection+143\u2191r
+word_CBB16      dw 3                    ; DATA XREF: Logics_tryMoveDirection+15C\u2191r
                 db    9
                 db    0
                 db    1
@@ -387317,10 +387317,10 @@ aUtO            db 'ut o',0
 aFollow         db 'follow',0           ; DATA XREF: Logics_checkMoveRestriction+338\u2191o
 ; char aSYou_[]
 aSYou_          db 9,'%s you.',0Ah,0    ; DATA XREF: Logics_checkMoveRestriction+34F\u2191o
-aAre_0          db 'are',0              ; DATA XREF: sub_14ED6+10F\u2191o
+aAre_0          db 'are',0              ; DATA XREF: Logics_tryMoveDirection+10F\u2191o
 ; char aSnTOpen_[]
 aSnTOpen_       db '%sn',27h,'t open.',0Ah,0
-                                        ; DATA XREF: sub_14ED6+125\u2191o
+                                        ; DATA XREF: Logics_tryMoveDirection+125\u2191o
 ; char asc_CBBD1[]
 asc_CBBD1       db ']',0Ah,0            ; DATA XREF: Score_add:loc_153A7\u2191o
                 db    1
@@ -387929,7 +387929,7 @@ asc_CC091       db ' ',0                ; DATA XREF: sub_651B3:loc_654A4\u2191o
 aRb_1           db 'rb',0               ; DATA XREF: vocab_load+8\u2191o
 ; char aVocab_dat[]
 aVocab_dat      db 'vocab.dat',0        ; DATA XREF: vocab_load+D\u2191o
-                                        ; sub_14ED6+261\u2191r ...
+                                        ; Logics_tryMoveDirection+261\u2191r ...
 byte_CC0A1      db 0                    ; DATA XREF: sub_65927+110\u2191w
 aRb_2           db 'rb',0               ; DATA XREF: objects_load+6\u2191o
 ; char aObject_dat[]
@@ -388422,8 +388422,8 @@ aSToS_1         db '%s to%s',0          ; DATA XREF: sub_2E653+418B7\u2191o
 aAre_51         db 'are',0
 ; char aYouWakeUp_[]
 aYouWakeUp_     db 'You wake up.',0Ah,0 ; DATA XREF: sub_2E937+416F4\u2191o
-word_CC9EE      dw 6557h                ; DATA XREF: sub_14ED6+172\u2191r
-word_CC9F0      dw 6C6Ch                ; DATA XREF: sub_14ED6+177\u2191r
+word_CC9EE      dw 6557h                ; DATA XREF: Logics_tryMoveDirection+172\u2191r
+word_CC9F0      dw 6C6Ch                ; DATA XREF: Logics_tryMoveDirection+177\u2191r
 aItWonT_        db ' it won',27h,'t.',0Ah,0
 aYouWould?      db 'You would?',0Ah,0
 aOk_            db 'OK.',0Ah,0
@@ -393813,7 +393813,7 @@ dseg_103        dw seg sg4d43           ; DATA XREF: sub_14A5F+8A\u2191r
 dseg_104        dw seg sg4d43           ; DATA XREF: sub_14A5F+95\u2191r
                                         ; sub_49C10+95\u2191r
 dseg_105        dw seg sg4d43           ; DATA XREF: Logics_checkMoveRestriction+11\u2191r
-                                        ; sub_14ED6+1AC\u2191r ...
+                                        ; Logics_tryMoveDirection+1AC\u2191r ...
 seg_D10EE       dw seg sg3EDC           ; DATA XREF: Logics_checkMoveRestriction:loc_14C22\u2191r
                                         ; seg009:03D3\u2191r ...
 dseg_106        dw seg sg4d43           ; DATA XREF: Logics_checkMoveRestriction+17C\u2191r
@@ -393824,15 +393824,15 @@ dseg_107        dw seg sg4d43           ; DATA XREF: Logics_checkMoveRestriction
                                         ; sub_153B6+9\u2191r ...
 dseg_108        dw seg sg4d43           ; DATA XREF: Logics_checkMoveRestriction+1E4\u2191r
                                         ; seg098:1BE9\u2191r
-seg_D10F8       dw seg seg082           ; DATA XREF: sub_14ED6+25D\u2191r
-                                        ; sub_14ED6+270\u2191r ...
-seg_D10FA       dw seg sg3EDC           ; DATA XREF: sub_14ED6+268\u2191r
+seg_D10F8       dw seg seg082           ; DATA XREF: Logics_tryMoveDirection+25D\u2191r
+                                        ; Logics_tryMoveDirection+270\u2191r ...
+seg_D10FA       dw seg sg3EDC           ; DATA XREF: Logics_tryMoveDirection+268\u2191r
                                         ; sub_151A9:loc_1522A\u2191r ...
-seg_D10FC       dw seg seg082           ; DATA XREF: sub_14ED6+71\u2191r
-                                        ; sub_14ED6+16E\u2191r ...
-seg_D10FE       dw seg seg082           ; DATA XREF: sub_14ED6+8E\u2191r
-                                        ; sub_14ED6+B4\u2191r ...
-dseg_109        dw seg sg4d43           ; DATA XREF: sub_14ED6+13F\u2191r
+seg_D10FC       dw seg seg082           ; DATA XREF: Logics_tryMoveDirection+71\u2191r
+                                        ; Logics_tryMoveDirection+16E\u2191r ...
+seg_D10FE       dw seg seg082           ; DATA XREF: Logics_tryMoveDirection+8E\u2191r
+                                        ; Logics_tryMoveDirection+B4\u2191r ...
+dseg_109        dw seg sg4d43           ; DATA XREF: Logics_tryMoveDirection+13F\u2191r
                                         ; sub_151A9+6A\u2191r ...
 dseg_110        dw seg sg4d43           ; DATA XREF: Score_add+10\u2191r
                                         ; seg100:040F\u2191r

@@ -258,6 +258,26 @@ RENAMES = [
      "Logic_call(_roomLogicNum, action=0xF) room-override hook. Returns "
      "nonzero (with the blocking message already printed) if movement "
      "is currently disallowed."),
+    (0x14ED6, "Logics_tryMoveDirection",
+     "sub_14ED6(directionChar): the core room-exit resolution function. "
+     "arg_0 is the parsed direction character ('n'/'s'/'e'/'w'/etc, "
+     "confirmed by direct comparison against a per-room exit-table "
+     "entry field and by setting Parser_val21 to the same byte on a "
+     "match). Walks the current room's exit table (var_6 entries, "
+     "count from sub_12445(_roomLogicNum)), each entry a small variant "
+     "record (direction char + a 1-5 type tag + type-specific data) "
+     "dispatching to 5 different exit-resolution shapes -- a direct "
+     "room link, a Logics_getBit-gated door (bits 0xC/0x10, printing "
+     "the locally-embedded string \"%sn't open.\\n\" when closed -- not "
+     "a GATESTR.DAT message, a literal string constant in this "
+     "executable's own data segment), a fixed blocked-message table "
+     "lookup, a sub_14742-computed dynamic "
+     "destination, and one more table-based lookup not fully "
+     "distinguished from the others. Calls the already-named "
+     "Logics_checkMoveRestriction before actually moving, and falls "
+     "back to \"You can't go that way.\\n\" when no exit matches. Not "
+     "fully traced: sub_123F3/sub_12445/sub_14742's individual roles, "
+     "and the exact semantics of each of the 5 exit-type branches."),
 ]
 
 

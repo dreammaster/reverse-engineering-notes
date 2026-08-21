@@ -1173,3 +1173,33 @@ two sessions ago — every entry added since then that had *already* been
 applied for real in an earlier turn needed converting to its hex
 address before this script would run again; worth double-checking for
 this whenever re-running the script after a gap.
+
+### `Logics_tryMoveDirection` named — the room-exit resolution function
+
+Same session, immediate follow-on — `Logics_checkMoveRestriction`'s
+only caller in this list, `sub_14ED6` (44 callers), turned out to be the
+core room-exit resolution function itself. Confirmed thoroughly by
+direct read, not just message decoding this time:
+
+- Its one parameter is the **parsed direction character** (`'n'`/`'s'`/
+  `'e'`/`'w'`/etc.), confirmed two ways: compared directly against a
+  per-room exit-table entry field, and copied into `Parser_val21` on a
+  match (a parser-state global recording the direction just used).
+- The current room's exit table (entry count from `sub_12445
+  (_roomLogicNum)`) holds one small variant record per defined
+  direction — a direction-char byte plus a **1-5 type tag** selecting
+  between 5 different exit-resolution shapes: a direct room link, a
+  `Logics_getBit`-gated door (bits `0xC`/`0x10`, printing a locally
+  embedded `"%sn't open.\n"` string when closed — a literal constant in
+  this executable's own data segment, not a `GATESTR.DAT` message), a
+  fixed blocked-message table lookup, a `sub_14742`-computed dynamic
+  destination, and one more table-based lookup not yet distinguished
+  from the others.
+- Calls the already-named `Logics_checkMoveRestriction` before actually
+  committing to the move, and falls back to the classic `"You can't go
+  that way.\n"` when no exit table entry matches the direction at all.
+
+Applied via `apply_renames_gatemain.py`'s seventh batch. **Not traced
+further**: `sub_123F3`/`sub_12445`/`sub_14742`'s individual roles, and
+the precise distinction between the 5 exit-type branches (only the
+door-gated one was read in enough detail to describe confidently).
