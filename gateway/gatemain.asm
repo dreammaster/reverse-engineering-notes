@@ -2156,7 +2156,7 @@ loc_11261:                              ; CODE XREF: main+AF7\u2191j
                 push    es:word_CB808
                 sub     ax, ax
                 push    ax
-                call    sub_12FC3
+                call    Queue_processTurn
                 add     sp, 4
                 mov     es, dseg_84
                 mov     es:word_CB808, 1
@@ -6473,7 +6473,7 @@ Queue_find      endp
 
 ; Attributes: bp-based frame
 
-sub_12FC3       proc far                ; CODE XREF: main+B44\u2191P
+Queue_processTurn proc far              ; CODE XREF: main+B44\u2191P
                                         ; seg151:2D54\u2193P ...
 
 var_C           = word ptr -0Ch
@@ -6495,12 +6495,12 @@ arg_2           = word ptr  8
                 jmp     loc_13176
 ; ---------------------------------------------------------------------------
 
-loc_12FDE:                              ; CODE XREF: sub_12FC3+11\u2191j
+loc_12FDE:                              ; CODE XREF: Queue_processTurn+11\u2191j
                 mov     ax, word_CB7F6
                 mov     [bp+var_2], ax
                 mov     [bp+var_C], 0
                 jmp     loc_13142
-sub_12FC3       endp
+Queue_processTurn endp
 
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR sub_130D6
@@ -6531,7 +6531,7 @@ loc_13019:                              ; CODE XREF: sub_130D6-D8\u2191j
                                         ; sub_130D6-D2\u2191j ...
                 inc     word_CB7F6
 
-loc_1301D:                              ; CODE XREF: sub_12FC3:loc_1316D\u2193j
+loc_1301D:                              ; CODE XREF: Queue_processTurn:loc_1316D\u2193j
                 mov     ax, _queueCount
                 cmp     word_CB7F6, ax
                 jb      short loc_13029
@@ -6673,9 +6673,9 @@ loc_1313F:                              ; CODE XREF: sub_130D6+2A\u2191j
                 inc     word ptr [bp-0Ch]
 sub_130D6       endp ; sp-analysis failed
 
-; START OF FUNCTION CHUNK FOR sub_12FC3
+; START OF FUNCTION CHUNK FOR Queue_processTurn
 
-loc_13142:                              ; CODE XREF: sub_12FC3+26\u2191j
+loc_13142:                              ; CODE XREF: Queue_processTurn+26\u2191j
                 mov     ax, [bp+arg_2]
                 cmp     [bp+var_C], ax
                 jge     short loc_13170
@@ -6706,7 +6706,7 @@ loc_13170:                              ; CODE XREF: sub_130D6+4B\u2191j
                 mov     ax, [bp+var_2]
                 mov     word_CB7F6, ax
 
-loc_13176:                              ; CODE XREF: sub_12FC3+18\u2191j
+loc_13176:                              ; CODE XREF: Queue_processTurn+18\u2191j
                 pop     si
 
 loc_13177:
@@ -6715,7 +6715,7 @@ loc_13177:
 
 locret_1317A:
                 retf
-; END OF FUNCTION CHUNK FOR sub_12FC3
+; END OF FUNCTION CHUNK FOR Queue_processTurn
 seg003          ends
 
 ; ===========================================================================
@@ -171275,7 +171275,7 @@ loc_6A89F:                              ; CODE XREF: thunk_loc_6A89F+3\u2191J
                 push    ax
                 mov     ax, 1
                 push    ax
-                call    sub_12FC3
+                call    Queue_processTurn
                 add     sp, 4
                 mov     ax, 1
                 retf
@@ -171507,7 +171507,7 @@ loc_6AA6E:                              ; CODE XREF: seg151:2EFA\u2191j
                 push    word ptr [bp-2]
                 mov     ax, 1
                 push    ax
-                call    sub_12FC3
+                call    Queue_processTurn
                 add     sp, 4
                 mov     es, seg_D1306
                 mov     es:byte_CB7F2, 1
@@ -186778,7 +186778,7 @@ loc_722BC:                              ; CODE XREF: sub_72260+4E\u2191j
                 push    ax
                 sub     ax, ax
                 push    ax
-                call    sub_12FC3
+                call    Queue_processTurn
                 add     sp, 4
                 mov     ax, 0Ah
                 imul    [bp+arg_0]
@@ -303517,7 +303517,7 @@ loc_A642F:                              ; CODE XREF: sub_A60CE+35A\u2191j
                 push    [bp+var_6]
                 sub     ax, ax
                 push    ax
-                call    sub_12FC3
+                call    Queue_processTurn
                 add     sp, 4
                 mov     es, seg_D17B8
                 cmp     es:_gameDayNumber, 0B4h ; '´'
@@ -303686,7 +303686,7 @@ loc_A65DB:                              ; CODE XREF: sub_A60CE+508\u2191j
                 push    ax
                 sub     ax, ax
                 push    ax
-                call    sub_12FC3
+                call    Queue_processTurn
                 add     sp, 4
                 mov     es, seg_D17B8
                 mov     ax, es:_gameDayNumber
@@ -393719,7 +393719,7 @@ seg065_s        dw seg seg065           ; DATA XREF: gatestr_load+89\u2191r
                                         ; gatestr_load+251\u2191r ...
 seg126_93       dw seg sg3EDC           ; DATA XREF: Queue_add+28\u2191r
                                         ; Queue_add+55\u2191r ...
-dseg_87         dw seg sg4d43           ; DATA XREF: sub_12FC3+190\u2191r
+dseg_87         dw seg sg4d43           ; DATA XREF: Queue_processTurn+190\u2191r
                                         ; seg097:106C\u2191r
 dseg_88         dw seg sg4d43           ; DATA XREF: sub_130D6:loc_13061\u2191r
                                         ; seg097:loc_4805A\u2191r

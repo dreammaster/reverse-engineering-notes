@@ -2219,3 +2219,34 @@ spending money), and checked here against the 1000-credit weapons
 fine.
 
 Applied via `apply_renames_gatemain.py`'s forty-first batch.
+
+### `Queue_processTurn` named — the turn/WAIT event-queue loop sighted
+
+Moved to `sub_12FC3` (5 callers, called directly from `main()`'s main
+game loop right before `_turnCount` is incremented). Its body shares
+function chunks with `sub_130D6` (itself `sp-analysis failed`), and
+together they interleave with a cluster of already-named symbols that
+pin down the architecture even though the two functions' exact
+individual roles aren't fully separated yet:
+
+- The already-named `_queueCount`/`Queue_add`/`Queue_remove`/
+  `Queue_find` — the shared chunk walks the exact same 4-byte-entry
+  scheduled-event table those functions operate on.
+- The already-named `waitMsg` (`"Do you want to continue waiting?"`)
+  and `j_continue_waiting` — confirming this cluster is reused as the
+  **WAIT command's inner loop**, not just a once-per-turn callback.
+
+`Queue_processTurn(prevValue, currentValue)`: gates on a one-shot skip
+flag (`byte_CB7F2`, not renamed), then either fires action `0x1B` on
+the current room or falls through into the shared queue-walking chunk.
+Named for its confirmed role — the per-turn (and per-WAIT-iteration)
+scheduled-event-queue processing entry point.
+
+Not renamed this pass: `sub_130D6` itself, and `word_CB7F6`/
+`word_CB808` (which look like a queue-walk index and a countdown value
+respectively — the latter plausibly related to the weapon-confiscation
+countdown from the `Game_handleWeaponDischarge` pass, but that
+relationship wasn't confirmed). Left for a future pass rather than
+guessed under this much interlocking complexity.
+
+Applied via `apply_renames_gatemain.py`'s forty-second batch.

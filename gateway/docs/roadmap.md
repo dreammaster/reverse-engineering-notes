@@ -630,6 +630,17 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       `_playerCreditsLo`/`_playerCreditsHi` (were `Persisted_val213`/
       `word_CF34C`). Full writeup in
       [overview.md](overview.md#game_handleweapondischarge-named--the-consequences-of-firing-a-gun).
+- [x] Named `sub_12FC3` (5 callers, called from `main()`) →
+      `Queue_processTurn` — the per-turn scheduled-event-queue
+      processing entry point, also reused as the WAIT command's inner
+      loop (confirmed via `waitMsg`/`j_continue_waiting`). Its
+      companion `sub_130D6` and the exact roles of `word_CB7F6`/
+      `word_CB808` left for a future pass. Full writeup in
+      [overview.md](overview.md#queue_processturn-named--the-turnwait-event-queue-loop-sighted).
+- [ ] Follow up on the turn/WAIT event-queue loop: nail down
+      `sub_130D6` and `word_CB7F6`/`word_CB808`'s exact roles, and
+      whether `word_CB808` is the same countdown mechanism as the
+      weapon-confiscation timer from `Game_handleWeaponDischarge`.
 - [ ] Unify the whole music/sound-hardware picture: `Speaker_playTone`/
       `Speaker_playErrorBeep` (PC-speaker tones), `Midi_sendByte` +
       `sub_1D966`/`sub_1EE70`/`sub_1ECB6` (MPU-401/MIDI), and

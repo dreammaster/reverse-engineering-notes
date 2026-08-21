@@ -1199,9 +1199,44 @@ RENAMES = [
      "points in the game (earning and spending money); checked in "
      "Game_handleWeaponDischarge against the 1000-credit weapons "
      "fine."),
-    ("Persisted_val213", "_playerCreditsLo",
+    (0xCF34A, "_playerCreditsLo",
      "Was Persisted_val213: low word of the 32-bit player-credits/"
      "money field, paired with _playerCreditsHi."),
+
+    # -- forty-second pass: sub_12FC3, called directly from main()'s
+    # main game loop right before _turnCount is incremented. Its body
+    # shares function chunks with sub_130D6 (itself "sp-analysis
+    # failed") and both interleave with the already-named _queueCount/
+    # Queue_add/Queue_remove/Queue_find machinery and the already-named
+    # waitMsg/j_continue_waiting ("Do you want to continue waiting?")
+    # -- confirming this whole cluster is the turn-advance / scheduled-
+    # event-queue-processing loop, reused both once per normal turn and
+    # repeatedly as the inner loop of the WAIT command. Only sub_12FC3
+    # itself renamed this pass; sub_130D6 and the deeper queue-item
+    # countdown mechanics (including word_CB808's exact relationship to
+    # the earlier-named weapon-confiscation countdown) are left for a
+    # future pass rather than guessed under this much interlocking
+    # complexity. See
+    # docs/overview.md#queue_processturn-named--the-turnwait-event-queue-loop-sighted. --
+
+    (0x12FC3, "Queue_processTurn",
+     "sub_12FC3(prevValue, currentValue): called from main() right "
+     "before _turnCount is incremented -- i.e. once per game turn. "
+     "Gates on a one-shot skip flag (byte_CB7F2, not renamed), then "
+     "either fires action 0x1B on the current room (Logic_call) or "
+     "falls through into a shared chunk (also reached from sub_130D6) "
+     "that walks the same 4-byte-entry scheduled-event table the "
+     "already-named Queue_add/Queue_remove/Queue_find operate on, "
+     "bounded by the already-named _queueCount. That shared code also "
+     "references the already-named waitMsg ('Do you want to continue "
+     "waiting?') and j_continue_waiting, confirming this is the "
+     "per-turn queued-event-processing loop reused as the WAIT "
+     "command's inner loop. word_CB7F6/word_CB808 (not renamed) look "
+     "like a queue-walk index and a countdown value respectively, but "
+     "their precise roles -- and word_CB808's relationship to the "
+     "weapon-confiscation countdown from the "
+     "Game_handleWeaponDischarge pass -- weren't nailed down this "
+     "pass."),
 ]
 
 
