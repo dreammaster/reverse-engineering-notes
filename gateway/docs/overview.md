@@ -1866,3 +1866,17 @@ room, resync-slots, and now clear-frames — is fully named. Only
 `sub_26F2A` remain open in this subsystem.
 
 Applied via `apply_renames_gatemain.py`'s twenty-sixth batch.
+
+### `Window_destroy` named
+
+Moved to `sub_28BB7` (10 callers), confirmed directly by its body: a
+full window-teardown function, distinct from the already-named
+(lighter-weight) `Window_close`. `Window_destroy(windowNum)` validates
+`windowNum` in `[0,6)`, then calls `Window_close`, releases any
+reserved regions (`Windows_ReserveRegions(windowNum, 0)`), zeroes
+`Windows_x2[windowNum]` (the per-slot "in use" flag), rescans all 6
+slots to recompute `Wndows_numWindows` (highest active index + 1), and
+clears `Windows_activeWindow` to `-1` if this was the active window —
+a strict superset of `Window_close`, not a synonym for it.
+
+Applied via `apply_renames_gatemain.py`'s twenty-seventh batch.

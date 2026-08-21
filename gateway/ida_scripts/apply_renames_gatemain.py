@@ -806,6 +806,22 @@ RENAMES = [
      "counterpart to the already-named Image_freeFrames, used by "
      "AnimPics_registerSlot to blank a slot's frame table before "
      "loading real frames into it."),
+
+    # -- twenty-seventh pass: sub_28BB7, confirmed directly by its body
+    # as a full window-teardown function, distinct from the already-
+    # named (lighter-weight) Window_close. See
+    # docs/overview.md#window_destroy-named. --
+
+    (0x28BB7, "Window_destroy",
+     "sub_28BB7(windowNum): validates windowNum in [0,6) (no-op "
+     "otherwise), then does full teardown: the already-named "
+     "Window_close, releases any reserved regions "
+     "(Windows_ReserveRegions(windowNum, 0)), zeroes "
+     "Windows_x2[windowNum] (the per-slot 'in use' flag), rescans all "
+     "6 slots to recompute Wndows_numWindows (highest active index + "
+     "1), and clears Windows_activeWindow to -1 if this was the "
+     "active window. A superset of Window_close, not a synonym for "
+     "it."),
 ]
 
 

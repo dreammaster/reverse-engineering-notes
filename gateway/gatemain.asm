@@ -14315,7 +14315,7 @@ Listbox_reset   endp
 ; Attributes: bp-based frame
 
 ; void __cdecl __far Window_close(int winNumber)
-Window_close    proc far                ; CODE XREF: sub_28BB7+16\u2193P
+Window_close    proc far                ; CODE XREF: Window_destroy+16\u2193P
                                         ; Windows_clear+21\u2193P
 
 winNumber       = word ptr  6
@@ -54217,7 +54217,7 @@ Regions_addRegion endp
 
 ; void __cdecl __far Windows_ReserveRegions(int windowNum, int numRegions)
 Windows_ReserveRegions proc far         ; CODE XREF: Windows_ReserveOneRegion+F\u2193p
-                                        ; sub_28BB7+24\u2193P ...
+                                        ; Window_destroy+24\u2193P ...
 
 var_6           = byte ptr -6
 var_4           = word ptr -4
@@ -57562,8 +57562,8 @@ Window_frameRect endp
 
 ; Attributes: bp-based frame
 
-; void __cdecl __far sub_28BB7(int windowNum)
-sub_28BB7       proc far                ; CODE XREF: sg1a3e:1734\u2193p
+; void __cdecl __far Window_destroy(int windowNum)
+Window_destroy  proc far                ; CODE XREF: sg1a3e:1734\u2193p
                                         ; sub_2A41D+27\u2193p ...
 
 windowNum       = word ptr  6
@@ -57590,7 +57590,7 @@ windowNum       = word ptr  6
                 mov     Wndows_numWindows, 0
                 sub     si, si
 
-loc_28BF6:                              ; CODE XREF: sub_28BB7+54\u2193j
+loc_28BF6:                              ; CODE XREF: Window_destroy+54\u2193j
                 mov     bx, si
                 shl     bx, 1
                 cmp     Windows_x2[bx], 0
@@ -57598,7 +57598,7 @@ loc_28BF6:                              ; CODE XREF: sub_28BB7+54\u2193j
                 lea     ax, [si+1]
                 mov     Wndows_numWindows, ax
 
-loc_28C07:                              ; CODE XREF: sub_28BB7+48\u2191j
+loc_28C07:                              ; CODE XREF: Window_destroy+48\u2191j
                 inc     si
                 cmp     si, 6
                 jl      short loc_28BF6
@@ -57607,13 +57607,13 @@ loc_28C07:                              ; CODE XREF: sub_28BB7+48\u2191j
                 jnz     short loc_28C1B
                 mov     Windows_activeWindow, -1
 
-loc_28C1B:                              ; CODE XREF: sub_28BB7+B\u2191j
-                                        ; sub_28BB7+11\u2191j ...
+loc_28C1B:                              ; CODE XREF: Window_destroy+B\u2191j
+                                        ; Window_destroy+11\u2191j ...
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_28BB7       endp
+Window_destroy  endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -60246,7 +60246,7 @@ loc_2A0D5:                              ; CODE XREF: sg1a3e:170F\u2191j
                 shl     bx, 1
                 push    word ptr [bx-52D0h]
                 push    cs
-                call    near ptr sub_28BB7
+                call    near ptr Window_destroy
                 add     sp, 2
 
 loc_2A0FA:                              ; CODE XREF: sg1a3e:1708\u2191j
@@ -60643,7 +60643,7 @@ loc_2A42D:                              ; CODE XREF: sub_2A41D+B\u2191j
                 shl     bx, 1
                 push    word ptr [bx-52D0h] ; windowNum
                 push    cs
-                call    near ptr sub_28BB7
+                call    near ptr Window_destroy
                 add     sp, 2
                 mov     es, dseg_64
                 assume es:sg4d43
@@ -156407,7 +156407,7 @@ loc_629ED:
                 call    Screen_setTextColor
                 add     sp, 4
                 push    [bp+windowNum]  ; windowNum
-                call    sub_28BB7
+                call    Window_destroy
                 add     sp, 2
                 push    [bp+winNumber]  ; winNumber
                 call    Windows_setActiveWindow
@@ -159128,7 +159128,7 @@ loc_63FD1:                              ; CODE XREF: prompt_for_filename+B01\u21
 
 loc_63FDF:                              ; CODE XREF: prompt_for_filename+B08\u2191j
                 push    [bp+windowNum]  ; windowNum
-                call    sub_28BB7
+                call    Window_destroy
                 add     sp, 2
                 jmp     loc_635A8
 ; ---------------------------------------------------------------------------
@@ -162301,7 +162301,7 @@ loc_65A00:                              ; CODE XREF: sub_65927+B5\u2191j
                 call    get_keypress
                 mov     [bp+var_C], ax
                 push    [bp+windowNum]  ; windowNum
-                call    sub_28BB7
+                call    Window_destroy
                 add     sp, 2
                 sub     ax, ax
                 push    ax              ; color
@@ -185980,7 +185980,7 @@ loc_71CEC:                              ; CODE XREF: sub_7179E+45C\u2191j
 loc_71CF8:                              ; CODE XREF: sub_7179E+471\u2191j
                                         ; sub_7179E+47F\u2191j ...
                 push    [bp+windowNum]  ; windowNum
-                call    sub_28BB7
+                call    Window_destroy
                 add     sp, 2
                 call    Events_isKeyPending
                 or      ax, ax
@@ -192712,7 +192712,7 @@ loc_75187:                              ; CODE XREF: sub_74D38+445\u2191j
 
 loc_7521F:                              ; CODE XREF: sub_74D38+4CE\u2191j
                 push    [bp+windowNum]  ; windowNum
-                call    sub_28BB7
+                call    Window_destroy
                 add     sp, 2
                 sub     ax, ax
                 push    ax              ; color
@@ -314501,11 +314501,11 @@ loc_AAAFE:                              ; CODE XREF: sub_AA9E3+116\u2191j
 loc_AAB13:                              ; CODE XREF: sub_AA9E3+124\u2191j
                 mov     es, seg_D180A
                 push    es:Commset_winContent ; windowNum
-                call    sub_28BB7
+                call    Window_destroy
                 add     sp, 2
                 mov     es, seg_D1808
                 push    es:Commset_winFrame ; windowNum
-                call    sub_28BB7
+                call    Window_destroy
                 add     sp, 2
                 mov     es, seg_D180A
                 mov     es:Commset_winContent, 0FFFFh
@@ -328294,11 +328294,11 @@ loc_B0BCE:                              ; CODE XREF: Commset_show+164\u2191j
 loc_B0BE3:                              ; CODE XREF: Commset_show+172\u2191j
                 mov     es, dseg_116
                 push    es:Commset_winContent ; windowNum
-                call    sub_28BB7
+                call    Window_destroy
                 add     sp, 2
                 mov     es, seg_D187A
                 push    es:Commset_winFrame ; windowNum
-                call    sub_28BB7
+                call    Window_destroy
                 add     sp, 2
                 mov     es, dseg_116
                 mov     es:Commset_winContent, 0FFFFh
@@ -339233,11 +339233,11 @@ loc_B59EE:                              ; CODE XREF: sub_B58A3+146\u2191j
 loc_B5A03:                              ; CODE XREF: sub_B58A3+154\u2191j
                 mov     es, seg_D1908
                 push    es:Commset_winContent ; windowNum
-                call    sub_28BB7
+                call    Window_destroy
                 add     sp, 2
                 mov     es, seg_D1906
                 push    es:Commset_winFrame ; windowNum
-                call    sub_28BB7
+                call    Window_destroy
                 add     sp, 2
                 mov     es, seg_D1908
                 mov     es:Commset_winContent, 0FFFFh
