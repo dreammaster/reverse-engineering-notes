@@ -84163,7 +84163,7 @@ sub_312E5       endp ; sp-analysis failed
 
 thunk_sub_8D517 proc far                ; CODE XREF: sub_7005F+45F\u2193P
                 call    near ptr rtlink_thunk
-                jmp     sub_8D517
+                jmp     Logics_printRaftStatus
 thunk_sub_8D517 endp ; sp-analysis failed
 
 ; ---------------------------------------------------------------------------
@@ -246290,7 +246290,7 @@ loc_8CE61:                              ; CODE XREF: sub_8CB20+250\u2191j
                 call    TextWindow_add
                 add     sp, 4
                 push    cs
-                call    near ptr sub_8D517
+                call    near ptr Logics_printRaftStatus
                 jmp     loc_8CBE6
 ; ---------------------------------------------------------------------------
 
@@ -247099,7 +247099,7 @@ loc_8D3A0:                              ; CODE XREF: sub_8D38C+F\u2191j
                 or      ax, ax
                 jz      short loc_8D40A
                 push    cs
-                call    near ptr sub_8D517
+                call    near ptr Logics_printRaftStatus
                 jmp     loc_8D513
 ; ---------------------------------------------------------------------------
 
@@ -247233,7 +247233,7 @@ sub_8D38C       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_8D517       proc far                ; CODE XREF: thunk_sub_8D517+3\u2191J
+Logics_printRaftStatus proc far         ; CODE XREF: thunk_sub_8D517+3\u2191J
                                         ; sub_8CB20+352\u2191p ...
                 mov     ax, 1FBh
                 push    ax
@@ -247271,18 +247271,18 @@ sub_8D517       proc far                ; CODE XREF: thunk_sub_8D517+3\u2191J
                 jmp     short loc_8D56F
 ; ---------------------------------------------------------------------------
 
-loc_8D56C:                              ; CODE XREF: sub_8D517+12\u2191j
-                                        ; sub_8D517+26\u2191j ...
+loc_8D56C:                              ; CODE XREF: Logics_printRaftStatus+12\u2191j
+                                        ; Logics_printRaftStatus+26\u2191j ...
                 mov     ax, 8C42h
 
-loc_8D56F:                              ; CODE XREF: sub_8D517+53\u2191j
+loc_8D56F:                              ; CODE XREF: Logics_printRaftStatus+53\u2191j
                 mov     dx, 0F000h
                 push    dx
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
                 retf
-sub_8D517       endp
+Logics_printRaftStatus endp
 
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR sub_30D81

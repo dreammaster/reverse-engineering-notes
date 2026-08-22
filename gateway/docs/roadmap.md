@@ -1062,6 +1062,12 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       confirmed via a TOUCH-verb scene where an NPC re-clothes the
       player and leads them away. Full writeup in
       [overview.md](overview.md#logics_stripplayeritemslogics_restoreplayeritems-named--the-savestriprestore-inventory-trio).
+- [x] Named `sub_8D517` → `Logics_printRaftStatus` — a raft-boarding
+      status check ("are both of us aboard the raft, ready to shove
+      off"), confirmed via its own messages; identifies logic `0x1FB`
+      as the raft and `0x1CC` as a steering NPC companion. Full
+      writeup in
+      [overview.md](overview.md#logics_printraftstatus-named--a-raft-boarding-puzzle).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

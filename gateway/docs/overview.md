@@ -4436,3 +4436,25 @@ then give everything back afterward" — presumably for a medical-exam-
 or quarantine-style sequence.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-forty-fifth batch.
+
+### `Logics_printRaftStatus` named — a raft-boarding puzzle
+
+`sub_8D517` (3 callers). Confirmed via its own two `GATESTR.DAT`
+messages as a raft-boarding status check. Tests four conditions via
+the already-named `Logics_IsPrehandler1`: the player (`0xD3`) attached
+to logic `0x1FB`, logic `0x1CC` attached to `0x1FB`, logic `0x204`
+attached to the player, and logic `0x1FC` attached to `0x1CC`. If all
+four hold, it prints *"'All we need to do is push off from the shore,
+ensign.'"*; otherwise it prints *"'You and I both need to be on the
+raft together. I'll hold the tiller and steer. You'll hold the pail
+and bail like crazy.'"*
+
+This nails down `0x1FB` as **the raft** itself, `0x1CC` as an NPC
+companion (addressed as "ensign") who steers, and `0x204`/`0x1FC` as
+per-person raft gear — plausibly the pail (player's) and tiller
+(companion's), though not individually confirmed. None of these
+`logicNum`s are independently named yet. Called from `sub_8CB20` and
+the RTLink-thunk-reached `sub_8D38C` — the "are both of us aboard the
+raft, ready to shove off" announcement.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-forty-sixth batch.

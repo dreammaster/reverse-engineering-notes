@@ -3346,6 +3346,24 @@ RENAMES = [
      "save/strip/restore trio implements 'temporarily take away and "
      "re-clothe the player for a scripted scene, then give everything "
      "back afterward.'"),
+
+    (0x8D517, "Logics_printRaftStatus",
+     "sub_8D517(): confirmed via its own two GATESTR.DAT messages as a "
+     "raft-boarding status check. Tests four conditions via the "
+     "already-named Logics_IsPrehandler1: player (0xD3) attached to "
+     "logic 0x1FB, logic 0x1CC attached to 0x1FB, logic 0x204 attached "
+     "to player (0xD3), and logic 0x1FC attached to 0x1CC. If all four "
+     "hold, prints message 0x8C41 ('\"All we need to do is push off "
+     "from the shore, ensign.\"'); otherwise prints 0x8C42 ('\"You and "
+     "I both need to be on the raft together. I'll hold the tiller and "
+     "steer. You'll hold the pail and bail like crazy.\"'). This "
+     "confirms 0x1FB is the raft itself, 0x1CC an NPC companion "
+     "('ensign') who steers, and 0x204/0x1FC are per-person raft gear "
+     "(player's item and the companion's item respectively, plausibly "
+     "the pail and tiller) -- none of these logicNums independently "
+     "named yet. Called from sub_8CB20 and the RTLink-thunk-reached "
+     "sub_8D38C -- the 'are both of us aboard the raft, ready to shove "
+     "off' announcement."),
 ]
 
 
