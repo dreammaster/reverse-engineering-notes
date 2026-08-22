@@ -57671,7 +57671,7 @@ Windows_clear   endp
 
 ; void __cdecl __far WindowText_clear(int windowNum)
 WindowText_clear proc far               ; CODE XREF: show_startup+161\u2191P
-                                        ; sub_5CD81+48\u2193P ...
+                                        ; InputWindow_setDisplayMode+48\u2193P ...
 
 windowNum       = word ptr  6
 
@@ -83820,7 +83820,7 @@ thunk_Scene_draw endp ; sp-analysis failed
 thunk_sub_5CD81 proc far                ; CODE XREF: sub_2E513+3D01A\u2193P
                                         ; sub_2EBF3+3D2E4\u2193P ...
                 call    near ptr rtlink_thunk
-                jmp     sub_5CD81
+                jmp     InputWindow_setDisplayMode
 thunk_sub_5CD81 endp ; sp-analysis failed
 
 ; ---------------------------------------------------------------------------
@@ -142669,7 +142669,7 @@ delay           endp
 ; =============== S U B R O U T I N E =======================================
 
 
-InputWindow_redrawPromptLine proc far   ; CODE XREF: sub_5CD81+37\u2193p
+InputWindow_redrawPromptLine proc far   ; CODE XREF: InputWindow_setDisplayMode+37\u2193p
                                         ; sub_5D18C+4D\u2193p ...
                 mov     es, dseg_143
                 push    word ptr es:aaInputPrompt+2
@@ -143143,7 +143143,7 @@ Scene_draw      endp
 
 ; Attributes: bp-based frame
 
-sub_5CD81       proc far                ; CODE XREF: thunk_sub_5CD81+3\u2191J
+InputWindow_setDisplayMode proc far     ; CODE XREF: thunk_sub_5CD81+3\u2191J
                                         ; InputWindow_getLine+CD\u2193p ...
 
 showFlag        = byte ptr -2
@@ -143156,7 +143156,7 @@ arg_0           = word ptr  6
                 jnz     short loc_5CD92
                 mov     [bp+arg_0], 5
 
-loc_5CD92:                              ; CODE XREF: sub_5CD81+A\u2191j
+loc_5CD92:                              ; CODE XREF: InputWindow_setDisplayMode+A\u2191j
                 mov     ax, word_CBCFE
                 cmp     [bp+arg_0], ax
                 jz      short loc_5CDE0
@@ -143175,7 +143175,7 @@ loc_5CD92:                              ; CODE XREF: sub_5CD81+A\u2191j
                 jmp     short loc_5CDE0
 ; ---------------------------------------------------------------------------
 
-loc_5CDBD:                              ; CODE XREF: sub_5CD81+2A\u2191j
+loc_5CDBD:                              ; CODE XREF: InputWindow_setDisplayMode+2A\u2191j
                 call    Mouse_Hide
                 mov     word ptr [bp+showFlag], ax
                 push    Input_window_mb ; windowNum
@@ -143187,12 +143187,12 @@ loc_5CDBD:                              ; CODE XREF: sub_5CD81+2A\u2191j
                 call    Mouse_show
                 add     sp, 2
 
-loc_5CDE0:                              ; CODE XREF: sub_5CD81+17\u2191j
-                                        ; sub_5CD81+3A\u2191j
+loc_5CDE0:                              ; CODE XREF: InputWindow_setDisplayMode+17\u2191j
+                                        ; InputWindow_setDisplayMode+3A\u2191j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_5CD81       endp
+InputWindow_setDisplayMode endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -143817,7 +143817,7 @@ loc_5D35D:                              ; CODE XREF: InputWindow_getLine+15D\u21
                 sub     ax, 13Eh
                 push    ax
                 push    cs
-                call    near ptr sub_5CD81
+                call    near ptr InputWindow_setDisplayMode
 
 loc_5D368:                              ; CODE XREF: InputWindow_getLine+1A1\u2193j
                 add     sp, 2
@@ -144425,7 +144425,7 @@ loc_5D81F:                              ; CODE XREF: get_mouse_input+1BA\u2191j
                 sub     ax, 5
                 push    ax
                 push    cs
-                call    near ptr sub_5CD81
+                call    near ptr InputWindow_setDisplayMode
                 add     sp, 2
                 jmp     loc_5D722
 ; ---------------------------------------------------------------------------
@@ -387732,7 +387732,7 @@ byte_CBD92      db 0                    ; DATA XREF: room_load+6\u2191w
                                         ; room_load:loc_5CFEC\u2191w ...
                 align 2
 word_CBD94      dw 0                    ; DATA XREF: Scene_draw:loc_5CD6F\u2191w
-                                        ; sub_5CD81+19\u2191w ...
+                                        ; InputWindow_setDisplayMode+19\u2191w ...
 unk_CBD96       db 0FFh ; ÿ             ; DATA XREF: sub_5C263+89\u2191o
                 db 0FFh ; ÿ
                 db  20h

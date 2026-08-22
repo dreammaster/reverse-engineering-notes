@@ -3058,3 +3058,24 @@ loading an image into a surface. `sub_2A9C7` and `sub_2BBBA` remain
 unnamed.
 
 Applied via `apply_renames_gatemain.py`'s eighty-fourth batch.
+
+### `InputWindow_setDisplayMode` named
+
+Moved to `sub_5CD81` (3 direct callers, plus several more via
+`thunk_sub_5CD81` from other overlays) — remaps mode 2 to 5, then
+compares against a cached current mode (`word_CBCFE`); no-ops if
+unchanged. Otherwise resets `word_CBD94` to 0, caches the new mode, and
+checks a second mode-like global (`word_CBCFC`) against 2: if it's 2,
+calls the already-named `Scene_draw(0)` then
+`InputWindow_redrawPromptLine` (a full scene-plus-prompt-line redraw).
+Otherwise hides the mouse, clears the already-named `Input_window_mb`
+via `WindowText_clear`, calls the tentatively-named `scene_update?`,
+then shows the mouse again.
+
+Called with small literal mode values (1, 3, 4, and 5 observed at
+different call sites) from `InputWindow_getLine`, `get_mouse_input`,
+and several room-logic overlays reached through the thunk — a shared
+display/input-mode switch that only runs its transition side effects
+when the mode actually changes.
+
+Applied via `apply_renames_gatemain.py`'s eighty-fifth batch.

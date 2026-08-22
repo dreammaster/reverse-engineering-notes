@@ -776,6 +776,11 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       into it; the core of loading an image into a surface, called via
       `sub_24A42` from `Image_load`. Full writeup in
       [overview.md](overview.md#image_allocatesurface-named).
+- [x] Named `sub_5CD81` (3 direct callers + thunked callers) →
+      `InputWindow_setDisplayMode` — a shared display/input-mode
+      switch called from `InputWindow_getLine`, `get_mouse_input`, and
+      several room-logic overlays. Full writeup in
+      [overview.md](overview.md#inputwindow_setdisplaymode-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

@@ -2158,6 +2158,22 @@ RENAMES = [
      "returns 0 (success). Called from sub_24A42, itself called from "
      "the already-named Image_load -- the size-computation-plus-"
      "allocation-plus-build step of loading an image into a surface."),
+
+    (0x5CD81, "InputWindow_setDisplayMode",
+     "sub_5CD81(mode): remaps mode 2 to 5, then compares against a "
+     "cached current mode (word_CBCFE); no-ops if unchanged. Otherwise "
+     "resets word_CBD94 to 0, caches the new mode, and checks a second "
+     "mode-like global (word_CBCFC) against 2: if it's 2, calls the "
+     "already-named Scene_draw(0) then InputWindow_redrawPromptLine "
+     "(a full scene + prompt-line redraw). Otherwise hides the mouse, "
+     "clears the already-named Input_window_mb via WindowText_clear, "
+     "calls the tentatively-named scene_update?, then shows the mouse "
+     "again. Called (both directly and via thunk_sub_5CD81 from other "
+     "overlays) with small literal mode values (1, 3, 4, 5 observed at "
+     "different call sites) from InputWindow_getLine, get_mouse_input, "
+     "and several room-logic overlays -- a shared display/input-mode "
+     "switch that only runs its transition side effects when the mode "
+     "actually changes."),
 ]
 
 
