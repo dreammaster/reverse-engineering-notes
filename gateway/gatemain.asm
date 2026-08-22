@@ -48030,7 +48030,7 @@ loc_24900:
 
 loc_2491B:                              ; CODE XREF: Mouse_init+2F\u2191j
                 push    cs
-                call    near ptr sub_24A42
+                call    near ptr Mouse_initCursorSurfaces
                 mov     mouseState, 4
                 jmp     short loc_2498D
 ; ---------------------------------------------------------------------------
@@ -48077,7 +48077,7 @@ loc_24971:                              ; CODE XREF: Mouse_init+7D\u2191j
                 cmp     [bp+state], 0
                 jz      short loc_24983
                 push    cs
-                call    near ptr sub_24A42
+                call    near ptr Mouse_initCursorSurfaces
                 mov     mouseState, 8
                 jmp     short loc_24989
 ; ---------------------------------------------------------------------------
@@ -48196,7 +48196,7 @@ loc_24A2F:                              ; CODE XREF: Mouse_shutdown+B\u2191j
                 push    cs
                 call    near ptr Mouse_free
                 push    cs
-                call    near ptr sub_24A42
+                call    near ptr Mouse_initCursorSurfaces
 
 loc_24A3E:                              ; CODE XREF: Mouse_shutdown+35\u2191j
                 mov     sp, bp
@@ -48208,7 +48208,7 @@ Mouse_shutdown  endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_24A42       proc far                ; CODE XREF: Mouse_init+38\u2191p
+Mouse_initCursorSurfaces proc far       ; CODE XREF: Mouse_init+38\u2191p
                                         ; Mouse_init+94\u2191p ...
                 sub     ax, ax
                 push    ax              ; int
@@ -48252,7 +48252,7 @@ loc_24A53:
                 jmp     short loc_24AB8
 ; ---------------------------------------------------------------------------
 
-loc_24AAB:                              ; CODE XREF: sub_24A42+62\u2191j
+loc_24AAB:                              ; CODE XREF: Mouse_initCursorSurfaces+62\u2191j
                 mov     es, seg126_13
                 assume es:sg3EDC
                 mov     ax, es:_screenRight
@@ -48260,7 +48260,7 @@ loc_24AAB:                              ; CODE XREF: sub_24A42+62\u2191j
                 sub     ax, dx
                 sar     ax, 1
 
-loc_24AB8:                              ; CODE XREF: sub_24A42+67\u2191j
+loc_24AB8:                              ; CODE XREF: Mouse_initCursorSurfaces+67\u2191j
                 mov     mousePos.x, ax
                 mov     es, seg126_12
                 mov     ax, es:_ScreenBottom
@@ -48269,7 +48269,7 @@ loc_24AB8:                              ; CODE XREF: sub_24A42+67\u2191j
                 sar     ax, 1
                 mov     mousePos.y, ax
                 retf
-sub_24A42       endp
+Mouse_initCursorSurfaces endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -64748,8 +64748,8 @@ sub_2BBBA       endp
 ; Attributes: bp-based frame
 
 ; int __stdcall __far Image_allocateSurface(int height, int width, int videoIndex, Surface *surface, int)
-Image_allocateSurface proc far          ; CODE XREF: sub_24A42+19\u2191P
-                                        ; sub_24A42+45\u2191P ...
+Image_allocateSurface proc far          ; CODE XREF: Mouse_initCursorSurfaces+19\u2191P
+                                        ; Mouse_initCursorSurfaces+45\u2191P ...
 
 var_2           = word ptr -2
 height          = word ptr  6
@@ -393536,11 +393536,11 @@ seg126_37       dw seg sg3EDC           ; DATA XREF: Screen_setEGAPalette+17B\u2
 seg126_38       dw seg sg3EDC           ; DATA XREF: Text_writeString+99\u2191r
 seg126_39       dw seg sg3EDC           ; DATA XREF: sub_238D1+34\u2191r
 dseg_151        dw seg sg4d43           ; DATA XREF: set_mouse_range+10\u2191r
-                                        ; sub_24A42+8\u2191r ...
+                                        ; Mouse_initCursorSurfaces+8\u2191r ...
 seg126_13       dw seg sg3EDC           ; DATA XREF: set_mouse_range:loc_249B2\u2191r
-                                        ; sub_24A42:loc_24AAB\u2191r ...
+                                        ; Mouse_initCursorSurfaces:loc_24AAB\u2191r ...
 seg126_12       dw seg sg3EDC           ; DATA XREF: set_mouse_range+4C\u2191r
-                                        ; sub_24A42+79\u2191r ...
+                                        ; Mouse_initCursorSurfaces+79\u2191r ...
 seg126_40       dw seg sg3EDC           ; DATA XREF: sub_25216:loc_25238\u2191r
 dseg_53         dw seg sg4d43           ; DATA XREF: sub_25216+39\u2191r
                                         ; sub_25216:loc_25279\u2191r ...
@@ -397265,17 +397265,17 @@ handles_master_list dd 0                ; DATA XREF: init_memory+B6\u2191w
 ; HandleEntry *handles_list
 handles_list    dd 0                    ; DATA XREF: init_memory+2F\u2191w
                                         ; init_memory+39\u2191r ...
-dword_D21B0     dd 0                    ; DATA XREF: sub_24A42+25\u2191w
+dword_D21B0     dd 0                    ; DATA XREF: Mouse_initCursorSurfaces+25\u2191w
                                         ; Mouse_free\u2191r ...
 ; Surface mouse_surface2
-mouse_surface2  Surface <0>             ; DATA XREF: sub_24A42+3\u2191o
+mouse_surface2  Surface <0>             ; DATA XREF: Mouse_initCursorSurfaces+3\u2191o
                                         ; Mouse_free+E\u2191o ...
-dword_D2234     dd 0                    ; DATA XREF: sub_24A42+51\u2191w
+dword_D2234     dd 0                    ; DATA XREF: Mouse_initCursorSurfaces+51\u2191w
                                         ; Mouse_free+18\u2191r ...
 ; Surface mouse_surface
-mouse_surface   Surface <0>             ; DATA XREF: sub_24A42+2F\u2191o
+mouse_surface   Surface <0>             ; DATA XREF: Mouse_initCursorSurfaces+2F\u2191o
                                         ; Mouse_free+26\u2191o ...
-mousePos        Point <0>               ; DATA XREF: sub_24A42:loc_24AB8\u2191w
+mousePos        Point <0>               ; DATA XREF: Mouse_initCursorSurfaces:loc_24AB8\u2191w
                                         ; Mouse_show+64\u2191r ...
 time_expiry     dd 0                    ; DATA XREF: set_delay_expiry+38\u2191w
                                         ; interruptable_delay+45\u2191r ...

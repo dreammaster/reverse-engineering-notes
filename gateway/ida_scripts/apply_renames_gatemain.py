@@ -2882,6 +2882,18 @@ RENAMES = [
      "from the already-named room_load and via a data-driven call site "
      "elsewhere -- the shared per-tick service point for whichever "
      "sound backend is currently active."),
+
+    (0x24A42, "Mouse_initCursorSurfaces",
+     "sub_24A42(): allocates the two mouse-cursor image surfaces "
+     "(the already-declared mouse_surface2, 24x16, and mouse_surface, "
+     "24x16) via the already-named Image_allocateSurface, storing "
+     "each one's resulting image handle into a scratch dword global "
+     "(dword_D21B0/dword_D2234). Then computes the initial mouse "
+     "position: x is hardcoded to 319 in video mode 3, or otherwise "
+     "centered as (_screenRight - width)/2; y is always centered as "
+     "(_ScreenBottom - height)/2. Called (twice) from the already-"
+     "named Mouse_init -- the mouse cursor's own surface-allocation-"
+     "plus-initial-centering setup step."),
 ]
 
 

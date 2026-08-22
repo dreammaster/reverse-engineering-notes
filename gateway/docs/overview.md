@@ -3861,3 +3861,17 @@ completing the top-level tick-dispatch picture alongside
 `Midi_serviceTick`.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-twenty-third batch.
+
+### `Mouse_initCursorSurfaces` named
+
+Moved to `sub_24A42` (2 callers) — allocates the two mouse-cursor
+image surfaces (`mouse_surface2` and `mouse_surface`, both 24x16) via
+the already-named `Image_allocateSurface`, storing each one's
+resulting image handle into a scratch global. Then computes the
+initial mouse position: x is hardcoded to 319 in video mode 3, or
+otherwise centered on screen; y is always centered.
+
+Called twice from the already-named `Mouse_init` — the mouse cursor's
+own surface-allocation-plus-initial-centering setup step.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-twenty-fourth batch.
