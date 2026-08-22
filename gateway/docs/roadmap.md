@@ -867,6 +867,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       — snapshots the player's two contained-items linked lists into
       flat arrays. Full writeup in
       [overview.md](overview.md#logics_collectplayeritemlists-named).
+- [x] Named `sub_16B53` (2 callers) → `Listbox_getSelectedItemText` —
+      reads the highlighted listbox entry as a string, handling both
+      raw-text and vocab-word-index storage formats. Full writeup in
+      [overview.md](overview.md#listbox_getselecteditemtext-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

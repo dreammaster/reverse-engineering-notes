@@ -9921,6 +9921,7 @@ static Bytes_1(void) {
 	op_plain_offset	(x,	1,	0XC7F20);
 	op_plain_offset	(x,	129,	0XC7F20);
 	create_insn	(0X16B53);
+	set_name	(0X16B53,	"Listbox_getSelectedItemText");
 	create_insn	(x=0X16B56);
 	op_hex		(x,	1);
 	set_cmt	(0X16B5F,	"winNumber",	0);
@@ -12471,11 +12472,6 @@ static Bytes_1(void) {
 	create_insn	(0X18CF5);
 	create_insn	(x=0X18CF7);
 	op_hex		(x,	1);
-	create_insn	(x=0X18CFB);
-	op_hex		(x,	1);
-	create_insn	(0X18D01);
-	create_insn	(0X18D16);
-	create_insn	(0X18D26);
 }
 
 //------------------------------------------------------------------------
@@ -12485,6 +12481,11 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X18CFB);
+	op_hex		(x,	1);
+	create_insn	(0X18D01);
+	create_insn	(0X18D16);
+	create_insn	(0X18D26);
 	create_insn	(x=0X18D28);
 	op_hex		(x,	1);
 	create_insn	(x=0X18D2C);
@@ -18290,10 +18291,6 @@ static Bytes_2(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X1F02A);
 	op_stkvar	(x,	0);
-	create_insn	(0X1F034);
-	create_insn	(x=0X1F037);
-	op_hex		(x,	1);
-	create_insn	(0X1F04C);
 }
 
 //------------------------------------------------------------------------
@@ -18303,6 +18300,10 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(0X1F034);
+	create_insn	(x=0X1F037);
+	op_hex		(x,	1);
+	create_insn	(0X1F04C);
 	create_insn	(x=0X1F0BA);
 	op_stkvar	(x,	0);
 	create_insn	(0X1F0E4);
@@ -23418,9 +23419,6 @@ static Bytes_3(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X2452D);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X24535);
-	op_stkvar	(x,	1);
-	set_cmt	(0X2453C,	"ptr",	0);
 }
 
 //------------------------------------------------------------------------
@@ -23430,6 +23428,9 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X24535);
+	op_stkvar	(x,	1);
+	set_cmt	(0X2453C,	"ptr",	0);
 	create_insn	(x=0X24543);
 	op_hex		(x,	1);
 	create_insn	(x=0X24546);
@@ -29104,11 +29105,6 @@ static Bytes_4(void) {
 	create_insn	(x=0X28A94);
 	op_plain_offset	(x,	0,	0XC7F20);
 	op_plain_offset	(x,	128,	0XC7F20);
-	create_insn	(x=0X28A9A);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X28AA1);
-	op_plain_offset	(x,	0,	0XC7F20);
-	op_plain_offset	(x,	128,	0XC7F20);
 }
 
 //------------------------------------------------------------------------
@@ -29118,6 +29114,11 @@ static Bytes_5(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X28A9A);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X28AA1);
+	op_plain_offset	(x,	0,	0XC7F20);
+	op_plain_offset	(x,	128,	0XC7F20);
 	set_cmt	(0X28AA9,	"style",	0);
 	set_cmt	(0X28AAA,	"val1",	0);
 	set_cmt	(0X28AAB,	"y2",	0);
@@ -34048,8 +34049,6 @@ static Bytes_5(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X2C6B2);
 	op_stroff	(x,	0,	GetStrucIdByName("Screen"),	0);
-	create_insn	(x=0X2C6B5);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -34059,6 +34058,8 @@ static Bytes_6(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X2C6B5);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X2C6B9);
 	op_stroff	(x,	0,	GetStrucIdByName("Screen"),	0);
 	create_insn	(x=0X2C6C1);
@@ -38188,7 +38189,6 @@ static Bytes_6(void) {
 	create_word	(0X30F7D);
 	create_insn	(0X30F7F);
 	set_name	(0X30F7F,	"thunk_sub_AE989");
-	create_word	(0X30F87);
 }
 
 //------------------------------------------------------------------------
@@ -38198,6 +38198,7 @@ static Bytes_7(void) {
         auto x;
 #define id x
 
+	create_word	(0X30F87);
 	create_insn	(0X30F89);
 	create_word	(0X30F91);
 	create_insn	(0X30F93);

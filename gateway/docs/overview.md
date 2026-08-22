@@ -3446,3 +3446,24 @@ handler index maps to which category wasn't independently confirmed
 this pass.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-third batch.
+
+### `Listbox_getSelectedItemText` named
+
+Moved to `sub_16B53` (2 callers) — returns a far pointer to a static
+buffer holding the text of the current window's currently-selected
+listbox item, or an empty string if there's no listbox or no items.
+Two source formats are handled: if the listbox's item data is a
+raw-text blob (a sentinel word at its start), the selected line is
+copied out directly and trailing spaces trimmed. Otherwise the listbox
+stores each line as a list of vocab-word indices, so each word's text
+is looked up in the vocabulary table and concatenated together with
+spaces. Finally, if a per-listbox flag has a specific bit set, the
+first character of the result is capitalized.
+
+Called from `prompt_for_filename` and `sub_5D9F3` (the RTLink-thunked
+function behind `thunk_sub_5D9F3`, seen many times this session as a
+caller of other listbox/UI primitives) — the general "read the
+highlighted listbox entry as a string" primitive, e.g. for reading a
+selected filename out of a file-picker listbox.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-fourth batch.

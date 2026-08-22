@@ -14792,7 +14792,7 @@ Listbox_getNumLines endp
 
 ; Attributes: bp-based frame
 
-sub_16B53       proc far                ; CODE XREF: sub_5D9F3+12\u2193P
+Listbox_getSelectedItemText proc far    ; CODE XREF: sub_5D9F3+12\u2193P
                                         ; sub_5D9F3:loc_5DAA4\u2193P ...
 
 items           = dword ptr -0Ah
@@ -14815,7 +14815,7 @@ var_2           = word ptr -2
                 jmp     loc_16CB4
 ; ---------------------------------------------------------------------------
 
-loc_16B74:                              ; CODE XREF: sub_16B53+1C\u2191j
+loc_16B74:                              ; CODE XREF: Listbox_getSelectedItemText+1C\u2191j
                 mov     bx, ax
                 shl     bx, 1
                 cmp     Listbox_itemsCount[bx], 1
@@ -14823,7 +14823,7 @@ loc_16B74:                              ; CODE XREF: sub_16B53+1C\u2191j
                 jmp     loc_16CB4
 ; ---------------------------------------------------------------------------
 
-loc_16B82:                              ; CODE XREF: sub_16B53+2A\u2191j
+loc_16B82:                              ; CODE XREF: Listbox_getSelectedItemText+2A\u2191j
                 mov     si, ax
                 shl     si, 1
                 mov     ax, Listbox_selectedIndex[si]
@@ -14856,7 +14856,7 @@ loc_16B82:                              ; CODE XREF: sub_16B53+2A\u2191j
                 add     sp, 4
                 mov     [bp+var_2], ax
 
-loc_16BD2:                              ; CODE XREF: sub_16B53+8A\u2193j
+loc_16BD2:                              ; CODE XREF: Listbox_getSelectedItemText+8A\u2193j
                 dec     [bp+var_2]
                 mov     bx, [bp+var_2]
                 cmp     byte_D312C[bx], 20h ; ' '
@@ -14865,7 +14865,7 @@ loc_16BD2:                              ; CODE XREF: sub_16B53+8A\u2193j
                 jmp     loc_16C93
 ; ---------------------------------------------------------------------------
 
-loc_16BE7:                              ; CODE XREF: sub_16B53+5B\u2191j
+loc_16BE7:                              ; CODE XREF: Listbox_getSelectedItemText+5B\u2191j
                 mov     si, [bp+var_2]
                 inc     [bp+var_2]
                 shl     si, 1
@@ -14889,7 +14889,7 @@ loc_16BE7:                              ; CODE XREF: sub_16B53+5B\u2191j
                 jmp     short loc_16C85
 ; ---------------------------------------------------------------------------
 
-loc_16C24:                              ; CODE XREF: sub_16B53+13E\u2193j
+loc_16C24:                              ; CODE XREF: Listbox_getSelectedItemText+13E\u2193j
                 mov     si, [bp+var_2]
                 shl     si, 1
                 mov     bx, [bp+var_6]
@@ -14930,15 +14930,15 @@ loc_16C7A:                              ; CODE XREF: seg103:0309\u2193P
                 add     sp, 8
                 inc     [bp+var_4]
 
-loc_16C85:                              ; CODE XREF: sub_16B53+CF\u2191j
+loc_16C85:                              ; CODE XREF: Listbox_getSelectedItemText+CF\u2191j
                 mov     bx, [bp+var_6]
                 shl     bx, 1
                 mov     ax, [bp+var_4]
                 cmp     Listbox_lineSize[bx], ax
                 jg      short loc_16C24
 
-loc_16C93:                              ; CODE XREF: sub_16B53+91\u2191j
-                                        ; sub_16B53+E5\u2191j
+loc_16C93:                              ; CODE XREF: Listbox_getSelectedItemText+91\u2191j
+                                        ; Listbox_getSelectedItemText+E5\u2191j
                 mov     bx, [bp+var_6]
                 test    Listbox_argE[bx], 1
                 jz      short loc_16CB4
@@ -14951,21 +14951,21 @@ loc_16C93:                              ; CODE XREF: sub_16B53+91\u2191j
                 jmp     short loc_16CB1
 ; ---------------------------------------------------------------------------
 
-loc_16CAE:                              ; CODE XREF: sub_16B53+155\u2191j
+loc_16CAE:                              ; CODE XREF: Listbox_getSelectedItemText+155\u2191j
                 mov     al, byte_D312C
 
-loc_16CB1:                              ; CODE XREF: sub_16B53+159\u2191j
+loc_16CB1:                              ; CODE XREF: Listbox_getSelectedItemText+159\u2191j
                 mov     byte_D312C, al
 
-loc_16CB4:                              ; CODE XREF: sub_16B53+1E\u2191j
-                                        ; sub_16B53+2C\u2191j ...
+loc_16CB4:                              ; CODE XREF: Listbox_getSelectedItemText+1E\u2191j
+                                        ; Listbox_getSelectedItemText+2C\u2191j ...
                 mov     ax, offset byte_D312C
                 mov     dx, ds
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_16B53       endp
+Listbox_getSelectedItemText endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -24713,8 +24713,8 @@ sub_1ACFE       endp
 
 ; Attributes: library function bp-based frame
 
-_strcat         proc far                ; CODE XREF: sub_16B53+F1\u2191P
-                                        ; sub_16B53:loc_16C7A\u2191P ...
+_strcat         proc far                ; CODE XREF: Listbox_getSelectedItemText+F1\u2191P
+                                        ; Listbox_getSelectedItemText:loc_16C7A\u2191P ...
 
 arg_0           = dword ptr  6
 arg_4           = dword ptr  0Ah
@@ -144684,7 +144684,7 @@ var_4           = dword ptr -4
                 call    get_input_line_ptr
                 mov     word ptr [bp+var_4], ax
                 mov     word ptr [bp+var_4+2], dx
-                call    sub_16B53
+                call    Listbox_getSelectedItemText
                 push    dx
                 push    ax              ; src
                 lea     ax, [bp+name1]
@@ -144760,7 +144760,7 @@ loc_5DAA0:                              ; CODE XREF: sub_5D9F3+97\u2191j
                 mov     [bp+name1], 0
 
 loc_5DAA4:                              ; CODE XREF: sub_5D9F3+AB\u2191j
-                call    sub_16B53
+                call    Listbox_getSelectedItemText
                 push    dx
                 push    ax
                 lea     ax, [bp+name1]
@@ -158767,7 +158767,7 @@ loc_63C8B:                              ; CODE XREF: prompt_for_filename+7BF\u21
                 push    [bp+fileHandle] ; windowNum
                 call    WindowText_clear
                 add     sp, 2
-                call    sub_16B53
+                call    Listbox_getSelectedItemText
                 push    dx
                 push    ax              ; text
                 push    [bp+fileHandle] ; wndowNum
@@ -158802,7 +158802,7 @@ loc_63CD6:                              ; CODE XREF: prompt_for_filename+7B1\u21
                 push    [bp+fileHandle] ; windowNum
                 call    WindowText_clear
                 add     sp, 2
-                call    sub_16B53
+                call    Listbox_getSelectedItemText
                 push    dx
                 push    ax              ; text
                 push    [bp+fileHandle] ; wndowNum
@@ -158876,7 +158876,7 @@ loc_63D62:                              ; CODE XREF: prompt_for_filename+896\u21
 loc_63D80:                              ; CODE XREF: prompt_for_filename+8AB\u2191j
                 cmp     [bp+var_2], 0
                 jz      short loc_63DA6
-                call    sub_16B53
+                call    Listbox_getSelectedItemText
                 push    dx
                 push    ax              ; src
                 mov     ax, offset dest
@@ -159022,7 +159022,7 @@ loc_63EC6:                              ; CODE XREF: prompt_for_filename+9EE\u21
 ; ---------------------------------------------------------------------------
 
 loc_63EF5:                              ; CODE XREF: prompt_for_filename+888\u2191j
-                call    sub_16B53
+                call    Listbox_getSelectedItemText
                 push    dx
                 push    ax              ; src
                 mov     ax, offset dest
@@ -159048,7 +159048,7 @@ loc_63F13:                              ; CODE XREF: prompt_for_filename+A47\u21
 ; ---------------------------------------------------------------------------
 
 loc_63F25:                              ; CODE XREF: prompt_for_filename+898\u2191j
-                call    sub_16B53
+                call    Listbox_getSelectedItemText
                 push    dx
                 push    ax              ; src
                 mov     ax, offset dest
@@ -386743,7 +386743,7 @@ off_CB61C       dd __fptrap             ; DATA XREF: sub_1A0FC+69\u2191r
                 db    1
                 db    0
 ascii_table_flags db 20h, 20h, 20h, 20h, 20h, 20h, 20h, 20h, 20h, 28h, 28h, 28h, 28h, 28h, 20h, 20h
-                                        ; DATA XREF: sub_16B53+150\u2191r
+                                        ; DATA XREF: Listbox_getSelectedItemText+150\u2191r
                                         ; Listbox_findLineStartingWith+2E\u2191r ...
                 db 20h, 20h, 20h, 20h, 20h, 20h, 20h, 20h, 20h, 20h, 20h, 20h, 20h, 20h, 20h, 20h
                 db 48h, 10h, 10h, 10h, 10h, 10h, 10h, 10h, 10h, 10h, 10h, 10h, 10h, 10h, 10h, 10h
@@ -392521,7 +392521,7 @@ Listbox_newTopVisible dw 0FFFFh         ; DATA XREF: Listbox_add+281\u2191w
                                         ; Listbox_reset+143\u2191w ...
 Listbox_newSelectedIndex dw 0FFFFh      ; DATA XREF: Listbox_add+287\u2191w
                                         ; Listbox_reset+149\u2191w ...
-asc_D0758       db ' ',0                ; DATA XREF: sub_16B53+E7\u2191o
+asc_D0758       db ' ',0                ; DATA XREF: Listbox_getSelectedItemText+E7\u2191o
 asc_D075A       db ' ',0                ; DATA XREF: Listbox_draw+13C\u2191o
                 db ' ',0
 asc_D075E       db ' ',0                ; DATA XREF: Listbox_draw+2E1\u2191o
@@ -395864,8 +395864,8 @@ seg_D1AB8       dw seg sg3EDC           ; DATA XREF: Listbox_add+37\u2191r
                                         ; Listbox_add+59\u2191r ...
 seg_D1ABA       dw seg sg3EDC           ; DATA XREF: Listbox_add+6E\u2191r
                                         ; seg105:0168\u2191r
-seg_D1ABC       dw seg sg3EDC           ; DATA XREF: sub_16B53+AF\u2191r
-                                        ; sub_16B53+114\u2191r ...
+seg_D1ABC       dw seg sg3EDC           ; DATA XREF: Listbox_getSelectedItemText+AF\u2191r
+                                        ; Listbox_getSelectedItemText+114\u2191r ...
 seg_D1ABE       dw seg sg3EDC           ; DATA XREF: sub_6176C+1AA\u2191r
                                         ; sub_6176C+24A\u2191r ...
 seg_D1AC0       dw seg sg4d43           ; DATA XREF: sub_6176C+1C6\u2191r
@@ -398410,8 +398410,8 @@ Listbox_bottom  dw 0                    ; DATA XREF: Listbox_add+EE\u2191w
 Listbox_argE    db 2 dup(0)             ; DATA XREF: Listbox_add+1B4\u2191w
                                         ; Listbox_reset+CC\u2191w ...
 ; char byte_D312C[]
-byte_D312C      db 140h dup(0)          ; DATA XREF: sub_16B53+7\u2191w
-                                        ; sub_16B53+62\u2191o ...
+byte_D312C      db 140h dup(0)          ; DATA XREF: Listbox_getSelectedItemText+7\u2191w
+                                        ; Listbox_getSelectedItemText+62\u2191o ...
 byte_D326C      db 0                    ; DATA XREF: sub_61C22+29\u2191w
                                         ; sub_61C22+43\u2191r ...
                 db    0

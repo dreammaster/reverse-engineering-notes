@@ -2511,6 +2511,25 @@ RENAMES = [
      "inventory categories) into two ready-to-iterate arrays, though "
      "which handler index maps to which category wasn't independently "
      "confirmed this pass."),
+
+    (0x16B53, "Listbox_getSelectedItemText",
+     "sub_16B53(): returns a far pointer to a static buffer "
+     "(byte_D312C) holding the text of the current window's currently-"
+     "selected listbox item, or an empty string if there's no listbox "
+     "or no items. Two source formats are handled: if "
+     "Listbox_items[listboxIdx] is a raw-text blob (sentinel word "
+     "0xFFFF at its start), the selected line is directly _strcpy'd "
+     "out and trailing spaces trimmed. Otherwise the listbox stores "
+     "each line as a list of vocab-word indices, so each word's text "
+     "is looked up via vocab_list._textP and _strcat'd together with "
+     "spaces, up to Listbox_lineSize words or a terminating 0 index. "
+     "Finally, if Listbox_argE has bit 1 set, the first character is "
+     "capitalized (via ascii_table_flags's lowercase-letter bit). "
+     "Called from prompt_for_filename and sub_5D9F3 (the RTLink-"
+     "thunked function behind thunk_sub_5D9F3, seen many times this "
+     "session) -- the general 'read the highlighted listbox entry as "
+     "a string' primitive, e.g. for reading a selected filename out "
+     "of a file-picker listbox."),
 ]
 
 
