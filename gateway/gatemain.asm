@@ -3815,7 +3815,7 @@ Logics_setVal2  endp
 
 ; int __cdecl __far Logics_getUnkHandler(int logicNum, int handlerIndex)
 Logics_getUnkHandler proc far           ; CODE XREF: Logics_savedLogicHandler:loc_10075\u2191P
-                                        ; sub_15932+13\u2193P ...
+                                        ; Logics_collectPlayerItemLists+13\u2193P ...
 
 type            = word ptr -6
 dataPtr         = dword ptr -4
@@ -4078,7 +4078,7 @@ Logics_setUnkHandler endp
 
 ; int __cdecl __far Logics_getVal1(int logicNum)
 Logics_getVal1  proc far                ; CODE XREF: Logics_savedLogicHandler+126\u2191P
-                                        ; sub_15932+34\u2193P ...
+                                        ; Logics_collectPlayerItemLists+34\u2193P ...
 
 var_4           = dword ptr -4
 logicNum        = word ptr  6
@@ -12236,7 +12236,7 @@ TextWindow_addMessageList endp
 
 ; Attributes: bp-based frame
 
-sub_15932       proc far                ; CODE XREF: sub_A2D8D+28C\u2193P
+Logics_collectPlayerItemLists proc far  ; CODE XREF: sub_A2D8D+28C\u2193P
                                         ; sub_3141B:loc_BCDC8\u2193P
 
 var_4           = word ptr -4
@@ -12255,7 +12255,7 @@ logicNum        = word ptr -2
                 jmp     short loc_1596E
 ; ---------------------------------------------------------------------------
 
-loc_1594F:                              ; CODE XREF: sub_15932+41\u2193j
+loc_1594F:                              ; CODE XREF: Logics_collectPlayerItemLists+41\u2193j
                 mov     ax, [bp+logicNum]
                 mov     bx, [bp+var_4]
                 inc     [bp+var_4]
@@ -12267,7 +12267,7 @@ loc_1594F:                              ; CODE XREF: sub_15932+41\u2193j
                 call    Logics_getVal1
                 add     sp, 2
 
-loc_1596E:                              ; CODE XREF: sub_15932+1B\u2191j
+loc_1596E:                              ; CODE XREF: Logics_collectPlayerItemLists+1B\u2191j
                 mov     [bp+logicNum], ax
                 or      ax, ax
                 jnz     short loc_1594F
@@ -12285,7 +12285,7 @@ loc_1596E:                              ; CODE XREF: sub_15932+1B\u2191j
                 jmp     short loc_159BA
 ; ---------------------------------------------------------------------------
 
-loc_1599B:                              ; CODE XREF: sub_15932+8D\u2193j
+loc_1599B:                              ; CODE XREF: Logics_collectPlayerItemLists+8D\u2193j
                 mov     ax, [bp+logicNum]
                 mov     bx, [bp+var_4]
                 inc     [bp+var_4]
@@ -12296,7 +12296,7 @@ loc_1599B:                              ; CODE XREF: sub_15932+8D\u2193j
                 call    Logics_getVal1
                 add     sp, 2
 
-loc_159BA:                              ; CODE XREF: sub_15932+67\u2191j
+loc_159BA:                              ; CODE XREF: Logics_collectPlayerItemLists+67\u2191j
                 mov     [bp+logicNum], ax
                 or      ax, ax
                 jnz     short loc_1599B
@@ -12307,7 +12307,7 @@ loc_159BA:                              ; CODE XREF: sub_15932+67\u2191j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_15932       endp
+Logics_collectPlayerItemLists endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -295666,7 +295666,7 @@ loc_A3009:                              ; CODE XREF: sub_A2D8D+23E\u2191j
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_15932
+                call    Logics_collectPlayerItemLists
                 mov     ax, 0D3h ; 'Ó'
                 push    ax
                 mov     ax, 0D6h ; 'Ö'
@@ -356166,7 +356166,7 @@ loc_BCDBB:
                 add     sp, 4
 
 loc_BCDC8:
-                call    sub_15932
+                call    Logics_collectPlayerItemLists
                 call    sub_15A7A
 
 loc_BCDD2:
@@ -393859,10 +393859,10 @@ seg_D1116       dw seg sg3EDC           ; DATA XREF: Game_showIllustration+C3\u2
                                         ; Game_showCaptionText+F0\u2191r ...
 seg_D1118       dw seg sg3EDC           ; DATA XREF: Game_showIllustration+CC\u2191r
                                         ; Game_showCaptionText+F9\u2191r ...
-seg_D111A       dw seg sg3EDC           ; DATA XREF: sub_15932+28\u2191r
-                                        ; sub_15932+48\u2191r ...
-seg_D111C       dw seg sg3EDC           ; DATA XREF: sub_15932+74\u2191r
-                                        ; sub_15932+94\u2191r ...
+seg_D111A       dw seg sg3EDC           ; DATA XREF: Logics_collectPlayerItemLists+28\u2191r
+                                        ; Logics_collectPlayerItemLists+48\u2191r ...
+seg_D111C       dw seg sg3EDC           ; DATA XREF: Logics_collectPlayerItemLists+74\u2191r
+                                        ; Logics_collectPlayerItemLists+94\u2191r ...
 dseg_117        dw seg sg4d43           ; DATA XREF: Logics_saveOrRestoreHandler+20\u2191r
                                         ; Logics_saveOrRestoreHandler+4B\u2191r ...
 seg_D1120       dw seg seg087           ; DATA XREF: sub_15BAE:loc_15BCB\u2191r

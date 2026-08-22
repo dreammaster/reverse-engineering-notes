@@ -3427,3 +3427,22 @@ second, direct caller (`sub_1CC58`, unnamed) that bypasses
 `Sound_setTimerRate`'s bookkeeping.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-second batch.
+
+### `Logics_collectPlayerItemLists` named
+
+Moved to `sub_15932` (2 callers) — walks two separate contained-items
+linked lists off logic ID `0xD3` (the player, per this session's
+earlier finding in `Parser_printTalkingIsStrange`) using the already-
+documented `Logics_getUnkHandler(0xD3, handlerIndex)`/`Logics_getVal1`
+traversal pattern (the same shape `Logics_describeContents` uses for
+its container-contents walk): first with `handlerIndex=1`, snapshotting
+each visited logic ID into a flat array, null-terminated; then again
+with `handlerIndex=0` into a second flat array, also null-terminated.
+
+Called from `sub_A2D8D` and `sub_3141B` (both unnamed) — plausibly
+separating the player's worn vs. carried items (or two similarly-split
+inventory categories) into two ready-to-iterate arrays, though which
+handler index maps to which category wasn't independently confirmed
+this pass.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-third batch.

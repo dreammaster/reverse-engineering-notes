@@ -863,6 +863,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       step and its higher-level caller, the shared master timer-rate
       control for the sound engine's tick clock. Full writeup in
       [overview.md](overview.md#pit_setreloadcount-and-sound_settimerrate-named).
+- [x] Named `sub_15932` (2 callers) → `Logics_collectPlayerItemLists`
+      — snapshots the player's two contained-items linked lists into
+      flat arrays. Full writeup in
+      [overview.md](overview.md#logics_collectplayeritemlists-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

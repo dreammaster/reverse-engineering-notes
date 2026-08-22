@@ -8486,6 +8486,7 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(0X1592D);
 	create_insn	(0X15932);
+	set_name	(0X15932,	"Logics_collectPlayerItemLists");
 	create_insn	(x=0X15935);
 	op_hex		(x,	1);
 	create_insn	(x=0X15938);
@@ -12475,11 +12476,6 @@ static Bytes_1(void) {
 	create_insn	(0X18D01);
 	create_insn	(0X18D16);
 	create_insn	(0X18D26);
-	create_insn	(x=0X18D28);
-	op_hex		(x,	1);
-	create_insn	(x=0X18D2C);
-	op_hex		(x,	1);
-	create_insn	(0X18D32);
 }
 
 //------------------------------------------------------------------------
@@ -12489,6 +12485,11 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X18D28);
+	op_hex		(x,	1);
+	create_insn	(x=0X18D2C);
+	op_hex		(x,	1);
+	create_insn	(0X18D32);
 	create_insn	(x=0X18D3B);
 	op_hex		(x,	1);
 	create_insn	(x=0X18D3D);
@@ -18293,10 +18294,6 @@ static Bytes_2(void) {
 	create_insn	(x=0X1F037);
 	op_hex		(x,	1);
 	create_insn	(0X1F04C);
-	create_insn	(x=0X1F0BA);
-	op_stkvar	(x,	0);
-	create_insn	(0X1F0E4);
-	create_insn	(0X1F102);
 }
 
 //------------------------------------------------------------------------
@@ -18306,6 +18303,10 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X1F0BA);
+	op_stkvar	(x,	0);
+	create_insn	(0X1F0E4);
+	create_insn	(0X1F102);
 	create_insn	(0X1F12B);
 	create_insn	(0X1F137);
 	create_insn	(0X1F15E);
@@ -23420,12 +23421,6 @@ static Bytes_3(void) {
 	create_insn	(x=0X24535);
 	op_stkvar	(x,	1);
 	set_cmt	(0X2453C,	"ptr",	0);
-	create_insn	(x=0X24543);
-	op_hex		(x,	1);
-	create_insn	(x=0X24546);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X24549);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -23435,6 +23430,12 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X24543);
+	op_hex		(x,	1);
+	create_insn	(x=0X24546);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X24549);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X24550);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X24553);
@@ -29108,8 +29109,6 @@ static Bytes_4(void) {
 	create_insn	(x=0X28AA1);
 	op_plain_offset	(x,	0,	0XC7F20);
 	op_plain_offset	(x,	128,	0XC7F20);
-	set_cmt	(0X28AA9,	"style",	0);
-	set_cmt	(0X28AAA,	"val1",	0);
 }
 
 //------------------------------------------------------------------------
@@ -29119,6 +29118,8 @@ static Bytes_5(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X28AA9,	"style",	0);
+	set_cmt	(0X28AAA,	"val1",	0);
 	set_cmt	(0X28AAB,	"y2",	0);
 	create_insn	(x=0X28AAB);
 	op_stkvar	(x,	0);
@@ -34049,8 +34050,6 @@ static Bytes_5(void) {
 	op_stroff	(x,	0,	GetStrucIdByName("Screen"),	0);
 	create_insn	(x=0X2C6B5);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X2C6B9);
-	op_stroff	(x,	0,	GetStrucIdByName("Screen"),	0);
 }
 
 //------------------------------------------------------------------------
@@ -34060,6 +34059,8 @@ static Bytes_6(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X2C6B9);
+	op_stroff	(x,	0,	GetStrucIdByName("Screen"),	0);
 	create_insn	(x=0X2C6C1);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X2C6C4);
@@ -38188,10 +38189,6 @@ static Bytes_6(void) {
 	create_insn	(0X30F7F);
 	set_name	(0X30F7F,	"thunk_sub_AE989");
 	create_word	(0X30F87);
-	create_insn	(0X30F89);
-	create_word	(0X30F91);
-	create_insn	(0X30F93);
-	create_word	(0X30F9B);
 }
 
 //------------------------------------------------------------------------
@@ -38201,6 +38198,10 @@ static Bytes_7(void) {
         auto x;
 #define id x
 
+	create_insn	(0X30F89);
+	create_word	(0X30F91);
+	create_insn	(0X30F93);
+	create_word	(0X30F9B);
 	create_insn	(0X30F9D);
 	create_word	(0X30FA5);
 	create_insn	(0X30FA7);
@@ -41566,9 +41567,6 @@ static Bytes_7(void) {
 	create_dword	(x=0X3F354);
 	op_plain_offset	(x,	0,	0X2CF40);
 	op_plain_offset	(x,	128,	0X2CF40);
-	create_dword	(x=0X3F358);
-	op_plain_offset	(x,	0,	0X2CF40);
-	op_plain_offset	(x,	128,	0X2CF40);
 }
 
 //------------------------------------------------------------------------
@@ -41578,6 +41576,9 @@ static Bytes_8(void) {
         auto x;
 #define id x
 
+	create_dword	(x=0X3F358);
+	op_plain_offset	(x,	0,	0X2CF40);
+	op_plain_offset	(x,	128,	0X2CF40);
 	create_dword	(x=0X3F35C);
 	op_plain_offset	(x,	0,	0X2CF40);
 	op_plain_offset	(x,	128,	0X2CF40);
@@ -47678,8 +47679,6 @@ static Bytes_8(void) {
 	set_name	(0X4DA7E,	"_ScreenBottom");
 	create_word	(0X4DA80);
 	set_name	(0X4DA80,	"_Screen_TEXT_COLUMNS_80");
-	create_word	(0X4DA82);
-	set_name	(0X4DA82,	"_Screen_TEXT_ROWS_30");
 }
 
 //------------------------------------------------------------------------
@@ -47689,6 +47688,8 @@ static Bytes_9(void) {
         auto x;
 #define id x
 
+	create_word	(0X4DA82);
+	set_name	(0X4DA82,	"_Screen_TEXT_ROWS_30");
 	create_word	(0X4DA84);
 	create_word	(0X4DA86);
 	create_word	(0X4DA88);
@@ -53435,12 +53436,6 @@ static Bytes_9(void) {
 	create_insn	(x=0X61E76);
 	op_stkvar	(x,	0);
 	op_seg		(x,	1);
-	create_insn	(x=0X61E85);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X61E89);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X61E8D);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -53450,6 +53445,12 @@ static Bytes_10(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X61E85);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X61E89);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X61E8D);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X61E96);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X61E9E);
@@ -59430,10 +59431,6 @@ static Bytes_10(void) {
 	set_cmt	(0X66D52,	"logicNum",	0);
 	create_insn	(x=0X66D52);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X66D5A);
-	op_hex		(x,	1);
-	create_insn	(x=0X66D61);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -59443,6 +59440,10 @@ static Bytes_11(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X66D5A);
+	op_hex		(x,	1);
+	create_insn	(x=0X66D61);
+	op_stkvar	(x,	0);
 	set_cmt	(0X66D66,	"handlerIndex",	0);
 	create_insn	(x=0X66D66);
 	op_stkvar	(x,	0);
@@ -65009,9 +65010,6 @@ static Bytes_11(void) {
 	create_insn	(x=0X6E786);
 	op_hex		(x,	1);
 	set_cmt	(0X6E790,	"msg",	0);
-	create_insn	(x=0X6E796);
-	op_hex		(x,	1);
-	create_insn	(0X6E79D);
 }
 
 //------------------------------------------------------------------------
@@ -65021,6 +65019,9 @@ static Bytes_12(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X6E796);
+	op_hex		(x,	1);
+	create_insn	(0X6E79D);
 	set_cmt	(0X6E7B1,	"msg",	0);
 	create_insn	(x=0X6E7B7);
 	op_hex		(x,	1);
@@ -70599,7 +70600,6 @@ static Bytes_12(void) {
 	create_insn	(0X75B27);
 	create_insn	(x=0X75B30);
 	op_hex		(x,	1);
-	set_cmt	(0X75B35,	"frameNumber",	0);
 }
 
 //------------------------------------------------------------------------
@@ -70609,6 +70609,7 @@ static Bytes_13(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X75B35,	"frameNumber",	0);
 	set_cmt	(0X75B39,	"picNumber",	0);
 	create_insn	(x=0X75B3F);
 	op_hex		(x,	1);
@@ -76295,9 +76296,6 @@ static Bytes_13(void) {
 	create_word	(x=0X7E28E);
 	op_plain_offset	(x,	0,	0X7DC60);
 	op_plain_offset	(x,	128,	0X7DC60);
-	create_word	(x=0X7E290);
-	op_plain_offset	(x,	0,	0X7DC60);
-	op_plain_offset	(x,	128,	0X7DC60);
 }
 
 //------------------------------------------------------------------------
@@ -76307,6 +76305,9 @@ static Bytes_14(void) {
         auto x;
 #define id x
 
+	create_word	(x=0X7E290);
+	op_plain_offset	(x,	0,	0X7DC60);
+	op_plain_offset	(x,	128,	0X7DC60);
 	create_word	(x=0X7E292);
 	op_plain_offset	(x,	0,	0X7DC60);
 	op_plain_offset	(x,	128,	0X7DC60);
@@ -81987,10 +81988,6 @@ static Bytes_14(void) {
 	create_insn	(x=0X85DDD);
 	op_hex		(x,	1);
 	create_insn	(0X85DEE);
-	create_insn	(0X85DFD);
-	create_insn	(0X85E0D);
-	create_insn	(x=0X85E1A);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -82000,6 +81997,10 @@ static Bytes_15(void) {
         auto x;
 #define id x
 
+	create_insn	(0X85DFD);
+	create_insn	(0X85E0D);
+	create_insn	(x=0X85E1A);
+	op_hex		(x,	1);
 	create_insn	(0X85E24);
 	create_insn	(0X85E2A);
 	create_insn	(0X85E3A);
@@ -87568,9 +87569,6 @@ static Bytes_15(void) {
 	op_hex		(x,	1);
 	set_cmt	(0X8DF23,	"logicNum",	0);
 	set_cmt	(0X8DF27,	"val1",	0);
-	create_insn	(x=0X8DF2D);
-	op_hex		(x,	1);
-	set_cmt	(0X8DF35,	"logicNum",	0);
 }
 
 //------------------------------------------------------------------------
@@ -87580,6 +87578,9 @@ static Bytes_16(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X8DF2D);
+	op_hex		(x,	1);
+	set_cmt	(0X8DF35,	"logicNum",	0);
 	set_cmt	(0X8DF39,	"val1",	0);
 	create_insn	(x=0X8DF3F);
 	op_hex		(x,	1);
@@ -93100,9 +93101,6 @@ static Bytes_16(void) {
 	create_word	(x=0X95F7E);
 	op_plain_offset	(x,	0,	0X959F0);
 	op_plain_offset	(x,	128,	0X959F0);
-	create_word	(x=0X95F80);
-	op_plain_offset	(x,	0,	0X959F0);
-	op_plain_offset	(x,	128,	0X959F0);
 }
 
 //------------------------------------------------------------------------
@@ -93112,6 +93110,9 @@ static Bytes_17(void) {
         auto x;
 #define id x
 
+	create_word	(x=0X95F80);
+	op_plain_offset	(x,	0,	0X959F0);
+	op_plain_offset	(x,	128,	0X959F0);
 	create_word	(x=0X95F82);
 	op_plain_offset	(x,	0,	0X959F0);
 	op_plain_offset	(x,	128,	0X959F0);
@@ -98948,9 +98949,6 @@ static Bytes_17(void) {
 	op_hex		(x,	1);
 	set_cmt	(0X9E60C,	"index",	0);
 	set_cmt	(0X9E610,	"logicNum",	0);
-	create_insn	(x=0X9E616);
-	op_hex		(x,	1);
-	create_insn	(0X9E622);
 }
 
 //------------------------------------------------------------------------
@@ -98960,6 +98958,9 @@ static Bytes_18(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X9E616);
+	op_hex		(x,	1);
+	create_insn	(0X9E622);
 	create_insn	(x=0X9E632);
 	op_hex		(x,	1);
 	set_cmt	(0X9E638,	"index",	0);
@@ -104739,9 +104740,6 @@ static Bytes_18(void) {
 	create_word	(x=0XA701E);
 	op_plain_offset	(x,	0,	0XA6780);
 	op_plain_offset	(x,	128,	0XA6780);
-	create_word	(x=0XA7020);
-	op_plain_offset	(x,	0,	0XA6780);
-	op_plain_offset	(x,	128,	0XA6780);
 }
 
 //------------------------------------------------------------------------
@@ -104751,6 +104749,9 @@ static Bytes_19(void) {
         auto x;
 #define id x
 
+	create_word	(x=0XA7020);
+	op_plain_offset	(x,	0,	0XA6780);
+	op_plain_offset	(x,	128,	0XA6780);
 	create_word	(x=0XA7022);
 	op_plain_offset	(x,	0,	0XA6780);
 	op_plain_offset	(x,	128,	0XA6780);
@@ -110538,8 +110539,6 @@ static Bytes_19(void) {
 	op_hex		(x,	1);
 	set_cmt	(0XAF88C,	"index",	0);
 	set_cmt	(0XAF890,	"logicNum",	0);
-	create_insn	(x=0XAF896);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -110549,6 +110548,8 @@ static Bytes_20(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0XAF896);
+	op_hex		(x,	1);
 	set_cmt	(0XAF89F,	"newId",	0);
 	set_cmt	(0XAF8A3,	"handlerId",	0);
 	set_cmt	(0XAF8A7,	"logicNum",	0);
@@ -116289,8 +116290,6 @@ static Bytes_20(void) {
 	create_insn	(x=0XB7785);
 	op_hex		(x,	1);
 	create_insn	(0XB779D);
-	create_insn	(x=0XB77AA);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -116300,6 +116299,8 @@ static Bytes_21(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0XB77AA);
+	op_hex		(x,	1);
 	create_insn	(0XB77B4);
 	set_cmt	(0XB77BB,	"msg",	0);
 	create_insn	(x=0XB77C1);
@@ -122028,7 +122029,6 @@ static Bytes_21(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0XC016E);
 	op_stkvar	(x,	0);
-	set_cmt	(0XC017B,	"clearScreen",	0);
 }
 
 //------------------------------------------------------------------------
@@ -122038,6 +122038,7 @@ static Bytes_22(void) {
         auto x;
 #define id x
 
+	set_cmt	(0XC017B,	"clearScreen",	0);
 	create_insn	(x=0XC0181);
 	op_hex		(x,	1);
 	set_cmt	(0XC0188,	"img",	0);
@@ -127849,8 +127850,6 @@ static Bytes_22(void) {
 	create_word	(0XC7F7A);
 	create_word	(0XC7F7C);
 	create_word	(0XC7F7E);
-	create_word	(0XC7F80);
-	create_word	(0XC7F82);
 }
 
 //------------------------------------------------------------------------
@@ -127860,6 +127859,8 @@ static Bytes_23(void) {
         auto x;
 #define id x
 
+	create_word	(0XC7F80);
+	create_word	(0XC7F82);
 	create_word	(0XC7F84);
 	create_word	(0XC7F86);
 	create_word	(0XC7F88);

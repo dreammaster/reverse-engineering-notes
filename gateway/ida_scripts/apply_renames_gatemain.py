@@ -2495,6 +2495,22 @@ RENAMES = [
      "timer) and from sub_1E329 (presumably setting a real tempo-"
      "derived rate) -- the shared master timer-rate control for the "
      "sound engine's custom tick clock."),
+
+    (0x15932, "Logics_collectPlayerItemLists",
+     "sub_15932(): walks two separate contained-items linked lists off "
+     "logicNum 0xD3 (the player, per this session's earlier finding in "
+     "Parser_printTalkingIsStrange) using the already-documented "
+     "Logics_getUnkHandler(0xD3, handlerIndex)/Logics_getVal1 "
+     "traversal pattern (same shape as Logics_describeContents' "
+     "container-contents walk): first with handlerIndex=1, snapshotting "
+     "each visited logicNum into a flat array (seg3EDC-based buffer 1), "
+     "null-terminated; then again with handlerIndex=0 into a second "
+     "flat array (buffer 2), also null-terminated. Called from "
+     "sub_A2D8D and sub_3141B (both unnamed) -- plausibly separating "
+     "the player's worn vs. carried items (or two similarly-split "
+     "inventory categories) into two ready-to-iterate arrays, though "
+     "which handler index maps to which category wasn't independently "
+     "confirmed this pass."),
 ]
 
 
