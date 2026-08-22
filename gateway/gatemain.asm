@@ -12002,7 +12002,7 @@ loc_1575E:                              ; CODE XREF: Game_showIllustration+52\u2
                 push    [bp+arg_4]
                 push    [bp+arg_2]
                 push    cs
-                call    near ptr sub_157A9
+                call    near ptr Game_showCaptionText
                 add     sp, 0Ah
                 mov     ax, offset img
                 push    ds
@@ -12029,7 +12029,7 @@ Game_showIllustration endp
 
 ; Attributes: bp-based frame
 
-sub_157A9       proc far                ; CODE XREF: Game_showIllustration+112\u2191p
+Game_showCaptionText proc far           ; CODE XREF: Game_showIllustration+112\u2191p
                                         ; sub_9B5F9+FE\u2193P
 
 yp              = word ptr -4
@@ -12045,8 +12045,8 @@ arg_8           = byte ptr  0Eh
                 push    si
                 mov     [bp+var_2], 0
 
-loc_157B5:                              ; CODE XREF: sub_157A9+DC\u2193j
-                                        ; sub_157A9:loc_158BB\u2193j
+loc_157B5:                              ; CODE XREF: Game_showCaptionText+DC\u2193j
+                                        ; Game_showCaptionText:loc_158BB\u2193j
                 mov     bx, [bp+var_2]
                 shl     bx, 1
                 shl     bx, 1
@@ -12058,11 +12058,11 @@ loc_157B5:                              ; CODE XREF: sub_157A9+DC\u2193j
                 jmp     loc_158BE
 ; ---------------------------------------------------------------------------
 
-loc_157CB:                              ; CODE XREF: sub_157A9+1D\u2191j
+loc_157CB:                              ; CODE XREF: Game_showCaptionText+1D\u2191j
                 mov     ax, [bp+arg_6]
                 mov     [bp+yp], ax
 
-loc_157D1:                              ; CODE XREF: sub_157A9+B3\u2193j
+loc_157D1:                              ; CODE XREF: Game_showCaptionText+B3\u2193j
                 mov     bx, [bp+var_2]
                 shl     bx, 1
                 shl     bx, 1
@@ -12115,7 +12115,7 @@ loc_157D1:                              ; CODE XREF: sub_157A9+B3\u2193j
                 jmp     loc_157D1
 ; ---------------------------------------------------------------------------
 
-loc_1585F:                              ; CODE XREF: sub_157A9+39\u2191j
+loc_1585F:                              ; CODE XREF: Game_showCaptionText+39\u2191j
                 inc     [bp+var_2]
                 mov     ax, 0Fh
                 push    ax              ; seconds
@@ -12133,7 +12133,7 @@ loc_1585F:                              ; CODE XREF: sub_157A9+39\u2191j
                 jmp     loc_157B5
 ; ---------------------------------------------------------------------------
 
-loc_15888:                              ; CODE XREF: sub_157A9+CD\u2191j
+loc_15888:                              ; CODE XREF: Game_showCaptionText+CD\u2191j
                 mov     es, seg_D1114
                 assume es:sg3EDC
                 push    es:BLACK        ; color
@@ -12157,13 +12157,13 @@ loc_158BB:
                 jmp     loc_157B5
 ; ---------------------------------------------------------------------------
 
-loc_158BE:                              ; CODE XREF: sub_157A9+1F\u2191j
-                                        ; sub_157A9+C7\u2191j
+loc_158BE:                              ; CODE XREF: Game_showCaptionText+1F\u2191j
+                                        ; Game_showCaptionText+C7\u2191j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_157A9       endp
+Game_showCaptionText endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -42283,8 +42283,8 @@ Font_GetColor   endp
 ; Attributes: bp-based frame
 
 ; void __cdecl __far Font_setColor(int fgColor, int bgColor)
-Font_setColor   proc far                ; CODE XREF: sub_157A9+42\u2191P
-                                        ; sub_157A9+79\u2191P ...
+Font_setColor   proc far                ; CODE XREF: Game_showCaptionText+42\u2191P
+                                        ; Game_showCaptionText+79\u2191P ...
 
 fgColor         = word ptr  6
 bgColor         = word ptr  8
@@ -42326,8 +42326,8 @@ loc_2238A:                              ; CODE XREF: sg1372:067F\u2191j
 ; Attributes: bp-based frame
 
 ; void __cdecl __far Font_setPosition(int xp, int yp)
-Font_setPosition proc far               ; CODE XREF: sub_157A9+50\u2191P
-                                        ; sub_157A9+8B\u2191P ...
+Font_setPosition proc far               ; CODE XREF: Game_showCaptionText+50\u2191P
+                                        ; Game_showCaptionText+8B\u2191P ...
 
 xp              = word ptr  6
 yp              = word ptr  8
@@ -42372,8 +42372,8 @@ Font_setPosition endp
 ; Attributes: bp-based frame
 
 ; void __cdecl __far Font_writeString(Message msg)
-Font_writeString proc far               ; CODE XREF: sub_157A9+69\u2191P
-                                        ; sub_157A9+A7\u2191P ...
+Font_writeString proc far               ; CODE XREF: Game_showCaptionText+69\u2191P
+                                        ; Game_showCaptionText+A7\u2191P ...
 
 nextChar        = word ptr -2
 msg             = Message ptr  6
@@ -44304,7 +44304,7 @@ Text_writeString endp
 
 ; void __cdecl __far Screen_setPenColor(int color)
 Screen_setPenColor proc far             ; CODE XREF: Game_showIllustration+BB\u2191P
-                                        ; sub_157A9+E8\u2191P ...
+                                        ; Game_showCaptionText+E8\u2191P ...
 
 oldColor        = word ptr -2
 color           = word ptr  6
@@ -44361,7 +44361,7 @@ Screen_setFillCheckerColor endp
 
 ; void __cdecl __far fillRect(int color, int x1, int y1, int x2, int y2)
 fillRect        proc far                ; CODE XREF: Game_showIllustration+DD\u2191P
-                                        ; sub_157A9+10A\u2191P ...
+                                        ; Game_showCaptionText+10A\u2191P ...
 
 color           = word ptr  6
 x1              = word ptr  8
@@ -52624,7 +52624,7 @@ Image_drawAt    endp
 
 ; void __cdecl __far Image_draw(Image *img)
 Image_draw      proc far                ; CODE XREF: Game_showIllustration+A3\u2191P
-                                        ; sub_157A9+D4\u2191P ...
+                                        ; Game_showCaptionText+D4\u2191P ...
 
 showFlag        = byte ptr -2
 img             = dword ptr  6
@@ -82290,7 +82290,7 @@ thunk_sub_67081 endp ; sp-analysis failed
 
 ; int __cdecl __far j_delay(int seconds)
 j_delay         proc far                ; CODE XREF: Game_showIllustration+F3\u2191P
-                                        ; sub_157A9+BD\u2191P ...
+                                        ; Game_showCaptionText+BD\u2191P ...
                 call    near ptr rtlink_thunk
                 jmp     delay
 j_delay         endp ; sp-analysis failed
@@ -138977,12 +138977,12 @@ _fontLineHeight dw 0                    ; DATA XREF: Listbox_drawSelectedItem+5D
                                         ; Listbox_drawSelectedItem+67\u2191r ...
 ; int screenRight
 _screenRight    dw 0                    ; DATA XREF: Game_showIllustration+D0\u2191r
-                                        ; sub_157A9+FD\u2191r ...
+                                        ; Game_showCaptionText+FD\u2191r ...
 word_4DA7C      dw 0                    ; DATA XREF: Screen_setEGAPalette+17F\u2191r
                                         ; graphics_init+11\u2191w
 ; int ScreenBottom
 _ScreenBottom   dw 0                    ; DATA XREF: Game_showIllustration+C7\u2191r
-                                        ; sub_157A9+F4\u2191r ...
+                                        ; Game_showCaptionText+F4\u2191r ...
 _Screen_TEXT_COLUMNS_80 dw 0            ; DATA XREF: Listbox_drawSelectedItem+A2\u2191r
                                         ; init_graphics+136\u2191w ...
 _Screen_TEXT_ROWS_30 dw 0               ; DATA XREF: init_graphics+142\u2191w
@@ -138992,7 +138992,7 @@ word_4DA84      dw 0                    ; DATA XREF: Listbox_add+3B\u2191r
 word_4DA86      dw 0                    ; DATA XREF: init_graphics+178\u2191w
 ; int BLACK
 BLACK           dw 0                    ; DATA XREF: Game_showIllustration+B6\u2191r
-                                        ; sub_157A9+E3\u2191r ...
+                                        ; Game_showCaptionText+E3\u2191r ...
 ; int DARK_GRAY
 DARK_GRAY       dw 0                    ; DATA XREF: init_graphics+19A\u2191w
                                         ; init_graphics+1D3\u2191w ...
@@ -279045,7 +279045,7 @@ loc_9B680:                              ; CODE XREF: sub_9B5F9+82\u2191j
                 mov     dx, seg seg204
                 push    dx
                 push    ax
-                call    sub_157A9
+                call    Game_showCaptionText
                 add     sp, 0Ah
                 call    Screen_fadeOut
                 jmp     short loc_9B716
@@ -393853,11 +393853,11 @@ dseg_114        dw seg sg4d43           ; DATA XREF: Game_showIllustration:loc_1
 dseg_115        dw seg sg4d43           ; DATA XREF: Game_showIllustration+6C\u2191r
                                         ; seg102:0151\u2191r
 seg_D1114       dw seg sg3EDC           ; DATA XREF: Game_showIllustration+B2\u2191r
-                                        ; sub_157A9:loc_15888\u2191r ...
+                                        ; Game_showCaptionText:loc_15888\u2191r ...
 seg_D1116       dw seg sg3EDC           ; DATA XREF: Game_showIllustration+C3\u2191r
-                                        ; sub_157A9+F0\u2191r ...
+                                        ; Game_showCaptionText+F0\u2191r ...
 seg_D1118       dw seg sg3EDC           ; DATA XREF: Game_showIllustration+CC\u2191r
-                                        ; sub_157A9+F9\u2191r ...
+                                        ; Game_showCaptionText+F9\u2191r ...
 seg_D111A       dw seg sg3EDC           ; DATA XREF: sub_15932+28\u2191r
                                         ; sub_15932+48\u2191r ...
 seg_D111C       dw seg sg3EDC           ; DATA XREF: sub_15932+74\u2191r

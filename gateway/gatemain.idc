@@ -8338,6 +8338,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X157A2);
 	op_stkvar	(x,	1);
 	create_insn	(0X157A9);
+	set_name	(0X157A9,	"Game_showCaptionText");
 	create_insn	(x=0X157AC);
 	op_hex		(x,	1);
 	create_insn	(x=0X157B0);

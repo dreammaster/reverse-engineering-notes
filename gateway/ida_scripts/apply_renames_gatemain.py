@@ -2285,6 +2285,28 @@ RENAMES = [
      "*100000 scaling). Called from sub_1E7D4 and sub_1F1DE, the same "
      "two unnamed callers as Sound_initPlaybackTiming -- the elapsed-"
      "time query half of that same per-track timing mechanism."),
+
+    (0x157A9, "Game_showCaptionText",
+     "sub_157A9(msgArray, xp, yp, redrawPicture): the long-flagged "
+     "'Game_showIllustration's caption-text helper' from several "
+     "passes ago, finally traced directly. msgArray is a far-pointer "
+     "array of dword message pointers grouped by null (0:0) separator "
+     "entries, the same shape TextWindow_addMessageList walks for its "
+     "text-only fallback. For each group: resets the y position to "
+     "yp, then for every message in the group draws it TWICE via "
+     "Font_setColor/Font_setPosition/Font_writeString -- once in black "
+     "(fg=0) at (xp, y), then again in white (fg=0xFF) at (xp-1, y-1) "
+     "-- a drop-shadow/embossed caption style, advancing y by 0xC (12) "
+     "per line. After a group finishes, delays ~15 (ticks or seconds, "
+     "via j_delay); if the delay is interrupted (skip keypress), "
+     "returns immediately. Otherwise, if redrawPicture is set, redraws "
+     "the already-loaded illustration (Image_draw) before continuing "
+     "to the next caption group over the same picture; if not set, "
+     "fills the screen black (Screen_setPenColor(BLACK) + fillRect) "
+     "before the next group instead -- supporting both 'captions over "
+     "a static picture' and 'sequential black-background caption "
+     "pages' modes. Returns once the message array is exhausted (a "
+     "null entry with no more groups) or a caption is skipped."),
 ]
 
 

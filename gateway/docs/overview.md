@@ -3190,3 +3190,27 @@ as `Sound_initPlaybackTiming` — the elapsed-time query half of that
 same per-track timing mechanism.
 
 Applied via `apply_renames_gatemain.py`'s ninetieth batch.
+
+### `Game_showCaptionText` named
+
+Moved to `sub_157A9` (2 callers) — the long-flagged "`Game_showIllustration`'s
+caption-text helper" from several passes ago, finally traced directly.
+Takes a far-pointer array of dword message pointers (`msgArray`,
+grouped by null `0:0` separator entries — the same shape
+`TextWindow_addMessageList` walks for its text-only fallback), an
+(x, y) starting position, and a `redrawPicture` flag.
+
+For each group: resets the y position, then for every message in the
+group draws it *twice* via `Font_setColor`/`Font_setPosition`/
+`Font_writeString` — once in black at `(x, y)`, then again in white at
+`(x-1, y-1)` — a drop-shadow/embossed caption style, advancing y by 12
+pixels per line. After a group finishes, it delays roughly 15
+(ticks/seconds); if that delay is interrupted by a skip keypress, it
+returns immediately. Otherwise, if `redrawPicture` is set, it redraws
+the already-loaded illustration before continuing to the next caption
+group over the same picture; if not set, it fills the screen black
+instead — supporting both "captions layered over a static picture" and
+"sequential black-background caption pages" (e.g. ending-sequence text
+crawls) as two different display modes of the same routine.
+
+Applied via `apply_renames_gatemain.py`'s ninety-first batch.

@@ -806,6 +806,11 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       mechanism, sharing both callers with `Sound_initPlaybackTiming`.
       Full writeup in
       [overview.md](overview.md#sound_getelapsedplaybacktime-named).
+- [x] Named `sub_157A9` (2 callers) → `Game_showCaptionText` — the
+      long-pending `Game_showIllustration` caption-text helper,
+      drawing drop-shadowed caption pages over a picture or a black
+      background. Full writeup in
+      [overview.md](overview.md#game_showcaptiontext-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-
