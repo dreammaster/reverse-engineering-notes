@@ -2865,6 +2865,23 @@ RENAMES = [
      "to prime the MIDI event queue, and repeatedly from sub_201C0 -- "
      "consistent with this being the regular per-frame/per-tick MIDI "
      "service routine, not a one-shot setup step."),
+
+    (0x201C0, "Sound_serviceTick",
+     "sub_201C0(): the top-level sound-engine tick dispatcher, guarded "
+     "against re-entrancy (word_C85A2: if already nonzero, returns 1 "
+     "immediately without doing any work). Otherwise, if a 'sound "
+     "active' bit (word_C8582 bit 4) is clear, skips straight to "
+     "cleanup. If set, dispatches by backend: MIDI (bit 2) calls the "
+     "just-named Midi_serviceTick; else OPL2/other (bit 1) calls "
+     "sub_1E950 (unnamed, itself calling the already-named "
+     "Opl2_stopTrack elsewhere -- plausibly the OPL2 backend's own "
+     "per-tick service routine); else defaults to 0. Based on that "
+     "result, sets or clears a bit in word_C8582 (matching the same "
+     "bit patterns Opl2_stopTrack manipulates at its own end), then "
+     "releases the re-entrancy guard and returns the result. Called "
+     "from the already-named room_load and via a data-driven call site "
+     "elsewhere -- the shared per-tick service point for whichever "
+     "sound backend is currently active."),
 ]
 
 

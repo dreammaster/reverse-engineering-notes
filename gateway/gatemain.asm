@@ -34496,7 +34496,7 @@ sub_1E7D4       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1E950       proc far                ; CODE XREF: sub_201C0+37\u2193P
+sub_1E950       proc far                ; CODE XREF: Sound_serviceTick+37\u2193P
                 cmp     byte_D20A2, 0
                 jz      short loc_1E96C
                 mov     es, dseg_16
@@ -36205,7 +36205,7 @@ Midi_prepareTrackData endp
 ; Attributes: bp-based frame
 
 Midi_serviceTick proc far               ; CODE XREF: Sound_loadAndStartTrack:loc_2013E\u2193P
-                                        ; sub_201C0+26\u2193P
+                                        ; Sound_serviceTick+26\u2193P
 
 var_A           = word ptr -0Ah
 var_6           = word ptr -6
@@ -37119,7 +37119,7 @@ loc_1FD2C:
                 cmp     word_C859E, 0
                 jz      short loc_1FD45
                 push    cs
-                call    near ptr sub_201C0
+                call    near ptr Sound_serviceTick
                 mov     word_D2104, ax
                 cli
                 or      ax, ax
@@ -37720,7 +37720,7 @@ Sound_loadAndStartTrack endp
 
 ; Attributes: bp-based frame
 
-sub_201C0       proc far                ; CODE XREF: seg029:00C4\u2191p
+Sound_serviceTick proc far              ; CODE XREF: seg029:00C4\u2191p
                                         ; room_load+B\u2193P
 
 var_2           = word ptr -2
@@ -37738,7 +37738,7 @@ loc_201C3:
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_201D4:                              ; CODE XREF: sub_201C0+B\u2191j
+loc_201D4:                              ; CODE XREF: Sound_serviceTick+B\u2191j
                 inc     word_C85A2
                 test    byte ptr word_C8582, 16
                 jz      short loc_20215
@@ -37746,39 +37746,39 @@ loc_201D4:                              ; CODE XREF: sub_201C0+B\u2191j
                 jz      short loc_201F0
                 call    Midi_serviceTick
 
-loc_201EB:                              ; CODE XREF: sub_201C0+3C\u2193j
+loc_201EB:                              ; CODE XREF: Sound_serviceTick+3C\u2193j
                 mov     [bp+var_2], ax
                 jmp     short loc_20203
 ; ---------------------------------------------------------------------------
 
-loc_201F0:                              ; CODE XREF: sub_201C0+24\u2191j
+loc_201F0:                              ; CODE XREF: Sound_serviceTick+24\u2191j
                 test    byte ptr word_C8582, 2
                 jz      short loc_201FE
                 call    sub_1E950
                 jmp     short loc_201EB
 ; ---------------------------------------------------------------------------
 
-loc_201FE:                              ; CODE XREF: sub_201C0+35\u2191j
+loc_201FE:                              ; CODE XREF: Sound_serviceTick+35\u2191j
                 mov     [bp+var_2], 0
 
-loc_20203:                              ; CODE XREF: sub_201C0+2E\u2191j
+loc_20203:                              ; CODE XREF: Sound_serviceTick+2E\u2191j
                 cmp     [bp+var_2], 0
                 jz      short loc_20210
                 or      byte ptr word_C8582, 64
                 jmp     short loc_20215
 ; ---------------------------------------------------------------------------
 
-loc_20210:                              ; CODE XREF: sub_201C0+47\u2191j
+loc_20210:                              ; CODE XREF: Sound_serviceTick+47\u2191j
                 and     byte ptr word_C8582, 143
 
-loc_20215:                              ; CODE XREF: sub_201C0+1D\u2191j
-                                        ; sub_201C0+4E\u2191j
+loc_20215:                              ; CODE XREF: Sound_serviceTick+1D\u2191j
+                                        ; Sound_serviceTick+4E\u2191j
                 dec     word_C85A2
                 mov     ax, [bp+var_2]
                 mov     sp, bp
                 pop     bp
                 retf
-sub_201C0       endp
+Sound_serviceTick endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -143361,7 +143361,7 @@ showFlag        = byte ptr -2
                 mov     bp, sp
                 sub     sp, 4
                 mov     byte_CBD92, 0
-                call    sub_201C0
+                call    Sound_serviceTick
                 cmp     word_CBCFC, 2
                 jnz     short loc_5CF6D
                 jmp     loc_5D188
@@ -383870,7 +383870,7 @@ word_C859E      dw 0                    ; DATA XREF: sub_1FCAA:loc_1FCBC\u2191r
 word_C85A0      dw 0                    ; DATA XREF: sub_1FCAA+C\u2191w
                                         ; seg029:00CF\u2191w ...
 word_C85A2      dw 0                    ; DATA XREF: seg029:00B5\u2191r
-                                        ; sub_201C0+6\u2191r ...
+                                        ; Sound_serviceTick+6\u2191r ...
 _soundMode      dw 9                    ; DATA XREF: seg029:08D2\u2191w
                                         ; seg029:08F0\u2191w ...
 cmdline_param4  dw 2                    ; DATA XREF: seg029:0948\u2191w

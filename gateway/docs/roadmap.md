@@ -951,6 +951,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       backend's regular per-tick service routine, delegating to
       `Midi_stopTrackStep` when stopping. Full writeup in
       [overview.md](overview.md#midi_servicetick-named).
+- [x] Named `sub_201C0` (2 callers) → `Sound_serviceTick` — the
+      top-level, re-entrancy-guarded sound-engine tick dispatcher,
+      called from `room_load`. Full writeup in
+      [overview.md](overview.md#sound_servicetick-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

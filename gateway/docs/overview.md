@@ -3839,3 +3839,25 @@ repeatedly from `sub_201C0` — consistent with this being the regular
 per-frame/per-tick MIDI service routine, not a one-shot setup step.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-twenty-second batch.
+
+### `Sound_serviceTick` named
+
+Moved to `sub_201C0` (2 callers, one via a data-driven call site) —
+the top-level sound-engine tick dispatcher, guarded against
+re-entrancy (returns 1 immediately without doing any work if already
+running). Otherwise, if a "sound active" bit is clear, skips straight
+to cleanup. If set, dispatches by backend: MIDI calls the just-named
+`Midi_serviceTick`; OPL2/other calls an unnamed helper (itself calling
+the already-named `Opl2_stopTrack` elsewhere, plausibly the OPL2
+backend's own per-tick service routine); otherwise defaults to no
+activity. Based on that result, sets or clears a bit in the shared
+sound-state word (matching the same bit patterns `Opl2_stopTrack`
+manipulates at its own end), then releases the re-entrancy guard and
+returns the result.
+
+Called from the already-named `room_load` — the shared per-tick
+service point for whichever sound backend is currently active,
+completing the top-level tick-dispatch picture alongside
+`Midi_serviceTick`.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-twenty-third batch.
