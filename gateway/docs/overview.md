@@ -2903,3 +2903,28 @@ any pending skip keypress, as the standard finishing step immediately
 before an anim-pics playback sequence tears its slots back down.
 
 Applied via `apply_renames_gatemain.py`'s seventy-seventh batch.
+
+### `GameDate_format` named
+
+Moved to `sub_13629` (4 callers) — a clean, self-contained date
+formatter, traced directly from its data tables rather than its
+callers. Takes a single `dayCount` argument, adds 16 to it, then walks
+a 12-entry table (at `seg067+0x1FE`) holding the standard non-leap
+Gregorian month lengths (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30,
+31), starting from table index 4 (May, 0-based) and subtracting whole
+months off `dayCount` while cycling the index mod 12, until what's left
+fits within the current month. If the table index wrapped back below 4
+(past December into Jan-Apr), the year-suffix digit is 3, otherwise 2;
+it then calls the real C runtime's `_sprintf` with the format string at
+`seg067+0x216` (`"%02d-%02d-21%02d"`) to render
+`"<month>-<day>-21<yearSuffix>"` into a static buffer (`unk_D2E3A`),
+returning a far pointer to it.
+
+Working the math backward confirms the game's internal day-counter
+epoch — `dayCount == 0` — formats to **May 17, 2102**, an in-universe
+date. Called from four room/logic-adjacent functions (`sub_72260`,
+`sub_A60CE`, `sub_AA9E3`, `sub_B8235`, none renamed yet), consistent
+with a journal/diary-entry or event-log timestamp formatter reading an
+elapsed-day counter somewhere in game state.
+
+Applied via `apply_renames_gatemain.py`'s seventy-eighth batch.

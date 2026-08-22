@@ -7452,7 +7452,7 @@ sub_135EC       endp
 
 ; Attributes: bp-based frame
 
-sub_13629       proc far                ; CODE XREF: sub_72260+403\u2193P
+GameDate_format proc far                ; CODE XREF: sub_72260+403\u2193P
                                         ; sub_A60CE+296\u2193P ...
 
 var_4           = word ptr -4
@@ -7468,7 +7468,7 @@ arg_0           = word ptr  6
                 jmp     short loc_13662
 ; ---------------------------------------------------------------------------
 
-loc_1363F:                              ; CODE XREF: sub_13629+50\u2193j
+loc_1363F:                              ; CODE XREF: GameDate_format+50\u2193j
                 mov     bx, [bp+var_2]
                 shl     bx, 1
                 mov     es, seg067_0
@@ -7483,7 +7483,7 @@ loc_1363F:                              ; CODE XREF: sub_13629+50\u2193j
                 idiv    cx
                 mov     [bp+var_2], dx
 
-loc_13662:                              ; CODE XREF: sub_13629+14\u2191j
+loc_13662:                              ; CODE XREF: GameDate_format+14\u2191j
                 cmp     [bp+var_4], 0Ch
                 jge     short loc_1367B
                 mov     ax, [bp+arg_0]
@@ -7493,17 +7493,17 @@ loc_13662:                              ; CODE XREF: sub_13629+14\u2191j
                 cmp     es:[bx+1FEh], ax
                 jbe     short loc_1363F
 
-loc_1367B:                              ; CODE XREF: sub_13629+3D\u2191j
+loc_1367B:                              ; CODE XREF: GameDate_format+3D\u2191j
                 cmp     [bp+var_2], 4
                 jge     short loc_13686
                 mov     ax, 3
                 jmp     short loc_13689
 ; ---------------------------------------------------------------------------
 
-loc_13686:                              ; CODE XREF: sub_13629+56\u2191j
+loc_13686:                              ; CODE XREF: GameDate_format+56\u2191j
                 mov     ax, 2
 
-loc_13689:                              ; CODE XREF: sub_13629+5B\u2191j
+loc_13689:                              ; CODE XREF: GameDate_format+5B\u2191j
                 push    ax
                 mov     ax, [bp+arg_0]
                 inc     ax
@@ -7524,7 +7524,7 @@ loc_13689:                              ; CODE XREF: sub_13629+5B\u2191j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_13629       endp
+GameDate_format endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -26064,7 +26064,7 @@ _ftell          endp
 
 ; Attributes: library function bp-based frame
 
-_sprintf        proc far                ; CODE XREF: sub_13629+78\u2191P
+_sprintf        proc far                ; CODE XREF: GameDate_format+78\u2191P
                                         ; Game_updateStatusLine+F2\u2191P ...
 
 var_14          = byte ptr -14h
@@ -187195,7 +187195,7 @@ loc_7263E:
                 add     sp, 6
                 mov     es, seg_D13C0
                 push    es:_gameDayNumber
-                call    sub_13629
+                call    GameDate_format
                 add     sp, 2
                 push    dx
                 push    ax
@@ -303434,7 +303434,7 @@ loc_A632B:                              ; CODE XREF: sub_A60CE+258\u2191j
 
 loc_A6361:                              ; CODE XREF: sub_A60CE+289\u2191j
                 push    [bp+var_A]
-                call    sub_13629
+                call    GameDate_format
                 add     sp, 2
                 push    dx
                 push    ax
@@ -303703,7 +303703,7 @@ loc_A65DB:                              ; CODE XREF: sub_A60CE+508\u2191j
 
 loc_A660F:                              ; CODE XREF: sub_A60CE+537\u2191j
                 push    [bp+var_A]
-                call    sub_13629
+                call    GameDate_format
                 add     sp, 2
                 push    dx
                 push    ax
@@ -314701,7 +314701,7 @@ loc_AAD2B:                              ; CODE XREF: sub_AA9E3+1DC\u2191j
                 add     sp, 2
                 sub     ax, ax
                 push    ax
-                call    sub_13629
+                call    GameDate_format
                 add     sp, 2
                 push    dx
                 push    ax              ; char
@@ -314720,7 +314720,7 @@ loc_AAD2B:                              ; CODE XREF: sub_AA9E3+1DC\u2191j
                 or      ax, ax
                 jz      short loc_AAD90
                 push    Persisted_val251
-                call    sub_13629
+                call    GameDate_format
                 add     sp, 2
                 push    dx
                 push    ax              ; char
@@ -314741,7 +314741,7 @@ loc_AAD90:                              ; CODE XREF: sub_AA9E3+38D\u2191j
                 or      ax, ax
                 jz      short loc_AADC2
                 push    Persisted_val252
-                call    sub_13629
+                call    GameDate_format
                 add     sp, 2
                 push    dx
                 push    ax              ; char
@@ -314801,7 +314801,7 @@ loc_AAE17:                              ; CODE XREF: sub_AA9E3+422\u2191j
                 push    word ptr es:[bx+0E1h]
                 push    word ptr es:[bx+0DFh]
                 push    [bp+var_18]
-                call    sub_13629
+                call    GameDate_format
                 add     sp, 2
                 push    dx
                 push    ax              ; char
@@ -345259,7 +345259,7 @@ loc_B8274:                              ; CODE XREF: sub_B8235+1B\u2191j
                 jz      short loc_B82D3
                 mov     es, seg_D1954
                 push    es:_gameDayNumber
-                call    sub_13629
+                call    GameDate_format
                 add     sp, 2
                 push    dx
                 push    ax
@@ -345270,7 +345270,7 @@ loc_B8274:                              ; CODE XREF: sub_B8235+1B\u2191j
 loc_B82AE:                              ; CODE XREF: sub_B8235+5A\u2191j
                 mov     es, seg_D1954
                 push    es:_gameDayNumber
-                call    sub_13629
+                call    GameDate_format
                 add     sp, 2
                 push    dx
                 push    ax              ; char
@@ -345289,7 +345289,7 @@ loc_B82C4:                              ; CODE XREF: sub_B8235+77\u2191j
 loc_B82D3:                              ; CODE XREF: sub_B8235+5F\u2191j
                 mov     es, seg_D1954
                 push    es:_gameDayNumber
-                call    sub_13629
+                call    GameDate_format
                 add     sp, 2
                 push    dx
                 push    ax
@@ -393733,7 +393733,7 @@ dseg_90         dw seg sg4d43           ; DATA XREF: Logics_getRoomPic:loc_132DF
 dseg_91         dw seg sg4d43           ; DATA XREF: Logics_getRoomPic:loc_1333E\u2191r
                                         ; seg098:loc_4836C\u2191r
 seg067_0        dw seg seg067           ; DATA XREF: Logics_getRoomPic+1C1\u2191r
-                                        ; sub_13629+1B\u2191r ...
+                                        ; GameDate_format+1B\u2191r ...
 dseg_92         dw seg sg4d43           ; DATA XREF: sub_1338B:loc_133B3\u2191r
                                         ; sub_1338B+155\u2191r ...
 seg126_95       dw seg sg3EDC           ; DATA XREF: sub_1338B:loc_133C2\u2191r
@@ -397948,7 +397948,7 @@ gatestr_buffer  dd 0                    ; DATA XREF: gatestr_load+2A5\u2191w
 ; int gatestr_huffmanTableSize
 gatestr_huffmanTableSize dw 0           ; DATA XREF: gatestr_load+12C\u2191o
                                         ; gatestr_load+138\u2191r ...
-unk_D2E3A       db    0                 ; DATA XREF: sub_13629+7D\u2191o
+unk_D2E3A       db    0                 ; DATA XREF: GameDate_format+7D\u2191o
                                         ; seg098:03C4\u2191o
                 db    0
                 db    0

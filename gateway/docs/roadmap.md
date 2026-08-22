@@ -742,6 +742,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       called immediately before `AnimPics_freeAll` at 6+ sites. Full
       writeup in
       [overview.md](overview.md#animpics_finishplayback-named).
+- [x] Named `sub_13629` (4 callers) → `GameDate_format` — formats an
+      elapsed day-count into an in-universe "MM-DD-21YY" date string;
+      confirms the game's day-counter epoch is May 17, 2102. Full
+      writeup in [overview.md](overview.md#gamedate_format-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

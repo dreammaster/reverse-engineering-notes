@@ -6113,6 +6113,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X13607);
 	op_stkvar	(x,	1);
 	create_insn	(0X13629);
+	set_name	(0X13629,	"GameDate_format");
 	create_insn	(x=0X1362C);
 	op_hex		(x,	1);
 	create_insn	(x=0X1362F);
@@ -7397,8 +7398,6 @@ static Bytes_0(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X14879);
 	op_hex		(x,	1);
-	create_insn	(x=0X1487C);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -7408,6 +7407,8 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X1487C);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X14883);
 	op_dec		(x,	1);
 	create_insn	(x=0X14888);
