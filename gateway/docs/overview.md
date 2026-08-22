@@ -2949,3 +2949,32 @@ runtime's buffered stdio entirely. `fsetpos`'s presence in the same
 small group makes the save-game system the most plausible consumer.
 
 Applied via `apply_renames_gatemain.py`'s seventy-ninth batch.
+
+### `_tzset` and the timezone globals named
+
+A full, confidently-confirmed cluster, traced directly from its data
+rather than its callers. `sub_1B81C` is the standard MSC runtime
+`_tzset()`: it calls `_getenv("TZ")` (the literal string `"TZ"`
+verified directly at its argument address) and, if the environment
+variable is set and non-empty, parses the classic POSIX `TZ` format
+(e.g. `"PST8PDT"`) — `_strncpy`s the leading 3-letter standard-timezone
+abbreviation into `_tzname`, `atoi`s the numeric UTC-offset digits and
+multiplies by 3600 (`__aFlmul`) into a 32-bit `_timezoneLo`/
+`_timezoneHi` pair (seconds west of UTC), then `_strncpy`s any trailing
+DST abbreviation into `_tznameDst`, setting `_daylight` to 1 if that
+name is non-empty or 0 otherwise. The default data — before any `TZ`
+value is parsed — is `"PST"`/`"PDT"`/28800 seconds/`_daylight=1`, the
+standard MSC runtime default.
+
+`sub_1B80C` is a one-time-init guard around `_tzset`, checking/
+incrementing `word_D2E00` so the environment variable only gets parsed
+once; it's called from the already-named `_ftime` and `__dtoxtime`
+before they read the timezone globals. `_ftime` in particular divides
+`_timezoneLo`/`_timezoneHi` by 60 to fill in a `struct timeb`'s
+timezone-in-minutes field, which is what confirmed the pair as a
+32-bit seconds value rather than something else. The 32-bit global was
+split Lo/Hi to match this project's existing convention for dword
+globals IDA represents as two `word_` symbols (see
+`_playerCreditsLo`/`_playerCreditsHi`).
+
+Applied via `apply_renames_gatemain.py`'s eightieth batch.

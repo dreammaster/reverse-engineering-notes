@@ -24835,8 +24835,8 @@ _strlen         endp
 
 ; Attributes: library function bp-based frame
 
-_strncpy        proc far                ; CODE XREF: sub_1B81C+3B\u2193P
-                                        ; sub_1B81C+AD\u2193P ...
+_strncpy        proc far                ; CODE XREF: _tzset+3B\u2193P
+                                        ; _tzset+AD\u2193P ...
 
 arg_0           = dword ptr  6
 arg_4           = dword ptr  0Ah
@@ -24932,7 +24932,7 @@ _strncmp        endp
 
 ; Attributes: thunk
 
-j_atoi          proc far                ; CODE XREF: sub_1B81C+53\u2193P
+j_atoi          proc far                ; CODE XREF: _tzset+53\u2193P
                 jmp     near ptr atoi
 j_atoi          endp
 
@@ -25101,7 +25101,7 @@ Char_toLower    endp
 
 ; Attributes: library function bp-based frame
 
-_getenv         proc far                ; CODE XREF: sub_1B81C+C\u2193P
+_getenv         proc far                ; CODE XREF: _tzset+C\u2193P
 
 var_6           = dword ptr -6
 arg_0           = word ptr  6
@@ -26339,13 +26339,13 @@ arg_0           = dword ptr  6
                 mov     bp, sp
                 sub     sp, 38h
                 push    si
-                call    sub_1B80C
+                call    _tzsetOnce
                 mov     ax, 3Ch ; '<'
                 cwd
                 push    dx
                 push    ax
-                push    word_CB76C
-                push    word_CB76A
+                push    _timezoneHi
+                push    _timezoneLo
                 call    __aFldiv
                 les     bx, [bp+arg_0]
                 mov     es:[bx+6], ax
@@ -26419,7 +26419,7 @@ loc_1B787:                              ; CODE XREF: _ftime+72\u2191j
                 mov     es:[bx], ax
                 mov     es:[bx+2], dx
                 mov     [bp+var_E], si
-                cmp     word_CB76E, 0
+                cmp     _daylight, 0
                 jz      short loc_1B7FE
                 lea     ax, [bp+var_12]
                 push    ss
@@ -26449,24 +26449,24 @@ _ftime          endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B80C       proc far                ; CODE XREF: _ftime+7\u2191P
+_tzsetOnce      proc far                ; CODE XREF: _ftime+7\u2191P
                                         ; __dtoxtime+D1\u2193P ...
                 cmp     word_D2E00, 0
                 jnz     short locret_1B81B
                 push    cs
-                call    near ptr sub_1B81C
+                call    near ptr _tzset
                 inc     word_D2E00
 
-locret_1B81B:                           ; CODE XREF: sub_1B80C+5\u2191j
+locret_1B81B:                           ; CODE XREF: _tzsetOnce+5\u2191j
                 retf
-sub_1B80C       endp
+_tzsetOnce      endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-sub_1B81C       proc far                ; CODE XREF: sub_1B80C+8\u2191p
+_tzset          proc far                ; CODE XREF: _tzsetOnce+8\u2191p
 
 var_6           = dword ptr -6
 
@@ -26486,20 +26486,20 @@ var_6           = dword ptr -6
                 jmp     loc_1B8EA
 ; ---------------------------------------------------------------------------
 
-loc_1B83D:                              ; CODE XREF: sub_1B81C+1C\u2191j
+loc_1B83D:                              ; CODE XREF: _tzset+1C\u2191j
                 les     bx, [bp+var_6]
                 cmp     byte ptr es:[bx], 0
                 jnz     short loc_1B849
                 jmp     loc_1B8EA
 ; ---------------------------------------------------------------------------
 
-loc_1B849:                              ; CODE XREF: sub_1B81C+28\u2191j
+loc_1B849:                              ; CODE XREF: _tzset+28\u2191j
                 mov     ax, 3
                 push    ax
                 push    es
                 push    bx
-                push    word ptr off_CB770+2
-                push    word ptr off_CB770
+                push    word ptr _tzname+2
+                push    word ptr _tzname
                 call    _strncpy
                 add     sp, 0Ah
                 mov     ax, 0E10h
@@ -26514,11 +26514,11 @@ loc_1B849:                              ; CODE XREF: sub_1B81C+28\u2191j
                 push    dx
                 push    ax
                 call    __aFlmul
-                mov     word_CB76A, ax
-                mov     word_CB76C, dx
+                mov     _timezoneLo, ax
+                mov     _timezoneHi, dx
                 sub     si, si
 
-loc_1B887:                              ; CODE XREF: sub_1B81C+8E\u2193j
+loc_1B887:                              ; CODE XREF: _tzset+8E\u2193j
                 les     bx, [bp+var_6]
                 cmp     byte ptr es:[bx+si], 0
                 jz      short loc_1B8AC
@@ -26531,13 +26531,13 @@ loc_1B887:                              ; CODE XREF: sub_1B81C+8E\u2193j
                 cmp     byte ptr es:[bx+si], 2Dh ; '-'
                 jnz     short loc_1B8AC
 
-loc_1B8A6:                              ; CODE XREF: sub_1B81C+7F\u2191j
+loc_1B8A6:                              ; CODE XREF: _tzset+7F\u2191j
                 inc     si
                 cmp     si, 3
                 jl      short loc_1B887
 
-loc_1B8AC:                              ; CODE XREF: sub_1B81C+72\u2191j
-                                        ; sub_1B81C+88\u2191j
+loc_1B8AC:                              ; CODE XREF: _tzset+72\u2191j
+                                        ; _tzset+88\u2191j
                 les     bx, [bp+var_6]
                 cmp     byte ptr es:[bx+si], 0
                 jz      short loc_1B8D4
@@ -26548,32 +26548,32 @@ loc_1B8AC:                              ; CODE XREF: sub_1B81C+72\u2191j
                 add     ax, si
                 push    dx
                 push    ax
-                push    word ptr off_CB774+2
-                push    word ptr off_CB774
+                push    word ptr _tznameDst+2
+                push    word ptr _tznameDst
                 call    _strncpy
                 add     sp, 0Ah
                 jmp     short loc_1B8DC
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1B8D4:                              ; CODE XREF: sub_1B81C+97\u2191j
-                les     bx, off_CB774
+loc_1B8D4:                              ; CODE XREF: _tzset+97\u2191j
+                les     bx, _tznameDst
                 mov     byte ptr es:[bx], 0
 
-loc_1B8DC:                              ; CODE XREF: sub_1B81C+B5\u2191j
-                les     bx, off_CB774
+loc_1B8DC:                              ; CODE XREF: _tzset+B5\u2191j
+                les     bx, _tznameDst
                 cmp     byte ptr es:[bx], 1
                 sbb     ax, ax
                 inc     ax
-                mov     word_CB76E, ax
+                mov     _daylight, ax
 
-loc_1B8EA:                              ; CODE XREF: sub_1B81C+1E\u2191j
-                                        ; sub_1B81C+2A\u2191j
+loc_1B8EA:                              ; CODE XREF: _tzset+1E\u2191j
+                                        ; _tzset+2A\u2191j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_1B81C       endp
+_tzset          endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -26825,9 +26825,9 @@ loc_1BA20:                              ; CODE XREF: __dtoxtime+45\u2191j
                 mov     ax, [bp+arg_4]
                 add     ax, di
                 mov     [bp+var_4], ax
-                call    sub_1B80C
-                mov     ax, word_CB76A
-                mov     dx, word_CB76C
+                call    _tzsetOnce
+                mov     ax, _timezoneLo
+                mov     dx, _timezoneHi
                 add     [bp+var_16], ax
                 adc     [bp+var_14], dx
                 lea     ax, [si+50h]
@@ -26837,7 +26837,7 @@ loc_1BA20:                              ; CODE XREF: __dtoxtime+45\u2191j
                 mov     [bp+var_A], ax
                 mov     ax, [bp+arg_6]
                 mov     [bp+var_E], ax
-                cmp     word_CB76E, 0
+                cmp     _daylight, 0
                 jz      short loc_1BAE9
                 lea     ax, [bp+var_12]
                 push    ss
@@ -28510,12 +28510,12 @@ arg_0           = dword ptr  6
                 push    bp
                 mov     bp, sp
                 sub     sp, 8
-                call    sub_1B80C
+                call    _tzsetOnce
                 les     bx, [bp+arg_0]
                 mov     ax, es:[bx]
                 mov     dx, es:[bx+2]
-                sub     ax, word_CB76A
-                sbb     dx, word_CB76C
+                sub     ax, _timezoneLo
+                sbb     dx, _timezoneHi
                 mov     [bp+var_8], ax
                 mov     [bp+var_6], dx
                 lea     ax, [bp+var_8]
@@ -28534,7 +28534,7 @@ arg_0           = dword ptr  6
                 align 2
 
 loc_1C51C:                              ; CODE XREF: _localtime+38\u2191j
-                cmp     word_CB76E, 0
+                cmp     _daylight, 0
                 jz      short loc_1C55A
                 push    word ptr [bp+var_4+2]
                 push    word ptr [bp+var_4]
@@ -138839,8 +138839,8 @@ loc_4D955:
                 mov     dx, es:[bx+2]
 
 loc_4D964:
-                sub     ax, word_CB76A
-                sbb     dx, word_CB76C
+                sub     ax, _timezoneLo
+                sbb     dx, _timezoneHi
                 mov     [bp-8], ax
                 mov     [bp-6], dx
                 lea     ax, [bp-8]
@@ -386816,19 +386816,19 @@ word_CB728      dw 0FFFFh               ; DATA XREF: _getch:loc_1AFA6\u2191r
                 db    1
 aTz             db 'TZ',0
                 db    0
-aPst            db 'PST',0              ; DATA XREF: sg4d43:off_CB770\u2193o
-aPdt            db 'PDT',0              ; DATA XREF: sg4d43:off_CB774\u2193o
-word_CB76A      dw 7080h                ; DATA XREF: _ftime+16\u2191r
-                                        ; sub_1B81C+62\u2191w ...
-word_CB76C      dw 0                    ; DATA XREF: _ftime+12\u2191r
-                                        ; sub_1B81C+65\u2191w ...
-word_CB76E      dw 1                    ; DATA XREF: _ftime+D7\u2191r
-                                        ; sub_1B81C+CB\u2191w ...
-off_CB770       dd aPst                 ; DATA XREF: sub_1B81C+37\u2191r
-                                        ; sub_1B81C+33\u2191r
+aPst            db 'PST',0              ; DATA XREF: sg4d43:_tzname\u2193o
+aPdt            db 'PDT',0              ; DATA XREF: sg4d43:_tznameDst\u2193o
+_timezoneLo     dw 7080h                ; DATA XREF: _ftime+16\u2191r
+                                        ; _tzset+62\u2191w ...
+_timezoneHi     dw 0                    ; DATA XREF: _ftime+12\u2191r
+                                        ; _tzset+65\u2191w ...
+_daylight       dw 1                    ; DATA XREF: _ftime+D7\u2191r
+                                        ; _tzset+CB\u2191w ...
+_tzname         dd aPst                 ; DATA XREF: _tzset+37\u2191r
+                                        ; _tzset+33\u2191r
                                         ; "PST"
-off_CB774       dd aPdt                 ; DATA XREF: sub_1B81C+A9\u2191r
-                                        ; sub_1B81C:loc_1B8D4\u2191r ...
+_tznameDst      dd aPdt                 ; DATA XREF: _tzset+A9\u2191r
+                                        ; _tzset:loc_1B8D4\u2191r ...
                                         ; "PDT"
 aSunmontuewedth db 'SunMonTueWedThuFriSat',0
 aJanfebmaraprma db 'JanFebMarAprMayJunJulAugSepOctNovDec',0
@@ -397894,8 +397894,8 @@ word_D2DFC      dw 0                    ; DATA XREF: iprint:loc_19EA6\u2191w
                                         ; sub_1A0FC+50\u2191w ...
 word_D2DFE      dw 0                    ; DATA XREF: __output+6A\u2191w
                                         ; __output+7D\u2191w ...
-word_D2E00      dw 0                    ; DATA XREF: sub_1B80C\u2191r
-                                        ; sub_1B80C+B\u2191w
+word_D2E00      dw 0                    ; DATA XREF: _tzsetOnce\u2191r
+                                        ; _tzsetOnce+B\u2191w
 word_D2E02      dw 0                    ; DATA XREF: Parser_perform+3D\u2191w
                                         ; Parser_perform+41\u2191r ...
 unk_D2E04       db    0                 ; DATA XREF: format_long_decimal+108\u2191o

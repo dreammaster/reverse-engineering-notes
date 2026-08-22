@@ -751,6 +751,12 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       runtime's own `_write`, in the small custom file-I/O group with
       `fseek`/`fsetpos`/`set_filename_prefix`. Full writeup in
       [overview.md](overview.md#rawfile_write-named).
+- [x] Named `sub_1B81C`/`sub_1B80C` → `_tzset`/`_tzsetOnce`, plus the
+      MSC runtime timezone globals they maintain (`_timezoneLo`/
+      `_timezoneHi`/`_daylight`/`_tzname`/`_tznameDst`) — confirmed via
+      the literal `"TZ"` getenv string and default `"PST"`/`"PDT"`/
+      28800-second data. Full writeup in
+      [overview.md](overview.md#_tzset-and-the-timezone-globals-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

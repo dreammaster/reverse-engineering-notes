@@ -2036,6 +2036,62 @@ RENAMES = [
      "custom file-I/O layer the game uses directly (bypassing the C "
      "runtime's buffered stdio), most plausibly for the save-game "
      "system given fsetpos's presence in the same small group."),
+
+    (0x1B81C, "_tzset",
+     "sub_1B81C(): confirmed as the standard MSC runtime _tzset(). "
+     "Calls _getenv('TZ') (the literal string 'TZ' verified directly "
+     "at its argument address); if unset or empty, leaves defaults "
+     "alone. Otherwise parses the classic POSIX TZ format (e.g. "
+     "'PST8PDT'): _strncpy's the first 3 chars into off_CB770 (the "
+     "standard-timezone name), atoi's the numeric UTC-offset digits "
+     "and multiplies by 3600 (__aFlmul) into word_CB76A:word_CB76C (a "
+     "32-bit seconds-west-of-UTC value), then _strncpy's any trailing "
+     "DST-abbreviation chars into off_CB774, setting word_CB76E to 1 "
+     "if that DST name is non-empty or 0 otherwise. The default data "
+     "(before any TZ env var is parsed) is 'PST'/'PDT'/28800 seconds/"
+     "daylight=1 -- the standard MSC runtime default."),
+
+    (0x1B80C, "_tzsetOnce",
+     "sub_1B80C(): a one-time-init guard around the just-named _tzset "
+     "-- checks word_D2E00, calls _tzset and increments it only the "
+     "first time through. Called from the already-named _ftime and "
+     "__dtoxtime before they read the timezone globals, so those "
+     "runtime functions don't re-parse the TZ environment variable on "
+     "every call."),
+
+    (0x0CB76A, "_timezoneLo",
+     "Low word of the 32-bit _timezone MSC runtime global (seconds "
+     "west of UTC) that _tzset (sub_1B81C) computes from the TZ "
+     "environment variable, and _ftime divides by 60 to fill in a "
+     "struct timeb's timezone-in-minutes field. Defaults to 0x7080 "
+     "(28800 = 8 hours), matching the default 'PST8PDT' TZ data. "
+     "Split Lo/Hi to match this project's existing convention for "
+     "32-bit globals IDA represents as two word_ symbols (see "
+     "_playerCreditsLo/_playerCreditsHi)."),
+
+    (0x0CB76C, "_timezoneHi",
+     "High word of the 32-bit _timezone global; see _timezoneLo "
+     "(sub_1B81C/_tzset's companion global, defaults to 0)."),
+
+    (0x0CB76E, "_daylight",
+     "The MSC runtime _daylight global: 1 if the parsed TZ "
+     "environment variable includes a DST-abbreviation suffix, 0 "
+     "otherwise. Set by the just-named _tzset; defaults to 1 "
+     "(matching the default 'PST8PDT' TZ data, which does specify a "
+     "DST abbreviation)."),
+
+    (0x0CB770, "_tzname",
+     "The MSC runtime _tzname[0] global: the 3-letter standard-"
+     "timezone abbreviation (e.g. 'PST'), written by _tzset "
+     "(sub_1B81C) from the TZ environment variable's leading letters. "
+     "Defaults to the literal string 'PST' (aPst)."),
+
+    (0x0CB774, "_tznameDst",
+     "The MSC runtime _tzname[1] global: the 3-letter DST-timezone "
+     "abbreviation (e.g. 'PDT'), written by _tzset (sub_1B81C) from "
+     "the TZ environment variable's trailing letters, or cleared to an "
+     "empty string if the TZ value has no DST suffix. Defaults to the "
+     "literal string 'PDT' (aPdt)."),
 ]
 
 
