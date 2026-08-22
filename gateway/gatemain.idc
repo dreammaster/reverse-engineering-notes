@@ -16949,6 +16949,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1D2F7);
 	op_hex		(x,	1);
 	create_insn	(0X1D2FC);
+	set_name	(0X1D2FC,	"Opl2_loadOperatorPatch");
 	create_insn	(x=0X1D2FF);
 	op_hex		(x,	1);
 	create_insn	(x=0X1D304);
@@ -18259,9 +18260,6 @@ static Bytes_2(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X1EF68);
 	op_hex		(x,	1);
-	create_insn	(x=0X1EF76);
-	op_hex		(x,	1);
-	create_insn	(0X1EF7C);
 }
 
 //------------------------------------------------------------------------
@@ -18271,6 +18269,9 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X1EF76);
+	op_hex		(x,	1);
+	create_insn	(0X1EF7C);
 	create_insn	(x=0X1EF80);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1EF83);
@@ -23397,7 +23398,6 @@ static Bytes_3(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X244E3);
 	op_stkvar	(x,	1);
-	set_cmt	(0X244EE,	"param1",	0);
 }
 
 //------------------------------------------------------------------------
@@ -23407,6 +23407,7 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X244EE,	"param1",	0);
 	create_insn	(x=0X244EF);
 	op_plain_offset	(x,	1,	0XC7F20);
 	op_plain_offset	(x,	129,	0XC7F20);

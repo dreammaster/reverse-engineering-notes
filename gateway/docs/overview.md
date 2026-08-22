@@ -3579,3 +3579,20 @@ several passes this session: `Opl2_setOperatorVolume` (`0x40`),
 interface for the OPL2/AdLib backend.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-ninth batch.
+
+### `Opl2_loadOperatorPatch` named
+
+Moved to `sub_1D2FC` (2 callers) — copies 13 bytes from a source patch
+structure (read every other byte — a 26-byte source, matching a
+duplicated-field or word-sized-field-per-byte encoding) into the
+7-byte-stride per-operator table this whole OPL2 cluster shares, then
+writes a `waveform` argument (masked to 2 bits) into the field the
+already-named `Opl2_setOperatorWaveform` reads. Finally calls the
+already-named `Opl2_applyOperatorSettings` to push the whole loaded
+patch out to OPL2 hardware in one go.
+
+This is the "load a MIDI-instrument-patch definition into an OPL2
+operator" entry point, called from `sub_1CFB0` — the natural top of
+the whole OPL2 register cluster traced across this session.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-tenth batch.

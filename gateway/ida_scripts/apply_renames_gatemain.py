@@ -2639,6 +2639,20 @@ RENAMES = [
      "the just-named Opl2_setOperatorProperty's 'update one property' "
      "role -- called from sub_1D2FC when first setting up an "
      "operator's complete OPL2 register state."),
+
+    (0x1D2FC, "Opl2_loadOperatorPatch",
+     "sub_1D2FC(operatorIndex, patchData, waveform): copies 13 bytes "
+     "from a source patch structure (patchData, read every other byte "
+     "-- a 26-byte source, matching a duplicated-field or word-sized-"
+     "field-per-byte encoding) into the 7-byte-stride per-operator "
+     "table this whole OPL2 cluster shares (at operatorIndex*7, "
+     "offsets 0-12), then writes waveform (masked to 2 bits) into "
+     "offset+13 of that same table -- exactly the field the just-"
+     "named Opl2_setOperatorWaveform reads. Finally calls the just-"
+     "named Opl2_applyOperatorSettings(operatorIndex) to push the "
+     "whole loaded patch out to OPL2 hardware in one go. This is the "
+     "'load a MIDI-instrument-patch definition into an OPL2 operator' "
+     "entry point, called from sub_1CFB0."),
 ]
 
 

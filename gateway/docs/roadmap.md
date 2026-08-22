@@ -894,6 +894,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       entry point, closing out the entire OPL2 per-operator register
       cluster. Full writeup in
       [overview.md](overview.md#the-opl2-per-operator-register-cluster-closed-out).
+- [x] Named `sub_1D2FC` (2 callers) → `Opl2_loadOperatorPatch` — the
+      "load a MIDI-instrument-patch into an OPL2 operator" entry
+      point, the natural top of the whole OPL2 cluster. Full writeup
+      in [overview.md](overview.md#opl2_loadoperatorpatch-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

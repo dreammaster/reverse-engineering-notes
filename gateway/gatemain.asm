@@ -30516,7 +30516,7 @@ loc_1D01C:                              ; CODE XREF: sub_1CFB0+59\u2191j
                 sub     ah, ah
                 push    ax
                 push    cs
-                call    near ptr sub_1D2FC
+                call    near ptr Opl2_loadOperatorPatch
                 add     sp, 8
                 les     bx, [bp+var_C]
                 cmp     byte ptr es:[bx+1], 0FFh
@@ -30528,7 +30528,7 @@ loc_1D01C:                              ; CODE XREF: sub_1CFB0+59\u2191j
                 sub     ah, ah
                 push    ax
                 push    cs
-                call    near ptr sub_1D2FC
+                call    near ptr Opl2_loadOperatorPatch
                 add     sp, 8
 
 loc_1D056:                              ; CODE XREF: sub_1CFB0+E\u2191j
@@ -30947,7 +30947,7 @@ sub_1D1FE       endp
 
 ; Attributes: bp-based frame
 
-sub_1D2FC       proc far                ; CODE XREF: sub_1CFB0+7F\u2191p
+Opl2_loadOperatorPatch proc far         ; CODE XREF: sub_1CFB0+7F\u2191p
                                         ; sub_1CFB0+A0\u2191p ...
 
 var_A           = word ptr -0Ah
@@ -30979,7 +30979,7 @@ arg_6           = word ptr  0Ch
                 mov     [bp+var_A], ds
                 lds     si, [bp+arg_2]
 
-loc_1D32F:                              ; CODE XREF: sub_1D2FC+3C\u2193j
+loc_1D32F:                              ; CODE XREF: Opl2_loadOperatorPatch+3C\u2193j
                 mov     al, [si]
                 mov     es:[di], al
                 add     si, 2
@@ -31003,7 +31003,7 @@ loc_1D32F:                              ; CODE XREF: sub_1D2FC+3C\u2193j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_1D2FC       endp
+Opl2_loadOperatorPatch endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -31059,7 +31059,7 @@ loc_1D394:                              ; CODE XREF: sub_1D366+39\u2193j
                 push    ax
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr sub_1D2FC
+                call    near ptr Opl2_loadOperatorPatch
                 add     sp, 8
                 pop     si
                 pop     di
@@ -31194,7 +31194,7 @@ Opl2_setOperatorProperty endp
 
 ; Attributes: bp-based frame
 
-Opl2_applyOperatorSettings proc far     ; CODE XREF: sub_1D2FC+5D\u2191p
+Opl2_applyOperatorSettings proc far     ; CODE XREF: Opl2_loadOperatorPatch+5D\u2191p
 
 arg_0           = word ptr  6
 
