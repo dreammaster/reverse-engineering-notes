@@ -12855,7 +12855,7 @@ loc_15D64:                              ; CODE XREF: Sound_selectTrackForRoom+14
                 call    get_buffer_size
                 mov     es, dseg_131
                 mov     es:word_C8578, ax
-                call    sub_1FE5C
+                call    Sound_loadAndStartTrack
 
 loc_15DAD:                              ; CODE XREF: Sound_selectTrackForRoom+38\u2191j
                                         ; Sound_selectTrackForRoom+9B\u2191j ...
@@ -13009,7 +13009,7 @@ loc_15F1A:
                 call    get_buffer_size
                 mov     es, dseg_131
                 mov     es:word_C8578, ax
-                call    sub_1FE5C
+                call    Sound_loadAndStartTrack
 
 loc_15F30:                              ; CODE XREF: Sound_selectTrack+46\u2191j
                                         ; Sound_selectTrack+5D\u2191j
@@ -33401,7 +33401,7 @@ Midi_readVarLengthValue2 endp
 
 ; Attributes: bp-based frame
 
-sub_1E1BC       proc far                ; CODE XREF: sub_1FE5C+339\u2193P
+sub_1E1BC       proc far                ; CODE XREF: Sound_loadAndStartTrack+339\u2193P
 
 arg_0           = word ptr  6
 arg_2           = word ptr  8
@@ -36148,7 +36148,7 @@ sub_1F552       endp
 ; Attributes: bp-based frame
 
 sub_1F63A       proc far                ; CODE XREF: sub_1F7D6+12D\u2193p
-                                        ; sub_1FE5C+2D4\u2193P
+                                        ; Sound_loadAndStartTrack+2D4\u2193P
 
 arg_0           = word ptr  6
 arg_2           = word ptr  8
@@ -36204,7 +36204,7 @@ sub_1F63A       endp
 
 ; Attributes: bp-based frame
 
-sub_1F692       proc far                ; CODE XREF: sub_1FE5C:loc_2013E\u2193P
+sub_1F692       proc far                ; CODE XREF: Sound_loadAndStartTrack:loc_2013E\u2193P
                                         ; sub_201C0+26\u2193P
 
 var_A           = word ptr -0Ah
@@ -37308,7 +37308,7 @@ Sound_shutdown  endp
 
 ; Attributes: bp-based frame
 
-sub_1FE5C       proc far                ; CODE XREF: Sound_selectTrackForRoom+1CE\u2191P
+Sound_loadAndStartTrack proc far        ; CODE XREF: Sound_selectTrackForRoom+1CE\u2191P
                                         ; Sound_selectTrack+179\u2191P
 
 var_1C          = word ptr -1Ch
@@ -37335,13 +37335,13 @@ var_2           = word ptr -2
                 jmp     loc_201BA
 ; ---------------------------------------------------------------------------
 
-loc_1FE6E:                              ; CODE XREF: sub_1FE5C+D\u2191j
+loc_1FE6E:                              ; CODE XREF: Sound_loadAndStartTrack+D\u2191j
                 cmp     word_C8580, 0
                 jnz     short loc_1FE78
                 jmp     loc_201BA
 ; ---------------------------------------------------------------------------
 
-loc_1FE78:                              ; CODE XREF: sub_1FE5C+17\u2191j
+loc_1FE78:                              ; CODE XREF: Sound_loadAndStartTrack+17\u2191j
                 sub     ax, ax
                 mov     [bp+var_2], ax
                 mov     [bp+var_4], ax
@@ -37354,7 +37354,7 @@ loc_1FE78:                              ; CODE XREF: sub_1FE5C+17\u2191j
                 jmp     loc_2000C
 ; ---------------------------------------------------------------------------
 
-loc_1FE95:                              ; CODE XREF: sub_1FE5C+34\u2191j
+loc_1FE95:                              ; CODE XREF: Sound_loadAndStartTrack+34\u2191j
                 mov     [bp+var_E], ax
                 mov     di, 618h
                 mov     [bp+var_12], 628h
@@ -37364,13 +37364,13 @@ loc_1FE95:                              ; CODE XREF: sub_1FE5C+34\u2191j
                 mov     [bp+var_1A], 644h
                 mov     si, [bp+handle]
 
-loc_1FEB7:                              ; CODE XREF: sub_1FE5C+18F\u2193j
+loc_1FEB7:                              ; CODE XREF: Sound_loadAndStartTrack+18F\u2193j
                 cmp     word ptr [di], 0
                 jnz     short loc_1FEBF
                 jmp     loc_1FFCB
 ; ---------------------------------------------------------------------------
 
-loc_1FEBF:                              ; CODE XREF: sub_1FE5C+5E\u2191j
+loc_1FEBF:                              ; CODE XREF: Sound_loadAndStartTrack+5E\u2191j
                 mov     ax, [di]
                 mov     [bp+var_1C], ax
                 mov     al, byte ptr [bp+var_1C+1]
@@ -37394,17 +37394,17 @@ loc_1FEBF:                              ; CODE XREF: sub_1FE5C+5E\u2191j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1FEF4:                              ; CODE XREF: sub_1FE5C+8A\u2191j
+loc_1FEF4:                              ; CODE XREF: Sound_loadAndStartTrack+8A\u2191j
                 test    byte ptr word_C8582, 2
                 jz      short loc_1FF00
                 mov     ax, 1
                 jmp     short loc_1FF03
 ; ---------------------------------------------------------------------------
 
-loc_1FF00:                              ; CODE XREF: sub_1FE5C+9D\u2191j
+loc_1FF00:                              ; CODE XREF: Sound_loadAndStartTrack+9D\u2191j
                 mov     ax, 2
 
-loc_1FF03:                              ; CODE XREF: sub_1FE5C+A2\u2191j
+loc_1FF03:                              ; CODE XREF: Sound_loadAndStartTrack+A2\u2191j
                 mov     [bp+var_A], ax
                 mov     ax, [bp+var_6]
                 shl     ax, 1
@@ -37440,7 +37440,7 @@ loc_1FF03:                              ; CODE XREF: sub_1FE5C+A2\u2191j
                 mov     ax, word_C8578
                 mov     cl, 4
 
-loc_1FF50:                              ; CODE XREF: sub_1FE5C+FA\u2193j
+loc_1FF50:                              ; CODE XREF: Sound_loadAndStartTrack+FA\u2193j
                 shl     ax, 1
                 rcl     dx, 1
                 dec     cl
@@ -37451,7 +37451,7 @@ loc_1FF50:                              ; CODE XREF: sub_1FE5C+FA\u2193j
                 cmp     ax, [bp+var_4]
                 jb      short loc_1FFCB
 
-loc_1FF64:                              ; CODE XREF: sub_1FE5C+FF\u2191j
+loc_1FF64:                              ; CODE XREF: Sound_loadAndStartTrack+FF\u2191j
                 push    count
                 call    new_handle
                 add     sp, 2
@@ -37467,7 +37467,7 @@ loc_1FF64:                              ; CODE XREF: sub_1FE5C+FF\u2191j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1FF88:                              ; CODE XREF: sub_1FE5C+11E\u2191j
+loc_1FF88:                              ; CODE XREF: Sound_loadAndStartTrack+11E\u2191j
                 push    word_D2108
                 push    offset          ; offset
                 push    si              ; fileHandle
@@ -37491,11 +37491,11 @@ loc_1FF88:                              ; CODE XREF: sub_1FE5C+11E\u2191j
                 mov     bx, [bp+var_1A]
                 mov     ax, word_D2110
 
-loc_1FFC9:                              ; CODE XREF: sub_1FE5C+94\u2191j
+loc_1FFC9:                              ; CODE XREF: Sound_loadAndStartTrack+94\u2191j
                 mov     [bx], ax
 
-loc_1FFCB:                              ; CODE XREF: sub_1FE5C+60\u2191j
-                                        ; sub_1FE5C+101\u2191j ...
+loc_1FFCB:                              ; CODE XREF: Sound_loadAndStartTrack+60\u2191j
+                                        ; Sound_loadAndStartTrack+101\u2191j ...
                 add     di, 2
                 add     [bp+var_12], 4
                 add     [bp+var_14], 4
@@ -37508,7 +37508,7 @@ loc_1FFCB:                              ; CODE XREF: sub_1FE5C+60\u2191j
                 jmp     loc_1FEB7
 ; ---------------------------------------------------------------------------
 
-loc_1FFEE:                              ; CODE XREF: sub_1FE5C+18D\u2191j
+loc_1FFEE:                              ; CODE XREF: Sound_loadAndStartTrack+18D\u2191j
                 mov     [bp+handle], si
                 mov     ax, word_C8548
                 mov     dx, word_C854A
@@ -37521,7 +37521,7 @@ loc_1FFEE:                              ; CODE XREF: sub_1FE5C+18D\u2191j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_2000C:                              ; CODE XREF: sub_1FE5C+36\u2191j
+loc_2000C:                              ; CODE XREF: Sound_loadAndStartTrack+36\u2191j
                 mov     al, byte ptr word_C8580+1
                 sub     ah, ah
                 mov     [bp+fileNumber], ax
@@ -37540,7 +37540,7 @@ loc_2000C:                              ; CODE XREF: sub_1FE5C+36\u2191j
                 mov     word ptr ptr+2, ax
                 mov     word ptr ptr, ax
 
-loc_20039:                              ; CODE XREF: sub_1FE5C+1D3\u2191j
+loc_20039:                              ; CODE XREF: Sound_loadAndStartTrack+1D3\u2191j
                 test    byte ptr word_C8582, 2
                 jz      short loc_20046
                 mov     ax, 1
@@ -37548,10 +37548,10 @@ loc_20039:                              ; CODE XREF: sub_1FE5C+1D3\u2191j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_20046:                              ; CODE XREF: sub_1FE5C+1E2\u2191j
+loc_20046:                              ; CODE XREF: Sound_loadAndStartTrack+1E2\u2191j
                 mov     ax, 2
 
-loc_20049:                              ; CODE XREF: sub_1FE5C+1E7\u2191j
+loc_20049:                              ; CODE XREF: Sound_loadAndStartTrack+1E7\u2191j
                 mov     [bp+var_A], ax
                 mov     ax, [bp+var_6]
                 shl     ax, 1
@@ -37584,7 +37584,7 @@ loc_20049:                              ; CODE XREF: sub_1FE5C+1E7\u2191j
                 sub     dx, dx
                 mov     cl, 4
 
-loc_20091:                              ; CODE XREF: sub_1FE5C+23B\u2193j
+loc_20091:                              ; CODE XREF: Sound_loadAndStartTrack+23B\u2193j
                 shl     ax, 1
                 rcl     dx, 1
                 dec     cl
@@ -37597,14 +37597,14 @@ loc_20091:                              ; CODE XREF: sub_1FE5C+23B\u2193j
                 jmp     loc_201BA
 ; ---------------------------------------------------------------------------
 
-loc_200A8:                              ; CODE XREF: sub_1FE5C+247\u2191j
+loc_200A8:                              ; CODE XREF: Sound_loadAndStartTrack+247\u2191j
                 cmp     ax, cx
                 jnb     short loc_200AF
                 jmp     loc_201BA
 ; ---------------------------------------------------------------------------
 
-loc_200AF:                              ; CODE XREF: sub_1FE5C+245\u2191j
-                                        ; sub_1FE5C+24E\u2191j
+loc_200AF:                              ; CODE XREF: Sound_loadAndStartTrack+245\u2191j
+                                        ; Sound_loadAndStartTrack+24E\u2191j
                 push    count
                 call    new_handle
                 add     sp, 2
@@ -37623,7 +37623,7 @@ loc_200AF:                              ; CODE XREF: sub_1FE5C+245\u2191j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_200D8:                              ; CODE XREF: sub_1FE5C+268\u2191j
+loc_200D8:                              ; CODE XREF: Sound_loadAndStartTrack+268\u2191j
                 push    word_D2108
                 push    offset          ; offset
                 push    [bp+handle]     ; fileHandle
@@ -37643,7 +37643,7 @@ loc_200D8:                              ; CODE XREF: sub_1FE5C+268\u2191j
                 mov     word_C8572, ax
                 mov     ax, word_D2110
 
-loc_20119:                              ; CODE XREF: sub_1FE5C+1AC\u2191j
+loc_20119:                              ; CODE XREF: Sound_loadAndStartTrack+1AC\u2191j
                 mov     word_C8574, ax
                 test    byte ptr word_C8582, 4
                 jz      short loc_20186
@@ -37657,7 +37657,7 @@ loc_20119:                              ; CODE XREF: sub_1FE5C+1AC\u2191j
                 jz      short loc_201BA
                 sub     si, si
 
-loc_2013E:                              ; CODE XREF: sub_1FE5C+2F0\u2193j
+loc_2013E:                              ; CODE XREF: Sound_loadAndStartTrack+2F0\u2193j
                 call    sub_1F692
                 or      ax, ax
                 jz      short loc_2014E
@@ -37665,7 +37665,7 @@ loc_2013E:                              ; CODE XREF: sub_1FE5C+2F0\u2193j
                 cmp     si, 100h
                 jl      short loc_2013E
 
-loc_2014E:                              ; CODE XREF: sub_1FE5C+2E9\u2191j
+loc_2014E:                              ; CODE XREF: Sound_loadAndStartTrack+2E9\u2191j
                 mov     [bp+var_E], si
                 mov     es, seg126_23
                 assume es:sg3EDC
@@ -37678,7 +37678,7 @@ loc_2014E:                              ; CODE XREF: sub_1FE5C+2E9\u2191j
                 jz      short loc_201BA
                 mov     word_C85A0, 1
 
-loc_20177:                              ; CODE XREF: sub_1FE5C+320\u2193j
+loc_20177:                              ; CODE XREF: Sound_loadAndStartTrack+320\u2193j
                 cmp     word_C859E, 1
                 jnz     short loc_20177
                 pop     si
@@ -37690,7 +37690,7 @@ loc_20177:                              ; CODE XREF: sub_1FE5C+320\u2193j
                 db 2 dup(90h)
 ; ---------------------------------------------------------------------------
 
-loc_20186:                              ; CODE XREF: sub_1FE5C+2C5\u2191j
+loc_20186:                              ; CODE XREF: Sound_loadAndStartTrack+2C5\u2191j
                 test    byte ptr word_C8582, 2
                 jz      short loc_201BA
                 push    word ptr ptr+2
@@ -37706,14 +37706,14 @@ loc_20186:                              ; CODE XREF: sub_1FE5C+2C5\u2191j
                 mov     es:_tmpSub._val7, ax
                 mov     es:_tmpSub._val8, dx
 
-loc_201BA:                              ; CODE XREF: sub_1FE5C+F\u2191j
-                                        ; sub_1FE5C+19\u2191j ...
+loc_201BA:                              ; CODE XREF: Sound_loadAndStartTrack+F\u2191j
+                                        ; Sound_loadAndStartTrack+19\u2191j ...
                 pop     si
                 pop     di
                 mov     sp, bp
                 pop     bp
                 retf
-sub_1FE5C       endp
+Sound_loadAndStartTrack endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -41208,8 +41208,8 @@ loc_21B81:
 ; Attributes: bp-based frame
 
 ; int __cdecl __far open_file2(FILETYPE fileType, int fileNumber)
-open_file2      proc far                ; CODE XREF: sub_1FE5C+7D\u2191P
-                                        ; sub_1FE5C+1C5\u2191P ...
+open_file2      proc far                ; CODE XREF: Sound_loadAndStartTrack+7D\u2191P
+                                        ; Sound_loadAndStartTrack+1C5\u2191P ...
 
 var_52          = word ptr -52h
 buffer          = byte ptr -50h
@@ -41268,8 +41268,8 @@ open_file2      endp
 ; Attributes: bp-based frame
 
 ; int __cdecl __far fsetpos(int fileHandle, __int32 offset)
-fsetpos         proc far                ; CODE XREF: sub_1FE5C+CA\u2191P
-                                        ; sub_1FE5C+135\u2191P ...
+fsetpos         proc far                ; CODE XREF: Sound_loadAndStartTrack+CA\u2191P
+                                        ; Sound_loadAndStartTrack+135\u2191P ...
 
 fileHandle      = word ptr  6
 offset          = dword ptr  8
@@ -41359,8 +41359,8 @@ freadWord       endp
 ; Attributes: bp-based frame
 
 ; int __cdecl __far file_read2(int handle, void *ptr, int count)
-file_read2      proc far                ; CODE XREF: sub_1FE5C+DC\u2191P
-                                        ; sub_1FE5C+14E\u2191P ...
+file_read2      proc far                ; CODE XREF: Sound_loadAndStartTrack+DC\u2191P
+                                        ; Sound_loadAndStartTrack+14E\u2191P ...
 
 handle          = word ptr  6
 ptr             = dword ptr  8
@@ -41460,8 +41460,8 @@ loc_21CF5:
 
 ; Attributes: bp-based frame
 
-close_file2     proc far                ; CODE XREF: sub_1FE5C+121\u2191P
-                                        ; sub_1FE5C+157\u2191P ...
+close_file2     proc far                ; CODE XREF: Sound_loadAndStartTrack+121\u2191P
+                                        ; Sound_loadAndStartTrack+157\u2191P ...
 
 arg_0           = word ptr  6
 
@@ -47075,8 +47075,8 @@ find_free_handle endp
 
 ; Attributes: bp-based frame
 
-new_handle      proc far                ; CODE XREF: sub_1FE5C+10C\u2191P
-                                        ; sub_1FE5C+257\u2191P ...
+new_handle      proc far                ; CODE XREF: Sound_loadAndStartTrack+10C\u2191P
+                                        ; Sound_loadAndStartTrack+257\u2191P ...
 
 masterPtr       = dword ptr -0Ah
 handleIndex     = word ptr -6
@@ -383785,8 +383785,8 @@ word_C8538      dw 0                    ; DATA XREF: Sound_selectTrackForRoom+12
 word_C8540      dw 0                    ; DATA XREF: Sound_selectTrackForRoom+133\u2191r
                                         ; Sound_selectTrack+DE\u2191r ...
                 align 8
-word_C8548      dw 0                    ; DATA XREF: sub_1FE5C+195\u2191r
-word_C854A      dw 0                    ; DATA XREF: sub_1FE5C+198\u2191r
+word_C8548      dw 0                    ; DATA XREF: Sound_loadAndStartTrack+195\u2191r
+word_C854A      dw 0                    ; DATA XREF: Sound_loadAndStartTrack+198\u2191r
                 db    0
                 db    0
                 db    0
@@ -383802,14 +383802,14 @@ word_C854A      dw 0                    ; DATA XREF: sub_1FE5C+198\u2191r
 ; void **ptr
 ptr             dd 0                    ; DATA XREF: Listbox_draw+2AD\u2191t
                                         ; Listbox_draw+2B2\u2191t ...
-word_C855C      dw 0                    ; DATA XREF: sub_1FE5C+1A3\u2191r
+word_C855C      dw 0                    ; DATA XREF: Sound_loadAndStartTrack+1A3\u2191r
                 db    0
                 db    0
                 db    0
                 db    0
                 db    0
                 db    0
-word_C8564      dw 0                    ; DATA XREF: sub_1FE5C+1A9\u2191r
+word_C8564      dw 0                    ; DATA XREF: Sound_loadAndStartTrack+1A9\u2191r
                 db    0
                 db    0
                 db    0
@@ -383822,9 +383822,9 @@ word_C856E      dw 0                    ; DATA XREF: Sound_selectTrackForRoom+94
                                         ; Sound_selectTrackForRoom+110\u2191w ...
                 db    0
                 db    0
-word_C8572      dw 0                    ; DATA XREF: sub_1FE5C+1A6\u2191w
-                                        ; sub_1FE5C+2B7\u2191w ...
-word_C8574      dw 0                    ; DATA XREF: sub_1FE5C:loc_20119\u2191w
+word_C8572      dw 0                    ; DATA XREF: Sound_loadAndStartTrack+1A6\u2191w
+                                        ; Sound_loadAndStartTrack+2B7\u2191w ...
+word_C8574      dw 0                    ; DATA XREF: Sound_loadAndStartTrack:loc_20119\u2191w
 word_C8576      dw 7Fh                  ; DATA XREF: Sound_selectTrackForRoom+1B5\u2191w
                                         ; Sound_selectTrack+160\u2191w ...
 word_C8578      dw 0                    ; DATA XREF: Sound_selectTrackForRoom+1CA\u2191w
@@ -393492,8 +393492,8 @@ dseg_51         dw seg sg4d43           ; DATA XREF: Midi_beginRolandSysEx\u2191
 dseg_52         dw seg sg4d43           ; DATA XREF: Midi_beginRolandSysEx+9\u2191r
 seg126_22       dw seg sg3EDC           ; DATA XREF: sub_1FC70+13\u2191r
                                         ; sub_1FCAA+19\u2191r ...
-seg126_23       dw seg sg3EDC           ; DATA XREF: sub_1FE5C+24\u2191r
-                                        ; sub_1FE5C+2F5\u2191r ...
+seg126_23       dw seg sg3EDC           ; DATA XREF: Sound_loadAndStartTrack+24\u2191r
+                                        ; Sound_loadAndStartTrack+2F5\u2191r ...
 seg126_24       dw seg sg3EDC           ; DATA XREF: Sound_stopTrack+73\u2191r
 dseg_153        dw seg sg4d43           ; DATA XREF: Sound_stopTrack+7E\u2191r
 dseg_154        dw seg sg4d43           ; DATA XREF: seg029:07A2\u2191r
@@ -397153,17 +397153,17 @@ word_D2104      dw 0                    ; DATA XREF: seg029:00C7\u2191w
 ; __int32 offset
 offset          dw 0                    ; DATA XREF: Logics_getObjectString+9A\u2191t
                                         ; Logics_getName+9B\u2191t ...
-word_D2108      dw 0                    ; DATA XREF: sub_1FE5C:loc_1FF88\u2191r
-                                        ; sub_1FE5C:loc_200D8\u2191r
+word_D2108      dw 0                    ; DATA XREF: Sound_loadAndStartTrack:loc_1FF88\u2191r
+                                        ; Sound_loadAndStartTrack:loc_200D8\u2191r
 ; int count
-count           dw 0                    ; DATA XREF: sub_1FE5C+E4\u2191r
-                                        ; sub_1FE5C:loc_1FF64\u2191r ...
+count           dw 0                    ; DATA XREF: Sound_loadAndStartTrack+E4\u2191r
+                                        ; Sound_loadAndStartTrack:loc_1FF64\u2191r ...
                 db    0
                 db    0
-word_D210E      dw 0                    ; DATA XREF: sub_1FE5C+162\u2191r
-                                        ; sub_1FE5C+2B4\u2191r
-word_D2110      dw 0                    ; DATA XREF: sub_1FE5C+16A\u2191r
-                                        ; sub_1FE5C+2BA\u2191r
+word_D210E      dw 0                    ; DATA XREF: Sound_loadAndStartTrack+162\u2191r
+                                        ; Sound_loadAndStartTrack+2B4\u2191r
+word_D2110      dw 0                    ; DATA XREF: Sound_loadAndStartTrack+16A\u2191r
+                                        ; Sound_loadAndStartTrack+2BA\u2191r
 max_input_line_length dw 0              ; DATA XREF: InputArea_setLine+11\u2191r
                                         ; InputArea_setLine+2F\u2191w ...
 word_D2114      dw 0                    ; DATA XREF: InputArea_setLine+14\u2191w

@@ -3770,3 +3770,36 @@ All three are called from `Midi_sendDisplayText` and `sub_1FB10` —
 SysEx payload, with `Midi_busyWaitDelay` settling afterward.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-nineteenth batch.
+
+### `Sound_loadAndStartTrack` named
+
+Moved to `sub_1FE5C` (868 bytes, 2 callers — the largest function
+named this session) — the shared track-loading worker called from
+both the already-named `Sound_selectTrack` and
+`Sound_selectTrackForRoom`, after they've picked a track/room number.
+No-ops unless a relevant sound-state bit is set and a track/room
+selector global is nonzero.
+
+Opens the selected `.MUS` resource via `open_file2`; when coming from
+the room-based path, additionally walks up to 4 header-described
+sub-chunks, allocating a handle and reading each one in (skipping
+chunks below a size threshold). Either way it ends up with the main
+track payload in a shared pointer global, plus two header words copied
+out.
+
+Then it dispatches on backend: if the MIDI bit is set, it parses the
+loaded MIDI data (via a helper traced earlier this session) and, on
+success, loops up to 256 times priming the MIDI event queue, snapshots
+the clock into the same fields the already-named
+`Sound_getElapsedPlaybackTime` reads, sets the "playing" bits, and
+optionally spins on a ready-handshake pair. Otherwise, it calls a
+presumed OPL2/other-backend equivalent preparation step.
+
+Several inner helpers remain unnamed, but this function's own role —
+load a `.MUS` track's data and kick off playback on whichever backend
+is active — is clear from its structure and already-named callers.
+This ties together nearly every sound-engine thread traced this
+session: file I/O, the MIDI event-queue/timing cluster, and the
+backend-selection bits in the shared sound-state word.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-twentieth batch.

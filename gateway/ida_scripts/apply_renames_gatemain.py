@@ -2803,6 +2803,34 @@ RENAMES = [
      "Midi_sendDisplayText and sub_1FB10, immediately after a Roland "
      "SysEx message, presumably giving the MIDI device time to "
      "process it before the caller continues."),
+
+    (0x1FE5C, "Sound_loadAndStartTrack",
+     "sub_1FE5C(): the shared track-loading worker called from both "
+     "the already-named Sound_selectTrack and Sound_selectTrackForRoom "
+     "(after they've picked a track/room number). No-ops unless a "
+     "relevant word_C8582 backend bit is set and a track/room "
+     "selector global (word_C8580) is nonzero. Opens the selected "
+     ".MUS resource via open_file2(fileNumber, FILETYPE_MUS); when "
+     "coming from the room-based path, additionally walks up to 4 "
+     "header-described sub-chunks, allocating a handle and reading "
+     "each in via new_handle/fsetpos/file_read2/close_file2 (skipping "
+     "chunks below a size threshold). Either way ends up with the "
+     "main track payload in a shared `ptr` global and copies two "
+     "header words into word_C8572/word_C8574. Then dispatches on "
+     "backend: if the MIDI bit (word_C8582 bit 2) is set, calls "
+     "sub_1F63A (traced earlier this session -- parses the loaded MIDI "
+     "data) and, on success, loops calling sub_1F692 up to 256 times "
+     "to prime the MIDI event queue, snapshots the clock into the "
+     "_tmpSub._val7/_val8 fields Sound_getElapsedPlaybackTime reads, "
+     "sets the 'playing' bits, and optionally spins on a ready-"
+     "handshake pair (word_C85A0/word_C859E) if a further bit is set. "
+     "Otherwise (bit 1 set instead), calls sub_1E1BC(ptr) -- "
+     "presumably the OPL2/other-backend equivalent preparation step. "
+     "Several inner helpers (sub_1F63A's own callees, sub_1F692, "
+     "sub_1E1BC) remain unnamed, but this function's own role -- load "
+     "a .MUS track's data and kick off playback on whichever backend "
+     "is active -- is clear from its structure and already-named "
+     "callers/callees."),
 ]
 
 

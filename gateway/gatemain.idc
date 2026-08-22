@@ -18874,6 +18874,7 @@ static Bytes_3(void) {
 	create_insn	(x=0X1FE56);
 	op_hex		(x,	1);
 	create_insn	(0X1FE5C);
+	set_name	(0X1FE5C,	"Sound_loadAndStartTrack");
 	create_insn	(x=0X1FE5F);
 	op_hex		(x,	1);
 	create_insn	(x=0X1FE64);
@@ -23378,8 +23379,6 @@ static Bytes_3(void) {
 	op_enum		(x,	1,	GetEnum("HFLAG"),0);
 	create_insn	(x=0X24498);
 	op_stroff	(x,	1,	GetStrucIdByName("HandleEntry"),	0);
-	create_insn	(x=0X2449C);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -23389,6 +23388,8 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X2449C);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X2449F);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X244A2);
