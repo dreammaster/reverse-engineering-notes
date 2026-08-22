@@ -4666,3 +4666,75 @@ Bend), not by any comment or message text, so it's flagged as a
 structural read rather than a narratively-confirmed one.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-fifty-second batch.
+
+### Both IDBs regenerated from scratch (2026-08-23) — the RTLink flattening tool's far-call bug is fixed
+
+Paul found and fixed the actual root cause of the flattening tool's
+"known bug" (see the RTLink flattening tool section above/earlier):
+a far call/jmp *within* one RTLink overlay segment, targeting another
+routine *within that same original segment* (so not routed through
+`rtlink_thunk`, which only exists for cross-segment calls), could
+resolve to an outright **wrong destination** after flattening — worse
+than the earlier "just the segment word is wrong, offset is fine"
+theory. IDA had been creating bogus function definitions in the middle
+of real functions at these wrong targets, and failing to identify the
+true callee.
+
+With the tool fixed, Paul regenerated both `gate.idb` and
+`gatemain.idb` from scratch against the same `gate_decoded.exe`/
+`gatemain_decoded.exe` inputs (same root filename and MD5, confirmed
+via `identify.py`), renamed the old databases to `gate_old.idb`/
+`gatemain_old.idb`, ran BinDiff, and carried over high-confidence
+(>=95%) function-name matches onto the fresh IDBs.
+
+**One residual case is expected to stay unresolvable**: 57 locations in
+`gatemain.idb` (none in `gate.idb`) are now marked with the comment
+`; rtlink_decode: polymorphic slot (segment value, target depends on
+which overlay is loaded)` — a far reference pointing beyond the loaded
+segment's own bounds, so which overlay actually resides there at
+runtime can vary. Confirming one for certain would require an in-game
+breakpoint at the call site (and even then, only if exactly one
+overlay is ever loaded there). The alternative reading is that it's
+simply a pointer to unallocated scratch space with no code at all.
+**Every such marked line should be treated as a `void*` to unknown
+memory** — not worth guessing a target for.
+
+**Recovery**: replayed the full accumulated `apply_renames_gate.py`
+(10 entries) and `apply_renames_gatemain.py` (255 entries) histories
+against the fresh IDBs, DRY_RUN first. Every single entry resolved to
+a valid address with zero errors and was re-applied for real —
+confirming the underlying byte addresses are stable across the
+regeneration (same executable, same load layout; only far-call
+*interpretation*, and consequently some function *boundaries*,
+changed). What BinDiff's carryover had actually missed: essentially all
+global **data** symbol names (`_score`, `_soundMode`,
+`_opl2MasterVolume`, etc. — 48 in gatemain, 7 in gate — BinDiff's
+function-similarity matching doesn't cover globals), plus a few
+**function** names whose body shape changed enough post-fix to drop
+below the 95% threshold: `Listbox_resetStateStack`, `Speaker_sampleIsr`
+(correctly superseded by the later `SoundBlaster_dmaIsr` correction
+during replay, as it always should be), and `Logics_printBeckerJudgment`.
+
+Two names — `Screen_fillSpanGeneric` and `Logic_heecheetownSpecial` —
+are now understood more accurately than before: both are **shared tail
+chunks owned by a different function** (`Screen_dispatchSpanFill`, and
+an unnamed room-dispatch table entry, respectively), not independent
+functions. This is a genuine improvement in understanding, not a loss —
+both still carry their names correctly as location labels; they just
+no longer show as their own `proc`/`endp` pair.
+
+**Open follow-up, not yet acted on**: the freshly-regenerated IDBs'
+auto-analysis has wrapped noticeably less of the disassemblable code in
+function boundaries than the old, years-accumulated IDBs had — a rough
+spot-check suggested on the order of 100-300KB of legitimate code in
+`gatemain.idb` sits disassembled but outside any `proc`, invisible to
+`rank_unnamed_functions.py` (which iterates `idautils.Functions()`
+only). This is likely not something the far-call fix caused — the old
+IDBs' function boundaries accumulated through years of manual/
+incidental "make this a function" actions a brand-new IDB hasn't had
+done to it yet. Not urgent (486 already-recognized unnamed functions
+remain in gatemain alone), but worth remembering: some code may need a
+function boundary created before it becomes nameable at all.
+
+Both `gate.asm`/`gate.idc` and `gatemain.asm`/`gatemain.idc` were
+re-exported fresh after this recovery.

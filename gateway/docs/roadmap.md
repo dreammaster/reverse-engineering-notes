@@ -5,6 +5,36 @@ add notes as they're resolved — this file is meant to stay current across
 sessions, unlike a one-off todo list. See [overview.md](overview.md) for
 the per-executable breakdown this is tracking against.
 
+## Infra (done, 2026-08-23) — both IDBs regenerated after the flattening-tool fix
+
+- [x] Paul fixed the flattening tool's intra-segment far-call bug (wrong
+      destination entirely, not just a bad segment word on a good
+      offset) and regenerated `gate.idb`/`gatemain.idb` from scratch,
+      BinDiff-carrying high-confidence names over. Full story in
+      overview.md's "Both IDBs regenerated from scratch" section.
+- [x] Replayed the full `apply_renames_gate.py`/`apply_renames_gatemain.py`
+      histories against the fresh IDBs (DRY_RUN first) — zero errors,
+      everything re-applied. Recovered 48+7 lost global-data-symbol
+      names and 3 lost function names
+      (`Listbox_resetStateStack`/`SoundBlaster_dmaIsr`/
+      `Logics_printBeckerJudgment`); confirmed 2 more
+      (`Screen_fillSpanGeneric`/`Logic_heecheetownSpecial`) are now
+      correctly understood as shared tail chunks of another function
+      rather than independent functions.
+- [x] Re-exported fresh `gate.asm`/`gate.idc`/`gatemain.asm`/
+      `gatemain.idc` and committed them.
+- [ ] Consider a broader "create function" pass over `gatemain.idb` —
+      auto-analysis on the fresh IDB left noticeably more disassemblable
+      code outside any function boundary (rough estimate 100-300KB)
+      than the old, years-accumulated IDB had. Not urgent (486 already-
+      recognized unnamed functions remain first), but code without a
+      function boundary is invisible to `rank_unnamed_functions.py`.
+- [ ] The 57 `; rtlink_decode: polymorphic slot` markers in
+      `gatemain.idb` are expected to stay unresolvable via static
+      analysis (target depends on which overlay is loaded at runtime,
+      or may be unallocated scratch space) — treat as `void*`, don't
+      try to resolve further without an in-game breakpoint.
+
 ## Infra (done, 2026-08-21)
 
 - [x] Reviewed the sibling `ultima1` project's headless IDA pipeline
