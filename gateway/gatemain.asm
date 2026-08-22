@@ -31124,7 +31124,7 @@ loc_1D3F0:                              ; CODE XREF: sub_1D3C4+E\u2191j
                                         ; DATA XREF: sub_1D3C4+62\u2193o ...
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr sub_1D58C
+                call    near ptr Opl2_setChannelFeedback
                 jmp     short loc_1D3EB
 ; ---------------------------------------------------------------------------
                 align 2
@@ -31210,7 +31210,7 @@ arg_0           = word ptr  6
                 add     sp, 2
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr sub_1D58C
+                call    near ptr Opl2_setChannelFeedback
                 add     sp, 2
                 push    [bp+arg_0]
                 push    cs
@@ -31379,7 +31379,7 @@ Opl2_setNoteSelect endp
 
 ; Attributes: bp-based frame
 
-sub_1D58C       proc far                ; CODE XREF: sub_1D3C4+30\u2191p
+Opl2_setChannelFeedback proc far        ; CODE XREF: sub_1D3C4+30\u2191p
                                         ; sub_1D448+19\u2191p
 
 var_2           = word ptr -2
@@ -31418,12 +31418,12 @@ arg_0           = word ptr  6
                 call    Opl2_writeRegister
                 add     sp, 4
 
-loc_1D5E3:                              ; CODE XREF: sub_1D58C+14\u2191j
+loc_1D5E3:                              ; CODE XREF: Opl2_setChannelFeedback+14\u2191j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_1D58C       endp
+Opl2_setChannelFeedback endp
 
 
 ; =============== S U B R O U T I N E =======================================

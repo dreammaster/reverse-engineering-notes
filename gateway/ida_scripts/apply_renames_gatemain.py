@@ -2546,6 +2546,22 @@ RENAMES = [
      "the listbox, 0 otherwise (letting the caller process it as a "
      "normal character). Called from get_mouse_input and "
      "prompt_for_filename."),
+
+    (0x1D58C, "Opl2_setChannelFeedback",
+     "sub_1D58C(channel): no-ops if the per-channel flag byte at "
+     "+0x1A6 is set (the same flag Opl2_setOperatorVolume gates its "
+     "velocity-tracking on) -- i.e. this only applies to normal "
+     "(non-rhythm-only) channels. Otherwise indexes the same 7-byte-"
+     "stride per-channel table Opl2_setOperatorVolume uses (channel*7) "
+     "to read a feedback-amount byte (+2, doubled into bits 1-3) and "
+     "an algorithm/connection-type byte (+0xC, compared >=1 to set bit "
+     "0), OR's them together, and writes the result to OPL2 register "
+     "0xC0+channelRegisterOffset (the standard OPL2 Feedback/"
+     "Connection-Type register) via the already-named "
+     "Opl2_writeRegister -- using the same per-channel register-offset "
+     "field (+0x1B8) as Opl2_setOperatorVolume. Called from sub_1D3C4 "
+     "and sub_1D448 (both unnamed, plausibly the note-on/instrument-"
+     "setup routines for this backend)."),
 ]
 
 

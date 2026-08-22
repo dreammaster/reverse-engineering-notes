@@ -3484,3 +3484,21 @@ Returns 1 if the keypress was consumed by the listbox, 0 otherwise
 Called from `get_mouse_input` and `prompt_for_filename`.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-fifth batch.
+
+### `Opl2_setChannelFeedback` named
+
+Moved to `sub_1D58C` (2 callers) — no-ops if the per-channel flag byte
+at `+0x1A6` is set (the same flag `Opl2_setOperatorVolume` gates its
+velocity-tracking on), i.e. this only applies to normal (non-rhythm-
+only) channels. Otherwise indexes the same 7-byte-stride per-channel
+table `Opl2_setOperatorVolume` uses to read a feedback-amount byte
+(doubled into bits 1-3) and an algorithm/connection-type byte (set as
+bit 0), ORs them together, and writes the result to OPL2 register
+`0xC0+channelRegisterOffset` — the standard OPL2 Feedback/Connection-
+Type register — via the already-named `Opl2_writeRegister`, using the
+same per-channel register-offset field as `Opl2_setOperatorVolume`.
+
+Called from `sub_1D3C4` and `sub_1D448` (both unnamed, plausibly the
+note-on/instrument-setup routines for this backend).
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-sixth batch.

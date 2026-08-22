@@ -17194,6 +17194,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X1D588);
 	op_hex		(x,	1);
 	create_insn	(0X1D58C);
+	set_name	(0X1D58C,	"Opl2_setChannelFeedback");
 	create_insn	(x=0X1D58F);
 	op_hex		(x,	1);
 	create_insn	(x=0X1D593);
@@ -18283,11 +18284,6 @@ static Bytes_2(void) {
 	create_insn	(0X1EFF6);
 	create_insn	(x=0X1EFFF);
 	op_hex		(x,	1);
-	create_insn	(0X1F008);
-	create_insn	(x=0X1F013);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X1F01A);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -18297,6 +18293,11 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(0X1F008);
+	create_insn	(x=0X1F013);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X1F01A);
+	op_hex		(x,	1);
 	create_insn	(x=0X1F020);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X1F02A);
@@ -23412,10 +23413,6 @@ static Bytes_3(void) {
 	op_stkvar	(x,	1);
 	create_insn	(0X2451E);
 	set_name	(0X2451E,	"unlock_handle");
-	create_insn	(x=0X24521);
-	op_hex		(x,	1);
-	create_insn	(x=0X24525);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -23425,6 +23422,10 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X24521);
+	op_hex		(x,	1);
+	create_insn	(x=0X24525);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X2452A);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X2452D);

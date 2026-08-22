@@ -875,6 +875,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       the listbox keyboard-navigation dispatcher (Home/End/PgUp/PgDn/
       arrows/type-ahead). Full writeup in
       [overview.md](overview.md#listbox_handlenavigationkey-named).
+- [x] Named `sub_1D58C` (2 callers) → `Opl2_setChannelFeedback` — the
+      OPL2 Feedback/Connection-Type register setter, companion to
+      `Opl2_setOperatorVolume`. Full writeup in
+      [overview.md](overview.md#opl2_setchannelfeedback-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-
