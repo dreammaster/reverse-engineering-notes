@@ -828,6 +828,11 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       after tracing confirmed they program the ISA DMA controller and
       the Sound Blaster DSP directly. Full writeup in
       [overview.md](overview.md#correction-the-digitized-pc-speaker-isr-is-actually-sound-blaster-dma-playback).
+- [x] Named `sub_18950` (2 callers) → `SoundBlaster_writeByteFromIsr`
+      — a private, unbounded-poll duplicate of `Sb_writeByte` used
+      from interrupt context, completing the Sound Blaster DMA
+      cluster. Full writeup in
+      [overview.md](overview.md#soundblaster_writebytefromisr-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

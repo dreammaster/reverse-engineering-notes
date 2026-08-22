@@ -3293,3 +3293,21 @@ re-checked this pass -- only that this specific ISR and its cluster
 belong to Sound Blaster, not PC-speaker.
 
 Applied via `apply_renames_gatemain.py`'s ninety-fourth batch.
+
+### `SoundBlaster_writeByteFromIsr` named
+
+Moved to `sub_18950` (2 callers) — byte-for-byte the same DSP-write
+handshake as the already-named `Sb_writeByte` (poll the status port
+until bit 7 clears, a few I/O-delay jumps, then write the byte) —
+another instance of this project's duplicate-compiled-copy pattern
+(previously seen with `Vocab_matchesAbbreviation`/
+`String_matchesPrefixCI` and the MIDI VLQ-decode pair). The one
+difference: this copy polls unboundedly, with no retry limit and no
+carry-flag timeout signal, fitting its use inside
+`SoundBlaster_startNextDmaBlock`, itself called from interrupt context
+(`SoundBlaster_dmaIsr`) where a private, self-contained near-call
+duplicate avoids relying on the far-callable `Sb_writeByte`'s calling
+convention. This completes the Sound Blaster DMA cluster corrected in
+the previous pass.
+
+Applied via `apply_renames_gatemain.py`'s ninety-fifth batch.

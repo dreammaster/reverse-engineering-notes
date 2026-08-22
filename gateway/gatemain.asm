@@ -19248,11 +19248,11 @@ loc_188B0:                              ; CODE XREF: SoundBlaster_startNextDmaBl
                 mov     dx, _sbBasePort
                 add     dl, 0Ch
                 mov     al, 14h
-                call    sub_18950
+                call    SoundBlaster_writeByteFromIsr
                 mov     al, cl
-                call    sub_18950
+                call    SoundBlaster_writeByteFromIsr
                 mov     al, ch
-                jmp     short sub_18950
+                jmp     short SoundBlaster_writeByteFromIsr
 SoundBlaster_startNextDmaBlock endp
 
 ; ---------------------------------------------------------------------------
@@ -19317,34 +19317,34 @@ SoundBlaster_uninstallDmaIsr endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18950       proc near               ; CODE XREF: SoundBlaster_startNextDmaBlock+75\u2191p
+SoundBlaster_writeByteFromIsr proc near ; CODE XREF: SoundBlaster_startNextDmaBlock+75\u2191p
                                         ; SoundBlaster_startNextDmaBlock+7A\u2191p ...
                 mov     ah, al
 
-loc_18952:                              ; CODE XREF: sub_18950+5\u2193j
+loc_18952:                              ; CODE XREF: SoundBlaster_writeByteFromIsr+5\u2193j
                 in      al, dx
                 or      al, al
                 js      short loc_18952
                 jmp     short $+2
 ; ---------------------------------------------------------------------------
 
-loc_18959:                              ; CODE XREF: sub_18950+7\u2191j
+loc_18959:                              ; CODE XREF: SoundBlaster_writeByteFromIsr+7\u2191j
                 jmp     short $+2
 ; ---------------------------------------------------------------------------
 
-loc_1895B:                              ; CODE XREF: sub_18950:loc_18959\u2191j
+loc_1895B:                              ; CODE XREF: SoundBlaster_writeByteFromIsr:loc_18959\u2191j
                 jmp     short $+2
 ; ---------------------------------------------------------------------------
 
-loc_1895D:                              ; CODE XREF: sub_18950:loc_1895B\u2191j
+loc_1895D:                              ; CODE XREF: SoundBlaster_writeByteFromIsr:loc_1895B\u2191j
                 jmp     short $+2
 ; ---------------------------------------------------------------------------
 
-loc_1895F:                              ; CODE XREF: sub_18950:loc_1895D\u2191j
+loc_1895F:                              ; CODE XREF: SoundBlaster_writeByteFromIsr:loc_1895D\u2191j
                 mov     al, ah
                 out     dx, al
                 retn
-sub_18950       endp
+SoundBlaster_writeByteFromIsr endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -19360,7 +19360,7 @@ sub_18963       proc near               ; CODE XREF: Sb_detectDsp+29\u2191p
 
 loc_18972:                              ; CODE XREF: sub_18963+B\u2191j
                 mov     al, ah
-                jmp     short sub_18950
+                jmp     short SoundBlaster_writeByteFromIsr
 sub_18963       endp
 
 

@@ -2338,7 +2338,7 @@ RENAMES = [
      "restarting -- distinct from the already-named "
      "Game_restartAfterDeath, which performs a real restart."),
 
-    ("Speaker_sampleIsr", "SoundBlaster_dmaIsr",
+    (0x18842, "SoundBlaster_dmaIsr",
      "CORRECTION: this ISR (previously named as part of a "
      "'digitized PC-speaker sound-effect engine' several sessions "
      "ago) is actually the Sound Blaster DSP's auto-init-DMA sample-"
@@ -2385,6 +2385,18 @@ RENAMES = [
      "SoundBlaster_dmaIsr's other dispatch target -- the 'playback "
      "finished, uninstall this ISR and acknowledge the last IRQ' "
      "path."),
+
+    (0x18950, "SoundBlaster_writeByteFromIsr",
+     "sub_18950(al=byte, dx=port): byte-for-byte the same DSP-write "
+     "handshake as the already-named Sb_writeByte (poll the status "
+     "port until bit 7 clears, a few I/O-delay jumps, then write the "
+     "byte) -- another instance of this project's duplicate-compiled-"
+     "copy pattern. The one difference: this copy polls unboundedly "
+     "(no cx-based retry limit, no carry-flag timeout signal), fitting "
+     "its use inside SoundBlaster_startNextDmaBlock, itself called "
+     "from interrupt context (SoundBlaster_dmaIsr) where a private, "
+     "self-contained near-call duplicate avoids relying on the far-"
+     "callable Sb_writeByte's calling convention/timeout plumbing."),
 ]
 
 

@@ -12317,6 +12317,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X18939);
 	op_hex		(x,	0);
 	create_insn	(0X18950);
+	set_name	(0X18950,	"SoundBlaster_writeByteFromIsr");
 	create_insn	(0X18959);
 	create_insn	(0X1895B);
 	create_insn	(0X1895D);
@@ -12498,12 +12499,6 @@ static Bytes_1(void) {
 	set_name	(0X18E1A,	"__setenvp");
 	create_insn	(x=0X18E46);
 	op_hex		(x,	1);
-	create_insn	(x=0X18E4A);
-	op_hex		(x,	1);
-	create_insn	(x=0X18E4C);
-	op_hex		(x,	1);
-	create_insn	(0X18E96);
-	set_name	(0X18E96,	"__NMSG_TEXT");
 }
 
 //------------------------------------------------------------------------
@@ -12513,6 +12508,12 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X18E4A);
+	op_hex		(x,	1);
+	create_insn	(x=0X18E4C);
+	op_hex		(x,	1);
+	create_insn	(0X18E96);
+	set_name	(0X18E96,	"__NMSG_TEXT");
 	create_insn	(x=0X18E9D);
 	op_stkvar	(x,	1);
 	create_insn	(0X18EB8);
@@ -18324,13 +18325,6 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1F2CC);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X1F2CF);
-	op_hex		(x,	1);
-	create_insn	(x=0X1F2D5);
-	op_hex		(x,	1);
-	create_insn	(0X1F2DF);
-	create_insn	(x=0X1F2F6);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -18340,6 +18334,13 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X1F2CF);
+	op_hex		(x,	1);
+	create_insn	(x=0X1F2D5);
+	op_hex		(x,	1);
+	create_insn	(0X1F2DF);
+	create_insn	(x=0X1F2F6);
+	op_hex		(x,	1);
 	create_insn	(x=0X1F2F9);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X1F300);
@@ -23446,8 +23447,6 @@ static Bytes_3(void) {
 	toggle_bnot		(x,	5);
 	toggle_bnot		(x,	6);
 	toggle_bnot		(x,	7);
-	create_insn	(x=0X24589);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -23457,6 +23456,8 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X24589);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X24590);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X24593);
@@ -29131,8 +29132,6 @@ static Bytes_4(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X28AEF);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X28AFA);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -29142,6 +29141,8 @@ static Bytes_5(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X28AFA);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X28B06);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X28B09);
