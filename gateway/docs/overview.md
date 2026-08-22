@@ -4095,3 +4095,58 @@ endpoints, and a rectangle's edges/fill presumably reduce to the same
 primitive when the fast per-mode path doesn't apply.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-thirty-seventh batch.
+
+### `Opl2_setChannelFrequency`/`Opl2_updateChannelFrequency` named
+
+`sub_1D7DA` (3 callers in the ranked list — actually 2 real callers,
+both from the already-named `Opl2_setRhythmMode`) had been sitting in
+the ranked list for a while, previously described only as "a per-
+channel setter in this same [OPL2] cluster, not yet renamed." Traced
+it and its one callee fully this pass.
+
+**`Opl2_setChannelFrequency`** (was `sub_1CB32`) writes OPL2 register
+`0xA0+channel` (F-Number low byte) and `0xB0+channel` (KeyOn | Block |
+F-Number high 2 bits) via the already-named `Opl2_writeRegister` — the
+standard OPL2 per-channel frequency/key-on register pair, unambiguous
+from the register offsets alone. It computes the 10-bit F-Number+block
+pair from a `note` argument via two lookup tables at fixed data-segment
+offsets (not independently decoded), after first scaling `note - 0x2000`
+by a "jump into a chain of `add`s" technique (a classic multiply-by-
+repeated-addition trick) whose iteration count is driven by
+`_opl2MasterVolume` (the already-named, clamped 1-12 global).
+
+That last part is a genuine curiosity worth flagging rather than
+quietly acting on: every *other* use of `_opl2MasterVolume` found so
+far is a true amplitude/loudness scale, but here it scales a pitch-
+related delta feeding into the F-Number lookup, before any volume
+register is touched. This doesn't necessarily mean the global is
+misnamed — `Opl2_setChannelFrequency` is only ever reached (via
+`Opl2_updateChannelFrequency`) for OPL2's two auxiliary rhythm-mode
+channels (7 and 8), so it's plausible this is some rhythm-specific
+pitch-compensation tied to the volume knob rather than evidence the
+global's core meaning is wrong elsewhere. Left as a flagged anomaly,
+not a correction, since there isn't enough evidence either way yet.
+
+Also worth noting: the call from `Opl2_updateChannelFrequency` to
+`Opl2_setChannelFrequency` is a plain near call with no `push cs`, yet
+`Opl2_setChannelFrequency` is declared `proc far` and ends in `retf` —
+the same intra-segment far-call mismatch already known from this
+project's custom RTLink-flattening tool (see its own section earlier
+in this doc), not a real bug in the original code.
+
+**`Opl2_updateChannelFrequency`** (was `sub_1D7DA`) is the actual
+`Opl2_setRhythmMode` caller: given a channel number, it reads three
+per-channel state tables at fixed offsets (`-0x629C`, `-0x62B0` as a
+word array, `-0x62BA`) and passes them to `Opl2_setChannelFrequency`,
+then caches the resulting F-Number low byte back into a fourth
+per-channel table at `-0x6292`. `Opl2_setRhythmMode` calls it twice
+(channels 8 then 7 — OPL2's two auxiliary rhythm voices), each call
+preceded by directly poking that channel's `-0x629C`/`-0x62B0` table
+entries — which alias to the globals `byte_D1C6E`/`word_D1C80` for
+channel 8 and `byte_D1C6D`/`word_D1C7E` for channel 7 — with fixed
+values immediately before the call. In other words: this is the
+"commit a channel's pending note/frequency settings to OPL2 hardware"
+step, not a volume setter as its position in the ranked list (right
+next to the OPL2 volume-register cluster) might have suggested.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-thirty-eighth batch.

@@ -29543,8 +29543,8 @@ seg018          segment byte public 'CODE' use16
 
 ; Attributes: bp-based frame
 
-Opl2_writeRegister proc far             ; CODE XREF: sub_1CB32+A3\u2193P
-                                        ; sub_1CB32:loc_1CBF7\u2193P ...
+Opl2_writeRegister proc far             ; CODE XREF: Opl2_setChannelFrequency+A3\u2193P
+                                        ; Opl2_setChannelFrequency:loc_1CBF7\u2193P ...
 
 arg_0           = word ptr  6
 arg_2           = word ptr  8
@@ -29642,7 +29642,7 @@ seg019          segment byte public 'CODE' use16
 
 ; Attributes: bp-based frame
 
-sub_1CB32       proc far                ; CODE XREF: sub_1D7DA:loc_1D7F6\u2193P
+Opl2_setChannelFrequency proc far       ; CODE XREF: Opl2_updateChannelFrequency:loc_1D7F6\u2193P
 
 arg_0           = word ptr  6
 arg_2           = byte ptr  8
@@ -29687,7 +29687,7 @@ loc_1CB51:
                 add     ax, cx
                 add     ax, cx
 
-loc_1CB6E:                              ; CODE XREF: sub_1CB32:loc_1CB3B\u2191j
+loc_1CB6E:                              ; CODE XREF: Opl2_setChannelFrequency:loc_1CB3B\u2191j
                 add     ah, [bp+arg_2]
                 add     ax, 8
                 sar     ax, 1
@@ -29701,13 +29701,13 @@ loc_1CB6E:                              ; CODE XREF: sub_1CB32:loc_1CB3B\u2191j
                 db 90h
 ; ---------------------------------------------------------------------------
 
-loc_1CB83:                              ; CODE XREF: sub_1CB32+4A\u2191j
+loc_1CB83:                              ; CODE XREF: Opl2_setChannelFrequency+4A\u2191j
                 cmp     ax, 5FFh
                 jl      short loc_1CB8B
                 mov     ax, 5FFh
 
-loc_1CB8B:                              ; CODE XREF: sub_1CB32+4E\u2191j
-                                        ; sub_1CB32+54\u2191j
+loc_1CB8B:                              ; CODE XREF: Opl2_setChannelFrequency+4E\u2191j
+                                        ; Opl2_setChannelFrequency+54\u2191j
                 mov     di, ax
                 shr     di, 1
                 shr     di, 1
@@ -29737,13 +29737,13 @@ loc_1CBA7:
                 jge     short loc_1CBC2
                 inc     bl
 
-loc_1CBC2:                              ; CODE XREF: sub_1CB32+8C\u2191j
+loc_1CBC2:                              ; CODE XREF: Opl2_setChannelFrequency+8C\u2191j
                 or      bl, bl
                 jge     short loc_1CBCA
                 inc     bl
                 sar     ax, 1
 
-loc_1CBCA:                              ; CODE XREF: sub_1CB32+92\u2191j
+loc_1CBCA:                              ; CODE XREF: Opl2_setChannelFrequency+92\u2191j
                 push    bx
                 push    ax
                 xor     ah, ah
@@ -29786,7 +29786,7 @@ loc_1CBFC:
 loc_1CC00:
                 pop     bp
                 retf
-sub_1CB32       endp
+Opl2_setChannelFrequency endp
 
 seg019          ends
 
@@ -30296,14 +30296,14 @@ loc_1CEC3:
                 mov     ax, 8
                 push    ax
                 push    cs
-                call    near ptr sub_1D7DA
+                call    near ptr Opl2_updateChannelFrequency
                 add     sp, 2
                 mov     byte_D1C6D, 1Fh
                 mov     word_D1C7E, 2000h
                 mov     ax, 7
                 push    ax
                 push    cs
-                call    near ptr sub_1D7DA
+                call    near ptr Opl2_updateChannelFrequency
                 add     sp, 2
 
 loc_1CEF5:                              ; CODE XREF: Opl2_setRhythmMode+7\u2191j
@@ -30642,7 +30642,7 @@ loc_1D0F4:                              ; CODE XREF: sub_1D0D2+1B\u2191j
                 mov     [bx-62B0h], ax
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr sub_1D7DA
+                call    near ptr Opl2_updateChannelFrequency
                 add     sp, 2
 
 loc_1D10A:                              ; CODE XREF: sub_1D0D2+14\u2191j
@@ -30683,7 +30683,7 @@ loc_1D12D:                              ; CODE XREF: sub_1D10C+19\u2191j
                 mov     byte ptr [bx-629Ch], 20h ; ' '
                 push    bx
                 push    cs
-                call    near ptr sub_1D7DA
+                call    near ptr Opl2_updateChannelFrequency
                 add     sp, 2
                 pop     bp
                 retf
@@ -30715,14 +30715,14 @@ loc_1D164:                              ; CODE XREF: sub_1D10C+4B\u2191j
                 mov     ax, 8
                 push    ax
                 push    cs
-                call    near ptr sub_1D7DA
+                call    near ptr Opl2_updateChannelFrequency
                 add     sp, 2
                 mov     ax, 7
                 push    ax
 
 loc_1D18C:                              ; CODE XREF: sub_1D10C+56\u2191j
                 push    cs
-                call    near ptr sub_1D7DA
+                call    near ptr Opl2_updateChannelFrequency
                 add     sp, 2
 
 loc_1D193:                              ; CODE XREF: sub_1D10C+5C\u2191j
@@ -31741,7 +31741,7 @@ Opl2_setOperatorWaveform endp
 
 ; Attributes: bp-based frame
 
-sub_1D7DA       proc far                ; CODE XREF: Opl2_setRhythmMode+19\u2191p
+Opl2_updateChannelFrequency proc far    ; CODE XREF: Opl2_setRhythmMode+19\u2191p
                                         ; Opl2_setRhythmMode+2F\u2191p ...
 
 arg_0           = word ptr  6
@@ -31766,7 +31766,7 @@ loc_1D7F0:
                 push    bx
 
 loc_1D7F6:
-                call    sub_1CB32
+                call    Opl2_setChannelFrequency
 
 loc_1D7FB:
                 add     sp, 8
@@ -31778,7 +31778,7 @@ loc_1D7FE:
 
 locret_1D806:
                 retf
-sub_1D7DA       endp
+Opl2_updateChannelFrequency endp
 
 seg021          ends
 
@@ -400780,7 +400780,7 @@ dword_D3BC2     dd 0                    ; DATA XREF: exit+3\u2191o exit+6\u2191o
                 db    0
 _opl2BasePort   dw 0                    ; DATA XREF: Opl2_writeRegister:loc_1CAF9\u2191r
                                         ; Opl2_detectAndInit:loc_1CD5A\u2191w ...
-_opl2MasterVolume dw 0                  ; DATA XREF: sub_1CB32+17\u2191r
+_opl2MasterVolume dw 0                  ; DATA XREF: Opl2_setChannelFrequency+17\u2191r
                                         ; Opl2_setMasterVolume+1C\u2191w
 Persisted_struc24 Struct24 <0>          ; DATA XREF: show_startup+3F\u2191o
                                         ; seg068:SAVE_FIELDS\u2191o ...

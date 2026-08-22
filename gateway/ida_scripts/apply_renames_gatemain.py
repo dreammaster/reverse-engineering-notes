@@ -3067,6 +3067,44 @@ RENAMES = [
      "again gating each plotted pixel on the same rotating dash-pattern "
      "bit. Shared by both the already-named Screen_drawLine and "
      "Screen_fillRect as their common generic-case pixel plotter."),
+
+    (0x1CB32, "Opl2_setChannelFrequency",
+     "sub_1CB32(channel, blockAdjust, note, keyOnBits): writes OPL2 "
+     "register 0xA0+channel (F-Number low byte) and 0xB0+channel "
+     "(KeyOn | Block | F-Number high 2 bits) via the already-named "
+     "Opl2_writeRegister -- the standard OPL2 per-channel frequency/"
+     "key-on register pair, confirmed unambiguously by the register "
+     "offsets alone. Computes the 10-bit F-Number+block pair from "
+     "`note` via two lookup tables (at fixed offsets +0x222/+0x42/"
+     "+0x1C2 in the current data segment, not independently decoded), "
+     "after first scaling (note-0x2000) by a repeated-addition 'jump "
+     "into a chain of adds' technique whose iteration count is driven "
+     "by _opl2MasterVolume (1-12) -- curiously, since every other use "
+     "of that global is a true amplitude/loudness scale, but here it "
+     "scales a pitch-related delta before the F-Number lookup; flagged "
+     "as an anomaly, not otherwise explained, rather than assumed to "
+     "mean _opl2MasterVolume is misnamed. Called only from sub_1D7DA, "
+     "always with a near call despite this proc's far declaration and "
+     "retf -- presumably another instance of this project's known "
+     "RTLink-flattening-tool intra-segment far-call quirk, not a real "
+     "bug in the original code."),
+
+    (0x1D7DA, "Opl2_updateChannelFrequency",
+     "sub_1D7DA(channel): refreshes one OPL2 channel's current note by "
+     "reading three per-channel state tables at fixed offsets "
+     "(-0x629C, -0x62B0 as a word array, -0x62BA) and passing them to "
+     "the just-named Opl2_setChannelFrequency, then caches the F-Number "
+     "low byte Opl2_setChannelFrequency computed back into a fourth "
+     "per-channel table at -0x6292. Called (twice) from the already-"
+     "named Opl2_setRhythmMode when enabling rhythm mode, for channels "
+     "8 then 7 specifically (OPL2's two auxiliary rhythm voices), each "
+     "preceded by the caller directly poking that channel's -0x629C/"
+     "-0x62B0 table entries (aliased to globals byte_D1C6E/word_D1C80 "
+     "for channel 8 and byte_D1C6D/word_D1C7E for channel 7) with fixed "
+     "values before calling -- i.e. this is the 'commit a channel's "
+     "pending note/frequency settings to OPL2 hardware' step, not a "
+     "volume setter as its neighborhood in the ranked list might "
+     "suggest."),
 ]
 
 
