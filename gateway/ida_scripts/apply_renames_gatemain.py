@@ -2425,6 +2425,20 @@ RENAMES = [
      "(which fills in a specific ambiguous word), used when the "
      "parser needs to ask for clarification without a particular word "
      "to reference."),
+
+    (0x13F85, "Parser_printTalkingIsStrange",
+     "sub_13F85(logicNum): if logicNum is 0xD3 (a special-cased ID, "
+     "plausibly the player character), uses the literal string ' "
+     "yourself' as the referenced name; otherwise calls j_printObj"
+     "(logicNum, 3) to get the target's descriptive name/pronoun. "
+     "Either way, prints decoded GATESTR.DAT message 0xC404 -- "
+     "'Doesn't it strike you that talking to%s is just a little "
+     "strange?' -- filling in the name. Then sets Persisted_val6 to "
+     "'e' and queues logic/event 0x2B via Queue_add(0x2B, 1) "
+     "(plausibly scheduling a delayed follow-up reaction). Called "
+     "from the already-named GatewayParser_speakHandler -- the "
+     "parser's response to trying to talk to a non-conversational "
+     "target (an object, or oneself)."),
 ]
 
 

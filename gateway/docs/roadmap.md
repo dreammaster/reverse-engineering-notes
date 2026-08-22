@@ -841,6 +841,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       a simpler, generic sibling of `Parser_askForClarification`. Full
       writeup in
       [overview.md](overview.md#parser_printbemorespecific-named).
+- [x] Named `sub_13F85` (2 callers) → `Parser_printTalkingIsStrange` —
+      the parser's "talking to a non-conversational target" response,
+      confirmed via a decoded GATESTR.DAT message. Full writeup in
+      [overview.md](overview.md#parser_printtalkingisstrange-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

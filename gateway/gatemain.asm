@@ -6213,7 +6213,7 @@ sub_12E3A       endp
 
 ; Attributes: bp-based frame
 
-Queue_add       proc far                ; CODE XREF: sub_13F85+4E\u2193P
+Queue_add       proc far                ; CODE XREF: Parser_printTalkingIsStrange+4E\u2193P
                                         ; show_startup+A5\u2193P ...
 
 idx             = word ptr -2
@@ -8706,7 +8706,7 @@ VocabSet_whichDoYouMean endp
 
 ; Attributes: bp-based frame
 
-sub_13F85       proc far                ; CODE XREF: GatewayParser_speakHandler+128\u2193p
+Parser_printTalkingIsStrange proc far   ; CODE XREF: GatewayParser_speakHandler+128\u2193p
                                         ; sub_2E9F5+3E645\u2193P
 
 var_4           = word ptr -4
@@ -8725,14 +8725,14 @@ logicNum        = word ptr  6
                 jmp     short loc_13FAE
 ; ---------------------------------------------------------------------------
 
-loc_13F9F:                              ; CODE XREF: sub_13F85+B\u2191j
+loc_13F9F:                              ; CODE XREF: Parser_printTalkingIsStrange+B\u2191j
                 push    [bp+logicNum]   ; logicNum
                 mov     ax, 3
                 push    ax              ; val1
                 call    j_printObj
                 add     sp, 4
 
-loc_13FAE:                              ; CODE XREF: sub_13F85+18\u2191j
+loc_13FAE:                              ; CODE XREF: Parser_printTalkingIsStrange+18\u2191j
                 push    dx
                 push    ax              ; char
                 mov     ax, 0C404h
@@ -8752,7 +8752,7 @@ loc_13FAE:                              ; CODE XREF: sub_13F85+18\u2191j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_13F85       endp
+Parser_printTalkingIsStrange endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -8902,7 +8902,7 @@ loc_140F8:                              ; CODE XREF: GatewayParser_speakHandler+
                 mov     bx, es:word_4DF2E
                 push    word ptr [bx]
                 push    cs
-                call    near ptr sub_13F85
+                call    near ptr Parser_printTalkingIsStrange
                 add     sp, 2
                 jmp     short loc_140A7
 ; ---------------------------------------------------------------------------
@@ -176071,7 +176071,7 @@ loc_6CFFA:                              ; CODE XREF: sub_2E9F5+3\u2191J
 loc_6D031:                              ; CODE XREF: sub_2E9F5+3E60F\u2191j
                 mov     es, seg_D1312
                 push    es:vocab_list_0._logicNum
-                call    sub_13F85
+                call    Parser_printTalkingIsStrange
                 add     sp, 2
 
 loc_6D042:                              ; CODE XREF: sub_2E9F5+3E63A\u2191j
@@ -387100,7 +387100,7 @@ aDoYouMean      db ' do you mean',0     ; DATA XREF: VocabSet_whichDoYouMean+2B\
 aOr             db ' or',0              ; DATA XREF: VocabSet_whichDoYouMean:loc_13EC1\u2191o
 ; char a__0[]
 a?_0            db '?]',0Ah,0           ; DATA XREF: VocabSet_whichDoYouMean:loc_13F73\u2191o
-aYourself_2     db ' yourself',0        ; DATA XREF: sub_13F85+D\u2191o
+aYourself_2     db ' yourself',0        ; DATA XREF: Parser_printTalkingIsStrange+D\u2191o
 aAre_16         db 'are',0
 proc_table_559  db 0C3h, 17h            ; DATA XREF: seg082:proc_table\u2191o
                 dw 0                    ; _vocabArrIndex
@@ -388317,7 +388317,7 @@ aFf_0           db 'ff',0
 aVerbose        db 'Verbose',0
 aBrief          db 'Brief',0            ; DATA XREF: sub_2EC9D+3EC95\u2191o
                 db    0
-Persisted_val6  dw 0                    ; DATA XREF: sub_13F85+3F\u2191w
+Persisted_val6  dw 0                    ; DATA XREF: Parser_printTalkingIsStrange+3F\u2191w
                                         ; seg009:0D23\u2191w ...
 Persisted_val8  db 0                    ; DATA XREF: seg068:SAVE_FIELDS\u2191o
                                         ; sub_2E7A7:loc_6F1F5\u2191w ...
@@ -393768,7 +393768,7 @@ seg_D10B6       dw seg seg083           ; DATA XREF: sub_13BE2+4A\u2191r
                                         ; seg098:09AE\u2191r
 seg_D10B8       dw seg sg3EDC           ; DATA XREF: Parser_askForClarification+15D\u2191r
                                         ; sub_48D59+15D\u2191r
-dseg_97         dw seg sg4d43           ; DATA XREF: sub_13F85+3B\u2191r
+dseg_97         dw seg sg4d43           ; DATA XREF: Parser_printTalkingIsStrange+3B\u2191r
                                         ; sub_49017+3B\u2191r
 seg_D10BC       dw seg sg3EDC           ; DATA XREF: GatewayParser_speakHandler+11\u2191r
                                         ; sub_4906E+11\u2191r
