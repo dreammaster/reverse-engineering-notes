@@ -3579,6 +3579,27 @@ RENAMES = [
      "176 callers, by far the most call sites of anything found so far "
      "this project -- essentially every already-named function that "
      "sets an object/room status flag routes through here."),
+
+    (0x18C28, "_chkstk",
+     "sub_18C28(): confirmed as the standard Microsoft C runtime "
+     "stack-check/stack-probe routine by its exact calling convention: "
+     "every caller's prologue is 'push bp; mov bp,sp; mov ax,<frame "
+     "size>; call sub_18C28' (confirmed directly in Queue_add and "
+     "Queue_remove) -- the textbook _chkstk pattern. Pops its own "
+     "return address into cx:dx, computes sp-ax, and if that's still "
+     "above a stack-limit threshold (word_CAE54), commits the new sp "
+     "and returns normally (pushing cx:dx back as the return address). "
+     "If not enough room: checks a far function-pointer global "
+     "(dword_CAE50) for the sentinel value -1 (low word +1 == 0, i.e. "
+     "'no handler installed') -- returns 0 if so, otherwise jumps "
+     "indirectly through that pointer (passing cx:dx along) to a "
+     "pluggable stack-overflow/stack-growth handler. Standard MSC "
+     "runtime name for this exact routine is _chkstk; the handler-chain "
+     "twist (rather than an unconditional halt) suggests this program "
+     "was built with stack-checking enabled and a custom growth/"
+     "overflow handler registered, though that handler itself wasn't "
+     "traced this pass. 31 callers -- essentially every function large "
+     "enough to need a stack-space check."),
 ]
 
 

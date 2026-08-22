@@ -4821,3 +4821,24 @@ left unnamed rather than forcing an uncertain merge — a case for a
 future pass with fresh eyes.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-fifty-third batch.
+
+### `_chkstk` named — the Microsoft C runtime stack-check routine
+
+`sub_18C28` (31 callers). Confirmed as the standard MSC runtime
+stack-probe routine by its exact, unmistakable calling convention:
+every caller's prologue is `push bp; mov bp, sp; mov ax, <frame size>;
+call sub_18C28` — confirmed directly in `Queue_add` and `Queue_remove`
+(the requested frame size lines up exactly with each function's own
+local-variable total). It pops its own return address into `cx:dx`,
+computes `sp - ax`, and if that's still above a stack-limit threshold
+(`word_CAE54`), commits the new `sp` and returns normally. If there
+isn't enough room, it checks a far function-pointer global
+(`dword_CAE50`) for the sentinel value `-1` ("no handler installed") —
+returning 0 if so, otherwise jumping indirectly through that pointer
+to a pluggable stack-overflow/growth handler (not traced this pass).
+
+Named `_chkstk` to match its real-world Microsoft C runtime symbol
+name — this is a textbook implementation of that exact routine, not a
+guess at a plausible-sounding name.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-fifty-fourth batch.

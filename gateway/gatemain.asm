@@ -6138,15 +6138,15 @@ Queue_add       proc far                ; CODE XREF: Parser_printTalkingIsStrang
                                         ; seg006:0DD7↓P ...
 
 var_2           = word ptr -2
-arg_2           = byte ptr  6
-arg_4           = word ptr  8
+arg_0           = byte ptr  6
+arg_2           = word ptr  8
 
 ; FUNCTION CHUNK AT 005E SIZE 00000044 BYTES
 
                 push    bp
                 mov     bp, sp
                 mov     ax, 2
-                call    sub_18C28
+                call    _chkstk
                 push    si              ; char
                 mov     [bp+var_2], 0
                 jmp     short loc_12E71
@@ -6190,10 +6190,10 @@ loc_12EA6:                              ; CODE XREF: Queue_add+37↑j
                 mov     si, [bp+var_2]
                 mov     cl, 2
                 shl     si, cl
-                mov     al, [bp+arg_2]
+                mov     al, [bp+arg_0]
                 mov     es, seg_D1086
                 mov     es:[si-73FCh], al
-                mov     ax, [bp+arg_4]
+                mov     ax, [bp+arg_2]
                 mov     es:[si-73FAh], ax
                 mov     ax, word_CB7F4
                 cmp     [bp+var_2], ax
@@ -6222,7 +6222,7 @@ arg_2           = byte ptr  6
                 push    bp
                 mov     bp, sp
                 mov     ax, 4
-                call    sub_18C28
+                call    _chkstk
                 push    si
                 mov     [bp+var_2], 0
                 jmp     short loc_12EE8
@@ -6299,7 +6299,7 @@ arg_0           = byte ptr  6
                 push    bp
                 mov     bp, sp
                 mov     ax, 2
-                call    sub_18C28
+                call    _chkstk
                 mov     [bp+var_2], 0
                 jmp     short loc_12F59
 ; ---------------------------------------------------------------------------
@@ -6345,7 +6345,7 @@ arg_0           = byte ptr  6
                 push    bp
                 mov     bp, sp
                 mov     ax, 2
-                call    sub_18C28
+                call    _chkstk
                 push    si
                 mov     [bp+var_2], 0
                 jmp     short loc_12F97
@@ -6391,14 +6391,14 @@ var_C           = word ptr -0Ch
 var_A           = word ptr -0Ah
 var_8           = word ptr -8
 var_2           = word ptr -2
-arg_4           = word ptr  8
+arg_2           = word ptr  8
 
 ; FUNCTION CHUNK AT 0312 SIZE 00000039 BYTES
 
                 push    bp
                 mov     bp, sp
                 mov     ax, 10h
-                call    sub_18C28
+                call    _chkstk
                 push    si
                 cmp     byte_CB7F2, 0
                 jz      short loc_12FDE
@@ -6585,7 +6585,7 @@ Queue_tickCountdowns endp ; sp-analysis failed
 ; START OF FUNCTION CHUNK FOR Queue_processTurn
 
 loc_13142:                              ; CODE XREF: Queue_processTurn+26↑j
-                mov     ax, [bp+arg_4]
+                mov     ax, [bp+arg_2]
                 cmp     [bp+var_C], ax
                 jge     short loc_13170
                 mov     [bp+var_8], 0
@@ -12343,7 +12343,7 @@ arg_0           = word ptr  6
                 push    bp
                 mov     bp, sp
                 xor     ax, ax
-                call    sub_18C28
+                call    _chkstk
                 cmp     [bp+arg_0], 0
                 jle     short loc_15BD6
                 cmp     [bp+arg_0], 6Ch ; 'l'
@@ -19063,12 +19063,12 @@ loc_18A08:                              ; CODE XREF: start-14CBA↑j
                 mov     ss:off_CADA4, 0B40h
 ; END OF FUNCTION CHUNK FOR start
 ; START OF FUNCTION CHUNK FOR sub_18C22
-;   ADDITIONAL PARENT FUNCTION sub_18C28
+;   ADDITIONAL PARENT FUNCTION _chkstk
 ;   ADDITIONAL PARENT FUNCTION sub_18EEC
 ;   ADDITIONAL PARENT FUNCTION sub_1A89C
 
 loc_18A87:                              ; CODE XREF: sub_18C22+3↓j
-                                        ; sub_18C28+1B↓j ...
+                                        ; _chkstk+1B↓j ...
                 push    ax
                 call    __FF_MSGBANNER
                 call    __NMSG_WRITE
@@ -19365,7 +19365,7 @@ sub_18C22       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18C28       proc far                ; CODE XREF: Queue_add+6↑P
+_chkstk         proc far                ; CODE XREF: Queue_add+6↑P
                                         ; Queue_remove+6↑P ...
 
 ; FUNCTION CHUNK AT 0A67 SIZE 00000015 BYTES
@@ -19383,8 +19383,8 @@ sub_18C28       proc far                ; CODE XREF: Queue_add+6↑P
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_18C3B:                              ; CODE XREF: sub_18C28+6↑j
-                                        ; sub_18C28+C↑j
+loc_18C3B:                              ; CODE XREF: _chkstk+6↑j
+                                        ; _chkstk+C↑j
                 mov     ax, word ptr dword_CAE50
                 inc     ax
                 jnz     short loc_18C46
@@ -19392,11 +19392,11 @@ loc_18C3B:                              ; CODE XREF: sub_18C28+6↑j
                 jmp     loc_18A87
 ; ---------------------------------------------------------------------------
 
-loc_18C46:                              ; CODE XREF: sub_18C28+17↑j
+loc_18C46:                              ; CODE XREF: _chkstk+17↑j
                 push    dx
                 push    cx
                 jmp     dword_CAE50
-sub_18C28       endp ; sp-analysis failed
+_chkstk         endp ; sp-analysis failed
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -21604,7 +21604,7 @@ arg_A           = word ptr  10h
                 push    bp
                 mov     bp, sp
                 mov     ax, 0Ah
-                call    sub_18C28
+                call    _chkstk
                 mov     ax, 0AD7Eh
                 mov     word_D2C98, ax
                 mov     word_D2C9A, ds
@@ -229649,7 +229649,7 @@ var_2           = word ptr -2
                 push    bp
                 mov     bp, sp
                 mov     ax, 0Ah
-                call    sub_18C28
+                call    _chkstk
                 call    Mouse_Hide
                 mov     [bp+var_4], ax
                 call    Screen_Clear
@@ -233189,7 +233189,7 @@ arg_4           = dword ptr  0Ah
                 push    bp
                 mov     bp, sp
                 mov     ax, 8
-                call    sub_18C28
+                call    _chkstk
                 push    si
                 les     bx, [bp+arg_0]
                 mov     ax, es:[bx+2Eh]
@@ -233293,7 +233293,7 @@ arg_4           = dword ptr  0Ah
                 push    bp
                 mov     bp, sp
                 mov     ax, 6
-                call    sub_18C28
+                call    _chkstk
                 push    si
                 les     bx, [bp+arg_0]
                 mov     ax, es:[bx+32h]
@@ -233363,7 +233363,7 @@ arg_4           = dword ptr  0Ah
                 push    bp
                 mov     bp, sp
                 mov     ax, 8
-                call    sub_18C28
+                call    _chkstk
                 push    si
                 les     bx, [bp+arg_0]
                 mov     ax, es:[bx]
@@ -233473,8 +233473,8 @@ arg_0           = dword ptr  6
 
                 push    bp
                 mov     bp, sp
-                mov     ax, 26h ; '&'
-                call    sub_18C28
+                mov     ax, 26h
+                call    _chkstk
                 push    di
                 push    si
                 mov     es, seg_D11B2
@@ -234061,7 +234061,7 @@ arg_0           = dword ptr  6
                 push    bp
                 mov     bp, sp
                 mov     ax, 2
-                call    sub_18C28
+                call    _chkstk
                 mov     [bp+var_2], 0
                 jmp     short loc_5FBF6
 ; ---------------------------------------------------------------------------
@@ -234142,7 +234142,7 @@ arg_4           = word ptr  0Ah
                 push    bp
                 mov     bp, sp
                 mov     ax, 0Eh
-                call    sub_18C28
+                call    _chkstk
                 push    di
                 push    si
                 les     bx, [bp+arg_0]
@@ -234343,7 +234343,7 @@ arg_0           = word ptr  6
                 push    bp
                 mov     bp, sp
                 mov     ax, 4
-                call    sub_18C28
+                call    _chkstk
                 mov     [bp+var_2], 0
                 jmp     short loc_5FE0D
 ; ---------------------------------------------------------------------------
@@ -234440,7 +234440,7 @@ arg_2           = word ptr  8
                 push    bp
                 mov     bp, sp
                 mov     ax, 0Eh
-                call    sub_18C28
+                call    _chkstk
                 push    si
                 mov     ax, [bp+arg_0]
                 shl     ax, 1
@@ -234565,7 +234565,7 @@ sub_5FE55       endp
                 push    bp
                 mov     bp, sp
                 mov     ax, 4
-                call    sub_18C28
+                call    _chkstk
                 cmp     word ptr [bp+0Ah], 0
                 jge     short loc_5FF90
                 mov     ax, 6
@@ -234641,7 +234641,7 @@ arg_2           = word ptr  8
                 push    bp
                 mov     bp, sp
                 xor     ax, ax
-                call    sub_18C28
+                call    _chkstk
                 mov     ax, [bp+arg_2]
                 mov     word_D2E88, ax
                 mov     ax, 1
@@ -234674,7 +234674,7 @@ arg_4           = word ptr  0Ah
                 push    bp
                 mov     bp, sp
                 mov     ax, 6
-                call    sub_18C28
+                call    _chkstk
                 push    si
                 mov     [bp+var_2], 0
                 mov     [bp+var_6], 0
@@ -234767,7 +234767,7 @@ arg_8           = word ptr  0Eh
                 push    bp
                 mov     bp, sp
                 mov     ax, 222h
-                call    sub_18C28
+                call    _chkstk
                 push    si
                 mov     ax, [bp+arg_0]
                 mov     dx, [bp+arg_2]
@@ -237534,7 +237534,7 @@ var_4           = dword ptr -4
                 push    bp
                 mov     bp, sp
                 mov     ax, 8
-                call    sub_18C28
+                call    _chkstk
                 cmp     byte_D0CA4, 0
                 jnz     short loc_61767
                 mov     word ptr [bp+var_4], 8C5Eh
@@ -237598,7 +237598,7 @@ arg_2           = word ptr  8
                 push    bp
                 mov     bp, sp
                 mov     ax, 0Ah
-                call    sub_18C28
+                call    _chkstk
                 push    si
                 mov     word_D0C98, 0
                 mov     word_D0C9A, 0
@@ -238126,7 +238126,7 @@ seg137          segment byte public 'CODE' use16
 
 sub_61C1A       proc far                ; CODE XREF: sub_6069A:loc_60705↑P
                 xor     ax, ax
-                call    sub_18C28
+                call    _chkstk
                 retf
 sub_61C1A       endp
 
@@ -238137,7 +238137,7 @@ sub_61C1A       endp
 sub_61C22       proc far                ; CODE XREF: Parser_parseLine:loc_626D2↓P
                                         ; Parser_parseLine+2E8↓P ...
                 xor     ax, ax
-                call    sub_18C28
+                call    _chkstk
                 mov     word ptr dword_D3A42, offset unk_5B73C
                 mov     word ptr dword_D3A42+2, seg seg126
                 mov     ax, 0B34Eh
@@ -238208,7 +238208,7 @@ var_2           = word ptr -2
                 push    bp
                 mov     bp, sp
                 mov     ax, 206h
-                call    sub_18C28
+                call    _chkstk
                 push    di
                 push    si
                 cmp     byte_D326C, 0
@@ -239070,7 +239070,7 @@ arg_0           = dword ptr  6
                 push    bp
                 mov     bp, sp
                 mov     ax, 4
-                call    sub_18C28
+                call    _chkstk
                 les     bx, [bp+arg_0]
                 mov     ax, es:[bx+2]
                 mov     dx, es:[bx+4]
@@ -239146,7 +239146,7 @@ arg_0           = dword ptr  6
                 push    bp
                 mov     bp, sp
                 mov     ax, 14Ah
-                call    sub_18C28
+                call    _chkstk
                 push    di
                 push    si
                 mov     [bp+var_2A], 3
@@ -243251,7 +243251,7 @@ arg_0           = word ptr  6
                 push    bp
                 mov     bp, sp
                 mov     ax, 6
-                call    sub_18C28
+                call    _chkstk
                 mov     ax, 0Ah
                 imul    [bp+arg_0]
                 mov     bx, ax
@@ -243373,7 +243373,7 @@ arg_4           = word ptr  0Ah
                 push    bp              ; char
                 mov     bp, sp
                 mov     ax, 2
-                call    sub_18C28
+                call    _chkstk
                 call    disable_log_file
                 mov     [bp+var_2], ax
                 call    TextWindow_resetLinesRemaining
@@ -243447,13 +243447,12 @@ var_8           = word ptr -8
 var_6           = word ptr -6
 var_4           = word ptr -4
 var_2           = word ptr -2
-arg_0           = word ptr  6
-arg_2           = word ptr  8
+arg_0           = dword ptr  6
 
                 push    bp
                 mov     bp, sp
                 mov     ax, 8
-                call    sub_18C28
+                call    _chkstk
                 mov     [bp+var_4], 0
                 mov     es, seg_D125C
                 mov     ax, es:word_CBB20
@@ -243484,9 +243483,9 @@ loc_64648:                              ; CODE XREF: vocab_indexOf+31↑j
                 mov     es, seg_D125A
                 assume es:seg126
                 push    word ptr es:[bx+55Eh]
-                push    word ptr es:[bx+55Ch]
-                push    [bp+arg_2]
-                push    [bp+arg_0]
+                push    word ptr es:[bx+55Ch] ; char *
+                push    word ptr [bp+arg_0+2]
+                push    word ptr [bp+arg_0] ; char *
                 call    _strcmp
                 add     sp, 8
                 mov     [bp+var_8], ax
@@ -243515,9 +243514,9 @@ loc_64687:                              ; CODE XREF: vocab_indexOf+29↑j
                 mov     bx, ax
                 mov     es, seg_D125A
                 push    word ptr es:[bx+55Eh]
-                push    word ptr es:[bx+55Ch]
-                push    [bp+arg_2]
-                push    [bp+arg_0]
+                push    word ptr es:[bx+55Ch] ; char *
+                push    word ptr [bp+arg_0+2]
+                push    word ptr [bp+arg_0] ; char *
                 call    _strcmp
                 add     sp, 8
                 mov     [bp+var_8], ax
@@ -243563,7 +243562,7 @@ arg_0           = dword ptr  6
                 push    bp
                 mov     bp, sp
                 mov     ax, 0Ch
-                call    sub_18C28
+                call    _chkstk
                 push    si
                 les     bx, [bp+arg_0]
                 assume es:nothing
@@ -243944,11 +243943,11 @@ loc_64AA2:                              ; CODE XREF: Parser_parseWord+119↑j
                                         ; Parser_parseWord+2C1↑j ...
                 mov     ax, 413Fh
                 push    ds
-                push    ax
+                push    ax              ; char *
                 mov     ax, 0DBD0h
                 mov     dx, seg seg126
                 push    dx
-                push    ax
+                push    ax              ; char *
                 call    _strcmp
                 add     sp, 8
                 or      ax, ax
@@ -243970,22 +243969,22 @@ loc_64AC9:                              ; CODE XREF: Parser_parseWord+3E3↑j
 loc_64ADB:                              ; CODE XREF: Parser_parseWord+3DB↑j
                 mov     ax, 4141h
                 push    ds
-                push    ax
+                push    ax              ; char *
                 mov     ax, 0DBD0h
                 mov     dx, seg seg126
                 push    dx
-                push    ax
+                push    ax              ; char *
                 call    _strcmp
                 add     sp, 8
                 or      ax, ax
                 jz      short loc_64B0D
                 mov     ax, 4143h
                 push    ds
-                push    ax
+                push    ax              ; char *
                 mov     ax, 0DBD0h
                 mov     dx, seg seg126
                 push    dx
-                push    ax
+                push    ax              ; char *
                 call    _strcmp
                 add     sp, 8
                 or      ax, ax
@@ -244009,11 +244008,11 @@ loc_64B1B:                              ; CODE XREF: Parser_parseWord+435↑j
 loc_64B2D:                              ; CODE XREF: Parser_parseWord+42D↑j
                 mov     ax, 4145h
                 push    ds
-                push    ax
+                push    ax              ; char *
                 mov     ax, 0DBD0h
                 mov     dx, seg seg126
                 push    dx
-                push    ax
+                push    ax              ; char *
                 call    _strcmp
                 add     sp, 8
                 or      ax, ax
@@ -475377,9 +475376,9 @@ dword_CAE48     dd 0                    ; DATA XREF: __ctermsub+23↑r
 unk_CAE4C       db    0                 ; DATA XREF: __FF_MSGBANNER+13↑r
                 db    0
 word_CAE4E      dw 0                    ; DATA XREF: __FF_MSGBANNER+C↑r
-dword_CAE50     dd 0FFFFFFFFh           ; DATA XREF: sub_18C28:loc_18C3B↑r
-                                        ; sub_18C28+20↑r
-word_CAE54      dw 0BF10h               ; DATA XREF: sub_18C28+8↑r
+dword_CAE50     dd 0FFFFFFFFh           ; DATA XREF: _chkstk:loc_18C3B↑r
+                                        ; _chkstk+20↑r
+word_CAE54      dw 0BF10h               ; DATA XREF: _chkstk+8↑r
                                         ; _stackavail+2↑r
 dword_CAE56     dd 0                    ; DATA XREF: __setargv↑w
                                         ; __setargv+1A3↑r ...

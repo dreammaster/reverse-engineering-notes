@@ -1151,6 +1151,11 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       other independent callers with an unclear calling shape and was
       left unnamed. Full writeup in
       [overview.md](overview.md#logics_setbit-named--the-missing-sibling-in-the-bit-primitive-family-and-the-projects-highest-caller-count-yet).
+- [x] Named `sub_18C28` → `_chkstk` — the Microsoft C runtime's
+      standard stack-check/stack-probe routine, confirmed by its exact
+      calling convention (`push bp; mov bp,sp; mov ax,<frame size>;
+      call`). Full writeup in
+      [overview.md](overview.md#_chkstk-named--the-microsoft-c-runtime-stack-check-routine).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-
