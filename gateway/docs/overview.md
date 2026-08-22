@@ -4219,3 +4219,56 @@ exact identity of `0x10A`/`0x10B` weren't independently confirmed
 beyond this structural role.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-thirty-ninth batch.
+
+### `Commset_run`/`Commset_drawScreen`/`Commset_redrawChangedIcons`/`Commset_drawKeycapIndicator` named
+
+Following up `sub_749C9`/`sub_755AF` (3 callers each in the ranked
+list, sharing the exact same 3 callers — `sub_73E5A`, `sub_74149`,
+`sub_74D38`) led to a small, cleanly-traceable UI subsystem rather than
+anything narrative this time.
+
+**`Commset_drawScreen`** (was `sub_73E5A`) creates or reuses (tracked
+via `word_CCCE2`) a full content window sized/positioned per video
+mode, loads the matching background region (`0xF00`/`0xF01`/`0x3F00`),
+draws a 3D-beveled border, sets colors/font — then stores the new
+window handle into the **already-named `Commset_winContent`** global,
+conclusively tying this whole cluster to the existing `Commset_show`/
+`Commset_winContent`/`Commnet_proc1` group (this project already had
+two spellings, "Commset" and "Commnet," for the same in-universe
+communicator-device UI from earlier sessions — `Commnet_proc1` is
+called directly from `Commset_show`, confirming they're the same
+subsystem). After drawing the background picture, it calls
+`Commset_redrawChangedIcons` and `Commset_drawKeycapIndicator` for
+indices 0-3, then a still-untraced `sub_7450E`.
+
+**`Commset_redrawChangedIcons`** (was `sub_749C9`) loops icon index
+1-15, comparing a per-icon current-state byte against a per-icon
+last-drawn-state table; on a change, redraws that icon via the
+already-named `Image_display` (picture number = a fixed base plus the
+icon index) — i.e. up to 15 independently-toggleable status icons,
+each its own picture resource, redrawn only when changed. Distinct
+from the already-named `AnimPics_*` cluster (different tables, no
+slot-count/duration bookkeeping — a much simpler "did this one icon's
+state change" check).
+
+**`Commset_drawKeycapIndicator`** (was `sub_755AF`) draws one
+drop-shadowed hotkey-style character at a fixed, per-index position
+(a lookup table gives x/y, adjusted per video mode): a black 'X' first
+(plausibly font 6's placeholder/box glyph, used purely to blank the
+cell) then the index's actual character on top in a separate
+foreground color. The 4 actual characters (from a small per-index
+table) weren't independently read out this pass, so which 4 Commset
+options these correspond to remains unconfirmed.
+
+**`Commset_run`** (was `sub_74149`) is the actual top-level entry
+point — reached only via a data-driven thunk, not an ordinary call
+site. It's the modal "bring up one Commset screen" session: stops any
+playing track, fades the screen out, clears windows, frees a cached
+image, calls `Commset_drawScreen`, shows the mouse, then enters a
+`Mouse_pollPosition`-driven loop testing the polled position against
+on-screen regions — the standard "modal screen, wait for a click on
+one of its regions" pattern seen elsewhere in this UI layer. Its own
+callee `sub_74D38` (also one of the 3 shared callers) wasn't traced
+this pass.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-fortieth batch.

@@ -45422,7 +45422,7 @@ get_keypress    endp
 ; Attributes: bp-based frame
 
 getUppercaseKeypress proc far           ; CODE XREF: Dialog_prompt+157\u2193P
-                                        ; sub_74149+1EF\u2193P ...
+                                        ; Commset_run+1EF\u2193P ...
 
 var_2           = word ptr -2
 
@@ -52062,7 +52062,7 @@ Picture_Load    endp
 ; Attributes: bp-based frame
 
 load_and_scale_pic proc far             ; CODE XREF: sub_7179E+6A5\u2193P
-                                        ; sub_74149+35A\u2193P ...
+                                        ; Commset_run+35A\u2193P ...
 
 picNumber       = word ptr  6
 
@@ -52091,7 +52091,7 @@ load_and_scale_pic endp
 
 ; void __cdecl __far Image_display(int picNumber, int frameNumber)
 Image_display   proc far                ; CODE XREF: sub_7179E+190\u2193P
-                                        ; sub_74149+287\u2193P ...
+                                        ; Commset_run+287\u2193P ...
 
 img             = Image ptr -8Ch
 picNumber       = word ptr  6
@@ -56062,7 +56062,7 @@ Compass_getDirection endp
 ; Attributes: bp-based frame
 
 Windows_setContentWindow proc far       ; CODE XREF: room_load+22\u2193P
-                                        ; sub_73E5A+5C\u2193P ...
+                                        ; Commset_drawScreen+5C\u2193P ...
 
 arg_0           = word ptr  6
 arg_2           = word ptr  8
@@ -56308,7 +56308,7 @@ loc_283A4:                              ; CODE XREF: sg1851:11BF\u2191j
 
 ; void __cdecl __far load_regions(int regionNum)
 load_regions    proc far                ; CODE XREF: room_load+65\u2193P
-                                        ; sub_73E5A+7B\u2193P ...
+                                        ; Commset_drawScreen+7B\u2193P ...
 
 y2              = word ptr -18h
 y1              = word ptr -16h
@@ -57486,7 +57486,7 @@ Windows_addWindow2 endp
 
 ; void __cdecl __far Window_loadFont2(int winNumber, int fontNumber, int fgColor, int bgColor)
 Window_loadFont2 proc far               ; CODE XREF: sub_7179E+3E8\u2193P
-                                        ; sub_73E5A+1E0\u2193P ...
+                                        ; Commset_drawScreen+1E0\u2193P ...
 
 winNumber       = word ptr  6
 fontNumber      = word ptr  8
@@ -82304,7 +82304,7 @@ j_delay         endp ; sp-analysis failed
 
 
 thunk_sub_5D9F3 proc far                ; CODE XREF: Game_showIllustration+28\u2191P
-                                        ; sub_74149+1F\u2193P ...
+                                        ; Commset_run+1F\u2193P ...
 
 ; FUNCTION CHUNK AT 1F36 SIZE 00000063 BYTES
 
@@ -83744,7 +83744,7 @@ j_room_load     endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_5D9F3_2 proc far              ; CODE XREF: sub_74149+315\u2193P
+thunk_sub_5D9F3_2 proc far              ; CODE XREF: Commset_run+315\u2193P
                                         ; sub_75AE0+281\u2193P ...
 
 ; FUNCTION CHUNK AT 1F99 SIZE 0000002A BYTES
@@ -84304,7 +84304,7 @@ thunk_sub_71625 endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_72260 proc far                ; CODE XREF: sub_74149+3A0\u2193P
+thunk_sub_72260 proc far                ; CODE XREF: Commset_run+3A0\u2193P
                 call    near ptr rtlink_thunk
                 jmp     sub_72260
 thunk_sub_72260 endp ; sp-analysis failed
@@ -84318,7 +84318,7 @@ thunk_sub_72260 endp ; sp-analysis failed
 thunk_sub_74149 proc far                ; CODE XREF: sub_734D5+1C0\u2193P
                                         ; sub_736D8+83\u2193P
                 call    near ptr rtlink_thunk
-                jmp     sub_74149
+                jmp     Commset_run
 thunk_sub_74149 endp ; sp-analysis failed
 
 ; ---------------------------------------------------------------------------
@@ -139510,7 +139510,7 @@ Commset_xp2     dw 0                    ; DATA XREF: Commset_printText+26\u2193r
                                         ; Commset_printText+BF\u2193r ...
 Commset_xp1     dw 0                    ; DATA XREF: Commset_displayText2+107\u2193r
                                         ; sub_712FE+1C\u2193r ...
-word_5B734      dw 0                    ; DATA XREF: sub_74149+16D\u2193r
+word_5B734      dw 0                    ; DATA XREF: Commset_run+16D\u2193r
                                         ; sub_744F6+A\u2193w ...
                 align 4
 unk_5B738       db    0                 ; DATA XREF: sub_6176C+18\u2193o
@@ -190426,13 +190426,13 @@ loc_73E31:
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_73E5A       proc far                ; CODE XREF: sub_74149+80\u2193p
+Commset_drawScreen proc far             ; CODE XREF: Commset_run+80\u2193p
                 cmp     word_CCCE2, 0
                 jl      short loc_73E64
                 jmp     loc_74053
 ; ---------------------------------------------------------------------------
 
-loc_73E64:                              ; CODE XREF: sub_73E5A+5\u2191j
+loc_73E64:                              ; CODE XREF: Commset_drawScreen+5\u2191j
                 mov     ax, 0FFFFh
                 push    ax              ; winNumber
 
@@ -190457,7 +190457,7 @@ loc_73E87:
                 jmp     short loc_73EA2
 ; ---------------------------------------------------------------------------
 
-loc_73E8D:                              ; CODE XREF: sub_73E5A+20\u2191j
+loc_73E8D:                              ; CODE XREF: Commset_drawScreen+20\u2191j
                 mov     es, seg_D13FC
                 assume es:sg3EDC
                 push    es:_ScreenBottom ; y2
@@ -190466,7 +190466,7 @@ loc_73E8D:                              ; CODE XREF: sub_73E5A+20\u2191j
                 sub     ax, ax
                 push    ax              ; y1
 
-loc_73EA2:                              ; CODE XREF: sub_73E5A+31\u2191j
+loc_73EA2:                              ; CODE XREF: Commset_drawScreen+31\u2191j
                 push    ax              ; x1
                 call    Windows_addWindow
                 add     sp, 8
@@ -190505,7 +190505,7 @@ loc_73ECA:
                 jmp     loc_74003
 ; ---------------------------------------------------------------------------
 
-loc_73F1F:                              ; CODE XREF: sub_73E5A+6E\u2191j
+loc_73F1F:                              ; CODE XREF: Commset_drawScreen+6E\u2191j
                 mov     es, seg_D13FA
                 assume es:sg4d43
                 cmp     es:_videoIndex, 1
@@ -190513,7 +190513,7 @@ loc_73F1F:                              ; CODE XREF: sub_73E5A+6E\u2191j
                 jmp     loc_73FC7
 ; ---------------------------------------------------------------------------
 
-loc_73F2E:                              ; CODE XREF: sub_73E5A+CF\u2191j
+loc_73F2E:                              ; CODE XREF: Commset_drawScreen+CF\u2191j
                 mov     es:_videoIndex, 2
                 mov     ax, 0F01h
                 push    ax              ; regionNum
@@ -190559,7 +190559,7 @@ loc_73F7F:
                 jmp     short loc_74009
 ; ---------------------------------------------------------------------------
 
-loc_73FC7:                              ; CODE XREF: sub_73E5A+D1\u2191j
+loc_73FC7:                              ; CODE XREF: Commset_drawScreen+D1\u2191j
                 mov     ax, 3F00h
                 push    ax              ; regionNum
                 call    load_regions
@@ -190573,10 +190573,10 @@ loc_73FC7:                              ; CODE XREF: sub_73E5A+D1\u2191j
                 mov     y1, 6Ah ; 'j'
                 mov     x2, 12Dh
 
-loc_74003:                              ; CODE XREF: sub_73E5A+C2\u2191j
+loc_74003:                              ; CODE XREF: Commset_drawScreen+C2\u2191j
                 mov     word_D30DE, 0BBh ; '»'
 
-loc_74009:                              ; CODE XREF: sub_73E5A+16B\u2191j
+loc_74009:                              ; CODE XREF: Commset_drawScreen+16B\u2191j
                 push    word_D30DE      ; y2
                 push    x2              ; x2
                 push    y1              ; y1
@@ -190599,7 +190599,7 @@ loc_74009:                              ; CODE XREF: sub_73E5A+16B\u2191j
                 call    Windows_setActiveWindow
                 add     sp, 2
 
-loc_74053:                              ; CODE XREF: sub_73E5A+7\u2191j
+loc_74053:                              ; CODE XREF: Commset_drawScreen+7\u2191j
                 push    cs
                 call    near ptr sub_749B4
                 push    cs
@@ -190614,7 +190614,7 @@ loc_74053:                              ; CODE XREF: sub_73E5A+7\u2191j
                 call    Windows_SetImageOffsetPos
                 add     sp, 2
 
-loc_7407E:                              ; CODE XREF: sub_73E5A+216\u2191j
+loc_7407E:                              ; CODE XREF: Commset_drawScreen+216\u2191j
                 mov     ax, 300h
                 mov     dx, seg seg161
                 push    dx
@@ -190649,8 +190649,8 @@ loc_7407E:                              ; CODE XREF: sub_73E5A+216\u2191j
                 call    Image_load
                 add     sp, 8
 
-loc_740D8:                              ; CODE XREF: sub_73E5A+24D\u2191j
-                                        ; sub_73E5A+259\u2191j
+loc_740D8:                              ; CODE XREF: Commset_drawScreen+24D\u2191j
+                                        ; Commset_drawScreen+259\u2191j
                 mov     ax, 300h
                 mov     dx, seg seg161
                 push    dx
@@ -190674,40 +190674,40 @@ loc_740D8:                              ; CODE XREF: sub_73E5A+24D\u2191j
                 call    _memmove
                 add     sp, 0Ah
 
-loc_74115:                              ; CODE XREF: sub_73E5A+29D\u2191j
+loc_74115:                              ; CODE XREF: Commset_drawScreen+29D\u2191j
                 push    cs
-                call    near ptr sub_749C9
+                call    near ptr Commset_redrawChangedIcons
                 sub     ax, ax
                 push    ax
                 push    cs
-                call    near ptr sub_755AF
+                call    near ptr Commset_drawKeycapIndicator
                 add     sp, 2
                 mov     ax, 1
                 push    ax
                 push    cs
-                call    near ptr sub_755AF
+                call    near ptr Commset_drawKeycapIndicator
                 add     sp, 2
                 mov     ax, 2
                 push    ax
                 push    cs
-                call    near ptr sub_755AF
+                call    near ptr Commset_drawKeycapIndicator
                 add     sp, 2
                 mov     ax, 3
                 push    ax
                 push    cs
-                call    near ptr sub_755AF
+                call    near ptr Commset_drawKeycapIndicator
                 add     sp, 2
                 push    cs
                 call    near ptr sub_7450E
                 retf
-sub_73E5A       endp
+Commset_drawScreen endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-sub_74149       proc far                ; CODE XREF: thunk_sub_74149+3\u2191J
+Commset_run     proc far                ; CODE XREF: thunk_sub_74149+3\u2191J
 
 var_12          = word ptr -12h
 picNumber       = word ptr -10h
@@ -190737,8 +190737,8 @@ regionNum       = word ptr -2
                 jmp     short loc_741A0
 ; ---------------------------------------------------------------------------
 
-loc_74178:                              ; CODE XREF: sub_74149+1D\u2191j
-                                        ; sub_74149+26\u2191j
+loc_74178:                              ; CODE XREF: Commset_run+1D\u2191j
+                                        ; Commset_run+26\u2191j
                 call    Screen_fadeOut
                 mov     ax, 1
                 push    ax              ; clearScreen
@@ -190752,7 +190752,7 @@ loc_74178:                              ; CODE XREF: sub_74149+1D\u2191j
                 add     sp, 4
                 call    thunk_sub_62AB0
 
-loc_741A0:                              ; CODE XREF: sub_74149+2D\u2191j
+loc_741A0:                              ; CODE XREF: Commset_run+2D\u2191j
                 mov     es, seg_D13FA
                 cmp     es:_videoIndex, 3
                 jnz     short loc_741C8
@@ -190767,9 +190767,9 @@ loc_741A0:                              ; CODE XREF: sub_74149+2D\u2191j
                 call    Font_setColor
                 add     sp, 4
 
-loc_741C8:                              ; CODE XREF: sub_74149+61\u2191j
+loc_741C8:                              ; CODE XREF: Commset_run+61\u2191j
                 push    cs
-                call    near ptr sub_73E5A
+                call    near ptr Commset_drawScreen
                 mov     es, seg_D140C
                 mov     ax, es:mouseState
                 and     ax, 2
@@ -190778,15 +190778,15 @@ loc_741C8:                              ; CODE XREF: sub_74149+61\u2191j
                 jz      short loc_741E8
                 or      byte ptr es:mouseState, 2
 
-loc_741E8:                              ; CODE XREF: sub_74149+97\u2191j
+loc_741E8:                              ; CODE XREF: Commset_run+97\u2191j
                 mov     ax, 1
                 push    ax              ; showFlag
                 call    Mouse_show
                 add     sp, 2
                 mov     [bp+var_12], 0
 
-loc_741F9:                              ; CODE XREF: sub_74149+23B\u2193j
-                                        ; sub_74149+2C6\u2193j ...
+loc_741F9:                              ; CODE XREF: Commset_run+23B\u2193j
+                                        ; Commset_run+2C6\u2193j ...
                 mov     [bp+regionNum], 0
                 mov     [bp+regionIndex], 0
                 lea     ax, [bp+y]
@@ -190802,7 +190802,7 @@ loc_741F9:                              ; CODE XREF: sub_74149+23B\u2193j
                 jmp     loc_7432F
 ; ---------------------------------------------------------------------------
 
-loc_7421C:                              ; CODE XREF: sub_74149+CE\u2191j
+loc_7421C:                              ; CODE XREF: Commset_run+CE\u2191j
                 lea     ax, [bp+regionNum]
                 push    ss
                 push    ax              ; regionNum
@@ -190823,31 +190823,31 @@ loc_7421C:                              ; CODE XREF: sub_74149+CE\u2191j
                 jmp     loc_74327
 ; ---------------------------------------------------------------------------
 
-loc_7424A:                              ; CODE XREF: sub_74149+FC\u2191j
+loc_7424A:                              ; CODE XREF: Commset_run+FC\u2191j
                 cmp     Persisted_val241, 0Dh
                 jz      short loc_74254
                 jmp     loc_74327
 ; ---------------------------------------------------------------------------
 
-loc_74254:                              ; CODE XREF: sub_74149+106\u2191j
+loc_74254:                              ; CODE XREF: Commset_run+106\u2191j
                 cmp     byte_CCCCD, 0
                 jnz     short loc_7425E
                 jmp     loc_74327
 ; ---------------------------------------------------------------------------
 
-loc_7425E:                              ; CODE XREF: sub_74149+110\u2191j
+loc_7425E:                              ; CODE XREF: Commset_run+110\u2191j
                 mov     es, seg_D13FA
                 cmp     es:_videoIndex, 3
                 jnz     short loc_74275
                 cmp     [bp+x], 0B4h ; '´'
                 jge     short loc_7429C
 
-loc_74271:                              ; CODE XREF: sub_74149+151\u2193j
+loc_74271:                              ; CODE XREF: Commset_run+151\u2193j
                 sub     ax, ax
                 jmp     short loc_7429F
 ; ---------------------------------------------------------------------------
 
-loc_74275:                              ; CODE XREF: sub_74149+11F\u2191j
+loc_74275:                              ; CODE XREF: Commset_run+11F\u2191j
                 cmp     es:_videoIndex, 1
                 jnz     short loc_74295
                 cmp     [bp+x], 154h
@@ -190856,29 +190856,29 @@ loc_74275:                              ; CODE XREF: sub_74149+11F\u2191j
                 jmp     short loc_7428B
 ; ---------------------------------------------------------------------------
 
-loc_74288:                              ; CODE XREF: sub_74149+139\u2191j
+loc_74288:                              ; CODE XREF: Commset_run+139\u2191j
                 mov     ax, 6
 
-loc_7428B:                              ; CODE XREF: sub_74149+13D\u2191j
+loc_7428B:                              ; CODE XREF: Commset_run+13D\u2191j
                 mov     cx, ax
                 mov     ax, [bp+y]
                 sub     ax, 0B8h ; '¸'
                 jmp     short loc_742A7
 ; ---------------------------------------------------------------------------
 
-loc_74295:                              ; CODE XREF: sub_74149+132\u2191j
+loc_74295:                              ; CODE XREF: Commset_run+132\u2191j
                 cmp     [bp+x], 168h
                 jl      short loc_74271
 
-loc_7429C:                              ; CODE XREF: sub_74149+126\u2191j
+loc_7429C:                              ; CODE XREF: Commset_run+126\u2191j
                 mov     ax, 6
 
-loc_7429F:                              ; CODE XREF: sub_74149+12A\u2191j
+loc_7429F:                              ; CODE XREF: Commset_run+12A\u2191j
                 mov     cx, ax
                 mov     ax, [bp+y]
                 sub     ax, 6Dh ; 'm'
 
-loc_742A7:                              ; CODE XREF: sub_74149+14A\u2191j
+loc_742A7:                              ; CODE XREF: Commset_run+14A\u2191j
                 cwd
                 mov     bx, 0Dh
                 idiv    bx
@@ -190907,45 +190907,45 @@ loc_742A7:                              ; CODE XREF: sub_74149+14A\u2191j
                 sub     ax, ax
                 push    ax
                 push    cs
-                call    near ptr sub_755AF
+                call    near ptr Commset_drawKeycapIndicator
                 add     sp, 2
                 mov     ax, 1
                 push    ax
                 push    cs
-                call    near ptr sub_755AF
+                call    near ptr Commset_drawKeycapIndicator
                 add     sp, 2
                 mov     ax, 2
                 push    ax
                 push    cs
-                call    near ptr sub_755AF
+                call    near ptr Commset_drawKeycapIndicator
                 add     sp, 2
                 mov     ax, 3
                 push    ax
                 push    cs
-                call    near ptr sub_755AF
+                call    near ptr Commset_drawKeycapIndicator
                 add     sp, 2
                 mov     byte_CCCD5, 1
                 push    cs
-                call    near ptr sub_749C9
+                call    near ptr Commset_redrawChangedIcons
                 jmp     short loc_74320
 ; ---------------------------------------------------------------------------
 
-loc_7431B:                              ; CODE XREF: sub_74149+17F\u2191j
+loc_7431B:                              ; CODE XREF: Commset_run+17F\u2191j
                 call    Speaker_playErrorBeep
 
-loc_74320:                              ; CODE XREF: sub_74149+1D0\u2191j
+loc_74320:                              ; CODE XREF: Commset_run+1D0\u2191j
                 mov     [bp+regionNum], 0
                 jmp     short loc_7437E
 ; ---------------------------------------------------------------------------
 
-loc_74327:                              ; CODE XREF: sub_74149+FE\u2191j
-                                        ; sub_74149+108\u2191j ...
+loc_74327:                              ; CODE XREF: Commset_run+FE\u2191j
+                                        ; Commset_run+108\u2191j ...
                 cmp     [bp+regionNum], 3
                 jz      short loc_7437E
                 jmp     short loc_74379
 ; ---------------------------------------------------------------------------
 
-loc_7432F:                              ; CODE XREF: sub_74149+D0\u2191j
+loc_7432F:                              ; CODE XREF: Commset_run+D0\u2191j
                 call    Events_isKeyPending
                 or      ax, ax
                 jz      short loc_7437E
@@ -190955,10 +190955,10 @@ loc_7432F:                              ; CODE XREF: sub_74149+D0\u2191j
                 jmp     short loc_7434A
 ; ---------------------------------------------------------------------------
 
-loc_74347:                              ; CODE XREF: sub_74149:loc_74364\u2193j
+loc_74347:                              ; CODE XREF: Commset_run:loc_74364\u2193j
                 inc     [bp+picNumber]
 
-loc_7434A:                              ; CODE XREF: sub_74149+1FC\u2191j
+loc_7434A:                              ; CODE XREF: Commset_run+1FC\u2191j
                 cmp     [bp+picNumber], 13h
                 jge     short loc_74373
                 mov     si, [bp+picNumber]
@@ -190976,27 +190976,27 @@ loc_74364:
                 mov     ax, es:[si+38Eh]
                 mov     [bp+regionIndex], ax
 
-loc_74373:                              ; CODE XREF: sub_74149+205\u2191j
+loc_74373:                              ; CODE XREF: Commset_run+205\u2191j
                 cmp     [bp+regionNum], 0
                 jnz     short loc_7437E
 
-loc_74379:                              ; CODE XREF: sub_74149+1E4\u2191j
+loc_74379:                              ; CODE XREF: Commset_run+1E4\u2191j
                 call    Speaker_playErrorBeep
 
-loc_7437E:                              ; CODE XREF: sub_74149+1DC\u2191j
-                                        ; sub_74149+1E2\u2191j ...
+loc_7437E:                              ; CODE XREF: Commset_run+1DC\u2191j
+                                        ; Commset_run+1E2\u2191j ...
                 cmp     [bp+regionNum], 3
                 jz      short loc_74387
                 jmp     loc_741F9
 ; ---------------------------------------------------------------------------
 
-loc_74387:                              ; CODE XREF: sub_74149+239\u2191j
+loc_74387:                              ; CODE XREF: Commset_run+239\u2191j
                 cmp     [bp+regionIndex], 10h
                 jnz     short loc_74390
                 jmp     loc_7442B
 ; ---------------------------------------------------------------------------
 
-loc_74390:                              ; CODE XREF: sub_74149+242\u2191j
+loc_74390:                              ; CODE XREF: Commset_run+242\u2191j
                 mov     es, seg_D13FA
                 assume es:sg4d43
                 cmp     es:_videoIndex, 3
@@ -191008,12 +191008,12 @@ loc_74390:                              ; CODE XREF: sub_74149+242\u2191j
                 jmp     short loc_743C2
 ; ---------------------------------------------------------------------------
 
-loc_743AB:                              ; CODE XREF: sub_74149+25B\u2191j
+loc_743AB:                              ; CODE XREF: Commset_run+25B\u2191j
                 mov     ax, 3F01h
                 jmp     short loc_743C2
 ; ---------------------------------------------------------------------------
 
-loc_743B0:                              ; CODE XREF: sub_74149+251\u2191j
+loc_743B0:                              ; CODE XREF: Commset_run+251\u2191j
                 mov     bx, [bp+regionIndex]
                 cmp     byte ptr [bx+4DACh], 0
                 jz      short loc_743BF
@@ -191021,11 +191021,11 @@ loc_743B0:                              ; CODE XREF: sub_74149+251\u2191j
                 jmp     short loc_743C2
 ; ---------------------------------------------------------------------------
 
-loc_743BF:                              ; CODE XREF: sub_74149+26F\u2191j
+loc_743BF:                              ; CODE XREF: Commset_run+26F\u2191j
                 mov     ax, 0F02h
 
-loc_743C2:                              ; CODE XREF: sub_74149+260\u2191j
-                                        ; sub_74149+265\u2191j ...
+loc_743C2:                              ; CODE XREF: Commset_run+260\u2191j
+                                        ; Commset_run+265\u2191j ...
                 add     ax, [bp+regionIndex]
                 dec     ax
                 mov     [bp+picNumber], ax
@@ -191041,7 +191041,7 @@ loc_743C2:                              ; CODE XREF: sub_74149+260\u2191j
                 call    Clock_delayTicks
                 add     sp, 4
 
-loc_743E6:                              ; CODE XREF: sub_74149+2A4\u2193j
+loc_743E6:                              ; CODE XREF: Commset_run+2A4\u2193j
                 call    get_mouse_buttons
                 or      ax, ax
                 jnz     short loc_743E6
@@ -191059,14 +191059,14 @@ loc_743E6:                              ; CODE XREF: sub_74149+2A4\u2193j
                 jmp     loc_741F9
 ; ---------------------------------------------------------------------------
 
-loc_74412:                              ; CODE XREF: sub_74149+2C4\u2191j
+loc_74412:                              ; CODE XREF: Commset_run+2C4\u2191j
                 cmp     byte ptr [bx+4DACh], 0
                 jz      short loc_7441C
                 jmp     loc_741F9
 ; ---------------------------------------------------------------------------
 
-loc_7441C:                              ; CODE XREF: sub_74149+2BD\u2191j
-                                        ; sub_74149+2C2\u2191j ...
+loc_7441C:                              ; CODE XREF: Commset_run+2BD\u2191j
+                                        ; Commset_run+2C2\u2191j ...
                 push    bx
                 push    cs
                 call    near ptr sub_74D38
@@ -191075,7 +191075,7 @@ loc_7441C:                              ; CODE XREF: sub_74149+2BD\u2191j
                 or      ax, ax
                 jz      short loc_7446A
 
-loc_7442B:                              ; CODE XREF: sub_74149+244\u2191j
+loc_7442B:                              ; CODE XREF: Commset_run+244\u2191j
                 call    Mouse_Hide
                 mov     es, seg_D140C
                 and     byte ptr es:mouseState, 0FDh
@@ -191095,13 +191095,13 @@ loc_7442B:                              ; CODE XREF: sub_74149+244\u2191j
                 jmp     short loc_744BA
 ; ---------------------------------------------------------------------------
 
-loc_7446A:                              ; CODE XREF: sub_74149+2E0\u2191j
+loc_7446A:                              ; CODE XREF: Commset_run+2E0\u2191j
                 push    cs
-                call    near ptr sub_749C9
+                call    near ptr Commset_redrawChangedIcons
                 jmp     loc_741F9
 ; ---------------------------------------------------------------------------
 
-loc_74471:                              ; CODE XREF: sub_74149+313\u2191j
+loc_74471:                              ; CODE XREF: Commset_run+313\u2191j
                 call    Screen_fadeOut
                 mov     ax, 1
                 push    ax              ; clearScreen
@@ -191115,18 +191115,18 @@ loc_74471:                              ; CODE XREF: sub_74149+313\u2191j
                 jmp     short loc_744AB
 ; ---------------------------------------------------------------------------
 
-loc_7449A:                              ; CODE XREF: sub_74149+348\u2191j
+loc_7449A:                              ; CODE XREF: Commset_run+348\u2191j
                 mov     es, seg_D1414
                 push    es:_picNumber
                 call    load_and_scale_pic
                 add     sp, 2
 
-loc_744AB:                              ; CODE XREF: sub_74149+34F\u2191j
+loc_744AB:                              ; CODE XREF: Commset_run+34F\u2191j
                 call    thunk_sub_62AE2
                 call    j_Events_ClearPendingKey
                 call    Screen_backupPalette
 
-loc_744BA:                              ; CODE XREF: sub_74149+31F\u2191j
+loc_744BA:                              ; CODE XREF: Commset_run+31F\u2191j
                 mov     word_CCCE2, 0FFFFh
                 mov     ax, 1
                 push    ax              ; flag
@@ -191142,24 +191142,24 @@ loc_744BA:                              ; CODE XREF: sub_74149+31F\u2191j
                 jmp     short loc_744F1
 ; ---------------------------------------------------------------------------
 
-loc_744E5:                              ; CODE XREF: sub_74149+393\u2191j
+loc_744E5:                              ; CODE XREF: Commset_run+393\u2191j
                 push    Persisted_val244
                 call    thunk_sub_72260
                 add     sp, 2
 
-loc_744F1:                              ; CODE XREF: sub_74149+38C\u2191j
-                                        ; sub_74149+39A\u2191j
+loc_744F1:                              ; CODE XREF: Commset_run+38C\u2191j
+                                        ; Commset_run+39A\u2191j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_74149       endp
+Commset_run     endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_744F6       proc far                ; CODE XREF: sub_73E5A+1FE\u2191p
+sub_744F6       proc far                ; CODE XREF: Commset_drawScreen+1FE\u2191p
                                         ; sub_74D38+61E\u2193p ...
                 mov     word_D30BE, 0FFFFh
                 mov     es, seg_D140E
@@ -191174,7 +191174,7 @@ sub_744F6       endp
 
 ; Attributes: bp-based frame
 
-sub_7450E       proc far                ; CODE XREF: sub_73E5A+2EB\u2191p
+sub_7450E       proc far                ; CODE XREF: Commset_drawScreen+2EB\u2191p
                                         ; sub_74D38+6C1\u2193p ...
 
 var_90          = byte ptr -90h
@@ -191754,7 +191754,7 @@ sub_748AD       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_749B4       proc far                ; CODE XREF: sub_73E5A+1FA\u2191p
+sub_749B4       proc far                ; CODE XREF: Commset_drawScreen+1FA\u2191p
                                         ; sub_74D38+61A\u2193p
                 mov     ax, 10h
                 push    ax              ; count
@@ -191773,8 +191773,8 @@ sub_749B4       endp
 
 ; Attributes: bp-based frame
 
-sub_749C9       proc far                ; CODE XREF: sub_73E5A+2BC\u2191p
-                                        ; sub_74149+1CD\u2191p ...
+Commset_redrawChangedIcons proc far     ; CODE XREF: Commset_drawScreen+2BC\u2191p
+                                        ; Commset_run+1CD\u2191p ...
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -191787,10 +191787,10 @@ var_2           = word ptr -2
                 jmp     short loc_749F4
 ; ---------------------------------------------------------------------------
 
-loc_749D7:                              ; CODE XREF: sub_749C9+4E\u2193j
+loc_749D7:                              ; CODE XREF: Commset_redrawChangedIcons+4E\u2193j
                 mov     ax, 0F11h
 
-loc_749DA:                              ; CODE XREF: sub_749C9+53\u2193j
+loc_749DA:                              ; CODE XREF: Commset_redrawChangedIcons+53\u2193j
                 mov     [bp+var_2], ax
                 mov     ax, 1
                 push    ax              ; frameNumber
@@ -191801,10 +191801,10 @@ loc_749DA:                              ; CODE XREF: sub_749C9+53\u2193j
                 call    Image_display
                 add     sp, 4
 
-loc_749F1:                              ; CODE XREF: sub_749C9+3E\u2193j
+loc_749F1:                              ; CODE XREF: Commset_redrawChangedIcons+3E\u2193j
                 inc     [bp+var_4]
 
-loc_749F4:                              ; CODE XREF: sub_749C9+C\u2191j
+loc_749F4:                              ; CODE XREF: Commset_redrawChangedIcons+C\u2191j
                 cmp     [bp+var_4], 10h
                 jge     short loc_74A1E
                 mov     bx, [bp+var_4]
@@ -191820,12 +191820,12 @@ loc_749F4:                              ; CODE XREF: sub_749C9+C\u2191j
                 jmp     short loc_749DA
 ; ---------------------------------------------------------------------------
 
-loc_74A1E:                              ; CODE XREF: sub_749C9+2F\u2191j
+loc_74A1E:                              ; CODE XREF: Commset_redrawChangedIcons+2F\u2191j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_749C9       endp
+Commset_redrawChangedIcons endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -192201,7 +192201,7 @@ sub_74C45       endp
 
 ; Attributes: bp-based frame
 
-sub_74D38       proc far                ; CODE XREF: sub_74149+2D5\u2191p
+sub_74D38       proc far                ; CODE XREF: Commset_run+2D5\u2191p
 
 var_16          = word ptr -16h
 picNumber       = word ptr -14h
@@ -192278,7 +192278,7 @@ loc_74D9F:                              ; CODE XREF: sub_74D38+5A\u2191j
                 mov     es:[bx-732Eh], al
                 push    [bp+var_C]
                 push    cs
-                call    near ptr sub_755AF
+                call    near ptr Commset_drawKeycapIndicator
                 add     sp, 2
                 jmp     loc_755A8
 ; ---------------------------------------------------------------------------
@@ -192905,26 +192905,26 @@ loc_75389:                              ; CODE XREF: sub_74D38+647\u2191j
 
 loc_753C9:                              ; CODE XREF: sub_74D38+617\u2191j
                 push    cs
-                call    near ptr sub_749C9
+                call    near ptr Commset_redrawChangedIcons
                 sub     ax, ax
                 push    ax
                 push    cs
-                call    near ptr sub_755AF
+                call    near ptr Commset_drawKeycapIndicator
                 add     sp, 2
                 mov     ax, 1
                 push    ax
                 push    cs
-                call    near ptr sub_755AF
+                call    near ptr Commset_drawKeycapIndicator
                 add     sp, 2
                 mov     ax, 2
                 push    ax
                 push    cs
-                call    near ptr sub_755AF
+                call    near ptr Commset_drawKeycapIndicator
                 add     sp, 2
                 mov     ax, 3
                 push    ax
                 push    cs
-                call    near ptr sub_755AF
+                call    near ptr Commset_drawKeycapIndicator
                 add     sp, 2
                 push    cs
                 call    near ptr sub_7450E
@@ -193045,7 +193045,7 @@ loc_754E5:                              ; CODE XREF: sub_74D38+7A9\u2191j
                 push    cs
                 call    near ptr sub_744F6
                 push    cs
-                call    near ptr sub_749C9
+                call    near ptr Commset_redrawChangedIcons
                 push    cs
                 call    near ptr sub_7450E
                 call    _clock
@@ -193133,8 +193133,8 @@ sub_74D38       endp
 
 ; Attributes: bp-based frame
 
-sub_755AF       proc far                ; CODE XREF: sub_73E5A+2C3\u2191p
-                                        ; sub_73E5A+2CE\u2191p ...
+Commset_drawKeycapIndicator proc far    ; CODE XREF: Commset_drawScreen+2C3\u2191p
+                                        ; Commset_drawScreen+2CE\u2191p ...
 
 yp              = word ptr -4
 xp              = word ptr -2
@@ -193157,14 +193157,14 @@ arg_0           = word ptr  6
                 jmp     short loc_755ED
 ; ---------------------------------------------------------------------------
 
-loc_755DC:                              ; CODE XREF: sub_755AF+26\u2191j
+loc_755DC:                              ; CODE XREF: Commset_drawKeycapIndicator+26\u2191j
                 cmp     es:_videoIndex, 1
                 jnz     short loc_755ED
                 add     [bp+xp], 0A0h ; ' '
                 add     [bp+yp], 4Bh ; 'K'
 
-loc_755ED:                              ; CODE XREF: sub_755AF+2B\u2191j
-                                        ; sub_755AF+33\u2191j
+loc_755ED:                              ; CODE XREF: Commset_drawKeycapIndicator+2B\u2191j
+                                        ; Commset_drawKeycapIndicator+33\u2191j
                 mov     ax, 6
                 push    ax              ; fontNumber
                 call    Font_LoadFont
@@ -193206,7 +193206,7 @@ loc_755ED:                              ; CODE XREF: sub_755AF+2B\u2191j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_755AF       endp
+Commset_drawKeycapIndicator endp
 
 ; ---------------------------------------------------------------------------
                 align 8
@@ -388735,7 +388735,7 @@ a0000           db '0000',0             ; DATA XREF: sub_3137B:loc_73E10\u2191o
 Persisted_val240 db    0                ; DATA XREF: seg068:SAVE_FIELDS\u2191o
                                         ; sub_3137B+42AB1\u2191o
 byte_CCCCD      db 1                    ; DATA XREF: sub_3137B+42AC6\u2191o
-                                        ; sub_74149:loc_74254\u2191r
+                                        ; Commset_run:loc_74254\u2191r
                 db    1
                 db    1
                 db    1
@@ -388743,7 +388743,7 @@ byte_CCCCD      db 1                    ; DATA XREF: sub_3137B+42AC6\u2191o
                 db    1
                 db    1
                 db    1
-byte_CCCD5      db 0                    ; DATA XREF: sub_74149+1C7\u2191w
+byte_CCCD5      db 0                    ; DATA XREF: Commset_run+1C7\u2191w
                                         ; sub_74D38:loc_74D55\u2191w ...
 byte_CCCD6      db 0                    ; DATA XREF: sub_74D38+9C\u2191w
                                         ; sub_74D38+52A\u2191w ...
@@ -388762,9 +388762,9 @@ Persisted_val241 dw 0Dh                 ; DATA XREF: seg068:SAVE_FIELDS\u2191o
 Persisted_val243 dw 0                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
                                         ; sub_7382B+BF\u2191r ...
 Persisted_val244 dw 0                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
-                                        ; sub_74149+38E\u2191r ...
-word_CCCE2      dw 0FFFFh               ; DATA XREF: sub_73E5A\u2191r
-                                        ; sub_73E5A+51\u2191w ...
+                                        ; Commset_run+38E\u2191r ...
+word_CCCE2      dw 0FFFFh               ; DATA XREF: Commset_drawScreen\u2191r
+                                        ; Commset_drawScreen+51\u2191w ...
 aNotAvailable   db 'Not Available',0Ah,0
 aOther          db 'Other',0
                 align 2
@@ -394456,31 +394456,31 @@ seg_D13F4       dw seg sg3EDC           ; DATA XREF: sub_72F8A:loc_73434\u2191r
 seg_D13F6       dw seg sg3EDC           ; DATA XREF: sub_734D5+2A\u2191r
 seg_D13F8       dw seg sg4d43           ; DATA XREF: sub_7382B+BB\u2191r
                                         ; sub_7382B+D7\u2191r ...
-seg_D13FA       dw seg sg4d43           ; DATA XREF: sub_73E5A+16\u2191r
-                                        ; sub_73E5A+64\u2191r ...
-seg_D13FC       dw seg sg3EDC           ; DATA XREF: sub_73E5A:loc_73E8D\u2191r
-                                        ; sub_73E5A+149\u2191r ...
-seg_D13FE       dw seg sg3EDC           ; DATA XREF: sub_73E5A+3C\u2191r
-                                        ; sub_73E5A+152\u2191r ...
-seg_D1400       dw seg sg3EDC           ; DATA XREF: sub_73E5A+94\u2191r
+seg_D13FA       dw seg sg4d43           ; DATA XREF: Commset_drawScreen+16\u2191r
+                                        ; Commset_drawScreen+64\u2191r ...
+seg_D13FC       dw seg sg3EDC           ; DATA XREF: Commset_drawScreen:loc_73E8D\u2191r
+                                        ; Commset_drawScreen+149\u2191r ...
+seg_D13FE       dw seg sg3EDC           ; DATA XREF: Commset_drawScreen+3C\u2191r
+                                        ; Commset_drawScreen+152\u2191r ...
+seg_D1400       dw seg sg3EDC           ; DATA XREF: Commset_drawScreen+94\u2191r
                                         ; sub_74D38+43D\u2191r
-seg_D1402       dw seg sg3EDC           ; DATA XREF: sub_73E5A+A2\u2191r
-                                        ; sub_73E5A+11A\u2191r ...
-seg_D1404       dw seg sg4d43           ; DATA XREF: sub_73E5A+1C7\u2191r
-                                        ; sub_73E5A+1E8\u2191r ...
-seg_D1406       dw seg sg4d43           ; DATA XREF: sub_73E5A+201\u2191r
-seg_D1408       dw seg sg4d43           ; DATA XREF: sub_73E5A+24F\u2191r
-seg_D140A       dw seg sg4d43           ; DATA XREF: sub_74149+13\u2191r
-seg_D140C       dw seg sg4d43           ; DATA XREF: sub_74149+83\u2191r
-                                        ; sub_74149+2E7\u2191r ...
-seg_D140E       dw seg sg3EDC           ; DATA XREF: sub_74149+169\u2191r
+seg_D1402       dw seg sg3EDC           ; DATA XREF: Commset_drawScreen+A2\u2191r
+                                        ; Commset_drawScreen+11A\u2191r ...
+seg_D1404       dw seg sg4d43           ; DATA XREF: Commset_drawScreen+1C7\u2191r
+                                        ; Commset_drawScreen+1E8\u2191r ...
+seg_D1406       dw seg sg4d43           ; DATA XREF: Commset_drawScreen+201\u2191r
+seg_D1408       dw seg sg4d43           ; DATA XREF: Commset_drawScreen+24F\u2191r
+seg_D140A       dw seg sg4d43           ; DATA XREF: Commset_run+13\u2191r
+seg_D140C       dw seg sg4d43           ; DATA XREF: Commset_run+83\u2191r
+                                        ; Commset_run+2E7\u2191r ...
+seg_D140E       dw seg sg3EDC           ; DATA XREF: Commset_run+169\u2191r
                                         ; sub_744F6+6\u2191r ...
-seg_D1410       dw seg sg4d43           ; DATA XREF: sub_74149+174\u2191r
+seg_D1410       dw seg sg4d43           ; DATA XREF: Commset_run+174\u2191r
                                         ; sub_7450E+2BC\u2191r ...
-seg_D1412       dw seg seg111           ; DATA XREF: sub_74149+20E\u2191r
+seg_D1412       dw seg seg111           ; DATA XREF: Commset_run+20E\u2191r
                                         ; sub_7450E+A7\u2191r ...
-seg_D1414       dw seg sg4d43           ; DATA XREF: sub_74149+33E\u2191r
-                                        ; sub_74149:loc_7449A\u2191r
+seg_D1414       dw seg sg4d43           ; DATA XREF: Commset_run+33E\u2191r
+                                        ; Commset_run:loc_7449A\u2191r
                 dw seg seg111
 seg_D1418       dw seg sg3EDC           ; DATA XREF: sub_7450E+243\u2191r
                                         ; sub_7450E+2FB\u2191r
@@ -398326,8 +398326,8 @@ word_D30BE      dw 0                    ; DATA XREF: sub_744F6\u2191w
 word_D30C0      dw 0                    ; DATA XREF: sub_744F6+11\u2191w
                                         ; sub_7450E:loc_745EF\u2191r ...
 ; int word_D30C2
-word_D30C2      dw 0                    ; DATA XREF: sub_73E5A+9F\u2191w
-                                        ; sub_73E5A+10E\u2191w ...
+word_D30C2      dw 0                    ; DATA XREF: Commset_drawScreen+9F\u2191w
+                                        ; Commset_drawScreen+10E\u2191w ...
                 db    0
                 db    0
                 db    0
@@ -398345,29 +398345,29 @@ word_D30C2      dw 0                    ; DATA XREF: sub_73E5A+9F\u2191w
                 db    0
                 db    0
 ; int word_D30D4
-word_D30D4      dw 0                    ; DATA XREF: sub_73E5A+AA\u2191w
-                                        ; sub_73E5A+114\u2191w ...
+word_D30D4      dw 0                    ; DATA XREF: Commset_drawScreen+AA\u2191w
+                                        ; Commset_drawScreen+114\u2191w ...
 ; int word_D30D6
-word_D30D6      dw 0                    ; DATA XREF: sub_73E5A+9C\u2191w
-                                        ; sub_73E5A+108\u2191w ...
+word_D30D6      dw 0                    ; DATA XREF: Commset_drawScreen+9C\u2191w
+                                        ; Commset_drawScreen+108\u2191w ...
 ; int x1
-x1              dw 0                    ; DATA XREF: sub_73E5A+B0\u2191w
-                                        ; sub_73E5A:loc_73F7F\u2191w ...
+x1              dw 0                    ; DATA XREF: Commset_drawScreen+B0\u2191w
+                                        ; Commset_drawScreen:loc_73F7F\u2191w ...
 ; int x2
-x2              dw 0                    ; DATA XREF: sub_73E5A+BC\u2191w
-                                        ; sub_73E5A+131\u2191w ...
+x2              dw 0                    ; DATA XREF: Commset_drawScreen+BC\u2191w
+                                        ; Commset_drawScreen+131\u2191w ...
 ; int y1
-y1              dw 0                    ; DATA XREF: sub_73E5A+B6\u2191w
-                                        ; sub_73E5A+12B\u2191w ...
+y1              dw 0                    ; DATA XREF: Commset_drawScreen+B6\u2191w
+                                        ; Commset_drawScreen+12B\u2191w ...
 ; int word_D30DE
-word_D30DE      dw 0                    ; DATA XREF: sub_73E5A+137\u2191w
-                                        ; sub_73E5A:loc_74003\u2191w ...
+word_D30DE      dw 0                    ; DATA XREF: Commset_drawScreen+137\u2191w
+                                        ; Commset_drawScreen:loc_74003\u2191w ...
 ; int word_D30E0
-word_D30E0      dw 0                    ; DATA XREF: sub_73E5A+AD\u2191w
-                                        ; sub_73E5A+122\u2191w ...
+word_D30E0      dw 0                    ; DATA XREF: Commset_drawScreen+AD\u2191w
+                                        ; Commset_drawScreen+122\u2191w ...
 ; int word_D30E2
-word_D30E2      dw 0                    ; DATA XREF: sub_73E5A+83\u2191w
-                                        ; sub_73E5A+E7\u2191w ...
+word_D30E2      dw 0                    ; DATA XREF: Commset_drawScreen+83\u2191w
+                                        ; Commset_drawScreen+E7\u2191w ...
                 db    0
                 db    0
                 db    0
@@ -400829,7 +400829,7 @@ word_D3C12      dw 0                    ; DATA XREF: sub_31137+5474B\u2191r
 word_D3C14      dw 0                    ; DATA XREF: sub_83842+1DB\u2191w
                                         ; sub_84913+C5\u2191w ...
 Persisted_val245 db 8Ch dup(0)          ; DATA XREF: seg068:SAVE_FIELDS\u2191o
-                                        ; sub_74149+187\u2191o
+                                        ; Commset_run+187\u2191o
 byte_D3CA2      db 0                    ; DATA XREF: sub_8014E+459\u2191w
                 db    0
                 db    0

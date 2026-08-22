@@ -3165,6 +3165,66 @@ RENAMES = [
      "0x10A, then calls Queue_remove(0x1E). Completes the trio "
      "Logic_heecheetownSpecial fires when the drunkenness countdown "
      "maxes out and the player passes out."),
+
+    (0x74149, "Commset_run",
+     "sub_74149(): reached only via a data-driven thunk (thunk_sub_74149), "
+     "i.e. a top-level entry point, not an ordinary call site -- the "
+     "'bring up one Commset screen' modal session. Stops any playing "
+     "track, fades the screen out, clears windows, frees a cached image, "
+     "then calls the just-named Commset_drawScreen to build and draw the "
+     "screen, shows the mouse, and enters a Mouse_pollPosition-driven "
+     "loop testing the polled position against on-screen regions -- the "
+     "standard 'modal screen, wait for a mouse click on one of its "
+     "regions' pattern used elsewhere in this UI layer. Confirmed as "
+     "part of the already-named Commset_show/Commset_winContent/"
+     "Commnet_proc1 cluster (this project's two spellings for the same "
+     "in-universe communicator-device UI) via Commset_drawScreen setting "
+     "the shared Commset_winContent global directly."),
+
+    (0x73E5A, "Commset_drawScreen",
+     "sub_73E5A(): called only from the just-named Commset_run. Creates "
+     "(or reuses, tracked via word_CCCE2) the Commset's content window, "
+     "sized and positioned differently per video mode, loads the "
+     "matching background region (0xF00/0xF01/0x3F00 depending on mode) "
+     "and its palette, draws a 3D-beveled border and sets colors/font, "
+     "then stores the new window handle into the already-named "
+     "Commset_winContent and makes it the active window. Loads and "
+     "draws the region's background picture (image 0x300), backs up the "
+     "palette, then calls the just-named Commset_redrawChangedIcons "
+     "(refresh any of up to 15 status icons whose state changed) and "
+     "Commset_drawKeycapIndicator for indices 0-3 (four fixed hotkey "
+     "indicators), finishing with sub_7450E (not traced this pass). The "
+     "Commset screen's 'build everything and draw it' entry point."),
+
+    (0x749C9, "Commset_redrawChangedIcons",
+     "sub_749C9(): called from the just-named Commset_drawScreen (and "
+     "elsewhere in this cluster). Loops icon index 1-15: reads a "
+     "per-icon current-state byte from a table at +0x4DAC, compares "
+     "against a per-icon last-drawn-state table at -0x4E5C; if "
+     "unchanged, skips. If changed, updates the last-drawn table and "
+     "calls the already-named Image_display(picNumber, frameNumber=1), "
+     "where picNumber is a fixed base (0xF11, or 0x3F10 in video mode 3) "
+     "plus the icon index -- i.e. each of the 15 icon slots is its own "
+     "dedicated picture resource, redrawn only when its state actually "
+     "changes. A change-tracked icon-refresh loop, distinct from the "
+     "already-named AnimPics_* cluster (different tables, no slot-count/"
+     "duration bookkeeping)."),
+
+    (0x755AF, "Commset_drawKeycapIndicator",
+     "sub_755AF(index): called from Commset_drawScreen for indices 0-3. "
+     "Hides the mouse, looks up this index's (x,y) position from a "
+     "table at +0x4E24 (paired with a fixed y=0x33), adjusted per video "
+     "mode (doubled in mode 0; offset by (+0xA0,+0x4B) in mode 1), loads "
+     "font 6, and draws a black 'X' at that position with a transparent "
+     "background (0xFFFF) -- plausibly font 6's placeholder/box glyph, "
+     "used here purely to blank the cell -- then redraws the same "
+     "position with this index's actual character (from a per-index "
+     "table at -0x732E) in a separate foreground color (word_D30D6). "
+     "Shows the mouse again. The net effect is a small drop-shadowed "
+     "letter at a fixed position per index -- consistent with a row of "
+     "labeled hotkey/keycap indicators for the Commset screen's main "
+     "options, though the 4 actual characters weren't independently "
+     "read out of the data table this pass."),
 ]
 
 

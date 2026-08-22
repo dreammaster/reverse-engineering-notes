@@ -1025,6 +1025,14 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       escalating drunkenness countdown ending in the player passing
       out), confirmed via its own `GATESTR.DAT` messages. Full writeup
       in [overview.md](overview.md#logic_heecheetownspecial-and-its-patron-departure-trio-named--a-hidden-get-drunk-minigame).
+- [x] Named `sub_74149`/`sub_73E5A`/`sub_749C9`/`sub_755AF` →
+      `Commset_run`/`Commset_drawScreen`/`Commset_redrawChangedIcons`/
+      `Commset_drawKeycapIndicator` — the modal screen-session entry
+      point, screen-builder, changed-icon refresher, and hotkey-keycap
+      drawer for the in-universe communicator UI, tied to the
+      already-named `Commset_winContent`/`Commset_show`/`Commnet_proc1`
+      cluster. Full writeup in
+      [overview.md](overview.md#commset_runcommset_drawscreencommset_redrawchangediconscommset_drawkeycapindicator-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-
