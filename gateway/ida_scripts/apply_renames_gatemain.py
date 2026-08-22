@@ -3053,6 +3053,20 @@ RENAMES = [
      "'release any owned pointers, then clear' cleanup step for a "
      "parser-result-shaped structure with two ref-counted pointer "
      "fields."),
+
+    (0x2C83C, "Screen_fillSpanGeneric",
+     "sub_2C83C(x1, y1, x2, y2): the generic slow-path rasterizer "
+     "already-named Screen_dispatchSpanFill falls back to (via a tail "
+     "jmp) when no video-mode-specific fast pixel routine matches. If "
+     "x1==x2 it's a degenerate vertical span: walks y from min(y1,y2) "
+     "to max(y1,y2), rotating a dash/pattern bitmask each step and "
+     "calling a mode-specific plot callback (a far function pointer at "
+     "offset+4 of the per-video-mode table entry Screen_dispatchSpanFill "
+     "indexed into) only on set bits. Otherwise runs a textbook two-"
+     "accumulator Bresenham line algorithm between (x1,y1)/(x2,y2), "
+     "again gating each plotted pixel on the same rotating dash-pattern "
+     "bit. Shared by both the already-named Screen_drawLine and "
+     "Screen_fillRect as their common generic-case pixel plotter."),
 ]
 
 

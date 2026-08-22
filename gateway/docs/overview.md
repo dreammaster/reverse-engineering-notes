@@ -4062,3 +4062,36 @@ owned pointers, then clear" cleanup step for a parser-result-shaped
 structure with two ref-counted pointer fields.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-thirty-sixth batch.
+
+### `Screen_fillSpanGeneric` named
+
+Moved to `sub_2C83C` (3 callers) — the generic slow-path rasterizer
+the already-named `Screen_dispatchSpanFill` falls back to (via a tail
+`jmp`) when no video-mode-specific fast pixel routine matches for the
+current state/mode combination.
+
+Confirmed by direct algorithmic reading rather than message decoding
+this time: if its first and third args (x1, x2) are equal, it's a
+degenerate vertical span — walks y from `min(y1,y2)` to `max(y1,y2)`,
+rotating a dash/pattern bitmask one bit each step and calling a
+mode-specific plot callback only when the rotated-out bit is set. That
+callback is a far function pointer at offset+4 of the same per-video-
+mode, 20-byte-stride table entry `Screen_dispatchSpanFill` indexes
+into by `videoIndex` — confirming the two functions share that table's
+layout.
+
+Otherwise it runs a textbook two-accumulator Bresenham line algorithm
+between `(x1,y1)` and `(x2,y2)` — computing `abs(dx)`/`abs(dy)` and
+their signs, then stepping the larger-magnitude axis one unit per
+iteration while accumulating the smaller axis's error term, again
+gating each plotted pixel on the same rotating dash-pattern bit. This
+is a genuine, general-purpose Bresenham implementation, not a
+special-cased horizontal/vertical-only fill.
+
+Shared by both the already-named `Screen_drawLine` and `Screen_fillRect`
+(both call through `Screen_dispatchSpanFill`) as their common
+generic-case pixel plotter — a line is drawn directly between its two
+endpoints, and a rectangle's edges/fill presumably reduce to the same
+primitive when the fast per-mode path doesn't apply.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-thirty-seventh batch.

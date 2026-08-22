@@ -66719,7 +66719,7 @@ loc_2C786:                              ; CODE XREF: Screen_dispatchSpanFill+9C\
 
 loc_2C78F:                              ; CODE XREF: Screen_dispatchSpanFill+96\u2191j
                                         ; Screen_dispatchSpanFill+A4\u2191j ...
-                jmp     sub_2C83C
+                jmp     Screen_fillSpanGeneric
 ; ---------------------------------------------------------------------------
                 mov     [bp+var_2], ax
 
@@ -66767,13 +66767,13 @@ loc_2C7D3:
                 mov     word ptr [bx+VideoMethod.fnPtr], offset sub_2CB40
                 mov     word ptr [bx+(VideoMethod.fnPtr+2)], seg seg060
                 add     bx, size VideoMethod
-                mov     word ptr [bx+VideoMethod.fnPtr], offset sub_2C83C
+                mov     word ptr [bx+VideoMethod.fnPtr], offset Screen_fillSpanGeneric
                 mov     word ptr [bx+(VideoMethod.fnPtr+2)], seg seg060
                 add     bx, size VideoMethod
-                mov     word ptr [bx+VideoMethod.fnPtr], offset sub_2C83C
+                mov     word ptr [bx+VideoMethod.fnPtr], offset Screen_fillSpanGeneric
                 mov     word ptr [bx+(VideoMethod.fnPtr+2)], seg seg060
                 add     bx, size VideoMethod
-                mov     word ptr [bx+VideoMethod.fnPtr], offset sub_2C83C
+                mov     word ptr [bx+VideoMethod.fnPtr], offset Screen_fillSpanGeneric
                 mov     word ptr [bx+(VideoMethod.fnPtr+2)], seg seg060
                 add     bx, size VideoMethod
                 mov     byte_CAC5D, 1
@@ -66784,7 +66784,7 @@ Screen_setVTable endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2C83C       proc far                ; CODE XREF: Screen_dispatchSpanFill:loc_2C78F\u2191J
+Screen_fillSpanGeneric proc far         ; CODE XREF: Screen_dispatchSpanFill:loc_2C78F\u2191J
                                         ; sub_2C966+6\u2193J ...
                 mov     ax, [bp+6]
                 cmp     ax, [bp+0Ah]
@@ -66796,7 +66796,7 @@ sub_2C83C       proc far                ; CODE XREF: Screen_dispatchSpanFill:loc
                 mov     [bp+8], bx
                 mov     [bp+0Ch], ax
 
-loc_2C855:                              ; CODE XREF: sub_2C83C+E\u2191j
+loc_2C855:                              ; CODE XREF: Screen_fillSpanGeneric+E\u2191j
                 cmp     word ptr [bp-26h], 1
                 jnz     short loc_2C86C
                 rol     word ptr [bp-28h], 1
@@ -66806,11 +66806,11 @@ loc_2C855:                              ; CODE XREF: sub_2C83C+E\u2191j
                 push    word ptr [bp-24h]
                 call    dword ptr [si+4]
 
-loc_2C86C:                              ; CODE XREF: sub_2C83C+1D\u2191j
-                                        ; sub_2C83C+22\u2191j
+loc_2C86C:                              ; CODE XREF: Screen_fillSpanGeneric+1D\u2191j
+                                        ; Screen_fillSpanGeneric+22\u2191j
                 mov     di, [bp+0Ch]
 
-loc_2C86F:                              ; CODE XREF: sub_2C83C+46\u2193j
+loc_2C86F:                              ; CODE XREF: Screen_fillSpanGeneric+46\u2193j
                 inc     di
                 rol     word ptr [bp-28h], 1
                 jnb     short loc_2C87F
@@ -66819,13 +66819,13 @@ loc_2C86F:                              ; CODE XREF: sub_2C83C+46\u2193j
                 push    word ptr [bp-24h]
                 call    dword ptr [si+4]
 
-loc_2C87F:                              ; CODE XREF: sub_2C83C+37\u2191j
+loc_2C87F:                              ; CODE XREF: Screen_fillSpanGeneric+37\u2191j
                 cmp     di, [bp+8]
                 jl      short loc_2C86F
                 jmp     loc_2C954
 ; ---------------------------------------------------------------------------
 
-loc_2C887:                              ; CODE XREF: sub_2C83C+6\u2191j
+loc_2C887:                              ; CODE XREF: Screen_fillSpanGeneric+6\u2191j
                 mov     ax, [bp+8]
                 sub     ax, [bp+0Ch]
                 mov     bx, ax
@@ -66833,7 +66833,7 @@ loc_2C887:                              ; CODE XREF: sub_2C83C+6\u2191j
                 jge     short loc_2C895
                 neg     bx
 
-loc_2C895:                              ; CODE XREF: sub_2C83C+55\u2191j
+loc_2C895:                              ; CODE XREF: Screen_fillSpanGeneric+55\u2191j
                 mov     [bp-4], bx
                 or      ax, ax
                 jz      short loc_2C8A6
@@ -66842,11 +66842,11 @@ loc_2C895:                              ; CODE XREF: sub_2C83C+55\u2191j
                 jmp     short loc_2C8A6
 ; ---------------------------------------------------------------------------
 
-loc_2C8A3:                              ; CODE XREF: sub_2C83C+60\u2191j
+loc_2C8A3:                              ; CODE XREF: Screen_fillSpanGeneric+60\u2191j
                 mov     ax, 0FFFFh
 
-loc_2C8A6:                              ; CODE XREF: sub_2C83C+5E\u2191j
-                                        ; sub_2C83C+65\u2191j
+loc_2C8A6:                              ; CODE XREF: Screen_fillSpanGeneric+5E\u2191j
+                                        ; Screen_fillSpanGeneric+65\u2191j
                 mov     [bp-0Ch], ax
                 mov     ax, [bp+6]
                 sub     ax, [bp+0Ah]
@@ -66855,7 +66855,7 @@ loc_2C8A6:                              ; CODE XREF: sub_2C83C+5E\u2191j
                 jge     short loc_2C8B7
                 neg     bx
 
-loc_2C8B7:                              ; CODE XREF: sub_2C83C+77\u2191j
+loc_2C8B7:                              ; CODE XREF: Screen_fillSpanGeneric+77\u2191j
                 mov     [bp-6], bx
                 or      ax, ax
                 jz      short loc_2C8C8
@@ -66864,18 +66864,18 @@ loc_2C8B7:                              ; CODE XREF: sub_2C83C+77\u2191j
                 jmp     short loc_2C8C8
 ; ---------------------------------------------------------------------------
 
-loc_2C8C5:                              ; CODE XREF: sub_2C83C+82\u2191j
+loc_2C8C5:                              ; CODE XREF: Screen_fillSpanGeneric+82\u2191j
                 mov     ax, 0FFFFh
 
-loc_2C8C8:                              ; CODE XREF: sub_2C83C+80\u2191j
-                                        ; sub_2C83C+87\u2191j
+loc_2C8C8:                              ; CODE XREF: Screen_fillSpanGeneric+80\u2191j
+                                        ; Screen_fillSpanGeneric+87\u2191j
                 mov     [bp-0Eh], ax
                 mov     ax, [bp-6]
                 cmp     ax, [bp-4]
                 ja      short loc_2C8D6
                 mov     ax, [bp-4]
 
-loc_2C8D6:                              ; CODE XREF: sub_2C83C+95\u2191j
+loc_2C8D6:                              ; CODE XREF: Screen_fillSpanGeneric+95\u2191j
                 mov     [bp-8], ax
                 mov     ax, [bp+0Ch]
                 mov     [bp-12h], ax
@@ -66890,15 +66890,15 @@ loc_2C8D6:                              ; CODE XREF: sub_2C83C+95\u2191j
                 push    word ptr [bp-24h]
                 call    dword ptr [si+4]
 
-loc_2C8FC:                              ; CODE XREF: sub_2C83C+AD\u2191j
-                                        ; sub_2C83C+B2\u2191j
+loc_2C8FC:                              ; CODE XREF: Screen_fillSpanGeneric+AD\u2191j
+                                        ; Screen_fillSpanGeneric+B2\u2191j
                 mov     bx, si
                 xor     si, si
                 xor     di, di
                 mov     cx, [bp-8]
                 inc     cx
 
-loc_2C906:                              ; CODE XREF: sub_2C83C:loc_2C952\u2193j
+loc_2C906:                              ; CODE XREF: Screen_fillSpanGeneric:loc_2C952\u2193j
                 add     si, [bp-4]
                 add     di, [bp-6]
                 mov     word ptr [bp-10h], 0
@@ -66909,7 +66909,7 @@ loc_2C906:                              ; CODE XREF: sub_2C83C:loc_2C952\u2193j
                 mov     ax, [bp-0Ch]
                 add     [bp-12h], ax
 
-loc_2C924:                              ; CODE XREF: sub_2C83C+D8\u2191j
+loc_2C924:                              ; CODE XREF: Screen_fillSpanGeneric+D8\u2191j
                 cmp     di, [bp-8]
                 jle     short loc_2C937
                 mov     word ptr [bp-10h], 1
@@ -66917,7 +66917,7 @@ loc_2C924:                              ; CODE XREF: sub_2C83C+D8\u2191j
                 mov     ax, [bp-0Eh]
                 add     [bp-14h], ax
 
-loc_2C937:                              ; CODE XREF: sub_2C83C+EB\u2191j
+loc_2C937:                              ; CODE XREF: Screen_fillSpanGeneric+EB\u2191j
                 cmp     word ptr [bp-10h], 1
                 jnz     short loc_2C952
                 rol     word ptr [bp-28h], 1
@@ -66931,11 +66931,11 @@ loc_2C937:                              ; CODE XREF: sub_2C83C+EB\u2191j
                 pop     cx
                 pop     bx
 
-loc_2C952:                              ; CODE XREF: sub_2C83C+FF\u2191j
-                                        ; sub_2C83C+104\u2191j
+loc_2C952:                              ; CODE XREF: Screen_fillSpanGeneric+FF\u2191j
+                                        ; Screen_fillSpanGeneric+104\u2191j
                 loop    loc_2C906
 
-loc_2C954:                              ; CODE XREF: sub_2C83C+48\u2191j
+loc_2C954:                              ; CODE XREF: Screen_fillSpanGeneric+48\u2191j
                 mov     word ptr [bp-2], 0
                 mov     ax, [bp-2]
                 pop     di
@@ -66945,7 +66945,7 @@ loc_2C954:                              ; CODE XREF: sub_2C83C+48\u2191j
                 mov     sp, bp
                 pop     bp
                 retf    8
-sub_2C83C       endp ; sp-analysis failed
+Screen_fillSpanGeneric endp ; sp-analysis failed
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -66954,7 +66954,7 @@ sub_2C83C       endp ; sp-analysis failed
 sub_2C966       proc far                ; DATA XREF: Screen_setVTable+3\u2191o
                 cmp     word ptr [bp-22h], 0
                 jz      short loc_2C971
-                jmp     sub_2C83C
+                jmp     Screen_fillSpanGeneric
 ; ---------------------------------------------------------------------------
 
 loc_2C971:                              ; CODE XREF: sub_2C966+4\u2191j
@@ -67512,7 +67512,7 @@ sub_2CB40       endp ; sp-analysis failed
 sub_2CCD9       proc far                ; DATA XREF: Screen_setVTable+2A\u2191o
                 cmp     word ptr [bp-22h], 0
                 jz      short loc_2CCE4
-                jmp     sub_2C83C
+                jmp     Screen_fillSpanGeneric
 ; ---------------------------------------------------------------------------
 
 loc_2CCE4:                              ; CODE XREF: sub_2CCD9+4\u2191j
