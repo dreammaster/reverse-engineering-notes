@@ -792,6 +792,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       volume half of an OPL2 operator update, called from `Opl2_noteOn`
       once per operator. Full writeup in
       [overview.md](overview.md#opl2_setoperatorvolume-named).
+- [x] Named `sub_1D570` (3 callers) → `Opl2_setNoteSelect` — writes
+      the OPL2 chip-wide NTS/keyboard-split-mode bit (register 8) from
+      a global flag set by its caller `sub_1CF90`. Full writeup in
+      [overview.md](overview.md#opl2_setnoteselect-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

@@ -3136,3 +3136,15 @@ bits (shifted into bits 6-7), and writes the result to OPL2 register
 via the already-named `Opl2_writeRegister`.
 
 Applied via `apply_renames_gatemain.py`'s eighty-seventh batch.
+
+### `Opl2_setNoteSelect` named
+
+Moved to `sub_1D570` (3 callers) — writes OPL2 register 8 (the
+chip-wide CSM-select/Note-Select register) with `0x40` if the global
+`byte_D1C54` is non-zero, or 0 otherwise. This is the standard OPL2 NTS
+(bit 6) keyboard-split-mode bit, which changes how key-scale frequency
+splits are computed across the whole chip. `byte_D1C54` is set by this
+function's only caller, `sub_1CF90`, immediately before calling this to
+commit the setting to hardware.
+
+Applied via `apply_renames_gatemain.py`'s eighty-eighth batch.

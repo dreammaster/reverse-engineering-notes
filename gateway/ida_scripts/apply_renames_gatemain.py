@@ -2245,6 +2245,15 @@ RENAMES = [
      "(from +0x0, shifted into bits 6-7), and writes the result to "
      "OPL2 register 0x40+operatorRegisterOffset (the standard OPL2 "
      "Level/KSL register) via the already-named Opl2_writeRegister."),
+
+    (0x1D570, "Opl2_setNoteSelect",
+     "sub_1D570(): writes OPL2 register 8 (the chip-wide CSM-select/"
+     "Note-Select register) with 0x40 if the global byte_D1C54 is "
+     "non-zero, or 0 otherwise -- the standard OPL2 NTS (bit 6) "
+     "keyboard-split-mode bit, which changes how key-scale frequency "
+     "splits are computed chip-wide. byte_D1C54 is set by this "
+     "function's only caller, sub_1CF90, immediately before calling "
+     "this to commit the setting to hardware."),
 ]
 
 

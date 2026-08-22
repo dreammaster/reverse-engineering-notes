@@ -30437,7 +30437,7 @@ arg_4           = byte ptr  0Ah
                 push    cs
                 call    near ptr Opl2_writeRhythmRegister
                 push    cs
-                call    near ptr sub_1D570
+                call    near ptr Opl2_setNoteSelect
                 pop     bp
                 retf
 sub_1CF90       endp
@@ -31101,7 +31101,7 @@ loc_1D3D8:                              ; CODE XREF: sub_1D3C4+E\u2191j
 loc_1D3DE:                              ; CODE XREF: sub_1D3C4+E\u2191j
                                         ; DATA XREF: sub_1D3C4+7E\u2193o
                 push    cs
-                call    near ptr sub_1D570
+                call    near ptr Opl2_setNoteSelect
                 pop     bp
                 retf
 ; ---------------------------------------------------------------------------
@@ -31202,7 +31202,7 @@ arg_0           = word ptr  6
                 push    cs
                 call    near ptr Opl2_writeRhythmRegister
                 push    cs
-                call    near ptr sub_1D570
+                call    near ptr Opl2_setNoteSelect
                 push    [bp+arg_0]
                 push    cs
                 call    near ptr Opl2_setOperatorVolume
@@ -31353,7 +31353,7 @@ Opl2_setOperatorVolume endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1D570       proc far                ; CODE XREF: sub_1CF90+1A\u2191p
+Opl2_setNoteSelect proc far             ; CODE XREF: sub_1CF90+1A\u2191p
                                         ; sub_1D3C4+1B\u2191p ...
                 cmp     byte_D1C54, 0
                 jz      short loc_1D57C
@@ -31361,17 +31361,17 @@ sub_1D570       proc far                ; CODE XREF: sub_1CF90+1A\u2191p
                 jmp     short loc_1D57E
 ; ---------------------------------------------------------------------------
 
-loc_1D57C:                              ; CODE XREF: sub_1D570+5\u2191j
+loc_1D57C:                              ; CODE XREF: Opl2_setNoteSelect+5\u2191j
                 sub     ax, ax
 
-loc_1D57E:                              ; CODE XREF: sub_1D570+A\u2191j
+loc_1D57E:                              ; CODE XREF: Opl2_setNoteSelect+A\u2191j
                 push    ax
                 mov     ax, 8
                 push    ax
                 call    Opl2_writeRegister
                 add     sp, 4
                 retf
-sub_1D570       endp
+Opl2_setNoteSelect endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -395940,7 +395940,7 @@ _opl2TremoloDepth db 0                  ; DATA XREF: sub_1CF90+6\u2191w
 _opl2RhythmEnabled db 0                 ; DATA XREF: sub_1CEC0+38\u2191w
                                         ; sub_1CFB0+42\u2191r ...
 byte_D1C54      db 0                    ; DATA XREF: sub_1CF90+12\u2191w
-                                        ; sub_1D570\u2191r
+                                        ; Opl2_setNoteSelect\u2191r
                 align 2
 word_D1C56      dw 0                    ; DATA XREF: sub_1CF1C:loc_1CF30\u2191w
                                         ; sub_1CF1C+3C\u2191r ...
