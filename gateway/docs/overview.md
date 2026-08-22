@@ -4996,3 +4996,50 @@ the corresponding "already flagged" byte in the same parallel array
 identical table offsets and stride.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-sixty-second batch.
+
+### `RTLink_ensureOverlaySegmentLoaded` named — the actual overlay manager behind `rtlink_thunk`
+
+`sub_2D15C` (5 callers in the ranked list, but really just one that
+matters: called directly and only from `rtlink_thunk` itself,
+confirmed at `rtlink_thunk+0x76`). This is the load-bearing piece
+behind the entire `call rtlink_thunk; jmp <target>` mechanism this
+project has been documenting since its earliest sessions — the actual
+routine that makes sure the overlay containing the real call target is
+resident in memory before control transfers there.
+
+Reading `rtlink_thunk` itself alongside this closed a gap in the
+existing understanding. Since `rtlink_thunk` is reached via a *near*
+`call rtlink_thunk` (a 2-byte return address — matching the
+already-documented RTLink-flattening-tool near/far calling-convention
+quirk), the bytes immediately following the call in the caller's own
+code — i.e. the operand bytes of the `jmp <target>` instruction that
+comes right after it — are directly readable via `[bp+4]`/`[bp+6]`
+relative to `rtlink_thunk`'s own stack frame. `rtlink_thunk` **peeks**
+that embedded target-segment ID without disturbing it, passes it to
+`RTLink_ensureOverlaySegmentLoaded`, and only then returns control so
+that the very same `jmp target` instruction executes normally
+afterward. It's an elegant reuse of the `jmp`'s own encoded operand as
+a compact side-channel parameter, rather than a conventional argument-
+passing calling convention — the call-site thunk shape isn't just
+"call a stub, then jump," it's "call a stub that reads what you're
+about to jump to, prepares for it, then lets the jump happen anyway."
+
+`RTLink_ensureOverlaySegmentLoaded` itself walks an in-memory table of
+`RTLinkSeg` records — a struct already declared in this project's IDB
+(`memorySegment`, `filename`, `fileOffset`/`fileOffset_hi`, `flags`,
+`field_8`, `numRelocations`, `field_C`, `segmentNum`, `numParagraphs`)
+— confirmed field-by-field against this function's own offset
+accesses, including computing `(numRelocations + 3) / 4 + fileOffset`
+to find the file position where a segment's actual code begins, after
+skipping past its own relocation table. It searches this table for
+either an already-loaded match or an evictable slot, before
+presumably reading the target overlay in from disk.
+
+Several of its own helper calls (`sub_2D550`, `sub_31431`,
+`sub_2D0F2`, `sub_3142F`, `sub_2D3B9`) weren't traced this pass — this
+write-up confirms the function's structure and role as the overlay
+swapper's entry point, not a complete instruction-by-instruction
+account of every branch. A good candidate for a dedicated future pass
+given how central it is to this whole engine's architecture.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-sixty-third batch.

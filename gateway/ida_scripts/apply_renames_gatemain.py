@@ -3748,6 +3748,41 @@ RENAMES = [
      "Confirmed as a genuine getter/setter pair by the identical table "
      "offsets and stride. Called from sub_81CCC (twice) and 5 other "
      "unnamed functions."),
+
+    (0x2D15C, "RTLink_ensureOverlaySegmentLoaded",
+     "sub_2D15C(targetSegmentId): called directly and only from "
+     "rtlink_thunk (confirmed at rtlink_thunk+0x76) -- this is the "
+     "actual RTLink overlay manager's 'make sure the overlay "
+     "containing my caller's real target is resident in memory' "
+     "routine, the load-bearing piece behind the entire "
+     "call-rtlink_thunk mechanism this project has been reverse-"
+     "engineering around from the start. rtlink_thunk itself is now "
+     "understood more precisely too: since it's reached via a near "
+     "'call rtlink_thunk' (2-byte return address, matching the "
+     "already-documented RTLink-flattening-tool near/far quirk), the "
+     "bytes immediately after the call -- i.e. the operand bytes of "
+     "the 'jmp <target>' instruction that follows it in the caller's "
+     "own code stream -- are readable via [bp+4]/[bp+6] relative to "
+     "rtlink_thunk's own stack frame. rtlink_thunk peeks that embedded "
+     "target-segment id (without disturbing it) and passes it here as "
+     "cx/ax before returning control to let the very same 'jmp target' "
+     "instruction execute normally afterward -- an elegant reuse of "
+     "the jmp's own encoded operand as a compact side-channel "
+     "parameter, rather than a separate calling convention. "
+     "sub_2D15C itself walks an in-memory table of RTLinkSeg records "
+     "(the already-declared struct: memorySegment, filename, "
+     "fileOffset/fileOffset_hi, flags, field_8, numRelocations, "
+     "field_C, segmentNum, numParagraphs -- confirmed field-by-field "
+     "against this function's own offset accesses, e.g. "
+     "'(numRelocations+3)/4 + fileOffset' computing the file position "
+     "where a segment's actual code begins, after its own relocation "
+     "table), searching for either an already-loaded match or an "
+     "evictable slot, before presumably reading the target overlay in "
+     "from disk. Several of its own helper calls (sub_2D550, "
+     "sub_31431, sub_2D0F2, sub_3142F, sub_2D3B9) weren't traced this "
+     "pass -- this is the RTLink overlay swapper's entry point, "
+     "confirmed in structure and purpose, not a complete instruction-"
+     "by-instruction account of every branch."),
 ]
 
 

@@ -66590,10 +66590,10 @@ seg062          segment byte public 'CODE' use16
                 db 16h, 0
 word_2CF42      dw 1Ah                  ; DATA XREF: sub_2D3B9+D9↓r
                 db 3Fh, 0
-word_2CF46      dw 66h                  ; DATA XREF: sub_2D15C+174↓r
-word_2CF48      dw 8Dh                  ; DATA XREF: sub_2D15C+52↓r
-word_2CF4A      dw 0AEh                 ; DATA XREF: sub_2D15C+34↓r
-word_2CF4C      dw 0D1h                 ; DATA XREF: sub_2D15C+40↓r
+word_2CF46      dw 66h                  ; DATA XREF: RTLink_ensureOverlaySegmentLoaded+174↓r
+word_2CF48      dw 8Dh                  ; DATA XREF: RTLink_ensureOverlaySegmentLoaded+52↓r
+word_2CF4A      dw 0AEh                 ; DATA XREF: RTLink_ensureOverlaySegmentLoaded+34↓r
+word_2CF4C      dw 0D1h                 ; DATA XREF: RTLink_ensureOverlaySegmentLoaded+40↓r
                 db 0D9h, 0, 0EDh, 0
 word_2CF52      dw 107h                 ; DATA XREF: rtlink_thunk+3D↓r
                 db 68h, 1, 22h, 0Dh, 0Ah, 0, 65h, 6Fh, 76h, 3 dup(30h)
@@ -66620,7 +66620,7 @@ aOverlayManager_0 db 'Overlay Manager Internal Reload Stack Underflow.',0Dh,0Ah,
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2D0F0       proc far                ; CODE XREF: sub_2D15C+235↓p
+sub_2D0F0       proc far                ; CODE XREF: RTLink_ensureOverlaySegmentLoaded+235↓p
                 nop
                 retf
 sub_2D0F0       endp
@@ -66629,7 +66629,7 @@ sub_2D0F0       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2D0F2       proc far                ; CODE XREF: sub_2D15C+86↓p
+sub_2D0F2       proc far                ; CODE XREF: RTLink_ensureOverlaySegmentLoaded+86↓p
                 test    byte ptr [si+7], 10h
                 jnz     short loc_2D12B
                 push    ax
@@ -66705,7 +66705,8 @@ sub_2D0F2       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2D15C       proc far                ; CODE XREF: sub_2D15C+256↓p
+RTLink_ensureOverlaySegmentLoaded proc far
+                                        ; CODE XREF: RTLink_ensureOverlaySegmentLoaded+256↓p
                                         ; rtlink_thunk+76↓p ...
 
 ; FUNCTION CHUNK AT 0A28 SIZE 00000016 BYTES
@@ -66716,7 +66717,7 @@ sub_2D15C       proc far                ; CODE XREF: sub_2D15C+256↓p
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_2D162:                              ; CODE XREF: sub_2D15C+3↑j
+loc_2D162:                              ; CODE XREF: RTLink_ensureOverlaySegmentLoaded+3↑j
                 pushf
                 push    ax
                 push    bx
@@ -66739,12 +66740,12 @@ loc_2D162:                              ; CODE XREF: sub_2D15C+3↑j
                 test    byte ptr [bx+7], 2
                 jz      short loc_2D1B5
 
-loc_2D188:                              ; CODE XREF: sub_2D15C+24↑j
+loc_2D188:                              ; CODE XREF: RTLink_ensureOverlaySegmentLoaded+24↑j
                 clc
                 jmp     loc_2D394
 ; ---------------------------------------------------------------------------
 
-loc_2D18C:                              ; CODE XREF: sub_2D15C+89↓j
+loc_2D18C:                              ; CODE XREF: RTLink_ensureOverlaySegmentLoaded+89↓j
                 mov     ax, cs
                 mov     ds, ax
                 mov     dx, word_2CF4A
@@ -66759,13 +66760,13 @@ loc_2D18C:                              ; CODE XREF: sub_2D15C+89↓j
                 jmp     loc_2D988
 ; ---------------------------------------------------------------------------
 
-loc_2D1B5:                              ; CODE XREF: sub_2D15C+2A↑j
+loc_2D1B5:                              ; CODE XREF: RTLink_ensureOverlaySegmentLoaded+2A↑j
                 push    ax
                 mov     bx, word_2D9CA
                 mov     cx, word_2DB59
                 mov     si, 0C1Fh
 
-loc_2D1C1:                              ; CODE XREF: sub_2D15C+8E↓j
+loc_2D1C1:                              ; CODE XREF: RTLink_ensureOverlaySegmentLoaded+8E↓j
                 test    byte ptr [si+7], 2
                 jz      short loc_2D1D7
                 mov     ax, [si]
@@ -66775,12 +66776,12 @@ loc_2D1C1:                              ; CODE XREF: sub_2D15C+8E↓j
                 jmp     short loc_2D1D7
 ; ---------------------------------------------------------------------------
 
-loc_2D1D2:                              ; CODE XREF: sub_2D15C+6F↑j
+loc_2D1D2:                              ; CODE XREF: RTLink_ensureOverlaySegmentLoaded+6F↑j
                 neg     ax
                 cmp     ax, [si+8]
 
-loc_2D1D7:                              ; CODE XREF: sub_2D15C+69↑j
-                                        ; sub_2D15C+74↑j
+loc_2D1D7:                              ; CODE XREF: RTLink_ensureOverlaySegmentLoaded+69↑j
+                                        ; RTLink_ensureOverlaySegmentLoaded+74↑j
                 jnb     short loc_2D1E7
                 mov     ax, cx
                 sub     ax, word_2DB59
@@ -66789,7 +66790,7 @@ loc_2D1D7:                              ; CODE XREF: sub_2D15C+69↑j
                 call    near ptr sub_2D0F2
                 jb      short loc_2D18C
 
-loc_2D1E7:                              ; CODE XREF: sub_2D15C:loc_2D1D7↑j
+loc_2D1E7:                              ; CODE XREF: RTLink_ensureOverlaySegmentLoaded:loc_2D1D7↑j
                 add     si, 12h
                 loop    loc_2D1C1
                 pop     ax
@@ -66805,14 +66806,14 @@ loc_2D1E7:                              ; CODE XREF: sub_2D15C:loc_2D1D7↑j
                 jmp     loc_2D387
 ; ---------------------------------------------------------------------------
 
-loc_2D208:                              ; CODE XREF: sub_2D15C+96↑j
-                                        ; sub_2D15C+9C↑j ...
+loc_2D208:                              ; CODE XREF: RTLink_ensureOverlaySegmentLoaded+96↑j
+                                        ; RTLink_ensureOverlaySegmentLoaded+9C↑j ...
                 mov     si, [bx+2]
                 test    byte ptr [bx+7], 8
                 jz      short loc_2D213
                 mov     si, [si]
 
-loc_2D213:                              ; CODE XREF: sub_2D15C+B3↑j
+loc_2D213:                              ; CODE XREF: RTLink_ensureOverlaySegmentLoaded+B3↑j
                 call    near ptr sub_2D3B9
                 mov     dx, [bx+0Ah]
                 add     dx, 3
@@ -66843,7 +66844,7 @@ loc_2D213:                              ; CODE XREF: sub_2D15C+B3↑j
                 mov     ax, [di]
                 pop     di
 
-loc_2D255:                              ; CODE XREF: sub_2D15C+F1↑j
+loc_2D255:                              ; CODE XREF: RTLink_ensureOverlaySegmentLoaded+F1↑j
                 inc     ax
                 cmp     ax, word_2DB37
                 jnz     short loc_2D26B
@@ -66855,7 +66856,7 @@ loc_2D255:                              ; CODE XREF: sub_2D15C+F1↑j
                 pop     di
                 pop     es
 
-loc_2D26B:                              ; CODE XREF: sub_2D15C+FE↑j
+loc_2D26B:                              ; CODE XREF: RTLink_ensureOverlaySegmentLoaded+FE↑j
                 mov     bx, word_2D9CE
                 mov     ax, 4200h
                 int     21h             ; DOS - 2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
@@ -66875,14 +66876,14 @@ loc_2D26B:                              ; CODE XREF: sub_2D15C+FE↑j
                 sub     di, 1000h
                 neg     di
 
-loc_2D294:                              ; CODE XREF: sub_2D15C+15F↓j
+loc_2D294:                              ; CODE XREF: RTLink_ensureOverlaySegmentLoaded+15F↓j
                 jcxz    short loc_2D2D8
                 mov     ax, cx
                 cmp     ax, di
                 jbe     short loc_2D29E
                 mov     ax, di
 
-loc_2D29E:                              ; CODE XREF: sub_2D15C+13E↑j
+loc_2D29E:                              ; CODE XREF: RTLink_ensureOverlaySegmentLoaded+13E↑j
                 push    ax
                 push    cx
                 mov     cl, 4
@@ -66904,7 +66905,7 @@ loc_2D29E:                              ; CODE XREF: sub_2D15C+13E↑j
                 jmp     short loc_2D294
 ; ---------------------------------------------------------------------------
 
-loc_2D2BD:                              ; CODE XREF: sub_2D15C+129↑j
+loc_2D2BD:                              ; CODE XREF: RTLink_ensureOverlaySegmentLoaded+129↑j
                 push    ax
                 push    word ptr cs:[bx+8]
                 push    ds
@@ -66913,14 +66914,14 @@ loc_2D2BD:                              ; CODE XREF: sub_2D15C+129↑j
                 or      ax, ax
                 jz      short loc_2D2EA
 
-loc_2D2CD:                              ; CODE XREF: sub_2D15C+150↑j
-                                        ; sub_2D15C+201↓j ...
+loc_2D2CD:                              ; CODE XREF: RTLink_ensureOverlaySegmentLoaded+150↑j
+                                        ; RTLink_ensureOverlaySegmentLoaded+201↓j ...
                 mov     cx, 13Fh
                 mov     bx, cs:word_2CF46
                 jmp     loc_2D968
 ; ---------------------------------------------------------------------------
 
-loc_2D2D8:                              ; CODE XREF: sub_2D15C:loc_2D294↑j
+loc_2D2D8:                              ; CODE XREF: RTLink_ensureOverlaySegmentLoaded:loc_2D294↑j
                 mov     ax, ds
                 pop     ds
                 mov     bx, word_C89AA
@@ -66929,7 +66930,7 @@ loc_2D2D8:                              ; CODE XREF: sub_2D15C:loc_2D294↑j
                 add     dx, ax
                 call    sub_2D560
 
-loc_2D2EA:                              ; CODE XREF: sub_2D15C+16F↑j
+loc_2D2EA:                              ; CODE XREF: RTLink_ensureOverlaySegmentLoaded+16F↑j
                 mov     bx, word_C89AA
                 mov     dx, [bx+4]
                 mov     cl, [bx+6]
@@ -66954,7 +66955,7 @@ loc_2D2EA:                              ; CODE XREF: sub_2D15C+16F↑j
                 mov     ax, [di]
                 pop     di
 
-loc_2D31E:                              ; CODE XREF: sub_2D15C+1BA↑j
+loc_2D31E:                              ; CODE XREF: RTLink_ensureOverlaySegmentLoaded+1BA↑j
                 inc     ax
                 cmp     ax, word_C8B17
                 jnz     short loc_2D334
@@ -66966,21 +66967,21 @@ loc_2D31E:                              ; CODE XREF: sub_2D15C+1BA↑j
                 pop     di
                 pop     es
 
-loc_2D334:                              ; CODE XREF: sub_2D15C+1C7↑j
+loc_2D334:                              ; CODE XREF: RTLink_ensureOverlaySegmentLoaded+1C7↑j
                 mov     si, [bx+0Ah]
                 mov     bx, word_C89AE
                 mov     ax, 4200h
                 int     21h             ; DOS - 2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
                                         ; AL = method: offset from beginning of file
 
-loc_2D340:                              ; CODE XREF: sub_2D15C+229↓j
+loc_2D340:                              ; CODE XREF: RTLink_ensureOverlaySegmentLoaded+229↓j
                 mov     cx, si
                 jcxz    short loc_2D387
                 cmp     cx, 58h ; 'X'
                 jbe     short loc_2D34C
                 mov     cx, 58h ; 'X'
 
-loc_2D34C:                              ; CODE XREF: sub_2D15C+1EB↑j
+loc_2D34C:                              ; CODE XREF: RTLink_ensureOverlaySegmentLoaded+1EB↑j
                 sub     si, cx
                 push    si
                 push    cx
@@ -66995,19 +66996,19 @@ loc_2D34C:                              ; CODE XREF: sub_2D15C+1EB↑j
                 jmp     loc_2D2CD
 ; ---------------------------------------------------------------------------
 
-loc_2D360:                              ; CODE XREF: sub_2D15C+1FF↑j
+loc_2D360:                              ; CODE XREF: RTLink_ensureOverlaySegmentLoaded+1FF↑j
                 cmp     ax, cx
                 jz      short loc_2D367
                 jmp     loc_2D2CD
 ; ---------------------------------------------------------------------------
 
-loc_2D367:                              ; CODE XREF: sub_2D15C+206↑j
+loc_2D367:                              ; CODE XREF: RTLink_ensureOverlaySegmentLoaded+206↑j
                 mov     si, dx
                 mov     dx, word_C89A6
                 add     dx, 10h
                 pop     cx
 
-loc_2D371:                              ; CODE XREF: sub_2D15C+226↓j
+loc_2D371:                              ; CODE XREF: RTLink_ensureOverlaySegmentLoaded+226↓j
                 mov     ax, dx
                 add     ax, [si+2]
                 jb      short loc_2D37F
@@ -67015,22 +67016,22 @@ loc_2D371:                              ; CODE XREF: sub_2D15C+226↓j
                 mov     di, [si]
                 add     es:[di], dx
 
-loc_2D37F:                              ; CODE XREF: sub_2D15C+21A↑j
+loc_2D37F:                              ; CODE XREF: RTLink_ensureOverlaySegmentLoaded+21A↑j
                 add     si, 4
                 loop    loc_2D371
                 pop     si
                 jmp     short loc_2D340
 ; ---------------------------------------------------------------------------
 
-loc_2D387:                              ; CODE XREF: sub_2D15C+A9↑j
-                                        ; sub_2D15C+1E6↑j
+loc_2D387:                              ; CODE XREF: RTLink_ensureOverlaySegmentLoaded+A9↑j
+                                        ; RTLink_ensureOverlaySegmentLoaded+1E6↑j
                 mov     bx, word_C89AA
                 or      byte ptr [bx+7], 2
                 clc
                 push    cs
                 call    near ptr sub_2D0F0
 
-loc_2D394:                              ; CODE XREF: sub_2D15C+2D↑j
+loc_2D394:                              ; CODE XREF: RTLink_ensureOverlaySegmentLoaded+2D↑j
                 mov     bx, word_C89AA
                 mov     ax, [bx+0Ch]
                 pop     es
@@ -67046,21 +67047,21 @@ loc_2D394:                              ; CODE XREF: sub_2D15C+2D↑j
                 cmp     ax, 0FFFFh
                 jz      short loc_2D3B5
                 push    cs
-                call    near ptr sub_2D15C
+                call    near ptr RTLink_ensureOverlaySegmentLoaded
 
-loc_2D3B5:                              ; CODE XREF: sub_2D15C+246↑j
-                                        ; sub_2D15C+24E↑j ...
+loc_2D3B5:                              ; CODE XREF: RTLink_ensureOverlaySegmentLoaded+246↑j
+                                        ; RTLink_ensureOverlaySegmentLoaded+24E↑j ...
                 pop     bx
                 pop     ax
                 popf
                 retf
-sub_2D15C       endp ; sp-analysis failed
+RTLink_ensureOverlaySegmentLoaded endp ; sp-analysis failed
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2D3B9       proc far                ; CODE XREF: sub_2D15C:loc_2D213↑p
+sub_2D3B9       proc far                ; CODE XREF: RTLink_ensureOverlaySegmentLoaded:loc_2D213↑p
                                         ; sub_2D766+AA↓p
 
 ; FUNCTION CHUNK AT 0A28 SIZE 00000016 BYTES
@@ -67291,7 +67292,7 @@ loc_2D52E:                              ; CODE XREF: rtlink_thunk+57↑j
                 mov     ds, ax
                 mov     ax, cx
                 push    cs
-                call    near ptr sub_2D15C
+                call    near ptr RTLink_ensureOverlaySegmentLoaded
                 popf
                 pop     ds
                 assume ds:dseg
@@ -67309,7 +67310,7 @@ rtlink_thunk    endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2D550       proc near               ; CODE XREF: sub_2D15C+18↑p
+sub_2D550       proc near               ; CODE XREF: RTLink_ensureOverlaySegmentLoaded+18↑p
                                         ; sub_2D6F5+19↓p ...
                 push    ax
                 push    dx
@@ -67326,7 +67327,7 @@ sub_2D550       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2D560       proc near               ; CODE XREF: sub_2D15C+18B↑p
+sub_2D560       proc near               ; CODE XREF: RTLink_ensureOverlaySegmentLoaded+18B↑p
                                         ; sub_2D766+6D↓p
                 cmp     ax, dx
                 jz      short locret_2D597
@@ -67542,7 +67543,7 @@ sub_2D645       proc far                ; CODE XREF: seg062:0701↑p
                 push    cs
                 pop     ds
                 push    cs
-                call    near ptr sub_2D15C
+                call    near ptr RTLink_ensureOverlaySegmentLoaded
 
 loc_2D697:                              ; CODE XREF: sub_2D645+45↑j
                 pop     ds
@@ -67756,7 +67757,7 @@ loc_2D7F5:                              ; CODE XREF: sub_2D766+7E↑j
                 test    byte ptr [bx+7], 1
                 jz      short loc_2D7FF
                 push    cs
-                call    near ptr sub_2D15C
+                call    near ptr RTLink_ensureOverlaySegmentLoaded
 
 loc_2D7FF:                              ; CODE XREF: sub_2D766+93↑j
                 add     bx, 12h
@@ -67938,7 +67939,7 @@ loc_2D8F2:                              ; CODE XREF: sub_2D8CB+39↓j
                 lodsw
                 sub     cx, 2
                 push    cs
-                call    near ptr sub_2D15C
+                call    near ptr RTLink_ensureOverlaySegmentLoaded
                 call    sub_2D550
                 test    byte ptr es:[bx+7], 8
                 jz      short loc_2D8F2
@@ -68003,10 +68004,10 @@ loc_2D965:                              ; CODE XREF: seg062:0A09↑j
                 pop     bx
                 retf
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR sub_2D15C
+; START OF FUNCTION CHUNK FOR RTLink_ensureOverlaySegmentLoaded
 ;   ADDITIONAL PARENT FUNCTION sub_2D3B9
 
-loc_2D968:                              ; CODE XREF: sub_2D15C+179↑j
+loc_2D968:                              ; CODE XREF: RTLink_ensureOverlaySegmentLoaded+179↑j
                                         ; sub_2D3B9+44↑j ...
                 call    sub_2D98E
                 mov     dx, word_C89AC
@@ -68014,27 +68015,27 @@ loc_2D968:                              ; CODE XREF: sub_2D15C+179↑j
                 mov     dx, word_C7F20
                 mov     word_C8964, dx
                 jmp     dword ptr es:[si]
-; END OF FUNCTION CHUNK FOR sub_2D15C
+; END OF FUNCTION CHUNK FOR RTLink_ensureOverlaySegmentLoaded
 ; ---------------------------------------------------------------------------
 word_2D97E      dw 0                    ; DATA XREF: sub_2D98E+4↓w
 word_2D980      dw 0                    ; DATA XREF: sub_2D98E+11↓w
                 align 8
-; START OF FUNCTION CHUNK FOR sub_2D15C
+; START OF FUNCTION CHUNK FOR RTLink_ensureOverlaySegmentLoaded
 ;   ADDITIONAL PARENT FUNCTION rtlink_thunk
 ;   ADDITIONAL PARENT FUNCTION sub_2D5CF
 ;   ADDITIONAL PARENT FUNCTION sub_2D645
 
-loc_2D988:                              ; CODE XREF: sub_2D15C+56↑j
+loc_2D988:                              ; CODE XREF: RTLink_ensureOverlaySegmentLoaded+56↑j
                                         ; rtlink_thunk+41↑j ...
                 call    sub_2D98E
                 jmp     dword ptr es:[si]
-; END OF FUNCTION CHUNK FOR sub_2D15C
+; END OF FUNCTION CHUNK FOR RTLink_ensureOverlaySegmentLoaded
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2D98E       proc near               ; CODE XREF: sub_2D15C:loc_2D968↑p
-                                        ; sub_2D15C:loc_2D988↑p
+sub_2D98E       proc near               ; CODE XREF: RTLink_ensureOverlaySegmentLoaded:loc_2D968↑p
+                                        ; RTLink_ensureOverlaySegmentLoaded:loc_2D988↑p
                 mov     dx, cs
                 mov     ds, dx
                 assume ds:seg062
@@ -68066,34 +68067,34 @@ seg_2D9B4       dw seg seg062           ; DATA XREF: rtlink_thunk+45↑r
                                         ; sub_2D645+2E↑r
 word_2D9B6      dw 0                    ; DATA XREF: rtlink_thunk+31↑r
 aCPEpathA       db 'C,P,EPATH,A',0
-byte_2D9C4      db 0                    ; DATA XREF: sub_2D15C+91↑r
+byte_2D9C4      db 0                    ; DATA XREF: RTLink_ensureOverlaySegmentLoaded+91↑r
 byte_2D9C5      db 0                    ; DATA XREF: sub_2D3B9+8B↑r
                                         ; sub_2D3B9+C8↑r
 word_2D9C6      dw 0                    ; DATA XREF: sub_2D3B9+C5↑r
                                         ; start↑w ...
 word_2D9C8      dw 0                    ; DATA XREF: start+5↑w
-word_2D9CA      dw 0                    ; DATA XREF: sub_2D15C+1B↑w
-                                        ; sub_2D15C+5A↑r ...
+word_2D9CA      dw 0                    ; DATA XREF: RTLink_ensureOverlaySegmentLoaded+1B↑w
+                                        ; RTLink_ensureOverlaySegmentLoaded+5A↑r ...
 word_2D9CC      dw 0                    ; DATA XREF: sub_2D3B9+74↑r
                                         ; sub_2D3B9+9E↑r ...
-word_2D9CE      dw 0                    ; DATA XREF: sub_2D15C:loc_2D26B↑r
+word_2D9CE      dw 0                    ; DATA XREF: RTLink_ensureOverlaySegmentLoaded:loc_2D26B↑r
                                         ; sub_2D3B9+F7↑w ...
 word_2D9D0      dw 0                    ; DATA XREF: sub_2D6F5+2F↑r
                 db 160h dup(0)
-byte_2DB32      db 0FFh                 ; DATA XREF: sub_2D15C+248↑r
+byte_2DB32      db 0FFh                 ; DATA XREF: RTLink_ensureOverlaySegmentLoaded+248↑r
                                         ; sub_2D8CB+1C↑r ...
                 db 4 dup(0)
-word_2DB37      dw 0FFFFh               ; DATA XREF: sub_2D15C+FA↑r
+word_2DB37      dw 0FFFFh               ; DATA XREF: RTLink_ensureOverlaySegmentLoaded+FA↑r
                                         ; sub_2D3B9+78↑w ...
-off_2DB39       dd byte_31461           ; DATA XREF: sub_2D15C+102↑r
+off_2DB39       dd byte_31461           ; DATA XREF: RTLink_ensureOverlaySegmentLoaded+102↑r
                 db 19h, 0Ch, 1Fh, 0Ch, 12h, 0, 7, 1, 8, 2 dup(0Ch), 0Eh
                 db 2 dup(0), 20h, 90h
 word_2DB4D      dw 1                    ; DATA XREF: rtlink_thunk+10↑r
                                         ; rtlink_thunk+4B↑r
                 dw seg seg258
                 db 8 dup(0)
-word_2DB59      dw 3Bh                  ; DATA XREF: sub_2D15C+5E↑r
-                                        ; sub_2D15C+7F↑r ...
+word_2DB59      dw 3Bh                  ; DATA XREF: RTLink_ensureOverlaySegmentLoaded+5E↑r
+                                        ; RTLink_ensureOverlaySegmentLoaded+7F↑r ...
                 db 2 dup(0), 80h, 1, 0DFh, 33h, 0C7h, 11h, 3 dup(0), 4
                 db 48h, 3, 0A4h, 1, 2 dup(0FFh), 2, 0, 48h, 3, 0DFh, 33h
                 db 0C7h, 11h, 0B1h, 3, 0, 4, 43h, 3, 0C4h, 0, 2 dup(0FFh)
@@ -82534,7 +82535,7 @@ thunk_sub_BDF6C endp
 
 
 sub_3142F       proc far                ; CODE XREF: sub_2D0F2+21↑P
-                                        ; sub_2D15C+A1↑P ...
+                                        ; RTLink_ensureOverlaySegmentLoaded+A1↑P ...
                 stc
                 retf
 sub_3142F       endp
@@ -82543,8 +82544,8 @@ sub_3142F       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_31431       proc far                ; CODE XREF: sub_2D15C+3B↑P
-                                        ; sub_2D15C+47↑P ...
+sub_31431       proc far                ; CODE XREF: RTLink_ensureOverlaySegmentLoaded+3B↑P
+                                        ; RTLink_ensureOverlaySegmentLoaded+47↑P ...
                 push    ax
                 push    di
                 push    es
@@ -467005,8 +467006,8 @@ word_C869E      dw 0                    ; DATA XREF: sub_20FE0+113↑w
                 db    0
                 db    0
                 db    0
-word_C8962      dw 0                    ; DATA XREF: sub_2D15C+813↑w
-word_C8964      dw 0                    ; DATA XREF: sub_2D15C+81B↑w
+word_C8962      dw 0                    ; DATA XREF: RTLink_ensureOverlaySegmentLoaded+813↑w
+word_C8964      dw 0                    ; DATA XREF: RTLink_ensureOverlaySegmentLoaded+81B↑w
                 db    0
                 db    0
                 db    0
@@ -467073,14 +467074,14 @@ byte_C89A4      db 0                    ; DATA XREF: sub_2D0F2+C↑r
                                         ; sub_2D6F5:loc_2D75F↑w
 byte_C89A5      db 0                    ; DATA XREF: sub_2D3B9+2E↑r
                                         ; sub_2D766+B↑w
-word_C89A6      dw 0                    ; DATA XREF: sub_2D15C+20D↑r
+word_C89A6      dw 0                    ; DATA XREF: RTLink_ensureOverlaySegmentLoaded+20D↑r
                                         ; sub_2D3B9+7C↑r ...
 word_C89A8      dw 0                    ; DATA XREF: start+40↑r
-word_C89AA      dw 0                    ; DATA XREF: sub_2D15C+17F↑r
-                                        ; sub_2D15C:loc_2D2EA↑r ...
+word_C89AA      dw 0                    ; DATA XREF: RTLink_ensureOverlaySegmentLoaded+17F↑r
+                                        ; RTLink_ensureOverlaySegmentLoaded:loc_2D2EA↑r ...
 word_C89AC      dw 0                    ; DATA XREF: sub_2D3B9+9↑r
                                         ; sub_2D3B9+13↑r ...
-word_C89AE      dw 0                    ; DATA XREF: sub_2D15C+1DB↑r
+word_C89AE      dw 0                    ; DATA XREF: RTLink_ensureOverlaySegmentLoaded+1DB↑r
                                         ; sub_2D3B9+10↑r ...
                 db    0
                 db    0
@@ -467441,8 +467442,8 @@ word_C8B13      dw 0                    ; DATA XREF: sub_2D766+5E↑w
                                         ; sub_2D766+BA↑r
 word_C8B15      dw 0                    ; DATA XREF: sub_2D766+61↑w
                                         ; sub_2D766+CD↑r
-word_C8B17      dw 0                    ; DATA XREF: sub_2D15C+1C3↑r
-dword_C8B19     dd 0                    ; DATA XREF: sub_2D15C+1CB↑r
+word_C8B17      dw 0                    ; DATA XREF: RTLink_ensureOverlaySegmentLoaded+1C3↑r
+dword_C8B19     dd 0                    ; DATA XREF: RTLink_ensureOverlaySegmentLoaded+1CB↑r
                 db    0
                 db    0
                 db    0

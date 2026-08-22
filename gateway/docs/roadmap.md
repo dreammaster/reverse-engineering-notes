@@ -1194,6 +1194,16 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       side of `Logics_setEncounterFlag`, confirmed by identical table
       offsets. Full writeup in
       [overview.md](overview.md#logics_isencounterflagged-named--the-getter-side-of-logics_setencounterflag).
+- [x] Named `sub_2D15C` → `RTLink_ensureOverlaySegmentLoaded` — the
+      actual overlay-swap manager `rtlink_thunk` calls, and clarified
+      exactly how `rtlink_thunk` extracts its target: it peeks the
+      `jmp <target>` instruction's own operand bytes sitting right
+      after the near call, rather than using a conventional argument.
+      Operates on the already-declared `RTLinkSeg` struct. Several
+      helper calls (`sub_2D550`/`sub_31431`/`sub_2D0F2`/`sub_3142F`/
+      `sub_2D3B9`) not yet traced -- worth a dedicated future pass.
+      Full writeup in
+      [overview.md](overview.md#rtlink_ensureoverlaysegmentloaded-named--the-actual-overlay-manager-behind-rtlink_thunk).
 - [ ] `sub_170F6` (large, ~600+ bytes, spans past its own declared
       64-byte function boundary into unlabeled code before reaching
       `sub_175CD`) is the listbox rendering routine that reads
