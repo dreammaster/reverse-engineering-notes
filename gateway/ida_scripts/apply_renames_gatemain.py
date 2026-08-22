@@ -3719,6 +3719,24 @@ RENAMES = [
      "naming convention (F=far, N=near). Falls through into sub_1BECC, "
      "left unnamed (an internal continuation with its own further "
      "xrefs, not confirmed independently)."),
+
+    (0x80FCF, "Logics_warnBeckerDamage",
+     "sub_80FCF(logicNum): confirmed via its own GATESTR.DAT message "
+     "(0x800D) as the warning stage of damaging one of Becker's "
+     "constructions -- ties directly into the already-named "
+     "Logics_printBeckerJudgment's later clauses (which recite whether "
+     "the player 'needlessly dug up a grave' or similar instead of "
+     "using the ship's actuator, i.e. a comparable 'don't destroy "
+     "Becker's work' theme). Prints '<object> ... Becker's clearly put "
+     "a lot of time and work into constructing%s, so why aren't you "
+     "satisfied with it the way it is? Is it your intention to damage "
+     "everything he's striven for?' via j_printObj(logicNum, 2) + "
+     "TextWindow_add, sets word_CC804 to 100 (0x64 -- plausibly a "
+     "patience/tolerance countdown, not independently confirmed), then "
+     "queues event 0x2B via Queue_add with param 1. Called from "
+     "sub_819E6, sub_81CCC, and a third caller -- presumably reached "
+     "when the player tries to damage/vandalize the construction in "
+     "question."),
 ]
 
 

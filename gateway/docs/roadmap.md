@@ -1185,6 +1185,11 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       already-named `__aFldiv` (32-bit signed division), another
       instance of the duplicate-compiled-copy pattern. Full writeup in
       [overview.md](overview.md#__anldiv-named--another-duplicate-compiled-copy-instance).
+- [x] Named `sub_80FCF` → `Logics_warnBeckerDamage` — the warning
+      stage for damaging one of Becker's constructions, confirmed via
+      its own message and tying into the already-named
+      `Logics_printBeckerJudgment`. Full writeup in
+      [overview.md](overview.md#logics_warnbeckerdamage-named--ties-back-into-the-becker-morality-system).
 - [ ] `sub_170F6` (large, ~600+ bytes, spans past its own declared
       64-byte function boundary into unlabeled code before reaching
       `sub_175CD`) is the listbox rendering routine that reads

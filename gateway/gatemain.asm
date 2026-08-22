@@ -301987,7 +301987,7 @@ sub_80F93       endp
 
 ; Attributes: bp-based frame
 
-sub_80FCF       proc far                ; CODE XREF: sub_819E6+97↓P
+Logics_warnBeckerDamage proc far        ; CODE XREF: sub_819E6+97↓P
                                         ; sub_81CCC+537↓P ...
 
 arg_0           = word ptr  6
@@ -302018,7 +302018,7 @@ arg_0           = word ptr  6
                 add     sp, 4
                 pop     bp
                 retf
-sub_80FCF       endp
+Logics_warnBeckerDamage endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -303560,7 +303560,7 @@ loc_81A74:                              ; CODE XREF: sub_819E6+25↑j
                 mov     es, seg_D150A
                 assume es:seg126
                 push    es:word_4DF9A
-                call    sub_80FCF
+                call    Logics_warnBeckerDamage
                 add     sp, 2
                 jmp     short loc_81A6F
 ; ---------------------------------------------------------------------------
@@ -304513,7 +304513,7 @@ loc_821FA:                              ; CODE XREF: sub_81CCC+3D↑j
                 mov     es, seg_D150A
                 assume es:seg126
                 push    es:word_4DF9A
-                call    sub_80FCF
+                call    Logics_warnBeckerDamage
                 jmp     loc_8202C
 ; ---------------------------------------------------------------------------
 
@@ -304781,7 +304781,7 @@ loc_8238D:                              ; CODE XREF: sub_82348+2A↑j
 loc_823B9:                              ; CODE XREF: sub_82348+20↑j
                 mov     es, seg_D150A
                 push    es:word_4DF9A
-                call    sub_80FCF
+                call    Logics_warnBeckerDamage
                 add     sp, 2
                 jmp     short loc_82387
 ; ---------------------------------------------------------------------------
@@ -304866,7 +304866,7 @@ loc_82456:                              ; CODE XREF: sub_8241D+50↓j
 loc_8245C:                              ; CODE XREF: sub_8241D+22↑j
                 mov     es, seg_D150A
                 push    es:word_4DF9A
-                call    sub_80FCF
+                call    Logics_warnBeckerDamage
 
 loc_8246A:                              ; CODE XREF: sub_8241D+FE↓j
                 add     sp, 2
@@ -305780,7 +305780,7 @@ loc_82B9C:                              ; CODE XREF: sub_82878+2FD↑j
 loc_82BA2:                              ; CODE XREF: sub_82878+27↑j
                 mov     es, seg_D150A
                 push    es:word_4DF9A
-                call    sub_80FCF
+                call    Logics_warnBeckerDamage
                 jmp     loc_82AFF
 ; ---------------------------------------------------------------------------
 
@@ -309512,7 +309512,7 @@ loc_843B8:                              ; CODE XREF: sub_84319+28↑j
                 mov     es, seg_D151C
                 assume es:seg126
                 push    es:word_4DF9A
-                call    sub_80FCF
+                call    Logics_warnBeckerDamage
                 add     sp, 2
                 jmp     short loc_8438C
 ; ---------------------------------------------------------------------------
@@ -309977,7 +309977,7 @@ loc_84754:                              ; CODE XREF: sub_843E1+360↑j
 loc_847A5:                              ; CODE XREF: sub_843E1+2D↑j
                 mov     es, seg_D151C
                 push    es:word_4DF9A
-                call    sub_80FCF
+                call    Logics_warnBeckerDamage
                 jmp     loc_8460F
 ; ---------------------------------------------------------------------------
 
@@ -310206,7 +310206,7 @@ loc_848E3:                              ; CODE XREF: sub_84892+2E↑j
 loc_848E8:                              ; CODE XREF: sub_84892+24↑j
                 mov     es, seg_D151C
                 push    es:word_4DF9A
-                call    sub_80FCF
+                call    Logics_warnBeckerDamage
                 add     sp, 2
                 jmp     short loc_848D4
 ; ---------------------------------------------------------------------------
@@ -310372,7 +310372,7 @@ loc_84A00:                              ; CODE XREF: sub_84913+E8↑j
 loc_84A2E:                              ; CODE XREF: sub_84913+2F↑j
                 mov     es, seg_D151C
                 push    es:word_4DF9A
-                call    sub_80FCF
+                call    Logics_warnBeckerDamage
                 add     sp, 2
                 jmp     loc_84958
 ; ---------------------------------------------------------------------------
@@ -317532,7 +317532,7 @@ loc_87D57:                              ; CODE XREF: sub_87CDF+20↑j
 loc_87D73:                              ; CODE XREF: sub_87CDF+1B↑j
                 mov     es, seg_D155E
                 push    es:word_4DF9A
-                call    sub_80FCF
+                call    Logics_warnBeckerDamage
                 add     sp, 2
                 jmp     short loc_87D52
 ; ---------------------------------------------------------------------------
@@ -320806,7 +320806,7 @@ loc_893BD:                              ; CODE XREF: sub_892FE+27↑j
                                         ; sub_892FE+2F↑j ...
                 mov     es, seg_D159E
                 push    es:word_4DF9A
-                call    sub_80FCF
+                call    Logics_warnBeckerDamage
                 add     sp, 2
                 jmp     loc_89348
 ; ---------------------------------------------------------------------------
@@ -321340,7 +321340,7 @@ loc_89722:                              ; CODE XREF: sub_895F8+27↑j
                                         ; sub_895F8+34↑j
                 mov     es, seg_D159E
                 push    es:word_4DF9A
-                call    sub_80FCF
+                call    Logics_warnBeckerDamage
                 jmp     short loc_896D0
 ; ---------------------------------------------------------------------------
 
@@ -321533,7 +321533,7 @@ loc_89864:                              ; CODE XREF: sub_8977A+2F↑j
                                         ; sub_8977A+37↑j ...
                 mov     es, seg_D159E
                 push    es:word_4DF9A
-                call    sub_80FCF
+                call    Logics_warnBeckerDamage
                 add     sp, 2
                 jmp     short loc_89802
 ; ---------------------------------------------------------------------------
@@ -321686,7 +321686,7 @@ loc_8995E:                              ; CODE XREF: sub_898CD+25↑j
                                         ; sub_898CD+34↑j
                 mov     es, seg_D159E
                 push    es:word_4DF9A
-                call    sub_80FCF
+                call    Logics_warnBeckerDamage
                 add     sp, 2
                 jmp     short loc_89931
 ; ---------------------------------------------------------------------------
@@ -321876,7 +321876,7 @@ loc_89A90:                              ; CODE XREF: sub_89A4B+18↑j
                                         ; sub_89A4B+27↑j
                 mov     es, seg_D159E
                 push    es:word_4DF9A
-                call    sub_80FCF
+                call    Logics_warnBeckerDamage
                 add     sp, 2
                 jmp     short loc_89A8B
 ; ---------------------------------------------------------------------------
@@ -491551,7 +491551,7 @@ seg_D14EE       dw seg dseg             ; DATA XREF: sub_8014E+BC↑r
 seg_D14F0       dw seg dseg             ; DATA XREF: sub_8014E+455↑r
 seg_D14F2       dw seg seg126           ; DATA XREF: sub_30D27+4FD6C↑r
 seg_D14F4       dw seg seg102           ; DATA XREF: seg176:0011↑r
-seg_D14F6       dw seg dseg             ; DATA XREF: sub_80FCF+24↑r
+seg_D14F6       dw seg dseg             ; DATA XREF: Logics_warnBeckerDamage+24↑r
 seg_D14F8       dw seg seg126           ; DATA XREF: sub_810A0:loc_810D6↑r
                                         ; sub_810A0:loc_81232↑r ...
 seg_D14FA       dw seg dseg             ; DATA XREF: sub_810A0+5A↑r

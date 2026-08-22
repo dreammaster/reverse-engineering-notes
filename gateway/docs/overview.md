@@ -4970,3 +4970,18 @@ Falls through into `sub_1BECC`, left unnamed (an internal continuation
 with its own further cross-references, not independently confirmed).
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-sixtieth batch.
+
+### `Logics_warnBeckerDamage` named — ties back into the Becker morality system
+
+`sub_80FCF` (15 callers). Confirmed via its own message as the warning
+stage of damaging one of Becker's constructions — connecting directly
+to the already-named `Logics_printBeckerJudgment`'s "don't destroy
+Becker's work" theme from a few passes ago. Prints *"Becker's clearly
+put a lot of time and work into constructing `<object>`, so why aren't
+you satisfied with it the way it is? Is it your intention to damage
+everything he's striven for?"*, sets `word_CC804` to `100` (plausibly a
+patience/tolerance countdown, not independently confirmed), and queues
+event `0x2B` — presumably reached when the player starts
+damaging/vandalizing the construction in question.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-sixty-first batch.
