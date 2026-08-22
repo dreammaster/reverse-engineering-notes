@@ -2092,6 +2092,23 @@ RENAMES = [
      "the TZ environment variable's trailing letters, or cleared to an "
      "empty string if the TZ value has no DST suffix. Defaults to the "
      "literal string 'PDT' (aPdt)."),
+
+    (0x1B8F0, "_isindst",
+     "sub_1B8F0(tm): another sibling of the just-named _tzset cluster "
+     "(called from the already-named _ftime and __dtoxtime). Reads a "
+     "0-based month field at tm+8: month<3 (before April) or month>9 "
+     "(after October) returns 0 immediately (never DST); month strictly "
+     "between 3 and 9 (May-September inclusive) returns 1 immediately "
+     "(always DST) -- exactly the pre-2007 US DST rule (first Sunday "
+     "of April through last Sunday of October). For the two boundary "
+     "months (3=April, 9=October) it computes the weekday of a "
+     "reference date via a classic day-of-week formula (year field at "
+     "tm+0Ah, *365 plus leap-day correction, /7) to find that month's "
+     "first (April) or last (October) Sunday, then compares tm's day-"
+     "of-month (tm+0Eh) and what's plausibly an hour field (tm+4, "
+     "checked against the 2am DST-transition hour) against it to "
+     "decide which side of the transition the given date/time falls "
+     "on. This is the standard MSC runtime `_isindst()`."),
 ]
 
 

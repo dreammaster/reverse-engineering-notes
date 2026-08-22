@@ -26424,7 +26424,7 @@ loc_1B787:                              ; CODE XREF: _ftime+72\u2191j
                 lea     ax, [bp+var_12]
                 push    ss
                 push    ax
-                call    sub_1B8F0
+                call    _isindst
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_1B7FE
@@ -26582,7 +26582,7 @@ _tzset          endp
 
 ; Attributes: bp-based frame
 
-sub_1B8F0       proc far                ; CODE XREF: _ftime+E3\u2191P
+_isindst        proc far                ; CODE XREF: _ftime+E3\u2191P
                                         ; __dtoxtime+102\u2193P ...
 
 var_6           = word ptr -6
@@ -26599,13 +26599,13 @@ arg_0           = dword ptr  6
                 jmp     loc_1B9CB
 ; ---------------------------------------------------------------------------
 
-loc_1B904:                              ; CODE XREF: sub_1B8F0+F\u2191j
+loc_1B904:                              ; CODE XREF: _isindst+F\u2191j
                 cmp     word ptr es:[bx+8], 9
                 jle     short loc_1B90E
                 jmp     loc_1B9CB
 ; ---------------------------------------------------------------------------
 
-loc_1B90E:                              ; CODE XREF: sub_1B8F0+19\u2191j
+loc_1B90E:                              ; CODE XREF: _isindst+19\u2191j
                 cmp     word ptr es:[bx+8], 3
                 jle     short loc_1B91F
                 cmp     word ptr es:[bx+8], 9
@@ -26613,8 +26613,8 @@ loc_1B90E:                              ; CODE XREF: sub_1B8F0+19\u2191j
                 jmp     loc_1B9B0
 ; ---------------------------------------------------------------------------
 
-loc_1B91F:                              ; CODE XREF: sub_1B8F0+23\u2191j
-                                        ; sub_1B8F0+2A\u2191j
+loc_1B91F:                              ; CODE XREF: _isindst+23\u2191j
+                                        ; _isindst+2A\u2191j
                 mov     si, es:[bx+0Ah]
                 add     si, 76Ch
                 cmp     si, 7C2h
@@ -26629,20 +26629,20 @@ loc_1B91F:                              ; CODE XREF: sub_1B8F0+23\u2191j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1B944:                              ; CODE XREF: sub_1B8F0+3B\u2191j
-                                        ; sub_1B8F0+42\u2191j
+loc_1B944:                              ; CODE XREF: _isindst+3B\u2191j
+                                        ; _isindst+42\u2191j
                 mov     bx, word ptr [bp+arg_0]
                 mov     bx, es:[bx+8]
                 shl     bx, 1
                 mov     ax, [bx+3826h]
 
-loc_1B951:                              ; CODE XREF: sub_1B8F0+51\u2191j
+loc_1B951:                              ; CODE XREF: _isindst+51\u2191j
                 mov     [bp+var_6], ax
                 test    si, 3
                 jnz     short loc_1B95D
                 inc     [bp+var_6]
 
-loc_1B95D:                              ; CODE XREF: sub_1B8F0+68\u2191j
+loc_1B95D:                              ; CODE XREF: _isindst+68\u2191j
                 les     bx, [bp+arg_0]
                 mov     si, es:[bx+0Ah]
                 sub     si, 46h ; 'F'
@@ -26676,14 +26676,14 @@ loc_1B95D:                              ; CODE XREF: sub_1B8F0+68\u2191j
                 cmp     word ptr es:[bx+4], 2
                 jl      short loc_1B9CB
 
-loc_1B9B0:                              ; CODE XREF: sub_1B8F0+2C\u2191j
-                                        ; sub_1B8F0+B5\u2191j ...
+loc_1B9B0:                              ; CODE XREF: _isindst+2C\u2191j
+                                        ; _isindst+B5\u2191j ...
                 mov     ax, 1
                 jmp     short loc_1B9CD
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1B9B6:                              ; CODE XREF: sub_1B8F0+AF\u2191j
+loc_1B9B6:                              ; CODE XREF: _isindst+AF\u2191j
                 les     bx, [bp+arg_0]
                 mov     ax, [bp+var_2]
                 cmp     es:[bx+0Eh], ax
@@ -26692,16 +26692,16 @@ loc_1B9B6:                              ; CODE XREF: sub_1B8F0+AF\u2191j
                 cmp     word ptr es:[bx+4], 1
                 jl      short loc_1B9B0
 
-loc_1B9CB:                              ; CODE XREF: sub_1B8F0+11\u2191j
-                                        ; sub_1B8F0+1B\u2191j ...
+loc_1B9CB:                              ; CODE XREF: _isindst+11\u2191j
+                                        ; _isindst+1B\u2191j ...
                 sub     ax, ax
 
-loc_1B9CD:                              ; CODE XREF: sub_1B8F0+C3\u2191j
+loc_1B9CD:                              ; CODE XREF: _isindst+C3\u2191j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_1B8F0       endp
+_isindst        endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -26842,7 +26842,7 @@ loc_1BA20:                              ; CODE XREF: __dtoxtime+45\u2191j
                 lea     ax, [bp+var_12]
                 push    ss
                 push    ax
-                call    sub_1B8F0
+                call    _isindst
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_1BAE9
@@ -28538,7 +28538,7 @@ loc_1C51C:                              ; CODE XREF: _localtime+38\u2191j
                 jz      short loc_1C55A
                 push    word ptr [bp+var_4+2]
                 push    word ptr [bp+var_4]
-                call    sub_1B8F0
+                call    _isindst
                 add     sp, 4
                 or      ax, ax
                 jz      short loc_1C55A

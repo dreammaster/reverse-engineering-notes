@@ -757,6 +757,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       the literal `"TZ"` getenv string and default `"PST"`/`"PDT"`/
       28800-second data. Full writeup in
       [overview.md](overview.md#_tzset-and-the-timezone-globals-named).
+- [x] Named `sub_1B8F0` (3 callers) → `_isindst` — implements the
+      pre-2007 US DST rule (first Sunday of April to last Sunday of
+      October), closing out the `_tzset` cluster. Full writeup in
+      [overview.md](overview.md#_isindst-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

@@ -2978,3 +2978,25 @@ globals IDA represents as two `word_` symbols (see
 `_playerCreditsLo`/`_playerCreditsHi`).
 
 Applied via `apply_renames_gatemain.py`'s eightieth batch.
+
+### `_isindst` named
+
+Moved to `sub_1B8F0` (3 callers, another sibling of the `_tzset`
+cluster, called from the already-named `_ftime` and `__dtoxtime`).
+Reads a 0-based month field at `tm+8`: month < 3 (before April) or
+month > 9 (after October) returns 0 immediately (never DST); month
+strictly between 3 and 9 (May through September inclusive) returns 1
+immediately (always DST) — exactly the pre-2007 US DST rule (Daylight
+Saving Time ran from the first Sunday of April through the last Sunday
+of October before the 2007 rule change). For the two boundary months
+(3 = April, 9 = October) it computes the weekday of a reference date
+via a classic day-of-week formula (a year field at `tm+0Ah`, times 365
+plus a leap-day correction, divided by 7) to find that month's first
+(April) or last (October) Sunday, then compares the date's day-of-month
+(`tm+0Eh`) and what's plausibly an hour field (`tm+4`, checked against
+the 2am DST-transition hour) against it to decide which side of the
+transition the given date/time falls on. This is the standard MSC
+runtime `_isindst()`, closing out the `_tzset`/timezone-globals cluster
+from the previous pass.
+
+Applied via `apply_renames_gatemain.py`'s eighty-first batch.
