@@ -2994,6 +2994,17 @@ RENAMES = [
      "else use the slow generic one' optimization pattern for "
      "horizontal pixel-span writing shared by line and rectangle "
      "drawing."),
+
+    (0x2137A, "Memory_fillBytes",
+     "sub_2137A(ptr, fillByte, count): a near-callable 'fill a buffer "
+     "with a repeated byte' helper -- word-aligns the destination "
+     "(storing one byte first if the pointer is odd), fills whole "
+     "words via rep stosw, then any trailing odd byte via rep stosb. "
+     "Similar in spirit to the already-named _memset but not the same "
+     "implementation (no segment-wraparound handling for buffers "
+     "crossing a 64K boundary, and a simpler alignment check) -- a "
+     "distinct, private near-call helper rather than a duplicate-"
+     "compiled copy. Called from sub_20D4F and sub_2139D."),
 ]
 
 

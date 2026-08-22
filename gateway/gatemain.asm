@@ -38852,7 +38852,7 @@ sub_20D4F       proc near               ; CODE XREF: seg102:010D\u2193P
                 mov     [bp-0Eh], ax
                 mov     [bp-0Ch], ax
                 mov     dx, 800h
-                call    sub_2137A
+                call    Memory_fillBytes
                 les     bx, dword_C8694
                 mov     word ptr es:[bx+4], 0
 
@@ -39773,7 +39773,7 @@ ictureDecoder_copyBlock endp
 
 ; Attributes: bp-based frame
 
-sub_2137A       proc near               ; CODE XREF: sub_20D4F+17\u2191p
+Memory_fillBytes proc near              ; CODE XREF: sub_20D4F+17\u2191p
                                         ; sub_2139D+56\u2193p
 
 arg_0           = dword ptr  4
@@ -39790,17 +39790,17 @@ arg_0           = dword ptr  4
                 stosb
                 dec     cx
 
-loc_2138F:                              ; CODE XREF: sub_2137A+11\u2191j
+loc_2138F:                              ; CODE XREF: Memory_fillBytes+11\u2191j
                 shr     cx, 1
                 rep stosw
                 shl     cx, 1
                 rep stosb
 
-loc_21397:                              ; CODE XREF: sub_2137A+6\u2191j
+loc_21397:                              ; CODE XREF: Memory_fillBytes+6\u2191j
                 pop     di
                 pop     bp
                 retn    4
-sub_2137A       endp
+Memory_fillBytes endp
 
 ; ---------------------------------------------------------------------------
                 db 0F7h
@@ -39846,7 +39846,7 @@ var_1           = byte ptr -1
                 push    ax
                 sub     ax, ax
                 mov     dx, 802h
-                call    sub_2137A
+                call    Memory_fillBytes
                 les     bx, dword_C8694
                 cmp     word ptr es:[bx+2], 0
                 jnz     short loc_21406

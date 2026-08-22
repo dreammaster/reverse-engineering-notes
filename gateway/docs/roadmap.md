@@ -987,6 +987,9 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       shared fast/generic pixel-span rasterizer dispatcher behind
       `Screen_drawLine`/`Screen_fillRect`. Full writeup in
       [overview.md](overview.md#screen_dispatchspanfill-named).
+- [x] Named `sub_2137A` (2 callers) → `Memory_fillBytes` — a private
+      near-call buffer-fill helper distinct from `_memset`. Full
+      writeup in [overview.md](overview.md#memory_fillbytes-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

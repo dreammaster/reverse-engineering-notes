@@ -19522,6 +19522,7 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_byte	(0X21379);
 	create_insn	(0X2137A);
+	set_name	(0X2137A,	"Memory_fillBytes");
 	create_insn	(x=0X21382);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X21387);
@@ -23375,8 +23376,6 @@ static Bytes_3(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X24487);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X2448E);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -23386,6 +23385,8 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X2448E);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X24491);
 	op_stroff	(x,	0,	GetStrucIdByName("HandleEntry"),	0);
 	op_enum		(x,	1,	GetEnum("HFLAG"),0);
@@ -29021,8 +29022,6 @@ static Bytes_4(void) {
 	create_insn	(x=0X2899D);
 	op_dec		(x,	1);
 	set_name	(0X2899D,	"Speaker_playErrorBeep");
-	create_insn	(x=0X289A3);
-	op_dec		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -29032,6 +29031,8 @@ static Bytes_5(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X289A3);
+	op_dec		(x,	1);
 	create_insn	(x=0X289AB);
 	op_hex		(x,	1);
 	create_insn	(x=0X289AE);
@@ -33981,8 +33982,6 @@ static Bytes_5(void) {
 	create_insn	(x=0X2C57A);
 	op_hex		(x,	1);
 	create_insn	(0X2C58D);
-	create_insn	(x=0X2C595);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -33992,6 +33991,8 @@ static Bytes_6(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X2C595);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X2C598);
 	op_hex		(x,	1);
 	create_insn	(x=0X2C59A);
@@ -38126,8 +38127,6 @@ static Bytes_6(void) {
 	create_word	(0X30DE3);
 	create_insn	(0X30DE5);
 	set_name	(0X30DE5,	"thunk_sub_C1C94");
-	create_word	(0X30DED);
-	create_insn	(0X30DEF);
 }
 
 //------------------------------------------------------------------------
@@ -38137,6 +38136,8 @@ static Bytes_7(void) {
         auto x;
 #define id x
 
+	create_word	(0X30DED);
+	create_insn	(0X30DEF);
 	create_word	(0X30DF7);
 	create_insn	(0X30DF9);
 	create_word	(0X30E01);

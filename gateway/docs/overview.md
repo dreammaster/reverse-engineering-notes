@@ -3988,3 +3988,18 @@ optimization pattern for horizontal pixel-span writing shared by line
 and rectangle drawing.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-thirty-first batch.
+
+### `Memory_fillBytes` named
+
+Moved to `sub_2137A` (2 callers) — a near-callable "fill a buffer with
+a repeated byte" helper: word-aligns the destination (storing one byte
+first if the pointer is odd), fills whole words via `rep stosw`, then
+any trailing odd byte via `rep stosb`. Similar in spirit to the
+already-named `_memset` but not the same implementation (no segment-
+wraparound handling for buffers crossing a 64K boundary, and a simpler
+alignment check) — a distinct, private near-call helper rather than a
+duplicate-compiled copy.
+
+Called from `sub_20D4F` and `sub_2139D`.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-thirty-second batch.
