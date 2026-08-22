@@ -1073,6 +1073,12 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       artifacts (three color variants), confirmed via its own
       floating/glowing description messages. Full writeup in
       [overview.md](overview.md#logics_examineprayerfan-named--the-crystalline-heechee-prayer-fans).
+- [x] Named `sub_BF410` → `Logics_insertPrayerFan` — the resolution
+      mechanic for the three-prayer-fan puzzle: cross-matched fan/slot
+      insertion, a light-show animation per correct fan, and a
+      device-detaches/score-bonus/victory-music payoff once all three
+      are placed. Full writeup in
+      [overview.md](overview.md#logics_insertprayerfan-named--solving-the-three-prayer-fan-puzzle).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

@@ -3390,6 +3390,32 @@ RENAMES = [
      "discovery-only flavor line. Finishes by clearing a shared bit "
      "(index 8) on all three fan objects (0x285/0x286/0x287). One of "
      "Gateway's classic collectible-artifact puzzles."),
+
+    (0xBF410, "Logics_insertPrayerFan",
+     "sub_BF410(action=4/5/6): the companion handler to the just-named "
+     "Logics_examinePrayerFan, for logic IDs 0x289/0x28A/0x28B -- "
+     "confirmed via its own GATESTR.DAT messages as the resolution "
+     "mechanic for Gateway's three-prayer-fan puzzle. The device itself "
+     "(described via a shared message 0x282D) has 'three colored slots "
+     "on top ... below each of them is an intense light. Under the red "
+     "slot is a purple light, under the blue slot is a green light, "
+     "and under the yellow slot is an orange light' -- a deliberately "
+     "cross-matched slot/light color puzzle. On a correct insertion "
+     "(verified via Logics_IsPrehandler1 checks and a thunk_sub_67867 "
+     "gate with several vocab-id arguments, not independently decoded), "
+     "prints 'You insert%s into%s. The %s light flares brilliantly. "
+     "You hear a mechanical click...the fan slowly descends into the "
+     "machine' (msg 0x2832), loads two Stream_loadFile animation "
+     "resources, awards 5 points via Score_add, then checks whether "
+     "all three fan/slot pairs (0x289-0x286, 0x28B-0x285, 0x28A-0x287 "
+     "-- the actual cross-matched correct pairing) are now satisfied. "
+     "If so: prints the puzzle's climax, 'The machine suddenly detaches "
+     "itself from the platform, levitates...You pluck the machine out "
+     "of the air' (msg 0x2833), reassigns the whole device (logic "
+     "0x288) to the player via j_Logics_updateHandler, awards a 25-"
+     "point bonus via Score_add, and plays a victory music track via "
+     "Sound_selectTrack. One of Gateway's best-known puzzle payoffs, "
+     "now fully confirmed end to end."),
 ]
 
 

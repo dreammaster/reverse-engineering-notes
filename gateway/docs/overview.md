@@ -4489,3 +4489,42 @@ core artifact and its floating/glowing presentation are now solidly
 confirmed.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-forty-seventh batch.
+
+### `Logics_insertPrayerFan` named — solving the three-prayer-fan puzzle
+
+`sub_BF410` (3 callers, 1295 bytes — the largest function named this
+session). The companion handler to `Logics_examinePrayerFan`, for
+logic IDs `0x289`/`0x28A`/`0x28B` this time. Confirmed via its own
+messages as **the resolution mechanic for Gateway's classic
+three-prayer-fan puzzle**, and a genuinely satisfying one to nail down
+end to end.
+
+The device itself is described (shared message `0x282D`): *"There are
+three colored slots on top of the Heechee device, and below each of
+them is an intense light. Under the red slot is a purple light, under
+the blue slot is a green light, and under the yellow slot is an
+orange light."* — a deliberately **cross-matched** color puzzle (the
+fan's own color doesn't match the slot it belongs in).
+
+On a correct insertion, it prints *"You insert `<fan>` into `<slot>`.
+The `<color>` light flares brilliantly. You hear a mechanical click,
+followed by a whining sound, and then the fan slowly descends into the
+machine..."*, plays two loaded animation resources, and awards 5
+points. It then checks whether **all three** fan/slot pairs are
+correctly filled — confirmed as `0x289`↔`0x286`, `0x28B`↔`0x285`,
+`0x28A`↔`0x287`, the actual (non-obvious) correct cross-pairing. If
+so, it prints the puzzle's payoff: *"The machine suddenly detaches
+itself from the platform, levitates a few centimeters in the air, and
+begins spinning around all of its axes. You pluck the machine out of
+the air."* — reassigns the whole device (logic `0x288`) to the player,
+awards a 25-point bonus, and plays a victory music track via
+`Sound_selectTrack`.
+
+Not every branch was traced instruction-by-instruction (a
+`thunk_sub_67867` gate taking several vocab-ID arguments wasn't
+independently decoded), but the puzzle's shape — insert three fans
+into their cross-matched slots, watch the light show, then get
+rewarded with a portable device and a real score bonus — is now fully
+confirmed by direct message evidence.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-forty-eighth batch.
