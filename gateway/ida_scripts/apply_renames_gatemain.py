@@ -3524,6 +3524,40 @@ RENAMES = [
      "reached. Called once per tick from the just-named "
      "Opl2_serviceTick and from sub_1E7D4 (unnamed, reached via a data "
      "table entry -- presumably where a glide is first kicked off)."),
+
+    (0x1EFA6, "Midi_processMetaEvent",
+     "sub_1EFA6(trackIndex): peeks the current MIDI meta-event type "
+     "byte (via the already-named Midi_peekTrackByte) and dispatches: "
+     "type 0x2F (End of Track) sends MIDI 'Stop' (0xFC) via the "
+     "already-named Midi_sendByte and returns 0 (stop parsing this "
+     "track); type 0x51 (Set Tempo), after the first occurrence "
+     "(word_C8536 counts them), calls the just-named "
+     "Midi_processTempoChange; type 0x58 (Time Signature) calls "
+     "sub_1EF52 (unnamed); type 0x03 (Track Name) calls sub_1EF7C "
+     "(unnamed); any other meta-event type sends MIDI Timing Clock "
+     "(0xF8) and skips over the event's payload via the already-named "
+     "Midi_readVarLengthValue, advancing this track's event-count and "
+     "cumulative-delta-time entries in a small per-track array at "
+     "0xA1A4. The standard 'handle whichever MIDI meta-event is next in "
+     "this track's data' dispatcher, called from sub_1F2B4."),
+
+    (0x1EE70, "Midi_processTempoChange",
+     "sub_1EE70(trackIndex): handles a MIDI Set-Tempo meta-event after "
+     "the track's first one (the just-named Midi_processMetaEvent only "
+     "calls this on the second and later occurrence). Reads the "
+     "standard 3-byte big-endian tempo payload via 3 calls to the "
+     "already-named Midi_peekTrackByte combined with shl32, computes a "
+     "scaled value from it via a 32-bit multiply (__aFlmul, against a "
+     "fixed constant and word_D20F4) then divide (__aFldiv), and sends "
+     "the low byte of the result as a MIDI Pitch Bend command (channel "
+     "0, 0xE0) via the already-named Midi_sendCommand/Midi_sendByte -- "
+     "a clever hardware trick to communicate a mid-song tempo change to "
+     "the MPU-401 despite it having no native 'change tempo' command "
+     "(only confirmed by direct MIDI status-byte semantics, not by any "
+     "explanatory comment or message). Finishes the same way every "
+     "meta-event handler does: advances this track's event-count/delta-"
+     "time entries in the per-track array at 0xA1A4 via the "
+     "already-named Midi_readVarLengthValue."),
 ]
 
 

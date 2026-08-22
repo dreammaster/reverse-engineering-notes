@@ -1096,6 +1096,12 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       confirmed via the already-named Sound_serviceTick. Full writeup
       in
       [overview.md](overview.md#opl2_servicetickopl2_updateglidestep-named--closing-out-the-opl2-tick-service-side).
+- [x] Named `sub_1EFA6`/`sub_1EE70` → `Midi_processMetaEvent`/
+      `Midi_processTempoChange` — the MIDI meta-event dispatcher
+      (End-of-Track/Set-Tempo/Time-Signature/Track-Name) and its
+      mid-song tempo-change handler, which sends a computed value via
+      a MIDI Pitch Bend command as a hardware trick. Full writeup in
+      [overview.md](overview.md#midi_processmetaeventmidi_processtempochange-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

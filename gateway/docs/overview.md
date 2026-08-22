@@ -4640,3 +4640,29 @@ the already-documented MIDI tick-service side from earlier this
 session.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-fifty-first batch.
+
+### `Midi_processMetaEvent`/`Midi_processTempoChange` named
+
+`sub_1EFA6` (2 callers, called from `sub_1F2B4`) peeks the current
+MIDI meta-event type byte and dispatches: type `0x2F` (End of Track)
+sends MIDI "Stop" and stops parsing this track; type `0x51` (Set
+Tempo), after the track's first occurrence (a counter gates it),
+calls **`Midi_processTempoChange`**; type `0x58` (Time Signature) and
+type `0x03` (Track Name) each go to their own still-unnamed helpers;
+any other type sends MIDI Timing Clock and skips over the event's
+payload via the already-named `Midi_readVarLengthValue`. Named
+**`Midi_processMetaEvent`** — the standard "handle whichever MIDI
+meta-event is next in this track's data" dispatcher.
+
+`Midi_processTempoChange` (was `sub_1EE70`) handles a Set-Tempo
+meta-event once the track has already seen its first one. It reads
+the standard 3-byte big-endian tempo payload, computes a scaled value
+from it via a 32-bit multiply/divide, and sends the result as a MIDI
+Pitch Bend command (channel 0) — a clever hardware trick to
+communicate a mid-song tempo change to the MPU-401, which has no
+native "change tempo" command. This interpretation is confirmed only
+by the literal MIDI status-byte semantics (command `0xE0` is Pitch
+Bend), not by any comment or message text, so it's flagged as a
+structural read rather than a narratively-confirmed one.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-fifty-second batch.

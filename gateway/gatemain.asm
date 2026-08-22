@@ -27730,8 +27730,8 @@ __aFlshl        endp
 ; Attributes: library function bp-based frame
 
 ; void __stdcall __far shl32(int near *ptr, int numBits)
-shl32           proc far                ; CODE XREF: sub_1EE70+24\u2193P
-                                        ; sub_1EE70+46\u2193P ...
+shl32           proc far                ; CODE XREF: Midi_processTempoChange+24\u2193P
+                                        ; Midi_processTempoChange+46\u2193P ...
 
 ptr             = word ptr  6
 numBits         = word ptr  8
@@ -31854,8 +31854,8 @@ Midi_sendCommand_raw endp
 
 ; Attributes: bp-based frame
 
-Midi_sendCommand proc far               ; CODE XREF: sub_1EE70+8F\u2193P
-                                        ; sub_1EE70+B1\u2193P ...
+Midi_sendCommand proc far               ; CODE XREF: Midi_processTempoChange+8F\u2193P
+                                        ; Midi_processTempoChange+B1\u2193P ...
 
 arg_0           = byte ptr  6
 
@@ -31934,8 +31934,8 @@ sub_1D874       endp
 
 ; Attributes: bp-based frame
 
-Midi_sendByte   proc far                ; CODE XREF: sub_1EE70+A5\u2193P
-                                        ; sub_1EE70+BF\u2193P ...
+Midi_sendByte   proc far                ; CODE XREF: Midi_processTempoChange+A5\u2193P
+                                        ; Midi_processTempoChange+BF\u2193P ...
 
 arg_0           = byte ptr  6
 
@@ -34900,7 +34900,7 @@ seg027          segment byte public 'CODE' use16
 ; Attributes: bp-based frame
 
 Midi_peekTrackByte proc far             ; CODE XREF: Midi_readVarLengthValue+20\u2193p
-                                        ; sub_1EE70+C\u2193p ...
+                                        ; Midi_processTempoChange+C\u2193p ...
 
 arg_0           = word ptr  6
 arg_2           = word ptr  8
@@ -34937,7 +34937,7 @@ Midi_peekTrackByte endp
 ; Attributes: bp-based frame
 
 Midi_readVarLengthValue proc far        ; CODE XREF: sub_1EDA0+1C\u2193p
-                                        ; sub_1EE70+D6\u2193p ...
+                                        ; Midi_processTempoChange+D6\u2193p ...
 
 var_2           = word ptr -2
 arg_0           = word ptr  6
@@ -35185,7 +35185,7 @@ sub_1EE06       endp
 
 ; Attributes: bp-based frame
 
-sub_1EE70       proc far                ; CODE XREF: sub_1EFA6+71\u2193p
+Midi_processTempoChange proc far        ; CODE XREF: Midi_processMetaEvent+71\u2193p
                                         ; sub_1F4A0+6C\u2193p
 
 arg_0           = word ptr  6
@@ -35253,7 +35253,7 @@ arg_0           = word ptr  6
                 or      ax, ax
                 jnz     short loc_1EF29
 
-loc_1EF0B:                              ; CODE XREF: sub_1EE70+89\u2191j
+loc_1EF0B:                              ; CODE XREF: Midi_processTempoChange+89\u2191j
                 mov     word_C8534, 1
                 mov     ax, 0F8h ; 'ø'
                 push    ax
@@ -35264,7 +35264,7 @@ loc_1EF0B:                              ; CODE XREF: sub_1EE70+89\u2191j
                 call    Midi_sendCommand
                 add     sp, 2
 
-loc_1EF29:                              ; CODE XREF: sub_1EE70+99\u2191j
+loc_1EF29:                              ; CODE XREF: Midi_processTempoChange+99\u2191j
                 mov     al, byte ptr word_D2100
                 sub     ah, ah
                 push    ax
@@ -35282,7 +35282,7 @@ loc_1EF29:                              ; CODE XREF: sub_1EE70+99\u2191j
                 pop     si
                 pop     bp
                 retf
-sub_1EE70       endp
+Midi_processTempoChange endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -35291,7 +35291,7 @@ sub_1EE70       endp
 
 ; Attributes: bp-based frame
 
-sub_1EF52       proc far                ; CODE XREF: sub_1EFA6+7E\u2193p
+sub_1EF52       proc far                ; CODE XREF: Midi_processMetaEvent+7E\u2193p
 
 arg_0           = word ptr  6
 
@@ -35321,7 +35321,7 @@ sub_1EF52       endp
 
 ; Attributes: bp-based frame
 
-sub_1EF7C       proc far                ; CODE XREF: sub_1EFA6+88\u2193p
+sub_1EF7C       proc far                ; CODE XREF: Midi_processMetaEvent+88\u2193p
 
 arg_0           = word ptr  6
 
@@ -35351,7 +35351,7 @@ sub_1EF7C       endp
 
 ; Attributes: bp-based frame
 
-sub_1EFA6       proc far                ; CODE XREF: sub_1F2B4+67\u2193p
+Midi_processMetaEvent proc far          ; CODE XREF: sub_1F2B4+67\u2193p
 
 arg_0           = word ptr  6
 
@@ -35374,7 +35374,7 @@ arg_0           = word ptr  6
                 cmp     ax, 58h ; 'X'
                 jz      short loc_1F020
 
-loc_1EFCD:                              ; CODE XREF: sub_1EFA6+6B\u2193j
+loc_1EFCD:                              ; CODE XREF: Midi_processMetaEvent+6B\u2193j
                 mov     ax, 0F8h ; 'ø'
                 push    ax
                 call    Midi_sendByte
@@ -35389,14 +35389,14 @@ loc_1EFCD:                              ; CODE XREF: sub_1EFA6+6B\u2193j
                 add     sp, 2
                 add     [si], ax
 
-loc_1EFF0:                              ; CODE XREF: sub_1EFA6+77\u2193j
+loc_1EFF0:                              ; CODE XREF: Midi_processMetaEvent+77\u2193j
                 mov     ax, 1
                 pop     si
                 pop     bp
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1EFF6:                              ; CODE XREF: sub_1EFA6+1B\u2191j
+loc_1EFF6:                              ; CODE XREF: Midi_processMetaEvent+1B\u2191j
                 mov     ax, 0FCh ; 'ü'
                 push    ax
                 call    Midi_sendByte
@@ -35408,22 +35408,22 @@ loc_1EFF6:                              ; CODE XREF: sub_1EFA6+1B\u2191j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1F008:                              ; CODE XREF: sub_1EFA6+20\u2191j
+loc_1F008:                              ; CODE XREF: Midi_processMetaEvent+20\u2191j
                 inc     word_C8536
                 cmp     word_C8536, 1
                 jle     short loc_1EFCD
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr sub_1EE70
+                call    near ptr Midi_processTempoChange
 
-loc_1F01A:                              ; CODE XREF: sub_1EFA6+81\u2193j
-                                        ; sub_1EFA6+8B\u2193j
+loc_1F01A:                              ; CODE XREF: Midi_processMetaEvent+81\u2193j
+                                        ; Midi_processMetaEvent+8B\u2193j
                 add     sp, 2
                 jmp     short loc_1EFF0
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1F020:                              ; CODE XREF: sub_1EFA6+25\u2191j
+loc_1F020:                              ; CODE XREF: Midi_processMetaEvent+25\u2191j
                 push    [bp+arg_0]
                 push    cs
                 call    near ptr sub_1EF52
@@ -35431,12 +35431,12 @@ loc_1F020:                              ; CODE XREF: sub_1EFA6+25\u2191j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1F02A:                              ; CODE XREF: sub_1EFA6+16\u2191j
+loc_1F02A:                              ; CODE XREF: Midi_processMetaEvent+16\u2191j
                 push    [bp+arg_0]
                 push    cs
                 call    near ptr sub_1EF7C
                 jmp     short loc_1F01A
-sub_1EFA6       endp
+Midi_processMetaEvent endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -35778,7 +35778,7 @@ loc_1F310:                              ; CODE XREF: sub_1F2B4+37\u2191j
                 jnz     short loc_1F328
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr sub_1EFA6
+                call    near ptr Midi_processMetaEvent
                 add     sp, 2
                 pop     si
                 pop     di
@@ -36024,7 +36024,7 @@ loc_1F504:                              ; CODE XREF: sub_1F4A0+43\u2191j
                 sub     ax, ax
                 push    ax
                 push    cs
-                call    near ptr sub_1EE70
+                call    near ptr Midi_processTempoChange
                 add     sp, 2
                 mov     ax, [bp+var_2]
                 mov     word_D20C4, ax
@@ -383780,10 +383780,10 @@ word_C8530      dw 0                    ; DATA XREF: sub_1F4A0+C\u2191w
                                         ; Midi_serviceTick+EC\u2191w ...
 word_C8532      dw 0                    ; DATA XREF: sub_1F4A0+12\u2191w
                                         ; Midi_serviceTick+8\u2191r ...
-word_C8534      dw 0                    ; DATA XREF: sub_1EE70+84\u2191r
-                                        ; sub_1EE70:loc_1EF0B\u2191w
-word_C8536      dw 0                    ; DATA XREF: sub_1EFA6:loc_1F008\u2191w
-                                        ; sub_1EFA6+66\u2191r ...
+word_C8534      dw 0                    ; DATA XREF: Midi_processTempoChange+84\u2191r
+                                        ; Midi_processTempoChange:loc_1EF0B\u2191w
+word_C8536      dw 0                    ; DATA XREF: Midi_processMetaEvent:loc_1F008\u2191w
+                                        ; Midi_processMetaEvent+66\u2191r ...
 word_C8538      dw 0                    ; DATA XREF: Sound_selectTrackForRoom+123\u2191r
                                         ; Sound_selectTrack+CE\u2191r ...
                 align 8
@@ -397137,19 +397137,19 @@ word_D20C4      dw 0                    ; DATA XREF: sub_1F4A0+1E\u2191r
                 db    0
                 db    0
 word_D20F4      dw 0                    ; DATA XREF: sub_1EE06+3A\u2191w
-                                        ; sub_1EE70+6F\u2191r
+                                        ; Midi_processTempoChange+6F\u2191r
 word_D20F6      dw 0                    ; DATA XREF: sub_1ED42+D\u2191r
                                         ; sub_1ED42+26\u2191r ...
 word_D20F8      dw 0                    ; DATA XREF: Midi_readVarLengthValue+D\u2191w
                                         ; Midi_readVarLengthValue+2A\u2191r ...
 word_D20FA      dw 0                    ; DATA XREF: Midi_readVarLengthValue+A\u2191w
                                         ; Midi_readVarLengthValue:loc_1ED0B\u2191r ...
-word_D20FC      dw 0                    ; DATA XREF: sub_1EE70+14\u2191w
-                                        ; sub_1EE70+3B\u2191w ...
-word_D20FE      dw 0                    ; DATA XREF: sub_1EE70+17\u2191w
-                                        ; sub_1EE70+5F\u2191r
-word_D2100      dw 0                    ; DATA XREF: sub_1EE70+81\u2191w
-                                        ; sub_1EE70:loc_1EF29\u2191r
+word_D20FC      dw 0                    ; DATA XREF: Midi_processTempoChange+14\u2191w
+                                        ; Midi_processTempoChange+3B\u2191w ...
+word_D20FE      dw 0                    ; DATA XREF: Midi_processTempoChange+17\u2191w
+                                        ; Midi_processTempoChange+5F\u2191r
+word_D2100      dw 0                    ; DATA XREF: Midi_processTempoChange+81\u2191w
+                                        ; Midi_processTempoChange:loc_1EF29\u2191r
 byte_D2102      db 0                    ; DATA XREF: sub_1F2B4+E6\u2191w
                                         ; sub_1F2B4+1A4\u2191w
 byte_D2103      db 0                    ; DATA XREF: sub_1F2B4+15\u2191w
