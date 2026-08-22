@@ -3364,6 +3364,32 @@ RENAMES = [
      "named yet. Called from sub_8CB20 and the RTLink-thunk-reached "
      "sub_8D38C -- the 'are both of us aboard the raft, ready to shove "
      "off' announcement."),
+
+    (0xBF003, "Logics_examinePrayerFan",
+     "sub_BF003(actionType=6): a per-object logic handler for logic ID "
+     "vocab_list_0._logicNum, shared by three color-variant objects "
+     "(0x285/0x286/0x287) -- confirmed via its own GATESTR.DAT messages "
+     "as the famous crystalline Heechee 'prayer fan' artifacts. Picks a "
+     "message ID (0x8119/0x811D/0x8122, presumably each fan's color "
+     "word -- not independently decoded, these IDs return no string via "
+     "dump_gatestr_messages.py) based on which of the three objects "
+     "this is, used as a '%c'-style fill later. For verb 0x90, gates on "
+     "thunk_sub_67094(0x14C) then calls thunk_sub_A8577(4) (neither "
+     "traced). For verb 0x3A (EXAMINE): checks whether any of three "
+     "related logics (0x28A/0x289/0x28B -- plausibly the other unique "
+     "fans or their sockets) is currently attached (via "
+     "Logics_IsPrehandler1) to this fan; if so, prints '<color> prayer "
+     "fan is in/on <that item>' (msg 0x2825); otherwise prints the "
+     "fan's own appearance description, 'a delicate crystalline prayer "
+     "fan... glows with a pure <color> light' (msg 0x2826). Then, if "
+     "this fan is NOT currently attached to the player (0xD3) and the "
+     "current room is 0x272 (presumably the dome where they're first "
+     "found) and a per-fan bit isn't set, additionally prints 'The "
+     "prayer fan is floating about two meters off the floor of the "
+     "dome, rotating slowly in the air' (msg 0x2827) -- a first-"
+     "discovery-only flavor line. Finishes by clearing a shared bit "
+     "(index 8) on all three fan objects (0x285/0x286/0x287). One of "
+     "Gateway's classic collectible-artifact puzzles."),
 ]
 
 

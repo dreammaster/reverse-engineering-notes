@@ -1068,6 +1068,11 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       as the raft and `0x1CC` as a steering NPC companion. Full
       writeup in
       [overview.md](overview.md#logics_printraftstatus-named--a-raft-boarding-puzzle).
+- [x] Named `sub_BF003` → `Logics_examinePrayerFan` — the per-object
+      EXAMINE handler for Gateway's crystalline Heechee "prayer fan"
+      artifacts (three color variants), confirmed via its own
+      floating/glowing description messages. Full writeup in
+      [overview.md](overview.md#logics_examineprayerfan-named--the-crystalline-heechee-prayer-fans).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

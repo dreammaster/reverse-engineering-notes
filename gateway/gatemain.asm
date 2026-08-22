@@ -360950,7 +360950,7 @@ sub_BEEFB       endp
 
 ; Attributes: bp-based frame
 
-sub_BF003       proc far                ; CODE XREF: sub_BF1A1+7\u2193p
+Logics_examinePrayerFan proc far        ; CODE XREF: sub_BF1A1+7\u2193p
                                         ; sub_BF1B0+7\u2193p ...
 
 var_6           = byte ptr -6
@@ -360967,7 +360967,7 @@ arg_0           = word ptr  6
                 jmp     loc_BF19B
 ; ---------------------------------------------------------------------------
 
-loc_BF014:                              ; CODE XREF: sub_BF003+C\u2191j
+loc_BF014:                              ; CODE XREF: Logics_examinePrayerFan+C\u2191j
                 mov     es, seg_D19F8
                 cmp     es:vocab_list_0._logicNum, 285h
                 jnz     short loc_BF026
@@ -360975,18 +360975,18 @@ loc_BF014:                              ; CODE XREF: sub_BF003+C\u2191j
                 jmp     short loc_BF037
 ; ---------------------------------------------------------------------------
 
-loc_BF026:                              ; CODE XREF: sub_BF003+1C\u2191j
+loc_BF026:                              ; CODE XREF: Logics_examinePrayerFan+1C\u2191j
                 cmp     es:vocab_list_0._logicNum, 286h
                 jnz     short loc_BF034
                 mov     ax, 811Dh
                 jmp     short loc_BF037
 ; ---------------------------------------------------------------------------
 
-loc_BF034:                              ; CODE XREF: sub_BF003+2A\u2191j
+loc_BF034:                              ; CODE XREF: Logics_examinePrayerFan+2A\u2191j
                 mov     ax, 8122h
 
-loc_BF037:                              ; CODE XREF: sub_BF003+21\u2191j
-                                        ; sub_BF003+2F\u2191j
+loc_BF037:                              ; CODE XREF: Logics_examinePrayerFan+21\u2191j
+                                        ; Logics_examinePrayerFan+2F\u2191j
                 mov     word ptr [bp+var_6], ax
                 mov     [bp+var_4], ds
                 mov     es, seg_D19F6
@@ -360999,7 +360999,7 @@ loc_BF037:                              ; CODE XREF: sub_BF003+21\u2191j
                 jmp     loc_BF19B
 ; ---------------------------------------------------------------------------
 
-loc_BF054:                              ; CODE XREF: sub_BF003+4C\u2191j
+loc_BF054:                              ; CODE XREF: Logics_examinePrayerFan+4C\u2191j
                 mov     ax, 14Ch
                 push    ax
                 call    thunk_sub_67094
@@ -361009,19 +361009,19 @@ loc_BF054:                              ; CODE XREF: sub_BF003+4C\u2191j
                 jmp     loc_BF19B
 ; ---------------------------------------------------------------------------
 
-loc_BF067:                              ; CODE XREF: sub_BF003+5F\u2191j
+loc_BF067:                              ; CODE XREF: Logics_examinePrayerFan+5F\u2191j
                 mov     ax, 4
                 push    ax
                 call    thunk_sub_A8577
                 add     sp, 2
 
-loc_BF073:                              ; CODE XREF: sub_BF003+F1\u2193j
-                                        ; sub_BF003+195\u2193j
+loc_BF073:                              ; CODE XREF: Logics_examinePrayerFan+F1\u2193j
+                                        ; Logics_examinePrayerFan+195\u2193j
                 mov     ax, 1
                 jmp     loc_BF19D
 ; ---------------------------------------------------------------------------
 
-loc_BF079:                              ; CODE XREF: sub_BF003+47\u2191j
+loc_BF079:                              ; CODE XREF: Logics_examinePrayerFan+47\u2191j
                 mov     ax, 28Ah
                 mov     [bp+logicNum], ax
                 push    ax
@@ -361050,8 +361050,8 @@ loc_BF079:                              ; CODE XREF: sub_BF003+47\u2191j
                 or      ax, ax
                 jz      short loc_BF0F7
 
-loc_BF0CD:                              ; CODE XREF: sub_BF003+90\u2191j
-                                        ; sub_BF003+AC\u2191j
+loc_BF0CD:                              ; CODE XREF: Logics_examinePrayerFan+90\u2191j
+                                        ; Logics_examinePrayerFan+AC\u2191j
                 push    [bp+logicNum]   ; logicNum
                 mov     ax, 2
                 push    ax              ; val1
@@ -361070,7 +361070,7 @@ loc_BF0CD:                              ; CODE XREF: sub_BF003+90\u2191j
                 jmp     loc_BF073
 ; ---------------------------------------------------------------------------
 
-loc_BF0F7:                              ; CODE XREF: sub_BF003+C8\u2191j
+loc_BF0F7:                              ; CODE XREF: Logics_examinePrayerFan+C8\u2191j
                 push    [bp+var_4]
                 push    word ptr [bp+var_6] ; char
                 mov     ax, 2826h
@@ -361107,8 +361107,8 @@ loc_BF0F7:                              ; CODE XREF: sub_BF003+C8\u2191j
                 call    TextWindow_add
                 add     sp, 4
 
-loc_BF15C:                              ; CODE XREF: sub_BF003+121\u2191j
-                                        ; sub_BF003+12E\u2191j ...
+loc_BF15C:                              ; CODE XREF: Logics_examinePrayerFan+121\u2191j
+                                        ; Logics_examinePrayerFan+12E\u2191j ...
                 mov     ax, 0Ah
                 push    ax              ; c
                 call    TextWindow_addChar
@@ -361134,15 +361134,15 @@ loc_BF15C:                              ; CODE XREF: sub_BF003+121\u2191j
                 jmp     loc_BF073
 ; ---------------------------------------------------------------------------
 
-loc_BF19B:                              ; CODE XREF: sub_BF003+E\u2191j
-                                        ; sub_BF003+4E\u2191j ...
+loc_BF19B:                              ; CODE XREF: Logics_examinePrayerFan+E\u2191j
+                                        ; Logics_examinePrayerFan+4E\u2191j ...
                 sub     ax, ax
 
-loc_BF19D:                              ; CODE XREF: sub_BF003+73\u2191j
+loc_BF19D:                              ; CODE XREF: Logics_examinePrayerFan+73\u2191j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_BF003       endp
+Logics_examinePrayerFan endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -361157,7 +361157,7 @@ arg_0           = word ptr  6
                 mov     bp, sp
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr sub_BF003
+                call    near ptr Logics_examinePrayerFan
                 add     sp, 2
                 pop     bp
                 retf
@@ -361176,7 +361176,7 @@ arg_0           = word ptr  6
                 mov     bp, sp
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr sub_BF003
+                call    near ptr Logics_examinePrayerFan
                 add     sp, 2
                 pop     bp
                 retf
@@ -361195,7 +361195,7 @@ arg_0           = word ptr  6
                 mov     bp, sp
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr sub_BF003
+                call    near ptr Logics_examinePrayerFan
                 add     sp, 2
                 pop     bp
                 retf

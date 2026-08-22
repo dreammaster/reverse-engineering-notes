@@ -121325,6 +121325,7 @@ static Bytes_21(void) {
 	create_insn	(0XBEFF7);
 	create_insn	(0XBEFFF);
 	create_insn	(0XBF003);
+	set_name	(0XBF003,	"Logics_examinePrayerFan");
 	create_insn	(x=0XBF006);
 	op_hex		(x,	1);
 	create_insn	(x=0XBF009);
@@ -121914,10 +121915,6 @@ static Bytes_21(void) {
 	op_hex		(x,	1);
 	set_cmt	(0XBFDEE,	"bgColor",	0);
 	set_cmt	(0XBFDF3,	"fgColor",	0);
-	create_insn	(x=0XBFDFD);
-	op_hex		(x,	1);
-	create_insn	(x=0XBFE00);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -121927,6 +121924,10 @@ static Bytes_22(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0XBFDFD);
+	op_hex		(x,	1);
+	create_insn	(x=0XBFE00);
+	op_stkvar	(x,	0);
 	create_insn	(x=0XBFE07);
 	op_stkvar	(x,	0);
 	create_insn	(x=0XBFE0A);
@@ -127718,10 +127719,6 @@ static Bytes_22(void) {
 	create_insn	(0XC7C1E);
 	create_insn	(x=0XC7C21);
 	op_hex		(x,	1);
-	create_insn	(x=0XC7C24);
-	op_stkvar	(x,	0);
-	create_insn	(x=0XC7C2A);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -127731,6 +127728,10 @@ static Bytes_23(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0XC7C24);
+	op_stkvar	(x,	0);
+	create_insn	(x=0XC7C2A);
+	op_stkvar	(x,	0);
 	create_insn	(x=0XC7C31);
 	op_stkvar	(x,	0);
 	create_insn	(x=0XC7C34);
@@ -131508,8 +131509,6 @@ static Bytes_23(void) {
 	set_name	(0XCDF08,	"aPet_0");
 	create_strlit	(0XCDF0C,	0X6);
 	set_name	(0XCDF0C,	"aCatch_0");
-	create_strlit	(0XCDF12,	0X7);
-	set_name	(0XCDF12,	"aAttack_0");
 }
 
 //------------------------------------------------------------------------
@@ -131519,6 +131518,8 @@ static Bytes_24(void) {
         auto x;
 #define id x
 
+	create_strlit	(0XCDF12,	0X7);
+	set_name	(0XCDF12,	"aAttack_0");
 	create_strlit	(0XCDF19,	0X3);
 	set_name	(0XCDF19,	"a__29");
 	create_word	(0XCDF20);
@@ -135396,9 +135397,6 @@ static Bytes_24(void) {
 	create_word	(x=0XD1134);
 	op_seg		(x,	0);
 	set_name	(0XD1134,	"dseg_126");
-	create_word	(x=0XD1136);
-	op_seg		(x,	0);
-	set_name	(0XD1136,	"dseg_127");
 }
 
 //------------------------------------------------------------------------
@@ -135408,6 +135406,9 @@ static Bytes_25(void) {
         auto x;
 #define id x
 
+	create_word	(x=0XD1136);
+	op_seg		(x,	0);
+	set_name	(0XD1136,	"dseg_127");
 	create_word	(x=0XD1138);
 	op_seg		(x,	0);
 	set_name	(0XD1138,	"dseg_128");

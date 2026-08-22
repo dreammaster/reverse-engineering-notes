@@ -4458,3 +4458,34 @@ the RTLink-thunk-reached `sub_8D38C` — the "are both of us aboard the
 raft, ready to shove off" announcement.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-forty-sixth batch.
+
+### `Logics_examinePrayerFan` named — the crystalline Heechee prayer fans
+
+`sub_BF003` (3 callers). A per-object logic handler (`actionType==6`,
+the same convention as `Logic_heecheetownSpecial`), shared by three
+color-variant objects (`0x285`/`0x286`/`0x287`). Confirmed via its own
+`GATESTR.DAT` messages as the artifact behind one of Gateway's classic
+collectible puzzles — the **crystalline Heechee "prayer fans."**
+
+For **EXAMINE** (verb `0x3A`): checks whether any of three related
+logics (`0x28A`/`0x289`/`0x28B` — plausibly the other unique fans, or
+sockets they fit into) is currently attached to this fan; if so,
+prints *"The `<color>` prayer fan is in/on `<that item>`."* Otherwise
+prints the fan's own appearance: *"The object looks like a delicate
+crystalline prayer fan that has been folded shut. It glows with a
+pure `<color>` light that seems to come from inside the translucent
+crystal."* If the fan isn't yet attached to the player and the current
+room is `0x272` (presumably the dome where they're first found) and a
+per-fan bit isn't set, it additionally prints a first-discovery-only
+line: *"The prayer fan is floating about two meters off the floor of
+the dome, rotating slowly in the air."* It finishes by clearing a
+shared bit on all three fan objects together.
+
+The three per-color message IDs selecting each fan's actual color word
+(`0x8119`/`0x811D`/`0x8122`) didn't decode via `dump_gatestr_messages.py`
+— not independently confirmed this pass. Verb `0x90`'s handling (gated
+behind two untraced thunks) also wasn't fully resolved. Still, the
+core artifact and its floating/glowing presentation are now solidly
+confirmed.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-forty-seventh batch.
