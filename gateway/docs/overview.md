@@ -3391,3 +3391,14 @@ Called from the already-named `get_mouse_input` and from `sub_1796D`
 primitive, e.g. Tab/Shift-Tab-style cycling between listbox windows.
 
 Applied via `apply_renames_gatemain.py`'s hundredth batch.
+
+### `Listbox_getSelectedIndexForWindow` named
+
+Moved to `sub_16A89` (2 callers) — calls the already-named
+`Windows_getListboxIndex(winNumber)`; if that's negative (the window
+has no listbox), returns -1. Otherwise returns `Listbox_selectedIndex[]`
+at that listbox index — the currently-selected item index for the
+listbox in the given window. Called twice from the already-named
+`Listbox_mouseButtonDown`.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-first batch.

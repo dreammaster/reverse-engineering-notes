@@ -2464,6 +2464,14 @@ RENAMES = [
      "and from sub_1796D -- the 'switch focus to the next/previous "
      "listbox window' navigation primitive (e.g. Tab/Shift-Tab-style "
      "cycling between listbox windows)."),
+
+    (0x16A89, "Listbox_getSelectedIndexForWindow",
+     "sub_16A89(winNumber): calls the already-named "
+     "Windows_getListboxIndex(winNumber); if that's negative (the "
+     "window has no listbox), returns -1. Otherwise returns "
+     "Listbox_selectedIndex[] at that listbox index -- the currently-"
+     "selected item index for the listbox in the given window. Called "
+     "twice from the already-named Listbox_mouseButtonDown."),
 ]
 
 

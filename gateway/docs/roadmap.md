@@ -854,6 +854,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       navigation primitive. Full writeup in
       [overview.md](overview.md#windows_switchlistboxwindow-named).
       (100th naming batch this project.)
+- [x] Named `sub_16A89` (2 callers) → `Listbox_getSelectedIndexForWindow`
+      — a getter for a window's currently-selected listbox item,
+      called from `Listbox_mouseButtonDown`. Full writeup in
+      [overview.md](overview.md#listbox_getselectedindexforwindow-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

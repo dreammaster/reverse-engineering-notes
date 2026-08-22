@@ -14612,8 +14612,9 @@ sub_169F9       endp
 
 ; Attributes: bp-based frame
 
-; int __cdecl __far sub_16A89(int winNumber)
-sub_16A89       proc far                ; CODE XREF: Listbox_mouseButtonDown+CE\u2193p
+; int __cdecl __far Listbox_getSelectedIndexForWindow(int winNumber)
+Listbox_getSelectedIndexForWindow proc far
+                                        ; CODE XREF: Listbox_mouseButtonDown+CE\u2193p
                                         ; Listbox_mouseButtonDown+127\u2193p ...
 
 var_2           = word ptr -2
@@ -14633,16 +14634,16 @@ winNumber       = word ptr  6
                 jmp     short loc_16AAE
 ; ---------------------------------------------------------------------------
 
-loc_16AA5:                              ; CODE XREF: sub_16A89+15\u2191j
+loc_16AA5:                              ; CODE XREF: Listbox_getSelectedIndexForWindow+15\u2191j
                 mov     bx, [bp+var_2]
                 shl     bx, 1
                 mov     ax, Listbox_selectedIndex[bx]
 
-loc_16AAE:                              ; CODE XREF: sub_16A89+1A\u2191j
+loc_16AAE:                              ; CODE XREF: Listbox_getSelectedIndexForWindow+1A\u2191j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_16A89       endp
+Listbox_getSelectedIndexForWindow endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -16605,7 +16606,7 @@ thumb_up:                               ; CODE XREF: Listbox_mouseButtonDown+2F\
 loc_178DD:                              ; CODE XREF: Listbox_mouseButtonDown+F4\u2193j
                 push    [bp+winNumber]  ; winNumber
                 push    cs
-                call    near ptr sub_16A89
+                call    near ptr Listbox_getSelectedIndexForWindow
                 add     sp, 2
                 or      ax, ax
                 jle     short loc_178F5
@@ -16652,7 +16653,7 @@ loc_1792A:                              ; CODE XREF: Listbox_mouseButtonDown+14E
                 push    [bp+winNumber]  ; winNumber
                 mov     si, ax
                 push    cs
-                call    near ptr sub_16A89
+                call    near ptr Listbox_getSelectedIndexForWindow
                 add     sp, 2
                 inc     ax
                 cmp     ax, si
@@ -144885,7 +144886,7 @@ loc_5DBAC:                              ; CODE XREF: sub_5D9F3+1B4\u2191j
 
 loc_5DBB4:                              ; CODE XREF: sub_5D9F3+1BC\u2191j
                 push    LIstbox_index1  ; winNumber
-                call    sub_16A89
+                call    Listbox_getSelectedIndexForWindow
                 add     sp, 2
                 mov     [bp+var_34], ax
                 or      ax, ax
@@ -145106,7 +145107,7 @@ loc_5DD89:                              ; CODE XREF: sub_5D9F3+391\u2191j
 
 loc_5DD91:                              ; CODE XREF: sub_5D9F3+399\u2191j
                 push    LIstbox_index1  ; winNumber
-                call    sub_16A89
+                call    Listbox_getSelectedIndexForWindow
                 add     sp, 2
                 mov     [bp+var_34], ax
                 or      ax, ax
@@ -145347,7 +145348,7 @@ loc_5DF52:                              ; CODE XREF: sub_5D9F3+55A\u2191j
                 cmp     [bp+var_38], seg sg3EDC
                 jnz     short loc_5DFDF
                 push    LIstbox_index2  ; winNumber
-                call    sub_16A89
+                call    Listbox_getSelectedIndexForWindow
                 add     sp, 2
                 mov     [bp+var_36], ax
                 or      ax, ax
