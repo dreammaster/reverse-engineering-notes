@@ -30492,6 +30492,7 @@ static Bytes_5(void) {
 	op_plain_offset	(x,	0,	0XC7F20);
 	op_plain_offset	(x,	128,	0XC7F20);
 	create_insn	(0X2983A);
+	set_name	(0X2983A,	"prompt_for_line");
 	create_insn	(x=0X2983D);
 	op_hex		(x,	1);
 	create_insn	(x=0X29840);
@@ -33979,9 +33980,6 @@ static Bytes_5(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2C578);
 	op_hex		(x,	1);
-	create_insn	(x=0X2C57A);
-	op_hex		(x,	1);
-	create_insn	(0X2C58D);
 }
 
 //------------------------------------------------------------------------
@@ -33991,6 +33989,9 @@ static Bytes_6(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X2C57A);
+	op_hex		(x,	1);
+	create_insn	(0X2C58D);
 	create_insn	(x=0X2C595);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X2C598);

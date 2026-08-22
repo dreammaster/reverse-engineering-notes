@@ -3027,6 +3027,21 @@ RENAMES = [
      "Called from the already-named Commset_printText -- the tab-"
      "expansion distance calculation for its proportional-width text "
      "layout."),
+
+    (0x2983A, "prompt_for_line",
+     "sub_2983A(line, windowNum, promptFlag): the generic line-input "
+     "prompt loop, called twice from the already-named "
+     "prompt_for_filename. Sets the initial input line via the "
+     "already-named InputArea_setLine (optionally seeding it from an "
+     "existing string), hides the mouse, flushes pending text via the "
+     "already-named TextWindow_flushText, disables the log file, "
+     "shows the text cursor via the already-named Font_showTextCursor, "
+     "and prints a prompt (either the given text or a default) via "
+     "the already-named TextWindow_addDirect. Then loops on "
+     "get_keypress(), dispatching Ctrl-C/Escape (cancel), Backspace, "
+     "Enter (accept), and printable characters -- a full line editor. "
+     "This is the shared line-input primitive prompt_for_filename "
+     "specializes for filenames specifically."),
 ]
 
 

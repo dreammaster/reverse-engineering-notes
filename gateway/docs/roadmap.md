@@ -998,6 +998,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       tab-expansion distance calculation for `Commset_printText`'s
       proportional-width text layout. Full writeup in
       [overview.md](overview.md#font_gettabstopdistance-named).
+- [x] Named `sub_2983A` (2 callers) → `prompt_for_line` — the generic
+      line-input prompt loop `prompt_for_filename` specializes for
+      filenames. Full writeup in
+      [overview.md](overview.md#prompt_for_line-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

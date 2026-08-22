@@ -40682,7 +40682,7 @@ InputArea_setLine endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_21952       proc far                ; CODE XREF: sub_2983A+168\u2193P
+sub_21952       proc far                ; CODE XREF: prompt_for_line+168\u2193P
                 mov     ax, word ptr old_input_line_p
                 or      ax, word ptr old_input_line_p+2
                 jz      short locret_2196F
@@ -40848,8 +40848,8 @@ sub_219C5       endp
 ; Attributes: bp-based frame
 
 ; int __cdecl __far input_line_backspace()
-input_line_backspace proc far           ; CODE XREF: sub_2983A:loc_299B5\u2193P
-                                        ; sub_2983A:loc_299CF\u2193P ...
+input_line_backspace proc far           ; CODE XREF: prompt_for_line:loc_299B5\u2193P
+                                        ; prompt_for_line:loc_299CF\u2193P ...
 
 srcP            = dword ptr -4
 
@@ -40902,7 +40902,7 @@ input_line_backspace endp
 
 ; const char *__cdecl __far get_input_line_ptr()
 get_input_line_ptr proc far             ; CODE XREF: sub_28595:loc_285D8\u2193P
-                                        ; sub_2983A+144\u2193P ...
+                                        ; prompt_for_line+144\u2193P ...
                 mov     ax, word ptr input_line_p
                 mov     dx, word ptr input_line_p+2
                 retf
@@ -56693,7 +56693,7 @@ sub_28656       endp
 ; Attributes: bp-based frame
 
 ; void __cdecl __far set_logfile_enabled(int enabled)
-set_logfile_enabled proc far            ; CODE XREF: sub_2983A+13C\u2193P
+set_logfile_enabled proc far            ; CODE XREF: prompt_for_line+13C\u2193P
                                         ; InputWindow_getLine+1B6\u2193P ...
 
 enabled         = word ptr  6
@@ -56711,7 +56711,7 @@ set_logfile_enabled endp
 
 ; Attributes: bp-based frame
 
-disable_log_file proc far               ; CODE XREF: sub_2983A+7F\u2193P
+disable_log_file proc far               ; CODE XREF: prompt_for_line+7F\u2193P
                                         ; InputWindow_getLine+6\u2193P ...
                 push    bp
                 mov     bp, sp
@@ -56776,7 +56776,7 @@ sub_2868B       endp
 
 ; int __cdecl __far LogFile_write(int windowNum, char *buffer)
 LogFile_write   proc far                ; CODE XREF: TextWindow_addDirect+1C\u2193P
-                                        ; sub_2983A+14F\u2193P ...
+                                        ; prompt_for_line+14F\u2193P ...
 
 idx             = word ptr -6
 var_4           = word ptr -4
@@ -57225,7 +57225,7 @@ Speaker_playTone endp
 
 
 Speaker_playErrorBeep proc far          ; CODE XREF: sub_28595:loc_285A3\u2191P
-                                        ; sub_2983A:loc_29A04\u2193P ...
+                                        ; prompt_for_line:loc_29A04\u2193P ...
                 mov     ax, 50
                 cwd
                 push    dx
@@ -57912,7 +57912,7 @@ TextWindow_allowPendingText endp
 
 ; void __cdecl __far TextWindow_flushText()
 TextWindow_flushText proc far           ; CODE XREF: main+13B\u2191P
-                                        ; sub_2983A+79\u2193p ...
+                                        ; prompt_for_line+79\u2193p ...
 
 var_2           = word ptr -2
 
@@ -58876,7 +58876,7 @@ TextWindow_addDirect endp
 ; Attributes: bp-based frame
 
 erase_lines     proc far                ; CODE XREF: sub_17AB8+83\u2191P
-                                        ; sub_2983A+18D\u2193p ...
+                                        ; prompt_for_line+18D\u2193p ...
 
 top             = word ptr -8Ch
 idx             = word ptr -8Ah
@@ -59068,7 +59068,7 @@ erase_lines     endp
 
 ; Attributes: bp-based frame
 
-sub_2983A       proc far                ; CODE XREF: prompt_for_filename+69A\u2193P
+prompt_for_line proc far                ; CODE XREF: prompt_for_filename+69A\u2193P
                                         ; prompt_for_filename+8FA\u2193P ...
 
 var_10          = word ptr -10h
@@ -59110,32 +59110,32 @@ arg_6           = word ptr  0Ch
                 jmp     short loc_2988C
 ; ---------------------------------------------------------------------------
 
-loc_2987B:                              ; CODE XREF: sub_2983A+18\u2191j
-                                        ; sub_2983A+1E\u2191j
+loc_2987B:                              ; CODE XREF: prompt_for_line+18\u2191j
+                                        ; prompt_for_line+1E\u2191j
                 push    [bp+var_4]      ; int
                 push    word ptr [bp+line+2]
                 push    word ptr [bp+line] ; line
                 call    InputArea_setLine
                 add     sp, 6
 
-loc_2988C:                              ; CODE XREF: sub_2983A+3F\u2191j
+loc_2988C:                              ; CODE XREF: prompt_for_line+3F\u2191j
                 cmp     Wndows_numWindows, 1
                 jge     short loc_2989C
 
-loc_29893:                              ; CODE XREF: sub_2983A+16D\u2193j
+loc_29893:                              ; CODE XREF: prompt_for_line+16D\u2193j
                 mov     ax, word ptr [bp+line]
                 mov     dx, word ptr [bp+line+2]
                 jmp     loc_29A0C
 ; ---------------------------------------------------------------------------
 
-loc_2989C:                              ; CODE XREF: sub_2983A+57\u2191j
+loc_2989C:                              ; CODE XREF: prompt_for_line+57\u2191j
                 cmp     Windows_activeWindow, 0
                 jge     short loc_298AA
                 mov     ax, Wndows_numWindows
                 dec     ax
                 mov     Windows_activeWindow, ax
 
-loc_298AA:                              ; CODE XREF: sub_2983A+67\u2191j
+loc_298AA:                              ; CODE XREF: prompt_for_line+67\u2191j
                 call    Mouse_Hide
                 mov     word ptr [bp+showFlag], ax
                 push    cs
@@ -59158,22 +59158,22 @@ loc_298AA:                              ; CODE XREF: sub_2983A+67\u2191j
                 jmp     short loc_298EB
 ; ---------------------------------------------------------------------------
 
-loc_298E6:                              ; CODE XREF: sub_2983A+9C\u2191j
-                                        ; sub_2983A+A2\u2191j
+loc_298E6:                              ; CODE XREF: prompt_for_line+9C\u2191j
+                                        ; prompt_for_line+A2\u2191j
                 mov     ax, offset byte_C97C4
                 push    ds
 
-loc_298EA:                              ; CODE XREF: sub_2983A+107\u2193j
+loc_298EA:                              ; CODE XREF: prompt_for_line+107\u2193j
                 push    ax              ; text
 
-loc_298EB:                              ; CODE XREF: sub_2983A+AA\u2191j
+loc_298EB:                              ; CODE XREF: prompt_for_line+AA\u2191j
                 push    Windows_activeWindow ; wndowNum
                 push    cs
                 call    near ptr TextWindow_addDirect
                 add     sp, 6
 
-loc_298F6:                              ; CODE XREF: sub_2983A+E4\u2193j
-                                        ; sub_2983A+ED\u2193j ...
+loc_298F6:                              ; CODE XREF: prompt_for_line+E4\u2193j
+                                        ; prompt_for_line+ED\u2193j ...
                 call    get_keypress
                 mov     word ptr [bp+src], ax
                 cmp     ax, 3
@@ -59181,13 +59181,13 @@ loc_298F6:                              ; CODE XREF: sub_2983A+E4\u2193j
                 jmp     loc_299AA
 ; ---------------------------------------------------------------------------
 
-loc_29906:                              ; CODE XREF: sub_2983A+C7\u2191j
+loc_29906:                              ; CODE XREF: prompt_for_line+C7\u2191j
                 cmp     ax, 8
                 jnz     short loc_2990E
                 jmp     loc_299CF
 ; ---------------------------------------------------------------------------
 
-loc_2990E:                              ; CODE XREF: sub_2983A+CF\u2191j
+loc_2990E:                              ; CODE XREF: prompt_for_line+CF\u2191j
                 cmp     ax, 0Dh
                 jz      short loc_29943
                 cmp     ax, 1Bh
@@ -59195,7 +59195,7 @@ loc_2990E:                              ; CODE XREF: sub_2983A+CF\u2191j
                 jmp     loc_299AA
 ; ---------------------------------------------------------------------------
 
-loc_2991B:                              ; CODE XREF: sub_2983A+DC\u2191j
+loc_2991B:                              ; CODE XREF: prompt_for_line+DC\u2191j
                 cmp     ax, 80h ; '€'
                 jnb     short loc_298F6
                 mov     bx, ax
@@ -59211,13 +59211,13 @@ loc_2991B:                              ; CODE XREF: sub_2983A+DC\u2191j
                 jmp     loc_29A04
 ; ---------------------------------------------------------------------------
 
-loc_2993D:                              ; CODE XREF: sub_2983A+FE\u2191j
+loc_2993D:                              ; CODE XREF: prompt_for_line+FE\u2191j
                 lea     ax, [bp+src]
                 push    ss
                 jmp     short loc_298EA
 ; ---------------------------------------------------------------------------
 
-loc_29943:                              ; CODE XREF: sub_2983A+D7\u2191j
+loc_29943:                              ; CODE XREF: prompt_for_line+D7\u2191j
                 mov     ax, offset asc_C97C5 ; "\n"
                 push    ds
                 push    ax              ; text
@@ -59226,7 +59226,7 @@ loc_29943:                              ; CODE XREF: sub_2983A+D7\u2191j
                 call    near ptr TextWindow_addDirect
                 add     sp, 6
 
-loc_29953:                              ; CODE XREF: sub_2983A+182\u2193j
+loc_29953:                              ; CODE XREF: prompt_for_line+182\u2193j
                 push    word ptr [bp+flag] ; flag
                 call    Font_showTextCursor
                 add     sp, 2
@@ -59260,14 +59260,14 @@ loc_2999A:
                 jmp     loc_29893
 ; ---------------------------------------------------------------------------
 
-loc_299AA:                              ; CODE XREF: sub_2983A+C9\u2191j
-                                        ; sub_2983A+DE\u2191j
+loc_299AA:                              ; CODE XREF: prompt_for_line+C9\u2191j
+                                        ; prompt_for_line+DE\u2191j
                 sub     ax, ax
                 push    ax              ; flag
                 call    Font_showTextCursor
                 add     sp, 2
 
-loc_299B5:                              ; CODE XREF: sub_2983A+193\u2193j
+loc_299B5:                              ; CODE XREF: prompt_for_line+193\u2193j
                 call    input_line_backspace
                 or      ax, ax
                 jz      short loc_29953
@@ -59280,14 +59280,14 @@ loc_299B5:                              ; CODE XREF: sub_2983A+193\u2193j
                 jmp     short loc_299B5
 ; ---------------------------------------------------------------------------
 
-loc_299CF:                              ; CODE XREF: sub_2983A+D1\u2191j
+loc_299CF:                              ; CODE XREF: prompt_for_line+D1\u2191j
                 call    input_line_backspace
                 or      ax, ax
                 jnz     short loc_299DB
                 jmp     loc_298F6
 ; ---------------------------------------------------------------------------
 
-loc_299DB:                              ; CODE XREF: sub_2983A+19C\u2191j
+loc_299DB:                              ; CODE XREF: prompt_for_line+19C\u2191j
                 sub     ax, ax
                 push    ax              ; flag
                 call    Font_showTextCursor
@@ -59305,16 +59305,16 @@ loc_299DB:                              ; CODE XREF: sub_2983A+19C\u2191j
                 jmp     loc_298F6
 ; ---------------------------------------------------------------------------
 
-loc_29A04:                              ; CODE XREF: sub_2983A+100\u2191j
+loc_29A04:                              ; CODE XREF: prompt_for_line+100\u2191j
                 call    Speaker_playErrorBeep
                 jmp     loc_298F6
 ; ---------------------------------------------------------------------------
 
-loc_29A0C:                              ; CODE XREF: sub_2983A+5F\u2191j
+loc_29A0C:                              ; CODE XREF: prompt_for_line+5F\u2191j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_2983A       endp
+prompt_for_line endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -158632,7 +158632,7 @@ loc_63B08:                              ; CODE XREF: prompt_for_filename:loc_63D
                 mov     ax, 0B02Eh
                 push    ds
                 push    ax
-                call    sub_2983A
+                call    prompt_for_line
                 jmp     loc_63F06
 ; ---------------------------------------------------------------------------
 
@@ -158901,7 +158901,7 @@ loc_63DA6:                              ; CODE XREF: prompt_for_filename+8BD\u21
                 mov     ax, offset dest
                 push    ds
                 push    ax
-                call    sub_2983A
+                call    prompt_for_line
                 add     sp, 8
                 cmp     dest, 0
                 jz      short loc_63DD3
@@ -159673,7 +159673,7 @@ loc_6458A:                              ; CODE XREF: sub_64550+22\u2191j
                 push    [bp+arg_4]
                 push    [bp+arg_2]
                 push    [bp+arg_0]
-                call    sub_2983A
+                call    prompt_for_line
                 add     sp, 8
                 push    dx
                 push    ax
@@ -384424,9 +384424,9 @@ _showMouse      dw 0                    ; DATA XREF: Windows_newLine+123\u2191r
                                         ; Windows_newLine+192\u2191r ...
 asc_C97C2       db ' ',0                ; DATA XREF: TextWindow_addDirect+3B2\u2191o
 ; char byte_C97C4
-byte_C97C4      db 0                    ; DATA XREF: sub_2983A:loc_298E6\u2191o
+byte_C97C4      db 0                    ; DATA XREF: prompt_for_line:loc_298E6\u2191o
 ; char asc_C97C5[]
-asc_C97C5       db 0Ah,0                ; DATA XREF: sub_2983A:loc_29943\u2191o
+asc_C97C5       db 0Ah,0                ; DATA XREF: prompt_for_line:loc_29943\u2191o
                 db  0Ah
                 db    0
 ; char line[]
