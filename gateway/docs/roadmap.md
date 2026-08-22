@@ -906,6 +906,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       `_opl2MasterVolume` — a clamped 1-12 master-volume value feeding
       the OPL2 per-channel instrument-setup cluster. Full writeup in
       [overview.md](overview.md#opl2_setmastervolume-and-_opl2mastervolume-named).
+- [x] Named `sub_1861F` (3 callers) → `Opl2_writeDetectRegister` — a
+      duplicate-compiled-copy of `Opl2_writeRegister` used by the
+      AdLib/OPL2 hardware-presence detection sequence. Full writeup in
+      [overview.md](overview.md#opl2_writedetectregister-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

@@ -2690,6 +2690,22 @@ RENAMES = [
      "A clamped 1-12 master-volume-style value set by the just-named "
      "Opl2_setMasterVolume; read only by sub_1CB32 (unnamed), part of "
      "the OPL2 per-channel instrument-setup cluster."),
+
+    (0x1861F, "Opl2_writeDetectRegister",
+     "sub_1861F(ah=reg, al=value): byte-for-byte the same OPL2 "
+     "register-write sequence as the already-named Opl2_writeRegister "
+     "-- write the register number to port 0x388, delay via 4 IN "
+     "reads (the calibrated ~3.3us address-write delay from the "
+     "Adlib Programming Guide), write the value to port 0x389, then "
+     "delay via 23 IN reads of port 0x388 (~23us data-write delay) -- "
+     "but as a private, near-callable duplicate using raw port I/O "
+     "directly instead of calling Opl2_writeRegister. Called "
+     "repeatedly from sub_18432 (itself called from the already-named "
+     "Stream_selectHandler), consistent with the classic AdLib/OPL2 "
+     "hardware-presence detection sequence (reset/mask the timers, "
+     "start timer 1, check status) rather than the main note-playing "
+     "engine -- another instance of this project's duplicate-"
+     "compiled-copy pattern."),
 ]
 
 

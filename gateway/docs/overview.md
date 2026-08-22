@@ -3628,3 +3628,21 @@ volume-style scaling factor feeding into per-channel volume/instrument
 calculations.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-twelfth batch.
+
+### `Opl2_writeDetectRegister` named
+
+Moved to `sub_1861F` (3 callers) — byte-for-byte the same OPL2
+register-write sequence as the already-named `Opl2_writeRegister`
+(write the register number to port `0x388`, delay via 4 `IN` reads —
+the calibrated ~3.3μs address-write delay from the Adlib Programming
+Guide — write the value to port `0x389`, then delay via 23 `IN` reads
+of port `0x388`) but as a private, near-callable duplicate using raw
+port I/O directly instead of calling `Opl2_writeRegister`.
+
+Called repeatedly from `sub_18432` (itself called from the already-
+named `Stream_selectHandler`), consistent with the classic AdLib/OPL2
+hardware-presence detection sequence (reset/mask the timers, start
+timer 1, check status) rather than the main note-playing engine —
+another instance of this project's duplicate-compiled-copy pattern.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-thirteenth batch.

@@ -18550,25 +18550,25 @@ sub_18432       proc near               ; CODE XREF: Stream_selectHandler:loc_18
                 out     40h, al         ; Timer 8253-5 (AT: 8254.2).
                 out     40h, al         ; Timer 8253-5 (AT: 8254.2).
                 mov     ax, 2021h
-                call    sub_1861F
+                call    Opl2_writeDetectRegister
                 mov     ax, 60F0h
-                call    sub_1861F
+                call    Opl2_writeDetectRegister
                 mov     ax, 80F0h
-                call    sub_1861F
+                call    Opl2_writeDetectRegister
                 mov     ax, 0C001h
-                call    sub_1861F
+                call    Opl2_writeDetectRegister
                 mov     ax, 0E000h
-                call    sub_1861F
+                call    Opl2_writeDetectRegister
                 mov     ax, 433Fh
-                call    sub_1861F
+                call    Opl2_writeDetectRegister
                 mov     ax, 0B000h
-                call    sub_1861F
+                call    Opl2_writeDetectRegister
                 mov     ax, 0A000h
-                call    sub_1861F
+                call    Opl2_writeDetectRegister
                 mov     ax, 0A08Fh
-                call    sub_1861F
+                call    Opl2_writeDetectRegister
                 mov     ax, 0B02Eh
-                call    sub_1861F
+                call    Opl2_writeDetectRegister
                 cli
                 sub     al, al
                 out     43h, al         ; Timer 8253-5 (AT: 8254.2).
@@ -18589,9 +18589,9 @@ loc_1848A:                              ; CODE XREF: sub_18432+6C\u2193j
                 cmp     cx, 952h
                 jb      short loc_1848A
                 mov     ax, 0B020h
-                call    sub_1861F
+                call    Opl2_writeDetectRegister
                 mov     ax, 0A000h
-                call    sub_1861F
+                call    Opl2_writeDetectRegister
                 mov     byte_C84CA, 0
                 clc
 
@@ -18642,7 +18642,7 @@ loc_184D5:                              ; CODE XREF: sg09a4:04AD\u2191j
                 cli
                 call    sub_18415
                 mov     ax, 4000h
-                call    sub_1861F
+                call    Opl2_writeDetectRegister
                 sub     ax, ax
                 mov     es, ax
                 mov     ax, 535h
@@ -18764,7 +18764,7 @@ loc_185B0:                              ; CODE XREF: sg09a4:0587\u2191j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1861F       proc near               ; CODE XREF: sub_18432+12\u2191p
+Opl2_writeDetectRegister proc near      ; CODE XREF: sub_18432+12\u2191p
                                         ; sub_18432+18\u2191p ...
                 push    cx
                 mov     dx, 388h
@@ -18772,7 +18772,7 @@ sub_1861F       proc near               ; CODE XREF: sub_18432+12\u2191p
                 out     dx, al
                 mov     cx, 4
 
-loc_18629:                              ; CODE XREF: sub_1861F+B\u2193j
+loc_18629:                              ; CODE XREF: Opl2_writeDetectRegister+B\u2193j
                 in      al, dx
                 loop    loc_18629
                 inc     dx
@@ -18781,12 +18781,12 @@ loc_18629:                              ; CODE XREF: sub_1861F+B\u2193j
                 mov     dx, 388h
                 mov     cx, 17h
 
-loc_18636:                              ; CODE XREF: sub_1861F+18\u2193j
+loc_18636:                              ; CODE XREF: Opl2_writeDetectRegister+18\u2193j
                 in      al, dx
                 loop    loc_18636
                 pop     cx
                 retn
-sub_1861F       endp
+Opl2_writeDetectRegister endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -18794,16 +18794,16 @@ sub_1861F       endp
 
 sub_1863B       proc near               ; CODE XREF: sub_18432\u2191p
                 mov     ax, 460h
-                call    sub_1861F
+                call    Opl2_writeDetectRegister
                 mov     ax, 480h
-                call    sub_1861F
+                call    Opl2_writeDetectRegister
                 mov     dx, 388h
                 in      al, dx
                 mov     bl, al
                 mov     ax, 2FFh
-                call    sub_1861F
+                call    Opl2_writeDetectRegister
                 mov     ax, 421h
-                call    sub_1861F
+                call    Opl2_writeDetectRegister
                 mov     cx, 0C8h ; 'È'
 
 loc_1865C:                              ; CODE XREF: sub_1863B+25\u2193j
@@ -18813,9 +18813,9 @@ loc_1865C:                              ; CODE XREF: sub_1863B+25\u2193j
                 in      al, dx
                 mov     bh, al
                 mov     ax, 460h
-                call    sub_1861F
+                call    Opl2_writeDetectRegister
                 mov     ax, 480h
-                call    sub_1861F
+                call    Opl2_writeDetectRegister
                 test    bl, 0E0h
                 jnz     short loc_18680
                 and     bh, 0E0h
