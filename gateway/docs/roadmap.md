@@ -1090,6 +1090,12 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       versions of roughly nine past player choices tallied across the
       whole game. Full writeup in
       [overview.md](overview.md#logics_printbeckerjudgment-named--a-whole-playthrough-morality-callback).
+- [x] Named `sub_1E950`/`sub_1E9F4` → `Opl2_serviceTick`/
+      `Opl2_updateGlideStep` — the OPL2 backend's per-tick service
+      routine and its software pitch-glide/portamento stepper,
+      confirmed via the already-named Sound_serviceTick. Full writeup
+      in
+      [overview.md](overview.md#opl2_servicetickopl2_updateglidestep-named--closing-out-the-opl2-tick-service-side).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

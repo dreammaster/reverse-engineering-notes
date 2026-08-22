@@ -34373,7 +34373,7 @@ loc_1E869:                              ; CODE XREF: sub_1E7D4+55\u2191j
                 cmp     es:word_C858A, 0
                 jz      short loc_1E879
                 push    cs
-                call    near ptr sub_1E9F4
+                call    near ptr Opl2_updateGlideStep
 
 loc_1E879:                              ; CODE XREF: sub_1E7D4+9F\u2191j
                 cmp     byte_D20A2, 0
@@ -34496,27 +34496,27 @@ sub_1E7D4       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1E950       proc far                ; CODE XREF: Sound_serviceTick+37\u2193P
+Opl2_serviceTick proc far               ; CODE XREF: Sound_serviceTick+37\u2193P
                 cmp     byte_D20A2, 0
                 jz      short loc_1E96C
                 mov     es, dseg_16
                 cmp     es:word_C858A, 0
                 jz      short loc_1E967
                 push    cs
-                call    near ptr sub_1E9F4
+                call    near ptr Opl2_updateGlideStep
 
-loc_1E967:                              ; CODE XREF: sub_1E950+11\u2191j
+loc_1E967:                              ; CODE XREF: Opl2_serviceTick+11\u2191j
                 mov     ax, 1
                 retf
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1E96C:                              ; CODE XREF: sub_1E950+5\u2191j
+loc_1E96C:                              ; CODE XREF: Opl2_serviceTick+5\u2191j
                 push    cs
                 call    near ptr Opl2_stopTrack
                 sub     ax, ax
                 retf
-sub_1E950       endp
+Opl2_serviceTick endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -34525,7 +34525,7 @@ sub_1E950       endp
 
 ; Attributes: bp-based frame
 
-Opl2_stopTrack  proc far                ; CODE XREF: sub_1E950+1D\u2191p
+Opl2_stopTrack  proc far                ; CODE XREF: Opl2_serviceTick+1D\u2191p
                                         ; Sound_stopTrack+B9\u2193P
 
 var_6           = dword ptr -6
@@ -34591,8 +34591,8 @@ Opl2_stopTrack  endp
 
 ; Attributes: bp-based frame
 
-sub_1E9F4       proc far                ; CODE XREF: sub_1E7D4+A2\u2191p
-                                        ; sub_1E950+14\u2191p
+Opl2_updateGlideStep proc far           ; CODE XREF: sub_1E7D4+A2\u2191p
+                                        ; Opl2_serviceTick+14\u2191p
 
 var_2           = word ptr -2
 
@@ -34606,7 +34606,7 @@ var_2           = word ptr -2
                 jmp     loc_1EAC2
 ; ---------------------------------------------------------------------------
 
-loc_1EA0C:                              ; CODE XREF: sub_1E9F4+13\u2191j
+loc_1EA0C:                              ; CODE XREF: Opl2_updateGlideStep+13\u2191j
                 mov     es, dseg_16
                 cmp     es:word_C858A, 2
                 jnz     short loc_1EA2B
@@ -34616,7 +34616,7 @@ loc_1EA0C:                              ; CODE XREF: sub_1E9F4+13\u2191j
                 cmp     es:word_C857C, ax
                 jg      short loc_1EA4A
 
-loc_1EA2B:                              ; CODE XREF: sub_1E9F4+22\u2191j
+loc_1EA2B:                              ; CODE XREF: Opl2_updateGlideStep+22\u2191j
                 mov     es, dseg_16
                 cmp     es:word_C858A, 1
                 jnz     short loc_1EAA4
@@ -34626,7 +34626,7 @@ loc_1EA2B:                              ; CODE XREF: sub_1E9F4+22\u2191j
                 cmp     es:word_C857C, ax
                 jge     short loc_1EAA4
 
-loc_1EA4A:                              ; CODE XREF: sub_1E9F4+35\u2191j
+loc_1EA4A:                              ; CODE XREF: Opl2_updateGlideStep+35\u2191j
                 mov     es, dseg_21
                 mov     ax, es:word_C8592
                 mov     dx, es:word_C8594
@@ -34658,8 +34658,8 @@ loc_1EA4A:                              ; CODE XREF: sub_1E9F4+35\u2191j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1EAA4:                              ; CODE XREF: sub_1E9F4+41\u2191j
-                                        ; sub_1E9F4+54\u2191j
+loc_1EAA4:                              ; CODE XREF: Opl2_updateGlideStep+41\u2191j
+                                        ; Opl2_updateGlideStep+54\u2191j
                 mov     es, dseg_16
                 mov     es:word_C858A, 0
                 mov     es, dseg_22
@@ -34672,7 +34672,7 @@ loc_1EAA4:                              ; CODE XREF: sub_1E9F4+41\u2191j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1EAC2:                              ; CODE XREF: sub_1E9F4+15\u2191j
+loc_1EAC2:                              ; CODE XREF: Opl2_updateGlideStep+15\u2191j
                 mov     es, dseg_15
                 mov     ax, es:word_C8596
                 mov     dx, es:word_C8598
@@ -34687,15 +34687,15 @@ loc_1EAC2:                              ; CODE XREF: sub_1E9F4+15\u2191j
                 jmp     loc_1EB99
 ; ---------------------------------------------------------------------------
 
-loc_1EAEB:                              ; CODE XREF: sub_1E9F4+F2\u2191j
+loc_1EAEB:                              ; CODE XREF: Opl2_updateGlideStep+F2\u2191j
                 ja      short loc_1EAF7
                 cmp     ax, es:word_C859A
                 ja      short loc_1EAF7
                 jmp     loc_1EB99
 ; ---------------------------------------------------------------------------
 
-loc_1EAF7:                              ; CODE XREF: sub_1E9F4:loc_1EAEB\u2191j
-                                        ; sub_1E9F4+FE\u2191j
+loc_1EAF7:                              ; CODE XREF: Opl2_updateGlideStep:loc_1EAEB\u2191j
+                                        ; Opl2_updateGlideStep+FE\u2191j
                 mov     es, dseg_16
                 cmp     es:word_C858A, 1
                 jnz     short loc_1EB1E
@@ -34709,8 +34709,8 @@ loc_1EAF7:                              ; CODE XREF: sub_1E9F4:loc_1EAEB\u2191j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1EB1E:                              ; CODE XREF: sub_1E9F4+10D\u2191j
-                                        ; sub_1E9F4+120\u2191j
+loc_1EB1E:                              ; CODE XREF: Opl2_updateGlideStep+10D\u2191j
+                                        ; Opl2_updateGlideStep+120\u2191j
                 mov     es, dseg_16
                 cmp     es:word_C858A, 2
                 jnz     short loc_1EB42
@@ -34721,8 +34721,8 @@ loc_1EB1E:                              ; CODE XREF: sub_1E9F4+10D\u2191j
                 jle     short loc_1EB42
                 dec     es:word_C857C
 
-loc_1EB42:                              ; CODE XREF: sub_1E9F4+127\u2191j
-                                        ; sub_1E9F4+134\u2191j ...
+loc_1EB42:                              ; CODE XREF: Opl2_updateGlideStep+127\u2191j
+                                        ; Opl2_updateGlideStep+134\u2191j ...
                 mov     es, dseg_20
                 mov     ax, es:word_C858C
                 mov     es, dseg_13
@@ -34742,7 +34742,7 @@ loc_1EB42:                              ; CODE XREF: sub_1E9F4+127\u2191j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1EB7E:                              ; CODE XREF: sub_1E9F4+15F\u2191j
+loc_1EB7E:                              ; CODE XREF: Opl2_updateGlideStep+15F\u2191j
                 mov     es, dseg_19
                 mov     ax, es:word_C859A
                 mov     dx, es:word_C859C
@@ -34751,12 +34751,12 @@ loc_1EB7E:                              ; CODE XREF: sub_1E9F4+15F\u2191j
                 add     es:_tmpSub._val5, ax
                 adc     es:_tmpSub._val6, dx
 
-loc_1EB99:                              ; CODE XREF: sub_1E9F4+F4\u2191j
-                                        ; sub_1E9F4+100\u2191j
+loc_1EB99:                              ; CODE XREF: Opl2_updateGlideStep+F4\u2191j
+                                        ; Opl2_updateGlideStep+100\u2191j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_1E9F4       endp
+Opl2_updateGlideStep endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -37754,7 +37754,7 @@ loc_201EB:                              ; CODE XREF: Sound_serviceTick+3C\u2193j
 loc_201F0:                              ; CODE XREF: Sound_serviceTick+24\u2191j
                 test    byte ptr word_C8582, 2
                 jz      short loc_201FE
-                call    sub_1E950
+                call    Opl2_serviceTick
                 jmp     short loc_201EB
 ; ---------------------------------------------------------------------------
 
@@ -383858,18 +383858,18 @@ word_C858E      dw 0                    ; DATA XREF: Sound_selectTrackForRoom+1A
                                         ; Sound_selectTrack+155\u2191w ...
 word_C8590      dw 0                    ; DATA XREF: Sound_selectTrackForRoom+1A6\u2191w
                                         ; Sound_selectTrack+151\u2191w ...
-word_C8592      dw 0                    ; DATA XREF: sub_1E9F4+5A\u2191r
+word_C8592      dw 0                    ; DATA XREF: Opl2_updateGlideStep+5A\u2191r
                                         ; sub_1F034+5A\u2191r ...
-word_C8594      dw 0                    ; DATA XREF: sub_1E9F4+5E\u2191r
+word_C8594      dw 0                    ; DATA XREF: Opl2_updateGlideStep+5E\u2191r
                                         ; sub_1F034+5E\u2191r ...
 word_C8596      dw 0                    ; DATA XREF: sub_1E7D4+3B\u2191w
-                                        ; sub_1E9F4+D2\u2191r ...
+                                        ; Opl2_updateGlideStep+D2\u2191r ...
 word_C8598      dw 0                    ; DATA XREF: sub_1E7D4+40\u2191w
-                                        ; sub_1E9F4+D6\u2191r ...
-word_C859A      dw 0                    ; DATA XREF: sub_1E9F4+A\u2191r
-                                        ; sub_1E9F4+A3\u2191w ...
-word_C859C      dw 0                    ; DATA XREF: sub_1E9F4+E\u2191r
-                                        ; sub_1E9F4+A7\u2191w ...
+                                        ; Opl2_updateGlideStep+D6\u2191r ...
+word_C859A      dw 0                    ; DATA XREF: Opl2_updateGlideStep+A\u2191r
+                                        ; Opl2_updateGlideStep+A3\u2191w ...
+word_C859C      dw 0                    ; DATA XREF: Opl2_updateGlideStep+E\u2191r
+                                        ; Opl2_updateGlideStep+A7\u2191w ...
 word_C859E      dw 0                    ; DATA XREF: sub_1FCAA:loc_1FCBC\u2191r
                                         ; seg029:loc_1FD2C\u2191r ...
 word_C85A0      dw 0                    ; DATA XREF: sub_1FCAA+C\u2191w
@@ -393426,21 +393426,21 @@ dseg_13         dw seg sg4d43           ; DATA XREF: sub_1E4C4+67\u2191r
 dseg_14         dw seg sg4d43           ; DATA XREF: sub_1E4C4+6F\u2191r
                                         ; sub_1E4C4+BB\u2191r
 dseg_15         dw seg sg4d43           ; DATA XREF: sub_1E7D4+37\u2191r
-                                        ; sub_1E9F4:loc_1EAC2\u2191r ...
+                                        ; Opl2_updateGlideStep:loc_1EAC2\u2191r ...
 dseg_16         dw seg sg4d43           ; DATA XREF: sub_1E7D4:loc_1E81F\u2191r
                                         ; sub_1E7D4:loc_1E869\u2191r ...
 dseg_17         dw seg sg4d43           ; DATA XREF: sub_1E7D4+74\u2191r
                                         ; sub_1EB9E+7F\u2191r
 dseg_18         dw seg sg4d43           ; DATA XREF: sub_1E7D4+142\u2191r
-dseg_19         dw seg sg4d43           ; DATA XREF: sub_1E9F4+6\u2191r
-                                        ; sub_1E9F4+9F\u2191r ...
-dseg_20         dw seg sg4d43           ; DATA XREF: sub_1E9F4+24\u2191r
-                                        ; sub_1E9F4+43\u2191r ...
-dseg_21         dw seg sg4d43           ; DATA XREF: sub_1E9F4:loc_1EA4A\u2191r
-seg126_17       dw seg sg3EDC           ; DATA XREF: sub_1E9F4+63\u2191r
-                                        ; sub_1E9F4+DB\u2191r ...
-dseg_22         dw seg sg4d43           ; DATA XREF: sub_1E9F4+8C\u2191r
-                                        ; sub_1E9F4+BB\u2191r ...
+dseg_19         dw seg sg4d43           ; DATA XREF: Opl2_updateGlideStep+6\u2191r
+                                        ; Opl2_updateGlideStep+9F\u2191r ...
+dseg_20         dw seg sg4d43           ; DATA XREF: Opl2_updateGlideStep+24\u2191r
+                                        ; Opl2_updateGlideStep+43\u2191r ...
+dseg_21         dw seg sg4d43           ; DATA XREF: Opl2_updateGlideStep:loc_1EA4A\u2191r
+seg126_17       dw seg sg3EDC           ; DATA XREF: Opl2_updateGlideStep+63\u2191r
+                                        ; Opl2_updateGlideStep+DB\u2191r ...
+dseg_22         dw seg sg4d43           ; DATA XREF: Opl2_updateGlideStep+8C\u2191r
+                                        ; Opl2_updateGlideStep+BB\u2191r ...
 dseg_23         dw seg sg4d43           ; DATA XREF: sub_1EB9E+8\u2191r
                                         ; sub_1EB9E+3D\u2191r ...
 dseg_24         dw seg sg4d43           ; DATA XREF: sub_1EB9E+2A\u2191r

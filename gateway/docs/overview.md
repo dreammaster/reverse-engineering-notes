@@ -4611,3 +4611,32 @@ A genuinely charming confirmation of just how much of Gateway's small
 get remembered and recited back at the player later.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-fiftieth batch.
+
+### `Opl2_serviceTick`/`Opl2_updateGlideStep` named — closing out the OPL2 tick-service side
+
+`sub_1E950` (2 callers) is confirmed directly from its only caller,
+the already-named `Sound_serviceTick`, as the OPL2 backend's per-tick
+service routine — the exact counterpart to the already-named
+`Midi_serviceTick` on the MIDI side. If `byte_D20A2` ("OPL2 currently
+playing") is clear, it calls the already-named `Opl2_stopTrack` and
+returns 0; otherwise, if a glide is in progress, it calls
+**`Opl2_updateGlideStep`** (was `sub_1E9F4`) and returns 1.
+
+`Opl2_updateGlideStep` is a **software pitch-glide/portamento
+stepper** — OPL2 hardware has no native glide support, so this
+interpolates a value (`word_C857C`) toward a target (`word_C858C`) one
+step at a time in software, timed via 32-bit tick math (a duration
+computed once via a 32-bit division, `__aFuldiv`, of the total delta
+by a fixed constant). Each tick it checks whether enough real time has
+elapsed since the glide started; if so, it nudges the value one unit
+closer to the target (incrementing or decrementing depending on
+direction), clearing the glide state entirely once the target is
+reached. Called once per tick from `Opl2_serviceTick`, and from
+`sub_1E7D4` (unnamed, reached via a data table entry — presumably
+where a glide first gets kicked off).
+
+With this, the OPL2 backend's tick-service side lines up cleanly with
+the already-documented MIDI tick-service side from earlier this
+session.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-fifty-first batch.

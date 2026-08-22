@@ -3494,6 +3494,36 @@ RENAMES = [
      "flagged sub_4A722 (part of the previously-declined sub_4A69F "
      "cluster), which is why several branches here weren't traced down "
      "to their exact bit sources."),
+
+    (0x1E950, "Opl2_serviceTick",
+     "sub_1E950(): confirmed as the OPL2 backend's per-tick service "
+     "routine directly from its only caller, the already-named "
+     "Sound_serviceTick (called for the OPL2/other bit, paralleling "
+     "the already-named Midi_serviceTick for the MIDI backend). If "
+     "byte_D20A2 (an 'OPL2 currently playing' flag) is clear, calls "
+     "the already-named Opl2_stopTrack and returns 0. Otherwise, if "
+     "word_C858A (a glide-in-progress mode flag, confirmed inside the "
+     "just-named Opl2_updateGlideStep) is nonzero, calls "
+     "Opl2_updateGlideStep and returns 1."),
+
+    (0x1E9F4, "Opl2_updateGlideStep",
+     "sub_1E9F4(): a software pitch-glide/portamento stepper for the "
+     "OPL2 backend (OPL2 hardware has no native glide, so this "
+     "interpolates word_C857C toward a target word_C858C one step at a "
+     "time in software). word_C858A selects the mode: 0 means no glide "
+     "in progress (falls through to the 'not yet timed' branch, which "
+     "-- if the elapsed-ticks-since-start-of-glide (word_C859A:C859C, "
+     "a dword) is zero -- computes it via a 32-bit division "
+     "(__aFuldiv) of the total pitch delta by a duration constant, "
+     "seeding the timer). Otherwise, checks whether enough real time "
+     "has elapsed (comparing the current dword tick count against a "
+     "snapshotted start time plus the computed per-step duration); if "
+     "so, advances word_C857C by 1 towards word_C858C (mode 1 "
+     "increments if still below target, mode 2 decrements if still "
+     "above), and clears the glide state entirely once the target is "
+     "reached. Called once per tick from the just-named "
+     "Opl2_serviceTick and from sub_1E7D4 (unnamed, reached via a data "
+     "table entry -- presumably where a glide is first kicked off)."),
 ]
 
 
