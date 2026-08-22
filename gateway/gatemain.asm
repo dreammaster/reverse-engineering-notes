@@ -52476,7 +52476,7 @@ Image_loadRange endp
 
 ; Attributes: bp-based frame
 
-sub_26892       proc far                ; CODE XREF: Icon_drawButton+7A\u2193P
+Surface_beginOverlay proc far           ; CODE XREF: Icon_drawButton+7A\u2193P
                                         ; Dialog_showFormattedPrompt+1D3\u2193P
 
 var_4           = word ptr -4
@@ -52494,7 +52494,7 @@ arg_A           = word ptr  10h
                 cmp     byte ptr es:[bx], 0
                 jz      short loc_268A8
 
-loc_268A1:                              ; CODE XREF: sub_26892+47\u2193j
+loc_268A1:                              ; CODE XREF: Surface_beginOverlay+47\u2193j
                 sub     ax, ax
                 mov     sp, bp
                 pop     bp
@@ -52502,7 +52502,7 @@ loc_268A1:                              ; CODE XREF: sub_26892+47\u2193j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_268A8:                              ; CODE XREF: sub_26892+D\u2191j
+loc_268A8:                              ; CODE XREF: Surface_beginOverlay+D\u2191j
                 sub     ax, ax
                 push    ax              ; int
                 mov     ax, word ptr [bp+arg_0]
@@ -52575,7 +52575,7 @@ loc_268A8:                              ; CODE XREF: sub_26892+D\u2191j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_26892       endp
+Surface_beginOverlay endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -55368,7 +55368,7 @@ arg_2           = word ptr  8
                 lea     ax, [bp+img]
                 push    ss
                 push    ax
-                call    sub_26892
+                call    Surface_beginOverlay
                 add     sp, 0Ch
                 mov     ax, [bp+var_6]
                 inc     ax
@@ -60538,7 +60538,7 @@ loc_2A2EF:                              ; CODE XREF: Dialog_showFormattedPrompt+
                 add     ax, 0ACA4h
                 push    ds
                 push    ax
-                call    sub_26892
+                call    Surface_beginOverlay
                 add     sp, 0Ch
                 mov     [bp+var_11E], ax
                 mov     es, dseg_64

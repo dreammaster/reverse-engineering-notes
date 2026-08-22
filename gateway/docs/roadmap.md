@@ -975,6 +975,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       in the palette/lookup table for the scale direction, called
       from `scale_pic`/`load_and_scale_pic`. Full writeup in
       [overview.md](overview.md#scalepic_selectpalette-named).
+- [x] Named `sub_26892` (2 callers) → `Surface_beginOverlay` — a
+      reusable temporary-drawing-surface-with-save/restore primitive,
+      called from `Icon_drawButton`/`Dialog_showFormattedPrompt`. Full
+      writeup in [overview.md](overview.md#surface_beginoverlay-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

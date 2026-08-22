@@ -2943,6 +2943,26 @@ RENAMES = [
      "lookup table appropriate for the scale direction (e.g. distinct "
      "EGA vs. VGA color-mapping data) before an EGA<->VGA picture "
      "scale."),
+
+    (0x26892, "Surface_beginOverlay",
+     "sub_26892(state, x1, y1, x2, y2): returns 0 immediately if the "
+     "given state struct's active flag (offset 0) is already set. "
+     "Otherwise allocates a surface sized (x2-x1+1) x (y2-y1+1) into "
+     "the struct's embedded image sub-structure (offset +8) via the "
+     "already-named Image_allocateSurface; returns 0 if that fails. "
+     "On success: saves the struct's current image pointer (offset "
+     "+0x20/+0x22) into a backup slot (offset +0x88/+0x8A) so it can "
+     "be restored later, stores the new rect's (x1,y1) into the "
+     "struct, clears some flag bytes and sets the active flag, hides "
+     "the mouse, swaps the freshly-allocated surface's own image data "
+     "into the struct's current-image slot, draws it over the "
+     "screen rect (via the already-named Surface_draw2, offsetting by "
+     "Image_OffsetPos) and shows the mouse again, returning 1. Called "
+     "from the already-named Icon_drawButton and "
+     "Dialog_showFormattedPrompt -- a reusable 'allocate a temporary "
+     "drawing surface over a rectangle, saving whatever image was "
+     "there before' overlay primitive, presumably paired with a "
+     "not-yet-identified restore/end counterpart."),
 ]
 
 

@@ -3934,3 +3934,23 @@ the scale direction (e.g. distinct EGA vs. VGA color-mapping data)
 before an EGA↔VGA picture scale.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-twenty-eighth batch.
+
+### `Surface_beginOverlay` named
+
+Moved to `sub_26892` (2 callers) — returns 0 immediately if the given
+state struct's active flag is already set. Otherwise allocates a
+surface sized to the given rectangle into the struct's embedded image
+sub-structure; returns 0 if that fails. On success: saves the struct's
+current image pointer into a backup slot so it can be restored later,
+stores the new rect, clears some flag bytes and sets the active flag,
+hides the mouse, swaps the freshly-allocated surface's own image data
+into the struct's current-image slot, draws it over the screen rect,
+and shows the mouse again, returning 1.
+
+Called from the already-named `Icon_drawButton` and
+`Dialog_showFormattedPrompt` — a reusable "allocate a temporary
+drawing surface over a rectangle, saving whatever image was there
+before" overlay primitive, presumably paired with a not-yet-identified
+restore/end counterpart.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-twenty-ninth batch.
