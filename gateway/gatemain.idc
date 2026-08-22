@@ -12259,7 +12259,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1883D);
 	op_hex		(x,	1);
 	create_insn	(0X18842);
-	set_name	(0X18842,	"Speaker_sampleIsr");
+	set_name	(0X18842,	"SoundBlaster_dmaIsr");
 	create_byte	(0X1886E);
 	create_insn	(0X1886F);
 	create_byte	(0X18874);
@@ -12268,6 +12268,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1887A);
 	op_hex		(x,	0);
 	create_insn	(0X18883);
+	set_name	(0X18883,	"SoundBlaster_startNextDmaBlock");
 	create_insn	(0X188AC);
 	set_cmt	(0X188BA,	"DMA controller, 8237A-5.\nsingle mask bit register\n0-1: select channel (00=0; 01=1; 10=2; 11=3)\n2: 1=set mask for channel; 0=clear mask (enable)",	0);
 	create_insn	(x=0X188BA);
@@ -12298,6 +12299,7 @@ static Bytes_1(void) {
 	op_hex		(x,	0);
 	create_byte	(0X18904);
 	create_insn	(0X18905);
+	set_name	(0X18905,	"SoundBlaster_uninstallDmaIsr");
 	set_cmt	(0X18907,	"DMA controller, 8237A-5.\nsingle mask bit register\n0-1: select channel (00=0; 01=1; 10=2; 11=3)\n2: 1=set mask for channel; 0=clear mask (enable)",	0);
 	create_insn	(x=0X18907);
 	op_hex		(x,	0);
@@ -12502,11 +12504,6 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(0X18E96);
 	set_name	(0X18E96,	"__NMSG_TEXT");
-	create_insn	(x=0X18E9D);
-	op_stkvar	(x,	1);
-	create_insn	(0X18EB8);
-	create_insn	(0X18EC1);
-	set_name	(0X18EC1,	"__NMSG_WRITE");
 }
 
 //------------------------------------------------------------------------
@@ -12516,6 +12513,11 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X18E9D);
+	op_stkvar	(x,	1);
+	create_insn	(0X18EB8);
+	create_insn	(0X18EC1);
+	set_name	(0X18EC1,	"__NMSG_WRITE");
 	create_insn	(x=0X18EC5);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X18EE1);
@@ -18329,14 +18331,6 @@ static Bytes_2(void) {
 	create_insn	(0X1F2DF);
 	create_insn	(x=0X1F2F6);
 	op_hex		(x,	1);
-	create_insn	(x=0X1F2F9);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X1F300);
-	op_hex		(x,	1);
-	create_insn	(x=0X1F303);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X1F306);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -18346,6 +18340,14 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X1F2F9);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X1F300);
+	op_hex		(x,	1);
+	create_insn	(x=0X1F303);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X1F306);
+	op_hex		(x,	1);
 	create_insn	(0X1F310);
 	create_insn	(x=0X1F317);
 	op_stkvar	(x,	0);
@@ -23446,14 +23448,6 @@ static Bytes_3(void) {
 	toggle_bnot		(x,	7);
 	create_insn	(x=0X24589);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X24590);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X24593);
-	op_hex		(x,	1);
-	create_insn	(x=0X24595);
-	op_hex		(x,	1);
-	create_insn	(x=0X245A2);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -23463,6 +23457,14 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X24590);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X24593);
+	op_hex		(x,	1);
+	create_insn	(x=0X24595);
+	op_hex		(x,	1);
+	create_insn	(x=0X245A2);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X245A5);
 	op_stkvar	(x,	1);
 	set_cmt	(0X245B0,	"param1",	0);
@@ -29131,12 +29133,6 @@ static Bytes_4(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X28AFA);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X28B06);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X28B09);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X28B11);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -29146,6 +29142,12 @@ static Bytes_5(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X28B06);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X28B09);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X28B11);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X28B1C);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X28B28);
@@ -34074,10 +34076,6 @@ static Bytes_5(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X2C71C);
 	op_stroff	(x,	1,	GetStrucIdByName("Screen"),	0);
-	create_insn	(x=0X2C71F);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X2C722);
-	op_stroff	(x,	1,	GetStrucIdByName("Screen"),	0);
 }
 
 //------------------------------------------------------------------------
@@ -34087,6 +34085,10 @@ static Bytes_6(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X2C71F);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X2C722);
+	op_stroff	(x,	1,	GetStrucIdByName("Screen"),	0);
 	create_insn	(x=0X2C725);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X2C728);
@@ -38209,10 +38211,6 @@ static Bytes_6(void) {
 	create_word	(0X31009);
 	create_insn	(0X3100B);
 	set_name	(0X3100B,	"thunk_sub_B4B07");
-	create_word	(0X31013);
-	create_insn	(0X31015);
-	set_name	(0X31015,	"thunk_sub_B46BF");
-	create_word	(0X3101D);
 }
 
 //------------------------------------------------------------------------
@@ -38222,6 +38220,10 @@ static Bytes_7(void) {
         auto x;
 #define id x
 
+	create_word	(0X31013);
+	create_insn	(0X31015);
+	set_name	(0X31015,	"thunk_sub_B46BF");
+	create_word	(0X3101D);
 	create_insn	(0X3101F);
 	create_word	(0X31027);
 	create_insn	(0X31029);
@@ -41594,9 +41596,6 @@ static Bytes_7(void) {
 	create_dword	(x=0X3F388);
 	op_plain_offset	(x,	0,	0X2CF40);
 	op_plain_offset	(x,	128,	0X2CF40);
-	create_dword	(x=0X3F38C);
-	op_plain_offset	(x,	0,	0X2CF40);
-	op_plain_offset	(x,	128,	0X2CF40);
 }
 
 //------------------------------------------------------------------------
@@ -41606,6 +41605,9 @@ static Bytes_8(void) {
         auto x;
 #define id x
 
+	create_dword	(x=0X3F38C);
+	op_plain_offset	(x,	0,	0X2CF40);
+	op_plain_offset	(x,	128,	0X2CF40);
 	create_dword	(x=0X3F390);
 	op_plain_offset	(x,	0,	0X2CF40);
 	op_plain_offset	(x,	128,	0X2CF40);
@@ -47691,8 +47693,6 @@ static Bytes_8(void) {
 	create_word	(x=0X4DAA6);
 	op_man		(x,	0,	"258");
 	set_name	(0X4DAA6,	"videoMode");
-	create_word	(0X4DAAA);
-	create_word	(0X4DAAC);
 }
 
 //------------------------------------------------------------------------
@@ -47702,6 +47702,8 @@ static Bytes_9(void) {
         auto x;
 #define id x
 
+	create_word	(0X4DAAA);
+	create_word	(0X4DAAC);
 	create_byte	(0X4DAAE);
 	make_array	(0X4DAAE,	0X8);
 	create_byte	(0X4DAB6);
@@ -53467,9 +53469,6 @@ static Bytes_9(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X61F00);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X61F08);
-	op_stkvar	(x,	0);
-	op_seg		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -53479,6 +53478,9 @@ static Bytes_10(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X61F08);
+	op_stkvar	(x,	0);
+	op_seg		(x,	1);
 	create_insn	(x=0X61F10);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X61F16);

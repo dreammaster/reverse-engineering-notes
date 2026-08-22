@@ -3251,3 +3251,45 @@ from the already-named `Game_restartAfterDeath`, which performs a real
 restart.
 
 Applied via `apply_renames_gatemain.py`'s ninety-third batch.
+
+### Correction: the "digitized PC-speaker" ISR is actually Sound Blaster DMA playback
+
+Tracing `Speaker_sampleIsr`'s two dispatch targets (`sub_18883` and
+`sub_18905`) revealed that this whole cluster was mischaracterized
+several sessions ago as a "digitized PC-speaker sound-effect engine."
+It is actually the **Sound Blaster DSP's auto-init-DMA sample-playback
+interrupt handler**. PC-speaker playback never touches the ISA DMA
+controller or the Sound Blaster DSP base port — but both dispatch
+targets do so directly and unambiguously:
+
+- `sub_18883` → **`SoundBlaster_startNextDmaBlock`**: reprograms ISA
+  DMA channel 1 (mask, clear flip-flop, auto-init/write/increment/
+  single mode `0x49`, base address, page register, count, re-enable),
+  advances the internal block index, then sends Sound Blaster DSP
+  command `0x14` (8-bit single-cycle DMA DAC output) plus the 16-bit
+  sample count via the DSP command port. The "more data queued, start
+  the next DMA block" dispatch path.
+- `sub_18905` → **`SoundBlaster_uninstallDmaIsr`**: masks DMA channel
+  1, restores the original interrupt vector for the configured SB IRQ
+  line (the vector this ISR's installer had saved), clears two state
+  flags, and reads the DSP's IRQ-acknowledge port to clear the pending
+  hardware interrupt. The "playback finished, uninstall and acknowledge"
+  dispatch path.
+
+The installer code sitting just above the ISR in the same segment
+confirms this further: it saves the current interrupt vector for a
+configurable IRQ line (`byte_C84F5`, defaulting to 3 — a classic Sound
+Blaster IRQ choice) before installing this ISR, using the already-named
+`Sb_writeByte` to program the card first.
+
+The renamed ISR itself is now **`SoundBlaster_dmaIsr`**. The buffer-
+position/length globals it sets up on entry
+(`byte_C84F6`/`word_C84F7`/`word_C84FC`/`word_C84FE`/`word_C8500`/
+`byte_C84FB`) are unaffected by this correction — they're real
+per-block DMA state, just belonging to the Sound Blaster backend
+instead of a PC-speaker one. Whether a genuinely separate PC-speaker
+digitized-sample path exists elsewhere in the sound engine wasn't
+re-checked this pass -- only that this specific ISR and its cluster
+belong to Sound Blaster, not PC-speaker.
+
+Applied via `apply_renames_gatemain.py`'s ninety-fourth batch.

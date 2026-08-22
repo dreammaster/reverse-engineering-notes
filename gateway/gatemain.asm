@@ -19075,7 +19075,7 @@ loc_18797:                              ; CODE XREF: sg09a4:loc_18795\u2191j
                 mov     word_C8500, ax
                 sub     dl, byte_C84F6
                 mov     byte_C84FB, dl
-                call    sub_18883
+                call    SoundBlaster_startNextDmaBlock
                 mov     byte_C84CA, 1
 
 locret_187E0:                           ; CODE XREF: sg09a4:06F5\u2191j
@@ -19132,7 +19132,7 @@ loc_18825:                              ; CODE XREF: sg09a4:07FC\u2191j
 ; =============== S U B R O U T I N E =======================================
 
 
-Speaker_sampleIsr proc far              ; CODE XREF: seg097:05AB\u2193P
+SoundBlaster_dmaIsr proc far            ; CODE XREF: seg097:05AB\u2193P
                                         ; seg097:0629\u2193P ...
                 adc     dx, 0
                 mov     byte_C84F6, dl
@@ -19153,17 +19153,17 @@ Speaker_sampleIsr proc far              ; CODE XREF: seg097:05AB\u2193P
 
 loc_1886F:                              ; CODE XREF: sg09a4:07E1\u2191j
                                         ; sg09a4:0802\u2191j
-                call    sub_18905
+                call    SoundBlaster_uninstallDmaIsr
                 jmp     short loc_18878
 ; ---------------------------------------------------------------------------
                 db 90h
 ; ---------------------------------------------------------------------------
 
 loc_18875:                              ; CODE XREF: sg09a4:07D9\u2191j
-                                        ; Speaker_sampleIsr+2A\u2191j
-                call    sub_18883
+                                        ; SoundBlaster_dmaIsr+2A\u2191j
+                call    SoundBlaster_startNextDmaBlock
 
-loc_18878:                              ; CODE XREF: Speaker_sampleIsr+30\u2191j
+loc_18878:                              ; CODE XREF: SoundBlaster_dmaIsr+30\u2191j
                 mov     al, 20h ; ' '
                 out     20h, al         ; Interrupt controller, 8259A.
                 pop     ds
@@ -19173,21 +19173,21 @@ loc_18878:                              ; CODE XREF: Speaker_sampleIsr+30\u2191j
                 pop     bx
                 pop     ax
                 iret
-Speaker_sampleIsr endp ; sp-analysis failed
+SoundBlaster_dmaIsr endp ; sp-analysis failed
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18883       proc near               ; CODE XREF: sg09a4:07B8\u2191p
-                                        ; Speaker_sampleIsr:loc_18875\u2191p
+SoundBlaster_startNextDmaBlock proc near ; CODE XREF: sg09a4:07B8\u2191p
+                                        ; SoundBlaster_dmaIsr:loc_18875\u2191p
                 mov     cx, 0FFFFh
                 cmp     byte_C84FB, 0
                 jnz     short loc_18895
                 inc     byte_C84FB
                 mov     cx, word_C8500
 
-loc_18895:                              ; CODE XREF: sub_18883+8\u2191j
+loc_18895:                              ; CODE XREF: SoundBlaster_startNextDmaBlock+8\u2191j
                 sub     cx, word_C84F7
                 mov     word_C84F9, cx
                 inc     cx
@@ -19198,10 +19198,10 @@ loc_18895:                              ; CODE XREF: sub_18883+8\u2191j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_188AC:                              ; CODE XREF: sub_18883+1B\u2191j
+loc_188AC:                              ; CODE XREF: SoundBlaster_startNextDmaBlock+1B\u2191j
                 dec     word_C84FE
 
-loc_188B0:                              ; CODE XREF: sub_18883+26\u2191j
+loc_188B0:                              ; CODE XREF: SoundBlaster_startNextDmaBlock+26\u2191j
                 mov     bx, word_C84F7
                 mov     cx, word_C84F9
                 mov     al, 5
@@ -19253,7 +19253,7 @@ loc_188B0:                              ; CODE XREF: sub_18883+26\u2191j
                 call    sub_18950
                 mov     al, ch
                 jmp     short sub_18950
-sub_18883       endp
+SoundBlaster_startNextDmaBlock endp
 
 ; ---------------------------------------------------------------------------
                 db 90h
@@ -19261,7 +19261,7 @@ sub_18883       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18905       proc near               ; CODE XREF: Speaker_sampleIsr:loc_1886F\u2191p
+SoundBlaster_uninstallDmaIsr proc near  ; CODE XREF: SoundBlaster_dmaIsr:loc_1886F\u2191p
                                         ; sub_18976+26\u2193p
                 mov     al, 5
                 out     0Ah, al         ; DMA controller, 8237A-5.
@@ -19290,19 +19290,19 @@ sub_18905       proc near               ; CODE XREF: Speaker_sampleIsr:loc_1886F
                 jmp     short $+2
 ; ---------------------------------------------------------------------------
 
-loc_18933:                              ; CODE XREF: sub_18905+2C\u2191j
+loc_18933:                              ; CODE XREF: SoundBlaster_uninstallDmaIsr+2C\u2191j
                 jmp     short $+2
 ; ---------------------------------------------------------------------------
 
-loc_18935:                              ; CODE XREF: sub_18905:loc_18933\u2191j
+loc_18935:                              ; CODE XREF: SoundBlaster_uninstallDmaIsr:loc_18933\u2191j
                 jmp     short $+2
 ; ---------------------------------------------------------------------------
 
-loc_18937:                              ; CODE XREF: sub_18905:loc_18935\u2191j
+loc_18937:                              ; CODE XREF: SoundBlaster_uninstallDmaIsr:loc_18935\u2191j
                 jmp     short $+2
 ; ---------------------------------------------------------------------------
 
-loc_18939:                              ; CODE XREF: sub_18905:loc_18937\u2191j
+loc_18939:                              ; CODE XREF: SoundBlaster_uninstallDmaIsr:loc_18937\u2191j
                 out     21h, al         ; Interrupt controller, 8259A.
                 sti
                 mov     byte_C84CA, 0
@@ -19311,14 +19311,14 @@ loc_18939:                              ; CODE XREF: sub_18905:loc_18937\u2191j
                 add     dl, 0Eh
                 in      al, dx
                 retn
-sub_18905       endp
+SoundBlaster_uninstallDmaIsr endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18950       proc near               ; CODE XREF: sub_18883+75\u2191p
-                                        ; sub_18883+7A\u2191p ...
+sub_18950       proc near               ; CODE XREF: SoundBlaster_startNextDmaBlock+75\u2191p
+                                        ; SoundBlaster_startNextDmaBlock+7A\u2191p ...
                 mov     ah, al
 
 loc_18952:                              ; CODE XREF: sub_18950+5\u2193j
@@ -19394,7 +19394,7 @@ loc_18994:                              ; CODE XREF: sub_18976+21\u2193j
                 js      short loc_18994
                 mov     al, ah
                 out     dx, al
-                call    sub_18905
+                call    SoundBlaster_uninstallDmaIsr
 
 loc_1899F:                              ; CODE XREF: sub_18976+16\u2191j
                 pop     es
@@ -127161,7 +127161,7 @@ loc_47659:                              ; CODE XREF: seg097:0547\u2191j
                 push    ax
                 call    sub_1A0FC
                 add     sp, 4
-                call    Speaker_sampleIsr
+                call    SoundBlaster_dmaIsr
 
 loc_47690:                              ; CODE XREF: seg097:0599\u2191j
                 push    word ptr gatestr_file+2
@@ -127208,7 +127208,7 @@ loc_47690:                              ; CODE XREF: seg097:0599\u2191j
                 push    ax
                 call    sub_1A0FC
                 add     sp, 4
-                call    Speaker_sampleIsr
+                call    SoundBlaster_dmaIsr
 
 loc_4770E:                              ; CODE XREF: seg097:0617\u2191j
                 push    word ptr gatestr_file+2
@@ -127275,7 +127275,7 @@ loc_47753:                              ; CODE XREF: seg097:066E\u2191j
                 push    ax
                 call    sub_1A0FC
                 add     sp, 4
-                call    Speaker_sampleIsr
+                call    SoundBlaster_dmaIsr
 
 loc_477B8:                              ; CODE XREF: seg097:06C1\u2191j
                 push    word ptr gatestr_file+2
@@ -127346,7 +127346,7 @@ loc_47858:                              ; CODE XREF: seg097:075F\u2191j
                 push    ax
                 call    sub_1A0FC
                 add     sp, 4
-                call    Speaker_sampleIsr
+                call    SoundBlaster_dmaIsr
 
 loc_47876:                              ; CODE XREF: seg097:077F\u2191j
                 sub     ax, ax
@@ -383708,25 +383708,25 @@ byte_C84E8      db 0                    ; DATA XREF: Cpu_measureSpeed:loc_18154\
 _sbBasePort     dw 220h                 ; DATA XREF: Sb_detectDsp\u2191r
                                         ; Sb_detectDsp+9\u2191r ...
 byte_C84F5      db 3                    ; DATA XREF: sg09a4:073D\u2191r
-                                        ; sub_18905+4\u2191r ...
+                                        ; SoundBlaster_uninstallDmaIsr+4\u2191r ...
 byte_C84F6      db 0                    ; DATA XREF: sg09a4:0791\u2191w
                                         ; sg09a4:07B0\u2191r ...
 word_C84F7      dw 0                    ; DATA XREF: sg09a4:0795\u2191w
-                                        ; Speaker_sampleIsr+7\u2191w ...
-word_C84F9      dw 0                    ; DATA XREF: sub_18883+16\u2191w
-                                        ; sub_18883+31\u2191r ...
+                                        ; SoundBlaster_dmaIsr+7\u2191w ...
+word_C84F9      dw 0                    ; DATA XREF: SoundBlaster_startNextDmaBlock+16\u2191w
+                                        ; SoundBlaster_startNextDmaBlock+31\u2191r ...
 byte_C84FB      db 0                    ; DATA XREF: sg09a4:07B4\u2191w
-                                        ; Speaker_sampleIsr+26\u2191w ...
+                                        ; SoundBlaster_dmaIsr+26\u2191w ...
 word_C84FC      dw 0                    ; DATA XREF: sg09a4:0798\u2191w
                                         ; sg09a4:07D4\u2191r ...
 word_C84FE      dw 0                    ; DATA XREF: sg09a4:079C\u2191w
-                                        ; Speaker_sampleIsr+E\u2191w ...
+                                        ; SoundBlaster_dmaIsr+E\u2191w ...
 word_C8500      dw 0                    ; DATA XREF: sg09a4:07AD\u2191w
-                                        ; Speaker_sampleIsr+1F\u2191w ...
+                                        ; SoundBlaster_dmaIsr+1F\u2191w ...
 word_C8502      dw 0                    ; DATA XREF: sg09a4:0753\u2191w
-                                        ; sub_18905+17\u2191r
+                                        ; SoundBlaster_uninstallDmaIsr+17\u2191r
 word_C8504      dw 0                    ; DATA XREF: sg09a4:075F\u2191w
-                                        ; sub_18905+1D\u2191r
+                                        ; SoundBlaster_uninstallDmaIsr+1D\u2191r
                 align 4
 word_C8508      dw 0                    ; DATA XREF: sub_1E21B+3B\u2191w
                                         ; sub_1E3D0+69\u2191r ...

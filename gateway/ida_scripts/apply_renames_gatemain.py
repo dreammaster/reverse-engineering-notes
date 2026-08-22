@@ -2337,6 +2337,54 @@ RENAMES = [
      "reloading/resuming the current session rather than actually "
      "restarting -- distinct from the already-named "
      "Game_restartAfterDeath, which performs a real restart."),
+
+    ("Speaker_sampleIsr", "SoundBlaster_dmaIsr",
+     "CORRECTION: this ISR (previously named as part of a "
+     "'digitized PC-speaker sound-effect engine' several sessions "
+     "ago) is actually the Sound Blaster DSP's auto-init-DMA sample-"
+     "playback interrupt handler, not PC-speaker code. Confirmed this "
+     "pass by tracing its two dispatch targets (sub_18883/sub_18905, "
+     "renamed below): both directly program the ISA DMA controller "
+     "(8237A-5, ports 0x0A-0x0C/0x02-0x03/0x83, channel 1) and the "
+     "already-named _sbBasePort/Sb_writeByte Sound Blaster DSP "
+     "interface -- PC-speaker playback never touches DMA or the SB "
+     "base port at all. The installer code just above this ISR (at "
+     "sg09a4, around loc_1875C) confirms it further: it saves the "
+     "current IRQ vector for byte_C84F5 (default 3, a classic SB IRQ "
+     "line) into word_C8502:word_C8504 before installing this ISR at "
+     "cs:0x7C1, using the already-named Sb_writeByte to program the "
+     "card first. The buffer-position/length globals this ISR sets up "
+     "(byte_C84F6/word_C84F7/word_C84FC/word_C84FE/word_C8500/"
+     "byte_C84FB) are real, just belonging to the Sound Blaster DMA "
+     "backend instead of PC-speaker -- that part of the original "
+     "characterization stands."),
+
+    (0x18883, "SoundBlaster_startNextDmaBlock",
+     "sub_18883(): reprograms ISA DMA channel 1 for the next block of "
+     "digitized-sample playback -- masks the channel, clears the byte-"
+     "pointer flip-flop, sets auto-init/write/increment/single mode "
+     "(0x49), writes the base address (from word_C84F7 and the block-"
+     "index byte_C84F6 as the DMA page register), writes the new "
+     "count, then re-enables the channel. Advances the internal block "
+     "counter/index (byte_C84FB/byte_C84F6), resets word_C84F7, then "
+     "sends Sound Blaster DSP command 0x14 (8-bit single-cycle DMA "
+     "DAC output) followed by the 16-bit sample count via sub_18950 "
+     "(unnamed, a DSP command-byte sender). One of the just-corrected "
+     "SoundBlaster_dmaIsr's two dispatch targets -- the 'more data "
+     "queued, start the next DMA block' path."),
+
+    (0x18905, "SoundBlaster_uninstallDmaIsr",
+     "sub_18905(): masks DMA channel 1, then restores the original "
+     "interrupt vector for IRQ byte_C84F5 (writing word_C8502:"
+     "word_C8504 -- the vector saved by this ISR's installer -- back "
+     "into the real-mode IVT), temporarily masking/unmasking that IRQ "
+     "line on the 8259A PIC around the restore. Clears two state "
+     "flags (byte_C84CA, cs:byte_1803B), then reads the Sound Blaster "
+     "DSP's IRQ-acknowledge port (_sbBasePort+0xE) to clear the "
+     "pending hardware interrupt. The just-corrected "
+     "SoundBlaster_dmaIsr's other dispatch target -- the 'playback "
+     "finished, uninstall this ISR and acknowledge the last IRQ' "
+     "path."),
 ]
 
 

@@ -821,6 +821,13 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       decoded refusal message; distinct from
       `Game_restartAfterDeath`. Full writeup in
       [overview.md](overview.md#game_refuserestart-named).
+- [x] **Correction**: `Speaker_sampleIsr`/`sub_18883`/`sub_18905` were
+      mischaracterized several sessions ago as a "digitized PC-speaker"
+      engine — renamed to `SoundBlaster_dmaIsr`/
+      `SoundBlaster_startNextDmaBlock`/`SoundBlaster_uninstallDmaIsr`
+      after tracing confirmed they program the ISA DMA controller and
+      the Sound Blaster DSP directly. Full writeup in
+      [overview.md](overview.md#correction-the-digitized-pc-speaker-isr-is-actually-sound-blaster-dma-playback).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-
