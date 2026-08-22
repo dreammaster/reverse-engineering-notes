@@ -84271,7 +84271,7 @@ thunk_sub_71380 endp ; sp-analysis failed
 
 thunk_sub_70F07 proc far                ; CODE XREF: Commset_show+26D\u2193P
                 call    near ptr rtlink_thunk
-                jmp     sub_70F07
+                jmp     Font_getTabStopDistance
 thunk_sub_70F07 endp ; sp-analysis failed
 
 ; ---------------------------------------------------------------------------
@@ -184304,7 +184304,7 @@ sub_70ED1       endp
 
 ; Attributes: bp-based frame
 
-sub_70F07       proc far                ; CODE XREF: thunk_sub_70F07+3\u2191J
+Font_getTabStopDistance proc far        ; CODE XREF: thunk_sub_70F07+3\u2191J
                                         ; Commset_printText+1B8\u2193p
 
 var_4           = dword ptr -4
@@ -184334,12 +184334,12 @@ arg_0           = word ptr  6
                 mov     ax, word ptr [bp+var_4]
                 add     word ptr [bp+var_4+2], ax
 
-loc_70F43:                              ; CODE XREF: sub_70F07+34\u2191j
+loc_70F43:                              ; CODE XREF: Font_getTabStopDistance+34\u2191j
                 mov     ax, word ptr [bp+var_4+2]
                 mov     sp, bp
                 pop     bp
                 retf
-sub_70F07       endp
+Font_getTabStopDistance endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -184522,7 +184522,7 @@ loc_710F2:                              ; CODE XREF: Commset_printText+1A0\u2191
                 mov     es, seg_D1394
                 push    es:Commset_xp3
                 push    cs
-                call    near ptr sub_70F07
+                call    near ptr Font_getTabStopDistance
                 add     sp, 2
                 mov     es, seg_D1394
                 add     es:Commset_xp3, ax
@@ -388467,7 +388467,7 @@ aGold_2         db 'gold',0
                 db    0
 word_CCA90      dw 0                    ; DATA XREF: Commset_printText+95\u2191r
                                         ; sub_75AE0+A8\u2191w ...
-asc_CCA92       db '    ',0             ; DATA XREF: sub_70F07+6\u2191o
+asc_CCA92       db '    ',0             ; DATA XREF: Font_getTabStopDistance+6\u2191o
                 align 2
 word_CCA98      dw 0                    ; DATA XREF: Commset_displayText2+7E\u2191w
                                         ; Commset_displayText2+FF\u2191r ...

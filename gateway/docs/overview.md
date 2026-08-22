@@ -4018,3 +4018,17 @@ formatting a filename into a fixed-width field (e.g. an 8.3-style
 padded name) for display or storage.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-thirty-third batch.
+
+### `Font_getTabStopDistance` named
+
+Moved to `sub_70F07` (2 callers) — computes the pixel width of a
+4-space tab stop via the already-named `Font_stringWidth`, then finds
+the given x-position's remainder into that width and subtracts it to
+get the distance to the next tab stop. If that distance is smaller
+than a single space character's width, adds a full extra tab width
+instead, avoiding a visually-too-small jump.
+
+Called from the already-named `Commset_printText` — the tab-expansion
+distance calculation for its proportional-width text layout.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-thirty-fourth batch.

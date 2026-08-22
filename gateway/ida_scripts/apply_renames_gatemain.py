@@ -3015,6 +3015,18 @@ RENAMES = [
      "fixed-width, space-padded string copy, consistent with "
      "formatting a filename into a fixed-width field (e.g. an 8.3-"
      "style padded name) for display or storage."),
+
+    (0x70F07, "Font_getTabStopDistance",
+     "sub_70F07(xPos): computes the pixel width of a 4-space tab stop "
+     "via the already-named Font_stringWidth('    '), then finds "
+     "xPos's remainder into that width and subtracts it from the tab "
+     "width to get the distance to the next tab stop. If that "
+     "distance is smaller than a single space character's width (per "
+     "the already-named Font_charWidth), adds a full extra tab width "
+     "instead (avoiding a visually-too-small jump to the next stop). "
+     "Called from the already-named Commset_printText -- the tab-"
+     "expansion distance calculation for its proportional-width text "
+     "layout."),
 ]
 
 

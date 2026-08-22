@@ -994,6 +994,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       width, space-padded string copy called from
       `prompt_for_filename`. Full writeup in
       [overview.md](overview.md#string_copypadded-named).
+- [x] Named `sub_70F07` (2 callers) → `Font_getTabStopDistance` — the
+      tab-expansion distance calculation for `Commset_printText`'s
+      proportional-width text layout. Full writeup in
+      [overview.md](overview.md#font_gettabstopdistance-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-
