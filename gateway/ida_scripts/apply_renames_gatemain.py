@@ -3647,6 +3647,26 @@ RENAMES = [
      "objects, most plausibly monsters or set-piece NPCs, but that's "
      "an inference from shape, not confirmed). Called from sub_82239, "
      "sub_8342B, and 9 other unnamed functions."),
+
+    (0x1AFA4, "Dos_readKeyNoEcho",
+     "sub_1AFA4(): a small DOS wrapper -- checks word_CB728 (ah half); "
+     "if clear (presumably 'first call this session'), sets "
+     "word_CB728=-1 as a sentinel and returns immediately without "
+     "reading anything. Otherwise calls INT 21h AH=8 ('Character Input "
+     "Without Echo, Ctrl-Break checked' -- the standard DOS 'wait for "
+     "any keypress, don't show it' function), passing word_CB728's own "
+     "value through DX (role not confirmed) and clearing AH on return. "
+     "Called consistently right after one or more error/diagnostic "
+     "_printf calls in the memory-handle management cluster (confirmed "
+     "directly in get_master and compact_memory) -- the classic "
+     "'print a warning, then wait for a keypress before continuing' "
+     "pattern, rather than terminating the program outright (no "
+     "INT 21h AH=4Ch here). The 'skip on first call' gate via "
+     "word_CB728 may be a workaround for stdin being redirected/"
+     "unavailable during automated testing, though that's inferred "
+     "from shape, not confirmed. 7 callers, all within the "
+     "get_master/new_handle/kill_handle/lock_handle/kill_pointer/"
+     "compact_memory handle-based memory manager."),
 ]
 
 

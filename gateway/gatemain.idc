@@ -11350,6 +11350,7 @@ static Bytes_1(void) {
 	create_insn	(0X1AF99);
 	create_insn	(0X1AFA0);
 	create_insn	(0X1AFA4);
+	set_name	(0X1AFA4,	"Dos_readKeyNoEcho");
 	create_insn	(0X1AFB5);
 	set_cmt	(0X1AFB6,	"DOS - ",	0);
 	create_insn	(x=0X1AFB6);
@@ -12764,8 +12765,6 @@ static Bytes_1(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X1C551);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X1C55A);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -12775,6 +12774,8 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X1C55A);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X1C55D);
 	op_stkvar	(x,	1);
 	create_insn	(0X1C564);
@@ -18343,7 +18344,6 @@ static Bytes_2(void) {
 	create_insn	(x=0X236B5);
 	op_stkvar	(x,	1);
 	set_cmt	(0X236B9,	"xp",	0);
-	set_cmt	(0X236BA,	"yp",	0);
 }
 
 //------------------------------------------------------------------------
@@ -18353,6 +18353,7 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X236BA,	"yp",	0);
 	create_insn	(x=0X236C0);
 	op_stkvar	(x,	1);
 	set_cmt	(0X236C4,	"xp",	0);
@@ -24081,8 +24082,6 @@ static Bytes_3(void) {
 	set_name	(0X28DE2,	"TextWindow_flushText");
 	create_insn	(x=0X28DE5);
 	op_hex		(x,	1);
-	create_insn	(x=0X28DED);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -24092,6 +24091,8 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X28DED);
+	op_hex		(x,	1);
 	create_insn	(x=0X28DF5);
 	op_stkvar	(x,	0);
 	set_cmt	(0X28E0B,	"text",	0);

@@ -25263,7 +25263,7 @@ _isatty         endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1AFA4       proc far                ; CODE XREF: get_master:loc_23F31↓P
+Dos_readKeyNoEcho proc far              ; CODE XREF: get_master:loc_23F31↓P
                                         ; compact_memory+11F↓P ...
                 mov     dh, 8
 
@@ -25275,14 +25275,14 @@ loc_1AFA6:                              ; CODE XREF: seg017:2F82↑j
                 jmp     short locret_1AFBA
 ; ---------------------------------------------------------------------------
 
-loc_1AFB5:                              ; CODE XREF: sub_1AFA4+7↑j
+loc_1AFB5:                              ; CODE XREF: Dos_readKeyNoEcho+7↑j
                 xchg    ax, dx
                 int     21h             ; DOS -
                 mov     ah, 0
 
-locret_1AFBA:                           ; CODE XREF: sub_1AFA4+F↑j
+locret_1AFBA:                           ; CODE XREF: Dos_readKeyNoEcho+F↑j
                 retf
-sub_1AFA4       endp
+Dos_readKeyNoEcho endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -46070,7 +46070,7 @@ loc_23F24:                              ; CODE XREF: get_master+1F↑j
                 add     sp, 4
 
 loc_23F31:                              ; CODE XREF: get_master+16D↑j
-                call    sub_1AFA4
+                call    Dos_readKeyNoEcho
 
 loc_23F36:                              ; CODE XREF: get_master+14D↑j
                 mov     ax, [bp+var_4]
@@ -46528,7 +46528,7 @@ loc_24262:                              ; CODE XREF: compact_memory+B3↑j
                 push    ax              ; msg
                 call    _printf
                 add     sp, 4
-                call    sub_1AFA4
+                call    Dos_readKeyNoEcho
 
 loc_24274:                              ; CODE XREF: compact_memory+6F↑j
                                         ; compact_memory+79↑j ...
@@ -46650,7 +46650,7 @@ arg_0           = word ptr  6
                 push    ax              ; msg
                 call    _printf
                 add     sp, 4
-                call    sub_1AFA4
+                call    Dos_readKeyNoEcho
                 jmp     short loc_24374
 ; ---------------------------------------------------------------------------
                 align 2
@@ -46798,7 +46798,7 @@ loc_2443C:                              ; CODE XREF: kill_handle+32↑j
                 add     sp, 8
 
 loc_2444F:                              ; CODE XREF: kill_handle+BC↑j
-                call    sub_1AFA4
+                call    Dos_readKeyNoEcho
 
 loc_24454:                              ; CODE XREF: kill_handle+14↑j
                                         ; kill_handle+8B↑j
@@ -46899,7 +46899,7 @@ loc_244FE:                              ; CODE XREF: lock_handle+30↑j
                 add     sp, 8
 
 loc_24511:                              ; CODE XREF: lock_handle+A0↑j
-                call    sub_1AFA4
+                call    Dos_readKeyNoEcho
 
 loc_24516:                              ; CODE XREF: lock_handle+14↑j
                                         ; lock_handle+70↑j
@@ -47000,7 +47000,7 @@ loc_245C0:                              ; CODE XREF: unlock_handle+30↑j
                 add     sp, 8
 
 loc_245D3:                              ; CODE XREF: unlock_handle+A0↑j
-                call    sub_1AFA4
+                call    Dos_readKeyNoEcho
 
 loc_245D8:                              ; CODE XREF: unlock_handle+14↑j
                                         ; unlock_handle+70↑j
@@ -47190,7 +47190,7 @@ loc_246E0:                              ; CODE XREF: kill_pointer+28↑j
                 push    ax              ; msg
                 call    _printf
                 add     sp, 8
-                call    sub_1AFA4
+                call    Dos_readKeyNoEcho
 
 loc_246F8:                              ; CODE XREF: kill_pointer+11↑j
                                         ; kill_pointer+42↑j
@@ -477594,8 +477594,8 @@ off_CB61C       dd sub_18C22            ; DATA XREF: seg017:2145↑r
                 db    0
                 db    0
                 db    0
-word_CB728      dw 0FFFFh               ; DATA XREF: sub_1AFA4:loc_1AFA6↑r
-                                        ; sub_1AFA4+9↑w
+word_CB728      dw 0FFFFh               ; DATA XREF: Dos_readKeyNoEcho:loc_1AFA6↑r
+                                        ; Dos_readKeyNoEcho+9↑w
                 db 0FFh
                 db 0FFh
                 db  1Eh

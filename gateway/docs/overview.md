@@ -4893,3 +4893,24 @@ this reads as one-time trigger/roster bookkeeping for a fixed set of
 inference from shape, flagged honestly as such rather than asserted.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-fifty-sixth batch.
+
+### `Dos_readKeyNoEcho` named — the memory-manager's "press any key" pause
+
+`sub_1AFA4` (7 callers, all within the `get_master`/`new_handle`/
+`kill_handle`/`lock_handle`/`kill_pointer`/`compact_memory`
+handle-based memory manager cluster). A small DOS wrapper: checks
+`word_CB728`'s high byte; if clear (presumably "first call this
+session"), sets it to `-1` as a sentinel and returns immediately
+without reading anything. Otherwise calls `INT 21h AH=8`
+("Character Input Without Echo, Ctrl-Break checked" — the standard DOS
+"wait for any keypress, don't show it" function).
+
+Confirmed directly in `get_master` and `compact_memory`: it's called
+right after one or more error/diagnostic `_printf` calls — the classic
+"print a warning, then wait for a keypress before continuing" pattern,
+notably *not* followed by an actual `INT 21h AH=4Ch` terminate. The
+"skip on first call" gate may be a workaround for stdin being
+redirected/unavailable during automated testing, though that's
+inferred from shape rather than confirmed.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-fifty-seventh batch.

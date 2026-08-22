@@ -1168,6 +1168,11 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       "already flagged" byte; table contents and bit 9's exact meaning
       not independently confirmed. Full writeup in
       [overview.md](overview.md#logics_setencounterflag-named--a-fixed-11-object-trigger-roster).
+- [x] Named `sub_1AFA4` → `Dos_readKeyNoEcho` — the memory manager's
+      "print a warning, then wait for a keypress" pause (INT 21h AH=8),
+      confirmed via `get_master`/`compact_memory`'s call sites right
+      after diagnostic `_printf`s. Full writeup in
+      [overview.md](overview.md#dos_readkeynoecho-named--the-memory-managers-press-any-key-pause).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-
