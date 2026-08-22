@@ -32719,7 +32719,7 @@ sub_1DD4C       endp
 ; Attributes: bp-based frame
 
 Sound_takeTrackFlag proc far            ; CODE XREF: sub_1F1DE+61\u2193P
-                                        ; sub_1F93E+37\u2193P
+                                        ; Midi_stopTrackStep+37\u2193P
 
 arg_0           = word ptr  6
 
@@ -36219,7 +36219,7 @@ var_4           = word ptr -4
                 cmp     word_C8532, 0
                 jz      short loc_1F6A8
                 push    cs
-                call    near ptr sub_1F93E
+                call    near ptr Midi_stopTrackStep
                 jmp     loc_1F7A8
 ; ---------------------------------------------------------------------------
 
@@ -36505,7 +36505,7 @@ Midi_stopTrack  proc far                ; CODE XREF: sub_1F692+113\u2191p
 
 loc_1F921:                              ; CODE XREF: Midi_stopTrack+1A\u2193j
                 push    cs
-                call    near ptr sub_1F93E
+                call    near ptr Midi_stopTrackStep
                 cmp     word_C8532, 0
                 jnz     short loc_1F921
                 cmp     word_C852E, 0
@@ -36524,7 +36524,7 @@ Midi_stopTrack  endp
 
 ; Attributes: bp-based frame
 
-sub_1F93E       proc far                ; CODE XREF: sub_1F692+10\u2191p
+Midi_stopTrackStep proc far             ; CODE XREF: sub_1F692+10\u2191p
                                         ; Midi_stopTrack+12\u2191p
                 push    bp
                 mov     bp, sp
@@ -36537,7 +36537,7 @@ sub_1F93E       proc far                ; CODE XREF: sub_1F692+10\u2191p
                 jmp     loc_1FA50
 ; ---------------------------------------------------------------------------
 
-loc_1F955:                              ; CODE XREF: sub_1F93E+12\u2191j
+loc_1F955:                              ; CODE XREF: Midi_stopTrackStep+12\u2191j
                 add     ax, ax
                 xchg    ax, bx
                 jmp     cs:off_1FA28[bx]
@@ -36545,20 +36545,20 @@ loc_1F955:                              ; CODE XREF: sub_1F93E+12\u2191j
                 jmp     loc_1FA50
 ; ---------------------------------------------------------------------------
 
-loc_1F960:                              ; CODE XREF: sub_1F93E+1A\u2191j
-                                        ; DATA XREF: sub_1F93E+EC\u2193o
+loc_1F960:                              ; CODE XREF: Midi_stopTrackStep+1A\u2191j
+                                        ; DATA XREF: Midi_stopTrackStep+EC\u2193o
                 cmp     word_C8530, 0
                 jnz     short loc_1F96A
                 jmp     loc_1FA50
 ; ---------------------------------------------------------------------------
 
-loc_1F96A:                              ; CODE XREF: sub_1F93E+27\u2191j
+loc_1F96A:                              ; CODE XREF: Midi_stopTrackStep+27\u2191j
                 mov     word_C8530, 0
                 sub     si, si
                 jmp     short loc_1F98E
 ; ---------------------------------------------------------------------------
 
-loc_1F974:                              ; CODE XREF: sub_1F93E+54\u2193j
+loc_1F974:                              ; CODE XREF: Midi_stopTrackStep+54\u2193j
                 push    si
                 call    Sound_takeTrackFlag
                 add     sp, 2
@@ -36569,18 +36569,18 @@ loc_1F974:                              ; CODE XREF: sub_1F93E+54\u2193j
                 call    Midi_sendByte
                 add     sp, 2
 
-loc_1F98D:                              ; CODE XREF: sub_1F93E+41\u2191j
+loc_1F98D:                              ; CODE XREF: Midi_stopTrackStep+41\u2191j
                 inc     si
 
-loc_1F98E:                              ; CODE XREF: sub_1F93E+34\u2191j
+loc_1F98E:                              ; CODE XREF: Midi_stopTrackStep+34\u2191j
                 cmp     word_D20F6, si
                 jg      short loc_1F974
                 call    Midi_resetDevice
                 jmp     loc_1FA50
 ; ---------------------------------------------------------------------------
 
-loc_1F99C:                              ; CODE XREF: sub_1F93E+1A\u2191j
-                                        ; DATA XREF: sub_1F93E+EE\u2193o
+loc_1F99C:                              ; CODE XREF: Midi_stopTrackStep+1A\u2191j
+                                        ; DATA XREF: Midi_stopTrackStep+EE\u2193o
                 call    Midi_resetDevice
                 mov     ax, 139h
                 mov     dx, seg seg022
@@ -36589,7 +36589,7 @@ loc_1F99C:                              ; CODE XREF: sub_1F93E+1A\u2191j
                 call    Midi_setDataCallback
                 add     sp, 4
 
-loc_1F9B1:                              ; CODE XREF: sub_1F93E:loc_1F9C4\u2193j
+loc_1F9B1:                              ; CODE XREF: Midi_stopTrackStep:loc_1F9C4\u2193j
                 mov     ax, 3Fh ; '?'
                 push    ax
                 call    Midi_sendCommand
@@ -36599,12 +36599,12 @@ loc_1F9B1:                              ; CODE XREF: sub_1F93E:loc_1F9C4\u2193j
                 jmp     loc_1FA50
 ; ---------------------------------------------------------------------------
 
-loc_1F9C4:                              ; CODE XREF: sub_1F93E+81\u2191j
+loc_1F9C4:                              ; CODE XREF: Midi_stopTrackStep+81\u2191j
                 jmp     short loc_1F9B1
 ; ---------------------------------------------------------------------------
 
-loc_1F9C6:                              ; CODE XREF: sub_1F93E+1A\u2191j
-                                        ; DATA XREF: sub_1F93E+F0\u2193o ...
+loc_1F9C6:                              ; CODE XREF: Midi_stopTrackStep+1A\u2191j
+                                        ; DATA XREF: Midi_stopTrackStep+F0\u2193o ...
                 mov     es, seg126_21
                 mov     al, byte ptr es:_tmpSub._val9
                 sub     al, 53h ; 'S'
@@ -36640,12 +36640,12 @@ loc_1FA0B:
                 jmp     short loc_1FA50
 ; ---------------------------------------------------------------------------
 
-loc_1FA20:                              ; CODE XREF: sub_1F93E+1A\u2191j
-                                        ; DATA XREF: sub_1F93E+110\u2193o
+loc_1FA20:                              ; CODE XREF: Midi_stopTrackStep+1A\u2191j
+                                        ; DATA XREF: Midi_stopTrackStep+110\u2193o
                 mov     word_C8532, 0
                 jmp     short loc_1FA50
 ; ---------------------------------------------------------------------------
-off_1FA28       dw offset loc_1FA50     ; DATA XREF: sub_1F93E+1A\u2191r
+off_1FA28       dw offset loc_1FA50     ; DATA XREF: Midi_stopTrackStep+1A\u2191r
                 dw offset loc_1F960
                 dw offset loc_1F99C
                 dw offset loc_1F9C6
@@ -36667,15 +36667,15 @@ off_1FA28       dw offset loc_1FA50     ; DATA XREF: sub_1F93E+1A\u2191r
                 dw offset loc_1FA20
 ; ---------------------------------------------------------------------------
 
-loc_1FA50:                              ; CODE XREF: sub_1F93E+14\u2191j
-                                        ; sub_1F93E+1A\u2191j ...
+loc_1FA50:                              ; CODE XREF: Midi_stopTrackStep+14\u2191j
+                                        ; Midi_stopTrackStep+1A\u2191j ...
                 mov     es, seg126_21
                 inc     es:_tmpSub._val9
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_1F93E       endp
+Midi_stopTrackStep endp
 
 
 ; =============== S U B R O U T I N E =======================================

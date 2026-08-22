@@ -3689,3 +3689,29 @@ both of the game's synthesized-music backends now have a named
 stop-track handler.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-sixteenth batch.
+
+### `Midi_stopTrackStep` named
+
+Moved to `sub_1F93E` (2 callers) — the per-call state-machine step
+`Midi_stopTrack`'s busy-loop repeatedly invokes, advancing a shared
+scratch state counter (reused here purely as a 0-19 step index) by one
+on every call via a 20-entry jump table:
+
+- **Step 1**: if a flush-needed flag is set, calls the already-named
+  `Sound_takeTrackFlag` per track and sends MIDI byte `0xFC` for any
+  flagged one, then resets the MIDI device.
+- **Step 2**: resets the device, installs a fixed completion routine
+  via the just-named `Midi_setDataCallback`, then spins sending a
+  device command until it succeeds.
+- **Steps 3-18** (16 steps, one per MIDI channel): send Control Change
+  123 ("All Notes Off") and 121 ("Reset All Controllers") on that
+  channel.
+- **Step 19**: clears the flag `Midi_stopTrack`'s busy-loop is waiting
+  on, signaling the whole shutdown sequence is complete.
+
+This one function makes `Midi_stopTrack`'s entire multi-call drain
+loop concrete: a proper MIDI "all channels silent, device reset"
+teardown sequence, spread one step per call so it doesn't block for
+too long in any single call.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-seventeenth batch.

@@ -922,6 +922,11 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       pending MIDI/MPU-401 backend's `Sound_stopTrack` handler,
       paralleling `Opl2_stopTrack`. Full writeup in
       [overview.md](overview.md#midi_stoptrack-named).
+- [x] Named `sub_1F93E` (2 callers) → `Midi_stopTrackStep` — the
+      20-step MIDI shutdown state machine `Midi_stopTrack`'s busy-loop
+      drives, fully confirmed via its MIDI Control Change messages.
+      Full writeup in
+      [overview.md](overview.md#midi_stoptrackstep-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

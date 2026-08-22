@@ -2739,6 +2739,26 @@ RENAMES = [
      "loop. Afterward clears word_C852E if set, and returns 1. The "
      "MIDI/MPU-401 backend's stop-track handler, paralleling the "
      "already-named Opl2_stopTrack for the OPL2 backend."),
+
+    (0x1F93E, "Midi_stopTrackStep",
+     "sub_1F93E(): the per-call state-machine step Midi_stopTrack's "
+     "busy-loop repeatedly invokes, advancing a shared scratch state "
+     "counter (_tmpSub._val9, reused here purely as a 0-19 step index) "
+     "by one on every call via a 20-entry jump table. Step 1: if a "
+     "flush-needed flag (word_C8530) is set, calls the already-named "
+     "Sound_takeTrackFlag per track and sends MIDI byte 0xFC for any "
+     "flagged one, then calls Midi_resetDevice. Step 2: calls "
+     "Midi_resetDevice, installs a fixed completion routine via the "
+     "just-named Midi_setDataCallback, then spins on Midi_sendCommand"
+     "(0x3F) until it succeeds. Steps 3-18 (16 steps, one per MIDI "
+     "channel): send Control Change 123 ('All Notes Off') and 121 "
+     "('Reset All Controllers') on that channel via Midi_sendByte. "
+     "Step 19: clears word_C8532 -- the flag Midi_stopTrack's busy-"
+     "loop is waiting on -- signaling the whole shutdown sequence is "
+     "complete. This one function makes Midi_stopTrack's entire "
+     "multi-call drain loop concrete: a proper MIDI 'all channels "
+     "silent, device reset' teardown sequence, spread one step per "
+     "call so it doesn't block for too long in any single call."),
 ]
 
 
