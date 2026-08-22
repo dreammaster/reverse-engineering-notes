@@ -2022,6 +2022,20 @@ RENAMES = [
      "room/logic-adjacent functions (sub_72260, sub_A60CE, sub_AA9E3, "
      "sub_B8235), consistent with a journal/diary-entry or event-log "
      "timestamp formatter."),
+
+    (0x21B15, "RawFile_write",
+     "sub_21B15(handle, buffer, bufferSeg, count): a thin wrapper "
+     "around DOS INT 21h/AH=40h (write to file with handle) -- bx="
+     "handle, cx=count, ds:dx=buffer, returning 0 on carry-set (error) "
+     "or DOS's returned byte count otherwise. NOT the C runtime's own "
+     "_write (already named at 0x1A89C, a much larger function with "
+     "real FILE-handle-table bookkeeping and append-mode handling) -- "
+     "this is a separate, much more primitive raw-handle writer, sitting "
+     "in the small sg12EE segment alongside the already-named `fseek`, "
+     "`fsetpos`, and `set_filename_prefix` -- a distinct, lightweight "
+     "custom file-I/O layer the game uses directly (bypassing the C "
+     "runtime's buffered stdio), most plausibly for the save-game "
+     "system given fsetpos's presence in the same small group."),
 ]
 
 

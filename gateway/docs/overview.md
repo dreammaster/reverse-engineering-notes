@@ -2928,3 +2928,24 @@ with a journal/diary-entry or event-log timestamp formatter reading an
 elapsed-day counter somewhere in game state.
 
 Applied via `apply_renames_gatemain.py`'s seventy-eighth batch.
+
+### `RawFile_write` named
+
+Moved to `sub_21B15` (4 callers) — a thin wrapper directly around DOS
+`INT 21h`/`AH=40h` ("write to file with handle"): `bx`=handle,
+`cx`=count, `ds:dx`=buffer, returning 0 on carry-set (error) or DOS's
+own returned byte count otherwise. Initially mistaken for the C
+runtime's own `_write` (already named at a different address, a much
+larger function with real FILE-handle-table bookkeeping and
+append-mode handling) — the rename script's real-apply run caught this
+itself (`ok=False`, since `_write` was already taken), which is what
+surfaced the distinction.
+
+This is a separate, much more primitive raw-handle writer, sitting in
+the small `sg12EE` segment directly alongside the already-named
+`fseek`, `fsetpos`, and `set_filename_prefix` — a distinct, lightweight
+custom file-I/O layer the game uses directly, bypassing the C
+runtime's buffered stdio entirely. `fsetpos`'s presence in the same
+small group makes the save-game system the most plausible consumer.
+
+Applied via `apply_renames_gatemain.py`'s seventy-ninth batch.

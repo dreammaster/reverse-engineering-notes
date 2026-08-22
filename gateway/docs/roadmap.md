@@ -746,6 +746,11 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       elapsed day-count into an in-universe "MM-DD-21YY" date string;
       confirms the game's day-counter epoch is May 17, 2102. Full
       writeup in [overview.md](overview.md#gamedate_format-named).
+- [x] Named `sub_21B15` (4 callers) → `RawFile_write` — a raw DOS
+      INT 21h/AH=40h handle-write wrapper, distinct from the C
+      runtime's own `_write`, in the small custom file-I/O group with
+      `fseek`/`fsetpos`/`set_filename_prefix`. Full writeup in
+      [overview.md](overview.md#rawfile_write-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

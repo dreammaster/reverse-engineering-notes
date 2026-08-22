@@ -41051,7 +41051,7 @@ file_read       endp
 
 ; Attributes: bp-based frame
 
-sub_21B15       proc far                ; CODE XREF: sg12EE:013C\u2193P
+RawFile_write   proc far                ; CODE XREF: sg12EE:013C\u2193P
                                         ; sg12EE:0155\u2193P ...
 
 arg_0           = word ptr  6
@@ -41077,12 +41077,12 @@ loc_21B26:
                 jnb     short loc_21B2F
                 sub     ax, ax
 
-loc_21B2F:                              ; CODE XREF: sub_21B15+16\u2191j
+loc_21B2F:                              ; CODE XREF: RawFile_write+16\u2191j
                 pop     ds
                 mov     sp, bp
                 pop     bp
                 retf
-sub_21B15       endp
+RawFile_write   endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -41402,7 +41402,7 @@ locret_21C8C:
                 push    ss
                 push    ax
                 push    word ptr [bp+6]
-                call    sub_21B15
+                call    RawFile_write
                 add     sp, 8
                 pop     bp
                 retf
@@ -41415,7 +41415,7 @@ locret_21C8C:
                 push    ss
                 push    ax
                 push    word ptr [bp+6]
-                call    sub_21B15
+                call    RawFile_write
                 add     sp, 8
                 pop     bp
                 retf
@@ -41426,7 +41426,7 @@ locret_21C8C:
                 push    word ptr [bp+0Ah]
                 push    word ptr [bp+8]
                 push    word ptr [bp+6]
-                call    sub_21B15
+                call    RawFile_write
 
 loc_21CD3:
                 add     sp, 8
@@ -41443,7 +41443,7 @@ loc_21CD3:
                 push    word ptr [bp+6]
 
 loc_21CEB:
-                call    sub_21B15
+                call    RawFile_write
 
 loc_21CF0:
                 add     sp, 8
