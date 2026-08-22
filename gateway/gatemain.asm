@@ -70391,7 +70391,7 @@ thunk_sub_9C347 proc far                ; CODE XREF: Logics_callSpecialExit:loc_
                                         ; seg098:15E9\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
-                jmp     sub_9C347
+                jmp     Logics_walkCatwalk
 thunk_sub_9C347 endp ; sp-analysis failed
 
 ; ---------------------------------------------------------------------------
@@ -279958,7 +279958,7 @@ loc_9BD17:                              ; CODE XREF: sub_9B946+3BF\u2191j
                 mov     ax, 63h ; 'c'
                 push    ax
                 push    cs
-                call    near ptr sub_9E7EF
+                call    near ptr Logics_relocateCatwalkContents
                 add     sp, 4
 
 loc_9BD38:                              ; CODE XREF: sub_9B946+3DB\u2191j
@@ -280365,7 +280365,7 @@ loc_9BFC1:                              ; CODE XREF: sub_9BD7E+14\u2191j
                 push    ax
                 push    Persisted_val96
                 push    cs
-                call    near ptr sub_9E7EF
+                call    near ptr Logics_relocateCatwalkContents
                 add     sp, 4
                 sub     ax, ax
                 push    ax              ; newId
@@ -280730,7 +280730,7 @@ loc_9C27E:                              ; CODE XREF: sub_9C0EE+16B\u2191j
                 mov     ax, 63h ; 'c'
                 push    ax
                 push    cs
-                call    near ptr sub_9E7EF
+                call    near ptr Logics_relocateCatwalkContents
                 add     sp, 4
 
 loc_9C29E:                              ; CODE XREF: sub_9C0EE+19A\u2191j
@@ -280820,7 +280820,7 @@ sub_9C0EE       endp
 
 ; Attributes: bp-based frame
 
-sub_9C347       proc far                ; CODE XREF: thunk_sub_9C347+3\u2191J
+Logics_walkCatwalk proc far             ; CODE XREF: thunk_sub_9C347+3\u2191J
                                         ; sub_9CC60+52\u2193p ...
 
 arg_0           = word ptr  6
@@ -280835,28 +280835,28 @@ arg_0           = word ptr  6
                 cmp     Persisted_val96, 5
                 jnz     short loc_9C3DA
 
-loc_9C363:                              ; CODE XREF: sub_9C347+81\u2193j
+loc_9C363:                              ; CODE XREF: Logics_walkCatwalk+81\u2193j
                 mov     ax, 21h ; '!'
                 jmp     loc_9C540
 ; ---------------------------------------------------------------------------
 
-loc_9C369:                              ; CODE XREF: sub_9C347+13\u2191j
+loc_9C369:                              ; CODE XREF: Logics_walkCatwalk+13\u2191j
                 cmp     Persisted_val96, 0
                 jnz     short loc_9C3DA
 
-loc_9C370:                              ; CODE XREF: sub_9C347+14B\u2193j
+loc_9C370:                              ; CODE XREF: Logics_walkCatwalk+14B\u2193j
                 mov     ax, 23h ; '#'
                 jmp     loc_9C540
 ; ---------------------------------------------------------------------------
 
-loc_9C376:                              ; CODE XREF: sub_9C347+7\u2191j
+loc_9C376:                              ; CODE XREF: Logics_walkCatwalk+7\u2191j
                 mov     es, seg_D16F2
                 cmp     es:Parser_val21, 1
                 jz      short loc_9C385
                 jmp     loc_9C44F
 ; ---------------------------------------------------------------------------
 
-loc_9C385:                              ; CODE XREF: sub_9C347+39\u2191j
+loc_9C385:                              ; CODE XREF: Logics_walkCatwalk+39\u2191j
                 cmp     Persisted_val96, 5
                 jnz     short loc_9C3E0
                 mov     ax, 0Ch
@@ -280885,29 +280885,29 @@ loc_9C385:                              ; CODE XREF: sub_9C347+39\u2191j
                 jmp     short loc_9C363
 ; ---------------------------------------------------------------------------
 
-loc_9C3CA:                              ; CODE XREF: sub_9C347+57\u2191j
+loc_9C3CA:                              ; CODE XREF: Logics_walkCatwalk+57\u2191j
                 mov     ax, 100Fh
 
-loc_9C3CD:                              ; CODE XREF: sub_9C347+151\u2193j
+loc_9C3CD:                              ; CODE XREF: Logics_walkCatwalk+151\u2193j
                 mov     dx, 0F000h
                 push    dx
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
 
-loc_9C3DA:                              ; CODE XREF: sub_9C347+1A\u2191j
-                                        ; sub_9C347+27\u2191j ...
+loc_9C3DA:                              ; CODE XREF: Logics_walkCatwalk+1A\u2191j
+                                        ; Logics_walkCatwalk+27\u2191j ...
                 mov     ax, 22h ; '"'
                 jmp     loc_9C540
 ; ---------------------------------------------------------------------------
 
-loc_9C3E0:                              ; CODE XREF: sub_9C347+43\u2191j
+loc_9C3E0:                              ; CODE XREF: Logics_walkCatwalk+43\u2191j
                 mov     ax, Persisted_val96
                 inc     ax
                 push    ax
                 push    Persisted_val96
                 push    cs
-                call    near ptr sub_9E7EF
+                call    near ptr Logics_relocateCatwalkContents
                 add     sp, 4
                 inc     Persisted_val96
                 cmp     Persisted_val127, 0
@@ -280920,12 +280920,12 @@ loc_9C3E0:                              ; CODE XREF: sub_9C347+43\u2191j
                 jmp     short loc_9C434
 ; ---------------------------------------------------------------------------
 
-loc_9C40E:                              ; CODE XREF: sub_9C347+C0\u2191j
+loc_9C40E:                              ; CODE XREF: Logics_walkCatwalk+C0\u2191j
                 mov     ax, 69CBh
                 jmp     short loc_9C434
 ; ---------------------------------------------------------------------------
 
-loc_9C413:                              ; CODE XREF: sub_9C347+B9\u2191j
+loc_9C413:                              ; CODE XREF: Logics_walkCatwalk+B9\u2191j
                 mov     ax, 1011h
                 mov     dx, 0F000h
                 push    dx
@@ -280935,18 +280935,18 @@ loc_9C413:                              ; CODE XREF: sub_9C347+B9\u2191j
                 jmp     short loc_9C446
 ; ---------------------------------------------------------------------------
 
-loc_9C425:                              ; CODE XREF: sub_9C347+B2\u2191j
+loc_9C425:                              ; CODE XREF: Logics_walkCatwalk+B2\u2191j
                 cmp     Persisted_val97, 0
                 jz      short loc_9C431
                 mov     ax, 69CCh
                 jmp     short loc_9C434
 ; ---------------------------------------------------------------------------
 
-loc_9C431:                              ; CODE XREF: sub_9C347+E3\u2191j
+loc_9C431:                              ; CODE XREF: Logics_walkCatwalk+E3\u2191j
                 mov     ax, 69D3h
 
-loc_9C434:                              ; CODE XREF: sub_9C347+C5\u2191j
-                                        ; sub_9C347+CA\u2191j ...
+loc_9C434:                              ; CODE XREF: Logics_walkCatwalk+C5\u2191j
+                                        ; Logics_walkCatwalk+CA\u2191j ...
                 push    ds
                 push    ax              ; char
                 mov     ax, 1010h
@@ -280956,12 +280956,12 @@ loc_9C434:                              ; CODE XREF: sub_9C347+C5\u2191j
                 call    TextWindow_add
                 add     sp, 8
 
-loc_9C446:                              ; CODE XREF: sub_9C347+DC\u2191j
+loc_9C446:                              ; CODE XREF: Logics_walkCatwalk+DC\u2191j
                 mov     Persisted_val127, 1
                 jmp     loc_9C507
 ; ---------------------------------------------------------------------------
 
-loc_9C44F:                              ; CODE XREF: sub_9C347+3B\u2191j
+loc_9C44F:                              ; CODE XREF: Logics_walkCatwalk+3B\u2191j
                 cmp     Persisted_val96, 0
                 jnz     short loc_9C49B
                 mov     ax, 0Ch
@@ -280989,18 +280989,18 @@ loc_9C44F:                              ; CODE XREF: sub_9C347+3B\u2191j
                 jmp     loc_9C370
 ; ---------------------------------------------------------------------------
 
-loc_9C495:                              ; CODE XREF: sub_9C347+121\u2191j
+loc_9C495:                              ; CODE XREF: Logics_walkCatwalk+121\u2191j
                 mov     ax, 1012h
                 jmp     loc_9C3CD
 ; ---------------------------------------------------------------------------
 
-loc_9C49B:                              ; CODE XREF: sub_9C347+10D\u2191j
+loc_9C49B:                              ; CODE XREF: Logics_walkCatwalk+10D\u2191j
                 mov     ax, Persisted_val96
                 dec     ax
                 push    ax
                 push    Persisted_val96
                 push    cs
-                call    near ptr sub_9E7EF
+                call    near ptr Logics_relocateCatwalkContents
                 add     sp, 4
                 dec     Persisted_val96
                 cmp     Persisted_val127, 0
@@ -281013,12 +281013,12 @@ loc_9C49B:                              ; CODE XREF: sub_9C347+10D\u2191j
                 jmp     short loc_9C4EF
 ; ---------------------------------------------------------------------------
 
-loc_9C4C9:                              ; CODE XREF: sub_9C347+17B\u2191j
+loc_9C4C9:                              ; CODE XREF: Logics_walkCatwalk+17B\u2191j
                 mov     ax, 69DBh
                 jmp     short loc_9C4EF
 ; ---------------------------------------------------------------------------
 
-loc_9C4CE:                              ; CODE XREF: sub_9C347+174\u2191j
+loc_9C4CE:                              ; CODE XREF: Logics_walkCatwalk+174\u2191j
                 mov     ax, 1011h
                 mov     dx, 0F000h
                 push    dx
@@ -281028,18 +281028,18 @@ loc_9C4CE:                              ; CODE XREF: sub_9C347+174\u2191j
                 jmp     short loc_9C501
 ; ---------------------------------------------------------------------------
 
-loc_9C4E0:                              ; CODE XREF: sub_9C347+16D\u2191j
+loc_9C4E0:                              ; CODE XREF: Logics_walkCatwalk+16D\u2191j
                 cmp     Persisted_val97, 0
                 jz      short loc_9C4EC
                 mov     ax, 69DCh
                 jmp     short loc_9C4EF
 ; ---------------------------------------------------------------------------
 
-loc_9C4EC:                              ; CODE XREF: sub_9C347+19E\u2191j
+loc_9C4EC:                              ; CODE XREF: Logics_walkCatwalk+19E\u2191j
                 mov     ax, 69E3h
 
-loc_9C4EF:                              ; CODE XREF: sub_9C347+180\u2191j
-                                        ; sub_9C347+185\u2191j ...
+loc_9C4EF:                              ; CODE XREF: Logics_walkCatwalk+180\u2191j
+                                        ; Logics_walkCatwalk+185\u2191j ...
                 push    ds
                 push    ax              ; char
                 mov     ax, 1010h
@@ -281049,10 +281049,10 @@ loc_9C4EF:                              ; CODE XREF: sub_9C347+180\u2191j
                 call    TextWindow_add
                 add     sp, 8
 
-loc_9C501:                              ; CODE XREF: sub_9C347+197\u2191j
+loc_9C501:                              ; CODE XREF: Logics_walkCatwalk+197\u2191j
                 mov     Persisted_val127, 2
 
-loc_9C507:                              ; CODE XREF: sub_9C347+105\u2191j
+loc_9C507:                              ; CODE XREF: Logics_walkCatwalk+105\u2191j
                 mov     ax, 1
                 push    ax
                 mov     ax, 28h ; '('
@@ -281073,16 +281073,16 @@ loc_9C507:                              ; CODE XREF: sub_9C347+105\u2191j
                 call    TextWindow_addChar
                 add     sp, 2
 
-loc_9C538:                              ; CODE XREF: sub_9C347+1D2\u2191j
+loc_9C538:                              ; CODE XREF: Logics_walkCatwalk+1D2\u2191j
                 mov     Persisted_val97, 1
                 jmp     loc_9C3DA
 ; ---------------------------------------------------------------------------
 
-loc_9C540:                              ; CODE XREF: sub_9C347+1F\u2191j
-                                        ; sub_9C347+2C\u2191j ...
+loc_9C540:                              ; CODE XREF: Logics_walkCatwalk+1F\u2191j
+                                        ; Logics_walkCatwalk+2C\u2191j ...
                 pop     bp
                 retf
-sub_9C347       endp
+Logics_walkCatwalk endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -282155,7 +282155,7 @@ loc_9CC97:                              ; CODE XREF: sub_9CC60+2E\u2191j
                 mov     ax, 0Ch
                 push    ax
                 push    cs
-                call    near ptr sub_9C347
+                call    near ptr Logics_walkCatwalk
                 add     sp, 2
                 mov     es, seg_D16EA
                 assume es:sg4d43
@@ -282246,7 +282246,7 @@ loc_9CD24:                              ; CODE XREF: sub_9CCED+2E\u2191j
                 mov     ax, 0Ch
                 push    ax
                 push    cs
-                call    near ptr sub_9C347
+                call    near ptr Logics_walkCatwalk
                 add     sp, 2
                 mov     es, seg_D16EA
                 assume es:sg4d43
@@ -285983,7 +285983,7 @@ LogicStrings41  endp
 
 ; Attributes: bp-based frame
 
-sub_9E7EF       proc far                ; CODE XREF: sub_9B946+3EC\u2191p
+Logics_relocateCatwalkContents proc far ; CODE XREF: sub_9B946+3EC\u2191p
                                         ; sub_9BD7E+26C\u2191p ...
 
 logicNum        = word ptr -2
@@ -286010,7 +286010,7 @@ arg_2           = word ptr  8
                 call    j_Logics_updateHandler
                 add     sp, 6
 
-loc_9E81E:                              ; CODE XREF: sub_9E7EF+1D\u2191j
+loc_9E81E:                              ; CODE XREF: Logics_relocateCatwalkContents+1D\u2191j
                 cmp     [bp+arg_0], 63h ; 'c'
                 jz      short loc_9E868
                 mov     ax, 1
@@ -286028,7 +286028,7 @@ loc_9E81E:                              ; CODE XREF: sub_9E7EF+1D\u2191j
                 jmp     short loc_9E861
 ; ---------------------------------------------------------------------------
 
-loc_9E848:                              ; CODE XREF: sub_9E7EF+77\u2193j
+loc_9E848:                              ; CODE XREF: Logics_relocateCatwalkContents+77\u2193j
                 sub     ax, ax
                 push    ax
                 push    [bp+logicNum]
@@ -286038,12 +286038,12 @@ loc_9E848:                              ; CODE XREF: sub_9E7EF+77\u2193j
                 call    Logics_getVal1
                 add     sp, 2
 
-loc_9E861:                              ; CODE XREF: sub_9E7EF+57\u2191j
+loc_9E861:                              ; CODE XREF: Logics_relocateCatwalkContents+57\u2191j
                 mov     [bp+logicNum], ax
                 or      ax, ax
                 jnz     short loc_9E848
 
-loc_9E868:                              ; CODE XREF: sub_9E7EF+33\u2191j
+loc_9E868:                              ; CODE XREF: Logics_relocateCatwalkContents+33\u2191j
                 cmp     [bp+arg_2], 63h ; 'c'
                 jz      short loc_9E8C1
                 mov     bx, [bp+arg_2]
@@ -286061,7 +286061,7 @@ loc_9E868:                              ; CODE XREF: sub_9E7EF+33\u2191j
                 jmp     short loc_9E8AC
 ; ---------------------------------------------------------------------------
 
-loc_9E892:                              ; CODE XREF: sub_9E7EF+C2\u2193j
+loc_9E892:                              ; CODE XREF: Logics_relocateCatwalkContents+C2\u2193j
                 mov     ax, 28h ; '('
                 push    ax
                 push    [bp+logicNum]
@@ -286071,7 +286071,7 @@ loc_9E892:                              ; CODE XREF: sub_9E7EF+C2\u2193j
                 call    Logics_getVal1
                 add     sp, 2
 
-loc_9E8AC:                              ; CODE XREF: sub_9E7EF+A1\u2191j
+loc_9E8AC:                              ; CODE XREF: Logics_relocateCatwalkContents+A1\u2191j
                 mov     [bp+logicNum], ax
                 or      ax, ax
                 jnz     short loc_9E892
@@ -286082,7 +286082,7 @@ loc_9E8AC:                              ; CODE XREF: sub_9E7EF+A1\u2191j
                 jmp     short loc_9E8CF
 ; ---------------------------------------------------------------------------
 
-loc_9E8C1:                              ; CODE XREF: sub_9E7EF+7D\u2191j
+loc_9E8C1:                              ; CODE XREF: Logics_relocateCatwalkContents+7D\u2191j
                 cmp     [bp+arg_0], 63h ; 'c'
                 jz      short loc_9E8DB
                 mov     ax, 1
@@ -286090,17 +286090,17 @@ loc_9E8C1:                              ; CODE XREF: sub_9E7EF+7D\u2191j
                 mov     ax, 28h ; '('
                 push    ax              ; handlerId
 
-loc_9E8CF:                              ; CODE XREF: sub_9E7EF+D0\u2191j
+loc_9E8CF:                              ; CODE XREF: Logics_relocateCatwalkContents+D0\u2191j
                 mov     ax, 0D3h ; 'Ó'
                 push    ax              ; logicNum
                 call    j_Logics_updateHandler
                 add     sp, 6
 
-loc_9E8DB:                              ; CODE XREF: sub_9E7EF+D6\u2191j
+loc_9E8DB:                              ; CODE XREF: Logics_relocateCatwalkContents+D6\u2191j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_9E7EF       endp
+Logics_relocateCatwalkContents endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -390731,7 +390731,7 @@ Persisted_val126 db 0                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
 _deathCount     dw 0                    ; DATA XREF: Game_restartAfterDeath+15\u2191r
                                         ; Game_restartAfterDeath:loc_9E90D\u2191w
 Persisted_val127 dw 0                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
-                                        ; sub_9C347+AD\u2191r ...
+                                        ; Logics_walkCatwalk+AD\u2191r ...
 aTakingYouIn    db 'taking you in',0
 aBlack_0        db 'black',0
 aGrey           db 'grey',0

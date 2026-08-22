@@ -3416,6 +3416,51 @@ RENAMES = [
      "point bonus via Score_add, and plays a victory music track via "
      "Sound_selectTrack. One of Gateway's best-known puzzle payoffs, "
      "now fully confirmed end to end."),
+
+    (0x9E7EF, "Logics_relocateCatwalkContents",
+     "sub_9E7EF(oldPos, newPos): revisits a function read earlier this "
+     "session but left unrenamed for unclear semantics -- now resolved "
+     "via its caller sub_9C347's confirmed context (a cliffside "
+     "catwalk). If the player (0xD3) is currently attached to logic "
+     "0x28 (the catwalk), detaches them. If oldPos isn't the sentinel "
+     "99 ('c'): fetches logic 0x28's slot-1 (Logics_getUnkHandler) item "
+     "chain, caches its head in a scratch table at oldPos, then walks "
+     "the chain clearing each item's own prehandler (Logics_setPrehandler) "
+     "-- evacuating whatever the player left behind at their old "
+     "position. If newPos isn't the sentinel: installs whatever chain "
+     "was previously cached at newPos back as logic 0x28's slot-1 chain "
+     "(Logics_setUnkHandler) and re-attaches each of its items' "
+     "prehandler to 0x28 -- restoring whatever the player had "
+     "previously left at the position they're now returning to. "
+     "Finally reattaches the player to 0x28. Called from sub_9C347 as "
+     "sub_9E7EF(Persisted_val96, Persisted_val96+/-1) -- i.e. this is "
+     "the primitive behind 'each spot along the catwalk remembers what "
+     "you dropped there, restored when you walk back to it'."),
+
+    (0x9C347, "Logics_walkCatwalk",
+     "sub_9C347(actionOrCode): confirmed via its own GATESTR.DAT "
+     "messages as the movement handler for a perilous cliffside "
+     "catwalk leading to a glowing portal. For actionOrCode==0xF (the "
+     "same 'leaving this location' hook seen elsewhere), checks "
+     "Parser_val21 (the already-confirmed 'direction just attempted' "
+     "global) and Persisted_val96 (the player's current position index "
+     "along the catwalk, 0-5): at position 5 moving further prints "
+     "'You step off the perilous catwalk and into the glowing portal' "
+     "(msg 0x100E) if a bit on logic 0x32 is set, else 'You cannot step "
+     "through portal. It is closed' (msg 0x100F). For other action/code "
+     "values, at either boundary (position 5 or 0) it instead returns a "
+     "sentinel char ('!' or '#') -- consistent with the 'exit blocked' "
+     "return convention documented for Logics_tryMoveDirection's other "
+     "exit-type handlers. In the middle of the catwalk, calls the "
+     "just-named Logics_relocateCatwalkContents to step the player one "
+     "position, prints 'You take a%s cautious step, inching along the "
+     "cliff walkway' (msg 0x1010) going forward or 'You turn around, "
+     "and take a hesitant step back the way you came' (msg 0x1011) "
+     "going back, then describes newly-visible scenery (messages in "
+     "the 0x69C4-0x69E3 range, not independently decoded) and any "
+     "visible contents via the already-named "
+     "Logics_countVisibleContents. Bit 0xC on logics 0x32/0x33 gate the "
+     "catwalk's two ends (one being the portal)."),
 ]
 
 

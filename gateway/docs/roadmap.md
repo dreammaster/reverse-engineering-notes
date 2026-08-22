@@ -1079,6 +1079,12 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       device-detaches/score-bonus/victory-music payoff once all three
       are placed. Full writeup in
       [overview.md](overview.md#logics_insertprayerfan-named--solving-the-three-prayer-fan-puzzle).
+- [x] Named `sub_9C347`/`sub_9E7EF` → `Logics_walkCatwalk`/
+      `Logics_relocateCatwalkContents` — a cliffside-catwalk movement
+      handler (with a portal at one end) and its position-based
+      item-caching primitive; closes out a function read but left
+      unrenamed earlier this session. Full writeup in
+      [overview.md](overview.md#logics_walkcatwalklogics_relocatecatwalkcontents-named--closing-out-an-earlier-deferred-function).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

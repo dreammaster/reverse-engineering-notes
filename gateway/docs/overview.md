@@ -4528,3 +4528,43 @@ rewarded with a portable device and a real score bonus — is now fully
 confirmed by direct message evidence.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-forty-eighth batch.
+
+### `Logics_walkCatwalk`/`Logics_relocateCatwalkContents` named — closing out an earlier deferred function
+
+`sub_9E7EF` was read in full earlier this session but left unrenamed —
+its structure (evacuating/restoring a linked-list chain off logic
+`0x28` via scratch-indexed slots) was clear, but the *why* wasn't.
+Following up its caller `sub_9C347` (3 callers) resolved both at once.
+
+**`Logics_walkCatwalk`** (was `sub_9C347`) is confirmed via its own
+messages as the movement handler for a **perilous cliffside catwalk
+leading to a glowing portal**. For `actionOrCode==0xF` (the same
+"leaving this location" hook seen in `Logics_checkMoveRestriction`/
+`Logics_travelViaTransitDisk`), it checks `Parser_val21` (the
+confirmed "direction just attempted" global) and `Persisted_val96`
+(the player's position index along the catwalk, `0`-`5`): at position
+`5`, stepping further either steps off the catwalk into the portal
+(*"You step off the perilous catwalk and into the glowing portal"*) or
+finds it closed (*"You cannot step through portal. It is closed."*),
+depending on a bit on logic `0x32`. For other action/code values, at
+either boundary it instead returns a sentinel char (`'!'`/`'#'`) —
+matching the "exit blocked" return convention already documented for
+`Logics_tryMoveDirection`'s other exit-type handlers. In the middle of
+the catwalk, it steps the player one position via
+`Logics_relocateCatwalkContents`, printing *"You take a cautious step,
+inching along the cliff walkway"* going forward or *"You turn around,
+and take a hesitant step back the way you came"* going back, then
+describes newly-visible scenery and contents.
+
+**`Logics_relocateCatwalkContents`** (was `sub_9E7EF`) is the
+primitive underneath: given an old and new position along the
+catwalk, it detaches the player from logic `0x28` (the catwalk
+itself), caches whatever chain of items was left at the old position
+into a scratch table (keyed by position), then restores whatever chain
+was previously cached at the new position — before reattaching the
+player. Net effect: **each spot along the catwalk remembers what you
+dropped there**, restored exactly when you walk back to it — a neat
+position-based inventory-caching mechanic for a linear, one-step-at-a-
+time location.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-forty-ninth batch.
