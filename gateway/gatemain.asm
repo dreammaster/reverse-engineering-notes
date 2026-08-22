@@ -207299,7 +207299,7 @@ loc_7B4AE:                              ; CODE XREF: sub_7AE5A+5D9\u2191j
                 mov     es, seg_D14BA
                 push    es:vocab_list_0._logicNum
                 push    cs
-                call    near ptr sub_7D203
+                call    near ptr Logics_dropIntoPond
                 jmp     loc_7B03F
 ; ---------------------------------------------------------------------------
 
@@ -210830,7 +210830,7 @@ sub_7C946       endp
 
 ; Attributes: bp-based frame
 
-sub_7D203       proc far                ; CODE XREF: sub_7AE5A+65E\u2191p
+Logics_dropIntoPond proc far            ; CODE XREF: sub_7AE5A+65E\u2191p
                                         ; sub_7D26B+72\u2193p ...
 
 logicNum        = word ptr  6
@@ -210878,10 +210878,10 @@ logicNum        = word ptr  6
                 call    j_Logics_updateHandler
                 add     sp, 6
 
-loc_7D269:                              ; CODE XREF: sub_7D203+51\u2191j
+loc_7D269:                              ; CODE XREF: Logics_dropIntoPond+51\u2191j
                 pop     bp
                 retf
-sub_7D203       endp
+Logics_dropIntoPond endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -210960,7 +210960,7 @@ loc_7D2D3:                              ; CODE XREF: sub_7D26B+63\u2191j
                 assume es:sg3EDC
                 push    es:vocab_list_0._logicNum
                 push    cs
-                call    near ptr sub_7D203
+                call    near ptr Logics_dropIntoPond
                 add     sp, 2
                 jmp     short loc_7D2BD
 ; ---------------------------------------------------------------------------
@@ -211765,7 +211765,7 @@ loc_7D977:                              ; CODE XREF: sub_7D57B+3F7\u2191j
                 assume es:sg3EDC
                 push    es:vocab_list_0._logicNum
                 push    cs
-                call    near ptr sub_7D203
+                call    near ptr Logics_dropIntoPond
                 jmp     loc_7D647
 ; ---------------------------------------------------------------------------
 

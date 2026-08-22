@@ -4298,3 +4298,26 @@ toggle from the music one, confirming this engine has independent
 music and sound-effects mute switches.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-forty-first batch.
+
+### `Logics_dropIntoPond` named
+
+`sub_7D203` (3 callers). Confirmed conclusively via its own `GATESTR.DAT`
+message: `0x4C78`, `"You drop%s and%s to the pond floor.\n"`. The two
+`%s` slots are filled by two `j_printObj(logicNum, valType)` calls
+(`valType` `0x44` then `2` — two different printed forms of the same
+object). After printing, it detaches `logicNum`'s handler and
+reassigns it to handler `0xA9` (presumably "the pond floor" acting as
+a location) via the already-named `j_Logics_updateHandler`.
+
+A nice bonus tie-in: if `logicNum == 0xA2` specifically, it *also*
+detaches/reassigns a companion object `0xBF` to handler `0x94`. `0xA2`
+is one of the mount/vehicle-related logic numbers
+`Logics_checkMoveRestriction` flagged as unidentified several sessions
+ago (alongside `0xA8`/`0x9D`) — this is the first independent
+confirmation that `0xA2` really is some kind of vehicle/harness object,
+since dropping it into the pond drags a companion accessory down with
+it. Called from `sub_7AE5A` and `sub_7D26B` — presumably part of a
+swim/dive/fall-in-water puzzle where carried items sink to the pond
+floor.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-forty-second batch.

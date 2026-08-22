@@ -1038,6 +1038,12 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       confirmation messages printed after each toggle command. Full
       writeup in
       [overview.md](overview.md#sound_reportmusictogglesound_reportsoundtoggle-named).
+- [x] Named `sub_7D203` → `Logics_dropIntoPond` — "You drop%s and%s to
+      the pond floor," confirmed via its own message; also gives the
+      first independent confirmation that logicNum `0xA2` (previously
+      flagged unidentified in `Logics_checkMoveRestriction`) is a
+      vehicle/harness-type object. Full writeup in
+      [overview.md](overview.md#logics_dropintopond-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

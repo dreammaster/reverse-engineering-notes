@@ -3245,6 +3245,22 @@ RENAMES = [
      "'sound effects on') and sub_2ECA7 (clears that bit -- 'sound "
      "effects off') -- the confirmation message for the separate "
      "sound-effects on/off toggle, distinct from the music toggle."),
+
+    (0x7D203, "Logics_dropIntoPond",
+     "sub_7D203(logicNum): confirmed via its own GATESTR.DAT message "
+     "(0x4C78, 'You drop%s and%s to the pond floor.\\n') -- prints that "
+     "message with two already-named j_printObj(logicNum, valType) "
+     "calls (valType 0x44 then 2, two different printed forms of the "
+     "same object) filling the %s slots, then detaches logicNum's "
+     "handler and reassigns it to handler 0xA9 (presumably 'the pond "
+     "floor' as a location) via the already-named j_Logics_updateHandler. "
+     "If logicNum==0xA2 specifically -- one of the unidentified mount/"
+     "vehicle-related logicNums Logics_checkMoveRestriction already "
+     "flagged -- also detaches/reassigns a companion object 0xBF to "
+     "handler 0x94, consistent with a vehicle/harness and its attached "
+     "accessory falling together. Called from sub_7AE5A and sub_7D26B "
+     "-- the 'you drop this into the pond, it sinks to the bottom' "
+     "event, presumably reached from a swim/dive/fall-in-water puzzle."),
 ]
 
 
