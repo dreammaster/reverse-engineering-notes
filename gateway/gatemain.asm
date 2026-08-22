@@ -157589,7 +157589,7 @@ sub_63210       endp
 
 ; Attributes: bp-based frame
 
-sub_632B9       proc far                ; CODE XREF: sub_632F5+169\u2193p
+String_copyPadded proc far              ; CODE XREF: sub_632F5+169\u2193p
                                         ; prompt_for_filename+132\u2193p ...
 
 arg_0           = dword ptr  6
@@ -157601,7 +157601,7 @@ arg_8           = word ptr  0Eh
                 jmp     short loc_632E2
 ; ---------------------------------------------------------------------------
 
-loc_632BE:                              ; CODE XREF: sub_632B9+31\u2193j
+loc_632BE:                              ; CODE XREF: String_copyPadded+31\u2193j
                 les     bx, [bp+arg_4]
                 cmp     byte ptr es:[bx], 0
                 jz      short loc_632D8
@@ -157615,13 +157615,13 @@ loc_632CD:
                 jmp     short loc_632E2
 ; ---------------------------------------------------------------------------
 
-loc_632D8:                              ; CODE XREF: sub_632B9+C\u2191j
+loc_632D8:                              ; CODE XREF: String_copyPadded+C\u2191j
                 les     bx, [bp+arg_0]
                 inc     word ptr [bp+arg_0]
                 mov     byte ptr es:[bx], 20h ; ' '
 
-loc_632E2:                              ; CODE XREF: sub_632B9+3\u2191j
-                                        ; sub_632B9+1D\u2191j
+loc_632E2:                              ; CODE XREF: String_copyPadded+3\u2191j
+                                        ; String_copyPadded+1D\u2191j
                 mov     ax, [bp+arg_8]
                 dec     [bp+arg_8]
                 or      ax, ax
@@ -157630,7 +157630,7 @@ loc_632E2:                              ; CODE XREF: sub_632B9+3\u2191j
                 mov     byte ptr es:[bx], 0
                 pop     bp
                 retf
-sub_632B9       endp
+String_copyPadded endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -157814,7 +157814,7 @@ loc_6340A:                              ; CODE XREF: sub_632F5+F9\u2191j
                 push    dx
                 push    ax
                 push    cs
-                call    near ptr sub_632B9
+                call    near ptr String_copyPadded
                 add     sp, 0Ah
 
 loc_63464:                              ; CODE XREF: sub_632F5+A0\u2191j
@@ -158056,7 +158056,7 @@ loc_635AE:                              ; CODE XREF: prompt_for_filename+100\u21
                 push    word ptr dword_CC026+2
                 push    word ptr dword_CC026
                 push    cs
-                call    near ptr sub_632B9
+                call    near ptr String_copyPadded
                 add     sp, 0Ah
                 call    TextWindow_resetFontLinesRemaining
                 mov     ax, 38F6h
@@ -159067,7 +159067,7 @@ loc_63F25:                              ; CODE XREF: prompt_for_filename+898\u21
                 push    ds
                 push    ax
                 push    cs
-                call    near ptr sub_632B9
+                call    near ptr String_copyPadded
                 add     sp, 0Ah
                 jmp     short loc_63F09
 ; ---------------------------------------------------------------------------
@@ -159146,7 +159146,7 @@ loc_63FEE:                              ; CODE XREF: prompt_for_filename+A49\u21
                 push    ds
                 push    ax
                 push    cs
-                call    near ptr sub_632B9
+                call    near ptr String_copyPadded
                 add     sp, 0Ah
                 mov     [bp+var_15A], 0
                 mov     [bp+var_160], 1
@@ -159185,7 +159185,7 @@ loc_64014:                              ; CODE XREF: prompt_for_filename+B47\u21
                 push    ds
                 push    ax
                 push    cs
-                call    near ptr sub_632B9
+                call    near ptr String_copyPadded
                 add     sp, 0Ah
                 mov     [bp+var_15A], 1
                 mov     ax, 12h
@@ -159237,7 +159237,7 @@ loc_640C0:                              ; CODE XREF: prompt_for_filename+BCF\u21
                 push    ds
                 push    ax
                 push    cs
-                call    near ptr sub_632B9
+                call    near ptr String_copyPadded
                 add     sp, 0Ah
                 mov     ax, [bp+var_150]
                 inc     ax

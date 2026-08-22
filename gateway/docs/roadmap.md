@@ -990,6 +990,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
 - [x] Named `sub_2137A` (2 callers) → `Memory_fillBytes` — a private
       near-call buffer-fill helper distinct from `_memset`. Full
       writeup in [overview.md](overview.md#memory_fillbytes-named).
+- [x] Named `sub_632B9` (2 callers) → `String_copyPadded` — a fixed-
+      width, space-padded string copy called from
+      `prompt_for_filename`. Full writeup in
+      [overview.md](overview.md#string_copypadded-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

@@ -4003,3 +4003,18 @@ duplicate-compiled copy.
 Called from `sub_20D4F` and `sub_2139D`.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-thirty-second batch.
+
+### `String_copyPadded` named
+
+Moved to `sub_632B9` (2 callers) — copies up to `width` characters
+from a source string into a destination buffer; once the source's
+null terminator is hit, pads the remainder of the destination with
+spaces instead. Always null-terminates the destination after exactly
+`width` characters.
+
+Called from the already-named `prompt_for_filename` and from
+`sub_632F5` — a fixed-width, space-padded string copy, consistent with
+formatting a filename into a fixed-width field (e.g. an 8.3-style
+padded name) for display or storage.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-thirty-third batch.

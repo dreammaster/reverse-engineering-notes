@@ -3005,6 +3005,16 @@ RENAMES = [
      "crossing a 64K boundary, and a simpler alignment check) -- a "
      "distinct, private near-call helper rather than a duplicate-"
      "compiled copy. Called from sub_20D4F and sub_2139D."),
+
+    (0x632B9, "String_copyPadded",
+     "sub_632B9(dest, src, width): copies up to `width` characters "
+     "from src into dest; once src's null terminator is hit, pads the "
+     "remainder of dest with spaces (0x20) instead. Always null-"
+     "terminates dest after exactly `width` characters. Called from "
+     "the already-named prompt_for_filename and from sub_632F5 -- a "
+     "fixed-width, space-padded string copy, consistent with "
+     "formatting a filename into a fixed-width field (e.g. an 8.3-"
+     "style padded name) for display or storage."),
 ]
 
 
