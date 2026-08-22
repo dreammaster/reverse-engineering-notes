@@ -3954,3 +3954,17 @@ before" overlay primitive, presumably paired with a not-yet-identified
 restore/end counterpart.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-twenty-ninth batch.
+
+### `Screen_setDrawMode` named
+
+Moved to `sub_2BE7A` (2 callers) — validates its fill-mode argument is
+in range 0-11 (12 raster-op-style modes); if so, stores it and the
+given color/flag arguments into the screen struct and returns 0. If
+out of range, leaves the screen struct untouched and returns the error
+code `0xF05F`.
+
+Called from the already-named `Font_writeChar` and `fillRect` — a
+shared "configure the screen's current draw mode/color before writing
+pixels" validator+setter.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-thirtieth batch.

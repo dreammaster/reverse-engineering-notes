@@ -42548,7 +42548,7 @@ loc_224FA:                              ; CODE XREF: Font_writeChar+9D\u2191j
                 push    ax
                 push    Font_bgColor
                 push    ax
-                call    sub_2BE7A
+                call    Screen_setDrawMode
                 push    Font_textPos.x  ; x1
                 push    Font_textPos.y  ; y1
                 mov     ax, [bp+charFullWidth]
@@ -44390,7 +44390,7 @@ loc_23130:                              ; CODE XREF: fillRect+7\u2191j
                 push    Screen_isCheckerFills_mb
 
 loc_2313C:                              ; CODE XREF: fillRect+15\u2191j
-                call    sub_2BE7A
+                call    Screen_setDrawMode
                 cmp     [bp+y1], 0FFFFh
                 jge     short loc_2314C
                 mov     [bp+y1], 0FFFFh
@@ -65064,7 +65064,7 @@ seg057          segment byte public 'CODE' use16
 
 ; Attributes: bp-based frame
 
-sub_2BE7A       proc far                ; CODE XREF: Font_writeChar+BD\u2191P
+Screen_setDrawMode proc far             ; CODE XREF: Font_writeChar+BD\u2191P
                                         ; fillRect:loc_2313C\u2191P
 
 var_2           = word ptr -2
@@ -65100,17 +65100,17 @@ loc_2BE92:
                 jz      short loc_2BEB0
                 mov     bx, 0
 
-loc_2BEB0:                              ; CODE XREF: sub_2BE7A+31\u2191j
+loc_2BEB0:                              ; CODE XREF: Screen_setDrawMode+31\u2191j
                 mov     [si+Screen.field_26], bx
                 mov     [bp+var_2], 0
                 jmp     short loc_2BEBF
 ; ---------------------------------------------------------------------------
 
-loc_2BEBA:                              ; CODE XREF: sub_2BE7A:loc_2BE92\u2191j
-                                        ; sub_2BE7A+1D\u2191j
+loc_2BEBA:                              ; CODE XREF: Screen_setDrawMode:loc_2BE92\u2191j
+                                        ; Screen_setDrawMode+1D\u2191j
                 mov     [bp+var_2], 0F05Fh
 
-loc_2BEBF:                              ; CODE XREF: sub_2BE7A+3E\u2191j
+loc_2BEBF:                              ; CODE XREF: Screen_setDrawMode+3E\u2191j
                 mov     ax, [bp+var_2]
                 pop     di
                 pop     si
@@ -65121,7 +65121,7 @@ loc_2BEBF:                              ; CODE XREF: sub_2BE7A+3E\u2191j
 
 locret_2BEC9:
                 retf    6
-sub_2BE7A       endp
+Screen_setDrawMode endp
 
 
 ; =============== S U B R O U T I N E =======================================

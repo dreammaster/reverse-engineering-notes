@@ -979,6 +979,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       reusable temporary-drawing-surface-with-save/restore primitive,
       called from `Icon_drawButton`/`Dialog_showFormattedPrompt`. Full
       writeup in [overview.md](overview.md#surface_beginoverlay-named).
+- [x] Named `sub_2BE7A` (2 callers) → `Screen_setDrawMode` — validates
+      and sets the screen's fill-mode/color before pixel writes,
+      called from `Font_writeChar`/`fillRect`. Full writeup in
+      [overview.md](overview.md#screen_setdrawmode-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

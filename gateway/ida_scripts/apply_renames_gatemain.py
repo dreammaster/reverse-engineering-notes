@@ -2963,6 +2963,17 @@ RENAMES = [
      "drawing surface over a rectangle, saving whatever image was "
      "there before' overlay primitive, presumably paired with a "
      "not-yet-identified restore/end counterpart."),
+
+    (0x2BE7A, "Screen_setDrawMode",
+     "sub_2BE7A(flagArg, color2, fillMode): validates fillMode is in "
+     "range 0-11 (12 raster-op-style modes); if so, stores fillMode "
+     "into screen.field_22, color2 into the already-partially-named "
+     "screen._color2, a boolean (1 if flagArg==1, else 0) into "
+     "screen.field_26, and returns 0. If fillMode is out of range, "
+     "leaves the screen struct untouched and returns the error code "
+     "0xF05F. Called from the already-named Font_writeChar and "
+     "fillRect -- a shared 'configure the screen's current draw mode/"
+     "color before writing pixels' validator+setter."),
 ]
 
 
