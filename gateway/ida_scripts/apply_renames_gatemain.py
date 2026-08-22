@@ -3627,6 +3627,26 @@ RENAMES = [
      "same 'sp-analysis failed causing a bogus function split, with a "
      "genuinely shared tail' pattern seen with Logics_setBit/sub_11970 "
      "just before this. 21 callers."),
+
+    (0x80F32, "Logics_setEncounterFlag",
+     "sub_80F32(logicNum, mode): searches a fixed, statically-"
+     "initialized 11-entry table (14-byte stride, never written "
+     "anywhere else in the disassembly) for one whose first word "
+     "matches logicNum. If found: calls the already-named "
+     "Logics_setBit(logicNum, 9) unconditionally; additionally, if "
+     "mode==1 specifically (mode==0 skips this extra step, any other "
+     "mode value does nothing at all), records a per-slot 'already "
+     "flagged' byte (indexed by the matched slot, not by logicNum, in "
+     "a separate small array) -- i.e. a one-time bookkeeping mark "
+     "distinct from the bit set on the object itself. Neither table's "
+     "contents nor bit 9's specific meaning were independently "
+     "confirmed this pass (no message text or other named caller "
+     "context pinned down what 'encounter'/'notified' actually "
+     "represents here -- structurally this reads as some kind of "
+     "one-time trigger/roster bookkeeping for a fixed set of 11 "
+     "objects, most plausibly monsters or set-piece NPCs, but that's "
+     "an inference from shape, not confirmed). Called from sub_82239, "
+     "sub_8342B, and 9 other unnamed functions."),
 ]
 
 

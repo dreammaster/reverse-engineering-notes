@@ -4873,3 +4873,23 @@ as `Logics_setBit`/`sub_11970` just before this. Left unnamed rather
 than force an uncertain merge.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-fifty-fifth batch.
+
+### `Logics_setEncounterFlag` named — a fixed 11-object trigger roster
+
+`sub_80F32` (11 callers). Searches a fixed, statically-initialized
+11-entry table (never written anywhere else in the disassembly) for
+one whose first word matches `logicNum`. If found, calls the
+just-named `Logics_setBit(logicNum, 9)` unconditionally; additionally,
+if `mode==1` specifically, records a per-slot "already flagged" byte
+in a separate small array indexed by the matched slot rather than by
+`logicNum` — a one-time bookkeeping mark distinct from the bit set on
+the object itself.
+
+Neither the table's contents nor bit 9's specific meaning were
+independently confirmed this pass — no message text or other named
+caller pinned down what "encounter" actually represents. Structurally
+this reads as one-time trigger/roster bookkeeping for a fixed set of
+11 objects (plausibly monsters or set-piece NPCs), but that's an
+inference from shape, flagged honestly as such rather than asserted.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-fifty-sixth batch.

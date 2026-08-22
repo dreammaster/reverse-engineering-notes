@@ -301876,7 +301876,7 @@ getThingName    endp
 
 ; Attributes: bp-based frame
 
-sub_80F32       proc far                ; CODE XREF: sub_82239+76↓P
+Logics_setEncounterFlag proc far        ; CODE XREF: sub_82239+76↓P
                                         ; sub_8342B+12F↓P ...
 
 var_2           = word ptr -2
@@ -301890,7 +301890,7 @@ arg_2           = word ptr  8
                 jmp     short loc_80F6C
 ; ---------------------------------------------------------------------------
 
-loc_80F3F:                              ; CODE XREF: sub_80F32+5B↓j
+loc_80F3F:                              ; CODE XREF: Logics_setEncounterFlag+5B↓j
                 mov     ax, 9
                 push    ax
                 push    [bp+arg_0]
@@ -301901,7 +301901,7 @@ loc_80F3F:                              ; CODE XREF: sub_80F32+5B↓j
                 jmp     short loc_80F8F
 ; ---------------------------------------------------------------------------
 
-loc_80F58:                              ; CODE XREF: sub_80F32+56↓j
+loc_80F58:                              ; CODE XREF: Logics_setEncounterFlag+56↓j
                 mov     ax, 9
                 push    ax
                 push    [bp+arg_0]
@@ -301910,10 +301910,10 @@ loc_80F58:                              ; CODE XREF: sub_80F32+56↓j
                 jmp     short loc_80F8F
 ; ---------------------------------------------------------------------------
 
-loc_80F69:                              ; CODE XREF: sub_80F32+4F↓j
+loc_80F69:                              ; CODE XREF: Logics_setEncounterFlag+4F↓j
                 inc     [bp+var_2]
 
-loc_80F6C:                              ; CODE XREF: sub_80F32+B↑j
+loc_80F6C:                              ; CODE XREF: Logics_setEncounterFlag+B↑j
                 cmp     [bp+var_2], 0Bh
                 jge     short loc_80F8F
                 mov     ax, 0Eh
@@ -301928,12 +301928,12 @@ loc_80F6C:                              ; CODE XREF: sub_80F32+B↑j
                 cmp     ax, 1
                 jz      short loc_80F3F
 
-loc_80F8F:                              ; CODE XREF: sub_80F32+24↑j
-                                        ; sub_80F32+35↑j ...
+loc_80F8F:                              ; CODE XREF: Logics_setEncounterFlag+24↑j
+                                        ; Logics_setEncounterFlag+35↑j ...
                 mov     sp, bp
                 pop     bp
                 retf
-sub_80F32       endp
+Logics_setEncounterFlag endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -304618,7 +304618,7 @@ loc_82266:                              ; CODE XREF: sub_82239+23↑j
                 push    ax
                 mov     es, seg_D150A
                 push    es:word_4DF9A
-                call    sub_80F32
+                call    Logics_setEncounterFlag
                 add     sp, 4
                 mov     ax, 843Fh
                 mov     dx, 0F000h
@@ -307505,7 +307505,7 @@ loc_834E5:                              ; CODE XREF: sub_8342B+B5↑j
                 push    ax
                 mov     ax, 1DFh
                 push    ax
-                call    sub_80F32
+                call    Logics_setEncounterFlag
                 jmp     short loc_8356E
 ; ---------------------------------------------------------------------------
 
@@ -308546,7 +308546,7 @@ loc_83D1D:                              ; CODE XREF: sub_83842+4CE↑j
                 push    ax
                 mov     ax, 1E1h
                 push    ax
-                call    sub_80F32
+                call    Logics_setEncounterFlag
                 jmp     short loc_83D6E
 ; ---------------------------------------------------------------------------
 
@@ -314432,7 +314432,7 @@ loc_867D2:                              ; CODE XREF: sub_85C7C+1053↓j
                 push    ax
                 mov     ax, 1EFh
                 push    ax
-                call    sub_80F32
+                call    Logics_setEncounterFlag
                 add     sp, 4
                 mov     ax, 9C48h
                 jmp     loc_85CFF
@@ -314490,7 +314490,7 @@ loc_86867:                              ; CODE XREF: sub_85C7C+BE4↑j
                 push    ax
                 mov     ax, 1EFh
                 push    ax
-                call    sub_80F32
+                call    Logics_setEncounterFlag
                 add     sp, 4
                 mov     es, seg_D1546
                 mov     es:byte_CD893, 1
@@ -314584,7 +314584,7 @@ loc_86936:                              ; CODE XREF: sub_85C7C+102F↓j
 loc_8693D:                              ; CODE XREF: sub_85C7C+CEF↓j
                                         ; sub_85C7C+CF8↓j ...
                 push    ax
-                call    sub_80F32
+                call    Logics_setEncounterFlag
                 jmp     loc_85D09
 ; ---------------------------------------------------------------------------
 
@@ -314594,7 +314594,7 @@ loc_86946:                              ; CODE XREF: sub_85C7C+FD1↓j
                 push    ax
                 mov     ax, 1D8h
                 push    ax
-                call    sub_80F32
+                call    Logics_setEncounterFlag
                 add     sp, 4
                 mov     es, seg_D1534
                 mov     es:word_CC804, 45h ; 'E'
@@ -314782,7 +314782,7 @@ loc_86ACD:                              ; CODE XREF: sub_85C7C+E49↑j
                 push    ax
                 mov     ax, 1E1h
                 push    ax
-                call    sub_80F32
+                call    Logics_setEncounterFlag
                 add     sp, 4
                 mov     ax, 1
                 push    ax
@@ -315726,7 +315726,7 @@ loc_87192:                              ; CODE XREF: sub_86D91+3DE↑j
                 push    ax
                 mov     ax, 1EFh
                 push    ax
-                call    sub_80F32
+                call    Logics_setEncounterFlag
                 jmp     short loc_871CA
 ; ---------------------------------------------------------------------------
 
@@ -322099,7 +322099,7 @@ loc_89C36:                              ; CODE XREF: sub_89AAC+147↑j
                 mov     es, seg_D1598
                 assume es:seg107
                 push    word ptr es:[bx+0C4h]
-                call    sub_80F32
+                call    Logics_setEncounterFlag
                 add     sp, 4
                 mov     es, seg_D15A2
                 assume es:dseg
@@ -323136,7 +323136,7 @@ loc_8A309:                              ; CODE XREF: sub_8A260+1D↑j
                 push    ax
                 mov     es, seg_D15BE
                 push    es:word_4DF9A
-                call    sub_80F32
+                call    Logics_setEncounterFlag
                 add     sp, 4
                 mov     ax, 8800h
                 mov     dx, 0F000h
@@ -323925,7 +323925,7 @@ loc_8A90B:                              ; CODE XREF: sub_8A8D1+23↑j
                 push    ax
                 mov     es, seg_D15BE
                 push    es:word_4DF9A
-                call    sub_80F32
+                call    Logics_setEncounterFlag
                 add     sp, 4
 
 loc_8A946:                              ; CODE XREF: sub_8A8D1+A1↓j
@@ -324790,7 +324790,7 @@ loc_8AF7D:                              ; CODE XREF: sub_8AED5+52↑j
                 push    ax
                 mov     es, seg_D15BE
                 push    es:word_4DF9A
-                call    sub_80F32
+                call    Logics_setEncounterFlag
                 add     sp, 4
                 mov     ax, 1FEh
                 push    ax
@@ -325557,7 +325557,7 @@ loc_8B4D6:                              ; CODE XREF: sub_8B48D+44↑j
                 push    ax
                 mov     es, seg_D15BE
                 push    es:word_4DF9A
-                call    sub_80F32
+                call    Logics_setEncounterFlag
                 jmp     short loc_8B57A
 ; ---------------------------------------------------------------------------
 
@@ -326683,7 +326683,7 @@ loc_8BCF9:                              ; CODE XREF: sub_8BC38+96↑j
                 push    ax
                 mov     es, seg_D15BE
                 push    es:word_4DF9A
-                call    sub_80F32
+                call    Logics_setEncounterFlag
                 add     sp, 4
                 mov     ax, 8869h
                 mov     dx, 0F000h

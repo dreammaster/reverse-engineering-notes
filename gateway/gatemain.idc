@@ -67781,6 +67781,7 @@ static Bytes_11(void) {
 	op_plain_offset	(x,	1,	0XC7F20);
 	op_plain_offset	(x,	129,	0XC7F20);
 	create_insn	(0X80F32);
+	set_name	(0X80F32,	"Logics_setEncounterFlag");
 	create_insn	(x=0X80F35);
 	op_hex		(x,	1);
 	create_insn	(x=0X80F38);
@@ -68389,9 +68390,6 @@ static Bytes_11(void) {
 	create_insn	(0X82148);
 	create_insn	(x=0X8215A);
 	op_hex		(x,	1);
-	create_insn	(0X82169);
-	create_insn	(x=0X8216C);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -68401,6 +68399,9 @@ static Bytes_12(void) {
         auto x;
 #define id x
 
+	create_insn	(0X82169);
+	create_insn	(x=0X8216C);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X8216F);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X82183);
@@ -74506,10 +74507,6 @@ static Bytes_12(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X8DC96);
 	op_hex		(x,	1);
-	create_insn	(x=0X8DCAD);
-	op_hex		(x,	1);
-	create_insn	(x=0X8DCB5);
-	op_seg		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -74519,6 +74516,10 @@ static Bytes_13(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X8DCAD);
+	op_hex		(x,	1);
+	create_insn	(x=0X8DCB5);
+	op_seg		(x,	1);
 	create_insn	(x=0X8DCBF);
 	op_hex		(x,	1);
 	create_insn	(0X8DCC7);

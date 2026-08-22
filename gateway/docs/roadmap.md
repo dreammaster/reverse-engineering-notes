@@ -1163,6 +1163,11 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       (a FLIRT-recognized name, not something in the rename-replay
       history). Full writeup in
       [overview.md](overview.md#_memset-named--recovering-a-library-name-that-didnt-survive-the-regeneration).
+- [x] Named `sub_80F32` → `Logics_setEncounterFlag` — searches a fixed
+      11-entry table and sets bit 9 plus an optional per-slot
+      "already flagged" byte; table contents and bit 9's exact meaning
+      not independently confirmed. Full writeup in
+      [overview.md](overview.md#logics_setencounterflag-named--a-fixed-11-object-trigger-roster).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-
