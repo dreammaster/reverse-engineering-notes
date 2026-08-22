@@ -5058,3 +5058,35 @@ presumably gets set to `2` or `3` as the corresponding good/bad choice
 happens elsewhere in the game) wasn't traced this pass.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-sixty-fourth batch.
+
+### `Queue_finishRemove`/`_queueCount`/`_queueCursor` named — closing a long-flagged roadmap item
+
+`sub_12F26` (4 callers). Turned out to be the back half of the
+already-named `Queue_remove` — reached both as its own fallthrough
+(`Queue_remove+3F`/`+1C`) and from a separate unnamed external caller,
+so kept as its own named function rather than folded into
+`Queue_remove` directly. It performs the actual `_memmove` that
+compacts the queue array down by one slot once `Queue_remove` finds
+the entry to delete, then adjusts two globals — and this is the actual
+resolution of the roadmap's long-standing "`word_CB7F6`/`word_CB808`
+roles unclear" item, flagged back when `Queue_processTurn`/
+`Queue_tickCountdowns` were first named:
+
+- **`_queueCount`** (was `word_CB7F4`) — the queue's total live-entry
+  count. Read as the search-loop bound in `Queue_remove`, decremented
+  unconditionally in `Queue_finishRemove` whenever an entry is
+  actually removed.
+- **`_queueCursor`** (was `word_CB7F6`) — the current iteration
+  position used while walking the queue in `Queue_processTurn`/
+  `Queue_tickCountdowns`. `Queue_finishRemove` decrements it whenever a
+  queue entry at or before this position was just removed and the
+  array compacted — the classic "keep an iteration cursor in sync when
+  an earlier array element is deleted" pattern, so an in-progress
+  queue walk doesn't skip or double-process an entry after the shift.
+
+`word_CB808`'s role remains a separate, still-open question (not
+addressed by this finding — the roadmap note about whether it's the
+same countdown mechanism as `Game_handleWeaponDischarge`'s
+weapon-confiscation timer stands as-is).
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-sixty-fifth batch.

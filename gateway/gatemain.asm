@@ -6125,7 +6125,7 @@ sub_12E3A       proc far                ; CODE XREF: seg098:1832↓P
                 push    ax              ; ptr
                 call    far ptr _memset
                 add     sp, 8
-                mov     word_CB7F4, 0
+                mov     _queueCount, 0
                 retf
 sub_12E3A       endp
 
@@ -6156,7 +6156,7 @@ loc_12E6E:                              ; CODE XREF: seg003:005C↓j
                 inc     [bp+var_2]
 
 loc_12E71:                              ; CODE XREF: Queue_add+11↑j
-                mov     ax, word_CB7F4
+                mov     ax, _queueCount
                 cmp     [bp+var_2], ax
 
 loc_12E77:                              ; CODE XREF: seg098:185B↓P
@@ -6195,10 +6195,10 @@ loc_12EA6:                              ; CODE XREF: Queue_add+37↑j
                 mov     es:[si-73FCh], al
                 mov     ax, [bp+arg_2]
                 mov     es:[si-73FAh], ax
-                mov     ax, word_CB7F4
+                mov     ax, _queueCount
                 cmp     [bp+var_2], ax
                 jb      short loc_12ECD
-                inc     word_CB7F4
+                inc     _queueCount
 
 loc_12ECD:                              ; CODE XREF: Queue_add+49↑j
                                         ; Queue_add+6C↑j
@@ -6232,7 +6232,7 @@ loc_12EE5:                              ; CODE XREF: Queue_remove+31↓j
                 inc     [bp+var_2]
 
 loc_12EE8:                              ; CODE XREF: Queue_remove+11↑j
-                mov     ax, word_CB7F4
+                mov     ax, _queueCount
                 cmp     [bp+var_2], ax
                 jnb     short loc_12F3F
                 mov     si, [bp+var_2]
@@ -6242,7 +6242,7 @@ loc_12EE8:                              ; CODE XREF: Queue_remove+11↑j
                 mov     es, seg_D1086
                 cmp     es:[si-73FCh], al
                 jnz     short loc_12EE5
-                mov     ax, word_CB7F4
+                mov     ax, _queueCount
                 sub     ax, [bp+var_2]
                 dec     ax
                 mov     [bp+var_4], ax
@@ -6263,27 +6263,27 @@ Queue_remove    endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_12F26       proc far                ; CODE XREF: seg098:183F↓P
+Queue_finishRemove proc far             ; CODE XREF: seg098:183F↓P
                                         ; seg098:1868↓P ...
                 push    ax              ; dest
                 call    _memmove
                 add     sp, 0Ah
 
 loc_12F2F:                              ; CODE XREF: Queue_remove+3F↑j
-                mov     ax, word_CB7F6
+                mov     ax, _queueCursor
                 cmp     [bp-2], ax
                 jg      short loc_12F3B
-                dec     word_CB7F6
+                dec     _queueCursor
 
-loc_12F3B:                              ; CODE XREF: sub_12F26+F↑j
-                dec     word_CB7F4
+loc_12F3B:                              ; CODE XREF: Queue_finishRemove+F↑j
+                dec     _queueCount
 
 loc_12F3F:                              ; CODE XREF: Queue_remove+1C↑j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_12F26       endp ; sp-analysis failed
+Queue_finishRemove endp ; sp-analysis failed
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -6308,7 +6308,7 @@ loc_12F56:                              ; CODE XREF: Queue_exists+30↓j
                 inc     [bp+var_2]
 
 loc_12F59:                              ; CODE XREF: Queue_exists+10↑j
-                mov     ax, word_CB7F4
+                mov     ax, _queueCount
                 cmp     [bp+var_2], ax
                 jnb     short loc_12F7B
                 mov     al, [bp+arg_0]
@@ -6355,7 +6355,7 @@ loc_12F94:                              ; CODE XREF: Queue_find+31↓j
                 inc     [bp+var_2]
 
 loc_12F97:                              ; CODE XREF: Queue_find+11↑j
-                mov     ax, word_CB7F4
+                mov     ax, _queueCount
                 cmp     [bp+var_2], ax
                 jnb     short loc_12FBB
                 mov     si, [bp+var_2]
@@ -6407,7 +6407,7 @@ arg_2           = word ptr  8
 ; ---------------------------------------------------------------------------
 
 loc_12FDE:                              ; CODE XREF: Queue_processTurn+11↑j
-                mov     ax, word_CB7F6
+                mov     ax, _queueCursor
                 mov     [bp+var_2], ax
                 mov     [bp+var_C], 0
                 jmp     loc_13142
@@ -6418,7 +6418,7 @@ Queue_processTurn endp
 
 loc_12FEC:                              ; CODE XREF: Queue_tickCountdowns-24↓j
                                         ; Queue_tickCountdowns-1B↓j
-                mov     bx, word_CB7F6
+                mov     bx, _queueCursor
                 shl     bx, 1
                 shl     bx, 1
                 mov     es, seg_D1086
@@ -6428,29 +6428,29 @@ loc_12FEC:                              ; CODE XREF: Queue_tickCountdowns-24↓j
                 jg      short loc_13019
 
 loc_13006:                              ; CODE XREF: Queue_tickCountdowns+17↓j
-                dec     word_CB7F6
+                dec     _queueCursor
                 jmp     short loc_13019
 ; ---------------------------------------------------------------------------
 
 loc_1300C:                              ; CODE XREF: Queue_tickCountdowns-9B↓j
-                mov     bx, word_CB7F6
+                mov     bx, _queueCursor
                 shl     bx, 1
                 shl     bx, 1
                 dec     word ptr es:[bx-73FAh]
 
 loc_13019:                              ; CODE XREF: Queue_tickCountdowns-D8↑j
                                         ; Queue_tickCountdowns-D2↑j ...
-                inc     word_CB7F6
+                inc     _queueCursor
 
 loc_1301D:                              ; CODE XREF: Queue_processTurn+1AA↓j
-                mov     ax, word_CB7F4
-                cmp     word_CB7F6, ax
+                mov     ax, _queueCount
+                cmp     _queueCursor, ax
                 jb      short loc_13029
                 jmp     loc_130F0
 ; ---------------------------------------------------------------------------
 
 loc_13029:                              ; CODE XREF: Queue_tickCountdowns-B2↑j
-                mov     si, word_CB7F6
+                mov     si, _queueCursor
                 mov     cl, 2
                 shl     si, cl
                 mov     es, seg_D1086
@@ -6484,9 +6484,9 @@ loc_1307E:                              ; CODE XREF: Queue_tickCountdowns-61↑j
                 mov     word ptr [bp+6], 0
 
 loc_1308A:                              ; CODE XREF: Queue_tickCountdowns-6B↑j
-                cmp     word_CB7F6, 0
+                cmp     _queueCursor, 0
                 jl      short loc_13019
-                mov     si, word_CB7F6
+                mov     si, _queueCursor
                 mov     cl, 2
                 shl     si, cl
                 mov     al, [bp-0Eh]
@@ -6510,8 +6510,8 @@ loc_130B5:                              ; CODE XREF: Queue_tickCountdowns-26↑j
 ; ---------------------------------------------------------------------------
 
 loc_130BE:                              ; CODE XREF: Queue_tickCountdowns-1D↑j
-                mov     ax, word_CB7F4
-                sub     ax, word_CB7F6
+                mov     ax, _queueCount
+                sub     ax, _queueCursor
                 dec     ax
                 mov     [bp-10h], ax
                 or      ax, ax
@@ -6540,7 +6540,7 @@ Queue_tickCountdowns proc near          ; CODE XREF: seg102:01A0↓P
                 add     sp, 0Ah
 
 loc_130E9:                              ; CODE XREF: Queue_tickCountdowns-B↑j
-                dec     word_CB7F4
+                dec     _queueCount
                 jmp     loc_13006
 ; ---------------------------------------------------------------------------
 
@@ -6596,14 +6596,14 @@ loc_13142:                              ; CODE XREF: Queue_processTurn+26↑j
                 call    Logic_call
                 add     sp, 4
                 mov     [bp+var_A], ax
-                mov     word_CB7F6, 0
+                mov     _queueCursor, 0
                 jmp     loc_1301D
 ; ---------------------------------------------------------------------------
 
 loc_13170:                              ; CODE XREF: Queue_tickCountdowns+4B↑j
                                         ; Queue_tickCountdowns+67↑j ...
                 mov     ax, [bp+var_2]
-                mov     word_CB7F6, ax
+                mov     _queueCursor, ax
 
 loc_13176:                              ; CODE XREF: Queue_processTurn+18↑j
                 pop     si
@@ -155887,7 +155887,7 @@ loc_47E67:                              ; CODE XREF: seg097:0DA5↓j
                 inc     word ptr [bp-2]
 
 loc_47E6A:                              ; CODE XREF: seg097:0D85↑j
-                mov     ax, word_CB7F4
+                mov     ax, _queueCount
                 cmp     [bp-2], ax
                 jnb     short loc_47E87
                 mov     al, [bp+6]
@@ -155920,10 +155920,10 @@ loc_47E9F:                              ; CODE XREF: seg097:0DAB↑j
                 mov     es:[si-73FCh], al
                 mov     ax, [bp+8]
                 mov     es:[si-73FAh], ax
-                mov     ax, word_CB7F4
+                mov     ax, _queueCount
                 cmp     [bp-2], ax
                 jb      short loc_47EC6
-                inc     word_CB7F4
+                inc     _queueCount
 
 loc_47EC6:                              ; CODE XREF: seg097:0DBD↑j
                                         ; seg097:0DE0↑j
@@ -155945,7 +155945,7 @@ loc_47EDE:                              ; CODE XREF: seg097:0E1C↓j
                 inc     word ptr [bp-2]
 
 loc_47EE1:                              ; CODE XREF: seg097:0DFC↑j
-                mov     ax, word_CB7F4
+                mov     ax, _queueCount
                 cmp     [bp-2], ax
                 jnb     short loc_47F38
                 mov     si, [bp-2]
@@ -155955,7 +155955,7 @@ loc_47EE1:                              ; CODE XREF: seg097:0DFC↑j
                 mov     es, seg_D1086
                 cmp     es:[si-73FCh], al
                 jnz     short loc_47EDE
-                mov     ax, word_CB7F4
+                mov     ax, _queueCount
                 sub     ax, [bp-2]
                 dec     ax
                 mov     [bp-4], ax
@@ -155975,13 +155975,13 @@ loc_47EE1:                              ; CODE XREF: seg097:0DFC↑j
                 add     sp, 0Ah
 
 loc_47F28:                              ; CODE XREF: seg097:0E2A↑j
-                mov     ax, word_CB7F6
+                mov     ax, _queueCursor
                 cmp     [bp-2], ax
                 jg      short loc_47F34
-                dec     word_CB7F6
+                dec     _queueCursor
 
 loc_47F34:                              ; CODE XREF: seg097:0E4E↑j
-                dec     word_CB7F4
+                dec     _queueCount
 
 loc_47F38:                              ; CODE XREF: seg097:0E07↑j
                 pop     si
@@ -156001,7 +156001,7 @@ loc_47F4F:                              ; CODE XREF: seg097:0E8D↓j
                 inc     word ptr [bp-2]
 
 loc_47F52:                              ; CODE XREF: seg097:0E6D↑j
-                mov     ax, word_CB7F4
+                mov     ax, _queueCount
                 cmp     [bp-2], ax
                 jnb     short loc_47F74
                 mov     al, [bp+6]
@@ -156036,7 +156036,7 @@ loc_47F8D:                              ; CODE XREF: seg097:0ECB↓j
                 inc     word ptr [bp-2]
 
 loc_47F90:                              ; CODE XREF: seg097:0EAB↑j
-                mov     ax, word_CB7F4
+                mov     ax, _queueCount
                 cmp     [bp-2], ax
                 jnb     short loc_47FB4
                 mov     si, [bp-2]
@@ -156071,7 +156071,7 @@ loc_47FB7:                              ; CODE XREF: seg097:0ED2↑j
 ; ---------------------------------------------------------------------------
 
 loc_47FD7:                              ; CODE XREF: seg097:0EED↑j
-                mov     ax, word_CB7F6
+                mov     ax, _queueCursor
                 mov     [bp-2], ax
                 mov     word ptr [bp-0Ch], 0
                 jmp     loc_4813B
@@ -156079,7 +156079,7 @@ loc_47FD7:                              ; CODE XREF: seg097:0EED↑j
 
 loc_47FE5:                              ; CODE XREF: seg097:0FCB↓j
                                         ; seg097:0FD4↓j
-                mov     bx, word_CB7F6
+                mov     bx, _queueCursor
                 shl     bx, 1
                 shl     bx, 1
                 mov     es, seg_D1086
@@ -156089,29 +156089,29 @@ loc_47FE5:                              ; CODE XREF: seg097:0FCB↓j
                 jg      short loc_48012
 
 loc_47FFF:                              ; CODE XREF: seg097:1006↓j
-                dec     word_CB7F6
+                dec     _queueCursor
                 jmp     short loc_48012
 ; ---------------------------------------------------------------------------
 
 loc_48005:                              ; CODE XREF: seg097:0F54↓j
-                mov     bx, word_CB7F6
+                mov     bx, _queueCursor
                 shl     bx, 1
                 shl     bx, 1
                 dec     word ptr es:[bx-73FAh]
 
 loc_48012:                              ; CODE XREF: seg097:0F17↑j
                                         ; seg097:0F1D↑j ...
-                inc     word_CB7F6
+                inc     _queueCursor
 
 loc_48016:                              ; CODE XREF: seg097:1086↓j
-                mov     ax, word_CB7F4
-                cmp     word_CB7F6, ax
+                mov     ax, _queueCount
+                cmp     _queueCursor, ax
                 jb      short loc_48022
                 jmp     loc_480E9
 ; ---------------------------------------------------------------------------
 
 loc_48022:                              ; CODE XREF: seg097:0F3D↑j
-                mov     si, word_CB7F6
+                mov     si, _queueCursor
                 mov     cl, 2
                 shl     si, cl
                 mov     es, seg_D1086
@@ -156145,9 +156145,9 @@ loc_48077:                              ; CODE XREF: seg097:0F8E↑j
                 mov     word ptr [bp+6], 0
 
 loc_48083:                              ; CODE XREF: seg097:0F84↑j
-                cmp     word_CB7F6, 0
+                cmp     _queueCursor, 0
                 jl      short loc_48012
-                mov     si, word_CB7F6
+                mov     si, _queueCursor
                 mov     cl, 2
                 shl     si, cl
                 mov     al, [bp-0Eh]
@@ -156176,8 +156176,8 @@ loc_480AE:                              ; CODE XREF: seg097:0FC9↑j
 ; ---------------------------------------------------------------------------
 
 loc_480B7:                              ; CODE XREF: seg097:0FD2↑j
-                mov     ax, word_CB7F4
-                sub     ax, word_CB7F6
+                mov     ax, _queueCount
+                sub     ax, _queueCursor
                 dec     ax
                 mov     [bp-10h], ax
                 or      ax, ax
@@ -156196,7 +156196,7 @@ loc_480B7:                              ; CODE XREF: seg097:0FD2↑j
                 add     sp, 0Ah
 
 loc_480E2:                              ; CODE XREF: seg097:0FE4↑j
-                dec     word_CB7F4
+                dec     _queueCount
                 jmp     loc_47FFF
 ; ---------------------------------------------------------------------------
 
@@ -156248,14 +156248,14 @@ loc_4813B:                              ; CODE XREF: seg097:0F02↑j
                 call    far ptr 476h:0F8h
                 add     sp, 4
                 mov     [bp-0Ah], ax
-                mov     word_CB7F6, 0
+                mov     _queueCursor, 0
                 jmp     loc_48016
 ; ---------------------------------------------------------------------------
 
 loc_48169:                              ; CODE XREF: seg097:103A↑j
                                         ; seg097:1056↑j ...
                 mov     ax, [bp-2]
-                mov     word_CB7F6, ax
+                mov     _queueCursor, ax
 
 loc_4816F:                              ; CODE XREF: seg097:0EF4↑j
                 pop     si
@@ -159247,7 +159247,7 @@ loc_49B16:                              ; CODE XREF: seg098:17BE↑j
                 mov     ax, 3C5Ch
                 push    ds
                 push    ax
-                call    sub_12F26
+                call    Queue_finishRemove
                 add     sp, 4
 
 loc_49B57:                              ; CODE XREF: seg098:184E↓j
@@ -159262,7 +159262,7 @@ loc_49B57:                              ; CODE XREF: seg098:184E↓j
                 mov     ax, 3C65h
                 push    ds
                 push    ax
-                call    sub_12F26
+                call    Queue_finishRemove
                 add     sp, 4
                 call    far ptr loc_18E71+1
                 mov     sp, bp
@@ -164106,7 +164106,7 @@ loc_4C629:                              ; CODE XREF: seg119:01E3↑j
                 lea     ax, [bp-2Ah]
                 push    ss
                 push    ax
-                call    sub_12F26
+                call    Queue_finishRemove
                 add     sp, 4
 
 loc_4C67C:                              ; CODE XREF: seg119:008D↑j
@@ -164327,7 +164327,7 @@ loc_4C812:                              ; CODE XREF: seg119:03B1↑j
                 lea     ax, [bp-2Ah]
                 push    ss
                 push    ax
-                call    sub_12F26
+                call    Queue_finishRemove
                 add     sp, 4
 
 loc_4C84C:                              ; CODE XREF: seg119:03D0↑j
@@ -240292,7 +240292,7 @@ loc_62D7E:                              ; CODE XREF: synchronize_save+CA↑j
                 push    [bp+arg_4]
                 push    [bp+arg_2]      ; fileHandle
                 mov     es, seg_D1248
-                push    es:word_CB7F4   ; count
+                push    es:_queueCount  ; count
                 mov     ax, 4
                 push    ax              ; size
                 mov     ax, 8C04h
@@ -477721,10 +477721,10 @@ word_CB7F0      dw 0                    ; DATA XREF: makeRoomInTextCache+F0↑w
 byte_CB7F2      db 0                    ; DATA XREF: main+78A↑w
                                         ; main+B64↑w ...
                 align 2
-word_CB7F4      dw 0                    ; DATA XREF: sub_12E3A+1A↑w
+_queueCount     dw 0                    ; DATA XREF: sub_12E3A+1A↑w
                                         ; Queue_add:loc_12E71↑r ...
-word_CB7F6      dw 0FFFFh               ; DATA XREF: sub_12F26:loc_12F2F↑r
-                                        ; sub_12F26+11↑w ...
+_queueCursor    dw 0FFFFh               ; DATA XREF: Queue_finishRemove:loc_12F2F↑r
+                                        ; Queue_finishRemove+11↑w ...
 word_CB7F8      dw 0EEh                 ; DATA XREF: seg000:0366↑r
                                         ; seg000:03C7↑r ...
 word_CB7FA      dw 0D3h                 ; DATA XREF: Logics_savedLogicHandler+B7↑r

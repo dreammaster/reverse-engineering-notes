@@ -3798,6 +3798,43 @@ RENAMES = [
      "to 11). The table itself presumably gets populated with 2/3 as "
      "the corresponding good/bad choice is made elsewhere in the game, "
      "though that write side wasn't traced this pass."),
+
+    (0x12F26, "Queue_finishRemove",
+     "sub_12F26(): the back half of the already-named Queue_remove, "
+     "reached both as its own fallthrough (CODE XREF: Queue_remove+3F/"
+     "+1C, i.e. genuinely part of the same logical operation) and from "
+     "an unnamed external caller elsewhere, so kept as its own named "
+     "function rather than folded in. Performs the actual _memmove "
+     "that compacts the queue array down by one slot after Queue_remove "
+     "found and is deleting an entry at index var_2 (the caller's own "
+     "local, passed through via bp), then -- this pass's actual "
+     "resolution of the roadmap's long-flagged 'word_CB7F6/word_CB808 "
+     "roles unclear' item -- adjusts two globals: decrements the "
+     "just-named _queueCursor only if the removed index was at or "
+     "before it (the classic 'keep an iteration cursor in sync when an "
+     "earlier array element is deleted' pattern), then unconditionally "
+     "decrements the just-named _queueCount. Confirms _queueCursor is "
+     "the current queue-iteration position Queue_processTurn/"
+     "Queue_tickCountdowns advance while walking the queue, kept "
+     "correct across in-place removals; _queueCount is the queue's "
+     "total live-entry count."),
+
+    (0xCB7F4, "_queueCount",
+     "word_CB7F4: the scheduled-event queue's total live-entry count. "
+     "Read as the search-loop bound in the already-named Queue_remove, "
+     "and decremented unconditionally in the just-named "
+     "Queue_finishRemove whenever an entry is actually removed."),
+
+    (0xCB7F6, "_queueCursor",
+     "word_CB7F6: the current iteration position used while walking "
+     "the scheduled-event queue (in the already-named "
+     "Queue_processTurn/Queue_tickCountdowns). Adjusted in the "
+     "just-named Queue_finishRemove -- decremented if a queue entry at "
+     "or before this position was just removed and the array "
+     "compacted, so an in-progress iteration doesn't skip or "
+     "double-process an entry after the shift. Resolves the roadmap's "
+     "previously-flagged 'word_CB7F6's exact role unclear' item; "
+     "word_CB808's role remains a separate, still-open question."),
 ]
 
 

@@ -1214,10 +1214,16 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       `sub_175CD`) is the listbox rendering routine that reads
       `Listbox_wrapItemText`'s per-slot table — worth a dedicated pass
       to properly extend its function boundary and trace it fully.
-- [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
-      `word_CB808`'s exact roles still aren't nailed down, and whether
-      `word_CB808` is the same countdown mechanism as the weapon-
-      confiscation timer from `Game_handleWeaponDischarge`.
+- [x] Named `sub_12F26`/`word_CB7F4`/`word_CB7F6` →
+      `Queue_finishRemove`/`_queueCount`/`_queueCursor` — closes the
+      `word_CB7F6` half of the long-flagged turn/WAIT event-queue
+      follow-up: it's the queue-walk iteration cursor, kept in sync
+      across in-place removals by the just-named `Queue_finishRemove`.
+      Full writeup in
+      [overview.md](overview.md#queue_finishremove_queuecount_queuecursor-named--closing-a-long-flagged-roadmap-item).
+- [ ] `word_CB808`'s role is still an open question, and whether it's
+      the same countdown mechanism as the weapon-confiscation timer
+      from `Game_handleWeaponDischarge`.
 - [x] Named `Sb_detectDsp`/`Sb_resetDsp`/`Sb_readByte`/`Sb_writeByte`
       (were `sub_18682`/`sub_186B2`/`sub_186D4`/`sub_186F0`), plus
       `_sbBasePort` — a fourth sound-hardware backend, Sound Blaster
