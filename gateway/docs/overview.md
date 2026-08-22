@@ -3214,3 +3214,20 @@ instead — supporting both "captions layered over a static picture" and
 crawls) as two different display modes of the same routine.
 
 Applied via `apply_renames_gatemain.py`'s ninety-first batch.
+
+### `Sound_lookupTrackVariant` named
+
+Moved to `sub_15F35` (2 callers) — the long-flagged "sound resource-
+variant lookup" from several passes ago, finally traced. Walks a
+6-bytes-per-entry table (up to 37 entries) whose first word field is a
+key; if the given track ID matches an entry's key, returns either that
+entry's second word field when the MIDI-active bit (bit 4) of
+`word_C8582` is set, or its third word field otherwise. Returns 0 if
+the track ID isn't found.
+
+Called twice from the already-named `Sound_selectTrackForRoom` — a
+per-room/track table mapping a logical track ID to the specific
+sound-resource number to use for whichever backend (MIDI vs. other) is
+currently active.
+
+Applied via `apply_renames_gatemain.py`'s ninety-second batch.

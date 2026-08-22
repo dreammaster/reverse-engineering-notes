@@ -12793,7 +12793,7 @@ loc_15CA9:                              ; CODE XREF: Sound_selectTrackForRoom+10
                 mov     es:[si+618h], ax
                 push    ax
                 push    cs
-                call    near ptr sub_15F35
+                call    near ptr Sound_lookupTrackVariant
                 add     sp, 2
                 mov     es, dseg_124
                 mov     es:[si+620h], ax
@@ -12833,7 +12833,7 @@ loc_15D43:
                 mov     es:word_C857E, ax
                 push    [bp+var_4]
                 push    cs
-                call    near ptr sub_15F35
+                call    near ptr Sound_lookupTrackVariant
                 add     sp, 2
                 mov     es, dseg_126
                 mov     es:word_C857A, ax
@@ -12947,7 +12947,7 @@ loc_15E2C:                              ; CODE XREF: Sound_selectTrack+B2\u2193j
                 mov     es:[si+618h], ax
                 push    ax
                 push    cs
-                call    near ptr sub_15F35
+                call    near ptr Sound_lookupTrackVariant
                 add     sp, 2
                 mov     es, dseg_124
                 mov     es:[si+620h], ax
@@ -12985,7 +12985,7 @@ loc_15EA9:                              ; CODE XREF: Sound_selectTrack+72\u2191j
                 mov     es:word_C857E, ax
                 push    [bp+var_2]
                 push    cs
-                call    near ptr sub_15F35
+                call    near ptr Sound_lookupTrackVariant
                 add     sp, 2
                 mov     es, dseg_126
                 mov     es:word_C857A, ax
@@ -13024,7 +13024,7 @@ Sound_selectTrack endp
 
 ; Attributes: bp-based frame
 
-sub_15F35       proc far                ; CODE XREF: Sound_selectTrackForRoom+F1\u2191p
+Sound_lookupTrackVariant proc far       ; CODE XREF: Sound_selectTrackForRoom+F1\u2191p
                                         ; Sound_selectTrackForRoom+17C\u2191p ...
 
 var_2           = word ptr -2
@@ -13037,7 +13037,7 @@ arg_0           = word ptr  6
                 jmp     short loc_15F58
 ; ---------------------------------------------------------------------------
 
-loc_15F42:                              ; CODE XREF: sub_15F35:loc_15F80\u2193j
+loc_15F42:                              ; CODE XREF: Sound_lookupTrackVariant:loc_15F80\u2193j
                 mov     ax, 6
                 imul    [bp+var_2]
                 mov     bx, ax
@@ -13046,10 +13046,10 @@ loc_15F42:                              ; CODE XREF: sub_15F35:loc_15F80\u2193j
                 jmp     short loc_15F97
 ; ---------------------------------------------------------------------------
 
-loc_15F55:                              ; CODE XREF: sub_15F35+3F\u2193j
+loc_15F55:                              ; CODE XREF: Sound_lookupTrackVariant+3F\u2193j
                 inc     [bp+var_2]
 
-loc_15F58:                              ; CODE XREF: sub_15F35+B\u2191j
+loc_15F58:                              ; CODE XREF: Sound_lookupTrackVariant+B\u2191j
                 cmp     [bp+var_2], 25h ; '%'
                 jge     short loc_15F95
                 mov     ax, [bp+arg_0]
@@ -13081,17 +13081,17 @@ loc_15F8E:
                 jmp     short loc_15F97
 ; ---------------------------------------------------------------------------
 
-loc_15F95:                              ; CODE XREF: sub_15F35+27\u2191j
+loc_15F95:                              ; CODE XREF: Sound_lookupTrackVariant+27\u2191j
                 sub     ax, ax
 
-loc_15F97:                              ; CODE XREF: sub_15F35+1E\u2191j
-                                        ; sub_15F35+5E\u2191j
+loc_15F97:                              ; CODE XREF: Sound_lookupTrackVariant+1E\u2191j
+                                        ; Sound_lookupTrackVariant+5E\u2191j
                 mov     sp, bp
                 pop     bp
 
 locret_15F9A:
                 retf
-sub_15F35       endp
+Sound_lookupTrackVariant endp
 
 seg011          ends
 
@@ -383836,7 +383836,7 @@ word_C857E      dw 0                    ; DATA XREF: Sound_selectTrackForRoom+14
 word_C8580      dw 0                    ; DATA XREF: Sound_selectTrackForRoom+AB\u2191r
                                         ; Sound_selectTrackForRoom+12B\u2191w ...
 word_C8582      dw 0                    ; DATA XREF: Game_showIllustration+70\u2191r
-                                        ; sub_15F35:loc_15F7A\u2191r ...
+                                        ; Sound_lookupTrackVariant:loc_15F7A\u2191r ...
                 db    0
                 db    0
 _midiBasePortConfig dw 2                ; DATA XREF: sub_1F552+4\u2191r
@@ -393896,9 +393896,9 @@ dseg_130        dw seg sg4d43           ; DATA XREF: Sound_selectTrackForRoom+1A
                                         ; Sound_selectTrack+159\u2191r ...
 dseg_131        dw seg sg4d43           ; DATA XREF: Sound_selectTrackForRoom+1C6\u2191r
                                         ; Sound_selectTrack+171\u2191r ...
-dseg_132        dw seg sg4d43           ; DATA XREF: sub_15F35+15\u2191r
-                                        ; sub_15F35+36\u2191r ...
-dseg_133        dw seg sg4d43           ; DATA XREF: sub_15F35+41\u2191r
+dseg_132        dw seg sg4d43           ; DATA XREF: Sound_lookupTrackVariant+15\u2191r
+                                        ; Sound_lookupTrackVariant+36\u2191r ...
+dseg_133        dw seg sg4d43           ; DATA XREF: Sound_lookupTrackVariant+41\u2191r
                                         ; sub_4B22B+41\u2191r
 dseg_3          dw seg sg4d43           ; DATA XREF: Screen_cyclePaletteEntry+6\u2191r
                                         ; PartTitle_Show+44\u2191r ...

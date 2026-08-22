@@ -2307,6 +2307,19 @@ RENAMES = [
      "a static picture' and 'sequential black-background caption "
      "pages' modes. Returns once the message array is exhausted (a "
      "null entry with no more groups) or a caption is skipped."),
+
+    (0x15F35, "Sound_lookupTrackVariant",
+     "sub_15F35(trackId): the long-flagged 'sound resource-variant "
+     "lookup' from several passes ago, finally traced. Walks a 6-"
+     "bytes-per-entry table (up to 0x25=37 entries) whose first word "
+     "field is a key; if trackId matches an entry's key, returns "
+     "either that entry's second word field (offset +2) when the "
+     "MIDI-active bit (bit 4) of word_C8582 is set, or its third word "
+     "field (offset +4) otherwise. Returns 0 if trackId isn't found. "
+     "Called twice from the already-named Sound_selectTrackForRoom -- "
+     "a per-room/track table mapping a logical track ID to the "
+     "specific sound-resource number to use for whichever backend "
+     "(MIDI vs. other) is currently active."),
 ]
 
 

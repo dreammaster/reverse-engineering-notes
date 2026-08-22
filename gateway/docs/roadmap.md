@@ -811,6 +811,11 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       drawing drop-shadowed caption pages over a picture or a black
       background. Full writeup in
       [overview.md](overview.md#game_showcaptiontext-named).
+- [x] Named `sub_15F35` (2 callers) → `Sound_lookupTrackVariant` — the
+      long-pending "sound resource-variant lookup," mapping a logical
+      track ID to a MIDI-specific or default resource number. Full
+      writeup in
+      [overview.md](overview.md#sound_lookuptrackvariant-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-
