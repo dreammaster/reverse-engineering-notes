@@ -2660,10 +2660,17 @@ sound subsystem's own full teardown function — the counterpart to
 `Sound_selectDevice`'s device-selection init: unconditionally stops
 the current track (`Sound_stopTrack(0xFFFF)`); if `word_C8582`'s
 MIDI-active bit is set (the same bit `Sound_selectDevice` sets on a
-successful MPU-401 probe), clears an on-screen device indicator
-(plausibly); then masks `word_C8582` down to just bit `8`, clearing
-all backend-selection state. Called from the game's top-level exit
-routines.
+successful MPU-401 probe), calls `sub_1FCAA` (still unnamed) and what
+was guessed here as clearing "an on-screen device indicator"; then
+masks `word_C8582` down to just bit `8`, clearing all backend-selection
+state. Called from the game's top-level exit routines.
+
+**Correction (see the `Midi_sendDisplayText` entry below):** that
+guess about `sub_1FB56` was wrong — it doesn't touch the screen at all.
+It sends the passed string as a Roland-style MIDI SysEx "Display Data"
+message, so `Sound_shutdown` calling it here is actually clearing the
+*device's own LCD text display* (on an MT-32/Sound Canvas-compatible
+module), not anything on the game's screen.
 
 Applied via `apply_renames_gatemain.py`'s sixty-second batch.
 
@@ -3715,3 +3722,24 @@ teardown sequence, spread one step per call so it doesn't block for
 too long in any single call.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-seventeenth batch.
+
+### `Midi_sendDisplayText` named (corrects a much earlier guess)
+
+Moved to `sub_1FB56` (2 callers, called from the already-named
+`Sound_selectDevice` and `Sound_shutdown`). Sends a Roland-style MIDI
+SysEx "Display Data" message: three header bytes (`0x20, 0, 0` —
+matching Roland's MT-32/Sound-Canvas Display-Data SysEx address `0x20
+0x00 0x00`), then 20 bytes read from the given string, accumulating a
+running byte sum, then a standard Roland 7-bit two's-complement
+checksum byte — all sent one byte at a time via `Midi_sendByte`, with
+unnamed helpers presumably framing the SysEx start/end.
+
+This directly corrects the guess made in `Sound_shutdown`'s own
+writeup much earlier this session, that this call "clears an on-screen
+device indicator" — it never touches the screen. `Sound_selectDevice`
+calls it on successful MPU-401 detection (presumably to show a device/
+game identifier), and `Sound_shutdown` calls it presumably to clear/
+blank the display on exit — writing text to a General-MIDI-compatible
+module's own onboard LCD, not the game's screen.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-eighteenth batch.

@@ -36737,7 +36737,7 @@ seg028          segment byte public 'CODE' use16
 
 
 sub_1FA8E       proc far                ; CODE XREF: sub_1FB10+1\u2193p
-                                        ; sub_1FB56+9\u2193p ...
+                                        ; Midi_sendDisplayText+9\u2193p ...
                 mov     es, dseg_51
                 assume es:sg4d43
                 push    es:_midiBasePortConfig
@@ -36788,7 +36788,7 @@ sub_1FA8E       endp
 
 
 sub_1FAFE       proc far                ; CODE XREF: sub_1FB10+3E\u2193p
-                                        ; sub_1FB56+6A\u2193p ...
+                                        ; Midi_sendDisplayText+6A\u2193p ...
                 mov     ax, 0F7h ; '÷'
                 push    ax
                 call    Midi_sendByte
@@ -36838,8 +36838,8 @@ sub_1FB10       endp
 
 ; Attributes: bp-based frame
 
-; int __cdecl __far sub_1FB56(const char *str)
-sub_1FB56       proc far                ; CODE XREF: Sound_selectDevice+4D\u2193P
+; int __cdecl __far Midi_sendDisplayText(const char *str)
+Midi_sendDisplayText proc far           ; CODE XREF: Sound_selectDevice+4D\u2193P
                                         ; Sound_shutdown+1E\u2193P
 
 var_4           = word ptr -4
@@ -36869,7 +36869,7 @@ str             = dword ptr  6
                 mov     [bp+var_2], 14h
                 mov     si, 14h
 
-loc_1FB8F:                              ; CODE XREF: sub_1FB56+50\u2193j
+loc_1FB8F:                              ; CODE XREF: Midi_sendDisplayText+50\u2193j
                 les     bx, [bp+str]
                 assume es:nothing
                 mov     al, es:[bx]
@@ -36899,7 +36899,7 @@ loc_1FB8F:                              ; CODE XREF: sub_1FB56+50\u2193j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_1FB56       endp
+Midi_sendDisplayText endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -36974,7 +36974,7 @@ sub_1FBCE       endp
 ; Attributes: bp-based frame
 
 sub_1FC4E       proc far                ; CODE XREF: sub_1FB10+42\u2191p
-                                        ; sub_1FB56+6E\u2191p
+                                        ; Midi_sendDisplayText+6E\u2191p
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -37249,7 +37249,7 @@ loc_1FDE0:                              ; CODE XREF: Sound_selectDevice+1F\u2191
                 mov     dx, seg seg067
                 push    dx
                 push    ax              ; str
-                call    sub_1FB56
+                call    Midi_sendDisplayText
                 add     sp, 4
                 or      byte ptr word_C8582, 4
                 push    cs
@@ -37295,7 +37295,7 @@ Sound_shutdown  proc far                ; CODE XREF: Sound_selectDevice+10\u2191
                 mov     dx, seg seg067
                 push    dx
                 push    ax              ; str
-                call    sub_1FB56
+                call    Midi_sendDisplayText
                 add     sp, 4
 
 loc_1FE56:                              ; CODE XREF: Sound_shutdown+10\u2191j

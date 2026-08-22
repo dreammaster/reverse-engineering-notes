@@ -2759,6 +2759,23 @@ RENAMES = [
      "multi-call drain loop concrete: a proper MIDI 'all channels "
      "silent, device reset' teardown sequence, spread one step per "
      "call so it doesn't block for too long in any single call."),
+
+    (0x1FB56, "Midi_sendDisplayText",
+     "sub_1FB56(str): CORRECTS an earlier guess (in Sound_shutdown's "
+     "writeup) that this 'clears an on-screen device indicator' -- it "
+     "doesn't touch the screen at all. Sends a Roland-style MIDI "
+     "SysEx 'Display Data' message: three header bytes (0x20, 0, 0 -- "
+     "matching Roland's MT-32/Sound-Canvas Display-Data SysEx address "
+     "0x20 0x00 0x00) via Midi_sendByte, then 20 (0x14) bytes read "
+     "from str, accumulating a running byte sum, then a standard "
+     "Roland 7-bit two's-complement checksum byte "
+     "(-(sum & 0x7F) mod 128), via sub_1FA8E/sub_1FAFE/sub_1FC4E "
+     "(unnamed, plausibly the SysEx start-of-message/end-of-message "
+     "framing). Called from the already-named Sound_selectDevice (on "
+     "successful MPU-401 detection, to show a device/game identifier) "
+     "and Sound_shutdown (presumably to clear/blank the display on "
+     "exit) -- writes text to a General-MIDI-module's own onboard LCD, "
+     "not the game's screen."),
 ]
 
 

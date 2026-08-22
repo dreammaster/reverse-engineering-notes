@@ -18728,6 +18728,7 @@ static Bytes_3(void) {
 	create_insn	(x=0X1FB4A);
 	op_hex		(x,	1);
 	create_insn	(0X1FB56);
+	set_name	(0X1FB56,	"Midi_sendDisplayText");
 	create_insn	(x=0X1FB59);
 	op_hex		(x,	1);
 	create_insn	(x=0X1FB6B);
@@ -139822,7 +139823,7 @@ static Functions_0(void) {
 	set_func_flags(0X1FB10,0x4402);
 	add_func    (0X1FB56,0X1FBCD);
 	set_func_flags(0X1FB56,0x4412);
-	SetType(0X1FB56, "int __cdecl __far sub_1FB56(const char *str);");
+	SetType(0X1FB56, "int __cdecl __far Midi_sendDisplayText(const char *str);");
 	set_frame_size(0X1FB56, 0XA, 2, 0);
 	define_local_var(0X1FB56, 0X1FBCD, "[bp+0X6]", "str");
 	add_func    (0X1FBCE,0X1FC4E);

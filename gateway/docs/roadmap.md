@@ -927,6 +927,11 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       drives, fully confirmed via its MIDI Control Change messages.
       Full writeup in
       [overview.md](overview.md#midi_stoptrackstep-named).
+- [x] **Correction**: named `sub_1FB56` → `Midi_sendDisplayText` — a
+      Roland-style MIDI SysEx "Display Data" message sender, not a
+      screen-clearing call as guessed in `Sound_shutdown`'s much
+      earlier writeup. Full writeup in
+      [overview.md](overview.md#midi_senddisplaytext-named-corrects-a-much-earlier-guess).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-
