@@ -3079,3 +3079,39 @@ display/input-mode switch that only runs its transition side effects
 when the mode actually changes.
 
 Applied via `apply_renames_gatemain.py`'s eighty-fifth batch.
+
+### The undo-snapshot cluster named
+
+A full, tightly-coupled cluster traced together. `sub_62AB0` →
+`Undo_resetSnapshotBuffer`: if the global memory handle (now
+`_undoSnapshotHandle`) is non-null, frees it via the already-named
+`kill_handle` and zeroes it; always resets a size accumulator (now
+`_undoSnapshotSize`) and two flags (now `Parser_undoSnapshotValid` and
+`Parser_undoBufferAllocated`) to 0.
+
+`sub_62AE2` → `Undo_allocateSnapshotBuffer`: calls
+`Undo_resetSnapshotBuffer`, then computes a required buffer size by
+summing per-entry contributions across the object method table
+(indexed over the already-named `METHODS_COUNT`) and the save-field
+table (indexed over the already-named `SAVE_FIELDS_COUNT`) into
+`_undoSnapshotSize`, plus a constant `0x42`. Compares that (rounded up)
+against `get_buffer_size()`'s available space; if it fits, allocates a
+new handle of that size via `new_handle` into `_undoSnapshotHandle`,
+and if allocation succeeded, sets `Parser_undoBufferAllocated` to 1.
+
+Both are called from the already-named `save_game`'s mode-3
+("quicksave") path: it clears `Parser_undoSnapshotValid` up front,
+(re)allocates the buffer if needed, then locks the handle and writes
+the current game state into it via `synchronize_save` — treating the
+handle's memory as a virtual file — setting
+`Parser_undoSnapshotValid` to 1 only if that write succeeds.
+
+The already-named `Parser_performUndo` requires both flags before
+actually loading the undo slot (`load_game(3)`): `Parser_undoBufferAllocated`
+alone decides which of two messages it prints ("undone" vs "nothing to
+undo" — the underlying message strings, at `off_CB926`/`off_CB92A`,
+weren't decoded this pass), while `Parser_undoSnapshotValid` gates
+whether the load actually happens at all — capturing the difference
+between "a buffer exists" and "a valid snapshot was taken this turn."
+
+Applied via `apply_renames_gatemain.py`'s eighty-sixth batch.

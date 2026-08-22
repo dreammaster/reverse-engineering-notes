@@ -762,10 +762,10 @@ sub_1057E       endp
 Parser_performUndo proc far             ; CODE XREF: main+299\u2193p
                                         ; Game_endGameMenu:loc_C4B15\u2193P
                 mov     es, dseg_73
-                cmp     es:Parser_val6, 0
+                cmp     es:Parser_undoSnapshotValid, 0
                 jz      short loc_10609
                 mov     es, dseg_74
-                cmp     es:Parser_val7, 0
+                cmp     es:Parser_undoBufferAllocated, 0
                 jz      short loc_10609
                 mov     ax, 3
                 push    ax
@@ -775,7 +775,7 @@ Parser_performUndo proc far             ; CODE XREF: main+299\u2193p
 loc_10609:                              ; CODE XREF: Parser_performUndo+A\u2191j
                                         ; Parser_performUndo+16\u2191j
                 mov     es, dseg_74
-                cmp     es:Parser_val7, 0
+                cmp     es:Parser_undoBufferAllocated, 0
                 jz      short loc_10625
                 mov     es, dseg_75
                 push    word ptr es:off_CB926+2
@@ -69614,7 +69614,7 @@ j_Events_ClearPendingKey endp ; sp-analysis failed
 thunk_sub_62AE2 proc far                ; CODE XREF: main+D8\u2191P
                                         ; thunk_sub_5D9F3_2+2CEC9\u2193P ...
                 call    near ptr rtlink_thunk
-                jmp     sub_62AE2
+                jmp     Undo_allocateSnapshotBuffer
 thunk_sub_62AE2 endp ; sp-analysis failed
 
 ; ---------------------------------------------------------------------------
@@ -69626,7 +69626,7 @@ thunk_sub_62AE2 endp ; sp-analysis failed
 thunk_sub_62AB0 proc far                ; CODE XREF: main+B9\u2191P
                                         ; thunk_sub_5D9F3+2D2C0\u2193P ...
                 call    near ptr rtlink_thunk
-                jmp     sub_62AB0
+                jmp     Undo_resetSnapshotBuffer
 thunk_sub_62AB0 endp ; sp-analysis failed
 
 ; ---------------------------------------------------------------------------
@@ -156499,32 +156499,32 @@ sub_62A26       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_62AB0       proc far                ; CODE XREF: thunk_sub_62AB0+3\u2191J
-                                        ; sub_62AE2+7\u2193p ...
-                mov     ax, word ptr handle
-                or      ax, word ptr handle+2
+Undo_resetSnapshotBuffer proc far       ; CODE XREF: thunk_sub_62AB0+3\u2191J
+                                        ; Undo_allocateSnapshotBuffer+7\u2193p ...
+                mov     ax, word ptr _undoSnapshotHandle
+                or      ax, word ptr _undoSnapshotHandle+2
                 jz      short loc_62AD1
-                push    word ptr handle+2
-                push    word ptr handle ; ptr
+                push    word ptr _undoSnapshotHandle+2
+                push    word ptr _undoSnapshotHandle ; ptr
                 call    kill_handle
                 add     sp, 4
                 sub     ax, ax
-                mov     word ptr handle+2, ax
-                mov     word ptr handle, ax
+                mov     word ptr _undoSnapshotHandle+2, ax
+                mov     word ptr _undoSnapshotHandle, ax
 
-loc_62AD1:                              ; CODE XREF: sub_62AB0+7\u2191j
-                mov     word_CBFE8, 0
-                mov     Parser_val6, 0
-                mov     Parser_val7, 0
+loc_62AD1:                              ; CODE XREF: Undo_resetSnapshotBuffer+7\u2191j
+                mov     _undoSnapshotSize, 0
+                mov     Parser_undoSnapshotValid, 0
+                mov     Parser_undoBufferAllocated, 0
                 retf
-sub_62AB0       endp
+Undo_resetSnapshotBuffer endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-sub_62AE2       proc far                ; CODE XREF: thunk_sub_62AE2+3\u2191J
+Undo_allocateSnapshotBuffer proc far    ; CODE XREF: thunk_sub_62AE2+3\u2191J
                                         ; save_game+121\u2193p ...
 
 var_6           = word ptr -6
@@ -156535,12 +156535,12 @@ var_2           = word ptr -2
                 mov     bp, sp
                 sub     sp, 6
                 push    cs
-                call    near ptr sub_62AB0
+                call    near ptr Undo_resetSnapshotBuffer
                 mov     [bp+var_4], 0
                 jmp     short loc_62B27
 ; ---------------------------------------------------------------------------
 
-loc_62AF3:                              ; CODE XREF: sub_62AE2+50\u2193j
+loc_62AF3:                              ; CODE XREF: Undo_allocateSnapshotBuffer+50\u2193j
                 mov     ax, 6
                 imul    [bp+var_4]
                 mov     bx, ax
@@ -156557,12 +156557,12 @@ loc_62AF3:                              ; CODE XREF: sub_62AE2+50\u2193j
                 mov     es, seg_D1242
                 mov     al, es:[bx-1]
                 sub     ah, ah
-                add     word_CBFE8, ax
+                add     _undoSnapshotSize, ax
 
-loc_62B24:                              ; CODE XREF: sub_62AE2+29\u2191j
+loc_62B24:                              ; CODE XREF: Undo_allocateSnapshotBuffer+29\u2191j
                 inc     [bp+var_4]
 
-loc_62B27:                              ; CODE XREF: sub_62AE2+F\u2191j
+loc_62B27:                              ; CODE XREF: Undo_allocateSnapshotBuffer+F\u2191j
                 mov     es, seg_D123E
                 assume es:sg4d43
                 mov     ax, es:METHODS_COUNT
@@ -156572,46 +156572,46 @@ loc_62B27:                              ; CODE XREF: sub_62AE2+F\u2191j
                 jmp     short loc_62B53
 ; ---------------------------------------------------------------------------
 
-loc_62B3B:                              ; CODE XREF: sub_62AE2+7C\u2193j
+loc_62B3B:                              ; CODE XREF: Undo_allocateSnapshotBuffer+7C\u2193j
                 mov     ax, 6
                 imul    [bp+var_4]
                 mov     bx, ax
                 mov     es, seg_D1246
                 assume es:seg068
                 mov     ax, es:[bx+20Bh]
-                add     word_CBFE8, ax
+                add     _undoSnapshotSize, ax
                 inc     [bp+var_4]
 
-loc_62B53:                              ; CODE XREF: sub_62AE2+57\u2191j
+loc_62B53:                              ; CODE XREF: Undo_allocateSnapshotBuffer+57\u2191j
                 mov     es, seg_D1244
                 assume es:sg4d43
                 mov     ax, es:SAVE_FIELDS_COUNT
                 cmp     [bp+var_4], ax
                 jb      short loc_62B3B
-                add     word_CBFE8, 42h ; 'B'
+                add     _undoSnapshotSize, 42h ; 'B'
                 call    get_buffer_size
                 mov     [bp+var_2], ax
-                mov     ax, word_CBFE8
+                mov     ax, _undoSnapshotSize
                 add     ax, 0Fh
                 mov     cl, 4
                 shr     ax, cl
                 cmp     ax, [bp+var_2]
                 jnb     short loc_62B98
-                push    word_CBFE8
+                push    _undoSnapshotSize
                 call    new_handle
                 add     sp, 2
-                mov     word ptr handle, ax
-                mov     word ptr handle+2, dx
+                mov     word ptr _undoSnapshotHandle, ax
+                mov     word ptr _undoSnapshotHandle+2, dx
                 or      ax, dx
                 jz      short loc_62B98
-                mov     Parser_val7, 1
+                mov     Parser_undoBufferAllocated, 1
 
-loc_62B98:                              ; CODE XREF: sub_62AE2+98\u2191j
-                                        ; sub_62AE2+AF\u2191j
+loc_62B98:                              ; CODE XREF: Undo_allocateSnapshotBuffer+98\u2191j
+                                        ; Undo_allocateSnapshotBuffer+AF\u2191j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_62AE2       endp
+Undo_allocateSnapshotBuffer endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -157092,20 +157092,20 @@ loc_62F03:                              ; CODE XREF: save_game+D1\u2191j
 loc_62F1D:                              ; CODE XREF: save_game+1F\u2191j
                 cmp     [bp+arg_0], 3
                 jnz     short loc_62F4C
-                mov     Parser_val6, 0
-                cmp     Parser_val7, 0
+                mov     Parser_undoSnapshotValid, 0
+                cmp     Parser_undoBufferAllocated, 0
                 jz      short loc_62F38
-                mov     ax, word ptr handle
-                or      ax, word ptr handle+2
+                mov     ax, word ptr _undoSnapshotHandle
+                or      ax, word ptr _undoSnapshotHandle+2
                 jnz     short loc_62F52
 
 loc_62F38:                              ; CODE XREF: save_game+115\u2191j
                 push    cs
-                call    near ptr sub_62AE2
-                cmp     Parser_val7, 0
+                call    near ptr Undo_allocateSnapshotBuffer
+                cmp     Parser_undoBufferAllocated, 0
                 jz      short loc_62F4C
-                mov     ax, word ptr handle
-                or      ax, word ptr handle+2
+                mov     ax, word ptr _undoSnapshotHandle
+                or      ax, word ptr _undoSnapshotHandle+2
                 jnz     short loc_62F52
 
 loc_62F4C:                              ; CODE XREF: save_game+109\u2191j
@@ -157116,11 +157116,11 @@ loc_62F4C:                              ; CODE XREF: save_game+109\u2191j
 
 loc_62F52:                              ; CODE XREF: save_game+11E\u2191j
                                         ; save_game+132\u2191j
-                push    word ptr handle+2
-                push    word ptr handle ; handle
+                push    word ptr _undoSnapshotHandle+2
+                push    word ptr _undoSnapshotHandle ; handle
                 call    lock_handle
                 add     sp, 4
-                les     bx, handle
+                les     bx, _undoSnapshotHandle
                 assume es:nothing
                 mov     ax, es:[bx]
                 mov     dx, es:[bx+2]
@@ -157135,13 +157135,13 @@ loc_62F52:                              ; CODE XREF: save_game+11E\u2191j
                 call    near ptr synchronize_save
                 add     sp, 6
                 mov     [bp+result], ax
-                push    word ptr handle+2
-                push    word ptr handle ; handle
+                push    word ptr _undoSnapshotHandle+2
+                push    word ptr _undoSnapshotHandle ; handle
                 call    unlock_handle
                 add     sp, 4
                 cmp     [bp+result], 0
                 jnz     short loc_62FA6
-                mov     Parser_val6, 1
+                mov     Parser_undoSnapshotValid, 1
 
 loc_62FA6:                              ; CODE XREF: save_game+65\u2191j
                                         ; save_game+102\u2191j ...
@@ -157172,16 +157172,16 @@ loc_62FE0:                              ; CODE XREF: save_game+198\u2191j
                                         ; save_game+1B9\u2191j
                 cmp     [bp+arg_0], 3
                 jz      short loc_62FEB
-                mov     Parser_val6, 0
+                mov     Parser_undoSnapshotValid, 0
 
 loc_62FEB:                              ; CODE XREF: save_game+1CC\u2191j
                 cmp     [bp+arg_0], 2
                 jnz     short loc_63003
                 push    cs
-                call    near ptr sub_62AB0
+                call    near ptr Undo_resetSnapshotBuffer
                 call    Font_deinit
                 push    cs
-                call    near ptr sub_62AE2
+                call    near ptr Undo_allocateSnapshotBuffer
                 call    j_Events_ClearPendingKey
 
 loc_63003:                              ; CODE XREF: save_game+1D7\u2191j
@@ -157339,8 +157339,8 @@ restart:                                ; CODE XREF: load_game+C8\u2191j
 loc_63104:                              ; CODE XREF: load_game+27\u2191j
                 cmp     [bp+loadType], LOAD_UNDO
                 jnz     short loc_63113
-                mov     ax, word ptr handle
-                or      ax, word ptr handle+2
+                mov     ax, word ptr _undoSnapshotHandle
+                or      ax, word ptr _undoSnapshotHandle+2
                 jnz     short loc_63119
 
 loc_63113:                              ; CODE XREF: load_game+FB\u2191j
@@ -157349,11 +157349,11 @@ loc_63113:                              ; CODE XREF: load_game+FB\u2191j
 ; ---------------------------------------------------------------------------
 
 loc_63119:                              ; CODE XREF: load_game+104\u2191j
-                push    word ptr handle+2
-                push    word ptr handle ; handle
+                push    word ptr _undoSnapshotHandle+2
+                push    word ptr _undoSnapshotHandle ; handle
                 call    lock_handle
                 add     sp, 4
-                les     bx, handle
+                les     bx, _undoSnapshotHandle
                 assume es:nothing
                 mov     ax, es:[bx]
                 mov     dx, es:[bx+2]
@@ -157368,8 +157368,8 @@ loc_63119:                              ; CODE XREF: load_game+104\u2191j
                 call    near ptr synchronize_save
                 add     sp, 6
                 mov     [bp+removeFlag], ax
-                push    word ptr handle+2
-                push    word ptr handle ; handle
+                push    word ptr _undoSnapshotHandle+2
+                push    word ptr _undoSnapshotHandle ; handle
                 call    unlock_handle
                 add     sp, 4
 
@@ -157409,7 +157409,7 @@ loc_63192:                              ; CODE XREF: load_game+15A\u2191j
                 add     sp, 4
                 cmp     [bp+loadType], 3
                 jnz     short loc_631B2
-                mov     Parser_val6, 0
+                mov     Parser_undoSnapshotValid, 0
 
 loc_631B2:                              ; CODE XREF: load_game+19E\u2191j
                 mov     ax, 25
@@ -171647,14 +171647,14 @@ loc_6AC22:
                 add     sp, 0Ch
                 mov     es, seg_D1308
                 assume es:sg4d43
-                push    es:word_CBFE8
+                push    es:_undoSnapshotSize
                 mov     es, seg_D130A
-                push    word ptr es:handle+2
-                push    word ptr es:handle
+                push    word ptr es:_undoSnapshotHandle+2
+                push    word ptr es:_undoSnapshotHandle
                 mov     es, seg_D130C
 
 loc_6AC58:
-                cmp     es:Parser_val7, 0
+                cmp     es:Parser_undoBufferAllocated, 0
                 jz      short loc_6AC65
                 sub     ax, ax
                 cwd
@@ -374023,7 +374023,7 @@ loc_C4950:                              ; CODE XREF: sub_C48E4+68\u2191j
                 add     sp, 0Ah
                 mov     es, seg_D1A76
                 assume es:sg4d43
-                cmp     es:Parser_val6, 0
+                cmp     es:Parser_undoSnapshotValid, 0
                 jnz     short loc_C49DF
                 mov     ax, 3
                 push    ax              ; regionNum
@@ -374150,7 +374150,7 @@ loc_C4AC8:                              ; CODE XREF: sub_C48E4+183\u2191j
 
 loc_C4ACF:                              ; CODE XREF: sub_C48E4+192\u2191j
                 mov     es, seg_D1A76
-                cmp     es:Parser_val6, 0
+                cmp     es:Parser_undoSnapshotValid, 0
                 jz      short loc_C4A78
                 mov     [bp+regionIndex], 3
                 jmp     short loc_C4A84
@@ -386994,7 +386994,7 @@ aDecember       db 'December',0         ; DATA XREF: seg067:0275\u2191o
 asc_CB900       db '       ',0          ; DATA XREF: Game_updateStatusLine+108\u2191o
 unk_CB908       db    0                 ; DATA XREF: sg4d43:off_CB93E\u2193o
 unk_CB909       db    0                 ; DATA XREF: sg4d43:off_CB942\u2193o
-SAVE_FIELDS_COUNT dw 261                ; DATA XREF: sub_62AE2+75\u2191r
+SAVE_FIELDS_COUNT dw 261                ; DATA XREF: Undo_allocateSnapshotBuffer+75\u2191r
                                         ; synchronize_save+102\u2191r
 CAPITALIZE_VOCAB_COUNT dw 12h           ; DATA XREF: whatDoYouWant+F9\u2191r
                                         ; Parser_askForClarification+EB\u2191r ...
@@ -387864,15 +387864,15 @@ aRestart_dat    db 'RESTART.DAT',0      ; DATA XREF: save_game:loc_62EBB\u2191o
 byte_CBFE2      db 1                    ; DATA XREF: sub_62A26+6\u2191r
                                         ; sub_62A26:loc_62AA7\u2191w ...
                 align 2
-; void **handle
-handle          dd 0                    ; DATA XREF: sub_62AB0\u2191r
-                                        ; sub_62AB0+D\u2191r ...
-word_CBFE8      dw 0                    ; DATA XREF: sub_62AB0:loc_62AD1\u2191w
-                                        ; sub_62AE2+3E\u2191w ...
-Parser_val7     db 0                    ; DATA XREF: Parser_performUndo+10\u2191r
+; void **undoSnapshotHandle
+_undoSnapshotHandle dd 0                ; DATA XREF: Undo_resetSnapshotBuffer\u2191r
+                                        ; Undo_resetSnapshotBuffer+D\u2191r ...
+_undoSnapshotSize dw 0                  ; DATA XREF: Undo_resetSnapshotBuffer:loc_62AD1\u2191w
+                                        ; Undo_allocateSnapshotBuffer+3E\u2191w ...
+Parser_undoBufferAllocated db 0         ; DATA XREF: Parser_performUndo+10\u2191r
                                         ; Parser_performUndo+28\u2191r ...
-Parser_val6     db 0                    ; DATA XREF: Parser_performUndo+4\u2191r
-                                        ; sub_62AB0+27\u2191w ...
+Parser_undoSnapshotValid db 0           ; DATA XREF: Parser_performUndo+4\u2191r
+                                        ; Undo_resetSnapshotBuffer+27\u2191w ...
 a_sav           db '*.SAV',0            ; DATA XREF: sub_62A26+22\u2191o
 ; char btn2Text[]
 btn2Text        db 'No',0               ; DATA XREF: sub_62A26+4D\u2191o
@@ -394097,15 +394097,15 @@ seg_D1238       dw seg sg3EDC           ; DATA XREF: Dialog_showCornerMessage+68
 seg_D123A       dw seg sg3EDC           ; DATA XREF: Dialog_showCornerMessage+71\u2191r
                                         ; Dialog_showCornerMessage+93\u2191r
 seg_D123C       dw seg sg4d43           ; DATA XREF: sub_62A26+6B\u2191r
-seg_D123E       dw seg sg4d43           ; DATA XREF: sub_62AE2:loc_62B27\u2191r
+seg_D123E       dw seg sg4d43           ; DATA XREF: Undo_allocateSnapshotBuffer:loc_62B27\u2191r
                                         ; synchronize_save:loc_62D38\u2191r
-seg_D1240       dw seg seg082           ; DATA XREF: sub_62AE2+19\u2191r
+seg_D1240       dw seg seg082           ; DATA XREF: Undo_allocateSnapshotBuffer+19\u2191r
                                         ; synchronize_save+60\u2191r ...
-seg_D1242       dw seg seg082           ; DATA XREF: sub_62AE2+33\u2191r
+seg_D1242       dw seg seg082           ; DATA XREF: Undo_allocateSnapshotBuffer+33\u2191r
                                         ; synchronize_save+7A\u2191r
-seg_D1244       dw seg sg4d43           ; DATA XREF: sub_62AE2:loc_62B53\u2191r
+seg_D1244       dw seg sg4d43           ; DATA XREF: Undo_allocateSnapshotBuffer:loc_62B53\u2191r
                                         ; synchronize_save:loc_62D7E\u2191r
-seg_D1246       dw seg seg068           ; DATA XREF: sub_62AE2+61\u2191r
+seg_D1246       dw seg seg068           ; DATA XREF: Undo_allocateSnapshotBuffer+61\u2191r
                                         ; synchronize_save+E1\u2191r
 seg_D1248       dw seg sg4d43           ; DATA XREF: synchronize_save+134\u2191r
 seg_D124A       dw seg sg3EDC           ; DATA XREF: save_game+91\u2191r

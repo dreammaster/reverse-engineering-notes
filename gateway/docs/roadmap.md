@@ -781,6 +781,13 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       switch called from `InputWindow_getLine`, `get_mouse_input`, and
       several room-logic overlays. Full writeup in
       [overview.md](overview.md#inputwindow_setdisplaymode-named).
+- [x] Named the undo-snapshot cluster: `sub_62AB0`/`sub_62AE2` →
+      `Undo_resetSnapshotBuffer`/`Undo_allocateSnapshotBuffer`, plus
+      `_undoSnapshotSize`/`_undoSnapshotHandle`/
+      `Parser_undoSnapshotValid`/`Parser_undoBufferAllocated` — the
+      in-memory "quicksave" buffer backing `Parser_performUndo`,
+      written via `save_game`'s mode-3 path. Full writeup in
+      [overview.md](overview.md#the-undo-snapshot-cluster-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

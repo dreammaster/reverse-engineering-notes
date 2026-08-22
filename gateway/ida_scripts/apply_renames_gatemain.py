@@ -2174,6 +2174,59 @@ RENAMES = [
      "and several room-logic overlays -- a shared display/input-mode "
      "switch that only runs its transition side effects when the mode "
      "actually changes."),
+
+    (0x62AB0, "Undo_resetSnapshotBuffer",
+     "sub_62AB0(): if the global `handle` (a memory handle, dword) is "
+     "non-null, frees it via the already-named kill_handle and zeroes "
+     "it; always resets a size accumulator (word_CBFE8) and two flags "
+     "(Parser_val6, Parser_val7) to 0. Called from the already-named "
+     "save_game and from sub_62AE2 (traced alongside this one) before "
+     "(re)allocating a fresh undo snapshot buffer -- see the renames "
+     "below."),
+
+    (0x62AE2, "Undo_allocateSnapshotBuffer",
+     "sub_62AE2(): calls the just-named Undo_resetSnapshotBuffer, then "
+     "computes a required buffer size by summing per-entry "
+     "contributions across the object method table (indexed 0..the "
+     "already-named METHODS_COUNT) and the save-field table (indexed "
+     "0..the already-named SAVE_FIELDS_COUNT) into word_CBFE8, plus a "
+     "constant 0x42. Compares that (rounded up) against "
+     "get_buffer_size()'s available space; if it fits, allocates a new "
+     "handle of that size via new_handle into the global `handle`, and "
+     "if the allocation succeeded, sets Parser_val7=1. Called from the "
+     "already-named save_game (in its mode-3/quicksave path) whenever "
+     "no undo buffer is currently allocated."),
+
+    (0x0CBFE8, "_undoSnapshotSize",
+     "The required-size accumulator Undo_allocateSnapshotBuffer "
+     "(sub_62AE2) builds up from the method and save-field tables "
+     "before allocating the undo snapshot handle; reset to 0 by "
+     "Undo_resetSnapshotBuffer (sub_62AB0)."),
+
+    ("handle", "_undoSnapshotHandle",
+     "The dword memory handle Undo_allocateSnapshotBuffer (sub_62AE2) "
+     "allocates via new_handle to hold the in-memory undo snapshot; "
+     "freed and zeroed by Undo_resetSnapshotBuffer (sub_62AB0). Locked/"
+     "written by the already-named save_game (mode-3/quicksave path) "
+     "via synchronize_save, treating the handle's memory as a virtual "
+     "file."),
+
+    ("Parser_val6", "Parser_undoSnapshotValid",
+     "Set to 1 by the already-named save_game's mode-3/quicksave path "
+     "only after synchronize_save successfully writes the current game "
+     "state into the undo snapshot handle; cleared to 0 up front each "
+     "time that path runs. The already-named Parser_performUndo "
+     "requires this (alongside Parser_val7, renamed below) before "
+     "actually loading the undo slot -- 'a valid snapshot was taken "
+     "this turn', as opposed to just 'the buffer exists'."),
+
+    ("Parser_val7", "Parser_undoBufferAllocated",
+     "Set to 1 by Undo_allocateSnapshotBuffer (sub_62AE2) once the "
+     "undo snapshot handle is successfully allocated; cleared by "
+     "Undo_resetSnapshotBuffer (sub_62AB0). The already-named "
+     "Parser_performUndo also uses this alone to decide which of two "
+     "messages to print ('undone' vs 'nothing to undo' -- messages at "
+     "off_CB926/off_CB92A, not yet decoded)."),
 ]
 
 
