@@ -2776,6 +2776,33 @@ RENAMES = [
      "and Sound_shutdown (presumably to clear/blank the display on "
      "exit) -- writes text to a General-MIDI-module's own onboard LCD, "
      "not the game's screen."),
+
+    (0x1FA8E, "Midi_beginRolandSysEx",
+     "sub_1FA8E(): calls the already-named Midi_initDevice; on "
+     "success, calls Midi_resetDevice, sends MPU-401 UART-mode "
+     "command 0x3F (spinning on Midi_sendCommand until it succeeds), "
+     "then sends five bytes via Midi_sendByte: 0xF0 (SysEx start), "
+     "0x41 (Roland manufacturer ID), 0x10 (device ID), 0x16 (Roland "
+     "MT-32/Sound Canvas model ID), 0x12 (DT1 'Data Set 1' command) "
+     "-- the exact standard Roland SysEx header preceding an address+"
+     "data+checksum+terminator message. Called from the just-named "
+     "Midi_sendDisplayText and sub_1FB10 -- the shared 'init the MIDI "
+     "device and begin a Roland Data Set SysEx message' preamble."),
+
+    (0x1FAFE, "Midi_endSysEx",
+     "sub_1FAFE(): sends 0xF7 (MIDI SysEx 'End of Exclusive') via "
+     "Midi_sendByte, then calls the already-named Midi_shutdown. "
+     "Called from the just-named Midi_sendDisplayText and sub_1FB10 "
+     "-- the closing half of the Midi_beginRolandSysEx/Midi_endSysEx "
+     "pair framing a Roland SysEx message."),
+
+    (0x1FC4E, "Midi_busyWaitDelay",
+     "sub_1FC4E(): a calibrated busy-wait -- loops a counter 0 to "
+     "0x800 computing counter*counter each iteration (result unused), "
+     "purely to burn CPU cycles. Called from the just-named "
+     "Midi_sendDisplayText and sub_1FB10, immediately after a Roland "
+     "SysEx message, presumably giving the MIDI device time to "
+     "process it before the caller continues."),
 ]
 
 

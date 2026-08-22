@@ -3743,3 +3743,30 @@ blank the display on exit — writing text to a General-MIDI-compatible
 module's own onboard LCD, not the game's screen.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-eighteenth batch.
+
+### The Roland SysEx framing trio named
+
+Three functions traced together, confirming and completing the
+prediction made in `Midi_sendDisplayText`'s own writeup. `sub_1FA8E`
+→ **`Midi_beginRolandSysEx`**: calls the already-named `Midi_initDevice`;
+on success, resets the device, sends MPU-401 UART-mode command `0x3F`
+(spinning until it succeeds), then sends the exact standard Roland
+SysEx header — `0xF0` (SysEx start), `0x41` (Roland manufacturer ID),
+`0x10` (device ID), `0x16` (Roland MT-32/Sound Canvas model ID), `0x12`
+(DT1 "Data Set 1" command) — preceding an address+data+checksum+
+terminator message.
+
+`sub_1FAFE` → **`Midi_endSysEx`**: sends `0xF7` (MIDI SysEx "End of
+Exclusive"), then calls the already-named `Midi_shutdown` — the
+closing half of the pair.
+
+`sub_1FC4E` → **`Midi_busyWaitDelay`**: a calibrated busy-wait loop
+(counter squared each iteration, result unused) purely to burn CPU
+cycles, presumably giving the MIDI device time to process a SysEx
+message before the caller continues.
+
+All three are called from `Midi_sendDisplayText` and `sub_1FB10` —
+`Midi_beginRolandSysEx`/`Midi_endSysEx` bracket the Roland Data Set
+SysEx payload, with `Midi_busyWaitDelay` settling afterward.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-nineteenth batch.

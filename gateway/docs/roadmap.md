@@ -932,6 +932,12 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       screen-clearing call as guessed in `Sound_shutdown`'s much
       earlier writeup. Full writeup in
       [overview.md](overview.md#midi_senddisplaytext-named-corrects-a-much-earlier-guess).
+- [x] Named `sub_1FA8E`/`sub_1FAFE`/`sub_1FC4E` →
+      `Midi_beginRolandSysEx`/`Midi_endSysEx`/`Midi_busyWaitDelay` —
+      the Roland SysEx start/end framing and settle-delay, confirming
+      the prediction from `Midi_sendDisplayText`'s writeup. Full
+      writeup in
+      [overview.md](overview.md#the-roland-sysex-framing-trio-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

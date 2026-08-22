@@ -36736,7 +36736,7 @@ seg028          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1FA8E       proc far                ; CODE XREF: sub_1FB10+1\u2193p
+Midi_beginRolandSysEx proc far          ; CODE XREF: sub_1FB10+1\u2193p
                                         ; Midi_sendDisplayText+9\u2193p ...
                 mov     es, dseg_51
                 assume es:sg4d43
@@ -36751,7 +36751,7 @@ loc_1FAA0:
                 jz      short locret_1FAFD
                 call    Midi_resetDevice
 
-loc_1FAB1:                              ; CODE XREF: sub_1FA8E+31\u2193j
+loc_1FAB1:                              ; CODE XREF: Midi_beginRolandSysEx+31\u2193j
                 mov     ax, 3Fh ; '?'
                 push    ax
                 call    Midi_sendCommand
@@ -36779,15 +36779,15 @@ loc_1FAB1:                              ; CODE XREF: sub_1FA8E+31\u2193j
                 call    Midi_sendByte
                 add     sp, 2
 
-locret_1FAFD:                           ; CODE XREF: sub_1FA8E+1C\u2191j
+locret_1FAFD:                           ; CODE XREF: Midi_beginRolandSysEx+1C\u2191j
                 retf
-sub_1FA8E       endp
+Midi_beginRolandSysEx endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1FAFE       proc far                ; CODE XREF: sub_1FB10+3E\u2193p
+Midi_endSysEx   proc far                ; CODE XREF: sub_1FB10+3E\u2193p
                                         ; Midi_sendDisplayText+6A\u2193p ...
                 mov     ax, 0F7h ; '÷'
                 push    ax
@@ -36795,7 +36795,7 @@ sub_1FAFE       proc far                ; CODE XREF: sub_1FB10+3E\u2193p
                 add     sp, 2
                 call    Midi_shutdown
                 retf
-sub_1FAFE       endp
+Midi_endSysEx   endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -36803,7 +36803,7 @@ sub_1FAFE       endp
 
 sub_1FB10       proc far                ; CODE XREF: sub_1FBCE+7\u2193p
                 push    cs
-                call    near ptr sub_1FA8E
+                call    near ptr Midi_beginRolandSysEx
                 mov     ax, 7Fh
                 push    ax
                 call    Midi_sendByte
@@ -36827,9 +36827,9 @@ loc_1FB39:
                 call    Midi_sendByte
                 add     sp, 2
                 push    cs
-                call    near ptr sub_1FAFE
+                call    near ptr Midi_endSysEx
                 push    cs
-                call    near ptr sub_1FC4E
+                call    near ptr Midi_busyWaitDelay
                 retf
 sub_1FB10       endp
 
@@ -36852,7 +36852,7 @@ str             = dword ptr  6
                 push    di
                 push    si
                 push    cs
-                call    near ptr sub_1FA8E
+                call    near ptr Midi_beginRolandSysEx
                 mov     ax, 20h ; ' '
                 push    ax
                 call    Midi_sendByte
@@ -36891,9 +36891,9 @@ loc_1FB8F:                              ; CODE XREF: Midi_sendDisplayText+50\u21
                 call    Midi_sendByte
                 add     sp, 2
                 push    cs
-                call    near ptr sub_1FAFE
+                call    near ptr Midi_endSysEx
                 push    cs
-                call    near ptr sub_1FC4E
+                call    near ptr Midi_busyWaitDelay
                 pop     si
                 pop     di
                 mov     sp, bp
@@ -36920,7 +36920,7 @@ arg_2           = word ptr  8
                 push    cs
                 call    near ptr sub_1FB10
                 push    cs
-                call    near ptr sub_1FA8E
+                call    near ptr Midi_beginRolandSysEx
                 mov     ax, 10h
                 push    ax
                 call    Midi_sendByte
@@ -36962,7 +36962,7 @@ loc_1FBF3:
                 call    Midi_sendByte
                 add     sp, 2
                 push    cs
-                call    near ptr sub_1FAFE
+                call    near ptr Midi_endSysEx
                 mov     sp, bp
                 pop     bp
                 retf
@@ -36973,7 +36973,7 @@ sub_1FBCE       endp
 
 ; Attributes: bp-based frame
 
-sub_1FC4E       proc far                ; CODE XREF: sub_1FB10+42\u2191p
+Midi_busyWaitDelay proc far             ; CODE XREF: sub_1FB10+42\u2191p
                                         ; Midi_sendDisplayText+6E\u2191p
 
 var_4           = word ptr -4
@@ -36985,7 +36985,7 @@ var_2           = word ptr -2
                 push    si
                 sub     cx, cx
 
-loc_1FC57:                              ; CODE XREF: sub_1FC4E+14\u2193j
+loc_1FC57:                              ; CODE XREF: Midi_busyWaitDelay+14\u2193j
                 mov     ax, cx
                 imul    cx
                 mov     si, ax
@@ -36998,7 +36998,7 @@ loc_1FC57:                              ; CODE XREF: sub_1FC4E+14\u2193j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_1FC4E       endp
+Midi_busyWaitDelay endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -393488,8 +393488,8 @@ dseg_48         dw seg sg3EDC           ; DATA XREF: sub_1F7D6+C2\u2191r
 dseg_152        dw seg sg4d43           ; DATA XREF: sub_1F7D6+EF\u2191r
 dseg_49         dw seg sg4d43           ; DATA XREF: sub_1F7D6+FF\u2191r
 dseg_50         dw seg sg4d43           ; DATA XREF: sub_1F7D6+108\u2191r
-dseg_51         dw seg sg4d43           ; DATA XREF: sub_1FA8E\u2191r
-dseg_52         dw seg sg4d43           ; DATA XREF: sub_1FA8E+9\u2191r
+dseg_51         dw seg sg4d43           ; DATA XREF: Midi_beginRolandSysEx\u2191r
+dseg_52         dw seg sg4d43           ; DATA XREF: Midi_beginRolandSysEx+9\u2191r
 seg126_22       dw seg sg3EDC           ; DATA XREF: sub_1FC70+13\u2191r
                                         ; sub_1FCAA+19\u2191r ...
 seg126_23       dw seg sg3EDC           ; DATA XREF: sub_1FE5C+24\u2191r
