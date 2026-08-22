@@ -31133,7 +31133,7 @@ loc_1D3FA:                              ; CODE XREF: sub_1D3C4+E\u2191j
                                         ; DATA XREF: sub_1D3C4+64\u2193o ...
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr sub_1D5E8
+                call    near ptr Opl2_setOperatorAttackDecay
                 jmp     short loc_1D3EB
 ; ---------------------------------------------------------------------------
                 align 2
@@ -31142,7 +31142,7 @@ loc_1D404:                              ; CODE XREF: sub_1D3C4+E\u2191j
                                         ; DATA XREF: sub_1D3C4+66\u2193o ...
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr sub_1D63E
+                call    near ptr Opl2_setOperatorSustainRelease
                 jmp     short loc_1D3EB
 ; ---------------------------------------------------------------------------
                 align 2
@@ -31214,11 +31214,11 @@ arg_0           = word ptr  6
                 add     sp, 2
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr sub_1D5E8
+                call    near ptr Opl2_setOperatorAttackDecay
                 add     sp, 2
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr sub_1D63E
+                call    near ptr Opl2_setOperatorSustainRelease
                 add     sp, 2
                 push    [bp+arg_0]
                 push    cs
@@ -31430,7 +31430,7 @@ Opl2_setChannelFeedback endp
 
 ; Attributes: bp-based frame
 
-sub_1D5E8       proc far                ; CODE XREF: sub_1D3C4+3A\u2191p
+Opl2_setOperatorAttackDecay proc far    ; CODE XREF: sub_1D3C4+3A\u2191p
                                         ; sub_1D448+23\u2191p
 
 var_2           = word ptr -2
@@ -31470,7 +31470,7 @@ arg_0           = word ptr  6
                 mov     sp, bp
                 pop     bp
                 retf
-sub_1D5E8       endp
+Opl2_setOperatorAttackDecay endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -31479,7 +31479,7 @@ sub_1D5E8       endp
 
 ; Attributes: bp-based frame
 
-sub_1D63E       proc far                ; CODE XREF: sub_1D3C4+44\u2191p
+Opl2_setOperatorSustainRelease proc far ; CODE XREF: sub_1D3C4+44\u2191p
                                         ; sub_1D448+2D\u2191p
 
 var_2           = word ptr -2
@@ -31519,7 +31519,7 @@ arg_0           = word ptr  6
                 mov     sp, bp
                 pop     bp
                 retf
-sub_1D63E       endp
+Opl2_setOperatorSustainRelease endp
 
 ; ---------------------------------------------------------------------------
                 align 2

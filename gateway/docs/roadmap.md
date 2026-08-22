@@ -879,6 +879,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       OPL2 Feedback/Connection-Type register setter, companion to
       `Opl2_setOperatorVolume`. Full writeup in
       [overview.md](overview.md#opl2_setchannelfeedback-named).
+- [x] Named `sub_1D5E8`/`sub_1D63E` → `Opl2_setOperatorAttackDecay`/
+      `Opl2_setOperatorSustainRelease` — the remaining two per-operator
+      OPL2 envelope registers, completing the cluster. Full writeup in
+      [overview.md](overview.md#opl2_setoperatorattackdecay-and-opl2_setoperatorsustainrelease-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

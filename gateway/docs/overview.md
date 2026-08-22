@@ -3502,3 +3502,28 @@ Called from `sub_1D3C4` and `sub_1D448` (both unnamed, plausibly the
 note-on/instrument-setup routines for this backend).
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-sixth batch.
+
+### `Opl2_setOperatorAttackDecay` and `Opl2_setOperatorSustainRelease` named
+
+Two more per-operator OPL2 register setters, traced together.
+`Opl2_setOperatorAttackDecay` (`sub_1D5E8`) indexes the same 7-byte-
+stride table the OPL2 cluster's other per-operator setters use, reads
+a byte shifted into the high nibble and another masked into the low
+nibble, ORs them together, and writes the result to OPL2 register
+`0x60+operatorRegisterOffset` — the standard OPL2 Attack-Rate/Decay-
+Rate register.
+
+`Opl2_setOperatorSustainRelease` (`sub_1D63E`) is byte-for-byte the
+same shape, reading two different table fields and writing to register
+`0x80+operatorRegisterOffset` — the standard OPL2 Sustain-Level/
+Release-Rate register.
+
+Both are called from `sub_1D3C4` and `sub_1D448` (both unnamed,
+plausibly the note-on/instrument-setup routines for this backend),
+completing the four standard per-operator OPL2 envelope/level
+registers this cluster now covers: `0x40` level/KSL
+(`Opl2_setOperatorVolume`), `0x60` attack/decay, `0x80` sustain/
+release, plus the per-channel `0xC0` feedback/connection
+(`Opl2_setChannelFeedback`).
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-seventh batch.

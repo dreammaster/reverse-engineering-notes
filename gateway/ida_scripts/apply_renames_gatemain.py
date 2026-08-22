@@ -2562,6 +2562,30 @@ RENAMES = [
      "field (+0x1B8) as Opl2_setOperatorVolume. Called from sub_1D3C4 "
      "and sub_1D448 (both unnamed, plausibly the note-on/instrument-"
      "setup routines for this backend)."),
+
+    (0x1D5E8, "Opl2_setOperatorAttackDecay",
+     "sub_1D5E8(operatorIndex): indexes the same 7-byte-stride table "
+     "(operatorIndex*7) as the OPL2 cluster's other per-operator "
+     "setters, reads a byte at +3 (shifted into bits 4-7) and a byte "
+     "at +6 (masked into bits 0-3), ORs them together, and writes the "
+     "result to OPL2 register 0x60+operatorRegisterOffset (using the "
+     "same +0x194 per-operator register-offset field as "
+     "Opl2_setOperatorVolume) via the already-named "
+     "Opl2_writeRegister. Register 0x60-0x75 is the standard OPL2 "
+     "Attack-Rate/Decay-Rate register (AR in the high nibble, DR in "
+     "the low nibble). Called from sub_1D3C4 and sub_1D448."),
+
+    (0x1D63E, "Opl2_setOperatorSustainRelease",
+     "sub_1D63E(operatorIndex): byte-for-byte the same shape as the "
+     "just-named Opl2_setOperatorAttackDecay, but reading fields +4 "
+     "(high nibble) and +7 (low nibble) instead of +3/+6, and writing "
+     "to OPL2 register 0x80+operatorRegisterOffset -- the standard "
+     "OPL2 Sustain-Level/Release-Rate register (SL in the high "
+     "nibble, RR in the low nibble). Called from sub_1D3C4 and "
+     "sub_1D448, completing the four standard per-operator OPL2 "
+     "envelope/level registers this cluster now covers (0x40 level/"
+     "KSL, 0x60 attack/decay, 0x80 sustain/release, plus the per-"
+     "channel 0xC0 feedback/connection)."),
 ]
 
 
