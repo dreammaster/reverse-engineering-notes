@@ -1181,6 +1181,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       rendering routine, sharing the same per-slot table layout. Full
       writeup in
       [overview.md](overview.md#listbox_wrapitemtext-named--ties-into-an-as-yet-unnamed-listbox-rendering-routine).
+- [x] Named `sub_1BEC2` → `__aNldiv` — a near-callable duplicate of the
+      already-named `__aFldiv` (32-bit signed division), another
+      instance of the duplicate-compiled-copy pattern. Full writeup in
+      [overview.md](overview.md#__anldiv-named--another-duplicate-compiled-copy-instance).
 - [ ] `sub_170F6` (large, ~600+ bytes, spans past its own declared
       64-byte function boundary into unlabeled code before reaching
       `sub_175CD`) is the listbox rendering routine that reads

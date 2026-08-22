@@ -12350,6 +12350,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1BEB5);
 	op_stkvar	(x,	1);
 	create_insn	(0X1BEC2);
+	set_name	(0X1BEC2,	"__aNldiv");
 	create_insn	(x=0X1BEC9);
 	op_stkvar	(x,	1);
 	create_insn	(0X1BECC);
@@ -12758,8 +12759,6 @@ static Bytes_1(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X1C53E);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X1C548);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -12769,6 +12768,8 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X1C548);
+	op_hex		(x,	1);
 	create_insn	(x=0X1C54B);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X1C54E);
@@ -18337,8 +18338,6 @@ static Bytes_2(void) {
 	set_cmt	(0X2369A,	"color",	0);
 	create_insn	(x=0X236A3);
 	op_hex		(x,	1);
-	create_insn	(x=0X236A6);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -18348,6 +18347,8 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X236A6);
+	op_stkvar	(x,	1);
 	set_cmt	(0X236AA,	"xp",	0);
 	create_insn	(x=0X236AB);
 	op_stkvar	(x,	1);

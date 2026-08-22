@@ -25682,7 +25682,7 @@ loc_1B266:                              ; CODE XREF: _fseek+1EF↑j
                 push    ax
                 push    [bp+arg_6]
                 push    [bp+arg_4]
-                call    far ptr sub_1BEC2
+                call    far ptr __aNldiv
                 mov     si, ax
                 cwd
                 mov     cx, [bp+arg_4]
@@ -27701,7 +27701,7 @@ __aFlmul        endp
 
 ; Attributes: bp-based frame
 
-sub_1BEC2       proc near               ; CODE XREF: _fseek+1FD↑P
+__aNldiv        proc near               ; CODE XREF: _fseek+1FD↑P
                                         ; _gmtime+75↓P ...
 
 arg_4           = word ptr  8
@@ -27712,7 +27712,7 @@ arg_4           = word ptr  8
                 push    di
                 xor     di, di
                 mov     ax, [bp+arg_4]
-sub_1BEC2       endp ; sp-analysis failed
+__aNldiv        endp ; sp-analysis failed
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -28433,7 +28433,7 @@ loc_1C324:                              ; CODE XREF: _gmtime+11↑j
                 push    word ptr es:[bx]
                 mov     word ptr [bp+var_E], ax
                 mov     word ptr [bp+var_E+2], dx
-                call    far ptr sub_1BEC2
+                call    far ptr __aNldiv
                 sub     ax, word ptr [bp+var_E]
                 sbb     dx, word ptr [bp+var_E+2]
                 mov     [bp+var_6], ax
@@ -28565,7 +28565,7 @@ loc_1C44F:                              ; CODE XREF: _gmtime+12C↑j
                 push    ax
                 push    [bp+var_4]
                 push    [bp+var_6]
-                call    far ptr sub_1BEC2
+                call    far ptr __aNldiv
                 mov     word_D0D10, ax
                 mov     ax, 16Dh
                 imul    word_D0D1A
@@ -29512,7 +29512,7 @@ arg_4           = word ptr  0Ah
                 push    [bp+arg_2]
                 push    word ptr [bx+2]
                 push    word ptr [bx]
-                call    far ptr sub_1BEC2
+                call    far ptr __aNldiv
                 mov     bx, [bp+arg_0]
                 mov     [bx+2], dx
                 mov     [bx], ax
@@ -268585,7 +268585,7 @@ loc_71A3D:                              ; CODE XREF: sub_7179E+274↑j
                 cwd
                 push    dx
                 push    ax
-                call    far ptr sub_1BEC2
+                call    far ptr __aNldiv
                 add     ax, si
                 adc     dx, di
                 add     ax, [bp+var_1DA]
@@ -268840,7 +268840,7 @@ loc_71CAC:                              ; CODE XREF: sub_7179E+506↑j
                 cwd
                 push    dx
                 push    ax
-                call    far ptr sub_1BEC2
+                call    far ptr __aNldiv
                 add     ax, si
                 adc     dx, di
                 add     ax, [bp+var_1DA]

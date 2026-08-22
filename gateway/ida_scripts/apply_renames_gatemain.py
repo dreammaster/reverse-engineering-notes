@@ -3702,6 +3702,23 @@ RENAMES = [
      "visible body here same as several others this cluster). The "
      "exact role of arg_4 (vocabOrLen_far) wasn't nailed down "
      "independently. 5 callers."),
+
+    (0x1BEC2, "__aNldiv",
+     "sub_1BEC2(): a near-callable duplicate of the already-named "
+     "__aFldiv (32-bit signed long division: negate the dividend if "
+     "negative, negate the divisor if negative, XOR-tracking the "
+     "result sign in di, then two 16-bit div instructions against a "
+     "16-bit divisor) -- byte-for-byte the same algorithm as __aFldiv, "
+     "just 'proc near' instead of 'proc far'. Matches this project's "
+     "established duplicate-compiled-copy pattern (RawFile_write vs. "
+     "_write, Opl2_writeDetectRegister vs. Opl2_writeRegister, etc.) "
+     "-- presumably the compiler emitted a private near-callable copy "
+     "for call sites within the same segment as _fseek/_gmtime rather "
+     "than paying for a far call to the shared __aFldiv. Named to "
+     "match Microsoft C runtime's own near/far arithmetic-helper "
+     "naming convention (F=far, N=near). Falls through into sub_1BECC, "
+     "left unnamed (an internal continuation with its own further "
+     "xrefs, not confirmed independently)."),
 ]
 
 

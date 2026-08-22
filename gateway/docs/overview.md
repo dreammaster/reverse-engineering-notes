@@ -4951,3 +4951,22 @@ pointer, possibly the vocab-word array or its bound) wasn't
 independently confirmed.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-fifty-ninth batch.
+
+### `__aNldiv` named — another duplicate-compiled-copy instance
+
+`sub_1BEC2` (4 callers: `_fseek`, `_gmtime`, and two unnamed
+functions). A near-callable duplicate of the already-named `__aFldiv`
+— byte-for-byte the same 32-bit signed long-division algorithm (negate
+the dividend/divisor if negative, track the result sign, two `div`
+instructions against a 16-bit divisor), just `proc near` instead of
+`proc far`. Matches this project's established
+duplicate-compiled-copy pattern (`RawFile_write` vs. `_write`,
+`Opl2_writeDetectRegister` vs. `Opl2_writeRegister`) — presumably the
+compiler emitted a private near-callable copy for call sites within
+the same segment as `_fseek`/`_gmtime` rather than paying for a far
+call to the shared `__aFldiv`. Named to match Microsoft C runtime's own
+near/far arithmetic-helper naming convention (`F`=far, `N`=near).
+Falls through into `sub_1BECC`, left unnamed (an internal continuation
+with its own further cross-references, not independently confirmed).
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-sixtieth batch.
