@@ -1050,6 +1050,12 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       hooks, room-look dispatch, and a first-arrival score bonus). Full
       writeup in
       [overview.md](overview.md#logics_travelviatransitdisk-named--gateways-heechee-teleportation-mechanic).
+- [x] Named `sub_14A5F` → `Logics_printObjectDescription` — previously
+      skipped for insufficient context, now resolved as the shared
+      "describe this room/object" backend for
+      `Logics_checkMoveRestriction`/`Logics_lookAtCurrentRoom`/
+      `Logics_travelViaTransitDisk`. Full writeup in
+      [overview.md](overview.md#logics_printobjectdescription-named--revisiting-a-previously-skipped-function-with-better-context).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

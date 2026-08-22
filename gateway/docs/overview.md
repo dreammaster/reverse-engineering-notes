@@ -4364,3 +4364,38 @@ recognizable mechanics, found purely by following up an ordinary
 3-caller ranked-list entry.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-forty-third batch.
+
+### `Logics_printObjectDescription` named — revisiting a previously-skipped function with better context
+
+`sub_14A5F` was explicitly skipped several sessions ago ("a
+generic-looking 'print an object's header, then invoke its own logic
+for a given action' dispatcher, but several pieces stayed unclear...
+Not renamed"), back when it only had `Logics_checkMoveRestriction` as
+a confirmed caller. This session's work on `Logics_lookAtCurrentRoom`
+and — just now — `Logics_travelViaTransitDisk` gave it two more
+already-named callers, which was enough to resolve it properly.
+
+`Logics_printObjectDescription(index, lookMode)`: prints the object/
+room's own name (`j_printObj(index, 145)`); if the player's (the
+already-confirmed logic `211`/`0xD3`) current location
+(`Logics_getPrehandler(211)`) differs from the room/object being
+described, also prints `", on/in <that location's name>"` (the same
+on/in preposition convention, via `Logics_getBit(loc, 0x1C)`, as the
+already-named `Logics_describeContents`), then always a newline.
+Optionally refreshes the displayed picture. Unless `lookMode` is `0xA`
+or `0xC`, prints a tab before invoking the object/room's own compiled
+logic for this look mode via `Logic_call(index, lookMode)`; if that
+returns nothing and `lookMode != 0xC`, falls back to a shared generic
+description (`thunk_sub_669E3`, still not traced).
+
+Confirmed as the shared "describe this room/object" backend for all
+three known callers: `Logics_checkMoveRestriction` (`lookMode` `9` or
+`0xA`, after a normal room-to-room move), `Logics_lookAtCurrentRoom`
+(the explicit LOOK command), and `Logics_travelViaTransitDisk`
+(`lookMode` `9`-`0xC` after a transit-disk teleport) — the same `9`-
+`0xC` "look mode" range showing up in all three confirms this is one
+shared brief/full/first-visit-style description dispatcher, not three
+independent implementations. A good reminder that a function worth
+skipping today may become nameable once its neighbors get named.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-forty-fourth batch.

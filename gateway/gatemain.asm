@@ -6810,7 +6810,7 @@ seg005          segment byte public 'CODE' use16
 ; Attributes: bp-based frame
 
 ; int __cdecl __far Logics_getRoomPic(int logicNum)
-Logics_getRoomPic proc far              ; CODE XREF: sub_14A5F+82\u2193P
+Logics_getRoomPic proc far              ; CODE XREF: Logics_printObjectDescription+82\u2193P
                                         ; room_load+3F\u2193P ...
 
 idx             = word ptr -2
@@ -10338,7 +10338,7 @@ Stream_loadFile endp
 
 ; Attributes: bp-based frame
 
-sub_14A5F       proc far                ; CODE XREF: Logics_checkMoveRestriction+23F\u2193p
+Logics_printObjectDescription proc far  ; CODE XREF: Logics_checkMoveRestriction+23F\u2193p
                                         ; Logics_lookAtCurrentRoom+E\u2193p ...
 
 var_4           = word ptr -4
@@ -10381,10 +10381,10 @@ param           = word ptr  8
                 jmp     short loc_14ABD
 ; ---------------------------------------------------------------------------
 
-loc_14ABA:                              ; CODE XREF: sub_14A5F+54\u2191j
+loc_14ABA:                              ; CODE XREF: Logics_printObjectDescription+54\u2191j
                 mov     ax, 'i'
 
-loc_14ABD:                              ; CODE XREF: sub_14A5F+59\u2191j
+loc_14ABD:                              ; CODE XREF: Logics_printObjectDescription+59\u2191j
                 push    ax              ; char
                 mov     ax, offset aCnS ; ", %cn%s"
                 push    ds
@@ -10392,7 +10392,7 @@ loc_14ABD:                              ; CODE XREF: sub_14A5F+59\u2191j
                 call    TextWindow_add
                 add     sp, 0Ah
 
-loc_14ACB:                              ; CODE XREF: sub_14A5F+32\u2191j
+loc_14ACB:                              ; CODE XREF: Logics_printObjectDescription+32\u2191j
                 mov     ax, 0Ah
                 push    ax              ; c
                 call    TextWindow_addChar
@@ -10411,11 +10411,11 @@ loc_14ACB:                              ; CODE XREF: sub_14A5F+32\u2191j
                 cmp     es:word_CBCFE, 2
                 jnz     short loc_14B0D
 
-loc_14B08:                              ; CODE XREF: sub_14A5F+9F\u2191j
+loc_14B08:                              ; CODE XREF: Logics_printObjectDescription+9F\u2191j
                 call    j_scene_update?
 
-loc_14B0D:                              ; CODE XREF: sub_14A5F+7D\u2191j
-                                        ; sub_14A5F+93\u2191j ...
+loc_14B0D:                              ; CODE XREF: Logics_printObjectDescription+7D\u2191j
+                                        ; Logics_printObjectDescription+93\u2191j ...
                 cmp     [bp+param], 0Ah
                 jz      short loc_14B25
                 cmp     [bp+param], 0Ch
@@ -10425,8 +10425,8 @@ loc_14B0D:                              ; CODE XREF: sub_14A5F+7D\u2191j
                 call    TextWindow_addChar
                 add     sp, 2
 
-loc_14B25:                              ; CODE XREF: sub_14A5F+B2\u2191j
-                                        ; sub_14A5F+B8\u2191j
+loc_14B25:                              ; CODE XREF: Logics_printObjectDescription+B2\u2191j
+                                        ; Logics_printObjectDescription+B8\u2191j
                 push    [bp+param]      ; action
                 push    [bp+index]      ; index
                 call    Logic_call
@@ -10449,12 +10449,12 @@ loc_14B25:                              ; CODE XREF: sub_14A5F+B2\u2191j
                 call    TextWindow_addChar
                 add     sp, 2
 
-loc_14B60:                              ; CODE XREF: sub_14A5F+DB\u2191j
-                                        ; sub_14A5F+DF\u2191j ...
+loc_14B60:                              ; CODE XREF: Logics_printObjectDescription+DB\u2191j
+                                        ; Logics_printObjectDescription+DF\u2191j ...
                 mov     sp, bp
                 pop     bp
                 retf
-sub_14A5F       endp
+Logics_printObjectDescription endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -10713,7 +10713,7 @@ loc_14D8F:                              ; CODE XREF: Logics_checkMoveRestriction
                 mov     es, dseg_102
                 push    es:_roomLogicNum
                 push    cs
-                call    near ptr sub_14A5F
+                call    near ptr Logics_printObjectDescription
                 add     sp, 4
                 jmp     short loc_14DB7
 ; ---------------------------------------------------------------------------
@@ -11614,7 +11614,7 @@ Logics_lookAtCurrentRoom proc far       ; CODE XREF: main+118\u2191P
                 mov     es, dseg_102
                 push    es:_roomLogicNum
                 push    cs
-                call    near ptr sub_14A5F
+                call    near ptr Logics_printObjectDescription
                 add     sp, 4
                 mov     ax, 1
                 retf
@@ -82214,7 +82214,7 @@ thunk_Logics_countVisibleContents endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_669E3 proc far                ; CODE XREF: sub_14A5F+E9\u2191P
+thunk_sub_669E3 proc far                ; CODE XREF: Logics_printObjectDescription+E9\u2191P
                                         ; sub_2E51D+3AB47\u2193P ...
                 call    near ptr rtlink_thunk
                 jmp     sub_669E3
@@ -223239,7 +223239,7 @@ loc_82EA4:                              ; CODE XREF: sub_82DA2+F9\u2191j
                 push    ax
                 mov     es, seg_D1502
                 push    es:_roomLogicNum
-                call    sub_14A5F
+                call    Logics_printObjectDescription
                 add     sp, 4
                 mov     Persisted_val135, 0
 
@@ -254198,7 +254198,7 @@ loc_908E0:                              ; CODE XREF: Logics_travelViaTransitDisk
                 push    [bp+var_2]
                 mov     es, seg_D160A
                 push    es:_roomLogicNum
-                call    sub_14A5F
+                call    Logics_printObjectDescription
                 add     sp, 4
                 call    j_scene_update?
                 mov     ax, 0Eh
@@ -260929,7 +260929,7 @@ loc_93A58:                              ; CODE XREF: sub_93922+1AD\u2193j
                 push    ax
                 mov     es, seg_D1622
                 push    es:_roomLogicNum
-                call    sub_14A5F
+                call    Logics_printObjectDescription
                 add     sp, 4
                 mov     ax, 0Eh
                 push    ax              ; action
@@ -260984,7 +260984,7 @@ loc_93AD1:                              ; CODE XREF: sub_93922+185\u2191j
                 push    ax
                 mov     es, seg_D1622
                 push    es:_roomLogicNum
-                call    sub_14A5F
+                call    Logics_printObjectDescription
                 add     sp, 4
                 mov     ax, 0Eh
                 push    ax              ; action
@@ -303480,7 +303480,7 @@ loc_A63B8:                              ; CODE XREF: sub_A60CE+25A\u2191j
                 push    ax
                 mov     es, seg_D1798
                 push    es:_roomLogicNum
-                call    sub_14A5F
+                call    Logics_printObjectDescription
                 add     sp, 4
 
 loc_A63CD:                              ; CODE XREF: sub_A60CE+2E8\u2191j
@@ -387304,7 +387304,7 @@ byte_CBB74      db 0                    ; DATA XREF: Logics_checkMoveRestriction
                                         ; Logics_checkMoveRestriction+331\u2191r ...
 byte_CBB75      db 0                    ; DATA XREF: Logics_checkMoveRestriction:loc_14DB7\u2191r
                                         ; Logics_checkMoveRestriction+366\u2191w ...
-byte_CBB76      db 1                    ; DATA XREF: sub_14A5F+78\u2191r
+byte_CBB76      db 1                    ; DATA XREF: Logics_printObjectDescription+78\u2191r
                                         ; Logics_checkMoveRestriction:loc_14DAB\u2191r ...
                 align 2
 ; char score[]
@@ -387320,7 +387320,7 @@ aCnSYouSee      db 9,'%cn%s you see',0  ; DATA XREF: Logics_describeContents+35\
 ; char a_[]
 a_              db '.',0Ah,0            ; DATA XREF: Logics_describeContents+50\u2191o
 ; char aCnS[]
-aCnS            db ', %cn%s',0          ; DATA XREF: sub_14A5F+5F\u2191o
+aCnS            db ', %cn%s',0          ; DATA XREF: Logics_printObjectDescription+5F\u2191o
                 db 'f',0
 aUtO            db 'ut o',0
 aFollow         db 'follow',0           ; DATA XREF: Logics_checkMoveRestriction+338\u2191o
@@ -387731,7 +387731,7 @@ word_CBD24      dw 0                    ; DATA XREF: show_memory_info+72\u2191r
                 db    0
                 db    0
 ; int picNumber
-_picNumber      dw 0FFFFh               ; DATA XREF: sub_14A5F+8E\u2191r
+_picNumber      dw 0FFFFh               ; DATA XREF: Logics_printObjectDescription+8E\u2191r
                                         ; sub_49C10+8E\u2191r ...
 word_CBD90      dw 0FFFFh               ; DATA XREF: room_load+89\u2191r
                                         ; room_load+A1\u2191w
@@ -393815,11 +393815,11 @@ seg_D10E2       dw seg seg085           ; DATA XREF: Logic_call+79\u2191r
                                         ; seg098:1767\u2191r
 dseg_101        dw seg sg4d43           ; DATA XREF: TextWindow_showMorePrompt+B\u2191r
                                         ; seg098:1817\u2191r
-dseg_102        dw seg sg4d43           ; DATA XREF: sub_14A5F+29\u2191r
+dseg_102        dw seg sg4d43           ; DATA XREF: Logics_printObjectDescription+29\u2191r
                                         ; Logics_checkMoveRestriction+32\u2191r ...
-dseg_103        dw seg sg4d43           ; DATA XREF: sub_14A5F+8A\u2191r
+dseg_103        dw seg sg4d43           ; DATA XREF: Logics_printObjectDescription+8A\u2191r
                                         ; sub_49C10+8A\u2191r
-dseg_104        dw seg sg4d43           ; DATA XREF: sub_14A5F+95\u2191r
+dseg_104        dw seg sg4d43           ; DATA XREF: Logics_printObjectDescription+95\u2191r
                                         ; sub_49C10+95\u2191r
 dseg_105        dw seg sg4d43           ; DATA XREF: Logics_checkMoveRestriction+11\u2191r
                                         ; Logics_tryMoveDirection+1AC\u2191r ...

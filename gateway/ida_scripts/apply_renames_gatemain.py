@@ -3287,6 +3287,33 @@ RENAMES = [
      "already-named Logics_getTakeScore/Score_add/Logics_setTakeScore "
      "pattern. The core 'ride a transit disk to another location' "
      "function underlying Gateway's teleportation network."),
+
+    (0x14A5F, "Logics_printObjectDescription",
+     "sub_14A5F(index, lookMode): revisited after being skipped several "
+     "sessions ago for insufficient context -- now has 3 already-named "
+     "callers instead of 1, which resolves it. Prints the object/room's "
+     "own name via j_printObj(index, 145); if the player (the "
+     "already-confirmed logic 211/0xD3)'s current location "
+     "(Logics_getPrehandler(211)) differs from the room being "
+     "described, also prints ', on/in <that location's name>' (the "
+     "same on/in preposition convention, via Logics_getBit(loc, 0x1C), "
+     "as the already-named Logics_describeContents), then always a "
+     "newline. Optionally refreshes the displayed picture (byte_CBB76 "
+     "gate, comparing Logics_getRoomPic against the current picNumber) "
+     "via the still-unnamed j_scene_update?. Unless lookMode is 0xA or "
+     "0xC, prints a tab before invoking the object/room's own compiled "
+     "logic for this look mode via Logic_call(index, lookMode); if that "
+     "returns 0 (no room/object-specific text for this mode) and "
+     "lookMode != 0xC, falls back to thunk_sub_669E3(index, 1, 1) (not "
+     "traced), printing a trailing newline if it has something to say. "
+     "Confirmed as the shared 'describe this room/object' backend for "
+     "the already-named Logics_checkMoveRestriction (lookMode 9 or "
+     "0xA, after a normal room-to-room move), Logics_lookAtCurrentRoom "
+     "(the explicit LOOK command), and Logics_travelViaTransitDisk "
+     "(lookMode 9-0xC after a transit-disk teleport) -- the same "
+     "9-0xC 'look mode' value across all three confirms this is one "
+     "shared brief/full/first-visit-style description dispatcher, not "
+     "three independent implementations."),
 ]
 
 
