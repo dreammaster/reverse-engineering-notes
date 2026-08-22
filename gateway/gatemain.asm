@@ -14475,7 +14475,7 @@ Windows_setCurrentWindow endp
 
 ; Attributes: bp-based frame
 
-Windows_switchListboxWindow proc far    ; CODE XREF: sub_1796D+23\u2193p
+Windows_switchListboxWindow proc far    ; CODE XREF: Listbox_handleNavigationKey+23\u2193p
                                         ; get_mouse_input+3AF\u2193P
 
 arg_0           = word ptr  6
@@ -15097,7 +15097,7 @@ sub_16CBE       endp
 ; Attributes: bp-based frame
 
 ; void __cdecl __far Listbox_findLineStartingWith(int c)
-Listbox_findLineStartingWith proc far   ; CODE XREF: sub_1796D+73\u2193p
+Listbox_findLineStartingWith proc far   ; CODE XREF: Listbox_handleNavigationKey+73\u2193p
 
 lbIndex         = word ptr -4
 newIndex        = word ptr -2
@@ -16692,7 +16692,7 @@ Listbox_mouseButtonDown endp
 
 ; Attributes: bp-based frame
 
-sub_1796D       proc far                ; CODE XREF: get_mouse_input+119\u2193P
+Listbox_handleNavigationKey proc far    ; CODE XREF: get_mouse_input+119\u2193P
                                         ; prompt_for_filename+783\u2193P
 
 var_2           = word ptr -2
@@ -16711,73 +16711,73 @@ c               = word ptr  6
                 jmp     cs:off_179F4[bx]
 ; ---------------------------------------------------------------------------
 
-loc_1798B:                              ; CODE XREF: sub_1796D+19\u2191j
-                                        ; DATA XREF: sub_1796D:off_179FC\u2193o
+loc_1798B:                              ; CODE XREF: Listbox_handleNavigationKey+19\u2191j
+                                        ; DATA XREF: Listbox_handleNavigationKey:off_179FC\u2193o
                 mov     ax, 0FFFFh
 
-loc_1798E:                              ; CODE XREF: sub_1796D+2E\u2193j
+loc_1798E:                              ; CODE XREF: Listbox_handleNavigationKey+2E\u2193j
                 push    ax
                 push    cs
                 call    near ptr Windows_switchListboxWindow
 
-loc_17993:                              ; CODE XREF: sub_1796D+38\u2193j
+loc_17993:                              ; CODE XREF: Listbox_handleNavigationKey+38\u2193j
                 add     sp, 2
                 jmp     short loc_17A0A
 ; ---------------------------------------------------------------------------
 
-loc_17998:                              ; CODE XREF: sub_1796D+19\u2191j
-                                        ; DATA XREF: sub_1796D:off_17A00\u2193o
+loc_17998:                              ; CODE XREF: Listbox_handleNavigationKey+19\u2191j
+                                        ; DATA XREF: Listbox_handleNavigationKey:off_17A00\u2193o
                 mov     ax, 1
                 jmp     short loc_1798E
 ; ---------------------------------------------------------------------------
 
-loc_1799D:                              ; CODE XREF: sub_1796D+19\u2191j
-                                        ; DATA XREF: sub_1796D+89\u2193o
+loc_1799D:                              ; CODE XREF: Listbox_handleNavigationKey+19\u2191j
+                                        ; DATA XREF: Listbox_handleNavigationKey+89\u2193o
                 mov     ax, -1
 
-loc_179A0:                              ; CODE XREF: sub_1796D+3D\u2193j
-                                        ; sub_1796D+43\u2193j ...
+loc_179A0:                              ; CODE XREF: Listbox_handleNavigationKey+3D\u2193j
+                                        ; Listbox_handleNavigationKey+43\u2193j ...
                 push    ax              ; delta
                 push    cs
                 call    near ptr Listbox_deltaChange
                 jmp     short loc_17993
 ; ---------------------------------------------------------------------------
 
-loc_179A7:                              ; CODE XREF: sub_1796D+19\u2191j
-                                        ; DATA XREF: sub_1796D:off_17A06\u2193o
+loc_179A7:                              ; CODE XREF: Listbox_handleNavigationKey+19\u2191j
+                                        ; DATA XREF: Listbox_handleNavigationKey:off_17A06\u2193o
                 mov     ax, 1
                 jmp     short loc_179A0
 ; ---------------------------------------------------------------------------
 
-loc_179AC:                              ; CODE XREF: sub_1796D+19\u2191j
-                                        ; DATA XREF: sub_1796D+9B\u2193o
+loc_179AC:                              ; CODE XREF: Listbox_handleNavigationKey+19\u2191j
+                                        ; DATA XREF: Listbox_handleNavigationKey+9B\u2193o
                 push    cs
                 call    near ptr Listbox_getNumLines
                 jmp     short loc_179A0
 ; ---------------------------------------------------------------------------
 
-loc_179B2:                              ; CODE XREF: sub_1796D+19\u2191j
-                                        ; DATA XREF: sub_1796D+8B\u2193o
+loc_179B2:                              ; CODE XREF: Listbox_handleNavigationKey+19\u2191j
+                                        ; DATA XREF: Listbox_handleNavigationKey+8B\u2193o
                 push    cs
                 call    near ptr Listbox_getNumLines
                 neg     ax
                 jmp     short loc_179A0
 ; ---------------------------------------------------------------------------
 
-loc_179BA:                              ; CODE XREF: sub_1796D+19\u2191j
-                                        ; DATA XREF: sub_1796D:off_179F4\u2193o
+loc_179BA:                              ; CODE XREF: Listbox_handleNavigationKey+19\u2191j
+                                        ; DATA XREF: Listbox_handleNavigationKey:off_179F4\u2193o
                 mov     ax, -9999
                 jmp     short loc_179A0
 ; ---------------------------------------------------------------------------
 
-loc_179BF:                              ; CODE XREF: sub_1796D+19\u2191j
-                                        ; DATA XREF: sub_1796D+97\u2193o
+loc_179BF:                              ; CODE XREF: Listbox_handleNavigationKey+19\u2191j
+                                        ; DATA XREF: Listbox_handleNavigationKey+97\u2193o
                 mov     ax, 9999
                 jmp     short loc_179A0
 ; ---------------------------------------------------------------------------
 
-loc_179C4:                              ; CODE XREF: sub_1796D+14\u2191j
-                                        ; sub_1796D+19\u2191j
+loc_179C4:                              ; CODE XREF: Listbox_handleNavigationKey+14\u2191j
+                                        ; Listbox_handleNavigationKey+19\u2191j
                                         ; DATA XREF: ...
                 call    sub_238C1
                 or      ax, ax
@@ -16795,12 +16795,12 @@ loc_179C4:                              ; CODE XREF: sub_1796D+14\u2191j
                 jmp     short loc_17A0A
 ; ---------------------------------------------------------------------------
 
-loc_179ED:                              ; CODE XREF: sub_1796D+5E\u2191j
-                                        ; sub_1796D+65\u2191j ...
+loc_179ED:                              ; CODE XREF: Listbox_handleNavigationKey+5E\u2191j
+                                        ; Listbox_handleNavigationKey+65\u2191j ...
                 mov     [bp+var_2], 0
                 jmp     short loc_17A0A
 ; ---------------------------------------------------------------------------
-off_179F4       dw offset loc_179BA     ; DATA XREF: sub_1796D+19\u2191r
+off_179F4       dw offset loc_179BA     ; DATA XREF: Listbox_handleNavigationKey+19\u2191r
                 dw offset loc_1799D
                 dw offset loc_179B2
                 dw offset loc_179C4
@@ -16813,8 +16813,8 @@ off_17A06       dw offset loc_179A7
                 dw offset loc_179AC
 ; ---------------------------------------------------------------------------
 
-loc_17A0A:                              ; CODE XREF: sub_1796D+29\u2191j
-                                        ; sub_1796D+7E\u2191j ...
+loc_17A0A:                              ; CODE XREF: Listbox_handleNavigationKey+29\u2191j
+                                        ; Listbox_handleNavigationKey+7E\u2191j ...
                 mov     ax, [bp+var_2]
 
 loc_17A0D:
@@ -16823,7 +16823,7 @@ loc_17A0D:
 
 locret_17A10:
                 retf
-sub_1796D       endp
+Listbox_handleNavigationKey endp
 
 sg0779          ends
 
@@ -45532,7 +45532,7 @@ sub_238B2       endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_238C1       proc far                ; CODE XREF: sub_1796D:loc_179C4\u2191P
+sub_238C1       proc far                ; CODE XREF: Listbox_handleNavigationKey:loc_179C4\u2191P
                 mov     ax, 2
                 push    ax
                 call    __bios_keybrd
@@ -144317,7 +144317,7 @@ loc_5D73E:                              ; CODE XREF: get_mouse_input+F5\u2191j
 
 loc_5D747:                              ; CODE XREF: get_mouse_input+111\u2191j
                 push    [bp+var_E]
-                call    sub_1796D
+                call    Listbox_handleNavigationKey
                 add     sp, 2
                 or      ax, ax
                 jnz     short loc_5D759
@@ -158723,7 +158723,7 @@ loc_63C3C:                              ; CODE XREF: prompt_for_filename+765\u21
 
 loc_63C46:                              ; CODE XREF: prompt_for_filename+77A\u2191j
                 push    [bp+c]
-                call    sub_1796D
+                call    Listbox_handleNavigationKey
                 add     sp, 2
                 or      ax, ax
                 jz      short loc_63C59

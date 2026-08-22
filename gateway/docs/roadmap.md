@@ -871,6 +871,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       reads the highlighted listbox entry as a string, handling both
       raw-text and vocab-word-index storage formats. Full writeup in
       [overview.md](overview.md#listbox_getselecteditemtext-named).
+- [x] Named `sub_1796D` (2 callers) → `Listbox_handleNavigationKey` —
+      the listbox keyboard-navigation dispatcher (Home/End/PgUp/PgDn/
+      arrows/type-ahead). Full writeup in
+      [overview.md](overview.md#listbox_handlenavigationkey-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

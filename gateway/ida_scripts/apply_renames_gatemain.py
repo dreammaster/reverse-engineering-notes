@@ -2530,6 +2530,22 @@ RENAMES = [
      "session) -- the general 'read the highlighted listbox entry as "
      "a string' primitive, e.g. for reading a selected filename out "
      "of a file-picker listbox."),
+
+    (0x1796D, "Listbox_handleNavigationKey",
+     "sub_1796D(c): the listbox keyboard-navigation dispatcher. Maps "
+     "c (an extended key code, c-327 indexing an 11-entry jump table) "
+     "to: Home (-9999) / End (9999) / PageUp / PageDown (both via the "
+     "already-named Listbox_getNumLines, signed) / Up / Down (delta "
+     "+-1, via the already-named Listbox_deltaChange) / Left / Right "
+     "(switch listbox window, via the already-named "
+     "Windows_switchListboxWindow). For any other character, calls "
+     "sub_238C1 (unnamed) as a gate, and if it passes and c is a "
+     "printable/alpha character (per ascii_table_flags), calls the "
+     "already-named Listbox_findLineStartingWith(c) -- a type-ahead-"
+     "jump-to-item feature. Returns 1 if the keypress was consumed by "
+     "the listbox, 0 otherwise (letting the caller process it as a "
+     "normal character). Called from get_mouse_input and "
+     "prompt_for_filename."),
 ]
 
 

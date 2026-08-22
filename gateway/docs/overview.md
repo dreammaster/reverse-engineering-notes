@@ -3467,3 +3467,20 @@ highlighted listbox entry as a string" primitive, e.g. for reading a
 selected filename out of a file-picker listbox.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-fourth batch.
+
+### `Listbox_handleNavigationKey` named
+
+Moved to `sub_1796D` (2 callers) — the listbox keyboard-navigation
+dispatcher. Maps an extended key code to: Home / End / Page Up / Page
+Down (via the already-named `Listbox_getNumLines`) / Up / Down (via
+the already-named `Listbox_deltaChange`) / Left / Right (switch
+listbox window, via the already-named `Windows_switchListboxWindow`).
+For any other character, gates on an unnamed helper, and if it passes
+and the character is printable/alphabetic, calls the already-named
+`Listbox_findLineStartingWith` — a type-ahead jump-to-item feature.
+Returns 1 if the keypress was consumed by the listbox, 0 otherwise
+(letting the caller process it as a normal character).
+
+Called from `get_mouse_input` and `prompt_for_filename`.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-fifth batch.
