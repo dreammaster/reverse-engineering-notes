@@ -78790,7 +78790,7 @@ word_300E1      dw 2Eh
 
 thunk_sub_B28A8 proc far                ; DATA XREF: seg084:04C4\u2193o
                 call    near ptr rtlink_thunk
-                jmp     sub_B28A8
+                jmp     Logic_heecheetownSpecial
 thunk_sub_B28A8 endp ; sp-analysis failed
 
 ; ---------------------------------------------------------------------------
@@ -84082,7 +84082,7 @@ thunk_sub_82DA2 endp ; sp-analysis failed
 
 
 thunk_sub_A60CE proc far                ; CODE XREF: sub_2EADB+40ACE\u2193P
-                                        ; sub_B28A8+21F\u2193P
+                                        ; Logic_heecheetownSpecial+21F\u2193P
                 call    near ptr rtlink_thunk
                 jmp     sub_A60CE
 thunk_sub_A60CE endp ; sp-analysis failed
@@ -84173,9 +84173,9 @@ thunk_sub_8D517 endp ; sp-analysis failed
 
 
 thunk_sub_B49DE proc far                ; CODE XREF: sub_705FE+AA\u2193P
-                                        ; sub_B28A8+207\u2193P ...
+                                        ; Logic_heecheetownSpecial+207\u2193P ...
                 call    near ptr rtlink_thunk
-                jmp     sub_B49DE
+                jmp     Logic_heecheetownSpecial_patronLeaves2
 thunk_sub_B49DE endp ; sp-analysis failed
 
 ; ---------------------------------------------------------------------------
@@ -84489,9 +84489,9 @@ thunk_Commset_show endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_B4DA7 proc far                ; CODE XREF: sub_B28A8+20C\u2193P
+thunk_sub_B4DA7 proc far                ; CODE XREF: Logic_heecheetownSpecial+20C\u2193P
                 call    near ptr rtlink_thunk
-                jmp     sub_B4DA7
+                jmp     Logic_heecheetownSpecial_patronLeaves3
 thunk_sub_B4DA7 endp ; sp-analysis failed
 
 ; ---------------------------------------------------------------------------
@@ -84500,11 +84500,11 @@ thunk_sub_B4DA7 endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-thunk_sub_B466E proc far                ; CODE XREF: sub_B28A8+202\u2193P
+thunk_sub_B466E proc far                ; CODE XREF: Logic_heecheetownSpecial+202\u2193P
                 call    near ptr rtlink_thunk
 
 loc_3140A:
-                jmp     sub_B466E
+                jmp     Logic_heecheetownSpecial_patronLeaves1
 thunk_sub_B466E endp ; sp-analysis failed
 
 ; ---------------------------------------------------------------------------
@@ -332105,7 +332105,7 @@ LogicStrings317 endp
 
 ; Attributes: bp-based frame
 
-sub_B28A8       proc far                ; CODE XREF: thunk_sub_B28A8+3\u2191J
+Logic_heecheetownSpecial proc far       ; CODE XREF: thunk_sub_B28A8+3\u2191J
 
 arg_0           = word ptr  6
 
@@ -332117,7 +332117,7 @@ arg_0           = word ptr  6
                 jmp     loc_B2E8F
 ; ---------------------------------------------------------------------------
 
-loc_B28B6:                              ; CODE XREF: sub_B28A8+9\u2191j
+loc_B28B6:                              ; CODE XREF: Logic_heecheetownSpecial+9\u2191j
                 mov     es, seg_D18B2
                 assume es:sg3EDC
                 mov     al, es:Parser_val20
@@ -332128,57 +332128,57 @@ loc_B28B6:                              ; CODE XREF: sub_B28A8+9\u2191j
                 jmp     loc_B2E67
 ; ---------------------------------------------------------------------------
 
-loc_B28CA:                              ; CODE XREF: sub_B28A8+1D\u2191j
+loc_B28CA:                              ; CODE XREF: Logic_heecheetownSpecial+1D\u2191j
                 cmp     ax, 12h
                 jnz     short loc_B28D2
                 jmp     loc_B2AD2
 ; ---------------------------------------------------------------------------
 
-loc_B28D2:                              ; CODE XREF: sub_B28A8+25\u2191j
+loc_B28D2:                              ; CODE XREF: Logic_heecheetownSpecial+25\u2191j
                 cmp     ax, 30h ; '0'
                 jnz     short loc_B28DA
                 jmp     loc_B29BF
 ; ---------------------------------------------------------------------------
 
-loc_B28DA:                              ; CODE XREF: sub_B28A8+2D\u2191j
+loc_B28DA:                              ; CODE XREF: Logic_heecheetownSpecial+2D\u2191j
                 cmp     ax, 36h ; '6'
                 jnz     short loc_B28E2
                 jmp     loc_B29BF
 ; ---------------------------------------------------------------------------
 
-loc_B28E2:                              ; CODE XREF: sub_B28A8+35\u2191j
+loc_B28E2:                              ; CODE XREF: Logic_heecheetownSpecial+35\u2191j
                 cmp     ax, 3Ah ; ':'
                 jz      short loc_B28EA
                 jmp     loc_B2E8F
 ; ---------------------------------------------------------------------------
 
-loc_B28EA:                              ; CODE XREF: sub_B28A8+3D\u2191j
+loc_B28EA:                              ; CODE XREF: Logic_heecheetownSpecial+3D\u2191j
                 mov     ax, 183Dh
 
-loc_B28ED:                              ; CODE XREF: sub_B28A8+5B\u2193j
-                                        ; sub_B28A8+10E\u2193j ...
+loc_B28ED:                              ; CODE XREF: Logic_heecheetownSpecial+5B\u2193j
+                                        ; Logic_heecheetownSpecial+10E\u2193j ...
                 mov     dx, 0F000h
                 push    dx
                 push    ax              ; msg
                 call    TextWindow_add
 
-loc_B28F7:                              ; CODE XREF: sub_B28A8+DB\u2193j
+loc_B28F7:                              ; CODE XREF: Logic_heecheetownSpecial+DB\u2193j
                 add     sp, 4
 
-loc_B28FA:                              ; CODE XREF: sub_B28A8+1DD\u2193j
-                                        ; sub_B28A8+227\u2193j ...
+loc_B28FA:                              ; CODE XREF: Logic_heecheetownSpecial+1DD\u2193j
+                                        ; Logic_heecheetownSpecial+227\u2193j ...
                 mov     ax, 1
                 jmp     loc_B2E91
 ; ---------------------------------------------------------------------------
 
-loc_B2900:                              ; CODE XREF: sub_B28A8+5C4\u2193j
-                                        ; sub_B28A8+5DC\u2193j
+loc_B2900:                              ; CODE XREF: Logic_heecheetownSpecial+5C4\u2193j
+                                        ; Logic_heecheetownSpecial+5DC\u2193j
                 mov     ax, 183Eh
                 jmp     short loc_B28ED
 ; ---------------------------------------------------------------------------
 
-loc_B2905:                              ; CODE XREF: sub_B28A8+1B\u2191j
-                                        ; sub_B28A8+5CC\u2193j
+loc_B2905:                              ; CODE XREF: Logic_heecheetownSpecial+1B\u2191j
+                                        ; Logic_heecheetownSpecial+5CC\u2193j
                 mov     ax, 13Ch
                 push    ax
                 mov     ax, 13Dh
@@ -332225,13 +332225,13 @@ loc_B2905:                              ; CODE XREF: sub_B28A8+1B\u2191j
                 push    ax
                 mov     ax, 1Ah
 
-loc_B297D:                              ; CODE XREF: sub_B28A8+5BC\u2193j
+loc_B297D:                              ; CODE XREF: Logic_heecheetownSpecial+5BC\u2193j
                 push    ax
                 call    Queue_add
                 jmp     loc_B28F7
 ; ---------------------------------------------------------------------------
 
-loc_B2986:                              ; CODE XREF: sub_B28A8+6F\u2191j
+loc_B2986:                              ; CODE XREF: Logic_heecheetownSpecial+6F\u2191j
                 mov     ax, 0D3h ; 'Ó'
                 push    ax
                 mov     ax, 13Dh
@@ -332243,7 +332243,7 @@ loc_B2986:                              ; CODE XREF: sub_B28A8+6F\u2191j
                 jmp     loc_B2E8F
 ; ---------------------------------------------------------------------------
 
-loc_B299D:                              ; CODE XREF: sub_B28A8+F0\u2191j
+loc_B299D:                              ; CODE XREF: Logic_heecheetownSpecial+F0\u2191j
                 sub     ax, ax
                 push    ax
                 mov     ax, 13Dh
@@ -332255,18 +332255,18 @@ loc_B299D:                              ; CODE XREF: sub_B28A8+F0\u2191j
                 jmp     loc_B2E91
 ; ---------------------------------------------------------------------------
 
-loc_B29B3:                              ; CODE XREF: sub_B28A8+5E4\u2193j
+loc_B29B3:                              ; CODE XREF: Logic_heecheetownSpecial+5E4\u2193j
                 mov     ax, 1840h
                 jmp     loc_B28ED
 ; ---------------------------------------------------------------------------
 
-loc_B29B9:                              ; CODE XREF: sub_B28A8+5D4\u2193j
+loc_B29B9:                              ; CODE XREF: Logic_heecheetownSpecial+5D4\u2193j
                 mov     ax, 1841h
                 jmp     loc_B28ED
 ; ---------------------------------------------------------------------------
 
-loc_B29BF:                              ; CODE XREF: sub_B28A8+2F\u2191j
-                                        ; sub_B28A8+37\u2191j
+loc_B29BF:                              ; CODE XREF: Logic_heecheetownSpecial+2F\u2191j
+                                        ; Logic_heecheetownSpecial+37\u2191j
                 mov     ax, 13Ch
                 push    ax
                 mov     ax, 13Dh
@@ -332289,7 +332289,7 @@ loc_B29BF:                              ; CODE XREF: sub_B28A8+2F\u2191j
                 jmp     short loc_B2A0E
 ; ---------------------------------------------------------------------------
 
-loc_B29F1:                              ; CODE XREF: sub_B28A8+129\u2191j
+loc_B29F1:                              ; CODE XREF: Logic_heecheetownSpecial+129\u2191j
                 mov     ax, 0D3h ; 'Ó'
                 push    ax
                 mov     ax, 13Dh
@@ -332302,10 +332302,10 @@ loc_B29F1:                              ; CODE XREF: sub_B28A8+129\u2191j
                 push    ax
                 call    Logics_autoTakeObject
 
-loc_B2A0E:                              ; CODE XREF: sub_B28A8+147\u2191j
+loc_B2A0E:                              ; CODE XREF: Logic_heecheetownSpecial+147\u2191j
                 add     sp, 2
 
-loc_B2A11:                              ; CODE XREF: sub_B28A8+15B\u2191j
+loc_B2A11:                              ; CODE XREF: Logic_heecheetownSpecial+15B\u2191j
                 mov     ax, 1842h
                 mov     dx, 0F000h
                 push    dx
@@ -332335,7 +332335,7 @@ loc_B2A11:                              ; CODE XREF: sub_B28A8+15B\u2191j
                 call    TextWindow_add
                 add     sp, 4
 
-loc_B2A5A:                              ; CODE XREF: sub_B28A8+1A0\u2191j
+loc_B2A5A:                              ; CODE XREF: Logic_heecheetownSpecial+1A0\u2191j
                 mov     ax, 1Eh
                 push    ax
                 mov     ax, 42h ; 'B'
@@ -332355,22 +332355,22 @@ loc_B2A5A:                              ; CODE XREF: sub_B28A8+1A0\u2191j
                 jmp     loc_B28FA
 ; ---------------------------------------------------------------------------
 
-loc_B2A88:                              ; CODE XREF: sub_B28A8+1CC\u2191j
+loc_B2A88:                              ; CODE XREF: Logic_heecheetownSpecial+1CC\u2191j
                 mov     ax, 1844h
                 jmp     loc_B28ED
 ; ---------------------------------------------------------------------------
 
-loc_B2A8E:                              ; CODE XREF: sub_B28A8+1D1\u2191j
+loc_B2A8E:                              ; CODE XREF: Logic_heecheetownSpecial+1D1\u2191j
                 mov     ax, 1845h
                 jmp     loc_B28ED
 ; ---------------------------------------------------------------------------
 
-loc_B2A94:                              ; CODE XREF: sub_B28A8+1D6\u2191j
+loc_B2A94:                              ; CODE XREF: Logic_heecheetownSpecial+1D6\u2191j
                 mov     ax, 1846h
                 jmp     loc_B28ED
 ; ---------------------------------------------------------------------------
 
-loc_B2A9A:                              ; CODE XREF: sub_B28A8+1DB\u2191j
+loc_B2A9A:                              ; CODE XREF: Logic_heecheetownSpecial+1DB\u2191j
                 mov     ax, 1847h
                 mov     dx, 0F000h
                 push    dx
@@ -332389,14 +332389,14 @@ loc_B2A9A:                              ; CODE XREF: sub_B28A8+1DB\u2191j
                 jmp     loc_B28FA
 ; ---------------------------------------------------------------------------
 
-loc_B2AD2:                              ; CODE XREF: sub_B28A8+27\u2191j
+loc_B2AD2:                              ; CODE XREF: Logic_heecheetownSpecial+27\u2191j
                 mov     es, seg_D18BA
                 cmp     es:_roomLogicNum, 0F4h ; 'ô'
                 jz      short loc_B2AE2
                 jmp     loc_B2E8F
 ; ---------------------------------------------------------------------------
 
-loc_B2AE2:                              ; CODE XREF: sub_B28A8+235\u2191j
+loc_B2AE2:                              ; CODE XREF: Logic_heecheetownSpecial+235\u2191j
                 mov     ax, 126h
                 push    ax
                 call    thunk_sub_67094
@@ -332407,7 +332407,7 @@ loc_B2AE2:                              ; CODE XREF: sub_B28A8+235\u2191j
                 jmp     loc_B28ED
 ; ---------------------------------------------------------------------------
 
-loc_B2AF8:                              ; CODE XREF: sub_B28A8+248\u2191j
+loc_B2AF8:                              ; CODE XREF: Logic_heecheetownSpecial+248\u2191j
                 mov     ax, 0D3h ; 'Ó'
                 push    ax
                 mov     ax, 126h
@@ -332421,7 +332421,7 @@ loc_B2AF8:                              ; CODE XREF: sub_B28A8+248\u2191j
                 call    Logics_autoTakeObject
                 add     sp, 2
 
-loc_B2B18:                              ; CODE XREF: sub_B28A8+262\u2191j
+loc_B2B18:                              ; CODE XREF: Logic_heecheetownSpecial+262\u2191j
                 mov     ax, 19h
                 push    ax
                 call    Queue_exists
@@ -332432,7 +332432,7 @@ loc_B2B18:                              ; CODE XREF: sub_B28A8+262\u2191j
                 jmp     loc_B28ED
 ; ---------------------------------------------------------------------------
 
-loc_B2B2E:                              ; CODE XREF: sub_B28A8+27E\u2191j
+loc_B2B2E:                              ; CODE XREF: Logic_heecheetownSpecial+27E\u2191j
                 mov     ax, 0F4h ; 'ô'
                 push    ax
                 mov     ax, 13Dh
@@ -332453,8 +332453,8 @@ loc_B2B2E:                              ; CODE XREF: sub_B28A8+27E\u2191j
                 jmp     loc_B28ED
 ; ---------------------------------------------------------------------------
 
-loc_B2B5C:                              ; CODE XREF: sub_B28A8+298\u2191j
-                                        ; sub_B28A8+2AC\u2191j
+loc_B2B5C:                              ; CODE XREF: Logic_heecheetownSpecial+298\u2191j
+                                        ; Logic_heecheetownSpecial+2AC\u2191j
                 mov     ax, 0F4h ; 'ô'
                 push    ax
                 mov     ax, 13Dh
@@ -332491,8 +332491,8 @@ loc_B2B5C:                              ; CODE XREF: sub_B28A8+298\u2191j
                 jmp     loc_B28ED
 ; ---------------------------------------------------------------------------
 
-loc_B2BB2:                              ; CODE XREF: sub_B28A8+2C6\u2191j
-                                        ; sub_B28A8+2DA\u2191j ...
+loc_B2BB2:                              ; CODE XREF: Logic_heecheetownSpecial+2C6\u2191j
+                                        ; Logic_heecheetownSpecial+2DA\u2191j ...
                 mov     ax, 0F4h ; 'ô'
                 push    ax
                 mov     ax, 13Ch
@@ -332513,8 +332513,8 @@ loc_B2BB2:                              ; CODE XREF: sub_B28A8+2C6\u2191j
                 jmp     loc_B28ED
 ; ---------------------------------------------------------------------------
 
-loc_B2BE0:                              ; CODE XREF: sub_B28A8+31C\u2191j
-                                        ; sub_B28A8+330\u2191j
+loc_B2BE0:                              ; CODE XREF: Logic_heecheetownSpecial+31C\u2191j
+                                        ; Logic_heecheetownSpecial+330\u2191j
                 mov     Persisted_val202, 0
                 mov     Persisted_val203, 0
                 mov     es, seg_D18B6
@@ -332524,13 +332524,13 @@ loc_B2BE0:                              ; CODE XREF: sub_B28A8+31C\u2191j
                 jmp     loc_B2C9A
 ; ---------------------------------------------------------------------------
 
-loc_B2BFA:                              ; CODE XREF: sub_B28A8+34D\u2191j
+loc_B2BFA:                              ; CODE XREF: Logic_heecheetownSpecial+34D\u2191j
                 cmp     es:vocab_list_0._altVocabId, 0D3h ; 'Ó'
                 jnz     short loc_B2C06
                 jmp     loc_B2C9A
 ; ---------------------------------------------------------------------------
 
-loc_B2C06:                              ; CODE XREF: sub_B28A8+359\u2191j
+loc_B2C06:                              ; CODE XREF: Logic_heecheetownSpecial+359\u2191j
                 cmp     es:vocab_list_0._altVocabId, 10Ah
                 jnz     short loc_B2C22
                 mov     ax, 184Dh
@@ -332542,14 +332542,14 @@ loc_B2C06:                              ; CODE XREF: sub_B28A8+359\u2191j
                 jmp     loc_B2CE4
 ; ---------------------------------------------------------------------------
 
-loc_B2C22:                              ; CODE XREF: sub_B28A8+365\u2191j
+loc_B2C22:                              ; CODE XREF: Logic_heecheetownSpecial+365\u2191j
                 mov     es, seg_D18B6
                 cmp     es:vocab_list_0._altVocabId, 100h
                 jz      short loc_B2C38
                 cmp     es:vocab_list_0._altVocabId, 10Bh
                 jnz     short loc_B2C75
 
-loc_B2C38:                              ; CODE XREF: sub_B28A8+385\u2191j
+loc_B2C38:                              ; CODE XREF: Logic_heecheetownSpecial+385\u2191j
                 mov     ax, 0F4h ; 'ô'
                 push    ax
                 mov     ax, 13Eh
@@ -332570,14 +332570,14 @@ loc_B2C38:                              ; CODE XREF: sub_B28A8+385\u2191j
                 jmp     short loc_B2C8B
 ; ---------------------------------------------------------------------------
 
-loc_B2C68:                              ; CODE XREF: sub_B28A8+3A2\u2191j
+loc_B2C68:                              ; CODE XREF: Logic_heecheetownSpecial+3A2\u2191j
                 mov     es, seg_D18B6
                 mov     ax, es:vocab_list_0._altVocabId
                 mov     Persisted_val203, ax
                 jmp     short loc_B2CE4
 ; ---------------------------------------------------------------------------
 
-loc_B2C75:                              ; CODE XREF: sub_B28A8+38E\u2191j
+loc_B2C75:                              ; CODE XREF: Logic_heecheetownSpecial+38E\u2191j
                 push    es:vocab_list_0._altVocabId ; logicNum
                 mov     ax, 23h ; '#'
                 push    ax              ; val1
@@ -332587,7 +332587,7 @@ loc_B2C75:                              ; CODE XREF: sub_B28A8+38E\u2191j
                 push    ax              ; char
                 mov     ax, 184Fh
 
-loc_B2C8B:                              ; CODE XREF: sub_B28A8+3BE\u2191j
+loc_B2C8B:                              ; CODE XREF: Logic_heecheetownSpecial+3BE\u2191j
                 mov     dx, 0F000h
                 push    dx
                 push    ax              ; msg
@@ -332596,8 +332596,8 @@ loc_B2C8B:                              ; CODE XREF: sub_B28A8+3BE\u2191j
                 jmp     short loc_B2CE4
 ; ---------------------------------------------------------------------------
 
-loc_B2C9A:                              ; CODE XREF: sub_B28A8+34F\u2191j
-                                        ; sub_B28A8+35B\u2191j
+loc_B2C9A:                              ; CODE XREF: Logic_heecheetownSpecial+34F\u2191j
+                                        ; Logic_heecheetownSpecial+35B\u2191j
                 mov     ax, 0F4h ; 'ô'
                 push    ax
                 mov     ax, 13Eh
@@ -332618,7 +332618,7 @@ loc_B2C9A:                              ; CODE XREF: sub_B28A8+34F\u2191j
                 jmp     short loc_B2CE4
 ; ---------------------------------------------------------------------------
 
-loc_B2CCA:                              ; CODE XREF: sub_B28A8+418\u2191j
+loc_B2CCA:                              ; CODE XREF: Logic_heecheetownSpecial+418\u2191j
                 mov     ax, 0F4h ; 'ô'
                 push    ax
                 mov     ax, 10Bh
@@ -332629,15 +332629,15 @@ loc_B2CCA:                              ; CODE XREF: sub_B28A8+418\u2191j
                 jz      short loc_B2CE4
                 mov     Persisted_val203, 10Bh
 
-loc_B2CE4:                              ; CODE XREF: sub_B28A8+377\u2191j
-                                        ; sub_B28A8+3CB\u2191j ...
+loc_B2CE4:                              ; CODE XREF: Logic_heecheetownSpecial+377\u2191j
+                                        ; Logic_heecheetownSpecial+3CB\u2191j ...
                 mov     es, seg_D18B6
                 cmp     es:vocab_list_0._altVocabId, 0
                 jz      short loc_B2CF9
                 cmp     es:vocab_list_0._altVocabId, 0D3h ; 'Ó'
                 jnz     short loc_B2D2F
 
-loc_B2CF9:                              ; CODE XREF: sub_B28A8+446\u2191j
+loc_B2CF9:                              ; CODE XREF: Logic_heecheetownSpecial+446\u2191j
                 mov     ax, 0F4h ; 'ô'
                 push    ax
                 mov     ax, 13Dh
@@ -332656,12 +332656,12 @@ loc_B2CF9:                              ; CODE XREF: sub_B28A8+446\u2191j
                 cmp     es:_playerCreditsLo, 14h
                 jb      short loc_B2D2F
 
-loc_B2D2A:                              ; CODE XREF: sub_B28A8+46A\u2191j
-                                        ; sub_B28A8+478\u2191j
+loc_B2D2A:                              ; CODE XREF: Logic_heecheetownSpecial+46A\u2191j
+                                        ; Logic_heecheetownSpecial+478\u2191j
                 mov     Persisted_val202, 1
 
-loc_B2D2F:                              ; CODE XREF: sub_B28A8+44F\u2191j
-                                        ; sub_B28A8+463\u2191j ...
+loc_B2D2F:                              ; CODE XREF: Logic_heecheetownSpecial+44F\u2191j
+                                        ; Logic_heecheetownSpecial+463\u2191j ...
                 cmp     Persisted_val202, 0
                 jnz     short loc_B2D40
                 cmp     Persisted_val203, 0
@@ -332669,8 +332669,8 @@ loc_B2D2F:                              ; CODE XREF: sub_B28A8+44F\u2191j
                 jmp     loc_B28FA
 ; ---------------------------------------------------------------------------
 
-loc_B2D40:                              ; CODE XREF: sub_B28A8+48C\u2191j
-                                        ; sub_B28A8+493\u2191j
+loc_B2D40:                              ; CODE XREF: Logic_heecheetownSpecial+48C\u2191j
+                                        ; Logic_heecheetownSpecial+493\u2191j
                 mov     ax, 7710h
                 push    ds
                 push    ax              ; filename
@@ -332689,13 +332689,13 @@ loc_B2D40:                              ; CODE XREF: sub_B28A8+48C\u2191j
                 cmp     es:_playerCreditsLo, 0Ah
                 jnb     short loc_B2D79
 
-loc_B2D73:                              ; CODE XREF: sub_B28A8+4C1\u2191j
+loc_B2D73:                              ; CODE XREF: Logic_heecheetownSpecial+4C1\u2191j
                 mov     ax, 1851h
                 jmp     loc_B28ED
 ; ---------------------------------------------------------------------------
 
-loc_B2D79:                              ; CODE XREF: sub_B28A8+4BF\u2191j
-                                        ; sub_B28A8+4C9\u2191j
+loc_B2D79:                              ; CODE XREF: Logic_heecheetownSpecial+4BF\u2191j
+                                        ; Logic_heecheetownSpecial+4C9\u2191j
                 mov     ax, 1852h
                 mov     dx, 0F000h
                 push    dx
@@ -332720,14 +332720,14 @@ loc_B2D79:                              ; CODE XREF: sub_B28A8+4BF\u2191j
                 call    TextWindow_add
                 add     sp, 4
 
-loc_B2DC1:                              ; CODE XREF: sub_B28A8+4E6\u2191j
-                                        ; sub_B28A8+50A\u2191j
+loc_B2DC1:                              ; CODE XREF: Logic_heecheetownSpecial+4E6\u2191j
+                                        ; Logic_heecheetownSpecial+50A\u2191j
                 cmp     Persisted_val203, 0
                 jnz     short loc_B2DCB
                 jmp     loc_B2E4D
 ; ---------------------------------------------------------------------------
 
-loc_B2DCB:                              ; CODE XREF: sub_B28A8+51E\u2191j
+loc_B2DCB:                              ; CODE XREF: Logic_heecheetownSpecial+51E\u2191j
                 mov     es, seg_D18C4
                 sub     es:_playerCreditsLo, 0Ah
                 sbb     es:_playerCreditsHi, 0
@@ -332748,7 +332748,7 @@ loc_B2DCB:                              ; CODE XREF: sub_B28A8+51E\u2191j
                 jmp     short loc_B2E44
 ; ---------------------------------------------------------------------------
 
-loc_B2E07:                              ; CODE XREF: sub_B28A8+539\u2191j
+loc_B2E07:                              ; CODE XREF: Logic_heecheetownSpecial+539\u2191j
                 cmp     Persisted_val203, 10Bh
                 jnz     short loc_B2E38
                 mov     ax, 772Fh
@@ -332767,21 +332767,21 @@ loc_B2E07:                              ; CODE XREF: sub_B28A8+539\u2191j
                 jmp     short loc_B2E4A
 ; ---------------------------------------------------------------------------
 
-loc_B2E38:                              ; CODE XREF: sub_B28A8+565\u2191j
+loc_B2E38:                              ; CODE XREF: Logic_heecheetownSpecial+565\u2191j
                 cmp     Persisted_val203, 10Ah
                 jnz     short loc_B2E4D
                 mov     ax, 773Eh
                 push    ds
 
-loc_B2E44:                              ; CODE XREF: sub_B28A8+55D\u2191j
+loc_B2E44:                              ; CODE XREF: Logic_heecheetownSpecial+55D\u2191j
                 push    ax              ; msg
                 call    TextWindow_add
 
-loc_B2E4A:                              ; CODE XREF: sub_B28A8+58E\u2191j
+loc_B2E4A:                              ; CODE XREF: Logic_heecheetownSpecial+58E\u2191j
                 add     sp, 4
 
-loc_B2E4D:                              ; CODE XREF: sub_B28A8+520\u2191j
-                                        ; sub_B28A8+554\u2191j ...
+loc_B2E4D:                              ; CODE XREF: Logic_heecheetownSpecial+520\u2191j
+                                        ; Logic_heecheetownSpecial+554\u2191j ...
                 mov     ax, 1855h
                 mov     dx, 0F000h
                 push    dx
@@ -332794,45 +332794,45 @@ loc_B2E4D:                              ; CODE XREF: sub_B28A8+520\u2191j
                 jmp     loc_B297D
 ; ---------------------------------------------------------------------------
 
-loc_B2E67:                              ; CODE XREF: sub_B28A8+1F\u2191j
+loc_B2E67:                              ; CODE XREF: Logic_heecheetownSpecial+1F\u2191j
                 cmp     ax, 79h ; 'y'
                 jnz     short loc_B2E6F
                 jmp     loc_B2900
 ; ---------------------------------------------------------------------------
 
-loc_B2E6F:                              ; CODE XREF: sub_B28A8+5C2\u2191j
+loc_B2E6F:                              ; CODE XREF: Logic_heecheetownSpecial+5C2\u2191j
                 cmp     ax, 85h ; '…'
                 jnz     short loc_B2E77
                 jmp     loc_B2905
 ; ---------------------------------------------------------------------------
 
-loc_B2E77:                              ; CODE XREF: sub_B28A8+5CA\u2191j
+loc_B2E77:                              ; CODE XREF: Logic_heecheetownSpecial+5CA\u2191j
                 cmp     ax, 96h ; '–'
                 jnz     short loc_B2E7F
                 jmp     loc_B29B9
 ; ---------------------------------------------------------------------------
 
-loc_B2E7F:                              ; CODE XREF: sub_B28A8+5D2\u2191j
+loc_B2E7F:                              ; CODE XREF: Logic_heecheetownSpecial+5D2\u2191j
                 cmp     ax, 0A3h ; '£'
                 jnz     short loc_B2E87
                 jmp     loc_B2900
 ; ---------------------------------------------------------------------------
 
-loc_B2E87:                              ; CODE XREF: sub_B28A8+5DA\u2191j
+loc_B2E87:                              ; CODE XREF: Logic_heecheetownSpecial+5DA\u2191j
                 cmp     ax, 0A4h ; '¤'
                 jnz     short loc_B2E8F
                 jmp     loc_B29B3
 ; ---------------------------------------------------------------------------
 
-loc_B2E8F:                              ; CODE XREF: sub_B28A8+B\u2191j
-                                        ; sub_B28A8+3F\u2191j ...
+loc_B2E8F:                              ; CODE XREF: Logic_heecheetownSpecial+B\u2191j
+                                        ; Logic_heecheetownSpecial+3F\u2191j ...
                 sub     ax, ax
 
-loc_B2E91:                              ; CODE XREF: sub_B28A8+55\u2191j
-                                        ; sub_B28A8+108\u2191j
+loc_B2E91:                              ; CODE XREF: Logic_heecheetownSpecial+55\u2191j
+                                        ; Logic_heecheetownSpecial+108\u2191j
                 pop     bp
                 retf
-sub_B28A8       endp
+Logic_heecheetownSpecial endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -336374,7 +336374,8 @@ locret_B466D:                           ; CODE XREF: sub_31047+83622\u2191j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_B466E       proc far                ; CODE XREF: thunk_sub_B466E:loc_3140A\u2191J
+Logic_heecheetownSpecial_patronLeaves1 proc far
+                                        ; CODE XREF: thunk_sub_B466E:loc_3140A\u2191J
                                         ; sub_B46BF+F4\u2193p ...
                 sub     ax, ax
                 push    ax              ; newId
@@ -336406,13 +336407,13 @@ sub_B466E       proc far                ; CODE XREF: thunk_sub_B466E:loc_3140A\u
                 call    j_Logics_updateHandler
                 add     sp, 6
 
-loc_B46B2:                              ; CODE XREF: sub_B466E+32\u2191j
+loc_B46B2:                              ; CODE XREF: Logic_heecheetownSpecial_patronLeaves1+32\u2191j
                 mov     ax, 1Ch
                 push    ax
                 call    far ptr Queue_remove
                 add     sp, 2
                 retf
-sub_B466E       endp
+Logic_heecheetownSpecial_patronLeaves1 endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -336527,7 +336528,7 @@ loc_B47AD:                              ; CODE XREF: sub_B46BF+19E\u2193j
 
 loc_B47B2:                              ; CODE XREF: sub_B46BF:loc_B47AD\u2191j
                 push    cs
-                call    near ptr sub_B466E
+                call    near ptr Logic_heecheetownSpecial_patronLeaves1
                 jmp     loc_B48E2
 ; ---------------------------------------------------------------------------
 
@@ -336774,7 +336775,7 @@ loc_B49B6:                              ; CODE XREF: sub_30FA7+3\u2191J
                 or      ax, ax
                 jz      short loc_B49DB
                 push    cs
-                call    near ptr sub_B466E
+                call    near ptr Logic_heecheetownSpecial_patronLeaves1
 
 loc_B49DB:                              ; CODE XREF: sub_30FA7+83A1A\u2191j
                                         ; sub_30FA7+83A2E\u2191j
@@ -336785,7 +336786,8 @@ loc_B49DB:                              ; CODE XREF: sub_30FA7+83A1A\u2191j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_B49DE       proc far                ; CODE XREF: thunk_sub_B49DE+3\u2191J
+Logic_heecheetownSpecial_patronLeaves2 proc far
+                                        ; CODE XREF: thunk_sub_B49DE+3\u2191J
                                         ; sub_B4B07+AF\u2193p ...
                 sub     ax, ax
                 push    ax              ; newId
@@ -336817,13 +336819,13 @@ sub_B49DE       proc far                ; CODE XREF: thunk_sub_B49DE+3\u2191J
                 call    j_Logics_updateHandler
                 add     sp, 6
 
-loc_B4A22:                              ; CODE XREF: sub_B49DE+32\u2191j
+loc_B4A22:                              ; CODE XREF: Logic_heecheetownSpecial_patronLeaves2+32\u2191j
                 mov     ax, 1Dh
                 push    ax
                 call    far ptr Queue_remove
                 add     sp, 2
                 retf
-sub_B49DE       endp
+Logic_heecheetownSpecial_patronLeaves2 endp
 
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR sub_31155
@@ -337005,7 +337007,7 @@ loc_B4BAC:                              ; CODE XREF: sub_B4B07+80\u2191j
 
 loc_B4BB5:                              ; CODE XREF: sub_B4B07:loc_B4B8C\u2191j
                 push    cs
-                call    near ptr sub_B49DE
+                call    near ptr Logic_heecheetownSpecial_patronLeaves2
                 jmp     loc_B4C56
 ; ---------------------------------------------------------------------------
 
@@ -337109,7 +337111,7 @@ loc_B4C6A:                              ; CODE XREF: sub_30F9D+3\u2191J
                 or      ax, ax
                 jz      short loc_B4C8F
                 push    cs
-                call    near ptr sub_B49DE
+                call    near ptr Logic_heecheetownSpecial_patronLeaves2
 
 loc_B4C8F:                              ; CODE XREF: sub_30F9D+83CD8\u2191j
                                         ; sub_30F9D+83CEC\u2191j
@@ -337243,7 +337245,8 @@ locret_B4DA6:                           ; CODE XREF: sub_3103D+83D25\u2191j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_B4DA7       proc far                ; CODE XREF: thunk_sub_B4DA7+3\u2191J
+Logic_heecheetownSpecial_patronLeaves3 proc far
+                                        ; CODE XREF: thunk_sub_B4DA7+3\u2191J
                                         ; sub_B4DF8+1A8\u2193p ...
                 sub     ax, ax
                 push    ax              ; newId
@@ -337275,13 +337278,13 @@ sub_B4DA7       proc far                ; CODE XREF: thunk_sub_B4DA7+3\u2191J
                 call    j_Logics_updateHandler
                 add     sp, 6
 
-loc_B4DEB:                              ; CODE XREF: sub_B4DA7+32\u2191j
+loc_B4DEB:                              ; CODE XREF: Logic_heecheetownSpecial_patronLeaves3+32\u2191j
                 mov     ax, 1Eh
                 push    ax
                 call    far ptr Queue_remove
                 add     sp, 2
                 retf
-sub_B4DA7       endp
+Logic_heecheetownSpecial_patronLeaves3 endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -337473,7 +337476,7 @@ loc_B4F2A:                              ; CODE XREF: sub_B4DF8+8B\u2191j
 
 loc_B4F9F:                              ; CODE XREF: sub_B4DF8:loc_B4E74\u2191j
                 push    cs
-                call    near ptr sub_B4DA7
+                call    near ptr Logic_heecheetownSpecial_patronLeaves3
 
 loc_B4FA3:                              ; CODE XREF: sub_B4DF8+70\u2191j
                                         ; sub_B4DF8+79\u2191j ...
@@ -337508,7 +337511,7 @@ loc_B4FB7:                              ; CODE XREF: sub_30F93+3\u2191J
                 or      ax, ax
                 jz      short loc_B4FDC
                 push    cs
-                call    near ptr sub_B4DA7
+                call    near ptr Logic_heecheetownSpecial_patronLeaves3
 
 loc_B4FDC:                              ; CODE XREF: sub_30F93+8402F\u2191j
                                         ; sub_30F93+84043\u2191j
@@ -395461,9 +395464,9 @@ seg_D18BA       dw seg sg4d43           ; DATA XREF: sub_B1730+3E3\u2191r
 seg_D18BC       dw seg sg4d43           ; DATA XREF: sub_B1730+62C\u2191r
 seg_D18BE       dw seg sg4d43           ; DATA XREF: sub_B2110+C2\u2191r
 seg_D18C0       dw seg sg3EDC           ; DATA XREF: sub_B22CA+2E\u2191r
-seg_D18C2       dw seg sg4d43           ; DATA XREF: sub_B28A8+211\u2191r
-seg_D18C4       dw seg sg4d43           ; DATA XREF: sub_B28A8+46C\u2191r
-                                        ; sub_B28A8+4B5\u2191r ...
+seg_D18C2       dw seg sg4d43           ; DATA XREF: Logic_heecheetownSpecial+211\u2191r
+seg_D18C4       dw seg sg4d43           ; DATA XREF: Logic_heecheetownSpecial+46C\u2191r
+                                        ; Logic_heecheetownSpecial+4B5\u2191r ...
 seg_D18C6       dw seg sg3EDC           ; DATA XREF: sub_B3850:loc_B3883\u2191r
                                         ; sub_B3850:loc_B3AA0\u2191r ...
 seg_D18C8       dw seg sg3EDC           ; DATA XREF: sub_B3850+4A\u2191r

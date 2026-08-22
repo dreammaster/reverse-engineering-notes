@@ -1018,6 +1018,13 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       corrected: `_opl2MasterVolume` unexpectedly scales a pitch delta
       here, not just amplitude elsewhere. Full writeup in
       [overview.md](overview.md#opl2_setchannelfrequencyopl2_updatechannelfrequency-named).
+- [x] Named `sub_B28A8`/`sub_B466E`/`sub_B49DE`/`sub_B4DA7` →
+      `Logic_heecheetownSpecial` and its 3
+      `Logic_heecheetownSpecial_patronLeavesN` helpers — a hidden
+      get-drunk minigame (a drink served by a robot bartender, with an
+      escalating drunkenness countdown ending in the player passing
+      out), confirmed via its own `GATESTR.DAT` messages. Full writeup
+      in [overview.md](overview.md#logic_heecheetownspecial-and-its-patron-departure-trio-named--a-hidden-get-drunk-minigame).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

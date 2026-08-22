@@ -4150,3 +4150,72 @@ step, not a volume setter as its position in the ranked list (right
 next to the OPL2 volume-register cluster) might have suggested.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-thirty-eighth batch.
+
+### `Logic_heecheetownSpecial` and its patron-departure trio named — a hidden get-drunk minigame
+
+Found by following up `sub_B466E` (3 callers in the ranked list), which
+turned out to lead somewhere much more interesting than its own
+structure suggested. Its own shape — a couple of hardcoded-logicNum
+`j_Logics_updateHandler(logicNum, 0, 0)` detach calls, one conditional
+on `Logics_IsPrehandler1`, then a `Queue_remove` — didn't say much on
+its own, but its actual caller (found via direct xref, not the ranked
+list, since it's reached through 3 near-identical siblings called
+together) turned out to be a single, fully-traceable object logic
+handler with its own `GATESTR.DAT` messages.
+
+**`Logic_heecheetownSpecial`** (was `sub_B28A8`) is the per-object
+logic handler for logic ID `0x13D` (317) — reached via its own thunk
+from a data-driven object-dispatch table entry, not an ordinary code
+xref, the same shape as object-specific handlers elsewhere in this
+codebase. Decoding its own message references nailed the whole scene
+down conclusively: this object is a drink called the **"Heecheetown
+Special,"** served by a robot bartender at one of the game's bars.
+
+- **EXAMINE** (verb `0x3A`) prints *"The glass contains a locally
+  brewed concoction that is known as a 'Heecheetown Special.' It looks
+  lethal."*
+- Considering throwing it away: *"You think about the mess that you
+  would make and decide against it."*
+- Taking it from the bartender walks through a small vignette — *"The
+  robot bartender emits a happy 'cheep' as you take the drink,"* *"You
+  put your finger in the drink. It's very wet,"* *"The distinctive
+  reek of alcohol is almost overpowering"* — via `Logics_autoTakeObject`.
+- **Drinking it** (verbs `0x30`/`0x36`) prints the full "gulp it down"
+  description (*"Your eyes bulge out, the little hairs on your neck
+  stand up, and your stomach is coated with a wave of cold fire..."*),
+  detaches the glass's own handler, and — if logic `0x100` (confirmed
+  as the NPC **Thom**, checked via
+  `Logics_prehandlerChainReaches(0x100, _roomLogicNum)`, i.e. "is Thom
+  in the current room") — prints Thom's own approving line: *"Thom
+  grins at you. 'Excellent drink, hey?'"*
+
+Then it starts an intoxication countdown (`Queue_add`), and on each
+subsequent call increments `Persisted_val209`, printing escalating
+drunkenness symptoms straight out of `GATESTR.DAT`: *"You feel a
+little woozy"* → *"You are having trouble concentrating"* → *"The room
+seems to be spinning, and you are having trouble remaining vertical"*
+→ *"You decide to lay on the floor and take a nap."* At that final
+stage — the player passing out drunk — it calls the three
+`Logic_heecheetownSpecial_patronLeavesN` helpers, sets
+`Persisted_val216 = 4`, and calls `thunk_sub_A60CE(0)`; `sub_A60CE` is
+one of the already-named `Logics_checkMoveRestriction`'s own callers,
+consistent with installing a "passed out, can't move" restriction on
+the player. A genuine hidden get-drunk minigame.
+
+**`Logic_heecheetownSpecial_patronLeaves1`/`2`/`3`** (were `sub_B466E`/
+`sub_B49DE`/`sub_B4DA7`) are three near-identical helpers fired
+together at that final stage. Each unconditionally detaches one
+specific patron logic (`0x100` confirmed as Thom; `0x10B`/`0x10A` for
+the other two, presumably other bar patrons by parallel structure, not
+independently confirmed) and a shared logic `0x137` from their handler
+chains; each conditionally also detaches logic `0x13E` if its
+prehandler chain currently reaches that patron (i.e. `0x13E` happens
+to be attached to/carried by them at the time); each finishes by
+cancelling that patron's own queued per-turn effect via `Queue_remove`
+(`0x1C`/`0x1D`/`0x1E` respectively). Read together: the other patrons
+react to the player passing out by leaving/dispersing, and whatever
+turn-based behavior they had running stops. `0x137`/`0x13E` and the
+exact identity of `0x10A`/`0x10B` weren't independently confirmed
+beyond this structural role.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-thirty-ninth batch.

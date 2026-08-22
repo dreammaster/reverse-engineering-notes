@@ -3105,6 +3105,66 @@ RENAMES = [
      "pending note/frequency settings to OPL2 hardware' step, not a "
      "volume setter as its neighborhood in the ranked list might "
      "suggest."),
+
+    (0xB28A8, "Logic_heecheetownSpecial",
+     "sub_B28A8(actionType=6): a per-object logic handler, reached via "
+     "its own thunk from a DATA-driven object-dispatch table entry (not "
+     "a code xref), for logic ID 0x13D (317) -- confirmed by decoding "
+     "its own GATESTR.DAT messages -- a drink called the 'Heecheetown "
+     "Special' served by a robot bartender at a bar. Only handles "
+     "actionType==6 (falls through to a shared default otherwise), then "
+     "dispatches on the already-named Parser_val20 (current verb): "
+     "EXAMINE (0x3A) prints 'The glass contains a locally brewed "
+     "concoction ... It looks lethal.'; a couple of verbs (0x30/0x36) "
+     "auto-take the glass via Logics_autoTakeObject, print 'You gulp "
+     "down your Heecheetown Special...your head spinning', detach the "
+     "glass's handler, and -- if logic 0x100 (confirmed as the NPC "
+     "Thom, checked via Logics_prehandlerChainReaches(0x100, "
+     "_roomLogicNum), i.e. is Thom in the current room) -- print "
+     "Thom's own approving line ('Excellent drink, hey?'). Then starts "
+     "an intoxication countdown via Queue_add and increments the "
+     "already-referenced Persisted_val209 each subsequent call, "
+     "printing escalating drunkenness messages ('a little woozy' -> "
+     "'trouble concentrating' -> 'the room seems to be spinning' -> "
+     "'you decide to lay on the floor and take a nap'). At the final "
+     "stage it calls the three just-named "
+     "Logic_heecheetownSpecial_patronLeaves1/2/3 helpers, sets "
+     "Persisted_val216=4, and calls thunk_sub_A60CE(0) (sub_A60CE is "
+     "one of Logics_checkMoveRestriction's own callers -- presumably "
+     "installing a 'passed out, can't move' restriction). A hidden "
+     "get-drunk minigame at one of the game's bars."),
+
+    (0xB466E, "Logic_heecheetownSpecial_patronLeaves1",
+     "sub_B466E(): one of three near-identical helpers "
+     "Logic_heecheetownSpecial calls together when the player passes "
+     "out drunk. Unconditionally detaches logic 0x100 (confirmed as "
+     "Thom) and logic 0x137 from their handler chains (via the "
+     "already-named j_Logics_updateHandler(logicNum, 0, 0)); if logic "
+     "0x13E's prehandler chain currently reaches 0x100 (i.e. 0x13E is "
+     "presently attached to/carried by Thom), detaches 0x13E too. "
+     "Finishes by calling the already-named Queue_remove(0x1C) -- "
+     "cancelling Thom's own per-turn queued effect. Read together with "
+     "its two siblings, this looks like 'the patron leaves (or reacts "
+     "and disperses), dropping/losing track of whatever they were "
+     "holding, and their scheduled turn-based behavior stops' -- 0x137/"
+     "0x13E/0x1C not independently identified beyond this structural "
+     "role."),
+
+    (0xB49DE, "Logic_heecheetownSpecial_patronLeaves2",
+     "sub_B49DE(): sibling of the just-named "
+     "Logic_heecheetownSpecial_patronLeaves1, identical in shape: "
+     "detaches logic 0x10B and the same shared logic 0x137, "
+     "conditionally detaches 0x13E if attached to 0x10B, then calls "
+     "Queue_remove(0x1D). 0x10B presumably another bar patron/NPC, by "
+     "parallel structure with the Thom (0x100) case in the first "
+     "sibling, though not independently confirmed."),
+
+    (0xB4DA7, "Logic_heecheetownSpecial_patronLeaves3",
+     "sub_B4DA7(): third sibling, same shape again: detaches logic "
+     "0x10A and 0x137, conditionally detaches 0x13E if attached to "
+     "0x10A, then calls Queue_remove(0x1E). Completes the trio "
+     "Logic_heecheetownSpecial fires when the drunkenness countdown "
+     "maxes out and the player passes out."),
 ]
 
 
