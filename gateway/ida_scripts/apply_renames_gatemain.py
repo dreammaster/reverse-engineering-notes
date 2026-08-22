@@ -2472,6 +2472,29 @@ RENAMES = [
      "Listbox_selectedIndex[] at that listbox index -- the currently-"
      "selected item index for the listbox in the given window. Called "
      "twice from the already-named Listbox_mouseButtonDown."),
+
+    (0x1CC15, "Pit_setReloadCount",
+     "sub_1CC15(ax=count): programs the 8253/8254 PIT's channel 0 "
+     "(the system timer, normally IRQ0) via out 0x43 with command "
+     "byte 0x36 (channel 0, mode 3 square wave, 16-bit binary, LSB "
+     "then MSB access), then writes ax's low byte then high byte to "
+     "port 0x40 -- the standard sequence to reprogram the system "
+     "timer to a custom tick rate. Called from sub_1CC34 (renamed "
+     "below) and sub_1CC58 -- the low-level hardware step of setting "
+     "a custom sound/timing tick rate."),
+
+    (0x1CC34, "Sound_setTimerRate",
+     "sub_1CC34(rate): stores rate into a code-segment-resident word "
+     "(cs:word_1CC04, consistent with being read by a timer ISR "
+     "living in the same segment), sets a 'stopped' flag (cs:"
+     "word_1CC02) to 1 if rate<1 or 0 otherwise (via the carry-to-"
+     "boolean idiom), then calls the just-named Pit_setReloadCount(rate) "
+     "to actually reprogram the hardware timer. Runs with interrupts "
+     "disabled around the whole sequence. Called from the already-"
+     "named Opl2_stopTrack (with rate=0, resetting/stopping the "
+     "timer) and from sub_1E329 (presumably setting a real tempo-"
+     "derived rate) -- the shared master timer-rate control for the "
+     "sound engine's custom tick clock."),
 ]
 
 

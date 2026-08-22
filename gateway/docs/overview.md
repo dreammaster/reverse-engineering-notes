@@ -3402,3 +3402,28 @@ listbox in the given window. Called twice from the already-named
 `Listbox_mouseButtonDown`.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-first batch.
+
+### `Pit_setReloadCount` and `Sound_setTimerRate` named
+
+A tightly-coupled pair traced together. `Pit_setReloadCount`
+(`sub_1CC15`) programs the 8253/8254 PIT's channel 0 (the system
+timer, normally driving IRQ0) via `out 0x43` with command byte `0x36`
+(channel 0, mode 3 square wave, 16-bit binary, LSB-then-MSB access),
+then writes the given count's low byte then high byte to port `0x40`
+— the standard sequence to reprogram the system timer to a custom
+tick rate.
+
+`Sound_setTimerRate` (`sub_1CC34`) is the higher-level caller: it
+stores the given rate into a code-segment-resident word (consistent
+with being read back by a timer ISR living in the same segment), sets
+a "stopped" flag if the rate is less than 1, then calls
+`Pit_setReloadCount` to actually reprogram the hardware. It runs with
+interrupts disabled around the whole sequence. Called from the
+already-named `Opl2_stopTrack` (with rate 0, resetting/stopping the
+timer) and from `sub_1E329` (unnamed, presumably setting a real tempo-
+derived rate) — the shared master timer-rate control underlying the
+sound engine's custom tick clock. `Pit_setReloadCount` itself has a
+second, direct caller (`sub_1CC58`, unnamed) that bypasses
+`Sound_setTimerRate`'s bookkeeping.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-second batch.

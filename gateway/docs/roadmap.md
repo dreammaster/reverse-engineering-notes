@@ -858,6 +858,11 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       — a getter for a window's currently-selected listbox item,
       called from `Listbox_mouseButtonDown`. Full writeup in
       [overview.md](overview.md#listbox_getselectedindexforwindow-named).
+- [x] Named `sub_1CC15`/`sub_1CC34` → `Pit_setReloadCount`/
+      `Sound_setTimerRate` — the low-level 8253/8254 PIT reprogramming
+      step and its higher-level caller, the shared master timer-rate
+      control for the sound engine's tick clock. Full writeup in
+      [overview.md](overview.md#pit_setreloadcount-and-sound_settimerrate-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

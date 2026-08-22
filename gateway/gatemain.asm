@@ -29797,9 +29797,9 @@ seg020          segment byte public 'CODE' use16
                 assume cs:seg020
                 ;org 2
                 assume es:nothing, ss:nothing, ds:sg4d43, fs:nothing, gs:nothing
-word_1CC02      dw 0                    ; DATA XREF: sub_1CC34+F\u2193w
-                                        ; sub_1CC34+16\u2193w ...
-word_1CC04      dw 0                    ; DATA XREF: sub_1CC34+8\u2193w
+word_1CC02      dw 0                    ; DATA XREF: Sound_setTimerRate+F\u2193w
+                                        ; Sound_setTimerRate+16\u2193w ...
+word_1CC04      dw 0                    ; DATA XREF: Sound_setTimerRate+8\u2193w
                                         ; sub_1CC58+10\u2193w ...
 word_1CC06      dw 0                    ; DATA XREF: sub_1CC58+14\u2193w
                                         ; seg020:00C9\u2193w
@@ -29817,7 +29817,7 @@ byte_1CC14      db 0                    ; DATA XREF: sub_1CC58+18\u2193w
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1CC15       proc far                ; CODE XREF: sub_1CC34+1C\u2193P
+Pit_setReloadCount proc far             ; CODE XREF: Sound_setTimerRate+1C\u2193P
                                         ; sub_1CC58+4\u2193P ...
                 push    ax
                 mov     al, 36h ; '6'
@@ -29830,7 +29830,7 @@ sub_1CC15       proc far                ; CODE XREF: sub_1CC34+1C\u2193P
 loc_1CC21:
                 xchg    ah, al
                 retf
-sub_1CC15       endp
+Pit_setReloadCount endp
 
 ; ---------------------------------------------------------------------------
                 push    bp
@@ -29854,7 +29854,7 @@ loc_1CC32:                              ; CODE XREF: seg020:002E\u2191j
 
 ; Attributes: bp-based frame
 
-sub_1CC34       proc far                ; CODE XREF: sub_1E329+7A\u2193P
+Sound_setTimerRate proc far             ; CODE XREF: sub_1E329+7A\u2193P
                                         ; Opl2_stopTrack+F\u2193P
 
 arg_0           = word ptr  6
@@ -29868,11 +29868,11 @@ arg_0           = word ptr  6
                 cmp     ax, 1
                 mov     cs:word_1CC02, 0
                 adc     cs:word_1CC02, 0
-                call    sub_1CC15
+                call    Pit_setReloadCount
                 popf
                 pop     bp
                 retf
-sub_1CC34       endp
+Sound_setTimerRate endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -29884,7 +29884,7 @@ sub_1CC58       proc far                ; CODE XREF: sub_1E124:loc_1E12B\u2193P
 
 loc_1CC5A:
                 xor     ax, ax
-                call    sub_1CC15
+                call    Pit_setReloadCount
 
 loc_1CC61:
                 mov     cs:word_1CC02, 1
@@ -29927,7 +29927,7 @@ sub_1CC58       endp
 
 sub_1CCA0       proc far                ; CODE XREF: sub_1E136+7\u2193P
                 xor     ax, ax
-                call    sub_1CC15
+                call    Pit_setReloadCount
                 push    ds
                 mov     ah, 25h ; '%'
                 mov     al, 8
@@ -33709,7 +33709,7 @@ sub_1E329       proc far                ; CODE XREF: seg098:1314\u2193P
 
 loc_1E3A0:                              ; CODE XREF: seg026:0203\u2191j
                 push    word ptr [bp-2]
-                call    sub_1CC34
+                call    Sound_setTimerRate
                 add     sp, 2
                 cmp     word ptr [bp-2], 0
                 jz      short loc_1E3C0
@@ -34537,7 +34537,7 @@ var_2           = word ptr -2
                 mov     byte_D20A2, 0
                 sub     ax, ax
                 push    ax
-                call    sub_1CC34
+                call    Sound_setTimerRate
                 add     sp, 2
                 mov     es, seg126_15
                 assume es:sg3EDC
