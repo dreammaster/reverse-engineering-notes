@@ -18526,6 +18526,7 @@ static Bytes_3(void) {
 	create_insn	(x=0X1F67A);
 	op_hex		(x,	1);
 	create_insn	(0X1F692);
+	set_name	(0X1F692,	"Midi_serviceTick");
 	create_insn	(x=0X1F695);
 	op_hex		(x,	1);
 	create_insn	(0X1F6A8);

@@ -2846,6 +2846,25 @@ RENAMES = [
      "pointer and the two header words read from the MUS file) and "
      "from sub_1F7D6 -- the MIDI backend's 'parse/validate the loaded "
      "track data and prepare it for playback' step."),
+
+    (0x1F692, "Midi_serviceTick",
+     "sub_1F692(): the MIDI backend's per-tick service routine. If "
+     "the already-named Midi_stopTrack's busy-loop flag (word_C8532) "
+     "is set, delegates straight to the already-named "
+     "Midi_stopTrackStep and returns. Otherwise, if a 'playing' flag "
+     "(word_C852E) is clear, no-ops. Otherwise services each active "
+     "track (calling sub_1F1DE, unnamed, once per track index up to "
+     "word_D20F6), then calls sub_1DDA4 (unnamed); if that returns 0, "
+     "returns. If a further flag (word_C857E) is set, reconfigures "
+     "the MPU-401's active-track set: sends command 5 (spinning until "
+     "it succeeds) and command 0xEC with a computed track-count "
+     "bitmask, swaps a pair of per-track arrays, then sends further "
+     "MPU-401 commands (0xB8, ...; the rest of this ~320-byte function "
+     "wasn't traced instruction-by-instruction). Called (up to 256 "
+     "times per call) from the already-named Sound_loadAndStartTrack "
+     "to prime the MIDI event queue, and repeatedly from sub_201C0 -- "
+     "consistent with this being the regular per-frame/per-tick MIDI "
+     "service routine, not a one-shot setup step."),
 ]
 
 

@@ -32739,7 +32739,7 @@ Sound_takeTrackFlag endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1DDA4       proc far                ; CODE XREF: sub_1F692+33\u2193P
+sub_1DDA4       proc far                ; CODE XREF: Midi_serviceTick+33\u2193P
                 cli
                 mov     ax, word_C848B
                 mov     word_C848B, 0
@@ -35619,7 +35619,7 @@ sub_1F034       endp
 
 ; Attributes: bp-based frame
 
-sub_1F1DE       proc far                ; CODE XREF: sub_1F692+26\u2193p
+sub_1F1DE       proc far                ; CODE XREF: Midi_serviceTick+26\u2193p
 
 arg_0           = word ptr  6
 
@@ -36204,7 +36204,7 @@ Midi_prepareTrackData endp
 
 ; Attributes: bp-based frame
 
-sub_1F692       proc far                ; CODE XREF: Sound_loadAndStartTrack:loc_2013E\u2193P
+Midi_serviceTick proc far               ; CODE XREF: Sound_loadAndStartTrack:loc_2013E\u2193P
                                         ; sub_201C0+26\u2193P
 
 var_A           = word ptr -0Ah
@@ -36223,25 +36223,25 @@ var_4           = word ptr -4
                 jmp     loc_1F7A8
 ; ---------------------------------------------------------------------------
 
-loc_1F6A8:                              ; CODE XREF: sub_1F692+D\u2191j
+loc_1F6A8:                              ; CODE XREF: Midi_serviceTick+D\u2191j
                 cmp     word_C852E, 0
                 jnz     short loc_1F6B2
                 jmp     loc_1F7A8
 ; ---------------------------------------------------------------------------
 
-loc_1F6B2:                              ; CODE XREF: sub_1F692+1B\u2191j
+loc_1F6B2:                              ; CODE XREF: Midi_serviceTick+1B\u2191j
                 sub     si, si
                 jmp     short loc_1F6BF
 ; ---------------------------------------------------------------------------
 
-loc_1F6B6:                              ; CODE XREF: sub_1F692+31\u2193j
+loc_1F6B6:                              ; CODE XREF: Midi_serviceTick+31\u2193j
                 push    si
                 push    cs
                 call    near ptr sub_1F1DE
                 add     sp, 2
                 inc     si
 
-loc_1F6BF:                              ; CODE XREF: sub_1F692+22\u2191j
+loc_1F6BF:                              ; CODE XREF: Midi_serviceTick+22\u2191j
                 cmp     word_D20F6, si
                 jg      short loc_1F6B6
                 call    sub_1DDA4
@@ -36250,13 +36250,13 @@ loc_1F6BF:                              ; CODE XREF: sub_1F692+22\u2191j
                 jmp     loc_1F7A8
 ; ---------------------------------------------------------------------------
 
-loc_1F6D1:                              ; CODE XREF: sub_1F692+3A\u2191j
+loc_1F6D1:                              ; CODE XREF: Midi_serviceTick+3A\u2191j
                 mov     es, dseg_29
                 assume es:sg4d43
                 cmp     es:word_C857E, 0
                 jz      short loc_1F75C
 
-loc_1F6DD:                              ; CODE XREF: sub_1F692+59\u2193j
+loc_1F6DD:                              ; CODE XREF: Midi_serviceTick+59\u2193j
                 mov     ax, 5
                 push    ax
                 call    Midi_sendCommand
@@ -36297,7 +36297,7 @@ loc_1F6DD:                              ; CODE XREF: sub_1F692+59\u2193j
                 pop     si
                 add     si, word_D20F6
 
-loc_1F741:                              ; CODE XREF: sub_1F692+82\u2191j
+loc_1F741:                              ; CODE XREF: Midi_serviceTick+82\u2191j
                 mov     ax, 0B8h ; '¸'
                 push    ax
                 call    Midi_sendCommand
@@ -36310,7 +36310,7 @@ loc_1F741:                              ; CODE XREF: sub_1F692+82\u2191j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1F75C:                              ; CODE XREF: sub_1F692+49\u2191j
+loc_1F75C:                              ; CODE XREF: Midi_serviceTick+49\u2191j
                 mov     es, dseg_41
                 cmp     es:word_C856E, 0
                 jz      short loc_1F76E
@@ -36319,8 +36319,8 @@ loc_1F75C:                              ; CODE XREF: sub_1F692+49\u2191j
                 jmp     short loc_1F7A8
 ; ---------------------------------------------------------------------------
 
-loc_1F76E:                              ; CODE XREF: sub_1F692+D4\u2191j
-                                        ; sub_1F692+EA\u2193j
+loc_1F76E:                              ; CODE XREF: Midi_serviceTick+D4\u2191j
+                                        ; Midi_serviceTick+EA\u2193j
                 mov     ax, 5
                 push    ax
                 call    Midi_sendCommand
@@ -36339,12 +36339,12 @@ loc_1F76E:                              ; CODE XREF: sub_1F692+D4\u2191j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1F7A4:                              ; CODE XREF: sub_1F692+FC\u2191j
+loc_1F7A4:                              ; CODE XREF: Midi_serviceTick+FC\u2191j
                 push    cs
                 call    near ptr Midi_stopTrack
 
-loc_1F7A8:                              ; CODE XREF: sub_1F692+13\u2191j
-                                        ; sub_1F692+1D\u2191j ...
+loc_1F7A8:                              ; CODE XREF: Midi_serviceTick+13\u2191j
+                                        ; Midi_serviceTick+1D\u2191j ...
                 cmp     word_C8530, 0
                 jnz     short loc_1F7C8
                 cmp     word_C8532, 0
@@ -36355,8 +36355,8 @@ loc_1F7A8:                              ; CODE XREF: sub_1F692+13\u2191j
                 jz      short loc_1F7C8
                 mov     word_C852E, 0
 
-loc_1F7C8:                              ; CODE XREF: sub_1F692+11B\u2191j
-                                        ; sub_1F692+122\u2191j ...
+loc_1F7C8:                              ; CODE XREF: Midi_serviceTick+11B\u2191j
+                                        ; Midi_serviceTick+122\u2191j ...
                 mov     ax, word_C8530
                 or      ax, word_C8532
                 pop     si
@@ -36364,7 +36364,7 @@ loc_1F7C8:                              ; CODE XREF: sub_1F692+11B\u2191j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_1F692       endp
+Midi_serviceTick endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -36373,7 +36373,7 @@ sub_1F692       endp
 
 ; Attributes: bp-based frame
 
-sub_1F7D6       proc far                ; CODE XREF: sub_1F692+D7\u2191p
+sub_1F7D6       proc far                ; CODE XREF: Midi_serviceTick+D7\u2191p
 
 var_2           = word ptr -2
 
@@ -36496,7 +36496,7 @@ sub_1F7D6       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-Midi_stopTrack  proc far                ; CODE XREF: sub_1F692+113\u2191p
+Midi_stopTrack  proc far                ; CODE XREF: Midi_serviceTick+113\u2191p
                                         ; Sound_stopTrack:loc_202B2\u2193P
                 mov     es, seg126_21
                 assume es:sg3EDC
@@ -36524,7 +36524,7 @@ Midi_stopTrack  endp
 
 ; Attributes: bp-based frame
 
-Midi_stopTrackStep proc far             ; CODE XREF: sub_1F692+10\u2191p
+Midi_stopTrackStep proc far             ; CODE XREF: Midi_serviceTick+10\u2191p
                                         ; Midi_stopTrack+12\u2191p
                 push    bp
                 mov     bp, sp
@@ -37658,7 +37658,7 @@ loc_20119:                              ; CODE XREF: Sound_loadAndStartTrack+1AC
                 sub     si, si
 
 loc_2013E:                              ; CODE XREF: Sound_loadAndStartTrack+2F0\u2193j
-                call    sub_1F692
+                call    Midi_serviceTick
                 or      ax, ax
                 jz      short loc_2014E
                 inc     si
@@ -37744,7 +37744,7 @@ loc_201D4:                              ; CODE XREF: sub_201C0+B\u2191j
                 jz      short loc_20215
                 test    byte ptr word_C8582, 4
                 jz      short loc_201F0
-                call    sub_1F692
+                call    Midi_serviceTick
 
 loc_201EB:                              ; CODE XREF: sub_201C0+3C\u2193j
                 mov     [bp+var_2], ax
@@ -383770,11 +383770,11 @@ word_C851E      dw 1                    ; DATA XREF: sub_1E7D4+B2\u2191w
                 db    2
                 db    0
 word_C852E      dw 0                    ; DATA XREF: sub_1F4A0+6\u2191w
-                                        ; sub_1F692:loc_1F6A8\u2191r ...
+                                        ; Midi_serviceTick:loc_1F6A8\u2191r ...
 word_C8530      dw 0                    ; DATA XREF: sub_1F4A0+C\u2191w
-                                        ; sub_1F692+EC\u2191w ...
+                                        ; Midi_serviceTick+EC\u2191w ...
 word_C8532      dw 0                    ; DATA XREF: sub_1F4A0+12\u2191w
-                                        ; sub_1F692+8\u2191r ...
+                                        ; Midi_serviceTick+8\u2191r ...
 word_C8534      dw 0                    ; DATA XREF: sub_1EE70+84\u2191r
                                         ; sub_1EE70:loc_1EF0B\u2191w
 word_C8536      dw 0                    ; DATA XREF: sub_1EFA6:loc_1F008\u2191w
@@ -393472,10 +393472,10 @@ dseg_39         dw seg sg4d43           ; DATA XREF: sub_1F552\u2191r
                                         ; Midi_detectDevice+6\u2191r
 dseg_40         dw seg sg4d43           ; DATA XREF: sub_1F552+9\u2191r
                                         ; Midi_detectDevice:loc_1FA6D\u2191r
-dseg_41         dw seg sg4d43           ; DATA XREF: sub_1F692:loc_1F75C\u2191r
-dseg_42         dw seg sg4d43           ; DATA XREF: sub_1F692+F2\u2191r
-                                        ; sub_1F692+124\u2191r ...
-seg126_21       dw seg sg3EDC           ; DATA XREF: sub_1F692+104\u2191r
+dseg_41         dw seg sg4d43           ; DATA XREF: Midi_serviceTick:loc_1F75C\u2191r
+dseg_42         dw seg sg4d43           ; DATA XREF: Midi_serviceTick+F2\u2191r
+                                        ; Midi_serviceTick+124\u2191r ...
+seg126_21       dw seg sg3EDC           ; DATA XREF: Midi_serviceTick+104\u2191r
                                         ; sub_1F7D6+24\u2191r ...
 dseg_43         dw seg sg4d43           ; DATA XREF: sub_1F7D6+35\u2191r
                                         ; sub_1F7D6+6A\u2191r ...

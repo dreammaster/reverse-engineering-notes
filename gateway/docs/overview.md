@@ -3819,3 +3819,23 @@ and from `sub_1F7D6` — the MIDI backend's "parse/validate the loaded
 track data and prepare it for playback" step.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-twenty-first batch.
+
+### `Midi_serviceTick` named
+
+Moved to `sub_1F692` (2 callers) — the MIDI backend's per-tick service
+routine. If the already-named `Midi_stopTrack`'s busy-loop flag is
+set, delegates straight to the already-named `Midi_stopTrackStep` and
+returns. Otherwise, if a "playing" flag is clear, no-ops. Otherwise
+services each active track via an unnamed helper, then checks another
+unnamed condition; if a further flag is set, reconfigures the
+MPU-401's active-track set (sending device commands with a computed
+track-count bitmask, swapping a pair of per-track arrays, and sending
+further commands — the tail of this ~320-byte function wasn't traced
+instruction-by-instruction).
+
+Called up to 256 times per call from the already-named
+`Sound_loadAndStartTrack` to prime the MIDI event queue, and
+repeatedly from `sub_201C0` — consistent with this being the regular
+per-frame/per-tick MIDI service routine, not a one-shot setup step.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-twenty-second batch.
