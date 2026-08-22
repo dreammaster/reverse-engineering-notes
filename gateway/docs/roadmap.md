@@ -1156,6 +1156,13 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       calling convention (`push bp; mov bp,sp; mov ax,<frame size>;
       call`). Full writeup in
       [overview.md](overview.md#_chkstk-named--the-microsoft-c-runtime-stack-check-routine).
+- [x] Named `sub_1C650` → `_memset` — a textbook MSC-runtime far-pointer
+      memset with segment-wraparound handling; recovers a library name
+      this project has referenced since early sessions but that never
+      actually got applied and didn't survive the IDB regeneration
+      (a FLIRT-recognized name, not something in the rename-replay
+      history). Full writeup in
+      [overview.md](overview.md#_memset-named--recovering-a-library-name-that-didnt-survive-the-regeneration).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

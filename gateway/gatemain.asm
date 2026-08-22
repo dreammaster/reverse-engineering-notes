@@ -374,7 +374,7 @@ loc_10258:                              ; CODE XREF: seg000:0245↑j
                 mov     dx, seg seg126
                 push    dx
                 push    ax
-                call    far ptr sub_1C650
+                call    far ptr _memset
                 add     sp, 8
 
 loc_1026F:                              ; CODE XREF: seg000:023A↑j
@@ -403,7 +403,7 @@ loc_10299:                              ; CODE XREF: seg000:0286↑j
                 mov     dx, seg seg126
                 push    dx
                 push    ax
-                call    far ptr sub_1C650
+                call    far ptr _memset
                 add     sp, 8
 
 loc_102B0:                              ; CODE XREF: seg000:027B↑j
@@ -1404,7 +1404,7 @@ loc_10B59:                              ; CODE XREF: main+3FC↑j
                 mov     dx, seg seg064
                 push    dx
                 push    ax              ; ptr
-                call    far ptr sub_1C650
+                call    far ptr _memset
                 add     sp, 8
                 mov     ax, 0Ch
                 push    ax              ; count
@@ -1414,7 +1414,7 @@ loc_10B59:                              ; CODE XREF: main+3FC↑j
                 mov     dx, seg seg126
                 push    dx
                 push    ax              ; ptr
-                call    far ptr sub_1C650
+                call    far ptr _memset
                 add     sp, 8
                 mov     es, seg_D105A
                 mov     ax, es:word_4DCF8
@@ -1500,7 +1500,7 @@ loc_10C1D:                              ; CODE XREF: main+462↑j
                 mov     dx, seg seg126
                 push    dx
                 push    ax              ; ptr
-                call    far ptr sub_1C650
+                call    far ptr _memset
                 add     sp, 8
 ; ;
                 mov     es, seg_D105A
@@ -1530,7 +1530,7 @@ loc_10C1D:                              ; CODE XREF: main+462↑j
                 mov     dx, seg seg126
                 push    dx
                 push    ax              ; ptr
-                call    far ptr sub_1C650
+                call    far ptr _memset
                 add     sp, 8
                 jmp     short loc_10CD8
 ; ---------------------------------------------------------------------------
@@ -1883,7 +1883,7 @@ loc_10F9F:                              ; CODE XREF: main+842↑j
                 mov     dx, seg seg126
                 push    dx
                 push    ax              ; ptr
-                call    far ptr sub_1C650
+                call    far ptr _memset
                 add     sp, 8
                 mov     ax, 28h ; '('
                 push    ax              ; count
@@ -1893,7 +1893,7 @@ loc_10F9F:                              ; CODE XREF: main+842↑j
                 mov     dx, seg seg126
                 push    dx
                 push    ax              ; ptr
-                call    far ptr sub_1C650
+                call    far ptr _memset
                 add     sp, 8
                 mov     es, seg_D1062
                 cmp     es:word_4DF3C, 0
@@ -6123,7 +6123,7 @@ sub_12E3A       proc far                ; CODE XREF: seg098:1832↓P
                 mov     dx, seg seg126
                 push    dx
                 push    ax              ; ptr
-                call    far ptr sub_1C650
+                call    far ptr _memset
                 add     sp, 8
                 mov     word_CB7F4, 0
                 retf
@@ -9407,7 +9407,7 @@ show_startup    proc near               ; CODE XREF: main:loc_10872↑P
                 mov     ax, 0BCB4h
                 push    ds
                 push    ax              ; ptr
-                call    far ptr sub_1C650
+                call    far ptr _memset
                 add     sp, 8
                 mov     ax, 8
                 push    ax              ; count
@@ -9420,7 +9420,7 @@ show_startup    proc near               ; CODE XREF: main:loc_10872↑P
 
 loc_145DD:                              ; CODE XREF: seg097:0588↓P
                                         ; seg097:0606↓P ...
-                call    far ptr sub_1C650
+                call    far ptr _memset
 show_startup    endp ; sp-analysis failed
 
                 add     sp, 8
@@ -28870,7 +28870,7 @@ _strupr         endp
 
 ; Attributes: bp-based frame
 
-sub_1C650       proc near               ; CODE XREF: seg000:0267↑P
+_memset         proc near               ; CODE XREF: seg000:0267↑P
                                         ; seg000:02A8↑P ...
 
 arg_2           = dword ptr  6
@@ -28887,7 +28887,7 @@ arg_8           = word ptr  0Ch
                 jz      short loc_1C66E
                 sub     dx, cx
                 sbb     bx, bx
-sub_1C650       endp ; sp-analysis failed
+_memset         endp ; sp-analysis failed
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -28899,7 +28899,7 @@ sub_1C666       proc near               ; CODE XREF: seg121:0054↓P
                 xchg    dx, cx
                 sub     dx, cx
 
-loc_1C66E:                              ; CODE XREF: sub_1C650+10↑j
+loc_1C66E:                              ; CODE XREF: _memset+10↑j
                 mov     ax, [bp+0Ah]
                 mov     ah, al
                 shr     cx, 1
@@ -28920,7 +28920,7 @@ loc_1C66E:                              ; CODE XREF: sub_1C650+10↑j
 loc_1C68F:                              ; CODE XREF: sub_1C666+17↑j
                 pop     di
 
-loc_1C690:                              ; CODE XREF: sub_1C650+6↑j
+loc_1C690:                              ; CODE XREF: _memset+6↑j
                 mov     ax, [bp+6]
                 mov     dx, [bp+8]
 sub_1C666       endp ; sp-analysis failed
@@ -225447,7 +225447,7 @@ loc_5C2C0:                              ; CODE XREF: sub_5C263+14↑j
                 mov     dx, seg seg126
                 push    dx
                 push    ax              ; ptr
-                call    far ptr sub_1C650
+                call    far ptr _memset
                 add     sp, 8
                 mov     es, seg_D114C
                 assume es:seg126
@@ -229267,7 +229267,7 @@ arg_4           = word ptr  0Ah
                 mov     ax, 0AF28h
                 push    ds
                 push    ax              ; ptr
-                call    far ptr sub_1C650
+                call    far ptr _memset
                 add     sp, 8
 
 loc_5E26E:                              ; CODE XREF: sub_5E247+11↑j
@@ -229378,7 +229378,7 @@ loc_5E339:                              ; CODE XREF: sub_5E247+7D↑j
                 mov     ax, 0AF28h
                 push    ds
                 push    ax              ; ptr
-                call    far ptr sub_1C650
+                call    far ptr _memset
                 add     sp, 8
 
 loc_5E36E:                              ; CODE XREF: sub_5E247+39↑j
@@ -235632,7 +235632,7 @@ arg_4           = dword ptr  0Ah
                 push    ax              ; val
                 push    word ptr [bp+arg_0+2]
                 push    word ptr [bp+arg_0] ; ptr
-                call    far ptr sub_1C650
+                call    far ptr _memset
                 add     sp, 8
                 les     bx, [bp+arg_4]
                 mov     al, es:[bx]
@@ -235789,7 +235789,7 @@ loc_608F4:                              ; CODE XREF: Parser_clearResultStruct+31
                 push    ax              ; val
                 push    word ptr [bp+arg_0+2]
                 push    word ptr [bp+arg_0] ; ptr
-                call    far ptr sub_1C650
+                call    far ptr _memset
                 add     sp, 8
                 pop     bp
                 retf
@@ -235977,7 +235977,7 @@ loc_60A85:                              ; CODE XREF: sub_6090B+15E↑j
                 mov     dx, seg seg126
                 push    dx
                 push    ax              ; ptr
-                call    far ptr sub_1C650
+                call    far ptr _memset
                 add     sp, 8
                 mov     es, seg_D11E6
                 dec     es:byte_4DCFE
@@ -236511,7 +236511,7 @@ loc_60EEF:                              ; CODE XREF: Parser_proc4+43B↑j
                 mov     dx, seg seg126
                 push    dx
                 push    ax              ; ptr
-                call    far ptr sub_1C650
+                call    far ptr _memset
                 add     sp, 8
 
 loc_60F06:                              ; CODE XREF: Parser_proc4+3E8↑j
@@ -236574,7 +236574,7 @@ loc_60F49:                              ; CODE XREF: sub_60F21+B↑j
                 mov     dx, seg seg126
                 push    dx
                 push    ax              ; ptr
-                call    far ptr sub_1C650
+                call    far ptr _memset
                 mov     es, seg_D1206
                 mov     ax, [bp+arg_0]
                 mov     es:word_4DF6E, ax
@@ -237458,7 +237458,7 @@ loc_61668:                              ; CODE XREF: Parser_oops+185↑j
                 mov     dx, word ptr [bp+var_4C+2]
                 push    dx
                 push    ax              ; ptr
-                call    far ptr sub_1C650
+                call    far ptr _memset
                 add     sp, 8
 
 loc_61695:                              ; CODE XREF: Parser_oops+1D7↑j
@@ -245497,7 +245497,7 @@ loc_656A5:                              ; CODE XREF: vocab_load+22↑j
                 mov     dx, seg seg126
                 push    dx
                 push    ax              ; ptr
-                call    far ptr sub_1C650
+                call    far ptr _memset
                 add     sp, 8
                 push    [bp+var_8]      ; handle
                 push    [bp+var_A]      ; count
@@ -270902,7 +270902,7 @@ loc_72E8D:                              ; CODE XREF: sub_72260+C28↑j
                 mov     ax, 0BCCCh
                 push    ds
                 push    ax              ; ptr
-                call    far ptr sub_1C650
+                call    far ptr _memset
                 add     sp, 8
                 mov     ax, 16h
                 push    ax              ; count
@@ -270913,7 +270913,7 @@ loc_72E8D:                              ; CODE XREF: sub_72260+C28↑j
 
 loc_72EBA:                              ; CODE XREF: sub_72260+CBD↓j
                 push    ax              ; ptr
-                call    far ptr sub_1C650
+                call    far ptr _memset
                 add     sp, 8
                 jmp     short def_722E2 ; jumptable 000722E2 default case, case 6
 ; ---------------------------------------------------------------------------
@@ -273237,7 +273237,7 @@ loc_73E10:                              ; CODE XREF: sub_3137B+3↑J
                 mov     ax, 4DACh
                 push    ds
                 push    ax
-                call    far ptr sub_1C650
+                call    far ptr _memset
                 add     sp, 8
                 mov     ax, 8
                 push    ax
@@ -273246,7 +273246,7 @@ loc_73E10:                              ; CODE XREF: sub_3137B+3↑J
                 mov     ax, 4DADh
                 push    ds
                 push    ax
-                call    far ptr sub_1C650
+                call    far ptr _memset
                 add     sp, 8
                 mov     byte_CCCD9, 1
                 mov     word_CCCDC, 0Dh
@@ -274583,7 +274583,7 @@ sub_749B4       proc far                ; CODE XREF: Commset_drawScreen+1FA↑p
                 mov     ax, 0B1A4h
                 push    ds
                 push    ax              ; ptr
-                call    far ptr sub_1C650
+                call    far ptr _memset
                 add     sp, 8
                 retf
 sub_749B4       endp
@@ -275114,7 +275114,7 @@ loc_74DBB:                              ; CODE XREF: sub_74D38+18↑j
                 mov     ax, 4DADh
                 push    ds
                 push    ax              ; ptr
-                call    far ptr sub_1C650
+                call    far ptr _memset
                 add     sp, 8
                 mov     byte_CCCD5, 0
                 mov     byte_CCCD6, 1
@@ -275560,7 +275560,7 @@ loc_75248:                              ; CODE XREF: sub_74D38+18↑j
                 mov     ax, 4DADh
                 push    ds
                 push    ax              ; ptr
-                call    far ptr sub_1C650
+                call    far ptr _memset
                 add     sp, 8
                 mov     byte_CCCD5, 1
                 mov     byte_CCCD6, 0
@@ -397305,7 +397305,7 @@ loc_AADD1:                              ; CODE XREF: sub_AA9E3+3E9↑j
                 lea     ax, [bp+var_E]
                 push    ss
                 push    ax              ; ptr
-                call    far ptr sub_1C650
+                call    far ptr _memset
                 add     sp, 8
                 mov     [bp+var_12], 0
                 jmp     short loc_AAE51
@@ -410596,7 +410596,7 @@ var_4           = dword ptr -4
                 lea     ax, [bp+var_7A]
                 push    ss
                 push    ax              ; ptr
-                call    far ptr sub_1C650
+                call    far ptr _memset
                 add     sp, 8
                 mov     [bp+var_1C], 0Ah
                 mov     [bp+var_1B], 0
@@ -411272,7 +411272,7 @@ loc_B10F2:                              ; CODE XREF: Commset_show+34E↑j
                 lea     ax, [bp+var_14]
                 push    ss
                 push    ax              ; ptr
-                call    far ptr sub_1C650
+                call    far ptr _memset
                 add     sp, 8
 
 loc_B1131:                              ; CODE XREF: Commset_show+6B6↑j
@@ -421691,7 +421691,7 @@ loc_B5937:                              ; CODE XREF: sub_B58A3+8F↑j
                 lea     ax, [bp+var_22]
                 push    ss
                 push    ax              ; ptr
-                call    far ptr sub_1C650
+                call    far ptr _memset
                 add     sp, 8
                 mov     ax, 5C6Dh
                 mov     dx, 0F000h
@@ -421953,7 +421953,7 @@ loc_B5B5E:                              ; CODE XREF: sub_B58A3+2B6↑j
                 lea     ax, [bp+var_22]
                 push    ss
                 push    ax              ; ptr
-                call    far ptr sub_1C650
+                call    far ptr _memset
                 add     sp, 8
                 mov     [bp+var_22], 1
                 mov     [bp+var_C], 0

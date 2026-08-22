@@ -4842,3 +4842,34 @@ name — this is a textbook implementation of that exact routine, not a
 guess at a plausible-sounding name.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-fifty-fourth batch.
+
+### `_memset` named — recovering a library-name that didn't survive the regeneration
+
+`sub_1C650` (21 callers). A textbook MSC-runtime far-pointer `memset`:
+takes a far pointer, fill byte, and count; checks whether the fill
+would cross a 64K segment boundary; fills via `rep stosw`/`rep stosb`;
+if it crossed into the next segment, bumps `es` by `0x1000` (the
+standard paragraph-granular "huge pointer normalize" step) and fills
+the remainder there too; returns the original far pointer unchanged
+(the standard `memset()` return convention).
+
+This project has referenced `_memset` by name since early sessions
+(the already-named `Memory_fillBytes` was described as "similar in
+spirit... but not the same implementation — no segment-wraparound
+handling" compared to it) — but that name was never actually applied
+via `apply_renames_gatemain.py`. It turns out `_memset` was a
+FLIRT-library-recognized name in the pre-regeneration IDB that the
+fresh IDB's auto-analysis simply didn't reproduce; nothing in the new
+`gatemain.idb` was named `_memset` until this entry. Worth remembering
+as a category of loss the rename-replay recovery (see the regeneration
+section above) couldn't have caught, since it was never in the
+accumulated history to replay in the first place.
+
+Falls through into `sub_1C666` (the actual fill loop) and `sub_1C696`
+(a shared `pop bp; retf` epilogue), both of which have their own
+separate additional callers elsewhere — the same "`sp-analysis failed`
+causing a bogus function split, with a genuinely shared tail" pattern
+as `Logics_setBit`/`sub_11970` just before this. Left unnamed rather
+than force an uncertain merge.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-fifty-fifth batch.

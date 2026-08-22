@@ -3600,6 +3600,33 @@ RENAMES = [
      "overflow handler registered, though that handler itself wasn't "
      "traced this pass. 31 callers -- essentially every function large "
      "enough to need a stack-space check."),
+
+    (0x1C650, "_memset",
+     "sub_1C650(dest_far, fillByte, count): the standard MSC-runtime "
+     "far-pointer memset, recognized by its textbook shape: takes a "
+     "far pointer + fill byte + count, checks whether the fill would "
+     "cross a 64K segment boundary (dx = -di computes bytes remaining "
+     "in the current segment; sub dx,cx / sbb bx,bx detects an "
+     "overflow), fills via rep stosw/rep stosb, and if the fill "
+     "crossed into the next segment, bumps es by 0x1000 (standard "
+     "16-byte-paragraph segment-arithmetic 'huge pointer normalize' "
+     "step) and fills the remainder there too -- returns the original "
+     "far pointer unchanged (the standard memset() return convention). "
+     "This is presumably the same _memset this project has referenced "
+     "in passing since early sessions (contrasted with the already-"
+     "named Memory_fillBytes, described as similar in spirit but "
+     "'not the same implementation -- no segment-wraparound handling'), "
+     "but that name was never actually applied via this script -- "
+     "apparently a FLIRT-library-recognized name in the pre-regeneration "
+     "IDB that the fresh IDB's analysis didn't reproduce, since no "
+     "function anywhere in the new gatemain.idb was named _memset "
+     "before this entry. Falls through into sub_1C666 (the actual fill "
+     "loop) and sub_1C696 (a shared 'pop bp; retf' epilogue), both of "
+     "which have their own separate additional callers elsewhere and "
+     "were left unnamed rather than force an uncertain merge -- the "
+     "same 'sp-analysis failed causing a bogus function split, with a "
+     "genuinely shared tail' pattern seen with Logics_setBit/sub_11970 "
+     "just before this. 21 callers."),
 ]
 
 
