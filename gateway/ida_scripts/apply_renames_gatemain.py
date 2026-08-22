@@ -2974,6 +2974,26 @@ RENAMES = [
      "0xF05F. Called from the already-named Font_writeChar and "
      "fillRect -- a shared 'configure the screen's current draw mode/"
      "color before writing pixels' validator+setter."),
+
+    (0x2C6D1, "Screen_dispatchSpanFill",
+     "sub_2C6D1(x1, y1, x2, y2): the shared low-level pixel-span "
+     "dispatcher behind both the already-named Screen_drawLine and "
+     "Screen_fillRect. Ensures the already-named Screen_setVTable has "
+     "run once (byte_CAC5D guard); if the screen struct's field_18 "
+     "flag is set, first calls sub_2C055 (unnamed) to clip/adjust the "
+     "coordinates, bailing out early on its error indication. Then, "
+     "based on several screen-state fields (pen color, fill mode, a "
+     "line-width-derived value, and a video-mode-indexed 20-byte-per-"
+     "entry function-pointer table at unk_CACBF/unk_CAD5F), it tries "
+     "to jump directly to a specialized fast pixel-writing routine "
+     "for the current state/video-mode combination; if no specialized "
+     "routine matches (or `videoIndex` is out of the table's range, "
+     "returning error 0xFFFA), it falls back to the already-ranked "
+     "sub_2C83C (a large, presumably generic, span-filling routine). "
+     "This mirrors a classic 'select the fastest matching rasterizer, "
+     "else use the slow generic one' optimization pattern for "
+     "horizontal pixel-span writing shared by line and rectangle "
+     "drawing."),
 ]
 
 

@@ -65469,7 +65469,7 @@ sub_2C02E       endp
 
 ; Attributes: bp-based frame
 
-sub_2C055       proc far                ; CODE XREF: sub_2C6D1+30\u2193P
+sub_2C055       proc far                ; CODE XREF: Screen_dispatchSpanFill+30\u2193P
 
 var_6           = word ptr -6
 var_4           = word ptr -4
@@ -66587,7 +66587,7 @@ xp              = word ptr  8
 
 loc_2C6B9:
                 mov     [si+Screen._penPos.y], ax
-                call    sub_2C6D1
+                call    Screen_dispatchSpanFill
                 mov     [bp+var_2], ax
                 mov     ax, [bp+var_2]
 
@@ -66606,7 +66606,7 @@ Screen_drawLine endp
 
 ; Attributes: bp-based frame
 
-sub_2C6D1       proc far                ; CODE XREF: Screen_drawLine+26\u2191P
+Screen_dispatchSpanFill proc far        ; CODE XREF: Screen_drawLine+26\u2191P
                                         ; Screen_fillRect+5C\u2193P ...
 
 var_2A          = word ptr -2Ah
@@ -66644,7 +66644,7 @@ loc_2C6D7:
                 jz      short loc_2C6EC
                 call    Screen_setVTable
 
-loc_2C6EC:                              ; CODE XREF: sub_2C6D1+14\u2191j
+loc_2C6EC:                              ; CODE XREF: Screen_dispatchSpanFill+14\u2191j
                 mov     si, offset screen
                 cmp     [si+Screen.field_18], 1
                 jnz     short loc_2C71C
@@ -66658,13 +66658,13 @@ loc_2C6EC:                              ; CODE XREF: sub_2C6D1+14\u2191j
                 jmp     loc_2C797
 ; ---------------------------------------------------------------------------
 
-loc_2C710:                              ; CODE XREF: sub_2C6D1+35\u2191j
+loc_2C710:                              ; CODE XREF: Screen_dispatchSpanFill+35\u2191j
                 mov     [bp+arg_6], ax
                 mov     [bp+arg_4], bx
                 mov     [bp+arg_2], cx
                 mov     [bp+arg_0], dx
 
-loc_2C71C:                              ; CODE XREF: sub_2C6D1+22\u2191j
+loc_2C71C:                              ; CODE XREF: Screen_dispatchSpanFill+22\u2191j
                 mov     ax, word ptr [si+Screen.field_16]
                 mov     [bp+var_22], ax
                 mov     ax, [si+Screen._penColor]
@@ -66683,7 +66683,7 @@ loc_2C71C:                              ; CODE XREF: sub_2C6D1+22\u2191j
                 jmp     short loc_2C75C
 ; ---------------------------------------------------------------------------
 
-loc_2C749:                              ; CODE XREF: sub_2C6D1+6E\u2191j
+loc_2C749:                              ; CODE XREF: Screen_dispatchSpanFill+6E\u2191j
                 mov     si, offset unk_CACBF
                 mov     dx, videoIndex
                 cmp     dx, 4
@@ -66692,8 +66692,8 @@ loc_2C749:                              ; CODE XREF: sub_2C6D1+6E\u2191j
                 jmp     short loc_2C797
 ; ---------------------------------------------------------------------------
 
-loc_2C75C:                              ; CODE XREF: sub_2C6D1+76\u2191j
-                                        ; sub_2C6D1+82\u2191j
+loc_2C75C:                              ; CODE XREF: Screen_dispatchSpanFill+76\u2191j
+                                        ; Screen_dispatchSpanFill+82\u2191j
                 mov     ax, 14h
                 mul     dx
                 add     si, ax
@@ -66711,20 +66711,20 @@ loc_2C75C:                              ; CODE XREF: sub_2C6D1+76\u2191j
                 cmp     ah, al
                 jnz     short loc_2C78F
 
-loc_2C786:                              ; CODE XREF: sub_2C6D1+9C\u2191j
+loc_2C786:                              ; CODE XREF: Screen_dispatchSpanFill+9C\u2191j
                 mov     ax, [si+2]
                 mov     [bp+var_20], ax
                 jmp     dword ptr [si+0Ch]
 ; ---------------------------------------------------------------------------
 
-loc_2C78F:                              ; CODE XREF: sub_2C6D1+96\u2191j
-                                        ; sub_2C6D1+A4\u2191j ...
+loc_2C78F:                              ; CODE XREF: Screen_dispatchSpanFill+96\u2191j
+                                        ; Screen_dispatchSpanFill+A4\u2191j ...
                 jmp     sub_2C83C
 ; ---------------------------------------------------------------------------
                 mov     [bp+var_2], ax
 
-loc_2C797:                              ; CODE XREF: sub_2C6D1+3C\u2191j
-                                        ; sub_2C6D1+89\u2191j
+loc_2C797:                              ; CODE XREF: Screen_dispatchSpanFill+3C\u2191j
+                                        ; Screen_dispatchSpanFill+89\u2191j
                 mov     ax, [bp+var_2]
                 pop     di
                 pop     si
@@ -66733,13 +66733,13 @@ loc_2C797:                              ; CODE XREF: sub_2C6D1+3C\u2191j
                 mov     sp, bp
                 pop     bp
                 retf    8
-sub_2C6D1       endp
+Screen_dispatchSpanFill endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-Screen_setVTable proc far               ; CODE XREF: sub_2C6D1+16\u2191P
+Screen_setVTable proc far               ; CODE XREF: Screen_dispatchSpanFill+16\u2191P
                 mov     bx, offset unk_CACBF
                 mov     word ptr [bx+VideoMethod.fnPtr], offset sub_2C966
                 mov     word ptr [bx+(VideoMethod.fnPtr+2)], seg seg060
@@ -66784,7 +66784,7 @@ Screen_setVTable endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2C83C       proc far                ; CODE XREF: sub_2C6D1:loc_2C78F\u2191J
+sub_2C83C       proc far                ; CODE XREF: Screen_dispatchSpanFill:loc_2C78F\u2191J
                                         ; sub_2C966+6\u2193J ...
                 mov     ax, [bp+6]
                 cmp     ax, [bp+0Ah]
@@ -67754,7 +67754,7 @@ loc_2CE22:                              ; CODE XREF: Screen_fillRect+65\u2193j
 loc_2CE26:
                 push    [bp+x2]
                 push    di
-                call    sub_2C6D1
+                call    Screen_dispatchSpanFill
                 inc     di
                 cmp     di, [bp+y2]
                 jbe     short loc_2CE22
@@ -67786,7 +67786,7 @@ loc_2CE53:                              ; CODE XREF: Screen_fillRect+D3\u2193j
                 push    dx
                 push    [bp+x2]
                 push    dx
-                call    sub_2C6D1
+                call    Screen_dispatchSpanFill
                 pop     dx
                 pop     cx
                 pop     bx
@@ -67805,7 +67805,7 @@ loc_2CE7D:                              ; CODE XREF: Screen_fillRect+89\u2191j
                 push    dx
                 push    [bp+x2]
                 push    dx
-                call    sub_2C6D1
+                call    Screen_dispatchSpanFill
                 pop     dx
                 pop     cx
                 pop     bx
@@ -67836,7 +67836,7 @@ loc_2CEBD:                              ; CODE XREF: Screen_fillRect+18\u2191j
                 push    [bp+y1]
                 push    [bp+x1]
                 push    [bp+y2]
-                call    sub_2C6D1
+                call    Screen_dispatchSpanFill
                 mov     ax, [bp+x1]
                 sub     ax, di
                 push    ax
@@ -67845,12 +67845,12 @@ loc_2CEBD:                              ; CODE XREF: Screen_fillRect+18\u2191j
                 add     ax, di
                 push    ax
                 push    [bp+y2]
-                call    sub_2C6D1
+                call    Screen_dispatchSpanFill
                 push    [bp+x2]
                 push    [bp+y2]
                 push    [bp+x2]
                 push    [bp+y1]
-                call    sub_2C6D1
+                call    Screen_dispatchSpanFill
                 mov     ax, [bp+x2]
                 add     ax, di
                 push    ax
@@ -67859,7 +67859,7 @@ loc_2CEBD:                              ; CODE XREF: Screen_fillRect+18\u2191j
                 sub     ax, di
                 push    ax
                 push    [bp+y1]
-                call    sub_2C6D1
+                call    Screen_dispatchSpanFill
 
 loc_2CF17:                              ; CODE XREF: Screen_fillRect+ED\u2191j
                 mov     si, offset screen
@@ -384681,7 +384681,7 @@ screen          dw 0                    ; field_0
                 db    1
                 db    0
                 db    0
-byte_CAC5D      db 0                    ; DATA XREF: sub_2C6D1+F\u2191r
+byte_CAC5D      db 0                    ; DATA XREF: Screen_dispatchSpanFill+F\u2191r
                                         ; Screen_setVTable+92\u2191w
                 db    0
 unk_CAC5F       db 0FFh ; ÿ             ; DATA XREF: Screen_fillRect+71\u2191o

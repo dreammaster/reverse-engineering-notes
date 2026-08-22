@@ -3968,3 +3968,23 @@ shared "configure the screen's current draw mode/color before writing
 pixels" validator+setter.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-thirtieth batch.
+
+### `Screen_dispatchSpanFill` named
+
+Moved to `sub_2C6D1` (2 callers) — the shared low-level pixel-span
+dispatcher behind both the already-named `Screen_drawLine` and
+`Screen_fillRect`. Ensures the already-named `Screen_setVTable` has run
+once; if a screen-state flag is set, first clips/adjusts the
+coordinates via an unnamed helper, bailing out early on error.
+
+Then, based on several screen-state fields (pen color, fill mode, a
+line-width-derived value, and a video-mode-indexed function-pointer
+table), it tries to jump directly to a specialized fast pixel-writing
+routine for the current state/video-mode combination; if no
+specialized routine matches, it falls back to a large, presumably
+generic, span-filling routine. This mirrors a classic "select the
+fastest matching rasterizer, else use the slow generic one"
+optimization pattern for horizontal pixel-span writing shared by line
+and rectangle drawing.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-thirty-first batch.
