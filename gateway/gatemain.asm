@@ -40625,12 +40625,12 @@ input_line_backspace endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_21A9A       proc far                ; CODE XREF: sub_28595+43↓P
+InputArea_getLine proc far              ; CODE XREF: sub_28595+43↓P
                                         ; prompt_for_line+144↓P ...
                 mov     ax, word ptr dword_C8EAA
                 mov     dx, word ptr dword_C8EAA+2
                 retf
-sub_21A9A       endp
+InputArea_getLine endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -55885,7 +55885,7 @@ loc_285AC:                              ; CODE XREF: sub_28595+C↑j
                 push    [bp+var_6]
                 call    sub_1338B
                 add     sp, 6
-                call    sub_21A9A
+                call    InputArea_getLine
                 mov     [bp+var_4], ax
                 mov     [bp+var_2], dx
                 mov     ax, [bp+var_8]
@@ -58460,7 +58460,7 @@ loc_29953:                              ; CODE XREF: prompt_for_line+182↓j
                 push    [bp+var_8]      ; enabled
                 call    set_logfile_enabled
                 add     sp, 2
-                call    sub_21A9A
+                call    InputArea_getLine
                 push    dx
                 push    ax              ; buffer
                 push    word_C97A8      ; windowNum
@@ -226256,7 +226256,7 @@ InputWindow_redrawPromptLine proc far   ; CODE XREF: InputWindow_setDisplayMode+
                 push    word_CBCF6      ; wndowNum
                 call    TextWindow_addDirect
                 add     sp, 6
-                call    sub_21A9A
+                call    InputArea_getLine
                 push    dx
                 push    ax              ; text
                 push    word_CBCF6      ; wndowNum
@@ -227505,7 +227505,7 @@ loc_5D445:                              ; CODE XREF: InputWindow_getLine+1A8↑j
                 push    word_CBCF6      ; windowNum
                 call    LogFile_write
                 add     sp, 6
-                call    sub_21A9A
+                call    InputArea_getLine
                 push    dx
                 push    ax              ; buffer
                 push    word_CBCF6      ; windowNum
@@ -228247,7 +228247,7 @@ var_4           = dword ptr -4
                 mov     bp, sp
                 sub     sp, 3Ah
                 push    si
-                call    sub_21A9A
+                call    InputArea_getLine
                 mov     word ptr [bp+var_4], ax
                 mov     word ptr [bp+var_4+2], dx
                 call    Listbox_getSelectedItemText
@@ -243412,7 +243412,7 @@ loc_6458A:                              ; CODE XREF: sub_64550+22↑j
                 push    es:word_CBCF6   ; windowNum
                 call    LogFile_write
                 add     sp, 6
-                call    sub_21A9A
+                call    InputArea_getLine
                 push    dx
                 push    ax              ; buffer
                 mov     es, seg_D126A

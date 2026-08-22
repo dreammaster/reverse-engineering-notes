@@ -1173,6 +1173,9 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       confirmed via `get_master`/`compact_memory`'s call sites right
       after diagnostic `_printf`s. Full writeup in
       [overview.md](overview.md#dos_readkeynoecho-named--the-memory-managers-press-any-key-pause).
+- [x] Named `sub_21A9A` → `InputArea_getLine` — the paired read side
+      of the already-named `InputArea_setLine`. Full writeup in
+      [overview.md](overview.md#inputarea_getline-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

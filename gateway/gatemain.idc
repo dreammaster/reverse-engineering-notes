@@ -16359,6 +16359,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X21A8C);
 	op_stkvar	(x,	1);
 	create_insn	(0X21A9A);
+	set_name	(0X21A9A,	"InputArea_getLine");
 	create_insn	(0X21AA2);
 	set_name	(0X21AA2,	"get_input_line_length");
 	create_insn	(0X21AAF);
@@ -18341,9 +18342,6 @@ static Bytes_2(void) {
 	create_insn	(x=0X236AB);
 	op_stkvar	(x,	1);
 	set_cmt	(0X236AF,	"yp",	0);
-	create_insn	(x=0X236B5);
-	op_stkvar	(x,	1);
-	set_cmt	(0X236B9,	"xp",	0);
 }
 
 //------------------------------------------------------------------------
@@ -18353,6 +18351,9 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X236B5);
+	op_stkvar	(x,	1);
+	set_cmt	(0X236B9,	"xp",	0);
 	set_cmt	(0X236BA,	"yp",	0);
 	create_insn	(x=0X236C0);
 	op_stkvar	(x,	1);
@@ -24080,8 +24081,6 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(0X28DE2);
 	set_name	(0X28DE2,	"TextWindow_flushText");
-	create_insn	(x=0X28DE5);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -24091,6 +24090,8 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X28DE5);
+	op_hex		(x,	1);
 	create_insn	(x=0X28DED);
 	op_hex		(x,	1);
 	create_insn	(x=0X28DF5);

@@ -3667,6 +3667,16 @@ RENAMES = [
      "from shape, not confirmed. 7 callers, all within the "
      "get_master/new_handle/kill_handle/lock_handle/kill_pointer/"
      "compact_memory handle-based memory manager."),
+
+    (0x21A9A, "InputArea_getLine",
+     "sub_21A9A(): trivial getter -- returns the far pointer "
+     "dword_C8EAA unchanged in dx:ax. Confirmed as the paired read "
+     "side of the already-named InputArea_setLine, which is the only "
+     "function that writes dword_C8EAA (directly read/verified). "
+     "Called from prompt_for_line, sub_28595, sub_5D9F3, sub_64550 and "
+     "2 others -- the 'get a pointer to the current input-line buffer' "
+     "counterpart used throughout the line-editing/input-prompt "
+     "cluster."),
 ]
 
 

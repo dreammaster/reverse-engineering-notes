@@ -4914,3 +4914,14 @@ redirected/unavailable during automated testing, though that's
 inferred from shape rather than confirmed.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-fifty-seventh batch.
+
+### `InputArea_getLine` named
+
+`sub_21A9A` (6 callers). A one-line getter, returning the far pointer
+`dword_C8EAA` unchanged. Confirmed as the paired read side of the
+already-named `InputArea_setLine`, the only function that writes
+`dword_C8EAA` — the "get a pointer to the current input-line buffer"
+counterpart used throughout the line-editing/input-prompt cluster
+(`prompt_for_line` among its callers).
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-fifty-eighth batch.
