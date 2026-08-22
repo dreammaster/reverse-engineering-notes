@@ -301940,7 +301940,7 @@ Logics_setEncounterFlag endp
 
 ; Attributes: bp-based frame
 
-sub_80F93       proc far                ; CODE XREF: sub_81CCC+16E↓P
+Logics_isEncounterFlagged proc far      ; CODE XREF: sub_81CCC+16E↓P
                                         ; sub_81CCC+33B↓P ...
 
 var_2           = word ptr -2
@@ -301953,16 +301953,16 @@ arg_0           = word ptr  6
                 jmp     short loc_80FA7
 ; ---------------------------------------------------------------------------
 
-loc_80FA0:                              ; CODE XREF: sub_80F93+18↓j
-                                        ; sub_80F93+33↓j
+loc_80FA0:                              ; CODE XREF: Logics_isEncounterFlagged+18↓j
+                                        ; Logics_isEncounterFlagged+33↓j
                 sub     ax, ax
                 jmp     short loc_80FCB
 ; ---------------------------------------------------------------------------
 
-loc_80FA4:                              ; CODE XREF: sub_80F93+29↓j
+loc_80FA4:                              ; CODE XREF: Logics_isEncounterFlagged+29↓j
                 inc     [bp+var_2]
 
-loc_80FA7:                              ; CODE XREF: sub_80F93+B↑j
+loc_80FA7:                              ; CODE XREF: Logics_isEncounterFlagged+B↑j
                 cmp     [bp+var_2], 0Bh
                 jge     short loc_80FA0
                 mov     ax, 0Eh
@@ -301976,11 +301976,11 @@ loc_80FA7:                              ; CODE XREF: sub_80F93+B↑j
                 jz      short loc_80FA0
                 mov     ax, 1
 
-loc_80FCB:                              ; CODE XREF: sub_80F93+F↑j
+loc_80FCB:                              ; CODE XREF: Logics_isEncounterFlagged+F↑j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_80F93       endp
+Logics_isEncounterFlagged endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -304090,7 +304090,7 @@ loc_81E1A:                              ; CODE XREF: sub_81CCC+149↑j
 loc_81E36:                              ; CODE XREF: sub_81CCC+165↑j
                 mov     ax, 1D8h
                 push    ax
-                call    sub_80F93
+                call    Logics_isEncounterFlagged
                 add     sp, 2
                 or      al, al
                 jz      short loc_81E58
@@ -304284,7 +304284,7 @@ loc_81F96:                              ; CODE XREF: sub_81CCC+2A2↑j
                 add     sp, 6
                 mov     ax, 1D8h
                 push    ax
-                call    sub_80F93
+                call    Logics_isEncounterFlagged
                 add     sp, 2
                 or      al, al
                 jz      short loc_82023
@@ -323098,7 +323098,7 @@ loc_8A2AF:                              ; CODE XREF: sub_8A260+4A↑j
                 add     sp, 8
                 mov     es, seg_D15BE
                 push    es:word_4DF9A
-                call    sub_80F93
+                call    Logics_isEncounterFlagged
                 add     sp, 2
                 or      al, al
                 jz      short loc_8A2FB
@@ -324936,7 +324936,7 @@ loc_8B09D:                              ; CODE XREF: sub_8AED5+1C1↑j
                 add     sp, 8
                 mov     ax, 1FDh
                 push    ax
-                call    sub_80F93
+                call    Logics_isEncounterFlagged
                 add     sp, 2
                 or      al, al
                 jz      short loc_8B0F8
@@ -325354,7 +325354,7 @@ loc_8B38F:                              ; CODE XREF: sub_8B35D+C0↓j
                 add     sp, 4
                 mov     ax, 1FDh
                 push    ax
-                call    sub_80F93
+                call    Logics_isEncounterFlagged
                 add     sp, 2
                 or      al, al
                 jz      short loc_8B3BF
@@ -325399,7 +325399,7 @@ loc_8B3D0:                              ; CODE XREF: sub_8B35D+1B↑j
                 jnz     short loc_8B413
                 mov     ax, 1FDh
                 push    ax
-                call    sub_80F93
+                call    Logics_isEncounterFlagged
                 add     sp, 2
                 or      al, al
                 jz      short loc_8B3BF
@@ -326655,7 +326655,7 @@ loc_8BCAE:                              ; CODE XREF: sub_8BC38+1B↑j
                 mov     es, seg_D15BE
                 assume es:seg126
                 push    es:word_4DF9A
-                call    sub_80F93
+                call    Logics_isEncounterFlagged
                 add     sp, 2
                 or      al, al
                 jz      short loc_8BCF9
@@ -327864,7 +327864,7 @@ var_2           = word ptr -2
                 add     sp, 8
                 mov     ax, 1FDh
                 push    ax
-                call    sub_80F93
+                call    Logics_isEncounterFlagged
                 add     sp, 2
                 or      al, al
                 jz      short loc_8C556
@@ -327942,7 +327942,7 @@ loc_8C5A9:                              ; CODE XREF: sub_8C58D+11↑j
                 add     sp, 8
                 mov     ax, 1CFh
                 push    ax
-                call    sub_80F93
+                call    Logics_isEncounterFlagged
                 add     sp, 2
                 or      al, al
                 jz      short loc_8C5EB

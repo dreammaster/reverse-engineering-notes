@@ -4985,3 +4985,14 @@ event `0x2B` — presumably reached when the player starts
 damaging/vandalizing the construction in question.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-sixty-first batch.
+
+### `Logics_isEncounterFlagged` named — the getter side of `Logics_setEncounterFlag`
+
+`sub_80F93` (7 callers). Searches the exact same 11-entry, 14-byte-
+stride table (offset `0x56E2`) as the already-named
+`Logics_setEncounterFlag`, and if `logicNum` is found, returns whether
+the corresponding "already flagged" byte in the same parallel array
+(`-0x4334`) is set. A genuine getter/setter pair, confirmed by the
+identical table offsets and stride.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-sixty-second batch.

@@ -3737,6 +3737,17 @@ RENAMES = [
      "sub_819E6, sub_81CCC, and a third caller -- presumably reached "
      "when the player tries to damage/vandalize the construction in "
      "question."),
+
+    (0x80F93, "Logics_isEncounterFlagged",
+     "sub_80F93(logicNum): the matching getter for the just-named "
+     "Logics_setEncounterFlag -- searches the exact same 11-entry, "
+     "14-byte-stride table at offset 0x56E2 for logicNum, and if "
+     "found, returns whether the corresponding 'already flagged' byte "
+     "in the same parallel array (offset -0x4334) is set; returns 0 if "
+     "logicNum isn't in the table at all, or is but isn't flagged. "
+     "Confirmed as a genuine getter/setter pair by the identical table "
+     "offsets and stride. Called from sub_81CCC (twice) and 5 other "
+     "unnamed functions."),
 ]
 
 

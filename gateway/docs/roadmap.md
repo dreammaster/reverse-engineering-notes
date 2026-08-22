@@ -1190,6 +1190,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       its own message and tying into the already-named
       `Logics_printBeckerJudgment`. Full writeup in
       [overview.md](overview.md#logics_warnbeckerdamage-named--ties-back-into-the-becker-morality-system).
+- [x] Named `sub_80F93` → `Logics_isEncounterFlagged` — the getter
+      side of `Logics_setEncounterFlag`, confirmed by identical table
+      offsets. Full writeup in
+      [overview.md](overview.md#logics_isencounterflagged-named--the-getter-side-of-logics_setencounterflag).
 - [ ] `sub_170F6` (large, ~600+ bytes, spans past its own declared
       64-byte function boundary into unlabeled code before reaching
       `sub_175CD`) is the listbox rendering routine that reads
