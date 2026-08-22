@@ -2586,6 +2586,21 @@ RENAMES = [
      "envelope/level registers this cluster now covers (0x40 level/"
      "KSL, 0x60 attack/decay, 0x80 sustain/release, plus the per-"
      "channel 0xC0 feedback/connection)."),
+
+    (0x1D694, "Opl2_setOperatorModulationFlags",
+     "sub_1D694(operatorIndex): indexes the same 7-byte-stride table "
+     "as the rest of this cluster and builds a byte from four boolean "
+     "flag fields (+9 -> bit 7, +0xA -> bit 6, +5 -> bit 5, +0xB -> "
+     "bit 4) plus a 4-bit value (+1, masked 0xF, bits 0-3), writing "
+     "the result to OPL2 register 0x20+operatorRegisterOffset via the "
+     "already-named Opl2_writeRegister. Register 0x20-0x35 is the "
+     "standard OPL2 AM/Vibrato/Envelope-Type/KSR/Multiple register "
+     "(Tremolo, Vibrato, sustain EG type, key-scale rate, and "
+     "frequency multiplier). Called from sub_1D3C4 and sub_1D448, "
+     "completing all 5 standard OPL2 per-operator/channel registers "
+     "this cluster now covers (0x20 AM/VIB/EG/KSR/Mult, 0x40 Level/"
+     "KSL, 0x60 Attack/Decay, 0x80 Sustain/Release, 0xC0 Feedback/"
+     "Connection)."),
 ]
 
 

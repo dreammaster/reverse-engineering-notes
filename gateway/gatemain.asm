@@ -31151,7 +31151,7 @@ loc_1D40E:                              ; CODE XREF: sub_1D3C4+E\u2191j
                                         ; DATA XREF: sub_1D3C4+60\u2193o ...
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr sub_1D694
+                call    near ptr Opl2_setOperatorModulationFlags
                 jmp     short loc_1D3EB
 ; ---------------------------------------------------------------------------
                 align 2
@@ -31222,7 +31222,7 @@ arg_0           = word ptr  6
                 add     sp, 2
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr sub_1D694
+                call    near ptr Opl2_setOperatorModulationFlags
                 add     sp, 2
                 push    [bp+arg_0]
                 push    cs
@@ -31528,7 +31528,7 @@ Opl2_setOperatorSustainRelease endp
 
 ; Attributes: bp-based frame
 
-sub_1D694       proc far                ; CODE XREF: sub_1D3C4+4E\u2191p
+Opl2_setOperatorModulationFlags proc far ; CODE XREF: sub_1D3C4+4E\u2191p
                                         ; sub_1D448+37\u2191p
 
 var_2           = word ptr -2
@@ -31555,10 +31555,10 @@ arg_0           = word ptr  6
                 jmp     short loc_1D6C2
 ; ---------------------------------------------------------------------------
 
-loc_1D6C0:                              ; CODE XREF: sub_1D694+25\u2191j
+loc_1D6C0:                              ; CODE XREF: Opl2_setOperatorModulationFlags+25\u2191j
                 sub     ax, ax
 
-loc_1D6C2:                              ; CODE XREF: sub_1D694+2A\u2191j
+loc_1D6C2:                              ; CODE XREF: Opl2_setOperatorModulationFlags+2A\u2191j
                 mov     [bp+var_2], ax
                 mov     al, es:[si+0Ah]
                 sub     ah, ah
@@ -31569,10 +31569,10 @@ loc_1D6C2:                              ; CODE XREF: sub_1D694+2A\u2191j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1D6D6:                              ; CODE XREF: sub_1D694+3A\u2191j
+loc_1D6D6:                              ; CODE XREF: Opl2_setOperatorModulationFlags+3A\u2191j
                 sub     ax, ax
 
-loc_1D6D8:                              ; CODE XREF: sub_1D694+3F\u2191j
+loc_1D6D8:                              ; CODE XREF: Opl2_setOperatorModulationFlags+3F\u2191j
                 add     [bp+var_2], ax
                 mov     al, es:[si+5]
                 sub     ah, ah
@@ -31583,10 +31583,10 @@ loc_1D6D8:                              ; CODE XREF: sub_1D694+3F\u2191j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1D6EC:                              ; CODE XREF: sub_1D694+50\u2191j
+loc_1D6EC:                              ; CODE XREF: Opl2_setOperatorModulationFlags+50\u2191j
                 sub     ax, ax
 
-loc_1D6EE:                              ; CODE XREF: sub_1D694+55\u2191j
+loc_1D6EE:                              ; CODE XREF: Opl2_setOperatorModulationFlags+55\u2191j
                 add     [bp+var_2], ax
                 mov     al, es:[si+0Bh]
                 sub     ah, ah
@@ -31597,10 +31597,10 @@ loc_1D6EE:                              ; CODE XREF: sub_1D694+55\u2191j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1D702:                              ; CODE XREF: sub_1D694+66\u2191j
+loc_1D702:                              ; CODE XREF: Opl2_setOperatorModulationFlags+66\u2191j
                 sub     ax, ax
 
-loc_1D704:                              ; CODE XREF: sub_1D694+6B\u2191j
+loc_1D704:                              ; CODE XREF: Opl2_setOperatorModulationFlags+6B\u2191j
                 add     [bp+var_2], ax
                 mov     al, es:[si+1]
                 sub     ah, ah
@@ -31618,7 +31618,7 @@ loc_1D704:                              ; CODE XREF: sub_1D694+6B\u2191j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_1D694       endp
+Opl2_setOperatorModulationFlags endp
 
 
 ; =============== S U B R O U T I N E =======================================

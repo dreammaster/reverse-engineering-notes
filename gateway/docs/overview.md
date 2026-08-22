@@ -3527,3 +3527,21 @@ release, plus the per-channel `0xC0` feedback/connection
 (`Opl2_setChannelFeedback`).
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-seventh batch.
+
+### `Opl2_setOperatorModulationFlags` named
+
+Moved to `sub_1D694` (2 callers) — indexes the same 7-byte-stride
+table as the rest of this cluster and builds a byte from four boolean
+flag fields (bits 4-7) plus a 4-bit value (bits 0-3), writing the
+result to OPL2 register `0x20+operatorRegisterOffset` via the
+already-named `Opl2_writeRegister`. Register `0x20-0x35` is the
+standard OPL2 AM/Vibrato/Envelope-Type/KSR/Multiple register (Tremolo,
+Vibrato, sustain EG type, key-scale rate, and frequency multiplier).
+
+Called from `sub_1D3C4` and `sub_1D448`, completing all 5 standard
+OPL2 per-operator/channel registers this cluster now covers: `0x20`
+AM/VIB/EG/KSR/Mult, `0x40` Level/KSL (`Opl2_setOperatorVolume`), `0x60`
+Attack/Decay, `0x80` Sustain/Release, and `0xC0` Feedback/Connection
+(`Opl2_setChannelFeedback`).
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-eighth batch.
