@@ -34362,7 +34362,7 @@ loc_1E81F:                              ; CODE XREF: sub_1E7D4+11\u2191j
                 mov     ax, 2
                 push    ax
                 push    ax
-                call    sub_20390
+                call    Sound_initPlaybackTiming
                 add     sp, 6
 
 loc_1E869:                              ; CODE XREF: sub_1E7D4+55\u2191j
@@ -35647,7 +35647,7 @@ loc_1F204:
                 mov     ax, 2
                 push    ax
                 push    ax
-                call    sub_20390
+                call    Sound_initPlaybackTiming
                 add     sp, 6
 
 loc_1F22C:                              ; CODE XREF: sub_1F1DE+E\u2191j
@@ -37824,7 +37824,7 @@ loc_20251:                              ; CODE XREF: Sound_stopTrack+28\u2191j
                 push    ax
                 push    ax
                 push    cs
-                call    near ptr sub_20390
+                call    near ptr Sound_initPlaybackTiming
                 add     sp, 6
                 sti
 
@@ -37961,7 +37961,7 @@ Sound_stopTrack endp
 
 ; Attributes: bp-based frame
 
-sub_20390       proc far                ; CODE XREF: sub_1E7D4+8D\u2191P
+Sound_initPlaybackTiming proc far       ; CODE XREF: sub_1E7D4+8D\u2191P
                                         ; sub_1F1DE+46\u2191P ...
 
 arg_0           = word ptr  6
@@ -37993,10 +37993,10 @@ arg_4           = word ptr  0Ah
                 mov     ax, [bp+arg_0]
                 mov     word_C858A, ax
 
-loc_203D3:                              ; CODE XREF: sub_20390+8\u2191j
+loc_203D3:                              ; CODE XREF: Sound_initPlaybackTiming+8\u2191j
                 pop     bp
                 retf
-sub_20390       endp
+Sound_initPlaybackTiming endp
 
 ; ---------------------------------------------------------------------------
                 align 2

@@ -796,6 +796,11 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       the OPL2 chip-wide NTS/keyboard-split-mode bit (register 8) from
       a global flag set by its caller `sub_1CF90`. Full writeup in
       [overview.md](overview.md#opl2_setnoteselect-named).
+- [x] Named `sub_20390` (3 callers) → `Sound_initPlaybackTiming` —
+      initializes per-track playback-timing state for one sound
+      backend, gated by a bit in the shared `word_C8582` state word
+      whose exact backend wasn't pinned down. Full writeup in
+      [overview.md](overview.md#sound_initplaybacktiming-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

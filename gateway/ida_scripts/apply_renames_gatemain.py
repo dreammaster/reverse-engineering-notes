@@ -2254,6 +2254,23 @@ RENAMES = [
      "splits are computed chip-wide. byte_D1C54 is set by this "
      "function's only caller, sub_1CF90, immediately before calling "
      "this to commit the setting to hardware."),
+
+    (0x20390, "Sound_initPlaybackTiming",
+     "sub_20390(arg_0, arg_2, arg_4): no-ops unless bit 0x10 of the "
+     "sound-engine state word (word_C8582, a widely-shared bitmask "
+     "used across the sound backend selection/dispatch code -- which "
+     "exact backend bit 0x10 marks wasn't pinned down this pass) is "
+     "set. When set, computes arg_2 * 100000 (0x186A0, via __aFlmul) "
+     "into a 32-bit pair (word_C858E:word_C8590 -- plausibly a "
+     "duration or sample-count scaled into a fixed-point/microsecond "
+     "unit), stores arg_4 into word_C858C, copies an existing 32-bit "
+     "value (word_C8596:word_C8598) into word_C8592:word_C8594 "
+     "(plausibly resetting an elapsed/position counter from a total-"
+     "duration value), and stores arg_0 into word_C858A. Called from "
+     "sub_1E7D4 and sub_1F1DE (both unnamed, themselves called from "
+     "the already-named Sound_stopTrack area) -- consistent with "
+     "initializing per-track playback-timing state for one specific "
+     "sound backend before starting or resuming a track."),
 ]
 
 
