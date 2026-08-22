@@ -902,6 +902,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       `_opl2ChannelCount` — the master OPL2 rhythm-mode toggle and its
       channel-count global. Full writeup in
       [overview.md](overview.md#opl2_setrhythmmode-and-_opl2channelcount-named).
+- [x] Named `sub_1CF6E`/`word_D3BD2` → `Opl2_setMasterVolume`/
+      `_opl2MasterVolume` — a clamped 1-12 master-volume value feeding
+      the OPL2 per-channel instrument-setup cluster. Full writeup in
+      [overview.md](overview.md#opl2_setmastervolume-and-_opl2mastervolume-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

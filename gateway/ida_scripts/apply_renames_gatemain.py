@@ -2675,6 +2675,21 @@ RENAMES = [
      "or 9 (melodic-only) otherwise. Set by the just-named "
      "Opl2_setRhythmMode; read as a channel-loop upper bound "
      "elsewhere in the OPL2 backend."),
+
+    (0x1CF6E, "Opl2_setMasterVolume",
+     "sub_1CF6E(level): clamps level to the range 1-12 and stores it "
+     "into word_D3BD2 (now _opl2MasterVolume). That global's only "
+     "reader is sub_1CB32 (unnamed, called from sub_1D7DA -- part of "
+     "this same OPL2 per-channel cluster, itself called from the "
+     "already-named Opl2_setRhythmMode), consistent with a 1-12 "
+     "master-volume-style scaling factor feeding into per-channel "
+     "volume/instrument calculations. Called from sub_1CE20 and "
+     "sub_1E60C."),
+
+    (0x0D3BD2, "_opl2MasterVolume",
+     "A clamped 1-12 master-volume-style value set by the just-named "
+     "Opl2_setMasterVolume; read only by sub_1CB32 (unnamed), part of "
+     "the OPL2 per-channel instrument-setup cluster."),
 ]
 
 

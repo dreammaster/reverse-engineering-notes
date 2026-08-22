@@ -29666,7 +29666,7 @@ loc_1CB3B:
                 sar     ax, 1
                 sar     ax, 1
                 mov     cx, ax
-                mov     bx, word_D3BD2
+                mov     bx, _opl2MasterVolume
                 shl     bx, 1
                 neg     bx
 
@@ -30261,7 +30261,7 @@ loc_1CE2B:                              ; CODE XREF: sub_1CE20+1C\u2193j
                 mov     ax, 1
                 push    ax
                 push    cs
-                call    near ptr sub_1CF6E
+                call    near ptr Opl2_setMasterVolume
                 add     sp, 2
                 mov     ax, 1
                 push    ax
@@ -30391,7 +30391,7 @@ sub_1CF1C       endp
 
 ; Attributes: bp-based frame
 
-sub_1CF6E       proc far                ; CODE XREF: sub_1CE20+89\u2191p
+Opl2_setMasterVolume proc far           ; CODE XREF: sub_1CE20+89\u2191p
                                         ; sub_1E60C+79\u2193P
 
 arg_0           = word ptr  6
@@ -30402,17 +30402,17 @@ arg_0           = word ptr  6
                 jbe     short loc_1CF7C
                 mov     [bp+arg_0], 0Ch
 
-loc_1CF7C:                              ; CODE XREF: sub_1CF6E+7\u2191j
+loc_1CF7C:                              ; CODE XREF: Opl2_setMasterVolume+7\u2191j
                 cmp     [bp+arg_0], 1
                 jnb     short loc_1CF87
                 mov     [bp+arg_0], 1
 
-loc_1CF87:                              ; CODE XREF: sub_1CF6E+12\u2191j
+loc_1CF87:                              ; CODE XREF: Opl2_setMasterVolume+12\u2191j
                 mov     ax, [bp+arg_0]
-                mov     word_D3BD2, ax
+                mov     _opl2MasterVolume, ax
                 pop     bp
                 retf
-sub_1CF6E       endp
+Opl2_setMasterVolume endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -34115,7 +34115,7 @@ loc_1E676:                              ; CODE XREF: sub_1E60C+58\u2191j
                 mov     al, es:[bx]
                 sub     ah, ah
                 push    ax
-                call    sub_1CF6E
+                call    Opl2_setMasterVolume
 
 loc_1E68A:                              ; CODE XREF: sub_1E60C:loc_1E674\u2191j
                 add     sp, 2
@@ -400780,8 +400780,8 @@ dword_D3BC2     dd 0                    ; DATA XREF: exit+3\u2191o exit+6\u2191o
                 db    0
 _opl2BasePort   dw 0                    ; DATA XREF: Opl2_writeRegister:loc_1CAF9\u2191r
                                         ; Opl2_detectAndInit:loc_1CD5A\u2191w ...
-word_D3BD2      dw 0                    ; DATA XREF: sub_1CB32+17\u2191r
-                                        ; sub_1CF6E+1C\u2191w
+_opl2MasterVolume dw 0                  ; DATA XREF: sub_1CB32+17\u2191r
+                                        ; Opl2_setMasterVolume+1C\u2191w
 Persisted_struc24 Struct24 <0>          ; DATA XREF: show_startup+3F\u2191o
                                         ; seg068:SAVE_FIELDS\u2191o ...
 Persisted_val152 db 0                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o

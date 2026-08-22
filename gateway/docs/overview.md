@@ -3616,3 +3616,15 @@ logical-channel count, read as a channel-loop upper bound elsewhere in
 the backend.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-eleventh batch.
+
+### `Opl2_setMasterVolume` and `_opl2MasterVolume` named
+
+Moved to `sub_1CF6E` (2 callers) — clamps its argument to the range
+1-12 and stores it into a global (now `_opl2MasterVolume`). That
+global's only reader is `sub_1CB32` (unnamed), called from `sub_1D7DA`
+— part of this same OPL2 per-channel cluster, itself called from the
+already-named `Opl2_setRhythmMode` — consistent with a 1-12 master-
+volume-style scaling factor feeding into per-channel volume/instrument
+calculations.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-twelfth batch.
