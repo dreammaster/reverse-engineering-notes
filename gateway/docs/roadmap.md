@@ -1033,6 +1033,11 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       already-named `Commset_winContent`/`Commset_show`/`Commnet_proc1`
       cluster. Full writeup in
       [overview.md](overview.md#commset_runcommset_drawscreencommset_redrawchangediconscommset_drawkeycapindicator-named).
+- [x] Named `sub_6D7A3`/`sub_6D836` → `Sound_reportMusicToggle`/
+      `Sound_reportSoundToggle` — the "[Music/Sound is on/off.]"
+      confirmation messages printed after each toggle command. Full
+      writeup in
+      [overview.md](overview.md#sound_reportmusictogglesound_reportsoundtoggle-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

@@ -71768,7 +71768,7 @@ thunk_sub_6D7CD endp ; sp-analysis failed
 
 thunk_sub_6D7A3 proc far                ; DATA XREF: seg083:0484\u2193o
                 call    near ptr rtlink_thunk
-                jmp     sub_6D7A3
+                jmp     Sound_reportMusicToggle
 thunk_sub_6D7A3 endp ; sp-analysis failed
 
 ; ---------------------------------------------------------------------------
@@ -73107,7 +73107,7 @@ word_2ECB9      dw 6
 
 thunk_sub_6D836 proc far                ; DATA XREF: seg083:0496\u2193o
                 call    near ptr rtlink_thunk
-                jmp     sub_6D836
+                jmp     Sound_reportSoundToggle
 thunk_sub_6D836 endp ; sp-analysis failed
 
 ; ---------------------------------------------------------------------------
@@ -176999,7 +176999,7 @@ sub_6D715       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_6D7A3       proc far                ; CODE XREF: thunk_sub_6D7A3+3\u2191J
+Sound_reportMusicToggle proc far        ; CODE XREF: thunk_sub_6D7A3+3\u2191J
                                         ; sub_6D7CD+44\u2193p ...
                 mov     es, seg_D133A
                 test    byte ptr es:word_C8582, 6
@@ -177008,10 +177008,10 @@ sub_6D7A3       proc far                ; CODE XREF: thunk_sub_6D7A3+3\u2191J
                 jmp     short loc_6D7B7
 ; ---------------------------------------------------------------------------
 
-loc_6D7B4:                              ; CODE XREF: sub_6D7A3+A\u2191j
+loc_6D7B4:                              ; CODE XREF: Sound_reportMusicToggle+A\u2191j
                 mov     ax, 48CDh
 
-loc_6D7B7:                              ; CODE XREF: sub_6D7A3+F\u2191j
+loc_6D7B7:                              ; CODE XREF: Sound_reportMusicToggle+F\u2191j
                 push    ds
                 push    ax              ; char
                 mov     ax, offset aMusicIsOS_ ; "[Music is o%s.]\n"
@@ -177022,7 +177022,7 @@ loc_6D7B7:                              ; CODE XREF: sub_6D7A3+F\u2191j
                 add     sp, 8
                 mov     ax, 1
                 retf
-sub_6D7A3       endp
+Sound_reportMusicToggle endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -177059,7 +177059,7 @@ loc_6D7F2:                              ; CODE XREF: sub_6D7CD+16\u2191j
                 call    Sound_selectDevice
                 add     sp, 6
                 push    cs
-                call    near ptr sub_6D7A3
+                call    near ptr Sound_reportMusicToggle
                 mov     es, seg_D1318
                 push    es:_roomLogicNum
                 call    Sound_selectTrackForRoom
@@ -177075,7 +177075,7 @@ sub_6D7CD       endp
 loc_6D829:                              ; CODE XREF: sub_2ECC5+3\u2191J
                 call    Sound_shutdown
                 push    cs
-                call    near ptr sub_6D7A3
+                call    near ptr Sound_reportMusicToggle
                 mov     ax, 1
                 retf
 ; END OF FUNCTION CHUNK FOR sub_2ECC5
@@ -177083,7 +177083,7 @@ loc_6D829:                              ; CODE XREF: sub_2ECC5+3\u2191J
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_6D836       proc far                ; CODE XREF: thunk_sub_6D836+3\u2191J
+Sound_reportSoundToggle proc far        ; CODE XREF: thunk_sub_6D836+3\u2191J
                                         ; sub_2ECB1+3EBF8\u2193p ...
                 mov     es, seg_D133A
                 test    byte ptr es:word_C8582, 8
@@ -177092,10 +177092,10 @@ sub_6D836       proc far                ; CODE XREF: thunk_sub_6D836+3\u2191J
                 jmp     short loc_6D84A
 ; ---------------------------------------------------------------------------
 
-loc_6D847:                              ; CODE XREF: sub_6D836+A\u2191j
+loc_6D847:                              ; CODE XREF: Sound_reportSoundToggle+A\u2191j
                 mov     ax, 48D2h
 
-loc_6D84A:                              ; CODE XREF: sub_6D836+F\u2191j
+loc_6D84A:                              ; CODE XREF: Sound_reportSoundToggle+F\u2191j
                 push    ds
                 push    ax              ; char
                 mov     ax, offset aSoundIsOS_ ; "[Sound is o%s.]\n"
@@ -177106,7 +177106,7 @@ loc_6D84A:                              ; CODE XREF: sub_6D836+F\u2191j
                 add     sp, 8
                 mov     ax, 1
                 retf
-sub_6D836       endp
+Sound_reportSoundToggle endp
 
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR sub_2ECB1
@@ -177131,7 +177131,7 @@ loc_6D860:                              ; CODE XREF: sub_2ECB1+3\u2191J
                 call    Stream_configure
                 add     sp, 6
                 push    cs
-                call    near ptr sub_6D836
+                call    near ptr Sound_reportSoundToggle
                 mov     ax, 1
                 retf
 ; END OF FUNCTION CHUNK FOR sub_2ECB1
@@ -177150,7 +177150,7 @@ loc_6D8B0:                              ; CODE XREF: sub_2ECA7+3\u2191J
                 call    Sound_selectDevice
                 add     sp, 6
                 push    cs
-                call    near ptr sub_6D836
+                call    near ptr Sound_reportSoundToggle
                 mov     ax, 1
                 retf
 ; END OF FUNCTION CHUNK FOR sub_2ECA7
@@ -177329,9 +177329,11 @@ aYeahYouWish_   db 'Yeah, you wish.',0Ah,0
 aYouCanTPullS   db 'You can',27h,'t pull%s',0
 aGoodIdea_How?  db 'Good idea. How?',0Ah,0
 ; char aMusicIsOS_[]
-aMusicIsOS_     db '[Music is o%s.]',0Ah,0 ; DATA XREF: sub_6D7A3+16\u2191o
+aMusicIsOS_     db '[Music is o%s.]',0Ah,0
+                                        ; DATA XREF: Sound_reportMusicToggle+16\u2191o
 ; char aSoundIsOS_[]
-aSoundIsOS_     db '[Sound is o%s.]',0Ah,0 ; DATA XREF: sub_6D836+16\u2191o
+aSoundIsOS_     db '[Sound is o%s.]',0Ah,0
+                                        ; DATA XREF: Sound_reportSoundToggle+16\u2191o
 ; char aDescriptions_[]
 aDescriptions_  db ' descriptions.]',0Ah,0
                                         ; DATA XREF: sub_2EC9D:loc_6D93F\u2191o
@@ -394308,7 +394310,7 @@ seg_D1336       dw seg sg4d43           ; DATA XREF: sub_2EAD1+3DBE4\u2191r
                                         ; sub_2EAD1+3DC1E\u2191r ...
 seg_D1338       dw seg sg4d43           ; DATA XREF: sub_6D715+3E\u2191r
                                         ; sub_6D715:loc_6D75B\u2191r
-seg_D133A       dw seg sg4d43           ; DATA XREF: sub_6D7A3\u2191r
+seg_D133A       dw seg sg4d43           ; DATA XREF: Sound_reportMusicToggle\u2191r
                                         ; sub_6D7CD:loc_6D7E5\u2191r ...
 seg_D133C       dw seg sg4d43           ; DATA XREF: sub_6D7CD+6\u2191r
                                         ; sub_2ECB1+3EBC1\u2191r ...

@@ -3225,6 +3225,26 @@ RENAMES = [
      "labeled hotkey/keycap indicators for the Commset screen's main "
      "options, though the 4 actual characters weren't independently "
      "read out of the data table this pass."),
+
+    (0x6D7A3, "Sound_reportMusicToggle",
+     "sub_6D7A3(): tests word_C8582 bits 1-2 (mask 6); prints "
+     "'[Music is on.]' or '[Music is off.]' (aMusicIsOS_, "
+     "'[Music is o%s.]\\n') via TextWindow_add accordingly, always "
+     "returns 1. Called from sub_6D7CD (right after Sound_selectDevice, "
+     "the 'turn music on and pick a device' command) and from a "
+     "function-chunk-only caller reached via the RTLink-thunk sub_2ECC5 "
+     "(right after Sound_shutdown -- the 'turn music off' command) -- "
+     "the confirmation message printed after any music on/off toggle."),
+
+    (0x6D836, "Sound_reportSoundToggle",
+     "sub_6D836(): sibling of the just-named Sound_reportMusicToggle, "
+     "same shape: tests word_C8582 bit 3 (mask 8) and prints '[Sound is "
+     "on.]' or '[Sound is off.]' (aSoundIsOS_) via TextWindow_add. "
+     "Called from the RTLink-thunk-reached chunks behind sub_2ECB1 "
+     "(sets _soundMode bit 3, reconfigures the device and stream -- "
+     "'sound effects on') and sub_2ECA7 (clears that bit -- 'sound "
+     "effects off') -- the confirmation message for the separate "
+     "sound-effects on/off toggle, distinct from the music toggle."),
 ]
 
 

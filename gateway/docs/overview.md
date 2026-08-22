@@ -4272,3 +4272,29 @@ callee `sub_74D38` (also one of the 3 shared callers) wasn't traced
 this pass.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-fortieth batch.
+
+### `Sound_reportMusicToggle`/`Sound_reportSoundToggle` named
+
+`sub_6D7A3`/`sub_6D836` (3 callers each, sharing the same
+two-per-function pattern of "one thunk-reached RTLink command chunk,
+one ordinary near-call sibling"). Quick, clean pair — both just print
+a one-line confirmation message via `TextWindow_add` after a sound
+setting is toggled.
+
+**`Sound_reportMusicToggle`** (was `sub_6D7A3`) tests `word_C8582`
+bits 1-2 and prints `"[Music is on.]"` or `"[Music is off.]"`
+(`aMusicIsOS_`, `"[Music is o%s.]\n"`). Called from `sub_6D7CD` right
+after `Sound_selectDevice` (a "turn music on and pick a device"
+command), and from the RTLink-thunk-reached chunk behind `sub_2ECC5`
+right after `Sound_shutdown` (a "turn music off" command).
+
+**`Sound_reportSoundToggle`** (was `sub_6D836`) is the sibling for
+sound *effects*: tests `word_C8582` bit 3 and prints `"[Sound is
+on.]"`/`"[Sound is off.]"` (`aSoundIsOS_`). Called from the
+RTLink-thunk-reached chunks behind `sub_2ECB1` (sets the bit,
+reconfigures the device and stream — "sound effects on") and
+`sub_2ECA7` (clears it — "sound effects off") — a separate on/off
+toggle from the music one, confirming this engine has independent
+music and sound-effects mute switches.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-forty-first batch.
