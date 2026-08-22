@@ -3040,3 +3040,21 @@ format doesn't match the active video mode, consistent with this being
 the format/video-mode compatibility check that decision is based on.
 
 Applied via `apply_renames_gatemain.py`'s eighty-third batch.
+
+### `Image_allocateSurface` named
+
+Moved to `sub_2BCA5` (3 callers) — calls `sub_2A9C7(height, width,
+videoIndex)` to compute a required buffer size; if that reports an
+error, returns the error code `0xFFE6` (-26). Otherwise allocates a
+handle of that size via the already-named `new_handle`; if allocation
+fails (a null handle), also returns `0xFFE6`. Otherwise calls
+`sub_2BBBA(height, width, videoIndex, handle, surface, arg_A)` to
+build/decode the actual image data into the new buffer, and returns 0
+on success.
+
+Called from `sub_24A42`, itself called from the already-named
+`Image_load` — the size-computation-plus-allocation-plus-build step of
+loading an image into a surface. `sub_2A9C7` and `sub_2BBBA` remain
+unnamed.
+
+Applied via `apply_renames_gatemain.py`'s eighty-fourth batch.

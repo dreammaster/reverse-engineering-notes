@@ -48222,7 +48222,7 @@ loc_24A53:
                 push    ax              ; width
                 mov     ax, 10h
                 push    ax              ; height
-                call    sub_2BCA5
+                call    Image_allocateSurface
                 mov     ax, word ptr mouse_surface2._image
                 mov     dx, word ptr mouse_surface2._image+2
                 mov     word ptr dword_D21B0, ax
@@ -48238,7 +48238,7 @@ loc_24A53:
                 push    ax              ; width
                 mov     ax, 16
                 push    ax              ; height
-                call    sub_2BCA5
+                call    Image_allocateSurface
                 mov     ax, word ptr mouse_surface._image
                 mov     dx, word ptr mouse_surface._image+2
                 mov     word ptr dword_D2234, ax
@@ -52310,7 +52310,7 @@ loc_26708:                              ; CODE XREF: Image_load+E\u2191j
                 assume es:sg3EDC
                 push    es:pic_header._width ; width
                 push    es:pic_header._height ; height
-                call    sub_2BCA5
+                call    Image_allocateSurface
                 mov     [bp+var_2], ax
                 or      ax, ax
                 jnz     short loc_26700
@@ -52519,7 +52519,7 @@ loc_268A8:                              ; CODE XREF: sub_26892+D\u2191j
                 sub     ax, [bp+arg_6]
                 inc     ax
                 push    ax              ; height
-                call    sub_2BCA5
+                call    Image_allocateSurface
                 mov     [bp+var_4], ax
                 or      ax, ax
                 jnz     short loc_268A1
@@ -61722,7 +61722,7 @@ Surface_getPixelOffset endp
 
 ; Attributes: bp-based frame
 
-sub_2A9C7       proc far                ; CODE XREF: sub_2BCA5+1E\u2193P
+sub_2A9C7       proc far                ; CODE XREF: Image_allocateSurface+1E\u2193P
 
 var_2           = word ptr -2
 arg_0           = word ptr  6
@@ -64625,7 +64625,7 @@ seg056          segment byte public 'CODE' use16
 
 ; Attributes: bp-based frame
 
-sub_2BBBA       proc far                ; CODE XREF: sub_2BCA5+5C\u2193P
+sub_2BBBA       proc far                ; CODE XREF: Image_allocateSurface+5C\u2193P
 
 var_2           = word ptr -2
 arg_0           = word ptr  6
@@ -64745,8 +64745,8 @@ sub_2BBBA       endp
 
 ; Attributes: bp-based frame
 
-; int __stdcall __far sub_2BCA5(int height, int width, int videoIndex, Surface *surface, int)
-sub_2BCA5       proc far                ; CODE XREF: sub_24A42+19\u2191P
+; int __stdcall __far Image_allocateSurface(int height, int width, int videoIndex, Surface *surface, int)
+Image_allocateSurface proc far          ; CODE XREF: sub_24A42+19\u2191P
                                         ; sub_24A42+45\u2191P ...
 
 var_2           = word ptr -2
@@ -64779,7 +64779,7 @@ arg_A           = word ptr  10h
                 jmp     short loc_2BD0B
 ; ---------------------------------------------------------------------------
 
-loc_2BCD3:                              ; CODE XREF: sub_2BCA5+25\u2191j
+loc_2BCD3:                              ; CODE XREF: Image_allocateSurface+25\u2191j
                 push    ax
                 call    new_handle
                 add     sp, 2
@@ -64789,7 +64789,7 @@ loc_2BCD3:                              ; CODE XREF: sub_2BCA5+25\u2191j
                 jmp     short loc_2BD0B
 ; ---------------------------------------------------------------------------
 
-loc_2BCE7:                              ; CODE XREF: sub_2BCA5+39\u2191j
+loc_2BCE7:                              ; CODE XREF: Image_allocateSurface+39\u2191j
                 mov     bx, [bp+arg_A]
                 push    bx
                 mov     bx, word ptr [bp+surface+2]
@@ -64807,8 +64807,8 @@ loc_2BCE7:                              ; CODE XREF: sub_2BCA5+39\u2191j
                 call    sub_2BBBA
                 mov     [bp+var_2], 0
 
-loc_2BD0B:                              ; CODE XREF: sub_2BCA5+2C\u2191j
-                                        ; sub_2BCA5+40\u2191j
+loc_2BD0B:                              ; CODE XREF: Image_allocateSurface+2C\u2191j
+                                        ; Image_allocateSurface+40\u2191j
                 mov     ax, [bp+var_2]
                 pop     di
                 pop     si
@@ -64817,7 +64817,7 @@ loc_2BD0B:                              ; CODE XREF: sub_2BCA5+2C\u2191j
                 mov     sp, bp
                 pop     bp
                 retf    0Ch
-sub_2BCA5       endp
+Image_allocateSurface endp
 
 
 ; =============== S U B R O U T I N E =======================================

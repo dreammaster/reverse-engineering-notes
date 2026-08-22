@@ -33183,6 +33183,7 @@ static Bytes_5(void) {
 	create_insn	(x=0X2BC98);
 	op_stkvar	(x,	1);
 	create_insn	(0X2BCA5);
+	set_name	(0X2BCA5,	"Image_allocateSurface");
 	create_insn	(x=0X2BCA8);
 	op_hex		(x,	1);
 	create_insn	(x=0X2BCAF);
@@ -34096,8 +34097,6 @@ static Bytes_5(void) {
 	create_insn	(x=0X2C749);
 	op_plain_offset	(x,	1,	0XC7F20);
 	op_plain_offset	(x,	129,	0XC7F20);
-	create_insn	(x=0X2C755);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -34107,6 +34106,8 @@ static Bytes_6(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X2C755);
+	op_stkvar	(x,	0);
 	create_insn	(0X2C75C);
 	create_insn	(x=0X2C763);
 	op_stkvar	(x,	0);
@@ -38235,8 +38236,6 @@ static Bytes_6(void) {
 	create_word	(0X31095);
 	create_insn	(0X31097);
 	create_word	(0X3109F);
-	create_insn	(0X310A1);
-	create_word	(0X310A9);
 }
 
 //------------------------------------------------------------------------
@@ -38246,6 +38245,8 @@ static Bytes_7(void) {
         auto x;
 #define id x
 
+	create_insn	(0X310A1);
+	create_word	(0X310A9);
 	create_insn	(0X310AB);
 	create_word	(0X310B3);
 	create_insn	(0X310B5);
@@ -41625,9 +41626,6 @@ static Bytes_7(void) {
 	create_dword	(x=0X3F3BC);
 	op_plain_offset	(x,	0,	0X2CF40);
 	op_plain_offset	(x,	128,	0X2CF40);
-	create_dword	(x=0X3F3C0);
-	op_plain_offset	(x,	0,	0X2CF40);
-	op_plain_offset	(x,	128,	0X2CF40);
 }
 
 //------------------------------------------------------------------------
@@ -41637,6 +41635,9 @@ static Bytes_8(void) {
         auto x;
 #define id x
 
+	create_dword	(x=0X3F3C0);
+	op_plain_offset	(x,	0,	0X2CF40);
+	op_plain_offset	(x,	128,	0X2CF40);
 	create_dword	(x=0X3F3C4);
 	op_plain_offset	(x,	0,	0X2CF40);
 	op_plain_offset	(x,	128,	0X2CF40);
@@ -141211,7 +141212,7 @@ static Functions_1(void) {
 	define_local_var(0X2BBBA, 0X2BCA5, "[bp+0XA]", "videoIndex");
 	add_func    (0X2BCA5,0X2BD18);
 	set_func_flags(0X2BCA5,0x4412);
-	SetType(0X2BCA5, "int __stdcall __far sub_2BCA5(int height, int width, int videoIndex, Surface *surface, int);");
+	SetType(0X2BCA5, "int __stdcall __far Image_allocateSurface(int height, int width, int videoIndex, Surface *surface, int);");
 	set_frame_size(0X2BCA5, 0X8, 2, 0XC);
 	define_local_var(0X2BCA5, 0X2BD18, "[bp+0X6]", "height");
 	define_local_var(0X2BCA5, 0X2BD18, "[bp+0X8]", "width");

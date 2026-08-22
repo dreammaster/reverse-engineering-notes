@@ -2145,6 +2145,19 @@ RENAMES = [
      "tables in memory) when a picture's format doesn't match the "
      "active video mode, consistent with this function being the "
      "format/video-mode compatibility check that decision is based on."),
+
+    (0x2BCA5, "Image_allocateSurface",
+     "sub_2BCA5(height, width, videoIndex, surface, arg_A): calls "
+     "sub_2A9C7(height, width, videoIndex) to compute a required "
+     "buffer size; if that reports an error (dx!=0), returns the "
+     "error code 0xFFE6 (-26). Otherwise allocates a handle of that "
+     "size via the already-named new_handle; if allocation fails "
+     "(dx==0, a null handle), also returns 0xFFE6. Otherwise calls "
+     "sub_2BBBA(height, width, videoIndex, handle, surface, arg_A) to "
+     "build/decode the actual image data into the new buffer, and "
+     "returns 0 (success). Called from sub_24A42, itself called from "
+     "the already-named Image_load -- the size-computation-plus-"
+     "allocation-plus-build step of loading an image into a surface."),
 ]
 
 

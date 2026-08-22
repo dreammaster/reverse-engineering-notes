@@ -771,6 +771,11 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       called from `Picture_Load`/`load_and_scale_pic`/`scale_pic`.
       Full writeup in
       [overview.md](overview.md#picture_checkformatmatch-named).
+- [x] Named `sub_2BCA5` (3 callers) → `Image_allocateSurface` —
+      computes buffer size, allocates a handle, and builds the image
+      into it; the core of loading an image into a surface, called via
+      `sub_24A42` from `Image_load`. Full writeup in
+      [overview.md](overview.md#image_allocatesurface-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-
