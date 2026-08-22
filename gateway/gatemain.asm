@@ -302026,7 +302026,7 @@ Logics_warnBeckerDamage endp
 
 ; Attributes: bp-based frame
 
-sub_81010       proc far                ; CODE XREF: sub_312DB+4FD78↓p
+Logics_tallyBeckerJudgment proc far     ; CODE XREF: sub_312DB+4FD78↓p
                                         ; Logics_printBeckerJudgment+366↓P ...
 
 var_4           = word ptr -4
@@ -302040,14 +302040,14 @@ var_2           = word ptr -2
                 jmp     short loc_81028
 ; ---------------------------------------------------------------------------
 
-loc_81022:                              ; CODE XREF: sub_81010+2F↓j
+loc_81022:                              ; CODE XREF: Logics_tallyBeckerJudgment+2F↓j
                 inc     [bp+var_4]
 
-loc_81025:                              ; CODE XREF: sub_81010+2A↓j
-                                        ; sub_81010+34↓j ...
+loc_81025:                              ; CODE XREF: Logics_tallyBeckerJudgment+2A↓j
+                                        ; Logics_tallyBeckerJudgment+34↓j ...
                 inc     [bp+var_2]
 
-loc_81028:                              ; CODE XREF: sub_81010+10↑j
+loc_81028:                              ; CODE XREF: Logics_tallyBeckerJudgment+10↑j
                 cmp     [bp+var_2], 0Bh
                 jge     short loc_8104B
                 mov     bx, [bp+var_2]
@@ -302063,19 +302063,19 @@ loc_81028:                              ; CODE XREF: sub_81010+10↑j
                 jmp     short loc_81025
 ; ---------------------------------------------------------------------------
 
-loc_8104B:                              ; CODE XREF: sub_81010+1C↑j
+loc_8104B:                              ; CODE XREF: Logics_tallyBeckerJudgment+1C↑j
                 mov     ax, [bp+var_4]
                 mov     sp, bp
                 pop     bp
                 retf
-sub_81010       endp
+Logics_tallyBeckerJudgment endp
 
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR sub_312DB
 
 loc_81052:                              ; CODE XREF: sub_312DB+3↑J
                 push    cs
-                call    near ptr sub_81010
+                call    near ptr Logics_tallyBeckerJudgment
                 or      ax, ax
                 jle     short loc_8105F
                 mov     ax, 578Ah
@@ -311812,7 +311812,7 @@ loc_85459:                              ; CODE XREF: Logics_printBeckerJudgment+
                 push    ax
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_81010
+                call    Logics_tallyBeckerJudgment
                 mov     [bp+var_E], ax
                 cmp     byte_CD89D, 0
                 jz      short loc_854CC
@@ -312398,7 +312398,7 @@ loc_85931:                              ; CODE XREF: sub_313B7+3↑J
                 push    cs
                 call    near ptr Logics_printBeckerJudgment
                 add     sp, 2
-                call    sub_81010
+                call    Logics_tallyBeckerJudgment
                 or      ax, ax
                 jl      short loc_859A6
                 mov     ax, 98A7h
@@ -313738,7 +313738,7 @@ loc_8622A:                              ; CODE XREF: sub_85C7C+5A9↑j
 ; ---------------------------------------------------------------------------
 
 loc_8623D:                              ; CODE XREF: sub_85C7C+5BC↑j
-                call    sub_81010
+                call    Logics_tallyBeckerJudgment
                 or      ax, ax
                 jl      short loc_8624C
                 mov     ax, 9C22h
@@ -314911,7 +314911,7 @@ loc_86C02:                              ; CODE XREF: sub_85C7C+F7A↑j
                 push    ax
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_81010
+                call    Logics_tallyBeckerJudgment
                 cmp     ax, 0FFFEh
                 jge     short loc_86C3C
                 call    far ptr sub_4A722 ; rtlink_decode: polymorphic slot (far call operand, target depends on which overlay is loaded)

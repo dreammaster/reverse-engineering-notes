@@ -1204,6 +1204,11 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       `sub_2D3B9`) not yet traced -- worth a dedicated future pass.
       Full writeup in
       [overview.md](overview.md#rtlink_ensureoverlaysegmentloaded-named--the-actual-overlay-manager-behind-rtlink_thunk).
+- [x] Named `sub_81010` → `Logics_tallyBeckerJudgment` — the tally
+      computation backing `Logics_printBeckerJudgment`'s good-minus-
+      bad score, pinning its category count down to exactly 11. Full
+      writeup in
+      [overview.md](overview.md#logics_tallybeckerjudgment-named--pins-the-becker-judgment-down-to-exactly-11-categories).
 - [ ] `sub_170F6` (large, ~600+ bytes, spans past its own declared
       64-byte function boundary into unlabeled code before reaching
       `sub_175CD`) is the listbox rendering routine that reads

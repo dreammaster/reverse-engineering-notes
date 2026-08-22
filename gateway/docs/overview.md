@@ -5043,3 +5043,18 @@ account of every branch. A good candidate for a dedicated future pass
 given how central it is to this whole engine's architecture.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-sixty-third batch.
+
+### `Logics_tallyBeckerJudgment` named — pins the Becker judgment down to exactly 11 categories
+
+`sub_81010` (4 callers, called directly from the already-named
+`Logics_printBeckerJudgment`). Takes no arguments — reads an 11-entry
+table of per-category state words (`0`/`1` = neutral, no effect; `2`
+= increments a running tally; `3` = decrements it) and returns the net
+tally. This is almost certainly the actual tally computation backing
+`Logics_printBeckerJudgment`'s good-minus-bad running score, pinning
+down the earlier "roughly nine past-choice categories" estimate to an
+exact **11**. The table's write side (where each category's state
+presumably gets set to `2` or `3` as the corresponding good/bad choice
+happens elsewhere in the game) wasn't traced this pass.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-sixty-fourth batch.

@@ -3783,6 +3783,21 @@ RENAMES = [
      "pass -- this is the RTLink overlay swapper's entry point, "
      "confirmed in structure and purpose, not a complete instruction-"
      "by-instruction account of every branch."),
+
+    (0x81010, "Logics_tallyBeckerJudgment",
+     "sub_81010(): no arguments -- reads an 11-entry, 2-byte-stride "
+     "table of per-category state words at offset -0x4320 (0/1 = "
+     "neutral/untouched, no effect; 2 = increments a running tally; "
+     "3 = decrements it) and returns the net tally. Called directly "
+     "from the already-named Logics_printBeckerJudgment, which "
+     "computes and uses a running good-minus-bad tally across roughly "
+     "nine past-choice categories to pick its closing remark and final "
+     "verdict -- this is almost certainly the actual tally computation "
+     "backing that mechanism (11 slots vs. 'roughly nine' categories "
+     "previously estimated without a precise count; this pins it down "
+     "to 11). The table itself presumably gets populated with 2/3 as "
+     "the corresponding good/bad choice is made elsewhere in the game, "
+     "though that write side wasn't traced this pass."),
 ]
 
 
