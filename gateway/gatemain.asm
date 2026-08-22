@@ -36341,7 +36341,7 @@ loc_1F76E:                              ; CODE XREF: sub_1F692+D4\u2191j
 
 loc_1F7A4:                              ; CODE XREF: sub_1F692+FC\u2191j
                 push    cs
-                call    near ptr sub_1F910
+                call    near ptr Midi_stopTrack
 
 loc_1F7A8:                              ; CODE XREF: sub_1F692+13\u2191j
                                         ; sub_1F692+1D\u2191j ...
@@ -36496,14 +36496,14 @@ sub_1F7D6       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1F910       proc far                ; CODE XREF: sub_1F692+113\u2191p
+Midi_stopTrack  proc far                ; CODE XREF: sub_1F692+113\u2191p
                                         ; Sound_stopTrack:loc_202B2\u2193P
                 mov     es, seg126_21
                 assume es:sg3EDC
                 mov     es:_tmpSub._val9, 0
                 mov     word_C8532, 1
 
-loc_1F921:                              ; CODE XREF: sub_1F910+1A\u2193j
+loc_1F921:                              ; CODE XREF: Midi_stopTrack+1A\u2193j
                 push    cs
                 call    near ptr sub_1F93E
                 cmp     word_C8532, 0
@@ -36512,10 +36512,10 @@ loc_1F921:                              ; CODE XREF: sub_1F910+1A\u2193j
                 jz      short loc_1F939
                 mov     word_C852E, 0
 
-loc_1F939:                              ; CODE XREF: sub_1F910+21\u2191j
+loc_1F939:                              ; CODE XREF: Midi_stopTrack+21\u2191j
                 mov     ax, 1
                 retf
-sub_1F910       endp
+Midi_stopTrack  endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -36525,7 +36525,7 @@ sub_1F910       endp
 ; Attributes: bp-based frame
 
 sub_1F93E       proc far                ; CODE XREF: sub_1F692+10\u2191p
-                                        ; sub_1F910+12\u2191p
+                                        ; Midi_stopTrack+12\u2191p
                 push    bp
                 mov     bp, sp
                 sub     sp, 2
@@ -37863,7 +37863,7 @@ loc_202A9:                              ; CODE XREF: Sound_stopTrack+90\u2193j
 
 loc_202B2:                              ; CODE XREF: Sound_stopTrack+63\u2191j
                                         ; Sound_stopTrack+6A\u2191j ...
-                call    sub_1F910
+                call    Midi_stopTrack
 
 loc_202B7:                              ; CODE XREF: Sound_stopTrack+8E\u2191j
                 test    byte ptr word_C8582, 80h

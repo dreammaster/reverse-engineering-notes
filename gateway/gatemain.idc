@@ -18588,6 +18588,7 @@ static Bytes_3(void) {
 	create_insn	(x=0X1F906);
 	op_hex		(x,	1);
 	create_insn	(0X1F910);
+	set_name	(0X1F910,	"Midi_stopTrack");
 	create_insn	(0X1F93E);
 	create_insn	(x=0X1F941);
 	op_hex		(x,	1);
@@ -23384,10 +23385,6 @@ static Bytes_3(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X244AC);
 	op_hex		(x,	1);
-	create_insn	(x=0X244AE);
-	op_hex		(x,	1);
-	create_insn	(x=0X244BF);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -23397,6 +23394,10 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X244AE);
+	op_hex		(x,	1);
+	create_insn	(x=0X244BF);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X244C2);
 	op_stroff	(x,	0,	GetStrucIdByName("HandleEntry"),	0);
 	op_enum		(x,	1,	GetEnum("HFLAG"),0);
@@ -29060,11 +29061,6 @@ static Bytes_4(void) {
 	create_insn	(x=0X28A33);
 	op_plain_offset	(x,	1,	0XC7F20);
 	op_plain_offset	(x,	129,	0XC7F20);
-	create_insn	(x=0X28A3A);
-	op_plain_offset	(x,	1,	0XC7F20);
-	op_plain_offset	(x,	129,	0XC7F20);
-	create_insn	(x=0X28A44);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -29074,6 +29070,11 @@ static Bytes_5(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X28A3A);
+	op_plain_offset	(x,	1,	0XC7F20);
+	op_plain_offset	(x,	129,	0XC7F20);
+	create_insn	(x=0X28A44);
+	op_hex		(x,	1);
 	create_insn	(x=0X28A47);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X28A4A);
@@ -34017,11 +34018,6 @@ static Bytes_5(void) {
 	create_insn	(0X2C628);
 	create_insn	(x=0X2C62C);
 	op_stkvar	(x,	1);
-	create_insn	(0X2C646);
-	create_insn	(0X2C64B);
-	create_insn	(0X2C650);
-	create_insn	(x=0X2C653);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -34031,6 +34027,11 @@ static Bytes_6(void) {
         auto x;
 #define id x
 
+	create_insn	(0X2C646);
+	create_insn	(0X2C64B);
+	create_insn	(0X2C650);
+	create_insn	(x=0X2C653);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X2C658);
 	op_stkvar	(x,	1);
 	create_byte	(0X2C665);
@@ -38157,10 +38158,6 @@ static Bytes_6(void) {
 	create_insn	(0X30EB7);
 	create_word	(0X30EBF);
 	create_insn	(0X30EC1);
-	create_word	(0X30EC9);
-	create_insn	(0X30ECB);
-	set_name	(0X30ECB,	"thunk_sub_C3EB7");
-	create_word	(0X30ED3);
 }
 
 //------------------------------------------------------------------------
@@ -38170,6 +38167,10 @@ static Bytes_7(void) {
         auto x;
 #define id x
 
+	create_word	(0X30EC9);
+	create_insn	(0X30ECB);
+	set_name	(0X30ECB,	"thunk_sub_C3EB7");
+	create_word	(0X30ED3);
 	create_insn	(0X30ED5);
 	set_name	(0X30ED5,	"thunk_sub_C3E91");
 	create_word	(0X30EDD);
@@ -41525,9 +41526,6 @@ static Bytes_7(void) {
 	create_dword	(x=0X3F308);
 	op_plain_offset	(x,	0,	0X2CF40);
 	op_plain_offset	(x,	128,	0X2CF40);
-	create_dword	(x=0X3F30C);
-	op_plain_offset	(x,	0,	0X2CF40);
-	op_plain_offset	(x,	128,	0X2CF40);
 }
 
 //------------------------------------------------------------------------
@@ -41537,6 +41535,9 @@ static Bytes_8(void) {
         auto x;
 #define id x
 
+	create_dword	(x=0X3F30C);
+	op_plain_offset	(x,	0,	0X2CF40);
+	op_plain_offset	(x,	128,	0X2CF40);
 	create_dword	(x=0X3F310);
 	op_plain_offset	(x,	0,	0X2CF40);
 	op_plain_offset	(x,	128,	0X2CF40);
@@ -47661,8 +47662,6 @@ static Bytes_8(void) {
 	set_cmt	(0X4D9E5,	"DOS - GET CURRENT TIME\nReturn: CH = hours, CL = minutes, DH = seconds\nDL = hundredths of seconds",	0);
 	create_insn	(x=0X4D9E5);
 	op_hex		(x,	0);
-	create_insn	(x=0X4D9F3);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -47672,6 +47671,8 @@ static Bytes_9(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4D9F3);
+	op_hex		(x,	1);
 	set_cmt	(0X4D9F5,	"DOS - GET CURRENT DATE\nReturn: DL = day, DH = month, CX = year\nAL = day of the week (0=Sunday, 1=Monday, etc.)",	0);
 	create_insn	(x=0X4D9F5);
 	op_hex		(x,	0);

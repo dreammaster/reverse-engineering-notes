@@ -3672,3 +3672,20 @@ pointer, matching the `cli`/`sti` pattern used elsewhere in this
 session's sound-timing cluster for state shared with an ISR.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-fifteenth batch.
+
+### `Midi_stopTrack` named
+
+Moved to `sub_1F910` (2 callers) — another of the long-flagged "other
+Sound_stopTrack backend routines," called directly from the already-
+named `Sound_stopTrack`. Resets a scratch value, sets a flag word to
+1, then busy-loops calling an unnamed helper (tied to the just-named
+`Midi_setDataCallback`'s caller's neighborhood) until that flag word is
+cleared back to 0 — a blocking "drain the pending MIDI queue until
+finished" loop. Afterward clears a second flag if set, and returns 1.
+
+The MIDI/MPU-401 backend's stop-track handler, paralleling the
+already-named `Opl2_stopTrack` for the OPL2 backend — with this,
+both of the game's synthesized-music backends now have a named
+stop-track handler.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-sixteenth batch.

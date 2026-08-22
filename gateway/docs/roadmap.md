@@ -918,6 +918,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       atomic setter for the already-named `_midiDataCallback` global.
       Full writeup in
       [overview.md](overview.md#midi_setdatacallback-named).
+- [x] Named `sub_1F910` (2 callers) → `Midi_stopTrack` — the long-
+      pending MIDI/MPU-401 backend's `Sound_stopTrack` handler,
+      paralleling `Opl2_stopTrack`. Full writeup in
+      [overview.md](overview.md#midi_stoptrack-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

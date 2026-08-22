@@ -2727,6 +2727,18 @@ RENAMES = [
      "sub_1F552 -- a simple atomic setter for the MIDI data callback "
      "pointer, matching the cli/sti pattern used elsewhere in this "
      "session's sound-timing cluster for state shared with an ISR."),
+
+    (0x1F910, "Midi_stopTrack",
+     "sub_1F910(): another of the long-flagged 'other Sound_stopTrack "
+     "backend routines' -- called directly from the already-named "
+     "Sound_stopTrack (and from sub_1F692). Resets a scratch value, "
+     "sets word_C8532 to 1, then busy-loops calling sub_1F93E "
+     "(unnamed, tied to the just-named Midi_setDataCallback's caller "
+     "sub_1F552's neighborhood) until word_C8532 is cleared back to 0 "
+     "-- a blocking 'drain the pending MIDI queue until finished' "
+     "loop. Afterward clears word_C852E if set, and returns 1. The "
+     "MIDI/MPU-401 backend's stop-track handler, paralleling the "
+     "already-named Opl2_stopTrack for the OPL2 backend."),
 ]
 
 
