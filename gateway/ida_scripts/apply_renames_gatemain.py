@@ -2831,6 +2831,21 @@ RENAMES = [
      "a .MUS track's data and kick off playback on whichever backend "
      "is active -- is clear from its structure and already-named "
      "callers/callees."),
+
+    (0x1F63A, "Midi_prepareTrackData",
+     "sub_1F63A(dataPtr, dataSeg, header1, header2): stores dataPtr:"
+     "dataSeg into the shared _tmpSub._val10/unk_4DA68 fields, "
+     "returning 0 immediately if that pointer is null. Otherwise "
+     "calls sub_1FBCE(header1, header2) (unnamed -- presumably "
+     "records the two header words the just-named "
+     "Sound_loadAndStartTrack read from the MUS file), then calls "
+     "sub_1EE06(dataPtr:dataSeg) (unnamed); if that returns 0, bails "
+     "out. Otherwise calls sub_1F552 (unnamed; if it returns 0, bails "
+     "out) then sub_1F4A0 (unnamed), and returns 1. Called from "
+     "Sound_loadAndStartTrack (with the just-loaded MIDI track's data "
+     "pointer and the two header words read from the MUS file) and "
+     "from sub_1F7D6 -- the MIDI backend's 'parse/validate the loaded "
+     "track data and prepare it for playback' step."),
 ]
 
 

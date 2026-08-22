@@ -943,6 +943,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       playback-kickoff worker behind both `Sound_selectTrack` and
       `Sound_selectTrackForRoom`. Full writeup in
       [overview.md](overview.md#sound_loadandstarttrack-named).
+- [x] Named `sub_1F63A` (2 callers) → `Midi_prepareTrackData` — the
+      MIDI backend's parse/validate step for freshly-loaded track
+      data, called from `Sound_loadAndStartTrack`. Full writeup in
+      [overview.md](overview.md#midi_preparetrackdata-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

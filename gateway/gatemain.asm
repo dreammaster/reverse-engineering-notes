@@ -35123,7 +35123,7 @@ sub_1EDA0       endp
 
 ; Attributes: bp-based frame
 
-sub_1EE06       proc far                ; CODE XREF: sub_1F63A+3D\u2193p
+sub_1EE06       proc far                ; CODE XREF: Midi_prepareTrackData+3D\u2193p
 
 var_4           = word ptr -4
 var_2           = word ptr -2
@@ -35970,7 +35970,7 @@ sub_1F2B4       endp
 
 ; Attributes: bp-based frame
 
-sub_1F4A0       proc far                ; CODE XREF: sub_1F63A+50\u2193p
+sub_1F4A0       proc far                ; CODE XREF: Midi_prepareTrackData+50\u2193p
 
 var_2           = word ptr -2
 
@@ -36056,7 +36056,7 @@ sub_1F4A0       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1F552       proc far                ; CODE XREF: sub_1F63A+48\u2193p
+sub_1F552       proc far                ; CODE XREF: Midi_prepareTrackData+48\u2193p
                 mov     es, dseg_39
                 push    es:_midiBasePortConfig
                 mov     es, dseg_40
@@ -36147,7 +36147,7 @@ sub_1F552       endp
 
 ; Attributes: bp-based frame
 
-sub_1F63A       proc far                ; CODE XREF: sub_1F7D6+12D\u2193p
+Midi_prepareTrackData proc far          ; CODE XREF: sub_1F7D6+12D\u2193p
                                         ; Sound_loadAndStartTrack+2D4\u2193P
 
 arg_0           = word ptr  6
@@ -36166,14 +36166,14 @@ arg_6           = word ptr  0Ch
                 or      ax, dx
                 jnz     short loc_1F658
 
-loc_1F654:                              ; CODE XREF: sub_1F63A+45\u2193j
-                                        ; sub_1F63A+4D\u2193j
+loc_1F654:                              ; CODE XREF: Midi_prepareTrackData+45\u2193j
+                                        ; Midi_prepareTrackData+4D\u2193j
                 sub     ax, ax
                 pop     bp
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1F658:                              ; CODE XREF: sub_1F63A+18\u2191j
+loc_1F658:                              ; CODE XREF: Midi_prepareTrackData+18\u2191j
                 push    [bp+arg_6]
                 push    [bp+arg_4]
                 call    sub_1FBCE
@@ -36197,7 +36197,7 @@ loc_1F658:                              ; CODE XREF: sub_1F63A+18\u2191j
                 mov     ax, 1
                 pop     bp
                 retf
-sub_1F63A       endp
+Midi_prepareTrackData endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -36481,7 +36481,7 @@ loc_1F85E:                              ; CODE XREF: sub_1F7D6+73\u2191j
                 push    word ptr es:[bx+62Ah]
                 push    word ptr es:[bx+628h]
                 push    cs
-                call    near ptr sub_1F63A
+                call    near ptr Midi_prepareTrackData
                 add     sp, 8
                 pop     si
                 pop     di
@@ -36908,7 +36908,7 @@ Midi_sendDisplayText endp
 
 ; Attributes: bp-based frame
 
-sub_1FBCE       proc far                ; CODE XREF: sub_1F63A+24\u2191P
+sub_1FBCE       proc far                ; CODE XREF: Midi_prepareTrackData+24\u2191P
 
 var_2           = word ptr -2
 arg_0           = word ptr  6
@@ -37651,7 +37651,7 @@ loc_20119:                              ; CODE XREF: Sound_loadAndStartTrack+1AC
                 push    word_C8572
                 push    word ptr ptr+2
                 push    word ptr ptr
-                call    sub_1F63A
+                call    Midi_prepareTrackData
                 add     sp, 8
                 or      ax, ax
                 jz      short loc_201BA
@@ -138961,7 +138961,7 @@ sg3EDC          segment byte public 'UNK' use16
                 assume es:nothing, ss:nothing, ds:sg4d43, fs:nothing, gs:nothing
 _tmpSub         HandlerDataSub2 <0>     ; DATA XREF: main+4D1\u2191o
                                         ; sub_1E329+8F\u2191w ...
-unk_4DA68       db    0                 ; DATA XREF: sub_1F63A+11\u2191w
+unk_4DA68       db    0                 ; DATA XREF: Midi_prepareTrackData+11\u2191w
                 db    0
 dword_4DA6A     dd 0                    ; DATA XREF: sub_1FC70+17\u2191w
                                         ; sub_1FCAA+22\u2191r ...

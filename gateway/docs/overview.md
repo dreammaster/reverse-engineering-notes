@@ -3803,3 +3803,19 @@ session: file I/O, the MIDI event-queue/timing cluster, and the
 backend-selection bits in the shared sound-state word.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-twentieth batch.
+
+### `Midi_prepareTrackData` named
+
+Moved to `sub_1F63A` (2 callers) — stores the passed data pointer into
+a shared scratch field, returning immediately if it's null. Otherwise
+records the two header words the just-named `Sound_loadAndStartTrack`
+read from the `.MUS` file (via an unnamed helper), validates the
+loaded data (another unnamed helper), and if that succeeds calls two
+more unnamed helpers before returning success.
+
+Called from `Sound_loadAndStartTrack` (with the just-loaded MIDI
+track's data pointer and the two header words read from the MUS file)
+and from `sub_1F7D6` — the MIDI backend's "parse/validate the loaded
+track data and prepare it for playback" step.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-twenty-first batch.
