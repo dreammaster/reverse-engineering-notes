@@ -626,7 +626,7 @@ loc_104CA:                              ; CODE XREF: Parser_perform+2DE\u2191j
                 mov     al, es:Parser_val20
                 sub     ah, ah
                 push    ax
-                call    sub_147A6
+                call    Parser_callActionHandler
                 add     sp, 2
                 mov     [bp+logicResult], ax
 
@@ -7740,7 +7740,7 @@ loc_1383A:                              ; CODE XREF: sub_13820+28\u2193j
                 push    ax
 
 loc_1383B:
-                call    sub_147A6
+                call    Parser_callActionHandler
 
 loc_13840:
                 add     sp, 2
@@ -9846,7 +9846,7 @@ sub_14768       endp
 
 ; Attributes: bp-based frame
 
-sub_147A6       proc far                ; CODE XREF: Parser_perform+331\u2191P
+Parser_callActionHandler proc far       ; CODE XREF: Parser_perform+331\u2191P
                                         ; sub_13820:loc_1383B\u2191P
 
 arg_2           = byte ptr  6
@@ -9869,14 +9869,14 @@ loc_147BA:
                 jmp     short loc_147C9
 ; ---------------------------------------------------------------------------
 
-loc_147C7:                              ; CODE XREF: sub_147A6+7\u2191j
-                                        ; sub_147A6+D\u2191j
+loc_147C7:                              ; CODE XREF: Parser_callActionHandler+7\u2191j
+                                        ; Parser_callActionHandler+D\u2191j
                 sub     ax, ax
 
-loc_147C9:                              ; CODE XREF: sub_147A6+1F\u2191j
+loc_147C9:                              ; CODE XREF: Parser_callActionHandler+1F\u2191j
                 pop     bp
                 retf
-sub_147A6       endp
+Parser_callActionHandler endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -71612,7 +71612,7 @@ sub_2E851       endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-j_debug_info    proc far                ; CODE XREF: sub_147A6+1A\u2191P
+j_debug_info    proc far                ; CODE XREF: Parser_callActionHandler+1A\u2191P
                                         ; seg098:1656\u2193P
                                         ; DATA XREF: ...
                 call    near ptr rtlink_thunk
@@ -112372,7 +112372,7 @@ off_3C950       dd thunk_sub_6B606
                 dd thunk_loc_6A33F
                 dd sub_2E86F
 off_3C974       dd sub_2E865            ; DATA XREF: sub_14768+1D\u2191r
-off_3C978       dd j_debug_info         ; DATA XREF: sub_147A6+1A\u2191r
+off_3C978       dd j_debug_info         ; DATA XREF: Parser_callActionHandler+1A\u2191r
                                         ; seg098:1656\u2193r
                 db 0
                 db    0
@@ -393795,7 +393795,7 @@ dseg_100        dw seg sg4d43           ; DATA XREF: show_startup+158\u2191r
 seg_D10D2       dw seg seg082           ; DATA XREF: Logics_callSpecialExit:loc_14755\u2191r
                                         ; seg098:15E5\u2191r
 seg_D10D4       dw seg seg083           ; DATA XREF: sub_14768:loc_14781\u2191r
-                                        ; sub_147A6+16\u2191r ...
+                                        ; Parser_callActionHandler+16\u2191r ...
                 dw seg seg083
                 dw seg seg083
                 dw seg seg083

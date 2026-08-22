@@ -2439,6 +2439,18 @@ RENAMES = [
      "from the already-named GatewayParser_speakHandler -- the "
      "parser's response to trying to talk to a non-conversational "
      "target (an object, or oneself)."),
+
+    (0x147A6, "Parser_callActionHandler",
+     "sub_147A6(actionId): bounds-checks actionId to 1-195 (returns 0 "
+     "if 0 or >195), then indexes a 6-bytes-per-entry function-pointer "
+     "table (off_3C978) by actionId*6 and calls that far function "
+     "pointer, returning its result (0 if out of range). Called from "
+     "the already-named Parser_perform -- the core 'dispatch to the "
+     "handler for this action/verb ID' primitive of the parser "
+     "execution engine, analogous in shape to the object-method-table "
+     "dispatch pattern seen elsewhere (sub_1234F/sub_123A1, not "
+     "renamed there due to corrupted disassembly) but using its own "
+     "separate table."),
 ]
 
 

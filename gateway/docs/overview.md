@@ -3362,3 +3362,17 @@ parser's response to trying to talk to a non-conversational target (an
 object, or oneself).
 
 Applied via `apply_renames_gatemain.py`'s ninety-eighth batch.
+
+### `Parser_callActionHandler` named
+
+Moved to `sub_147A6` (2 callers) — bounds-checks its `actionId`
+argument to 1-195 (returning 0 if 0 or out of range), then indexes a
+6-bytes-per-entry function-pointer table (`off_3C978`) by
+`actionId*6` and calls that far function pointer directly, returning
+its result. Called from the already-named `Parser_perform` — the core
+"dispatch to the handler for this action/verb ID" primitive of the
+parser execution engine, similar in shape to the object-method-table
+dispatch pattern seen elsewhere (`sub_1234F`/`sub_123A1`, left unnamed
+due to corrupted disassembly) but using its own separate table.
+
+Applied via `apply_renames_gatemain.py`'s ninety-ninth batch.

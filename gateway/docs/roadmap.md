@@ -845,6 +845,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       the parser's "talking to a non-conversational target" response,
       confirmed via a decoded GATESTR.DAT message. Full writeup in
       [overview.md](overview.md#parser_printtalkingisstrange-named).
+- [x] Named `sub_147A6` (2 callers) → `Parser_callActionHandler` — the
+      core action/verb-ID dispatch primitive called from
+      `Parser_perform`. Full writeup in
+      [overview.md](overview.md#parser_callactionhandler-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-
