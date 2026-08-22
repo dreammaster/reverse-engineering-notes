@@ -5115,7 +5115,7 @@ loc_12562:
                 les     bx, [bp+handle]
                 test    byte ptr es:[bx+0Ah], 20h
                 jz      short loc_125B0
-                push    word_CAE11
+                push    errno
                 call    _strerror
 
 loc_1259B:
@@ -5160,7 +5160,7 @@ loc_125B7:
                 les     bx, [bp+0Eh]
                 test    byte ptr es:[bx+0Ah], 20h
                 jz      short loc_1260A
-                push    word_CAE11
+                push    errno
                 call    _strerror
                 add     sp, 2
                 push    dx
@@ -20059,7 +20059,7 @@ __myalloc       endp
 __maperror      proc far                ; CODE XREF: _int86+70\u2193P
                                         ; _intdos+3B\u2193P
                 xor     ah, ah
-                call    sub_18F54
+                call    Dos_setErrnoFromCode
                 retf
 __maperror      endp
 
@@ -20067,7 +20067,7 @@ __maperror      endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18F54       proc near               ; CODE XREF: __dos_findfirst-3AE6\u2191p
+Dos_setErrnoFromCode proc near          ; CODE XREF: __dos_findfirst-3AE6\u2191p
                                         ; _close:loc_18F43\u2191p ...
                 mov     byte_CAE1C, al
                 or      ah, ah
@@ -20084,29 +20084,29 @@ sub_18F54       proc near               ; CODE XREF: __dos_findfirst-3AE6\u2191p
                 db 90h
 ; ---------------------------------------------------------------------------
 
-loc_18F6F:                              ; CODE XREF: sub_18F54+C\u2191j
-                                        ; sub_18F54+14\u2191j
+loc_18F6F:                              ; CODE XREF: Dos_setErrnoFromCode+C\u2191j
+                                        ; Dos_setErrnoFromCode+14\u2191j
                 cmp     al, 13h
                 jbe     short loc_18F75
 
-loc_18F73:                              ; CODE XREF: sub_18F54+10\u2191j
+loc_18F73:                              ; CODE XREF: Dos_setErrnoFromCode+10\u2191j
                 mov     al, 13h
 
-loc_18F75:                              ; CODE XREF: sub_18F54+18\u2191j
-                                        ; sub_18F54+1D\u2191j
+loc_18F75:                              ; CODE XREF: Dos_setErrnoFromCode+18\u2191j
+                                        ; Dos_setErrnoFromCode+1D\u2191j
                 mov     bx, 2F3Ah
                 xlat
 
-loc_18F79:                              ; CODE XREF: sub_18F54+2C\u2193j
+loc_18F79:                              ; CODE XREF: Dos_setErrnoFromCode+2C\u2193j
                 cbw
-                mov     word_CAE11, ax
+                mov     errno, ax
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_18F7E:                              ; CODE XREF: sub_18F54+5\u2191j
+loc_18F7E:                              ; CODE XREF: Dos_setErrnoFromCode+5\u2191j
                 mov     al, ah
                 jmp     short loc_18F79
-sub_18F54       endp
+Dos_setErrnoFromCode endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -25419,7 +25419,7 @@ origin          = word ptr  0Eh
 
 loc_1B094:                              ; CODE XREF: _fseek+14\u2191j
                                         ; _fseek+1A\u2191j ...
-                mov     word_CAE11, 16h
+                mov     errno, 16h
                 jmp     loc_1B12A
 ; ---------------------------------------------------------------------------
                 align 2
@@ -25930,7 +25930,7 @@ loc_1B488:                              ; CODE XREF: _ftell+94\u2191j
                 les     bx, [bp+handle]
                 test    byte ptr es:[bx+0Ah], 80h
                 jnz     short loc_1B479
-                mov     word_CAE11, 16h
+                mov     errno, 16h
                 jmp     loc_1B3C7
 ; ---------------------------------------------------------------------------
                 align 2
@@ -127007,7 +127007,7 @@ arg_8           = dword ptr  0Eh
                 les     bx, [bp+arg_8]
                 test    byte ptr es:[bx+0Ah], 20h
                 jz      short loc_47547
-                push    word_CAE11
+                push    errno
                 call    far ptr 802h:46CCh
                 add     sp, 2
                 push    dx
@@ -127046,7 +127046,7 @@ sub_474F8       endp
                 les     bx, [bp+0Eh]
                 test    byte ptr es:[bx+0Ah], 20h
                 jz      short loc_475A1
-                push    word_CAE11
+                push    errno
                 call    far ptr 802h:46CCh
                 add     sp, 2
                 push    dx
@@ -156915,7 +156915,7 @@ loc_62DD0:                              ; CODE XREF: synchronize_save+25\u2191j
                 jnz     short loc_62E10
 
 loc_62DE2:                              ; CODE XREF: synchronize_save+15A\u2191j
-                push    word_CAE11
+                push    errno
                 call    _strerror
                 add     sp, 2
                 push    dx
@@ -385067,7 +385067,7 @@ dword_CAE05     dd 0                    ; DATA XREF: __fptrap-17A\u2191w
                 db    0
                 db    0
                 db    0
-word_CAE11      dw 0                    ; DATA XREF: fread+31\u2191r
+errno           dw 0                    ; DATA XREF: fread+31\u2191r
                                         ; sg03f6:00AC\u2191r ...
 word_CAE13      dw 0                    ; DATA XREF: __cXENIXtoDOSmode\u2191r
                 db    0
@@ -385075,9 +385075,9 @@ word_CAE13      dw 0                    ; DATA XREF: __cXENIXtoDOSmode\u2191r
 word_CAE17      dw 0                    ; DATA XREF: start-14C7C\u2191w
                                         ; __fptrap-160\u2191r ...
 byte_CAE19      db 0                    ; DATA XREF: __setargv+B\u2191r
-                                        ; sub_18F54+7\u2191r
+                                        ; Dos_setErrnoFromCode+7\u2191r
                 align 4
-byte_CAE1C      db 0                    ; DATA XREF: sub_18F54\u2191w
+byte_CAE1C      db 0                    ; DATA XREF: Dos_setErrnoFromCode\u2191w
                 align 2
 word_CAE1E      dw 14h                  ; DATA XREF: _close+6\u2191r
                                         ; _lseek+9\u2191r ...

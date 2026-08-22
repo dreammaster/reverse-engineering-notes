@@ -761,6 +761,11 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       pre-2007 US DST rule (first Sunday of April to last Sunday of
       October), closing out the `_tzset` cluster. Full writeup in
       [overview.md](overview.md#_isindst-named).
+- [x] Named `sub_18F54` (3 callers) → `Dos_setErrnoFromCode`, plus the
+      `errno` global — the real worker behind the already-named
+      `__maperror`, translating DOS extended-error codes via a lookup
+      table. Full writeup in
+      [overview.md](overview.md#dos_seterrnofromcode-and-errno-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

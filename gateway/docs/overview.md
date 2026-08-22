@@ -3000,3 +3000,23 @@ runtime `_isindst()`, closing out the `_tzset`/timezone-globals cluster
 from the previous pass.
 
 Applied via `apply_renames_gatemain.py`'s eighty-first batch.
+
+### `Dos_setErrnoFromCode` and `errno` named
+
+Moved to `sub_18F54` (3 callers) — the real worker behind the
+already-named `__maperror`, which just zeroes `ah` and tail-calls this.
+If `ah` is already non-zero on entry, the function uses it directly as
+the result (its other two callers, `_close` and `_dos_findfirst`, call
+it directly rather than through `__maperror`, presumably passing a
+pre-known errno value straight through via `ah`). Otherwise it clamps
+`al` to a max index (`byte_CAE19`, with a special case forcing index 5
+for `al` in 0x20-0x21), looks it up via `xlat` against a translation
+table at segment offset `0x2F3A` (a DOS extended-error-code → errno
+mapping table), and stores the sign-extended result into the global
+now named `errno`.
+
+That global (`word_CAE11`) was confirmed via the already-named `fread`
+reading it, plus two direct `0x16`/`EINVAL` literal stores elsewhere in
+the code — standard C runtime `errno` usage throughout.
+
+Applied via `apply_renames_gatemain.py`'s eighty-second batch.

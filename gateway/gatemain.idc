@@ -12541,6 +12541,7 @@ static Bytes_2(void) {
 	create_insn	(0X18F4E);
 	set_name	(0X18F4E,	"__maperror");
 	create_insn	(0X18F54);
+	set_name	(0X18F54,	"Dos_setErrnoFromCode");
 	create_byte	(0X18F6E);
 	create_insn	(0X18F6F);
 	create_insn	(0X18F7E);
@@ -18359,8 +18360,6 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1F3A8);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X1F3AB);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -18370,6 +18369,8 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X1F3AB);
+	op_hex		(x,	1);
 	create_insn	(0X1F3B6);
 	create_insn	(x=0X1F3BA);
 	op_hex		(x,	1);
@@ -128522,6 +128523,7 @@ static Bytes_23(void) {
 	set_name	(0XCADF8,	"aC_file_info");
 	create_dword	(0XCAE05);
 	create_word	(0XCAE11);
+	set_name	(0XCAE11,	"errno");
 	create_word	(0XCAE13);
 	create_word	(0XCAE17);
 	create_byte	(0XCAE19);
@@ -131589,8 +131591,6 @@ static Bytes_23(void) {
 	set_name	(0XCE1D7,	"aOnS_3");
 	create_strlit	(0XCE1DD,	0X6);
 	set_name	(0XCE1DD,	"aInS_1");
-	create_strlit	(0XCE1E3,	0X3);
-	set_name	(0XCE1E3,	"a__37");
 }
 
 //------------------------------------------------------------------------
@@ -131600,6 +131600,8 @@ static Bytes_24(void) {
         auto x;
 #define id x
 
+	create_strlit	(0XCE1E3,	0X3);
+	set_name	(0XCE1E3,	"a__37");
 	create_strlit	(0XCE1E6,	0X3);
 	set_name	(0XCE1E6,	"a__38");
 	create_strlit	(0XCE1E9,	0X10);
@@ -135665,12 +135667,6 @@ static Bytes_24(void) {
 	op_seg		(x,	0);
 	create_word	(x=0XD1276);
 	op_seg		(x,	0);
-	create_word	(x=0XD1278);
-	op_seg		(x,	0);
-	create_word	(x=0XD127A);
-	op_seg		(x,	0);
-	create_word	(x=0XD127C);
-	op_seg		(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -135680,6 +135676,12 @@ static Bytes_25(void) {
         auto x;
 #define id x
 
+	create_word	(x=0XD1278);
+	op_seg		(x,	0);
+	create_word	(x=0XD127A);
+	op_seg		(x,	0);
+	create_word	(x=0XD127C);
+	op_seg		(x,	0);
 	create_word	(x=0XD127E);
 	op_seg		(x,	0);
 	create_word	(x=0XD1280);

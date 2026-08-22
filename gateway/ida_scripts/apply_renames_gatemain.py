@@ -2109,6 +2109,26 @@ RENAMES = [
      "checked against the 2am DST-transition hour) against it to "
      "decide which side of the transition the given date/time falls "
      "on. This is the standard MSC runtime `_isindst()`."),
+
+    (0x18F54, "Dos_setErrnoFromCode",
+     "sub_18F54(al=code, ah=flag): the real worker behind the "
+     "already-named __maperror (which just zeroes ah and tail-calls "
+     "this). If ah is already non-zero on entry, uses it directly as "
+     "the result (callers _close/_dos_findfirst call this directly, "
+     "presumably passing a pre-known errno value straight through via "
+     "ah). Otherwise clamps al to a max index (byte_CAE19, with a "
+     "special case for al in 0x20-0x21 forcing index 5), looks it up "
+     "via xlat against a translation table at segment offset 0x2F3A "
+     "(DOS extended-error-code -> errno mapping), and stores the "
+     "sign-extended result into the just-identified errno global "
+     "(word_CAE11, confirmed via the already-named fread's read of "
+     "it, plus two direct 0x16/EINVAL literal stores elsewhere)."),
+
+    (0x0CAE11, "errno",
+     "The MSC runtime errno global. Read by the already-named fread; "
+     "written directly to 0x16 (EINVAL) at two call sites, and by the "
+     "just-named Dos_setErrnoFromCode (sub_18F54, the worker behind "
+     "__maperror) via a DOS-error-code translation table."),
 ]
 
 
