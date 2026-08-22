@@ -30938,7 +30938,7 @@ sub_1D1FE       endp
                 push    word ptr [bp+8]
                 push    cx
                 push    cs
-                call    near ptr sub_1D3C4
+                call    near ptr Opl2_setOperatorProperty
                 add     sp, 4
                 pop     bp
                 retf
@@ -30996,7 +30996,7 @@ loc_1D32F:                              ; CODE XREF: sub_1D2FC+3C\u2193j
                 mov     es:[bx], al
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr sub_1D448
+                call    near ptr Opl2_applyOperatorSettings
                 add     sp, 2
                 pop     si
                 pop     di
@@ -31075,7 +31075,7 @@ sub_1D366       endp
 
 ; Attributes: bp-based frame
 
-sub_1D3C4       proc far                ; CODE XREF: seg021:05A4\u2191p
+Opl2_setOperatorProperty proc far       ; CODE XREF: seg021:05A4\u2191p
 
 arg_0           = word ptr  6
 arg_2           = word ptr  8
@@ -31091,37 +31091,37 @@ arg_2           = word ptr  8
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1D3D8:                              ; CODE XREF: sub_1D3C4+E\u2191j
-                                        ; DATA XREF: sub_1D3C4+7A\u2193o ...
+loc_1D3D8:                              ; CODE XREF: Opl2_setOperatorProperty+E\u2191j
+                                        ; DATA XREF: Opl2_setOperatorProperty+7A\u2193o ...
                 push    cs
                 call    near ptr Opl2_writeRhythmRegister
                 pop     bp
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1D3DE:                              ; CODE XREF: sub_1D3C4+E\u2191j
-                                        ; DATA XREF: sub_1D3C4+7E\u2193o
+loc_1D3DE:                              ; CODE XREF: Opl2_setOperatorProperty+E\u2191j
+                                        ; DATA XREF: Opl2_setOperatorProperty+7E\u2193o
                 push    cs
                 call    near ptr Opl2_setNoteSelect
                 pop     bp
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1D3E4:                              ; CODE XREF: sub_1D3C4+E\u2191j
-                                        ; DATA XREF: sub_1D3C4:off_1D422\u2193o ...
+loc_1D3E4:                              ; CODE XREF: Opl2_setOperatorProperty+E\u2191j
+                                        ; DATA XREF: Opl2_setOperatorProperty:off_1D422\u2193o ...
                 push    [bp+arg_0]
                 push    cs
                 call    near ptr Opl2_setOperatorVolume
 
-loc_1D3EB:                              ; CODE XREF: sub_1D3C4+33\u2193j
-                                        ; sub_1D3C4+3D\u2193j ...
+loc_1D3EB:                              ; CODE XREF: Opl2_setOperatorProperty+33\u2193j
+                                        ; Opl2_setOperatorProperty+3D\u2193j ...
                 add     sp, 2
                 pop     bp
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1D3F0:                              ; CODE XREF: sub_1D3C4+E\u2191j
-                                        ; DATA XREF: sub_1D3C4+62\u2193o ...
+loc_1D3F0:                              ; CODE XREF: Opl2_setOperatorProperty+E\u2191j
+                                        ; DATA XREF: Opl2_setOperatorProperty+62\u2193o ...
                 push    [bp+arg_0]
                 push    cs
                 call    near ptr Opl2_setChannelFeedback
@@ -31129,8 +31129,8 @@ loc_1D3F0:                              ; CODE XREF: sub_1D3C4+E\u2191j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1D3FA:                              ; CODE XREF: sub_1D3C4+E\u2191j
-                                        ; DATA XREF: sub_1D3C4+64\u2193o ...
+loc_1D3FA:                              ; CODE XREF: Opl2_setOperatorProperty+E\u2191j
+                                        ; DATA XREF: Opl2_setOperatorProperty+64\u2193o ...
                 push    [bp+arg_0]
                 push    cs
                 call    near ptr Opl2_setOperatorAttackDecay
@@ -31138,8 +31138,8 @@ loc_1D3FA:                              ; CODE XREF: sub_1D3C4+E\u2191j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1D404:                              ; CODE XREF: sub_1D3C4+E\u2191j
-                                        ; DATA XREF: sub_1D3C4+66\u2193o ...
+loc_1D404:                              ; CODE XREF: Opl2_setOperatorProperty+E\u2191j
+                                        ; DATA XREF: Opl2_setOperatorProperty+66\u2193o ...
                 push    [bp+arg_0]
                 push    cs
                 call    near ptr Opl2_setOperatorSustainRelease
@@ -31147,8 +31147,8 @@ loc_1D404:                              ; CODE XREF: sub_1D3C4+E\u2191j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1D40E:                              ; CODE XREF: sub_1D3C4+E\u2191j
-                                        ; DATA XREF: sub_1D3C4+60\u2193o ...
+loc_1D40E:                              ; CODE XREF: Opl2_setOperatorProperty+E\u2191j
+                                        ; DATA XREF: Opl2_setOperatorProperty+60\u2193o ...
                 push    [bp+arg_0]
                 push    cs
                 call    near ptr Opl2_setOperatorModulationFlags
@@ -31156,15 +31156,15 @@ loc_1D40E:                              ; CODE XREF: sub_1D3C4+E\u2191j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1D418:                              ; CODE XREF: sub_1D3C4+E\u2191j
-                                        ; DATA XREF: sub_1D3C4+78\u2193o
+loc_1D418:                              ; CODE XREF: Opl2_setOperatorProperty+E\u2191j
+                                        ; DATA XREF: Opl2_setOperatorProperty+78\u2193o
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr sub_1D786
+                call    near ptr Opl2_setOperatorWaveform
                 jmp     short loc_1D3EB
 ; ---------------------------------------------------------------------------
                 align 2
-off_1D422       dw offset loc_1D3E4     ; DATA XREF: sub_1D3C4+E\u2191r
+off_1D422       dw offset loc_1D3E4     ; DATA XREF: Opl2_setOperatorProperty+E\u2191r
                 dw offset loc_1D40E
                 dw offset loc_1D3F0
                 dw offset loc_1D3FA
@@ -31184,17 +31184,17 @@ off_1D422       dw offset loc_1D3E4     ; DATA XREF: sub_1D3C4+E\u2191r
                 dw offset loc_1D3D8
 ; ---------------------------------------------------------------------------
 
-loc_1D446:                              ; CODE XREF: sub_1D3C4+9\u2191j
+loc_1D446:                              ; CODE XREF: Opl2_setOperatorProperty+9\u2191j
                 pop     bp
                 retf
-sub_1D3C4       endp
+Opl2_setOperatorProperty endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-sub_1D448       proc far                ; CODE XREF: sub_1D2FC+5D\u2191p
+Opl2_applyOperatorSettings proc far     ; CODE XREF: sub_1D2FC+5D\u2191p
 
 arg_0           = word ptr  6
 
@@ -31226,11 +31226,11 @@ arg_0           = word ptr  6
                 add     sp, 2
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr sub_1D786
+                call    near ptr Opl2_setOperatorWaveform
                 add     sp, 2
                 pop     bp
                 retf
-sub_1D448       endp
+Opl2_applyOperatorSettings endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -31355,7 +31355,7 @@ Opl2_setOperatorVolume endp
 
 
 Opl2_setNoteSelect proc far             ; CODE XREF: sub_1CF90+1A\u2191p
-                                        ; sub_1D3C4+1B\u2191p ...
+                                        ; Opl2_setOperatorProperty+1B\u2191p ...
                 cmp     byte_D1C54, 0
                 jz      short loc_1D57C
                 mov     ax, 40h ; '@'
@@ -31379,8 +31379,8 @@ Opl2_setNoteSelect endp
 
 ; Attributes: bp-based frame
 
-Opl2_setChannelFeedback proc far        ; CODE XREF: sub_1D3C4+30\u2191p
-                                        ; sub_1D448+19\u2191p
+Opl2_setChannelFeedback proc far        ; CODE XREF: Opl2_setOperatorProperty+30\u2191p
+                                        ; Opl2_applyOperatorSettings+19\u2191p
 
 var_2           = word ptr -2
 arg_0           = word ptr  6
@@ -31430,8 +31430,8 @@ Opl2_setChannelFeedback endp
 
 ; Attributes: bp-based frame
 
-Opl2_setOperatorAttackDecay proc far    ; CODE XREF: sub_1D3C4+3A\u2191p
-                                        ; sub_1D448+23\u2191p
+Opl2_setOperatorAttackDecay proc far    ; CODE XREF: Opl2_setOperatorProperty+3A\u2191p
+                                        ; Opl2_applyOperatorSettings+23\u2191p
 
 var_2           = word ptr -2
 arg_0           = word ptr  6
@@ -31479,8 +31479,8 @@ Opl2_setOperatorAttackDecay endp
 
 ; Attributes: bp-based frame
 
-Opl2_setOperatorSustainRelease proc far ; CODE XREF: sub_1D3C4+44\u2191p
-                                        ; sub_1D448+2D\u2191p
+Opl2_setOperatorSustainRelease proc far ; CODE XREF: Opl2_setOperatorProperty+44\u2191p
+                                        ; Opl2_applyOperatorSettings+2D\u2191p
 
 var_2           = word ptr -2
 arg_0           = word ptr  6
@@ -31528,8 +31528,9 @@ Opl2_setOperatorSustainRelease endp
 
 ; Attributes: bp-based frame
 
-Opl2_setOperatorModulationFlags proc far ; CODE XREF: sub_1D3C4+4E\u2191p
-                                        ; sub_1D448+37\u2191p
+Opl2_setOperatorModulationFlags proc far
+                                        ; CODE XREF: Opl2_setOperatorProperty+4E\u2191p
+                                        ; Opl2_applyOperatorSettings+37\u2191p
 
 var_2           = word ptr -2
 arg_0           = word ptr  6
@@ -31687,8 +31688,8 @@ Opl2_writeRhythmRegister endp
 
 ; Attributes: bp-based frame
 
-sub_1D786       proc far                ; CODE XREF: sub_1D3C4+58\u2191p
-                                        ; sub_1D448+41\u2191p
+Opl2_setOperatorWaveform proc far       ; CODE XREF: Opl2_setOperatorProperty+58\u2191p
+                                        ; Opl2_applyOperatorSettings+41\u2191p
 
 var_2           = word ptr -2
 arg_0           = word ptr  6
@@ -31716,10 +31717,10 @@ loc_1D78C:
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1D7B6:                              ; CODE XREF: sub_1D786+B\u2191j
+loc_1D7B6:                              ; CODE XREF: Opl2_setOperatorWaveform+B\u2191j
                 mov     [bp+var_2], 0
 
-loc_1D7BB:                              ; CODE XREF: sub_1D786+2D\u2191j
+loc_1D7BB:                              ; CODE XREF: Opl2_setOperatorWaveform+2D\u2191j
                 push    [bp+var_2]
                 mov     bx, [bp+arg_0]
                 mov     es, seg_D0F06
@@ -31731,7 +31732,7 @@ loc_1D7BB:                              ; CODE XREF: sub_1D786+2D\u2191j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_1D786       endp
+Opl2_setOperatorWaveform endp
 
 ; ---------------------------------------------------------------------------
                 align 2

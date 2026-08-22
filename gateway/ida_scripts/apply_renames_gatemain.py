@@ -2601,6 +2601,44 @@ RENAMES = [
      "this cluster now covers (0x20 AM/VIB/EG/KSR/Mult, 0x40 Level/"
      "KSL, 0x60 Attack/Decay, 0x80 Sustain/Release, 0xC0 Feedback/"
      "Connection)."),
+
+    (0x1D786, "Opl2_setOperatorWaveform",
+     "sub_1D786(operatorIndex): if the global word_D1C56 (a 'waveform "
+     "select enabled' flag, matching OPL2's WSE bit) is nonzero, reads "
+     "a 2-bit waveform value from the same 7-byte-stride per-operator "
+     "table (+0xD, masked to 2 bits); otherwise uses 0 (sine, the "
+     "fixed default when waveform select is disabled). Writes the "
+     "result to OPL2 register 0xE0+operatorRegisterOffset -- the "
+     "standard OPL2 Waveform-Select register -- via the already-named "
+     "Opl2_writeRegister. Called from sub_1D3C4 and sub_1D448, and "
+     "with this the entire standard OPL2 per-operator/channel register "
+     "set is now covered by this cluster (0x20/0x40/0x60/0x80/0xC0/"
+     "0xE0)."),
+
+    (0x1D3C4, "Opl2_setOperatorProperty",
+     "sub_1D3C4(operatorIndex, propertyId): a property-ID dispatcher "
+     "(propertyId 0-0x11, 18 values, via a jump table) that calls "
+     "exactly one of this session's just-named OPL2 register setters "
+     "per property -- Opl2_setOperatorVolume, Opl2_setChannelFeedback, "
+     "Opl2_setOperatorAttackDecay, Opl2_setOperatorSustainRelease, "
+     "Opl2_setOperatorModulationFlags, Opl2_setOperatorWaveform, "
+     "Opl2_setNoteSelect, or the already-named "
+     "Opl2_writeRhythmRegister -- letting a caller update a single "
+     "named instrument/operator parameter without touching the "
+     "others. Ties together this entire OPL2 register cluster as a "
+     "single property-set entry point."),
+
+    (0x1D448, "Opl2_applyOperatorSettings",
+     "sub_1D448(operatorIndex): unconditionally calls every OPL2 "
+     "register setter this cluster covers, in sequence, for one "
+     "operator -- Opl2_writeRhythmRegister, Opl2_setNoteSelect, "
+     "Opl2_setOperatorVolume, Opl2_setChannelFeedback, "
+     "Opl2_setOperatorAttackDecay, Opl2_setOperatorSustainRelease, "
+     "Opl2_setOperatorModulationFlags, and Opl2_setOperatorWaveform. "
+     "The 'load/commit a full instrument definition' counterpart to "
+     "the just-named Opl2_setOperatorProperty's 'update one property' "
+     "role -- called from sub_1D2FC when first setting up an "
+     "operator's complete OPL2 register state."),
 ]
 
 

@@ -887,6 +887,13 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       — the AM/Vibrato/EG-Type/KSR/Multiple register, the 5th and
       final standard OPL2 register this cluster covers. Full writeup
       in [overview.md](overview.md#opl2_setoperatormodulationflags-named).
+- [x] Named `sub_1D786`/`sub_1D3C4`/`sub_1D448` →
+      `Opl2_setOperatorWaveform`/`Opl2_setOperatorProperty`/
+      `Opl2_applyOperatorSettings` — the Waveform-Select register,
+      the property-ID dispatcher, and the "apply all settings"
+      entry point, closing out the entire OPL2 per-operator register
+      cluster. Full writeup in
+      [overview.md](overview.md#the-opl2-per-operator-register-cluster-closed-out).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

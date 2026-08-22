@@ -3545,3 +3545,37 @@ Attack/Decay, `0x80` Sustain/Release, and `0xC0` Feedback/Connection
 (`Opl2_setChannelFeedback`).
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-eighth batch.
+
+### The OPL2 per-operator register cluster closed out
+
+Three more functions traced together, completing the whole cluster
+this session built up piece by piece. `Opl2_setOperatorWaveform`
+(`sub_1D786`) writes OPL2 register `0xE0+operatorRegisterOffset` (the
+Waveform-Select register) from either a 2-bit value in the per-
+operator table or a forced 0 (sine) when a "waveform select enabled"
+global flag is clear — the last of the standard OPL2 per-operator
+registers (`0x20`/`0x40`/`0x60`/`0x80`/`0xC0`/`0xE0`) left to identify.
+
+`Opl2_setOperatorProperty` (`sub_1D3C4`) is a property-ID dispatcher:
+given an operator index and a property ID (0-0x11), it calls exactly
+one of this session's OPL2 register setters — letting a caller update
+a single named instrument/operator parameter without touching the
+others.
+
+`Opl2_applyOperatorSettings` (`sub_1D448`) is the "commit everything"
+counterpart: it unconditionally calls every one of those same register
+setters in sequence for one operator, the "load/commit a full
+instrument definition" role, called from `sub_1D2FC` when first
+setting up an operator's complete OPL2 register state.
+
+Together, `Opl2_setOperatorProperty` and `Opl2_applyOperatorSettings`
+tie together the entire OPL2 register-writing cluster traced across
+several passes this session: `Opl2_setOperatorVolume` (`0x40`),
+`Opl2_setNoteSelect` (register 8), `Opl2_setChannelFeedback` (`0xC0`),
+`Opl2_setOperatorAttackDecay` (`0x60`),
+`Opl2_setOperatorSustainRelease` (`0x80`),
+`Opl2_setOperatorModulationFlags` (`0x20`), and
+`Opl2_setOperatorWaveform` (`0xE0`) — a complete instrument-parameter
+interface for the OPL2/AdLib backend.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-ninth batch.
