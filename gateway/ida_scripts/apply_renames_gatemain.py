@@ -3677,6 +3677,31 @@ RENAMES = [
      "2 others -- the 'get a pointer to the current input-line buffer' "
      "counterpart used throughout the line-editing/input-prompt "
      "cluster."),
+
+    (0x16739, "Listbox_wrapItemText",
+     "sub_16739(listboxNum, textPtr_far, vocabOrLen_far, flag1, flag2): "
+     "called from the already-named Listbox_pushState. Resolves "
+     "listboxNum to an internal slot index via a lookup table at "
+     "offset -0x4E20 (an indirection layer, not confirmed further), "
+     "reads the text (raw string if the first byte is the 0xFF "
+     "sentinel -- matching the same raw-vs-vocab-word convention seen "
+     "in the already-named Listbox_getSelectedItemText -- via _strlen, "
+     "otherwise a fixed word-count via the byte itself), then measures "
+     "how many whole words/lines of text fit by repeatedly calling "
+     "_strlen and comparing against textPtr_far's own length, "
+     "incrementing a per-line counter each time it does -- a word-wrap "
+     "line-count computation. Stores the results into the same set of "
+     "per-listbox-slot fields the already-ranked sub_170F6 (a large, "
+     "not-yet-named listbox rendering routine) reads back from: line/"
+     "word counts (-0x4E2C/-0x4E02), the text far pointer itself "
+     "(-0x4E0C/-0x4E0A), two flag bytes (-0x4E04, -0x4DF6 -- the "
+     "latter also tested directly in sub_170F6), and clears two more "
+     "fields (-0x4E10, -0x4E14). Ends by calling Mouse_Hide (the "
+     "matching Mouse_Show presumably follows in a part of the function "
+     "not reached this pass -- 'sp-analysis failed' truncates the "
+     "visible body here same as several others this cluster). The "
+     "exact role of arg_4 (vocabOrLen_far) wasn't nailed down "
+     "independently. 5 callers."),
 ]
 
 

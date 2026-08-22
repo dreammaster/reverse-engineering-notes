@@ -13762,7 +13762,7 @@ loc_16733:                              ; CODE XREF: Listbox_add+12↑j
 
 ; Attributes: bp-based frame
 
-sub_16739       proc far                ; CODE XREF: Listbox_pushState+91↓P
+Listbox_wrapItemText proc far           ; CODE XREF: Listbox_pushState+91↓P
                                         ; sub_17AB8+5B↓P ...
 
 var_C           = word ptr -0Ch
@@ -13783,7 +13783,7 @@ arg_8           = byte ptr  0Eh
                 jmp     loc_168C4
 ; ---------------------------------------------------------------------------
 
-loc_16749:                              ; CODE XREF: sub_16739+B↑j
+loc_16749:                              ; CODE XREF: Listbox_wrapItemText+B↑j
                 mov     bx, [bp+arg_2]
                 shl     bx, 1
                 mov     ax, [bx-4E20h]
@@ -13793,7 +13793,7 @@ loc_16749:                              ; CODE XREF: sub_16739+B↑j
                 jmp     loc_168C4
 ; ---------------------------------------------------------------------------
 
-loc_1675C:                              ; CODE XREF: sub_16739+1E↑j
+loc_1675C:                              ; CODE XREF: Listbox_wrapItemText+1E↑j
                 les     bx, [bp+8]
                 assume es:nothing
                 mov     al, es:[bx]
@@ -13808,13 +13808,13 @@ loc_1675C:                              ; CODE XREF: sub_16739+1E↑j
                 inc     ax
                 mov     [bp+var_6], ax
 
-loc_16779:                              ; CODE XREF: sub_16739+30↑j
+loc_16779:                              ; CODE XREF: Listbox_wrapItemText+30↑j
                 mov     [bp+var_8], 1
                 les     bx, [bp+8]
                 cmp     word ptr es:[bx], 0FFFFh
                 jnz     short loc_167AD
 
-loc_16787:                              ; CODE XREF: sub_16739+6F↓j
+loc_16787:                              ; CODE XREF: Listbox_wrapItemText+6F↓j
                 mov     ax, [bp+var_8]
                 imul    [bp+var_6]
                 add     ax, [bp+8]
@@ -13831,10 +13831,10 @@ loc_16787:                              ; CODE XREF: sub_16739+6F↓j
                 jmp     short loc_16787
 ; ---------------------------------------------------------------------------
 
-loc_167AA:                              ; CODE XREF: sub_16739+85↓j
+loc_167AA:                              ; CODE XREF: Listbox_wrapItemText+85↓j
                 inc     [bp+var_8]
 
-loc_167AD:                              ; CODE XREF: sub_16739+4C↑j
+loc_167AD:                              ; CODE XREF: Listbox_wrapItemText+4C↑j
                 mov     ax, [bp+var_8]
                 imul    [bp+var_6]
                 mov     bx, ax
@@ -13843,7 +13843,7 @@ loc_167AD:                              ; CODE XREF: sub_16739+4C↑j
                 cmp     word ptr es:[bx+si], 0
                 jnz     short loc_167AA
 
-loc_167C0:                              ; CODE XREF: sub_16739+6A↑j
+loc_167C0:                              ; CODE XREF: Listbox_wrapItemText+6A↑j
                 mov     si, [bp+var_C]
                 shl     si, 1
                 mov     ax, [bp+var_6]
@@ -13872,7 +13872,7 @@ loc_167C0:                              ; CODE XREF: sub_16739+6A↑j
                 shl     si, 1
                 mov     ax, [si-4E24h]
                 cmp     [si-4E02h], ax
-sub_16739       endp ; sp-analysis failed
+Listbox_wrapItemText endp ; sp-analysis failed
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -13944,8 +13944,8 @@ loc_168B9:                              ; CODE XREF: sub_1681E+7D↑j
                 call    Mouse_show
                 add     sp, 2
 
-loc_168C4:                              ; CODE XREF: sub_16739+D↑j
-                                        ; sub_16739+20↑j
+loc_168C4:                              ; CODE XREF: Listbox_wrapItemText+D↑j
+                                        ; Listbox_wrapItemText+20↑j
                 pop     si
                 mov     sp, bp
                 pop     bp
@@ -16534,7 +16534,7 @@ loc_17A26:                              ; CODE XREF: Listbox_pushState+8↑j
                 push    [bp+arg_4]
                 push    [bp+arg_2]      ; items
                 push    [bp+arg_0]      ; widowNum
-                call    sub_16739
+                call    Listbox_wrapItemText
                 add     sp, 0Ah
 
 loc_17AB2:                              ; CODE XREF: Listbox_pushState+7B↑j
@@ -16587,7 +16587,7 @@ var_2           = word ptr -2
                 push    [bp+var_2]
                 push    [bp+var_4]      ; items
                 push    [bp+var_6]      ; widowNum
-                call    sub_16739
+                call    Listbox_wrapItemText
                 add     sp, 0Ah
                 dec     word_D0766
                 mov     bx, word_D0766
@@ -226124,7 +226124,7 @@ loc_5C837:                              ; CODE XREF: Events_waitForPress+91↑j
                 push    seg_CBCD4
                 push    word_CBCD2      ; items
                 push    word_CBCFA      ; widowNum
-                call    sub_16739
+                call    Listbox_wrapItemText
                 add     sp, 0Ah
 
 loc_5C84F:                              ; CODE XREF: Events_waitForPress+97↑j
@@ -226144,7 +226144,7 @@ loc_5C867:                              ; CODE XREF: Events_waitForPress+C1↑j
                 push    seg_CBCCA
                 push    word_CBCC8      ; items
                 push    word_CBCF8      ; widowNum
-                call    sub_16739
+                call    Listbox_wrapItemText
                 add     sp, 0Ah
                 jmp     short loc_5C896
 ; ---------------------------------------------------------------------------
@@ -226819,7 +226819,7 @@ loc_5CE2A:                              ; CODE XREF: scene_update?+30↑j
                 push    seg_CBCD4
                 push    word_CBCD2      ; items
                 push    word_CBCFA      ; widowNum
-                call    sub_16739
+                call    Listbox_wrapItemText
                 add     sp, 0Ah
                 push    word_CBCF8      ; winNumber
                 call    Listbox_getItems
@@ -226849,7 +226849,7 @@ loc_5CE78:                              ; CODE XREF: scene_update?+7E↑j
                 push    seg_CBCCA
                 push    word_CBCC8      ; items
                 push    word_CBCF8      ; widowNum
-                call    sub_16739
+                call    Listbox_wrapItemText
                 add     sp, 0Ah
                 cmp     word_CBD00, 0
                 jnz     short loc_5CEE0
@@ -227211,7 +227211,7 @@ loc_5D1FC:                              ; CODE XREF: sub_5D18C+68↑j
                 push    seg_CBCD4
                 push    word_CBCD2      ; items
                 push    word_CBCFA      ; widowNum
-                call    sub_16739
+                call    Listbox_wrapItemText
                 add     sp, 0Ah
 
 loc_5D214:                              ; CODE XREF: sub_5D18C+6E↑j
@@ -227231,7 +227231,7 @@ loc_5D22C:                              ; CODE XREF: sub_5D18C+98↑j
                 push    seg_CBCCA
                 push    word_CBCC8      ; items
                 push    word_CBCF8      ; widowNum
-                call    sub_16739
+                call    Listbox_wrapItemText
                 add     sp, 0Ah
                 jmp     short locret_5D297
 ; ---------------------------------------------------------------------------

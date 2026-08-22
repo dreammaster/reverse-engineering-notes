@@ -1176,6 +1176,16 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
 - [x] Named `sub_21A9A` → `InputArea_getLine` — the paired read side
       of the already-named `InputArea_setLine`. Full writeup in
       [overview.md](overview.md#inputarea_getline-named).
+- [x] Named `sub_16739` → `Listbox_wrapItemText` — the word-wrap
+      setup counterpart to the still-unnamed `sub_170F6` listbox
+      rendering routine, sharing the same per-slot table layout. Full
+      writeup in
+      [overview.md](overview.md#listbox_wrapitemtext-named--ties-into-an-as-yet-unnamed-listbox-rendering-routine).
+- [ ] `sub_170F6` (large, ~600+ bytes, spans past its own declared
+      64-byte function boundary into unlabeled code before reaching
+      `sub_175CD`) is the listbox rendering routine that reads
+      `Listbox_wrapItemText`'s per-slot table — worth a dedicated pass
+      to properly extend its function boundary and trace it fully.
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

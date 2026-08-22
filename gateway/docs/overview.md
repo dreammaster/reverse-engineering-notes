@@ -4925,3 +4925,29 @@ counterpart used throughout the line-editing/input-prompt cluster
 (`prompt_for_line` among its callers).
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-fifty-eighth batch.
+
+### `Listbox_wrapItemText` named — ties into an as-yet-unnamed listbox rendering routine
+
+`sub_16739` (5 callers, called from the already-named
+`Listbox_pushState`). Resolves a listbox number to an internal slot
+index via a lookup table, reads the item's text (raw string vs. a
+vocab-word-index list, gated by the same `0xFF` sentinel convention
+already confirmed for `Listbox_getSelectedItemText`), then computes a
+word-wrap line count by repeatedly measuring string lengths against a
+maximum. Stores the results — line/word counts, the text far pointer,
+two flag bytes, two cleared fields — into a per-listbox-slot table.
+
+That same table is read back by `sub_170F6`, a large (600+ byte,
+still-unnamed) listbox rendering routine spotted a couple of passes
+ago but set aside as too large/complex to fully trace in one sitting —
+worth returning to now that its setup counterpart has a name and the
+shared field layout is documented.
+
+Ends with a call to `Mouse_Hide`; the matching `Mouse_Show` presumably
+lives in a portion of the body not reached this pass (`sp-analysis
+failed` truncates it, the same issue affecting several functions in
+this cluster). The exact role of the third argument (a second far
+pointer, possibly the vocab-word array or its bound) wasn't
+independently confirmed.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-fifty-ninth batch.
