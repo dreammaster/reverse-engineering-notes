@@ -1056,6 +1056,12 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       `Logics_checkMoveRestriction`/`Logics_lookAtCurrentRoom`/
       `Logics_travelViaTransitDisk`. Full writeup in
       [overview.md](overview.md#logics_printobjectdescription-named--revisiting-a-previously-skipped-function-with-better-context).
+- [x] Named `sub_15A7A`/`sub_159D5` → `Logics_stripPlayerItems`/
+      `Logics_restorePlayerItems` — closes out a save/strip/restore
+      trio with the already-named `Logics_collectPlayerItemLists`,
+      confirmed via a TOUCH-verb scene where an NPC re-clothes the
+      player and leads them away. Full writeup in
+      [overview.md](overview.md#logics_stripplayeritemslogics_restoreplayeritems-named--the-savestriprestore-inventory-trio).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

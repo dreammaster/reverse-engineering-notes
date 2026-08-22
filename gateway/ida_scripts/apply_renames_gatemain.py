@@ -3314,6 +3314,38 @@ RENAMES = [
      "9-0xC 'look mode' value across all three confirms this is one "
      "shared brief/full/first-visit-style description dispatcher, not "
      "three independent implementations."),
+
+    (0x15A7A, "Logics_stripPlayerItems",
+     "sub_15A7A(): detaches every item the already-confirmed player "
+     "logic (0xD3) currently has, in both handler slots. Repeatedly "
+     "queries Logics_getUnkHandler(0xD3, 1) (the 'worn' chain per the "
+     "already-named Logics_collectPlayerItemLists) and detaches "
+     "whatever it returns via j_Logics_updateHandler(logicNum, 0, 0) "
+     "until the chain is empty, then does the same for handlerIndex 0 "
+     "(the 'carried' chain). The 'take away literally everything the "
+     "player has, worn and carried' primitive -- called from the "
+     "just-named Logics_restorePlayerItems and from sub_9B5F9."),
+
+    (0x159D5, "Logics_restorePlayerItems",
+     "sub_159D5(): gated on Persisted_val19/Persisted_val20 (both must "
+     "be zero to no-op -- the setter for these two flags wasn't found "
+     "in this pass, so what actually triggers a pending restore isn't "
+     "confirmed). When gated in: calls the just-named "
+     "Logics_stripPlayerItems to clear the player's current items, "
+     "then reattaches every logicNum from two flat, null-terminated "
+     "snapshot arrays at the exact same offsets (-0x7376, -0x73B2) the "
+     "already-named Logics_collectPlayerItemLists populates -- "
+     "confirmed as its direct restore counterpart. Reattaches the "
+     "-0x7376 array's entries with handlerId=1 (worn) and the -0x73B2 "
+     "array's entries with handlerId=0 (carried), then zeroes both "
+     "flags. Logics_collectPlayerItemLists's own caller (sub_A2D8D, a "
+     "TOUCH-verb handler) is confirmed via its own messages to be a "
+     "scene where an NPC dresses the player in a fresh coverall "
+     "('She slips you into a blue coverall, exactly like the one you "
+     "left behind') and leads them away by the hand -- i.e. this "
+     "save/strip/restore trio implements 'temporarily take away and "
+     "re-clothe the player for a scripted scene, then give everything "
+     "back afterward.'"),
 ]
 
 

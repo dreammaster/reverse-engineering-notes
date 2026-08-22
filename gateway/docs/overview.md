@@ -4399,3 +4399,40 @@ independent implementations. A good reminder that a function worth
 skipping today may become nameable once its neighbors get named.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-forty-fourth batch.
+
+### `Logics_stripPlayerItems`/`Logics_restorePlayerItems` named — the save/strip/restore-inventory trio
+
+`sub_15A7A` (3 callers). Detaches every item the player (logic `0xD3`)
+currently has: repeatedly queries `Logics_getUnkHandler(0xD3, 1)` (the
+"worn" chain, per the already-named `Logics_collectPlayerItemLists`)
+and detaches whatever it returns via `j_Logics_updateHandler(logicNum,
+0, 0)` until the chain is empty, then does the same for handler index
+`0` (the "carried" chain). Named **`Logics_stripPlayerItems`**.
+
+Its caller `sub_159D5` turned out to be the direct **restore**
+counterpart, closing out a three-function cluster with the already-
+named `Logics_collectPlayerItemLists`. **`Logics_restorePlayerItems`**
+is gated on `Persisted_val19`/`Persisted_val20` (both zero = nothing
+to restore, no-op — the code that actually *sets* these two flags
+nonzero wasn't found this pass, so what triggers a pending restore
+isn't independently confirmed). When triggered, it calls
+`Logics_stripPlayerItems` to clear whatever the player is currently
+holding, then reattaches every entry from two flat, null-terminated
+snapshot arrays — at the *exact same offsets* (`-0x7376`, `-0x73B2`)
+`Logics_collectPlayerItemLists` populates — as worn (`handlerId=1`)
+and carried (`handlerId=0`) items respectively, before zeroing both
+flags.
+
+Following `Logics_collectPlayerItemLists`'s own only caller
+(`sub_A2D8D`, a TOUCH-verb handler) confirmed the whole trio's
+purpose via its own messages: an NPC dresses the player in a fresh
+outfit (*"'I'm afraid I must ask that you be suitably dressed.' She
+slips you into a blue coverall, exactly like the one you left
+behind."*) and leads them away by the hand (*"you are too shocked and
+mystified to even think of resisting"*) — right after snapshotting the
+player's current items. The three functions together implement
+"temporarily take away and re-clothe the player for a scripted scene,
+then give everything back afterward" — presumably for a medical-exam-
+or quarantine-style sequence.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-forty-fifth batch.

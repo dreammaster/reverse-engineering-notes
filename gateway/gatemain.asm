@@ -12314,7 +12314,7 @@ Logics_collectPlayerItemLists endp
 
 ; Attributes: bp-based frame
 
-sub_159D5       proc far                ; CODE XREF: sub_A1E0B+8D\u2193P
+Logics_restorePlayerItems proc far      ; CODE XREF: sub_A1E0B+8D\u2193P
                                         ; sub_BD174+10\u2193P
 
 var_2           = word ptr -2
@@ -12330,13 +12330,13 @@ var_2           = word ptr -2
                 cmp     es:Persisted_val20, 0
                 jz      short loc_15A76
 
-loc_159F8:                              ; CODE XREF: sub_159D5+15\u2191j
+loc_159F8:                              ; CODE XREF: Logics_restorePlayerItems+15\u2191j
                 push    cs
-                call    near ptr sub_15A7A
+                call    near ptr Logics_stripPlayerItems
                 jmp     short loc_15A1F
 ; ---------------------------------------------------------------------------
 
-loc_159FE:                              ; CODE XREF: sub_159D5+59\u2193j
+loc_159FE:                              ; CODE XREF: Logics_restorePlayerItems+59\u2193j
                 mov     ax, 1
                 push    ax              ; newId
                 mov     ax, 0D3h ; 'Ó'
@@ -12349,7 +12349,7 @@ loc_159FE:                              ; CODE XREF: sub_159D5+59\u2193j
                 call    j_Logics_updateHandler
                 add     sp, 6
 
-loc_15A1F:                              ; CODE XREF: sub_159D5+27\u2191j
+loc_15A1F:                              ; CODE XREF: Logics_restorePlayerItems+27\u2191j
                 mov     bx, [bp+var_2]
                 shl     bx, 1
                 mov     es, seg_D111A
@@ -12359,7 +12359,7 @@ loc_15A1F:                              ; CODE XREF: sub_159D5+27\u2191j
                 jmp     short loc_15A57
 ; ---------------------------------------------------------------------------
 
-loc_15A37:                              ; CODE XREF: sub_159D5+91\u2193j
+loc_15A37:                              ; CODE XREF: Logics_restorePlayerItems+91\u2193j
                 sub     ax, ax
                 push    ax              ; newId
                 mov     ax, 0D3h ; 'Ó'
@@ -12372,7 +12372,7 @@ loc_15A37:                              ; CODE XREF: sub_159D5+91\u2193j
                 call    j_Logics_updateHandler
                 add     sp, 6
 
-loc_15A57:                              ; CODE XREF: sub_159D5+60\u2191j
+loc_15A57:                              ; CODE XREF: Logics_restorePlayerItems+60\u2191j
                 mov     bx, [bp+var_2]
                 shl     bx, 1
                 mov     es, seg_D111C
@@ -12383,18 +12383,18 @@ loc_15A57:                              ; CODE XREF: sub_159D5+60\u2191j
                 mov     es, seg_D111A
                 mov     es:Persisted_val19, ax
 
-loc_15A76:                              ; CODE XREF: sub_159D5+21\u2191j
+loc_15A76:                              ; CODE XREF: Logics_restorePlayerItems+21\u2191j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_159D5       endp
+Logics_restorePlayerItems endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-sub_15A7A       proc far                ; CODE XREF: sub_159D5+24\u2191p
+Logics_stripPlayerItems proc far        ; CODE XREF: Logics_restorePlayerItems+24\u2191p
                                         ; sub_9B5F9+17\u2193P ...
 
 var_4           = word ptr -4
@@ -12407,7 +12407,7 @@ logicNum        = word ptr -2
                 jmp     short loc_15A96
 ; ---------------------------------------------------------------------------
 
-loc_15A87:                              ; CODE XREF: sub_15A7A+31\u2193j
+loc_15A87:                              ; CODE XREF: Logics_stripPlayerItems+31\u2193j
                 sub     ax, ax
                 push    ax              ; newId
                 push    ax              ; handlerId
@@ -12415,7 +12415,7 @@ loc_15A87:                              ; CODE XREF: sub_15A7A+31\u2193j
                 call    j_Logics_updateHandler
                 add     sp, 6
 
-loc_15A96:                              ; CODE XREF: sub_15A7A+B\u2191j
+loc_15A96:                              ; CODE XREF: Logics_stripPlayerItems+B\u2191j
                 mov     ax, 1
                 push    ax              ; handlerIndex
                 mov     ax, 0D3h ; 'Ó'
@@ -12428,7 +12428,7 @@ loc_15A96:                              ; CODE XREF: sub_15A7A+B\u2191j
                 jmp     short loc_15ABE
 ; ---------------------------------------------------------------------------
 
-loc_15AAF:                              ; CODE XREF: sub_15A7A+58\u2193j
+loc_15AAF:                              ; CODE XREF: Logics_stripPlayerItems+58\u2193j
                 sub     ax, ax
                 push    ax              ; newId
                 push    ax              ; handlerId
@@ -12436,7 +12436,7 @@ loc_15AAF:                              ; CODE XREF: sub_15A7A+58\u2193j
                 call    j_Logics_updateHandler
                 add     sp, 6
 
-loc_15ABE:                              ; CODE XREF: sub_15A7A+33\u2191j
+loc_15ABE:                              ; CODE XREF: Logics_stripPlayerItems+33\u2191j
                 sub     ax, ax
                 push    ax              ; handlerIndex
                 mov     ax, 0D3h ; 'Ó'
@@ -12449,7 +12449,7 @@ loc_15ABE:                              ; CODE XREF: sub_15A7A+33\u2191j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_15A7A       endp
+Logics_stripPlayerItems endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -139329,11 +139329,11 @@ Persisted_val225 dw 0                   ; DATA XREF: Logics_getRoomPic+B2\u2191r
                                         ; seg068:SAVE_FIELDS\u2191o ...
 _gameTicks      dw 0                    ; DATA XREF: sub_135EC+16\u2191w
                                         ; seg068:SAVE_FIELDS\u2191o ...
-Persisted_val20 dw 0                    ; DATA XREF: sub_159D5+1B\u2191r
-                                        ; sub_159D5+95\u2191w ...
+Persisted_val20 dw 0                    ; DATA XREF: Logics_restorePlayerItems+1B\u2191r
+                                        ; Logics_restorePlayerItems+95\u2191w ...
                 db 3Ah dup(0)
-Persisted_val19 dw 0                    ; DATA XREF: sub_159D5+F\u2191r
-                                        ; sub_159D5+9D\u2191w ...
+Persisted_val19 dw 0                    ; DATA XREF: Logics_restorePlayerItems+F\u2191r
+                                        ; Logics_restorePlayerItems+9D\u2191w ...
                 db 3Ah dup(0)
 Persisted_array1 db 8 dup(0)            ; DATA XREF: show_startup+53\u2191o
                                         ; seg068:SAVE_FIELDS\u2191o
@@ -278970,7 +278970,7 @@ var_2           = word ptr -2
                 push    ax
                 call    Sound_stopTrack
                 add     sp, 2
-                call    sub_15A7A
+                call    Logics_stripPlayerItems
                 mov     ax, 9
                 push    ax
                 call    far ptr Queue_remove
@@ -293308,7 +293308,7 @@ sub_A1E0B       proc far                ; CODE XREF: sub_A059C+296\u2191p
                 push    ax
                 call    far ptr Queue_remove
                 add     sp, 2
-                call    sub_159D5
+                call    Logics_restorePlayerItems
                 mov     es, seg_D174E
                 mov     es:byte_CBB74, 1
                 mov     es, seg_D1750
@@ -356173,7 +356173,7 @@ loc_BCDBB:
 
 loc_BCDC8:
                 call    Logics_collectPlayerItemLists
-                call    sub_15A7A
+                call    Logics_stripPlayerItems
 
 loc_BCDD2:
                 mov     es, seg_D19B8
@@ -356627,7 +356627,7 @@ sub_BD174       proc far                ; CODE XREF: thunk_sub_BD174:loc_31414\u
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
-                call    sub_159D5
+                call    Logics_restorePlayerItems
                 mov     ax, 29Bh
                 push    ax
                 mov     ax, 2A3h
