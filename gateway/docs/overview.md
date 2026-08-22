@@ -3891,3 +3891,17 @@ driver and feed its position into the game's own mouse state"
 primitive.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-twenty-fifth batch.
+
+### `Region_setValueAndStyle` named
+
+Moved to `sub_27582` (2 callers) — no-ops if either the window number
+or region index is negative. Otherwise looks up the actual region slot
+via the already-named `Windows_regionIndexes`, sets the already-named
+`Regions_val1` and `Regions_style` arrays at that slot, then calls the
+already-named `Region_fill` to redraw it.
+
+Called from the already-named `Listbox_add` and `Listbox_reset` —
+sets a listbox item's region value/style (plausibly selected vs.
+unselected appearance) and immediately refills it.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-twenty-sixth batch.

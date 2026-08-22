@@ -13901,7 +13901,7 @@ loc_164E7:                              ; CODE XREF: Listbox_add+80\u2191j
                 sub     ax, ax
                 push    ax
                 push    [bp+windowNum]
-                call    sub_27582
+                call    Region_setValueAndStyle
                 add     sp, 8
                 mov     bx, [bp+windowNum]
                 shl     bx, 1
@@ -14253,7 +14253,7 @@ loc_16836:                              ; CODE XREF: Listbox_reset+F1\u2191j
                 mov     ax, 1
                 push    ax
                 push    [bp+widowNum]
-                call    sub_27582
+                call    Region_setValueAndStyle
                 add     sp, 8
                 push    [bp+var_A]
                 mov     ax, 4
@@ -14261,7 +14261,7 @@ loc_16836:                              ; CODE XREF: Listbox_reset+F1\u2191j
                 mov     ax, 2
                 push    ax
                 push    [bp+widowNum]
-                call    sub_27582
+                call    Region_setValueAndStyle
                 add     sp, 8
                 mov     bx, [bp+var_C]
                 shl     bx, 1
@@ -53959,7 +53959,7 @@ Screen_setFillColor endp
 
 ; void __cdecl __far Region_fill(int windowNum, int regionIndex)
 Region_fill     proc far                ; CODE XREF: Regions_addRegion+E7\u2193p
-                                        ; sub_27582+40\u2193p ...
+                                        ; Region_setValueAndStyle+40\u2193p ...
 
 var_C           = word ptr -0Ch
 style           = word ptr -0Ah
@@ -54432,7 +54432,7 @@ Window_fillRegion endp
 
 ; Attributes: bp-based frame
 
-sub_27582       proc far                ; CODE XREF: Listbox_add+BE\u2191P
+Region_setValueAndStyle proc far        ; CODE XREF: Listbox_add+BE\u2191P
                                         ; Listbox_reset+10B\u2191P ...
 
 var_2           = word ptr -2
@@ -54468,13 +54468,13 @@ arg_6           = byte ptr  0Ch
                 call    near ptr Region_fill
                 add     sp, 4
 
-loc_275C8:                              ; CODE XREF: sub_27582+B\u2191j
-                                        ; sub_27582+11\u2191j
+loc_275C8:                              ; CODE XREF: Region_setValueAndStyle+B\u2191j
+                                        ; Region_setValueAndStyle+11\u2191j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_27582       endp
+Region_setValueAndStyle endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -397400,7 +397400,7 @@ word_D2A96      dw 0                    ; DATA XREF: Windows_setContentWindow+C\
 region_handle   dw 0                    ; DATA XREF: load_regions+45\u2191r
                                         ; load_regions+7D\u2191w ...
 Regions_val1    db 6 dup(0)             ; DATA XREF: Regions_addRegion+75\u2191w
-                                        ; sub_27582+2B\u2191w ...
+                                        ; Region_setValueAndStyle+2B\u2191w ...
                 db    0
                 db    0
                 db    0

@@ -963,6 +963,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       shared low-level DOS mouse-driver poll (`INT 33h AH=3`) behind
       `Mouse_pollPosition` and `get_mouse_buttons`. Full writeup in
       [overview.md](overview.md#mouse_polldriverstate-named).
+- [x] Named `sub_27582` (2 callers) → `Region_setValueAndStyle` —
+      sets a listbox item's region value/style and refills it, called
+      from `Listbox_add`/`Listbox_reset`. Full writeup in
+      [overview.md](overview.md#region_setvalueandstyle-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

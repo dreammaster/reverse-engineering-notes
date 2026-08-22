@@ -2906,6 +2906,18 @@ RENAMES = [
      "named Mouse_pollPosition and get_mouse_buttons -- the shared "
      "low-level 'read the real DOS mouse driver and feed its position "
      "into the game's own mouse state' primitive."),
+
+    (0x27582, "Region_setValueAndStyle",
+     "sub_27582(windowNum, regionIndex, val1, style): no-ops if "
+     "either windowNum or regionIndex is negative. Otherwise looks up "
+     "the actual region slot via the already-named "
+     "Windows_regionIndexes[windowNum*35+regionIndex], sets the "
+     "already-named Regions_val1[slot]=val1 and "
+     "Regions_style[slot]=style, then calls the already-named "
+     "Region_fill(windowNum, regionIndex) to redraw it. Called from "
+     "the already-named Listbox_add and Listbox_reset -- sets a "
+     "listbox item's region value/style (plausibly selected vs. "
+     "unselected appearance) and immediately refills it."),
 ]
 
 
