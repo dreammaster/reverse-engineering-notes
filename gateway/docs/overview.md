@@ -4568,3 +4568,46 @@ position-based inventory-caching mechanic for a linear, one-step-at-a-
 time location.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-forty-ninth batch.
+
+### `Logics_printBeckerJudgment` named — a whole-playthrough morality callback
+
+`sub_85100` (3 callers, 614 bytes). Confirmed via an unusually rich
+set of `GATESTR.DAT` messages as a beloved Gateway mechanic: the NPC
+**Becker's cumulative judgment of the player**, built from many small
+choices made throughout the entire game.
+
+Opens with *"'Ok. Let's see,' Becker muses, scratching his head."*
+(or a second variant, or just a continuing quote mark depending on
+`arg_0`), then always: *"'You can tell me all you want about yourself
+but I've formed my own opinion of you.'"* It then walks roughly nine
+past-choice categories, printing either the "good" or "bad" version of
+each depending on tracked game state, and incrementing or decrementing
+a running tally per clause:
+
+- Greeted Becker courteously, vs. didn't shake his hand
+- Avoided killing "the harmless `<creature>`", vs. unnecessarily
+  killed it
+- Protected another creature's life, vs. unthinkingly slaughtered it
+- Didn't hurt his pet "Mr. Pookie", vs. chased him away or murdered him
+- Cleverly disassembled his ship's actuator, vs. needlessly dug up a
+  grave
+- Got his lens without harming a tree, vs. cut the tree down (its
+  extinction!)
+- Helped him get his cane/walking stick, vs. refused
+- Let him read the player's magazine, vs. refused — paired with an
+  inverse clause about reading Becker's own private journal
+
+Individual clauses weren't each traced down to their exact triggering
+bit/prehandler check this pass (there are roughly nine of them, and
+the function also touches the already-flagged `sub_4A722` — part of
+the previously-declined `sub_4A69F` cluster). The function finishes by
+picking a closing remark from a small table indexed by the tally,
+storing the tally into `word_CD600`, and — specifically when called
+with `arg_0 == -1` while in room `0x1BE` — delivering a final verdict
+("did well" vs. "did poorly") based on the tally's sign.
+
+A genuinely charming confirmation of just how much of Gateway's small
+"be a decent person to the environment and its inhabitants" choices
+get remembered and recited back at the player later.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-fiftieth batch.

@@ -1085,6 +1085,11 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       item-caching primitive; closes out a function read but left
       unrenamed earlier this session. Full writeup in
       [overview.md](overview.md#logics_walkcatwalklogics_relocatecatwalkcontents-named--closing-out-an-earlier-deferred-function).
+- [x] Named `sub_85100` → `Logics_printBeckerJudgment` — the NPC
+      Becker's cumulative judgment monologue, reciting good/bad
+      versions of roughly nine past player choices tallied across the
+      whole game. Full writeup in
+      [overview.md](overview.md#logics_printbeckerjudgment-named--a-whole-playthrough-morality-callback).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

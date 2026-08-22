@@ -84368,7 +84368,7 @@ sub_3138F       endp ; sp-analysis failed
 
 thunk_sub_85100 proc far                ; CODE XREF: sub_85C7C+A08\u2193P
                 call    near ptr rtlink_thunk
-                jmp     sub_85100
+                jmp     Logics_printBeckerJudgment
 thunk_sub_85100 endp ; sp-analysis failed
 
 ; ---------------------------------------------------------------------------
@@ -132661,7 +132661,7 @@ sub_4A6C6       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_4A6E0       proc near               ; CODE XREF: sub_85100+366\u2193P
+sub_4A6E0       proc near               ; CODE XREF: Logics_printBeckerJudgment+366\u2193P
                                         ; sub_313B7+545B9\u2193P ...
 
 ; FUNCTION CHUNK AT 01ED SIZE 00000003 BYTES
@@ -132698,7 +132698,7 @@ sub_4A6E0       endp
 
 
 sub_4A722       proc near               ; CODE XREF: sub_8342B:loc_83645\u2193P
-                                        ; sub_85100:loc_854D9\u2193P ...
+                                        ; Logics_printBeckerJudgment:loc_854D9\u2193P ...
                 mov     si, [bp-2]
                 mov     cl, 2
                 shl     si, cl
@@ -228320,7 +228320,7 @@ locret_850FF:                           ; CODE XREF: seg177:1D28\u2191j
 
 ; Attributes: bp-based frame
 
-sub_85100       proc far                ; CODE XREF: thunk_sub_85100+3\u2191J
+Logics_printBeckerJudgment proc far     ; CODE XREF: thunk_sub_85100+3\u2191J
                                         ; sub_313B7+545B3\u2193p ...
 
 var_E           = word ptr -0Eh
@@ -228347,17 +228347,17 @@ arg_0           = word ptr  6
                 jmp     short loc_85131
 ; ---------------------------------------------------------------------------
 
-loc_85121:                              ; CODE XREF: sub_85100+C\u2191j
+loc_85121:                              ; CODE XREF: Logics_printBeckerJudgment+C\u2191j
                 mov     ax, 9876h
 
-loc_85124:                              ; CODE XREF: sub_85100+52\u2193j
+loc_85124:                              ; CODE XREF: Logics_printBeckerJudgment+52\u2193j
                 mov     dx, 0F000h
                 push    dx
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
 
-loc_85131:                              ; CODE XREF: sub_85100+1F\u2191j
+loc_85131:                              ; CODE XREF: Logics_printBeckerJudgment+1F\u2191j
                 mov     ax, 5B0Bh
                 push    ds
                 push    ax              ; msg
@@ -228369,23 +228369,23 @@ loc_85131:                              ; CODE XREF: sub_85100+1F\u2191j
                 jmp     short loc_85166
 ; ---------------------------------------------------------------------------
 
-loc_8514F:                              ; CODE XREF: sub_85100+11\u2191j
+loc_8514F:                              ; CODE XREF: Logics_printBeckerJudgment+11\u2191j
                 mov     ax, 9877h
                 jmp     short loc_85124
 ; ---------------------------------------------------------------------------
 
-loc_85154:                              ; CODE XREF: sub_85100+76\u2193j
+loc_85154:                              ; CODE XREF: Logics_printBeckerJudgment+76\u2193j
                 mov     bx, [bp+var_8]
                 shl     bx, 1
                 cmp     word ptr [bx-4320h], 3
                 jnz     short loc_85163
                 inc     [bp+var_C]
 
-loc_85163:                              ; CODE XREF: sub_85100+5E\u2191j
-                                        ; sub_85100+7B\u2193j
+loc_85163:                              ; CODE XREF: Logics_printBeckerJudgment+5E\u2191j
+                                        ; Logics_printBeckerJudgment+7B\u2193j
                 inc     [bp+var_8]
 
-loc_85166:                              ; CODE XREF: sub_85100+4D\u2191j
+loc_85166:                              ; CODE XREF: Logics_printBeckerJudgment+4D\u2191j
                 cmp     [bp+var_8], 0Bh
                 jge     short loc_8517D
                 mov     bx, [bp+var_8]
@@ -228396,36 +228396,36 @@ loc_85166:                              ; CODE XREF: sub_85100+4D\u2191j
                 jmp     short loc_85163
 ; ---------------------------------------------------------------------------
 
-loc_8517D:                              ; CODE XREF: sub_85100+6A\u2191j
+loc_8517D:                              ; CODE XREF: Logics_printBeckerJudgment+6A\u2191j
                 cmp     [bp+var_6], 0
                 jnz     short loc_85186
                 jmp     loc_852E2
 ; ---------------------------------------------------------------------------
 
-loc_85186:                              ; CODE XREF: sub_85100+81\u2191j
+loc_85186:                              ; CODE XREF: Logics_printBeckerJudgment+81\u2191j
                 mov     [bp+var_8], 0
                 mov     [bp+var_A], 0
                 jmp     loc_85260
 ; ---------------------------------------------------------------------------
 
-loc_85193:                              ; CODE XREF: sub_85100+1C7\u2193j
-                                        ; DATA XREF: sub_85100:off_85247\u2193o
+loc_85193:                              ; CODE XREF: Logics_printBeckerJudgment+1C7\u2193j
+                                        ; DATA XREF: Logics_printBeckerJudgment:off_85247\u2193o
                 mov     ax, 9878h
 
-loc_85196:                              ; CODE XREF: sub_85100+E5\u2193j
-                                        ; sub_85100+EA\u2193j ...
+loc_85196:                              ; CODE XREF: Logics_printBeckerJudgment+E5\u2193j
+                                        ; Logics_printBeckerJudgment+EA\u2193j ...
                 mov     dx, 0F000h
                 push    dx
 
-loc_8519A:                              ; CODE XREF: sub_85100+144\u2193j
+loc_8519A:                              ; CODE XREF: Logics_printBeckerJudgment+144\u2193j
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
                 jmp     loc_8525D
 ; ---------------------------------------------------------------------------
 
-loc_851A6:                              ; CODE XREF: sub_85100+1C7\u2193j
-                                        ; DATA XREF: sub_85100+149\u2193o
+loc_851A6:                              ; CODE XREF: Logics_printBeckerJudgment+1C7\u2193j
+                                        ; DATA XREF: Logics_printBeckerJudgment+149\u2193o
                 mov     ax, 1DFh
                 push    ax              ; logicNum
                 mov     ax, 1
@@ -228436,8 +228436,8 @@ loc_851A6:                              ; CODE XREF: sub_85100+1C7\u2193j
                 push    ax              ; char
                 mov     ax, 9879h
 
-loc_851BB:                              ; CODE XREF: sub_85100+E0\u2193j
-                                        ; sub_85100+101\u2193j
+loc_851BB:                              ; CODE XREF: Logics_printBeckerJudgment+E0\u2193j
+                                        ; Logics_printBeckerJudgment+101\u2193j
                 mov     dx, 0F000h
                 push    dx
                 push    ax              ; msg
@@ -228446,8 +228446,8 @@ loc_851BB:                              ; CODE XREF: sub_85100+E0\u2193j
                 jmp     loc_8525D
 ; ---------------------------------------------------------------------------
 
-loc_851CB:                              ; CODE XREF: sub_85100+1C7\u2193j
-                                        ; DATA XREF: sub_85100+14B\u2193o
+loc_851CB:                              ; CODE XREF: Logics_printBeckerJudgment+1C7\u2193j
+                                        ; DATA XREF: Logics_printBeckerJudgment+14B\u2193o
                 mov     ax, 1E0h
                 push    ax              ; logicNum
                 mov     ax, 2
@@ -228460,20 +228460,20 @@ loc_851CB:                              ; CODE XREF: sub_85100+1C7\u2193j
                 jmp     short loc_851BB
 ; ---------------------------------------------------------------------------
 
-loc_851E2:                              ; CODE XREF: sub_85100+1C7\u2193j
-                                        ; DATA XREF: sub_85100+14D\u2193o
+loc_851E2:                              ; CODE XREF: Logics_printBeckerJudgment+1C7\u2193j
+                                        ; DATA XREF: Logics_printBeckerJudgment+14D\u2193o
                 mov     ax, 987Bh
                 jmp     short loc_85196
 ; ---------------------------------------------------------------------------
 
-loc_851E7:                              ; CODE XREF: sub_85100+1C7\u2193j
-                                        ; DATA XREF: sub_85100+151\u2193o
+loc_851E7:                              ; CODE XREF: Logics_printBeckerJudgment+1C7\u2193j
+                                        ; DATA XREF: Logics_printBeckerJudgment+151\u2193o
                 mov     ax, 987Ch
                 jmp     short loc_85196
 ; ---------------------------------------------------------------------------
 
-loc_851EC:                              ; CODE XREF: sub_85100+1C7\u2193j
-                                        ; DATA XREF: sub_85100+14F\u2193o
+loc_851EC:                              ; CODE XREF: Logics_printBeckerJudgment+1C7\u2193j
+                                        ; DATA XREF: Logics_printBeckerJudgment+14F\u2193o
                 mov     ax, 1FDh
                 push    ax              ; logicNum
                 mov     ax, 2
@@ -228486,16 +228486,16 @@ loc_851EC:                              ; CODE XREF: sub_85100+1C7\u2193j
                 jmp     short loc_851BB
 ; ---------------------------------------------------------------------------
 
-loc_85203:                              ; CODE XREF: sub_85100+1C7\u2193j
-                                        ; DATA XREF: sub_85100+155\u2193o
+loc_85203:                              ; CODE XREF: Logics_printBeckerJudgment+1C7\u2193j
+                                        ; DATA XREF: Logics_printBeckerJudgment+155\u2193o
                 cmp     Persisted_val142, 0
                 jz      short loc_8525D
                 mov     ax, 987Eh
                 jmp     short loc_85196
 ; ---------------------------------------------------------------------------
 
-loc_8520F:                              ; CODE XREF: sub_85100+1C7\u2193j
-                                        ; DATA XREF: sub_85100+153\u2193o
+loc_8520F:                              ; CODE XREF: Logics_printBeckerJudgment+1C7\u2193j
+                                        ; DATA XREF: Logics_printBeckerJudgment+153\u2193o
                 cmp     Persisted_val170, 0
                 jz      short loc_8525D
                 mov     ax, 987Fh
@@ -228516,13 +228516,13 @@ loc_8520F:                              ; CODE XREF: sub_85100+1C7\u2193j
                 jmp     loc_85196
 ; ---------------------------------------------------------------------------
 
-loc_85240:                              ; CODE XREF: sub_85100+1C7\u2193j
-                                        ; DATA XREF: sub_85100+15B\u2193o
+loc_85240:                              ; CODE XREF: Logics_printBeckerJudgment+1C7\u2193j
+                                        ; DATA XREF: Logics_printBeckerJudgment+15B\u2193o
                 mov     ax, 5B1Dh
                 push    ds
                 jmp     loc_8519A
 ; ---------------------------------------------------------------------------
-off_85247       dw offset loc_85193     ; DATA XREF: sub_85100+1C7\u2193r
+off_85247       dw offset loc_85193     ; DATA XREF: Logics_printBeckerJudgment+1C7\u2193r
                 dw offset loc_851A6
                 dw offset loc_851CB
                 dw offset loc_851E2
@@ -228535,11 +228535,11 @@ off_85247       dw offset loc_85193     ; DATA XREF: sub_85100+1C7\u2193r
                 dw offset loc_85240
 ; ---------------------------------------------------------------------------
 
-loc_8525D:                              ; CODE XREF: sub_85100+A3\u2191j
-                                        ; sub_85100+C8\u2191j ...
+loc_8525D:                              ; CODE XREF: Logics_printBeckerJudgment+A3\u2191j
+                                        ; Logics_printBeckerJudgment+C8\u2191j ...
                 inc     [bp+var_8]
 
-loc_85260:                              ; CODE XREF: sub_85100+90\u2191j
+loc_85260:                              ; CODE XREF: Logics_printBeckerJudgment+90\u2191j
                 cmp     [bp+var_8], 0Bh
                 jge     short loc_852CC
                 mov     bx, [bp+var_8]
@@ -228558,8 +228558,8 @@ loc_85260:                              ; CODE XREF: sub_85100+90\u2191j
                 call    TextWindow_add
                 add     sp, 4
 
-loc_8528F:                              ; CODE XREF: sub_85100+17A\u2191j
-                                        ; sub_85100+180\u2191j
+loc_8528F:                              ; CODE XREF: Logics_printBeckerJudgment+17A\u2191j
+                                        ; Logics_printBeckerJudgment+180\u2191j
                 mov     ax, [bp+var_6]
                 cmp     [bp+var_A], ax
                 jnz     short loc_852A9
@@ -228571,8 +228571,8 @@ loc_8528F:                              ; CODE XREF: sub_85100+17A\u2191j
                 call    TextWindow_add
                 add     sp, 4
 
-loc_852A9:                              ; CODE XREF: sub_85100+195\u2191j
-                                        ; sub_85100+19A\u2191j
+loc_852A9:                              ; CODE XREF: Logics_printBeckerJudgment+195\u2191j
+                                        ; Logics_printBeckerJudgment+19A\u2191j
                 cmp     [bp+var_A], 1
                 jz      short loc_852BC
                 mov     ax, 5B18h
@@ -228581,7 +228581,7 @@ loc_852A9:                              ; CODE XREF: sub_85100+195\u2191j
                 call    TextWindow_add
                 add     sp, 4
 
-loc_852BC:                              ; CODE XREF: sub_85100+1AD\u2191j
+loc_852BC:                              ; CODE XREF: Logics_printBeckerJudgment+1AD\u2191j
                 mov     ax, [bp+var_8]
                 cmp     ax, 0Ah
                 ja      short loc_8525D
@@ -228590,7 +228590,7 @@ loc_852BC:                              ; CODE XREF: sub_85100+1AD\u2191j
                 jmp     cs:off_85247[bx]
 ; ---------------------------------------------------------------------------
 
-loc_852CC:                              ; CODE XREF: sub_85100+164\u2191j
+loc_852CC:                              ; CODE XREF: Logics_printBeckerJudgment+164\u2191j
                 cmp     [bp+var_C], 0
                 jz      short loc_852E2
                 mov     ax, 9881h
@@ -228600,27 +228600,27 @@ loc_852CC:                              ; CODE XREF: sub_85100+164\u2191j
                 call    TextWindow_add
                 add     sp, 4
 
-loc_852E2:                              ; CODE XREF: sub_85100+83\u2191j
-                                        ; sub_85100+1D0\u2191j
+loc_852E2:                              ; CODE XREF: Logics_printBeckerJudgment+83\u2191j
+                                        ; Logics_printBeckerJudgment+1D0\u2191j
                 cmp     [bp+var_C], 0
                 jnz     short loc_852EB
                 jmp     loc_85459
 ; ---------------------------------------------------------------------------
 
-loc_852EB:                              ; CODE XREF: sub_85100+1E6\u2191j
+loc_852EB:                              ; CODE XREF: Logics_printBeckerJudgment+1E6\u2191j
                 mov     [bp+var_8], 0
                 mov     [bp+var_A], 0
                 jmp     loc_853ED
 ; ---------------------------------------------------------------------------
 
-loc_852F8:                              ; CODE XREF: sub_85100+354\u2193j
-                                        ; DATA XREF: sub_85100:off_853D4\u2193o
+loc_852F8:                              ; CODE XREF: Logics_printBeckerJudgment+354\u2193j
+                                        ; DATA XREF: Logics_printBeckerJudgment:off_853D4\u2193o
                 mov     ax, 9882h
                 jmp     short loc_85350
 ; ---------------------------------------------------------------------------
 
-loc_852FD:                              ; CODE XREF: sub_85100+354\u2193j
-                                        ; DATA XREF: sub_85100+2D6\u2193o
+loc_852FD:                              ; CODE XREF: Logics_printBeckerJudgment+354\u2193j
+                                        ; DATA XREF: Logics_printBeckerJudgment+2D6\u2193o
                 mov     ax, 1DFh
                 push    ax              ; logicNum
                 mov     ax, 1
@@ -228631,8 +228631,8 @@ loc_852FD:                              ; CODE XREF: sub_85100+354\u2193j
                 push    ax              ; char
                 mov     ax, 9883h
 
-loc_85312:                              ; CODE XREF: sub_85100+237\u2193j
-                                        ; sub_85100+286\u2193j ...
+loc_85312:                              ; CODE XREF: Logics_printBeckerJudgment+237\u2193j
+                                        ; Logics_printBeckerJudgment+286\u2193j ...
                 mov     dx, 0F000h
                 push    dx
                 push    ax              ; msg
@@ -228641,8 +228641,8 @@ loc_85312:                              ; CODE XREF: sub_85100+237\u2193j
                 jmp     loc_853EA
 ; ---------------------------------------------------------------------------
 
-loc_85322:                              ; CODE XREF: sub_85100+354\u2193j
-                                        ; DATA XREF: sub_85100+2D8\u2193o
+loc_85322:                              ; CODE XREF: Logics_printBeckerJudgment+354\u2193j
+                                        ; DATA XREF: Logics_printBeckerJudgment+2D8\u2193o
                 mov     ax, 1E0h
                 push    ax              ; logicNum
                 mov     ax, 2
@@ -228655,8 +228655,8 @@ loc_85322:                              ; CODE XREF: sub_85100+354\u2193j
                 jmp     short loc_85312
 ; ---------------------------------------------------------------------------
 
-loc_85339:                              ; CODE XREF: sub_85100+354\u2193j
-                                        ; DATA XREF: sub_85100+2DA\u2193o
+loc_85339:                              ; CODE XREF: Logics_printBeckerJudgment+354\u2193j
+                                        ; DATA XREF: Logics_printBeckerJudgment+2DA\u2193o
                 mov     ax, 15h
                 push    ax              ; index
                 mov     ax, 1E1h
@@ -228667,8 +228667,8 @@ loc_85339:                              ; CODE XREF: sub_85100+354\u2193j
                 jz      short loc_85360
                 mov     ax, 9885h
 
-loc_85350:                              ; CODE XREF: sub_85100+1FB\u2191j
-                                        ; sub_85100+263\u2193j ...
+loc_85350:                              ; CODE XREF: Logics_printBeckerJudgment+1FB\u2191j
+                                        ; Logics_printBeckerJudgment+263\u2193j ...
                 mov     dx, 0F000h
                 push    dx
                 push    ax              ; msg
@@ -228677,13 +228677,13 @@ loc_85350:                              ; CODE XREF: sub_85100+1FB\u2191j
                 jmp     loc_853EA
 ; ---------------------------------------------------------------------------
 
-loc_85360:                              ; CODE XREF: sub_85100+24B\u2191j
+loc_85360:                              ; CODE XREF: Logics_printBeckerJudgment+24B\u2191j
                 mov     ax, 9886h
                 jmp     short loc_85350
 ; ---------------------------------------------------------------------------
 
-loc_85365:                              ; CODE XREF: sub_85100+354\u2193j
-                                        ; DATA XREF: sub_85100+2DE\u2193o
+loc_85365:                              ; CODE XREF: Logics_printBeckerJudgment+354\u2193j
+                                        ; DATA XREF: Logics_printBeckerJudgment+2DE\u2193o
                 mov     es, seg_D1528
                 cmp     es:Persisted_val167, 0
                 jz      short loc_853EA
@@ -228699,14 +228699,14 @@ loc_85365:                              ; CODE XREF: sub_85100+354\u2193j
                 jmp     short loc_85312
 ; ---------------------------------------------------------------------------
 
-loc_85388:                              ; CODE XREF: sub_85100+354\u2193j
-                                        ; DATA XREF: sub_85100+2E6\u2193o
+loc_85388:                              ; CODE XREF: Logics_printBeckerJudgment+354\u2193j
+                                        ; DATA XREF: Logics_printBeckerJudgment+2E6\u2193o
                 mov     ax, 9888h
                 jmp     short loc_85350
 ; ---------------------------------------------------------------------------
 
-loc_8538D:                              ; CODE XREF: sub_85100+354\u2193j
-                                        ; DATA XREF: sub_85100+2DC\u2193o
+loc_8538D:                              ; CODE XREF: Logics_printBeckerJudgment+354\u2193j
+                                        ; DATA XREF: Logics_printBeckerJudgment+2DC\u2193o
                 mov     es, seg_D152A
                 cmp     es:Persisted_val169, 0
                 jz      short loc_853EA
@@ -228722,8 +228722,8 @@ loc_8538D:                              ; CODE XREF: sub_85100+354\u2193j
                 jmp     loc_85312
 ; ---------------------------------------------------------------------------
 
-loc_853B1:                              ; CODE XREF: sub_85100+354\u2193j
-                                        ; DATA XREF: sub_85100+2E2\u2193o
+loc_853B1:                              ; CODE XREF: Logics_printBeckerJudgment+354\u2193j
+                                        ; DATA XREF: Logics_printBeckerJudgment+2E2\u2193o
                 cmp     Persisted_val142, 0
                 jnz     short loc_853EA
                 cmp     Persisted_val159, 0
@@ -228732,24 +228732,24 @@ loc_853B1:                              ; CODE XREF: sub_85100+354\u2193j
                 jmp     short loc_85350
 ; ---------------------------------------------------------------------------
 
-loc_853C4:                              ; CODE XREF: sub_85100+354\u2193j
-                                        ; DATA XREF: sub_85100+2E0\u2193o
+loc_853C4:                              ; CODE XREF: Logics_printBeckerJudgment+354\u2193j
+                                        ; DATA XREF: Logics_printBeckerJudgment+2E0\u2193o
                 mov     ax, 988Bh
                 jmp     short loc_85350
 ; ---------------------------------------------------------------------------
 
-loc_853C9:                              ; CODE XREF: sub_85100+354\u2193j
-                                        ; DATA XREF: sub_85100+2E4\u2193o
+loc_853C9:                              ; CODE XREF: Logics_printBeckerJudgment+354\u2193j
+                                        ; DATA XREF: Logics_printBeckerJudgment+2E4\u2193o
                 mov     ax, 988Ch
                 jmp     short loc_85350
 ; ---------------------------------------------------------------------------
 
-loc_853CE:                              ; CODE XREF: sub_85100+354\u2193j
-                                        ; DATA XREF: sub_85100+2E8\u2193o
+loc_853CE:                              ; CODE XREF: Logics_printBeckerJudgment+354\u2193j
+                                        ; DATA XREF: Logics_printBeckerJudgment+2E8\u2193o
                 mov     ax, 988Dh
                 jmp     loc_85350
 ; ---------------------------------------------------------------------------
-off_853D4       dw offset loc_852F8     ; DATA XREF: sub_85100+354\u2193r
+off_853D4       dw offset loc_852F8     ; DATA XREF: Logics_printBeckerJudgment+354\u2193r
                 dw offset loc_852FD
                 dw offset loc_85322
                 dw offset loc_85339
@@ -228762,11 +228762,11 @@ off_853D4       dw offset loc_852F8     ; DATA XREF: sub_85100+354\u2193r
                 dw offset loc_853CE
 ; ---------------------------------------------------------------------------
 
-loc_853EA:                              ; CODE XREF: sub_85100+21F\u2191j
-                                        ; sub_85100+25D\u2191j ...
+loc_853EA:                              ; CODE XREF: Logics_printBeckerJudgment+21F\u2191j
+                                        ; Logics_printBeckerJudgment+25D\u2191j ...
                 inc     [bp+var_8]
 
-loc_853ED:                              ; CODE XREF: sub_85100+1F5\u2191j
+loc_853ED:                              ; CODE XREF: Logics_printBeckerJudgment+1F5\u2191j
                 cmp     [bp+var_8], 0Bh
                 jge     short loc_85459
                 mov     bx, [bp+var_8]
@@ -228785,8 +228785,8 @@ loc_853ED:                              ; CODE XREF: sub_85100+1F5\u2191j
                 call    TextWindow_add
                 add     sp, 4
 
-loc_8541C:                              ; CODE XREF: sub_85100+307\u2191j
-                                        ; sub_85100+30D\u2191j
+loc_8541C:                              ; CODE XREF: Logics_printBeckerJudgment+307\u2191j
+                                        ; Logics_printBeckerJudgment+30D\u2191j
                 mov     ax, [bp+var_C]
                 cmp     [bp+var_A], ax
                 jnz     short loc_85436
@@ -228798,8 +228798,8 @@ loc_8541C:                              ; CODE XREF: sub_85100+307\u2191j
                 call    TextWindow_add
                 add     sp, 4
 
-loc_85436:                              ; CODE XREF: sub_85100+322\u2191j
-                                        ; sub_85100+327\u2191j
+loc_85436:                              ; CODE XREF: Logics_printBeckerJudgment+322\u2191j
+                                        ; Logics_printBeckerJudgment+327\u2191j
                 cmp     [bp+var_A], 1
                 jz      short loc_85449
                 mov     ax, 5B34h
@@ -228808,7 +228808,7 @@ loc_85436:                              ; CODE XREF: sub_85100+322\u2191j
                 call    TextWindow_add
                 add     sp, 4
 
-loc_85449:                              ; CODE XREF: sub_85100+33A\u2191j
+loc_85449:                              ; CODE XREF: Logics_printBeckerJudgment+33A\u2191j
                 mov     ax, [bp+var_8]
                 cmp     ax, 0Ah
                 ja      short loc_853EA
@@ -228817,8 +228817,8 @@ loc_85449:                              ; CODE XREF: sub_85100+33A\u2191j
                 jmp     cs:off_853D4[bx]
 ; ---------------------------------------------------------------------------
 
-loc_85459:                              ; CODE XREF: sub_85100+1E8\u2191j
-                                        ; sub_85100+2F1\u2191j
+loc_85459:                              ; CODE XREF: Logics_printBeckerJudgment+1E8\u2191j
+                                        ; Logics_printBeckerJudgment+2F1\u2191j
                 mov     ax, 5B39h
                 push    ds
                 push    ax              ; msg
@@ -228843,7 +228843,7 @@ loc_85459:                              ; CODE XREF: sub_85100+1E8\u2191j
                 jmp     short loc_854B7
 ; ---------------------------------------------------------------------------
 
-loc_8549F:                              ; CODE XREF: sub_85100+391\u2191j
+loc_8549F:                              ; CODE XREF: Logics_printBeckerJudgment+391\u2191j
                 mov     ax, [bp+var_E]
                 cmp     es:word_CD600, ax
                 jge     short loc_854AE
@@ -228851,14 +228851,14 @@ loc_8549F:                              ; CODE XREF: sub_85100+391\u2191j
                 jmp     short loc_854B1
 ; ---------------------------------------------------------------------------
 
-loc_854AE:                              ; CODE XREF: sub_85100+3A7\u2191j
+loc_854AE:                              ; CODE XREF: Logics_printBeckerJudgment+3A7\u2191j
                 mov     ax, 5B49h
 
-loc_854B1:                              ; CODE XREF: sub_85100+3AC\u2191j
+loc_854B1:                              ; CODE XREF: Logics_printBeckerJudgment+3AC\u2191j
                 mov     word ptr [bp+var_4], ax
                 mov     [bp+var_2], ds
 
-loc_854B7:                              ; CODE XREF: sub_85100+39D\u2191j
+loc_854B7:                              ; CODE XREF: Logics_printBeckerJudgment+39D\u2191j
                 push    [bp+var_2]
                 push    word ptr [bp+var_4] ; char
                 mov     ax, 5B54h
@@ -228869,14 +228869,14 @@ loc_854B7:                              ; CODE XREF: sub_85100+39D\u2191j
                 jmp     short loc_854D9
 ; ---------------------------------------------------------------------------
 
-loc_854CC:                              ; CODE XREF: sub_85100+373\u2191j
+loc_854CC:                              ; CODE XREF: Logics_printBeckerJudgment+373\u2191j
                 mov     ax, 5B61h
                 push    ds
                 push    ax              ; msg
                 call    TextWindow_add
                 add     sp, 4
 
-loc_854D9:                              ; CODE XREF: sub_85100+3CA\u2191j
+loc_854D9:                              ; CODE XREF: Logics_printBeckerJudgment+3CA\u2191j
                 call    far ptr sub_4A722
                 push    dx
                 push    ax
@@ -228912,10 +228912,10 @@ loc_854D9:                              ; CODE XREF: sub_85100+3CA\u2191j
                 jmp     short loc_85535
 ; ---------------------------------------------------------------------------
 
-loc_85532:                              ; CODE XREF: sub_85100+42B\u2191j
+loc_85532:                              ; CODE XREF: Logics_printBeckerJudgment+42B\u2191j
                 mov     ax, 5B84h
 
-loc_85535:                              ; CODE XREF: sub_85100+430\u2191j
+loc_85535:                              ; CODE XREF: Logics_printBeckerJudgment+430\u2191j
                 push    ds
                 push    ax              ; char
                 mov     ax, 9890h
@@ -228925,8 +228925,8 @@ loc_85535:                              ; CODE XREF: sub_85100+430\u2191j
                 call    TextWindow_add
                 add     sp, 0Ch
 
-loc_85547:                              ; CODE XREF: sub_85100+418\u2191j
-                                        ; sub_85100+41E\u2191j
+loc_85547:                              ; CODE XREF: Logics_printBeckerJudgment+418\u2191j
+                                        ; Logics_printBeckerJudgment+41E\u2191j
                 mov     Persisted_val173, 1
                 mov     es, seg_D152C
                 mov     ax, [bp+var_E]
@@ -228934,7 +228934,7 @@ loc_85547:                              ; CODE XREF: sub_85100+418\u2191j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_85100       endp
+Logics_printBeckerJudgment endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -229399,7 +229399,7 @@ loc_85931:                              ; CODE XREF: sub_313B7+3\u2191J
                 mov     ax, 0FFFFh
                 push    ax
                 push    cs
-                call    near ptr sub_85100
+                call    near ptr Logics_printBeckerJudgment
                 add     sp, 2
                 call    far ptr sub_4A6E0
                 or      ax, ax
@@ -229453,7 +229453,7 @@ loc_859CB:                              ; CODE XREF: sub_312E5+3\u2191J
                 mov     ax, 0FFFFh
                 push    ax
                 push    cs
-                call    near ptr sub_85100
+                call    near ptr Logics_printBeckerJudgment
                 add     sp, 2
                 retf
 ; END OF FUNCTION CHUNK FOR sub_312E5
@@ -389415,8 +389415,8 @@ aParrot         db 'parrot',0           ; DATA XREF: sg4d43:5770\u2193o
 aSingingParrot  db 'singing parrot',0   ; DATA XREF: sg4d43:5774\u2193o
 aParroo         db 'parroo',0           ; DATA XREF: sg4d43:5778\u2193o
                 db    0
-word_CD600      dw 0                    ; DATA XREF: sub_85100+38C\u2191r
-                                        ; sub_85100+3A2\u2191r ...
+word_CD600      dw 0                    ; DATA XREF: Logics_printBeckerJudgment+38C\u2191r
+                                        ; Logics_printBeckerJudgment+3A2\u2191r ...
 ANIMALS         Thing <479, aWeirdBird, aPterodactyl, aGyranthymus>
                                         ; DATA XREF: getThingName:loc_80EF5\u2191r
                                         ; getThingName+27\u2191r ...
@@ -389618,7 +389618,7 @@ Persisted_val157 db 0                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
 Persisted_val158 db 0                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
                                         ; sub_87766+149\u2191r ...
 Persisted_val159 db 0                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
-                                        ; sub_85100+2B8\u2191r ...
+                                        ; Logics_printBeckerJudgment+2B8\u2191r ...
 Persisted_val160 db 0                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
                                         ; sub_85C7C+E7F\u2191r ...
 Persisted_val162 db 0                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
@@ -389638,11 +389638,11 @@ Persisted_val163 db 0                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
 Persisted_val164 db 1                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
                                         ; sub_7005F+44F\u2191w ...
 Persisted_val170 db 0                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
-                                        ; sub_85100:loc_8520F\u2191r ...
+                                        ; Logics_printBeckerJudgment:loc_8520F\u2191r ...
 Persisted_val172 db 0                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
                                         ; sub_85C7C+50B\u2191r ...
 Persisted_val173 db 0                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
-                                        ; sub_85100+36E\u2191r ...
+                                        ; Logics_printBeckerJudgment+36E\u2191r ...
 Persisted_val174 db 0                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
                                         ; sub_83842+5E\u2191r ...
 Persisted_val171 db 1                   ; DATA XREF: seg068:SAVE_FIELDS\u2191o
@@ -394714,10 +394714,10 @@ seg_D1522       dw seg sg3EDC           ; DATA XREF: sub_83842+269\u2191r
 seg_D1524       dw seg seg122           ; DATA XREF: sub_84019+11\u2191r
                                         ; sub_3117D+53EF2\u2191r ...
                 dw seg seg122
-seg_D1528       dw seg sg4d43           ; DATA XREF: sub_85100:loc_85365\u2191r
-seg_D152A       dw seg sg4d43           ; DATA XREF: sub_85100:loc_8538D\u2191r
-seg_D152C       dw seg sg4d43           ; DATA XREF: sub_85100+385\u2191r
-                                        ; sub_85100+44C\u2191r
+seg_D1528       dw seg sg4d43           ; DATA XREF: Logics_printBeckerJudgment:loc_85365\u2191r
+seg_D152A       dw seg sg4d43           ; DATA XREF: Logics_printBeckerJudgment:loc_8538D\u2191r
+seg_D152C       dw seg sg4d43           ; DATA XREF: Logics_printBeckerJudgment+385\u2191r
+                                        ; Logics_printBeckerJudgment+44C\u2191r
                 dw seg seg122
 seg_D1530       dw seg sg4d43           ; DATA XREF: sub_31141+5466A\u2191r
                                         ; sub_313B7+545D2\u2191r

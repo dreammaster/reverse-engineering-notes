@@ -3461,6 +3461,39 @@ RENAMES = [
      "visible contents via the already-named "
      "Logics_countVisibleContents. Bit 0xC on logics 0x32/0x33 gate the "
      "catwalk's two ends (one being the portal)."),
+
+    (0x85100, "Logics_printBeckerJudgment",
+     "sub_85100(arg_0): confirmed via its own extensive GATESTR.DAT "
+     "messages as the NPC Becker's cumulative judgment-of-the-player "
+     "monologue -- a beloved Gateway mechanic reflecting many small "
+     "morality/environmental-ethics choices made throughout the game. "
+     "arg_0 selects the opening line (1: '\"Ok. Let's see,\" Becker "
+     "muses, scratching his head.'; 2: a second variant; otherwise just "
+     "a continuing quote mark), then always: '\"You can tell me all you "
+     "want about yourself but I've formed my own opinion of you.\"'. "
+     "The function then walks roughly nine past-choice categories, "
+     "printing either the 'good' or 'bad' version of each depending on "
+     "tracked game state (bits/prehandler checks on various logics, "
+     "individual clauses not each traced this pass, given the size), "
+     "incrementing or decrementing a running tally (var_E) per clause: "
+     "greeting Becker courteously vs. not shaking his hand; avoiding "
+     "killing vs. unnecessarily killing 'the harmless <creature>'; "
+     "protecting vs. unthinkingly slaughtering another creature; not "
+     "harming vs. chasing away/murdering his pet 'Mr. Pookie'; cleverly "
+     "disassembling his ship's actuator vs. needlessly digging up a "
+     "grave; getting his lens without harming a tree vs. cutting the "
+     "tree down; helping him get his cane/walking stick vs. refusing; "
+     "and letting him read the player's magazine vs. refusing (with an "
+     "inverse clause about reading Becker's own private journal). Ends "
+     "by picking a closing remark from a small lookup table indexed by "
+     "the tally (rounded via (tally+11)/3), storing the tally into "
+     "word_CD600 and setting Persisted_val173=1; if called with "
+     "arg_0==-1 while in room 0x1BE specifically, additionally delivers "
+     "a final verdict ('you did well' vs 'you did poorly'-style, msg "
+     "0x9890) based on the tally's sign. Also touches the already-"
+     "flagged sub_4A722 (part of the previously-declined sub_4A69F "
+     "cluster), which is why several branches here weren't traced down "
+     "to their exact bit sources."),
 ]
 
 
