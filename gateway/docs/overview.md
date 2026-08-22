@@ -3020,3 +3020,23 @@ reading it, plus two direct `0x16`/`EINVAL` literal stores elsewhere in
 the code — standard C runtime `errno` usage throughout.
 
 Applied via `apply_renames_gatemain.py`'s eighty-second batch.
+
+### `Picture_checkFormatMatch` named
+
+Moved to `sub_25B90` (3 callers) — reads the global `pic_header._flags`
+byte and masks it to the low nibble, a format-code sub-field distinct
+from the individual flag bits tested elsewhere in the same struct
+(e.g. the already-named `PICFLAG_HAS_PALETTE`, and separately-tested
+`0x10`/`0x40` bits). Uses that format code to index a per-format table
+(`byte_C96B0`), and compares the result against a per-video-mode table
+(`byte_C96B6`) indexed by the current `_videoIndex`; if they match,
+returns the format-table value (the picture's required video mode),
+otherwise returns 0.
+
+Called from `Picture_Load`, `load_and_scale_pic`, and `scale_pic` — the
+latter prints the literal string `" scale_pic : EGA -> VGA disabled "`
+(sitting right after these two tables in memory) when a picture's
+format doesn't match the active video mode, consistent with this being
+the format/video-mode compatibility check that decision is based on.
+
+Applied via `apply_renames_gatemain.py`'s eighty-third batch.

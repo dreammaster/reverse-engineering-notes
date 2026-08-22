@@ -2129,6 +2129,22 @@ RENAMES = [
      "written directly to 0x16 (EINVAL) at two call sites, and by the "
      "just-named Dos_setErrnoFromCode (sub_18F54, the worker behind "
      "__maperror) via a DOS-error-code translation table."),
+
+    (0x25B90, "Picture_checkFormatMatch",
+     "sub_25B90(): reads the global pic_header._flags byte, masks it "
+     "to the low nibble (a format-code sub-field distinct from the "
+     "individual flag bits tested elsewhere in this struct, e.g. the "
+     "already-named PICFLAG_HAS_PALETTE and the separately-tested 0x10/"
+     "0x40 bits), and uses it to index byte_C96B0 (a per-format table). "
+     "Compares that against byte_C96B6 indexed by the current "
+     "_videoIndex (a per-video-mode table); if they match, returns the "
+     "format-table value (the picture's required video mode), "
+     "otherwise returns 0. Called from Picture_Load, load_and_scale_pic, "
+     "and scale_pic -- the latter prints ' scale_pic : EGA -> VGA "
+     "disabled ' (a literal string sitting right after these two "
+     "tables in memory) when a picture's format doesn't match the "
+     "active video mode, consistent with this function being the "
+     "format/video-mode compatibility check that decision is based on."),
 ]
 
 

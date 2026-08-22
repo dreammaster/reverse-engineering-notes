@@ -50572,7 +50572,7 @@ load_picture    endp
 
 ; Attributes: bp-based frame
 
-sub_25B90       proc far                ; CODE XREF: scale_pic+7\u2193p
+Picture_checkFormatMatch proc far       ; CODE XREF: scale_pic+7\u2193p
                                         ; Picture_Load+1E\u2193p ...
 
 var_2           = word ptr -2
@@ -50601,13 +50601,13 @@ var_2           = word ptr -2
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_25BC6:                              ; CODE XREF: sub_25B90+28\u2191j
+loc_25BC6:                              ; CODE XREF: Picture_checkFormatMatch+28\u2191j
                 sub     ax, ax
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_25B90       endp
+Picture_checkFormatMatch endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -50780,7 +50780,7 @@ arg_0           = dword ptr  6
                 mov     bp, sp
                 sub     sp, 0Eh
                 push    cs
-                call    near ptr sub_25B90
+                call    near ptr Picture_checkFormatMatch
                 mov     [bp+var_E], ax
                 or      ax, ax
                 jnz     short loc_25CB6
@@ -51991,7 +51991,7 @@ frameNumber     = word ptr  0Ch
                 or      ax, ax
                 jz      short loc_26580
                 push    cs
-                call    near ptr sub_25B90
+                call    near ptr Picture_checkFormatMatch
                 mov     [bp+var_2], ax
                 mov     es, seg126_54
                 mov     ax, es:pic_header._width
@@ -52073,7 +52073,7 @@ picNumber       = word ptr  6
                 call    near ptr load_picture
                 add     sp, 4
                 push    cs
-                call    near ptr sub_25B90
+                call    near ptr Picture_checkFormatMatch
                 push    ax
                 push    cs
                 call    near ptr sub_25BCE
@@ -384340,14 +384340,14 @@ aNocycle        db 'nocycle',0
 aCriticalErrorU db 'Critical Error: unable to initialize graphics.',0Ah,0
                                         ; DATA XREF: graphics_init:loc_25802\u2191o
                 db    0
-byte_C96B0      db 0                    ; DATA XREF: sub_25B90+20\u2191r
-                                        ; sub_25B90+2C\u2191r
+byte_C96B0      db 0                    ; DATA XREF: Picture_checkFormatMatch+20\u2191r
+                                        ; Picture_checkFormatMatch+2C\u2191r
                 db    1
                 db 0FFh ; ÿ
                 db    0
                 db 0FFh ; ÿ
                 db    0
-byte_C96B6      db 0                    ; DATA XREF: sub_25B90+24\u2191r
+byte_C96B6      db 0                    ; DATA XREF: Picture_checkFormatMatch+24\u2191r
                 db 0FFh ; ÿ
                 db    1
                 db    0

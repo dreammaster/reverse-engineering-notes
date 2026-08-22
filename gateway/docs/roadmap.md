@@ -766,6 +766,11 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       `__maperror`, translating DOS extended-error codes via a lookup
       table. Full writeup in
       [overview.md](overview.md#dos_seterrnofromcode-and-errno-named).
+- [x] Named `sub_25B90` (3 callers) → `Picture_checkFormatMatch` —
+      checks a picture's format code against the current video mode,
+      called from `Picture_Load`/`load_and_scale_pic`/`scale_pic`.
+      Full writeup in
+      [overview.md](overview.md#picture_checkformatmatch-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-
