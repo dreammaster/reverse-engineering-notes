@@ -3558,6 +3558,27 @@ RENAMES = [
      "meta-event handler does: advances this track's event-count/delta-"
      "time entries in the per-track array at 0xA1A4 via the "
      "already-named Midi_readVarLengthValue."),
+
+    (0x11950, "Logics_setBit",
+     "sub_11950(logicNum, index): the missing sibling of the already-"
+     "named Logics_getBit/Logics_getBitPtr/Logics_clearBit family -- an "
+     "exact structural mirror of Logics_clearBit (same "
+     "Logics_getBitPtr(logicNum, index, &bitPos) call, same null-pointer "
+     "guard), but ORs the bit in (`al = 1 << bitPos; or es:[bx], al`) "
+     "instead of ANDing its complement out. Confirmed by direct "
+     "byte-for-byte comparison against Logics_clearBit's body. Ends "
+     "with an 'sp-analysis failed' tag and falls through into what IDA "
+     "auto-analysis split off as a separate sub_11970 -- NOT folded into "
+     "this rename, since sub_11970 (19 bytes) also has its own "
+     "confirmed independent callers elsewhere (e.g. a message-dispatch "
+     "routine that does 'push ds; push ax; call sub_11970' with what "
+     "looks like a far string-pointer argument sub_11970's own body "
+     "never references) using a calling shape that doesn't obviously "
+     "match Logics_setBit's own use of it -- left unnamed and "
+     "unresolved this pass rather than force an uncertain merge. "
+     "176 callers, by far the most call sites of anything found so far "
+     "this project -- essentially every already-named function that "
+     "sets an object/room status flag routes through here."),
 ]
 
 

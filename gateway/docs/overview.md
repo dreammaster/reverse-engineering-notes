@@ -4790,3 +4790,34 @@ equivalent pass was needed or run there.
 Re-exported `gatemain.asm`/`gatemain.idc` fresh afterward (2520 new
 `thunk_*` proc/endp line pairs — 1260 thunk functions — appear in the
 new export; `gate.asm`/`gate.idc` unaffected).
+
+### `Logics_setBit` named — the missing sibling in the bit-primitive family, and the project's highest caller count yet
+
+Back to the ranked list after the RTLink thunk recovery. `sub_11950`
+topped it with **176 callers** — by a wide margin the most call sites
+found for anything this project has traced, and unsurprising once
+identified: it's `Logics_setBit`, the missing fourth member of the
+already-named `Logics_getBit`/`Logics_getBitPtr`/`Logics_clearBit`
+family.
+
+Confirmed by direct byte-for-byte comparison against `Logics_clearBit`'s
+body: both call `Logics_getBitPtr(logicNum, index, &bitPos)` the same
+way, both guard on the returned pointer being non-null, then diverge
+only in the final operation — `Logics_clearBit` does
+`al = ~(1 << bitPos); and es:[bx], al`, while this one does
+`al = 1 << bitPos; or es:[bx], al`. Textbook mirror-image
+implementations of "set" vs. "clear" on the same bit-pointer primitive.
+
+One loose end deliberately left alone: `sub_11950` ends with an
+"sp-analysis failed" tag and falls straight through into what IDA's
+auto-analysis split off as a separate `sub_11970` (19 bytes) — which
+would complete the picture nicely as `Logics_setBit`'s own tail, except
+`sub_11970` *also* has its own confirmed, independent callers elsewhere
+(a message-dispatch routine doing `push ds; push ax; call sub_11970`
+with what looks like a far string-pointer argument that `sub_11970`'s
+own body never touches). Since that other calling shape doesn't
+obviously line up with how `Logics_setBit` reaches it, `sub_11970` was
+left unnamed rather than forcing an uncertain merge — a case for a
+future pass with fresh eyes.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-fifty-third batch.

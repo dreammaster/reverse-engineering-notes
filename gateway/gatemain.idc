@@ -3179,6 +3179,7 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X1194A);
 	create_insn	(0X11950);
+	set_name	(0X11950,	"Logics_setBit");
 	create_insn	(x=0X11953);
 	op_hex		(x,	1);
 	create_insn	(x=0X11956);
@@ -105305,8 +105306,14 @@ static Bytes_18(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0XC7C3A);
 	op_stkvar	(x,	1);
+	create_insn	(x=0XC7C45);
+	op_plain_offset	(x,	0,	0XC7F20);
+	op_plain_offset	(x,	128,	0XC7F20);
 	create_insn	(x=0XC7C4B);
 	op_hex		(x,	1);
+	create_insn	(x=0XC7C4D);
+	op_plain_offset	(x,	0,	0XC7F20);
+	op_plain_offset	(x,	128,	0XC7F20);
 	create_insn	(0XC7C59);
 	set_cmt	(0XC7C60,	"msg",	0);
 	create_insn	(x=0XC7C66);
@@ -105317,6 +105324,9 @@ static Bytes_18(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0XC7C99);
 	op_hex		(x,	1);
+	create_insn	(x=0XC7C9B);
+	op_plain_offset	(x,	0,	0XC7F20);
+	op_plain_offset	(x,	128,	0XC7F20);
 	create_insn	(x=0XC7CB6);
 	op_hex		(x,	1);
 	create_insn	(0XC7CCD);
@@ -108757,10 +108767,6 @@ static Bytes_18(void) {
 	set_name	(0XCFD2C,	"aSitIn_1");
 	create_strlit	(0XCFD33,	0XB);
 	set_name	(0XCFD33,	"aDullBeige");
-	create_strlit	(0XCFD3E,	0XE);
-	set_name	(0XCFD3E,	"aBrightPurple");
-	create_strlit	(0XCFD4C,	0X8);
-	set_name	(0XCFD4C,	"aShakily");
 }
 
 //------------------------------------------------------------------------
@@ -108770,6 +108776,10 @@ static Bytes_19(void) {
         auto x;
 #define id x
 
+	create_strlit	(0XCFD3E,	0XE);
+	set_name	(0XCFD3E,	"aBrightPurple");
+	create_strlit	(0XCFD4C,	0X8);
+	set_name	(0XCFD4C,	"aShakily");
 	create_strlit	(0XCFD54,	0XB);
 	set_name	(0XCFD54,	"aThankfully");
 	create_strlit	(0XCFD5F,	0X5);
@@ -109037,7 +109047,10 @@ static Bytes_19(void) {
 	create_word	(0XD03CE);
 	create_word	(0XD03D0);
 	create_word	(0XD03D2);
+	create_word	(0XD03D4);
+	make_array	(0XD03D4,	0X5);
 	create_byte	(0XD03DE);
+	create_byte	(0XD040C);
 	create_word	(0XD0492);
 	create_word	(0XD0494);
 	create_word	(0XD0752);

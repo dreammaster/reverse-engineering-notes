@@ -2953,7 +2953,7 @@ Logics_getBits  endp
 ; Attributes: bp-based frame
 
 Logics_getBitPtr proc far               ; CODE XREF: Logics_getBit+12↓p
-                                        ; sub_11950+12↓p ...
+                                        ; Logics_setBit+12↓p ...
 
 var_8           = word ptr -8
 var_6           = word ptr -6
@@ -3084,7 +3084,7 @@ Logics_getBit   endp
 
 ; Attributes: bp-based frame
 
-sub_11950       proc near               ; CODE XREF: Logics_autoTakeObject+12C↓P
+Logics_setBit   proc near               ; CODE XREF: Logics_autoTakeObject+12C↓P
                                         ; Logics_checkMoveRestriction+2DD↓P ...
 
 var_6           = byte ptr -6
@@ -3107,7 +3107,7 @@ arg_4           = word ptr  8
                 mov     [bp+var_4], ax
                 mov     [bp+var_2], dx
                 or      dx, ax
-sub_11950       endp ; sp-analysis failed
+Logics_setBit   endp ; sp-analysis failed
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -9312,7 +9312,7 @@ loc_14518:                              ; CODE XREF: Logics_autoTakeObject+10C�
                 mov     ax, 2
                 push    ax
                 push    [bp+arg_0]
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
 
 loc_14527:                              ; CODE XREF: Logics_autoTakeObject+19↑j
@@ -10527,7 +10527,7 @@ loc_14E34:                              ; CODE XREF: Logics_checkMoveRestriction
                 push    ax
                 mov     es, seg_D10E6
                 push    es:word_CB7F8
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
 
 loc_14E49:                              ; CODE XREF: Logics_checkMoveRestriction+29A↑j
@@ -10718,7 +10718,7 @@ loc_14F95:                              ; CODE XREF: Logics_tryMoveDirection+AB�
                 mov     ax, 0Ch
                 push    ax
                 push    [bp+var_10]
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 jmp     short loc_14F83
 ; ---------------------------------------------------------------------------
@@ -11322,7 +11322,7 @@ loc_15429:                              ; CODE XREF: Logics_takeObject+5B↑j
                 mov     ax, 2
                 push    ax
                 push    [bp+arg_0]
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0Ah
                 push    ax              ; index
@@ -11332,7 +11332,7 @@ loc_15429:                              ; CODE XREF: Logics_takeObject+5B↑j
                 mov     ax, 1Dh
                 push    ax
                 push    [bp+arg_0]
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 8
                 push    ax              ; index
@@ -86304,7 +86304,7 @@ aEverythingExce db '[Everything except the first word after "oops" is ignored.]'
                 dd word_CCB42
                 db    2
                 db    0
-                dd unk_D03D4
+                dd word_D03D4
                 db  0Ah
                 db    0
                 dd word_D03D2
@@ -247066,7 +247066,7 @@ loc_667B4:                              ; CODE XREF: printObj+6BB↑j
                 mov     ax, 7
                 push    ax
                 push    [bp+arg_2]
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, [bp+var_98]
                 mov     dx, [bp+var_96]
@@ -247277,7 +247277,7 @@ loc_66926:                              ; CODE XREF: sub_66888+83↑j
                 mov     ax, 7
                 push    ax
                 push    [bp+var_6]
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 jmp     loc_668B9
 ; ---------------------------------------------------------------------------
@@ -252545,13 +252545,13 @@ loc_69287:                              ; CODE XREF: sub_690D2+1B0↑j
                 push    ax
                 mov     es, seg_D12D8
                 push    es:word_4DF9A
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 2
                 push    ax
                 mov     es, seg_D12D8
                 push    es:word_4DF9A
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     es, seg_D12D8
                 push    es:word_4DF9A
@@ -259183,7 +259183,7 @@ loc_6D3B8:                              ; CODE XREF: sub_6D307+8D↑j
                 push    ax
                 mov     es, seg_D1312
                 push    es:word_4DF9A
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 4858h
                 push    ds
@@ -270012,7 +270012,7 @@ loc_725BD:                              ; CODE XREF: sub_72260+358↑j
                 push    ax
                 mov     ax, 104h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 sub     ax, ax
                 push    ax              ; newId
@@ -270277,13 +270277,13 @@ loc_7288E:                              ; CODE XREF: sub_72260+1A3↑j
                 push    ax
                 mov     ax, 264h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 15h
                 push    ax
                 mov     ax, 25Bh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 sub     ax, ax
                 push    ax              ; newId
@@ -270326,7 +270326,7 @@ loc_7288E:                              ; CODE XREF: sub_72260+1A3↑j
                 push    ax
                 mov     ax, 25Eh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 sub     ax, ax
                 push    ax              ; newId
@@ -270490,7 +270490,7 @@ loc_72A99:                              ; CODE XREF: sub_72260+2E1↑j
                 push    ax
                 mov     ax, 1B7h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     es, seg_D13C2
                 cmp     es:_gameMinutes, 21Bh
@@ -272458,13 +272458,13 @@ loc_73992:                              ; CODE XREF: sub_7382B+144↑j
                 push    ax
                 mov     ax, 1B7h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 2
                 push    ax
                 mov     ax, 1B7h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 1
 
@@ -278847,7 +278847,7 @@ loc_7675D:                              ; CODE XREF: sub_766F5+61↑j
                 push    ax
                 mov     ax, 15h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0Ch
                 push    ax
@@ -279062,7 +279062,7 @@ loc_768AA:                              ; CODE XREF: seg165:0035↑j
                 push    ax
                 mov     ax, 0A2h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     es, seg_D1450
                 mov     es:byte_CD056, 1
@@ -283773,7 +283773,7 @@ loc_7870B:                              ; CODE XREF: sub_78570+196↑j
                 push    ax
                 mov     ax, 0A1h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 sub     ax, ax
                 push    ax
@@ -285395,7 +285395,7 @@ loc_792B6:                              ; CODE XREF: sub_79293+1E↑j
                 push    ax
                 mov     ax, 0ABh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0A5h
                 push    ax
@@ -285417,7 +285417,7 @@ loc_792B6:                              ; CODE XREF: sub_79293+1E↑j
                 push    ax
                 mov     ax, 0AAh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
 
 loc_79316:                              ; CODE XREF: sub_79293+5D↑j
@@ -287615,7 +287615,7 @@ loc_7A12B:                              ; CODE XREF: sub_79F66+1C0↑j
                 push    ax
                 mov     ax, 0AAh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 jmp     loc_7A06F
 ; ---------------------------------------------------------------------------
 
@@ -287779,7 +287779,7 @@ loc_7A294:                              ; CODE XREF: sub_79F66+329↑j
                 push    ax
                 mov     ax, 0A5h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 8
                 push    ax
@@ -290573,7 +290573,7 @@ loc_7B6B1:                              ; CODE XREF: sub_7AE5A+852↑j
                 push    ax
                 mov     ax, 99h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0Ch
                 push    ax
@@ -291562,7 +291562,7 @@ loc_7BE08:                              ; CODE XREF: sub_7BD01+102↑j
                 push    ax
                 mov     ax, 0AAh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
 
 loc_7BE8F:                              ; CODE XREF: sub_7BD01+104↑j
@@ -291994,7 +291994,7 @@ loc_7C22C:                              ; CODE XREF: sub_7BD01+50A↑j
                 push    ax
                 mov     ax, 0AAh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
 
 loc_7C27E:                              ; CODE XREF: sub_7BD01+4DD↑j
@@ -293239,7 +293239,7 @@ loc_7CC5F:                              ; CODE XREF: sub_7C946+314↑j
                 push    ax
                 mov     ax, 0AAh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 jmp     loc_7CA8A
 ; ---------------------------------------------------------------------------
 
@@ -293495,7 +293495,7 @@ loc_7CEC4:                              ; CODE XREF: sub_7C946+579↑j
                 push    ax
                 mov     ax, 9Bh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 11h
                 push    ax
@@ -294061,7 +294061,7 @@ loc_7D34F:                              ; CODE XREF: sub_7D26B+D3↑j
                 push    ax
                 mov     es, seg_D14BA
                 push    es:word_4DF9A
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
 
 loc_7D371:                              ; CODE XREF: sub_7D26B+E2↑j
                 add     sp, 4
@@ -294580,7 +294580,7 @@ loc_7D76B:                              ; CODE XREF: sub_7D57B+126↑j
                 push    ax
                 mov     ax, 0A7h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 8
                 push    ax
@@ -294686,7 +294686,7 @@ loc_7D883:                              ; CODE XREF: sub_7D57B+303↑j
                 push    ax
                 mov     ax, 0A8h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 10h
                 push    ax
@@ -297265,7 +297265,7 @@ loc_7EAAD:                              ; CODE XREF: sub_7E97C+12C↑j
                 push    ax
                 mov     ax, 95h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0Eh
                 push    ax
@@ -300081,13 +300081,13 @@ loc_80212:                              ; CODE XREF: sub_8014E+B1↑j
                 push    ax
                 mov     ax, 0A2h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0Ah
                 push    ax
                 mov     ax, 0A2h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 sub     ax, ax
                 push    ax
@@ -300810,7 +300810,7 @@ sub_80857       proc far                ; CODE XREF: sub_7DC6F+295↑p
                 push    ax
                 mov     ax, 9Dh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0Fh
                 push    ax
@@ -301895,7 +301895,7 @@ loc_80F3F:                              ; CODE XREF: sub_80F32+5B↓j
                 mov     ax, 9
                 push    ax
                 push    [bp+arg_0]
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     bx, [bp+var_2]
                 mov     byte ptr [bx-4334h], 1
@@ -301906,7 +301906,7 @@ loc_80F58:                              ; CODE XREF: sub_80F32+56↓j
                 mov     ax, 9
                 push    ax
                 push    [bp+arg_0]
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 jmp     short loc_80F8F
 ; ---------------------------------------------------------------------------
@@ -303157,7 +303157,7 @@ loc_81792:                              ; CODE XREF: sub_81613+160↑j
                 push    ax
                 mov     ax, 1EFh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     byte_CD6D8, 1
                 jmp     short loc_8178C
@@ -304129,7 +304129,7 @@ loc_81E64:                              ; CODE XREF: sub_81CCC+18A↑j
                 push    ax
                 mov     es, seg_D150A
                 push    es:word_4DF9A
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     es, seg_D150A
                 push    es:word_4DF9A
@@ -304423,7 +304423,7 @@ loc_8212C:                              ; CODE XREF: sub_81CCC+45B↑j
                 push    ax
                 mov     ax, 1D2h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 1
                 push    ax
@@ -304768,7 +304768,7 @@ loc_8238D:                              ; CODE XREF: sub_82348+2A↑j
                 push    ax
                 mov     es, seg_D150A
                 push    es:word_4DF9A
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 8
                 push    ax
@@ -305135,7 +305135,7 @@ loc_82651:                              ; CODE XREF: sub_82520+1D↑j
                 push    ax
                 mov     es, seg_D150A
                 push    es:word_4DF9A
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 9
                 push    ax
@@ -305153,7 +305153,7 @@ loc_826B7:                              ; CODE XREF: sub_82520+192↑j
                 push    ax
                 mov     ax, 200h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 14h
                 push    ax
@@ -305355,7 +305355,7 @@ loc_827EA:                              ; CODE XREF: sub_82715+D0↑j
                 push    ax
                 mov     es, seg_D150A
                 push    es:word_4DF9A
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 9
                 push    ax
@@ -305369,7 +305369,7 @@ loc_827EA:                              ; CODE XREF: sub_82715+D0↑j
                 push    ax
                 mov     ax, 202h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 14h
                 push    ax
@@ -305670,13 +305670,13 @@ loc_82A7C:                              ; CODE XREF: sub_82878+1FF↑j
                 push    ax
                 mov     es, seg_D150A
                 push    es:word_4DF9A
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0Ah
                 push    ax
                 mov     es, seg_D150A
                 push    es:word_4DF9A
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 9
                 push    ax
@@ -305694,7 +305694,7 @@ loc_82AE6:                              ; CODE XREF: sub_82878+269↑j
                 push    ax
                 mov     ax, 1FEh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 1
                 push    ax
@@ -308746,7 +308746,7 @@ loc_83EB7:                              ; CODE XREF: sub_83842+668↑j
                 push    ax
                 mov     ax, 1F7h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 9821h
                 mov     dx, 0F000h
@@ -309801,7 +309801,7 @@ loc_845F6:                              ; CODE XREF: sub_843E1+210↑j
                 push    ax
                 mov     ax, 1E2h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0Ah
                 push    ax
@@ -312319,7 +312319,7 @@ sub_8584D       proc far                ; CODE XREF: thunk_sub_8584D+3↑J
                 mov     es, seg_D151C
                 assume es:seg126
                 push    es:word_4DF9A
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
 
 loc_858CC:                              ; CODE XREF: sub_8584D+33↑j
@@ -314078,7 +314078,7 @@ loc_864EA:                              ; CODE XREF: sub_85C7C+847↑j
                 push    ax
                 mov     ax, 1CCh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     es, seg_D153C
                 mov     es:word_CBB72, 0
@@ -314725,7 +314725,7 @@ loc_86A37:                              ; CODE XREF: sub_85C7C+D9B↑j
                 push    ax
                 mov     ax, 1D4h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
 
 loc_86A6B:                              ; CODE XREF: sub_85C7C+DCD↑j
@@ -314865,7 +314865,7 @@ loc_86B8E:                              ; CODE XREF: sub_85C7C+EB8↑j
                 push    ax
                 mov     ax, 1D4h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 jmp     loc_86A78
 ; ---------------------------------------------------------------------------
 
@@ -316865,7 +316865,7 @@ loc_878AB:                              ; CODE XREF: sub_87766+14↑j
                 push    ax
                 mov     ax, 1E9h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0A004h
                 mov     dx, 0F000h
@@ -318179,7 +318179,7 @@ loc_881ED:                              ; CODE XREF: sub_880C5+10D↑j
                 mov     es, seg_D155E
                 assume es:seg126
                 push    es:word_4DF9A
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 sub     ax, ax
                 push    ax
@@ -318621,7 +318621,7 @@ loc_884E4:                              ; CODE XREF: sub_8840F+D0↑j
                 push    ax
                 mov     es, seg_D155E
                 push    es:word_4DF9A
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     es, seg_D157E
                 assume es:dseg
@@ -319954,7 +319954,7 @@ loc_88D97:                              ; CODE XREF: sub_88D50+14↑j
                 push    ax
                 mov     ax, 1FAh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
 
 loc_88DCF:                              ; CODE XREF: sub_88D50+59↑j
@@ -319962,19 +319962,19 @@ loc_88DCF:                              ; CODE XREF: sub_88D50+59↑j
                 push    ax
                 mov     ax, 1FAh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 1F3h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 1F4h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 jmp     loc_88EE9
 ; ---------------------------------------------------------------------------
 
@@ -322262,7 +322262,7 @@ loc_89DB5:                              ; CODE XREF: sub_89CAA+F7↑j
                 push    ax
                 mov     es, seg_D159E
                 push    es:word_4DF9A
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 45h ; 'E'
                 push    ax
@@ -322425,7 +322425,7 @@ loc_89F22:                              ; CODE XREF: sub_89CAA+235↑j
                 push    ax
                 mov     ax, 1ECh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
 
 loc_89F5E:                              ; CODE XREF: sub_89CAA+290↑j
@@ -327560,7 +327560,7 @@ loc_8C2AA:                              ; CODE XREF: sub_8C282+B↑j
                 push    ax
                 mov     ax, 22Dh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 1
                 push    ax
@@ -327622,7 +327622,7 @@ loc_8C334:                              ; CODE XREF: sub_8C30C+B↑j
                 push    ax
                 mov     ax, 22Eh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 1
                 push    ax
@@ -329089,19 +329089,19 @@ loc_8CDA1:                              ; CODE XREF: sub_8CB20+27C↑j
                 push    ax
                 mov     ax, 1FBh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 8
                 push    ax
                 mov     ax, 1FBh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 8
                 push    ax
                 mov     ax, 1FCh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     es, seg_D15E0
                 assume es:dseg
@@ -329138,7 +329138,7 @@ loc_8CE42:                              ; CODE XREF: sub_8CB20+31D↑j
                 push    ax
                 mov     ax, 1C7h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
@@ -329365,7 +329365,7 @@ loc_8CF80:                              ; CODE XREF: sub_8CF00+2B↑j
                 push    ax
                 mov     es, seg_D15D2
                 push    es:word_4DF9A
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 jmp     short loc_8CFDF
 ; ---------------------------------------------------------------------------
 
@@ -330215,7 +330215,7 @@ loc_8D5DD:                              ; CODE XREF: sub_8D57D+5B↑j
                 push    ax
                 mov     ax, 1D4h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 jmp     loc_8D7A4
 ; ---------------------------------------------------------------------------
@@ -330383,7 +330383,7 @@ loc_8D7A4:                              ; CODE XREF: sub_8D57D+9F↑j
                 push    ax
                 mov     ax, 1FBh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 1
                 push    ax
@@ -331443,7 +331443,7 @@ loc_8DF0C:                              ; CODE XREF: sub_8DD0F+1F8↑j
                 push    ax
                 mov     ax, 206h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 jmp     loc_8DDEC
 ; ---------------------------------------------------------------------------
 
@@ -332137,7 +332137,7 @@ loc_8E4BE:                              ; CODE XREF: sub_8E187+325↑j
                 push    ax
                 mov     ax, 212h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 jmp     loc_8E258
 ; ---------------------------------------------------------------------------
 
@@ -332307,19 +332307,19 @@ loc_8E5E1:                              ; CODE XREF: sub_8E561+7A↑j
                 push    ax
                 mov     ax, 216h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 218h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 217h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
 
 loc_8E63E:                              ; CODE XREF: sub_8E561+14D↓j
                 add     sp, 4
@@ -333207,7 +333207,7 @@ loc_8EC9B:                              ; CODE XREF: sub_8EAB3+1E3↑j
                 push    ax
                 mov     ax, 215h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 sub     ax, ax
                 push    ax
@@ -333693,7 +333693,7 @@ loc_8F05D:                              ; CODE XREF: sub_8EDD9+27F↑j
                 push    ax
                 mov     es, seg_D15F2
                 push    es:word_4DF9A
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 jmp     loc_8EEC5
 ; ---------------------------------------------------------------------------
 
@@ -333932,7 +333932,7 @@ loc_8F274:                              ; CODE XREF: sub_8F164+105↑j
                 push    ax
                 mov     es, seg_D15F2
                 push    es:word_4DF9A
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     es, seg_D15FC
                 assume es:dseg
@@ -334111,13 +334111,13 @@ loc_8F3BD:                              ; CODE XREF: sub_8F3A8+E↑j
                 push    ax
                 mov     ax, 220h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 221h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
 
 loc_8F413:                              ; CODE XREF: sub_8F3A8+F3↓j
@@ -334525,7 +334525,7 @@ loc_8F75C:                              ; CODE XREF: sub_8F4E1+24A↑j
                 push    ax
                 mov     es, seg_D15F2
                 push    es:word_4DF9A
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
 
 loc_8F7A7:                              ; CODE XREF: sub_8F4E1+1BB↑j
                                         ; sub_8F4E1+220↑j
@@ -334880,7 +334880,7 @@ loc_8FA60:                              ; CODE XREF: sub_8F7E5+24A↑j
                 push    ax
                 mov     es, seg_D15F2
                 push    es:word_4DF9A
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
 
 loc_8FAAB:                              ; CODE XREF: sub_8F7E5+1BB↑j
                                         ; sub_8F7E5+220↑j
@@ -338622,7 +338622,7 @@ loc_914FC:                              ; CODE XREF: sub_91398+15F↑j
                 push    ax
                 mov     es, seg_D1604
                 push    es:word_4DF9A
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 push    cs
                 call    near ptr sub_91368
@@ -338632,7 +338632,7 @@ loc_914FC:                              ; CODE XREF: sub_91398+15F↑j
                 push    ax
                 mov     ax, 239h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 5438h
                 mov     dx, 0F000h
@@ -338710,7 +338710,7 @@ loc_915FA:                              ; CODE XREF: sub_91398+1F8↑j
                 push    ax
                 mov     ax, 235h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
@@ -338741,7 +338741,7 @@ loc_9165D:                              ; CODE XREF: sub_91398+2C0↑j
                 push    ax
                 mov     ax, 239h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
@@ -339105,7 +339105,7 @@ loc_91902:                              ; CODE XREF: sub_917BE+13F↑j
                 push    ax
                 mov     es, seg_D1604
                 push    es:word_4DF9A
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 jmp     loc_9189D
 ; ---------------------------------------------------------------------------
 
@@ -339449,7 +339449,7 @@ loc_91BC3:                              ; CODE XREF: sub_91A6F+14F↑j
                 push    ax
                 mov     es, seg_D1604
                 push    es:word_4DF9A
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 push    cs
                 call    near ptr sub_91368
@@ -339459,7 +339459,7 @@ loc_91BC3:                              ; CODE XREF: sub_91A6F+14F↑j
                 push    ax
                 mov     ax, 239h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 5438h
                 mov     dx, 0F000h
@@ -339537,7 +339537,7 @@ loc_91CC1:                              ; CODE XREF: sub_91A6F+1E8↑j
                 push    ax
                 mov     ax, 235h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
@@ -339568,7 +339568,7 @@ loc_91D24:                              ; CODE XREF: sub_91A6F+2B0↑j
                 push    ax
                 mov     ax, 239h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
@@ -339933,7 +339933,7 @@ loc_91FC8:                              ; CODE XREF: sub_91E82+141↑j
                 push    ax
                 mov     es, seg_D1604
                 push    es:word_4DF9A
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 jmp     loc_91F63
 ; ---------------------------------------------------------------------------
 
@@ -341282,7 +341282,7 @@ loc_928F4:                              ; CODE XREF: sub_9259E+320↑j
                 push    ax
                 mov     ax, 234h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0Eh
                 push    ax
@@ -341760,7 +341760,7 @@ loc_92C9C:                              ; CODE XREF: sub_92967+2F↑j
                 push    ax
                 mov     es, seg_D1616
                 push    es:word_4DF9A
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 jmp     loc_92A89
 ; ---------------------------------------------------------------------------
 
@@ -341790,7 +341790,7 @@ loc_92D0D:                              ; CODE XREF: sub_92967+3A1↑j
                 push    ax
                 mov     es, seg_D1616
                 push    es:word_4DF9A
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 sub     ax, ax
                 push    ax
@@ -341815,7 +341815,7 @@ loc_92D77:                              ; CODE XREF: sub_92967+40B↑j
                 push    ax
                 mov     ax, 245h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 13h
                 push    ax
@@ -343218,7 +343218,7 @@ loc_936AD:                              ; CODE XREF: sub_934D9+1CF↑j
                 push    ax
                 mov     es, seg_D1616
                 push    es:word_4DF9A
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 9
                 push    ax
@@ -343236,7 +343236,7 @@ loc_93722:                              ; CODE XREF: sub_934D9+244↑j
                 push    ax
                 mov     ax, 241h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
@@ -346005,97 +346005,97 @@ loc_94901:                              ; CODE XREF: sub_9478A+10E↑j
                 push    ax
                 mov     ax, 4Eh ; 'N'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 51h ; 'Q'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 53h ; 'S'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 55h ; 'U'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 57h ; 'W'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 5Fh ; '_'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 61h ; 'a'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 6Fh ; 'o'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 70h ; 'p'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 76h ; 'v'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 77h ; 'w'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 79h ; 'y'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 7Ah ; 'z'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 7Eh ; '~'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 7Fh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 83h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 jmp     loc_94844
 ; ---------------------------------------------------------------------------
 
@@ -348693,43 +348693,43 @@ loc_95BB8:                              ; CODE XREF: sub_95ABF+B2↑j
                 push    ax
                 mov     ax, 52h ; 'R'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 54h ; 'T'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 69h ; 'i'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 6Ah ; 'j'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 6Bh ; 'k'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 7Dh ; '}'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 80h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 jmp     loc_95B14
 ; ---------------------------------------------------------------------------
 
@@ -352774,31 +352774,31 @@ loc_97620:                              ; CODE XREF: sub_974C0+19↑j
                 push    ax
                 mov     ax, 4Dh ; 'M'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 5Dh ; ']'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 67h ; 'g'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 6Dh ; 'm'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 87h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
 
 loc_976C3:                              ; CODE XREF: sub_974C0+15D↑j
                 add     sp, 4
@@ -352958,31 +352958,31 @@ loc_977B2:                              ; CODE XREF: sub_97716+14↑j
                 push    ax
                 mov     ax, 4Dh ; 'M'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 68h ; 'h'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 6Ch ; 'l'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 6Dh ; 'm'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 76h ; 'v'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
 
 loc_9780F:                              ; CODE XREF: sub_97716+213↓j
                 add     sp, 4
@@ -355006,13 +355006,13 @@ loc_9869E:                              ; CODE XREF: sub_98471+211↑j
                 push    ax
                 mov     ax, 84h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0Ah
                 push    ax
                 mov     ax, 84h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     es, seg_D168C
                 cmp     es:word_CB7F8, 49h ; 'I'
@@ -357123,127 +357123,127 @@ loc_99509:                              ; CODE XREF: sub_993B4+17↑j
                 push    ax
                 mov     ax, 4Fh ; 'O'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 50h ; 'P'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 56h ; 'V'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 5Ch ; '\'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 5Eh ; '^'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 60h ; '`'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 62h ; 'b'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 63h ; 'c'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 64h ; 'd'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 65h ; 'e'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 6Eh ; 'n'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 71h ; 'q'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 72h ; 'r'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 73h ; 's'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 74h ; 't'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 7Ch ; '|'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 81h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 82h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 47h ; 'G'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 49h ; 'I'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 48h ; 'H'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 jmp     loc_9949C
 ; ---------------------------------------------------------------------------
 
@@ -357683,19 +357683,19 @@ loc_99937:                              ; CODE XREF: sub_9989F+11↑j
                 push    ax
                 mov     ax, 4Dh ; 'M'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 66h ; 'f'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 6Dh ; 'm'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
 
 loc_99984:                              ; CODE XREF: sub_9989F+96↑j
                 add     sp, 4
@@ -360135,7 +360135,7 @@ loc_9A97B:                              ; CODE XREF: sub_9A8FE+EF↓j
                 push    ax
                 mov     ax, 60h ; '`'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
 
 loc_9A9A9:                              ; CODE XREF: sub_9A8FE+EA↓j
                 add     sp, 4
@@ -362599,49 +362599,49 @@ loc_9BC5C:                              ; CODE XREF: sub_9B946+2AC↑j
                 push    ax
                 mov     ax, 25h ; '%'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 2Eh ; '.'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 32h ; '2'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 33h ; '3'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 3Ah ; ':'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 41h ; 'A'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 43h ; 'C'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 44h ; 'D'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 jmp     def_9B962       ; jumptable 0009B962 default case, cases 2-7,10,12,16-21
 ; ---------------------------------------------------------------------------
@@ -362936,19 +362936,19 @@ loc_9BEFA:                              ; CODE XREF: sub_9BD7E+164↑j
                 push    ax
                 mov     ax, 28h ; '('
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 39h ; '9'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 3Ch ; '<'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 jmp     short def_9BD92 ; jumptable 0009BD92 default case, cases 2-7,10,12,16-21
 ; ---------------------------------------------------------------------------
@@ -363413,37 +363413,37 @@ loc_9C2B2:                              ; CODE XREF: sub_9C0EE+19↑j
                 push    ax
                 mov     ax, 34h ; '4'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 35h ; '5'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 36h ; '6'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 37h ; '7'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 38h ; '8'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 3Dh ; '='
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 jmp     loc_9C17B
 ; ---------------------------------------------------------------------------
 jpt_9C107       dw offset loc_9C183     ; DATA XREF: sub_9C0EE+19↑r
@@ -368084,7 +368084,7 @@ loc_9E370:                              ; CODE XREF: sub_9E079+69↑j
                 push    ax
                 mov     ax, 37h ; '7'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0Fh
                 push    ax
@@ -368191,7 +368191,7 @@ loc_9E47B:                              ; CODE XREF: sub_9E458+9↑j
                 push    ax
                 mov     ax, 43h ; 'C'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
 
 loc_9E488:                              ; CODE XREF: sub_9E458+142↓j
                 add     sp, 4
@@ -368199,7 +368199,7 @@ loc_9E488:                              ; CODE XREF: sub_9E458+142↓j
                 push    ax
                 mov     ax, 3Ah ; ':'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
 
 loc_9E498:                              ; CODE XREF: sub_9E458+172↓j
                 add     sp, 4
@@ -368220,7 +368220,7 @@ loc_9E4B0:                              ; CODE XREF: sub_9E458+E↑j
                 push    ax
                 mov     ax, 45h ; 'E'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     es, seg_D16EA
                 cmp     es:word_CB7F8, 24h ; '$'
@@ -368253,7 +368253,7 @@ loc_9E4E7:                              ; CODE XREF: sub_9E458+8B↑j
                 push    ax
                 mov     ax, 29h ; ')'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 32h ; '2'
                 push    ax
@@ -368276,7 +368276,7 @@ loc_9E525:                              ; CODE XREF: sub_9E458+15↑j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 32h ; '2'
                 push    ax
@@ -368336,7 +368336,7 @@ loc_9E59D:                              ; CODE XREF: sub_9E458+EB↑j
                 push    ax
                 mov     ax, 43h ; 'C'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
 
 loc_9E5BD:                              ; CODE XREF: sub_9E458+C0↑j
@@ -368355,7 +368355,7 @@ loc_9E5CD:                              ; CODE XREF: sub_9E458+1D↑j
                 push    ax
                 mov     ax, 2Eh ; '.'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 32h ; '2'
                 push    ax
@@ -368367,7 +368367,7 @@ loc_9E5CD:                              ; CODE XREF: sub_9E458+1D↑j
                 push    ax
                 mov     ax, 45h ; 'E'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     es, seg_D16EA
                 cmp     es:word_CB7F8, 24h ; '$'
@@ -368406,7 +368406,7 @@ loc_9E624:                              ; CODE XREF: sub_9E458+1C8↑j
                 push    ax
                 mov     ax, 3Ah ; ':'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 jmp     short loc_9E691
 ; ---------------------------------------------------------------------------
 
@@ -368427,7 +368427,7 @@ loc_9E654:                              ; CODE XREF: sub_9E458+193↑j
                 push    ax
                 mov     ax, 43h ; 'C'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 9
                 push    ax
@@ -368456,7 +368456,7 @@ loc_9E6A4:                              ; CODE XREF: sub_9E458:loc_9E478↑j
                 push    ax
                 mov     ax, 2Eh ; '.'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 9
                 push    ax
@@ -368474,19 +368474,19 @@ loc_9E6A4:                              ; CODE XREF: sub_9E458:loc_9E478↑j
                 push    ax
                 mov     ax, 3Ah ; ':'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 9
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 9
                 push    ax
                 mov     ax, 29h ; ')'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 jmp     short loc_9E774
 ; ---------------------------------------------------------------------------
 
@@ -368501,13 +368501,13 @@ loc_9E717:                              ; CODE XREF: sub_9E458+25E↑j
                 push    ax
                 mov     ax, 45h ; 'E'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 9
                 push    ax
                 mov     ax, 43h ; 'C'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 9
                 push    ax
@@ -368942,31 +368942,31 @@ loc_9E981:                              ; CODE XREF: Game_restartAfterDeath+B4�
                 push    ax
                 mov     ax, 32h ; '2'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0Ch
                 push    ax
                 mov     ax, 33h ; '3'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 8
                 push    ax
                 mov     ax, 2Eh ; '.'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 8
                 push    ax
                 mov     ax, 26h ; '&'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0Bh
                 push    ax
                 mov     ax, 26h ; '&'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 5
                 push    ax              ; index
@@ -370045,31 +370045,31 @@ loc_9F24C:                              ; CODE XREF: sub_9F08E+190↑j
                 push    ax
                 mov     ax, 26h ; '&'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 31h ; '1'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 3Eh ; '>'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 3Fh ; '?'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 45h ; 'E'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 jmp     def_9F0AE       ; jumptable 0009F0AE default case, cases 2-7,10,12,16-21
 ; ---------------------------------------------------------------------------
@@ -371686,7 +371686,7 @@ loc_9FE88:                              ; CODE XREF: sub_9FCEC+197↑j
                 push    ax
                 mov     ax, 2Bh ; '+'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0Ah
                 push    ax
@@ -372075,7 +372075,7 @@ loc_A0166:                              ; CODE XREF: sub_A0045+11C↑j
                 push    ax
                 mov     ax, 2Ah ; '*'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0Fh
                 push    ax
@@ -372107,7 +372107,7 @@ loc_A01A6:                              ; CODE XREF: sub_A0045+143↑j
                 push    ax
                 mov     ax, 2Eh ; '.'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0Bh
                 push    ax              ; index
@@ -372125,7 +372125,7 @@ loc_A01A6:                              ; CODE XREF: sub_A0045+143↑j
                 push    ax
                 mov     ax, 27h ; '''
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     es, seg_D172C
                 assume es:dseg
@@ -372190,7 +372190,7 @@ loc_A027D:                              ; CODE XREF: sub_A0045+22B↑j
                 push    ax
                 mov     ax, 44h ; 'D'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 5
                 push    ax
@@ -372216,7 +372216,7 @@ loc_A02BF:                              ; CODE XREF: sub_A0045+25C↑j
                 push    ax
                 mov     ax, 2Eh ; '.'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     es, seg_D1712
                 mov     es:byte_CE88E, 1
@@ -372464,7 +372464,7 @@ loc_A04A5:                              ; CODE XREF: sub_A0045+45B↑j
 
 loc_A04E9:                              ; CODE XREF: sub_A0045+216↑j
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
 
 loc_A04EF:                              ; CODE XREF: sub_A0045+305↑j
                 add     sp, 4
@@ -373750,7 +373750,7 @@ loc_A0E51:                              ; CODE XREF: sub_A0C24+206↑j
                 push    ax
                 mov     ax, 2Ch ; ','
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     es, seg_D1738
                 cmp     es:byte_CE8A1, 0
@@ -374170,7 +374170,7 @@ loc_A1157:                              ; CODE XREF: sub_A102A+2A2↓j
                 push    ax
                 mov     ax, 2Eh ; '.'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 jmp     loc_A10D1
 ; ---------------------------------------------------------------------------
 
@@ -374254,7 +374254,7 @@ loc_A11FB:                              ; CODE XREF: sub_A102A+1C9↑j
                 push    ax
                 mov     ax, 2Eh ; '.'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     es, seg_D1712
                 assume es:dseg
@@ -374271,7 +374271,7 @@ loc_A11FB:                              ; CODE XREF: sub_A102A+1C9↑j
                 push    ax
                 mov     ax, 44h ; 'D'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 5
                 push    ax
@@ -375381,7 +375381,7 @@ loc_A19D0:                              ; CODE XREF: sub_A181A+154↑j
                 push    ax
                 mov     ax, 42h ; 'B'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 1
                 push    ax
@@ -376031,7 +376031,7 @@ loc_A1F2C:                              ; CODE XREF: sub_A1E0B+116↑j
                 push    ax
                 mov     ax, 2A0h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     es, seg_D1758
                 mov     es:word_CED20, 2
@@ -376992,31 +376992,31 @@ loc_A26E4:                              ; CODE XREF: sub_A24BB+14↑j
                 push    ax
                 mov     ax, 15h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 1Bh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 1Ch
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 1Eh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 1Fh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 jmp     def_A24CF       ; jumptable 000A24CF default case, cases 2-7,10,12,16-21
 ; ---------------------------------------------------------------------------
@@ -377206,25 +377206,25 @@ loc_A2862:                              ; CODE XREF: sub_A27E1+105↓j
                 push    ax
                 mov     ax, 17h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 18h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 19h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 1Ah
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 jmp     short loc_A2845
 ; ---------------------------------------------------------------------------
@@ -377419,7 +377419,7 @@ loc_A29B0:                              ; CODE XREF: sub_A292A+81↑j
                 push    ax
                 mov     ax, 14h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
 
 loc_A29BD:                              ; CODE XREF: sub_A292A+A6↓j
                 add     sp, 4
@@ -377666,7 +377666,7 @@ loc_A2B92:                              ; CODE XREF: sub_A292A+263↑j
                 push    ax
                 mov     ax, 14h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 5
                 push    ax
@@ -377913,7 +377913,7 @@ loc_A2D41:                              ; CODE XREF: sub_A2BD5+15A↑j
                 push    ax
                 mov     ax, 15h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0Ch
                 push    ax
@@ -378111,7 +378111,7 @@ loc_A2E7C:                              ; CODE XREF: sub_A2D8D+EA↑j
                 push    ax
                 mov     ax, 1Dh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0Fh
                 push    ax
@@ -378868,7 +378868,7 @@ loc_A340B:                              ; CODE XREF: sub_A3281+183↑j
                 push    ax
                 mov     ax, 20h ; ' '
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 jmp     loc_A32C0
 ; ---------------------------------------------------------------------------
 
@@ -379452,7 +379452,7 @@ loc_A37C2:                              ; CODE XREF: sub_A3744+4C↑j
                 push    ax
                 mov     ax, 20h ; ' '
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 mov     byte_CEC52, 1
                 mov     byte_CEC50, 0
                 mov     ax, 1
@@ -379538,7 +379538,7 @@ loc_A384C:                              ; CODE XREF: sub_A3822+B↑j
                 shl     bx, 1
                 mov     es, seg_D1776
                 push    word ptr es:[bx+0CEh]
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 jmp     short loc_A3846
 ; ---------------------------------------------------------------------------
 
@@ -380341,7 +380341,7 @@ loc_A3D50:                              ; CODE XREF: sub_A3C0C+E5↑j
                 push    ax
                 mov     ax, 14Bh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
 
 loc_A3D94:                              ; CODE XREF: sub_A3C0C+23↑j
@@ -380752,49 +380752,49 @@ loc_A4006:                              ; CODE XREF: sub_A3E55+19F↑j
                 push    ax
                 mov     ax, 125h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 124h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 14Eh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 150h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 14Fh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 16Fh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 175h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 131h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
 
 loc_A4086:                              ; CODE XREF: sub_A3E55+14↑j
@@ -381262,7 +381262,7 @@ loc_A43D3:                              ; CODE XREF: sub_A4352+71↑j
                 push    ax
                 mov     ax, 123h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0C0Bh
 
@@ -381427,7 +381427,7 @@ loc_A44C0:                              ; CODE XREF: sub_A4418:loc_A451B↓j
                 push    ax
                 mov     ax, 124h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 jmp     short loc_A4496
 ; ---------------------------------------------------------------------------
 
@@ -383165,7 +383165,7 @@ loc_A5068:                              ; CODE XREF: sub_A4F49+10D↑j
                 push    ax
                 mov     ax, 16Dh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 5
                 push    ax
@@ -383216,7 +383216,7 @@ loc_A50F6:                              ; CODE XREF: sub_A4F49+1A8↑j
                 push    ax
                 mov     ax, 14Bh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 jmp     loc_A5043
 ; ---------------------------------------------------------------------------
 
@@ -384496,7 +384496,7 @@ loc_A5874:                              ; CODE XREF: sub_A576B+FB↑j
                 push    ax
                 mov     ax, 162h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 23h ; '#'
                 push    ax
@@ -384508,7 +384508,7 @@ loc_A5874:                              ; CODE XREF: sub_A576B+FB↑j
                 push    ax
                 mov     ax, 161h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 6E9Ah
                 push    ds
@@ -384537,7 +384537,7 @@ loc_A58EC:                              ; CODE XREF: sub_A576B+17C↑j
                 push    ax
                 mov     ax, 150h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 5
                 push    ax
@@ -384585,7 +384585,7 @@ loc_A5936:                              ; CODE XREF: sub_A576B+1C3↑j
                 push    ax
                 mov     ax, 162h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0Ch
                 push    ax
@@ -385807,7 +385807,7 @@ loc_A6119:                              ; CODE XREF: sub_A60CE+22↑j
                 push    ax
                 mov     ax, 2A8h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
 
 loc_A6155:                              ; CODE XREF: sub_A60CE+61↑j
@@ -385856,7 +385856,7 @@ loc_A6198:                              ; CODE XREF: sub_A60CE+B2↑j
                 push    ax
                 mov     ax, 0D3h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     word_CED20, 0
                 mov     ax, 0D3h
@@ -386589,13 +386589,13 @@ loc_A67E8:                              ; CODE XREF: sub_A6780+56↑j
                 push    ax
                 mov     ax, 132h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 2
                 push    ax
                 mov     ax, 132h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     es, seg_D17C8
                 assume es:dseg
@@ -386619,7 +386619,7 @@ loc_A67E8:                              ; CODE XREF: sub_A6780+56↑j
                 push    ax
                 mov     ax, 132h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0Ah
                 push    ax
@@ -386673,7 +386673,7 @@ sub_A686E       proc far                ; CODE XREF: sub_A6BD4+283↓p
                 push    ax
                 mov     ax, 133h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0Fh
                 push    ax
@@ -386910,13 +386910,13 @@ loc_A6A75:                              ; CODE XREF: sub_A68D8+198↑j
                 push    ax
                 mov     ax, 143h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 146h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
 
 loc_A6AA7:                              ; CODE XREF: sub_A68D8+14↑j
@@ -387291,13 +387291,13 @@ loc_A6D61:                              ; CODE XREF: sub_A6BD4+188↑j
                 push    ax
                 mov     ax, 144h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 147h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
 
 loc_A6D93:                              ; CODE XREF: sub_A6BD4+14↑j
@@ -389209,7 +389209,7 @@ loc_A79CB:                              ; CODE XREF: sub_A7907+9D↑j
                 push    ax
                 mov     ax, 14Ch
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0Fh
                 push    ax
@@ -391380,7 +391380,7 @@ sub_A86F1       proc far                ; CODE XREF: thunk_sub_A86F1+3↑J
                 push    ax
                 mov     ax, 1AFh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     es, seg_D17D6
                 cmp     es:word_CB7F8, 0F7h
@@ -391464,7 +391464,7 @@ var_2           = word ptr -2
                 push    ax
                 mov     ax, 1AFh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     word_CEE3C, 0
                 jmp     short loc_A87E1
@@ -391586,7 +391586,7 @@ sub_A887D       proc far                ; CODE XREF: thunk_sub_A887D+3↑J
                 push    ax
                 mov     ax, 1B0h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     es, seg_D17D6
                 cmp     es:word_CB7F8, 0F8h
@@ -391708,7 +391708,7 @@ loc_A8975:                              ; CODE XREF: sub_A894F+12↑j
                 push    ax
                 mov     ax, 1B0h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     word_CEE3E, 0
 
@@ -393366,7 +393366,7 @@ loc_A943D:                              ; CODE XREF: sub_A92BF+1F7↓j
                 push    ax
                 mov     ax, 13Fh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 1Dh
                 push    ax
@@ -398682,7 +398682,7 @@ loc_AB6AF:                              ; CODE XREF: sub_AB5A8+14↑j
                 push    ax
                 mov     ax, 0E7h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 5
                 push    ax
@@ -399046,7 +399046,7 @@ loc_AB976:                              ; CODE XREF: sub_AB748+1A6↑j
                 push    ax
                 mov     ax, 107h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
 
 loc_AB9B7:                              ; CODE XREF: sub_AB748:loc_AB76B↑j
@@ -399842,7 +399842,7 @@ loc_ABEF0:                              ; CODE XREF: sub_ABDEF+14↑j
                 push    ax
                 mov     ax, 11Bh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0Ah
                 push    ax
@@ -400206,7 +400206,7 @@ loc_AC198:                              ; CODE XREF: sub_AC0F4+14↑j
                 push    ax
                 mov     ax, 103h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 8
                 push    ax
@@ -400934,7 +400934,7 @@ loc_AC6B5:                              ; CODE XREF: sub_AC5B9+1E9↓j
                 push    ax
                 mov     ax, 107h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 sub     ax, ax
                 push    ax
@@ -400990,7 +400990,7 @@ loc_AC745:                              ; CODE XREF: sub_AC5B9+187↑j
                 push    ax
                 mov     ax, 107h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 5
                 push    ax
@@ -401148,7 +401148,7 @@ loc_AC83A:                              ; CODE XREF: sub_AC7D1+20↑j
                 push    ax
                 mov     ax, 107h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 sub     ax, ax
                 push    ax
@@ -401200,7 +401200,7 @@ loc_AC8CA:                              ; CODE XREF: sub_AC7D1+F4↑j
                 push    ax
                 mov     ax, 107h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 5
                 push    ax
@@ -401414,7 +401414,7 @@ loc_ACA2C:                              ; CODE XREF: sub_AC95E+A1↑j
                 push    ax
                 mov     ax, 151h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 3
                 push    ax
@@ -401465,7 +401465,7 @@ loc_ACA6C:                              ; CODE XREF: sub_AC95E+F0↑j
                 push    ax
                 mov     ax, 16Ch
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0Ah
                 push    ax
@@ -402626,7 +402626,7 @@ loc_AD301:                              ; CODE XREF: sub_AD063+299↑j
                 push    ax
                 mov     ax, 107h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 5
                 push    ax
@@ -403977,13 +403977,13 @@ loc_ADC6D:                              ; CODE XREF: sub_ADB2A+13E↑j
                 push    ax
                 mov     ax, 129h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 12Eh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
 
 loc_ADC9C:                              ; CODE XREF: sub_ADB2A+2CA↓j
                 add     sp, 4
@@ -404068,7 +404068,7 @@ loc_ADCF1:                              ; CODE XREF: sub_ADB2A+1C2↑j
                 push    ax
                 mov     ax, 0F3h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0Fh
                 push    ax
@@ -404503,7 +404503,7 @@ loc_ADFC7:                              ; CODE XREF: sub_ADF9F+1B↑j
                 push    ax
                 mov     ax, 141h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 5
                 push    ax
@@ -405232,7 +405232,7 @@ loc_AE4DE:                              ; CODE XREF: sub_AE317+1C2↑j
                 push    ax
                 mov     es, seg_D185C
                 push    es:word_4DF9A
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     es, seg_D185C
                 cmp     es:word_4DF9A, 127h
@@ -405257,7 +405257,7 @@ loc_AE589:                              ; CODE XREF: sub_AE317+26D↑j
                 push    ax
                 mov     ax, 127h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0Ah
                 push    ax
@@ -405454,13 +405454,13 @@ loc_AE6EE:                              ; CODE XREF: sub_AE5B2+137↑j
                 push    ax
                 mov     es, seg_D185C
                 push    es:word_4DF9A
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 9
                 push    ax
                 mov     es, seg_D185C
                 push    es:word_4DF9A
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 6C1Dh
                 mov     dx, 0F000h
@@ -405480,7 +405480,7 @@ loc_AE6EE:                              ; CODE XREF: sub_AE5B2+137↑j
                 push    ax
                 mov     ax, 12Ch
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 5
                 push    ax
@@ -405522,7 +405522,7 @@ loc_AE789:                              ; CODE XREF: sub_AE5B2+1D2↑j
                 mov     ax, 0Ah
                 push    ax
                 push    [bp+var_2]
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 cmp     [bp+var_2], 127h
                 jz      short loc_AE7CE
@@ -405546,7 +405546,7 @@ loc_AE7E5:                              ; CODE XREF: sub_AE5B2+22E↑j
                 push    ax
                 mov     ax, 127h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0Ah
                 push    ax
@@ -406208,7 +406208,7 @@ loc_AEC0A:                              ; CODE XREF: sub_AEBC0+17↑j
                 push    ax
                 mov     ax, 115h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0EFh
                 push    ax
@@ -406236,7 +406236,7 @@ loc_AEC0A:                              ; CODE XREF: sub_AEBC0+17↑j
                 push    ax
                 mov     ax, 101h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
 
 loc_AEC72:                              ; CODE XREF: sub_AEBC0+7C↑j
@@ -406261,7 +406261,7 @@ loc_AEC72:                              ; CODE XREF: sub_AEBC0+7C↑j
                 push    ax
                 mov     ax, 13Fh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
 
 loc_AECA7:                              ; CODE XREF: sub_AEBC0+31E↓j
                 add     sp, 4
@@ -406604,19 +406604,19 @@ loc_AEF5F:                              ; CODE XREF: sub_AEBC0+39A↑j
                 push    ax
                 mov     ax, 11Dh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0Ah
                 push    ax
                 mov     ax, 11Eh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0Ah
                 push    ax
                 mov     ax, 11Ch
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 187h
                 push    ax
@@ -406646,7 +406646,7 @@ loc_AEF5F:                              ; CODE XREF: sub_AEBC0+39A↑j
                 push    ax
                 mov     ax, 11Bh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
 
 loc_AF026:                              ; CODE XREF: sub_AEBC0+441↑j
@@ -407518,7 +407518,7 @@ loc_AF5A3:                              ; CODE XREF: sub_AF467+127↑j
                 push    ax
                 mov     ax, 117h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 5
                 push    ax
@@ -407711,13 +407711,13 @@ loc_AF6F5:                              ; CODE XREF: sub_AF65E+90↑j
                 push    ax
                 mov     ax, 119h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0Ch
                 push    ax
                 mov     ax, 115h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 6046h
                 jmp     short loc_AF6C4
@@ -407963,7 +407963,7 @@ loc_AF85F:                              ; CODE XREF: sub_AF81D+25↑j
                 push    ax
                 mov     ax, 11Bh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0Ah
                 push    ax
@@ -408915,19 +408915,19 @@ sub_AFDD7       proc far                ; CODE XREF: thunk_sub_AFDD7+3↑J
                 push    ax
                 mov     ax, 11Dh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0Ah
                 push    ax
                 mov     ax, 11Eh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0Ah
                 push    ax
                 mov     ax, 11Ch
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 11Ah
                 push    ax
@@ -408949,7 +408949,7 @@ sub_AFDD7       proc far                ; CODE XREF: thunk_sub_AFDD7+3↑J
                 push    ax
                 mov     ax, 11Bh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
 
 loc_AFEB0:                              ; CODE XREF: sub_AFDD7+B4↑j
@@ -409039,13 +409039,13 @@ loc_AFF19:                              ; CODE XREF: sub_AFF00+14↑j
                 push    ax
                 mov     ax, 119h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0Ch
                 push    ax
                 mov     ax, 115h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     es, seg_D1872
                 cmp     es:word_CB7F8, 0EFh
@@ -409272,7 +409272,7 @@ var_2           = word ptr -2
                 push    ax
                 mov     ax, 116h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0Ch
                 push    ax
@@ -409530,7 +409530,7 @@ loc_B02F0:                              ; CODE XREF: sub_B00A6+244↑j
                 push    ax
                 mov     ax, 11Bh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0Ah
                 push    ax
@@ -412722,7 +412722,7 @@ loc_B1BAC:                              ; CODE XREF: sub_B1730+477↑j
                 push    ax
                 mov     ax, 100h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 1803h
                 mov     dx, 0F000h
@@ -412841,7 +412841,7 @@ loc_B1CC1:                              ; CODE XREF: sub_B1730+580↑j
                 push    ax
                 mov     ax, 10Ah
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 1808h
                 mov     dx, 0F000h
@@ -412930,7 +412930,7 @@ loc_B1D84:                              ; CODE XREF: sub_B1730+650↑j
                 push    ax
                 mov     ax, 10Bh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0Ah
                 push    ax
@@ -413052,7 +413052,7 @@ loc_B1E90:                              ; CODE XREF: sub_B1730+17↑j
                 push    ax
                 mov     ax, 172h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
 
 loc_B1EAD:                              ; CODE XREF: sub_B1730+75E↑j
                 add     sp, 4
@@ -413652,7 +413652,7 @@ arg_0           = word ptr  6
                 push    ax
                 mov     ax, 136h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 5
                 push    ax
@@ -413686,7 +413686,7 @@ loc_B22A0:                              ; CODE XREF: sub_B224A+22↑j
                 push    ax
                 mov     ax, 136h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 76A7h
                 jmp     short loc_B229C
@@ -416394,7 +416394,7 @@ loc_B3468:                              ; CODE XREF: sub_B343B+29↑j
                 push    ax
                 mov     ax, 13Dh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 4
                 push    ax
@@ -417767,7 +417767,7 @@ loc_B3E39:                              ; CODE XREF: sub_B3BF0+20C↑j
                 push    ax
                 mov     ax, 138h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 5
                 push    ax
@@ -418773,7 +418773,7 @@ loc_B4538:                              ; CODE XREF: sub_B4528+B↑j
                 push    ax
                 mov     ax, 100h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0B0ACh
                 mov     dx, 0F000h
@@ -418972,7 +418972,7 @@ loc_B46EA:                              ; CODE XREF: sub_B46BF+26↑j
                 push    ax
                 mov     ax, 100h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     es, seg_D18D2
                 cmp     es:word_CF53A, 0Ah
@@ -419225,7 +419225,7 @@ loc_B48F1:                              ; CODE XREF: sub_B46BF+1DB↑j
                 push    ax
                 mov     ax, 10Bh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     es, seg_D18CE
                 cmp     es:word_CF536, 100h
@@ -419389,7 +419389,7 @@ loc_B4A81:                              ; CODE XREF: sub_B4A2F+4D↑j
                 push    ax
                 mov     ax, 10Bh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0B0CBh
                 mov     dx, 0F000h
@@ -419479,7 +419479,7 @@ loc_B4B39:                              ; CODE XREF: sub_B4B07+2D↑j
                 push    ax
                 mov     ax, 10Bh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 call    Game_updateStatusLine
                 mov     es, seg_D18DE
@@ -419717,7 +419717,7 @@ loc_B4D3F:                              ; CODE XREF: sub_B4C92+A6↑j
                 push    ax
                 mov     ax, 10Ah
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0B0DBh
 
@@ -422207,25 +422207,25 @@ loc_B5E39:                              ; CODE XREF: sub_B5D89+14↑j
                 push    ax
                 mov     ax, 199h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 19Ah
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 19Bh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 16Eh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
 
 def_B5D9D:                              ; CODE XREF: sub_B5D89+E↑j
@@ -422396,7 +422396,7 @@ loc_B5FB1:                              ; CODE XREF: sub_B5EF9+B3↑j
                 push    ax
                 mov     ax, 0F6h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 5
                 push    ax
@@ -422417,49 +422417,49 @@ loc_B5FD0:                              ; CODE XREF: sub_B5EF9+14↑j
                 push    ax
                 mov     ax, 148h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 16Ah
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 19Ch
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 19Dh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 19Eh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 19Fh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 1A0h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 1A1h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
 
 def_B5F0D:                              ; CODE XREF: sub_B5EF9+E↑j
@@ -423066,7 +423066,7 @@ loc_B63E9:                              ; CODE XREF: sub_B6395+35↑j
                 push    ax
                 mov     ax, 148h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
 
 loc_B6406:                              ; CODE XREF: sub_B6395+83↓j
                 add     sp, 4
@@ -423349,7 +423349,7 @@ loc_B6571:                              ; CODE XREF: sub_B650A+34↑j
                 push    ax
                 mov     ax, 10Bh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 call    thunk_Logic_heecheetownSpecial_patronLeaves2
                 jmp     short loc_B6566
@@ -423417,7 +423417,7 @@ loc_B6635:                              ; CODE XREF: sub_B650A+F5↑j
                 push    ax
                 mov     ax, 10Bh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 1Eh
                 push    ax
@@ -424777,7 +424777,7 @@ loc_B6E76:                              ; CODE XREF: sub_B6E4F+22↑j
                 push    ax
                 mov     ax, 106h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 19h
                 push    ax
@@ -425735,109 +425735,109 @@ loc_B74C4:                              ; CODE XREF: sub_B7364+9A↑j
                 push    ax
                 mov     ax, 29Eh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 29Fh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 2A0h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 2A1h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 2A2h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 2A3h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 2A4h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 2A5h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 2A6h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 2A7h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 2A8h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 2A9h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 2AAh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 2ABh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 2ACh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 2ADh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 75h ; 'u'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 78h ; 'x'
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     es, seg_D193E
                 assume es:seg126
@@ -426023,13 +426023,13 @@ loc_B7710:                              ; CODE XREF: sub_B7698+11↑j
                 push    ax
                 mov     ax, 29Ch
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 29Dh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 3Ch ; '<'
                 push    ax
@@ -426057,7 +426057,7 @@ loc_B7710:                              ; CODE XREF: sub_B7698+11↑j
                 push    ax
                 mov     ax, 106h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 1
                 push    ax
@@ -426272,7 +426272,7 @@ loc_B78A8:                              ; CODE XREF: sub_B77EE+312↓j
                 push    ax
                 mov     ax, 2A3h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 jmp     loc_B7818
 ; ---------------------------------------------------------------------------
 
@@ -427577,7 +427577,7 @@ loc_B817E:                              ; CODE XREF: sub_B8106+61↑j
                 push    ax
                 mov     ax, 2A9h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 jmp     short loc_B81B5
 ; ---------------------------------------------------------------------------
@@ -427991,7 +427991,7 @@ loc_B8461:                              ; CODE XREF: sub_B82EF+16D↑j
                 push    ax
                 mov     ax, 2AAh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0Fh
                 push    ax
@@ -428402,7 +428402,7 @@ loc_B874B:                              ; CODE XREF: sub_B8541+205↑j
                 push    ax
                 mov     ax, 29Fh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 14h
                 push    ax
@@ -428587,7 +428587,7 @@ loc_B888A:                              ; CODE XREF: sub_B87AD+81↑j
                 push    ax
                 mov     ax, 2A7h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7DAAh
                 push    ds
@@ -428996,7 +428996,7 @@ loc_B8B46:                              ; CODE XREF: sub_B8AEB+53↑j
                 push    ax
                 mov     ax, 2A8h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
 
 loc_B8B77:                              ; CODE XREF: sub_B8AEB+10B↓j
                                         ; sub_B8AEB+13F↓j
@@ -429265,7 +429265,7 @@ loc_B8CFA:                              ; CODE XREF: sub_B8CD2+B↑j
                 push    ax
                 mov     ax, 2B7h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 jmp     short loc_B8DAA
 ; ---------------------------------------------------------------------------
 
@@ -429347,7 +429347,7 @@ loc_B8DD2:                              ; CODE XREF: sub_B8CD2+FB↑j
                 push    ax
                 mov     ax, 2B0h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 3
                 push    ax
@@ -429371,7 +429371,7 @@ loc_B8E08:                              ; CODE XREF: sub_B8CD2+12↑j
                 push    ax
                 mov     ax, 2C3h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 jmp     short loc_B8E38
 ; ---------------------------------------------------------------------------
 
@@ -429394,7 +429394,7 @@ loc_B8E38:                              ; CODE XREF: sub_B8CD2+157↑j
                 push    ax
                 mov     ax, 2C5h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 jmp     short loc_B8E67
 ; ---------------------------------------------------------------------------
 
@@ -429417,7 +429417,7 @@ loc_B8E67:                              ; CODE XREF: sub_B8CD2+186↑j
                 push    ax
                 mov     ax, 2C4h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 jmp     short loc_B8E96
 ; ---------------------------------------------------------------------------
 
@@ -429440,7 +429440,7 @@ loc_B8E96:                              ; CODE XREF: sub_B8CD2+1B5↑j
                 push    ax
                 mov     ax, 2C1h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 jmp     short loc_B8EC5
 ; ---------------------------------------------------------------------------
 
@@ -429463,7 +429463,7 @@ loc_B8EC5:                              ; CODE XREF: sub_B8CD2+1E4↑j
                 push    ax
                 mov     ax, 2BEh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 jmp     short loc_B8EF4
 ; ---------------------------------------------------------------------------
 
@@ -429486,7 +429486,7 @@ loc_B8EF4:                              ; CODE XREF: sub_B8CD2+213↑j
                 push    ax
                 mov     ax, 2C7h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 jmp     short loc_B8F23
 ; ---------------------------------------------------------------------------
 
@@ -429525,7 +429525,7 @@ loc_B8F23:                              ; CODE XREF: sub_B8CD2+242↑j
                 push    ax
                 mov     ax, 2C9h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 387Ah
                 mov     dx, 0F000h
@@ -429579,7 +429579,7 @@ loc_B8FAD:                              ; CODE XREF: sub_B8CD2+1A↑j
                 push    ax
                 mov     ax, 2D1h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 jmp     short loc_B8FD9
 ; ---------------------------------------------------------------------------
 
@@ -429602,7 +429602,7 @@ loc_B8FD9:                              ; CODE XREF: sub_B8CD2+2F8↑j
                 push    ax
                 mov     ax, 2D2h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 jmp     short loc_B9008
 ; ---------------------------------------------------------------------------
 
@@ -429625,7 +429625,7 @@ loc_B9008:                              ; CODE XREF: sub_B8CD2+327↑j
                 push    ax
                 mov     ax, 2D3h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 jmp     short loc_B9037
 ; ---------------------------------------------------------------------------
 
@@ -429651,7 +429651,7 @@ loc_B9037:                              ; CODE XREF: sub_B8CD2+356↑j
 loc_B9051:                              ; CODE XREF: sub_B8CD2+BE↑j
                                         ; sub_B8CD2+2B3↑j
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 jmp     loc_B8F95
 ; ---------------------------------------------------------------------------
 
@@ -430330,61 +430330,61 @@ loc_B93BB:                              ; CODE XREF: sub_B9310+14↑j
                 push    ax
                 mov     ax, 2B0h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 2B1h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 2B2h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 2B3h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 2B5h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 2B6h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 2B8h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 2B9h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 2BAh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 2BBh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 jmp     def_B9324       ; jumptable 000B9324 default case, cases 2-5,7,10,12,13,15-21
 ; ---------------------------------------------------------------------------
@@ -430473,7 +430473,7 @@ loc_B94E4:                              ; CODE XREF: sub_B9310+1CC↑j
                 push    ax
                 mov     ax, 2B4h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 jmp     loc_B9487
 ; ---------------------------------------------------------------------------
 
@@ -431649,7 +431649,7 @@ loc_B9D8E:                              ; CODE XREF: sub_B9C0D+14B↑j
                 push    ax
                 mov     ax, 2B4h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 jmp     loc_B9C2F
 ; ---------------------------------------------------------------------------
 
@@ -432147,7 +432147,7 @@ loc_BA0AB:                              ; CODE XREF: sub_B9F03+196↑j
                 push    ax
                 mov     ax, 2BBh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
 
 loc_BA114:                              ; CODE XREF: sub_B9F03+14E↑j
@@ -433861,55 +433861,55 @@ loc_BAC96:                              ; CODE XREF: sub_BA9A5+17↑j
                 push    ax
                 mov     ax, 2CFh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 2D0h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 2D1h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 2D2h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 2D3h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 2D4h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 2D5h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 2D6h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 2D7h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 jmp     def_BA9BC       ; jumptable 000BA9BC default case, cases 2-5,7,10,12,13,16-21
 ; ---------------------------------------------------------------------------
@@ -434588,73 +434588,73 @@ loc_BB1CF:                              ; CODE XREF: sub_BB131+18↑j
                 push    ax
                 mov     ax, 2BEh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 2BFh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 2C0h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 2C1h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 2C2h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 2C3h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 2C4h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 2C5h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 2C6h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 2C7h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 2C8h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 2CAh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 jmp     def_BB149       ; jumptable 000BB149 default case, cases 2-5,7,10,12,13,15-21
 ; ---------------------------------------------------------------------------
@@ -435237,7 +435237,7 @@ loc_BB6ED:                              ; CODE XREF: sub_BB498+24D↑j
                 push    ax
                 mov     ax, 2CDh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 call    AnimPics_finishPlayback
                 call    AnimPics_freeAll
@@ -436170,7 +436170,7 @@ loc_BBD40:                              ; CODE XREF: sub_BBCD0+6B↑j
                 push    ax
                 mov     ax, 2BFh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
 
 loc_BBD5A:                              ; CODE XREF: sub_BBCD0+A0↓j
                 add     sp, 4
@@ -436550,7 +436550,7 @@ loc_BC017:                              ; CODE XREF: sub_BBEC0+152↑j
                 push    ax
                 mov     ax, 228h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0Ah
                 push    ax
@@ -437898,7 +437898,7 @@ loc_BC868:                              ; CODE XREF: sub_BC81A+1B↑j
                 push    ax
                 mov     ax, 2D4h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
 
 loc_BC8C4:                              ; CODE XREF: sub_BC81A+199↓j
                                         ; sub_BC81A+276↓j
@@ -438666,7 +438666,7 @@ loc_BCF23:                              ; CODE XREF: sub_BCD63+1B2↑j
                 push    ax
                 mov     ax, 2B4h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 jmp     locret_BD173
 ; ---------------------------------------------------------------------------
@@ -439039,7 +439039,7 @@ loc_BD2B9:                              ; CODE XREF: sub_BD174+29↑j
                 push    ax
                 mov     ax, 165h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 44h ; 'D'
                 push    ax
@@ -441974,19 +441974,19 @@ loc_BE7E4:                              ; CODE XREF: sub_BE6DF+F3↑j
                 push    ax
                 mov     ax, 285h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 287h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 7
                 push    ax
                 mov     ax, 286h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
 
 loc_BE820:                              ; CODE XREF: sub_BE6DF+1D↑j
@@ -443638,7 +443638,7 @@ loc_BF347:                              ; CODE XREF: sub_BF1CE+172↑j
                 push    ax
                 mov     ax, 288h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
 
 loc_BF357:                              ; CODE XREF: sub_BF1CE+13↑j
@@ -444187,7 +444187,7 @@ loc_BF773:                              ; CODE XREF: Logics_insertPrayerFan+327�
                 push    ax
                 mov     es, seg_D19F8
                 push    es:word_4DF9A
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 push    [bp+var_2]
                 push    [bp+var_4]
@@ -445251,7 +445251,7 @@ loc_BFF53:                              ; CODE XREF: sub_BFEAA+57↑j
                 push    ax
                 mov     ax, 279h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 call    thunk_scene_update?
                 mov     ax, 2850h
@@ -445273,7 +445273,7 @@ loc_BFF86:                              ; CODE XREF: sub_BFEAA+57↑j
                 push    ax
                 mov     ax, 279h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 call    thunk_scene_update?
                 mov     ax, 2851h
@@ -445352,7 +445352,7 @@ sub_BFFFA       proc far                ; CODE XREF: thunk_sub_BFFFA+3↑J
                 push    ax
                 mov     ax, 279h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 2852h
                 mov     dx, 0F000h
@@ -446659,7 +446659,7 @@ loc_C0951:                              ; CODE XREF: sub_C08B1+11↑j
                 push    ax
                 mov     ax, 279h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0B40Eh
                 mov     dx, 0F000h
@@ -446686,7 +446686,7 @@ loc_C0990:                              ; CODE XREF: sub_C08B1+B2↑j
                 push    ax
                 mov     ax, 275h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 2
                 push    ax
@@ -447049,7 +447049,7 @@ loc_C0C1B:                              ; CODE XREF: sub_C0C05+11↑j
                 push    ax
                 mov     ax, 277h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
 
 loc_C0C48:                              ; CODE XREF: sub_C0C05+B5↓j
                 add     sp, 4
@@ -448734,7 +448734,7 @@ loc_C175D:                              ; CODE XREF: sub_C1484+2C2↑j
                 push    ax
                 mov     ax, 281h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
 
 loc_C17F0:                              ; CODE XREF: sub_C1484+336↑j
@@ -448783,7 +448783,7 @@ loc_C17F6:                              ; CODE XREF: sub_C1484+2D6↑j
                 push    ax
                 mov     ax, 282h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
 
 loc_C186B:                              ; CODE XREF: sub_C1484+3C9↑j
@@ -451054,7 +451054,7 @@ loc_C279F:                              ; CODE XREF: sub_C26C7+D3↑j
                 push    ax
                 mov     ax, 266h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 jmp     short loc_C27DF
 ; ---------------------------------------------------------------------------
 
@@ -451899,13 +451899,13 @@ loc_C2D44:                              ; CODE XREF: sub_C2BEE+10A↑j
                 push    ax
                 mov     ax, 14Ch
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 0Ah
                 push    ax
                 mov     ax, 14Ch
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 15h
                 push    ax
@@ -452756,7 +452756,7 @@ loc_C336A:                              ; CODE XREF: sub_C3150+208↑j
                 push    ax
                 mov     ax, 25Eh
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 call    thunk_room_load
                 mov     ax, 21h ; '!'
@@ -453208,7 +453208,7 @@ loc_C368A:                              ; CODE XREF: sub_C360C+79↑j
                 push    ax
                 mov     ax, 265h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 43h ; 'C'
                 push    ax
@@ -453300,7 +453300,7 @@ loc_C3721:                              ; CODE XREF: sub_C3713+9↑j
                 push    ax
                 mov     ax, 263h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
 
 loc_C3777:                              ; CODE XREF: sub_C3713+79↓j
                 add     sp, 4
@@ -453429,7 +453429,7 @@ loc_C3829:                              ; CODE XREF: sub_C37B5+4F↑j
                 push    ax
                 mov     ax, 264h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     es, seg_D1A50
                 assume es:dseg
@@ -453499,7 +453499,7 @@ loc_C3880:                              ; CODE XREF: sub_C37B5+AA↑j
                 push    ax
                 mov     ax, 261h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 1
                 push    ax
@@ -453815,7 +453815,7 @@ loc_C3AC2:                              ; CODE XREF: sub_C3A79+44↑j
                 push    ax
                 mov     ax, 266h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
 
 loc_C3AF3:                              ; CODE XREF: sub_C3A79+B0↓j
                                         ; sub_C3A79+100↓j
@@ -454579,7 +454579,7 @@ sub_C3F93       proc far                ; CODE XREF: thunk_sub_C3F93+3↑J
                 push    ax
                 mov     ax, 261h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 call    thunk_room_load
                 mov     ax, 21h ; '!'
@@ -457679,7 +457679,7 @@ loc_C546D:                              ; CODE XREF: sub_C53F0+A2↓j
                 mov     ax, 0Ah
                 push    ax
                 push    [bp+var_4]
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, [bp+var_2]
 
@@ -457691,7 +457691,7 @@ loc_C548D:                              ; CODE XREF: sub_C53F0+7B↑j
                 push    ax
                 mov     ax, 0D6h
                 push    ax
-                call    far ptr sub_11950
+                call    far ptr Logics_setBit
                 add     sp, 4
                 mov     ax, 1
                 push    ax
@@ -464136,10 +464136,10 @@ loc_C7C34:                              ; CODE XREF: sub_C7C1E+11↑j
                 mov     bx, [bp+var_2]
                 mov     es, seg_D1AA6
                 mov     al, es:byte_5C099
-                cmp     [bx-7B14h], al
+                cmp     byte_D040C[bx], al
                 jnz     short loc_C7C31
                 shl     bx, 1
-                cmp     word ptr [bx-7B4Ch], 1
+                cmp     word_D03D4[bx], 1
                 jnz     short loc_C7C31
 
 loc_C7C54:                              ; CODE XREF: sub_C7C1E+A↑j
@@ -464189,7 +464189,7 @@ sub_C7C84       proc far                ; CODE XREF: thunk_sub_C7C84+3↑J
                 add     sp, 4
                 mov     bx, word_D03D2
                 shl     bx, 1
-                mov     word ptr [bx-7B4Ch], 0
+                mov     word_D03D4[bx], 0
                 inc     word_D03D2
                 cmp     word_D03D2, 5
                 jnz     short loc_C7CB2
@@ -488419,16 +488419,8 @@ word_D03CE      dw 7891h                ; DATA XREF: sub_C64A0+19B↑r
 word_D03D0      dw 0F000h               ; DATA XREF: sub_C64A0+197↑r
 word_D03D2      dw 1                    ; DATA XREF: seg068:07E9↑o
                                         ; sub_C7C84+11↑r ...
-unk_D03D4       db    0                 ; DATA XREF: seg068:07E3↑o
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
+word_D03D4      dw 5 dup(0)             ; DATA XREF: seg068:07E3↑o
+                                        ; sub_C7C1E+2F↑r ...
 byte_D03DE      db 0                    ; DATA XREF: seg068:07EF↑o
                                         ; sub_A5A8E+36↑r ...
                 align 2
@@ -488476,7 +488468,7 @@ byte_D03DE      db 0                    ; DATA XREF: seg068:07EF↑o
                 db  73h ; s
                 db    0
                 db    0
-                db    1
+byte_D040C      db 1                    ; DATA XREF: sub_C7C1E+27↑r
                 db    2
                 db    3
                 db    7

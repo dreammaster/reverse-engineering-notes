@@ -1143,6 +1143,14 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       mid-song tempo-change handler, which sends a computed value via
       a MIDI Pitch Bend command as a hardware trick. Full writeup in
       [overview.md](overview.md#midi_processmetaeventmidi_processtempochange-named).
+- [x] Named `sub_11950` → `Logics_setBit` — the missing fourth member
+      of the `Logics_getBit`/`Logics_getBitPtr`/`Logics_clearBit`
+      family (mirror-image of `Logics_clearBit`, OR instead of
+      AND-complement), with 176 callers — the highest caller count
+      found so far this project. `sub_11970`, its apparent tail, has
+      other independent callers with an unclear calling shape and was
+      left unnamed. Full writeup in
+      [overview.md](overview.md#logics_setbit-named--the-missing-sibling-in-the-bit-primitive-family-and-the-projects-highest-caller-count-yet).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-
