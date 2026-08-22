@@ -898,6 +898,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       "load a MIDI-instrument-patch into an OPL2 operator" entry
       point, the natural top of the whole OPL2 cluster. Full writeup
       in [overview.md](overview.md#opl2_loadoperatorpatch-named).
+- [x] Named `sub_1CEC0`/`word_D1C82` → `Opl2_setRhythmMode`/
+      `_opl2ChannelCount` — the master OPL2 rhythm-mode toggle and its
+      channel-count global. Full writeup in
+      [overview.md](overview.md#opl2_setrhythmmode-and-_opl2channelcount-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

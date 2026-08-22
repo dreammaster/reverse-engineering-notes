@@ -2653,6 +2653,28 @@ RENAMES = [
      "whole loaded patch out to OPL2 hardware in one go. This is the "
      "'load a MIDI-instrument-patch definition into an OPL2 operator' "
      "entry point, called from sub_1CFB0."),
+
+    (0x1CEC0, "Opl2_setRhythmMode",
+     "sub_1CEC0(enable): the master OPL2 rhythm-mode toggle. When "
+     "enabling, configures two extra rhythm-mode channels (7 and 8 -- "
+     "OPL2's hi-hat/cymbal-style extra voices) via sub_1D7DA (a "
+     "per-channel setter in this same cluster, not yet renamed) with "
+     "specific hardcoded parameters. Always sets the already-named "
+     "_opl2RhythmEnabled global from the argument, sets the channel "
+     "count (now _opl2ChannelCount) to 11 (6 melodic + 5 rhythm-mode "
+     "percussion voices) if enabling or 9 (melodic-only) otherwise -- "
+     "matching the channel-loop bounds already seen in the already-"
+     "named Opl2_stopTrack -- clears the already-named "
+     "_opl2RhythmInstruments bitmask, then calls sub_1D1FE (unnamed) "
+     "and the already-named Opl2_writeRhythmRegister to commit the "
+     "mode switch to hardware."),
+
+    (0x0D1C82, "_opl2ChannelCount",
+     "The OPL2 backend's active logical-channel count: 11 (6 melodic "
+     "+ 5 rhythm-mode percussion voices) when rhythm mode is enabled, "
+     "or 9 (melodic-only) otherwise. Set by the just-named "
+     "Opl2_setRhythmMode; read as a channel-loop upper bound "
+     "elsewhere in the OPL2 backend."),
 ]
 
 

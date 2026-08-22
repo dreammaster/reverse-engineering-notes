@@ -30249,7 +30249,7 @@ loc_1CE2B:                              ; CODE XREF: sub_1CE20+1C\u2193j
                 sub     ax, ax
                 push    ax
                 push    cs
-                call    near ptr sub_1CEC0
+                call    near ptr Opl2_setRhythmMode
                 add     sp, 2
                 sub     ax, ax
                 push    ax
@@ -30280,7 +30280,7 @@ sub_1CE20       endp
 
 ; Attributes: bp-based frame
 
-sub_1CEC0       proc far                ; CODE XREF: sub_1CE20+72\u2191p
+Opl2_setRhythmMode proc far             ; CODE XREF: sub_1CE20+72\u2191p
                                         ; sub_1E60C+63\u2193P
 
 arg_0           = word ptr  6
@@ -30306,7 +30306,7 @@ loc_1CEC3:
                 call    near ptr sub_1D7DA
                 add     sp, 2
 
-loc_1CEF5:                              ; CODE XREF: sub_1CEC0+7\u2191j
+loc_1CEF5:                              ; CODE XREF: Opl2_setRhythmMode+7\u2191j
                 mov     al, byte ptr [bp+arg_0]
                 mov     _opl2RhythmEnabled, al
                 cmp     [bp+arg_0], 0
@@ -30315,11 +30315,11 @@ loc_1CEF5:                              ; CODE XREF: sub_1CEC0+7\u2191j
                 jmp     short loc_1CF09
 ; ---------------------------------------------------------------------------
 
-loc_1CF06:                              ; CODE XREF: sub_1CEC0+3F\u2191j
+loc_1CF06:                              ; CODE XREF: Opl2_setRhythmMode+3F\u2191j
                 mov     ax, 9
 
-loc_1CF09:                              ; CODE XREF: sub_1CEC0+44\u2191j
-                mov     word_D1C82, ax
+loc_1CF09:                              ; CODE XREF: Opl2_setRhythmMode+44\u2191j
+                mov     _opl2ChannelCount, ax
                 mov     _opl2RhythmInstruments, 0
                 push    cs
                 call    near ptr sub_1D1FE
@@ -30327,7 +30327,7 @@ loc_1CF09:                              ; CODE XREF: sub_1CEC0+44\u2191j
                 call    near ptr Opl2_writeRhythmRegister
                 pop     bp
                 retf
-sub_1CEC0       endp
+Opl2_setRhythmMode endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -30465,7 +30465,7 @@ arg_4           = word ptr  0Ah
                 push    bp
                 mov     bp, sp
                 sub     sp, 10h
-                mov     ax, word_D1C82
+                mov     ax, _opl2ChannelCount
                 cmp     [bp+arg_0], ax
                 jb      short loc_1CFC1
                 jmp     loc_1D056
@@ -30553,7 +30553,7 @@ arg_2           = word ptr  8
                 push    bp
                 mov     bp, sp
                 sub     sp, 4
-                mov     ax, word_D1C82
+                mov     ax, _opl2ChannelCount
                 cmp     [bp+arg_0], ax
                 jnb     short loc_1D0CD
                 cmp     [bp+arg_2], 7Fh
@@ -30799,7 +30799,7 @@ Opl2_noteOff    endp
 
 ; Attributes: bp-based frame
 
-sub_1D1FE       proc far                ; CODE XREF: sub_1CEC0+52\u2191p
+sub_1D1FE       proc far                ; CODE XREF: Opl2_setRhythmMode+52\u2191p
 
 var_2           = word ptr -2
 
@@ -31626,7 +31626,7 @@ Opl2_setOperatorModulationFlags endp
 
 ; Attributes: bp-based frame
 
-Opl2_writeRhythmRegister proc far       ; CODE XREF: sub_1CEC0+56\u2191p
+Opl2_writeRhythmRegister proc far       ; CODE XREF: Opl2_setRhythmMode+56\u2191p
                                         ; sub_1CF90+16\u2191p ...
 
 var_2           = word ptr -2
@@ -31741,8 +31741,8 @@ Opl2_setOperatorWaveform endp
 
 ; Attributes: bp-based frame
 
-sub_1D7DA       proc far                ; CODE XREF: sub_1CEC0+19\u2191p
-                                        ; sub_1CEC0+2F\u2191p ...
+sub_1D7DA       proc far                ; CODE XREF: Opl2_setRhythmMode+19\u2191p
+                                        ; Opl2_setRhythmMode+2F\u2191p ...
 
 arg_0           = word ptr  6
 
@@ -34102,7 +34102,7 @@ loc_1E660:                              ; CODE XREF: sub_1E60C+C\u2191j
                 mov     al, es:[bx]
                 sub     ah, ah
                 push    ax
-                call    sub_1CEC0
+                call    Opl2_setRhythmMode
 
 loc_1E674:
                 jmp     short loc_1E68A
@@ -395939,7 +395939,7 @@ aRunTimeErrorR6007BadEnv db 0Dh,0Ah
                 db  79h ; y
 _opl2TremoloDepth db 0                  ; DATA XREF: sub_1CF90+6\u2191w
                                         ; Opl2_writeRhythmRegister+6\u2191r
-_opl2RhythmEnabled db 0                 ; DATA XREF: sub_1CEC0+38\u2191w
+_opl2RhythmEnabled db 0                 ; DATA XREF: Opl2_setRhythmMode+38\u2191w
                                         ; sub_1CFB0+42\u2191r ...
 byte_D1C54      db 0                    ; DATA XREF: sub_1CF90+12\u2191w
                                         ; Opl2_setNoteSelect\u2191r
@@ -395948,7 +395948,7 @@ word_D1C56      dw 0                    ; DATA XREF: sub_1CF1C:loc_1CF30\u2191w
                                         ; sub_1CF1C+3C\u2191r ...
 _opl2VibratoDepth db 0                  ; DATA XREF: sub_1CF90+C\u2191w
                                         ; Opl2_writeRhythmRegister+17\u2191r
-_opl2RhythmInstruments db 0             ; DATA XREF: sub_1CEC0+4C\u2191w
+_opl2RhythmInstruments db 0             ; DATA XREF: Opl2_setRhythmMode+4C\u2191w
                                         ; sub_1D10C+8E\u2191w ...
                 db    0
                 db    0
@@ -395969,9 +395969,9 @@ _opl2RhythmInstruments db 0             ; DATA XREF: sub_1CEC0+4C\u2191w
                 db    0
                 db    0
 byte_D1C6C      db 0                    ; DATA XREF: sub_1D10C+50\u2191w
-byte_D1C6D      db 0                    ; DATA XREF: sub_1CEC0+1F\u2191w
+byte_D1C6D      db 0                    ; DATA XREF: Opl2_setRhythmMode+1F\u2191w
                                         ; sub_1D10C+6E\u2191w
-byte_D1C6E      db 0                    ; DATA XREF: sub_1CEC0+9\u2191w
+byte_D1C6E      db 0                    ; DATA XREF: Opl2_setRhythmMode+9\u2191w
                                         ; sub_1D10C+5E\u2191r ...
                 db    0
                 db    0
@@ -395988,9 +395988,9 @@ byte_D1C6E      db 0                    ; DATA XREF: sub_1CEC0+9\u2191w
                 db    0
                 db    0
                 db    0
-word_D1C7E      dw 0                    ; DATA XREF: sub_1CEC0+24\u2191w
-word_D1C80      dw 0                    ; DATA XREF: sub_1CEC0+E\u2191w
-word_D1C82      dw 0                    ; DATA XREF: sub_1CEC0:loc_1CF09\u2191w
+word_D1C7E      dw 0                    ; DATA XREF: Opl2_setRhythmMode+24\u2191w
+word_D1C80      dw 0                    ; DATA XREF: Opl2_setRhythmMode+E\u2191w
+_opl2ChannelCount dw 0                  ; DATA XREF: Opl2_setRhythmMode:loc_1CF09\u2191w
                                         ; sub_1CFB0+6\u2191r ...
                 db    0
                 db    0

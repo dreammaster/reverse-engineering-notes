@@ -3596,3 +3596,23 @@ operator" entry point, called from `sub_1CFB0` — the natural top of
 the whole OPL2 register cluster traced across this session.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-tenth batch.
+
+### `Opl2_setRhythmMode` and `_opl2ChannelCount` named
+
+Moved to `sub_1CEC0` (2 callers) — the master OPL2 rhythm-mode toggle.
+When enabling, configures two extra rhythm-mode channels (OPL2's hi-
+hat/cymbal-style extra voices) via a per-channel setter in this same
+cluster with specific hardcoded parameters. Always sets the already-
+named `_opl2RhythmEnabled` global from its argument, sets the channel
+count (now `_opl2ChannelCount`) to 11 (6 melodic + 5 rhythm-mode
+percussion voices) if enabling or 9 (melodic-only) otherwise —
+matching the channel-loop bounds already seen in the already-named
+`Opl2_stopTrack` — clears the already-named `_opl2RhythmInstruments`
+bitmask, then calls an unnamed helper and the already-named
+`Opl2_writeRhythmRegister` to commit the mode switch to hardware.
+
+`_opl2ChannelCount` (`word_D1C82`) is the OPL2 backend's active
+logical-channel count, read as a channel-loop upper bound elsewhere in
+the backend.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-eleventh batch.
