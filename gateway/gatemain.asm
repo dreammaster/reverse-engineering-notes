@@ -43233,7 +43233,7 @@ sub_2297C       endp
 
 ; Attributes: bp-based frame
 
-sub_229C0       proc far                ; CODE XREF: sub_25BCE+66\u2193P
+sub_229C0       proc far                ; CODE XREF: ScalePic_selectPalette+66\u2193P
 
 var_E           = word ptr -0Eh
 var_C           = word ptr -0Ch
@@ -43321,7 +43321,7 @@ sub_229C0       endp
 
 ; Attributes: bp-based frame
 
-sub_22A5A       proc far                ; CODE XREF: sub_25BCE+30\u2193P
+sub_22A5A       proc far                ; CODE XREF: ScalePic_selectPalette+30\u2193P
 
 var_E           = word ptr -0Eh
 var_C           = word ptr -0Ch
@@ -50618,7 +50618,7 @@ Picture_checkFormatMatch endp
 
 ; Attributes: bp-based frame
 
-sub_25BCE       proc far                ; CODE XREF: scale_pic+16\u2193p
+ScalePic_selectPalette proc far         ; CODE XREF: scale_pic+16\u2193p
                                         ; load_and_scale_pic+16\u2193p
 
 var_4           = word ptr -4
@@ -50647,7 +50647,7 @@ arg_0           = word ptr  6
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_25BF6:                              ; CODE XREF: sub_25BCE+1A\u2191j
+loc_25BF6:                              ; CODE XREF: ScalePic_selectPalette+1A\u2191j
                 mov     ax, 0FDCh
                 mov     dx, seg sg4d43
                 push    dx
@@ -50660,7 +50660,7 @@ loc_25BF6:                              ; CODE XREF: sub_25BCE+1A\u2191j
                 assume es:sg4d43
                 mov     cx, 10h
 
-loc_25C13:                              ; CODE XREF: sub_25BCE+7B\u2193j
+loc_25C13:                              ; CODE XREF: ScalePic_selectPalette+7B\u2193j
                 mov     di, 0FDCh
                 mov     si, ax
                 push    ds
@@ -50678,7 +50678,7 @@ loc_25C13:                              ; CODE XREF: sub_25BCE+7B\u2193j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_25C2C:                              ; CODE XREF: sub_25BCE+1F\u2191j
+loc_25C2C:                              ; CODE XREF: ScalePic_selectPalette+1F\u2191j
                 mov     ax, 0FDCh
                 mov     dx, seg sg4d43
                 push    dx
@@ -50693,13 +50693,13 @@ loc_25C2C:                              ; CODE XREF: sub_25BCE+1F\u2191j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_25C4C:                              ; CODE XREF: sub_25BCE+12\u2191j
+loc_25C4C:                              ; CODE XREF: ScalePic_selectPalette+12\u2191j
                 pop     si
                 pop     di
                 mov     sp, bp
                 pop     bp
                 retf
-sub_25BCE       endp
+ScalePic_selectPalette endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -50792,7 +50792,7 @@ arg_0           = dword ptr  6
 loc_25CB6:                              ; CODE XREF: scale_pic+F\u2191j
                 push    ax
                 push    cs
-                call    near ptr sub_25BCE
+                call    near ptr ScalePic_selectPalette
                 add     sp, 2
                 les     bx, [bp+arg_0]
                 assume es:nothing
@@ -52078,7 +52078,7 @@ picNumber       = word ptr  6
                 call    near ptr Picture_checkFormatMatch
                 push    ax
                 push    cs
-                call    near ptr sub_25BCE
+                call    near ptr ScalePic_selectPalette
                 add     sp, 2
                 pop     bp
                 retf
@@ -393573,8 +393573,8 @@ seg126_54       dw seg sg3EDC           ; DATA XREF: load_picture:loc_25A59\u219
                                         ; load_picture:loc_25B0E\u2191r ...
 dseg_56         dw seg sg4d43           ; DATA XREF: load_picture+1E2\u2191r
                                         ; Screen_resetPalette+1F\u2191r ...
-dseg_57         dw seg sg4d43           ; DATA XREF: sub_25BCE+3E\u2191r
-                                        ; sub_25BCE+74\u2191r ...
+dseg_57         dw seg sg4d43           ; DATA XREF: ScalePic_selectPalette+3E\u2191r
+                                        ; ScalePic_selectPalette+74\u2191r ...
 seg126_55       dw seg sg3EDC           ; DATA XREF: sub_2609A+1D\u2191r
 seg126_56       dw seg sg3EDC           ; DATA XREF: sub_2609A+38\u2191r
 seg126_57       dw seg sg3EDC           ; DATA XREF: Screen_backupPalette+A0\u2191r

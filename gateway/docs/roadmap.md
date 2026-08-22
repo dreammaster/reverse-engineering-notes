@@ -971,6 +971,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       3/4 or 4/3 coordinate-scaling primitive behind `scale_pic`'s
       EGA↔VGA conversion. Full writeup in
       [overview.md](overview.md#scalepic_scalecoordinate-named).
+- [x] Named `sub_25BCE` (2 callers) → `ScalePic_selectPalette` — swaps
+      in the palette/lookup table for the scale direction, called
+      from `scale_pic`/`load_and_scale_pic`. Full writeup in
+      [overview.md](overview.md#scalepic_selectpalette-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

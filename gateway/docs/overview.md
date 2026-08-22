@@ -3918,3 +3918,19 @@ coordinate/dimension scaling primitive behind its EGA↔VGA
 picture-scaling conversion.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-twenty-seventh batch.
+
+### `ScalePic_selectPalette` named
+
+Moved to `sub_25BCE` (2 callers) — gated on a `pic_header._flags` bit.
+If `direction` is -1 (the same "scale down 3/4" convention as the
+just-named `ScalePic_scaleCoordinate`), fetches a pointer via an
+unnamed helper and copies 16 words from it into a fixed buffer. If
+`direction` is 1 ("scale up 4/3"), fetches from a different unnamed
+helper and copies 48 words instead. Otherwise no-ops.
+
+Called from the already-named `scale_pic` and `load_and_scale_pic` —
+plausibly swapping in the color-palette/lookup table appropriate for
+the scale direction (e.g. distinct EGA vs. VGA color-mapping data)
+before an EGA↔VGA picture scale.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-twenty-eighth batch.

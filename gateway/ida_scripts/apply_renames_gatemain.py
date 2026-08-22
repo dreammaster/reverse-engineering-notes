@@ -2929,6 +2929,20 @@ RENAMES = [
      "prints ' scale_pic : EGA -> VGA disabled ' when refusing to "
      "scale) -- the coordinate/dimension scaling primitive behind "
      "its EGA<->VGA picture-scaling conversion."),
+
+    (0x25BCE, "ScalePic_selectPalette",
+     "sub_25BCE(direction): gated on pic_header._flags bit 0x10. If "
+     "direction==0xFFFF (-1, the same 'scale down 3/4' direction "
+     "convention as the just-named ScalePic_scaleCoordinate), calls "
+     "sub_22A5A(0xFDC, sg4d43) (unnamed) and copies 16 words from the "
+     "returned pointer into a fixed buffer at offset 0xFDC in the "
+     "current data segment. If direction==1 ('scale up 4/3'), calls "
+     "sub_229C0(0xFDC, sg4d43) instead and copies 48 words. Otherwise "
+     "no-ops. Called from the already-named scale_pic and "
+     "load_and_scale_pic -- plausibly swapping in the color-palette/"
+     "lookup table appropriate for the scale direction (e.g. distinct "
+     "EGA vs. VGA color-mapping data) before an EGA<->VGA picture "
+     "scale."),
 ]
 
 
