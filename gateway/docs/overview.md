@@ -3115,3 +3115,24 @@ whether the load actually happens at all — capturing the difference
 between "a buffer exists" and "a valid snapshot was taken this turn."
 
 Applied via `apply_renames_gatemain.py`'s eighty-sixth batch.
+
+### `Opl2_setOperatorVolume` named
+
+Moved to `sub_1D492` (3 callers, called twice per note from the
+already-named `Opl2_noteOn` — once per operator, carrier and
+modulator, closing out the "not renamed" reference left in that
+writeup). Reads a cached per-channel velocity value (stored earlier by
+`Opl2_noteOn` at offset `0x1CA` for rhythm channels or `0x1B8` for
+melodic ones), then reads the operator's current output-level register
+byte (masked to the low 6 bits, the OPL2 level field) and inverts it
+(`0x3F` − level) so higher means louder.
+
+For operators flagged to track velocity (gated by a per-operator byte
+at `+0x1A6` and a table byte at `+0xC`), it scales that inverted level
+by the velocity through a lookup table and rescales back down. It then
+re-inverts to attenuation scale, ORs in the operator's key-scale-level
+bits (shifted into bits 6-7), and writes the result to OPL2 register
+`0x40+operatorRegisterOffset` — the standard OPL2 Level/KSL register —
+via the already-named `Opl2_writeRegister`.
+
+Applied via `apply_renames_gatemain.py`'s eighty-seventh batch.

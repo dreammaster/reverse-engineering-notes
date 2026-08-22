@@ -30587,7 +30587,7 @@ loc_1D0A5:                              ; CODE XREF: Opl2_noteOn+39\u2191j
                 sub     ah, ah
                 push    ax
                 push    cs
-                call    near ptr sub_1D492
+                call    near ptr Opl2_setOperatorVolume
                 add     sp, 2
                 les     bx, [bp+var_4]
                 cmp     byte ptr es:[bx+1], 0FFh
@@ -30596,7 +30596,7 @@ loc_1D0A5:                              ; CODE XREF: Opl2_noteOn+39\u2191j
                 sub     ah, ah
                 push    ax
                 push    cs
-                call    near ptr sub_1D492
+                call    near ptr Opl2_setOperatorVolume
                 add     sp, 2
 
 loc_1D0CD:                              ; CODE XREF: Opl2_noteOn+C\u2191j
@@ -31110,7 +31110,7 @@ loc_1D3E4:                              ; CODE XREF: sub_1D3C4+E\u2191j
                                         ; DATA XREF: sub_1D3C4:off_1D422\u2193o ...
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr sub_1D492
+                call    near ptr Opl2_setOperatorVolume
 
 loc_1D3EB:                              ; CODE XREF: sub_1D3C4+33\u2193j
                                         ; sub_1D3C4+3D\u2193j ...
@@ -31205,7 +31205,7 @@ arg_0           = word ptr  6
                 call    near ptr sub_1D570
                 push    [bp+arg_0]
                 push    cs
-                call    near ptr sub_1D492
+                call    near ptr Opl2_setOperatorVolume
                 add     sp, 2
                 push    [bp+arg_0]
                 push    cs
@@ -31238,7 +31238,7 @@ sub_1D448       endp
 
 ; Attributes: bp-based frame
 
-sub_1D492       proc far                ; CODE XREF: Opl2_noteOn+55\u2191p
+Opl2_setOperatorVolume proc far         ; CODE XREF: Opl2_noteOn+55\u2191p
                                         ; Opl2_noteOn+6D\u2191p ...
 
 var_6           = word ptr -6
@@ -31259,12 +31259,12 @@ arg_0           = word ptr  6
                 jmp     short loc_1D4BA
 ; ---------------------------------------------------------------------------
 
-loc_1D4AE:                              ; CODE XREF: sub_1D492+C\u2191j
+loc_1D4AE:                              ; CODE XREF: Opl2_setOperatorVolume+C\u2191j
                 mov     bx, [bp+arg_0]
                 mov     es, seg_D0F06
                 mov     al, es:[bx+1B8h]
 
-loc_1D4BA:                              ; CODE XREF: sub_1D492+1A\u2191j
+loc_1D4BA:                              ; CODE XREF: Opl2_setOperatorVolume+1A\u2191j
                 sub     ah, ah
                 mov     [bp+var_6], ax
                 mov     ax, bx
@@ -31290,11 +31290,11 @@ loc_1D4BA:                              ; CODE XREF: sub_1D492+1A\u2191j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1D4F4:                              ; CODE XREF: sub_1D492+54\u2191j
-                                        ; sub_1D492+5A\u2191j
+loc_1D4F4:                              ; CODE XREF: Opl2_setOperatorVolume+54\u2191j
+                                        ; Opl2_setOperatorVolume+5A\u2191j
                 sub     ax, ax
 
-loc_1D4F6:                              ; CODE XREF: sub_1D492+5F\u2191j
+loc_1D4F6:                              ; CODE XREF: Opl2_setOperatorVolume+5F\u2191j
                 mov     [bp+var_2], ax
                 mov     bx, [bp+arg_0]
                 cmp     byte ptr es:[bx+1A6h], 0
@@ -31306,8 +31306,8 @@ loc_1D4F6:                              ; CODE XREF: sub_1D492+5F\u2191j
                 cmp     [bp+var_2], 0
                 jz      short loc_1D52B
 
-loc_1D515:                              ; CODE XREF: sub_1D492+70\u2191j
-                                        ; sub_1D492+7B\u2191j
+loc_1D515:                              ; CODE XREF: Opl2_setOperatorVolume+70\u2191j
+                                        ; Opl2_setOperatorVolume+7B\u2191j
                 mov     bx, [bp+var_6]
                 mov     al, [bx-62C6h]
                 sub     ah, ah
@@ -31317,7 +31317,7 @@ loc_1D515:                              ; CODE XREF: sub_1D492+70\u2191j
                 shr     ax, cl
                 mov     [bp+var_4], ax
 
-loc_1D52B:                              ; CODE XREF: sub_1D492+81\u2191j
+loc_1D52B:                              ; CODE XREF: Opl2_setOperatorVolume+81\u2191j
                 mov     ax, 3Fh ; '?'
                 sub     ax, [bp+var_4]
                 mov     [bp+var_4], ax
@@ -31345,7 +31345,7 @@ loc_1D52B:                              ; CODE XREF: sub_1D492+81\u2191j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_1D492       endp
+Opl2_setOperatorVolume endp
 
 ; ---------------------------------------------------------------------------
                 align 2

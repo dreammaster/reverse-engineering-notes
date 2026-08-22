@@ -2203,7 +2203,7 @@ RENAMES = [
      "before allocating the undo snapshot handle; reset to 0 by "
      "Undo_resetSnapshotBuffer (sub_62AB0)."),
 
-    ("handle", "_undoSnapshotHandle",
+    (0x0CBFE4, "_undoSnapshotHandle",
      "The dword memory handle Undo_allocateSnapshotBuffer (sub_62AE2) "
      "allocates via new_handle to hold the in-memory undo snapshot; "
      "freed and zeroed by Undo_resetSnapshotBuffer (sub_62AB0). Locked/"
@@ -2211,7 +2211,7 @@ RENAMES = [
      "via synchronize_save, treating the handle's memory as a virtual "
      "file."),
 
-    ("Parser_val6", "Parser_undoSnapshotValid",
+    (0x0CBFEB, "Parser_undoSnapshotValid",
      "Set to 1 by the already-named save_game's mode-3/quicksave path "
      "only after synchronize_save successfully writes the current game "
      "state into the undo snapshot handle; cleared to 0 up front each "
@@ -2220,13 +2220,31 @@ RENAMES = [
      "actually loading the undo slot -- 'a valid snapshot was taken "
      "this turn', as opposed to just 'the buffer exists'."),
 
-    ("Parser_val7", "Parser_undoBufferAllocated",
+    (0x0CBFEA, "Parser_undoBufferAllocated",
      "Set to 1 by Undo_allocateSnapshotBuffer (sub_62AE2) once the "
      "undo snapshot handle is successfully allocated; cleared by "
      "Undo_resetSnapshotBuffer (sub_62AB0). The already-named "
      "Parser_performUndo also uses this alone to decide which of two "
      "messages to print ('undone' vs 'nothing to undo' -- messages at "
      "off_CB926/off_CB92A, not yet decoded)."),
+
+    (0x1D492, "Opl2_setOperatorVolume",
+     "sub_1D492(operatorIndex): the volume half of an OPL2 operator "
+     "update, called twice per note from the already-named Opl2_noteOn "
+     "(once per operator -- carrier and modulator). Reads a cached "
+     "per-channel velocity value (stored earlier by Opl2_noteOn at "
+     "offset 0x1CA for rhythm channels or 0x1B8 for melodic ones), "
+     "then reads the operator's current output-level register byte "
+     "(masked to the low 6 bits, the OPL2 level field) and inverts it "
+     "(0x3F - level) so higher = louder. For operators flagged to "
+     "track velocity (gated by a per-operator byte at +0x1A6 and a "
+     "table byte at +0xC), scales that inverted level by the velocity "
+     "through a lookup table (indexed by the cached velocity, at "
+     "bx-0x62C6) and rescales back down (>>7). Re-inverts to "
+     "attenuation scale, ORs in the operator's key-scale-level bits "
+     "(from +0x0, shifted into bits 6-7), and writes the result to "
+     "OPL2 register 0x40+operatorRegisterOffset (the standard OPL2 "
+     "Level/KSL register) via the already-named Opl2_writeRegister."),
 ]
 
 

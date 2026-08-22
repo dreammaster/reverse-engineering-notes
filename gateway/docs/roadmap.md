@@ -788,6 +788,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       in-memory "quicksave" buffer backing `Parser_performUndo`,
       written via `save_game`'s mode-3 path. Full writeup in
       [overview.md](overview.md#the-undo-snapshot-cluster-named).
+- [x] Named `sub_1D492` (3 callers) → `Opl2_setOperatorVolume` — the
+      volume half of an OPL2 operator update, called from `Opl2_noteOn`
+      once per operator. Full writeup in
+      [overview.md](overview.md#opl2_setoperatorvolume-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-
