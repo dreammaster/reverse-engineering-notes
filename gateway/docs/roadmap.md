@@ -23,17 +23,28 @@ the per-executable breakdown this is tracking against.
       rather than independent functions.
 - [x] Re-exported fresh `gate.asm`/`gate.idc`/`gatemain.asm`/
       `gatemain.idc` and committed them.
-- [ ] Consider a broader "create function" pass over `gatemain.idb` —
-      auto-analysis on the fresh IDB left noticeably more disassemblable
-      code outside any function boundary (rough estimate 100-300KB)
-      than the old, years-accumulated IDB had. Not urgent (486 already-
-      recognized unnamed functions remain first), but code without a
-      function boundary is invisible to `rank_unnamed_functions.py`.
+- [x] The "create function" follow-up above turned out to be almost
+      entirely the RTLink call-thunk shape. `create_rtlink_thunk_functions.py`
+      walked all 1272 real call sites to `rtlink_thunk` (via code
+      xrefs, not `idautils.Functions()`) and created the missing
+      function definitions at both ends (1119 call sites, 1112 of 1114
+      jump targets — 2 failures left as-is, low value), renaming each
+      call site `thunk_<target>`. `gatemain.idb`: 1207→3439 total
+      functions, 721→1846 named. `gate.idb` has no `rtlink_thunk`
+      symbol at all, so needed no equivalent pass. Full writeup in
+      overview.md's "RTLink thunk function-boundary recovery" section.
 - [ ] The 57 `; rtlink_decode: polymorphic slot` markers in
       `gatemain.idb` are expected to stay unresolvable via static
       analysis (target depends on which overlay is loaded at runtime,
       or may be unallocated scratch space) — treat as `void*`, don't
       try to resolve further without an in-game breakpoint.
+- [ ] Two rtlink-thunk jump targets (`0x69f13`, `0x69eda`) still lack a
+      function definition — both land inside a large pre-existing
+      multi-byte `db` data item that blocks `add_func` from carving a
+      function out without first deleting that data item. Their thunk
+      call sites are still correctly identified/created, just named
+      generically (`thunk_0x69f13`/`thunk_0x69eda`) rather than after a
+      real target function. Low priority (2 out of 1257).
 
 ## Infra (done, 2026-08-21)
 

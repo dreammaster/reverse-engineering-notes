@@ -4738,3 +4738,55 @@ function boundary created before it becomes nameable at all.
 
 Both `gate.asm`/`gate.idc` and `gatemain.asm`/`gatemain.idc` were
 re-exported fresh after this recovery.
+
+### RTLink thunk function-boundary recovery (2026-08-23, same day) — the "orphan code" follow-up acted on
+
+The "open follow-up" noted just above turned out to be almost entirely
+explained by, and fixable via, the RTLink call-thunk shape itself.
+`survey_rtlink_thunk_sites.py` (new, read-only) walked every real code
+cross-reference *to* `rtlink_thunk` — via `idautils.CodeRefsTo`,
+not by scanning `idautils.Functions()` the way the older
+`find_rtlink_thunks.py`/`apply_rtlink_thunks_gatemain.py` did — and
+found **1272 total call sites**, of which only **136** already had
+both the call-thunk site itself and its jump target recognized as
+functions. **1119** call-thunk sites and **1129** of their jump targets
+had no function definition at all in the freshly-regenerated
+`gatemain.idb` — exactly the "orphan code" gap, and almost the whole
+of it.
+
+`create_rtlink_thunk_functions.py` (new, one-off structural script,
+same category as the original `apply_rtlink_thunks_gatemain.py`) fixed
+this at scale: for every `call rtlink_thunk; jmp <target>` site found
+via the same code-xref walk, it (1) creates a function at the jump
+target if none exists (`ida_funcs.add_func(target_ea, BADADDR)`,
+letting IDA's own analyzer determine the extent — it's real subroutine
+code), (2) creates a function spanning exactly the 2-instruction thunk
+at the call site itself if none exists (deterministic size: 3 bytes for
+the call plus 3 or 5 for the jmp, near or far), then (3) renames the
+call site to `thunk_<target-name>`, the exact convention established
+originally. DRY_RUN-verified first, then applied for real:
+
+- **1112 of 1114** needed jump-target functions created successfully
+  (2 failures: `0x69f13`/`0x69eda`, both landing inside a large
+  pre-existing multi-byte `db` data item IDA won't let `add_func`
+  carve a function out of without first deleting that data item — not
+  investigated further this pass, low value for 2 out of 1257).
+- **1119 of 1119** needed call-site functions created successfully.
+- **1162** call sites renamed to `thunk_<target>` (95 were already
+  correctly named from the small pre-existing set of 136).
+
+Net effect on `gatemain.idb`: **1207 → 3439 total functions**, **721 →
+1846 named**. This is by far the single biggest jump in analysis
+completeness this project has seen in one pass, and it directly
+recovers the vast majority of the "orphan code" concern — most of what
+looked like a broad auto-analysis gap was actually just this one
+specific, well-understood, and now-automated shape.
+
+`gate.idb` has **no `rtlink_thunk` symbol at all** — it doesn't use
+this cross-overlay call-gate mechanism the way `gatemain.idb` does (a
+much smaller executable, title screen/cutscenes only), so no
+equivalent pass was needed or run there.
+
+Re-exported `gatemain.asm`/`gatemain.idc` fresh afterward (2520 new
+`thunk_*` proc/endp line pairs — 1260 thunk functions — appear in the
+new export; `gate.asm`/`gate.idc` unaffected).
