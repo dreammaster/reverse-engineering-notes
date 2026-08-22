@@ -3042,6 +3042,17 @@ RENAMES = [
      "Enter (accept), and printable characters -- a full line editor. "
      "This is the shared line-input primitive prompt_for_filename "
      "specializes for filenames specifically."),
+
+    (0x608AA, "Parser_clearResultStruct",
+     "sub_608AA(structPtr): given a 12-byte struct holding two "
+     "embedded (flagByte, farPointer) sub-fields (offsets 0-5 and "
+     "6-11), for each sub-field: if its pointer is non-null and its "
+     "flag byte is >1, calls the already-named kill_pointer_ to "
+     "release it. Then zeroes the entire 12-byte struct via _memset. "
+     "Called (twice) from the already-named Parser_proc4 -- a "
+     "'release any owned pointers, then clear' cleanup step for a "
+     "parser-result-shaped structure with two ref-counted pointer "
+     "fields."),
 ]
 
 

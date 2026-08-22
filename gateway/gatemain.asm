@@ -152273,7 +152273,7 @@ sub_6076F       endp
 
 ; Attributes: bp-based frame
 
-sub_608AA       proc far                ; CODE XREF: Parser_proc4+83\u2193p
+Parser_clearResultStruct proc far       ; CODE XREF: Parser_proc4+83\u2193p
                                         ; Parser_proc4+271\u2193p ...
 
 ptr             = dword ptr  6
@@ -152291,8 +152291,8 @@ ptr             = dword ptr  6
                 call    kill_pointer_
                 add     sp, 4
 
-loc_608D0:                              ; CODE XREF: sub_608AA+E\u2191j
-                                        ; sub_608AA+14\u2191j
+loc_608D0:                              ; CODE XREF: Parser_clearResultStruct+E\u2191j
+                                        ; Parser_clearResultStruct+14\u2191j
                 les     bx, [bp+ptr]
                 mov     ax, es:[bx+8]
                 or      ax, es:[bx+0Ah]
@@ -152304,8 +152304,8 @@ loc_608D0:                              ; CODE XREF: sub_608AA+E\u2191j
                 call    kill_pointer_
                 add     sp, 4
 
-loc_608F4:                              ; CODE XREF: sub_608AA+31\u2191j
-                                        ; sub_608AA+38\u2191j
+loc_608F4:                              ; CODE XREF: Parser_clearResultStruct+31\u2191j
+                                        ; Parser_clearResultStruct+38\u2191j
                 mov     ax, 0Ch
                 push    ax              ; count
                 sub     ax, ax
@@ -152316,7 +152316,7 @@ loc_608F4:                              ; CODE XREF: sub_608AA+31\u2191j
                 add     sp, 8
                 pop     bp
                 retf
-sub_608AA       endp
+Parser_clearResultStruct endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -152597,7 +152597,7 @@ loc_60B1A:                              ; CODE XREF: Parser_proc4+9B\u2193j
                 push    dx
                 push    ax
                 push    cs
-                call    near ptr sub_608AA
+                call    near ptr Parser_clearResultStruct
                 add     sp, 4
                 inc     [bp+var_106]
 
@@ -152817,7 +152817,7 @@ loc_60D04:                              ; CODE XREF: Parser_proc4+1FA\u2191j
                 push    dx
                 push    ax
                 push    cs
-                call    near ptr sub_608AA
+                call    near ptr Parser_clearResultStruct
                 add     sp, 4
                 dec     word_CBFD4
                 mov     ax, word_CBFD4
@@ -152851,7 +152851,7 @@ loc_60D56:                              ; CODE XREF: Parser_proc4+1E5\u2191j
                 push    dx
                 push    ax
                 push    cs
-                call    near ptr sub_608AA
+                call    near ptr Parser_clearResultStruct
                 add     sp, 4
                 mov     ax, 0DB76h
                 mov     dx, seg sg3EDC
@@ -153081,7 +153081,7 @@ loc_60F2E:                              ; CODE XREF: sub_60F21+35\u2193j
                 push    dx
                 push    ax
                 push    cs
-                call    near ptr sub_608AA
+                call    near ptr Parser_clearResultStruct
                 add     sp, 4
                 inc     [bp+var_2]
 

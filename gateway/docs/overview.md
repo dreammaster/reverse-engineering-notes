@@ -4048,3 +4048,17 @@ This is the shared line-input primitive `prompt_for_filename`
 specializes for filenames specifically.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-thirty-fifth batch.
+
+### `Parser_clearResultStruct` named
+
+Moved to `sub_608AA` (2 callers) — given a 12-byte struct holding two
+embedded (flag byte, far pointer) sub-fields, for each sub-field: if
+its pointer is non-null and its flag byte is greater than 1, calls the
+already-named `kill_pointer_` to release it. Then zeroes the entire
+struct via `_memset`.
+
+Called twice from the already-named `Parser_proc4` — a "release any
+owned pointers, then clear" cleanup step for a parser-result-shaped
+structure with two ref-counted pointer fields.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-thirty-sixth batch.
