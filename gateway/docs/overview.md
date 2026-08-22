@@ -2876,3 +2876,30 @@ graphics display isn't available, to print the same caption content a
 picture-mode call would otherwise show alongside the image.
 
 Applied via `apply_renames_gatemain.py`'s seventy-sixth batch.
+
+### `AnimPics_finishPlayback` named
+
+Moved to `sub_26F2A` (19 callers) — the busiest still-unnamed function
+at the time, sitting physically right between the named
+`AnimPics_resyncSlots` and `AnimPics_tick` inside the `sg1692` overlay
+segment. If any AnimPics slots are currently registered, it clears a
+private scratch buffer (`unk_D2302`) and latches each per-slot "shown"
+byte in a private 6-byte array (`byte_D22EE`) to 1 — these arrays
+belong only to this function, distinct from the slot handle/frame
+tables `AnimPics_registerSlot` itself writes. It always finishes by
+tail-calling `Events_checkKeypress`, which consumes a pending Space or
+Enter keypress (returning it to the caller) while requeuing any other
+pending key into `injectCharacter` for later.
+
+At 6+ call sites (e.g. inside `sub_9B5F9`, `sub_B1730`, `sub_BA9A5`,
+and the death-restart sequence) it is called immediately before
+`AnimPics_freeAll`. An anonymous inline loop physically inside `sg1692`
+(sitting between the `AnimPics_resyncSlots` and `AnimPics_tick`
+definitions, entered via a computed/indirect call IDA never attributed
+a function boundary to) also calls it exactly once, right after its own
+`AnimPics_tick` / wait-for-keypress loop exits. Both patterns match the
+same role: settle whatever frames are currently displayed and swallow
+any pending skip keypress, as the standard finishing step immediately
+before an anim-pics playback sequence tears its slots back down.
+
+Applied via `apply_renames_gatemain.py`'s seventy-seventh batch.

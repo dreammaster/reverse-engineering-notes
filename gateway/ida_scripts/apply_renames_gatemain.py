@@ -1986,6 +1986,24 @@ RENAMES = [
      "this as its text-only fallback (when graphics display isn't "
      "available) to print the same caption content a picture-mode call "
      "would otherwise show alongside the image."),
+
+    (0x26F2A, "AnimPics_finishPlayback",
+     "sub_26F2A (19 callers, sitting physically right between the named "
+     "AnimPics_resyncSlots and AnimPics_tick in sg1692): if any AnimPics "
+     "slots are registered, clears a private scratch buffer (unk_D2302) "
+     "and latches each per-slot 'shown' byte in byte_D22EE to 1 (these "
+     "arrays are private to this function only, not the slot handle/"
+     "frame tables AnimPics_registerSlot writes). Always finishes by "
+     "tail-calling Events_checkKeypress, which consumes a pending Space "
+     "or Enter keypress (returning it) while requeuing any other pending "
+     "key into injectCharacter for later. At 6+ call sites (e.g. "
+     "sub_9B5F9, sub_B1730, sub_BA9A5, the death-sequence handler) it is "
+     "called immediately before AnimPics_freeAll, and an anonymous inline "
+     "loop in sg1692 (between AnimPics_resyncSlots and AnimPics_tick's "
+     "definitions) calls it once after its tick/wait-for-press loop "
+     "exits -- both patterns match 'settle the currently-displayed "
+     "frames and swallow a skip keypress' as the standard finishing step "
+     "before an anim-pics playback sequence tears down its slots."),
 ]
 
 

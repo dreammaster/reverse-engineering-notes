@@ -736,6 +736,12 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       `Game_showIllustration`'s text-only fallback for printing
       caption content. Full writeup in
       [overview.md](overview.md#textwindow_addmessagelist-named).
+- [x] Named `sub_26F2A` (19 callers, the busiest unnamed function at
+      the time) → `AnimPics_finishPlayback` — settles the currently-
+      displayed AnimPics frames and swallows a pending skip keypress,
+      called immediately before `AnimPics_freeAll` at 6+ sites. Full
+      writeup in
+      [overview.md](overview.md#animpics_finishplayback-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

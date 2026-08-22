@@ -11895,7 +11895,7 @@ arg_8           = word ptr  0Eh
                 assume es:sg4d43
                 cmp     es:word_C8EF0, 0
                 jz      short loc_15690
-                call    sub_26F2A
+                call    AnimPics_finishPlayback
                 call    AnimPics_freeAll
 
 loc_15690:                              ; CODE XREF: Game_showIllustration+10\u2191j
@@ -45473,7 +45473,7 @@ addCharacter    endp
 ; Attributes: bp-based frame
 
 Events_checkKeypress proc far           ; CODE XREF: TextWindow_showMorePrompt+44\u2191P
-                                        ; sub_26F2A:loc_26F68\u2193P ...
+                                        ; AnimPics_finishPlayback:loc_26F68\u2193P ...
 
 var_2           = word ptr -2
 
@@ -53401,7 +53401,7 @@ loc_26ECC:                              ; CODE XREF: sg1692:191D\u2191j
 
 loc_26ED5:                              ; CODE XREF: sg1692:192A\u2191j
                 push    cs
-                call    near ptr sub_26F2A
+                call    near ptr AnimPics_finishPlayback
                 pop     si
                 pop     bp
                 retf
@@ -53464,7 +53464,7 @@ AnimPics_resyncSlots endp
 
 ; Attributes: bp-based frame
 
-sub_26F2A       proc far                ; CODE XREF: Game_showIllustration+12\u2191P
+AnimPics_finishPlayback proc far        ; CODE XREF: Game_showIllustration+12\u2191P
                                         ; sg1692:1936\u2191p ...
 
 var_2           = word ptr -2
@@ -53488,25 +53488,25 @@ var_2           = word ptr -2
                 mov     si, [bp+var_2]
                 mov     cx, _animPicsSlotCount
 
-loc_26F54:                              ; CODE XREF: sub_26F2A+39\u2193j
+loc_26F54:                              ; CODE XREF: AnimPics_finishPlayback+39\u2193j
                 cmp     byte_D22EE[si], 0
                 jz      short loc_26F60
                 mov     byte_D22EE[si], 1
 
-loc_26F60:                              ; CODE XREF: sub_26F2A+2F\u2191j
+loc_26F60:                              ; CODE XREF: AnimPics_finishPlayback+2F\u2191j
                 inc     si
                 cmp     si, cx
                 jl      short loc_26F54
                 mov     [bp+var_2], si
 
-loc_26F68:                              ; CODE XREF: sub_26F2A+12\u2191j
+loc_26F68:                              ; CODE XREF: AnimPics_finishPlayback+12\u2191j
                 call    Events_checkKeypress
                 pop     si
                 pop     di
                 mov     sp, bp
                 pop     bp
                 retf
-sub_26F2A       endp
+AnimPics_finishPlayback endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -143524,7 +143524,7 @@ loc_5D0F3:                              ; CODE XREF: room_load+196\u2191j
                 add     sp, 2
 
 loc_5D10B:                              ; CODE XREF: room_load+1AA\u2191j
-                call    sub_26F2A
+                call    AnimPics_finishPlayback
                 call    Screen_backupPalette
                 mov     es, dseg_141
                 cmp     es:_videoIndex, 4
@@ -145957,7 +145957,7 @@ loc_5E48E:
 
 loc_5E491:                              ; CODE XREF: sub_5E426+32\u2191j
                                         ; sub_5E426+3E\u2191j ...
-                call    sub_26F2A
+                call    AnimPics_finishPlayback
 
 loc_5E496:
                 mov     ax, 3DE2h
@@ -196246,7 +196246,7 @@ loc_769C7:
 
 loc_769CE:                              ; CODE XREF: sub_76960+11\u2191j
                                         ; DATA XREF: sub_76960+100\u2193o ...
-                call    sub_26F2A
+                call    AnimPics_finishPlayback
 
 loc_769D3:
                 call    AnimPics_freeAll
@@ -200729,7 +200729,7 @@ loc_7866E:                              ; CODE XREF: sub_78570:loc_78587\u2191j
 
 loc_78689:                              ; CODE XREF: sub_78570:loc_78587\u2191j
                                         ; DATA XREF: sub_78570+63C\u2193o ...
-                call    sub_26F2A
+                call    AnimPics_finishPlayback
                 call    AnimPics_freeAll
                 mov     byte_CD0CC, 0
                 cmp     [bp+arg_0], 0Fh
@@ -212248,7 +212248,7 @@ loc_7DCE2:                              ; CODE XREF: sub_7DC6F:loc_7DCBB\u2191j
 
 loc_7DCE9:                              ; CODE XREF: sub_7DC6F+14\u2191j
                                         ; DATA XREF: sub_7DC6F+2E7\u2193o ...
-                call    sub_26F2A
+                call    AnimPics_finishPlayback
                 call    AnimPics_freeAll
                 mov     word_CD2C4, 0FFFFh
                 jmp     short loc_7DD2C
@@ -279007,7 +279007,7 @@ var_2           = word ptr -2
 
 loc_9B680:                              ; CODE XREF: sub_9B5F9+82\u2191j
                 call    TextWindow_showMorePrompt
-                call    sub_26F2A
+                call    AnimPics_finishPlayback
                 call    AnimPics_freeAll
                 call    thunk_sub_5D9F3
                 mov     [bp+var_A], ax
@@ -279644,7 +279644,7 @@ loc_9BA6C:                              ; CODE XREF: sub_9B946+112\u2191j
                 call    Queue_exists
                 add     sp, 2
                 mov     byte_CE8C6, al
-                call    sub_26F2A
+                call    AnimPics_finishPlayback
                 call    AnimPics_freeAll
                 mov     byte_CE8C5, 0
 
@@ -279923,7 +279923,7 @@ loc_9BC5C:                              ; CODE XREF: sub_9B946+2AC\u2191j
 
 loc_9BCDF:                              ; CODE XREF: sub_9B946:loc_9B962\u2191j
                                         ; DATA XREF: sub_9B946+42F\u2193o
-                call    sub_26F2A
+                call    AnimPics_finishPlayback
                 call    AnimPics_freeAll
                 mov     byte_CE8C5, 0
                 jmp     loc_9BB31
@@ -279931,7 +279931,7 @@ loc_9BCDF:                              ; CODE XREF: sub_9B946:loc_9B962\u2191j
 
 loc_9BCF1:                              ; CODE XREF: sub_9B946:loc_9B962\u2191j
                                         ; DATA XREF: sub_9B946+41D\u2193o
-                call    sub_26F2A
+                call    AnimPics_finishPlayback
                 call    AnimPics_freeAll
                 mov     byte_CE8C5, 0
                 cmp     Persisted_val113, 5
@@ -280341,7 +280341,7 @@ loc_9BF86:
 
 loc_9BFAF:                              ; CODE XREF: sub_9BD7E+14\u2191j
                                         ; DATA XREF: sub_9BD7E+2B8\u2193o
-                call    sub_26F2A
+                call    AnimPics_finishPlayback
                 call    AnimPics_freeAll
                 mov     byte_CE8D6, 0
                 jmp     loc_9BEB6
@@ -280349,7 +280349,7 @@ loc_9BFAF:                              ; CODE XREF: sub_9BD7E+14\u2191j
 
 loc_9BFC1:                              ; CODE XREF: sub_9BD7E+14\u2191j
                                         ; DATA XREF: sub_9BD7E+2A6\u2193o
-                call    sub_26F2A
+                call    AnimPics_finishPlayback
                 call    AnimPics_freeAll
                 mov     byte_CE8D6, 0
                 mov     ax, 0Fh
@@ -286113,7 +286113,7 @@ var_2           = word ptr -2
                 mov     bp, sp
                 sub     sp, 4
                 mov     [bp+var_4], 0
-                call    sub_26F2A
+                call    AnimPics_finishPlayback
                 call    AnimPics_freeAll
                 cmp     _deathCount, 1
                 jle     short loc_9E90D
@@ -287287,7 +287287,7 @@ loc_9F134:                              ; CODE XREF: sub_9F08E+A2\u2191j
 ; ---------------------------------------------------------------------------
 
 loc_9F16A:                              ; CODE XREF: sub_9F08E+B5\u2191j
-                call    sub_26F2A
+                call    AnimPics_finishPlayback
                 call    AnimPics_freeAll
 
 loc_9F174:                              ; CODE XREF: sub_9F08E+C1\u2191j
@@ -287578,7 +287578,7 @@ loc_9F373:
 
 loc_9F3DC:                              ; CODE XREF: sub_9F08E+20\u2191j
                                         ; DATA XREF: sub_9F08E+3D2\u2193o ...
-                call    sub_26F2A
+                call    AnimPics_finishPlayback
                 call    AnimPics_freeAll
                 mov     byte_CEAA5, 0
                 cmp     [bp+arg_0], 18h
@@ -290201,7 +290201,7 @@ loc_A0781:                              ; CODE XREF: sub_A059C+1DD\u2191j
                 push    es:Input_window_mb ; winNumber
                 call    Windows_SetImageOffsetPos
                 add     sp, 2
-                call    sub_26F2A
+                call    AnimPics_finishPlayback
                 call    AnimPics_freeAll
                 mov     ax, 3DE2h
                 push    ds
@@ -294156,7 +294156,7 @@ loc_A252E:                              ; CODE XREF: sub_A24BB+66\u2191j
 
 loc_A2530:                              ; CODE XREF: sub_A24BB+71\u2191j
                 mov     byte_CEC60, al
-                call    sub_26F2A
+                call    AnimPics_finishPlayback
                 call    AnimPics_freeAll
                 cmp     byte_CEC60, 0
                 jnz     short loc_A2560
@@ -294342,7 +294342,7 @@ loc_A26AD:                              ; CODE XREF: sub_A24BB+E\u2191j
 
 loc_A26B2:                              ; CODE XREF: sub_A24BB+14\u2191j
                                         ; DATA XREF: sub_A24BB+305\u2193o ...
-                call    sub_26F2A
+                call    AnimPics_finishPlayback
                 call    AnimPics_freeAll
                 mov     byte_CEC5F, 0
                 jmp     short loc_A26AD
@@ -297995,7 +297995,7 @@ loc_A3EF0:                              ; CODE XREF: logic238+6B\u2191j
 
 action24:                               ; CODE XREF: logic238+14\u2191j
                                         ; logic238+A0\u2191j ...
-                call    sub_26F2A
+                call    AnimPics_finishPlayback
                 call    AnimPics_freeAll
                 mov     word_CED40, 0FFFFh
                 jmp     default
@@ -329707,7 +329707,7 @@ loc_B1766:                              ; CODE XREF: sub_B1730+26\u2191j
 
 loc_B17B2:                              ; CODE XREF: sub_B1730+4A\u2191j
                                         ; sub_B1730+60\u2191j ...
-                call    sub_26F2A
+                call    AnimPics_finishPlayback
                 call    AnimPics_freeAll
                 mov     word_CF57A, 0
 
@@ -330401,7 +330401,7 @@ loc_B1D84:                              ; CODE XREF: sub_B1730+650\u2191j
 
 loc_B1DB0:                              ; CODE XREF: sub_B1730+17\u2191j
                                         ; DATA XREF: sub_B1730+801\u2193o ...
-                call    sub_26F2A
+                call    AnimPics_finishPlayback
                 call    AnimPics_freeAll
                 mov     word_CF57A, 0
                 cmp     [bp+arg_0], 18h
@@ -351161,7 +351161,7 @@ loc_BAA52:
                 jz      short loc_BAA6F
                 mov     ax, es:Persisted_val41
                 mov     word_CFDEE, ax
-                call    sub_26F2A
+                call    AnimPics_finishPlayback
                 call    AnimPics_freeAll
                 mov     byte_CFDF0, 0
 
@@ -351405,7 +351405,7 @@ loc_BAC75:                              ; CODE XREF: sub_BA9A5+3A6\u2193j
 
 loc_BAC84:                              ; CODE XREF: sub_BA9A5+17\u2191j
                                         ; DATA XREF: sub_BA9A5+3C5\u2193o ...
-                call    sub_26F2A
+                call    AnimPics_finishPlayback
                 call    AnimPics_freeAll
                 mov     byte_CFDF0, 0
                 jmp     loc_BAB06
@@ -351770,7 +351770,7 @@ loc_BAF0A:                              ; CODE XREF: sub_BAE1F+E5\u2191j
 
 loc_BAF0C:                              ; CODE XREF: sub_BAE1F+E9\u2191j
                 mov     byte_CFDFE, al
-                call    sub_26F2A
+                call    AnimPics_finishPlayback
                 call    AnimPics_freeAll
                 mov     byte_CFDFF, 0
 
@@ -351983,7 +351983,7 @@ loc_BB0B4:                              ; CODE XREF: sub_BAE1F+28A\u2191j
 
 loc_BB0D7:                              ; CODE XREF: sub_BAE1F+1C\u2191j
                                         ; DATA XREF: sub_BAE1F+2E6\u2193o ...
-                call    sub_26F2A
+                call    AnimPics_finishPlayback
                 call    AnimPics_freeAll
                 mov     byte_CFDFF, 0
                 jmp     loc_BAF94
@@ -352805,7 +352805,7 @@ loc_BB6ED:                              ; CODE XREF: sub_BB498+24D\u2191j
                 push    ax
                 call    Logics_setBit
                 add     sp, 4
-                call    sub_26F2A
+                call    AnimPics_finishPlayback
                 call    AnimPics_freeAll
                 call    j_room_load
                 mov     ax, 7022h
@@ -397301,8 +397301,8 @@ word_D22CE      dw 0                    ; DATA XREF: PicFile_copy_ega+76\u2191r
 old_ctrl_c_fn   dd 0                    ; DATA XREF: graphics_init+ED\u2191w
                                         ; restore_handlers+3B\u2191r ...
 animPicsHandles db 14h dup(   0)        ; DATA XREF: AnimPics_freeAll+14\u2191o
-byte_D22EE      db 6 dup(   0)          ; DATA XREF: sub_26F2A:loc_26F54\u2191r
-                                        ; sub_26F2A+31\u2191w
+byte_D22EE      db 6 dup(   0)          ; DATA XREF: AnimPics_finishPlayback:loc_26F54\u2191r
+                                        ; AnimPics_finishPlayback+31\u2191w
 old_ctrl_break_fn dd 0                  ; DATA XREF: graphics_init+C6\u2191w
                                         ; restore_handlers+27\u2191r ...
 old_timer_fn    dd 0                    ; DATA XREF: graphics_init+134\u2191w
@@ -397313,7 +397313,7 @@ old_timer_fn    dd 0                    ; DATA XREF: graphics_init+134\u2191w
                 db    0
                 db    0
                 db    0
-unk_D2302       db    0                 ; DATA XREF: sub_26F2A+1C\u2191o
+unk_D2302       db    0                 ; DATA XREF: AnimPics_finishPlayback+1C\u2191o
                 db    0
                 db    0
                 db    0
