@@ -914,6 +914,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       atomic take-and-clear of a per-track ISR-shared flag in the
       sound-timing cluster. Full writeup in
       [overview.md](overview.md#sound_taketrackflag-named).
+- [x] Named `sub_1D953` (2 callers) → `Midi_setDataCallback` — an
+      atomic setter for the already-named `_midiDataCallback` global.
+      Full writeup in
+      [overview.md](overview.md#midi_setdatacallback-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

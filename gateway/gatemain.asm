@@ -32080,7 +32080,7 @@ loc_1D94A:                              ; CODE XREF: seg022:0145\u2191j
 
 ; Attributes: bp-based frame
 
-sub_1D953       proc far                ; CODE XREF: sub_1F552+2F\u2193P
+Midi_setDataCallback proc far           ; CODE XREF: sub_1F552+2F\u2193P
                                         ; sub_1F552+DB\u2193P ...
 
 arg_0           = word ptr  6
@@ -32096,7 +32096,7 @@ arg_2           = word ptr  8
                 sti
                 pop     bp
                 retf
-sub_1D953       endp
+Midi_setDataCallback endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -36076,7 +36076,7 @@ loc_1F574:                              ; CODE XREF: sub_1F552+1C\u2191j
                 mov     dx, seg seg022
                 push    dx
                 push    ax
-                call    sub_1D953
+                call    Midi_setDataCallback
                 add     sp, 4
                 mov     ax, 0C5h ; 'Å'
                 push    ax
@@ -36134,7 +36134,7 @@ loc_1F574:                              ; CODE XREF: sub_1F552+1C\u2191j
                 mov     dx, seg seg024
                 push    dx
                 push    ax
-                call    sub_1D953
+                call    Midi_setDataCallback
                 add     sp, 4
                 mov     ax, 1
                 retf
@@ -36586,7 +36586,7 @@ loc_1F99C:                              ; CODE XREF: sub_1F93E+1A\u2191j
                 mov     dx, seg seg022
                 push    dx
                 push    ax
-                call    sub_1D953
+                call    Midi_setDataCallback
                 add     sp, 4
 
 loc_1F9B1:                              ; CODE XREF: sub_1F93E:loc_1F9C4\u2193j

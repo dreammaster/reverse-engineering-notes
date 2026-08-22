@@ -3661,3 +3661,14 @@ notification set by the sound engine's timer ISR, though the exact
 event this flag represents wasn't independently confirmed.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-fourteenth batch.
+
+### `Midi_setDataCallback` named
+
+Moved to `sub_1D953` (2 callers) — with interrupts disabled,
+atomically sets the already-named far-pointer global
+`_midiDataCallback` from its two word arguments. Called twice from
+`sub_1F552` — a simple atomic setter for the MIDI data callback
+pointer, matching the `cli`/`sti` pattern used elsewhere in this
+session's sound-timing cluster for state shared with an ISR.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-fifteenth batch.

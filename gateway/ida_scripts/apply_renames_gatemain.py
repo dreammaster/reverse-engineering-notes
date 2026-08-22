@@ -2719,6 +2719,14 @@ RENAMES = [
      "a per-track 'segment/loop completed' notification set by the "
      "sound engine's timer ISR, though the exact event this flag "
      "represents wasn't independently confirmed."),
+
+    (0x1D953, "Midi_setDataCallback",
+     "sub_1D953(callback): with interrupts disabled, atomically sets "
+     "the already-named far-pointer global _midiDataCallback from its "
+     "two word arguments (offset:segment). Called (twice) from "
+     "sub_1F552 -- a simple atomic setter for the MIDI data callback "
+     "pointer, matching the cli/sti pattern used elsewhere in this "
+     "session's sound-timing cluster for state shared with an ISR."),
 ]
 
 
