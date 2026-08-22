@@ -6582,6 +6582,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X13CB1);
 	op_plain_offset	(x,	1,	0XC7F20);
 	op_plain_offset	(x,	129,	0XC7F20);
+	set_name	(0X13CB1,	"Parser_printBeMoreSpecific");
 	set_cmt	(0X13CB5,	"char",	0);
 	create_insn	(x=0X13CB6);
 	op_plain_offset	(x,	1,	0X32E20);
@@ -7392,11 +7393,6 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1485E);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X1486C);
-	op_stkvar	(x,	0);
-	set_cmt	(0X14871,	"index",	0);
-	create_insn	(x=0X14871);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -7406,6 +7402,11 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X1486C);
+	op_stkvar	(x,	0);
+	set_cmt	(0X14871,	"index",	0);
+	create_insn	(x=0X14871);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X14879);
 	op_hex		(x,	1);
 	create_insn	(x=0X1487C);
@@ -12494,11 +12495,6 @@ static Bytes_1(void) {
 	create_insn	(0X18DFA);
 	create_insn	(x=0X18DFC);
 	op_hex		(x,	1);
-	create_insn	(0X18E07);
-	create_insn	(0X18E1A);
-	set_name	(0X18E1A,	"__setenvp");
-	create_insn	(x=0X18E46);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -12508,6 +12504,11 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(0X18E07);
+	create_insn	(0X18E1A);
+	set_name	(0X18E1A,	"__setenvp");
+	create_insn	(x=0X18E46);
+	op_hex		(x,	1);
 	create_insn	(x=0X18E4A);
 	op_hex		(x,	1);
 	create_insn	(x=0X18E4C);
@@ -18315,13 +18316,6 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1F2A2);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X1F2A9);
-	op_hex		(x,	1);
-	create_insn	(0X1F2B4);
-	create_insn	(x=0X1F2B7);
-	op_hex		(x,	1);
-	create_insn	(x=0X1F2BF);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -18331,6 +18325,13 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X1F2A9);
+	op_hex		(x,	1);
+	create_insn	(0X1F2B4);
+	create_insn	(x=0X1F2B7);
+	op_hex		(x,	1);
+	create_insn	(x=0X1F2BF);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X1F2C6);
 	op_hex		(x,	1);
 	create_insn	(x=0X1F2CC);
@@ -23434,6 +23435,15 @@ static Bytes_3(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X2456E);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X24570);
 	op_hex		(x,	1);
 	create_insn	(x=0X24581);
@@ -23448,15 +23458,6 @@ static Bytes_3(void) {
 	toggle_bnot		(x,	5);
 	toggle_bnot		(x,	6);
 	toggle_bnot		(x,	7);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X24589);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X24590);
@@ -29122,6 +29123,15 @@ static Bytes_4(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X28AC9);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X28ACF);
 	op_stkvar	(x,	1);
 	create_insn	(0X28AD7);
@@ -29133,15 +29143,6 @@ static Bytes_4(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X28AEF);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X28AFA);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X28B06);
@@ -34064,6 +34065,15 @@ static Bytes_5(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X2C6FB);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_6(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2C6FE);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X2C708);
@@ -34078,15 +34088,6 @@ static Bytes_5(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X2C71C);
 	op_stroff	(x,	1,	GetStrucIdByName("Screen"),	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_6(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2C71F);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X2C722);
@@ -38201,6 +38202,15 @@ static Bytes_6(void) {
 	create_word	(0X30FD7);
 	create_insn	(0X30FD9);
 	set_name	(0X30FD9,	"thunk_sub_A877B");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_7(void) {
+        auto x;
+#define id x
+
 	create_word	(0X30FE1);
 	create_insn	(0X30FE3);
 	create_word	(0X30FEB);
@@ -38213,15 +38223,6 @@ static Bytes_6(void) {
 	create_word	(0X31009);
 	create_insn	(0X3100B);
 	set_name	(0X3100B,	"thunk_sub_B4B07");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_7(void) {
-        auto x;
-#define id x
-
 	create_word	(0X31013);
 	create_insn	(0X31015);
 	set_name	(0X31015,	"thunk_sub_B46BF");
@@ -41583,6 +41584,15 @@ static Bytes_7(void) {
 	create_dword	(x=0X3F374);
 	op_plain_offset	(x,	0,	0X2CF40);
 	op_plain_offset	(x,	128,	0X2CF40);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_8(void) {
+        auto x;
+#define id x
+
 	create_dword	(x=0X3F378);
 	op_plain_offset	(x,	0,	0X2CF40);
 	op_plain_offset	(x,	128,	0X2CF40);
@@ -41598,15 +41608,6 @@ static Bytes_7(void) {
 	create_dword	(x=0X3F388);
 	op_plain_offset	(x,	0,	0X2CF40);
 	op_plain_offset	(x,	128,	0X2CF40);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_8(void) {
-        auto x;
-#define id x
-
 	create_dword	(x=0X3F38C);
 	op_plain_offset	(x,	0,	0X2CF40);
 	op_plain_offset	(x,	128,	0X2CF40);
@@ -47686,15 +47687,6 @@ static Bytes_8(void) {
 	create_word	(0X4DA90);
 	set_name	(0X4DA90,	"Screen_maxColor");
 	create_dword	(0X4DA92);
-	create_word	(0X4DA96);
-	set_name	(0X4DA96,	"pic_file_handle");
-	MakeStruct	(0X4DA98,	"PicIndexEntry");
-	set_name	(0X4DA98,	"pic_header");
-	create_word	(0X4DAA4);
-	set_name	(0X4DAA4,	"Mouse_enablement");
-	create_word	(x=0X4DAA6);
-	op_man		(x,	0,	"258");
-	set_name	(0X4DAA6,	"videoMode");
 }
 
 //------------------------------------------------------------------------
@@ -47704,6 +47696,15 @@ static Bytes_9(void) {
         auto x;
 #define id x
 
+	create_word	(0X4DA96);
+	set_name	(0X4DA96,	"pic_file_handle");
+	MakeStruct	(0X4DA98,	"PicIndexEntry");
+	set_name	(0X4DA98,	"pic_header");
+	create_word	(0X4DAA4);
+	set_name	(0X4DAA4,	"Mouse_enablement");
+	create_word	(x=0X4DAA6);
+	op_man		(x,	0,	"258");
+	set_name	(0X4DAA6,	"videoMode");
 	create_word	(0X4DAAA);
 	create_word	(0X4DAAC);
 	create_byte	(0X4DAAE);
@@ -53454,6 +53455,15 @@ static Bytes_9(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X61ED6);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_10(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X61EDE);
 	op_stkvar	(x,	0);
 	op_seg		(x,	1);
@@ -53471,15 +53481,6 @@ static Bytes_9(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X61F00);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_10(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X61F08);
 	op_stkvar	(x,	0);
 	op_seg		(x,	1);
@@ -59442,6 +59443,15 @@ static Bytes_10(void) {
 	set_cmt	(0X66D84,	"logicNum",	0);
 	create_insn	(x=0X66D84);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_11(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X66D8C);
 	op_hex		(x,	1);
 	create_insn	(x=0X66D8F);
@@ -59461,15 +59471,6 @@ static Bytes_10(void) {
 	set_cmt	(0X66DD4,	"mode",	0);
 	create_insn	(x=0X66DD4);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_11(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X66DD7,	"logicNum",	0);
 	create_insn	(x=0X66DD7);
 	op_stkvar	(x,	0);
@@ -65022,6 +65023,15 @@ static Bytes_11(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X6E7FE);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_12(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X6E80C,	"msg",	0);
 	create_insn	(x=0X6E812);
 	op_hex		(x,	1);
@@ -65043,15 +65053,6 @@ static Bytes_11(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X6E88C);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_12(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X6E88F);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X6E892);
@@ -70609,6 +70610,15 @@ static Bytes_12(void) {
 	create_insn	(x=0X75BCF);
 	op_hex		(x,	1);
 	set_cmt	(0X75C05,	"str",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_13(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X75C0E);
 	op_hex		(x,	1);
 	create_insn	(x=0X75C28);
@@ -70628,15 +70638,6 @@ static Bytes_12(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X75C5B);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_13(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X75C5E);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X75C61);
@@ -76309,6 +76310,15 @@ static Bytes_13(void) {
 	create_word	(x=0X7E29C);
 	op_plain_offset	(x,	0,	0X7DC60);
 	op_plain_offset	(x,	128,	0X7DC60);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_14(void) {
+        auto x;
+#define id x
+
 	create_word	(x=0X7E29E);
 	op_plain_offset	(x,	0,	0X7DC60);
 	op_plain_offset	(x,	128,	0X7DC60);
@@ -76330,15 +76340,6 @@ static Bytes_13(void) {
 	create_insn	(0X7E328);
 	create_insn	(x=0X7E335);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_14(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X7E342);
 	create_insn	(x=0X7E34F);
 	op_hex		(x,	1);
@@ -82001,6 +82002,15 @@ static Bytes_14(void) {
 	set_cmt	(0X85E85,	"logicNum",	0);
 	create_insn	(x=0X85E8B);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_15(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X85E9C);
 	create_insn	(0X85EBC);
 	set_cmt	(0X85EC2,	"char",	0);
@@ -82020,15 +82030,6 @@ static Bytes_14(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X85F4C);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_15(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X85F4E);
 	op_hex		(x,	1);
 	set_cmt	(0X85F59,	"char",	0);
@@ -87578,6 +87579,15 @@ static Bytes_15(void) {
 	op_hex		(x,	1);
 	create_insn	(0X8DF7C);
 	set_cmt	(0X8DF7F,	"logicNum",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_16(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X8DF83,	"val1",	0);
 	create_insn	(x=0X8DF89);
 	op_hex		(x,	1);
@@ -87593,15 +87603,6 @@ static Bytes_15(void) {
 	create_insn	(0X8DFBD);
 	set_cmt	(0X8DFC1,	"logicNum",	0);
 	set_cmt	(0X8DFC9,	"val1",	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_16(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X8DFCF);
 	op_hex		(x,	1);
 	set_cmt	(0X8DFD3,	"char",	0);
@@ -93114,6 +93115,15 @@ static Bytes_16(void) {
 	create_word	(x=0X95F8C);
 	op_plain_offset	(x,	0,	0X959F0);
 	op_plain_offset	(x,	128,	0X959F0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_17(void) {
+        auto x;
+#define id x
+
 	create_word	(x=0X95F8E);
 	op_plain_offset	(x,	0,	0X959F0);
 	op_plain_offset	(x,	128,	0X959F0);
@@ -93132,15 +93142,6 @@ static Bytes_16(void) {
 	create_word	(x=0X95F98);
 	op_plain_offset	(x,	0,	0X959F0);
 	op_plain_offset	(x,	128,	0X959F0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_17(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X95F9A);
 	create_insn	(0X95FAC);
 	create_insn	(x=0X95FAF);
@@ -98959,6 +98960,15 @@ static Bytes_17(void) {
 	set_cmt	(0X9E66B,	"logicNum",	0);
 	create_insn	(x=0X9E671);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_18(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X9E681);
 	op_hex		(x,	1);
 	set_cmt	(0X9E687,	"index",	0);
@@ -98977,15 +98987,6 @@ static Bytes_17(void) {
 	op_hex		(x,	1);
 	set_cmt	(0X9E6DB,	"index",	0);
 	set_cmt	(0X9E6DF,	"logicNum",	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_18(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X9E6E5);
 	op_hex		(x,	1);
 	create_insn	(x=0X9E6F5);
@@ -104753,6 +104754,15 @@ static Bytes_18(void) {
 	create_word	(x=0XA702C);
 	op_plain_offset	(x,	0,	0XA6780);
 	op_plain_offset	(x,	128,	0XA6780);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_19(void) {
+        auto x;
+#define id x
+
 	create_word	(x=0XA702E);
 	op_plain_offset	(x,	0,	0XA6780);
 	op_plain_offset	(x,	128,	0XA6780);
@@ -104771,15 +104781,6 @@ static Bytes_18(void) {
 	create_word	(x=0XA7038);
 	op_plain_offset	(x,	0,	0XA6780);
 	op_plain_offset	(x,	128,	0XA6780);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_19(void) {
-        auto x;
-#define id x
-
 	create_word	(x=0XA703A);
 	op_plain_offset	(x,	0,	0XA6780);
 	op_plain_offset	(x,	128,	0XA6780);
@@ -110550,6 +110551,15 @@ static Bytes_19(void) {
 	create_insn	(0XAF906);
 	create_insn	(0XAF912);
 	set_cmt	(0XAF916,	"logicNum",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_20(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0XAF91E,	"val1",	0);
 	create_insn	(x=0XAF924);
 	op_hex		(x,	1);
@@ -110566,15 +110576,6 @@ static Bytes_19(void) {
 	create_insn	(0XAF955);
 	create_insn	(x=0XAF958);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_20(void) {
-        auto x;
-#define id x
-
 	create_insn	(0XAF963);
 	create_insn	(0XAF97A);
 	create_insn	(x=0XAF987);
@@ -116303,6 +116304,15 @@ static Bytes_20(void) {
 	create_word	(x=0XB77D1);
 	op_plain_offset	(x,	0,	0XB7350);
 	op_plain_offset	(x,	128,	0XB7350);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_21(void) {
+        auto x;
+#define id x
+
 	create_word	(x=0XB77D3);
 	op_plain_offset	(x,	0,	0XB7350);
 	op_plain_offset	(x,	128,	0XB7350);
@@ -116321,15 +116331,6 @@ static Bytes_20(void) {
 	create_word	(x=0XB77DD);
 	op_plain_offset	(x,	0,	0XB7350);
 	op_plain_offset	(x,	128,	0XB7350);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_21(void) {
-        auto x;
-#define id x
-
 	create_word	(x=0XB77DF);
 	op_plain_offset	(x,	0,	0XB7350);
 	op_plain_offset	(x,	128,	0XB7350);
@@ -122039,6 +122040,15 @@ static Bytes_21(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0XC01DB);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_22(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0XC01EA);
 	op_stkvar	(x,	1);
 	set_cmt	(0XC01ED,	"y2",	0);
@@ -122056,15 +122066,6 @@ static Bytes_21(void) {
 	create_insn	(x=0XC0210);
 	op_hex		(x,	1);
 	set_cmt	(0XC0216,	"regionNum",	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_22(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0XC021C);
 	op_hex		(x,	1);
 	set_cmt	(0XC022F,	"color",	0);
@@ -127864,6 +127865,15 @@ static Bytes_22(void) {
 	create_word	(0XC7FA6);
 	create_word	(0XC7FA8);
 	create_word	(0XC7FAA);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_23(void) {
+        auto x;
+#define id x
+
 	create_word	(0XC7FAC);
 	create_word	(0XC7FAE);
 	create_word	(0XC7FB0);
@@ -127881,15 +127891,6 @@ static Bytes_22(void) {
 	create_word	(x=0XC7FE0);
 	make_array	(x,	0X30);
 	op_dec		(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_23(void) {
-        auto x;
-#define id x
-
 	create_word	(0XC8093);
 	create_word	(0XC8095);
 	create_word	(0XC8097);
@@ -131566,6 +131567,15 @@ static Bytes_23(void) {
 	set_name	(0XCE114,	"aYouGetOnS");
 	create_strlit	(0XCE121,	0X8);
 	set_name	(0XCE121,	"aStepOn_1");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_24(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0XCE129,	0XE);
 	set_name	(0XCE129,	"aContainingS_0");
 	create_strlit	(0XCE137,	0X3);
@@ -131576,15 +131586,6 @@ static Bytes_23(void) {
 	set_name	(0XCE145,	"aContainsS");
 	create_strlit	(0XCE150,	0XB);
 	set_name	(0XCE150,	"aIsEmpty__0");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_24(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0XCE15B,	0XB);
 	set_name	(0XCE15B,	"aContainsS_0");
 	create_strlit	(0XCE166,	0XB);
@@ -135578,6 +135579,15 @@ static Bytes_24(void) {
 	op_seg		(x,	0);
 	create_word	(x=0XD120C);
 	op_seg		(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_25(void) {
+        auto x;
+#define id x
+
 	create_word	(x=0XD120E);
 	op_seg		(x,	0);
 	create_word	(x=0XD1210);
@@ -135604,15 +135614,6 @@ static Bytes_24(void) {
 	op_seg		(x,	0);
 	create_word	(x=0XD1226);
 	op_seg		(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_25(void) {
-        auto x;
-#define id x
-
 	create_word	(x=0XD1228);
 	op_seg		(x,	0);
 	create_word	(x=0XD122A);

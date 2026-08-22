@@ -2415,6 +2415,16 @@ RENAMES = [
      "that shared state word and resets byte_D20A2 again -- tearing "
      "down whatever per-track state that bit range represents for "
      "this backend."),
+
+    (0x13CB1, "Parser_printBeMoreSpecific",
+     "sub_13CB1(): prints the literal message '[Please be more "
+     "specific.%s]\\n' (aPleaseBeMoreSp + asc_CB97E) via "
+     "TextWindow_add. Called from the already-named "
+     "GatewayParser_speakHandler and Parser_proc6 -- a simpler, "
+     "generic sibling of the already-named Parser_askForClarification "
+     "(which fills in a specific ambiguous word), used when the "
+     "parser needs to ask for clarification without a particular word "
+     "to reference."),
 ]
 
 

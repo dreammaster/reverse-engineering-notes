@@ -837,6 +837,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       pending OPL2/AdLib backend's `Sound_stopTrack` handler, silencing
       all 11 OPL2 logical channels. Full writeup in
       [overview.md](overview.md#opl2_stoptrack-named).
+- [x] Named `sub_13CB1` (2 callers) → `Parser_printBeMoreSpecific` —
+      a simpler, generic sibling of `Parser_askForClarification`. Full
+      writeup in
+      [overview.md](overview.md#parser_printbemorespecific-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

@@ -8345,7 +8345,7 @@ sub_13BE2       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_13CB1       proc far                ; CODE XREF: GatewayParser_speakHandler+86\u2193p
+Parser_printBeMoreSpecific proc far     ; CODE XREF: GatewayParser_speakHandler+86\u2193p
                                         ; Parser_proc6+236\u2193P
                 mov     ax, offset asc_CB97E ; "]\n"
                 push    ds
@@ -8357,7 +8357,7 @@ sub_13CB1       proc far                ; CODE XREF: GatewayParser_speakHandler+
                 call    TextWindow_add
                 add     sp, 8
                 retf
-sub_13CB1       endp
+Parser_printBeMoreSpecific endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -8819,7 +8819,7 @@ loc_1401F:                              ; CODE XREF: GatewayParser_speakHandler+
 
 loc_14061:                              ; CODE XREF: GatewayParser_speakHandler+EF\u2193j
                 push    cs
-                call    near ptr sub_13CB1
+                call    near ptr Parser_printBeMoreSpecific
                 jmp     short loc_140A7
 ; ---------------------------------------------------------------------------
 
@@ -86373,7 +86373,7 @@ seg069          segment byte public 'UNK' use16
                 assume es:nothing, ss:nothing, ds:sg4d43, fs:nothing, gs:nothing
 ; char aPleaseBeMoreSp[]
 aPleaseBeMoreSp db '[Please be more specific.%s',0
-                                        ; DATA XREF: sub_13CB1+5\u2191o
+                                        ; DATA XREF: Parser_printBeMoreSpecific+5\u2191o
                                         ; Parser_askForClarification+5C\u2191o
 aIMNotSureWh    db ' I',27h,'m not sure wh',0
                                         ; DATA XREF: Parser_askForClarification:loc_13D1B\u2191o
@@ -153402,7 +153402,7 @@ loc_611C2:                              ; CODE XREF: Parser_proc6+226\u2191j
 loc_611C7:                              ; CODE XREF: Parser_proc6+343\u2193j
                 cmp     [bp+var_6], 0
                 jz      short loc_61177
-                call    sub_13CB1
+                call    Parser_printBeMoreSpecific
                 jmp     short loc_611A3
 ; ---------------------------------------------------------------------------
 
@@ -387073,7 +387073,7 @@ a?              db '?]',0Ah,0           ; DATA XREF: whatDoYouWant:loc_13BD0\u21
 aThe_6          db 'the ',0             ; DATA XREF: sub_13BE2+A7\u2191o
 ; char aS_7[]
 aS_7            db '%s]',0Ah,0          ; DATA XREF: sub_13BE2+C1\u2191o
-asc_CB97E       db ']',0Ah,0            ; DATA XREF: sub_13CB1\u2191o
+asc_CB97E       db ']',0Ah,0            ; DATA XREF: Parser_printBeMoreSpecific\u2191o
 ; char aAt[]
 aAt             db 'at',0               ; DATA XREF: Parser_askForClarification:loc_13D64\u2191o
 ; char aYouMeanBy[]

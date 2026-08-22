@@ -3332,3 +3332,15 @@ resets the state byte again — tearing down whatever per-track state
 that bit range represents for this backend.
 
 Applied via `apply_renames_gatemain.py`'s ninety-sixth batch.
+
+### `Parser_printBeMoreSpecific` named
+
+Moved to `sub_13CB1` (2 callers) — prints the literal message
+`"[Please be more specific.%s]\n"` via `TextWindow_add`. Called from
+the already-named `GatewayParser_speakHandler` and `Parser_proc6` — a
+simpler, generic sibling of the already-named
+`Parser_askForClarification` (which fills in a specific ambiguous
+word), used when the parser needs to ask for clarification without a
+particular word to reference.
+
+Applied via `apply_renames_gatemain.py`'s ninety-seventh batch.
