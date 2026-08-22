@@ -801,6 +801,11 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       backend, gated by a bit in the shared `word_C8582` state word
       whose exact backend wasn't pinned down. Full writeup in
       [overview.md](overview.md#sound_initplaybacktiming-named).
+- [x] Named `sub_203D6` (3 callers) → `Sound_getElapsedPlaybackTime` —
+      the elapsed-time query half of the same per-track timing
+      mechanism, sharing both callers with `Sound_initPlaybackTiming`.
+      Full writeup in
+      [overview.md](overview.md#sound_getelapsedplaybacktime-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

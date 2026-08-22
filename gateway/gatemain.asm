@@ -34351,7 +34351,7 @@ loc_1E81F:                              ; CODE XREF: sub_1E7D4+11\u2191j
                 mov     es, dseg_12
                 cmp     es:word_C857E, 0
                 jnz     short loc_1E869
-                call    sub_203D6
+                call    Sound_getElapsedPlaybackTime
                 mov     es, dseg_17
                 mov     cx, es:word_C857A
                 sub     cx, 0C8h ; 'È'
@@ -35636,7 +35636,7 @@ arg_0           = word ptr  6
 
 loc_1F204:
                 jnz     short loc_1F22C
-                call    sub_203D6
+                call    Sound_getElapsedPlaybackTime
                 mov     es, dseg_37
                 mov     cx, es:word_C857A
                 sub     cx, 0C8h ; 'È'
@@ -38004,7 +38004,7 @@ Sound_initPlaybackTiming endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_203D6       proc far                ; CODE XREF: sub_1E7D4+6F\u2191P
+Sound_getElapsedPlaybackTime proc far   ; CODE XREF: sub_1E7D4+6F\u2191P
                                         ; sub_1F1DE+28\u2191P ...
                 test    byte ptr word_C8582, 4
                 mov     ax, 3E8h
@@ -38021,7 +38021,7 @@ sub_203D6       proc far                ; CODE XREF: sub_1E7D4+6F\u2191P
                 push    ax
                 call    __aFuldiv
                 retf
-sub_203D6       endp
+Sound_getElapsedPlaybackTime endp
 
 ; ---------------------------------------------------------------------------
                 push    bp
@@ -38049,7 +38049,7 @@ loc_2041E:                              ; CODE XREF: seg029:0799\u2191j
 loc_2042E:                              ; CODE XREF: seg029:07AB\u2191j
                 mov     [bp-2], ax
                 push    cs
-                call    near ptr sub_203D6
+                call    near ptr Sound_getElapsedPlaybackTime
                 cmp     [bp-2], ax
                 jnb     short loc_20442
                 mov     ax, 1

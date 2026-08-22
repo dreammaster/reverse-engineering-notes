@@ -2271,6 +2271,20 @@ RENAMES = [
      "the already-named Sound_stopTrack area) -- consistent with "
      "initializing per-track playback-timing state for one specific "
      "sound backend before starting or resuming a track."),
+
+    (0x203D6, "Sound_getElapsedPlaybackTime",
+     "sub_203D6(): computes (word_C8596:word_C8598 minus a snapshot "
+     "pair, sg3EDC:_tmpSub._val7/_val8) via unsigned 32-bit subtract, "
+     "then unsigned-divides that by 1000 (__aFuldiv) and returns the "
+     "result in dx:ax. word_C8596:word_C8598 is a running clock/tick "
+     "counter; _tmpSub._val7/_val8 is a snapshot of that same counter "
+     "taken elsewhere (in sub_1EB9E, unnamed) at track-start time -- so "
+     "this computes elapsed playback time since that snapshot, scaled "
+     "down by 1000 (plausibly ms from an underlying microsecond-ish "
+     "tick, matching the just-named Sound_initPlaybackTiming's "
+     "*100000 scaling). Called from sub_1E7D4 and sub_1F1DE, the same "
+     "two unnamed callers as Sound_initPlaybackTiming -- the elapsed-"
+     "time query half of that same per-track timing mechanism."),
 ]
 
 

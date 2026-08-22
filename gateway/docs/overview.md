@@ -3171,3 +3171,22 @@ for one specific sound backend before starting or resuming a track.
 Which backend, and the exact units of the stored values, remain open.
 
 Applied via `apply_renames_gatemain.py`'s eighty-ninth batch.
+
+### `Sound_getElapsedPlaybackTime` named
+
+Moved to `sub_203D6` (3 callers) — computes `word_C8596:word_C8598`
+minus a snapshot pair (`_tmpSub._val7/_val8`) via unsigned 32-bit
+subtract, then unsigned-divides that by 1000 (`__aFuldiv`) and returns
+the result. `word_C8596:word_C8598` is a running clock/tick counter;
+`_tmpSub._val7/_val8` is a snapshot of that same counter taken
+elsewhere (in `sub_1EB9E`, unnamed) at track-start time — so this
+computes elapsed playback time since that snapshot, scaled down by
+1000 (plausibly milliseconds from an underlying microsecond-ish tick,
+matching the previous pass's `Sound_initPlaybackTiming` and its
+`*100000` scaling).
+
+Called from `sub_1E7D4` and `sub_1F1DE`, the same two unnamed callers
+as `Sound_initPlaybackTiming` — the elapsed-time query half of that
+same per-track timing mechanism.
+
+Applied via `apply_renames_gatemain.py`'s ninetieth batch.
