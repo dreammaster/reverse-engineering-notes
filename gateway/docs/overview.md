@@ -3905,3 +3905,16 @@ sets a listbox item's region value/style (plausibly selected vs.
 unselected appearance) and immediately refills it.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-twenty-sixth batch.
+
+### `ScalePic_scaleCoordinate` named
+
+Moved to `sub_25C52` (2 callers) — if `direction` is -1, returns the
+value scaled by 3/4; if `direction` is 1, returns the value scaled by
+4/3 (the reciprocal); any other direction returns the value unchanged.
+
+Called from the already-named `scale_pic` (which prints
+`" scale_pic : EGA -> VGA disabled "` when refusing to scale) — the
+coordinate/dimension scaling primitive behind its EGA↔VGA
+picture-scaling conversion.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-twenty-seventh batch.

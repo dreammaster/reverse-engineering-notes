@@ -50706,7 +50706,7 @@ sub_25BCE       endp
 
 ; Attributes: bp-based frame
 
-sub_25C52       proc far                ; CODE XREF: scale_pic+44\u2193p
+ScalePic_scaleCoordinate proc far       ; CODE XREF: scale_pic+44\u2193p
                                         ; scale_pic+58\u2193p ...
 
 arg_0           = word ptr  6
@@ -50722,7 +50722,7 @@ arg_2           = word ptr  8
                 jmp     short loc_25C8D
 ; ---------------------------------------------------------------------------
 
-loc_25C64:                              ; CODE XREF: sub_25C52+9\u2191j
+loc_25C64:                              ; CODE XREF: ScalePic_scaleCoordinate+9\u2191j
                 mov     ax, [bp+arg_2]
                 cwd
                 mov     cx, 4
@@ -50742,16 +50742,16 @@ loc_25C64:                              ; CODE XREF: sub_25C52+9\u2191j
                 add     ax, cx
                 add     ax, bx
 
-loc_25C8A:                              ; CODE XREF: sub_25C52+4D\u2193j
+loc_25C8A:                              ; CODE XREF: ScalePic_scaleCoordinate+4D\u2193j
                 mov     [bp+arg_2], ax
 
-loc_25C8D:                              ; CODE XREF: sub_25C52+10\u2191j
+loc_25C8D:                              ; CODE XREF: ScalePic_scaleCoordinate+10\u2191j
                 mov     ax, [bp+arg_2]
                 pop     bp
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_25C92:                              ; CODE XREF: sub_25C52+E\u2191j
+loc_25C92:                              ; CODE XREF: ScalePic_scaleCoordinate+E\u2191j
                 mov     ax, [bp+arg_2]
                 shl     ax, 1
                 shl     ax, 1
@@ -50759,7 +50759,7 @@ loc_25C92:                              ; CODE XREF: sub_25C52+E\u2191j
                 mov     cx, 3
                 idiv    cx
                 jmp     short loc_25C8A
-sub_25C52       endp
+ScalePic_scaleCoordinate endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -50808,14 +50808,14 @@ loc_25CB6:                              ; CODE XREF: scale_pic+F\u2191j
                 push    [bp+var_A]
                 push    [bp+var_E]
                 push    cs
-                call    near ptr sub_25C52
+                call    near ptr ScalePic_scaleCoordinate
                 add     sp, 4
                 les     bx, [bp+arg_0]
                 mov     es:[bx+4], ax
                 push    [bp+var_C]
                 push    [bp+var_E]
                 push    cs
-                call    near ptr sub_25C52
+                call    near ptr ScalePic_scaleCoordinate
                 add     sp, 4
                 les     bx, [bp+arg_0]
                 sub     ax, es:[bx+4]
@@ -52005,7 +52005,7 @@ frameNumber     = word ptr  0Ch
                 push    es:pic_header._height
                 push    [bp+var_2]
                 push    cs
-                call    near ptr sub_25C52
+                call    near ptr ScalePic_scaleCoordinate
                 add     sp, 4
                 les     bx, [bp+pic]
                 assume es:nothing
@@ -52015,7 +52015,7 @@ frameNumber     = word ptr  0Ch
                 push    pic_draw_position.y
                 push    [bp+var_2]
                 push    cs
-                call    near ptr sub_25C52
+                call    near ptr ScalePic_scaleCoordinate
                 add     sp, 4
                 les     bx, [bp+pic]
                 mov     es:[bx+Picture.field_2], ax

@@ -2918,6 +2918,17 @@ RENAMES = [
      "the already-named Listbox_add and Listbox_reset -- sets a "
      "listbox item's region value/style (plausibly selected vs. "
      "unselected appearance) and immediately refills it."),
+
+    (0x25C52, "ScalePic_scaleCoordinate",
+     "sub_25C52(direction, value): if direction==0xFFFF (-1), returns "
+     "3*(value/4) + value%4 -- i.e. value scaled by 3/4 (using two "
+     "different truncating-division computations of the same "
+     "quotient, redundantly). If direction==1, returns (value*4)/3 -- "
+     "the reciprocal 4/3 scale. Any other direction returns value "
+     "unchanged. Called from the already-named scale_pic (which "
+     "prints ' scale_pic : EGA -> VGA disabled ' when refusing to "
+     "scale) -- the coordinate/dimension scaling primitive behind "
+     "its EGA<->VGA picture-scaling conversion."),
 ]
 
 
