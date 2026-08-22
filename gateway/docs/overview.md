@@ -4321,3 +4321,46 @@ swim/dive/fall-in-water puzzle where carried items sink to the pond
 floor.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-forty-second batch.
+
+### `Logics_travelViaTransitDisk` named — Gateway's Heechee teleportation mechanic
+
+`sub_907ED` (3 callers, and itself one of `sub_14A5F`'s callers).
+Confirmed via its own `GATESTR.DAT` message (`0x5421`) as the core
+function behind Gateway's signature **Heechee transit-disk
+teleportation network**: *"...the world around you fades to black,
+leaving you in a dark empty space. A moment later, the world fades
+back in and you find yourself on a metal disk similar to the one you
+just stood on at%s."* — the `%s` filled in via `printObjLower` from
+the *departing* room, which the function saves into `Persisted_val1`
+right before switching rooms.
+
+`Logics_travelViaTransitDisk(newRoomOrId, printAltMsgFlag)`:
+
+1. Fires the leaving-room hook (`Logic_call(_roomLogicNum,
+   action=0xF)`) and snapshots the departing room into
+   `Persisted_val1`.
+2. Sets `_roomLogicNum` to `newRoomOrId` — or to `unk_C8152` if
+   `newRoomOrId` is the special value `0x230`.
+3. Reassigns the already-confirmed player logic (`0xD3`) to handler
+   `0x235` or `0x236` (two container variants, chosen by whether the
+   destination is `0x230`) via the already-named
+   `j_Logics_updateHandler`.
+4. Optionally prints message `0x61F0` if `printAltMsgFlag` is set —
+   not independently decoded this pass.
+5. Prints the fade-to-black/transit-disk arrival narration above.
+6. Picks a room-description variant (`9`-`0xC`, from `Persisted_val2`
+   and a room bit via the already-named `Logics_getBit`) and calls
+   `sub_14A5F(_roomLogicNum, variant)` — the same shared room-look
+   helper the already-named `Logics_lookAtCurrentRoom` calls.
+7. Fires the entering-room hook (`Logic_call(_roomLogicNum,
+   action=0xE)`).
+8. On first arrival at room `0x232` specifically, awards a one-time
+   score bonus via the already-established
+   `Logics_getTakeScore`/`Score_add`/`Logics_setTakeScore` pattern — a
+   "reached this location" discovery bonus.
+
+A genuinely satisfying confirmation of one of Gateway's most
+recognizable mechanics, found purely by following up an ordinary
+3-caller ranked-list entry.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-forty-third batch.

@@ -89391,6 +89391,7 @@ static Bytes_16(void) {
 	create_insn	(0X907E4);
 	create_insn	(0X907E9);
 	create_insn	(0X907ED);
+	set_name	(0X907ED,	"Logics_travelViaTransitDisk");
 	create_insn	(x=0X907F0);
 	op_hex		(x,	1);
 	set_cmt	(0X907F6,	"action",	0);
@@ -92985,9 +92986,6 @@ static Bytes_16(void) {
 	create_insn	(x=0X95C9D);
 	op_hex		(x,	1);
 	set_cmt	(0X95CAB,	"msg",	0);
-	create_insn	(x=0X95CB1);
-	op_hex		(x,	1);
-	set_cmt	(0X95CBB,	"msg",	0);
 }
 
 //------------------------------------------------------------------------
@@ -92997,6 +92995,9 @@ static Bytes_17(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X95CB1);
+	op_hex		(x,	1);
+	set_cmt	(0X95CBB,	"msg",	0);
 	create_insn	(x=0X95CC1);
 	op_hex		(x,	1);
 	set_cmt	(0X95CC6,	"newId",	0);
@@ -98832,8 +98833,6 @@ static Bytes_17(void) {
 	op_hex		(x,	1);
 	set_cmt	(0X9E22C,	"index",	0);
 	set_cmt	(0X9E230,	"logicNum",	0);
-	create_insn	(x=0X9E236);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -98843,6 +98842,8 @@ static Bytes_18(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X9E236);
+	op_hex		(x,	1);
 	create_insn	(0X9E242);
 	set_cmt	(0X9E246,	"char",	0);
 	set_cmt	(0X9E24E,	"msg",	0);
@@ -104626,7 +104627,6 @@ static Bytes_18(void) {
 	op_hex		(x,	1);
 	set_cmt	(0XA6DCD,	"newId",	0);
 	set_cmt	(0XA6DD2,	"handlerId",	0);
-	set_cmt	(0XA6DDA,	"logicNum",	0);
 }
 
 //------------------------------------------------------------------------
@@ -104636,6 +104636,7 @@ static Bytes_19(void) {
         auto x;
 #define id x
 
+	set_cmt	(0XA6DDA,	"logicNum",	0);
 	create_insn	(x=0XA6DE0);
 	op_hex		(x,	1);
 	create_insn	(0XA6DE5);

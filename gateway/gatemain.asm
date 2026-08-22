@@ -254077,7 +254077,7 @@ sub_907AE       endp
 
 ; Attributes: bp-based frame
 
-sub_907ED       proc far                ; CODE XREF: sub_90953+C0\u2193p
+Logics_travelViaTransitDisk proc far    ; CODE XREF: sub_90953+C0\u2193p
                                         ; sub_91398+24C\u2193p ...
 
 var_2           = word ptr -2
@@ -254105,10 +254105,10 @@ arg_2           = byte ptr  8
                 jmp     short loc_90827
 ; ---------------------------------------------------------------------------
 
-loc_90824:                              ; CODE XREF: sub_907ED+30\u2191j
+loc_90824:                              ; CODE XREF: Logics_travelViaTransitDisk+30\u2191j
                 mov     ax, offset unk_C8152
 
-loc_90827:                              ; CODE XREF: sub_907ED+35\u2191j
+loc_90827:                              ; CODE XREF: Logics_travelViaTransitDisk+35\u2191j
                 mov     es, seg_D160A
                 assume es:sg4d43
                 mov     es:_roomLogicNum, ax
@@ -254120,10 +254120,10 @@ loc_90827:                              ; CODE XREF: sub_907ED+35\u2191j
                 jmp     short loc_90844
 ; ---------------------------------------------------------------------------
 
-loc_90841:                              ; CODE XREF: sub_907ED+4D\u2191j
+loc_90841:                              ; CODE XREF: Logics_travelViaTransitDisk+4D\u2191j
                 mov     ax, 236h
 
-loc_90844:                              ; CODE XREF: sub_907ED+52\u2191j
+loc_90844:                              ; CODE XREF: Logics_travelViaTransitDisk+52\u2191j
                 push    ax              ; handlerId
                 mov     ax, 0D3h ; 'Ó'
                 push    ax              ; logicNum
@@ -254141,17 +254141,17 @@ loc_90844:                              ; CODE XREF: sub_907ED+52\u2191j
                 call    TextWindow_add
                 add     sp, 4
 
-loc_9086F:                              ; CODE XREF: sub_907ED+73\u2191j
+loc_9086F:                              ; CODE XREF: Logics_travelViaTransitDisk+73\u2191j
                 cmp     [bp+arg_0], 230h
                 jnz     short loc_9087B
                 mov     ax, 232h
                 jmp     short loc_9087E
 ; ---------------------------------------------------------------------------
 
-loc_9087B:                              ; CODE XREF: sub_907ED+87\u2191j
+loc_9087B:                              ; CODE XREF: Logics_travelViaTransitDisk+87\u2191j
                 mov     ax, 230h
 
-loc_9087E:                              ; CODE XREF: sub_907ED+8C\u2191j
+loc_9087E:                              ; CODE XREF: Logics_travelViaTransitDisk+8C\u2191j
                 push    ax
                 call    printObjLower
                 add     sp, 2
@@ -254170,14 +254170,14 @@ loc_9087E:                              ; CODE XREF: sub_907ED+8C\u2191j
                 jmp     short loc_908E0
 ; ---------------------------------------------------------------------------
 
-loc_908AC:                              ; CODE XREF: sub_907ED+B6\u2191j
+loc_908AC:                              ; CODE XREF: Logics_travelViaTransitDisk+B6\u2191j
                 cmp     es:Persisted_val2, 0
                 jnz     short loc_908BB
                 mov     [bp+var_2], 0Ch
                 jmp     short loc_908E0
 ; ---------------------------------------------------------------------------
 
-loc_908BB:                              ; CODE XREF: sub_907ED+C5\u2191j
+loc_908BB:                              ; CODE XREF: Logics_travelViaTransitDisk+C5\u2191j
                 mov     ax, 2
                 push    ax              ; index
                 mov     es, seg_D160A
@@ -254190,11 +254190,11 @@ loc_908BB:                              ; CODE XREF: sub_907ED+C5\u2191j
                 jmp     short loc_908E0
 ; ---------------------------------------------------------------------------
 
-loc_908DB:                              ; CODE XREF: sub_907ED+E5\u2191j
+loc_908DB:                              ; CODE XREF: Logics_travelViaTransitDisk+E5\u2191j
                 mov     [bp+var_2], 9
 
-loc_908E0:                              ; CODE XREF: sub_907ED+BD\u2191j
-                                        ; sub_907ED+CC\u2191j ...
+loc_908E0:                              ; CODE XREF: Logics_travelViaTransitDisk+BD\u2191j
+                                        ; Logics_travelViaTransitDisk+CC\u2191j ...
                 push    [bp+var_2]
                 mov     es, seg_D160A
                 push    es:_roomLogicNum
@@ -254230,12 +254230,12 @@ loc_908E0:                              ; CODE XREF: sub_907ED+BD\u2191j
                 call    Logics_setTakeScore
                 add     sp, 4
 
-loc_9094F:                              ; CODE XREF: sub_907ED+12C\u2191j
-                                        ; sub_907ED+13C\u2191j
+loc_9094F:                              ; CODE XREF: Logics_travelViaTransitDisk+12C\u2191j
+                                        ; Logics_travelViaTransitDisk+13C\u2191j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_907ED       endp
+Logics_travelViaTransitDisk endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -254337,7 +254337,7 @@ loc_90A0E:                              ; CODE XREF: sub_90953+B4\u2191j
 loc_90A11:                              ; CODE XREF: sub_90953+B9\u2191j
                 push    ax
                 push    cs
-                call    near ptr sub_907ED
+                call    near ptr Logics_travelViaTransitDisk
                 add     sp, 4
 
 loc_90A19:                              ; CODE XREF: sub_90953+37\u2191j
@@ -255884,7 +255884,7 @@ loc_91592:                              ; CODE XREF: sub_91398+1D2\u2191j
                 mov     ax, 232h
                 push    ax
                 push    cs
-                call    near ptr sub_907ED
+                call    near ptr Logics_travelViaTransitDisk
                 jmp     loc_91482
 ; ---------------------------------------------------------------------------
 
@@ -256711,7 +256711,7 @@ loc_91C59:                              ; CODE XREF: sub_91A6F+1C2\u2191j
                 mov     ax, 232h
                 push    ax
                 push    cs
-                call    near ptr sub_907ED
+                call    near ptr Logics_travelViaTransitDisk
                 jmp     loc_91B5E
 ; ---------------------------------------------------------------------------
 
@@ -382839,7 +382839,7 @@ word_C8093      dw 57FEh
                 db    1
                 db    2
                 db    3
-unk_C8152       db    4                 ; DATA XREF: sub_907ED:loc_90824\u2191o
+unk_C8152       db    4                 ; DATA XREF: Logics_travelViaTransitDisk:loc_90824\u2191o
                 db    5
                 db    6
                 db    7
@@ -394892,10 +394892,10 @@ seg_D1604       dw seg sg3EDC           ; DATA XREF: sub_90150+52\u2191r
 seg_D1606       dw seg sg3EDC           ; DATA XREF: sub_90150+2F3\u2191r
                                         ; sub_9046F+A5\u2191r ...
 seg_D1608       dw seg seg083           ; DATA XREF: sub_9065C+2C\u2191r
-seg_D160A       dw seg sg4d43           ; DATA XREF: sub_907ED+A\u2191r
-                                        ; sub_907ED+1B\u2191r ...
-seg_D160C       dw seg sg3EDC           ; DATA XREF: sub_907ED+23\u2191r
-seg_D160E       dw seg sg4d43           ; DATA XREF: sub_907ED+AC\u2191r
+seg_D160A       dw seg sg4d43           ; DATA XREF: Logics_travelViaTransitDisk+A\u2191r
+                                        ; Logics_travelViaTransitDisk+1B\u2191r ...
+seg_D160C       dw seg sg3EDC           ; DATA XREF: Logics_travelViaTransitDisk+23\u2191r
+seg_D160E       dw seg sg4d43           ; DATA XREF: Logics_travelViaTransitDisk+AC\u2191r
 seg_D1610       dw seg sg3EDC           ; DATA XREF: sub_92132+2D\u2191r
 seg_D1612       dw seg sg4d43           ; DATA XREF: sub_92247:loc_92258\u2191r
 seg_D1614       dw seg sg3EDC           ; DATA XREF: sub_9240C:loc_92450\u2191r

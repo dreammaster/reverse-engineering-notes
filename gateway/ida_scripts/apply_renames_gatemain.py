@@ -3261,6 +3261,32 @@ RENAMES = [
      "accessory falling together. Called from sub_7AE5A and sub_7D26B "
      "-- the 'you drop this into the pond, it sinks to the bottom' "
      "event, presumably reached from a swim/dive/fall-in-water puzzle."),
+
+    (0x907ED, "Logics_travelViaTransitDisk",
+     "sub_907ED(newRoomOrId, printAltMsgFlag): confirmed via its own "
+     "GATESTR.DAT arrival message (0x5421) as Gateway's signature "
+     "Heechee transit-disk teleportation mechanic: '...the world around "
+     "you fades to black, leaving you in a dark empty space. A moment "
+     "later, the world fades back in and you find yourself on a metal "
+     "disk similar to the one you just stood on at%s.' Fires the "
+     "leaving-room hook (Logic_call(_roomLogicNum, action=0xF)), saves "
+     "the departing room into Persisted_val1 (read back later as the "
+     "'%s' in the arrival message via printObjLower), sets "
+     "_roomLogicNum to newRoomOrId (or to unk_C8152 if newRoomOrId is "
+     "the special value 0x230), and reassigns the already-confirmed "
+     "player logic 0xD3 to handler 0x235 or 0x236 (two container "
+     "variants, chosen by whether the destination is 0x230) via the "
+     "already-named j_Logics_updateHandler. Optionally prints message "
+     "0x61F0 if printAltMsgFlag is set (not independently decoded this "
+     "pass). Then computes a room-description variant (9-0xC, from "
+     "Persisted_val2 and a room bit via the already-named Logics_getBit) "
+     "and calls sub_14A5F(_roomLogicNum, variant) -- the shared room-"
+     "look helper Logics_lookAtCurrentRoom also calls -- fires the "
+     "entering-room hook (action=0xE), and, on first arrival at room "
+     "0x232 specifically, awards a one-time score bonus via the "
+     "already-named Logics_getTakeScore/Score_add/Logics_setTakeScore "
+     "pattern. The core 'ride a transit disk to another location' "
+     "function underlying Gateway's teleportation network."),
 ]
 
 

@@ -1044,6 +1044,12 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       flagged unidentified in `Logics_checkMoveRestriction`) is a
       vehicle/harness-type object. Full writeup in
       [overview.md](overview.md#logics_dropintopond-named).
+- [x] Named `sub_907ED` → `Logics_travelViaTransitDisk` — confirmed via
+      its own message as the core function behind Gateway's signature
+      Heechee transit-disk teleportation network (leaving/entering-room
+      hooks, room-look dispatch, and a first-arrival score bonus). Full
+      writeup in
+      [overview.md](overview.md#logics_travelviatransitdisk-named--gateways-heechee-teleportation-mechanic).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-
