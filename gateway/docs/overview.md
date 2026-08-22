@@ -3875,3 +3875,19 @@ Called twice from the already-named `Mouse_init` — the mouse cursor's
 own surface-allocation-plus-initial-centering setup step.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-twenty-fourth batch.
+
+### `Mouse_pollDriverState` named
+
+Moved to `sub_24FAE` (2 callers) — if the DOS mouse driver is present
+(per the already-named `mouseState`), calls `INT 33h AH=3` (the
+standard "get mouse position and button status" mouse-driver call),
+then halves the returned x position if in video mode 3 (that mode's
+coordinate space is twice as wide as the internal one), and passes the
+resulting (x, y) to the already-named `Commset_btn_setMouse`.
+
+Called from the already-named `Mouse_pollPosition` and
+`get_mouse_buttons` — the shared low-level "read the real DOS mouse
+driver and feed its position into the game's own mouse state"
+primitive.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-twenty-fifth batch.

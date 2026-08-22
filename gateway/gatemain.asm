@@ -48840,7 +48840,7 @@ has_mouse_moved endp
 ; Attributes: bp-based frame
 
 ; void __cdecl __far Commset_btn_setMouse(int xp, int yp)
-Commset_btn_setMouse proc far           ; CODE XREF: sub_24FAE+43\u2193p
+Commset_btn_setMouse proc far           ; CODE XREF: Mouse_pollDriverState+43\u2193p
                                         ; sub_25216+11A\u2193p ...
 
 showFlag        = byte ptr -10h
@@ -48947,7 +48947,7 @@ Commset_btn_setMouse endp
 
 ; Attributes: bp-based frame
 
-sub_24FAE       proc far                ; CODE XREF: Mouse_pollPosition+A0\u2193p
+Mouse_pollDriverState proc far          ; CODE XREF: Mouse_pollPosition+A0\u2193p
                                         ; get_mouse_buttons+13\u2193p
 
 regs            = REGS ptr -0Eh
@@ -48978,20 +48978,20 @@ regs            = REGS ptr -0Eh
                 jmp     short loc_24FEF
 ; ---------------------------------------------------------------------------
 
-loc_24FEC:                              ; CODE XREF: sub_24FAE+35\u2191j
+loc_24FEC:                              ; CODE XREF: Mouse_pollDriverState+35\u2191j
                 mov     ax, [bp+regs._cx]
 
-loc_24FEF:                              ; CODE XREF: sub_24FAE+3C\u2191j
+loc_24FEF:                              ; CODE XREF: Mouse_pollDriverState+3C\u2191j
                 push    ax              ; xp
                 push    cs
                 call    near ptr Commset_btn_setMouse
                 add     sp, 4
 
-loc_24FF7:                              ; CODE XREF: sub_24FAE+B\u2191j
+loc_24FF7:                              ; CODE XREF: Mouse_pollDriverState+B\u2191j
                 mov     sp, bp
                 pop     bp
                 retf
-sub_24FAE       endp
+Mouse_pollDriverState endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -49082,7 +49082,7 @@ loc_25093:                              ; CODE XREF: Mouse_pollPosition+27\u2191
                 test    byte ptr mouseState, 38h
                 jz      short loc_250ED
                 push    cs
-                call    near ptr sub_24FAE
+                call    near ptr Mouse_pollDriverState
                 mov     [bp+regs._ax], 3
                 lea     ax, [bp+regs]
                 push    ss
@@ -49166,7 +49166,7 @@ regs            = REGS ptr -0Eh
                 test    byte ptr mouseState, 28h
                 jz      short loc_25156
                 push    cs
-                call    near ptr sub_24FAE
+                call    near ptr Mouse_pollDriverState
                 mov     [bp+regs._ax], 3
                 lea     ax, [bp+regs]
                 push    ss

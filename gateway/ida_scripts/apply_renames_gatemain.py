@@ -2894,6 +2894,18 @@ RENAMES = [
      "(_ScreenBottom - height)/2. Called (twice) from the already-"
      "named Mouse_init -- the mouse cursor's own surface-allocation-"
      "plus-initial-centering setup step."),
+
+    (0x24FAE, "Mouse_pollDriverState",
+     "sub_24FAE(): if bit 3 of the already-named mouseState is set "
+     "(the DOS mouse driver is present), calls INT 33h AH=3 (the "
+     "standard 'get mouse position and button status' mouse-driver "
+     "call) via _int86, then halves the returned cx (x position) if "
+     "in video mode 3 (that mode's coordinate space is twice as wide "
+     "as the internal one), and passes the resulting (x, y) to the "
+     "already-named Commset_btn_setMouse. Called from the already-"
+     "named Mouse_pollPosition and get_mouse_buttons -- the shared "
+     "low-level 'read the real DOS mouse driver and feed its position "
+     "into the game's own mouse state' primitive."),
 ]
 
 

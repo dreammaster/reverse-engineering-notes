@@ -959,6 +959,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       allocates the mouse cursor's image surfaces and centers its
       initial position, called from `Mouse_init`. Full writeup in
       [overview.md](overview.md#mouse_initcursorsurfaces-named).
+- [x] Named `sub_24FAE` (2 callers) → `Mouse_pollDriverState` — the
+      shared low-level DOS mouse-driver poll (`INT 33h AH=3`) behind
+      `Mouse_pollPosition` and `get_mouse_buttons`. Full writeup in
+      [overview.md](overview.md#mouse_polldriverstate-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-
