@@ -2320,6 +2320,23 @@ RENAMES = [
      "a per-room/track table mapping a logical track ID to the "
      "specific sound-resource number to use for whichever backend "
      "(MIDI vs. other) is currently active."),
+
+    (0x1057E, "Game_refuseRestart",
+     "sub_1057E(): calls the already-named LogFile_close, frees the "
+     "currently-loaded illustration (Image_Free(img)), invokes "
+     "Logic_call(_roomLogicNum, action=24) (a pre-something room-logic "
+     "hook), reloads game state via j_load_game(1), calls "
+     "j_scene_update?, invokes Logic_call(_roomLogicNum, action=25) "
+     "(a matching post-hook), then prints the decoded literal message "
+     "'[Sorry, you can't use \"restart\" right now.]' (aSorryYouCanTUs, "
+     "referenced via aaCantRestart) and returns -1. Despite the "
+     "load_game/Logic_call bracketing looking restart-shaped, the "
+     "printed message is unambiguous: this is the handler for a "
+     "restart request the engine declines (called from the already-"
+     "named Game_endGameMenu and from sub_69EDA), most plausibly "
+     "reloading/resuming the current session rather than actually "
+     "restarting -- distinct from the already-named "
+     "Game_restartAfterDeath, which performs a real restart."),
 ]
 
 

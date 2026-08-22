@@ -721,7 +721,7 @@ get_buffer_size endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1057E       proc far                ; CODE XREF: sub_69EDA+1E\u2193P
+Game_refuseRestart proc far             ; CODE XREF: sub_69EDA+1E\u2193P
                                         ; Game_endGameMenu+1A\u2193P
                 call    LogFile_close
                 mov     ax, offset img
@@ -753,7 +753,7 @@ sub_1057E       proc far                ; CODE XREF: sub_69EDA+1E\u2193P
                 add     sp, 4
                 mov     ax, 0FFFFh
                 retf
-sub_1057E       endp
+Game_refuseRestart endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -53090,7 +53090,7 @@ Image_clearFrames endp
 ; Attributes: bp-based frame
 
 ; void __cdecl __far Image_Free(Image *img)
-Image_Free      proc far                ; CODE XREF: sub_1057E+A\u2191P
+Image_Free      proc far                ; CODE XREF: Game_refuseRestart+A\u2191P
                                         ; main+B1\u2191P ...
 
 var_2           = word ptr -2
@@ -56960,7 +56960,7 @@ LogFile_write   endp
 ; =============== S U B R O U T I N E =======================================
 
 
-LogFile_close   proc far                ; CODE XREF: sub_1057E\u2191P
+LogFile_close   proc far                ; CODE XREF: Game_refuseRestart\u2191P
                                         ; finish\u2193P ...
                 cmp     LogFile_windowNum, 0
                 jl      short locret_28840
@@ -59347,7 +59347,7 @@ TextWindow_addChar endp
 
 ; void __far TextWindow_add(const char *msg, ...)
 TextWindow_add  proc far                ; CODE XREF: Parser_perform+50\u2191P
-                                        ; sub_1057E+5B\u2191P ...
+                                        ; Game_refuseRestart+5B\u2191P ...
 
 nextChar        = byte ptr -82h
 var_80          = word ptr -80h
@@ -69516,7 +69516,7 @@ thunk_sub_674A7 endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-j_scene_update? proc far                ; CODE XREF: sub_1057E+33\u2191P
+j_scene_update? proc far                ; CODE XREF: Game_refuseRestart+33\u2191P
                                         ; main:loc_1083D\u2191P ...
                 call    near ptr rtlink_thunk
                 jmp     scene_update?
@@ -69528,7 +69528,7 @@ j_scene_update? endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-j_load_game     proc far                ; CODE XREF: sub_1057E+2B\u2191P
+j_load_game     proc far                ; CODE XREF: Game_refuseRestart+2B\u2191P
                                         ; Parser_performUndo+1C\u2191P ...
                 call    near ptr rtlink_thunk
                 jmp     load_game
@@ -170180,7 +170180,7 @@ sub_69EDA       proc far                ; CODE XREF: thunk_sub_69EDA+3\u2191J
                 add     sp, 0Ch
                 or      ax, ax
                 jz      short loc_69EFF
-                call    sub_1057E
+                call    Game_refuseRestart
                 jmp     short loc_69F0F
 ; ---------------------------------------------------------------------------
 
@@ -374185,7 +374185,7 @@ loc_C4AF7:                              ; CODE XREF: Game_endGameMenu\u2191j
                 call    near ptr sub_C48E4
                 cmp     ax, 1
                 jnz     short loc_C4AE8
-                call    sub_1057E
+                call    Game_refuseRestart
                 jmp     short loc_C4AF7
 ; ---------------------------------------------------------------------------
 
@@ -386999,8 +386999,8 @@ SAVE_FIELDS_COUNT dw 261                ; DATA XREF: Undo_allocateSnapshotBuffer
 CAPITALIZE_VOCAB_COUNT dw 12h           ; DATA XREF: whatDoYouWant+F9\u2191r
                                         ; Parser_askForClarification+EB\u2191r ...
 ; Message aaCantRestart
-aaCantRestart   dd aSorryYouCanTUs      ; DATA XREF: sub_1057E+56\u2191r
-                                        ; sub_1057E+51\u2191r
+aaCantRestart   dd aSorryYouCanTUs      ; DATA XREF: Game_refuseRestart+56\u2191r
+                                        ; Game_refuseRestart+51\u2191r
                                         ; "[Sorry, you can't use \"restart\" right"...
 ; Message off_CB912
 off_CB912       dd aThatDoesnTMake      ; DATA XREF: Parser_proc4+52\u2191r
@@ -387616,7 +387616,7 @@ is_mouse_input_mode dw 0                ; DATA XREF: Events_waitForPress:loc_5C7
                                         ; Events_waitForPress+6F\u2191w ...
 ; Image img
 img             db 20h dup(0)           ; DATA XREF: get_buffer_size+2C\u2191r
-                                        ; sub_1057E+5\u2191o ...
+                                        ; Game_refuseRestart+5\u2191o ...
 word_CBD22      dw 0                    ; DATA XREF: show_memory_info:loc_6AC76\u2191r
 word_CBD24      dw 0                    ; DATA XREF: show_memory_info+72\u2191r
                 db    0
@@ -393658,7 +393658,7 @@ dseg_70         dw seg sg4d43           ; DATA XREF: Parser_perform:loc_1037D\u2
                                         ; Parser_perform+1F0\u2191r ...
 dseg_71         dw seg sg4d43           ; DATA XREF: get_buffer_size+15\u2191r
                                         ; seg092:1F13\u2191r
-dseg_72         dw seg sg4d43           ; DATA XREF: sub_1057E+4D\u2191r
+dseg_72         dw seg sg4d43           ; DATA XREF: Game_refuseRestart+4D\u2191r
 dseg_73         dw seg sg4d43           ; DATA XREF: Parser_performUndo\u2191r
 dseg_74         dw seg sg4d43           ; DATA XREF: Parser_performUndo+C\u2191r
                                         ; Parser_performUndo:loc_10609\u2191r

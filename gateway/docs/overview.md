@@ -3231,3 +3231,23 @@ sound-resource number to use for whichever backend (MIDI vs. other) is
 currently active.
 
 Applied via `apply_renames_gatemain.py`'s ninety-second batch.
+
+### `Game_refuseRestart` named
+
+Moved to `sub_1057E` (2 callers) — calls the already-named
+`LogFile_close`, frees the currently-loaded illustration, invokes a
+pre-hook to the current room's logic (`Logic_call(_roomLogicNum,
+action=24)`), reloads game state via `load_game(1)`, redraws, invokes
+a matching post-hook (`action=25`), then prints the decoded literal
+message `"[Sorry, you can't use \"restart\" right now.]"` and returns
+-1.
+
+Despite the `load_game`/`Logic_call` bracketing looking restart-shaped,
+the printed message is unambiguous: this is the handler for a restart
+request the engine declines — called from the already-named
+`Game_endGameMenu` and from `sub_69EDA` — most plausibly reloading or
+resuming the current session rather than actually restarting, distinct
+from the already-named `Game_restartAfterDeath`, which performs a real
+restart.
+
+Applied via `apply_renames_gatemain.py`'s ninety-third batch.
