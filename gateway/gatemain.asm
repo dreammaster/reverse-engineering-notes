@@ -14475,7 +14475,7 @@ Windows_setCurrentWindow endp
 
 ; Attributes: bp-based frame
 
-sub_169A6       proc far                ; CODE XREF: sub_1796D+23\u2193p
+Windows_switchListboxWindow proc far    ; CODE XREF: sub_1796D+23\u2193p
                                         ; get_mouse_input+3AF\u2193P
 
 arg_0           = word ptr  6
@@ -14493,7 +14493,7 @@ loc_169B7:                              ; CODE XREF: seg102:0188\u2193P
                                         ; sub_4A95A+D4\u2193P ...
                 add     sp, 2
 
-loc_169BA:                              ; CODE XREF: sub_169A6+44\u2193j
+loc_169BA:                              ; CODE XREF: Windows_switchListboxWindow+44\u2193j
                 cmp     [bp+arg_0], 0
                 jle     short loc_169D3
                 inc     Windows_currentWindow
@@ -14503,13 +14503,13 @@ loc_169BA:                              ; CODE XREF: sub_169A6+44\u2193j
                 jmp     short loc_169DF
 ; ---------------------------------------------------------------------------
 
-loc_169D3:                              ; CODE XREF: sub_169A6+18\u2191j
+loc_169D3:                              ; CODE XREF: Windows_switchListboxWindow+18\u2191j
                 dec     Windows_currentWindow
                 jns     short loc_169DF
                 mov     Windows_currentWindow, 5
 
-loc_169DF:                              ; CODE XREF: sub_169A6+23\u2191j
-                                        ; sub_169A6+2B\u2191j ...
+loc_169DF:                              ; CODE XREF: Windows_switchListboxWindow+23\u2191j
+                                        ; Windows_switchListboxWindow+2B\u2191j ...
                 mov     bx, Windows_currentWindow
                 shl     bx, 1
                 cmp     Windows_listboxIndex[bx], 0
@@ -14520,10 +14520,10 @@ loc_169DF:                              ; CODE XREF: sub_169A6+23\u2191j
                 call    near ptr Listbox_draw
                 add     sp, 2
 
-loc_169F7:                              ; CODE XREF: sub_169A6+8\u2191j
+loc_169F7:                              ; CODE XREF: Windows_switchListboxWindow+8\u2191j
                 pop     bp
                 retf
-sub_169A6       endp
+Windows_switchListboxWindow endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -16717,7 +16717,7 @@ loc_1798B:                              ; CODE XREF: sub_1796D+19\u2191j
 loc_1798E:                              ; CODE XREF: sub_1796D+2E\u2193j
                 push    ax
                 push    cs
-                call    near ptr sub_169A6
+                call    near ptr Windows_switchListboxWindow
 
 loc_17993:                              ; CODE XREF: sub_1796D+38\u2193j
                 add     sp, 2
@@ -144643,7 +144643,7 @@ loc_5D9D6:                              ; CODE XREF: get_mouse_input+39C\u2191j
                 jnz     short loc_5D97A
                 mov     ax, 1
                 push    ax
-                call    sub_169A6
+                call    Windows_switchListboxWindow
                 add     sp, 2
                 mov     [bp+var_E], 0
                 jmp     short loc_5D97A

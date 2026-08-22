@@ -849,6 +849,11 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       core action/verb-ID dispatch primitive called from
       `Parser_perform`. Full writeup in
       [overview.md](overview.md#parser_callactionhandler-named).
+- [x] Named `sub_169A6` (2 callers) → `Windows_switchListboxWindow` —
+      the "cycle focus to the next/previous listbox window"
+      navigation primitive. Full writeup in
+      [overview.md](overview.md#windows_switchlistboxwindow-named).
+      (100th naming batch this project.)
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

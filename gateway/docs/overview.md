@@ -3376,3 +3376,18 @@ dispatch pattern seen elsewhere (`sub_1234F`/`sub_123A1`, left unnamed
 due to corrupted disassembly) but using its own separate table.
 
 Applied via `apply_renames_gatemain.py`'s ninety-ninth batch.
+
+### `Windows_switchListboxWindow` named
+
+Moved to `sub_169A6` (2 callers) — no-ops if `Windows_currentWindow`
+is negative. Otherwise redraws the current listbox deselected, then
+steps `Windows_currentWindow` forward or backward (wrapping through
+the 6 window slots 0-5, direction chosen by the sign of its argument)
+until landing on one whose `Windows_listboxIndex[]` entry indicates it
+actually has a listbox, then redraws that window's listbox selected.
+
+Called from the already-named `get_mouse_input` and from `sub_1796D`
+— the "switch focus to the next/previous listbox window" navigation
+primitive, e.g. Tab/Shift-Tab-style cycling between listbox windows.
+
+Applied via `apply_renames_gatemain.py`'s hundredth batch.

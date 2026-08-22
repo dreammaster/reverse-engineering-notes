@@ -2451,6 +2451,19 @@ RENAMES = [
      "dispatch pattern seen elsewhere (sub_1234F/sub_123A1, not "
      "renamed there due to corrupted disassembly) but using its own "
      "separate table."),
+
+    (0x169A6, "Windows_switchListboxWindow",
+     "sub_169A6(direction): no-ops if Windows_currentWindow < 0. "
+     "Otherwise redraws the current listbox deselected "
+     "(Listbox_draw(0)), then steps Windows_currentWindow forward "
+     "(direction>0, wrapping 5->0) or backward (direction<=0, "
+     "wrapping 0->5) through the 6 window slots (0-5) until landing "
+     "on one whose Windows_listboxIndex[] entry is >=0 (i.e. actually "
+     "has a listbox), then redraws that window's listbox selected "
+     "(Listbox_draw(1)). Called from the already-named get_mouse_input "
+     "and from sub_1796D -- the 'switch focus to the next/previous "
+     "listbox window' navigation primitive (e.g. Tab/Shift-Tab-style "
+     "cycling between listbox windows)."),
 ]
 
 
