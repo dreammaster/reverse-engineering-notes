@@ -29854,7 +29854,7 @@ loc_1CC32:                              ; CODE XREF: seg020:002E\u2191j
 ; Attributes: bp-based frame
 
 sub_1CC34       proc far                ; CODE XREF: sub_1E329+7A\u2193P
-                                        ; sub_1E974+F\u2193P
+                                        ; Opl2_stopTrack+F\u2193P
 
 arg_0           = word ptr  6
 
@@ -33291,7 +33291,7 @@ sub_1E124       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1E136       proc far                ; CODE XREF: sub_1E974+2A\u2193p
+sub_1E136       proc far                ; CODE XREF: Opl2_stopTrack+2A\u2193p
                 cmp     byte_C850C, 0
                 jz      short loc_1E142
                 call    sub_1CCA0
@@ -34511,7 +34511,7 @@ loc_1E967:                              ; CODE XREF: sub_1E950+11\u2191j
 
 loc_1E96C:                              ; CODE XREF: sub_1E950+5\u2191j
                 push    cs
-                call    near ptr sub_1E974
+                call    near ptr Opl2_stopTrack
                 sub     ax, ax
                 retf
 sub_1E950       endp
@@ -34523,7 +34523,7 @@ sub_1E950       endp
 
 ; Attributes: bp-based frame
 
-sub_1E974       proc far                ; CODE XREF: sub_1E950+1D\u2191p
+Opl2_stopTrack  proc far                ; CODE XREF: sub_1E950+1D\u2191p
                                         ; Sound_stopTrack+B9\u2193P
 
 var_6           = dword ptr -6
@@ -34546,12 +34546,12 @@ var_2           = word ptr -2
                 push    cs
                 call    near ptr sub_1E136
 
-loc_1E9A1:                              ; CODE XREF: sub_1E974+27\u2191j
+loc_1E9A1:                              ; CODE XREF: Opl2_stopTrack+27\u2191j
                 sub     si, si
                 mov     word ptr [bp+var_6], offset _tmpSub._sub._val2
                 mov     word ptr [bp+var_6+2], seg sg3EDC
 
-loc_1E9AD:                              ; CODE XREF: sub_1E974+5E\u2193j
+loc_1E9AD:                              ; CODE XREF: Opl2_stopTrack+5E\u2193j
                 les     bx, [bp+var_6]
                 assume es:nothing
                 mov     word ptr es:[bx], 0
@@ -34575,12 +34575,12 @@ loc_1E9AD:                              ; CODE XREF: sub_1E974+5E\u2193j
                 and     byte ptr es:word_C8582, 8Fh
                 mov     byte_D20A2, 0
 
-loc_1E9EE:                              ; CODE XREF: sub_1E974+6D\u2191j
+loc_1E9EE:                              ; CODE XREF: Opl2_stopTrack+6D\u2191j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_1E974       endp
+Opl2_stopTrack  endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -37880,7 +37880,7 @@ loc_202CB:                              ; CODE XREF: Sound_stopTrack+9C\u2191j
 loc_202D2:                              ; CODE XREF: Sound_stopTrack+5C\u2191j
                 test    byte ptr word_C8582, 2
                 jz      short loc_202DE
-                call    sub_1E974
+                call    Opl2_stopTrack
 
 loc_202DE:                              ; CODE XREF: Sound_stopTrack+B0\u2191j
                                         ; Sound_stopTrack+B7\u2191j

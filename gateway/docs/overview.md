@@ -3311,3 +3311,24 @@ convention. This completes the Sound Blaster DMA cluster corrected in
 the previous pass.
 
 Applied via `apply_renames_gatemain.py`'s ninety-fifth batch.
+
+### `Opl2_stopTrack` named
+
+Moved to `sub_1E974` (2 callers) — one of the long-flagged "other
+Sound_stopTrack backend routines," now confirmed as the OPL2/AdLib
+backend's stop-track handler, called directly from the already-named
+`Sound_stopTrack`. Resets a state byte, calls an unnamed helper
+(`sub_1CC34(0)`, plausibly resetting some MIDI-file-position parse
+state shared with the MIDI backend), and conditionally calls another
+unnamed cleanup routine if a track-loaded flag is set.
+
+Then loops over all 11 OPL2 logical channels (0-10, matching 9 melodic
+voices or 6 melodic + 5 rhythm-mode percussion voices), zeroing a
+per-channel state word and calling the already-named
+`Opl2_noteOn(channel, velocity=0)` then `Opl2_noteOff(channel)` to
+silence each one. Finally, if a specific bit of the shared
+`word_C8582` sound-state word is set, clears a related bit range and
+resets the state byte again — tearing down whatever per-track state
+that bit range represents for this backend.
+
+Applied via `apply_renames_gatemain.py`'s ninety-sixth batch.

@@ -833,6 +833,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       from interrupt context, completing the Sound Blaster DMA
       cluster. Full writeup in
       [overview.md](overview.md#soundblaster_writebytefromisr-named).
+- [x] Named `sub_1E974` (2 callers) → `Opl2_stopTrack` — the long-
+      pending OPL2/AdLib backend's `Sound_stopTrack` handler, silencing
+      all 11 OPL2 logical channels. Full writeup in
+      [overview.md](overview.md#opl2_stoptrack-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

@@ -2397,6 +2397,24 @@ RENAMES = [
      "from interrupt context (SoundBlaster_dmaIsr) where a private, "
      "self-contained near-call duplicate avoids relying on the far-"
      "callable Sb_writeByte's calling convention/timeout plumbing."),
+
+    (0x1E974, "Opl2_stopTrack",
+     "sub_1E974(): one of the long-flagged 'other Sound_stopTrack "
+     "backend routines' -- the OPL2/AdLib backend's stop-track "
+     "handler, called directly from the already-named Sound_stopTrack "
+     "(and from sub_1E950). Resets byte_D20A2, calls sub_1CC34(0) "
+     "(unnamed, plausibly resetting some MIDI-file-position parse "
+     "state shared with the MIDI backend), sets a _tmpSub scratch "
+     "value, and conditionally calls sub_1E136 (unnamed) if a track-"
+     "loaded flag (byte_C850C) is set. Then loops over all 11 OPL2 "
+     "logical channels (0-10, matching 9 melodic voices or 6 melodic + "
+     "5 rhythm-mode percussion voices), zeroing a per-channel state "
+     "word and calling the already-named Opl2_noteOn(channel, "
+     "velocity=0) then Opl2_noteOff(channel) to silence each one. "
+     "Finally, if bit 0x10 of word_C8582 is set, clears bits 4-6 of "
+     "that shared state word and resets byte_D20A2 again -- tearing "
+     "down whatever per-track state that bit range represents for "
+     "this backend."),
 ]
 
 

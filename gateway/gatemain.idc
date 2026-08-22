@@ -18060,6 +18060,7 @@ static Bytes_2(void) {
 	create_insn	(0X1E950);
 	create_insn	(0X1E96C);
 	create_insn	(0X1E974);
+	set_name	(0X1E974,	"Opl2_stopTrack");
 	create_insn	(x=0X1E977);
 	op_hex		(x,	1);
 	create_insn	(x=0X1E988);
@@ -18321,10 +18322,6 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1F2BF);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X1F2C6);
-	op_hex		(x,	1);
-	create_insn	(x=0X1F2CC);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -18334,6 +18331,10 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X1F2C6);
+	op_hex		(x,	1);
+	create_insn	(x=0X1F2CC);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X1F2CF);
 	op_hex		(x,	1);
 	create_insn	(x=0X1F2D5);
