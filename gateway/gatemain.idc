@@ -17500,6 +17500,7 @@ static Bytes_2(void) {
 	set_name	(0X1DD41,	"Midi_bufferByte");
 	create_insn	(0X1DD4C);
 	create_insn	(0X1DD8E);
+	set_name	(0X1DD8E,	"Sound_takeTrackFlag");
 	create_insn	(x=0X1DD91);
 	op_stkvar	(x,	1);
 	create_insn	(0X1DDA4);
@@ -18248,8 +18249,6 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1EF37);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X1EF3A);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -18259,6 +18258,8 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X1EF3A);
+	op_hex		(x,	1);
 	create_insn	(x=0X1EF42);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X1EF49);

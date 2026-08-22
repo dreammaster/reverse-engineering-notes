@@ -910,6 +910,10 @@ AGI/SCI-style adventure-engine resource layer: `Room`,
       duplicate-compiled-copy of `Opl2_writeRegister` used by the
       AdLib/OPL2 hardware-presence detection sequence. Full writeup in
       [overview.md](overview.md#opl2_writedetectregister-named).
+- [x] Named `sub_1DD8E` (2 callers) → `Sound_takeTrackFlag` — an
+      atomic take-and-clear of a per-track ISR-shared flag in the
+      sound-timing cluster. Full writeup in
+      [overview.md](overview.md#sound_taketrackflag-named).
 - [ ] Follow up on the turn/WAIT event-queue loop: `word_CB7F6`/
       `word_CB808`'s exact roles still aren't nailed down, and whether
       `word_CB808` is the same countdown mechanism as the weapon-

@@ -32718,7 +32718,7 @@ sub_1DD4C       endp
 
 ; Attributes: bp-based frame
 
-sub_1DD8E       proc far                ; CODE XREF: sub_1F1DE+61\u2193P
+Sound_takeTrackFlag proc far            ; CODE XREF: sub_1F1DE+61\u2193P
                                         ; sub_1F93E+37\u2193P
 
 arg_0           = word ptr  6
@@ -32733,7 +32733,7 @@ arg_0           = word ptr  6
                 sti
                 pop     bp
                 retf
-sub_1DD8E       endp
+Sound_takeTrackFlag endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -35662,7 +35662,7 @@ loc_1F22C:                              ; CODE XREF: sub_1F1DE+E\u2191j
 
 loc_1F23C:                              ; CODE XREF: sub_1F1DE+58\u2191j
                 push    [bp+arg_0]
-                call    sub_1DD8E
+                call    Sound_takeTrackFlag
                 add     sp, 2
                 or      ax, ax
                 jz      short loc_1F2B1
@@ -36560,7 +36560,7 @@ loc_1F96A:                              ; CODE XREF: sub_1F93E+27\u2191j
 
 loc_1F974:                              ; CODE XREF: sub_1F93E+54\u2193j
                 push    si
-                call    sub_1DD8E
+                call    Sound_takeTrackFlag
                 add     sp, 2
                 or      ax, ax
                 jz      short loc_1F98D

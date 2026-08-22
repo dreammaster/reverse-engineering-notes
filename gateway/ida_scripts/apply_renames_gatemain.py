@@ -2706,6 +2706,19 @@ RENAMES = [
      "start timer 1, check status) rather than the main note-playing "
      "engine -- another instance of this project's duplicate-"
      "compiled-copy pattern."),
+
+    (0x1DD8E, "Sound_takeTrackFlag",
+     "sub_1DD8E(trackIndex): with interrupts disabled, atomically "
+     "reads then zeroes a per-track word at a table indexed by "
+     "trackIndex*2 (offset 0x557) -- a classic 'take and clear a "
+     "pending-event flag shared with an ISR' pattern (cli/sti "
+     "bracketing implies a timer ISR writes this same table). Called "
+     "from sub_1F1DE and sub_1F93E, both already seen as callers "
+     "within the Sound_initPlaybackTiming/Sound_getElapsedPlaybackTime "
+     "timing cluster from earlier this session -- plausibly consuming "
+     "a per-track 'segment/loop completed' notification set by the "
+     "sound engine's timer ISR, though the exact event this flag "
+     "represents wasn't independently confirmed."),
 ]
 
 

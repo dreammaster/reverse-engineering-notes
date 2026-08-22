@@ -3646,3 +3646,18 @@ timer 1, check status) rather than the main note-playing engine —
 another instance of this project's duplicate-compiled-copy pattern.
 
 Applied via `apply_renames_gatemain.py`'s hundred-and-thirteenth batch.
+
+### `Sound_takeTrackFlag` named
+
+Moved to `sub_1DD8E` (2 callers) — with interrupts disabled,
+atomically reads then zeroes a per-track word in a small table — a
+classic "take and clear a pending-event flag shared with an ISR"
+pattern (the `cli`/`sti` bracketing implies a timer ISR writes this
+same table). Called from `sub_1F1DE` and `sub_1F93E`, both already
+seen as callers within the `Sound_initPlaybackTiming`/
+`Sound_getElapsedPlaybackTime` timing cluster from earlier this
+session — plausibly consuming a per-track "segment/loop completed"
+notification set by the sound engine's timer ISR, though the exact
+event this flag represents wasn't independently confirmed.
+
+Applied via `apply_renames_gatemain.py`'s hundred-and-fourteenth batch.
