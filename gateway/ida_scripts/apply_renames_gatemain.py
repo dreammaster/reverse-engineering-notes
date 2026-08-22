@@ -1971,6 +1971,21 @@ RENAMES = [
      "full-screen illustration/cutscene display sequence -- confirmed "
      "as the hub Game_restartAfterDeath and others route through for "
      "'show a picture with fade-in, delay, and caption text'."),
+
+    # -- seventy-sixth pass: sub_158C3, Game_showIllustration's own
+    # text-only fallback path, traced directly. See
+    # docs/overview.md#textwindow_addmessagelist-named. --
+
+    (0x158C3, "TextWindow_addMessageList",
+     "sub_158C3(msgArray): walks a far-pointer array of dword message-"
+     "string pointers (msgArray), grouped by null (0:0) separator "
+     "entries. For each group: prints a tab character, then each "
+     "non-null message in the group via TextWindow_add back-to-back, "
+     "then a newline; stops entirely at the first group that starts "
+     "with a null entry. The already-named Game_showIllustration calls "
+     "this as its text-only fallback (when graphics display isn't "
+     "available) to print the same caption content a picture-mode call "
+     "would otherwise show alongside the image."),
 ]
 
 

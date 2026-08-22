@@ -12015,7 +12015,7 @@ loc_15798:                              ; CODE XREF: Game_showIllustration+3D\u2
                 push    [bp+arg_4]
                 push    [bp+arg_2]
                 push    cs
-                call    near ptr sub_158C3
+                call    near ptr TextWindow_addMessageList
 
 loc_157A2:                              ; CODE XREF: Game_showIllustration+122\u2191j
                 mov     ax, [bp+var_2]
@@ -12170,7 +12170,7 @@ sub_157A9       endp
 
 ; Attributes: bp-based frame
 
-sub_158C3       proc far                ; CODE XREF: Game_showIllustration+12B\u2191p
+TextWindow_addMessageList proc far      ; CODE XREF: Game_showIllustration+12B\u2191p
                                         ; sub_9B5F9+115\u2193P ...
 
 var_2           = word ptr -2
@@ -12182,7 +12182,7 @@ arg_0           = dword ptr  6
                 push    si              ; char
                 mov     [bp+var_2], 0
 
-loc_158CF:                              ; CODE XREF: sub_158C3+68\u2193j
+loc_158CF:                              ; CODE XREF: TextWindow_addMessageList+68\u2193j
                 mov     bx, [bp+var_2]
                 shl     bx, 1
                 shl     bx, 1
@@ -12196,7 +12196,7 @@ loc_158CF:                              ; CODE XREF: sub_158C3+68\u2193j
                 call    TextWindow_addChar
                 add     sp, 2
 
-loc_158EE:                              ; CODE XREF: sub_158C3+57\u2193j
+loc_158EE:                              ; CODE XREF: TextWindow_addMessageList+57\u2193j
                 mov     bx, [bp+var_2]
                 shl     bx, 1
                 shl     bx, 1
@@ -12215,7 +12215,7 @@ loc_158EE:                              ; CODE XREF: sub_158C3+57\u2193j
                 jmp     short loc_158EE
 ; ---------------------------------------------------------------------------
 
-loc_1591C:                              ; CODE XREF: sub_158C3+3C\u2191j
+loc_1591C:                              ; CODE XREF: TextWindow_addMessageList+3C\u2191j
                 inc     [bp+var_2]
                 mov     ax, 0Ah
                 push    ax              ; c
@@ -12224,12 +12224,12 @@ loc_1591C:                              ; CODE XREF: sub_158C3+3C\u2191j
                 jmp     short loc_158CF
 ; ---------------------------------------------------------------------------
 
-loc_1592D:                              ; CODE XREF: sub_158C3+1D\u2191j
+loc_1592D:                              ; CODE XREF: TextWindow_addMessageList+1D\u2191j
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_158C3       endp
+TextWindow_addMessageList endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -279056,7 +279056,7 @@ loc_9B706:                              ; CODE XREF: sub_9B5F9+84\u2191j
                 mov     dx, seg seg204
                 push    dx
                 push    ax
-                call    sub_158C3
+                call    TextWindow_addMessageList
                 add     sp, 4
 
 loc_9B716:                              ; CODE XREF: sub_9B5F9+10B\u2191j
@@ -286121,7 +286121,7 @@ var_2           = word ptr -2
                 mov     dx, seg seg206
                 push    dx
                 push    ax
-                call    sub_158C3
+                call    TextWindow_addMessageList
                 add     sp, 4
                 jmp     short loc_9E941
 ; ---------------------------------------------------------------------------

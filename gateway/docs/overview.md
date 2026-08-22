@@ -2863,3 +2863,16 @@ through for "show a picture with fade-in, delay, and caption text,"
 e.g. death/ending scenes and other major story beats.
 
 Applied via `apply_renames_gatemain.py`'s seventy-fifth batch.
+
+### `TextWindow_addMessageList` named
+
+Moved to `sub_158C3` (3 callers) — `Game_showIllustration`'s own
+text-only fallback path, traced directly. Walks a far-pointer array of
+dword message-string pointers, grouped by null separator entries: for
+each group, prints a tab character, then each non-null message in the
+group back-to-back, then a newline; stops entirely at the first group
+that starts with a null entry. `Game_showIllustration` calls this when
+graphics display isn't available, to print the same caption content a
+picture-mode call would otherwise show alongside the image.
+
+Applied via `apply_renames_gatemain.py`'s seventy-sixth batch.

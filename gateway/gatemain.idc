@@ -8437,6 +8437,7 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(0X158BE);
 	create_insn	(0X158C3);
+	set_name	(0X158C3,	"TextWindow_addMessageList");
 	create_insn	(x=0X158C6);
 	op_hex		(x,	1);
 	set_cmt	(0X158C9,	"char",	0);
