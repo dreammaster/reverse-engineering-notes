@@ -235,7 +235,7 @@ rather than trusting these numbers as they age)
   944/776 before that addition) — this pool was "largely exhausted" for
   Engine/Common code specifically; a productive third-party-library round
   (Task #10, now paused — see below) pushed it further before wrapping up.
-- `reversing/analysis/matches.json` has 557 entries (function + struct-field
+- `reversing/analysis/matches.json` has 570 entries (function + struct-field
   matches combined)
 - 25 struct definitions built entirely from disassembly evidence (not
   borrowed from the 2011 source — see `reversing/notes/struct-layout-drift.md`):
@@ -839,8 +839,10 @@ rather than trusting these numbers as they age)
   Two more fields dismissed earlier as "standalone" also turn out to
   fall inside the proven 2404-byte range once actually checked against
   it — `play_invorder`@`+0x614` and `offsets_locked`@`+0x81E` — while
-  `screen_tint`@`+0x10C6C` genuinely is outside it, so that one call
-  stands. `apply_structs.py`'s `GameState` struct is rebuilt as one
+  `screen_tint` was believed at this point to compute to `+0x10C6C`,
+  outside it (later found to be WRONG — a line-number/address mixup,
+  corrected several rounds below). `apply_structs.py`'s `GameState`
+  struct is rebuilt as one
   unified definition, padded to its now-proven total size with two
   explicitly-labeled unexplored regions. Process lesson: the original
   "proves discontiguity" call was built on an address looking
@@ -931,6 +933,298 @@ rather than trusting these numbers as they age)
   end to end from `+0x00` to `+0x964` — every remaining gap is an
   explicitly-sized, explicitly-labeled pad rather than unaccounted
   territory.
+  **Six more fields close out both remaining pads**: `load_new_room`'s
+  room-entry-edge logic confirms `entered_edge`@`+0x828` (exact match
+  to 2011's descending-threshold assignment) and, via its second edge-
+  detection block, CONFIRMS `entered_at_x`/`entered_at_y` are ABSENT
+  (this build reuses the shared `tox`/`toy` scratch globals instead of
+  persisting them). Two already-IDA-named globals sitting right next to
+  it turn out to be exactly where they should be: `want_speech`@`+0x82C`
+  (via `SetVoiceMode`, exact match) and a plausible-but-position-
+  contradicting `stop_dialog_at_end`@`+0x834` (2011 places it much
+  earlier, near `reserved[10]`, not next to `want_speech` — flagged as
+  a genuine unexplained difference). `SetNormalFont` confirms
+  `normal_font`@`+0x894` exactly; the already-named `fontid` right
+  after it is a medium-high-confidence `speech_font` candidate (kept
+  cautious given the `ifnum` mislabeling precedent); and
+  `play_key_skip_wait` — already IDA-named but never behaviorally
+  verified — now has an exact match via `check_controls`. GameState's
+  struct is now broken into small, precisely-sized pads with no
+  undifferentiated multi-hundred-byte gaps left anywhere.
+  **MAJOR SELF-CAUGHT ERROR: `screen_tint`'s address was a line-number/
+  address mixup, not actually outside GameState.** Its address had
+  originally come from reading a `grep -n` LINE NUMBER (`500204`) as if
+  it were the hex memory address `0x500204` — never cross-checked
+  against a neighboring self-encoding label the way every other custom
+  global name in this project was grounded. The TRUE address (verified
+  via three independent self-encoding neighbors) is `+0x8AC`, well
+  inside the struct, and lines up exactly with 2011's declared order —
+  closing FOUR fields at once with zero gaps between them:
+  `swap_portrait_lastchar`@`+0x8A0` and `swap_portrait_side`@`+0x10C`
+  (a much-earlier field, upgraded from a many-rounds-old tentative
+  guess) via the same `_displayspeech` evidence; `seperate_music_lib`@
+  `+0x8A4` — a THIRD mislabeled pre-existing global found in this
+  project (`play_want_music` is misleading; 2011 has no "want_music"
+  field at all, `IsMusicVoxAvailable` proves it's really
+  `seperate_music_lib`); and `in_conversation`@`+0x8A8` via
+  `do_conversation`'s opening increment. Process lesson: a grep line
+  number and a hex address look similar and are easy to conflate —
+  every custom-named global needs grounding against a neighboring
+  auto-named label before its address is trusted.
+  **`bad_parsed_word` closes almost the last remaining pad**:
+  `SaidUnknownWord` (already matched) confirms `bad_parsed_word[100]`
+  exactly, landing with the EXPECTED 2-byte alignment gap before the
+  already-confirmed `raw_color` — strong positional reinforcement on
+  top of the role match. This also confirms 2011's `num_parsed_words`/
+  `parsed_words[MAX_PARSED_WORDS]` (declared immediately before
+  `bad_parsed_word`) are ABSENT — the 34 bytes where they'd sit belong
+  to unrelated already-named parser globals (`comparetonum`/
+  `compareto`) instead. The only sizeable unmapped GameState territory
+  left is the `+0x60C..+0x80C` pad (containing `CharacterExtras`) and
+  three still-unidentified dwords in the small `+0x114..+0x138` stretch.
+  **The `+0x60C..+0x80C` pad turns out to be fully byte-accounted for**,
+  even though not every piece is named: 8 bytes of unconfirmed video/
+  music-parameter globals, `play_invorder` (200 bytes, role/capacity
+  known, GameState membership still genuinely unresolved — no
+  positional evidence either way, since neither neighbor is itself a
+  confirmed member), `CharacterExtras` (300 bytes, confirmed separate),
+  and 4 bytes of an unidentified countdown timer. The three small-gap
+  dwords resisted a fourth round of attempts and are left as genuinely
+  hard cases rather than forced. `apply_structs.py` now represents all
+  of this with precisely-sized pads instead of one undifferentiated
+  512-byte unknown — a clarity improvement, not new content.
+  **`text_speed`/`sierra_inv_color`/`talkanim_speed` close** — the last
+  three purely-positional guesses in GameState's early section, sitting
+  unconfirmed since the very first fresh-survey round. `sierra_inv_color`
+  closed via `__actual_invscreen`'s exact `wsetcolor`/`wbar`-equivalent
+  call sequence. `text_speed` and `talkanim_speed` both closed the same
+  way: an exact match to 2011's own init literal value (`15` and `5`
+  respectively) alongside an independent role-matching use site.
+  `talkanim_speed`'s use site is notable — 2011's own source only ever
+  assigns it once and never reads it again, but this build actively
+  uses it for talk-animation timing, another case (like `inv_numorder`)
+  of a field 2011 kept declared but stopped using. Every field from
+  `+0x00` through `+0x104` now has real behavioral evidence.
+  **The init block: one ~65-instruction block confirms or closes nearly
+  everything left in GameState.** A massive sequential init sequence
+  inside `main` (this build's inlined `init_game_settings()`
+  predecessor) sets ~40 fields to literal values matching 2011's own
+  init sequence almost line for line. This closes THREE fields that had
+  resisted five separate rounds — `follow_change_room_timer`@`+0x114`
+  (init value 150, exact), `no_multiloop_repeat`@`+0x120`, and
+  `no_textbg_when_voice`@`+0x12C` (both via matching sequential init-
+  code position plus value) — and every remaining tentative field:
+  `speech_text_shadow`, `screen_flipped`, `speech_font` (resolving the
+  standing `ifnum`-style mislabeling caution — it's genuine), and
+  `skip_display` (upgraded to high). ~25 more already-confirmed fields
+  get exact-value bonus reconfirmations in the same block. GameState's
+  field-level identification work is now, for all practical purposes,
+  essentially complete — remaining open items are `play_invorder`'s
+  membership question and a handful of still-unidentified globals in
+  the smaller pads.
+  **`sub_40A6D8` read in full: a genuinely different fade-out
+  technique, not just a refactor.** This build's high-color-depth
+  screen-fade helper (already tied to the confirmed `no_hicolor_fadein`
+  flag) does the same job as 2011's `highcolor_fade_out()` — but via a
+  manual pixel-by-pixel darkening loop rather than Allegro's alpha-
+  blending API, predating that API entirely. Deliberately left unnamed
+  rather than renamed, matching this project's established convention
+  (`sub_42B394`/`cc_run_code`) for role-matches whose implementation
+  diverges too much to claim 1:1 correspondence.
+  **Fresh survey target: `ScreenOverlay`** — closed completely in a
+  single round via `add_screen_overlay`'s own construction sequence
+  (already matched; only its error string had been read before).
+  Confirms a genuine array-of-structs, `pic`/`type`/`x`/`y`/`timeout`
+  (5 fields, `0x14`-byte stride), matching 2011's `OVER_TEXTMSG`/
+  `OVER_COMPLETE`/`OVER_CUSTOM` constants and custom-ID search range
+  exactly. DRIFT: capacity 10 vs. 2011's `MAX_SCREEN_OVERLAYS=20` — the
+  familiar 2x-reduction pattern. CONFIRMED ABSENT: `bmp`
+  (`IDriverDependantBitmap*`, a later hardware-acceleration
+  abstraction, same pattern as `CharacterInfo.actx`/`.acty`),
+  `bgSpeechForChar`, `associatedOverlayHandle`, `hasAlphaChannel`,
+  `positionRelativeToScreen` — this build has exactly 2011's first 5
+  fields. Bonus: a new function match (`find_overlay_of_type`, exact
+  instruction-for-instruction match) and three related globals
+  (`numscreenover`, `is_complete_overlay`, `is_text_overlay` — the last
+  a second independent confirmation of a global first seen incidentally
+  during an earlier GameState round).
+  **`CreateGraphicOverlay` read in full reconfirms `ScreenOverlay`
+  and closes `spritewidth`/`spriteheight`**: matches 2011's version
+  (`AC.CPP:13125-13138`) line for line — `create_bitmap_ex(...,
+  spritewidth[slott], spriteheight[slott])` upgrades `dword_4CD2E8`/
+  `dword_4E787C` to HIGH confidence via a second independent usage
+  context, and `return screenover[nse].type;` is a second independent
+  confirmation of `ScreenOverlay.type`@`+0x04`. Bonus: two new function
+  matches, `wputblock` (exact instruction-for-instruction match) and,
+  incidentally, `draw_sprite` (a well-known third-party Allegro API).
+  **CORRECTION: `sub_409FD4` is `remove_screen_overlay`, not
+  `stop_fast_forwarding`** — the earlier match (several rounds prior, on
+  callgraph-position evidence alone, body never read) is wrong. Reading it
+  in full while investigating `RemoveOverlay`'s callees shows an exact,
+  complete algorithmic match to `remove_screen_overlay`/inlined
+  `remove_screen_overlay_index` (`AC.CPP:3404-3441`), including a `rep
+  movsd`/`ecx=5` shift-down loop matching `ScreenOverlay`'s own confirmed
+  20-byte size exactly. This means `EndSkippingUntilCharStops`
+  (`sub_40AAE3`)'s final call is actually `remove_screen_overlay(-1)`,
+  matching 2011's `unload_old_room()` calling `remove_screen_overlay(-1)`
+  at `AC.CPP:3627` — not `stop_fast_forwarding()` as previously recorded.
+  The real `stop_fast_forwarding()` (`AC.CPP:24132`) has **not** been
+  located in this binary and is an open lead for a future round.
+  `matches.json` entries for both functions corrected (old evidence kept
+  for the record); `apply_structs.py` needed no change (zero mentions).
+  **The `stop_fast_forwarding` lead is now resolved — it doesn't exist as
+  a function here.** Reading `StartCutscene`/`EndCutscene` (already
+  matched via linker symbol, but never read body-first) in full:
+  `EndCutscene` inlines `play.fast_forward=0` directly and covers the rest
+  of `stop_fast_forwarding()`'s job with a call to the already-matched
+  `UpdatePalette` (whose own 2011 body already does the equivalent
+  `setpal()`/`invalidate_screen()` work); `StartCutscene` has no call to
+  `EndSkippingUntilCharStops()` where source has one. CONFIRMED ABSENT:
+  the entire `SkipUntilCharacterStops`/`EndSkippingUntilCharStops`/
+  `stop_fast_forwarding`/`initialize_skippable_cutscene` subsystem, not
+  just one function — consistent with the earlier finding that no
+  `SkipUntilCharacterStops`-related strings exist anywhere in the binary.
+  Bonus: third/fourth independent confirmations of `dword_4EEB50`=
+  `in_cutscene`/`dword_4EEB54`=`fast_forward`.
+  **`CharacterExtras.xwas`/`.ywas`/`invorder[]`/`invorder_count` confirmed
+  absent** (reading `EndSkippingUntilCharStops`/`unload_old_room`-combined
+  in full end to end for the first time): no `charcache`/`xwas`-wipe loop
+  exists in this function at all, and `char_zoom` (`word_4EF1BC`, the one
+  field a `wantMoveNow`-equivalent function would have to read) has
+  exactly TWO xrefs in the whole binary, both already accounted for inside
+  `prepare_characters_for_drawing` — no other function reads it, ruling
+  out a separate scaled-movement-smoothing function existing anywhere.
+  Converges with an earlier round's dead-end `INVALID_X`-sentinel search.
+  `invorder[]`/`invorder_count` (2011's per-character inventory-order
+  pair) are absent for the same reason `play_invorder`/`update_invorder`
+  were found game-wide-not-per-character several rounds ago — the feature
+  they belong to doesn't exist yet. Two bonus drift findings fell out of
+  the same full read: ambient-sound-stop is a single hardcoded
+  `StopAmbientSound(1)`, not a loop over channels 1–7; and room-script
+  cleanup frees only `roominst`, not a separate `roominstFork` — no such
+  global is touched anywhere in the function. Also a second independent
+  confirmation of `RoomObject.moving`@`+0x18` via this function's own
+  `objs[ff].moving=0` reset loop.
+  **`animwait`/`walkwait` fold into `CharacterInfo.wait`@`+0x1C`, closing
+  the last big open lead**: reading `update_stuff`'s per-character
+  walking/animation section in full shows THREE separate 2011 fields
+  (lip-sync wait, `walkwait`, `charextra[].animwait`) are all the SAME
+  field here — the TURNING_AROUND-branch `walkwait--` decrement, the
+  walking<1 `animwait=0` reset, the `animwait>0`/`animwait--` decrement,
+  and the final `animwait=frames[frame].speed+chi->animspeed` computation
+  all read/write `[chi+0x1C]`. Matches `OldCharacterInfo`'s single
+  declared `wait` field exactly (no separate `walkwait` in that ancestor
+  at all) — `animwait` is CONFIRMED ABSENT as its own field, not a gap.
+  Bonus: upgrades `CharacterInfo.animspeed`@`+0x42` to high confidence
+  (read directly as the computation's second addend).
+  `process_idle_this_time` resolved as a genuine identity but NOT a
+  per-character array: `dword_52320C` (all 3 xrefs inside `update_stuff`)
+  matches the role exactly, set/reset as a single shared flag rather than
+  a 50-entry array — works because this build's flatter, single-pass-
+  per-character loop shape only ever consumes it within the same
+  character's own iteration. Bonus: identifies `dword_523120` as
+  `loopcounter`. `slow_move_counter` shelved rather than forced (even
+  2011's own source writes it once and never reads it — unfalsifiable
+  either way).
+  **`tint_r`/`tint_g`/`tint_b`/`tint_level`/`tint_light` upgraded to
+  CONFIRMED ABSENT** (follow-up round): tracing `prepare_characters_for_
+  drawing`'s actual character scale-then-blit control flow end to end —
+  from the confirmed zoom-scaling code through bitmap creation, the
+  mirroring check, sprite fetch, to the final blit — shows no tint-related
+  step anywhere in the sequence: no 8-argument call shaped like
+  `get_local_tint(...)`, no `apply_tint_or_light(...)` call, and neither
+  function is matched (or even flagged as a lead) anywhere else in the
+  binary. Not just the `CHF_HASTINT` branch is missing — the entire tint
+  computation-and-application subsystem has no counterpart here. This
+  also explains why GameState's `rtint_red`/`rtint_green`/`rtint_blue`/
+  `rtint_level`/`rtint_light` (`get_local_tint`'s own room-tint-override
+  source) have never turned up in any GameState round. With this,
+  `CharacterExtras`'s field-level investigation is essentially complete —
+  only `slow_move_counter` remains genuinely open.
+  **`music_master_volume` closes the `dword_4EF220` lead, `play_speech`
+  gets named**: `sub_418E82` turns out to be `update_music_volume` fused
+  with 2011's separate `calculate_max_volume()` — its volume formula
+  (`thisroom.options[ST_VOLUME]*30 + dword_4EF220`, clamped [0,255])
+  matches source exactly and identifies `dword_4EF220` as
+  `GameState.music_master_volume`, confirmed a second way via
+  `play_speech`'s (`sub_4141B8`, upgraded from unnamed medium-confidence
+  to a named high-confidence match) own `-60` speech-ducking decrement
+  right before calling it — a hardcoded stand-in for 2011's configurable
+  `speech_music_drop` field. Zero-slack bonus: the field ends exactly 4
+  bytes before the already-confirmed `walkable_areas_on`, proving 2011's
+  `digital_master_volume`/`cur_music_number`/`music_repeat` are confirmed
+  absent here too. `play_speech`'s tail also resolves the two-round-old
+  "plausibly lipsync-related" mystery cluster — wrong guess, the real
+  answer is Sierra-speech-mode switching (`byte_513340`=
+  `game.options[OPT_SPEECHTYPE]`), giving `no_textbg_when_voice` a second
+  independent confirmation. Two drift points recorded: this build's
+  speech-load failure is fatal (`quit()`) where 2011 fails gracefully, and
+  no OGG attempt exists between WAV and MP3.
+  **Closed the loose end from last round: `my_load_wave`/`my_load_mp3`/
+  `load_sample`/`play_sample` all matched.** `sub_408623`=`my_load_mp3`
+  is an overwhelming instruction-for-instruction match to source,
+  including a `malloc(0x186A0)` matching `MP3CHUNKSIZE`'s OLD,
+  commented-out value of 100000 still sitting in the source itself — this
+  independently upgrades `pack_fopen`/`pack_fread`/`pack_fclose` from
+  medium to high confidence via a second, unrelated caller. `sub_408556`=
+  `my_load_wave` matches similarly cleanly, and following its two callees
+  down turned up two more well-known Allegro APIs: `sub_4444C0`=
+  `load_sample` (its real `"wav"`/`"voc"` extension-dispatch logic,
+  calling the already-matched `load_wav`/`load_voc`) and `sub_444AF0`=
+  `play_sample` (opens with the already-matched `allocate_voice`, and its
+  frequency-scaling branch contains an unmistakable MSVC divide-by-1000
+  magic-constant fingerprint, `0x10624DD3`). Bonus: identifies 3 new
+  globals (`thiswave`/`mp3in`/`thistune`) and 5 candidate Allegro
+  voice-control functions for a future round. Also closed: `rtint_red`/
+  `rtint_green`/`rtint_blue`/`rtint_level`/`rtint_light` confirmed
+  absent outright — their only writer, `SetAmbientTint`, has zero string
+  occurrences anywhere in the binary, same as their reader.
+  **The full `play_sample` call chain closes**: all 5 candidate
+  voice-control functions from the previous round confirmed on an
+  immediate follow-up — `voice_set_volume`/`voice_set_pan` (each keyed by
+  an unmistakable MSVC reciprocal-multiplication magic constant, divide-
+  by-255 and divide-by-1000 respectively), `voice_set_playmode` (the
+  `PLAYMODE_BACKWARD`=2 bit test matches exactly), `voice_start`
+  (identifies `retrace_count`), and `release_voice` (a one-line body
+  whose `0xFFFFFFFF` write only makes sense once you know Allegro's own
+  `TRUE` is `#define`d as `-1`, not `1`). All 7 calls in `play_sample`'s
+  real chain (`allocate_voice`→`voice_set_volume`→`voice_set_pan`→
+  `voice_set_frequency`→`voice_set_playmode`→`voice_start`→
+  `release_voice`) are now fully identified with zero remaining unmatched
+  links, and the `VOICE` struct's first 3 members (`sample`/`num`/
+  `autokill`) are cross-confirmed across three different functions.
+  **`cur_music_number`/`music_repeat` close the last `GameState` pad —
+  with a self-caught correction.** `dword_4EF024`=`cur_music_number`,
+  confirmed across 6 functions (`GetCurrentMusic`/`PlayMusic`/
+  `scr_StopMusic`/`main`, plus a decisive literal match: `restore_game_data`
+  writes `2000`, matching source's own `"play.cur_music_number=2000; //
+  make sure it gets played"` comment word for word). `dword_4EF028`=
+  `music_repeat`, via `SetMusicRepeat`'s entire one-line body matching
+  2011's entire function body verbatim, sitting with zero gap right after
+  `cur_music_number` exactly as source declares them adjacent. **This
+  REQUIRED correcting a mistake from two rounds ago**: `music_master_volume`'s
+  own field entry had claimed the same zero-gap argument that proves
+  `digital_master_volume` absent (sits AFTER `music_master_volume`) ALSO
+  proved `cur_music_number`/`music_repeat` absent (2011 declares them
+  BEFORE `music_master_volume`) — that doesn't follow; a zero-gap proof
+  about what comes after says nothing about what comes before. Both fields
+  turn out to exist after all, just as a standalone pair at `+0x60C`, far
+  from `music_master_volume`'s own `+0x808` — 2011 later consolidated two
+  previously-independent globals into one contiguous run, the same pattern
+  seen repeatedly elsewhere in this project. `digital_master_volume`
+  remaining confirmed absent is unaffected — only the over-broad extension
+  of that argument was wrong, corrected in place with a visible note.
+  **GameState's very last pad turns out to already be solved**: the
+  remaining `+0x820..+0x828` span (2 dwords, between `offsets_locked` and
+  `entered_edge`) is exactly where 2011's `entered_at_x`/`entered_at_y`
+  would sit — already confirmed absent several rounds ago (`load_new_room`
+  writes the equivalent assignment into shared `tox`/`toy` scratch globals
+  instead). An exhaustive grep of the entire disassembly for every address
+  in that 8-byte range turns up zero xrefs anywhere, independently and
+  more forcefully reconfirming the same conclusion. With this, every byte
+  of `GameState` from `+0x00` through its proven `+0x964` total is now
+  either a confirmed field or an explicitly-evidenced pad — no remaining
+  unexplored territory anywhere in the struct.
   — this
   **completes the full `GUIObject` class hierarchy** (all six derived
   classes' vtables identified and structs recovered). Struct work has
@@ -960,6 +1254,264 @@ rather than trusting these numbers as they age)
   rounds). Some threads have gone cold (old CRT file-search APIs with no
   2011 counterpart, a few ambiguous shared vtable stubs) — see
   `reversing/notes/` for specifics before re-attempting those.
+- **Fresh survey target (in progress): `RoomStruct`** (`thisroom`/
+  `rstruc`, 2011's `roomstruct`, `Common/acroom.h:806`) — the current-
+  room data format, never formalized before despite incidental references
+  in many already-matched functions. The global instance and 4 leading
+  pointer fields (`walls`/`object`/`lookat`/`regions`) turned out to
+  already be IDA-named from work predating this project, matching 2011's
+  declared order with zero drift. **Caution surfaced immediately**: IDA's
+  Local Types library also already has a `roomstruct` type applied to
+  this global, UNVERIFIED against this build — likely a blind 2011
+  import, given this project already independently proved this struct's
+  own capacity constants (`MAX_INIT_SPR`, `MAX_HOTSPOTS`, `MAX_WALK_AREAS`)
+  drift smaller here via `RoomStatus`/`RoomObject`/`GameState` work.
+  Round 1, via `load_main_block` (already matched, AGS's own room-file
+  loader): confirmed `width`/`height`/`resolution`/`numwalkareas`/
+  `numhotspots` via exact literal-value inits, `objbaseline[10]` via the
+  function's only `0xFF`-valued memset, and a genuine architectural-drift
+  find — `hotspotnames[20][30]` is a FIXED INLINE array here, not 2011's
+  `char*[]` pointer array with individually-`malloc`'d names.
+  **Round 2 (immediate follow-up) closed every pad round 1 left open**:
+  reading `load_main_block`'s real `fread()` sequence (not just its init
+  preamble) confirmed `numobj`/`objyval[]`'s start, gave `numwalkareas`/
+  `numhotspots`/`hotspotnames` second independent confirmations, and
+  closed `hswalkto[20]` plus the decisive find — `hscond[20]`/
+  `objcond[10]`/`misccond` are `roomstruct`'s own SOURCE copies of the
+  same `EventBlock` command lists `RoomStatus` holds RUNTIME copies of
+  (identified via three `fread`s sharing `EventBlock`'s own already-
+  confirmed exact size, `0x94`/148 bytes). Genuinely interesting
+  architectural point: 2011 keeps this subsystem only as a dead,
+  commented-out declaration, but this 2002 build's room-loading code
+  still actively reads and uses it on every room load — not vestigial
+  save-compat cruft here, the live implementation.
+  **Round 3 (same session) found the SAME "still live in 2002" pattern
+  one step further back**: a version-gated branch (room-file versions
+  7-8) still actively `fread`s 2011's own "obsolete v2.00 action editor"
+  arrays (`whataction`/`val1`/`val2`/`otcond`/`points`), capacity 130
+  confirmed via four consecutive zero-slack boundaries in a row. Past
+  that, the version≥9 path (this build's real path) confirmed
+  `left`/`right`/`top`/`bottom`/`numsprs`/`sprs[10]` via a double
+  cross-check (read order vs. declared order agreeing on the same four
+  addresses). A genuine surprise: the same path also re-reads INTO the
+  already-confirmed `objbaseline` address using `numsprs` as the count —
+  but `objbaseline` sits at `+0x3858`, far from `sprs[]` at `+0x936`,
+  where 2011 declares them as neighbors. Not a capacity difference like
+  everywhere else in this project — a genuine field-order reordering,
+  with the entire hotspot/walkarea block interposed between two fields
+  2011 keeps adjacent.
+  **Round 4 (same session) closed the entire `+0x936..+0x1570` span**:
+  `password[11]`/`options[10]` close cleanly (exact-size freads, zero
+  gap). `message[]`/`msgi[]` turn out more interesting than a plain
+  read — `message[]` is populated by a dedicated decrypt-and-`malloc`
+  loop, genuinely a `char*[100]` pointer array matching 2011's declared
+  TYPE exactly (unlike `hotspotnames`, this one did NOT drift to a fixed
+  array); `msgi[]` closes right after with zero gap, its 2-byte stride
+  matching `MessageInfo`'s own packed layout, `MAXMESS=100` confirmed
+  twice over. `anims[10]`/`numanims`/`shadinginfo[16]` close via the
+  same version-gated fread-or-memset pattern seen throughout this
+  struct. Round 1's one remaining loose end — "two `0x20`-byte memsets,
+  ambiguous which field" — resolves cleanly: `shadinginfo` lives
+  elsewhere entirely, and the two memsets near `width`/`height` are
+  `walk_area_zoom[16]`/`walk_area_light[16]`, individually confirmed via
+  their own version-gated reads, sitting with zero gap between them
+  (confirming 2011's intervening `walk_area_zoom2` is absent too).
+  **MAJOR SELF-CAUGHT CORRECTION (round 5, same session)**: the struct's
+  own leading four fields, round 1's supposedly cleanest zero-drift
+  find, were never actually independently confirmed — `walls`/`object`/
+  `lookat`/`regions`@`+0x00..+0x0C` rested on pre-existing IDA field
+  names, but those names come from IDA's own `roomstruct <?>` type,
+  which round 1's OWN caution note had already flagged as unverified —
+  the disassembly's `rstruc.walls`-style display was that same unverified
+  type rendering itself back as if it were independent evidence, exactly
+  the trap the caution warned against. Genuine untyped-parameter offset
+  arithmetic in `load_main_block`'s picture-loading calls shows all four
+  fields sit 4 bytes later than recorded (`walls`@`+0x04` through
+  `regions`@`+0x10`), with a fifth, previously-unknown field —
+  `ebscene[0]` — occupying the real `+0x00` (confirmed via `load_lzw`'s
+  distinct signature and the real AGS global `recalced`). Bonus: this
+  also fully resolves the standing "`pal[256]` is 4 bytes short of
+  `numobj`" puzzle — `pal[256]`@`+0x14` now lands exactly on `numobj`
+  with zero slack. Corrected in place, old offsets struck through and
+  explained rather than silently rewritten.
+  **Round 6 (same session) landed a SECOND correction — this time on
+  round 5's own work.** `load_room`'s pre-load cleanup confirmed
+  `scripts`@`+0x39F4`/`compiled_script`@`+0x39F8` (freed via a plain
+  `free()` vs. a specialized destructor respectively, matching their
+  different 2011 types), then a cleanup loop destroying
+  `[rstruc+c*4+0x3A0C]` proved `ebscene[]`'s REAL array base is
+  `+0x3A0C` — directly overturning round 5's own claim that `+0x00` was
+  `ebscene[0]`. Round 5's reasoning wasn't baseless (`+0x00` really does
+  get read/written in a sequence matching source's `load_lzw`/`recalced`
+  assignment), it just stopped one step early: that value gets copied
+  into the real destination, `+0x3A0C`, immediately after — a transient
+  holding spot, not `ebscene[0]`'s own home. `+0x00`'s true role is left
+  honestly unconfirmed rather than re-guessed. Bonus: `num_bscenes`@
+  `+0x3A00`/`bscene_anim_speed`@`+0x3A04` close via a reset-to-default
+  matching 2011's own constructor literals (`1`/`5`) exactly. First time
+  in this struct's work that a correction landed on this SESSION's own
+  immediately-preceding round rather than an older mistake — same
+  discipline both times: keep reading past a plausible-looking match and
+  let contradicting evidence override it.
+  **Round 7 closed `localvars`/`numLocalVars` as CONFIRMED ABSENT** — an
+  exhaustive count of every `getw()` call across `load_main_block`'s
+  entire body finds exactly two, both already identified, with no third
+  call for the version≥19 gate 2011's own `localvars` read needs;
+  independently reinforced by `unload_old_room`'s own already-exhausted
+  body never containing the matching copy loop either. Also caught a
+  small real mistake in passing: `anims[10]` (round 4) was captioned as
+  drift without ever checking 2011's own `MAXANIMS` constant — it's
+  actually `10` too, a zero-drift match, corrected in place. The same
+  lookup gives `MAX_BSCENE=5`, replacing round 6's unverified guess of
+  `10` for `ebscene[]`'s capacity (still not independently confirmed
+  against the disassembly itself, just now grounded in the right
+  reference point instead of a guess). Lesson stated plainly: "matches
+  this project's common smaller-capacity pattern" is a plausibility
+  check, not evidence — the actual 2011 constant still has to be looked
+  up before citing drift.
+  **Round 8 landed a capstone finding**: listing EVERY room-file-version
+  gate check across `load_main_block`'s entire body shows a clean,
+  gapless run — `3` through `14`, nothing higher anywhere. This build's
+  COMPILED ENGINE never had code for room-format version 15+ at all, not
+  just this game's own room files happening to be old-format. One fact,
+  checked once, retroactively confirms absent everything 2011 gates
+  version≥15: `walk_area_zoom2`/`walk_area_top`/`walk_area_bottom`
+  (ruling out the leading candidates for the still-open 300-byte pad
+  before `scripts`, though its real contents remain unknown),
+  `numLocalVars`/`localvars` (a second independent confirmation of round
+  7's finding), the entire `NewInteraction`-based interaction-
+  deserialization block including `intrObject[]`/`objectScripts`
+  (upgraded from "plausible by precedent" to decisively confirmed),
+  `hotspotScriptNames`, `gameId`, and `hotspotScripts`/`objectScripts`/
+  `regionScripts`/`roomScripts`. Bonus: resolves `sub_403024` (round 4)
+  as necessarily `fgetstring_limit`, not `read_string_decrypt`. Also
+  caught and fixed a stale round-1 comment that still listed
+  `left`/`right`/`top`/`bottom`/`numsprs`/`sprs[]` as candidates for a
+  span two rounds had already shown they don't occupy.
+  **Round 9 discovered `load_room` doesn't read the file directly — it
+  dispatches on a per-block TYPE byte to separate handlers**, of which
+  `load_main_block` is only one. Two big payoffs: `BLOCKTYPE_
+  OBJECTNAMES`(5)'s handler closes the 300-byte mystery flagged since
+  round 6 — `objectnames[10][30]`@`+0x38C6`, `MAXOBJNAMELEN`/
+  `MAX_INIT_SPR` matching exactly. `BLOCKTYPE_ANIMBKGRND`(6)'s handler
+  confirms `bpalettes[]` is CONFIRMED ABSENT — this build passes the
+  SAME shared `pal[256]` to every background-frame load instead of a
+  per-frame address, matching 2011's own older, commented-out
+  predecessor line still sitting next to the live code (the same
+  "matches a historical artifact preserved in source comments" pattern
+  as the almp3 `MP3CHUNKSIZE` find). A second, stronger-than-usual
+  absence closes alongside it: the dispatch loop only handles block
+  types 1–7 and an EOF sentinel — any other type, including
+  `BLOCKTYPE_PROPERTIES`(8) and `BLOCKTYPE_OBJECTSCRIPTNAMES`(9), hits
+  an explicit "unknown block type" `quit()` — this build's engine would
+  actively crash on either, confirming `objectscriptnames[]`/
+  `CustomProperties`-based fields absent by direct positive evidence.
+  With this, every field either function's own read/write sequences
+  reference has been mapped or ruled out.
+  **Round 10 checked `load_new_room` (the caller of `load_room`) for
+  anything past its own call into it** — found reinforcement rather than
+  new territory: `resolution`/`ebscene[]` each pick up further
+  independent confirmations, and `+0x00`'s role gets clarified (a
+  working cache of the active background bitmap, refreshed after every
+  room load/resize) without its "official" identity closing. A
+  legitimate "kept looking, found nothing new" result, recorded
+  honestly. Struct total size still not established; still open for a
+  future round.
+- **Fresh survey, resolved in one round: `AmbientSound`** (2011's
+  `ambient[MAX_SOUND_CHANNELS+1]`, `Common/acruntim.h:25-33`) — CONFIRMED
+  ABSENT as an array: `PlayAmbientSound` (already matched) hard-locks
+  `channel` to `1` via an explicit check, unlike 2011's range check, and
+  every field write that would be `ambient[channel].FIELD` targets a
+  bare scalar global instead (`num`/`maxdist`/`x`/`y`/`vol`, plus the
+  loaded `SOUNDCLIP*` itself) — this build only ever supports one
+  ambient channel, so no indexable struct was needed. Closed the loop by
+  naming `update_ambient_sound_vol` (`sub_4089CC`, previously an unnamed
+  lead from a much earlier GameState round) — a complete, exact match to
+  source's per-channel distance-based volume falloff, giving every
+  scalar global a second independent confirmation. Bonus drift: tries
+  MP3 then WAV, unlike 2011's later unified loader. A useful contrast
+  with `RoomStruct`'s ten-round slog — sometimes the fastest path to a
+  complete answer is proving there's nothing left to map.
+  **Immediate follow-up correction**: the flagged "near-duplicate MP3
+  loader" open lead resolved into a real mismatch. `sub_408811`
+  (`PlayAmbientSound`'s own MP3 loader) is `my_load_static_mp3`,
+  confirmed via a COMPLETE field-offset match (`vol`/`mp3buffer`/
+  `repeat`/`tune` all landing on `MYSTATICMP3`'s exact declared member
+  order) — a much stronger standard than the call-shape-only evidence
+  `sub_4083FC` (called from `PlayMusic`) had been carrying under that
+  same name. Re-checked against that standard, `sub_4083FC` doesn't
+  meet it: it stores `almp3_create_mp3`'s raw result directly into
+  `PlayMusic`'s own stream-handle global with no wrapper object and no
+  `vol`/`mp3buffer`/`repeat` fields at all — a genuinely different
+  function, not a smaller variant. `sub_4083FC`'s match retracted and
+  left unnamed; `sub_408811` gets the name instead. This build keeps two
+  separate, near-identical MP3-loading implementations rather than one
+  shared function, the same "no unified loader yet" pattern already
+  found repeatedly elsewhere in this project.
+- **Fresh survey: `SOUNDCLIP`/`MYWAVE`/`MYMP3`/`MYSTATICMP3`** —
+  consolidated scattered evidence from several earlier rounds into
+  formal struct declarations, using `Common/acsound.h` (still present in
+  this repo) as a direct reference. Headline finding: this build's
+  `SOUNDCLIP` base class is drastically smaller than 2011's — just
+  `{vtable; int done;}` (8 bytes) vs. 2011's ~0x40 bytes of volume-
+  percentage/positional-audio state — a whole abstract base class
+  collapsed to its minimum, not just a smaller array or an absent field.
+  `MYWAVE` (16 bytes) closes with zero drift in its own two fields
+  (`wave`/`voice` match 2011's declared order exactly — an earlier,
+  hastier pass at this same comment had wrongly called it drifted, fixed
+  by reading the actual struct declaration instead of guessing from
+  constructor-assignment order); its confirmed total size proves 2011's
+  `firstTime`/`repeat` are absent — this build plays samples eagerly at
+  load time, not lazily. `MYMP3` (24 bytes) shows the familiar kind of
+  drift layered on the unfamiliar one: `stream`/`in`/`chunksize` all
+  zero-drift, but `buffer` sits with zero gap right after `in`,
+  confirming 2011's intervening `filesize` is absent. Bonus: identifies
+  `almp3_create_mp3stream` as a new function match. `MYSTATICMP3` (24
+  bytes) shows the base-class shrinkage forcing real structural
+  adaptation — `vol`/`repeat`, which 2011 inherits from the bulky
+  `SOUNDCLIP` base, had to become this build's own LOCAL fields since
+  its minimal base doesn't carry them, shifting `mp3buffer` 4 bytes
+  later to make room.
+- **MAJOR CORRECTION: `EventBlockCmd`/`GameAnimation` (an earlier
+  session's structs, explicitly documented as having "no 2011 source at
+  all to anchor to") turn out to be real, still-declared 2011 structs —
+  `AnimationStruct`/`FullAnimation` (`Common/acroom.h:218-232`).
+  Discovered incidentally while re-reading `acroom.h` for an unrelated
+  `RoomStruct` thread. Confirmed three independent ways at once: (1)
+  size arithmetic — `AnimationStruct` is 5 ints + 2 chars, naturally
+  padded to 24 bytes, matching `EventBlockCmd`'s own disassembly-derived
+  stride with zero slack, and `10×24+4=0xF4` lands exactly on
+  `GameAnimation`'s own independently-confirmed 244-byte total; (2)
+  field-by-field semantics — every one of `EventBlockCmd`'s 7 fields
+  (independently named/described from pure disassembly evidence in an
+  earlier round) matches `AnimationStruct`'s declared fields exactly:
+  `data0`→`x`, `data1`→`y`, `data2`→`data`, `target`→`object`,
+  `data3`→`speed`, `type`→`action`, `waitUntilDone`→`wait` — three of
+  these (`data`/`object`/`speed`) were already described in this
+  project's own prior prose using almost 2011's literal field names,
+  with zero knowledge at the time that a match existed; (3)
+  `RoomStruct.anims[10][0xF4]` (previously a raw byte blob, matched only
+  by position/size to 2011's `FullAnimation anims[MAXANIMS]` field) is
+  now retyped to `FullAnimation anims[10]` directly, and its
+  immediately-following `numanims` field matches 2011's declared
+  adjacency with zero drift — a third, fully independent confirmation.
+  ARCHITECTURAL NUANCE: the one part of the earlier claim that was
+  right — 2011's own room loader no longer reads the `anims[]` payload
+  on load (`acroom.h:1897-1908` reads `numanims` then `fseek`s past the
+  data, the real `fread` left commented out) — the FORMAT survives to
+  2011, declared and dead, but this build's own specific USE of it as a
+  standalone 10-slot global "Animations" resource table
+  (`unk_52024C[10]`, triggered via `EventBlock.respond[i]==4`,
+  processed by two still-unnamed functions with no 2011 counterpart at
+  all) remains a genuine, still-undocumented-in-2011 discovery — matches
+  the "dead-but-declared by 2011, still fully live here" pattern already
+  seen with `RoomStatus`/`RoomStruct`'s `hscond`/`objcond`/`misccond`.
+  Renamed throughout `apply_structs.py` (fields renamed to match 2011
+  exactly, per aim #3), with the old placeholder names kept visible in
+  both structs' own header comments and appended (not overwritten)
+  correction notes on the three affected `matches.json` entries
+  (`run_event_block`, and the two still-unnamed `sub_40C3E0`/
+  `sub_40C75E`), per this project's "visible retraction" convention.
 
 ## Third-party library identification (Task #10)
 

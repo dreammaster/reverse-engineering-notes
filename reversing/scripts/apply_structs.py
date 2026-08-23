@@ -508,6 +508,16 @@ struct CharacterInfo {
                            // SetCharacterView delegates to) does "chap->wait=0;" -- matches [+0x1C]=0
                            // exactly. update_stuff's "if (chi->wait>0) chi->wait--;" lip-sync decrement
                            // pattern (originally spotted in round 2) belongs here, not at +0x08.
+                           // MAJOR ADDITIONAL ROLE (CharacterExtras remaining-fields round): this
+                           // SAME field ALSO serves as 2011's `walkwait` (TURNING_AROUND-branch
+                           // "if (chi->walkwait>0) chi->walkwait--;", AC.CPP:6528) AND `charextra[].
+                           // animwait` (the "walking<1 -> animwait=0", "animwait>0 -> animwait--",
+                           // and final "animwait=views[...].frames[...].speed+chi->animspeed" trio,
+                           // AC.CPP:6626-6653) -- all three read/write this one field, matching
+                           // `OldCharacterInfo`'s single declared `wait` (`acroom.h:2604`, no
+                           // separate `walkwait` in this ancestor at all). CONFIRMS `charextra[].
+                           // animwait` is not a separate field in this build -- see CharacterExtras's
+                           // own documentation block below for the full writeup.
   int flags;                // +0x20, high confidence: Character_UnlockView does
                            // "chaa->flags &= ~CHF_FIXVIEW;" where CHF_FIXVIEW=2 (Common/acroom.h:2480) --
                            // disasm matches exactly: `and al, 0FDh` (~2) on a 32-bit field read via `mov eax,[...]`.
@@ -575,10 +585,12 @@ struct CharacterInfo {
   short walkspeed;          // +0x40, high confidence: walk_character reads this into a global right where
                            // source has "int move_speed_x = chin->walkspeed;" (the very next source line
                            // after the animating check above).
-  short animspeed;          // +0x42, tentative/lower confidence: inferred from positional adjacency to
-                           // walkspeed (matches 2011's "short walkspeed, animspeed;" pair) plus an earlier,
-                           // less certain read-site seen during unrelated work -- not independently nailed
-                           // down to the same standard as the fields above.
+  short animspeed;          // +0x42, high confidence (UPGRADED from tentative, CharacterExtras
+                           // remaining-fields round): `update_stuff` (already matched) reads this
+                           // field directly as the second addend in "wait =
+                           // views[chi->view].loops[chi->loop].frames[chi->frame].speed +
+                           // chi->animspeed;", matching AC.CPP:6653 exactly -- see `wait`@+0x1C's
+                           // own comment above for the full context.
   short inv[100];            // +0x44..0x10C (200 bytes), high confidence: CORRECTS the earlier
                            // pre-existing "int inv" annotation -- `main` (already matched): "mov
                            // word ptr [playerchar+ee*2+44h], 1" (or 0) sets each item's starting-
@@ -2140,7 +2152,13 @@ struct RoomObject {
                             // call shape EXACTLY -- "do_movelist_move(&objs[aa].moving,&objs[aa].
                             // x,&objs[aa].y)" (`Engine/AC.CPP:6438`, `do_movelist_move`
                             // signature at `AC.CPP:17327`) confirms both the field identity AND
-                            // the global's own identity as AGS's `objs[]` array. (This build's
+                            // the global's own identity as AGS's `objs[]` array. SECOND
+                            // independent confirmation (found while chasing the stop_fast_forwarding
+                            // lead): `EndSkippingUntilCharStops`/`unload_old_room`-combined
+                            // (already matched) zeroes this same field in a
+                            // "for(ff=0;ff<croom->numobj;ff++) [dword_4E45C8+ff*20h+18h]=0" loop,
+                            // matching 2011's "for (ff=0;ff<croom->numobj;ff++) objs[ff].moving=0;"
+                            // (AC.CPP:3597-3598) exactly. (This build's
                             // call site only pushes the one `mlnum` argument -- a reduced
                             // signature/calling convention compared to 2011's three-pointer
                             // version, consistent with this project's broader "build predates
@@ -2184,93 +2202,148 @@ struct RoomObject {
                             // and the confirmed `flags` field ending at +0x1E.
 };
 
-struct EventBlockCmd {
-  // A project-assigned name, NOT derived from any 2011 source identifier -- unlike every other
-  // struct in this file, no living OR dead-commented 2011 declaration corresponds to this one.
-  // Confirmed via two still-unnamed functions: sub_40C75E (called from `run_event_block`,
-  // already matched, at offset +0x548 -- CONFIRMED to fire for `EventBlock.respond[i]==4`,
-  // "Run Animation", via a direct "cmp respond[i],4" guard immediately before the call -- see
-  // the `GameAnimation` struct below for the full resource-table discovery this unlocked) loops
-  // "for (i=[arg_4]; i<[arg_0+0xF0]; i++) sub_40C3E0(&arg_0[i*0x18])" -- confirming the record
-  // stride is 0x18(24 bytes) and that the list's own element-count field sits at list-relative
-  // +0xF0. sub_40C3E0 is a COMPLETE per-record dispatcher, its
-  // `type`@+0x14 byte now fully enumerated across all 6 values it handles (0-5; anything else
-  // hits a SECOND distinct error, "unknown animation encountered", proving the switch is
-  // exhaustive): type 0 = explicit error ("!undefined animation command"); type 1 = SetObjectView
-  // (target is a room object) or SetCharacterView/ReleaseCharacterView (target is a character --
-  // UNIFIED into one type here via a `data2==0` sentinel meaning "release", where 2011 later
-  // SPLIT this into two separate command types, `case 27`/`case 28`); type 2 = AnimateObject
-  // (object) or an inline animate-character equivalent (character, packing a value into
-  // CharacterInfo+0x3E, not otherwise investigated); type 3 = `move_object`/`walk_character` with
-  // `ignwal=0` (respect walkable areas); type 4 = the same, with `ignwal=1` ("move direct",
-  // ignoring walls -- 2011's later `MoveObjectDirect`-style distinction, here just a flag on the
-  // SAME command type rather than a separate one); type 5 = set the target's `x`/`y` position
-  // directly with no movement at all (writes straight into `RoomObject.x`/`.y` for an object, or
-  // `CharacterInfo+0x14`/`+0x18` for a character -- both already-confirmed offsets, reconfirmed
-  // here via a brand new caller). This resembles 2011's `NewInteractionCommand`/
-  // `run_interaction_commandlist` (`Common/acroom.h:600`, `Engine/AC.CPP:21449`) closely in ROLE
-  // (nearly the same action set: set/release view, animate, move with/without wall-avoidance, set
-  // position) but NOT in layout -- 2011's version has a vtable (virtual `NewInteractionAction`
-  // base) and 5 typed `data[]` slots, totaling ~76+ bytes, vs. this build's flat 24-byte POD
-  // record with 4 generic reused data slots. Given `run_event_block` (this build's confirmed
-  // EventBlock processor) is the caller, and 2011 states the ENTIRE EventBlock/interaction-
-  // scripts system "was replaced" by the time of the 2011 build (see run_event_block's own
-  // matches.json entry), this is most plausibly EventBlock's own native command-list format for
-  // its more complex response types -- a genuine ancestor of NewInteractionCommand that predates
-  // the vtable/NewInteractionAction refactor AND predates the later split of "set view"/"release
-  // view" and "move"/"move direct" into separate command types, not a corrupted or misread
-  // version of the 2011 struct.
-  int data0;                        // +0x00, high confidence: the target X coordinate for type 3/
-                            // 4 (move, passed as `tox` to `move_object`/`walk_character`) and for
-                            // type 5 (direct position set, written straight to `.x`). Unused by
-                            // types 1/2. Matches 2011's generic `data[0]`/`IPARAM1` slot concept
-                            // -- a fixed 4-byte argument whose meaning is entirely `type`-defined.
-  int data1;                        // +0x04, high confidence: the target Y coordinate for type 3/
-                            // 4/5 (`toy`, or written straight to `.y`), but REUSED for type 1/2
-                            // as a single-bit flag (`and ecx,1`, a "repeat"-style gate) -- the
-                            // clearest evidence this is a generic reusable slot (like 2011's
-                            // `data[1]`/`IPARAM2`) rather than a dedicated "flags" field as
-                            // originally guessed.
-  int data2;                        // +0x08, high confidence: the view number for type 1
-                            // (`SetObjectView`/`SetCharacterView`'s `vii`; `==0` selects
-                            // `ReleaseCharacterView` instead for a character target) and the loop
-                            // number for type 2's `AnimateObject` (object path). Unused by types
-                            // 3/4/5. Matches 2011's `data[2]`/`IPARAM2`-in-those-cases slot.
-  int target;                       // +0x0C, high confidence: the entity selector, decoded once
-                            // near the top of sub_40C3E0 and used by every type -- this build's
-                            // established object/character convention (<10 = room object index,
-                            // ==99 = player character, >=100 = character index+100, matching the
-                            // same convention documented for `AnimateObject`'s obn>=99 branch to
-                            // `animate_character`).
-  int data3;                        // +0x10, high confidence: the speed parameter for type 2's
-                            // `AnimateObject` (object path, `spdd`) and type 3/4's move speed
-                            // (`spee`, passed to `move_object`/packed into `walk_character`'s
-                            // call); also packed (shifted left 8 bits) into CharacterInfo+0x3E
-                            // for type 2's character path. Unused by types 1/5.
-  char type;                        // +0x14, high confidence: the command type byte, fully
-                            // enumerated 0-5 (see struct-level comment above) -- any other value
-                            // hits an explicit "unknown animation encountered" error, proving no
-                            // further types exist in this build.
-  char waitUntilDone;                // +0x15, high confidence: gates a blocking `do_main_cycle`
-                            // call after types 2 (character path), 3, and 4 -- "wait until this
-                            // animation/movement finishes before continuing" (matching 2011's
-                            // "wait until finished" idiom seen in `run_interaction_commandlist`'s
-                            // `case 14: Move Object`). Not read by types 0/1/5 (which don't take
-                            // time to complete).
+struct AnimationStruct {
+  // MAJOR CORRECTION (fresh survey follow-up, after this project's earlier session had drafted
+  // this struct under the project-assigned placeholder name `EventBlockCmd` and explicitly
+  // recorded "no living OR dead-commented 2011 declaration corresponds to this one" -- that claim
+  // was WRONG, just not yet disproven at the time). 2011's source DOES declare this struct, under
+  // the name `AnimationStruct` (`Common/acroom.h:218-226`): "struct AnimationStruct { int x, y;
+  // int data; int object; int speed; char action; char wait; ... };". The correspondence was
+  // found by working the arithmetic backward from `FullAnimation` (`acroom.h:228-232`,
+  // "AnimationStruct stage[MAXANIMSTAGES]; int numstages;", MAXANIMSTAGES=10, acroom.h:217) --
+  // 10 * sizeof(AnimationStruct) + sizeof(int) lands EXACTLY on this build's already-confirmed
+  // `GameAnimation` total size (0xF4/244 bytes) with zero slack IF AnimationStruct itself is
+  // 24 bytes (5 ints + 2 chars, naturally padded to a 4-byte boundary -- exactly this struct's
+  // own already-confirmed 0x18-byte stride). Checking field-by-field against sub_40C3E0's
+  // already-fully-characterized per-record dispatcher (see its own matches.json entry) confirms
+  // an exact, unforced semantic correspondence for EVERY field, not just the total size: `x`@+0x00
+  // (this struct's `data0`, "target X coordinate"), `y`@+0x04 (`data1`, "target Y coordinate"),
+  // `data`@+0x08 (`data2`, "view/loop number" -- 2011's OWN field name is the same generic "data"
+  // this project had already independently guessed), `object`@+0x0C (`target`, "the entity
+  // selector" -- 2011's OWN field name is literally "object", matching this project's own
+  // independently-derived semantic description almost word for word), `speed`@+0x10 (`data3`,
+  // "the speed parameter" -- exact name match), `action`@+0x14 (`type`, "the command type byte" --
+  // 2011's own field is a 1-byte discriminator here renamed `action`), `wait`@+0x15
+  // (`waitUntilDone`, "gates a blocking wait" -- exact semantic and even near-exact name match).
+  // Every one of these fields was independently derived from pure disassembly evidence, with zero
+  // knowledge of AnimationStruct's existence at the time -- an unusually strong, over-determined
+  // confirmation. RENAMED from `EventBlockCmd` to this struct's real 2011 name; the old name is
+  // kept in this comment (and left as a documented former name in matches.json/struct-layout-
+  // drift.md, per this project's "visible retraction, not silent edit" convention) purely for
+  // searchability across older notes. See `FullAnimation` below for the outer array/count struct
+  // and `RoomStruct.anims[10]`'s own entry (now retyped to `FullAnimation anims[10]` directly) for
+  // a THIRD independent confirmation: 2011 declares `roomstruct.anims` as exactly
+  // `FullAnimation anims[MAXANIMS]; short numanims;` (`acroom.h:835-836`), matching this build's
+  // already-confirmed field name, capacity (MAXANIMS=10, zero drift), and adjacency exactly.
+  //
+  // ARCHITECTURAL NOTE (unaffected by this rename): 2011 itself still DECLARES this struct and
+  // still reads `numanims`/`numstages`-shaped counts from room files, but no longer actually
+  // reads the `anims[]`/`stage[]` PAYLOAD data on load for current room versions -- see
+  // `acroom.h:1897-1908`, where the real "fread(&rstruc->anims[0], sizeof(FullAnimation), ...)"
+  // is commented out in favor of an `fseek` that just skips past the bytes. This is the exact
+  // same "still fully live in this 2002 build, reduced to a dead/skipped legacy declaration by
+  // 2011" pattern already seen with `RoomStruct.hscond`/`.objcond`/`.misccond` (EventBlock-based
+  // room interaction data) -- not a corrupted or misread version of the 2011 struct, a genuinely
+  // still-functioning ancestor subsystem 2011 stopped actually using but never deleted the
+  // declaration for. This build's own actual command-list PROCESSING (via `sub_40C3E0`/
+  // `sub_40C75E`, still unnamed -- see their own matches.json entries) has NO 2011 counterpart at
+  // all; only the underlying DATA LAYOUT (AnimationStruct/FullAnimation) survives to 2011,
+  // unused. `run_interaction_commandlist`/`NewInteractionCommand` (`acroom.h:600`,
+  // `Engine/AC.CPP:21449`) remains a separate, structurally unrelated, much later replacement
+  // system (vtable-based, 5 typed `data[]` slots, ~76+ bytes) covering a similar action set
+  // (set/release view, animate, move with/without wall-avoidance, set position) -- not this
+  // struct's own direct successor.
+  int x;                             // +0x00 (was `data0`), high confidence: the target X
+                            // coordinate for type 3/4 (move, passed as `tox` to
+                            // `move_object`/`walk_character`) and for type 5 (direct position
+                            // set, written straight to `.x`). Unused by types 1/2. Matches
+                            // 2011's declared `AnimationStruct::x` (`acroom.h:219`) exactly.
+  int y;                             // +0x04 (was `data1`), high confidence: the target Y
+                            // coordinate for type 3/4/5 (`toy`, or written straight to `.y`),
+                            // but REUSED for type 1/2 as a single-bit flag (`and ecx,1`, a
+                            // "repeat"-style gate). Matches 2011's declared `AnimationStruct::y`
+                            // (`acroom.h:219`) in position; the type-1/2 flag reuse is this
+                            // build's own behavior, not separately declared in 2011.
+  int data;                          // +0x08 (was `data2`), high confidence: the view number for
+                            // type 1 (`SetObjectView`/`SetCharacterView`'s `vii`; `==0` selects
+                            // `ReleaseCharacterView` instead for a character target) and the
+                            // loop number for type 2's `AnimateObject` (object path). Unused by
+                            // types 3/4/5. Matches 2011's declared `AnimationStruct::data`
+                            // (`acroom.h:220`) exactly, including the field NAME.
+  int object;                        // +0x0C (was `target`), high confidence: the entity
+                            // selector, decoded once near the top of sub_40C3E0 and used by
+                            // every type -- this build's established object/character
+                            // convention (<10 = room object index, ==99 = player character,
+                            // >=100 = character index+100, matching the same convention
+                            // documented for `AnimateObject`'s obn>=99 branch to
+                            // `animate_character`). Matches 2011's declared
+                            // `AnimationStruct::object` (`acroom.h:221`) exactly, including the
+                            // field NAME.
+  int speed;                         // +0x10 (was `data3`), high confidence: the speed parameter
+                            // for type 2's `AnimateObject` (object path, `spdd`) and type 3/4's
+                            // move speed (`spee`, passed to `move_object`/packed into
+                            // `walk_character`'s call); also packed (shifted left 8 bits) into
+                            // CharacterInfo+0x3E for type 2's character path. Unused by types
+                            // 1/5. Matches 2011's declared `AnimationStruct::speed`
+                            // (`acroom.h:222`) exactly, including the field NAME.
+  char action;                       // +0x14 (was `type`), high confidence: the command type
+                            // byte, fully enumerated 0-5 -- type 0 = explicit error
+                            // ("!undefined animation command"); type 1 = SetObjectView (target
+                            // is a room object) or SetCharacterView/ReleaseCharacterView (target
+                            // is a character -- UNIFIED into one type here via a `data==0`
+                            // sentinel meaning "release", where 2011 later SPLIT this into two
+                            // separate `NewInteractionCommand` types, `case 27`/`case 28`); type
+                            // 2 = AnimateObject (object) or an inline animate-character
+                            // equivalent (character, packing a value into CharacterInfo+0x3E);
+                            // type 3 = `move_object`/`walk_character` with `ignwal=0` (respect
+                            // walkable areas); type 4 = the same, with `ignwal=1` ("move direct",
+                            // ignoring walls); type 5 = set the target's `x`/`y` position
+                            // directly with no movement at all (writes straight into
+                            // `RoomObject.x`/`.y` for an object, or `CharacterInfo+0x14`/`+0x18`
+                            // for a character). Any other value hits a SECOND distinct error,
+                            // "unknown animation encountered", proving the switch is exhaustive
+                            // -- no further types exist in this build. Matches 2011's declared
+                            // `AnimationStruct::action` (`acroom.h:223`) in position and role
+                            // (a type/action discriminator byte), though 2011's own constructor
+                            // (`action=0;`) never assigns it the richer 1-5 meaning this build's
+                            // command-list interpreter (`sub_40C3E0`, still unnamed) actively
+                            // uses -- consistent with the "declared but functionally dead by
+                            // 2011" pattern documented at the struct level above.
+  char wait;                         // +0x15 (was `waitUntilDone`), high confidence: gates a
+                            // blocking `do_main_cycle` call after types 2 (character path), 3,
+                            // and 4 -- "wait until this animation/movement finishes before
+                            // continuing". Matches 2011's declared `AnimationStruct::wait`
+                            // (`acroom.h:224`) exactly, including the field NAME -- 2011's own
+                            // constructor even defaults it to `wait=1`, consistent with this
+                            // being a "should the engine block" flag in both builds.
   char _pad_align[2];               // +0x16..0x18, compiler alignment padding (not a real field)
                             // -- boxed in with zero slack now that every other byte through
-                            // +0x15 is accounted for across all 6 command types.
+                            // +0x15 is accounted for across all 6 command types, and matching
+                            // the same natural 4-byte-alignment padding 2011's own declaration
+                            // (5 ints + 2 chars = 22 bytes, rounded to 24) would produce.
 };
 
-struct GameAnimation {
-  // A project-assigned name for a genuine, previously entirely unknown game resource: this
-  // build's "Animations" system -- a room-independent, globally-numbered table of reusable
-  // EventBlockCmd command lists, triggerable from any EventBlock's `respond[i]==4` ("Run
-  // Animation") via `EventBlock.data[i]` as a 0-9 index. This matches the OLD AGS Editor's
-  // "Animations" resource pane (a distinct project-tree entry type in ancient AGS versions,
-  // predating the modern Views-only approach) -- entirely absent from the 2011 reference source,
-  // consistent with "the whole EventBlock/interaction-scripts system was replaced" (see
-  // run_event_block's matches.json entry) extending to this resource type as well.
+struct FullAnimation {
+  // MAJOR CORRECTION (fresh survey follow-up, same round as `AnimationStruct` above): this
+  // struct was originally drafted under the project-assigned placeholder name `GameAnimation`,
+  // documented as "a genuine, previously entirely unknown game resource... entirely absent from
+  // the 2011 reference source". That conclusion is WRONG in one specific way: the DATA FORMAT
+  // (this struct) is not absent from 2011 at all -- it's declared verbatim as `FullAnimation`
+  // (`Common/acroom.h:228-232`: "struct FullAnimation { AnimationStruct stage[MAXANIMSTAGES]; int
+  // numstages; ... };", MAXANIMSTAGES=10 at `acroom.h:217`) and is STILL `RoomStruct`'s own
+  // `anims[MAXANIMS=10]` field type in the CURRENT 2011 source (`acroom.h:835`) -- see
+  // `RoomStruct.anims`'s own entry, now retyped from a raw byte blob to `FullAnimation anims[10]`
+  // directly. What genuinely IS new/undocumented in 2011 is this build's own PROCESSING of that
+  // data as a standalone, room-independent, globally-numbered resource table (`unk_52024C[10]`,
+  // triggerable from any EventBlock's `respond[i]==4` "Run Animation" via `EventBlock.data[i]` as
+  // a 0-9 index) -- matching the OLD AGS Editor's "Animations" resource pane, a distinct
+  // project-tree entry type in ancient AGS versions that predates the modern Views-only approach
+  // and is gone entirely from both 2011's UI and its actual room-loading code path (which now
+  // only reads `numanims` and skips the payload -- see `AnimationStruct`'s struct-level comment).
+  // So: the FORMAT survives to 2011 (dead but declared); this build's specific USE of that format
+  // as its own global resource table does not. RENAMED from `GameAnimation` to this struct's real
+  // 2011 name; old name kept in this comment for searchability, per this project's "visible
+  // retraction" convention.
   //
   // Confirmed via `run_event_block` (already matched): its `respond[i]==4` branch bounds-checks
   // `EventBlock.data[i]` against `0Ah`(10) -- erroring "!run_animate: undefined animation was
@@ -2278,35 +2351,41 @@ struct GameAnimation {
   // `dword_52033C[data[i]*0xF4]` for nonzero, erroring "!Run_animate: empty animation was run"
   // otherwise, before finally calling sub_40C75E(&unk_52024C[data[i]*0xF4], 0) -- `unk_52024C`
   // being the actual table of this struct's instances, `sub_40C75E` being the already-
-  // characterized EventBlockCmd list iterator (see its own entry).
+  // characterized `AnimationStruct` list iterator (see its own entry).
   //
   // RESOLVED (a follow-up round, after this struct was first drafted): `dword_52033C` is NOT a
   // separate parallel table at all -- its address (0x52033C) is EXACTLY `unk_52024C`'s address
-  // (0x52024C) plus `0xF0`, i.e. `&unk_52024C[0].numCommands`. IDA simply assigned it a distinct
+  // (0x52024C) plus `0xF0`, i.e. `&unk_52024C[0].numstages`. IDA simply assigned it a distinct
   // symbol because the compiler generated that one access as a literal computed address rather
   // than as `unk_52024C+member_offset`, so IDA's data-xref analysis didn't recognize the overlap.
-  // The "empty animation" check is therefore just `GameAnimation[data[i]].numCommands != 0` --
+  // The "empty animation" check is therefore just `FullAnimation[data[i]].numstages != 0` --
   // the exact same field `sub_40C75E`'s own loop bound reads, checked once early as an
   // error-message-friendly short-circuit before the (otherwise silently-no-op) iteration. This
-  // ALSO gives `numCommands`@+0xF0 below a second, fully independent confirmation.
+  // ALSO gives `numstages`@+0xF0 below a second, fully independent confirmation.
   //
-  // Total size 0xF4(244 bytes) is high confidence: independently confirmed by TWO things landing
-  // on it simultaneously -- the `dword_52033C`/`unk_52024C` address delta itself (`0xF0`, i.e.
-  // exactly `numCommands`'s own offset), AND sub_40C75E's own confirmed "list[+0xF0] =
-  // numCommands" access applied to `unk_52024C[slot]`, meaning `command[10]` (10*0x18=0xF0) plus
-  // a trailing `numCommands` int lands EXACTLY on the externally-confirmed 0xF4 stride with zero
-  // slack.
-  EventBlockCmd command[10];         // +0x000..0xF0 (240 bytes), high confidence: see struct-level
-                            // comment -- MAX_ANIMATIONS=10 slots confirmed via run_event_block's
-                            // own literal `0Ah` bounds check, and this array's own per-element
-                            // stride (0x18) already independently confirmed via EventBlockCmd.
-  int numCommands;                   // +0xF0, high confidence: confirmed via sub_40C75E (already
-                            // characterized): the loop bound for iterating `command[]`, matching
-                            // the same role NewInteractionCommandList.numCommands plays in 2011's
-                            // later, structurally unrelated replacement system. INDEPENDENTLY
-                            // reconfirmed via `run_event_block`'s "empty animation" check reading
-                            // this exact same field through the address it knows as
-                            // `dword_52033C` -- see the struct-level RESOLVED note above.
+  // Total size 0xF4(244 bytes) is high confidence: independently confirmed by THREE things
+  // landing on it simultaneously -- the `dword_52033C`/`unk_52024C` address delta itself
+  // (`0xF0`, i.e. exactly `numstages`'s own offset), sub_40C75E's own confirmed "list[+0xF0] =
+  // numstages" access applied to `unk_52024C[slot]` (`stage[10]` (10*0x18=0xF0) plus a trailing
+  // `numstages` int lands EXACTLY on the externally-confirmed 0xF4 stride with zero slack), AND
+  // 2011's own declared arithmetic (10 * sizeof(AnimationStruct)=0x18 + sizeof(int) = 0xF4)
+  // reached completely independently, from the reference source rather than the disassembly.
+  AnimationStruct stage[10];         // +0x000..0xF0 (240 bytes), high confidence: see
+                            // struct-level comment -- MAX_ANIMATIONS=10 slots confirmed via
+                            // run_event_block's own literal `0Ah` bounds check (matching 2011's
+                            // own `MAXANIMSTAGES=10`, `acroom.h:217`, with zero drift), and this
+                            // array's own per-element stride (0x18) already independently
+                            // confirmed via `AnimationStruct`. Matches 2011's declared
+                            // `AnimationStruct stage[MAXANIMSTAGES]` (`acroom.h:229`) exactly,
+                            // including the field NAME (was `command` under the old placeholder
+                            // name).
+  int numstages;                     // +0xF0 (was `numCommands`), high confidence: confirmed via
+                            // sub_40C75E (already characterized): the loop bound for iterating
+                            // `stage[]`. INDEPENDENTLY reconfirmed via `run_event_block`'s
+                            // "empty animation" check reading this exact same field through the
+                            // address it knows as `dword_52033C` -- see the struct-level
+                            // RESOLVED note above. Matches 2011's declared `int numstages`
+                            // (`acroom.h:230`) exactly, including the field NAME.
 };
 
 struct RoomStatus {
@@ -2327,10 +2406,11 @@ struct RoomStatus {
   //
   // STRUCT FULLY MAPPED: every byte from +0x00 through +0x1390 is now accounted for. The
   // region 2011 fills with `NewInteraction`-based `intrHotspot`/`intrObject`/`intrRegion`/
-  // `intrRoom` (already proven entirely absent from this build, see `EventBlockCmd`/
-  // `GameAnimation`) turns out to hold this build's OWN EventBlock-based per-room interaction
-  // data instead -- `hscond[20]`/`objcond[10]`/`misccond` below, matching 2011's OWN dead-
-  // commented-out declaration for exactly this (`Common/acruntim.h:105-107`) almost verbatim.
+  // `intrRoom` (already proven entirely absent from this build, see `AnimationStruct`/
+  // `FullAnimation` -- formerly `EventBlockCmd`/`GameAnimation`, renamed after their real 2011
+  // identities were found) turns out to hold this build's OWN EventBlock-based per-room
+  // interaction data instead -- `hscond[20]`/`objcond[10]`/`misccond` below, matching 2011's OWN
+  // dead-commented-out declaration for exactly this (`Common/acruntim.h:105-107`) almost verbatim.
   // `region_enabled` and `interactionVariableValues` are CONFIRMED ABSENT (see their own notes
   // below). 8 fields confirmed total, plus 2 confirmed absent.
   int beenhere;                     // +0x00, high confidence: confirmed via `load_new_room`
@@ -2603,15 +2683,30 @@ struct GameState {
                             // branch sense) exactly, and the field name itself ("number in a
                             // line") matches 2011's declared role precisely
                             // (`acruntim.h:474`-adjacent field, "inv_numinline").
-  int _tentative_text_speed;  // +0xF4, TENTATIVE, positional inference only: the 12-byte gap
-                            // between the newly-confirmed `inv_numinline`@+0xF0 and
-                            // `inv_item_wid`@+0x100 is EXACTLY 3 ints, matching the count of
-                            // fields 2011 declares in that same span (`text_speed`,
-                            // `sierra_inv_color`, `talkanim_speed`) with zero slack -- a
-                            // positional over-determined fit, but none of these three has an
-                            // access-site confirmation yet.
-  int _tentative_sierra_inv_color; // +0xF8, TENTATIVE, see `_tentative_text_speed` above.
-  int _tentative_talkanim_speed;   // +0xFC, TENTATIVE, see `_tentative_text_speed` above.
+  int text_speed;               // +0xF4, high confidence (UPGRADED from tentative): an
+                            // unmatched helper (sub_4136AF) computes "(strlen(Str)/
+                            // dword_4EEB0C + 1) * frames_per_second", matching the role of
+                            // 2011's text-display-duration calculation (AC.CPP:12688-12692,
+                            // this build's simpler predecessor lacking later-added modifiers).
+                            // Independently confirmed via game-startup init setting it to the
+                            // literal value 15, matching 2011's "play.text_speed=15;"
+                            // (AC.CPP:26289) exactly.
+  int sierra_inv_color;         // +0xF8, high confidence (UPGRADED from tentative):
+                            // `__actual_invscreen` (already matched) does "push dword_4EEB10;
+                            // call sub_40187F(wsetcolor-equivalent);" immediately before
+                            // drawing the inventory window background, matching 2011's
+                            // "wsetcolor(play.sierra_inv_color); wbar(...);"
+                            // (AC.CPP:23916-23917) exactly.
+  int talkanim_speed;           // +0xFC, high confidence (UPGRADED from tentative):
+                            // `_displayspeech` (already matched) packs this into a
+                            // CharacterInfo field via the classic AGS packed-value idiom when
+                            // starting a talk animation, and it's independently confirmed set
+                            // to the literal value 5 during init, matching 2011's
+                            // "play.talkanim_speed=5;" (AC.CPP:26279) exactly. NOTE: 2011's own
+                            // source only ever assigns this field once (at init) and never
+                            // reads it again -- this build actively USES it, another case
+                            // (like inv_numorder) of a field 2011 kept declared but stopped
+                            // actively using.
   int inv_item_wid;            // +0x100, high confidence: confirmed via sub_40D80C as the
                             // column-width divisor -- "mover = mouseX/(inv_item_wid*mult_x)"
                             // matches source's "mover = xoffs/itemWidth" (`GUIInv::itemWidth`,
@@ -2619,12 +2714,23 @@ struct GameState {
                             // exact declared field name and adjacent pairing with `inv_item_hit`.
   int inv_item_hit;            // +0x104, high confidence: confirmed via sub_40D80C as the
                             // row-height divisor, same match shape as `inv_item_wid` above.
-  int _tentative_speech_text_shadow;   // +0x108, TENTATIVE, positional inference only: the
-                            // 8-byte gap between `inv_item_hit`@+0x104 and the newly-confirmed
-                            // `speech_textwindow_gui`@+0x110 (below) is exactly 2 ints, matching
-                            // 2011's declared field count in that same span (`speech_text_shadow`,
-                            // `swap_portrait_side`) with zero slack -- no access-site evidence yet.
-  int _tentative_swap_portrait_side;   // +0x10C, TENTATIVE, see field above.
+  int speech_text_shadow;       // +0x108, high confidence (UPGRADED from tentative): an
+                            // unmatched helper (sub_413635, called from `GUITextBox::Draw`
+                            // among others) reads dword_4EEB20 immediately before a
+                            // wtextcolor-equivalent call (sub_401F62), matching 2011's
+                            // "wtextcolor(play.speech_text_shadow);" (AC.CPP:12616/12621)
+                            // exactly in role. Independently confirmed via `main`'s init
+                            // block setting dword_4EEB20=0x10(16), matching 2011's
+                            // "play.speech_text_shadow = 16;" (AC.CPP:26338) exactly.
+  int swap_portrait_side;      // +0x10C, HIGH confidence (UPGRADED from tentative several
+                            // rounds later): `_displayspeech` (already matched) does "if
+                            // (dword_4EF2B8 != xx) { if (dword_4EEB24==1) dword_4EEB24=2; else
+                            // if (dword_4EEB24==2) dword_4EEB24=1; ... }" matching 2011's "if
+                            // (play.swap_portrait_lastchar != aschar) { ... if
+                            // (play.swap_portrait_side==2) play.swap_portrait_side=1; else
+                            // play.swap_portrait_side=2; ... }" (AC.CPP:13697-13721) exactly --
+                            // the original positional guess for this field is confirmed
+                            // correct.
   int speech_textwindow_gui;  // +0x110, high confidence: this is what the pre-existing IDA
                             // global label `ifnum` (address 0x4EEB28) actually is -- NOT a
                             // genuinely separate variable as earlier rounds assumed (see this
@@ -2636,35 +2742,35 @@ struct GameState {
                             // computed offset (0x4EEB28-0x4EEA18=0x110) also lines up exactly
                             // with 2011's declared position (3 fields after inv_item_hit) if
                             // this build has zero drift in that short span.
-  char _pad_unknown1a[0x04];   // +0x114..0x118, genuinely unexplored (1 dword, dword_4EEB2C) --
-                            // XREF'd from `update_stuff` (already matched) negating it into a
-                            // walk-target-adjacent field; role not pinned down this round.
+  int follow_change_room_timer; // +0x114, high confidence (UPGRADED from unidentified after
+                            // FIVE rounds): `main`'s inlined game-settings-init block
+                            // (already matched) sets dword_4EEB2C=0x96(150), matching 2011's
+                            // "play.follow_change_room_timer = 150;" (AC.CPP:26394) exactly.
   int totalscore;               // +0x118, high confidence: `replace_macro_tokens` (already
                             // matched) reads this for BOTH its "totalscore" and "scoretext"
                             // macro branches, matching 2011's `#define MAXSCORE
                             // play.totalscore` (`acruntim.h:809`) exactly -- 2011's own source
                             // uses the macro rather than the field name directly at both call
                             // sites (`AC.CPP:7134`/`7136`), but the macro's definition makes
-                            // the identification unambiguous.
-  int _tentative_skip_display;  // +0x11C, MEDIUM confidence: `_display_main` (already matched)
-                            // checks this against 0/2/3 in a message-box wait loop deciding
-                            // whether to poll for a skipping keypress/mouseclick -- generally
-                            // consistent with GameState.skip_display's role ("how the user can
-                            // skip normal Display windows") and small-int-enum value space
-                            // (2011's sibling field skip_speech uses the same style of enum via
-                            // user_to_internal_skip_speech, AC.CPP:12790-12810), but this
-                            // build's specific branch structure doesn't cleanly match a single
-                            // identifiable 2011 function line for line -- not upgraded past
-                            // medium confidence pending a more direct behavioral match.
-  char _pad_unknown1c[0x04];   // +0x120..0x124 (1 dword, dword_4EEB38), genuinely unexplored --
-                            // XREF'd from `update_stuff` (already matched) gating a per-
-                            // character blink/talk-animation update block; role not pinned
-                            // down this round.
+                            // the identification unambiguous. Reconfirmed via `main`'s init
+                            // block: "dword_51B84C(game.totalscore) -> dword_4EEB30" matches
+                            // "play.totalscore = game.totalscore;" (AC.CPP:26348) exactly,
+                            // also identifying dword_51B84C as the bonus global game.totalscore.
+  int skip_display;             // +0x11C, high confidence (UPGRADED from medium): `main`'s init
+                            // block sets dword_4EEB34=3, matching 2011's "play.skip_display =
+                            // 3;" (AC.CPP:26344) exactly -- on top of the pre-existing
+                            // message-box-wait-loop role match from `_display_main`.
+  int no_multiloop_repeat;      // +0x120, high confidence (UPGRADED from unidentified after
+                            // FIVE rounds): `main`'s init block sets dword_4EEB38=0 in the
+                            // same sequential position 2011 declares/initializes
+                            // no_multiloop_repeat (immediately after skip_display), matching
+                            // "play.no_multiloop_repeat = 0;" (AC.CPP:26345).
   int roomscript_finished;      // +0x124, high confidence: `post_script_cleanup` (already
                             // matched)'s `runnext[0]=='$'` branch does
                             // "run_text_script_iparam(roominst,...); dword_4EEB3C=1;" matching
                             // 2011's "run_text_script_iparam(roominst,&runnext[1],...);
                             // play.roomscript_finished = 1;" (AC.CPP:3179-3181) exactly.
+                            // Reconfirmed via `main`'s init block setting it to 0.
   int used_inv_on;              // +0x128, high confidence: `check_controls` (already matched)'s
                             // GOBJ_INVENTORY click branch does "iit=sub_40D80C(); if (iit>=0)
                             // dword_4EEB40=iit;" matching 2011's "int
@@ -2672,14 +2778,22 @@ struct GameState {
                             // iit; }" (AC.CPP:5707-5710) exactly -- also a further independent
                             // confirmation that sub_40D80C is this build's offset_over_inv
                             // equivalent.
-  char _pad_unknown1d[0x04];   // +0x12C..0x130 (1 dword, dword_4EEB44), genuinely unexplored --
-                            // an earlier round's `skip_display` guess for this specific field
-                            // is RETRACTED in favor of `_tentative_skip_display`@+0x11C above,
-                            // which has closer-matching evidence (the same small-int value
-                            // space AND a message-box-skip-specific role, vs. this field's
-                            // weaker "set to 2 under some unrelated gate" evidence). XREF'd
-                            // from an `_display_at`-adjacent function (sub_4141B8, already
-                            // touched but not fully read this round).
+  int no_textbg_when_voice;     // +0x12C, high confidence (UPGRADED from unidentified after
+                            // FIVE rounds -- an earlier round's `skip_display` guess for this
+                            // specific field is RETRACTED, see `skip_display`@+0x11C above for
+                            // the correct field): `main`'s init block sets dword_4EEB44=0 in
+                            // the same sequential position 2011 declares/initializes
+                            // no_textbg_when_voice (immediately after roomscript_finished),
+                            // matching "play.no_textbg_when_voice = 0;" (AC.CPP:26350). SECOND,
+                            // independent confirmation (GameState remaining-fields round,
+                            // chasing the music_master_volume cluster): `play_speech` (this
+                            // round's new match, `sub_4141B8`)'s tail does "if
+                            // (byte_513340==2 && dword_4EEB44>0) { byte_513340=1;
+                            // dword_4EEB44=2; }" matching 2011's "if
+                            // ((game.options[OPT_SPEECHTYPE]==2) &&
+                            // (play.no_textbg_when_voice>0)) { game.options[OPT_SPEECHTYPE]=1;
+                            // play.no_textbg_when_voice=2; }" (AC.CPP:13428-13431) exactly --
+                            // also identifies `byte_513340` as `game.options[OPT_SPEECHTYPE]`.
   int max_dialogoption_width;   // +0x130, high confidence: `do_conversation` (already matched)
                             // computes "wii = dword_4EEB48 * current_screen_resolution_
                             // multiplier_x" inside its is_textwindow-equivalent branch,
@@ -2744,51 +2858,108 @@ struct GameState {
   int globalscriptvars[300];    // +0x15C..0x60C (1200 bytes), high confidence via SetGlobalInt
                             // (already matched) -- see its own evidence. DRIFT: 300 here vs.
                             // 2011's declared MAXGSVALUES=500.
-  char _pad_unexplored2[0x200]; // +0x60C..0x80C (512 bytes), genuinely unexplored -- KNOWN to
-                            // contain at least one whole unrelated struct, not just uncharted
-                            // GameState fields: `word_4EF0F4`/`word_4EF158`/`word_4EF1BC`
-                            // (+0x6DC from play's base) turned out to be this build's
-                            // `CharacterExtras.width`/`.height`/`.zoom` (three parallel
-                            // `short[50]` arrays -- structure-of-arrays, unlike 2011's single
-                            // `CharacterExtras charextra[50]` array-of-structs, Common/
-                            // acruntim.h:441-455; see `prepare_characters_for_drawing`'s own
-                            // matches.json entry for the full evidence chain). This PROVES
-                            // SaveGameSlot's literal 0x964 fwrite constant (see this struct's
-                            // header comment) sweeps in more than just the true GameState
-                            // struct -- it also captures adjacent-but-distinct AC.CPP file-scope
-                            // globals (here, a WHOLE SEPARATE real struct, not just scratch
-                            // memory) that the linker happened to place contiguously after
-                            // `play`. IMPORTANT CAUTION for the rest of this pad and the one
-                            // below: falling inside the fwrite's span is NOT by itself
-                            // sufficient evidence of GameState membership -- role-based
-                            // confirmation is still required, as it was for every field already
-                            // confirmed in this struct (in_cutscene, speech_textwindow_gui,
-                            // totalscore, walkable_areas_on below, etc.).
-                            //
-                            // `play_scren_tint`/screen_tint is CONFIRMED ABSENT here (its own
-                            // address computes to +0x10C6C, far outside GameState's bounds --
-                            // it really is a standalone global). `play_invorder` (this build's
-                            // `short[100]` inventory-order array -- capacity confirmed via a
-                            // clean, zero-interruption 200-byte span immediately after it,
-                            // matching MAX_INV=100 with zero drift -- see update_invorder's
-                            // evidence) computes to +0x614 -- still unresolved whether it's a
-                            // genuine GameState member or, like CharacterExtras, a
-                            // coincidentally-adjacent separate global; not added as a typed
-                            // struct member pending role-based confirmation or further mapping
-                            // of the surrounding territory.
+  // The +0x60C..+0x80C span (512 bytes) is now FULLY BYTE-ACCOUNTED FOR, and unlike when this
+  // comment was first written, its first 8 bytes (cur_music_number/music_repeat, immediately
+  // below) are now real confirmed fields, not a pad -- the rest is broken into precisely-sized
+  // pieces below rather than one undifferentiated pad. IMPORTANT CAUTION established here and
+  // reinforced since: falling
+  // inside SaveGameSlot's proven 2404-byte fwrite span (see this struct's header comment) is NOT
+  // by itself sufficient evidence of GameState membership -- role-based confirmation is still
+  // required, as it was for every field already confirmed in this struct. This span is known to
+  // contain at least one WHOLE UNRELATED STRUCT (CharacterExtras, below), not just uncharted
+  // GameState fields or scratch memory -- the fwrite's literal size constant sweeps in more than
+  // the true GameState struct, capturing adjacent-but-distinct AC.CPP file-scope globals that
+  // the linker happened to place contiguously after `play`.
+  int cur_music_number;         // +0x60C, high confidence (RESOLVED, closing a pad open since
+                            // this struct's earliest rounds): `GetCurrentMusic` (already matched)
+                            // does "return dword_4EF024;" matching 2011's
+                            // "return play.cur_music_number;" (AC.CPP:17750) exactly. Cross-
+                            // confirmed across 5 more functions: `PlayMusic` (already matched)
+                            // reads it for an "already playing this track" early-out then writes
+                            // the new music number, matching AC.CPP:17896-17917 exactly;
+                            // `scr_StopMusic` (already matched) writes -1, matching
+                            // "play.cur_music_number=-1;" (AC.CPP:17583); `restore_game_data`
+                            // (already matched) writes the literal 0x7D0(2000), matching source's
+                            // own "play.cur_music_number=2000; // make sure it gets played"
+                            // (AC.CPP:23632) -- an unusually specific literal that could not
+                            // plausibly be a coincidence; and `main` (already matched) inits it to
+                            // -1, matching AC.CPP:26327.
+  int music_repeat;             // +0x610, high confidence: `SetMusicRepeat` (already matched)'s
+                            // ENTIRE one-line body -- "dword_4EF028 = loopflag;" -- matches 2011's
+                            // ENTIRE function body verbatim, "void SetMusicRepeat(int loopflag) {
+                            // play.music_repeat=loopflag; }" (AC.CPP:17753-17755). Sits with ZERO
+                            // gap immediately after `cur_music_number` above, matching 2011's exact
+                            // declared adjacency "int cur_music_number,music_repeat;"
+                            // (acruntim.h:553) with zero drift -- unlike most of this struct's
+                            // other confirmed pairs, this one is NOT drift-shifted relative to
+                            // 2011's declared order at all, it just isn't contiguous with the
+                            // REST of GameState's music fields (`music_master_volume` sits far
+                            // away at +0x808 -- see its own entry and the correction noted there).
+                            // `PlayMusic` (already matched) reads this as the repeat flag passed
+                            // down to its MP3-stream-creation helper.
+  char _pad_invorder_maybe[0xC8]; // +0x614..0x6DC (200 bytes) -- NOT asserted as a struct
+                            // member; kept as a neutral pad (not a typed `play_invorder[100]`
+                            // declaration) since GameState membership here is genuinely
+                            // unresolved, consistent with this project's convention of only
+                            // giving real field declarations to confirmed members. This is
+                            // `play_invorder`, this build's inventory-order array (role
+                            // confirmed via `update_invorder`'s exact algorithmic match;
+                            // capacity confirmed via a clean, zero-interruption 200-byte span
+                            // matching MAX_INV=100 with zero drift) -- but whether it's a
+                            // genuine GameState member or, like CharacterExtras immediately
+                            // after it, a coincidentally-adjacent separate global remains
+                            // UNRESOLVED. Neither neighbor (the unidentified pair above, or
+                            // CharacterExtras below) is itself a confirmed GameState field, so
+                            // there's no positional evidence either way -- unlike
+                            // bad_parsed_word/screen_tint, which each closed against an
+                            // independently-confirmed neighbor.
+  // CharacterExtras.width/height/zoom (this build's version) -- +0x6DC..0x808 (300 bytes),
+  // CONFIRMED NOT GameState -- see the dedicated CharacterExtras documentation block after this
+  // struct's closing brace for the full field-by-field writeup and evidence.
+  char _pad_characterextras[0x12C];
+  int music_master_volume;      // +0x808, high confidence (RESOLVED, correcting the previous
+                            // round's "plausibly lipsync/close-mouth-timing related" guess --
+                            // WRONG, the real answer is music volume): `sub_418E82` (this round's
+                            // new match, `update_music_volume` fused with `calculate_max_volume`)
+                            // computes "newvol = thisroom.options[ST_VOLUME]*30 +
+                            // dword_4EF220" then clamps to [0,255], matching 2011's
+                            // "newvol=play.music_master_volume + thisroom.options[ST_VOLUME]*30;
+                            // if(newvol>255)newvol=255; if(newvol<0)newvol=0;" (AC.CPP:12318-
+                            // 12320) exactly. `play_speech` (this round's new match, `sub_4141B8`)
+                            // decrements this field by a hardcoded 60 right before calling
+                            // `sub_418E82`, matching 2011's "play.music_master_volume -=
+                            // play.speech_music_drop; ...; update_music_volume();"
+                            // (AC.CPP:13417-13420) -- this build hardcodes the ducking amount
+                            // instead of reading a configurable `speech_music_drop` field
+                            // (predates that feature). ZERO-SLACK POSITIONAL CONFIRMATION: this
+                            // field ends exactly 4 bytes before the already-confirmed
+                            // `walkable_areas_on`@+0x80C, with no gap -- proving 2011's declared
+                            // `digital_master_volume` (sitting between `music_master_volume` and
+                            // `walkable_areas_on` in 2011's own order, `acruntim.h:554-556`) is
+                            // CONFIRMED ABSENT here. CORRECTION (found two rounds later while
+                            // closing the +0x60C..+0x614 pad): this comment previously ALSO
+                            // claimed `cur_music_number`/`music_repeat` (2011's declared PRECEDING
+                            // pair, `acruntim.h:553`) were confirmed absent by this same zero-gap
+                            // argument -- WRONG. That argument only bears on what comes AFTER
+                            // `music_master_volume`; it says nothing about fields that would
+                            // precede it. Both `cur_music_number` and `music_repeat` turn out to
+                            // exist after all, just as a standalone pair at a completely different
+                            // address (`+0x60C`, see their own field entries above) -- not embedded
+                            // contiguously with the rest of GameState's music fields here. See
+                            // struct-layout-drift.md for the full correction writeup.
   char walkable_areas_on[16]; // +0x80C..0x81C, high confidence: `EndSkippingUntilCharStops`/
                             // `unload_old_room`-combined (sub_40AAE3, already matched) does
                             // "memset(&byte_4EF224, 1, 0x10);" matching 2011's
                             // "memset(&play.walkable_areas_on[0],1,MAX_WALK_AREAS+1);"
                             // (AC.CPP:3623) exactly -- MAX_WALK_AREAS=15 (acroom.h:250), so
                             // MAX_WALK_AREAS+1=16=0x10 with zero drift.
-  short _tentative_screen_flipped; // +0x81C, TENTATIVE, positional inference only: the 2-byte
-                            // gap between the newly-confirmed walkable_areas_on's end (+0x81C)
-                            // and the already-confirmed offsets_locked (+0x81E, below) matches
-                            // 2011's declared adjacency "char walkable_areas_on[...]; short
-                            // screen_flipped; short offsets_locked;" (acruntim.h:556-558) with
-                            // zero slack for exactly this one intervening field -- no direct
-                            // access-site evidence of its own yet.
+  short screen_flipped;         // +0x81C, high confidence (UPGRADED from tentative): sits
+                            // exactly in the 2-byte gap between walkable_areas_on's confirmed
+                            // end and offsets_locked, matching 2011's declared adjacency
+                            // "char walkable_areas_on[...]; short screen_flipped; short
+                            // offsets_locked;" (acruntim.h:556-558) with zero slack. Directly
+                            // confirmed via `main`'s init block: word_4EF234=0 matches 2011's
+                            // "play.screen_flipped=0;" (AC.CPP:26331) exactly.
   short offsets_locked;    // +0x81E, high confidence: originally found via sub_40AAE3 zeroing
                             // it immediately after bg_frame_locked (matching source's exact
                             // adjacent assignment order), and its GameState membership -- left
@@ -2797,11 +2968,64 @@ struct GameState {
                             // positional confirmation: it lands exactly 2 bytes after the newly
                             // and separately confirmed walkable_areas_on, matching 2011's own
                             // declared field order with zero slack.
-  char _pad_unexplored3[0x18]; // +0x820..0x838 (24 bytes), genuinely unexplored -- contains at
-                            // least dword_4EF240 (XREF'd from load_new_room) and dword_4EF248
-                            // (XREF'd from check_controls, itself checked against 0/2/3 the
-                            // same way the tentative skip_display candidate was -- not chased
-                            // further this round, possibly a related or duplicate lead).
+  char _pad_unknown5[0x08];    // +0x820..0x828 (8 bytes, 2 dwords) -- RESOLVED (GameState's last
+                            // open pad, closed this round): this is exactly where 2011's `int
+                            // entered_at_x,entered_at_y,entered_edge;` (`acruntim.h:559`) would
+                            // place `entered_at_x`/`entered_at_y`, both already independently
+                            // CONFIRMED ABSENT (see `entered_edge`'s own comment immediately
+                            // below -- `load_new_room`'s second edge-computation block writes the
+                            // equivalent 2011 assignment into the shared `tox`/`toy` scratch
+                            // globals instead of dedicated persistent fields). An exhaustive
+                            // search of the ENTIRE disassembly for every address in this 8-byte
+                            // range (0x4EF238-0x4EF23F) turns up ZERO xrefs anywhere -- stronger
+                            // than a role-based absence finding, this is direct proof no code in
+                            // the whole binary ever touches this memory at all. Kept as a neutral
+                            // pad rather than typed fields, consistent with this project's
+                            // "only confirmed members get real declarations" convention -- there
+                            // is nothing here to declare, just 8 bytes of genuine compiler
+                            // padding/unused space between `offsets_locked` and `entered_edge`.
+                            // This closes out GameState's field-level investigation entirely --
+                            // every byte from +0x00 through +0x964 is now either a confirmed
+                            // field or an explicitly-explained, evidenced pad.
+  int entered_edge;             // +0x828, high confidence: `load_new_room` (already matched)
+                            // sets this to -1 (default) then 0/1/2/3 by descending threshold
+                            // comparisons against a bonus-identified global (`new_room_pos`),
+                            // matching 2011's "play.entered_edge = -1; ... if
+                            // (new_room_pos>=4000) play.entered_edge=3; ... >=1000:
+                            // entered_edge=0;" (AC.CPP:4453-4499) exactly, same thresholds,
+                            // same descending order. A second edge-computation block in the
+                            // same function CONFIRMS GameState.entered_at_x/entered_at_y are
+                            // ABSENT from this build -- the equivalent source assignment
+                            // (AC.CPP:4539-4540) writes into the shared `tox`/`toy` scratch
+                            // globals here instead of dedicated persistent fields.
+  int want_speech;              // +0x82C, high confidence: pre-existing IDA name
+                            // (`play_want_speech`), XREF'd from `SetVoiceMode` (already
+                            // correctly named, mechanical match) at exactly the location
+                            // matching 2011's "if (play.want_speech<0)
+                            // play.want_speech=(-newmod)-1; else play.want_speech=newmod;"
+                            // (AC.CPP:13500-13503).
+  int cant_skip_speech;         // +0x830, medium-high confidence (UPGRADED from tentative):
+                            // positionally exactly where 2011 declares `cant_skip_speech`
+                            // (immediately after `want_speech`); `check_controls`'s own check
+                            // there ("0 < dword_4EF248 < 3") doesn't cleanly read as a simple
+                            // boolean on its own, but `main`'s init block sets it via
+                            // "movsx ecx, byte_51333D; dword_4EF248=ecx" -- a COMPUTED value
+                            // from a game-options byte, matching the SHAPE of 2011's
+                            // "play.cant_skip_speech = user_to_internal_skip_speech(game.
+                            // options[OPT_NOSKIPTEXT]);" (AC.CPP:26333) rather than a fixed
+                            // literal, reinforcing the identification without fully closing
+                            // it (this build's version doesn't visibly call a conversion
+                            // function matching user_to_internal_skip_speech's name).
+  int stop_dialog_at_end;       // +0x834, medium-high confidence: pre-existing IDA name
+                            // (`play_stop_dialog_at_end`), XREF'd from `RunDialog`/`NewRoom`
+                            // (both already correctly named) in a role plausibly matching
+                            // 2011's dialog-stop-request flag -- but its POSITION here does
+                            // NOT match 2011's declared order (2011 places
+                            // stop_dialog_at_end much earlier, adjacent to reserved[10] near
+                            // the game.-exposed section boundary, acruntim.h:536, not next to
+                            // want_speech/entered_edge at acruntim.h:560-561) -- a genuine,
+                            // not-yet-explained architectural difference, flagged rather than
+                            // silently assumed consistent.
   int script_timers[21];       // +0x838..0x88C (84 bytes), high confidence: `update_stuff`
                             // (already matched)'s own OPENING lines loop "for(chat=0;chat<15h;
                             // chat++) if(dword_4EF250[chat]>1) dword_4EF250[chat]--;" matching
@@ -2825,11 +3049,75 @@ struct GameState {
                             // play.speech_volume);" (AC.CPP:13387-13396) exactly. Sits with
                             // ZERO gap immediately after sound_volume, matching 2011's exact
                             // declared pairing with zero drift.
-  char _pad_unexplored4[0xA4]; // +0x894..0x938 (164 bytes), genuinely unexplored -- 2011
-                            // declares a large run of fields here (normal_font/speech_font
-                            // through parsed_words[]/bad_parsed_word[100]), almost certainly
-                            // not all present given this project's repeated massive-drift
-                            // pattern; not mapped this round.
+  int normal_font;              // +0x894, high confidence: `SetNormalFont` (already matched,
+                            // mechanical) does "if (fontnum<0 || fontnum>=dword_51D2EC)
+                            // quit(...); dword_4EF2AC=fontnum;" matching 2011's "if
+                            // ((fontnum<0) || (fontnum>=game.numfonts))
+                            // quit(\"!SetNormalFont: invalid font number.\"); play.normal_font
+                            // = fontnum;" (AC.CPP:13468-13472) exactly, exact error string
+                            // included, dword_51D2EC=game.numfonts already confirmed. Sits
+                            // with ZERO gap immediately after speech_volume, matching 2011's
+                            // exact declared adjacency "sound_volume,speech_volume;
+                            // normal_font, speech_font;" with zero drift.
+  int speech_font;               // +0x898, high confidence (UPGRADED from medium-high): the
+                            // pre-existing IDA name `fontid` turned out to be genuine, not
+                            // another mislabeling artifact like `ifnum`/`play_want_music` --
+                            // `main`'s init block sets fontid=1, matching 2011's "play.
+                            // speech_font = 1;" (AC.CPP:26337) exactly, resolving the standing
+                            // caution from several rounds ago.
+  char key_skip_wait;          // +0x89C, high confidence: pre-existing IDA name
+                            // (`play_key_skip_wait`), behaviorally confirmed via
+                            // `check_controls` (already matched): "if (play_wait_counter>0 &&
+                            // play_key_skip_wait>1) play_wait_counter=0xFFFF;" matches 2011's
+                            // "else if ((play.wait_counter > 0) && (play.key_skip_wait > 1))"
+                            // (AC.CPP:5742) exactly.
+  char _pad_align7[0x03];      // +0x89D..0x8A0, compiler alignment padding (not a real field)
+                            // -- confirmed via IDA's own "align 4" directive at this exact
+                            // point in the raw .data listing.
+  int swap_portrait_lastchar;   // +0x8A0, high confidence: `_displayspeech` (already matched)
+                            // does "if (dword_4EF2B8 != xx) { ...toggle swap_portrait_side...;
+                            // dword_4EF2B8=xx; }" matching 2011's "if
+                            // (play.swap_portrait_lastchar != aschar) { ...toggle
+                            // play.swap_portrait_side...; play.swap_portrait_lastchar=ce; }"
+                            // (AC.CPP:13697-13721) exactly.
+  int seperate_music_lib;       // +0x8A4, high confidence: `IsMusicVoxAvailable` (already
+                            // matched, mechanical) does "return play_want_music;" matching
+                            // 2011's "return play.seperate_music_lib;" (AC.CPP:13512-13514)
+                            // exactly. CORRECTS the pre-existing IDA name `play_want_music`
+                            // (misleading -- 2011 has no "want_music" field at all) -- the
+                            // third pre-existing custom global name in this project found to
+                            // be a mislabeling artifact, after `ifnum`/speech_textwindow_gui.
+  int in_conversation;          // +0x8A8, high confidence: `do_conversation` (already matched)
+                            // does "dword_4EF2C0++;" right at its start, matching 2011's
+                            // "play.in_conversation++;" (RunDialog, AC.CPP:21955) -- same
+                            // role, same position at the top of the dialog-running routine.
+  int screen_tint;              // +0x8AC, high confidence: pre-existing IDA name
+                            // (`play_scren_tint`, typo-preserved), role confirmed via
+                            // `TintScreen` (already matched) and `sub_40AAE3`'s fade dispatch.
+                            // Its TRUE address (this struct's header comment has the full
+                            // correction story) lands here with ZERO gap after
+                            // in_conversation, matching 2011's exact declared adjacency
+                            // "swap_portrait_lastchar; seperate_music_lib; in_conversation;
+                            // screen_tint;" across all four fields with zero drift.
+  char _pad_unexplored7[0x22]; // +0x8B0..0x8D2 (34 bytes), CONFIRMED NOT GameState territory
+                            // -- occupied by `comparetonum`/`compareto` (both already IDA-
+                            // named globals, XREF'd from `ParseText`/`Said`, core text-parser
+                            // state unrelated to GameState) plus unlabeled bytes. This means
+                            // 2011's declared `num_parsed_words`/`parsed_words[MAX_PARSED_
+                            // WORDS]` (which 2011 places immediately before bad_parsed_word,
+                            // below) are CONFIRMED ABSENT here -- no room for them, adjacent
+                            // unrelated parser globals occupy the space instead.
+  char bad_parsed_word[100];   // +0x8D2..0x936, high confidence: `SaidUnknownWord` (already
+                            // matched, mechanical) does "strcpy(buffer, byte_4EF2EA); if
+                            // (byte_4EF2EA[0]==0) ..." matching 2011's "strcpy(buffer,
+                            // play.bad_parsed_word); if (play.bad_parsed_word[0]==0) ..."
+                            // (AC.CPP:18038-18041) exactly.
+  char _pad_align8[0x02];      // +0x936..0x938, compiler alignment padding (not a real field)
+                            // -- 0x8D2 isn't 4-byte aligned, so a 100-byte array starting
+                            // there ends 2 bytes short of the boundary the next field
+                            // (raw_color, an int) needs; boxed in with zero slack by
+                            // bad_parsed_word's own confirmed end and raw_color's
+                            // independently-confirmed start.
   int raw_color;                // +0x938, high confidence: `RawSetColor` (already matched,
                             // mechanical) does "dword_4EF350 = get_col8_lookup(this);"
                             // matching 2011's "play.raw_color = get_col8_lookup(clr);"
@@ -2859,7 +3147,7 @@ struct GameState {
 // Common/acruntim.h:441-455), this build implements it as THREE SEPARATE PARALLEL short[50]
 // arrays (structure-of-arrays) -- a genuine memory-layout difference, matching the same
 // "flattened/simplified 2002 predecessor" pattern seen elsewhere in this project (e.g.
-// ExecutingScript, GameAnimation), just applied to array-of-structs vs. structure-of-arrays
+// ExecutingScript, FullAnimation), just applied to array-of-structs vs. structure-of-arrays
 // rather than field count. Address range: 0x4EF0F4..0x4EF220 (300 bytes total, 3*50*2).
 //   short char_width[50];   // word_4EF0F4, high confidence: matches 2011's
 //                           // "scale_sprite_size(sppic,zoom_level,&newwidth,&newheight);
@@ -2875,9 +3163,900 @@ struct GameState {
 // history comment the way some other capacity-drift findings in this project have been) --
 // confirmed via a clean, zero-interruption 100-byte (50-short) span between each of the three
 // arrays with no other labels breaking it. Base sprite dimensions feeding the width/height
-// scale computation, dword_4CD2E8[]/dword_4E787C[], are plausibly `spritewidth[]`/
-// `spriteheight[]` (both well-known AGS globals, Engine/acplatfm.cpp:438 etc.) -- medium-high
-// confidence, not independently confirmed this round.
+// scale computation, dword_4CD2E8[]/dword_4E787C[], are `spritewidth[]`/`spriteheight[]`
+// (both well-known AGS globals) -- HIGH confidence (UPGRADED, found during the ScreenOverlay
+// round): `CreateGraphicOverlay` (already matched) passes them as create_bitmap_ex's height/
+// width args, matching 2011's "create_bitmap_ex(final_col_dep, spritewidth[slott],
+// spriteheight[slott]);" (AC.CPP:13128) exactly -- a second, independent usage context beyond
+// the original width/height-scaling lead.
+//
+// xwas/ywas (2011's half-move-smoothing pair for scaled/zoomed character movement, read/written
+// by `wantMoveNow(int,CharacterInfo*)`, AC.CPP:6349-6399) are CONFIRMED ABSENT from this build,
+// not merely unfound: `char_zoom` (word_4EF1BC, the one field `wantMoveNow` would need to read)
+// has EXACTLY TWO xrefs in the ENTIRE binary, both inside `prepare_characters_for_drawing`'s own
+// zoom-scaling code -- no other function reads it, ruling out a separate `wantMoveNow`-equivalent
+// function existing anywhere. Consistent with an earlier round's search for the INVALID_X
+// (0x7530/30000) sentinel constant across the whole disassembly, which turned up only one
+// coincidental unrelated hit (`add_screen_overlay`'s own overlay-position tracking, a reuse of
+// the same generic sentinel value in a totally different subsystem) and zero genuine
+// xwas/ywas-shaped hits. `invorder[MAX_INVORDER]`/`invorder_count` (2011's PER-CHARACTER
+// inventory-order pair, also declared in `CharacterExtras`) are likewise CONFIRMED ABSENT here:
+// this build's inventory-order tracking is `play_invorder`, a single GAME-WIDE array (see
+// GameState's own `_pad_invorder_maybe` comment above), and `update_invorder` (already matched)
+// is a genuinely simpler single-character predecessor with no per-character loop at all --
+// the whole per-character-invorder feature this pair belongs to doesn't exist yet.
+//
+// `animwait` is CONFIRMED ABSENT as a separate field, resolved via a full read of `update_stuff`
+// (already matched): every one of 2011's `charextra[aa].animwait` reads/writes (the
+// walking<1/animwait=0 reset, the animwait>0/animwait-- decrement, and the final
+// animwait=views[...].frames[...].speed+chi->animspeed computation, AC.CPP:6626-6653) operate on
+// the SAME already-confirmed `CharacterInfo.wait`@+0x1C -- which ALSO independently serves 2011's
+// `walkwait` role (the TURNING_AROUND-branch decrement, AC.CPP:6528) in the very same function.
+// This build has ONE consolidated `wait` field doing the job of THREE separate 2011 fields
+// (lip-sync wait, walkwait, animwait), matching `OldCharacterInfo`'s single declared `wait`
+// (`acroom.h:2604`, no separate `walkwait` field in this ancestor at all) -- a real, structural
+// simplification, not a gap in the evidence. Bonus: this same read upgrades
+// `CharacterInfo.animspeed`@+0x42 from tentative to HIGH confidence (directly read as the second
+// addend in the animwait computation).
+//
+// `process_idle_this_time` is CONFIRMED to exist conceptually but NOT as a per-character array:
+// `update_stuff`'s "(loopcounter%40==0) || (charextra[aa].process_idle_this_time==1)" gate
+// (AC.CPP:6867) matches disasm's "dword_523120 % 0x28(40)==0 OR dword_52320C==1" exactly --
+// identifying `dword_523120` as a new global, `loopcounter` (bonus, not independently verified
+// beyond this one modulo-40 match), and `dword_52320C` as this build's `process_idle_this_time`
+// equivalent, but implemented as a SINGLE GLOBAL flag: set inside the walking<1 branch of the
+// per-character loop, reset to 0 once before a second per-character loop begins (rather than a
+// 50-entry per-character array). Works because, in this build's loop structure, the flag is only
+// ever set and consumed within the processing of the SAME character, never carried across to a
+// different character's turn -- a genuine simplification made possible by this build's flatter
+// single-pass-per-character loop shape, not a bug or a gap.
+//
+// `slow_move_counter` is a LOW-VALUE, likely-unconfirmable lead: even in 2011's OWN source, this
+// field is written exactly once (zeroed at game startup, AC.CPP:26259) and never read or written
+// anywhere else in the entire file -- effectively dead weight even in the reference build itself.
+// No behavioral evidence could distinguish "this build has it too" from "this build never had
+// it" for a field neither build's own code actually uses. Left genuinely open, not worth
+// further search time.
+//
+// `tint_r`/`tint_g`/`tint_b`/`tint_level`/`tint_light` (per-character tint override, gated by
+// `CHF_HASTINT`=`0x2000`, AC.CPP:8319-8327) are CONFIRMED ABSENT (UPGRADED from medium-confidence
+// "likely absent" -- see struct-layout-drift.md for the full follow-up round): tracing
+// `prepare_characters_for_drawing`'s actual scale-then-blit control flow for the character-sprite
+// path end to end -- from the confirmed zoom-scaling code (AC.CPP:8307-8317) through bitmap
+// creation/`clear_to_color`, the `ViewFrame272.flags&1` mirroring check, the
+// `SpriteCache::operator[]` sprite fetch, to the final `render_to_screen`/blit -- shows NO
+// tint-related step anywhere in that sequence: no call shaped like 2011's `get_local_tint(x,y,
+// noLighting,&amount,&r,&g,&b,&light,&level)` (an 8-argument call, AC.CPP:7661-7737) or
+// `apply_tint_or_light(...)` (AC.CPP:7741+) appears between the zoom-scaling code and the final
+// blit. This is stronger than the earlier "zero `0x2000` literal" evidence alone -- it's not just
+// the `CHF_HASTINT` branch that's missing, the WHOLE surrounding tint-computation-and-application
+// subsystem (both the per-character-override branch AND the ambient/room-tint fallback branch) is
+// absent from this code path. Reinforced by neither `get_local_tint` nor `apply_tint_or_light`
+// being matched, or even flagged as an unmatched lead, anywhere else in the whole binary. `play`'s
+// own `rtint_red`/`rtint_green`/`rtint_blue`/`rtint_level`/`rtint_light` fields (`get_local_tint`'s
+// own room-tint-override source, `acruntim.h:583`) are CONFIRMED ABSENT too (UPGRADED from
+// "remain unconfirmed, consistent" -- checked directly this round): these fields' only writer,
+// `SetAmbientTint(int,int,int,int,int)` (`AC.CPP:2615-2629`, a DISTINCT script API function from
+// the already-matched `TintScreen`), has zero occurrences of its distinctive error string
+// (`"!SetTint: invalid parameter..."`) anywhere in the extracted string dataset -- neither its
+// reader (`get_local_tint`, already shown absent) nor its writer (`SetAmbientTint`) exist in this
+// build. `TintScreen` (already matched, writing the separate `screen_tint` field) is this build's
+// only screen/room-tint mechanism -- a simpler, older, palette-manipulation-based approach that
+// predates the RGB/opacity/luminance-based `SetAmbientTint`/`get_local_tint`/`apply_tint_or_light`
+// subsystem entirely.
+
+struct ScreenOverlay {
+  // FRESH SURVEY -- this build's version, recovered in a single round from `add_screen_overlay`
+  // (already matched, Common/AC.CPP:3451-3474) and `find_overlay_of_type` (new match this
+  // round, AC.CPP:3443-3449). Array-of-structs (unlike the CharacterExtras precedent just
+  // above), base `dword_4CD220`, stride 0x14 (20 bytes) -- one field per one assignment
+  // statement in add_screen_overlay's construction sequence, zero ambiguity. Capacity 10
+  // (checked directly against a literal in add_screen_overlay), vs. 2011's declared
+  // MAX_SCREEN_OVERLAYS=20 (Common/acruntim.h:841) -- the usual 2x-reduction pattern seen
+  // throughout this project. CONFIRMED ABSENT vs. 2011's current declaration
+  // (Common/acruntim.h:272-280): `bmp` (IDriverDependantBitmap*, a later hardware-acceleration
+  // abstraction this build predates, same pattern as CharacterInfo.actx/acty),
+  // `bgSpeechForChar`, `associatedOverlayHandle`, `hasAlphaChannel`,
+  // `positionRelativeToScreen` -- this build's struct is exactly 2011's first 5 fields
+  // (pic/type/x/y/timeout) and nothing more.
+  block pic;                    // +0x00, high confidence: "screenover[numscreenover].pic =
+                            // piccy;" -- direct assignment from add_screen_overlay's own
+                            // `piccy` parameter.
+  int type;                     // +0x04, high confidence: "screenover[numscreenover].type =
+                            // type;" -- also independently confirmed via
+                            // find_overlay_of_type's own field read.
+  int x;                        // +0x08, high confidence: direct assignment from
+                            // add_screen_overlay's `x` parameter.
+  int y;                        // +0x0C, high confidence: direct assignment from
+                            // add_screen_overlay's `y` parameter.
+  int timeout;                  // +0x10, high confidence: "screenover[numscreenover].timeout
+                            // = 0;" -- set to a literal 0 at creation time, matching source
+                            // exactly.
+};
+
+// Related globals found in the same round (not ScreenOverlay struct members):
+//   int numscreenover;   // dword_52318C, high confidence: the count/next-index global,
+//                         // checked against the literal capacity (10) and incremented after
+//                         // each new overlay -- matches 2011's `numscreenover` exactly.
+//   int is_complete_overlay; // dword_523168, high confidence: incremented when type==
+//                         // OVER_COMPLETE(2), matching 2011's "if (type==OVER_COMPLETE)
+//                         // is_complete_overlay++;" exactly.
+//   int is_text_overlay;     // dword_52316C, high confidence: incremented when type==
+//                         // OVER_TEXTMSG(1), matching 2011's "if (type==OVER_TEXTMSG)
+//                         // is_text_overlay++;" exactly -- a SECOND independent confirmation,
+//                         // having already surfaced in an earlier GameState round via
+//                         // check_controls (see that entry).
+
+struct RoomStruct {
+  // FRESH SURVEY, ROUND 1 -- 2011's `roomstruct` (Common/acroom.h:806, the current-room data
+  // format: walkable areas, hotspots, regions, background scenes, etc.) has never been formalized
+  // in this project before, despite being referenced incidentally in several already-matched
+  // functions' evidence (calculate_max_volume's thisroom.options[ST_VOLUME], etc.). This build's
+  // global instance is ALREADY IDA-named `rstruc` (not a name from this project -- pre-existing,
+  // confirmed live via `load_room`'s "push offset rstruc" call argument, already matched).
+  // UPDATE (several rounds later): this struct ALSO had 4 pre-existing IDA field names
+  // (`rstruc.walls/object/lookat/regions`) that looked at first like the same "already recovered,
+  // just needs formalizing" situation as `SpriteCache` -- that turned out to be WRONG (see the
+  // MAJOR CORRECTION note attached to the real leading fields below): those names came from IDA's
+  // own unverified `roomstruct <?>` type, not independent confirmation, and every one of them was
+  // off by 4 bytes. Left here as a cautionary note for the pattern itself, not just this struct.
+  //
+  // IMPORTANT CAUTION: IDA's Local Types library ALSO already has a type literally named
+  // `roomstruct` applied to this global ("rstruc roomstruct <?>"). That type is UNVERIFIED
+  // against this build and must NOT be trusted wholesale -- it is almost certainly either a
+  // blind import of 2011's declared layout, or an old placeholder. This project has ALREADY shown
+  // (independently, via RoomStatus/RoomObject/GameState work in earlier rounds) that this
+  // struct's own capacity constants drift substantially smaller here than 2011's declarations
+  // (MAX_INIT_SPR=10 not 2011's larger value, MAX_HOTSPOTS=20 not 2011's 50, MAX_WALK_AREAS=15
+  // matching MAX_WALK_AREAS+1=16 exactly) -- the same "never trust a 2011 layout without
+  // independent verification" caution that applies to every other struct in this project applies
+  // doubly hard here, since a pre-existing IDA type makes it tempting to skip that step. Every
+  // field below is verified independently, exactly like everywhere else in this codebase.
+  //
+  // Evidence source for this round: `load_main_block` (already matched, `Common/acroom.h:1605`,
+  // called from `load_room`/already matched) -- AGS's own room-file-loading code, which inits/
+  // reads roomstruct's fields in a strict, traceable sequence, the same kind of anchor
+  // `count_data_offsets.py` used for `GameSetupStructBase`'s .data-section layout.
+  //
+  // MAJOR CORRECTION (found several rounds later, while tracing load_main_block's background-
+  // picture-loading calls): the four leading fields below were originally recorded as
+  // `walls`@+0x00/`object`@+0x04/`lookat`@+0x08/`regions`@+0x0C, "confirmed" via the pre-existing
+  // IDA field names `rstruc.walls`/`.object`/`.lookat`/`.regions` appearing directly in
+  // `load_room`'s disassembly. That was NOT independent evidence -- it was IDA's own
+  // ALREADY-FLAGGED-AS-UNVERIFIED `roomstruct <?>` type (see the caution above) rendering itself
+  // through the disassembly's symbolic STRUCT.FIELD display, exactly the trap this same comment
+  // warned against. The actual raw-offset evidence (found by reading `load_main_block`'s
+  // `loadcompressed_allegro` calls, which reference `rst+0x4`/`rst+0x8`/`rst+0xC`/`rst+0x10` via
+  // literal hex arithmetic on the `rst` PARAMETER -- untyped, so NOT going through IDA's
+  // unverified struct at all, genuinely independent) shows every one of those four fields sits 4
+  // bytes LATER than previously recorded, with a fifth, previously-unknown field -- `ebscene[0]`
+  // -- actually occupying +0x00. `apply_structs.py`'s earlier entries are corrected in place
+  // below rather than silently rewritten; see `struct-layout-drift.md` for the full writeup.
+  char _pad_unknown_0[4];        // +0x00, role NOT confirmed -- CORRECTION (found this round,
+                            // reading `load_room`'s own cleanup code): the previous round
+                            // recorded this field as `ebscene[0]` itself, reasoning from
+                            // `load_main_block`'s "sub_40365D(Stream,Block=[rst],
+                            // Buffer=rst+0x14); [rst]=dword_4EDA3C;" sequence (matching source's
+                            // "tesl=load_lzw(opty,rstruc->ebscene[0],rstruc->pal);
+                            // rstruc->ebscene[0]=recalced;", `acroom.h:1926-1927`). That
+                            // reasoning is now shown to be INCOMPLETE: `load_room` (the caller,
+                            // already matched)'s own room-cleanup loop destroys
+                            // `[rstruc+c*4+0x3A0C]` for `c=1..num_bscenes-1`, matching source's
+                            // "destroy_bitmap(rstruc->ebscene[c]); rstruc->ebscene[c]=NULL;"
+                            // exactly -- proving `ebscene[]`'s REAL, PERSISTENT array base is
+                            // `+0x3A0C` (see that field below), not `+0x00`. `dword_4EDA3C`
+                            // (`recalced`) still gets copied FROM `+0x00` INTO `+0x3A0C`
+                            // immediately after the `load_lzw` call (`[rst+0x3A0C]=[rst]`,
+                            // confirmed in `load_main_block`'s own body) -- so `+0x00` is
+                            // genuinely READ and WRITTEN in this exact sequence, just not as a
+                            // persistent `ebscene[0]` slot; it's used as a transient holding spot
+                            // (plausibly `load_lzw`'s own "existing bitmap" input template, or
+                            // simply reused scratch space) whose value gets moved to its real
+                            // destination immediately after.
+                            //
+                            // FOLLOW-UP (this round, `load_new_room` -- already matched):
+                            // strengthens the "transient cache" picture without fully closing it.
+                            // After a resolution-mismatch-driven resize loop over every
+                            // `ebscene[c]` entry (bounded by the confirmed `num_bscenes`, gated
+                            // on the confirmed `resolution` no longer matching
+                            // `current_screen_resolution_multiplier_x`), `load_new_room` does
+                            // "mov edx,[ebscene-array-base]; mov [rstruc+0],edx;" -- i.e.
+                            // `[rstruc+0] = ebscene[0]`, an EXPLICIT, direct assignment of
+                            // `ebscene[0]`'s (possibly just-resized) value into this field. This
+                            // confirms `+0x00` really does function as a working cache of "the
+                            // currently active background bitmap" (refreshed here after every
+                            // room load/resize), consistent with -- and reinforcing -- the
+                            // transient-holding-spot theory from `load_main_block`'s own
+                            // sequence, but its "official" 2011 identity (if it maps to a
+                            // declared field at all, rather than being scratch state this build
+                            // added on top of `roomstruct`) is still not established. Left as an
+                            // honestly-unconfirmed pad rather than guessed at a third time.
+  block walls;                  // +0x04, high confidence (CORRECTED from +0x00): the last of
+                            // three UNCONDITIONAL, consecutive `loadcompressed_allegro`
+                            // (`sub_403846`, 4-arg: FILE*, block* by ADDRESS, color*, long --
+                            // matching 2011's own `loadcompressed_allegro` signature) calls
+                            // targeting `rst+0x4`/`rst+0x8`/`rst+0xC` in that exact order matches
+                            // source's own unconditional trio "loadcompressed_allegro(opty,
+                            // &rstruc->walls,...); loadcompressed_allegro(opty,&rstruc->object,
+                            // ...); loadcompressed_allegro(opty,&rstruc->lookat,...);"
+                            // (`acroom.h:1946-1952`) exactly, in the same relative order.
+  block object;                  // +0x08, high confidence (CORRECTED from +0x04): see `walls`
+                            // above -- the second of the same three-call trio.
+  block lookat;                  // +0x0C, high confidence (CORRECTED from +0x08): see `walls`
+                            // above -- the third of the same three-call trio.
+  block regions;                 // +0x10, high confidence (CORRECTED from +0x0C): a FOURTH
+                            // `loadcompressed_allegro` call, gated on room-file version>=8,
+                            // targeting `rst+0x10`, sitting immediately BEFORE the unconditional
+                            // walls/object/lookat trio in the disassembly's own call order --
+                            // matches source's own version-gated `regions` load
+                            // (`acroom.h:1938-1939`) coming before the walls/object/lookat trio
+                            // in source order too.
+  char pal[256][4];              // +0x14..0x414 (1024 bytes, 256 x 4-byte `RGB` entries), high
+                            // confidence (NEW, closing the previous round's "1024 vs. 1028, a
+                            // 4-byte remainder" mystery completely): the SAME address is passed
+                            // as the shared palette-buffer argument to EVERY ONE of the four
+                            // `loadcompressed_allegro`/`load_lzw` calls above, matching 2011's
+                            // `rstruc->pal` being reused as the shared destination in every one
+                            // of those same calls exactly. `RGB`={r,g,b,filler}=4 bytes
+                            // (`allegro/palette.h:26-30`) x 256 = 1024 bytes, landing EXACTLY on
+                            // `numobj`'s own independently-confirmed start (`+0x414`) with ZERO
+                            // remaining slack -- the earlier round's 4-byte discrepancy was
+                            // entirely explained by the leading-fields correction above, not a
+                            // separate unresolved gap.
+  short numobj;                  // +0x414, high confidence: `load_main_block`'s own
+                            // "fread(rst+0x414, ElementSize=2, Count=1)" matches source's
+                            // "fread(&rstruc->numobj, 2, 1, opty);" (`acroom.h:1650`) exactly --
+                            // confirms both the field AND its `short` type (2011 declares it
+                            // `short numobj;`, `acroom.h:810`).
+  // objyval[] (2011's `short objyval[MAX_OBJ]`, walkbehind-area baselines) starts at +0x416 with
+  // ZERO gap after numobj -- "fread(rst+0x416, ElementSize=2, Count=[rst+0x414])" matches source's
+  // "fread(&rstruc->objyval[0], 2, rstruc->numobj, opty);" (`acroom.h:1655`) exactly, confirming
+  // the START address and element type/size, but NOT a fixed capacity (the read count is dynamic,
+  // driven by `numobj` itself, not a compile-time `MAX_OBJ` constant) -- left folded into the pad
+  // below rather than declared as its own array, consistent with this project's convention of not
+  // asserting an unconfirmed capacity.
+  char _pad_objyval_tail[0x1E]; // +0x416..0x434, NOT independently confirmed this round --
+                            // plausibly the rest of `objyval[]`'s fixed capacity (a
+                            // zero-remainder fit: 30 bytes/2 = 15 shorts, i.e. `MAX_OBJ=15`
+                            // would land exactly here with zero slack -- consistent with this
+                            // project's repeated smaller-capacity drift pattern, but no direct
+                            // read/write site observed for `MAX_OBJ`'s own value, so treated as
+                            // a strong lead rather than a confirmed fact).
+  short whataction[130];        // +0x434..0x538 (260 bytes), high confidence, MAJOR
+                            // ARCHAEOLOGICAL FINDING: this build's room-file format STILL
+                            // ACTIVELY READS the "obsolete v2.00 action editor" arrays that
+                            // 2011's own header only keeps as legacy declarations
+                            // (`whataction[NUM_CONDIT+3]`, `acroom.h:813`) -- `load_main_block`
+                            // has a real, version-gated read path for room-file versions 7 and
+                            // 8 (`arg_C>=7 && arg_C<9`) that `fread`s this array directly, plus
+                            // an even-older sub-v7 conversion path. Capacity 130 confirmed via a
+                            // perfect zero-gap chain: this array's end lands exactly on `val1`'s
+                            // start, which lands exactly on `val2`'s start, `otcond`'s start,
+                            // and `points`'s start -- four consecutive zero-slack boundaries in
+                            // a row, computing to 130 = `NUM_CONDIT+3` with `NUM_CONDIT=127`
+                            // (matching the same-function's own `ElementCount=0x7F`(127) local
+                            // used by the sub-v7 conversion path). Whether this 2002 build's OWN
+                            // room files actually exercise this path (i.e. were compiled with a
+                            // pre-v9 room format) or only carries the dead-but-still-compiled
+                            // fallback code is not established -- either way, the array's own
+                            // layout is now confirmed.
+  short val1[130];               // +0x538..0x63C (260 bytes), high confidence: see `whataction`
+                            // above for the shared evidence (zero-gap chain + version-gated
+                            // read path). Matches 2011's declared adjacency
+                            // ("whataction[...];val1[...];", `acroom.h:813-814`) exactly.
+  short val2[130];               // +0x63C..0x740 (260 bytes), high confidence: same evidence.
+  short otcond[130];             // +0x740..0x844 (260 bytes), high confidence: same evidence.
+  char points[130];              // +0x844..0x8C6 (130 bytes, `char` not `short` -- matches
+                            // 2011's declared `char points[NUM_CONDIT+3]`, `acroom.h:817`,
+                            // exactly), high confidence: same evidence, closing the zero-gap
+                            // chain -- ends exactly where `left` (below) begins.
+  short left;                    // +0x8C6, high confidence: `load_main_block`'s version>=9
+                            // path `fread`s `top`/`bottom`/`left`/`right` in that READ order
+                            // (matching source's own read order exactly, `acroom.h:1704-1707`)
+                            // into addresses that only make sense in DECLARED order left/right/
+                            // top/bottom (`acroom.h:819`) -- `fread(rst+0x8CA,2,1)`(top),
+                            // `fread(rst+0x8CC,2,1)`(bottom), `fread(rst+0x8C6,2,1)`(left),
+                            // `fread(rst+0x8C8,2,1)`(right) -- both the read-order AND the
+                            // declared-order cross-checks land on the same four addresses with
+                            // zero ambiguity.
+  short right;                   // +0x8C8, high confidence: see `left` above.
+  short top;                     // +0x8CA, high confidence: see `left` above.
+  short bottom;                  // +0x8CC, high confidence: see `left` above.
+  short numsprs;                 // +0x8CE, high confidence: `fread(rst+0x8CE,2,1)` matches
+                            // "fread(&rstruc->numsprs,2,1,opty);" (`acroom.h:1709`) exactly,
+                            // sitting with zero gap immediately after `bottom`.
+  short nummes;                   // +0x8D0, high confidence (UPGRADED from medium/positional-only
+                            // via a direct behavioral confirmation, same session): fills the
+                            // exact 2-byte gap between `numsprs` and `sprs[]` matching 2011's
+                            // declared adjacency ("short numsprs,nummes;", `acroom.h:820`) with
+                            // zero slack, AND `fread(rst+0x8D0, ElementSize=2, Count=1)` --
+                            // matching source's `fread(&rstruc->nummes,...)` role directly (read
+                            // later in the file-loading sequence than its declared position,
+                            // same "code order need not match struct order" pattern seen
+                            // throughout this project) -- then consumed immediately after as the
+                            // element count driving `message[]`'s own read loop, matching
+                            // source's use of `nummes` as `message[]`'s bound exactly.
+  short sprs[10][5];              // +0x8D2..0x936 (100 bytes), high confidence: `load_main_block`
+                            // memsets this region to 0 (100 bytes) before conditionally
+                            // `fread`ing it back; represented as a raw `short[10][5]` (10
+                            // elements of 5 packed shorts each) rather than declaring a new
+                            // `sprstruc` type -- matches `sprstruc`'s own confirmed 10-byte size
+                            // (`sprnum,x,y,room,on`, all packed shorts, `acroom.h:181-198`)
+                            // exactly. Capacity 10 (100/10) -- DRIFT vs. 2011's declared
+                            // `MAX_INIT_SPR`, matching this build's already-established
+                            // `RoomObject`/`objbaseline` array capacity of 10 with zero further
+                            // drift.
+  // MAJOR STRUCTURAL FINDING: this build's field ORDER genuinely diverges from 2011's declared
+  // order here, not just capacities. 2011 declares `objbaseline[MAX_INIT_SPR]` immediately after
+  // `sprs[]`/`intrObject[]`/`objectScripts` (i.e. right here, at ~+0x936) -- but this build's own
+  // `objbaseline` (confirmed above at +0x3858, via last round's 0xFF-fill memset) sits FAR AWAY,
+  // AFTER the entire hotspot/walkarea block (`numwalkareas` through `misccond`). A bonus
+  // reconfirmation ties the two finds together: `load_main_block`'s version>=9 path also does
+  // "fread(rst+0x3858, ElementSize=4, Count=[rst+0x8CE])" -- i.e. reads INTO the already-
+  // confirmed `objbaseline` address, using `numsprs`'s own value (not a fixed `MAX_INIT_SPR`
+  // constant) as the read count -- a second independent confirmation of `objbaseline`'s address,
+  // plus a genuine behavioral nuance (this build ties the object-baseline read-count to
+  // `numsprs`, not a separate object count) worth remembering for later. `intrObject[]`/
+  // `objectScripts` themselves are NOT found anywhere in this +0x936..+0x1570 gap or the
+  // +0x936..+0x3858 gap explored so far -- CONFIRMED ABSENT (UPGRADED from plausible-by-
+  // precedent, see the `scripts`/version-ceiling finding below): both are declared behind a
+  // version>=21/version>=26 `deserialize_new_interaction`/`deserialize_interaction_scripts`
+  // block that this build's `load_main_block` never compiled in at all (its complete set of
+  // version-gate checks tops out at 14) -- not just consistent with the earlier
+  // `NewInteraction`-predates-this-build finding, independently and decisively confirmed by it.
+  char password[11];             // +0x936..0x941 (11 bytes), high confidence: `fread(rst+0x936,
+                            // ElementSize=0xB(11), Count=1)` matches source's declared `char
+                            // password[11];` (`acroom.h:829`) in both position and exact size --
+                            // sits with zero gap immediately after `misccond`.
+  char options[10];              // +0x941..0x94B (10 bytes), high confidence: `fread(rst+0x941,
+                            // ElementSize=0xA(10), Count=1)` matches source's declared `char
+                            // options[10];  // [0]=startup music` (`acroom.h:830`) in both
+                            // position and exact size, sitting with zero gap immediately after
+                            // `password`.
+  char _pad_align_message[1]; // +0x94B..0x94C, compiler alignment padding (not a real field) --
+                            // boxed in with zero slack by `options`'s own confirmed end and
+                            // `message[]`'s own confirmed start (needs 4-byte alignment for its
+                            // pointer array below).
+  char *message[100];            // +0x94C..0xADC (400 bytes, 100 x 4-byte pointers), high
+                            // confidence: a dedicated read loop (not a raw `fread`) decrypts
+                            // each message string via `sub_403024` (an as-yet-unmatched
+                            // decrypt-read helper, plausibly `read_string_decrypt`-adjacent --
+                            // not confirmed this round), `malloc`s a buffer sized to the decoded
+                            // string, and stores the pointer at "[rst+f*4+0x94C]" -- an exact
+                            // structural match to 2011's declared `char *message[MAXMESS];`
+                            // (`acroom.h:831`), including the pointer TYPE (this build does NOT
+                            // drift to a fixed-size inline array here, unlike `hotspotnames`).
+                            // Loop count is `nummes` (dynamic), but the RESERVED capacity is
+                            // fixed at 100 -- confirmed via the zero-gap distance to `msgi[]`
+                            // immediately below (100 x 4 bytes = 0x190, landing exactly on
+                            // `msgi`'s own independently-confirmed start) -- `MAXMESS=100`.
+  char msgi[100][2];              // +0xADC..0xBA4 (200 bytes, 100 x 2-byte `MessageInfo`
+                            // entries), high confidence: `fread(rst+0xADC, ElementSize=2,
+                            // Count=nummes)` for room-file version>=3, else
+                            // `memset(rst+0xADC,0,0xC8(200))` -- both match 2011's declared
+                            // `MessageInfo msgi[MAXMESS];` (`acroom.h:832`) exactly:
+                            // `MessageInfo` itself is a packed 2-byte struct (`char displayas;
+                            // char flags;`, `acroom.h:203-205`), represented here as a raw
+                            // `short[100][2]`-shaped byte pair rather than declaring a new
+                            // `MessageInfo` type. The message-loading loop directly confirms the
+                            // SECOND byte's role too: "[rst+f*2+0xADD] |= 1" (a per-message
+                            // fixup flag) matches `MessageInfo.flags`'s documented role exactly.
+                            // The 200-byte memset fallback independently reconfirms
+                            // `MAXMESS=100` (200/2) with zero drift from 2011's own constant.
+  char _pad_unexplored2b[0x20]; // +0xBA4..0xBC4 (32 bytes), genuinely unexplored this round.
+  FullAnimation anims[10];       // +0xBC4..0x154C (2440 bytes, 10 x 244-byte `FullAnimation`
+                            // entries), high confidence: `fread(rst+0xBC4, ElementSize=0xF4(244),
+                            // Count=numanims)` for room-file version>=6, else
+                            // `memset(rst+0xBC4,0,0x988(2440))` -- both match 2011's declared
+                            // `FullAnimation anims[MAXANIMS];` (`acroom.h:835`) in position;
+                            // capacity 10 (2440/244) -- CORRECTION (found later, reading
+                            // `acroom.h:800`): `MAXANIMS` is ALREADY declared as `10` in 2011
+                            // itself (`#define MAXANIMS 10`) -- this is a genuine ZERO-DRIFT
+                            // match, not the smaller-capacity pattern common elsewhere in this
+                            // project (an earlier version of this comment wrongly called it
+                            // drift without having checked the actual 2011 constant value).
+                            // UPGRADED from a raw byte blob to a typed `FullAnimation` array
+                            // (found later, in the round that identified `FullAnimation` itself
+                            // as this build's already-confirmed `GameAnimation` struct under its
+                            // real 2011 name -- see `FullAnimation`'s own declaration above) --
+                            // this field's own capacity (10) and immediately-following
+                            // `numanims` field match 2011's declared "FullAnimation
+                            // anims[MAXANIMS]; short numanims;" (`acroom.h:835-836`) adjacency
+                            // with zero drift on both counts, an independent THIRD confirmation
+                            // of the AnimationStruct/FullAnimation identification (alongside the
+                            // size-arithmetic and field-semantics matches documented on
+                            // `AnimationStruct`/`FullAnimation` themselves).
+  short numanims;                // +0x154C, high confidence: read via `getw()` for version>=6
+                            // (else defaulted to 0) directly into this address, immediately
+                            // BEFORE the `anims[]` read that consumes it as the element count --
+                            // matches 2011's declared adjacency ("anims[MAXANIMS]; short
+                            // numanims;", `acroom.h:835-836`) positionally, though the READ order
+                            // here is reversed (count read before the array it bounds, a common
+                            // and unremarkable code-generation choice, not a struct-layout fact).
+  short shadinginfo[16];         // +0x154E..0x156E (32 bytes), high confidence: `fread(rst+0x154E,
+                            // ElementSize=2, Count=0x10(16))` for room-file version>=8, else
+                            // `memset(rst+0x154E,0,0x20(32))` -- both match 2011's declared
+                            // `short shadinginfo[16];  // walkable area-specific view number`
+                            // (`acroom.h:837`) exactly, capacity 16 with zero drift. Sits with
+                            // zero gap immediately after `numanims`.
+  char _pad_align_walkareas[2]; // +0x156E..0x1570, compiler alignment padding (not a real
+                            // field) -- boxed in with zero slack by `shadinginfo`'s own
+                            // confirmed end and `numwalkareas`'s own already-confirmed start.
+  int numwalkareas;             // +0x1570, high confidence: `load_main_block` inits this to the
+                            // literal 0 ("rstruc->numwalkareas = 0;", `acroom.h:1614`), AND
+                            // separately reads it via "fread(rst+0x1570, ElementSize=4, Count=1)"
+                            // matching "fread(&rstruc->numwalkareas, 4, 1, opty);"
+                            // (`acroom.h:1691`) exactly -- two independent confirmations.
+  char _pad_unexplored2[0xE4C]; // +0x1574..0x23C0, genuinely unexplored this round -- STALE NOTE
+                            // CORRECTED: an earlier version of this comment guessed
+                            // `left`/`right`/`top`/`bottom`/`numsprs`/`nummes`/`sprs[]` might
+                            // live here, based only on 2011's declared order without having
+                            // actually located them yet -- they were later found at
+                            // `+0x8C6..+0x936` instead (see those fields' own entries below),
+                            // NOT in this span. `intrObject[]`/`objectScripts` are separately
+                            // CONFIRMED ABSENT (see the version-ceiling finding on `scripts`'s
+                            // own comment further below) -- but that doesn't place them HERE
+                            // either, it just rules them out everywhere. This span's actual
+                            // contents remain genuinely unknown.
+  int numhotspots;               // +0x23C0, high confidence: `load_main_block` inits this to the
+                            // literal 0 ("rstruc->numhotspots = 0;", `acroom.h:1615`), AND
+                            // separately reads it via "fread(rst+0x23C0, ElementSize=4, Count=1)"
+                            // matching "fread(&rstruc->numhotspots, sizeof(int), 1, opty);"
+                            // (`acroom.h:1659`) exactly -- two independent confirmations.
+  short hswalkto[20][2];          // +0x23C4..0x2414 (80 bytes), high confidence (RESOLVED, closing
+                            // last round's open pad): "fread(rst+0x23C4, ElementSize=4,
+                            // Count=20)" matches source's "fread(&rstruc->hswalkto[0],
+                            // sizeof(_Point), rstruc->numhotspots, opty);" (`acroom.h:1666`)
+                            // exactly -- 2011's `_Point` is 4 bytes (2 packed shorts, matching
+                            // this build's other `PCKD` conventions), represented here as a raw
+                            // `short[2]` pair (x,y) rather than declaring a new `_Point` type,
+                            // x20 = 80 bytes, capacity matching this build's already-confirmed
+                            // `MAX_HOTSPOTS=20` with zero drift. Sits with zero gap immediately
+                            // before `hotspotnames`.
+  char hotspotnames[20][30];     // +0x2414..0x266C (600 bytes), high confidence, ARCHITECTURAL
+                            // DRIFT from 2011: this build stores hotspot names as a FIXED
+                            // INLINE `char[20][30]` array, not 2011's `char* hotspotnames[
+                            // MAX_HOTSPOTS]` (a pointer array with each name individually
+                            // `malloc`'d, `acroom.h:843`) -- `load_main_block` writes directly
+                            // into "rst + f*0x1E + 0x2414" via `sprintf("Hotspot %d")`/
+                            // `strcpy("No hotspot")` for f==0, with a 30-byte (0x1E) per-name
+                            // stride matching the SAME function's own pre-v28-room-file-format
+                            // fallback path later on ("hotspotnames[f]=malloc(30);
+                            // fread(hotspotnames[f],30,1,opty);", `acroom.h:1681-1685`) -- this
+                            // build keeps the OLD, fixed-30-byte-name convention inline rather
+                            // than ever moving to heap-allocated variable-length names.
+                            // Capacity 20 matches this build's already-confirmed
+                            // `MAX_HOTSPOTS=20` (`RoomStatus.hotspot_enabled[20]`, several
+                            // rounds ago) with zero drift. A SECOND, independent confirmation
+                            // (this round): "fread(rst+0x2414, ElementSize=0x1E, Count=20)" in
+                            // the SAME function's version-gated newer-format read path matches
+                            // this exact address/stride/capacity too. Ends with ZERO gap exactly
+                            // where `hscond` begins (`+0x266C`, see below).
+  EventBlock hscond[20];         // +0x266C..0x31FC (2960 bytes), high confidence (RESOLVED,
+                            // closing last round's open "1628-byte fully-byte-accounted-for"
+                            // span): "fread(rst+0x266C, ElementSize=0x94, Count=20)" -- the
+                            // ElementSize, 0x94(148), is an EXACT match to `EventBlock`'s own
+                            // independently-confirmed total size (see that struct's own entry
+                            // above) -- decisive, not just a size coincidence. This is
+                            // `roomstruct`'s own SOURCE copy of the same per-hotspot
+                            // EventBlock command-list array that `RoomStatus.hscond[20]`
+                            // (already confirmed, several rounds ago) holds a per-save-slot
+                            // RUNTIME copy of -- the room file stores the compiled command
+                            // lists here, and they get copied into `RoomStatus` at room-load
+                            // time. Capacity 20 matches `MAX_HOTSPOTS=20` exactly, matching
+                            // `RoomStatus.hscond[20]`'s own already-confirmed capacity with
+                            // zero drift. 2011 keeps the equivalent as a dead comment only
+                            // (`/* EventBlock hscond[MAX_HOTSPOTS]; ... */`) -- this build's
+                            // room-file format still actively uses it.
+  EventBlock objcond[10];        // +0x31FC..0x37C4 (1480 bytes), high confidence: same evidence
+                            // pattern as `hscond` immediately above -- "fread(rst+0x31FC,
+                            // ElementSize=0x94, Count=10)" -- `roomstruct`'s own source copy of
+                            // `RoomStatus.objcond[10]`'s per-object EventBlock list, capacity
+                            // matching `MAX_INIT_SPR=10` exactly (this build's already-
+                            // established `RoomObject`/`objbaseline` array capacity).
+  EventBlock misccond;           // +0x37C4..0x3858 (148 bytes), high confidence: same evidence
+                            // pattern again -- "fread(rst+0x37C4, ElementSize=0x94, Count=1)" --
+                            // `roomstruct`'s own source copy of `RoomStatus.misccond`, a single
+                            // room-wide EventBlock. Ends with ZERO gap exactly where
+                            // `objbaseline` begins.
+  int objbaseline[10];          // +0x3858..0x3880 (40 bytes), high confidence: `load_main_block`'s
+                            // own 0xFF-fill memset ("memset(rst+0x3858, 0xFF, 0x28)") matches
+                            // source's "memset(&rstruc->objbaseline[0], 0xff, sizeof(int)*
+                            // MAX_INIT_SPR);" (`acroom.h:1619`) exactly -- the ONLY 0xFF-valued
+                            // memset in the whole function, an unambiguous fingerprint. Capacity
+                            // 10 (0x28/4) -- DRIFT vs. 2011's declared `MAX_INIT_SPR`, matching
+                            // this build's already-established `RoomObject` array capacity of 10
+                            // (several rounds ago) with zero further drift.
+  short width;                   // +0x3880, high confidence: `load_main_block` inits this to the
+                            // literal 320 (`0x140`), matching source's "rstruc->width = 320;"
+                            // (`acroom.h:1611`) exactly.
+  short height;                  // +0x3882, high confidence: inits to the literal 200 (`0xC8`),
+                            // matching "rstruc->height = 200;" (`acroom.h:1612`) exactly.
+  short resolution;              // +0x3884, high confidence: inits to the literal 1, matching
+                            // "rstruc->resolution = 1;" (`acroom.h:1613`) exactly. SECOND
+                            // confirmation (this round): `load_new_room` (already matched)
+                            // compares this field against `current_screen_resolution_
+                            // multiplier_x` to decide whether every `ebscene[c]` bitmap needs
+                            // resizing after a room change -- matching 2011's own resolution-
+                            // mismatch handling role exactly.
+  short walk_area_zoom[16];       // +0x3886..0x38A6 (32 bytes), high confidence (RESOLVED,
+                            // closing round 1's "ambiguous which is which" note): a count local
+                            // (defaulted to 15, or read via `getw()` for version>=14, bounds-
+                            // checked against a literal 16 with a "Too many walkable areas" quit
+                            // matching source's `MAX_WALK_AREAS` check, `acroom.h:1839`) drives
+                            // "fread(rst+0x3886, ElementSize=2, Count=NUMREAD)" for version>=10
+                            // -- matches 2011's declared `short walk_area_zoom[MAX_WALK_AREAS+1];`
+                            // (`acroom.h:856`) exactly, capacity 16 confirming `MAX_WALK_AREAS=15`
+                            // with zero drift (already established elsewhere in this project).
+  short walk_area_light[16];      // +0x38A6..0x38C6 (32 bytes), high confidence: same NUMREAD-
+                            // driven read, "fread(rst+0x38A6, ElementSize=2, Count=NUMREAD)" for
+                            // version>=13, matching 2011's declared `short
+                            // walk_area_light[MAX_WALK_AREAS+1];` (`acroom.h:858`) exactly --
+                            // sits with zero gap immediately after `walk_area_zoom`. 2011's
+                            // intervening `walk_area_zoom2[MAX_WALK_AREAS+1]` (`acroom.h:857`)
+                            // is CONFIRMED ABSENT here -- no room for it between the two
+                            // confirmed zero-gap neighbors.
+  char objectnames[10][30];      // +0x38C6..0x39F2 (300 bytes), high confidence (RESOLVED,
+                            // closing the mystery left open since round 6): `load_room`
+                            // (already matched)'s block-type dispatch loop -- a SEPARATE
+                            // mechanism from `load_main_block`, handling `BLOCKTYPE_
+                            // OBJECTNAMES`(5) -- does "if (fgetc(Stream) != [rstruc+0x8CE])
+                            // quit(...); fread(rstruc+0x38C6, ElementSize=0x1E(30),
+                            // Count=[rstruc+0x8CE]);" matching source's "if (fgetc(opty) !=
+                            // rstruc->numsprs) quit(\"Load_room: inconsistent blocks for object
+                            // names\"); fread(&rstruc->objectnames[0][0], MAXOBJNAMELEN,
+                            // rstruc->numsprs, opty);" (`acroom.h:2133-2137`) exactly --
+                            // `MAXOBJNAMELEN=30` (`acroom.h:802`) matches the `0x1E` element
+                            // size exactly, and 300/30=10 matches this build's already-
+                            // established `MAX_INIT_SPR=10` capacity with zero further drift.
+                            // Bonus: this is a THIRD independent confirmation of `numsprs`
+                            // @+0x8CE (read here as the inconsistent-block-count check).
+  char _pad_align_scripts[2];   // +0x39F2..0x39F4, compiler alignment padding (not a real
+                            // field) -- boxed in by the confirmed memset's own end and
+                            // `scripts`'s own confirmed start (needs 4-byte alignment for the
+                            // pointer field immediately below).
+  char *scripts;                 // +0x39F4, high confidence: `load_room` (already matched)'s own
+                            // pre-load cleanup does "if ([rstruc+0x39F4]!=0) { free([rstruc+
+                            // 0x39F4]); [rstruc+0x39F4]=0; }" -- a plain `free()`, matching
+                            // 2011's declared `char *scripts;` (`acroom.h:861`, a raw malloc'd
+                            // buffer, not requiring a specialized destructor). SECOND
+                            // confirmation: `load_room`'s own block-type dispatch loop (see the
+                            // finding immediately below) handles `BLOCKTYPE_SCRIPT`(2) by
+                            // `malloc`ing into this SAME address, `fread`ing the raw script text,
+                            // NUL-terminating it, then decrypting it in place against the "Avis
+                            // Durgan" key -- matching this build's old, pre-CSCOMP SeeR-era
+                            // text-script format exactly.
+                            //
+                            // MAJOR FINDING: `load_room` doesn't read the room file directly --
+                            // it dispatches on a per-block TYPE byte (`fgetc`) to one of several
+                            // handler branches, matching source's own block-tagged room-file
+                            // container format (`BLOCKTYPE_MAIN`=1 dispatches to
+                            // `load_main_block`, `BLOCKTYPE_SCRIPT`=2/`BLOCKTYPE_COMPSCRIPT3`=7
+                            // handle `scripts`/`compiled_script` as above, `BLOCKTYPE_
+                            // OBJECTNAMES`=5 handles `objectnames[]` above,
+                            // `BLOCKTYPE_ANIMBKGRND`=6 handles `ebscene[]`/`num_bscenes`/
+                            // `bscene_anim_speed` -- see those fields' own entries). This
+                            // build's dispatch loop explicitly handles ONLY types 1, 2, 3, 4, 5,
+                            // 6, 7, and the `0xFF` EOF sentinel -- types 3(`COMPSCRIPT`) and
+                            // 4(`COMPSCRIPT2`) both hit an explicit "Load_room: old room format.
+                            // Please upgrade the room." `quit()`, and any OTHER type value
+                            // (including 8=`BLOCKTYPE_PROPERTIES` and 9=`BLOCKTYPE_
+                            // OBJECTSCRIPTNAMES`) falls through to a generic "LoadRoom: unknown
+                            // block type %d encountered" `quit()`. This CONFIRMS ABSENT, with
+                            // direct positive evidence (not just an unfound handler -- this
+                            // build's code would actively CRASH if it ever encountered either
+                            // block type), `objectscriptnames[MAX_INIT_SPR][MAX_SCRIPT_NAME_LEN]`
+                            // and the `CustomProperties`-based `objProps[]`/`roomProps`/
+                            // `hsProps[]` trio.
+                            //
+                            // Separately: `load_main_block`'s COMPLETE set of room-file-version
+                            // gate checks -- every `cmp arg_C,N` in the entire function, listed
+                            // exhaustively -- runs 3,4,5,6,7,8,9,10,11,12,13,14 with NOTHING
+                            // above 14 anywhere. This means this build's COMPILED ENGINE, not
+                            // just this game's own room files, never had code for room-format
+                            // version 15+ at all -- the branches were never compiled in, not
+                            // merely unexercised at runtime. This retroactively CONFIRMS ABSENT,
+                            // with a single unifying explanation, everything gated version>=15
+                            // in 2011's source: `walk_area_zoom2`/`walk_area_top`/
+                            // `walk_area_bottom` (version>=18), `numLocalVars`/`localvars`
+                            // (version>=19, round 7), `numRegions`/`regionLightLevel`/
+                            // `regionTintLevel`/the entire `NewInteraction`-based `intrHotspot`/
+                            // `intrObject`/`intrRoom`/`intrRegion` deserialization block
+                            // (version>=21), `hotspotScriptNames` (version>=24), `gameId`
+                            // (version>=25), and `hotspotScripts`/`objectScripts`/
+                            // `regionScripts`/`roomScripts`/`deserialize_interaction_scripts`
+                            // (version>=26). All CONFIRMED ABSENT from this build by the same
+                            // evidence, not individually guessed. Also settles a previously-
+                            // unresolved detail: the message-string-reading helper
+                            // `sub_403024` (round 4) is unconditionally called with no version
+                            // gate visible at its call site, consistent with it being
+                            // `fgetstring_limit` (2011's version<22 path) rather than
+                            // `read_string_decrypt` (version>=22) -- this build's version
+                            // ceiling makes that the only path that could exist here anyway.
+  void *compiled_script;         // +0x39F8, high confidence: same cleanup pattern as `scripts`
+                            // immediately above, but freed via a DIFFERENT, as-yet-unmatched
+                            // helper (`sub_42A4DB`) instead of plain `free()` -- matching 2011's
+                            // declared `ccScript *compiled_script;` (`acroom.h:862`) needing its
+                            // own specialized destructor (a `ccScript*`, not a raw buffer).
+                            // Represented as `void*` since `sub_42A4DB` itself isn't matched to
+                            // a specific 2011 function yet (a candidate for a future round --
+                            // plausibly `ccScript::~ccScript()`-equivalent or a free-script
+                            // helper). SECOND confirmation: `load_room`'s block-type dispatch
+                            // loop handles `BLOCKTYPE_COMPSCRIPT3`(7) by assigning this SAME
+                            // address the return value of the already-matched `fread_script`
+                            // (`Common/CSRUN.CPP:2029`) -- matching 2011's `ccScript`
+                            // deserialization exactly, and confirming this build's room files
+                            // ship modern CSCOMP-compiled scripts, not the old SeeR-era text
+                            // format `scripts` handles.
+  char _pad_unexplored4[4];     // +0x39FC..0x3A00, genuinely unexplored this round -- plausibly
+                            // `cscriptsize` (2011's declared `int cscriptsize;`, `acroom.h:863`,
+                            // sitting immediately after `compiled_script` in source order) but
+                            // not independently confirmed.
+  int num_bscenes;               // +0x3A00, high confidence: `load_room`'s cleanup loop uses
+                            // this as its bound ("for(c=1;c<[rstruc+0x3A00];c++)
+                            // destroy_bitmap(ebscene[c]);"), then resets it to the literal 1
+                            // afterward -- matching 2011's own constructor default
+                            // ("num_bscenes=1;", `acroom.h:889`) exactly.
+  int bscene_anim_speed;         // +0x3A04, high confidence: reset to the literal 5 in the same
+                            // `load_room` cleanup block, matching 2011's own constructor default
+                            // ("bscene_anim_speed=5;", `acroom.h:890`) exactly. 2011 declares
+                            // this immediately after `num_bscenes` ("int num_bscenes,
+                            // bscene_anim_speed;", `acroom.h:864`) -- zero drift.
+  char _pad_unexplored5[4];     // +0x3A08..0x3A0C, genuinely unexplored this round -- plausibly
+                            // `bytes_per_pixel` (2011's declared `int bytes_per_pixel;`,
+                            // `acroom.h:865`, sitting immediately after `bscene_anim_speed` in
+                            // source order, and already known to exist as a concept in this
+                            // build via `load_main_block`'s own `_acroom_bpp`-driven read
+                            // earlier in the function) but not independently confirmed at this
+                            // specific address.
+  void *ebscene[5];              // +0x3A0C..0x3A20 (20 bytes, 5 x 4-byte pointers), the array's
+                            // OWN base address is high confidence -- `load_room`'s own pre-load
+                            // cleanup loop ("for(c=1;c<num_bscenes;c++) {
+                            // destroy_bitmap([rstruc+c*4+0x3A0C]); [rstruc+c*4+0x3A0C]=0; }")
+                            // matches 2011's declared `block ebscene[MAX_BSCENE];`
+                            // (`acroom.h:866`) cleanup exactly. SECOND confirmation: `load_room`'s
+                            // `BLOCKTYPE_ANIMBKGRND`(6) handler loops "for(c=1;c<num_bscenes;c++)
+                            // { fpos=load_lzw(Stream,[rstruc+c*4+0x3A0C],pal); [rstruc+c*4+
+                            // 0x3A0C]=recalced; }" -- matching source's own (commented-out-in-
+                            // 2011, see `bpalettes` note below) "ebscene[ct]=recalced;" loop
+                            // exactly. THIRD and FOURTH confirmations (also this round):
+                            // `load_new_room` (already matched) contains TWO separate
+                            // `for(c=0;c<num_bscenes;c++)` loops over this same array base --
+                            // one converting each `ebscene[c]`'s color depth after a room
+                            // change, one conditionally resizing each entry when `resolution`
+                            // no longer matches the current screen multiplier -- both using the
+                            // SAME confirmed `num_bscenes` bound and this SAME base address.
+                            // Capacity NOT independently confirmed for THIS build
+                            // though -- sized to `5` here matching 2011's own `#define
+                            // MAX_BSCENE 5` (`acroom.h:803`) as the current best estimate
+                            // (CORRECTING an earlier version of this comment that guessed `10`
+                            // purely from this project's general smaller-capacity pattern,
+                            // without having actually checked what 2011's own constant even was
+                            // -- an unforced error caught immediately after `anims[]`, two fields
+                            // prior, turned out to be a genuine ZERO-DRIFT match rather than the
+                            // assumed drift too). Still not independently verified either way --
+                            // a real, well-defined target for a future round (a bounds-check
+                            // quit-message or a malloc/array-index literal would settle it, the
+                            // same technique used everywhere else in this project). `ebscene[0]`
+                            // itself is populated separately, in `load_main_block`, via the
+                            // `load_lzw`/`recalced` sequence discussed at `+0x00` above.
+  // `bpalettes[MAX_BSCENE][256]` (2011's declared per-background-frame palette array,
+  // `acroom.h:867`) is CONFIRMED ABSENT from this build: `load_room`'s `BLOCKTYPE_ANIMBKGRND`(6)
+  // handler passes the SAME shared `rstruc+0x14` (the already-confirmed `pal[256]`) as the
+  // palette argument to `load_lzw` for EVERY background-scene index, not a per-index
+  // `bpalettes[ct]` address -- matching 2011's own OLDER, commented-out predecessor line still
+  // sitting right next to the live code ("// fpos = load_lzw(files,rstruc->ebscene[ct],
+  // rstruc->pal,fpos);", `acroom.h:2162`, superseded in 2011 by the live
+  // "load_lzw(opty,rstruc->ebscene[ct],rstruc->bpalettes[ct])") -- another case, like the almp3
+  // `MP3CHUNKSIZE` find, of this build matching a historical artifact still preserved in the
+  // reference source's own comments. This build shares ONE palette across every background
+  // frame rather than storing one per frame.
+  // `localvars`/`numLocalVars` (2011's declared `InteractionVariable *localvars; int
+  // numLocalVars;`, `acroom.h:868-869` -- per-room script variables, read via a version>=19
+  // `getw()` gate in source) are CONFIRMED ABSENT from this build: `load_main_block`'s ENTIRE
+  // body (already fully read across this struct's investigation) contains exactly TWO `getw()`
+  // calls total, both already independently identified (`_acroom_bpp`'s version>=12 read, and
+  // the walk-area-count override's version>=14 read) -- there is no third `getw()` call anywhere
+  // for a version>=19 gate, meaning this build's compiled room-loading code never had this
+  // branch at all. Independently reinforced by `unload_old_room`/`EndSkippingUntilCharStops`-
+  // combined (already exhaustively read across multiple earlier GameState/RoomStatus rounds)
+  // never containing the matching "for(ff=0;ff<thisroom.numLocalVars;ff++)
+  // croom->interactionVariableValues[ff]=thisroom.localvars[ff].value;" copy loop either -- two
+  // independent negative results agreeing with each other, the same cross-confirmation standard
+  // used for every other confirmed-absent finding in this project.
+  // Everything past +0x3A20 is unexplored territory for this fresh-survey round -- the struct's
+  // own total size is not yet established. Every field `load_room`'s and `load_main_block`'s own
+  // read/write sequences reference has now been mapped; further progress needs either a genuinely
+  // new evidence source (a different already-matched function touching `rstruc`) or independently
+  // confirming `ebscene[]`'s real capacity for this build.
+};
+
+// AmbientSound (this build's version) -- FRESH SURVEY, picked as the next target after
+// RoomStruct's 10-round pass exhausted every already-matched function touching `rstruc`.
+// 2011 declares `AmbientSound ambient[MAX_SOUND_CHANNELS+1];` (`Common/acruntim.h:25-33,891` --
+// `int channel; int x,y; int vol; int num; int maxdist;`, 24 bytes/entry) as a genuine ARRAY,
+// indexed per sound channel. This build's `PlayAmbientSound` (already matched) is CONFIRMED to
+// have NO SUCH ARRAY: its very first check is "if (channel!=1) quit(\"!PlayAmbientSound: channel
+// must be 1\");" -- a hard-coded single-channel restriction, unlike 2011's range check against
+// `MAX_SOUND_CHANNELS`. Every field write that would be `ambient[channel].FIELD` in 2011 instead
+// targets a BARE SCALAR GLOBAL here -- this build never needed an indexable struct because it
+// only ever supports exactly one ambient sound channel:
+//   dword_4EDA68 = num       // sound number (sndnum), matching `ambient[channel].num`
+//   dword_4EDA6C = maxdist   // computed as "((x>width/2)?x:(width-x))-25" in PlayAmbientSound,
+//                            // matching "((x>thisroom.width/2)?x:(thisroom.width-x))-
+//                            // AMBIENCE_FULL_DIST" with AMBIENCE_FULL_DIST=25 exactly (`width`
+//                            // read via the already-confirmed `RoomStruct.width`, `word_522F08`)
+//                            // -- reconfirmed a second, independent way by `update_ambient_
+//                            // sound_vol` (below) reading it as the falloff divisor.
+//   x, y                     // position, matching `ambient[channel].x/.y` -- genuinely named
+//                            // globals (not this project's naming), each individually confirmed
+//                            // via a DATA XREF to `update_ambient_sound_vol` below.
+//   vol                      // base volume, matching `ambient[channel].vol`, same confirmation.
+//   dword_4EDA58             // the loaded `SOUNDCLIP*` itself -- this build's equivalent of
+//                            // `channels[chan]` for the ambient channel specifically (2011 keeps
+//                            // ambient sounds in the shared `channels[]` array indexed by
+//                            // `ambient[channel].channel`; this build has no such indirection,
+//                            // just one dedicated pointer).
+// `ambient[channel].channel` itself is CONFIRMED ABSENT as a stored field -- with `channel`
+// hard-locked to `1` by the validation check, storing it back would be redundant, and no write
+// site for it was found.
+//
+// New function match: `update_ambient_sound_vol` (`sub_4089CC`, upgraded this round from an
+// unnamed medium-confidence GameState-field lead -- see its own entry) -- its body is a complete,
+// exact match to source's per-channel distance-based volume falloff: "if (x==0 && y==0) use full
+// volume; else { dist=sqrt((playerchar->x-x)^2+(playerchar->y-y)^2); if (dist<25) full volume;
+// else full volume -= ((dist-25)*full volume)/maxdist; }" -- implemented here for the single
+// hardcoded channel using the bare scalars above instead of looping over an array. Also confirms
+// `GameState.sound_volume` a further independent way (already established elsewhere).
+//
+// DRIFT noted in passing: `PlayAmbientSound` tries MP3 first (`sub_408811` = `my_load_static_mp3`,
+// see below) then falls back to WAV (`my_load_wave`, already matched) -- unlike 2011's later,
+// unified `load_sound_from_path()` call.
+//
+// CORRECTION (immediate follow-up round): `sub_408811` is `my_load_static_mp3` (`acsound.cpp:
+// 439-477`), confirmed via a COMPLETE, decisive field-offset match (vol@+0xC, mp3buffer@+0x10,
+// repeat@+0x14, tune@+8, matching the real `MYSTATICMP3` member order exactly) -- not just an
+// algorithm-shape guess. This REQUIRED retracting an earlier, weaker match: `sub_4083FC` (called
+// from `PlayMusic`, already matched) had previously been matched to `my_load_static_mp3` too, on
+// call-shape similarity alone (`pack_fopen`/`malloc`/`pack_fread`/`pack_fclose`/
+// `almp3_create_mp3`) -- but its actual body stores `almp3_create_mp3`'s RAW return value
+// directly into `dword_523214` (already established as `PlayMusic`'s own MP3-stream-handle
+// global) with NO `MYSTATICMP3`-style wrapper object and NO `vol`/`mp3buffer`/`repeat` field
+// assignments at all -- a fundamentally different shape once actually checked field-by-field.
+// `sub_4083FC` is better understood as `PlayMusic`'s own dedicated, inlined MP3-stream-
+// preparation helper, not the generic reusable function `my_load_static_mp3` is -- this build
+// has TWO separate, near-identical loading implementations (one per caller), consistent with its
+// established "no shared loading helper yet" pattern found repeatedly elsewhere. `sub_4083FC`'s
+// own match entry retracted the name and left it unnamed rather than force an ill-fitting one.
+
+// SOUNDCLIP and its derived classes (MYWAVE/MYMP3/MYSTATICMP3) -- FRESH SURVEY. 2011's real
+// `SOUNDCLIP` base class (`Common/acsound.h:22-99`) is a large, mature abstract base: 13 `int`
+// fields (done/priority/soundType/vol/volAsPercentage/originalVolAsPercentage/volModifier/
+// paused/panning/panningAsPercentage/xSource/ySource/maximumPossibleDistanceAway/
+// directionalVolModifier), a `bool repeat`, and a `void *sourceClip`, on top of its vtable --
+// roughly 0x40 bytes of base-class overhead before any derived class's own fields even start.
+// This build's version is drastically smaller: evidence gathered across the `my_load_wave`/
+// `my_load_mp3`/`my_load_static_mp3` matches (several rounds, now consolidated here) shows EVERY
+// derived class's own first field sitting at just `+0x08` -- meaning this build's `SOUNDCLIP`
+// base is only `{vtable; int done;}`, 8 bytes total. A genuine, large architectural
+// simplification (not just smaller array capacities like most drift found elsewhere in this
+// project) -- this build predates `SOUNDCLIP` growing volume-percentage tracking, directional/
+// positional audio, and pause/resume state entirely. Represented as flat, non-inheriting structs
+// below (repeating the shared vtable/done pair in each), consistent with this project's existing
+// convention for C++ classes (see `FLAT_CPP_NAMES` in `extract_prototypes.py`).
+struct SOUNDCLIP {
+  void *vtbl;                     // +0x00, high confidence: every derived class below is
+                            // allocated via `operator new` then passed through a distinct
+                            // constructor call before any field gets set -- standard C++ vtable-
+                            // pointer setup, inferred from the consistent pattern across all
+                            // three derived classes rather than directly observed (constructor
+                            // bodies themselves not disassembled this round).
+  int done;                        // +0x04, high confidence: `my_load_wave`/`my_load_mp3`
+                            // (already matched) both explicitly zero this field right after
+                            // construction ("[thiswave+4]=0"/"[thistune+4]=0"), matching 2011's
+                            // `SOUNDCLIP()` constructor's own "done=0;" (`acsound.h:85`) -- the
+                            // one base-class field this build's simplified version keeps.
+};                          // Total confirmed size: 8 bytes (vs. 2011's ~0x40).
+
+struct MYWAVE {
+  void *vtbl;                     // +0x00, see `SOUNDCLIP.vtbl` above.
+  int done;                        // +0x04, see `SOUNDCLIP.done` above.
+  void *wave;                       // +0x08, high confidence: `my_load_wave` (`sub_408556`,
+                            // already matched) stores the just-loaded Allegro `SAMPLE*` (from
+                            // `load_sample`, already matched) here immediately after
+                            // construction -- matching 2011's `SAMPLE *wave;` (`acsound.cpp:52`,
+                            // `MYWAVE`'s own declared FIRST field) exactly in both role and
+                            // position, zero drift.
+  int voice;                        // +0x0C, high confidence: the Allegro voice handle returned
+                            // by `play_sample` (already matched) is stored here directly --
+                            // matching 2011's declared `int voice;` (`acsound.cpp:53`,
+                            // `MYWAVE`'s own declared SECOND field) exactly in position, though
+                            // its ROLE differs: 2011's `voice` gets set lazily inside `play()`
+                            // (called separately, after construction), while this build's
+                            // `my_load_wave` calls `play_sample` immediately at LOAD time and
+                            // stores the handle here right away. ARCHITECTURAL FINDING /
+                            // CONFIRMED ABSENT: 2011's trailing `int firstTime; int repeat;`
+                            // (`acsound.cpp:54-55`) have no room here -- the struct's own
+                            // confirmed total size (16 bytes) ends immediately after `voice`,
+                            // proving this build's `MYWAVE` plays its sample eagerly at load
+                            // time rather than storing parameters for a later lazy `play()`.
+};                          // Total confirmed size: 16 bytes (0x10), matching the `operator
+                            // new(0x10)` call exactly with zero slack.
+
+struct MYMP3 {
+  void *vtbl;                     // +0x00, see `SOUNDCLIP.vtbl` above.
+  int done;                        // +0x04, see `SOUNDCLIP.done` above.
+  void *stream;                     // +0x08, high confidence: `my_load_mp3` (`sub_408623`,
+                            // already matched) stores `almp3_create_mp3stream`'s result here
+                            // (`sub_47ED10`, this round's new match -- see its own entry) --
+                            // matching 2011's `thistune->stream=almp3_create_mp3stream(...);`
+                            // (`acsound.cpp:320`) exactly in both role and position (2011's
+                            // `MYMP3` also declares `stream` as its own first member,
+                            // `ALMP3_MP3STREAM *stream;`).
+  void *in;                         // +0x0C, high confidence: stores the `PACKFILE*` from
+                            // `pack_fopen` (already matched) -- matching 2011's `PACKFILE *in;`
+                            // (`acsound.cpp:180`, `MYMP3`'s own declared SECOND field) exactly
+                            // in both role and position, zero drift.
+  void *buffer;                     // +0x10, high confidence: stores the `malloc`'d
+                            // decompression buffer after `pack_fread` fills it -- matching
+                            // 2011's `char *buffer;` (`acsound.cpp:182`, `MYMP3`'s own declared
+                            // FOURTH field) in role, but sitting with ZERO gap immediately after
+                            // `in`@`+0x0C` (`+0x10`) -- CONFIRMING 2011's intervening `long
+                            // filesize;` (`acsound.cpp:181`, `MYMP3`'s own declared THIRD field)
+                            // is CONFIRMED ABSENT here, not merely unfound: there is no room for
+                            // it between two independently-confirmed neighbors.
+  int chunksize;                    // +0x14, high confidence: set to the literal `0x186A0`
+                            // (100000) -- matching `MP3CHUNKSIZE`'s OLD, commented-out value in
+                            // 2011's own source (already established, several rounds ago, as a
+                            // genuine drift point matching a historical artifact preserved in
+                            // the reference source's comments) -- matching 2011's `int
+                            // chunksize;` (`acsound.cpp:183`, `MYMP3`'s own declared FIFTH/LAST
+                            // field) in role and position, zero drift.
+};                          // Total confirmed size: 24 bytes (0x18), matching the `operator
+                            // new(0x18)` call exactly with zero slack -- `stream`/`in`/
+                            // `chunksize` match 2011's own declared `MYMP3` member positions
+                            // with zero drift, `buffer` shifts 4 bytes earlier due to the
+                            // confirmed-absent `filesize`, and the `SOUNDCLIP` base portion
+                            // itself is drastically smaller (see the struct's own entry above)
+                            // -- a clean example of this project's usual pattern (later fields
+                            // absent) layered on top of its less usual one (base class shrunk).
+
+struct MYSTATICMP3 {
+  void *vtbl;                     // +0x00, see `SOUNDCLIP.vtbl` above.
+  int done;                        // +0x04, see `SOUNDCLIP.done` above.
+  void *tune;                       // +0x08, high confidence: `my_load_static_mp3`
+                            // (`sub_408811`, this round's new match) stores `almp3_create_mp3`'s
+                            // result here -- matching 2011's `ALMP3_MP3 *tune;`
+                            // (`acsound.cpp:335`, `MYSTATICMP3`'s own declared FIRST field, set
+                            // via `thismp3->tune=almp3_create_mp3(...);` at `acsound.cpp:465`)
+                            // exactly in both role and position, zero drift.
+  int vol;                          // +0x0C, high confidence: set directly from the function's
+                            // own `voll` parameter -- matching 2011's `thismp3->vol=voll;`
+                            // (`acsound.cpp:462`) in role, but NOT position: 2011's `MYSTATICMP3`
+                            // doesn't declare its own `vol` field at all (it's inherited from the
+                            // much larger `SOUNDCLIP` base, `acsound.h:27`) -- this build's
+                            // drastically smaller `SOUNDCLIP` base (see that struct's own entry
+                            // above) doesn't provide one, so this derived class declares its own
+                            // local `vol` to compensate, landing right after `tune` instead.
+  void *mp3buffer;                   // +0x10, high confidence: initialized to `NULL` immediately
+                            // after construction, then set to the real buffer pointer after a
+                            // successful `almp3_create_mp3` call -- matching 2011's `char
+                            // *mp3buffer;` (`acsound.cpp:336`, `MYSTATICMP3`'s own declared
+                            // SECOND field) in role, shifted 4 bytes later than 2011's position
+                            // by the locally-reclaimed `vol` field immediately before it.
+  char repeat;                      // +0x14, high confidence: set directly from the function's
+                            // own `loop` parameter (read as a single byte) -- matching 2011's
+                            // `thismp3->repeat=loop;` (`acsound.cpp:464`) in role, but -- like
+                            // `vol` above -- NOT position: 2011's `bool repeat` is inherited from
+                            // `SOUNDCLIP` (`acsound.h:37`), not declared locally in
+                            // `MYSTATICMP3` at all. This build's version reclaims it as its own
+                            // local field too, landing last, after `mp3buffer`.
+};                          // Total confirmed size: 24 bytes (0x18), matching the `operator
+                            // new(0x18)` call exactly with zero slack -- `tune`/`vol`/
+                            // `mp3buffer`/`repeat` all matching 2011's own declared
+                            // `MYSTATICMP3` member order exactly (only the `SOUNDCLIP` base
+                            // portion drifts, not this derived class's own fields -- the same
+                            // pattern as `MYMP3` above).
 """
 
 
@@ -2905,8 +4084,9 @@ def main():
               "ccInstance, ccScript, GUIButton, GUITextBox, GUILabel, GUIListBox, GUIInv, "
               "GUISlider, SpriteCache, EventBlock, MouseCursor, InterfaceElement, "
               "InventoryItemInfo, GameSetupStructBase, ExecutingScript, DialogTopic, "
-              "MoveList, ViewFrame272, ViewStruct272, RoomObject, EventBlockCmd, "
-              "GameAnimation, RoomStatus, WordsDictionary, GameState).")
+              "MoveList, ViewFrame272, ViewStruct272, RoomObject, AnimationStruct, "
+              "FullAnimation, RoomStatus, WordsDictionary, GameState, ScreenOverlay, "
+              "RoomStruct, SOUNDCLIP, MYWAVE, MYMP3, MYSTATICMP3).")
     else:
         print(f"parse_decls reported {err_count} error(s) -- check the declarations above.")
 
