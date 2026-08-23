@@ -2253,6 +2253,20 @@ struct AnimationStruct {
   // system (vtable-based, 5 typed `data[]` slots, ~76+ bytes) covering a similar action set
   // (set/release view, animate, move with/without wall-avoidance, set position) -- not this
   // struct's own direct successor.
+  //
+  // DECISIVE FOLLOW-UP CONFIRMATION (found in the very next round, while investigating an
+  // unrelated `RoomStruct` gap): `sub_4247A0` (RESOLVED, previously unnamed -- see its own
+  // matches.json entry), the per-element constructor callback for `FullAnimation.stage[10]`'s own
+  // C++ array-of-objects default-construction (called from `sub_424770`/`FullAnimation__
+  // FullAnimation` with ElementSize=0x18(24)/Count=0xA(10), independently reconfirming this
+  // struct's own stride/capacity a THIRD way), has a body of EXACTLY four literal writes:
+  // "[this+0x14]=0; [this+0xC]=0; [this+0x15]=1; [this+0x10]=5;" -- matching 2011's own
+  // `AnimationStruct() { action=0; object=0; wait=1; speed=5; }` (`acroom.h:225`) WORD FOR WORD AND
+  // VALUE FOR VALUE, with the same four fields the disassembly-only investigation had already
+  // (independently) matched to `action`/`object`/`wait`/`speed`. This is about as strong as
+  // confirmation gets in this project -- a full constructor-literal match, not just a size or
+  // single-field fit -- and definitively puts to rest any remaining doubt about the
+  // `EventBlockCmd`->`AnimationStruct` rename.
   int x;                             // +0x00 (was `data0`), high confidence: the target X
                             // coordinate for type 3/4 (move, passed as `tox` to
                             // `move_object`/`walk_character`) and for type 5 (direct position
@@ -2363,13 +2377,20 @@ struct FullAnimation {
   // error-message-friendly short-circuit before the (otherwise silently-no-op) iteration. This
   // ALSO gives `numstages`@+0xF0 below a second, fully independent confirmation.
   //
-  // Total size 0xF4(244 bytes) is high confidence: independently confirmed by THREE things
+  // Total size 0xF4(244 bytes) is high confidence: independently confirmed by FOUR things
   // landing on it simultaneously -- the `dword_52033C`/`unk_52024C` address delta itself
   // (`0xF0`, i.e. exactly `numstages`'s own offset), sub_40C75E's own confirmed "list[+0xF0] =
   // numstages" access applied to `unk_52024C[slot]` (`stage[10]` (10*0x18=0xF0) plus a trailing
-  // `numstages` int lands EXACTLY on the externally-confirmed 0xF4 stride with zero slack), AND
-  // 2011's own declared arithmetic (10 * sizeof(AnimationStruct)=0x18 + sizeof(int) = 0xF4)
-  // reached completely independently, from the reference source rather than the disassembly.
+  // `numstages` int lands EXACTLY on the externally-confirmed 0xF4 stride with zero slack), 2011's
+  // own declared arithmetic (10 * sizeof(AnimationStruct)=0x18 + sizeof(int) = 0xF4) reached
+  // completely independently, from the reference source rather than the disassembly, AND (found a
+  // round later) `FullAnimation__FullAnimation`'s own C++ constructor body: a `stage[]`
+  // array-of-objects default-construction call with ElementSize=0x18(24)/Count=0xA(10) followed
+  // immediately by "[this+0xF0]=0" -- matching 2011's own `FullAnimation() { numstages=0; }`
+  // (`acroom.h:231`) precisely, and independently reconfirming `numstages`@+0xF0 a THIRD way. See
+  // `AnimationStruct`'s own struct-level comment for the matching decisive confirmation of ITS
+  // fields via the same constructor-chasing round (`sub_4247A0`/`AnimationStruct__
+  // AnimationStruct`, `stage[]`'s own per-element constructor).
   AnimationStruct stage[10];         // +0x000..0xF0 (240 bytes), high confidence: see
                             // struct-level comment -- MAX_ANIMATIONS=10 slots confirmed via
                             // run_event_block's own literal `0Ah` bounds check (matching 2011's
@@ -3287,6 +3308,68 @@ struct ScreenOverlay {
 //                         // having already surfaced in an earlier GameState round via
 //                         // check_controls (see that entry).
 
+struct sprstruc {
+  // Matches 2011's declared `sprstruc` (`Common/acroom.h:181-198`) exactly: `short sprnum, x, y,
+  // room, on;` (5 packed shorts, `PCKD`, no padding), used by `RoomStruct.sprs[10]` below (this
+  // build's own already-independently-confirmed 10-byte-per-element stride, from `load_main_block`
+  // memsetting/freading the whole `sprs[]` region as one 100-byte block -- see that field's own
+  // entry). Never formalized as its own type until this round.
+  //
+  // Confirmed via `sub_424750` (RESOLVED, previously an unnamed helper -- see its own matches.json
+  // entry), the per-element constructor callback for `RoomStruct.sprs[]`'s C++ array-of-objects
+  // default-construction (`vector constructor iterator`, called from `roomstruct::roomstruct()`
+  // with ElementSize=0xA(10)/Count=0xA(10) matching `sprs[10]`'s own address/stride/capacity
+  // exactly): its ENTIRE body is "[this+8] = 0" (a single 2-byte write) -- matching 2011's own
+  // `sprstruc() { on = 0; }` (`acroom.h:186`) precisely, both in VALUE and in being the constructor's
+  // only action. Since `on` is 2011's declared 5th/LAST field (`sprnum`@0, `x`@2, `y`@4, `room`@6,
+  // `on`@8, each a natural 2-byte short with zero padding needed), this single confirmed write
+  // pins down the whole 10-byte layout with zero slack -- the same "anchored from one confirmed
+  // field plus the already-independently-confirmed total size" reasoning used elsewhere in this
+  // project (e.g. `MouseCursor.name[10]`).
+  short sprnum;                  // +0x00, medium-high confidence: positional, boxed in by the
+                            // confirmed total stride and `on`'s own confirmed position -- no
+                            // direct disassembly access to this specific field found yet.
+  short x;                       // +0x02, medium-high confidence: see `sprnum` above.
+  short y;                       // +0x04, medium-high confidence: see `sprnum` above.
+  short room;                    // +0x06, medium-high confidence: see `sprnum` above.
+  short on;                      // +0x08, high confidence: directly confirmed via
+                            // `sprstruc__sprstruc`'s exact constructor-literal match (see
+                            // struct-level comment above).
+};
+
+struct PolyPoints {
+  // Matches 2011's declared `PolyPoints` (`Common/acroom.h:251-264`) exactly: `int x[MAXPOINTS=30];
+  // int y[MAXPOINTS=30]; int numpoints;` (61 ints, 244/0xF4 bytes total). This is
+  // `RoomStruct.wallpoints[15]`'s element type (see that field's own entry) -- a walkable area's
+  // raw polygon vertex list, used only by the AGS EDITOR for room authoring; the runtime engine
+  // itself never reads individual vertices, only the pre-rasterized `walls` bitmap mask, so no
+  // already-matched RUNTIME function was expected to reference these fields directly (and indeed
+  // none does -- `wallpoints` has zero references anywhere in `Engine/`, only in `Common/acroom.h`'s
+  // room-file I/O code).
+  //
+  // Total size (0xF4) was first confirmed via `load_main_block`'s own `fread(rst+0x1574,
+  // ElementSize=0F4h, Count=numwalkareas)` (see `RoomStruct.wallpoints`'s own entry). A SECOND,
+  // fully independent confirmation of both the total size AND the internal `numpoints` field
+  // position came from `sub_4247D0` (RESOLVED, previously unnamed -- see its own matches.json
+  // entry), the per-element constructor callback for `wallpoints[]`'s own C++ array-of-objects
+  // default-construction (called from `roomstruct::roomstruct()` with ElementSize=0F4h(244)/
+  // Count=0Fh(15), matching `wallpoints[15]`'s address/stride/capacity exactly): its ENTIRE body is
+  // "[this+0F0h] = 0" (a single 4-byte write) -- matching 2011's own `PolyPoints() { numpoints = 0;
+  // }` (`acroom.h:264`) precisely. `x[30]`/`y[30]` themselves are NOT independently confirmed at
+  // the individual-element level (no access site exists anywhere in this build), but are boxed in
+  // with zero slack: `numpoints`'s own confirmed offset (`+0xF0`=240=30 ints + 30 ints) is exactly
+  // where 2011 declares it, immediately after both 30-int arrays, and no other layout of "two
+  // 30-element int arrays plus a trailing int, totaling 244 bytes" is possible without either array
+  // itself changing size -- which would move `numpoints`'s own confirmed offset.
+  int x[30];                     // +0x000..0x78 (120 bytes), medium-high confidence: boxed in by
+                            // `numpoints`'s own confirmed offset and the struct's own confirmed
+                            // total size -- see struct-level comment above.
+  int y[30];                     // +0x078..0xF0 (120 bytes), medium-high confidence: see `x` above.
+  int numpoints;                  // +0xF0, high confidence: directly confirmed via
+                            // `PolyPoints__PolyPoints`'s exact constructor-literal match (see
+                            // struct-level comment above).
+};
+
 struct RoomStruct {
   // FRESH SURVEY, ROUND 1 -- 2011's `roomstruct` (Common/acroom.h:806, the current-room data
   // format: walkable areas, hotspots, regions, background scenes, etc.) has never been formalized
@@ -3371,6 +3454,28 @@ struct RoomStruct {
                             // declared field at all, rather than being scratch state this build
                             // added on top of `roomstruct`) is still not established. Left as an
                             // honestly-unconfirmed pad rather than guessed at a third time.
+                            //
+                            // FURTHER SUPPORTING EVIDENCE (found this round, `roomstruct__
+                            // roomstruct` -- this build's newly-matched `RoomStruct` default
+                            // constructor): zeroes `+0x00` in the SAME instruction group as
+                            // `walls`/`object`/`lookat` ("[rst]=0; [rst+4]=0; [rst+8]=0;
+                            // [rst+0xC]=0;", four consecutive NULLs) -- interesting because 2011's
+                            // own constructor's very FIRST statement is "ebscene[0] = NULL; walls
+                            // = NULL; object = NULL; lookat = NULL;" (`acroom.h:879`), a genuine,
+                            // still-unexplained REDUNDANCY in 2011's own source (`ebscene[0]` is
+                            // set to NULL a SECOND time later, at `acroom.h:889`, right next to
+                            // `num_bscenes=1`). This build's constructor zeroing `+0x00` in
+                            // lockstep with `walls`/`object`/`lookat` -- rather than alongside
+                            // `num_bscenes`/`bscene_anim_speed`/`bytes_per_pixel`, where the REAL,
+                            // persistent `ebscene[]` array (`+0x3A0C`) gets its own separate zero
+                            // -- is consistent with `+0x00` being this build's counterpart to
+                            // 2011's own first, redundant `ebscene[0]=NULL` line specifically, not
+                            // the second one. Suggestive, not decisive: still doesn't independently
+                            // confirm `+0x00`'s identity beyond "transient cache of the active
+                            // background bitmap," but does explain WHY 2011's source shows that
+                            // particular redundancy at all -- it's a vestige of exactly this kind
+                            // of transient/duplicate field once existing where `+0x00` still does
+                            // here.
   block walls;                  // +0x04, high confidence (CORRECTED from +0x00): the last of
                             // three UNCONDITIONAL, consecutive `loadcompressed_allegro`
                             // (`sub_403846`, 4-arg: FILE*, block* by ADDRESS, color*, long --
@@ -3407,7 +3512,14 @@ struct RoomStruct {
                             // "fread(rst+0x414, ElementSize=2, Count=1)" matches source's
                             // "fread(&rstruc->numobj, 2, 1, opty);" (`acroom.h:1650`) exactly --
                             // confirms both the field AND its `short` type (2011 declares it
-                            // `short numobj;`, `acroom.h:810`).
+                            // `short numobj;`, `acroom.h:810`). BONUS DRIFT (found via
+                            // `roomstruct__roomstruct`, this round): the constructor's default
+                            // value, "[rst+0x414]=0xF(15)", matches 2011's own constructor idiom
+                            // "numobj = MAX_OBJ;" (`acroom.h:880`) in ROLE, but this build's own
+                            // `MAX_OBJ`-equivalent default is 15, not 2011's declared `MAX_OBJ=16`
+                            // (`acroom.h:60`) -- a one-off reduction, the same direction as this
+                            // project's usual smaller-capacity pattern though unusually small in
+                            // magnitude.
   // objyval[] (2011's `short objyval[MAX_OBJ]`, walkbehind-area baselines) starts at +0x416 with
   // ZERO gap after numobj -- "fread(rst+0x416, ElementSize=2, Count=[rst+0x414])" matches source's
   // "fread(&rstruc->objyval[0], 2, rstruc->numobj, opty);" (`acroom.h:1655`) exactly, confirming
@@ -3476,16 +3588,18 @@ struct RoomStruct {
                             // throughout this project) -- then consumed immediately after as the
                             // element count driving `message[]`'s own read loop, matching
                             // source's use of `nummes` as `message[]`'s bound exactly.
-  short sprs[10][5];              // +0x8D2..0x936 (100 bytes), high confidence: `load_main_block`
+  sprstruc sprs[10];              // +0x8D2..0x936 (100 bytes), high confidence: `load_main_block`
                             // memsets this region to 0 (100 bytes) before conditionally
-                            // `fread`ing it back; represented as a raw `short[10][5]` (10
-                            // elements of 5 packed shorts each) rather than declaring a new
-                            // `sprstruc` type -- matches `sprstruc`'s own confirmed 10-byte size
-                            // (`sprnum,x,y,room,on`, all packed shorts, `acroom.h:181-198`)
-                            // exactly. Capacity 10 (100/10) -- DRIFT vs. 2011's declared
-                            // `MAX_INIT_SPR`, matching this build's already-established
-                            // `RoomObject`/`objbaseline` array capacity of 10 with zero further
-                            // drift.
+                            // `fread`ing it back. UPGRADED (this round) from a raw `short[10][5]`
+                            // blob to a typed `sprstruc` array -- see `sprstruc`'s own declaration
+                            // above for the constructor-level field confirmation
+                            // (`sprstruc__sprstruc`, found via `roomstruct__roomstruct`'s own
+                            // per-element array-construction call, ElementSize=0xA(10)/Count=0xA(10)
+                            // matching this field's address/stride/capacity exactly -- a second,
+                            // fully independent confirmation of both). Capacity 10 (100/10) --
+                            // DRIFT vs. 2011's declared `MAX_INIT_SPR`, matching this build's
+                            // already-established `RoomObject`/`objbaseline` array capacity of 10
+                            // with zero further drift.
   // MAJOR STRUCTURAL FINDING: this build's field ORDER genuinely diverges from 2011's declared
   // order here, not just capacities. 2011 declares `objbaseline[MAX_INIT_SPR]` immediately after
   // `sprs[]`/`intrObject[]`/`objectScripts` (i.e. right here, at ~+0x936) -- but this build's own
@@ -3543,7 +3657,38 @@ struct RoomStruct {
                             // fixup flag) matches `MessageInfo.flags`'s documented role exactly.
                             // The 200-byte memset fallback independently reconfirms
                             // `MAXMESS=100` (200/2) with zero drift from 2011's own constant.
-  char _pad_unexplored2b[0x20]; // +0xBA4..0xBC4 (32 bytes), genuinely unexplored this round.
+  short wasversion;              // +0xBA4, high confidence: RESOLVED (closing the previously
+                            // undifferentiated 32-byte `_pad_unexplored2b` gap). Confirmed via
+                            // `load_room` (already matched, the CALLER of `load_main_block`, not
+                            // `load_main_block` itself): "fread(&var_8,2,1,Stream);
+                            // rstruc.wasversion=var_8; if (rstruc.wasversion<2 ||
+                            // rstruc.wasversion>0Eh(14)) quit(\"Load_Room: Bad packed file. Either
+                            // the file requires a newer or older version of...\")" -- an exact
+                            // structural match to source's "rstruc->wasversion = rfh.version; if
+                            // ((rstruc->wasversion<15)||(rstruc->wasversion>ROOM_FILE_VERSION))
+                            // quit(\"Load_Room: Bad packed file...\");" (`acroom.h:2080-2088`),
+                            // including the same error string. The bounds this build actually
+                            // enforces (2..14) are LOWER on both ends than 2011's (15..29) --
+                            // matching, and reinforcing from a brand new angle, round 8's
+                            // capstone finding that this build's compiled engine never had code
+                            // for room-format version 15+ at all; the floor of 2 additionally
+                            // shows this build's minimum supported room format is even OLDER than
+                            // 2011's own documented floor.
+  short flagstates[15];          // +0xBA6..0xBC4 (30 bytes), MEDIUM confidence: positional/
+                            // arithmetic-fit only -- no already-matched function reads this span
+                            // directly (same evidentiary status as `RoomStatus.flagstates[15]`'s
+                            // own entry, the closest analogue). Sits with zero gap immediately
+                            // after the now-confirmed `wasversion`@+0xBA4 and ends with zero
+                            // remainder exactly at the already-confirmed `anims[10]` start
+                            // (+0xBC4), matching 2011's declared "short wasversion; short
+                            // flagstates[MAX_FLAGS];" adjacency (`acroom.h:833-834`) exactly, with
+                            // `MAX_FLAGS=15` (`acroom.h:801`) matching `RoomStatus.flagstates`'s
+                            // own already-confirmed capacity with zero drift. Most plausibly this
+                            // room's DEFAULT/source flag values, copied into the per-save-slot
+                            // `RoomStatus.flagstates` on first visit -- the same "source copy ->
+                            // runtime copy" relationship already established for `hscond`/
+                            // `objcond`/`misccond` -- but that specific copy site has not been
+                            // located in this build.
   FullAnimation anims[10];       // +0xBC4..0x154C (2440 bytes, 10 x 244-byte `FullAnimation`
                             // entries), high confidence: `fread(rst+0xBC4, ElementSize=0xF4(244),
                             // Count=numanims)` for room-file version>=6, else
@@ -3587,17 +3732,37 @@ struct RoomStruct {
                             // separately reads it via "fread(rst+0x1570, ElementSize=4, Count=1)"
                             // matching "fread(&rstruc->numwalkareas, 4, 1, opty);"
                             // (`acroom.h:1691`) exactly -- two independent confirmations.
-  char _pad_unexplored2[0xE4C]; // +0x1574..0x23C0, genuinely unexplored this round -- STALE NOTE
-                            // CORRECTED: an earlier version of this comment guessed
-                            // `left`/`right`/`top`/`bottom`/`numsprs`/`nummes`/`sprs[]` might
-                            // live here, based only on 2011's declared order without having
-                            // actually located them yet -- they were later found at
-                            // `+0x8C6..+0x936` instead (see those fields' own entries below),
-                            // NOT in this span. `intrObject[]`/`objectScripts` are separately
-                            // CONFIRMED ABSENT (see the version-ceiling finding on `scripts`'s
-                            // own comment further below) -- but that doesn't place them HERE
-                            // either, it just rules them out everywhere. This span's actual
-                            // contents remain genuinely unknown.
+  PolyPoints wallpoints[15];    // +0x1574..0x23C0 (3660 bytes total, 15 x 244-byte entries),
+                            // RESOLVED (closing this project's single largest remaining RoomStruct
+                            // gap, previously an undifferentiated 0xE4C-byte unknown span --
+                            // earlier comment history: an initial guess that `left`/`right`/`top`/
+                            // `bottom`/`numsprs`/`nummes`/`sprs[]` might live here was WRONG, those
+                            // were later found at `+0x8C6..+0x936` instead; a later "STALE NOTE
+                            // CORRECTED" pass then only ruled out `intrObject[]`/`objectScripts`
+                            // without identifying the real contents). High confidence via TWO
+                            // independent routes: (1) `load_main_block`: immediately after the
+                            // already-confirmed `numwalkareas`@+0x1570 fread, `fread(rst+0x1574,
+                            // ElementSize=0F4h(244), Count=[rst+0x1570])` matches
+                            // `fread(&rstruc->wallpoints[0], sizeof(PolyPoints),
+                            // rstruc->numwalkareas, opty);` (`acroom.h:1694`) exactly; (2)
+                            // `roomstruct__roomstruct` (this build's `RoomStruct` default
+                            // constructor, found this round -- see its own matches.json entry):
+                            // its own C++ array-of-objects default-construction call targets
+                            // `rst+0x1574` with ElementSize=0F4h(244)/Count=0Fh(15), matching this
+                            // field's address/stride/capacity a SECOND, fully independent way. Both
+                            // routes confirm the field NAME/position (2011's own `PolyPoints
+                            // wallpoints[MAX_WALK_AREAS];`, `acroom.h:840`) and total capacity (15,
+                            // matching 2011's `MAX_WALK_AREAS=15`, `acroom.h:250`, with ZERO drift
+                            // -- unusual for this project, most fixed capacities shrink). UPGRADED
+                            // (this round) from a raw byte blob to a typed `PolyPoints` array: the
+                            // per-element constructor callback found via route (2), `sub_4247D0`
+                            // (now `PolyPoints__PolyPoints`), directly confirms `PolyPoints.
+                            // numpoints`@+0xF0 -- see `PolyPoints`'s own declaration above for the
+                            // complete field-level writeup. Walkable-area polygon vertex data
+                            // remains purely an AGS EDITOR/room-authoring concern at RUNTIME --
+                            // `wallpoints` has zero references anywhere in `Engine/`, only in
+                            // `Common/acroom.h`'s room-file I/O and constructor code, both now
+                            // fully accounted for.
   int numhotspots;               // +0x23C0, high confidence: `load_main_block` inits this to the
                             // literal 0 ("rstruc->numhotspots = 0;", `acroom.h:1615`), AND
                             // separately reads it via "fread(rst+0x23C0, ElementSize=4, Count=1)"
@@ -3788,10 +3953,18 @@ struct RoomStruct {
                             // deserialization exactly, and confirming this build's room files
                             // ship modern CSCOMP-compiled scripts, not the old SeeR-era text
                             // format `scripts` handles.
-  char _pad_unexplored4[4];     // +0x39FC..0x3A00, genuinely unexplored this round -- plausibly
-                            // `cscriptsize` (2011's declared `int cscriptsize;`, `acroom.h:863`,
-                            // sitting immediately after `compiled_script` in source order) but
-                            // not independently confirmed.
+  int cscriptsize;               // +0x39FC, RESOLVED (this round): confirmed via
+                            // `roomstruct__roomstruct` (this build's `RoomStruct` default
+                            // constructor, newly matched this round -- see its own matches.json
+                            // entry): "[rst+0x3880]=0x140; [rst+0x3882]=0xC8; [rst+0x39F4]=0;
+                            // [rst+0x39F8]=0; [rst+0x39FC]=0;" matches 2011's own constructor
+                            // "width=320; height=200; scripts=NULL; compiled_script=NULL;
+                            // cscriptsize=0;" (`acroom.h:885-886`) LINE FOR LINE, in the exact
+                            // same order -- five consecutive literal-value writes matching five
+                            // consecutive source assignments with zero deviation, decisively
+                            // resolving this position as `cscriptsize` (2011's declared `int
+                            // cscriptsize;`, `acroom.h:863`, sitting immediately after
+                            // `compiled_script` in source order, exactly as found here).
   int num_bscenes;               // +0x3A00, high confidence: `load_room`'s cleanup loop uses
                             // this as its bound ("for(c=1;c<[rstruc+0x3A00];c++)
                             // destroy_bitmap(ebscene[c]);"), then resets it to the literal 1
@@ -3802,13 +3975,21 @@ struct RoomStruct {
                             // ("bscene_anim_speed=5;", `acroom.h:890`) exactly. 2011 declares
                             // this immediately after `num_bscenes` ("int num_bscenes,
                             // bscene_anim_speed;", `acroom.h:864`) -- zero drift.
-  char _pad_unexplored5[4];     // +0x3A08..0x3A0C, genuinely unexplored this round -- plausibly
-                            // `bytes_per_pixel` (2011's declared `int bytes_per_pixel;`,
-                            // `acroom.h:865`, sitting immediately after `bscene_anim_speed` in
-                            // source order, and already known to exist as a concept in this
-                            // build via `load_main_block`'s own `_acroom_bpp`-driven read
-                            // earlier in the function) but not independently confirmed at this
-                            // specific address.
+  int bytes_per_pixel;           // +0x3A08, RESOLVED (this round), two independent confirmations:
+                            // (1) `load_main_block` itself: "if (version>=12) _acroom_bpp =
+                            // getw(Stream); else _acroom_bpp=1; if (_acroom_bpp<1) _acroom_bpp=1;
+                            // [rst+0x3A08]=_acroom_bpp;" (immediately followed by the
+                            // already-confirmed `numobj` fread) matches 2011's "if (rfh.version>=12)
+                            // _acroom_bpp=getw(opty); else _acroom_bpp=1; if (_acroom_bpp<1)
+                            // _acroom_bpp=1; rstruc->bytes_per_pixel=_acroom_bpp;" (`acroom.h:
+                            // 1641-1649`) line for line, including the version gate, the default,
+                            // AND the clamp; (2) `roomstruct__roomstruct` (this build's `RoomStruct`
+                            // default constructor, newly matched this round): "[rst+0x3A0C]=0;
+                            // [rst+0x3A04]=5; [rst+0x3A08]=1;" matches 2011's own constructor
+                            // "num_bscenes=1; ebscene[0]=NULL; bscene_anim_speed=5;
+                            // bytes_per_pixel=1;" (`acroom.h:889-890`) exactly (see `ebscene`/
+                            // `bscene_anim_speed`'s own entries for the matching confirmations of
+                            // their two literals in the same block).
   void *ebscene[5];              // +0x3A0C..0x3A20 (20 bytes, 5 x 4-byte pointers), the array's
                             // OWN base address is high confidence -- `load_room`'s own pre-load
                             // cleanup loop ("for(c=1;c<num_bscenes;c++) {
@@ -4086,7 +4267,8 @@ def main():
               "InventoryItemInfo, GameSetupStructBase, ExecutingScript, DialogTopic, "
               "MoveList, ViewFrame272, ViewStruct272, RoomObject, AnimationStruct, "
               "FullAnimation, RoomStatus, WordsDictionary, GameState, ScreenOverlay, "
-              "RoomStruct, SOUNDCLIP, MYWAVE, MYMP3, MYSTATICMP3).")
+              "RoomStruct, SOUNDCLIP, MYWAVE, MYMP3, MYSTATICMP3, sprstruc, "
+              "PolyPoints).")
     else:
         print(f"parse_decls reported {err_count} error(s) -- check the declarations above.")
 

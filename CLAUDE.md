@@ -235,7 +235,7 @@ rather than trusting these numbers as they age)
   944/776 before that addition) — this pool was "largely exhausted" for
   Engine/Common code specifically; a productive third-party-library round
   (Task #10, now paused — see below) pushed it further before wrapping up.
-- `reversing/analysis/matches.json` has 570 entries (function + struct-field
+- `reversing/analysis/matches.json` has 577 entries (function + struct-field
   matches combined)
 - 25 struct definitions built entirely from disassembly evidence (not
   borrowed from the 2011 source — see `reversing/notes/struct-layout-drift.md`):
@@ -1512,6 +1512,41 @@ rather than trusting these numbers as they age)
   correction notes on the three affected `matches.json` entries
   (`run_event_block`, and the two still-unnamed `sub_40C3E0`/
   `sub_40C75E`), per this project's "visible retraction" convention.
+- **RoomStruct's last big gap closes, plus a whole constructor cluster
+  found by accident.** The single largest remaining unexplored span
+  (`0xE4C`/3660 bytes, between `numwalkareas` and `numhotspots`) turned
+  out to be `PolyPoints wallpoints[15]` (`Common/acroom.h:840`,
+  `PolyPoints` itself at `acroom.h:252-255`) — size arithmetic
+  (15×244=0xE4C) and a direct `load_main_block` fread
+  (`ElementSize=0xF4`, `Count=numwalkareas`) closed it immediately, with
+  `MAX_WALK_AREAS=15` matching zero drift from 2011. Chasing the two
+  remaining small pads (`cscriptsize`/`bytes_per_pixel`) led to a
+  previously-uncharacterized function turning out to be
+  `roomstruct::roomstruct()` — this build's `RoomStruct` DEFAULT
+  CONSTRUCTOR — whose body is an almost line-for-line match to source's
+  own constructor, closing `cscriptsize`, reconfirming
+  `bytes_per_pixel`, and independently reconfirming nearly every other
+  already-established field via literal constructor defaults (also
+  pinning this build's own `ROOM_FILE_VERSION`-equivalent at exactly
+  14). Its three per-element array-constructor callbacks turned out to
+  be even more valuable: `sprstruc::sprstruc()` (a brand new struct
+  formalized this round, `sprnum/x/y/room/on`, confirms `on`@+0x08
+  directly), `FullAnimation::FullAnimation()` (reconfirms `stage[]`/
+  `numstages` a third way), and — the headline result —
+  `AnimationStruct::AnimationStruct()`, whose ENTIRE body
+  (`action=0;object=0;wait=1;speed=5;`) matches 2011's declared
+  constructor word for word and value for value, decisively closing any
+  remaining doubt about the previous round's `EventBlockCmd`->
+  `AnimationStruct` rename. A sibling callback,
+  `PolyPoints::PolyPoints()`, directly confirms `PolyPoints.numpoints`
+  @+0xF0 — the one field `wallpoints`'s fread-only evidence could never
+  reach (a pure AGS-editor concern with zero `Engine/` usage) — letting
+  `wallpoints` be retyped from a raw byte blob to a proper typed array.
+  Also caught in passing: this build's own `MAX_OBJ`-equivalent default
+  is 15, not 2011's declared 16 (a genuine one-off capacity reduction).
+  Five new function matches, two new formalized structs, RoomStruct's
+  last big gap and both remaining small pads closed, all from following
+  one dangling function reference.
 
 ## Third-party library identification (Task #10)
 
