@@ -1681,6 +1681,13 @@ rather than trusting these numbers as they age)
   coincidentally-adjacent global?" question remains undecidable by this
   project's techniques, since standalone-global and struct-member array
   accesses compile to identical code with no exploitable distinction.
+- **`curscript` identified**, a small loose end left over from
+  `run_text_script_2iparam`'s own match two rounds ago: the single
+  dereference it does before calling `ccCallInstance` matches source's
+  `ccCallInstance(curscript->inst,...)` (`Engine/AC.CPP:3281`) exactly —
+  `dword_52314C` is `curscript` (a global `ExecutingScript*`, set inside
+  `prepare_text_script`), and the dereference itself gives
+  `ExecutingScript.inst`@+0x00 a third independent confirmation route.
 
 ## Third-party library identification (Task #10)
 

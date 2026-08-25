@@ -1967,7 +1967,14 @@ struct ExecutingScript {
                             // passed straight to the already-matched ccFreeInstance. Matches
                             // 2011's FIRST declared field (Common/acruntim.h:701) exactly.
                             // Cross-confirmed by ExecutingScript::init (sub_424A00), which
-                            // zeroes this offset first.
+                            // zeroes this offset first. FURTHER RECONFIRMATION (found later,
+                            // `run_text_script_2iparam`'s own entry): a single dereference of the
+                            // newly-identified global `curscript` (`dword_52314C`, this build's
+                            // `ExecutingScript *curscript;`) supplies `ccCallInstance`'s first
+                            // argument with no added offset, matching source's
+                            // `ccCallInstance(curscript->inst,...)` (`Engine/AC.CPP:3281`) exactly
+                            // -- a third independent confirmation that `inst` is genuinely the
+                            // struct's first field.
   int newnum;                     // +0x04, high confidence: sentinel -1 = "no pending room
                             // change". IDA's own pre-existing local-variable name for this
                             // offset (decoded from post_script_cleanup's bulk-copy buffer).

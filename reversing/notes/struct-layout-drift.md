@@ -7214,3 +7214,29 @@ confirmed neighbor" pattern that has settled genuine ambiguities
 elsewhere in this project. Left open, but flagged as likely unresolvable
 without a fundamentally different kind of evidence than anything in this
 project's existing toolkit.
+
+## `curscript` identified, a small loose end from `run_text_script_2iparam`
+
+A quick follow-up on an open detail noted (but not chased) when
+`run_text_script_2iparam` (`sub_409F23`) was matched two rounds ago:
+right after calling `prepare_text_script`, the function dereferences
+`dword_52314C` ONCE and passes the result as `ccCallInstance`'s first
+argument, rather than passing `prepare_text_script`'s own return value
+or the raw `sci` parameter directly.
+
+Checking 2011's `run_script_function_if_exist` (the function this build's
+version has inlined) settles it immediately: `ccCallInstance(curscript
+->inst, tsname, numParam, iparam, iparam2);` (`Engine/AC.CPP:3281`, the
+matching 5-argument overload) -- `curscript` is a global `ExecutingScript
+*`, set inside `prepare_text_script` itself (`curscript = &scripts
+[num_scripts];`, `AC.CPP:3064`) to point at whichever script instance was
+just forked/resolved for this call. The single dereference in the
+disassembly is exactly `curscript->inst` -- `ExecutingScript`'s own
+already-confirmed FIRST field, itself now given a THIRD independent
+confirmation route (on top of `post_script_cleanup`'s array-indexed read
+and `ExecutingScript::init`'s own zeroing).
+
+`dword_52314C` is identified as `curscript` accordingly -- a small,
+previously-unnamed global this project hadn't had occasion to pin down
+before, closed in passing while sweeping for loose ends from recent
+matches rather than through a dedicated investigation of its own.
