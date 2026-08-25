@@ -7030,3 +7030,87 @@ own load-time call), does not exist in this build at all --
 (`read_gui`), not two. This is consistent with the broader `guin`/`objn`/
 z-order picture: this build predates AGS's GUI-as-scriptable-object
 system entirely, not just one isolated feature within it.
+
+## `GUIMain::init()` found, closing nearly every remaining field at once -- with a genuinely new kind of caveat
+
+Chasing `bgcol` further (its two known 2011 reader sites -- the compiled-
+out `adjust_x/y_for_guis`, and `draw_gui_for_dialog_options`'s `wbar`-
+based rectangle fill -- were both checked and ruled out this round;
+`wbar` itself has ZERO occurrences anywhere in this entire 917k-line
+binary, confirming the whole custom-dialog-options-GUI background-drawing
+path is absent, not just unfound) led to reading the code immediately
+surrounding `GUIMain__rebuild_array` and its neighboring static-array-
+construction chain (`sub_407356` → `sub_407360`, a `vector constructor
+iterator` wrapper for the static `GUIListBox` array) more closely.
+
+Sitting in between `sub_407360`'s `endp` and `GUIMain__rebuild_array`'s
+own `proc` is a block of loose instructions with content that is an
+almost line-for-line match to source's `GUIMain::init()` (`acgui.cpp:
+985-1000`):
+
+```
+[this+0x00] = 0   (single byte)      vtext[0] = 0;
+[this+0x38] = 0                      focus = 0;
+[this+0x3C] = 0                      numobjs = 0;
+[this+0x54] = -1                     mouseover = -1;
+[this+0x58] = -1                     mousewasx = -1;
+[this+0x5C] = -1                     mousewasy = -1;
+[this+0x60] = -1                     mousedownon = -1;
+[this+0x64] = -1                     highlightobj = -1;
+[this+0x90] = 1                      on = 1;
+[this+0x50] = 1                      fgcol = 1;
+[this+0x48] = 8                      bgcol = 8;
+[this+0x68] = 0                      flags = 0;
+```
+
+Every field, every value, in almost the exact same order as source --
+11 of source's 12 assignments match exactly (only `clickEventHandler[0]
+= 0` is missing, discussed below). This single find closes or reconfirms
+nearly every remaining `GUIMain` field at once: `focus`, `mousewasx`,
+`mousewasy`, `highlightobj`, and the original target `bgcol` all go from
+MEDIUM to HIGH confidence; `mousedownon`, `on`, and `flags` (already
+HIGH) get further reconfirmation; and `fgcol=1` lines up EXACTLY with
+this same round's separate `wtextcolor`-based confirmation of
+`fgcol`@`+0x50` -- two completely independent evidence routes landing on
+the identical value for the identical field, a nice cross-check.
+
+**A genuinely new kind of caveat, not yet encountered in this project**:
+this code has NO formal IDA function boundary at all -- no `proc`/`endp`
+pair, no assigned name, no visible `CODE XREF` comment. It's not an
+unnamed-but-properly-bounded `sub_XXXXXX` like the dozens of other
+unnamed helpers this project has documented -- it's genuinely loose
+instructions that IDA's auto-analysis never wrapped into a function
+object, most likely because it has zero direct call-site cross-references
+(the whole chain it's part of, rooted at `sub_407356`, is itself only
+referenced via a DATA XREF from `.data`, consistent with an MSVC C++
+static-initializer table entry that runs automatically before `main()`
+rather than being called from an identifiable point in the code). This
+means it CANNOT be given a normal `matches.json` function-match entry:
+`apply_matches.py` resolves every `asm_name` via
+`idc.get_name_ea_simple()`, which requires the name to already exist in
+the IDB -- there is nothing to look up here. The finding is recorded as
+pure field evidence attached to `GUIMain__rebuild_array`'s own entry
+instead. A human will need to open the IDB, navigate to immediately after
+`sub_407360`'s `endp`, and manually define the function (Alt-P) before it
+can be formally named and given its own match entry -- a genuinely new
+category of "next step" for this project, distinct from every previous
+"unnamed but already-bounded helper" case.
+
+**The one asymmetry worth flagging**: source zeroes BOTH `vtext[0]` and
+`clickEventHandler[0]` back to back (`acgui.cpp:987-988`); this build's
+version zeroes only `vtext[0]`. Combined with `process_interface_click`'s
+already-established total lack of any code path that reads
+`clickEventHandler` at all (previous round), this is a second, independent
+piece of evidence consistent with `clickEventHandler` not existing as a
+distinct field in this build's `GUIMain` -- though not fully decisive on
+its own, since a compiler or source revision could in principle zero one
+adjacent array and not another for unrelated reasons.
+
+`GUIMain`'s remaining genuinely open fields after this round: `name`
+(the version-gated `"GUI%d"` sprintf default was already shown absent
+last round, and this constructor doesn't set it either -- consistent
+with it being populated purely from the room/game file's own on-disk
+data, never a runtime default), `clickEventHandler`'s own byte offset
+(behavior confirmed absent, but the offset itself remains positional-
+only), and `reserved[6]` (plausible genuinely-unused padding, matching
+this project's established `InventoryItemInfo.reserved` precedent).

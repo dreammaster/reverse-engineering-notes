@@ -374,9 +374,16 @@ struct GUIMain {
   // `GUIMain` declaration (`Common/acgui.h:664-687`), which those confirmed fields match with
   // zero drift -- an over-determined fit across five separate previously-opaque gaps. MEDIUM
   // confidence unless a field has its own direct access-site note below.
-  char vtext[4];             // +0x00, MEDIUM confidence: positional/arithmetic fit only. 2011's
-                           // own comment calls this "for compatibility" -- likely already vestigial
-                           // even in 2011, plausibly more so here.
+  char vtext[4];             // +0x00, high confidence (UPGRADED from MEDIUM): confirmed via a
+                           // newly-found `GUIMain::init()`-equivalent (see the struct-level round
+                           // note below this field list for the complete writeup and its important
+                           // caveat -- it has NO formal IDA function boundary yet): its very first
+                           // instruction is "mov byte ptr [this], 0" -- a single-BYTE write,
+                           // matching source's "vtext[0]=0;" (`acgui.cpp:987`) exactly in both
+                           // value and type (a char-array element write, not a 4-byte int write --
+                           // independently confirming this is genuinely a `char[]` start, not some
+                           // other field). 2011's own comment calls this "for compatibility" --
+                           // likely already vestigial even in 2011, plausibly more so here.
   char name[16];              // +0x04, MEDIUM confidence: positional/arithmetic fit only, matching
                            // 2011's declared `char name[16]; // the name of the GUI`.
   char clickEventHandler[20]; // +0x14, MEDIUM confidence (byte offset still positional/arithmetic
@@ -397,7 +404,18 @@ struct GUIMain {
                            // feature entirely -- not an unused code path, a never-compiled one. See
                            // `process_interface_click`'s own matches.json entry for the complete
                            // writeup, including the newly-matched `run_text_script_2iparam`
-                           // (`sub_409F23`) this finding was confirmed against.
+                           // (`sub_409F23`) this finding was confirmed against. FURTHER SUPPORTING
+                           // EVIDENCE (found later, same struct-level round as `vtext` above): the
+                           // newly-found `GUIMain::init()`-equivalent zeroes `vtext[0]`@+0x00
+                           // explicitly but does NOT zero `clickEventHandler[0]`@+0x14 -- 2011's own
+                           // constructor does BOTH ("vtext[0]=0; clickEventHandler[0]=0;",
+                           // `acgui.cpp:987-988`, back to back). This asymmetry -- one adjacent
+                           // char-array zero present, the very next one absent -- is a second,
+                           // independent piece of evidence (on top of `process_interface_click`'s
+                           // total lack of a reader) consistent with `clickEventHandler` not
+                           // existing as a distinct field in this build at all, though it isn't
+                           // fully decisive on its own (a compiler/source could in principle zero
+                           // one and not the other for unrelated reasons).
   int x;                  // +0x28, confirmed via GUIMain::mouse_but_down; RECONFIRMED via
                            // `GetGUIAt` (already matched, script-exported) as part of its
                            // point-in-bounding-box hit test.
@@ -413,8 +431,15 @@ struct GUIMain {
                            // way as `wid` immediately above -- `GetGUIAt` computes `y+hit` as
                            // the bottom edge of the bounding-box hit test, matching 2011's
                            // "yy<=guis[aa].y+guis[aa].hit" exactly.
-  int focus;                 // +0x38, MEDIUM confidence: positional/arithmetic fit only, matching
-                           // 2011's declared "which object has the focus" field.
+  int focus;                 // +0x38, high confidence (UPGRADED from MEDIUM): confirmed via a
+                           // newly-found `GUIMain::init()`-equivalent (see `bgcol`'s own entry
+                           // below for the complete writeup and its important IDA-boundary
+                           // caveat): "[this+0x38]=0" matches source's "focus=0;" (`acgui.cpp:989`)
+                           // exactly, in the same relative position as source's assignment order.
+                           // 2011 itself has ZERO usages of `focus` anywhere in `Engine/` past this
+                           // one constructor default (checked this round) -- genuinely vestigial
+                           // even in 2011, so no further LIVE-usage confirmation is expected to be
+                           // findable in either build.
   int numobjs;             // +0x3C, high confidence: confirmed via GUIMain::get_control_type's bounds
                            // check ("if (indx<0 || indx>=numobjs) return -1;").
   int popup;                 // +0x40, high confidence (UPGRADED from MEDIUM): confirmed via
@@ -435,8 +460,46 @@ struct GUIMain {
                            // "reposition the mouse when auto-hiding the popup" logic. Matches
                            // 2011's declared field (`acgui.h:673`, "popup when mousey < this") in
                            // position and semantic role exactly.
-  int bgcol;                  // +0x48, MEDIUM confidence: positional/arithmetic fit only, boxed in
-                           // with zero slack between the confirmed `popupyp` and `bgpic` fields.
+  int bgcol;                  // +0x48, high confidence (UPGRADED from MEDIUM): confirmed via a
+                           // newly-found `GUIMain::init()`-equivalent, discovered this round while
+                           // chasing `bgcol` (2011's own reader for it in `adjust_x_for_guis`/
+                           // `adjust_y_for_guis` had already been shown absent, and `wbar` -- the
+                           // Allegro rectangle-fill call `draw_gui_for_dialog_options`'s bgcol path
+                           // needs -- has ZERO occurrences anywhere in this entire binary,
+                           // confirming that specific dialog-options-GUI rendering path absent too;
+                           // this constructor lead paid off where those didn't). Located immediately
+                           // after `sub_407360`'s `endp` (itself a `vector constructor iterator`
+                           // wrapper for the static `GUIListBox` array, `unk_4D31D0`,
+                           // ElementSize=0x1DC/Count=0x51) and immediately before
+                           // `GUIMain__rebuild_array`'s own `proc` -- part of the same C++ static-
+                           // array-construction chain rooted at `sub_407356` (itself referenced via
+                           // a DATA XREF from `.data`, consistent with an MSVC global-static-
+                           // initializer table entry, i.e. this whole chain runs automatically
+                           // before `main()`, not from an explicit call site). IMPORTANT CAVEAT:
+                           // this code has NO formal IDA function boundary (no `proc`/`endp`, no
+                           // visible name or CODE XREF) -- it reads as loose instructions between
+                           // two properly-defined functions, so it cannot be given a `matches.json`
+                           // function-match entry the normal way (`apply_matches.py` resolves
+                           // `asm_name` via `idc.get_name_ea_simple`, which needs an existing name
+                           // to look up). A human needs to define the function in IDA (Alt-P at its
+                           // start address) before it can be formally renamed; until then this is
+                           // recorded as pure field evidence, not a function match. Content is an
+                           // exact, near-complete match to source's `GUIMain::init()`
+                           // (`acgui.cpp:985-1000`): "[this+0x38]=0; [this+0x3C]=0; [this+0x54]=-1;
+                           // [this+0x58]=-1; [this+0x5C]=-1; [this+0x60]=-1; [this+0x64]=-1;
+                           // [this+0x90]=1; [this+0x50]=1; [this+0x48]=8; [this+0x68]=0" (preceded
+                           // by the single-byte `vtext[0]=0` write, see that field's own entry) --
+                           // matching source's "focus=0; numobjs=0; mouseover=-1; mousewasx=-1;
+                           // mousewasy=-1; mousedownon=-1; highlightobj=-1; on=1; fgcol=1; bgcol=8;
+                           // flags=0;" line for line, VALUE for VALUE, across 11 of source's 12
+                           // assignments (only `clickEventHandler[0]=0` is missing -- see that
+                           // field's own entry for the drift this implies). This single find closes
+                           // or reconfirms nearly every remaining `GUIMain` field at once: `bgcol`
+                           // here, `focus`/`mousewasx`/`mousewasy`/`highlightobj` at their own
+                           // entries, and `numobjs`/`mouseover`/`mousedownon`/`on`/`fgcol`/`flags`
+                           // all independently reconfirmed (the `fgcol=1` default is a clean
+                           // cross-check against this SAME round's separate `wtextcolor`-based
+                           // confirmation of `fgcol`@+0x50).
   int bgpic;                  // +0x4C, high confidence: confirmed via `SetGUIBackgroundPic` (already
                            // matched, script-exported): "mov [guis+guin*184h+4Ch], slotn" -- sets
                            // this field directly from its `slotn` parameter, matching 2011's
@@ -456,12 +519,20 @@ struct GUIMain {
                            // independently confirmed via `GUILabel__ReadFromFile`'s own default-
                            // value logic.
   int mouseover;          // +0x54, confirmed via GUIMain::mouse_but_down
-  int mousewasx;              // +0x58, MEDIUM confidence: positional/arithmetic fit only, matching
-                           // 2011's declared `mousewasx, mousewasy` adjacency.
-  int mousewasy;              // +0x5C, MEDIUM confidence: same status as `mousewasx` immediately above.
-  int mousedownon;        // +0x60, confirmed via GUIMain::mouse_but_up/down
-  int highlightobj;           // +0x64, MEDIUM confidence: positional/arithmetic fit only, matching
-                           // 2011's declared field.
+  int mousewasx;              // +0x58, high confidence (UPGRADED from MEDIUM): confirmed via the
+                           // same newly-found `GUIMain::init()`-equivalent as `bgcol` (see its own
+                           // entry for the complete writeup and caveat): "[this+0x58]=-1" matches
+                           // source's "mousewasx=-1;" (`acgui.cpp:992`) exactly.
+  int mousewasy;              // +0x5C, high confidence (UPGRADED from MEDIUM): same source, "
+                           // [this+0x5C]=-1" matches "mousewasy=-1;" (`acgui.cpp:993`) exactly --
+                           // see `bgcol`'s own entry for the complete writeup.
+  int mousedownon;        // +0x60, confirmed via GUIMain::mouse_but_up/down. RECONFIRMED via the
+                           // same `GUIMain::init()`-equivalent: "[this+0x60]=-1" matches
+                           // "mousedownon=-1;" (`acgui.cpp:994`) exactly.
+  int highlightobj;           // +0x64, high confidence (UPGRADED from MEDIUM): confirmed via the
+                           // same newly-found `GUIMain::init()`-equivalent as `bgcol` (see its own
+                           // entry for the complete writeup and caveat): "[this+0x64]=-1" matches
+                           // source's "highlightobj=-1;" (`acgui.cpp:995`) exactly.
   int flags;                  // +0x68, high confidence (UPGRADED from MEDIUM): confirmed via
                            // `GetGUIAt` (already matched, script-exported): "edx=guis[idx].flags;
                            // and edx,1; test edx,edx; jz <continue-hit-test>; else <skip-this-gui>"

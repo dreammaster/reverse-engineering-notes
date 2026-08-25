@@ -1622,6 +1622,30 @@ rather than trusting these numbers as they age)
   would give `GUIMain.name` a promising lead doesn't exist in this build
   either — `rebuild_array` has only one caller anywhere (`read_gui`), not
   the two 2011 has.
+- **`GUIMain::init()` found, closing nearly every remaining field at
+  once — with a genuinely new kind of caveat.** Chasing `bgcol` further
+  (its 2011 reader sites all ruled out — `wbar`, needed by
+  `draw_gui_for_dialog_options`'s bgcol path, has ZERO occurrences
+  anywhere in this 917k-line binary) led to reading the code around
+  `GUIMain__rebuild_array` more closely. Sitting between a neighboring
+  function's `endp` and `rebuild_array`'s own `proc` is a block of loose
+  instructions matching source's `GUIMain::init()` (`acgui.cpp:985-1000`)
+  almost line for line: 11 of 12 field assignments match exactly
+  (`focus=0`, `numobjs=0`, `mouseover=-1`, `mousewasx=-1`,
+  `mousewasy=-1`, `mousedownon=-1`, `highlightobj=-1`, `on=1`, `fgcol=1`,
+  `bgcol=8`, `flags=0`, plus a single-byte `vtext[0]=0`) — closing or
+  reconfirming nearly every remaining `GUIMain` field at once, with
+  `fgcol=1` landing exactly on this same round's separate `wtextcolor`-
+  based confirmation. **Genuinely new wrinkle**: this code has NO formal
+  IDA function boundary at all (no `proc`/`endp`, no name, no CODE XREF)
+  — it's part of a static-initializer chain that runs automatically
+  before `main()`, so it can't be given a normal `matches.json` function
+  entry (`apply_matches.py` needs an existing IDA name to resolve). A
+  human needs to manually define the function in IDA before it can be
+  named. The one asymmetry worth flagging: `clickEventHandler[0]=0`
+  (present in source right next to `vtext[0]=0`) is missing here — a
+  second, independent hint (on top of last round's absent reader) that
+  `clickEventHandler` may not exist as a distinct field in this build.
 
 ## Third-party library identification (Task #10)
 
