@@ -379,8 +379,25 @@ struct GUIMain {
                            // even in 2011, plausibly more so here.
   char name[16];              // +0x04, MEDIUM confidence: positional/arithmetic fit only, matching
                            // 2011's declared `char name[16]; // the name of the GUI`.
-  char clickEventHandler[20]; // +0x14, MEDIUM confidence: positional/arithmetic fit only, matching
-                           // 2011's declared field.
+  char clickEventHandler[20]; // +0x14, MEDIUM confidence (byte offset still positional/arithmetic
+                           // fit only), but the ASSOCIATED BEHAVIOR is now confirmed absent: 2011's
+                           // `process_interface_click` (`Engine/AC.CPP:5355-5391`) reads this field
+                           // only in its `btn<0` ("click on GUI background") branch --
+                           // `run_text_script_2iparam(gameinst, guis[ifce].clickEventHandler,
+                           // (int)&scrGui[ifce], mbut);`. This build's own `process_interface_click`
+                           // (already matched) has NO such branch at all: its very first
+                           // instructions unconditionally decode `objrefptr[btn]` with no `btn<0`
+                           // check anywhere in the function, and its caller (`process_event`,
+                           // already matched) pushes only 2 arguments (`ifce`/`btn`) for this call
+                           // -- not the 3 (`ifce`/`btn`/`mbut`) 2011's signature needs -- confirmed
+                           // by the matching `add esp,8` cleanup immediately after the call site.
+                           // `mbut` is never referenced anywhere in the function body either. This
+                           // build's version of the function is a genuine 2-argument predecessor
+                           // that predates the "click GUI background triggers clickEventHandler"
+                           // feature entirely -- not an unused code path, a never-compiled one. See
+                           // `process_interface_click`'s own matches.json entry for the complete
+                           // writeup, including the newly-matched `run_text_script_2iparam`
+                           // (`sub_409F23`) this finding was confirmed against.
   int x;                  // +0x28, confirmed via GUIMain::mouse_but_down; RECONFIRMED via
                            // `GetGUIAt` (already matched, script-exported) as part of its
                            // point-in-bounding-box hit test.

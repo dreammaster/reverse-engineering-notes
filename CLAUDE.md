@@ -235,7 +235,7 @@ rather than trusting these numbers as they age)
   944/776 before that addition) — this pool was "largely exhausted" for
   Engine/Common code specifically; a productive third-party-library round
   (Task #10, now paused — see below) pushed it further before wrapping up.
-- `reversing/analysis/matches.json` has 577 entries (function + struct-field
+- `reversing/analysis/matches.json` has 578 entries (function + struct-field
   matches combined)
 - 25 struct definitions built entirely from disassembly evidence (not
   borrowed from the 2011 source — see `reversing/notes/struct-layout-drift.md`):
@@ -1565,6 +1565,26 @@ rather than trusting these numbers as they age)
   has no site to find it at. Recorded as an exhausted lead, not an open
   one; capacity stays at 2011's own `MAX_BSCENE=5` as an unconfirmed
   working estimate.
+- **Pivoted to `GUIMain`'s remaining fields; `clickEventHandler` confirmed
+  unused, plus a new function match.** With `RoomStruct` essentially
+  exhausted, re-read `process_interface_click` (already matched)
+  specifically for `clickEventHandler` — 2011's version calls
+  `run_text_script_2iparam(gameinst, guis[ifce].clickEventHandler, ...)`
+  when `btn<0` ("clicked the GUI background, not a control"). This
+  build's version has NO such branch at all: it unconditionally decodes
+  the control-type dispatch as its first action, and its caller
+  (`process_event`) pushes only 2 arguments for the call, not the 3
+  2011's signature needs — confirmed by the matching stack-cleanup size
+  immediately after. `clickEventHandler`'s own byte offset stays
+  positional-only, but its associated read code is now confirmed
+  entirely absent — a genuine 2-argument predecessor that predates the
+  feature. Along the way, `process_interface_click`'s other branch
+  turned up a clean new match: `sub_409F23` → `run_text_script_2iparam`
+  (`Engine/AC.CPP:3381`), confirmed via `prepare_text_script`/
+  `ccCallInstance` calls, a distinctive `"run_text_script2: error %d
+  (%s)"` string, and an exact `strnicmp(tsname,"interface_click",15)`
+  match — missing only 2011's later `"on_event"`/`run_claimable_event`
+  special case. Bonus: identifies `dword_523134` as `gameinst`.
 
 ## Third-party library identification (Task #10)
 

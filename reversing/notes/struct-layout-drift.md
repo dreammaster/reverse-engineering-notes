@@ -6861,3 +6861,62 @@ recorded as genuinely unconfirmable by this route -- an exhausted lead
 now, not an open one -- and stays sized to 5 purely as 2011's own current
 `MAX_BSCENE` constant, without build-specific evidence backing that
 number for this build specifically.
+
+## Pivot to GUIMain's remaining fields: `clickEventHandler` confirmed unused, plus a new function match
+
+With RoomStruct's field-level investigation essentially exhausted, this
+round surveyed `GUIMain`'s own remaining MEDIUM-confidence fields
+(`vtext`, `name`, `clickEventHandler`, `focus`, `bgcol`, `fgcol`,
+`mousewasx`/`y`, `highlightobj`, `guiId`, `reserved[6]` -- `transparency`/
+`zorder` were already exhaustively checked in an earlier round).
+
+`clickEventHandler` stood out because, unlike `vtext` (2011's own comment
+calls it vestigial "for compatibility"), 2011 still actively USES this
+field: `process_interface_click` (`Engine/AC.CPP:5355-5391`) opens with
+"if (btn<0) { run_text_script_2iparam(gameinst,
+guis[ifce].clickEventHandler, (int)&scrGui[ifce], mbut); return; }" --
+the "user clicked the GUI's background, not a specific control" case.
+`process_interface_click` is already matched in this project
+(`sub_40D738`), so its disassembly was worth re-reading specifically for
+this field.
+
+The result: this build's `process_interface_click` has NO such branch at
+all. Its very first instructions unconditionally decode
+`objrefptr[btn]>>16 & 0xFFFF` (the control-type dispatch) with no `btn<0`
+check anywhere before or after. Checking the CALL SITE independently
+confirms this isn't just an unread code path: `process_event` (already
+matched) pushes only 2 arguments (`ifce`, `btn`) for this call, not the 3
+(`ifce`, `btn`, `mbut`) 2011's signature needs -- confirmed by the
+matching `add esp,8` cleanup immediately after (2 dwords, not 3). Reading
+the function's remaining body end to end confirms `mbut` is never
+referenced at all. This is decisive: this build's `process_interface_click`
+is a genuine 2-argument predecessor that predates the "click GUI
+background triggers `clickEventHandler`" feature entirely -- not an
+unexercised branch, a never-compiled one. `clickEventHandler`'s own byte
+offset stays positional/arithmetic-fit-only (still zero direct access-site
+evidence for the field ITSELF), but its associated behavior is now
+confirmed absent, which is worth recording in its own right.
+
+The function's OTHER branch (`var_8==2`, `guis[ifce].objrefptr[btn]`
+decoded as a control type this project hasn't yet individually
+characterized) turned up a genuine new function match along the way:
+`sub_409F23`, called there with `(gameinst, "interface_click", ifce,
+btn)`, matches source's own fallback call
+`run_text_script_2iparam(gameinst,"interface_click",ifce,btn);`
+(`AC.CPP:5390`) exactly. Reading its body confirms it thoroughly: it
+calls `prepare_text_script` (already matched) then `ccCallInstance`
+(already matched) with the two int params, matching source's
+`run_script_function_if_exist(sci,tsname,2,iparam,param2)` inlined
+directly (this build predates that helper's own extraction into a
+separate function -- yet another instance of this project's "one big
+pre-refactor function, later split into several" pattern); on error it
+builds and quits with the distinctive, exact string
+`"run_text_script2: error %d (%s)"`; and it finishes with
+`strnicmp(tsname,"interface_click",0xF); if(==0) guis_need_update=1;`
+matching source (`AC.CPP:3391-3392`) exactly, down to the literal 15/0xF
+length. 2011's OWN first branch in this function -- the `"on_event"`/
+`run_claimable_event` special case, a later addition -- is entirely
+absent from this build's version, consistent with the broader pattern of
+this build predating AGS's claimable-event system. Bonus: identifies
+`dword_523134` as `gameinst`, confirmed via `process_interface_click`'s
+own call-site push order.
