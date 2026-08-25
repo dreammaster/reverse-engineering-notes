@@ -3533,7 +3533,7 @@ loc_1193E:                              ; CODE XREF: castSpellAttack+2E↑j
                 mov     ax, _savegame._readySpell
                 shl     ax, 1
                 mov     si, ax
-                inc     _savegame._spellSlot0[si]
+                inc     _savegame._prayer[si]
                 jmp     loc_119FA
 ; ---------------------------------------------------------------------------
 
@@ -3710,7 +3710,7 @@ loc_11A91:                              ; CODE XREF: cast+73↑j
                 mov     ax, _savegame._readySpell
                 shl     ax, 1
                 mov     si, ax
-                dec     _savegame._spellSlot0[si]
+                dec     _savegame._prayer[si]
                 cmp     _mapType, LOCTYPE_DUNGEON
                 jnz     short loc_11AB2
                 mov     ax, 1
@@ -3845,9 +3845,9 @@ loc_11B84:                              ; CODE XREF: dropPenceCastle+69↑j
                 mov     [bp+0Ch+var_4], ax
                 shl     ax, 1
                 mov     si, ax
-                cmp     _savegame._weaponSlot0[si], 255
+                cmp     _savegame._hands[si], 255
                 jge     short loc_11BBB
-                inc     _savegame._weaponSlot0[si]
+                inc     _savegame._hands[si]
                 jmp     short loc_11BBB
 ; ---------------------------------------------------------------------------
 
@@ -4130,7 +4130,7 @@ loc_11D92:                              ; CODE XREF: dropWeapon+3A↓j
                 jg      short loc_11DAD
                 shl     ax, 1
                 mov     si, ax
-                cmp     _savegame._weaponSlot0[si], 0
+                cmp     _savegame._hands[si], 0
                 jz      short loc_11DA8
                 inc     [bp+0Eh+var_6]
 
@@ -4168,7 +4168,7 @@ loc_11DE1:                              ; CODE XREF: dropWeapon+CC↓j
                 jg      short loc_11E3F
                 shl     ax, 1
                 mov     si, ax
-                cmp     _savegame._weaponSlot0[si], 0
+                cmp     _savegame._hands[si], 0
                 jz      short loc_11E37
                 mov     ax, [bp+0Eh+var_8]
                 add     ax, [bp+0Eh+var_6]
@@ -4239,7 +4239,7 @@ loc_11E7D:                              ; CODE XREF: dropWeapon+FB↑j
                 xor     ah, ah
                 shl     ax, 1
                 mov     si, ax
-                cmp     _savegame._weaponSlot0[si], 0
+                cmp     _savegame._hands[si], 0
                 jnz     short loc_11E9C
                 push    _textColor      ; color
                 mov     ax, offset aNone ; "none"
@@ -4262,12 +4262,12 @@ loc_11E9C:                              ; CODE XREF: dropWeapon+11A↑j
                 xor     ah, ah
                 shl     ax, 1
                 mov     si, ax
-                dec     _savegame._weaponSlot0[si]
+                dec     _savegame._hands[si]
                 mov     bl, [bp+0Eh+var_4]
                 xor     bh, bh
                 cmp     bx, _savegame._readyWeapon
                 jnz     short loc_11ED7
-                cmp     _savegame._weaponSlot0[si], 0
+                cmp     _savegame._hands[si], 0
                 jnz     short loc_11ED7
                 mov     _savegame._readyWeapon, 0
 
@@ -4311,7 +4311,7 @@ loc_11F00:                              ; CODE XREF: dropArmor+3A↓j
                 jg      short loc_11F1B
                 shl     ax, 1
                 mov     si, ax
-                cmp     _savegame._armorSlot0[si], 0
+                cmp     _savegame._skin[si], 0
                 jz      short loc_11F16
                 inc     [bp+0Eh+var_6]
 
@@ -4349,7 +4349,7 @@ loc_11F4F:                              ; CODE XREF: dropArmor+CC↓j
                 jg      short loc_11FAD
                 shl     ax, 1
                 mov     si, ax
-                cmp     _savegame._armorSlot0[si], 0
+                cmp     _savegame._skin[si], 0
                 jz      short loc_11FA5
                 mov     ax, [bp+0Eh+var_8]
                 add     ax, [bp+0Eh+var_6]
@@ -4420,7 +4420,7 @@ loc_11FEB:                              ; CODE XREF: dropArmor+FB↑j
                 xor     ah, ah
                 shl     ax, 1
                 mov     si, ax
-                cmp     _savegame._armorSlot0[si], 0
+                cmp     _savegame._skin[si], 0
                 jnz     short loc_1200A
                 push    _textColor      ; color
                 mov     ax, offset aNone ; "none"
@@ -4443,12 +4443,12 @@ loc_1200A:                              ; CODE XREF: dropArmor+11A↑j
                 xor     ah, ah
                 shl     ax, 1
                 mov     si, ax
-                dec     _savegame._armorSlot0[si]
+                dec     _savegame._skin[si]
                 mov     bl, [bp+0Eh+var_4]
                 xor     bh, bh
                 cmp     bx, _savegame._readyArmor
                 jnz     short loc_12045
-                cmp     _savegame._armorSlot0[si], 0
+                cmp     _savegame._skin[si], 0
                 jnz     short loc_12045
                 mov     _savegame._readyArmor, 0
 
@@ -5360,14 +5360,14 @@ loc_125B5:                              ; CODE XREF: updateBardJester+BA↓j
                 mov     ax, [bp+12h+var_6]
                 shl     ax, 1
                 mov     si, ax
-                cmp     _savegame._weaponSlot0[si], 0
+                cmp     _savegame._hands[si], 0
                 jz      short loc_125D9
                 mov     ax, [bp+12h+var_6]
                 cmp     ax, _savegame._readyWeapon
                 jz      short loc_125D9
                 shl     ax, 1
                 mov     si, ax
-                dec     _savegame._weaponSlot0[si]
+                dec     _savegame._hands[si]
                 mov     [bp+12h+stolen], 1
 
 loc_125D9:                              ; CODE XREF: updateBardJester+95↑j
@@ -11124,7 +11124,7 @@ loc_15122:                              ; CODE XREF: enterPillar+6B↓j
                 mov     ax, [bp+0Ch+var_A]
                 shl     ax, 1
                 mov     si, ax
-                cmp     _savegame._weaponSlot0[si], 0
+                cmp     _savegame._hands[si], 0
                 jnz     short loc_15122
                 cmp     [bp+0Ch+var_A], 0Fh
                 jle     short loc_15141
@@ -11136,7 +11136,7 @@ loc_15141:                              ; CODE XREF: enterPillar+71↑j
                 mov     ax, [bp+0Ch+var_A]
                 shl     ax, 1
                 mov     si, ax
-                inc     _savegame._weaponSlot0[si]
+                inc     _savegame._hands[si]
                 push    _textColor      ; color
                 mov     ax, offset aYouFindA ; "You find a"
                 push    ax              ; msg
@@ -12760,9 +12760,9 @@ loc_15C92:                              ; CODE XREF: findWeapon+89↑j
                 mov     ax, [bp+4]
                 shl     ax, 1
                 mov     si, ax
-                cmp     _savegame._weaponSlot0[si], 0FFh
+                cmp     _savegame._hands[si], 0FFh
                 jge     short loc_15CB5
-                inc     _savegame._weaponSlot0[si]
+                inc     _savegame._hands[si]
 
 loc_15CB5:                              ; CODE XREF: findWeapon+1D↑j
                                         ; findWeapon+B5↑j
@@ -12897,9 +12897,9 @@ loc_15D89:                              ; CODE XREF: findArmor+46↑j
                 mov     ax, [bp+0Ah+var_6]
                 shl     ax, 1
                 mov     si, ax
-                cmp     _savegame._armorSlot0[si], 0FFh
+                cmp     _savegame._skin[si], 0FFh
                 jge     short loc_15DAC
-                inc     _savegame._armorSlot0[si]
+                inc     _savegame._skin[si]
 
 loc_15DAC:                              ; CODE XREF: findArmor+1B↑j
                                         ; findArmor+72↑j
@@ -13882,7 +13882,7 @@ loc_16409:                              ; CODE XREF: sellWeapons+30↓j
                 jg      short loc_16424
                 shl     ax, 1
                 mov     si, ax
-                cmp     _savegame._weaponSlot0[si], 0
+                cmp     _savegame._hands[si], 0
                 jz      short loc_1641F
                 inc     [bp+0Eh+var_8]
 
@@ -13925,7 +13925,7 @@ loc_16461:                              ; CODE XREF: sellWeapons+110↓j
                 mov     ax, [bp+4]
                 shl     ax, 1
                 mov     si, ax
-                cmp     _savegame._weaponSlot0[si], 0
+                cmp     _savegame._hands[si], 0
                 jnz     short loc_16472
                 jmp     loc_164F0
 ; ---------------------------------------------------------------------------
@@ -14039,7 +14039,7 @@ loc_16555:                              ; CODE XREF: sellWeapons+152↑j
                 sub     ax, 65
                 shl     ax, 1
                 mov     si, ax
-                cmp     _savegame._weaponSlot0[si], 0
+                cmp     _savegame._hands[si], 0
                 jnz     short loc_16577
                 push    _textColor      ; color
                 mov     ax, offset aNothing_0 ; "nothing"
@@ -14063,7 +14063,7 @@ loc_16577:                              ; CODE XREF: sellWeapons+174↑j
                 mov     [bp+0Eh+var_E], ax
                 shl     ax, 1
                 mov     si, ax
-                dec     _savegame._weaponSlot0[si]
+                dec     _savegame._hands[si]
                 mov     ax, _savegame._readyWeapon
                 cmp     ax, [bp+0]
                 jnz     short loc_165AA
@@ -14338,9 +14338,9 @@ loc_1679A:                              ; CODE XREF: transactWeapons+129↑j
                 sub     ax, 61h ; 'a'
                 shl     ax, 1
                 mov     si, ax
-                cmp     _savegame._weaponSlot0[si], 0FFh
+                cmp     _savegame._hands[si], 0FFh
                 jge     short loc_167C4
-                inc     _savegame._weaponSlot0[si]
+                inc     _savegame._hands[si]
 
 loc_167C4:                              ; CODE XREF: transactWeapons+161↑j
                 mov     al, [bp+10h+var_8]
@@ -14441,7 +14441,7 @@ loc_1683B:                              ; CODE XREF: sellArmor+31↓j
                 jg      short loc_16856
                 shl     ax, 1
                 mov     si, ax
-                cmp     _savegame._armorSlot0[si], 0
+                cmp     _savegame._skin[si], 0
                 jz      short loc_16851
                 inc     [bp+0Eh+var_8]
 
@@ -14490,7 +14490,7 @@ loc_16893:                              ; CODE XREF: sellArmor+10D↓j
 loc_1689E:                              ; CODE XREF: sellArmor+76↑j
                 shl     ax, 1
                 mov     si, ax
-                cmp     _savegame._armorSlot0[si], 0
+                cmp     _savegame._skin[si], 0
                 jnz     short loc_168AC
                 jmp     loc_1692A
 ; ---------------------------------------------------------------------------
@@ -14590,7 +14590,7 @@ loc_1696F:                              ; CODE XREF: sellArmor+13B↑j
                 sub     ax, 41h ; 'A'
                 shl     ax, 1
                 mov     si, ax
-                cmp     _savegame._armorSlot0[si], 0
+                cmp     _savegame._skin[si], 0
                 jnz     short loc_16991
                 push    _textColor      ; color
                 mov     ax, offset aNothing_0 ; "nothing"
@@ -14614,7 +14614,7 @@ loc_16991:                              ; CODE XREF: sellArmor+15D↑j
                 mov     [bp+0Eh+var_E], ax
                 shl     ax, 1
                 mov     si, ax
-                dec     _savegame._armorSlot0[si]
+                dec     _savegame._skin[si]
                 mov     ax, _savegame._readyArmor
                 cmp     ax, [bp+0]
                 jnz     short loc_169C4
@@ -14842,9 +14842,9 @@ loc_16B55:                              ; CODE XREF: transactArmory+CA↑j
                 sub     ax, 61h ; 'a'
                 shl     ax, 1
                 mov     si, ax
-                cmp     _savegame._armorSlot0[si], 0FFh
+                cmp     _savegame._skin[si], 0FFh
                 jge     short loc_16B7F
-                inc     _savegame._armorSlot0[si]
+                inc     _savegame._skin[si]
 
 loc_16B7F:                              ; CODE XREF: transactArmory+102↑j
                 mov     al, [bp+0Ah+var_4]
@@ -15142,9 +15142,9 @@ loc_16D8C:                              ; CODE XREF: transactMagic+125↑j
                 sub     ax, 61h ; 'a'
                 shl     ax, 1
                 mov     si, ax
-                cmp     _savegame._spellSlot0[si], 0FFh
+                cmp     _savegame._prayer[si], 0FFh
                 jge     short loc_16DB6
-                inc     _savegame._spellSlot0[si]
+                inc     _savegame._prayer[si]
 
 loc_16DB6:                              ; CODE XREF: transactMagic+15D↑j
                 mov     al, [bp+10h+var_8]
@@ -15372,7 +15372,7 @@ arg_0           = word ptr  2
                 mov     ax, [bp+10h+arg_0]
                 shl     ax, 1
                 mov     si, ax
-                inc     _savegame._transportSlot0[si]
+                inc     _savegame._foot[si]
                 cmp     [bp+10h+arg_0], 2
                 jg      short loc_16F81
                 cmp     _woodsCount, 0
@@ -18998,7 +18998,7 @@ loc_18881:                              ; CODE XREF: dungeonMonsterAttack+131↑
                 mov     ax, _savegame._readyArmor
                 shl     ax, 1
                 mov     si, ax
-                dec     _savegame._armorSlot0[si]
+                dec     _savegame._skin[si]
                 xor     ax, ax
                 mov     _savegame._readyArmor, ax
                 mov     [bp+16h+isHit], ax
@@ -19060,7 +19060,7 @@ loc_1890B:                              ; CODE XREF: dungeonMonsterAttack+278↓
 loc_18916:                              ; CODE XREF: dungeonMonsterAttack+1D4↑j
                 shl     ax, 1
                 mov     si, ax
-                cmp     _savegame._weaponSlot0[si], 0
+                cmp     _savegame._hands[si], 0
                 jnz     short loc_18924
                 jmp     loc_189B2
 ; ---------------------------------------------------------------------------
@@ -19129,7 +19129,7 @@ loc_18992:                              ; CODE XREF: dungeonMonsterAttack+24A↑
                 mov     ax, [bp+16h+weaponNum]
                 shl     ax, 1
                 mov     si, ax
-                dec     _savegame._weaponSlot0[si]
+                dec     _savegame._hands[si]
                 mov     [bp+16h+weaponNum], 16
 
 loc_189B2:                              ; CODE XREF: dungeonMonsterAttack+1E4↑j
@@ -27355,7 +27355,7 @@ readyWeapon     proc near               ; CODE XREF: ready+52↓p
                 push    ax              ; min
                 mov     ax, offset WEAPONS_UPPERCASE
                 push    ax              ; names
-                mov     ax, offset _savegame._weaponSlot0
+                mov     ax, offset _savegame._hands
                 push    ax              ; items
                 call    selectItem
                 mov     sp, bp
@@ -27384,7 +27384,7 @@ readyArmor      proc near               ; CODE XREF: ready:loc_1BC77↓p
                 push    ax              ; min
                 mov     ax, offset ARMOR
                 push    ax              ; names
-                mov     ax, offset _savegame._armorSlot0
+                mov     ax, offset _savegame._skin
                 push    ax              ; items
                 call    selectItem
                 mov     sp, bp
@@ -27413,7 +27413,7 @@ readySpell      proc near               ; CODE XREF: ready:loc_1BC7C↓p
                 push    ax              ; min
                 mov     ax, offset SPELL_NAMES
                 push    ax              ; names
-                mov     ax, offset _savegame._spellSlot0
+                mov     ax, offset _savegame._prayer
                 push    ax              ; items
                 call    selectItem
                 mov     sp, bp
@@ -28257,7 +28257,7 @@ loc_1C1E4:                              ; CODE XREF: showStats+1D7↑j
                 push    ax              ; start
                 mov     ax, offset ARMOR
                 push    ax              ; statNames
-                mov     ax, offset _savegame._armorSlot0
+                mov     ax, offset _savegame._skin
                 push    ax              ; statValues
                 call    writeStatRange
                 mov     sp, bp
@@ -28269,7 +28269,7 @@ loc_1C1E4:                              ; CODE XREF: showStats+1D7↑j
                 push    bx              ; start
                 mov     bx, offset WEAPONS_UPPERCASE
                 push    bx              ; statNames
-                mov     bx, offset _savegame._weaponSlot0
+                mov     bx, offset _savegame._hands
                 push    bx              ; statValues
                 mov     [bp+6+lineNum], ax
                 call    writeStatRange
@@ -28282,7 +28282,7 @@ loc_1C1E4:                              ; CODE XREF: showStats+1D7↑j
                 push    bx              ; start
                 mov     bx, offset SPELL_NAMES
                 push    bx              ; statNames
-                mov     bx, offset _savegame._spellSlot0
+                mov     bx, offset _savegame._prayer
                 push    bx              ; statValues
                 mov     [bp+6+lineNum], ax
                 call    writeStatRange
@@ -28295,7 +28295,7 @@ loc_1C1E4:                              ; CODE XREF: showStats+1D7↑j
                 push    bx              ; start
                 mov     bx, offset TRANSPORTS
                 push    bx              ; statNames
-                mov     bx, offset _savegame._transportSlot0
+                mov     bx, offset _savegame._foot
                 push    bx              ; statValues
                 mov     [bp+6+lineNum], ax
                 call    writeStatRange
@@ -28768,7 +28768,7 @@ loc_1C563:                              ; CODE XREF: death+D0↑j
                 jz      short loc_1C57E
                 shl     ax, 1
                 mov     si, ax
-                dec     _savegame._transportSlot0[si]
+                dec     _savegame._foot[si]
                 mov     _savegame._transportType, 0
                 mov     _savegame._overworldEntities._type, 10
 
@@ -28781,7 +28781,7 @@ loc_1C583:                              ; CODE XREF: death+11C↓j
                 jg      short loc_1C59A
                 shl     ax, 1
                 mov     si, ax
-                mov     _savegame._weaponSlot0[si], 0
+                mov     _savegame._hands[si], 0
                 inc     [bp+6+idx]
                 jmp     short loc_1C583
 ; ---------------------------------------------------------------------------

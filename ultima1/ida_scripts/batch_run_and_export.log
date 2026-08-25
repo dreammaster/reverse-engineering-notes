@@ -7612,3 +7612,419 @@ Done. Re-export the .asm/.idc and check the new display took.
 [*] gen_file(OFILE_IDC) returned 1
 [*] saving database to C:\dev\ultima1\ultima1_gen.idb
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'find_creature_padding_refs.py', 'noexport']
+[*] reading find_creature_padding_refs.py
+[*] executing find_creature_padding_refs.py
+[!] EXCEPTION:
+Traceback (most recent call last):
+  File "C:/dev/ultima1/ida_scripts/batch_run_and_export.py", line 97, in main
+    exec(compile(code, target_script, "exec"), g)
+  File "find_creature_padding_refs.py", line 4, in <module>
+    dseg_base = dseg.start_ea
+AttributeError: 'NoneType' object has no attribute 'start_ea'
+
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'find_creature_padding_refs.py', 'noexport']
+[*] reading find_creature_padding_refs.py
+[*] executing find_creature_padding_refs.py
+[!] EXCEPTION:
+Traceback (most recent call last):
+  File "C:/dev/ultima1/ida_scripts/batch_run_and_export.py", line 97, in main
+    exec(compile(code, target_script, "exec"), g)
+  File "find_creature_padding_refs.py", line 30, in <module>
+    end = ida_segment.get_segm_end(seg_ea)
+AttributeError: module 'ida_segment' has no attribute 'get_segm_end'
+
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'find_creature_padding_refs.py', 'noexport']
+[*] reading find_creature_padding_refs.py
+[*] executing find_creature_padding_refs.py
+[*] captured stdout from target script:
+----- begin target script output -----
+dseg base=0x1d480  _savegame ea=0x20ef8  offset-in-dseg=0x3a78
+
+field_A: raw immediate to search for = 0x3b36  (target ea if resolved = 0x20fb6)
+  found 0 instruction(s) with this raw immediate:
+
+field_C: raw immediate to search for = 0x3b38  (target ea if resolved = 0x20fb8)
+  found 0 instruction(s) with this raw immediate:
+
+field_E: raw immediate to search for = 0x3b3a  (target ea if resolved = 0x20fba)
+  found 0 instruction(s) with this raw immediate:
+----- end target script output -----
+[*] finished executing find_creature_padding_refs.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_space.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'find_creature_padding_refs.py', 'noexport']
+[*] reading find_creature_padding_refs.py
+[*] executing find_creature_padding_refs.py
+[*] captured stdout from target script:
+----- begin target script output -----
+dseg base=0x172d0  _savegame ea=0x1cdac  offset-in-dseg=0x5adc
+
+field_A: raw immediate to search for = 0x5b9a  (target ea if resolved = 0x1ce6a)
+  found 0 instruction(s) with this raw immediate:
+
+field_C: raw immediate to search for = 0x5b9c  (target ea if resolved = 0x1ce6c)
+  found 0 instruction(s) with this raw immediate:
+
+field_E: raw immediate to search for = 0x5b9e  (target ea if resolved = 0x1ce6e)
+  found 0 instruction(s) with this raw immediate:
+----- end target script output -----
+[*] finished executing find_creature_padding_refs.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_structs_savegame.py', 'noexport']
+[*] reading apply_structs_savegame.py
+[*] executing apply_structs_savegame.py
+[*] captured stdout from target script:
+----- begin target script output -----
+Savegame+0x2a: already '_readyWeapon' -- skipping
+Savegame+0x2c: already '_readySpell' -- skipping
+Savegame+0x2e: already '_readyArmor' -- skipping
+Savegame+0x3a: already '_questStatus' -- skipping
+Savegame+0x54: '_armorSlot0' -> '_skin'
+    ARMOR[0] = "Skin" -- confirmed via dropArmor's menu loop starting at index 1, skipping this slot.
+Savegame+0x60: '_weaponSlot0' -> '_hands'
+    WEAPONS_LOWERCASE[0] = "hands" -- bare-handed/unarmed.
+Savegame+0x80: '_spellSlot0' -> '_prayer'
+    SPELL_NAMES[0] = "Prayer".
+Savegame+0x96: '_transportSlot0' -> '_foot'
+    TRANSPORTS[0] = "Foot" -- on foot/walking, matches the existing TRANSPORT_WALKING constant.
+Savegame+0xaa: already '_overworldEntityCount' -- skipping
+Savegame+0xb0: already '_shipFuel' -- skipping
+Savegame+0xb2: already '_shipShield' -- skipping
+Savegame+0xb4: already '_overworldEntities' -- skipping
+Savegame+0xAC: '_moveCount' size=4 -- already fine, leaving alone
+Creature+0x0a: 'field_A' -> '_unused1'
+    confirmed unreferenced by any instruction in OUT.EXE or SPACE.EXE -- see module docstring.
+Creature+0x0c: 'field_C' -> '_unused2'
+    see _unused1.
+Creature+0x0e: 'field_E' -> '_unused3'
+    see _unused1.
+[!] function 'addOverworldWidget' not found in this IDB -- skipping
+
+[dry] nothing changed. Set DRY_RUN = False to apply.
+----- end target script output -----
+[*] finished executing apply_structs_savegame.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_structs_savegame.py']
+[*] reading apply_structs_savegame.py
+[*] executing apply_structs_savegame.py
+[*] captured stdout from target script:
+----- begin target script output -----
+Savegame+0x2a: already '_readyWeapon' -- skipping
+Savegame+0x2c: already '_readySpell' -- skipping
+Savegame+0x2e: already '_readyArmor' -- skipping
+Savegame+0x3a: already '_questStatus' -- skipping
+Savegame+0x54: '_armorSlot0' -> '_skin'
+    ARMOR[0] = "Skin" -- confirmed via dropArmor's menu loop starting at index 1, skipping this slot.
+Savegame+0x60: '_weaponSlot0' -> '_hands'
+    WEAPONS_LOWERCASE[0] = "hands" -- bare-handed/unarmed.
+Savegame+0x80: '_spellSlot0' -> '_prayer'
+    SPELL_NAMES[0] = "Prayer".
+Savegame+0x96: '_transportSlot0' -> '_foot'
+    TRANSPORTS[0] = "Foot" -- on foot/walking, matches the existing TRANSPORT_WALKING constant.
+Savegame+0xaa: already '_overworldEntityCount' -- skipping
+Savegame+0xb0: already '_shipFuel' -- skipping
+Savegame+0xb2: already '_shipShield' -- skipping
+Savegame+0xb4: already '_overworldEntities' -- skipping
+Savegame+0xAC: '_moveCount' size=4 -- already fine, leaving alone
+Creature+0x0a: 'field_A' -> '_unused1'
+    confirmed unreferenced by any instruction in OUT.EXE or SPACE.EXE -- see module docstring.
+Creature+0x0c: 'field_C' -> '_unused2'
+    see _unused1.
+Creature+0x0e: 'field_E' -> '_unused3'
+    see _unused1.
+[!] function 'addOverworldWidget' not found in this IDB -- skipping
+
+Done. Re-export the .asm/.idc and check the new names took.
+----- end target script output -----
+[*] finished executing apply_structs_savegame.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima1\ultima1_out.asm
+[*] gen_file(OFILE_ASM) returned 41660
+[*] exporting IDC to C:\dev\ultima1\ultima1_out.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima1\ultima1_out.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_gen.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_structs_savegame.py']
+[*] reading apply_structs_savegame.py
+[*] executing apply_structs_savegame.py
+[*] captured stdout from target script:
+----- begin target script output -----
+Savegame+0x2a: already '_readyWeapon' -- skipping
+Savegame+0x2c: already '_readySpell' -- skipping
+Savegame+0x2e: already '_readyArmor' -- skipping
+Savegame+0x3a: already '_questStatus' -- skipping
+Savegame+0x54: '_armorSlot0' -> '_skin'
+    ARMOR[0] = "Skin" -- confirmed via dropArmor's menu loop starting at index 1, skipping this slot.
+Savegame+0x60: '_weaponSlot0' -> '_hands'
+    WEAPONS_LOWERCASE[0] = "hands" -- bare-handed/unarmed.
+Savegame+0x80: '_spellSlot0' -> '_prayer'
+    SPELL_NAMES[0] = "Prayer".
+Savegame+0x96: '_transportSlot0' -> '_foot'
+    TRANSPORTS[0] = "Foot" -- on foot/walking, matches the existing TRANSPORT_WALKING constant.
+Savegame+0xaa: already '_overworldEntityCount' -- skipping
+Savegame+0xb0: already '_shipFuel' -- skipping
+Savegame+0xb2: already '_shipShield' -- skipping
+Savegame+0xb4: already '_overworldEntities' -- skipping
+Savegame+0xAC: '_moveCount' size=4 -- already fine, leaving alone
+Creature+0x0a: 'field_A' -> '_unused1'
+    confirmed unreferenced by any instruction in OUT.EXE or SPACE.EXE -- see module docstring.
+Creature+0x0c: 'field_C' -> '_unused2'
+    see _unused1.
+Creature+0x0e: 'field_E' -> '_unused3'
+    see _unused1.
+[!] function 'addOverworldWidget' not found in this IDB -- skipping
+
+Done. Re-export the .asm/.idc and check the new names took.
+----- end target script output -----
+[*] finished executing apply_structs_savegame.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima1\ultima1_gen.asm
+[*] gen_file(OFILE_ASM) returned 10993
+[*] exporting IDC to C:\dev\ultima1\ultima1_gen.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima1\ultima1_gen.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_space.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_structs_savegame.py']
+[*] reading apply_structs_savegame.py
+[*] executing apply_structs_savegame.py
+[*] captured stdout from target script:
+----- begin target script output -----
+Savegame+0x2a: already '_readyWeapon' -- skipping
+Savegame+0x2c: already '_readySpell' -- skipping
+Savegame+0x2e: already '_readyArmor' -- skipping
+Savegame+0x3a: already '_questStatus' -- skipping
+Savegame+0x54: '_armorSlot0' -> '_skin'
+    ARMOR[0] = "Skin" -- confirmed via dropArmor's menu loop starting at index 1, skipping this slot.
+Savegame+0x60: '_weaponSlot0' -> '_hands'
+    WEAPONS_LOWERCASE[0] = "hands" -- bare-handed/unarmed.
+Savegame+0x80: '_spellSlot0' -> '_prayer'
+    SPELL_NAMES[0] = "Prayer".
+Savegame+0x96: '_transportSlot0' -> '_foot'
+    TRANSPORTS[0] = "Foot" -- on foot/walking, matches the existing TRANSPORT_WALKING constant.
+Savegame+0xaa: already '_overworldEntityCount' -- skipping
+Savegame+0xb0: already '_shipFuel' -- skipping
+Savegame+0xb2: already '_shipShield' -- skipping
+Savegame+0xb4: already '_overworldEntities' -- skipping
+Savegame+0xAC: '_moveCount' size=4 -- already fine, leaving alone
+Creature+0x0a: 'field_A' -> '_unused1'
+    confirmed unreferenced by any instruction in OUT.EXE or SPACE.EXE -- see module docstring.
+Creature+0x0c: 'field_C' -> '_unused2'
+    see _unused1.
+Creature+0x0e: 'field_E' -> '_unused3'
+    see _unused1.
+[!] function 'addOverworldWidget' not found in this IDB -- skipping
+
+Done. Re-export the .asm/.idc and check the new names took.
+----- end target script output -----
+[*] finished executing apply_structs_savegame.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima1\ultima1_space.asm
+[*] gen_file(OFILE_ASM) returned 23097
+[*] exporting IDC to C:\dev\ultima1\ultima1_space.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima1\ultima1_space.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_structs_savegame.py']
+[*] reading apply_structs_savegame.py
+[*] executing apply_structs_savegame.py
+[*] captured stdout from target script:
+----- begin target script output -----
+Savegame+0x2a: already '_readyWeapon' -- skipping
+Savegame+0x2c: already '_readySpell' -- skipping
+Savegame+0x2e: already '_readyArmor' -- skipping
+Savegame+0x3a: already '_questStatus' -- skipping
+Savegame+0x54: '_armorSlot0' -> '_skin'
+    ARMOR[0] = "Skin" -- confirmed via dropArmor's menu loop starting at index 1, skipping this slot.
+Savegame+0x60: '_weaponSlot0' -> '_hands'
+    WEAPONS_LOWERCASE[0] = "hands" -- bare-handed/unarmed.
+Savegame+0x80: '_spellSlot0' -> '_prayer'
+    SPELL_NAMES[0] = "Prayer".
+Savegame+0x96: '_transportSlot0' -> '_foot'
+    TRANSPORTS[0] = "Foot" -- on foot/walking, matches the existing TRANSPORT_WALKING constant.
+Savegame+0xaa: already '_overworldEntityCount' -- skipping
+Savegame+0xb0: already '_shipFuel' -- skipping
+Savegame+0xb2: already '_shipShield' -- skipping
+Savegame+0xb4: already '_overworldEntities' -- skipping
+Savegame+0xAC: '_moveCount' size=4 -- already fine, leaving alone
+Creature+0x0a: 'field_A' -> '_unused1'
+    confirmed unreferenced by any instruction in OUT.EXE or SPACE.EXE -- see module docstring.
+Creature+0x0c: 'field_C' -> '_unused2'
+    see _unused1.
+Creature+0x0e: 'field_E' -> '_unused3'
+    see _unused1.
+[!] function 'addOverworldWidget' not found in this IDB -- skipping
+
+Done. Re-export the .asm/.idc and check the new names took.
+----- end target script output -----
+[*] finished executing apply_structs_savegame.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima1\ultima1.asm
+[*] gen_file(OFILE_ASM) returned 10721
+[*] exporting IDC to C:\dev\ultima1\ultima1.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima1\ultima1.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'dump_savegame_full.py', 'noexport']
+[*] reading dump_savegame_full.py
+[*] executing dump_savegame_full.py
+[*] captured stdout from target script:
+----- begin target script output -----
+Root: OUT.EXE
+
+All structs in this IDB:
+  STR15, DungeonCell, DungeonColumn, DungeonMap, Point, Rect, Creature, LocationWidget, Savegame, MapLine, Map
+
+=== Savegame  size=0x334 (820) ===
+  0x0000  size=0x10 ( 16)  _name
+  0x0010  size=0x02 (  2)  _race
+  0x0012  size=0x02 (  2)  _class
+  0x0014  size=0x02 (  2)  _sex
+  0x0016  size=0x02 (  2)  _hits
+  0x0018  size=0x02 (  2)  _strength
+  0x001a  size=0x02 (  2)  _agility
+  0x001c  size=0x02 (  2)  _stamina
+  0x001e  size=0x02 (  2)  _charisma
+  0x0020  size=0x02 (  2)  _wisdom
+  0x0022  size=0x02 (  2)  _intelligence
+  0x0024  size=0x02 (  2)  _coins
+  0x0026  size=0x02 (  2)  _experience
+  0x0028  size=0x02 (  2)  _food
+  0x002a  size=0x02 (  2)  _readyWeapon
+  0x002c  size=0x02 (  2)  _readySpell
+  0x002e  size=0x02 (  2)  _readyArmor
+  0x0030  size=0x02 (  2)  _transportType
+  0x0032  size=0x02 (  2)  _randomSeed
+  0x0034  size=0x04 (  4)  _position
+  0x0038  size=0x02 (  2)  _soundOn
+  0x003a  size=0x12 ( 18)  _questStatus
+  0x004c  size=0x02 (  2)  _redGems
+  0x004e  size=0x02 (  2)  _greenGems
+  0x0050  size=0x02 (  2)  _blueGem
+  0x0052  size=0x02 (  2)  _whiteGem
+  0x0054  size=0x02 (  2)  _skin
+  0x0056  size=0x02 (  2)  _leatherArmor
+  0x0058  size=0x02 (  2)  _chainmail
+  0x005a  size=0x02 (  2)  _plateMail
+  0x005c  size=0x02 (  2)  _vacuumSuit
+  0x005e  size=0x02 (  2)  _reflectSuit
+  0x0060  size=0x02 (  2)  _hands
+  0x0062  size=0x02 (  2)  _dagger
+  0x0064  size=0x02 (  2)  _mace
+  0x0066  size=0x02 (  2)  _axe
+  0x0068  size=0x02 (  2)  _ropeSpikes
+  0x006a  size=0x02 (  2)  _sword
+  0x006c  size=0x02 (  2)  _greatSword
+  0x006e  size=0x02 (  2)  _bow
+  0x0070  size=0x02 (  2)  _amulet
+  0x0072  size=0x02 (  2)  _wand
+  0x0074  size=0x02 (  2)  _staff
+  0x0076  size=0x02 (  2)  _triangle
+  0x0078  size=0x02 (  2)  _pistol
+  0x007a  size=0x02 (  2)  _lightSword
+  0x007c  size=0x02 (  2)  _phazor
+  0x007e  size=0x02 (  2)  _blaster
+  0x0080  size=0x02 (  2)  _prayer
+  0x0082  size=0x02 (  2)  _open
+  0x0084  size=0x02 (  2)  _unlock
+  0x0086  size=0x02 (  2)  _magicMissile
+  0x0088  size=0x02 (  2)  _steal
+  0x008a  size=0x02 (  2)  _ladderDown
+  0x008c  size=0x02 (  2)  _ladderUp
+  0x008e  size=0x02 (  2)  _blink
+  0x0090  size=0x02 (  2)  _create
+  0x0092  size=0x02 (  2)  _destroy
+  0x0094  size=0x02 (  2)  _kill
+  0x0096  size=0x02 (  2)  _foot
+  0x0098  size=0x02 (  2)  _horse
+  0x009a  size=0x02 (  2)  _cart
+  0x009c  size=0x02 (  2)  _raft
+  0x009e  size=0x02 (  2)  _frigate
+  0x00a0  size=0x02 (  2)  _aircar
+  0x00a2  size=0x02 (  2)  _shuttle
+  0x00a4  size=0x02 (  2)  _timeMachine
+  0x00a6  size=0x02 (  2)  _enemyVessels
+  0x00a8  size=0x02 (  2)  _signMarker
+  0x00aa  size=0x02 (  2)  _overworldEntityCount
+  0x00ac  size=0x04 (  4)  _moveCount
+  0x00b0  size=0x02 (  2)  _shipFuel
+  0x00b2  size=0x02 (  2)  _shipShield
+  0x00b4  size=0x280 (640)  _overworldEntities
+
+=== Creature  size=0x10 (16) ===
+  0x0000  size=0x02 (  2)  _type
+  0x0002  size=0x02 (  2)  _data
+  0x0004  size=0x02 (  2)  _x
+  0x0006  size=0x02 (  2)  _y
+  0x0008  size=0x02 (  2)  _hits
+  0x000a  size=0x02 (  2)  _unused1
+  0x000c  size=0x02 (  2)  _unused2
+  0x000e  size=0x02 (  2)  _unused3
+
+=== LocationWidget  size=0x8 (8) ===
+  0x0000  size=0x02 (  2)  _type
+  0x0002  size=0x04 (  4)  _position
+  0x0006  size=0x02 (  2)  _hitPoints
+
+=== Point  size=0x4 (4) ===
+  0x0000  size=0x02 (  2)  _x
+  0x0002  size=0x02 (  2)  _y
+
+=== Rect  size=0x8 (8) ===
+  0x0000  size=0x02 (  2)  _x1
+  0x0002  size=0x02 (  2)  _y1
+  0x0004  size=0x02 (  2)  _x2
+  0x0006  size=0x02 (  2)  _y2
+
+=== STR15  size=0xf (15) ===
+  0x0000  size=0x0f ( 15)  _str
+----- end target script output -----
+[*] finished executing dump_savegame_full.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0

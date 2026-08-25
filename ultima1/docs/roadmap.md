@@ -400,15 +400,17 @@ shifts to polish and cross-checking:
       `ida_scripts/apply_structs_savegame.py` (GEN/OUT/SPACE),
       `ida_scripts/apply_structs_savegame_ultima.py` (ULTIMA.EXE
       rebuild).
-- [ ] **Still open from that pass**: what item (if any) `_armorSlot0`/
-      `_weaponSlot0`/`_spellSlot0`/`_transportSlot0` actually represent
-      — evidence is consistent with either "unused padding" or "a real
-      item this session didn't identify". `Creature.field_A`/`field_C`/
-      `field_E` (confirmed unreferenced by any instruction, likely
-      padding) also still unnamed. Neither blocks the reimplementation,
-      both worth another look if a future pass turns up more evidence
-      (e.g. tracing the item-price tables directly rather than via
-      usage sites).
+- [x] **Item-slot-0 and `Creature` padding, resolved** (2026-08-25):
+      `_armorSlot0`/`_weaponSlot0`/`_spellSlot0`/`_transportSlot0`
+      renamed to `_skin`/`_hands`/`_prayer`/`_foot` — each is index 0
+      of `OUT.EXE`'s pre-existing `ARMOR`/`WEAPONS_LOWERCASE`/
+      `SPELL_NAMES`/`TRANSPORTS` name tables, i.e. the "nothing
+      equipped" baseline for that category, not padding.
+      `Creature.field_A`/`field_C`/`field_E` confirmed genuinely
+      unused via an exhaustive raw-operand scan of `OUT.EXE` and
+      `SPACE.EXE` (`ida_scripts/find_creature_padding_refs.py`), and
+      renamed to `_unused1`/`_unused2`/`_unused3`. Full writeup in
+      [overview.md](overview.md#item-slot-0-and-creature-padding-resolved).
 - [ ] `apply_structs_mondain.py` — **not needed after all**: confirmed
       `MONDAIN.EXE` never references `_savegame` anywhere in its code
       (its own encounter state is plain standalone globals, named in
