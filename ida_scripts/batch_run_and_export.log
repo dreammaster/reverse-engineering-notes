@@ -7386,3 +7386,229 @@ All structs in this IDB:
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_gen.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'check_attr_offsets.py', 'noexport']
+[*] reading check_attr_offsets.py
+[*] executing check_attr_offsets.py
+[*] captured stdout from target script:
+----- begin target script output -----
+
+=== decreaseAttribute @ 0x10e32 ===
+  0x10e3f: cmp _savegame._hits[si], 0Ah
+  0x10e46: dec _savegame._hits[si], 
+
+=== increaseAttribute @ 0x10e61 ===
+  0x10e6e: cmp word ptr [si+0A46h], 19h
+  0x10e83: inc word ptr [si+0A46h], 
+
+=== updateAttribute @ 0x107a8 ===
+  0x107d4: push word ptr [si+0A46h], 
+----- end target script output -----
+[*] finished executing check_attr_offsets.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_gen.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'check_op_stroff.py', 'noexport']
+[*] reading check_op_stroff.py
+[*] executing check_op_stroff.py
+[!] EXCEPTION:
+Traceback (most recent call last):
+  File "C:/dev/ultima1/ida_scripts/batch_run_and_export.py", line 97, in main
+    exec(compile(code, target_script, "exec"), g)
+  File "check_op_stroff.py", line 8, in <module>
+    is_stroff = idc.is_stroff(flags, n)
+  File "C:\Program Files\IDA Pro 8.3\python\3\ida_ida.py", line 4269, in __getattribute__
+    return getattr(self.orig, name)
+AttributeError: module 'idc' has no attribute 'is_stroff'
+
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_gen.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'check_op_stroff.py', 'noexport']
+[*] reading check_op_stroff.py
+[*] executing check_op_stroff.py
+[*] captured stdout from target script:
+----- begin target script output -----
+Savegame sid: 0xff000195
+0x10e3f op0: is_stroff=False  operand='_savegame._hits[si]'
+0x10e46 op0: is_stroff=False  operand='_savegame._hits[si]'
+0x10e6e op0: is_stroff=False  operand='word ptr [si+0A46h]'
+0x10e83 op0: is_stroff=False  operand='word ptr [si+0A46h]'
+0x107d4 op0: is_stroff=False  operand='word ptr [si+0A46h]'
+----- end target script output -----
+[*] finished executing check_op_stroff.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_gen.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'fix_attr_stroff.py', 'noexport']
+[*] reading fix_attr_stroff.py
+[*] executing fix_attr_stroff.py
+[*] captured stdout from target script:
+----- begin target script output -----
+Savegame sid: 0xff000195
+0x10e6e: op_stroff ok=True  'word ptr [si+0A46h]' -> '[si+(Savegame._overworldEntityCount+99Ch)]'
+0x10e83: op_stroff ok=True  'word ptr [si+0A46h]' -> '[si+(Savegame._overworldEntityCount+99Ch)]'
+0x107d4: op_stroff ok=True  'word ptr [si+0A46h]' -> '[si+(Savegame._overworldEntityCount+99Ch)]'
+----- end target script output -----
+[*] finished executing fix_attr_stroff.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_gen.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'fix_attr_stroff2.py', 'noexport']
+[*] reading fix_attr_stroff2.py
+[*] executing fix_attr_stroff2.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0x10e6e: after clear -> 'word ptr [si+0A46h]'
+0x10e83: after clear -> 'word ptr [si+0A46h]'
+0x107d4: after clear -> 'word ptr [si+0A46h]'
+----- end target script output -----
+[*] finished executing fix_attr_stroff2.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_gen.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'inspect_op_type.py', 'noexport']
+[*] reading inspect_op_type.py
+[*] executing inspect_op_type.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0x10e3f: op0='_savegame._hits[si]'
+  is_off0: True
+  is_stroff0: False
+  is_enum0: False
+  operand_type: 4
+  refinfo: None
+0x10e46: op0='_savegame._hits[si]'
+  is_off0: True
+  is_stroff0: False
+  is_enum0: False
+  operand_type: 4
+  refinfo: None
+0x10e6e: op0='word ptr [si+0A46h]'
+  is_off0: False
+  is_stroff0: False
+  is_enum0: False
+  operand_type: 4
+  refinfo: None
+----- end target script output -----
+[*] finished executing inspect_op_type.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_gen.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'fix_attr_offset.py', 'noexport']
+[*] reading fix_attr_offset.py
+[*] executing fix_attr_offset.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0x10e6e: op_plain_offset ok=True  'word ptr [si+0A46h]' -> 'word ptr [si+0A46h]'
+0x10e83: op_plain_offset ok=True  'word ptr [si+0A46h]' -> 'word ptr [si+0A46h]'
+0x107d4: op_plain_offset ok=True  'word ptr [si+0A46h]' -> 'word ptr [si+0A46h]'
+----- end target script output -----
+[*] finished executing fix_attr_offset.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_gen.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'check_savegame_addr.py', 'noexport']
+[*] reading check_savegame_addr.py
+[*] executing check_savegame_addr.py
+[*] captured stdout from target script:
+----- begin target script output -----
+_savegame ea: 0x14c90
+_savegame + 0x16 (hits): 0x14ca6
+0xA46 as ea: 0xa46
+69183 get_operand_value: 0xa46
+69230 get_operand_value: 0xa46
+----- end target script output -----
+[*] finished executing check_savegame_addr.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_gen.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'check_dseg.py', 'noexport']
+[*] reading check_dseg.py
+[*] executing check_dseg.py
+[*] captured stdout from target script:
+----- begin target script output -----
+sg013A 0x10000 0x14260 sel= 0x1000
+dseg 0x14260 0x15130 sel= 0x1426
+sg064D 0x15130 0x16530 sel= 0x1513
+sg078D 0x16530 0x16531 sel= 0x1653
+
+_savegame ea: 0x14c90
+get_operand_value decreaseAttribute op0: 0xa46
+----- end target script output -----
+[*] finished executing check_dseg.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_gen.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'fix_attr_offset2.py', 'noexport']
+[*] reading fix_attr_offset2.py
+[*] executing fix_attr_offset2.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0x10e6e: op_plain_offset ok=True  'word ptr [si+0A46h]' -> '_savegame._hits[si]'
+0x10e83: op_plain_offset ok=True  'word ptr [si+0A46h]' -> '_savegame._hits[si]'
+0x107d4: op_plain_offset ok=True  'word ptr [si+0A46h]' -> '_savegame._hits[si]'
+----- end target script output -----
+[*] finished executing fix_attr_offset2.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_gen.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_structs_gen.py']
+[*] reading apply_structs_gen.py
+[*] executing apply_structs_gen.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0x10e6e: already resolved ('_savegame._hits[si]') -- skipping
+0x10e83: already resolved ('_savegame._hits[si]') -- skipping
+0x107d4: already resolved ('_savegame._hits[si]') -- skipping
+
+Done. Re-export the .asm/.idc and check the new display took.
+----- end target script output -----
+[*] finished executing apply_structs_gen.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima1\ultima1_gen.asm
+[*] gen_file(OFILE_ASM) returned 10993
+[*] exporting IDC to C:\dev\ultima1\ultima1_gen.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima1\ultima1_gen.idb
+[*] done, exiting 0

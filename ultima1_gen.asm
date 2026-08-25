@@ -1138,7 +1138,7 @@ attr            = word ptr  2
                 push    ax
                 mov     ax, 2
                 push    ax
-                push    (_savegame._strength-2)[si]
+                push    _savegame._hits[si]
                 call    writeNumber
                 mov     sp, bp
                 add     sp, 2
@@ -2061,14 +2061,14 @@ increaseAttribute proc near             ; CODE XREF: generateCharacter+99\u2193p
                 mov     ax, [bp+6]
                 shl     ax, 1
                 mov     si, ax
-                cmp     word ptr [si+0A46h], 19h
+                cmp     _savegame._hits[si], 19h
                 jge     short loc_10E97
                 cmp     _pointsRemaining, 0
                 jz      short loc_10E97
                 mov     ax, [bp+6]
                 shl     ax, 1
                 mov     si, ax
-                inc     word ptr [si+0A46h]
+                inc     _savegame._hits[si]
                 push    word ptr [bp+6] ; attr
                 call    updateAttribute
                 mov     sp, bp
@@ -10667,8 +10667,8 @@ word_14C8A      dw 0                    ; DATA XREF: getKeypressRaw+87\u2191w
 word_14C8E      dw 0                    ; DATA XREF: getKeypressRaw+A\u2191w
                                         ; textCursorAnimate\u2191r ...
 ; char savegame[]
-_savegame       Savegame <?>            ; DATA XREF: updateAttribute+2C\u2191t
-                                        ; getName+6C\u2191w ...
+_savegame       Savegame <?>            ; DATA XREF: getName+6C\u2191w
+                                        ; getName+BA\u2191w ...
 stru_14FC4      STR15 4 dup(<?>)        ; DATA XREF: generateCharacter+2EB\u2191w
                                         ; readSavegameList+36\u2191o ...
 _pointsRemaining dw ?                   ; DATA XREF: increaseAttribute+14\u2191r

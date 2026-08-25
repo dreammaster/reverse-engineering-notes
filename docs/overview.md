@@ -734,17 +734,26 @@ each point moving one attribute by 1, within a hard range of
 - **`increaseAttribute`** (Right arrow) — refuses above 25, and refuses
   if `_pointsRemaining` is already 0; otherwise increments and spends
   a point.
-- Both redraw via the already-named `updateAttribute`, which resolved
-  a small IDB oddity along the way: `_savegame._strength` is
-  confirmed (via `updateAttribute`'s own typed `Attribute attr`
-  parameter and its `(_savegame._strength-2)[si]` indexing) to be the
-  base of the real 6-element attribute array. `sub_10E32` (now
-  `decreaseAttribute`) separately indexes the *same* underlying memory
-  through a differently-resolved struct field, `_savegame._hits[si]`
-  — almost certainly a stale/incorrect alternate field name IDA's
-  struct-member resolution attached to that specific access, not a
-  real second array. Not fixed here (a struct-definition edit, out of
-  scope for a plain rename); flagged in roadmap.md.
+- Both redraw via the already-named `updateAttribute`. This session
+  (2026-08-25) resolved the small IDB oddity flagged here in the
+  original pass: **there is no real struct-field bug** — all three
+  functions (`decreaseAttribute`, `increaseAttribute`,
+  `updateAttribute`) index the exact same 7-word run of `Savegame`
+  fields (`_hits`, `_strength`, `_agility`, `_stamina`, `_charisma`,
+  `_wisdom`, `_intelligence`) via `[si]` with `si = attr*2` — i.e. one
+  array starting at `_hits` (index 0), with the 6 point-buy attributes
+  at indices 1-6. `decreaseAttribute`'s `_savegame._hits[si]` display
+  was correct all along; `increaseAttribute` and `updateAttribute`
+  showed the identical address as a raw `word ptr [si+0A46h]` purely
+  because those 2 instructions were never given the "offset" operand
+  type IDA needs to resolve a bare immediate back to a symbol (`0xA46`
+  = `dseg`'s base `0x14260` + `_hits`'s struct offset `0x16`, byte-for-
+  byte the same address `decreaseAttribute` references). Applied
+  `idc.op_plain_offset` to both — now all three read identically as
+  `_savegame._hits[si]`. Fixed via
+  `ida_scripts/apply_structs_gen.py`. The original "stale/incorrect
+  alternate field name" suspicion was a misdiagnosis of this
+  display-only gap, not a genuine struct inconsistency.
 - **`clearSelectionArrows`** blanks the `<`/`>` cursor at the old
   attribute row before `moveSelectedAttrUp`/`Down` (already named)
   redraws it at the new one via `writeSelectionArrows` (already
@@ -974,11 +983,16 @@ print `"Transact...Mondain will" / "not negotiate!"` — the `T`ransact
 command's refusal message, nothing to do with view-switching. Renamed
 to `cmdTransactDisabled`; the real, previously-unnamed `"View?"` stub
 is now `cmdViewDisabled`. Same category of issue as
-`writeString2_mb`→`printStartupMessage` in ULTIMA.EXE and the
-`_savegame._hits`/`_strength` mixup in GEN.EXE: a structurally-matched
-or coincidentally-plausible name that doesn't survive checking against
-what the function actually does. Worth this same skepticism check
-if any other BinDiff-transferred name in this IDB stops making sense.
+`writeString2_mb`→`printStartupMessage` in ULTIMA.EXE: a
+structurally-matched or coincidentally-plausible name that doesn't
+survive checking against what the function actually does. Worth this
+same skepticism check if any other BinDiff-transferred name in this
+IDB stops making sense. (A third suspected case, GEN.EXE's
+`_savegame._hits`/`_strength` "mixup", turned out on closer inspection
+during the later struct-cleanup pass to not be a real issue at all —
+see
+[overview.md](overview.md#character-creation-point-buy-mechanic-decoded)'s
+updated writeup.)
 
 **Session total for MONDAIN.EXE**: 134 → 191 functions named (100%),
 in one pass, plus one name fix (`viewChange` → `cmdTransactDisabled`)

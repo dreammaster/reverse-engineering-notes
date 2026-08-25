@@ -414,10 +414,16 @@ shifts to polish and cross-checking:
       (its own encounter state is plain standalone globals, named in
       the MONDAIN.EXE pass), so there's no struct instance to import
       one for. Leaving this IDB's 0 structs as correct, not a gap.
-- [ ] `apply_structs_gen.py` — fix the `_savegame._hits`/`_strength`
-      struct-field mixup flagged under GEN.EXE above (a specific
-      mis-resolved instruction operand in `decreaseAttribute`, separate
-      from the struct-definition sync just completed).
+- [x] `apply_structs_gen.py` (2026-08-25) — investigated the
+      `_savegame._hits`/`_strength` "mixup" flagged under GEN.EXE and
+      found **it isn't a real bug**: `decreaseAttribute`,
+      `increaseAttribute`, and `updateAttribute` all index the same
+      `_hits`-based 7-word array identically; 2 of the 3 instructions
+      just lacked the IDA operand-offset type needed to display it
+      symbolically instead of as a raw `[si+0A46h]`. Fixed via
+      `idc.op_plain_offset` (base = `dseg`'s start address). Corrected
+      writeup in
+      [overview.md](overview.md#character-creation-point-buy-mechanic-decoded).
 - [ ] Rename each IDB's segments (`sg*`/`seg00*`/`dseg`) to the
       `CODE`/`DATA` convention used in `ultima2` — not done for any of
       the 5 IDBs yet.
