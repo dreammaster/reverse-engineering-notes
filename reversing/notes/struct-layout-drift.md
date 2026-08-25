@@ -7114,3 +7114,48 @@ data, never a runtime default), `clickEventHandler`'s own byte offset
 (behavior confirmed absent, but the offset itself remains positional-
 only), and `reserved[6]` (plausible genuinely-unused padding, matching
 this project's established `InventoryItemInfo.reserved` precedent).
+
+## Pivot to the shared `GUIObject` base: closing its last unconfirmed pad, `zorder`
+
+With `GUIMain` essentially exhausted (`name`/`clickEventHandler`'s offset/
+`reserved[6]` all being genuine, well-documented dead ends now), this
+round pivoted to the shared `GUIObject` base class -- the fields common to
+all six derived control structs (`GUIButton`/`GUISlider`/`GUILabel`/
+`GUITextBox`/`GUIListBox`/`GUIInv`), a target explicitly flagged as a
+candidate in an earlier round's `guin`/`objn` architectural note.
+
+Each of the six structs already carried an identical, still-unconfirmed
+4-byte pad at `+0x18..0x1C`, sitting between the already-confirmed `hit`
+and `activated`. Checking 2011's `GUIObject::WriteToFile`/`ReadFromFile`
+(`Engine/acgui.cpp:69-83`) settled it immediately: both read/write the
+ENTIRE base class as one bulk block, `fread(&flags, sizeof(int),
+BASEGOBJ_SIZE, ooo);`, with `BASEGOBJ_SIZE=7` (`Common/acgui.h:119`) --
+exactly 7 consecutive ints starting at `flags`. This build's own already-
+confirmed layout has `flags`@`+0x04` through `activated`@`+0x1C`
+occupying EXACTLY that same 7-int/28-byte span, with only the one pad at
+`+0x18` left unaccounted for -- meaning it MUST hold a real field for the
+bulk-block argument (already implicitly relied on to confirm `activated`
+in earlier rounds, just never followed all the way through for the
+field in the middle) to hold at all. 2011's declared order for this exact
+span (`flags, x, y, wid, hit, zorder, activated`, `acgui.h:128-133`) has
+only one field between `hit` and `activated`: `zorder`.
+
+Retyped `_pad_unknown[0x04]@+0x18` to `int zorder;` across all six
+structs at once (identical text, safe for a single `replace_all`). This
+is this build's own per-CONTROL z-order -- a distinct concept from
+`GUIMain`'s already-established-unused per-GUI z-order, though plausibly
+sharing its fate: 2011's per-control equivalent, `resort_zorder()`, is
+likewise never called from this build's `GUIMain__rebuild_array` (already
+established two rounds ago), so this field is most likely present in
+memory but functionally inert here too -- consistent with, not
+contradicting, the broader z-order-absence picture already built up
+across this session.
+
+This closes the LAST remaining unconfirmed gap in the shared `GUIObject`
+base-class layout: every byte from the vtable through `activated` is now
+either a confirmed field (`flags`, `x`, `y`, `wid`, `hit`, `zorder`,
+`activated`) or the already-independently-confirmed `guin`/`objn`-absent
+finding from two rounds ago. The full `GUIObject` base recovery arc
+across this session: `guin`/`objn` shown likely absent (round before
+last) → `zorder` closes the one remaining gap (this round) -- a genuine,
+if incidental, capstone to the `GUIObject` class hierarchy work.

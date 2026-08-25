@@ -911,7 +911,30 @@ struct GUIButton {
   int wid;                      // +0x10, high confidence (GUIObject base field), see x above --
                             // independently reconfirmed via GUITextBox::KeyPress's text-width bound check.
   int hit;                      // +0x14, high confidence (GUIObject base field), see x above.
-  char _pad_unknown[0x04];    // +0x18..0x1C, unknown (GUIObject base field, still unconfirmed)
+  int zorder;                  // +0x18, high confidence (UPGRADED from an unconfirmed pad, found
+                            // this round while surveying GUIMain's own now-mostly-closed field
+                            // list and pivoting to the shared GUIObject base): 2011's own
+                            // `GUIObject::WriteToFile`/`ReadFromFile` (`Engine/acgui.cpp:69-83`)
+                            // read/write the base class as ONE bulk block, "fread(&flags,
+                            // sizeof(int), BASEGOBJ_SIZE, ooo);" with `BASEGOBJ_SIZE=7`
+                            // (`Common/acgui.h:119`) -- exactly 7 consecutive ints starting at
+                            // `flags`. This build's own confirmed layout already has `flags`@+0x04
+                            // through `activated`@+0x1C occupying exactly that same 7-int/28-byte
+                            // span (already-matched `ReadFromFile`/`WriteToFile` methods for all
+                            // six derived classes independently confirm both endpoints, `flags` and
+                            // `activated`, at their own exact offsets) -- meaning this position MUST
+                            // hold a real field, not padding, for the bulk-block argument to hold at
+                            // all. 2011's declared order for this exact span (`Common/acgui.h:
+                            // 128-133`, `flags,x,y,wid,hit,zorder,activated`) has only one field
+                            // between `hit` and `activated`: `zorder` -- this build's own
+                            // per-CONTROL z-order (distinct from `GUIMain`'s already-shown-unused
+                            // per-GUI z-order; 2011's per-control equivalent, `resort_zorder()`, is
+                            // similarly never called from this build's `GUIMain__rebuild_array`, so
+                            // this field is plausibly present-but-inert here too, matching the same
+                            // pattern rather than contradicting it). Applies identically to all six
+                            // `GUIObject`-derived structs in this file (`GUIButton`/`GUISlider`/
+                            // `GUILabel`/`GUITextBox`/`GUIListBox`/`GUIInv`), which all share this
+                            // exact base-class layout.
   int activated;                // +0x1C, high confidence (GUIObject base field): confirmed via
                             // GUIButton::MouseUp's "activated++" and via GUIObject::ReadFromFile's
                             // 7-int (28-byte) base-field block ending exactly here.
@@ -950,7 +973,30 @@ struct GUITextBox {
   int wid;                      // +0x10, high confidence, see x above -- independently reconfirmed via
                             // GUITextBox::KeyPress's "wgettextwidth(text,font) > wid-(6+...)" bound check.
   int hit;                      // +0x14, high confidence, see x above.
-  char _pad_unknown[0x04];    // +0x18..0x1C, unknown (GUIObject base field, still unconfirmed)
+  int zorder;                  // +0x18, high confidence (UPGRADED from an unconfirmed pad, found
+                            // this round while surveying GUIMain's own now-mostly-closed field
+                            // list and pivoting to the shared GUIObject base): 2011's own
+                            // `GUIObject::WriteToFile`/`ReadFromFile` (`Engine/acgui.cpp:69-83`)
+                            // read/write the base class as ONE bulk block, "fread(&flags,
+                            // sizeof(int), BASEGOBJ_SIZE, ooo);" with `BASEGOBJ_SIZE=7`
+                            // (`Common/acgui.h:119`) -- exactly 7 consecutive ints starting at
+                            // `flags`. This build's own confirmed layout already has `flags`@+0x04
+                            // through `activated`@+0x1C occupying exactly that same 7-int/28-byte
+                            // span (already-matched `ReadFromFile`/`WriteToFile` methods for all
+                            // six derived classes independently confirm both endpoints, `flags` and
+                            // `activated`, at their own exact offsets) -- meaning this position MUST
+                            // hold a real field, not padding, for the bulk-block argument to hold at
+                            // all. 2011's declared order for this exact span (`Common/acgui.h:
+                            // 128-133`, `flags,x,y,wid,hit,zorder,activated`) has only one field
+                            // between `hit` and `activated`: `zorder` -- this build's own
+                            // per-CONTROL z-order (distinct from `GUIMain`'s already-shown-unused
+                            // per-GUI z-order; 2011's per-control equivalent, `resort_zorder()`, is
+                            // similarly never called from this build's `GUIMain__rebuild_array`, so
+                            // this field is plausibly present-but-inert here too, matching the same
+                            // pattern rather than contradicting it). Applies identically to all six
+                            // `GUIObject`-derived structs in this file (`GUIButton`/`GUISlider`/
+                            // `GUILabel`/`GUITextBox`/`GUIListBox`/`GUIInv`), which all share this
+                            // exact base-class layout.
   int activated;                // +0x1C, high confidence (GUIObject base field): confirmed via
                             // GUITextBox::KeyPress's "activated++" on kp==13 (Enter).
   char text[200];               // +0x20, high confidence: fwrite/fread with ElementSize=0xC8(200),
@@ -975,7 +1021,30 @@ struct GUILabel {
   int y;                        // +0x0C, positional, see x above.
   int wid;                      // +0x10, positional, see x above.
   int hit;                      // +0x14, positional, see x above.
-  char _pad_unknown[0x04];    // +0x18..0x1C, unknown (GUIObject base field, still unconfirmed)
+  int zorder;                  // +0x18, high confidence (UPGRADED from an unconfirmed pad, found
+                            // this round while surveying GUIMain's own now-mostly-closed field
+                            // list and pivoting to the shared GUIObject base): 2011's own
+                            // `GUIObject::WriteToFile`/`ReadFromFile` (`Engine/acgui.cpp:69-83`)
+                            // read/write the base class as ONE bulk block, "fread(&flags,
+                            // sizeof(int), BASEGOBJ_SIZE, ooo);" with `BASEGOBJ_SIZE=7`
+                            // (`Common/acgui.h:119`) -- exactly 7 consecutive ints starting at
+                            // `flags`. This build's own confirmed layout already has `flags`@+0x04
+                            // through `activated`@+0x1C occupying exactly that same 7-int/28-byte
+                            // span (already-matched `ReadFromFile`/`WriteToFile` methods for all
+                            // six derived classes independently confirm both endpoints, `flags` and
+                            // `activated`, at their own exact offsets) -- meaning this position MUST
+                            // hold a real field, not padding, for the bulk-block argument to hold at
+                            // all. 2011's declared order for this exact span (`Common/acgui.h:
+                            // 128-133`, `flags,x,y,wid,hit,zorder,activated`) has only one field
+                            // between `hit` and `activated`: `zorder` -- this build's own
+                            // per-CONTROL z-order (distinct from `GUIMain`'s already-shown-unused
+                            // per-GUI z-order; 2011's per-control equivalent, `resort_zorder()`, is
+                            // similarly never called from this build's `GUIMain__rebuild_array`, so
+                            // this field is plausibly present-but-inert here too, matching the same
+                            // pattern rather than contradicting it). Applies identically to all six
+                            // `GUIObject`-derived structs in this file (`GUIButton`/`GUISlider`/
+                            // `GUILabel`/`GUITextBox`/`GUIListBox`/`GUIInv`), which all share this
+                            // exact base-class layout.
   int activated;                // +0x1C, positional (GUIObject base field, see GUITextBox above).
   char text[200];               // +0x20, high confidence: fwrite/fread with ElementSize=0xC8(200),
                             // ElementCount=1 at this offset in GUILabel::WriteToFile/ReadFromFile.
@@ -1002,7 +1071,30 @@ struct GUIListBox {
   int y;                        // +0x0C, positional, see x above.
   int wid;                      // +0x10, positional, see x above.
   int hit;                      // +0x14, positional, see x above.
-  char _pad_unknown[0x04];    // +0x18..0x1C, unknown (GUIObject base field, still unconfirmed)
+  int zorder;                  // +0x18, high confidence (UPGRADED from an unconfirmed pad, found
+                            // this round while surveying GUIMain's own now-mostly-closed field
+                            // list and pivoting to the shared GUIObject base): 2011's own
+                            // `GUIObject::WriteToFile`/`ReadFromFile` (`Engine/acgui.cpp:69-83`)
+                            // read/write the base class as ONE bulk block, "fread(&flags,
+                            // sizeof(int), BASEGOBJ_SIZE, ooo);" with `BASEGOBJ_SIZE=7`
+                            // (`Common/acgui.h:119`) -- exactly 7 consecutive ints starting at
+                            // `flags`. This build's own confirmed layout already has `flags`@+0x04
+                            // through `activated`@+0x1C occupying exactly that same 7-int/28-byte
+                            // span (already-matched `ReadFromFile`/`WriteToFile` methods for all
+                            // six derived classes independently confirm both endpoints, `flags` and
+                            // `activated`, at their own exact offsets) -- meaning this position MUST
+                            // hold a real field, not padding, for the bulk-block argument to hold at
+                            // all. 2011's declared order for this exact span (`Common/acgui.h:
+                            // 128-133`, `flags,x,y,wid,hit,zorder,activated`) has only one field
+                            // between `hit` and `activated`: `zorder` -- this build's own
+                            // per-CONTROL z-order (distinct from `GUIMain`'s already-shown-unused
+                            // per-GUI z-order; 2011's per-control equivalent, `resort_zorder()`, is
+                            // similarly never called from this build's `GUIMain__rebuild_array`, so
+                            // this field is plausibly present-but-inert here too, matching the same
+                            // pattern rather than contradicting it). Applies identically to all six
+                            // `GUIObject`-derived structs in this file (`GUIButton`/`GUISlider`/
+                            // `GUILabel`/`GUITextBox`/`GUIListBox`/`GUIInv`), which all share this
+                            // exact base-class layout.
   int activated;                // +0x1C, positional (GUIObject base field, see GUITextBox above --
                             // not independently re-verified for GUIListBox specifically this round).
   char _pad_items[0x190];     // +0x20..0x1B0, unknown: this is `items[MAX_LISTBOX_ITEMS]` (char*) and
@@ -1038,7 +1130,30 @@ struct GUIInv {
   int y;                        // +0x0C, positional, see x above.
   int wid;                      // +0x10, positional, see x above.
   int hit;                      // +0x14, positional, see x above.
-  char _pad_unknown[0x04];    // +0x18..0x1C, unknown (GUIObject base field, still unconfirmed)
+  int zorder;                  // +0x18, high confidence (UPGRADED from an unconfirmed pad, found
+                            // this round while surveying GUIMain's own now-mostly-closed field
+                            // list and pivoting to the shared GUIObject base): 2011's own
+                            // `GUIObject::WriteToFile`/`ReadFromFile` (`Engine/acgui.cpp:69-83`)
+                            // read/write the base class as ONE bulk block, "fread(&flags,
+                            // sizeof(int), BASEGOBJ_SIZE, ooo);" with `BASEGOBJ_SIZE=7`
+                            // (`Common/acgui.h:119`) -- exactly 7 consecutive ints starting at
+                            // `flags`. This build's own confirmed layout already has `flags`@+0x04
+                            // through `activated`@+0x1C occupying exactly that same 7-int/28-byte
+                            // span (already-matched `ReadFromFile`/`WriteToFile` methods for all
+                            // six derived classes independently confirm both endpoints, `flags` and
+                            // `activated`, at their own exact offsets) -- meaning this position MUST
+                            // hold a real field, not padding, for the bulk-block argument to hold at
+                            // all. 2011's declared order for this exact span (`Common/acgui.h:
+                            // 128-133`, `flags,x,y,wid,hit,zorder,activated`) has only one field
+                            // between `hit` and `activated`: `zorder` -- this build's own
+                            // per-CONTROL z-order (distinct from `GUIMain`'s already-shown-unused
+                            // per-GUI z-order; 2011's per-control equivalent, `resort_zorder()`, is
+                            // similarly never called from this build's `GUIMain__rebuild_array`, so
+                            // this field is plausibly present-but-inert here too, matching the same
+                            // pattern rather than contradicting it). Applies identically to all six
+                            // `GUIObject`-derived structs in this file (`GUIButton`/`GUISlider`/
+                            // `GUILabel`/`GUITextBox`/`GUIListBox`/`GUIInv`), which all share this
+                            // exact base-class layout.
   int activated;                // +0x1C, high confidence (GUIObject base field): confirmed via
                             // GUIInv::MouseUp's "if (isover) activated=1;".
   int isover;                    // +0x20, high confidence: GUIInv's own first declared field
@@ -1058,7 +1173,30 @@ struct GUISlider {
   int y;                        // +0x0C, positional, see x above.
   int wid;                      // +0x10, positional, see x above.
   int hit;                      // +0x14, positional, see x above.
-  char _pad_unknown[0x04];    // +0x18..0x1C, unknown (GUIObject base field, still unconfirmed)
+  int zorder;                  // +0x18, high confidence (UPGRADED from an unconfirmed pad, found
+                            // this round while surveying GUIMain's own now-mostly-closed field
+                            // list and pivoting to the shared GUIObject base): 2011's own
+                            // `GUIObject::WriteToFile`/`ReadFromFile` (`Engine/acgui.cpp:69-83`)
+                            // read/write the base class as ONE bulk block, "fread(&flags,
+                            // sizeof(int), BASEGOBJ_SIZE, ooo);" with `BASEGOBJ_SIZE=7`
+                            // (`Common/acgui.h:119`) -- exactly 7 consecutive ints starting at
+                            // `flags`. This build's own confirmed layout already has `flags`@+0x04
+                            // through `activated`@+0x1C occupying exactly that same 7-int/28-byte
+                            // span (already-matched `ReadFromFile`/`WriteToFile` methods for all
+                            // six derived classes independently confirm both endpoints, `flags` and
+                            // `activated`, at their own exact offsets) -- meaning this position MUST
+                            // hold a real field, not padding, for the bulk-block argument to hold at
+                            // all. 2011's declared order for this exact span (`Common/acgui.h:
+                            // 128-133`, `flags,x,y,wid,hit,zorder,activated`) has only one field
+                            // between `hit` and `activated`: `zorder` -- this build's own
+                            // per-CONTROL z-order (distinct from `GUIMain`'s already-shown-unused
+                            // per-GUI z-order; 2011's per-control equivalent, `resort_zorder()`, is
+                            // similarly never called from this build's `GUIMain__rebuild_array`, so
+                            // this field is plausibly present-but-inert here too, matching the same
+                            // pattern rather than contradicting it). Applies identically to all six
+                            // `GUIObject`-derived structs in this file (`GUIButton`/`GUISlider`/
+                            // `GUILabel`/`GUITextBox`/`GUIListBox`/`GUIInv`), which all share this
+                            // exact base-class layout.
   int activated;                // +0x1C, positional (GUIObject base field, see GUITextBox above --
                             // not independently re-verified for GUISlider specifically this round).
   int min;                       // +0x20, high confidence: confirmed via GUISlider::WriteToFile's

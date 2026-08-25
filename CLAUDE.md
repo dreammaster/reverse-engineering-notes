@@ -1646,6 +1646,24 @@ rather than trusting these numbers as they age)
   (present in source right next to `vtext[0]=0`) is missing here — a
   second, independent hint (on top of last round's absent reader) that
   `clickEventHandler` may not exist as a distinct field in this build.
+- **`GUIObject` base class: last unconfirmed pad closes as `zorder`.**
+  With `GUIMain` essentially exhausted, pivoted to the shared `GUIObject`
+  base (`GUIButton`/`GUISlider`/`GUILabel`/`GUITextBox`/`GUIListBox`/
+  `GUIInv` all inherit it) — a target explicitly flagged as a candidate
+  two rounds ago. All six structs carried an identical unconfirmed 4-byte
+  pad at `+0x18`, between `hit` and `activated`. 2011's `GUIObject::
+  WriteToFile`/`ReadFromFile` read/write the whole base class as ONE
+  bulk block sized `BASEGOBJ_SIZE=7` ints starting at `flags` — this
+  build's own confirmed `flags`@+0x04 through `activated`@+0x1C already
+  spans exactly that same 7-int range, meaning the one remaining pad
+  MUST be a real field for the bulk-block argument to hold. 2011's
+  declared order leaves only one candidate for that position: `zorder`
+  (this build's per-CONTROL z-order, distinct from — but plausibly
+  sharing the inert fate of — `GUIMain`'s own already-shown-unused
+  per-GUI z-order, since `resort_zorder()` is likewise never called
+  here). Retyped across all six structs at once. This closes the last
+  gap in the shared `GUIObject` base layout — a fitting capstone to this
+  session's `GUIObject`/`GUIMain` field-recovery arc.
 
 ## Third-party library identification (Task #10)
 
