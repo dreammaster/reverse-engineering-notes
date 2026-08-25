@@ -2545,7 +2545,7 @@ loc_111F7:                              ; CODE XREF: generateCharacter+1A2\u2193
 ; ---------------------------------------------------------------------------
 
 loc_1120E:                              ; CODE XREF: generateCharacter+193\u2191j
-                mov     _savegame._spellSlot0, 0FFFFh
+                mov     _savegame._prayer, 0FFFFh
                 mov     [bp+14h+attrNum], 1
 
 loc_11219:                              ; CODE XREF: generateCharacter+1C4\u2193j
@@ -2560,7 +2560,7 @@ loc_11219:                              ; CODE XREF: generateCharacter+1C4\u2193
 ; ---------------------------------------------------------------------------
 
 loc_11230:                              ; CODE XREF: generateCharacter+1B5\u2191j
-                mov     _savegame._armorSlot0, 0FFFFh
+                mov     _savegame._skin, 0FFFFh
                 mov     _savegame._leatherArmor, 1
                 mov     word ptr [bp+4], 2
 
@@ -2576,7 +2576,7 @@ loc_11241:                              ; CODE XREF: generateCharacter+1EC\u2193
 ; ---------------------------------------------------------------------------
 
 loc_11258:                              ; CODE XREF: generateCharacter+1DD\u2191j
-                mov     _savegame._weaponSlot0, 0FFFFh
+                mov     _savegame._hands, 0FFFFh
                 mov     ax, 2
                 mov     _savegame._dagger, ax
                 mov     [bp+4], ax
@@ -2587,13 +2587,13 @@ loc_11267:                              ; CODE XREF: generateCharacter+212\u2193
                 jg      short loc_1127E
                 shl     ax, 1
                 mov     si, ax
-                mov     _savegame._weaponSlot0[si], 0
+                mov     _savegame._hands[si], 0
                 inc     word ptr [bp+4]
                 jmp     short loc_11267
 ; ---------------------------------------------------------------------------
 
 loc_1127E:                              ; CODE XREF: generateCharacter+203\u2191j
-                mov     _savegame._transportSlot0, 0FFFFh
+                mov     _savegame._foot, 0FFFFh
                 mov     [bp+14h+attrNum], 1
 
 loc_11289:                              ; CODE XREF: generateCharacter+234\u2193j

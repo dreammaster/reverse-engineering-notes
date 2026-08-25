@@ -15404,7 +15404,7 @@ loc_1682D:                              ; CODE XREF: status+1D7\u2191j
                 push    ax
                 mov     ax, offset ARMOR_NAMES
                 push    ax
-                mov     ax, offset _savegame._armorSlot0
+                mov     ax, offset _savegame._skin
                 push    ax
                 call    drawStatusList
                 mov     sp, bp
@@ -15416,7 +15416,7 @@ loc_1682D:                              ; CODE XREF: status+1D7\u2191j
                 push    bx
                 mov     bx, offset WEAPON_NAMES
                 push    bx
-                mov     bx, offset _savegame._weaponSlot0
+                mov     bx, offset _savegame._hands
                 push    bx
                 mov     [bp+arg_0], ax
                 call    drawStatusList
@@ -15429,7 +15429,7 @@ loc_1682D:                              ; CODE XREF: status+1D7\u2191j
                 push    bx
                 mov     bx, offset SPELL_NAMES
                 push    bx
-                mov     bx, offset _savegame._spellSlot0
+                mov     bx, offset _savegame._prayer
                 push    bx
                 mov     [bp+arg_0], ax
                 call    drawStatusList
@@ -15442,7 +15442,7 @@ loc_1682D:                              ; CODE XREF: status+1D7\u2191j
                 push    bx
                 mov     bx, offset TRANSPORT_NAMES
                 push    bx
-                mov     bx, offset _savegame._transportSlot0
+                mov     bx, offset _savegame._foot
                 push    bx
                 mov     [bp+arg_0], ax
                 call    drawStatusList

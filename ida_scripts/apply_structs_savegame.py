@@ -44,29 +44,36 @@ docs/overview.md):
   STATE (-1 = not offered, 1 = accepted, 0 = reward claimed), indexed
   by `_castleIndex`, not a list of quest objects.
 - `_armor_array`/`_weapons_array`/`_spells_array`/`_transports_array`
-  -> `_armorSlot0`/`_weaponSlot0`/`_spellSlot0`/`_transportSlot0`:
-  these are genuinely distinct 2-byte memory slots 2 bytes *before*
-  the first individually-named item in each category (e.g.
-  `_armor_array` at 0x54, `_leatherArmor` at 0x56) -- not, as the old
-  "_array" name implied, the base of an array whose first element is
-  one of the named fields. What item (if any) this slot 0 actually
-  represents is NOT confirmed -- `dropPenceCastle`'s random weapon-
-  boost event picks `getRandomNumber(1, 15)`, skipping index 0, which
-  is consistent with either "index 0 is unused padding" (plausible
-  1-based-BASIC-port artifact, item ID 0 reserved as a "nothing"
-  sentinel elsewhere in the game, e.g. MONDAIN.EXE's
-  selectedSpellIndex) or "index 0 is a real item this one random event
-  just doesn't grant". Renamed to remove the actively-misleading
-  "_array" implication without asserting an unconfirmed identity --
-  still an open question, see docs/roadmap.md.
+  -> **`_skin`/`_hands`/`_prayer`/`_foot`** (2026-08-25, resolved --
+  previously landed as the placeholder `_armorSlot0`/`_weaponSlot0`/
+  `_spellSlot0`/`_transportSlot0` while the identity was still
+  unconfirmed): each category's item-name table in OUT.EXE
+  (`ARMOR`/`WEAPONS_LOWERCASE`/`SPELL_NAMES`/`TRANSPORTS`, all
+  pre-existing names) has a real, named entry at index 0 --
+  `"Skin"`/`"hands"`/`"Prayer"`/`"Foot"` respectively -- confirming
+  these aren't padding at all, just the "you have nothing equipped in
+  this category" baseline item. Confirmed further for armor:
+  `dropArmor`'s menu loop explicitly starts at index 1 (`var_A = 1`),
+  skipping index 0 -- you can't drop your own skin. Same table also
+  explains `ATTRIBUTES[0] = "Hit Points"`, matching `_hits` being
+  index 0 of the attribute array fixed in `apply_structs_gen.py`.
 
-Left alone (confirmed genuinely unreferenced by any instruction in
-OUT.EXE -- no `Creature.field_A`/`field_C`/`field_E` struct-relative
-access anywhere in the disassembly, unlike every other Creature field):
-`Creature.field_A`, `field_C`, `field_E` -- 6 bytes of the 16-byte
-Creature slot with no confirmed purpose, most likely padding written
-once and never read, but not asserted as such.
+**`Creature.field_A`/`field_C`/`field_E`** (2026-08-25, resolved --
+previously left unnamed): confirmed genuinely unused via an exhaustive
+scan (not just a symbolic-name grep) of every instruction's raw
+operand values in both OUT.EXE and SPACE.EXE for the fixed
+array-base-relative immediate that would reach each field through the
+`[si]`-indexed access pattern every other Creature field uses (see
+`ida_scripts/find_creature_padding_refs.py`) -- zero hits in either
+executable. The array is indexed via `shl ax, 4` (multiply by 16)
+rather than `imul ax, 10`, which is presumably *why* the padding
+exists: the struct's real data is 5 words (10 bytes: type/data/x/y/
+hits), padded out to a power-of-2 16 bytes purely so array indexing
+can use a fast shift instead of a multiply. Renamed to `_unused1`/
+`_unused2`/`_unused3` to reflect that confirmed (not just assumed)
+status.
 
+    .\\run_ida_script.ps1 -Idb ultima1 -ScriptName apply_structs_savegame.py -NoExport
     .\\run_ida_script.ps1 -Idb ultima1_gen -ScriptName apply_structs_savegame.py -NoExport
     .\\run_ida_script.ps1 -Idb ultima1_out -ScriptName apply_structs_savegame.py -NoExport
     .\\run_ida_script.ps1 -Idb ultima1_space -ScriptName apply_structs_savegame.py -NoExport
@@ -82,10 +89,10 @@ SAVEGAME_RENAMES = [
     (0x2C, "_readySpell", "see _readyWeapon."),
     (0x2E, "_readyArmor", "see _readyWeapon."),
     (0x3A, "_questStatus", "9-word per-castle quest state array (-1/1/0), not a list of quest objects."),
-    (0x54, "_armorSlot0", "distinct 2-byte slot before _leatherArmor -- item identity unconfirmed, see module docstring."),
-    (0x60, "_weaponSlot0", "distinct 2-byte slot before _dagger -- item identity unconfirmed, see module docstring."),
-    (0x80, "_spellSlot0", "distinct 2-byte slot before _open -- item identity unconfirmed, see module docstring."),
-    (0x96, "_transportSlot0", "distinct 2-byte slot before _horse -- item identity unconfirmed, see module docstring."),
+    (0x54, "_skin", "ARMOR[0] = \"Skin\" -- confirmed via dropArmor's menu loop starting at index 1, skipping this slot."),
+    (0x60, "_hands", "WEAPONS_LOWERCASE[0] = \"hands\" -- bare-handed/unarmed."),
+    (0x80, "_prayer", "SPELL_NAMES[0] = \"Prayer\"."),
+    (0x96, "_foot", "TRANSPORTS[0] = \"Foot\" -- on foot/walking, matches the existing TRANSPORT_WALKING constant."),
     (0xAA, "_overworldEntityCount", "saved/restored alongside _moveCount in saveGame/writeInUseAndExit/startup load, mirrors the live _creaturesCount global."),
     (0xB0, "_shipFuel", "propagated from SPACE.EXE's independently-correct name."),
     (0xB2, "_shipShield", "propagated from SPACE.EXE's independently-correct name."),
@@ -153,6 +160,33 @@ def fix_movecount_type():
         print(f"Savegame+0xAC: {name_ac!r} size={size_ac} -- already fine, leaving alone")
 
 
+# (offset, new_name, note) -- Creature struct fields.
+CREATURE_RENAMES = [
+    (0xA, "_unused1", "confirmed unreferenced by any instruction in OUT.EXE or SPACE.EXE -- see module docstring."),
+    (0xC, "_unused2", "see _unused1."),
+    (0xE, "_unused3", "see _unused1."),
+]
+
+
+def apply_creature_renames():
+    sid = idc.get_struc_id("Creature")
+    if sid == idc.BADADDR:
+        print("[!] Creature struct not found in this IDB -- skipping")
+        return
+    for off, new_name, note in CREATURE_RENAMES:
+        cur = idc.get_member_name(sid, off)
+        if cur == new_name:
+            print(f"Creature+{off:#04x}: already {new_name!r} -- skipping")
+            continue
+        print(f"Creature+{off:#04x}: {cur!r} -> {new_name!r}")
+        print(f"    {note}")
+        if DRY_RUN:
+            continue
+        ok = idc.set_member_name(sid, off, new_name)
+        if not ok:
+            print("    [!] rename FAILED")
+
+
 # Function(s) referencing the renamed field, worth renaming for consistency.
 FUNCTION_RENAMES = [
     ("addOverworldWidget", "addOverworldEntity",
@@ -181,6 +215,7 @@ def apply_function_renames():
 def main():
     apply_savegame_renames()
     fix_movecount_type()
+    apply_creature_renames()
     apply_function_renames()
     if DRY_RUN:
         print("\n[dry] nothing changed. Set DRY_RUN = False to apply.")

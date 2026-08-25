@@ -1069,31 +1069,66 @@ compare all 4 copies side by side.
   claimed) — a status table, not a list of quest objects, hence the
   clearer name.
 - **The `_X_array` fields** (`_armor_array`/`_weapons_array`/
-  `_spells_array`/`_transports_array`) were actively misleading: each
-  is a genuinely distinct 2-byte memory slot sitting 2 bytes *before*
-  the first individually-named item in its category (e.g.
-  `_armor_array` at `+0x54`, `_leatherArmor` at `+0x56`), not — as the
-  `_array` suffix implied — the base of an array whose first element
-  is one of the already-named fields. Renamed to `_armorSlot0`/
-  `_weaponSlot0`/`_spellSlot0`/`_transportSlot0` to drop the misleading
-  implication. **What item (if any) slot 0 represents in each category
-  is still unconfirmed** — `dropPenceCastle`'s random weapon-boost
-  event rolls `getRandomNumber(1, 15)`, skipping index 0, which is
-  consistent with either "index 0 is unused padding" (a plausible
-  1-based-BASIC-port artifact — item ID 0 is used as a "nothing
-  selected" sentinel elsewhere in the game, e.g. MONDAIN.EXE's
-  `selectedSpellIndex`) or "index 0 is a real item this one random
-  event just doesn't grant". Left as an open question rather than
-  guessing a specific item name — see roadmap.md.
-- **Left alone**: `Creature.field_A`/`field_C`/`field_E` (3 of the
-  struct's 16 bytes) — confirmed via cross-reference search that
-  *no* instruction anywhere in `OUT.EXE` accesses these by
-  struct-relative addressing, unlike every other `Creature` field.
-  Likely padding written once (or never) and never read by game
-  logic, but not asserted as such without positive evidence.
+  `_spells_array`/`_transports_array`, briefly `_armorSlot0`/
+  `_weaponSlot0`/`_spellSlot0`/`_transportSlot0`) were actively
+  misleading: each is a genuinely distinct 2-byte memory slot sitting
+  2 bytes *before* the first individually-named item in its category
+  (e.g. `_armor_array` at `+0x54`, `_leatherArmor` at `+0x56`), not —
+  as the `_array` suffix implied — the base of an array whose first
+  element is one of the already-named fields.
 
 Also renamed `addOverworldWidget` → `addOverworldEntity` in `OUT.EXE`
 (its only home) for consistency with the field rename.
+
+## Item-slot-0 and `Creature` padding, resolved
+
+Follow-up pass (2026-08-25) on the two questions the struct-cleanup
+pass above left open.
+
+**What item is slot 0 in each category?** Found the answer in
+`OUT.EXE`'s pre-existing item-name tables — `ARMOR`, `WEAPONS_LOWERCASE`,
+`SPELL_NAMES`, `TRANSPORTS` (all already named, just not cross-checked
+against the `Savegame` field order before now). Each has a real,
+named entry at index 0:
+
+| Table | Index 0 | Renamed field |
+|---|---|---|
+| `ARMOR` | `"Skin"` | `_armorSlot0` → **`_skin`** |
+| `WEAPONS_LOWERCASE` | `"hands"` | `_weaponSlot0` → **`_hands`** |
+| `SPELL_NAMES` | `"Prayer"` | `_spellSlot0` → **`_prayer`** |
+| `TRANSPORTS` | `"Foot"` | `_transportSlot0` → **`_foot`** |
+
+So these were never unused padding — they're each category's "nothing
+special equipped" baseline: bare skin, bare hands, a basic prayer
+instead of a real spell, on foot instead of a vehicle. Confirmed for
+armor specifically by `dropArmor`'s drop-menu loop, which explicitly
+starts iterating at index 1 (`var_A = 1`) rather than 0 — you can't
+drop your own skin. The same tables also explain a detail noticed
+during the earlier `apply_structs_gen.py` fix: `ATTRIBUTES[0]` is
+`"Hit Points"`, confirming `_hits` is genuinely index 0 of that
+struct's 7-word attribute array (see the character-creation section
+above) — the exact same "index 0 is a real baseline value, not
+padding" pattern, just for attributes instead of items.
+
+**What are `Creature.field_A`/`field_C`/`field_E`?** Confirmed
+genuinely unused — not just "unreferenced by name" (the kind of gap
+that produced the false `_hits`/`_strength` alarm in GEN.EXE), but
+unreferenced by *any* instruction. Wrote
+`ida_scripts/find_creature_padding_refs.py` to compute the raw
+immediate value an `[si]`-indexed array access would need to reach
+each field and scan every instruction's raw operand values for a
+match across the entirety of both `OUT.EXE` and `SPACE.EXE` (the two
+executables that actually use the `Creature` array) — zero hits in
+either. The array is indexed via `shl ax, 4` (× 16) rather than an
+`imul` by the struct's real 10-byte size (5 words: `_type`/`_data`/
+`_x`/`_y`/`_hits`), which is presumably *why* the padding exists: 16 is
+a power of 2, letting every array access use a fast shift instead of a
+multiply, at the cost of 6 wasted bytes per 40-entry array (240 bytes
+total). Renamed `field_A`/`field_C`/`field_E` → `_unused1`/`_unused2`/
+`_unused3` to reflect the now-confirmed (not just assumed) status.
+
+Both fixes applied via the same `ida_scripts/apply_structs_savegame.py`
+used for the original sync pass, across all 4 struct-owning IDBs.
 
 **`MONDAIN.EXE` intentionally excluded**: confirmed via `grep -i
 savegame ultima1_mondain.asm` that this executable never references
