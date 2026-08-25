@@ -924,10 +924,16 @@ handler prints (`"Board?"`, `"Drop?"`, `"Get (Gem)"`, `"Cast "`, `"Quit
 
 ### The encounter, mechanically
 
-- A 19×9 (`0x13 × 9`) map, loaded via 3 `readFile` calls at startup,
-  with the player at `(playerMapX, playerMapY)` and Mondain at
-  `(mondainMapX, mondainMapY)` (his tile's occupant-state byte is
-  always 6).
+- A 19×9 (`0x13 × 9`) map, with the player at `(playerMapX,
+  playerMapY)` and Mondain at `(mondainMapX, mondainMapY)` (his tile's
+  occupant-state byte is always 6). **Correction** (found while
+  writing [file-formats.md](file-formats.md#mondainexes-startup-file-loads--corrected)):
+  the map's actual tile layout is *not* loaded from a file — the 3
+  `readFile` calls at startup load the current savegame (`inuse.u1`),
+  a partial slice of the shared overworld tile graphics, and the
+  dedicated Mondain-encounter graphics, none of which are room-layout
+  data. With only one Mondain encounter in the whole game, the layout
+  is presumably hardcoded directly in this executable's data segment.
 - Arrow-key movement (`moveOrMeleeAttack`) either walks into an empty
   cell, is blocked by Mondain's own tile, or — if some other occupant
   is there — deals damage and, once player and Mondain are adjacent

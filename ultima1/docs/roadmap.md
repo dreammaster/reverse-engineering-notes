@@ -18,8 +18,13 @@ the per-executable breakdown this is tracking against.
       (re-ran `identify.py` without `-NoExport`; `.idc` byte-identical,
       `.asm` differs only in incidental ordering/whitespace, not content).
 - [x] Fixed `.gitignore` (was still ultima2-specific filenames).
-- [ ] Create `docs/file-formats.md` once the first on-disk format
-      (savegame, map, etc.) is actually traced — don't stub it empty.
+- [x] Create `docs/file-formats.md` (2026-08-25) — savegame record,
+      overworld map (nibble-packed), town/castle/dungeon-room layouts,
+      roster/session hand-off files, title-screen image, and the
+      graphics/sprite files all documented; dungeon generation and
+      exact tile-graphics pixel packing flagged as future work. Also
+      corrected a wrong claim from the MONDAIN.EXE session (its 3
+      startup `readFile` calls don't load room-layout data).
 
 ## Executable order
 
@@ -446,10 +451,8 @@ shifts to polish and cross-checking:
 - [x] Confirm the SPACE.EXE "leave outer space" comment's "(DOS
       EXEC...)" phrasing (2026-08-25) — see the checked-off entry
       under SPACE.EXE's own next-steps above for the full writeup.
-- [ ] Create `docs/file-formats.md` once the first on-disk format is
-      actually traced (savegame layout — now fully named and synced,
-      good starting point — the 19×9 Mondain-encounter map format
-      loaded via `readFile` in `mondainMainLoop`, etc.).
+- [x] Create `docs/file-formats.md` (2026-08-25) — see the checked-off
+      entry under Infra above for the full writeup.
 - [ ] Start the actual C++/ScummVM reimplementation — this was always
       the end goal of the naming sweep; with all 5 executables fully
       named and their major subsystems documented in overview.md, the

@@ -8347,3 +8347,118 @@ repeatable cmt: None
 [*] gen_file(OFILE_IDC) returned 1
 [*] saving database to C:\dev\ultima1\ultima1_space.idb
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'check_tile_enum2.py', 'noexport']
+[*] reading check_tile_enum2.py
+[*] executing check_tile_enum2.py
+[!] EXCEPTION:
+Traceback (most recent call last):
+  File "C:/dev/ultima1/ida_scripts/batch_run_and_export.py", line 97, in main
+    exec(compile(code, target_script, "exec"), g)
+  File "check_tile_enum2.py", line 24, in <module>
+    while val != ida_enum.BADADDR and val is not None:
+AttributeError: module 'ida_enum' has no attribute 'BADADDR'
+
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'dump_dungeon_structs.py', 'noexport']
+[*] reading dump_dungeon_structs.py
+[*] executing dump_dungeon_structs.py
+[*] captured stdout from target script:
+----- begin target script output -----
+
+=== DungeonCell size=0x8 (8) ===
+  0x00 size=0x2  _tileNum
+  0x02 size=0x2  _monsterId
+  0x04 size=0x2  _itemId
+  0x06 size=0x2  _monsterHp
+
+=== DungeonColumn size=0x58 (88) ===
+  0x00 size=0x58  _columns
+
+=== DungeonMap size=0x3c8 (968) ===
+  0x00 size=0x58  _cols_0
+  0x58 size=0x58  _cols_1
+  0xb0 size=0x58  _cols_2
+  0x108 size=0x58  _cols_3
+  0x160 size=0x58  _cols_4
+  0x1b8 size=0x58  _cols_5
+  0x210 size=0x58  _cols_6
+  0x268 size=0x58  _cols_7
+  0x2c0 size=0x58  _cols_8
+  0x318 size=0x58  _cols_9
+  0x370 size=0x58  _cols_10
+----- end target script output -----
+[*] finished executing dump_dungeon_structs.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_mondain.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'check_mondain_readfile_args.py', 'noexport']
+[*] reading check_mondain_readfile_args.py
+[*] executing check_mondain_readfile_args.py
+[*] captured stdout from target script:
+----- begin target script output -----
+dseg base: 0x15970
+0x55d (ea=0x15ecd): b'inuse.u1'
+0x184 (ea=0x15af4): b'\\'
+0x18a (ea=0x15afa): None
+0x156 (ea=0x15ac6): b'2'
+----- end target script output -----
+[*] finished executing check_mondain_readfile_args.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_mondain.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'check_mondain_readfile_args2.py', 'noexport']
+[*] reading check_mondain_readfile_args2.py
+[*] executing check_mondain_readfile_args2.py
+[*] captured stdout from target script:
+----- begin target script output -----
+dseg base: 0x15970
+
+=== second readFile filename table @ dseg+0x18a ===
+  mode 0: word value=0x2c0 -> string at dseg+0x2c0: b'!'
+  mode 1: word value=0x580 -> string at dseg+0x580: b'y Mondain!'
+  mode 2: word value=0x580 -> string at dseg+0x580: b'y Mondain!'
+
+=== third readFile filename table @ dseg+0x156 ===
+  mode 0: word value=0x132 -> string at dseg+0x132: b'CgaMond.Bin'
+  mode 1: word value=0x13e -> string at dseg+0x13e: b'EgaMond.Bin'
+  mode 2: word value=0x14a -> string at dseg+0x14a: b'T1KMond.Bin'
+----- end target script output -----
+[*] finished executing check_mondain_readfile_args2.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_mondain.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'check_mondain_readfile_args3.py', 'noexport']
+[*] reading check_mondain_readfile_args3.py
+[*] executing check_mondain_readfile_args3.py
+[*] captured stdout from target script:
+----- begin target script output -----
+=== second readFile: filename table @ dseg+0x184, count table @ dseg+0x18A ===
+  mode 0: filename ptr=0x15c -> b'CgaTiles.Bin', count=0x2c0 (704)
+  mode 1: filename ptr=0x169 -> b'EgaTiles.Bin', count=0x580 (1408)
+  mode 2: filename ptr=0x176 -> b'T1KTiles.Bin', count=0x580 (1408)
+
+=== third readFile: filename table @ dseg+0x156 (already confirmed CgaMond.Bin etc) ===
+----- end target script output -----
+[*] finished executing check_mondain_readfile_args3.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0

@@ -49,8 +49,13 @@ DRY_RUN = False
 RENAMES = [
     (0x11F85, "mondainMainLoop",
      "far proc, the sole callee of start2 (the whole executable exists "
-     "to run this). Loads the special map/room data via 3 readFile "
-     "calls, seeds the RNG, shows the instructions (showInstructions) "
+     "to run this). Runs 3 readFile calls at startup -- CORRECTION "
+     "(docs/file-formats.md, 2026-08-25): these load inuse.u1 (the "
+     "savegame), a partial slice of the shared overworld tile graphics, "
+     "and the dedicated Mondain-encounter graphics, NOT room-layout "
+     "data as originally described here; the 19x9 room's actual tile "
+     "layout is presumably hardcoded in this exe's data segment. "
+     "Then seeds the RNG, shows the instructions (showInstructions) "
      "and initial redraw, then loops: read a keypress, compare it "
      "against a packed (letter,jump-target) table at cs:[si+20B1h] "
      "(4 bytes/entry, si counts down from 0x78 i.e. up to 30 letters), "
