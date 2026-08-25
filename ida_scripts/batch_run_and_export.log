@@ -8028,3 +8028,70 @@ All structs in this IDB:
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'check_1f95e.py', 'noexport']
+[*] reading check_1f95e.py
+[*] executing check_1f95e.py
+[*] captured stdout from target script:
+----- begin target script output -----
+ea: 0x1f95e
+0x1f95e byte: 0x1 is_word: True
+0x1f95f byte: 0x0 is_word: False
+0x1f960 byte: 0xa is_word: False
+0x1f961 byte: 0x0 is_word: False
+0x1f962 byte: 0x64 is_word: False
+0x1f963 byte: 0x0 is_word: False
+0x1f964 byte: 0xe8 is_word: False
+0x1f965 byte: 0x3 is_word: False
+----- end target script output -----
+[*] finished executing check_1f95e.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'fix_powers_of_ten.py', 'noexport']
+[*] reading fix_powers_of_ten.py
+[*] executing fix_powers_of_ten.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0x1f95e: 'word_1F95E', 8 raw bytes (1 dw + 6 undefined db) -- fixing to a 4-word array
+[dry] would undefine, redefine as 4 words, rename to POWERS_OF_TEN
+----- end target script output -----
+[*] finished executing fix_powers_of_ten.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'fix_powers_of_ten.py']
+[*] reading fix_powers_of_ten.py
+[*] executing fix_powers_of_ten.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0x1f95e: 'word_1F95E', 8 raw bytes (1 dw + 6 undefined db) -- fixing to a 4-word array
+  del_items ok=True
+  create_word(8 bytes = 4 words) ok=True
+  rename to POWERS_OF_TEN ok=True
+  [0] = 1
+  [1] = 10
+  [2] = 100
+  [3] = 1000
+
+Done. Re-export the .asm/.idc and check the new array display took.
+----- end target script output -----
+[*] finished executing fix_powers_of_ten.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima1\ultima1_out.asm
+[*] gen_file(OFILE_ASM) returned 41654
+[*] exporting IDC to C:\dev\ultima1\ultima1_out.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima1\ultima1_out.idb
+[*] done, exiting 0
