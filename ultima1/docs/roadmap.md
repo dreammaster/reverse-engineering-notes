@@ -411,7 +411,7 @@ shifts to polish and cross-checking:
       `SPACE.EXE` (`ida_scripts/find_creature_padding_refs.py`), and
       renamed to `_unused1`/`_unused2`/`_unused3`. Full writeup in
       [overview.md](overview.md#item-slot-0-and-creature-padding-resolved).
-- [ ] `apply_structs_mondain.py` — **not needed after all**: confirmed
+- [x] `apply_structs_mondain.py` — **not needed after all**: confirmed
       `MONDAIN.EXE` never references `_savegame` anywhere in its code
       (its own encounter state is plain standalone globals, named in
       the MONDAIN.EXE pass), so there's no struct instance to import
@@ -429,8 +429,13 @@ shifts to polish and cross-checking:
 - [ ] Rename each IDB's segments (`sg*`/`seg00*`/`dseg`) to the
       `CODE`/`DATA` convention used in `ultima2` — not done for any of
       the 5 IDBs yet.
-- [ ] Fix `word_1F95E` in OUT.EXE (should be a `dw 4 dup(?)` array, not
-      a single `dw` + raw bytes).
+- [x] Fix `word_1F95E` in OUT.EXE (2026-08-25) — confirmed via
+      `readAmount` (the 4-digit numeric-input reader) that this is a
+      powers-of-ten lookup table (`1, 10, 100, 1000`) used to convert
+      typed digits into an integer; the trailing 3 values had never
+      been defined as words. Fixed and renamed to `POWERS_OF_TEN` via
+      `ida_scripts/fix_powers_of_ten.py`. Full writeup in
+      [overview.md](overview.md#word_1f95e-fixed--its-a-powers-of-ten-table).
 - [ ] Split `_nheapinit`'s mis-scoped proc boundary in OUT.EXE (visually
       contains `execProgramEntry`/`translateDosErrorToErrno`).
 - [ ] Confirm the SPACE.EXE "leave outer space" comment's "(DOS

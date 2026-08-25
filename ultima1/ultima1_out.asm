@@ -25692,7 +25692,7 @@ loc_1B146:                              ; CODE XREF: readAmount+80↑j
                 sub     ax, 30h ; '0'
                 mov     bx, [bp+12h+var_A]
                 shl     bx, 1
-                mul     word_1F95E[bx]
+                mul     POWERS_OF_TEN[bx]
                 add     [bp+12h+var_E], ax
                 inc     [bp+12h+var_A]
                 jmp     short loc_1B146
@@ -33501,13 +33501,7 @@ off_1F94A       dw offset soundEffectBump ; DATA XREF: playSound+11↑r
                 dw offset soundEffectAttack
                 dw offset soundEffect8
                 dw offset soundEffect9
-word_1F95E      dw 1                    ; DATA XREF: readAmount+BC↑r
-                db  0Ah
-                db    0
-                db  64h ; d
-                db    0
-                db 0E8h
-                db    3
+POWERS_OF_TEN   dw 1, 0Ah, 64h, 3E8h    ; DATA XREF: readAmount+BC↑r
 aRb             db 'rb',0               ; DATA XREF: readFile:loc_1B18B↑o
 aWb             db 'wb',0               ; DATA XREF: writeFile:loc_1B1E1↑o
 _lineStarts     dw 0C7h dup(0)          ; DATA XREF: fillRect+8C↑r

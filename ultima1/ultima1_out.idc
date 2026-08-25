@@ -20047,6 +20047,8 @@ static Bytes_3(void) {
 	op_plain_offset	(x,	0,	0X10000);
 	op_plain_offset	(x,	128,	0X10000);
 	create_word	(0X1F95E);
+	make_array	(0X1F95E,	0X4);
+	set_name	(0X1F95E,	"POWERS_OF_TEN");
 	create_strlit	(0X1F966,	0X3);
 	set_name	(0X1F966,	"aRb");
 	create_strlit	(0X1F969,	0X3);
@@ -20481,9 +20483,6 @@ static Bytes_3(void) {
 	op_plain_offset	(x,	0,	0X1D480);
 	op_plain_offset	(x,	128,	0X1D480);
 	set_name	(0X1FE98,	"SAVE_NAMES");
-	create_word	(x=0X1FE9A);
-	op_plain_offset	(x,	0,	0X1D480);
-	op_plain_offset	(x,	128,	0X1D480);
 }
 
 //------------------------------------------------------------------------
@@ -20493,6 +20492,9 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_word	(x=0X1FE9A);
+	op_plain_offset	(x,	0,	0X1D480);
+	op_plain_offset	(x,	128,	0X1D480);
 	create_word	(x=0X1FE9C);
 	op_plain_offset	(x,	0,	0X1D480);
 	op_plain_offset	(x,	128,	0X1D480);

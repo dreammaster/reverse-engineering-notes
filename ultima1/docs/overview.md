@@ -1146,3 +1146,22 @@ every struct-typed member's own layout, for cross-IDB diffing),
 `ida_scripts/apply_structs_savegame.py` (GEN/OUT/SPACE — plain
 renames), `ida_scripts/apply_structs_savegame_ultima.py` (ULTIMA.EXE —
 full rebuild, safe because the struct was unused there).
+
+## `word_1F95E` fixed — it's a powers-of-ten table
+
+Picked up the next roadmap item: `word_1F95E` had been flagged as
+"currently a single `dw 1` plus raw `db` bytes, should be a proper
+array". Its only reference, `readAmount` (the 4-digit numeric-input
+reader behind `dropPence`/`transactGrocer`/etc.), does
+`mul word_1F95E[bx]` with `bx = digitPosition*2` while accumulating a
+typed number one digit at a time working backward from the last digit
+— classic ASCII-to-integer conversion via a powers-of-ten lookup. The
+6 raw bytes following the initial `dw 1` decode as `0x000A`, `0x0064`,
+`0x03E8` — 10, 100, 1000. Confirmed the byte content matched exactly
+before touching anything, then re-defined the 8-byte range as a proper
+4-element word array and renamed it `POWERS_OF_TEN` (matching this
+IDB's existing ALL_CAPS convention for lookup tables — `ARMOR`,
+`WEAPONS_LOWERCASE`, `SPELL_NAMES`, etc.). Now displays cleanly as
+`POWERS_OF_TEN dw 1, 0Ah, 64h, 3E8h` instead of a named word followed
+by 6 bytes of unlabeled data. Fixed via
+`ida_scripts/fix_powers_of_ten.py`.
