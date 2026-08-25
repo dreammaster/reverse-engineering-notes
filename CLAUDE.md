@@ -1547,6 +1547,24 @@ rather than trusting these numbers as they age)
   Five new function matches, two new formalized structs, RoomStruct's
   last big gap and both remaining small pads closed, all from following
   one dangling function reference.
+- **Two quick follow-ups closed out RoomStruct's remaining loose ends.**
+  `roomstruct__roomstruct`'s body, already read in full, ends right
+  after `bytes_per_pixel`'s init — 2011's own constructor continues past
+  that point initializing `numLocalVars`/`localvars`/
+  `lastLoadNumHotspots`/`lastLoadNumRegions`/`lastLoadNumObjects` (plus
+  the already-confirmed-absent `walk_area_zoom2`/`top`/`bottom` trio).
+  The constructor's own completeness makes its silence on these fields
+  direct evidence they're CONFIRMED ABSENT too — a third confirmation
+  route for `localvars`/`numLocalVars`, and a first one for the three
+  `lastLoadNum*` fields. Separately, `ebscene[]`'s still-unconfirmed
+  capacity was run to ground: every one of its 6 references anywhere in
+  the disassembly uses the dynamic `num_bscenes` field as a loop bound,
+  never a fixed literal — matching 2011's own idiom exactly
+  (`SetBackgroundFrame`/etc. bounds-check against `num_bscenes`, not
+  `MAX_BSCENE`) — so this project's usual bounds-check-literal technique
+  has no site to find it at. Recorded as an exhausted lead, not an open
+  one; capacity stays at 2011's own `MAX_BSCENE=5` as an unconfirmed
+  working estimate.
 
 ## Third-party library identification (Task #10)
 

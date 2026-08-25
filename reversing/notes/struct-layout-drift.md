@@ -6808,3 +6808,56 @@ formalized structs (`sprstruc`, `PolyPoints`), RoomStruct's last big gap
 and both remaining small pads closed, and a decisive reinforcement of the
 previous round's `AnimationStruct`/`FullAnimation` rename -- a
 genuinely excellent return for following one dangling function reference.
+
+## Two quick follow-ups: constructor completeness, and an exhausted lead
+
+A short follow-up round picked up two loose ends left by
+`roomstruct__roomstruct`'s own discovery.
+
+**Constructor completeness closes three more absent-field questions.**
+`roomstruct__roomstruct`'s body had already been read in full and ends in
+a bare `retn` immediately after `bytes_per_pixel@+0x3A08=1`. 2011's own
+constructor (`acroom.h:889-901`) doesn't stop there -- it continues with
+`numLocalVars=0; localvars=NULL; lastLoadNumHotspots=0;
+lastLoadNumRegions=0; lastLoadNumObjects=0;` and then a `for` loop
+initializing `walk_area_zoom2[]`/`walk_area_top[]`/`walk_area_bottom[]`
+(the latter three already confirmed absent via round 8's version-ceiling
+argument). Since the disassembly's own version of this function is now
+known to be read completely, its *failure* to contain any of those
+assignments is direct positive evidence, not just an unfound access
+site: `lastLoadNumHotspots`/`lastLoadNumObjects`/`lastLoadNumRegions`
+(2011-only per-room-reload bookkeeping, `acroom.h:874-876`) are CONFIRMED
+ABSENT from this build's `RoomStruct` entirely, and `localvars`/
+`numLocalVars` (already confirmed absent twice over in round 7) pick up
+a THIRD independent confirmation route. This also narrows what could
+still occupy the still-unexplored territory past `+0x3A20`: every
+2011-declared field known to specifically live there (`bpalettes`,
+`localvars`/`numLocalVars`, and now the three `lastLoadNum*` fields) is
+confirmed absent, leaving only `ebpalShared[MAX_BSCENE]` (itself
+plausibly a later addition, per 2011's own "used internally by engine
+atm" comment) and the already-confirmed-absent `CustomProperties
+hsProps[MAX_HOTSPOTS]`/`gameId` as 2011-declared candidates for that
+space at all.
+
+**`ebscene[]`'s capacity: an exhausted lead, not an unexplored one.** An
+earlier round had flagged this as "a real, well-defined target for a
+future round (a bounds-check quit-message or a malloc/array-index
+literal would settle it)". Enumerating every single reference to
+`rst+0x3A0C` across the ENTIRE disassembly (6 total: `load_room`'s
+pre-load cleanup loop, its `BLOCKTYPE_ANIMBKGRND`(6) handler,
+`load_new_room`'s two resize/depth-conversion loops, and
+`roomstruct__roomstruct`'s own single `ebscene[0]=NULL` write) found
+that none of them use a fixed capacity literal -- every loop bound is
+the DYNAMIC `num_bscenes` field instead. Checking 2011's own idiom
+confirms this isn't a build-specific quirk: `SetBackgroundFrame`/
+`GetBackgroundFrame`/etc. (`Engine/AC.CPP:21027` and others) all
+bounds-check user input against `thisroom.num_bscenes` -- the room's own
+declared count -- never against `MAX_BSCENE`, the array's fixed
+capacity. So there was never going to be a literal-5 bounds check to
+find here, in EITHER build. This project's usual technique (find a
+bounds-check quit-message or an allocation-size literal) simply has no
+site to apply to for this specific field. `ebscene[]`'s capacity is
+recorded as genuinely unconfirmable by this route -- an exhausted lead
+now, not an open one -- and stays sized to 5 purely as 2011's own current
+`MAX_BSCENE` constant, without build-specific evidence backing that
+number for this build specifically.

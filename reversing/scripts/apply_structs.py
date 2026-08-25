@@ -4015,12 +4015,25 @@ struct RoomStruct {
                             // without having actually checked what 2011's own constant even was
                             // -- an unforced error caught immediately after `anims[]`, two fields
                             // prior, turned out to be a genuine ZERO-DRIFT match rather than the
-                            // assumed drift too). Still not independently verified either way --
-                            // a real, well-defined target for a future round (a bounds-check
-                            // quit-message or a malloc/array-index literal would settle it, the
-                            // same technique used everywhere else in this project). `ebscene[0]`
-                            // itself is populated separately, in `load_main_block`, via the
-                            // `load_lzw`/`recalced` sequence discussed at `+0x00` above.
+                            // assumed drift too). CHECKED THIS ROUND, still not independently
+                            // confirmed -- but now via an EXHAUSTIVE search rather than an
+                            // unexplored lead: every single reference to `+0x3A0C` anywhere in the
+                            // entire disassembly (6 total, including the constructor's own
+                            // `ebscene[0]=NULL` write) was enumerated, and all of them either
+                            // write a single fixed index (`ebscene[0]` specifically) or loop
+                            // bounded by the DYNAMIC `num_bscenes` field -- never a fixed capacity
+                            // literal. This exactly matches 2011's OWN idiom
+                            // (`SetBackgroundFrame`/`GetBackgroundFrame`/etc. all bounds-check
+                            // user input against `thisroom.num_bscenes`, the room's own declared
+                            // count, NOT `MAX_BSCENE` the array capacity -- `Engine/AC.CPP:21027`
+                            // etc.), so the absence of a literal-5 check isn't itself surprising --
+                            // but it also means this project's usual technique (a bounds-check
+                            // quit-message or malloc/array-index literal) has no site left to find
+                            // it at. Capacity remains genuinely unconfirmable by this route; sized
+                            // to 5 purely as 2011's own current constant, not build-specific
+                            // evidence. `ebscene[0]` itself is populated separately, in
+                            // `load_main_block`, via the `load_lzw`/`recalced` sequence discussed
+                            // at `+0x00` above.
   // `bpalettes[MAX_BSCENE][256]` (2011's declared per-background-frame palette array,
   // `acroom.h:867`) is CONFIRMED ABSENT from this build: `load_room`'s `BLOCKTYPE_ANIMBKGRND`(6)
   // handler passes the SAME shared `rstruc+0x14` (the already-confirmed `pal[256]`) as the
@@ -4045,11 +4058,35 @@ struct RoomStruct {
   // croom->interactionVariableValues[ff]=thisroom.localvars[ff].value;" copy loop either -- two
   // independent negative results agreeing with each other, the same cross-confirmation standard
   // used for every other confirmed-absent finding in this project.
-  // Everything past +0x3A20 is unexplored territory for this fresh-survey round -- the struct's
-  // own total size is not yet established. Every field `load_room`'s and `load_main_block`'s own
-  // read/write sequences reference has now been mapped; further progress needs either a genuinely
-  // new evidence source (a different already-matched function touching `rstruc`) or independently
-  // confirming `ebscene[]`'s real capacity for this build.
+  // FOUND VIA `roomstruct__roomstruct` (this build's newly-matched default constructor, closing
+  // the loop on `localvars`/`numLocalVars` a THIRD independent way, and confirming three more
+  // fields absent for the first time): the function's body ENDS -- a bare `retn` -- immediately
+  // after `bytes_per_pixel@+0x3A08=1`. 2011's own constructor (`acroom.h:889-901`) continues past
+  // the equivalent point with `numLocalVars=0; localvars=NULL; lastLoadNumHotspots=0;
+  // lastLoadNumRegions=0; lastLoadNumObjects=0;` and then a `for` loop initializing
+  // `walk_area_zoom2[]`/`walk_area_top[]`/`walk_area_bottom[]` (already independently confirmed
+  // absent via round 8's version-ceiling argument). Since this function has now been read
+  // completely, start to end, its FAILURE to contain any of those assignments is direct positive
+  // evidence, not merely an unfound access site: this build's `RoomStruct` has no
+  // `lastLoadNumHotspots`/`lastLoadNumObjects`/`lastLoadNumRegions` fields at all (both fields are
+  // 2011-only per-room reload bookkeeping this build's ancestor layout predates), on top of the
+  // now triply-confirmed absence of `localvars`/`numLocalVars` and the already-known absence of
+  // the `walk_area_zoom2`/`top`/`bottom` trio. `CustomProperties hsProps[MAX_HOTSPOTS]`/`gameId`
+  // (`acroom.h:872-873`) are not part of 2011's own constructor either, so this evidence doesn't
+  // speak to them directly, but both are already independently confirmed absent via round 8's
+  // version-ceiling argument (`CustomProperties` gated version>=21, `gameId` version>=25).
+  //
+  // Everything past +0x3A20 remains unexplored territory -- the struct's own total size is still
+  // not established -- but every 2011-declared field known to occupy that region specifically
+  // (`bpalettes`, `localvars`/`numLocalVars`, and now `lastLoadNumHotspots`/`lastLoadNumObjects`/
+  // `lastLoadNumRegions`) is confirmed absent, narrowing what could still be there considerably:
+  // only `ebpalShared[MAX_BSCENE]` (`acroom.h:870`, "used internally by engine atm" per 2011's own
+  // comment -- plausibly a later addition itself, unconfirmed either way) and `CustomProperties
+  // hsProps[MAX_HOTSPOTS]`/`gameId` (both already confirmed absent) remain as 2011-declared
+  // candidates for this space at all. Every field `load_room`'s, `load_main_block`'s, and
+  // `roomstruct__roomstruct`'s own read/write sequences reference has now been mapped; further
+  // progress needs either a genuinely new evidence source (a different already-matched function
+  // touching `rstruc`) or independently confirming `ebscene[]`'s real capacity for this build.
 };
 
 // AmbientSound (this build's version) -- FRESH SURVEY, picked as the next target after
