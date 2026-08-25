@@ -802,7 +802,8 @@ static Bytes_0(void) {
 	create_insn	(x=0X107D0);
 	op_dec		(x,	1);
 	create_insn	(x=0X107D4);
-	op_man		(x,	0,	"(_savegame._strength-2)[si]");
+	op_plain_offset	(x,	0,	0X14260);
+	op_plain_offset	(x,	128,	0X14260);
 	create_insn	(x=0X107DD);
 	op_hex		(x,	1);
 	create_insn	(0X107E2);
@@ -1405,8 +1406,14 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X10E6A);
 	op_hex		(x,	1);
+	create_insn	(x=0X10E6E);
+	op_plain_offset	(x,	0,	0X14260);
+	op_plain_offset	(x,	128,	0X14260);
 	create_insn	(x=0X10E7F);
 	op_hex		(x,	1);
+	create_insn	(x=0X10E83);
+	op_plain_offset	(x,	0,	0X14260);
+	op_plain_offset	(x,	128,	0X14260);
 	set_cmt	(0X10E87,	"attr",	0);
 	create_insn	(x=0X10E92);
 	op_hex		(x,	1);
