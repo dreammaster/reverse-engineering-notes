@@ -6920,3 +6920,52 @@ absent from this build's version, consistent with the broader pattern of
 this build predating AGS's claimable-event system. Bonus: identifies
 `dword_523134` as `gameinst`, confirmed via `process_interface_click`'s
 own call-site push order.
+
+## `GUIMain.fgcol` closes via `wtextcolor`, plus an inlined-and-simplified `adjust_y_for_guis`
+
+Continuing the `GUIMain` field survey, `_display_main` (already matched
+-- the core text/speech-display positioning function) turned out to have
+an entire chunk of 2011's `draw_text_window_and_bar` (`Engine/AC.CPP:
+12573-`) INLINED directly into it, rather than calling it as a separate
+function -- the familiar "one big pre-refactor function, later split
+apart" pattern seen repeatedly elsewhere in this project (`sub_42B394`/
+`cc_run_code`, `offset_over_inv`, `unload_old_room`, and now this).
+
+Two distinct inlined branches were found, matching two different pieces
+of source:
+
+1. **An `adjust_y_for_guis`-shaped branch** (source role at `AC.CPP:
+   12757-12777`): loops over `guis[]` checking `on@+0x90>=1`, then
+   `y@+0x2C<=yy`, then adjusts `yy` when it falls inside `y..y+hit`
+   (`hit@+0x34`). This gives `on`/`y`/`hit` further reconfirmations, but
+   is a genuinely SIMPLER predecessor of 2011's version -- missing the
+   "totally transparent GUI, ignore" check (`bgcol==0 && bgpic<1`) and
+   the "full-height GUI down the side, ignore" check (`hit >
+   get_fixed_pixel_size(50)`) entirely. So despite superficially matching
+   `adjust_y_for_guis`'s ROLE, this specific site doesn't extend to
+   `bgcol`/`bgpic` field evidence -- those checks simply aren't compiled
+   in here.
+2. **The custom-speech-GUI branch** (source role at `AC.CPP:12902-12931`):
+   when a custom text-window GUI is configured, does `wtextcolor(guis
+   [ifnum].fgcol)` before drawing speech text. The disassembly's exact
+   counterpart, `push [guis+ifnum*184h+50h]; call sub_401F62`, matches
+   this precisely. `ifnum` here is this build's already-confirmed
+   `GameState.speech_textwindow_gui` global (established several rounds
+   ago via `main`'s own evidence) picking up a brand new reader -- 2011's
+   own version computes an equivalent LOCAL (`usingGui = play.
+   speech_textwindow_gui;`) at this exact point rather than reading the
+   global directly, another instance of this project's "locals collapsed
+   into direct global reads" simplification pattern.
+
+`sub_401F62` itself needed independent confirmation before it could
+support the `fgcol` claim, and got a decisive one: `GUILabel__Draw`
+(already matched) calls it as `wtextcolor([this+0xEC])`, matching source's
+`wtextcolor(textcol);` (`acgui.cpp:354`) exactly, where `[this+0xEC]` is
+`GUILabel.textcol`, itself already independently confirmed via
+`GUILabel__ReadFromFile`'s own default-value logic. With `sub_401F62`
+confirmed as `wtextcolor` (24 call sites total across the disassembly,
+consistent with a widely-used simple wrapper), the `_display_main` call
+decisively confirms `GUIMain.fgcol`@`+0x50`, upgrading it from MEDIUM to
+HIGH confidence -- the first of `GUIMain`'s remaining MEDIUM fields to
+close this round. `vtext`/`name`/`clickEventHandler`/`focus`/`bgcol`/
+`mousewasx`/`mousewasy`/`highlightobj`/`guiId`/`reserved[6]` remain open.

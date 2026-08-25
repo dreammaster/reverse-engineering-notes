@@ -441,8 +441,20 @@ struct GUIMain {
                            // matched, script-exported): "mov [guis+guin*184h+4Ch], slotn" -- sets
                            // this field directly from its `slotn` parameter, matching 2011's
                            // declared field in position exactly.
-  int fgcol;                  // +0x50, MEDIUM confidence: positional/arithmetic fit only, boxed in
-                           // with zero slack between the confirmed `bgpic` and `mouseover` fields.
+  int fgcol;                  // +0x50, high confidence (UPGRADED from MEDIUM): confirmed via
+                           // `_display_main` (already matched): an inlined custom-text-window-GUI
+                           // branch does "push [guis+ifnum*184h+50h]; call sub_401F62" -- matching
+                           // source's "wtextcolor(guis[ifnum].fgcol);" (`Engine/AC.CPP:12931`,
+                           // inside `draw_text_window_and_bar`'s speech-GUI branch, inlined here
+                           // rather than called separately) exactly, where `ifnum` is this build's
+                           // already-confirmed `GameState.speech_textwindow_gui` global (see
+                           // `main`'s own matches.json entry) getting a new reader. `sub_401F62`
+                           // itself is independently, decisively confirmed as `wtextcolor` via
+                           // `GUILabel__Draw` (already matched): "push [this+0xEC]; call
+                           // sub_401F62" matches source's "wtextcolor(textcol);" (`acgui.cpp:354`)
+                           // exactly, where `[this+0xEC]` is `GUILabel.textcol`, already
+                           // independently confirmed via `GUILabel__ReadFromFile`'s own default-
+                           // value logic.
   int mouseover;          // +0x54, confirmed via GUIMain::mouse_but_down
   int mousewasx;              // +0x58, MEDIUM confidence: positional/arithmetic fit only, matching
                            // 2011's declared `mousewasx, mousewasy` adjacency.

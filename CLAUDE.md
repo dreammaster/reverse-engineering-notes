@@ -235,7 +235,7 @@ rather than trusting these numbers as they age)
   944/776 before that addition) — this pool was "largely exhausted" for
   Engine/Common code specifically; a productive third-party-library round
   (Task #10, now paused — see below) pushed it further before wrapping up.
-- `reversing/analysis/matches.json` has 578 entries (function + struct-field
+- `reversing/analysis/matches.json` has 579 entries (function + struct-field
   matches combined)
 - 25 struct definitions built entirely from disassembly evidence (not
   borrowed from the 2011 source — see `reversing/notes/struct-layout-drift.md`):
@@ -1585,6 +1585,22 @@ rather than trusting these numbers as they age)
   (%s)"` string, and an exact `strnicmp(tsname,"interface_click",15)`
   match — missing only 2011's later `"on_event"`/`run_claimable_event`
   special case. Bonus: identifies `dword_523134` as `gameinst`.
+- **`GUIMain.fgcol` closes via a newly-matched `wtextcolor`.**
+  `_display_main` (already matched) turns out to have an entire chunk of
+  2011's `draw_text_window_and_bar` inlined directly into it — another
+  "one big pre-refactor function" case. One inlined branch matches
+  `adjust_y_for_guis`'s role but is a genuinely simpler predecessor,
+  missing 2011's `bgcol`/`bgpic` transparency check and full-height-GUI
+  exclusion entirely (so no new evidence for those two fields). The other
+  inlined branch does `wtextcolor(guis[ifnum].fgcol)` for custom-speech-
+  GUI text color — `ifnum` being the already-confirmed `GameState.
+  speech_textwindow_gui` global picking up a new reader. `sub_401F62`
+  needed independent confirmation first and got a decisive one via
+  `GUILabel__Draw`'s own `wtextcolor(textcol)` call (matching
+  `acgui.cpp:354` exactly) — now matched as `wtextcolor` (24 call sites
+  total). This upgrades `GUIMain.fgcol`@+0x50 from MEDIUM to HIGH
+  confidence, the first of `GUIMain`'s remaining fields to close this
+  round.
 
 ## Third-party library identification (Task #10)
 
