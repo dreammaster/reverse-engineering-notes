@@ -48,7 +48,7 @@ loc_10005:
 loc_1000B:
                 add     sp, 0B240h
                 sti
-                mov     word_1D48C, es
+                mov     word ptr dword_1D48A+2, es
                 mov     word_1D490, es
                 cld
                 mov     ax, es
@@ -350,7 +350,7 @@ loc_10261:                              ; CODE XREF: start+235↑j
 
 loc_10267:                              ; CODE XREF: start+25F↑j
                 mov     ax, seg seg003
-                sub     ax, word_1D48C
+                sub     ax, word ptr dword_1D48A+2
                 mov     seg_1D492, ax
                 mov     ax, word ptr dword_1D4C4+2
                 sub     ax, seg sg0E82
@@ -554,7 +554,7 @@ loc_103DC:                              ; CODE XREF: start+5B↑j
                 mov     ah, 9
                 int     21h             ; DOS - PRINT STRING
                                         ; DS:DX -> string terminated by "$"
-                mov     es, word_1D48C
+                mov     es, word ptr dword_1D48A+2
                 assume es:nothing
                 mov     ax, 4C01h
                 int     21h             ; DOS - 2+ - QUIT WITH EXIT CODE (EXIT)
@@ -20759,17 +20759,13 @@ criticalErrorHandler endp
 ; Attributes: bp-based frame
 
 _nheapinit      proc near               ; CODE XREF: start+28B↑p
-
-arg_4           = word ptr  8
-arg_6           = byte ptr  0Ah
-
                 push    bp
                 mov     bp, sp
                 mov     _doserrno, 0
                 cmp     seg_1D4A6, 0
                 jnz     short loc_1947B
                 mov     bx, word_1D4CC
-                sub     bx, word_1D48C
+                sub     bx, word ptr dword_1D48A+2
                 mov     dx, word_1EC28
                 mov     cx, word_1EC2A
                 add     dx, 0Fh
@@ -20795,7 +20791,7 @@ arg_6           = byte ptr  0Ah
                 push    dx
                 push    bx
                 push    es
-                les     ax, dword ptr word_1D48A
+                les     ax, dword_1D48A
                 mov     ah, 4Ah
                 int     21h             ; DOS - 2+ - ADJUST MEMORY BLOCK SIZE (SETBLOCK)
                                         ; ES = segment address of block to change
@@ -20829,14 +20825,20 @@ loc_19499:                              ; CODE XREF: _nheapinit+29↑j
                 mov     ax, 0FFFFh
                 pop     bp
                 retn
-; ---------------------------------------------------------------------------
+_nheapinit      endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_1949E       proc near
                 push    bp
                 sub     sp, 4
                 mov     bp, sp
-                lea     ax, [bp+arg_6]
+                lea     ax, [bp+0Ah]
                 mov     [bp+2], ax
 
-loc_194AA:                              ; CODE XREF: _nheapinit+9E↓j
+loc_194AA:                              ; CODE XREF: sub_1949E+18↓j
                 mov     si, [bp+2]
                 cmp     word ptr [si], 0
                 jz      short loc_194B8
@@ -20844,20 +20846,24 @@ loc_194AA:                              ; CODE XREF: _nheapinit+9E↓j
                 jmp     short loc_194AA
 ; ---------------------------------------------------------------------------
 
-loc_194B8:                              ; CODE XREF: _nheapinit+98↑j
+loc_194B8:                              ; CODE XREF: sub_1949E+12↑j
                 mov     si, [bp+2]
                 push    word ptr [si+2]
-                lea     ax, [bp+arg_6]
+                lea     ax, [bp+0Ah]
                 push    ax
-                push    [bp+arg_4]
+                push    word ptr [bp+8]
                 call    execProgramEntry
                 mov     sp, bp
                 add     sp, 4
                 pop     bp
                 retn
-; ---------------------------------------------------------------------------
+sub_1949E       endp
 
-execProgramEntry:                       ; CODE XREF: chainToExecutable+11↑p
+
+; =============== S U B R O U T I N E =======================================
+
+
+execProgramEntry proc near              ; CODE XREF: chainToExecutable+11↑p
                                         ; chainToExecutableAlt+10↑p ...
                 push    bp
                 sub     sp, 42h
@@ -20875,7 +20881,7 @@ execProgramEntry:                       ; CODE XREF: chainToExecutable+11↑p
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_194ED:                              ; CODE XREF: _nheapinit+CB↑j
+loc_194ED:                              ; CODE XREF: execProgramEntry+14↑j
                 push    word ptr [bp+4Ah]
                 push    word ptr [bp+48h]
                 lea     ax, [bp+2]
@@ -20890,24 +20896,28 @@ loc_194ED:                              ; CODE XREF: _nheapinit+CB↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_19508:                              ; CODE XREF: _nheapinit+E6↑j
+loc_19508:                              ; CODE XREF: execProgramEntry+2F↑j
                 add     sp, 42h
                 pop     bp
                 retn
-; ---------------------------------------------------------------------------
+execProgramEntry endp
 
-translateDosErrorToErrno:               ; CODE XREF: _nheapinit+7E↑j
+
+; =============== S U B R O U T I N E =======================================
+
+
+translateDosErrorToErrno proc near      ; CODE XREF: _nheapinit+7E↑j
                                         ; _dos_open+E↓j ...
                 jnb     short loc_1955B
 
-loc_1950F:                              ; CODE XREF: _nheapinit+148↓j
+loc_1950F:                              ; CODE XREF: translateDosErrorToErrno+53↓j
                                         ; _dos_close:loc_19569↓j ...
                 test    byte_1ECC3, 2
                 jz      short loc_1951E
                 mov     ax, 53h ; 'S'
                 and     byte_1ECC3, 1
 
-loc_1951E:                              ; CODE XREF: _nheapinit+FC↑j
+loc_1951E:                              ; CODE XREF: translateDosErrorToErrno+7↑j
                 mov     _doserrno, ax
                 cmp     byte ptr word_1D482, 3
                 jl      short loc_1953E
@@ -20923,13 +20933,13 @@ loc_1951E:                              ; CODE XREF: _nheapinit+FC↑j
                 mov     byte_1ECC1, bl
                 mov     byte_1ECC2, ch
 
-loc_1953E:                              ; CODE XREF: _nheapinit+10E↑j
+loc_1953E:                              ; CODE XREF: translateDosErrorToErrno+19↑j
                 mov     ax, _doserrno
                 cmp     al, 53h ; 'S'
                 jle     short loc_19547
                 xor     al, al
 
-loc_19547:                              ; CODE XREF: _nheapinit+12B↑j
+loc_19547:                              ; CODE XREF: translateDosErrorToErrno+36↑j
                 mov     bx, 1844h
                 xlat
                 xor     ah, ah
@@ -20937,20 +20947,20 @@ loc_19547:                              ; CODE XREF: _nheapinit+12B↑j
                 jnz     short loc_19552
                 dec     ax
 
-loc_19552:                              ; CODE XREF: _nheapinit+137↑j
+loc_19552:                              ; CODE XREF: translateDosErrorToErrno+42↑j
                 mov     errno, ax
                 mov     ax, 0FFFFh
                 mov     bx, ax
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1955B:                              ; CODE XREF: _nheapinit:translateDosErrorToErrno↑j
+loc_1955B:                              ; CODE XREF: translateDosErrorToErrno↑j
                                         ; _dos_close-13↓j
                 test    byte_1ECC3, 2
                 jnz     short loc_1950F
                 mov     _doserrno, 0
                 retn
-_nheapinit      endp
+translateDosErrorToErrno endp
 
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR _dos_close
@@ -21177,7 +21187,7 @@ atexit          endp
 
 ; Attributes: fpd=4
 
-findExecutableFile proc near            ; CODE XREF: _nheapinit+C4↑p
+findExecutableFile proc near            ; CODE XREF: execProgramEntry+D↑p
 
 arg_0           = word ptr  2
 arg_2           = word ptr  4
@@ -21248,7 +21258,7 @@ findExecutableFile endp
 
 ; Attributes: fpd=97h
 
-buildAndChainExecutable proc near       ; CODE XREF: _nheapinit+DF↑p
+buildAndChainExecutable proc near       ; CODE XREF: execProgramEntry+28↑p
 
 var_93          = word ptr -93h
 var_91          = word ptr -91h
@@ -21889,7 +21899,7 @@ arg_4           = word ptr  8
                 mov     bp, sp
                 push    ds
                 cld
-                mov     ax, word_1D48C
+                mov     ax, word ptr dword_1D48A+2
                 mov     cs:word_19B2D, ax
                 mov     es, ax
                 assume es:nothing
@@ -22367,7 +22377,7 @@ loc_19EEB:                              ; CODE XREF: _nheapgrow+25↑j
                 test    ax, 0F000h
                 jnz     short loc_19F59
                 push    es
-                les     ax, dword ptr word_1D48A
+                les     ax, dword_1D48A
                 mov     ah, 4Ah
                 int     21h             ; DOS - 2+ - ADJUST MEMORY BLOCK SIZE (SETBLOCK)
                                         ; ES = segment address of block to change
@@ -31147,10 +31157,8 @@ dword_1D484     dd 0                    ; DATA XREF: start+AB↑r
                                         ; start+CC↑w ...
 word_1D488      dw 0                    ; DATA XREF: start:loc_100DD↑w
                                         ; start+35C↑r
-word_1D48A      dw 0                    ; DATA XREF: _nheapinit+52↑r
-                                        ; _nheapgrow+78↑r
-word_1D48C      dw 0                    ; DATA XREF: start+10↑w
-                                        ; start+26A↑r ...
+dword_1D48A     dd 0                    ; DATA XREF: _nheapinit+52↑r
+                                        ; _nheapgrow+78↑r ...
                 dw 80h
 word_1D490      dw 0                    ; DATA XREF: start+14↑w
 seg_1D492       dw seg seg003           ; DATA XREF: start+1B↑w
@@ -32190,11 +32198,11 @@ word_1EC64      dw 0                    ; DATA XREF: _flushall+F9↑r
                 db    0
                 db    0
                 db    0
-byte_1ECC0      db 0                    ; DATA XREF: _nheapinit+11A↑w
-byte_1ECC1      db 0                    ; DATA XREF: _nheapinit+11E↑w
-byte_1ECC2      db 0                    ; DATA XREF: _nheapinit+122↑w
+byte_1ECC0      db 0                    ; DATA XREF: translateDosErrorToErrno+25↑w
+byte_1ECC1      db 0                    ; DATA XREF: translateDosErrorToErrno+29↑w
+byte_1ECC2      db 0                    ; DATA XREF: translateDosErrorToErrno+2D↑w
 byte_1ECC3      db 0                    ; DATA XREF: criticalErrorHandler+2D↑w
-                                        ; _nheapinit:loc_1950F↑r ...
+                                        ; translateDosErrorToErrno:loc_1950F↑r ...
                 db    0
                 db  16h
                 db    2
@@ -32289,7 +32297,7 @@ byte_1ECC3      db 0                    ; DATA XREF: criticalErrorHandler+2D↑w
                 db    0
 word_1ED20      dw 0                    ; DATA XREF: _exit+6↑r
                                         ; _exit+E↑r ...
-errno           dw 0                    ; DATA XREF: _nheapinit:loc_19552↑w
+errno           dw 0                    ; DATA XREF: translateDosErrorToErrno:loc_19552↑w
                                         ; _dos_write+17↑w ...
 aCom            db 'COM',0
 aExe            db 'EXE',0
