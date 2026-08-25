@@ -3778,20 +3778,24 @@ struct RoomStruct {
                             // (`acroom.h:60`) -- a one-off reduction, the same direction as this
                             // project's usual smaller-capacity pattern though unusually small in
                             // magnitude.
-  // objyval[] (2011's `short objyval[MAX_OBJ]`, walkbehind-area baselines) starts at +0x416 with
-  // ZERO gap after numobj -- "fread(rst+0x416, ElementSize=2, Count=[rst+0x414])" matches source's
-  // "fread(&rstruc->objyval[0], 2, rstruc->numobj, opty);" (`acroom.h:1655`) exactly, confirming
-  // the START address and element type/size, but NOT a fixed capacity (the read count is dynamic,
-  // driven by `numobj` itself, not a compile-time `MAX_OBJ` constant) -- left folded into the pad
-  // below rather than declared as its own array, consistent with this project's convention of not
-  // asserting an unconfirmed capacity.
-  char _pad_objyval_tail[0x1E]; // +0x416..0x434, NOT independently confirmed this round --
-                            // plausibly the rest of `objyval[]`'s fixed capacity (a
-                            // zero-remainder fit: 30 bytes/2 = 15 shorts, i.e. `MAX_OBJ=15`
-                            // would land exactly here with zero slack -- consistent with this
-                            // project's repeated smaller-capacity drift pattern, but no direct
-                            // read/write site observed for `MAX_OBJ`'s own value, so treated as
-                            // a strong lead rather than a confirmed fact).
+  short objyval[15];             // +0x416..0x434 (30 bytes, 2011's `short objyval[MAX_OBJ]`,
+                            // walkbehind-area baselines), high confidence -- RESOLVED this round by
+                            // connecting two previously-separate pieces of evidence that were never
+                            // cross-referenced against each other. Start address/element type/size
+                            // confirmed via `load_main_block`'s "fread(rst+0x416, ElementSize=2,
+                            // Count=[rst+0x414])" matching source's "fread(&rstruc->objyval[0], 2,
+                            // rstruc->numobj, opty);" (`acroom.h:1655`) exactly -- but that alone
+                            // only bounds the READ to a dynamic `numobj`-driven count, not the
+                            // array's own fixed CAPACITY, so the trailing 30 bytes were left as an
+                            // unconfirmed pad pending direct evidence for this build's own `MAX_OBJ`
+                            // value. That evidence has since been found (a later round,
+                            // `roomstruct__roomstruct`'s own constructor default: "numobj@+0x414 =
+                            // 0xF(15)", matching source's `numobj=MAX_OBJ;` idiom -- see `numobj`'s
+                            // own entry) -- confirming this build's `MAX_OBJ`-equivalent is
+                            // EXACTLY 15, which lands with ZERO remainder on this field's own
+                            // already-established 30-byte (15-short) span. Both pieces of evidence
+                            // were independently correct when found, just never connected until
+                            // this round.
   short whataction[130];        // +0x434..0x538 (260 bytes), high confidence, MAJOR
                             // ARCHAEOLOGICAL FINDING: this build's room-file format STILL
                             // ACTIVELY READS the "obsolete v2.00 action editor" arrays that

@@ -7157,5 +7157,60 @@ either a confirmed field (`flags`, `x`, `y`, `wid`, `hit`, `zorder`,
 `activated`) or the already-independently-confirmed `guin`/`objn`-absent
 finding from two rounds ago. The full `GUIObject` base recovery arc
 across this session: `guin`/`objn` shown likely absent (round before
-last) → `zorder` closes the one remaining gap (this round) -- a genuine,
+last) -> `zorder` closes the one remaining gap (this round) -- a genuine,
 if incidental, capstone to the `GUIObject` class hierarchy work.
+
+## `RoomStruct.objyval[]`: closed by connecting two already-known facts
+
+With `GUIObject`/`GUIMain` now thoroughly exhausted, this round swept the
+whole file for any remaining `_pad_*` gaps across every struct, looking
+for cases where evidence found in one round might settle a question left
+open in an earlier, unrelated round -- a category of easy win this
+project hasn't deliberately gone looking for before.
+
+One turned up immediately: `RoomStruct.objyval[]`. Its start address and
+element type were confirmed many rounds ago via `load_main_block`'s own
+`fread(rst+0x416, ElementSize=2, Count=numobj)`, matching source's
+`fread(&rstruc->objyval[0], 2, rstruc->numobj, opty);` (`acroom.h:1655`)
+-- but that read is bounded by the DYNAMIC `numobj` field, not a
+compile-time capacity, so the array's own fixed size (2011 declares it
+`short objyval[MAX_OBJ]`) was left as an unconfirmed 30-byte pad,
+explicitly noting "no direct read/write site observed for `MAX_OBJ`'s own
+value."
+
+That statement stopped being true several rounds later, just without
+anyone going back to check: `roomstruct__roomstruct`'s own constructor
+(found while chasing `wallpoints`/`PolyPoints`) sets `numobj`'s default
+to the literal `0xF`(15), matching source's `numobj = MAX_OBJ;` idiom and
+independently pinning this build's own `MAX_OBJ`-equivalent at exactly
+15 -- a fact recorded on `numobj`'s own entry at the time, but never
+cross-referenced back against `objyval[]`'s still-open capacity question
+sitting right next to it. 15 shorts is exactly 30 bytes, landing with
+zero remainder on the already-confirmed pad. Retyped `_pad_objyval_tail
+[0x1E]` to `short objyval[15]` accordingly.
+
+Both underlying facts were independently correct the moment they were
+found; this round's only contribution is noticing they answer each
+other. Worth remembering as a technique for future rounds: periodically
+sweep for `_pad_*` fields whose "missing piece" (usually a capacity
+constant) might already have been established elsewhere in the file
+under a completely different investigation thread.
+
+A pass over `GameSetupStructBase.__old_spriteflags[2100]` (the largest
+remaining pad in the file) and `GameState.play_invorder[100]`'s own
+long-standing "genuine GameState member, or coincidentally-adjacent
+separate global?" question were also revisited this round, but neither
+yielded new progress: `__old_spriteflags` has literally zero usages
+anywhere in 2011's own source (not just `Engine/`, checked across
+`Common/` too) -- a genuine dead end, matching `vtext`/`InterfaceElement`'s
+established status, not worth re-flagging as an open lead going forward.
+`play_invorder`'s membership question remains genuinely undecidable by
+this project's own techniques: `update_invorder` (already matched)
+addresses it as a directly-named global array (`play_invorder[edx*2]`),
+which is exactly how x86 codegen renders EITHER a standalone global array
+OR a member array of a larger global struct -- there is no compiler-level
+distinction to exploit here, unlike the "same base register used for a
+confirmed neighbor" pattern that has settled genuine ambiguities
+elsewhere in this project. Left open, but flagged as likely unresolvable
+without a fundamentally different kind of evidence than anything in this
+project's existing toolkit.

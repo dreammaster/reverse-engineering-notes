@@ -1664,6 +1664,23 @@ rather than trusting these numbers as they age)
   here). Retyped across all six structs at once. This closes the last
   gap in the shared `GUIObject` base layout — a fitting capstone to this
   session's `GUIObject`/`GUIMain` field-recovery arc.
+- **`RoomStruct.objyval[]` closed by connecting two already-known facts,
+  a new technique for this project.** A sweep for `_pad_*` gaps whose
+  missing piece might already be established elsewhere under a different
+  investigation thread turned up `objyval[]`: its start/element type were
+  confirmed many rounds ago via a dynamic-count `fread`, leaving its
+  30-byte capacity unconfirmed for lack of a known `MAX_OBJ` value — but
+  that value WAS independently found several rounds later
+  (`roomstruct__roomstruct`'s constructor default, `numobj=0xF=15`),
+  just never cross-referenced back. 15 shorts is exactly 30 bytes, zero
+  remainder. Retyped `_pad_objyval_tail[0x1E]` to `short objyval[15]`
+  accordingly — worth remembering as a technique going forward. Two other
+  long-open leads were revisited but didn't move: `GameSetupStructBase.
+  __old_spriteflags[2100]` has zero usages anywhere in 2011's own source,
+  a genuine dead end; `GameState.play_invorder[100]`'s "real member or
+  coincidentally-adjacent global?" question remains undecidable by this
+  project's techniques, since standalone-global and struct-member array
+  accesses compile to identical code with no exploitable distinction.
 
 ## Third-party library identification (Task #10)
 
