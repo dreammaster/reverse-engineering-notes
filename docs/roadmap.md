@@ -312,14 +312,15 @@ from substantial prior work.
       pattern as `strncpy2`/`toupper2`/`_fread2`). **210/210 (100%)**.
       Full writeup in
       [overview.md](overview.md#spaceexe-complete--210210-100).
-- [ ] **Still open**: double-check the already-existing comment on the
-      "leave outer space" function (already named, not touched this
-      session) that describes the chain back to `OUT.EXE` as "(DOS
-      EXEC...)" — every other executable's equivalent turned out to
-      use a custom overlay loader, not real `INT 21h`/`4Bh` EXEC, so
-      this phrasing is probably just loose wording rather than a
-      genuine architectural difference, but worth a quick read to
-      confirm rather than assume.
+- [x] **Resolved** (2026-08-25): the "(DOS EXEC...)" comment (on
+      `execWithEnvp`, called from `exit()`, SPACE.EXE's own "leave
+      outer space" function) was confirmed stale, not a real
+      architectural difference — it still referred to its callee by
+      the old placeholder name `exec?()`, which has long since been
+      named `execProgramEntry` and confirmed to be the same custom
+      overlay loader used everywhere else. Corrected the comment in
+      place. Full writeup in
+      [overview.md](overview.md#spaceexes-dos-exec-comment-confirmed-stale-corrected).
 
 ## SPACE.EXE status: complete
 
@@ -442,10 +443,9 @@ shifts to polish and cross-checking:
 - [x] Split `_nheapinit`'s mis-scoped proc boundary in OUT.EXE
       (2026-08-25) — see the checked-off entry earlier in this file
       under OUT.EXE's own IDB-hygiene item for the full writeup.
-- [ ] Confirm the SPACE.EXE "leave outer space" comment's "(DOS
-      EXEC...)" phrasing is loose wording, not a genuine architectural
-      difference from the custom-loader mechanism confirmed everywhere
-      else.
+- [x] Confirm the SPACE.EXE "leave outer space" comment's "(DOS
+      EXEC...)" phrasing (2026-08-25) — see the checked-off entry
+      under SPACE.EXE's own next-steps above for the full writeup.
 - [ ] Create `docs/file-formats.md` once the first on-disk format is
       actually traced (savegame layout — now fully named and synced,
       good starting point — the 19×9 Mondain-encounter map format
