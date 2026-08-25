@@ -6969,3 +6969,64 @@ decisively confirms `GUIMain.fgcol`@`+0x50`, upgrading it from MEDIUM to
 HIGH confidence -- the first of `GUIMain`'s remaining MEDIUM fields to
 close this round. `vtext`/`name`/`clickEventHandler`/`focus`/`bgcol`/
 `mousewasx`/`mousewasy`/`highlightobj`/`guiId`/`reserved[6]` remain open.
+
+## `guiId`/`zorder`: two more negative results, plus a `guin`/`objn` architectural lead
+
+A follow-up round checked `focus` first: `GUIMain.focus` ("which object
+has the focus") turns out to have ZERO usages anywhere in 2011's own
+`Engine/` source -- genuinely vestigial even in the reference build, the
+same status as `vtext`. Not worth chasing further in this build, matching
+the established "no living code path to find" precedent (`InterfaceElement`,
+`vtext`).
+
+`guiId` looked more promising: 2011 writes it in exactly two places --
+`GUIMain::rebuild_array()`'s `objs[ff]->guin=this->guiId;` (`acgui.cpp:
+1128`) and `read_gui`'s own post-load loop, `guiread[ee].guiId=ee;`
+(`acgui.cpp:1487`) -- and both of those CALLERS are already matched in
+this project (`GUIMain__rebuild_array`/`read_gui`), making this a
+well-scoped lead to re-read both functions in full for the first time.
+
+The result was a clean negative on both counts, but a genuinely useful
+one. `GUIMain__rebuild_array`'s loop resolves `objs[ff]` via its already-
+documented 6-way type dispatch, but NEVER writes `guin`/`objn` afterward,
+and the function ends immediately with no `resort_zorder()` call at the
+end at all (source's own trailing statement, `acgui.cpp:1132`) -- both
+omissions independently reinforcing (from inside this function's own
+body, not just a caller's evidence) the already-established finding that
+GUI z-order sorting is absent from this build. `read_gui`'s per-GUI
+post-load loop matches source's `hit<2` clamp (`acgui.cpp:1478-1480`)
+exactly -- a further reconfirmation of `hit`@`+0x34` -- then calls
+`GUIMain__rebuild_array` immediately, with NONE of source's intervening
+version-gated defaults (`gver<103` name default, `gver<105` zorder
+default) or the unconditional `guiId=ee` assignment present anywhere.
+This build's GUI-format version-gating for this specific era of fields
+is simply absent, consistent with the "predates this feature entirely"
+pattern already established for z-order elsewhere.
+
+A genuine architectural lead fell out of the `guin`/`objn` absence,
+worth flagging even though it isn't chased down this round: this
+project's own already-independently-confirmed `x`@`+0x08` positioning
+for the shared `GUIObject` base (established via `GUIButton`/`GUISlider`/
+etc.'s own field recovery rounds) only leaves room for a SINGLE 4-byte
+field between the vtable and `x` -- not the THREE fields (`guin`, `objn`,
+`flags`) 2011 declares in that exact span (`Common/acgui.h:128-130`).
+Combined with `rebuild_array`'s own failure to ever write `guin`/`objn`
+on a resolved object, this suggests `GUIObject.guin`/`.objn` may not
+exist in this build's base class at all -- plausibly the same kind of
+later addition as GUI z-order and the dynamic-GUI script-object system
+(`scrGui`/`ccDynamicGUI`), which this build's own `guiScriptObjNames`-
+free startup sequence (checked separately this round, see below) is
+already consistent with predating entirely. Not formalized as a struct-
+level finding since `GUIObject`'s own base layout was never formalized
+as its own struct in `apply_structs.py` to begin with -- a candidate for
+a future round if `GUIObject` itself becomes a fresh survey target.
+
+One more dead end recorded for completeness: `GUIMain.name`'s one
+promising-looking lead, `AC.CPP:11933-11953`'s `guiScriptObjNames`/
+`scrGui`/`ccDynamicGUI` startup export loop (which calls
+`guis[ee].rebuild_array()` a SECOND time, separately from `read_gui`'s
+own load-time call), does not exist in this build at all --
+`GUIMain__rebuild_array` has only ONE caller anywhere in the disassembly
+(`read_gui`), not two. This is consistent with the broader `guin`/`objn`/
+z-order picture: this build predates AGS's GUI-as-scriptable-object
+system entirely, not just one isolated feature within it.

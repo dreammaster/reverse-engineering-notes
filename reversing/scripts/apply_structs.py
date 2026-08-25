@@ -485,9 +485,29 @@ struct GUIMain {
                            // (`Engine/AC.CPP:16090`). This build most likely predates GUI z-order
                            // sorting as a feature entirely; `zorder` itself may still exist as an
                            // inert field (matching the struct's own total-size arithmetic), just
-                           // not yet wired up to anything that reads or writes it.
+                           // not yet wired up to anything that reads or writes it. FURTHER
+                           // SUPPORTING EVIDENCE (this round): `read_gui` (already matched)'s own
+                           // per-GUI post-load loop -- fully read this round -- matches 2011's
+                           // `hit<2` clamp (`acgui.cpp:1478-1480`) exactly, but then calls
+                           // `GUIMain__rebuild_array` immediately, with NO version-gated
+                           // `"if(gver<105) zorder=ee;"` (`acgui.cpp:1484-1485`) default assignment
+                           // in between -- the entire version-gating block for this era of the GUI
+                           // file format (`gver<103`/`gver<105` checks) is simply absent from this
+                           // build's loop. Consistent with, not just circumstantial alongside,
+                           // `GetGUIAt`'s already-noted lack of `gui_draw_order[]` indirection.
   int guiId;                  // +0x74, MEDIUM confidence: positional/arithmetic fit only, matching
-                           // 2011's declared field.
+                           // 2011's declared field. CHECKED THIS ROUND, still not independently
+                           // confirmed: `read_gui`'s per-GUI post-load loop (see `zorder` above,
+                           // fully read this round) never performs 2011's unconditional
+                           // `guiread[ee].guiId=ee;` (`acgui.cpp:1487`) -- the loop goes straight
+                           // from the `hit<2` clamp to calling `GUIMain__rebuild_array`, and that
+                           // function's own body (also fully read this round -- see its own
+                           // matches.json entry) doesn't read `this->guiId` either, unlike 2011's
+                           // `objs[ff]->guin=this->guiId;` (`acgui.cpp:1128`). Both of `guiId`'s
+                           // only 2011 write/read sites are confirmed absent from their exact
+                           // disassembly counterparts -- a real negative result, though not (yet)
+                           // the exhaustive whole-binary search this project's "confirmed absent"
+                           // standard requires.
   int reserved[6];             // +0x78..0x90 (24 bytes), MEDIUM confidence: positional/arithmetic
                            // fit only, boxed in with zero slack between the confirmed `guiId` and
                            // `on` fields -- plausible for genuinely unused reserved space, matching

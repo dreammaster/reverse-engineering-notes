@@ -1601,6 +1601,27 @@ rather than trusting these numbers as they age)
   total). This upgrades `GUIMain.fgcol`@+0x50 from MEDIUM to HIGH
   confidence, the first of `GUIMain`'s remaining fields to close this
   round.
+- **Two more `GUIMain` negative results, plus a `guin`/`objn`
+  architectural lead.** `focus` has zero usages anywhere in 2011's own
+  source — genuinely vestigial there too, not worth chasing. `guiId`
+  looked promising (2011 writes it in exactly two places, both already-
+  matched functions), but reading both in full end to end found neither
+  write present: `GUIMain__rebuild_array` never sets `guin`/`objn` on a
+  resolved object and never calls `resort_zorder()` (independently
+  reinforcing the already-known z-order absence from inside its own
+  body), and `read_gui`'s post-load loop goes straight from the `hit<2`
+  clamp to calling `rebuild_array`, skipping every one of 2011's
+  version-gated `name`/`zorder` defaults and the unconditional
+  `guiId=ee`. A genuine architectural lead fell out of this: this
+  project's own independently-confirmed `GUIObject.x`@+0x08 only leaves
+  room for ONE 4-byte field before `x`, not the three (`guin`, `objn`,
+  `flags`) 2011 declares there — suggesting `guin`/`objn` may not exist
+  in this build's `GUIObject` base at all, plausibly the same later
+  addition as z-order and the dynamic-GUI script-object system. Also
+  confirmed: the `guiScriptObjNames`/`scrGui` startup export loop that
+  would give `GUIMain.name` a promising lead doesn't exist in this build
+  either — `rebuild_array` has only one caller anywhere (`read_gui`), not
+  the two 2011 has.
 
 ## Third-party library identification (Task #10)
 
