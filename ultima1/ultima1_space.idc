@@ -10256,7 +10256,7 @@ static Functions_0(void) {
 	set_frame_size(0X13DD6, 0, 2, 0);
 	add_func    (0X13DED,0X13E08);
 	set_func_flags(0X13DED,0x400);
-	set_func_cmt(0X13DED,	"Thin wrapper adding the current envp before forwarding to exec?() - exec?() itself is presumably the real DOS EXEC (INT 21h AH=4Bh) child-process spawn/overlay-load implementation; not traced further here as it's generic C-runtime process-exec plumbing rather than save/load logic. Called by exit().", 0);
+	set_func_cmt(0X13DED,	"Thin wrapper adding the current envp before forwarding to execProgramEntry -- confirmed (2026-08-25) to be the same custom overlay loader used everywhere else in this project (reads the target file directly, builds a PSP by hand, far-JMPs in -- never real DOS INT 21h/4Bh EXEC, despite this comment's earlier guess). Called by exit() (SPACE.EXE's own 'leave outer space' function): saves _savegame to inuse.u1, then execWithEnvp(\"out.exe\", \"S\", 0), retrying via promptDiskSwapRetry on failure.", 0);
 	set_frame_size(0X13DED, 0X4, 0, 0);
 	add_func    (0X13E22,0X13EB1);
 	set_func_flags(0X13E22,0x5401);

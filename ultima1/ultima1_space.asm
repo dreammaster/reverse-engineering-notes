@@ -8777,7 +8777,7 @@ invalidShipExit endp
 
 ; =============== S U B R O U T I N E =======================================
 
-; Thin wrapper adding the current envp before forwarding to exec?() - exec?() itself is presumably the real DOS EXEC (INT 21h AH=4Bh) child-process spawn/overlay-load implementation; not traced further here as it's generic C-runtime process-exec plumbing rather than save/load logic. Called by exit().
+; Thin wrapper adding the current envp before forwarding to execProgramEntry -- confirmed (2026-08-25) to be the same custom overlay loader used everywhere else in this project (reads the target file directly, builds a PSP by hand, far-JMPs in -- never real DOS INT 21h/4Bh EXEC, despite this comment's earlier guess). Called by exit() (SPACE.EXE's own 'leave outer space' function): saves _savegame to inuse.u1, then execWithEnvp("out.exe", "S", 0), retrying via promptDiskSwapRetry on failure.
 ; Attributes: fpd=4
 
 execWithEnvp    proc near               ; CODE XREF: exit+44\u2191p

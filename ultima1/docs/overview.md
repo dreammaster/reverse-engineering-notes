@@ -1221,3 +1221,35 @@ references to the old `word_1D48C` name remained after the merge.
 range) — not touched here since the roadmap item was scoped to
 OUT.EXE specifically; worth a look in a future pass if it turns out to
 have the same hygiene problem in a different shape.
+
+## SPACE.EXE's "(DOS EXEC...)" comment confirmed stale, corrected
+
+Last item on the polish-list check: whether `execWithEnvp`'s function
+comment — "exec?() itself is presumably the real DOS EXEC (INT 21h
+AH=4Bh)..." — described a genuine architectural difference from every
+other executable's confirmed custom-loader chain-exec mechanism, or
+was just loose/outdated wording. It's the latter, and the evidence was
+immediate: the comment's own text refers to the callee only as the
+placeholder `exec?()`, but that function has long since been named
+`execProgramEntry` in this same IDB — the exact same name (and,
+tracing it, the exact same reads-the-file/builds-a-PSP/far-JMPs-in
+shape) already confirmed in `OUT.EXE`/`ULTIMA.EXE`/`GEN.EXE` to be the
+custom overlay loader, never real DOS `INT 21h`/`4Bh` EXEC. The
+comment simply predates that naming/tracing work and was never revised
+afterward.
+
+Traced `execWithEnvp`'s only caller while at it: SPACE.EXE's own
+`exit()` (the "leave outer space" function, called from `death` and
+`checkForLanding`) — on non-zero hits it drains ship fuel/shields
+first, then unconditionally saves `_savegame` to `"inuse.u1"` and
+calls `execWithEnvp("out.exe", "S", 0)`, retrying via
+`promptDiskSwapRetry` on failure. Exactly the same
+save-then-chain-with-retry shape as every other executable's exit
+path. Corrected the stale function comment on `execWithEnvp` in place
+(`ida_scripts/fix_execwithenvp_comment.py`) rather than leaving the
+misleading guess to confuse a future reader.
+
+This closes out the last open item from the SPACE.EXE session and the
+cross-IDB polish-list follow-ups (aside from segment renames, which
+are explicitly out of scope — Paul uses the existing segment names to
+correlate with DOSBox Debugger).
