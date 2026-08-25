@@ -140,27 +140,23 @@ static Enums_0(id) {
 	add_enum_member(id,"TILE_OCEAN",	0,	-1);
 	add_enum_member(id,"TILE_GRASS",	0X1,	-1);
 	add_enum_member(id,"TILE_WOODS",	0X2,	-1);
-	add_enum_member(id,"TILE_3",	0X3,	-1);
-	add_enum_member(id,"TILE_CASTLE",	0X4,	-1);
-	add_enum_member(id,"TILE_CASTLE_FLAG",	0X5,	-1);
+	add_enum_member(id,"TILE_MOUNTAINS",	0X3,	-1);
+	add_enum_member(id,"TILE_CASTLE1",	0X4,	-1);
+	add_enum_member(id,"TILE_CASTLE2",	0X5,	-1);
 	add_enum_member(id,"TILE_SIGNPOST",	0X6,	-1);
-	add_enum_member(id,"TILE_CITY",	0X7,	-1);
-	add_enum_member(id,"TILE_CITY_FLAG",	0X8,	-1);
-	add_enum_member(id,"TILE_9",	0X9,	-1);
-	add_enum_member(id,"TILE_10",	0XA,	-1);
-	add_enum_member(id,"TILE_PARTY",	0XB,	-1);
-	add_enum_member(id,"TILE_HORSE",	0XC,	-1);
-	add_enum_member(id,"TILE_CART",	0XD,	-1);
-	add_enum_member(id,"TILE_RAFT",	0XE,	-1);
-	add_enum_member(id,"TILE_FRIGATE",	0XF,	-1);
+	add_enum_member(id,"TILE_CITY1",	0X7,	-1);
+	add_enum_member(id,"TILE_CITY2",	0X8,	-1);
+	add_enum_member(id,"TILE_DUNGEON",	0X9,	-1);
+	add_enum_member(id,"TILE_PLAYER",	0XA,	-1);
+	add_enum_member(id,"TILE_HORSE",	0XB,	-1);
+	add_enum_member(id,"TILE_CART",	0XC,	-1);
+	add_enum_member(id,"TILE_RAFT",	0XD,	-1);
+	add_enum_member(id,"TILE_FRIGATE1",	0XE,	-1);
+	add_enum_member(id,"TILE_FRIGATE2",	0XF,	-1);
 	add_enum_member(id,"TILE_AIRCAR",	0X10,	-1);
 	add_enum_member(id,"TILE_SHUTTLE",	0X11,	-1);
 	add_enum_member(id,"TILE_TIME_MACHINE",	0X12,	-1);
 	add_enum_member(id,"TILE_FIRST_MONSTER",	0X13,	-1);
-	add_enum_member(id,"TILE_25",	0X19,	-1);
-	add_enum_member(id,"TILE_31",	0X1F,	-1);
-	add_enum_member(id,"TILE_35",	0X23,	-1);
-	add_enum_member(id,"TILE_LAST_MONSTER",	0X2F,	-1);
 	id = add_enum(-1,"CityTileNum",0x2200000);
 	add_enum_member(id,"CTILE_GROUND",	0X1,	-1);
 	add_enum_member(id,"CTILE_CELL_DOOR",	0X3,	-1);
@@ -381,25 +377,25 @@ static Structures_0(id) {
 	mid = add_struc_member(id,"_coins",	0X24,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_experience",	0X26,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_food",	0X28,	0x10000400,	-1,	2);
-	mid = add_struc_member(id,"_equippedWeapon",	0X2A,	0x10000400,	-1,	2);
-	mid = add_struc_member(id,"_equippedSpell",	0X2C,	0x10000400,	-1,	2);
-	mid = add_struc_member(id,"_equippedArmor",	0X2E,	0x10000400,	-1,	2);
+	mid = add_struc_member(id,"_readyWeapon",	0X2A,	0x10000400,	-1,	2);
+	mid = add_struc_member(id,"_readySpell",	0X2C,	0x10000400,	-1,	2);
+	mid = add_struc_member(id,"_readyArmor",	0X2E,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_transportType",	0X30,	0x18800400,	get_enum("TransportType"),	2);
 	mid = add_struc_member(id,"_randomSeed",	0X32,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_position",	0X34,	0x60000400,	get_struc_id("Point"),	4);
 	mid = add_struc_member(id,"_soundOn",	0X38,	0x10000400,	-1,	2);
-	mid = add_struc_member(id,"_quests",	0X3A,	0x10000400,	-1,	18);
+	mid = add_struc_member(id,"_questStatus",	0X3A,	0x10000400,	-1,	18);
 	mid = add_struc_member(id,"_redGems",	0X4C,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_greenGems",	0X4E,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_blueGem",	0X50,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_whiteGem",	0X52,	0x10000400,	-1,	2);
-	mid = add_struc_member(id,"_armor_array",	0X54,	0x10000400,	-1,	2);
+	mid = add_struc_member(id,"_armorSlot0",	0X54,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_leatherArmor",	0X56,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_chainmail",	0X58,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_plateMail",	0X5A,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_vacuumSuit",	0X5C,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_reflectSuit",	0X5E,	0x10000400,	-1,	2);
-	mid = add_struc_member(id,"_weapons_array",	0X60,	0x10000400,	-1,	2);
+	mid = add_struc_member(id,"_weaponSlot0",	0X60,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_dagger",	0X62,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_mace",	0X64,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_axe",	0X66,	0x10000400,	-1,	2);
@@ -415,7 +411,7 @@ static Structures_0(id) {
 	mid = add_struc_member(id,"_lightSword",	0X7A,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_phazor",	0X7C,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_blaster",	0X7E,	0x10000400,	-1,	2);
-	mid = add_struc_member(id,"_spells_array",	0X80,	0x10000400,	-1,	2);
+	mid = add_struc_member(id,"_spellSlot0",	0X80,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_open",	0X82,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_unlock",	0X84,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_magicMissile",	0X86,	0x10000400,	-1,	2);
@@ -426,7 +422,7 @@ static Structures_0(id) {
 	mid = add_struc_member(id,"_create",	0X90,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_destroy",	0X92,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_kill",	0X94,	0x10000400,	-1,	2);
-	mid = add_struc_member(id,"_transports_array",	0X96,	0x10000400,	-1,	2);
+	mid = add_struc_member(id,"_transportSlot0",	0X96,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_horse",	0X98,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_cart",	0X9A,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_raft",	0X9C,	0x10000400,	-1,	2);
@@ -436,11 +432,11 @@ static Structures_0(id) {
 	mid = add_struc_member(id,"_timeMachine",	0XA4,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_enemyVessels",	0XA6,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_signMarker",	0XA8,	0x10000400,	-1,	2);
-	mid = add_struc_member(id,"field_AA",	0XAA,	0x10000400,	-1,	2);
+	mid = add_struc_member(id,"_overworldEntityCount",	0XAA,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_moveCount",	0XAC,	0x20000400,	-1,	4);
-	mid = add_struc_member(id,"field_B0",	0XB0,	0x10000400,	-1,	2);
-	mid = add_struc_member(id,"field_B2",	0XB2,	0x10000400,	-1,	2);
-	mid = add_struc_member(id,"_overworldWidgets",	0XB4,	0x60000400,	get_struc_id("Creature"),	640);
+	mid = add_struc_member(id,"_shipFuel",	0XB0,	0x10000400,	-1,	2);
+	mid = add_struc_member(id,"_shipShield",	0XB2,	0x10000400,	-1,	2);
+	mid = add_struc_member(id,"_overworldEntities",	0XB4,	0x60000400,	get_struc_id("Creature"),	640);
 	
 	id = get_struc_id("MapLine");
 	mid = add_struc_member(id,"line",	0,	0x00000400,	-1,	84);
@@ -708,7 +704,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X104AA);
 	op_hex		(x,	1);
 	create_insn	(0X104AF);
-	set_name	(0X104AF,	"moveCheck");
+	set_name	(0X104AF,	"overworld_moveCheck");
 	create_insn	(x=0X104B0);
 	op_hex		(x,	1);
 	create_insn	(x=0X104B7);
@@ -5813,7 +5809,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X1387A);
 	op_plain_offset	(x,	1,	0X1D480);
 	op_plain_offset	(x,	129,	0X1D480);
-	set_cmt	(0X13883,	"color",	0);
 }
 
 //------------------------------------------------------------------------
@@ -5823,6 +5818,7 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X13883,	"color",	0);
 	set_cmt	(0X13887,	"y2",	0);
 	set_cmt	(0X13888,	"x2",	0);
 	set_cmt	(0X13889,	"y1",	0);
@@ -11019,8 +11015,6 @@ static Bytes_1(void) {
 	set_cmt	(0X17216,	"transportId",	0);
 	create_insn	(x=0X1721C);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X17224);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -11030,6 +11024,8 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X17224);
+	op_stkvar	(x,	0);
 	set_cmt	(0X1722A,	"c",	0);
 	set_cmt	(0X1722B,	"yp",	0);
 	create_insn	(x=0X1722B);
@@ -13544,8 +13540,8 @@ static Bytes_2(void) {
 	create_insn	(x=0X18EFC);
 	op_dec		(x,	1);
 	create_insn	(x=0X18F07);
-	op_plain_offset	(x,	1,	0X1D480);
-	op_plain_offset	(x,	129,	0X1D480);
+	op_plain_offset	(x,	1,	0X10000);
+	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(x=0X18F0E);
 	op_plain_offset	(x,	0,	0X10000);
 	op_plain_offset	(x,	128,	0X10000);
@@ -16349,7 +16345,7 @@ static Bytes_3(void) {
 	create_insn	(x=0X1B4F7);
 	op_hex		(x,	1);
 	create_insn	(0X1B502);
-	set_name	(0X1B502,	"addOverworldWidget");
+	set_name	(0X1B502,	"addOverworldEntity");
 	create_insn	(x=0X1B503);
 	op_hex		(x,	1);
 	create_insn	(x=0X1B50B);
@@ -16527,6 +16523,8 @@ static Bytes_3(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X1B6B0);
 	op_stkvar	(x,	1);
+	create_insn	(x=0X1B6B3);
+	op_dec		(x,	1);
 	create_insn	(x=0X1B6BB);
 	op_stkvar	(x,	1);
 	set_cmt	(0X1B6C0,	"xp",	0);
@@ -20486,9 +20484,6 @@ static Bytes_3(void) {
 	create_word	(x=0X1FE9A);
 	op_plain_offset	(x,	0,	0X1D480);
 	op_plain_offset	(x,	128,	0X1D480);
-	create_word	(x=0X1FE9C);
-	op_plain_offset	(x,	0,	0X1D480);
-	op_plain_offset	(x,	128,	0X1D480);
 }
 
 //------------------------------------------------------------------------
@@ -20498,6 +20493,9 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_word	(x=0X1FE9C);
+	op_plain_offset	(x,	0,	0X1D480);
+	op_plain_offset	(x,	128,	0X1D480);
 	create_word	(x=0X1FE9E);
 	op_plain_offset	(x,	0,	0X1D480);
 	op_plain_offset	(x,	128,	0X1D480);
@@ -21523,12 +21521,13 @@ static Functions_0(void) {
 	define_local_var(0X1048A, 0X104AF, "[bp+0X2]", "reason");
 	add_func    (0X104AF,0X1066F);
 	set_func_flags(0X104AF,0x4400);
-	SetType(0X104AF, "void __cdecl moveCheck(Direction dir);");
+	SetType(0X104AF, "void __cdecl overworld_moveCheck(Direction dir);");
 	set_frame_size(0X104AF, 0X12, 0, 0);
 	define_local_var(0X104AF, 0X1066F, "[bp-0X12]", "xp");
 	define_local_var(0X104AF, 0X1066F, "[bp-0XE]", "deltaX");
 	define_local_var(0X104AF, 0X1066F, "[bp-0XC]", "deltaY");
-	define_local_var(0X104AF, 0X1066F, "[bp-0XA]", "transport");
+	define_local_var(0X104AF, 0X1066F, "[bp-0XA]", "tile");
+	define_local_var(0X104AF, 0X1066F, "[bp-0X6]", "transport");
 	define_local_var(0X104AF, 0X1066F, "[bp+0X2]", "dir");
 	set_name(0X104DD, "up", SN_LOCAL);
 	set_name(0X104E4, "down", SN_LOCAL);
@@ -22985,7 +22984,7 @@ static Functions_0(void) {
 	define_local_var(0X1B4C3, 0X1B502, "[bp+0X6]", "max");
 	add_func    (0X1B502,0X1B545);
 	set_func_flags(0X1B502,0x4400);
-	SetType(0X1B502, "void __cdecl addOverworldWidget(int tile, int data, int xp, int yp, int hits);");
+	SetType(0X1B502, "void __cdecl addOverworldEntity(int tile, int data, int xp, int yp, int hits);");
 	set_frame_size(0X1B502, 0X6, 0, 0);
 	define_local_var(0X1B502, 0X1B545, "[bp+0X2]", "tile");
 	define_local_var(0X1B502, 0X1B545, "[bp+0X4]", "data");

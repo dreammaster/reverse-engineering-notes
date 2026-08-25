@@ -6003,3 +6003,1386 @@ structs (0):
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'dump_struct.py', 'noexport']
+[*] reading dump_struct.py
+[*] executing dump_struct.py
+[*] captured stdout from target script:
+----- begin target script output -----
+
+=== struct Savegame  (id=0xff00041d, size=0x334 = 820 bytes) ===
+  0x0000  size=0x10 ( 16)  _name
+  0x0010  size=0x02 (  2)  _race
+  0x0012  size=0x02 (  2)  _class
+  0x0014  size=0x02 (  2)  _sex
+  0x0016  size=0x02 (  2)  _hits
+  0x0018  size=0x02 (  2)  _strength
+  0x001a  size=0x02 (  2)  _agility
+  0x001c  size=0x02 (  2)  _stamina
+  0x001e  size=0x02 (  2)  _charisma
+  0x0020  size=0x02 (  2)  _wisdom
+  0x0022  size=0x02 (  2)  _intelligence
+  0x0024  size=0x02 (  2)  _coins
+  0x0026  size=0x02 (  2)  _experience
+  0x0028  size=0x02 (  2)  _food
+  0x002a  size=0x02 (  2)  _equippedWeapon
+  0x002c  size=0x02 (  2)  _equippedSpell
+  0x002e  size=0x02 (  2)  _equippedArmor
+  0x0030  size=0x02 (  2)  _transportType
+  0x0032  size=0x02 (  2)  _randomSeed
+  0x0034  size=0x04 (  4)  _position
+  0x0038  size=0x02 (  2)  _soundOn
+  0x003a  size=0x12 ( 18)  _quests
+  0x004c  size=0x02 (  2)  _redGems
+  0x004e  size=0x02 (  2)  _greenGems
+  0x0050  size=0x02 (  2)  _blueGem
+  0x0052  size=0x02 (  2)  _whiteGem
+  0x0054  size=0x02 (  2)  _armor_array
+  0x0056  size=0x02 (  2)  _leatherArmor
+  0x0058  size=0x02 (  2)  _chainmail
+  0x005a  size=0x02 (  2)  _plateMail
+  0x005c  size=0x02 (  2)  _vacuumSuit
+  0x005e  size=0x02 (  2)  _reflectSuit
+  0x0060  size=0x02 (  2)  _weapons_array
+  0x0062  size=0x02 (  2)  _dagger
+  0x0064  size=0x02 (  2)  _mace
+  0x0066  size=0x02 (  2)  _axe
+  0x0068  size=0x02 (  2)  _ropeSpikes
+  0x006a  size=0x02 (  2)  _sword
+  0x006c  size=0x02 (  2)  _greatSword
+  0x006e  size=0x02 (  2)  _bow
+  0x0070  size=0x02 (  2)  _amulet
+  0x0072  size=0x02 (  2)  _wand
+  0x0074  size=0x02 (  2)  _staff
+  0x0076  size=0x02 (  2)  _triangle
+  0x0078  size=0x02 (  2)  _pistol
+  0x007a  size=0x02 (  2)  _lightSword
+  0x007c  size=0x02 (  2)  _phazor
+  0x007e  size=0x02 (  2)  _blaster
+  0x0080  size=0x02 (  2)  _spells_array
+  0x0082  size=0x02 (  2)  _open
+  0x0084  size=0x02 (  2)  _unlock
+  0x0086  size=0x02 (  2)  _magicMissile
+  0x0088  size=0x02 (  2)  _steal
+  0x008a  size=0x02 (  2)  _ladderDown
+  0x008c  size=0x02 (  2)  _ladderUp
+  0x008e  size=0x02 (  2)  _blink
+  0x0090  size=0x02 (  2)  _create
+  0x0092  size=0x02 (  2)  _destroy
+  0x0094  size=0x02 (  2)  _kill
+  0x0096  size=0x02 (  2)  _transports_array
+  0x0098  size=0x02 (  2)  _horse
+  0x009a  size=0x02 (  2)  _cart
+  0x009c  size=0x02 (  2)  _raft
+  0x009e  size=0x02 (  2)  _frigate
+  0x00a0  size=0x02 (  2)  _aircar
+  0x00a2  size=0x02 (  2)  _shuttle
+  0x00a4  size=0x02 (  2)  _timeMachine
+  0x00a6  size=0x02 (  2)  _enemyVessels
+  0x00a8  size=0x02 (  2)  _signMarker
+  0x00aa  size=0x02 (  2)  field_AA
+  0x00ac  size=0x04 (  4)  _moveCount
+  0x00b0  size=0x02 (  2)  field_B0
+  0x00b2  size=0x02 (  2)  field_B2
+  0x00b4  size=0x280 (640)  _overworldWidgets
+----- end target script output -----
+[*] finished executing dump_struct.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'dump_struct2.py', 'noexport']
+[*] reading dump_struct2.py
+[*] executing dump_struct2.py
+[*] captured stdout from target script:
+----- begin target script output -----
+
+=== LocationWidget size=0x8 (8) ===
+  0x00 size=0x2  _type
+  0x02 size=0x4  _position
+  0x06 size=0x2  _hitPoints
+
+=== Map size=0x3330 (13104) ===
+  0x00 size=0x3330  lines
+
+=== MapLine size=0x54 (84) ===
+  0x00 size=0x54  line
+----- end target script output -----
+[*] finished executing dump_struct2.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'dump_struct3.py', 'noexport']
+[*] reading dump_struct3.py
+[*] executing dump_struct3.py
+[*] captured stdout from target script:
+----- begin target script output -----
+_position: soff=0x34 eoff=0x38 flag=0x60000400 tinfo_ok=True type=Point
+_quests: soff=0x3a eoff=0x4c flag=0x10000400 tinfo_ok=False type=?
+field_AA: soff=0xaa eoff=0xac flag=0x10000400 tinfo_ok=False type=?
+_moveCount: soff=0xac eoff=0xb0 flag=0x20000400 tinfo_ok=False type=?
+field_B0: soff=0xb0 eoff=0xb2 flag=0x10000400 tinfo_ok=False type=?
+field_B2: soff=0xb2 eoff=0xb4 flag=0x10000400 tinfo_ok=False type=?
+_overworldWidgets: soff=0xb4 eoff=0x334 flag=0x60000400 tinfo_ok=False type=?
+
+all struct names containing 'idget' or 'onster':
+  LocationWidget
+----- end target script output -----
+[*] finished executing dump_struct3.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'dump_struct4.py', 'noexport']
+[*] reading dump_struct4.py
+[*] executing dump_struct4.py
+[!] EXCEPTION:
+Traceback (most recent call last):
+  File "C:/dev/ultima1/ida_scripts/batch_run_and_export.py", line 97, in main
+    exec(compile(code, target_script, "exec"), g)
+  File "dump_struct4.py", line 8, in <module>
+    strid = ida_struct.get_member_strid(struc, 0xb4)
+AttributeError: module 'ida_struct' has no attribute 'get_member_strid'
+
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'dump_struct4.py', 'noexport']
+[*] reading dump_struct4.py
+[*] executing dump_struct4.py
+[*] captured stdout from target script:
+----- begin target script output -----
+raw: (<ida_struct.member_t; proxy of <Swig Object of type 'member_t *' at 0x00000221439634B0> >, 'Savegame._overworldWidgets', <ida_struct.struc_t; proxy of <Swig Object of type 'struc_t *' at 0x00000221439636C0> >)
+substruct: Creature size 0x10
+  0x0 0x2 _type
+  0x2 0x2 _data
+  0x4 0x2 _x
+  0x6 0x2 _y
+  0x8 0x2 _hits
+  0xa 0x2 field_A
+  0xc 0x2 field_C
+  0xe 0x2 field_E
+----- end target script output -----
+[*] finished executing dump_struct4.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'dump_savegame_full.py', 'noexport']
+[*] reading dump_savegame_full.py
+[*] executing dump_savegame_full.py
+[*] captured stdout from target script:
+----- begin target script output -----
+Root: ULTIMA.EXE
+
+All structs in this IDB:
+  STR15, Point, Rect, Savegame
+
+=== Savegame  size=0x334 (820) ===
+  0x0000  size=0x10 ( 16)  _name
+  0x0010  size=0x02 (  2)  _race
+  0x0012  size=0x02 (  2)  _class
+  0x0014  size=0x02 (  2)  _sex
+  0x0016  size=0x02 (  2)  _hits
+  0x0018  size=0x02 (  2)  _strength
+  0x001a  size=0x02 (  2)  _agility
+  0x001c  size=0x02 (  2)  _stamina
+  0x001e  size=0x02 (  2)  _charisma
+  0x0020  size=0x02 (  2)  _transportType
+  0x0022  size=0x02 (  2)  field_22
+  0x0024  size=0x04 (  4)  _position
+  0x0028  size=0x02 (  2)  field_28
+  0x002a  size=0x02 (  2)  field_2A
+  0x002c  size=0x02 (  2)  field_2C
+  0x002e  size=0x02 (  2)  field_2E
+  0x0030  size=0x02 (  2)  field_30
+  0x0032  size=0x02 (  2)  field_32
+  0x0034  size=0x02 (  2)  field_34
+  0x0036  size=0x02 (  2)  field_36
+  0x0038  size=0x02 (  2)  field_38
+  0x003a  size=0x02 (  2)  field_3A
+  0x003c  size=0x10 ( 16)  field_3C
+  0x004c  size=0x02 (  2)  _redGems
+  0x004e  size=0x02 (  2)  _greenGems
+  0x0050  size=0x02 (  2)  _blueGem
+  0x0052  size=0x02 (  2)  _whiteGem
+  0x0054  size=0x02 (  2)  field_54
+  0x0056  size=0x02 (  2)  _leatherArmor
+  0x0058  size=0x02 (  2)  _chainmail
+  0x005a  size=0x02 (  2)  _plateMail
+  0x005c  size=0x02 (  2)  _vacuumSuit
+  0x005e  size=0x02 (  2)  _reflectSuit
+  0x0060  size=0x02 (  2)  field_60
+  0x0062  size=0x02 (  2)  _dagger
+  0x0064  size=0x02 (  2)  _mace
+  0x0066  size=0x02 (  2)  _axe
+  0x0068  size=0x02 (  2)  _ropeSpikes
+  0x006a  size=0x02 (  2)  _sword
+  0x006c  size=0x02 (  2)  _greatSword
+  0x006e  size=0x02 (  2)  _bow
+  0x0070  size=0x02 (  2)  _amulet
+  0x0072  size=0x02 (  2)  _wand
+  0x0074  size=0x02 (  2)  _staff
+  0x0076  size=0x02 (  2)  _triangle
+  0x0078  size=0x02 (  2)  _pistol
+  0x007a  size=0x02 (  2)  _lightSword
+  0x007c  size=0x02 (  2)  _phazor
+  0x007e  size=0x02 (  2)  _blaster
+  0x0080  size=0x02 (  2)  field_80
+  0x0082  size=0x02 (  2)  _open
+  0x0084  size=0x02 (  2)  _unlock
+  0x0086  size=0x02 (  2)  _magicMissile
+  0x0088  size=0x02 (  2)  _steal
+  0x008a  size=0x02 (  2)  _ladderDown
+  0x008c  size=0x02 (  2)  _ladderUp
+  0x008e  size=0x02 (  2)  _blink
+  0x0090  size=0x02 (  2)  _create
+  0x0092  size=0x02 (  2)  _destroy
+  0x0094  size=0x02 (  2)  _kill
+  0x0096  size=0x02 (  2)  field_96
+  0x0098  size=0x02 (  2)  _horse
+  0x009a  size=0x02 (  2)  _cart
+  0x009c  size=0x02 (  2)  _raft
+  0x009e  size=0x02 (  2)  _frigate
+  0x00a0  size=0x02 (  2)  _aircar
+  0x00a2  size=0x02 (  2)  _shuttle
+  0x00a4  size=0x02 (  2)  _timeMachine
+  0x00a6  size=0x02 (  2)  _enemyVessels
+  0x00a8  size=0x02 (  2)  _signMarker
+  0x00aa  size=0x02 (  2)  field_AA
+  0x00ac  size=0x02 (  2)  _moveCount
+  0x00ae  size=0x02 (  2)  field_AE
+  0x0332  size=0x02 (  2)  field_332
+
+=== Point  size=0x4 (4) ===
+  0x0000  size=0x02 (  2)  _x
+  0x0002  size=0x02 (  2)  _y
+
+=== Rect  size=0x8 (8) ===
+  0x0000  size=0x02 (  2)  _x1
+  0x0002  size=0x02 (  2)  _y1
+  0x0004  size=0x02 (  2)  _x2
+  0x0006  size=0x02 (  2)  _y2
+
+=== STR15  size=0xf (15) ===
+  0x0000  size=0x0f ( 15)  _str
+----- end target script output -----
+[*] finished executing dump_savegame_full.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_gen.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'dump_savegame_full.py', 'noexport']
+[*] reading dump_savegame_full.py
+[*] executing dump_savegame_full.py
+[*] captured stdout from target script:
+----- begin target script output -----
+Root: GEN.EXE
+
+All structs in this IDB:
+  STR15, Point, Rect, Creature, Savegame
+
+=== Savegame  size=0x334 (820) ===
+  0x0000  size=0x10 ( 16)  _name
+  0x0010  size=0x02 (  2)  _race
+  0x0012  size=0x02 (  2)  _class
+  0x0014  size=0x02 (  2)  _sex
+  0x0016  size=0x02 (  2)  _hits
+  0x0018  size=0x02 (  2)  _strength
+  0x001a  size=0x02 (  2)  _agility
+  0x001c  size=0x02 (  2)  _stamina
+  0x001e  size=0x02 (  2)  _charisma
+  0x0020  size=0x02 (  2)  _wisdom
+  0x0022  size=0x02 (  2)  _intelligence
+  0x0024  size=0x02 (  2)  _coins
+  0x0026  size=0x02 (  2)  _experience
+  0x0028  size=0x02 (  2)  _food
+  0x002a  size=0x02 (  2)  _equippedWeapon
+  0x002c  size=0x02 (  2)  _equippedSpell
+  0x002e  size=0x02 (  2)  _equippedArmor
+  0x0030  size=0x02 (  2)  _transportType
+  0x0032  size=0x02 (  2)  _randomSeed
+  0x0034  size=0x04 (  4)  _position
+  0x0038  size=0x02 (  2)  _soundOn
+  0x003a  size=0x12 ( 18)  _quests
+  0x004c  size=0x02 (  2)  _redGems
+  0x004e  size=0x02 (  2)  _greenGems
+  0x0050  size=0x02 (  2)  _blueGem
+  0x0052  size=0x02 (  2)  _whiteGem
+  0x0054  size=0x02 (  2)  _armor_array
+  0x0056  size=0x02 (  2)  _leatherArmor
+  0x0058  size=0x02 (  2)  _chainmail
+  0x005a  size=0x02 (  2)  _plateMail
+  0x005c  size=0x02 (  2)  _vacuumSuit
+  0x005e  size=0x02 (  2)  _reflectSuit
+  0x0060  size=0x02 (  2)  _weapons_array
+  0x0062  size=0x02 (  2)  _dagger
+  0x0064  size=0x02 (  2)  _mace
+  0x0066  size=0x02 (  2)  _axe
+  0x0068  size=0x02 (  2)  _ropeSpikes
+  0x006a  size=0x02 (  2)  _sword
+  0x006c  size=0x02 (  2)  _greatSword
+  0x006e  size=0x02 (  2)  _bow
+  0x0070  size=0x02 (  2)  _amulet
+  0x0072  size=0x02 (  2)  _wand
+  0x0074  size=0x02 (  2)  _staff
+  0x0076  size=0x02 (  2)  _triangle
+  0x0078  size=0x02 (  2)  _pistol
+  0x007a  size=0x02 (  2)  _lightSword
+  0x007c  size=0x02 (  2)  _phazor
+  0x007e  size=0x02 (  2)  _blaster
+  0x0080  size=0x02 (  2)  _spells_array
+  0x0082  size=0x02 (  2)  _open
+  0x0084  size=0x02 (  2)  _unlock
+  0x0086  size=0x02 (  2)  _magicMissile
+  0x0088  size=0x02 (  2)  _steal
+  0x008a  size=0x02 (  2)  _ladderDown
+  0x008c  size=0x02 (  2)  _ladderUp
+  0x008e  size=0x02 (  2)  _blink
+  0x0090  size=0x02 (  2)  _create
+  0x0092  size=0x02 (  2)  _destroy
+  0x0094  size=0x02 (  2)  _kill
+  0x0096  size=0x02 (  2)  _transports_array
+  0x0098  size=0x02 (  2)  _horse
+  0x009a  size=0x02 (  2)  _cart
+  0x009c  size=0x02 (  2)  _raft
+  0x009e  size=0x02 (  2)  _frigate
+  0x00a0  size=0x02 (  2)  _aircar
+  0x00a2  size=0x02 (  2)  _shuttle
+  0x00a4  size=0x02 (  2)  _timeMachine
+  0x00a6  size=0x02 (  2)  _enemyVessels
+  0x00a8  size=0x02 (  2)  _signMarker
+  0x00aa  size=0x02 (  2)  field_AA
+  0x00ac  size=0x02 (  2)  _moveCount
+  0x00ae  size=0x02 (  2)  field_AE
+  0x00b4  size=0x280 (640)  _overworldWidgets
+
+=== Creature  size=0x10 (16) ===
+  0x0000  size=0x02 (  2)  _type
+  0x0002  size=0x02 (  2)  _data
+  0x0004  size=0x02 (  2)  _x
+  0x0006  size=0x02 (  2)  _y
+  0x0008  size=0x02 (  2)  _hits
+  0x000a  size=0x02 (  2)  field_A
+  0x000c  size=0x02 (  2)  field_C
+  0x000e  size=0x02 (  2)  field_E
+
+=== Point  size=0x4 (4) ===
+  0x0000  size=0x02 (  2)  _x
+  0x0002  size=0x02 (  2)  _y
+
+=== Rect  size=0x8 (8) ===
+  0x0000  size=0x02 (  2)  _x1
+  0x0002  size=0x02 (  2)  _y1
+  0x0004  size=0x02 (  2)  _x2
+  0x0006  size=0x02 (  2)  _y2
+
+=== STR15  size=0xf (15) ===
+  0x0000  size=0x0f ( 15)  _str
+----- end target script output -----
+[*] finished executing dump_savegame_full.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_space.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'dump_savegame_full.py', 'noexport']
+[*] reading dump_savegame_full.py
+[*] executing dump_savegame_full.py
+[*] captured stdout from target script:
+----- begin target script output -----
+Root: SPACE.EXE
+
+All structs in this IDB:
+  STR15, DuneonRow, DungeonMap, Point, Rect, Creature, LocationWidget, Savegame, MapLine, Map, SpaceMapShip, SpaceMapCell, SpaceMapY, SpaceMap, FightData, JumpEntry
+
+=== Savegame  size=0x334 (820) ===
+  0x0000  size=0x10 ( 16)  _name
+  0x0010  size=0x02 (  2)  _race
+  0x0012  size=0x02 (  2)  _class
+  0x0014  size=0x02 (  2)  _sex
+  0x0016  size=0x02 (  2)  _hits
+  0x0018  size=0x02 (  2)  _strength
+  0x001a  size=0x02 (  2)  _agility
+  0x001c  size=0x02 (  2)  _stamina
+  0x001e  size=0x02 (  2)  _charisma
+  0x0020  size=0x02 (  2)  _wisdom
+  0x0022  size=0x02 (  2)  _intelligence
+  0x0024  size=0x02 (  2)  _coins
+  0x0026  size=0x02 (  2)  _experience
+  0x0028  size=0x02 (  2)  _food
+  0x002a  size=0x02 (  2)  _readyWeapon
+  0x002c  size=0x02 (  2)  _readySpell
+  0x002e  size=0x02 (  2)  _readyArmor
+  0x0030  size=0x02 (  2)  _transportType
+  0x0032  size=0x02 (  2)  _randomSeed
+  0x0034  size=0x04 (  4)  _position
+  0x0038  size=0x02 (  2)  _soundOn
+  0x003a  size=0x12 ( 18)  _quests
+  0x004c  size=0x02 (  2)  _redGems
+  0x004e  size=0x02 (  2)  _greenGems
+  0x0050  size=0x02 (  2)  _blueGem
+  0x0052  size=0x02 (  2)  _whiteGem
+  0x0054  size=0x02 (  2)  _armor_array
+  0x0056  size=0x02 (  2)  _leatherArmor
+  0x0058  size=0x02 (  2)  _chainmail
+  0x005a  size=0x02 (  2)  _plateMail
+  0x005c  size=0x02 (  2)  _vacuumSuit
+  0x005e  size=0x02 (  2)  _reflectSuit
+  0x0060  size=0x02 (  2)  _weapons_array
+  0x0062  size=0x02 (  2)  _dagger
+  0x0064  size=0x02 (  2)  _mace
+  0x0066  size=0x02 (  2)  _axe
+  0x0068  size=0x02 (  2)  _ropeSpikes
+  0x006a  size=0x02 (  2)  _sword
+  0x006c  size=0x02 (  2)  _greatSword
+  0x006e  size=0x02 (  2)  _bow
+  0x0070  size=0x02 (  2)  _amulet
+  0x0072  size=0x02 (  2)  _wand
+  0x0074  size=0x02 (  2)  _staff
+  0x0076  size=0x02 (  2)  _triangle
+  0x0078  size=0x02 (  2)  _pistol
+  0x007a  size=0x02 (  2)  _lightSword
+  0x007c  size=0x02 (  2)  _phazor
+  0x007e  size=0x02 (  2)  _blaster
+  0x0080  size=0x02 (  2)  _spells_array
+  0x0082  size=0x02 (  2)  _open
+  0x0084  size=0x02 (  2)  _unlock
+  0x0086  size=0x02 (  2)  _magicMissile
+  0x0088  size=0x02 (  2)  _steal
+  0x008a  size=0x02 (  2)  _ladderDown
+  0x008c  size=0x02 (  2)  _ladderUp
+  0x008e  size=0x02 (  2)  _blink
+  0x0090  size=0x02 (  2)  _create
+  0x0092  size=0x02 (  2)  _destroy
+  0x0094  size=0x02 (  2)  _kill
+  0x0096  size=0x02 (  2)  _transports_array
+  0x0098  size=0x02 (  2)  _horse
+  0x009a  size=0x02 (  2)  _cart
+  0x009c  size=0x02 (  2)  _raft
+  0x009e  size=0x02 (  2)  _frigate
+  0x00a0  size=0x02 (  2)  _aircar
+  0x00a2  size=0x02 (  2)  _shuttle
+  0x00a4  size=0x02 (  2)  _timeMachine
+  0x00a6  size=0x02 (  2)  _enemyVessels
+  0x00a8  size=0x02 (  2)  _signMarker
+  0x00aa  size=0x02 (  2)  field_AA
+  0x00ac  size=0x04 (  4)  _moveCount
+  0x00b0  size=0x02 (  2)  _shipFuel
+  0x00b2  size=0x02 (  2)  _shipShield
+  0x00b4  size=0x280 (640)  _overworldWidgets
+
+=== Creature  size=0x10 (16) ===
+  0x0000  size=0x02 (  2)  _type
+  0x0002  size=0x02 (  2)  _data
+  0x0004  size=0x02 (  2)  _x
+  0x0006  size=0x02 (  2)  _y
+  0x0008  size=0x02 (  2)  _hits
+  0x000a  size=0x02 (  2)  field_A
+  0x000c  size=0x02 (  2)  field_C
+  0x000e  size=0x02 (  2)  field_E
+
+=== LocationWidget  size=0x8 (8) ===
+  0x0000  size=0x02 (  2)  _type
+  0x0002  size=0x04 (  4)  _position
+  0x0006  size=0x02 (  2)  _hitPoints
+
+=== Point  size=0x4 (4) ===
+  0x0000  size=0x02 (  2)  _x
+  0x0002  size=0x02 (  2)  _y
+
+=== Rect  size=0x8 (8) ===
+  0x0000  size=0x02 (  2)  _x1
+  0x0002  size=0x02 (  2)  _y1
+  0x0004  size=0x02 (  2)  _x2
+  0x0006  size=0x02 (  2)  _y2
+
+=== STR15  size=0xf (15) ===
+  0x0000  size=0x0f ( 15)  _str
+----- end target script output -----
+[*] finished executing dump_savegame_full.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_gen.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'probe_idc_api.py', 'noexport']
+[*] reading probe_idc_api.py
+[*] executing probe_idc_api.py
+[*] captured stdout from target script:
+----- begin target script output -----
+True
+True
+True
+True
+Help on function set_member_name in module idc:
+
+set_member_name(sid, member_offset, name)
+    Change structure member name
+    
+    @param sid: structure type ID
+    @param member_offset: offset of the member
+    @param name: new name of the member
+    
+    @return: != 0 - ok.
+----- end target script output -----
+[*] finished executing probe_idc_api.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_gen.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_structs_savegame.py', 'noexport']
+[*] reading apply_structs_savegame.py
+[*] executing apply_structs_savegame.py
+[*] captured stdout from target script:
+----- begin target script output -----
+Savegame+0x2a: '_equippedWeapon' -> '_readyWeapon'
+    standardized on SPACE.EXE's name -- matches the `ready` [R] command's own terminology.
+Savegame+0x2c: '_equippedSpell' -> '_readySpell'
+    see _readyWeapon.
+Savegame+0x2e: '_equippedArmor' -> '_readyArmor'
+    see _readyWeapon.
+Savegame+0x3a: '_quests' -> '_questStatus'
+    9-word per-castle quest state array (-1/1/0), not a list of quest objects.
+Savegame+0x54: '_armor_array' -> '_armorSlot0'
+    distinct 2-byte slot before _leatherArmor -- item identity unconfirmed, see module docstring.
+Savegame+0x60: '_weapons_array' -> '_weaponSlot0'
+    distinct 2-byte slot before _dagger -- item identity unconfirmed, see module docstring.
+Savegame+0x80: '_spells_array' -> '_spellSlot0'
+    distinct 2-byte slot before _open -- item identity unconfirmed, see module docstring.
+Savegame+0x96: '_transports_array' -> '_transportSlot0'
+    distinct 2-byte slot before _horse -- item identity unconfirmed, see module docstring.
+Savegame+0xaa: 'field_AA' -> '_overworldEntityCount'
+    saved/restored alongside _moveCount in saveGame/writeInUseAndExit/startup load, mirrors the live _creaturesCount global.
+Savegame+0xb0: None -> '_shipFuel'
+    propagated from SPACE.EXE's independently-correct name.
+Savegame+0xb2: None -> '_shipShield'
+    propagated from SPACE.EXE's independently-correct name.
+Savegame+0xb4: '_overworldWidgets' -> '_overworldEntities'
+    NOT purely monsters -- see module docstring. Array of 40 Creature.
+Savegame+0xAC: _moveCount is 2 bytes with 'field_AE' at +0xAE -- merging into a 4-byte dword
+[!] function 'addOverworldWidget' not found in this IDB -- skipping
+
+[dry] nothing changed. Set DRY_RUN = False to apply.
+----- end target script output -----
+[*] finished executing apply_structs_savegame.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_gen.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_structs_savegame.py', 'noexport']
+[*] reading apply_structs_savegame.py
+[*] executing apply_structs_savegame.py
+[*] captured stdout from target script:
+----- begin target script output -----
+Savegame+0x2a: '_equippedWeapon' -> '_readyWeapon'
+    standardized on SPACE.EXE's name -- matches the `ready` [R] command's own terminology.
+Savegame+0x2c: '_equippedSpell' -> '_readySpell'
+    see _readyWeapon.
+Savegame+0x2e: '_equippedArmor' -> '_readyArmor'
+    see _readyWeapon.
+Savegame+0x3a: '_quests' -> '_questStatus'
+    9-word per-castle quest state array (-1/1/0), not a list of quest objects.
+Savegame+0x54: '_armor_array' -> '_armorSlot0'
+    distinct 2-byte slot before _leatherArmor -- item identity unconfirmed, see module docstring.
+Savegame+0x60: '_weapons_array' -> '_weaponSlot0'
+    distinct 2-byte slot before _dagger -- item identity unconfirmed, see module docstring.
+Savegame+0x80: '_spells_array' -> '_spellSlot0'
+    distinct 2-byte slot before _open -- item identity unconfirmed, see module docstring.
+Savegame+0x96: '_transports_array' -> '_transportSlot0'
+    distinct 2-byte slot before _horse -- item identity unconfirmed, see module docstring.
+Savegame+0xaa: 'field_AA' -> '_overworldEntityCount'
+    saved/restored alongside _moveCount in saveGame/writeInUseAndExit/startup load, mirrors the live _creaturesCount global.
+Savegame+0xb0: <no member> -> '_shipFuel' (creating)
+    propagated from SPACE.EXE's independently-correct name.
+Savegame+0xb2: <no member> -> '_shipShield' (creating)
+    propagated from SPACE.EXE's independently-correct name.
+Savegame+0xb4: '_overworldWidgets' -> '_overworldEntities'
+    NOT purely monsters -- see module docstring. Array of 40 Creature.
+Savegame+0xAC: _moveCount is 2 bytes with 'field_AE' at +0xAE -- merging into a 4-byte dword
+[!] function 'addOverworldWidget' not found in this IDB -- skipping
+
+[dry] nothing changed. Set DRY_RUN = False to apply.
+----- end target script output -----
+[*] finished executing apply_structs_savegame.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_gen.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_structs_savegame.py']
+[*] reading apply_structs_savegame.py
+[*] executing apply_structs_savegame.py
+[*] captured stdout from target script:
+----- begin target script output -----
+Savegame+0x2a: '_equippedWeapon' -> '_readyWeapon'
+    standardized on SPACE.EXE's name -- matches the `ready` [R] command's own terminology.
+Savegame+0x2c: '_equippedSpell' -> '_readySpell'
+    see _readyWeapon.
+Savegame+0x2e: '_equippedArmor' -> '_readyArmor'
+    see _readyWeapon.
+Savegame+0x3a: '_quests' -> '_questStatus'
+    9-word per-castle quest state array (-1/1/0), not a list of quest objects.
+Savegame+0x54: '_armor_array' -> '_armorSlot0'
+    distinct 2-byte slot before _leatherArmor -- item identity unconfirmed, see module docstring.
+Savegame+0x60: '_weapons_array' -> '_weaponSlot0'
+    distinct 2-byte slot before _dagger -- item identity unconfirmed, see module docstring.
+Savegame+0x80: '_spells_array' -> '_spellSlot0'
+    distinct 2-byte slot before _open -- item identity unconfirmed, see module docstring.
+Savegame+0x96: '_transports_array' -> '_transportSlot0'
+    distinct 2-byte slot before _horse -- item identity unconfirmed, see module docstring.
+Savegame+0xaa: 'field_AA' -> '_overworldEntityCount'
+    saved/restored alongside _moveCount in saveGame/writeInUseAndExit/startup load, mirrors the live _creaturesCount global.
+Savegame+0xb0: <no member> -> '_shipFuel' (creating)
+    propagated from SPACE.EXE's independently-correct name.
+Savegame+0xb2: <no member> -> '_shipShield' (creating)
+    propagated from SPACE.EXE's independently-correct name.
+Savegame+0xb4: '_overworldWidgets' -> '_overworldEntities'
+    NOT purely monsters -- see module docstring. Array of 40 Creature.
+Savegame+0xAC: _moveCount is 2 bytes with 'field_AE' at +0xAE -- merging into a 4-byte dword
+    [!] set_member_type(+0xAC, dword) FAILED
+[!] function 'addOverworldWidget' not found in this IDB -- skipping
+
+Done. Re-export the .asm/.idc and check the new names took.
+----- end target script output -----
+[*] finished executing apply_structs_savegame.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima1\ultima1_gen.asm
+[*] gen_file(OFILE_ASM) returned 10993
+[*] exporting IDC to C:\dev\ultima1\ultima1_gen.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima1\ultima1_gen.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_gen.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'check_movecount.py', 'noexport']
+[*] reading check_movecount.py
+[*] executing check_movecount.py
+[*] captured stdout from target script:
+----- begin target script output -----
+172 '_moveCount' 2
+174 None None
+176 '_shipFuel' 2
+----- end target script output -----
+[*] finished executing check_movecount.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_gen.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'fix_movecount2.py']
+[*] reading fix_movecount2.py
+[*] executing fix_movecount2.py
+[*] captured stdout from target script:
+----- begin target script output -----
+del _moveCount: True
+add dword _moveCount: 0
+172 '_moveCount' 4
+176 '_shipFuel' 2
+----- end target script output -----
+[*] finished executing fix_movecount2.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima1\ultima1_gen.asm
+[*] gen_file(OFILE_ASM) returned 10993
+[*] exporting IDC to C:\dev\ultima1\ultima1_gen.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima1\ultima1_gen.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_gen.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'dump_savegame_full.py', 'noexport']
+[*] reading dump_savegame_full.py
+[*] executing dump_savegame_full.py
+[*] captured stdout from target script:
+----- begin target script output -----
+Root: GEN.EXE
+
+All structs in this IDB:
+  STR15, Point, Rect, Creature, Savegame
+
+=== Savegame  size=0x334 (820) ===
+  0x0000  size=0x10 ( 16)  _name
+  0x0010  size=0x02 (  2)  _race
+  0x0012  size=0x02 (  2)  _class
+  0x0014  size=0x02 (  2)  _sex
+  0x0016  size=0x02 (  2)  _hits
+  0x0018  size=0x02 (  2)  _strength
+  0x001a  size=0x02 (  2)  _agility
+  0x001c  size=0x02 (  2)  _stamina
+  0x001e  size=0x02 (  2)  _charisma
+  0x0020  size=0x02 (  2)  _wisdom
+  0x0022  size=0x02 (  2)  _intelligence
+  0x0024  size=0x02 (  2)  _coins
+  0x0026  size=0x02 (  2)  _experience
+  0x0028  size=0x02 (  2)  _food
+  0x002a  size=0x02 (  2)  _readyWeapon
+  0x002c  size=0x02 (  2)  _readySpell
+  0x002e  size=0x02 (  2)  _readyArmor
+  0x0030  size=0x02 (  2)  _transportType
+  0x0032  size=0x02 (  2)  _randomSeed
+  0x0034  size=0x04 (  4)  _position
+  0x0038  size=0x02 (  2)  _soundOn
+  0x003a  size=0x12 ( 18)  _questStatus
+  0x004c  size=0x02 (  2)  _redGems
+  0x004e  size=0x02 (  2)  _greenGems
+  0x0050  size=0x02 (  2)  _blueGem
+  0x0052  size=0x02 (  2)  _whiteGem
+  0x0054  size=0x02 (  2)  _armorSlot0
+  0x0056  size=0x02 (  2)  _leatherArmor
+  0x0058  size=0x02 (  2)  _chainmail
+  0x005a  size=0x02 (  2)  _plateMail
+  0x005c  size=0x02 (  2)  _vacuumSuit
+  0x005e  size=0x02 (  2)  _reflectSuit
+  0x0060  size=0x02 (  2)  _weaponSlot0
+  0x0062  size=0x02 (  2)  _dagger
+  0x0064  size=0x02 (  2)  _mace
+  0x0066  size=0x02 (  2)  _axe
+  0x0068  size=0x02 (  2)  _ropeSpikes
+  0x006a  size=0x02 (  2)  _sword
+  0x006c  size=0x02 (  2)  _greatSword
+  0x006e  size=0x02 (  2)  _bow
+  0x0070  size=0x02 (  2)  _amulet
+  0x0072  size=0x02 (  2)  _wand
+  0x0074  size=0x02 (  2)  _staff
+  0x0076  size=0x02 (  2)  _triangle
+  0x0078  size=0x02 (  2)  _pistol
+  0x007a  size=0x02 (  2)  _lightSword
+  0x007c  size=0x02 (  2)  _phazor
+  0x007e  size=0x02 (  2)  _blaster
+  0x0080  size=0x02 (  2)  _spellSlot0
+  0x0082  size=0x02 (  2)  _open
+  0x0084  size=0x02 (  2)  _unlock
+  0x0086  size=0x02 (  2)  _magicMissile
+  0x0088  size=0x02 (  2)  _steal
+  0x008a  size=0x02 (  2)  _ladderDown
+  0x008c  size=0x02 (  2)  _ladderUp
+  0x008e  size=0x02 (  2)  _blink
+  0x0090  size=0x02 (  2)  _create
+  0x0092  size=0x02 (  2)  _destroy
+  0x0094  size=0x02 (  2)  _kill
+  0x0096  size=0x02 (  2)  _transportSlot0
+  0x0098  size=0x02 (  2)  _horse
+  0x009a  size=0x02 (  2)  _cart
+  0x009c  size=0x02 (  2)  _raft
+  0x009e  size=0x02 (  2)  _frigate
+  0x00a0  size=0x02 (  2)  _aircar
+  0x00a2  size=0x02 (  2)  _shuttle
+  0x00a4  size=0x02 (  2)  _timeMachine
+  0x00a6  size=0x02 (  2)  _enemyVessels
+  0x00a8  size=0x02 (  2)  _signMarker
+  0x00aa  size=0x02 (  2)  _overworldEntityCount
+  0x00ac  size=0x04 (  4)  _moveCount
+  0x00b0  size=0x02 (  2)  _shipFuel
+  0x00b2  size=0x02 (  2)  _shipShield
+  0x00b4  size=0x280 (640)  _overworldEntities
+
+=== Creature  size=0x10 (16) ===
+  0x0000  size=0x02 (  2)  _type
+  0x0002  size=0x02 (  2)  _data
+  0x0004  size=0x02 (  2)  _x
+  0x0006  size=0x02 (  2)  _y
+  0x0008  size=0x02 (  2)  _hits
+  0x000a  size=0x02 (  2)  field_A
+  0x000c  size=0x02 (  2)  field_C
+  0x000e  size=0x02 (  2)  field_E
+
+=== Point  size=0x4 (4) ===
+  0x0000  size=0x02 (  2)  _x
+  0x0002  size=0x02 (  2)  _y
+
+=== Rect  size=0x8 (8) ===
+  0x0000  size=0x02 (  2)  _x1
+  0x0002  size=0x02 (  2)  _y1
+  0x0004  size=0x02 (  2)  _x2
+  0x0006  size=0x02 (  2)  _y2
+
+=== STR15  size=0xf (15) ===
+  0x0000  size=0x0f ( 15)  _str
+----- end target script output -----
+[*] finished executing dump_savegame_full.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_structs_savegame.py']
+[*] reading apply_structs_savegame.py
+[*] executing apply_structs_savegame.py
+[*] captured stdout from target script:
+----- begin target script output -----
+Savegame+0x2a: '_equippedWeapon' -> '_readyWeapon'
+    standardized on SPACE.EXE's name -- matches the `ready` [R] command's own terminology.
+Savegame+0x2c: '_equippedSpell' -> '_readySpell'
+    see _readyWeapon.
+Savegame+0x2e: '_equippedArmor' -> '_readyArmor'
+    see _readyWeapon.
+Savegame+0x3a: '_quests' -> '_questStatus'
+    9-word per-castle quest state array (-1/1/0), not a list of quest objects.
+Savegame+0x54: '_armor_array' -> '_armorSlot0'
+    distinct 2-byte slot before _leatherArmor -- item identity unconfirmed, see module docstring.
+Savegame+0x60: '_weapons_array' -> '_weaponSlot0'
+    distinct 2-byte slot before _dagger -- item identity unconfirmed, see module docstring.
+Savegame+0x80: '_spells_array' -> '_spellSlot0'
+    distinct 2-byte slot before _open -- item identity unconfirmed, see module docstring.
+Savegame+0x96: '_transports_array' -> '_transportSlot0'
+    distinct 2-byte slot before _horse -- item identity unconfirmed, see module docstring.
+Savegame+0xaa: 'field_AA' -> '_overworldEntityCount'
+    saved/restored alongside _moveCount in saveGame/writeInUseAndExit/startup load, mirrors the live _creaturesCount global.
+Savegame+0xb0: 'field_B0' -> '_shipFuel'
+    propagated from SPACE.EXE's independently-correct name.
+Savegame+0xb2: 'field_B2' -> '_shipShield'
+    propagated from SPACE.EXE's independently-correct name.
+Savegame+0xb4: '_overworldWidgets' -> '_overworldEntities'
+    NOT purely monsters -- see module docstring. Array of 40 Creature.
+Savegame+0xAC: '_moveCount' size=4 -- already fine, leaving alone
+1B502: 'addOverworldWidget' -> 'addOverworldEntity'
+    consistency with Savegame._overworldEntities -- adds an entry to that array (monster, or a ship/marker left behind), not always a monster.
+
+Done. Re-export the .asm/.idc and check the new names took.
+----- end target script output -----
+[*] finished executing apply_structs_savegame.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima1\ultima1_out.asm
+[*] gen_file(OFILE_ASM) returned 41660
+[*] exporting IDC to C:\dev\ultima1\ultima1_out.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima1\ultima1_out.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_space.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_structs_savegame.py']
+[*] reading apply_structs_savegame.py
+[*] executing apply_structs_savegame.py
+[*] captured stdout from target script:
+----- begin target script output -----
+Savegame+0x2a: already '_readyWeapon' -- skipping
+Savegame+0x2c: already '_readySpell' -- skipping
+Savegame+0x2e: already '_readyArmor' -- skipping
+Savegame+0x3a: '_quests' -> '_questStatus'
+    9-word per-castle quest state array (-1/1/0), not a list of quest objects.
+Savegame+0x54: '_armor_array' -> '_armorSlot0'
+    distinct 2-byte slot before _leatherArmor -- item identity unconfirmed, see module docstring.
+Savegame+0x60: '_weapons_array' -> '_weaponSlot0'
+    distinct 2-byte slot before _dagger -- item identity unconfirmed, see module docstring.
+Savegame+0x80: '_spells_array' -> '_spellSlot0'
+    distinct 2-byte slot before _open -- item identity unconfirmed, see module docstring.
+Savegame+0x96: '_transports_array' -> '_transportSlot0'
+    distinct 2-byte slot before _horse -- item identity unconfirmed, see module docstring.
+Savegame+0xaa: 'field_AA' -> '_overworldEntityCount'
+    saved/restored alongside _moveCount in saveGame/writeInUseAndExit/startup load, mirrors the live _creaturesCount global.
+Savegame+0xb0: already '_shipFuel' -- skipping
+Savegame+0xb2: already '_shipShield' -- skipping
+Savegame+0xb4: '_overworldWidgets' -> '_overworldEntities'
+    NOT purely monsters -- see module docstring. Array of 40 Creature.
+Savegame+0xAC: '_moveCount' size=4 -- already fine, leaving alone
+[!] function 'addOverworldWidget' not found in this IDB -- skipping
+
+Done. Re-export the .asm/.idc and check the new names took.
+----- end target script output -----
+[*] finished executing apply_structs_savegame.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima1\ultima1_space.asm
+[*] gen_file(OFILE_ASM) returned 23097
+[*] exporting IDC to C:\dev\ultima1\ultima1_space.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima1\ultima1_space.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'apply_structs_savegame_ultima.py']
+[*] reading apply_structs_savegame_ultima.py
+[*] executing apply_structs_savegame_ultima.py
+[*] captured stdout from target script:
+----- begin target script output -----
+Creature struct missing -- creating (matches GEN/OUT/SPACE layout)
+Deleting existing Savegame struct (was 0x334 bytes, unused in this IDB's code)
+  [!] add_struc_member('_name' @ 0x00) FAILED (code -3)
+  0x10  _race  (2 bytes, word)
+  0x12  _class  (2 bytes, word)
+  0x14  _sex  (2 bytes, word)
+  0x16  _hits  (2 bytes, word)
+  0x18  _strength  (2 bytes, word)
+  0x1a  _agility  (2 bytes, word)
+  0x1c  _stamina  (2 bytes, word)
+  0x1e  _charisma  (2 bytes, word)
+  0x20  _wisdom  (2 bytes, word)
+  0x22  _intelligence  (2 bytes, word)
+  0x24  _coins  (2 bytes, word)
+  0x26  _experience  (2 bytes, word)
+  0x28  _food  (2 bytes, word)
+  0x2a  _readyWeapon  (2 bytes, word)
+  0x2c  _readySpell  (2 bytes, word)
+  0x2e  _readyArmor  (2 bytes, word)
+  0x30  _transportType  (2 bytes, word)
+  0x32  _randomSeed  (2 bytes, word)
+  0x34  _position  (4 bytes, Point)
+  0x38  _soundOn  (2 bytes, word)
+  0x3a  _questStatus  (18 bytes, raw18)
+  0x4c  _redGems  (2 bytes, word)
+  0x4e  _greenGems  (2 bytes, word)
+  0x50  _blueGem  (2 bytes, word)
+  0x52  _whiteGem  (2 bytes, word)
+  0x54  _armorSlot0  (2 bytes, word)
+  0x56  _leatherArmor  (2 bytes, word)
+  0x58  _chainmail  (2 bytes, word)
+  0x5a  _plateMail  (2 bytes, word)
+  0x5c  _vacuumSuit  (2 bytes, word)
+  0x5e  _reflectSuit  (2 bytes, word)
+  0x60  _weaponSlot0  (2 bytes, word)
+  0x62  _dagger  (2 bytes, word)
+  0x64  _mace  (2 bytes, word)
+  0x66  _axe  (2 bytes, word)
+  0x68  _ropeSpikes  (2 bytes, word)
+  0x6a  _sword  (2 bytes, word)
+  0x6c  _greatSword  (2 bytes, word)
+  0x6e  _bow  (2 bytes, word)
+  0x70  _amulet  (2 bytes, word)
+  0x72  _wand  (2 bytes, word)
+  0x74  _staff  (2 bytes, word)
+  0x76  _triangle  (2 bytes, word)
+  0x78  _pistol  (2 bytes, word)
+  0x7a  _lightSword  (2 bytes, word)
+  0x7c  _phazor  (2 bytes, word)
+  0x7e  _blaster  (2 bytes, word)
+  0x80  _spellSlot0  (2 bytes, word)
+  0x82  _open  (2 bytes, word)
+  0x84  _unlock  (2 bytes, word)
+  0x86  _magicMissile  (2 bytes, word)
+  0x88  _steal  (2 bytes, word)
+  0x8a  _ladderDown  (2 bytes, word)
+  0x8c  _ladderUp  (2 bytes, word)
+  0x8e  _blink  (2 bytes, word)
+  0x90  _create  (2 bytes, word)
+  0x92  _destroy  (2 bytes, word)
+  0x94  _kill  (2 bytes, word)
+  0x96  _transportSlot0  (2 bytes, word)
+  0x98  _horse  (2 bytes, word)
+  0x9a  _cart  (2 bytes, word)
+  0x9c  _raft  (2 bytes, word)
+  0x9e  _frigate  (2 bytes, word)
+  0xa0  _aircar  (2 bytes, word)
+  0xa2  _shuttle  (2 bytes, word)
+  0xa4  _timeMachine  (2 bytes, word)
+  0xa6  _enemyVessels  (2 bytes, word)
+  0xa8  _signMarker  (2 bytes, word)
+  0xaa  _overworldEntityCount  (2 bytes, word)
+  0xac  _moveCount  (4 bytes, dword)
+  0xb0  _shipFuel  (2 bytes, word)
+  0xb2  _shipShield  (2 bytes, word)
+  0xb4  _overworldEntities  (640 bytes, Creature*40)
+Savegame rebuilt: 0x334 bytes, matches canonical size.
+
+Done. Re-export the .asm/.idc and check the new struct took.
+----- end target script output -----
+[*] finished executing apply_structs_savegame_ultima.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima1\ultima1.asm
+[*] gen_file(OFILE_ASM) returned 10721
+[*] exporting IDC to C:\dev\ultima1\ultima1.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima1\ultima1.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'dump_savegame_full.py', 'noexport']
+[*] reading dump_savegame_full.py
+[*] executing dump_savegame_full.py
+[*] captured stdout from target script:
+----- begin target script output -----
+Root: ULTIMA.EXE
+
+All structs in this IDB:
+  STR15, Point, Rect, Creature, Savegame
+
+=== Savegame  size=0x334 (820) ===
+  0x0010  size=0x02 (  2)  _race
+  0x0012  size=0x02 (  2)  _class
+  0x0014  size=0x02 (  2)  _sex
+  0x0016  size=0x02 (  2)  _hits
+  0x0018  size=0x02 (  2)  _strength
+  0x001a  size=0x02 (  2)  _agility
+  0x001c  size=0x02 (  2)  _stamina
+  0x001e  size=0x02 (  2)  _charisma
+  0x0020  size=0x02 (  2)  _wisdom
+  0x0022  size=0x02 (  2)  _intelligence
+  0x0024  size=0x02 (  2)  _coins
+  0x0026  size=0x02 (  2)  _experience
+  0x0028  size=0x02 (  2)  _food
+  0x002a  size=0x02 (  2)  _readyWeapon
+  0x002c  size=0x02 (  2)  _readySpell
+  0x002e  size=0x02 (  2)  _readyArmor
+  0x0030  size=0x02 (  2)  _transportType
+  0x0032  size=0x02 (  2)  _randomSeed
+  0x0034  size=0x04 (  4)  _position
+  0x0038  size=0x02 (  2)  _soundOn
+  0x003a  size=0x12 ( 18)  _questStatus
+  0x004c  size=0x02 (  2)  _redGems
+  0x004e  size=0x02 (  2)  _greenGems
+  0x0050  size=0x02 (  2)  _blueGem
+  0x0052  size=0x02 (  2)  _whiteGem
+  0x0054  size=0x02 (  2)  _armorSlot0
+  0x0056  size=0x02 (  2)  _leatherArmor
+  0x0058  size=0x02 (  2)  _chainmail
+  0x005a  size=0x02 (  2)  _plateMail
+  0x005c  size=0x02 (  2)  _vacuumSuit
+  0x005e  size=0x02 (  2)  _reflectSuit
+  0x0060  size=0x02 (  2)  _weaponSlot0
+  0x0062  size=0x02 (  2)  _dagger
+  0x0064  size=0x02 (  2)  _mace
+  0x0066  size=0x02 (  2)  _axe
+  0x0068  size=0x02 (  2)  _ropeSpikes
+  0x006a  size=0x02 (  2)  _sword
+  0x006c  size=0x02 (  2)  _greatSword
+  0x006e  size=0x02 (  2)  _bow
+  0x0070  size=0x02 (  2)  _amulet
+  0x0072  size=0x02 (  2)  _wand
+  0x0074  size=0x02 (  2)  _staff
+  0x0076  size=0x02 (  2)  _triangle
+  0x0078  size=0x02 (  2)  _pistol
+  0x007a  size=0x02 (  2)  _lightSword
+  0x007c  size=0x02 (  2)  _phazor
+  0x007e  size=0x02 (  2)  _blaster
+  0x0080  size=0x02 (  2)  _spellSlot0
+  0x0082  size=0x02 (  2)  _open
+  0x0084  size=0x02 (  2)  _unlock
+  0x0086  size=0x02 (  2)  _magicMissile
+  0x0088  size=0x02 (  2)  _steal
+  0x008a  size=0x02 (  2)  _ladderDown
+  0x008c  size=0x02 (  2)  _ladderUp
+  0x008e  size=0x02 (  2)  _blink
+  0x0090  size=0x02 (  2)  _create
+  0x0092  size=0x02 (  2)  _destroy
+  0x0094  size=0x02 (  2)  _kill
+  0x0096  size=0x02 (  2)  _transportSlot0
+  0x0098  size=0x02 (  2)  _horse
+  0x009a  size=0x02 (  2)  _cart
+  0x009c  size=0x02 (  2)  _raft
+  0x009e  size=0x02 (  2)  _frigate
+  0x00a0  size=0x02 (  2)  _aircar
+  0x00a2  size=0x02 (  2)  _shuttle
+  0x00a4  size=0x02 (  2)  _timeMachine
+  0x00a6  size=0x02 (  2)  _enemyVessels
+  0x00a8  size=0x02 (  2)  _signMarker
+  0x00aa  size=0x02 (  2)  _overworldEntityCount
+  0x00ac  size=0x04 (  4)  _moveCount
+  0x00b0  size=0x02 (  2)  _shipFuel
+  0x00b2  size=0x02 (  2)  _shipShield
+  0x00b4  size=0x280 (640)  _overworldEntities
+
+=== Creature  size=0x10 (16) ===
+  0x0000  size=0x02 (  2)  _type
+  0x0002  size=0x02 (  2)  _data
+  0x0004  size=0x02 (  2)  _x
+  0x0006  size=0x02 (  2)  _y
+  0x0008  size=0x02 (  2)  _hits
+  0x000a  size=0x02 (  2)  field_A
+  0x000c  size=0x02 (  2)  field_C
+  0x000e  size=0x02 (  2)  field_E
+
+=== Point  size=0x4 (4) ===
+  0x0000  size=0x02 (  2)  _x
+  0x0002  size=0x02 (  2)  _y
+
+=== Rect  size=0x8 (8) ===
+  0x0000  size=0x02 (  2)  _x1
+  0x0002  size=0x02 (  2)  _y1
+  0x0004  size=0x02 (  2)  _x2
+  0x0006  size=0x02 (  2)  _y2
+
+=== STR15  size=0xf (15) ===
+  0x0000  size=0x0f ( 15)  _str
+----- end target script output -----
+[*] finished executing dump_savegame_full.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'dump_savegame_full.py', 'noexport']
+[*] reading dump_savegame_full.py
+[*] executing dump_savegame_full.py
+[*] captured stdout from target script:
+----- begin target script output -----
+Root: OUT.EXE
+
+All structs in this IDB:
+  STR15, DungeonCell, DungeonColumn, DungeonMap, Point, Rect, Creature, LocationWidget, Savegame, MapLine, Map
+
+=== Savegame  size=0x334 (820) ===
+  0x0000  size=0x10 ( 16)  _name
+  0x0010  size=0x02 (  2)  _race
+  0x0012  size=0x02 (  2)  _class
+  0x0014  size=0x02 (  2)  _sex
+  0x0016  size=0x02 (  2)  _hits
+  0x0018  size=0x02 (  2)  _strength
+  0x001a  size=0x02 (  2)  _agility
+  0x001c  size=0x02 (  2)  _stamina
+  0x001e  size=0x02 (  2)  _charisma
+  0x0020  size=0x02 (  2)  _wisdom
+  0x0022  size=0x02 (  2)  _intelligence
+  0x0024  size=0x02 (  2)  _coins
+  0x0026  size=0x02 (  2)  _experience
+  0x0028  size=0x02 (  2)  _food
+  0x002a  size=0x02 (  2)  _readyWeapon
+  0x002c  size=0x02 (  2)  _readySpell
+  0x002e  size=0x02 (  2)  _readyArmor
+  0x0030  size=0x02 (  2)  _transportType
+  0x0032  size=0x02 (  2)  _randomSeed
+  0x0034  size=0x04 (  4)  _position
+  0x0038  size=0x02 (  2)  _soundOn
+  0x003a  size=0x12 ( 18)  _questStatus
+  0x004c  size=0x02 (  2)  _redGems
+  0x004e  size=0x02 (  2)  _greenGems
+  0x0050  size=0x02 (  2)  _blueGem
+  0x0052  size=0x02 (  2)  _whiteGem
+  0x0054  size=0x02 (  2)  _armorSlot0
+  0x0056  size=0x02 (  2)  _leatherArmor
+  0x0058  size=0x02 (  2)  _chainmail
+  0x005a  size=0x02 (  2)  _plateMail
+  0x005c  size=0x02 (  2)  _vacuumSuit
+  0x005e  size=0x02 (  2)  _reflectSuit
+  0x0060  size=0x02 (  2)  _weaponSlot0
+  0x0062  size=0x02 (  2)  _dagger
+  0x0064  size=0x02 (  2)  _mace
+  0x0066  size=0x02 (  2)  _axe
+  0x0068  size=0x02 (  2)  _ropeSpikes
+  0x006a  size=0x02 (  2)  _sword
+  0x006c  size=0x02 (  2)  _greatSword
+  0x006e  size=0x02 (  2)  _bow
+  0x0070  size=0x02 (  2)  _amulet
+  0x0072  size=0x02 (  2)  _wand
+  0x0074  size=0x02 (  2)  _staff
+  0x0076  size=0x02 (  2)  _triangle
+  0x0078  size=0x02 (  2)  _pistol
+  0x007a  size=0x02 (  2)  _lightSword
+  0x007c  size=0x02 (  2)  _phazor
+  0x007e  size=0x02 (  2)  _blaster
+  0x0080  size=0x02 (  2)  _spellSlot0
+  0x0082  size=0x02 (  2)  _open
+  0x0084  size=0x02 (  2)  _unlock
+  0x0086  size=0x02 (  2)  _magicMissile
+  0x0088  size=0x02 (  2)  _steal
+  0x008a  size=0x02 (  2)  _ladderDown
+  0x008c  size=0x02 (  2)  _ladderUp
+  0x008e  size=0x02 (  2)  _blink
+  0x0090  size=0x02 (  2)  _create
+  0x0092  size=0x02 (  2)  _destroy
+  0x0094  size=0x02 (  2)  _kill
+  0x0096  size=0x02 (  2)  _transportSlot0
+  0x0098  size=0x02 (  2)  _horse
+  0x009a  size=0x02 (  2)  _cart
+  0x009c  size=0x02 (  2)  _raft
+  0x009e  size=0x02 (  2)  _frigate
+  0x00a0  size=0x02 (  2)  _aircar
+  0x00a2  size=0x02 (  2)  _shuttle
+  0x00a4  size=0x02 (  2)  _timeMachine
+  0x00a6  size=0x02 (  2)  _enemyVessels
+  0x00a8  size=0x02 (  2)  _signMarker
+  0x00aa  size=0x02 (  2)  _overworldEntityCount
+  0x00ac  size=0x04 (  4)  _moveCount
+  0x00b0  size=0x02 (  2)  _shipFuel
+  0x00b2  size=0x02 (  2)  _shipShield
+  0x00b4  size=0x280 (640)  _overworldEntities
+
+=== Creature  size=0x10 (16) ===
+  0x0000  size=0x02 (  2)  _type
+  0x0002  size=0x02 (  2)  _data
+  0x0004  size=0x02 (  2)  _x
+  0x0006  size=0x02 (  2)  _y
+  0x0008  size=0x02 (  2)  _hits
+  0x000a  size=0x02 (  2)  field_A
+  0x000c  size=0x02 (  2)  field_C
+  0x000e  size=0x02 (  2)  field_E
+
+=== LocationWidget  size=0x8 (8) ===
+  0x0000  size=0x02 (  2)  _type
+  0x0002  size=0x04 (  4)  _position
+  0x0006  size=0x02 (  2)  _hitPoints
+
+=== Point  size=0x4 (4) ===
+  0x0000  size=0x02 (  2)  _x
+  0x0002  size=0x02 (  2)  _y
+
+=== Rect  size=0x8 (8) ===
+  0x0000  size=0x02 (  2)  _x1
+  0x0002  size=0x02 (  2)  _y1
+  0x0004  size=0x02 (  2)  _x2
+  0x0006  size=0x02 (  2)  _y2
+
+=== STR15  size=0xf (15) ===
+  0x0000  size=0x0f ( 15)  _str
+----- end target script output -----
+[*] finished executing dump_savegame_full.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_space.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'dump_savegame_full.py', 'noexport']
+[*] reading dump_savegame_full.py
+[*] executing dump_savegame_full.py
+[*] captured stdout from target script:
+----- begin target script output -----
+Root: SPACE.EXE
+
+All structs in this IDB:
+  STR15, DuneonRow, DungeonMap, Point, Rect, Creature, LocationWidget, Savegame, MapLine, Map, SpaceMapShip, SpaceMapCell, SpaceMapY, SpaceMap, FightData, JumpEntry
+
+=== Savegame  size=0x334 (820) ===
+  0x0000  size=0x10 ( 16)  _name
+  0x0010  size=0x02 (  2)  _race
+  0x0012  size=0x02 (  2)  _class
+  0x0014  size=0x02 (  2)  _sex
+  0x0016  size=0x02 (  2)  _hits
+  0x0018  size=0x02 (  2)  _strength
+  0x001a  size=0x02 (  2)  _agility
+  0x001c  size=0x02 (  2)  _stamina
+  0x001e  size=0x02 (  2)  _charisma
+  0x0020  size=0x02 (  2)  _wisdom
+  0x0022  size=0x02 (  2)  _intelligence
+  0x0024  size=0x02 (  2)  _coins
+  0x0026  size=0x02 (  2)  _experience
+  0x0028  size=0x02 (  2)  _food
+  0x002a  size=0x02 (  2)  _readyWeapon
+  0x002c  size=0x02 (  2)  _readySpell
+  0x002e  size=0x02 (  2)  _readyArmor
+  0x0030  size=0x02 (  2)  _transportType
+  0x0032  size=0x02 (  2)  _randomSeed
+  0x0034  size=0x04 (  4)  _position
+  0x0038  size=0x02 (  2)  _soundOn
+  0x003a  size=0x12 ( 18)  _questStatus
+  0x004c  size=0x02 (  2)  _redGems
+  0x004e  size=0x02 (  2)  _greenGems
+  0x0050  size=0x02 (  2)  _blueGem
+  0x0052  size=0x02 (  2)  _whiteGem
+  0x0054  size=0x02 (  2)  _armorSlot0
+  0x0056  size=0x02 (  2)  _leatherArmor
+  0x0058  size=0x02 (  2)  _chainmail
+  0x005a  size=0x02 (  2)  _plateMail
+  0x005c  size=0x02 (  2)  _vacuumSuit
+  0x005e  size=0x02 (  2)  _reflectSuit
+  0x0060  size=0x02 (  2)  _weaponSlot0
+  0x0062  size=0x02 (  2)  _dagger
+  0x0064  size=0x02 (  2)  _mace
+  0x0066  size=0x02 (  2)  _axe
+  0x0068  size=0x02 (  2)  _ropeSpikes
+  0x006a  size=0x02 (  2)  _sword
+  0x006c  size=0x02 (  2)  _greatSword
+  0x006e  size=0x02 (  2)  _bow
+  0x0070  size=0x02 (  2)  _amulet
+  0x0072  size=0x02 (  2)  _wand
+  0x0074  size=0x02 (  2)  _staff
+  0x0076  size=0x02 (  2)  _triangle
+  0x0078  size=0x02 (  2)  _pistol
+  0x007a  size=0x02 (  2)  _lightSword
+  0x007c  size=0x02 (  2)  _phazor
+  0x007e  size=0x02 (  2)  _blaster
+  0x0080  size=0x02 (  2)  _spellSlot0
+  0x0082  size=0x02 (  2)  _open
+  0x0084  size=0x02 (  2)  _unlock
+  0x0086  size=0x02 (  2)  _magicMissile
+  0x0088  size=0x02 (  2)  _steal
+  0x008a  size=0x02 (  2)  _ladderDown
+  0x008c  size=0x02 (  2)  _ladderUp
+  0x008e  size=0x02 (  2)  _blink
+  0x0090  size=0x02 (  2)  _create
+  0x0092  size=0x02 (  2)  _destroy
+  0x0094  size=0x02 (  2)  _kill
+  0x0096  size=0x02 (  2)  _transportSlot0
+  0x0098  size=0x02 (  2)  _horse
+  0x009a  size=0x02 (  2)  _cart
+  0x009c  size=0x02 (  2)  _raft
+  0x009e  size=0x02 (  2)  _frigate
+  0x00a0  size=0x02 (  2)  _aircar
+  0x00a2  size=0x02 (  2)  _shuttle
+  0x00a4  size=0x02 (  2)  _timeMachine
+  0x00a6  size=0x02 (  2)  _enemyVessels
+  0x00a8  size=0x02 (  2)  _signMarker
+  0x00aa  size=0x02 (  2)  _overworldEntityCount
+  0x00ac  size=0x04 (  4)  _moveCount
+  0x00b0  size=0x02 (  2)  _shipFuel
+  0x00b2  size=0x02 (  2)  _shipShield
+  0x00b4  size=0x280 (640)  _overworldEntities
+
+=== Creature  size=0x10 (16) ===
+  0x0000  size=0x02 (  2)  _type
+  0x0002  size=0x02 (  2)  _data
+  0x0004  size=0x02 (  2)  _x
+  0x0006  size=0x02 (  2)  _y
+  0x0008  size=0x02 (  2)  _hits
+  0x000a  size=0x02 (  2)  field_A
+  0x000c  size=0x02 (  2)  field_C
+  0x000e  size=0x02 (  2)  field_E
+
+=== LocationWidget  size=0x8 (8) ===
+  0x0000  size=0x02 (  2)  _type
+  0x0002  size=0x04 (  4)  _position
+  0x0006  size=0x02 (  2)  _hitPoints
+
+=== Point  size=0x4 (4) ===
+  0x0000  size=0x02 (  2)  _x
+  0x0002  size=0x02 (  2)  _y
+
+=== Rect  size=0x8 (8) ===
+  0x0000  size=0x02 (  2)  _x1
+  0x0002  size=0x02 (  2)  _y1
+  0x0004  size=0x02 (  2)  _x2
+  0x0006  size=0x02 (  2)  _y2
+
+=== STR15  size=0xf (15) ===
+  0x0000  size=0x0f ( 15)  _str
+----- end target script output -----
+[*] finished executing dump_savegame_full.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
