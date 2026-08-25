@@ -8095,3 +8095,196 @@ Done. Re-export the .asm/.idc and check the new array display took.
 [*] gen_file(OFILE_IDC) returned 1
 [*] saving database to C:\dev\ultima1\ultima1_out.idb
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'inspect_nheapinit.py', 'noexport']
+[*] reading inspect_nheapinit.py
+[*] executing inspect_nheapinit.py
+[*] captured stdout from target script:
+----- begin target script output -----
+_nheapinit: start=0x19418 end=0x19569 size=0x151
+  label at 0x1947b: 'loc_1947B'  (xor)
+  label at 0x19495: 'loc_19495'  (pop)
+  label at 0x19499: 'loc_19499'  (mov)
+  label at 0x194aa: 'loc_194AA'  (mov)
+  label at 0x194b8: 'loc_194B8'  (mov)
+  label at 0x194cf: 'execProgramEntry'  (push)
+  label at 0x194ed: 'loc_194ED'  (push)
+  label at 0x19508: 'loc_19508'  (add)
+  label at 0x1950d: 'translateDosErrorToErrno'  (jnb)
+  label at 0x1950f: 'loc_1950F'  (test)
+  label at 0x1951e: 'loc_1951E'  (mov)
+  label at 0x1953e: 'loc_1953E'  (mov)
+  label at 0x19547: 'loc_19547'  (mov)
+  label at 0x19552: 'loc_19552'  (mov)
+  label at 0x1955b: 'loc_1955B'  (test)
+
+push bp @ 0x19418
+push bp @ 0x1949e
+push bp @ 0x194cf
+----- end target script output -----
+[*] finished executing inspect_nheapinit.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'inspect_nheapinit2.py', 'noexport']
+[*] reading inspect_nheapinit2.py
+[*] executing inspect_nheapinit2.py
+[*] captured stdout from target script:
+----- begin target script output -----
+
+=== xrefs to 0x19418 ===
+  code ref from 0x1028b (start)
+  flow ref from 0x1028b
+
+=== xrefs to 0x1949e ===
+
+=== xrefs to 0x194cf ===
+  code ref from 0x1909c (chainToExecutable)
+  code ref from 0x190b6 (chainToExecutableAlt)
+  code ref from 0x194c5 (_nheapinit)
+  flow ref from 0x1909c
+  flow ref from 0x190b6
+  flow ref from 0x194c5
+
+=== xrefs to 0x1950d ===
+  code ref from 0x19496 (_nheapinit)
+  code ref from 0x19586 (_dos_open)
+  code ref from 0x195a8 (_dos_read)
+  code ref from 0x195cc (_dos_lseek)
+  code ref from 0x195f5 (_dos_write)
+  code ref from 0x19e29 (_dos_getfileattr)
+  code ref from 0x1d38a (_dos_creat)
+  code ref from 0x1d3a8 (_dos_creattemp)
+  flow ref from 0x19496
+  flow ref from 0x19586
+  flow ref from 0x195a8
+  flow ref from 0x195cc
+  flow ref from 0x195f5
+  flow ref from 0x19e29
+  flow ref from 0x1d38a
+  flow ref from 0x1d3a8
+retn at 0x19494, next insn at 0x19495
+retn at 0x1949d, next insn at 0xffffffff
+----- end target script output -----
+[*] finished executing inspect_nheapinit2.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'check_nheapinit_bounds.py', 'noexport']
+[*] reading check_nheapinit_bounds.py
+[*] executing check_nheapinit_bounds.py
+[*] captured stdout from target script:
+----- begin target script output -----
+
+=== nheapinit end / dead-block start @ 0x1949e ===
+  prev insn: retn
+  this insn: push    bp
+  is_code(this): True
+
+=== dead-block end / execProgramEntry start @ 0x194cf ===
+  prev insn: retn
+  this insn: push    bp
+  is_code(this): True
+
+=== execProgramEntry end / translateDosErrorToErrno start @ 0x1950d ===
+  prev insn: retn
+  this insn: jnb     short loc_1955B
+  is_code(this): True
+----- end target script output -----
+[*] finished executing check_nheapinit_bounds.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'fix_nheapinit_boundary.py', 'noexport']
+[*] reading fix_nheapinit_boundary.py
+[*] executing fix_nheapinit_boundary.py
+[*] captured stdout from target script:
+----- begin target script output -----
+names before split: {'0x19418': '_nheapinit', '0x1949e': '', '0x194cf': 'execProgramEntry', '0x1950d': 'translateDosErrorToErrno'}
+Deleting merged function 0x19418-0x19569
+[dry] would delete and re-add 4 separate functions:
+  0x19418-0x1949e (134 bytes): _nheapinit (unchanged name, corrected end)
+  0x1949e-0x194cf (49 bytes): dead/uncalled block -- left as auto sub_ name
+  0x194cf-0x1950d (62 bytes): execProgramEntry (unchanged name, now a real function)
+  0x1950d-0x19569 (92 bytes): translateDosErrorToErrno (unchanged name, now a real function)
+----- end target script output -----
+[*] finished executing fix_nheapinit_boundary.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'fix_nheapinit_boundary.py']
+[*] reading fix_nheapinit_boundary.py
+[*] executing fix_nheapinit_boundary.py
+[*] captured stdout from target script:
+----- begin target script output -----
+names before split: {'0x19418': '_nheapinit', '0x1949e': '', '0x194cf': 'execProgramEntry', '0x1950d': 'translateDosErrorToErrno'}
+Deleting merged function 0x19418-0x19569
+  del_func ok=True
+  add_func(0x19418, 0x1949e) ok=True  -- _nheapinit (unchanged name, corrected end)
+  add_func(0x1949e, 0x194cf) ok=True  -- dead/uncalled block -- left as auto sub_ name
+  add_func(0x194cf, 0x1950d) ok=True  -- execProgramEntry (unchanged name, now a real function)
+  add_func(0x1950d, 0x19569) ok=True  -- translateDosErrorToErrno (unchanged name, now a real function)
+
+names after split:
+  0x19418: '_nheapinit'
+  0x1949e: 'sub_1949E'
+  0x194cf: 'execProgramEntry'
+  0x1950d: 'translateDosErrorToErrno'
+
+Done. Re-export the .asm/.idc and check the function list/names took.
+----- end target script output -----
+[*] finished executing fix_nheapinit_boundary.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima1\ultima1_out.asm
+[*] gen_file(OFILE_ASM) returned 41662
+[*] exporting IDC to C:\dev\ultima1\ultima1_out.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima1\ultima1_out.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima1\ultima1_out.idb
+[*] ARGV = ['C:\\dev\\ultima1\\ida_scripts\\batch_run_and_export.py', 'identify.py', 'noexport']
+[*] reading identify.py
+[*] executing identify.py
+[*] captured stdout from target script:
+----- begin target script output -----
+root filename : OUT.EXE
+input file    : D:\GOG Games\Ultima 1\OUT.EXE
+entry point   : 0x0 (cs=0x1000)
+input md5     : 6a3301183223faea538c953ce94649f2
+
+segments:
+  sg013A       0x010000-0x01d480  (54400 bytes)
+  sg0E82       0x01d480-0x0286c0  (45632 bytes)
+  seg002       0x0286c0-0x029ac0  (5120 bytes)
+  seg003       0x029ac0-0x029ac1  (1 bytes)
+
+functions: 356 total, 354 named, 2 still sub_XXXXX
+
+structs (11): STR15, DungeonCell, DungeonColumn, DungeonMap, Point, Rect, Creature, LocationWidget, Savegame, MapLine, Map
+----- end target script output -----
+[*] finished executing identify.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0

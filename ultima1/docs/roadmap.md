@@ -143,16 +143,19 @@ OUT.EXE**.
       (`STR15`, `Point`, `Rect`, `Savegame`, `Creature`) actually agree
       field-for-field with their same-named counterparts elsewhere —
       flagged as unverified in overview.md.
-- [ ] **IDB hygiene**: `_nheapinit`'s proc boundary is wrong — it
-      visually contains `execProgramEntry` and `translateDosErrorToErrno`
-      (both nested `loc_` labels, not real children) purely because
-      IDA merged contiguous code with no gap between them. Named the
-      two locations directly rather than fixing the boundary (lower
-      risk than `ida_funcs.add_func` structural surgery this session),
-      but a future pass should properly split `_nheapinit` /
-      `execProgramEntry` / `translateDosErrorToErrno` into 3 separate
-      functions so the call graph and function list read correctly.
-      See overview.md's EXE-chaining section.
+- [x] **IDB hygiene**: `_nheapinit`'s proc boundary, fixed
+      (2026-08-25) — split the merged function into 4 correct
+      boundaries (`_nheapinit`, a genuinely dead uncalled block now
+      `sub_1949E`, `execProgramEntry`, `translateDosErrorToErrno`) via
+      `ida_funcs.del_func`/`add_func`
+      (`ida_scripts/fix_nheapinit_boundary.py`). 356 total functions
+      now (was 353), every XREF comment in the file correctly
+      attributes callers to the right function. Full writeup in
+      [overview.md](overview.md#_nheapinits-proc-boundary-split--and-a-dead-sibling-found-in-the-process).
+      `ULTIMA.EXE`/`GEN.EXE` have a related-but-different version of
+      this (a separate function *chunk*, not a merged contiguous
+      range) — not touched, out of this item's OUT.EXE scope, worth a
+      look later.
 - [ ] Same IDB-hygiene family: `sub_192AE` (dead, shares tail code with
       `divmod32`) confirms at least one more case of a linked-but-
       unused sibling function; not worth chasing further unless a
@@ -436,8 +439,9 @@ shifts to polish and cross-checking:
       been defined as words. Fixed and renamed to `POWERS_OF_TEN` via
       `ida_scripts/fix_powers_of_ten.py`. Full writeup in
       [overview.md](overview.md#word_1f95e-fixed--its-a-powers-of-ten-table).
-- [ ] Split `_nheapinit`'s mis-scoped proc boundary in OUT.EXE (visually
-      contains `execProgramEntry`/`translateDosErrorToErrno`).
+- [x] Split `_nheapinit`'s mis-scoped proc boundary in OUT.EXE
+      (2026-08-25) — see the checked-off entry earlier in this file
+      under OUT.EXE's own IDB-hygiene item for the full writeup.
 - [ ] Confirm the SPACE.EXE "leave outer space" comment's "(DOS
       EXEC...)" phrasing is loose wording, not a genuine architectural
       difference from the custom-loader mechanism confirmed everywhere

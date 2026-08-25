@@ -1165,3 +1165,59 @@ IDB's existing ALL_CAPS convention for lookup tables — `ARMOR`,
 `POWERS_OF_TEN dw 1, 0Ah, 64h, 3E8h` instead of a named word followed
 by 6 bytes of unlabeled data. Fixed via
 `ida_scripts/fix_powers_of_ten.py`.
+
+## `_nheapinit`'s proc boundary split — and a dead sibling found in the process
+
+Next roadmap item: `_nheapinit`'s function boundary in OUT.EXE had
+silently swallowed 3 unrelated pieces of code that happened to sit
+contiguously after it with no gap (a long-flagged IDB hygiene issue,
+first noticed while decoding the EXE-chaining mechanism). Mapped the
+exact split points with `idautils.CodeRefsTo`/`get_func`/manual
+boundary inspection before touching anything:
+
+| Range | What it actually is |
+|---|---|
+| `0x19418`-`0x1949D` | the real `_nheapinit` (heap-init / `SETBLOCK` dance) |
+| `0x1949E`-`0x194CE` | **a genuinely dead, uncalled block** (see below) |
+| `0x194CF`-`0x1950C` | `execProgramEntry` (already named as a location, not a real function) |
+| `0x1950D`-`0x19568` | `translateDosErrorToErrno` (ditto) |
+
+The middle block was the interesting find: it loops through a
+candidate-name list and calls `execProgramEntry`, but
+`idautils.CodeRefsTo(0x1949E)` returns **zero** hits — no code ref, no
+data ref, and the instruction immediately before it is a `retn`, so it
+can't even be reached by fallthrough. It's genuinely unreachable dead
+code, the same family as the already-documented dead `sub_192AE`
+(shares tail code with `divmod32`, also zero callers). Left it with
+its auto-generated name (`sub_1949E`) rather than guessing an
+identity from zero evidence — it may be the compiled body of an
+alternate calling convention for `chainToExecutableAlt` (the other
+confirmed-unused sibling in this same cluster) that never actually got
+wired up, but that's speculation, not a finding.
+
+Deleted the merged function and re-added the 4 correct boundaries via
+`ida_funcs.del_func`/`add_func` (`ida_scripts/fix_nheapinit_boundary.py`).
+All 3 previously-`loc_`-attributed names (`_nheapinit`,
+`execProgramEntry`, `translateDosErrorToErrno`) kept their existing
+names — this was purely a boundary fix, not a rename — and every XREF
+comment throughout the file now correctly attributes callers to the
+right function (e.g. `buildAndChainExecutable`'s caller comment changed
+from `_nheapinit+DF` to the accurate `execProgramEntry+28`).
+**356 total functions now (was 353), 354 named** — the 2 remaining
+`sub_XXXXX` are this newly-split dead block and the pre-existing dead
+`sub_192AE`, both confirmed-dead, not gaps in the naming sweep.
+
+One incidental, unplanned improvement rode along: deleting/re-adding
+the function boundaries triggered IDA's own re-analysis of a couple of
+nearby operands, which noticed `word_1D48A` and `word_1D48C` (two
+previously-separate 2-byte globals, already treated as one 4-byte far
+pointer at their only real use site — `les ax, dword ptr word_1D48A`)
+should actually be a single `dword_1D48A`. Verified no dangling
+references to the old `word_1D48C` name remained after the merge.
+
+`ULTIMA.EXE`/`GEN.EXE` have a related-but-different situation
+(`translateDosErrorToErrno` already lives in a separate function
+*chunk*, not literally merged into `_nheapinit`'s contiguous byte
+range) — not touched here since the roadmap item was scoped to
+OUT.EXE specifically; worth a look in a future pass if it turns out to
+have the same hygiene problem in a different shape.
