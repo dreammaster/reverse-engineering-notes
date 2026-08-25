@@ -196,25 +196,25 @@ static Structures_0(id) {
 	mid = add_struc_member(id,"_coins",	0X24,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_experience",	0X26,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_food",	0X28,	0x10000400,	-1,	2);
-	mid = add_struc_member(id,"_equippedWeapon",	0X2A,	0x10000400,	-1,	2);
-	mid = add_struc_member(id,"_equippedSpell",	0X2C,	0x10000400,	-1,	2);
-	mid = add_struc_member(id,"_equippedArmor",	0X2E,	0x10000400,	-1,	2);
+	mid = add_struc_member(id,"_readyWeapon",	0X2A,	0x10000400,	-1,	2);
+	mid = add_struc_member(id,"_readySpell",	0X2C,	0x10000400,	-1,	2);
+	mid = add_struc_member(id,"_readyArmor",	0X2E,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_transportType",	0X30,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_randomSeed",	0X32,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_position",	0X34,	0x60000400,	get_struc_id("Point"),	4);
 	mid = add_struc_member(id,"_soundOn",	0X38,	0x10000400,	-1,	2);
-	mid = add_struc_member(id,"_quests",	0X3A,	0x10000400,	-1,	18);
+	mid = add_struc_member(id,"_questStatus",	0X3A,	0x10000400,	-1,	18);
 	mid = add_struc_member(id,"_redGems",	0X4C,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_greenGems",	0X4E,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_blueGem",	0X50,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_whiteGem",	0X52,	0x10000400,	-1,	2);
-	mid = add_struc_member(id,"_armor_array",	0X54,	0x10000400,	-1,	2);
+	mid = add_struc_member(id,"_armorSlot0",	0X54,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_leatherArmor",	0X56,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_chainmail",	0X58,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_plateMail",	0X5A,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_vacuumSuit",	0X5C,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_reflectSuit",	0X5E,	0x10000400,	-1,	2);
-	mid = add_struc_member(id,"_weapons_array",	0X60,	0x10000400,	-1,	2);
+	mid = add_struc_member(id,"_weaponSlot0",	0X60,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_dagger",	0X62,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_mace",	0X64,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_axe",	0X66,	0x10000400,	-1,	2);
@@ -230,7 +230,7 @@ static Structures_0(id) {
 	mid = add_struc_member(id,"_lightSword",	0X7A,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_phazor",	0X7C,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_blaster",	0X7E,	0x10000400,	-1,	2);
-	mid = add_struc_member(id,"_spells_array",	0X80,	0x10000400,	-1,	2);
+	mid = add_struc_member(id,"_spellSlot0",	0X80,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_open",	0X82,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_unlock",	0X84,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_magicMissile",	0X86,	0x10000400,	-1,	2);
@@ -241,7 +241,7 @@ static Structures_0(id) {
 	mid = add_struc_member(id,"_create",	0X90,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_destroy",	0X92,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_kill",	0X94,	0x10000400,	-1,	2);
-	mid = add_struc_member(id,"_transports_array",	0X96,	0x10000400,	-1,	2);
+	mid = add_struc_member(id,"_transportSlot0",	0X96,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_horse",	0X98,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_cart",	0X9A,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_raft",	0X9C,	0x10000400,	-1,	2);
@@ -251,10 +251,11 @@ static Structures_0(id) {
 	mid = add_struc_member(id,"_timeMachine",	0XA4,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_enemyVessels",	0XA6,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_signMarker",	0XA8,	0x10000400,	-1,	2);
-	mid = add_struc_member(id,"field_AA",	0XAA,	0x10000400,	-1,	2);
-	mid = add_struc_member(id,"_moveCount",	0XAC,	0x10000400,	-1,	2);
-	mid = add_struc_member(id,"field_AE",	0XAE,	0x10000400,	-1,	2);
-	mid = add_struc_member(id,"_overworldWidgets",	0XB4,	0x60000400,	get_struc_id("Creature"),	640);
+	mid = add_struc_member(id,"_overworldEntityCount",	0XAA,	0x10000400,	-1,	2);
+	mid = add_struc_member(id,"_moveCount",	0XAC,	0x20000400,	-1,	4);
+	mid = add_struc_member(id,"_shipFuel",	0XB0,	0x10000400,	-1,	2);
+	mid = add_struc_member(id,"_shipShield",	0XB2,	0x10000400,	-1,	2);
+	mid = add_struc_member(id,"_overworldEntities",	0XB4,	0x60000400,	get_struc_id("Creature"),	640);
 	return id;
 }
 
@@ -1654,7 +1655,8 @@ static Bytes_0(void) {
 	create_insn	(x=0X111E3);
 	op_hex		(x,	1);
 	create_insn	(x=0X111E7);
-	op_man		(x,	0,	"(_savegame.field_3C - 2)[si]");
+	op_plain_offset	(x,	0,	0X14260);
+	op_plain_offset	(x,	128,	0X14260);
 	create_insn	(x=0X111ED);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X111F2);

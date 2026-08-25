@@ -22,7 +22,7 @@ identified and renamed in any other IDB it also happens to appear in.
 
 | IDB | Root file | Role (best guess, to confirm) | Functions named | Structs |
 |---|---|---|---|---|
-| `ultima1.idb` | `ULTIMA.EXE` | Title screen / attract mode, chains unconditionally to `GEN.EXE` | 100 / 100 | `STR15`, `Point`, `Rect`, `Savegame` |
+| `ultima1.idb` | `ULTIMA.EXE` | Title screen / attract mode, chains unconditionally to `GEN.EXE` | 100 / 100 | `STR15`, `Point`, `Rect`, `Savegame`, `Creature` |
 | `ultima1_gen.idb` | `GEN.EXE` | Character generation / continue, chains to `OUT.EXE` | 113 / 113 | + `Creature` |
 | `ultima1_out.idb` | `OUT.EXE` | Overworld/towns/dungeons (outdoor engine) | 352 / 353 | + `DungeonCell`, `DungeonColumn`, `DungeonMap`, `LocationWidget`, `MapLine`, `Map` |
 | `ultima1_space.idb` | `SPACE.EXE` | Space combat minigame, chains back to `OUT.EXE` | 210 / 210 | + `DuneonRow`, `DungeonMap` (space variant), `SpaceMapShip`, `SpaceMapCell`, `SpaceMapY`, `SpaceMap`, `FightData`, `JumpEntry` |
@@ -988,3 +988,112 @@ Remaining work: 0 structs defined in this IDB (see roadmap.md), and the
 few open semantic questions flagged above (`spellEffectInterficioNunc`'s
 real kill condition, the win-path exit sequence, `cmdHyperjumpDisabled`'s
 stray `word_15B00 = 1` side effect).
+
+## Cross-IDB struct cleanup — `Savegame` brought up to date and synced
+
+With all 5 executables fully named, moved to the first item on the
+cross-IDB follow-up list: the shared `Savegame` struct (the on-disk/
+in-memory save-file format, referenced as `_savegame` in
+`ULTIMA.EXE`/`GEN.EXE`/`OUT.EXE`/`SPACE.EXE` — `MONDAIN.EXE` never
+references it at all, see below). Since IDA has no shared type library
+across separate IDBs, each executable's copy had been named
+independently over many sessions and had drifted out of sync with each
+other. Wrote `ida_scripts/dump_struct.py`/`dump_savegame_full.py` to
+compare all 4 copies side by side.
+
+**What was actually wrong, in order of severity:**
+
+- **`ULTIMA.EXE`'s copy was badly offset-misaligned** from `+0x20`
+  onward — missing 8 fields entirely (`_wisdom`/`_intelligence`/
+  `_coins`/`_experience`/`_food`/the 3 ready-item fields), which shifted
+  every subsequent field 16 bytes out of position (`_position` sat at
+  `+0x24` instead of the real `+0x34`, etc.), degrading into a wall of
+  unnamed `field_XX` placeholders and a totally undefined 642-byte gap
+  from `+0xB0` to `+0x332`. Confirmed via `grep -i savegame
+  ultima1.asm` returning **zero matches** that this struct is never
+  actually applied to any variable in this executable — makes sense,
+  `ULTIMA.EXE` is just the title screen and chains to `GEN.EXE` before
+  any savegame data would be touched. Since nothing depended on the old
+  (wrong) layout, rebuilt the whole struct from scratch
+  (`ida_scripts/apply_structs_savegame_ultima.py`) to match the other
+  3 IDBs exactly, including importing the `Creature` struct (which
+  `ULTIMA.EXE` didn't have at all).
+- **`SPACE.EXE` had already independently worked out 5 fields the
+  other 3 IDBs still had as raw `field_XX`**: `_readyWeapon`/
+  `_readySpell`/`_readyArmor` (the other 3 called them
+  `_equippedWeapon`/etc.) and `_shipFuel`/`_shipShield` (the other 3
+  had these as unnamed `field_B0`/`field_B2`). Standardized on
+  `SPACE.EXE`'s names — `_ready*` matches the game's own command
+  terminology (the `R`eady command, named `ready` everywhere it
+  exists), and propagated `_shipFuel`/`_shipShield` to
+  `ULTIMA.EXE`/`GEN.EXE`/`OUT.EXE`.
+- **`_overworldWidgets` (Paul's example — see below) turned out to
+  hold more than monsters.** Investigated via
+  `ultima1_out.asm` cross-references before renaming anything:
+  `_type` gets compared against the already-named `TILE_FIRST_MONSTER`
+  constant to decide whether an entry *is* a monster (implying
+  non-monster entries exist), and `exitLocation` re-adds the *same*
+  widget — with `_data` set to the tile that was underneath it —
+  back onto the overworld map at the player's position when leaving a
+  town/dungeon, which is how a ship/raft left docked outside a town
+  persists. So "monsters" would have been actively wrong, the same
+  category of mistake as `viewChange`/`writeString2_mb` above — this
+  is genuinely a general overworld-object slot list (monsters *and*
+  transports/markers left behind), renamed to **`_overworldEntities`**
+  instead. The 40-element array's per-slot struct is still `Creature`
+  (already reasonably named, and monsters remain its primary use).
+- **`field_AA` → `_overworldEntityCount`**: confirmed via both
+  `saveGame` and `writeInUseAndExit`, which both do
+  `_savegame.field_AA = _creaturesCount` immediately before writing the
+  whole 820-byte struct to disk (`mov bx, size Savegame`), and OUT.EXE's
+  startup code restoring `_creaturesCount = _savegame.field_AA` right
+  after loading the town map on the load path — a save/restore pair
+  for the live entity-count global, not raw padding.
+- **`_quests` → `_questStatus`**: confirmed as a 9-word array (18
+  bytes) indexed by `_castleIndex * 2`, holding per-castle quest
+  *state* (`-1` = not yet offered, `1` = accepted, `0` = reward
+  claimed) — a status table, not a list of quest objects, hence the
+  clearer name.
+- **The `_X_array` fields** (`_armor_array`/`_weapons_array`/
+  `_spells_array`/`_transports_array`) were actively misleading: each
+  is a genuinely distinct 2-byte memory slot sitting 2 bytes *before*
+  the first individually-named item in its category (e.g.
+  `_armor_array` at `+0x54`, `_leatherArmor` at `+0x56`), not — as the
+  `_array` suffix implied — the base of an array whose first element
+  is one of the already-named fields. Renamed to `_armorSlot0`/
+  `_weaponSlot0`/`_spellSlot0`/`_transportSlot0` to drop the misleading
+  implication. **What item (if any) slot 0 represents in each category
+  is still unconfirmed** — `dropPenceCastle`'s random weapon-boost
+  event rolls `getRandomNumber(1, 15)`, skipping index 0, which is
+  consistent with either "index 0 is unused padding" (a plausible
+  1-based-BASIC-port artifact — item ID 0 is used as a "nothing
+  selected" sentinel elsewhere in the game, e.g. MONDAIN.EXE's
+  `selectedSpellIndex`) or "index 0 is a real item this one random
+  event just doesn't grant". Left as an open question rather than
+  guessing a specific item name — see roadmap.md.
+- **Left alone**: `Creature.field_A`/`field_C`/`field_E` (3 of the
+  struct's 16 bytes) — confirmed via cross-reference search that
+  *no* instruction anywhere in `OUT.EXE` accesses these by
+  struct-relative addressing, unlike every other `Creature` field.
+  Likely padding written once (or never) and never read by game
+  logic, but not asserted as such without positive evidence.
+
+Also renamed `addOverworldWidget` → `addOverworldEntity` in `OUT.EXE`
+(its only home) for consistency with the field rename.
+
+**`MONDAIN.EXE` intentionally excluded**: confirmed via `grep -i
+savegame ultima1_mondain.asm` that this executable never references
+`_savegame` at all — its encounter state (`playerHits`, `playerFood`,
+etc., named in the MONDAIN.EXE pass above) lives in its own standalone
+globals, not a `Savegame`-typed variable, so there's nothing to sync
+there.
+
+All 4 struct-owning IDBs (`ULTIMA.EXE`/`GEN.EXE`/`OUT.EXE`/`SPACE.EXE`)
+now have **byte-identical, identically-named** `Savegame` (820 bytes)
+and `Creature` (16 bytes) struct layouts, verified via a full
+side-by-side dump after applying. Scripts: `ida_scripts/dump_struct.py`
+(single struct), `ida_scripts/dump_savegame_full.py` (Savegame +
+every struct-typed member's own layout, for cross-IDB diffing),
+`ida_scripts/apply_structs_savegame.py` (GEN/OUT/SPACE — plain
+renames), `ida_scripts/apply_structs_savegame_ultima.py` (ULTIMA.EXE —
+full rebuild, safe because the struct was unused there).

@@ -386,17 +386,41 @@ questions noted above, not unidentified code.
 With every executable's function-naming sweep complete, remaining work
 shifts to polish and cross-checking:
 
+- [x] **`Savegame`/`Creature` struct cross-check and sync** (2026-08-25):
+      found and fixed real drift between the 4 independently-maintained
+      copies (`ULTIMA.EXE`'s was offset-misaligned and effectively
+      dead code; `SPACE.EXE` had 5 fields the other 3 IDBs left
+      unnamed; `_overworldWidgets`, `_quests`, and the 4 `_X_array`
+      fields were actively unclear or misleading). All 4 IDBs that
+      reference `_savegame` now have byte-identical, consistently-named
+      layouts. Full writeup in
+      [overview.md](overview.md#cross-idb-struct-cleanup--savegame-brought-up-to-date-and-synced).
+      Scripts: `ida_scripts/dump_struct.py`,
+      `ida_scripts/dump_savegame_full.py`,
+      `ida_scripts/apply_structs_savegame.py` (GEN/OUT/SPACE),
+      `ida_scripts/apply_structs_savegame_ultima.py` (ULTIMA.EXE
+      rebuild).
+- [ ] **Still open from that pass**: what item (if any) `_armorSlot0`/
+      `_weaponSlot0`/`_spellSlot0`/`_transportSlot0` actually represent
+      — evidence is consistent with either "unused padding" or "a real
+      item this session didn't identify". `Creature.field_A`/`field_C`/
+      `field_E` (confirmed unreferenced by any instruction, likely
+      padding) also still unnamed. Neither blocks the reimplementation,
+      both worth another look if a future pass turns up more evidence
+      (e.g. tracing the item-price tables directly rather than via
+      usage sites).
+- [ ] `apply_structs_mondain.py` — **not needed after all**: confirmed
+      `MONDAIN.EXE` never references `_savegame` anywhere in its code
+      (its own encounter state is plain standalone globals, named in
+      the MONDAIN.EXE pass), so there's no struct instance to import
+      one for. Leaving this IDB's 0 structs as correct, not a gap.
+- [ ] `apply_structs_gen.py` — fix the `_savegame._hits`/`_strength`
+      struct-field mixup flagged under GEN.EXE above (a specific
+      mis-resolved instruction operand in `decreaseAttribute`, separate
+      from the struct-definition sync just completed).
 - [ ] Rename each IDB's segments (`sg*`/`seg00*`/`dseg`) to the
       `CODE`/`DATA` convention used in `ultima2` — not done for any of
       the 5 IDBs yet.
-- [ ] Cross-check the structs shared by name across IDBs (`STR15`,
-      `Point`, `Rect`, `Savegame`, `Creature`) actually agree
-      field-for-field with their same-named counterparts in each other
-      IDB — flagged as unverified everywhere they appear.
-- [ ] `apply_structs_mondain.py` — import/define structs in the one IDB
-      that currently has none.
-- [ ] `apply_structs_gen.py` — fix the `_savegame._hits`/`_strength`
-      struct-field mixup flagged under GEN.EXE above.
 - [ ] Fix `word_1F95E` in OUT.EXE (should be a `dw 4 dup(?)` array, not
       a single `dw` + raw bytes).
 - [ ] Split `_nheapinit`'s mis-scoped proc boundary in OUT.EXE (visually
@@ -406,8 +430,9 @@ shifts to polish and cross-checking:
       difference from the custom-loader mechanism confirmed everywhere
       else.
 - [ ] Create `docs/file-formats.md` once the first on-disk format is
-      actually traced (savegame layout, the 19×9 Mondain-encounter map
-      format loaded via `readFile` in `mondainMainLoop`, etc.).
+      actually traced (savegame layout — now fully named and synced,
+      good starting point — the 19×9 Mondain-encounter map format
+      loaded via `readFile` in `mondainMainLoop`, etc.).
 - [ ] Start the actual C++/ScummVM reimplementation — this was always
       the end goal of the naming sweep; with all 5 executables fully
       named and their major subsystems documented in overview.md, the

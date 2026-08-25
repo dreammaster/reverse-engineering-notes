@@ -662,7 +662,7 @@ loadTiles       endp
 
 ; void __cdecl playFX(int effectNum)
 playFX          proc near               ; CODE XREF: impassable+19↓p
-                                        ; moveCheck+116↓p ...
+                                        ; overworld_moveCheck+116↓p ...
 
 effectNum       = word ptr  4
 
@@ -685,8 +685,8 @@ playFX          endp
 ; Attributes: fpd=4
 
 ; int __cdecl impassable(Impassable reason)
-impassable      proc near               ; CODE XREF: moveCheck+128↓p
-                                        ; moveCheck+14E↓p ...
+impassable      proc near               ; CODE XREF: overworld_moveCheck+128↓p
+                                        ; overworld_moveCheck+14E↓p ...
 
 reason          = word ptr  2
 
@@ -714,15 +714,15 @@ impassable      endp
 
 ; Attributes: fpd=12h
 
-; void __cdecl moveCheck(Direction dir)
-moveCheck       proc near               ; CODE XREF: move+3C↓p
+; void __cdecl overworld_moveCheck(Direction dir)
+overworld_moveCheck proc near           ; CODE XREF: move+3C↓p
 
 xp              = word ptr -12h
 deltaX          = word ptr -0Eh
 deltaY          = word ptr -0Ch
-transport       = word ptr -0Ah
+tile            = word ptr -0Ah
 var_8           = word ptr -8
-var_6           = word ptr -6
+transport       = word ptr -6
 var_4           = word ptr -4
 dir             = word ptr  2
 
@@ -742,36 +742,36 @@ dir             = word ptr  2
                 shl     si, 1
                 jmp     cs:off_104D5[si]
 ; ---------------------------------------------------------------------------
-off_104D5       dw offset left          ; DATA XREF: moveCheck+21↑r
+off_104D5       dw offset left          ; DATA XREF: overworld_moveCheck+21↑r
                 dw offset right
                 dw offset up
                 dw offset down
 ; ---------------------------------------------------------------------------
 
-up:                                     ; CODE XREF: moveCheck+21↑j
-                                        ; DATA XREF: moveCheck+2A↑o
+up:                                     ; CODE XREF: overworld_moveCheck+21↑j
+                                        ; DATA XREF: overworld_moveCheck+2A↑o
                 mov     [bp+12h+deltaY], -1
                 jmp     short loc_104F7
 ; ---------------------------------------------------------------------------
 
-down:                                   ; CODE XREF: moveCheck+21↑j
-                                        ; DATA XREF: moveCheck+2C↑o
+down:                                   ; CODE XREF: overworld_moveCheck+21↑j
+                                        ; DATA XREF: overworld_moveCheck+2C↑o
                 mov     [bp+12h+deltaY], 1
                 jmp     short loc_104F7
 ; ---------------------------------------------------------------------------
 
-right:                                  ; CODE XREF: moveCheck+21↑j
-                                        ; DATA XREF: moveCheck+28↑o
+right:                                  ; CODE XREF: overworld_moveCheck+21↑j
+                                        ; DATA XREF: overworld_moveCheck+28↑o
                 mov     [bp+12h+deltaX], 1
                 jmp     short loc_104F7
 ; ---------------------------------------------------------------------------
 
-left:                                   ; CODE XREF: moveCheck+21↑j
-                                        ; DATA XREF: moveCheck:off_104D5↑o
+left:                                   ; CODE XREF: overworld_moveCheck+21↑j
+                                        ; DATA XREF: overworld_moveCheck:off_104D5↑o
                 mov     [bp+12h+deltaX], -1
 
-loc_104F7:                              ; CODE XREF: moveCheck+18↑j
-                                        ; moveCheck+1D↑j ...
+loc_104F7:                              ; CODE XREF: overworld_moveCheck+18↑j
+                                        ; overworld_moveCheck+1D↑j ...
                 mov     ax, [bp+12h+deltaX]
                 add     ax, 9
                 push    ax              ; xp
@@ -792,19 +792,19 @@ loc_104F7:                              ; CODE XREF: moveCheck+18↑j
                 mov     [bp+12h+var_8], 1
                 mov     bx, _savegame._transportType
                 cmp     ax, 19
-                mov     [bp+12h+transport], ax
-                mov     [bp+12h+var_6], bx
+                mov     [bp+12h+tile], ax
+                mov     [bp+12h+transport], bx
                 jge     short loc_10536
                 jmp     loc_105CD
 ; ---------------------------------------------------------------------------
 
-loc_10536:                              ; CODE XREF: moveCheck+82↑j
+loc_10536:                              ; CODE XREF: overworld_moveCheck+82↑j
                 cmp     ax, 47
                 jle     short loc_1053E
                 jmp     loc_105CD
 ; ---------------------------------------------------------------------------
 
-loc_1053E:                              ; CODE XREF: moveCheck+8A↑j
+loc_1053E:                              ; CODE XREF: overworld_moveCheck+8A↑j
                 sub     ax, 19
                 mov     bx, 2
                 cwd
@@ -833,13 +833,13 @@ loc_1053E:                              ; CODE XREF: moveCheck+8A↑j
                 call    writeCharacter_0
                 mov     sp, bp
 
-loc_10582:                              ; CODE XREF: moveCheck+C4↑j
+loc_10582:                              ; CODE XREF: overworld_moveCheck+C4↑j
                 push    _textColor      ; color
                 mov     ax, 32
                 push    ax              ; c
                 call    writeCharacter_0
                 mov     sp, bp
-                cmp     [bp+12h+transport], 47
+                cmp     [bp+12h+tile], 47
                 jnz     short loc_105A5
                 call    scrollStatus
                 mov     ax, 18h
@@ -849,7 +849,7 @@ loc_10582:                              ; CODE XREF: moveCheck+C4↑j
                 call    setCursorPos
                 mov     sp, bp
 
-loc_105A5:                              ; CODE XREF: moveCheck+E4↑j
+loc_105A5:                              ; CODE XREF: overworld_moveCheck+E4↑j
                 mov     ax, [bp+12h+var_4]
                 shl     ax, 1
                 mov     si, ax
@@ -868,9 +868,9 @@ loc_105A5:                              ; CODE XREF: moveCheck+E4↑j
                 jmp     loc_10667
 ; ---------------------------------------------------------------------------
 
-loc_105CD:                              ; CODE XREF: moveCheck+84↑j
-                                        ; moveCheck+8C↑j
-                cmp     [bp+12h+transport], TRANSPORT_RAFT
+loc_105CD:                              ; CODE XREF: overworld_moveCheck+84↑j
+                                        ; overworld_moveCheck+8C↑j
+                cmp     [bp+12h+tile], TRANSPORT_RAFT
                 jnz     short loc_105E2
                 mov     ax, IMP_MOUNTAINS
                 push    ax              ; reason
@@ -880,10 +880,10 @@ loc_105CD:                              ; CODE XREF: moveCheck+84↑j
                 jmp     loc_10667
 ; ---------------------------------------------------------------------------
 
-loc_105E2:                              ; CODE XREF: moveCheck+122↑j
-                cmp     [bp+12h+transport], 0
+loc_105E2:                              ; CODE XREF: overworld_moveCheck+122↑j
+                cmp     [bp+12h+tile], 0
                 jnz     short loc_10607
-                mov     ax, [bp+12h+var_6]
+                mov     ax, [bp+12h+transport]
                 cmp     ax, 4
                 jz      short loc_10667
                 cmp     ax, 3
@@ -898,10 +898,10 @@ loc_105E2:                              ; CODE XREF: moveCheck+122↑j
                 jmp     short loc_10667
 ; ---------------------------------------------------------------------------
 
-loc_10607:                              ; CODE XREF: moveCheck+137↑j
-                cmp     [bp+12h+transport], 2
+loc_10607:                              ; CODE XREF: overworld_moveCheck+137↑j
+                cmp     [bp+12h+tile], 2
                 jnz     short loc_10621
-                cmp     [bp+12h+var_6], 5
+                cmp     [bp+12h+transport], 5
                 jnz     short loc_10621
                 mov     ax, IMP_WOODS
                 push    ax              ; reason
@@ -911,11 +911,11 @@ loc_10607:                              ; CODE XREF: moveCheck+137↑j
                 jmp     short loc_10667
 ; ---------------------------------------------------------------------------
 
-loc_10621:                              ; CODE XREF: moveCheck+15C↑j
-                                        ; moveCheck+162↑j
-                cmp     [bp+12h+var_6], 4
+loc_10621:                              ; CODE XREF: overworld_moveCheck+15C↑j
+                                        ; overworld_moveCheck+162↑j
+                cmp     [bp+12h+transport], 4
                 jnz     short loc_1063B
-                cmp     [bp+12h+transport], 0
+                cmp     [bp+12h+tile], 0
                 jz      short loc_1063B
                 mov     ax, IMP_FRIGATES_WATER
                 push    ax              ; reason
@@ -925,11 +925,11 @@ loc_10621:                              ; CODE XREF: moveCheck+15C↑j
                 jmp     short loc_10667
 ; ---------------------------------------------------------------------------
 
-loc_1063B:                              ; CODE XREF: moveCheck+176↑j
-                                        ; moveCheck+17C↑j
-                cmp     [bp+12h+var_6], 3
+loc_1063B:                              ; CODE XREF: overworld_moveCheck+176↑j
+                                        ; overworld_moveCheck+17C↑j
+                cmp     [bp+12h+transport], 3
                 jnz     short loc_10655
-                cmp     [bp+12h+transport], 0
+                cmp     [bp+12h+tile], 0
                 jz      short loc_10655
                 mov     ax, IMP_RAFTS_WATER
                 push    ax              ; reason
@@ -939,9 +939,9 @@ loc_1063B:                              ; CODE XREF: moveCheck+176↑j
                 jmp     short loc_10667
 ; ---------------------------------------------------------------------------
 
-loc_10655:                              ; CODE XREF: moveCheck+190↑j
-                                        ; moveCheck+196↑j
-                cmp     [bp+12h+var_6], 6
+loc_10655:                              ; CODE XREF: overworld_moveCheck+190↑j
+                                        ; overworld_moveCheck+196↑j
+                cmp     [bp+12h+transport], 6
                 jl      short loc_10667
                 mov     ax, IMP_MOVE_ON_LAND
                 push    ax              ; reason
@@ -949,13 +949,13 @@ loc_10655:                              ; CODE XREF: moveCheck+190↑j
                 mov     sp, bp
                 mov     [bp+12h+var_8], ax
 
-loc_10667:                              ; CODE XREF: moveCheck+11B↑j
-                                        ; moveCheck+130↑j ...
+loc_10667:                              ; CODE XREF: overworld_moveCheck+11B↑j
+                                        ; overworld_moveCheck+130↑j ...
                 mov     ax, [bp+12h+var_8]
                 add     sp, 10h
                 pop     bp
                 retn
-moveCheck       endp
+overworld_moveCheck endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -1001,7 +1001,7 @@ loc_106A5:                              ; CODE XREF: move+26↑j
                 mov     al, byte ptr [bp+6+dir]
                 xor     ah, ah
                 push    ax              ; dir
-                call    moveCheck
+                call    overworld_moveCheck
                 mov     sp, bp
                 test    ax, ax
                 jnz     short loc_106B7
@@ -1070,9 +1070,9 @@ loc_10718:                              ; CODE XREF: move+8D↑j
 loc_1071B:                              ; CODE XREF: move+84↑j
                                         ; move+89↑j ...
                 mov     ax, _savegame._position._x
-                mov     _savegame._overworldWidgets._x, ax
+                mov     _savegame._overworldEntities._x, ax
                 mov     bx, _savegame._position._y
-                mov     _savegame._overworldWidgets._y, bx
+                mov     _savegame._overworldEntities._y, bx
                 push    bx              ; y
                 push    ax              ; x
                 call    getContinentAt
@@ -1819,7 +1819,7 @@ monsterDistance = word ptr -4
                 push    ax              ; effectNum
                 call    playFX
                 mov     sp, bp
-                mov     ax, _savegame._equippedWeapon
+                mov     ax, _savegame._readyWeapon
                 shl     ax, 1
                 mov     si, ax
                 push    WEAPONS_DISTANCE[si] ; maxDistance
@@ -1839,7 +1839,7 @@ loc_10C8C:                              ; CODE XREF: dungeonAttack+2D↑j
                 mov     ax, _savegame._agility
                 add     ax, 50
                 mov     cl, 3
-                mov     bx, _savegame._equippedWeapon
+                mov     bx, _savegame._readyWeapon
                 shl     bx, cl
                 mov     cx, _savegame._strength
                 add     cx, bx
@@ -2099,8 +2099,8 @@ loc_10E20:                              ; CODE XREF: damage+128↑j
                 shl     ax, cl
                 mov     si, ax
                 mov     bx, [bp+28h]
-                sub     _savegame._overworldWidgets._hits[si], bx
-                cmp     _savegame._overworldWidgets._hits[si], 0
+                sub     _savegame._overworldEntities._hits[si], bx
+                cmp     _savegame._overworldEntities._hits[si], 0
                 jg      short loc_10E9A
                 push    _textColor      ; color
                 mov     ax, offset aKilledThe ; "Killed the "
@@ -2129,7 +2129,7 @@ loc_10EA7:                              ; CODE XREF: damage+1A5↑j
                 mov     ax, [bp+12h]
                 shl     ax, cl
                 mov     si, ax
-                cmp     _savegame._overworldWidgets._hits[si], 0
+                cmp     _savegame._overworldEntities._hits[si], 0
                 jle     short loc_10F2A
                 cmp     [bp+20h+var_4], 6
                 jle     short loc_10EDA
@@ -2287,14 +2287,14 @@ arg_2           = word ptr  4
                 mov     bp, sp
                 cmp     [bp+0Ah+arg_2], 7
                 jnz     short loc_11030
-                mov     ax, _savegame._equippedWeapon
+                mov     ax, _savegame._readyWeapon
                 shl     ax, 1
                 mov     si, ax
                 mov     ax, WEAPONS_DISTANCE[si]
                 mov     bx, _savegame._agility
                 add     bx, 50
                 mov     cl, 3
-                mov     dx, _savegame._equippedWeapon
+                mov     dx, _savegame._readyWeapon
                 shl     dx, cl
                 mov     cx, _savegame._strength
                 add     cx, dx
@@ -2417,14 +2417,14 @@ dir             = word ptr  2
                 push    ax              ; msg
                 call    writeString
                 mov     sp, bp
-                mov     ax, _savegame._equippedWeapon
+                mov     ax, _savegame._readyWeapon
                 shl     ax, 1
                 mov     si, ax
                 push    _textColor      ; color
                 push    WEAPONS_LOWERCASE[si] ; msg
                 call    writeString
                 mov     sp, bp
-                mov     ax, _savegame._equippedWeapon
+                mov     ax, _savegame._readyWeapon
                 shl     ax, 1
                 mov     si, ax
                 cmp     WEAPONS_DISTANCE[si], 0
@@ -2490,7 +2490,7 @@ val             = word ptr  4
                 call    drawTile
                 mov     sp, bp
                 mov     ax, _creaturesCount
-                mov     _savegame.field_AA, ax
+                mov     _savegame._overworldEntityCount, ax
                 mov     ax, word ptr _moveCtr+2
                 mov     bx, word ptr _moveCtr
                 mov     word ptr _savegame._moveCount+2, ax
@@ -2565,7 +2565,7 @@ loc_111CB:                              ; CODE XREF: board+27↑j
                 push    _savegame._position._x ; x
                 call    getTileAt
                 mov     sp, bp
-                cmp     ax, TILE_PARTY
+                cmp     ax, TILE_HORSE
                 mov     [bp+6+tileNum], ax
                 jl      short loc_111E9
                 cmp     ax, TILE_TIME_MACHINE
@@ -2585,13 +2585,13 @@ loc_111E9:                              ; CODE XREF: board+55↑j
 
 loc_111FE:                              ; CODE XREF: board+5A↑j
                 mov     ax, [bp+6+tileNum]
-                mov     _savegame._overworldWidgets._type, ax
+                mov     _savegame._overworldEntities._type, ax
                 push    _savegame._position._y ; y
                 push    _savegame._position._x ; x
                 call    removeCreatureAt
                 mov     sp, bp
                 mov     ax, [bp+6+tileNum]
-                sub     ax, TILE_PARTY
+                sub     ax, TILE_HORSE
                 inc     ax
                 mov     _savegame._transportType, ax
                 cmp     ax, 4
@@ -2600,9 +2600,9 @@ loc_111FE:                              ; CODE XREF: board+5A↑j
 
 loc_11224:                              ; CODE XREF: board+91↑j
                 mov     ax, [bp+6+tileNum]
-                cmp     ax, TILE_PARTY
-                jz      short loc_11231
                 cmp     ax, TILE_HORSE
+                jz      short loc_11231
+                cmp     ax, TILE_CART
                 jnz     short loc_11240
 
 loc_11231:                              ; CODE XREF: board+9D↑j
@@ -2727,7 +2727,7 @@ result          = word ptr -4
                 push    ax              ; min
                 call    getRandomNumber
                 mov     sp, bp
-                cmp     _savegame._equippedWeapon, WEAPON_WAND
+                cmp     _savegame._readyWeapon, WEAPON_WAND
                 mov     [bp+6+result], ax
                 jnz     short loc_11314
                 shl     [bp+6+result], 1
@@ -2735,7 +2735,7 @@ result          = word ptr -4
 ; ---------------------------------------------------------------------------
 
 loc_11314:                              ; CODE XREF: getMagicWeaponPower+1B↑j
-                cmp     _savegame._equippedWeapon, WEAPON_AMULET
+                cmp     _savegame._readyWeapon, WEAPON_AMULET
                 jnz     short loc_11331
                 mov     ax, [bp+6+result]
                 mov     bx, 3
@@ -2749,7 +2749,7 @@ loc_11314:                              ; CODE XREF: getMagicWeaponPower+1B↑j
 ; ---------------------------------------------------------------------------
 
 loc_11331:                              ; CODE XREF: getMagicWeaponPower+27↑j
-                mov     ax, _savegame._equippedWeapon
+                mov     ax, _savegame._readyWeapon
                 cmp     ax, WEAPON_STAFF
                 jz      short loc_1133E
                 cmp     ax, WEAPON_TRIANGLE
@@ -3394,7 +3394,7 @@ loc_11836:                              ; CODE XREF: castPrayer+C8↑j
                 mov     cl, 4
                 shl     ax, cl
                 mov     si, ax
-                add     si, offset _savegame._overworldWidgets
+                add     si, offset _savegame._overworldEntities
                 mov     ax, [si+Creature._type]
                 cmp     ax, 19
                 mov     [bp+0Eh+creatureP], si
@@ -3530,15 +3530,15 @@ loc_1192C:                              ; CODE XREF: castSpellAttack+20↑j
 loc_1193E:                              ; CODE XREF: castSpellAttack+2E↑j
                 cmp     [bp+0Eh+var_8], 0
                 jz      short loc_11952
-                mov     ax, _savegame._equippedSpell
+                mov     ax, _savegame._readySpell
                 shl     ax, 1
                 mov     si, ax
-                inc     _savegame._spells_array[si]
+                inc     _savegame._spellSlot0[si]
                 jmp     loc_119FA
 ; ---------------------------------------------------------------------------
 
 loc_11952:                              ; CODE XREF: castSpellAttack+46↑j
-                cmp     _savegame._equippedSpell, 3
+                cmp     _savegame._readySpell, 3
                 jnz     short loc_1196E
                 push    _textColor      ; color
                 mov     ax, offset aDelcioEreUi ; "\"DELCIO-ERE-UI\" "
@@ -3672,21 +3672,21 @@ loc_11A39:                              ; CODE XREF: cast+16↑j
                 push    ax              ; msg
                 call    writeString
                 mov     sp, bp
-                mov     ax, _savegame._equippedSpell
+                mov     ax, _savegame._readySpell
                 shl     ax, 1
                 mov     si, ax
                 push    _textColor      ; color
                 push    SPELL_NAMES[si] ; msg
                 call    writeString
                 mov     sp, bp
-                cmp     _savegame._equippedSpell, SPELL_PRAYER
+                cmp     _savegame._readySpell, SPELL_PRAYER
                 jnz     short loc_11A66
                 call    castPrayer
                 jmp     short loc_11ADF
 ; ---------------------------------------------------------------------------
 
 loc_11A66:                              ; CODE XREF: cast+60↑j
-                mov     ax, _savegame._equippedSpell
+                mov     ax, _savegame._readySpell
                 shl     ax, 1
                 mov     si, ax
                 cmp     (_savegame._open-2)[si], 0
@@ -3707,22 +3707,22 @@ loc_11A66:                              ; CODE XREF: cast+60↑j
 ; ---------------------------------------------------------------------------
 
 loc_11A91:                              ; CODE XREF: cast+73↑j
-                mov     ax, _savegame._equippedSpell
+                mov     ax, _savegame._readySpell
                 shl     ax, 1
                 mov     si, ax
-                dec     _savegame._spells_array[si]
+                dec     _savegame._spellSlot0[si]
                 cmp     _mapType, LOCTYPE_DUNGEON
                 jnz     short loc_11AB2
                 mov     ax, 1
                 push    ax              ; int
-                push    _savegame._equippedSpell ; spellNum
+                push    _savegame._readySpell ; spellNum
                 call    castSpell
                 mov     sp, bp
                 jmp     short loc_11ADF
 ; ---------------------------------------------------------------------------
 
 loc_11AB2:                              ; CODE XREF: cast+A2↑j
-                mov     ax, _savegame._equippedSpell
+                mov     ax, _savegame._readySpell
                 cmp     ax, SPELL_MAGIC_MISSILE
                 jz      short loc_11ADC
                 cmp     ax, SPELL_KILL
@@ -3845,9 +3845,9 @@ loc_11B84:                              ; CODE XREF: dropPenceCastle+69↑j
                 mov     [bp+0Ch+var_4], ax
                 shl     ax, 1
                 mov     si, ax
-                cmp     _savegame._weapons_array[si], 255
+                cmp     _savegame._weaponSlot0[si], 255
                 jge     short loc_11BBB
-                inc     _savegame._weapons_array[si]
+                inc     _savegame._weaponSlot0[si]
                 jmp     short loc_11BBB
 ; ---------------------------------------------------------------------------
 
@@ -4130,7 +4130,7 @@ loc_11D92:                              ; CODE XREF: dropWeapon+3A↓j
                 jg      short loc_11DAD
                 shl     ax, 1
                 mov     si, ax
-                cmp     _savegame._weapons_array[si], 0
+                cmp     _savegame._weaponSlot0[si], 0
                 jz      short loc_11DA8
                 inc     [bp+0Eh+var_6]
 
@@ -4168,7 +4168,7 @@ loc_11DE1:                              ; CODE XREF: dropWeapon+CC↓j
                 jg      short loc_11E3F
                 shl     ax, 1
                 mov     si, ax
-                cmp     _savegame._weapons_array[si], 0
+                cmp     _savegame._weaponSlot0[si], 0
                 jz      short loc_11E37
                 mov     ax, [bp+0Eh+var_8]
                 add     ax, [bp+0Eh+var_6]
@@ -4239,7 +4239,7 @@ loc_11E7D:                              ; CODE XREF: dropWeapon+FB↑j
                 xor     ah, ah
                 shl     ax, 1
                 mov     si, ax
-                cmp     _savegame._weapons_array[si], 0
+                cmp     _savegame._weaponSlot0[si], 0
                 jnz     short loc_11E9C
                 push    _textColor      ; color
                 mov     ax, offset aNone ; "none"
@@ -4262,14 +4262,14 @@ loc_11E9C:                              ; CODE XREF: dropWeapon+11A↑j
                 xor     ah, ah
                 shl     ax, 1
                 mov     si, ax
-                dec     _savegame._weapons_array[si]
+                dec     _savegame._weaponSlot0[si]
                 mov     bl, [bp+0Eh+var_4]
                 xor     bh, bh
-                cmp     bx, _savegame._equippedWeapon
+                cmp     bx, _savegame._readyWeapon
                 jnz     short loc_11ED7
-                cmp     _savegame._weapons_array[si], 0
+                cmp     _savegame._weaponSlot0[si], 0
                 jnz     short loc_11ED7
-                mov     _savegame._equippedWeapon, 0
+                mov     _savegame._readyWeapon, 0
 
 loc_11ED7:                              ; CODE XREF: dropWeapon+10A↑j
                                         ; dropWeapon+129↑j ...
@@ -4311,7 +4311,7 @@ loc_11F00:                              ; CODE XREF: dropArmor+3A↓j
                 jg      short loc_11F1B
                 shl     ax, 1
                 mov     si, ax
-                cmp     _savegame._armor_array[si], 0
+                cmp     _savegame._armorSlot0[si], 0
                 jz      short loc_11F16
                 inc     [bp+0Eh+var_6]
 
@@ -4349,7 +4349,7 @@ loc_11F4F:                              ; CODE XREF: dropArmor+CC↓j
                 jg      short loc_11FAD
                 shl     ax, 1
                 mov     si, ax
-                cmp     _savegame._armor_array[si], 0
+                cmp     _savegame._armorSlot0[si], 0
                 jz      short loc_11FA5
                 mov     ax, [bp+0Eh+var_8]
                 add     ax, [bp+0Eh+var_6]
@@ -4420,7 +4420,7 @@ loc_11FEB:                              ; CODE XREF: dropArmor+FB↑j
                 xor     ah, ah
                 shl     ax, 1
                 mov     si, ax
-                cmp     _savegame._armor_array[si], 0
+                cmp     _savegame._armorSlot0[si], 0
                 jnz     short loc_1200A
                 push    _textColor      ; color
                 mov     ax, offset aNone ; "none"
@@ -4443,14 +4443,14 @@ loc_1200A:                              ; CODE XREF: dropArmor+11A↑j
                 xor     ah, ah
                 shl     ax, 1
                 mov     si, ax
-                dec     _savegame._armor_array[si]
+                dec     _savegame._armorSlot0[si]
                 mov     bl, [bp+0Eh+var_4]
                 xor     bh, bh
-                cmp     bx, _savegame._equippedArmor
+                cmp     bx, _savegame._readyArmor
                 jnz     short loc_12045
-                cmp     _savegame._armor_array[si], 0
+                cmp     _savegame._armorSlot0[si], 0
                 jnz     short loc_12045
-                mov     _savegame._equippedArmor, 0
+                mov     _savegame._readyArmor, 0
 
 loc_12045:                              ; CODE XREF: dropArmor+10A↑j
                                         ; dropArmor+129↑j ...
@@ -5360,14 +5360,14 @@ loc_125B5:                              ; CODE XREF: updateBardJester+BA↓j
                 mov     ax, [bp+12h+var_6]
                 shl     ax, 1
                 mov     si, ax
-                cmp     _savegame._weapons_array[si], 0
+                cmp     _savegame._weaponSlot0[si], 0
                 jz      short loc_125D9
                 mov     ax, [bp+12h+var_6]
-                cmp     ax, _savegame._equippedWeapon
+                cmp     ax, _savegame._readyWeapon
                 jz      short loc_125D9
                 shl     ax, 1
                 mov     si, ax
-                dec     _savegame._weapons_array[si]
+                dec     _savegame._weaponSlot0[si]
                 mov     [bp+12h+stolen], 1
 
 loc_125D9:                              ; CODE XREF: updateBardJester+95↑j
@@ -5978,7 +5978,7 @@ loc_129C9:                              ; CODE XREF: guardAttack+76↑j
                 cwd
                 idiv    bx
                 mov     cl, 3
-                mov     bx, _savegame._equippedArmor
+                mov     bx, _savegame._readyArmor
                 shl     bx, cl
                 add     ax, bx
                 add     ax, 56
@@ -10603,7 +10603,7 @@ loc_14D38:                              ; CODE XREF: princessSaved+125↑j
                 push    cx              ; data
                 mov     cx, 18
                 push    cx              ; tile
-                call    addOverworldWidget
+                call    addOverworldEntity
                 mov     sp, bp
 
 loc_14D96:                              ; CODE XREF: princessSaved+19B↑j
@@ -11038,9 +11038,9 @@ arg_0           = word ptr  2
                 sub     ax, [bp+6+arg_0]
                 shl     ax, 1
                 mov     si, ax
-                cmp     _savegame._quests[si], 0FFFFh
+                cmp     _savegame._questStatus[si], 0FFFFh
                 jnz     short loc_150C1
-                mov     _savegame._quests[si], 1
+                mov     _savegame._questStatus[si], 1
                 push    _textColor      ; color
                 mov     ax, offset aAQuestHasBeenC ; "A quest has been completed!"
                 push    ax              ; msg
@@ -11124,7 +11124,7 @@ loc_15122:                              ; CODE XREF: enterPillar+6B↓j
                 mov     ax, [bp+0Ch+var_A]
                 shl     ax, 1
                 mov     si, ax
-                cmp     _savegame._weapons_array[si], 0
+                cmp     _savegame._weaponSlot0[si], 0
                 jnz     short loc_15122
                 cmp     [bp+0Ch+var_A], 0Fh
                 jle     short loc_15141
@@ -11136,7 +11136,7 @@ loc_15141:                              ; CODE XREF: enterPillar+71↑j
                 mov     ax, [bp+0Ch+var_A]
                 shl     ax, 1
                 mov     si, ax
-                inc     _savegame._weapons_array[si]
+                inc     _savegame._weaponSlot0[si]
                 push    _textColor      ; color
                 mov     ax, offset aYouFindA ; "You find a"
                 push    ax              ; msg
@@ -12539,7 +12539,7 @@ saveGame        proc near               ; CODE XREF: quit:loc_15B82↓p
                 call    writeString
                 mov     sp, bp
                 mov     ax, _creaturesCount
-                mov     _savegame.field_AA, ax
+                mov     _savegame._overworldEntityCount, ax
                 mov     ax, word ptr _moveCtr+2
                 mov     bx, word ptr _moveCtr
                 mov     word ptr _savegame._moveCount+2, ax
@@ -12760,9 +12760,9 @@ loc_15C92:                              ; CODE XREF: findWeapon+89↑j
                 mov     ax, [bp+4]
                 shl     ax, 1
                 mov     si, ax
-                cmp     _savegame._weapons_array[si], 0FFh
+                cmp     _savegame._weaponSlot0[si], 0FFh
                 jge     short loc_15CB5
-                inc     _savegame._weapons_array[si]
+                inc     _savegame._weaponSlot0[si]
 
 loc_15CB5:                              ; CODE XREF: findWeapon+1D↑j
                                         ; findWeapon+B5↑j
@@ -12897,9 +12897,9 @@ loc_15D89:                              ; CODE XREF: findArmor+46↑j
                 mov     ax, [bp+0Ah+var_6]
                 shl     ax, 1
                 mov     si, ax
-                cmp     _savegame._armor_array[si], 0FFh
+                cmp     _savegame._armorSlot0[si], 0FFh
                 jge     short loc_15DAC
-                inc     _savegame._armor_array[si]
+                inc     _savegame._armorSlot0[si]
 
 loc_15DAC:                              ; CODE XREF: findArmor+1B↑j
                                         ; findArmor+72↑j
@@ -13882,7 +13882,7 @@ loc_16409:                              ; CODE XREF: sellWeapons+30↓j
                 jg      short loc_16424
                 shl     ax, 1
                 mov     si, ax
-                cmp     _savegame._weapons_array[si], 0
+                cmp     _savegame._weaponSlot0[si], 0
                 jz      short loc_1641F
                 inc     [bp+0Eh+var_8]
 
@@ -13925,7 +13925,7 @@ loc_16461:                              ; CODE XREF: sellWeapons+110↓j
                 mov     ax, [bp+4]
                 shl     ax, 1
                 mov     si, ax
-                cmp     _savegame._weapons_array[si], 0
+                cmp     _savegame._weaponSlot0[si], 0
                 jnz     short loc_16472
                 jmp     loc_164F0
 ; ---------------------------------------------------------------------------
@@ -14039,7 +14039,7 @@ loc_16555:                              ; CODE XREF: sellWeapons+152↑j
                 sub     ax, 65
                 shl     ax, 1
                 mov     si, ax
-                cmp     _savegame._weapons_array[si], 0
+                cmp     _savegame._weaponSlot0[si], 0
                 jnz     short loc_16577
                 push    _textColor      ; color
                 mov     ax, offset aNothing_0 ; "nothing"
@@ -14063,11 +14063,11 @@ loc_16577:                              ; CODE XREF: sellWeapons+174↑j
                 mov     [bp+0Eh+var_E], ax
                 shl     ax, 1
                 mov     si, ax
-                dec     _savegame._weapons_array[si]
-                mov     ax, _savegame._equippedWeapon
+                dec     _savegame._weaponSlot0[si]
+                mov     ax, _savegame._readyWeapon
                 cmp     ax, [bp+0]
                 jnz     short loc_165AA
-                mov     _savegame._equippedWeapon, 0
+                mov     _savegame._readyWeapon, 0
 
 loc_165AA:                              ; CODE XREF: sellWeapons+1B0↑j
                 mov     al, [bp+0Ah]
@@ -14338,9 +14338,9 @@ loc_1679A:                              ; CODE XREF: transactWeapons+129↑j
                 sub     ax, 61h ; 'a'
                 shl     ax, 1
                 mov     si, ax
-                cmp     _savegame._weapons_array[si], 0FFh
+                cmp     _savegame._weaponSlot0[si], 0FFh
                 jge     short loc_167C4
-                inc     _savegame._weapons_array[si]
+                inc     _savegame._weaponSlot0[si]
 
 loc_167C4:                              ; CODE XREF: transactWeapons+161↑j
                 mov     al, [bp+10h+var_8]
@@ -14441,7 +14441,7 @@ loc_1683B:                              ; CODE XREF: sellArmor+31↓j
                 jg      short loc_16856
                 shl     ax, 1
                 mov     si, ax
-                cmp     _savegame._armor_array[si], 0
+                cmp     _savegame._armorSlot0[si], 0
                 jz      short loc_16851
                 inc     [bp+0Eh+var_8]
 
@@ -14490,7 +14490,7 @@ loc_16893:                              ; CODE XREF: sellArmor+10D↓j
 loc_1689E:                              ; CODE XREF: sellArmor+76↑j
                 shl     ax, 1
                 mov     si, ax
-                cmp     _savegame._armor_array[si], 0
+                cmp     _savegame._armorSlot0[si], 0
                 jnz     short loc_168AC
                 jmp     loc_1692A
 ; ---------------------------------------------------------------------------
@@ -14590,7 +14590,7 @@ loc_1696F:                              ; CODE XREF: sellArmor+13B↑j
                 sub     ax, 41h ; 'A'
                 shl     ax, 1
                 mov     si, ax
-                cmp     _savegame._armor_array[si], 0
+                cmp     _savegame._armorSlot0[si], 0
                 jnz     short loc_16991
                 push    _textColor      ; color
                 mov     ax, offset aNothing_0 ; "nothing"
@@ -14614,11 +14614,11 @@ loc_16991:                              ; CODE XREF: sellArmor+15D↑j
                 mov     [bp+0Eh+var_E], ax
                 shl     ax, 1
                 mov     si, ax
-                dec     _savegame._armor_array[si]
-                mov     ax, _savegame._equippedArmor
+                dec     _savegame._armorSlot0[si]
+                mov     ax, _savegame._readyArmor
                 cmp     ax, [bp+0]
                 jnz     short loc_169C4
-                mov     _savegame._equippedArmor, 0
+                mov     _savegame._readyArmor, 0
 
 loc_169C4:                              ; CODE XREF: sellArmor+199↑j
                 mov     al, [bp+0Ah]
@@ -14842,9 +14842,9 @@ loc_16B55:                              ; CODE XREF: transactArmory+CA↑j
                 sub     ax, 61h ; 'a'
                 shl     ax, 1
                 mov     si, ax
-                cmp     _savegame._armor_array[si], 0FFh
+                cmp     _savegame._armorSlot0[si], 0FFh
                 jge     short loc_16B7F
-                inc     _savegame._armor_array[si]
+                inc     _savegame._armorSlot0[si]
 
 loc_16B7F:                              ; CODE XREF: transactArmory+102↑j
                 mov     al, [bp+0Ah+var_4]
@@ -15142,9 +15142,9 @@ loc_16D8C:                              ; CODE XREF: transactMagic+125↑j
                 sub     ax, 61h ; 'a'
                 shl     ax, 1
                 mov     si, ax
-                cmp     _savegame._spells_array[si], 0FFh
+                cmp     _savegame._spellSlot0[si], 0FFh
                 jge     short loc_16DB6
-                inc     _savegame._spells_array[si]
+                inc     _savegame._spellSlot0[si]
 
 loc_16DB6:                              ; CODE XREF: transactMagic+15D↑j
                 mov     al, [bp+10h+var_8]
@@ -15372,7 +15372,7 @@ arg_0           = word ptr  2
                 mov     ax, [bp+10h+arg_0]
                 shl     ax, 1
                 mov     si, ax
-                inc     _savegame._transports_array[si]
+                inc     _savegame._transportSlot0[si]
                 cmp     [bp+10h+arg_0], 2
                 jg      short loc_16F81
                 cmp     _woodsCount, 0
@@ -15479,7 +15479,7 @@ loc_17011:                              ; CODE XREF: transportPurchased+B4↑j
                 push    bx              ; xp
                 push    [bp+10h+tileNum] ; data
                 push    ax              ; tile
-                call    addOverworldWidget
+                call    addOverworldEntity
                 mov     sp, bp
                 add     sp, 0Eh
                 pop     bp
@@ -15907,8 +15907,8 @@ loc_17320:                              ; CODE XREF: transactTransport+23D↑j
                 cmp     [bp+16h+var_4], 46h ; 'F'
                 jnz     short loc_1735A
                 mov     ax, 1000
-                mov     _savegame.field_B2, ax
-                mov     _savegame.field_B0, ax
+                mov     _savegame._shipShield, ax
+                mov     _savegame._shipFuel, ax
 
 loc_1735A:                              ; CODE XREF: transactTransport+280↑j
                 mov     al, [bp+12h]
@@ -16186,7 +16186,7 @@ giveQuest       proc near               ; CODE XREF: transactCastle:loc_17B0F↓
                 mov     ax, _castleIndex_2
                 shl     ax, 1
                 mov     si, ax
-                mov     _savegame._quests[si], -1
+                mov     _savegame._questStatus[si], -1
                 test    _castleIndex_2, 1
                 jz      short loc_1754D
                 jmp     loc_175D4
@@ -16382,7 +16382,7 @@ isOnQuest       proc near               ; CODE XREF: transactCastle:loc_17AEB↓
                 mov     ax, _castleIndex_2
                 shl     ax, 1
                 mov     si, ax
-                cmp     _savegame._quests[si], -1
+                cmp     _savegame._questStatus[si], -1
                 jz      short loc_17695
                 xor     ax, ax
                 jmp     short loc_17698
@@ -16701,7 +16701,7 @@ var_4           = word ptr -4
                 mov     ax, _castleIndex_2
                 shl     ax, 1
                 mov     si, ax
-                cmp     _savegame._quests[si], 1
+                cmp     _savegame._questStatus[si], 1
                 mov     [bp+6+var_4], bx
                 jz      short loc_178E1
                 xor     ax, ax
@@ -16714,7 +16714,7 @@ loc_178E1:                              ; CODE XREF: questReward+29↑j
                 mov     ax, _castleIndex_2
                 shl     ax, 1
                 mov     si, ax
-                mov     _savegame._quests[si], 0
+                mov     _savegame._questStatus[si], 0
                 push    _borderColor    ; borderColor
                 call    drawDialog
                 mov     sp, bp
@@ -17445,13 +17445,13 @@ loc_17E21:                              ; CODE XREF: exitLocation+A0↑j
                 push    _savegame._position._y ; yp
                 push    _savegame._position._x ; xp
                 push    ax              ; data
-                push    _savegame._overworldWidgets._type ; tile
-                call    addOverworldWidget
+                push    _savegame._overworldEntities._type ; tile
+                call    addOverworldEntity
                 mov     sp, bp
                 mov     _savegame._transportType, TRANSPORT_WALKING
-                mov     ax, _savegame._overworldWidgets._type
-                mov     _savegame._overworldWidgets._data, ax
-                mov     _savegame._overworldWidgets._type, 10
+                mov     ax, _savegame._overworldEntities._type
+                mov     _savegame._overworldEntities._data, ax
+                mov     _savegame._overworldEntities._type, 10
                 mov     ax, offset aXIt ; "X-it"
                 push    ax              ; msg
                 call    writeStringNewline
@@ -17813,7 +17813,7 @@ loc_18077:                              ; CODE XREF: generateMonsters+155↑j
                 push    [bp+1Eh+xp]     ; xp
                 push    [bp+1Eh+data]   ; data
                 push    [bp+1Eh+tile]   ; tile
-                call    addOverworldWidget
+                call    addOverworldEntity
                 mov     sp, bp
                 inc     _monstersCount
 
@@ -17871,7 +17871,7 @@ loc_180D5:                              ; CODE XREF: monsterTransportCheck+2A↑
                 mov     ax, [bp+16h]
                 shl     ax, cl
                 mov     si, ax
-                mov     ax, word ptr _savegame._overworldWidgets._type[si]
+                mov     ax, word ptr _savegame._overworldEntities._type[si]
                 cmp     ax, TILE_FIRST_MONSTER
                 mov     [bp+14h+monsterType], ax
                 jl      short loc_180F9
@@ -17886,9 +17886,9 @@ loc_180D5:                              ; CODE XREF: monsterTransportCheck+2A↑
 loc_180F9:                              ; CODE XREF: monsterTransportCheck+46↑j
                                         ; monsterTransportCheck+4B↑j
                 mov     ax, [bp+14h+monsterType]
-                cmp     ax, TILE_31
+                cmp     ax, 31
                 jz      short loc_18106
-                cmp     ax, TILE_35
+                cmp     ax, 35
                 jnz     short loc_1810F
 
 loc_18106:                              ; CODE XREF: monsterTransportCheck+5D↑j
@@ -17920,9 +17920,9 @@ loc_1810F:                              ; CODE XREF: monsterTransportCheck+55↑
                 cmp     bx, [bp+14h+tile2]
                 mov     [bp+14h+tileNUm], ax
                 jz      short loc_18158
-                cmp     ax, TILE_CASTLE
+                cmp     ax, TILE_CASTLE1
                 jl      short loc_18153
-                cmp     ax, TILE_9
+                cmp     ax, TILE_DUNGEON
                 jg      short loc_18153
                 xor     ax, ax
                 inc     ax
@@ -18092,7 +18092,7 @@ maxDistance     = word ptr  8
                 sub     dx, [bp+18h+yDiff]
                 push    dx              ; y
                 push    cx              ; x
-                push    word ptr _savegame._overworldWidgets._type[bx] ; tileNum
+                push    word ptr _savegame._overworldEntities._type[bx] ; tileNum
                 mov     [bp+18h+yDelta], ax
                 mov     [bp+18h+xDelta], ax
                 call    drawTile
@@ -18129,7 +18129,7 @@ loc_18253:                              ; CODE XREF: monsterAttack+49↑j
                 mov     ax, [bp+18h+widgetNum]
                 shl     ax, cl
                 mov     si, ax
-                push    word ptr _savegame._overworldWidgets._type[si] ; monsterId
+                push    word ptr _savegame._overworldEntities._type[si] ; monsterId
                 call    getOverworldMonsterName
                 mov     sp, bp
                 push    _textColor      ; color
@@ -18235,7 +18235,7 @@ loc_18318:                              ; CODE XREF: monsterAttack+102↑j
                 mov     bx, 200
                 sub     bx, ax
                 mov     cl, 3
-                mov     ax, _savegame._equippedArmor
+                mov     ax, _savegame._readyArmor
                 shl     ax, cl
                 sub     bx, ax
                 mov     ax, [bp+18h+var_18]
@@ -18264,14 +18264,14 @@ loc_18360:                              ; CODE XREF: monsterAttack+158↑j
                 push    ax              ; y
                 mov     ax, 9
                 push    ax              ; x
-                push    _savegame._overworldWidgets._type ; tileNum
+                push    _savegame._overworldEntities._type ; tileNum
                 call    drawTile
                 mov     sp, bp
                 mov     cl, 4
                 mov     ax, [bp+18h+widgetNum]
                 shl     ax, cl
                 mov     si, ax
-                push    word ptr _savegame._overworldWidgets._type[si] ; monsterId
+                push    word ptr _savegame._overworldEntities._type[si] ; monsterId
                 call    getOverworldMonsterName
                 mov     sp, bp
                 push    ax              ; str
@@ -18314,7 +18314,7 @@ loc_183B2:                              ; CODE XREF: monsterAttack+162↑j
                 mov     ax, [bp+18h+widgetNum]
                 shl     ax, cl
                 mov     si, ax
-                mov     ax, word ptr _savegame._overworldWidgets._type[si]
+                mov     ax, word ptr _savegame._overworldEntities._type[si]
                 sub     ax, 19
                 mov     bx, 2
                 cwd
@@ -18339,7 +18339,7 @@ loc_183B2:                              ; CODE XREF: monsterAttack+162↑j
                 mov     ax, [bp+18h+widgetNum]
                 shl     ax, cl
                 mov     si, ax
-                push    word ptr _savegame._overworldWidgets._type[si] ; monsterId
+                push    word ptr _savegame._overworldEntities._type[si] ; monsterId
                 call    getOverworldMonsterName
                 mov     sp, bp
                 push    ax              ; str
@@ -18384,7 +18384,7 @@ loc_18438:                              ; CODE XREF: monsterAttack+231↑j
                 push    ax              ; y
                 mov     ax, 9
                 push    ax              ; x
-                push    _savegame._overworldWidgets._type ; tileNum
+                push    _savegame._overworldEntities._type ; tileNum
                 call    drawTile
                 mov     sp, bp
                 mov     ax, [bp+18h+damage]
@@ -18437,15 +18437,15 @@ yDiff           = word ptr  6
                 call    getMapTile
                 mov     sp, bp
                 mov     si, [bp+0Ah+widgetOffset]
-                mov     _savegame._overworldWidgets._data[si], ax
+                mov     _savegame._overworldEntities._data[si], ax
                 mov     cl, 4
                 mov     ax, [bp+0Ah+widgetNum]
                 shl     ax, cl
                 mov     si, ax
                 mov     bx, [bp+0Ah+newX]
-                mov     _savegame._overworldWidgets._x[si], bx
+                mov     _savegame._overworldEntities._x[si], bx
                 mov     ax, [bp+0Ah+newY]
-                mov     _savegame._overworldWidgets._y[si], ax
+                mov     _savegame._overworldEntities._y[si], ax
                 add     sp, 8
                 pop     bp
                 retn
@@ -18679,20 +18679,20 @@ loc_18610:                              ; CODE XREF: updateCreaturesOverworld+81
                 mov     cl, 4
                 shl     ax, cl
                 mov     si, ax
-                mov     ax, word ptr _savegame._overworldWidgets._type[si]
+                mov     ax, word ptr _savegame._overworldEntities._type[si]
                 cmp     ax, TILE_FIRST_MONSTER
                 mov     [bp+24h+tileNum], ax
                 jl      short loc_1867E
-                cmp     ax, TILE_LAST_MONSTER
+                cmp     ax, 47
                 jg      short loc_1867E
                 mov     cl, 4
                 mov     ax, [bp+24h+idx]
                 shl     ax, cl
                 mov     si, ax
                 mov     bx, _savegame._position._x
-                sub     bx, _savegame._overworldWidgets._x[si]
+                sub     bx, _savegame._overworldEntities._x[si]
                 mov     ax, _savegame._position._y
-                sub     ax, _savegame._overworldWidgets._y[si]
+                sub     ax, _savegame._overworldEntities._y[si]
                 push    ax              ; yDiff
                 push    bx              ; xDiff
                 push    [bp+24h+tileNum] ; tileNum
@@ -18743,12 +18743,12 @@ loc_18686:                              ; CODE XREF: updateCreaturesOverworld+DA
                 shl     ax, cl
                 mov     si, ax
                 mov     bx, _savegame._position._x
-                sub     bx, _savegame._overworldWidgets._x[si]
+                sub     bx, _savegame._overworldEntities._x[si]
                 mov     cx, _savegame._position._y
-                sub     cx, _savegame._overworldWidgets._y[si]
+                sub     cx, _savegame._overworldEntities._y[si]
                 push    cx              ; yDiff
                 push    bx              ; xDiff
-                push    word ptr _savegame._overworldWidgets._type[si] ; tileNum
+                push    word ptr _savegame._overworldEntities._type[si] ; tileNum
                 mov     [bp+24h+yDiff], cx
                 mov     [bp+24h+xDiff], bx
                 call    getMonsterAttackDistance
@@ -18794,10 +18794,10 @@ loc_186EC:                              ; CODE XREF: continentChanged+55↓j
                 mov     cl, 4
                 shl     ax, cl
                 mov     si, ax
-                cmp     word ptr _savegame._overworldWidgets._type[si], TILE_FIRST_MONSTER
+                cmp     word ptr _savegame._overworldEntities._type[si], TILE_FIRST_MONSTER
                 jl      short loc_18733
-                push    _savegame._overworldWidgets._y[si] ; y
-                push    _savegame._overworldWidgets._x[si] ; x
+                push    _savegame._overworldEntities._y[si] ; y
+                push    _savegame._overworldEntities._x[si] ; x
                 call    getContinentAt
                 mov     sp, bp
                 cmp     ax, [bp+0Ah+oldContinent]
@@ -18806,8 +18806,8 @@ loc_186EC:                              ; CODE XREF: continentChanged+55↓j
                 mov     ax, [bp+0Ah+continentNum]
                 shl     ax, cl
                 mov     si, ax
-                push    _savegame._overworldWidgets._y[si] ; y
-                push    _savegame._overworldWidgets._x[si] ; x
+                push    _savegame._overworldEntities._y[si] ; y
+                push    _savegame._overworldEntities._x[si] ; x
                 call    removeCreatureAt
                 mov     sp, bp
                 dec     _monstersCount
@@ -18940,7 +18940,7 @@ loc_187C8:                              ; CODE XREF: dungeonMonsterAttack+4E↑j
                 cwd
                 idiv    bx
                 mov     cl, 3
-                mov     bx, _savegame._equippedArmor
+                mov     bx, _savegame._readyArmor
                 shl     bx, cl
                 add     ax, bx
                 add     ax, 56
@@ -18989,18 +18989,18 @@ loc_1884B:                              ; CODE XREF: dungeonMonsterAttack+FB↑j
 loc_18881:                              ; CODE XREF: dungeonMonsterAttack+131↑j
                 cmp     [bp+16h+monsterId], UMONS_GELATINOUS_CUBE
                 jnz     short loc_188AC
-                cmp     _savegame._equippedArmor, 0
+                cmp     _savegame._readyArmor, 0
                 jz      short loc_188AC
                 mov     ax, offset aArmorDestroyed ; "Armor destroyed!"
                 push    ax              ; msg
                 call    writeStringNewline
                 mov     sp, bp
-                mov     ax, _savegame._equippedArmor
+                mov     ax, _savegame._readyArmor
                 shl     ax, 1
                 mov     si, ax
-                dec     _savegame._armor_array[si]
+                dec     _savegame._armorSlot0[si]
                 xor     ax, ax
-                mov     _savegame._equippedArmor, ax
+                mov     _savegame._readyArmor, ax
                 mov     [bp+16h+isHit], ax
                 jmp     short loc_188FD
 ; ---------------------------------------------------------------------------
@@ -19060,14 +19060,14 @@ loc_1890B:                              ; CODE XREF: dungeonMonsterAttack+278↓
 loc_18916:                              ; CODE XREF: dungeonMonsterAttack+1D4↑j
                 shl     ax, 1
                 mov     si, ax
-                cmp     _savegame._weapons_array[si], 0
+                cmp     _savegame._weaponSlot0[si], 0
                 jnz     short loc_18924
                 jmp     loc_189B2
 ; ---------------------------------------------------------------------------
 
 loc_18924:                              ; CODE XREF: dungeonMonsterAttack+1E2↑j
                 mov     ax, [bp+16h+weaponNum]
-                cmp     ax, _savegame._equippedWeapon
+                cmp     ax, _savegame._readyWeapon
                 jnz     short loc_18930
                 jmp     loc_189B2
 ; ---------------------------------------------------------------------------
@@ -19129,7 +19129,7 @@ loc_18992:                              ; CODE XREF: dungeonMonsterAttack+24A↑
                 mov     ax, [bp+16h+weaponNum]
                 shl     ax, 1
                 mov     si, ax
-                dec     _savegame._weapons_array[si]
+                dec     _savegame._weaponSlot0[si]
                 mov     [bp+16h+weaponNum], 16
 
 loc_189B2:                              ; CODE XREF: dungeonMonsterAttack+1E4↑j
@@ -19573,13 +19573,13 @@ loc_18CC2:                              ; CODE XREF: resetPlayerPosition+98↑j
                 mov     _savegame._position._x, ax
                 mov     ax, [bp+0Ch+y]
                 mov     _savegame._position._y, ax
-                mov     _savegame._overworldWidgets._type, 0Ah
+                mov     _savegame._overworldEntities._type, 0Ah
                 mov     ax, [bp+0Ch+var_8]
-                mov     _savegame._overworldWidgets._data, ax
+                mov     _savegame._overworldEntities._data, ax
                 mov     ax, _savegame._position._x
-                mov     _savegame._overworldWidgets._x, ax
+                mov     _savegame._overworldEntities._x, ax
                 mov     ax, _savegame._position._y
-                mov     _savegame._overworldWidgets._y, ax
+                mov     _savegame._overworldEntities._y, ax
                 add     sp, 0Ah
                 pop     bp
                 retn
@@ -19785,7 +19785,7 @@ loc_18DDA:                              ; CODE XREF: main+27↑j
                 push    TOWN_MAP_NAMES[si] ; filename
                 call    readFile
                 mov     sp, bp
-                mov     ax, _savegame.field_AA
+                mov     ax, _savegame._overworldEntityCount
                 mov     _creaturesCount, ax
                 mov     ax, word ptr _savegame._moveCount+2
                 mov     bx, word ptr _savegame._moveCount
@@ -19876,11 +19876,11 @@ loc_18EFF:                              ; CODE XREF: main+15E↓j
 ; ---------------------------------------------------------------------------
 
 loc_18F07:                              ; CODE XREF: main+154↑j
-                cmp     ax, cs:word_26393[si]
+                cmp     ax, cs:word_18F13[si]
                 jnz     short loc_18EFF
                 jmp     word ptr cs:jump_table[si]
 ; ---------------------------------------------------------------------------
-                dw 1Bh
+word_18F13      dw 1Bh                  ; DATA XREF: main:loc_18F07↑r
 jump_table:                             ; DATA XREF: main+160↑r
                 dw offset jmp_escape
                 dw ' '
@@ -22515,7 +22515,7 @@ detectVideoMode endp
 ; Attributes: bp-based frame
 
 ; void __stdcall setCursorPos(char x, char y)
-setCursorPos    proc near               ; CODE XREF: moveCheck+F1↑p
+setCursorPos    proc near               ; CODE XREF: overworld_moveCheck+F1↑p
                                         ; board+15B↑p ...
 
 x               = byte ptr  4
@@ -22591,8 +22591,8 @@ initVideoModeCGA endp
 ; Attributes: bp-based frame
 
 ; int __stdcall writeCharacter_0(char c, char color)
-writeCharacter_0 proc near              ; CODE XREF: moveCheck+CE↑p
-                                        ; moveCheck+DB↑p ...
+writeCharacter_0 proc near              ; CODE XREF: overworld_moveCheck+CE↑p
+                                        ; overworld_moveCheck+DB↑p ...
 
 c               = byte ptr  4
 color           = byte ptr  6
@@ -22628,8 +22628,8 @@ writeCharacter_0 endp
 ; Attributes: bp-based frame
 
 ; void __stdcall writeString(const char near *msg, char color)
-writeString     proc near               ; CODE XREF: moveCheck+A3↑p
-                                        ; moveCheck+105↑p ...
+writeString     proc near               ; CODE XREF: overworld_moveCheck+A3↑p
+                                        ; overworld_moveCheck+105↑p ...
 
 msg             = word ptr  4
 color           = byte ptr  6
@@ -23207,10 +23207,10 @@ loc_1A39F:                              ; CODE XREF: getMapTile2+16↑j
                 shr     al, 1
 
 loc_1A3AD:                              ; CODE XREF: getMapTile2+20↑j
-                cmp     al, TILE_CASTLE
+                cmp     al, TILE_CASTLE1
                 jbe     short locret_1A3B9
                 inc     al
-                cmp     al, TILE_CITY_FLAG
+                cmp     al, TILE_CITY2
                 jnz     short locret_1A3B9
                 inc     al
 
@@ -24492,7 +24492,7 @@ drawDeathGraphic endp
 
 ; int __cdecl writeStringNewline(const char near *msg)
 writeStringNewline proc near            ; CODE XREF: impassable+11↑p
-                                        ; moveCheck+10E↑p ...
+                                        ; overworld_moveCheck+10E↑p ...
 
 msg             = word ptr  4
 
@@ -24839,7 +24839,7 @@ drawGameBorder  endp
 
 ; Attributes: bp-based frame
 
-scrollStatus    proc near               ; CODE XREF: moveCheck+E6↑p
+scrollStatus    proc near               ; CODE XREF: overworld_moveCheck+E6↑p
                                         ; insertDisk+6↑p ...
                 push    bp
                 mov     bp, sp
@@ -25453,7 +25453,7 @@ loc_1AFBC:                              ; CODE XREF: overworldUpdate+60↑j
 ; ---------------------------------------------------------------------------
 
 loc_1AFE3:                              ; CODE XREF: overworldUpdate+7B↑j
-                cmp     [bp+10h+tileNum], TILE_CITY
+                cmp     [bp+10h+tileNum], TILE_CITY1
                 jnz     short loc_1B004
                 cmp     [bp+10h+flag], 2
                 jz      short loc_1B004
@@ -25469,7 +25469,7 @@ loc_1AFE3:                              ; CODE XREF: overworldUpdate+7B↑j
 
 loc_1B004:                              ; CODE XREF: overworldUpdate+90↑j
                                         ; overworldUpdate+96↑j
-                cmp     [bp+10h+tileNum], TILE_CASTLE
+                cmp     [bp+10h+tileNum], TILE_CASTLE1
                 jnz     short loc_1B024
                 cmp     [bp+10h+offset], 2
                 jz      short loc_1B024
@@ -25487,9 +25487,9 @@ loc_1B024:                              ; CODE XREF: overworldUpdate+B1↑j
                                         ; overworldUpdate+B7↑j
                 mov     al, [bp+10h+tileNum]
                 xor     ah, ah
-                cmp     ax, TILE_RAFT
+                cmp     ax, TILE_FRIGATE1
                 jz      short loc_1B033
-                cmp     ax, TILE_25
+                cmp     ax, 25
                 jnz     short loc_1B04E
 
 loc_1B033:                              ; CODE XREF: overworldUpdate+D5↑j
@@ -26234,8 +26234,8 @@ getRandomNumber endp
 
 ; Attributes: fpd=6
 
-; void __cdecl addOverworldWidget(int tile, int data, int xp, int yp, int hits)
-addOverworldWidget proc near            ; CODE XREF: princessSaved+1BB↑p
+; void __cdecl addOverworldEntity(int tile, int data, int xp, int yp, int hits)
+addOverworldEntity proc near            ; CODE XREF: princessSaved+1BB↑p
                                         ; transportPurchased+D2↑p ...
 
 tile            = word ptr  2
@@ -26256,21 +26256,21 @@ hits            = word ptr  0Ah
                 shl     ax, cl
                 mov     si, ax
                 mov     bx, [bp+6+tile]
-                mov     word ptr _savegame._overworldWidgets._type[si], bx
+                mov     word ptr _savegame._overworldEntities._type[si], bx
                 mov     bx, [bp+6+data]
-                mov     _savegame._overworldWidgets._data[si], bx
+                mov     _savegame._overworldEntities._data[si], bx
                 mov     bx, [bp+6+xp]
-                mov     _savegame._overworldWidgets._x[si], bx
+                mov     _savegame._overworldEntities._x[si], bx
                 mov     bx, [bp+6+yp]
-                mov     _savegame._overworldWidgets._y[si], bx
+                mov     _savegame._overworldEntities._y[si], bx
                 mov     ax, [bp+6+hits]
-                mov     _savegame._overworldWidgets._hits[si], ax
+                mov     _savegame._overworldEntities._hits[si], ax
 
-loc_1B540:                              ; CODE XREF: addOverworldWidget+C↑j
+loc_1B540:                              ; CODE XREF: addOverworldEntity+C↑j
                 add     sp, 4
                 pop     bp
                 retn
-addOverworldWidget endp
+addOverworldEntity endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -26300,10 +26300,10 @@ loc_1B550:                              ; CODE XREF: getCreatureAt+3C↓j
                 mov     cl, 4
                 shl     ax, cl
                 mov     si, ax
-                mov     bx, _savegame._overworldWidgets._x[si]
+                mov     bx, _savegame._overworldEntities._x[si]
                 cmp     bx, [bp+8+x]
                 jnz     short loc_1B57E
-                mov     ax, _savegame._overworldWidgets._y[si]
+                mov     ax, _savegame._overworldEntities._y[si]
                 cmp     ax, [bp+8+y]
                 jnz     short loc_1B57E
                 mov     ax, [bp+8+startingIndex]
@@ -26362,9 +26362,9 @@ loc_1B5AD:                              ; CODE XREF: removeCreatureAt+48↓j
                 mov     cl, 4
                 shl     ax, cl
                 mov     [bp+0Ch+var_C], ax
-                add     ax, offset _savegame._overworldWidgets
+                add     ax, offset _savegame._overworldEntities
                 mov     bx, [bp+0Ch+var_C]
-                add     bx, (offset _savegame._overworldWidgets._type+10h)
+                add     bx, (offset _savegame._overworldEntities._type+10h)
                 mov     si, bx
                 mov     di, ax
                 mov     cx, 8
@@ -26409,7 +26409,7 @@ loc_1B5EF:                              ; CODE XREF: getMonsterCount+2C↓j
                 mov     cl, 4
                 shl     ax, cl
                 mov     si, ax
-                cmp     word ptr _savegame._overworldWidgets._type[si], 19
+                cmp     word ptr _savegame._overworldEntities._type[si], 19
                 jl      short loc_1B60A
                 inc     [bp+8+count]
 
@@ -26451,7 +26451,7 @@ loc_1B625:                              ; CODE XREF: getTransportCount+2C↓j
                 mov     cl, 4
                 shl     ax, cl
                 mov     si, ax
-                cmp     word ptr _savegame._overworldWidgets._type[si], 17
+                cmp     word ptr _savegame._overworldEntities._type[si], 17
                 jg      short loc_1B640
                 inc     [bp+8+count]
 
@@ -26542,7 +26542,7 @@ loc_1B6AB:                              ; CODE XREF: moveUp+13↑j
 
 loc_1B6B0:                              ; CODE XREF: moveUp+84↓j
                 mov     ax, [bp+0Ch+xp]
-                cmp     ax, 13h
+                cmp     ax, 19
                 jge     short loc_1B6EB
                 mov     ax, 9
                 imul    [bp+0Ch+xp]
@@ -26908,7 +26908,7 @@ moveLeft        endp
 ; Attributes: fpd=6
 
 ; bool __cdecl isVowel(char c)
-isVowel         proc near               ; CODE XREF: moveCheck+BD↑p
+isVowel         proc near               ; CODE XREF: overworld_moveCheck+BD↑p
                                         ; enterPillar+A5↑p ...
 
 c               = byte ptr  2
@@ -27348,18 +27348,18 @@ readyWeapon     proc near               ; CODE XREF: ready+52↓p
                 push    ax              ; msg
                 call    writeString
                 mov     sp, bp
-                push    _savegame._equippedWeapon ; selectedIndex
+                push    _savegame._readyWeapon ; selectedIndex
                 mov     ax, 0Fh
                 push    ax              ; max
                 xor     ax, ax
                 push    ax              ; min
                 mov     ax, offset WEAPONS_UPPERCASE
                 push    ax              ; names
-                mov     ax, offset _savegame._weapons_array
+                mov     ax, offset _savegame._weaponSlot0
                 push    ax              ; items
                 call    selectItem
                 mov     sp, bp
-                mov     _savegame._equippedWeapon, ax
+                mov     _savegame._readyWeapon, ax
                 pop     bp
                 retn
 readyWeapon     endp
@@ -27377,18 +27377,18 @@ readyArmor      proc near               ; CODE XREF: ready:loc_1BC77↓p
                 push    ax              ; msg
                 call    writeString
                 mov     sp, bp
-                push    _savegame._equippedArmor ; selectedIndex
+                push    _savegame._readyArmor ; selectedIndex
                 mov     ax, 5
                 push    ax              ; max
                 xor     ax, ax
                 push    ax              ; min
                 mov     ax, offset ARMOR
                 push    ax              ; names
-                mov     ax, offset _savegame._armor_array
+                mov     ax, offset _savegame._armorSlot0
                 push    ax              ; items
                 call    selectItem
                 mov     sp, bp
-                mov     _savegame._equippedArmor, ax
+                mov     _savegame._readyArmor, ax
                 pop     bp
                 retn
 readyArmor      endp
@@ -27406,18 +27406,18 @@ readySpell      proc near               ; CODE XREF: ready:loc_1BC7C↓p
                 push    ax              ; msg
                 call    writeString
                 mov     sp, bp
-                push    _savegame._equippedSpell ; selectedIndex
+                push    _savegame._readySpell ; selectedIndex
                 mov     ax, 10
                 push    ax              ; max
                 xor     ax, ax
                 push    ax              ; min
                 mov     ax, offset SPELL_NAMES
                 push    ax              ; names
-                mov     ax, offset _savegame._spells_array
+                mov     ax, offset _savegame._spellSlot0
                 push    ax              ; items
                 call    selectItem
                 mov     sp, bp
-                mov     _savegame._equippedSpell, ax
+                mov     _savegame._readySpell, ax
                 pop     bp
                 retn
 readySpell      endp
@@ -28250,39 +28250,39 @@ loc_1C1B8:                              ; CODE XREF: showStats+1A5↑j
 
 loc_1C1E4:                              ; CODE XREF: showStats+1D7↑j
                 push    [bp+6+lineNum]  ; lineNum
-                push    _savegame._equippedArmor ; equipedIndex
+                push    _savegame._readyArmor ; equipedIndex
                 mov     ax, 5
                 push    ax              ; end
                 mov     ax, 1
                 push    ax              ; start
                 mov     ax, offset ARMOR
                 push    ax              ; statNames
-                mov     ax, offset _savegame._armor_array
+                mov     ax, offset _savegame._armorSlot0
                 push    ax              ; statValues
                 call    writeStatRange
                 mov     sp, bp
                 push    ax              ; lineNum
-                push    _savegame._equippedWeapon ; equipedIndex
+                push    _savegame._readyWeapon ; equipedIndex
                 mov     bx, 0Fh
                 push    bx              ; end
                 mov     bx, 1
                 push    bx              ; start
                 mov     bx, offset WEAPONS_UPPERCASE
                 push    bx              ; statNames
-                mov     bx, offset _savegame._weapons_array
+                mov     bx, offset _savegame._weaponSlot0
                 push    bx              ; statValues
                 mov     [bp+6+lineNum], ax
                 call    writeStatRange
                 mov     sp, bp
                 push    ax              ; lineNum
-                push    _savegame._equippedSpell ; equipedIndex
+                push    _savegame._readySpell ; equipedIndex
                 mov     bx, 0Ah
                 push    bx              ; end
                 mov     bx, 1
                 push    bx              ; start
                 mov     bx, offset SPELL_NAMES
                 push    bx              ; statNames
-                mov     bx, offset _savegame._spells_array
+                mov     bx, offset _savegame._spellSlot0
                 push    bx              ; statValues
                 mov     [bp+6+lineNum], ax
                 call    writeStatRange
@@ -28295,7 +28295,7 @@ loc_1C1E4:                              ; CODE XREF: showStats+1D7↑j
                 push    bx              ; start
                 mov     bx, offset TRANSPORTS
                 push    bx              ; statNames
-                mov     bx, offset _savegame._transports_array
+                mov     bx, offset _savegame._transportSlot0
                 push    bx              ; statValues
                 mov     [bp+6+lineNum], ax
                 call    writeStatRange
@@ -28349,7 +28349,7 @@ showStats       endp
 ; Attributes: fpd=6
 
 ; int __cdecl getTileAt(int x, int y, int creatureIndex)
-getTileAt       proc near               ; CODE XREF: moveCheck+6B↑p
+getTileAt       proc near               ; CODE XREF: overworld_moveCheck+6B↑p
                                         ; damage+D0↑p ...
 
 objNum          = word ptr -4
@@ -28371,7 +28371,7 @@ creatureIndex   = word ptr  6
                 mov     cl, 4
                 shl     ax, cl
                 mov     si, ax
-                mov     ax, word ptr _savegame._overworldWidgets._type[si]
+                mov     ax, word ptr _savegame._overworldEntities._type[si]
                 add     sp, 4
                 pop     bp
                 retn
@@ -28394,7 +28394,7 @@ getTileAt       endp
 ; Attributes: fpd=6
 
 ; int __cdecl getViewportX(int xp)
-getViewportX    proc near               ; CODE XREF: moveCheck+4F↑p
+getViewportX    proc near               ; CODE XREF: overworld_moveCheck+4F↑p
                                         ; damage+145↑p ...
 
 x               = word ptr -4
@@ -28432,7 +28432,7 @@ getViewportX    endp
 ; Attributes: fpd=6
 
 ; int __cdecl getViewportY(int yp)
-getViewportY    proc near               ; CODE XREF: moveCheck+5E↑p
+getViewportY    proc near               ; CODE XREF: overworld_moveCheck+5E↑p
                                         ; damage+154↑p ...
 
 y               = word ptr -4
@@ -28768,9 +28768,9 @@ loc_1C563:                              ; CODE XREF: death+D0↑j
                 jz      short loc_1C57E
                 shl     ax, 1
                 mov     si, ax
-                dec     _savegame._transports_array[si]
+                dec     _savegame._transportSlot0[si]
                 mov     _savegame._transportType, 0
-                mov     _savegame._overworldWidgets._type, 10
+                mov     _savegame._overworldEntities._type, 10
 
 loc_1C57E:                              ; CODE XREF: death+EC↑j
                 mov     [bp+6+idx], 1
@@ -28781,16 +28781,16 @@ loc_1C583:                              ; CODE XREF: death+11C↓j
                 jg      short loc_1C59A
                 shl     ax, 1
                 mov     si, ax
-                mov     _savegame._weapons_array[si], 0
+                mov     _savegame._weaponSlot0[si], 0
                 inc     [bp+6+idx]
                 jmp     short loc_1C583
 ; ---------------------------------------------------------------------------
 
 loc_1C59A:                              ; CODE XREF: death+10D↑j
                 xor     ax, ax
-                mov     _savegame._equippedWeapon, ax
-                mov     _savegame._equippedArmor, ax
-                mov     _savegame._equippedSpell, ax
+                mov     _savegame._readyWeapon, ax
+                mov     _savegame._readyArmor, ax
+                mov     _savegame._readySpell, ax
                 mov     ax, 5
                 push    ax              ; effectNum
                 call    playFX
@@ -31258,7 +31258,7 @@ _escapeFlag     dw 0                    ; DATA XREF: main:jmp_escape↑w
 aInuse_u1       db 'inuse.u1',0         ; DATA XREF: readSavegame+4A↑o
                                         ; writeInUseAndExit+32↑o
 ; char asc_1D60D[]
-asc_1D60D       db '!',0                ; DATA XREF: moveCheck+10A↑o
+asc_1D60D       db '!',0                ; DATA XREF: overworld_moveCheck+10A↑o
                                         ; giveTreasure+7E↑o ...
 ; char asc_1D60F[]
 asc_1D60F       db '! ',0               ; DATA XREF: giveTreasure+92↑o
@@ -33739,8 +33739,9 @@ aKnight         db 'Knight',0           ; DATA XREF: sg0E82:2ACE↓o
 aNecromancer    db 'Necromancer',0      ; DATA XREF: sg0E82:2AD0↓o
 aEvilRanger     db 'Evil ranger',0      ; DATA XREF: sg0E82:2AD2↓o
 aWanderingWarlock db 'Wandering warlock',0 ; DATA XREF: sg0E82:2AD4↓o
-OVERWORLD_MONSTERS dw offset aNessCreature ; DATA XREF: moveCheck+AF↑r
-                                        ; moveCheck+101↑r ...
+OVERWORLD_MONSTERS dw offset aNessCreature
+                                        ; DATA XREF: overworld_moveCheck+AF↑r
+                                        ; overworld_moveCheck+101↑r ...
                                         ; "Ness creature"
                 dw offset aGiantSquid   ; "Giant squid"
                 dw offset aDragonTurtle ; "Dragon turtle"
@@ -34260,7 +34261,7 @@ impassible_reasons dw offset aYouCanTWalkOnWat
                 dw offset aFrigatesLikeWate ; "Frigates like water!"
                 dw offset aRaftsLikeWater ; "Rafts like water!"
 ; char near *aaBlockedBy
-aaBlockedBy     dw offset aBlockedByA   ; DATA XREF: moveCheck+9C↑r
+aaBlockedBy     dw offset aBlockedByA   ; DATA XREF: overworld_moveCheck+9C↑r
                                         ; "Blocked by a"
 aaCantMoveOnLand dw offset aCanTMoveOnLand ; "Can't move on land!"
 unk_20C3C       db    0                 ; DATA XREF: sg0E82:DIRECTION_NAMES↓o
@@ -34443,8 +34444,8 @@ _borderColor    dw ?                    ; DATA XREF: board:loc_112A1↑r
 _highlightColor dw ?                    ; DATA XREF: drawBeams+9E↑r
                                         ; setVideoMode+23↑w ...
 ; char textColor[]
-_textColor      dw ?                    ; DATA XREF: moveCheck+98↑r
-                                        ; moveCheck+C6↑r ...
+_textColor      dw ?                    ; DATA XREF: overworld_moveCheck+98↑r
+                                        ; overworld_moveCheck+C6↑r ...
 _savegame       Savegame <?>            ; DATA XREF: readSavegame+32↑o
                                         ; readSavegame:loc_1042B↑o ...
 _map            Map <?>                 ; DATA XREF: main+66↑o
@@ -35362,7 +35363,7 @@ _townCityMap    db ?                    ; DATA XREF: dropPenceCastle+20↑r
                 db    ? ;
                 db    ? ;
                 db    ? ;
-word_26393      dw ?                    ; DATA XREF: main:loc_18F07↑r
+                dw ?
                 db    ? ;
                 db    ? ;
                 db    ? ;

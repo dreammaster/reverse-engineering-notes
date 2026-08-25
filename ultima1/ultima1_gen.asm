@@ -2508,11 +2508,11 @@ loc_1118D:                              ; CODE XREF: generateCharacter+11E\u2191
                 mov     _savegame._experience, ax
                 mov     _savegame._food, 200
                 mov     ax, 1
-                mov     _savegame._equippedWeapon, ax
+                mov     _savegame._readyWeapon, ax
                 xor     ax, ax
-                mov     _savegame._equippedSpell, ax
+                mov     _savegame._readySpell, ax
                 mov     ax, 1
-                mov     _savegame._equippedArmor, ax
+                mov     _savegame._readyArmor, ax
                 mov     _savegame._transportType, 0
                 mov     _savegame._position._x, 49
                 mov     _savegame._position._y, 40
@@ -2525,7 +2525,7 @@ loc_111DB:                              ; CODE XREF: generateCharacter+186\u2193
                 jg      short loc_111F2
                 shl     ax, 1
                 mov     si, ax
-                mov     (_savegame.field_3C - 2)[si], 0
+                mov     _savegame._questStatus[si], 0
                 inc     [bp+14h+attrNum]
                 jmp     short loc_111DB
 ; ---------------------------------------------------------------------------
@@ -2545,7 +2545,7 @@ loc_111F7:                              ; CODE XREF: generateCharacter+1A2\u2193
 ; ---------------------------------------------------------------------------
 
 loc_1120E:                              ; CODE XREF: generateCharacter+193\u2191j
-                mov     _savegame._spells_array, 0FFFFh
+                mov     _savegame._spellSlot0, 0FFFFh
                 mov     [bp+14h+attrNum], 1
 
 loc_11219:                              ; CODE XREF: generateCharacter+1C4\u2193j
@@ -2560,7 +2560,7 @@ loc_11219:                              ; CODE XREF: generateCharacter+1C4\u2193
 ; ---------------------------------------------------------------------------
 
 loc_11230:                              ; CODE XREF: generateCharacter+1B5\u2191j
-                mov     _savegame._armor_array, 0FFFFh
+                mov     _savegame._armorSlot0, 0FFFFh
                 mov     _savegame._leatherArmor, 1
                 mov     word ptr [bp+4], 2
 
@@ -2576,7 +2576,7 @@ loc_11241:                              ; CODE XREF: generateCharacter+1EC\u2193
 ; ---------------------------------------------------------------------------
 
 loc_11258:                              ; CODE XREF: generateCharacter+1DD\u2191j
-                mov     _savegame._weapons_array, 0FFFFh
+                mov     _savegame._weaponSlot0, 0FFFFh
                 mov     ax, 2
                 mov     _savegame._dagger, ax
                 mov     [bp+4], ax
@@ -2587,13 +2587,13 @@ loc_11267:                              ; CODE XREF: generateCharacter+212\u2193
                 jg      short loc_1127E
                 shl     ax, 1
                 mov     si, ax
-                mov     _savegame._weapons_array[si], 0
+                mov     _savegame._weaponSlot0[si], 0
                 inc     word ptr [bp+4]
                 jmp     short loc_11267
 ; ---------------------------------------------------------------------------
 
 loc_1127E:                              ; CODE XREF: generateCharacter+203\u2191j
-                mov     _savegame._transports_array, 0FFFFh
+                mov     _savegame._transportSlot0, 0FFFFh
                 mov     [bp+14h+attrNum], 1
 
 loc_11289:                              ; CODE XREF: generateCharacter+234\u2193j
@@ -2610,16 +2610,16 @@ loc_11289:                              ; CODE XREF: generateCharacter+234\u2193
 loc_112A0:                              ; CODE XREF: generateCharacter+225\u2191j
                 xor     ax, ax
                 mov     _savegame._enemyVessels, ax
-                mov     _savegame.field_AA, ax
-                mov     _savegame.field_AE, 0
-                mov     _savegame._moveCount, 0
+                mov     _savegame._overworldEntityCount, ax
+                mov     word ptr _savegame._moveCount+2, 0
+                mov     word ptr _savegame._moveCount, 0
                 mov     _savegame._signMarker, 0FFFFh
-                mov     _savegame._overworldWidgets._type, 10
-                mov     _savegame._overworldWidgets._data, 1
+                mov     _savegame._overworldEntities._type, 10
+                mov     _savegame._overworldEntities._data, 1
                 mov     ax, _savegame._position._x
-                mov     _savegame._overworldWidgets._x, ax
+                mov     _savegame._overworldEntities._x, ax
                 mov     ax, _savegame._position._y
-                mov     _savegame._overworldWidgets._y, ax
+                mov     _savegame._overworldEntities._y, ax
                 mov     ax, [bp+16h]
                 shl     ax, 1
                 mov     si, ax
@@ -2641,7 +2641,7 @@ loc_112A0:                              ; CODE XREF: generateCharacter+225\u2191
                 call    _fread
                 mov     sp, bp
 ;
-                mov     bx, offset _savegame._overworldWidgets
+                mov     bx, offset _savegame._overworldEntities
                 push    [bp+14h+file]   ; count
                 mov     cx, 1
                 push    cx              ; size
