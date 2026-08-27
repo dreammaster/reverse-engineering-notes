@@ -7335,3 +7335,33 @@ untouched siblings, a natural next target: OGG is very plausibly an even
 later addition than MP3, consistent with this project's own earlier
 finding that speech loading here "tries MP3 then WAV... no OGG attempt
 exists between WAV and MP3."
+
+## `MYOGG`/`MYSTATICOGG` confirmed absent -- the cleanest result of the four
+
+Checking the last two `SOUNDCLIP`-family siblings took one grep. Every
+"ogg" hit (case-insensitive) was searched for across both the full
+2727-entry extracted string dataset AND a direct pass over the entire
+917k-line disassembly -- zero occurrences either way. This is the same
+exhaustive-negative standard already used to rule out `apeg-1.2.1`/
+`dumb-0.9.2` in their own dedicated rounds, and it lands just as
+decisively here: this build's compiled engine has no Ogg Vorbis support
+of any kind. No `MYOGG`/`MYSTATICOGG` wrapper objects, no `my_load_ogg`/
+`my_load_static_ogg` functions -- and, going one step further than
+`MYMIDI`/`MYMOD` (which are absent as *wrapper objects* but still use
+real, present, already-matched underlying libraries, Allegro and JGMOD
+respectively), OGG appears to be missing at every level: even the
+underlying `vorbisfile`/`ogg.h` third-party dependency itself was
+apparently not yet a concept AGS depended on as of this build's
+2002-07-21 link date. Consistent with -- and now conclusively closing
+the loop on -- this project's much earlier finding that speech loading
+"tries MP3 then WAV... no OGG attempt exists between WAV and MP3," OGG
+support is most plausibly a later AGS addition than MP3, arriving well
+after this binary was built.
+
+With this, all four `SOUNDCLIP`-family siblings surveyed this session
+are accounted for: `MYMIDI`/`MYMOD` confirmed absent as wrapper objects
+(the underlying libraries are present and already matched, just glued
+together via bare globals instead of polymorphic objects), `MYOGG`/
+`MYSTATICOGG` confirmed absent as a feature entirely. A clean, complete
+close to the `SOUNDCLIP` hierarchy this project opened several rounds
+ago with `SOUNDCLIP`/`MYWAVE`/`MYMP3`/`MYSTATICMP3`.

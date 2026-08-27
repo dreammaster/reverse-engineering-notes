@@ -1718,6 +1718,19 @@ rather than trusting these numbers as they age)
   this repo to check names against). Two SOUNDCLIP-family siblings down;
   `MYOGG`/`MYSTATICOGG` remain as the last untouched pair, plausibly
   absent given OGG is likely a later addition than MP3.
+- **`MYOGG`/`MYSTATICOGG` confirmed absent — the cleanest result of the
+  four.** A search for "ogg" (any case) across the full extracted string
+  dataset AND a direct pass over the entire 917k-line disassembly found
+  ZERO occurrences either way — the same exhaustive-negative standard
+  already used to rule out `apeg-1.2.1`/`dumb-0.9.2`. This build has no
+  Ogg Vorbis support at any level: no wrapper objects, no loader
+  functions, and unlike `MYMIDI`/`MYMOD` (absent as wrapper objects, but
+  built on real, present, already-matched libraries), not even the
+  underlying `vorbisfile`/`ogg.h` dependency appears to have existed yet
+  at this build's 2002-07-21 link date — closing the loop on this
+  project's much earlier finding that speech loading tries MP3 then WAV
+  with no OGG attempt in between. All four `SOUNDCLIP`-family siblings
+  surveyed this session are now accounted for.
 
 ## Third-party library identification (Task #10)
 

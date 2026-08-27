@@ -4462,6 +4462,22 @@ struct RoomStruct {
 // against beyond the `acsound.cpp` call-site declarations themselves -- same caveat already
 // recorded on `load_mod`/`play_mod`'s own entries).
 
+// MYOGG/MYSTATICOGG (2011's declared Ogg Vorbis classes, `Engine/acsound.cpp:494-915`) --
+// CONFIRMED ABSENT, not merely unformalized. An exhaustive search for the substring "ogg" (any
+// case) across BOTH the entire 2727-entry extracted string dataset AND a direct grep of the whole
+// 917k-line disassembly turns up ZERO occurrences anywhere -- the strongest possible negative
+// result this project's technique can produce, the same standard already used to rule out
+// `apeg-1.2.1`/`dumb-0.9.2` entirely. This build's compiled engine has no Ogg Vorbis support
+// whatsoever: no `MYOGG`/`MYSTATICOGG` wrapper objects (unsurprising, following `MYMIDI`/`MYMOD`'s
+// own "no wrapper object" pattern), no `my_load_ogg`/`my_load_static_ogg` functions, and -- unlike
+// `apeg`/`dumb`, which are absent third-party LIBRARIES this build simply doesn't link -- not even
+// the underlying vorbisfile/ogg.h dependency itself appears to have been a concept yet at this
+// build's 2002-07-21 link date, consistent with OGG support being a later AGS-era addition
+// entirely, added sometime after MP3 support (`almp3`) had already matured. With this, ALL FOUR
+// `SOUNDCLIP`-family siblings surveyed this session (`MYMIDI`/`MYMOD`/`MYOGG`/`MYSTATICOGG`) are
+// accounted for -- two confirmed absent as wrapper objects (replaced by bare globals), two
+// confirmed absent as a feature entirely.
+
 // SOUNDCLIP and its derived classes (MYWAVE/MYMP3/MYSTATICMP3) -- FRESH SURVEY. 2011's real
 // `SOUNDCLIP` base class (`Common/acsound.h:22-99`) is a large, mature abstract base: 13 `int`
 // fields (done/priority/soundType/vol/volAsPercentage/originalVolAsPercentage/volModifier/
