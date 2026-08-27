@@ -7426,3 +7426,60 @@ originally confirmed them.
 `MoveList` -- already one of this project's cleanest zero-drift matches
 -- is now fully behaviorally confirmed field by field, with no remaining
 positional-only fields at all.
+
+## `sub_41D49B` is `run_dialog_script`, not `run_dialog_request` -- a self-caught correction
+
+Continuing the sweep, `DialogTopic.entrypoints[15]` was next: its own
+struct comment already predicted a `run_dialog_script`-shaped call site
+reading it, so `do_conversation` (already matched) was re-read looking
+for that access. It was there -- but the function it fed the value into
+turned out to be a MISIDENTIFICATION discovered along the way, not
+merely an unread caller.
+
+`sub_41D49B` had been matched to `run_dialog_request` (`AC.CPP:21797`,
+a small function whose whole body is "set `stop_dialog_at_end`, run a
+`"dialog_request"` text-script hook, then interpret the result") on the
+strength of a genuine, DATA-XREF-confirmed `"dialog_request"` string
+inside its body, plus a structural argument about where `do_conversation`
+calls it. Reading the FULL function this round shows that reasoning
+stopped one step short: the `"dialog_request"` string sits inside just
+ONE branch (`opcode==7`) of a much larger byte-code dispatch loop that
+decodes one opcode byte at a time from a buffer starting at `dtpp->
+optionscripts + offse` -- unmistakably `run_dialog_script`'s own
+interpreter (`AC.CPP:21824`), not `run_dialog_request` at all.
+
+Opcode 7's body is a decisive, line-for-line match to `run_dialog_request`'s
+ENTIRE function ("`play.stop_dialog_at_end=DIALOG_RUNNING;
+run_text_script_iparam(gameinst,"dialog_request",parmtr); if
+(play.stop_dialog_at_end==DIALOG_STOP) return -2; if
+(play.stop_dialog_at_end>=DIALOG_NEWTOPIC) {...}`", including the exact
+`DIALOG_NEWTOPIC`(100)/`DIALOG_STOP`(2) literal comparisons) -- meaning
+`run_dialog_request` has NO separate existence in this build at all,
+its entire logic FUSED into `run_dialog_script`'s own opcode dispatch as
+one case. The same "one big pre-refactor function, later split into
+several" pattern already found repeatedly this project (`sub_42B394`/
+the script interpreter, `offset_over_inv`, `unload_old_room`) -- this
+function's OWN pre-existing evidence comment (for a neighboring helper)
+had already namechecked this exact pattern ("same pattern as
+call_function/cc_run_code and do_conversation/show_dialog_options")
+without anyone noticing it applied to the enclosing function's own
+identity too.
+
+Both of `do_conversation`'s two call sites into this interpreter confirm
+the correction and, as a bonus, both `DialogTopic` fields at once:
+the STARTUP call passes `[parmtr+0x47A]` (`startupentrypoint`, already
+confirmed) alongside the topic pointer, and the CHOSEN-OPTION call
+passes `[parmtr+chose*2+0x45C]` (`entrypoints[chose]`, now newly
+confirmed) the same way -- both matching 2011's real `run_dialog_script`
+call shape (`dtpp`, `offse`) in role, just with this build's own
+2-parameter predecessor signature (no separate `dialogID`/`optionIndex`
+-- the option-index-driven `optionflags` bit manipulation 2011 does via
+a separate call happens INSIDE this interpreter instead, as opcode 6,
+reading its own index straight from the bytecode stream).
+
+Renamed `sub_41D49B` from `run_dialog_request` to `run_dialog_script` in
+`matches.json`, with the old (wrong) name and reasoning kept visible in
+the entry per this project's "visible retraction" convention. The
+interpreter's full opcode set is only partially traced (0/6/7
+characterized so far) -- left as an open thread for a future round
+rather than force complete coverage in one pass.

@@ -1796,6 +1796,22 @@ rather than trusting these numbers as they age)
   re-derive `pos[onstage+1]` the same way, a bonus reconfirmation from a
   different function than the one that first confirmed it. `MoveList` is
   now fully behaviorally confirmed field by field.
+- **A self-caught correction: `sub_41D49B` is `run_dialog_script`, not
+  `run_dialog_request`.** Chasing `DialogTopic.entrypoints[]`'s own
+  predicted reader in `do_conversation` led to reading the FULL body of
+  a function previously matched to `run_dialog_request` on a genuine but
+  incomplete string match. It's actually a byte-code dispatch loop
+  reading `dtpp->optionscripts + offse` one opcode at a time —
+  `run_dialog_script` itself — with `run_dialog_request`'s entire body
+  fused in as just one opcode case (a decisive line-for-line match,
+  including its exact `DIALOG_NEWTOPIC`/`DIALOG_STOP` literal
+  comparisons). `run_dialog_request` has no separate existence in this
+  build at all. Both of `do_conversation`'s call sites into this
+  interpreter confirm the correction and, as a bonus, both
+  `DialogTopic.entrypoints[15]`/`.startupentrypoint` fields at once.
+  Renamed with the old name kept visible per the usual retraction
+  convention; the interpreter's full opcode set is only partially traced
+  (0/6/7 so far), left open for a future round.
 
 ## Third-party library identification (Task #10)
 

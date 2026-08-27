@@ -2123,22 +2123,32 @@ struct DialogTopic {
                             // (the compiled per-option dialog-script bytecode) in identity;
                             // position (right after `optionflags`) also matches 2011's declared
                             // adjacency exactly.
-  short entrypoints[15];            // +0x45C..0x47A (30 bytes), MEDIUM confidence: NOT
-                            // independently confirmed via its own access site -- included
-                            // because it's boxed in with zero slack between the confirmed
-                            // `optionscripts` and `startupentrypoint` fields, and 15 elements at
-                            // 2 bytes each matches `MAXTOPICOPTIONS=15`, now confirmed THREE
-                            // independent ways for this struct (`optionnames`, `optionflags`,
-                            // and the `SaveGameSlot`/`restore_game_data` literal `0x0F` constant
-                            // -- see their own comments), not just a coincidental gap size.
-                            // Matches 2011's declared `short entrypoints[MAXTOPICOPTIONS]` in
-                            // position and type.
+  short entrypoints[15];            // +0x45C..0x47A (30 bytes), high confidence (UPGRADED from
+                            // MEDIUM): confirmed via `do_conversation` (already matched):
+                            // "movsx edx,word[parmtr+var_4C*2+0x45C]; push edx; push parmtr; call
+                            // <bytecode interpreter>" -- reading `dtop->entrypoints[chose]` and
+                            // passing it as the start-offset argument into the dialog-script
+                            // bytecode interpreter, matching 2011's
+                            // "run_dialog_script(dtop,dlgnum,dtop->entrypoints[chose],chose+1);"
+                            // (`AC.CPP:22564`) in ROLE exactly (this build's own 2-argument
+                            // predecessor of that call only needs `dtpp`/`offse` -- see the
+                            // interpreter's own entry, previously misidentified as
+                            // `run_dialog_request`, now corrected to `run_dialog_script`, for the
+                            // complete writeup). 15 elements at 2 bytes each matches
+                            // `MAXTOPICOPTIONS=15`, already confirmed THREE other independent ways
+                            // for this struct (`optionnames`, `optionflags`, and the
+                            // `SaveGameSlot`/`restore_game_data` literal `0x0F` constant).
   short startupentrypoint;         // +0x47A, high confidence: confirmed via `do_conversation`
                             // (already matched): "movsx edx,word[parmtr+0x47A]; push edx; push
-                            // parmtr; call run_dialog_request" -- passed alongside the dialog
-                            // topic pointer itself to `run_dialog_request` (already matched),
-                            // matching 2011's semantic role ("initial dialog-script entry point
-                            // to jump to") and position exactly.
+                            // parmtr; call <bytecode interpreter>" -- passed alongside the dialog
+                            // topic pointer itself to this build's dialog-script bytecode
+                            // interpreter (previously misidentified as `run_dialog_request`; see
+                            // that function's own entry, now corrected to `run_dialog_script`, for
+                            // the complete writeup), matching 2011's semantic role ("initial
+                            // dialog-script entry point to jump to") and position exactly. This is
+                            // do_conversation's OWN opening call into the interpreter, a SECOND
+                            // independent confirmation of the interpreter's 2-argument call shape
+                            // alongside `entrypoints[]`'s own confirming call site.
   short codesize;                  // +0x47C, high confidence: confirmed via load_ac2game_dta
                             // (already matched) -- see `optionscripts` above: used directly as
                             // the `optionscripts` malloc/fread size, matching 2011's declared
