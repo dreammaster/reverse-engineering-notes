@@ -235,7 +235,7 @@ rather than trusting these numbers as they age)
   944/776 before that addition) — this pool was "largely exhausted" for
   Engine/Common code specifically; a productive third-party-library round
   (Task #10, now paused — see below) pushed it further before wrapping up.
-- `reversing/analysis/matches.json` has 584 entries (function + struct-field
+- `reversing/analysis/matches.json` has 587 entries (function + struct-field
   matches combined)
 - 25 struct definitions built entirely from disassembly evidence (not
   borrowed from the 2011 source — see `reversing/notes/struct-layout-drift.md`):
@@ -1705,6 +1705,19 @@ rather than trusting these numbers as they age)
   against `allegro/midi.h`), plus field evidence newly added to four
   previously-bare-linker-matched functions (`scr_StopMusic`/
   `IsMusicPlaying`/`GetMIDIPosition`/`SeekMIDIPosition`).
+- **Immediate follow-up: `MYMOD` closes the same way.** `MYMIDI`'s
+  resolution made its JGMOD-based sibling an obvious next check.
+  `load_mod`/`play_mod` were already matched from an earlier Task #10
+  round; re-reading `PlayMusic`'s `.mod`/`.xm`/`.s3m` cascade and
+  `scr_StopMusic`'s cleanup branch confirms explicitly what that
+  evidence already implied: no `MYMOD` wrapper object exists here either
+  — `dword_5231B8` is the bare `JGMOD*` handle, checked/cleared by the
+  same five-function pattern already established for MIDI. Three new
+  matches fall out (`is_mod_playing`, `stop_mod`, `destroy_mod`, all
+  identified by call-shape/role since no JGMOD source tree exists in
+  this repo to check names against). Two SOUNDCLIP-family siblings down;
+  `MYOGG`/`MYSTATICOGG` remain as the last untouched pair, plausibly
+  absent given OGG is likely a later addition than MP3.
 
 ## Third-party library identification (Task #10)
 

@@ -4445,6 +4445,23 @@ struct RoomStruct {
 // not itself independently searched for as an absence (this build may simply never call the
 // equivalent of `GetMusicLength`-style APIs, if any exist here at all -- not checked this round).
 
+// MYMOD (2011's declared class, `Engine/acsound.cpp:1030-1110`, the `JGMOD_MOD_PLAYER`-gated
+// version -- matching this build's own confirmed music library, see `reversing/notes/
+// third-party-library-identification.md`) -- FRESH SURVEY, an immediate follow-up to `MYMIDI`
+// above. Same conclusion: NO wrapper object, bare globals instead. `PlayMusic`'s own `.mod`/`.xm`/
+// `.s3m` cascade calls `load_mod` (already matched) directly, storing the result into
+// `dword_5231B8` -- the bare `JGMOD*` handle, matching 2011's `MYMOD.tune` in ROLE, just
+// unwrapped. Confirmed via FIVE already-matched functions all agreeing on this one global: `
+// PlayMusic` (sets it, then passes it straight to `play_mod` alongside the already-confirmed
+// `GameState.music_repeat`), `scr_StopMusic` (clears it, via a `is_mod_playing()`-gated
+// `stop_mod()` call followed by an unconditional `destroy_mod()` -- matching 2011's `MYMOD::
+// destroy()` call order exactly, `acsound.cpp:1053-1058`), and `IsMusicPlaying` (checks
+// `is_mod_playing()` as one leg of its "is ANY music format active" OR-chain, alongside the
+// already-established MIDI check). `is_mod_playing`/`stop_mod`/`destroy_mod` are all newly
+// matched this round (no local JGMOD source tree exists in this repo to verify their exact names
+// against beyond the `acsound.cpp` call-site declarations themselves -- same caveat already
+// recorded on `load_mod`/`play_mod`'s own entries).
+
 // SOUNDCLIP and its derived classes (MYWAVE/MYMP3/MYSTATICMP3) -- FRESH SURVEY. 2011's real
 // `SOUNDCLIP` base class (`Common/acsound.h:22-99`) is a large, mature abstract base: 13 `int`
 // fields (done/priority/soundType/vol/volAsPercentage/originalVolAsPercentage/volModifier/

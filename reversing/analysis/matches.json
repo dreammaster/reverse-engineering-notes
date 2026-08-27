@@ -1047,7 +1047,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD/ARCHITECTURE EVIDENCE (found this round, MYMIDI fresh-survey): the MIDI-cleanup branch -- 'if (dword_5231B4!=0) { set_volume(-1,0); stop_midi(); destroy_midi(dword_5231B4); dword_5231B4=0; }' -- matches 2011's MYMIDI::destroy() ('stop_midi(); destroy_midi(tune); tune=NULL;', acsound.cpp:940-945) exactly in call order and role, but operates directly on the bare global dword_5231B4 rather than a MYMIDI object's own tune field -- confirming this build has NO MYMIDI wrapper class at all (see PlayMusic's own entry for the complete architectural writeup). Also matches MYMIDI::set_volume's own 'set_volume(-1, newvol)' Allegro call (acsound.cpp:937) in shape (2 args, first literal -1 meaning \"all voices\")."
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD/ARCHITECTURE EVIDENCE (found this round, MYMIDI fresh-survey): the MIDI-cleanup branch -- 'if (dword_5231B4!=0) { set_volume(-1,0); stop_midi(); destroy_midi(dword_5231B4); dword_5231B4=0; }' -- matches 2011's MYMIDI::destroy() ('stop_midi(); destroy_midi(tune); tune=NULL;', acsound.cpp:940-945) exactly in call order and role, but operates directly on the bare global dword_5231B4 rather than a MYMIDI object's own tune field -- confirming this build has NO MYMIDI wrapper class at all (see PlayMusic's own entry for the complete architectural writeup). Also matches MYMIDI::set_volume's own 'set_volume(-1, newvol)' Allegro call (acsound.cpp:937) in shape (2 args, first literal -1 meaning \"all voices\"). MOD/JGMOD FIELD EVIDENCE (found this round, following up the MYMIDI architecture finding): the MOD-cleanup branch -- 'if (opts_mod_player!=0 && is_mod_playing()) stop_mod(); if (dword_5231B8!=0) destroy_mod(dword_5231B8); dword_5231B8=0;' -- matches 2011's MYMOD::destroy() ('stop_mod(); destroy_mod(tune); tune=NULL;', acsound.cpp:1055-1057) exactly in role, but operates on the bare global dword_5231B8 rather than a MYMOD object's own tune field, confirming this build has NO MYMOD wrapper class either (same 'bare globals' pattern as MYMIDI -- see load_mod's own entry for the complete writeup). Newly identifies sub_4778B0/sub_477790/sub_4779A0 as is_mod_playing/stop_mod/destroy_mod respectively (see their own entries)."
   },
   {
     "kind": "function",
@@ -1057,7 +1057,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (found this round, MYMIDI fresh-survey): the MIDI-active check, 'if (dword_5231B4!=0 && dword_4BD8F8>=0) return 1;', reconfirms dword_5231B4 (this build's bare MIDI* handle, see PlayMusic's own entry) and identifies dword_4BD8F8 as Allegro's own 'volatile long midi_pos;' global (allegro/midi.h:110, \"current position in the midi file, in beats\" -- negative when no MIDI is active), matching the exact same check GetMIDIPosition performs (see its own entry)."
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (found this round, MYMIDI fresh-survey): the MIDI-active check, 'if (dword_5231B4!=0 && dword_4BD8F8>=0) return 1;', reconfirms dword_5231B4 (this build's bare MIDI* handle, see PlayMusic's own entry) and identifies dword_4BD8F8 as Allegro's own 'volatile long midi_pos;' global (allegro/midi.h:110, \"current position in the midi file, in beats\" -- negative when no MIDI is active), matching the exact same check GetMIDIPosition performs (see its own entry). MOD FIELD EVIDENCE (found this round): the MOD leg of this function's OR-chain, 'if (opts_mod_player!=0 && is_mod_playing()) return 1;', gives the newly-matched is_mod_playing (sub_4778B0) a second independent confirmation site."
   },
   {
     "kind": "function",
@@ -5140,7 +5140,7 @@
     "source_file": "Engine/acsound.cpp",
     "source_line": 1116,
     "confidence": "high",
-    "evidence": "JGMOD library public API, JGMOD *load_mod(char *filename) -- referenced (not defined, the library body itself is not in this repo's checkout -- no Engine/libsrc/jgmod/ tree exists) at Engine/acsound.cpp:1116, \"JGMOD *modPtr = load_mod((char *)filname); if (modPtr == NULL) return NULL;\" inside my_load_mod (compiled under the ACTIVE #ifdef JGMOD_MOD_PLAYER branch, acsound.cpp:1025). CORRECTS an earlier investigation round that mistook this function's internal XM-signature check (it checks for \"Extended Module: \", the standard XM file magic) for evidence of dumb-0.9.2's XM loader -- dumb-0.9.2 is conclusively NOT linked into this binary at all (released April 2003, seven months after this binary's 2002-07-21 link date, the same \"wrong era\" pattern already established for apeg-1.2.1). Confirmed via caller pattern: PlayMusic (already matched) builds candidate filenames (\"music%d.mod\", \"music%d.xm\", \"music%d.s3m\") and calls this function on each in turn, checking for a non-NULL result -- exactly matching my_load_mod's own \"call load_mod, check NULL\" shape, just with the multi-extension-guessing loop living in PlayMusic directly in this build rather than a level up. Internally does an 8-format check-then-load cascade (MOD/XM/S3M/etc, format-specific pairs like sub_47C4C0(check)/sub_47C520(load) for XM), consistent with JGMOD's own multi-format auto-detection; internal helper functions are NOT individually renamed since JGMOD's own source is unavailable to verify exact names against, but are richly documented with distinctive JGMOD error strings (\"Unable to allocate enough memory for JGMOD structure\", \"JGMOD 01 module : \", etc.) throughout. See reversing/notes/third-party-library-identification.md for the complete writeup."
+    "evidence": "JGMOD library public API, JGMOD *load_mod(char *filename) -- referenced (not defined, the library body itself is not in this repo's checkout -- no Engine/libsrc/jgmod/ tree exists) at Engine/acsound.cpp:1116, \"JGMOD *modPtr = load_mod((char *)filname); if (modPtr == NULL) return NULL;\" inside my_load_mod (compiled under the ACTIVE #ifdef JGMOD_MOD_PLAYER branch, acsound.cpp:1025). CORRECTS an earlier investigation round that mistook this function's internal XM-signature check (it checks for \"Extended Module: \", the standard XM file magic) for evidence of dumb-0.9.2's XM loader -- dumb-0.9.2 is conclusively NOT linked into this binary at all (released April 2003, seven months after this binary's 2002-07-21 link date, the same \"wrong era\" pattern already established for apeg-1.2.1). Confirmed via caller pattern: PlayMusic (already matched) builds candidate filenames (\"music%d.mod\", \"music%d.xm\", \"music%d.s3m\") and calls this function on each in turn, checking for a non-NULL result -- exactly matching my_load_mod's own \"call load_mod, check NULL\" shape, just with the multi-extension-guessing loop living in PlayMusic directly in this build rather than a level up. Internally does an 8-format check-then-load cascade (MOD/XM/S3M/etc, format-specific pairs like sub_47C4C0(check)/sub_47C520(load) for XM), consistent with JGMOD's own multi-format auto-detection; internal helper functions are NOT individually renamed since JGMOD's own source is unavailable to verify exact names against, but are richly documented with distinctive JGMOD error strings (\"Unable to allocate enough memory for JGMOD structure\", \"JGMOD 01 module : \", etc.) throughout. See reversing/notes/third-party-library-identification.md for the complete writeup. ARCHITECTURE NOTE (found this round, following up the MYMIDI fresh survey): this build has NO MYMOD wrapper object either, exactly the same 'bare globals instead' pattern already established for MYMIDI/AmbientSound. PlayMusic stores this function's result directly into dword_5231B8 (the bare JGMOD* handle, checked non-NULL as the success gate for each of the .mod/.xm/.s3m attempts in turn) with no intervening object allocation. dword_5231B8 is the SAME global scr_StopMusic's cleanup branch checks/clears (see its own entry) and is_mod_playing/stop_mod/destroy_mod's own entries reference -- five already-matched functions now agreeing on this one identification."
   },
   {
     "kind": "manual",
@@ -5149,7 +5149,7 @@
     "source_file": "Engine/acsound.cpp",
     "source_line": 1103,
     "confidence": "high",
-    "evidence": "JGMOD library public API, void play_mod(JGMOD *j, int loop) -- referenced at Engine/acsound.cpp:1103, \"play_mod(tune, repeat);\" inside MYMOD::play() (JGMOD_MOD_PLAYER branch). Confirmed via a distinctive literal error string, \"Can't play a JGMOD pointer with null value\", guarding a NULL check on its first argument -- exactly the kind of defensive check a public \"play this tune\" API would have. Called from PlayMusic (already matched) immediately after a successful load_mod (sub_477320, see its own entry) call, matching the source's load-then-play sequence exactly."
+    "evidence": "JGMOD library public API, void play_mod(JGMOD *j, int loop) -- referenced at Engine/acsound.cpp:1103, \"play_mod(tune, repeat);\" inside MYMOD::play() (JGMOD_MOD_PLAYER branch). Confirmed via a distinctive literal error string, \"Can't play a JGMOD pointer with null value\", guarding a NULL check on its first argument -- exactly the kind of defensive check a public \"play this tune\" API would have. Called from PlayMusic (already matched) immediately after a successful load_mod (sub_477320, see its own entry) call, matching the source's load-then-play sequence exactly. Confirms dword_4EF028 (already-established GameState.music_repeat) as play_mod's second argument, matching source's 'play_mod(tune,repeat);' (acsound.cpp:1103) exactly -- the same global MYMIDI's own play_midi call uses in the identical role (see PlayMusic's own entry)."
   },
   {
     "kind": "manual",
@@ -5598,5 +5598,32 @@
     "source_line": null,
     "confidence": "high",
     "evidence": "Allegro library: void destroy_midi(MIDI *midi) (allegro/midi.h:119). Called from scr_StopMusic (already matched) as 'sub_44B130(dword_5231B4)' -- 1 arg (the bare MIDI* handle), immediately after stop_midi, immediately before 'dword_5231B4=0' -- matching 2011's MYMIDI::destroy() call order exactly ('stop_midi(); destroy_midi(tune); tune=NULL;', acsound.cpp:942-944), just operating on a bare global instead of an object field."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_4778B0",
+    "new_name": "is_mod_playing",
+    "source_file": "Engine/acsound.cpp",
+    "source_line": 1040,
+    "confidence": "high",
+    "evidence": "JGMOD library public API, int is_mod_playing(void) -- referenced at Engine/acsound.cpp:1040/1062/1068 (MYMOD::poll/seek/get_pos, all gating their real work on this check). No local JGMOD source tree exists in this repo to verify the exact name against (same caveat already recorded on load_mod/play_mod's own entries), so identified by call-shape/role alone: 0 arguments, boolean-style return (checked via 'test eax,eax'), called from TWO already-matched sites -- scr_StopMusic (gating whether to call stop_mod, see its own entry) and IsMusicPlaying (as one leg of its 'is ANY music format currently active' OR-chain, alongside the already-established MIDI check) -- both matching the exact role `is_mod_playing()` plays in source."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_477790",
+    "new_name": "stop_mod",
+    "source_file": "Engine/acsound.cpp",
+    "source_line": 1055,
+    "confidence": "high",
+    "evidence": "JGMOD library public API, void stop_mod(void) -- referenced at Engine/acsound.cpp:1055 inside MYMOD::destroy() ('stop_mod(); destroy_mod(tune); tune=NULL;'). Called from scr_StopMusic (already matched) with ZERO arguments, immediately after is_mod_playing() (sub_4778B0, see its own entry) returns true, and immediately before destroy_mod (sub_4779A0, see its own entry) -- matching source's exact call order and arg count."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_4779A0",
+    "new_name": "destroy_mod",
+    "source_file": "Engine/acsound.cpp",
+    "source_line": 1056,
+    "confidence": "high",
+    "evidence": "JGMOD library public API, void destroy_mod(JGMOD *j) -- referenced at Engine/acsound.cpp:1056 inside MYMOD::destroy(). Called from scr_StopMusic (already matched) as 'sub_4779A0(dword_5231B8)' -- 1 arg (the bare JGMOD* handle, see load_mod/play_mod's own entries), immediately after stop_mod, immediately before 'dword_5231B8=0' -- matching source's exact call order ('stop_mod(); destroy_mod(tune); tune=NULL;', acsound.cpp:1055-1057), just operating on a bare global instead of a MYMOD object's own tune field (this build has no MYMOD wrapper class at all -- see load_mod's own entry for the complete architectural writeup)."
   }
 ]

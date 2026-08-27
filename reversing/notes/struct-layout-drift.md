@@ -7298,3 +7298,40 @@ lengthInSeconds` (2011's own addition, used only by `get_length_ms()`)
 has no located counterpart in this build -- not exhaustively searched for
 absence this round, since no already-matched function was found calling
 anything resembling a "get music length" API here.
+
+## Immediate follow-up: `MYMOD` closes the same way
+
+`MYMIDI`'s clean resolution made its immediate JGMOD-based sibling,
+`MYMOD` (`Engine/acsound.cpp:1030-1110`, the `#ifdef JGMOD_MOD_PLAYER`
+branch -- matching this build's own confirmed module-music library, see
+`reversing/notes/third-party-library-identification.md`), an obvious
+next check, and it turned out already half-covered: `load_mod`/`play_mod`
+had been matched in an earlier Task #10 round, their evidence already
+noting (without saying so explicitly) that "the multi-extension-guessing
+loop lives in `PlayMusic` directly... rather than a level up" -- exactly
+the "no wrapper object" shape, just not yet framed that way or connected
+to the rest of the picture.
+
+Re-reading `PlayMusic`'s `.mod`/`.xm`/`.s3m` cascade (right after the
+already-documented MIDI attempt) and `scr_StopMusic`'s cleanup branch
+confirms it explicitly: `dword_5231B8` is the bare `JGMOD*` handle
+(2011's `MYMOD.tune`, unwrapped), checked/cleared by the SAME five-
+function pattern already established for MIDI's `dword_5231B4`.
+`scr_StopMusic`'s MOD-cleanup sequence -- "if (opts_mod_player!=0 &&
+is_mod_playing()) stop_mod(); if (dword_5231B8!=0)
+destroy_mod(dword_5231B8); dword_5231B8=0;" -- matches 2011's `MYMOD::
+destroy()` ("stop_mod(); destroy_mod(tune); tune=NULL;",
+`acsound.cpp:1055-1057`) exactly in role. Three new function matches
+fall out of it: `is_mod_playing` (confirmed via two independent call
+sites, `scr_StopMusic`'s gate and `IsMusicPlaying`'s own OR-chain),
+`stop_mod`, and `destroy_mod` -- all identified by call-shape/role alone
+since no JGMOD source tree exists in this repo to check names against,
+the same standard already applied to `load_mod`/`play_mod` themselves.
+
+Two SOUNDCLIP-family siblings down (`MYMIDI`, `MYMOD`), both confirmed
+absent as wrapper objects in one round each -- `MYOGG`/`MYSTATICOGG`
+(Ogg Vorbis support, `acsound.cpp:494-915`) are the two remaining
+untouched siblings, a natural next target: OGG is very plausibly an even
+later addition than MP3, consistent with this project's own earlier
+finding that speech loading here "tries MP3 then WAV... no OGG attempt
+exists between WAV and MP3."
