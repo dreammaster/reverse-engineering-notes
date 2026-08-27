@@ -4416,6 +4416,35 @@ struct RoomStruct {
 // established "no shared loading helper yet" pattern found repeatedly elsewhere. `sub_4083FC`'s
 // own match entry retracted the name and left it unnamed rather than force an ill-fitting one.
 
+// MYMIDI (2011's declared class, `Engine/acsound.cpp:916-1007`) -- FRESH SURVEY, picked as the
+// next target after the SOUNDCLIP/MYWAVE/MYMP3/MYSTATICMP3 family was completed, to check whether
+// this build's MIDI music support has an equivalent wrapper object. It does NOT: exactly the same
+// "no wrapper object, bare scalar globals instead" architecture already found for `AmbientSound`.
+// `PlayMusic` (already matched)'s own MIDI-format attempt calls Allegro's `load_midi`/`play_midi`
+// (see their own matches.json entries, both newly matched this round) DIRECTLY, gluing the result
+// into plain globals with no intervening `new`, vtable, or virtual dispatch of any kind:
+//   dword_5231B4 = the raw `MIDI*` handle itself -- matching 2011's `MYMIDI.tune` in ROLE, just
+//                  unwrapped. Checked for non-NULL as the "is a MIDI currently loaded/active" gate
+//                  by `scr_StopMusic`/`IsMusicPlaying`/`GetMIDIPosition`/`SeekMIDIPosition` (all
+//                  already matched, all newly given field evidence this round) -- five independent
+//                  confirmation sites for the same identification.
+//   dword_4BD8F8 = Allegro's own `volatile long midi_pos;` global (`allegro/midi.h:110`) -- read
+//                  directly by `GetMIDIPosition`/`IsMusicPlaying`, matching source's own use of the
+//                  same Allegro global inside `MYMIDI::get_pos()`/`poll()` in role.
+//   dword_5231BC = set to the music number on successful MIDI load, reset to 0 on the two non-MIDI
+//                  fallthrough paths in `PlayMusic` -- plausibly a "currently active MIDI music
+//                  number" tracker, but WRITE-ONLY everywhere else in the disassembly (zero read
+//                  sites found), so left as a documented hypothesis rather than a confirmed
+//                  identity.
+// Allegro's own `stop_midi()`/`destroy_midi()` (both newly matched this round, called from
+// `scr_StopMusic`) match 2011's `MYMIDI::destroy()` ("stop_midi(); destroy_midi(tune);
+// tune=NULL;", `acsound.cpp:942-944`) call order and role exactly, just operating on the bare
+// global instead of an object's own field. `MYMIDI.lengthInSeconds` (2011's own added field, used
+// only by `get_length_ms()`) has no counterpart found in this build -- consistent with the "no
+// object, no per-instance state beyond what a handful of globals already cover" picture, though
+// not itself independently searched for as an absence (this build may simply never call the
+// equivalent of `GetMusicLength`-style APIs, if any exist here at all -- not checked this round).
+
 // SOUNDCLIP and its derived classes (MYWAVE/MYMP3/MYSTATICMP3) -- FRESH SURVEY. 2011's real
 // `SOUNDCLIP` base class (`Common/acsound.h:22-99`) is a large, mature abstract base: 13 `int`
 // fields (done/priority/soundType/vol/volAsPercentage/originalVolAsPercentage/volModifier/

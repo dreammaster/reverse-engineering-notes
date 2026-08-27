@@ -235,7 +235,7 @@ rather than trusting these numbers as they age)
   944/776 before that addition) — this pool was "largely exhausted" for
   Engine/Common code specifically; a productive third-party-library round
   (Task #10, now paused — see below) pushed it further before wrapping up.
-- `reversing/analysis/matches.json` has 579 entries (function + struct-field
+- `reversing/analysis/matches.json` has 584 entries (function + struct-field
   matches combined)
 - 25 struct definitions built entirely from disassembly evidence (not
   borrowed from the 2011 source — see `reversing/notes/struct-layout-drift.md`):
@@ -1688,6 +1688,23 @@ rather than trusting these numbers as they age)
   `dword_52314C` is `curscript` (a global `ExecutingScript*`, set inside
   `prepare_text_script`), and the dereference itself gives
   `ExecutingScript.inst`@+0x00 a third independent confirmation route.
+- **Fresh survey, resolved in one round: `MYMIDI`** (2011's `SOUNDCLIP`-
+  derived MIDI wrapper, `Engine/acsound.cpp:916-1007`, the one sibling
+  in the `MYWAVE`/`MYMP3`/`MYSTATICMP3`/`MYMIDI` family the earlier
+  SOUNDCLIP round hadn't covered) — CONFIRMED ABSENT as a wrapper
+  object, matching `AmbientSound`'s own "bare globals instead" pattern.
+  `PlayMusic` (already matched, previously undocumented despite being
+  correctly named — a retroactive-documentation case) calls Allegro's
+  `load_midi`/`play_midi` directly, gluing results into three bare
+  globals: `dword_5231B4` (the raw `MIDI*` handle, checked non-NULL by
+  five already-matched functions as the "is MIDI active" gate),
+  `dword_4BD8F8` (Allegro's own `midi_pos`), and `dword_5231BC` (a
+  write-only "current MIDI music number?" hypothesis, not asserted).
+  Five new Allegro function matches (`load_midi`/`play_midi`/
+  `stop_midi`/`destroy_midi`, all via exact signature/call-shape checks
+  against `allegro/midi.h`), plus field evidence newly added to four
+  previously-bare-linker-matched functions (`scr_StopMusic`/
+  `IsMusicPlaying`/`GetMIDIPosition`/`SeekMIDIPosition`).
 
 ## Third-party library identification (Task #10)
 

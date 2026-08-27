@@ -1047,7 +1047,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD/ARCHITECTURE EVIDENCE (found this round, MYMIDI fresh-survey): the MIDI-cleanup branch -- 'if (dword_5231B4!=0) { set_volume(-1,0); stop_midi(); destroy_midi(dword_5231B4); dword_5231B4=0; }' -- matches 2011's MYMIDI::destroy() ('stop_midi(); destroy_midi(tune); tune=NULL;', acsound.cpp:940-945) exactly in call order and role, but operates directly on the bare global dword_5231B4 rather than a MYMIDI object's own tune field -- confirming this build has NO MYMIDI wrapper class at all (see PlayMusic's own entry for the complete architectural writeup). Also matches MYMIDI::set_volume's own 'set_volume(-1, newvol)' Allegro call (acsound.cpp:937) in shape (2 args, first literal -1 meaning \"all voices\")."
   },
   {
     "kind": "function",
@@ -1057,7 +1057,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (found this round, MYMIDI fresh-survey): the MIDI-active check, 'if (dword_5231B4!=0 && dword_4BD8F8>=0) return 1;', reconfirms dword_5231B4 (this build's bare MIDI* handle, see PlayMusic's own entry) and identifies dword_4BD8F8 as Allegro's own 'volatile long midi_pos;' global (allegro/midi.h:110, \"current position in the midi file, in beats\" -- negative when no MIDI is active), matching the exact same check GetMIDIPosition performs (see its own entry)."
   },
   {
     "kind": "function",
@@ -1097,7 +1097,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (found this round, MYMIDI fresh-survey): body is 'if (dword_5231B4!=0) midi_seek(position);' -- a simpler predecessor of source's MYMIDI::seek() wrapper ('midi_seek(pos);', acsound.cpp:948-950) gated the same way GetMIDIPosition/IsMusicPlaying are, reconfirming dword_5231B4's identity (this build's bare MIDI* handle) a third way. midi_seek itself was already linker-symbol matched to Allegro's own API."
   },
   {
     "kind": "function",
@@ -1107,7 +1107,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (found this round, MYMIDI fresh-survey): body is 'return (dword_5231B4!=0) ? dword_4BD8F8 : -1;' -- a genuinely SIMPLER predecessor of source's 'if (play.silent_midi) return midi_pos; if (current_music_type!=MUS_MIDI) return -1; if (play.fast_forward) return 99999; return midi_pos;' (AC.CPP:8927-8936), missing the silent_midi and fast_forward special cases entirely but matching the core \"is MIDI active\" gate and midi_pos return exactly. Confirms dword_5231B4 (this build's bare MIDI* handle -- see PlayMusic's own entry for the complete architectural writeup, this build has no MYMIDI wrapper class) and identifies dword_4BD8F8 as Allegro's own 'volatile long midi_pos;' global (allegro/midi.h:110)."
   },
   {
     "kind": "function",
@@ -5553,5 +5553,50 @@
     "source_line": null,
     "confidence": "high",
     "evidence": "wtextcolor(int) -- sets the current text-drawing color state, an Allegro/AGS low-level wrapper. Found while surveying GUIMain's remaining fields: GUILabel__Draw (already matched) does \"mov ecx,[var_E8]; mov edx,[ecx+0ECh]; push edx; call sub_401F62\" -- matching source's \"wtextcolor(textcol);\" (Engine/acgui.cpp:354) exactly, where [this+0xEC] is GUILabel.textcol, already independently confirmed via GUILabel__ReadFromFile's own default-value logic. 24 call sites total across the disassembly, consistent with a widely-used simple single-argument wrapper. Also called from _display_main (already matched) as \"wtextcolor(guis[ifnum].fgcol)\" -- see that function's own entry and GUIMain.fgcol's entry in apply_structs.py for the matching field-level confirmation this unlocked."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "PlayMusic",
+    "new_name": "PlayMusic",
+    "source_file": "Engine/AC.CPP",
+    "source_line": null,
+    "confidence": "high",
+    "evidence": "Retroactive struct-field documentation (PlayMusic itself was already named in the IDB via exact linker-symbol match, long before this entry existed -- no prior matches.json record of it at all). Fresh survey target: this build's MIDI-music handling, picked up while investigating whether a MYMIDI wrapper class (Engine/acsound.cpp:916, this build's other SOUNDCLIP-family siblings MYWAVE/MYMP3/MYSTATICMP3 already formalized) exists here too. It does NOT: PlayMusic's own MIDI-format attempt -- 'sprintf(Buffer,\"music%d.mid\",musicnum); dword_5231B4=sub_44AFC0(Buffer); if (dword_5231B4!=0) { dword_5231BC=musicnum; if (sub_44B580(dword_5231B4,dword_4EF028)) quit(\"!Couldn't play MIDI file\"); }' -- calls Allegro's load_midi/play_midi APIs (see sub_44AFC0/sub_44B580's own entries) DIRECTLY on bare globals, with no intervening object allocation, vtable, or virtual dispatch at all. This matches the SAME 'no wrapper object, just scalar globals' architecture already found for AmbientSound -- a genuine predecessor to 2011's polymorphic MYMIDI:public SOUNDCLIP design, not a corrupted or misread version of it. Identifies dword_5231B4 as this build's raw `MIDI*` handle (matching 2011's MYMIDI.tune in role, just unwrapped) and dword_4EF028 as the already-confirmed GameState.music_repeat, passed as play_midi's loop argument matching source's 'play_midi(tune,repeat)' (acsound.cpp:996) exactly. dword_5231BC is set to the music number on successful MIDI load and to 0 on the two non-MIDI fallthrough paths (opts_mod_player==0, or falling through to the \"music%d.mod\" attempt) -- plausibly a 'currently active MIDI music number' tracker, but it has ZERO other references anywhere in the disassembly (write-only), so its identity is recorded as a hypothesis, not asserted. See scr_StopMusic/IsMusicPlaying/GetMIDIPosition/SeekMIDIPosition's own entries for the matching cleanup/query-side confirmations, and struct-layout-drift.md for the complete writeup."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_44AFC0",
+    "new_name": "load_midi",
+    "source_file": "Engine/libsrc/allegro-4.2.2",
+    "source_line": null,
+    "confidence": "high",
+    "evidence": "Allegro library: MIDI *load_midi(const char *filename) (allegro/midi.h:118). Called from PlayMusic (already matched) as 'sub_44AFC0(Buffer)' with Buffer holding the sprintf'd \"music%d.mid\" filename, matching the exact 1-arg/pointer-return signature and this build's own MIDI-loading role exactly. Result stored into dword_5231B4 (this build's bare MIDI* handle -- see PlayMusic's own entry for the complete writeup)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_44B580",
+    "new_name": "play_midi",
+    "source_file": "Engine/libsrc/allegro-4.2.2",
+    "source_line": null,
+    "confidence": "high",
+    "evidence": "Allegro library: int play_midi(MIDI *midi, int loop) (allegro/midi.h:120). Called from PlayMusic (already matched) as 'sub_44B580(dword_5231B4, dword_4EF028)' -- 2 args (MIDI* handle, loop flag), checked for a NONZERO return before quitting with \"!Couldn't play MIDI file\", matching Allegro's own documented failure-return convention and 2011's 'if (::play_midi(tune,repeat)) { delete this; return 0; }' (acsound.cpp:996-999) exactly in both signature and error-handling shape."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_44C610",
+    "new_name": "stop_midi",
+    "source_file": "Engine/libsrc/allegro-4.2.2",
+    "source_line": null,
+    "confidence": "high",
+    "evidence": "Allegro library: void stop_midi(void) (allegro/midi.h:122). Called from scr_StopMusic (already matched) with ZERO arguments, immediately before destroy_midi (see sub_44B130's own entry) -- matching 2011's MYMIDI::destroy() 'stop_midi(); destroy_midi(tune); tune=NULL;' (acsound.cpp:942-944) call order and arg-count exactly."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_44B130",
+    "new_name": "destroy_midi",
+    "source_file": "Engine/libsrc/allegro-4.2.2",
+    "source_line": null,
+    "confidence": "high",
+    "evidence": "Allegro library: void destroy_midi(MIDI *midi) (allegro/midi.h:119). Called from scr_StopMusic (already matched) as 'sub_44B130(dword_5231B4)' -- 1 arg (the bare MIDI* handle), immediately after stop_midi, immediately before 'dword_5231B4=0' -- matching 2011's MYMIDI::destroy() call order exactly ('stop_midi(); destroy_midi(tune); tune=NULL;', acsound.cpp:942-944), just operating on a bare global instead of an object field."
   }
 ]

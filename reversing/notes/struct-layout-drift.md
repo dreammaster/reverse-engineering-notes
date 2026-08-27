@@ -7240,3 +7240,61 @@ and `ExecutingScript::init`'s own zeroing).
 previously-unnamed global this project hadn't had occasion to pin down
 before, closed in passing while sweeping for loose ends from recent
 matches rather than through a dedicated investigation of its own.
+
+## Fresh survey: `MYMIDI` -- confirmed absent, resolved in one round
+
+With `RoomStruct`/`GUIMain`/`GUIObject` all thoroughly exhausted, this
+round picked a genuinely fresh target: `MYMIDI` (`Engine/acsound.cpp:
+916-1007`), 2011's `SOUNDCLIP`-derived wrapper for MIDI music -- the one
+sibling in the `MYWAVE`/`MYMP3`/`MYSTATICMP3`/`MYMIDI` family this
+project's earlier SOUNDCLIP-family round hadn't touched.
+
+The question resolved fast, and in the same direction as `AmbientSound`:
+this build has NO `MYMIDI` wrapper object at all. `PlayMusic` (already
+matched, previously undocumented in `matches.json` despite being
+correctly named for a long time -- a "retroactive documentation" case
+like `main`/`SaveGameSlot`) tries a MIDI file with `sprintf(Buffer,
+"music%d.mid", musicnum)`, then calls Allegro's `load_midi`/`play_midi`
+DIRECTLY on the result, with no intervening `new`, vtable, or virtual
+dispatch of any kind -- gluing everything together via three bare
+globals instead of an object:
+
+- `dword_5231B4` -- the raw `MIDI*` handle itself, matching 2011's
+  `MYMIDI.tune` in ROLE, just unwrapped. This single global is checked
+  for non-NULL as the "is a MIDI currently active" gate by FIVE
+  independent, already-matched functions: `PlayMusic` (sets it),
+  `scr_StopMusic` (clears it, after calling `stop_midi()`/`destroy_midi()`
+  -- both newly matched this round, in exactly 2011's `MYMIDI::destroy()`
+  call order), `IsMusicPlaying`, `GetMIDIPosition`, and
+  `SeekMIDIPosition` (the latter three all previously bare
+  linker-symbol-matched entries with zero field evidence recorded, now
+  filled in).
+- `dword_4BD8F8` -- Allegro's own `volatile long midi_pos;` global
+  (`allegro/midi.h:110`), read directly by `GetMIDIPosition`/
+  `IsMusicPlaying` in place of 2011's `MYMIDI::get_pos()`/`poll()`
+  wrapper methods.
+- `dword_5231BC` -- set to the music number on successful MIDI load,
+  reset to 0 on `PlayMusic`'s two non-MIDI fallthrough paths. Plausibly a
+  "currently active MIDI music number" tracker, but WRITE-ONLY
+  everywhere else in the disassembly (zero read sites found anywhere) --
+  left as a documented hypothesis, not asserted as a confirmed identity,
+  consistent with this project's discipline about not forcing a name
+  onto evidence that doesn't fully support it.
+
+`GetMIDIPosition`'s own body is a clean example of the "simpler
+predecessor" pattern seen throughout this project: `if (dword_5231B4!=0)
+return dword_4BD8F8; else return -1;` versus source's four-branch version
+(`play.silent_midi`, `current_music_type!=MUS_MIDI`, `play.fast_forward`,
+`AC.CPP:8927-8936`) -- the core "is MIDI active, return its position"
+logic survives, the later special-case branches don't exist yet.
+
+Five new Allegro function matches this round (`load_midi`, `play_midi`,
+`stop_midi`, `destroy_midi`, all confirmed via exact signature/call-shape
+matches against `allegro/midi.h`) plus field evidence added to four
+already-matched-but-undocumented functions (`scr_StopMusic`,
+`IsMusicPlaying`, `GetMIDIPosition`, `SeekMIDIPosition`) and a full
+retroactive documentation entry for `PlayMusic` itself. `MYMIDI.
+lengthInSeconds` (2011's own addition, used only by `get_length_ms()`)
+has no located counterpart in this build -- not exhaustively searched for
+absence this round, since no already-matched function was found calling
+anything resembling a "get music length" API here.
