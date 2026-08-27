@@ -235,7 +235,7 @@ rather than trusting these numbers as they age)
   944/776 before that addition) — this pool was "largely exhausted" for
   Engine/Common code specifically; a productive third-party-library round
   (Task #10, now paused — see below) pushed it further before wrapping up.
-- `reversing/analysis/matches.json` has 587 entries (function + struct-field
+- `reversing/analysis/matches.json` has 588 entries (function + struct-field
   matches combined)
 - 25 struct definitions built entirely from disassembly evidence (not
   borrowed from the 2011 source — see `reversing/notes/struct-layout-drift.md`):
@@ -1731,6 +1731,17 @@ rather than trusting these numbers as they age)
   project's much earlier finding that speech loading tries MP3 then WAV
   with no OGG attempt in between. All four `SOUNDCLIP`-family siblings
   surveyed this session are now accounted for.
+- **`InventoryItemInfo.name[25]` closes via `GetInvName`.** A sweep for
+  other structs' `_unconfirmed`/positional-only fields with an
+  obvious-but-untraced reader turned up `name[25]` — its own comment
+  already named `GetInvName` as the likely candidate, just never
+  followed up. `GetInvName` (already correctly named, but only a bare
+  mechanical linker match with zero field evidence) reads `invinfo[].name`
+  starting at the array's own base address and passes it straight to
+  `GetTranslation`, matching 2011's implementation almost verbatim —
+  confirming `name[25]`@+0x00 directly and cross-confirming the array's
+  base address a third independent way against `pic`@+0x1C. Only
+  `cursorPic`@+0x20 remains open in this struct now.
 
 ## Third-party library identification (Task #10)
 

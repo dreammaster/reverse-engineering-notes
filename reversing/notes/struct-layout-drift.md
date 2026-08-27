@@ -7365,3 +7365,36 @@ together via bare globals instead of polymorphic objects), `MYOGG`/
 `MYSTATICOGG` confirmed absent as a feature entirely. A clean, complete
 close to the `SOUNDCLIP` hierarchy this project opened several rounds
 ago with `SOUNDCLIP`/`MYWAVE`/`MYMP3`/`MYSTATICMP3`.
+
+## `InventoryItemInfo.name[25]` closes via `GetInvName`
+
+With the SOUNDCLIP family wrapped up, this round swept other structs'
+remaining `_unconfirmed`/positional-only fields for anything with an
+obvious, not-yet-traced reader -- `InventoryItemInfo.name[25]` fit that
+description exactly: its own struct comment already named the likely
+candidate, "presumably read/written by GetInvName/SetInvItemName-
+equivalent functions not yet traced," but nobody had gone and traced it.
+
+`GetInvName` turned out to already be correctly named in the IDB (a
+bare linker-symbol match, `kind: "function"`, with zero field evidence
+recorded) -- reading its body settles the question immediately: after
+the usual bounds check, it does `imul eax,44h; add eax,offset
+byte_51B854; push eax; call GetTranslation; ...;
+strcpy(Destination,result);` -- indexing into `invinfo[]` with this
+struct's own already-confirmed `0x44`(68)-byte stride and reading
+starting at the array's BASE address (`byte_51B854`, i.e. element-
+relative offset 0), then handing the result straight to `GetTranslation`.
+This matches 2011's own `GetInvName`
+(`strcpy(usebuf,get_translation(game.invinfo[indx].name));`) almost
+certainly verbatim, and confirms `name[25]`@`+0x00` directly -- upgrading
+it from an unconfirmed positional pad to a real, behaviorally-confirmed
+field.
+
+A useful bonus: this also cross-confirms `byte_51B854` as `invinfo[]`'s
+own base address a THIRD independent way (previously anchored via
+`pic`@`+0x1C`'s own confirmed address, `dword_51B870`) -- `byte_51B854 +
+0x1C` lands EXACTLY on `dword_51B870` with zero slack, the two facts
+mutually reinforcing each other. `InventoryItemInfo.cursorPic`@`+0x20`
+remains the one still-open field in this struct (no access site found
+yet that reads a value distinct from `pic` for cursor-picture purposes)
+-- everything else is now confirmed.

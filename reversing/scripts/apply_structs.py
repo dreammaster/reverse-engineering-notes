@@ -1360,11 +1360,23 @@ struct InventoryItemInfo {
   // size (Common/acroom.h:2624-2629: name[25]+pad[3]+pic(4)+cursorPic(4)+hotx(4)+hoty(4)+
   // reserved[5](20)+flags(1)+pad[3] = 68) exactly -- a RARE case of genuinely ZERO drift in
   // every independently-confirmed field's offset, matching MouseCursor's own "best fit" case.
-  char _unconfirmed1[0x1C];       // +0x00..0x1C (28 bytes), matches 2011's `char name[25]` plus
-                            // 3 bytes of compiler alignment padding by POSITION only -- no
-                            // access-site evidence found this round (the item's display name is
-                            // presumably read/written by GetInvName/SetInvItemName-equivalent
-                            // functions not yet traced).
+  char name[25];                  // +0x00, high confidence (UPGRADED from an unconfirmed pad,
+                            // found in a later round): `GetInvName` (already matched,
+                            // script-exported, previously only mechanically linker-matched with no
+                            // field evidence recorded) does "imul eax,44h /*this struct's own
+                            // confirmed stride*/; add eax,offset byte_51B854; push eax; call
+                            // GetTranslation; ...; strcpy(Destination,result);" -- reading
+                            // `invinfo[index].name` starting at THIS struct's own base address
+                            // (`byte_51B854`, offset 0 within the element) and passing it straight
+                            // to `GetTranslation`, matching 2011's `GetInvName`
+                            // ("strcpy(usebuf,get_translation(game.invinfo[indx].name));") almost
+                            // certainly verbatim. Cross-confirms `byte_51B854` as `invinfo[]`'s own
+                            // base address a further way: `byte_51B854+0x1C` lands EXACTLY on the
+                            // already-confirmed `pic`@+0x1C's own address (`dword_51B870`), zero
+                            // slack.
+  char _pad_align1[3];            // +0x19..0x1C, compiler alignment padding (not a real field) --
+                            // boxed in with zero slack between `name`'s own confirmed 25-byte
+                            // extent and `pic`'s own confirmed start.
   int pic;                        // +0x1C, high confidence: `dword_51B870`. Confirmed THREE
                             // independent ways: (1) `SetInvItemPic` (already matched,
                             // script-exported) writes its `piccy` parameter directly here,

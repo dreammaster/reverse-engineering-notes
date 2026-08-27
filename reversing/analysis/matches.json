@@ -5625,5 +5625,14 @@
     "source_line": 1056,
     "confidence": "high",
     "evidence": "JGMOD library public API, void destroy_mod(JGMOD *j) -- referenced at Engine/acsound.cpp:1056 inside MYMOD::destroy(). Called from scr_StopMusic (already matched) as 'sub_4779A0(dword_5231B8)' -- 1 arg (the bare JGMOD* handle, see load_mod/play_mod's own entries), immediately after stop_mod, immediately before 'dword_5231B8=0' -- matching source's exact call order ('stop_mod(); destroy_mod(tune); tune=NULL;', acsound.cpp:1055-1057), just operating on a bare global instead of a MYMOD object's own tune field (this build has no MYMOD wrapper class at all -- see load_mod's own entry for the complete architectural writeup)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "GetInvName",
+    "new_name": "GetInvName",
+    "source_file": "Engine/AC.CPP",
+    "source_line": null,
+    "confidence": "high",
+    "evidence": "Retroactive struct-field documentation (GetInvName itself was already correctly named in the IDB via exact linker-symbol match, long before this entry existed -- only a bare mechanical 'kind: function' record with no field evidence). Body: bounds-checks indx against game_numinvitems with the exact same error string family as source, then 'imul eax,44h; add eax,offset byte_51B854; push eax; call GetTranslation; ...; strcpy(Destination,result);' -- reading InventoryItemInfo.name (this struct's own already-confirmed 0x44/68-byte stride) starting at the array's base address itself (byte_51B854, i.e. offset 0 within the element) and passing it straight to GetTranslation, matching 2011's GetInvName ('strcpy(usebuf,get_translation(game.invinfo[indx].name));') almost certainly verbatim. This both confirms InventoryItemInfo.name[25]@+0x00 (previously an unconfirmed positional pad) AND cross-confirms byte_51B854 as invinfo[]'s own base address a further way: byte_51B854+0x1C lands EXACTLY on the already-confirmed pic@+0x1C field's own address (dword_51B870), zero slack. See InventoryItemInfo's own entry in apply_structs.py for the complete writeup."
   }
 ]
