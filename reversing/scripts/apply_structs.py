@@ -2184,17 +2184,23 @@ struct MoveList {
                             // before the `memcpy` into `pos[]` above, matching 2011's `int
                             // numstage` (`acroom.h:3084`) in both position and semantic role
                             // exactly.
-  int xpermove[40];                 // +0x0A4..0x144 (160 bytes), MEDIUM confidence: NOT
-                            // independently confirmed via its own access site this round --
-                            // included because it's boxed in with zero slack between the
-                            // confirmed `numstage` and `ypermove` fields, matching 2011's
-                            // declared `fixed xpermove[MAXNEEDSTAGES]` (`fixed` is a 4-byte
-                            // fixed-point int typedef, `acroom.h:3085`) in position and size.
-  int ypermove[40];                 // +0x144..0x1E4 (160 bytes), MEDIUM confidence: same
-                            // evidence status as `xpermove` immediately above -- boxed in with
-                            // zero slack between it and the independently-confirmed `fromx`
-                            // below. Matches 2011's declared `fixed ypermove[MAXNEEDSTAGES]`
-                            // (`acroom.h:3085`) in position and size.
+  int xpermove[40];                 // +0x0A4..0x144 (160 bytes), high confidence (UPGRADED from
+                            // MEDIUM, found in a later round): `do_movelist_move` (already
+                            // matched, `Engine/AC.CPP:17327`, this build's per-frame move-list
+                            // consumer): "edx=cmls[+0x1EC] /*onstage*/; ecx=cmls[edx*4+0xA4]" --
+                            // an `onstage`-indexed read, matching source's "fixed
+                            // xpermove=cmls->xpermove[cmls->onstage];" (`AC.CPP:17331`) exactly.
+                            // Matches 2011's declared `fixed xpermove[MAXNEEDSTAGES]` (`fixed` is
+                            // a 4-byte fixed-point int typedef, `acroom.h:3085`) in position, size,
+                            // AND now behavior.
+  int ypermove[40];                 // +0x144..0x1E4 (160 bytes), high confidence (UPGRADED from
+                            // MEDIUM, same round/function as `xpermove` above): the immediately
+                            // following instructions repeat the identical `onstage`-indexed
+                            // pattern at `+0x144`, matching source's "ypermove=cmls->
+                            // ypermove[cmls->onstage];" (`AC.CPP:17331`) exactly -- the same
+                            // single source line confirms both fields at once. Matches 2011's
+                            // declared `fixed ypermove[MAXNEEDSTAGES]` (`acroom.h:3085`) in
+                            // position, size, and now behavior.
   int fromx;                       // +0x1E4, high confidence: confirmed via `find_route`
                             // (already matched): "mov dword ptr (mls+1E4h)[eax],ecx" sets it
                             // from a computed X coordinate as part of a "start of move" reset,

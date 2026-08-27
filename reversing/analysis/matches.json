@@ -3826,7 +3826,7 @@
     "source_file": "Engine/AC.CPP",
     "source_line": 17327,
     "confidence": "high",
-    "evidence": "int do_movelist_move(short*,int*,int*) at AC.CPP:17327. String match: \"movelist_move: attempted to move on a non-exist movelist\" (17329). Caller matches exactly: update_stuff (already matched), per-frame processing of active move-lists."
+    "evidence": "int do_movelist_move(short*,int*,int*) at AC.CPP:17327. String match: \"movelist_move: attempted to move on a non-exist movelist\" (17329). Caller matches exactly: update_stuff (already matched), per-frame processing of active move-lists. MOVELIST FIELD EVIDENCE (found in a later round, sweeping other structs' remaining MEDIUM-confidence fields for an obvious untraced reader): this function's opening block is a decisive, textbook confirmation of MoveList's last two unconfirmed fields -- 'edx=cmls[+0x1EC] /*onstage*/; ecx=cmls[edx*4+0xA4]' then, immediately after, the identical pattern at '+0x144' -- matching source's 'fixed xpermove=cmls->xpermove[cmls->onstage], ypermove=cmls->ypermove[cmls->onstage];' (AC.CPP:17331) exactly, confirming MoveList.xpermove[40]@+0xA4 and ypermove[40]@+0x144 (both upgraded from MEDIUM/positional-fit-only to HIGH confidence) in one source line. The same block also re-derives 'cmls[+onstage*4+4]' (pos[onstage+1]) and unpacks it into two 16-bit halves via shr/and, matching source's 'short targetx=short((cmls->pos[cmls->onstage+1]>>16)&0xffff); short targety=short(cmls->pos[cmls->onstage+1]&0xffff);' exactly -- a further independent reconfirmation of pos[]/onstage. See MoveList's own entry in apply_structs.py for the complete writeup."
   },
   {
     "kind": "manual",

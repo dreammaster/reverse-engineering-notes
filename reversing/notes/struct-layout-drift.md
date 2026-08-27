@@ -7398,3 +7398,31 @@ mutually reinforcing each other. `InventoryItemInfo.cursorPic`@`+0x20`
 remains the one still-open field in this struct (no access site found
 yet that reads a value distinct from `pic` for cursor-picture purposes)
 -- everything else is now confirmed.
+
+## `MoveList.xpermove`/`ypermove` close via `do_movelist_move`
+
+Same sweep, same technique, immediate next hit: `MoveList.xpermove[40]`/
+`ypermove[40]` had been sitting at MEDIUM confidence (boxed in with zero
+slack between `numstage` and `fromx`, but no access site of their own)
+since the round that closed out the rest of `MoveList` via `find_route`.
+`find_route` computes the ROUTE once; the per-frame CONSUMER of these
+two fixed-point fields is a different, already-matched function,
+`do_movelist_move` (`Engine/AC.CPP:17327`) -- called every frame by
+`update_stuff` for each active move-list.
+
+Its opening block is about as clean a confirmation as this project gets:
+"`edx=cmls[+0x1EC]` (`onstage`); `ecx=cmls[edx*4+0xA4]`" immediately
+followed by the identical pattern at `+0x144` -- matching source's
+single line, "`fixed xpermove=cmls->xpermove[cmls->onstage],
+ypermove=cmls->ypermove[cmls->onstage];`" (`AC.CPP:17331`), EXACTLY,
+confirming both fields from one source statement. The same block goes on
+to re-derive `pos[onstage+1]` (`cmls[onstage*4+4]`) and unpack it into
+two 16-bit halves via `shr`/`and`, matching source's `short
+targetx=short((cmls->pos[cmls->onstage+1]>>16)&0xffff); short
+targety=...&0xffff);` just as exactly -- a bonus reconfirmation of
+`pos[]`/`onstage` from a completely different function than the one that
+originally confirmed them.
+
+`MoveList` -- already one of this project's cleanest zero-drift matches
+-- is now fully behaviorally confirmed field by field, with no remaining
+positional-only fields at all.

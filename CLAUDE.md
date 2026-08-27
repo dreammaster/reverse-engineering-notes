@@ -1742,6 +1742,18 @@ rather than trusting these numbers as they age)
   confirming `name[25]`@+0x00 directly and cross-confirming the array's
   base address a third independent way against `pic`@+0x1C. Only
   `cursorPic`@+0x20 remains open in this struct now.
+- **`MoveList.xpermove`/`ypermove` close via `do_movelist_move`.** Same
+  sweep, immediate next hit: these two fixed-point fields sat at MEDIUM
+  confidence (boxed in with zero slack, no access site of their own)
+  since `find_route`'s own round — `find_route` computes the route once,
+  but the per-frame consumer is `do_movelist_move` (already matched),
+  called every frame by `update_stuff`. Its opening block reads both
+  fields via an identical `onstage`-indexed pattern at +0xA4/+0x144,
+  matching source's single line `xpermove=cmls->xpermove[cmls->onstage],
+  ypermove=cmls->ypermove[cmls->onstage];` exactly — and goes on to
+  re-derive `pos[onstage+1]` the same way, a bonus reconfirmation from a
+  different function than the one that first confirmed it. `MoveList` is
+  now fully behaviorally confirmed field by field.
 
 ## Third-party library identification (Task #10)
 
