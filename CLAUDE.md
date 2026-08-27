@@ -1812,6 +1812,22 @@ rather than trusting these numbers as they age)
   Renamed with the old name kept visible per the usual retraction
   convention; the interpreter's full opcode set is only partially traced
   (0/6/7 so far), left open for a future round.
+- **The full `DCMD_*` opcode table, plus a bonus `CharacterInfo.talkview`
+  confirmation.** An immediate follow-up read `run_dialog_script` to
+  completion: its opcode byte is 2011's own `DCMD_*` dialog-script
+  byte-code set (`Common/acroom.h:2653-2669`) — still declared in the
+  reference source even though 2011's engine no longer uses the format
+  at all (it now compiles dialog topics into real script bytecode
+  instead). 13 of 16 declared opcodes are confirmed handled here exactly
+  matching their `DCMD_` role (`SAY`/`OPTOFF`/`OPTON`/`RETURN`/
+  `STOPDIALOG`/`OPTOFFFOREVER`/`RUNTEXTSCRIPT`/`GOTODIALOG`/`PLAYSOUND`/
+  `ADDINV`/`SETSPCHVIEW`/`NEWROOM`/`ENDSCRIPT`); any other opcode byte
+  hits an explicit `quit()`, proving the switch exhaustive and
+  confirming the 4 unhandled `DCMD_*` constants (`SETGLOBALINT`/
+  `GIVESCORE`/`GOTOPREVIOUS`/`LOSEINV`) absent by direct positive
+  evidence. Bonus: the `SETSPCHVIEW` handler decisively confirms
+  `CharacterInfo.talkview`@+0x04, a TENTATIVE positional-only guess
+  since a much earlier round — it was right all along.
 
 ## Third-party library identification (Task #10)
 

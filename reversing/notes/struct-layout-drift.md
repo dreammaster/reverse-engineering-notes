@@ -7483,3 +7483,56 @@ the entry per this project's "visible retraction" convention. The
 interpreter's full opcode set is only partially traced (0/6/7
 characterized so far) -- left as an open thread for a future round
 rather than force complete coverage in one pass.
+
+## The full `DCMD_*` opcode table -- and a bonus `CharacterInfo.talkview` confirmation
+
+An immediate follow-up read `run_dialog_script`'s remaining ~150 lines
+to completion, and it turned into one of this project's cleanest
+"declared-but-dead-by-2011" finds. The interpreter's opcode byte is not
+an invented enum -- it is 2011's own `DCMD_*` dialog-script byte-code
+opcode set, `Common/acroom.h:2653-2669`, STILL DECLARED in the reference
+source even though 2011's engine no longer uses them at all (its own
+`run_dialog_script` now just compiles each topic into real script
+bytecode and calls it via `run_text_script_iparam(dialogScriptsInst,
+"_run_dialogN",...)` -- the dedicated mini-VM is entirely gone from the
+live 2011 engine, only the enum survives as an artifact). The exact same
+"declared but dead by 2011, still fully live here" pattern already found
+with `EventBlock`/`AnimationStruct`.
+
+Every opcode this build's interpreter handles matches its `DCMD_` name
+and role exactly:
+
+| opcode | `DCMD_*` name | this build's behavior |
+|---|---|---|
+| 1 | `SAY` | reads charID+msgID (2 bytes each); charID==999 -> `Display()` (narrator); else `GetTranslation`+`_displayspeech` (character says) |
+| 2 | `OPTOFF` | `optionflags[idx] &= ~1` (clear `DFLG_ON`) |
+| 3 | `OPTON` | `optionflags[idx] |= 1`, UNLESS `DFLG_OFFPERM`(2) is already set |
+| 4 | `RETURN` | returns -1 |
+| 5 | `STOPDIALOG` | returns -2 (`RUN_DIALOG_STOP_DIALOG`) |
+| 6 | `OPTOFFFOREVER` | `optionflags[idx] = (optionflags[idx]&~1)|2` (clear ON, set OFFPERM) |
+| 7 | `RUNTEXTSCRIPT` | the `run_dialog_request`-fused branch (see above) |
+| 8 | `GOTODIALOG` | reads a 2-byte dialog number, returns it directly |
+| 9 | `PLAYSOUND` | reads a 2-byte sound number, calls `PlaySound()` |
+| 10 | `ADDINV` | reads a 2-byte item number, calls `add_inventory()` |
+| 11 | `SETSPCHVIEW` | reads a 2-byte view number, decrements by 1, writes `game_chars[charID*0x140+4]` |
+| 12 | `NEWROOM` | reads a 2-byte room number, calls `NewRoom()`, returns -2 |
+| 0xFF | `ENDSCRIPT` | returns -1 |
+
+Any opcode byte outside this set hits an explicit `"unknown dialog
+command"` `quit()` -- proving the switch is EXHAUSTIVE, not just
+unobserved-past-this-point. This is direct positive evidence (this
+build would crash on encountering them) that the four `DCMD_*` constants
+NOT handled -- `SETGLOBALINT`(13), `GIVESCORE`(14), `GOTOPREVIOUS`(15),
+`LOSEINV`(16) -- are later additions to the dialog-script command set
+that this build's compiled dialog scripts never emit and its
+interpreter has no code path for at all.
+
+The `SETSPCHVIEW`(11) handler is a genuine bonus: it decisively confirms
+`CharacterInfo.talkview`@`+0x04`, previously sitting as a TENTATIVE,
+purely positional guess since a much earlier round ("`defview`/`view`/
+`room` landed at `+0x00`/`+0x08`/`+0x0C`, matching 2011's declared
+adjacency -- `talkview` is the field that WOULD fall at `+0x04` if that
+holds"). The guess turns out to have been correct all along, now with
+real behavioral evidence: `game_chars[charID*0x140+4]` is exactly
+`CharacterInfo.talkview`, written directly by the "change this
+character's talking-head view" dialog command.

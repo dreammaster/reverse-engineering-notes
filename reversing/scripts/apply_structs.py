@@ -604,11 +604,17 @@ struct CharacterInfo {
                            // delegates to) does "chaa->view = chaa->defview;" -- disasm matches exactly,
                            // [+0x08](view) = [+0x00], and it's read as a full 32-bit int, not a word,
                            // contradicting the old pre-existing "word" annotation which is now discarded.
-  int talkview;              // +0x04, TENTATIVE, positional inference only (not independently verified):
-                           // defview/view/room landed at +0x00/+0x08/+0x0C, exactly matching the 2011
-                           // source's field order/spacing (defview,talkview,view,room,prevroom all
-                           // 4-byte ints in that order) -- talkview is the 2011 field that would fall
-                           // at +0x04 if that adjacency holds. Treat as a lead, not a confirmed fact.
+  int talkview;              // +0x04, high confidence (UPGRADED from TENTATIVE, found in a later
+                           // round): `run_dialog_script` (this build's dialog-script byte-code
+                           // interpreter, corrected from an earlier `run_dialog_request`
+                           // misidentification -- see its own matches.json entry)'s `DCMD_
+                           // SETSPCHVIEW`(11) opcode handler does "eax=viewnum-1;
+                           // game_chars[charID*0x140+4]=eax" -- writing a (1-based-to-0-based
+                           // converted) view number directly into this exact offset, matching
+                           // 2011's still-declared `DCMD_SETSPCHVIEW` role ("SetCharacterSpeechView"
+                           // -- change talkview) and confirming the original positional-adjacency
+                           // guess (`defview`@+0x00, `view`@+0x08, `room`@+0x0C) was correct all
+                           // along.
   int view;                // +0x08, high confidence, SUPERSEDES an earlier "wait" guess (see
                            // reversing/notes/struct-layout-drift.md for the retraction and why).
                            // update_stuff uses this as `imul ecx, 8D4h` array index into a per-view
