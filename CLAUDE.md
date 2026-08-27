@@ -5,6 +5,11 @@
 Reconstruct usable C source for **Rob Blanc 1**, an early-2000s commercial
 Adventure Game Studio (AGS) title, starting from an IDA Pro disassembly and
 using the earliest *publicly available* AGS engine source as a reference.
+The ultimate target is a **ScummVM engine reimplementation** — this shapes
+scope: game-specific/AGS-engine logic (opcodes, structs, script VM, room/
+GUI/character behavior) is the real prize, since ScummVM needs an accurate
+reimplementation of *that*. Third-party library code (Allegro, JGMOD,
+ALMP3, etc.) is a different matter — see "Third-party library scope" below.
 
 Two things live side by side in this repo and must not be confused:
 
@@ -65,7 +70,44 @@ target of the identification work.
    comments citing exact `source_file`/evidence) should make the eventual
    Hex-Rays/manual decompilation pass read as close to the original C as
    possible. When adding matches, prefer also recording the reference
-   function's signature/struct layout, not just its name.
+   function's signature/struct layout, not just its name. The eventual
+   consumer of this reconstruction is a **ScummVM engine reimplementation**
+   — see "Third-party library scope" immediately below for how that
+   narrows aim #1's effort allocation.
+
+## Third-party library scope (read before investigating any library function)
+
+Once a function (or global) is confirmed to belong to a statically-linked
+third-party library (Allegro, JGMOD, ALMP3, libcda, etc. — see
+`reversing/notes/third-party-library-identification.md`), **do not chase
+that library's own internal helper functions** — the ones called only by
+other functions *within the same library*, never directly by AGS/game
+code. Reason: a ScummVM reimplementation replaces the ENTIRE library with
+ScummVM's own equivalent (or a modern port), wholesale — the original
+library's internal implementation details (how `load_mod` parses JGMOD's
+on-disk format internally, how `almp3`'s decoder buffers frames, Allegro's
+own internal blitting helpers, etc.) are simply discarded, not ported.
+They cost real investigation effort (large, string-poor, no local source
+to check names against) for zero eventual payoff.
+
+What's still worth identifying, once a call site is confirmed to be a
+third-party API:
+- The **public API surface** actually called FROM AGS/game code (e.g.
+  `load_mod`, `play_mod`, `stop_midi`) — this tells us what the
+  ScummVM-side replacement needs to provide/emulate, and confirms which
+  library is linked at all (useful for Task #10's own inventory).
+- **Struct fields on the CALLING side** (AGS's own globals/structs that
+  hold the library's return values, handles, or parameters) — e.g.
+  `GameState.music_repeat`, `RoomStruct.ebscene[]` — these are AGS's own
+  data, not the library's, and matter for the reconstruction regardless.
+
+What to stop doing the moment a function is confirmed library-internal:
+walking further into its own callees, decoding its internal control flow,
+or trying to name it against upstream source purely for IDB completeness.
+Leave it unnamed (or leave IDA's own FLIRT-assigned name alone) and move
+on — record in `matches.json`/notes only the boundary fact ("this and
+everything it calls is `library X`'s own internals, not chased further"),
+not a blow-by-blow account of what's inside.
 
 ## Repo layout for this project
 
@@ -1760,8 +1802,18 @@ rather than trusting these numbers as they age)
 Statically-linked third-party libraries (`Engine/libsrc/libcda-0.4`,
 `Engine/libsrc/allegro-4.2.2-agspatch`, `Engine/libsrc/dumb-0.9.2`,
 `aastr-0.1.1`, `almp3-2.0.5`, `hq2x`) don't move the "reconstruct Rob
-Blanc 1" goal forward the way Engine/Common matches do, but are worth
-doing for IDB completeness. A productive session got ~40 new matches
+Blanc 1" goal forward the way Engine/Common matches do. **Per the
+"Third-party library scope" rule above, this task is now narrower than
+its original "IDB completeness" framing**: identify a library's PUBLIC
+API surface (what AGS/game code actually calls) and the AGS-side struct
+fields/globals that hold its results, but do NOT chase a library's own
+internal helper functions once the library itself is confirmed — a
+ScummVM reimplementation replaces those wholesale, so investigating them
+further has no payoff. Historical work done before this rule was
+introduced (below) sometimes went deeper than this into library
+internals (e.g. some JGMOD/ALMP3 internal helpers got individually
+characterized) — that work isn't wrong, just no longer the model to
+follow going forward. A productive session got ~40 new matches
 (all of `libcda-0.4` bar one function, a good chunk of Allegro's
 Windows driver/config code, `apeg` conclusively ruled out) — see
 `reversing/notes/third-party-library-identification.md` for full
