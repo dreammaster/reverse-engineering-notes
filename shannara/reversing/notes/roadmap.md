@@ -78,17 +78,22 @@ runtime behavior in this binary."
 
 ## Prioritized next steps
 
-1. **`CXBUF2BUFEXPAND` deep dive** (flagged in `compression_lzhuf.md`):
-   trace `decode_`/`decode_c`/`decode_p`/`read_c_len`/`read_pt_len` fully
-   and confirm the exact LZHUF parameters against a reference `lzhuf.c`.
-   Self-contained, high payoff (unlocks picture decoding), doesn't require
-   understanding more game logic first.
+1. ~~**`CXBUF2BUFEXPAND` deep dive**~~ — **DONE** (2026-08-28), see
+   [`analysis/lzh_decode_spec.md`](../analysis/lzh_decode_spec.md). It's LHA
+   `-lh4-` (static per-block canonical Huffman, `DICBIT=12`); full decode
+   spec written out as C, every parameter verified. `sub_17DCC0` resolved as
+   `make_table`. Renames staged in `scripts/apply_lzh_findings.py` (needs an
+   IDA session — was open during this pass). Picture decoding is now fully
+   unblocked for reimplementation. Encoder side (`CXBUF2BUFCOMPRESS` etc.)
+   left untraced — only matters if the port ever needs to *write* the format.
 2. **Check `..\Shannara.idb` vs. the demo IDB** — establish whether it's the
    full game and whether structures/names from this demo pass transfer
    directly. This likely reframes how much more demo-specific work is worth
    doing vs. pivoting straight to the full game IDB.
 3. **Cross-reference the Xanth BinDiff** to validate the engine/game-specific
-   split already inferred from name prefixes alone.
+   split already inferred from name prefixes alone. (`..\xanth\` is present
+   again as of 2026-08-28: `Xanth.idb`, `Xanth.BinExport`,
+   `Shannara Demo.BinExport`, `xanth_vs_Shannara Demo.BinDiff`.)
 4. **`sub_167334`'s diagonal-line branch** (past the axis-aligned special
    case) — only partially traced; matters if pixel-exact rendering parity is
    a goal.

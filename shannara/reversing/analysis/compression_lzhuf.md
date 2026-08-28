@@ -1,5 +1,17 @@
 # Resource compression is LZHUF (LZSS + adaptive Huffman), not RLE
 
+> **Superseded (deep-dive complete):** see
+> [`lzh_decode_spec.md`](lzh_decode_spec.md) for the full line-by-line decode
+> spec (exact parameters, every routine as C). Two things this page got
+> slightly wrong, corrected there:
+> 1. It's **LHA `-lh4-`** (per-block *static* canonical Huffman, `DICBIT=12`),
+>    not Okumura's 1988 *adaptive* `lzhuf.c`. The routine names
+>    (`decode_c`/`decode_p`/`read_c_len`/`read_pt_len`/`make_table`) are LHA
+>    `huf.c`, not `lzhuf.c`.
+> 2. `CXBUF2BUFEXPAND`'s real arg order is `(srcLen, dstLen, dst, src)`, not
+>    `(dstSize, srcSize, srcPtr, dstPtr)`.
+> The call-graph / "this IS lzh" identification below still stands.
+
 **Correction to `engine_overview.md`**, which describes `Pic.isCompressed`
 as gating "RLE decompression" via `gxVirtualDecompress`. That's wrong (or at
 least incomplete) — the actual decompressor statically linked into the
