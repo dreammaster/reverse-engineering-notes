@@ -1,0 +1,9322 @@
+[
+ {
+  "name": "flix_play",
+  "start_line": 341,
+  "end_line": 802,
+  "xref_lines": 13,
+  "size_lines": 461,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "sub_1574EC",
+  "start_line": 822,
+  "end_line": 845,
+  "xref_lines": 3,
+  "size_lines": 23,
+  "bucket": "unnamed"
+ },
+ {
+  "name": "select_option",
+  "start_line": 856,
+  "end_line": 959,
+  "xref_lines": 2,
+  "size_lines": 103,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "setup_demo",
+  "start_line": 967,
+  "end_line": 1104,
+  "xref_lines": 1,
+  "size_lines": 137,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "main",
+  "start_line": 1114,
+  "end_line": 1256,
+  "xref_lines": 1,
+  "size_lines": 142,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "init_dib_file",
+  "start_line": 1266,
+  "end_line": 1402,
+  "xref_lines": 1,
+  "size_lines": 136,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "check_dib",
+  "start_line": 1410,
+  "end_line": 1424,
+  "xref_lines": 1,
+  "size_lines": 14,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "check_dib_xor",
+  "start_line": 1434,
+  "end_line": 1517,
+  "xref_lines": 0,
+  "size_lines": 83,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "load_dib",
+  "start_line": 1534,
+  "end_line": 1663,
+  "xref_lines": 6,
+  "size_lines": 129,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "copy_dib",
+  "start_line": 1671,
+  "end_line": 1742,
+  "xref_lines": 0,
+  "size_lines": 71,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "xor_dib",
+  "start_line": 1750,
+  "end_line": 1876,
+  "xref_lines": 0,
+  "size_lines": 126,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "copy_dib_from",
+  "start_line": 1884,
+  "end_line": 1985,
+  "xref_lines": 0,
+  "size_lines": 101,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "clear_dib",
+  "start_line": 1995,
+  "end_line": 2050,
+  "xref_lines": 2,
+  "size_lines": 55,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "new_dib",
+  "start_line": 2060,
+  "end_line": 2165,
+  "xref_lines": 2,
+  "size_lines": 105,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "display_dib",
+  "start_line": 2175,
+  "end_line": 2242,
+  "xref_lines": 0,
+  "size_lines": 67,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "kill_dib",
+  "start_line": 2250,
+  "end_line": 2291,
+  "xref_lines": 2,
+  "size_lines": 41,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_byte",
+  "start_line": 2299,
+  "end_line": 2303,
+  "xref_lines": 2,
+  "size_lines": 4,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_gif_word",
+  "start_line": 2311,
+  "end_line": 2329,
+  "xref_lines": 2,
+  "size_lines": 18,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "out_line",
+  "start_line": 2339,
+  "end_line": 2360,
+  "xref_lines": 2,
+  "size_lines": 21,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "init_exp",
+  "start_line": 2370,
+  "end_line": 2397,
+  "xref_lines": 1,
+  "size_lines": 27,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_next_code",
+  "start_line": 2405,
+  "end_line": 2530,
+  "xref_lines": 2,
+  "size_lines": 125,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "decoder",
+  "start_line": 2540,
+  "end_line": 2775,
+  "xref_lines": 1,
+  "size_lines": 235,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "load_gif",
+  "start_line": 2785,
+  "end_line": 2962,
+  "xref_lines": 2,
+  "size_lines": 177,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "load_pcx",
+  "start_line": 2970,
+  "end_line": 3118,
+  "xref_lines": 2,
+  "size_lines": 148,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "ctrl_break_handle",
+  "start_line": 3127,
+  "end_line": 3145,
+  "xref_lines": 2,
+  "size_lines": 18,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "release_break",
+  "start_line": 3153,
+  "end_line": 3180,
+  "xref_lines": 1,
+  "size_lines": 27,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "capture_break",
+  "start_line": 3188,
+  "end_line": 3214,
+  "xref_lines": 1,
+  "size_lines": 26,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "key_hit",
+  "start_line": 3222,
+  "end_line": 3257,
+  "xref_lines": 2,
+  "size_lines": 35,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_key",
+  "start_line": 3265,
+  "end_line": 3362,
+  "xref_lines": 2,
+  "size_lines": 97,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_key_upper",
+  "start_line": 3370,
+  "end_line": 3386,
+  "xref_lines": 2,
+  "size_lines": 16,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "unget_key",
+  "start_line": 3396,
+  "end_line": 3404,
+  "xref_lines": 2,
+  "size_lines": 8,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "test_key",
+  "start_line": 3412,
+  "end_line": 3438,
+  "xref_lines": 2,
+  "size_lines": 26,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "clear_key",
+  "start_line": 3446,
+  "end_line": 3451,
+  "xref_lines": 1,
+  "size_lines": 5,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "clear_keys",
+  "start_line": 3459,
+  "end_line": 3481,
+  "xref_lines": 1,
+  "size_lines": 22,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "shift_key_status",
+  "start_line": 3489,
+  "end_line": 3521,
+  "xref_lines": 0,
+  "size_lines": 32,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "keyboard_handler",
+  "start_line": 3529,
+  "end_line": 3878,
+  "xref_lines": 1,
+  "size_lines": 349,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "capture_keyboard",
+  "start_line": 3886,
+  "end_line": 3909,
+  "xref_lines": 0,
+  "size_lines": 23,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "release_keyboard",
+  "start_line": 3917,
+  "end_line": 3939,
+  "xref_lines": 1,
+  "size_lines": 22,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "poll_scan_code",
+  "start_line": 3945,
+  "end_line": 3949,
+  "xref_lines": 0,
+  "size_lines": 4,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "poll_key",
+  "start_line": 3955,
+  "end_line": 3959,
+  "xref_lines": 0,
+  "size_lines": 4,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "key_down",
+  "start_line": 3969,
+  "end_line": 3983,
+  "xref_lines": 0,
+  "size_lines": 14,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "_key_hit",
+  "start_line": 3991,
+  "end_line": 3998,
+  "xref_lines": 2,
+  "size_lines": 7,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_get_key",
+  "start_line": 4006,
+  "end_line": 4062,
+  "xref_lines": 1,
+  "size_lines": 56,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "release_memory",
+  "start_line": 4070,
+  "end_line": 4076,
+  "xref_lines": 1,
+  "size_lines": 6,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_alloc_limits",
+  "start_line": 4084,
+  "end_line": 4301,
+  "xref_lines": 1,
+  "size_lines": 217,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "init_memory",
+  "start_line": 4309,
+  "end_line": 4592,
+  "xref_lines": 1,
+  "size_lines": 283,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "add_purge_routine",
+  "start_line": 4600,
+  "end_line": 4620,
+  "xref_lines": 1,
+  "size_lines": 20,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "set_purge_routine",
+  "start_line": 4630,
+  "end_line": 4641,
+  "xref_lines": 2,
+  "size_lines": 11,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "set_handle_type",
+  "start_line": 4649,
+  "end_line": 4682,
+  "xref_lines": 2,
+  "size_lines": 33,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_pointer_type",
+  "start_line": 4690,
+  "end_line": 4699,
+  "xref_lines": 1,
+  "size_lines": 9,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "set_pointer_type",
+  "start_line": 4708,
+  "end_line": 4743,
+  "xref_lines": 2,
+  "size_lines": 35,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "insert_master",
+  "start_line": 4753,
+  "end_line": 4841,
+  "xref_lines": 2,
+  "size_lines": 88,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "delete_master",
+  "start_line": 4851,
+  "end_line": 4883,
+  "xref_lines": 2,
+  "size_lines": 32,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "purge_block",
+  "start_line": 4893,
+  "end_line": 4974,
+  "xref_lines": 1,
+  "size_lines": 81,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "purge_memory",
+  "start_line": 4984,
+  "end_line": 5012,
+  "xref_lines": 2,
+  "size_lines": 28,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_master",
+  "start_line": 5022,
+  "end_line": 5237,
+  "xref_lines": 2,
+  "size_lines": 215,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "find_master",
+  "start_line": 5246,
+  "end_line": 5287,
+  "xref_lines": 2,
+  "size_lines": 41,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "compact_memory",
+  "start_line": 5295,
+  "end_line": 5370,
+  "xref_lines": 2,
+  "size_lines": 75,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_handle_num",
+  "start_line": 5378,
+  "end_line": 5416,
+  "xref_lines": 1,
+  "size_lines": 38,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "new_handle",
+  "start_line": 5426,
+  "end_line": 5473,
+  "xref_lines": 2,
+  "size_lines": 47,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_handle_size",
+  "start_line": 5481,
+  "end_line": 5496,
+  "xref_lines": 0,
+  "size_lines": 15,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "resize_handle",
+  "start_line": 5503,
+  "end_line": 5538,
+  "xref_lines": 0,
+  "size_lines": 35,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "kill_handle",
+  "start_line": 5547,
+  "end_line": 5583,
+  "xref_lines": 2,
+  "size_lines": 36,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "lock_handle",
+  "start_line": 5592,
+  "end_line": 5627,
+  "xref_lines": 2,
+  "size_lines": 35,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "unlock_handle",
+  "start_line": 5636,
+  "end_line": 5671,
+  "xref_lines": 2,
+  "size_lines": 35,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "new_real_pointer",
+  "start_line": 5681,
+  "end_line": 5718,
+  "xref_lines": 2,
+  "size_lines": 37,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "new_pointer",
+  "start_line": 5728,
+  "end_line": 5765,
+  "xref_lines": 2,
+  "size_lines": 37,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_pointer_size",
+  "start_line": 5773,
+  "end_line": 5787,
+  "xref_lines": 0,
+  "size_lines": 14,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "resize_pointer",
+  "start_line": 5796,
+  "end_line": 5836,
+  "xref_lines": 2,
+  "size_lines": 40,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "kill_pointer",
+  "start_line": 5845,
+  "end_line": 5864,
+  "xref_lines": 2,
+  "size_lines": 19,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "dump_master_table",
+  "start_line": 5873,
+  "end_line": 6057,
+  "xref_lines": 0,
+  "size_lines": 184,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_min_memory",
+  "start_line": 6065,
+  "end_line": 6072,
+  "xref_lines": 0,
+  "size_lines": 7,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "_get_min_memory",
+  "start_line": 6078,
+  "end_line": 6081,
+  "xref_lines": 0,
+  "size_lines": 3,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "freemem_block",
+  "start_line": 6089,
+  "end_line": 6133,
+  "xref_lines": 2,
+  "size_lines": 44,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "freemem_min",
+  "start_line": 6143,
+  "end_line": 6194,
+  "xref_lines": 2,
+  "size_lines": 51,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "memsetx",
+  "start_line": 6204,
+  "end_line": 6223,
+  "xref_lines": 2,
+  "size_lines": 19,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "memxor",
+  "start_line": 6234,
+  "end_line": 6245,
+  "xref_lines": 0,
+  "size_lines": 11,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "memcpynotn",
+  "start_line": 6253,
+  "end_line": 6289,
+  "xref_lines": 0,
+  "size_lines": 36,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "init_audio",
+  "start_line": 6295,
+  "end_line": 6705,
+  "xref_lines": 1,
+  "size_lines": 410,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "kill_music",
+  "start_line": 6713,
+  "end_line": 6746,
+  "xref_lines": 1,
+  "size_lines": 33,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "kill_sound",
+  "start_line": 6754,
+  "end_line": 6787,
+  "xref_lines": 1,
+  "size_lines": 33,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "kill_audio",
+  "start_line": 6795,
+  "end_line": 6815,
+  "xref_lines": 1,
+  "size_lines": 20,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "kill_voice",
+  "start_line": 6825,
+  "end_line": 6853,
+  "xref_lines": 0,
+  "size_lines": 28,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "set_music",
+  "start_line": 6863,
+  "end_line": 6890,
+  "xref_lines": 0,
+  "size_lines": 27,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "set_sound?",
+  "start_line": 6896,
+  "end_line": 6908,
+  "xref_lines": 0,
+  "size_lines": 12,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "music_on",
+  "start_line": 6916,
+  "end_line": 6919,
+  "xref_lines": 0,
+  "size_lines": 3,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "sound_on",
+  "start_line": 6927,
+  "end_line": 6930,
+  "xref_lines": 0,
+  "size_lines": 3,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "voice_on",
+  "start_line": 6938,
+  "end_line": 6941,
+  "xref_lines": 0,
+  "size_lines": 3,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "purge_music",
+  "start_line": 6951,
+  "end_line": 6982,
+  "xref_lines": 1,
+  "size_lines": 31,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "purge_sound",
+  "start_line": 6992,
+  "end_line": 7023,
+  "xref_lines": 1,
+  "size_lines": 31,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "in_audio_cache",
+  "start_line": 7033,
+  "end_line": 7082,
+  "xref_lines": 2,
+  "size_lines": 49,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "clear_audio_cache",
+  "start_line": 7092,
+  "end_line": 7139,
+  "xref_lines": 2,
+  "size_lines": 47,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_audio_cache",
+  "start_line": 7147,
+  "end_line": 7193,
+  "xref_lines": 1,
+  "size_lines": 46,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_music_id",
+  "start_line": 7201,
+  "end_line": 7231,
+  "xref_lines": 1,
+  "size_lines": 30,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "load_music_id",
+  "start_line": 7238,
+  "end_line": 7280,
+  "xref_lines": 1,
+  "size_lines": 42,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_sound_id",
+  "start_line": 7288,
+  "end_line": 7315,
+  "xref_lines": 2,
+  "size_lines": 27,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "load_sound_id",
+  "start_line": 7325,
+  "end_line": 7367,
+  "xref_lines": 1,
+  "size_lines": 42,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "update_audio_cache",
+  "start_line": 7375,
+  "end_line": 7466,
+  "xref_lines": 2,
+  "size_lines": 91,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_music_volume",
+  "start_line": 7472,
+  "end_line": 7475,
+  "xref_lines": 0,
+  "size_lines": 3,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "set_music_volume",
+  "start_line": 7484,
+  "end_line": 7548,
+  "xref_lines": 1,
+  "size_lines": 64,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "start_music",
+  "start_line": 7556,
+  "end_line": 7578,
+  "xref_lines": 1,
+  "size_lines": 22,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "update_music_volume",
+  "start_line": 7588,
+  "end_line": 7613,
+  "xref_lines": 0,
+  "size_lines": 25,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "load_music",
+  "start_line": 7623,
+  "end_line": 7653,
+  "xref_lines": 1,
+  "size_lines": 30,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "set_next_music_id",
+  "start_line": 7661,
+  "end_line": 7668,
+  "xref_lines": 0,
+  "size_lines": 7,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "update_music",
+  "start_line": 7674,
+  "end_line": 7761,
+  "xref_lines": 2,
+  "size_lines": 87,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "check_music_id",
+  "start_line": 7767,
+  "end_line": 7788,
+  "xref_lines": 0,
+  "size_lines": 21,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "fade_music",
+  "start_line": 7798,
+  "end_line": 7819,
+  "xref_lines": 1,
+  "size_lines": 21,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "stop_music",
+  "start_line": 7827,
+  "end_line": 7867,
+  "xref_lines": 2,
+  "size_lines": 40,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "make_voice",
+  "start_line": 7875,
+  "end_line": 8086,
+  "xref_lines": 0,
+  "size_lines": 211,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "set_sound_callback",
+  "start_line": 8094,
+  "end_line": 8097,
+  "xref_lines": 0,
+  "size_lines": 3,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "update_sound",
+  "start_line": 8105,
+  "end_line": 8112,
+  "xref_lines": 1,
+  "size_lines": 7,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "_default_sample_callback",
+  "start_line": 8120,
+  "end_line": 8158,
+  "xref_lines": 1,
+  "size_lines": 38,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "make_sound",
+  "start_line": 8168,
+  "end_line": 8264,
+  "xref_lines": 1,
+  "size_lines": 96,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "update_sound_volume",
+  "start_line": 8272,
+  "end_line": 8296,
+  "xref_lines": 0,
+  "size_lines": 24,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "load_sound",
+  "start_line": 8306,
+  "end_line": 8336,
+  "xref_lines": 1,
+  "size_lines": 30,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "check_sound_id",
+  "start_line": 8344,
+  "end_line": 8365,
+  "xref_lines": 0,
+  "size_lines": 21,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "set_sound_style",
+  "start_line": 8375,
+  "end_line": 8430,
+  "xref_lines": 2,
+  "size_lines": 55,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "stop_sound",
+  "start_line": 8440,
+  "end_line": 8505,
+  "xref_lines": 2,
+  "size_lines": 65,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "AIL_alloc",
+  "start_line": 8511,
+  "end_line": 8527,
+  "xref_lines": 2,
+  "size_lines": 16,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "j_kill_pointer",
+  "start_line": 8534,
+  "end_line": 8537,
+  "xref_lines": 2,
+  "size_lines": 3,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "AIL_free",
+  "start_line": 8547,
+  "end_line": 8568,
+  "xref_lines": 2,
+  "size_lines": 21,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "_MEM_alloc_lock",
+  "start_line": 8578,
+  "end_line": 8599,
+  "xref_lines": 2,
+  "size_lines": 21,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_MEM_free_lock",
+  "start_line": 8609,
+  "end_line": 8638,
+  "xref_lines": 2,
+  "size_lines": 29,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_MEM_free_DOS",
+  "start_line": 8646,
+  "end_line": 8653,
+  "xref_lines": 2,
+  "size_lines": 7,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_VMM_lock_range",
+  "start_line": 8663,
+  "end_line": 8715,
+  "xref_lines": 2,
+  "size_lines": 52,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_VMM_unlock_range",
+  "start_line": 8725,
+  "end_line": 8777,
+  "xref_lines": 2,
+  "size_lines": 52,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_VMM_lock",
+  "start_line": 8787,
+  "end_line": 8801,
+  "xref_lines": 2,
+  "size_lines": 14,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_VMM_unlock",
+  "start_line": 8811,
+  "end_line": 8825,
+  "xref_lines": 2,
+  "size_lines": 14,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_FILE_read",
+  "start_line": 8835,
+  "end_line": 8913,
+  "xref_lines": 2,
+  "size_lines": 78,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_FILE_size",
+  "start_line": 8923,
+  "end_line": 8945,
+  "xref_lines": 2,
+  "size_lines": 22,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "init_addr_tbl",
+  "start_line": 8955,
+  "end_line": 9016,
+  "xref_lines": 2,
+  "size_lines": 61,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "q_init",
+  "start_line": 9024,
+  "end_line": 9055,
+  "xref_lines": 1,
+  "size_lines": 31,
+  "bucket": "q_codec"
+ },
+ {
+  "name": "q_open",
+  "start_line": 9065,
+  "end_line": 9246,
+  "xref_lines": 1,
+  "size_lines": 181,
+  "bucket": "q_codec"
+ },
+ {
+  "name": "q_load",
+  "start_line": 9252,
+  "end_line": 9663,
+  "xref_lines": 1,
+  "size_lines": 411,
+  "bucket": "q_codec"
+ },
+ {
+  "name": "q_expand",
+  "start_line": 9671,
+  "end_line": 9687,
+  "xref_lines": 1,
+  "size_lines": 16,
+  "bucket": "q_codec"
+ },
+ {
+  "name": "q_display",
+  "start_line": 9697,
+  "end_line": 9773,
+  "xref_lines": 1,
+  "size_lines": 76,
+  "bucket": "q_codec"
+ },
+ {
+  "name": "q_close",
+  "start_line": 9782,
+  "end_line": 9805,
+  "xref_lines": 2,
+  "size_lines": 23,
+  "bucket": "q_codec"
+ },
+ {
+  "name": "q_kill",
+  "start_line": 9813,
+  "end_line": 9847,
+  "xref_lines": 1,
+  "size_lines": 34,
+  "bucket": "q_codec"
+ },
+ {
+  "name": "graphics_mode",
+  "start_line": 9857,
+  "end_line": 9914,
+  "xref_lines": 2,
+  "size_lines": 57,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "text_mode",
+  "start_line": 9922,
+  "end_line": 9936,
+  "xref_lines": 2,
+  "size_lines": 14,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "reset_clip_region",
+  "start_line": 9942,
+  "end_line": 9955,
+  "xref_lines": 1,
+  "size_lines": 13,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "set_clip_region",
+  "start_line": 9965,
+  "end_line": 9975,
+  "xref_lines": 0,
+  "size_lines": 10,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "set_palette_range",
+  "start_line": 9984,
+  "end_line": 10047,
+  "xref_lines": 2,
+  "size_lines": 63,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "set_palette",
+  "start_line": 10054,
+  "end_line": 10064,
+  "xref_lines": 2,
+  "size_lines": 10,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "fade_in_palette",
+  "start_line": 10074,
+  "end_line": 10121,
+  "xref_lines": 2,
+  "size_lines": 47,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "fade_out_palette",
+  "start_line": 10131,
+  "end_line": 10190,
+  "xref_lines": 1,
+  "size_lines": 59,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "black_palette",
+  "start_line": 10198,
+  "end_line": 10214,
+  "xref_lines": 2,
+  "size_lines": 16,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "reset_palette",
+  "start_line": 10222,
+  "end_line": 10253,
+  "xref_lines": 1,
+  "size_lines": 31,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "draw_rect",
+  "start_line": 10261,
+  "end_line": 10278,
+  "xref_lines": 2,
+  "size_lines": 17,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "scroll_up",
+  "start_line": 10286,
+  "end_line": 10347,
+  "xref_lines": 1,
+  "size_lines": 61,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "set_bevel_style",
+  "start_line": 10356,
+  "end_line": 10374,
+  "xref_lines": 0,
+  "size_lines": 18,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "reset_bevel_style",
+  "start_line": 10383,
+  "end_line": 10405,
+  "xref_lines": 0,
+  "size_lines": 22,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "_draw_bevel",
+  "start_line": 10415,
+  "end_line": 10778,
+  "xref_lines": 2,
+  "size_lines": 363,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "draw_bevel",
+  "start_line": 10788,
+  "end_line": 10845,
+  "xref_lines": 2,
+  "size_lines": 57,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "draw_dark",
+  "start_line": 10853,
+  "end_line": 10914,
+  "xref_lines": 0,
+  "size_lines": 61,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "change_color",
+  "start_line": 10924,
+  "end_line": 10984,
+  "xref_lines": 1,
+  "size_lines": 60,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "draw_xor",
+  "start_line": 10994,
+  "end_line": 11050,
+  "xref_lines": 1,
+  "size_lines": 56,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "gxSetMode",
+  "start_line": 11060,
+  "end_line": 11171,
+  "xref_lines": 2,
+  "size_lines": 111,
+  "bucket": "gx_blitter"
+ },
+ {
+  "name": "gxSetXGA",
+  "start_line": 11181,
+  "end_line": 11218,
+  "xref_lines": 2,
+  "size_lines": 37,
+  "bucket": "gx_blitter"
+ },
+ {
+  "name": "gxDirtyDisplay",
+  "start_line": 11227,
+  "end_line": 11269,
+  "xref_lines": 2,
+  "size_lines": 42,
+  "bucket": "gx_blitter"
+ },
+ {
+  "name": "find_rgb",
+  "start_line": 11279,
+  "end_line": 11348,
+  "xref_lines": 2,
+  "size_lines": 69,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "find_rgb2",
+  "start_line": 11356,
+  "end_line": 11359,
+  "xref_lines": 0,
+  "size_lines": 3,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "gxUpdateDisplay",
+  "start_line": 11367,
+  "end_line": 11874,
+  "xref_lines": 2,
+  "size_lines": 507,
+  "bucket": "gx_blitter"
+ },
+ {
+  "name": "gxVideoAddr",
+  "start_line": 11884,
+  "end_line": 11898,
+  "xref_lines": 2,
+  "size_lines": 14,
+  "bucket": "gx_blitter"
+ },
+ {
+  "name": "gxCreateVirtual",
+  "start_line": 11908,
+  "end_line": 11960,
+  "xref_lines": 2,
+  "size_lines": 52,
+  "bucket": "gx_blitter"
+ },
+ {
+  "name": "gxSetVirtualHeader",
+  "start_line": 11970,
+  "end_line": 11992,
+  "xref_lines": 2,
+  "size_lines": 22,
+  "bucket": "gx_blitter"
+ },
+ {
+  "name": "gxVirtualDecompress",
+  "start_line": 12002,
+  "end_line": 12084,
+  "xref_lines": 2,
+  "size_lines": 82,
+  "bucket": "gx_blitter"
+ },
+ {
+  "name": "gxDestroyVirtual",
+  "start_line": 12094,
+  "end_line": 12132,
+  "xref_lines": 2,
+  "size_lines": 38,
+  "bucket": "gx_blitter"
+ },
+ {
+  "name": "gxSetClipRegion",
+  "start_line": 12142,
+  "end_line": 12216,
+  "xref_lines": 1,
+  "size_lines": 74,
+  "bucket": "gx_blitter"
+ },
+ {
+  "name": "gxClearDisplay",
+  "start_line": 12225,
+  "end_line": 12237,
+  "xref_lines": 2,
+  "size_lines": 12,
+  "bucket": "gx_blitter"
+ },
+ {
+  "name": "gxClearVirtual",
+  "start_line": 12246,
+  "end_line": 12267,
+  "xref_lines": 1,
+  "size_lines": 21,
+  "bucket": "gx_blitter"
+ },
+ {
+  "name": "gxDisplayDisplay",
+  "start_line": 12277,
+  "end_line": 12504,
+  "xref_lines": 1,
+  "size_lines": 227,
+  "bucket": "gx_blitter"
+ },
+ {
+  "name": "gxDisplayVirtual",
+  "start_line": 12512,
+  "end_line": 12545,
+  "xref_lines": 2,
+  "size_lines": 33,
+  "bucket": "gx_blitter"
+ },
+ {
+  "name": "gxVirtualDisplay",
+  "start_line": 12553,
+  "end_line": 12650,
+  "xref_lines": 2,
+  "size_lines": 97,
+  "bucket": "gx_blitter"
+ },
+ {
+  "name": "gxVirtualVirtual",
+  "start_line": 12666,
+  "end_line": 12995,
+  "xref_lines": 3,
+  "size_lines": 329,
+  "bucket": "gx_blitter"
+ },
+ {
+  "name": "critical_error_handler",
+  "start_line": 13004,
+  "end_line": 13021,
+  "xref_lines": 1,
+  "size_lines": 17,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "release_errors",
+  "start_line": 13029,
+  "end_line": 13039,
+  "xref_lines": 1,
+  "size_lines": 10,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "trap_errors",
+  "start_line": 13045,
+  "end_line": 13063,
+  "xref_lines": 1,
+  "size_lines": 18,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "kill_all",
+  "start_line": 13069,
+  "end_line": 13078,
+  "xref_lines": 1,
+  "size_lines": 9,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "init",
+  "start_line": 13086,
+  "end_line": 13103,
+  "xref_lines": 1,
+  "size_lines": 17,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "game_abort",
+  "start_line": 13112,
+  "end_line": 13122,
+  "xref_lines": 0,
+  "size_lines": 10,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "user_abort",
+  "start_line": 13132,
+  "end_line": 13140,
+  "xref_lines": 2,
+  "size_lines": 8,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "arctan",
+  "start_line": 13148,
+  "end_line": 13231,
+  "xref_lines": 0,
+  "size_lines": 83,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "str_match",
+  "start_line": 13241,
+  "end_line": 13271,
+  "xref_lines": 2,
+  "size_lines": 30,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "xtoi",
+  "start_line": 13281,
+  "end_line": 13347,
+  "xref_lines": 1,
+  "size_lines": 66,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "_strdate",
+  "start_line": 13357,
+  "end_line": 13388,
+  "xref_lines": 0,
+  "size_lines": 31,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_strtime",
+  "start_line": 13398,
+  "end_line": 13430,
+  "xref_lines": 0,
+  "size_lines": 32,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "set_timeout",
+  "start_line": 13440,
+  "end_line": 13448,
+  "xref_lines": 0,
+  "size_lines": 8,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "timeout",
+  "start_line": 13456,
+  "end_line": 13462,
+  "xref_lines": 0,
+  "size_lines": 6,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "msleep",
+  "start_line": 13470,
+  "end_line": 13507,
+  "xref_lines": 2,
+  "size_lines": 37,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "_update_timer",
+  "start_line": 13513,
+  "end_line": 13516,
+  "xref_lines": 1,
+  "size_lines": 3,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "remove_timer",
+  "start_line": 13522,
+  "end_line": 13538,
+  "xref_lines": 1,
+  "size_lines": 16,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "init_timer",
+  "start_line": 13546,
+  "end_line": 13579,
+  "xref_lines": 1,
+  "size_lines": 33,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_clock",
+  "start_line": 13587,
+  "end_line": 13596,
+  "xref_lines": 2,
+  "size_lines": 9,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "fprintf_",
+  "start_line": 13605,
+  "end_line": 13626,
+  "xref_lines": 2,
+  "size_lines": 21,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "__null_int23_exit_",
+  "start_line": 13633,
+  "end_line": 13636,
+  "xref_lines": 2,
+  "size_lines": 3,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "_null_exit_rtn_",
+  "start_line": 13644,
+  "end_line": 13652,
+  "xref_lines": 2,
+  "size_lines": 8,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_exit_",
+  "start_line": 13663,
+  "end_line": 13673,
+  "xref_lines": 1,
+  "size_lines": 10,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "init_ini_info",
+  "start_line": 13685,
+  "end_line": 13856,
+  "xref_lines": 1,
+  "size_lines": 171,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "match",
+  "start_line": 13866,
+  "end_line": 13900,
+  "xref_lines": 2,
+  "size_lines": 34,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "eos",
+  "start_line": 13910,
+  "end_line": 13927,
+  "xref_lines": 2,
+  "size_lines": 17,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "strskip",
+  "start_line": 13937,
+  "end_line": 13983,
+  "xref_lines": 1,
+  "size_lines": 46,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "copy_ini",
+  "start_line": 13991,
+  "end_line": 14033,
+  "xref_lines": 1,
+  "size_lines": 42,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "_get_ini",
+  "start_line": 14043,
+  "end_line": 14136,
+  "xref_lines": 2,
+  "size_lines": 93,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "add_ini",
+  "start_line": 14146,
+  "end_line": 14228,
+  "xref_lines": 2,
+  "size_lines": 82,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_ini",
+  "start_line": 14235,
+  "end_line": 14270,
+  "xref_lines": 2,
+  "size_lines": 35,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "kill_ini",
+  "start_line": 14276,
+  "end_line": 14293,
+  "xref_lines": 0,
+  "size_lines": 17,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "init_files",
+  "start_line": 14302,
+  "end_line": 14305,
+  "xref_lines": 1,
+  "size_lines": 3,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "set_file_path",
+  "start_line": 14315,
+  "end_line": 14343,
+  "xref_lines": 0,
+  "size_lines": 28,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "exists",
+  "start_line": 14352,
+  "end_line": 14362,
+  "xref_lines": 2,
+  "size_lines": 10,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_file_path",
+  "start_line": 14372,
+  "end_line": 14412,
+  "xref_lines": 1,
+  "size_lines": 40,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_file_name",
+  "start_line": 14421,
+  "end_line": 14448,
+  "xref_lines": 1,
+  "size_lines": 27,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "open_file",
+  "start_line": 14457,
+  "end_line": 14475,
+  "xref_lines": 2,
+  "size_lines": 18,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_file_size",
+  "start_line": 14483,
+  "end_line": 14485,
+  "xref_lines": 0,
+  "size_lines": 2,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "seek_file",
+  "start_line": 14493,
+  "end_line": 14500,
+  "xref_lines": 2,
+  "size_lines": 7,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_file_char",
+  "start_line": 14509,
+  "end_line": 14512,
+  "xref_lines": 2,
+  "size_lines": 3,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_file_int",
+  "start_line": 14520,
+  "end_line": 14546,
+  "xref_lines": 2,
+  "size_lines": 26,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "read_file",
+  "start_line": 14553,
+  "end_line": 14556,
+  "xref_lines": 2,
+  "size_lines": 3,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "read_file_blocks",
+  "start_line": 14566,
+  "end_line": 14575,
+  "xref_lines": 0,
+  "size_lines": 9,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "read_file_line",
+  "start_line": 14585,
+  "end_line": 14620,
+  "xref_lines": 0,
+  "size_lines": 35,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "put_file_char",
+  "start_line": 14629,
+  "end_line": 14631,
+  "xref_lines": 0,
+  "size_lines": 2,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "put_file_int",
+  "start_line": 14641,
+  "end_line": 14654,
+  "xref_lines": 0,
+  "size_lines": 13,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "write_file",
+  "start_line": 14661,
+  "end_line": 14663,
+  "xref_lines": 0,
+  "size_lines": 2,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "write_file_blocks",
+  "start_line": 14673,
+  "end_line": 14682,
+  "xref_lines": 0,
+  "size_lines": 9,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "close_file",
+  "start_line": 14691,
+  "end_line": 14694,
+  "xref_lines": 2,
+  "size_lines": 3,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "start",
+  "start_line": 14704,
+  "end_line": 14979,
+  "xref_lines": 1,
+  "size_lines": 275,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "__GETDS",
+  "start_line": 14986,
+  "end_line": 14990,
+  "xref_lines": 2,
+  "size_lines": 4,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "strupr",
+  "start_line": 15003,
+  "end_line": 15029,
+  "xref_lines": 2,
+  "size_lines": 26,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "sub_15E930",
+  "start_line": 15037,
+  "end_line": 15041,
+  "xref_lines": 2,
+  "size_lines": 4,
+  "bucket": "unnamed"
+ },
+ {
+  "name": "nullsub_3",
+  "start_line": 15047,
+  "end_line": 15049,
+  "xref_lines": 1,
+  "size_lines": 2,
+  "bucket": "unnamed"
+ },
+ {
+  "name": "strcmp",
+  "start_line": 15060,
+  "end_line": 15141,
+  "xref_lines": 2,
+  "size_lines": 81,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "strstr",
+  "start_line": 15150,
+  "end_line": 15295,
+  "xref_lines": 2,
+  "size_lines": 145,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "load_lbm",
+  "start_line": 15303,
+  "end_line": 15306,
+  "xref_lines": 1,
+  "size_lines": 3,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "memset",
+  "start_line": 15316,
+  "end_line": 15330,
+  "xref_lines": 2,
+  "size_lines": 14,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "init_graphics?",
+  "start_line": 15338,
+  "end_line": 15376,
+  "xref_lines": 0,
+  "size_lines": 38,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "init_pictures?",
+  "start_line": 15382,
+  "end_line": 15392,
+  "xref_lines": 0,
+  "size_lines": 10,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "close_pictures?",
+  "start_line": 15398,
+  "end_line": 15420,
+  "xref_lines": 1,
+  "size_lines": 22,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "open_pic",
+  "start_line": 15430,
+  "end_line": 15466,
+  "xref_lines": 2,
+  "size_lines": 36,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "read_pic_dir",
+  "start_line": 15476,
+  "end_line": 15580,
+  "xref_lines": 1,
+  "size_lines": 104,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "load_palette",
+  "start_line": 15590,
+  "end_line": 15663,
+  "xref_lines": 1,
+  "size_lines": 73,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "set_color_cycle",
+  "start_line": 15673,
+  "end_line": 15686,
+  "xref_lines": 0,
+  "size_lines": 13,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "reset_color_cycle",
+  "start_line": 15694,
+  "end_line": 15711,
+  "xref_lines": 1,
+  "size_lines": 17,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "fix_palette",
+  "start_line": 15719,
+  "end_line": 15759,
+  "xref_lines": 0,
+  "size_lines": 40,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "display_palette",
+  "start_line": 15767,
+  "end_line": 15835,
+  "xref_lines": 0,
+  "size_lines": 68,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "push_pic_offset",
+  "start_line": 15845,
+  "end_line": 15856,
+  "xref_lines": 2,
+  "size_lines": 11,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "pop_pic_offset",
+  "start_line": 15862,
+  "end_line": 15869,
+  "xref_lines": 2,
+  "size_lines": 7,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "set_pic_offset",
+  "start_line": 15879,
+  "end_line": 15883,
+  "xref_lines": 0,
+  "size_lines": 4,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "select_pic_window",
+  "start_line": 15893,
+  "end_line": 15923,
+  "xref_lines": 1,
+  "size_lines": 30,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "load_display",
+  "start_line": 15933,
+  "end_line": 15953,
+  "xref_lines": 0,
+  "size_lines": 20,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_pic_gxdata",
+  "start_line": 15960,
+  "end_line": 16010,
+  "xref_lines": 2,
+  "size_lines": 50,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "load_pic_in",
+  "start_line": 16020,
+  "end_line": 16041,
+  "xref_lines": 0,
+  "size_lines": 21,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "put_pic_in",
+  "start_line": 16051,
+  "end_line": 16120,
+  "xref_lines": 1,
+  "size_lines": 69,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "set_pic_comp",
+  "start_line": 16130,
+  "end_line": 16138,
+  "xref_lines": 2,
+  "size_lines": 8,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "load_pic_uncomp",
+  "start_line": 16146,
+  "end_line": 16162,
+  "xref_lines": 1,
+  "size_lines": 16,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "load_pic_comp",
+  "start_line": 16172,
+  "end_line": 16188,
+  "xref_lines": 0,
+  "size_lines": 16,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "load_pic",
+  "start_line": 16197,
+  "end_line": 16336,
+  "xref_lines": 2,
+  "size_lines": 139,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "load_pics",
+  "start_line": 16344,
+  "end_line": 16476,
+  "xref_lines": 2,
+  "size_lines": 132,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "save_display",
+  "start_line": 16484,
+  "end_line": 16623,
+  "xref_lines": 2,
+  "size_lines": 139,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "copy_pic",
+  "start_line": 16633,
+  "end_line": 16766,
+  "xref_lines": 0,
+  "size_lines": 133,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_pic_delay",
+  "start_line": 16774,
+  "end_line": 16805,
+  "xref_lines": 2,
+  "size_lines": 31,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_pic_coords",
+  "start_line": 16813,
+  "end_line": 16872,
+  "xref_lines": 0,
+  "size_lines": 59,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "set_pic_position",
+  "start_line": 16882,
+  "end_line": 16917,
+  "xref_lines": 1,
+  "size_lines": 35,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "display_pic_at",
+  "start_line": 16927,
+  "end_line": 16938,
+  "xref_lines": 2,
+  "size_lines": 11,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "display_pic",
+  "start_line": 16947,
+  "end_line": 17026,
+  "xref_lines": 2,
+  "size_lines": 79,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "unload_pic",
+  "start_line": 17033,
+  "end_line": 17045,
+  "xref_lines": 2,
+  "size_lines": 12,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "unload_pics",
+  "start_line": 17053,
+  "end_line": 17074,
+  "xref_lines": 1,
+  "size_lines": 21,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "clear_pic",
+  "start_line": 17083,
+  "end_line": 17136,
+  "xref_lines": 2,
+  "size_lines": 53,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "clear_pics",
+  "start_line": 17145,
+  "end_line": 17170,
+  "xref_lines": 2,
+  "size_lines": 25,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "set_pic_vector",
+  "start_line": 17180,
+  "end_line": 17194,
+  "xref_lines": 0,
+  "size_lines": 14,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "init_animation",
+  "start_line": 17202,
+  "end_line": 17217,
+  "xref_lines": 1,
+  "size_lines": 15,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "add_sequence",
+  "start_line": 17227,
+  "end_line": 17264,
+  "xref_lines": 0,
+  "size_lines": 37,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "enable_sequence",
+  "start_line": 17274,
+  "end_line": 17289,
+  "xref_lines": 0,
+  "size_lines": 15,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "disable_sequence",
+  "start_line": 17299,
+  "end_line": 17314,
+  "xref_lines": 0,
+  "size_lines": 15,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "animate_sequences",
+  "start_line": 17324,
+  "end_line": 17346,
+  "xref_lines": 0,
+  "size_lines": 22,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "start_animation",
+  "start_line": 17352,
+  "end_line": 17385,
+  "xref_lines": 1,
+  "size_lines": 33,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "stop_animation",
+  "start_line": 17393,
+  "end_line": 17425,
+  "xref_lines": 1,
+  "size_lines": 32,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "update_animation",
+  "start_line": 17435,
+  "end_line": 17561,
+  "xref_lines": 2,
+  "size_lines": 126,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "clear_sequence",
+  "start_line": 17570,
+  "end_line": 17639,
+  "xref_lines": 0,
+  "size_lines": 69,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "clear_animation",
+  "start_line": 17645,
+  "end_line": 17658,
+  "xref_lines": 1,
+  "size_lines": 13,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "fp_open",
+  "start_line": 17666,
+  "end_line": 17687,
+  "xref_lines": 2,
+  "size_lines": 21,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "fp_FILE_",
+  "start_line": 17695,
+  "end_line": 17698,
+  "xref_lines": 0,
+  "size_lines": 3,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "fp_close",
+  "start_line": 17705,
+  "end_line": 17741,
+  "xref_lines": 2,
+  "size_lines": 36,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "fp_set_bufsiz",
+  "start_line": 17750,
+  "end_line": 17804,
+  "xref_lines": 2,
+  "size_lines": 54,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "fp_read",
+  "start_line": 17814,
+  "end_line": 17849,
+  "xref_lines": 2,
+  "size_lines": 35,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "fp_write",
+  "start_line": 17859,
+  "end_line": 17884,
+  "xref_lines": 1,
+  "size_lines": 25,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "fp_seek",
+  "start_line": 17892,
+  "end_line": 17896,
+  "xref_lines": 2,
+  "size_lines": 4,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "fp_tell",
+  "start_line": 17902,
+  "end_line": 17905,
+  "xref_lines": 0,
+  "size_lines": 3,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "fp_size",
+  "start_line": 17913,
+  "end_line": 17916,
+  "xref_lines": 2,
+  "size_lines": 3,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "fp_putc",
+  "start_line": 17924,
+  "end_line": 17927,
+  "xref_lines": 0,
+  "size_lines": 3,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "fp_getc",
+  "start_line": 17933,
+  "end_line": 17937,
+  "xref_lines": 1,
+  "size_lines": 4,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "fp_printf",
+  "start_line": 17945,
+  "end_line": 17968,
+  "xref_lines": 0,
+  "size_lines": 23,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "fp_fgets",
+  "start_line": 17976,
+  "end_line": 17979,
+  "xref_lines": 0,
+  "size_lines": 3,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "_dos_setvect",
+  "start_line": 17988,
+  "end_line": 18021,
+  "xref_lines": 2,
+  "size_lines": 33,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_dos_getvect",
+  "start_line": 18030,
+  "end_line": 18061,
+  "xref_lines": 2,
+  "size_lines": 31,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_Full_at_exit_rtn",
+  "start_line": 18068,
+  "end_line": 18097,
+  "xref_lines": 1,
+  "size_lines": 29,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "atexit",
+  "start_line": 18106,
+  "end_line": 18134,
+  "xref_lines": 2,
+  "size_lines": 28,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "kbhit",
+  "start_line": 18140,
+  "end_line": 18155,
+  "xref_lines": 1,
+  "size_lines": 15,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "int386",
+  "start_line": 18164,
+  "end_line": 18177,
+  "xref_lines": 2,
+  "size_lines": 13,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "_nfree_",
+  "start_line": 18186,
+  "end_line": 18235,
+  "xref_lines": 2,
+  "size_lines": 49,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "free",
+  "start_line": 18245,
+  "end_line": 18283,
+  "xref_lines": 2,
+  "size_lines": 38,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "DPMI_real_irq",
+  "start_line": 18293,
+  "end_line": 18329,
+  "xref_lines": 0,
+  "size_lines": 36,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "DPMI_real_call",
+  "start_line": 18337,
+  "end_line": 18376,
+  "xref_lines": 1,
+  "size_lines": 39,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "DPMI_real_alloc",
+  "start_line": 18386,
+  "end_line": 18418,
+  "xref_lines": 0,
+  "size_lines": 32,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "DPMI_real_free",
+  "start_line": 18426,
+  "end_line": 18448,
+  "xref_lines": 1,
+  "size_lines": 22,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "DPMI_real_freemem",
+  "start_line": 18456,
+  "end_line": 18489,
+  "xref_lines": 1,
+  "size_lines": 33,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "getenv",
+  "start_line": 18498,
+  "end_line": 18564,
+  "xref_lines": 2,
+  "size_lines": 66,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "cget_string",
+  "start_line": 18573,
+  "end_line": 18598,
+  "xref_lines": 1,
+  "size_lines": 25,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "uncget_string",
+  "start_line": 18607,
+  "end_line": 18610,
+  "xref_lines": 1,
+  "size_lines": 3,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "vsscanf",
+  "start_line": 18619,
+  "end_line": 18639,
+  "xref_lines": 1,
+  "size_lines": 20,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "sscanf",
+  "start_line": 18648,
+  "end_line": 18669,
+  "xref_lines": 2,
+  "size_lines": 21,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "printf",
+  "start_line": 18678,
+  "end_line": 18698,
+  "xref_lines": 2,
+  "size_lines": 20,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "_nmalloc",
+  "start_line": 18707,
+  "end_line": 18830,
+  "xref_lines": 2,
+  "size_lines": 123,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "memmove",
+  "start_line": 18839,
+  "end_line": 18899,
+  "xref_lines": 2,
+  "size_lines": 60,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "AILDEBUG_start",
+  "start_line": 18905,
+  "end_line": 18955,
+  "xref_lines": 2,
+  "size_lines": 50,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "_TIME_callback",
+  "start_line": 18961,
+  "end_line": 18994,
+  "xref_lines": 1,
+  "size_lines": 33,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "TIME_write",
+  "start_line": 19000,
+  "end_line": 19076,
+  "xref_lines": 2,
+  "size_lines": 76,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "_AIL_startup",
+  "start_line": 19082,
+  "end_line": 19193,
+  "xref_lines": 1,
+  "size_lines": 111,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_shutdown",
+  "start_line": 19199,
+  "end_line": 19256,
+  "xref_lines": 1,
+  "size_lines": 57,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_set_preference",
+  "start_line": 19264,
+  "end_line": 19371,
+  "xref_lines": 2,
+  "size_lines": 107,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_lock",
+  "start_line": 19378,
+  "end_line": 19381,
+  "xref_lines": 2,
+  "size_lines": 3,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_unlock",
+  "start_line": 19388,
+  "end_line": 19391,
+  "xref_lines": 2,
+  "size_lines": 3,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_get_real_vect",
+  "start_line": 19399,
+  "end_line": 19497,
+  "xref_lines": 1,
+  "size_lines": 98,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_set_real_vect",
+  "start_line": 19505,
+  "end_line": 19562,
+  "xref_lines": 2,
+  "size_lines": 57,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_set_USE16_ISR",
+  "start_line": 19570,
+  "end_line": 19627,
+  "xref_lines": 0,
+  "size_lines": 57,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_restore_USE16_ISR",
+  "start_line": 19657,
+  "end_line": 19714,
+  "xref_lines": 2,
+  "size_lines": 57,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_disable_interrupts",
+  "start_line": 19721,
+  "end_line": 19724,
+  "xref_lines": 2,
+  "size_lines": 3,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_restore_interrupts",
+  "start_line": 19732,
+  "end_line": 19742,
+  "xref_lines": 2,
+  "size_lines": 10,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_call_driver",
+  "start_line": 19750,
+  "end_line": 19876,
+  "xref_lines": 2,
+  "size_lines": 126,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_delay",
+  "start_line": 19884,
+  "end_line": 19932,
+  "xref_lines": 2,
+  "size_lines": 48,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_background",
+  "start_line": 19939,
+  "end_line": 19942,
+  "xref_lines": 2,
+  "size_lines": 3,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_read_INI",
+  "start_line": 19950,
+  "end_line": 20298,
+  "xref_lines": 2,
+  "size_lines": 348,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_register_timer",
+  "start_line": 20306,
+  "end_line": 20405,
+  "xref_lines": 2,
+  "size_lines": 99,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_set_timer_user",
+  "start_line": 20413,
+  "end_line": 20512,
+  "xref_lines": 2,
+  "size_lines": 99,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_set_timer_period",
+  "start_line": 20520,
+  "end_line": 20573,
+  "xref_lines": 2,
+  "size_lines": 53,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_set_timer_frequency",
+  "start_line": 20581,
+  "end_line": 20634,
+  "xref_lines": 2,
+  "size_lines": 53,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_set_timer_divisor",
+  "start_line": 20642,
+  "end_line": 20694,
+  "xref_lines": 0,
+  "size_lines": 52,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_interrupt_divisor",
+  "start_line": 20700,
+  "end_line": 20788,
+  "xref_lines": 0,
+  "size_lines": 88,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_start_timer",
+  "start_line": 20796,
+  "end_line": 20844,
+  "xref_lines": 2,
+  "size_lines": 48,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_start_all_timers",
+  "start_line": 20850,
+  "end_line": 20889,
+  "xref_lines": 0,
+  "size_lines": 39,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_stop_timer",
+  "start_line": 20897,
+  "end_line": 20945,
+  "xref_lines": 2,
+  "size_lines": 48,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_stop_all_timers",
+  "start_line": 20951,
+  "end_line": 20990,
+  "xref_lines": 0,
+  "size_lines": 39,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_release_timer_handle",
+  "start_line": 20998,
+  "end_line": 21046,
+  "xref_lines": 2,
+  "size_lines": 48,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_release_all_timers",
+  "start_line": 21052,
+  "end_line": 21091,
+  "xref_lines": 1,
+  "size_lines": 39,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_get_IO_environment",
+  "start_line": 21099,
+  "end_line": 21191,
+  "xref_lines": 2,
+  "size_lines": 92,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_install_driver",
+  "start_line": 21199,
+  "end_line": 21301,
+  "xref_lines": 2,
+  "size_lines": 102,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_uninstall_driver",
+  "start_line": 21309,
+  "end_line": 21357,
+  "xref_lines": 2,
+  "size_lines": 48,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_install_DIG_INI",
+  "start_line": 21363,
+  "end_line": 21454,
+  "xref_lines": 1,
+  "size_lines": 91,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_install_DIG_driver_file",
+  "start_line": 21462,
+  "end_line": 21559,
+  "xref_lines": 2,
+  "size_lines": 97,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_uninstall_DIG_driver",
+  "start_line": 21567,
+  "end_line": 21614,
+  "xref_lines": 0,
+  "size_lines": 47,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_allocate_sample_handle",
+  "start_line": 21622,
+  "end_line": 21714,
+  "xref_lines": 2,
+  "size_lines": 92,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_allocate_file_sample",
+  "start_line": 21722,
+  "end_line": 21823,
+  "xref_lines": 0,
+  "size_lines": 101,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_release_sample_handle",
+  "start_line": 21831,
+  "end_line": 21879,
+  "xref_lines": 2,
+  "size_lines": 48,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_init_sample",
+  "start_line": 21887,
+  "end_line": 21935,
+  "xref_lines": 2,
+  "size_lines": 48,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_set_sample_file",
+  "start_line": 21943,
+  "end_line": 22043,
+  "xref_lines": 0,
+  "size_lines": 100,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_set_sample_address",
+  "start_line": 22071,
+  "end_line": 22132,
+  "xref_lines": 2,
+  "size_lines": 61,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_set_sample_type",
+  "start_line": 22140,
+  "end_line": 22201,
+  "xref_lines": 2,
+  "size_lines": 61,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_start_sample",
+  "start_line": 22209,
+  "end_line": 22257,
+  "xref_lines": 2,
+  "size_lines": 48,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_stop_sample",
+  "start_line": 22265,
+  "end_line": 22313,
+  "xref_lines": 2,
+  "size_lines": 48,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_resume_sample",
+  "start_line": 22321,
+  "end_line": 22368,
+  "xref_lines": 0,
+  "size_lines": 47,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_end_sample",
+  "start_line": 22376,
+  "end_line": 22424,
+  "xref_lines": 2,
+  "size_lines": 48,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_set_sample_playback_rate",
+  "start_line": 22432,
+  "end_line": 22485,
+  "xref_lines": 2,
+  "size_lines": 53,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_set_sample_volume",
+  "start_line": 22493,
+  "end_line": 22546,
+  "xref_lines": 2,
+  "size_lines": 53,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_set_sample_pan",
+  "start_line": 22554,
+  "end_line": 22607,
+  "xref_lines": 2,
+  "size_lines": 53,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_set_sample_loop_count",
+  "start_line": 22615,
+  "end_line": 22667,
+  "xref_lines": 1,
+  "size_lines": 52,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_sample_status",
+  "start_line": 22675,
+  "end_line": 22767,
+  "xref_lines": 2,
+  "size_lines": 92,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_sample_playback_rate",
+  "start_line": 22775,
+  "end_line": 22865,
+  "xref_lines": 0,
+  "size_lines": 90,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_sample_volume",
+  "start_line": 22898,
+  "end_line": 22991,
+  "xref_lines": 0,
+  "size_lines": 93,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_sample_pan",
+  "start_line": 22999,
+  "end_line": 23092,
+  "xref_lines": 0,
+  "size_lines": 93,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_sample_loop_count",
+  "start_line": 23100,
+  "end_line": 23193,
+  "xref_lines": 0,
+  "size_lines": 93,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_install_DIG_driver_image",
+  "start_line": 23201,
+  "end_line": 23302,
+  "xref_lines": 0,
+  "size_lines": 101,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_minimum_sample_buffer_size",
+  "start_line": 23310,
+  "end_line": 23413,
+  "xref_lines": 0,
+  "size_lines": 103,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_sample_buffer_ready",
+  "start_line": 23421,
+  "end_line": 23515,
+  "xref_lines": 2,
+  "size_lines": 94,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_load_sample_buffer",
+  "start_line": 23523,
+  "end_line": 23590,
+  "xref_lines": 2,
+  "size_lines": 67,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_set_sample_position",
+  "start_line": 23598,
+  "end_line": 23650,
+  "xref_lines": 0,
+  "size_lines": 52,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_sample_position",
+  "start_line": 23658,
+  "end_line": 23749,
+  "xref_lines": 0,
+  "size_lines": 91,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_register_SOB_callback",
+  "start_line": 23757,
+  "end_line": 23853,
+  "xref_lines": 0,
+  "size_lines": 96,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_register_EOB_callback",
+  "start_line": 23861,
+  "end_line": 23957,
+  "xref_lines": 0,
+  "size_lines": 96,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_register_EOS_callback",
+  "start_line": 23965,
+  "end_line": 24062,
+  "xref_lines": 2,
+  "size_lines": 97,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_register_EOF_callback",
+  "start_line": 24070,
+  "end_line": 24166,
+  "xref_lines": 0,
+  "size_lines": 96,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_set_sample_user_data",
+  "start_line": 24174,
+  "end_line": 24234,
+  "xref_lines": 0,
+  "size_lines": 60,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_sample_user_data",
+  "start_line": 24242,
+  "end_line": 24338,
+  "xref_lines": 0,
+  "size_lines": 96,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_active_sample_count",
+  "start_line": 24346,
+  "end_line": 24439,
+  "xref_lines": 0,
+  "size_lines": 93,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_install_MDI_INI",
+  "start_line": 24445,
+  "end_line": 24528,
+  "xref_lines": 1,
+  "size_lines": 83,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_install_MDI_driver_file",
+  "start_line": 24536,
+  "end_line": 24633,
+  "xref_lines": 2,
+  "size_lines": 97,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_uninstall_MDI_driver",
+  "start_line": 24641,
+  "end_line": 24688,
+  "xref_lines": 0,
+  "size_lines": 47,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_allocate_sequence_handle",
+  "start_line": 24696,
+  "end_line": 24787,
+  "xref_lines": 1,
+  "size_lines": 91,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_release_sequence_handle",
+  "start_line": 24795,
+  "end_line": 24842,
+  "xref_lines": 1,
+  "size_lines": 47,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_init_sequence",
+  "start_line": 24850,
+  "end_line": 24953,
+  "xref_lines": 1,
+  "size_lines": 103,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_start_sequence",
+  "start_line": 24961,
+  "end_line": 25008,
+  "xref_lines": 1,
+  "size_lines": 47,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_stop_sequence",
+  "start_line": 25016,
+  "end_line": 25064,
+  "xref_lines": 2,
+  "size_lines": 48,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_resume_sequence",
+  "start_line": 25072,
+  "end_line": 25119,
+  "xref_lines": 0,
+  "size_lines": 47,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_end_sequence",
+  "start_line": 25127,
+  "end_line": 25174,
+  "xref_lines": 1,
+  "size_lines": 47,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_set_sequence_tempo",
+  "start_line": 25182,
+  "end_line": 25242,
+  "xref_lines": 0,
+  "size_lines": 60,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_set_sequence_volume",
+  "start_line": 25250,
+  "end_line": 25311,
+  "xref_lines": 2,
+  "size_lines": 61,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_set_sequence_loop_count",
+  "start_line": 25319,
+  "end_line": 25371,
+  "xref_lines": 0,
+  "size_lines": 52,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_sequence_status",
+  "start_line": 25379,
+  "end_line": 25470,
+  "xref_lines": 0,
+  "size_lines": 91,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_sequence_tempo",
+  "start_line": 25478,
+  "end_line": 25571,
+  "xref_lines": 0,
+  "size_lines": 93,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_sequence_volume",
+  "start_line": 25579,
+  "end_line": 25672,
+  "xref_lines": 0,
+  "size_lines": 93,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_sequence_loop_count",
+  "start_line": 25680,
+  "end_line": 25773,
+  "xref_lines": 0,
+  "size_lines": 93,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_install_MDI_driver_image",
+  "start_line": 25781,
+  "end_line": 25882,
+  "xref_lines": 0,
+  "size_lines": 101,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_set_GTL_filename_prefix",
+  "start_line": 25890,
+  "end_line": 25937,
+  "xref_lines": 1,
+  "size_lines": 47,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_timbre_status",
+  "start_line": 25945,
+  "end_line": 26048,
+  "xref_lines": 0,
+  "size_lines": 103,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_install_timbre",
+  "start_line": 26056,
+  "end_line": 26159,
+  "xref_lines": 0,
+  "size_lines": 103,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_protect_timbre",
+  "start_line": 26167,
+  "end_line": 26227,
+  "xref_lines": 0,
+  "size_lines": 60,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_unprotect_timbre",
+  "start_line": 26235,
+  "end_line": 26295,
+  "xref_lines": 0,
+  "size_lines": 60,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_active_sequence_count",
+  "start_line": 26303,
+  "end_line": 26396,
+  "xref_lines": 0,
+  "size_lines": 93,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_controller_value",
+  "start_line": 26404,
+  "end_line": 26507,
+  "xref_lines": 0,
+  "size_lines": 103,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_channel_notes",
+  "start_line": 26515,
+  "end_line": 26611,
+  "xref_lines": 0,
+  "size_lines": 96,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_sequence_position",
+  "start_line": 26619,
+  "end_line": 26727,
+  "xref_lines": 0,
+  "size_lines": 108,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_branch_index",
+  "start_line": 26735,
+  "end_line": 26787,
+  "xref_lines": 1,
+  "size_lines": 52,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_register_prefix_callback",
+  "start_line": 26795,
+  "end_line": 26891,
+  "xref_lines": 0,
+  "size_lines": 96,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_register_trigger_callback",
+  "start_line": 26899,
+  "end_line": 26995,
+  "xref_lines": 1,
+  "size_lines": 96,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_register_sequence_callback",
+  "start_line": 27003,
+  "end_line": 27099,
+  "xref_lines": 0,
+  "size_lines": 96,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_register_event_callback",
+  "start_line": 27107,
+  "end_line": 27204,
+  "xref_lines": 2,
+  "size_lines": 97,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_register_timbre_callback",
+  "start_line": 27212,
+  "end_line": 27309,
+  "xref_lines": 2,
+  "size_lines": 97,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_set_sequence_user_data",
+  "start_line": 27317,
+  "end_line": 27377,
+  "xref_lines": 0,
+  "size_lines": 60,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_sequence_user_data",
+  "start_line": 27385,
+  "end_line": 27481,
+  "xref_lines": 0,
+  "size_lines": 96,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_register_ICA_array",
+  "start_line": 27489,
+  "end_line": 27541,
+  "xref_lines": 0,
+  "size_lines": 52,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_lock_channel",
+  "start_line": 27549,
+  "end_line": 27643,
+  "xref_lines": 2,
+  "size_lines": 94,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_release_channel",
+  "start_line": 27651,
+  "end_line": 27704,
+  "xref_lines": 2,
+  "size_lines": 53,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_map_sequence_channel",
+  "start_line": 27712,
+  "end_line": 27773,
+  "xref_lines": 2,
+  "size_lines": 61,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_true_sequence_channel",
+  "start_line": 27781,
+  "end_line": 27877,
+  "xref_lines": 0,
+  "size_lines": 96,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_send_channel_voice_message",
+  "start_line": 27885,
+  "end_line": 27954,
+  "xref_lines": 0,
+  "size_lines": 69,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_send_sysex_message",
+  "start_line": 27962,
+  "end_line": 28014,
+  "xref_lines": 0,
+  "size_lines": 52,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_create_wave_synthesizer",
+  "start_line": 28022,
+  "end_line": 28130,
+  "xref_lines": 0,
+  "size_lines": 108,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_destroy_wave_synthesizer",
+  "start_line": 28138,
+  "end_line": 28185,
+  "xref_lines": 0,
+  "size_lines": 47,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "sub_1652A5",
+  "start_line": 28191,
+  "end_line": 28210,
+  "xref_lines": 2,
+  "size_lines": 19,
+  "bucket": "unnamed"
+ },
+ {
+  "name": "sub_1652E0",
+  "start_line": 28228,
+  "end_line": 30739,
+  "xref_lines": 7,
+  "size_lines": 2511,
+  "bucket": "unnamed"
+ },
+ {
+  "name": "grMoveTo?",
+  "start_line": 30756,
+  "end_line": 30763,
+  "xref_lines": 2,
+  "size_lines": 7,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "sub_1672D0",
+  "start_line": 30773,
+  "end_line": 30796,
+  "xref_lines": 2,
+  "size_lines": 23,
+  "bucket": "unnamed"
+ },
+ {
+  "name": "sub_167334",
+  "start_line": 30816,
+  "end_line": 31584,
+  "xref_lines": 4,
+  "size_lines": 768,
+  "bucket": "unnamed"
+ },
+ {
+  "name": "draw_rect_",
+  "start_line": 31599,
+  "end_line": 31768,
+  "xref_lines": 2,
+  "size_lines": 169,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "sub_167CE8",
+  "start_line": 31778,
+  "end_line": 31782,
+  "xref_lines": 0,
+  "size_lines": 4,
+  "bucket": "unnamed"
+ },
+ {
+  "name": "sub_167CF4",
+  "start_line": 31790,
+  "end_line": 31793,
+  "xref_lines": 1,
+  "size_lines": 3,
+  "bucket": "unnamed"
+ },
+ {
+  "name": "set_gr_color",
+  "start_line": 31803,
+  "end_line": 31808,
+  "xref_lines": 2,
+  "size_lines": 5,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "sub_167D08",
+  "start_line": 31818,
+  "end_line": 31841,
+  "xref_lines": 0,
+  "size_lines": 23,
+  "bucket": "unnamed"
+ },
+ {
+  "name": "sub_167D54",
+  "start_line": 31856,
+  "end_line": 31901,
+  "xref_lines": 2,
+  "size_lines": 45,
+  "bucket": "unnamed"
+ },
+ {
+  "name": "init_mouse_subroutine",
+  "start_line": 31911,
+  "end_line": 31971,
+  "xref_lines": 1,
+  "size_lines": 60,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "init_mouse",
+  "start_line": 31979,
+  "end_line": 32035,
+  "xref_lines": 1,
+  "size_lines": 56,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "mouse_function",
+  "start_line": 32043,
+  "end_line": 32087,
+  "xref_lines": 1,
+  "size_lines": 44,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "close_mouse",
+  "start_line": 32095,
+  "end_line": 32113,
+  "xref_lines": 0,
+  "size_lines": 18,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "show_mouse",
+  "start_line": 32121,
+  "end_line": 32129,
+  "xref_lines": 2,
+  "size_lines": 8,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "mouse_moved_sub2",
+  "start_line": 32138,
+  "end_line": 32141,
+  "xref_lines": 1,
+  "size_lines": 3,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "mouse_moved_sub",
+  "start_line": 32149,
+  "end_line": 32178,
+  "xref_lines": 0,
+  "size_lines": 29,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "_mouse_interrupt",
+  "start_line": 32186,
+  "end_line": 32305,
+  "xref_lines": 1,
+  "size_lines": 119,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "set_mouse_limits",
+  "start_line": 32315,
+  "end_line": 32380,
+  "xref_lines": 1,
+  "size_lines": 65,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "reset_mouse_limits",
+  "start_line": 32388,
+  "end_line": 32405,
+  "xref_lines": 1,
+  "size_lines": 17,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "set_mouse_cursor",
+  "start_line": 32413,
+  "end_line": 32476,
+  "xref_lines": 2,
+  "size_lines": 63,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "arrow_cursor",
+  "start_line": 32484,
+  "end_line": 32498,
+  "xref_lines": 1,
+  "size_lines": 14,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "load_mouse_cursor",
+  "start_line": 32506,
+  "end_line": 32574,
+  "xref_lines": 0,
+  "size_lines": 68,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "mouse_input",
+  "start_line": 32582,
+  "end_line": 32589,
+  "xref_lines": 0,
+  "size_lines": 7,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "_show_mouse",
+  "start_line": 32597,
+  "end_line": 32747,
+  "xref_lines": 2,
+  "size_lines": 150,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "hide_mouse",
+  "start_line": 32755,
+  "end_line": 32821,
+  "xref_lines": 2,
+  "size_lines": 66,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "hidden_inside",
+  "start_line": 32829,
+  "end_line": 32865,
+  "xref_lines": 2,
+  "size_lines": 36,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "is_mouse_pushed",
+  "start_line": 32873,
+  "end_line": 32876,
+  "xref_lines": 0,
+  "size_lines": 3,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "push_mouse_inside",
+  "start_line": 32884,
+  "end_line": 32958,
+  "xref_lines": 2,
+  "size_lines": 74,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "push_mouse",
+  "start_line": 32966,
+  "end_line": 32985,
+  "xref_lines": 2,
+  "size_lines": 19,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "pop_mouse",
+  "start_line": 32993,
+  "end_line": 33030,
+  "xref_lines": 2,
+  "size_lines": 37,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "move_mouse",
+  "start_line": 33040,
+  "end_line": 33108,
+  "xref_lines": 1,
+  "size_lines": 68,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_mouse",
+  "start_line": 33118,
+  "end_line": 33219,
+  "xref_lines": 2,
+  "size_lines": 101,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_mouse_button",
+  "start_line": 33227,
+  "end_line": 33235,
+  "xref_lines": 2,
+  "size_lines": 8,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "mouse_wait",
+  "start_line": 33241,
+  "end_line": 33247,
+  "xref_lines": 1,
+  "size_lines": 6,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "reset_click",
+  "start_line": 33257,
+  "end_line": 33294,
+  "xref_lines": 0,
+  "size_lines": 37,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_click_count",
+  "start_line": 33304,
+  "end_line": 33360,
+  "xref_lines": 1,
+  "size_lines": 56,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "mouse_moved",
+  "start_line": 33366,
+  "end_line": 33410,
+  "xref_lines": 0,
+  "size_lines": 44,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "video_sync",
+  "start_line": 33418,
+  "end_line": 33445,
+  "xref_lines": 1,
+  "size_lines": 27,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "_color_cycle_interrupt",
+  "start_line": 33453,
+  "end_line": 33552,
+  "xref_lines": 1,
+  "size_lines": 99,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "disable_color_cycling",
+  "start_line": 33558,
+  "end_line": 33574,
+  "xref_lines": 1,
+  "size_lines": 16,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "enable_color_cycling",
+  "start_line": 33582,
+  "end_line": 33628,
+  "xref_lines": 1,
+  "size_lines": 46,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "init_fonts",
+  "start_line": 33636,
+  "end_line": 33674,
+  "xref_lines": 1,
+  "size_lines": 38,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "close_fonts",
+  "start_line": 33682,
+  "end_line": 33698,
+  "xref_lines": 2,
+  "size_lines": 16,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "close_font",
+  "start_line": 33707,
+  "end_line": 33750,
+  "xref_lines": 2,
+  "size_lines": 43,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_font_rec",
+  "start_line": 33758,
+  "end_line": 33777,
+  "xref_lines": 1,
+  "size_lines": 19,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "set_font",
+  "start_line": 33786,
+  "end_line": 34061,
+  "xref_lines": 2,
+  "size_lines": 275,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_font",
+  "start_line": 34069,
+  "end_line": 34072,
+  "xref_lines": 1,
+  "size_lines": 3,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "load_font_palette",
+  "start_line": 34082,
+  "end_line": 34228,
+  "xref_lines": 0,
+  "size_lines": 146,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "set_tab_width",
+  "start_line": 34237,
+  "end_line": 34248,
+  "xref_lines": 0,
+  "size_lines": 11,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_font_height",
+  "start_line": 34254,
+  "end_line": 34272,
+  "xref_lines": 1,
+  "size_lines": 18,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_char_width",
+  "start_line": 34281,
+  "end_line": 34360,
+  "xref_lines": 2,
+  "size_lines": 79,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_string_width",
+  "start_line": 34367,
+  "end_line": 34396,
+  "xref_lines": 2,
+  "size_lines": 29,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_font_color",
+  "start_line": 34403,
+  "end_line": 34411,
+  "xref_lines": 1,
+  "size_lines": 8,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "set_font_color",
+  "start_line": 34420,
+  "end_line": 34425,
+  "xref_lines": 2,
+  "size_lines": 5,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "set_font_outline",
+  "start_line": 34432,
+  "end_line": 34440,
+  "xref_lines": 2,
+  "size_lines": 8,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_font_position",
+  "start_line": 34447,
+  "end_line": 34463,
+  "xref_lines": 0,
+  "size_lines": 16,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "set_font_position",
+  "start_line": 34473,
+  "end_line": 34478,
+  "xref_lines": 2,
+  "size_lines": 5,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "print_font",
+  "start_line": 34486,
+  "end_line": 34516,
+  "xref_lines": 2,
+  "size_lines": 30,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "print_font_char",
+  "start_line": 34526,
+  "end_line": 35118,
+  "xref_lines": 1,
+  "size_lines": 592,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "toggle_cursor",
+  "start_line": 35126,
+  "end_line": 35141,
+  "xref_lines": 2,
+  "size_lines": 15,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "text_cursor",
+  "start_line": 35151,
+  "end_line": 35167,
+  "xref_lines": 2,
+  "size_lines": 16,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "CXBUF2BUFINIT",
+  "start_line": 35175,
+  "end_line": 35208,
+  "xref_lines": 1,
+  "size_lines": 33,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "CXBUF2BUFCLOSE",
+  "start_line": 35214,
+  "end_line": 35228,
+  "xref_lines": 1,
+  "size_lines": 14,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "CXBUF2BUFCOMPRESS",
+  "start_line": 35236,
+  "end_line": 35303,
+  "xref_lines": 0,
+  "size_lines": 67,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "ENCODE_BUF",
+  "start_line": 35313,
+  "end_line": 35440,
+  "xref_lines": 1,
+  "size_lines": 127,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "CXBUF2BUFEXPAND",
+  "start_line": 35448,
+  "end_line": 35573,
+  "xref_lines": 1,
+  "size_lines": 125,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "VESA_set_mode",
+  "start_line": 35583,
+  "end_line": 35698,
+  "xref_lines": 1,
+  "size_lines": 115,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "VESA_set_bank",
+  "start_line": 35708,
+  "end_line": 35755,
+  "xref_lines": 1,
+  "size_lines": 47,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "purge_background",
+  "start_line": 35763,
+  "end_line": 35775,
+  "xref_lines": 1,
+  "size_lines": 12,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "init_background",
+  "start_line": 35782,
+  "end_line": 35811,
+  "xref_lines": 0,
+  "size_lines": 29,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "kill_background",
+  "start_line": 35819,
+  "end_line": 35827,
+  "xref_lines": 1,
+  "size_lines": 8,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "is_background",
+  "start_line": 35835,
+  "end_line": 35841,
+  "xref_lines": 2,
+  "size_lines": 6,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "draw_background",
+  "start_line": 35849,
+  "end_line": 35944,
+  "xref_lines": 1,
+  "size_lines": 95,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "tolower",
+  "start_line": 35953,
+  "end_line": 35964,
+  "xref_lines": 2,
+  "size_lines": 11,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "time",
+  "start_line": 35973,
+  "end_line": 36001,
+  "xref_lines": 2,
+  "size_lines": 28,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "_localtime",
+  "start_line": 36009,
+  "end_line": 36046,
+  "xref_lines": 2,
+  "size_lines": 37,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "localtime",
+  "start_line": 36054,
+  "end_line": 36061,
+  "xref_lines": 2,
+  "size_lines": 7,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "mem_putc",
+  "start_line": 36070,
+  "end_line": 36082,
+  "xref_lines": 1,
+  "size_lines": 12,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "sprintf",
+  "start_line": 36091,
+  "end_line": 36117,
+  "xref_lines": 2,
+  "size_lines": 26,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "file_putc",
+  "start_line": 36126,
+  "end_line": 36135,
+  "xref_lines": 1,
+  "size_lines": 9,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "__fprtf",
+  "start_line": 36144,
+  "end_line": 36206,
+  "xref_lines": 2,
+  "size_lines": 62,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "access",
+  "start_line": 36215,
+  "end_line": 36248,
+  "xref_lines": 1,
+  "size_lines": 33,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "__CMain",
+  "start_line": 36256,
+  "end_line": 36283,
+  "xref_lines": 1,
+  "size_lines": 27,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "__InitRtns",
+  "start_line": 36300,
+  "end_line": 36358,
+  "xref_lines": 1,
+  "size_lines": 58,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "__FiniRtns",
+  "start_line": 36367,
+  "end_line": 36427,
+  "xref_lines": 1,
+  "size_lines": 60,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "nullsub_5",
+  "start_line": 36433,
+  "end_line": 36436,
+  "xref_lines": 2,
+  "size_lines": 3,
+  "bucket": "unnamed"
+ },
+ {
+  "name": "__Init_Argv",
+  "start_line": 36443,
+  "end_line": 36523,
+  "xref_lines": 1,
+  "size_lines": 80,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "_SplitParms",
+  "start_line": 36532,
+  "end_line": 36684,
+  "xref_lines": 2,
+  "size_lines": 152,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "__STOSB",
+  "start_line": 36695,
+  "end_line": 36728,
+  "xref_lines": 2,
+  "size_lines": 33,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "__STOSD",
+  "start_line": 36739,
+  "end_line": 36804,
+  "xref_lines": 2,
+  "size_lines": 65,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "init_windows",
+  "start_line": 36812,
+  "end_line": 36824,
+  "xref_lines": 1,
+  "size_lines": 12,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "make_xwindow",
+  "start_line": 36834,
+  "end_line": 36913,
+  "xref_lines": 2,
+  "size_lines": 79,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "set_window_font",
+  "start_line": 36923,
+  "end_line": 36943,
+  "xref_lines": 1,
+  "size_lines": 20,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "bevel_window",
+  "start_line": 36953,
+  "end_line": 36972,
+  "xref_lines": 0,
+  "size_lines": 19,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "remove_window",
+  "start_line": 36982,
+  "end_line": 37031,
+  "xref_lines": 1,
+  "size_lines": 49,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "remove_windows",
+  "start_line": 37041,
+  "end_line": 37087,
+  "xref_lines": 1,
+  "size_lines": 46,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "clear_window",
+  "start_line": 37095,
+  "end_line": 37132,
+  "xref_lines": 0,
+  "size_lines": 37,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "_clear_window",
+  "start_line": 37142,
+  "end_line": 37179,
+  "xref_lines": 0,
+  "size_lines": 37,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "get_window_xy",
+  "start_line": 37189,
+  "end_line": 37211,
+  "xref_lines": 2,
+  "size_lines": 22,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_current_xy",
+  "start_line": 37221,
+  "end_line": 37243,
+  "xref_lines": 2,
+  "size_lines": 22,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "set_window_xy",
+  "start_line": 37253,
+  "end_line": 37278,
+  "xref_lines": 2,
+  "size_lines": 25,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "select_window",
+  "start_line": 37288,
+  "end_line": 37309,
+  "xref_lines": 0,
+  "size_lines": 21,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "enable_window_buffer",
+  "start_line": 37317,
+  "end_line": 37330,
+  "xref_lines": 1,
+  "size_lines": 13,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "disable_window_buffer",
+  "start_line": 37336,
+  "end_line": 37362,
+  "xref_lines": 1,
+  "size_lines": 26,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "flush_window_buffer",
+  "start_line": 37368,
+  "end_line": 37396,
+  "xref_lines": 2,
+  "size_lines": 28,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "set_window_pause",
+  "start_line": 37404,
+  "end_line": 37422,
+  "xref_lines": 0,
+  "size_lines": 18,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "release_window_pause",
+  "start_line": 37430,
+  "end_line": 37440,
+  "xref_lines": 0,
+  "size_lines": 10,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "set_window_margins",
+  "start_line": 37448,
+  "end_line": 37499,
+  "xref_lines": 0,
+  "size_lines": 51,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "write_window_cr",
+  "start_line": 37509,
+  "end_line": 37657,
+  "xref_lines": 2,
+  "size_lines": 148,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "_write_window",
+  "start_line": 37667,
+  "end_line": 37679,
+  "xref_lines": 1,
+  "size_lines": 12,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "get_write_width",
+  "start_line": 37689,
+  "end_line": 37706,
+  "xref_lines": 2,
+  "size_lines": 17,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_window_y2",
+  "start_line": 37716,
+  "end_line": 37903,
+  "xref_lines": 0,
+  "size_lines": 187,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "write_window",
+  "start_line": 37913,
+  "end_line": 38350,
+  "xref_lines": 2,
+  "size_lines": 437,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "wputchar",
+  "start_line": 38360,
+  "end_line": 38377,
+  "xref_lines": 2,
+  "size_lines": 17,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "wprintf",
+  "start_line": 38386,
+  "end_line": 38946,
+  "xref_lines": 2,
+  "size_lines": 560,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "winput",
+  "start_line": 38956,
+  "end_line": 39157,
+  "xref_lines": 0,
+  "size_lines": 201,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "pop_up_error",
+  "start_line": 39167,
+  "end_line": 39220,
+  "xref_lines": 0,
+  "size_lines": 53,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "pop_up",
+  "start_line": 39230,
+  "end_line": 39453,
+  "xref_lines": 1,
+  "size_lines": 223,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "pop_off",
+  "start_line": 39459,
+  "end_line": 39505,
+  "xref_lines": 2,
+  "size_lines": 46,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "initrandnext",
+  "start_line": 39512,
+  "end_line": 39516,
+  "xref_lines": 2,
+  "size_lines": 4,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "rand_",
+  "start_line": 39523,
+  "end_line": 39538,
+  "xref_lines": 1,
+  "size_lines": 15,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "srand_",
+  "start_line": 39547,
+  "end_line": 39558,
+  "xref_lines": 0,
+  "size_lines": 11,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "__open_flags_",
+  "start_line": 39567,
+  "end_line": 39673,
+  "xref_lines": 1,
+  "size_lines": 106,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "__doopen_",
+  "start_line": 39682,
+  "end_line": 39782,
+  "xref_lines": 2,
+  "size_lines": 100,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "_fsopen_",
+  "start_line": 39791,
+  "end_line": 39807,
+  "xref_lines": 1,
+  "size_lines": 16,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "fopen_",
+  "start_line": 39814,
+  "end_line": 39821,
+  "xref_lines": 2,
+  "size_lines": 7,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "close_file_",
+  "start_line": 39830,
+  "end_line": 39893,
+  "xref_lines": 1,
+  "size_lines": 63,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "freopen",
+  "start_line": 39902,
+  "end_line": 39920,
+  "xref_lines": 0,
+  "size_lines": 18,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "fclose_",
+  "start_line": 39929,
+  "end_line": 39960,
+  "xref_lines": 2,
+  "size_lines": 31,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "__shutdown_stream_",
+  "start_line": 39969,
+  "end_line": 39980,
+  "xref_lines": 2,
+  "size_lines": 11,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "__hex_",
+  "start_line": 39989,
+  "end_line": 39998,
+  "xref_lines": 2,
+  "size_lines": 9,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "__MkTmpFile_",
+  "start_line": 40007,
+  "end_line": 40050,
+  "xref_lines": 1,
+  "size_lines": 43,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "__doclose_",
+  "start_line": 40059,
+  "end_line": 40126,
+  "xref_lines": 2,
+  "size_lines": 67,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "setvbuf_",
+  "start_line": 40135,
+  "end_line": 40194,
+  "xref_lines": 2,
+  "size_lines": 59,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "fgetc_",
+  "start_line": 40203,
+  "end_line": 40278,
+  "xref_lines": 1,
+  "size_lines": 75,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "__filbuf_",
+  "start_line": 40287,
+  "end_line": 40316,
+  "xref_lines": 2,
+  "size_lines": 29,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "__fill_buffer_",
+  "start_line": 40325,
+  "end_line": 40410,
+  "xref_lines": 2,
+  "size_lines": 85,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "fread_",
+  "start_line": 40419,
+  "end_line": 40634,
+  "xref_lines": 1,
+  "size_lines": 215,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "fputc_",
+  "start_line": 40643,
+  "end_line": 40728,
+  "xref_lines": 1,
+  "size_lines": 85,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "fwrite_",
+  "start_line": 40737,
+  "end_line": 40957,
+  "xref_lines": 1,
+  "size_lines": 220,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "__update_buffer_",
+  "start_line": 40966,
+  "end_line": 41004,
+  "xref_lines": 2,
+  "size_lines": 38,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "fseek_",
+  "start_line": 41013,
+  "end_line": 41149,
+  "xref_lines": 1,
+  "size_lines": 136,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "ftell_",
+  "start_line": 41158,
+  "end_line": 41191,
+  "xref_lines": 1,
+  "size_lines": 33,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "filelength_",
+  "start_line": 41200,
+  "end_line": 41231,
+  "xref_lines": 0,
+  "size_lines": 31,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "j___fprtf_",
+  "start_line": 41238,
+  "end_line": 41240,
+  "xref_lines": 1,
+  "size_lines": 2,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "fgets_",
+  "start_line": 41249,
+  "end_line": 41312,
+  "xref_lines": 1,
+  "size_lines": 63,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "segread_",
+  "start_line": 41321,
+  "end_line": 41338,
+  "xref_lines": 1,
+  "size_lines": 17,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "int386x_",
+  "start_line": 41347,
+  "end_line": 41363,
+  "xref_lines": 2,
+  "size_lines": 16,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "__MemAllocator",
+  "start_line": 41374,
+  "end_line": 41464,
+  "xref_lines": 1,
+  "size_lines": 90,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "__MemFree",
+  "start_line": 41480,
+  "end_line": 41640,
+  "xref_lines": 1,
+  "size_lines": 160,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "strnicmp_",
+  "start_line": 41651,
+  "end_line": 41713,
+  "xref_lines": 2,
+  "size_lines": 62,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "__scnf_",
+  "start_line": 41722,
+  "end_line": 41995,
+  "xref_lines": 1,
+  "size_lines": 273,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "get_opt_",
+  "start_line": 42004,
+  "end_line": 42121,
+  "xref_lines": 2,
+  "size_lines": 117,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "scan_white_",
+  "start_line": 42130,
+  "end_line": 42164,
+  "xref_lines": 1,
+  "size_lines": 34,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "scan_char_",
+  "start_line": 42173,
+  "end_line": 42259,
+  "xref_lines": 1,
+  "size_lines": 86,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "scan_string_",
+  "start_line": 42268,
+  "end_line": 42408,
+  "xref_lines": 1,
+  "size_lines": 140,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "report_scan_",
+  "start_line": 42417,
+  "end_line": 42482,
+  "xref_lines": 2,
+  "size_lines": 65,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "makelist_",
+  "start_line": 42491,
+  "end_line": 42528,
+  "xref_lines": 1,
+  "size_lines": 37,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "scan_arb_",
+  "start_line": 42537,
+  "end_line": 42660,
+  "xref_lines": 1,
+  "size_lines": 123,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "scan_float_",
+  "start_line": 42669,
+  "end_line": 43000,
+  "xref_lines": 1,
+  "size_lines": 331,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "scan_int_",
+  "start_line": 43009,
+  "end_line": 43255,
+  "xref_lines": 1,
+  "size_lines": 246,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "radix_value_",
+  "start_line": 43264,
+  "end_line": 43289,
+  "xref_lines": 2,
+  "size_lines": 25,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "cgetw_",
+  "start_line": 43298,
+  "end_line": 43320,
+  "xref_lines": 2,
+  "size_lines": 22,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "__unlink_",
+  "start_line": 43329,
+  "end_line": 43362,
+  "xref_lines": 2,
+  "size_lines": 33,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "__FreeDPMIBlocks_",
+  "start_line": 43369,
+  "end_line": 43426,
+  "xref_lines": 2,
+  "size_lines": 57,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "__ReAllocDPMIBlock_",
+  "start_line": 43435,
+  "end_line": 43555,
+  "xref_lines": 0,
+  "size_lines": 120,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "__LinkUpNewMHeap_",
+  "start_line": 43564,
+  "end_line": 43619,
+  "xref_lines": 2,
+  "size_lines": 55,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "__LastFree_",
+  "start_line": 43626,
+  "end_line": 43665,
+  "xref_lines": 1,
+  "size_lines": 39,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "RationalAlloc_",
+  "start_line": 43672,
+  "end_line": 43787,
+  "xref_lines": 1,
+  "size_lines": 115,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "__CreateNewNHeap_",
+  "start_line": 43794,
+  "end_line": 43874,
+  "xref_lines": 1,
+  "size_lines": 80,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "__ExpandDGROUP_",
+  "start_line": 43881,
+  "end_line": 44033,
+  "xref_lines": 1,
+  "size_lines": 152,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "__AdjustAmount_",
+  "start_line": 44042,
+  "end_line": 44108,
+  "xref_lines": 2,
+  "size_lines": 66,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "__nmemneed",
+  "start_line": 44114,
+  "end_line": 44117,
+  "xref_lines": 1,
+  "size_lines": 3,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "_AIL_API_lock",
+  "start_line": 44125,
+  "end_line": 44136,
+  "xref_lines": 1,
+  "size_lines": 11,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_unlock",
+  "start_line": 44142,
+  "end_line": 44152,
+  "xref_lines": 1,
+  "size_lines": 10,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_API_timer",
+  "start_line": 44158,
+  "end_line": 44267,
+  "xref_lines": 1,
+  "size_lines": 109,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_set_PIT_divisor",
+  "start_line": 44276,
+  "end_line": 44318,
+  "xref_lines": 2,
+  "size_lines": 42,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_set_PIT_period",
+  "start_line": 44327,
+  "end_line": 44354,
+  "xref_lines": 1,
+  "size_lines": 27,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_program_timers",
+  "start_line": 44360,
+  "end_line": 44405,
+  "xref_lines": 1,
+  "size_lines": 45,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_AILA_startup",
+  "start_line": 44411,
+  "end_line": 44498,
+  "xref_lines": 0,
+  "size_lines": 87,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_AILA_shutdown",
+  "start_line": 44504,
+  "end_line": 44537,
+  "xref_lines": 1,
+  "size_lines": 33,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_AIL_API_get_real_vect",
+  "start_line": 44546,
+  "end_line": 44581,
+  "xref_lines": 1,
+  "size_lines": 35,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_set_real_vect",
+  "start_line": 44590,
+  "end_line": 44618,
+  "xref_lines": 1,
+  "size_lines": 28,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_thunk_proc",
+  "start_line": 44626,
+  "end_line": 44683,
+  "xref_lines": 2,
+  "size_lines": 57,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_AIL_API_set_USE16_ISR",
+  "start_line": 44692,
+  "end_line": 44940,
+  "xref_lines": 1,
+  "size_lines": 248,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_restore_USE16_ISR",
+  "start_line": 44949,
+  "end_line": 44988,
+  "xref_lines": 1,
+  "size_lines": 39,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_disable_interrupts",
+  "start_line": 44994,
+  "end_line": 44999,
+  "xref_lines": 0,
+  "size_lines": 5,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_restore_interrupts",
+  "start_line": 45008,
+  "end_line": 45027,
+  "xref_lines": 1,
+  "size_lines": 19,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_switch_stack",
+  "start_line": 45035,
+  "end_line": 45064,
+  "xref_lines": 0,
+  "size_lines": 29,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_restore_stack",
+  "start_line": 45073,
+  "end_line": 45091,
+  "xref_lines": 0,
+  "size_lines": 18,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_API_call_driver",
+  "start_line": 45100,
+  "end_line": 45202,
+  "xref_lines": 1,
+  "size_lines": 102,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_delay",
+  "start_line": 45211,
+  "end_line": 45252,
+  "xref_lines": 1,
+  "size_lines": 41,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_background",
+  "start_line": 45258,
+  "end_line": 45268,
+  "xref_lines": 2,
+  "size_lines": 10,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_register_timer",
+  "start_line": 45277,
+  "end_line": 45314,
+  "xref_lines": 2,
+  "size_lines": 37,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_set_timer_user",
+  "start_line": 45323,
+  "end_line": 45349,
+  "xref_lines": 1,
+  "size_lines": 26,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_release_timer_handle",
+  "start_line": 45358,
+  "end_line": 45380,
+  "xref_lines": 1,
+  "size_lines": 22,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_release_all_timers",
+  "start_line": 45386,
+  "end_line": 45404,
+  "xref_lines": 1,
+  "size_lines": 18,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_start_timer",
+  "start_line": 45413,
+  "end_line": 45439,
+  "xref_lines": 2,
+  "size_lines": 26,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_start_all_timers",
+  "start_line": 45445,
+  "end_line": 45463,
+  "xref_lines": 1,
+  "size_lines": 18,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_stop_timer",
+  "start_line": 45472,
+  "end_line": 45497,
+  "xref_lines": 1,
+  "size_lines": 25,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_stop_all_timers",
+  "start_line": 45503,
+  "end_line": 45521,
+  "xref_lines": 1,
+  "size_lines": 18,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_set_timer_period",
+  "start_line": 45530,
+  "end_line": 45552,
+  "xref_lines": 1,
+  "size_lines": 22,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_set_timer_frequency",
+  "start_line": 45561,
+  "end_line": 45587,
+  "xref_lines": 2,
+  "size_lines": 26,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_set_timer_divisor",
+  "start_line": 45596,
+  "end_line": 45631,
+  "xref_lines": 1,
+  "size_lines": 35,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_interrupt_divisor",
+  "start_line": 45637,
+  "end_line": 45646,
+  "xref_lines": 1,
+  "size_lines": 9,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AILA_VMM_lock",
+  "start_line": 45652,
+  "end_line": 45663,
+  "xref_lines": 2,
+  "size_lines": 11,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "AIL_start",
+  "start_line": 45669,
+  "end_line": 45711,
+  "xref_lines": 2,
+  "size_lines": 42,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "_AIL_driver_server",
+  "start_line": 45719,
+  "end_line": 45748,
+  "xref_lines": 1,
+  "size_lines": 29,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_ASC_val",
+  "start_line": 45756,
+  "end_line": 45849,
+  "xref_lines": 2,
+  "size_lines": 93,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_AIL_API_read_INI",
+  "start_line": 45857,
+  "end_line": 46123,
+  "xref_lines": 1,
+  "size_lines": 266,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_set_preference",
+  "start_line": 46131,
+  "end_line": 46142,
+  "xref_lines": 1,
+  "size_lines": 11,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_install_driver",
+  "start_line": 46150,
+  "end_line": 46386,
+  "xref_lines": 1,
+  "size_lines": 236,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_uninstall_driver",
+  "start_line": 46394,
+  "end_line": 46476,
+  "xref_lines": 1,
+  "size_lines": 82,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_get_IO_environment",
+  "start_line": 46484,
+  "end_line": 46535,
+  "xref_lines": 1,
+  "size_lines": 51,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_startup",
+  "start_line": 46541,
+  "end_line": 46631,
+  "xref_lines": 2,
+  "size_lines": 90,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_shutdown",
+  "start_line": 46637,
+  "end_line": 46661,
+  "xref_lines": 1,
+  "size_lines": 24,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "AIL_end",
+  "start_line": 46667,
+  "end_line": 46710,
+  "xref_lines": 2,
+  "size_lines": 43,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "isatty_",
+  "start_line": 46719,
+  "end_line": 46738,
+  "xref_lines": 2,
+  "size_lines": 19,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "setbuf_",
+  "start_line": 46747,
+  "end_line": 46761,
+  "xref_lines": 1,
+  "size_lines": 14,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "convDec_",
+  "start_line": 46770,
+  "end_line": 46799,
+  "xref_lines": 2,
+  "size_lines": 29,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "_asctime_",
+  "start_line": 46807,
+  "end_line": 46887,
+  "xref_lines": 2,
+  "size_lines": 80,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_ctime_",
+  "start_line": 46895,
+  "end_line": 46909,
+  "xref_lines": 0,
+  "size_lines": 14,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "asctime_",
+  "start_line": 46921,
+  "end_line": 46927,
+  "xref_lines": 1,
+  "size_lines": 6,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "strcpy_",
+  "start_line": 46936,
+  "end_line": 46957,
+  "xref_lines": 2,
+  "size_lines": 21,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "AILSS_start_",
+  "start_line": 46963,
+  "end_line": 47018,
+  "xref_lines": 2,
+  "size_lines": 55,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "_SS_start_DIG_driver_playback",
+  "start_line": 47028,
+  "end_line": 47059,
+  "xref_lines": 0,
+  "size_lines": 31,
+  "bucket": "miles_ail_dig"
+ },
+ {
+  "name": "_SS_stop_DIG_driver_playback",
+  "start_line": 47069,
+  "end_line": 47089,
+  "xref_lines": 0,
+  "size_lines": 20,
+  "bucket": "miles_ail_dig"
+ },
+ {
+  "name": "_SS_build_amplitude_tables",
+  "start_line": 47099,
+  "end_line": 47340,
+  "xref_lines": 2,
+  "size_lines": 241,
+  "bucket": "miles_ail_dig"
+ },
+ {
+  "name": "_SS_serve",
+  "start_line": 47350,
+  "end_line": 47505,
+  "xref_lines": 1,
+  "size_lines": 155,
+  "bucket": "miles_ail_dig"
+ },
+ {
+  "name": "_SS_configure_buffers",
+  "start_line": 47523,
+  "end_line": 47994,
+  "xref_lines": 9,
+  "size_lines": 471,
+  "bucket": "miles_ail_dig"
+ },
+ {
+  "name": "_SS_attempt_DIG_detection",
+  "start_line": 48004,
+  "end_line": 48116,
+  "xref_lines": 2,
+  "size_lines": 112,
+  "bucket": "miles_ail_dig"
+ },
+ {
+  "name": "_SS_destroy_DIG_driver",
+  "start_line": 48126,
+  "end_line": 48196,
+  "xref_lines": 1,
+  "size_lines": 70,
+  "bucket": "miles_ail_dig"
+ },
+ {
+  "name": "_SS_construct_DIG_driver",
+  "start_line": 48206,
+  "end_line": 48796,
+  "xref_lines": 2,
+  "size_lines": 590,
+  "bucket": "miles_ail_dig"
+ },
+ {
+  "name": "_AIL_API_install_DIG_driver_file",
+  "start_line": 48806,
+  "end_line": 48870,
+  "xref_lines": 1,
+  "size_lines": 64,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_install_DIG_driver_image",
+  "start_line": 48880,
+  "end_line": 48917,
+  "xref_lines": 1,
+  "size_lines": 37,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_install_DIG_INI",
+  "start_line": 48925,
+  "end_line": 48962,
+  "xref_lines": 1,
+  "size_lines": 37,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_uninstall_DIG_driver",
+  "start_line": 48972,
+  "end_line": 48982,
+  "xref_lines": 1,
+  "size_lines": 10,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_active_sample_count",
+  "start_line": 48990,
+  "end_line": 49019,
+  "xref_lines": 1,
+  "size_lines": 29,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_allocate_sample_handle",
+  "start_line": 49029,
+  "end_line": 49082,
+  "xref_lines": 1,
+  "size_lines": 53,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_release_sample_handle",
+  "start_line": 49092,
+  "end_line": 49104,
+  "xref_lines": 1,
+  "size_lines": 12,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_init_sample",
+  "start_line": 49112,
+  "end_line": 49146,
+  "xref_lines": 1,
+  "size_lines": 34,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_sample_status",
+  "start_line": 49156,
+  "end_line": 49169,
+  "xref_lines": 1,
+  "size_lines": 13,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_set_sample_address",
+  "start_line": 49179,
+  "end_line": 49197,
+  "xref_lines": 1,
+  "size_lines": 18,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_set_sample_type",
+  "start_line": 49207,
+  "end_line": 49233,
+  "xref_lines": 1,
+  "size_lines": 26,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_sample_playback_rate",
+  "start_line": 49243,
+  "end_line": 49256,
+  "xref_lines": 1,
+  "size_lines": 13,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_set_sample_playback_rate",
+  "start_line": 49266,
+  "end_line": 49280,
+  "xref_lines": 1,
+  "size_lines": 14,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_sample_volume",
+  "start_line": 49288,
+  "end_line": 49301,
+  "xref_lines": 1,
+  "size_lines": 13,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_set_sample_volume",
+  "start_line": 49311,
+  "end_line": 49330,
+  "xref_lines": 1,
+  "size_lines": 19,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_sample_pan",
+  "start_line": 49340,
+  "end_line": 49353,
+  "xref_lines": 1,
+  "size_lines": 13,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_set_sample_pan",
+  "start_line": 49363,
+  "end_line": 49382,
+  "xref_lines": 1,
+  "size_lines": 19,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_sample_position",
+  "start_line": 49392,
+  "end_line": 49407,
+  "xref_lines": 1,
+  "size_lines": 15,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_set_sample_position",
+  "start_line": 49417,
+  "end_line": 49433,
+  "xref_lines": 1,
+  "size_lines": 16,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_sample_loop_count",
+  "start_line": 49443,
+  "end_line": 49458,
+  "xref_lines": 1,
+  "size_lines": 15,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_set_sample_loop_count",
+  "start_line": 49468,
+  "end_line": 49482,
+  "xref_lines": 1,
+  "size_lines": 14,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_start_sample",
+  "start_line": 49490,
+  "end_line": 49540,
+  "xref_lines": 1,
+  "size_lines": 50,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_stop_sample",
+  "start_line": 49550,
+  "end_line": 49564,
+  "xref_lines": 1,
+  "size_lines": 14,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_resume_sample",
+  "start_line": 49574,
+  "end_line": 49588,
+  "xref_lines": 1,
+  "size_lines": 14,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_end_sample",
+  "start_line": 49598,
+  "end_line": 49630,
+  "xref_lines": 1,
+  "size_lines": 32,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_register_SOB_callback",
+  "start_line": 49640,
+  "end_line": 49658,
+  "xref_lines": 1,
+  "size_lines": 18,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_register_EOB_callback",
+  "start_line": 49668,
+  "end_line": 49686,
+  "xref_lines": 1,
+  "size_lines": 18,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_register_EOS_callback",
+  "start_line": 49696,
+  "end_line": 49714,
+  "xref_lines": 1,
+  "size_lines": 18,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_set_sample_user_data",
+  "start_line": 49724,
+  "end_line": 49741,
+  "xref_lines": 1,
+  "size_lines": 17,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "sub_170A10",
+  "start_line": 49749,
+  "end_line": 49765,
+  "xref_lines": 1,
+  "size_lines": 16,
+  "bucket": "unnamed"
+ },
+ {
+  "name": "_AIL_API_minimum_sample_buffer_size",
+  "start_line": 49780,
+  "end_line": 49857,
+  "xref_lines": 4,
+  "size_lines": 77,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_load_sample_buffer",
+  "start_line": 49867,
+  "end_line": 49921,
+  "xref_lines": 1,
+  "size_lines": 54,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_sample_buffer_ready",
+  "start_line": 49931,
+  "end_line": 49981,
+  "xref_lines": 1,
+  "size_lines": 50,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "AILSS_end_",
+  "start_line": 49989,
+  "end_line": 50044,
+  "xref_lines": 2,
+  "size_lines": 55,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "AILSFILE_start_",
+  "start_line": 50050,
+  "end_line": 50068,
+  "xref_lines": 2,
+  "size_lines": 18,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "_AIL_VOC_block_len",
+  "start_line": 50076,
+  "end_line": 50085,
+  "xref_lines": 2,
+  "size_lines": 9,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_VOC_terminate",
+  "start_line": 50093,
+  "end_line": 50117,
+  "xref_lines": 2,
+  "size_lines": 24,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_process_VOC_block",
+  "start_line": 50136,
+  "end_line": 50407,
+  "xref_lines": 9,
+  "size_lines": 271,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_VOC_EOS",
+  "start_line": 50415,
+  "end_line": 50425,
+  "xref_lines": 1,
+  "size_lines": 10,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_process_WAV_image",
+  "start_line": 50433,
+  "end_line": 50553,
+  "xref_lines": 2,
+  "size_lines": 120,
+  "bucket": "miles_ail_public"
+ },
+ {
+  "name": "_AIL_API_allocate_file_sample",
+  "start_line": 50561,
+  "end_line": 50683,
+  "xref_lines": 1,
+  "size_lines": 122,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_set_sample_file",
+  "start_line": 50691,
+  "end_line": 50781,
+  "xref_lines": 1,
+  "size_lines": 90,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_register_EOF_callback",
+  "start_line": 50789,
+  "end_line": 50807,
+  "xref_lines": 1,
+  "size_lines": 18,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "AILSFILE_end_",
+  "start_line": 50813,
+  "end_line": 50832,
+  "xref_lines": 2,
+  "size_lines": 19,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "AILXMIDI_start_",
+  "start_line": 50840,
+  "end_line": 50911,
+  "xref_lines": 2,
+  "size_lines": 71,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "_XMI_message_size",
+  "start_line": 50921,
+  "end_line": 50975,
+  "xref_lines": 0,
+  "size_lines": 54,
+  "bucket": "miles_ail_xmidi"
+ },
+ {
+  "name": "_XMI_flush_buffer",
+  "start_line": 50985,
+  "end_line": 51014,
+  "xref_lines": 2,
+  "size_lines": 29,
+  "bucket": "miles_ail_xmidi"
+ },
+ {
+  "name": "_XMI_MIDI_message",
+  "start_line": 51024,
+  "end_line": 51137,
+  "xref_lines": 2,
+  "size_lines": 113,
+  "bucket": "miles_ail_xmidi"
+ },
+ {
+  "name": "_XMI_sysex_message",
+  "start_line": 51147,
+  "end_line": 51215,
+  "xref_lines": 0,
+  "size_lines": 68,
+  "bucket": "miles_ail_xmidi"
+ },
+ {
+  "name": "_XMI_read_VLN",
+  "start_line": 51225,
+  "end_line": 51256,
+  "xref_lines": 2,
+  "size_lines": 31,
+  "bucket": "miles_ail_xmidi"
+ },
+ {
+  "name": "_XMI_swap",
+  "start_line": 51266,
+  "end_line": 51286,
+  "xref_lines": 0,
+  "size_lines": 20,
+  "bucket": "miles_ail_xmidi"
+ },
+ {
+  "name": "_XMI_find_sequence",
+  "start_line": 51296,
+  "end_line": 51416,
+  "xref_lines": 1,
+  "size_lines": 120,
+  "bucket": "miles_ail_xmidi"
+ },
+ {
+  "name": "_XMI_read_log",
+  "start_line": 51426,
+  "end_line": 51632,
+  "xref_lines": 1,
+  "size_lines": 206,
+  "bucket": "miles_ail_xmidi"
+ },
+ {
+  "name": "_XMI_write_log",
+  "start_line": 51642,
+  "end_line": 51896,
+  "xref_lines": 1,
+  "size_lines": 254,
+  "bucket": "miles_ail_xmidi"
+ },
+ {
+  "name": "_XMI_send_channel_voice_message",
+  "start_line": 51906,
+  "end_line": 52360,
+  "xref_lines": 2,
+  "size_lines": 454,
+  "bucket": "miles_ail_xmidi"
+ },
+ {
+  "name": "_XMI_flush_note_queue",
+  "start_line": 52370,
+  "end_line": 52445,
+  "xref_lines": 1,
+  "size_lines": 75,
+  "bucket": "miles_ail_xmidi"
+ },
+ {
+  "name": "_XMI_flush_channel_notes",
+  "start_line": 52455,
+  "end_line": 52518,
+  "xref_lines": 1,
+  "size_lines": 63,
+  "bucket": "miles_ail_xmidi"
+ },
+ {
+  "name": "_XMI_refresh_channel",
+  "start_line": 52526,
+  "end_line": 52749,
+  "xref_lines": 2,
+  "size_lines": 223,
+  "bucket": "miles_ail_xmidi"
+ },
+ {
+  "name": "_XMI_init_sequence_state",
+  "start_line": 52757,
+  "end_line": 52806,
+  "xref_lines": 2,
+  "size_lines": 49,
+  "bucket": "miles_ail_xmidi"
+ },
+ {
+  "name": "_XMI_rewind_sequence",
+  "start_line": 52816,
+  "end_line": 52830,
+  "xref_lines": 0,
+  "size_lines": 14,
+  "bucket": "miles_ail_xmidi"
+ },
+ {
+  "name": "_XMI_update_volume",
+  "start_line": 52840,
+  "end_line": 52878,
+  "xref_lines": 2,
+  "size_lines": 38,
+  "bucket": "miles_ail_xmidi"
+ },
+ {
+  "name": "_XMI_serve",
+  "start_line": 52888,
+  "end_line": 53517,
+  "xref_lines": 1,
+  "size_lines": 629,
+  "bucket": "miles_ail_xmidi"
+ },
+ {
+  "name": "_XMI_attempt_MDI_detection",
+  "start_line": 53527,
+  "end_line": 53617,
+  "xref_lines": 2,
+  "size_lines": 90,
+  "bucket": "miles_ail_xmidi"
+ },
+ {
+  "name": "_XMI_destroy_MDI_driver",
+  "start_line": 53627,
+  "end_line": 53672,
+  "xref_lines": 1,
+  "size_lines": 45,
+  "bucket": "miles_ail_xmidi"
+ },
+ {
+  "name": "_XMI_construct_MDI_driver",
+  "start_line": 53680,
+  "end_line": 54314,
+  "xref_lines": 2,
+  "size_lines": 634,
+  "bucket": "miles_ail_xmidi"
+ },
+ {
+  "name": "_AIL_API_install_MDI_driver_file",
+  "start_line": 54324,
+  "end_line": 54388,
+  "xref_lines": 1,
+  "size_lines": 64,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_install_MDI_driver_image",
+  "start_line": 54398,
+  "end_line": 54435,
+  "xref_lines": 1,
+  "size_lines": 37,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_install_MDI_INI",
+  "start_line": 54443,
+  "end_line": 54480,
+  "xref_lines": 1,
+  "size_lines": 37,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_uninstall_MDI_driver",
+  "start_line": 54490,
+  "end_line": 54500,
+  "xref_lines": 1,
+  "size_lines": 10,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_set_GTL_filename_prefix",
+  "start_line": 54508,
+  "end_line": 54584,
+  "xref_lines": 1,
+  "size_lines": 76,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_allocate_sequence_handle",
+  "start_line": 54594,
+  "end_line": 54647,
+  "xref_lines": 1,
+  "size_lines": 53,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_release_sequence_handle",
+  "start_line": 54657,
+  "end_line": 54674,
+  "xref_lines": 1,
+  "size_lines": 17,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_init_sequence",
+  "start_line": 54684,
+  "end_line": 55025,
+  "xref_lines": 1,
+  "size_lines": 341,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_start_sequence",
+  "start_line": 55035,
+  "end_line": 55060,
+  "xref_lines": 1,
+  "size_lines": 25,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_stop_sequence",
+  "start_line": 55070,
+  "end_line": 55151,
+  "xref_lines": 1,
+  "size_lines": 81,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_resume_sequence",
+  "start_line": 55161,
+  "end_line": 55226,
+  "xref_lines": 1,
+  "size_lines": 65,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_end_sequence",
+  "start_line": 55236,
+  "end_line": 55255,
+  "xref_lines": 1,
+  "size_lines": 19,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_set_sequence_loop_count",
+  "start_line": 55265,
+  "end_line": 55279,
+  "xref_lines": 1,
+  "size_lines": 14,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_set_sequence_tempo",
+  "start_line": 55287,
+  "end_line": 55340,
+  "xref_lines": 1,
+  "size_lines": 53,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_set_sequence_volume",
+  "start_line": 55350,
+  "end_line": 55417,
+  "xref_lines": 1,
+  "size_lines": 67,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_sequence_status",
+  "start_line": 55425,
+  "end_line": 55438,
+  "xref_lines": 1,
+  "size_lines": 13,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_sequence_loop_count",
+  "start_line": 55448,
+  "end_line": 55463,
+  "xref_lines": 1,
+  "size_lines": 15,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_sequence_tempo",
+  "start_line": 55473,
+  "end_line": 55486,
+  "xref_lines": 1,
+  "size_lines": 13,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_sequence_volume",
+  "start_line": 55496,
+  "end_line": 55509,
+  "xref_lines": 1,
+  "size_lines": 13,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_timbre_status",
+  "start_line": 55519,
+  "end_line": 55544,
+  "xref_lines": 1,
+  "size_lines": 25,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_install_timbre",
+  "start_line": 55554,
+  "end_line": 55648,
+  "xref_lines": 1,
+  "size_lines": 94,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_protect_timbre",
+  "start_line": 55658,
+  "end_line": 55686,
+  "xref_lines": 1,
+  "size_lines": 28,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_unprotect_timbre",
+  "start_line": 55696,
+  "end_line": 55724,
+  "xref_lines": 1,
+  "size_lines": 28,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_active_sequence_count",
+  "start_line": 55734,
+  "end_line": 55764,
+  "xref_lines": 1,
+  "size_lines": 30,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_controller_value",
+  "start_line": 55774,
+  "end_line": 55800,
+  "xref_lines": 1,
+  "size_lines": 26,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_channel_notes",
+  "start_line": 55810,
+  "end_line": 55844,
+  "xref_lines": 1,
+  "size_lines": 34,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_sequence_position",
+  "start_line": 55854,
+  "end_line": 55924,
+  "xref_lines": 1,
+  "size_lines": 70,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_branch_index",
+  "start_line": 55934,
+  "end_line": 56000,
+  "xref_lines": 1,
+  "size_lines": 66,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_register_prefix_callback",
+  "start_line": 56010,
+  "end_line": 56028,
+  "xref_lines": 1,
+  "size_lines": 18,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_register_trigger_callback",
+  "start_line": 56038,
+  "end_line": 56056,
+  "xref_lines": 1,
+  "size_lines": 18,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_register_sequence_callback",
+  "start_line": 56066,
+  "end_line": 56084,
+  "xref_lines": 1,
+  "size_lines": 18,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_register_event_callback",
+  "start_line": 56094,
+  "end_line": 56105,
+  "xref_lines": 1,
+  "size_lines": 11,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_register_timbre_callback",
+  "start_line": 56115,
+  "end_line": 56126,
+  "xref_lines": 1,
+  "size_lines": 11,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_set_sequence_user_data",
+  "start_line": 56136,
+  "end_line": 56154,
+  "xref_lines": 1,
+  "size_lines": 18,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_sequence_user_data",
+  "start_line": 56162,
+  "end_line": 56178,
+  "xref_lines": 1,
+  "size_lines": 16,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_register_ICA_array",
+  "start_line": 56188,
+  "end_line": 56201,
+  "xref_lines": 1,
+  "size_lines": 13,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_lock_channel",
+  "start_line": 56209,
+  "end_line": 56375,
+  "xref_lines": 1,
+  "size_lines": 166,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_release_channel",
+  "start_line": 56385,
+  "end_line": 56503,
+  "xref_lines": 1,
+  "size_lines": 118,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_map_sequence_channel",
+  "start_line": 56513,
+  "end_line": 56538,
+  "xref_lines": 1,
+  "size_lines": 25,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_true_sequence_channel",
+  "start_line": 56548,
+  "end_line": 56566,
+  "xref_lines": 1,
+  "size_lines": 18,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_send_channel_voice_message",
+  "start_line": 56576,
+  "end_line": 56656,
+  "xref_lines": 1,
+  "size_lines": 80,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_send_sysex_message",
+  "start_line": 56666,
+  "end_line": 56725,
+  "xref_lines": 1,
+  "size_lines": 59,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "sub_174500",
+  "start_line": 56733,
+  "end_line": 56804,
+  "xref_lines": 2,
+  "size_lines": 71,
+  "bucket": "unnamed"
+ },
+ {
+  "name": "AILXDIG_start",
+  "start_line": 56827,
+  "end_line": 56845,
+  "xref_lines": 2,
+  "size_lines": 18,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "_XMI_write_log_",
+  "start_line": 56853,
+  "end_line": 57108,
+  "xref_lines": 1,
+  "size_lines": 255,
+  "bucket": "miles_ail_xmidi"
+ },
+ {
+  "name": "WVL_search",
+  "start_line": 57116,
+  "end_line": 57149,
+  "xref_lines": 2,
+  "size_lines": 33,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "XDIG_set_volume",
+  "start_line": 57157,
+  "end_line": 57199,
+  "xref_lines": 2,
+  "size_lines": 42,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "XDIG_set_pitch",
+  "start_line": 57207,
+  "end_line": 57313,
+  "xref_lines": 2,
+  "size_lines": 106,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "_XDIG_TIMB_trap",
+  "start_line": 57321,
+  "end_line": 57337,
+  "xref_lines": 1,
+  "size_lines": 16,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_XDIG_MIDI_trap",
+  "start_line": 57345,
+  "end_line": 57742,
+  "xref_lines": 1,
+  "size_lines": 397,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_AIL_API_create_wave_synthesizer",
+  "start_line": 57761,
+  "end_line": 57896,
+  "xref_lines": 1,
+  "size_lines": 135,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "_AIL_API_destroy_wave_synthesizer",
+  "start_line": 57904,
+  "end_line": 57946,
+  "xref_lines": 1,
+  "size_lines": 42,
+  "bucket": "miles_ail_internal"
+ },
+ {
+  "name": "AILXDIG_end",
+  "start_line": 57952,
+  "end_line": 57971,
+  "xref_lines": 2,
+  "size_lines": 19,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "load_string_stub",
+  "start_line": 57980,
+  "end_line": 57983,
+  "xref_lines": 2,
+  "size_lines": 3,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "cx_BuildCRCTable",
+  "start_line": 57991,
+  "end_line": 58037,
+  "xref_lines": 2,
+  "size_lines": 46,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "CX_COMPUTECRC32",
+  "start_line": 58047,
+  "end_line": 58063,
+  "xref_lines": 2,
+  "size_lines": 16,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "CX_COMPUTECRC32BLOCK",
+  "start_line": 58073,
+  "end_line": 58105,
+  "xref_lines": 1,
+  "size_lines": 32,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "CXBUFCRC32",
+  "start_line": 58115,
+  "end_line": 58135,
+  "xref_lines": 0,
+  "size_lines": 20,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "allocate_memory",
+  "start_line": 58143,
+  "end_line": 58197,
+  "xref_lines": 2,
+  "size_lines": 54,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "deallocate_memory",
+  "start_line": 58205,
+  "end_line": 58276,
+  "xref_lines": 2,
+  "size_lines": 71,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "init_slide",
+  "start_line": 58284,
+  "end_line": 58363,
+  "xref_lines": 2,
+  "size_lines": 79,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "child",
+  "start_line": 58373,
+  "end_line": 58405,
+  "xref_lines": 2,
+  "size_lines": 32,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "makechild",
+  "start_line": 58415,
+  "end_line": 58446,
+  "xref_lines": 2,
+  "size_lines": 31,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "split",
+  "start_line": 58456,
+  "end_line": 58538,
+  "xref_lines": 1,
+  "size_lines": 82,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "insert_node",
+  "start_line": 58546,
+  "end_line": 58794,
+  "xref_lines": 2,
+  "size_lines": 248,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "delete_node",
+  "start_line": 58802,
+  "end_line": 58981,
+  "xref_lines": 1,
+  "size_lines": 179,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_next_match",
+  "start_line": 58989,
+  "end_line": 59027,
+  "xref_lines": 2,
+  "size_lines": 38,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "ENCODE",
+  "start_line": 59037,
+  "end_line": 59163,
+  "xref_lines": 0,
+  "size_lines": 126,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "count_t_freq",
+  "start_line": 59171,
+  "end_line": 59277,
+  "xref_lines": 1,
+  "size_lines": 106,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "write_pt_len",
+  "start_line": 59285,
+  "end_line": 59358,
+  "xref_lines": 2,
+  "size_lines": 73,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "write_c_len",
+  "start_line": 59366,
+  "end_line": 59513,
+  "xref_lines": 1,
+  "size_lines": 147,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "encode_c",
+  "start_line": 59523,
+  "end_line": 59533,
+  "xref_lines": 2,
+  "size_lines": 10,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "encode_p",
+  "start_line": 59543,
+  "end_line": 59581,
+  "xref_lines": 1,
+  "size_lines": 38,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "send_block",
+  "start_line": 59587,
+  "end_line": 59759,
+  "xref_lines": 2,
+  "size_lines": 172,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "output",
+  "start_line": 59769,
+  "end_line": 59849,
+  "xref_lines": 2,
+  "size_lines": 80,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "huf_encode_start",
+  "start_line": 59857,
+  "end_line": 59905,
+  "xref_lines": 2,
+  "size_lines": 48,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "huf_encode_end",
+  "start_line": 59913,
+  "end_line": 59931,
+  "xref_lines": 2,
+  "size_lines": 18,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "fillbuf",
+  "start_line": 59941,
+  "end_line": 60017,
+  "xref_lines": 2,
+  "size_lines": 76,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "getbits",
+  "start_line": 60027,
+  "end_line": 60044,
+  "xref_lines": 2,
+  "size_lines": 17,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "putbits",
+  "start_line": 60054,
+  "end_line": 60158,
+  "xref_lines": 2,
+  "size_lines": 104,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "init_getbits",
+  "start_line": 60166,
+  "end_line": 60176,
+  "xref_lines": 1,
+  "size_lines": 10,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "init_putbits",
+  "start_line": 60184,
+  "end_line": 60194,
+  "xref_lines": 1,
+  "size_lines": 10,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "write_byte",
+  "start_line": 60200,
+  "end_line": 60212,
+  "xref_lines": 2,
+  "size_lines": 12,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "read_byte",
+  "start_line": 60220,
+  "end_line": 60243,
+  "xref_lines": 1,
+  "size_lines": 23,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "cx_mread",
+  "start_line": 60253,
+  "end_line": 60309,
+  "xref_lines": 2,
+  "size_lines": 56,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "cx_malloc",
+  "start_line": 60318,
+  "end_line": 60321,
+  "xref_lines": 2,
+  "size_lines": 3,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "cx_free",
+  "start_line": 60329,
+  "end_line": 60334,
+  "xref_lines": 2,
+  "size_lines": 5,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "cx_memcpy",
+  "start_line": 60342,
+  "end_line": 60370,
+  "xref_lines": 2,
+  "size_lines": 28,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "cx_memmove",
+  "start_line": 60380,
+  "end_line": 60450,
+  "xref_lines": 0,
+  "size_lines": 70,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "cx_memicmp",
+  "start_line": 60460,
+  "end_line": 60521,
+  "xref_lines": 0,
+  "size_lines": 61,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "cx_memcmp",
+  "start_line": 60531,
+  "end_line": 60572,
+  "xref_lines": 0,
+  "size_lines": 41,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "cx_memset",
+  "start_line": 60582,
+  "end_line": 60603,
+  "xref_lines": 0,
+  "size_lines": 21,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "decode_start",
+  "start_line": 60611,
+  "end_line": 60618,
+  "xref_lines": 1,
+  "size_lines": 7,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "decode_",
+  "start_line": 60626,
+  "end_line": 60711,
+  "xref_lines": 1,
+  "size_lines": 85,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "__getctime",
+  "start_line": 60720,
+  "end_line": 60809,
+  "xref_lines": 1,
+  "size_lines": 89,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "mktime",
+  "start_line": 60818,
+  "end_line": 60979,
+  "xref_lines": 2,
+  "size_lines": 161,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "tryOSTimeZone",
+  "start_line": 60986,
+  "end_line": 60988,
+  "xref_lines": 0,
+  "size_lines": 2,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "tzset",
+  "start_line": 60995,
+  "end_line": 61002,
+  "xref_lines": 2,
+  "size_lines": 7,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "parse_time",
+  "start_line": 61011,
+  "end_line": 61039,
+  "xref_lines": 2,
+  "size_lines": 28,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "parse_offset",
+  "start_line": 61048,
+  "end_line": 61197,
+  "xref_lines": 2,
+  "size_lines": 149,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "parse_rule",
+  "start_line": 61206,
+  "end_line": 61314,
+  "xref_lines": 2,
+  "size_lines": 108,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "__parse_tz",
+  "start_line": 61321,
+  "end_line": 61378,
+  "xref_lines": 0,
+  "size_lines": 57,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "__brktime",
+  "start_line": 61387,
+  "end_line": 61514,
+  "xref_lines": 2,
+  "size_lines": 127,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "_gmtime",
+  "start_line": 61522,
+  "end_line": 61537,
+  "xref_lines": 1,
+  "size_lines": 15,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "gmtime",
+  "start_line": 61544,
+  "end_line": 61550,
+  "xref_lines": 0,
+  "size_lines": 6,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "__leapyear",
+  "start_line": 61559,
+  "end_line": 61597,
+  "xref_lines": 2,
+  "size_lines": 38,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "calc_yday",
+  "start_line": 61606,
+  "end_line": 61723,
+  "xref_lines": 2,
+  "size_lines": 117,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "check_order",
+  "start_line": 61732,
+  "end_line": 61754,
+  "xref_lines": 1,
+  "size_lines": 22,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "__isindst",
+  "start_line": 61763,
+  "end_line": 62075,
+  "xref_lines": 2,
+  "size_lines": 312,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "time_less",
+  "start_line": 62084,
+  "end_line": 62117,
+  "xref_lines": 2,
+  "size_lines": 33,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "__prtf",
+  "start_line": 62126,
+  "end_line": 62447,
+  "xref_lines": 2,
+  "size_lines": 321,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "getprintspecs",
+  "start_line": 62456,
+  "end_line": 62639,
+  "xref_lines": 1,
+  "size_lines": 183,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "evalflags",
+  "start_line": 62648,
+  "end_line": 62707,
+  "xref_lines": 1,
+  "size_lines": 59,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "far_strlen",
+  "start_line": 62716,
+  "end_line": 62747,
+  "xref_lines": 2,
+  "size_lines": 31,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "far_other_strlen",
+  "start_line": 62756,
+  "end_line": 62777,
+  "xref_lines": 1,
+  "size_lines": 21,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "fmt4hex",
+  "start_line": 62786,
+  "end_line": 62853,
+  "xref_lines": 2,
+  "size_lines": 67,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "FixedPoint_Format",
+  "start_line": 62862,
+  "end_line": 62997,
+  "xref_lines": 1,
+  "size_lines": 135,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "float_format",
+  "start_line": 63004,
+  "end_line": 63008,
+  "xref_lines": 1,
+  "size_lines": 4,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "formstring",
+  "start_line": 63017,
+  "end_line": 63568,
+  "xref_lines": 1,
+  "size_lines": 551,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "zupstr",
+  "start_line": 63577,
+  "end_line": 63596,
+  "xref_lines": 2,
+  "size_lines": 19,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "__InitFiles",
+  "start_line": 63603,
+  "end_line": 63649,
+  "xref_lines": 1,
+  "size_lines": 46,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "__full_io_exit",
+  "start_line": 63656,
+  "end_line": 63663,
+  "xref_lines": 1,
+  "size_lines": 7,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "docloseall",
+  "start_line": 63676,
+  "end_line": 63723,
+  "xref_lines": 1,
+  "size_lines": 47,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "__ioalloc",
+  "start_line": 63732,
+  "end_line": 63786,
+  "xref_lines": 2,
+  "size_lines": 54,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "__flush",
+  "start_line": 63795,
+  "end_line": 63876,
+  "xref_lines": 2,
+  "size_lines": 81,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "_dosret0",
+  "start_line": 63885,
+  "end_line": 63896,
+  "xref_lines": 1,
+  "size_lines": 11,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "__set_errno_dos",
+  "start_line": 63905,
+  "end_line": 63961,
+  "xref_lines": 1,
+  "size_lines": 56,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "stackavail",
+  "start_line": 63967,
+  "end_line": 63972,
+  "xref_lines": 2,
+  "size_lines": 5,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "__CommonInit",
+  "start_line": 63978,
+  "end_line": 63981,
+  "xref_lines": 1,
+  "size_lines": 3,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "_init_regions",
+  "start_line": 63989,
+  "end_line": 64010,
+  "xref_lines": 1,
+  "size_lines": 21,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "set_list_region_pics",
+  "start_line": 64020,
+  "end_line": 64033,
+  "xref_lines": 1,
+  "size_lines": 13,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "set_region_color",
+  "start_line": 64044,
+  "end_line": 64052,
+  "xref_lines": 2,
+  "size_lines": 8,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "display_region",
+  "start_line": 64060,
+  "end_line": 64146,
+  "xref_lines": 2,
+  "size_lines": 86,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "make_region",
+  "start_line": 64161,
+  "end_line": 64313,
+  "xref_lines": 5,
+  "size_lines": 152,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "remove_regions",
+  "start_line": 64323,
+  "end_line": 64401,
+  "xref_lines": 2,
+  "size_lines": 78,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "move_region",
+  "start_line": 64411,
+  "end_line": 64470,
+  "xref_lines": 0,
+  "size_lines": 59,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "resize_region",
+  "start_line": 64480,
+  "end_line": 64507,
+  "xref_lines": 0,
+  "size_lines": 27,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "clear_region",
+  "start_line": 64517,
+  "end_line": 64587,
+  "xref_lines": 1,
+  "size_lines": 70,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "_clear_region",
+  "start_line": 64597,
+  "end_line": 64653,
+  "xref_lines": 1,
+  "size_lines": 56,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "remake_region",
+  "start_line": 64663,
+  "end_line": 64718,
+  "xref_lines": 2,
+  "size_lines": 55,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "move_elevator_box",
+  "start_line": 64728,
+  "end_line": 64780,
+  "xref_lines": 2,
+  "size_lines": 52,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "click_region_toggle",
+  "start_line": 64790,
+  "end_line": 64848,
+  "xref_lines": 2,
+  "size_lines": 58,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_region",
+  "start_line": 64858,
+  "end_line": 64958,
+  "xref_lines": 1,
+  "size_lines": 100,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_region_xy",
+  "start_line": 64968,
+  "end_line": 65043,
+  "xref_lines": 2,
+  "size_lines": 75,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "make_icon_button",
+  "start_line": 65051,
+  "end_line": 65091,
+  "xref_lines": 0,
+  "size_lines": 40,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "make_button",
+  "start_line": 65099,
+  "end_line": 65169,
+  "xref_lines": 1,
+  "size_lines": 70,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "enable_button",
+  "start_line": 65179,
+  "end_line": 65269,
+  "xref_lines": 1,
+  "size_lines": 90,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "disable_button",
+  "start_line": 65279,
+  "end_line": 65343,
+  "xref_lines": 0,
+  "size_lines": 64,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "click_button",
+  "start_line": 65353,
+  "end_line": 65587,
+  "xref_lines": 0,
+  "size_lines": 234,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "new_region",
+  "start_line": 65596,
+  "end_line": 65656,
+  "xref_lines": 2,
+  "size_lines": 60,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "update_region",
+  "start_line": 65666,
+  "end_line": 65747,
+  "xref_lines": 1,
+  "size_lines": 81,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "add_to_region",
+  "start_line": 65755,
+  "end_line": 65808,
+  "xref_lines": 2,
+  "size_lines": 53,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "in_region",
+  "start_line": 65816,
+  "end_line": 66059,
+  "xref_lines": 1,
+  "size_lines": 243,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "kill_region",
+  "start_line": 66067,
+  "end_line": 66081,
+  "xref_lines": 1,
+  "size_lines": 14,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "init_pic_regions",
+  "start_line": 66091,
+  "end_line": 66094,
+  "xref_lines": 0,
+  "size_lines": 3,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "remove_pic_regions",
+  "start_line": 66102,
+  "end_line": 66112,
+  "xref_lines": 0,
+  "size_lines": 10,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "enable_pic_object",
+  "start_line": 66120,
+  "end_line": 66150,
+  "xref_lines": 0,
+  "size_lines": 30,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "disable_pic_object",
+  "start_line": 66160,
+  "end_line": 66190,
+  "xref_lines": 0,
+  "size_lines": 30,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "enable_pic_region",
+  "start_line": 66200,
+  "end_line": 66216,
+  "xref_lines": 0,
+  "size_lines": 16,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "disable_pic_region",
+  "start_line": 66226,
+  "end_line": 66242,
+  "xref_lines": 0,
+  "size_lines": 16,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_region_object",
+  "start_line": 66252,
+  "end_line": 66273,
+  "xref_lines": 0,
+  "size_lines": 21,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "make_pic_region",
+  "start_line": 66283,
+  "end_line": 66342,
+  "xref_lines": 0,
+  "size_lines": 59,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "load_pic_regions",
+  "start_line": 66352,
+  "end_line": 66537,
+  "xref_lines": 0,
+  "size_lines": 185,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "init_lists",
+  "start_line": 66545,
+  "end_line": 66578,
+  "xref_lines": 0,
+  "size_lines": 33,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "close_lists",
+  "start_line": 66586,
+  "end_line": 66601,
+  "xref_lines": 0,
+  "size_lines": 15,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "make_list",
+  "start_line": 66609,
+  "end_line": 66811,
+  "xref_lines": 0,
+  "size_lines": 202,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "remake_list",
+  "start_line": 66821,
+  "end_line": 66917,
+  "xref_lines": 0,
+  "size_lines": 96,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "remove_list",
+  "start_line": 66927,
+  "end_line": 66975,
+  "xref_lines": 2,
+  "size_lines": 48,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_list_num",
+  "start_line": 66985,
+  "end_line": 66996,
+  "xref_lines": 2,
+  "size_lines": 11,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_list",
+  "start_line": 67004,
+  "end_line": 67015,
+  "xref_lines": 0,
+  "size_lines": 11,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "update_current_list",
+  "start_line": 67023,
+  "end_line": 67042,
+  "xref_lines": 1,
+  "size_lines": 19,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "select_list",
+  "start_line": 67050,
+  "end_line": 67100,
+  "xref_lines": 2,
+  "size_lines": 50,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "select_from_list",
+  "start_line": 67110,
+  "end_line": 67169,
+  "xref_lines": 1,
+  "size_lines": 59,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_list_ptr",
+  "start_line": 67175,
+  "end_line": 67188,
+  "xref_lines": 2,
+  "size_lines": 13,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_list_size",
+  "start_line": 67196,
+  "end_line": 67207,
+  "xref_lines": 1,
+  "size_lines": 11,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_list_sort_start",
+  "start_line": 67213,
+  "end_line": 67225,
+  "xref_lines": 0,
+  "size_lines": 12,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_list_cap",
+  "start_line": 67233,
+  "end_line": 67246,
+  "xref_lines": 0,
+  "size_lines": 13,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_list_page_size",
+  "start_line": 67252,
+  "end_line": 67265,
+  "xref_lines": 2,
+  "size_lines": 13,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "get_data_from_list",
+  "start_line": 67273,
+  "end_line": 67341,
+  "xref_lines": 0,
+  "size_lines": 68,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "move_list_elevator",
+  "start_line": 67351,
+  "end_line": 67434,
+  "xref_lines": 1,
+  "size_lines": 83,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "move_list_to_char",
+  "start_line": 67444,
+  "end_line": 67519,
+  "xref_lines": 1,
+  "size_lines": 75,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "move_list_ptr_to",
+  "start_line": 67529,
+  "end_line": 67543,
+  "xref_lines": 0,
+  "size_lines": 14,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "move_list_ptr",
+  "start_line": 67553,
+  "end_line": 67671,
+  "xref_lines": 2,
+  "size_lines": 118,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "print_list",
+  "start_line": 67681,
+  "end_line": 67752,
+  "xref_lines": 2,
+  "size_lines": 71,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "display_list",
+  "start_line": 67763,
+  "end_line": 68009,
+  "xref_lines": 2,
+  "size_lines": 246,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "click_list",
+  "start_line": 68024,
+  "end_line": 68236,
+  "xref_lines": 5,
+  "size_lines": 212,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "key_list",
+  "start_line": 68257,
+  "end_line": 68374,
+  "xref_lines": 8,
+  "size_lines": 117,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "mem_putc__0",
+  "start_line": 68383,
+  "end_line": 68395,
+  "xref_lines": 1,
+  "size_lines": 12,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "vsprintf",
+  "start_line": 68404,
+  "end_line": 68415,
+  "xref_lines": 2,
+  "size_lines": 11,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "__set_errno",
+  "start_line": 68428,
+  "end_line": 68436,
+  "xref_lines": 2,
+  "size_lines": 8,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "__set_ERANGE",
+  "start_line": 68443,
+  "end_line": 68446,
+  "xref_lines": 0,
+  "size_lines": 3,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "__set_EINVAL",
+  "start_line": 68453,
+  "end_line": 68459,
+  "xref_lines": 0,
+  "size_lines": 6,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "__set_doserrno",
+  "start_line": 68468,
+  "end_line": 68475,
+  "xref_lines": 1,
+  "size_lines": 7,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "__FPE_exception",
+  "start_line": 68482,
+  "end_line": 68485,
+  "xref_lines": 0,
+  "size_lines": 3,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "open",
+  "start_line": 68494,
+  "end_line": 68516,
+  "xref_lines": 0,
+  "size_lines": 22,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "sopen",
+  "start_line": 68525,
+  "end_line": 68751,
+  "xref_lines": 2,
+  "size_lines": 226,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "__set_binary",
+  "start_line": 68760,
+  "end_line": 68822,
+  "xref_lines": 0,
+  "size_lines": 62,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "__allocfp",
+  "start_line": 68829,
+  "end_line": 68907,
+  "xref_lines": 1,
+  "size_lines": 78,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "__freefp",
+  "start_line": 68916,
+  "end_line": 68950,
+  "xref_lines": 2,
+  "size_lines": 34,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "__chktty",
+  "start_line": 68980,
+  "end_line": 69007,
+  "xref_lines": 2,
+  "size_lines": 27,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "sub_17A84B",
+  "start_line": 69013,
+  "end_line": 69016,
+  "xref_lines": 1,
+  "size_lines": 3,
+  "bucket": "unnamed"
+ },
+ {
+  "name": "lseek",
+  "start_line": 69025,
+  "end_line": 69063,
+  "xref_lines": 2,
+  "size_lines": 38,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "__close",
+  "start_line": 69072,
+  "end_line": 69100,
+  "xref_lines": 1,
+  "size_lines": 28,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "j_unlink",
+  "start_line": 69107,
+  "end_line": 69109,
+  "xref_lines": 1,
+  "size_lines": 2,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "__flushall",
+  "start_line": 69122,
+  "end_line": 69153,
+  "xref_lines": 1,
+  "size_lines": 31,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "getche",
+  "start_line": 69160,
+  "end_line": 69175,
+  "xref_lines": 1,
+  "size_lines": 15,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "__qread",
+  "start_line": 69184,
+  "end_line": 69204,
+  "xref_lines": 2,
+  "size_lines": 20,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "write",
+  "start_line": 69213,
+  "end_line": 69442,
+  "xref_lines": 1,
+  "size_lines": 229,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "tell",
+  "start_line": 69449,
+  "end_line": 69459,
+  "xref_lines": 2,
+  "size_lines": 10,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "__int386x",
+  "start_line": 69470,
+  "end_line": 69499,
+  "xref_lines": 1,
+  "size_lines": 29,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "sub_17AB54",
+  "start_line": 69508,
+  "end_line": 69523,
+  "xref_lines": 1,
+  "size_lines": 15,
+  "bucket": "unnamed"
+ },
+ {
+  "name": "_DoINTR",
+  "start_line": 69532,
+  "end_line": 69567,
+  "xref_lines": 0,
+  "size_lines": 35,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "sub_17ABC6",
+  "start_line": 69575,
+  "end_line": 69595,
+  "xref_lines": 1,
+  "size_lines": 20,
+  "bucket": "unnamed"
+ },
+ {
+  "name": "sub_17ABFA",
+  "start_line": 69601,
+  "end_line": 69608,
+  "xref_lines": 2,
+  "size_lines": 7,
+  "bucket": "unnamed"
+ },
+ {
+  "name": "__setenvp",
+  "start_line": 69657,
+  "end_line": 69764,
+  "xref_lines": 1,
+  "size_lines": 107,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "_no_support_loaded",
+  "start_line": 69773,
+  "end_line": 69782,
+  "xref_lines": 2,
+  "size_lines": 9,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "__FDFS",
+  "start_line": 69791,
+  "end_line": 69830,
+  "xref_lines": 1,
+  "size_lines": 39,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "_heapenable",
+  "start_line": 69839,
+  "end_line": 69846,
+  "xref_lines": 0,
+  "size_lines": 7,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "sbrk",
+  "start_line": 69855,
+  "end_line": 69948,
+  "xref_lines": 0,
+  "size_lines": 93,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "__brk",
+  "start_line": 69969,
+  "end_line": 70076,
+  "xref_lines": 2,
+  "size_lines": 107,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "toupper",
+  "start_line": 70085,
+  "end_line": 70096,
+  "xref_lines": 2,
+  "size_lines": 11,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "strlen",
+  "start_line": 70105,
+  "end_line": 70126,
+  "xref_lines": 2,
+  "size_lines": 21,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "strncpy",
+  "start_line": 70135,
+  "end_line": 70171,
+  "xref_lines": 2,
+  "size_lines": 36,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "_DC_0",
+  "start_line": 70338,
+  "end_line": 70349,
+  "xref_lines": 1,
+  "size_lines": 11,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_1",
+  "start_line": 70357,
+  "end_line": 70367,
+  "xref_lines": 1,
+  "size_lines": 10,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_16",
+  "start_line": 70375,
+  "end_line": 70388,
+  "xref_lines": 1,
+  "size_lines": 13,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_17",
+  "start_line": 70396,
+  "end_line": 70407,
+  "xref_lines": 1,
+  "size_lines": 11,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_18",
+  "start_line": 70415,
+  "end_line": 70428,
+  "xref_lines": 1,
+  "size_lines": 13,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_19",
+  "start_line": 70436,
+  "end_line": 70447,
+  "xref_lines": 1,
+  "size_lines": 11,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_24",
+  "start_line": 70455,
+  "end_line": 70469,
+  "xref_lines": 1,
+  "size_lines": 14,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_25",
+  "start_line": 70477,
+  "end_line": 70489,
+  "xref_lines": 1,
+  "size_lines": 12,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_26",
+  "start_line": 70497,
+  "end_line": 70511,
+  "xref_lines": 1,
+  "size_lines": 14,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_27",
+  "start_line": 70519,
+  "end_line": 70531,
+  "xref_lines": 1,
+  "size_lines": 12,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_32",
+  "start_line": 70539,
+  "end_line": 70549,
+  "xref_lines": 1,
+  "size_lines": 10,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_33",
+  "start_line": 70557,
+  "end_line": 70566,
+  "xref_lines": 1,
+  "size_lines": 9,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_36",
+  "start_line": 70574,
+  "end_line": 70585,
+  "xref_lines": 1,
+  "size_lines": 11,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_37",
+  "start_line": 70593,
+  "end_line": 70603,
+  "xref_lines": 1,
+  "size_lines": 10,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_48",
+  "start_line": 70611,
+  "end_line": 70624,
+  "xref_lines": 1,
+  "size_lines": 13,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_49",
+  "start_line": 70632,
+  "end_line": 70643,
+  "xref_lines": 1,
+  "size_lines": 11,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_50",
+  "start_line": 70651,
+  "end_line": 70664,
+  "xref_lines": 1,
+  "size_lines": 13,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_51",
+  "start_line": 70672,
+  "end_line": 70683,
+  "xref_lines": 1,
+  "size_lines": 11,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_52",
+  "start_line": 70691,
+  "end_line": 70706,
+  "xref_lines": 1,
+  "size_lines": 15,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_53",
+  "start_line": 70714,
+  "end_line": 70727,
+  "xref_lines": 1,
+  "size_lines": 13,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_54",
+  "start_line": 70735,
+  "end_line": 70750,
+  "xref_lines": 1,
+  "size_lines": 15,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_55",
+  "start_line": 70758,
+  "end_line": 70771,
+  "xref_lines": 1,
+  "size_lines": 13,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_56",
+  "start_line": 70779,
+  "end_line": 70793,
+  "xref_lines": 1,
+  "size_lines": 14,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_57",
+  "start_line": 70801,
+  "end_line": 70813,
+  "xref_lines": 1,
+  "size_lines": 12,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_58",
+  "start_line": 70821,
+  "end_line": 70835,
+  "xref_lines": 1,
+  "size_lines": 14,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_59",
+  "start_line": 70843,
+  "end_line": 70855,
+  "xref_lines": 1,
+  "size_lines": 12,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_60",
+  "start_line": 70863,
+  "end_line": 70879,
+  "xref_lines": 1,
+  "size_lines": 16,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_61",
+  "start_line": 70887,
+  "end_line": 70901,
+  "xref_lines": 1,
+  "size_lines": 14,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_62",
+  "start_line": 70909,
+  "end_line": 70925,
+  "xref_lines": 1,
+  "size_lines": 16,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_63",
+  "start_line": 70933,
+  "end_line": 70947,
+  "xref_lines": 1,
+  "size_lines": 14,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_64",
+  "start_line": 70953,
+  "end_line": 70980,
+  "xref_lines": 1,
+  "size_lines": 27,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_65",
+  "start_line": 70986,
+  "end_line": 71012,
+  "xref_lines": 1,
+  "size_lines": 26,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_80",
+  "start_line": 71018,
+  "end_line": 71065,
+  "xref_lines": 1,
+  "size_lines": 47,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_81",
+  "start_line": 71071,
+  "end_line": 71116,
+  "xref_lines": 1,
+  "size_lines": 45,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_82",
+  "start_line": 71122,
+  "end_line": 71169,
+  "xref_lines": 1,
+  "size_lines": 47,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_83",
+  "start_line": 71175,
+  "end_line": 71220,
+  "xref_lines": 1,
+  "size_lines": 45,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_88",
+  "start_line": 71226,
+  "end_line": 71274,
+  "xref_lines": 1,
+  "size_lines": 48,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_89",
+  "start_line": 71280,
+  "end_line": 71326,
+  "xref_lines": 1,
+  "size_lines": 46,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_90",
+  "start_line": 71332,
+  "end_line": 71380,
+  "xref_lines": 1,
+  "size_lines": 48,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_91",
+  "start_line": 71386,
+  "end_line": 71432,
+  "xref_lines": 1,
+  "size_lines": 46,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_96",
+  "start_line": 71438,
+  "end_line": 71465,
+  "xref_lines": 1,
+  "size_lines": 27,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_97",
+  "start_line": 71471,
+  "end_line": 71497,
+  "xref_lines": 1,
+  "size_lines": 26,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_100",
+  "start_line": 71503,
+  "end_line": 71531,
+  "xref_lines": 1,
+  "size_lines": 28,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_101",
+  "start_line": 71537,
+  "end_line": 71564,
+  "xref_lines": 1,
+  "size_lines": 27,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_112",
+  "start_line": 71570,
+  "end_line": 71617,
+  "xref_lines": 1,
+  "size_lines": 47,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_113",
+  "start_line": 71623,
+  "end_line": 71668,
+  "xref_lines": 1,
+  "size_lines": 45,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_114",
+  "start_line": 71674,
+  "end_line": 71721,
+  "xref_lines": 1,
+  "size_lines": 47,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_115",
+  "start_line": 71727,
+  "end_line": 71772,
+  "xref_lines": 1,
+  "size_lines": 45,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_116",
+  "start_line": 71778,
+  "end_line": 71827,
+  "xref_lines": 1,
+  "size_lines": 49,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_117",
+  "start_line": 71833,
+  "end_line": 71880,
+  "xref_lines": 1,
+  "size_lines": 47,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_118",
+  "start_line": 71886,
+  "end_line": 71935,
+  "xref_lines": 1,
+  "size_lines": 49,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_119",
+  "start_line": 71941,
+  "end_line": 71988,
+  "xref_lines": 1,
+  "size_lines": 47,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_120",
+  "start_line": 71994,
+  "end_line": 72042,
+  "xref_lines": 1,
+  "size_lines": 48,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_121",
+  "start_line": 72048,
+  "end_line": 72094,
+  "xref_lines": 1,
+  "size_lines": 46,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_122",
+  "start_line": 72100,
+  "end_line": 72148,
+  "xref_lines": 1,
+  "size_lines": 48,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_123",
+  "start_line": 72154,
+  "end_line": 72200,
+  "xref_lines": 1,
+  "size_lines": 46,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_124",
+  "start_line": 72206,
+  "end_line": 72256,
+  "xref_lines": 1,
+  "size_lines": 50,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_125",
+  "start_line": 72262,
+  "end_line": 72310,
+  "xref_lines": 1,
+  "size_lines": 48,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_126",
+  "start_line": 72316,
+  "end_line": 72366,
+  "xref_lines": 1,
+  "size_lines": 50,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_DC_127",
+  "start_line": 72372,
+  "end_line": 72420,
+  "xref_lines": 1,
+  "size_lines": 48,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_0",
+  "start_line": 72426,
+  "end_line": 72442,
+  "xref_lines": 1,
+  "size_lines": 16,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_1",
+  "start_line": 72448,
+  "end_line": 72465,
+  "xref_lines": 1,
+  "size_lines": 17,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_2",
+  "start_line": 72471,
+  "end_line": 72489,
+  "xref_lines": 1,
+  "size_lines": 18,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_3",
+  "start_line": 72495,
+  "end_line": 72515,
+  "xref_lines": 1,
+  "size_lines": 20,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_6",
+  "start_line": 72521,
+  "end_line": 72538,
+  "xref_lines": 1,
+  "size_lines": 17,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_7",
+  "start_line": 72544,
+  "end_line": 72563,
+  "xref_lines": 1,
+  "size_lines": 19,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_8",
+  "start_line": 72569,
+  "end_line": 72584,
+  "xref_lines": 1,
+  "size_lines": 15,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_9",
+  "start_line": 72590,
+  "end_line": 72606,
+  "xref_lines": 1,
+  "size_lines": 16,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_10",
+  "start_line": 72612,
+  "end_line": 72629,
+  "xref_lines": 1,
+  "size_lines": 17,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_11",
+  "start_line": 72635,
+  "end_line": 72654,
+  "xref_lines": 1,
+  "size_lines": 19,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_14",
+  "start_line": 72660,
+  "end_line": 72677,
+  "xref_lines": 1,
+  "size_lines": 17,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_15",
+  "start_line": 72683,
+  "end_line": 72702,
+  "xref_lines": 1,
+  "size_lines": 19,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_16",
+  "start_line": 72708,
+  "end_line": 72722,
+  "xref_lines": 1,
+  "size_lines": 14,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_17",
+  "start_line": 72728,
+  "end_line": 72743,
+  "xref_lines": 1,
+  "size_lines": 15,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_18",
+  "start_line": 72749,
+  "end_line": 72764,
+  "xref_lines": 1,
+  "size_lines": 15,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_19",
+  "start_line": 72770,
+  "end_line": 72787,
+  "xref_lines": 1,
+  "size_lines": 17,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_22",
+  "start_line": 72793,
+  "end_line": 72808,
+  "xref_lines": 1,
+  "size_lines": 15,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_23",
+  "start_line": 72814,
+  "end_line": 72831,
+  "xref_lines": 1,
+  "size_lines": 17,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_24",
+  "start_line": 72837,
+  "end_line": 72851,
+  "xref_lines": 1,
+  "size_lines": 14,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_25",
+  "start_line": 72857,
+  "end_line": 72872,
+  "xref_lines": 1,
+  "size_lines": 15,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_26",
+  "start_line": 72878,
+  "end_line": 72893,
+  "xref_lines": 1,
+  "size_lines": 15,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_27",
+  "start_line": 72899,
+  "end_line": 72916,
+  "xref_lines": 1,
+  "size_lines": 17,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_30",
+  "start_line": 72922,
+  "end_line": 72937,
+  "xref_lines": 1,
+  "size_lines": 15,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_31",
+  "start_line": 72943,
+  "end_line": 72960,
+  "xref_lines": 1,
+  "size_lines": 17,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_32",
+  "start_line": 72966,
+  "end_line": 72982,
+  "xref_lines": 1,
+  "size_lines": 16,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_33",
+  "start_line": 72988,
+  "end_line": 73005,
+  "xref_lines": 1,
+  "size_lines": 17,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_34",
+  "start_line": 73011,
+  "end_line": 73031,
+  "xref_lines": 1,
+  "size_lines": 20,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_35",
+  "start_line": 73037,
+  "end_line": 73059,
+  "xref_lines": 1,
+  "size_lines": 22,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_38",
+  "start_line": 73065,
+  "end_line": 73085,
+  "xref_lines": 1,
+  "size_lines": 20,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_39",
+  "start_line": 73091,
+  "end_line": 73113,
+  "xref_lines": 1,
+  "size_lines": 22,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_40",
+  "start_line": 73119,
+  "end_line": 73137,
+  "xref_lines": 1,
+  "size_lines": 18,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_41",
+  "start_line": 73143,
+  "end_line": 73162,
+  "xref_lines": 1,
+  "size_lines": 19,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_42",
+  "start_line": 73168,
+  "end_line": 73188,
+  "xref_lines": 1,
+  "size_lines": 20,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_43",
+  "start_line": 73194,
+  "end_line": 73216,
+  "xref_lines": 1,
+  "size_lines": 22,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_46",
+  "start_line": 73222,
+  "end_line": 73242,
+  "xref_lines": 1,
+  "size_lines": 20,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_47",
+  "start_line": 73248,
+  "end_line": 73270,
+  "xref_lines": 1,
+  "size_lines": 22,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_48",
+  "start_line": 73276,
+  "end_line": 73291,
+  "xref_lines": 1,
+  "size_lines": 15,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_49",
+  "start_line": 73297,
+  "end_line": 73313,
+  "xref_lines": 1,
+  "size_lines": 16,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_50",
+  "start_line": 73319,
+  "end_line": 73337,
+  "xref_lines": 1,
+  "size_lines": 18,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_51",
+  "start_line": 73343,
+  "end_line": 73363,
+  "xref_lines": 1,
+  "size_lines": 20,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_54",
+  "start_line": 73369,
+  "end_line": 73387,
+  "xref_lines": 1,
+  "size_lines": 18,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_55",
+  "start_line": 73393,
+  "end_line": 73413,
+  "xref_lines": 1,
+  "size_lines": 20,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_56",
+  "start_line": 73419,
+  "end_line": 73436,
+  "xref_lines": 1,
+  "size_lines": 17,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_57",
+  "start_line": 73442,
+  "end_line": 73460,
+  "xref_lines": 1,
+  "size_lines": 18,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_58",
+  "start_line": 73466,
+  "end_line": 73484,
+  "xref_lines": 1,
+  "size_lines": 18,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_59",
+  "start_line": 73490,
+  "end_line": 73510,
+  "xref_lines": 1,
+  "size_lines": 20,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_62",
+  "start_line": 73516,
+  "end_line": 73534,
+  "xref_lines": 1,
+  "size_lines": 18,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_63",
+  "start_line": 73540,
+  "end_line": 73560,
+  "xref_lines": 1,
+  "size_lines": 20,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_64",
+  "start_line": 73566,
+  "end_line": 73580,
+  "xref_lines": 1,
+  "size_lines": 14,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_65",
+  "start_line": 73586,
+  "end_line": 73602,
+  "xref_lines": 1,
+  "size_lines": 16,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_66",
+  "start_line": 73608,
+  "end_line": 73623,
+  "xref_lines": 1,
+  "size_lines": 15,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_67",
+  "start_line": 73629,
+  "end_line": 73646,
+  "xref_lines": 1,
+  "size_lines": 17,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_70",
+  "start_line": 73652,
+  "end_line": 73667,
+  "xref_lines": 1,
+  "size_lines": 15,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_71",
+  "start_line": 73673,
+  "end_line": 73690,
+  "xref_lines": 1,
+  "size_lines": 17,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_72",
+  "start_line": 73696,
+  "end_line": 73710,
+  "xref_lines": 1,
+  "size_lines": 14,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_73",
+  "start_line": 73716,
+  "end_line": 73732,
+  "xref_lines": 1,
+  "size_lines": 16,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_74",
+  "start_line": 73738,
+  "end_line": 73753,
+  "xref_lines": 1,
+  "size_lines": 15,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_75",
+  "start_line": 73759,
+  "end_line": 73776,
+  "xref_lines": 1,
+  "size_lines": 17,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_78",
+  "start_line": 73782,
+  "end_line": 73797,
+  "xref_lines": 1,
+  "size_lines": 15,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_79",
+  "start_line": 73803,
+  "end_line": 73820,
+  "xref_lines": 1,
+  "size_lines": 17,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_96",
+  "start_line": 73826,
+  "end_line": 73841,
+  "xref_lines": 1,
+  "size_lines": 15,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_97",
+  "start_line": 73847,
+  "end_line": 73864,
+  "xref_lines": 1,
+  "size_lines": 17,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_98",
+  "start_line": 73870,
+  "end_line": 73888,
+  "xref_lines": 1,
+  "size_lines": 18,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_99",
+  "start_line": 73894,
+  "end_line": 73914,
+  "xref_lines": 1,
+  "size_lines": 20,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_102",
+  "start_line": 73920,
+  "end_line": 73938,
+  "xref_lines": 1,
+  "size_lines": 18,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_103",
+  "start_line": 73944,
+  "end_line": 73964,
+  "xref_lines": 1,
+  "size_lines": 20,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_104",
+  "start_line": 73970,
+  "end_line": 73987,
+  "xref_lines": 1,
+  "size_lines": 17,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_105",
+  "start_line": 73993,
+  "end_line": 74012,
+  "xref_lines": 1,
+  "size_lines": 19,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_106",
+  "start_line": 74018,
+  "end_line": 74036,
+  "xref_lines": 1,
+  "size_lines": 18,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_107",
+  "start_line": 74042,
+  "end_line": 74062,
+  "xref_lines": 1,
+  "size_lines": 20,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_110",
+  "start_line": 74068,
+  "end_line": 74086,
+  "xref_lines": 1,
+  "size_lines": 18,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_M_111",
+  "start_line": 74092,
+  "end_line": 74112,
+  "xref_lines": 1,
+  "size_lines": 20,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_AILSSA_merge",
+  "start_line": 74121,
+  "end_line": 74338,
+  "xref_lines": 1,
+  "size_lines": 217,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_AILSSA_DMA_copy",
+  "start_line": 74347,
+  "end_line": 74422,
+  "xref_lines": 2,
+  "size_lines": 75,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_AILSSA_flush_buffer",
+  "start_line": 74431,
+  "end_line": 74465,
+  "xref_lines": 2,
+  "size_lines": 34,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_AILSSA_VMM_lock",
+  "start_line": 74471,
+  "end_line": 74492,
+  "xref_lines": 2,
+  "size_lines": 21,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "strncmp",
+  "start_line": 74501,
+  "end_line": 74537,
+  "xref_lines": 2,
+  "size_lines": 36,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "_fmemmove",
+  "start_line": 74546,
+  "end_line": 74611,
+  "xref_lines": 1,
+  "size_lines": 65,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "read_pt_len",
+  "start_line": 74621,
+  "end_line": 74742,
+  "xref_lines": 2,
+  "size_lines": 121,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "read_c_len",
+  "start_line": 74748,
+  "end_line": 74884,
+  "xref_lines": 1,
+  "size_lines": 136,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "decode_c",
+  "start_line": 74892,
+  "end_line": 74950,
+  "xref_lines": 1,
+  "size_lines": 58,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "decode_p",
+  "start_line": 74958,
+  "end_line": 75005,
+  "xref_lines": 1,
+  "size_lines": 47,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "huf_decode_start",
+  "start_line": 75013,
+  "end_line": 75020,
+  "xref_lines": 1,
+  "size_lines": 7,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "count_len",
+  "start_line": 75030,
+  "end_line": 75071,
+  "xref_lines": 2,
+  "size_lines": 41,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "make_len",
+  "start_line": 75081,
+  "end_line": 75182,
+  "xref_lines": 1,
+  "size_lines": 101,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "downheap",
+  "start_line": 75192,
+  "end_line": 75254,
+  "xref_lines": 2,
+  "size_lines": 62,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "make_code",
+  "start_line": 75264,
+  "end_line": 75313,
+  "xref_lines": 1,
+  "size_lines": 49,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "make_tree",
+  "start_line": 75323,
+  "end_line": 75479,
+  "xref_lines": 2,
+  "size_lines": 156,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "utoa",
+  "start_line": 75491,
+  "end_line": 75536,
+  "xref_lines": 1,
+  "size_lines": 45,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "itoa",
+  "start_line": 75545,
+  "end_line": 75562,
+  "xref_lines": 2,
+  "size_lines": 17,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "ultoa",
+  "start_line": 75574,
+  "end_line": 75619,
+  "xref_lines": 2,
+  "size_lines": 45,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "ltoa",
+  "start_line": 75628,
+  "end_line": 75645,
+  "xref_lines": 2,
+  "size_lines": 17,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "__fatal_runtime_error",
+  "start_line": 75658,
+  "end_line": 75677,
+  "xref_lines": 2,
+  "size_lines": 19,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "__qwrite",
+  "start_line": 75686,
+  "end_line": 75760,
+  "xref_lines": 1,
+  "size_lines": 74,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "sub_17DBD6",
+  "start_line": 75766,
+  "end_line": 75770,
+  "xref_lines": 2,
+  "size_lines": 4,
+  "bucket": "unnamed"
+ },
+ {
+  "name": "sub_17DBDC",
+  "start_line": 75776,
+  "end_line": 75779,
+  "xref_lines": 1,
+  "size_lines": 3,
+  "bucket": "unnamed"
+ },
+ {
+  "name": "__IOMode",
+  "start_line": 75788,
+  "end_line": 75831,
+  "xref_lines": 2,
+  "size_lines": 43,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "__SetIOMode",
+  "start_line": 75840,
+  "end_line": 75851,
+  "xref_lines": 2,
+  "size_lines": 11,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "unlink",
+  "start_line": 75860,
+  "end_line": 75880,
+  "xref_lines": 0,
+  "size_lines": 20,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "sub_17DC6C",
+  "start_line": 75888,
+  "end_line": 75891,
+  "xref_lines": 1,
+  "size_lines": 3,
+  "bucket": "unnamed"
+ },
+ {
+  "name": "__CHK",
+  "start_line": 75900,
+  "end_line": 75908,
+  "xref_lines": 0,
+  "size_lines": 8,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "__GRO",
+  "start_line": 75915,
+  "end_line": 75917,
+  "xref_lines": 0,
+  "size_lines": 2,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "__STK",
+  "start_line": 75926,
+  "end_line": 75949,
+  "xref_lines": 1,
+  "size_lines": 23,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "sub_17DCC0",
+  "start_line": 75959,
+  "end_line": 76234,
+  "xref_lines": 2,
+  "size_lines": 275,
+  "bucket": "unnamed"
+ },
+ {
+  "name": "__EnterWVIDEO",
+  "start_line": 76241,
+  "end_line": 76266,
+  "xref_lines": 1,
+  "size_lines": 25,
+  "bucket": "watcom_runtime"
+ },
+ {
+  "name": "_L2clearscreen",
+  "start_line": 76275,
+  "end_line": 76349,
+  "xref_lines": 1,
+  "size_lines": 74,
+  "bucket": "ms_graphics"
+ },
+ {
+  "name": "_clearscreen",
+  "start_line": 76358,
+  "end_line": 76410,
+  "xref_lines": 2,
+  "size_lines": 52,
+  "bucket": "ms_graphics"
+ },
+ {
+  "name": "_GrClear",
+  "start_line": 76419,
+  "end_line": 76455,
+  "xref_lines": 2,
+  "size_lines": 36,
+  "bucket": "ms_graphics"
+ },
+ {
+  "name": "_TxtClear",
+  "start_line": 76464,
+  "end_line": 76545,
+  "xref_lines": 1,
+  "size_lines": 81,
+  "bucket": "ms_graphics"
+ },
+ {
+  "name": "_gettextposition",
+  "start_line": 76552,
+  "end_line": 76569,
+  "xref_lines": 1,
+  "size_lines": 17,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_settextposition",
+  "start_line": 76577,
+  "end_line": 76631,
+  "xref_lines": 2,
+  "size_lines": 54,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_getvideoconfig",
+  "start_line": 76640,
+  "end_line": 76665,
+  "xref_lines": 0,
+  "size_lines": 25,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_CalcNumPages",
+  "start_line": 76672,
+  "end_line": 76721,
+  "xref_lines": 1,
+  "size_lines": 49,
+  "bucket": "ms_graphics"
+ },
+ {
+  "name": "_GetState",
+  "start_line": 76728,
+  "end_line": 76819,
+  "xref_lines": 2,
+  "size_lines": 91,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_InitState",
+  "start_line": 76826,
+  "end_line": 76862,
+  "xref_lines": 2,
+  "size_lines": 36,
+  "bucket": "ms_graphics"
+ },
+ {
+  "name": "_GrInit",
+  "start_line": 76871,
+  "end_line": 76905,
+  "xref_lines": 0,
+  "size_lines": 34,
+  "bucket": "ms_graphics"
+ },
+ {
+  "name": "_CursorOff",
+  "start_line": 76934,
+  "end_line": 76974,
+  "xref_lines": 2,
+  "size_lines": 40,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "TextCursor",
+  "start_line": 76983,
+  "end_line": 77007,
+  "xref_lines": 2,
+  "size_lines": 24,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "GraphCursor",
+  "start_line": 77014,
+  "end_line": 77071,
+  "xref_lines": 2,
+  "size_lines": 57,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "_GraphMode",
+  "start_line": 77078,
+  "end_line": 77088,
+  "xref_lines": 1,
+  "size_lines": 10,
+  "bucket": "ms_graphics"
+ },
+ {
+  "name": "_GrProlog",
+  "start_line": 77095,
+  "end_line": 77106,
+  "xref_lines": 0,
+  "size_lines": 11,
+  "bucket": "ms_graphics"
+ },
+ {
+  "name": "_GrEpilog",
+  "start_line": 77113,
+  "end_line": 77121,
+  "xref_lines": 2,
+  "size_lines": 8,
+  "bucket": "ms_graphics"
+ },
+ {
+  "name": "_InitDevice",
+  "start_line": 77128,
+  "end_line": 77135,
+  "xref_lines": 0,
+  "size_lines": 7,
+  "bucket": "ms_graphics"
+ },
+ {
+  "name": "_FiniDevice",
+  "start_line": 77142,
+  "end_line": 77146,
+  "xref_lines": 0,
+  "size_lines": 4,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_StartDevice",
+  "start_line": 77153,
+  "end_line": 77158,
+  "xref_lines": 2,
+  "size_lines": 5,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_ResetDevice",
+  "start_line": 77165,
+  "end_line": 77170,
+  "xref_lines": 2,
+  "size_lines": 5,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_getplotaction",
+  "start_line": 77182,
+  "end_line": 77213,
+  "xref_lines": 4,
+  "size_lines": 31,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_setplotaction",
+  "start_line": 77222,
+  "end_line": 77266,
+  "xref_lines": 2,
+  "size_lines": 44,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_getfillmask",
+  "start_line": 77275,
+  "end_line": 77304,
+  "xref_lines": 1,
+  "size_lines": 29,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_setfillmask",
+  "start_line": 77313,
+  "end_line": 77383,
+  "xref_lines": 2,
+  "size_lines": 70,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_getcolor",
+  "start_line": 77390,
+  "end_line": 77393,
+  "xref_lines": 1,
+  "size_lines": 3,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_setcolor",
+  "start_line": 77402,
+  "end_line": 77419,
+  "xref_lines": 2,
+  "size_lines": 17,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_L2setcolor",
+  "start_line": 77428,
+  "end_line": 77440,
+  "xref_lines": 1,
+  "size_lines": 12,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_L1Block",
+  "start_line": 77449,
+  "end_line": 77493,
+  "xref_lines": 1,
+  "size_lines": 44,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_SysMonType",
+  "start_line": 77500,
+  "end_line": 77608,
+  "xref_lines": 1,
+  "size_lines": 108,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "DCCEmulate",
+  "start_line": 77615,
+  "end_line": 77732,
+  "xref_lines": 1,
+  "size_lines": 117,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "CheckMONO",
+  "start_line": 77739,
+  "end_line": 77822,
+  "xref_lines": 2,
+  "size_lines": 83,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "CheckCGA",
+  "start_line": 77829,
+  "end_line": 77839,
+  "xref_lines": 2,
+  "size_lines": 10,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "ChkCursorReg",
+  "start_line": 77848,
+  "end_line": 77894,
+  "xref_lines": 2,
+  "size_lines": 46,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "_InitSegments",
+  "start_line": 77901,
+  "end_line": 77945,
+  "xref_lines": 1,
+  "size_lines": 44,
+  "bucket": "ms_graphics"
+ },
+ {
+  "name": "_L1SLine",
+  "start_line": 77954,
+  "end_line": 77986,
+  "xref_lines": 1,
+  "size_lines": 32,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_L1Line",
+  "start_line": 77995,
+  "end_line": 78079,
+  "xref_lines": 0,
+  "size_lines": 84,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_L0Line",
+  "start_line": 78088,
+  "end_line": 78177,
+  "xref_lines": 2,
+  "size_lines": 89,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_L1Fill",
+  "start_line": 78186,
+  "end_line": 78260,
+  "xref_lines": 2,
+  "size_lines": 74,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_L1ClipFill",
+  "start_line": 78269,
+  "end_line": 78727,
+  "xref_lines": 1,
+  "size_lines": 458,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_L1OutCode",
+  "start_line": 78736,
+  "end_line": 78774,
+  "xref_lines": 2,
+  "size_lines": 38,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "line_inter",
+  "start_line": 78783,
+  "end_line": 78842,
+  "xref_lines": 2,
+  "size_lines": 59,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "_L0LineClip",
+  "start_line": 78851,
+  "end_line": 79016,
+  "xref_lines": 2,
+  "size_lines": 165,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "block_inter",
+  "start_line": 79025,
+  "end_line": 79058,
+  "xref_lines": 2,
+  "size_lines": 33,
+  "bucket": "engine_named"
+ },
+ {
+  "name": "_L0BlockClip",
+  "start_line": 79067,
+  "end_line": 79128,
+  "xref_lines": 0,
+  "size_lines": 61,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_L0DrawLine",
+  "start_line": 79137,
+  "end_line": 79345,
+  "xref_lines": 1,
+  "size_lines": 208,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_FastMap",
+  "start_line": 79354,
+  "end_line": 79430,
+  "xref_lines": 0,
+  "size_lines": 76,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_RMAlloc",
+  "start_line": 79439,
+  "end_line": 79513,
+  "xref_lines": 2,
+  "size_lines": 74,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_RMFree",
+  "start_line": 79520,
+  "end_line": 79552,
+  "xref_lines": 2,
+  "size_lines": 32,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_RMInterrupt",
+  "start_line": 79561,
+  "end_line": 79662,
+  "xref_lines": 2,
+  "size_lines": 101,
+  "bucket": "runtime_or_global_backed"
+ },
+ {
+  "name": "_GetStackLow",
+  "start_line": 79668,
+  "end_line": 79671,
+  "xref_lines": 1,
+  "size_lines": 3,
+  "bucket": "runtime_or_global_backed"
+ }
+]
