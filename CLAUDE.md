@@ -39,6 +39,32 @@ wasn't released until ~2005) than either of these trees, so treat this the
 same way as the `Engine`/`Common` 2011 reference: strong structural guide,
 verify against the disassembly, don't assume 1:1.
 
+A fifth reference, `ags-archives/`, holds the OFFICIAL AGS release
+archives for versions 2.00 through 3.30+ (docs-only through ~2.7x: each
+version's `CHANGES.TXT`/`TECHINFO.TXT`, no source). Unlike the 2011
+`Engine`/`Common` reference, this is CONTEMPORARY with Rob Blanc 1's own
+era, and has let this project pin the binary's actual engine version
+tightly: **AGS 2.4b, July 2002** (see "Rob Blanc 1's AGS version" below
+and `reversing/notes/ags-archives-cross-reference.md` for the complete
+evidence and usage guidance). Check this archive's `CHANGES.TXT` files
+before assuming a "confirmed absent" feature needs fresh disassembly
+work to date -- it will often say, in plain English, exactly which
+version added/removed it.
+
+### Rob Blanc 1's AGS version: 2.4b, July 2002
+
+Cross-referencing this project's own already-confirmed findings against
+`ags-archives/*/docs/CHANGES.TXT`'s dated version entries pins Rob Blanc
+1 tightly: `>= 2.4b` (its `IsMusicVoxAvailable` function, added in that
+exact version) and `< 2.5` (three independent findings -- `MYOGG`/
+`MYSTATICOGG` confirmed absent, `MAXTOPICOPTIONS=15` not 2011's 30, and
+`DCMD_SETGLOBALINT` confirmed absent from the dialog-script interpreter
+-- all match features 2.5, released September 2002, introduces). AGS
+2.4b was released in the same month as the binary's own 2002-07-21 link
+date. Treat this as the working ground-truth version for "was this
+feature present" questions -- see the dedicated notes file for the
+complete evidence table and how to extend it.
+
 ### Important correction (do not assume PDB-level ground truth)
 
 The disassembly is **not** annotated from a recovered PDB. Of its ~2582
@@ -114,6 +140,17 @@ not a blow-by-blow account of what's inside.
 ```
 rob_blanc_1.asm                  - the disassembly (huge, script-only access)
 Common/, Engine/                 - reference source, AGS 3.2.1.1115
+ags-archives/                    - official AGS release archives, versions 2.00
+                                    through 3.30+ (docs-only through ~2.7x: each
+                                    version's CHANGES.TXT/TECHINFO.TXT, no source
+                                    code). Added mid-project by the owner.
+                                    CONTEMPORARY with Rob Blanc 1's own era, unlike
+                                    the 2011 Engine/Common reference -- used to pin
+                                    the binary's actual engine version to AGS 2.4b
+                                    (July 2002). See "Rob Blanc 1's AGS version"
+                                    above and reversing/notes/ags-archives-cross-
+                                    reference.md for the complete evidence and
+                                    how to use CHANGES.TXT to date a feature.
 Engine/acwin___Win32_DebugWorking/acwin.map
                                   - linker map from a LOCAL build of the
                                     reference source (built by the project
@@ -1828,6 +1865,36 @@ rather than trusting these numbers as they age)
   evidence. Bonus: the `SETSPCHVIEW` handler decisively confirms
   `CharacterInfo.talkview`@+0x04, a TENTATIVE positional-only guess
   since a much earlier round — it was right all along.
+
+**Detour: the `ags-archives/` resource, and pinning Rob Blanc 1 to AGS
+2.4b (July 2002).** The user added official AGS release archives
+(versions 2.00-3.30+, docs-only through ~2.7x). Cross-referencing this
+project's own already-confirmed findings against `CHANGES.TXT`'s dated
+version entries pinned the binary's actual engine version tightly (see
+"Rob Blanc 1's AGS version" near the top of this file for the summary,
+`reversing/notes/ags-archives-cross-reference.md` for the complete
+writeup) and independently DATED roughly a dozen of this project's own
+findings via version-numbered changelog entries: `IsMusicVoxAvailable`
+(added 2.4b, the lower bound), `MYOGG`/`MYSTATICOGG` absence/
+`MAXTOPICOPTIONS=15`/`DCMD_SETGLOBALINT` absence (all pre-2.5, the upper
+bound), `GameSetupStructBase.spriteflags[6000]` ("Increase limit to 6000
+sprite slots", 2.4), `GameState.globalscriptvars[300]` ("Upped
+GlobalInts to 300", 2.22/Dec 2001), `DCMD_ADDINV`/`DCMD_SETSPCHVIEW`
+(2.22/Dec 2001), `DCMD_NEWROOM` (2.3/Jan 2002), `GUIMain.zorder`/
+`GUIObject.guin`/`.objn`/`SetGUIClickable` absence (all added 2.6/Dec
+2003, over a year later), and `RoomStatus.hotspot_enabled[20]`'s
+capacity (reconciles exactly with 2.3's "Upped limit to 19 hotspots" --
+19 usable + hotspot 0 reserved = 20 slots). Separately, `ags240/docs/
+TECHINFO.TXT`'s official `.CHA` CHARACTER FILE format (dated 26 December
+2001, contemporary with Rob Blanc 1) independently confirms
+`CharacterInfo`'s `defview`/`talkview`/`view`/`room`/`x`/`y`/
+`animspeed`/`name`/`scrname` field layout byte-for-byte with zero
+contradiction, and `ags261/docs/TECHINFO.TXT`'s `.DLG` DIALOG FILE
+format confirms `DialogTopic`'s field order/types (a later-era
+declaration, but same lineage). This resource is now a standing
+reference for dating "was this feature present" questions going
+forward -- check `CHANGES.TXT` before assuming a gap needs fresh
+disassembly work.
 
 ## Third-party library identification (Task #10)
 

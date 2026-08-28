@@ -566,6 +566,14 @@ struct GUIMain {
                            // file format (`gver<103`/`gver<105` checks) is simply absent from this
                            // build's loop. Consistent with, not just circumstantial alongside,
                            // `GetGUIAt`'s already-noted lack of `gui_draw_order[]` indirection.
+                           // DATED (via `ags-archives/`, see `reversing/notes/
+                           // ags-archives-cross-reference.md`): `ags261/docs/CHANGES.TXT`'s
+                           // "VERSION 2.6, December 2003" entry adds `SetGUIZOrder` and "GUI
+                           // Z-order support, so that you can choose which order overlapping GUIs
+                           // are drawn in" -- confirming this feature (and, in the same version
+                           // entry, `SetGUIClickable`/`SetGUIObjectSize`, both also independently
+                           // searched-for-and-absent elsewhere in this project) postdates Rob
+                           // Blanc 1's own ~2.4b (July 2002) era by well over a year.
   int guiId;                  // +0x74, MEDIUM confidence: positional/arithmetic fit only, matching
                            // 2011's declared field. CHECKED THIS ROUND, still not independently
                            // confirmed: `read_gui`'s per-GUI post-load loop (see `zorder` above,
@@ -614,7 +622,20 @@ struct CharacterInfo {
                            // 2011's still-declared `DCMD_SETSPCHVIEW` role ("SetCharacterSpeechView"
                            // -- change talkview) and confirming the original positional-adjacency
                            // guess (`defview`@+0x00, `view`@+0x08, `room`@+0x0C) was correct all
-                           // along.
+                           // along. INDEPENDENTLY CROSS-CONFIRMED (found via the newly-added
+                           // `ags-archives/` resource -- see `reversing/notes/
+                           // ags-archives-cross-reference.md` for the complete writeup): Chris
+                           // Jones's own official `.CHA` character-file format documentation
+                           // (`ags-archives/ags240/docs/TECHINFO.TXT` section 1.2, dated 26
+                           // December 2001 -- i.e. contemporary with Rob Blanc 1's own era, not a
+                           // 9-years-later reference) declares "+04h DWORD talking view number" at
+                           // this EXACT offset. This document also independently pins `defview`@
+                           // +0x00/`view`@+0x08/`room`@+0x0C, and its "+44h 204BYTEs [internal],
+                           // then 30-byte name, then 16-byte scriptname" arithmetic lands EXACTLY
+                           // on this project's own already-confirmed `name`@+0x110 and
+                           // `scrname`@+0x12E with zero slack -- four independently-confirmed
+                           // fields agreeing with an authoritative period document, about as
+                           // strong a cross-validation as this project has had.
   int view;                // +0x08, high confidence, SUPERSEDES an earlier "wait" guess (see
                            // reversing/notes/struct-layout-drift.md for the retraction and why).
                            // update_stuff uses this as `imul ecx, 8D4h` array index into a per-view
@@ -625,9 +646,22 @@ struct CharacterInfo {
                            // matches source exactly.
   int prevroom;              // +0x10, TENTATIVE, positional inference only -- see talkview above; this
                            // is the 2011 field that would fall here if the defview..room adjacency holds.
+                           // SUPPORTING CONTEXT (via `ags-archives/`, see `reversing/notes/
+                           // ags-archives-cross-reference.md`): `ags240/docs/TECHINFO.TXT` labels
+                           // this exact offset "[used internally by AGS]" (not a confirmation of
+                           // WHICH field, but consistent with a real field living here, not
+                           // padding), and `ags240/docs/CHANGES.TXT`'s own 2.15 entry ("Fixed
+                           // prevroom text script variable for following characters") confirms
+                           // `prevroom` is a genuine, officially-named AGS field from this exact
+                           // era -- still not independently pinned to this exact byte offset via
+                           // disassembly evidence, so left TENTATIVE.
   int x;                   // +0x14, high confidence: exact arg-order match in get_hotspot_at's
                            // caller (mainloop), matching source's get_hotspot_at(playerchar->x, playerchar->y).
-  int y;                   // +0x18, see x above.
+                           // Matches `ags240/docs/TECHINFO.TXT`'s own documented "+14h X-coordinate"
+                           // exactly (see `talkview`'s own entry above for the complete cross-
+                           // reference writeup).
+  int y;                   // +0x18, see x above. Matches TECHINFO.TXT's documented "+18h
+                           // Y-coordinate" exactly.
   int wait;                 // +0x1C, high confidence, RESOLVES the round-2 "decrement-if-positive
                            // countdown at +0x1C" lead (which round-2 mis-attributed to +0x08, since
                            // corrected to "view"): Character_LockView (Engine/acchars.cpp:824, what
@@ -1913,7 +1947,13 @@ struct GameSetupStructBase {
                             // the further-derived `GameSetupStruct`'s declared `spriteflags`
                             // (`acroom.h:2893`) in identity, though this build has no separate
                             // base/derived split -- everything is flattened into one struct (see
-                            // the MAJOR FINDING note below).
+                            // the MAJOR FINDING note below). DATED (via `ags-archives/`, see
+                            // `reversing/notes/ags-archives-cross-reference.md`): `ags240/docs/
+                            // CHANGES.TXT`'s own "VERSION 2.4, July 2002" entry says "Increase
+                            // limit to 6000 sprite slots, 300 views" -- an exact match to this
+                            // build's own independently-confirmed 6000 capacity, pinning Rob Blanc
+                            // 1's engine version to `>= 2.4` (July 2002) from a completely
+                            // different angle than the `IsMusicVoxAvailable`/OGG-absence dating.
   //
   // STRUCT FULLY MAPPED: every byte of GameSetupStructBase, `+0x00` through `+0xBF84` (49028
   // bytes total), is now accounted for -- `spriteflags` above was the LAST remaining gap.
@@ -2072,11 +2112,22 @@ struct DialogTopic {
   // Total confirmed size 0x484 (1156 bytes), high confidence -- confirmed via the array
   // stride used by every access site below (`imul reg,484h`) AND via load_ac2game_dta's own
   // `malloc(numdialog*0x484+5)`/`fread(buffer,0x484,numdialog,stream)` allocation. UNLIKE every
-  // other struct in this project, `Common/acroom.h` preserves NO older ancestor declaration for
+  // other struct in this project, `Common/acroom.h` preserves NO older ANCESTOR declaration for
   // `DialogTopic` to check this against -- 2011's own `DialogTopic` is ~4696 bytes
   // (`optionnames[MAXTOPICOPTIONS=30][150]` alone is 4500), over 4x bigger than this build's
-  // confirmed total. This is a genuinely novel, from-scratch reconstruction, not a "confirm
-  // against a known reference" exercise like every other struct tackled so far. The global
+  // confirmed total. This was a genuinely novel, from-scratch reconstruction when first tackled,
+  // not a "confirm against a known reference" exercise like every other struct in this project --
+  // though a SUCCESSOR-era declaration was later found via `ags-archives/` (see
+  // `reversing/notes/ags-archives-cross-reference.md`): `ags-archives/ags261/docs/TECHINFO.TXT`
+  // (dated 12 April 2004, so documenting the LATER 30-option/150-char layout, not this build's own
+  // 15/70 one directly) declares `struct DialogTopic { char optionNames[30][150]; DWORD
+  // optionFlags[30]; DWORD hasCompiledScript; WORD entryPoints[30]; WORD startupEntryPoint; WORD
+  // codeSize; DWORD numOptions; DWORD topicFlags; };` -- matching this build's own independently-
+  // confirmed field ORDER and TYPES exactly (optionflags as 4-byte ints, entrypoints/
+  // startupentrypoint/codesize as 2-byte shorts, numoptions as an int), with `topicFlags` the one
+  // trailing field confirmed absent here (the struct ends exactly at `numoptions`) -- a
+  // contemporary-lineage independent confirmation of this project's own from-scratch layout, even
+  // though it postdates Rob Blanc 1 itself. The global
   // instance itself is a POINTER (`Engine/AC.CPP:567`'s `DialogTopic *dialog;`), dynamically
   // allocated based on the already-confirmed `GameSetupStructBase.numdialog` -- NOT embedded in
   // any other struct. `dword_4EDA48` in the current IDB corresponds to this pointer; consider
@@ -2838,7 +2889,18 @@ struct RoomStatus {
                             // acroom.h:65` comment: "v2.62 increased from 20 to 30; v2.8 to
                             // 50") -- this build genuinely predates both of those increases,
                             // a rare case of a confirmed field matching 2011's OLDEST
-                            // documented capacity rather than a smaller ad-hoc reduction.
+                            // documented capacity rather than a smaller ad-hoc reduction. DATED
+                            // AND RECONCILED (via `ags-archives/`, see `reversing/notes/
+                            // ags-archives-cross-reference.md`): `ags230/docs/CHANGES.TXT`'s
+                            // "VERSION 2.3, January 2002" entry says "Upped limit to 19 hotspots
+                            // (sorry, quick fix, more later)" -- at first glance a mismatch (19 vs.
+                            // this build's confirmed 20-slot array), but it reconciles exactly: 19
+                            // USABLE hotspots (matching this same field's own confirmed `hsnum`
+                            // bounds check, 1 through 19 inclusive) plus hotspot 0 (reserved for
+                            // "no hotspot"/background, never individually enabled/disabled) is
+                            // precisely a 20-element array. No later CHANGES.TXT entry through
+                            // Rob Blanc 1's own ~2.4b era raises this further, consistent with
+                            // 2011's own comment that the NEXT increase (to 30) waited until v2.62.
                             // Matches 2011's declared field (`acruntim.h:108`) in semantic role
                             // exactly, just not immediately adjacent to `tsdata` the way 2011
                             // declares it (2011 has several `NewInteraction`-based fields
@@ -3177,7 +3239,12 @@ struct GameState {
                             // bg_frame-advance gate matching source exactly.
   int globalscriptvars[300];    // +0x15C..0x60C (1200 bytes), high confidence via SetGlobalInt
                             // (already matched) -- see its own evidence. DRIFT: 300 here vs.
-                            // 2011's declared MAXGSVALUES=500.
+                            // 2011's declared MAXGSVALUES=500. DATED (via `ags-archives/`, see
+                            // `reversing/notes/ags-archives-cross-reference.md`): `ags222/docs/
+                            // CHANGES.TXT`'s "VERSION 2.22, December 2001" entry says "Upped
+                            // GlobalInts to 300" -- an exact match, meaning this exact 300-value
+                            // capacity was introduced December 2001 and stayed unchanged through
+                            // Rob Blanc 1's own ~2.4b era before later growing to 2011's 500.
   // The +0x60C..+0x80C span (512 bytes) is now FULLY BYTE-ACCOUNTED FOR, and unlike when this
   // comment was first written, its first 8 bytes (cur_music_number/music_repeat, immediately
   // below) are now real confirmed fields, not a pad -- the rest is broken into precisely-sized
@@ -4510,7 +4577,12 @@ struct RoomStruct {
 // entirely, added sometime after MP3 support (`almp3`) had already matured. With this, ALL FOUR
 // `SOUNDCLIP`-family siblings surveyed this session (`MYMIDI`/`MYMOD`/`MYOGG`/`MYSTATICOGG`) are
 // accounted for -- two confirmed absent as wrapper objects (replaced by bare globals), two
-// confirmed absent as a feature entirely.
+// confirmed absent as a feature entirely. DATED EXACTLY (found later, via the newly-added
+// `ags-archives/` resource -- see `reversing/notes/ags-archives-cross-reference.md`):
+// `ags-archives/ags250/docs/CHANGES.TXT`'s "VERSION 2.5, September 2002" entry says "Added OGG
+// Vorbis support for music, speech and sound effects" -- confirming this "later AGS-era addition"
+// hypothesis precisely: OGG support arrived two months after Rob Blanc 1's own ~2.4b (July 2002)
+// build, not merely "sometime later."
 
 // SOUNDCLIP and its derived classes (MYWAVE/MYMP3/MYSTATICMP3) -- FRESH SURVEY. 2011's real
 // `SOUNDCLIP` base class (`Common/acsound.h:22-99`) is a large, mature abstract base: 13 `int`
