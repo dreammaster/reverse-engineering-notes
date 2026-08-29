@@ -1015,10 +1015,16 @@ struct GUIButton {
   int rightclick;                // +0x78, high confidence (positional, see font above)
   int lclickdata;                // +0x7C, high confidence (positional, see font above)
   int rclickdata;                // +0x80, high confidence (positional, see font above)
-  // NOTE: this is a MINIMUM/partial size, not a confirmed total. 2011 has more fields after
-  // rclickdata (textAlignment, reserved1, eventHandlers[]...) that are read/written individually
-  // (not via the three bulk fread/fwrite calls this recovery was based on) -- not yet confirmed
-  // for this 2002 build. Do not assume sizeof(GUIButton) == 0x84.
+  // Total confirmed size 0x84 (132 bytes), HIGH confidence (UPGRADED from an explicitly-flagged
+  // "minimum/partial size" caveat): reading GUIButton::ReadFromFile/WriteToFile (sub_406A9C/
+  // sub_406A4A, both already matched) in full end to end -- not just the three fread/fwrite calls
+  // already used to recover the fields above -- shows each function does EXACTLY those three
+  // calls (28 bytes@+0x04, 48 bytes@+0x54, 50 bytes@+0x20) and then returns immediately (a small
+  // textcol-default fixup in ReadFromFile, nothing else). No fourth call, no further offset past
+  // +0x80 is ever touched by either function. This positively confirms 2011's trailing
+  // `textAlignment`/`reserved1`/`eventHandlers[]` fields (`Common/acgui.h`, declared after
+  // `rclickdata`) are CONFIRMED ABSENT here, not just unconfirmed -- this build's save-file
+  // format for GUIButton genuinely ends at `rclickdata`. sizeof(GUIButton) == 0x84 confirmed.
 };
 
 struct GUITextBox {

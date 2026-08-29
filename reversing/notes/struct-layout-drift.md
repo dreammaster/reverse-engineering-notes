@@ -7721,3 +7721,46 @@ findings elsewhere in this project -- this build's `MoveObject`/
 `MoveCharacter` unify the direct/non-direct distinction entirely through
 the `ignwal` parameter passed to `find_route`, with no separate
 persistent per-movelist flag needed.
+
+## `GUIButton`'s long-standing "minimum size" caveat closes
+
+`GUIButton` had carried an explicit caveat since the original vtable-
+recovery round: its field list (`vtbl` through `rclickdata`, ending at
+`+0x80`) was recovered entirely from `ReadFromFile`/`WriteToFile`'s
+three bulk fread/fwrite calls, but the struct's own comment flagged this
+as a MINIMUM size only -- 2011 declares more fields after `rclickdata`
+(`textAlignment`, `reserved1`, `eventHandlers[]`) that get read/written
+individually rather than through a bulk call, so their absence couldn't
+be assumed just because the three known calls didn't reach them.
+
+Reading both functions (`sub_406A9C`/`sub_406A4A`, already matched) in
+full end to end, rather than just the fread/fwrite call sites already
+used to recover the field list, resolves this cleanly. Both are tiny,
+completely linear functions with a single early-exit branch (a
+`textcol==0` default-fixup in `ReadFromFile`) and no other control flow:
+
+```
+GUIButton__ReadFromFile:
+    fread(this+4,  7, 4, Stream)   ; 28 bytes -- GUIObject base fields
+    fread(this+0x54, 12, 4, Stream) ; 48 bytes -- pic..rclickdata block
+    fread(this+0x20, 50, 1, Stream) ; 50 bytes -- text[50]
+    if (*(this+0x70) == 0) *(this+0x70) = 0x10;  ; textcol default
+    return;
+```
+
+`WriteToFile` is an exact mirror -- same three offsets, same sizes,
+`fwrite` instead of `fread`, no fixup branch, immediate return. Neither
+function contains a fourth call, and neither ever computes or
+dereferences any offset past `+0x80`. This is a stronger result than
+"the three known calls don't reach further" (which was already true and
+already reflected in the caveat) -- it's a *complete* account of
+everything the load/save routines do, positively proving there is
+nothing else to read or write. `sizeof(GUIButton) == 0x84` (132 bytes)
+is now confirmed, not just a lower bound, and 2011's `textAlignment`/
+`reserved1`/`eventHandlers[]` trailing fields are CONFIRMED ABSENT here
+-- the same "later AGS addition, not yet present in this 2002 build"
+pattern found repeatedly elsewhere in this project. A quick check of the
+other five `GUIObject`-derived structs (`GUISlider`/`GUILabel`/
+`GUITextBox`/`GUIListBox`/`GUIInv`) confirms none of them carry an
+equivalent open-tail caveat -- `GUIButton` was the only one left with
+unfinished business here, and it's now closed.

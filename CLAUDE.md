@@ -1964,6 +1964,22 @@ disassembly work.
   already-confirmed `ExecutingScript.newnum`. All three of 2011's known
   write sites checked, none present — confirmed absent by the same
   exhaustive-multi-site standard used for the `DCMD_*` opcode table.
+- **`GUIButton`'s long-standing "minimum size" caveat closes.** Its
+  field list (`vtbl` through `rclickdata`) had carried an explicit note
+  since the original vtable-recovery round that it was a MINIMUM size
+  only, since 2011 declares more trailing fields
+  (`textAlignment`/`reserved1`/`eventHandlers[]`) read/written
+  individually rather than via the bulk fread/fwrite calls the recovery
+  was based on. Reading `GUIButton::ReadFromFile`/`WriteToFile`
+  (already matched) in full end to end — not just their three known
+  bulk calls — shows each is a tiny, fully linear function (one
+  early-exit branch for a `textcol` default) that does exactly those
+  three calls and then returns, with no fourth call and no offset past
+  `+0x80` ever touched by either. `sizeof(GUIButton)==0x84` (132 bytes)
+  is now positively confirmed rather than a lower bound, and 2011's
+  trailing fields are CONFIRMED ABSENT — the usual "later AGS addition"
+  pattern. A check of the other five `GUIObject`-derived structs found
+  none carrying an equivalent open-tail caveat.
 
 ## Third-party library identification (Task #10)
 
