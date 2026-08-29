@@ -2101,6 +2101,27 @@ disassembly work.
   string also turns out to differ from 2011's wording (`"err: user_dis:
   FOR_SCript"` vs. 2011's `"...obsolete (v2.1 and earlier only)"`) —
   this build's message doesn't call it obsolete, since here it isn't.
+- **`run_graph_script` found: a whole ancient AGS subsystem 2011 has
+  completely forgotten.** Chasing the previous round's dangling
+  `sub_41CDC3` lead (the "other unmatched caller" of `run_animation`)
+  led to `respond[i]==0Ah`(10) in `run_event_block`, which — cross-
+  referenced against `whataction[]`'s own documentation comment already
+  on file from an earlier `RoomStruct` round (`Common/acroom.h:89-104`)
+  — is exactly `GRAPHSCRIPT`(10), "v1.00 SR-1: Run graphical script".
+  This feature has NO trace anywhere else in 2011's source beyond that
+  one comment line — no function, no struct, no string, nothing. This
+  build still runs it in full. Named directly from its own four
+  self-identifying error strings (`"run_graph_script: ..."`/`"Run_
+  Graph_script: ..."`) since no 2011 body exists to compare against at
+  all. Full behavior: builds a temp filename `"~acsc%d.tmp"`, validates
+  a script/block version header, loads a 254-slot table of 254-byte
+  command records (4-byte count + up to ten 25-byte commands), and runs
+  slot 0 through a recursive 26-opcode interpreter (`sub_41CDC3`, left
+  unnamed — nothing supplies IT a specific name). Five opcodes read so
+  far: `NewRoom`, `GiveScore`, `StopMoving`, an unhandled slot, and —
+  notably — the same `run_animation` iterator already shared by
+  `run_event_block` and `wait_loop_still_valid`, now with a third
+  independent caller. Remaining ~20 opcodes left for a future round.
 
 ## Third-party library identification (Task #10)
 

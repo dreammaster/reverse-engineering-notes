@@ -8063,3 +8063,75 @@ joins the growing list of fully-confirmed functions in this project's
 main-loop/wait-state machinery, and the EventBlock/`AnimationStruct`
 subsystem picks up a second live caller nobody had connected to it
 before.
+
+## `run_graph_script` found: an entire AGS subsystem 2011 has completely forgotten
+
+Chasing the previous round's own dangling thread (`sub_41CDC3`, the
+"other unmatched caller" of `run_animation` flagged but not yet read)
+led somewhere much bigger than expected: a whole ancient AGS feature,
+alive and complete in this build, with essentially zero footprint left
+anywhere in the 2011 reference source.
+
+`sub_41CDC3` turned out not to be called from anywhere external at all
+(every `CODE XREF` into it is from its own body -- it's purely
+recursive). Its actual entry point is `sub_41D342`, itself called from
+`run_event_block` (already matched) on `respond[i]==0Ah`(10) -- which,
+cross-referenced against the `whataction[]` enum this project already
+had on file from an earlier `RoomStruct` round (`Common/acroom.h:89-104`,
+the "obsolete v1.00-2.00 action editor" documentation), is EXACTLY
+`GRAPHSCRIPT`(10), "v1.00 SR-1: Run graphical script". AGS's original
+"Graphical Script" editor feature -- seemingly a precursor to real
+text-based scripting from the very earliest AGS versions -- has no
+trace anywhere else in 2011's entire source tree beyond that one
+`whataction[]` comment line. No function, no struct declaration, no
+error string, nothing else survives even as dead code. This build still
+runs it in full.
+
+`sub_41D342` names itself directly and unambiguously: it carries FOUR
+of its own error strings, all prefixed `"run_graph_script:"` / `"Run_
+Graph_script:"` -- `"temp file '%s' not found"`, `"invalid script
+version"`, `"invalid block version"`, and (inside `sub_41CDC3`'s own
+default case) `"unknown evnt %d"`. This is the same "a function's error
+text carries its own name" convention that has named dozens of other
+functions in this project, just doing double duty here since there's no
+2011 body to diff against at all. Renamed to `run_graph_script`
+accordingly, at the highest confidence this project ever assigns a name
+with zero source comparison possible.
+
+Its full behavior, read end to end: builds a temp filename
+`"~acsc%d.tmp"` from its own argument (the graph-script number, passed
+as `respondval[i]` from `run_event_block`), opens it, validates a
+"script version" (must be `2`) and a "block version"/element-size (must
+be `0xFE`=254) via a small `getw()`-style helper (`sub_41D323`, also
+documented this round but left unnamed -- functionally identical to the
+CRT's own `getw()` but not confirmed to literally be that symbol), then
+`malloc`s and `fread`s a 254-element table where each element is 254
+bytes: a 4-byte command count followed by up to ten 25-byte command
+records. It brackets a call to `sub_41CDC3(0)` (always running slot 0
+of the freshly-loaded table) with increments/decrements of the global
+`in_graph_script`, handles a pending room change afterward via
+`new_room()`, then frees the table.
+
+`sub_41CDC3` is the per-slot command interpreter itself: a 26-way switch
+on each record's leading type byte (1-based, used directly as a jump-
+table index after subtracting 1). Only five of the 26 slots were read
+this round -- type 1 calls `NewRoom` (matching `whataction[]`'s own
+`GO_TO_SCREEN`=0 in spirit, off by the expected one-based/zero-based
+shift), type 2 calls `GiveScore`, type 3 calls `StopMoving(playerchar)`,
+type 4 is unhandled (falls to the shared "unknown evnt" error), and type
+5 calls -- delightfully -- the same `run_animation`
+(`AnimationStruct`/`FullAnimation` command-list iterator) already
+confirmed as `run_event_block`'s own `respond[i]==4` handler and
+`wait_loop_still_valid`'s `FOR_ANIMATION` handler. This makes THREE
+independent subsystems in this build that all converge on the same
+shared "run an animation command list" primitive -- EventBlock
+responses, the main-loop wait-state cleanup, and now graphical scripts
+too. The interpreter's own confirmed self-recursion (every internal
+`call sub_41CDC3` targets itself) strongly suggests some of its
+remaining ~20 unread opcodes are conditional branches recursing into a
+nested sub-list, mirroring the shape (though not the identity -- the
+opcode numbering doesn't match at all) of 2011's much later, structurally
+unrelated `run_interaction_commandlist`. The remaining opcodes are left
+for a future round; `sub_41CDC3` itself is left unnamed, since -- unlike
+`run_graph_script` -- nothing in the binary supplies it a specific name
+of its own to use.
