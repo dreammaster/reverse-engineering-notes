@@ -2665,10 +2665,14 @@ struct AnimationStruct {
   // 2011" pattern already seen with `RoomStruct.hscond`/`.objcond`/`.misccond` (EventBlock-based
   // room interaction data) -- not a corrupted or misread version of the 2011 struct, a genuinely
   // still-functioning ancestor subsystem 2011 stopped actually using but never deleted the
-  // declaration for. This build's own actual command-list PROCESSING (via `sub_40C3E0`/
-  // `sub_40C75E`, still unnamed -- see their own matches.json entries) has NO 2011 counterpart at
-  // all; only the underlying DATA LAYOUT (AnimationStruct/FullAnimation) survives to 2011,
-  // unused. `run_interaction_commandlist`/`NewInteractionCommand` (`acroom.h:600`,
+  // declaration for. This build's own actual command-list PROCESSING (via `sub_40C3E0`, still
+  // unnamed, and `run_animation` -- see their own matches.json entries; `run_animation` itself
+  // was matched in a later round via `wait_loop_still_valid`'s own dead-in-2011
+  // `if(user_disabled_for==FOR_ANIMATION) run_animation((FullAnimation*)user_disabled_data2,
+  // user_disabled_data3);` call site, `AC.CPP:25723-25724` -- the ONLY place this exact name
+  // and call shape survive in the 2011 source, commented out but still textually present) has
+  // NO LIVING 2011 counterpart; only the underlying DATA LAYOUT (AnimationStruct/FullAnimation)
+  // survives to 2011, unused. `run_interaction_commandlist`/`NewInteractionCommand` (`acroom.h:600`,
   // `Engine/AC.CPP:21449`) remains a separate, structurally unrelated, much later replacement
   // system (vtable-based, 5 typed `data[]` slots, ~76+ bytes) covering a similar action set
   // (set/release view, animate, move with/without wall-avoidance, set position) -- not this
@@ -2783,8 +2787,8 @@ struct FullAnimation {
   // `EventBlock.data[i]` against `0Ah`(10) -- erroring "!run_animate: undefined animation was
   // r[un]" if out of range -- giving MAX_ANIMATIONS=10 for this build. It then checks
   // `dword_52033C[data[i]*0xF4]` for nonzero, erroring "!Run_animate: empty animation was run"
-  // otherwise, before finally calling sub_40C75E(&unk_52024C[data[i]*0xF4], 0) -- `unk_52024C`
-  // being the actual table of this struct's instances, `sub_40C75E` being the already-
+  // otherwise, before finally calling run_animation(&unk_52024C[data[i]*0xF4], 0) -- `unk_52024C`
+  // being the actual table of this struct's instances, `run_animation` being the already-
   // characterized `AnimationStruct` list iterator (see its own entry).
   //
   // RESOLVED (a follow-up round, after this struct was first drafted): `dword_52033C` is NOT a
@@ -2793,13 +2797,13 @@ struct FullAnimation {
   // symbol because the compiler generated that one access as a literal computed address rather
   // than as `unk_52024C+member_offset`, so IDA's data-xref analysis didn't recognize the overlap.
   // The "empty animation" check is therefore just `FullAnimation[data[i]].numstages != 0` --
-  // the exact same field `sub_40C75E`'s own loop bound reads, checked once early as an
+  // the exact same field `run_animation`'s own loop bound reads, checked once early as an
   // error-message-friendly short-circuit before the (otherwise silently-no-op) iteration. This
   // ALSO gives `numstages`@+0xF0 below a second, fully independent confirmation.
   //
   // Total size 0xF4(244 bytes) is high confidence: independently confirmed by FOUR things
   // landing on it simultaneously -- the `dword_52033C`/`unk_52024C` address delta itself
-  // (`0xF0`, i.e. exactly `numstages`'s own offset), sub_40C75E's own confirmed "list[+0xF0] =
+  // (`0xF0`, i.e. exactly `numstages`'s own offset), run_animation's own confirmed "list[+0xF0] =
   // numstages" access applied to `unk_52024C[slot]` (`stage[10]` (10*0x18=0xF0) plus a trailing
   // `numstages` int lands EXACTLY on the externally-confirmed 0xF4 stride with zero slack), 2011's
   // own declared arithmetic (10 * sizeof(AnimationStruct)=0x18 + sizeof(int) = 0xF4) reached
@@ -2821,7 +2825,7 @@ struct FullAnimation {
                             // including the field NAME (was `command` under the old placeholder
                             // name).
   int numstages;                     // +0xF0 (was `numCommands`), high confidence: confirmed via
-                            // sub_40C75E (already characterized): the loop bound for iterating
+                            // run_animation (already characterized): the loop bound for iterating
                             // `stage[]`. INDEPENDENTLY reconfirmed via `run_event_block`'s
                             // "empty animation" check reading this exact same field through the
                             // address it knows as `dword_52033C` -- see the struct-level

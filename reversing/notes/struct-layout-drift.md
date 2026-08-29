@@ -7995,3 +7995,71 @@ function's own return-value convergence and its `GetLocationName` call
 partway through are left as a candidate for a future round) -- but it
 resolves what would otherwise have looked like a polarity mismatch
 between the two builds' loop conditions.
+
+## `wait_loop_still_valid`'s full body closes -- and `run_animation` turns out to be secretly alive here
+
+Followed up immediately on the previous round's own "candidate for a
+future round": reading the rest of `wait_loop_still_valid` past the
+`UNTIL_MOVEEND`/`UNTIL_CHARIS0` checks already confirmed. Every
+remaining branch matches `AC.CPP:25649-25684` exactly --
+`UNTIL_NEGATIVE`(5), `UNTIL_NOOVERLAY`(4, via the already-confirmed
+`is_text_overlay` global, picking up a third independent confirmation),
+`UNTIL_INTIS0`(6), and `UNTIL_SHORTIS0`(7) all dispatch on
+`restrict_until` and clear it via the same per-type pointer-dereference
+pattern as the first two cases. `UNTIL_ANIMEND`(1) has no explicit case
+in EITHER build's version of this function -- both fall through to the
+same `"loop_until: unknown until event"` quit for that value, which
+turns out to be a genuine match rather than a gap once actually checked.
+
+Past the dispatch sits the piece that resolves the previous round's
+open loop-polarity puzzle: the "end restrict_until" cleanup block
+(`AC.CPP:25719-25737`, only reached once `restrict_until` has cleared to
+0). It matches instruction for instruction -- `SetDefaultCursor()`/
+`guis_need_update=1`/`disabled_user_interface--`, then a three-way
+dispatch on `user_disabled_for`:
+
+- `==3` (`FOR_EXITLOOP`): reset `user_disabled_for` and return `-1` --
+  exact match, and the reason `do_main_cycle`'s
+  `while(!wait_loop_still_valid());` terminates correctly: it exits
+  precisely when `restrict_until` clears AND `user_disabled_for==
+  FOR_EXITLOOP` (set by `do_main_cycle` itself right before the loop),
+  fully consistent with the caller after all.
+- `==2` (`FOR_SCRIPT`): quits, but with a genuinely DIFFERENT, older
+  error string -- `"err: user_dis: FOR_SCript"` rather than 2011's
+  `"err: for_script obsolete (v2.1 and earlier only)"`. 2011's own
+  wording calls this path "obsolete"; this build's simpler message
+  doesn't, because in this build it isn't obsolete yet -- it just always
+  errors, the same behavior with an earlier-era message.
+- Any other value: silently resets `user_disabled_for` to 0 and returns
+  0, with no catch-all quit at all -- unlike 2011's `"quit(Unknown
+  user_disabled_for in end restrict_until)"`, a stricter check added
+  later.
+
+The real headline, though, is `==1` (`FOR_ANIMATION`): this build calls
+`run_animation(dword_52315C, dword_523160)` here -- and 2011's own
+source has this EXACT call, dead code inside a comment:
+`"/* if(user_disabled_for==FOR_ANIMATION)
+run_animation((FullAnimation*)user_disabled_data2,user_disabled_data3);
+else*/"` (`AC.CPP:25723-25725`). This is the one and only place the
+name `run_animation` and its `(FullAnimation*, int)` call shape survive
+anywhere in the 2011 reference source -- commented out, but textually
+present, unlike `sub_40C3E0` (this struct's other still-unnamed helper),
+which has no 2011 name anywhere, living or dead. The function on the
+receiving end of this call is one this project already knew well: the
+`AnimationStruct`/`FullAnimation` command-list iterator formerly left
+deliberately unnamed (per this project's "don't force a name that
+doesn't apply" convention) because its ONLY previously-known caller was
+`run_event_block`'s own `respond[i]==4` dispatch, with no 2011
+counterpart in sight. Finding this SECOND, completely independent
+caller -- one that matches a real (if dead) 2011 name exactly -- clears
+the bar this project sets for renaming, so it's renamed to
+`run_animation` accordingly, with the intentionally-unnamed history kept
+visible in its own comment per the usual convention.
+
+Two more globals fall out for free: `dword_52315C`=`user_disabled_data2`
+and `dword_523160`=`user_disabled_data3`, matching 2011's own commented-
+out call's argument names exactly. With this, `wait_loop_still_valid`
+joins the growing list of fully-confirmed functions in this project's
+main-loop/wait-state machinery, and the EventBlock/`AnimationStruct`
+subsystem picks up a second live caller nobody had connected to it
+before.

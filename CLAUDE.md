@@ -2075,6 +2075,32 @@ disassembly work.
   opens with a call to `mainloop()` before its condition checks, which
   is why `do_main_cycle` can poll it alone in a tight loop instead of
   2011's `while(main_game_loop()==0);`.
+- **`wait_loop_still_valid`'s full body closes, plus a bonus
+  `run_animation` rename.** Immediate follow-up on the previous round's
+  own open lead: every remaining `UNTIL_*` branch (`NEGATIVE`/
+  `NOOVERLAY`/`INTIS0`/`SHORTIS0`) matches source exactly, and
+  `UNTIL_ANIMEND`(1) having no explicit case in EITHER build (both fall
+  through to the same unknown-event quit) turns out to be a genuine
+  match, not a gap. The "end restrict_until" cleanup resolves last
+  round's open loop-polarity question — `do_main_cycle`'s
+  `while(!wait_loop_still_valid());` exits exactly when `restrict_until`
+  clears AND `user_disabled_for==FOR_EXITLOOP`(3, set by `do_main_cycle`
+  itself), returning `-1`, fully consistent with the caller. The
+  headline: the `FOR_ANIMATION`(1) branch calls
+  `run_animation(user_disabled_data2,user_disabled_data3)` — matching
+  2011's OWN commented-out dead code (`"/* if(user_disabled_for==
+  FOR_ANIMATION) run_animation((FullAnimation*)user_disabled_data2,
+  user_disabled_data3); */"`, `AC.CPP:25723-25725`), the only place that
+  name and call shape survive anywhere in 2011's source. This is a
+  second, independent caller of this project's own previously-
+  deliberately-unnamed `AnimationStruct`/`FullAnimation` command-list
+  iterator (whose only other known caller was `run_event_block`'s
+  `respond[i]==4` dispatch) — clearing the bar for a real rename where
+  there previously wasn't a 2011 name to use. Two more globals fall out:
+  `user_disabled_data2`/`user_disabled_data3`. `FOR_SCRIPT`'s error
+  string also turns out to differ from 2011's wording (`"err: user_dis:
+  FOR_SCript"` vs. 2011's `"...obsolete (v2.1 and earlier only)"`) —
+  this build's message doesn't call it obsolete, since here it isn't.
 
 ## Third-party library identification (Task #10)
 
