@@ -644,17 +644,19 @@ struct CharacterInfo {
   int room;                // +0x0C, high confidence: SetPlayerCharacter saves this, switches
                            // playerchar, and calls NewRoom(new playerchar->room) if it changed --
                            // matches source exactly.
-  int prevroom;              // +0x10, TENTATIVE, positional inference only -- see talkview above; this
-                           // is the 2011 field that would fall here if the defview..room adjacency holds.
-                           // SUPPORTING CONTEXT (via `ags-archives/`, see `reversing/notes/
-                           // ags-archives-cross-reference.md`): `ags240/docs/TECHINFO.TXT` labels
-                           // this exact offset "[used internally by AGS]" (not a confirmation of
-                           // WHICH field, but consistent with a real field living here, not
-                           // padding), and `ags240/docs/CHANGES.TXT`'s own 2.15 entry ("Fixed
-                           // prevroom text script variable for following characters") confirms
-                           // `prevroom` is a genuine, officially-named AGS field from this exact
-                           // era -- still not independently pinned to this exact byte offset via
-                           // disassembly evidence, so left TENTATIVE.
+  int prevroom;              // +0x10, high confidence (UPGRADED from TENTATIVE, found in a later
+                           // round while chasing the `ags-archives/`-confirmed field name -- see
+                           // `reversing/notes/ags-archives-cross-reference.md`): `load_new_room`
+                           // (already matched) does "mov eax,[forchar+0Ch]; mov [forchar+10h],eax;
+                           // mov edx,[newnum]; mov [forchar+0Ch],edx" -- a direct, complete,
+                           // multi-instruction match to source's "forchar->prevroom=forchar->room;
+                           // forchar->room=newnum;" (`Engine/AC.CPP:4431-4432`), including the
+                           // identical `offsetx=0; offsety=0;` initialization immediately
+                           // preceding it in both. `ags240/docs/CHANGES.TXT`'s own 2.15 entry
+                           // ("Fixed prevroom text script variable for following characters") had
+                           // already confirmed `prevroom` as a genuine, officially-named AGS field
+                           // from this exact era; this round supplies the missing disassembly-side
+                           // confirmation of its exact byte offset.
   int x;                   // +0x14, high confidence: exact arg-order match in get_hotspot_at's
                            // caller (mainloop), matching source's get_hotspot_at(playerchar->x, playerchar->y).
                            // Matches `ags240/docs/TECHINFO.TXT`'s own documented "+14h X-coordinate"

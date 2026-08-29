@@ -7536,3 +7536,33 @@ holds"). The guess turns out to have been correct all along, now with
 real behavioral evidence: `game_chars[charID*0x140+4]` is exactly
 `CharacterInfo.talkview`, written directly by the "change this
 character's talking-head view" dialog command.
+
+## `CharacterInfo.prevroom` closes, following up the `ags-archives/` detour
+
+Returning to struct work after the `ags-archives/` detour, the natural
+next target was the one field that detour left explicitly open:
+`CharacterInfo.prevroom`@`+0x10`. The archive's own `TECHINFO.TXT` only
+labels this offset "[used internally by AGS]" (not a confirmation of
+which field), and `CHANGES.TXT`'s 2.15 entry ("Fixed prevroom text
+script variable for following characters") confirms the OFFICIAL NAME
+and era but not the exact disassembly access site -- so this was a
+genuinely well-scoped, named lead to go chase directly, rather than
+another round of pure inference.
+
+2011's own `load_new_room` (`Engine/AC.CPP:4429-4432`) does exactly
+`offsetx=0; offsety=0; forchar->prevroom=forchar->room;
+forchar->room=newnum;` right near the top of the function, gated on
+`forchar!=NULL`. This build's own `load_new_room` (already matched)
+has the identical shape at the identical position: `offsetx=0;
+offsety=0;` immediately followed by `eax=[forchar+0Ch]; [forchar+10h]
+=eax; edx=[newnum]; [forchar+0Ch]=edx` -- reading `room`@`+0x0C` into a
+register, writing it to `+0x10`, THEN overwriting `room`@`+0x0C` with
+the new room number. A complete, multi-instruction, order-preserving
+match to source, closing the loop this round's earlier detour opened.
+
+`CharacterInfo` is now fully confirmed field by field except `actx`/
+`acty`@`+0x10C`/`+0x10E` -- already checked and shelved as a plausible
+later addition (2011's only usage site sits inside hardware-accelerated
+drawing code this build has repeatedly been shown to predate) -- and
+`loop`@`+0x38`, sitting at MEDIUM confidence pending a more direct
+access site than the shared direction-lookup-table write already found.

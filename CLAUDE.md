@@ -1895,6 +1895,13 @@ declaration, but same lineage). This resource is now a standing
 reference for dating "was this feature present" questions going
 forward -- check `CHANGES.TXT` before assuming a gap needs fresh
 disassembly work.
+- **`CharacterInfo.prevroom` closes**, a follow-up to the `ags-archives/`
+  detour: `load_new_room` (already matched) does `offsetx=0; offsety=0;
+  forchar->prevroom=forchar->room; forchar->room=newnum;` right near the
+  top of the function, gated on `forchar!=NULL` -- matching source
+  (`AC.CPP:4429-4432`) instruction for instruction. `CharacterInfo` is
+  now fully confirmed except `actx`/`acty` (already shelved as a likely
+  later addition) and `loop`@+0x38 (MEDIUM, no direct access site yet).
 
 ## Third-party library identification (Task #10)
 
