@@ -1980,6 +1980,21 @@ disassembly work.
   trailing fields are CONFIRMED ABSENT — the usual "later AGS addition"
   pattern. A check of the other five `GUIObject`-derived structs found
   none carrying an equivalent open-tail caveat.
+- **`InventoryItemInfo.cursorPic` confirmed absent, via a smoking-gun
+  comment in the 2011 reference source itself.** Re-reading
+  `SetInvItemPic` (already matched) end to end shows it does ONE
+  unconditional write (`pic`@`+0x1C` only), no `pic==piccy` early-return
+  check, no second-field sync branch. 2011's own `set_inv_item_pic`
+  (`Engine/AC.CPP:5262-5278`) explains exactly why: `"if
+  (game.invinfo[invi].pic == game.invinfo[invi].cursorPic) { //
+  Backwards compatibility -- there didn't used to be a cursorPic, so if
+  they're the same update both. set_inv_item_cursorpic(invi, piccy); }"`
+  — 2011's own source documents `cursorPic` as a later addition, kept in
+  sync with `pic` purely for save-compatibility with builds from exactly
+  this era. Reinforced by an exhaustive search: no
+  `set_inv_item_cursorpic`/`InventoryItem::SetCursorGraphic`-equivalent
+  function or export string exists anywhere in the binary. `pic` alone
+  serves both roles here — closing `InventoryItemInfo`'s last open field.
 
 ## Third-party library identification (Task #10)
 

@@ -7764,3 +7764,46 @@ other five `GUIObject`-derived structs (`GUISlider`/`GUILabel`/
 `GUITextBox`/`GUIListBox`/`GUIInv`) confirms none of them carry an
 equivalent open-tail caveat -- `GUIButton` was the only one left with
 unfinished business here, and it's now closed.
+
+## `InventoryItemInfo.cursorPic` confirmed absent -- the source comment gave it away
+
+`cursorPic`@`+0x20` had sat in an unusual limbo since the round that
+closed `pic`/`hotx`/`hoty`: unlike every genuinely-absent field found
+elsewhere in this project, it had explicitly NO negative evidence
+either way, just an unconfirmed positional gap -- every cursor-picture
+code path traced read `pic` directly, but nothing proved `cursorPic`
+itself didn't exist unread somewhere in memory.
+
+Re-reading `SetInvItemPic` (already matched) end to end this round
+settled it, but the real smoking gun turned out to be sitting in the
+2011 *reference source itself*, not the disassembly. 2011's own
+`set_inv_item_pic` (`Engine/AC.CPP:5262-5278`) contains an explicit,
+almost too-convenient comment right where the two fields would diverge:
+
+```c
+if (game.invinfo[invi].pic == game.invinfo[invi].cursorPic)
+{
+  // Backwards compatibility -- there didn't used to be a cursorPic,
+  // so if they're the same update both.
+  set_inv_item_cursorpic(invi, piccy);
+}
+game.invinfo[invi].pic = piccy;
+```
+
+2011's own source is documenting, in plain English, exactly the
+scenario this project keeps finding evidence for elsewhere: a field
+that "didn't used to" exist, kept in sync only for save-compatibility
+with games built before it existed. This build's own `SetInvItemPic` is
+even simpler than the backwards-compatibility branch the comment
+describes -- it does ONE unconditional write (`dword_51B870[ecx]=
+piccy`, i.e. `pic`@`+0x1C` alone), with no `pic==piccy` check and no
+second-field sync logic at all. That's consistent with never having had
+a second field to keep in sync in the first place, not just with the
+sync branch being untraced. Reinforcing this further: an exhaustive
+search finds no `set_inv_item_cursorpic`/`InventoryItem::
+SetCursorGraphic`/`InventoryItem::GetCursorGraphic`-equivalent function
+anywhere in the binary, and no `"SetCursorGraphic"`-family export
+string either -- the entire API surface 2011 built around the
+cursorPic/pic split doesn't exist yet. `cursorPic` is now confirmed
+absent, with `pic` serving both roles in this build -- closing
+`InventoryItemInfo`'s last open field.

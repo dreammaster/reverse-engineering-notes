@@ -1453,20 +1453,29 @@ struct InventoryItemInfo {
                             // to set the MODE_USE cursor's picture, and again as a sprite-index
                             // for the auto-center-hotspot fallback. Lands at EXACTLY 2011's
                             // declared `pic` offset (right after `name[25]`+padding), zero drift.
-  char _unconfirmed2[4];          // +0x20..0x24 (4 bytes), matches 2011's `int cursorPic` by
-                            // POSITION only (boxed in with zero slack between the confirmed
-                            // `pic` and `hotx` fields, exactly 2011's declared `cursorPic` size
-                            // and position) -- no access site found this round that reads a
-                            // field distinct from `pic` for cursor-picture purposes; every
-                            // cursor-picture code path traced this round (`sub_40CF16`) reads
-                            // `pic` directly instead. Plausible explanation: this build's
-                            // cursor-picture logic simply doesn't use `cursorPic` yet (the field
-                            // may still exist in memory, just unread/unwritten by any traced code
-                            // path), not that the field itself is absent -- unlike fields
-                            // confirmed genuinely ABSENT elsewhere in this project (e.g.
-                            // `numcursors`), there's no NEGATIVE evidence here, just an
-                            // unconfirmed gap. Do not assert a name for this field without
-                            // independent access-site evidence.
+  char _unconfirmed2[4];          // +0x20..0x24 (4 bytes), CONFIRMED ABSENT (UPGRADED from an
+                            // "unconfirmed gap, no negative evidence either way" caveat): 2011's
+                            // own `set_inv_item_pic` (`Engine/AC.CPP:5262-5278`) carries an
+                            // explicit, decisive comment right at the point that would distinguish
+                            // the two builds -- "if (game.invinfo[invi].pic ==
+                            // game.invinfo[invi].cursorPic) { // Backwards compatibility -- there
+                            // didn't used to be a cursorPic, so if they're the same update both.
+                            // set_inv_item_cursorpic(invi, piccy); }" -- i.e. 2011's own source
+                            // directly documents that `cursorPic` is a LATER addition, kept in
+                            // sync with `pic` only for save-compatibility with exactly this era.
+                            // This build's own `SetInvItemPic` (already matched, re-read this
+                            // round end to end) matches the PRE-cursorPic shape the comment
+                            // describes: it does ONE unconditional write,
+                            // "dword_51B870[ecx]=piccy" (`pic`@+0x1C only), with no `pic==piccy`
+                            // early-return check and no second-field sync branch at all --
+                            // simpler than even 2011's own "backwards compatibility" branch,
+                            // consistent with never having had a second field to sync in the
+                            // first place. Reinforced by exhaustive search: no
+                            // `set_inv_item_cursorpic`/`InventoryItem::SetCursorGraphic`/
+                            // `InventoryItem::GetCursorGraphic`-equivalent function, and no
+                            // `"SetCursorGraphic"`-family export string, exists anywhere in this
+                            // binary. `cursorPic` is confirmed absent; `pic` alone serves both
+                            // roles in this build.
   int hotx;                       // +0x24, high confidence: `dword_51B878`. Confirmed via
                             // `sub_40CF16` (reads it, applies to `mcurs[MODE_USE].hotx`) AND via
                             // `main`'s startup sequence (scales it by
