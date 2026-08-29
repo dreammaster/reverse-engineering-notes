@@ -7605,3 +7605,48 @@ full -- and copies `animspeed`@`+0x42` into `wait`@`+0x1C`
 established fields in the same pass. `CharacterInfo` is now fully
 confirmed field by field except `actx`/`acty`, a genuinely shelved dead
 end rather than an open lead.
+
+## Three more small wins: `ViewStruct272.numloops`, `MoveList.direct`, and a big `RoomStatus.obj[]` upgrade
+
+With `CharacterInfo` closed, this round swept the file's remaining
+MEDIUM-confidence fields once more.
+
+**`ViewStruct272.numloops`@`+0x00` closed almost by accident.** The
+`update_stuff` evidence used to confirm `CharacterInfo.loop` the
+previous round already contained the answer: the "turning around"
+branch reads `views[view]+0` (no added offset) to compare against
+`turnlooporder[wantloop]`, matching source's `turnlooporder[wantloop]
+>= views[chi->view].numLoops` -- `views[view]+0` IS `numloops` itself.
+Upgraded to HIGH confidence by cross-referencing evidence already on
+record rather than fresh investigation.
+
+**`MoveList.direct`@`+0x1FD` got a real but incomplete answer.** 2011's
+`move_object` sets `mls[mslot].direct=ignwal;` right after
+`objs[objj].moving=mslot;`; this build's own `move_object` (already
+matched, already fully read for other fields) ends immediately after
+the `moving` assignment with NO further write. That's genuine negative
+evidence for THIS call site, but 2011 has at least one other write site
+(`NewRoom`'s own "nasty hack" edge case, `AC.CPP:20028`) and a presumed
+third for `MoveCharacterDirect` (not yet matched in this build) that
+weren't checked -- recorded as a real, useful data point without
+claiming the field itself is confirmed absent.
+
+**`RoomStatus.obj[10]`@`+0x08` got the biggest upgrade** -- and it was
+hiding in plain sight. `RoomObject.transparent`'s own entry already
+cited `load_new_room`'s first-time "beenhere==0" initialization loop for
+ONE field write, but nobody had gone back and asked what ELSE that same
+loop does. Reading it in full: it writes NINE separate `RoomObject`
+fields per iteration -- `x`, `y`, `transparent`, `num`, `view`, `loop`,
+`frame`, `wait`, `moving`, and a conditionally-overwritten `baseline` --
+matching 2011's own `croom->obj[cc].FIELD=...` initialization block
+(`Engine/AC.CPP:4282-4298`) field for field, same order, same defaults,
+even reading from the already-confirmed `RoomStruct.sprs[]`/
+`objbaseline[]` globals as its own data source. This is no longer an
+arithmetic fit (total-size subtraction) -- it's direct, exhaustive,
+per-field behavioral proof that `obj[]` genuinely starts at `+0x08`
+within `RoomStatus`, upgraded from MEDIUM to HIGH accordingly. The
+lesson repeats from a few rounds ago (`objyval[]`/`MAX_OBJ`): evidence
+already sitting in the file, cited for one purpose, can answer a
+completely different open question if someone goes back and reads the
+whole source of that evidence rather than just the one line it was
+originally quoted for.

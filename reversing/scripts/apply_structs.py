@@ -2311,11 +2311,21 @@ struct MoveList {
                             // (already matched): set to `0` (byte-sized write, "mov byte ptr
                             // (mls+1FCh)[eax],0") as part of the same reset. Matches 2011's
                             // declared `char doneflag` (`acroom.h:3089`) exactly.
-  char direct;                     // +0x1FD, MEDIUM confidence: NOT independently confirmed via
-                            // its own access site this round -- boxed in with zero slack
-                            // immediately after the confirmed `doneflag`. Matches 2011's
+  char direct;                     // +0x1FD, MEDIUM confidence: still boxed in with zero slack
+                            // immediately after the confirmed `doneflag`, matching 2011's
                             // declared `char direct` (`acroom.h:3090`, "MoveCharDirect was used
-                            // or not") in position.
+                            // or not") in position -- CHECKED THIS ROUND, one real data point but
+                            // not a full confirmation: `move_object` (already matched)'s own body
+                            // -- already fully read for other MoveList/RoomObject fields -- ends
+                            // immediately after "objs[objj].moving=mslot;" (`RoomObject.moving`
+                            // @+0x18, confirmed) with NO further write, unlike 2011's own version
+                            // which follows that exact same line with "mls[mslot].direct=ignwal;"
+                            // (`AC.CPP:16561`). This is real (if narrow) negative evidence that
+                            // THIS caller doesn't set `.direct` -- but 2011 has a second write site
+                            // (`AC.CPP:20028`, a `NewRoom`-triggered "nasty hack" edge case) and a
+                            // presumed third for character movement (`MoveCharacterDirect`, not
+                            // yet matched in this build) neither checked yet, so this is not
+                            // treated as a full confirmed-absent finding for the field as a whole.
   char _pad_align[2];              // +0x1FE..0x200, compiler alignment padding (not a real
                             // field) -- boxed in with zero slack by the confirmed total stride
                             // (0x200) and the confirmed `direct` field ending at +0x1FE.
@@ -2388,11 +2398,17 @@ struct ViewStruct272 {
   // 0x14(header) + 8*0x118(loop blocks) = 0x8D4 exactly; 0x118/0x1C = 10 frames/loop exactly;
   // 8*10*0x1C + 0x14 = 0x8D4 exactly. No combination of a different loop/frame count closes all
   // three simultaneously.
-  short numloops;                  // +0x00, MEDIUM confidence: NOT independently confirmed via
-                            // its own access site -- boxed in with zero slack immediately before
-                            // the confirmed `numframes[]` below, matching 2011's declared field
-                            // order (`short numloops; short numframes[16];`, `acroom.h:2421-2422`)
-                            // exactly in position and type.
+  short numloops;                  // +0x00, high confidence (UPGRADED from MEDIUM, found by
+                            // cross-referencing a previous round's own `update_stuff` evidence):
+                            // the "turning around before walking" branch (see `CharacterInfo.
+                            // loop`'s own entry) does "ecx=[this_char+8] /*view*/; imul ecx,8D4h;
+                            // edx=views_global; eax=word[edx+ecx]" -- reading `views[view]+0`
+                            // with NO added offset, i.e. `numloops` itself -- then compares it
+                            // against `turnlooporder[wantloop]`, matching source's
+                            // "turnlooporder[wantloop] >= views[chi->view].numLoops" exactly.
+                            // Sits with zero slack immediately before the confirmed `numframes[]`
+                            // below, matching 2011's declared field order ("short numloops; short
+                            // numframes[16];", `acroom.h:2421-2422`) exactly in position and type.
   short numframes[8];               // +0x02..0x12 (16 bytes), high confidence: confirmed via
                             // `update_stuff` (already matched), TWICE independently -- (1) the
                             // main frame-advance check: "movsx ecx,word[viewbase+curloop*2+2];
@@ -2811,19 +2827,30 @@ struct RoomStatus {
                             // documented): the per-room object count, used as both an
                             // initialization loop bound and a live bounds check. Matches 2011's
                             // declared field (`acruntim.h:96`) exactly.
-  RoomObject obj[10];                // +0x08..0x148 (320 bytes), MEDIUM confidence: NOT
-                            // independently confirmed field-by-field this round -- derived from
-                            // clean, zero-slack arithmetic between two independently confirmed
-                            // anchors (`obj[]`'s own start at +0x08, already established via
-                            // RoomObject's own discovery, and `tsdatasize`'s confirmed position
-                            // at +0x168 below): `(0x168-0x08)=0x160`(352) bytes total for
-                            // `obj[]`+`flagstates[]` combined; `352 - 15*2(flagstates, see
-                            // below) - 2(align pad) = 320 = 10*0x20`(RoomObject's own confirmed
-                            // stride) exactly -- the only clean integer solution once
-                            // `flagstates[15]` is anchored to 2011's exact declared capacity.
-                            // DRIFT: 10 objects/room here vs. 2011's declared
-                            // `MAX_INIT_SPR=40` (`acroom.h:59`) -- a 4x reduction, consistent
-                            // with this project's "smaller fixed capacity" pattern.
+  RoomObject obj[10];                // +0x08..0x148 (320 bytes), high confidence (UPGRADED from
+                            // MEDIUM by connecting evidence already on record elsewhere -- see
+                            // `RoomObject.transparent`'s own entry above, which already cites this
+                            // SAME `load_new_room` loop for a single field without the connection
+                            // being propagated back here): the room's first-time "beenhere==0"
+                            // initialization loop -- "for(chaa=0; chaa<[croom+4]/*numobj*/; chaa++)"
+                            // -- writes NINE separate `RoomObject` fields per iteration, every one
+                            // at `[dword_523128/*croom*/ + chaa*0x20 + FIELD_OFFSET]`: `x`@+0x00
+                            // (from `thisroom.sprs[chaa].x`), `y`@+0x04 (from `thisroom.
+                            // sprs[chaa].y`, height-adjusted), `num`@+0x0C (from `thisroom.
+                            // sprs[chaa].sprnum`), `transparent`@+0x08 (already its own entry's
+                            // evidence), `view`@+0x10=-1, `loop`@+0x12=0, `frame`@+0x14=0,
+                            // `wait`@+0x16=0, `moving`@+0x18=-1, `baseline`@+0x0E=-1 (then
+                            // conditionally overwritten from `RoomStruct.objbaseline[chaa]`, the
+                            // already-confirmed global, if `>=0`) -- matching 2011's own
+                            // `croom->obj[cc].FIELD=...` initialization block (`Engine/AC.CPP:
+                            // 4282-4298`) field for field, in the same order, with the SAME
+                            // defaults. This is no longer an arithmetic fit -- it's direct,
+                            // exhaustive, per-field behavioral confirmation that `obj[]` genuinely
+                            // starts at `+0x08` within `RoomStatus`. DRIFT: 10 objects/room here
+                            // vs. 2011's declared `MAX_INIT_SPR=40` (`acroom.h:59`) -- a 4x
+                            // reduction, consistent with this project's "smaller fixed capacity"
+                            // pattern, and matching `RoomObject`'s own independently-confirmed
+                            // array capacity elsewhere in this project with zero further drift.
   short flagstates[15];              // +0x148..0x166 (30 bytes), MEDIUM confidence: same
                             // arithmetic-fit status as `obj[]` immediately above -- anchored to
                             // 2011's declared `short flagstates[MAX_FLAGS]` (`acruntim.h:98`,

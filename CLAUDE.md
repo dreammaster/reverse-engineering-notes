@@ -1912,6 +1912,22 @@ disassembly work.
   `CharacterInfo` is now fully confirmed field by field except `actx`/
   `acty` (already shelved as a likely later addition) — one of the most
   thoroughly-confirmed structs in the whole project.
+- **`ViewStruct272.numloops` closes almost by accident**, connecting
+  evidence already on record from `CharacterInfo.loop`'s own round:
+  `update_stuff`'s "turning around" branch reads `views[view]+0` (no
+  added offset) — that IS `numloops` itself. `MoveList.direct` got a
+  real but incomplete answer: `move_object`'s own body (already fully
+  read) ends immediately after `moving=mslot` with no further write,
+  unlike 2011's `mls[mslot].direct=ignwal;` right after it — genuine
+  negative evidence for this one call site, but 2011 has at least one
+  other write site not yet checked, so not treated as fully confirmed
+  absent. **`RoomStatus.obj[10]` got the biggest upgrade**: its own
+  `load_new_room` initialization loop (already partially cited for a
+  single `RoomObject.transparent` write) turns out to write NINE
+  separate fields per iteration, matching 2011's own `croom->obj[cc]`
+  init block field for field — no longer an arithmetic fit, direct
+  behavioral proof. The same "evidence already on record, just never
+  connected" pattern as `objyval[]`/`MAX_OBJ` a few rounds back.
 
 ## Third-party library identification (Task #10)
 
