@@ -2052,6 +2052,29 @@ disassembly work.
   separately-`malloc`'d dynamic ones. `compiled_script` is retyped from
   a placeholder `void*` to a proper `ccScript*` now that its destructor
   is known.
+- **`main_loop_until` found, plus four new globals and a genuine
+  architecture difference.** `GameState.disabled_user_interface`'s
+  writer (`sub_40C395`) had been flagged as "plausible role match, not
+  yet individually confirmed." Reading it in full: matches
+  `main_loop_until(int,int,int)` (`AC.CPP:4664-4676`) almost line for
+  line, including a neat confirmation of its unused third parameter —
+  `do_main_cycle` (already matched) calls it with a literal `0` for
+  `mousestuff`, matching source's own call exactly, even though this
+  build's function body never reads that argument at all. Identifies
+  four new globals via literal-constant cross-checks:
+  `dword_4EDA7C`=`cur_mode`, `dword_523180`=`restrict_until`,
+  `dword_523158`=`user_disabled_data`, `dword_523154`=`user_disabled_for`
+  (the last via `do_main_cycle`'s own `=3` matching `FOR_EXITLOOP=3`) —
+  with `restrict_until`/`user_disabled_data` independently reconfirmed a
+  second way via `wait_loop_still_valid`'s own UNTIL_MOVEEND/
+  UNTIL_CHARIS0 checks. Two drift points recorded: `do_main_cycle` here
+  skips 2011's `EndSkippingUntilCharStops()` call and nested-context
+  save/restore (a simpler, non-reentrant version), and — more
+  interesting — this build fuses 2011's separate `main_game_loop()`/
+  `wait_loop_still_valid()` into one: `wait_loop_still_valid`'s own body
+  opens with a call to `mainloop()` before its condition checks, which
+  is why `do_main_cycle` can poll it alone in a tight loop instead of
+  2011's `while(main_game_loop()==0);`.
 
 ## Third-party library identification (Task #10)
 

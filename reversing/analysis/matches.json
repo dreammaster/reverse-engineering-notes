@@ -2177,7 +2177,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (found this round, previously mechanically matched with no field evidence recorded): calls the newly-matched main_loop_until(untilWhat,daaa,0) (sub_40C395) at its start, then sets dword_523154=3, matching source's \"user_disabled_for=FOR_EXITLOOP;\" (FOR_EXITLOOP=3, Common/acruntim.h:838) exactly -- identifies dword_523154=user_disabled_for. DRIFT: this build's version has neither an EndSkippingUntilCharStops() call at the start nor the nested-context save/restore of restrict_until/user_disabled_data/user_disabled_for around the wait loop that 2011's version has (AC.CPP:25740-25758) -- a simpler, non-reentrant predecessor. Also, rather than looping on \"while(main_game_loop()==0);\", this build polls the already-matched wait_loop_still_valid() directly in a tight loop -- see that function's own entry for how the two architectures reconcile."
   },
   {
     "kind": "function",
@@ -3889,7 +3889,7 @@
     "source_file": "Engine/AC.CPP",
     "source_line": 25649,
     "confidence": "high",
-    "evidence": "int wait_loop_still_valid() at AC.CPP:25649. String match: \"loop_until: unknown until event\" (25681). Caller matches: called from an already-named function, do_main_cycle, at a label mid-function -- fits a loop-condition check."
+    "evidence": "int wait_loop_still_valid() at AC.CPP:25649. String match: \"loop_until: unknown until event\" (25681). Caller matches: called from an already-named function, do_main_cycle, at a label mid-function -- fits a loop-condition check. FURTHER EVIDENCE (found this round while investigating main_loop_until/do_main_cycle): the function's own body reads dword_523180 (restrict_until) and, for the UNTIL_MOVEEND(2)/UNTIL_CHARIS0(3) cases, dereferences dword_523158 (user_disabled_data) as a short/byte pointer respectively and compares it against the wait-until condition, clearing restrict_until to 0 once satisfied -- matching source's per-case handling (AC.CPP:25654-25680) and independently reconfirming both globals (first identified via main_loop_until/do_main_cycle) from a second, unrelated function. Also notable: this function's own body OPENS with a call to the already-matched mainloop() before doing any of its condition checks -- meaning this build fuses what 2011 keeps as two separate functions (main_game_loop(), which pumps one frame, and wait_loop_still_valid(), which only checks the wait condition) into one. This reconciles do_main_cycle's own simpler \"while(!wait_loop_still_valid());\" polling loop (as opposed to 2011's \"while(main_game_loop()==0);\") -- each call to this build's wait_loop_still_valid already pumps a frame internally, so no separate main_game_loop()-equivalent call is needed in the caller. Not chased further this round; the full body past the UNTIL_* dispatch (return-value convergence, GetLocationName's exact role) is a candidate for a future round."
   },
   {
     "kind": "manual",
@@ -5653,5 +5653,14 @@
     "is_library": false,
     "confidence": "high",
     "evidence": "void ccFreeScript(ccScript*) at Common/cscommon.cpp:116. Exact, line-for-line match: conditionally frees globaldata@+0x00/code@+0x08/strings@+0x10/fixuptypes@+0x18/fixups@+0x1C (each null-checked individually) then zeroes all five; then \"for(aa=0;aa<numimports;aa++) if(imports[aa]) free(imports[aa]);\" (cscommon.cpp:140-143) and \"for(aa=0;aa<numexports;aa++) free(exports[aa]);\" (cscommon.cpp:145-146, no null check in source either -- matches this build's unconditional free exactly); then zeroes numimports@+0x984/numexports@+0x1C48 and returns. Called from load_room (already matched) right at the start, passed RoomStruct.compiled_script@+0x39F8 -- matches source's role as the ccScript destructor called before loading a new room's own compiled script. This build's version stops immediately after the exports loop, with NO third loop over numSections/sectionNames and no free(imports)/free(exports)/free(export_addr) calls for the arrays themselves (cscommon.cpp:148-167) -- confirms ccScript.imports[600]/exports[600]/export_addr[600] are fixed embedded arrays here (nothing to free), not 2011's separately-malloc'd dynamic arrays, and confirms numSections/sectionNames/sectionOffsets are CONFIRMED ABSENT from this build's ccScript entirely."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_40C395",
+    "new_name": "main_loop_until",
+    "source_file": "Engine/AC.CPP",
+    "source_line": 4664,
+    "confidence": "high",
+    "evidence": "void main_loop_until(int untilwhat,int udata,int mousestuff) at AC.CPP:4664-4676. Exact match: increments GameState.disabled_user_interface (play_disabled_user_interface), sets guis_need_update=1, then \"if(cur_cursor==cur_mode || untilwhat==4) SetMouseCursor(7)\" -- matching source's \"if(((cur_cursor==cur_mode)||(untilwhat==UNTIL_NOOVERLAY))&&(cur_mode!=CURS_WAIT)) set_mouse_cursor(CURS_WAIT)\" (UNTIL_NOOVERLAY=4, Common/acruntim.h:855; CURS_WAIT=7) -- this build's version omits the cur_mode!=CURS_WAIT guard, a simpler predecessor. Then stores arg_0 into dword_523180 and arg_4 into dword_523158, matching source's \"restrict_until=untilwhat; user_disabled_data=udata;\". A third parameter (mousestuff) is pushed by every caller (do_main_cycle pushes a literal 0, matching source's \"main_loop_until(untilwhat,daaa,0)\" call at AC.CPP:25751 exactly) but never read inside the function body -- IDA never auto-named it, consistent with this build's simpler version not yet using it. Called from do_main_cycle (already matched) at its very start. Identifies four new globals: dword_4EDA7C=cur_mode, dword_523180=restrict_until, dword_523158=user_disabled_data (the latter two independently reconfirmed by wait_loop_still_valid's own UNTIL_MOVEEND/UNTIL_CHARIS0 checks against the same two addresses -- see that entry)."
   }
 ]

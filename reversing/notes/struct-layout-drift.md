@@ -7941,3 +7941,57 @@ tries to.
 proper `ccScript*` now that its own destructor is identified, and one
 more function joins this project's growing list of fully-matched
 `ccScript`/`ccInstance` machinery.
+
+## `main_loop_until` found, plus four new globals and a genuine architecture difference
+
+Pulled the thread on `GameState.disabled_user_interface`'s own comment,
+which had flagged its writer (`sub_40C395`) as unmatched with "plausible
+role match, not yet individually confirmed." Reading it in full closes
+that immediately: it's `main_loop_until(int untilwhat,int udata,int
+mousestuff)` (`AC.CPP:4664-4676`), matched almost line for line --
+`disabled_user_interface++`, `guis_need_update=1`, then `if(cur_cursor
+== cur_mode || untilwhat==UNTIL_NOOVERLAY) set_mouse_cursor(CURS_WAIT)`
+(this build's version drops 2011's extra `cur_mode != CURS_WAIT` guard,
+a small simplification), then `restrict_until=untilwhat;
+user_disabled_data=udata;`.
+
+A neat confirmation of the third, unused parameter: `do_main_cycle`
+(already matched) calls this function as `main_loop_until(untilWhat,
+daaa, 0)` -- pushing a literal `0` for `mousestuff`, matching source's
+own `main_loop_until(untilwhat,daaa,0)` call (`AC.CPP:25751`) exactly,
+even though this build's function body never reads that third argument
+at all. IDA never auto-named it as a result -- a small reminder that "no
+named parameter" doesn't always mean "fewer parameters."
+
+This one function match identifies FOUR new globals at once, each
+confirmed via a literal-constant cross-check against `Common/
+acruntim.h`'s declared constants: `dword_4EDA7C`=`cur_mode`,
+`dword_523180`=`restrict_until`, `dword_523158`=`user_disabled_data`,
+and (via `do_main_cycle`'s own very next instruction, `dword_523154=3`
+matching source's `user_disabled_for=FOR_EXITLOOP;` with `FOR_EXITLOOP`
+literally `3`) `dword_523154`=`user_disabled_for`. Two of these
+(`restrict_until`/`user_disabled_data`) get an immediate second,
+independent confirmation from `wait_loop_still_valid` (already matched):
+its own UNTIL_MOVEEND/UNTIL_CHARIS0 branches read exactly these two
+globals, matching source's per-case dispatch (`AC.CPP:25654-25680`).
+
+Two genuine architecture differences fell out along the way, both
+recorded as drift rather than treated as further leads to chase. First,
+`do_main_cycle` in this build skips 2011's opening
+`EndSkippingUntilCharStops()` call and its nested-context save/restore
+of `restrict_until`/`user_disabled_data`/`user_disabled_for` around the
+wait loop (`AC.CPP:25744-25757`) -- a simpler, non-reentrant version.
+Second, and more interesting: 2011 keeps `main_game_loop()` (pumps one
+frame) and `wait_loop_still_valid()` (only checks the wait condition) as
+two separate functions, called as `while(main_game_loop()==0);`. This
+build's `do_main_cycle` instead loops on `while(!wait_loop_still_valid());`
+alone -- which makes sense once you notice `wait_loop_still_valid`'s own
+body OPENS with a call to the already-matched `mainloop()` before doing
+any of its condition checks. This build fuses the two 2011 functions
+into one: every call to this build's "check the wait condition" function
+also pumps a frame internally, so the caller doesn't need a separate
+frame-pump call at all. Not fully traced past that observation (the
+function's own return-value convergence and its `GetLocationName` call
+partway through are left as a candidate for a future round) -- but it
+resolves what would otherwise have looked like a polarity mismatch
+between the two builds' loop conditions.
