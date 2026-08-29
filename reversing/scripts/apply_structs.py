@@ -3111,10 +3111,15 @@ struct GameState {
   int disabled_user_interface;  // +0x08, medium-high confidence: pre-existing IDA name, XREF'd
                             // from an as-yet-unmatched helper (sub_40C395) reading then writing
                             // it -- plausible role match, not yet individually confirmed.
-  int gscript_timer;          // +0x0C, medium-high confidence: pre-existing IDA name, XREF'd from
-                            // `load_new_room` (already matched, write) and `update_stuff`
-                            // (already matched, read) -- plausible role match, not yet
-                            // individually confirmed via a specific instruction.
+  int gscript_timer;          // +0x0C, HIGH confidence (UPGRADED from medium-high): confirmed
+                            // via the graph-script command interpreter (`sub_41CDC3`, newly
+                            // characterized this round -- see `run_graph_script`'s own matches.json
+                            // entry): its SET_TIMER opcode (case 23) does
+                            // "play_gscript_timer=record[+5]; if(record[+5]==0)
+                            // play_gscript_timer=-1;", and its IF_TIMER_EXPIRED opcode (case 24)
+                            // checks "play_gscript_timer==0" before resetting it to -1 and
+                            // recursing into a nested command list -- a direct, individually
+                            // confirmed instruction match this field previously lacked.
   int debug_mode;              // +0x10, medium-high confidence: pre-existing IDA name, XREF'd
                             // from `debug_log` (already matched) and `check_controls` (already
                             // matched) -- plausible role match, not yet individually confirmed.
@@ -3129,11 +3134,17 @@ struct GameState {
   int messagetime;             // +0xDC, medium-high confidence: pre-existing IDA name, XREF'd
                             // from `update_stuff` (already matched, read) -- plausible role
                             // match, not yet individually confirmed via a specific instruction.
-  int usedinv;                 // +0xE0, medium confidence: pre-existing IDA name flagged with a
-                            // trailing "?" by the prior (pre-this-project) manual naming pass,
-                            // XREF'd from `check_controls` (already matched, read+write) --
-                            // plausible but not individually confirmed; the prior session's own
-                            // uncertainty flag is preserved here rather than silently upgraded.
+  int usedinv;                 // +0xE0, HIGH confidence (UPGRADED, resolving the prior session's
+                            // own "?"-flagged uncertainty): confirmed via the graph-script
+                            // command interpreter's (`sub_41CDC3`, newly characterized this
+                            // round) IF_USED_INVENTORY_ITEM opcode (case 26): "if(play_usedinv==
+                            // record[+5]) recurse(...)" -- matching 2011's own "case 20: // If
+                            // Inventory Item was used -- if(play.usedinv==IPARAM1){...}"
+                            // (`Engine/AC.CPP:21557-21558`) almost verbatim, down to the same
+                            // "if used-inv equals this item, run a nested command list" shape.
+                            // Distinct from `used_inv_on`@+0x128 (a different, already-confirmed
+                            // field -- "which object/hotspot the item was used ON", not "which
+                            // item was used").
   int inv_top;                 // +0xE4, HIGH confidence (UPGRADED from medium/"?"-flagged):
                             // confirmed via sub_40D80C (new match this round, algorithmic twin
                             // of 2011's offset_over_inv, AC.CPP:5394-5409) -- "mover +=

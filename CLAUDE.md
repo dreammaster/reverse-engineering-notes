@@ -2121,7 +2121,25 @@ disassembly work.
   far: `NewRoom`, `GiveScore`, `StopMoving`, an unhandled slot, and —
   notably — the same `run_animation` iterator already shared by
   `run_event_block` and `wait_loop_still_valid`, now with a third
-  independent caller. Remaining ~20 opcodes left for a future round.
+  independent caller.
+- **An immediate follow-up closed all 26 graph-script opcodes, plus two
+  long-open `GameState` fields.** The full table (see
+  `reversing/notes/struct-layout-drift.md` for the complete listing)
+  covers room changes, score, dialog, sound/FLIC playback, inventory,
+  and a full set of conditional "if flag/random/timer/inventory-used,
+  run a nested list" branches. Opcode 10 (RUN_SCRIPT) calls into AGS's
+  classic fixed exported function `"gscript_request"`, confirmed via
+  that literal string. Opcodes 11/12 (SET_FLAG/CLEAR_FLAG) validate
+  their flag number is outside `[15,100)`, erroring with a second
+  independent `"!graph_script: ..."`-prefixed string; tracing the
+  shared getter/setter helpers shows flags 0-14 are the already-
+  confirmed `RoomStatus.flagstates[15]`, while flags ≥100 hit a
+  previously-unknown standalone global array with no other
+  reader/writer anywhere. Opcodes 23/24 (SET_TIMER/IF_TIMER_EXPIRED)
+  and 26 (IF_USED_INVENTORY_ITEM) supply the first individually-
+  confirmed instructions for two long-"?"-flagged `GameState` fields
+  from the very first `GameState` survey rounds — `gscript_timer`@+0x0C
+  and `usedinv`@+0xE0 — both upgraded to HIGH confidence.
 
 ## Third-party library identification (Task #10)
 

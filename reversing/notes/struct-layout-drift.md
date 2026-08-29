@@ -8135,3 +8135,63 @@ unrelated `run_interaction_commandlist`. The remaining opcodes are left
 for a future round; `sub_41CDC3` itself is left unnamed, since -- unlike
 `run_graph_script` -- nothing in the binary supplies it a specific name
 of its own to use.
+
+## The full graph-script opcode table, plus two long-open `GameState` fields close
+
+An immediate follow-up read `sub_41CDC3` to completion, closing every
+one of its 26 opcode slots (only `4` is a genuine gap, falling through
+to the shared "unknown evnt" error, matching the earlier finding that
+this switch is exhaustive):
+
+```
+ 1  NewRoom(param)                      14  IF_NOT_FLAG(flag)
+ 2  GiveScore(param)                    15  IF_FLAG(flag)
+ 3  StopMoving(playerchar)              16  PlaySound(param)
+ 4  -- unhandled --                     17  PlayFlic(param2, param)
+ 5  run_animation(anim, 0)              18  ObjectOn(param)
+ 6  DisplayMessage(param)               19  IF_INVENTORY_ITEM_HELD(item)
+ 7  ObjectOff(param)                    20  LoseInventory(item)
+ 8  RunDialog(param)                    21  IF_ONCE_EVERY_N_LOOPS(n)
+ 9  add_inventory(param)                22  IF_RANDOM_1_IN_N(n)
+10  RUN_SCRIPT -> gscript_request(p)    23  SET_TIMER(n)
+11  SET_FLAG(flag)                      24  IF_TIMER_EXPIRED
+12  CLEAR_FLAG(flag)                    25  MoveCharacterToObject(obj)
+13  STOP (return 0 immediately)         26  IF_USED_INVENTORY_ITEM(item)
+```
+
+Several of these came with their own decisive confirmations. Opcode 10
+calls `run_text_script_iparam(gameinst, "gscript_request", param)` --
+the literal string `"gscript_request"` sitting right there in the
+disassembly is AGS's classic, well-known fixed exported-function name
+that graphical scripts call into (distinct from the per-object-named
+functions the later real scripting language uses). Opcodes 11/12
+(SET_FLAG/CLEAR_FLAG) each validate their flag argument is NOT in the
+range `[15,100)`, erroring `"!graph_script: SET_FLAG used with
+invalid..."` / `"...CLEAR_FLAG..."` otherwise -- a SECOND independent
+place (beyond `run_graph_script` itself) where this subsystem's own
+error text confirms its "graph_script" family name. Tracing the shared
+flag getter/setter (`sub_41CD6D`/`sub_41CD95`, both newly characterized,
+left unnamed) explains the odd `[15,100)` gap immediately: flag numbers
+0-14 read/write `RoomStatus.flagstates[flagnum]` directly (the SAME
+already-confirmed `flagstates[15]` field from several rounds ago, now
+picking up a fresh, unexpected reader/writer), while flag numbers >=100
+read/write a previously-unknown standalone global array
+(`dword_4EE89C[]`, no other reader/writer found anywhere in the
+binary) -- 15-99 is simply a reserved dead zone between the two
+storage schemes, not a capacity limit either one is close to.
+
+Two long-standing "?"-flagged `GameState` fields close as a bonus.
+Opcode 23 (SET_TIMER) writes `play_gscript_timer` directly, and opcode
+24 (IF_TIMER_EXPIRED) reads it back and resets it -- the individually-
+confirmed instruction this project's own `gscript_timer`@`+0x0C` entry
+had been waiting on since the field was first listed (previously just
+"plausible role match" from its name and two unrelated callers' generic
+XREFs). Opcode 26 (IF_USED_INVENTORY_ITEM) reads `play_usedinv?`
+(the prior session's own uncertain, question-mark-flagged name) and
+compares it against an item number to gate a nested command list --
+matching 2011's textually similar, but structurally unrelated, `case
+20: // If Inventory Item was used -- if (play.usedinv==IPARAM1) {...}`
+in `run_interaction_commandlist` (`AC.CPP:21557-21558`) almost
+verbatim. Both fields upgrade from their long-standing uncertain status
+to HIGH confidence, resolving two of the oldest still-open question
+marks left over from the very first `GameState` survey rounds.
