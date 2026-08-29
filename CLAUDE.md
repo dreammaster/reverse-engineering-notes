@@ -2010,6 +2010,28 @@ disassembly work.
   confirmation: no drawing function has been found reading from `+0x00`
   itself. Recorded as the most coherent explanation tying together three
   rounds of evidence, not a new confirmation of the field's identity.
+- **Found the missing drawing-code reader — and a correction: it reads
+  `ebscene[]` directly, not `+0x00`.** `RawSaveScreen`/`RawRestoreScreen`/
+  `RawDrawImage` (previously mechanically linker-matched with zero field
+  evidence) all fetch the active background via
+  `dword_523094[dword_4EEB58*4]` — `dword_4EEB58` is the confirmed
+  `GameState.bg_frame`, and `dword_523094` turns out, via a decisive
+  zero-slack arithmetic chain (`dword_523088`/`52308C`/`523090`/`523094`
+  sit at four consecutive +4-byte offsets, landing exactly on the
+  already-confirmed `num_bscenes`@+0x3A00/`bscene_anim_speed`@+0x3A04/
+  `bytes_per_pixel`@+0x3A08/`ebscene[0]`@+0x3A0C), to BE `ebscene[0]`
+  itself — just accessed via IDA's own auto-generated standalone-global
+  name, since `rstruc`'s applied IDB type doesn't extend far enough for
+  IDA to resolve it as struct-relative. Matches 2011's own `RAW_START`
+  macro (`"abuf=thisroom.ebscene[play.bg_frame]"`, `AC.CPP:14355`)
+  exactly — a fifth independent confirmation of `ebscene[]`'s offset.
+  The catch: this is exactly the drawing-code reader last round went
+  looking for, and it reads `ebscene[bg_frame]` STRAIGHT from
+  `+0x3A0C+bg_frame*4`, never touching `+0x00`. Correcting last round's
+  theory in place: the "read by drawing code" support for `+0x00`'s
+  cache theory doesn't hold up — the actual drawing code bypasses it
+  entirely. `+0x00`'s identity is no worse off than before, but that
+  specific supporting claim is retracted.
 
 ## Third-party library identification (Task #10)
 

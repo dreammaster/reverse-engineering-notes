@@ -3948,6 +3948,34 @@ struct RoomStruct {
                             // isn't independently confirmed -- recorded as a plausible unifying
                             // explanation for two previously-separate pieces of evidence, not a
                             // new confirmation.
+                            //
+                            // CORRECTION (immediate follow-up, same investigation thread): the
+                            // "read by drawing code" half of that theory doesn't hold up.
+                            // `RawSaveScreen`/`RawRestoreScreen`/`RawDrawImage` (all already
+                            // matched) are this build's actual raw-screen-drawing API, and all
+                            // three read the CURRENTLY DISPLAYED background via
+                            // "dword_523094[dword_4EEB58*4]" -- `dword_4EEB58` is the already-
+                            // confirmed `GameState.bg_frame`, and `dword_523094` (proven via a
+                            // decisive, zero-slack arithmetic chain: `dword_523088`/`52308C`/
+                            // `523090`/`523094` sit at consecutive +4-byte offsets, exactly
+                            // matching the already-confirmed `num_bscenes`@+0x3A00/
+                            // `bscene_anim_speed`@+0x3A04/`bytes_per_pixel`@+0x3A08/`ebscene[0]`@
+                            // +0x3A0C) IS `ebscene[0]`, accessed via IDA's own auto-generated
+                            // standalone-global name because `rstruc`'s applied IDB type doesn't
+                            // yet extend far enough to resolve it as a struct-relative access.
+                            // Matches 2011's own `RAW_START` macro ("abuf=thisroom.
+                            // ebscene[play.bg_frame]", `AC.CPP:14355`) exactly. This means the
+                            // ACTUAL drawing code reads `ebscene[bg_frame]` straight from
+                            // `+0x3A0C+bg_frame*4` with ZERO reference to `+0x00` anywhere --
+                            // there is no confirmed drawing-code reader of `+0x00` after all, and
+                            // the "fast-access cache for the currently-displayed background, read
+                            // by drawing code" framing above should be read with that caveat: the
+                            // one class of function best positioned to be that reader turns out
+                            // not to touch `+0x00` at all. `+0x00`'s identity remains exactly as
+                            // unconfirmed as before -- this doesn't reopen anything already
+                            // closed, since `ebscene[]`'s own offsets are now confirmed a THIRD
+                            // independent way, but it does retract the specific "drawing code
+                            // reads the cache" support offered for the unifying theory above.
   block walls;                  // +0x04, high confidence (CORRECTED from +0x00): the last of
                             // three UNCONDITIONAL, consecutive `loadcompressed_allegro`
                             // (`sub_403846`, 4-arg: FILE*, block* by ADDRESS, color*, long --
@@ -4492,6 +4520,19 @@ struct RoomStruct {
                             // change, one conditionally resizing each entry when `resolution`
                             // no longer matches the current screen multiplier -- both using the
                             // SAME confirmed `num_bscenes` bound and this SAME base address.
+                            // FIFTH confirmation (this round): `RawSaveScreen`/
+                            // `RawRestoreScreen`/`RawDrawImage` (all already matched) read the
+                            // active background via `dword_523094[bg_frame*4]`, matching 2011's
+                            // own `"abuf=thisroom.ebscene[play.bg_frame]"` (`AC.CPP:14355`)
+                            // exactly -- `dword_523094` is this SAME `ebscene[0]` address
+                            // (`+0x3A0C`), just accessed via IDA's own auto-generated standalone-
+                            // global name in functions that don't receive `rstruc` as a parameter
+                            // (unlike `load_room`), so IDA hasn't resolved it as a struct-relative
+                            // access. Independently reconfirmed via decisive zero-slack
+                            // arithmetic: `dword_523088`/`52308C`/`523090`/`523094` sit at
+                            // consecutive +4-byte offsets, matching `num_bscenes`@+0x3A00/
+                            // `bscene_anim_speed`@+0x3A04/`bytes_per_pixel`@+0x3A08/`ebscene[0]`@
+                            // +0x3A0C exactly.
                             // Capacity NOT independently confirmed for THIS build
                             // though -- sized to `5` here matching 2011's own `#define
                             // MAX_BSCENE 5` (`acroom.h:803`) as the current best estimate

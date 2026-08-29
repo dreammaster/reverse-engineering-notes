@@ -7848,3 +7848,54 @@ across three separate rounds, but `+0x00`'s formal identity is left
 exactly where round 10 left it: an honestly-unconfirmed pad, now with a
 clearer picture of what it's plausibly doing and why, but no name to
 attach to it.
+
+## Found the missing drawing-code reader -- and it reads `ebscene[]` directly, not `+0x00`
+
+Immediately following up on the last round's open question ("no direct
+READER of `+0x00` by any drawing function has been found yet"), reading
+`RawSaveScreen`/`RawRestoreScreen`/`RawDrawImage` (all already matched,
+previously only mechanically linker-matched with zero field evidence
+recorded) turned up exactly the class of function that theory predicted
+-- and it settles the question in the opposite direction from what was
+hoped.
+
+All three do the same thing: fetch "the currently active background
+bitmap" via `dword_523094[dword_4EEB58*4]`. `dword_4EEB58` is the
+already-confirmed `GameState.bg_frame`. `dword_523094` turns out, via a
+completely independent and decisive route, to BE `RoomStruct.ebscene[0]`
+itself: `dword_523088`, `dword_52308C`, `dword_523090`, and
+`dword_523094` sit at four consecutive +4-byte-apart addresses, landing
+with zero slack on this project's own already-confirmed
+`num_bscenes`@`+0x3A00`, `bscene_anim_speed`@`+0x3A04`,
+`bytes_per_pixel`@`+0x3A08`, and `ebscene[0]`@`+0x3A0C` respectively.
+IDA simply hasn't recognized these as struct-relative accesses --
+`rstruc`'s own applied type in the live IDB only extends through
+`regions`@`+0x10` (round 1's original finding), so any function that
+references these deeper fields WITHOUT going through a passed
+`roomstruct*` parameter (unlike `load_room`/`load_main_block`, which do)
+gets auto-named standalone globals by IDA instead of
+`rstruc.num_bscenes` etc. `dword_523088` being "never written anywhere"
+-- a real puzzle when first noticed this round -- resolves the same
+way: it's written plenty, just always through the OTHER addressing form
+(`[some_rstruc_pointer+0x3A00]`), which doesn't show up under a
+`dword_523088`-specific xref search.
+
+This also matches 2011's own source exactly: `RawSaveScreen`/
+`RawRestoreScreen`'s shared `RAW_START` macro is literally `"abuf =
+thisroom.ebscene[play.bg_frame]"` (`Engine/AC.CPP:14355`), and the two
+functions' own bodies use that exact expression (`AC.CPP:14361/14373`).
+Three independently-named, previously-evidence-free functions now carry
+solid field evidence, and `ebscene[]`'s own offset picks up a fifth
+independent confirmation route on top of the four already on record.
+
+The catch: this is the exact class of function the previous round
+speculated might be reading from `+0x00` as a fast-access cache -- and
+it turns out not to. All three read `ebscene[bg_frame]` STRAIGHT from
+`+0x3A0C+bg_frame*4`, with no reference to `+0x00` anywhere in any of
+them. The "read by drawing code" half of last round's unifying theory
+doesn't hold up now that the actual drawing code's behavior is known --
+recorded as a correction in place (per this project's usual convention)
+rather than a silent edit. `+0x00`'s identity is no worse off than
+before -- nothing here reopens what was already settled -- but the one
+piece of positive-sounding support offered for the cache theory turns
+out not to exist.
