@@ -2032,6 +2032,26 @@ disassembly work.
   cache theory doesn't hold up — the actual drawing code bypasses it
   entirely. `+0x00`'s identity is no worse off than before, but that
   specific supporting claim is retracted.
+- **`ccFreeScript` found, closing a long-open "candidate for a future
+  round."** `RoomStruct.compiled_script`'s cleanup helper (`sub_42A4DB`)
+  had sat unmatched since the round that first found it. Reading it in
+  full: an exact, line-for-line match to `ccFreeScript(ccScript*)`
+  (`Common/cscommon.cpp:116`) — conditional frees of `globaldata`/`code`/
+  `strings`/`fixuptypes`/`fixups`, a zero-out of all five, a loop freeing
+  non-null `imports[]` entries, then a loop freeing EVERY `exports[]`
+  entry unconditionally (source has no null check there either — an
+  easy-to-miss detail that confirms genuine identity, not just a generic
+  pattern), then zeroing `numimports`/`numexports` and returning. 2011's
+  own version keeps going for another dozen lines: a `numSections` loop
+  and explicit frees of the `imports`/`exports`/`export_addr` ARRAY
+  POINTERS themselves. This build has neither — confirming `numSections`/
+  `sectionNames`/`sectionOffsets` are absent from this build's `ccScript`
+  entirely, and independently reinforcing (via the missing array-level
+  frees) the already-suspected drift that `imports[600]`/`exports[600]`/
+  `export_addr[600]` are fixed embedded arrays here, not 2011's
+  separately-`malloc`'d dynamic ones. `compiled_script` is retyped from
+  a placeholder `void*` to a proper `ccScript*` now that its destructor
+  is known.
 
 ## Third-party library identification (Task #10)
 

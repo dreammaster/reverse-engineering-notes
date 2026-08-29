@@ -933,7 +933,16 @@ struct ccScript {
                             // figure is independently corroborated by exports[]/export_addr[] below
                             // being exactly the same length -- looks like a real 2002 MAX_IMPORTS/
                             // MAX_EXPORTS=600 fixed-array limit (later replaced by 2011's dynamic
-                            // importsCapacity-sized allocation).
+                            // importsCapacity-sized allocation). REINFORCED (found this round,
+                            // `ccFreeScript` -- newly matched, `RoomStruct.compiled_script`'s own
+                            // destructor): this build's destructor frees each individual
+                            // `imports[]`/`exports[]` ELEMENT but never the arrays `imports`/
+                            // `exports`/`export_addr` themselves -- unlike 2011's own
+                            // `ccFreeScript` (`Common/cscommon.cpp:160-167`), which explicitly
+                            // `free()`s all three array pointers right after. Consistent with
+                            // there being nothing TO free here (fixed embedded arrays, not
+                            // separately-`malloc`'d ones) -- independent confirmation of the
+                            // drift already inferred from the length arithmetic above.
   int numimports;               // +0x984, high confidence: confirmed loop bound for the imports[] scan above.
   char *exports[600];           // +0x988, high confidence: ccCallInstance strcmp's function names against
                             // entries here (`[instanceof+ecx*4+988h]`) in a loop bounded by numexports
@@ -4451,21 +4460,39 @@ struct RoomStruct {
                             // `fgetstring_limit` (2011's version<22 path) rather than
                             // `read_string_decrypt` (version>=22) -- this build's version
                             // ceiling makes that the only path that could exist here anyway.
-  void *compiled_script;         // +0x39F8, high confidence: same cleanup pattern as `scripts`
-                            // immediately above, but freed via a DIFFERENT, as-yet-unmatched
-                            // helper (`sub_42A4DB`) instead of plain `free()` -- matching 2011's
-                            // declared `ccScript *compiled_script;` (`acroom.h:862`) needing its
-                            // own specialized destructor (a `ccScript*`, not a raw buffer).
-                            // Represented as `void*` since `sub_42A4DB` itself isn't matched to
-                            // a specific 2011 function yet (a candidate for a future round --
-                            // plausibly `ccScript::~ccScript()`-equivalent or a free-script
-                            // helper). SECOND confirmation: `load_room`'s block-type dispatch
-                            // loop handles `BLOCKTYPE_COMPSCRIPT3`(7) by assigning this SAME
-                            // address the return value of the already-matched `fread_script`
-                            // (`Common/CSRUN.CPP:2029`) -- matching 2011's `ccScript`
-                            // deserialization exactly, and confirming this build's room files
-                            // ship modern CSCOMP-compiled scripts, not the old SeeR-era text
-                            // format `scripts` handles.
+  ccScript *compiled_script;     // +0x39F8, high confidence: same cleanup pattern as `scripts`
+                            // immediately above, but freed via a DIFFERENT helper -- matching
+                            // 2011's declared `ccScript *compiled_script;` (`acroom.h:862`)
+                            // needing its own specialized destructor (a `ccScript*`, not a raw
+                            // buffer). RETYPED from `void*` (this round): the helper,
+                            // `sub_42A4DB`, is now matched to `ccFreeScript`
+                            // (`Common/cscommon.cpp:116`) -- an exact, line-for-line match:
+                            // conditionally frees `globaldata`/`code`/`strings`/`fixuptypes`/
+                            // `fixups` then zeroes all five, then loops `for(aa=0;
+                            // aa<numimports;aa++) if(imports[aa]) free(imports[aa]);` and `for
+                            // (aa=0;aa<numexports;aa++) free(exports[aa]);` (2011's own source
+                            // has NO null check on the second loop either, matching this build's
+                            // unconditional free exactly), then zeroes `numimports`/`numexports`
+                            // and returns. This gives `ccScript`'s own struct TWO pieces of new
+                            // confirmation: this build's destructor never frees `imports`/
+                            // `exports`/`export_addr` themselves (only their individual
+                            // elements), independently reinforcing the already-suspected drift
+                            // that these are FIXED embedded `[600]` arrays here rather than
+                            // 2011's separately-`malloc`'d dynamic arrays (2011's own
+                            // `ccFreeScript` frees `imports`/`exports`/`export_addr` themselves
+                            // right after, `cscommon.cpp:160-167` -- absent here since there's
+                            // nothing to free). Also confirms 2011's trailing `numSections`/
+                            // `sectionNames`/`sectionOffsets` cleanup block (`cscommon.cpp:
+                            // 148-157`) is CONFIRMED ABSENT from this build's `ccScript` --
+                            // `sub_42A4DB` returns immediately after the exports loop, with no
+                            // third loop and no `sectionNames`-related cleanup at all. SECOND
+                            // confirmation of `compiled_script` itself: `load_room`'s block-type
+                            // dispatch loop handles `BLOCKTYPE_COMPSCRIPT3`(7) by assigning this
+                            // SAME address the return value of the already-matched
+                            // `fread_script` (`Common/CSRUN.CPP:2029`) -- matching 2011's
+                            // `ccScript` deserialization exactly, and confirming this build's
+                            // room files ship modern CSCOMP-compiled scripts, not the old
+                            // SeeR-era text format `scripts` handles.
   int cscriptsize;               // +0x39FC, RESOLVED (this round): confirmed via
                             // `roomstruct__roomstruct` (this build's `RoomStruct` default
                             // constructor, newly matched this round -- see its own matches.json

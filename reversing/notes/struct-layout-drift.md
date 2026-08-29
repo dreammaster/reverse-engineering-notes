@@ -7899,3 +7899,45 @@ rather than a silent edit. `+0x00`'s identity is no worse off than
 before -- nothing here reopens what was already settled -- but the one
 piece of positive-sounding support offered for the cache theory turns
 out not to exist.
+
+## `ccFreeScript` found, closing a long-open "candidate for a future round"
+
+`RoomStruct.compiled_script`'s own comment had flagged its cleanup
+helper, `sub_42A4DB`, as unmatched since the round that first found it
+-- "plausibly `ccScript::~ccScript()`-equivalent or a free-script
+helper," left unnamed pending a real check. Reading the function in
+full this round settled it immediately: it's an exact, line-for-line
+match to `ccFreeScript(ccScript *ccs)` (`Common/cscommon.cpp:116`).
+
+Every step lines up: conditional `free()` calls on `globaldata`/`code`/
+`strings`/`fixuptypes`/`fixups` (each individually null-checked, same
+order as source), a zeroing of all five right after, then a loop
+freeing each non-null `imports[]` entry, then a loop freeing every
+`exports[]` entry UNCONDITIONALLY -- source itself has no null check on
+that second loop either (`cscommon.cpp:145-146`), an easy-to-miss
+detail that confirms this isn't just a generic "loop and free" pattern
+but the genuine source function, asymmetry and all. Finally,
+`numimports`/`numexports` get zeroed and the function returns.
+
+That return point is exactly where the two builds diverge. 2011's own
+`ccFreeScript` keeps going for another dozen lines
+(`cscommon.cpp:148-167`): a third loop over `numSections`/
+`sectionNames`, then explicit `free()` calls on the `imports`/
+`exports`/`export_addr` ARRAY POINTERS themselves (on top of the
+per-element frees already done). This build's version has neither.
+The missing `numSections` loop confirms that field (and its
+`sectionNames`/`sectionOffsets` companions) are absent from this
+build's `ccScript` entirely -- consistent with everything else this
+project has found about this era's simpler script-compilation format.
+The missing `free(imports)`/`free(exports)`/`free(export_addr)` calls
+supply independent confirmation of a drift already suspected from pure
+length arithmetic several rounds ago: this build's `imports[600]`/
+`exports[600]`/`export_addr[600]` are genuinely fixed embedded arrays,
+not 2011's separately-`malloc`'d dynamic ones -- there's nothing for a
+destructor to free at the array level here, and sure enough, nothing
+tries to.
+
+`compiled_script` itself gets retyped from a placeholder `void*` to a
+proper `ccScript*` now that its own destructor is identified, and one
+more function joins this project's growing list of fully-matched
+`ccScript`/`ccInstance` machinery.

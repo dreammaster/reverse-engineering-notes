@@ -5643,5 +5643,15 @@
     "source_line": null,
     "confidence": "high",
     "evidence": "int find_looporder_index(int curloop) -- referenced at Engine/AC.CPP:6531, \"int wantloop = find_looporder_index(chi->loop) + 1;\" inside update_stuff's (already matched) 'turning around before walking' branch. Confirmed via exact call shape: called with the single argument 'word[this+0x38]' (CharacterInfo.loop, already confirmed), its result incremented by 1 and used to index the newly-identified turnlooporder[8] global (dword_4B42C8) -- matching source's role (reverse-lookup a loop number's position within the turnlooporder direction table) and call-site shape exactly. See CharacterInfo.loop's own entry in apply_structs.py for the complete writeup."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_42A4DB",
+    "new_name": "ccFreeScript",
+    "source_file": "Common/cscommon.cpp",
+    "source_obj": null,
+    "is_library": false,
+    "confidence": "high",
+    "evidence": "void ccFreeScript(ccScript*) at Common/cscommon.cpp:116. Exact, line-for-line match: conditionally frees globaldata@+0x00/code@+0x08/strings@+0x10/fixuptypes@+0x18/fixups@+0x1C (each null-checked individually) then zeroes all five; then \"for(aa=0;aa<numimports;aa++) if(imports[aa]) free(imports[aa]);\" (cscommon.cpp:140-143) and \"for(aa=0;aa<numexports;aa++) free(exports[aa]);\" (cscommon.cpp:145-146, no null check in source either -- matches this build's unconditional free exactly); then zeroes numimports@+0x984/numexports@+0x1C48 and returns. Called from load_room (already matched) right at the start, passed RoomStruct.compiled_script@+0x39F8 -- matches source's role as the ccScript destructor called before loading a new room's own compiled script. This build's version stops immediately after the exports loop, with NO third loop over numSections/sectionNames and no free(imports)/free(exports)/free(export_addr) calls for the arrays themselves (cscommon.cpp:148-167) -- confirms ccScript.imports[600]/exports[600]/export_addr[600] are fixed embedded arrays here (nothing to free), not 2011's separately-malloc'd dynamic arrays, and confirms numSections/sectionNames/sectionOffsets are CONFIRMED ABSENT from this build's ccScript entirely."
   }
 ]
