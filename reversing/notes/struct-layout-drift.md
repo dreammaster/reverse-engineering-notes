@@ -7650,3 +7650,30 @@ already sitting in the file, cited for one purpose, can answer a
 completely different open question if someone goes back and reads the
 whole source of that evidence rather than just the one line it was
 originally quoted for.
+
+## `RoomStatus.flagstates[]` closes the same way, right next door
+
+Reading a little further past the `obj[]` initialization loop (the same
+`load_new_room` code this round's earlier `obj[]` upgrade came from)
+turned up the last open `RoomStatus` field for free. Immediately after
+the object-init loop ends, the very next code is `for(chaa=0; chaa<0xF
+(15); chaa++) [croom+chaa*2+0x148]=0` -- a direct, literal loop clearing
+`RoomStatus.flagstates[15]`@`+0x148`, matching 2011's `for
+(cc=0;cc<MAX_FLAGS;cc++) croom->flagstates[cc]=0;` (`Engine/AC.CPP:
+4308`) exactly. This confirms both the exact POSITION and the exact
+CAPACITY in one shot -- no longer an arithmetic remainder computed from
+`obj[]`'s own end and `tsdatasize`'s own start, but a literal `0xF`
+loop bound sitting right there in the disassembly.
+
+The code immediately after THAT does three more `rep movsd` block
+copies of 148-byte (`0x94`) `EventBlock` records, all from `RoomStruct`-
+side source data into this build's already-confirmed `RoomStatus`
+fields: one record into `misccond`@`+0x12C8`, a 20-element loop into
+`hscond[20]`@`+0x170`, and a 10-element loop into `objcond[10]`@`+0xD00`
+-- reconfirming all three via the exact same evidence pass, for free.
+
+With this, `RoomStatus` has no remaining MEDIUM-confidence fields at
+all -- every field from `beenhere` through `walkbehind_base` is now
+either directly behaviorally confirmed or confirmed absent by positive
+evidence, joining `RoomObject`/`MoveList`/`MouseCursor`/
+`InventoryItemInfo` as one of this project's fully closed structs.

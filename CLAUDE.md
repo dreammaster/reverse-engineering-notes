@@ -1928,6 +1928,17 @@ disassembly work.
   init block field for field — no longer an arithmetic fit, direct
   behavioral proof. The same "evidence already on record, just never
   connected" pattern as `objyval[]`/`MAX_OBJ` a few rounds back.
+- **`RoomStatus.flagstates[]` closes the same way, right next door.**
+  Reading a little further past the `obj[]` initialization loop turned
+  up the last open `RoomStatus` field for free: immediately after the
+  object-init loop, `load_new_room` does `for(chaa=0;chaa<0xF(15);
+  chaa++) [croom+chaa*2+0x148]=0` — a direct, literal loop matching
+  2011's `for(cc=0;cc<MAX_FLAGS;cc++) croom->flagstates[cc]=0;`
+  (`AC.CPP:4308`) exactly, confirming both position and capacity in one
+  shot rather than an arithmetic remainder. The code right after that
+  does three more `rep movsd` block copies reconfirming `misccond`/
+  `hscond[20]`/`objcond[10]` from the exact same pass. `RoomStatus` now
+  has no remaining MEDIUM-confidence fields at all.
 
 ## Third-party library identification (Task #10)
 

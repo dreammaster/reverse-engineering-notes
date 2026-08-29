@@ -2851,12 +2851,23 @@ struct RoomStatus {
                             // reduction, consistent with this project's "smaller fixed capacity"
                             // pattern, and matching `RoomObject`'s own independently-confirmed
                             // array capacity elsewhere in this project with zero further drift.
-  short flagstates[15];              // +0x148..0x166 (30 bytes), MEDIUM confidence: same
-                            // arithmetic-fit status as `obj[]` immediately above -- anchored to
-                            // 2011's declared `short flagstates[MAX_FLAGS]` (`acruntim.h:98`,
-                            // `MAX_FLAGS=15`, `acroom.h:801`) with ZERO drift, which is what
-                            // makes the `obj[]`/`tsdatasize` arithmetic close cleanly to a round
-                            // object count (10) rather than an arbitrary remainder.
+  short flagstates[15];              // +0x148..0x166 (30 bytes), high confidence (UPGRADED from
+                            // MEDIUM, found in a later round): `load_new_room` (already matched)
+                            // -- immediately after the `obj[]` initialization loop just confirmed
+                            // above -- does "for(chaa=0; chaa<0Fh(15); chaa++)
+                            // [dword_523128/*croom*/+chaa*2+0x148]=0" -- a direct, literal,
+                            // zero-ambiguity confirmation of BOTH this field's exact position
+                            // AND its exact capacity in one shot, matching 2011's "for
+                            // (cc=0;cc<MAX_FLAGS;cc++) croom->flagstates[cc]=0;"
+                            // (`Engine/AC.CPP:4308`) exactly, with `MAX_FLAGS=15`
+                            // (`acroom.h:801`) confirmed with ZERO drift via the literal loop
+                            // bound itself, not just an arithmetic remainder. The SAME code
+                            // region immediately afterward does three more `rep movsd` block
+                            // copies of 148-byte(`0x94`) `EventBlock` records from `RoomStruct`-
+                            // side source data -- one record into `misccond`@+0x12C8, then a
+                            // 20-element loop into `hscond[20]`@+0x170, then a 10-element loop
+                            // into `objcond[10]`@+0xD00 -- a further, independent reconfirmation
+                            // of all three via the exact same evidence pass.
   char _pad_align[2];                // +0x166..0x168, compiler alignment padding (not a real
                             // field) -- boxed in with zero slack by `flagstates[15]`'s odd
                             // (30-byte) size and the confirmed `tsdatasize` position immediately
