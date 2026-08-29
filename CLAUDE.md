@@ -2175,6 +2175,17 @@ disassembly work.
   `MAX_SPRITES_ON_SCREEN=76` — the usual capacity-increase pattern,
   here for the first time on a per-frame runtime list rather than a
   save-data array.
+- **The flagged `add_to_sprite_list` offset asymmetry resolves as
+  ordinary bookkeeping, not a puzzle.** Reading the surrounding loop
+  body in full: `var_10`/`var_28` (its `x`/`y` arguments) are computed
+  once, already `offsetx`/`offsety`-subtracted (room-space converted to
+  screen-space up front). The sibling `sub_410631` call runs only on
+  the walk-behind-aware sort path (`RoomObject.flags&
+  OBJF_NOWALKBEHINDS` clear, already documented on `flags` itself), and
+  adds the offsets back because IT needs original room-space
+  coordinates for walk-behind occlusion, while `add_to_sprite_list`
+  wants the already-converted screen-space values everything else uses.
+  Corrected in place, no longer an open lead.
 
 ## Third-party library identification (Task #10)
 

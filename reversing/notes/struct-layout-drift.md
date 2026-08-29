@@ -8283,3 +8283,25 @@ same loop (to an already-matched, still-unnamed helper) DOES adjust its
 x/y arguments by `offsetx`/`offsety` before the call, while
 `add_to_sprite_list` itself does NOT -- a real behavioral asymmetry
 between the two calls worth understanding, left for a future round.
+
+## Resolving that asymmetry: ordinary coordinate bookkeeping, not a puzzle
+
+An immediate follow-up read the surrounding loop body in full rather
+than just the two call sites. `var_10`/`var_28` (the `x`/`y` arguments
+`add_to_sprite_list` receives) are computed exactly once, earlier in
+the same loop iteration, already WITH `offsetx`/`offsety` subtracted --
+"`eax = obj.x * current_screen_resolution_multiplier_x; eax -= offsetx;
+var_10 = eax`" -- converting the object's room-space position to
+screen-space up front. The sibling call (`sub_410631`, still unnamed)
+sits behind a branch already fully documented on `RoomObject.flags`
+itself: it only runs when `OBJF_NOWALKBEHINDS`(2) is CLEAR, i.e. the
+walk-behind-aware sort path. That path adds `offsetx`/`offsety` back
+onto `var_10`/`var_28` specifically because it needs the ORIGINAL
+room-space coordinates to compute walk-behind occlusion against the
+room's own walk-behind bitmap (which is naturally addressed in
+room-space, not screen-space) -- while `add_to_sprite_list` wants the
+already-converted screen-space values used by everything else feeding
+the sprite list. Ordinary coordinate-space bookkeeping between two
+consumers with different needs, not an architectural puzzle. Corrected
+in place in both `apply_structs.py` and `add_to_sprite_list`'s own
+`matches.json` entry.

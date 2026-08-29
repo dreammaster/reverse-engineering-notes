@@ -4951,11 +4951,20 @@ struct SpriteListEntry {
                             // matching 2011's `baseline` role and the sort-by-baseline purpose
                             // this whole list exists for).
   int x;                       // +0x08, high confidence: the function's 2nd argument (`var_10`
-                            // at both call sites; NOT offset-adjusted before this call, unlike
-                            // the sibling `sub_410631` call in the same loop, which DOES add
-                            // `offsetx`/`offsety` -- a genuine behavioral difference between the
-                            // two sibling calls worth noting for a future round, not yet
-                            // explained).
+                            // at both call sites). RESOLVED (immediate follow-up, same
+                            // investigation): `var_10`/`var_28` are computed ONCE, earlier in
+                            // `prepare_characters_for_drawing`'s loop body, already WITH
+                            // `offsetx`/`offsety` subtracted ("eax=obj.x*mult_x; eax-=offsetx;
+                            // var_10=eax" -- converting room-space to screen-space up front).
+                            // The sibling `sub_410631` call (taken only when
+                            // `RoomObject.flags&OBJF_NOWALKBEHINDS`(2) is CLEAR, i.e. the
+                            // walk-behind-aware sort path, already documented on `flags` above)
+                            // ADDS `offsetx`/`offsety` back before its own call specifically
+                            // because IT needs the original room-space coordinates for
+                            // walk-behind-occlusion purposes, while `add_to_sprite_list` wants
+                            // the already-converted screen-space values used everywhere else in
+                            // the sprite list -- ordinary coordinate-space bookkeeping between
+                            // two consumers with different needs, not an unexplained asymmetry.
   int y;                       // +0x0C, high confidence: the function's 3rd argument (`var_28`),
                             // same evidence pattern as `x` above.
   int transparent;             // +0x10, high confidence: the function's 5th argument -- at one
