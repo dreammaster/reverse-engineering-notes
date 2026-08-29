@@ -2311,21 +2311,33 @@ struct MoveList {
                             // (already matched): set to `0` (byte-sized write, "mov byte ptr
                             // (mls+1FCh)[eax],0") as part of the same reset. Matches 2011's
                             // declared `char doneflag` (`acroom.h:3089`) exactly.
-  char direct;                     // +0x1FD, MEDIUM confidence: still boxed in with zero slack
-                            // immediately after the confirmed `doneflag`, matching 2011's
-                            // declared `char direct` (`acroom.h:3090`, "MoveCharDirect was used
-                            // or not") in position -- CHECKED THIS ROUND, one real data point but
-                            // not a full confirmation: `move_object` (already matched)'s own body
-                            // -- already fully read for other MoveList/RoomObject fields -- ends
-                            // immediately after "objs[objj].moving=mslot;" (`RoomObject.moving`
-                            // @+0x18, confirmed) with NO further write, unlike 2011's own version
-                            // which follows that exact same line with "mls[mslot].direct=ignwal;"
-                            // (`AC.CPP:16561`). This is real (if narrow) negative evidence that
-                            // THIS caller doesn't set `.direct` -- but 2011 has a second write site
-                            // (`AC.CPP:20028`, a `NewRoom`-triggered "nasty hack" edge case) and a
-                            // presumed third for character movement (`MoveCharacterDirect`, not
-                            // yet matched in this build) neither checked yet, so this is not
-                            // treated as a full confirmed-absent finding for the field as a whole.
+  char direct;                     // +0x1FD, CONFIRMED ABSENT (upgraded from MEDIUM/an
+                            // incomplete negative result the previous round, now exhaustive):
+                            // ALL THREE of 2011's own write sites for this field were checked
+                            // this round and none exist in this build. (1) `move_object` (already
+                            // matched, fully read) ends immediately after "objs[objj].moving=
+                            // mslot;" with no further write, unlike 2011's "mls[mslot].direct=
+                            // ignwal;" (`AC.CPP:16561`) right after it. (2) Character movement:
+                            // `MoveCharacterDirect` (already matched) is a thin wrapper that just
+                            // calls `walk_character(cc,xx,yy,ignwal=1,autoWalkAnims=0)`; "MoveCharacter"
+                            // itself calls the SAME `walk_character` with `ignwal` varying --
+                            // `walk_character`'s own body (fully read this round, start to end)
+                            // never touches `mls[mslot]+0x1FD`, and its own post-`find_route`
+                            // helper (`sub_40EB7B`, called for the "route needs more than one
+                            // step" case) was checked too -- zero byte-sized writes anywhere in
+                            // its ~420-line body. (3) `NewRoom` (already matched, fully read): its
+                            // `inside_script` branch is a genuine simpler predecessor of 2011's
+                            // "nasty hack" (`AC.CPP:20021-20030`) -- this build just stores `nrnum`
+                            // into the already-confirmed `ExecutingScript.newnum`@+0x04 via the
+                            // already-confirmed `curscript` global, with NO
+                            // `mls[playerchar->walking].direct=1;`/`StopMoving` logic at all; the
+                            // whole hack doesn't exist here. With all three 2011 write sites
+                            // checked and none present, `direct` is confirmed absent by the same
+                            // "exhaustive multi-site check" standard used elsewhere in this
+                            // project (matching 2011's own comment role, "MoveCharDirect was used
+                            // or not" -- this build's `MoveObject`/`MoveCharacter` unify the
+                            // direct/non-direct distinction entirely through the `ignwal` parameter
+                            // passed to `find_route`, with no separate persistent flag needed).
   char _pad_align[2];              // +0x1FE..0x200, compiler alignment padding (not a real
                             // field) -- boxed in with zero slack by the confirmed total stride
                             // (0x200) and the confirmed `direct` field ending at +0x1FE.
@@ -4102,19 +4114,28 @@ struct RoomStruct {
                             // 2011's own documented floor.
   short flagstates[15];          // +0xBA6..0xBC4 (30 bytes), MEDIUM confidence: positional/
                             // arithmetic-fit only -- no already-matched function reads this span
-                            // directly (same evidentiary status as `RoomStatus.flagstates[15]`'s
-                            // own entry, the closest analogue). Sits with zero gap immediately
-                            // after the now-confirmed `wasversion`@+0xBA4 and ends with zero
-                            // remainder exactly at the already-confirmed `anims[10]` start
-                            // (+0xBC4), matching 2011's declared "short wasversion; short
-                            // flagstates[MAX_FLAGS];" adjacency (`acroom.h:833-834`) exactly, with
-                            // `MAX_FLAGS=15` (`acroom.h:801`) matching `RoomStatus.flagstates`'s
-                            // own already-confirmed capacity with zero drift. Most plausibly this
-                            // room's DEFAULT/source flag values, copied into the per-save-slot
-                            // `RoomStatus.flagstates` on first visit -- the same "source copy ->
-                            // runtime copy" relationship already established for `hscond`/
-                            // `objcond`/`misccond` -- but that specific copy site has not been
-                            // located in this build.
+                            // directly. Sits with zero gap immediately after the now-confirmed
+                            // `wasversion`@+0xBA4 and ends with zero remainder exactly at the
+                            // already-confirmed `anims[10]` start (+0xBC4), matching 2011's
+                            // declared "short wasversion; short flagstates[MAX_FLAGS];"
+                            // adjacency (`acroom.h:833-834`) exactly, with `MAX_FLAGS=15`
+                            // (`acroom.h:801`) matching `RoomStatus.flagstates`'s own already-
+                            // confirmed capacity with zero drift. UPDATED HYPOTHESIS (this round,
+                            // superseding the earlier "copied into RoomStatus.flagstates on first
+                            // visit" guess): now that `RoomStatus.flagstates`'s own populating
+                            // code IS known (`load_new_room`'s "for(chaa=0;chaa<15;chaa++)
+                            // croom->flagstates[chaa]=0;" -- an unconditional RESET, not a copy
+                            // from anywhere), the "source copy -> runtime copy" relationship
+                            // already established for `hscond`/`objcond`/`misccond` does NOT
+                            // extend to `flagstates` -- there is no copy site to find, because no
+                            // copy happens. Reinforced by an exhaustive check of 2011's own
+                            // `Engine/` source: `thisroom.flagstates`/`rstruc->flagstates` has
+                            // ZERO usages anywhere -- this field is genuinely unused/dead weight
+                            // even in the 2011 reference build, the same "declared but never read"
+                            // status as `MouseCursor.name`/`GameSetupStructBase.target_win`
+                            // elsewhere in this project. Left at MEDIUM (positional fit) since no
+                            // negative search of THIS build's own disassembly has been done yet,
+                            // but this is now a much weaker lead than previously framed.
   FullAnimation anims[10];       // +0xBC4..0x154C (2440 bytes, 10 x 244-byte `FullAnimation`
                             // entries), high confidence: `fread(rst+0xBC4, ElementSize=0xF4(244),
                             // Count=numanims)` for room-file version>=6, else

@@ -1939,6 +1939,31 @@ disassembly work.
   does three more `rep movsd` block copies reconfirming `misccond`/
   `hscond[20]`/`objcond[10]` from the exact same pass. `RoomStatus` now
   has no remaining MEDIUM-confidence fields at all.
+- **`MoveList.direct`@+0x1FD closes as CONFIRMED ABSENT, and
+  `RoomStruct.flagstates`'s standing hypothesis gets corrected.** Two
+  loose ends closed in the same round. First, `RoomStruct.flagstates`'s
+  comment had guessed it was "copied into the per-save-slot
+  `RoomStatus.flagstates` on first visit," mirroring the established
+  `hscond`/`objcond`/`misccond` source-copy pattern — but the round
+  above already proved `RoomStatus.flagstates` is populated by an
+  unconditional zero-reset, not a copy, so there's nothing to copy from.
+  A check of 2011's own `Engine/` source reinforces this independently:
+  `thisroom.flagstates` has ZERO usages anywhere in the reference build
+  either — genuinely dead weight even in 2011, not just unfound here.
+  Retracted in place, field stays MEDIUM (position/arithmetic still
+  solid). Second, `MoveList.direct` — left at "one negative site found,
+  two more to check" the previous round — closes completely: reading
+  `MoveCharacterDirect` shows it's a thin wrapper calling
+  `walk_character(...,ignwal=1,...)` (this build unifies "direct" and
+  "avoid walls" through one shared function, same as `move_object`
+  already showed for objects), and neither `walk_character`'s own body
+  nor its multi-stage-route helper (`sub_40EB7B`, ~420 lines) ever
+  writes the offset. `NewRoom`'s `inside_script` branch — 2011's third
+  write site, a "nasty hack" — turns out to be a genuine simpler
+  predecessor with no such hack at all here, just a plain store into the
+  already-confirmed `ExecutingScript.newnum`. All three of 2011's known
+  write sites checked, none present — confirmed absent by the same
+  exhaustive-multi-site standard used for the `DCMD_*` opcode table.
 
 ## Third-party library identification (Task #10)
 

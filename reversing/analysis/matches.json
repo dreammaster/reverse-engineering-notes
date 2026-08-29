@@ -1587,7 +1587,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj MOVELIST.DIRECT EXHAUSTIVE CHECK (found this round): this function's own body -- fully read start to end -- has no counterpart to 2011's 'nasty hack' inside_script branch ('if ((playerchar->walking>0)&&(playerchar->walking<TURNING_AROUND)) { mls[playerchar->walking].direct=1; StopMoving(...); }', AC.CPP:20021-20030). This build's own inside_script branch is a genuine simpler predecessor: it just stores nrnum into the already-confirmed ExecutingScript.newnum@+0x04 via the already-confirmed curscript global, with no direct/StopMoving logic at all -- the whole hack doesn't exist here. See MoveList.direct's own entry in apply_structs.py for the complete three-site writeup that closes this field as CONFIRMED ABSENT."
   },
   {
     "kind": "function",
@@ -3817,7 +3817,7 @@
     "source_file": "Engine/acchars.cpp",
     "source_line": 37,
     "confidence": "high",
-    "evidence": "void walk_character(int,int,int,int,bool) at acchars.cpp:37. String match: \"!MoveCharacter: character not in current room\" (40). Same caller (sub_40C3E0) as move_object -- a single dispatcher function invoking both, plausible for a generic \"move this game entity\" script-command handler. ADDITIONAL FIELD EVIDENCE (found later, MoveList struct investigation): \"shl eax,9 /* eax=mslot*0x200 */; mov edx,dword ptr mls.pos[eax]; cmp edx,dword ptr (mls.pos+4)[ecx]; jz <skip-if-already-there>\" -- confirms the MoveList array's stride is exactly 0x200(512) bytes via the `shl eax,9` scaling (2^9=512), and confirms MoveList.pos[0]/[1] are used to check whether the route's first two waypoints coincide (a \"we're already at the destination\" short-circuit). See reversing/notes/struct-layout-drift.md for the complete MoveList writeup."
+    "evidence": "void walk_character(int,int,int,int,bool) at acchars.cpp:37. String match: \"!MoveCharacter: character not in current room\" (40). Same caller (sub_40C3E0) as move_object -- a single dispatcher function invoking both, plausible for a generic \"move this game entity\" script-command handler. ADDITIONAL FIELD EVIDENCE (found later, MoveList struct investigation): \"shl eax,9 /* eax=mslot*0x200 */; mov edx,dword ptr mls.pos[eax]; cmp edx,dword ptr (mls.pos+4)[ecx]; jz <skip-if-already-there>\" -- confirms the MoveList array's stride is exactly 0x200(512) bytes via the `shl eax,9` scaling (2^9=512), and confirms MoveList.pos[0]/[1] are used to check whether the route's first two waypoints coincide (a \"we're already at the destination\" short-circuit). See reversing/notes/struct-layout-drift.md for the complete MoveList writeup. MOVELIST.DIRECT EXHAUSTIVE CHECK (found this round, closing out the previous round's partial negative result): this function's own body -- fully read start to end -- never writes mls[mslot]+0x1FD (MoveList.direct) anywhere. Its post-find_route helper (sub_40EB7B, called for the 'route needs more than one step' case, ~420 lines) was also checked and contains zero byte-sized writes at all. Combined with move_object's own already-confirmed absence and NewRoom's confirmed absence of 2011's 'nasty hack' branch (see MoveList.direct's own entry in apply_structs.py for the complete three-site writeup), this field is now CONFIRMED ABSENT by exhaustive multi-site check."
   },
   {
     "kind": "manual",

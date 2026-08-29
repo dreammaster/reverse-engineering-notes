@@ -7677,3 +7677,47 @@ all -- every field from `beenhere` through `walkbehind_base` is now
 either directly behaviorally confirmed or confirmed absent by positive
 evidence, joining `RoomObject`/`MoveList`/`MouseCursor`/
 `InventoryItemInfo` as one of this project's fully closed structs.
+
+## `MoveList.direct` confirmed absent, and `RoomStruct.flagstates`'s hypothesis corrected
+
+Two follow-up threads closed this round.
+
+**`RoomStruct.flagstates[15]`'s standing hypothesis needed correcting.**
+Its own comment had guessed it was "most plausibly copied into the
+per-save-slot `RoomStatus.flagstates` on first visit," mirroring the
+already-established `hscond`/`objcond`/`misccond` source-copy-to-
+runtime-copy relationship. Now that `RoomStatus.flagstates`'s own
+populating code IS known (last round's finding: `load_new_room`
+unconditionally RESETS it to zero, `for(chaa=0;chaa<15;chaa++)
+croom->flagstates[chaa]=0;`), that hypothesis doesn't hold -- there is
+no copy to find, because no copy happens. A check of 2011's own
+`Engine/` source reinforces this from a different angle:
+`thisroom.flagstates`/`rstruc->flagstates` has ZERO usages anywhere in
+the reference build either -- this field is genuinely dead weight even
+in 2011, the same "declared but never read" status as `MouseCursor.name`/
+`GameSetupStructBase.target_win`. The field stays at MEDIUM confidence
+(position/arithmetic fit is still solid), just with the wrong
+hypothesis retracted rather than silently dropped.
+
+**`MoveList.direct`@`+0x1FD` closes as CONFIRMED ABSENT.** The previous
+round found `move_object` doesn't set it, but flagged two more of
+2011's three known write sites as unchecked. Both got checked this
+round: `MoveCharacterDirect` turns out to be a thin wrapper -- it just
+calls `walk_character(cc,xx,yy,ignwal=1,autoWalkAnims=0)`, meaning
+"MoveCharacter" and "MoveCharacterDirect" are unified through the same
+function in this build (mirroring `move_object`'s own `ignwal`-parameter
+unification). Reading `walk_character`'s own body in full, plus its
+post-`find_route` helper (`sub_40EB7B`, ~420 lines, called for
+multi-stage routes), finds zero writes to `mls[mslot]+0x1FD` anywhere.
+`NewRoom` (2011's third site, a "nasty hack" edge case gated on
+`inside_script`) was also read in full: this build's own `inside_script`
+branch is a genuine simpler predecessor that just stores `nrnum` into
+the already-confirmed `ExecutingScript.newnum`@`+0x04` -- the entire
+`mls[playerchar->walking].direct=1;`/`StopMoving` hack doesn't exist
+here. With all three of 2011's own write sites checked and none present
+in this build, `direct` is confirmed absent by the same "exhaustive
+multi-site check" standard already used for `DCMD_*` opcodes and other
+findings elsewhere in this project -- this build's `MoveObject`/
+`MoveCharacter` unify the direct/non-direct distinction entirely through
+the `ignwal` parameter passed to `find_route`, with no separate
+persistent per-movelist flag needed.
