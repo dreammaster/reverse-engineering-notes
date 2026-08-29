@@ -730,10 +730,26 @@ struct CharacterInfo {
                            // 2011's declared field (`acroom.h:2611`) in position exactly.
   int activeinv;            // +0x34, high confidence: SetActiveInventory(-1) sets this to -1,
                            // matching source's "player.activeinv = -1;" exactly.
-  short loop;               // +0x38, medium confidence: update_stuff writes an 8-entry direction-lookup
-                           // table value here (source: Engine/acchars.cpp:19 "int turnlooporder[8] =
-                           // {0, 6, 1, 7, 3, 5, 2, 4};" -- the classic AGS "walking direction -> loop
-                           // number" table, confirmed to be the same table via ReleaseCharacterView's context).
+  short loop;               // +0x38, high confidence (UPGRADED from MEDIUM, found in a later
+                           // round): `update_stuff`'s "turning around before walking" branch
+                           // (gated on `walking>=0x3E8`/`TURNING_AROUND`, already-confirmed
+                           // `walking`@+0x3C) is a complete, decisive, multi-field match to
+                           // source's `AC.CPP:6526-6558`: reads `loop`@+0x38 as the sole argument
+                           // to a newly-identified helper (`sub_40EB43`, now `find_looporder_index`
+                           // -- matching `find_looporder_index(chi->loop)` exactly), clamps the
+                           // resulting `wantloop` to [0,7], validates it against
+                           // `views[view].numLoops`/`CHF_NODIAGONAL`(8, already-confirmed
+                           // `flags`@+0x20) using a newly-identified global 8-entry table
+                           // (`dword_4B42C8`, now identified as `turnlooporder[8]={0,6,1,7,3,5,2,4}`
+                           // itself), and finally writes "dx=word[dword_4B42C8[wantloop*4]];
+                           // [this+0x38]=dx" -- `chi->loop=turnlooporder[wantloop];` -- as the
+                           // SOLE, unambiguous write target. The same block goes on to decrement
+                           // `walking` by `TURNING_AROUND` and take it modulo `TURNING_BACKWARDS`
+                           // (0x2710/10000, matching this project's own earlier "modular-1000/
+                           // 10000 arithmetic" observation on `walking` exactly) and copy
+                           // `animspeed`@+0x42 into `wait`@+0x1C (`chi->walkwait=chi->animspeed;`)
+                           // -- reconfirming FOUR other already-established fields in the same
+                           // pass.
   short frame;              // +0x3A, high confidence: Character_UnlockView's "chaa->frame = 0;" matches
                            // disasm exactly ([+0x3A] = 0, right where source resets frame after defview restore).
   short walking;           // +0x3C, pre-existing IDB annotation, CONFIRMED (upgraded from "flagged" in an

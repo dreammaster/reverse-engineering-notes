@@ -314,7 +314,7 @@ rather than trusting these numbers as they age)
   944/776 before that addition) — this pool was "largely exhausted" for
   Engine/Common code specifically; a productive third-party-library round
   (Task #10, now paused — see below) pushed it further before wrapping up.
-- `reversing/analysis/matches.json` has 588 entries (function + struct-field
+- `reversing/analysis/matches.json` has 589 entries (function + struct-field
   matches combined)
 - 25 struct definitions built entirely from disassembly evidence (not
   borrowed from the 2011 source — see `reversing/notes/struct-layout-drift.md`):
@@ -1899,9 +1899,19 @@ disassembly work.
   detour: `load_new_room` (already matched) does `offsetx=0; offsety=0;
   forchar->prevroom=forchar->room; forchar->room=newnum;` right near the
   top of the function, gated on `forchar!=NULL` -- matching source
-  (`AC.CPP:4429-4432`) instruction for instruction. `CharacterInfo` is
-  now fully confirmed except `actx`/`acty` (already shelved as a likely
-  later addition) and `loop`@+0x38 (MEDIUM, no direct access site yet).
+  (`AC.CPP:4429-4432`) instruction for instruction.
+- **`CharacterInfo.loop` closes too**, via `update_stuff`'s "turning
+  around before walking" branch (a 2.3-era feature, per `ags-archives/`)
+  -- a complete match to source's `AC.CPP:6526-6558`: reads `loop`@+0x38
+  as the sole argument to a newly-matched `find_looporder_index`
+  (`sub_40EB43`), validates the result against a newly-identified global
+  `turnlooporder[8]={0,6,1,7,3,5,2,4}` table (`dword_4B42C8`) and the
+  already-confirmed `flags`/`CHF_NODIAGONAL`, then writes the result
+  back into `loop`@+0x38 as the sole target — while also reconfirming
+  `walking`, `view`, `flags`, `wait`, and `animspeed` in the same pass.
+  `CharacterInfo` is now fully confirmed field by field except `actx`/
+  `acty` (already shelved as a likely later addition) — one of the most
+  thoroughly-confirmed structs in the whole project.
 
 ## Third-party library identification (Task #10)
 

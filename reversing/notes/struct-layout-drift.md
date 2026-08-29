@@ -7566,3 +7566,42 @@ later addition (2011's only usage site sits inside hardware-accelerated
 drawing code this build has repeatedly been shown to predate) -- and
 `loop`@`+0x38`, sitting at MEDIUM confidence pending a more direct
 access site than the shared direction-lookup-table write already found.
+
+## `CharacterInfo.loop` closes too, with a complete "turning around" match
+
+That last remaining field didn't stay open long. `update_stuff`'s
+"turning around before walking" branch (a 2.3-era feature, per
+`ags-archives/ags230/docs/CHANGES.TXT`: "Added option to make characters
+turn to face the new direction before starting to walk") is gated on
+`walking >= 0x3E8`(1000, `TURNING_AROUND`) -- already-confirmed
+`walking`@`+0x3C` -- and turns out to be a complete, decisive,
+multi-field match to source's `AC.CPP:6526-6558`:
+
+- Reads `loop`@`+0x38` as the SOLE argument to a previously-unnamed
+  helper (`sub_40EB43`), incrementing the result by 1 -- matching
+  source's `int wantloop = find_looporder_index(chi->loop) + 1;`
+  exactly. `sub_40EB43` is accordingly matched to `find_looporder_index`.
+- Clamps `wantloop` to the range `[0,7]` in a loop, validating each
+  candidate against `views[view].numLoops` (via the already-confirmed
+  `view`@`+0x08` and the `views` global's own confirmed `0x8D4` stride)
+  and `CHF_NODIAGONAL`(8) against the already-confirmed `flags`@`+0x20`
+  -- both matching source's validation conditions exactly.
+- The candidate values themselves come from a previously-unidentified
+  global 8-entry table, `dword_4B42C8` -- now identified as
+  `turnlooporder[8] = {0, 6, 1, 7, 3, 5, 2, 4}` itself
+  (`Engine/acchars.cpp:19`), the exact literal array this project's
+  much earlier round had already found being WRITTEN somewhere without
+  yet finding the table's own address.
+- Finally: `dx = word[dword_4B42C8[wantloop*4]]; [this+0x38] = dx;` --
+  `chi->loop = turnlooporder[wantloop];` -- as the sole, unambiguous
+  write target. This closes `loop`@`+0x38` at HIGH confidence.
+
+The same block goes on to decrement `walking` by `TURNING_AROUND` and
+take the remainder modulo `TURNING_BACKWARDS` (`0x2710`/10000) --
+matching this project's own much earlier "modular-1000/10000
+arithmetic" observation on `walking` exactly, finally explained in
+full -- and copies `animspeed`@`+0x42` into `wait`@`+0x1C`
+(`chi->walkwait = chi->animspeed;`), reconfirming four other already-
+established fields in the same pass. `CharacterInfo` is now fully
+confirmed field by field except `actx`/`acty`, a genuinely shelved dead
+end rather than an open lead.
