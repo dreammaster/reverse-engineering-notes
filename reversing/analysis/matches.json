@@ -5716,5 +5716,23 @@
     "source_line": 21179,
     "confidence": "high",
     "evidence": "int IsTimerExpired(int tnum) at AC.CPP:21179-21187. Exact match: same range validation as script_SetTimer (tnum in [1,MAX_TIMERS=21)), quitting \"!IsTimerExpired: invalid timer number\" otherwise; then \"if(script_timers[tnum]==1){script_timers[tnum]=0;return 1;} return 0;\" matches the disassembly instruction for instruction. Already correctly named in the live IDB (case-only difference from 2011's own \"IsTimerExpired\", not renamed) but had no matches.json entry at all until this round. Third independent confirmation of GameState.script_timers[21]@+0x838 and MAX_TIMERS=21."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_4106EF",
+    "new_name": "add_to_sprite_list",
+    "source_file": "Engine/AC.CPP",
+    "source_line": 7441,
+    "confidence": "high",
+    "evidence": "void add_to_sprite_list(IDriverDependantBitmap*,int,int,int,int,int,bool) at AC.CPP:7441-7470. Named from its own overflow-quit string, \"ad_to_sprite_list: roo many sprite added\" (a genuine typo in the original 2002 source -- 'ad_to' for 'add_to', 'roo' for 'too' -- preserved verbatim as the compiled string, not a transcription error here). Called twice from prepare_characters_for_drawing (already matched), matching 2011's own two call sites into add_to_sprite_list from the same function (one drawing a room object, passing RoomObject.transparent@+0x08 already confirmed as the 5th argument; one drawing a character sprite). This build's version takes only 5 arguments (bmp,x,y,baseline,trans) and writes exactly 5 parallel-array slots (dword_4DC870/874/878/87C/880[dword_5231DC*0x14]) -- see the new SpriteListEntry struct in apply_structs.py for the full field recovery. Overflow check fires at count >=0x27(39), roughly half of 2011's MAX_SPRITES_ON_SCREEN=76 (AC.CPP:685) -- confirms 2011's hasAlphaChannel/takesPriorityIfEqual fields and the sprNum/isWalkBehind parameters are absent from this build entirely."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_4106E0",
+    "new_name": "clear_sprite_list",
+    "source_file": "Engine/AC.CPP",
+    "source_line": 7438,
+    "confidence": "high",
+    "evidence": "void clear_sprite_list() at AC.CPP:7438-7440. Verbatim match: \"mov dword_5231DC,0; retn\" against source's entire body, \"sprlistsize=0;\". Called from prepare_characters_for_drawing (already matched), matching 2011's own call site into clear_sprite_list at the start of the equivalent per-frame sprite-list-building pass. Identifies dword_5231DC as sprlistsize, the counter driving add_to_sprite_list's own indexing (see that entry)."
   }
 ]

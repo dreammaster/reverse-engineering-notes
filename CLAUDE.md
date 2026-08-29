@@ -2155,6 +2155,26 @@ disassembly work.
   its own unrelated-looking label — the same pattern already seen with
   `ebscene[]`/`dword_523094`. A third independent confirmation for
   `messages[500]`.
+- **`add_to_sprite_list`/`clear_sprite_list` found, plus a new
+  `SpriteListEntry` predecessor struct.** The same error-string sweep
+  turned up a genuine 2002-era typo doubling as naming evidence:
+  `sub_4106EF`'s overflow-quit string reads `"ad_to_sprite_list: roo
+  many sprite added"`. Matches `add_to_sprite_list`
+  (`Engine/AC.CPP:7441-7470`), the per-frame list that orders objects
+  and characters by baseline before drawing; both call sites sit inside
+  `prepare_characters_for_drawing` (already matched), one passing the
+  already-confirmed `RoomObject.transparent`@+0x08 straight through. A
+  companion two-instruction function matches `clear_sprite_list()`
+  verbatim and identifies `sprlistsize`. The function's own 5 field
+  writes land on 5 separate-looking globals exactly 4 bytes apart (the
+  same "IDA doesn't recognize the struct" pattern seen twice already
+  this session) — formalized as `SpriteListEntry` (`bmp`/`baseline`/
+  `x`/`y`/`transparent`, 20 bytes). DRIFT: 2011's `hasAlphaChannel`/
+  `takesPriorityIfEqual` fields are confirmed absent, and this build's
+  own overflow limit (39) is roughly half of 2011's
+  `MAX_SPRITES_ON_SCREEN=76` — the usual capacity-increase pattern,
+  here for the first time on a per-frame runtime list rather than a
+  save-data array.
 
 ## Third-party library identification (Task #10)
 

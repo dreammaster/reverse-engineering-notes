@@ -8230,3 +8230,56 @@ the same "IDA doesn't recognize a folded-offset alias" pattern already
 seen with `ebscene[]`/`dword_523094` a few rounds back, and gives
 `messages[500]`'s address a third independent confirmation route on top
 of its own already-solid `load_ac2game_dta` evidence.
+
+## `add_to_sprite_list`/`clear_sprite_list` found, plus a new `SpriteListEntry` predecessor struct
+
+Continuing the self-identifying-error-string sweep turned up a genuine
+typo in the original 2002 source that doubles as decisive naming
+evidence: `sub_4106EF`'s overflow-quit string reads `"ad_to_sprite_list:
+roo many sprite added"` -- "ad_to" for "add_to", "roo" for "too", both
+almost certainly typos already present in the compiled 2002 binary
+itself, not something introduced by this project's transcription.
+Preserved verbatim in `matches.json` since it's the function's own
+compiled string.
+
+This is `add_to_sprite_list` (`Engine/AC.CPP:7441-7470`) -- the
+"intermediate list used to order objects and characters by their
+baselines before everything is added to the Thing To Draw List." Both
+of its call sites sit inside `prepare_characters_for_drawing` (already
+matched), matching 2011's own two call sites into the same function
+from the same caller almost exactly: one for a room object (passing
+the already-confirmed `RoomObject.transparent`@`+0x08` straight through
+as the 5th argument -- an unusually direct field-to-field link between
+two independently-confirmed structs), one for a character sprite. A
+companion function, `sub_4106E0` (a two-instruction body, "zero a
+global, return"), matches `clear_sprite_list()` (`AC.CPP:7438-7440`)
+verbatim, and identifies the counter global `dword_5231DC` as
+`sprlistsize`.
+
+`add_to_sprite_list`'s own body writes exactly 5 fields per call into 5
+parallel-looking globals (`dword_4DC870`/`874`/`878`/`87C`/`880`, each
+exactly 4 bytes apart) at a shared `sprlistsize*0x14` stride -- the same
+"IDA doesn't recognize this is one struct, not five separate globals"
+pattern already seen twice this session (`ebscene[]`/`dword_523094`,
+`messages[500]`/`dword_51CB50`). Tracing each argument back through both
+call sites (cross-checking against a sibling call to an already-matched
+helper in the same loop that adjusts x/y by `offsetx`/`offsety`) pins
+down the field order precisely: `bmp`@`+0x00`, `baseline`@`+0x04`,
+`x`@`+0x08`, `y`@`+0x0C`, `transparent`@`+0x10` -- a clean 20-byte
+struct, formalized as `SpriteListEntry` (matching 2011's own class name
+for the same conceptual role). DRIFT: this build's version takes only 5
+arguments and writes only these 5 fields -- 2011's own `hasAlphaChannel`
+and `takesPriorityIfEqual` (and the `sprNum`/`isWalkBehind` parameters
+that drive them) are CONFIRMED ABSENT, this build predating both the
+alpha-channel sprite flag and walk-behind-priority sorting entirely.
+Capacity also drifts: this build's own overflow check fires at count
+`>=0x27`(39), roughly half of 2011's `MAX_SPRITES_ON_SCREEN=76`
+(`AC.CPP:685`) -- the same "later capacity increase" pattern found
+throughout this project, here applied for the first time to a
+per-frame runtime list rather than a fixed save-data array.
+
+One loose end noted but not chased further: the sibling call in the
+same loop (to an already-matched, still-unnamed helper) DOES adjust its
+x/y arguments by `offsetx`/`offsety` before the call, while
+`add_to_sprite_list` itself does NOT -- a real behavioral asymmetry
+between the two calls worth understanding, left for a future round.

@@ -4922,6 +4922,65 @@ struct MYSTATICMP3 {
                             // `MYSTATICMP3` member order exactly (only the `SOUNDCLIP` base
                             // portion drifts, not this derived class's own fields -- the same
                             // pattern as `MYMP3` above).
+
+// SpriteListEntry (this build's own ancestor version) -- found via a self-identifying error
+// string sweep: `sub_4106EF` carries its own name in its overflow-quit message,
+// "ad_to_sprite_list: roo many sprite added" (a genuine typo in the original 2002 source,
+// "roo" for "too" -- preserved verbatim since it's the function's own compiled string, not a
+// transcription error). Confirmed as `add_to_sprite_list` (`Engine/AC.CPP:7441-7470`, the
+// "intermediate list used to order objects and characters by their baselines before everything
+// is added to the Thing To Draw List") via a decisive combination of role AND caller: both of
+// its two call sites are inside `prepare_characters_for_drawing` (already matched), one for
+// drawing a room object (passing `RoomObject.transparent`@+0x08, already confirmed, as the
+// 5th argument) and one for a character sprite -- matching 2011's own two call sites into
+// `add_to_sprite_list` from the SAME function almost exactly in shape. A companion function,
+// `sub_4106E0` ("mov dword_5231DC,0; retn"), matches 2011's `clear_sprite_list()` ("void
+// clear_sprite_list() { sprlistsize=0; }", `AC.CPP:7438-7440`) verbatim -- both newly matched
+// this round. `dword_5231DC` is `sprlistsize`, confirmed via the exact same global driving both
+// functions' counter logic.
+struct SpriteListEntry {
+  void *bmp;                  // +0x00, high confidence: the function's 1st argument (the
+                            // bitmap/SpriteCache-derived pointer passed by both call sites),
+                            // matching 2011's own leading `IDriverDependantBitmap *bmp` field
+                            // (`acsound.h`-style hardware-bitmap wrapper this build predates --
+                            // here just a raw `block`/`BITMAP*`, consistent with this build's
+                            // established lack of the hardware-acceleration abstraction layer
+                            // found absent elsewhere, e.g. `CharacterInfo.actx`/`.acty`).
+  int baseline;                // +0x04, high confidence: the function's 4th argument
+                            // (`var_34` at both call sites, passed unchanged/unadjusted,
+                            // matching 2011's `baseline` role and the sort-by-baseline purpose
+                            // this whole list exists for).
+  int x;                       // +0x08, high confidence: the function's 2nd argument (`var_10`
+                            // at both call sites; NOT offset-adjusted before this call, unlike
+                            // the sibling `sub_410631` call in the same loop, which DOES add
+                            // `offsetx`/`offsety` -- a genuine behavioral difference between the
+                            // two sibling calls worth noting for a future round, not yet
+                            // explained).
+  int y;                       // +0x0C, high confidence: the function's 3rd argument (`var_28`),
+                            // same evidence pattern as `x` above.
+  int transparent;             // +0x10, high confidence: the function's 5th argument -- at one
+                            // call site this is literally `RoomObject.transparent`@+0x08
+                            // (already confirmed), read via `[dword_4E45C8+ecx*0x20+8]` and
+                            // passed straight through, an unusually direct field-to-field link
+                            // between two independently-confirmed structs.
+};                          // Total confirmed size 0x14 (20 bytes), matching the `*0x14` stride
+                            // used to index all five backing globals (`dword_4DC870`/`874`/
+                            // `878`/`87C`/`880`) with zero slack -- IDA auto-named each field's
+                            // own computed address as an unrelated standalone global, the same
+                            // "doesn't recognize the struct" pattern seen repeatedly elsewhere
+                            // in this project (`ebscene[]`/`dword_523094`, `messages[500]`/
+                            // `dword_51CB50`). DRIFT: 2011's own `SpriteListEntry` (`AC.CPP:
+                            // 683-686`) additionally declares `bool hasAlphaChannel` and `bool
+                            // takesPriorityIfEqual` -- both CONFIRMED ABSENT here (the function's
+                            // own body only ever writes these 5 fields, nothing else, and takes
+                            // only 5 arguments where 2011's takes 7) -- this build predates both
+                            // the alpha-channel sprite flag and the walk-behind-priority-sorting
+                            // features entirely. Capacity: this build's own overflow check fires
+                            // at count `>=0x27`(39), roughly half of 2011's `MAX_SPRITES_ON_
+                            // SCREEN=76` (`AC.CPP:685`) -- the familiar "later capacity increase"
+                            // pattern found throughout this project, here for the very first time
+                            // applied to a runtime PER-FRAME list rather than a fixed save-data
+                            // array.
 """
 
 
