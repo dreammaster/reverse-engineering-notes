@@ -1895,6 +1895,18 @@ struct GameSetupStructBase {
                             // field) -- `messages[500]` below is a pointer array and needs
                             // 4-byte alignment; `langcodes`'s 15-byte extent lands 3 bytes short.
   void *messages[500];             // +0xA008..0xA7D8 (2000 bytes), HIGH confidence: `dword_51D320`.
+                            // THIRD confirmation (found this round): `DisplayMessage` (already
+                            // matched)'s own "global message" branch (`msnum>=500`) reads
+                            // `dword_51CB50[msnum]` directly (no `-500` subtraction visible in
+                            // the disassembly) -- decisively explained by `dword_51CB50 ==
+                            // dword_51D320 - 500*4` (`0x51D320-0x51CB50=0x7D0=2000=500*4`,
+                            // zero slack), i.e. the compiler folded the `messages[msnum-500]`
+                            // indexing into a single pre-adjusted base address, matching 2011's
+                            // "if((msnum>=MAXGLOBALMES+500)||(game.messages[msnum-500]==NULL))
+                            // quit(\"!DisplayGlobalMessage: message does not exist\");" (`AC.CPP:
+                            // 14257-14259`) exactly -- the same "IDA doesn't recognize the two
+                            // addresses as the same array" pattern already seen with `ebscene[]`/
+                            // `dword_523094` a few rounds ago.
                             // Confirmed via load_ac2game_dta (already matched): "for(i=0;
                             // i<0x1F4(500);i++) { if(dword_51D320[i*4]==0) continue; else {
                             // malloc(0x1F4=500); dword_51D320[i*4]=result; fread(...) into it

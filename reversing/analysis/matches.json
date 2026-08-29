@@ -557,7 +557,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (found this round, previously mechanically matched with no field evidence recorded): for msnum>=500, reads dword_51CB50[msnum] and quits \"!DisplayGlobalMessage: message does not exist\" if null -- dword_51CB50 is GameSetupStructBase.messages[500] (dword_51D320) minus 500*4 bytes (0x51D320-0x51CB50=0x7D0=2000=500*4, zero slack), i.e. the compiler folded the \"messages[msnum-500]\" indexing into one pre-adjusted base address. Matches 2011's \"if((msnum>=MAXGLOBALMES+500)||(game.messages[msnum-500]==NULL)) quit(...)\" (AC.CPP:14257-14259) exactly -- a third independent confirmation of messages[500]'s address, via the same 'IDA doesn't recognize the folded-offset alias' pattern already seen with ebscene[]/dword_523094."
   },
   {
     "kind": "function",
@@ -2067,7 +2067,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (found this round, previously mechanically matched with no field evidence recorded): void script_SetTimer(int tnum,int timeout) at AC.CPP:21173-21177, exact match -- validates \"tnum>=1 && tnum<MAX_TIMERS(21)\" (quitting \"!StartTimer: invalid timer number\" otherwise, matching the function's own script-facing name 'StartTimer' rather than its internal C name) then writes dword_4EF250[tnum]=timeout -- dword_4EF250 is the already-confirmed GameState.script_timers[21]@+0x838, picking up a second independent confirmation route (on top of update_stuff's own decrement loop) plus a second confirmation of MAX_TIMERS=21 via the identical range check."
   },
   {
     "kind": "function",
@@ -5707,5 +5707,14 @@
     "source_line": null,
     "confidence": "high",
     "evidence": "Graph-script flag SETTER -- exact mirror of sub_41CD6D (see its own entry), called only from sub_41CDC3's SET_FLAG/CLEAR_FLAG opcodes (cases 11/12). Signature (int flagnum, int value): if flagnum<100, writes RoomStatus.flagstates[flagnum]=value (as a short); else writes dword_4EE89C[flagnum]=value (as a full int). Left unnamed for the same reason as sub_41CD6D."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "isTimerExpired",
+    "new_name": null,
+    "source_file": "Engine/AC.CPP",
+    "source_line": 21179,
+    "confidence": "high",
+    "evidence": "int IsTimerExpired(int tnum) at AC.CPP:21179-21187. Exact match: same range validation as script_SetTimer (tnum in [1,MAX_TIMERS=21)), quitting \"!IsTimerExpired: invalid timer number\" otherwise; then \"if(script_timers[tnum]==1){script_timers[tnum]=0;return 1;} return 0;\" matches the disassembly instruction for instruction. Already correctly named in the live IDB (case-only difference from 2011's own \"IsTimerExpired\", not renamed) but had no matches.json entry at all until this round. Third independent confirmation of GameState.script_timers[21]@+0x838 and MAX_TIMERS=21."
   }
 ]

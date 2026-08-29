@@ -8195,3 +8195,38 @@ in `run_interaction_commandlist` (`AC.CPP:21557-21558`) almost
 verbatim. Both fields upgrade from their long-standing uncertain status
 to HIGH confidence, resolving two of the oldest still-open question
 marks left over from the very first `GameState` survey rounds.
+
+## Two quick wins: the generic Timer API, and a third confirmation for `messages[500]`
+
+A sweep for self-identifying error strings not yet tied to a matched
+function (the same technique that found `run_graph_script`) turned up
+two clean, if smaller, results this round.
+
+`script_SetTimer`/`isTimerExpired` (the generic script-facing Timer API
+-- `StartTimer`/`IsTimerExpired` in script terms, distinct from the
+graph-script-specific timer closed out last round) were sitting in the
+IDB with correct names already (from prior manual work), but
+`script_SetTimer` had only a bare mechanical matches.json entry and
+`isTimerExpired` had none at all. Both match `Common/AC.CPP:21172-21187`
+exactly, instruction for instruction: the same `[1,MAX_TIMERS=21)` range
+validation, the same underlying array access. This gives
+`GameState.script_timers[21]`@`+0x838` a second and third independent
+confirmation route (on top of `update_stuff`'s own decrement loop) and
+reconfirms `MAX_TIMERS=21` a second way.
+
+Separately, revisiting `DisplayMessage` (already matched, but with no
+field evidence recorded beyond the mechanical linker match) explained a
+small mystery in passing: its "global message" branch (`msnum>=500`)
+reads `dword_51CB50[msnum]` directly, with no visible `-500` subtraction
+anywhere in the disassembly -- yet 2011's source clearly does
+`game.messages[msnum-500]`. The arithmetic resolves it immediately:
+`dword_51D320` (the already-confirmed base address of
+`GameSetupStructBase.messages[500]`) minus `dword_51CB50` is exactly
+`0x7D0` = `2000` = `500*4`, zero slack. The compiler folded the
+`messages[msnum-500]` indexing into one pre-adjusted base address at
+compile time, and IDA -- having no idea the two addresses are related --
+gave the folded one its own independent `dword_51CB50` label. This is
+the same "IDA doesn't recognize a folded-offset alias" pattern already
+seen with `ebscene[]`/`dword_523094` a few rounds back, and gives
+`messages[500]`'s address a third independent confirmation route on top
+of its own already-solid `load_ac2game_dta` evidence.

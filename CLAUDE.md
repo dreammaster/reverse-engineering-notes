@@ -2140,6 +2140,21 @@ disassembly work.
   confirmed instructions for two long-"?"-flagged `GameState` fields
   from the very first `GameState` survey rounds — `gscript_timer`@+0x0C
   and `usedinv`@+0xE0 — both upgraded to HIGH confidence.
+- **Two quick wins from a fresh self-identifying-error-string sweep.**
+  `script_SetTimer`/`isTimerExpired` (the generic script Timer API, distinct
+  from the graph-script-specific timer closed last round) were already
+  correctly named in the IDB but had thin-to-nonexistent matches.json
+  entries; both match `AC.CPP:21172-21187` exactly, giving
+  `GameState.script_timers[21]`@+0x838 a second/third confirmation route
+  and reconfirming `MAX_TIMERS=21`. Separately, `DisplayMessage`'s
+  "global message" branch (`msnum>=500`) reads `dword_51CB50[msnum]` with
+  no visible `-500` subtraction — resolved by `dword_51D320`
+  (`messages[500]`'s own confirmed base) minus `dword_51CB50` landing
+  exactly on `500*4`, zero slack: the compiler folded the `-500` offset
+  into the base address at compile time, and IDA gave the folded address
+  its own unrelated-looking label — the same pattern already seen with
+  `ebscene[]`/`dword_523094`. A third independent confirmation for
+  `messages[500]`.
 
 ## Third-party library identification (Task #10)
 
