@@ -3925,6 +3925,29 @@ struct RoomStruct {
                             // particular redundancy at all -- it's a vestige of exactly this kind
                             // of transient/duplicate field once existing where `+0x00` still does
                             // here.
+                            //
+                            // FOLLOW-UP (this round): a structural asymmetry between how scene 0
+                            // vs. scenes 1+ get loaded offers a plausible WHY for the staging
+                            // behavior, still without fully confirming it. `load_room`'s own
+                            // animated-background loop (`BLOCKTYPE_ANIMBKGRND`, scenes 1..
+                            // num_bscenes-1, already matched) reads/writes `ebscene[c]` DIRECTLY
+                            // at `+0x3A0C+c*4` for every c>=1, with zero staging through `+0x00`
+                            // anywhere -- e.g. "mov eax,[edx+ecx*4+3A0Ch]; push eax /*Block*/;
+                            // ...; mov [eax+edx*4+3A0Ch],ecx" for the load, and an exactly
+                            // parallel direct-addressed sequence for the pre-load destroy loop.
+                            // Only scene 0's own load (inside `load_main_block`) goes through
+                            // `+0x00` first and copies the result into `+0x3A0C` afterward. If
+                            // `+0x00` really is a fast-access cache read by drawing code
+                            // specifically for "the currently active background" (per
+                            // `load_new_room`'s own cache-refresh evidence above), this asymmetry
+                            // makes sense: only scene 0 is drawn every frame by default, so only
+                            // its loader bothers routing through the would-be cache slot and
+                            // keeping it in sync -- the other, less-frequently-displayed animated
+                            // frames have no reason to. No direct READER of `+0x00` by any drawing
+                            // function has been found yet to clinch this, so the identity still
+                            // isn't independently confirmed -- recorded as a plausible unifying
+                            // explanation for two previously-separate pieces of evidence, not a
+                            // new confirmation.
   block walls;                  // +0x04, high confidence (CORRECTED from +0x00): the last of
                             // three UNCONDITIONAL, consecutive `loadcompressed_allegro`
                             // (`sub_403846`, 4-arg: FILE*, block* by ADDRESS, color*, long --

@@ -7807,3 +7807,44 @@ string either -- the entire API surface 2011 built around the
 cursorPic/pic split doesn't exist yet. `cursorPic` is now confirmed
 absent, with `pic` serving both roles in this build -- closing
 `InventoryItemInfo`'s last open field.
+
+## `RoomStruct`'s `+0x00` mystery: a plausible unifying explanation, still not a confirmation
+
+Revisited `RoomStruct`'s oldest remaining open question -- the `+0x00`
+field, corrected twice already (round 5 called it `ebscene[0]`, round 6
+overturned that in favor of `+0x3A0C` being the real array base, and
+round 10 found `load_new_room` treats `+0x00` as a "working cache of
+the active background bitmap" without settling its formal identity).
+
+This round noticed a structural asymmetry that hadn't been explicitly
+called out before. `load_room`'s own `BLOCKTYPE_ANIMBKGRND` loop --
+which loads the room's extra animated-background frames, scenes 1
+through `num_bscenes-1` -- reads and writes `ebscene[c]` DIRECTLY at
+`+0x3A0C+c*4` for every one of those scenes, with no staging through
+`+0x00` anywhere in its body: the "existing bitmap to reuse" input to
+`load_lzw` comes straight from `ebscene[c]`'s own slot, and the result
+goes straight back into that same slot. Scene 0's own load -- inside
+`load_main_block`, a separate function entirely -- is the ONLY one that
+routes through `+0x00` first, copying the result into `+0x3A0C`
+afterward as a second, additional step.
+
+Put together with round 10's finding (`load_new_room` explicitly
+refreshes `+0x00` from `ebscene[0]` after every room load/resize), this
+asymmetry has a tidy explanation: if `+0x00` really is a fast-access
+cache of "the currently displayed background," it would make sense that
+only scene 0 -- the one actually drawn every frame by default -- has
+any reason to keep that cache synchronized. The other animated frames,
+displayed far less often (cycled in only when `play.bg_frame` advances
+past 0), have no cache to maintain, so their loader never touches
+`+0x00` at all.
+
+This is a genuine new piece of the puzzle, but it stops short of a
+confirmation: no function that actually DRAWS the background has been
+found yet reading from `+0x00` itself (as opposed to `ebscene[bg_frame]`
+directly, which would sidestep any cache entirely). Without that
+reader, "fast-access cache for scene 0 specifically" remains the most
+coherent story tying together every piece of evidence gathered so far
+across three separate rounds, but `+0x00`'s formal identity is left
+exactly where round 10 left it: an honestly-unconfirmed pad, now with a
+clearer picture of what it's plausibly doing and why, but no name to
+attach to it.

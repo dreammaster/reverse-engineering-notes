@@ -1995,6 +1995,21 @@ disassembly work.
   `set_inv_item_cursorpic`/`InventoryItem::SetCursorGraphic`-equivalent
   function or export string exists anywhere in the binary. `pic` alone
   serves both roles here — closing `InventoryItemInfo`'s last open field.
+- **`RoomStruct`'s `+0x00` mystery gets a plausible unifying explanation,
+  still not a confirmation.** A structural asymmetry not called out
+  before: `load_room`'s `BLOCKTYPE_ANIMBKGRND` loop (scenes 1..
+  num_bscenes-1, already matched) reads/writes `ebscene[c]` DIRECTLY at
+  `+0x3A0C+c*4` for every scene, no staging through `+0x00` anywhere;
+  only scene 0's own load (inside the separate `load_main_block`) routes
+  through `+0x00` first and copies the result into `+0x3A0C` afterward.
+  Combined with `load_new_room`'s already-known `+0x00`-refresh-from-
+  `ebscene[0]` behavior, this fits a tidy story: `+0x00` is a fast-access
+  cache of "the currently displayed background," and only scene 0 (drawn
+  every frame by default) has any reason to keep it synchronized — the
+  other, less-frequently-shown animated frames don't. Still short of a
+  confirmation: no drawing function has been found reading from `+0x00`
+  itself. Recorded as the most coherent explanation tying together three
+  rounds of evidence, not a new confirmation of the field's identity.
 
 ## Third-party library identification (Task #10)
 
