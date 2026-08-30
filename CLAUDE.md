@@ -2386,6 +2386,24 @@ disassembly work.
   same reason as its own callee — `FadeOut` delegates to `gfxDriver`
   entirely in 2011, leaving nothing to compare this build's manual
   implementation against.
+- **A self-correction: `dword_52321C` isn't a plugin hook, it's
+  `speechmp3`, plus `PlaySound` closes its own single-channel
+  predecessor.** Last round's `sub_40A21C` entry guessed `dword_52321C`
+  was "a generic plugin-hook-style function pointer" from the shape of
+  its check alone, without tracing where it's actually assigned.
+  Reading its real setter (inside `play_speech`, already matched) shows
+  it's the already-confirmed `speechmp3` handle — corrected in place,
+  wrong guess kept visible. Lesson: a plausible access pattern isn't
+  identity evidence; always trace the pointer to its real origin.
+  Separately, `dword_523220` (the neighbor that prompted the check)
+  turns out to be `PlaySound`'s own sound-effect channel. `PlaySound`
+  itself was already correctly named but had no `matches.json` entry —
+  it's a genuine standalone predecessor of 2011's `PlaySoundEx`, with
+  matching validation logic but one piece of ancient AGS history baked
+  in that 2011 has since removed: `"if(val>=1000) { PlayMusic(val-1000)
+  ; return; }"` — sound numbers ≥1000 redirect to music, a historical
+  quirk with zero trace in `PlaySoundEx`. Single-channel throughout,
+  predating the later multi-channel design entirely.
 
 ## Third-party library identification (Task #10)
 

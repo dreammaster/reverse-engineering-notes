@@ -8883,3 +8883,45 @@ project's usual convention; `sub_40A358` itself gets no 2011-derived
 name for the same reason its own callee doesn't -- 2011's `FadeOut`
 delegates to `gfxDriver` entirely, leaving nothing to compare this
 build's manual palette-capture-and-interpolate implementation against.
+
+## A self-correction: `dword_52321C` isn't a plugin hook, it's `speechmp3` -- and `PlaySound` closes its own single-channel predecessor
+
+A quick chase of `PlaySound`'s own sound-effect channel handle
+(`dword_523220`, spotted while it and a similar-looking neighbor,
+`dword_52321C`, kept turning up together in `mainloop`/`FadeOut`/
+`new_room`'s per-frame polling code) turned up two things: a genuine
+new match, and a mistake in this project's own recent work worth
+fixing in place rather than leaving to confuse a future round.
+
+The mistake first. Last round's `sub_40A21C` entry guessed that
+`dword_52321C` was "a generic plugin-hook-style function pointer,"
+based purely on the shape of the check (`if(ptr) call ptr->vtable[0]`)
+without tracing where the value actually came from. Reading its actual
+SETTER this round (inside `play_speech`, already matched) shows it's
+assigned the return value of `my_load_wave`/`my_load_mp3` -- it's
+`speechmp3`, the already-confirmed speech-audio handle, not a hook of
+any kind. Corrected in place in `sub_40A21C`'s own entry, with the
+wrong guess kept visible rather than silently deleted, per this
+project's usual convention. Worth remembering as a general lesson: a
+plausible-looking access PATTERN (poll a handle, call its first vtable
+slot) isn't identity evidence on its own -- always trace the pointer
+back to where it's actually assigned before naming it.
+
+The genuine new find: `dword_523220` (the neighbor that started this
+whole check) turns out to be `PlaySound`'s own sound-effect channel
+handle. `PlaySound` itself was already correctly named in the IDB but
+had no `matches.json` entry at all -- reading it end to end shows it's
+a real, standalone predecessor of 2011's `PlaySoundEx`
+(`AC.CPP:15928-15947`, itself later reduced to a thin wrapper around a
+priority-channel system). The validation logic matches almost exactly
+(same `DBG_NOSFX`/digicard/`fast_forward` checks, same order), but this
+build's version still carries a piece of ancient AGS history baked
+directly into the function that 2011 has long since removed: `"if
+(val>=1000) { PlayMusic(val-1000); return; }"` -- sound numbers 1000
+and above redirect straight to music playback, a historical quirk with
+zero trace left in `PlaySoundEx`. After trying `"sound%d.mp3"`/`".wav"`/
+`".voc"` in turn, it hands the resolved filename to `sub_416C18` (also
+newly characterized) to actually load and play it via the already-
+matched `my_load_mp3`/`my_load_wave`, storing the result in
+`dword_523220` -- a single channel throughout, predating
+`PlaySoundEx`'s later multi-channel design entirely.
