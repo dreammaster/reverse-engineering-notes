@@ -2548,6 +2548,7 @@ static Bytes_0(void) {
 	create_insn	(0X17180);
 	set_name	(0X17180,	"seg001_entry");
 	create_insn	(0X17183);
+	set_name	(0X17183,	"viewFaceDirection");
 	set_cmt	(0X17193,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 	create_insn	(0X1719C);
 	create_insn	(0X171A4);
@@ -2559,6 +2560,7 @@ static Bytes_0(void) {
 	create_insn	(0X1722C);
 	set_name	(0X1722C,	"j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0");
 	create_insn	(0X1722F);
+	set_name	(0X1722F,	"drawInteriorTiles");
 	create_insn	(x=0X1724B);
 	op_hex		(x,	1);
 	set_cmt	(0X1726C,	", USE ONLY     PRICES\\n\\xf4\\x0b\\x1a,\\nBANK EMPTY\\xf4 A\\x16C\\x092,\\nYOU G",	0);
@@ -2582,6 +2584,7 @@ static Bytes_0(void) {
 	create_insn	(0X17410);
 	set_name	(0X17410,	"j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0");
 	create_insn	(0X17413);
+	set_name	(0X17413,	"drawActor");
 	create_insn	(0X17452);
 	create_insn	(x=0X17462);
 	op_hex		(x,	1);
@@ -2593,6 +2596,7 @@ static Bytes_0(void) {
 	create_insn	(0X174CC);
 	set_name	(0X174CC,	"j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0");
 	create_insn	(0X174CF);
+	set_name	(0X174CF,	"stepByDirection");
 	set_cmt	(0X174F1,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 	create_insn	(0X174FA);
 	create_insn	(0X17508);
@@ -2691,6 +2695,7 @@ static Bytes_0(void) {
 	create_insn	(0X179D1);
 	set_name	(0X179D1,	"j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0");
 	create_insn	(0X179D4);
+	set_name	(0X179D4,	"findObjectTile");
 	create_insn	(x=0X179F3);
 	op_hex		(x,	1);
 	create_insn	(0X17A0C);
@@ -2700,6 +2705,7 @@ static Bytes_0(void) {
 	create_insn	(0X17A3C);
 	set_name	(0X17A3C,	"j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0");
 	create_insn	(0X17A3F);
+	set_name	(0X17A3F,	"tileAt");
 	create_insn	(x=0X17A61);
 	op_hex		(x,	1);
 	create_insn	(0X17A8B);
@@ -2720,6 +2726,7 @@ static Bytes_0(void) {
 	create_insn	(0X17BAB);
 	set_name	(0X17BAB,	"j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0");
 	create_insn	(0X17BAE);
+	set_name	(0X17BAE,	"scanLineOfSight");
 	set_cmt	(0X17BB6,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 	set_cmt	(0X17BFC,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 	create_insn	(0X17BFC);
@@ -2770,6 +2777,7 @@ static Bytes_0(void) {
 	create_insn	(0X17E0E);
 	set_name	(0X17E0E,	"j_j_j_j_j_j_j_j_rt_ED_0");
 	create_insn	(0X17E11);
+	set_name	(0X17E11,	"moveActor");
 	set_cmt	(0X17E19,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 	set_cmt	(0X17E1E,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 	set_cmt	(0X17E40,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
@@ -2835,6 +2843,7 @@ static Bytes_0(void) {
 	set_name	(0X18061,	"j_j_j_j_j_j_rt_ED_0");
 	set_cmt	(0X18064,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 	create_insn	(0X18064);
+	set_name	(0X18064,	"refreshView");
 	set_name	(0X18071,	"j_rt_FE69");
 	set_name	(0X18076,	"j_rt_F4_4");
 	set_cmt	(0X1807B,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
@@ -2842,6 +2851,7 @@ static Bytes_0(void) {
 	create_insn	(0X1807E);
 	set_name	(0X1807E,	"j_j_j_j_j_rt_ED_0");
 	create_insn	(0X18081);
+	set_name	(0X18081,	"setViewport");
 	set_cmt	(0X1809F,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 	create_insn	(0X180A8);
 	create_insn	(0X180C3);
@@ -2860,6 +2870,7 @@ static Bytes_0(void) {
 	create_insn	(0X181A2);
 	set_name	(0X181A2,	"j_j_j_j_rt_ED_0");
 	create_insn	(0X181A5);
+	set_name	(0X181A5,	"traceCombatLine");
 	set_cmt	(0X181BD,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 	set_cmt	(0X181C2,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 	set_cmt	(0X181CF,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
@@ -2912,6 +2923,7 @@ static Bytes_0(void) {
 	create_insn	(0X18436);
 	set_name	(0X18436,	"j_j_rt_ED_0");
 	create_insn	(0X18439);
+	set_name	(0X18439,	"dirBetween");
 	set_cmt	(0X18454,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 	set_cmt	(0X18457,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 	set_cmt	(0X18460,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
@@ -2925,12 +2937,6 @@ static Bytes_0(void) {
 	create_insn	(0X184DA);
 	create_insn	(0X184E2);
 	set_cmt	(0X184E7,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
-	set_cmt	(0X184EB,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
-	set_cmt	(0X184F6,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
-	set_cmt	(0X18505,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
-	create_insn	(0X18505);
-	create_insn	(0X18532);
-	set_name	(0X18545,	"nullsub_60");
 }
 
 //------------------------------------------------------------------------
@@ -2940,6 +2946,12 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X184EB,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
+	set_cmt	(0X184F6,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
+	set_cmt	(0X18505,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
+	create_insn	(0X18505);
+	create_insn	(0X18532);
+	set_name	(0X18545,	"nullsub_60");
 	create_insn	(0X18548);
 	set_name	(0X18548,	"j_rt_ED_0");
 	set_cmt	(0X18560,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
@@ -5158,6 +5170,15 @@ static Bytes_1(void) {
 	set_name	(0X18A70,	"rt_FE2A");
 	create_byte	(0X18A72);
 	make_array	(0X18A72,	0X2);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X18A74,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
 	set_cmt	(0X18A74,	"-> rtm_FE2B  (leglib seg008:0x289a9)",	1);
 	create_insn	(x=0X18A74);
@@ -5169,15 +5190,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X18A78);
 	op_hex		(x,	0);
 	set_name	(0X18A78,	"rt_FE2C");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_byte	(0X18A7A);
 	make_array	(0X18A7A,	0X2);
 	set_cmt	(0X18A7C,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
@@ -6216,12 +6228,16 @@ static Functions_0(void) {
 	set_func_flags(0X17180,0x14c1);
 	add_func    (0X17183,0X1722F);
 	set_func_flags(0X17183,0x1403);
+	set_func_cmt(0X17183,	"direction (0..3) -> the facing code 0x81/0x82/0x84 + camera set-up (rtm_C8 / rtm_FE06).", 1);
 	add_func    (0X1722F,0X17413);
 	set_func_flags(0X1722F,0x1403);
+	set_func_cmt(0X1722F,	"renders the interior room view -- walks the map array and blits each tile via rtm_FE1B / rtm_FE14 (leglib seg004).", 1);
 	add_func    (0X17413,0X174CF);
 	set_func_flags(0X17413,0x1403);
+	set_func_cmt(0X17413,	"draw or erase the actor/NPC sprite at its tile (ds:2636h = 1 draw / 0 erase). Called from moveActor both ways.", 1);
 	add_func    (0X174CF,0X1760D);
 	set_func_flags(0X174CF,0x1403);
+	set_func_cmt(0X174CF,	"given a direction (0..3) and a coord pair, produce the coord one step that way (and an in-bounds flag). Called from doWalk.", 1);
 	add_func    (0X1760D,0X176DC);
 	set_func_flags(0X1760D,0x1403);
 	add_func    (0X176DC,0X17724);
@@ -6236,10 +6252,13 @@ static Functions_0(void) {
 	set_func_flags(0X1796D,0x1403);
 	add_func    (0X179D4,0X17A3F);
 	set_func_flags(0X179D4,0x1403);
+	set_func_cmt(0X179D4,	"scan the interior map array for the first non-empty tile (!= 0xFF). Used by the NPC / dialog code.", 1);
 	add_func    (0X17A3F,0X17BAE);
 	set_func_flags(0X17A3F,0x1403);
+	set_func_cmt(0X17A3F,	"look up the map tile / object id at a coord (rtm_FE17). Returns the id (and via es:[bx] its attributes).", 1);
 	add_func    (0X17BAE,0X17C88);
 	set_func_flags(0X17BAE,0x1403);
+	set_func_cmt(0X17BAE,	"step outward from a position calling tileAt, accumulating in ds:262Ch -- line-of-sight / nearest-blocker scan. Called from doWalk, jailScene, the NPC code.", 1);
 	add_func    (0X17C88,0X17D8E);
 	set_func_flags(0X17C88,0x1403);
 	add_func    (0X17D8E,0X17DA9);
@@ -6250,18 +6269,23 @@ static Functions_0(void) {
 	set_func_flags(0X17DBC,0x1403);
 	add_func    (0X17E11,0X18051);
 	set_func_flags(0X17E11,0x1403);
+	set_func_cmt(0X17E11,	"move the actor one tile and redraw: erase (drawActor 0), update position (via dirBetween / updateTile), draw (drawActor 1). Called from stepByDirection.", 1);
 	add_func    (0X18051,0X18064);
 	set_func_flags(0X18051,0x1403);
 	add_func    (0X18064,0X18081);
 	set_func_flags(0X18064,0x1403);
+	set_func_cmt(0X18064,	"rebuild + blit the whole interior view: drawInteriorTiles then rtm_FE69. Called after any state change.", 1);
 	add_func    (0X18081,0X181A5);
 	set_func_flags(0X18081,0x1403);
+	set_func_cmt(0X18081,	"direction (0..3) -> the interior viewport window (ds:1F26h/1F28h/ds:2634h/ds:2082h).", 1);
 	add_func    (0X181A5,0X183FF);
 	set_func_flags(0X181A5,0x1403);
+	set_func_cmt(0X181A5,	"combat: trace from the attacker along a direction (tileAt per step, rtm_FE18 to draw), set ds:1F02h/1F04h. Called from fightGuard.", 1);
 	add_func    (0X183FF,0X18439);
 	set_func_flags(0X183FF,0x1403);
 	add_func    (0X18439,0X18548);
 	set_func_flags(0X18439,0x1403);
+	set_func_cmt(0X18439,	"compute the step direction (0..3, or 3 = none) from one coord to another via the map.", 1);
 	add_func    (0X18548,0X1854D);
 	set_func_flags(0X18548,0x14c1);
 	add_func    (0X18563,0X18566);

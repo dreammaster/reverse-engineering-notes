@@ -290,7 +290,7 @@ sub_1021B       proc near               ; CODE XREF: j_rt_FE4E:loc_10267↓p
                 push    ax
                 mov     ax, 20C6h
                 push    ax
-                call    sub_152B3
+                call    viewFaceDirection ; direction (0..3) -> the facing code 0x81/0x82/0x84 + camera set-up (rtm_C8 / rtm_FE06).
 sub_1021B       endp
 
 ; ---------------------------------------------------------------------------
@@ -405,7 +405,7 @@ sub_102D3       proc near               ; CODE XREF: j_rt_FE01:loc_101AA↑p
                 push    ax
                 mov     ax, 20DAh
                 push    ax
-                call    sub_15CDE
+                call    scanLineOfSight ; step outward from a position calling tileAt, accumulating in ds:262Ch -- line-of-sight / nearest-blocker scan. Called from doWalk, jailScene, the NPC code.
 sub_102D3       endp
 
 ; ---------------------------------------------------------------------------
@@ -586,7 +586,7 @@ loc_10408:                              ; CODE XREF: doWalk+13↑j
                 push    ax
                 mov     ax, 20ECh
                 push    ax
-                call    sub_155FF
+                call    stepByDirection ; given a direction (0..3) and a coord pair, produce the coord one step that way (and an in-bounds flag). Called from doWalk.
 ; ---------------------------------------------------------------------------
                 cmp     word ptr ds:1F02h, 0
                 jg      short loc_1042A
@@ -652,7 +652,7 @@ loc_10489:                              ; CODE XREF: doWalk+96↑j
                 push    ax
                 mov     ax, 20F4h
                 push    ax
-                call    sub_15CDE
+                call    scanLineOfSight ; step outward from a position calling tileAt, accumulating in ds:262Ch -- line-of-sight / nearest-blocker scan. Called from doWalk, jailScene, the NPC code.
 ; ---------------------------------------------------------------------------
                 cmp     word ptr ds:2084h, 2
                 jz      short loc_104AD
@@ -875,7 +875,7 @@ loc_1058B:                              ; CODE XREF: doWalk+160↑j
                 push    ax
                 mov     ax, 1F2Ah
                 push    ax
-                call    sub_15CDE
+                call    scanLineOfSight ; step outward from a position calling tileAt, accumulating in ds:262Ch -- line-of-sight / nearest-blocker scan. Called from doWalk, jailScene, the NPC code.
 ; ---------------------------------------------------------------------------
                 cmp     word ptr ds:20BCh, 898h
                 jg      short loc_105B6
@@ -1057,7 +1057,7 @@ loc_106BA:                              ; CODE XREF: sub_1068D+2A↑j
                 push    ax
                 mov     ax, 210Ah
                 push    ax
-                call    sub_15CDE
+                call    scanLineOfSight ; step outward from a position calling tileAt, accumulating in ds:262Ch -- line-of-sight / nearest-blocker scan. Called from doWalk, jailScene, the NPC code.
 ; ---------------------------------------------------------------------------
                 cmp     word ptr ds:1F2Ah, 0
                 jg      short loc_106DE
@@ -1160,8 +1160,8 @@ loc_1072E:                              ; CODE XREF: j_rt_FE01:loc_101CC↑p
                 db 0FAh
 ; ---------------------------------------------------------------------------
 
-loc_1076D:
-                call    sub_16194
+loc_1076D:                              ; rebuild + blit the whole interior view: drawInteriorTiles then rtm_FE69. Called after any state change.
+                call    refreshView
 sub_1068D       endp
 
 ; ---------------------------------------------------------------------------
@@ -1220,8 +1220,8 @@ j_j_rt_FE4E_1:
                 call    j_rt_FE4E
 ; ---------------------------------------------------------------------------
 
-loc_107C0:
-                call    sub_16194
+loc_107C0:                              ; rebuild + blit the whole interior view: drawInteriorTiles then rtm_FE69. Called after any state change.
+                call    refreshView
 chooseAbove     endp
 
 ; ---------------------------------------------------------------------------
@@ -1546,7 +1546,7 @@ loc_10A3F:                              ; CODE XREF: privateLevelWarn+19↑j
                 push    ax
                 mov     ax, 1F2Ah
                 push    ax
-                call    sub_15CDE
+                call    scanLineOfSight ; step outward from a position calling tileAt, accumulating in ds:262Ch -- line-of-sight / nearest-blocker scan. Called from doWalk, jailScene, the NPC code.
 ; ---------------------------------------------------------------------------
 
 j_rt_FE4E_2:                            ; -> rtm_FE4E  (leglib seg007:0x25c5c)
@@ -1582,7 +1582,7 @@ loc_10A6C:                              ; CODE XREF: privateLevelWarn+55↑j
                 push    ax
                 mov     ax, 2150h
                 push    ax
-                call    sub_161B1
+                call    setViewport     ; direction (0..3) -> the interior viewport window (ds:1F26h/1F28h/ds:2634h/ds:2082h).
 ; ---------------------------------------------------------------------------
                 mov     word ptr ds:209Eh, 1Dh
                 mov     word ptr ds:1F04h, 29h ; ')'
@@ -1602,7 +1602,7 @@ loc_10AA7:                              ; CODE XREF: privateLevelWarn+90↑j
                 push    ax
                 mov     ax, 2154h
                 push    ax
-                call    sub_161B1
+                call    setViewport     ; direction (0..3) -> the interior viewport window (ds:1F26h/1F28h/ds:2634h/ds:2082h).
 ; ---------------------------------------------------------------------------
                 mov     word ptr ds:209Eh, 0
                 mov     word ptr ds:1F04h, 1Ch
@@ -1618,7 +1618,7 @@ loc_10AD8:                              ; CODE XREF: privateLevelWarn+92↑j
                 push    ax
                 mov     ax, 1F2Ah
                 push    ax
-                call    sub_15CDE
+                call    scanLineOfSight ; step outward from a position calling tileAt, accumulating in ds:262Ch -- line-of-sight / nearest-blocker scan. Called from doWalk, jailScene, the NPC code.
 ; ---------------------------------------------------------------------------
                 call    sub_1021B
 ; ---------------------------------------------------------------------------
@@ -1673,7 +1673,7 @@ loc_10B27:                              ; CODE XREF: privateLevelWarn+110↑j
                 push    ax
                 mov     ax, 1F2Ah
                 push    ax
-                call    sub_15CDE
+                call    scanLineOfSight ; step outward from a position calling tileAt, accumulating in ds:262Ch -- line-of-sight / nearest-blocker scan. Called from doWalk, jailScene, the NPC code.
 ; ---------------------------------------------------------------------------
                 mov     word ptr ds:209Eh, 5DCh
                 call    sub_100D2
@@ -2137,7 +2137,7 @@ sub_10E86       endp
 ; Attributes: noreturn thunk
 
 sub_10EB8       proc near
-                call    sub_16194
+                call    refreshView     ; rebuild + blit the whole interior view: drawInteriorTiles then rtm_FE69. Called after any state change.
 ; ---------------------------------------------------------------------------
                 mov     word ptr ds:1F0Ah, 48F0h
                 mov     ax, 0Dh
@@ -2231,7 +2231,7 @@ loc_10F6C:                              ; CODE XREF: sub_10EB8+74↑j
                 jle     short loc_10F30
 
 loc_10F74:                              ; CODE XREF: sub_10EB8+6E↑j
-                call    sub_16194
+                call    refreshView     ; rebuild + blit the whole interior view: drawInteriorTiles then rtm_FE69. Called after any state change.
 sub_10EB8       endp
 
 ; ---------------------------------------------------------------------------
@@ -2583,7 +2583,7 @@ loc_1122C:                              ; CODE XREF: sub_111A1+9↑j
 ; ---------------------------------------------------------------------------
 
 loc_11238:                              ; CODE XREF: sub_111A1+92↑j
-                call    sub_16194
+                call    refreshView     ; rebuild + blit the whole interior view: drawInteriorTiles then rtm_FE69. Called after any state change.
 sub_111A1       endp
 
 ; ---------------------------------------------------------------------------
@@ -2781,7 +2781,7 @@ loc_113F6:                              ; CODE XREF: sub_113EB+8↑j
                 push    ax
                 mov     ax, 21E6h
                 push    ax
-                call    sub_161B1
+                call    setViewport     ; direction (0..3) -> the interior viewport window (ds:1F26h/1F28h/ds:2634h/ds:2082h).
 sub_113EB       endp
 
 ; ---------------------------------------------------------------------------
@@ -2980,7 +2980,7 @@ loc_1154B:                              ; CODE XREF: doFight+139↑j
                 push    ax
                 mov     ax, 209Eh
                 push    ax
-                call    sub_162D5
+                call    traceCombatLine ; combat: trace from the attacker along a direction (tileAt per step, rtm_FE18 to draw), set ds:1F02h/1F04h. Called from fightGuard.
 ; ---------------------------------------------------------------------------
                 cmp     word ptr ds:20C0h, 2
                 mov     ax, 0
@@ -3571,7 +3571,7 @@ loc_119D4:                              ; CODE XREF: doFight+5BE↑j
                 push    ax
                 mov     ax, 2232h
                 push    ax
-                call    sub_15CDE
+                call    scanLineOfSight ; step outward from a position calling tileAt, accumulating in ds:262Ch -- line-of-sight / nearest-blocker scan. Called from doWalk, jailScene, the NPC code.
 ; ---------------------------------------------------------------------------
                 db 0C7h
                 db    6
@@ -4794,7 +4794,7 @@ loc_121CB:                              ; CODE XREF: sub_12195+2C↑j
                 push    ax
                 mov     ax, 229Ch
                 push    ax
-                call    sub_15CDE
+                call    scanLineOfSight ; step outward from a position calling tileAt, accumulating in ds:262Ch -- line-of-sight / nearest-blocker scan. Called from doWalk, jailScene, the NPC code.
 ; ---------------------------------------------------------------------------
                 call    sub_1222D
 ; ---------------------------------------------------------------------------
@@ -4838,7 +4838,7 @@ loc_1223C:
                 push    ax
                 mov     ax, 22A2h
                 push    ax
-                call    sub_15CDE
+                call    scanLineOfSight ; step outward from a position calling tileAt, accumulating in ds:262Ch -- line-of-sight / nearest-blocker scan. Called from doWalk, jailScene, the NPC code.
 sub_1222D       endp
 
 ; ---------------------------------------------------------------------------
@@ -5231,7 +5231,7 @@ loc_124EE:                              ; CODE XREF: warlordConfrontation+140↓
                 push    ax
                 mov     ax, 22D8h
                 push    ax
-                call    sub_15CDE
+                call    scanLineOfSight ; step outward from a position calling tileAt, accumulating in ds:262Ch -- line-of-sight / nearest-blocker scan. Called from doWalk, jailScene, the NPC code.
 ; ---------------------------------------------------------------------------
                 mov     word ptr ds:22DAh, 8
                 mov     ax, 22DAh
@@ -8650,7 +8650,7 @@ loc_139A8:                              ; CODE XREF: openDoor+285↑j
                 mov     es, word ptr [si+2]
                 mov     es:[bx], ax
                 mov     word ptr ds:1F2Ah, 1
-                call    sub_16194
+                call    refreshView     ; rebuild + blit the whole interior view: drawInteriorTiles then rtm_FE69. Called after any state change.
 ; ---------------------------------------------------------------------------
                 mov     word ptr ds:209Eh, 3E7h
                 call    sub_10100
@@ -9073,7 +9073,7 @@ loc_13C05:                              ; CODE XREF: useKey+12B↑j
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 ; ---------------------------------------------------------------------------
-                call    sub_16194
+                call    refreshView     ; rebuild + blit the whole interior view: drawInteriorTiles then rtm_FE69. Called after any state change.
 ; ---------------------------------------------------------------------------
                 mov     word ptr ds:243Eh, 5
                 mov     word ptr ds:2440h, 7
@@ -9384,7 +9384,7 @@ loc_13EC5:                              ; CODE XREF: sub_13E33+8D↑j
 ; ---------------------------------------------------------------------------
 
 loc_13ECF:                              ; CODE XREF: sub_13E33+97↑j
-                call    sub_16194
+                call    refreshView     ; rebuild + blit the whole interior view: drawInteriorTiles then rtm_FE69. Called after any state change.
 ; ---------------------------------------------------------------------------
 
 locret_13ED4:                           ; CODE XREF: sub_13E33+99↑j
@@ -11864,9 +11864,10 @@ aBmtncalb       db 'bmTNCALB  ',0       ; DATA XREF: seg004:35D8↓o
 
 ; =============== S U B R O U T I N E =======================================
 
+; direction (0..3) -> the facing code 0x81/0x82/0x84 + camera set-up (rtm_C8 / rtm_FE06).
 ; Attributes: noreturn
 
-sub_152B3       proc far                ; CODE XREF: sub_1021B+E↑P
+viewFaceDirection proc far              ; CODE XREF: sub_1021B+E↑P
                 mov     cx, 8
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -11879,40 +11880,40 @@ loc_152BB:
                 jmp     loc_152D4
 ; ---------------------------------------------------------------------------
 
-loc_152CC:                              ; CODE XREF: sub_152B3+14↑j
+loc_152CC:                              ; CODE XREF: viewFaceDirection+14↑j
                 mov     word ptr [bp-0Eh], 84h
                 jmp     loc_152FF
 ; ---------------------------------------------------------------------------
 
-loc_152D4:                              ; CODE XREF: sub_152B3+16↑j
+loc_152D4:                              ; CODE XREF: viewFaceDirection+16↑j
                 cmp     word ptr [bp-0Ch], 1
                 jz      short loc_152DD
                 jmp     loc_152E5
 ; ---------------------------------------------------------------------------
 
-loc_152DD:                              ; CODE XREF: sub_152B3+25↑j
+loc_152DD:                              ; CODE XREF: viewFaceDirection+25↑j
                 mov     word ptr [bp-0Eh], 82h
                 jmp     loc_152FF
 ; ---------------------------------------------------------------------------
 
-loc_152E5:                              ; CODE XREF: sub_152B3+27↑j
+loc_152E5:                              ; CODE XREF: viewFaceDirection+27↑j
                 cmp     word ptr [bp-0Ch], 2
                 jz      short loc_152EE
                 jmp     loc_152F6
 ; ---------------------------------------------------------------------------
 
-loc_152EE:                              ; CODE XREF: sub_152B3+36↑j
+loc_152EE:                              ; CODE XREF: viewFaceDirection+36↑j
                 mov     word ptr [bp-0Eh], 81h
                 jmp     loc_152FF
 ; ---------------------------------------------------------------------------
 
-loc_152F6:                              ; CODE XREF: sub_152B3+38↑j
+loc_152F6:                              ; CODE XREF: viewFaceDirection+38↑j
                 mov     ax, 27h ; '''
                 push    ax
                 call    far ptr rt_C8   ; -> rtm_C8  (leglib seg003:0x138e2)
 
-loc_152FF:                              ; CODE XREF: sub_152B3+1E↑j
-                                        ; sub_152B3+2F↑j ...
+loc_152FF:                              ; CODE XREF: viewFaceDirection+1E↑j
+                                        ; viewFaceDirection+2F↑j ...
                 call    far ptr rt_FE06 ; -> rtm_FE06  (leglib seg004:0x2063c)
 
 loc_15304:
@@ -11951,14 +11952,15 @@ nullsub_36:
 j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0:
                                         ; CODE XREF: seg001_entry↑j
                 jmp     j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0
-sub_152B3       endp
+viewFaceDirection endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; renders the interior room view -- walks the map array and blits each tile via rtm_FE1B / rtm_FE14 (leglib seg004).
 ; Attributes: noreturn
 
-sub_1535F       proc far                ; CODE XREF: sub_16194:loc_1619C↓P
+drawInteriorTiles proc far              ; CODE XREF: refreshView:loc_1619C↓P
                 mov     cx, 1Ah
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -11985,7 +11987,7 @@ loc_15390:
                 jmp     loc_153D5
 ; ---------------------------------------------------------------------------
 
-loc_1539C:                              ; CODE XREF: sub_1535F+38↑j
+loc_1539C:                              ; CODE XREF: drawInteriorTiles+38↑j
                 mov     word ptr [bp-10h], 11h
                 mov     cx, ds:1B04h
                 sub     cx, ax
@@ -12002,17 +12004,17 @@ loc_1539C:                              ; CODE XREF: sub_1535F+38↑j
                 jmp     loc_153D2
 ; ---------------------------------------------------------------------------
 
-loc_153C6:                              ; CODE XREF: sub_1535F+62↑j
+loc_153C6:                              ; CODE XREF: drawInteriorTiles+62↑j
                 mov     cx, 11h
                 sub     cx, ds:1B04h
                 add     ax, cx
                 mov     [bp-10h], ax
 
-loc_153D2:                              ; CODE XREF: sub_1535F+64↑j
+loc_153D2:                              ; CODE XREF: drawInteriorTiles+64↑j
                 jmp     loc_1542F
 ; ---------------------------------------------------------------------------
 
-loc_153D5:                              ; CODE XREF: sub_1535F+3A↑j
+loc_153D5:                              ; CODE XREF: drawInteriorTiles+3A↑j
                 mov     ax, ds:24A4h
                 sub     ax, ds:1B04h
                 mov     [bp-14h], ax
@@ -12021,7 +12023,7 @@ loc_153D5:                              ; CODE XREF: sub_1535F+3A↑j
 ; ---------------------------------------------------------------------------
                 nop
 
-loc_153E6:                              ; CODE XREF: sub_1535F+AF↓j
+loc_153E6:                              ; CODE XREF: drawInteriorTiles+AF↓j
                 mov     word ptr [bp-16h], 1Ah
                 lea     ax, [bp-0Ch]
                 push    ax
@@ -12036,7 +12038,7 @@ loc_153E6:                              ; CODE XREF: sub_1535F+AF↓j
                 mov     ax, [bp-18h]
                 inc     ax
 
-loc_15408:                              ; CODE XREF: sub_1535F+83↑j
+loc_15408:                              ; CODE XREF: drawInteriorTiles+83↑j
                 mov     [bp-18h], ax
                 cmp     ax, [bp-14h]
                 jle     short loc_153E6
@@ -12051,7 +12053,7 @@ loc_15408:                              ; CODE XREF: sub_1535F+83↑j
                 mov     ax, es:[bx]
                 mov     [bp-12h], ax
 
-loc_1542F:                              ; CODE XREF: sub_1535F:loc_153D2↑j
+loc_1542F:                              ; CODE XREF: drawInteriorTiles:loc_153D2↑j
                 mov     word ptr [bp-1Ah], 0
                 mov     word ptr [bp-1Ch], 0
                 mov     ax, ds:24AAh
@@ -12060,7 +12062,7 @@ loc_1542F:                              ; CODE XREF: sub_1535F:loc_153D2↑j
                 jmp     loc_15478
 ; ---------------------------------------------------------------------------
 
-loc_15445:                              ; CODE XREF: sub_1535F+E1↑j
+loc_15445:                              ; CODE XREF: drawInteriorTiles+E1↑j
                 mov     word ptr [bp-1Eh], 1Ah
                 mov     cx, [bp-12h]
                 sub     cx, ax
@@ -12073,7 +12075,7 @@ loc_15445:                              ; CODE XREF: sub_1535F+E1↑j
                 jmp     loc_15475
 ; ---------------------------------------------------------------------------
 
-loc_15464:                              ; CODE XREF: sub_1535F+100↑j
+loc_15464:                              ; CODE XREF: drawInteriorTiles+100↑j
                 sub     ax, ds:1B00h
                 neg     ax
                 mov     [bp-1Ch], ax
@@ -12081,11 +12083,11 @@ loc_15464:                              ; CODE XREF: sub_1535F+100↑j
                 neg     ax
                 mov     [bp-1Eh], ax
 
-loc_15475:                              ; CODE XREF: sub_1535F+102↑j
+loc_15475:                              ; CODE XREF: drawInteriorTiles+102↑j
                 jmp     loc_1548A
 ; ---------------------------------------------------------------------------
 
-loc_15478:                              ; CODE XREF: sub_1535F+E3↑j
+loc_15478:                              ; CODE XREF: drawInteriorTiles+E3↑j
                 mov     ax, ds:24AAh
                 sub     ax, ds:1B00h
                 mov     [bp-1Ah], ax
@@ -12093,14 +12095,14 @@ loc_15478:                              ; CODE XREF: sub_1535F+E3↑j
                 neg     ax
                 mov     [bp-1Eh], ax
 
-loc_1548A:                              ; CODE XREF: sub_1535F:loc_15475↑j
+loc_1548A:                              ; CODE XREF: drawInteriorTiles:loc_15475↑j
                 mov     ax, [bp-10h]
                 mov     [bp-20h], ax
                 mov     ax, 1
                 jmp     loc_154F5
 ; ---------------------------------------------------------------------------
 
-loc_15496:                              ; CODE XREF: sub_1535F+19C↓j
+loc_15496:                              ; CODE XREF: drawInteriorTiles+19C↓j
                 lea     ax, [bp-0Ch]
                 push    ax
                 lea     ax, [bp-0Eh]
@@ -12141,7 +12143,7 @@ loc_15496:                              ; CODE XREF: sub_1535F+19C↓j
                 mov     ax, [bp-18h]
                 inc     ax
 
-loc_154F5:                              ; CODE XREF: sub_1535F+134↑j
+loc_154F5:                              ; CODE XREF: drawInteriorTiles+134↑j
                 mov     [bp-18h], ax
                 cmp     ax, [bp-20h]
                 jle     short loc_15496
@@ -12153,7 +12155,7 @@ loc_154F5:                              ; CODE XREF: sub_1535F+134↑j
 ; ---------------------------------------------------------------------------
                 nop
 
-loc_1550E:                              ; CODE XREF: sub_1535F+1D7↓j
+loc_1550E:                              ; CODE XREF: drawInteriorTiles+1D7↓j
                 mov     word ptr [bp-24h], 1Ah
                 lea     ax, [bp-0Ch]
                 push    ax
@@ -12168,7 +12170,7 @@ loc_1550E:                              ; CODE XREF: sub_1535F+1D7↓j
                 mov     ax, [bp-18h]
                 inc     ax
 
-loc_15530:                              ; CODE XREF: sub_1535F+1AB↑j
+loc_15530:                              ; CODE XREF: drawInteriorTiles+1AB↑j
                 mov     [bp-18h], ax
                 cmp     ax, [bp-22h]
                 jle     short loc_1550E
@@ -12179,17 +12181,18 @@ nullsub_37:
 ; ---------------------------------------------------------------------------
 
 j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0:
-                                        ; CODE XREF: sub_152B3:j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0↑j
+                                        ; CODE XREF: viewFaceDirection:j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0↑j
                 jmp     j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0
-sub_1535F       endp
+drawInteriorTiles endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; draw or erase the actor/NPC sprite at its tile (ds:2636h = 1 draw / 0 erase). Called from moveActor both ways.
 ; Attributes: noreturn
 
-sub_15543       proc far                ; CODE XREF: j_rt_FE4E_3:loc_113B8↑P
-                                        ; sub_15F41+1FC↓P ...
+drawActor       proc far                ; CODE XREF: j_rt_FE4E_3:loc_113B8↑P
+                                        ; moveActor+1FC↓P ...
                 mov     cx, 0Ch
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -12217,7 +12220,7 @@ loc_15563:
                 jmp     loc_155A6
 ; ---------------------------------------------------------------------------
 
-loc_15582:                              ; CODE XREF: sub_15543+69↓j
+loc_15582:                              ; CODE XREF: drawActor+69↓j
                 mov     bx, ax
                 mov     es, word ptr ds:101h
                 mov     bl, es:[bx]
@@ -12232,7 +12235,7 @@ loc_15582:                              ; CODE XREF: sub_15543+69↓j
                 mov     ax, [bp-14h]
                 inc     ax
 
-loc_155A6:                              ; CODE XREF: sub_15543+3C↑j
+loc_155A6:                              ; CODE XREF: drawActor+3C↑j
                 mov     [bp-14h], ax
                 cmp     ax, [bp-0Ch]
                 jle     short loc_15582
@@ -12248,7 +12251,7 @@ loc_155A6:                              ; CODE XREF: sub_15543+3C↑j
 ; ---------------------------------------------------------------------------
                 nop
 
-loc_155C8:                              ; CODE XREF: sub_15543+AF↓j
+loc_155C8:                              ; CODE XREF: drawActor+AF↓j
                 mov     bx, ax
                 mov     es, word ptr ds:101h
                 mov     bl, es:[bx]
@@ -12263,7 +12266,7 @@ loc_155C8:                              ; CODE XREF: sub_15543+AF↓j
                 mov     ax, [bp-14h]
                 inc     ax
 
-loc_155EC:                              ; CODE XREF: sub_15543+81↑j
+loc_155EC:                              ; CODE XREF: drawActor+81↑j
                 mov     [bp-14h], ax
                 cmp     ax, [bp-16h]
                 jle     short loc_155C8
@@ -12274,16 +12277,17 @@ nullsub_38:
 ; ---------------------------------------------------------------------------
 
 j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0:
-                                        ; CODE XREF: sub_1535F:j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0↑j
+                                        ; CODE XREF: drawInteriorTiles:j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0↑j
                 jmp     j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0
-sub_15543       endp
+drawActor       endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; given a direction (0..3) and a coord pair, produce the coord one step that way (and an in-bounds flag). Called from doWalk.
 ; Attributes: noreturn
 
-sub_155FF       proc far                ; CODE XREF: doWalk+2B↑P
+stepByDirection proc far                ; CODE XREF: doWalk+2B↑P
                 mov     cx, 0Ch
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -12303,7 +12307,7 @@ loc_15607:
                 jmp     loc_15638
 ; ---------------------------------------------------------------------------
 
-loc_1562A:                              ; CODE XREF: sub_155FF+26↑j
+loc_1562A:                              ; CODE XREF: stepByDirection+26↑j
                 dec     bx
                 mov     ax, bx
                 mov     [bp-0Eh], ax
@@ -12311,13 +12315,13 @@ loc_1562A:                              ; CODE XREF: sub_155FF+26↑j
                 jmp     loc_1568F
 ; ---------------------------------------------------------------------------
 
-loc_15638:                              ; CODE XREF: sub_155FF+28↑j
+loc_15638:                              ; CODE XREF: stepByDirection+28↑j
                 cmp     word ptr [bp-0Ch], 1
                 jz      short loc_15641
                 jmp     loc_15652
 ; ---------------------------------------------------------------------------
 
-loc_15641:                              ; CODE XREF: sub_155FF+3D↑j
+loc_15641:                              ; CODE XREF: stepByDirection+3D↑j
                 mov     si, [bp+0Ah]
                 mov     ax, [si]
                 inc     ax
@@ -12326,13 +12330,13 @@ loc_15641:                              ; CODE XREF: sub_155FF+3D↑j
                 jmp     loc_1568F
 ; ---------------------------------------------------------------------------
 
-loc_15652:                              ; CODE XREF: sub_155FF+3F↑j
+loc_15652:                              ; CODE XREF: stepByDirection+3F↑j
                 cmp     word ptr [bp-0Ch], 2
                 jz      short loc_1565B
                 jmp     loc_1566C
 ; ---------------------------------------------------------------------------
 
-loc_1565B:                              ; CODE XREF: sub_155FF+57↑j
+loc_1565B:                              ; CODE XREF: stepByDirection+57↑j
                 mov     si, [bp+8]
                 mov     ax, [si]
                 inc     ax
@@ -12341,13 +12345,13 @@ loc_1565B:                              ; CODE XREF: sub_155FF+57↑j
                 jmp     loc_1568F
 ; ---------------------------------------------------------------------------
 
-loc_1566C:                              ; CODE XREF: sub_155FF+59↑j
+loc_1566C:                              ; CODE XREF: stepByDirection+59↑j
                 cmp     word ptr [bp-0Ch], 3
                 jz      short loc_15675
                 jmp     loc_15686
 ; ---------------------------------------------------------------------------
 
-loc_15675:                              ; CODE XREF: sub_155FF+71↑j
+loc_15675:                              ; CODE XREF: stepByDirection+71↑j
                 mov     si, [bp+0Ah]
                 mov     ax, [si]
                 dec     ax
@@ -12356,13 +12360,13 @@ loc_15675:                              ; CODE XREF: sub_155FF+71↑j
                 jmp     loc_1568F
 ; ---------------------------------------------------------------------------
 
-loc_15686:                              ; CODE XREF: sub_155FF+73↑j
+loc_15686:                              ; CODE XREF: stepByDirection+73↑j
                 mov     ax, 27h ; '''
                 push    ax
                 call    far ptr rt_C8   ; -> rtm_C8  (leglib seg003:0x138e2)
 
-loc_1568F:                              ; CODE XREF: sub_155FF+36↑j
-                                        ; sub_155FF+50↑j ...
+loc_1568F:                              ; CODE XREF: stepByDirection+36↑j
+                                        ; stepByDirection+50↑j ...
                 mov     si, 1E58h
                 mov     bx, 7Eh ; '~'
                 add     bx, [si+0Ah]
@@ -12375,7 +12379,7 @@ loc_1568F:                              ; CODE XREF: sub_155FF+36↑j
                 jmp     loc_156D3
 ; ---------------------------------------------------------------------------
 
-loc_156B1:                              ; CODE XREF: sub_155FF+AD↑j
+loc_156B1:                              ; CODE XREF: stepByDirection+AD↑j
                 mov     bx, [bp-12h]
                 shl     bx, 1
                 add     bx, [si+0Ah]
@@ -12389,7 +12393,7 @@ loc_156B1:                              ; CODE XREF: sub_155FF+AD↑j
                 mov     ax, [bp-12h]
                 mov     ds:24AEh, ax
 
-loc_156D3:                              ; CODE XREF: sub_155FF+AF↑j
+loc_156D3:                              ; CODE XREF: stepByDirection+AF↑j
                 mov     si, 1E58h
                 mov     bx, 90h
                 add     bx, [si+0Ah]
@@ -12399,7 +12403,7 @@ loc_156D3:                              ; CODE XREF: sub_155FF+AF↑j
                 push    ax
                 lea     ax, [bp-0Eh]
                 push    ax
-                call    sub_15F41
+                call    moveActor       ; move the actor one tile and redraw: erase (drawActor 0), update position (via dirBetween / updateTile), draw (drawActor 1). Called from stepByDirection.
 
 loc_156F1:
                 mov     [bp-14h], ax
@@ -12410,20 +12414,20 @@ loc_156F1:
                 jnz     short loc_15702
                 dec     cx
 
-loc_15702:                              ; CODE XREF: sub_155FF+100↑j
+loc_15702:                              ; CODE XREF: stepByDirection+100↑j
                 cmp     ax, 3
                 mov     dx, 0
                 jle     short loc_1570B
                 dec     dx
 
-loc_1570B:                              ; CODE XREF: sub_155FF+109↑j
+loc_1570B:                              ; CODE XREF: stepByDirection+109↑j
                 or      dx, cx
                 and     dx, dx
                 jnz     short loc_15714
                 jmp     loc_15732
 ; ---------------------------------------------------------------------------
 
-loc_15714:                              ; CODE XREF: sub_155FF+110↑j
+loc_15714:                              ; CODE XREF: stepByDirection+110↑j
                 mov     ax, [bp-10h]
                 mov     si, [bp+0Ah]
                 mov     [si], ax
@@ -12435,7 +12439,7 @@ loc_15714:                              ; CODE XREF: sub_155FF+110↑j
                 push    ax
                 call    far ptr rt_FE27 ; -> rtm_FE27  (leglib seg007:0x253ad)
 
-loc_15732:                              ; CODE XREF: sub_155FF+112↑j
+loc_15732:                              ; CODE XREF: stepByDirection+112↑j
                 call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
 nullsub_39:
@@ -12443,16 +12447,16 @@ nullsub_39:
 ; ---------------------------------------------------------------------------
 
 j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0:
-                                        ; CODE XREF: sub_15543:j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0↑j
+                                        ; CODE XREF: drawActor:j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0↑j
                 jmp     j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0
-sub_155FF       endp
+stepByDirection endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: noreturn
 
-sub_1573D       proc far                ; CODE XREF: sub_162D5+226↓P
+sub_1573D       proc far                ; CODE XREF: traceCombatLine+226↓P
                 mov     cx, 10h
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -12565,7 +12569,7 @@ nullsub_40:
 ; ---------------------------------------------------------------------------
 
 j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0:
-                                        ; CODE XREF: sub_155FF:j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0↑j
+                                        ; CODE XREF: stepByDirection:j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0↑j
                 jmp     j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0
 sub_1573D       endp
 
@@ -12639,7 +12643,7 @@ sub_15854       endp
 
 ; Attributes: noreturn
 
-sub_15867       proc far                ; CODE XREF: sub_15CDE+86↓P
+sub_15867       proc far                ; CODE XREF: scanLineOfSight+86↓P
                 mov     cx, 12h
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -12717,7 +12721,7 @@ loc_158F7:                              ; CODE XREF: sub_15867+8B↑j
                 lea     ax, [bp-0Eh]
                 push    ax
                 push    word ptr [bp+0Ah]
-                call    sub_16569
+                call    dirBetween      ; compute the step direction (0..3, or 3 = none) from one coord to another via the map.
                 mov     [bp-16h], ax
                 cmp     word ptr [bp-16h], 0
                 jnz     short loc_1590F
@@ -12729,7 +12733,7 @@ loc_1590F:                              ; CODE XREF: sub_15867+8D↑j
                 push    word ptr [bp+0Ch]
                 lea     ax, [bp-14h]
                 push    ax
-                call    sub_16569
+                call    dirBetween      ; compute the step direction (0..3, or 3 = none) from one coord to another via the map.
                 mov     [bp-18h], ax
                 cmp     word ptr [bp-18h], 0
                 jz      short loc_15927
@@ -12750,7 +12754,7 @@ loc_1593C:                              ; CODE XREF: sub_15867+BD↑j
                 lea     ax, [bp-0Eh]
                 push    ax
                 push    word ptr [bp+0Ah]
-                call    sub_16569
+                call    dirBetween      ; compute the step direction (0..3, or 3 = none) from one coord to another via the map.
                 mov     [bp-1Ah], ax
                 cmp     word ptr [bp-1Ah], 0
                 jz      short loc_15954
@@ -12822,7 +12826,7 @@ sub_15867       endp
 
 ; Attributes: noreturn
 
-sub_159AC       proc far                ; CODE XREF: sub_15CDE+BB↓P
+sub_159AC       proc far                ; CODE XREF: scanLineOfSight+BB↓P
                 mov     cx, 6
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -12994,9 +12998,10 @@ sub_15A9D       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; scan the interior map array for the first non-empty tile (!= 0xFF). Used by the NPC / dialog code.
 ; Attributes: noreturn
 
-sub_15B04       proc far
+findObjectTile  proc far
                 mov     cx, 6
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -13022,7 +13027,7 @@ loc_15B1F:
                 jmp     loc_15B5C
 ; ---------------------------------------------------------------------------
 
-loc_15B3C:                              ; CODE XREF: sub_15B04+5E↓j
+loc_15B3C:                              ; CODE XREF: findObjectTile+5E↓j
                 mov     bx, [bp-0Eh]
                 mov     es, word ptr ds:101h
                 mov     bl, es:[bx]
@@ -13032,15 +13037,15 @@ loc_15B3C:                              ; CODE XREF: sub_15B04+5E↓j
                 jmp     loc_15B55
 ; ---------------------------------------------------------------------------
 
-loc_15B51:                              ; CODE XREF: sub_15B04+48↑j
+loc_15B51:                              ; CODE XREF: findObjectTile+48↑j
                 inc     word ptr ds:1F02h
 
-loc_15B55:                              ; CODE XREF: sub_15B04+4A↑j
+loc_15B55:                              ; CODE XREF: findObjectTile+4A↑j
                 inc     word ptr [bp-0Eh]
                 mov     ax, [bp-10h]
                 inc     ax
 
-loc_15B5C:                              ; CODE XREF: sub_15B04+35↑j
+loc_15B5C:                              ; CODE XREF: findObjectTile+35↑j
                 mov     [bp-10h], ax
                 cmp     ax, [bp-0Ch]
                 jle     short loc_15B3C
@@ -13052,15 +13057,16 @@ nullsub_46:
 
 j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0:    ; CODE XREF: sub_15A9D:j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0↑j
                 jmp     j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0
-sub_15B04       endp
+findObjectTile  endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; look up the map tile / object id at a coord (rtm_FE17). Returns the id (and via es:[bx] its attributes).
 ; Attributes: noreturn
 
-sub_15B6F       proc far                ; CODE XREF: sub_15CDE+39↓P
-                                        ; sub_162D5+E9↓P ...
+tileAt          proc far                ; CODE XREF: scanLineOfSight+39↓P
+                                        ; traceCombatLine+E9↓P ...
                 mov     cx, 18h
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -13093,10 +13099,10 @@ loc_15B8D:
                 jmp     loc_15BBF
 ; ---------------------------------------------------------------------------
 
-loc_15BBB:                              ; CODE XREF: sub_15B6F+47↑j
+loc_15BBB:                              ; CODE XREF: tileAt+47↑j
                 inc     word ptr ds:24B4h
 
-loc_15BBF:                              ; CODE XREF: sub_15B6F+49↑j
+loc_15BBF:                              ; CODE XREF: tileAt+49↑j
                 mov     si, [bp+0Ch]
                 mov     ax, [si]
                 mov     di, [bp+6]
@@ -13107,10 +13113,10 @@ loc_15BBF:                              ; CODE XREF: sub_15B6F+49↑j
                 jmp     loc_15BD8
 ; ---------------------------------------------------------------------------
 
-loc_15BD3:                              ; CODE XREF: sub_15B6F+5F↑j
+loc_15BD3:                              ; CODE XREF: tileAt+5F↑j
                 mov     word ptr [bp-12h], 0
 
-loc_15BD8:                              ; CODE XREF: sub_15B6F+61↑j
+loc_15BD8:                              ; CODE XREF: tileAt+61↑j
                 mov     si, [bp+0Ah]
                 mov     ax, [si]
                 mov     di, [bp+6]
@@ -13125,7 +13131,7 @@ loc_15BD8:                              ; CODE XREF: sub_15B6F+61↑j
                 mov     ax, bx
                 mov     [bp-18h], ax
 
-loc_15BF8:                              ; CODE XREF: sub_15B6F+157↓j
+loc_15BF8:                              ; CODE XREF: tileAt+157↓j
                 mov     ax, [bp-10h]
                 sub     ax, ds:24B4h
                 mov     [bp-1Ah], ax
@@ -13150,12 +13156,12 @@ loc_15C1B:
                 jmp     loc_15C33
 ; ---------------------------------------------------------------------------
 
-loc_15C2B:                              ; CODE XREF: sub_15B6F+B7↑j
+loc_15C2B:                              ; CODE XREF: tileAt+B7↑j
                 mov     word ptr [bp-1Eh], 0FFFFh
                 jmp     loc_15CCA
 ; ---------------------------------------------------------------------------
 
-loc_15C33:                              ; CODE XREF: sub_15B6F+B9↑j
+loc_15C33:                              ; CODE XREF: tileAt+B9↑j
                 mov     ax, ds:24B2h
                 add     ax, ds:24B4h
                 mov     ds:24B8h, ax
@@ -13193,21 +13199,21 @@ loc_15C33:                              ; CODE XREF: sub_15B6F+B9↑j
                 jmp     loc_15CC2
 ; ---------------------------------------------------------------------------
 
-loc_15C98:                              ; CODE XREF: sub_15B6F+124↑j
+loc_15C98:                              ; CODE XREF: tileAt+124↑j
                 mov     ax, [bp-14h]
                 cmp     ax, ds:24BAh
                 jle     short loc_15CA4
                 jmp     loc_15CC2
 ; ---------------------------------------------------------------------------
 
-loc_15CA4:                              ; CODE XREF: sub_15B6F+130↑j
+loc_15CA4:                              ; CODE XREF: tileAt+130↑j
                 mov     ax, [bp-18h]
                 cmp     ax, ds:24BAh
                 jge     short loc_15CB0
                 jmp     loc_15CC2
 ; ---------------------------------------------------------------------------
 
-loc_15CB0:                              ; CODE XREF: sub_15B6F+13C↑j
+loc_15CB0:                              ; CODE XREF: tileAt+13C↑j
                 mov     ax, ds:24B4h
                 sub     ax, [bp-0Eh]
                 mov     [bp-1Eh], ax
@@ -13216,15 +13222,15 @@ loc_15CB0:                              ; CODE XREF: sub_15B6F+13C↑j
                 jmp     loc_15CCA
 ; ---------------------------------------------------------------------------
 
-loc_15CC2:                              ; CODE XREF: sub_15B6F+126↑j
-                                        ; sub_15B6F+132↑j ...
+loc_15CC2:                              ; CODE XREF: tileAt+126↑j
+                                        ; tileAt+132↑j ...
                 inc     word ptr ds:24B4h
                 jmp     loc_15BF8
 ; ---------------------------------------------------------------------------
                 nop
 
-loc_15CCA:                              ; CODE XREF: sub_15B6F+C1↑j
-                                        ; sub_15B6F+150↑j
+loc_15CCA:                              ; CODE XREF: tileAt+C1↑j
+                                        ; tileAt+150↑j
                 mov     ax, [bp-1Eh]
                 mov     [bp-22h], ax
                 mov     ax, [bp-22h]
@@ -13234,16 +13240,17 @@ nullsub_47:
                 retf    8
 ; ---------------------------------------------------------------------------
 
-j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0:      ; CODE XREF: sub_15B04:j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0↑j
+j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0:      ; CODE XREF: findObjectTile:j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0↑j
                 jmp     j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0
-sub_15B6F       endp
+tileAt          endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; step outward from a position calling tileAt, accumulating in ds:262Ch -- line-of-sight / nearest-blocker scan. Called from doWalk, jailScene, the NPC code.
 ; Attributes: noreturn
 
-sub_15CDE       proc far                ; CODE XREF: sub_102D3+1C↑P
+scanLineOfSight proc far                ; CODE XREF: sub_102D3+1C↑P
                                         ; doWalk+AE↑P ...
                 mov     cx, 10h
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
@@ -13258,7 +13265,7 @@ loc_15CE6:
                 mov     word ptr ds:24B6h, 0FFFFh
                 nop
 
-loc_15D04:                              ; CODE XREF: sub_15CDE+C7↓j
+loc_15D04:                              ; CODE XREF: scanLineOfSight+C7↓j
                 mov     word ptr [bp-0Ch], 0Fh
                 push    word ptr [bp+0Ch]
                 push    word ptr [bp+0Ah]
@@ -13266,7 +13273,7 @@ loc_15D04:                              ; CODE XREF: sub_15CDE+C7↓j
                 push    ax
                 lea     ax, [bp-0Ch]
                 push    ax
-                call    sub_15B6F
+                call    tileAt          ; look up the map tile / object id at a coord (rtm_FE17). Returns the id (and via es:[bx] its attributes).
 
 loc_15D1C:
                 mov     [bp-0Eh], ax
@@ -13277,7 +13284,7 @@ loc_15D1C:
                 jmp     loc_15D9E
 ; ---------------------------------------------------------------------------
 
-loc_15D2C:                              ; CODE XREF: sub_15CDE+49↑j
+loc_15D2C:                              ; CODE XREF: scanLineOfSight+49↑j
                 mov     word ptr [bp-12h], 0
                 mov     ax, ds:24BCh
                 mov     [bp-14h], ax
@@ -13294,7 +13301,7 @@ loc_15D2C:                              ; CODE XREF: sub_15CDE+49↑j
                 jmp     loc_15D8D
 ; ---------------------------------------------------------------------------
 
-loc_15D55:                              ; CODE XREF: sub_15CDE+72↑j
+loc_15D55:                              ; CODE XREF: scanLineOfSight+72↑j
                 lea     ax, [bp-14h]
                 push    ax
                 lea     ax, [bp-16h]
@@ -13315,7 +13322,7 @@ loc_15D55:                              ; CODE XREF: sub_15CDE+72↑j
                 mov     es, word ptr ds:101h
                 mov     es:[bx], al
 
-loc_15D8D:                              ; CODE XREF: sub_15CDE+74↑j
+loc_15D8D:                              ; CODE XREF: scanLineOfSight+74↑j
                 lea     ax, [bp-14h]
                 push    ax
                 lea     ax, [bp-16h]
@@ -13324,14 +13331,14 @@ loc_15D8D:                              ; CODE XREF: sub_15CDE+74↑j
                 push    ax
                 call    sub_159AC
 
-loc_15D9E:                              ; CODE XREF: sub_15CDE+4B↑j
+loc_15D9E:                              ; CODE XREF: scanLineOfSight+4B↑j
                 cmp     word ptr ds:24B6h, 0
                 jl      short loc_15DA8
                 jmp     loc_15D04
 ; ---------------------------------------------------------------------------
 
-loc_15DA8:                              ; CODE XREF: sub_15CDE+C5↑j
-                call    sub_16194
+loc_15DA8:                              ; CODE XREF: scanLineOfSight+C5↑j
+                call    refreshView     ; rebuild + blit the whole interior view: drawInteriorTiles then rtm_FE69. Called after any state change.
 
 j_rt_F4_0:                              ; -> basProcLeave  (leglib seg003:0x1bb7c)
                 call    far ptr rt_F4
@@ -13340,9 +13347,9 @@ nullsub_48:
                 retf    8
 ; ---------------------------------------------------------------------------
 
-j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0:        ; CODE XREF: sub_15B6F:j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0↑j
+j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0:        ; CODE XREF: tileAt:j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0↑j
                 jmp     j_j_j_j_j_j_j_j_j_j_j_rt_ED_0
-sub_15CDE       endp
+scanLineOfSight endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -13468,7 +13475,7 @@ nullsub_49:
                 retf    2
 ; ---------------------------------------------------------------------------
 
-j_j_j_j_j_j_j_j_j_j_j_rt_ED_0:          ; CODE XREF: sub_15CDE:j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0↑j
+j_j_j_j_j_j_j_j_j_j_j_rt_ED_0:          ; CODE XREF: scanLineOfSight:j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0↑j
                 jmp     j_j_j_j_j_j_j_j_j_j_rt_ED_0
 sub_15DB8       endp
 
@@ -13571,9 +13578,10 @@ sub_15EEC       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; move the actor one tile and redraw: erase (drawActor 0), update position (via dirBetween / updateTile), draw (drawActor 1). Called from stepByDirection.
 ; Attributes: noreturn
 
-sub_15F41       proc far                ; CODE XREF: sub_155FF+ED↑P
+moveActor       proc far                ; CODE XREF: stepByDirection+ED↑P
                 mov     cx, 0Ah
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -13582,7 +13590,7 @@ loc_15F49:
                 mov     word ptr ds:24B4h, 0
                 push    word ptr [bp+8]
                 push    word ptr [bp+6]
-                call    sub_16569
+                call    dirBetween      ; compute the step direction (0..3, or 3 = none) from one coord to another via the map.
 
 loc_15F5F:
                 mov     [bp-0Ch], ax
@@ -13593,10 +13601,10 @@ loc_15F5F:
                 jmp     loc_15F75
 ; ---------------------------------------------------------------------------
 
-loc_15F70:                              ; CODE XREF: sub_15F41+2A↑j
+loc_15F70:                              ; CODE XREF: moveActor+2A↑j
                 mov     word ptr [bp-0Eh], 0
 
-loc_15F75:                              ; CODE XREF: sub_15F41+2C↑j
+loc_15F75:                              ; CODE XREF: moveActor+2C↑j
                 push    word ptr [bp+8]
                 push    word ptr [bp+6]
                 call    sub_15A9D
@@ -13608,101 +13616,101 @@ loc_15F80:
                 jmp     loc_1615D
 ; ---------------------------------------------------------------------------
 
-loc_15F8A:                              ; CODE XREF: sub_15F41+44↑j
+loc_15F8A:                              ; CODE XREF: moveActor+44↑j
                 cmp     ax, 1
                 jz      short loc_15F92
                 jmp     loc_16020
 ; ---------------------------------------------------------------------------
 
-loc_15F92:                              ; CODE XREF: sub_15F41+4C↑j
+loc_15F92:                              ; CODE XREF: moveActor+4C↑j
                 cmp     word ptr ds:1F02h, 0E3h
                 jz      short loc_15F9D
                 jmp     loc_15FA2
 ; ---------------------------------------------------------------------------
 
-loc_15F9D:                              ; CODE XREF: sub_15F41+57↑j
+loc_15F9D:                              ; CODE XREF: moveActor+57↑j
                 mov     word ptr [bp-0Eh], 4
 
-loc_15FA2:                              ; CODE XREF: sub_15F41+59↑j
+loc_15FA2:                              ; CODE XREF: moveActor+59↑j
                 cmp     word ptr ds:1F02h, 0D9h
                 jz      short loc_15FAD
                 jmp     loc_15FB2
 ; ---------------------------------------------------------------------------
 
-loc_15FAD:                              ; CODE XREF: sub_15F41+67↑j
+loc_15FAD:                              ; CODE XREF: moveActor+67↑j
                 mov     word ptr [bp-0Eh], 5
 
-loc_15FB2:                              ; CODE XREF: sub_15F41+69↑j
+loc_15FB2:                              ; CODE XREF: moveActor+69↑j
                 cmp     word ptr ds:1F02h, 0CAh
                 jz      short loc_15FBD
                 jmp     loc_15FC2
 ; ---------------------------------------------------------------------------
 
-loc_15FBD:                              ; CODE XREF: sub_15F41+77↑j
+loc_15FBD:                              ; CODE XREF: moveActor+77↑j
                 mov     word ptr [bp-0Eh], 6
 
-loc_15FC2:                              ; CODE XREF: sub_15F41+79↑j
+loc_15FC2:                              ; CODE XREF: moveActor+79↑j
                 cmp     word ptr ds:1F02h, 0C8h
                 jz      short loc_15FCD
                 jmp     loc_15FD2
 ; ---------------------------------------------------------------------------
 
-loc_15FCD:                              ; CODE XREF: sub_15F41+87↑j
+loc_15FCD:                              ; CODE XREF: moveActor+87↑j
                 mov     word ptr [bp-0Eh], 7
 
-loc_15FD2:                              ; CODE XREF: sub_15F41+89↑j
+loc_15FD2:                              ; CODE XREF: moveActor+89↑j
                 cmp     word ptr ds:2084h, 1
                 jz      short loc_15FDC
                 jmp     loc_1601D
 ; ---------------------------------------------------------------------------
 
-loc_15FDC:                              ; CODE XREF: sub_15F41+96↑j
+loc_15FDC:                              ; CODE XREF: moveActor+96↑j
                 mov     si, [bp+6]
                 cmp     word ptr [si], 52h ; 'R'
                 jle     short loc_15FE7
                 jmp     loc_1601D
 ; ---------------------------------------------------------------------------
 
-loc_15FE7:                              ; CODE XREF: sub_15F41+A1↑j
+loc_15FE7:                              ; CODE XREF: moveActor+A1↑j
                 mov     word ptr [bp-10h], 28h ; '('
                 cmp     word ptr [si], 52h ; 'R'
                 jz      short loc_15FF4
                 jmp     loc_15FF9
 ; ---------------------------------------------------------------------------
 
-loc_15FF4:                              ; CODE XREF: sub_15F41+AE↑j
+loc_15FF4:                              ; CODE XREF: moveActor+AE↑j
                 mov     word ptr [bp-10h], 7
 
-loc_15FF9:                              ; CODE XREF: sub_15F41+B0↑j
+loc_15FF9:                              ; CODE XREF: moveActor+B0↑j
                 mov     si, [bp+8]
                 cmp     word ptr [si], 21h ; '!'
                 mov     ax, 0
                 jl      short loc_16005
                 dec     ax
 
-loc_16005:                              ; CODE XREF: sub_15F41+C1↑j
+loc_16005:                              ; CODE XREF: moveActor+C1↑j
                 cmp     word ptr [si], 2Fh ; '/'
                 mov     cx, 0
                 jg      short loc_1600E
                 dec     cx
 
-loc_1600E:                              ; CODE XREF: sub_15F41+CA↑j
+loc_1600E:                              ; CODE XREF: moveActor+CA↑j
                 and     cx, ax
                 and     cx, cx
                 jnz     short loc_16017
                 jmp     loc_1601D
 ; ---------------------------------------------------------------------------
 
-loc_16017:                              ; CODE XREF: sub_15F41+D1↑j
+loc_16017:                              ; CODE XREF: moveActor+D1↑j
                 mov     ax, [bp-10h]
                 mov     ds:24A8h, ax
 
-loc_1601D:                              ; CODE XREF: sub_15F41+98↑j
-                                        ; sub_15F41+A3↑j ...
+loc_1601D:                              ; CODE XREF: moveActor+98↑j
+                                        ; moveActor+A3↑j ...
                 jmp     loc_160FE
 ; ---------------------------------------------------------------------------
 
-loc_16020:                              ; CODE XREF: sub_15F41+4E↑j
+loc_16020:                              ; CODE XREF: moveActor+4E↑j
                 mov     ax, ds:1F02h
                 mov     [bp-12h], ax
                 cmp     word ptr [bp-12h], 0CCh
@@ -13710,200 +13718,200 @@ loc_16020:                              ; CODE XREF: sub_15F41+4E↑j
                 jmp     loc_16038
 ; ---------------------------------------------------------------------------
 
-loc_16030:                              ; CODE XREF: sub_15F41+EA↑j
+loc_16030:                              ; CODE XREF: moveActor+EA↑j
                 mov     word ptr [bp-0Eh], 8
                 jmp     loc_160FE
 ; ---------------------------------------------------------------------------
 
-loc_16038:                              ; CODE XREF: sub_15F41+EC↑j
+loc_16038:                              ; CODE XREF: moveActor+EC↑j
                 cmp     word ptr [bp-12h], 0CDh
                 jz      short loc_16042
                 jmp     loc_1604A
 ; ---------------------------------------------------------------------------
 
-loc_16042:                              ; CODE XREF: sub_15F41+FC↑j
+loc_16042:                              ; CODE XREF: moveActor+FC↑j
                 mov     word ptr [bp-0Eh], 9
                 jmp     loc_160FE
 ; ---------------------------------------------------------------------------
 
-loc_1604A:                              ; CODE XREF: sub_15F41+FE↑j
+loc_1604A:                              ; CODE XREF: moveActor+FE↑j
                 cmp     word ptr [bp-12h], 0CAh
                 jz      short loc_16054
                 jmp     loc_1605C
 ; ---------------------------------------------------------------------------
 
-loc_16054:                              ; CODE XREF: sub_15F41+10E↑j
+loc_16054:                              ; CODE XREF: moveActor+10E↑j
                 mov     word ptr [bp-0Eh], 0Ah
                 jmp     loc_160FE
 ; ---------------------------------------------------------------------------
 
-loc_1605C:                              ; CODE XREF: sub_15F41+110↑j
+loc_1605C:                              ; CODE XREF: moveActor+110↑j
                 cmp     word ptr [bp-12h], 0CBh
                 jz      short loc_16066
                 jmp     loc_1606E
 ; ---------------------------------------------------------------------------
 
-loc_16066:                              ; CODE XREF: sub_15F41+120↑j
+loc_16066:                              ; CODE XREF: moveActor+120↑j
                 mov     word ptr [bp-0Eh], 0Bh
                 jmp     loc_160FE
 ; ---------------------------------------------------------------------------
 
-loc_1606E:                              ; CODE XREF: sub_15F41+122↑j
+loc_1606E:                              ; CODE XREF: moveActor+122↑j
                 cmp     word ptr [bp-12h], 0C1h
                 jz      short loc_16078
                 jmp     loc_16080
 ; ---------------------------------------------------------------------------
 
-loc_16078:                              ; CODE XREF: sub_15F41+132↑j
+loc_16078:                              ; CODE XREF: moveActor+132↑j
                 mov     word ptr [bp-0Eh], 0Ch
                 jmp     loc_160FE
 ; ---------------------------------------------------------------------------
 
-loc_16080:                              ; CODE XREF: sub_15F41+134↑j
+loc_16080:                              ; CODE XREF: moveActor+134↑j
                 cmp     word ptr [bp-12h], 0FEh
                 jz      short loc_1608A
                 jmp     loc_16092
 ; ---------------------------------------------------------------------------
 
-loc_1608A:                              ; CODE XREF: sub_15F41+144↑j
+loc_1608A:                              ; CODE XREF: moveActor+144↑j
                 mov     word ptr [bp-0Eh], 0Dh
                 jmp     loc_160FE
 ; ---------------------------------------------------------------------------
 
-loc_16092:                              ; CODE XREF: sub_15F41+146↑j
+loc_16092:                              ; CODE XREF: moveActor+146↑j
                 cmp     word ptr [bp-12h], 0C4h
                 jz      short loc_1609C
                 jmp     loc_160A4
 ; ---------------------------------------------------------------------------
 
-loc_1609C:                              ; CODE XREF: sub_15F41+156↑j
+loc_1609C:                              ; CODE XREF: moveActor+156↑j
                 mov     word ptr [bp-0Eh], 0Eh
                 jmp     loc_160FE
 ; ---------------------------------------------------------------------------
 
-loc_160A4:                              ; CODE XREF: sub_15F41+158↑j
+loc_160A4:                              ; CODE XREF: moveActor+158↑j
                 cmp     word ptr [bp-12h], 0C5h
                 jz      short loc_160AE
                 jmp     loc_160B6
 ; ---------------------------------------------------------------------------
 
-loc_160AE:                              ; CODE XREF: sub_15F41+168↑j
+loc_160AE:                              ; CODE XREF: moveActor+168↑j
                 mov     word ptr [bp-0Eh], 0Fh
                 jmp     loc_160FE
 ; ---------------------------------------------------------------------------
 
-loc_160B6:                              ; CODE XREF: sub_15F41+16A↑j
+loc_160B6:                              ; CODE XREF: moveActor+16A↑j
                 cmp     word ptr [bp-12h], 0DDh
                 jz      short loc_160C0
                 jmp     loc_160C8
 ; ---------------------------------------------------------------------------
 
-loc_160C0:                              ; CODE XREF: sub_15F41+17A↑j
+loc_160C0:                              ; CODE XREF: moveActor+17A↑j
                 mov     word ptr [bp-0Eh], 10h
                 jmp     loc_160FE
 ; ---------------------------------------------------------------------------
 
-loc_160C8:                              ; CODE XREF: sub_15F41+17C↑j
+loc_160C8:                              ; CODE XREF: moveActor+17C↑j
                 cmp     word ptr [bp-12h], 0C7h
                 jz      short loc_160D2
                 jmp     loc_160DA
 ; ---------------------------------------------------------------------------
 
-loc_160D2:                              ; CODE XREF: sub_15F41+18C↑j
+loc_160D2:                              ; CODE XREF: moveActor+18C↑j
                 mov     word ptr [bp-0Eh], 11h
                 jmp     loc_160FE
 ; ---------------------------------------------------------------------------
 
-loc_160DA:                              ; CODE XREF: sub_15F41+18E↑j
+loc_160DA:                              ; CODE XREF: moveActor+18E↑j
                 cmp     word ptr [bp-12h], 0C9h
                 jz      short loc_160E4
                 jmp     loc_160EC
 ; ---------------------------------------------------------------------------
 
-loc_160E4:                              ; CODE XREF: sub_15F41+19E↑j
+loc_160E4:                              ; CODE XREF: moveActor+19E↑j
                 mov     word ptr [bp-0Eh], 12h
                 jmp     loc_160FE
 ; ---------------------------------------------------------------------------
 
-loc_160EC:                              ; CODE XREF: sub_15F41+1A0↑j
+loc_160EC:                              ; CODE XREF: moveActor+1A0↑j
                 cmp     word ptr [bp-12h], 0C8h
                 jz      short loc_160F6
                 jmp     loc_160FE
 ; ---------------------------------------------------------------------------
 
-loc_160F6:                              ; CODE XREF: sub_15F41+1B0↑j
+loc_160F6:                              ; CODE XREF: moveActor+1B0↑j
                 mov     word ptr [bp-0Eh], 13h
                 jmp     $+3
 ; ---------------------------------------------------------------------------
 
-loc_160FE:                              ; CODE XREF: sub_15F41:loc_1601D↑j
-                                        ; sub_15F41+F4↑j ...
+loc_160FE:                              ; CODE XREF: moveActor:loc_1601D↑j
+                                        ; moveActor+F4↑j ...
                 cmp     word ptr ds:1F02h, 0F5h
                 mov     ax, 0
                 jl      short loc_1610A
                 dec     ax
 
-loc_1610A:                              ; CODE XREF: sub_15F41+1C6↑j
+loc_1610A:                              ; CODE XREF: moveActor+1C6↑j
                 cmp     word ptr ds:1F02h, 0F9h
                 mov     cx, 0
                 jg      short loc_16116
                 dec     cx
 
-loc_16116:                              ; CODE XREF: sub_15F41+1D2↑j
+loc_16116:                              ; CODE XREF: moveActor+1D2↑j
                 and     cx, ax
                 cmp     word ptr ds:1F02h, 0FEh
                 mov     ax, 0
                 jnz     short loc_16124
                 dec     ax
 
-loc_16124:                              ; CODE XREF: sub_15F41+1E0↑j
+loc_16124:                              ; CODE XREF: moveActor+1E0↑j
                 or      ax, cx
                 and     ax, ax
                 jnz     short loc_1612D
                 jmp     loc_16145
 ; ---------------------------------------------------------------------------
 
-loc_1612D:                              ; CODE XREF: sub_15F41+1E7↑j
+loc_1612D:                              ; CODE XREF: moveActor+1E7↑j
                 cmp     word ptr ds:24C0h, 0
                 jz      short loc_16137
                 jmp     loc_16142
 ; ---------------------------------------------------------------------------
 
-loc_16137:                              ; CODE XREF: sub_15F41+1F1↑j
+loc_16137:                              ; CODE XREF: moveActor+1F1↑j
                 mov     word ptr ds:24C0h, 1
-                call    sub_15543
+                call    drawActor       ; draw or erase the actor/NPC sprite at its tile (ds:2636h = 1 draw / 0 erase). Called from moveActor both ways.
 
-loc_16142:                              ; CODE XREF: sub_15F41+1F3↑j
+loc_16142:                              ; CODE XREF: moveActor+1F3↑j
                 jmp     loc_1615A
 ; ---------------------------------------------------------------------------
 
-loc_16145:                              ; CODE XREF: sub_15F41+1E9↑j
+loc_16145:                              ; CODE XREF: moveActor+1E9↑j
                 mov     ax, ds:24C0h
                 and     ax, ax
                 jnz     short loc_1614F
                 jmp     loc_1615A
 ; ---------------------------------------------------------------------------
 
-loc_1614F:                              ; CODE XREF: sub_15F41+209↑j
+loc_1614F:                              ; CODE XREF: moveActor+209↑j
                 mov     word ptr ds:24C0h, 0
-                call    sub_15543
+                call    drawActor       ; draw or erase the actor/NPC sprite at its tile (ds:2636h = 1 draw / 0 erase). Called from moveActor both ways.
 
-loc_1615A:                              ; CODE XREF: sub_15F41:loc_16142↑j
-                                        ; sub_15F41+20B↑j
+loc_1615A:                              ; CODE XREF: moveActor:loc_16142↑j
+                                        ; moveActor+20B↑j
                 jmp     loc_1616D
 ; ---------------------------------------------------------------------------
 
-loc_1615D:                              ; CODE XREF: sub_15F41+46↑j
+loc_1615D:                              ; CODE XREF: moveActor+46↑j
                 cmp     word ptr ds:1F02h, 0DAh
                 jz      short loc_16168
                 jmp     loc_1616D
 ; ---------------------------------------------------------------------------
 
-loc_16168:                              ; CODE XREF: sub_15F41+222↑j
+loc_16168:                              ; CODE XREF: moveActor+222↑j
                 mov     word ptr [bp-0Eh], 3
 
-loc_1616D:                              ; CODE XREF: sub_15F41:loc_1615A↑j
-                                        ; sub_15F41+224↑j
+loc_1616D:                              ; CODE XREF: moveActor:loc_1615A↑j
+                                        ; moveActor+224↑j
                 mov     ax, [bp-0Eh]
                 mov     [bp-14h], ax
                 mov     ax, [bp-14h]
@@ -13915,7 +13923,7 @@ nullsub_53:
 
 j_j_j_j_j_j_j_rt_ED_0:                  ; CODE XREF: sub_15EEC:j_j_j_j_j_j_j_j_rt_ED_0↑j
                 jmp     j_j_j_j_j_j_rt_ED_0
-sub_15F41       endp
+moveActor       endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -13934,22 +13942,23 @@ nullsub_54:
                 retf    0
 ; ---------------------------------------------------------------------------
 
-j_j_j_j_j_j_rt_ED_0:                    ; CODE XREF: sub_15F41:j_j_j_j_j_j_j_rt_ED_0↑j
+j_j_j_j_j_j_rt_ED_0:                    ; CODE XREF: moveActor:j_j_j_j_j_j_j_rt_ED_0↑j
                 jmp     j_j_j_j_j_rt_ED_0
 sub_16181       endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; rebuild + blit the whole interior view: drawInteriorTiles then rtm_FE69. Called after any state change.
 ; Attributes: noreturn
 
-sub_16194       proc far                ; CODE XREF: sub_1068D:loc_1076D↑P
+refreshView     proc far                ; CODE XREF: sub_1068D:loc_1076D↑P
                                         ; chooseAbove:loc_107C0↑P ...
                 mov     cx, 0
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
-loc_1619C:
-                call    sub_1535F
+loc_1619C:                              ; renders the interior room view -- walks the map array and blits each tile via rtm_FE1B / rtm_FE14 (leglib seg004).
+                call    drawInteriorTiles
 
 j_rt_FE69:                              ; -> rtm_FE69  (leglib seg008:0x28d74)
                 call    far ptr rt_FE69
@@ -13963,14 +13972,15 @@ nullsub_55:
 
 j_j_j_j_j_rt_ED_0:                      ; CODE XREF: sub_16181:j_j_j_j_j_j_rt_ED_0↑j
                 jmp     j_j_j_j_rt_ED_0
-sub_16194       endp
+refreshView     endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; direction (0..3) -> the interior viewport window (ds:1F26h/1F28h/ds:2634h/ds:2082h).
 ; Attributes: noreturn
 
-sub_161B1       proc far                ; CODE XREF: j_rt_FE01+81↑P
+setViewport     proc far                ; CODE XREF: j_rt_FE01+81↑P
                                         ; privateLevelWarn+7A↑P ...
                 mov     cx, 0Ah
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
@@ -13989,7 +13999,7 @@ loc_161B9:
                 jmp     loc_161F3
 ; ---------------------------------------------------------------------------
 
-loc_161D8:                              ; CODE XREF: sub_161B1+22↑j
+loc_161D8:                              ; CODE XREF: setViewport+22↑j
                 mov     word ptr ds:1F26h, 50h ; 'P'
                 mov     word ptr ds:1F28h, 28h ; '('
                 mov     word ptr ds:24BEh, 2Ch ; ','
@@ -13997,13 +14007,13 @@ loc_161D8:                              ; CODE XREF: sub_161B1+22↑j
                 jmp     loc_16244
 ; ---------------------------------------------------------------------------
 
-loc_161F3:                              ; CODE XREF: sub_161B1+24↑j
+loc_161F3:                              ; CODE XREF: setViewport+24↑j
                 cmp     word ptr [bp-0Ch], 1
                 jz      short loc_161FC
                 jmp     loc_16217
 ; ---------------------------------------------------------------------------
 
-loc_161FC:                              ; CODE XREF: sub_161B1+46↑j
+loc_161FC:                              ; CODE XREF: setViewport+46↑j
                 mov     word ptr ds:1F26h, 5Ah ; 'Z'
                 mov     word ptr ds:1F28h, 5Bh ; '['
                 mov     word ptr ds:24BEh, 1Eh
@@ -14011,13 +14021,13 @@ loc_161FC:                              ; CODE XREF: sub_161B1+46↑j
                 jmp     loc_16244
 ; ---------------------------------------------------------------------------
 
-loc_16217:                              ; CODE XREF: sub_161B1+48↑j
+loc_16217:                              ; CODE XREF: setViewport+48↑j
                 cmp     word ptr [bp-0Ch], 2
                 jz      short loc_16220
                 jmp     loc_1623B
 ; ---------------------------------------------------------------------------
 
-loc_16220:                              ; CODE XREF: sub_161B1+6A↑j
+loc_16220:                              ; CODE XREF: setViewport+6A↑j
                 mov     word ptr ds:1F26h, 70h ; 'p'
                 mov     word ptr ds:1F28h, 49h ; 'I'
                 mov     word ptr ds:24BEh, 27h ; '''
@@ -14025,13 +14035,13 @@ loc_16220:                              ; CODE XREF: sub_161B1+6A↑j
                 jmp     loc_16244
 ; ---------------------------------------------------------------------------
 
-loc_1623B:                              ; CODE XREF: sub_161B1+6C↑j
+loc_1623B:                              ; CODE XREF: setViewport+6C↑j
                 mov     ax, 27h ; '''
                 push    ax
                 call    far ptr rt_C8   ; -> rtm_C8  (leglib seg003:0x138e2)
 
-loc_16244:                              ; CODE XREF: sub_161B1+3F↑j
-                                        ; sub_161B1+63↑j ...
+loc_16244:                              ; CODE XREF: setViewport+3F↑j
+                                        ; setViewport+63↑j ...
                 mov     word ptr ds:24AAh, 0Ch
                 mov     word ptr ds:24A4h, 8
                 mov     ax, ds:1F26h
@@ -14049,7 +14059,7 @@ loc_16244:                              ; CODE XREF: sub_161B1+3F↑j
 ; ---------------------------------------------------------------------------
                 nop
 
-loc_16274:                              ; CODE XREF: sub_161B1+E6↓j
+loc_16274:                              ; CODE XREF: setViewport+E6↓j
                 shl     ax, 1
                 mov     bx, ax
                 mov     si, 1FF6h
@@ -14062,7 +14072,7 @@ loc_16274:                              ; CODE XREF: sub_161B1+E6↓j
                 mov     ax, [bp-12h]
                 inc     ax
 
-loc_16291:                              ; CODE XREF: sub_161B1+BF↑j
+loc_16291:                              ; CODE XREF: setViewport+BF↑j
                 mov     [bp-12h], ax
                 cmp     ax, [bp-0Eh]
                 jle     short loc_16274
@@ -14072,7 +14082,7 @@ loc_16291:                              ; CODE XREF: sub_161B1+BF↑j
 ; ---------------------------------------------------------------------------
                 nop
 
-loc_162A4:                              ; CODE XREF: sub_161B1+117↓j
+loc_162A4:                              ; CODE XREF: setViewport+117↓j
                 shl     ax, 1
                 mov     bx, ax
                 mov     si, 2024h
@@ -14085,7 +14095,7 @@ loc_162A4:                              ; CODE XREF: sub_161B1+117↓j
                 inc     cx
                 mov     ax, cx
 
-loc_162C2:                              ; CODE XREF: sub_161B1+EF↑j
+loc_162C2:                              ; CODE XREF: setViewport+EF↑j
                 mov     [bp-12h], ax
                 cmp     ax, 10h
                 jle     short loc_162A4
@@ -14095,16 +14105,17 @@ nullsub_56:
                 retf    4
 ; ---------------------------------------------------------------------------
 
-j_j_j_j_rt_ED_0:                        ; CODE XREF: sub_16194:j_j_j_j_j_rt_ED_0↑j
+j_j_j_j_rt_ED_0:                        ; CODE XREF: refreshView:j_j_j_j_j_rt_ED_0↑j
                 jmp     j_j_j_rt_ED_0
-sub_161B1       endp
+setViewport     endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; combat: trace from the attacker along a direction (tileAt per step, rtm_FE18 to draw), set ds:1F02h/1F04h. Called from fightGuard.
 ; Attributes: noreturn
 
-sub_162D5       proc far                ; CODE XREF: doFight+164↑P
+traceCombatLine proc far                ; CODE XREF: doFight+164↑P
                 mov     cx, 2Ah ; '*'
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -14125,51 +14136,51 @@ loc_162DD:
                 jmp     loc_16310
 ; ---------------------------------------------------------------------------
 
-loc_16308:                              ; CODE XREF: sub_162D5+2E↑j
+loc_16308:                              ; CODE XREF: traceCombatLine+2E↑j
                 mov     word ptr [bp-14h], 0FFFFh
                 jmp     loc_1634C
 ; ---------------------------------------------------------------------------
 
-loc_16310:                              ; CODE XREF: sub_162D5+30↑j
+loc_16310:                              ; CODE XREF: traceCombatLine+30↑j
                 cmp     word ptr [bp-0Ch], 1
                 jz      short loc_16319
                 jmp     loc_16321
 ; ---------------------------------------------------------------------------
 
-loc_16319:                              ; CODE XREF: sub_162D5+3F↑j
+loc_16319:                              ; CODE XREF: traceCombatLine+3F↑j
                 mov     word ptr [bp-12h], 1
                 jmp     loc_1634C
 ; ---------------------------------------------------------------------------
 
-loc_16321:                              ; CODE XREF: sub_162D5+41↑j
+loc_16321:                              ; CODE XREF: traceCombatLine+41↑j
                 cmp     word ptr [bp-0Ch], 2
                 jz      short loc_1632A
                 jmp     loc_16332
 ; ---------------------------------------------------------------------------
 
-loc_1632A:                              ; CODE XREF: sub_162D5+50↑j
+loc_1632A:                              ; CODE XREF: traceCombatLine+50↑j
                 mov     word ptr [bp-14h], 1
                 jmp     loc_1634C
 ; ---------------------------------------------------------------------------
 
-loc_16332:                              ; CODE XREF: sub_162D5+52↑j
+loc_16332:                              ; CODE XREF: traceCombatLine+52↑j
                 cmp     word ptr [bp-0Ch], 3
                 jz      short loc_1633B
                 jmp     loc_16343
 ; ---------------------------------------------------------------------------
 
-loc_1633B:                              ; CODE XREF: sub_162D5+61↑j
+loc_1633B:                              ; CODE XREF: traceCombatLine+61↑j
                 mov     word ptr [bp-12h], 0FFFFh
                 jmp     loc_1634C
 ; ---------------------------------------------------------------------------
 
-loc_16343:                              ; CODE XREF: sub_162D5+63↑j
+loc_16343:                              ; CODE XREF: traceCombatLine+63↑j
                 mov     ax, 27h ; '''
                 push    ax
                 call    far ptr rt_C8   ; -> rtm_C8  (leglib seg003:0x138e2)
 
-loc_1634C:                              ; CODE XREF: sub_162D5+38↑j
-                                        ; sub_162D5+49↑j ...
+loc_1634C:                              ; CODE XREF: traceCombatLine+38↑j
+                                        ; traceCombatLine+49↑j ...
                 mov     si, 1E2Ah
                 xor     bx, bx
                 add     bx, [si+0Ah]
@@ -14184,7 +14195,7 @@ loc_1634C:                              ; CODE XREF: sub_162D5+38↑j
                 jmp     loc_1644B
 ; ---------------------------------------------------------------------------
 
-loc_16370:                              ; CODE XREF: sub_162D5+17E↓j
+loc_16370:                              ; CODE XREF: traceCombatLine+17E↓j
                 mov     ax, [bp-12h]
                 add     [bp-0Eh], ax
                 mov     ax, [bp-14h]
@@ -14194,27 +14205,27 @@ loc_16370:                              ; CODE XREF: sub_162D5+17E↓j
                 jmp     loc_16456
 ; ---------------------------------------------------------------------------
 
-loc_16385:                              ; CODE XREF: sub_162D5+AB↑j
+loc_16385:                              ; CODE XREF: traceCombatLine+AB↑j
                 mov     ax, ds:1F26h
                 cmp     ax, [bp-0Eh]
                 jg      short loc_16390
                 jmp     loc_16456
 ; ---------------------------------------------------------------------------
 
-loc_16390:                              ; CODE XREF: sub_162D5+B6↑j
+loc_16390:                              ; CODE XREF: traceCombatLine+B6↑j
                 cmp     word ptr [bp-10h], 0
                 jge     short loc_16399
                 jmp     loc_16456
 ; ---------------------------------------------------------------------------
 
-loc_16399:                              ; CODE XREF: sub_162D5+BF↑j
+loc_16399:                              ; CODE XREF: traceCombatLine+BF↑j
                 mov     ax, ds:1F28h
                 cmp     ax, [bp-10h]
                 jg      short loc_163A4
                 jmp     loc_16456
 ; ---------------------------------------------------------------------------
 
-loc_163A4:                              ; CODE XREF: sub_162D5+CA↑j
+loc_163A4:                              ; CODE XREF: traceCombatLine+CA↑j
                 mov     word ptr [bp-1Ah], 0
                 mov     word ptr [bp-1Ch], 1
                 lea     ax, [bp-0Eh]
@@ -14225,7 +14236,7 @@ loc_163A4:                              ; CODE XREF: sub_162D5+CA↑j
                 push    ax
                 lea     ax, [bp-1Ch]
                 push    ax
-                call    sub_15B6F
+                call    tileAt          ; look up the map tile / object id at a coord (rtm_FE17). Returns the id (and via es:[bx] its attributes).
                 mov     [bp-1Eh], ax
                 mov     ax, [bp-1Eh]
                 mov     [bp-20h], ax
@@ -14234,7 +14245,7 @@ loc_163A4:                              ; CODE XREF: sub_162D5+CA↑j
                 jmp     loc_16456
 ; ---------------------------------------------------------------------------
 
-loc_163D3:                              ; CODE XREF: sub_162D5+F9↑j
+loc_163D3:                              ; CODE XREF: traceCombatLine+F9↑j
                 mov     bx, [bp-10h]
                 shl     bx, 1
                 mov     si, 1FF6h
@@ -14260,19 +14271,19 @@ loc_163D3:                              ; CODE XREF: sub_162D5+F9↑j
                 jmp     loc_16420
 ; ---------------------------------------------------------------------------
 
-loc_1640F:                              ; CODE XREF: sub_162D5+135↑j
+loc_1640F:                              ; CODE XREF: traceCombatLine+135↑j
                 cmp     ax, 0FFh
                 jnz     short loc_16417
                 jmp     loc_16420
 ; ---------------------------------------------------------------------------
 
-loc_16417:                              ; CODE XREF: sub_162D5+13D↑j
+loc_16417:                              ; CODE XREF: traceCombatLine+13D↑j
                 mov     word ptr ds:1F04h, 1
                 jmp     loc_16456
 ; ---------------------------------------------------------------------------
 
-loc_16420:                              ; CODE XREF: sub_162D5+137↑j
-                                        ; sub_162D5+13F↑j
+loc_16420:                              ; CODE XREF: traceCombatLine+137↑j
+                                        ; traceCombatLine+13F↑j
                 lea     ax, [bp-0Eh]
                 push    ax
                 lea     ax, [bp-10h]
@@ -14283,44 +14294,44 @@ loc_16420:                              ; CODE XREF: sub_162D5+137↑j
                 jmp     loc_16447
 ; ---------------------------------------------------------------------------
 
-loc_16438:                              ; CODE XREF: sub_162D5+15E↑j
+loc_16438:                              ; CODE XREF: traceCombatLine+15E↑j
                 mov     word ptr ds:1F02h, 0FEh
                 mov     word ptr ds:1F04h, 0BFh
                 jmp     loc_16456
 ; ---------------------------------------------------------------------------
 
-loc_16447:                              ; CODE XREF: sub_162D5+160↑j
+loc_16447:                              ; CODE XREF: traceCombatLine+160↑j
                 mov     ax, ds:1F06h
                 inc     ax
 
-loc_1644B:                              ; CODE XREF: sub_162D5+98↑j
+loc_1644B:                              ; CODE XREF: traceCombatLine+98↑j
                 mov     ds:1F06h, ax
                 cmp     ax, [bp-16h]
                 jg      short loc_16456
                 jmp     loc_16370
 ; ---------------------------------------------------------------------------
 
-loc_16456:                              ; CODE XREF: sub_162D5+AD↑j
-                                        ; sub_162D5+B8↑j ...
+loc_16456:                              ; CODE XREF: traceCombatLine+AD↑j
+                                        ; traceCombatLine+B8↑j ...
                 cmp     word ptr [bp-20h], 0
                 jge     short loc_1645F
                 jmp     loc_16468
 ; ---------------------------------------------------------------------------
 
-loc_1645F:                              ; CODE XREF: sub_162D5+185↑j
+loc_1645F:                              ; CODE XREF: traceCombatLine+185↑j
                 mov     ax, [bp-20h]
                 mov     ds:1F02h, ax
                 jmp     loc_16524
 ; ---------------------------------------------------------------------------
 
-loc_16468:                              ; CODE XREF: sub_162D5+187↑j
+loc_16468:                              ; CODE XREF: traceCombatLine+187↑j
                 mov     ax, ds:1F04h
                 and     ax, ax
                 jnz     short loc_16472
                 jmp     loc_1651E
 ; ---------------------------------------------------------------------------
 
-loc_16472:                              ; CODE XREF: sub_162D5+198↑j
+loc_16472:                              ; CODE XREF: traceCombatLine+198↑j
                 mov     word ptr ds:1F02h, 0FFh
                 mov     word ptr ds:1F04h, 0
                 cmp     word ptr ds:24C2h, 0
@@ -14328,7 +14339,7 @@ loc_16472:                              ; CODE XREF: sub_162D5+198↑j
                 jmp     loc_1651B
 ; ---------------------------------------------------------------------------
 
-loc_16488:                              ; CODE XREF: sub_162D5+1AE↑j
+loc_16488:                              ; CODE XREF: traceCombatLine+1AE↑j
                 push    word ptr [bp-18h]
                 call    far ptr rt_11   ; -> rtm_11  (leglib seg003:0x12bde)
                 xor     ax, ax
@@ -14336,13 +14347,13 @@ loc_16488:                              ; CODE XREF: sub_162D5+1AE↑j
 ; ---------------------------------------------------------------------------
                 nop
 
-loc_16496:                              ; CODE XREF: sub_162D5+243↓j
+loc_16496:                              ; CODE XREF: traceCombatLine+243↓j
                 xor     ax, ax
                 jmp     loc_16504
 ; ---------------------------------------------------------------------------
                 nop
 
-loc_1649C:                              ; CODE XREF: sub_162D5+235↓j
+loc_1649C:                              ; CODE XREF: traceCombatLine+235↓j
                 mov     cx, [bp-2Eh]
                 add     cx, [bp-0Eh]
                 mov     ax, cx
@@ -14369,62 +14380,62 @@ loc_1649C:                              ; CODE XREF: sub_162D5+235↓j
                 jle     short loc_164DF
                 dec     cx
 
-loc_164DF:                              ; CODE XREF: sub_162D5+207↑j
+loc_164DF:                              ; CODE XREF: traceCombatLine+207↑j
                 cmp     ax, 0B7h
                 mov     dx, 0
                 jge     short loc_164E8
                 dec     dx
 
-loc_164E8:                              ; CODE XREF: sub_162D5+210↑j
+loc_164E8:                              ; CODE XREF: traceCombatLine+210↑j
                 and     dx, cx
                 and     dx, dx
                 jnz     short loc_164F1
                 jmp     loc_16500
 ; ---------------------------------------------------------------------------
 
-loc_164F1:                              ; CODE XREF: sub_162D5+217↑j
+loc_164F1:                              ; CODE XREF: traceCombatLine+217↑j
                 mov     word ptr ds:1F02h, 0FDh
                 lea     ax, [bp-32h]
                 push    ax
                 call    sub_1573D
 
-loc_16500:                              ; CODE XREF: sub_162D5+219↑j
+loc_16500:                              ; CODE XREF: traceCombatLine+219↑j
                 mov     ax, [bp-30h]
                 inc     ax
 
-loc_16504:                              ; CODE XREF: sub_162D5+1C3↑j
+loc_16504:                              ; CODE XREF: traceCombatLine+1C3↑j
                 mov     [bp-30h], ax
                 cmp     ax, 1
                 jle     short loc_1649C
                 mov     ax, [bp-2Eh]
                 inc     ax
 
-loc_16510:                              ; CODE XREF: sub_162D5+1BD↑j
+loc_16510:                              ; CODE XREF: traceCombatLine+1BD↑j
                 mov     [bp-2Eh], ax
                 cmp     ax, 1
                 jg      short loc_1651B
                 jmp     loc_16496
 ; ---------------------------------------------------------------------------
 
-loc_1651B:                              ; CODE XREF: sub_162D5+1B0↑j
-                                        ; sub_162D5+241↑j
+loc_1651B:                              ; CODE XREF: traceCombatLine+1B0↑j
+                                        ; traceCombatLine+241↑j
                 jmp     loc_16524
 ; ---------------------------------------------------------------------------
 
-loc_1651E:                              ; CODE XREF: sub_162D5+19A↑j
+loc_1651E:                              ; CODE XREF: traceCombatLine+19A↑j
                 mov     word ptr ds:1F02h, 0FFh
 
-loc_16524:                              ; CODE XREF: sub_162D5+190↑j
-                                        ; sub_162D5:loc_1651B↑j
+loc_16524:                              ; CODE XREF: traceCombatLine+190↑j
+                                        ; traceCombatLine:loc_1651B↑j
                 call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
 nullsub_57:
                 retf    8
 ; ---------------------------------------------------------------------------
 
-j_j_j_rt_ED_0:                          ; CODE XREF: sub_161B1:j_j_j_j_rt_ED_0↑j
+j_j_j_rt_ED_0:                          ; CODE XREF: setViewport:j_j_j_j_rt_ED_0↑j
                 jmp     j_j_rt_ED_0
-sub_162D5       endp
+traceCombatLine endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -14444,7 +14455,7 @@ loc_16537:
                 push    ax
                 lea     ax, [bp-0Eh]
                 push    ax
-                call    sub_15B6F
+                call    tileAt          ; look up the map tile / object id at a coord (rtm_FE17). Returns the id (and via es:[bx] its attributes).
 
 loc_16554:
                 mov     [bp-10h], ax
@@ -14457,16 +14468,17 @@ nullsub_58:
                 retf    4
 ; ---------------------------------------------------------------------------
 
-j_j_rt_ED_0:                            ; CODE XREF: sub_162D5:j_j_j_rt_ED_0↑j
+j_j_rt_ED_0:                            ; CODE XREF: traceCombatLine:j_j_j_rt_ED_0↑j
                 jmp     j_rt_ED_0
 sub_1652F       endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; compute the step direction (0..3, or 3 = none) from one coord to another via the map.
 ; Attributes: noreturn
 
-sub_16569       proc far                ; CODE XREF: sub_15867+97↑P
+dirBetween      proc far                ; CODE XREF: sub_15867+97↑P
                                         ; sub_15867+AF↑P ...
                 mov     cx, 12h
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
@@ -14484,14 +14496,14 @@ loc_16571:
                 jge     short loc_1658D
                 dec     ax
 
-loc_1658D:                              ; CODE XREF: sub_16569+21↑j
+loc_1658D:                              ; CODE XREF: dirBetween+21↑j
                 mov     di, [bp+6]
                 cmp     word ptr [di], 0
                 mov     cx, 0
                 jge     short loc_16599
                 dec     cx
 
-loc_16599:                              ; CODE XREF: sub_16569+2D↑j
+loc_16599:                              ; CODE XREF: dirBetween+2D↑j
                 or      cx, ax
                 mov     ax, ds:1F26h
                 add     ax, 0FFFEh
@@ -14500,7 +14512,7 @@ loc_16599:                              ; CODE XREF: sub_16569+2D↑j
                 jge     short loc_165A9
                 dec     dx
 
-loc_165A9:                              ; CODE XREF: sub_16569+3D↑j
+loc_165A9:                              ; CODE XREF: dirBetween+3D↑j
                 or      dx, cx
                 mov     ax, ds:1F28h
                 add     ax, 0FFFEh
@@ -14509,19 +14521,19 @@ loc_165A9:                              ; CODE XREF: sub_16569+3D↑j
                 jge     short loc_165B9
                 dec     cx
 
-loc_165B9:                              ; CODE XREF: sub_16569+4D↑j
+loc_165B9:                              ; CODE XREF: dirBetween+4D↑j
                 or      cx, dx
                 and     cx, cx
                 jnz     short loc_165C2
                 jmp     loc_165CA
 ; ---------------------------------------------------------------------------
 
-loc_165C2:                              ; CODE XREF: sub_16569+54↑j
+loc_165C2:                              ; CODE XREF: dirBetween+54↑j
                 mov     word ptr [bp-0Eh], 3
                 jmp     loc_1666D
 ; ---------------------------------------------------------------------------
 
-loc_165CA:                              ; CODE XREF: sub_16569+56↑j
+loc_165CA:                              ; CODE XREF: dirBetween+56↑j
                 mov     si, [bp+6]
                 mov     bx, [si]
                 shl     bx, 1
@@ -14549,36 +14561,36 @@ loc_165CA:                              ; CODE XREF: sub_16569+56↑j
                 jmp     loc_16617
 ; ---------------------------------------------------------------------------
 
-loc_1660A:                              ; CODE XREF: sub_16569+9C↑j
+loc_1660A:                              ; CODE XREF: dirBetween+9C↑j
                 cmp     ax, 0FFh
                 jnz     short loc_16612
                 jmp     loc_16617
 ; ---------------------------------------------------------------------------
 
-loc_16612:                              ; CODE XREF: sub_16569+A4↑j
+loc_16612:                              ; CODE XREF: dirBetween+A4↑j
                 mov     word ptr [bp-14h], 1
 
-loc_16617:                              ; CODE XREF: sub_16569+9E↑j
-                                        ; sub_16569+A6↑j
+loc_16617:                              ; CODE XREF: dirBetween+9E↑j
+                                        ; dirBetween+A6↑j
                 cmp     word ptr [bp-14h], 0
                 mov     ax, 0
                 jnz     short loc_16621
                 dec     ax
 
-loc_16621:                              ; CODE XREF: sub_16569+B5↑j
+loc_16621:                              ; CODE XREF: dirBetween+B5↑j
                 cmp     word ptr [bp-14h], 0FFh
                 mov     cx, 0
                 jnz     short loc_1662C
                 dec     cx
 
-loc_1662C:                              ; CODE XREF: sub_16569+C0↑j
+loc_1662C:                              ; CODE XREF: dirBetween+C0↑j
                 or      cx, ax
                 and     cx, cx
                 jnz     short loc_16635
                 jmp     loc_16667
 ; ---------------------------------------------------------------------------
 
-loc_16635:                              ; CODE XREF: sub_16569+C7↑j
+loc_16635:                              ; CODE XREF: dirBetween+C7↑j
                 mov     word ptr [bp-1Ah], 0
                 mov     word ptr [bp-16h], 1
                 push    word ptr [bp+8]
@@ -14587,7 +14599,7 @@ loc_16635:                              ; CODE XREF: sub_16569+C7↑j
                 push    ax
                 lea     ax, [bp-16h]
                 push    ax
-                call    sub_15B6F
+                call    tileAt          ; look up the map tile / object id at a coord (rtm_FE17). Returns the id (and via es:[bx] its attributes).
                 mov     [bp-18h], ax
                 mov     ax, [bp-18h]
                 mov     [bp-1Ch], ax
@@ -14596,21 +14608,21 @@ loc_16635:                              ; CODE XREF: sub_16569+C7↑j
                 jmp     loc_16667
 ; ---------------------------------------------------------------------------
 
-loc_16662:                              ; CODE XREF: sub_16569+F4↑j
+loc_16662:                              ; CODE XREF: dirBetween+F4↑j
                 mov     word ptr [bp-14h], 2
 
-loc_16667:                              ; CODE XREF: sub_16569+C9↑j
-                                        ; sub_16569+F6↑j
+loc_16667:                              ; CODE XREF: dirBetween+C9↑j
+                                        ; dirBetween+F6↑j
                 mov     ax, [bp-14h]
                 mov     [bp-0Eh], ax
 
-loc_1666D:                              ; CODE XREF: sub_16569+5E↑j
+loc_1666D:                              ; CODE XREF: dirBetween+5E↑j
                 mov     ax, [bp-0Eh]
                 call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
 nullsub_59:
                 retf    4
-sub_16569       endp
+dirBetween      endp
 
 ; [00000005 BYTES: COLLAPSED FUNCTION j_rt_ED_0. PRESS NUMPAD+ TO EXPAND]
                 db    0
@@ -16711,8 +16723,8 @@ rt_C7:                                  ; Overlay manager interrupt
 ; -> rtm_C8  (leglib seg003:0x138e2)
 ; Attributes: noreturn
 
-rt_C8           proc near               ; CODE XREF: sub_152B3+47↑P
-                                        ; sub_155FF+8B↑P ...
+rt_C8           proc near               ; CODE XREF: viewFaceDirection+47↑P
+                                        ; stepByDirection+8B↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -16927,7 +16939,7 @@ rt_FE05:                                ; Overlay manager interrupt
 ; -> rtm_FE06  (leglib seg004:0x2063c)
 ; Attributes: noreturn
 
-rt_FE06         proc near               ; CODE XREF: sub_152B3:loc_152FF↑P
+rt_FE06         proc near               ; CODE XREF: viewFaceDirection:loc_152FF↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -17032,7 +17044,7 @@ rt_FE13:                                ; Overlay manager interrupt
 ; -> rtm_FE14  (leglib seg004:0x1ff3a)
 ; Attributes: noreturn
 
-rt_FE14         proc near               ; CODE XREF: sub_1535F+166↑P
+rt_FE14         proc near               ; CODE XREF: drawInteriorTiles+166↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -17071,7 +17083,7 @@ rt_FE16         endp
 ; -> rtm_FE17  (leglib seg004:0x2000d)
 ; Attributes: noreturn
 
-rt_FE17         proc near               ; CODE XREF: sub_15B6F+A7↑P
+rt_FE17         proc near               ; CODE XREF: tileAt+A7↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -17084,8 +17096,8 @@ rt_FE17         endp
 ; -> rtm_FE18  (leglib seg004:0x200b3)
 ; Attributes: noreturn
 
-rt_FE18         proc near               ; CODE XREF: sub_162D5+125↑P
-                                        ; sub_16569+8C↑P
+rt_FE18         proc near               ; CODE XREF: traceCombatLine+125↑P
+                                        ; dirBetween+8C↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -17117,8 +17129,8 @@ rt_FE1A:                                ; Overlay manager interrupt
 ; -> rtm_FE1B  (leglib seg004:0x1ff18)
 ; Attributes: noreturn
 
-rt_FE1B         proc near               ; CODE XREF: sub_1535F+9C↑P
-                                        ; sub_1535F+147↑P ...
+rt_FE1B         proc near               ; CODE XREF: drawInteriorTiles+9C↑P
+                                        ; drawInteriorTiles+147↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -17273,7 +17285,7 @@ rt_FE2B:                                ; Overlay manager interrupt
 ; -> rtm_FE2C  (leglib seg007:0x24fe3)
 ; Attributes: noreturn
 
-rt_FE2C         proc near               ; CODE XREF: sub_152B3+8A↑P
+rt_FE2C         proc near               ; CODE XREF: viewFaceDirection+8A↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -17822,7 +17834,7 @@ rt_FE68:                                ; Overlay manager interrupt
 ; -> rtm_FE69  (leglib seg008:0x28d74)
 ; Attributes: noreturn
 
-rt_FE69         proc near               ; CODE XREF: sub_16194:j_rt_FE69↑P
+rt_FE69         proc near               ; CODE XREF: refreshView:j_rt_FE69↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------

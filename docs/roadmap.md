@@ -87,7 +87,15 @@ priority).
       `potionWizard`, `doFight`, `describeRoom`/`describeObjects` (incl.
       "THE COMPENDIUM IS THERE!"), `loadCastleLevel` (CASTLE.BS1/2,
       FORT.BS1/2), `exitCastle`, `gasRoomTrap`, `useKey`, spell handlers.
-- [ ] Name the shared `bmTNCALB` `seg001` module once (applies to both).
+- [x] Name the shared `bmTNCALB` `seg001` module (2026-08-31,
+      `apply_renames_tncalb.py` — keyed by seg001 offset, byte-identical
+      structure in both, applied to each). 13/26: the town/castle
+      *interior* engine — `drawInteriorTiles`, `refreshView`, `tileAt`,
+      `scanLineOfSight`, `findObjectTile`, `moveActor`, `stepByDirection`,
+      `dirBetween`, `viewFaceDirection`, `setViewport`, `drawActor`,
+      `traceCombatLine`.
+- [ ] `bmTNCALB`: the other 13 helpers (mostly the direction/coord math
+      variants and small draw wrappers).
 - [ ] `twndr`: `sub_11ED0` (calls `townServiceDispatch`) — the town
       command loop.
 

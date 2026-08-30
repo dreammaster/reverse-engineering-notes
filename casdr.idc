@@ -1611,6 +1611,7 @@ static Bytes_0(void) {
 	create_insn	(0X152B0);
 	set_name	(0X152B0,	"seg001_entry");
 	create_insn	(0X152B3);
+	set_name	(0X152B3,	"viewFaceDirection");
 	create_insn	(0X152CC);
 	create_insn	(0X152D4);
 	create_insn	(0X152DD);
@@ -1621,6 +1622,7 @@ static Bytes_0(void) {
 	create_insn	(0X1535C);
 	set_name	(0X1535C,	"j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0");
 	create_insn	(0X1535F);
+	set_name	(0X1535F,	"drawInteriorTiles");
 	create_insn	(x=0X1537B);
 	op_hex		(x,	1);
 	create_insn	(0X1539C);
@@ -1638,6 +1640,7 @@ static Bytes_0(void) {
 	create_insn	(0X15540);
 	set_name	(0X15540,	"j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0");
 	create_insn	(0X15543);
+	set_name	(0X15543,	"drawActor");
 	create_insn	(0X15582);
 	create_insn	(x=0X15592);
 	op_hex		(x,	1);
@@ -1648,6 +1651,7 @@ static Bytes_0(void) {
 	create_insn	(0X155FC);
 	set_name	(0X155FC,	"j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0");
 	create_insn	(0X155FF);
+	set_name	(0X155FF,	"stepByDirection");
 	create_insn	(0X1562A);
 	create_insn	(0X15638);
 	create_insn	(0X15641);
@@ -1725,6 +1729,7 @@ static Bytes_0(void) {
 	create_insn	(0X15B01);
 	set_name	(0X15B01,	"j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0");
 	create_insn	(0X15B04);
+	set_name	(0X15B04,	"findObjectTile");
 	create_insn	(x=0X15B23);
 	op_hex		(x,	1);
 	create_insn	(0X15B3C);
@@ -1733,6 +1738,7 @@ static Bytes_0(void) {
 	create_insn	(0X15B6C);
 	set_name	(0X15B6C,	"j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0");
 	create_insn	(0X15B6F);
+	set_name	(0X15B6F,	"tileAt");
 	create_insn	(x=0X15B91);
 	op_hex		(x,	1);
 	create_insn	(0X15BBB);
@@ -1752,6 +1758,7 @@ static Bytes_0(void) {
 	create_insn	(0X15CDB);
 	set_name	(0X15CDB,	"j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0");
 	create_insn	(0X15CDE);
+	set_name	(0X15CDE,	"scanLineOfSight");
 	create_insn	(0X15D2C);
 	create_insn	(0X15D55);
 	create_insn	(0X15DA8);
@@ -1793,6 +1800,7 @@ static Bytes_0(void) {
 	create_insn	(0X15F3E);
 	set_name	(0X15F3E,	"j_j_j_j_j_j_j_j_rt_ED_0");
 	create_insn	(0X15F41);
+	set_name	(0X15F41,	"moveActor");
 	create_insn	(0X15F70);
 	create_insn	(0X15F8A);
 	create_insn	(0X15F92);
@@ -1844,12 +1852,14 @@ static Bytes_0(void) {
 	create_insn	(0X16191);
 	set_name	(0X16191,	"j_j_j_j_j_j_rt_ED_0");
 	create_insn	(0X16194);
+	set_name	(0X16194,	"refreshView");
 	set_name	(0X161A1,	"j_rt_FE69");
 	set_name	(0X161A6,	"j_rt_F4_4");
 	set_name	(0X161AB,	"nullsub_55");
 	create_insn	(0X161AE);
 	set_name	(0X161AE,	"j_j_j_j_j_rt_ED_0");
 	create_insn	(0X161B1);
+	set_name	(0X161B1,	"setViewport");
 	create_insn	(0X161D8);
 	create_insn	(0X161F3);
 	create_insn	(0X161FC);
@@ -1866,6 +1876,7 @@ static Bytes_0(void) {
 	create_insn	(0X162D2);
 	set_name	(0X162D2,	"j_j_j_j_rt_ED_0");
 	create_insn	(0X162D5);
+	set_name	(0X162D5,	"traceCombatLine");
 	create_insn	(0X16308);
 	create_insn	(0X16310);
 	create_insn	(0X16319);
@@ -1905,6 +1916,7 @@ static Bytes_0(void) {
 	create_insn	(0X16566);
 	set_name	(0X16566,	"j_j_rt_ED_0");
 	create_insn	(0X16569);
+	set_name	(0X16569,	"dirBetween");
 	create_insn	(0X165C2);
 	create_insn	(0X165CA);
 	create_insn	(x=0X165CF);
@@ -3252,6 +3264,15 @@ static Bytes_0(void) {
 	create_insn	(x=0X169B3);
 	op_hex		(x,	0);
 	set_name	(0X169B3,	"rt_02");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_byte	(0X169B5);
 	set_cmt	(0X169B6,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
 	set_cmt	(0X169B6,	"-> rtm_03  (leglib seg003:0x1527e)",	1);
@@ -3264,15 +3285,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X169B9);
 	op_hex		(x,	0);
 	set_name	(0X169B9,	"rt_05");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_byte	(0X169BB);
 	set_cmt	(0X169BC,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
 	set_cmt	(0X169BC,	"-> rtm_0C  (leglib seg003:0x1bce1)",	1);
@@ -5245,12 +5257,16 @@ static Functions_0(void) {
 	set_func_flags(0X152B0,0x14c1);
 	add_func    (0X152B3,0X1535F);
 	set_func_flags(0X152B3,0x1403);
+	set_func_cmt(0X152B3,	"direction (0..3) -> the facing code 0x81/0x82/0x84 + camera set-up (rtm_C8 / rtm_FE06).", 1);
 	add_func    (0X1535F,0X15543);
 	set_func_flags(0X1535F,0x1403);
+	set_func_cmt(0X1535F,	"renders the interior room view -- walks the map array and blits each tile via rtm_FE1B / rtm_FE14 (leglib seg004).", 1);
 	add_func    (0X15543,0X155FF);
 	set_func_flags(0X15543,0x1403);
+	set_func_cmt(0X15543,	"draw or erase the actor/NPC sprite at its tile (ds:2636h = 1 draw / 0 erase). Called from moveActor both ways.", 1);
 	add_func    (0X155FF,0X1573D);
 	set_func_flags(0X155FF,0x1403);
+	set_func_cmt(0X155FF,	"given a direction (0..3) and a coord pair, produce the coord one step that way (and an in-bounds flag). Called from doWalk.", 1);
 	add_func    (0X1573D,0X1580C);
 	set_func_flags(0X1573D,0x1403);
 	add_func    (0X1580C,0X15854);
@@ -5265,10 +5281,13 @@ static Functions_0(void) {
 	set_func_flags(0X15A9D,0x1403);
 	add_func    (0X15B04,0X15B6F);
 	set_func_flags(0X15B04,0x1403);
+	set_func_cmt(0X15B04,	"scan the interior map array for the first non-empty tile (!= 0xFF). Used by the NPC / dialog code.", 1);
 	add_func    (0X15B6F,0X15CDE);
 	set_func_flags(0X15B6F,0x1403);
+	set_func_cmt(0X15B6F,	"look up the map tile / object id at a coord (rtm_FE17). Returns the id (and via es:[bx] its attributes).", 1);
 	add_func    (0X15CDE,0X15DB8);
 	set_func_flags(0X15CDE,0x1403);
+	set_func_cmt(0X15CDE,	"step outward from a position calling tileAt, accumulating in ds:262Ch -- line-of-sight / nearest-blocker scan. Called from doWalk, jailScene, the NPC code.", 1);
 	add_func    (0X15DB8,0X15EBE);
 	set_func_flags(0X15DB8,0x1403);
 	add_func    (0X15EBE,0X15ED9);
@@ -5279,18 +5298,23 @@ static Functions_0(void) {
 	set_func_flags(0X15EEC,0x1403);
 	add_func    (0X15F41,0X16181);
 	set_func_flags(0X15F41,0x1403);
+	set_func_cmt(0X15F41,	"move the actor one tile and redraw: erase (drawActor 0), update position (via dirBetween / updateTile), draw (drawActor 1). Called from stepByDirection.", 1);
 	add_func    (0X16181,0X16194);
 	set_func_flags(0X16181,0x1403);
 	add_func    (0X16194,0X161B1);
 	set_func_flags(0X16194,0x1403);
+	set_func_cmt(0X16194,	"rebuild + blit the whole interior view: drawInteriorTiles then rtm_FE69. Called after any state change.", 1);
 	add_func    (0X161B1,0X162D5);
 	set_func_flags(0X161B1,0x1403);
+	set_func_cmt(0X161B1,	"direction (0..3) -> the interior viewport window (ds:1F26h/1F28h/ds:2634h/ds:2082h).", 1);
 	add_func    (0X162D5,0X1652F);
 	set_func_flags(0X162D5,0x1403);
+	set_func_cmt(0X162D5,	"combat: trace from the attacker along a direction (tileAt per step, rtm_FE18 to draw), set ds:1F02h/1F04h. Called from fightGuard.", 1);
 	add_func    (0X1652F,0X16569);
 	set_func_flags(0X1652F,0x1403);
 	add_func    (0X16569,0X16678);
 	set_func_flags(0X16569,0x1403);
+	set_func_cmt(0X16569,	"compute the step direction (0..3, or 3 = none) from one coord to another via the map.", 1);
 	add_func    (0X16678,0X1667D);
 	set_func_flags(0X16678,0x14c1);
 	add_func    (0X16693,0X16696);
