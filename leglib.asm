@@ -305,6 +305,12 @@ seg000          segment byte public 'UNK' use16
                 db    0
                 db    0
                 db    0
+nestLevel       dw 0                    ; runtime call-nesting / re-entrancy counter -- rtm_63 inc's on entry and dec's on exit, rtm_FF02 checks `== 1`, basProcLeave resets it to 0.
+                db    0
+                db    0
+                db    0
+                db    0
+ioChannel       db 0                    ; current I/O channel / mode byte (rtm_5A sets 8, sub_19A5E checks 3, sub_1A176 sets 2). TENTATIVE.
                 db    0
                 db    0
                 db    0
@@ -329,15 +335,7 @@ seg000          segment byte public 'UNK' use16
                 db    0
                 db    0
                 db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
+fmtBufPos       dw 0                    ; a running buffer / parse position in the string-format cluster (sub_149xx..sub_153xx) -- cleared to 0, used as SI, `add es:137h, ax`. TENTATIVE.
                 db    0
                 db    0
                 db    0
@@ -617,10 +615,8 @@ seg000          segment byte public 'UNK' use16
                 db    0
                 db    0
                 db    0
-                db    0
-                db    0
-                db    0
-                db    0
+gfxTempA        dw 0                    ; interior-graphics swap cell -- rtm_60 / rtm_61 and the sub_1A2xx..sub_1C0xx cluster `xchg` / `pop` it around draw ops. TENTATIVE.
+gfxTempB        dw 0                    ; paired with gfxTempA (0250). TENTATIVE.
                 db    0
                 db    0
                 db    0
@@ -2199,8 +2195,7 @@ seg001          segment byte public 'UNK' use16
                 db    0
                 db    0
                 db    0
-                db    0
-                db 0B8h
+videoSegment    dw 0B800h               ; the graphics framebuffer segment. Every bm* blitter (rtm_FE2A / FE2D / FE3A / FE3B / FE46 / FE47 / FE5E / FE5F / ...) does `mov es, ds:876h` (or `mov ds, ...`) before touching pixels.
                 db    0
                 db 0BAh
                 db    3
@@ -3203,10 +3198,8 @@ seg001          segment byte public 'UNK' use16
                 db    0
                 db    0
                 db    0
-                db    0
-                db    0
-                db    0
-                db    0
+vsScratchA      dw 0                    ; value-stack scratch cell (holds CX across a sub-operation in sub_2072E / sub_2075B / sub_20788). TENTATIVE.
+vsScratchB      dw 0                    ; value-stack accumulator (sub_207BB / sub_20840 -- `add cx, ds:0C64h`). TENTATIVE.
                 db    0
                 db    0
                 db 0FFh
@@ -3721,7 +3714,7 @@ word_10C6A      dw 0                    ; DATA XREF: rtm_FE65+11↓w
                 db  3Dh ; =
                 db  65h ; e
                 db    0
-                db    0
+textAttr        db 0                    ; current text attribute / colour byte, compared against the character in AL by the text-output routines. TENTATIVE.
                 db    0
                 db    0
                 db  28h ; (
@@ -3867,7 +3860,7 @@ word_10C6A      dw 0                    ; DATA XREF: rtm_FE65+11↓w
                 db    0
                 db    0
                 db    0
-                db    0
+screenFlags     db 0                    ; display / console output status bits -- the seg003 text-output cluster tests and sets individual bits (0x01 / 0x03 / 0x06 / 0x08 / 0x20 / 0x40 / 0x80).
                 db  90h
                 db  40h ; @
                 db    0
@@ -4413,8 +4406,7 @@ word_10C6A      dw 0                    ; DATA XREF: rtm_FE65+11↓w
                 db    0
                 db    0
                 db    0
-                db 0ACh
-                db  0Fh
+valueStackPtr   dw 0FACh                ; the BASIC value / expression stack pointer. The FF-cluster routines advance/retreat it via BX/DI; rtm_FF4A / rtm_FF4B are the push / pop.
                 db    0
                 db    0
                 db    0

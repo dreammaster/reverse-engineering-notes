@@ -349,7 +349,14 @@ reimplementation.
       (provisional), `drawString`/`drawStringInner`/`screenRefresh`
       (engine text). Continue with the FF-cluster `out` leans on
       (`FF4B` 154x, `FF20`, `FF1F`, `FF44`, `FF4E`, `FF50` — value/screen
-      stack ops around `ds:111Ch`).
+      stack ops around `valueStackPtr` = `ds:111Ch`).
+- [~] Partial DGROUP map (2026-08-31, `apply_dsvars_leglib.py`):
+      `videoSegment` (0876, inits to 0xB800), `valueStackPtr` (111C),
+      `screenFlags` (0EFA), `nestLevel` (0118) + tentatives
+      (`vsScratchA`/`B`, `textAttr`, `ioChannel`, `gfxTempA`/`B`,
+      `fmtBufPos`). ~460 DGROUP words total; the rest need the
+      surrounding `rtm_*`/`sub_` clusters named first. `dsvars.py`
+      output is the working list.
 - [ ] Verify the 65 `[mid-func: verify]` `rtm_*` entries — confirm
       they're genuine shared-tail / multi-entry routines, not resolution
       errors.
