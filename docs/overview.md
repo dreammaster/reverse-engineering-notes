@@ -86,7 +86,7 @@ one place that pays off across every module.
 |---|---|---|---|---|
 | `leglib.idb` | `LEGLIB.EXE` | ~445 / 773 (14 real, rest `rtm_*` provisional) | 0 | 10 segments; `seg003` (53 KB) + `seg004` (18 KB) are the code, `seg007`/`seg008` the `bm*` graphics. Every int-3Fh run-time entry resolved; the 14 hot BASIC-runtime primitives named (`apply_renames_leglib.py`). |
 | `menu.idb` | `MENU.EXE` | 25 / 25 seg000 funcs (+ 467 `rt_*` thunks) | 0 | `seg000` coerced + fully named. Layout: `seg000` code, `seg001` thunk table, `seg002` RTM bootstrap, `seg003` DGROUP text, `seg004` stack. |
-| `out.idb` | `OUT.EXE` | ~40 / ~95 seg000 funcs (+ `rt_*` thunks) | 0 | Overworld/towns/dungeons engine; chains to `MUS`/`SAVER`/`TWNDR`/`CASDR`/`DUN`. Rebuilt from the UNP-unpacked OUT.EXE (5 clean segments like menu); `seg000` coerced to 100%, 1297 run-time calls resolved. ~40 functions named (`doMovement`, `creatureAttack`, `shopBuy`, `chainTo*`, …) from the decoded screen text (`dump_strings.py`); ~55 helpers still `sub_`. |
+| `out.idb` | `OUT.EXE` | 67 / 121 seg000 funcs (+ `rt_*` thunks) | 0 | Overworld/towns/dungeons engine; chains to `MUS`/`SAVER`/`TWNDR`/`CASDR`/`DUN`. Rebuilt from the UNP-unpacked OUT.EXE (5 clean segments like menu); `seg000` coerced to 100%, 1297 run-time calls resolved. Functions named from the screen text (`dump_strings.py`) **and** the engine state vars (`apply_dsvars_out.py` — `partyGold`, `hitPoints`, `playerX/Y`, `combatPhase`, `questFlags`, …): `doMovement`, `resolveMoveTarget`, `enterOverworld`, `loadOverworldData`, `beginEncounterView`, `creatureDefeated`, `banditAmbushEvent`, `chainTo*`, …. ~40 tiny runtime-dispatched stubs left `sub_`. |
 | `dun.idb` | `DUN.EXE` | 24 / 72 seg000 funcs (+ `rt_*` thunks) | 0 | Dungeon engine; chains back to `OUT`/`MUS`/`SAVER`. UNP-unpacked; 6 segments — **two** compiled-BASIC code segs: `seg000` "bmDUN" (main) + `seg001` "bmDUNG" (graphics helpers, 9 funcs), thunk table in `seg002`. Both coerced to ~100%. 24 `seg000` functions named from the screen text (`dunMain`, `openChest`, `monsterAttack`, `useMagicMenu`, `castSpell`, `loadDungeonLevel`, …). |
 | `twndr.idb` | `TWNDR.EXE` | 41 / 98 seg000 (+ 13 `bmTNCALB` seg001) funcs (+ `rt_*` thunks) | 0 | Town driver (entered from `OUT` board; chains back). UNP-unpacked; 6 segments — `seg000` "bmTWNDR" (98 funcs) + `seg001` "bmTNCALB" (town/castle anim, 26 funcs), thunk table `seg002` (only **431** entries — TWNDR uses fewer runtime routines). Both ~100% coerced. 41 `seg000` functions named from the shop/NPC text (`foodShop`, `weaponShopEntry`, `borrowMoney`, `loanRepayment`, `fortuneTeller`, `jailScene`/`jailRelease`, `buyBackShop`, `townServiceDispatch` (~6 KB), …). |
 | `casdr.idb` | `CASDR.EXE` |  34 (+ 13 `bmTNCALB`) / 102 seg000 funcs (+ `rt_*` thunks) | 0 | Castle / fortress driver — **endgame** content (the Warlord, the Compendium, the king's quest). UNP-unpacked; `seg000` "bmCASDR" + `seg001` "bmTNCALB" (the **same** helper module TWNDR uses), thunk table `seg002` (431). Both ~100% coerced. 34 named from the story text (`warlordConfrontation`, `kingConfides` (the guardians-of-the-scroll / forearm-mark quest), `potionWizard`, `doFight`, `describeRoom`/`describeObjects`, `loadCastleLevel`, `exitCastle`, `gasRoomTrap`, …). |
@@ -493,3 +493,17 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   game-data array, pushed to almost every `rtm_` call). The other ~200
   are per-call compiled-BASIC scratch temps. This is the lever for
   naming OUT's ~55 remaining `sub_` helpers.
+- **2026-08-31** — Second OUT naming pass off the state vars + call
+  graph + screen text (`apply_renames_out.py`): **67 / 121** `seg000`
+  functions named (was ~40). New: the overworld-load chain
+  (`enterOverworld` → `loadOverworldData` [`OUTM*.BSV` / `OUTDATA.BSV`,
+  keyed by `combatPhase`] → `drawOverworldViewport`); the move pipeline
+  (`doMovement` → `resolveMoveTarget` → `classifyLocationTile` /
+  `identifyLocationObject` / `readTileObject` → `enterLocationOrChain`);
+  combat (`beginEncounterView`, `resolvePlayerAttack`, `creatureDefeated`
+  with loot + "FLESH FOR FOOD", `awardFoundItem`); the Pegasus event
+  (`pegasusFlightAnim` / `pegasusFlyStep` / `showPegasusLanding`) and
+  `banditAmbushEvent` (the scripted Compendium theft); `redrawAfterAction`
+  and the food/status helpers (several tentative). ~40 tiny
+  runtime-dispatched `(combatPhase, subcode)` and coordinate-preset
+  stubs left `sub_` -- not worth speculative names.

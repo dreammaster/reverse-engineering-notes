@@ -118,6 +118,98 @@ RENAMES = [
     (0x161AD, "museumAccessPrompt",
      'the museum access-code entry ("World- / Stone- / Ring- ", ordinal '
      'suffixes st/nd/rd/th, "*** TRY AGAIN ***"). ~1.6 KB.'),
+
+    # --- 2nd pass: named from the ds: engine state vars + call graph
+    #     (apply_dsvars_out.py) + the screen text ---
+    (0x1486B, "enterOverworld",
+     'set up overworld play (called once from outInit): clears '
+     'contextMode, sets playerX/playerY and turnActionFlag, and calls '
+     'loadOverworldData + the sub-setup helpers (sub_12823 / sub_122CB / '
+     'setupLocationDisplay). ~0.5 KB.'),
+    (0x14619, "loadOverworldData",
+     'BLOADs the overworld map/monster banks -- "OUTM<n>.BSV", '
+     '"OUTDATA.BSV" (+ lower-case fallbacks). Keyed by combatPhase '
+     '("0"+combatPhase in the filename). ~0.6 KB.'),
+    (0x1608D, "drawOverworldViewport",
+     'redraw the overworld map view centred on playerX/playerY. '
+     'Called by the map-load path (sub_145DB / loadOverworldData). '
+     'TENTATIVE.'),
+    (0x145DB, "initOverworldViewport",
+     'viewport / scroll-window setup preceding drawOverworldViewport. '
+     'TENTATIVE.'),
+
+    (0x151B7, "resolveMoveTarget",
+     'per-move tile examination (~1 KB, BASIC SUB): given the trial '
+     'coords from doMovement, work out what is on the destination tile '
+     '-- sets enteredLocationId / targetSlot and dispatches to '
+     'identifyLocationObject / refreshMapView / readTileObject.'),
+    (0x14CDF, "identifyLocationObject",
+     'classify the map object on the target tile; writes '
+     'enteredLocationId. TENTATIVE.'),
+    (0x155A3, "readTileObject",
+     'read the object/creature record for a tile (writes '
+     'enteredLocationId). TENTATIVE.'),
+    (0x15FA2, "classifyLocationTile",
+     'map the raw tile/object type under the player (copied to '
+     'ds:2182h by doMovement) to a location code in enteredLocationId '
+     '-- SELECT CASE 0..7 (0 -> 0x0A, ...).'),
+    (0x14AA7, "enterLocationOrChain",
+     'act on enteredLocationId: either handle the location inline or '
+     'call chainExec to hand off to TWNDR / CASDR / MUS / DUN.'),
+    (0x16030, "resolveTownEntry",
+     'chainToTown helper: writes the town id into enteredLocationId '
+     'before the hand-off. TENTATIVE.'),
+
+    (0x1232F, "beginEncounterView",
+     'transition into the encounter / parley view: back up contextMode '
+     '(to ds:1F10h) when < 5, set it to 0x0B then 0x0C, roll the '
+     'creature position (rtm_FC), set combatPhase. Called by '
+     'creatureApproach and quitOrTalk. ~0.7 KB.'),
+    (0x13D98, "resolvePlayerAttack",
+     'the player attack round: hit/miss math off the value stack, '
+     '"YOUR ATTACK MISSES." / "ENEMY HIT BY BLOW OF ", steps '
+     'combatPhase. ~0.7 KB.'),
+    (0x14054, "creatureDefeated",
+     'creature-death resolution (~1.1 KB): " DIES.", clears '
+     'contextMode / encounterActive, awards loot -- partyGold, "YOU '
+     'FIND " (-> awardFoundItem), and the "DO YOU WANT TO USE THE / '
+     'FLESH FOR FOOD?  YOU GAIN <n> DAYS OF FOOD." option.'),
+    (0x14523, "awardFoundItem", '"YOU FIND A " -- add a dropped item to inventory.'),
+    (0x1449C, "describeFoundItem", '"YOU FIND A " item-description helper. TENTATIVE.'),
+    (0x122CB, "rollCreatureStats",
+     'roll / fetch the encountered creature\'s stats from '
+     'overworldArrayPtr (used by creatureAttack and enterOverworld). '
+     'TENTATIVE.'),
+
+    (0x13334, "addFoodDays",
+     'add food to the party ration count + redraw the gauge -- called '
+     'by buyFood and creatureDefeated ("DAYS OF FOOD"). TENTATIVE.'),
+    (0x133FD, "spendFoodDays", 'decrement the ration count. TENTATIVE.'),
+    (0x134A1, "drawFoodGauge", 'render the food/rations indicator. TENTATIVE.'),
+
+    (0x157B0, "redrawAfterAction",
+     'redraw the status line + map view after any turn-consuming action '
+     '(called from mainDispatch, creatureAttack, avoidCreature, shopBuy, '
+     'tryDisengage, outInit, creatureDefeated, banditAmbushEvent).'),
+    (0x14BD0, "drawStatusBar",
+     'draw the HUD / status line (reads turnActionFlag). TENTATIVE.'),
+    (0x14EA4, "refreshMapView", 'repaint the map viewport region. TENTATIVE.'),
+    (0x11454, "setupLocationDisplay",
+     'draw the 10..12 location-type indicators for the current tile '
+     '(loops rtm_FE38); reads/writes subMode. TENTATIVE.'),
+
+    (0x15BB7, "banditAmbushEvent",
+     'the "YOU ARE AMBUSHED BY BANDITS!" travel event -> knockout ("YOU '
+     'FALL UNCONSCIOUS.") -> the scripted Compendium theft ("YOU AWAKE.  '
+     'THE COMPENDIUM IS GONE.", "DO NOT BE DISCOURAGED ... KEEP TO YOUR '
+     'QUEST."). Hits hitPoints, sets a questFlag. ~0.5 KB.'),
+    (0x15B97, "showPegasusLanding", '"PEGASUS SETS YOU DOWN" message.'),
+    (0x15A21, "pegasusFlightAnim",
+     'the Pegasus fly-across animation loop (steps pegasusFlyStep east '
+     'tile by tile).'),
+    (0x15A78, "pegasusFlyStep",
+     'advance the Pegasus one tile east: playerX++, re-run '
+     'resolveMoveTarget, redraw (rtm_FE55).'),
 ]
 
 

@@ -352,15 +352,24 @@ reimplementation.
       thunks (== menu namespace), 1297 run-time calls resolved. The
       `apply_renames_out.py` EAs carried over (reloc-only packing =
       byte-stable code).
-- [~] Name the `seg000` functions (`apply_renames_out.py`): ~40 done —
-      `out_entry` → `outInit` → `mainDispatch`, `quitOrTalk` (dispatch on
-      `ds:1F2Ah`), the `setFlag_*` / `setMode_*` / `applyGameFlag`
-      families, and ~25 from the decoded screen text (`doMovement`,
-      `creatureApproach`/`creatureAttack`, `enterLocation`, `buyFood`,
-      `shopBuy`, `chainTo{Town,Castle,Museum,Dungeon}`, `doAttackOrCast`,
-      `museumAccessPrompt`, …). ~55 helpers still `sub_` — need the `ds:`
-      state vars mapped. Recurring shapes in the `apply_renames_out.py`
-      header.
+- [~] Name the `seg000` functions (`apply_renames_out.py`): **67 / 121**
+      (2026-08-31, second pass off the state vars + call graph). Movement
+      pipeline (`doMovement` → `resolveMoveTarget` → `classifyLocationTile`
+      / `identifyLocationObject` / `readTileObject` →
+      `enterLocationOrChain`), overworld load (`enterOverworld` →
+      `loadOverworldData` → `drawOverworldViewport`), combat
+      (`beginEncounterView`, `resolvePlayerAttack`, `creatureDefeated`,
+      `awardFoundItem`), events (`pegasusFlightAnim` / `pegasusFlyStep` /
+      `showPegasusLanding`, `banditAmbushEvent`), `redrawAfterAction`.
+      Several food/HUD helpers tentative. ~40 tiny runtime-dispatched
+      `(combatPhase, subcode)` / coord-preset stubs left `sub_` (not
+      worth speculative names).
+- [ ] Confirm the tentatives: `addFoodDays` / `spendFoodDays` /
+      `drawFoodGauge` (1F04/231C usage), `identifyLocationObject` /
+      `readTileObject` (the `resolveMoveTarget` sub-tree), `rollCreatureStats`.
+- [ ] `ds:1F04` — reused as a scratch/subcode word everywhere; in the
+      combat stubs it pairs with `combatPhase` as an animation/message
+      id, in movement it is the "blocked" result. Worth pinning down.
 - [x] Fixed the call-far fragmentation merge (2026-08-30) — was
       orphaning code when a fragment's successor wasn't adjacent. Now
       merges only truly-adjacent fragments + re-sweeps.
