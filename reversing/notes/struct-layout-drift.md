@@ -8925,3 +8925,35 @@ newly characterized) to actually load and play it via the already-
 matched `my_load_mp3`/`my_load_wave`, storing the result in
 `dword_523220` -- a single channel throughout, predating
 `PlaySoundEx`'s later multi-channel design entirely.
+
+## The full per-frame audio-polling picture completes: three single-channel systems, one shared pattern
+
+One loose thread from the last two rounds' fade/sound work: a small
+helper, `sub_425230`, kept appearing in `mainloop`/`FadeOut`/
+`sub_40A21C` right alongside the already-identified `speechmp3`/
+sound-effect polling checks, always called the same way --
+`mov ecx, offset SOME_HANDLE; call sub_425230; test eax,eax; jz skip;
+...call handle's vtable slot 0...`. Reading it: a one-line `__thiscall`
+method, `return (*this != 0) ? 1 : 0;` -- a bare null check on whatever
+pointer-sized field it's handed.
+
+The handle it's checking here is `dword_4EDA58` -- already confirmed,
+several sessions ago, as this build's single ambient-sound `SOUNDCLIP*`
+(`PlayAmbientSound`/`update_ambient_sound_vol`'s own handle, this
+build's stand-in for 2011's `AmbientSound ambient[]` array). That
+completes a genuinely satisfying picture: this build's per-frame audio
+polling is built from THREE entirely separate single-channel systems --
+speech (`dword_52321C`, `speechmp3`), sound effects (`dword_523220`,
+`PlaySound`'s own channel), and ambient sound (`dword_4EDA58`) -- each
+checked the exact same way (null-check, then call vtable slot 0 if
+set) from multiple, otherwise-unrelated call sites across the codebase.
+None of the three share a common array or loop; each is its own bare
+global, matching this project's now-familiar "later AGS versions
+generalized several independent 2002 globals into one array-based
+system" pattern, just observed here across an entire SUBSYSTEM rather
+than a single struct. `sub_425230` itself stays unnamed -- too generic
+and too trivial (a single comparison) to confidently pin to one
+specific 2011 identifier, especially since 2011's own equivalent logic
+is folded into a much larger `channels[]`-array-based audio-polling
+routine with no directly comparable single-purpose helper left to
+check it against.

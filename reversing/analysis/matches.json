@@ -5921,5 +5921,14 @@
     "source_line": null,
     "confidence": "medium-high",
     "evidence": "This build's own sound-effect load-and-play helper, called only from PlaySound (see its own entry) with an already-resolved filename. Destroys any existing sound-effect handle (dword_523220) via its vtable slot+4 (a stop/destructor-style method, matching the SOUNDCLIP-family vtable shape already confirmed elsewhere), loads the new file via the already-matched my_load_mp3 (sub_408623, for .mp3) or my_load_wave (sub_408556, otherwise) using GameState.sound_volume (dword_4EF2A4, already confirmed) as the playback volume, stores the result in dword_523220, and logs \"Sound sample load failure: '%s'\" via debug_log (already matched) on failure. No clean 2011 identifier exists -- 2011's play_sound_priority-based system has no directly comparable single-function loader to compare against. Left unnamed per the usual convention. Identifies dword_523220 as this build's single sound-effect channel handle -- polled once per frame in mainloop/FadeOut/new_room (already matched) via its vtable slot 0, the same 'poll if still playing' pattern already established for dword_52321C (speechmp3)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_425230",
+    "new_name": null,
+    "source_file": null,
+    "source_line": null,
+    "confidence": "high",
+    "evidence": "Trivial one-line __thiscall helper: \"return (*this != 0) ? 1 : 0;\" -- a null-check on a pointer-sized field. Called with &dword_4EDA58 (this build's single ambient-sound SOUNDCLIP* handle, already confirmed via PlayAmbientSound/update_ambient_sound_vol) from mainloop, FadeOut, and sub_40A21C (all already matched/characterized), each guarding a conditional call into the handle's own vtable slot 0 if set. This completes the picture of this build's per-frame/per-tick audio polling: THREE separate single-channel audio systems -- speech (dword_52321C=speechmp3), sound effects (dword_523220, PlaySound's channel), and ambient sound (dword_4EDA58, via this helper) -- are each polled the same way (null-check, then call vtable slot 0) from multiple otherwise-unrelated call sites. Left unnamed: too trivial and too generically-shaped to confidently attach a specific 2011 identifier to (2011's own equivalent audio-polling logic is folded into a much larger, channels[]-array-based update_polled_audio()-style routine with no directly comparable single-purpose helper)."
   }
 ]

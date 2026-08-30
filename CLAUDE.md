@@ -2404,6 +2404,21 @@ disassembly work.
   ; return; }"` — sound numbers ≥1000 redirect to music, a historical
   quirk with zero trace in `PlaySoundEx`. Single-channel throughout,
   predating the later multi-channel design entirely.
+- **The full per-frame audio-polling picture completes: three single-
+  channel systems, one shared pattern.** A small helper, `sub_425230`
+  (a one-line null-check `__thiscall` method), kept appearing in
+  `mainloop`/`FadeOut`/`sub_40A21C` right alongside the `speechmp3`/
+  sound-effect polling already identified. It turns out to be checking
+  `dword_4EDA58` — this build's own single ambient-sound handle,
+  already confirmed several sessions ago. This completes a satisfying
+  picture: this build's per-frame audio polling is three entirely
+  separate single-channel systems (speech, sound effects, ambient
+  sound), each checked the exact same way (null-check, call vtable slot
+  0 if set) from otherwise-unrelated call sites — the "later AGS
+  versions generalized several independent 2002 globals into one
+  array-based system" pattern, here observed across a whole subsystem
+  rather than one struct. `sub_425230` stays unnamed — too generic and
+  trivial to confidently pin to a specific 2011 identifier.
 
 ## Third-party library identification (Task #10)
 
