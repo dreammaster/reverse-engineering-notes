@@ -2397,7 +2397,14 @@ confidence — the `PACKFILE.todo` field offset this build reads doesn't
 match the 4.2.2 reference declaration, likely struct-layout drift, not
 a function-identity doubt). One open lead remains there (`sub_47E7A0`,
 called right after `almp3_create_mp3` with an argument shape that
-doesn't cleanly match a single known ALMP3 API function). A follow-up
+doesn't cleanly match a single known ALMP3 API function). A later round
+found a SECOND call site with the identical argument shape, inside a
+small cluster of two AGS-side functions (`sub_4084E0`/`sub_408392`,
+left unnamed) implementing this build's own much simpler, single-
+stream MP3-crossfade check/cleanup — no clean 2011 counterpart exists
+since 2011's crossfading is built around a `channels[]` array this
+build predates entirely. Recorded at the ALMP3 boundary per the scope
+rule above, not individually resolved. A follow-up
 round characterized 6 of JGMOD's 8 cascade branches by their magic-
 string checks (JGMOD-native, IT, S3M, MOD, and two XM-adjacent checks
 sharing an unresolved 4-byte constant) — still unnamed, pending a

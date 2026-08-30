@@ -8774,3 +8774,40 @@ in this build, with zero drift and zero gaps. A bonus data point on the
 hotspot") and `6` ("mouse hovering over a hotspot") -- a genuinely
 separate value space from `EVB_ROOM`'s, since `data1` distinguishes the
 two families entirely.
+
+## This build's own, much simpler MP3-crossfade cluster, characterized at the ALMP3 boundary
+
+A `crossFading?` global spotted in passing several rounds ago (in
+`mainloop`'s own already-read body) led to a small cluster of two
+AGS-side functions this round: `sub_4084E0` (called from `FadeOut`,
+already matched) checks whether the currently-crossfading MP3 stream
+(`dword_523214`, already established as `PlayMusic`'s own stream
+handle) has finished, and either stops it (if `GameState.music_repeat`
+is off) or continues/restarts it. `sub_408392` is its stop/cleanup
+counterpart, called from `mainloop`/`new_room`'s own crossfade-cleanup
+branches and from `sub_4083FC` (`PlayMusic`'s "load an MP3 from disk
+and start it playing" helper, already matched but previously
+under-characterized -- reading its full body this round confirmed the
+earlier round's own retraction was right: this really is a distinct
+"load AND start" function, not a smaller variant of `my_load_static_
+mp3`).
+
+Neither of the two new functions has a clean 1:1 match in 2011's own
+source -- 2011's crossfading system (`AC.CPP:480-486, 12377-12398,
+17632-17667`) is built around a `channels[]` array supporting multiple
+simultaneous music channels, while this build tracks exactly ONE MP3
+handle at a time. This is the same "this build predates a later
+architectural refactor entirely" pattern found repeatedly elsewhere in
+this project, just applied to the crossfading subsystem specifically.
+Left unnamed per the usual convention when no 2011 identifier actually
+fits.
+
+Both functions call into what's plausibly ALMP3's own public API
+(`sub_47E990`/`sub_47E7A0`/`sub_47E890`/`sub_47E760`, all sharing the
+address range of the already-confirmed `almp3_create_mp3`) to poll
+playback status and adjust/restart the stream. Per this project's
+Third-party library scope rule -- and consistent with Task #10 being
+paused -- these are recorded as the AGS-side boundary and not
+individually confirmed or chased further; a ScummVM reimplementation
+replaces ALMP3 wholesale regardless of exactly which internal calls
+this build makes.
