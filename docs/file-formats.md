@@ -49,7 +49,7 @@ castle/fort layout banks.
 | `DIS0.BSV`…`DIS15.BSV` (+ `DIS0A`, `DIS1A`) | 727–2055 | ? (`DIS9` → `CELDRV`) | "display" screens? ~18 of them. `celdrv_entry` BLOADs `DIS9.BSV` as one of the five ending image banks. |
 | `CEL0.BSV`…`CEL3.BSV` | 1573 / 2597 | `CELDRV` | endgame-cinematic image banks — `celdrv_entry` BLOADs `CEL0`/`CEL1`/`CEL2` (loop), then `DIS9.BSV`, then `CEL3.BSV`, via `rt_FE07`, and relocates each one's internal offset table by its load segment. |
 | `MUSDATA.BSV`, `MUSOBJ.BSV`, `MUSMSG.TXT` | 8055 / 12961 / 11229 | `MUS` | MUSEUM data / exhibit objects / message text |
-| `SDMAP.GLB` / `.GMP`, `SDOBJ.GLB` | 4113 / 2081 / 6161 | `SDEFENDR` | Space Defender minigame map / objects |
+| `SDMAP.GLB` / `.GMP`, `SDOBJ.GLB` | 4113 / 2081 / 6161 | `SDEFENDR` | combat-training arena playfield / sprites (loaded into `seg004`, driven by the hand-written `arenaGameLoop`) |
 | `BJCHR.GLB` | 6161 | `GMB1`/`GMB2` | blackjack ("BJ") character graphics? |
 | `BIGNUM.DAT` | 420 | ? | large-digit font |
 | `D.BSV`, `R.BSV`, `PEGASUS.BSV` | 3527 / 3527 / 1159 | ? | ? |

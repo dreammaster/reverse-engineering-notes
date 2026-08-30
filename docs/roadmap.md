@@ -71,8 +71,14 @@ credits. Loads `CEL0`–`CEL2`/`DIS9`/`CEL3.BSV`. Chained from `CASDR`.
 `CHAR.DAT`, then ESC → DOS / else re-exec `OUT` / `DUN`. Confirms
 `CHAR.DAT` doubles as the in-progress save (no separate file).
 
-Still to build: `SDEFENDR`, `GMB1`/`GMB2` (check packing first),
-`CONFIGUR` (standalone C, low priority).
+`sdefendr.idb` built 2026-08-31 — **`SDEFENDR.EXE` is the combat-training
+school** (ARMOR / WEAPONS training arena, a 360° fireball-defense shooter
+reached from a town; raises ARMOR/WEAPON/ENDURANCE, 50 gold/session,
+7 levels, chains back to `TWNDR`). First module with a hand-written
+**asm** code segment (`seg001` = the real-time arena engine).
+
+Still to build: `GMB1`/`GMB2` (check packing first), `CONFIGUR`
+(standalone C, low priority).
 
 ## DUN.EXE — open questions
 
@@ -181,6 +187,31 @@ Still to build: `SDEFENDR`, `GMB1`/`GMB2` (check packing first),
 - [ ] The "character disk" checks ("is not on this / character disk",
       "empty") imply a multi-disk / per-character-slot save scheme —
       confirm.
+
+## SDEFENDR.EXE — open questions
+
+- [x] Build `sdefendr.idb` (2026-08-31). Two code segs: `seg000`
+      "bmSDEFENDR" (compiled BASIC) + `seg001` (hand-written asm arena
+      engine); thunk table straddles `seg001`/`seg002` (328 entries).
+      `seg000` 99.8% coerced, 0 bad insns.
+- [~] Name functions (`apply_renames_sdefendr.py`): ~15 —
+      `trainingSchoolMain` (mode select + rating + gold + `TWNDR`
+      hand-off), `showBriefing`, `runTrainingLevel`, `runPractice`,
+      `showWaveIntro`, `showWaveScore`, `drawScorePanel`, `drawFramedBox`;
+      `arenaGameLoop` + its 8 step routines (`arenaInitPlayfield`,
+      `pollPlayerTurn`, `firePlayerArrow`, `moveFireballs`,
+      `arenaStepEndCheck`, `drawArenaSprites` — all **tentative**, from
+      the loop structure + `ds:` byte-var usage, not yet verified).
+- [ ] The `seg001` asm engine: it works on `ds:` bytes `0Ch/0Eh` (seg004
+      playfield ptr), `11h` (turn key), `15h` (fire/shift), `16h`/`22h`
+      (cooldown timers). Map the full arena state block in `seg004`.
+- [ ] `SDMAP.GLB` / `.GMP` / `SDOBJ.GLB` field layout (the arena
+      playfield + fireball/arrow sprites).
+- [ ] Confirm the stat-change math: the "40, 31, 22, 19, 16, 14, 12"
+      table (per-level hit thresholds?) vs. the " INCREASE: + / DECREASE:
+      -" applied to `ARMOR,WEAPON,ENDUR`.
+- [ ] Which town building launches it, and how the trained stat writes
+      back to `CHAR.DAT`.
 
 ## LEGLIB.EXE — open questions
 
