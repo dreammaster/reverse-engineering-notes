@@ -97,7 +97,7 @@ code. `menu.idb`:
 
 | Seg | Range | Contents |
 |---|---|---|
-| `seg000` | `10000`–`13160` | Root menu/intro code (compiled BASIC; ~890 `call far` sites, all routed through `seg001`). **Undisassembled** — needs forcing to code. |
+| `seg000` | `10000`–`13160` | Root menu/intro code (compiled BASIC). Coerced to code 2026-08-30 (`coerce_seg000_menu.py`): 99.5%, 0 bad insns, 25 functions with a real call graph. Header (`0`–`0x31`) is the `bmMENU` name + BSS descriptor. |
 | `seg001` | `13160`–`138F0` | `int 3Fh` run-time thunk table (467 entries) + a few small resident helpers at the top. Decoded — see "int 3Fh run-time dispatch" below. |
 | `seg002` | `138F0`–`13F30` | BC 6.0 EXE bootstrap + RTM loader (`start` at `139CF`). "Error in loading RTM…" strings live here. |
 | `seg003` | `13F30`–`1A1B0` | DGROUP data. Text block (menu items, credits, instructions, "poor peasant on the world of Tarmalon…" intro, MML music strings, chained-EXE names) at offset `21D0h`+ (file `0x6ED2`–`0x7F10`). |
@@ -228,8 +228,21 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
 
 - **2026-08-30** — Decoded the `int 3Fh` run-time dispatch (above).
   `leglib.idb`: 7 → ~440 named (all `rtm_*` provisional). `menu.idb`: all
-  467 `seg001` thunks named + cross-referenced to `leglib`. Next:
-  (a) force `menu` `seg000` to code so the call sites resolve;
-  (b) rank `rtm_*` by cross-module call frequency and start attaching real
-  `B$…` names; (c) build `out.idb` / `dun.idb` and confirm the shared
-  namespace.
+  467 `seg001` thunks named + cross-referenced to `leglib`.
+- **2026-08-30** — `menu.idb` `seg000` coerced to code
+  (`coerce_seg000_menu.py`): 99.5% instruction coverage, 0 bad insns, 25
+  functions. Call graph: `menu_main` → `sub_10580` (main-menu dispatch
+  loop) → 9 top-level option handlers (`sub_10738` credits, `sub_10D97`
+  instructions submenu, `sub_1138D`, `sub_11D3A`, …). ~830 `call far`
+  sites, all commented with their `rtm_*` target. Argument immediates
+  like `mov ax, 21DCh` are offsets into the `seg003` text block.
+  Remaining: functions unnamed; the `menu.idb` rebuild lost the original
+  `.idb` (recreated via `idat -B` from a copy of `MENU.EXE` — input path
+  in the DB now reads `C:\dev\lota\menu.exe`). IDA's `int 3Fh` =
+  "overlay-manager" special-casing chops every basic block after a
+  `call far` and mislabels some blocks `noreturn` — cosmetic, ownership
+  and xrefs are correct.
+- Next: (a) name the 25 `menu` functions + rank/attach real `B$…` names
+  to the hot `rtm_*`; (b) mark up the `seg003:21D0h` text block as
+  strings and back-reference the pushed offsets; (c) build `out.idb` /
+  `dun.idb` and confirm the shared `(prefix,ordinal)` namespace.

@@ -1045,3 +1045,363 @@ currently referenced from (partial) seg000 analysis: 85
 [*] gen_file(OFILE_IDC) returned 1
 [*] saving database to C:\dev\lota\menu.idb
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\lota\menu.idb
+[*] ARGV = ['C:\\dev\\lota\\ida_scripts\\batch_run_and_export.py', 'coerce_seg000_menu.py', 'noexport']
+[*] reading coerce_seg000_menu.py
+[*] executing coerce_seg000_menu.py
+[*] captured stdout from target script:
+----- begin target script output -----
+seg000 0x10000-0x13160 (12640 bytes)
+before: code=0 data=893 undef=11747
+seg001 thunks: 467, seg001 selector word = 0x0316
+far-call sites into seg001 thunks: 0
+[DRY_RUN] stopping before edits
+----- end target script output -----
+[*] finished executing coerce_seg000_menu.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\lota\menu.idb
+[*] ARGV = ['C:\\dev\\lota\\ida_scripts\\batch_run_and_export.py', 'coerce_seg000_menu.py', 'noexport']
+[*] reading coerce_seg000_menu.py
+[*] executing coerce_seg000_menu.py
+[*] captured stdout from target script:
+----- begin target script output -----
+seg000 0x10000-0x13160 (12640 bytes)
+before: code=0 data=893 undef=11747
+seg001 thunks: 467, seg001 selector words = ['0x1316', '0x316']
+far-call sites into seg001 thunks: 830
+[DRY_RUN] stopping before edits
+----- end target script output -----
+[*] finished executing coerce_seg000_menu.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\lota\menu.idb
+[*] ARGV = ['C:\\dev\\lota\\ida_scripts\\batch_run_and_export.py', 'coerce_seg000_menu.py']
+[*] reading coerce_seg000_menu.py
+[*] executing coerce_seg000_menu.py
+[*] captured stdout from target script:
+----- begin target script output -----
+seg000 0x10000-0x13160 (12640 bytes)
+before: code=0 data=893 undef=11747
+seg001 thunks: 467, seg001 selector words = ['0x1316', '0x316']
+far-call sites into seg001 thunks: 830
+coerced 830/830 call-far sites
+coerced 33 fall-through insns
+entry: 0x10034 -> menu_main
+new functions from near-call targets: 0
+swept-in functions: 616
+
+after:  code=4126 data=65 undef=8449
+delta:  code +4126, undef -3298
+functions in seg000: 631
+----- end target script output -----
+[*] finished executing coerce_seg000_menu.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\lota\menu.asm
+[*] gen_file(OFILE_ASM) returned 39467
+[*] exporting IDC to C:\dev\lota\menu.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\lota\menu.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\lota\menu.idb
+[*] ARGV = ['C:\\dev\\lota\\ida_scripts\\batch_run_and_export.py', 'identify.py', 'noexport']
+[*] reading identify.py
+[*] executing identify.py
+[*] captured stdout from target script:
+----- begin target script output -----
+root filename : menu.exe
+input file    : C:\dev\lota\menu.exe
+entry point   : 0xdf (cs=0x138f)
+input md5     : b6d59fb5b2adae4f4b007f1fe6e19849
+
+segments:
+  seg000       0x010000-0x013160  (12640 bytes)
+  seg001       0x013160-0x0138f0  (1936 bytes)
+  seg002       0x0138f0-0x013f30  (1600 bytes)
+  seg003       0x013f30-0x01a1b0  (25216 bytes)
+  seg004       0x01a1b0-0x01a9b0  (2048 bytes)
+
+functions: 16 total, 1 named, 15 still sub_XXXXX
+
+structs (0): 
+
+byte coverage : 508 code, 40990 undefined (raw)
+----- end target script output -----
+[*] finished executing identify.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\lota\menu.idb
+[*] ARGV = ['C:\\dev\\lota\\ida_scripts\\batch_run_and_export.py', 'resolve_thunks_menu.py', 'noexport']
+[*] reading resolve_thunks_menu.py
+[*] executing resolve_thunks_menu.py
+[*] captured stdout from target script:
+----- begin target script output -----
+seg001: 467 thunks  (bare 254, FF 103, FE 110)
+named 467, commented 467, itemized 467
+resolved via rtm_map: 467/467
+currently referenced from (partial) seg000 analysis: 2
+----- end target script output -----
+[*] finished executing resolve_thunks_menu.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\lota\menu.idb
+[*] ARGV = ['C:\\dev\\lota\\ida_scripts\\batch_run_and_export.py', 'coerce_seg000_menu.py', 'noexport']
+[*] reading coerce_seg000_menu.py
+[*] executing coerce_seg000_menu.py
+[*] captured stdout from target script:
+----- begin target script output -----
+seg000 0x10000-0x13160 (12640 bytes)
+before: code=0 data=1782 undef=10858
+far-call sites into seg001 thunks: 830
+gap sizes: min=0 max=297 avg=10.2
+largest gaps (size @ start):  297@0x105fe, 102@0x1080a, 95@0x12352, 83@0x12ee6, 78@0x10f05, 69@0x104cb, 65@0x107a9, 53@0x108ef, 48@0x10929, 46@0x10498
+[DRY_RUN] stopping before edits
+----- end target script output -----
+[*] finished executing coerce_seg000_menu.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\lota\menu.idb
+[*] ARGV = ['C:\\dev\\lota\\ida_scripts\\batch_run_and_export.py', 'coerce_seg000_menu.py', 'noexport']
+[*] reading coerce_seg000_menu.py
+[*] executing coerce_seg000_menu.py
+[*] captured stdout from target script:
+----- begin target script output -----
+seg000 0x10000-0x13160 (12640 bytes)
+before: code=0 data=1782 undef=10858
+far-call sites: 885  (830 -> seg001 thunks, 55 -> seg000 procs / 21 distinct targets)
+gap sizes: min=0 max=102 avg=9.2
+largest gaps (size @ start):  102@0x1080a, 83@0x12ee6, 72@0x106a0, 71@0x10642, 69@0x104cb, 65@0x107a9, 53@0x108ef, 48@0x10929, 46@0x10498, 46@0x10449
+proc targets: 0x10738, 0x108e7, 0x10a76, 0x10c71, 0x10d97, 0x110cd, 0x1138d, 0x11967, 0x11a15, 0x11aeb, 0x11c2f, 0x11d3a, 0x12055, 0x121e4, 0x12414, 0x125ab, 0x12778, 0x128a9, 0x1294e, 0x129a8
+[DRY_RUN] stopping before edits
+----- end target script output -----
+[*] finished executing coerce_seg000_menu.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\lota\menu.idb
+[*] ARGV = ['C:\\dev\\lota\\ida_scripts\\batch_run_and_export.py', 'coerce_seg000_menu.py']
+[*] reading coerce_seg000_menu.py
+[*] executing coerce_seg000_menu.py
+[*] captured stdout from target script:
+----- begin target script output -----
+seg000 0x10000-0x13160 (12640 bytes)
+before: code=0 data=1782 undef=10858
+far-call sites: 885  (830 -> seg001 thunks, 55 -> seg000 procs / 21 distinct targets)
+anchored 885/885 call-far sites
+gap sweep: +437 insns
+  settle pass 1: +5 insns, code=4440 undef=8183
+  settle pass 2: +0 insns, code=4440 undef=8183
+entry: 0x10032 -> menu_main
+functions from seg000 far-call targets: 0
+functions from near-call targets: 0
+functions swept from loose code: 592
+
+after:  code=4440 data=17 undef=8183  (35.1% code)
+delta:  code +4440, undef -2675
+functions in seg000: 614
+bad insns: 0  
+largest undefined runs left: 10@0x119e3, 5@0x1315b, 5@0x12f51, 5@0x12f4b, 5@0x12f45, 5@0x12f3f, 5@0x12f20, 5@0x12f1a, 5@0x12f14, 5@0x12f0e
+----- end target script output -----
+[*] finished executing coerce_seg000_menu.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\lota\menu.asm
+[*] gen_file(OFILE_ASM) returned 14545
+[*] exporting IDC to C:\dev\lota\menu.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\lota\menu.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\lota\menu.idb
+[*] ARGV = ['C:\\dev\\lota\\ida_scripts\\batch_run_and_export.py', 'coerce_seg000_menu.py']
+[*] reading coerce_seg000_menu.py
+[*] executing coerce_seg000_menu.py
+[*] captured stdout from target script:
+----- begin target script output -----
+seg000 0x10000-0x13160 (12640 bytes)
+before: code=4440 data=17 undef=8183
+reset:  code=0 data=5 undef=12635
+far-call sites: 885  (830 -> seg001 thunks, 55 -> seg000 procs / 21 distinct targets)
+anchored 885/885 call-far sites
+gap sweep: +516 insns
+  settle pass 1: +17 insns, code=4452 undef=8183
+  settle pass 2: +0 insns, code=4452 undef=8183
+entry: 0x10032 -> menu_main
+functions from seg000 far-call targets: 0
+functions from near-call targets: 0
+functions swept from loose code: 226
+
+after:  code=4452 data=5 undef=8183  (35.2% code)
+delta:  code +12, undef +0
+functions in seg000: 248
+bad insns: 0  
+largest undefined runs left: 10@0x13156, 5@0x12f51, 5@0x12f4b, 5@0x12f45, 5@0x12f3f, 5@0x12f20, 5@0x12f1a, 5@0x12f14, 5@0x12f0e, 5@0x12e9f
+----- end target script output -----
+[*] finished executing coerce_seg000_menu.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\lota\menu.asm
+[*] gen_file(OFILE_ASM) returned 12133
+[*] exporting IDC to C:\dev\lota\menu.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\lota\menu.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\lota\menu.idb
+[*] ARGV = ['C:\\dev\\lota\\ida_scripts\\batch_run_and_export.py', 'coerce_seg000_menu.py']
+[*] reading coerce_seg000_menu.py
+[*] executing coerce_seg000_menu.py
+[*] captured stdout from target script:
+----- begin target script output -----
+seg000 0x10000-0x13160 (12640 bytes)
+before: code=12584 data=24 undef=32
+reset:  code=0 data=24 undef=12616
+far-call sites: 885  (830 -> seg001 thunks, 55 -> seg000 procs / 21 distinct targets)
+seg001 thunks made into returning funcs: 82/82
+anchored 885/885 call-far sites
+gap sweep: +3328 insns
+  settle pass 1: +3 insns, code=12584 undef=32
+  settle pass 2: +0 insns, code=12584 undef=32
+entry: 0x10032 -> menu_main
+functions from seg000 far-call targets: 0
+functions from near-call targets: 0
+functions swept from loose code: 592
+
+after:  code=12584 data=24 undef=32  (99.6% code)
+delta:  code +0, undef +0
+functions in seg000: 614
+bad insns: 0  
+largest undefined runs left: 6@0x1315a, 1@0x10031
+----- end target script output -----
+[*] finished executing coerce_seg000_menu.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\lota\menu.asm
+[*] gen_file(OFILE_ASM) returned 14487
+[*] exporting IDC to C:\dev\lota\menu.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\lota\menu.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\lota\menu.idb
+[*] ARGV = ['C:\\dev\\lota\\ida_scripts\\batch_run_and_export.py', 'coerce_seg000_menu.py']
+[*] reading coerce_seg000_menu.py
+[*] executing coerce_seg000_menu.py
+[*] captured stdout from target script:
+----- begin target script output -----
+seg000 0x10000-0x13160 (12640 bytes)
+before: code=12584 data=24 undef=32
+reset:  code=0 data=24 undef=12616
+far-call sites: 885  (830 -> seg001 thunks, 55 -> seg000 procs / 21 distinct targets)
+seg001 thunks made into returning funcs: 82/82
+anchored 885/885 call-far sites
+gap sweep: +3328 insns
+  settle pass 1: +3 insns, code=12584 undef=32
+  settle pass 2: +0 insns, code=12584 undef=32
+seed functions (entry + 21 procs + near-calls): 22/22
+orphan-code functions: 592
+
+after:  code=12583 data=25 undef=32  (99.5% code)
+delta:  code -1, undef +0
+functions in seg000: 614
+bad insns: 0  
+largest undefined runs left: 6@0x1315a, 1@0x10031
+----- end target script output -----
+[*] finished executing coerce_seg000_menu.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\lota\menu.asm
+[*] gen_file(OFILE_ASM) returned 14487
+[*] exporting IDC to C:\dev\lota\menu.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\lota\menu.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\lota\menu.idb
+[*] ARGV = ['C:\\dev\\lota\\ida_scripts\\batch_run_and_export.py', 'coerce_seg000_menu.py']
+[*] reading coerce_seg000_menu.py
+[*] executing coerce_seg000_menu.py
+[*] captured stdout from target script:
+----- begin target script output -----
+seg000 0x10000-0x13160 (12640 bytes)
+before: code=12583 data=25 undef=32
+reset:  code=0 data=24 undef=12616
+far-call sites: 885  (830 -> seg001 thunks, 55 -> seg000 procs / 21 distinct targets)
+seg001 thunks made into returning funcs: 82/82
+anchored 885/885 call-far sites
+gap sweep: +3328 insns
+  settle pass 1: +3 insns, code=12584 undef=32
+  settle pass 2: +0 insns, code=12584 undef=32
+seed functions (entry + 21 procs + near-calls): 22/22
+orphan-code functions: 592
+call-far function merges: 2 rounds
+
+after:  code=12583 data=25 undef=32  (99.5% code)
+delta:  code +0, undef +0
+functions in seg000: 47
+bad insns: 0  
+largest undefined runs left: 6@0x1315a, 1@0x10031
+----- end target script output -----
+[*] finished executing coerce_seg000_menu.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\lota\menu.asm
+[*] gen_file(OFILE_ASM) returned 12112
+[*] exporting IDC to C:\dev\lota\menu.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\lota\menu.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\lota\menu.idb
+[*] ARGV = ['C:\\dev\\lota\\ida_scripts\\batch_run_and_export.py', 'resolve_thunks_menu.py']
+[*] reading resolve_thunks_menu.py
+[*] executing resolve_thunks_menu.py
+[*] captured stdout from target script:
+----- begin target script output -----
+seg001: 467 thunks  (bare 254, FF 103, FE 110)
+named 0, commented 467, itemized 467
+resolved via rtm_map: 467/467
+currently referenced from (partial) seg000 analysis: 84
+----- end target script output -----
+[*] finished executing resolve_thunks_menu.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\lota\menu.asm
+[*] gen_file(OFILE_ASM) returned 11702
+[*] exporting IDC to C:\dev\lota\menu.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\lota\menu.idb
+[*] done, exiting 0

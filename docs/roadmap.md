@@ -69,9 +69,18 @@ not BASIC).
 
 - [x] Name all 467 `seg001` thunks + cross-reference to `leglib`
       (2026-08-30, `resolve_thunks_menu.py`).
-- [ ] Force `seg000` (12 KB) to code; it's the whole menu/intro program
-      and is currently raw `db`. This is the immediate next step — the
-      thunk names only pay off once the call sites are disassembled.
+- [x] Force `seg000` to code (2026-08-30, `coerce_seg000_menu.py`):
+      99.5%, 0 bad insns, 25 functions, full call graph.
+- [ ] Name the 25 `seg000` functions. `menu_main` → `sub_10580`
+      (main-menu dispatch) → option handlers; `sub_10738` reads the
+      GAME CREDITS text (loops over `seg003` offsets).
+- [ ] Cosmetic: IDA's `int 3Fh` overlay special-casing chops blocks
+      after every `call far` and mislabels some `noreturn`. Find the
+      analysis/loader switch to disable it, or post-process.
+- [ ] `menu.idb` input path reads `C:\dev\lota\menu.exe` (a copy; the
+      original `.idb` was lost and rebuilt via `idat -B`). Harmless, but
+      re-point at `C:\games\lota\MENU.EXE` if a full rebuild is ever
+      needed.
 - [ ] Mark up the `seg003:21D0h`+ text block as strings.
 - [ ] Walk the menu state machine (main menu → play / instructions /
       credits / sound toggle; character management screens).
