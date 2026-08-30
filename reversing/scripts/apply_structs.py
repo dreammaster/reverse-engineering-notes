@@ -760,6 +760,9 @@ struct CharacterInfo {
   short animating;          // +0x3E, high confidence: walk_character's
                            // "if (chin->animating && autoWalkAnims) chin->animating = 0;" matches
                            // disasm exactly (test-and-clear-to-0 on this field, gated the same way).
+                           // First confirmed bit value (found via `animate_character`, newly
+                           // documented this round): "animating=1; if(rept) animating|=2;" matches
+                           // 2011's `CHANIM_REPEAT=2` (`Common/acruntim.h:810`) exactly.
   short walkspeed;          // +0x40, high confidence: walk_character reads this into a global right where
                            // source has "int move_speed_x = chin->walkspeed;" (the very next source line
                            // after the animating check above).

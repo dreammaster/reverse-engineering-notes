@@ -8371,3 +8371,30 @@ actionable outcome is purely procedural: the live IDB needs a fresh
 correctly declared for a long time now. Until that happens, any
 `rstruc.FIELD` symbolic access read directly from `rob_blanc_1.asm`
 should be mentally shifted one position early to get the REAL field.
+
+## `animate_character` fully documented, retroactively confirming eight `CharacterInfo` fields
+
+A sweep for self-identifying error strings turned up `animate_character`
+itself -- already correctly named in the IDB (mechanically linker-
+matched) but with zero field evidence recorded, despite being an
+unusually rich function to read. Matches `Engine/AC.CPP:14774-14805`
+almost line for line.
+
+The body touches eight already-confirmed `CharacterInfo` fields in one
+pass -- `view`@`+0x08` (range-validated against `numviews`, matching the
+function's own error string exactly), `idleleft`@`+0x2E`/`idletime`@
+`+0x2C` (reset when interrupting an in-progress idle animation, via a
+call to the already-matched `ReleaseCharacterView` at exactly the point
+source calls `Character_UnlockView`), `walking`@`+0x3C` (zeroed via an
+inlined `StopMoving`-equivalent), `animating`@`+0x3E` (set to 1, then OR
+'d with a repeat bit and a direction bit), `loop`@`+0x38`, `frame`@
+`+0x3A` (0, or `numFrames-1` for backwards animation), and `wait`@
+`+0x1C` (computed from `views[view].loops[loopn].frames[frame].speed +
+sppd`, reconfirming `ViewStruct272.numloops`/`ViewFrame272.speed` along
+the way). None of these needed to change -- every one was already HIGH
+confidence -- but each now has one more independent confirmation route,
+and `animating` picks up its first confirmed bit value:
+`animating|=2` when `rept` is set matches 2011's `CHANIM_REPEAT=2`
+(`Common/acruntim.h:810`) exactly. A solid "retroactive documentation"
+round, in the same spirit as earlier ones for `SpriteCache` and
+`GUIMain::init`.

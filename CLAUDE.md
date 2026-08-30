@@ -2207,6 +2207,15 @@ disassembly work.
   IDB's own `roomstruct` type was simply never re-applied after the
   earlier round-5/6 offset correction; it needs a fresh
   `apply_structs.py` run and re-export to catch up.
+- **`animate_character` fully documented, retroactively confirming
+  eight `CharacterInfo` fields.** Already correctly named in the IDB
+  but with zero field evidence recorded. Matches `AC.CPP:14774-14805`
+  almost line for line, touching `view`/`idleleft`/`idletime`/
+  `walking`/`animating`/`loop`/`frame`/`wait` in one pass — none
+  needed to change (all already HIGH confidence), but each gets a
+  fresh confirmation route, and `animating` picks up its first
+  confirmed bit value: `CHANIM_REPEAT=2`. A retroactive-documentation
+  round, same spirit as earlier ones for `SpriteCache`/`GUIMain::init`.
 
 ## Third-party library identification (Task #10)
 

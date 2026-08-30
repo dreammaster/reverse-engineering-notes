@@ -697,7 +697,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (found this round, previously mechanically matched with no field evidence recorded): void animate_character(CharacterInfo*,int,int,int,int,int) at AC.CPP:14774-14805. Exact, near line-for-line match: validates chap->view@+0x08 (already confirmed) against [0,numviews], quitting with the function's own error string on failure; if idleleft@+0x2E<0 and !noidleoverride, calls ReleaseCharacterView (already matched, matching source's Character_UnlockView) then sets idleleft@+0x2E=idletime@+0x2C; validates loopn against views[view].numLoops (ViewStruct272.numloops@+0x00, already confirmed); sets walking@+0x3C=0 (inlined StopMoving-equivalent), animating@+0x3E=1 then ORs in CHANIM_REPEAT=2 (Common/acruntim.h:810, exact bit match) if rept and a direction bit if direction, then ORs in (sppd<<8)&0xFF00; sets loop@+0x38=loopn; sets frame@+0x3A to 0 or numFrames-1 depending on direction; finally computes wait@+0x1C=sppd+views[view].loops[loopn].frames[frame].speed (ViewFrame272.speed, already confirmed) exactly matching source's own formula. Gives EIGHT already-confirmed CharacterInfo fields (view, idleleft, idletime, walking, animating, loop, frame, wait) and ViewStruct272.numloops/ViewFrame272.speed each a fresh independent confirmation route, plus the first confirmed bit value for `animating` (CHANIM_REPEAT=2)."
   },
   {
     "kind": "function",
@@ -1887,7 +1887,7 @@
     "source_obj": "acchars.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=acchars.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=acchars.obj FIELD EVIDENCE (found this round, previously mechanically matched with no field evidence recorded): called from animate_character (already matched, newly documented this round) exactly where source calls Character_UnlockView(chap) -- matching role and call-site context precisely."
   },
   {
     "kind": "function",
