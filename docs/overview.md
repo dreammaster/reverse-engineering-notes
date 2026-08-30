@@ -84,9 +84,9 @@ one place that pays off across every module.
 
 | IDB | Root file | Functions named | Structs | Notes |
 |---|---|---|---|---|
-| `leglib.idb` | `LEGLIB.EXE` | ~445 / 773 (all `rtm_*` provisional) | 0 | 10 segments; `seg003` (53 KB) + `seg004` (18 KB) are the code, `seg007`/`seg008` the `bm*` graphics. Every int-3Fh run-time entry resolved (`resolve_rtm_leglib.py`). |
+| `leglib.idb` | `LEGLIB.EXE` | ~445 / 773 (14 real, rest `rtm_*` provisional) | 0 | 10 segments; `seg003` (53 KB) + `seg004` (18 KB) are the code, `seg007`/`seg008` the `bm*` graphics. Every int-3Fh run-time entry resolved; the 14 hot BASIC-runtime primitives named (`apply_renames_leglib.py`). |
 | `menu.idb` | `MENU.EXE` | 25 / 25 seg000 funcs (+ 467 `rt_*` thunks) | 0 | `seg000` coerced + fully named. Layout: `seg000` code, `seg001` thunk table, `seg002` RTM bootstrap, `seg003` DGROUP text, `seg004` stack. |
-| `out.idb` | `OUT.EXE` | ~2 / ~97 seg000 funcs (+ `rt_*` thunks) | 0 | Overworld/towns/dungeons engine; chains to `MUS`/`SAVER`/`TWNDR`/`CASDR`/`DUN`. `seg000` coerced to 99.7% (2026-08-30), 1308 run-time calls resolved. Functions mostly still `sub_`; naming pending. Layout differs from menu — see below. |
+| `out.idb` | `OUT.EXE` | ~15 / ~95 seg000 funcs (+ `rt_*` thunks) | 0 | Overworld/towns/dungeons engine; chains to `MUS`/`SAVER`/`TWNDR`/`CASDR`/`DUN`. `seg000` coerced to 99.7% (2026-08-30), 1 unowned code byte, 1308 run-time calls resolved. Structural functions named (`out_entry` → `outInit` → `mainDispatch` 3.8 KB); ~80 helpers still `sub_` — no readable text, so naming is slow. Layout differs from menu — see below. |
 
 (Counts via `ida_scripts/identify.py -NoExport`; re-run any time as a
 sanity check.)

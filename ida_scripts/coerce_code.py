@@ -361,7 +361,8 @@ def main():
                    for h in idautils.Heads(fn.start_ea, fn.end_ea)):
                 continue
             succ = ida_funcs.get_func(fn.end_ea)
-            if not succ or succ.start_ea in boundaries or not in_span(succ.start_ea):
+            if not succ or succ.start_ea != fn.end_ea \
+               or succ.start_ea in boundaries or not in_span(succ.start_ea):
                 continue
             new_end = succ.end_ea
             ida_funcs.del_func(succ.start_ea)
@@ -370,6 +371,28 @@ def main():
         if merges:
             ida_auto.auto_wait()
     print(f"call-far merges: {rounds} rounds")
+
+    # 5b. re-sweep any code the merge / earlier passes left unowned
+    #     (a call-far fragment whose successor wasn't adjacent gets
+    #     orphaned; those addresses then show as `<prevfunc>+big_offset`).
+    resweep = 0
+    for lo, hi in SPANS:
+        a = lo
+        while a < hi:
+            fn = ida_funcs.get_func(a)
+            if fn:
+                a = fn.end_ea
+                continue
+            if is_code(a):
+                if ida_funcs.add_func(a):
+                    resweep += 1
+                nf = ida_funcs.get_func(a)
+                a = nf.end_ea if nf else a + 1
+            else:
+                a += 1
+    if resweep:
+        ida_auto.auto_wait()
+    print(f"re-swept orphan functions: {resweep}")
 
     # 6. fold the 3-byte `jmp <thunk>` procedure-epilogue stubs (IDA
     #    daisy-chain-names them j_j_..._rt_XX) into the function before.

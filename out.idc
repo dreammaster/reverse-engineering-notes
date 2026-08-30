@@ -125,6 +125,7 @@ static Bytes_0(void) {
 	create_insn	(0X10160);
 	create_insn	(0X10181);
 	create_insn	(0X10199);
+	set_name	(0X10199,	"outInit");
 	create_insn	(0X10308);
 	create_insn	(0X10327);
 	create_insn	(0X10331);
@@ -275,21 +276,28 @@ static Bytes_0(void) {
 	create_insn	(x=0X115F4);
 	op_hex		(x,	1);
 	create_insn	(0X11638);
+	set_name	(0X11638,	"setFlag_03");
 	create_insn	(0X11681);
+	set_name	(0X11681,	"setFlag_38");
 	create_insn	(0X1168A);
+	set_name	(0X1168A,	"setFlag_C0");
 	create_insn	(0X116D8);
+	set_name	(0X116D8,	"setFlag_0300");
 	create_insn	(0X116E1);
 	create_insn	(0X116EC);
 	create_insn	(0X116FE);
 	create_insn	(0X11705);
+	set_name	(0X11705,	"setFlag_0800");
 	create_insn	(0X11718);
 	create_insn	(0X1171F);
+	set_name	(0X1171F,	"setFlag_1000");
 	create_insn	(0X11732);
 	create_insn	(0X11739);
 	create_insn	(0X11743);
 	create_insn	(x=0X1174D);
 	op_hex		(x,	1);
 	create_insn	(0X11760);
+	set_name	(0X11760,	"applyGameFlag");
 	create_insn	(0X117B0);
 	create_insn	(0X117BA);
 	create_insn	(0X117DC);
@@ -409,8 +417,11 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	set_name	(0X127D1,	"nullsub_10");
 	create_insn	(0X127D2);
+	set_name	(0X127D2,	"setMode_1");
 	create_insn	(0X127DB);
+	set_name	(0X127DB,	"setMode_2");
 	create_insn	(0X127E4);
+	set_name	(0X127E4,	"setMode_3");
 	create_insn	(0X127EA);
 	set_name	(0X127EA,	"j_rt_FE4E");
 	create_insn	(0X12823);
@@ -425,6 +436,7 @@ static Bytes_0(void) {
 	set_name	(0X128B7,	"j_rt_FE3C");
 	create_insn	(0X128C5);
 	create_insn	(0X12969);
+	set_name	(0X12969,	"updateGameState");
 	create_insn	(0X12973);
 	create_insn	(0X12995);
 	set_name	(0X129BF,	"j_rt_FE5B_3");
@@ -584,6 +596,7 @@ static Bytes_0(void) {
 	create_insn	(0X13C31);
 	create_insn	(0X13C51);
 	create_insn	(0X13C60);
+	set_name	(0X13C60,	"mainDispatch");
 	create_insn	(0X13C9F);
 	create_insn	(0X13CAF);
 	create_insn	(0X13CF1);
@@ -1126,7 +1139,7 @@ static Bytes_0(void) {
 	create_byte	(0X1685A);
 	make_array	(0X1685A,	0X2);
 	set_cmt	(0X16860,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X16860,	"-> rtm_00  (leglib seg003:0x1b8d2)",	1);
+	set_cmt	(0X16860,	"-> basArrayCopy  (leglib seg003:0x1b8d2)",	1);
 	create_insn	(x=0X16860);
 	op_hex		(x,	0);
 	set_name	(0X16860,	"rt_00");
@@ -1433,7 +1446,7 @@ static Bytes_0(void) {
 	set_name	(0X168F9,	"rt_72");
 	create_byte	(0X168FB);
 	set_cmt	(0X168FC,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X168FC,	"-> rtm_73  (leglib seg003:0x1b4ed)",	1);
+	set_cmt	(0X168FC,	"-> basStrBuild  (leglib seg003:0x1b4ed)",	1);
 	create_insn	(x=0X168FC);
 	op_hex		(x,	0);
 	set_name	(0X168FC,	"rt_73");
@@ -1686,7 +1699,7 @@ static Bytes_0(void) {
 	set_name	(0X1697A,	"rt_CD");
 	create_byte	(0X1697C);
 	set_cmt	(0X1697D,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X1697D,	"-> rtm_CE  (leglib seg003:0x1edba)",	1);
+	set_cmt	(0X1697D,	"-> basPlayMusic  (leglib seg003:0x1edba)",	1);
 	create_insn	(x=0X1697D);
 	op_hex		(x,	0);
 	set_name	(0X1697D,	"rt_CE");
@@ -2854,6 +2867,15 @@ static Bytes_0(void) {
 	create_insn	(x=0X16C0A);
 	op_hex		(x,	0);
 	set_name	(0X16C0A,	"rt_55");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_byte	(0X16C0C);
 	set_cmt	(0X16C0D,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
 	set_cmt	(0X16C0D,	"-> rtm_5C  (leglib seg003:0x1454a)",	1);
@@ -2866,15 +2888,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X16C10);
 	op_hex		(x,	0);
 	set_name	(0X16C10,	"rt_5D");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_byte	(0X16C12);
 	set_cmt	(0X16C13,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
 	create_insn	(x=0X16C13);
@@ -4090,9 +4103,10 @@ static Functions_0(void) {
 
 	add_func    (0X10030,0X10199);
 	set_func_flags(0X10030,0x1401);
-	set_func_cmt(0X10030,	"OUT.EXE program entry (compiled-BASIC module init). Falls through into the overworld main loop.", 1);
+	set_func_cmt(0X10030,	"OUT.EXE entry / module init: declares the module-scope variables (14x basValuePush/basValueStore via rt_FF4B/rt_FF50) and sets up the screen (rt_AF x3, rt_98). Falls through into outInit.", 1);
 	add_func    (0X10199,0X109D3);
 	set_func_flags(0X10199,0x1401);
+	set_func_cmt(0X10199,	"overworld first-time setup: 9x basScreenInit (screen regions), then loads the overworld data via the engine (rt_FE63/FE44/FE16/FE68/FE37) and calls sub_10B06. ~2 KB, called once from out_entry.", 1);
 	add_func    (0X109D3,0X10A05);
 	set_func_flags(0X109D3,0x1401);
 	add_func    (0X10A05,0X10A1F);
@@ -4135,14 +4149,18 @@ static Functions_0(void) {
 	set_frame_size(0X11454, 0, 0, 0);
 	add_func    (0X11638,0X11681);
 	set_func_flags(0X11638,0x5400);
+	set_func_cmt(0X11638,	"set game flag mask 0x03 (-> applyGameFlag).", 1);
 	set_frame_size(0X11638, 0, 0, 0);
 	add_func    (0X11681,0X1168A);
 	set_func_flags(0X11681,0x5400);
+	set_func_cmt(0X11681,	"set game flag mask 0x38 (-> applyGameFlag).", 1);
 	set_frame_size(0X11681, 0, 0, 0);
 	add_func    (0X1168A,0X116D8);
 	set_func_flags(0X1168A,0x1401);
+	set_func_cmt(0X1168A,	"set game flag mask 0xC0 (-> applyGameFlag).", 1);
 	add_func    (0X116D8,0X116E1);
 	set_func_flags(0X116D8,0x5400);
+	set_func_cmt(0X116D8,	"set game flag mask 0x0300 (-> applyGameFlag).", 1);
 	set_frame_size(0X116D8, 0, 0, 0);
 	add_func    (0X116E1,0X116FE);
 	set_func_flags(0X116E1,0x5400);
@@ -4152,15 +4170,18 @@ static Functions_0(void) {
 	set_frame_size(0X116FE, 0, 0, 0);
 	add_func    (0X11705,0X1171F);
 	set_func_flags(0X11705,0x5400);
+	set_func_cmt(0X11705,	"set game flag mask 0x0800 (-> applyGameFlag).", 1);
 	set_frame_size(0X11705, 0, 0, 0);
 	add_func    (0X1171F,0X11739);
 	set_func_flags(0X1171F,0x5400);
+	set_func_cmt(0X1171F,	"set game flag mask 0x1000 (-> applyGameFlag).", 1);
 	set_frame_size(0X1171F, 0, 0, 0);
 	add_func    (0X11739,0X11760);
 	set_func_flags(0X11739,0x5400);
 	set_frame_size(0X11739, 0, 0, 0);
 	add_func    (0X11760,0X117B0);
 	set_func_flags(0X11760,0x5400);
+	set_func_cmt(0X11760,	"shared tail of the ds:2234h flag-setter family (sub_11638 etc.): `mov si, 1B96h` then folds the pushed mask into the flag word.", 1);
 	set_frame_size(0X11760, 0, 0, 0);
 	add_func    (0X117B0,0X11CB3);
 	set_func_flags(0X117B0,0x5400);
@@ -4204,10 +4225,13 @@ static Functions_0(void) {
 	set_func_flags(0X12792,0x1401);
 	add_func    (0X127D2,0X127DB);
 	set_func_flags(0X127D2,0x1401);
+	set_func_cmt(0X127D2,	"ds:2146h := 1, then jmp j_rt_FE4E.", 1);
 	add_func    (0X127DB,0X127E4);
 	set_func_flags(0X127DB,0x1401);
+	set_func_cmt(0X127DB,	"ds:2146h := 2, then jmp j_rt_FE4E.", 1);
 	add_func    (0X127E4,0X127EA);
 	set_func_flags(0X127E4,0x1401);
+	set_func_cmt(0X127E4,	"ds:2146h := 3.", 1);
 	add_func    (0X127EA,0X12823);
 	set_func_flags(0X127EA,0x14c1);
 	add_func    (0X12823,0X128B2);
@@ -4219,6 +4243,7 @@ static Functions_0(void) {
 	set_func_flags(0X128C5,0x1401);
 	add_func    (0X12969,0X12B3B);
 	set_func_flags(0X12969,0x1401);
+	set_func_cmt(0X12969,	"dispatches on ds:1F2Ah (`mov ax, ds:1F2Ah / and ax,ax` then a jump table) -- the mode switch between overworld / town / dungeon / combat states.", 1);
 	add_func    (0X12B3B,0X12F73);
 	set_func_flags(0X12B3B,0x1401);
 	add_func    (0X12F77,0X12F8F);
@@ -4259,10 +4284,14 @@ static Functions_0(void) {
 	set_func_flags(0X13982,0x1401);
 	add_func    (0X139B5,0X13A13);
 	set_func_flags(0X139B5,0x1401);
+	add_func    (0X13A13,0X13BDE);
+	set_func_flags(0X13A13,0x5400);
+	set_frame_size(0X13A13, 0, 0, 0);
 	add_func    (0X13BDE,0X13C60);
 	set_func_flags(0X13BDE,0x1401);
 	add_func    (0X13C60,0X14B6F);
 	set_func_flags(0X13C60,0x1401);
+	set_func_cmt(0X13C60,	"the central overworld command/event loop -- a large (~3.5 KB) function called from ~15 sites (often at big `+offset`s into itself). Branches on ds:1F2Ah and fans out to the per-command helpers (movement, look, board, the parameter setters, etc.).", 1);
 	add_func    (0X14B6F,0X14B8D);
 	set_func_flags(0X14B6F,0x1403);
 	add_func    (0X14B8D,0X14BD0);
@@ -4315,10 +4344,10 @@ static Functions_0(void) {
 	set_func_flags(0X167D5,0x14c1);
 	add_func    (0X167F0,0X167F3);
 	set_func_flags(0X167F0,0x1401);
-	set_func_cmt(0X167F0,	"-> rtm_EC  (leglib seg003:0x12dc7)", 1);
+	set_func_cmt(0X167F0,	"-> basProcExit1  (leglib seg003:0x12dc7)", 1);
 	add_func    (0X167F3,0X167F6);
 	set_func_flags(0X167F3,0x1401);
-	set_func_cmt(0X167F3,	"-> rtm_ED  (leglib seg003:0x12db0)", 1);
+	set_func_cmt(0X167F3,	"-> basProcExit2  (leglib seg003:0x12db0)", 1);
 	add_func    (0X16869,0X1686C);
 	set_func_flags(0X16869,0x1401);
 	set_func_cmt(0X16869,	"-> rtm_09  (leglib seg003:0x14a31)", 1);
@@ -4345,13 +4374,13 @@ static Functions_0(void) {
 	set_func_cmt(0X16956,	"-> rtm_B5  (leglib seg003:0x1b707)  [mid-func]", 1);
 	add_func    (0X16965,0X16968);
 	set_func_flags(0X16965,0x1401);
-	set_func_cmt(0X16965,	"-> rtm_C2  (leglib seg003:0x1b572)", 1);
+	set_func_cmt(0X16965,	"-> basStrAssign  (leglib seg003:0x1b572)", 1);
 	add_func    (0X16968,0X1696B);
 	set_func_flags(0X16968,0x1401);
-	set_func_cmt(0X16968,	"-> rtm_C3  (leglib seg003:0x1b5ab)", 1);
+	set_func_cmt(0X16968,	"-> basStrConcat  (leglib seg003:0x1b5ab)", 1);
 	add_func    (0X16980,0X16983);
 	set_func_flags(0X16980,0x1401);
-	set_func_cmt(0X16980,	"-> rtm_D1  (leglib seg003:0x1b9b0)", 1);
+	set_func_cmt(0X16980,	"-> basStrClear  (leglib seg003:0x1b9b0)", 1);
 	add_func    (0X16983,0X16986);
 	set_func_flags(0X16983,0x1401);
 	set_func_cmt(0X16983,	"-> rtm_D2  (leglib seg003:0x1b870)", 1);
@@ -4363,10 +4392,10 @@ static Functions_0(void) {
 	set_func_cmt(0X169BC,	"-> rtm_EE  (leglib seg003:0x1c9d3)", 1);
 	add_func    (0X169C2,0X169C5);
 	set_func_flags(0X169C2,0x1401);
-	set_func_cmt(0X169C2,	"-> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]", 1);
+	set_func_cmt(0X169C2,	"-> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]", 1);
 	add_func    (0X169CE,0X169D1);
 	set_func_flags(0X169CE,0x1401);
-	set_func_cmt(0X169CE,	"-> rtm_F4  (leglib seg003:0x1bb7c)", 1);
+	set_func_cmt(0X169CE,	"-> basProcLeave  (leglib seg003:0x1bb7c)", 1);
 	add_func    (0X169E6,0X169E9);
 	set_func_flags(0X169E6,0x1401);
 	set_func_cmt(0X169E6,	"-> rtm_FC  (leglib seg003:0x1ca63)", 1);
@@ -4456,7 +4485,7 @@ static Functions_0(void) {
 	set_func_cmt(0X16C16,	"-> rtm_5F  (leglib seg003:0x145ab)", 1);
 	add_func    (0X16C52,0X16C55);
 	set_func_flags(0X16C52,0x1401);
-	set_func_cmt(0X16C52,	"-> rtm_AF  (leglib seg003:0x13608)", 1);
+	set_func_cmt(0X16C52,	"-> basScreenInit  (leglib seg003:0x13608)", 1);
 	add_func    (0X16C58,0X16C5B);
 	set_func_flags(0X16C58,0x1401);
 	set_func_cmt(0X16C58,	"-> rtm_B7  (leglib seg003:0x1a1b2)", 1);
@@ -4492,10 +4521,10 @@ static Functions_0(void) {
 	set_func_cmt(0X16D3C,	"-> rtm_FE1D  (leglib seg008:0x2863d)", 1);
 	add_func    (0X16D5C,0X16D60);
 	set_func_flags(0X16D5C,0x1401);
-	set_func_cmt(0X16D5C,	"-> rtm_FE25  (leglib seg008:0x28bd2)", 1);
+	set_func_cmt(0X16D5C,	"-> drawStringInner  (leglib seg008:0x28bd2)", 1);
 	add_func    (0X16D60,0X16D64);
 	set_func_flags(0X16D60,0x1401);
-	set_func_cmt(0X16D60,	"-> rtm_FE26  (leglib seg007:0x26967)", 1);
+	set_func_cmt(0X16D60,	"-> drawString  (leglib seg007:0x26967)", 1);
 	add_func    (0X16D64,0X16D68);
 	set_func_flags(0X16D64,0x1401);
 	set_func_cmt(0X16D64,	"-> rtm_FE27  (leglib seg007:0x253ad)", 1);
@@ -4564,7 +4593,7 @@ static Functions_0(void) {
 	set_func_cmt(0X16E24,	"-> rtm_FE57  (leglib seg007:0x24f84)", 1);
 	add_func    (0X16E34,0X16E38);
 	set_func_flags(0X16E34,0x1401);
-	set_func_cmt(0X16E34,	"-> rtm_FE5B  (leglib seg008:0x28861)", 1);
+	set_func_cmt(0X16E34,	"-> screenRefresh  (leglib seg008:0x28861)", 1);
 	add_func    (0X16E54,0X16E58);
 	set_func_flags(0X16E54,0x1401);
 	set_func_cmt(0X16E54,	"-> rtm_FE63  (leglib seg007:0x24a83)", 1);

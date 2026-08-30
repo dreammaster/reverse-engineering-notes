@@ -46,12 +46,15 @@ not BASIC).
       [overview.md](overview.md#int-3fh-run-time-dispatch-decoded-2026-08-30).
 - [x] Extended the FE table to `FE70` (2026-08-30) — `out.exe` uses
       `FE6E`–`FE70`; `FE71`+ is past the table.
-- [ ] Attach real names to `rtm_*`. Rank by cross-module call frequency
-      (`out.idb` now exists), identify the Microsoft BASIC 6.0
-      runtime routines (`B$…`) against QuickBASIC 4.5 / BASCOM 6 / BASIC
-      PDS 7 references + QB reversing notes. Start with `rtm_C2` (171
-      calls in `menu` alone), `rtm_D1`, `rtm_AF`, the `rtm_FE*` graphics
-      calls.
+- [~] Attach real names to `rtm_*` (`apply_renames_leglib.py`). Done: 14
+      hot ones — `basProcEnter`/`basProcLeave` (SUB frame enter/leave, cx
+      = frame size), `basProcExit1`/`basProcExit2` (outer exit wrapper),
+      `basStrAssign` (164x in out), `basStrConcat`, `basStrClear`,
+      `basStrBuild`, `basArrayCopy`, `basPlayMusic`, `basScreenInit`
+      (provisional), `drawString`/`drawStringInner`/`screenRefresh`
+      (engine text). Continue with the FF-cluster `out` leans on
+      (`FF4B` 154x, `FF20`, `FF1F`, `FF44`, `FF4E`, `FF50` — value/screen
+      stack ops around `ds:111Ch`).
 - [ ] Verify the 65 `[mid-func: verify]` `rtm_*` entries — confirm
       they're genuine shared-tail / multi-entry routines, not resolution
       errors.
@@ -101,12 +104,20 @@ not BASIC).
       99.7%, 0 bad insns, ~97 functions, 1308 run-time calls resolved to
       `rt_*`. Thunk table embedded mid-`seg000`; frame selector `0x67E`
       registered (no segment carve).
-- [ ] Name the ~95 `seg000` functions. `sub_13C60` is a widely-called
-      central helper (dispatch?). OUT's DGROUP text is position-coded and
-      not readily readable — lean on `rtm_*` patterns + data-file /
-      chained-EXE (`MUS`/`SAVER`/`TWNDR`/`CASDR`/`DUN`) references.
-- [ ] Tune the call-far fragmentation merge — a few functions look
-      over-merged (spanning >1 real proc).
+- [~] Name the `seg000` functions. Done so far (`apply_renames_out.py`):
+      `out_entry` → `outInit` → `mainDispatch` (3.8 KB central loop),
+      `updateGameState` (dispatch on `ds:1F2Ah`), the `setFlag_*` /
+      `setMode_*` / `applyGameFlag` families. ~80 helpers still `sub_` —
+      OUT's DGROUP text is position-coded (no anchors), so each needs
+      tracing its `ds:` state vars + `rtm_*` pattern. Recurring shapes
+      catalogued in the `apply_renames_out.py` header.
+- [x] Fixed the call-far fragmentation merge (2026-08-30) — was
+      orphaning ~3.8 KB (`mainDispatch` came out 15 bytes). Now merges
+      only truly-adjacent fragments + re-sweeps; 1 unowned byte left.
+- [ ] Map the `ds:21XXh` / `ds:1F0Xh` / `ds:1F2Ah` / `ds:2234h` engine
+      state variables — the key to naming the helper cloud.
+- [ ] Decode the position-coded DGROUP string format (leading
+      byte(s) = screen position/attr, `%` etc = control codes).
 - [ ] The post-thunk RTM-loader stub (`seg000:16E8C`+) is left unswept
       (`$`-terminated DOS strings + boilerplate) — disassemble if needed.
 - [ ] Trace the `BLOAD` sites for `OUTDATA.BSV` / `OUTM*.BSV` / `OUTOBJ.BSV`.

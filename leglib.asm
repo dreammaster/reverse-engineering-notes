@@ -8640,7 +8640,7 @@ loc_12CC1:                              ; CODE XREF: sub_16E0E-417E↑j
                 db 24h, 95h, 12h
                 dw seg seg007
                 dd rtm_FE5A
-                dd rtm_FE5B
+                dd screenRefresh        ; engine: post-draw cursor/row update (divides a packed row*256+col by 100h). [name provisional]
                 dd rtm_FE5C
                 dd rtm_FE5D
                 dd rtm_FE5E
@@ -8665,9 +8665,10 @@ loc_12CC1:                              ; CODE XREF: sub_16E0E-417E↑j
 
 ; =============== S U B R O U T I N E =======================================
 
+; second half of the proc exit wrapper -- checks ds:136h and returns to the caller. The `jmp` target of every menu.idb SUB epilogue (IDA daisy-chain-names the stubs j_j_..._rt_ED).
 ; Attributes: bp-based frame
 
-rtm_ED          proc far                ; DATA XREF: seg007:3683↓o
+basProcExit2    proc far                ; DATA XREF: seg007:3683↓o
                                         ; seg009:0001↓o
 
 ; FUNCTION CHUNK AT 0340 SIZE 0000000B BYTES
@@ -8679,30 +8680,31 @@ rtm_ED          proc far                ; DATA XREF: seg007:3683↓o
                 jmp     loc_1382F+1
 ; ---------------------------------------------------------------------------
 
-loc_12DBF:                              ; CODE XREF: rtm_ED+8↑j
+loc_12DBF:                              ; CODE XREF: basProcExit2+8↑j
                 mov     word ptr ds:132h, 0
                 jmp     short loc_12DD0
-rtm_ED          endp ; sp-analysis failed
+basProcExit2    endp ; sp-analysis failed
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; first half of a proc's outer exit wrapper (clears ds:132h). menu SUB tails are `call basProcExit1 / jmp basProcExit2`. [verify: event/line-trap hook vs. return path]
 ; Attributes: bp-based frame
 
-rtm_EC          proc near               ; CODE XREF: rtm_FE63:loc_24B2E↓P
+basProcExit1    proc near               ; CODE XREF: rtm_FE63:loc_24B2E↓P
                 push    bp              ; int 3Fh run-time entry EC
                 mov     bp, sp
                 mov     word ptr ds:132h, 0
-rtm_EC          endp ; sp-analysis failed
+basProcExit1    endp ; sp-analysis failed
 
 ; START OF FUNCTION CHUNK FOR sub_14334
-;   ADDITIONAL PARENT FUNCTION rtm_ED
+;   ADDITIONAL PARENT FUNCTION basProcExit2
 ;   ADDITIONAL PARENT FUNCTION rtm_FF0C
 ;   ADDITIONAL PARENT FUNCTION sub_1AFD6
 ;   ADDITIONAL PARENT FUNCTION rtm_40
 ;   ADDITIONAL PARENT FUNCTION rtm_62
 
-loc_12DD0:                              ; CODE XREF: rtm_ED+15↑j
+loc_12DD0:                              ; CODE XREF: basProcExit2+15↑j
                                         ; sub_14334-151B↓j ...
                 call    sub_12DDB
                 xor     ax, ax
@@ -10124,7 +10126,7 @@ sub_13524       endp
 ; ---------------------------------------------------------------------------
                 align 2
 
-rtm_AF:                                 ; int 3Fh run-time entry AF
+basScreenInit:                          ; int 3Fh run-time entry AF
                 xor     al, al
 ; ---------------------------------------------------------------------------
                 db  3Dh ; =
@@ -11778,7 +11780,7 @@ sub_13E9B       endp
 
 
 sub_13ED4       proc near               ; CODE XREF: sub_13F29↓p
-                                        ; rtm_C2+6↓p
+                                        ; basStrAssign+6↓p
                 cmp     bx, 0E2Ch
                 jnb     short locret_13F28
                 cmp     bx, 0DB4h
@@ -28632,7 +28634,7 @@ loc_1B45F:                              ; CODE XREF: rtm_AD+22↑j
                 push    [bp+arg_4]
                 push    word ptr [bp+arg_0+2]
                 push    word ptr [bp+arg_0]
-                call    rtm_00
+                call    basArrayCopy    ; block copy between two far buffers -- args (word, dst:dword, count, src:dword). Array / FIELD move.
                 pop     es
                 pop     di
                 pop     si
@@ -28704,23 +28706,24 @@ loc_1B4E0:                              ; CODE XREF: rtm_BB+D↑j
                 rep movsb
 rtm_BB          endp ; sp-analysis failed
 
-; START OF FUNCTION CHUNK FOR rtm_73
+; START OF FUNCTION CHUNK FOR basStrBuild
 
-loc_1B4E3:                              ; CODE XREF: rtm_73+10↓j
-                                        ; rtm_73+13↓j
+loc_1B4E3:                              ; CODE XREF: basStrBuild+10↓j
+                                        ; basStrBuild+13↓j
                 call    sub_13F29
                 pop     es
                 pop     di
                 pop     si
                 pop     bp
                 retf    8
-; END OF FUNCTION CHUNK FOR rtm_73
+; END OF FUNCTION CHUNK FOR basStrBuild
 
 ; =============== S U B R O U T I N E =======================================
 
+; string-space copy+pad helper (`rep movsb` then `rep stosw`); used while materialising a string result.
 ; Attributes: bp-based frame
 
-rtm_73          proc far                ; CODE XREF: rtm_00+48↓P
+basStrBuild     proc far                ; CODE XREF: basArrayCopy+48↓P
 
 ; FUNCTION CHUNK AT 8A53 SIZE 0000000A BYTES
 
@@ -28738,14 +28741,14 @@ rtm_73          proc far                ; CODE XREF: rtm_00+48↓P
                 jnb     short loc_1B4E3
                 stosb
                 jmp     short loc_1B4E3
-rtm_73          endp
+basStrBuild     endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
 sub_1B502       proc near               ; CODE XREF: rtm_BB+6↑p
-                                        ; rtm_73+6↑p
+                                        ; basStrBuild+6↑p
                 mov     si, [bp+0Ch]
                 push    si
                 lodsw
@@ -28815,9 +28818,10 @@ locret_1B560:                           ; CODE XREF: seg003:8ACB↑j
 
 ; =============== S U B R O U T I N E =======================================
 
+; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
 ; Attributes: bp-based frame
 
-rtm_C2          proc near               ; CODE XREF: rtm_00+3A↓P
+basStrAssign    proc near               ; CODE XREF: basArrayCopy+3A↓P
                                         ; rtm_DD+62↓P ...
 
 arg_2           = word ptr  6
@@ -28831,7 +28835,7 @@ arg_4           = word ptr  8
                 call    sub_13ED4
                 jnb     short loc_1B5A2
 
-loc_1B57D:                              ; CODE XREF: rtm_C2+37↓j
+loc_1B57D:                              ; CODE XREF: basStrAssign+37↓j
                 xchg    bx, dx
                 mov     bx, [bp+arg_2]
                 call    sub_13F6A
@@ -28843,7 +28847,7 @@ loc_1B57D:                              ; CODE XREF: rtm_C2+37↓j
                 mov     [bx+2], ax
                 jcxz    short loc_1B59E
                 xchg    ax, bx
-rtm_C2          endp ; sp-analysis failed
+basStrAssign    endp ; sp-analysis failed
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -28855,26 +28859,27 @@ sub_1B596       proc far                ; CODE XREF: sub_1CDD3:loc_1CE1E↓j
                 xchg    bx, dx
                 call    sub_13F31
 
-loc_1B59E:                              ; CODE XREF: rtm_C2+21↑j
+loc_1B59E:                              ; CODE XREF: basStrAssign+21↑j
                 pop     bp
                 retf    4
 sub_1B596       endp ; sp-analysis failed
 
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR rtm_C2
+; START OF FUNCTION CHUNK FOR basStrAssign
 
-loc_1B5A2:                              ; CODE XREF: rtm_C2+9↑j
+loc_1B5A2:                              ; CODE XREF: basStrAssign+9↑j
                 xor     cx, cx
                 mov     dx, [bx]
                 call    sub_13F41
                 jmp     short loc_1B57D
-; END OF FUNCTION CHUNK FOR rtm_C2
+; END OF FUNCTION CHUNK FOR basStrAssign
 
 ; =============== S U B R O U T I N E =======================================
 
+; string concatenation (`a$ + b$`): sums the two operand lengths, allocates, copies both. args (a, b).
 ; Attributes: bp-based frame
 
-rtm_C3          proc far                ; CODE XREF: sub_1C440+9↓P
+basStrConcat    proc far                ; CODE XREF: sub_1C440+9↓P
                                         ; rtm_FE63+34E↓P ...
 
 arg_0           = word ptr  6
@@ -28909,14 +28914,14 @@ arg_2           = word ptr  8
                 pop     si
                 pop     bp
                 retf    4
-rtm_C3          endp
+basStrConcat    endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B5D5       proc near               ; CODE XREF: rtm_C3+1A↑p
-                                        ; rtm_C3+1F↑p
+sub_1B5D5       proc near               ; CODE XREF: basStrConcat+1A↑p
+                                        ; basStrConcat+1F↑p
                 mov     bx, si
                 lodsw
                 xchg    ax, cx
@@ -28934,13 +28939,13 @@ loc_1B5E2:                              ; CODE XREF: sub_1B5D5:loc_1B5DF↑j
 sub_1B5D5       endp
 
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR rtm_C3
+; START OF FUNCTION CHUNK FOR basStrConcat
 ;   ADDITIONAL PARENT FUNCTION rtm_32
 
-loc_1B5E5:                              ; CODE XREF: rtm_C3+12↑j
+loc_1B5E5:                              ; CODE XREF: basStrConcat+12↑j
                                         ; rtm_32+B↓j
                 jmp     def_14641       ; jumptable 00014641 default case
-; END OF FUNCTION CHUNK FOR rtm_C3
+; END OF FUNCTION CHUNK FOR basStrConcat
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -29663,7 +29668,7 @@ sub_1B8A0       endp
 ; Attributes: bp-based frame
 
 rtm_6B          proc far                ; CODE XREF: sub_19A5E+11↑P
-                                        ; rtm_00+33↓P ...
+                                        ; basArrayCopy+33↓P ...
 
 arg_0           = word ptr  6
 arg_2           = dword ptr  8
@@ -29701,9 +29706,10 @@ rtm_6B          endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; block copy between two far buffers -- args (word, dst:dword, count, src:dword). Array / FIELD move.
 ; Attributes: bp-based frame
 
-rtm_00          proc far                ; CODE XREF: rtm_AD+42↑P
+basArrayCopy    proc far                ; CODE XREF: rtm_AD+42↑P
                                         ; rtm_DD+5B↓P ...
 
 arg_0           = word ptr  6
@@ -29729,7 +29735,7 @@ arg_8           = dword ptr  0Eh
                 mov     cx, [bp+arg_0]
                 xor     ax, ax
 
-loc_1B8F5:                              ; CODE XREF: rtm_00+1C↑j
+loc_1B8F5:                              ; CODE XREF: basArrayCopy+1C↑j
                 push    ds
                 mov     ds, bx
                 rep movsb
@@ -29740,36 +29746,36 @@ loc_1B8F5:                              ; CODE XREF: rtm_00+1C↑j
                 jmp     short loc_1B91F
 ; ---------------------------------------------------------------------------
 
-loc_1B902:                              ; CODE XREF: rtm_00+18↑j
+loc_1B902:                              ; CODE XREF: basArrayCopy+18↑j
                 push    bx
                 push    si
                 push    cx
                 call    rtm_6B
 
-loc_1B90A:                              ; CODE XREF: rtm_00+42↓j
+loc_1B90A:                              ; CODE XREF: basArrayCopy+42↓j
                 push    ax
                 push    di
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 jmp     short loc_1B91F
 ; ---------------------------------------------------------------------------
 
-loc_1B913:                              ; CODE XREF: rtm_00+16↑j
+loc_1B913:                              ; CODE XREF: basArrayCopy+16↑j
                 xchg    ax, si
                 jz      short loc_1B90A
                 push    ax
                 push    es
                 push    di
                 push    si
-                call    rtm_73
+                call    basStrBuild     ; string-space copy+pad helper (`rep movsb` then `rep stosw`); used while materialising a string result.
 
-loc_1B91F:                              ; CODE XREF: rtm_00+2E↑j
-                                        ; rtm_00+3F↑j
+loc_1B91F:                              ; CODE XREF: basArrayCopy+2E↑j
+                                        ; basArrayCopy+3F↑j
                 pop     es
                 pop     di
                 pop     si
                 pop     bp
                 retf    0Ch
-rtm_00          endp
+basArrayCopy    endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -29843,10 +29849,10 @@ loc_1B96E:                              ; CODE XREF: rtm_DD:loc_1B952↑j
                 push    es
                 push    ax
                 push    dx
-                call    rtm_00
+                call    basArrayCopy    ; block copy between two far buffers -- args (word, dst:dword, count, src:dword). Array / FIELD move.
                 push    di
                 push    si
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 jmp     short loc_1B992
 ; ---------------------------------------------------------------------------
 
@@ -29895,9 +29901,10 @@ rtm_C5          endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
 ; Attributes: bp-based frame
 
-rtm_D1          proc far                ; CODE XREF: rtm_FF0B+F↓P
+basStrClear     proc far                ; CODE XREF: rtm_FF0B+F↓P
                                         ; rtm_FE63+41E↓P ...
 
 arg_0           = word ptr  6
@@ -29911,7 +29918,7 @@ arg_0           = word ptr  6
                 mov     word ptr [bx], 0
                 pop     bp
                 retf    2
-rtm_D1          endp
+basStrClear     endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -29929,7 +29936,7 @@ arg_0           = word ptr  6
                 call    rtm_C5
                 push    ax
                 push    [bp+arg_0]
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 pop     ax
                 pop     bp
                 retf    2
@@ -30092,7 +30099,7 @@ loc_1BA9B:                              ; CODE XREF: rtm_FF02+13↑j
                 pop     ax
                 xchg    ax, bx
                 pop     dx
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 push    dx
                 push    ax
                 retf
@@ -30307,8 +30314,9 @@ sub_1BB76       endp ; sp-analysis failed
 
 ; =============== S U B R O U T I N E =======================================
 
+; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
 
-rtm_F4          proc near               ; CODE XREF: rtm_FF01+13↑P
+basProcLeave    proc near               ; CODE XREF: rtm_FF01+13↑P
                                         ; rtm_F8:loc_1CA48↓P ...
                 pop     word ptr ds:738h ; int 3Fh run-time entry F4
                 pop     word ptr ds:73Ah
@@ -30319,11 +30327,12 @@ rtm_F4          proc near               ; CODE XREF: rtm_FF01+13↑P
                 pop     word ptr ds:116h
                 pop     bp
                 jmp     dword ptr ds:738h
-rtm_F4          endp
+basProcLeave    endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; SUB/FUNCTION prologue: pops the return addr to ds:738h, saves si/di/cx/ax, `sub sp,cx` for the local frame (cx = frame size, set by the caller just before), links the frame via ds:116h, `inc ds:118h` (nesting depth). Every compiled-BASIC proc -- including LEGLIB's own FE/FF engine routines -- opens with `mov cx,N / call basProcEnter`.
 
 rtm_16          proc near
                 mov     ax, sp          ; int 3Fh run-time entry 16
@@ -30334,7 +30343,7 @@ rtm_16          proc near
                 cmp     ax, ds:0BAh
                 jb      short loc_1BB70
 
-rtm_F0:                                 ; CODE XREF: rtm_FE3E+3↓P
+basProcEnter:                           ; CODE XREF: rtm_FE3E+3↓P
                                         ; rtm_FE08+3↓P ...
                 pop     word ptr ds:738h ; int 3Fh run-time entry F0  [mid-func: verify]
                 pop     word ptr ds:73Ah
@@ -32083,7 +32092,7 @@ sub_1C440       proc near               ; CODE XREF: sub_1C367+AC↑p
                 jz      short locret_1C450
                 push    si
                 push    bx
-                call    rtm_C3
+                call    basStrConcat    ; string concatenation (`a$ + b$`): sums the two operand lengths, allocates, copies both. args (a, b).
                 mov     si, ax
 
 locret_1C450:                           ; CODE XREF: sub_1C440+5↑j
@@ -32191,7 +32200,7 @@ loc_1C4D2:                              ; CODE XREF: rtm_6E+3A↑j
                 push    [bp+arg_6]
                 push    [bp+arg_4]
                 push    [bp+arg_2]
-                call    rtm_00
+                call    basArrayCopy    ; block copy between two far buffers -- args (word, dst:dword, count, src:dword). Array / FIELD move.
                 mov     word ptr ds:137h, 0
                 pop     si
                 pop     bp
@@ -32768,7 +32777,7 @@ arg_0           = word ptr  6
                 mov     ax, 126h
                 push    [bp+arg_0]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 or      byte ptr ds:0F5Ah, 2
                 mov     word ptr ds:716h, 9D06h
                 mov     word ptr ds:74Eh, 0
@@ -32966,7 +32975,7 @@ loc_1CA45:                              ; CODE XREF: rtm_F8+19↑j
 
 loc_1CA48:                              ; CODE XREF: rtm_F8+21↑j
                                         ; rtm_F8+2B↑j
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 jmp     dword ptr ds:11Ah
 ; ---------------------------------------------------------------------------
                 retf
@@ -33076,7 +33085,7 @@ loc_1CAB7:                              ; CODE XREF: rtm_68+3E↓j
                 pop     dx
                 push    ax
                 push    dx
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 test    byte ptr ds:349h, 1
                 jz      short loc_1CB13
                 call    word ptr ds:0EFBh
@@ -39842,9 +39851,10 @@ rtm_4E          endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; start playing an MML music string (`PLAY`): stashes the string ptr at ds:7A4h. menu's showTitleScreen alternates this with playMusicTick over the 5 theme strings.
 ; Attributes: bp-based frame
 
-rtm_CE          proc far
+basPlayMusic    proc far
 
 arg_0           = word ptr  6
 
@@ -39860,13 +39870,13 @@ arg_0           = word ptr  6
                 pop     si
                 pop     bp
                 retf    2
-rtm_CE          endp
+basPlayMusic    endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1EDD6       proc near               ; CODE XREF: rtm_CE+4↑p
+sub_1EDD6       proc near               ; CODE XREF: basPlayMusic+4↑p
                 xor     ax, ax
                 mov     word ptr ds:241h, 0C43Ch
                 mov     ds:7A2h, al
@@ -39881,7 +39891,7 @@ sub_1EDD6       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1EDEF       proc near               ; CODE XREF: rtm_CE+E↑p
+sub_1EDEF       proc near               ; CODE XREF: basPlayMusic+E↑p
                 mov     byte ptr ds:7A3h, 1
                 mov     bx, ds:7A4h
                 or      bx, bx
@@ -41950,7 +41960,7 @@ rtm_FE46        endp
 ; Attributes: bp-based frame
 
 rtm_FE3B        proc far                ; CODE XREF: rtm_FE5C+19↓P
-                                        ; rtm_FE5B+92↓P ...
+                                        ; screenRefresh+92↓P ...
 
 arg_0           = word ptr  6
 arg_2           = word ptr  8
@@ -55850,7 +55860,7 @@ aBmcomblib      db 'bmCOMBLIB ',0       ; DATA XREF: seg001:1274↑o
                 db  28h ; (
                 db    0
                 db  9Ah
-                dd rtm_F0               ; int 3Fh run-time entry F0  [mid-func: verify]
+                dd basProcEnter         ; int 3Fh run-time entry F0  [mid-func: verify]
                 db 0B8h
                 db 0FFh
                 db 0FFh
@@ -55899,7 +55909,7 @@ aBmcomblib      db 'bmCOMBLIB ',0       ; DATA XREF: seg001:1274↑o
                 db 0EEh
                 db  50h ; P
                 db  9Ah
-                dd rtm_C2
+                dd basStrAssign         ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 db  8Dh
                 db  46h ; F
                 db 0EEh
@@ -56871,15 +56881,15 @@ aBmcomblib      db 'bmCOMBLIB ',0       ; DATA XREF: seg001:1274↑o
                 db 0EEh
                 db  50h ; P
                 db  9Ah
-                dd rtm_D1
+                dd basStrClear          ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 db  8Dh
                 db  46h ; F
                 db 0F2h
                 db  50h ; P
                 db  9Ah
-                dd rtm_D1
+                dd basStrClear          ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 db  9Ah
-                dd rtm_F4
+                dd basProcLeave         ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 db 0CAh
                 db    0
                 db    0
@@ -56892,7 +56902,7 @@ aBmcomblib      db 'bmCOMBLIB ',0       ; DATA XREF: seg001:1274↑o
 
 rtm_FE3E        proc far                ; CODE XREF: rtm_FE3C+3A↓P
                 mov     cx, 12h         ; int 3Fh run-time entry FE3E
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 mov     si, [bp+8]
                 mov     ax, [si]
                 mov     [bp-0Ch], ax
@@ -56981,7 +56991,7 @@ loc_24A0C:                              ; CODE XREF: rtm_FE3E+80↑j
                 lea     ax, [bp-0Eh]
                 push    ax
                 call    rtm_FE60
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    8
 rtm_FE3E        endp
 
@@ -56995,13 +57005,13 @@ rtm_FE3E        endp
 
 rtm_FE08        proc far                ; DATA XREF: seg003:017C↑o
                 mov     cx, 0           ; int 3Fh run-time entry FE08
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 xor     ax, ax
                 push    ax
                 call    rtm_09
                 push    word ptr [bp+6]
                 call    rtm_FF08
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    2
 rtm_FE08        endp
 
@@ -57015,13 +57025,13 @@ rtm_FE08        endp
 
 rtm_FE63        proc far                ; DATA XREF: seg003:02E8↑o
                 mov     cx, 40h ; '@'   ; int 3Fh run-time entry FE63
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 push    word ptr [bp+6]
                 call    rtm_E0
                 push    ax
                 lea     ax, [bp-10h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 mov     word ptr [bp-12h], 0
                 cmp     word ptr ds:1FEEh, 1
                 jg      short loc_24AAC
@@ -57093,7 +57103,7 @@ loc_24B2C:                              ; CODE XREF: rtm_FE63+A4↑j
 ; ---------------------------------------------------------------------------
 
 loc_24B2E:                              ; CODE XREF: rtm_FE63+A6↑j
-                call    far ptr rtm_EC
+                call    far ptr basProcExit1 ; first half of a proc's outer exit wrapper (clears ds:132h). menu SUB tails are `call basProcExit1 / jmp basProcExit2`. [verify: event/line-trap hook vs. return path]
 
 loc_24B33:                              ; CODE XREF: rtm_FE63+26↑j
                 nop
@@ -57431,11 +57441,11 @@ loc_24D90:                              ; CODE XREF: rtm_FE63+305↑j
                 push    ax
                 mov     ax, 1758h
                 push    ax
-                call    rtm_C3
+                call    basStrConcat    ; string concatenation (`a$ + b$`): sums the two operand lengths, allocates, copies both. args (a, b).
                 push    ax
                 lea     ax, [bp-30h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 mov     si, 1F5Eh
                 mov     bx, [bp-2Ch]
                 add     bx, [si+0Ah]
@@ -57508,17 +57518,17 @@ loc_24E7D:                              ; CODE XREF: rtm_FE63+3F5↑j
                 push    ax
                 lea     ax, [bp-30h]
                 push    ax
-                call    rtm_C3
+                call    basStrConcat    ; string concatenation (`a$ + b$`): sums the two operand lengths, allocates, copies both. args (a, b).
                 push    ax
                 lea     ax, [bp-3Ch]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-3Ch]
                 push    ax
-                call    rtm_FE26
+                call    drawString      ; engine: draw one position-coded screen string. arg (string); body is `basProcEnter / drawStringInner / screenRefresh / basProcLeave`.
                 lea     ax, [bp-3Ch]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 jmp     loc_24EEF
 ; ---------------------------------------------------------------------------
 
@@ -57530,38 +57540,38 @@ loc_24EA9:                              ; CODE XREF: rtm_FE63+3F7↑j
                 push    ax
                 call    rtm_32
                 push    ax
-                call    rtm_C3
+                call    basStrConcat    ; string concatenation (`a$ + b$`): sums the two operand lengths, allocates, copies both. args (a, b).
                 push    ax
                 mov     ax, 179Ah
                 push    ax
-                call    rtm_C3
+                call    basStrConcat    ; string concatenation (`a$ + b$`): sums the two operand lengths, allocates, copies both. args (a, b).
                 push    ax
                 lea     ax, [bp-30h]
                 push    ax
-                call    rtm_C3
+                call    basStrConcat    ; string concatenation (`a$ + b$`): sums the two operand lengths, allocates, copies both. args (a, b).
                 push    ax
                 lea     ax, [bp-40h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-40h]
                 push    ax
-                call    rtm_FE26
+                call    drawString      ; engine: draw one position-coded screen string. arg (string); body is `basProcEnter / drawStringInner / screenRefresh / basProcLeave`.
                 lea     ax, [bp-40h]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
 
 loc_24EEF:                              ; CODE XREF: rtm_FE63+423↑j
                 mov     ax, 17AAh
                 push    ax
                 lea     ax, [bp-44h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-44h]
                 push    ax
-                call    rtm_FE26
+                call    drawString      ; engine: draw one position-coded screen string. arg (string); body is `basProcEnter / drawStringInner / screenRefresh / basProcLeave`.
                 lea     ax, [bp-44h]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 mov     word ptr [bp-46h], 78h ; 'x'
                 mov     word ptr [bp-48h], 7
                 lea     ax, [bp-46h]
@@ -57614,11 +57624,11 @@ loc_24F67:                              ; CODE XREF: rtm_FE63+3C↑j
                                         ; rtm_FE63+1D0↑j ...
                 lea     ax, [bp-30h]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 lea     ax, [bp-10h]
                 push    ax
-                call    rtm_D1
-                call    far ptr rtm_F4
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    2
 rtm_FE63        endp ; sp-analysis failed
 
@@ -57632,7 +57642,7 @@ rtm_FE63        endp ; sp-analysis failed
 
 rtm_FE57        proc far
                 mov     cx, 4           ; int 3Fh run-time entry FE57
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 mov     word ptr [bp-0Ch], 18h
                 mov     word ptr [bp-0Eh], 3
                 lea     ax, [bp-0Ch]
@@ -57645,7 +57655,7 @@ rtm_FE57        proc far
                 push    word ptr [bp+8]
                 push    word ptr [bp+6]
                 call    rtm_FE58
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    8
 rtm_FE57        endp
 
@@ -57659,14 +57669,14 @@ rtm_FE57        endp
 
 rtm_FE07        proc far                ; DATA XREF: seg003:0178↑o
                 mov     cx, 0           ; int 3Fh run-time entry FE07
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 push    word ptr [bp+8]
                 mov     si, [bp+6]
                 push    word ptr [si]
                 mov     ax, 1
                 push    ax
                 call    rtm_02
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    4
 rtm_FE07        endp
 
@@ -57680,7 +57690,7 @@ rtm_FE07        endp
 
 rtm_FE2C        proc far                ; CODE XREF: rtm_FE4E+D↓P
                 mov     cx, 0           ; int 3Fh run-time entry FE2C
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 mov     si, 1E58h
                 mov     bx, 21Ah
                 add     bx, [si+0Ah]
@@ -57704,7 +57714,7 @@ loc_25011:                              ; CODE XREF: rtm_FE2C+1C↑j
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
                 mov     word ptr es:[bx], 0
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    0
 rtm_FE2C        endp
 
@@ -57718,7 +57728,7 @@ rtm_FE2C        endp
 
 rtm_FE44        proc far
                 mov     cx, 1Eh         ; int 3Fh run-time entry FE44
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 nop
 
 loc_25036:                              ; CODE XREF: rtm_FE44+49↓j
@@ -57769,14 +57779,14 @@ loc_25078:                              ; CODE XREF: rtm_FE44+35↑j
                 push    ax
                 lea     ax, [bp-14h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-14h]
                 push    ax
                 lea     ax, [bp-18h]
                 push    ax
-                call    far ptr rtm_C2
-                call    rtm_FE5B
-                call    rtm_FE5B
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
+                call    screenRefresh   ; engine: post-draw cursor/row update (divides a packed row*256+col by 100h). [name provisional]
+                call    screenRefresh   ; engine: post-draw cursor/row update (divides a packed row*256+col by 100h). [name provisional]
                 lea     ax, [bp-18h]
                 push    ax
                 mov     ax, 1664h
@@ -57794,13 +57804,13 @@ loc_250DE:                              ; CODE XREF: rtm_FE44+A9↑j
                 push    ax
                 lea     ax, [bp-1Ch]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-1Ch]
                 push    ax
-                call    rtm_FE25
+                call    drawStringInner ; engine: parse + emit a position-coded string (copies it local via basStrAssign, walks it, writes cells).
                 lea     ax, [bp-1Ch]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
 
 loc_250FD:                              ; CODE XREF: rtm_FE44+1D6↓j
                 lea     ax, [bp-18h]
@@ -57825,12 +57835,12 @@ loc_2510F:                              ; CODE XREF: rtm_FE44+DD↑j
                 push    ax
                 lea     ax, [bp-24h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-24h]
                 push    ax
                 lea     ax, [bp-18h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
 
 loc_25144:                              ; CODE XREF: rtm_FE44+DF↑j
                 lea     ax, [bp-18h]
@@ -57847,7 +57857,7 @@ loc_25156:                              ; CODE XREF: rtm_FE44+124↑j
                 push    ax
                 lea     ax, [bp-18h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
 
 loc_25163:                              ; CODE XREF: rtm_FE44+126↑j
                 lea     ax, [bp-18h]
@@ -57865,7 +57875,7 @@ loc_25175:                              ; CODE XREF: rtm_FE44+143↑j
                 push    ax
                 lea     ax, [bp-18h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 call    rtm_FE04
 
 loc_2518D:                              ; CODE XREF: rtm_FE44+145↑j
@@ -57926,7 +57936,7 @@ loc_251F1:                              ; CODE XREF: rtm_FE44+1BF↑j
                 push    ax
                 lea     ax, [bp-18h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 jmp     loc_250FD
 ; ---------------------------------------------------------------------------
 
@@ -57948,14 +57958,14 @@ loc_25214:                              ; CODE XREF: rtm_FE44+1E0↑j
                 call    rtm_FE49
                 lea     ax, [bp-24h]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 lea     ax, [bp-14h]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 lea     ax, [bp-18h]
                 push    ax
-                call    rtm_D1
-                call    far ptr rtm_F4
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    2
 rtm_FE44        endp
 
@@ -57969,7 +57979,7 @@ rtm_FE44        endp
 
 rtm_FE49        proc far                ; CODE XREF: rtm_FE44+1F0↑P
                 mov     cx, 18h         ; int 3Fh run-time entry FE49
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 call    rtm_FE24
                 mov     [bp-0Ch], ax
                 mov     ax, [bp-0Ch]
@@ -58068,17 +58078,17 @@ loc_252FA:                              ; CODE XREF: rtm_FE49+AD↑j
                 push    ax
                 mov     ax, 17EAh
                 push    ax
-                call    rtm_C3
+                call    basStrConcat    ; string concatenation (`a$ + b$`): sums the two operand lengths, allocates, copies both. args (a, b).
                 push    ax
                 lea     ax, [bp-16h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-16h]
                 push    ax
-                call    rtm_FE25
+                call    drawStringInner ; engine: parse + emit a position-coded string (copies it local via basStrAssign, walks it, writes cells).
                 lea     ax, [bp-16h]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 jmp     loc_25369
 ; ---------------------------------------------------------------------------
 
@@ -58091,17 +58101,17 @@ loc_25336:                              ; CODE XREF: rtm_FE49+AF↑j
                 push    bx
                 mov     ax, 17D0h
                 push    ax
-                call    rtm_C3
+                call    basStrConcat    ; string concatenation (`a$ + b$`): sums the two operand lengths, allocates, copies both. args (a, b).
                 push    ax
                 lea     ax, [bp-1Ch]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-1Ch]
                 push    ax
-                call    rtm_FE25
+                call    drawStringInner ; engine: parse + emit a position-coded string (copies it local via basStrAssign, walks it, writes cells).
                 lea     ax, [bp-1Ch]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
 
 loc_25369:                              ; CODE XREF: rtm_FE49+EB↑j
                 call    sub_27D1C
@@ -58133,7 +58143,7 @@ loc_25399:                              ; CODE XREF: rtm_FE49+14C↑j
                 call    rtm_FE23
 
 loc_253A2:                              ; CODE XREF: rtm_FE49+63↑j
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    2
 rtm_FE49        endp
 
@@ -58148,7 +58158,7 @@ rtm_FE49        endp
 rtm_FE27        proc far                ; CODE XREF: rtm_FE59+11↓P
                                         ; sub_274C4+11↓P
                 mov     cx, 0Ch         ; int 3Fh run-time entry FE27
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 mov     ax, ds:1F5Ch
                 and     ax, ax
                 jnz     short loc_253BF
@@ -58514,7 +58524,7 @@ loc_255F3:                              ; CODE XREF: rtm_FE27+241↑j
 
 loc_255FB:                              ; CODE XREF: rtm_FE27+F↑j
                                         ; rtm_FE27+3A↑j ...
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    2
 rtm_FE27        endp ; sp-analysis failed
 
@@ -58529,7 +58539,7 @@ rtm_FE27        endp ; sp-analysis failed
 sub_25606       proc far                ; CODE XREF: rtm_FE42+51↓P
                                         ; rtm_FE43+14↓P
                 mov     cx, 14h
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 call    rtm_FE1F
                 mov     [bp-0Ch], ax
                 mov     ax, [bp-0Ch]
@@ -58603,10 +58613,10 @@ loc_2569C:                              ; CODE XREF: sub_25606+93↑j
 ; ---------------------------------------------------------------------------
 
 loc_256A5:                              ; CODE XREF: sub_25606+9A↑j
-                call    rtm_FE5B
+                call    screenRefresh   ; engine: post-draw cursor/row update (divides a packed row*256+col by 100h). [name provisional]
 
 loc_256AA:                              ; CODE XREF: sub_25606+9C↑j
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    0
 sub_25606       endp
 
@@ -58621,12 +58631,12 @@ sub_25606       endp
 rtm_FE59        proc far                ; CODE XREF: rtm_FE44:loc_251F1↑P
                                         ; rtm_FE52:loc_2584F↓P ...
                 mov     cx, 2           ; int 3Fh run-time entry FE59
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 mov     word ptr [bp-0Ch], 12h
                 lea     ax, [bp-0Ch]
                 push    ax
                 call    rtm_FE27
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    0
 rtm_FE59        endp
 
@@ -58640,7 +58650,7 @@ rtm_FE59        endp
 
 rtm_FE51        proc far
                 mov     cx, 0Ch         ; int 3Fh run-time entry FE51
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 mov     si, [bp+6]
                 mov     ax, [si]
                 or      ax, ds:15DEh
@@ -58692,7 +58702,7 @@ loc_25747:                              ; CODE XREF: rtm_FE51+6C↑j
 
 loc_2574A:                              ; CODE XREF: rtm_FE51+15↑j
                                         ; rtm_FE51+6E↑j
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    2
 rtm_FE51        endp
 
@@ -58706,7 +58716,7 @@ rtm_FE51        endp
 
 rtm_FE28        proc far                ; CODE XREF: rtm_FE27+113↑P
                 mov     cx, 4           ; int 3Fh run-time entry FE28
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 mov     ax, ds:1F5Ch
                 and     ax, ax
                 jnz     short loc_25767
@@ -58761,7 +58771,7 @@ loc_257AC:                              ; CODE XREF: rtm_FE28+4E↑j
                 call    sub_20F38
 
 loc_257B9:                              ; CODE XREF: rtm_FE28+F↑j
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    4
 rtm_FE28        endp
 
@@ -58775,7 +58785,7 @@ rtm_FE28        endp
 
 rtm_FE52        proc far
                 mov     cx, 0Eh         ; int 3Fh run-time entry FE52
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
 
 loc_257CC:                              ; CODE XREF: rtm_FE52+56↓j
                                         ; rtm_FE52+90↓j
@@ -58786,12 +58796,12 @@ loc_257CC:                              ; CODE XREF: rtm_FE52+56↓j
                 push    ax
                 lea     ax, [bp-10h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-10h]
                 push    ax
                 lea     ax, [bp-14h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 mov     si, [bp+6]
                 cmp     word ptr [si], 0
                 mov     ax, 0
@@ -58856,11 +58866,11 @@ loc_25860:                              ; CODE XREF: rtm_FE52+67↑j
 loc_25866:                              ; CODE XREF: rtm_FE52+99↑j
                 lea     ax, [bp-10h]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 lea     ax, [bp-14h]
                 push    ax
-                call    rtm_D1
-                call    far ptr rtm_F4
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    2
 rtm_FE52        endp
 
@@ -58874,7 +58884,7 @@ rtm_FE52        endp
 
 rtm_FE20        proc far
                 mov     cx, 2           ; int 3Fh run-time entry FE20
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 mov     si, 1E2Ah
                 xor     bx, bx
                 add     bx, [si+0Ah]
@@ -58893,7 +58903,7 @@ rtm_FE20        proc far
                 mov     ax, bx
                 mov     [bp-0Ch], ax
                 mov     ax, [bp-0Ch]
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    2
 rtm_FE20        endp
 
@@ -58907,7 +58917,7 @@ rtm_FE20        endp
 
 rtm_FE41        proc far
                 mov     cx, 6           ; int 3Fh run-time entry FE41
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 mov     si, [bp+8]
                 cmp     word ptr [si], 0
                 mov     ax, 0
@@ -58956,8 +58966,8 @@ loc_258FF:                              ; CODE XREF: rtm_FE41+33↑j
 
 loc_2592E:                              ; CODE XREF: rtm_FE41+35↑j
                 call    rtm_FE59
-                call    rtm_FE5B
-                call    rtm_FE5B
+                call    screenRefresh   ; engine: post-draw cursor/row update (divides a packed row*256+col by 100h). [name provisional]
+                call    screenRefresh   ; engine: post-draw cursor/row update (divides a packed row*256+col by 100h). [name provisional]
                 mov     ax, 17F0h
                 push    ax
                 mov     si, [bp+8]
@@ -58969,20 +58979,20 @@ loc_2592E:                              ; CODE XREF: rtm_FE41+35↑j
                 push    ax
                 call    rtm_3C
                 push    ax
-                call    rtm_C3
+                call    basStrConcat    ; string concatenation (`a$ + b$`): sums the two operand lengths, allocates, copies both. args (a, b).
                 push    ax
                 lea     ax, [bp-10h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-10h]
                 push    ax
-                call    rtm_FE26
+                call    drawString      ; engine: draw one position-coded screen string. arg (string); body is `basProcEnter / drawStringInner / screenRefresh / basProcLeave`.
                 lea     ax, [bp-10h]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
 
 loc_25976:                              ; CODE XREF: rtm_FE41+64↑j
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    4
 rtm_FE41        endp
 
@@ -58996,7 +59006,7 @@ rtm_FE41        endp
 
 rtm_FE62        proc far                ; DATA XREF: seg003:02E4↑o
                 mov     cx, 22h ; '"'   ; int 3Fh run-time entry FE62
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 mov     si, 1F5Eh
                 mov     bx, 2
                 add     bx, [si+0Ah]
@@ -59037,7 +59047,7 @@ rtm_FE62        proc far                ; DATA XREF: seg003:02E4↑o
                 xor     bx, bx
                 add     bx, [si+0Ah]
                 push    bx
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 mov     word ptr ds:1FE8h, 0
                 lea     ax, [bp-0Eh]
                 push    ax
@@ -59049,7 +59059,7 @@ rtm_FE62        proc far                ; DATA XREF: seg003:02E4↑o
                 push    ax
                 lea     ax, [bp-12h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-0Eh]
                 push    ax
                 mov     ax, 1
@@ -59058,7 +59068,7 @@ rtm_FE62        proc far                ; DATA XREF: seg003:02E4↑o
                 push    ax
                 lea     ax, [bp-16h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-0Eh]
                 push    ax
                 mov     ax, 2
@@ -59069,7 +59079,7 @@ rtm_FE62        proc far                ; DATA XREF: seg003:02E4↑o
                 push    ax
                 lea     ax, [bp-1Ah]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 nop
 
 loc_25A4C:                              ; CODE XREF: rtm_FE62+107↓j
@@ -59276,17 +59286,17 @@ loc_25C2D:                              ; CODE XREF: rtm_FE62+125↑j
                                         ; rtm_FE62+298↑j
                 lea     ax, [bp-16h]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 lea     ax, [bp-1Ah]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 lea     ax, [bp-12h]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 lea     ax, [bp-0Eh]
                 push    ax
-                call    rtm_D1
-                call    far ptr rtm_F4
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    0
 rtm_FE62        endp ; sp-analysis failed
 
@@ -59300,10 +59310,10 @@ rtm_FE62        endp ; sp-analysis failed
 
 rtm_FE4E        proc far
                 mov     cx, 0           ; int 3Fh run-time entry FE4E
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 call    rtm_FE05
                 call    rtm_FE2C
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    0
 rtm_FE4E        endp
 
@@ -59317,7 +59327,7 @@ rtm_FE4E        endp
 
 rtm_FE4D        proc far
                 mov     cx, 0           ; int 3Fh run-time entry FE4D
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 call    rtm_FE04
                 mov     si, 1E58h
                 mov     bx, 21Ah
@@ -59325,7 +59335,7 @@ rtm_FE4D        proc far
                 mov     es, word ptr [si+2]
                 mov     ax, ds:1F5Ah
                 mov     es:[bx], ax
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    4
 rtm_FE4D        endp
 
@@ -59339,7 +59349,7 @@ rtm_FE4D        endp
 
 rtm_FE3C        proc far
                 mov     cx, 0C2h        ; int 3Fh run-time entry FE3C
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 call    rtm_FE24
                 mov     [bp-0Ch], ax
                 mov     ax, [bp-0Ch]
@@ -59368,13 +59378,13 @@ rtm_FE3C        proc far
                 push    ax
                 lea     ax, [bp-1Eh]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-1Eh]
                 push    ax
-                call    rtm_FE25
+                call    drawStringInner ; engine: parse + emit a position-coded string (copies it local via basStrAssign, walks it, writes cells).
                 lea     ax, [bp-1Eh]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 mov     word ptr [bp-20h], 1
                 mov     word ptr [bp-22h], 0Bh
                 lea     ax, [bp-20h]
@@ -59386,13 +59396,13 @@ rtm_FE3C        proc far
                 push    ax
                 lea     ax, [bp-26h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-26h]
                 push    ax
-                call    rtm_FE25
+                call    drawStringInner ; engine: parse + emit a position-coded string (copies it local via basStrAssign, walks it, writes cells).
                 lea     ax, [bp-26h]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 mov     word ptr [bp-28h], 3
                 mov     word ptr [bp-2Ah], 3
                 lea     ax, [bp-28h]
@@ -59406,35 +59416,35 @@ rtm_FE3C        proc far
                 push    ax
                 call    rtm_E0
                 push    ax
-                call    rtm_C3
+                call    basStrConcat    ; string concatenation (`a$ + b$`): sums the two operand lengths, allocates, copies both. args (a, b).
                 push    ax
                 lea     ax, [bp-2Eh]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-2Eh]
                 push    ax
-                call    rtm_FE26
+                call    drawString      ; engine: draw one position-coded screen string. arg (string); body is `basProcEnter / drawStringInner / screenRefresh / basProcLeave`.
                 lea     ax, [bp-2Eh]
                 push    ax
-                call    rtm_D1
-                call    rtm_FE5B
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
+                call    screenRefresh   ; engine: post-draw cursor/row update (divides a packed row*256+col by 100h). [name provisional]
                 mov     ax, 185Ah
                 push    ax
                 push    word ptr ds:1AE0h
                 call    rtm_D2
                 push    ax
-                call    rtm_C3
+                call    basStrConcat    ; string concatenation (`a$ + b$`): sums the two operand lengths, allocates, copies both. args (a, b).
                 push    ax
                 lea     ax, [bp-32h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-32h]
                 push    ax
-                call    rtm_FE26
+                call    drawString      ; engine: draw one position-coded screen string. arg (string); body is `basProcEnter / drawStringInner / screenRefresh / basProcLeave`.
                 lea     ax, [bp-32h]
                 push    ax
-                call    rtm_D1
-                call    rtm_FE5B
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
+                call    screenRefresh   ; engine: post-draw cursor/row update (divides a packed row*256+col by 100h). [name provisional]
                 mov     ax, 1864h
                 push    ax
                 mov     bx, 1AF4h
@@ -59445,21 +59455,21 @@ rtm_FE3C        proc far
                 call    rtm_FF50
                 call    loc_1B881+1
                 push    ax
-                call    rtm_C3
+                call    basStrConcat    ; string concatenation (`a$ + b$`): sums the two operand lengths, allocates, copies both. args (a, b).
                 push    ax
                 mov     ax, 186Eh
                 push    ax
-                call    rtm_C3
+                call    basStrConcat    ; string concatenation (`a$ + b$`): sums the two operand lengths, allocates, copies both. args (a, b).
                 push    ax
                 lea     ax, [bp-36h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-36h]
                 push    ax
-                call    rtm_FE25
+                call    drawStringInner ; engine: parse + emit a position-coded string (copies it local via basStrAssign, walks it, writes cells).
                 lea     ax, [bp-36h]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 mov     word ptr [bp-38h], 16h
                 mov     word ptr [bp-3Ah], 0Fh
                 mov     word ptr [bp-3Ch], 1
@@ -59485,81 +59495,81 @@ rtm_FE3C        proc far
                 push    word ptr ds:1AC0h
                 call    rtm_D2
                 push    ax
-                call    rtm_C3
+                call    basStrConcat    ; string concatenation (`a$ + b$`): sums the two operand lengths, allocates, copies both. args (a, b).
                 push    ax
                 lea     ax, [bp-46h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-46h]
                 push    ax
-                call    rtm_FE26
+                call    drawString      ; engine: draw one position-coded screen string. arg (string); body is `basProcEnter / drawStringInner / screenRefresh / basProcLeave`.
                 lea     ax, [bp-46h]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 mov     ax, 1888h
                 push    ax
                 push    word ptr ds:1B08h
                 call    rtm_D2
                 push    ax
-                call    rtm_C3
+                call    basStrConcat    ; string concatenation (`a$ + b$`): sums the two operand lengths, allocates, copies both. args (a, b).
                 push    ax
                 lea     ax, [bp-4Ah]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-4Ah]
                 push    ax
-                call    rtm_FE26
+                call    drawString      ; engine: draw one position-coded screen string. arg (string); body is `basProcEnter / drawStringInner / screenRefresh / basProcLeave`.
                 lea     ax, [bp-4Ah]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 mov     ax, 1898h
                 push    ax
                 push    word ptr ds:1ADEh
                 call    rtm_D2
                 push    ax
-                call    rtm_C3
+                call    basStrConcat    ; string concatenation (`a$ + b$`): sums the two operand lengths, allocates, copies both. args (a, b).
                 push    ax
                 lea     ax, [bp-4Eh]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-4Eh]
                 push    ax
-                call    rtm_FE26
+                call    drawString      ; engine: draw one position-coded screen string. arg (string); body is `basProcEnter / drawStringInner / screenRefresh / basProcLeave`.
                 lea     ax, [bp-4Eh]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 mov     ax, 18A8h
                 push    ax
                 push    word ptr ds:1ACCh
                 call    rtm_D2
                 push    ax
-                call    rtm_C3
+                call    basStrConcat    ; string concatenation (`a$ + b$`): sums the two operand lengths, allocates, copies both. args (a, b).
                 push    ax
                 lea     ax, [bp-52h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-52h]
                 push    ax
-                call    rtm_FE26
+                call    drawString      ; engine: draw one position-coded screen string. arg (string); body is `basProcEnter / drawStringInner / screenRefresh / basProcLeave`.
                 lea     ax, [bp-52h]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 mov     ax, 18B8h
                 push    ax
                 push    word ptr ds:1AF0h
                 call    rtm_D2
                 push    ax
-                call    rtm_C3
+                call    basStrConcat    ; string concatenation (`a$ + b$`): sums the two operand lengths, allocates, copies both. args (a, b).
                 push    ax
                 lea     ax, [bp-56h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-56h]
                 push    ax
-                call    rtm_FE26
+                call    drawString      ; engine: draw one position-coded screen string. arg (string); body is `basProcEnter / drawStringInner / screenRefresh / basProcLeave`.
                 lea     ax, [bp-56h]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 call    rtm_FE43
                 mov     word ptr [bp-58h], 0Bh
                 mov     word ptr [bp-5Ah], 5
@@ -59572,13 +59582,13 @@ rtm_FE3C        proc far
                 push    ax
                 lea     ax, [bp-5Eh]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-5Eh]
                 push    ax
-                call    rtm_FE25
+                call    drawStringInner ; engine: parse + emit a position-coded string (copies it local via basStrAssign, walks it, writes cells).
                 lea     ax, [bp-5Eh]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 mov     word ptr [bp-60h], 19h
                 lea     ax, [bp-60h]
                 push    ax
@@ -59587,13 +59597,13 @@ rtm_FE3C        proc far
                 push    ax
                 lea     ax, [bp-64h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-64h]
                 push    ax
-                call    rtm_FE25
+                call    drawStringInner ; engine: parse + emit a position-coded string (copies it local via basStrAssign, walks it, writes cells).
                 lea     ax, [bp-64h]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 mov     word ptr [bp-66h], 0Dh
                 mov     word ptr [bp-68h], 5
                 lea     ax, [bp-66h]
@@ -59647,7 +59657,7 @@ loc_2600A:                              ; CODE XREF: rtm_FE3C+362↑j
                 lea     ax, [bp-74h]
                 push    ax
                 mov     [bp-76h], bx
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 mov     si, 1B68h
                 mov     bx, [bp-76h]
                 add     bx, [si+0Ah]
@@ -59661,7 +59671,7 @@ loc_2600A:                              ; CODE XREF: rtm_FE3C+362↑j
                 push    bx
                 lea     ax, [bp-7Ah]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 mov     ax, [bp-7Ch]
                 cmp     ax, ds:1AFCh
                 jz      short loc_26061
@@ -59675,23 +59685,23 @@ loc_26061:                              ; CODE XREF: rtm_FE3C+3B9↑j
                 push    ax
                 lea     ax, [bp-74h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-7Ah]
                 push    ax
                 call    rtm_E0
                 push    ax
                 mov     ax, 17EAh
                 push    ax
-                call    rtm_C3
+                call    basStrConcat    ; string concatenation (`a$ + b$`): sums the two operand lengths, allocates, copies both. args (a, b).
                 push    ax
                 lea     ax, [bp-7Ah]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
 
 loc_26091:                              ; CODE XREF: rtm_FE3C+3BB↑j
                 lea     ax, [bp-74h]
                 push    ax
-                call    rtm_FE25
+                call    drawStringInner ; engine: parse + emit a position-coded string (copies it local via basStrAssign, walks it, writes cells).
                 mov     word ptr [bp-7Eh], 19h
                 lea     ax, [bp-7Eh]
                 push    ax
@@ -59700,13 +59710,13 @@ loc_26091:                              ; CODE XREF: rtm_FE3C+3BB↑j
                 push    ax
                 lea     ax, [bp-82h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-82h]
                 push    ax
-                call    rtm_FE26
+                call    drawString      ; engine: draw one position-coded screen string. arg (string); body is `basProcEnter / drawStringInner / screenRefresh / basProcLeave`.
                 lea     ax, [bp-82h]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
 
 loc_260CA:                              ; CODE XREF: rtm_FE3C+364↑j
                 mov     ax, [bp-7Ch]
@@ -59720,7 +59730,7 @@ loc_260CE:                              ; CODE XREF: rtm_FE3C+34B↑j
 ; ---------------------------------------------------------------------------
 
 loc_260D9:                              ; CODE XREF: rtm_FE3C+431↑j
-                call    rtm_FE5B
+                call    screenRefresh   ; engine: post-draw cursor/row update (divides a packed row*256+col by 100h). [name provisional]
                 mov     ax, 5
                 jmp     loc_261AB
 ; ---------------------------------------------------------------------------
@@ -59752,7 +59762,7 @@ loc_260FC:                              ; CODE XREF: rtm_FE3C+454↑j
                 lea     ax, [bp-74h]
                 push    ax
                 mov     [bp-84h], bx
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 mov     si, 1B68h
                 mov     bx, [bp-84h]
                 add     bx, [si+0Ah]
@@ -59766,7 +59776,7 @@ loc_260FC:                              ; CODE XREF: rtm_FE3C+454↑j
                 push    bx
                 lea     ax, [bp-7Ah]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 mov     ax, [bp-7Ch]
                 cmp     ax, ds:1AEAh
                 jz      short loc_26155
@@ -59780,30 +59790,30 @@ loc_26155:                              ; CODE XREF: rtm_FE3C+4AD↑j
                 push    ax
                 lea     ax, [bp-74h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-7Ah]
                 push    ax
                 call    rtm_E0
                 push    ax
                 mov     ax, 17EAh
                 push    ax
-                call    rtm_C3
+                call    basStrConcat    ; string concatenation (`a$ + b$`): sums the two operand lengths, allocates, copies both. args (a, b).
                 push    ax
                 lea     ax, [bp-7Ah]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
 
 loc_26185:                              ; CODE XREF: rtm_FE3C+4AF↑j
                 lea     ax, [bp-74h]
                 push    ax
-                call    rtm_FE25
+                call    drawStringInner ; engine: parse + emit a position-coded string (copies it local via basStrAssign, walks it, writes cells).
                 mov     word ptr [bp-86h], 19h
                 lea     ax, [bp-86h]
                 push    ax
                 call    rtm_FE1E
                 lea     ax, [bp-7Ah]
                 push    ax
-                call    rtm_FE26
+                call    drawString      ; engine: draw one position-coded screen string. arg (string); body is `basProcEnter / drawStringInner / screenRefresh / basProcLeave`.
 
 loc_261A7:                              ; CODE XREF: rtm_FE3C+456↑j
                 mov     ax, [bp-7Ch]
@@ -59843,13 +59853,13 @@ loc_261B6:                              ; CODE XREF: rtm_FE3C+50E↑j
                 push    ax
                 lea     ax, [bp-96h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-96h]
                 push    ax
-                call    rtm_FE25
+                call    drawStringInner ; engine: parse + emit a position-coded string (copies it local via basStrAssign, walks it, writes cells).
                 lea     ax, [bp-96h]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 mov     word ptr [bp-98h], 0Ah
                 mov     word ptr [bp-9Ah], 3
                 lea     ax, [bp-98h]
@@ -59876,7 +59886,7 @@ loc_261B6:                              ; CODE XREF: rtm_FE3C+50E↑j
                 push    ax
                 lea     ax, [bp-7Ah]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 xor     ax, ax
                 jmp     loc_2633E
 ; ---------------------------------------------------------------------------
@@ -59904,7 +59914,7 @@ loc_262AA:                              ; CODE XREF: rtm_FE3C+602↑j
                 lea     ax, [bp-74h]
                 push    ax
                 mov     [bp-0A4h], bx
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 mov     si, 1BC4h
                 mov     bx, [bp-0A4h]
                 add     bx, [si+0Ah]
@@ -59931,24 +59941,24 @@ loc_262F6:                              ; CODE XREF: rtm_FE3C+64E↑j
                 push    ax
                 mov     ax, 17EAh
                 push    ax
-                call    rtm_C3
+                call    basStrConcat    ; string concatenation (`a$ + b$`): sums the two operand lengths, allocates, copies both. args (a, b).
                 push    ax
                 lea     ax, [bp-74h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
 
 loc_26313:                              ; CODE XREF: rtm_FE3C+650↑j
-                call    rtm_FE5B
+                call    screenRefresh   ; engine: post-draw cursor/row update (divides a packed row*256+col by 100h). [name provisional]
                 lea     ax, [bp-7Ah]
                 push    ax
-                call    rtm_FE25
+                call    drawStringInner ; engine: parse + emit a position-coded string (copies it local via basStrAssign, walks it, writes cells).
                 mov     word ptr [bp-0A6h], 7
                 lea     ax, [bp-0A6h]
                 push    ax
                 call    rtm_FE1E
                 lea     ax, [bp-74h]
                 push    ax
-                call    rtm_FE25
+                call    drawStringInner ; engine: parse + emit a position-coded string (copies it local via basStrAssign, walks it, writes cells).
 
 loc_2633A:                              ; CODE XREF: rtm_FE3C+604↑j
                 mov     ax, [bp-7Ch]
@@ -60015,7 +60025,7 @@ loc_263BE:                              ; CODE XREF: rtm_FE3C+716↑j
                 call    far ptr rtm_BB
                 lea     ax, [bp-7Ah]
                 push    ax
-                call    rtm_FE25
+                call    drawStringInner ; engine: parse + emit a position-coded string (copies it local via basStrAssign, walks it, writes cells).
                 mov     word ptr [bp-0B6h], 19h
                 lea     ax, [bp-0B6h]
                 push    ax
@@ -60030,17 +60040,17 @@ loc_263BE:                              ; CODE XREF: rtm_FE3C+716↑j
                 lea     ax, [bp-0BAh]
                 push    ax
                 mov     [bp-0BCh], dx
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-0BAh]
                 push    ax
-                call    rtm_FE26
+                call    drawString      ; engine: draw one position-coded screen string. arg (string); body is `basProcEnter / drawStringInner / screenRefresh / basProcLeave`.
                 lea     ax, [bp-0BAh]
                 push    ax
                 mov     si, 1D66h
                 mov     bx, [bp-0BCh]
                 add     bx, [si+0Ah]
                 push    bx
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 mov     word ptr [bp-0B4h], 1
                 mov     word ptr [bp-0BEh], 15h
                 lea     ax, [bp-0BEh]
@@ -60108,7 +60118,7 @@ loc_264AA:                              ; CODE XREF: rtm_FE3C+802↑j
                 lea     ax, [bp-74h]
                 push    ax
                 mov     [bp-0C6h], bx
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 mov     si, 1BC4h
                 mov     bx, [bp-0C6h]
                 add     bx, [si+0Ah]
@@ -60136,24 +60146,24 @@ loc_264F9:                              ; CODE XREF: rtm_FE3C+851↑j
                 push    ax
                 mov     ax, 17EAh
                 push    ax
-                call    rtm_C3
+                call    basStrConcat    ; string concatenation (`a$ + b$`): sums the two operand lengths, allocates, copies both. args (a, b).
                 push    ax
                 lea     ax, [bp-74h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
 
 loc_26516:                              ; CODE XREF: rtm_FE3C+853↑j
-                call    rtm_FE5B
+                call    screenRefresh   ; engine: post-draw cursor/row update (divides a packed row*256+col by 100h). [name provisional]
                 lea     ax, [bp-7Ah]
                 push    ax
-                call    rtm_FE25
+                call    drawStringInner ; engine: parse + emit a position-coded string (copies it local via basStrAssign, walks it, writes cells).
                 mov     word ptr [bp-0C8h], 19h
                 lea     ax, [bp-0C8h]
                 push    ax
                 call    rtm_FE1E
                 lea     ax, [bp-74h]
                 push    ax
-                call    rtm_FE25
+                call    drawStringInner ; engine: parse + emit a position-coded string (copies it local via basStrAssign, walks it, writes cells).
 
 loc_2653D:                              ; CODE XREF: rtm_FE3C+804↑j
                 mov     ax, [bp-7Ch]
@@ -60180,14 +60190,14 @@ loc_2654C:                              ; CODE XREF: rtm_FE3C+8A4↑j
                 call    rtm_FE4A
                 lea     ax, [bp-0BAh]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 lea     ax, [bp-74h]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 lea     ax, [bp-7Ah]
                 push    ax
-                call    rtm_D1
-                call    far ptr rtm_F4
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    0
 rtm_FE3C        endp
 
@@ -60201,7 +60211,7 @@ rtm_FE3C        endp
 
 rtm_FE4F        proc far
                 mov     cx, 8           ; int 3Fh run-time entry FE4F
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 mov     word ptr [bp-0Ch], 0
                 mov     word ptr [bp-0Eh], 4
                 lea     ax, [bp-0Ch]
@@ -60216,7 +60226,7 @@ rtm_FE4F        proc far
                 lea     ax, [bp-12h]
                 push    ax
                 call    rtm_FE50
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    0
 rtm_FE4F        endp
 
@@ -60230,7 +60240,7 @@ rtm_FE4F        endp
 
 rtm_FE61        proc far                ; DATA XREF: seg003:02E0↑o
                 mov     cx, 0Ch         ; int 3Fh run-time entry FE61
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 mov     ax, 1
                 push    ax
                 push    ax
@@ -60260,14 +60270,14 @@ rtm_FE61        proc far                ; DATA XREF: seg003:02E0↑o
                 push    ax
                 lea     ax, [bp-16h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-16h]
                 push    ax
-                call    rtm_FE25
+                call    drawStringInner ; engine: parse + emit a position-coded string (copies it local via basStrAssign, walks it, writes cells).
                 lea     ax, [bp-16h]
                 push    ax
-                call    rtm_D1
-                call    far ptr rtm_F4
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    0
 rtm_FE61        endp
 
@@ -60281,8 +60291,8 @@ rtm_FE61        endp
 
 rtm_FE16        proc far                ; DATA XREF: seg003:01B4↑o
                 mov     cx, 0           ; int 3Fh run-time entry FE16
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
-                call    far ptr rtm_F4
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    0
 rtm_FE16        endp
 
@@ -60296,24 +60306,24 @@ rtm_FE16        endp
 
 rtm_FE3D        proc far
                 mov     cx, 34h ; '4'   ; int 3Fh run-time entry FE3D
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 mov     ax, 1908h
                 push    ax
                 mov     ax, 0Dh
                 push    ax
                 call    rtm_32
                 push    ax
-                call    rtm_C3
+                call    basStrConcat    ; string concatenation (`a$ + b$`): sums the two operand lengths, allocates, copies both. args (a, b).
                 push    ax
                 mov     ax, 8
                 push    ax
                 call    rtm_32
                 push    ax
-                call    rtm_C3
+                call    basStrConcat    ; string concatenation (`a$ + b$`): sums the two operand lengths, allocates, copies both. args (a, b).
                 push    ax
                 lea     ax, [bp-12h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 mov     si, [bp+6]
                 cmp     word ptr [si], 0
                 jg      short loc_266A7
@@ -60326,32 +60336,32 @@ loc_266A7:                              ; CODE XREF: rtm_FE3D+3B↑j
                 push    word ptr [si]
                 call    rtm_D2
                 push    ax
-                call    rtm_C3
+                call    basStrConcat    ; string concatenation (`a$ + b$`): sums the two operand lengths, allocates, copies both. args (a, b).
                 push    ax
                 mov     ax, 192Ah
                 push    ax
-                call    rtm_C3
+                call    basStrConcat    ; string concatenation (`a$ + b$`): sums the two operand lengths, allocates, copies both. args (a, b).
                 push    ax
                 lea     ax, [bp-0Eh]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-0Eh]
                 push    ax
-                call    rtm_FE26
+                call    drawString      ; engine: draw one position-coded screen string. arg (string); body is `basProcEnter / drawStringInner / screenRefresh / basProcLeave`.
                 lea     ax, [bp-0Eh]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 mov     ax, 1936h
                 push    ax
                 lea     ax, [bp-16h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-16h]
                 push    ax
-                call    rtm_FE25
+                call    drawStringInner ; engine: parse + emit a position-coded string (copies it local via basStrAssign, walks it, writes cells).
                 lea     ax, [bp-16h]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 mov     si, [bp+6]
                 mov     ax, [si]
                 mov     [bp-18h], ax
@@ -60374,13 +60384,13 @@ loc_2671B:                              ; CODE XREF: rtm_FE3D+AF↑j
                 push    ax
                 lea     ax, [bp-1Ch]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-1Ch]
                 push    ax
-                call    rtm_FE25
+                call    drawStringInner ; engine: parse + emit a position-coded string (copies it local via basStrAssign, walks it, writes cells).
                 lea     ax, [bp-1Ch]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 mov     word ptr [bp-18h], 7FFFh
 
 loc_2673F:                              ; CODE XREF: rtm_FE3D+9E↑j
@@ -60399,17 +60409,17 @@ loc_2674E:                              ; CODE XREF: rtm_FE3D+239↓j
                 push    ax
                 mov     ax, 17D0h
                 push    ax
-                call    rtm_C3
+                call    basStrConcat    ; string concatenation (`a$ + b$`): sums the two operand lengths, allocates, copies both. args (a, b).
                 push    ax
                 lea     ax, [bp-24h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-24h]
                 push    ax
-                call    rtm_FE25
+                call    drawStringInner ; engine: parse + emit a position-coded string (copies it local via basStrAssign, walks it, writes cells).
                 lea     ax, [bp-24h]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 mov     word ptr [bp-2Ah], 0
                 lea     ax, [bp-2Ah]
                 push    ax
@@ -60417,12 +60427,12 @@ loc_2674E:                              ; CODE XREF: rtm_FE3D+239↓j
                 push    ax
                 lea     ax, [bp-2Eh]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-2Eh]
                 push    ax
                 lea     ax, [bp-32h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-32h]
                 push    ax
                 mov     ax, 1664h
@@ -60455,11 +60465,11 @@ loc_267D6:                              ; CODE XREF: rtm_FE3D+16A↑j
                 push    ax
                 lea     ax, [bp-32h]
                 push    ax
-                call    rtm_C3
+                call    basStrConcat    ; string concatenation (`a$ + b$`): sums the two operand lengths, allocates, copies both. args (a, b).
                 push    ax
                 lea     ax, [bp-28h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
 
 loc_267ED:                              ; CODE XREF: rtm_FE3D+16C↑j
                 cmp     word ptr [bp-34h], 0Ch
@@ -60498,7 +60508,7 @@ loc_26819:                              ; CODE XREF: rtm_FE3D+1AD↑j
                 push    ax
                 lea     ax, [bp-28h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
 
 loc_26837:                              ; CODE XREF: rtm_FE3D+1AF↑j
                 jmp     loc_2683F
@@ -60533,7 +60543,7 @@ loc_26874:                              ; CODE XREF: rtm_FE3D+208↑j
                 push    ax
                 lea     ax, [bp-28h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
 
 loc_2688B:                              ; CODE XREF: rtm_FE3D+20A↑j
                 mov     ax, 0Dh
@@ -60554,18 +60564,18 @@ loc_268A3:                              ; CODE XREF: rtm_FE3D+237↑j
                 mov     [bp-3Eh], ax
                 lea     ax, [bp-2Eh]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 lea     ax, [bp-12h]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 lea     ax, [bp-32h]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 lea     ax, [bp-28h]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 mov     ax, [bp-3Eh]
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    2
 rtm_FE3D        endp
 
@@ -60579,8 +60589,8 @@ rtm_FE3D        endp
 
 rtm_FE03        proc far                ; DATA XREF: seg003:0168↑o
                 mov     cx, 0           ; int 3Fh run-time entry FE03
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
-                call    far ptr rtm_F4
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    0
 rtm_FE03        endp
 
@@ -60594,7 +60604,7 @@ rtm_FE03        endp
 
 rtm_FE38        proc far
                 mov     cx, 0           ; int 3Fh run-time entry FE38
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 mov     si, [bp+8]
                 mov     ax, [si]
                 and     ax, ax
@@ -60637,7 +60647,7 @@ loc_2692E:                              ; CODE XREF: rtm_FE38+11↑j
                 mov     ds:1AF2h, ax
 
 loc_2695C:                              ; CODE XREF: rtm_FE38+33↑j
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    4
 rtm_FE38        endp
 
@@ -60648,17 +60658,18 @@ rtm_FE38        endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; engine: draw one position-coded screen string. arg (string); body is `basProcEnter / drawStringInner / screenRefresh / basProcLeave`.
 
-rtm_FE26        proc far                ; CODE XREF: rtm_FE63+415↑P
+drawString      proc far                ; CODE XREF: rtm_FE63+415↑P
                                         ; rtm_FE63+45E↑P ...
                 mov     cx, 0           ; int 3Fh run-time entry FE26
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 push    word ptr [bp+6]
-                call    rtm_FE25
-                call    rtm_FE5B
-                call    far ptr rtm_F4
+                call    drawStringInner ; engine: parse + emit a position-coded string (copies it local via basStrAssign, walks it, writes cells).
+                call    screenRefresh   ; engine: post-draw cursor/row update (divides a packed row*256+col by 100h). [name provisional]
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    2
-rtm_FE26        endp
+drawString      endp
 
 ; ---------------------------------------------------------------------------
                 db 0E9h
@@ -60671,7 +60682,7 @@ rtm_FE26        endp
 rtm_FE21        proc far                ; CODE XREF: rtm_FE55+8↓P
                                         ; rtm_FE56+8↓P
                 mov     cx, 20h ; ' '   ; int 3Fh run-time entry FE21
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 call    rtm_FE24
                 mov     [bp-0Ch], ax
                 mov     ax, [bp-0Ch]
@@ -60682,7 +60693,7 @@ rtm_FE21        proc far                ; CODE XREF: rtm_FE55+8↓P
                 push    ax
                 lea     ax, [bp-16h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 push    word ptr ds:1ADAh
                 call    rtm_D2
                 push    ax
@@ -60703,17 +60714,17 @@ rtm_FE21        proc far                ; CODE XREF: rtm_FE55+8↓P
                 push    ax
                 lea     ax, [bp-16h]
                 push    ax
-                call    rtm_C3
+                call    basStrConcat    ; string concatenation (`a$ + b$`): sums the two operand lengths, allocates, copies both. args (a, b).
                 push    ax
                 lea     ax, [bp-1Ah]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-1Ah]
                 push    ax
-                call    rtm_FE25
+                call    drawStringInner ; engine: parse + emit a position-coded string (copies it local via basStrAssign, walks it, writes cells).
                 lea     ax, [bp-1Ah]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 mov     bx, 1ACEh
                 call    rtm_FF4B
                 call    rtm_FF27
@@ -60739,17 +60750,17 @@ rtm_FE21        proc far                ; CODE XREF: rtm_FE55+8↓P
                 push    ax
                 lea     ax, [bp-16h]
                 push    ax
-                call    rtm_C3
+                call    basStrConcat    ; string concatenation (`a$ + b$`): sums the two operand lengths, allocates, copies both. args (a, b).
                 push    ax
                 lea     ax, [bp-22h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-22h]
                 push    ax
-                call    rtm_FE25
+                call    drawStringInner ; engine: parse + emit a position-coded string (copies it local via basStrAssign, walks it, writes cells).
                 lea     ax, [bp-22h]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 push    word ptr ds:1AD4h
                 push    word ptr ds:1AD2h
                 call    rtm_D3
@@ -60771,24 +60782,24 @@ rtm_FE21        proc far                ; CODE XREF: rtm_FE55+8↓P
                 push    ax
                 lea     ax, [bp-16h]
                 push    ax
-                call    rtm_C3
+                call    basStrConcat    ; string concatenation (`a$ + b$`): sums the two operand lengths, allocates, copies both. args (a, b).
                 push    ax
                 lea     ax, [bp-2Ah]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-2Ah]
                 push    ax
-                call    rtm_FE25
+                call    drawStringInner ; engine: parse + emit a position-coded string (copies it local via basStrAssign, walks it, writes cells).
                 lea     ax, [bp-2Ah]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 lea     ax, [bp-12h]
                 push    ax
                 call    rtm_FE23
                 lea     ax, [bp-16h]
                 push    ax
-                call    rtm_D1
-                call    far ptr rtm_F4
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    0
 rtm_FE21        endp
 
@@ -60803,7 +60814,7 @@ rtm_FE21        endp
 rtm_FE5A        proc far                ; CODE XREF: rtm_FE4C+48↓P
                                         ; DATA XREF: seg003:02C4↑o ...
                 mov     cx, 5Eh ; '^'   ; int 3Fh run-time entry FE5A
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 mov     word ptr [bp-0Eh], 0
                 mov     si, [bp+6]
                 mov     ax, [si]
@@ -60893,18 +60904,18 @@ loc_26B85:                              ; CODE XREF: rtm_FE5A+77↑j
 ; ---------------------------------------------------------------------------
 
 loc_26B8E:                              ; CODE XREF: rtm_FE5A+A0↑j
-                call    rtm_FE5B
+                call    screenRefresh   ; engine: post-draw cursor/row update (divides a packed row*256+col by 100h). [name provisional]
                 mov     ax, 198Ch
                 push    ax
                 lea     ax, [bp-16h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-16h]
                 push    ax
-                call    rtm_FE25
+                call    drawStringInner ; engine: parse + emit a position-coded string (copies it local via basStrAssign, walks it, writes cells).
                 lea     ax, [bp-16h]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 mov     word ptr [bp-18h], 0
                 jmp     loc_26FE9
 ; ---------------------------------------------------------------------------
@@ -60931,7 +60942,7 @@ loc_26BE8:                              ; CODE XREF: rtm_FE5A:loc_26FBA↓j
                 push    ax
                 lea     ax, [bp-2Ch]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 mov     word ptr [bp-24h], 2
                 mov     word ptr [bp-26h], 14h
                 lea     ax, [bp-24h]
@@ -60942,17 +60953,17 @@ loc_26BE8:                              ; CODE XREF: rtm_FE5A:loc_26FBA↓j
                 mov     ax, 19A8h
                 push    ax
                 push    word ptr [bp+0Ch]
-                call    rtm_C3
+                call    basStrConcat    ; string concatenation (`a$ + b$`): sums the two operand lengths, allocates, copies both. args (a, b).
                 push    ax
                 lea     ax, [bp-30h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-30h]
                 push    ax
-                call    rtm_FE25
+                call    drawStringInner ; engine: parse + emit a position-coded string (copies it local via basStrAssign, walks it, writes cells).
                 lea     ax, [bp-30h]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 mov     word ptr [bp-32h], 4
                 lea     ax, [bp-32h]
                 push    ax
@@ -60963,18 +60974,18 @@ loc_26BE8:                              ; CODE XREF: rtm_FE5A:loc_26FBA↓j
                 push    ax
                 lea     ax, [bp-36h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-36h]
                 push    ax
-                call    rtm_FE25
+                call    drawStringInner ; engine: parse + emit a position-coded string (copies it local via basStrAssign, walks it, writes cells).
                 lea     ax, [bp-36h]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 mov     ax, 19BAh
                 push    ax
                 lea     ax, [bp-3Eh]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 mov     si, [bp+0Ah]
                 mov     ax, [si]
                 cmp     ax, [bp-10h]
@@ -60989,17 +61000,17 @@ loc_26C84:                              ; CODE XREF: rtm_FE5A+196↑j
                 push    ax
                 mov     ax, 17EAh
                 push    ax
-                call    rtm_C3
+                call    basStrConcat    ; string concatenation (`a$ + b$`): sums the two operand lengths, allocates, copies both. args (a, b).
                 push    ax
                 lea     ax, [bp-3Ah]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-3Ah]
                 push    ax
-                call    rtm_FE25
+                call    drawStringInner ; engine: parse + emit a position-coded string (copies it local via basStrAssign, walks it, writes cells).
                 lea     ax, [bp-3Ah]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 jmp     loc_26CDF
 ; ---------------------------------------------------------------------------
 
@@ -61008,17 +61019,17 @@ loc_26CB6:                              ; CODE XREF: rtm_FE5A+198↑j
                 push    ax
                 mov     ax, 17D0h
                 push    ax
-                call    rtm_C3
+                call    basStrConcat    ; string concatenation (`a$ + b$`): sums the two operand lengths, allocates, copies both. args (a, b).
                 push    ax
                 lea     ax, [bp-42h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-42h]
                 push    ax
-                call    rtm_FE25
+                call    drawStringInner ; engine: parse + emit a position-coded string (copies it local via basStrAssign, walks it, writes cells).
                 lea     ax, [bp-42h]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
 
 loc_26CDF:                              ; CODE XREF: rtm_FE5A+1CA↑j
                 mov     word ptr [bp-46h], 31h ; '1'
@@ -61058,17 +61069,17 @@ loc_26D0C:                              ; CODE XREF: rtm_FE5A+21E↑j
                 push    ax
                 mov     ax, 19C6h
                 push    ax
-                call    rtm_C3
+                call    basStrConcat    ; string concatenation (`a$ + b$`): sums the two operand lengths, allocates, copies both. args (a, b).
                 push    ax
                 lea     ax, [bp-4Eh]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-4Eh]
                 push    ax
-                call    rtm_FE25
+                call    drawStringInner ; engine: parse + emit a position-coded string (copies it local via basStrAssign, walks it, writes cells).
                 lea     ax, [bp-4Eh]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 mov     si, [bp+8]
                 cmp     word ptr [si], 10h
                 jl      short loc_26D61
@@ -61092,7 +61103,7 @@ loc_26D61:                              ; CODE XREF: rtm_FE5A+273↑j
                 mov     ax, 17D0h
                 push    ax
                 mov     [bp-50h], dx
-                call    rtm_C3
+                call    basStrConcat    ; string concatenation (`a$ + b$`): sums the two operand lengths, allocates, copies both. args (a, b).
                 push    ax
                 mov     si, 1B0Ch
                 mov     bx, [bp-50h]
@@ -61105,11 +61116,11 @@ loc_26D61:                              ; CODE XREF: rtm_FE5A+273↑j
                 mov     si, 1D0Ah
                 add     bx, [si+0Ah]
                 push    bx
-                call    rtm_C3
+                call    basStrConcat    ; string concatenation (`a$ + b$`): sums the two operand lengths, allocates, copies both. args (a, b).
                 push    ax
                 lea     ax, [bp-3Eh]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 jmp     loc_26DD3
 ; ---------------------------------------------------------------------------
 
@@ -61122,7 +61133,7 @@ loc_26DBC:                              ; CODE XREF: rtm_FE5A+275↑j
                 push    bx
                 lea     ax, [bp-3Eh]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
 
 loc_26DD3:                              ; CODE XREF: rtm_FE5A+2D0↑j
                 mov     ax, [bp-10h]
@@ -61138,17 +61149,17 @@ loc_26DDE:                              ; CODE XREF: rtm_FE5A+2F0↑j
                 push    ax
                 mov     ax, 17EAh
                 push    ax
-                call    rtm_C3
+                call    basStrConcat    ; string concatenation (`a$ + b$`): sums the two operand lengths, allocates, copies both. args (a, b).
                 push    ax
                 lea     ax, [bp-54h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-54h]
                 push    ax
-                call    rtm_FE25
+                call    drawStringInner ; engine: parse + emit a position-coded string (copies it local via basStrAssign, walks it, writes cells).
                 lea     ax, [bp-54h]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 jmp     loc_26E39
 ; ---------------------------------------------------------------------------
 
@@ -61157,17 +61168,17 @@ loc_26E10:                              ; CODE XREF: rtm_FE5A+2F2↑j
                 push    ax
                 mov     ax, 17D0h
                 push    ax
-                call    rtm_C3
+                call    basStrConcat    ; string concatenation (`a$ + b$`): sums the two operand lengths, allocates, copies both. args (a, b).
                 push    ax
                 lea     ax, [bp-58h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-58h]
                 push    ax
-                call    rtm_FE25
+                call    drawStringInner ; engine: parse + emit a position-coded string (copies it local via basStrAssign, walks it, writes cells).
                 lea     ax, [bp-58h]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
 
 loc_26E39:                              ; CODE XREF: rtm_FE5A+324↑j
                 push    word ptr [bp-46h]
@@ -61175,7 +61186,7 @@ loc_26E39:                              ; CODE XREF: rtm_FE5A+324↑j
                 push    ax
                 lea     ax, [bp-3Eh]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 inc     word ptr [bp-46h]
                 cmp     word ptr [bp-46h], 3Ah ; ':'
                 jz      short loc_26E57
@@ -61196,18 +61207,18 @@ loc_26E5F:                              ; CODE XREF: rtm_FE5A+220↑j
                 push    ax
                 lea     ax, [bp-3Eh]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
 
 loc_26E72:                              ; CODE XREF: rtm_FE5A:loc_26E5C↑j
                 lea     ax, [bp-2Ch]
                 push    ax
                 lea     ax, [bp-3Eh]
                 push    ax
-                call    rtm_C3
+                call    basStrConcat    ; string concatenation (`a$ + b$`): sums the two operand lengths, allocates, copies both. args (a, b).
                 push    ax
                 lea     ax, [bp-2Ch]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 mov     ax, [bp-12h]
                 inc     ax
 
@@ -61235,14 +61246,14 @@ loc_26EA1:                              ; CODE XREF: rtm_FE5A+3B3↑j
                 push    ax
                 lea     ax, [bp-60h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-60h]
                 push    ax
                 call    rtm_E0
                 push    ax
                 lea     ax, [bp-64h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-2Ch]
                 push    ax
                 lea     ax, [bp-64h]
@@ -61399,18 +61410,18 @@ loc_26FD5:                              ; CODE XREF: rtm_FE5A+4E4↑j
 loc_26FE9:                              ; CODE XREF: rtm_FE5A+CE↑j
                 lea     ax, [bp-60h]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 lea     ax, [bp-3Eh]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 lea     ax, [bp-64h]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 lea     ax, [bp-2Ch]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 mov     ax, [bp-18h]
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    0Ah
 rtm_FE5A        endp
 
@@ -61424,7 +61435,7 @@ rtm_FE5A        endp
 
 rtm_FE37        proc far
                 mov     cx, 4           ; int 3Fh run-time entry FE37
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 push    word ptr [bp+6]
                 mov     ax, 1
                 push    ax
@@ -61456,7 +61467,7 @@ loc_27059:                              ; CODE XREF: rtm_FE37+19↑j
                 mov     [bp-0Eh], ax
                 cmp     ax, [bp-0Ch]
                 jle     short loc_27038
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    2
 rtm_FE37        endp
 
@@ -61470,12 +61481,12 @@ rtm_FE37        endp
 
 rtm_FE68        proc far                ; DATA XREF: seg003:02FC↑o
                 mov     cx, 0Ah         ; int 3Fh run-time entry FE68
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 mov     ax, 17D0h
                 push    ax
                 lea     ax, [bp-10h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 push    word ptr [bp+6]
                 mov     ax, 1
                 push    ax
@@ -61512,7 +61523,7 @@ loc_27096:                              ; CODE XREF: rtm_FE68+88↓j
                 add     bx, [si+0Ah]
                 push    bx
                 mov     [bp-14h], dx
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 mov     ax, 1
                 push    ax
                 mov     si, [bp+6]
@@ -61534,8 +61545,8 @@ loc_270EE:                              ; CODE XREF: rtm_FE68+26↑j
                 jle     short loc_27096
                 lea     ax, [bp-10h]
                 push    ax
-                call    rtm_D1
-                call    far ptr rtm_F4
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    2
 rtm_FE68        endp
 
@@ -61549,7 +61560,7 @@ rtm_FE68        endp
 
 rtm_FE4C        proc far
                 mov     cx, 2Ch ; ','   ; int 3Fh run-time entry FE4C
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 mov     si, [bp+6]
                 mov     bx, [si]
                 call    loc_1CA69+1
@@ -61564,7 +61575,7 @@ rtm_FE4C        proc far
                 push    ax
                 lea     ax, [bp-0Eh]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 mov     word ptr [bp-10h], 0
                 mov     word ptr [bp-12h], 4
                 mov     ax, 1B0Ch
@@ -61581,7 +61592,7 @@ rtm_FE4C        proc far
                 mov     [bp-14h], ax
                 lea     ax, [bp-0Eh]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 mov     ax, [bp-14h]
                 mov     [bp-16h], ax
                 dec     ax
@@ -61622,7 +61633,7 @@ loc_271A0:                              ; CODE XREF: rtm_FE4C+87↑j
                 db 0E4h
                 db  50h ; P
                 db  9Ah
-                dd rtm_C2
+                dd basStrAssign         ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 db 0C7h
                 db  46h ; F
                 db 0E2h
@@ -61663,7 +61674,7 @@ loc_271A0:                              ; CODE XREF: rtm_FE4C+87↑j
                 db 0E4h
                 db  50h ; P
                 db  9Ah
-                dd rtm_D1
+                dd basStrClear          ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 db  8Bh
                 db  46h ; F
                 db 0DEh
@@ -61739,7 +61750,7 @@ loc_271A0:                              ; CODE XREF: rtm_FE4C+87↑j
                 db 0DAh
                 db  50h ; P
                 db  9Ah
-                dd rtm_C2
+                dd basStrAssign         ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 db 0C7h
                 db  46h ; F
                 db 0D8h
@@ -61780,7 +61791,7 @@ loc_271A0:                              ; CODE XREF: rtm_FE4C+87↑j
                 db 0DAh
                 db  50h ; P
                 db  9Ah
-                dd rtm_D1
+                dd basStrClear          ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 db  8Bh
                 db  46h ; F
                 db 0D4h
@@ -61829,7 +61840,7 @@ loc_271A0:                              ; CODE XREF: rtm_FE4C+87↑j
                 db 0CEh
                 db  50h ; P
                 db  9Ah
-                dd rtm_C2
+                dd basStrAssign         ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 db 0C7h
                 db  46h ; F
                 db 0CCh
@@ -61865,7 +61876,7 @@ loc_271A0:                              ; CODE XREF: rtm_FE4C+87↑j
                 db 0CEh
                 db  50h ; P
                 db  9Ah
-                dd rtm_D1
+                dd basStrClear          ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 db  8Bh
                 db  46h ; F
                 db 0CAh
@@ -61898,7 +61909,7 @@ loc_271A0:                              ; CODE XREF: rtm_FE4C+87↑j
 ; ---------------------------------------------------------------------------
 
 loc_272D8:                              ; CODE XREF: rtm_FE4C:loc_271A0↑j
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    2
 rtm_FE4C        endp
 
@@ -61912,7 +61923,7 @@ rtm_FE4C        endp
 
 rtm_FE5C        proc far                ; DATA XREF: seg003:02CC↑o
                 mov     cx, 2           ; int 3Fh run-time entry FE5C
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 mov     word ptr [bp-0Ch], 8
                 mov     ax, 1E86h
                 push    ax
@@ -61921,7 +61932,7 @@ rtm_FE5C        proc far                ; DATA XREF: seg003:02CC↑o
                 lea     ax, [bp-0Ch]
                 push    ax
                 call    rtm_FE3B
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    0
 rtm_FE5C        endp
 
@@ -61936,7 +61947,7 @@ rtm_FE5C        endp
 rtm_FE42        proc far                ; CODE XREF: rtm_FE3C+19A↑P
                                         ; rtm_FE3C+344↑P ...
                 mov     cx, 0           ; int 3Fh run-time entry FE42
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 mov     ax, ds:1E86h
                 mov     ds:15E4h, ax
                 mov     ax, ds:1E88h
@@ -61970,7 +61981,7 @@ rtm_FE42        proc far                ; CODE XREF: rtm_FE3C+19A↑P
                 dec     ax
                 mov     ds:1E88h, ax
                 call    sub_25606
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    8
 rtm_FE42        endp
 
@@ -61985,13 +61996,13 @@ rtm_FE42        endp
 rtm_FE43        proc far                ; CODE XREF: rtm_FE3C+2A1↑P
                                         ; rtm_FE3C:loc_261B6↑P ...
                 mov     cx, 0           ; int 3Fh run-time entry FE43
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 mov     ax, ds:15E4h
                 mov     ds:1E86h, ax
                 mov     ax, ds:15E6h
                 mov     ds:1E88h, ax
                 call    sub_25606
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    0
 rtm_FE43        endp
 
@@ -62005,7 +62016,7 @@ rtm_FE43        endp
 
 rtm_FE29        proc far
                 mov     cx, 4           ; int 3Fh run-time entry FE29
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 mov     cx, 20h ; ' '
                 mov     si, [bp+8]
                 mov     ax, [si]
@@ -62029,7 +62040,7 @@ rtm_FE29        proc far
                 mov     dx, 3D9h
                 mov     ax, [si]
                 out     dx, al
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    4
 rtm_FE29        endp
 
@@ -62043,7 +62054,7 @@ rtm_FE29        endp
 
 rtm_FE55        proc far
                 mov     cx, 0           ; int 3Fh run-time entry FE55
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 call    rtm_FE21
                 mov     si, [bp+6]
                 mov     ax, [si]
@@ -62097,7 +62108,7 @@ loc_27441:                              ; CODE XREF: rtm_FE55+61↑j
 
 loc_2744C:                              ; CODE XREF: rtm_FE55+59↑j
                                         ; rtm_FE55+63↑j
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    2
 rtm_FE55        endp
 
@@ -62111,7 +62122,7 @@ rtm_FE55        endp
 
 rtm_FE56        proc far                ; CODE XREF: sub_274C4+1F↓P
                 mov     cx, 0Ch         ; int 3Fh run-time entry FE56
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 call    rtm_FE21
                 mov     si, [bp+6]
                 mov     ax, [si]
@@ -62155,7 +62166,7 @@ loc_274B1:                              ; CODE XREF: rtm_FE56+18↑j
                 mov     [bp-16h], ax
                 cmp     ax, [bp-0Ch]
                 jle     short loc_27472
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    2
 rtm_FE56        endp
 
@@ -62170,7 +62181,7 @@ rtm_FE56        endp
 sub_274C4       proc far                ; CODE XREF: rtm_FE55+34↑P
                                         ; rtm_FE55+6C↑P
                 mov     cx, 4
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 mov     word ptr [bp-0Ch], 14h
                 lea     ax, [bp-0Ch]
                 push    ax
@@ -62195,7 +62206,7 @@ loc_274FC:                              ; CODE XREF: sub_274C4+33↑j
 ; ---------------------------------------------------------------------------
 
 loc_274FE:                              ; CODE XREF: sub_274C4+35↑j
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    0
 sub_274C4       endp
 
@@ -62209,7 +62220,7 @@ sub_274C4       endp
 
 rtm_FE58        proc far                ; CODE XREF: rtm_FE57+2B↑P
                 mov     cx, 34h ; '4'   ; int 3Fh run-time entry FE58
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 mov     si, [bp+0Ch]
                 mov     ax, [si]
                 mov     [bp-0Ch], ax
@@ -62237,7 +62248,7 @@ loc_2752F:                              ; CODE XREF: rtm_FE58+1F↑j
                 push    ax
                 lea     ax, [bp-16h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 mov     word ptr [bp-18h], 0
                 call    rtm_FE24
                 mov     [bp-10h], ax
@@ -62252,19 +62263,19 @@ loc_27562:                              ; CODE XREF: rtm_FE58+257↓j
                 push    ax
                 lea     ax, [bp-1Eh]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-1Eh]
                 push    ax
-                call    rtm_FE25
+                call    drawStringInner ; engine: parse + emit a position-coded string (copies it local via basStrAssign, walks it, writes cells).
                 lea     ax, [bp-1Eh]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 mov     word ptr [bp-22h], 0
                 mov     ax, 1664h
                 push    ax
                 lea     ax, [bp-26h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 mov     ax, [bp-12h]
                 mov     [bp-20h], ax
                 mov     ax, [bp-0Ch]
@@ -62280,7 +62291,7 @@ loc_275A8:                              ; CODE XREF: rtm_FE58+152↓j
                 push    bx
                 lea     ax, [bp-2Eh]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 mov     ax, [bp-0Eh]
                 cmp     ax, [bp-22h]
                 jz      short loc_275C9
@@ -62294,28 +62305,28 @@ loc_275C9:                              ; CODE XREF: rtm_FE58+BB↑j
                 push    ax
                 call    rtm_E0
                 push    ax
-                call    rtm_C3
+                call    basStrConcat    ; string concatenation (`a$ + b$`): sums the two operand lengths, allocates, copies both. args (a, b).
                 push    ax
                 mov     ax, 1A10h
                 push    ax
-                call    rtm_C3
+                call    basStrConcat    ; string concatenation (`a$ + b$`): sums the two operand lengths, allocates, copies both. args (a, b).
                 push    ax
                 lea     ax, [bp-2Ah]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-2Ah]
                 push    ax
-                call    rtm_FE25
+                call    drawStringInner ; engine: parse + emit a position-coded string (copies it local via basStrAssign, walks it, writes cells).
                 lea     ax, [bp-2Ah]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 jmp     loc_2760E
 ; ---------------------------------------------------------------------------
 
 loc_27605:                              ; CODE XREF: rtm_FE58+BD↑j
                 lea     ax, [bp-2Eh]
                 push    ax
-                call    rtm_FE25
+                call    drawStringInner ; engine: parse + emit a position-coded string (copies it local via basStrAssign, walks it, writes cells).
 
 loc_2760E:                              ; CODE XREF: rtm_FE58+F9↑j
                 lea     ax, [bp-26h]
@@ -62326,11 +62337,11 @@ loc_2760E:                              ; CODE XREF: rtm_FE58+F9↑j
                 push    ax
                 call    rtm_6C
                 push    ax
-                call    rtm_C3
+                call    basStrConcat    ; string concatenation (`a$ + b$`): sums the two operand lengths, allocates, copies both. args (a, b).
                 push    ax
                 lea     ax, [bp-26h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 mov     ax, [bp-12h]
                 cmp     ax, [bp-30h]
                 jnz     short loc_2763A
@@ -62340,13 +62351,13 @@ loc_2760E:                              ; CODE XREF: rtm_FE58+F9↑j
 loc_2763A:                              ; CODE XREF: rtm_FE58+12C↑j
                 lea     ax, [bp-16h]
                 push    ax
-                call    rtm_FE25
+                call    drawStringInner ; engine: parse + emit a position-coded string (copies it local via basStrAssign, walks it, writes cells).
 
 loc_27643:                              ; CODE XREF: rtm_FE58+12E↑j
                 inc     word ptr [bp-22h]
                 lea     ax, [bp-16h]
                 push    ax
-                call    rtm_FE25
+                call    drawStringInner ; engine: parse + emit a position-coded string (copies it local via basStrAssign, walks it, writes cells).
                 mov     ax, [bp-30h]
                 inc     ax
 
@@ -62375,12 +62386,12 @@ loc_27668:                              ; CODE XREF: rtm_FE58+15A↑j
                 push    ax
                 lea     ax, [bp-38h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-38h]
                 push    ax
                 lea     ax, [bp-3Ch]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-26h]
                 push    ax
                 lea     ax, [bp-3Ch]
@@ -62521,23 +62532,23 @@ loc_2777D:                              ; CODE XREF: rtm_FE58+26C↑j
                 lea     ax, [bp-3Eh]
                 push    ax
                 call    rtm_FE54
-                call    rtm_FE5B
+                call    screenRefresh   ; engine: post-draw cursor/row update (divides a packed row*256+col by 100h). [name provisional]
                 lea     ax, [bp-38h]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 lea     ax, [bp-3Ch]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 lea     ax, [bp-26h]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 lea     ax, [bp-2Eh]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 lea     ax, [bp-16h]
                 push    ax
-                call    rtm_D1
-                call    far ptr rtm_F4
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    8
 rtm_FE58        endp
 
@@ -62551,7 +62562,7 @@ rtm_FE58        endp
 
 rtm_FE6C        proc far                ; DATA XREF: seg003:030C↑o
                 mov     cx, 4           ; int 3Fh run-time entry FE6C
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 mov     si, [bp+6]
                 mov     ax, [si]
                 inc     ax
@@ -62565,7 +62576,7 @@ rtm_FE6C        proc far                ; DATA XREF: seg003:030C↑o
                 lea     ax, [bp-0Eh]
                 push    ax
                 call    rtm_FE1D
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    2
 rtm_FE6C        endp
 
@@ -62579,7 +62590,7 @@ rtm_FE6C        endp
 
 rtm_FE39        proc far
                 mov     cx, 4           ; int 3Fh run-time entry FE39
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 push    word ptr [bp+6]
                 mov     ax, 1
                 push    ax
@@ -62611,7 +62622,7 @@ loc_27839:                              ; CODE XREF: rtm_FE39+19↑j
                 mov     [bp-0Eh], ax
                 cmp     ax, [bp-0Ch]
                 jle     short loc_27818
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    2
 rtm_FE39        endp
 
@@ -62626,7 +62637,7 @@ rtm_FE39        endp
 rtm_FE50        proc far                ; CODE XREF: rtm_FE4F+1A↑P
                                         ; rtm_FE4F+31↑P
                 mov     cx, 1Ah         ; int 3Fh run-time entry FE50
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
 
 loc_27854:                              ; CODE XREF: rtm_FE50+24B↓j
                 mov     word ptr [bp-0Eh], 0
@@ -62915,13 +62926,13 @@ loc_27A90:                              ; CODE XREF: rtm_FE50+23F↑j
 ; ---------------------------------------------------------------------------
 
 loc_27A9A:                              ; CODE XREF: rtm_FE50+249↑j
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    4
 rtm_FE50        endp
 
 ; ---------------------------------------------------------------------------
                 db  9Ah
-                dd rtm_ED
+                dd basProcExit2         ; second half of the proc exit wrapper -- checks ds:136h and returns to the caller. The `jmp` target of every menu.idb SUB epilogue (IDA daisy-chain-names the stubs j_j_..._rt_ED).
                 align 10h
 seg007          ends
 
@@ -62978,7 +62989,7 @@ aBmtcasanim     db 'bmTCASANIM',0       ; DATA XREF: seg001:1278↑o
 
 sub_27AE3       proc far                ; CODE XREF: rtm_FE22:loc_2801A↓P
                 mov     cx, 8
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 mov     si, 1E2Ah
                 xor     bx, bx
                 add     bx, [si+0Ah]
@@ -63099,7 +63110,7 @@ loc_27BDE:                              ; CODE XREF: sub_27AE3+DF↑j
                 push    word ptr [bp-10h]
                 push    word ptr [bp-12h]
                 call    rtm_FE0C
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    0
 sub_27AE3       endp
 
@@ -63114,7 +63125,7 @@ sub_27AE3       endp
 rtm_FE01        proc far                ; CODE XREF: rtm_FE44:loc_250D9↑P
                                         ; DATA XREF: seg003:0160↑o
                 mov     cx, 6           ; int 3Fh run-time entry FE01
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 nop
 
 loc_27C2E:                              ; CODE XREF: rtm_FE01:loc_27C58↓j
@@ -63125,7 +63136,7 @@ loc_27C2E:                              ; CODE XREF: rtm_FE01:loc_27C58↓j
                 push    ax
                 lea     ax, [bp-10h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-10h]
                 push    ax
                 mov     ax, 1A20h
@@ -63142,8 +63153,8 @@ loc_27C58:                              ; CODE XREF: rtm_FE01+2E↑j
 loc_27C5A:                              ; CODE XREF: rtm_FE01+30↑j
                 lea     ax, [bp-10h]
                 push    ax
-                call    rtm_D1
-                call    far ptr rtm_F4
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    0
 rtm_FE01        endp
 
@@ -63155,9 +63166,9 @@ rtm_FE01        endp
 ; =============== S U B R O U T I N E =======================================
 
 
-rtm_FE45        proc far                ; CODE XREF: rtm_FE25:loc_28C02↓P
+rtm_FE45        proc far                ; CODE XREF: drawStringInner:loc_28C02↓P
                 mov     cx, 6           ; int 3Fh run-time entry FE45
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 mov     cx, 100h
                 mov     ax, ds:1E86h
                 cwd
@@ -63180,7 +63191,7 @@ rtm_FE45        proc far                ; CODE XREF: rtm_FE25:loc_28C02↓P
                 lea     ax, [bp-10h]
                 push    ax
                 call    rtm_FE1D
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    0
 rtm_FE45        endp
 
@@ -63195,7 +63206,7 @@ rtm_FE45        endp
 rtm_FE1F        proc far                ; CODE XREF: sub_25606+8↑P
                                         ; sub_25606+3E↑P ...
                 mov     cx, 2           ; int 3Fh run-time entry FE1F
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 mov     cx, 2
                 mov     cx, 140h
                 mov     ax, ds:15FEh
@@ -63208,7 +63219,7 @@ rtm_FE1F        proc far                ; CODE XREF: sub_25606+8↑P
                 inc     ax
                 mov     [bp-0Ch], ax
                 mov     ax, [bp-0Ch]
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    0
 rtm_FE1F        endp
 
@@ -63223,10 +63234,10 @@ rtm_FE1F        endp
 rtm_FE40        proc far                ; CODE XREF: rtm_FE02+43↓P
                                         ; rtm_FE02+83↓P
                 mov     cx, 0           ; int 3Fh run-time entry FE40
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 mov     ax, ds:1600h
                 mov     ds:15FEh, ax
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    0
 rtm_FE40        endp
 
@@ -63241,11 +63252,11 @@ rtm_FE40        endp
 rtm_FE24        proc far                ; CODE XREF: rtm_FE49+8↑P
                                         ; rtm_FE3C+8↑P ...
                 mov     cx, 2           ; int 3Fh run-time entry FE24
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 mov     ax, ds:15FEh
                 mov     [bp-0Ch], ax
                 mov     ax, [bp-0Ch]
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    0
 rtm_FE24        endp
 
@@ -63260,7 +63271,7 @@ rtm_FE24        endp
 sub_27D1C       proc far                ; CODE XREF: rtm_FE49:loc_25369↑P
                                         ; rtm_FE3C:loc_26461↑P ...
                 mov     cx, 2
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 mov     cx, 140h
                 mov     ax, ds:15FEh
                 cwd
@@ -63268,7 +63279,7 @@ sub_27D1C       proc far                ; CODE XREF: rtm_FE49:loc_25369↑P
                 inc     ax
                 mov     [bp-0Ch], ax
                 mov     ax, [bp-0Ch]
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    0
 sub_27D1C       endp
 
@@ -63283,11 +63294,11 @@ sub_27D1C       endp
 rtm_FE23        proc far                ; CODE XREF: rtm_FE49+155↑P
                                         ; rtm_FE3C+8B2↑P ...
                 mov     cx, 0           ; int 3Fh run-time entry FE23
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 mov     si, [bp+6]
                 mov     ax, [si]
                 mov     ds:15FEh, ax
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    2
 rtm_FE23        endp
 
@@ -63302,7 +63313,7 @@ rtm_FE23        endp
 rtm_FE3F        proc far                ; CODE XREF: rtm_FE02+1F↓P
                                         ; rtm_FE02+5F↓P
                 mov     cx, 4           ; int 3Fh run-time entry FE3F
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 mov     ax, ds:15FEh
                 mov     ds:1600h, ax
                 mov     si, [bp+6]
@@ -63318,7 +63329,7 @@ rtm_FE3F        proc far                ; CODE XREF: rtm_FE02+1F↓P
                 lea     ax, [bp-0Eh]
                 push    ax
                 call    rtm_FE1D
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    4
 rtm_FE3F        endp
 
@@ -63333,26 +63344,26 @@ rtm_FE3F        endp
 rtm_FE4A        proc far                ; CODE XREF: rtm_FE3C+52E↑P
                                         ; rtm_FE3C+8CD↑P
                 mov     cx, 8           ; int 3Fh run-time entry FE4A
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 push    word ptr [bp+8]
                 push    word ptr [bp+6]
                 call    rtm_FE4B
                 push    ax
                 lea     ax, [bp-0Eh]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-0Eh]
                 push    ax
                 lea     ax, [bp-12h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-0Eh]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 lea     ax, [bp-12h]
                 push    ax
-                call    rtm_D1
-                call    far ptr rtm_F4
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    4
 rtm_FE4A        endp
 
@@ -63367,7 +63378,7 @@ rtm_FE4A        endp
 rtm_FE4B        proc far                ; CODE XREF: rtm_FE44+FB↑P
                                         ; rtm_FE5A+3CA↑P ...
                 mov     cx, 2Ch ; ','   ; int 3Fh run-time entry FE4B
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 mov     word ptr [bp-0Ch], 0
                 lea     ax, [bp-0Ch]
                 push    ax
@@ -63403,12 +63414,12 @@ loc_27E17:                              ; CODE XREF: rtm_FE4B+39↑j
                 push    ax
                 lea     ax, [bp-16h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-16h]
                 push    ax
                 lea     ax, [bp-1Ah]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
 
 loc_27E3C:                              ; CODE XREF: rtm_FE4B+3B↑j
                 cmp     word ptr [bp-10h], 1
@@ -63463,7 +63474,7 @@ loc_27E92:                              ; CODE XREF: rtm_FE4B:loc_27E8A↑j
                 push    ax
                 lea     ax, [bp-1Ah]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 cmp     word ptr [bp-10h], 5
                 jz      short loc_27EA8
                 jmp     loc_27EBF
@@ -63507,12 +63518,12 @@ loc_27EDA:                              ; CODE XREF: rtm_FE4B+FC↑j
                 push    ax
                 lea     ax, [bp-26h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-26h]
                 push    ax
                 lea     ax, [bp-1Ah]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 jmp     short loc_27EC8
 ; ---------------------------------------------------------------------------
                 db  90h
@@ -63557,12 +63568,12 @@ loc_27F3C:                              ; CODE XREF: rtm_FE4B+15E↑j
                 push    ax
                 lea     ax, [bp-30h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-30h]
                 push    ax
                 lea     ax, [bp-1Ah]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 jmp     short loc_27F10
 ; ---------------------------------------------------------------------------
                 db  90h
@@ -63573,27 +63584,27 @@ loc_27F76:                              ; CODE XREF: rtm_FE4B+160↑j
                 push    ax
                 lea     ax, [bp-36h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 mov     word ptr [bp-32h], 0
                 lea     ax, [bp-32h]
                 push    ax
                 call    rtm_FE54
                 lea     ax, [bp-30h]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 lea     ax, [bp-26h]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 lea     ax, [bp-16h]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 lea     ax, [bp-1Ah]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 lea     ax, [bp-36h]
                 push    ax
                 call    rtm_FF0B
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    4
 rtm_FE4B        endp
 
@@ -63607,7 +63618,7 @@ rtm_FE4B        endp
 
 rtm_FE22        proc far                ; CODE XREF: rtm_FE54:loc_28708↓P
                 mov     cx, 16h         ; int 3Fh run-time entry FE22
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 mov     ax, 1E58h
                 push    ax
                 mov     ax, 1
@@ -63784,7 +63795,7 @@ loc_28140:                              ; CODE XREF: rtm_FE22+83↑j
 
 loc_2814B:                              ; CODE XREF: rtm_FE22+1A↑j
                                         ; rtm_FE22+5B↑j ...
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    0
 rtm_FE22        endp
 
@@ -63799,7 +63810,7 @@ rtm_FE22        endp
 sub_28156       proc far                ; CODE XREF: rtm_FE11+1C↓P
                                         ; rtm_FE69+1C↓P
                 mov     cx, 0
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 mov     si, 1E2Ah
                 xor     bx, bx
                 add     bx, [si+0Ah]
@@ -63841,7 +63852,7 @@ loc_281A1:                              ; CODE XREF: sub_28156+3D↑j
                 mov     ax, es
                 mov     si, [bp+8]
                 mov     [si], ax
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    0Ah
 sub_28156       endp
 
@@ -63856,7 +63867,7 @@ sub_28156       endp
 rtm_FE53        proc far                ; CODE XREF: rtm_FE44+74↑P
                                         ; rtm_FE52+11↑P ...
                 mov     cx, 6           ; int 3Fh run-time entry FE53
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 mov     ax, 1602h
                 push    ax
                 mov     ax, 1A20h
@@ -63871,7 +63882,7 @@ loc_281E5:                              ; CODE XREF: rtm_FE53+15↑j
                 push    ax
                 mov     ax, 1602h
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 mov     ax, 1602h
                 push    ax
                 mov     ax, 1A20h
@@ -63988,7 +63999,7 @@ loc_282B7:                              ; CODE XREF: rtm_FE53+D0↑j
                 push    ax
                 mov     ax, 1602h
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
 
 loc_282C4:                              ; CODE XREF: rtm_FE53+17↑j
                                         ; rtm_FE53+38↑j ...
@@ -63996,7 +64007,7 @@ loc_282C4:                              ; CODE XREF: rtm_FE53+17↑j
                 push    ax
                 lea     ax, [bp-10h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 mov     si, [bp+6]
                 cmp     word ptr [si], 0
                 jz      short loc_282DC
@@ -64008,13 +64019,13 @@ loc_282DC:                              ; CODE XREF: rtm_FE53+10C↑j
                 push    ax
                 mov     ax, 1602h
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
 
 loc_282E9:                              ; CODE XREF: rtm_FE53+10E↑j
                 lea     ax, [bp-10h]
                 push    ax
                 call    rtm_FF0B
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    2
 rtm_FE53        endp
 
@@ -64028,7 +64039,7 @@ rtm_FE53        endp
 
 sub_282FD       proc far                ; CODE XREF: rtm_FE69+2F↓P
                 mov     cx, 10h
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 mov     si, 1E58h
                 mov     bx, 1D4h
                 add     bx, [si+0Ah]
@@ -64111,7 +64122,7 @@ loc_283CD:                              ; CODE XREF: sub_282FD+39↑j
 ; ---------------------------------------------------------------------------
 
 loc_283D8:                              ; CODE XREF: sub_282FD+D6↑j
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    4
 sub_282FD       endp
 
@@ -64126,7 +64137,7 @@ sub_282FD       endp
 rtm_FE11        proc far                ; CODE XREF: rtm_FE22:loc_2801F↑P
                                         ; DATA XREF: seg003:01A0↑o
                 mov     cx, 2Ch ; ','   ; int 3Fh run-time entry FE11
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 lea     ax, [bp-0Ch]
                 push    ax
                 lea     ax, [bp-0Eh]
@@ -64376,7 +64387,7 @@ loc_28611:                              ; CODE XREF: rtm_FE11+221↑j
                 mov     es:[bx], ax
 
 loc_28632:                              ; CODE XREF: rtm_FE11+1F7↑j
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    0
 rtm_FE11        endp
 
@@ -64391,7 +64402,7 @@ rtm_FE11        endp
 rtm_FE1D        proc far                ; CODE XREF: rtm_FE57+1A↑P
                                         ; rtm_FE49+7C↑P ...
                 mov     cx, 0           ; int 3Fh run-time entry FE1D
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 mov     si, [bp+8]
                 mov     ax, [si]
                 mov     cx, 140h
@@ -64401,7 +64412,7 @@ rtm_FE1D        proc far                ; CODE XREF: rtm_FE57+1A↑P
                 add     ax, [si]
                 add     ax, 0FEBEh
                 mov     ds:15FEh, ax
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    4
 rtm_FE1D        endp
 
@@ -64416,7 +64427,7 @@ rtm_FE1D        endp
 rtm_FE1E        proc far                ; CODE XREF: rtm_FE3C+2E5↑P
                                         ; rtm_FE3C+400↑P ...
                 mov     cx, 0           ; int 3Fh run-time entry FE1E
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 mov     si, [bp+6]
                 mov     ax, [si]
                 mov     cx, 140h
@@ -64431,7 +64442,7 @@ rtm_FE1E        proc far                ; CODE XREF: rtm_FE3C+2E5↑P
                 add     bx, 0FFFEh
                 mov     ax, bx
                 mov     ds:15FEh, ax
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    2
 rtm_FE1E        endp
 
@@ -64446,7 +64457,7 @@ rtm_FE1E        endp
 rtm_FE54        proc far                ; CODE XREF: rtm_FE44+44↑P
                                         ; rtm_FE5A+4FB↑P ...
                 mov     cx, 1Ch         ; int 3Fh run-time entry FE54
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 call    rtm_FE06
                 mov     [bp-0Eh], ax
                 mov     [bp-0Ch], dx
@@ -64565,7 +64576,7 @@ loc_2878D:                              ; CODE XREF: rtm_FE54+EC↑j
 
 loc_287CC:                              ; CODE XREF: rtm_FE54+EE↑j
                                         ; rtm_FE54+12B↑j
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    2
 rtm_FE54        endp
 
@@ -64580,7 +64591,7 @@ rtm_FE54        endp
 rtm_FE6A        proc far                ; CODE XREF: rtm_FE69:loc_28E40↓P
                                         ; DATA XREF: seg003:0304↑o
                 mov     cx, 8           ; int 3Fh run-time entry FE6A
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 mov     si, 1E58h
                 mov     bx, 11Eh
                 add     bx, [si+0Ah]
@@ -64639,7 +64650,7 @@ loc_2884E:                              ; CODE XREF: rtm_FE6A+45↑j
                 mov     [bp-10h], ax
                 cmp     ax, 2
                 jle     short loc_28820
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    0
 rtm_FE6A        endp
 
@@ -64650,11 +64661,12 @@ rtm_FE6A        endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; engine: post-draw cursor/row update (divides a packed row*256+col by 100h). [name provisional]
 
-rtm_FE5B        proc far                ; CODE XREF: rtm_FE44+90↑P
+screenRefresh   proc far                ; CODE XREF: rtm_FE44+90↑P
                                         ; rtm_FE44+95↑P ...
                 mov     cx, 22h ; '"'   ; int 3Fh run-time entry FE5B
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 call    sub_27D1C
                 mov     [bp-0Ch], ax
                 mov     ax, [bp-0Ch]
@@ -64670,7 +64682,7 @@ rtm_FE5B        proc far                ; CODE XREF: rtm_FE44+90↑P
                 jmp     loc_28977
 ; ---------------------------------------------------------------------------
 
-loc_2888C:                              ; CODE XREF: rtm_FE5B+26↑j
+loc_2888C:                              ; CODE XREF: screenRefresh+26↑j
                 dec     ax
                 mov     [bp-12h], ax
                 call    rtm_FE06
@@ -64684,7 +64696,7 @@ loc_2888C:                              ; CODE XREF: rtm_FE5B+26↑j
                 jmp     loc_2896C
 ; ---------------------------------------------------------------------------
 
-loc_288AC:                              ; CODE XREF: rtm_FE5B+113↓j
+loc_288AC:                              ; CODE XREF: screenRefresh+113↓j
                 mov     word ptr [bp-1Ah], 1
                 lea     ax, [bp-1Ah]
                 push    ax
@@ -64692,7 +64704,7 @@ loc_288AC:                              ; CODE XREF: rtm_FE5B+113↓j
                 push    ax
                 lea     ax, [bp-1Eh]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-1Eh]
                 push    ax
                 mov     ax, 1A20h
@@ -64702,14 +64714,14 @@ loc_288AC:                              ; CODE XREF: rtm_FE5B+113↓j
                 jnz     short loc_288D7
                 dec     ax
 
-loc_288D7:                              ; CODE XREF: rtm_FE5B+73↑j
+loc_288D7:                              ; CODE XREF: screenRefresh+73↑j
                 and     ax, ds:1FEAh
                 and     ax, ax
                 jnz     short loc_288E2
                 jmp     loc_2894B
 ; ---------------------------------------------------------------------------
 
-loc_288E2:                              ; CODE XREF: rtm_FE5B+7C↑j
+loc_288E2:                              ; CODE XREF: screenRefresh+7C↑j
                 mov     word ptr [bp-20h], 1
                 mov     ax, 1E86h
                 push    ax
@@ -64725,7 +64737,7 @@ loc_288E2:                              ; CODE XREF: rtm_FE5B+7C↑j
                 mov     [bp-18h], ax
                 mov     [bp-16h], dx
 
-loc_28908:                              ; CODE XREF: rtm_FE5B+E5↓j
+loc_28908:                              ; CODE XREF: screenRefresh+E5↓j
                 push    word ptr ds:1EF0h
                 push    word ptr ds:1EEEh
                 push    word ptr [bp-16h]
@@ -64735,20 +64747,20 @@ loc_28908:                              ; CODE XREF: rtm_FE5B+E5↓j
                 jge     short loc_28921
                 dec     ax
 
-loc_28921:                              ; CODE XREF: rtm_FE5B+BD↑j
+loc_28921:                              ; CODE XREF: screenRefresh+BD↑j
                 cmp     word ptr [bp-24h], 0BB8h
                 mov     cx, 0
                 jge     short loc_2892C
                 dec     cx
 
-loc_2892C:                              ; CODE XREF: rtm_FE5B+C8↑j
+loc_2892C:                              ; CODE XREF: screenRefresh+C8↑j
                 and     cx, ax
                 and     cx, cx
                 jnz     short loc_28935
                 jmp     loc_28948
 ; ---------------------------------------------------------------------------
 
-loc_28935:                              ; CODE XREF: rtm_FE5B+CF↑j
+loc_28935:                              ; CODE XREF: screenRefresh+CF↑j
                 inc     word ptr [bp-24h]
                 mov     word ptr [bp-22h], 0
                 lea     ax, [bp-22h]
@@ -64757,11 +64769,11 @@ loc_28935:                              ; CODE XREF: rtm_FE5B+CF↑j
                 jmp     short loc_28908
 ; ---------------------------------------------------------------------------
 
-loc_28948:                              ; CODE XREF: rtm_FE5B+D1↑j
+loc_28948:                              ; CODE XREF: screenRefresh+D1↑j
                 jmp     loc_28968
 ; ---------------------------------------------------------------------------
 
-loc_2894B:                              ; CODE XREF: rtm_FE5B+7E↑j
+loc_2894B:                              ; CODE XREF: screenRefresh+7E↑j
                 mov     ax, 8
                 sub     ax, [bp-28h]
                 mov     [bp-26h], ax
@@ -64775,19 +64787,19 @@ loc_2894B:                              ; CODE XREF: rtm_FE5B+7E↑j
                 jmp     loc_28977
 ; ---------------------------------------------------------------------------
 
-loc_28968:                              ; CODE XREF: rtm_FE5B:loc_28948↑j
+loc_28968:                              ; CODE XREF: screenRefresh:loc_28948↑j
                 mov     ax, [bp-28h]
                 inc     ax
 
-loc_2896C:                              ; CODE XREF: rtm_FE5B+48↑j
+loc_2896C:                              ; CODE XREF: screenRefresh+48↑j
                 mov     [bp-28h], ax
                 cmp     ax, 7
                 jg      short loc_28977
                 jmp     loc_288AC
 ; ---------------------------------------------------------------------------
 
-loc_28977:                              ; CODE XREF: rtm_FE5B+28↑j
-                                        ; rtm_FE5B+104↑j ...
+loc_28977:                              ; CODE XREF: screenRefresh+28↑j
+                                        ; screenRefresh+104↑j ...
                 mov     ax, [bp-12h]
                 inc     ax
                 mov     [bp-2Ah], ax
@@ -64802,10 +64814,10 @@ loc_28977:                              ; CODE XREF: rtm_FE5B+28↑j
                 call    rtm_FE1D
                 lea     ax, [bp-1Eh]
                 push    ax
-                call    rtm_D1
-                call    far ptr rtm_F4
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    0
-rtm_FE5B        endp
+screenRefresh   endp
 
 ; ---------------------------------------------------------------------------
                 db 0E9h
@@ -64817,7 +64829,7 @@ rtm_FE5B        endp
 
 rtm_FE2B        proc far
                 mov     cx, 1Ah         ; int 3Fh run-time entry FE2B
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 mov     si, [bp+6]
                 mov     ax, [si]
                 shl     ax, 1
@@ -64941,7 +64953,7 @@ loc_28A5C:                              ; CODE XREF: rtm_FE2B+AE↑j
                 mov     ds:1EF4h, dx
 
 loc_28AED:                              ; CODE XREF: rtm_FE2B+B0↑j
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    2
 rtm_FE2B        endp
 
@@ -64956,7 +64968,7 @@ rtm_FE2B        endp
 rtm_FE02        proc far                ; CODE XREF: rtm_FE53:loc_28290↑P
                                         ; DATA XREF: seg003:0164↑o
                 mov     cx, 10h         ; int 3Fh run-time entry FE02
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 call    rtm_FE6F
                 mov     word ptr [bp-0Ch], 0Bh
                 mov     word ptr [bp-0Eh], 18h
@@ -64969,13 +64981,13 @@ rtm_FE02        proc far                ; CODE XREF: rtm_FE53:loc_28290↑P
                 push    ax
                 lea     ax, [bp-12h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-12h]
                 push    ax
-                call    rtm_FE25
+                call    drawStringInner ; engine: parse + emit a position-coded string (copies it local via basStrAssign, walks it, writes cells).
                 lea     ax, [bp-12h]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 call    rtm_FE40
                 call    rtm_FE48
                 mov     word ptr [bp-14h], 0Ch
@@ -64989,16 +65001,16 @@ rtm_FE02        proc far                ; CODE XREF: rtm_FE53:loc_28290↑P
                 push    ax
                 lea     ax, [bp-1Ah]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-1Ah]
                 push    ax
-                call    rtm_FE25
+                call    drawStringInner ; engine: parse + emit a position-coded string (copies it local via basStrAssign, walks it, writes cells).
                 lea     ax, [bp-1Ah]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 call    rtm_FE40
                 call    rtm_FE70
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    0
 rtm_FE02        endp
 
@@ -65010,10 +65022,10 @@ rtm_FE02        endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_28B90       proc far                ; CODE XREF: rtm_FE25+101↓P
-                                        ; rtm_FE25+152↓P
+sub_28B90       proc far                ; CODE XREF: drawStringInner+101↓P
+                                        ; drawStringInner+152↓P
                 mov     cx, 4
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 mov     si, 1EC0h
                 xor     bx, bx
                 add     bx, [si+0Ah]
@@ -65031,7 +65043,7 @@ sub_28B90       proc far                ; CODE XREF: rtm_FE25+101↓P
                 push    word ptr [bp-0Ch]
                 push    word ptr [bp-0Eh]
                 call    rtm_FE34
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    2
 sub_28B90       endp
 
@@ -65042,15 +65054,16 @@ sub_28B90       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; engine: parse + emit a position-coded string (copies it local via basStrAssign, walks it, writes cells).
 
-rtm_FE25        proc far                ; CODE XREF: rtm_FE44+C2↑P
+drawStringInner proc far                ; CODE XREF: rtm_FE44+C2↑P
                                         ; rtm_FE49+DD↑P ...
                 mov     cx, 10h         ; int 3Fh run-time entry FE25
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 push    word ptr [bp+6]
                 lea     ax, [bp-0Eh]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-0Eh]
                 push    ax
                 mov     ax, 1
@@ -65064,7 +65077,7 @@ rtm_FE25        proc far                ; CODE XREF: rtm_FE44+C2↑P
                 jmp     loc_28C25
 ; ---------------------------------------------------------------------------
 
-loc_28C02:                              ; CODE XREF: rtm_FE25+2B↑j
+loc_28C02:                              ; CODE XREF: drawStringInner+2B↑j
                 call    rtm_FE45
                 lea     ax, [bp-0Eh]
                 push    ax
@@ -65077,9 +65090,9 @@ loc_28C02:                              ; CODE XREF: rtm_FE25+2B↑j
                 push    ax
                 lea     ax, [bp-0Eh]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
 
-loc_28C25:                              ; CODE XREF: rtm_FE25+2D↑j
+loc_28C25:                              ; CODE XREF: drawStringInner+2D↑j
                 lea     ax, [bp-0Eh]
                 push    ax
                 mov     ax, 1
@@ -65093,7 +65106,7 @@ loc_28C25:                              ; CODE XREF: rtm_FE25+2D↑j
                 jmp     loc_28C76
 ; ---------------------------------------------------------------------------
 
-loc_28C41:                              ; CODE XREF: rtm_FE25+6A↑j
+loc_28C41:                              ; CODE XREF: drawStringInner+6A↑j
                 mov     word ptr [bp-10h], 1
                 mov     word ptr [bp-12h], 1
                 lea     ax, [bp-10h]
@@ -65112,10 +65125,10 @@ loc_28C41:                              ; CODE XREF: rtm_FE25+6A↑j
                 push    ax
                 lea     ax, [bp-0Eh]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
 
-loc_28C76:                              ; CODE XREF: rtm_FE25+6C↑j
-                                        ; rtm_FE25:loc_28D2E↓j
+loc_28C76:                              ; CODE XREF: drawStringInner+6C↑j
+                                        ; drawStringInner:loc_28D2E↓j
                 lea     ax, [bp-0Eh]
                 push    ax
                 mov     ax, 1A20h
@@ -65125,7 +65138,7 @@ loc_28C76:                              ; CODE XREF: rtm_FE25+6C↑j
                 jmp     loc_28D32
 ; ---------------------------------------------------------------------------
 
-loc_28C88:                              ; CODE XREF: rtm_FE25+B1↑j
+loc_28C88:                              ; CODE XREF: drawStringInner+B1↑j
                 lea     ax, [bp-0Eh]
                 push    ax
                 mov     ax, 1A5Ch
@@ -65137,7 +65150,7 @@ loc_28C88:                              ; CODE XREF: rtm_FE25+B1↑j
                 jmp     loc_28CC6
 ; ---------------------------------------------------------------------------
 
-loc_28CA0:                              ; CODE XREF: rtm_FE25+C9↑j
+loc_28CA0:                              ; CODE XREF: drawStringInner+C9↑j
                 lea     ax, [bp-0Eh]
                 push    ax
                 lea     ax, [bp-0Eh]
@@ -65149,18 +65162,18 @@ loc_28CA0:                              ; CODE XREF: rtm_FE25+C9↑j
                 push    ax
                 lea     ax, [bp-0Eh]
                 push    ax
-                call    far ptr rtm_C2
-                call    rtm_FE5B
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
+                call    screenRefresh   ; engine: post-draw cursor/row update (divides a packed row*256+col by 100h). [name provisional]
                 jmp     loc_28D2E
 ; ---------------------------------------------------------------------------
 
-loc_28CC6:                              ; CODE XREF: rtm_FE25+CB↑j
+loc_28CC6:                              ; CODE XREF: drawStringInner+CB↑j
                 cmp     word ptr [bp-14h], 0
                 jz      short loc_28CCF
                 jmp     loc_28CE8
 ; ---------------------------------------------------------------------------
 
-loc_28CCF:                              ; CODE XREF: rtm_FE25+F8↑j
+loc_28CCF:                              ; CODE XREF: drawStringInner+F8↑j
                 lea     ax, [bp-0Eh]
                 push    ax
                 call    sub_28B90
@@ -65168,11 +65181,11 @@ loc_28CCF:                              ; CODE XREF: rtm_FE25+F8↑j
                 push    ax
                 lea     ax, [bp-0Eh]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 jmp     loc_28D2E
 ; ---------------------------------------------------------------------------
 
-loc_28CE8:                              ; CODE XREF: rtm_FE25+FA↑j
+loc_28CE8:                              ; CODE XREF: drawStringInner+FA↑j
                 lea     ax, [bp-0Eh]
                 push    ax
                 mov     ax, [bp-14h]
@@ -65182,7 +65195,7 @@ loc_28CE8:                              ; CODE XREF: rtm_FE25+FA↑j
                 push    ax
                 lea     ax, [bp-18h]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-0Eh]
                 push    ax
                 lea     ax, [bp-0Eh]
@@ -65194,47 +65207,47 @@ loc_28CE8:                              ; CODE XREF: rtm_FE25+FA↑j
                 push    ax
                 lea     ax, [bp-0Eh]
                 push    ax
-                call    far ptr rtm_C2
+                call    far ptr basStrAssign ; string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).
                 lea     ax, [bp-18h]
                 push    ax
                 call    sub_28B90
-                call    rtm_FE5B
+                call    screenRefresh   ; engine: post-draw cursor/row update (divides a packed row*256+col by 100h). [name provisional]
 
-loc_28D2E:                              ; CODE XREF: rtm_FE25+F1↑j
-                                        ; rtm_FE25+113↑j
+loc_28D2E:                              ; CODE XREF: drawStringInner+F1↑j
+                                        ; drawStringInner+113↑j
                 jmp     loc_28C76
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
 
-loc_28D32:                              ; CODE XREF: rtm_FE25+B3↑j
+loc_28D32:                              ; CODE XREF: drawStringInner+B3↑j
                 cmp     word ptr ds:160Ah, 3
                 jl      short loc_28D3C
                 jmp     loc_28D43
 ; ---------------------------------------------------------------------------
 
-loc_28D3C:                              ; CODE XREF: rtm_FE25+165↑j
+loc_28D3C:                              ; CODE XREF: drawStringInner+165↑j
                 inc     word ptr ds:160Ah
                 jmp     loc_28D57
 ; ---------------------------------------------------------------------------
 
-loc_28D43:                              ; CODE XREF: rtm_FE25+167↑j
+loc_28D43:                              ; CODE XREF: drawStringInner+167↑j
                 mov     word ptr ds:160Ah, 0
                 mov     word ptr [bp-1Ah], 0
                 lea     ax, [bp-1Ah]
                 push    ax
                 call    rtm_FE54
 
-loc_28D57:                              ; CODE XREF: rtm_FE25+16E↑j
+loc_28D57:                              ; CODE XREF: drawStringInner+16E↑j
                 lea     ax, [bp-18h]
                 push    ax
-                call    rtm_D1
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 lea     ax, [bp-0Eh]
                 push    ax
-                call    rtm_D1
-                call    far ptr rtm_F4
+                call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    2
-rtm_FE25        endp
+drawStringInner endp
 
 ; ---------------------------------------------------------------------------
                 db 0E9h
@@ -65246,7 +65259,7 @@ rtm_FE25        endp
 
 rtm_FE69        proc far                ; DATA XREF: seg003:0300↑o
                 mov     cx, 1Ah         ; int 3Fh run-time entry FE69
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 lea     ax, [bp-0Ch]
                 push    ax
                 lea     ax, [bp-0Eh]
@@ -65329,7 +65342,7 @@ loc_28E45:                              ; CODE XREF: rtm_FE69+C9↑j
                 lea     ax, [bp-24h]
                 push    ax
                 call    rtm_FE54
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    0
 rtm_FE69        endp
 
@@ -65343,7 +65356,7 @@ rtm_FE69        endp
 
 rtm_FE6B        proc far                ; DATA XREF: seg003:0308↑o
                 mov     cx, 0           ; int 3Fh run-time entry FE6B
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 mov     si, [bp+6]
                 mov     ax, [si]
                 shl     ax, 1
@@ -65359,7 +65372,7 @@ rtm_FE6B        proc far                ; DATA XREF: seg003:0308↑o
                 cwd
                 idiv    cx
                 mov     ds:160Eh, ax
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    4
 rtm_FE6B        endp
 
@@ -65373,9 +65386,9 @@ rtm_FE6B        endp
 
 rtm_FE00        proc far                ; DATA XREF: seg003:015C↑o
                 mov     cx, 0           ; int 3Fh run-time entry FE00
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 mov     word ptr ds:1FEAh, 14h
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    0
 rtm_FE00        endp
 
@@ -65389,7 +65402,7 @@ rtm_FE00        endp
 
 rtm_FE48        proc far                ; CODE XREF: rtm_FE02+48↑P
                 mov     cx, 4           ; int 3Fh run-time entry FE48
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 nop
 
 loc_28EB6:                              ; CODE XREF: rtm_FE48+41↓j
@@ -65445,7 +65458,7 @@ loc_28F04:                              ; CODE XREF: rtm_FE48+52↑j
 ; ---------------------------------------------------------------------------
 
 loc_28F14:                              ; CODE XREF: rtm_FE48+54↑j
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    0
 rtm_FE48        endp
 
@@ -65460,7 +65473,7 @@ rtm_FE48        endp
 rtm_FE10        proc far                ; CODE XREF: rtm_FE22:loc_28008↑P
                                         ; DATA XREF: seg003:019C↑o
                 mov     cx, 8           ; int 3Fh run-time entry FE10
-                call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
+                call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 mov     si, 1E2Ah
                 xor     bx, bx
                 add     bx, [si+0Ah]
@@ -65490,7 +65503,7 @@ rtm_FE10        proc far                ; CODE XREF: rtm_FE22:loc_28008↑P
                 push    word ptr ds:160Ch
                 push    word ptr ds:160Eh
                 call    rtm_FE0D
-                call    far ptr rtm_F4
+                call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    0
 rtm_FE10        endp
 
@@ -65503,7 +65516,7 @@ seg009          segment byte public 'UNK' use16
                 assume cs:seg009
                 assume es:nothing, ss:nothing, ds:nothing, fs:nothing, gs:nothing
                 db  9Ah
-                dd rtm_ED
+                dd basProcExit2         ; second half of the proc exit wrapper -- checks ds:136h and returns to the caller. The `jmp` target of every menu.idb SUB epilogue (IDA daisy-chain-names the stubs j_j_..._rt_ED).
                 align 2
                 db  3Ch ; <
                 db  3Ch ; <

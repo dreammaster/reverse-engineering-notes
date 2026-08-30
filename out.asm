@@ -66,7 +66,7 @@ aBmout          db 'bmOUT     ',0
 
 ; =============== S U B R O U T I N E =======================================
 
-; OUT.EXE program entry (compiled-BASIC module init). Falls through into the overworld main loop.
+; OUT.EXE entry / module init: declares the module-scope variables (14x basValuePush/basValueStore via rt_FF4B/rt_FF50) and sets up the screen (rt_AF x3, rt_98). Falls through into outInit.
 ; Attributes: noreturn
 
 out_entry       proc near
@@ -80,7 +80,7 @@ out_entry       proc near
                 push    ax
                 mov     ax, 1E2Ah
                 push    ax
-                call    far ptr rt_AF   ; -> rtm_AF  (leglib seg003:0x13608)
+                call    far ptr rt_AF   ; -> basScreenInit  (leglib seg003:0x13608)
 
 loc_10048:
                 xor     ax, ax
@@ -93,7 +93,7 @@ loc_10048:
                 push    ax
                 mov     ax, 1E58h
                 push    ax
-                call    far ptr rt_AF   ; -> rtm_AF  (leglib seg003:0x13608)
+                call    far ptr rt_AF   ; -> basScreenInit  (leglib seg003:0x13608)
 
 loc_10060:
                 cmp     word ptr ds:1AC0h, 0
@@ -204,15 +204,16 @@ loc_10181:                              ; CODE XREF: out_entry:loc_1007B↑j
                 push    ax
                 mov     ax, 209Ah
                 push    ax
-                call    far ptr rt_AF   ; -> rtm_AF  (leglib seg003:0x13608)
+                call    far ptr rt_AF   ; -> basScreenInit  (leglib seg003:0x13608)
 out_entry       endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; overworld first-time setup: 9x basScreenInit (screen regions), then loads the overworld data via the engine (rt_FE63/FE44/FE16/FE68/FE37) and calls sub_10B06. ~2 KB, called once from out_entry.
 ; Attributes: noreturn
 
-sub_10199       proc near
+outInit         proc near
                 xor     ax, ax
                 push    ax
                 mov     ax, 1Fh
@@ -223,7 +224,7 @@ sub_10199       proc near
                 push    ax
                 mov     ax, 20ACh
                 push    ax
-                call    far ptr rt_AF   ; -> rtm_AF  (leglib seg003:0x13608)
+                call    far ptr rt_AF   ; -> basScreenInit  (leglib seg003:0x13608)
 
 loc_101B1:
                 xor     ax, ax
@@ -236,7 +237,7 @@ loc_101B1:
                 push    ax
                 mov     ax, 20BEh
                 push    ax
-                call    far ptr rt_AF   ; -> rtm_AF  (leglib seg003:0x13608)
+                call    far ptr rt_AF   ; -> basScreenInit  (leglib seg003:0x13608)
 
 loc_101C9:
                 xor     ax, ax
@@ -249,7 +250,7 @@ loc_101C9:
                 push    ax
                 mov     ax, 20D0h
                 push    ax
-                call    far ptr rt_AF   ; -> rtm_AF  (leglib seg003:0x13608)
+                call    far ptr rt_AF   ; -> basScreenInit  (leglib seg003:0x13608)
 
 loc_101E1:
                 xor     ax, ax
@@ -262,7 +263,7 @@ loc_101E1:
                 push    ax
                 mov     ax, 20E2h
                 push    ax
-                call    far ptr rt_AF   ; -> rtm_AF  (leglib seg003:0x13608)
+                call    far ptr rt_AF   ; -> basScreenInit  (leglib seg003:0x13608)
 
 loc_101F9:
                 xor     ax, ax
@@ -275,7 +276,7 @@ loc_101F9:
                 push    ax
                 mov     ax, 1C7Ch
                 push    ax
-                call    far ptr rt_AF   ; -> rtm_AF  (leglib seg003:0x13608)
+                call    far ptr rt_AF   ; -> basScreenInit  (leglib seg003:0x13608)
 
 loc_10211:
                 xor     ax, ax
@@ -288,7 +289,7 @@ loc_10211:
                 push    ax
                 mov     ax, 20F4h
                 push    ax
-                call    far ptr rt_AF   ; -> rtm_AF  (leglib seg003:0x13608)
+                call    far ptr rt_AF   ; -> basScreenInit  (leglib seg003:0x13608)
 
 loc_10229:
                 xor     ax, ax
@@ -301,7 +302,7 @@ loc_10229:
                 push    ax
                 mov     ax, 2106h
                 push    ax
-                call    far ptr rt_AF   ; -> rtm_AF  (leglib seg003:0x13608)
+                call    far ptr rt_AF   ; -> basScreenInit  (leglib seg003:0x13608)
 
 loc_10241:
                 xor     ax, ax
@@ -314,7 +315,7 @@ loc_10241:
                 push    ax
                 mov     ax, 2118h
                 push    ax
-                call    far ptr rt_AF   ; -> rtm_AF  (leglib seg003:0x13608)
+                call    far ptr rt_AF   ; -> basScreenInit  (leglib seg003:0x13608)
 
 loc_10259:
                 xor     ax, ax
@@ -327,7 +328,7 @@ loc_10259:
                 push    ax
                 mov     ax, 2024h
                 push    ax
-                call    far ptr rt_AF   ; -> rtm_AF  (leglib seg003:0x13608)
+                call    far ptr rt_AF   ; -> basScreenInit  (leglib seg003:0x13608)
 
 loc_10271:
                 xor     ax, ax
@@ -339,7 +340,7 @@ loc_10279:
                 push    ax
                 mov     ax, 212Ah
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
 loc_10286:
                 mov     ax, 212Ah
@@ -349,7 +350,7 @@ loc_10286:
 loc_1028F:
                 mov     ax, 212Ah
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
 loc_10298:
                 mov     ax, 24ACh
@@ -422,27 +423,27 @@ loc_10308:
                 jg      short loc_10313
                 dec     ax
 
-loc_10313:                              ; CODE XREF: sub_10199+177↑j
+loc_10313:                              ; CODE XREF: outInit+177↑j
                 cmp     word ptr ds:1ACCh, 0
                 mov     cx, 0
                 jg      short loc_1031E
                 dec     cx
 
-loc_1031E:                              ; CODE XREF: sub_10199+182↑j
+loc_1031E:                              ; CODE XREF: outInit+182↑j
                 or      cx, ax
                 and     cx, cx
                 jz      short loc_10327
                 jmp     loc_104A7
 ; ---------------------------------------------------------------------------
 
-loc_10327:                              ; CODE XREF: sub_10199+189↑j
-                                        ; sub_10199+27A↓j ...
+loc_10327:                              ; CODE XREF: outInit+189↑j
+                                        ; outInit+27A↓j ...
                 cmp     word ptr ds:212Eh, 0
                 jz      short loc_10331
                 jmp     loc_10342
 ; ---------------------------------------------------------------------------
 
-loc_10331:                              ; CODE XREF: sub_10199+193↑j
+loc_10331:                              ; CODE XREF: outInit+193↑j
                 mov     ax, 1F24h
                 push    ax
                 call    far ptr rt_FE44 ; -> rtm_FE44  (leglib seg007:0x2502d)
@@ -450,26 +451,26 @@ loc_10331:                              ; CODE XREF: sub_10199+193↑j
                 jmp     loc_10350
 ; ---------------------------------------------------------------------------
 
-loc_10342:                              ; CODE XREF: sub_10199+195↑j
+loc_10342:                              ; CODE XREF: outInit+195↑j
                 mov     ax, 2130h
                 push    ax
                 call    far ptr rt_FE44 ; -> rtm_FE44  (leglib seg007:0x2502d)
                 call    far ptr rt_FE16 ; -> rtm_FE16  (leglib seg007:0x26654)
 
-loc_10350:                              ; CODE XREF: sub_10199+1A6↑j
+loc_10350:                              ; CODE XREF: outInit+1A6↑j
                 cmp     word ptr ds:1E1Eh, 0
                 jnz     short loc_1035A
                 jmp     loc_10365
 ; ---------------------------------------------------------------------------
 
-loc_1035A:                              ; CODE XREF: sub_10199+1BC↑j
+loc_1035A:                              ; CODE XREF: outInit+1BC↑j
                 call    sub_10B06
 ; ---------------------------------------------------------------------------
                 call    far ptr rt_FE01 ; -> rtm_FE01  (leglib seg008:0x27c25)
                 jmp     loc_103A6
 ; ---------------------------------------------------------------------------
 
-loc_10365:                              ; CODE XREF: sub_10199+1BE↑j
+loc_10365:                              ; CODE XREF: outInit+1BE↑j
                 mov     bx, ds:1E20h
                 shl     bx, 1
                 shl     bx, 1
@@ -480,30 +481,30 @@ loc_10365:                              ; CODE XREF: sub_10199+1BE↑j
                 mov     ax, 2132h
                 push    ax
                 mov     [bp-0Ch], dx
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 2132h
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 2132h
                 push    ax
                 mov     si, 1CAEh
                 mov     bx, [bp-0Ch]
                 add     bx, [si+0Ah]
                 push    bx
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 call    sub_109D3
 ; ---------------------------------------------------------------------------
                 db 9Ah, 6Fh, 5Eh, 2 dup(0)
 ; ---------------------------------------------------------------------------
 
-loc_103A6:                              ; CODE XREF: sub_10199+1C9↑j
+loc_103A6:                              ; CODE XREF: outInit+1C9↑j
                 call    sub_117B0
                 cmp     word ptr ds:1F1Ah, 1
                 jz      short loc_103B3
                 jmp     loc_103D1
 ; ---------------------------------------------------------------------------
 
-loc_103B3:                              ; CODE XREF: sub_10199+215↑j
+loc_103B3:                              ; CODE XREF: outInit+215↑j
                 call    far ptr 0:58EEh
                 call    loc_145DB
 ; ---------------------------------------------------------------------------
@@ -511,18 +512,18 @@ loc_103B3:                              ; CODE XREF: sub_10199+215↑j
                 push    ax
                 mov     ax, 2136h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     word ptr ds:1F16h, 6
                 jmp     loc_1134B
 ; ---------------------------------------------------------------------------
 
-loc_103D1:                              ; CODE XREF: sub_10199+217↑j
+loc_103D1:                              ; CODE XREF: outInit+217↑j
                 cmp     word ptr ds:1ADAh, 0
                 mov     ax, 0
                 jle     short loc_103DC
                 dec     ax
 
-loc_103DC:                              ; CODE XREF: sub_10199+240↑j
+loc_103DC:                              ; CODE XREF: outInit+240↑j
                 mov     bx, 24C6h
                 mov     [bp-0Ch], ax
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
@@ -533,14 +534,14 @@ loc_103DC:                              ; CODE XREF: sub_10199+240↑j
                 jbe     short loc_103FA
                 dec     ax
 
-loc_103FA:                              ; CODE XREF: sub_10199+25E↑j
+loc_103FA:                              ; CODE XREF: outInit+25E↑j
                 and     ax, [bp-0Ch]
                 and     ax, ax
                 jnz     short loc_10404
                 jmp     loc_10416
 ; ---------------------------------------------------------------------------
 
-loc_10404:                              ; CODE XREF: sub_10199+266↑j
+loc_10404:                              ; CODE XREF: outInit+266↑j
                 mov     word ptr ds:213Ah, 28h ; '('
                 mov     ax, 213Ah
                 push    ax
@@ -548,16 +549,16 @@ loc_10404:                              ; CODE XREF: sub_10199+266↑j
                 jmp     loc_10327
 ; ---------------------------------------------------------------------------
 
-loc_10416:                              ; CODE XREF: sub_10199+268↑j
+loc_10416:                              ; CODE XREF: outInit+268↑j
                 cmp     word ptr ds:1ADAh, 0
                 jl      short loc_10420
                 jmp     loc_10426
 ; ---------------------------------------------------------------------------
 
-loc_10420:                              ; CODE XREF: sub_10199+282↑j
+loc_10420:                              ; CODE XREF: outInit+282↑j
                 mov     word ptr ds:1ADAh, 0
 
-loc_10426:                              ; CODE XREF: sub_10199+284↑j
+loc_10426:                              ; CODE XREF: outInit+284↑j
                 mov     bx, 24C6h
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
                 mov     bx, 1ACEh
@@ -567,24 +568,24 @@ loc_10426:                              ; CODE XREF: sub_10199+284↑j
                 jmp     loc_10450
 ; ---------------------------------------------------------------------------
 
-loc_10440:                              ; CODE XREF: sub_10199+2A2↑j
+loc_10440:                              ; CODE XREF: outInit+2A2↑j
                 mov     bx, 24C6h
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
                 mov     bx, 1ACEh
                 call    far ptr rt_FF50 ; -> rtm_FF50  (leglib seg004:0x2182d)
 
-loc_10450:                              ; CODE XREF: sub_10199+2A4↑j
+loc_10450:                              ; CODE XREF: outInit+2A4↑j
                 mov     ax, 24CAh
                 push    ax
                 mov     ax, 213Ch
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 213Ch
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 213Ch
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     word ptr ds:2140h, 28h ; '('
                 mov     ax, 2140h
                 push    ax
@@ -600,7 +601,7 @@ loc_10450:                              ; CODE XREF: sub_10199+2A4↑j
                 call    far ptr rt_FE56 ; -> rtm_FE56  (leglib seg007:0x27457)
                 call    far ptr 0:5018h
 
-loc_104A7:                              ; CODE XREF: sub_10199+18B↑j
+loc_104A7:                              ; CODE XREF: outInit+18B↑j
                 call    far ptr 0:57B0h
                 push    word ptr ds:24E8h
                 push    word ptr ds:24E6h
@@ -658,7 +659,7 @@ loc_10519:
 ; ---------------------------------------------------------------------------
                 nop
 
-loc_10526:                              ; CODE XREF: sub_10199+3A9↓j
+loc_10526:                              ; CODE XREF: outInit+3A9↓j
                 shl     ax, 1
                 mov     bx, ax
                 mov     si, 1B0Ch
@@ -668,7 +669,7 @@ loc_10526:                              ; CODE XREF: sub_10199+3A9↓j
                 mov     ax, ds:2146h
                 inc     ax
 
-loc_1053C:                              ; CODE XREF: sub_10199+389↑j
+loc_1053C:                              ; CODE XREF: outInit+389↑j
                 mov     ds:2146h, ax
                 cmp     ax, 4
                 jle     short loc_10526
@@ -705,7 +706,7 @@ loc_1053C:                              ; CODE XREF: sub_10199+389↑j
 ; ---------------------------------------------------------------------------
                 nop
 
-loc_105B8:                              ; CODE XREF: sub_10199+48B↓j
+loc_105B8:                              ; CODE XREF: outInit+48B↓j
                 mov     cx, 3
                 imul    cx
                 add     ax, 0FFF6h
@@ -723,7 +724,7 @@ loc_105B8:                              ; CODE XREF: sub_10199+48B↓j
                 jmp     loc_10602
 ; ---------------------------------------------------------------------------
 
-loc_105EE:                              ; CODE XREF: sub_10199+450↑j
+loc_105EE:                              ; CODE XREF: outInit+450↑j
                 mov     bx, ds:2146h
                 shl     bx, 1
                 mov     si, 1B0Ch
@@ -731,22 +732,22 @@ loc_105EE:                              ; CODE XREF: sub_10199+450↑j
                 mov     es, word ptr [si+2]
                 mov     word ptr es:[bx], 0
 
-loc_10602:                              ; CODE XREF: sub_10199+452↑j
+loc_10602:                              ; CODE XREF: outInit+452↑j
                 mov     ax, ds:2146h
                 cmp     ax, ds:1AEAh
                 jz      short loc_1060E
                 jmp     loc_1061A
 ; ---------------------------------------------------------------------------
 
-loc_1060E:                              ; CODE XREF: sub_10199+470↑j
+loc_1060E:                              ; CODE XREF: outInit+470↑j
                 mov     word ptr ds:1AEAh, 63h ; 'c'
                 mov     word ptr ds:1AECh, 0
 
-loc_1061A:                              ; CODE XREF: sub_10199+472↑j
+loc_1061A:                              ; CODE XREF: outInit+472↑j
                 mov     ax, ds:2146h
                 inc     ax
 
-loc_1061E:                              ; CODE XREF: sub_10199+41B↑j
+loc_1061E:                              ; CODE XREF: outInit+41B↑j
                 mov     ds:2146h, ax
                 cmp     ax, 7
                 jle     short loc_105B8
@@ -768,7 +769,7 @@ loc_1061E:                              ; CODE XREF: sub_10199+41B↑j
 ; ---------------------------------------------------------------------------
                 nop
 
-loc_1065A:                              ; CODE XREF: sub_10199+4DD↓j
+loc_1065A:                              ; CODE XREF: outInit+4DD↓j
                 shl     ax, 1
                 mov     bx, ax
                 mov     si, 1BC4h
@@ -778,7 +779,7 @@ loc_1065A:                              ; CODE XREF: sub_10199+4DD↓j
                 mov     ax, ds:2146h
                 inc     ax
 
-loc_10670:                              ; CODE XREF: sub_10199+4BD↑j
+loc_10670:                              ; CODE XREF: outInit+4BD↑j
                 mov     ds:2146h, ax
                 cmp     ax, 1Dh
                 jle     short loc_1065A
@@ -794,7 +795,7 @@ loc_1067D:
                 jmp     loc_106AA
 ; ---------------------------------------------------------------------------
 
-loc_10694:                              ; CODE XREF: sub_10199+517↓j
+loc_10694:                              ; CODE XREF: outInit+517↓j
                 shl     ax, 1
                 mov     bx, ax
                 mov     si, 1B96h
@@ -804,7 +805,7 @@ loc_10694:                              ; CODE XREF: sub_10199+517↓j
                 mov     ax, ds:2146h
                 inc     ax
 
-loc_106AA:                              ; CODE XREF: sub_10199+4F8↑j
+loc_106AA:                              ; CODE XREF: outInit+4F8↑j
                 mov     ds:2146h, ax
                 cmp     ax, 1Dh
                 jle     short loc_10694
@@ -841,14 +842,14 @@ loc_106F4:
                 jmp     loc_10708
 ; ---------------------------------------------------------------------------
 
-loc_106F9:                              ; CODE XREF: sub_10199:loc_106F4↑j
+loc_106F9:                              ; CODE XREF: outInit:loc_106F4↑j
                 mov     ax, ds:1AC2h
                 mov     bx, 0Ah
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
                 mov     es:[bx], ax
 
-loc_10708:                              ; CODE XREF: sub_10199+55D↑j
+loc_10708:                              ; CODE XREF: outInit+55D↑j
                 mov     word ptr ds:1ADCh, 0
                 mov     si, 1B96h
                 mov     bx, 0Ch
@@ -860,14 +861,14 @@ loc_10708:                              ; CODE XREF: sub_10199+55D↑j
                 jmp     loc_10733
 ; ---------------------------------------------------------------------------
 
-loc_10725:                              ; CODE XREF: sub_10199+587↑j
+loc_10725:                              ; CODE XREF: outInit+587↑j
                 mov     bx, 0Ch
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
                 mov     word ptr es:[bx], 64h ; 'd'
 
-loc_10733:                              ; CODE XREF: sub_10199+589↑j
-                                        ; sub_10199+62B↓j ...
+loc_10733:                              ; CODE XREF: outInit+589↑j
+                                        ; outInit+62B↓j ...
                 push    word ptr ds:24E8h
                 push    word ptr ds:24E6h
                 call    far ptr rt_B8   ; -> rtm_B8  (leglib seg003:0x1a1ba)
@@ -928,53 +929,53 @@ loc_10798:
                 jnz     short loc_107B3
                 dec     ax
 
-loc_107B3:                              ; CODE XREF: sub_10199+617↑j
+loc_107B3:                              ; CODE XREF: outInit+617↑j
                 cmp     word ptr ds:1F02h, 2
                 mov     cx, 0
                 jle     short loc_107BE
                 dec     cx
 
-loc_107BE:                              ; CODE XREF: sub_10199+622↑j
+loc_107BE:                              ; CODE XREF: outInit+622↑j
                 or      cx, ax
                 and     cx, cx
                 jz      short loc_107C7
                 jmp     loc_10733
 ; ---------------------------------------------------------------------------
 
-loc_107C7:                              ; CODE XREF: sub_10199+629↑j
+loc_107C7:                              ; CODE XREF: outInit+629↑j
                 cmp     word ptr ds:1B02h, 32h ; '2'
                 mov     ax, 0
                 jle     short loc_107D2
                 dec     ax
 
-loc_107D2:                              ; CODE XREF: sub_10199+636↑j
+loc_107D2:                              ; CODE XREF: outInit+636↑j
                 cmp     word ptr ds:1B02h, 39h ; '9'
                 mov     cx, 0
                 jge     short loc_107DD
                 dec     cx
 
-loc_107DD:                              ; CODE XREF: sub_10199+641↑j
+loc_107DD:                              ; CODE XREF: outInit+641↑j
                 and     cx, ax
                 cmp     word ptr ds:1B06h, 32h ; '2'
                 mov     ax, 0
                 jle     short loc_107EA
                 dec     ax
 
-loc_107EA:                              ; CODE XREF: sub_10199+64E↑j
+loc_107EA:                              ; CODE XREF: outInit+64E↑j
                 and     ax, cx
                 cmp     word ptr ds:1B06h, 38h ; '8'
                 mov     cx, 0
                 jge     short loc_107F7
                 dec     cx
 
-loc_107F7:                              ; CODE XREF: sub_10199+65B↑j
+loc_107F7:                              ; CODE XREF: outInit+65B↑j
                 and     cx, ax
                 and     cx, cx
                 jz      short loc_10800
                 jmp     loc_10733
 ; ---------------------------------------------------------------------------
 
-loc_10800:                              ; CODE XREF: sub_10199+662↑j
+loc_10800:                              ; CODE XREF: outInit+662↑j
                 mov     bx, 2496h
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
 
@@ -996,7 +997,7 @@ loc_10824:
                 jmp     loc_1086B
 ; ---------------------------------------------------------------------------
 
-loc_10829:                              ; CODE XREF: sub_10199:loc_10824↑j
+loc_10829:                              ; CODE XREF: outInit:loc_10824↑j
                 mov     si, 1B96h
                 xor     bx, bx
                 add     bx, [si+0Ah]
@@ -1007,7 +1008,7 @@ loc_10829:                              ; CODE XREF: sub_10199:loc_10824↑j
                 jmp     loc_1086B
 ; ---------------------------------------------------------------------------
 
-loc_10840:                              ; CODE XREF: sub_10199+6A2↑j
+loc_10840:                              ; CODE XREF: outInit+6A2↑j
                 xor     bx, bx
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
@@ -1022,13 +1023,13 @@ loc_10840:                              ; CODE XREF: sub_10199+6A2↑j
                 mov     es, word ptr [si+2]
                 mov     es:[bx], ax
 
-loc_1086B:                              ; CODE XREF: sub_10199+68D↑j
-                                        ; sub_10199+6A4↑j
+loc_1086B:                              ; CODE XREF: outInit+68D↑j
+                                        ; outInit+6A4↑j
                 xor     ax, ax
                 jmp     loc_108E2
 ; ---------------------------------------------------------------------------
 
-loc_10870:                              ; CODE XREF: sub_10199+74F↓j
+loc_10870:                              ; CODE XREF: outInit+74F↓j
                 shl     ax, 1
                 mov     bx, ax
                 mov     si, 1BF2h
@@ -1040,7 +1041,7 @@ loc_10870:                              ; CODE XREF: sub_10199+74F↓j
                 jge     short loc_10889
                 dec     cx
 
-loc_10889:                              ; CODE XREF: sub_10199+6ED↑j
+loc_10889:                              ; CODE XREF: outInit+6ED↑j
                 mov     bx, 2482h
                 mov     [bp-0Ch], ax
                 mov     [bp-0Eh], cx
@@ -1056,14 +1057,14 @@ loc_10889:                              ; CODE XREF: sub_10199+6ED↑j
                 jnb     short loc_108B9
                 dec     ax
 
-loc_108B9:                              ; CODE XREF: sub_10199+71D↑j
+loc_108B9:                              ; CODE XREF: outInit+71D↑j
                 and     ax, [bp-0Eh]
                 and     ax, ax
                 jnz     short loc_108C3
                 jmp     loc_108DE
 ; ---------------------------------------------------------------------------
 
-loc_108C3:                              ; CODE XREF: sub_10199+725↑j
+loc_108C3:                              ; CODE XREF: outInit+725↑j
                 mov     bx, [bp-0Ch]
                 mov     dx, bx
                 add     bx, [si+0Ah]
@@ -1075,11 +1076,11 @@ loc_108C3:                              ; CODE XREF: sub_10199+725↑j
                 mov     es, word ptr [si+2]
                 mov     es:[bx], ax
 
-loc_108DE:                              ; CODE XREF: sub_10199+727↑j
+loc_108DE:                              ; CODE XREF: outInit+727↑j
                 mov     ax, ds:2146h
                 inc     ax
 
-loc_108E2:                              ; CODE XREF: sub_10199+6D4↑j
+loc_108E2:                              ; CODE XREF: outInit+6D4↑j
                 mov     ds:2146h, ax
                 cmp     ax, 29h ; ')'
                 jle     short loc_10870
@@ -1093,7 +1094,7 @@ loc_108E2:                              ; CODE XREF: sub_10199+6D4↑j
                 jmp     loc_10920
 ; ---------------------------------------------------------------------------
 
-loc_10901:                              ; CODE XREF: sub_10199+763↑j
+loc_10901:                              ; CODE XREF: outInit+763↑j
                 mov     bx, 14h
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
@@ -1104,7 +1105,7 @@ loc_10901:                              ; CODE XREF: sub_10199+763↑j
                 mov     es, word ptr [si+2]
                 mov     word ptr es:[bx], 0Ah
 
-loc_10920:                              ; CODE XREF: sub_10199+765↑j
+loc_10920:                              ; CODE XREF: outInit+765↑j
                 mov     si, 1BC4h
                 mov     bx, 1Ah
                 add     bx, [si+0Ah]
@@ -1115,7 +1116,7 @@ loc_10920:                              ; CODE XREF: sub_10199+765↑j
                 jmp     loc_10956
 ; ---------------------------------------------------------------------------
 
-loc_10937:                              ; CODE XREF: sub_10199+799↑j
+loc_10937:                              ; CODE XREF: outInit+799↑j
                 mov     bx, 1Ah
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
@@ -1126,7 +1127,7 @@ loc_10937:                              ; CODE XREF: sub_10199+799↑j
                 mov     es, word ptr [si+2]
                 mov     word ptr es:[bx], 0Dh
 
-loc_10956:                              ; CODE XREF: sub_10199+79B↑j
+loc_10956:                              ; CODE XREF: outInit+79B↑j
                 mov     si, 1B96h
                 mov     bx, 44h ; 'D'
                 add     bx, [si+0Ah]
@@ -1145,34 +1146,34 @@ loc_1097E:
                 push    ax
                 mov     ax, 214Ch
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
 loc_1098B:
                 mov     ax, 214Ch
                 push    ax
-                call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
+                call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
 
 loc_10994:
                 mov     ax, 214Ch
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
 loc_1099D:
                 mov     ax, 2526h
                 push    ax
                 mov     ax, 2150h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
 loc_109AA:
                 mov     ax, 2150h
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
 
 loc_109B3:
                 mov     ax, 2150h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
 loc_109BC:
                 mov     word ptr ds:2154h, 1Bh
@@ -1185,14 +1186,14 @@ j_rt_FE01:                              ; -> rtm_FE01  (leglib seg008:0x27c25)
 
 loc_109D0:
                 jmp     loc_10327
-sub_10199       endp
+outInit         endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: noreturn
 
-sub_109D3       proc near               ; CODE XREF: sub_10199+205↑p
+sub_109D3       proc near               ; CODE XREF: outInit+205↑p
                 mov     bx, ds:1E20h
                 inc     bx
                 call    far ptr rt_FD   ; -> rtm_FD  (leglib seg003:0x1ca6a)  [mid-func]
@@ -1230,7 +1231,7 @@ sub_109D3       endp
 ; Attributes: noreturn
 
 sub_10A05       proc near               ; CODE XREF: sub_110BF+107↓j
-                                        ; sub_12969:loc_129C9↓p ...
+                                        ; updateGameState:loc_129C9↓p ...
                 mov     word ptr ds:2156h, 0Fh
                 mov     word ptr ds:2158h, 2
                 mov     ax, 2156h
@@ -1248,8 +1249,8 @@ sub_10A05       endp
 
 ; Attributes: noreturn
 
-sub_10A1F       proc near               ; CODE XREF: sub_13C60+257↓j
-                                        ; sub_13C60+3A2↓p
+sub_10A1F       proc near               ; CODE XREF: mainDispatch+257↓j
+                                        ; mainDispatch+3A2↓p
                 mov     word ptr ds:215Ah, 3Ch ; '<'
                 mov     word ptr ds:215Ch, 0CAh
                 mov     ax, 215Ah
@@ -1304,8 +1305,8 @@ sub_10A53       endp
 
 ; Attributes: noreturn
 
-sub_10A6D       proc near               ; CODE XREF: sub_12969+1C7↓j
-                                        ; sub_13C60+447↓p ...
+sub_10A6D       proc near               ; CODE XREF: updateGameState+1C7↓j
+                                        ; mainDispatch+447↓p ...
                 mov     word ptr ds:2166h, 32h ; '2'
                 mov     word ptr ds:2168h, 2
                 mov     ax, 2166h
@@ -1417,7 +1418,7 @@ sub_10AEC       endp
 
 ; Attributes: noreturn
 
-sub_10B06       proc near               ; CODE XREF: sub_10199:loc_1035A↑p
+sub_10B06       proc near               ; CODE XREF: outInit:loc_1035A↑p
                 mov     ax, 2548h
                 push    ax
                 mov     ax, ds:1E1Eh
@@ -1428,23 +1429,23 @@ sub_10B06       proc near               ; CODE XREF: sub_10199:loc_1035A↑p
                 mov     si, 1D94h
                 add     bx, [si+0Ah]
                 push    bx
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
 
 loc_10B22:
                 push    ax
                 mov     ax, 217Ch
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
 loc_10B2C:
                 mov     ax, 217Ch
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
 
 loc_10B35:
                 mov     ax, 217Ch
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
 loc_10B3E:
                 cmp     word ptr ds:1F2Ah, 0Ah
@@ -1580,24 +1581,24 @@ loc_10C96:                              ; CODE XREF: sub_10B06+18C↑j
                 push    ax
                 mov     ax, 218Ah
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 218Ah
                 push    ax
-                call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
+                call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
                 mov     ax, 218Ah
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     ax, 256Eh
                 push    ax
                 mov     ax, 218Eh
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 218Eh
                 push    ax
-                call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
+                call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
                 mov     ax, 218Eh
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     ax, ds:1ADAh
                 call    far ptr rt_FF20 ; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
                 push    word ptr ds:24E8h
@@ -1620,17 +1621,17 @@ loc_10C96:                              ; CODE XREF: sub_10B06+18C↑j
                 push    word ptr ds:2192h
                 call    far ptr rt_D2   ; -> rtm_D2  (leglib seg003:0x1b870)
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 mov     ax, 2194h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 2194h
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 2194h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     word ptr ds:2198h, 3
                 mov     ax, 2198h
                 push    ax
@@ -1650,8 +1651,8 @@ loc_10D6A:                              ; CODE XREF: sub_10B06+AE↑j
 
 loc_10D74:                              ; CODE XREF: sub_10B06+269↑j
                 mov     word ptr ds:1F06h, 0
-                call    far ptr rt_FE5B ; -> rtm_FE5B  (leglib seg008:0x28861)
-                call    far ptr rt_FE5B ; -> rtm_FE5B  (leglib seg008:0x28861)
+                call    far ptr rt_FE5B ; -> screenRefresh  (leglib seg008:0x28861)
+                call    far ptr rt_FE5B ; -> screenRefresh  (leglib seg008:0x28861)
                 mov     bx, ds:1F04h
                 call    far ptr rt_FD   ; -> rtm_FD  (leglib seg003:0x1ca6a)  [mid-func]
                 or      [bp+5E0Dh], bl
@@ -1676,13 +1677,13 @@ loc_10DA8:                              ; CODE XREF: sub_10B06+29D↑j
                 push    ax
                 mov     ax, 219Ch
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 219Ch
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 219Ch
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     word ptr ds:21A0h, 15h
                 mov     ax, 21A0h
                 push    ax
@@ -1701,24 +1702,24 @@ loc_10DE1:                              ; CODE XREF: sub_10B06+2D6↑j
                 push    ax
                 mov     ax, 21A2h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 21A2h
                 push    ax
-                call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
+                call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
                 mov     ax, 21A2h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     ax, 25DCh
                 push    ax
                 mov     ax, 21A6h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 21A6h
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 21A6h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     word ptr ds:21AAh, 15h
                 mov     ax, 21AAh
                 push    ax
@@ -1731,13 +1732,13 @@ loc_10E2F:                              ; CODE XREF: sub_10B06+2D8↑j
                 push    ax
                 mov     ax, 21ACh
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 21ACh
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 21ACh
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     word ptr ds:21B0h, 15h
                 mov     ax, 21B0h
                 push    ax
@@ -1759,13 +1760,13 @@ loc_10E75:                              ; CODE XREF: sub_10B06+36A↑j
                 push    ax
                 mov     ax, 21B2h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 21B2h
                 push    ax
-                call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
+                call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
                 mov     ax, 21B2h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     word ptr ds:1F24h, 0FFh
                 mov     word ptr ds:21B6h, 0
                 mov     word ptr ds:21B8h, 2
@@ -1812,13 +1813,13 @@ loc_10EFE:                              ; CODE XREF: sub_10B06+3EE↑j
                 push    ax
                 mov     ax, 21BEh
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 21BEh
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 21BEh
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     word ptr ds:2182h, 7
                 jmp     loc_10BB7
 ; ---------------------------------------------------------------------------
@@ -1833,13 +1834,13 @@ loc_10EFE:                              ; CODE XREF: sub_10B06+3EE↑j
                 push    ax
                 mov     ax, 21C6h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 21C6h
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 21C6h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     word ptr ds:21CAh, 0Ch
                 mov     ax, 21CAh
                 push    ax
@@ -1857,13 +1858,13 @@ loc_10EFE:                              ; CODE XREF: sub_10B06+3EE↑j
                 push    ax
                 mov     ax, 21D0h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 21D0h
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 21D0h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     word ptr ds:21D4h, 0Fh
                 mov     ax, 21D4h
                 push    ax
@@ -1883,13 +1884,13 @@ loc_10EFE:                              ; CODE XREF: sub_10B06+3EE↑j
                 push    ax
                 mov     ax, 21DEh
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 21DEh
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 21DEh
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 jmp     loc_1109D
 ; ---------------------------------------------------------------------------
                 mov     word ptr ds:21E2h, 1
@@ -1903,24 +1904,24 @@ loc_10EFE:                              ; CODE XREF: sub_10B06+3EE↑j
                 push    ax
                 mov     ax, 21E6h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 21E6h
                 push    ax
-                call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
+                call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
                 mov     ax, 21E6h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     ax, 26D6h
                 push    ax
                 mov     ax, 21EAh
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 21EAh
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 21EAh
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 inc     word ptr ds:21DCh
                 cmp     word ptr ds:21DCh, 8
                 jl      short loc_1106C
@@ -1938,13 +1939,13 @@ loc_11072:                              ; CODE XREF: sub_10B06+563↑j
                 push    ax
                 mov     ax, 21EEh
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 21EEh
                 push    ax
-                call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
+                call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
                 mov     ax, 21EEh
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     word ptr ds:1ADAh, 0
                 mov     word ptr ds:1F2Ah, 0
 
@@ -1964,7 +1965,7 @@ loc_110B2:                              ; CODE XREF: sub_10B06+3F↑j
                 push    ax
                 mov     ax, 21F4h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 sub_10B06       endp
 
 
@@ -1975,12 +1976,12 @@ sub_10B06       endp
 sub_110BF       proc near
                 mov     ax, 21F4h
                 push    ax
-                call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
+                call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
 
 loc_110C8:
                 mov     ax, 21F4h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
 loc_110D1:
                 mov     word ptr ds:21F8h, 8
@@ -2087,13 +2088,13 @@ loc_11194:                              ; CODE XREF: sub_110BF+D0↑j
                 push    ax
                 mov     ax, 2202h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 2202h
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 2202h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     word ptr ds:2206h, 15h
                 mov     ax, 2206h
                 push    ax
@@ -2107,17 +2108,17 @@ loc_111C9:                              ; CODE XREF: sub_110BF+D2↑j
                 push    ax
                 mov     ax, 2208h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
 loc_111D6:
                 mov     ax, 2208h
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
 
 loc_111DF:
                 mov     ax, 2208h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
 loc_111E8:
                 mov     word ptr ds:1F2Ah, 0
@@ -2142,7 +2143,7 @@ loc_11205:
                 push    ax
                 mov     ax, 220Ch
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
 loc_11212:
                 cmp     word ptr ds:2182h, 0Dh
@@ -2155,7 +2156,7 @@ loc_1121C:                              ; CODE XREF: sub_111FC+1B↑j
                 push    ax
                 mov     ax, 220Ch
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
 loc_11229:                              ; CODE XREF: sub_111FC+1D↑j
                 mov     word ptr ds:1F24h, 0FFh
@@ -2163,31 +2164,31 @@ loc_11229:                              ; CODE XREF: sub_111FC+1D↑j
                 push    ax
                 mov     ax, 2210h
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
 
 loc_1123C:
                 push    ax
                 mov     ax, 276Ch
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
 
 loc_11246:
                 push    ax
                 mov     ax, 2214h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
 loc_11250:
                 mov     ax, 2214h
                 push    ax
-                call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
+                call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
 
 loc_11259:
                 mov     ax, 2214h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
-j_rt_FE5B_0:                            ; -> rtm_FE5B  (leglib seg008:0x28861)
+j_rt_FE5B_0:                            ; -> screenRefresh  (leglib seg008:0x28861)
                 call    far ptr rt_FE5B
 
 loc_11267:
@@ -2278,13 +2279,13 @@ loc_11312:                              ; CODE XREF: sub_111FC+111↑j
                 push    ax
                 mov     ax, 2222h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 2222h
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 2222h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 jmp     loc_10BB7
 ; ---------------------------------------------------------------------------
 
@@ -2300,7 +2301,7 @@ loc_1133E:                              ; CODE XREF: sub_111FC+13D↑j
                 jmp     loc_11408
 ; ---------------------------------------------------------------------------
 
-loc_1134B:                              ; CODE XREF: sub_10199+235↑j
+loc_1134B:                              ; CODE XREF: outInit+235↑j
                                         ; sub_111FC+13F↑j
                 mov     word ptr ds:1F04h, 61A8h
                 mov     word ptr ds:1F06h, 0
@@ -2439,7 +2440,7 @@ sub_1141E       endp
 
 
 sub_11454       proc near               ; CODE XREF: sub_111FC:loc_1139B↑p
-                                        ; sub_13C60+C1E↓p
+                                        ; mainDispatch+C1E↓p
                 mov     ax, 0Ah
                 jmp     loc_1148B
 ; ---------------------------------------------------------------------------
@@ -2663,10 +2664,11 @@ sub_11454       endp ; sp-analysis failed
 
 ; =============== S U B R O U T I N E =======================================
 
+; set game flag mask 0x03 (-> applyGameFlag).
 
-sub_11638       proc near
+setFlag_03      proc near
                 mov     word ptr ds:2234h, 3
-                call    sub_11760
+                call    applyGameFlag   ; shared tail of the ds:2234h flag-setter family (sub_11638 etc.): `mov si, 1B96h` then folds the pushed mask into the flag word.
                 mov     si, 1B3Ah
                 mov     bx, 6
                 add     bx, [si+0Ah]
@@ -2677,7 +2679,7 @@ sub_11638       proc near
                 jnz     short loc_11659
                 dec     ax
 
-loc_11659:                              ; CODE XREF: sub_11638+1E↑j
+loc_11659:                              ; CODE XREF: setFlag_03+1E↑j
                 neg     ax
                 mov     si, 1BC4h
                 mov     bx, 14h
@@ -2689,38 +2691,40 @@ loc_11659:                              ; CODE XREF: sub_11638+1E↑j
                 jle     short loc_11673
                 dec     cx
 
-loc_11673:                              ; CODE XREF: sub_11638+38↑j
+loc_11673:                              ; CODE XREF: setFlag_03+38↑j
                 neg     cx
                 or      cx, ax
                 or      cx, ds:222Eh
                 mov     ax, cx
                 mov     ds:222Eh, ax
                 retn
-sub_11638       endp
+setFlag_03      endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; set game flag mask 0x38 (-> applyGameFlag).
 
-sub_11681       proc near
+setFlag_38      proc near
                 mov     word ptr ds:2234h, 38h ; '8'
-                jmp     sub_11760
-sub_11681       endp
+                jmp     applyGameFlag   ; shared tail of the ds:2234h flag-setter family (sub_11638 etc.): `mov si, 1B96h` then folds the pushed mask into the flag word.
+setFlag_38      endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; set game flag mask 0xC0 (-> applyGameFlag).
 ; Attributes: noreturn
 
-sub_1168A       proc near
+setFlag_C0      proc near
                 mov     word ptr ds:2234h, 0C0h
-                call    sub_11760
+                call    applyGameFlag   ; shared tail of the ds:2234h flag-setter family (sub_11638 etc.): `mov si, 1B96h` then folds the pushed mask into the flag word.
                 cmp     word ptr ds:1AF0h, 1Ch
                 mov     ax, 0
                 jge     short loc_1169E
                 dec     ax
 
-loc_1169E:                              ; CODE XREF: sub_1168A+11↑j
+loc_1169E:                              ; CODE XREF: setFlag_C0+11↑j
                 neg     ax
                 mov     bx, 278Ch
                 mov     [bp-0Ch], ax
@@ -2744,27 +2748,28 @@ loc_116C7:
                 jnb     short loc_116CD
                 dec     ax
 
-loc_116CD:                              ; CODE XREF: sub_1168A+40↑j
+loc_116CD:                              ; CODE XREF: setFlag_C0+40↑j
                 and     ax, [bp-0Ch]
                 or      ax, ds:222Eh
                 mov     ds:222Eh, ax
                 retn
-sub_1168A       endp
+setFlag_C0      endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; set game flag mask 0x0300 (-> applyGameFlag).
 
-sub_116D8       proc near
+setFlag_0300    proc near
                 mov     word ptr ds:2234h, 300h
-                jmp     sub_11760
-sub_116D8       endp
+                jmp     applyGameFlag   ; shared tail of the ds:2234h flag-setter family (sub_11638 etc.): `mov si, 1B96h` then folds the pushed mask into the flag word.
+setFlag_0300    endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_116E1       proc near               ; CODE XREF: sub_13C60+E21↓p
+sub_116E1       proc near               ; CODE XREF: mainDispatch+E21↓p
                 cmp     word ptr ds:2236h, 9D1Ah
                 jnz     short loc_116EC
                 jmp     locret_116FD
@@ -2793,40 +2798,42 @@ sub_116FE       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; set game flag mask 0x0800 (-> applyGameFlag).
 
-sub_11705       proc near
+setFlag_0800    proc near
                 mov     word ptr ds:2234h, 800h
-                call    sub_11760
+                call    applyGameFlag   ; shared tail of the ds:2234h flag-setter family (sub_11638 etc.): `mov si, 1B96h` then folds the pushed mask into the flag word.
                 cmp     word ptr ds:222Eh, 0
                 jz      short loc_11718
                 jmp     locret_1171E
 ; ---------------------------------------------------------------------------
 
-loc_11718:                              ; CODE XREF: sub_11705+E↑j
+loc_11718:                              ; CODE XREF: setFlag_0800+E↑j
                 mov     word ptr ds:222Eh, 2
 
-locret_1171E:                           ; CODE XREF: sub_11705+10↑j
+locret_1171E:                           ; CODE XREF: setFlag_0800+10↑j
                 retn
-sub_11705       endp
+setFlag_0800    endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; set game flag mask 0x1000 (-> applyGameFlag).
 
-sub_1171F       proc near
+setFlag_1000    proc near
                 mov     word ptr ds:2234h, 1000h
-                call    sub_11760
+                call    applyGameFlag   ; shared tail of the ds:2234h flag-setter family (sub_11638 etc.): `mov si, 1B96h` then folds the pushed mask into the flag word.
                 cmp     word ptr ds:222Eh, 0
                 jz      short loc_11732
                 jmp     locret_11738
 ; ---------------------------------------------------------------------------
 
-loc_11732:                              ; CODE XREF: sub_1171F+E↑j
+loc_11732:                              ; CODE XREF: setFlag_1000+E↑j
                 mov     word ptr ds:222Eh, 2
 
-locret_11738:                           ; CODE XREF: sub_1171F+10↑j
+locret_11738:                           ; CODE XREF: setFlag_1000+10↑j
                 retn
-sub_1171F       endp
+setFlag_1000    endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -2857,9 +2864,10 @@ sub_11739       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; shared tail of the ds:2234h flag-setter family (sub_11638 etc.): `mov si, 1B96h` then folds the pushed mask into the flag word.
 
-sub_11760       proc near               ; CODE XREF: sub_11638+6↑p
-                                        ; sub_11681+6↑j ...
+applyGameFlag   proc near               ; CODE XREF: setFlag_03+6↑p
+                                        ; setFlag_38+6↑j ...
                 mov     si, 1B96h
                 mov     bx, 16h
                 add     bx, [si+0Ah]
@@ -2886,18 +2894,18 @@ sub_11760       proc near               ; CODE XREF: sub_11638+6↑p
                 jz      short loc_117A8
                 dec     cx
 
-loc_117A8:                              ; CODE XREF: sub_11760+45↑j
+loc_117A8:                              ; CODE XREF: applyGameFlag+45↑j
                 neg     cx
                 mov     ax, cx
                 mov     ds:222Eh, ax
                 retn
-sub_11760       endp
+applyGameFlag   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_117B0       proc near               ; CODE XREF: sub_10199:loc_103A6↑p
+sub_117B0       proc near               ; CODE XREF: outInit:loc_103A6↑p
                 cmp     word ptr ds:1F2Ah, 0
                 jle     short loc_117BA
                 jmp     loc_11A58
@@ -3107,13 +3115,13 @@ loc_119BC:                              ; CODE XREF: sub_117B0+2EC↓j
                 push    ax
                 mov     ax, 223Eh
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 223Eh
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 223Eh
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 cmp     word ptr ds:21FEh, 1
                 jg      short loc_119E5
                 jmp     loc_11A04
@@ -3124,13 +3132,13 @@ loc_119E5:                              ; CODE XREF: sub_117B0+230↑j
                 push    ax
                 mov     ax, 2242h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 2242h
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 2242h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
 loc_11A04:                              ; CODE XREF: sub_117B0+232↑j
                 mov     ax, 27BCh
@@ -3143,21 +3151,21 @@ loc_11A04:                              ; CODE XREF: sub_117B0+232↑j
                 mov     si, 1D94h
                 add     bx, [si+0Ah]
                 push    bx
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 mov     ax, 27D6h
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 mov     ax, 2246h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 2246h
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 2246h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     word ptr ds:224Ah, 0Fh
                 mov     ax, 224Ah
                 push    ax
@@ -3346,11 +3354,11 @@ loc_11BEC:                              ; CODE XREF: sub_117B0+437↑j
                 push    word ptr ds:21FEh
                 call    far ptr rt_D2   ; -> rtm_D2  (leglib seg003:0x1b870)
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 mov     ax, 27E2h
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 mov     bx, ds:2254h
                 shl     bx, 1
@@ -3358,22 +3366,22 @@ loc_11BEC:                              ; CODE XREF: sub_117B0+437↑j
                 mov     si, 20E2h
                 add     bx, [si+0Ah]
                 push    bx
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 mov     ax, 2256h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 2256h
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 2256h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     ax, 27E8h
                 push    ax
                 mov     ax, 2210h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 cmp     word ptr ds:21FEh, 1
                 jg      short loc_11C51
                 jmp     loc_11C7D
@@ -3384,42 +3392,42 @@ loc_11C51:                              ; CODE XREF: sub_117B0+49C↑j
                 push    ax
                 mov     ax, 225Ah
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 225Ah
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 225Ah
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     ax, 27F0h
                 push    ax
                 mov     ax, 2210h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
 loc_11C7D:                              ; CODE XREF: sub_117B0+49E↑j
-                call    far ptr rt_FE5B ; -> rtm_FE5B  (leglib seg008:0x28861)
+                call    far ptr rt_FE5B ; -> screenRefresh  (leglib seg008:0x28861)
                 mov     ax, 2210h
                 push    ax
                 mov     ax, 27F8h
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 mov     ax, 225Eh
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 225Eh
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 225Eh
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 jmp     sub_10AD5
 ; ---------------------------------------------------------------------------
 
 loc_11CAE:                              ; CODE XREF: sub_117B0+2AF↑j
                                         ; sub_117B0+403↑j ...
-                call    far ptr rt_FE5B ; -> rtm_FE5B  (leglib seg008:0x28861)
+                call    far ptr rt_FE5B ; -> screenRefresh  (leglib seg008:0x28861)
 sub_117B0       endp
 
 ; [00000490 BYTES: COLLAPSED FUNCTION j_rt_FE5B_1. PRESS NUMPAD+ TO EXPAND]
@@ -3432,7 +3440,7 @@ sub_12143       proc near
                 push    ax
                 mov     ax, 27E2h
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
 
 loc_1214D:
                 push    ax
@@ -3442,30 +3450,30 @@ loc_1214D:
                 mov     si, 20E2h
                 add     bx, [si+0Ah]
                 push    bx
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
 
 loc_12162:
                 push    ax
                 mov     ax, 2288h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
 loc_1216C:
                 mov     ax, 2288h
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
 
 loc_12175:
                 mov     ax, 2288h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
 loc_1217E:
                 mov     ax, 28BEh
                 push    ax
                 mov     ax, 2210h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
 loc_1218B:
                 cmp     word ptr ds:21FEh, 1
@@ -3478,47 +3486,47 @@ loc_12195:                              ; CODE XREF: sub_12143+4D↑j
                 push    ax
                 mov     ax, 2210h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 27B6h
                 push    ax
                 mov     ax, 228Ch
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 228Ch
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 228Ch
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
 loc_121C1:                              ; CODE XREF: sub_12143+4F↑j
                 mov     ax, 28D4h
                 push    ax
                 mov     ax, 2210h
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
 
 loc_121CE:
                 push    ax
                 mov     ax, 28DAh
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
 
 loc_121D8:
                 push    ax
                 mov     ax, 2290h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
 loc_121E2:
                 mov     ax, 2290h
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
 
 loc_121EB:
                 mov     ax, 2290h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
 loc_121F4:
                 jmp     sub_10AD5
@@ -3605,17 +3613,17 @@ sub_12252       proc near               ; CODE XREF: sub_117B0+361↑j
                 push    ax
                 mov     ax, 2294h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
 loc_1225F:
                 mov     ax, 2294h
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
 
 loc_12268:
                 mov     ax, 2294h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
 loc_12271:
                 cmp     word ptr ds:21FEh, 1
@@ -3628,30 +3636,30 @@ loc_1227B:                              ; CODE XREF: sub_12252+24↑j
                 push    ax
                 mov     ax, 2298h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 2298h
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 2298h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
 loc_1229A:                              ; CODE XREF: sub_12252+26↑j
                 mov     ax, 27D6h
                 push    ax
                 mov     ax, 229Ch
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
 loc_122A7:
                 mov     ax, 229Ch
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
 
 loc_122B0:
                 mov     ax, 229Ch
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
 loc_122B9:
                 mov     word ptr ds:1F2Ah, 0
@@ -3666,7 +3674,7 @@ sub_12252       endp
 ; Attributes: noreturn
 
 sub_122CB       proc near               ; CODE XREF: j_rt_FE5B_1+454↑p
-                                        ; sub_13C60+C1B↓p
+                                        ; mainDispatch+C1B↓p
                 mov     word ptr ds:2274h, 0FC18h
                 mov     bx, 2476h
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
@@ -3714,7 +3722,7 @@ sub_122CB       endp
 ; Attributes: noreturn
 
 sub_1232F       proc near               ; CODE XREF: sub_117B0+3AC↑p
-                                        ; sub_12969:loc_12A29↓p
+                                        ; updateGameState:loc_12A29↓p
                 cmp     word ptr ds:1F2Ah, 5
                 jl      short loc_12339
                 jmp     loc_1233F
@@ -3994,19 +4002,19 @@ sub_125D1       proc near
                 push    ax
                 mov     ax, 22B2h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
 loc_125DE:
                 mov     ax, 22B2h
                 push    ax
-                call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
+                call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
 
 loc_125E7:
                 mov     ax, 22B2h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
-j_rt_FE5B_2:                            ; -> rtm_FE5B  (leglib seg008:0x28861)
+j_rt_FE5B_2:                            ; -> screenRefresh  (leglib seg008:0x28861)
                 call    far ptr rt_FE5B
 
 loc_125F5:
@@ -4024,17 +4032,17 @@ loc_125FF:                              ; CODE XREF: sub_125D1+29↑j
                 mov     si, 1CAEh
                 add     bx, [si+0Ah]
                 push    bx
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 mov     ax, 22B6h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 22B6h
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 22B6h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 retn
 ; ---------------------------------------------------------------------------
 
@@ -4043,7 +4051,7 @@ loc_12634:                              ; CODE XREF: sub_125D1+2B↑j
                 push    ax
                 mov     ax, 22BAh
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 sub_125D1       endp
 
 
@@ -4054,12 +4062,12 @@ sub_125D1       endp
 sub_12641       proc near
                 mov     ax, 22BAh
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
 
 loc_1264A:
                 mov     ax, 22BAh
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
 loc_12653:
                 mov     word ptr ds:22BEh, 0
@@ -4176,7 +4184,7 @@ loc_12717:                              ; CODE XREF: sub_12641+A0↑j
                 mov     si, 1CAEh
                 add     bx, [si+0Ah]
                 push    bx
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
 sub_12641       endp
 
 
@@ -4188,7 +4196,7 @@ sub_12792       proc near
                 push    ax
                 mov     ax, 2950h
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
 
 loc_1279C:
                 push    ax
@@ -4200,23 +4208,23 @@ loc_1279C:
                 mov     si, 1D94h
                 add     bx, [si+0Ah]
                 push    bx
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
 
 loc_127B5:
                 push    ax
                 mov     ax, 22CEh
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
 loc_127BF:
                 mov     ax, 22CEh
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
 
 loc_127C8:
                 mov     ax, 22CEh
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
 nullsub_10:
                 retn
@@ -4225,31 +4233,34 @@ sub_12792       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; ds:2146h := 1, then jmp j_rt_FE4E.
 ; Attributes: noreturn
 
-sub_127D2       proc near
+setMode_1       proc near
                 mov     word ptr ds:2146h, 1
                 jmp     j_rt_FE4E
-sub_127D2       endp
+setMode_1       endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; ds:2146h := 2, then jmp j_rt_FE4E.
 ; Attributes: noreturn
 
-sub_127DB       proc near
+setMode_2       proc near
                 mov     word ptr ds:2146h, 2
                 jmp     j_rt_FE4E
-sub_127DB       endp
+setMode_2       endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; ds:2146h := 3.
 ; Attributes: noreturn
 
-sub_127E4       proc near
+setMode_3       proc near
                 mov     word ptr ds:2146h, 3
-sub_127E4       endp
+setMode_3       endp
 
 ; [00000039 BYTES: COLLAPSED FUNCTION j_rt_FE4E. PRESS NUMPAD+ TO EXPAND]
 
@@ -4257,7 +4268,7 @@ sub_127E4       endp
 
 
 sub_12823       proc near               ; CODE XREF: j_rt_FE4E:loc_12817↑p
-                                        ; sub_13C60+C18↓p
+                                        ; mainDispatch+C18↓p
                 mov     word ptr ds:2266h, 0
                 cmp     word ptr ds:1AEAh, 8
                 jl      short loc_12833
@@ -4321,34 +4332,34 @@ sub_128C5       proc near
                 push    ax
                 mov     ax, 22D8h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
 loc_128D2:
                 mov     ax, 22D8h
                 push    ax
-                call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
+                call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
 
 loc_128DB:
                 mov     ax, 22D8h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
 loc_128E4:
                 mov     ax, 2996h
                 push    ax
                 mov     ax, 22DCh
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
 loc_128F1:
                 mov     ax, 22DCh
                 push    ax
-                call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
+                call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
 
 loc_128FA:
                 mov     ax, 22DCh
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
 loc_12903:
                 mov     word ptr ds:22E0h, 65h ; 'e'
@@ -4377,23 +4388,23 @@ loc_12931:
 
 loc_12944:
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
 
 loc_1294A:
                 push    ax
                 mov     ax, 22E8h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
 loc_12954:
                 mov     ax, 22E8h
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
 
 loc_1295D:
                 mov     ax, 22E8h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
 loc_12966:
                 jmp     sub_10A39
@@ -4402,31 +4413,32 @@ sub_128C5       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; dispatches on ds:1F2Ah (`mov ax, ds:1F2Ah / and ax,ax` then a jump table) -- the mode switch between overworld / town / dungeon / combat states.
 ; Attributes: noreturn
 
-sub_12969       proc near
+updateGameState proc near
                 mov     ax, ds:1F2Ah
                 and     ax, ax
                 jnz     short loc_12973
                 jmp     loc_12995
 ; ---------------------------------------------------------------------------
 
-loc_12973:                              ; CODE XREF: sub_12969+5↑j
+loc_12973:                              ; CODE XREF: updateGameState+5↑j
                 mov     ax, 29C2h
                 push    ax
                 mov     ax, 22ECh
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 22ECh
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 22ECh
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 jmp     loc_13CF1
 ; ---------------------------------------------------------------------------
 
-loc_12995:                              ; CODE XREF: sub_12969+7↑j
+loc_12995:                              ; CODE XREF: updateGameState+7↑j
                 call    far ptr rt_FE4E ; -> rtm_FE4E  (leglib seg007:0x25c5c)
 
 loc_1299A:
@@ -4436,7 +4448,7 @@ loc_1299A:
                 push    ax
                 mov     ax, 22F0h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
 loc_129AD:
                 mov     ax, 22F0h
@@ -4444,12 +4456,12 @@ loc_129AD:
                 call    far ptr 0:5DD8h
                 mov     ax, 22F0h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
-j_rt_FE5B_3:                            ; -> rtm_FE5B  (leglib seg008:0x28861)
+j_rt_FE5B_3:                            ; -> screenRefresh  (leglib seg008:0x28861)
                 call    far ptr rt_FE5B
 
-j_rt_FE5B_4:                            ; -> rtm_FE5B  (leglib seg008:0x28861)
+j_rt_FE5B_4:                            ; -> screenRefresh  (leglib seg008:0x28861)
                 call    far ptr rt_FE5B
 
 loc_129C9:
@@ -4462,28 +4474,28 @@ loc_129CC:
                 jmp     loc_129F6
 ; ---------------------------------------------------------------------------
 
-loc_129D6:                              ; CODE XREF: sub_12969+68↑j
+loc_129D6:                              ; CODE XREF: updateGameState+68↑j
                 mov     ax, 29E6h
                 push    ax
                 mov     ax, 22F4h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 22F4h
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 22F4h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_129F6:                              ; CODE XREF: sub_12969+6A↑j
+loc_129F6:                              ; CODE XREF: updateGameState+6A↑j
                 cmp     word ptr ds:1F2Ah, 4
                 jle     short loc_12A00
                 jmp     loc_12AA6
 ; ---------------------------------------------------------------------------
 
-loc_12A00:                              ; CODE XREF: sub_12969+92↑j
+loc_12A00:                              ; CODE XREF: updateGameState+92↑j
                 mov     bx, 29FAh
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
                 push    word ptr ds:24E8h
@@ -4497,72 +4509,72 @@ loc_12A00:                              ; CODE XREF: sub_12969+92↑j
                 jmp     loc_12A2F
 ; ---------------------------------------------------------------------------
 
-loc_12A29:                              ; CODE XREF: sub_12969+BB↑j
+loc_12A29:                              ; CODE XREF: updateGameState+BB↑j
                 call    sub_1232F
 ; ---------------------------------------------------------------------------
                 jmp     loc_12AA6
 ; ---------------------------------------------------------------------------
 
-loc_12A2F:                              ; CODE XREF: sub_12969+BD↑j
+loc_12A2F:                              ; CODE XREF: updateGameState+BD↑j
                 mov     ax, 29FEh
                 push    ax
                 mov     ax, 2210h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 cmp     word ptr ds:21FEh, 1
                 jz      short loc_12A46
                 jmp     loc_12A53
 ; ---------------------------------------------------------------------------
 
-loc_12A46:                              ; CODE XREF: sub_12969+D8↑j
+loc_12A46:                              ; CODE XREF: updateGameState+D8↑j
                 mov     ax, 27E8h
                 push    ax
                 mov     ax, 2210h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
-loc_12A53:                              ; CODE XREF: sub_12969+DA↑j
+loc_12A53:                              ; CODE XREF: updateGameState+DA↑j
                 mov     ax, 2A08h
                 push    ax
                 mov     ax, 2210h
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 mov     ax, 2A18h
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 mov     ax, 22F8h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 22F8h
                 push    ax
-                call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
+                call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
                 mov     ax, 22F8h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     ax, 2A20h
                 push    ax
                 mov     ax, 22FCh
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 22FCh
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 22FCh
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_12AA6:                              ; CODE XREF: sub_12969+94↑j
-                                        ; sub_12969+C3↑j
+loc_12AA6:                              ; CODE XREF: updateGameState+94↑j
+                                        ; updateGameState+C3↑j
                 cmp     word ptr ds:1F2Ah, 0Ch
                 jnz     short loc_12AB0
                 jmp     loc_12B33
 ; ---------------------------------------------------------------------------
 
-loc_12AB0:                              ; CODE XREF: sub_12969+142↑j
+loc_12AB0:                              ; CODE XREF: updateGameState+142↑j
                 mov     ax, 2A3Ah
                 push    ax
                 mov     bx, ds:2254h
@@ -4571,56 +4583,56 @@ loc_12AB0:                              ; CODE XREF: sub_12969+142↑j
                 mov     si, 20E2h
                 add     bx, [si+0Ah]
                 push    bx
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 mov     ax, 2300h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 2300h
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 2300h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     ax, 2A42h
                 push    ax
                 mov     ax, 2210h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 cmp     word ptr ds:21FEh, 1
                 jg      short loc_12AFB
                 jmp     loc_12B08
 ; ---------------------------------------------------------------------------
 
-loc_12AFB:                              ; CODE XREF: sub_12969+18D↑j
+loc_12AFB:                              ; CODE XREF: updateGameState+18D↑j
                 mov     ax, 2A4Ch
                 push    ax
                 mov     ax, 2210h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
-loc_12B08:                              ; CODE XREF: sub_12969+18F↑j
+loc_12B08:                              ; CODE XREF: updateGameState+18F↑j
                 mov     ax, 2210h
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 2A54h
                 push    ax
                 mov     ax, 2304h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 2304h
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 2304h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 jmp     sub_10A6D
 ; ---------------------------------------------------------------------------
 
-loc_12B33:                              ; CODE XREF: sub_12969+144↑j
+loc_12B33:                              ; CODE XREF: updateGameState+144↑j
                 mov     bx, 2A64h
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
-sub_12969       endp
+updateGameState endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -4760,38 +4772,38 @@ loc_12C39:                              ; CODE XREF: sub_12B3B+E8↑j
                 push    ax
                 mov     ax, 230Ch
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 230Ch
                 push    ax
-                call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
+                call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
                 mov     ax, 230Ch
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 push    word ptr ds:1F04h
                 call    far ptr rt_D2   ; -> rtm_D2  (leglib seg003:0x1b870)
                 push    ax
                 mov     ax, 2A96h
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 push    word ptr ds:2192h
                 call    far ptr rt_D2   ; -> rtm_D2  (leglib seg003:0x1b870)
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 mov     ax, 2AAAh
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 mov     ax, 2310h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 2310h
                 push    ax
-                call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
+                call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
                 mov     ax, 2310h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 call    j_rt_FE5B
 ; ---------------------------------------------------------------------------
                 mov     ax, ds:1F04h
@@ -4881,37 +4893,37 @@ loc_12D4B:                              ; CODE XREF: sub_12B3B:loc_12D46↑j
                 push    word ptr ds:1F04h
                 call    far ptr rt_D2   ; -> rtm_D2  (leglib seg003:0x1b870)
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 mov     ax, 2314h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 2314h
                 push    ax
-                call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
+                call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
                 mov     ax, 2314h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     ax, 2AD8h
                 push    ax
                 push    word ptr ds:2192h
                 call    far ptr rt_D2   ; -> rtm_D2  (leglib seg003:0x1b870)
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 mov     ax, 2AAAh
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 mov     ax, 2318h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 2318h
                 push    ax
-                call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
+                call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
                 mov     ax, 2318h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 call    j_rt_FE5B
 ; ---------------------------------------------------------------------------
                 mov     ax, ds:1F04h
@@ -5101,7 +5113,7 @@ sub_12F77       proc near
                 push    ax
                 mov     ax, 2210h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
 nullsub_11:
                 retn
@@ -5117,7 +5129,7 @@ sub_12F8F       proc near
                 push    ax
                 mov     ax, 2210h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
 nullsub_12:
                 retn
@@ -5133,7 +5145,7 @@ sub_12F9D       proc near
                 push    ax
                 mov     ax, 2210h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
 nullsub_13:
                 retn
@@ -5149,7 +5161,7 @@ sub_12FAB       proc near
                 push    ax
                 mov     ax, 2210h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
 nullsub_14:
                 retn
@@ -5165,7 +5177,7 @@ sub_12FB9       proc near
                 push    ax
                 mov     ax, 2210h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
 nullsub_15:
                 retn
@@ -5181,23 +5193,23 @@ sub_12FC7       proc near
                 push    ax
                 mov     ax, 2210h
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
 
 loc_12FD4:
                 push    ax
                 mov     ax, 231Eh
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
 loc_12FDE:
                 mov     ax, 231Eh
                 push    ax
-                call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
+                call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
 
 loc_12FE7:
                 mov     ax, 231Eh
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
 loc_12FF0:
                 mov     bx, ds:1F04h
@@ -5208,7 +5220,7 @@ loc_12FF0:
                 push    bx
                 mov     ax, 2B5Ah
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
 
 loc_13008:
                 push    ax
@@ -5217,29 +5229,29 @@ loc_13008:
 
 loc_13012:
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
 
 loc_13018:
                 push    ax
                 mov     ax, 2AAAh
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
 
 loc_13022:
                 push    ax
                 mov     ax, 2322h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
 loc_1302C:
                 mov     ax, 2322h
                 push    ax
-                call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
+                call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
 
 loc_13035:
                 mov     ax, 2322h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
 j_j_rt_FE5B:
                 call    j_rt_FE5B
@@ -5294,33 +5306,33 @@ loc_13081:                              ; CODE XREF: sub_12B3B+41↑j
                 push    ax
                 mov     ax, 2326h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 2326h
                 push    ax
-                call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
+                call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
                 mov     ax, 2326h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     ax, 2B80h
                 push    ax
                 push    word ptr ds:2192h
                 call    far ptr rt_D2   ; -> rtm_D2  (leglib seg003:0x1b870)
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 mov     ax, 2AAAh
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 mov     ax, 232Ah
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 232Ah
                 push    ax
-                call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
+                call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
                 mov     ax, 232Ah
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     word ptr ds:232Eh, 1
                 mov     ax, 232Eh
                 push    ax
@@ -5363,21 +5375,21 @@ loc_13140:                              ; CODE XREF: sub_12FC7+174↑j
                 mov     si, 1D66h
                 add     bx, [si+0Ah]
                 push    bx
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 mov     ax, 2BA2h
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 mov     ax, 2334h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 2334h
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 2334h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
 locret_131B7:                           ; CODE XREF: sub_12FC7+176↑j
                 retn
@@ -5385,7 +5397,7 @@ locret_131B7:                           ; CODE XREF: sub_12FC7+176↑j
 
 j_rt_FE5B:                              ; CODE XREF: sub_12B3B+1A2↑p
                                         ; sub_12B3B+2E0↑p ...
-                call    far ptr rt_FE5B ; -> rtm_FE5B  (leglib seg008:0x28861)
+                call    far ptr rt_FE5B ; -> screenRefresh  (leglib seg008:0x28861)
                 mov     word ptr ds:2338h, 0
                 mov     word ptr ds:233Ah, 2
                 mov     word ptr ds:233Ch, 3
@@ -5399,7 +5411,7 @@ j_rt_FE5B:                              ; CODE XREF: sub_12B3B+1A2↑p
                 mov     ax, 233Eh
                 push    ax
                 call    far ptr rt_FE57 ; -> rtm_FE57  (leglib seg007:0x24f84)
-                call    far ptr rt_FE5B ; -> rtm_FE5B  (leglib seg008:0x28861)
+                call    far ptr rt_FE5B ; -> screenRefresh  (leglib seg008:0x28861)
                 mov     word ptr ds:1F2Ah, 0
                 mov     word ptr ds:2148h, 0
                 call    far ptr 0:57B0h
@@ -5472,13 +5484,13 @@ loc_1329B:                              ; CODE XREF: sub_12FC7+2CF↑j
                 push    ax
                 mov     ax, 2344h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 2344h
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 2344h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 retn
 ; ---------------------------------------------------------------------------
 
@@ -5487,13 +5499,13 @@ loc_132BB:                              ; CODE XREF: sub_12FC7+2D1↑j
                 push    ax
                 mov     ax, 2348h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 2348h
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 2348h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 retn
 ; ---------------------------------------------------------------------------
 
@@ -5502,13 +5514,13 @@ loc_132DB:                              ; CODE XREF: sub_12FC7+2A8↑j
                 push    ax
                 mov     ax, 234Ch
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 234Ch
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 234Ch
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 retn
 ; ---------------------------------------------------------------------------
 
@@ -5524,13 +5536,13 @@ loc_13305:                              ; CODE XREF: sub_12FC7+339↑j
                 push    ax
                 mov     ax, 2350h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 2350h
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 2350h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     word ptr ds:2354h, 8
                 mov     ax, 2354h
                 push    ax
@@ -5546,7 +5558,7 @@ sub_12FC7       endp
 ; Attributes: noreturn
 
 sub_13334       proc near               ; CODE XREF: sub_12B3B:loc_12EF1↑p
-                                        ; sub_13C60+839↓p
+                                        ; mainDispatch+839↓p
                 cmp     word ptr ds:231Ch, 7
                 jnz     short loc_1333E
                 jmp     loc_133F5
@@ -5868,13 +5880,13 @@ sub_135B1       proc near
                 add     bx, [si+0Ah]
                 push    bx
                 mov     [bp-0Ch], dx
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
 
 loc_135CE:
                 push    ax
                 mov     ax, 27E2h
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
 
 loc_135D8:
                 push    ax
@@ -5882,29 +5894,29 @@ loc_135D8:
                 mov     bx, [bp-0Ch]
                 add     bx, [si+0Ah]
                 push    bx
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
 
 loc_135E8:
                 push    ax
                 mov     ax, 27D6h
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
 
 loc_135F2:
                 push    ax
                 mov     ax, 2356h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
 loc_135FC:
                 mov     ax, 2356h
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
 
 loc_13605:
                 mov     ax, 2356h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
 loc_1360E:
                 cmp     word ptr ds:1ADCh, 3
@@ -5973,7 +5985,7 @@ locret_136B2:                           ; CODE XREF: sub_135B1+F8↑j
 ; ---------------------------------------------------------------------------
 
 loc_136B3:                              ; CODE XREF: sub_135B1+64↑j
-                call    far ptr rt_FE5B ; -> rtm_FE5B  (leglib seg008:0x28861)
+                call    far ptr rt_FE5B ; -> screenRefresh  (leglib seg008:0x28861)
 sub_135B1       endp
 
 
@@ -5996,13 +6008,13 @@ loc_136C5:                              ; CODE XREF: sub_136B8+8↑j
                 push    ax
                 mov     ax, 235Eh
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 235Eh
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 235Eh
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 retn
 ; ---------------------------------------------------------------------------
 
@@ -6011,7 +6023,7 @@ loc_136E5:                              ; CODE XREF: sub_136B8+A↑j
                 push    ax
                 mov     ax, 2362h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 sub_136B8       endp
 
 
@@ -6022,12 +6034,12 @@ sub_136B8       endp
 sub_136F2       proc near
                 mov     ax, 2362h
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
 
 loc_136FB:
                 mov     ax, 2362h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
 nullsub_16:
                 retn
@@ -6044,29 +6056,29 @@ sub_13896       proc near
                 push    ax
                 mov     ax, 2210h
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
 
 loc_138A3:
                 push    ax
                 mov     ax, 27D6h
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
 
 loc_138AD:
                 push    ax
                 mov     ax, 2372h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
 loc_138B7:
                 mov     ax, 2372h
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
 
 loc_138C0:
                 mov     ax, 2372h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
 nullsub_17:
                 retn
@@ -6103,7 +6115,7 @@ loc_138D6:
                 push    bx
                 mov     ax, 2210h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, ds:1F02h
                 mov     ds:1F22h, ax
                 mov     ax, 2D5Ah
@@ -6112,7 +6124,7 @@ loc_13911:                              ; CODE XREF: sub_138CA+D↑j
                 push    ax
                 mov     ax, 2136h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
 loc_1391B:
                 mov     word ptr ds:1F16h, 3
@@ -6129,7 +6141,7 @@ sub_13922       proc near
                 push    ax
                 mov     ax, 2210h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
 loc_1392F:
                 mov     si, 1B96h
@@ -6150,7 +6162,7 @@ loc_13947:                              ; CODE XREF: sub_13922+22↑j
                 push    ax
                 mov     ax, 2136h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
 loc_1395A:
                 mov     word ptr ds:1F16h, 2
@@ -6167,14 +6179,14 @@ sub_13961       proc near
                 push    ax
                 mov     ax, 2210h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
 loc_1396E:
                 mov     ax, 24BAh
                 push    ax
                 mov     ax, 2136h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
 loc_1397B:
                 mov     word ptr ds:1F16h, 6
@@ -6191,14 +6203,14 @@ sub_13982       proc near
                 push    ax
                 mov     ax, 2210h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
 loc_1398F:
                 mov     ax, 2D9Eh
                 push    ax
                 mov     ax, 2136h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
 loc_1399C:
                 mov     word ptr ds:1ACAh, 1
@@ -6258,13 +6270,17 @@ loc_13A02:                              ; CODE XREF: sub_139B5+3↑j
                 call    j_rt_FE4E
 sub_139B5       endp
 
-; ---------------------------------------------------------------------------
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_13A13       proc near
                 mov     ax, 1Ah
                 jmp     loc_13A3E
 ; ---------------------------------------------------------------------------
                 nop
 
-loc_13A1A:                              ; CODE XREF: seg000:3A44↓j
+loc_13A1A:                              ; CODE XREF: sub_13A13+31↓j
                 shl     ax, 1
                 mov     bx, ax
                 mov     si, 1C7Ch
@@ -6280,7 +6296,7 @@ loc_13A1A:                              ; CODE XREF: seg000:3A44↓j
                 mov     ax, ds:2146h
                 inc     ax
 
-loc_13A3E:                              ; CODE XREF: seg000:3A16↑j
+loc_13A3E:                              ; CODE XREF: sub_13A13+3↑j
                 mov     ds:2146h, ax
                 cmp     ax, 1Ch
                 jle     short loc_13A1A
@@ -6289,25 +6305,25 @@ loc_13A3E:                              ; CODE XREF: seg000:3A16↑j
                 jmp     loc_13A51
 ; ---------------------------------------------------------------------------
 
-locret_13A50:                           ; CODE XREF: seg000:3A4B↑j
+locret_13A50:                           ; CODE XREF: sub_13A13+38↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_13A51:                              ; CODE XREF: seg000:3A4D↑j
+loc_13A51:                              ; CODE XREF: sub_13A13+3A↑j
                 cmp     word ptr ds:1E24h, 1Dh
                 jnz     short loc_13A5B
                 jmp     loc_13BD1
 ; ---------------------------------------------------------------------------
 
-loc_13A5B:                              ; CODE XREF: seg000:3A56↑j
-                call    far ptr rt_FE5B ; -> rtm_FE5B  (leglib seg008:0x28861)
-                call    far ptr rt_FE5B ; -> rtm_FE5B  (leglib seg008:0x28861)
+loc_13A5B:                              ; CODE XREF: sub_13A13+43↑j
+                call    far ptr rt_FE5B ; -> screenRefresh  (leglib seg008:0x28861)
+                call    far ptr rt_FE5B ; -> screenRefresh  (leglib seg008:0x28861)
                 cmp     word ptr ds:1F2Ah, 0Ah
                 jge     short loc_13A6F
                 jmp     loc_13D05
 ; ---------------------------------------------------------------------------
 
-loc_13A6F:                              ; CODE XREF: seg000:3A6A↑j
+loc_13A6F:                              ; CODE XREF: sub_13A13+57↑j
                 mov     word ptr ds:1F2Ah, 0Bh
                 mov     ax, ds:1E24h
                 mov     ds:231Ch, ax
@@ -6330,21 +6346,21 @@ loc_13A6F:                              ; CODE XREF: seg000:3A6A↑j
                 mov     si, 1D66h
                 add     bx, [si+0Ah]
                 push    bx
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 mov     ax, 27D6h
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 mov     ax, 2376h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 2376h
                 push    ax
-                call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
+                call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
                 mov     ax, 2376h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     bx, ds:1E24h
                 shl     bx, 1
                 mov     si, 1BC4h
@@ -6356,10 +6372,10 @@ loc_13A6F:                              ; CODE XREF: seg000:3A6A↑j
                 jmp     loc_13AF5
 ; ---------------------------------------------------------------------------
 
-loc_13AEF:                              ; CODE XREF: seg000:3AEA↑j
+loc_13AEF:                              ; CODE XREF: sub_13A13+D7↑j
                 mov     word ptr ds:1E24h, 0
 
-loc_13AF5:                              ; CODE XREF: seg000:3AEC↑j
+loc_13AF5:                              ; CODE XREF: sub_13A13+D9↑j
                 mov     ax, ds:1AF0h
                 add     ax, 14h
                 call    far ptr rt_FF20 ; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
@@ -6376,7 +6392,7 @@ loc_13AF5:                              ; CODE XREF: seg000:3AEC↑j
                 jmp     loc_13B69
 ; ---------------------------------------------------------------------------
 
-loc_13B29:                              ; CODE XREF: seg000:3B24↑j
+loc_13B29:                              ; CODE XREF: sub_13A13+111↑j
                 mov     ax, ds:231Ch
                 call    far ptr rt_FF20 ; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
                 call    far ptr rt_FF27 ; -> rtm_FF27  (leglib seg004:0x21ddf)
@@ -6389,17 +6405,17 @@ loc_13B29:                              ; CODE XREF: seg000:3B24↑j
                 push    ax
                 mov     ax, 237Ch
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 237Ch
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 237Ch
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 jmp     sub_10A39
 ; ---------------------------------------------------------------------------
 
-loc_13B69:                              ; CODE XREF: seg000:3B26↑j
+loc_13B69:                              ; CODE XREF: sub_13A13+113↑j
                 mov     ax, ds:231Ch
                 call    far ptr rt_FF20 ; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
                 mov     bx, 2502h
@@ -6429,12 +6445,14 @@ loc_13B69:                              ; CODE XREF: seg000:3B26↑j
                 jmp     loc_13FBA
 ; ---------------------------------------------------------------------------
 
-loc_13BD1:                              ; CODE XREF: seg000:3A58↑j
+loc_13BD1:                              ; CODE XREF: sub_13A13+45↑j
                 mov     ax, 2DD4h
                 push    ax
                 mov     ax, 2382h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+sub_13A13       endp
+
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -6443,12 +6461,12 @@ loc_13BD1:                              ; CODE XREF: seg000:3A58↑j
 sub_13BDE       proc near
                 mov     ax, 2382h
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
 
 loc_13BE7:
                 mov     ax, 2382h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
 loc_13BF0:
                 mov     si, 1B96h
@@ -6466,13 +6484,13 @@ loc_13C07:                              ; CODE XREF: sub_13BDE+24↑j
                 push    ax
                 mov     ax, 2386h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 2386h
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 2386h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 retn
 ; ---------------------------------------------------------------------------
 
@@ -6487,13 +6505,13 @@ loc_13C31:                              ; CODE XREF: sub_13BDE+4E↑j
                 push    ax
                 mov     ax, 238Ah
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 238Ah
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 238Ah
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 retn
 ; ---------------------------------------------------------------------------
 
@@ -6507,9 +6525,10 @@ sub_13BDE       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; the central overworld command/event loop -- a large (~3.5 KB) function called from ~15 sites (often at big `+offset`s into itself). Branches on ds:1F2Ah and fans out to the per-command helpers (movement, look, board, the parameter setters, etc.).
 ; Attributes: noreturn
 
-sub_13C60       proc near
+mainDispatch    proc near
                 mov     word ptr ds:2390h, 1F4h
                 mov     ax, 2390h
                 push    ax
@@ -6535,16 +6554,16 @@ loc_13C6F:
                 jmp     loc_13CA5
 ; ---------------------------------------------------------------------------
 
-loc_13C9F:                              ; CODE XREF: sub_13C60+3A↑j
+loc_13C9F:                              ; CODE XREF: mainDispatch+3A↑j
                 mov     word ptr ds:1E24h, 0
 
-loc_13CA5:                              ; CODE XREF: sub_13C60+3C↑j
+loc_13CA5:                              ; CODE XREF: mainDispatch+3C↑j
                 cmp     word ptr ds:212Eh, 1
                 jz      short loc_13CAF
                 jmp     loc_13CCB
 ; ---------------------------------------------------------------------------
 
-loc_13CAF:                              ; CODE XREF: sub_13C60+4A↑j
+loc_13CAF:                              ; CODE XREF: mainDispatch+4A↑j
                 mov     si, 1B96h
                 mov     bx, 1Ah
                 add     bx, [si+0Ah]
@@ -6556,7 +6575,7 @@ loc_13CAF:                              ; CODE XREF: sub_13C60+4A↑j
                 mov     es, word ptr [si+2]
                 mov     es:[bx], ax
 
-loc_13CCB:                              ; CODE XREF: sub_13C60+4C↑j
+loc_13CCB:                              ; CODE XREF: mainDispatch+4C↑j
                 mov     word ptr ds:1F2Ah, 0
                 mov     word ptr ds:2148h, 0
                 call    far ptr 0:57B0h
@@ -6566,16 +6585,16 @@ loc_13CCB:                              ; CODE XREF: sub_13C60+4C↑j
                 jmp     loc_14B1A
 ; ---------------------------------------------------------------------------
 
-loc_13CF1:                              ; CODE XREF: sub_12969+29↑j
-                call    far ptr rt_FE5B ; -> rtm_FE5B  (leglib seg008:0x28861)
-                call    far ptr rt_FE5B ; -> rtm_FE5B  (leglib seg008:0x28861)
+loc_13CF1:                              ; CODE XREF: updateGameState+29↑j
+                call    far ptr rt_FE5B ; -> screenRefresh  (leglib seg008:0x28861)
+                call    far ptr rt_FE5B ; -> screenRefresh  (leglib seg008:0x28861)
                 cmp     word ptr ds:1F2Ah, 9
                 jle     short loc_13D05
                 jmp     loc_13D8A
 ; ---------------------------------------------------------------------------
 
-loc_13D05:                              ; CODE XREF: seg000:3A6C↑j
-                                        ; sub_13C60+A0↑j
+loc_13D05:                              ; CODE XREF: sub_13A13+59↑j
+                                        ; mainDispatch+A0↑j
                 call    sub_10A05
 ; ---------------------------------------------------------------------------
                 cmp     word ptr ds:1F2Ah, 0
@@ -6583,63 +6602,63 @@ loc_13D05:                              ; CODE XREF: seg000:3A6C↑j
                 jmp     loc_13D32
 ; ---------------------------------------------------------------------------
 
-loc_13D12:                              ; CODE XREF: sub_13C60+AD↑j
+loc_13D12:                              ; CODE XREF: mainDispatch+AD↑j
                 mov     ax, 2E14h
                 push    ax
                 mov     ax, 2392h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 2392h
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 2392h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_13D32:                              ; CODE XREF: sub_13C60+AF↑j
+loc_13D32:                              ; CODE XREF: mainDispatch+AF↑j
                 mov     ax, 27E8h
                 push    ax
                 mov     ax, 2210h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 cmp     word ptr ds:21FEh, 1
                 jg      short loc_13D49
                 jmp     loc_13D56
 ; ---------------------------------------------------------------------------
 
-loc_13D49:                              ; CODE XREF: sub_13C60+E4↑j
+loc_13D49:                              ; CODE XREF: mainDispatch+E4↑j
                 mov     ax, 29FEh
                 push    ax
                 mov     ax, 2210h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
-loc_13D56:                              ; CODE XREF: sub_13C60+E6↑j
+loc_13D56:                              ; CODE XREF: mainDispatch+E6↑j
                 mov     ax, 2A08h
                 push    ax
                 mov     ax, 2210h
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 mov     ax, 2E28h
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 mov     ax, 2396h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 2396h
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 2396h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_13D8A:                              ; CODE XREF: sub_13C60+A2↑j
+loc_13D8A:                              ; CODE XREF: mainDispatch+A2↑j
                 mov     word ptr ds:1F2Ah, 0Bh
                 mov     bx, 2E3Ah
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
@@ -6663,13 +6682,13 @@ loc_13D8A:                              ; CODE XREF: sub_13C60+A2↑j
                 jmp     loc_13DEE
 ; ---------------------------------------------------------------------------
 
-loc_13DDE:                              ; CODE XREF: sub_13C60+179↑j
+loc_13DDE:                              ; CODE XREF: mainDispatch+179↑j
                 mov     bx, 24E6h
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
                 mov     bx, 208Eh
                 call    far ptr rt_FF50 ; -> rtm_FF50  (leglib seg004:0x2182d)
 
-loc_13DEE:                              ; CODE XREF: sub_13C60+17B↑j
+loc_13DEE:                              ; CODE XREF: mainDispatch+17B↑j
                 mov     ax, 2E3Eh
                 push    ax
                 mov     bx, ds:2254h
@@ -6678,17 +6697,17 @@ loc_13DEE:                              ; CODE XREF: sub_13C60+17B↑j
                 mov     si, 20E2h
                 add     bx, [si+0Ah]
                 push    bx
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 mov     ax, 239Ah
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 239Ah
                 push    ax
-                call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
+                call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
                 mov     ax, 239Ah
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     ax, 2E4Ah
                 push    ax
                 mov     bx, ds:1AFEh
@@ -6697,21 +6716,21 @@ loc_13DEE:                              ; CODE XREF: sub_13C60+17B↑j
                 mov     si, 1D0Ah
                 add     bx, [si+0Ah]
                 push    bx
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 mov     ax, 27D6h
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 mov     ax, 239Eh
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 239Eh
                 push    ax
-                call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
+                call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
                 mov     ax, 239Eh
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     bx, 208Eh
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
                 push    word ptr ds:24E8h
@@ -6725,18 +6744,18 @@ loc_13DEE:                              ; CODE XREF: sub_13C60+17B↑j
                 jmp     loc_13EBA
 ; ---------------------------------------------------------------------------
 
-loc_13E89:                              ; CODE XREF: sub_13C60+224↑j
+loc_13E89:                              ; CODE XREF: mainDispatch+224↑j
                 mov     ax, 2E54h
                 push    ax
                 mov     ax, 23A2h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 23A2h
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 23A2h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     word ptr ds:23A6h, 4
                 mov     ax, 23A6h
                 push    ax
@@ -6744,7 +6763,7 @@ loc_13E89:                              ; CODE XREF: sub_13C60+224↑j
                 jmp     sub_10A1F
 ; ---------------------------------------------------------------------------
 
-loc_13EBA:                              ; CODE XREF: sub_13C60+226↑j
+loc_13EBA:                              ; CODE XREF: mainDispatch+226↑j
                 mov     ax, ds:1B08h
                 call    far ptr rt_FF20 ; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
                 mov     ax, ds:22D6h
@@ -6772,7 +6791,7 @@ loc_13EBA:                              ; CODE XREF: sub_13C60+226↑j
                 jge     short loc_13F1E
                 dec     ax
 
-loc_13F1E:                              ; CODE XREF: sub_13C60+2BB↑j
+loc_13F1E:                              ; CODE XREF: mainDispatch+2BB↑j
                 mov     bx, ax
                 mov     ax, ds:22A6h
                 cmp     ax, ds:1AFEh
@@ -6780,14 +6799,14 @@ loc_13F1E:                              ; CODE XREF: sub_13C60+2BB↑j
                 jz      short loc_13F2D
                 dec     cx
 
-loc_13F2D:                              ; CODE XREF: sub_13C60+2CA↑j
+loc_13F2D:                              ; CODE XREF: mainDispatch+2CA↑j
                 and     cx, bx
                 and     cx, cx
                 jnz     short loc_13F36
                 jmp     loc_13F7A
 ; ---------------------------------------------------------------------------
 
-loc_13F36:                              ; CODE XREF: sub_13C60+2D1↑j
+loc_13F36:                              ; CODE XREF: mainDispatch+2D1↑j
                 push    word ptr ds:24E8h
                 push    word ptr ds:24E6h
                 call    far ptr rt_B8   ; -> rtm_B8  (leglib seg003:0x1a1ba)
@@ -6806,14 +6825,14 @@ loc_13F36:                              ; CODE XREF: sub_13C60+2D1↑j
                 call    far ptr rt_FF22 ; -> rtm_FF22  (leglib seg004:0x218e6)
                 mov     ds:2192h, ax
 
-loc_13F7A:                              ; CODE XREF: sub_13C60+2D3↑j
+loc_13F7A:                              ; CODE XREF: mainDispatch+2D3↑j
                 mov     ax, ds:1AFEh
                 cmp     ax, ds:22A6h
                 jz      short loc_13F86
                 jmp     loc_13FBA
 ; ---------------------------------------------------------------------------
 
-loc_13F86:                              ; CODE XREF: sub_13C60+321↑j
+loc_13F86:                              ; CODE XREF: mainDispatch+321↑j
                 mov     ax, ds:1B08h
                 call    far ptr rt_FF20 ; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
                 push    word ptr ds:24E8h
@@ -6828,28 +6847,28 @@ loc_13F86:                              ; CODE XREF: sub_13C60+321↑j
                 call    far ptr rt_FF22 ; -> rtm_FF22  (leglib seg004:0x218e6)
                 mov     ds:2192h, ax
 
-loc_13FBA:                              ; CODE XREF: seg000:3BCE↑j
-                                        ; sub_13C60+323↑j
+loc_13FBA:                              ; CODE XREF: sub_13A13+1BB↑j
+                                        ; mainDispatch+323↑j
                 mov     ax, 2E70h
                 push    ax
                 push    word ptr ds:2192h
                 call    far ptr rt_D2   ; -> rtm_D2  (leglib seg003:0x1b870)
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 mov     ax, 27D6h
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 mov     ax, 23A8h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 23A8h
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 23A8h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     word ptr ds:23ACh, 2
                 mov     ax, 23ACh
                 push    ax
@@ -6877,11 +6896,11 @@ loc_13FBA:                              ; CODE XREF: seg000:3BCE↑j
                 jmp     loc_1403C
 ; ---------------------------------------------------------------------------
 
-locret_1403B:                           ; CODE XREF: sub_13C60+3D6↑j
+locret_1403B:                           ; CODE XREF: mainDispatch+3D6↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1403C:                              ; CODE XREF: sub_13C60+3D8↑j
+loc_1403C:                              ; CODE XREF: mainDispatch+3D8↑j
                 mov     ax, 2E8Ah
                 push    ax
                 mov     bx, ds:2254h
@@ -6890,21 +6909,21 @@ loc_1403C:                              ; CODE XREF: sub_13C60+3D8↑j
                 mov     si, 20E2h
                 add     bx, [si+0Ah]
                 push    bx
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 mov     ax, 2E94h
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 mov     ax, 23AEh
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 23AEh
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 23AEh
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     word ptr ds:23B2h, 6
                 mov     ax, 23B2h
                 push    ax
@@ -6915,8 +6934,8 @@ loc_1403C:                              ; CODE XREF: sub_13C60+3D8↑j
                 jmp     sub_10A39
 ; ---------------------------------------------------------------------------
 
-loc_14097:                              ; CODE XREF: sub_13C60+432↑j
-                call    far ptr rt_FE5B ; -> rtm_FE5B  (leglib seg008:0x28861)
+loc_14097:                              ; CODE XREF: mainDispatch+432↑j
+                call    far ptr rt_FE5B ; -> screenRefresh  (leglib seg008:0x28861)
                 mov     word ptr ds:1F2Ah, 0
                 call    far ptr 0:57B0h
                 call    sub_10A6D
@@ -6938,7 +6957,7 @@ loc_14097:                              ; CODE XREF: sub_13C60+432↑j
                 jge     short loc_140DA
                 dec     cx
 
-loc_140DA:                              ; CODE XREF: sub_13C60+477↑j
+loc_140DA:                              ; CODE XREF: mainDispatch+477↑j
                 mov     bx, 2476h
                 mov     [bp-0Ch], cx
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
@@ -6951,7 +6970,7 @@ loc_140DA:                              ; CODE XREF: sub_13C60+477↑j
                 jbe     short loc_14100
                 dec     ax
 
-loc_14100:                              ; CODE XREF: sub_13C60+49D↑j
+loc_14100:                              ; CODE XREF: mainDispatch+49D↑j
                 call    far ptr rt_FF20 ; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
                 mov     bx, 2A64h
                 call    far ptr rt_FF4E ; -> rtm_FF4E  (leglib seg004:0x21a1a)
@@ -6967,25 +6986,25 @@ loc_14100:                              ; CODE XREF: sub_13C60+49D↑j
                 jnb     short loc_14134
                 dec     ax
 
-loc_14134:                              ; CODE XREF: sub_13C60+4D1↑j
+loc_14134:                              ; CODE XREF: mainDispatch+4D1↑j
                 or      ax, [bp-0Ch]
                 and     ax, ax
                 jz      short loc_1413E
                 jmp     loc_14314
 ; ---------------------------------------------------------------------------
 
-loc_1413E:                              ; CODE XREF: sub_13C60+4D9↑j
+loc_1413E:                              ; CODE XREF: mainDispatch+4D9↑j
                 mov     ax, 2EA2h
                 push    ax
                 mov     ax, 23B4h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 23B4h
                 push    ax
-                call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
+                call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
                 mov     ax, 23B4h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     bx, ds:2254h
                 shl     bx, 1
                 shl     bx, 1
@@ -6996,49 +7015,49 @@ loc_1413E:                              ; CODE XREF: sub_13C60+4D9↑j
                 mov     ax, 23B8h
                 push    ax
                 mov     [bp-0Ch], dx
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 23B8h
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 23B8h
                 push    ax
                 mov     si, 20E2h
                 mov     bx, [bp-0Ch]
                 add     bx, [si+0Ah]
                 push    bx
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 2EBEh
                 push    ax
                 mov     ax, 2210h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 cmp     word ptr ds:22B0h, 1
                 jg      short loc_141AD
                 jmp     loc_141BA
 ; ---------------------------------------------------------------------------
 
-loc_141AD:                              ; CODE XREF: sub_13C60+548↑j
+loc_141AD:                              ; CODE XREF: mainDispatch+548↑j
                 mov     ax, 2EC4h
                 push    ax
                 mov     ax, 2210h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
-loc_141BA:                              ; CODE XREF: sub_13C60+54A↑j
+loc_141BA:                              ; CODE XREF: mainDispatch+54A↑j
                 mov     ax, 2210h
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 2ECAh
                 push    ax
                 mov     ax, 23BCh
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 23BCh
                 push    ax
-                call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
+                call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
                 mov     ax, 23BCh
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     word ptr ds:23C0h, 0
                 mov     word ptr ds:23C2h, 2
                 mov     word ptr ds:23C4h, 3
@@ -7057,7 +7076,7 @@ loc_141BA:                              ; CODE XREF: sub_13C60+54A↑j
                 jmp     loc_14314
 ; ---------------------------------------------------------------------------
 
-loc_14219:                              ; CODE XREF: sub_13C60+5B4↑j
+loc_14219:                              ; CODE XREF: mainDispatch+5B4↑j
                 mov     word ptr ds:2192h, 0
                 mov     ax, ds:1F04h
                 and     ax, 3Fh
@@ -7068,7 +7087,7 @@ loc_14219:                              ; CODE XREF: sub_13C60+5B4↑j
                 jmp     loc_14286
 ; ---------------------------------------------------------------------------
 
-loc_14234:                              ; CODE XREF: sub_13C60+62D↓j
+loc_14234:                              ; CODE XREF: mainDispatch+62D↓j
                 mov     ax, ds:2192h
                 call    far ptr rt_FF20 ; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
                 push    word ptr ds:24E8h
@@ -7091,7 +7110,7 @@ loc_14234:                              ; CODE XREF: sub_13C60+62D↓j
                 mov     ax, ds:2146h
                 inc     ax
 
-loc_14286:                              ; CODE XREF: sub_13C60+5D1↑j
+loc_14286:                              ; CODE XREF: mainDispatch+5D1↑j
                 mov     ds:2146h, ax
                 cmp     ax, ds:23C8h
                 jle     short loc_14234
@@ -7108,21 +7127,21 @@ loc_14286:                              ; CODE XREF: sub_13C60+5D1↑j
                 push    word ptr ds:2192h
                 call    far ptr rt_D2   ; -> rtm_D2  (leglib seg003:0x1b870)
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 mov     ax, 2EEEh
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 mov     ax, 23CAh
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 23CAh
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 23CAh
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     bx, 2F00h
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
                 mov     bx, 2186h
@@ -7132,15 +7151,15 @@ loc_14286:                              ; CODE XREF: sub_13C60+5D1↑j
                 jmp     loc_14314
 ; ---------------------------------------------------------------------------
 
-loc_14304:                              ; CODE XREF: sub_13C60+69F↑j
+loc_14304:                              ; CODE XREF: mainDispatch+69F↑j
                 mov     bx, 2F04h
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
                 mov     bx, 2186h
                 call    far ptr rt_FF50 ; -> rtm_FF50  (leglib seg004:0x2182d)
 
-loc_14314:                              ; CODE XREF: sub_13C60+4DB↑j
-                                        ; sub_13C60+5B6↑j ...
-                call    far ptr rt_FE5B ; -> rtm_FE5B  (leglib seg008:0x28861)
+loc_14314:                              ; CODE XREF: mainDispatch+4DB↑j
+                                        ; mainDispatch+5B6↑j ...
+                call    far ptr rt_FE5B ; -> screenRefresh  (leglib seg008:0x28861)
                 mov     bx, 2F08h
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
                 push    word ptr ds:24E8h
@@ -7154,7 +7173,7 @@ loc_14314:                              ; CODE XREF: sub_13C60+4DB↑j
                 jmp     loc_14365
 ; ---------------------------------------------------------------------------
 
-loc_14342:                              ; CODE XREF: sub_13C60+6DD↑j
+loc_14342:                              ; CODE XREF: mainDispatch+6DD↑j
                 mov     word ptr ds:23CEh, 0
                 mov     word ptr ds:23D0h, 0
                 mov     ax, 23CEh
@@ -7167,8 +7186,8 @@ loc_14342:                              ; CODE XREF: sub_13C60+6DD↑j
                 jmp     loc_14523
 ; ---------------------------------------------------------------------------
 
-loc_14365:                              ; CODE XREF: sub_13C60+6DF↑j
-                                        ; sub_13C60+700↑j
+loc_14365:                              ; CODE XREF: mainDispatch+6DF↑j
+                                        ; mainDispatch+700↑j
                 mov     si, 1B0Ch
                 mov     bx, 8
                 add     bx, [si+0Ah]
@@ -7179,7 +7198,7 @@ loc_14365:                              ; CODE XREF: sub_13C60+6DF↑j
                 jnz     short loc_1437D
                 dec     ax
 
-loc_1437D:                              ; CODE XREF: sub_13C60+71A↑j
+loc_1437D:                              ; CODE XREF: mainDispatch+71A↑j
                 mov     bx, 2F0Ch
                 mov     [bp-0Ch], ax
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
@@ -7194,14 +7213,14 @@ loc_1437D:                              ; CODE XREF: sub_13C60+71A↑j
                 jnb     short loc_143AA
                 dec     ax
 
-loc_143AA:                              ; CODE XREF: sub_13C60+747↑j
+loc_143AA:                              ; CODE XREF: mainDispatch+747↑j
                 and     ax, [bp-0Ch]
                 and     ax, ax
                 jz      short loc_143B4
                 jmp     loc_14493
 ; ---------------------------------------------------------------------------
 
-loc_143B4:                              ; CODE XREF: sub_13C60+74F↑j
+loc_143B4:                              ; CODE XREF: mainDispatch+74F↑j
                 mov     bx, ds:2254h
                 shl     bx, 1
                 mov     si, 20BEh
@@ -7249,21 +7268,21 @@ loc_143B4:                              ; CODE XREF: sub_13C60+74F↑j
                 push    word ptr ds:2192h
                 call    far ptr rt_D2   ; -> rtm_D2  (leglib seg003:0x1b870)
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 mov     ax, 2F1Ch
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 mov     ax, 23D8h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 23D8h
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 23D8h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     ax, ds:2192h
                 cwd
                 add     ax, ds:1AD2h
@@ -7273,7 +7292,7 @@ loc_143B4:                              ; CODE XREF: sub_13C60+74F↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_14493:                              ; CODE XREF: sub_13C60+751↑j
+loc_14493:                              ; CODE XREF: mainDispatch+751↑j
                 mov     word ptr ds:231Ch, 4
                 call    sub_13334
 ; ---------------------------------------------------------------------------
@@ -7285,11 +7304,11 @@ loc_14493:                              ; CODE XREF: sub_13C60+751↑j
                 mov     si, 1CDCh
                 add     bx, [si+0Ah]
                 push    bx
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 mov     ax, 27E2h
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 mov     bx, ds:1F04h
                 shl     bx, 1
@@ -7297,21 +7316,21 @@ loc_14493:                              ; CODE XREF: sub_13C60+751↑j
                 mov     si, 1D0Ah
                 add     bx, [si+0Ah]
                 push    bx
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 mov     ax, 2F36h
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 mov     ax, 23DCh
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 23DCh
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 23DCh
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     si, 1B0Ch
                 mov     bx, 8
                 add     bx, [si+0Ah]
@@ -7328,37 +7347,37 @@ loc_14493:                              ; CODE XREF: sub_13C60+751↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_14523:                              ; CODE XREF: sub_13C60+702↑j
+loc_14523:                              ; CODE XREF: mainDispatch+702↑j
                 mov     ax, 2F3Ch
                 push    ax
                 mov     ax, 23E0h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 23E0h
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 23E0h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 cmp     word ptr ds:1AEEh, 13h
                 jz      short loc_1454C
                 jmp     loc_1456B
 ; ---------------------------------------------------------------------------
 
-loc_1454C:                              ; CODE XREF: sub_13C60+8E7↑j
+loc_1454C:                              ; CODE XREF: mainDispatch+8E7↑j
                 mov     ax, 2F4Ah
                 push    ax
                 mov     ax, 23E4h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 23E4h
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 23E4h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
-loc_1456B:                              ; CODE XREF: sub_13C60+8E9↑j
+loc_1456B:                              ; CODE XREF: mainDispatch+8E9↑j
                 mov     ax, 27E2h
                 push    ax
                 mov     bx, ds:1AEEh
@@ -7367,21 +7386,21 @@ loc_1456B:                              ; CODE XREF: sub_13C60+8E9↑j
                 mov     si, 1D66h
                 add     bx, [si+0Ah]
                 push    bx
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 mov     ax, 2F36h
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 mov     ax, 23E8h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 23E8h
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     ax, 23E8h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     bx, ds:1AEEh
                 shl     bx, 1
                 mov     si, 1BC4h
@@ -7401,8 +7420,8 @@ loc_1456B:                              ; CODE XREF: sub_13C60+8E9↑j
                 jmp     sub_10A6D
 ; ---------------------------------------------------------------------------
 
-loc_145DB:                              ; CODE XREF: sub_10199+21F↑p
-                                        ; sub_10199+539↑p ...
+loc_145DB:                              ; CODE XREF: outInit+21F↑p
+                                        ; outInit+539↑p ...
                 mov     word ptr ds:23EEh, 0
                 mov     ax, 23EEh
                 push    ax
@@ -7417,11 +7436,11 @@ loc_145DB:                              ; CODE XREF: sub_10199+21F↑p
                 jmp     loc_14602
 ; ---------------------------------------------------------------------------
 
-locret_14601:                           ; CODE XREF: sub_13C60+99C↑j
+locret_14601:                           ; CODE XREF: mainDispatch+99C↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_14602:                              ; CODE XREF: sub_13C60+99E↑j
+loc_14602:                              ; CODE XREF: mainDispatch+99E↑j
                 mov     si, 1B96h
                 mov     bx, 18h
                 add     bx, [si+0Ah]
@@ -7429,7 +7448,7 @@ loc_14602:                              ; CODE XREF: sub_13C60+99E↑j
                 mov     word ptr es:[bx], 0
                 mov     word ptr ds:2192h, 0
 
-loc_14619:                              ; CODE XREF: sub_13C60:loc_148A1↓p
+loc_14619:                              ; CODE XREF: mainDispatch:loc_148A1↓p
                 mov     ax, ds:2192h
                 add     ax, 30h ; '0'
                 push    ax
@@ -7437,7 +7456,7 @@ loc_14619:                              ; CODE XREF: sub_13C60:loc_148A1↓p
                 push    ax
                 mov     ax, 2210h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     si, 1E2Ah
                 xor     bx, bx
                 add     bx, [si+0Ah]
@@ -7449,34 +7468,34 @@ loc_14619:                              ; CODE XREF: sub_13C60:loc_148A1↓p
                 push    ax
                 mov     ax, 2210h
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 mov     ax, 2F58h
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 mov     ax, 23F0h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 23F0h
                 push    ax
                 call    far ptr rt_FE63 ; -> rtm_FE63  (leglib seg007:0x24a83)
                 mov     ax, 23F0h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     ax, 2F60h
                 push    ax
                 mov     ax, 2210h
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 mov     ax, 2F68h
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 mov     ax, 23F4h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     si, 1E2Ah
                 xor     bx, bx
                 add     bx, [si+0Ah]
@@ -7490,23 +7509,23 @@ loc_14619:                              ; CODE XREF: sub_13C60:loc_148A1↓p
                 call    far ptr rt_FE07 ; -> rtm_FE07  (leglib seg007:0x24fbf)
                 mov     ax, 23F4h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     ax, 2F70h
                 push    ax
                 mov     ax, 23FAh
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 23FAh
                 push    ax
                 call    far ptr rt_FE63 ; -> rtm_FE63  (leglib seg007:0x24a83)
                 mov     ax, 23FAh
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     ax, 2F80h
                 push    ax
                 mov     ax, 23FEh
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     si, 1E2Ah
                 mov     bx, 2B22h
                 add     bx, [si+0Ah]
@@ -7520,7 +7539,7 @@ loc_14619:                              ; CODE XREF: sub_13C60:loc_148A1↓p
                 call    far ptr rt_FE07 ; -> rtm_FE07  (leglib seg007:0x24fbf)
                 mov     ax, 23FEh
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     si, 1E2Ah
                 mov     bx, 4
                 add     bx, [si+0Ah]
@@ -7559,18 +7578,18 @@ loc_14619:                              ; CODE XREF: sub_13C60:loc_148A1↓p
                 push    ax
                 mov     ax, 2408h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 2408h
                 push    ax
                 call    far ptr rt_FE63 ; -> rtm_FE63  (leglib seg007:0x24a83)
                 mov     ax, 2408h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     ax, 2F9Eh
                 push    ax
                 mov     ax, 240Ch
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     si, 1E58h
                 xor     bx, bx
                 add     bx, [si+0Ah]
@@ -7584,7 +7603,7 @@ loc_14619:                              ; CODE XREF: sub_13C60:loc_148A1↓p
                 call    far ptr rt_FE07 ; -> rtm_FE07  (leglib seg007:0x24fbf)
                 mov     ax, 240Ch
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     si, 1E58h
                 xor     bx, bx
                 add     bx, [si+0Ah]
@@ -7601,23 +7620,23 @@ loc_14619:                              ; CODE XREF: sub_13C60:loc_148A1↓p
                 jmp     loc_1482D
 ; ---------------------------------------------------------------------------
 
-loc_147EB:                              ; CODE XREF: sub_13C60+B86↑j
+loc_147EB:                              ; CODE XREF: mainDispatch+B86↑j
                 mov     ax, 2FACh
                 push    ax
                 mov     ax, 2414h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 2414h
                 push    ax
                 call    far ptr rt_FE63 ; -> rtm_FE63  (leglib seg007:0x24a83)
                 mov     ax, 2414h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     ax, 2FBCh
                 push    ax
                 mov     ax, 2418h
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 2418h
                 push    ax
                 mov     ax, 2412h
@@ -7625,21 +7644,21 @@ loc_147EB:                              ; CODE XREF: sub_13C60+B86↑j
                 call    far ptr rt_FE07 ; -> rtm_FE07  (leglib seg007:0x24fbf)
                 mov     ax, 2418h
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
-loc_1482D:                              ; CODE XREF: sub_13C60+B88↑j
+loc_1482D:                              ; CODE XREF: mainDispatch+B88↑j
                 cmp     word ptr ds:2192h, 0
                 jz      short loc_14837
                 jmp     loc_1483D
 ; ---------------------------------------------------------------------------
 
-loc_14837:                              ; CODE XREF: sub_13C60+BD2↑j
+loc_14837:                              ; CODE XREF: mainDispatch+BD2↑j
                 call    loc_145DB
 ; ---------------------------------------------------------------------------
                 jmp     locret_1486A
 ; ---------------------------------------------------------------------------
 
-loc_1483D:                              ; CODE XREF: sub_13C60+BD4↑j
+loc_1483D:                              ; CODE XREF: mainDispatch+BD4↑j
                 mov     si, 1B96h
                 mov     bx, 18h
                 add     bx, [si+0Ah]
@@ -7656,17 +7675,17 @@ loc_1483D:                              ; CODE XREF: sub_13C60+BD4↑j
                 mov     ax, ds:241Ch
                 mov     es:[bx], ax
 
-locret_1486A:                           ; CODE XREF: sub_13C60+BDA↑j
+locret_1486A:                           ; CODE XREF: mainDispatch+BDA↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1486B:                              ; CODE XREF: sub_10199:loc_10305↑p
-                                        ; sub_10199+7E2↑p
+loc_1486B:                              ; CODE XREF: outInit:loc_10305↑p
+                                        ; outInit+7E2↑p
                 mov     ax, 2FCCh
                 push    ax
                 mov     ax, 1E8Ah
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 call    sub_12823
                 call    sub_122CB
 ; ---------------------------------------------------------------------------
@@ -7682,10 +7701,10 @@ loc_1486B:                              ; CODE XREF: sub_10199:loc_10305↑p
                 jmp     loc_148A1
 ; ---------------------------------------------------------------------------
 
-loc_1489B:                              ; CODE XREF: sub_13C60+C36↑j
+loc_1489B:                              ; CODE XREF: mainDispatch+C36↑j
                 mov     word ptr ds:2192h, 2
 
-loc_148A1:                              ; CODE XREF: sub_13C60+C38↑j
+loc_148A1:                              ; CODE XREF: mainDispatch+C38↑j
                 call    loc_14619
 ; ---------------------------------------------------------------------------
                 db 0C7h
@@ -7752,13 +7771,13 @@ loc_148A1:                              ; CODE XREF: sub_13C60+C38↑j
                 jmp     loc_148FE
 ; ---------------------------------------------------------------------------
 
-loc_148EE:                              ; CODE XREF: sub_13C60+C89↑j
+loc_148EE:                              ; CODE XREF: mainDispatch+C89↑j
                 mov     bx, 2FE4h
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
                 mov     bx, 1AF8h
                 call    far ptr rt_FF50 ; -> rtm_FF50  (leglib seg004:0x2182d)
 
-loc_148FE:                              ; CODE XREF: sub_13C60+C8B↑j
+loc_148FE:                              ; CODE XREF: mainDispatch+C8B↑j
                 mov     bx, 2FE4h
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
                 mov     bx, 1AF4h
@@ -7768,13 +7787,13 @@ loc_148FE:                              ; CODE XREF: sub_13C60+C8B↑j
                 jmp     loc_14928
 ; ---------------------------------------------------------------------------
 
-loc_14918:                              ; CODE XREF: sub_13C60+CB3↑j
+loc_14918:                              ; CODE XREF: mainDispatch+CB3↑j
                 mov     bx, 2FE4h
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
                 mov     bx, 1AF4h
                 call    far ptr rt_FF50 ; -> rtm_FF50  (leglib seg004:0x2182d)
 
-loc_14928:                              ; CODE XREF: sub_13C60+CB5↑j
+loc_14928:                              ; CODE XREF: mainDispatch+CB5↑j
                 call    far ptr 0:5018h
                 mov     si, 1B96h
                 mov     bx, 44h ; 'D'
@@ -7803,13 +7822,13 @@ loc_14928:                              ; CODE XREF: sub_13C60+CB5↑j
                 jmp     loc_14991
 ; ---------------------------------------------------------------------------
 
-loc_14982:                              ; CODE XREF: sub_13C60+D1D↑j
+loc_14982:                              ; CODE XREF: mainDispatch+D1D↑j
                 mov     word ptr ds:1B02h, 7
                 mov     word ptr ds:1B06h, 5
                 call    loc_14A87
 ; ---------------------------------------------------------------------------
 
-loc_14991:                              ; CODE XREF: sub_13C60+D1F↑j
+loc_14991:                              ; CODE XREF: mainDispatch+D1F↑j
                 mov     si, 1B96h
                 mov     bx, 18h
                 add     bx, [si+0Ah]
@@ -7820,27 +7839,27 @@ loc_14991:                              ; CODE XREF: sub_13C60+D1F↑j
                 jnz     short loc_149A9
                 dec     ax
 
-loc_149A9:                              ; CODE XREF: sub_13C60+D46↑j
+loc_149A9:                              ; CODE XREF: mainDispatch+D46↑j
                 cmp     word ptr ds:1ADAh, 0
                 mov     cx, 0
                 jg      short loc_149B4
                 dec     cx
 
-loc_149B4:                              ; CODE XREF: sub_13C60+D51↑j
+loc_149B4:                              ; CODE XREF: mainDispatch+D51↑j
                 and     cx, ax
                 and     cx, cx
                 jnz     short loc_149BD
                 jmp     loc_149CE
 ; ---------------------------------------------------------------------------
 
-loc_149BD:                              ; CODE XREF: sub_13C60+D58↑j
+loc_149BD:                              ; CODE XREF: mainDispatch+D58↑j
                 mov     si, 1BC4h
                 mov     bx, 1Eh
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
                 mov     word ptr es:[bx], 0
 
-loc_149CE:                              ; CODE XREF: sub_13C60+D5A↑j
+loc_149CE:                              ; CODE XREF: mainDispatch+D5A↑j
                 mov     ax, 2FE8h
                 push    ax
                 mov     ax, 1
@@ -7871,7 +7890,7 @@ loc_149CE:                              ; CODE XREF: sub_13C60+D5A↑j
 ; ---------------------------------------------------------------------------
                 nop
 
-loc_14A0A:                              ; CODE XREF: sub_13C60+DCF↓j
+loc_14A0A:                              ; CODE XREF: mainDispatch+DCF↓j
                 mov     ax, 1
                 push    ax
                 mov     bx, 222Eh
@@ -7887,7 +7906,7 @@ loc_14A0A:                              ; CODE XREF: sub_13C60+DCF↓j
                 mov     ax, ds:2146h
                 inc     ax
 
-loc_14A29:                              ; CODE XREF: sub_13C60+DA6↑j
+loc_14A29:                              ; CODE XREF: mainDispatch+DA6↑j
                 mov     ds:2146h, ax
                 cmp     ax, 18h
                 jle     short loc_14A0A
@@ -7910,7 +7929,7 @@ loc_14A29:                              ; CODE XREF: sub_13C60+DA6↑j
 ; ---------------------------------------------------------------------------
                 nop
 
-loc_14A52:                              ; CODE XREF: sub_13C60+E17↓j
+loc_14A52:                              ; CODE XREF: mainDispatch+E17↓j
                 mov     ax, 1
                 push    ax
                 mov     bx, 222Eh
@@ -7926,7 +7945,7 @@ loc_14A52:                              ; CODE XREF: sub_13C60+E17↓j
                 mov     ax, ds:2146h
                 inc     ax
 
-loc_14A71:                              ; CODE XREF: sub_13C60+DEE↑j
+loc_14A71:                              ; CODE XREF: mainDispatch+DEE↑j
                 mov     ds:2146h, ax
                 cmp     ax, 64h ; 'd'
                 jle     short loc_14A52
@@ -7937,7 +7956,7 @@ loc_14A71:                              ; CODE XREF: sub_13C60+DEE↑j
                 jmp     loc_14AA7
 ; ---------------------------------------------------------------------------
 
-loc_14A87:                              ; CODE XREF: sub_13C60+D2E↑p
+loc_14A87:                              ; CODE XREF: mainDispatch+D2E↑p
                 mov     si, 1B96h
                 mov     bx, 18h
                 add     bx, [si+0Ah]
@@ -7953,7 +7972,7 @@ loc_14AA1:                              ; CODE XREF: sub_117B0+10F↑j
 ; ---------------------------------------------------------------------------
 
 loc_14AA7:                              ; CODE XREF: j_rt_FE4E_0+10↑j
-                                        ; sub_13C60+E24↑j ...
+                                        ; mainDispatch+E24↑j ...
                 mov     word ptr ds:2424h, 2
                 mov     word ptr ds:2426h, 17h
                 mov     word ptr ds:2428h, 0Ch
@@ -7990,7 +8009,7 @@ loc_14AD4:                              ; CODE XREF: j_rt_FE4E+36↑j
                 push    ax
                 call    far ptr rt_FE4D ; -> rtm_FE4D  (leglib seg007:0x25c79)
 
-loc_14B1A:                              ; CODE XREF: sub_13C60+8E↑j
+loc_14B1A:                              ; CODE XREF: mainDispatch+8E↑j
                 mov     word ptr ds:2438h, 0FFh
                 mov     word ptr ds:243Ah, 0
                 mov     word ptr ds:243Ch, 1
@@ -8012,19 +8031,19 @@ loc_14B1A:                              ; CODE XREF: sub_13C60+8E↑j
                 jmp     loc_14B60
 ; ---------------------------------------------------------------------------
 
-loc_14B53:                              ; CODE XREF: sub_13C60+EEE↑j
+loc_14B53:                              ; CODE XREF: mainDispatch+EEE↑j
                 mov     ax, 2254h
                 push    ax
                 mov     ax, 2148h
                 push    ax
                 call    far ptr 0:57DEh
 
-loc_14B60:                              ; CODE XREF: sub_13C60+EF0↑j
+loc_14B60:                              ; CODE XREF: mainDispatch+EF0↑j
                 mov     word ptr ds:243Eh, 0
                 mov     ax, 243Eh
                 push    ax
                 call    far ptr rt_FE49 ; -> rtm_FE49  (leglib seg007:0x25248)
-sub_13C60       endp
+mainDispatch    endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -8040,7 +8059,7 @@ sub_14B6F       proc far
 loc_14B7E:
                 mov     ax, ds:1F02h
                 mov     ds:214Ah, ax
-                call    far ptr rt_FE5B ; -> rtm_FE5B  (leglib seg008:0x28861)
+                call    far ptr rt_FE5B ; -> screenRefresh  (leglib seg008:0x28861)
 
 nullsub_18:
                 retn
@@ -8057,7 +8076,7 @@ sub_14B6F       endp
 
 sub_14B8D       proc far
                 mov     cx, 0
-                call    far ptr rt_F0   ; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
+                call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
 loc_14B95:
                 mov     si, [bp+6]
@@ -8088,7 +8107,7 @@ loc_14BB8:                              ; CODE XREF: sub_14B8D+26↑j
                 mov     ds:223Ch, ax
 
 loc_14BC5:                              ; CODE XREF: sub_14B8D+28↑j
-                call    far ptr rt_F4   ; -> rtm_F4  (leglib seg003:0x1bb7c)
+                call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
 nullsub_19:
                 retf    6
@@ -8105,7 +8124,7 @@ sub_14B8D       endp
 
 sub_14BD0       proc far
                 mov     cx, 0Ch
-                call    far ptr rt_F0   ; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
+                call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
 j_rt_FE06:                              ; -> rtm_FE06  (leglib seg004:0x2063c)
                 call    far ptr rt_FE06
@@ -8203,7 +8222,7 @@ loc_14CBD:
                 mov     es, word ptr [si+2]
                 mov     word ptr es:[bx], 88h
                 mov     word ptr ds:2082h, 23CDh
-                call    far ptr rt_F4   ; -> rtm_F4  (leglib seg003:0x1bb7c)
+                call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
 nullsub_20:
                 retf    0
@@ -8220,7 +8239,7 @@ sub_14BD0       endp
 
 sub_14CDF       proc far
                 mov     cx, 8
-                call    far ptr rt_F0   ; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
+                call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
 loc_14CE7:
                 xor     ax, ax
@@ -8401,7 +8420,7 @@ loc_14E4C:                              ; CODE XREF: sub_14CDF+A↑j
 ; ---------------------------------------------------------------------------
 
 loc_14E57:                              ; CODE XREF: sub_14CDF+173↑j
-                call    far ptr rt_F4   ; -> rtm_F4  (leglib seg003:0x1bb7c)
+                call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
 nullsub_21:
                 retf    6
@@ -8418,7 +8437,7 @@ sub_14CDF       endp
 
 sub_14E62       proc far
                 mov     cx, 0
-                call    far ptr rt_F0   ; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
+                call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
 loc_14E6A:
                 mov     si, [bp+6]
@@ -8442,7 +8461,7 @@ loc_14E75:                              ; CODE XREF: sub_14E62+E↑j
                 mov     word ptr es:[bx], 7Fh
 
 loc_14E99:                              ; CODE XREF: sub_14E62+10↑j
-                call    far ptr rt_F4   ; -> rtm_F4  (leglib seg003:0x1bb7c)
+                call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
 nullsub_22:
                 retf    2
@@ -8459,7 +8478,7 @@ sub_14E62       endp
 
 sub_14EA4       proc far
                 mov     cx, 16h
-                call    far ptr rt_F0   ; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
+                call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
 loc_14EAC:
                 mov     si, 1E2Ah
@@ -8613,7 +8632,7 @@ loc_15000:                              ; CODE XREF: sub_14EA4+131↑j
                 jle     short loc_14FD8
                 call    far ptr rt_FE69 ; -> rtm_FE69  (leglib seg008:0x28d74)
 
-loc_1500D:                              ; -> rtm_F4  (leglib seg003:0x1bb7c)
+loc_1500D:                              ; -> basProcLeave  (leglib seg003:0x1bb7c)
                 call    far ptr rt_F4
 
 nullsub_23:
@@ -8631,7 +8650,7 @@ sub_14EA4       endp
 
 sub_15018       proc far
                 mov     cx, 8
-                call    far ptr rt_F0   ; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
+                call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
 loc_15020:
                 mov     word ptr [bp-0Eh], 0C8h
@@ -8669,7 +8688,7 @@ loc_15058:                              ; CODE XREF: sub_15018+39↑j
                 mov     es, word ptr [si+2]
                 mov     ax, [bp-0Eh]
                 mov     es:[bx], ax
-                call    far ptr rt_F4   ; -> rtm_F4  (leglib seg003:0x1bb7c)
+                call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
 nullsub_24:
                 retf    0
@@ -8686,7 +8705,7 @@ sub_15018       endp
 
 sub_15075       proc far
                 mov     cx, 2
-                call    far ptr rt_F0   ; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
+                call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
 loc_1507D:
                 mov     si, [bp+6]
@@ -8721,7 +8740,7 @@ loc_150A5:
                 mov     ds:1F02h, ax
                 and     ax, 0Fh
                 mov     ds:1F02h, ax
-                call    far ptr rt_F4   ; -> rtm_F4  (leglib seg003:0x1bb7c)
+                call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
 nullsub_25:
                 retf    4
@@ -8738,7 +8757,7 @@ sub_15075       endp
 
 sub_150DA       proc far
                 mov     cx, 2
-                call    far ptr rt_F0   ; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
+                call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
 loc_150E2:
                 mov     si, 1B96h
@@ -8809,7 +8828,7 @@ loc_15153:                              ; CODE XREF: sub_150DA+74↑j
                 mov     word ptr ds:1F02h, 0FFh
 
 loc_15159:                              ; CODE XREF: sub_150DA+76↑j
-                call    far ptr rt_F4   ; -> rtm_F4  (leglib seg003:0x1bb7c)
+                call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
 nullsub_26:
                 retf    4
@@ -8826,7 +8845,7 @@ sub_150DA       endp
 
 sub_15164       proc far
                 mov     cx, 0
-                call    far ptr rt_F0   ; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
+                call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
 loc_1516C:
                 mov     si, [bp+6]
@@ -8858,7 +8877,7 @@ loc_151A0:                              ; CODE XREF: sub_15164+10↑j
                 mov     word ptr ds:1F04h, 7Fh
 
 loc_151AC:                              ; CODE XREF: sub_15164+39↑j
-                call    far ptr rt_F4   ; -> rtm_F4  (leglib seg003:0x1bb7c)
+                call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
 nullsub_27:
                 retf    2
@@ -8875,7 +8894,7 @@ sub_15164       endp
 
 sub_151B7       proc far
                 mov     cx, 22h ; '"'
-                call    far ptr rt_F0   ; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
+                call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
 loc_151BF:
                 push    word ptr [bp+10h]
@@ -9347,7 +9366,7 @@ loc_15593:                              ; CODE XREF: sub_151B7+3D7↑j
                 call    far ptr 0:4EA4h
 
 loc_15598:                              ; CODE XREF: sub_151B7+3D9↑j
-                call    far ptr rt_F4   ; -> rtm_F4  (leglib seg003:0x1bb7c)
+                call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
 nullsub_28:
                 retf    0Ch
@@ -9364,7 +9383,7 @@ sub_151B7       endp
 
 sub_155A3       proc far
                 mov     cx, 4
-                call    far ptr rt_F0   ; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
+                call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
 loc_155AB:
                 mov     word ptr ds:1F02h, 0
@@ -9616,7 +9635,7 @@ loc_1579F:                              ; CODE XREF: sub_155A3+1F7↑j
                 mov     ds:1F04h, ax
 
 loc_157A5:                              ; CODE XREF: sub_155A3+1F9↑j
-                call    far ptr rt_F4   ; -> rtm_F4  (leglib seg003:0x1bb7c)
+                call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
 nullsub_29:
                 retf    6
@@ -9633,7 +9652,7 @@ sub_155A3       endp
 
 sub_157B0       proc far
                 mov     cx, 0
-                call    far ptr rt_F0   ; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
+                call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
 loc_157B8:
                 call    far ptr 0:4BD0h
@@ -9643,7 +9662,7 @@ loc_157B8:
                 mov     es, word ptr [si+2]
                 mov     word ptr es:[bx], 0
                 call    far ptr 0:4EA4h
-                call    far ptr rt_F4   ; -> rtm_F4  (leglib seg003:0x1bb7c)
+                call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
 nullsub_30:
                 retf    0
@@ -9660,7 +9679,7 @@ sub_157B0       endp
 
 sub_157DE       proc far
                 mov     cx, 0Eh
-                call    far ptr rt_F0   ; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
+                call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
 loc_157E6:
                 mov     word ptr [bp-0Eh], 0C6h
@@ -9775,7 +9794,7 @@ loc_158CF:
                 push    ax
                 call    far ptr rt_61   ; -> rtm_61  (leglib seg003:0x1dc84)
 
-loc_158E3:                              ; -> rtm_F4  (leglib seg003:0x1bb7c)
+loc_158E3:                              ; -> basProcLeave  (leglib seg003:0x1bb7c)
                 call    far ptr rt_F4
 
 nullsub_31:
@@ -9793,7 +9812,7 @@ sub_157DE       endp
 
 sub_158EE       proc near
                 mov     cx, 6Eh ; 'n'
-                call    far ptr rt_F0   ; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
+                call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
 loc_158F6:
                 mov     si, 1B96h
@@ -9929,13 +9948,13 @@ loc_159D7:                              ; CODE XREF: sub_158EE+B7↑j
                 push    ax
                 lea     ax, [bp-22h]
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 lea     ax, [bp-22h]
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 lea     ax, [bp-22h]
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     si, 1B96h
                 mov     bx, 12h
                 add     bx, [si+0Ah]
@@ -10093,15 +10112,15 @@ loc_15B97:                              ; CODE XREF: sub_158EE+A0↑p
                 push    ax
                 lea     ax, [bp-40h]
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 lea     ax, [bp-40h]
 
 loc_15BA7:                              ; CODE XREF: j_rt_FE5B_5+25↑J
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 lea     ax, [bp-40h]
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 retn
 ; ---------------------------------------------------------------------------
 
@@ -10118,7 +10137,7 @@ loc_15BB7:                              ; CODE XREF: sub_158EE+1C↑j
                 push    ax
                 lea     ax, [bp-48h]
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 sub_158EE       endp
 
 
@@ -10129,12 +10148,12 @@ sub_158EE       endp
 sub_15BE1       proc far
                 lea     ax, [bp-48h]
                 push    ax
-                call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
+                call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
 
 loc_15BEA:
                 lea     ax, [bp-48h]
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
 loc_15BF3:
                 mov     word ptr [bp-4Ah], 0Fh
@@ -10231,17 +10250,17 @@ loc_15CE1:
                 push    ax
                 lea     ax, [bp-5Eh]
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
 loc_15CEE:
                 lea     ax, [bp-5Eh]
                 push    ax
-                call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
+                call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
 
 loc_15CF7:
                 lea     ax, [bp-5Eh]
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
 loc_15D00:
                 mov     word ptr [bp-60h], 0BB8h
@@ -10261,17 +10280,17 @@ loc_15D1C:
                 push    ax
                 lea     ax, [bp-66h]
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
 loc_15D2E:
                 lea     ax, [bp-66h]
                 push    ax
-                call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
+                call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
 
 loc_15D37:
                 lea     ax, [bp-66h]
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
 loc_15D40:
                 mov     word ptr [bp-68h], 1Ah
@@ -10290,51 +10309,51 @@ loc_15D5C:
                 push    ax
                 lea     ax, [bp-6Eh]
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
 loc_15D69:
                 lea     ax, [bp-6Eh]
                 push    ax
-                call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
+                call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
 
 loc_15D72:
                 lea     ax, [bp-6Eh]
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
 loc_15D7B:
                 mov     ax, 30A6h
                 push    ax
                 lea     ax, [bp-72h]
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
 loc_15D88:
                 lea     ax, [bp-72h]
                 push    ax
-                call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
+                call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
 
 loc_15D91:
                 lea     ax, [bp-72h]
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
 loc_15D9A:
                 mov     ax, 30C8h
                 push    ax
                 lea     ax, [bp-76h]
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
 loc_15DA7:
                 lea     ax, [bp-76h]
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
 
 loc_15DB0:
                 lea     ax, [bp-76h]
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
 loc_15DB9:
                 mov     word ptr [bp-78h], 1388h
@@ -10347,7 +10366,7 @@ loc_15DC7:
 
 loc_15DCD:                              ; CODE XREF: sub_158EE+AC↑j
                                         ; sub_158EE+130↑j
-                call    far ptr rt_F4   ; -> rtm_F4  (leglib seg003:0x1bb7c)
+                call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
 nullsub_32:
                 retf    0
@@ -10364,7 +10383,7 @@ sub_15BE1       endp
 
 sub_15DD8       proc far
                 mov     cx, 2
-                call    far ptr rt_F0   ; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
+                call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
 loc_15DE0:
                 xor     ax, ax
@@ -10377,7 +10396,7 @@ loc_15DE0:
                 push    ax
                 mov     ax, 1E58h
                 push    ax
-                call    far ptr rt_AF   ; -> rtm_AF  (leglib seg003:0x13608)
+                call    far ptr rt_AF   ; -> basScreenInit  (leglib seg003:0x13608)
 
 loc_15DF8:
                 xor     ax, ax
@@ -10390,7 +10409,7 @@ loc_15DF8:
                 push    ax
                 mov     ax, 1E2Ah
                 push    ax
-                call    far ptr rt_AF   ; -> rtm_AF  (leglib seg003:0x13608)
+                call    far ptr rt_AF   ; -> basScreenInit  (leglib seg003:0x13608)
 
 loc_15E10:
                 mov     si, 1B96h
@@ -10425,7 +10444,7 @@ loc_15E5C:
                 push    word ptr [bp+6]
                 call    far ptr rt_FF08 ; -> rtm_FF08  (leglib seg003:0x13346)
 
-loc_15E64:                              ; -> rtm_F4  (leglib seg003:0x1bb7c)
+loc_15E64:                              ; -> basProcLeave  (leglib seg003:0x1bb7c)
                 call    far ptr rt_F4
 
 nullsub_33:
@@ -10443,9 +10462,9 @@ sub_15DD8       endp
 
 sub_15E6F       proc far
                 mov     cx, 0
-                call    far ptr rt_F0   ; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
+                call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
-loc_15E77:                              ; -> rtm_F4  (leglib seg003:0x1bb7c)
+loc_15E77:                              ; -> basProcLeave  (leglib seg003:0x1bb7c)
                 call    far ptr rt_F4
 
 nullsub_34:
@@ -10463,7 +10482,7 @@ sub_15E6F       endp
 
 sub_15E82       proc far
                 mov     cx, 2
-                call    far ptr rt_F0   ; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
+                call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
 loc_15E8A:
                 mov     si, 1B96h
@@ -10527,7 +10546,7 @@ loc_15ED9:                              ; CODE XREF: sub_15E82+48↑j
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
                 mov     es:[bx], ax
-                call    far ptr rt_F4   ; -> rtm_F4  (leglib seg003:0x1bb7c)
+                call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
 nullsub_35:
                 retf    4
@@ -10544,7 +10563,7 @@ sub_15E82       endp
 
 sub_15F10       proc far
                 mov     cx, 0Ah
-                call    far ptr rt_F0   ; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
+                call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
 loc_15F18:
                 mov     si, [bp+6]
@@ -10611,7 +10630,7 @@ loc_15F8F:                              ; CODE XREF: sub_15F10+43↑j
                 jle     short loc_15F56
 
 loc_15F97:                              ; CODE XREF: sub_15F10+10↑j
-                call    far ptr rt_F4   ; -> rtm_F4  (leglib seg003:0x1bb7c)
+                call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
 nullsub_36:
                 retf    2
@@ -10628,7 +10647,7 @@ sub_15F10       endp
 
 sub_15FA2       proc far
                 mov     cx, 2
-                call    far ptr rt_F0   ; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
+                call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
 loc_15FAA:
                 mov     ax, ds:2182h
@@ -10709,7 +10728,7 @@ loc_1601C:                              ; CODE XREF: sub_15FA2+75↑j
 
 loc_16025:                              ; CODE XREF: sub_15FA2+1D↑j
                                         ; sub_15FA2+38↑j ...
-                call    far ptr rt_F4   ; -> rtm_F4  (leglib seg003:0x1bb7c)
+                call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
 nullsub_37:
                 retf    0
@@ -10726,7 +10745,7 @@ sub_15FA2       endp
 
 sub_16030       proc far
                 mov     cx, 2
-                call    far ptr rt_F0   ; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
+                call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
 loc_16038:
                 xor     ax, ax
@@ -10772,7 +10791,7 @@ loc_16074:                              ; CODE XREF: sub_16030+A↑j
 loc_1607C:                              ; CODE XREF: sub_16030+3D↑j
                 mov     ax, [bp-0Ch]
                 mov     ds:1F02h, ax
-                call    far ptr rt_F4   ; -> rtm_F4  (leglib seg003:0x1bb7c)
+                call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
 nullsub_38:
                 retf    4
@@ -10789,7 +10808,7 @@ sub_16030       endp
 
 sub_1608D       proc far
                 mov     cx, 16h
-                call    far ptr rt_F0   ; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
+                call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
 loc_16095:
                 mov     word ptr [bp-0Ch], 0
@@ -10923,7 +10942,7 @@ loc_1618B:                              ; CODE XREF: sub_1608D+F9↑j
                 call    far ptr 0:5E82h
 
 loc_161A2:                              ; CODE XREF: sub_1608D+FB↑j
-                call    far ptr rt_F4   ; -> rtm_F4  (leglib seg003:0x1bb7c)
+                call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
 nullsub_39:
                 retf    2
@@ -10940,7 +10959,7 @@ sub_1608D       endp
 
 sub_161AD       proc far
                 mov     cx, 82h
-                call    far ptr rt_F0   ; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
+                call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
 loc_161B5:
                 cmp     word ptr ds:1EBCh, 61h ; 'a'
@@ -10970,12 +10989,12 @@ loc_161C7:                              ; CODE XREF: sub_161AD+F↑j
                 push    ax
                 lea     ax, [bp-1Eh]
                 push    ax
-                call    far ptr rt_AF   ; -> rtm_AF  (leglib seg003:0x13608)
+                call    far ptr rt_AF   ; -> basScreenInit  (leglib seg003:0x13608)
                 mov     ax, 30ECh
                 push    ax
                 lea     ax, [bp-28h]
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 call    far ptr rt_B7   ; -> rtm_B7  (leglib seg003:0x1a1b2)
                 mov     bx, ax
                 mov     [bp-2Ah], bx
@@ -10991,7 +11010,7 @@ loc_161C7:                              ; CODE XREF: sub_161AD+F↑j
                 mov     bx, 4
                 add     bx, [si+0Ah]
                 push    bx
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 call    far ptr rt_B7   ; -> rtm_B7  (leglib seg003:0x1a1b2)
                 mov     bx, ax
                 mov     [bp-2Eh], bx
@@ -11007,7 +11026,7 @@ loc_161C7:                              ; CODE XREF: sub_161AD+F↑j
                 mov     bx, 8
                 add     bx, [si+0Ah]
                 push    bx
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 call    far ptr rt_B7   ; -> rtm_B7  (leglib seg003:0x1a1b2)
                 mov     bx, ax
                 mov     [bp-32h], bx
@@ -11023,7 +11042,7 @@ loc_161C7:                              ; CODE XREF: sub_161AD+F↑j
                 mov     bx, 0Ch
                 add     bx, [si+0Ah]
                 push    bx
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, [bp-2Ch]
                 sub     ax, [bp-30h]
                 mov     [bp-36h], ax
@@ -11066,7 +11085,7 @@ loc_162DD:                              ; CODE XREF: sub_161AD+129↑j
                 push    ax
                 lea     ax, [bp-28h]
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 1
                 jmp     loc_163BA
 ; ---------------------------------------------------------------------------
@@ -11082,7 +11101,7 @@ loc_16318:                              ; CODE XREF: sub_161AD+215↓j
                 push    ax
                 lea     ax, [bp-3Ch]
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 3106h
                 push    ax
                 mov     ax, [bp-3Eh]
@@ -11093,7 +11112,7 @@ loc_16318:                              ; CODE XREF: sub_161AD+215↓j
                 lea     si, [bp-1Eh]
                 add     bx, [si+0Ah]
                 push    bx
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 lea     ax, [bp-3Ch]
                 push    ax
                 call    far ptr rt_42   ; -> rtm_42  (leglib seg003:0x1b651)
@@ -11111,11 +11130,11 @@ loc_16361:                              ; CODE XREF: sub_161AD+1AF↑j
                 push    ax
                 call    far ptr rt_B5   ; -> rtm_B5  (leglib seg003:0x1b707)  [mid-func]
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 lea     ax, [bp-3Ch]
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 jmp     loc_1639C
 ; ---------------------------------------------------------------------------
 
@@ -11128,18 +11147,18 @@ loc_16385:                              ; CODE XREF: sub_161AD+1B1↑j
                 push    ax
                 lea     ax, [bp-3Ch]
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
 loc_1639C:                              ; CODE XREF: sub_161AD+1D5↑j
                 lea     ax, [bp-28h]
                 push    ax
                 lea     ax, [bp-3Ch]
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 lea     ax, [bp-28h]
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 inc     word ptr [bp-38h]
                 mov     ax, [bp-3Eh]
                 inc     ax
@@ -11197,7 +11216,7 @@ loc_16422:                              ; CODE XREF: sub_161AD+270↑j
                 mov     ax, 3112h
                 push    ax
                 call    far ptr rt_98   ; -> rtm_98  (leglib seg003:0x1b0d8)  [mid-func]
-                call    far ptr rt_EC   ; -> rtm_EC  (leglib seg003:0x12dc7)
+                call    far ptr rt_EC   ; -> basProcExit1  (leglib seg003:0x12dc7)
 
 loc_16430:                              ; CODE XREF: sub_161AD+272↑j
                 mov     word ptr [bp-0Ch], 0
@@ -11224,7 +11243,7 @@ loc_16447:                              ; CODE XREF: sub_161AD+295↑j
                 push    ax
                 lea     ax, [bp-28h]
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 jmp     short loc_16436
 ; ---------------------------------------------------------------------------
                 nop
@@ -11235,29 +11254,29 @@ loc_16468:                              ; CODE XREF: sub_161AD+297↑j
                 push    ax
                 lea     ax, [bp-48h]
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 mov     ax, 311Ch
                 push    ax
                 lea     ax, [bp-44h]
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 lea     ax, [bp-44h]
                 push    ax
-                call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
+                call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
                 lea     ax, [bp-44h]
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     ax, 3134h
                 push    ax
                 lea     ax, [bp-4Ch]
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 lea     ax, [bp-4Ch]
                 push    ax
-                call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
+                call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
                 lea     ax, [bp-4Ch]
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     ax, 314Ch
                 push    ax
                 mov     bx, [bp-2Ch]
@@ -11266,17 +11285,17 @@ loc_16468:                              ; CODE XREF: sub_161AD+297↑j
                 mov     si, 2106h
                 add     bx, [si+0Ah]
                 push    bx
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 lea     ax, [bp-50h]
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 lea     ax, [bp-50h]
                 push    ax
-                call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
+                call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
                 lea     ax, [bp-50h]
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     ax, 3158h
                 push    ax
                 mov     bx, [bp-30h]
@@ -11285,17 +11304,17 @@ loc_16468:                              ; CODE XREF: sub_161AD+297↑j
                 mov     si, 2118h
                 add     bx, [si+0Ah]
                 push    bx
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 lea     ax, [bp-54h]
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 lea     ax, [bp-54h]
                 push    ax
-                call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
+                call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
                 lea     ax, [bp-54h]
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     ax, 3164h
                 push    ax
                 mov     ax, [bp-34h]
@@ -11303,17 +11322,17 @@ loc_16468:                              ; CODE XREF: sub_161AD+297↑j
                 push    ax
                 call    far ptr rt_D2   ; -> rtm_D2  (leglib seg003:0x1b870)
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 lea     ax, [bp-58h]
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 lea     ax, [bp-58h]
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 lea     ax, [bp-58h]
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     word ptr [bp-5Ah], 14h
                 mov     word ptr [bp-5Ch], 16h
                 lea     ax, [bp-5Ah]
@@ -11334,13 +11353,13 @@ loc_16560:                              ; CODE XREF: sub_161AD+4D7↓j
                 push    ax
                 lea     ax, [bp-64h]
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 lea     ax, [bp-64h]
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 lea     ax, [bp-64h]
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     word ptr [bp-66h], 15h
                 mov     word ptr [bp-68h], 1Ch
                 lea     ax, [bp-66h]
@@ -11350,7 +11369,7 @@ loc_16560:                              ; CODE XREF: sub_161AD+4D7↓j
                 call    far ptr rt_FE1D ; -> rtm_FE1D  (leglib seg008:0x2863d)
                 lea     ax, [bp-48h]
                 push    ax
-                call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
                 mov     word ptr [bp-6Ah], 0
                 mov     word ptr [bp-6Ch], 3
                 lea     ax, [bp-6Ah]
@@ -11361,12 +11380,12 @@ loc_16560:                              ; CODE XREF: sub_161AD+4D7↓j
                 push    ax
                 lea     ax, [bp-70h]
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 lea     ax, [bp-70h]
                 push    ax
                 lea     ax, [bp-74h]
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 lea     ax, [bp-74h]
                 push    ax
                 call    far ptr rt_30   ; -> rtm_30  (leglib seg003:0x1b661)
@@ -11394,11 +11413,11 @@ loc_1660B:                              ; CODE XREF: sub_161AD+459↑j
                 push    ax
                 lea     ax, [bp-74h]
                 push    ax
-                call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
                 push    ax
                 lea     ax, [bp-48h]
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
 loc_16622:                              ; CODE XREF: sub_161AD+45B↑j
                 cmp     word ptr [bp-76h], 8
@@ -11436,7 +11455,7 @@ loc_1664C:                              ; CODE XREF: sub_161AD+49A↑j
                 push    ax
                 lea     ax, [bp-48h]
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
 loc_1666A:                              ; CODE XREF: sub_161AD+49C↑j
                 cmp     word ptr [bp-76h], 0Dh
@@ -11462,13 +11481,13 @@ loc_16687:                              ; CODE XREF: sub_161AD+4D5↑j
                 push    ax
                 lea     ax, [bp-7Ch]
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 lea     ax, [bp-7Ch]
                 push    ax
-                call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
+                call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
                 lea     ax, [bp-7Ch]
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
 loc_166A6:                              ; CODE XREF: sub_161AD:loc_166ED↓j
                 lea     ax, [bp-48h]
@@ -11501,7 +11520,7 @@ loc_166C9:                              ; CODE XREF: sub_161AD+517↑j
                 push    ax
                 lea     ax, [bp-48h]
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 jmp     loc_166ED
 ; ---------------------------------------------------------------------------
 
@@ -11542,13 +11561,13 @@ loc_1670F:                              ; CODE XREF: sub_161AD+552↑j
                 push    ax
                 lea     ax, [bp-86h]
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 lea     ax, [bp-86h]
                 push    ax
-                call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
+                call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
                 lea     ax, [bp-86h]
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     word ptr [bp-88h], 0FA0h
                 lea     ax, [bp-88h]
                 push    ax
@@ -11574,45 +11593,45 @@ loc_1676F:                              ; CODE XREF: sub_161AD+5BD↑j
                 push    ax
                 lea     ax, [bp-8Ch]
                 push    ax
-                call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 lea     ax, [bp-8Ch]
                 push    ax
                 call    far ptr 0:5DD8h
                 lea     ax, [bp-8Ch]
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
 loc_16797:                              ; CODE XREF: sub_161AD+5BF↑j
                 lea     ax, [bp-70h]
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
 loc_167A0:
                 lea     ax, [bp-74h]
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
 loc_167A9:
                 lea     ax, [bp-3Ch]
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
 loc_167B2:
                 lea     ax, [bp-48h]
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
 loc_167BB:
                 lea     ax, [bp-28h]
                 push    ax
-                call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
 loc_167C4:
                 lea     ax, [bp-1Eh]
                 push    ax
                 call    far ptr rt_1B   ; -> rtm_1B  (leglib seg003:0x1379d)
 
-loc_167CD:                              ; -> rtm_F4  (leglib seg003:0x1bb7c)
+loc_167CD:                              ; -> basProcLeave  (leglib seg003:0x1bb7c)
                 call    far ptr rt_F4
 
 nullsub_40:
@@ -11645,7 +11664,7 @@ sub_161AD       endp
 
 ; =============== S U B R O U T I N E =======================================
 
-; -> rtm_EC  (leglib seg003:0x12dc7)
+; -> basProcExit1  (leglib seg003:0x12dc7)
 ; Attributes: noreturn
 
 rt_EC           proc near               ; CODE XREF: sub_161AD+27E↑P
@@ -11658,7 +11677,7 @@ rt_EC           endp
 
 ; =============== S U B R O U T I N E =======================================
 
-; -> rtm_ED  (leglib seg003:0x12db0)
+; -> basProcExit2  (leglib seg003:0x12db0)
 ; Attributes: noreturn
 
 rt_ED           proc near               ; CODE XREF: j_rt_ED↑P
@@ -11828,8 +11847,8 @@ rt_07:                                  ; Overlay manager interrupt
 ; -> rtm_09  (leglib seg003:0x14a31)
 ; Attributes: noreturn
 
-rt_09           proc near               ; CODE XREF: sub_10199+DB↑P
-                                        ; sub_10199+167↑P ...
+rt_09           proc near               ; CODE XREF: outInit+DB↑P
+                                        ; outInit+167↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -11879,7 +11898,7 @@ rt_17:                                  ; Overlay manager interrupt
 ; -> rtm_32  (leglib seg003:0x1b627)
 ; Attributes: noreturn
 
-rt_32           proc near               ; CODE XREF: sub_13C60+9C0↑P
+rt_32           proc near               ; CODE XREF: mainDispatch+9C0↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -12201,8 +12220,8 @@ rt_86:                                  ; Overlay manager interrupt
 ; -> rtm_87  (leglib seg003:0x148ea)
 ; Attributes: noreturn
 
-rt_87           proc near               ; CODE XREF: sub_10199+10F↑P
-                                        ; sub_13C60+D7E↑P
+rt_87           proc near               ; CODE XREF: outInit+10F↑P
+                                        ; mainDispatch+D7E↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -12390,11 +12409,11 @@ rt_C1:                                  ; Overlay manager interrupt
 
 ; =============== S U B R O U T I N E =======================================
 
-; -> rtm_C2  (leglib seg003:0x1b572)
+; -> basStrAssign  (leglib seg003:0x1b572)
 ; Attributes: noreturn
 
-rt_C2           proc near               ; CODE XREF: sub_10199+E8↑P
-                                        ; sub_10199+1E4↑P ...
+rt_C2           proc near               ; CODE XREF: outInit+E8↑P
+                                        ; outInit+1E4↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -12404,7 +12423,7 @@ rt_C2           endp
 
 ; =============== S U B R O U T I N E =======================================
 
-; -> rtm_C3  (leglib seg003:0x1b5ab)
+; -> basStrConcat  (leglib seg003:0x1b5ab)
 ; Attributes: noreturn
 
 rt_C3           proc near               ; CODE XREF: sub_10B06+17↑P
@@ -12460,11 +12479,11 @@ rt_CE:                                  ; Overlay manager interrupt
 
 ; =============== S U B R O U T I N E =======================================
 
-; -> rtm_D1  (leglib seg003:0x1b9b0)
+; -> basStrClear  (leglib seg003:0x1b9b0)
 ; Attributes: noreturn
 
-rt_D1           proc near               ; CODE XREF: sub_10199+FA↑P
-                                        ; sub_10199+2D1↑P ...
+rt_D1           proc near               ; CODE XREF: outInit+FA↑P
+                                        ; outInit+2D1↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -12606,7 +12625,7 @@ rt_EB:                                  ; Overlay manager interrupt
 ; -> rtm_EE  (leglib seg003:0x1c9d3)
 ; Attributes: noreturn
 
-rt_EE           proc near               ; CODE XREF: sub_10199+556↑P
+rt_EE           proc near               ; CODE XREF: outInit+556↑P
                                         ; j_rt_FE5B_1+372↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
@@ -12623,7 +12642,7 @@ rt_EF:                                  ; Overlay manager interrupt
 
 ; =============== S U B R O U T I N E =======================================
 
-; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
+; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 ; Attributes: noreturn
 
 rt_F0           proc near               ; CODE XREF: sub_14B8D+3↑P
@@ -12655,7 +12674,7 @@ rt_F3:                                  ; Overlay manager interrupt
 
 ; =============== S U B R O U T I N E =======================================
 
-; -> rtm_F4  (leglib seg003:0x1bb7c)
+; -> basProcLeave  (leglib seg003:0x1bb7c)
 ; Attributes: noreturn
 
 rt_F4           proc near               ; CODE XREF: sub_14B8D:loc_14BC5↑P
@@ -12817,8 +12836,8 @@ rt_FF0F:                                ; Overlay manager interrupt
 ; -> rtm_FF1F  (leglib seg004:0x21b5e)
 ; Attributes: noreturn
 
-rt_FF1F         proc near               ; CODE XREF: sub_10199+256↑P
-                                        ; sub_10199+29D↑P ...
+rt_FF1F         proc near               ; CODE XREF: outInit+256↑P
+                                        ; outInit+29D↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -12875,8 +12894,8 @@ rt_FF1E:                                ; Overlay manager interrupt
 ; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
 ; Attributes: noreturn
 
-rt_FF20         proc near               ; CODE XREF: sub_10199+427↑P
-                                        ; sub_10199+6B5↑P ...
+rt_FF20         proc near               ; CODE XREF: outInit+427↑P
+                                        ; outInit+6B5↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -12889,7 +12908,7 @@ rt_FF20         endp
 ; -> rtm_FF21  (leglib seg004:0x21768)  [mid-func]
 ; Attributes: noreturn
 
-rt_FF21         proc near               ; CODE XREF: sub_10199+520↑P
+rt_FF21         proc near               ; CODE XREF: outInit+520↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -12902,8 +12921,8 @@ rt_FF21         endp
 ; -> rtm_FF22  (leglib seg004:0x218e6)
 ; Attributes: noreturn
 
-rt_FF22         proc near               ; CODE XREF: sub_10199:loc_1075F↑P
-                                        ; sub_10199:loc_10793↑P ...
+rt_FF22         proc near               ; CODE XREF: outInit:loc_1075F↑P
+                                        ; outInit:loc_10793↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -12916,8 +12935,8 @@ rt_FF22         endp
 ; -> rtm_FF23  (leglib seg004:0x218ee)
 ; Attributes: noreturn
 
-rt_FF23         proc near               ; CODE XREF: sub_10199:loc_10514↑P
-                                        ; sub_10199:loc_106C6↑P ...
+rt_FF23         proc near               ; CODE XREF: outInit:loc_10514↑P
+                                        ; outInit:loc_106C6↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -12948,8 +12967,8 @@ rt_FF26:                                ; Overlay manager interrupt
 ; -> rtm_FF27  (leglib seg004:0x21ddf)
 ; Attributes: noreturn
 
-rt_FF27         proc near               ; CODE XREF: sub_10199:loc_10752↑P
-                                        ; sub_10199:loc_10786↑P ...
+rt_FF27         proc near               ; CODE XREF: outInit:loc_10752↑P
+                                        ; outInit:loc_10786↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -13146,8 +13165,8 @@ rt_FF43:                                ; Overlay manager interrupt
 ; -> rtm_FF44  (leglib seg004:0x21a62)
 ; Attributes: noreturn
 
-rt_FF44         proc near               ; CODE XREF: sub_10199+335↑P
-                                        ; sub_10199+376↑P ...
+rt_FF44         proc near               ; CODE XREF: outInit+335↑P
+                                        ; outInit+376↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -13240,7 +13259,7 @@ rt_FF4C         endp
 ; -> rtm_FF4D  (leglib seg004:0x21ad9)  [mid-func]
 ; Attributes: noreturn
 
-rt_FF4D         proc near               ; CODE XREF: sub_10199+528↑P
+rt_FF4D         proc near               ; CODE XREF: outInit+528↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -13253,8 +13272,8 @@ rt_FF4D         endp
 ; -> rtm_FF4E  (leglib seg004:0x21a1a)
 ; Attributes: noreturn
 
-rt_FF4E         proc near               ; CODE XREF: sub_10199+32D↑P
-                                        ; sub_10199+36E↑P ...
+rt_FF4E         proc near               ; CODE XREF: outInit+32D↑P
+                                        ; outInit+36E↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -13594,8 +13613,8 @@ rt_0C:                                  ; Overlay manager interrupt
 ; -> rtm_11  (leglib seg003:0x12bde)
 ; Attributes: noreturn
 
-rt_11           proc near               ; CODE XREF: sub_13C60+9DD↑P
-                                        ; sub_13C60+B0C↑P ...
+rt_11           proc near               ; CODE XREF: mainDispatch+9DD↑P
+                                        ; mainDispatch+B0C↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -13881,8 +13900,8 @@ rt_5D:                                  ; Overlay manager interrupt
 ; -> rtm_5E  (leglib seg003:0x14589)
 ; Attributes: noreturn
 
-rt_5E           proc near               ; CODE XREF: sub_13C60+DB9↑P
-                                        ; sub_13C60+E01↑P
+rt_5E           proc near               ; CODE XREF: mainDispatch+DB9↑P
+                                        ; mainDispatch+E01↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -13895,8 +13914,8 @@ rt_5E           endp
 ; -> rtm_5F  (leglib seg003:0x145ab)
 ; Attributes: noreturn
 
-rt_5F           proc near               ; CODE XREF: sub_13C60+D98↑P
-                                        ; sub_13C60+DE6↑P
+rt_5F           proc near               ; CODE XREF: mainDispatch+D98↑P
+                                        ; mainDispatch+DE6↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -14020,7 +14039,7 @@ rt_AC:                                  ; Overlay manager interrupt
 
 ; =============== S U B R O U T I N E =======================================
 
-; -> rtm_AF  (leglib seg003:0x13608)
+; -> basScreenInit  (leglib seg003:0x13608)
 ; Attributes: noreturn
 
 rt_AF           proc near               ; CODE XREF: out_entry+13↑P
@@ -14057,8 +14076,8 @@ rt_B7           endp
 ; -> rtm_B8  (leglib seg003:0x1a1ba)
 ; Attributes: noreturn
 
-rt_B8           proc near               ; CODE XREF: sub_10199+31B↑P
-                                        ; sub_10199+35C↑P ...
+rt_B8           proc near               ; CODE XREF: outInit+31B↑P
+                                        ; outInit+35C↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -14107,7 +14126,7 @@ rt_CA:                                  ; Overlay manager interrupt
 ; -> rtm_CF  (leglib seg003:0x16168)  [mid-func]
 ; Attributes: noreturn
 
-rt_CF           proc near               ; CODE XREF: sub_10199+11E↑P
+rt_CF           proc near               ; CODE XREF: outInit+11E↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -14258,8 +14277,8 @@ rt_FE00:                                ; Overlay manager interrupt
 ; -> rtm_FE01  (leglib seg008:0x27c25)
 ; Attributes: noreturn
 
-rt_FE01         proc near               ; CODE XREF: sub_10199+1C4↑P
-                                        ; sub_10199:j_rt_FE01↑P ...
+rt_FE01         proc near               ; CODE XREF: outInit+1C4↑P
+                                        ; outInit:j_rt_FE01↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -14316,8 +14335,8 @@ rt_FE06         endp
 ; -> rtm_FE07  (leglib seg007:0x24fbf)
 ; Attributes: noreturn
 
-rt_FE07         proc near               ; CODE XREF: sub_13C60+A4E↑P
-                                        ; sub_13C60+AA1↑P ...
+rt_FE07         proc near               ; CODE XREF: mainDispatch+A4E↑P
+                                        ; mainDispatch+AA1↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -14421,8 +14440,8 @@ rt_FE15:                                ; Overlay manager interrupt
 ; -> rtm_FE16  (leglib seg007:0x26654)
 ; Attributes: noreturn
 
-rt_FE16         proc near               ; CODE XREF: sub_10199+1A1↑P
-                                        ; sub_10199+1B2↑P
+rt_FE16         proc near               ; CODE XREF: outInit+1A1↑P
+                                        ; outInit+1B2↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -14532,11 +14551,11 @@ rt_FE24:                                ; Overlay manager interrupt
 
 ; =============== S U B R O U T I N E =======================================
 
-; -> rtm_FE25  (leglib seg008:0x28bd2)
+; -> drawStringInner  (leglib seg008:0x28bd2)
 ; Attributes: noreturn
 
-rt_FE25         proc near               ; CODE XREF: sub_10199+1ED↑P
-                                        ; sub_10199+2C8↑P ...
+rt_FE25         proc near               ; CODE XREF: outInit+1ED↑P
+                                        ; outInit+2C8↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -14546,10 +14565,10 @@ rt_FE25         endp
 
 ; =============== S U B R O U T I N E =======================================
 
-; -> rtm_FE26  (leglib seg007:0x26967)
+; -> drawString  (leglib seg007:0x26967)
 ; Attributes: noreturn
 
-rt_FE26         proc near               ; CODE XREF: sub_10199+7F6↑P
+rt_FE26         proc near               ; CODE XREF: outInit+7F6↑P
                                         ; sub_10B06+1A1↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
@@ -14563,8 +14582,8 @@ rt_FE26         endp
 ; -> rtm_FE27  (leglib seg007:0x253ad)
 ; Attributes: noreturn
 
-rt_FE27         proc near               ; CODE XREF: sub_10199+2F5↑P
-                                        ; sub_10199+82D↑P ...
+rt_FE27         proc near               ; CODE XREF: outInit+2F5↑P
+                                        ; outInit+82D↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -14583,7 +14602,7 @@ rt_FE28:                                ; Overlay manager interrupt
 ; -> rtm_FE29  (leglib seg007:0x27391)
 ; Attributes: noreturn
 
-rt_FE29         proc near               ; CODE XREF: sub_13C60+AD8↑P
+rt_FE29         proc near               ; CODE XREF: mainDispatch+AD8↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -14681,8 +14700,8 @@ rt_FE36:                                ; Overlay manager interrupt
 ; -> rtm_FE37  (leglib seg007:0x2701b)
 ; Attributes: noreturn
 
-rt_FE37         proc near               ; CODE XREF: sub_10199+139↑P
-                                        ; sub_10199+142↑P ...
+rt_FE37         proc near               ; CODE XREF: outInit+139↑P
+                                        ; outInit+142↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -14746,7 +14765,7 @@ rt_FE3D:                                ; Overlay manager interrupt
 ; -> rtm_FE3E  (leglib seg007:0x2497a)
 ; Attributes: noreturn
 
-rt_FE3E         proc near               ; CODE XREF: sub_13C60+E6F↑P
+rt_FE3E         proc near               ; CODE XREF: mainDispatch+E6F↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -14785,7 +14804,7 @@ rt_FE41:                                ; Overlay manager interrupt
 ; -> rtm_FE42  (leglib seg007:0x2730c)
 ; Attributes: noreturn
 
-rt_FE42         proc near               ; CODE XREF: sub_13C60+E9C↑P
+rt_FE42         proc near               ; CODE XREF: mainDispatch+E9C↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -14804,8 +14823,8 @@ rt_FE43:                                ; Overlay manager interrupt
 ; -> rtm_FE44  (leglib seg007:0x2502d)
 ; Attributes: noreturn
 
-rt_FE44         proc near               ; CODE XREF: sub_10199+19C↑P
-                                        ; sub_10199+1AD↑P
+rt_FE44         proc near               ; CODE XREF: outInit+19C↑P
+                                        ; outInit+1AD↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -14843,7 +14862,7 @@ rt_FE48:                                ; Overlay manager interrupt
 ; Attributes: noreturn
 
 rt_FE49         proc near               ; CODE XREF: sub_111FC+1FE↑P
-                                        ; sub_13C60+D06↑P ...
+                                        ; mainDispatch+D06↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -14896,7 +14915,7 @@ rt_FE4C         endp
 ; -> rtm_FE4D  (leglib seg007:0x25c79)
 ; Attributes: noreturn
 
-rt_FE4D         proc near               ; CODE XREF: sub_13C60+EB5↑P
+rt_FE4D         proc near               ; CODE XREF: mainDispatch+EB5↑P
                                         ; sub_158EE+31↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
@@ -14924,7 +14943,7 @@ rt_FE4E         endp
 ; -> rtm_FE4F  (leglib seg007:0x2659c)
 ; Attributes: noreturn
 
-rt_FE4F         proc near               ; CODE XREF: sub_10199+4DF↑P
+rt_FE4F         proc near               ; CODE XREF: outInit+4DF↑P
                                         ; j_rt_FE5B_1+3FF↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
@@ -14983,8 +15002,8 @@ rt_FE54         endp
 ; -> rtm_FE55  (leglib seg007:0x273db)
 ; Attributes: noreturn
 
-rt_FE55         proc near               ; CODE XREF: sub_10199+275↑P
-                                        ; sub_10199+2E0↑P ...
+rt_FE55         proc near               ; CODE XREF: outInit+275↑P
+                                        ; outInit+2E0↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -14997,7 +15016,7 @@ rt_FE55         endp
 ; -> rtm_FE56  (leglib seg007:0x27457)
 ; Attributes: noreturn
 
-rt_FE56         proc near               ; CODE XREF: sub_10199+304↑P
+rt_FE56         proc near               ; CODE XREF: outInit+304↑P
                                         ; j_rt_FE5B_1+3A8↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
@@ -15040,7 +15059,7 @@ rt_FE5A:                                ; Overlay manager interrupt
 
 ; =============== S U B R O U T I N E =======================================
 
-; -> rtm_FE5B  (leglib seg008:0x28861)
+; -> screenRefresh  (leglib seg008:0x28861)
 ; Attributes: noreturn
 
 rt_FE5B         proc near               ; CODE XREF: sub_10B06+274↑P
@@ -15099,8 +15118,8 @@ rt_FE62:                                ; Overlay manager interrupt
 ; -> rtm_FE63  (leglib seg007:0x24a83)
 ; Attributes: noreturn
 
-rt_FE63         proc near               ; CODE XREF: sub_10199+F1↑P
-                                        ; sub_13C60+A07↑P ...
+rt_FE63         proc near               ; CODE XREF: outInit+F1↑P
+                                        ; mainDispatch+A07↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -15137,8 +15156,8 @@ rt_FE67:                                ; Overlay manager interrupt
 ; -> rtm_FE68  (leglib seg007:0x2706c)
 ; Attributes: noreturn
 
-rt_FE68         proc near               ; CODE XREF: sub_10199+127↑P
-                                        ; sub_10199+130↑P ...
+rt_FE68         proc near               ; CODE XREF: outInit+127↑P
+                                        ; outInit+130↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------

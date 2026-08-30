@@ -672,11 +672,11 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	128,	0X1F9C0);
 	set_cmt	(0X12DB0,	"int 3Fh run-time entry ED",	1);
 	create_insn	(0X12DB0);
-	set_name	(0X12DB0,	"rtm_ED");
+	set_name	(0X12DB0,	"basProcExit2");
 	create_insn	(0X12DBF);
 	set_cmt	(0X12DC7,	"int 3Fh run-time entry EC",	1);
 	create_insn	(0X12DC7);
-	set_name	(0X12DC7,	"rtm_EC");
+	set_name	(0X12DC7,	"basProcExit1");
 	create_insn	(0X12DDB);
 	create_insn	(0X12DE9);
 	create_insn	(x=0X12E0B);
@@ -916,7 +916,7 @@ static Bytes_0(void) {
 	create_insn	(0X13604);
 	set_cmt	(0X13608,	"int 3Fh run-time entry AF",	1);
 	create_insn	(0X13608);
-	set_name	(0X13608,	"rtm_AF");
+	set_name	(0X13608,	"basScreenInit");
 	set_cmt	(0X1360B,	"int 3Fh run-time entry 0F",	1);
 	create_insn	(0X1360B);
 	set_name	(0X1360B,	"rtm_0F");
@@ -3672,7 +3672,7 @@ static Bytes_0(void) {
 	set_name	(0X1B4D0,	"rtm_BB");
 	set_cmt	(0X1B4ED,	"int 3Fh run-time entry 73",	1);
 	create_insn	(0X1B4ED);
-	set_name	(0X1B4ED,	"rtm_73");
+	set_name	(0X1B4ED,	"basStrBuild");
 	create_insn	(0X1B502);
 	create_insn	(x=0X1B520);
 	op_hex		(x,	1);
@@ -3686,7 +3686,7 @@ static Bytes_0(void) {
 	create_insn	(0X1B561);
 	set_cmt	(0X1B572,	"int 3Fh run-time entry C2",	1);
 	create_insn	(0X1B572);
-	set_name	(0X1B572,	"rtm_C2");
+	set_name	(0X1B572,	"basStrAssign");
 	create_insn	(x=0X1B575);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1B57F);
@@ -3695,7 +3695,7 @@ static Bytes_0(void) {
 	create_insn	(0X1B5A2);
 	set_cmt	(0X1B5AB,	"int 3Fh run-time entry C3",	1);
 	create_insn	(0X1B5AB);
-	set_name	(0X1B5AB,	"rtm_C3");
+	set_name	(0X1B5AB,	"basStrConcat");
 	create_insn	(x=0X1B5B3);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1B5B6);
@@ -3856,7 +3856,7 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	set_cmt	(0X1B8D2,	"int 3Fh run-time entry 00",	1);
 	create_insn	(0X1B8D2);
-	set_name	(0X1B8D2,	"rtm_00");
+	set_name	(0X1B8D2,	"basArrayCopy");
 	create_insn	(x=0X1B8D8);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1B8DD);
@@ -3900,7 +3900,7 @@ static Bytes_0(void) {
 	op_stkvar	(x,	1);
 	set_cmt	(0X1B9B0,	"int 3Fh run-time entry D1",	1);
 	create_insn	(0X1B9B0);
-	set_name	(0X1B9B0,	"rtm_D1");
+	set_name	(0X1B9B0,	"basStrClear");
 	create_insn	(x=0X1B9B3);
 	op_stkvar	(x,	1);
 	set_cmt	(0X1B9C3,	"int 3Fh run-time entry FF0B",	1);
@@ -3973,12 +3973,12 @@ static Bytes_0(void) {
 	create_insn	(0X1BB76);
 	set_cmt	(0X1BB7C,	"int 3Fh run-time entry F4",	1);
 	create_insn	(0X1BB7C);
-	set_name	(0X1BB7C,	"rtm_F4");
+	set_name	(0X1BB7C,	"basProcLeave");
 	set_cmt	(0X1BB96,	"int 3Fh run-time entry 16",	1);
 	create_insn	(0X1BB96);
 	set_name	(0X1BB96,	"rtm_16");
 	set_cmt	(0X1BBA7,	"int 3Fh run-time entry F0  [mid-func: verify]",	1);
-	set_name	(0X1BBA7,	"rtm_F0");
+	set_name	(0X1BBA7,	"basProcEnter");
 	create_insn	(x=0X1BBC9);
 	op_hex		(x,	1);
 	set_cmt	(0X1BBD6,	"int 3Fh run-time entry 0A",	1);
@@ -4479,12 +4479,6 @@ static Bytes_0(void) {
 	set_cmt	(0X1CD4A,	"int 3Fh run-time entry FF65",	1);
 	create_insn	(0X1CD4A);
 	set_name	(0X1CD4A,	"rtm_FF65");
-	create_insn	(x=0X1CD4F);
-	op_stkvar	(x,	1);
-	create_insn	(0X1CD59);
-	set_cmt	(0X1CD60,	"int 3Fh run-time entry F5",	1);
-	create_insn	(0X1CD60);
-	set_name	(0X1CD60,	"rtm_F5");
 }
 
 //------------------------------------------------------------------------
@@ -4494,6 +4488,12 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X1CD4F);
+	op_stkvar	(x,	1);
+	create_insn	(0X1CD59);
+	set_cmt	(0X1CD60,	"int 3Fh run-time entry F5",	1);
+	create_insn	(0X1CD60);
+	set_name	(0X1CD60,	"rtm_F5");
 	set_cmt	(0X1CD63,	"int 3Fh run-time entry 3C",	1);
 	create_insn	(0X1CD63);
 	set_name	(0X1CD63,	"rtm_3C");
@@ -5365,7 +5365,7 @@ static Bytes_1(void) {
 	set_name	(0X1EDB0,	"rtm_4E");
 	set_cmt	(0X1EDBA,	"int 3Fh run-time entry CE",	1);
 	create_insn	(0X1EDBA);
-	set_name	(0X1EDBA,	"rtm_CE");
+	set_name	(0X1EDBA,	"basPlayMusic");
 	create_insn	(x=0X1EDC1);
 	op_stkvar	(x,	1);
 	create_insn	(0X1EDD6);
@@ -7125,10 +7125,6 @@ static Bytes_1(void) {
 	set_cmt	(0X21055,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═► OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
 	create_insn	(x=0X21055);
 	op_hex		(x,	0);
-	create_insn	(0X21068);
-	set_cmt	(0X21079,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═► OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
-	create_insn	(x=0X21079);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -7138,6 +7134,10 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(0X21068);
+	set_cmt	(0X21079,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═► OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
+	create_insn	(x=0X21079);
+	op_hex		(x,	1);
 	create_insn	(x=0X2107B);
 	op_hex		(x,	1);
 	set_cmt	(0X2107D,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═► OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
@@ -9742,7 +9742,7 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	set_cmt	(0X26967,	"int 3Fh run-time entry FE26",	1);
 	create_insn	(0X26967);
-	set_name	(0X26967,	"rtm_FE26");
+	set_name	(0X26967,	"drawString");
 	set_cmt	(0X26987,	"int 3Fh run-time entry FE21",	1);
 	create_insn	(0X26987);
 	set_name	(0X26987,	"rtm_FE21");
@@ -10124,7 +10124,7 @@ static Bytes_2(void) {
 	create_insn	(0X28826);
 	set_cmt	(0X28861,	"int 3Fh run-time entry FE5B",	1);
 	create_insn	(0X28861);
-	set_name	(0X28861,	"rtm_FE5B");
+	set_name	(0X28861,	"screenRefresh");
 	create_insn	(0X2888C);
 	create_insn	(0X288AC);
 	create_insn	(0X288E2);
@@ -10154,7 +10154,7 @@ static Bytes_2(void) {
 	create_insn	(0X28B90);
 	set_cmt	(0X28BD2,	"int 3Fh run-time entry FE25",	1);
 	create_insn	(0X28BD2);
-	set_name	(0X28BD2,	"rtm_FE25");
+	set_name	(0X28BD2,	"drawStringInner");
 	create_insn	(0X28C02);
 	create_insn	(0X28C41);
 	create_insn	(0X28C88);
@@ -10231,9 +10231,11 @@ static Functions_0(void) {
 	set_frame_size(0X12BDE, 0, 2, 0X2);
 	add_func    (0X12DB0,0X12DC7);
 	set_func_flags(0X12DB0,0x5412);
+	set_func_cmt(0X12DB0,	"second half of the proc exit wrapper -- checks ds:136h and returns to the caller. The `jmp` target of every menu.idb SUB epilogue (IDA daisy-chain-names the stubs j_j_..._rt_ED).", 1);
 	set_frame_size(0X12DB0, 0, 2, 0);
 	add_func    (0X12DC7,0X12DD0);
 	set_func_flags(0X12DC7,0x1410);
+	set_func_cmt(0X12DC7,	"first half of a proc's outer exit wrapper (clears ds:132h). menu SUB tails are `call basProcExit1 / jmp basProcExit2`. [verify: event/line-trap hook vs. return path]", 1);
 	set_frame_size(0X12DC7, 0, 2, 0);
 	add_func    (0X12DDB,0X12DE9);
 	set_func_flags(0X12DDB,0x5400);
@@ -11611,18 +11613,21 @@ static Functions_0(void) {
 	set_frame_size(0X1B4D0, 0X4, 2, 0);
 	add_func    (0X1B4ED,0X1B502);
 	set_func_flags(0X1B4ED,0x5412);
+	set_func_cmt(0X1B4ED,	"string-space copy+pad helper (`rep movsb` then `rep stosw`); used while materialising a string result.", 1);
 	set_frame_size(0X1B4ED, 0X4, 2, 0X8);
 	add_func    (0X1B502,0X1B527);
 	set_func_flags(0X1B502,0x5400);
 	set_frame_size(0X1B502, 0, 0, 0);
 	add_func    (0X1B572,0X1B596);
 	set_func_flags(0X1B572,0x5410);
+	set_func_cmt(0X1B572,	"string assignment: copy the 4-byte string descriptor from src to dst. args (dst, src) on the stack; the single most common run-time call (164x in out, 171x in menu).", 1);
 	set_frame_size(0X1B572, 0, 2, 0X4);
 	add_func    (0X1B596,0X1B5A2);
 	set_func_flags(0X1B596,0x5402);
 	set_frame_size(0X1B596, 0, 0, 0X4);
 	add_func    (0X1B5AB,0X1B5D5);
 	set_func_flags(0X1B5AB,0x5412);
+	set_func_cmt(0X1B5AB,	"string concatenation (`a$ + b$`): sums the two operand lengths, allocates, copies both. args (a, b).", 1);
 	set_frame_size(0X1B5AB, 0X4, 2, 0X4);
 	add_func    (0X1B5D5,0X1B5E5);
 	set_func_flags(0X1B5D5,0x1400);
@@ -11694,6 +11699,7 @@ static Functions_0(void) {
 	set_frame_size(0X1B8AD, 0X4, 2, 0X6);
 	add_func    (0X1B8D2,0X1B926);
 	set_func_flags(0X1B8D2,0x5412);
+	set_func_cmt(0X1B8D2,	"block copy between two far buffers -- args (word, dst:dword, count, src:dword). Array / FIELD move.", 1);
 	set_frame_size(0X1B8D2, 0X4, 2, 0XC);
 	add_func    (0X1B926,0X1B99A);
 	set_func_flags(0X1B926,0x5412);
@@ -11706,6 +11712,7 @@ static Functions_0(void) {
 	set_frame_size(0X1B99E, 0, 2, 0X2);
 	add_func    (0X1B9B0,0X1B9C3);
 	set_func_flags(0X1B9B0,0x5412);
+	set_func_cmt(0X1B9B0,	"zero a string descriptor (free a temp / `LET a$ = \"\"`). arg (descriptor).", 1);
 	set_frame_size(0X1B9B0, 0, 2, 0X2);
 	add_func    (0X1B9C3,0X1B9DC);
 	set_func_flags(0X1B9C3,0x5412);
@@ -11751,8 +11758,10 @@ static Functions_0(void) {
 	set_frame_size(0X1BB76, 0, 2, 0);
 	add_func    (0X1BB7C,0X1BB96);
 	set_func_flags(0X1BB7C,0x1400);
+	set_func_cmt(0X1BB7C,	"SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.", 1);
 	add_func    (0X1BB96,0X1BBD5);
 	set_func_flags(0X1BB96,0x1400);
+	set_func_cmt(0X1BB96,	"SUB/FUNCTION prologue: pops the return addr to ds:738h, saves si/di/cx/ax, `sub sp,cx` for the local frame (cx = frame size, set by the caller just before), links the frame via ds:116h, `inc ds:118h` (nesting depth). Every compiled-BASIC proc -- including LEGLIB's own FE/FF engine routines -- opens with `mov cx,N / call basProcEnter`.", 1);
 	add_func    (0X1BBD6,0X1BBEB);
 	set_func_flags(0X1BBD6,0x5402);
 	set_frame_size(0X1BBD6, 0, 0, 0);
@@ -12482,6 +12491,7 @@ static Functions_0(void) {
 	set_frame_size(0X1EDB0, 0, 2, 0X2);
 	add_func    (0X1EDBA,0X1EDD6);
 	set_func_flags(0X1EDBA,0x5412);
+	set_func_cmt(0X1EDBA,	"start playing an MML music string (`PLAY`): stashes the string ptr at ds:7A4h. menu's showTitleScreen alternates this with playMusicTick over the 5 theme strings.", 1);
 	set_frame_size(0X1EDBA, 0X2, 2, 0X2);
 	add_func    (0X1EDD6,0X1EDEF);
 	set_func_flags(0X1EDD6,0x5400);
@@ -13198,6 +13208,10 @@ static Functions_0(void) {
 	add_func    (0X2237B,0X223B0);
 	set_func_flags(0X2237B,0x5400);
 	set_frame_size(0X2237B, 0, 0, 0);
+}
+
+static Functions_1(void) {
+
 	add_func    (0X223B0,0X22429);
 	set_func_flags(0X223B0,0x5400);
 	set_frame_size(0X223B0, 0, 0, 0);
@@ -13285,10 +13299,6 @@ static Functions_0(void) {
 	add_func    (0X23AA4,0X23B24);
 	set_func_flags(0X23AA4,0x5400);
 	set_frame_size(0X23AA4, 0, 0, 0);
-}
-
-static Functions_1(void) {
-
 	add_func    (0X23BB9,0X23BF8);
 	set_func_flags(0X23BB9,0x5400);
 	set_frame_size(0X23BB9, 0, 0, 0);
@@ -13523,6 +13533,7 @@ static Functions_1(void) {
 	set_frame_size(0X268F8, 0, 0, 0X4);
 	add_func    (0X26967,0X26984);
 	set_func_flags(0X26967,0x5402);
+	set_func_cmt(0X26967,	"engine: draw one position-coded screen string. arg (string); body is `basProcEnter / drawStringInner / screenRefresh / basProcLeave`.", 1);
 	set_frame_size(0X26967, 0, 0, 0X2);
 	add_func    (0X26987,0X26AE6);
 	set_func_flags(0X26987,0x5402);
@@ -13634,6 +13645,7 @@ static Functions_1(void) {
 	set_frame_size(0X287D7, 0, 0, 0);
 	add_func    (0X28861,0X289A6);
 	set_func_flags(0X28861,0x5402);
+	set_func_cmt(0X28861,	"engine: post-draw cursor/row update (divides a packed row*256+col by 100h). [name provisional]", 1);
 	set_frame_size(0X28861, 0, 0, 0);
 	add_func    (0X289A9,0X28AF5);
 	set_func_flags(0X289A9,0x5402);
@@ -13646,6 +13658,7 @@ static Functions_1(void) {
 	set_frame_size(0X28B90, 0, 0, 0X2);
 	add_func    (0X28BD2,0X28D71);
 	set_func_flags(0X28BD2,0x5402);
+	set_func_cmt(0X28BD2,	"engine: parse + emit a position-coded string (copies it local via basStrAssign, walks it, writes cells).", 1);
 	set_frame_size(0X28BD2, 0, 0, 0X2);
 	add_func    (0X28D74,0X28E5B);
 	set_func_flags(0X28D74,0x5402);
