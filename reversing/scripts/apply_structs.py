@@ -4021,10 +4021,52 @@ struct RoomStruct {
                             // &rstruc->walls,...); loadcompressed_allegro(opty,&rstruc->object,
                             // ...); loadcompressed_allegro(opty,&rstruc->lookat,...);"
                             // (`acroom.h:1946-1952`) exactly, in the same relative order.
+                            // SECOND, INDEPENDENT confirmation (found this round, via USAGE
+                            // rather than load order for the first time): `sub_40AD11` (newly
+                            // matched this round, see its own matches.json entry) is
+                            // `redo_walkable_areas()` -- confirmed beyond doubt via its
+                            // `walkable_areas_on[]`-gated pixel-clearing loop matching 2011's
+                            // "if(play.walkable_areas_on[thisroom.walls->line[hh][ww]]==0)
+                            // _putpixel(thisroom.walls,ww,hh,0);" (`AC.CPP:3703-3718`) exactly --
+                            // and it operates on THIS field (`+0x04`), matching 2011's own
+                            // `thisroom.walls` target precisely. A second, independent site
+                            // (`load_new_room`'s room-entry walkable-position check, testing the
+                            // character's entry point against this same mask) reinforces it.
+                            //
+                            // IMPORTANT CAVEAT, applying to ALL FOUR of `walls`/`object`/
+                            // `lookat`/`regions` below: at the time of writing, every access to
+                            // the GLOBAL `rstruc` via its own applied struct type (as opposed to
+                            // the raw-offset pointer-parameter form `load_main_block`/`load_room`
+                            // use, which is what actually established these offsets and is
+                            // unaffected) displays in the currently-exported `rob_blanc_1.asm`
+                            // with each field name shifted ONE POSITION EARLY relative to this
+                            // file's own doubly-confirmed order: `rstruc.walls` (displayed)
+                            // resolves to the REAL `+0x00` (the still-unconfirmed `ebscene[0]`-
+                            // cache field -- `load_new_room`'s own "mov rstruc.walls,
+                            // dword_523094(ebscene[0])" is exactly the already-documented
+                            // `+0x00` cache-refresh line, now cross-confirmed via this shift);
+                            // `rstruc.object` (displayed) resolves to REAL `+0x04` (=`walls`,
+                            // per `redo_walkable_areas` above); `rstruc.lookat` (displayed)
+                            // resolves to REAL `+0x08` (=`object`/walk-behind, confirmed via
+                            // `sub_410631`'s `walkbehind_base[]`-indexed pixel check, itself
+                            // called from `prepare_characters_for_drawing`); `rstruc.regions`
+                            // (displayed) resolves to REAL `+0x0C` (=`lookat`/hotspot mask,
+                            // confirmed via `get_hotspot_at`, already matched, reading it via
+                            // `getpixel` for its own hotspot lookup). Four independent usage
+                            // sites, four confirmations, all consistent with one uniform
+                            // "off-by-one-field-early" stale type currently applied in the IDB --
+                            // this file's own declared offsets/order are correct and now backed
+                            // by BOTH load-order AND usage evidence; only the IDB's own type
+                            // definition needs a fresh `apply_structs.py` run and re-export to
+                            // catch up. Any future investigation reading `rstruc.FIELD` symbolic
+                            // accesses in the CURRENT `.asm` export should mentally shift the
+                            // displayed name one position early until that re-sync happens.
   block object;                  // +0x08, high confidence (CORRECTED from +0x04): see `walls`
-                            // above -- the second of the same three-call trio.
+                            // above -- the second of the same three-call trio, and see the same
+                            // comment for the confirmed stale-display-shift caveat.
   block lookat;                  // +0x0C, high confidence (CORRECTED from +0x08): see `walls`
-                            // above -- the third of the same three-call trio.
+                            // above -- the third of the same three-call trio, and see the same
+                            // comment for the confirmed stale-display-shift caveat.
   block regions;                 // +0x10, high confidence (CORRECTED from +0x0C): a FOURTH
                             // `loadcompressed_allegro` call, gated on room-file version>=8,
                             // targeting `rst+0x10`, sitting immediately BEFORE the unconditional

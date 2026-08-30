@@ -2186,6 +2186,27 @@ disassembly work.
   coordinates for walk-behind occlusion, while `add_to_sprite_list`
   wants the already-converted screen-space values everything else uses.
   Corrected in place, no longer an open lead.
+- **A genuine surprise: the live IDB's `rstruc.FIELD` symbolic display
+  is shifted one position early.** Investigating `sub_410631` (the
+  walk-behind-occlusion helper from last round) found it reading the
+  field DISPLAYED as `rstruc.lookat` to look up `RoomStatus.
+  walkbehind_base[]` — but a walk-behind helper reading the hotspot
+  mask made no sense. A four-way cross-check resolved it: `sub_40AD11`
+  (newly matched as `redo_walkable_areas`, confirmed via `GameState.
+  walkable_areas_on[]`) can only touch the walkable-areas mask, yet
+  displays as `rstruc.object`; `sub_410631` can only touch the walk-
+  behind mask, yet displays as `rstruc.lookat`; `get_hotspot_at`
+  (already matched) can only touch the hotspot mask, yet displays as
+  `rstruc.regions`. All three land exactly one field position early
+  relative to this project's own load-order-confirmed declaration —
+  and the fourth slot resolves perfectly too: `rstruc.walls`
+  (displayed) is exactly the already-documented `+0x00`
+  `ebscene[0]`-cache line from several rounds ago. This project's own
+  struct declarations needed no correction — the opposite, they're now
+  confirmed via usage for the first time, not just load order. The live
+  IDB's own `roomstruct` type was simply never re-applied after the
+  earlier round-5/6 offset correction; it needs a fresh
+  `apply_structs.py` run and re-export to catch up.
 
 ## Third-party library identification (Task #10)
 

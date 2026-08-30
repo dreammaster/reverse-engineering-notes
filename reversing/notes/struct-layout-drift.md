@@ -8305,3 +8305,69 @@ the sprite list. Ordinary coordinate-space bookkeeping between two
 consumers with different needs, not an architectural puzzle. Corrected
 in place in both `apply_structs.py` and `add_to_sprite_list`'s own
 `matches.json` entry.
+
+## A genuine surprise: the live IDB's `rstruc.FIELD` symbolic display is shifted one position early
+
+Investigating `sub_410631` (the still-unnamed walk-behind-occlusion
+helper from the previous round's own drawing-loop context) led to a
+real puzzle: it reads getpixel results from the field the disassembly
+DISPLAYS as `rstruc.lookat`, then checks those values against
+`RoomStatus.walkbehind_base[]` -- a walk-behind-area lookup table. But
+`lookat` is this project's own, load-order-confirmed HOTSPOT mask
+(`Common/acroom.h`'s own comment names `object`, not `lookat`, as "the
+walk-behind"). A walk-behind-occlusion helper reading the hotspot mask
+made no sense.
+
+Chasing this down turned into a genuine four-way cross-check, not a
+one-off anomaly. Three more already-matched or newly-matched functions,
+each independently confirming what mask they MUST be touching purely
+from their own unambiguous ROLE, were checked against what the
+disassembly DISPLAYS them as touching:
+
+- `sub_40AD11` (newly matched this round as `redo_walkable_areas`,
+  confirmed beyond any doubt via its `GameState.walkable_areas_on[]`-
+  gated pixel-clearing loop matching `AC.CPP:3703-3718` exactly) -- its
+  role can ONLY be the walkable-areas mask (2011's `thisroom.walls`).
+  Displayed in the disassembly as `rstruc.object`.
+- `load_new_room`'s own room-entry walkable-position check (adjusting a
+  character's starting position if it doesn't land on a walkable pixel)
+  -- same mask, same conclusion. Also displayed as `rstruc.object`.
+- `sub_410631` itself -- role can only be the walk-behind mask (2011's
+  `thisroom.object`). Displayed as `rstruc.lookat`.
+- `get_hotspot_at` (already matched) -- role can only be the hotspot
+  mask (2011's `thisroom.lookat`). Displayed as `rstruc.regions`.
+
+Every one of these lands exactly one field position EARLY relative to
+this project's own doubly-load-order-confirmed declaration (`walls`@
+`+0x04`, `object`@`+0x08`, `lookat`@`+0x0C`, `regions`@`+0x10`) -- a
+single, uniform, internally-consistent shift, not scattered errors.
+Working out what the DISPLAYED `rstruc.walls` (the one slot left over)
+must then resolve to landed somewhere satisfying: `load_new_room`'s own
+`"mov rstruc.walls, dword_523094"` line is EXACTLY the already-
+documented `+0x00` cache-refresh instruction from several rounds ago
+(`dword_523094` being the already-confirmed `ebscene[0]`) -- meaning
+displayed `rstruc.walls` resolves to REAL `+0x00`, the still-not-fully-
+identified "background bitmap cache" field from that earlier
+investigation. Four for four, fully consistent.
+
+The explanation is almost certainly mundane: the GLOBAL `rstruc`'s own
+applied `roomstruct` type in the live IDB was never re-applied after
+this project's own round-5/6 corrections to these four fields' offsets
+(the `+4`-shift discovered several dozen rounds ago). Functions that
+take `rstruc` as a PASSED POINTER PARAMETER (`load_room`/
+`load_main_block`) show raw hex offsets rather than symbolic names --
+completely unaffected by this, and the actual source of the original
+`walls@+0x04`/etc. confirmation -- while functions that touch the
+GLOBAL directly render through whatever type IDA currently has on file
+for it, which is evidently still the OLD, pre-correction layout.
+
+Nothing in this project's own struct declarations needed correcting --
+quite the opposite, this is now the STRONGEST confirmation yet of
+`walls`/`object`/`lookat`/`regions`'s declared order, arrived at via
+usage for the first time rather than load sequence alone. The
+actionable outcome is purely procedural: the live IDB needs a fresh
+`apply_structs.py` run (and ideally a re-export) to bring its own
+`roomstruct` type's field names in sync with what this file has
+correctly declared for a long time now. Until that happens, any
+`rstruc.FIELD` symbolic access read directly from `rob_blanc_1.asm`
+should be mentally shifted one position early to get the REAL field.
