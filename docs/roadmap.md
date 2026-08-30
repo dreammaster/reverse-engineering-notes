@@ -61,9 +61,13 @@ exhibit minigame; the match result adjusts the character's INTELLIGENCE.
 `STDRVSCR.DAT` = the rules text it narrates. Single code segment, 467
 thunks, 100% coerced; 7/39 named.
 
-Still to build: `SAVER`, `CELDRV` (cel animations), `SDEFENDR`,
-`GMB1`/`GMB2` (check packing first), `CONFIGUR` (standalone C, low
-priority).
+`celdrv.idb` built 2026-08-31 — and **`CELDRV.EXE` is the endgame victory
+cinematic**, not a general cel player: "AGAINST ALL ODDS!" + the
+scrolling victory-story recap (hero-name substitution, over music) + end
+credits. Loads `CEL0`–`CEL2`/`DIS9`/`CEL3.BSV`. Chained from `CASDR`.
+
+Still to build: `SAVER`, `SDEFENDR`, `GMB1`/`GMB2` (check packing first),
+`CONFIGUR` (standalone C, low priority).
 
 ## DUN.EXE — open questions
 
@@ -129,6 +133,28 @@ priority).
       screen-string record pool as the in-EXE text, or a flat blob?
 - [ ] How the INTELLIGENCE delta is written back to the character record
       (shared with `SAVER` / `CHAR.DAT`?).
+
+## CELDRV.EXE — open questions
+
+- [x] Build `celdrv.idb` (2026-08-31). Single code seg `seg000`
+      "bmCELDRV" (16 funcs, 2 KB), thunk table `seg001` (373 entries),
+      DGROUP `seg003`. 99.5% coerced, 0 bad insns, 373 thunks resolved.
+- [~] Name `seg000` functions (`apply_renames_celdrv.py`): 13/16 —
+      `celdrv_entry` (loads `CEL0`–`CEL2`/`DIS9`/`CEL3.BSV` via `rt_FE07`,
+      relocates their offset tables, "AGAINST ALL ODDS!", the story
+      crawl), `scrollStoryText`, `runCreditsCrawl` + `showCreditIbmVersion`
+      / `showCreditMusic` / `showCreditArtwork` / `showCreditArtworkCont`,
+      `serviceMusic`, `delayWithMusic` / `waitKeyWithMusic` (tentative),
+      `celAnimStep` / `blitCelFrame` (tentative). `sub_10777` is a NOP
+      sled + `jmp` (dead).
+- [ ] Confirm this is *only* the ending — does `MUS`'s `chainToCel` ever
+      invoke `CELDRV` for a mid-game exhibit animation, or is that path
+      dead? (All 54 string records here are ending / credits content.)
+- [ ] `DIS9.BSV` is loaded here (the `DIS*.BSV` set was "display screens?"
+      in file-formats — this ties one of them to the ending).
+- [ ] The 999-line victory-story text: is it in `STDRVSCR`-style records
+      inside the EXE, or a `.BSV`? (`rt_46` array access on a DGROUP
+      table at `ds:1E58h`.)
 
 ## LEGLIB.EXE — open questions
 
