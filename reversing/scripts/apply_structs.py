@@ -3425,6 +3425,26 @@ struct GameState {
   // CharacterExtras.width/height/zoom (this build's version) -- +0x6DC..0x808 (300 bytes),
   // CONFIRMED NOT GameState -- see the dedicated CharacterExtras documentation block after this
   // struct's closing brace for the full field-by-field writeup and evidence.
+  //
+  // ADDITIONAL EVIDENCE toward `play_invorder`'s membership question (found this round, via
+  // `add_inventory` -- newly given full field evidence, see its own matches.json entry): its
+  // body treats `play_invorder[]` and `play_inv_numorder`(=`inv_numorder`@+0xEC, an ALREADY-
+  // CONFIRMED GameState member) as one atomic, always-synchronized pair --
+  // "play_invorder[play_inv_numorder]=inum; play_inv_numorder++;" -- with `inv_numorder`
+  // exclusively incrementing in lockstep with new `play_invorder[]` entries. 2011's own
+  // `add_inventory` mirrors this exactly in spirit: "play.obsolete_inv_numorder =
+  // charextra[...].invorder_count;" (`AC.CPP:16035`) -- 2011's OWN successor to this same
+  // "count" field is likewise always kept synchronized with its own (by-then per-character)
+  // order array. This is a DIFFERENT kind of evidence than the positional-adjacency approach
+  // that closed `bad_parsed_word`/`screen_tint` -- it's behavioral coupling with a confirmed
+  // member, not physical proximity -- and it doesn't by itself PROVE struct membership (this
+  // project's own standing limitation still applies: a standalone global and a struct member
+  // compile to identical code, so no purely-static technique can fully distinguish them here).
+  // But it meaningfully strengthens the case that `play_invorder[]` is conceptually part of the
+  // same inventory-order STATE as `inv_numorder`, even if its physical placement can't be
+  // proven contiguous. Left as still-unresolved per this project's convention, but no longer
+  // "no evidence either way" -- there is now a real, if inconclusive, behavioral argument FOR
+  // membership.
   char _pad_characterextras[0x12C];
   int music_master_volume;      // +0x808, high confidence (RESOLVED, correcting the previous
                             // round's "plausibly lipsync/close-mouth-timing related" guess --

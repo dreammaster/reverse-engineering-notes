@@ -857,7 +857,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (found this round, previously mechanically matched with no field evidence recorded): void add_inventory(int inum) at AC.CPP:16029-16036. Role match rather than line-for-line (2011 delegates to Character_AddInventory; this build's simpler predecessor does the work inline): validates inum in [0,MAX_INV=100), quitting with the function's own \"!AddInventory: invalid invnetory number\" (a genuine period-typo, \"invnetory\", preserved verbatim) on failure; increments CharacterInfo.inv[inum]@+0x44 (already confirmed) on playerchar; scans play_invorder[0..play_inv_numorder) for an existing entry equal to inum, and if not already present, appends it (\"play_invorder[play_inv_numorder]=inum; play_inv_numorder++;\") before setting guis_need_update=1 and calling run_on_event(7,inum) (already matched). play_inv_numorder is the already-confirmed GameState.inv_numorder@+0xEC; this is the clearest evidence yet that play_invorder[] and inv_numorder are treated as one synchronized pair -- see the updated `_pad_invorder_maybe` comment in apply_structs.py's GameState struct (the still-open GameState-membership question for play_invorder) for the full reasoning."
   },
   {
     "kind": "function",

@@ -8398,3 +8398,39 @@ and `animating` picks up its first confirmed bit value:
 (`Common/acruntim.h:810`) exactly. A solid "retroactive documentation"
 round, in the same spirit as earlier ones for `SpriteCache` and
 `GUIMain::init`.
+
+## A new (if inconclusive) argument for `play_invorder`'s GameState membership
+
+`add_inventory` was another retroactive-documentation target this
+round -- already correctly named, bare mechanical match, no field
+evidence recorded. Its body is a role match (not line-for-line; 2011
+delegates to `Character_AddInventory`, this build's simpler predecessor
+does the work inline) to `AC.CPP:16029-16036`, and its own error string
+carries a genuine period-typo worth preserving verbatim:
+`"!AddInventory: invalid invnetory number"`.
+
+The interesting part is what it does with inventory ordering: it scans
+`play_invorder[0..play_inv_numorder)` for an existing entry, and if the
+item isn't already listed, appends it with `"play_invorder[
+play_inv_numorder]=inum; play_inv_numorder++;"` -- one atomic,
+always-synchronized update. `play_inv_numorder` is the already-confirmed
+`GameState.inv_numorder`@`+0xEC`. This reopens (without fully resolving)
+the standing "is `play_invorder[]` a genuine `GameState` member, or a
+coincidentally-adjacent separate global?" question flagged several
+rounds ago as likely undecidable by this project's own techniques.
+
+It doesn't resolve it -- the underlying limitation is real and hasn't
+gone away: a standalone global and a genuine struct member compile to
+byte-identical code, so no purely static technique can distinguish them
+here. But this round's evidence is a genuinely DIFFERENT kind of
+argument than the positional-adjacency approach that closed
+`bad_parsed_word`/`screen_tint` a while back: it's behavioral coupling
+with an already-confirmed member, not physical proximity. 2011's own
+`add_inventory` mirrors the same coupling in spirit -- its own successor
+"count" field, `play.obsolete_inv_numorder`, is kept synchronized with
+its own (by-then per-character) order array every time inventory
+changes, exactly the role `inv_numorder`/`play_invorder[]` play here.
+Recorded as a real, if inconclusive, argument FOR membership --
+upgraded from "no evidence either way" to "a positive but unproven
+case" in `apply_structs.py`'s own comment, without asserting a
+resolution the evidence doesn't actually support.

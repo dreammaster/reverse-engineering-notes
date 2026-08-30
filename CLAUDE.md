@@ -2216,6 +2216,19 @@ disassembly work.
   fresh confirmation route, and `animating` picks up its first
   confirmed bit value: `CHANIM_REPEAT=2`. A retroactive-documentation
   round, same spirit as earlier ones for `SpriteCache`/`GUIMain::init`.
+- **A new (if inconclusive) argument for `play_invorder`'s `GameState`
+  membership.** `add_inventory` (also retroactively documented this
+  round) treats `play_invorder[]` and the already-confirmed
+  `GameState.inv_numorder`@+0xEC as one atomic, always-synchronized
+  pair — `play_invorder[inv_numorder]=inum; inv_numorder++;`. This
+  doesn't resolve the standing "genuine member or coincidentally-
+  adjacent global?" question (a struct member and a standalone global
+  still compile identically — the underlying limitation is real), but
+  it's a genuinely different kind of evidence than the positional-
+  adjacency approach that closed earlier fields: behavioral coupling
+  with a confirmed member, mirroring 2011's own successor field
+  (`obsolete_inv_numorder`) staying synchronized with its own order
+  array. Recorded as a real, if inconclusive, case FOR membership.
 
 ## Third-party library identification (Task #10)
 
