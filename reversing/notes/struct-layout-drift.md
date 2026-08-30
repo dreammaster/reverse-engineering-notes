@@ -8517,3 +8517,33 @@ correcting the standing dismissal in place. With this, `CharacterInfo`
 -- one of the most heavily-worked structs in the whole project, spanning
 dozens of rounds across many sessions -- has no remaining open fields
 at all.
+
+## `getpixel`/`putpixel` identified, closing out the mask-reading helper trail with a Task #10-style boundary
+
+Following up on this session's own mask-reading discoveries
+(`redo_walkable_areas`, `sub_410631`, `get_hotspot_at`), the small
+pixel-access helpers those functions all call turned out to be genuine
+Allegro library code, not AGS-side functions -- previously unmatched
+entirely. `sub_423F20`/`sub_423EC0` dispatch through the bitmap's own
+vtable at consecutive slots (`+0x20`/`+0x24`), an exact match to
+Allegro's public `getpixel`/`putpixel` API and its declared
+`BITMAP_METHODS` field order. `sub_425490`/`sub_425450` are a
+DIFFERENT, lower-level pair -- Allegro's own 8-bit-specific fast-path
+internals (acquire a scanline pointer, read/write one byte directly,
+release the line), bypassing the vtable entirely. Both pairs are used
+in the SAME kind of role but by different callers: `redo_walkable_areas`
+uses the fast 8-bit pair, while `sub_410631`/`get_hotspot_at` use the
+generic vtable dispatch -- and this maps EXACTLY onto `redo_walkable_
+areas`'s own 2011 source comment, "since this is an 8-bit memory
+bitmap, we can just use direct memory access" (`AC.CPP:3705-3706`) --
+its choice of the faster, depth-specific path is deliberate and source-
+documented, not an unexplained difference between two otherwise-
+identical call sites.
+
+Per this project's own "Third-party library scope" rule, these are
+recorded at the boundary and no further: `getpixel`/`putpixel` are
+named as Allegro's public API, and the 8-bit-fast-path pair's own
+callees (line-lock/unlock helpers) are left uninvestigated -- a
+ScummVM reimplementation replaces this entire library wholesale, so
+there's no payoff in tracing further into how Allegro implements pixel
+access internally.

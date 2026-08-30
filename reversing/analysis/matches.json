@@ -5770,5 +5770,45 @@
     "source_line": 15447,
     "confidence": "high",
     "evidence": "int sc_GetTime(int whatti) at AC.CPP:15447-15462 (2011's C symbol for the script-facing GetTime -- this build's own IDA label already matches the script name). This build's simpler predecessor calls time()/localtime() (both already matched) directly and reads the resulting struct tm* fields by raw offset rather than going through a ScriptDateTime wrapper: whatToGet==1 -> tm_hour@+8, ==2 -> tm_min@+4, ==3 -> tm_sec@+0, ==4 -> tm_mday@+0xC, ==5 -> tm_mon@+0x10 (adjusted +1 for 1-based month) -- matching source's 1=hour/2=minute/3=second/4=day/5=month mapping exactly, and its own \"!GetTime: invalid parameter passed\" error string verbatim. DRIFT CONFIRMED ABSENT: 2011 additionally handles whatti==6 (year); this build's dispatch only checks 1-5, falling straight to the error for 6 or any other value -- GetTime(TIME_YEAR) is a later addition this build predates."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_423F20",
+    "new_name": "getpixel",
+    "source_file": null,
+    "source_line": null,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "Allegro's public getpixel(BITMAP*,x,y) API: signature \"return bmp->vtable->getpixel(bmp,x,y);\" -- an exact vtable-dispatch shape (bmp+0x1C=vtable pointer, +0x20=getpixel slot), matching Allegro's own BITMAP_METHODS layout. Used by sub_410631 and get_hotspot_at (already matched) to read RoomStruct's walk-behind/hotspot masks generically across color depths. THIRD-PARTY LIBRARY BOUNDARY (per this project's own scope rule): this is Allegro's public API surface -- do not chase its vtable target implementations further, they are wholesale-replaced by a ScummVM reimplementation regardless of how they work internally."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_423EC0",
+    "new_name": "putpixel",
+    "source_file": null,
+    "source_line": null,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "Allegro's public putpixel(BITMAP*,x,y,color) API: signature \"bmp->vtable->putpixel(bmp,x,y,color);\" via the vtable slot immediately after getpixel's (+0x24 vs. +0x20), matching Allegro's declared BITMAP_METHODS field order exactly. Used by sub_410631 (already characterized) to mask out walk-behind-occluded pixels. THIRD-PARTY LIBRARY BOUNDARY -- see getpixel's own entry."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_425490",
+    "new_name": null,
+    "source_file": null,
+    "source_line": null,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "Allegro's internal 8-bit-specific getpixel fast path (Allegro's own _getpixel8-equivalent): acquires a scanline pointer via a line-lock helper (sub_425430), reads one byte directly, then releases the line (sub_4253D0) -- bypassing the generic vtable dispatch entirely. Called only from redo_walkable_areas (already matched this session), matching that function's own 2011 source comment verbatim: \"since this is an 8-bit memory bitmap, we can just use direct memory access\" (AC.CPP:3705-3706) -- redo_walkable_areas deliberately bypasses the generic getpixel/putpixel used elsewhere (e.g. sub_410631/get_hotspot_at) because it already knows the walkable-areas mask is always 8-bit. THIRD-PARTY LIBRARY INTERNAL: per this project's scope rule, its own callees (sub_425430/sub_4253D0, line-lock/unlock helpers) are not chased further -- documented here only for the boundary fact and the confirmation it supplies of redo_walkable_areas's own source comment."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_425450",
+    "new_name": null,
+    "source_file": null,
+    "source_line": null,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "Allegro's internal 8-bit-specific putpixel fast path (Allegro's own _putpixel8-equivalent) -- exact mirror of sub_425490 (see its own entry): acquires a scanline pointer (sub_4253B0), writes one byte directly, releases the line (sub_4253D0). Called only from redo_walkable_areas, for the same 8-bit-fast-path reason. THIRD-PARTY LIBRARY INTERNAL -- not chased further."
   }
 ]

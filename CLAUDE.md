@@ -2264,6 +2264,20 @@ disassembly work.
   moments earlier. Both fields upgrade to HIGH confidence — `CharacterInfo`,
   one of the most heavily-worked structs in the whole project, now has
   no remaining open fields at all.
+- **`getpixel`/`putpixel` identified, closing out this session's own
+  mask-reading helper trail with a Task #10-style boundary.** The small
+  pixel-access helpers behind `redo_walkable_areas`/`sub_410631`/
+  `get_hotspot_at` turned out to be genuine Allegro library code, not
+  AGS-side functions. `sub_423F20`/`sub_423EC0` dispatch through the
+  bitmap's own vtable at consecutive slots — Allegro's public
+  `getpixel`/`putpixel`. `sub_425490`/`sub_425450` are a different,
+  lower-level pair — Allegro's own 8-bit-specific fast path, used only
+  by `redo_walkable_areas`, matching that function's own 2011 source
+  comment verbatim ("since this is an 8-bit memory bitmap, we can just
+  use direct memory access") — its choice of the faster path is
+  deliberate and source-documented. Per this project's third-party
+  scope rule, recorded at the boundary only — the fast path's own
+  line-lock/unlock callees aren't chased further.
 
 ## Third-party library identification (Task #10)
 
