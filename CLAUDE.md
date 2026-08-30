@@ -2435,6 +2435,23 @@ disassembly work.
   `GUITextBox`/`GUILabel`'s own confirmed 200-byte `text[]` capacity),
   and further reconfirmation routes for `GUISlider.min`/`.max`/`.value`
   and `GUITextBox`/`GUILabel.text`@+0x20 (all already HIGH confidence).
+- **An immediate follow-up closes two more `GOBJ_*` constants.**
+  `is_valid_listbox` (already matched, its enum angle never previously
+  cited) checks `==6`, confirming `GOBJ_LISTBOX=6`. `SetButtonPic`
+  (previously bare) checks `==1` (`GOBJ_BUTTON`), and its own 3-way
+  `ptype` dispatch (NORMAL/OVER/PUSHED) exercises ALL SIX of
+  `GUIButton`'s picture/state fields (`pic`/`overpic`/`pushedpic`/
+  `usepic`/`ispushed`/`isover`) via genuine matching BEHAVIOR — each
+  branch's conditional `usepic` refresh depends on `isover`/`ispushed`
+  — the strongest confirmation route any of the six has had, previously
+  each only individually confirmed via a single `MouseDown`/`MouseUp`
+  site. Bonus: `check_controls`'s own internal mouse-click/scroll-wheel
+  dispatch independently re-derives `==1`(`GOBJ_BUTTON`) and
+  `==4`(`GOBJ_SLIDER`) a second way each, and `SetLabelFont` (also
+  previously bare) checks `==2`, a second confirmation of `GOBJ_LABEL=2`
+  and of `GUILabel.font`@+0xE8. `GOBJ_INVENTORY=3` remains the only
+  constant with no individually-read confirmation site — left open
+  rather than guessed.
 
 ## Third-party library identification (Task #10)
 

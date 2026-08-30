@@ -1028,12 +1028,26 @@ struct GUIButton {
                             // "fread(&text[0], sizeof(char), 50, ooo)" landing exactly at [this+0x20],
                             // immediately after GUIObject's persisted base fields end at +0x20.
   char _pad_align[2];         // +0x52..0x54, alignment padding (50 isn't 4-byte aligned)
-  int pic;                      // +0x54, high confidence
-  int overpic;                  // +0x58, high confidence (confirmed via MouseUp: usepic=overpic)
-  int pushedpic;                 // +0x5C, high confidence (confirmed via MouseDown: usepic=pushedpic)
-  int usepic;                    // +0x60, high confidence (confirmed via MouseDown and MouseUp)
-  int ispushed;                  // +0x64, high confidence (confirmed via MouseDown/MouseUp setting it 1/0)
-  int isover;                    // +0x68, high confidence (confirmed via MouseUp's isover check)
+  int pic;                      // +0x54, high confidence. Also SetButtonPic's (already matched)
+                            // ptype==1 unconditional write target -- see usepic below for the
+                            // full cross-field writeup of that function's 3-way dispatch.
+  int overpic;                  // +0x58, high confidence (confirmed via MouseUp: usepic=overpic).
+                            // Also SetButtonPic's ptype==2 unconditional write target.
+  int pushedpic;                 // +0x5C, high confidence (confirmed via MouseDown: usepic=pushedpic).
+                            // Also SetButtonPic's ptype==3 (else) unconditional write target.
+  int usepic;                    // +0x60, high confidence (confirmed via MouseDown and MouseUp).
+                            // SetButtonPic (already matched, GOBJ_BUTTON=1-gated) conditionally
+                            // refreshes this field too, in all three ptype branches, whenever the
+                            // button isn't currently showing a *different* override picture --
+                            // e.g. ptype==1 (normal): usepic=slotn unless (isover!=0 AND
+                            // overpic>=1) OR ispushed!=0. This exercises and reconfirms ALL SIX
+                            // of pic/overpic/pushedpic/usepic/ispushed/isover via genuine matching
+                            // BEHAVIOR in one function, not just position -- see matches.json's
+                            // SetButtonPic entry for the complete 3-branch writeup.
+  int ispushed;                  // +0x64, high confidence (confirmed via MouseDown/MouseUp setting it 1/0).
+                            // Also read by SetButtonPic's usepic-refresh gate in all 3 branches.
+  int isover;                    // +0x68, high confidence (confirmed via MouseUp's isover check).
+                            // Also read by SetButtonPic's usepic-refresh gate (ptype==1/2 branches).
   int font;                      // +0x6C, high confidence (positional, within the confirmed pic..rclickdata
                             // 12-int/48-byte block read by ReadFromFile -- matches 2011's declared order
                             // exactly for this whole block, zero drift, see notes)

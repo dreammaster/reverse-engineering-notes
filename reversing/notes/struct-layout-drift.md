@@ -9022,3 +9022,48 @@ yet in this project's own notes -- a small open item for a future
 round, not a doubt about the mechanism itself. All five functions
 (previously bare linker-symbol matches with no field evidence) are now
 fully retroactively documented in `matches.json`.
+
+### Immediate follow-up: two of the three remaining GOBJ_* constants close
+
+The previous round's "small open item for a future round" -- `GOBJ_BUTTON=1`/
+`GOBJ_INVENTORY=3`/`GOBJ_LISTBOX=6` each lacking an individually-read
+confirmation site -- closes two of three immediately. `is_valid_listbox`
+(`sub_41A146`, already matched several rounds ago from `ListBoxAdd`'s own
+investigation, but its own `matches.json` entry never cited the enum
+angle) does the exact same `guin`/`objn`/`get_control_type` skeleton as
+this round's other five functions and checks `==6` -- confirming
+`GOBJ_LISTBOX=6` with zero drift. `SetButtonPic` (previously a bare
+linker-symbol match) checks `==1`, confirming `GOBJ_BUTTON=1` -- and its
+own body turned out to be worth reading in full: it dispatches on a
+second argument, `ptype` (validated to `[1,3]`, matching 2011's
+NORMAL/OVER/PUSHED 3-way split exactly), and each branch does an
+unconditional write to one of `GUIButton.pic`@+0x54/`.overpic`@+0x58/
+`.pushedpic`@+0x5C PLUS a conditional refresh of `.usepic`@+0x60 gated on
+`.isover`@+0x68/`.ispushed`@+0x64 -- e.g. the `ptype==1` (normal) branch
+only refreshes `usepic` when the button isn't currently showing an
+active over/pushed override (`NOT(isover!=0 AND overpic>=1) AND
+ispushed==0`). This exercises and reconfirms ALL SIX of `GUIButton`'s
+already-HIGH-confidence picture/state fields via genuine matching
+BEHAVIOR in one function, the strongest confirmation route any of them
+has had -- previously each was confirmed individually via a single
+`MouseDown`/`MouseUp`/`ReadFromFile` site, never all six together via one
+shared conditional-refresh mechanism. A bonus find while scanning every
+`GUIMain::get_control_type` call site for other candidates: `check_controls`
+(already matched) independently re-derives `==1`(`GOBJ_BUTTON`) and
+`==4`(`GOBJ_SLIDER`) in its own internal mouse-click/scroll-wheel
+dispatch logic -- second confirmation sites for both, this time from the
+engine's own internal control-routing rather than script-API argument
+validation, and its scroll-wheel-on-slider handler adjusts
+`GUISlider.value`@+0x28 directly by a wheel-delta step, a further
+reconfirmation of that field. `SetLabelFont` (also a bare linker-symbol
+match, found in the same `get_control_type` call-site sweep) checks
+`==2`, a SECOND independent confirmation of `GOBJ_LABEL=2` alongside
+`SetLabelText`'s from the previous round, and writes `fontnum` directly
+to `GUILabel.font`@+0xE8 -- a further confirmation route for that field
+too. `GOBJ_INVENTORY=3` remains the only constant still without an
+individually-read confirmation site; none of the `get_control_type` call
+sites found so far check for it, consistent with `GUIInv`'s own control
+type perhaps being validated differently (e.g. via a dedicated
+`is_valid_...`-style helper not yet located) or not needing runtime
+validation at all in this build's own inventory-window script API. Left
+open rather than guessed.
