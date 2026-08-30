@@ -114,10 +114,13 @@ not BASIC).
 - [x] Fixed the call-far fragmentation merge (2026-08-30) — was
       orphaning ~3.8 KB (`mainDispatch` came out 15 bytes). Now merges
       only truly-adjacent fragments + re-sweeps; 1 unowned byte left.
+- [x] Decode the screen-string pool format (2026-08-30) — see
+      [file-formats.md](file-formats.md#screen-string-pool-in-the-exe-not-a-file--decoded-2026-08-30).
+      `dump_strings.py` recovers + annotates it; drove ~25 `out`
+      function names.
 - [ ] Map the `ds:21XXh` / `ds:1F0Xh` / `ds:1F2Ah` / `ds:2234h` engine
-      state variables — the key to naming the helper cloud.
-- [ ] Decode the position-coded DGROUP string format (leading
-      byte(s) = screen position/attr, `%` etc = control codes).
+      state variables — the key to the remaining ~55 helpers.
+- [ ] Pin down the trailing `! # $ &` control codes in `drawString`.
 - [ ] The post-thunk RTM-loader stub (`seg000:16E8C`+) is left unswept
       (`$`-terminated DOS strings + boilerplate) — disassemble if needed.
 - [ ] Trace the `BLOAD` sites for `OUTDATA.BSV` / `OUTM*.BSV` / `OUTOBJ.BSV`.

@@ -86,7 +86,7 @@ one place that pays off across every module.
 |---|---|---|---|---|
 | `leglib.idb` | `LEGLIB.EXE` | ~445 / 773 (14 real, rest `rtm_*` provisional) | 0 | 10 segments; `seg003` (53 KB) + `seg004` (18 KB) are the code, `seg007`/`seg008` the `bm*` graphics. Every int-3Fh run-time entry resolved; the 14 hot BASIC-runtime primitives named (`apply_renames_leglib.py`). |
 | `menu.idb` | `MENU.EXE` | 25 / 25 seg000 funcs (+ 467 `rt_*` thunks) | 0 | `seg000` coerced + fully named. Layout: `seg000` code, `seg001` thunk table, `seg002` RTM bootstrap, `seg003` DGROUP text, `seg004` stack. |
-| `out.idb` | `OUT.EXE` | ~15 / ~95 seg000 funcs (+ `rt_*` thunks) | 0 | Overworld/towns/dungeons engine; chains to `MUS`/`SAVER`/`TWNDR`/`CASDR`/`DUN`. `seg000` coerced to 99.7% (2026-08-30), 1 unowned code byte, 1308 run-time calls resolved. Structural functions named (`out_entry` → `outInit` → `mainDispatch` 3.8 KB); ~80 helpers still `sub_` — no readable text, so naming is slow. Layout differs from menu — see below. |
+| `out.idb` | `OUT.EXE` | ~40 / ~95 seg000 funcs (+ `rt_*` thunks) | 0 | Overworld/towns/dungeons engine; chains to `MUS`/`SAVER`/`TWNDR`/`CASDR`/`DUN`. `seg000` coerced to 99.7% (2026-08-30), 1 unowned code byte, 1308 run-time calls resolved. ~40 functions named (`doMovement`, `creatureAttack`, `shopBuy`, `chainTo*`, …) from the decoded screen text (`dump_strings.py`); ~55 helpers still `sub_`. Layout differs from menu — see below. |
 
 (Counts via `ida_scripts/identify.py -NoExport`; re-run any time as a
 sanity check.)
@@ -108,9 +108,16 @@ code. `menu.idb`:
 
 | Seg | Range | Contents |
 |---|---|---|
-| `seg000` | `10000`–`181E0` | BASIC code (`10030`–`167F0`), then the `int 3Fh` **thunk table embedded mid-segment** (`167F0`–`16E8C`, 470 entries), then the RTM-loader stub + its `$`-terminated DOS message strings (`16E8C`–`181E0`). |
-| `seg001` | `181E0`–`1B3B0` | DGROUP — the (position-coded, not plain-text) screen strings. |
+| `seg000` | `10000`–`181E0` | BASIC code (`10030`–`167F0`); the `int 3Fh` **thunk table embedded mid-segment** (`167F0`–`16E8C`, 470 entries); the RTM-loader stub + its `$`-terminated DOS messages (`16E8C`–`~748C`); then the **screen-string pool** (`~748C`–`81B0`, a DGROUP initialiser — see [file-formats.md](file-formats.md)). |
+| `seg001` | `181E0`–`1B3B0` | DGROUP — BSS at load time; the startup copies the string pool + engine state into it. |
 | `seg002` | `1B3B0`–`1B430` | Stack. |
+
+`OUT.EXE` (and `DUN`/`TWNDR`/`CASDR`/`CONFIGUR`) carry a "Packed file is
+corrupt" stub and have zero relocations — likely EXEPACK-style packed, or
+at least linked so DGROUP is BSS in the image and rebuilt at startup from
+the `seg000`-tail initialiser list. `idat -B` disassembles the code
+cleanly regardless. `MENU.EXE` is plain (909 relocs, DGROUP in `seg003`).
+[verify: run OUT.EXE through an unpacker and diff.]
 
 Because `out.exe`'s thunk table isn't its own segment, its `call far`
 operands use a frame selector (`0x67E`) IDA has no mapping for and would

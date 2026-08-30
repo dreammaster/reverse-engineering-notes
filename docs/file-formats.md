@@ -63,15 +63,63 @@ castle/fort layout banks.
 `LEGACY.BAT` (4 bytes: `menu`), `manual.txt`, and
 `Passed.through.ANTiQUE.Shop` are not game data.
 
-## Menu text (in `MENU.EXE` itself, not a file)
+## Screen-string pool (in the `.EXE`, not a file) — decoded 2026-08-30
 
-`MENU.EXE`'s `seg003` holds ~4 KB of screen text starting at offset
-`0x21D0` (file `0x6ED2`): the main menu items ("1. play a game", "2.
-simple instructions", "3. game credits", "4. sound is currently …"), the
-GAME CREDITS screen (designers John & Charles Dougherty, IBM version Al
-DeYoung, art Rick Tumanis / Dan Stechow / Roseann Miller, additional
-programming Gregg Seelhoff / Johnny Klonaris / Bob Luzenski), the SIMPLE
-INSTRUCTIONS / COMMANDS / CHARACTER MOVEMENT help screens, the
-new-game/erase/restart character-management prompts, the "poor peasant on
-the world of Tarmalon" intro narrative, and MML-style music strings
-(`t120l4cl8ef…`). Not yet marked up as strings in `menu.idb`.
+Every module keeps its on-screen text as a **pool of string-constant
+records**, each:
+
+```
+dw  length            ; 1..~200
+dw  dgroup_ptr         ; near offset of the descriptor in the DGROUP segment
+db  length bytes       ; the raw text
+(db 00 or F4)          ; 0-1 byte, to word-align the next record
+```
+
+Arrangement differs by how the module is linked:
+
+- **`MENU.EXE`** (not EXEPACK'd) — the pool *is* the DGROUP segment
+  (`seg003`), starting ~`seg003:0x2150`. `dgroup_ptr` is self-relative
+  (points at the text 4 bytes after the descriptor). Code does
+  `mov ax,<descriptor_addr> / push ax / call basStrAssign`.
+- **`OUT.EXE`** and the other EXEPACK'd modules (`DUN`, `TWNDR`,
+  `CASDR`, `CONFIGUR`) — the pool sits in the **code segment's tail**
+  (`out`: `seg000:~0x748C`–`0x81B0`) as a DGROUP *initialiser* list. The
+  BASIC startup copies each record's text to `dgroup_ptr` in the (BSS)
+  DGROUP segment (`seg001`) and builds a 4-byte descriptor at
+  `dgroup_ptr − 4`. Code immediates are those `dgroup_ptr − 4` values.
+
+`ida_scripts/dump_strings.py` walks the pool for either arrangement,
+maps each record to the code sites that reference it, and (with
+`ANNOTATE = True`) writes the text as an inline comment at each
+`mov reg,<dgrp>`.
+
+### In-string control codes (interpreted by `drawString` / `rtm_FE26`)
+
+The text is not plain — a handful of punctuation characters are
+directives:
+
+| code | hex | meaning |
+|---|---|---|
+| `%` | `0x25` | newline. A leading run (`%%%`) positions the text N lines down; mid-string `%` breaks a line. |
+| `@` | `0x40` | column / cursor-position marker (leading). |
+| `!` `#` `$` `&` | `0x21` `0x23` `0x24` `0x26` | trailing paragraph / page-break / wait-for-key directives (exact split TBD). |
+
+What looks like a 2-byte prefix in a hex dump (`N,` `j-` `B.` `F'`) is
+just the low+high byte of the *previous* record's `dgroup_ptr` shown as
+ASCII — not a code.
+
+### What's in each pool
+
+`MENU.EXE` `seg003:0x2150`+ (~4 KB): main-menu items, GAME CREDITS
+(Doughertys / Al DeYoung / Tumanis / Stechow / Miller / Seelhoff /
+Klonaris / Luzenski), SIMPLE INSTRUCTIONS / COMMANDS / CHARACTER
+MOVEMENT, character-management prompts, the "poor peasant on the world of
+Tarmalon" intro, MML music strings (`t120l4cl8ef…`).
+
+`OUT.EXE` `seg000:0x748C`+ (~140 records): overworld messages — terrain
+("GRASSLANDS", "A FOREST", "THE MOUNTAINS", "THE WATER"), travel/raft
+("THE RAFT MUST STAY IN THE WATER.", "YOUR RAFT SINKS."), combat
+("ATTACKED BY ", "YOUR ATTACK MISSES.", "ENEMY HIT BY BLOW OF "),
+shop ("DO YOU WANT TO BUY", "MUSEUM COIN FOR "), death ("YOU DIED!!!",
+"THE POWERS OF THE MUSEUM / RESURRECT YOU FROM THE GRAVE!!"), the museum
+access code ("World- / Stone- / Ring- "), and the chained-EXE names.
