@@ -132,34 +132,64 @@ static Bytes_0(void) {
 	update_extra_cmt		(0X10000,	E_PREV + 1,	"; Format      : MS-DOS executable (EXE)");
 	update_extra_cmt		(0X10000,	E_PREV + 2,	"; Base Address: 1000h Range: 10000h-29694h Loaded length: 19694h");
 	update_extra_cmt		(0X10000,	E_PREV + 3,	"; Entry Point : 241A:E");
+	set_cmt	(0X10101,	"the runtime's own DS / DGROUP segment value -- stashed at startup (sub_12B21 / rtm_12: `mov ds:101h, ds`) and reloaded into ES/DS by routines that trash the segment regs (rtm_92 / rtm_A0 / rtm_FE20 / rtm_02 / rtm_03).",	1);
+	create_word	(0X10101);
+	set_name	(0X10101,	"dgroupSeg");
+	set_cmt	(0X10116,	"proc-frame state word paired with nestLevel (basProcLeave, rtm_16, rtm_FF02). TENTATIVE.",	1);
+	create_word	(0X10116);
+	set_name	(0X10116,	"procFlags");
 	set_cmt	(0X10118,	"runtime call-nesting / re-entrancy counter -- rtm_63 inc's on entry and dec's on exit, rtm_FF02 checks `== 1`, basProcLeave resets it to 0.",	1);
 	create_word	(0X10118);
 	set_name	(0X10118,	"nestLevel");
 	set_cmt	(0X1011E,	"current I/O channel / mode byte (rtm_5A sets 8, sub_19A5E checks 3, sub_1A176 sets 2). TENTATIVE.",	1);
 	create_byte	(0X1011E);
 	set_name	(0X1011E,	"ioChannel");
+	set_cmt	(0X10136,	"end-of-program / abort byte (0xFF = stop). basProcExit2 checks `== 0`; rtm_F2 / rtm_FB / rtm_FF07 test it; sub_1D5F2 sets it.",	1);
+	create_byte	(0X10136);
+	set_name	(0X10136,	"stopFlag");
 	set_cmt	(0X10137,	"a running buffer / parse position in the string-format cluster (sub_149xx..sub_153xx) -- cleared to 0, used as SI, `add es:137h, ax`. TENTATIVE.",	1);
 	create_word	(0X10137);
 	set_name	(0X10137,	"fmtBufPos");
-	set_cmt	(0X10250,	"interior-graphics swap cell -- rtm_60 / rtm_61 and the sub_1A2xx..sub_1C0xx cluster `xchg` / `pop` it around draw ops. TENTATIVE.",	1);
+	set_cmt	(0X10250,	"current interior-graphics draw column -- rtm_60 / rtm_61 and the sub_1A2xx..sub_1C0xx cluster xchg / pop it around draw ops. TENTATIVE.",	1);
 	create_word	(0X10250);
-	set_name	(0X10250,	"gfxTempA");
-	set_cmt	(0X10252,	"paired with gfxTempA (0250). TENTATIVE.",	1);
+	set_name	(0X10250,	"interiorDrawX");
+	set_cmt	(0X10252,	"current interior-graphics draw row (paired with interiorDrawX). TENTATIVE.",	1);
 	create_word	(0X10252);
-	set_name	(0X10252,	"gfxTempB");
+	set_name	(0X10252,	"interiorDrawY");
+	set_cmt	(0X102C4,	"interior-graphics view origin X -- the tile routines compute `screenX = worldX - ds:2C4h` (sub_1A3E9 etc). TENTATIVE.",	1);
+	create_word	(0X102C4);
+	set_name	(0X102C4,	"viewOriginX");
+	set_cmt	(0X102C8,	"interior-graphics view origin Y (paired with viewOriginX). TENTATIVE.",	1);
+	create_word	(0X102C8);
+	set_name	(0X102C8,	"viewOriginY");
+	set_cmt	(0X103BD,	"keyboard shift / ctrl / alt state bits (sub_15018 / sub_15F9F test 0x04 / 0x08 / 0x10 / 0x20). TENTATIVE.",	1);
+	create_byte	(0X103BD);
+	set_name	(0X103BD,	"keyModifiers");
+	set_cmt	(0X10738,	"saved stack pointer / frame top for the proc unwind (basProcLeave / rtm_16 / rtm_EF read it). TENTATIVE.",	1);
+	create_word	(0X10738);
+	set_name	(0X10738,	"savedStackTop");
+	set_cmt	(0X10874,	"startup pointer stashed alongside dgroupSeg (sub_12B21: `mov ds:874h, di`); rtm_FF08 reads it and sub_172FE pushes it for the chain/exec -- looks like the command-line / environment pointer. TENTATIVE.",	1);
+	create_word	(0X10874);
+	set_name	(0X10874,	"chainCmdPtr");
 	set_cmt	(0X10876,	"the graphics framebuffer segment. Every bm* blitter (rtm_FE2A / FE2D / FE3A / FE3B / FE46 / FE47 / FE5E / FE5F / ...) does `mov es, ds:876h` (or `mov ds, ...`) before touching pixels.",	1);
 	create_word	(0X10876);
 	set_name	(0X10876,	"videoSegment");
-	set_cmt	(0X10C62,	"value-stack scratch cell (holds CX across a sub-operation in sub_2072E / sub_2075B / sub_20788). TENTATIVE.",	1);
+	set_cmt	(0X10C62,	"value-stack work register -- the primary CX spill for the FF arithmetic / string cluster (sub_2072E..sub_20948). TENTATIVE.",	1);
 	create_word	(0X10C62);
-	set_name	(0X10C62,	"vsScratchA");
-	set_cmt	(0X10C64,	"value-stack accumulator (sub_207BB / sub_20840 -- `add cx, ds:0C64h`). TENTATIVE.",	1);
+	set_name	(0X10C62,	"vsWorkA");
+	set_cmt	(0X10C64,	"second value-stack work register / accumulator (`add cx, ds:0C64h`). TENTATIVE.",	1);
 	create_word	(0X10C64);
-	set_name	(0X10C64,	"vsScratchB");
+	set_name	(0X10C64,	"vsWorkB");
 	create_word	(0X10C6A);
-	set_cmt	(0X10E68,	"current text attribute / colour byte, compared against the character in AL by the text-output routines. TENTATIVE.",	1);
+	set_cmt	(0X10E46,	"current text attribute / colour byte (rtm_FF66 / sub_142B3 / sub_14334). TENTATIVE.",	1);
+	create_byte	(0X10E46);
+	set_name	(0X10E46,	"textAttr");
+	set_cmt	(0X10E68,	"screen width in columns -- the text-output routines compare the output column / char in AL against it. TENTATIVE.",	1);
 	create_byte	(0X10E68);
-	set_name	(0X10E68,	"textAttr");
+	set_name	(0X10E68,	"screenCols");
+	set_cmt	(0X10E6B,	"screen height in rows (paired with screenCols in the same output routines). TENTATIVE.",	1);
+	create_byte	(0X10E6B);
+	set_name	(0X10E6B,	"screenRows");
 	set_cmt	(0X10EFA,	"display / console output status bits -- the seg003 text-output cluster tests and sets individual bits (0x01 / 0x03 / 0x06 / 0x08 / 0x20 / 0x40 / 0x80).",	1);
 	create_byte	(0X10EFA);
 	set_name	(0X10EFA,	"screenFlags");
@@ -260,13 +290,27 @@ static Bytes_0(void) {
 	create_dword	(x=0X115C4);
 	op_plain_offset	(x,	0,	0X12A90);
 	op_plain_offset	(x,	128,	0X12A90);
-	make_array	(0X115C8,	0X48);
+	set_cmt	(0X115FE,	"interior-view scroll offset / base pointer -- the rtm_FE1x routines add to it (`add bx, ds:15FEh`). TENTATIVE.",	1);
+	create_word	(0X115FE);
+	set_name	(0X115FE,	"interiorViewBase");
 	create_dword	(x=0X11A84);
 	op_plain_offset	(x,	0,	0X24420);
 	op_plain_offset	(x,	128,	0X24420);
 	create_dword	(x=0X11A88);
 	op_plain_offset	(x,	0,	0X27AB0);
 	op_plain_offset	(x,	128,	0X27AB0);
+	set_cmt	(0X11E86,	"one corner of the pending screen-refresh rectangle -- rtm_FE42 / rtm_FE43 mark it, screenRefresh flushes it.",	1);
+	create_word	(0X11E86);
+	set_name	(0X11E86,	"dirtyRectA");
+	set_cmt	(0X11E88,	"the other corner of the refresh rect (see dirtyRectA).",	1);
+	create_word	(0X11E88);
+	set_name	(0X11E88,	"dirtyRectB");
+	set_cmt	(0X11FEA,	"text-page mode flag for rtm_FE53 / rtm_FE00 (0 or 0x14). TENTATIVE.",	1);
+	create_word	(0X11FEA);
+	set_name	(0X11FEA,	"textPageFlag");
+	set_cmt	(0X11FEC,	"line counter for the rtm_FE54 \"press a key to continue\" pager -- inc'd per line, compared against the page height.",	1);
+	create_word	(0X11FEC);
+	set_name	(0X11FEC,	"pagerLineCount");
 	create_byte	(0X12090);
 	make_array	(0X12090,	0XA00);
 	create_insn	(0X12A90);
@@ -4201,6 +4245,15 @@ static Bytes_0(void) {
 	set_cmt	(0X1C260,	"int 3Fh run-time entry 45",	1);
 	create_insn	(0X1C260);
 	set_name	(0X1C260,	"rtm_45");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1C266);
 	op_stkvar	(x,	1);
 	set_cmt	(0X1C270,	"int 3Fh run-time entry 4B",	1);
@@ -4390,15 +4443,6 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1C9F3);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X1C9F5);
 	op_hex		(x,	1);
 	set_cmt	(0X1CA00,	"int 3Fh run-time entry 15",	1);
@@ -7086,6 +7130,15 @@ static Bytes_1(void) {
 	set_cmt	(0X20F69,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═► OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
 	create_insn	(x=0X20F69);
 	op_hex		(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X20F71);
 	op_hex		(x,	1);
 	set_cmt	(0X20F73,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═► OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
@@ -7129,15 +7182,6 @@ static Bytes_1(void) {
 	set_cmt	(0X20FEF,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═► OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
 	create_insn	(x=0X20FEF);
 	op_hex		(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X20FFA);
 	op_hex		(x,	1);
 	set_cmt	(0X20FFC,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═► OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);

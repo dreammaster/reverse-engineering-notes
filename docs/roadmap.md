@@ -372,13 +372,17 @@ reimplementation.
       (engine text). Continue with the FF-cluster `out` leans on
       (`FF4B` 154x, `FF20`, `FF1F`, `FF44`, `FF4E`, `FF50` — value/screen
       stack ops around `valueStackPtr` = `ds:111Ch`).
-- [~] Partial DGROUP map (2026-08-31, `apply_dsvars_leglib.py`):
-      `videoSegment` (0876, inits to 0xB800), `valueStackPtr` (111C),
-      `screenFlags` (0EFA), `nestLevel` (0118) + tentatives
-      (`vsScratchA`/`B`, `textAttr`, `ioChannel`, `gfxTempA`/`B`,
-      `fmtBufPos`). ~460 DGROUP words total; the rest need the
-      surrounding `rtm_*`/`sub_` clusters named first. `dsvars.py`
-      output is the working list.
+- [~] DGROUP map (2026-08-31, `apply_dsvars_leglib.py`, ~26 named).
+      Control block: `dgroupSeg` (0101), `nestLevel` (0118), `stopFlag`
+      (0136), `chainCmdPtr` (0874). Value stack: `valueStackPtr` (111C,
+      init 0xFAC), `vsWorkA`/`B` (0C62/0C64). Screen: `videoSegment`
+      (0876, init 0xB800), `screenFlags` (0EFA), `screenCols`/`Rows`
+      (0E68/0E6B), `dirtyRectA`/`B` (1E86/1E88 = the FE42 refresh rect),
+      `pagerLineCount` (1FEC). Interior tile engine: `viewOriginX`/`Y`
+      (02C4/02C8), `interiorDrawX`/`Y` (0250/0252), `interiorViewBase`
+      (15FE). ~740 DGROUP words total; the rest need the surrounding
+      `rtm_*`/`sub_` clusters named first. `dsvars.py` output (traffic
+      >= 4) is the working list.
 - [ ] Verify the 65 `[mid-func: verify]` `rtm_*` entries — confirm
       they're genuine shared-tail / multi-entry routines, not resolution
       errors.

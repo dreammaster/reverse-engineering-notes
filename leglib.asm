@@ -282,6 +282,7 @@ seg000          segment byte public 'UNK' use16
                 db    0
                 db    0
                 db    0
+dgroupSeg       dw 0                    ; the runtime's own DS / DGROUP segment value -- stashed at startup (sub_12B21 / rtm_12: `mov ds:101h, ds`) and reloaded into ES/DS by routines that trash the segment regs (rtm_92 / rtm_A0 / rtm_FE20 / rtm_02 / rtm_03).
                 db    0
                 db    0
                 db    0
@@ -301,10 +302,7 @@ seg000          segment byte public 'UNK' use16
                 db    0
                 db    0
                 db    0
-                db    0
-                db    0
-                db    0
-                db    0
+procFlags       dw 0                    ; proc-frame state word paired with nestLevel (basProcLeave, rtm_16, rtm_FF02). TENTATIVE.
 nestLevel       dw 0                    ; runtime call-nesting / re-entrancy counter -- rtm_63 inc's on entry and dec's on exit, rtm_FF02 checks `== 1`, basProcLeave resets it to 0.
                 db    0
                 db    0
@@ -334,7 +332,7 @@ ioChannel       db 0                    ; current I/O channel / mode byte (rtm_5
                 db    0
                 db    0
                 db    0
-                db    0
+stopFlag        db 0                    ; end-of-program / abort byte (0xFF = stop). basProcExit2 checks `== 0`; rtm_F2 / rtm_FB / rtm_FF07 test it; sub_1D5F2 sets it.
 fmtBufPos       dw 0                    ; a running buffer / parse position in the string-format cluster (sub_149xx..sub_153xx) -- cleared to 0, used as SI, `add es:137h, ax`. TENTATIVE.
                 db    0
                 db    0
@@ -615,8 +613,8 @@ fmtBufPos       dw 0                    ; a running buffer / parse position in t
                 db    0
                 db    0
                 db    0
-gfxTempA        dw 0                    ; interior-graphics swap cell -- rtm_60 / rtm_61 and the sub_1A2xx..sub_1C0xx cluster `xchg` / `pop` it around draw ops. TENTATIVE.
-gfxTempB        dw 0                    ; paired with gfxTempA (0250). TENTATIVE.
+interiorDrawX   dw 0                    ; current interior-graphics draw column -- rtm_60 / rtm_61 and the sub_1A2xx..sub_1C0xx cluster xchg / pop it around draw ops. TENTATIVE.
+interiorDrawY   dw 0                    ; current interior-graphics draw row (paired with interiorDrawX). TENTATIVE.
                 db    0
                 db    0
                 db    0
@@ -729,12 +727,10 @@ gfxTempB        dw 0                    ; paired with gfxTempA (0250). TENTATIVE
                 db    0
                 db    0
                 db    0
+viewOriginX     dw 0                    ; interior-graphics view origin X -- the tile routines compute `screenX = worldX - ds:2C4h` (sub_1A3E9 etc). TENTATIVE.
                 db    0
                 db    0
-                db    0
-                db    0
-                db    0
-                db    0
+viewOriginY     dw 0                    ; interior-graphics view origin Y (paired with viewOriginX). TENTATIVE.
                 db    0
                 db    0
                 db    0
@@ -978,6 +974,7 @@ gfxTempB        dw 0                    ; paired with gfxTempA (0250). TENTATIVE
                 db    0
                 db    0
                 db    0
+keyModifiers    db 0                    ; keyboard shift / ctrl / alt state bits (sub_15018 / sub_15F9F test 0x04 / 0x08 / 0x10 / 0x20). TENTATIVE.
                 db    0
                 db    0
                 db    0
@@ -1868,9 +1865,7 @@ gfxTempB        dw 0                    ; paired with gfxTempA (0250). TENTATIVE
                 db    0
                 db    0
                 db    0
-                db    0
-                db    0
-                db    0
+savedStackTop   dw 0                    ; saved stack pointer / frame top for the proc unwind (basProcLeave / rtm_16 / rtm_EF read it). TENTATIVE.
                 db    0
                 db    0
                 db    0
@@ -2193,8 +2188,7 @@ seg001          segment byte public 'UNK' use16
                 db  18h
                 db    0
                 db    0
-                db    0
-                db    0
+chainCmdPtr     dw 0                    ; startup pointer stashed alongside dgroupSeg (sub_12B21: `mov ds:874h, di`); rtm_FF08 reads it and sub_172FE pushes it for the chain/exec -- looks like the command-line / environment pointer. TENTATIVE.
 videoSegment    dw 0B800h               ; the graphics framebuffer segment. Every bm* blitter (rtm_FE2A / FE2D / FE3A / FE3B / FE46 / FE47 / FE5E / FE5F / ...) does `mov es, ds:876h` (or `mov ds, ...`) before touching pixels.
                 db    0
                 db 0BAh
@@ -3198,8 +3192,8 @@ videoSegment    dw 0B800h               ; the graphics framebuffer segment. Ever
                 db    0
                 db    0
                 db    0
-vsScratchA      dw 0                    ; value-stack scratch cell (holds CX across a sub-operation in sub_2072E / sub_2075B / sub_20788). TENTATIVE.
-vsScratchB      dw 0                    ; value-stack accumulator (sub_207BB / sub_20840 -- `add cx, ds:0C64h`). TENTATIVE.
+vsWorkA         dw 0                    ; value-stack work register -- the primary CX spill for the FF arithmetic / string cluster (sub_2072E..sub_20948). TENTATIVE.
+vsWorkB         dw 0                    ; second value-stack work register / accumulator (`add cx, ds:0C64h`). TENTATIVE.
                 db    0
                 db    0
                 db 0FFh
@@ -3680,7 +3674,7 @@ word_10C6A      dw 0                    ; DATA XREF: rtm_FE65+11↓w
                 db  18h
                 db  42h ; B
                 db  18h
-                db    0
+textAttr        db 0                    ; current text attribute / colour byte (rtm_FF66 / sub_142B3 / sub_14334). TENTATIVE.
                 db    0
                 db  14h
                 db  21h ; !
@@ -3714,10 +3708,10 @@ word_10C6A      dw 0                    ; DATA XREF: rtm_FE65+11↓w
                 db  3Dh ; =
                 db  65h ; e
                 db    0
-textAttr        db 0                    ; current text attribute / colour byte, compared against the character in AL by the text-output routines. TENTATIVE.
+screenCols      db 0                    ; screen width in columns -- the text-output routines compare the output column / char in AL against it. TENTATIVE.
                 db    0
                 db    0
-                db  28h ; (
+screenRows      db 28h                  ; screen height in rows (paired with screenCols in the same output routines). TENTATIVE.
                 db  19h
                 db  40h ; @
                 db    1
@@ -5505,7 +5499,77 @@ valueStackPtr   dw 0FACh                ; the BASIC value / expression stack poi
                 dd loc_1E914
                 dd loc_1E9B6
                 dd loc_1EA0B
-                align 80h
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+interiorViewBase dw 0                   ; interior-view scroll offset / base pointer -- the rtm_FE1x routines add to it (`add bx, ds:15FEh`). TENTATIVE.
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
                 db  21h ; !
                 db    0
                 db  14h
@@ -7666,6 +7730,8 @@ valueStackPtr   dw 0FACh                ; the BASIC value / expression stack poi
                 db    0
                 db    0
                 db    0
+dirtyRectA      dw 0                    ; one corner of the pending screen-refresh rectangle -- rtm_FE42 / rtm_FE43 mark it, screenRefresh flushes it.
+dirtyRectB      dw 0                    ; the other corner of the refresh rect (see dirtyRectA).
                 db    0
                 db    0
                 db    0
@@ -8018,14 +8084,8 @@ valueStackPtr   dw 0FACh                ; the BASIC value / expression stack poi
                 db    0
                 db    0
                 db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
+textPageFlag    dw 0                    ; text-page mode flag for rtm_FE53 / rtm_FE00 (0 or 0x14). TENTATIVE.
+pagerLineCount  dw 0                    ; line counter for the rtm_FE54 "press a key to continue" pager -- inc'd per line, compared against the page height.
                 db    0
                 db    0
                 db    0

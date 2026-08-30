@@ -84,7 +84,7 @@ one place that pays off across every module.
 
 | IDB | Root file | Functions named | Structs | Notes |
 |---|---|---|---|---|
-| `leglib.idb` | `LEGLIB.EXE` | ~445 / 773 (14 real, rest `rtm_*` provisional) | 0 | 10 segments; `seg003` (53 KB, 810 funcs) + `seg004` (18 KB, 279 funcs) are the code, `seg007` "bmCOMBLIB" / `seg008` "bmTCASANIM" the `bm*` graphics, `seg000`+`seg001` the DGROUP, `seg009` the BASIC error strings. Every int-3Fh run-time entry resolved; the 14 hot BASIC-runtime primitives named (`apply_renames_leglib.py`). Partial DGROUP map (`apply_dsvars_leglib.py`): `videoSegment` (`ds:876`, inits to `0xB800`), `valueStackPtr` (`ds:111C`), `screenFlags` (`ds:0EFA`), `nestLevel` (`ds:0118`) + tentatives. |
+| `leglib.idb` | `LEGLIB.EXE` | ~445 / 773 (14 real, rest `rtm_*` provisional) | 0 | 10 segments; `seg003` (53 KB, 810 funcs) + `seg004` (18 KB, 279 funcs) are the code, `seg007` "bmCOMBLIB" / `seg008` "bmTCASANIM" the `bm*` graphics, `seg000`+`seg001` the DGROUP, `seg009` the BASIC error strings. Every int-3Fh run-time entry resolved; the 14 hot BASIC-runtime primitives named (`apply_renames_leglib.py`). DGROUP map (`apply_dsvars_leglib.py`, ~26 named): `dgroupSeg` (`ds:0101`), `nestLevel` (`ds:0118`), `stopFlag` (`ds:0136`), `valueStackPtr` (`ds:111C`, init `0xFAC`), `vsWorkA`/`B` (`ds:0C62`/`C64`), `videoSegment` (`ds:0876`, init `0xB800`), `screenFlags` (`ds:0EFA`), `screenCols`/`Rows` (`ds:0E68`/`0E6B`), `dirtyRectA`/`B` (`ds:1E86`/`1E88` — the FE42 refresh rect), `pagerLineCount` (`ds:1FEC`), `viewOriginX`/`Y` + `interiorDrawX`/`Y` (the FE1x tile engine) + more. |
 | `menu.idb` | `MENU.EXE` | ~31 / ~34 seg000 funcs (+ 467 `rt_*` thunks) | 0 | `seg000` coerced + named. Layout: `seg000` code, `seg001` thunk table, `seg002` RTM bootstrap, **DGROUP `seg003`**, `seg004` stack. State vars (`apply_dsvars_menu.py` — MENU holds almost none, being a launcher): `menuHighlight`, `charCount` (0..8), `rosterIndex`, `charRecordSize` (CHAR.DAT stride), `menuChoice`. + the CHAR.DAT helpers `readCharDat` / `writeCharDat` / `menuStartup` / `pressAnyKey`. |
 | `out.idb` | `OUT.EXE` | 104 / 121 seg000 funcs (+ `rt_*` thunks) | 0 | Overworld/towns/dungeons engine; chains to `MUS`/`SAVER`/`TWNDR`/`CASDR`/`DUN`. Rebuilt from the UNP-unpacked OUT.EXE (5 clean segments like menu); `seg000` coerced to 100%, 1297 run-time calls resolved. Functions named from the screen text (`dump_strings.py`) **and** the engine state vars (`apply_dsvars_out.py` — `partyGold`, `hitPoints`, `playerX/Y`, `combatPhase`, `questFlags`, …): `doMovement`, `resolveMoveTarget`, `enterOverworld`, `loadOverworldData`, `beginEncounterView`, `creatureDefeated`, `banditAmbushEvent`, `chainTo*`, the `combatBeat_*` / `stageSfx_*` / `stageShopItem_*` stub families, …. ~17 obscure sub-20-byte helpers left `sub_`. |
 | `dun.idb` | `DUN.EXE` | 38 / 72 seg000 funcs (+ `rt_*` thunks) | 0 | Dungeon engine; chains back to `OUT`/`MUS`/`SAVER`. UNP-unpacked; 6 segments — **two** compiled-BASIC code segs: `seg000` "bmDUN" (main) + `seg001` "bmDUNG" (the first-person **dungeon-view renderer**, 7 funcs, all named — `renderDungeonView`, `drawViewSprite`, `blitViewCell`, wall-band drawers), thunk table `seg002`, **DGROUP `seg004`**. Both coerced to ~100%. Named from the screen text + engine state vars (`apply_dsvars_dun.py` — `dungeonLevel`, `hitPoints`, `playerX/Y`, `tileAhead`, `selectedSpell`, `dungeonArrayPtr`, `turnActionFlag`/`chainDestType` [shared slots with OUT]): `dunMain`, `processTileFeature`, `moveMonsters`, `drawDungeonHud`, `doLookSearch`, `openChest`, `castSpell`, `loadDungeonLevel`, …. |
@@ -402,17 +402,27 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   `updateCharDatEntry`, `enumerateRoster`. `menu.idb` is now essentially
   fully named -- **the state-var + helper mapping is complete for every
   client module.**
-- **2026-08-31** — Partial DGROUP map of `leglib.idb` (the shared
-  runtime, so DGROUP = runtime internals not game state; base =
-  `seg000`, extends into `seg001`). `dsvars.py` over seg003+seg004
-  finds ~460 words touched, mostly in still-unnamed `rtm_*` clusters.
-  Named the clear ones (`apply_dsvars_leglib.py`): `videoSegment`
-  (`ds:0876` -- loaded into ES/DS by every `bm*` blitter; the DB shows
-  its init value is `0xB800`), `valueStackPtr` (`ds:111C` -- the FF
-  value-stack push/pop pointer, `rtm_FF4A`/`FF4B`), `screenFlags`
-  (`ds:0EFA` -- console-output status bits), `nestLevel` (`ds:0118` --
-  re-entrancy counter). Tentatives: `vsScratchA`/`B`, `textAttr`,
-  `ioChannel`, `gfxTempA`/`B`, `fmtBufPos`. The rest wait on real
+- **2026-08-31** — DGROUP map of `leglib.idb` (the shared runtime, so
+  DGROUP = runtime internals not game state; base = `seg000`, extends
+  into `seg001`). `dsvars.py` over seg003..seg008 finds **~740 words
+  touched**. The layout that emerges:
+    - `0x0002..0x0140` — the BASIC runtime control block: `dgroupSeg`
+      (`ds:0101`, the runtime's stashed DS), `nestLevel` (`ds:0118`),
+      `stopFlag` (`ds:0136`, 0xFF = end program), `procFlags` /
+      `savedStackTop` / `ioChannel`, `chainCmdPtr` (`ds:0874`).
+    - `0x0216..0x0302` — the interior tile-graphics engine (`rtm_60`/`61`,
+      `sub_1A2xx`): `viewOriginX`/`Y` (`ds:02C4`/`02C8`),
+      `interiorDrawX`/`Y` (`ds:0250`/`0252`).
+    - `0x0C62..0x0C64` — `vsWorkA`/`B`, the value-stack CX-spill registers.
+    - `0x0E46..0x0EFA` — screen geometry: `screenCols`/`Rows`
+      (`ds:0E68`/`0E6B`), `screenFlags` (`ds:0EFA`), `keyModifiers`.
+    - `0x111C` — `valueStackPtr` (init `0xFAC`, `rtm_FF4A`/`FF4B` push/pop).
+    - `0x14FA..0x1FEE` — the bm*/FE graphics layer: `videoSegment`
+      (`ds:0876`, init `0xB800`), `dirtyRectA`/`B` (`ds:1E86`/`1E88`, the
+      `rtm_FE42` refresh rect flushed by `screenRefresh`),
+      `pagerLineCount` (`ds:1FEC`, the `rtm_FE54` pager), `interiorViewBase`.
+  ~26 named (`apply_dsvars_leglib.py`); many single-function scratch
+  slots and not-yet-understood `rtm_*` clusters remain, waiting on real
   `B$…` names for the surrounding routines.
 - **2026-08-31** — Built `mus.idb` and discovered **`MUS.EXE` is the
   MUSEUM driver, not a music player** ("MUS" = Museum). The Tarmalon
