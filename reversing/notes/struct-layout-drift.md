@@ -8640,3 +8640,52 @@ index for `EV_TEXTSCRIPT`, the room number for `EV_NEWROOM`), `data2`@
 `EV_RUNEVBLOCK` branch's own `in_enters_screen` bookkeeping -- its exact
 role not chased further this round, a reasonable next target given how
 cleanly the rest of this struct closed.
+
+## `EventHappened` formalized -- the fourth field closes, and a fifth field turns up for free, with zero drift throughout
+
+Picked up exactly where the previous round left off: what is
+`EventHappened.data3`@`+0x0C` actually for? Reading 2011's own
+`check_new_room()` supplied the answer directly. Right next to the
+comment `"// if they're in a new room, run Player Enters Screen and
+on_event(ENTER_ROOM)"`, it hand-constructs one specific event:
+
+```c
+EventHappened evh;
+evh.type = EV_RUNEVBLOCK;
+evh.data1 = EVB_ROOM;
+evh.data2 = 0;
+evh.data3 = 5;
+evh.player = game.playercharacter;
+```
+
+-- which matches, field for field and value for value, the exact
+condition `process_event`'s `EV_RUNEVBLOCK` branch checks
+(`data1==EVB_ROOM(2) && data3==5`) before firing the room-level
+`EventBlock` and incrementing `in_enters_screen`. `data3==5` is a
+sentinel marking this one specific "player enters screen" event,
+distinct from the ordinary `EVB_ROOM` triggers (edge-crossing indices
+0-3, or the values 4/6/7 that 2011's other `setevent(EV_RUNEVBLOCK,...)`
+call sites use for other room-entry-lifecycle triggers). That source
+snippet also handed over a genuine bonus: a FIFTH field, `player`, that
+hadn't been on the radar until this exact moment.
+
+Both fields are decisively confirmed via `setevent`'s own body (already
+matched, but with zero field evidence recorded until now) --
+`void setevent(int evtyp,int ev1,int ev2,int ev3)` writes its four
+arguments PLUS `game_playercharacter` (not a fifth caller argument, a
+global read -- matching 2011's own `evh.player=game.playercharacter;`
+exactly, including where the value comes from) into five separate-
+looking globals at a shared `numevents*0x14` stride -- the same
+"IDA doesn't recognize the struct" pattern that's now shown up four
+times this session (`ebscene[]`, `messages[500]`, `SpriteListEntry`,
+and now this). Formalized as `EventHappened` (`type`/`data1`/`data2`/
+`data3`/`player`, 20 bytes), matching 2011's own declared
+`EventHappened event[MAXEVENTS+1]` (`AC.CPP:644-645`) in every field.
+
+Capacity is the pleasant surprise: `setevent`'s own overflow check
+("too many events posted") fires at `numevents>=15`, matching 2011's
+`MAXEVENTS=15` (`AC.CPP:644`) with genuinely ZERO drift -- the second
+struct closed this session (after `process_event`'s own dispatch table)
+with no capacity reduction, no missing fields, nothing this build
+predates. A clean, complete result from a two-round thread that started
+as "what's this mystery 4th field for?"

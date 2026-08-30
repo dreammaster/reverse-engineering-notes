@@ -2311,6 +2311,21 @@ disassembly work.
   unidentified — it was already confirmed as `GameSetupStructBase.
   options[1]` (`OPT_SCORESOUND`) several sessions ago, just not
   cross-referenced back into `GiveScore`'s own entry.
+- **`EventHappened` formalized — the fourth field closes, a fifth turns
+  up for free, zero drift throughout.** 2011's own `check_new_room()`
+  hand-constructs one specific event right next to the comment "run
+  Player Enters Screen and on_event(ENTER_ROOM)":
+  `evh.data3=5; evh.player=game.playercharacter;` — matching
+  `process_event`'s own `data1==EVB_ROOM && data3==5` check exactly,
+  and handing over a bonus fifth field (`player`) along the way. Both
+  decisively confirmed via `setevent` (already matched, zero field
+  evidence until now): it writes its four arguments plus
+  `game_playercharacter` into five separate-looking globals at a shared
+  stride — formalized as `EventHappened` (`type`/`data1`/`data2`/
+  `data3`/`player`, 20 bytes). Capacity closes with genuinely ZERO
+  drift: `setevent`'s own overflow check matches 2011's `MAXEVENTS=15`
+  exactly — the second struct this session with no capacity reduction
+  at all.
 
 ## Third-party library identification (Task #10)
 

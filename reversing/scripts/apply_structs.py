@@ -5085,6 +5085,54 @@ struct SpriteListEntry {
                             // pattern found throughout this project, here for the very first time
                             // applied to a runtime PER-FRAME list rather than a fixed save-data
                             // array.
+
+// EventHappened -- found via `setevent`'s own construction sequence (newly given full field
+// evidence this round) and cross-confirmed by `process_event`'s complete, ZERO-DRIFT `EV_*`
+// dispatch switch (also newly documented). 2011 declares `EventHappened event[MAXEVENTS+1];`
+// (`Engine/AC.CPP:644-645`) as a genuine array-of-structs; this build's own `setevent` (already
+// matched) writes each of the 5 fields below into 5 separate-looking globals at a shared
+// `numevents*0x14` stride -- the same "IDA doesn't recognize the struct" pattern seen repeatedly
+// this session (`ebscene[]`, `messages[500]`, `SpriteListEntry`). Capacity: `numevents` is
+// checked against `0xF`(15) with a literal "too many events posted" quit, matching 2011's
+// `MAXEVENTS=15` (`AC.CPP:644`) with ZERO drift -- a rare case where this project's usual
+// "smaller fixed capacity" pattern doesn't apply at all.
+struct EventHappened {
+  int type;                    // +0x00, high confidence: `setevent`'s 1st argument (`evtyp`).
+                            // `process_event` (already matched) switches on this field with a
+                            // complete, zero-drift match to all five of 2011's declared `EV_*`
+                            // constants (`AC.CPP:647-651`): 1=EV_TEXTSCRIPT, 2=EV_RUNEVBLOCK,
+                            // 3=EV_FADEIN, 4=EV_IFACECLICK, 5=EV_NEWROOM, falling through to
+                            // `process_event`'s own "unknown event to process" quit for any other
+                            // value -- proving the switch exhaustive.
+  int data1;                   // +0x04, high confidence: `setevent`'s 2nd argument (`ev1`). Role
+                            // is `EV_*`-dependent: the room number for `EV_NEWROOM`, a script-name
+                            // index for `EV_TEXTSCRIPT`, and (for `EV_RUNEVBLOCK`) an `EVB_*`
+                            // sub-type selecting hotspot- vs. room-level interactions (`EVB_
+                            // HOTSPOT=1`/`EVB_ROOM=2`, `AC.CPP:655-656`) -- confirmed via
+                            // `process_event`'s own `data1==EVB_ROOM(2)` check gating the
+                            // room-level `run_event_block` dispatch (`sub_40C335`, already
+                            // matched).
+  int data2;                   // +0x08, high confidence: `setevent`'s 3rd argument (`ev2`). Role
+                            // is likewise `EV_*`-dependent: an extra `wparam` for `EV_TEXTSCRIPT`,
+                            // the clicked GUI control number (`btn`) for `EV_IFACECLICK`.
+  int data3;                   // +0x0C, high confidence: `setevent`'s 4th argument (`ev3`).
+                            // DECISIVELY confirmed via `process_event`'s own `EV_RUNEVBLOCK`
+                            // branch checking `data1==EVB_ROOM(2) && data3==5` to fire the
+                            // "player enters screen" room-level interaction and increment
+                            // `in_enters_screen` -- matching 2011's own `check_new_room()`
+                            // construction of this exact event by hand ("evh.type=EV_RUNEVBLOCK;
+                            // evh.data1=EVB_ROOM; evh.data2=0; evh.data3=5;", `AC.CPP:5327-5330`,
+                            // right next to the source comment "run Player Enters Screen and
+                            // on_event(ENTER_ROOM)") field for field, value for value.
+  int player;                  // +0x10, high confidence: `setevent`'s own body sets this to
+                            // `game_playercharacter` (the already-confirmed player-character-index
+                            // global) rather than taking it as a caller-supplied argument --
+                            // matching 2011's own `evh.player=game.playercharacter;`
+                            // (`AC.CPP:25331`) exactly, including WHERE the assignment comes from
+                            // (a global read, not a parameter).
+};                          // Total confirmed size 0x14 (20 bytes), matching the stride used to
+                            // index all five backing globals (`dword_4F7480`/`7484`/`7488`/`748C`/
+                            // `7490`) with zero slack.
 """
 
 
