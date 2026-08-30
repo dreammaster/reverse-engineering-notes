@@ -1197,7 +1197,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Validates chaa via the already-matched is_valid_character, then does \"flags = (flags & ~0x20); if (yesorno) flags |= 0x20;\" on the already-confirmed CharacterInfo.flags@+0x20 -- matching Common/acroom.h:2484's CHF_NOLIGHTING=0x20 exactly, zero drift. A further individually-confirmed CHF_* bit value on this build's flags field, alongside CHF_FIXVIEW=2/CHF_NODIAGONAL=8/CHF_NOINTERACT=4 already established in earlier rounds."
   },
   {
     "kind": "function",

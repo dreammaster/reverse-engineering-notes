@@ -9180,3 +9180,13 @@ picks up one more piece of real information: there is no 33rd field to
 find for `talkcolor` -- the struct's already-known total size (`0x140`)
 was correct all along, and the "missing" field was hiding inside a byte
 of a field already fully mapped.
+
+A quick immediate follow-up on the same `flags` field: `SetCharacterIgnoreLight`
+(also previously bare) does `flags=(flags&~0x20); if (yesorno) flags|=0x20;`
+on the same `CharacterInfo.flags`@+0x20, matching `Common/acroom.h:2484`'s
+`CHF_NOLIGHTING=0x20` exactly, zero drift -- one more individually-confirmed
+`CHF_*` bit alongside `CHF_FIXVIEW=2`/`CHF_NODIAGONAL=8`/`CHF_NOINTERACT=4`
+already established in earlier rounds, with no collision against the
+`talkcolor` byte just found (`OCHF_SPEECHCOL` occupies bits 24-31 only,
+well clear of every `CHF_*` bit constant declared, the highest being
+`CHF_ANTIGLIDE=0x20000` at bit 17).

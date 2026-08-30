@@ -2492,6 +2492,10 @@ disassembly work.
   still uses it live, not as a save-compat artifact. No 33rd field to
   find: the struct's already-known `0x140` total size was correct all
   along, `talkcolor` was hiding inside an already-mapped field's byte.
+  Immediate follow-up: `SetCharacterIgnoreLight` (also previously bare)
+  confirms `CHF_NOLIGHTING=0x20` on the same `flags` field, zero drift,
+  with no collision against the `talkcolor` byte (`OCHF_SPEECHCOL`
+  occupies bits 24-31, clear of every declared `CHF_*` bit).
 
 ## Third-party library identification (Task #10)
 

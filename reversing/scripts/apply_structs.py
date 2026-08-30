@@ -683,6 +683,9 @@ struct CharacterInfo {
   int flags;                // +0x20, high confidence: Character_UnlockView does
                            // "chaa->flags &= ~CHF_FIXVIEW;" where CHF_FIXVIEW=2 (Common/acroom.h:2480) --
                            // disasm matches exactly: `and al, 0FDh` (~2) on a 32-bit field read via `mov eax,[...]`.
+                           // SetCharacterIgnoreLight (already matched) confirms CHF_NOLIGHTING=
+                           // 0x20 (acroom.h:2484) the same way: `and al,0DFh` (~0x20) then
+                           // conditional `or edx,20h`, zero drift.
                            // Top byte doubles as a packed talkcolor/speech-color field (no
                            // standalone talkcolor field exists in this build): SetTalkingColor
                            // (already matched) does "flags=(flags&0x00FFFFFF)|((ncol<<24)&
