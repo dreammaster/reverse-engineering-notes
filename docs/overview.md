@@ -380,6 +380,16 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   `setViewport`, `drawActor`, `traceCombatLine`. These drive the
   `rtm_FE1x` graphics primitives in `leglib` `seg004` and read the
   interior map array (empty tile = `0xFF`).
+- **2026-08-31** — Mapped `bmTNCALB`'s DGROUP state (twndr/casdr
+  `seg001`). It shares `dgroupSeg` (`ds:0101`), `playerX`/`playerY`
+  (`ds:1B00`/`1B04`), `tileAhead` (`ds:1F02`), `mapStride`/`mapHeight`
+  (`ds:1F26`/`1F28` -- set by `setViewport` per layout, the `y*stride+x`
+  factor) with `seg000`. Its **private** state is a ~0x20-byte block
+  that lands at a *different DGROUP offset per link* (TWNDR `0x26xx`,
+  CASDR `0x24xx`, `+0x176` apart -- unlike the byte-identical code):
+  `tileScanIndex`, `losScanResult` (`0xFFFF` = clear), `actorDrawMode`
+  (1 = erase / 0 = draw, toggled by `moveActor`), `mapArrayBase` /
+  `mapRowBytes`. Added to `apply_dsvars_twndr.py` / `apply_dsvars_casdr.py`.
 - **2026-08-31** — Named the remaining `seg001` graphics helpers.
   `bmTNCALB` (twndr/casdr) up to **21/26**: `refreshTileGraphic` (the
   shared `rtm_FE19` single-tile blit), `stepLineOfSight` /

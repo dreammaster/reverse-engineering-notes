@@ -21777,9 +21777,72 @@ word_19270      dw 0                    ; DATA XREF: start+3E↑w
                 db 20h, 3Ch, 0A1h, 3Ch, 0F4h, 3Bh, 0F0h, 1Fh, 0F6h, 1Fh
                 db 20h, 3Ch, 25h, 2
                 dw seg seg003
-                db 0, 3Ch, 0, 3Ch, 0, 3Ch, 0, 3Ch, 20h, 3Ch, 20h, 3Ch
-                db 0, 3Ch, 0, 3Ch, 0, 3Ch, 4, 3Ch, 4, 3Ch, 4, 3Ch, 0, 3Ch
-                db 14h, 3Ch, 18h dup(0), 0C4h, 5, 0Dh dup(0)
+                db    0
+                db  3Ch ; <
+                db    0
+                db  3Ch ; <
+                db    0
+                db  3Ch ; <
+                db    0
+                db  3Ch ; <
+                db  20h
+                db  3Ch ; <
+                db  20h
+                db  3Ch ; <
+                db    0
+                db  3Ch ; <
+                db    0
+                db  3Ch ; <
+                db    0
+                db  3Ch ; <
+                db    4
+                db  3Ch ; <
+                db    4
+                db  3Ch ; <
+                db    4
+                db  3Ch ; <
+                db    0
+                db  3Ch ; <
+                db  14h
+                db  3Ch ; <
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db 0C4h
+                db    5
+                db    0
+                db    0
+                db    0
+dgroupSeg       dw 0                    ; the DGROUP self-segment -- `mov es, ds:101h` in the bmTNCALB tile routines (drawActor / tileAt / scanLineOfSight / ...).
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
 word_192CB      dw 0                    ; DATA XREF: sub_18CFA+34↑w
 word_192CD      dw 0                    ; DATA XREF: sub_18CFA+3B↑w
 word_192CF      dw 0                    ; DATA XREF: sub_18CFA+42↑w
@@ -28419,12 +28482,10 @@ hitPoints       dw 0                    ; party hit points -- guardAttack subtra
                 db    0
                 db    0
                 db    0
+playerX         dw 0                    ; player column in the town interior. Read by bmTNCALB's drawInteriorTiles / stepLineOfSight / sightBlockedBy (and set by seg000's movement code).
                 db    0
                 db    0
-                db    0
-                db    0
-                db    0
-                db    0
+playerY         dw 0                    ; player row in the town interior (paired with playerX).
                 db    0
                 db    0
                 db    0
@@ -29476,10 +29537,8 @@ shopWorkQty     dw 0                    ; working quantity / haggle amount in th
 townServiceId   dw 0                    ; id of the town building / service the player is using. townServiceDispatch is one big SELECT CASE on it (0 / 2 / 4 / 5 / 9 / 0x0A / 0x0B = food shop / weapon / armor / bank / ... ); never written from seg000 (set by the bmTNCALB tile engine).
                 db    0
                 db    0
-                db    0
-                db    0
-                db    0
-                db    0
+mapStride       dw 0                    ; current interior map row width -- setViewport sets it (0x50 / 0x5A / 0x70 for the different layouts); drawInteriorTiles / dirBetween / traceCombatLine use it for `y*stride + x`.
+mapHeight       dw 0                    ; current interior map height (0x28 / 0x5B / 0x49), paired with mapStride, set by setViewport.
 turnFlag        dw 0                    ; 1 after a turn-consuming / attention-drawing action (doWalk, fightGuard, stealGold, npcRecurringDialog set it; jailScene and the dialog code clear it). TENTATIVE.
                 db    0
                 db    0
@@ -29823,8 +29882,7 @@ turnFlag        dw 0                    ; 1 after a turn-consuming / attention-d
                 db    0
                 db    0
                 db    0
-                db    0
-                db    0
+viewBufOffset   dw 0                    ; screen-buffer start offset for the interior view region (setViewport sets 0x960 / 0x1060). TENTATIVE.
                 db    0
                 db    0
                 db    0
@@ -31266,6 +31324,10 @@ guardHitPoints  dw 0                    ; the guard's hit points during fightGua
                 db    0
                 db    0
                 db    0
+mapArrayBase    dw 0                    ; base offset of the interior map data in its array descriptor (placeNpcSprite sets 0x641 / 0x1020). TENTATIVE.
+mapRowBytes     dw 0                    ; row stride in bytes of the map array (0x40 / 0x20). TENTATIVE.
+tileScanIndex   dw 0                    ; running index into the map array during a tileAt lookup / LOS scan -- inc'd, added/subtracted, used as BX; moveActor resets it.
+losScanResult   dw 0                    ; line-of-sight scan result -- scanLineOfSight inits it to 0xFFFF (clear) then stores the first blocking tile.
                 db    0
                 db    0
                 db    0
@@ -31274,16 +31336,7 @@ guardHitPoints  dw 0                    ; the guard's hit points during fightGua
                 db    0
                 db    0
                 db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
+actorDrawMode   dw 0                    ; 1 = erase the actor sprite at its old tile, 0 = draw it at the new one. moveActor toggles it around the two drawActor calls.
                 db    0
                 db    0
                 db    0

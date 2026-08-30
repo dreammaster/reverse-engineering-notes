@@ -180,6 +180,13 @@ reimplementation.
       `sightBlockedBy`, `traceCombatRay` / `combatRayResult`,
       `placeNpcSprite`, `drawViewFrame`, `tileAtOffset` (several
       TENTATIVE). 5 tiny stubs (<20 b, runtime-dispatched) left `sub_`.
+- [x] Map `bmTNCALB`'s DGROUP state (2026-08-31). Shares
+      `dgroupSeg`/`playerX`/`playerY`/`tileAhead`/`mapStride`/`mapHeight`
+      with `seg000`. Its **private** ~0x20-byte block lands at a
+      different DGROUP offset per link (TWNDR `0x26xx`, CASDR `0x24xx`,
+      `+0x176`): `tileScanIndex`, `losScanResult`, `actorDrawMode`
+      (moveActor erase/draw toggle), `mapArrayBase`/`mapRowBytes`. Added
+      to `apply_dsvars_twndr.py` / `apply_dsvars_casdr.py`.
 - [x] `twndr` `sub_11ED0` -> `enterTownService` (the ENTER/USE command
       that locates the adjacent service tile and jumps to
       `townServiceDispatch`).

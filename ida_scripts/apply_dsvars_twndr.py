@@ -72,6 +72,42 @@ VARS = [
      "read-only context constant (12 / 13) tested by doWalk and every "
      "shop entry -- probably 'in a building' vs 'on the street'. "
      "TENTATIVE."),
+
+    # --- shared with the bmTNCALB interior engine (seg001) ---
+    (0x0101, "dgroupSeg",
+     "the DGROUP self-segment -- `mov es, ds:101h` in the bmTNCALB tile "
+     "routines (drawActor / tileAt / scanLineOfSight / ...)."),
+    (0x1B00, "playerX",
+     "player column in the town interior. Read by bmTNCALB's "
+     "drawInteriorTiles / stepLineOfSight / sightBlockedBy (and set by "
+     "seg000's movement code)."),
+    (0x1B04, "playerY", "player row in the town interior (paired with playerX)."),
+    (0x1F26, "mapStride",
+     "current interior map row width -- setViewport sets it (0x50 / "
+     "0x5A / 0x70 for the different layouts); drawInteriorTiles / "
+     "dirBetween / traceCombatLine use it for `y*stride + x`."),
+    (0x1F28, "mapHeight",
+     "current interior map height (0x28 / 0x5B / 0x49), paired with "
+     "mapStride, set by setViewport."),
+    (0x2082, "viewBufOffset",
+     "screen-buffer start offset for the interior view region "
+     "(setViewport sets 0x960 / 0x1060). TENTATIVE."),
+
+    # --- bmTNCALB private state (TWNDR link: the 0x26xx block) ---
+    (0x262A, "tileScanIndex",
+     "running index into the map array during a tileAt lookup / LOS "
+     "scan -- inc'd, added/subtracted, used as BX; moveActor resets it."),
+    (0x262C, "losScanResult",
+     "line-of-sight scan result -- scanLineOfSight inits it to 0xFFFF "
+     "(clear) then stores the first blocking tile."),
+    (0x2636, "actorDrawMode",
+     "1 = erase the actor sprite at its old tile, 0 = draw it at the "
+     "new one. moveActor toggles it around the two drawActor calls."),
+    (0x2626, "mapArrayBase",
+     "base offset of the interior map data in its array descriptor "
+     "(placeNpcSprite sets 0x641 / 0x1020). TENTATIVE."),
+    (0x2628, "mapRowBytes",
+     "row stride in bytes of the map array (0x40 / 0x20). TENTATIVE."),
 ]
 
 

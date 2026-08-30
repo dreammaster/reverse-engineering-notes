@@ -78,9 +78,38 @@ VARS = [
      "current menu / Y-N answer (changeGameSpeed, doFight, kingConfides, "
      "potionWizard read it; never written from seg000). TENTATIVE."),
     (0x1F26, "mapStride",
-     "per-level constant loadCastleLevel sets (0x70 / 0x5A) and "
-     "sub_13E33 / sub_14CAE use as an imul / idiv factor -- probably "
-     "the map row width for `y*stride+x` indexing. TENTATIVE."),
+     "current interior map row width -- loadCastleLevel sets it (0x70 / "
+     "0x5A), bmTNCALB's setViewport also sets it per layout, and it's "
+     "the imul / idiv factor for `y*stride + x` (sub_13E33 / sub_14CAE)."),
+    (0x1F28, "mapHeight",
+     "current interior map height (0x28 / 0x5B / 0x49), paired with "
+     "mapStride, set by bmTNCALB's setViewport."),
+
+    # --- shared with the bmTNCALB interior engine (seg001) ---
+    (0x0101, "dgroupSeg",
+     "the DGROUP self-segment -- `mov es, ds:101h` in the bmTNCALB tile "
+     "routines."),
+    (0x2082, "viewBufOffset",
+     "screen-buffer start offset for the interior view region "
+     "(setViewport sets 0x960 / 0x1060). TENTATIVE."),
+
+    # --- bmTNCALB private state (CASDR link: the 0x24xx block --
+    #     the same variables TWNDR links at 0x26xx, +0x176 apart) ---
+    (0x24B4, "tileScanIndex",
+     "running index into the map array during a tileAt lookup / LOS "
+     "scan; moveActor resets it. (TWNDR: ds:262A.)"),
+    (0x24B6, "losScanResult",
+     "line-of-sight scan result -- scanLineOfSight inits it to 0xFFFF "
+     "then stores the first blocking tile. (TWNDR: ds:262C.)"),
+    (0x24C0, "actorDrawMode",
+     "1 = erase the actor sprite at its old tile, 0 = draw it at the "
+     "new one (moveActor). (TWNDR: ds:2636.)"),
+    (0x24B0, "mapArrayBase",
+     "base offset of the interior map data in its array descriptor. "
+     "(TWNDR: ds:2626.) TENTATIVE."),
+    (0x24B2, "mapRowBytes",
+     "row stride in bytes of the map array. (TWNDR: ds:2628.) "
+     "TENTATIVE."),
 ]
 
 

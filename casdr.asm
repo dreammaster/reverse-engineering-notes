@@ -18819,10 +18819,72 @@ word_173A0      dw 0                    ; DATA XREF: start+3E↑w
                 db 7 dup(0), 36h, 81h, 36h, 0D4h, 35h, 0F0h, 1Fh, 0F6h
                 db 1Fh, 0, 36h, 25h, 2
                 dw seg seg003
-                db 0E0h, 35h, 0E0h, 35h, 0E0h, 35h, 0E0h, 35h, 0, 36h
-                db 0, 36h, 0E0h, 35h, 0E0h, 35h, 0E0h, 35h, 0E4h, 35h
-                db 0E4h, 35h, 0E4h, 35h, 0E0h, 35h, 0F4h, 35h, 18h dup(0)
-                db 0C4h, 5, 0Dh dup(0)
+                db 0E0h
+                db  35h ; 5
+                db 0E0h
+                db  35h ; 5
+                db 0E0h
+                db  35h ; 5
+                db 0E0h
+                db  35h ; 5
+                db    0
+                db  36h ; 6
+                db    0
+                db  36h ; 6
+                db 0E0h
+                db  35h ; 5
+                db 0E0h
+                db  35h ; 5
+                db 0E0h
+                db  35h ; 5
+                db 0E4h
+                db  35h ; 5
+                db 0E4h
+                db  35h ; 5
+                db 0E4h
+                db  35h ; 5
+                db 0E0h
+                db  35h ; 5
+                db 0F4h
+                db  35h ; 5
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db 0C4h
+                db    5
+                db    0
+                db    0
+                db    0
+dgroupSeg       dw 0                    ; the DGROUP self-segment -- `mov es, ds:101h` in the bmTNCALB tile routines.
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
 word_173FB      dw 0                    ; DATA XREF: sub_16E2A+34↑w
 word_173FD      dw 0                    ; DATA XREF: sub_16E2A+3B↑w
 word_173FF      dw 0                    ; DATA XREF: sub_16E2A+42↑w
@@ -26520,8 +26582,7 @@ tileAhead       dw 0                    ; code for the tile / object in front of
                 db    0
 targetSlot      dw 0                    ; reset to 0xFF (= none) by doWalk / gasRoomTrap / warlordConfrontation. The selected creature / target slot. Same slot as OUT.
 mapStride       dw 0                    ; per-level constant loadCastleLevel sets (0x70 / 0x5A) and sub_13E33 / sub_14CAE use as an imul / idiv factor -- probably the map row width for `y*stride+x` indexing. TENTATIVE.
-                db    0
-                db    0
+mapHeight       dw 0                    ; current interior map height (0x28 / 0x5B / 0x49), paired with mapStride, set by bmTNCALB's setViewport.
 turnFlag        dw 0                    ; 1 after a turn-consuming action (doWalk, doFight, ambushGuard, gasTrap set it; cleared to 0 elsewhere). Same slot as TWNDR.
                 db    0
                 db    0
@@ -26865,8 +26926,7 @@ turnFlag        dw 0                    ; 1 after a turn-consuming action (doWal
                 db    0
                 db    0
                 db    0
-                db    0
-                db    0
+viewBufOffset   dw 0                    ; screen-buffer start offset for the interior view region (setViewport sets 0x960 / 0x1060). TENTATIVE.
 viewLevel       dw 0                    ; second 1 / 2 mode flag, often checked next to castleOrFort. TENTATIVE.
                 db    0
                 db    0
@@ -27932,6 +27992,10 @@ enemyHitPoints  dw 0                    ; the current opponent's hit points duri
                 db    0
                 db    0
                 db    0
+mapArrayBase    dw 0                    ; base offset of the interior map data in its array descriptor. (TWNDR: ds:2626.) TENTATIVE.
+mapRowBytes     dw 0                    ; row stride in bytes of the map array. (TWNDR: ds:2628.) TENTATIVE.
+tileScanIndex   dw 0                    ; running index into the map array during a tileAt lookup / LOS scan; moveActor resets it. (TWNDR: ds:262A.)
+losScanResult   dw 0                    ; line-of-sight scan result -- scanLineOfSight inits it to 0xFFFF then stores the first blocking tile. (TWNDR: ds:262C.)
                 db    0
                 db    0
                 db    0
@@ -27940,16 +28004,7 @@ enemyHitPoints  dw 0                    ; the current opponent's hit points duri
                 db    0
                 db    0
                 db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
+actorDrawMode   dw 0                    ; 1 = erase the actor sprite at its old tile, 0 = draw it at the new one (moveActor). (TWNDR: ds:2636.)
                 db    0
                 db    0
                 db    0
