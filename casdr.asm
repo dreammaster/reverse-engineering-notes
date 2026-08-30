@@ -382,7 +382,7 @@ sub_102C3       proc near               ; CODE XREF: j_rt_FE01+86↑p
                                         ; j_rt_FE4E_3+2F↓p
                 mov     ax, 20C0h
                 push    ax
-                call    sub_15DB8
+                call    placeNpcSprite  ; position an NPC sprite in the view (rtm_C8 camera + rtm_11). Called from npcRecurringDialog. TENTATIVE.
 sub_102C3       endp
 
 ; ---------------------------------------------------------------------------
@@ -4338,7 +4338,7 @@ sub_11F14       proc near               ; CODE XREF: doWalk:loc_104DE↑p
                 push    ax
                 mov     ax, 1B04h
                 push    ax
-                call    sub_15A9D
+                call    refreshTileGraphic ; redraw a single interior tile (rtm_FE19). The shared low-level blit -- called from moveActor, walkBlocked, traceCombatLine, robCommand, speakCommand and the ray helpers.
 sub_11F14       endp
 
 ; ---------------------------------------------------------------------------
@@ -4549,7 +4549,7 @@ loc_120A1:                              ; CODE XREF: speakToGuard+77↑j
                 push    ax
                 mov     ax, 1B04h
                 push    ax
-                call    sub_1652F
+                call    tileAtOffset    ; tileAt wrapper that first applies a coord offset. TENTATIVE.
 ; ---------------------------------------------------------------------------
                 cmp     word ptr ds:1F04h, 0
                 jz      short loc_120B8
@@ -6207,7 +6207,7 @@ loc_12AE2:
                 push    ax
                 mov     ax, 1B04h
                 push    ax
-                call    sub_15A9D
+                call    refreshTileGraphic ; redraw a single interior tile (rtm_FE19). The shared low-level blit -- called from moveActor, walkBlocked, traceCombatLine, robCommand, speakCommand and the ray helpers.
 ; ---------------------------------------------------------------------------
                 cmp     word ptr ds:1F02h, 12h
                 mov     ax, 0
@@ -7461,7 +7461,7 @@ takeItem        proc near
                 push    ax
                 mov     ax, 1B04h
                 push    ax
-                call    sub_15A9D
+                call    refreshTileGraphic ; redraw a single interior tile (rtm_FE19). The shared low-level blit -- called from moveActor, walkBlocked, traceCombatLine, robCommand, speakCommand and the ray helpers.
 ; ---------------------------------------------------------------------------
                 cmp     word ptr ds:20C0h, 1
                 jnz     short loc_132F2
@@ -7893,7 +7893,7 @@ openDoor        proc near
                 push    ax
                 mov     ax, 1B04h
                 push    ax
-                call    sub_15A9D
+                call    refreshTileGraphic ; redraw a single interior tile (rtm_FE19). The shared low-level blit -- called from moveActor, walkBlocked, traceCombatLine, robCommand, speakCommand and the ray helpers.
 ; ---------------------------------------------------------------------------
                 cmp     word ptr ds:20C0h, 1
                 jz      short loc_13668
@@ -9122,7 +9122,7 @@ loc_13C67:                              ; CODE XREF: useKey+88↑j
                 push    ax
                 mov     ax, 1B04h
                 push    ax
-                call    sub_15A9D
+                call    refreshTileGraphic ; redraw a single interior tile (rtm_FE19). The shared low-level blit -- called from moveActor, walkBlocked, traceCombatLine, robCommand, speakCommand and the ray helpers.
 useKey          endp
 
 
@@ -9622,7 +9622,7 @@ weakenSpell     proc near               ; CODE XREF: useKey+9C↑j
                 push    ax
                 mov     ax, 1B04h
                 push    ax
-                call    sub_15A9D
+                call    refreshTileGraphic ; redraw a single interior tile (rtm_FE19). The shared low-level blit -- called from moveActor, walkBlocked, traceCombatLine, robCommand, speakCommand and the ray helpers.
 ; ---------------------------------------------------------------------------
                 cmp     word ptr ds:1F02h, 0DEh
                 mov     ax, 0
@@ -11115,7 +11115,7 @@ loc_14DF2:                              ; CODE XREF: resolveOpenDoor+18A↓j
                 push    ax
                 lea     ax, [bp-20h]
                 push    ax
-                call    sub_15EEC
+                call    combatRayResult ; resolve what the combat ray hit (rtm_DF). Called from traceCombatLine. TENTATIVE.
 ; ---------------------------------------------------------------------------
                 mov     [bp-1Eh], ax
                 mov     ax, [bp-1Eh]
@@ -11349,7 +11349,7 @@ resolveUseKey   proc far                ; CODE XREF: useKey+117↑P
 ; ---------------------------------------------------------------------------
                 push    word ptr [bp+0Ah]
                 push    word ptr [bp+8]
-                call    sub_15A9D
+                call    refreshTileGraphic ; redraw a single interior tile (rtm_FE19). The shared low-level blit -- called from moveActor, walkBlocked, traceCombatLine, robCommand, speakCommand and the ray helpers.
 ; ---------------------------------------------------------------------------
                 mov     word ptr ds:1F04h, 1
                 mov     ax, ds:1F02h
@@ -11521,7 +11521,7 @@ loc_150A6:                              ; CODE XREF: resolveUseKey+18A↓j
                 push    ax
                 lea     ax, [bp-1Ah]
                 push    ax
-                call    sub_15EEC
+                call    combatRayResult ; resolve what the combat ray hit (rtm_DF). Called from traceCombatLine. TENTATIVE.
 ; ---------------------------------------------------------------------------
                 mov     [bp-16h], ax
                 mov     ax, [bp-16h]
@@ -11793,7 +11793,7 @@ loc_1521A:                              ; CODE XREF: sub_1519E+B9↓j
                 push    ax
                 lea     ax, [bp-18h]
                 push    ax
-                call    sub_15EEC
+                call    combatRayResult ; resolve what the combat ray hit (rtm_DF). Called from traceCombatLine. TENTATIVE.
 ; ---------------------------------------------------------------------------
                 mov     [bp-16h], ax
                 mov     ax, [bp-16h]
@@ -12467,9 +12467,10 @@ stepByDirection endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; step the traceCombatLine ray one tile (-> refreshTileGraphic). TENTATIVE.
 ; Attributes: noreturn
 
-sub_1573D       proc far                ; CODE XREF: traceCombatLine+226↓P
+traceCombatRay  proc far                ; CODE XREF: traceCombatLine+226↓P
                 mov     cx, 10h
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -12489,7 +12490,7 @@ loc_15758:
                 push    ax
                 mov     ax, 1B04h
                 push    ax
-                call    sub_15A9D
+                call    refreshTileGraphic ; redraw a single interior tile (rtm_FE19). The shared low-level blit -- called from moveActor, walkBlocked, traceCombatLine, robCommand, speakCommand and the ray helpers.
 
 loc_1576B:
                 mov     ax, ds:1F02h
@@ -12506,7 +12507,7 @@ loc_1576B:
                 jmp     loc_157F9
 ; ---------------------------------------------------------------------------
 
-loc_15788:                              ; CODE XREF: sub_1573D+C2↓j
+loc_15788:                              ; CODE XREF: traceCombatRay+C2↓j
                 mov     ax, ds:1F26h
                 mov     [bp-12h], ax
                 mov     [bp-14h], ax
@@ -12514,8 +12515,8 @@ loc_15788:                              ; CODE XREF: sub_1573D+C2↓j
                 jmp     loc_157DC
 ; ---------------------------------------------------------------------------
 
-loc_15796:                              ; CODE XREF: sub_1573D+AE↓j
-                                        ; sub_1573D+B6↓j
+loc_15796:                              ; CODE XREF: traceCombatRay+AE↓j
+                                        ; traceCombatRay+B6↓j
                 add     ax, [bp-16h]
                 mov     bx, ax
                 mov     es, word ptr ds:101h
@@ -12531,47 +12532,47 @@ loc_15796:                              ; CODE XREF: sub_1573D+AE↓j
                 jmp     loc_157C7
 ; ---------------------------------------------------------------------------
 
-loc_157BB:                              ; CODE XREF: sub_1573D+79↑j
+loc_157BB:                              ; CODE XREF: traceCombatRay+79↑j
                 mov     bx, dx
                 mov     ax, [bp-10h]
                 mov     es, word ptr ds:101h
                 mov     es:[bx], al
 
-loc_157C7:                              ; CODE XREF: sub_1573D+7B↑j
+loc_157C7:                              ; CODE XREF: traceCombatRay+7B↑j
                 cmp     word ptr [bp-18h], 0
                 jz      short loc_157D0
                 jmp     loc_157D6
 ; ---------------------------------------------------------------------------
 
-loc_157D0:                              ; CODE XREF: sub_1573D+8E↑j
+loc_157D0:                              ; CODE XREF: traceCombatRay+8E↑j
                 mov     word ptr ds:1F04h, 1
 
-loc_157D6:                              ; CODE XREF: sub_1573D+90↑j
+loc_157D6:                              ; CODE XREF: traceCombatRay+90↑j
                 mov     ax, [bp-14h]
                 add     ax, [bp-1Ah]
 
-loc_157DC:                              ; CODE XREF: sub_1573D+56↑j
+loc_157DC:                              ; CODE XREF: traceCombatRay+56↑j
                 mov     [bp-1Ah], ax
                 cmp     word ptr [bp-14h], 0
                 jl      short loc_157E8
                 jmp     loc_157F0
 ; ---------------------------------------------------------------------------
 
-loc_157E8:                              ; CODE XREF: sub_1573D+A6↑j
+loc_157E8:                              ; CODE XREF: traceCombatRay+A6↑j
                 cmp     ax, [bp-12h]
                 jge     short loc_15796
                 jmp     loc_157F5
 ; ---------------------------------------------------------------------------
 
-loc_157F0:                              ; CODE XREF: sub_1573D+A8↑j
+loc_157F0:                              ; CODE XREF: traceCombatRay+A8↑j
                 cmp     ax, [bp-12h]
                 jle     short loc_15796
 
-loc_157F5:                              ; CODE XREF: sub_1573D+B0↑j
+loc_157F5:                              ; CODE XREF: traceCombatRay+B0↑j
                 mov     ax, [bp-16h]
                 inc     ax
 
-loc_157F9:                              ; CODE XREF: sub_1573D+48↑j
+loc_157F9:                              ; CODE XREF: traceCombatRay+48↑j
                 mov     [bp-16h], ax
                 cmp     ax, [bp-0Eh]
                 jle     short loc_15788
@@ -12584,7 +12585,7 @@ nullsub_40:
 j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0:
                                         ; CODE XREF: stepByDirection:j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0↑j
                 jmp     j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0
-sub_1573D       endp
+traceCombatRay  endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -12625,7 +12626,7 @@ nullsub_41:
 ; ---------------------------------------------------------------------------
 
 j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0:
-                                        ; CODE XREF: sub_1573D:j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0↑j
+                                        ; CODE XREF: traceCombatRay:j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0↑j
                 jmp     j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0
 sub_1580C       endp
 
@@ -12654,9 +12655,10 @@ sub_15854       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; one outward step of the scanLineOfSight ray -- advances the coord (via dirBetween) and tests the tile.
 ; Attributes: noreturn
 
-sub_15867       proc far                ; CODE XREF: scanLineOfSight+86↓P
+stepLineOfSight proc far                ; CODE XREF: scanLineOfSight+86↓P
                 mov     cx, 12h
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -12675,7 +12677,7 @@ loc_1586F:
                 jmp     loc_158A4
 ; ---------------------------------------------------------------------------
 
-loc_15891:                              ; CODE XREF: sub_15867+25↑j
+loc_15891:                              ; CODE XREF: stepLineOfSight+25↑j
                 mov     cx, [bp-0Ch]
                 neg     cx
                 mov     ax, cx
@@ -12683,7 +12685,7 @@ loc_15891:                              ; CODE XREF: sub_15867+25↑j
                 add     word ptr [bp-0Eh], 2
                 mov     word ptr [bp-10h], 1
 
-loc_158A4:                              ; CODE XREF: sub_15867+27↑j
+loc_158A4:                              ; CODE XREF: stepLineOfSight+27↑j
                 mov     si, [bp+0Ah]
                 mov     ax, [si]
                 mov     bx, ax
@@ -12697,40 +12699,40 @@ loc_158A4:                              ; CODE XREF: sub_15867+27↑j
                 jmp     loc_158CF
 ; ---------------------------------------------------------------------------
 
-loc_158C1:                              ; CODE XREF: sub_15867+55↑j
+loc_158C1:                              ; CODE XREF: stepLineOfSight+55↑j
                 mov     cx, [bp-12h]
                 neg     cx
                 mov     ax, cx
                 mov     [bp-12h], ax
                 add     word ptr [bp-14h], 2
 
-loc_158CF:                              ; CODE XREF: sub_15867+57↑j
+loc_158CF:                              ; CODE XREF: stepLineOfSight+57↑j
                 cmp     word ptr [bp-0Ch], 2
                 mov     ax, 0
                 jle     short loc_158D9
                 dec     ax
 
-loc_158D9:                              ; CODE XREF: sub_15867+6F↑j
+loc_158D9:                              ; CODE XREF: stepLineOfSight+6F↑j
                 cmp     word ptr [bp-12h], 2
                 mov     cx, 0
                 jle     short loc_158E3
                 dec     cx
 
-loc_158E3:                              ; CODE XREF: sub_15867+79↑j
+loc_158E3:                              ; CODE XREF: stepLineOfSight+79↑j
                 or      cx, ax
                 and     cx, cx
                 jnz     short loc_158EC
                 jmp     loc_15999
 ; ---------------------------------------------------------------------------
 
-loc_158EC:                              ; CODE XREF: sub_15867+80↑j
+loc_158EC:                              ; CODE XREF: stepLineOfSight+80↑j
                 mov     ax, [bp-12h]
                 cmp     ax, [bp-0Ch]
                 jl      short loc_158F7
                 jmp     loc_1590F
 ; ---------------------------------------------------------------------------
 
-loc_158F7:                              ; CODE XREF: sub_15867+8B↑j
+loc_158F7:                              ; CODE XREF: stepLineOfSight+8B↑j
                 lea     ax, [bp-0Eh]
                 push    ax
                 push    word ptr [bp+0Ah]
@@ -12741,8 +12743,8 @@ loc_158F7:                              ; CODE XREF: sub_15867+8B↑j
                 jmp     loc_15954
 ; ---------------------------------------------------------------------------
 
-loc_1590F:                              ; CODE XREF: sub_15867+8D↑j
-                                        ; sub_15867+A3↑j
+loc_1590F:                              ; CODE XREF: stepLineOfSight+8D↑j
+                                        ; stepLineOfSight+A3↑j
                 push    word ptr [bp+0Ch]
                 lea     ax, [bp-14h]
                 push    ax
@@ -12753,7 +12755,7 @@ loc_1590F:                              ; CODE XREF: sub_15867+8D↑j
                 jmp     loc_1593C
 ; ---------------------------------------------------------------------------
 
-loc_15927:                              ; CODE XREF: sub_15867+BB↑j
+loc_15927:                              ; CODE XREF: stepLineOfSight+BB↑j
                 mov     si, [bp+6]
                 mov     word ptr [si], 2
                 mov     ax, [bp-14h]
@@ -12763,7 +12765,7 @@ loc_15927:                              ; CODE XREF: sub_15867+BB↑j
                 jmp     loc_15967
 ; ---------------------------------------------------------------------------
 
-loc_1593C:                              ; CODE XREF: sub_15867+BD↑j
+loc_1593C:                              ; CODE XREF: stepLineOfSight+BD↑j
                 lea     ax, [bp-0Eh]
                 push    ax
                 push    word ptr [bp+0Ah]
@@ -12774,8 +12776,8 @@ loc_1593C:                              ; CODE XREF: sub_15867+BD↑j
                 jmp     loc_15967
 ; ---------------------------------------------------------------------------
 
-loc_15954:                              ; CODE XREF: sub_15867+A5↑j
-                                        ; sub_15867+E8↑j
+loc_15954:                              ; CODE XREF: stepLineOfSight+A5↑j
+                                        ; stepLineOfSight+E8↑j
                 mov     ax, [bp-10h]
                 mov     si, [bp+6]
                 mov     [si], ax
@@ -12784,20 +12786,20 @@ loc_15954:                              ; CODE XREF: sub_15867+A5↑j
                 mov     [si], ax
                 dec     word ptr [bp-0Ch]
 
-loc_15967:                              ; CODE XREF: sub_15867+D2↑j
-                                        ; sub_15867+EA↑j
+loc_15967:                              ; CODE XREF: stepLineOfSight+D2↑j
+                                        ; stepLineOfSight+EA↑j
                 cmp     word ptr [bp-0Ch], 3
                 mov     ax, 0
                 jge     short loc_15971
                 dec     ax
 
-loc_15971:                              ; CODE XREF: sub_15867+107↑j
+loc_15971:                              ; CODE XREF: stepLineOfSight+107↑j
                 cmp     word ptr [bp-12h], 3
                 mov     cx, 0
                 jge     short loc_1597B
                 dec     cx
 
-loc_1597B:                              ; CODE XREF: sub_15867+111↑j
+loc_1597B:                              ; CODE XREF: stepLineOfSight+111↑j
                 and     cx, ax
                 mov     si, [bp+8]
                 and     cx, [si]
@@ -12806,22 +12808,22 @@ loc_1597B:                              ; CODE XREF: sub_15867+111↑j
                 jmp     loc_15991
 ; ---------------------------------------------------------------------------
 
-loc_15989:                              ; CODE XREF: sub_15867+11D↑j
+loc_15989:                              ; CODE XREF: stepLineOfSight+11D↑j
                 mov     word ptr [bp-1Ch], 1
                 jmp     loc_15996
 ; ---------------------------------------------------------------------------
 
-loc_15991:                              ; CODE XREF: sub_15867+11F↑j
+loc_15991:                              ; CODE XREF: stepLineOfSight+11F↑j
                 mov     word ptr [bp-1Ch], 0
 
-loc_15996:                              ; CODE XREF: sub_15867+127↑j
+loc_15996:                              ; CODE XREF: stepLineOfSight+127↑j
                 jmp     loc_1599E
 ; ---------------------------------------------------------------------------
 
-loc_15999:                              ; CODE XREF: sub_15867+82↑j
+loc_15999:                              ; CODE XREF: stepLineOfSight+82↑j
                 mov     word ptr [bp-1Ch], 1
 
-loc_1599E:                              ; CODE XREF: sub_15867:loc_15996↑j
+loc_1599E:                              ; CODE XREF: stepLineOfSight:loc_15996↑j
                 mov     ax, [bp-1Ch]
                 call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
@@ -12832,14 +12834,15 @@ nullsub_43:
 j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0:
                                         ; CODE XREF: sub_15854:j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0↑j
                 jmp     j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0
-sub_15867       endp
+stepLineOfSight endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; the second scanLineOfSight helper -- classify what stopped the ray (wall / actor / edge). TENTATIVE.
 ; Attributes: noreturn
 
-sub_159AC       proc far                ; CODE XREF: scanLineOfSight+BB↓P
+sightBlockedBy  proc far                ; CODE XREF: scanLineOfSight+BB↓P
                 mov     cx, 6
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -12858,25 +12861,25 @@ loc_159B4:
                 jmp     loc_15A92
 ; ---------------------------------------------------------------------------
 
-loc_159D6:                              ; CODE XREF: sub_159AC+25↑j
+loc_159D6:                              ; CODE XREF: sightBlockedBy+25↑j
                 cmp     ax, 7
                 jle     short loc_159DE
                 jmp     loc_15A92
 ; ---------------------------------------------------------------------------
 
-loc_159DE:                              ; CODE XREF: sub_159AC+2D↑j
+loc_159DE:                              ; CODE XREF: sightBlockedBy+2D↑j
                 cmp     word ptr [bp-0Ch], 0FFF4h
                 jge     short loc_159E7
                 jmp     loc_15A92
 ; ---------------------------------------------------------------------------
 
-loc_159E7:                              ; CODE XREF: sub_159AC+36↑j
+loc_159E7:                              ; CODE XREF: sightBlockedBy+36↑j
                 cmp     word ptr [bp-0Ch], 0Ch
                 jle     short loc_159F0
                 jmp     loc_15A92
 ; ---------------------------------------------------------------------------
 
-loc_159F0:                              ; CODE XREF: sub_159AC+3F↑j
+loc_159F0:                              ; CODE XREF: sightBlockedBy+3F↑j
                 mov     si, 1E58h
                 mov     bx, 78h ; 'x'
                 add     bx, [si+0Ah]
@@ -12936,8 +12939,8 @@ loc_159F0:                              ; CODE XREF: sub_159AC+3F↑j
                 mov     ax, [bp-10h]
                 mov     es:[bx], ax
 
-loc_15A92:                              ; CODE XREF: sub_159AC+27↑j
-                                        ; sub_159AC+2F↑j ...
+loc_15A92:                              ; CODE XREF: sightBlockedBy+27↑j
+                                        ; sightBlockedBy+2F↑j ...
                 call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
 nullsub_44:
@@ -12945,16 +12948,17 @@ nullsub_44:
 ; ---------------------------------------------------------------------------
 
 j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0:
-                                        ; CODE XREF: sub_15867:j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0↑j
+                                        ; CODE XREF: stepLineOfSight:j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0↑j
                 jmp     j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0
-sub_159AC       endp
+sightBlockedBy  endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; redraw a single interior tile (rtm_FE19). The shared low-level blit -- called from moveActor, walkBlocked, traceCombatLine, robCommand, speakCommand and the ray helpers.
 ; Attributes: noreturn
 
-sub_15A9D       proc far                ; CODE XREF: sub_11F14+8↑P
+refreshTileGraphic proc far             ; CODE XREF: sub_11F14+8↑P
                                         ; j_rt_FE5B_4+D↑P ...
                 mov     cx, 6
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
@@ -12972,10 +12976,10 @@ loc_15AA5:
                 jmp     loc_15AC4
 ; ---------------------------------------------------------------------------
 
-loc_15AC0:                              ; CODE XREF: sub_15A9D+1E↑j
+loc_15AC0:                              ; CODE XREF: refreshTileGraphic+1E↑j
                 mov     word ptr [si], 0
 
-loc_15AC4:                              ; CODE XREF: sub_15A9D+20↑j
+loc_15AC4:                              ; CODE XREF: refreshTileGraphic+20↑j
                 mov     si, [bp+6]
                 mov     bx, [si]
                 shl     bx, 1
@@ -13004,9 +13008,9 @@ nullsub_45:
                 retf    4
 ; ---------------------------------------------------------------------------
 
-j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0:  ; CODE XREF: sub_159AC:j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0↑j
+j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0:  ; CODE XREF: sightBlockedBy:j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0↑j
                 jmp     j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0
-sub_15A9D       endp
+refreshTileGraphic endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -13068,7 +13072,7 @@ nullsub_46:
                 retf    0
 ; ---------------------------------------------------------------------------
 
-j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0:    ; CODE XREF: sub_15A9D:j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0↑j
+j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0:    ; CODE XREF: refreshTileGraphic:j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0↑j
                 jmp     j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0
 findObjectTile  endp
 
@@ -13322,7 +13326,7 @@ loc_15D55:                              ; CODE XREF: scanLineOfSight+72↑j
                 push    word ptr [bp+8]
                 lea     ax, [bp-12h]
                 push    ax
-                call    sub_15867
+                call    stepLineOfSight ; one outward step of the scanLineOfSight ray -- advances the coord (via dirBetween) and tests the tile.
                 mov     [bp-10h], ax
                 mov     ax, [bp-10h]
                 add     ds:2080h, ax
@@ -13342,7 +13346,7 @@ loc_15D8D:                              ; CODE XREF: scanLineOfSight+74↑j
                 push    ax
                 lea     ax, [bp-12h]
                 push    ax
-                call    sub_159AC
+                call    sightBlockedBy  ; the second scanLineOfSight helper -- classify what stopped the ray (wall / actor / edge). TENTATIVE.
 
 loc_15D9E:                              ; CODE XREF: scanLineOfSight+4B↑j
                 cmp     word ptr ds:24B6h, 0
@@ -13367,9 +13371,10 @@ scanLineOfSight endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; position an NPC sprite in the view (rtm_C8 camera + rtm_11). Called from npcRecurringDialog. TENTATIVE.
 ; Attributes: noreturn
 
-sub_15DB8       proc far                ; CODE XREF: sub_102C3+4↑P
+placeNpcSprite  proc far                ; CODE XREF: sub_102C3+4↑P
                 mov     cx, 8
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -13382,43 +13387,43 @@ loc_15DC0:
                 jmp     loc_15DE0
 ; ---------------------------------------------------------------------------
 
-loc_15DD1:                              ; CODE XREF: sub_15DB8+14↑j
+loc_15DD1:                              ; CODE XREF: placeNpcSprite+14↑j
                 mov     word ptr ds:24B0h, 641h
                 mov     word ptr ds:24B2h, 20h ; ' '
                 jmp     loc_15E19
 ; ---------------------------------------------------------------------------
 
-loc_15DE0:                              ; CODE XREF: sub_15DB8+16↑j
+loc_15DE0:                              ; CODE XREF: placeNpcSprite+16↑j
                 cmp     word ptr [bp-0Ch], 1
                 jz      short loc_15DE9
                 jmp     loc_15DF8
 ; ---------------------------------------------------------------------------
 
-loc_15DE9:                              ; CODE XREF: sub_15DB8+2C↑j
+loc_15DE9:                              ; CODE XREF: placeNpcSprite+2C↑j
                 mov     word ptr ds:24B0h, 1020h
                 mov     word ptr ds:24B2h, 40h ; '@'
                 jmp     loc_15E19
 ; ---------------------------------------------------------------------------
 
-loc_15DF8:                              ; CODE XREF: sub_15DB8+2E↑j
+loc_15DF8:                              ; CODE XREF: placeNpcSprite+2E↑j
                 cmp     word ptr [bp-0Ch], 2
                 jz      short loc_15E01
                 jmp     loc_15E10
 ; ---------------------------------------------------------------------------
 
-loc_15E01:                              ; CODE XREF: sub_15DB8+44↑j
+loc_15E01:                              ; CODE XREF: placeNpcSprite+44↑j
                 mov     word ptr ds:24B0h, 1020h
                 mov     word ptr ds:24B2h, 40h ; '@'
                 jmp     loc_15E19
 ; ---------------------------------------------------------------------------
 
-loc_15E10:                              ; CODE XREF: sub_15DB8+46↑j
+loc_15E10:                              ; CODE XREF: placeNpcSprite+46↑j
                 mov     ax, 27h ; '''
                 push    ax
                 call    far ptr rt_C8   ; -> rtm_C8  (leglib seg003:0x138e2)
 
-loc_15E19:                              ; CODE XREF: sub_15DB8+25↑j
-                                        ; sub_15DB8+3D↑j ...
+loc_15E19:                              ; CODE XREF: placeNpcSprite+25↑j
+                                        ; placeNpcSprite+3D↑j ...
                 mov     word ptr ds:1F02h, 0
                 mov     si, 1E2Ah
                 xor     bx, bx
@@ -13443,7 +13448,7 @@ loc_15E32:
 ; ---------------------------------------------------------------------------
                 nop
 
-loc_15E52:                              ; CODE XREF: sub_15DB8+BF↓j
+loc_15E52:                              ; CODE XREF: placeNpcSprite+BF↓j
                 mov     bx, [bp-10h]
                 mov     es, word ptr ds:101h
                 mov     bl, es:[bx]
@@ -13454,14 +13459,14 @@ loc_15E52:                              ; CODE XREF: sub_15DB8+BF↓j
                 jmp     loc_15E6D
 ; ---------------------------------------------------------------------------
 
-loc_15E69:                              ; CODE XREF: sub_15DB8+AC↑j
+loc_15E69:                              ; CODE XREF: placeNpcSprite+AC↑j
                 inc     word ptr ds:1F02h
 
-loc_15E6D:                              ; CODE XREF: sub_15DB8+AE↑j
+loc_15E6D:                              ; CODE XREF: placeNpcSprite+AE↑j
                 mov     ax, [bp-12h]
                 inc     ax
 
-loc_15E71:                              ; CODE XREF: sub_15DB8+96↑j
+loc_15E71:                              ; CODE XREF: placeNpcSprite+96↑j
                 mov     [bp-12h], ax
                 cmp     ax, [bp-0Eh]
                 jle     short loc_15E52
@@ -13490,14 +13495,15 @@ nullsub_49:
 
 j_j_j_j_j_j_j_j_j_j_j_rt_ED_0:          ; CODE XREF: scanLineOfSight:j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0↑j
                 jmp     j_j_j_j_j_j_j_j_j_j_rt_ED_0
-sub_15DB8       endp
+placeNpcSprite  endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; draw the interior-view border / frame (rtm_FE1E). Called from townServiceDispatch and robberyEvent. TENTATIVE.
 ; Attributes: noreturn
 
-sub_15EBE       proc far
+drawViewFrame   proc far
                 mov     cx, 0
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -13512,9 +13518,9 @@ nullsub_50:
                 retf    2
 ; ---------------------------------------------------------------------------
 
-j_j_j_j_j_j_j_j_j_j_rt_ED_0:            ; CODE XREF: sub_15DB8:j_j_j_j_j_j_j_j_j_j_j_rt_ED_0↑j
+j_j_j_j_j_j_j_j_j_j_rt_ED_0:            ; CODE XREF: placeNpcSprite:j_j_j_j_j_j_j_j_j_j_j_rt_ED_0↑j
                 jmp     j_j_j_j_j_j_j_j_j_rt_ED_0
-sub_15EBE       endp
+drawViewFrame   endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -13532,16 +13538,17 @@ nullsub_51:
                 retf    0
 ; ---------------------------------------------------------------------------
 
-j_j_j_j_j_j_j_j_j_rt_ED_0:              ; CODE XREF: sub_15EBE:j_j_j_j_j_j_j_j_j_j_rt_ED_0↑j
+j_j_j_j_j_j_j_j_j_rt_ED_0:              ; CODE XREF: drawViewFrame:j_j_j_j_j_j_j_j_j_j_rt_ED_0↑j
                 jmp     j_j_j_j_j_j_j_j_rt_ED_0
 sub_15ED9       endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; resolve what the combat ray hit (rtm_DF). Called from traceCombatLine. TENTATIVE.
 ; Attributes: noreturn
 
-sub_15EEC       proc far                ; CODE XREF: resolveOpenDoor+14C↑P
+combatRayResult proc far                ; CODE XREF: resolveOpenDoor+14C↑P
                                         ; resolveUseKey+13A↑P ...
                 mov     cx, 6
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
@@ -13563,11 +13570,11 @@ loc_15F01:
                 jmp     loc_15F1A
 ; ---------------------------------------------------------------------------
 
-loc_15F14:                              ; CODE XREF: sub_15EEC+23↑j
+loc_15F14:                              ; CODE XREF: combatRayResult+23↑j
                 mov     ax, [bp-0Ch]
                 mov     [bp-0Eh], ax
 
-loc_15F1A:                              ; CODE XREF: sub_15EEC+25↑j
+loc_15F1A:                              ; CODE XREF: combatRayResult+25↑j
                 mov     bx, [bp-0Eh]
                 shl     bx, 1
                 mov     si, 1FF6h
@@ -13586,7 +13593,7 @@ nullsub_52:
 
 j_j_j_j_j_j_j_j_rt_ED_0:                ; CODE XREF: sub_15ED9:j_j_j_j_j_j_j_j_j_rt_ED_0↑j
                 jmp     j_j_j_j_j_j_j_rt_ED_0
-sub_15EEC       endp
+combatRayResult endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -13620,7 +13627,7 @@ loc_15F70:                              ; CODE XREF: moveActor+2A↑j
 loc_15F75:                              ; CODE XREF: moveActor+2C↑j
                 push    word ptr [bp+8]
                 push    word ptr [bp+6]
-                call    sub_15A9D
+                call    refreshTileGraphic ; redraw a single interior tile (rtm_FE19). The shared low-level blit -- called from moveActor, walkBlocked, traceCombatLine, robCommand, speakCommand and the ray helpers.
 
 loc_15F80:
                 mov     ax, ds:24C2h
@@ -13934,7 +13941,7 @@ nullsub_53:
                 retf    4
 ; ---------------------------------------------------------------------------
 
-j_j_j_j_j_j_j_rt_ED_0:                  ; CODE XREF: sub_15EEC:j_j_j_j_j_j_j_j_rt_ED_0↑j
+j_j_j_j_j_j_j_rt_ED_0:                  ; CODE XREF: combatRayResult:j_j_j_j_j_j_j_j_rt_ED_0↑j
                 jmp     j_j_j_j_j_j_rt_ED_0
 moveActor       endp
 
@@ -14301,7 +14308,7 @@ loc_16420:                              ; CODE XREF: traceCombatLine+137↑j
                 push    ax
                 lea     ax, [bp-10h]
                 push    ax
-                call    sub_15A9D
+                call    refreshTileGraphic ; redraw a single interior tile (rtm_FE19). The shared low-level blit -- called from moveActor, walkBlocked, traceCombatLine, robCommand, speakCommand and the ray helpers.
                 cmp     word ptr ds:1F02h, 0D7h
                 jz      short loc_16438
                 jmp     loc_16447
@@ -14378,7 +14385,7 @@ loc_1649C:                              ; CODE XREF: traceCombatLine+235↓j
                 push    ax
                 lea     ax, [bp-2Ah]
                 push    ax
-                call    sub_15EEC
+                call    combatRayResult ; resolve what the combat ray hit (rtm_DF). Called from traceCombatLine. TENTATIVE.
                 mov     [bp-2Ch], ax
                 mov     ax, [bp-2Ch]
                 mov     [bp-32h], ax
@@ -14410,7 +14417,7 @@ loc_164F1:                              ; CODE XREF: traceCombatLine+217↑j
                 mov     word ptr ds:1F02h, 0FDh
                 lea     ax, [bp-32h]
                 push    ax
-                call    sub_1573D
+                call    traceCombatRay  ; step the traceCombatLine ray one tile (-> refreshTileGraphic). TENTATIVE.
 
 loc_16500:                              ; CODE XREF: traceCombatLine+219↑j
                 mov     ax, [bp-30h]
@@ -14453,9 +14460,10 @@ traceCombatLine endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; tileAt wrapper that first applies a coord offset. TENTATIVE.
 ; Attributes: noreturn
 
-sub_1652F       proc far                ; CODE XREF: speakToGuard+BB↑P
+tileAtOffset    proc far                ; CODE XREF: speakToGuard+BB↑P
                 mov     cx, 6
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -14483,7 +14491,7 @@ nullsub_58:
 
 j_j_rt_ED_0:                            ; CODE XREF: traceCombatLine:j_j_j_rt_ED_0↑j
                 jmp     j_rt_ED_0
-sub_1652F       endp
+tileAtOffset    endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -14491,8 +14499,8 @@ sub_1652F       endp
 ; compute the step direction (0..3, or 3 = none) from one coord to another via the map.
 ; Attributes: noreturn
 
-dirBetween      proc far                ; CODE XREF: sub_15867+97↑P
-                                        ; sub_15867+AF↑P ...
+dirBetween      proc far                ; CODE XREF: stepLineOfSight+97↑P
+                                        ; stepLineOfSight+AF↑P ...
                 mov     cx, 12h
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -15491,7 +15499,7 @@ rt_DE:                                  ; Overlay manager interrupt
 ; -> rtm_DF  (leglib seg003:0x13771)  [mid-func]
 ; Attributes: noreturn
 
-rt_DF           proc near               ; CODE XREF: sub_15EEC+10↑P
+rt_DF           proc near               ; CODE XREF: combatRayResult+10↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -17123,7 +17131,7 @@ rt_FE18         endp
 ; -> rtm_FE19  (leglib seg004:0x20103)
 ; Attributes: noreturn
 
-rt_FE19         proc near               ; CODE XREF: sub_15A9D+4E↑P
+rt_FE19         proc near               ; CODE XREF: refreshTileGraphic+4E↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -17168,7 +17176,7 @@ rt_FE1D:                                ; Overlay manager interrupt
 ; -> rtm_FE1E  (leglib seg008:0x28667)
 ; Attributes: noreturn
 
-rt_FE1E         proc near               ; CODE XREF: sub_15EBE+B↑P
+rt_FE1E         proc near               ; CODE XREF: drawViewFrame+B↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------

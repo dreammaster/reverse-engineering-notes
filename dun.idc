@@ -1171,6 +1171,7 @@ static Bytes_0(void) {
 	create_insn	(0X13BD0);
 	set_name	(0X13BD0,	"seg001_entry");
 	create_insn	(0X13BD3);
+	set_name	(0X13BD3,	"drawViewSprite");
 	set_cmt	(0X13BE3,	")?\\x01\\x10)*\\x01\\x16)0R\\x0f\\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT",	0);
 	create_insn	(x=0X13BE3);
 	op_hex		(x,	1);
@@ -1209,6 +1210,7 @@ static Bytes_0(void) {
 	create_insn	(0X13DCE);
 	set_name	(0X13DCE,	"j_j_j_j_j_j_j_rt_ED_0");
 	create_insn	(0X13DD1);
+	set_name	(0X13DD1,	"blitViewCell");
 	set_cmt	(0X13DDE,	")?\\x01\\x10)*\\x01\\x16)0R\\x0f\\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT",	0);
 	create_insn	(x=0X13DDE);
 	op_hex		(x,	1);
@@ -1220,6 +1222,7 @@ static Bytes_0(void) {
 	create_insn	(0X13E6B);
 	set_name	(0X13E6B,	"j_j_j_j_j_j_rt_ED_0");
 	create_insn	(0X13E6E);
+	set_name	(0X13E6E,	"renderDungeonView");
 	set_name	(0X13E76,	"j_rt_FE2C");
 	set_cmt	(0X13EB0,	")?\\x01\\x10)*\\x01\\x16)0R\\x0f\\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT",	0);
 	create_insn	(x=0X13EB0);
@@ -1258,6 +1261,7 @@ static Bytes_0(void) {
 	create_insn	(0X14163);
 	set_name	(0X14163,	"j_j_j_j_j_rt_ED_0");
 	create_insn	(0X14166);
+	set_name	(0X14166,	"drawViewWallBandNear");
 	set_cmt	(0X14173,	")?\\x01\\x10)*\\x01\\x16)0R\\x0f\\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT",	0);
 	create_insn	(x=0X14173);
 	op_hex		(x,	1);
@@ -1276,6 +1280,7 @@ static Bytes_0(void) {
 	create_insn	(0X14279);
 	set_name	(0X14279,	"j_j_j_j_rt_ED_0");
 	create_insn	(0X1427C);
+	set_name	(0X1427C,	"drawViewWallBandMid");
 	create_insn	(0X14290);
 	create_insn	(0X14298);
 	set_cmt	(0X142AB,	")?\\x01\\x10)*\\x01\\x16)0R\\x0f\\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT",	0);
@@ -1285,6 +1290,7 @@ static Bytes_0(void) {
 	create_insn	(0X1430B);
 	set_name	(0X1430B,	"j_j_j_rt_ED_0");
 	create_insn	(0X1430E);
+	set_name	(0X1430E,	"drawViewWallBandFar");
 	set_cmt	(0X14335,	")?\\x01\\x10)*\\x01\\x16)0R\\x0f\\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT",	0);
 	create_insn	(x=0X14335);
 	op_hex		(x,	1);
@@ -1293,6 +1299,7 @@ static Bytes_0(void) {
 	create_insn	(0X14362);
 	set_name	(0X14362,	"j_j_rt_ED_0");
 	create_insn	(0X14365);
+	set_name	(0X14365,	"drawViewFloorCeiling");
 	create_insn	(0X14378);
 	set_cmt	(0X1437D,	")?\\x01\\x10)*\\x01\\x16)0R\\x0f\\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT",	0);
 	create_insn	(x=0X1437D);
@@ -2571,6 +2578,15 @@ static Bytes_0(void) {
 	create_insn	(x=0X14754);
 	op_hex		(x,	0);
 	set_name	(0X14754,	"rt_FF4B");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_byte	(0X14756);
 	make_array	(0X14756,	0X2);
 	set_cmt	(0X14758,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
@@ -2584,15 +2600,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X1475C);
 	op_hex		(x,	0);
 	set_name	(0X1475C,	"rt_FF4D");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_byte	(0X1475E);
 	make_array	(0X1475E,	0X2);
 	set_cmt	(0X14760,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
@@ -4770,18 +4777,25 @@ static Functions_0(void) {
 	set_func_flags(0X13BD0,0x14c1);
 	add_func    (0X13BD3,0X13DD1);
 	set_func_flags(0X13BD3,0x1403);
+	set_func_cmt(0X13BD3,	"blit a monster / object sprite into the 3D view from its object descriptor ([bp+8]) -- rtm_FE46 / rtm_FE2E.", 1);
 	add_func    (0X13DD1,0X13E6E);
 	set_func_flags(0X13DD1,0x1403);
+	set_func_cmt(0X13DD1,	"the shared wall/surface draw primitive (rtm_FE2A) that all the wall-band drawers call.", 1);
 	add_func    (0X13E6E,0X14166);
 	set_func_flags(0X13E6E,0x1403);
+	set_func_cmt(0X13E6E,	"bmDUNG top level: draw the first-person corridor view -- clear (rtm_FE2C), loop over the depth bands (ds:1F5Ah) calling the wall-band + sprite drawers, then present. Called each turn from dunMain / processTileFeature. ~0.75 KB.", 1);
 	add_func    (0X14166,0X1427C);
 	set_func_flags(0X14166,0x1403);
+	set_func_cmt(0X14166,	"draw the nearest wall-projection band (-> blitViewCell). TENTATIVE (which band).", 1);
 	add_func    (0X1427C,0X1430E);
 	set_func_flags(0X1427C,0x1403);
+	set_func_cmt(0X1427C,	"draw the middle wall band. TENTATIVE.", 1);
 	add_func    (0X1430E,0X14365);
 	set_func_flags(0X1430E,0x1403);
+	set_func_cmt(0X1430E,	"draw the far wall band. TENTATIVE.", 1);
 	add_func    (0X14365,0X14443);
 	set_func_flags(0X14365,0x1403);
+	set_func_cmt(0X14365,	"draw the floor / ceiling planes of the view. TENTATIVE.", 1);
 	add_func    (0X14443,0X14448);
 	set_func_flags(0X14443,0x14c1);
 	add_func    (0X14463,0X14466);

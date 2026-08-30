@@ -2628,6 +2628,7 @@ static Bytes_0(void) {
 	create_insn	(0X1760A);
 	set_name	(0X1760A,	"j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0");
 	create_insn	(0X1760D);
+	set_name	(0X1760D,	"traceCombatRay");
 	create_insn	(0X17658);
 	create_insn	(0X17666);
 	create_insn	(x=0X17678);
@@ -2655,6 +2656,7 @@ static Bytes_0(void) {
 	create_insn	(0X17734);
 	set_name	(0X17734,	"j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0");
 	create_insn	(0X17737);
+	set_name	(0X17737,	"stepLineOfSight");
 	set_cmt	(0X17758,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 	create_insn	(0X17761);
 	set_cmt	(0X17788,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
@@ -2680,6 +2682,7 @@ static Bytes_0(void) {
 	create_insn	(0X17879);
 	set_name	(0X17879,	"j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0");
 	create_insn	(0X1787C);
+	set_name	(0X1787C,	"sightBlockedBy");
 	create_insn	(0X178A6);
 	create_insn	(0X178AE);
 	create_insn	(0X178B7);
@@ -2696,6 +2699,7 @@ static Bytes_0(void) {
 	create_insn	(0X1796A);
 	set_name	(0X1796A,	"j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0");
 	create_insn	(0X1796D);
+	set_name	(0X1796D,	"refreshTileGraphic");
 	set_cmt	(0X17988,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 	set_cmt	(0X17990,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 	create_insn	(0X17990);
@@ -2748,6 +2752,7 @@ static Bytes_0(void) {
 	create_insn	(0X17C85);
 	set_name	(0X17C85,	"j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0");
 	create_insn	(0X17C88);
+	set_name	(0X17C88,	"placeNpcSprite");
 	set_cmt	(0X17C98,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 	create_insn	(0X17CA1);
 	create_insn	(0X17CB0);
@@ -2768,6 +2773,7 @@ static Bytes_0(void) {
 	set_name	(0X17D8B,	"j_j_j_j_j_j_j_j_j_j_j_rt_ED_0");
 	set_cmt	(0X17D8E,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 	create_insn	(0X17D8E);
+	set_name	(0X17D8E,	"drawViewFrame");
 	set_name	(0X17D9E,	"j_rt_F4_1");
 	set_name	(0X17DA3,	"nullsub_51");
 	create_insn	(0X17DA6);
@@ -2780,6 +2786,7 @@ static Bytes_0(void) {
 	create_insn	(0X17DB9);
 	set_name	(0X17DB9,	"j_j_j_j_j_j_j_j_j_rt_ED_0");
 	create_insn	(0X17DBC);
+	set_name	(0X17DBC,	"combatRayResult");
 	create_insn	(0X17DE4);
 	create_insn	(x=0X17DED);
 	op_hex		(x,	1);
@@ -2928,6 +2935,7 @@ static Bytes_0(void) {
 	create_insn	(0X183FC);
 	set_name	(0X183FC,	"j_j_j_rt_ED_0");
 	create_insn	(0X183FF);
+	set_name	(0X183FF,	"tileAtOffset");
 	set_cmt	(0X18407,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 	set_name	(0X18433,	"nullsub_59");
 	create_insn	(0X18436);
@@ -2936,9 +2944,6 @@ static Bytes_0(void) {
 	set_name	(0X18439,	"dirBetween");
 	set_cmt	(0X18454,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 	set_cmt	(0X18457,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
-	set_cmt	(0X18460,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
-	set_cmt	(0X18463,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
-	set_cmt	(0X18473,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 }
 
 //------------------------------------------------------------------------
@@ -2948,6 +2953,9 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X18460,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
+	set_cmt	(0X18463,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
+	set_cmt	(0X18473,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 	set_cmt	(0X18483,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 	create_insn	(0X18492);
 	create_insn	(0X1849A);
@@ -5161,6 +5169,15 @@ static Bytes_1(void) {
 	set_name	(0X18A64,	"rt_FE27");
 	create_byte	(0X18A66);
 	make_array	(0X18A66,	0X2);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X18A68,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
 	create_insn	(x=0X18A68);
 	op_hex		(x,	0);
@@ -5171,15 +5188,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X18A6C);
 	op_hex		(x,	0);
 	set_name	(0X18A6C,	"rt_FE29");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_byte	(0X18A6E);
 	make_array	(0X18A6E,	0X2);
 	set_cmt	(0X18A70,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
@@ -6290,16 +6298,20 @@ static Functions_0(void) {
 	set_func_cmt(0X174CF,	"given a direction (0..3) and a coord pair, produce the coord one step that way (and an in-bounds flag). Called from doWalk.", 1);
 	add_func    (0X1760D,0X176DC);
 	set_func_flags(0X1760D,0x1403);
+	set_func_cmt(0X1760D,	"step the traceCombatLine ray one tile (-> refreshTileGraphic). TENTATIVE.", 1);
 	add_func    (0X176DC,0X17724);
 	set_func_flags(0X176DC,0x1403);
 	add_func    (0X17724,0X17737);
 	set_func_flags(0X17724,0x1403);
 	add_func    (0X17737,0X1787C);
 	set_func_flags(0X17737,0x1403);
+	set_func_cmt(0X17737,	"one outward step of the scanLineOfSight ray -- advances the coord (via dirBetween) and tests the tile.", 1);
 	add_func    (0X1787C,0X1796D);
 	set_func_flags(0X1787C,0x1403);
+	set_func_cmt(0X1787C,	"the second scanLineOfSight helper -- classify what stopped the ray (wall / actor / edge). TENTATIVE.", 1);
 	add_func    (0X1796D,0X179D4);
 	set_func_flags(0X1796D,0x1403);
+	set_func_cmt(0X1796D,	"redraw a single interior tile (rtm_FE19). The shared low-level blit -- called from moveActor, walkBlocked, traceCombatLine, robCommand, speakCommand and the ray helpers.", 1);
 	add_func    (0X179D4,0X17A3F);
 	set_func_flags(0X179D4,0x1403);
 	set_func_cmt(0X179D4,	"scan the interior map array for the first non-empty tile (!= 0xFF). Used by the NPC / dialog code.", 1);
@@ -6311,12 +6323,15 @@ static Functions_0(void) {
 	set_func_cmt(0X17BAE,	"step outward from a position calling tileAt, accumulating in ds:262Ch -- line-of-sight / nearest-blocker scan. Called from doWalk, jailScene, the NPC code.", 1);
 	add_func    (0X17C88,0X17D8E);
 	set_func_flags(0X17C88,0x1403);
+	set_func_cmt(0X17C88,	"position an NPC sprite in the view (rtm_C8 camera + rtm_11). Called from npcRecurringDialog. TENTATIVE.", 1);
 	add_func    (0X17D8E,0X17DA9);
 	set_func_flags(0X17D8E,0x1403);
+	set_func_cmt(0X17D8E,	"draw the interior-view border / frame (rtm_FE1E). Called from townServiceDispatch and robberyEvent. TENTATIVE.", 1);
 	add_func    (0X17DA9,0X17DBC);
 	set_func_flags(0X17DA9,0x1403);
 	add_func    (0X17DBC,0X17E11);
 	set_func_flags(0X17DBC,0x1403);
+	set_func_cmt(0X17DBC,	"resolve what the combat ray hit (rtm_DF). Called from traceCombatLine. TENTATIVE.", 1);
 	add_func    (0X17E11,0X18051);
 	set_func_flags(0X17E11,0x1403);
 	set_func_cmt(0X17E11,	"move the actor one tile and redraw: erase (drawActor 0), update position (via dirBetween / updateTile), draw (drawActor 1). Called from stepByDirection.", 1);
@@ -6333,6 +6348,7 @@ static Functions_0(void) {
 	set_func_cmt(0X181A5,	"combat: trace from the attacker along a direction (tileAt per step, rtm_FE18 to draw), set ds:1F02h/1F04h. Called from fightGuard.", 1);
 	add_func    (0X183FF,0X18439);
 	set_func_flags(0X183FF,0x1403);
+	set_func_cmt(0X183FF,	"tileAt wrapper that first applies a coord offset. TENTATIVE.", 1);
 	add_func    (0X18439,0X18548);
 	set_func_flags(0X18439,0x1403);
 	set_func_cmt(0X18439,	"compute the step direction (0..3, or 3 = none) from one coord to another via the map.", 1);

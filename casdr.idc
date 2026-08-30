@@ -1681,6 +1681,7 @@ static Bytes_0(void) {
 	create_insn	(0X1573A);
 	set_name	(0X1573A,	"j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0");
 	create_insn	(0X1573D);
+	set_name	(0X1573D,	"traceCombatRay");
 	create_insn	(0X15788);
 	create_insn	(0X15796);
 	create_insn	(x=0X157A8);
@@ -1704,6 +1705,7 @@ static Bytes_0(void) {
 	create_insn	(0X15864);
 	set_name	(0X15864,	"j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0");
 	create_insn	(0X15867);
+	set_name	(0X15867,	"stepLineOfSight");
 	create_insn	(0X15891);
 	create_insn	(0X158C1);
 	create_insn	(0X158EC);
@@ -1719,6 +1721,7 @@ static Bytes_0(void) {
 	create_insn	(0X159A9);
 	set_name	(0X159A9,	"j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0");
 	create_insn	(0X159AC);
+	set_name	(0X159AC,	"sightBlockedBy");
 	create_insn	(0X159D6);
 	create_insn	(0X159DE);
 	create_insn	(0X159E7);
@@ -1735,6 +1738,7 @@ static Bytes_0(void) {
 	create_insn	(0X15A9A);
 	set_name	(0X15A9A,	"j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0");
 	create_insn	(0X15A9D);
+	set_name	(0X15A9D,	"refreshTileGraphic");
 	create_insn	(0X15AC0);
 	create_insn	(x=0X15AC9);
 	op_hex		(x,	1);
@@ -1780,6 +1784,7 @@ static Bytes_0(void) {
 	create_insn	(0X15DB5);
 	set_name	(0X15DB5,	"j_j_j_j_j_j_j_j_j_j_j_j_rt_ED_0");
 	create_insn	(0X15DB8);
+	set_name	(0X15DB8,	"placeNpcSprite");
 	create_insn	(0X15DD1);
 	create_insn	(0X15DE0);
 	create_insn	(0X15DE9);
@@ -1796,6 +1801,7 @@ static Bytes_0(void) {
 	create_insn	(0X15EBB);
 	set_name	(0X15EBB,	"j_j_j_j_j_j_j_j_j_j_j_rt_ED_0");
 	create_insn	(0X15EBE);
+	set_name	(0X15EBE,	"drawViewFrame");
 	set_name	(0X15ECE,	"j_rt_F4_1");
 	set_name	(0X15ED3,	"nullsub_50");
 	create_insn	(0X15ED6);
@@ -1806,6 +1812,7 @@ static Bytes_0(void) {
 	create_insn	(0X15EE9);
 	set_name	(0X15EE9,	"j_j_j_j_j_j_j_j_j_rt_ED_0");
 	create_insn	(0X15EEC);
+	set_name	(0X15EEC,	"combatRayResult");
 	create_insn	(0X15F14);
 	create_insn	(x=0X15F1D);
 	op_hex		(x,	1);
@@ -1925,6 +1932,7 @@ static Bytes_0(void) {
 	create_insn	(0X1652C);
 	set_name	(0X1652C,	"j_j_j_rt_ED_0");
 	create_insn	(0X1652F);
+	set_name	(0X1652F,	"tileAtOffset");
 	set_name	(0X16563,	"nullsub_58");
 	create_insn	(0X16566);
 	set_name	(0X16566,	"j_j_rt_ED_0");
@@ -3257,13 +3265,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X169A0);
 	op_hex		(x,	0);
 	set_name	(0X169A0,	"rt_FF52");
-	create_byte	(0X169A2);
-	make_array	(0X169A2,	0X2);
-	set_cmt	(0X169A4,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X169A4,	"-> rtm_FF53  (leglib seg004:0x219ea)",	1);
-	create_insn	(x=0X169A4);
-	op_hex		(x,	0);
-	set_name	(0X169A4,	"rt_FF53");
 }
 
 //------------------------------------------------------------------------
@@ -3273,6 +3274,13 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_byte	(0X169A2);
+	make_array	(0X169A2,	0X2);
+	set_cmt	(0X169A4,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
+	set_cmt	(0X169A4,	"-> rtm_FF53  (leglib seg004:0x219ea)",	1);
+	create_insn	(x=0X169A4);
+	op_hex		(x,	0);
+	set_name	(0X169A4,	"rt_FF53");
 	create_byte	(0X169A6);
 	make_array	(0X169A6,	0X2);
 	set_cmt	(0X169B0,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
@@ -5336,16 +5344,20 @@ static Functions_0(void) {
 	set_func_cmt(0X155FF,	"given a direction (0..3) and a coord pair, produce the coord one step that way (and an in-bounds flag). Called from doWalk.", 1);
 	add_func    (0X1573D,0X1580C);
 	set_func_flags(0X1573D,0x1403);
+	set_func_cmt(0X1573D,	"step the traceCombatLine ray one tile (-> refreshTileGraphic). TENTATIVE.", 1);
 	add_func    (0X1580C,0X15854);
 	set_func_flags(0X1580C,0x1403);
 	add_func    (0X15854,0X15867);
 	set_func_flags(0X15854,0x1403);
 	add_func    (0X15867,0X159AC);
 	set_func_flags(0X15867,0x1403);
+	set_func_cmt(0X15867,	"one outward step of the scanLineOfSight ray -- advances the coord (via dirBetween) and tests the tile.", 1);
 	add_func    (0X159AC,0X15A9D);
 	set_func_flags(0X159AC,0x1403);
+	set_func_cmt(0X159AC,	"the second scanLineOfSight helper -- classify what stopped the ray (wall / actor / edge). TENTATIVE.", 1);
 	add_func    (0X15A9D,0X15B04);
 	set_func_flags(0X15A9D,0x1403);
+	set_func_cmt(0X15A9D,	"redraw a single interior tile (rtm_FE19). The shared low-level blit -- called from moveActor, walkBlocked, traceCombatLine, robCommand, speakCommand and the ray helpers.", 1);
 	add_func    (0X15B04,0X15B6F);
 	set_func_flags(0X15B04,0x1403);
 	set_func_cmt(0X15B04,	"scan the interior map array for the first non-empty tile (!= 0xFF). Used by the NPC / dialog code.", 1);
@@ -5357,12 +5369,15 @@ static Functions_0(void) {
 	set_func_cmt(0X15CDE,	"step outward from a position calling tileAt, accumulating in ds:262Ch -- line-of-sight / nearest-blocker scan. Called from doWalk, jailScene, the NPC code.", 1);
 	add_func    (0X15DB8,0X15EBE);
 	set_func_flags(0X15DB8,0x1403);
+	set_func_cmt(0X15DB8,	"position an NPC sprite in the view (rtm_C8 camera + rtm_11). Called from npcRecurringDialog. TENTATIVE.", 1);
 	add_func    (0X15EBE,0X15ED9);
 	set_func_flags(0X15EBE,0x1403);
+	set_func_cmt(0X15EBE,	"draw the interior-view border / frame (rtm_FE1E). Called from townServiceDispatch and robberyEvent. TENTATIVE.", 1);
 	add_func    (0X15ED9,0X15EEC);
 	set_func_flags(0X15ED9,0x1403);
 	add_func    (0X15EEC,0X15F41);
 	set_func_flags(0X15EEC,0x1403);
+	set_func_cmt(0X15EEC,	"resolve what the combat ray hit (rtm_DF). Called from traceCombatLine. TENTATIVE.", 1);
 	add_func    (0X15F41,0X16181);
 	set_func_flags(0X15F41,0x1403);
 	set_func_cmt(0X15F41,	"move the actor one tile and redraw: erase (drawActor 0), update position (via dirBetween / updateTile), draw (drawActor 1). Called from stepByDirection.", 1);
@@ -5379,6 +5394,7 @@ static Functions_0(void) {
 	set_func_cmt(0X162D5,	"combat: trace from the attacker along a direction (tileAt per step, rtm_FE18 to draw), set ds:1F02h/1F04h. Called from fightGuard.", 1);
 	add_func    (0X1652F,0X16569);
 	set_func_flags(0X1652F,0x1403);
+	set_func_cmt(0X1652F,	"tileAt wrapper that first applies a coord offset. TENTATIVE.", 1);
 	add_func    (0X16569,0X16678);
 	set_func_flags(0X16569,0x1403);
 	set_func_cmt(0X16569,	"compute the step direction (0..3, or 3 = none) from one coord to another via the map.", 1);

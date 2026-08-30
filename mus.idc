@@ -1024,6 +1024,7 @@ static Bytes_0(void) {
 	create_insn	(0X12E60);
 	set_name	(0X12E60,	"seg001_entry");
 	create_insn	(0X12E63);
+	set_name	(0X12E63,	"blitViewCell");
 	set_cmt	(0X12E70,	"B'\\n\\x01H'=\\x01N'#\\x16T'@\\nWOULD YOU LIKE TO GO\\x03n'TO \\xf4\\x11v'\\n\\nDO",	0);
 	create_insn	(x=0X12E70);
 	op_hex		(x,	1);
@@ -1035,6 +1036,7 @@ static Bytes_0(void) {
 	create_insn	(0X12EFD);
 	set_name	(0X12EFD,	"j_j_j_j_j_j_rt_ED_0");
 	create_insn	(0X12F00);
+	set_name	(0X12F00,	"renderExhibitView");
 	set_name	(0X12F08,	"j_rt_FE2C_3");
 	set_cmt	(0X12F22,	"B'\\n\\x01H'=\\x01N'#\\x16T'@\\nWOULD YOU LIKE TO GO\\x03n'TO \\xf4\\x11v'\\n\\nDO",	0);
 	create_insn	(x=0X12F22);
@@ -1059,6 +1061,7 @@ static Bytes_0(void) {
 	create_insn	(0X130EB);
 	set_name	(0X130EB,	"j_j_j_j_j_rt_ED_0");
 	create_insn	(0X130EE);
+	set_name	(0X130EE,	"drawViewSprite");
 	set_cmt	(0X130FB,	"B'\\n\\x01H'=\\x01N'#\\x16T'@\\nWOULD YOU LIKE TO GO\\x03n'TO \\xf4\\x11v'\\n\\nDO",	0);
 	create_insn	(x=0X130FB);
 	op_hex		(x,	1);
@@ -1090,6 +1093,7 @@ static Bytes_0(void) {
 	create_insn	(0X1327A);
 	set_name	(0X1327A,	"j_j_j_j_rt_ED_0");
 	create_insn	(0X1327D);
+	set_name	(0X1327D,	"drawViewWallBandNear");
 	create_insn	(0X13291);
 	create_insn	(0X13299);
 	set_cmt	(0X132AC,	"B'\\n\\x01H'=\\x01N'#\\x16T'@\\nWOULD YOU LIKE TO GO\\x03n'TO \\xf4\\x11v'\\n\\nDO",	0);
@@ -1099,6 +1103,7 @@ static Bytes_0(void) {
 	create_insn	(0X1330C);
 	set_name	(0X1330C,	"j_j_j_rt_ED_0");
 	create_insn	(0X1330F);
+	set_name	(0X1330F,	"drawViewWallBandMid");
 	set_cmt	(0X13336,	"B'\\n\\x01H'=\\x01N'#\\x16T'@\\nWOULD YOU LIKE TO GO\\x03n'TO \\xf4\\x11v'\\n\\nDO",	0);
 	create_insn	(x=0X13336);
 	op_hex		(x,	1);
@@ -1108,6 +1113,7 @@ static Bytes_0(void) {
 	create_insn	(0X13363);
 	set_name	(0X13363,	"j_j_rt_ED_0");
 	create_insn	(0X13366);
+	set_name	(0X13366,	"drawViewWallBandFar");
 	create_insn	(0X13379);
 	set_cmt	(0X1337E,	"B'\\n\\x01H'=\\x01N'#\\x16T'@\\nWOULD YOU LIKE TO GO\\x03n'TO \\xf4\\x11v'\\n\\nDO",	0);
 	create_insn	(x=0X1337E);
@@ -2500,13 +2506,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X13812);
 	op_hex		(x,	0);
 	set_name	(0X13812,	"rt_12");
-	create_byte	(0X13814);
-	set_cmt	(0X13815,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X13815,	"-> rtm_15  (leglib seg003:0x1ca00)",	1);
-	create_insn	(x=0X13815);
-	op_hex		(x,	0);
-	set_name	(0X13815,	"rt_15");
-	create_byte	(0X13817);
 }
 
 //------------------------------------------------------------------------
@@ -2516,6 +2515,13 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_byte	(0X13814);
+	set_cmt	(0X13815,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
+	set_cmt	(0X13815,	"-> rtm_15  (leglib seg003:0x1ca00)",	1);
+	create_insn	(x=0X13815);
+	op_hex		(x,	0);
+	set_name	(0X13815,	"rt_15");
+	create_byte	(0X13817);
 	set_cmt	(0X13818,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
 	set_cmt	(0X13818,	"-> rtm_18  (leglib seg003:0x1e75b)",	1);
 	create_insn	(x=0X13818);
@@ -4478,16 +4484,22 @@ static Functions_0(void) {
 	set_func_flags(0X12E60,0x14c1);
 	add_func    (0X12E63,0X12F00);
 	set_func_flags(0X12E63,0x1403);
+	set_func_cmt(0X12E63,	"the shared wall/surface draw primitive (rtm_FE2A) -- byte-for-byte the same as DUN's blitViewCell.", 1);
 	add_func    (0X12F00,0X130EE);
 	set_func_flags(0X12F00,0x1403);
+	set_func_cmt(0X12F00,	"bmMUSDUNG top level: draw the first-person view for a dungeon-style exhibit room -- clear (rtm_FE2C), wall bands + sprites, present. Same design as DUN.EXE's renderDungeonView. ~0.5 KB.", 1);
 	add_func    (0X130EE,0X1327D);
 	set_func_flags(0X130EE,0x1403);
+	set_func_cmt(0X130EE,	"blit a sprite into the 3D view (rtm_FE2B).", 1);
 	add_func    (0X1327D,0X1330F);
 	set_func_flags(0X1327D,0x1403);
+	set_func_cmt(0X1327D,	"nearest wall band. TENTATIVE.", 1);
 	add_func    (0X1330F,0X13366);
 	set_func_flags(0X1330F,0x1403);
+	set_func_cmt(0X1330F,	"middle wall band. TENTATIVE.", 1);
 	add_func    (0X13366,0X134BD);
 	set_func_flags(0X13366,0x1403);
+	set_func_cmt(0X13366,	"far wall band. TENTATIVE.", 1);
 	add_func    (0X134BD,0X134C2);
 	set_func_flags(0X134BD,0x14c1);
 	add_func    (0X134E3,0X134E6);

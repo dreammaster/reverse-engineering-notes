@@ -200,7 +200,7 @@ loc_10105:                              ; CODE XREF: dunMain+C7↑j
                 push    ax
                 mov     ax, 1AE4h
                 push    ax
-                call    sub_13E6E
+                call    renderDungeonView ; bmDUNG top level: draw the first-person corridor view -- clear (rtm_FE2C), loop over the depth bands (ds:1F5Ah) calling the wall-band + sprite drawers, then present. Called each turn from dunMain / processTileFeature. ~0.75 KB.
 ; ---------------------------------------------------------------------------
 
 loc_10112:                              ; CODE XREF: dunMain+C9↑j
@@ -223,7 +223,7 @@ loc_10128:                              ; CODE XREF: dunMain+EA↑j
                 push    ax
                 mov     ax, 1AE4h
                 push    ax
-                call    sub_13E6E
+                call    renderDungeonView ; bmDUNG top level: draw the first-person corridor view -- clear (rtm_FE2C), loop over the depth bands (ds:1F5Ah) calling the wall-band + sprite drawers, then present. Called each turn from dunMain / processTileFeature. ~0.75 KB.
 ; ---------------------------------------------------------------------------
 
 loc_10135:                              ; CODE XREF: dunMain+EC↑j
@@ -4689,7 +4689,7 @@ loc_127C4:
                 push    ax
                 mov     ax, 1AE4h
                 push    ax
-                call    sub_13E6E
+                call    renderDungeonView ; bmDUNG top level: draw the first-person corridor view -- clear (rtm_FE2C), loop over the depth bands (ds:1F5Ah) calling the wall-band + sprite drawers, then present. Called each turn from dunMain / processTileFeature. ~0.75 KB.
 ; ---------------------------------------------------------------------------
 
 j_rt_FE5B_19:                           ; -> screenRefresh  (leglib seg008:0x28861)
@@ -8410,9 +8410,10 @@ a2FL            db '2*F"L"',0
 
 ; =============== S U B R O U T I N E =======================================
 
+; blit a monster / object sprite into the 3D view from its object descriptor ([bp+8]) -- rtm_FE46 / rtm_FE2E.
 ; Attributes: noreturn
 
-sub_13BD3       proc far                ; CODE XREF: sub_13E6E+2B7↓P
+drawViewSprite  proc far                ; CODE XREF: renderDungeonView+2B7↓P
                 mov     cx, 22h ; '"'
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -8433,10 +8434,10 @@ loc_13BDB:
                 jmp     loc_13C05
 ; ---------------------------------------------------------------------------
 
-loc_13C01:                              ; CODE XREF: sub_13BD3+29↑j
+loc_13C01:                              ; CODE XREF: drawViewSprite+29↑j
                 add     word ptr [bp-0Eh], 0FFFAh
 
-loc_13C05:                              ; CODE XREF: sub_13BD3+2B↑j
+loc_13C05:                              ; CODE XREF: drawViewSprite+2B↑j
                 mov     ax, [bp-0Eh]
                 shl     ax, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
                 add     ax, 190h
@@ -8462,7 +8463,7 @@ loc_13C05:                              ; CODE XREF: sub_13BD3+2B↑j
                 jmp     loc_13C60
 ; ---------------------------------------------------------------------------
 
-loc_13C44:                              ; CODE XREF: sub_13BD3+6C↑j
+loc_13C44:                              ; CODE XREF: drawViewSprite+6C↑j
                 mov     word ptr [bp-16h], 0B3h
                 mov     word ptr [bp-18h], 38h ; '8'
                 mov     word ptr [bp-1Ah], 23h ; '#'
@@ -8471,13 +8472,13 @@ loc_13C44:                              ; CODE XREF: sub_13BD3+6C↑j
                 jmp     loc_13CFD
 ; ---------------------------------------------------------------------------
 
-loc_13C60:                              ; CODE XREF: sub_13BD3+6E↑j
+loc_13C60:                              ; CODE XREF: drawViewSprite+6E↑j
                 cmp     word ptr [bp-10h], 1 ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
                 jz      short loc_13C69
                 jmp     loc_13C85
 ; ---------------------------------------------------------------------------
 
-loc_13C69:                              ; CODE XREF: sub_13BD3+91↑j
+loc_13C69:                              ; CODE XREF: drawViewSprite+91↑j
                 mov     word ptr [bp-16h], 0C3h
                 mov     word ptr [bp-18h], 48h ; 'H'
                 mov     word ptr [bp-1Ah], 4Bh ; 'K'
@@ -8486,13 +8487,13 @@ loc_13C69:                              ; CODE XREF: sub_13BD3+91↑j
                 jmp     loc_13CFD
 ; ---------------------------------------------------------------------------
 
-loc_13C85:                              ; CODE XREF: sub_13BD3+93↑j
+loc_13C85:                              ; CODE XREF: drawViewSprite+93↑j
                 cmp     word ptr [bp-10h], 2
                 jz      short loc_13C8E
                 jmp     loc_13CAA
 ; ---------------------------------------------------------------------------
 
-loc_13C8E:                              ; CODE XREF: sub_13BD3+B6↑j
+loc_13C8E:                              ; CODE XREF: drawViewSprite+B6↑j
                 mov     word ptr [bp-16h], 0CCh
                 mov     word ptr [bp-18h], 50h ; 'P'
                 mov     word ptr [bp-1Ah], 73h ; 's'
@@ -8501,13 +8502,13 @@ loc_13C8E:                              ; CODE XREF: sub_13BD3+B6↑j
                 jmp     loc_13CFD
 ; ---------------------------------------------------------------------------
 
-loc_13CAA:                              ; CODE XREF: sub_13BD3+B8↑j
+loc_13CAA:                              ; CODE XREF: drawViewSprite+B8↑j
                 cmp     word ptr [bp-10h], 3
                 jz      short loc_13CB3
                 jmp     loc_13CCF
 ; ---------------------------------------------------------------------------
 
-loc_13CB3:                              ; CODE XREF: sub_13BD3+DB↑j
+loc_13CB3:                              ; CODE XREF: drawViewSprite+DB↑j
                 mov     word ptr [bp-16h], 0D0h
                 mov     word ptr [bp-18h], 52h ; 'R'
                 mov     word ptr [bp-1Ah], 9Bh
@@ -8516,13 +8517,13 @@ loc_13CB3:                              ; CODE XREF: sub_13BD3+DB↑j
                 jmp     loc_13CFD
 ; ---------------------------------------------------------------------------
 
-loc_13CCF:                              ; CODE XREF: sub_13BD3+DD↑j
+loc_13CCF:                              ; CODE XREF: drawViewSprite+DD↑j
                 cmp     word ptr [bp-10h], 4
                 jz      short loc_13CD8
                 jmp     loc_13CF4
 ; ---------------------------------------------------------------------------
 
-loc_13CD8:                              ; CODE XREF: sub_13BD3+100↑j
+loc_13CD8:                              ; CODE XREF: drawViewSprite+100↑j
                 mov     word ptr [bp-16h], 0D3h
                 mov     word ptr [bp-18h], 56h ; 'V'
                 mov     word ptr [bp-1Ah], 0C3h
@@ -8531,22 +8532,22 @@ loc_13CD8:                              ; CODE XREF: sub_13BD3+100↑j
                 jmp     loc_13CFD
 ; ---------------------------------------------------------------------------
 
-loc_13CF4:                              ; CODE XREF: sub_13BD3+102↑j
+loc_13CF4:                              ; CODE XREF: drawViewSprite+102↑j
                 mov     ax, 27h ; '''
                 push    ax
                 call    far ptr rt_C8   ; -> rtm_C8  (leglib seg003:0x138e2)
 
-loc_13CFD:                              ; CODE XREF: sub_13BD3+8A↑j
-                                        ; sub_13BD3+AF↑j ...
+loc_13CFD:                              ; CODE XREF: drawViewSprite+8A↑j
+                                        ; drawViewSprite+AF↑j ...
                 cmp     word ptr [bp-0Eh], 0
                 jz      short loc_13D06
                 jmp     loc_13D0A
 ; ---------------------------------------------------------------------------
 
-loc_13D06:                              ; CODE XREF: sub_13BD3+12E↑j
+loc_13D06:                              ; CODE XREF: drawViewSprite+12E↑j
                 add     word ptr [bp-18h], 0FFFAh
 
-loc_13D0A:                              ; CODE XREF: sub_13BD3+130↑j
+loc_13D0A:                              ; CODE XREF: drawViewSprite+130↑j
                 mov     ax, [bp-1Ah]
                 shl     ax, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
                 mov     bx, ax
@@ -8576,7 +8577,7 @@ loc_13D0A:                              ; CODE XREF: sub_13BD3+130↑j
 ; ---------------------------------------------------------------------------
                 nop
 
-loc_13D52:                              ; CODE XREF: sub_13BD3+1C0↓j
+loc_13D52:                              ; CODE XREF: drawViewSprite+1C0↓j
                 mov     bx, [bp-24h]
                 shl     bx, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
                 mov     si, 1E58h
@@ -8599,7 +8600,7 @@ loc_13D52:                              ; CODE XREF: sub_13BD3+1C0↓j
                 mov     ax, [bp-2Ch]
                 inc     ax
 
-loc_13D8D:                              ; CODE XREF: sub_13BD3+17B↑j
+loc_13D8D:                              ; CODE XREF: drawViewSprite+17B↑j
                 mov     [bp-2Ch], ax
                 cmp     ax, [bp-20h]
                 jle     short loc_13D52
@@ -8636,15 +8637,16 @@ nullsub_37:
 
 j_j_j_j_j_j_j_rt_ED_0:                  ; CODE XREF: seg001_entry↑j
                 jmp     j_j_j_j_j_j_rt_ED_0
-sub_13BD3       endp
+drawViewSprite  endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; the shared wall/surface draw primitive (rtm_FE2A) that all the wall-band drawers call.
 ; Attributes: noreturn
 
-sub_13DD1       proc far                ; CODE XREF: sub_14166+66↓P
-                                        ; sub_14166+9D↓P ...
+blitViewCell    proc far                ; CODE XREF: drawViewWallBandNear+66↓P
+                                        ; drawViewWallBandNear+9D↓P ...
                 mov     cx, 0Eh
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -8686,7 +8688,7 @@ loc_13DD9:
 ; ---------------------------------------------------------------------------
                 nop
 
-loc_13E36:                              ; CODE XREF: sub_13DD1+90↓j
+loc_13E36:                              ; CODE XREF: blitViewCell+90↓j
                 push    word ptr [bp-10h]
                 push    word ptr [bp-14h]
                 push    word ptr [bp-0Eh]
@@ -8700,7 +8702,7 @@ loc_13E36:                              ; CODE XREF: sub_13DD1+90↓j
                 mov     ax, [bp-18h]
                 inc     ax
 
-loc_13E5B:                              ; CODE XREF: sub_13DD1+61↑j
+loc_13E5B:                              ; CODE XREF: blitViewCell+61↑j
                 mov     [bp-18h], ax
                 cmp     ax, [bp-0Ch]
                 jle     short loc_13E36
@@ -8710,16 +8712,17 @@ nullsub_38:
                 retf    6
 ; ---------------------------------------------------------------------------
 
-j_j_j_j_j_j_rt_ED_0:                    ; CODE XREF: sub_13BD3:j_j_j_j_j_j_j_rt_ED_0↑j
+j_j_j_j_j_j_rt_ED_0:                    ; CODE XREF: drawViewSprite:j_j_j_j_j_j_j_rt_ED_0↑j
                 jmp     j_j_j_j_j_rt_ED_0
-sub_13DD1       endp
+blitViewCell    endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; bmDUNG top level: draw the first-person corridor view -- clear (rtm_FE2C), loop over the depth bands (ds:1F5Ah) calling the wall-band + sprite drawers, then present. Called each turn from dunMain / processTileFeature. ~0.75 KB.
 ; Attributes: noreturn
 
-sub_13E6E       proc far                ; CODE XREF: dunMain+D4↑P
+renderDungeonView proc far              ; CODE XREF: dunMain+D4↑P
                                         ; dunMain+F7↑P ...
                 mov     cx, 26h ; '&'
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
@@ -8776,7 +8779,7 @@ loc_13E94:
 ; ---------------------------------------------------------------------------
                 nop
 
-loc_13EF4:                              ; CODE XREF: sub_13E6E+162↓j
+loc_13EF4:                              ; CODE XREF: renderDungeonView+162↓j
                 mov     ax, [bp-16h]
                 add     ax, 77h ; 'w'
                 mov     [bp-1Ah], ax
@@ -8785,20 +8788,20 @@ loc_13EF4:                              ; CODE XREF: sub_13E6E+162↓j
                 jl      short loc_13F05
                 dec     cx
 
-loc_13F05:                              ; CODE XREF: sub_13E6E+94↑j
+loc_13F05:                              ; CODE XREF: renderDungeonView+94↑j
                 cmp     ax, 7
                 mov     dx, 0
                 jge     short loc_13F0E
                 dec     dx
 
-loc_13F0E:                              ; CODE XREF: sub_13E6E+9D↑j
+loc_13F0E:                              ; CODE XREF: renderDungeonView+9D↑j
                 and     dx, cx
                 and     dx, dx
                 jnz     short loc_13F17
                 jmp     loc_13F40
 ; ---------------------------------------------------------------------------
 
-loc_13F17:                              ; CODE XREF: sub_13E6E+A4↑j
+loc_13F17:                              ; CODE XREF: renderDungeonView+A4↑j
                 mov     cx, [bp-14h]
                 shl     cx, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
                 add     cx, 12h
@@ -8815,7 +8818,7 @@ loc_13F17:                              ; CODE XREF: sub_13E6E+A4↑j
                 push    ax
                 call    far ptr rt_FE2B ; -> rtm_FE2B  (leglib seg008:0x289a9)
 
-loc_13F40:                              ; CODE XREF: sub_13E6E+A6↑j
+loc_13F40:                              ; CODE XREF: renderDungeonView+A6↑j
                 mov     bx, [bp-0Eh]
                 add     bx, [bp-12h]
                 mov     es, word ptr ds:101h
@@ -8845,50 +8848,50 @@ loc_13F40:                              ; CODE XREF: sub_13E6E+A6↑j
                 push    ax
                 lea     ax, [bp-14h]
                 push    ax
-                call    sub_14166
+                call    drawViewWallBandNear ; draw the nearest wall-projection band (-> blitViewCell). TENTATIVE (which band).
                 add     word ptr [bp-14h], 0Ah
                 cmp     word ptr [bp-16h], 0
                 jle     short loc_13FA2
                 jmp     loc_13FD3
 ; ---------------------------------------------------------------------------
 
-loc_13FA2:                              ; CODE XREF: sub_13E6E+12F↑j
+loc_13FA2:                              ; CODE XREF: renderDungeonView+12F↑j
                 lea     ax, [bp-1Ch]
                 push    ax
                 lea     ax, [bp-14h]
                 push    ax
-                call    sub_14365
+                call    drawViewFloorCeiling ; draw the floor / ceiling planes of the view. TENTATIVE.
                 add     word ptr [bp-14h], 7
                 lea     ax, [bp-1Eh]
                 push    ax
                 lea     ax, [bp-14h]
                 push    ax
-                call    sub_14365
+                call    drawViewFloorCeiling ; draw the floor / ceiling planes of the view. TENTATIVE.
                 add     word ptr [bp-14h], 7
                 mov     ax, [bp-20h]
                 inc     ax
 
-loc_13FC8:                              ; CODE XREF: sub_13E6E+82↑j
+loc_13FC8:                              ; CODE XREF: renderDungeonView+82↑j
                 mov     [bp-20h], ax
                 cmp     ax, 4
                 jg      short loc_13FD3
                 jmp     loc_13EF4
 ; ---------------------------------------------------------------------------
 
-loc_13FD3:                              ; CODE XREF: sub_13E6E+131↑j
-                                        ; sub_13E6E+160↑j
+loc_13FD3:                              ; CODE XREF: renderDungeonView+131↑j
+                                        ; renderDungeonView+160↑j
                 cmp     word ptr [bp-20h], 4
                 jle     short loc_13FDC
                 jmp     loc_14081
 ; ---------------------------------------------------------------------------
 
-loc_13FDC:                              ; CODE XREF: sub_13E6E+169↑j
+loc_13FDC:                              ; CODE XREF: renderDungeonView+169↑j
                 cmp     word ptr [bp-1Ch], 0
                 jl      short loc_13FE5
                 jmp     loc_14009
 ; ---------------------------------------------------------------------------
 
-loc_13FE5:                              ; CODE XREF: sub_13E6E+172↑j
+loc_13FE5:                              ; CODE XREF: renderDungeonView+172↑j
                 mov     bx, [bp-12h]
                 add     bx, [bp-0Eh]
                 mov     es, word ptr ds:101h
@@ -8900,16 +8903,16 @@ loc_13FE5:                              ; CODE XREF: sub_13E6E+172↑j
                 push    ax
                 lea     ax, [bp-14h]
                 push    ax
-                call    sub_1427C
+                call    drawViewWallBandMid ; draw the middle wall band. TENTATIVE.
                 jmp     loc_1402B
 ; ---------------------------------------------------------------------------
 
-loc_14009:                              ; CODE XREF: sub_13E6E+174↑j
+loc_14009:                              ; CODE XREF: renderDungeonView+174↑j
                 lea     ax, [bp-1Ch]
                 push    ax
                 lea     ax, [bp-14h]
                 push    ax
-                call    sub_14365
+                call    drawViewFloorCeiling ; draw the floor / ceiling planes of the view. TENTATIVE.
                 mov     ax, 0Ah
                 imul    word ptr [bp-20h]
                 add     ax, 19Fh
@@ -8918,14 +8921,14 @@ loc_14009:                              ; CODE XREF: sub_13E6E+174↑j
                 push    ax
                 call    far ptr rt_FE2B ; -> rtm_FE2B  (leglib seg008:0x289a9)
 
-loc_1402B:                              ; CODE XREF: sub_13E6E+198↑j
+loc_1402B:                              ; CODE XREF: renderDungeonView+198↑j
                 add     word ptr [bp-14h], 7
                 cmp     word ptr [bp-1Eh], 0
                 jl      short loc_14038
                 jmp     loc_1405C
 ; ---------------------------------------------------------------------------
 
-loc_14038:                              ; CODE XREF: sub_13E6E+1C5↑j
+loc_14038:                              ; CODE XREF: renderDungeonView+1C5↑j
                 mov     bx, [bp-0Eh]
                 sub     bx, [bp-12h]
                 mov     es, word ptr ds:101h
@@ -8937,16 +8940,16 @@ loc_14038:                              ; CODE XREF: sub_13E6E+1C5↑j
                 push    ax
                 lea     ax, [bp-14h]
                 push    ax
-                call    sub_1427C
+                call    drawViewWallBandMid ; draw the middle wall band. TENTATIVE.
                 jmp     loc_1407E
 ; ---------------------------------------------------------------------------
 
-loc_1405C:                              ; CODE XREF: sub_13E6E+1C7↑j
+loc_1405C:                              ; CODE XREF: renderDungeonView+1C7↑j
                 lea     ax, [bp-1Eh]
                 push    ax
                 lea     ax, [bp-14h]
                 push    ax
-                call    sub_14365
+                call    drawViewFloorCeiling ; draw the floor / ceiling planes of the view. TENTATIVE.
                 mov     ax, 0Ah
                 imul    word ptr [bp-20h]
                 add     ax, 1A4h
@@ -8955,19 +8958,19 @@ loc_1405C:                              ; CODE XREF: sub_13E6E+1C7↑j
                 push    ax
                 call    far ptr rt_FE2B ; -> rtm_FE2B  (leglib seg008:0x289a9)
 
-loc_1407E:                              ; CODE XREF: sub_13E6E+1EB↑j
+loc_1407E:                              ; CODE XREF: renderDungeonView+1EB↑j
                 jmp     j_rt_FE22
 ; ---------------------------------------------------------------------------
 
-loc_14081:                              ; CODE XREF: sub_13E6E+16B↑j
+loc_14081:                              ; CODE XREF: renderDungeonView+16B↑j
                 mov     ax, [bp-14h]
                 add     ax, 0FFE8h
                 mov     [bp-2Ah], ax
                 lea     ax, [bp-2Ah]
                 push    ax
-                call    sub_1430E
+                call    drawViewWallBandFar ; draw the far wall band. TENTATIVE.
 
-j_rt_FE22:                              ; CODE XREF: sub_13E6E:loc_1407E↑j
+j_rt_FE22:                              ; CODE XREF: renderDungeonView:loc_1407E↑j
                 call    far ptr rt_FE22 ; -> rtm_FE22  (leglib seg008:0x27fc9)
 
 j_rt_FE2C_0:                            ; -> rtm_FE2C  (leglib seg007:0x24fe3)
@@ -9003,7 +9006,7 @@ loc_140CF:
 ; ---------------------------------------------------------------------------
                 nop
 
-loc_140DC:                              ; CODE XREF: sub_13E6E+2EB↓j
+loc_140DC:                              ; CODE XREF: renderDungeonView+2EB↓j
                 mov     ax, [bp-10h]
                 add     [bp-0Eh], ax
                 mov     bx, [bp-0Eh]
@@ -9017,7 +9020,7 @@ loc_140DC:                              ; CODE XREF: sub_13E6E+2EB↓j
                 jmp     loc_1414F
 ; ---------------------------------------------------------------------------
 
-loc_140FB:                              ; CODE XREF: sub_13E6E+288↑j
+loc_140FB:                              ; CODE XREF: renderDungeonView+288↑j
                 mov     cx, 10h
                 cwd
                 idiv    cx
@@ -9034,18 +9037,18 @@ loc_140FB:                              ; CODE XREF: sub_13E6E+288↑j
                 jmp     loc_14130
 ; ---------------------------------------------------------------------------
 
-loc_1411D:                              ; CODE XREF: sub_13E6E+2AA↑j
+loc_1411D:                              ; CODE XREF: renderDungeonView+2AA↑j
                 lea     ax, [bp-16h]
                 push    ax
                 lea     ax, [bp-20h]
                 push    ax
-                call    sub_13BD3
+                call    drawViewSprite  ; blit a monster / object sprite into the 3D view from its object descriptor ([bp+8]) -- rtm_FE46 / rtm_FE2E.
                 jmp     loc_1415B
 ; ---------------------------------------------------------------------------
                 jmp     loc_1414F
 ; ---------------------------------------------------------------------------
 
-loc_14130:                              ; CODE XREF: sub_13E6E+2AC↑j
+loc_14130:                              ; CODE XREF: renderDungeonView+2AC↑j
                 mov     bx, [bp-0Eh]
                 mov     es, word ptr ds:101h
                 mov     bl, es:[bx]
@@ -9057,33 +9060,34 @@ loc_14130:                              ; CODE XREF: sub_13E6E+2AC↑j
                 mov     es, word ptr ds:101h
                 mov     es:[bx], al
 
-loc_1414F:                              ; CODE XREF: sub_13E6E+28A↑j
-                                        ; sub_13E6E+2BF↑j
+loc_1414F:                              ; CODE XREF: renderDungeonView+28A↑j
+                                        ; renderDungeonView+2BF↑j
                 mov     ax, [bp-20h]
                 inc     ax
 
-loc_14153:                              ; CODE XREF: sub_13E6E+26A↑j
+loc_14153:                              ; CODE XREF: renderDungeonView+26A↑j
                 mov     [bp-20h], ax
                 cmp     ax, [bp-30h]
                 jle     short loc_140DC
 
-loc_1415B:                              ; CODE XREF: sub_13E6E+2BC↑j
+loc_1415B:                              ; CODE XREF: renderDungeonView+2BC↑j
                 call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
 nullsub_39:
                 retf    4
 ; ---------------------------------------------------------------------------
 
-j_j_j_j_j_rt_ED_0:                      ; CODE XREF: sub_13DD1:j_j_j_j_j_j_rt_ED_0↑j
+j_j_j_j_j_rt_ED_0:                      ; CODE XREF: blitViewCell:j_j_j_j_j_j_rt_ED_0↑j
                 jmp     j_j_j_j_rt_ED_0
-sub_13E6E       endp
+renderDungeonView endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; draw the nearest wall-projection band (-> blitViewCell). TENTATIVE (which band).
 ; Attributes: noreturn
 
-sub_14166       proc far                ; CODE XREF: sub_13E6E+122↑P
+drawViewWallBandNear proc far           ; CODE XREF: renderDungeonView+122↑P
                 mov     cx, 14h
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -9124,7 +9128,7 @@ loc_1416E:
                 push    ax
                 lea     ax, [bp-10h]
                 push    ax
-                call    sub_13DD1
+                call    blitViewCell    ; the shared wall/surface draw primitive (rtm_FE2A) that all the wall-band drawers call.
 
 loc_141D1:
                 mov     si, [bp+6]
@@ -9147,7 +9151,7 @@ loc_141D1:
                 lea     ax, [bp-10h]
                 push    ax
                 mov     [bp-18h], dx
-                call    sub_13DD1
+                call    blitViewCell    ; the shared wall/surface draw primitive (rtm_FE2A) that all the wall-band drawers call.
 
 loc_14208:
                 mov     si, 1E2Ah
@@ -9162,7 +9166,7 @@ loc_14208:
                 jmp     loc_14271
 ; ---------------------------------------------------------------------------
 
-loc_14225:                              ; CODE XREF: sub_14166+BA↑j
+loc_14225:                              ; CODE XREF: drawViewWallBandNear+BA↑j
                 mov     si, [bp+6]
                 mov     ax, [si]
                 mov     bx, ax
@@ -9183,7 +9187,7 @@ loc_14225:                              ; CODE XREF: sub_14166+BA↑j
                 lea     ax, [bp-10h]
                 push    ax
                 mov     [bp-1Eh], dx
-                call    sub_13DD1
+                call    blitViewCell    ; the shared wall/surface draw primitive (rtm_FE2A) that all the wall-band drawers call.
                 mov     si, 1E2Ah
                 mov     bx, [bp-1Eh]
                 add     bx, [si+0Ah]
@@ -9193,25 +9197,26 @@ loc_14225:                              ; CODE XREF: sub_14166+BA↑j
                 jmp     $+3
 ; ---------------------------------------------------------------------------
 
-loc_14271:                              ; CODE XREF: sub_14166+BC↑j
-                                        ; sub_14166+108↑j
+loc_14271:                              ; CODE XREF: drawViewWallBandNear+BC↑j
+                                        ; drawViewWallBandNear+108↑j
                 call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
 nullsub_40:
                 retf    4
 ; ---------------------------------------------------------------------------
 
-j_j_j_j_rt_ED_0:                        ; CODE XREF: sub_13E6E:j_j_j_j_j_rt_ED_0↑j
+j_j_j_j_rt_ED_0:                        ; CODE XREF: renderDungeonView:j_j_j_j_j_rt_ED_0↑j
                 jmp     j_j_j_rt_ED_0
-sub_14166       endp
+drawViewWallBandNear endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; draw the middle wall band. TENTATIVE.
 ; Attributes: noreturn
 
-sub_1427C       proc far                ; CODE XREF: sub_13E6E+193↑P
-                                        ; sub_13E6E+1E6↑P
+drawViewWallBandMid proc far            ; CODE XREF: renderDungeonView+193↑P
+                                        ; renderDungeonView+1E6↑P
                 mov     cx, 8
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -9222,15 +9227,15 @@ loc_14284:
                 jmp     loc_14298
 ; ---------------------------------------------------------------------------
 
-loc_14290:                              ; CODE XREF: sub_1427C+F↑j
+loc_14290:                              ; CODE XREF: drawViewWallBandMid+F↑j
                 mov     word ptr [bp-0Ch], 0Ah
                 jmp     loc_1429D
 ; ---------------------------------------------------------------------------
 
-loc_14298:                              ; CODE XREF: sub_1427C+11↑j
+loc_14298:                              ; CODE XREF: drawViewWallBandMid+11↑j
                 mov     word ptr [bp-0Ch], 8
 
-loc_1429D:                              ; CODE XREF: sub_1427C+19↑j
+loc_1429D:                              ; CODE XREF: drawViewWallBandMid+19↑j
                 mov     cx, 2
                 mov     ax, [bp-0Ch]
                 cwd
@@ -9256,7 +9261,7 @@ loc_1429D:                              ; CODE XREF: sub_1427C+19↑j
                 lea     ax, [bp-10h]
                 push    ax
                 mov     [bp-12h], dx
-                call    sub_13DD1
+                call    blitViewCell    ; the shared wall/surface draw primitive (rtm_FE2A) that all the wall-band drawers call.
 
 loc_142E2:
                 mov     si, 1E2Ah
@@ -9276,16 +9281,17 @@ nullsub_41:
                 retf    4
 ; ---------------------------------------------------------------------------
 
-j_j_j_rt_ED_0:                          ; CODE XREF: sub_14166:j_j_j_j_rt_ED_0↑j
+j_j_j_rt_ED_0:                          ; CODE XREF: drawViewWallBandNear:j_j_j_j_rt_ED_0↑j
                 jmp     j_j_rt_ED_0
-sub_1427C       endp
+drawViewWallBandMid endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; draw the far wall band. TENTATIVE.
 ; Attributes: noreturn
 
-sub_1430E       proc far                ; CODE XREF: sub_13E6E+220↑P
+drawViewWallBandFar proc far            ; CODE XREF: renderDungeonView+220↑P
                 mov     cx, 6
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -9314,7 +9320,7 @@ loc_14316:
                 push    ax
                 lea     ax, [bp-10h]
                 push    ax
-                call    sub_13DD1
+                call    blitViewCell    ; the shared wall/surface draw primitive (rtm_FE2A) that all the wall-band drawers call.
 
 j_rt_F4_0:                              ; -> basProcLeave  (leglib seg003:0x1bb7c)
                 call    far ptr rt_F4
@@ -9323,17 +9329,18 @@ nullsub_42:
                 retf    2
 ; ---------------------------------------------------------------------------
 
-j_j_rt_ED_0:                            ; CODE XREF: sub_1427C:j_j_j_rt_ED_0↑j
+j_j_rt_ED_0:                            ; CODE XREF: drawViewWallBandMid:j_j_j_rt_ED_0↑j
                 jmp     j_rt_ED_0
-sub_1430E       endp
+drawViewWallBandFar endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; draw the floor / ceiling planes of the view. TENTATIVE.
 ; Attributes: noreturn
 
-sub_14365       proc far                ; CODE XREF: sub_13E6E+13C↑P
-                                        ; sub_13E6E+14D↑P ...
+drawViewFloorCeiling proc far           ; CODE XREF: renderDungeonView+13C↑P
+                                        ; renderDungeonView+14D↑P ...
                 mov     cx, 0Ch
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -9344,7 +9351,7 @@ loc_1436D:
                 jmp     loc_143DB
 ; ---------------------------------------------------------------------------
 
-loc_14378:                              ; CODE XREF: sub_14365+E↑j
+loc_14378:                              ; CODE XREF: drawViewFloorCeiling+E↑j
                 mov     si, [bp+6]
                 mov     ax, [si]
                 shl     ax, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
@@ -9367,7 +9374,7 @@ loc_14378:                              ; CODE XREF: sub_14365+E↑j
                 lea     ax, [bp-0Eh]
                 push    ax
                 mov     [bp-10h], dx
-                call    sub_13DD1
+                call    blitViewCell    ; the shared wall/surface draw primitive (rtm_FE2A) that all the wall-band drawers call.
                 mov     si, 1E2Ah
                 mov     bx, 800h
                 add     bx, [si+0Ah]
@@ -9382,7 +9389,7 @@ loc_14378:                              ; CODE XREF: sub_14365+E↑j
                 jmp     loc_1443B
 ; ---------------------------------------------------------------------------
 
-loc_143DB:                              ; CODE XREF: sub_14365+10↑j
+loc_143DB:                              ; CODE XREF: drawViewFloorCeiling+10↑j
                 mov     si, [bp+6]
                 mov     ax, [si]
                 shl     ax, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
@@ -9405,7 +9412,7 @@ loc_143DB:                              ; CODE XREF: sub_14365+10↑j
                 lea     ax, [bp-14h]
                 push    ax
                 mov     [bp-16h], dx
-                call    sub_13DD1
+                call    blitViewCell    ; the shared wall/surface draw primitive (rtm_FE2A) that all the wall-band drawers call.
 
 loc_1441A:
                 mov     si, 1E2Ah
@@ -9420,12 +9427,12 @@ loc_1441A:
                 mov     ax, [bp-12h]
                 mov     es:[bx], ax
 
-loc_1443B:                              ; CODE XREF: sub_14365+73↑j
+loc_1443B:                              ; CODE XREF: drawViewFloorCeiling+73↑j
                 call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
 nullsub_43:
                 retf    4
-sub_14365       endp
+drawViewFloorCeiling endp
 
 ; [00000005 BYTES: COLLAPSED FUNCTION j_rt_ED_0. PRESS NUMPAD+ TO EXPAND]
                 db    0
@@ -11120,7 +11127,7 @@ rt_60:                                  ; Overlay manager interrupt
 ; -> rtm_61  (leglib seg003:0x1dc84)
 ; Attributes: noreturn
 
-rt_61           proc near               ; CODE XREF: sub_13BD3+1EE↑P
+rt_61           proc near               ; CODE XREF: drawViewSprite+1EE↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -11139,7 +11146,7 @@ rt_6D:                                  ; Overlay manager interrupt
 ; -> rtm_7A  (leglib seg003:0x1a853)
 ; Attributes: noreturn
 
-rt_7A           proc near               ; CODE XREF: sub_13BD3+1D5↑P
+rt_7A           proc near               ; CODE XREF: drawViewSprite+1D5↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -11815,7 +11822,7 @@ rt_C7:                                  ; Overlay manager interrupt
 ; Attributes: noreturn
 
 rt_C8           proc near               ; CODE XREF: seg000:3B88↑P
-                                        ; sub_13BD3+125↑P
+                                        ; drawViewSprite+125↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -12219,7 +12226,7 @@ rt_FE21:                                ; Overlay manager interrupt
 ; -> rtm_FE22  (leglib seg008:0x27fc9)
 ; Attributes: noreturn
 
-rt_FE22         proc near               ; CODE XREF: sub_13E6E:j_rt_FE22↑P
+rt_FE22         proc near               ; CODE XREF: renderDungeonView:j_rt_FE22↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -12300,7 +12307,7 @@ rt_FE28         endp
 ; -> rtm_FE29  (leglib seg007:0x27391)
 ; Attributes: noreturn
 
-rt_FE29         proc near               ; CODE XREF: sub_13E6E+241↑P
+rt_FE29         proc near               ; CODE XREF: renderDungeonView+241↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -12313,7 +12320,7 @@ rt_FE29         endp
 ; -> rtm_FE2A  (leglib seg004:0x1fd3f)
 ; Attributes: noreturn
 
-rt_FE2A         proc near               ; CODE XREF: sub_13DD1+76↑P
+rt_FE2A         proc near               ; CODE XREF: blitViewCell+76↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -12326,8 +12333,8 @@ rt_FE2A         endp
 ; -> rtm_FE2B  (leglib seg008:0x289a9)
 ; Attributes: noreturn
 
-rt_FE2B         proc near               ; CODE XREF: sub_13E6E+CD↑P
-                                        ; sub_13E6E+1B8↑P ...
+rt_FE2B         proc near               ; CODE XREF: renderDungeonView+CD↑P
+                                        ; renderDungeonView+1B8↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -12340,8 +12347,8 @@ rt_FE2B         endp
 ; -> rtm_FE2C  (leglib seg007:0x24fe3)
 ; Attributes: noreturn
 
-rt_FE2C         proc near               ; CODE XREF: sub_13E6E:j_rt_FE2C↑P
-                                        ; sub_13E6E:j_rt_FE2C_0↑P
+rt_FE2C         proc near               ; CODE XREF: renderDungeonView:j_rt_FE2C↑P
+                                        ; renderDungeonView:j_rt_FE2C_0↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -12360,7 +12367,7 @@ rt_FE2D:                                ; Overlay manager interrupt
 ; -> rtm_FE2E  (leglib seg004:0x1fda1)
 ; Attributes: noreturn
 
-rt_FE2E         proc near               ; CODE XREF: sub_13BD3+1B1↑P
+rt_FE2E         proc near               ; CODE XREF: drawViewSprite+1B1↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -12569,7 +12576,7 @@ rt_FE45         endp
 ; -> rtm_FE46  (leglib seg004:0x1fa0a)
 ; Attributes: noreturn
 
-rt_FE46         proc near               ; CODE XREF: sub_13BD3+1CA↑P
+rt_FE46         proc near               ; CODE XREF: drawViewSprite+1CA↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------

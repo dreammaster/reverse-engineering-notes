@@ -568,7 +568,7 @@ sub_1037F       proc near               ; CODE XREF: doWalk+68↑p
                 push    ax
                 mov     ax, 1AE4h
                 push    ax
-                call    sub_12F00
+                call    renderExhibitView ; bmMUSDUNG top level: draw the first-person view for a dungeon-style exhibit room -- clear (rtm_FE2C), wall bands + sprites, present. Same design as DUN.EXE's renderDungeonView. ~0.5 KB.
 ; ---------------------------------------------------------------------------
                 mov     word ptr ds:20B4h, 0
                 call    sub_1041F
@@ -7078,10 +7078,11 @@ aBmmusdung      db 'bmMUSDUNG ',0       ; DATA XREF: seg004:2978↓o
 
 ; =============== S U B R O U T I N E =======================================
 
+; the shared wall/surface draw primitive (rtm_FE2A) -- byte-for-byte the same as DUN's blitViewCell.
 ; Attributes: noreturn
 
-sub_12E63       proc far                ; CODE XREF: sub_130EE+66↓P
-                                        ; sub_130EE+9D↓P ...
+blitViewCell    proc far                ; CODE XREF: drawViewSprite+66↓P
+                                        ; drawViewSprite+9D↓P ...
                 mov     cx, 0Eh
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -7123,7 +7124,7 @@ loc_12E6B:
 ; ---------------------------------------------------------------------------
                 nop
 
-loc_12EC8:                              ; CODE XREF: sub_12E63+90↓j
+loc_12EC8:                              ; CODE XREF: blitViewCell+90↓j
                 push    word ptr [bp-10h]
                 push    word ptr [bp-14h]
                 push    word ptr [bp-0Eh]
@@ -7137,7 +7138,7 @@ loc_12EC8:                              ; CODE XREF: sub_12E63+90↓j
                 mov     ax, [bp-18h]
                 inc     ax
 
-loc_12EED:                              ; CODE XREF: sub_12E63+61↑j
+loc_12EED:                              ; CODE XREF: blitViewCell+61↑j
                 mov     [bp-18h], ax
                 cmp     ax, [bp-0Ch]
                 jle     short loc_12EC8
@@ -7149,14 +7150,15 @@ nullsub_43:
 
 j_j_j_j_j_j_rt_ED_0:                    ; CODE XREF: seg001_entry↑j
                 jmp     j_j_j_j_j_rt_ED_0
-sub_12E63       endp
+blitViewCell    endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; bmMUSDUNG top level: draw the first-person view for a dungeon-style exhibit room -- clear (rtm_FE2C), wall bands + sprites, present. Same design as DUN.EXE's renderDungeonView. ~0.5 KB.
 ; Attributes: noreturn
 
-sub_12F00       proc far                ; CODE XREF: sub_1037F+8↑P
+renderExhibitView proc far              ; CODE XREF: sub_1037F+8↑P
                 mov     cx, 20h ; ' '
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -7191,7 +7193,7 @@ loc_12F0D:
 ; ---------------------------------------------------------------------------
                 nop
 
-loc_12F52:                              ; CODE XREF: sub_12F00+F5↓j
+loc_12F52:                              ; CODE XREF: renderExhibitView+F5↓j
                 mov     si, 1E2Ah
                 xor     bx, bx
                 add     bx, [si+0Ah]
@@ -7228,50 +7230,50 @@ loc_12F52:                              ; CODE XREF: sub_12F00+F5↓j
                 push    ax
                 lea     ax, [bp-12h]
                 push    ax
-                call    sub_130EE
+                call    drawViewSprite  ; blit a sprite into the 3D view (rtm_FE2B).
                 add     word ptr [bp-12h], 0Ah
                 cmp     word ptr [bp-18h], 0
                 jl      short loc_12FC7
                 jmp     loc_12FF8
 ; ---------------------------------------------------------------------------
 
-loc_12FC7:                              ; CODE XREF: sub_12F00+C2↑j
+loc_12FC7:                              ; CODE XREF: renderExhibitView+C2↑j
                 lea     ax, [bp-14h]
                 push    ax
                 lea     ax, [bp-12h]
                 push    ax
-                call    sub_13366
+                call    drawViewWallBandFar ; far wall band. TENTATIVE.
                 add     word ptr [bp-12h], 7
                 lea     ax, [bp-16h]
                 push    ax
                 lea     ax, [bp-12h]
                 push    ax
-                call    sub_13366
+                call    drawViewWallBandFar ; far wall band. TENTATIVE.
                 add     word ptr [bp-12h], 7
                 mov     ax, [bp-1Ah]
                 inc     ax
 
-loc_12FED:                              ; CODE XREF: sub_12F00+4E↑j
+loc_12FED:                              ; CODE XREF: renderExhibitView+4E↑j
                 mov     [bp-1Ah], ax
                 cmp     ax, 4
                 jg      short loc_12FF8
                 jmp     loc_12F52
 ; ---------------------------------------------------------------------------
 
-loc_12FF8:                              ; CODE XREF: sub_12F00+C4↑j
-                                        ; sub_12F00+F3↑j
+loc_12FF8:                              ; CODE XREF: renderExhibitView+C4↑j
+                                        ; renderExhibitView+F3↑j
                 cmp     word ptr [bp-1Ah], 4
                 jle     short loc_13001
                 jmp     loc_130A6
 ; ---------------------------------------------------------------------------
 
-loc_13001:                              ; CODE XREF: sub_12F00+FC↑j
+loc_13001:                              ; CODE XREF: renderExhibitView+FC↑j
                 cmp     word ptr [bp-14h], 0
                 jl      short loc_1300A
                 jmp     loc_1302E
 ; ---------------------------------------------------------------------------
 
-loc_1300A:                              ; CODE XREF: sub_12F00+105↑j
+loc_1300A:                              ; CODE XREF: renderExhibitView+105↑j
                 mov     bx, [bp-10h]
                 add     bx, [bp-0Ch]
                 mov     es, word ptr ds:101h
@@ -7283,16 +7285,16 @@ loc_1300A:                              ; CODE XREF: sub_12F00+105↑j
                 push    ax
                 lea     ax, [bp-12h]
                 push    ax
-                call    sub_1327D
+                call    drawViewWallBandNear ; nearest wall band. TENTATIVE.
                 jmp     loc_13050
 ; ---------------------------------------------------------------------------
 
-loc_1302E:                              ; CODE XREF: sub_12F00+107↑j
+loc_1302E:                              ; CODE XREF: renderExhibitView+107↑j
                 lea     ax, [bp-14h]
                 push    ax
                 lea     ax, [bp-12h]
                 push    ax
-                call    sub_13366
+                call    drawViewWallBandFar ; far wall band. TENTATIVE.
                 mov     ax, 0Ah
                 imul    word ptr [bp-1Ah]
                 add     ax, 19Fh
@@ -7301,14 +7303,14 @@ loc_1302E:                              ; CODE XREF: sub_12F00+107↑j
                 push    ax
                 call    far ptr rt_FE2B ; -> rtm_FE2B  (leglib seg008:0x289a9)
 
-loc_13050:                              ; CODE XREF: sub_12F00+12B↑j
+loc_13050:                              ; CODE XREF: renderExhibitView+12B↑j
                 add     word ptr [bp-12h], 7
                 cmp     word ptr [bp-16h], 0
                 jl      short loc_1305D
                 jmp     loc_13081
 ; ---------------------------------------------------------------------------
 
-loc_1305D:                              ; CODE XREF: sub_12F00+158↑j
+loc_1305D:                              ; CODE XREF: renderExhibitView+158↑j
                 mov     bx, [bp-0Ch]
                 sub     bx, [bp-10h]
                 mov     es, word ptr ds:101h
@@ -7320,16 +7322,16 @@ loc_1305D:                              ; CODE XREF: sub_12F00+158↑j
                 push    ax
                 lea     ax, [bp-12h]
                 push    ax
-                call    sub_1327D
+                call    drawViewWallBandNear ; nearest wall band. TENTATIVE.
                 jmp     loc_130A3
 ; ---------------------------------------------------------------------------
 
-loc_13081:                              ; CODE XREF: sub_12F00+15A↑j
+loc_13081:                              ; CODE XREF: renderExhibitView+15A↑j
                 lea     ax, [bp-16h]
                 push    ax
                 lea     ax, [bp-12h]
                 push    ax
-                call    sub_13366
+                call    drawViewWallBandFar ; far wall band. TENTATIVE.
                 mov     ax, 0Ah
                 imul    word ptr [bp-1Ah]
                 add     ax, 1A4h
@@ -7338,19 +7340,19 @@ loc_13081:                              ; CODE XREF: sub_12F00+15A↑j
                 push    ax
                 call    far ptr rt_FE2B ; -> rtm_FE2B  (leglib seg008:0x289a9)
 
-loc_130A3:                              ; CODE XREF: sub_12F00+17E↑j
+loc_130A3:                              ; CODE XREF: renderExhibitView+17E↑j
                 jmp     loc_130B8
 ; ---------------------------------------------------------------------------
 
-loc_130A6:                              ; CODE XREF: sub_12F00+FE↑j
+loc_130A6:                              ; CODE XREF: renderExhibitView+FE↑j
                 mov     ax, [bp-12h]
                 add     ax, 0FFE8h
                 mov     [bp-24h], ax
                 lea     ax, [bp-24h]
                 push    ax
-                call    sub_1330F
+                call    drawViewWallBandMid ; middle wall band. TENTATIVE.
 
-loc_130B8:                              ; CODE XREF: sub_12F00:loc_130A3↑j
+loc_130B8:                              ; CODE XREF: renderExhibitView:loc_130A3↑j
                 mov     word ptr ds:1EFEh, 78h ; 'x'
                 mov     word ptr [bp-26h], 0
                 lea     ax, [bp-26h]
@@ -7373,16 +7375,17 @@ nullsub_44:
                 retf    4
 ; ---------------------------------------------------------------------------
 
-j_j_j_j_j_rt_ED_0:                      ; CODE XREF: sub_12E63:j_j_j_j_j_j_rt_ED_0↑j
+j_j_j_j_j_rt_ED_0:                      ; CODE XREF: blitViewCell:j_j_j_j_j_j_rt_ED_0↑j
                 jmp     j_j_j_j_rt_ED_0
-sub_12F00       endp
+renderExhibitView endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; blit a sprite into the 3D view (rtm_FE2B).
 ; Attributes: noreturn
 
-sub_130EE       proc far                ; CODE XREF: sub_12F00+B5↑P
+drawViewSprite  proc far                ; CODE XREF: renderExhibitView+B5↑P
                 mov     cx, 1Ah
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -7423,7 +7426,7 @@ loc_130F6:
                 push    ax
                 lea     ax, [bp-10h]
                 push    ax
-                call    sub_12E63
+                call    blitViewCell    ; the shared wall/surface draw primitive (rtm_FE2A) -- byte-for-byte the same as DUN's blitViewCell.
 
 loc_13159:
                 mov     si, [bp+6]
@@ -7446,7 +7449,7 @@ loc_13159:
                 lea     ax, [bp-10h]
                 push    ax
                 mov     [bp-18h], dx
-                call    sub_12E63
+                call    blitViewCell    ; the shared wall/surface draw primitive (rtm_FE2A) -- byte-for-byte the same as DUN's blitViewCell.
 
 loc_13190:
                 mov     si, 1E2Ah
@@ -7461,7 +7464,7 @@ loc_13190:
                 jmp     loc_13272
 ; ---------------------------------------------------------------------------
 
-loc_131AD:                              ; CODE XREF: sub_130EE+BA↑j
+loc_131AD:                              ; CODE XREF: drawViewSprite+BA↑j
                 mov     si, [bp+6]
                 mov     ax, [si]
                 mov     bx, ax
@@ -7482,7 +7485,7 @@ loc_131AD:                              ; CODE XREF: sub_130EE+BA↑j
                 lea     ax, [bp-10h]
                 push    ax
                 mov     [bp-1Eh], dx
-                call    sub_12E63
+                call    blitViewCell    ; the shared wall/surface draw primitive (rtm_FE2A) -- byte-for-byte the same as DUN's blitViewCell.
                 mov     si, 1E2Ah
                 mov     bx, [bp-1Eh]
                 add     bx, [si+0Ah]
@@ -7497,51 +7500,51 @@ loc_131AD:                              ; CODE XREF: sub_130EE+BA↑j
                 jmp     loc_1320F
 ; ---------------------------------------------------------------------------
 
-loc_13207:                              ; CODE XREF: sub_130EE+114↑j
+loc_13207:                              ; CODE XREF: drawViewSprite+114↑j
                 mov     word ptr [bp-22h], 0Ah
                 jmp     loc_1323F
 ; ---------------------------------------------------------------------------
 
-loc_1320F:                              ; CODE XREF: sub_130EE+116↑j
+loc_1320F:                              ; CODE XREF: drawViewSprite+116↑j
                 cmp     word ptr [bp-20h], 2
                 jz      short loc_13218
                 jmp     loc_13220
 ; ---------------------------------------------------------------------------
 
-loc_13218:                              ; CODE XREF: sub_130EE+125↑j
+loc_13218:                              ; CODE XREF: drawViewSprite+125↑j
                 mov     word ptr [bp-22h], 0
                 jmp     loc_1323F
 ; ---------------------------------------------------------------------------
 
-loc_13220:                              ; CODE XREF: sub_130EE+127↑j
+loc_13220:                              ; CODE XREF: drawViewSprite+127↑j
                 cmp     word ptr [bp-20h], 60h ; '`'
                 jge     short loc_13229
                 jmp     loc_1323A
 ; ---------------------------------------------------------------------------
 
-loc_13229:                              ; CODE XREF: sub_130EE+136↑j
+loc_13229:                              ; CODE XREF: drawViewSprite+136↑j
                 cmp     word ptr [bp-20h], 6Fh ; 'o'
                 jle     short loc_13232
                 jmp     loc_1323A
 ; ---------------------------------------------------------------------------
 
-loc_13232:                              ; CODE XREF: sub_130EE+13F↑j
+loc_13232:                              ; CODE XREF: drawViewSprite+13F↑j
                 mov     word ptr [bp-22h], 5
                 jmp     loc_1323F
 ; ---------------------------------------------------------------------------
 
-loc_1323A:                              ; CODE XREF: sub_130EE+138↑j
-                                        ; sub_130EE+141↑j
+loc_1323A:                              ; CODE XREF: drawViewSprite+138↑j
+                                        ; drawViewSprite+141↑j
                 mov     word ptr [bp-22h], 0FFFFh
 
-loc_1323F:                              ; CODE XREF: sub_130EE+11E↑j
-                                        ; sub_130EE+12F↑j ...
+loc_1323F:                              ; CODE XREF: drawViewSprite+11E↑j
+                                        ; drawViewSprite+12F↑j ...
                 cmp     word ptr [bp-22h], 0
                 jge     short loc_13248
                 jmp     loc_1326F
 ; ---------------------------------------------------------------------------
 
-loc_13248:                              ; CODE XREF: sub_130EE+155↑j
+loc_13248:                              ; CODE XREF: drawViewSprite+155↑j
                 mov     si, [bp+6]
                 mov     ax, [si]
                 shl     ax, 1           ; B'\n\x01H'=\x01N'#\x16T'@\nWOULD YOU LIKE TO GO\x03n'TO \xf4\x11v'\n\nDO
@@ -7557,29 +7560,30 @@ loc_13248:                              ; CODE XREF: sub_130EE+155↑j
                 push    ax
                 call    far ptr rt_FE2B ; -> rtm_FE2B  (leglib seg008:0x289a9)
 
-loc_1326F:                              ; CODE XREF: sub_130EE+157↑j
+loc_1326F:                              ; CODE XREF: drawViewSprite+157↑j
                 jmp     $+3
 ; ---------------------------------------------------------------------------
 
-loc_13272:                              ; CODE XREF: sub_130EE+BC↑j
-                                        ; sub_130EE:loc_1326F↑j
+loc_13272:                              ; CODE XREF: drawViewSprite+BC↑j
+                                        ; drawViewSprite:loc_1326F↑j
                 call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
 nullsub_45:
                 retf    4
 ; ---------------------------------------------------------------------------
 
-j_j_j_j_rt_ED_0:                        ; CODE XREF: sub_12F00:j_j_j_j_j_rt_ED_0↑j
+j_j_j_j_rt_ED_0:                        ; CODE XREF: renderExhibitView:j_j_j_j_j_rt_ED_0↑j
                 jmp     j_j_j_rt_ED_0
-sub_130EE       endp
+drawViewSprite  endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; nearest wall band. TENTATIVE.
 ; Attributes: noreturn
 
-sub_1327D       proc far                ; CODE XREF: sub_12F00+126↑P
-                                        ; sub_12F00+179↑P
+drawViewWallBandNear proc far           ; CODE XREF: renderExhibitView+126↑P
+                                        ; renderExhibitView+179↑P
                 mov     cx, 8
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -7590,15 +7594,15 @@ loc_13285:
                 jmp     loc_13299
 ; ---------------------------------------------------------------------------
 
-loc_13291:                              ; CODE XREF: sub_1327D+F↑j
+loc_13291:                              ; CODE XREF: drawViewWallBandNear+F↑j
                 mov     word ptr [bp-0Ch], 0Ah
                 jmp     loc_1329E
 ; ---------------------------------------------------------------------------
 
-loc_13299:                              ; CODE XREF: sub_1327D+11↑j
+loc_13299:                              ; CODE XREF: drawViewWallBandNear+11↑j
                 mov     word ptr [bp-0Ch], 8
 
-loc_1329E:                              ; CODE XREF: sub_1327D+19↑j
+loc_1329E:                              ; CODE XREF: drawViewWallBandNear+19↑j
                 mov     cx, 2
                 mov     ax, [bp-0Ch]
                 cwd
@@ -7624,7 +7628,7 @@ loc_1329E:                              ; CODE XREF: sub_1327D+19↑j
                 lea     ax, [bp-10h]
                 push    ax
                 mov     [bp-12h], dx
-                call    sub_12E63
+                call    blitViewCell    ; the shared wall/surface draw primitive (rtm_FE2A) -- byte-for-byte the same as DUN's blitViewCell.
 
 loc_132E3:
                 mov     si, 1E2Ah
@@ -7644,16 +7648,17 @@ nullsub_46:
                 retf    4
 ; ---------------------------------------------------------------------------
 
-j_j_j_rt_ED_0:                          ; CODE XREF: sub_130EE:j_j_j_j_rt_ED_0↑j
+j_j_j_rt_ED_0:                          ; CODE XREF: drawViewSprite:j_j_j_j_rt_ED_0↑j
                 jmp     j_j_rt_ED_0
-sub_1327D       endp
+drawViewWallBandNear endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; middle wall band. TENTATIVE.
 ; Attributes: noreturn
 
-sub_1330F       proc far                ; CODE XREF: sub_12F00+1B3↑P
+drawViewWallBandMid proc far            ; CODE XREF: renderExhibitView+1B3↑P
                 mov     cx, 6
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -7682,7 +7687,7 @@ loc_13317:
                 push    ax
                 lea     ax, [bp-10h]
                 push    ax
-                call    sub_12E63
+                call    blitViewCell    ; the shared wall/surface draw primitive (rtm_FE2A) -- byte-for-byte the same as DUN's blitViewCell.
 
 j_rt_F4_0:                              ; -> basProcLeave  (leglib seg003:0x1bb7c)
                 call    far ptr rt_F4
@@ -7691,17 +7696,18 @@ nullsub_47:
                 retf    2
 ; ---------------------------------------------------------------------------
 
-j_j_rt_ED_0:                            ; CODE XREF: sub_1327D:j_j_j_rt_ED_0↑j
+j_j_rt_ED_0:                            ; CODE XREF: drawViewWallBandNear:j_j_j_rt_ED_0↑j
                 jmp     j_rt_ED_0
-sub_1330F       endp
+drawViewWallBandMid endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; far wall band. TENTATIVE.
 ; Attributes: noreturn
 
-sub_13366       proc far                ; CODE XREF: sub_12F00+CF↑P
-                                        ; sub_12F00+E0↑P ...
+drawViewWallBandFar proc far            ; CODE XREF: renderExhibitView+CF↑P
+                                        ; renderExhibitView+E0↑P ...
                 mov     cx, 12h
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -7712,7 +7718,7 @@ loc_1336E:
                 jmp     loc_133DC
 ; ---------------------------------------------------------------------------
 
-loc_13379:                              ; CODE XREF: sub_13366+E↑j
+loc_13379:                              ; CODE XREF: drawViewWallBandFar+E↑j
                 mov     si, [bp+6]
                 mov     ax, [si]
                 shl     ax, 1           ; B'\n\x01H'=\x01N'#\x16T'@\nWOULD YOU LIKE TO GO\x03n'TO \xf4\x11v'\n\nDO
@@ -7735,7 +7741,7 @@ loc_13379:                              ; CODE XREF: sub_13366+E↑j
                 lea     ax, [bp-0Eh]
                 push    ax
                 mov     [bp-10h], dx
-                call    sub_12E63
+                call    blitViewCell    ; the shared wall/surface draw primitive (rtm_FE2A) -- byte-for-byte the same as DUN's blitViewCell.
                 mov     si, 1E2Ah
                 mov     bx, 800h
                 add     bx, [si+0Ah]
@@ -7750,7 +7756,7 @@ loc_13379:                              ; CODE XREF: sub_13366+E↑j
                 jmp     loc_134B5
 ; ---------------------------------------------------------------------------
 
-loc_133DC:                              ; CODE XREF: sub_13366+10↑j
+loc_133DC:                              ; CODE XREF: drawViewWallBandFar+10↑j
                 mov     si, [bp+6]
                 mov     ax, [si]
                 shl     ax, 1           ; B'\n\x01H'=\x01N'#\x16T'@\nWOULD YOU LIKE TO GO\x03n'TO \xf4\x11v'\n\nDO
@@ -7773,7 +7779,7 @@ loc_133DC:                              ; CODE XREF: sub_13366+10↑j
                 lea     ax, [bp-14h]
                 push    ax
                 mov     [bp-16h], dx
-                call    sub_12E63
+                call    blitViewCell    ; the shared wall/surface draw primitive (rtm_FE2A) -- byte-for-byte the same as DUN's blitViewCell.
 
 loc_1341B:
                 mov     si, 1E2Ah
@@ -7795,51 +7801,51 @@ loc_1341B:
                 jmp     loc_13455
 ; ---------------------------------------------------------------------------
 
-loc_1344D:                              ; CODE XREF: sub_13366+E2↑j
+loc_1344D:                              ; CODE XREF: drawViewWallBandFar+E2↑j
                 mov     word ptr [bp-1Ah], 0Ah
                 jmp     loc_13485
 ; ---------------------------------------------------------------------------
 
-loc_13455:                              ; CODE XREF: sub_13366+E4↑j
+loc_13455:                              ; CODE XREF: drawViewWallBandFar+E4↑j
                 cmp     word ptr [bp-18h], 2
                 jz      short loc_1345E
                 jmp     loc_13466
 ; ---------------------------------------------------------------------------
 
-loc_1345E:                              ; CODE XREF: sub_13366+F3↑j
+loc_1345E:                              ; CODE XREF: drawViewWallBandFar+F3↑j
                 mov     word ptr [bp-1Ah], 0
                 jmp     loc_13485
 ; ---------------------------------------------------------------------------
 
-loc_13466:                              ; CODE XREF: sub_13366+F5↑j
+loc_13466:                              ; CODE XREF: drawViewWallBandFar+F5↑j
                 cmp     word ptr [bp-18h], 60h ; '`'
                 jge     short loc_1346F
                 jmp     loc_13480
 ; ---------------------------------------------------------------------------
 
-loc_1346F:                              ; CODE XREF: sub_13366+104↑j
+loc_1346F:                              ; CODE XREF: drawViewWallBandFar+104↑j
                 cmp     word ptr [bp-18h], 6Fh ; 'o'
                 jle     short loc_13478
                 jmp     loc_13480
 ; ---------------------------------------------------------------------------
 
-loc_13478:                              ; CODE XREF: sub_13366+10D↑j
+loc_13478:                              ; CODE XREF: drawViewWallBandFar+10D↑j
                 mov     word ptr [bp-1Ah], 5
                 jmp     loc_13485
 ; ---------------------------------------------------------------------------
 
-loc_13480:                              ; CODE XREF: sub_13366+106↑j
-                                        ; sub_13366+10F↑j
+loc_13480:                              ; CODE XREF: drawViewWallBandFar+106↑j
+                                        ; drawViewWallBandFar+10F↑j
                 mov     word ptr [bp-1Ah], 0FFFFh
 
-loc_13485:                              ; CODE XREF: sub_13366+EC↑j
-                                        ; sub_13366+FD↑j ...
+loc_13485:                              ; CODE XREF: drawViewWallBandFar+EC↑j
+                                        ; drawViewWallBandFar+FD↑j ...
                 cmp     word ptr [bp-1Ah], 0
                 jge     short loc_1348E
                 jmp     loc_134B5
 ; ---------------------------------------------------------------------------
 
-loc_1348E:                              ; CODE XREF: sub_13366+123↑j
+loc_1348E:                              ; CODE XREF: drawViewWallBandFar+123↑j
                 mov     si, [bp+6]
                 mov     ax, [si]
                 shl     ax, 1           ; B'\n\x01H'=\x01N'#\x16T'@\nWOULD YOU LIKE TO GO\x03n'TO \xf4\x11v'\n\nDO
@@ -7855,13 +7861,13 @@ loc_1348E:                              ; CODE XREF: sub_13366+123↑j
                 push    ax
                 call    far ptr rt_FE2B ; -> rtm_FE2B  (leglib seg008:0x289a9)
 
-loc_134B5:                              ; CODE XREF: sub_13366+73↑j
-                                        ; sub_13366+125↑j
+loc_134B5:                              ; CODE XREF: drawViewWallBandFar+73↑j
+                                        ; drawViewWallBandFar+125↑j
                 call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
 nullsub_48:
                 retf    4
-sub_13366       endp
+drawViewWallBandFar endp
 
 ; [00000005 BYTES: COLLAPSED FUNCTION j_rt_ED_0. PRESS NUMPAD+ TO EXPAND]
                 db    0
@@ -10423,7 +10429,7 @@ rt_FE28:                                ; Overlay manager interrupt
 ; -> rtm_FE29  (leglib seg007:0x27391)
 ; Attributes: noreturn
 
-rt_FE29         proc near               ; CODE XREF: sub_12F00+1DE↑P
+rt_FE29         proc near               ; CODE XREF: renderExhibitView+1DE↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -10451,7 +10457,7 @@ rt_FE2A         endp
 ; Attributes: noreturn
 
 rt_FE2B         proc near               ; CODE XREF: sub_12823+126↑P
-                                        ; sub_12F00+14B↑P ...
+                                        ; renderExhibitView+14B↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------

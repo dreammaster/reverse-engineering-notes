@@ -90,6 +90,21 @@ RENAMES = [
     (0x1204B, "showExhibitResult",
      'display the message string indexed by ds:1ADC (from the array at '
      'the ds:1D38 descriptor) and add to hitPoints. TENTATIVE.'),
+
+    # --- seg001 "bmMUSDUNG": the same first-person view renderer bmDUN
+    #     uses, for the museum's "dungeon exhibit" rooms ---
+    (0x12F00, "renderExhibitView",
+     'bmMUSDUNG top level: draw the first-person view for a dungeon-'
+     'style exhibit room -- clear (rtm_FE2C), wall bands + sprites, '
+     'present. Same design as DUN.EXE\'s renderDungeonView. ~0.5 KB.'),
+    (0x130EE, "drawViewSprite",
+     'blit a sprite into the 3D view (rtm_FE2B).'),
+    (0x12E63, "blitViewCell",
+     'the shared wall/surface draw primitive (rtm_FE2A) -- byte-for-'
+     'byte the same as DUN\'s blitViewCell.'),
+    (0x1327D, "drawViewWallBandNear", 'nearest wall band. TENTATIVE.'),
+    (0x1330F, "drawViewWallBandMid", 'middle wall band. TENTATIVE.'),
+    (0x13366, "drawViewWallBandFar", 'far wall band. TENTATIVE.'),
 ]
 
 

@@ -66,6 +66,32 @@ RENAMES = [
     (0x12E9, "dirBetween",
      "compute the step direction (0..3, or 3 = none) from one coord to "
      "another via the map."),
+
+    # --- 2nd pass: the remaining helpers (seg001 profile + call graph) ---
+    (0x81D, "refreshTileGraphic",
+     "redraw a single interior tile (rtm_FE19). The shared low-level "
+     "blit -- called from moveActor, walkBlocked, traceCombatLine, "
+     "robCommand, speakCommand and the ray helpers."),
+    (0x5E7, "stepLineOfSight",
+     "one outward step of the scanLineOfSight ray -- advances the coord "
+     "(via dirBetween) and tests the tile."),
+    (0x72C, "sightBlockedBy",
+     "the second scanLineOfSight helper -- classify what stopped the "
+     "ray (wall / actor / edge). TENTATIVE."),
+    (0x4BD, "traceCombatRay",
+     "step the traceCombatLine ray one tile (-> refreshTileGraphic). "
+     "TENTATIVE."),
+    (0xC6C, "combatRayResult",
+     "resolve what the combat ray hit (rtm_DF). Called from "
+     "traceCombatLine. TENTATIVE."),
+    (0xB38, "placeNpcSprite",
+     "position an NPC sprite in the view (rtm_C8 camera + rtm_11). "
+     "Called from npcRecurringDialog. TENTATIVE."),
+    (0xC3E, "drawViewFrame",
+     "draw the interior-view border / frame (rtm_FE1E). Called from "
+     "townServiceDispatch and robberyEvent. TENTATIVE."),
+    (0x12AF, "tileAtOffset",
+     "tileAt wrapper that first applies a coord offset. TENTATIVE."),
 ]
 
 

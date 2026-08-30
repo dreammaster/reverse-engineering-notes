@@ -118,7 +118,12 @@ reimplementation.
       `clearTurnFlag`, `setActionPhase_1/2/3`, plus tentatives
       (`stepMonsterToward`, `rebuildLevelView`, `updateLevelState`,
       `rollChestContents`, `monsterSpecialAttack`, `redrawDungeonView`).
-- [ ] Name `seg001` "bmDUNG" (9 funcs, no screen text — graphics).
+- [x] Name `seg001` "bmDUNG" (2026-08-31) — it's the first-person
+      **dungeon-view renderer** (7 funcs): `renderDungeonView` loops the
+      depth bands calling `drawViewWallBand{Near,Mid,Far}` +
+      `drawViewSprite`, all via the `blitViewCell` primitive (rtm_FE2A).
+      Which band is which is a guess. MUS's `bmMUSDUNG` (6 funcs) is the
+      same renderer for the dungeon-exhibit rooms — named identically.
 - [ ] Confirm the DUN tentatives; identify the ~28 remaining `sub_`
       (many are runtime-dispatched 6–26 byte stubs).
 
@@ -170,8 +175,11 @@ reimplementation.
       `scanLineOfSight`, `findObjectTile`, `moveActor`, `stepByDirection`,
       `dirBetween`, `viewFaceDirection`, `setViewport`, `drawActor`,
       `traceCombatLine`.
-- [ ] `bmTNCALB`: the other 13 helpers (mostly the direction/coord math
-      variants and small draw wrappers).
+- [~] `bmTNCALB`: **21/26** (2026-08-31). Added `refreshTileGraphic`
+      (the shared rtm_FE19 single-tile blit), `stepLineOfSight` /
+      `sightBlockedBy`, `traceCombatRay` / `combatRayResult`,
+      `placeNpcSprite`, `drawViewFrame`, `tileAtOffset` (several
+      TENTATIVE). 5 tiny stubs (<20 b, runtime-dispatched) left `sub_`.
 - [x] `twndr` `sub_11ED0` -> `enterTownService` (the ENTER/USE command
       that locates the adjacent service tile and jumps to
       `townServiceDispatch`).
@@ -185,8 +193,8 @@ reimplementation.
       partyGold and `ds:1ADA` = hitPoints in every module; `ds:1F02`,
       `ds:1F24`, `ds:1F2A`, `ds:212E`, `ds:1F16` are the other
       LEGLIB-fixed slots. Remaining: use them to finish naming the
-      per-module `sub_` helpers, and name `seg001` (`bmDUNG`,
-      `bmMUSDUNG`, the other 13 `bmTNCALB`).
+      per-module `sub_` helpers. (`seg001` graphics helpers -- `bmDUNG`,
+      `bmMUSDUNG`, `bmTNCALB` -- now named, 2026-08-31.)
 
 ## STDRV.EXE — open questions
 

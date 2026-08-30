@@ -115,6 +115,26 @@ RENAMES = [
     (0x1031C, "redrawDungeonView",
      'repaint the dungeon viewport (called from climb / describe / '
      'doAttack / the FE5B path). TENTATIVE.'),
+
+    # --- seg001 "bmDUNG": the first-person dungeon-view renderer ---
+    (0x13E6E, "renderDungeonView",
+     'bmDUNG top level: draw the first-person corridor view -- clear '
+     '(rtm_FE2C), loop over the depth bands (ds:1F5Ah) calling the '
+     'wall-band + sprite drawers, then present. Called each turn from '
+     'dunMain / processTileFeature. ~0.75 KB.'),
+    (0x13BD3, "drawViewSprite",
+     'blit a monster / object sprite into the 3D view from its object '
+     'descriptor ([bp+8]) -- rtm_FE46 / rtm_FE2E.'),
+    (0x13DD1, "blitViewCell",
+     'the shared wall/surface draw primitive (rtm_FE2A) that all the '
+     'wall-band drawers call.'),
+    (0x14166, "drawViewWallBandNear",
+     'draw the nearest wall-projection band (-> blitViewCell). '
+     'TENTATIVE (which band).'),
+    (0x1427C, "drawViewWallBandMid", 'draw the middle wall band. TENTATIVE.'),
+    (0x1430E, "drawViewWallBandFar", 'draw the far wall band. TENTATIVE.'),
+    (0x14365, "drawViewFloorCeiling",
+     'draw the floor / ceiling planes of the view. TENTATIVE.'),
 ]
 
 
