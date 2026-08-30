@@ -60,11 +60,11 @@ notes on BRUN.
 | `DUN.EXE` | 25,353 | Dungeon engine. `DUNDATA.BSV`, `DUNM*.BSV`, `DUNMON*.BSV`, `DUNOBJ.BSV`. |
 | `TWNDR.EXE` | 47,315 | Town driver. `TWNMSG.TXT`, `TOWN0.BSV`…`TOWNB.BSV`. |
 | `CASDR.EXE` | 36,845 | Castle driver. `CASTLE.BS1`/`.BS2`, `TCASOBJ.BSV`. |
-| `MUS.EXE` | 20,387 | Music player / jukebox. `MUSDATA.BSV`, `MUSMSG.TXT`, `MUSOBJ.BSV`. |
+| `MUS.EXE` | ~29,568 (unpacked) | **The MUSEUM driver** ("MUS" = Museum, *not* music). The Tarmalon Museum is the game's central hub; its display cases are portals into the world — chains to `TWNDR` (town exhibits), `DUN` (dungeon exhibits), `STDRV` (story), `CELDRV` (cel animations). `MUSDATA.BSV`, `MUSOBJ.BSV`, `MUSMSG.TXT`. |
 | `SDEFENDR.EXE` | 15,443 | "Space Defender" arcade minigame (one of the in-world arcade cabinets). `SDMAP.GLB`, `SDOBJ.GLB`, `SDMAP.GMP`. |
 | `GMB1.EXE` / `GMB2.EXE` | 13,285 / 21,079 | Gambling / casino minigames. |
 | `CELDRV.EXE` | 8,967 | Cel-animation driver. `CEL0.BSV`…`CEL3.BSV`. |
-| `STDRV.EXE` | 24,923 | Driver (story? "ST"?). `STDRVSCR.DAT`. |
+| `STDRV.EXE` | 24,923 | Story driver -- the exhibit story sequences (confirmed: `MUS` chains to it). `STDRVSCR.DAT`. |
 | `SAVER.EXE` | 5,903 | Savegame handler. |
 | `CONFIGUR.EXE` | 10,349 | Standalone config utility — plain Microsoft C, **no LEGLIB dependency**. `DRCONFIG.DAT`. |
 
@@ -90,6 +90,7 @@ one place that pays off across every module.
 | `dun.idb` | `DUN.EXE` | 24 / 72 seg000 funcs (+ `rt_*` thunks) | 0 | Dungeon engine; chains back to `OUT`/`MUS`/`SAVER`. UNP-unpacked; 6 segments — **two** compiled-BASIC code segs: `seg000` "bmDUN" (main) + `seg001` "bmDUNG" (graphics helpers, 9 funcs), thunk table in `seg002`. Both coerced to ~100%. 24 `seg000` functions named from the screen text (`dunMain`, `openChest`, `monsterAttack`, `useMagicMenu`, `castSpell`, `loadDungeonLevel`, …). |
 | `twndr.idb` | `TWNDR.EXE` | 41 / 98 seg000 (+ 13 `bmTNCALB` seg001) funcs (+ `rt_*` thunks) | 0 | Town driver (entered from `OUT` board; chains back). UNP-unpacked; 6 segments — `seg000` "bmTWNDR" (98 funcs) + `seg001` "bmTNCALB" (town/castle anim, 26 funcs), thunk table `seg002` (only **431** entries — TWNDR uses fewer runtime routines). Both ~100% coerced. 41 `seg000` functions named from the shop/NPC text (`foodShop`, `weaponShopEntry`, `borrowMoney`, `loanRepayment`, `fortuneTeller`, `jailScene`/`jailRelease`, `buyBackShop`, `townServiceDispatch` (~6 KB), …). |
 | `casdr.idb` | `CASDR.EXE` |  34 (+ 13 `bmTNCALB`) / 102 seg000 funcs (+ `rt_*` thunks) | 0 | Castle / fortress driver — **endgame** content (the Warlord, the Compendium, the king's quest). UNP-unpacked; `seg000` "bmCASDR" + `seg001` "bmTNCALB" (the **same** helper module TWNDR uses), thunk table `seg002` (431). Both ~100% coerced. 34 named from the story text (`warlordConfrontation`, `kingConfides` (the guardians-of-the-scroll / forearm-mark quest), `potionWizard`, `doFight`, `describeRoom`/`describeObjects`, `loadCastleLevel`, `exitCastle`, `gasRoomTrap`, …). |
+| `mus.idb` | `MUS.EXE` | 37 / 109 seg000 funcs (+ `rt_*` thunks) | 0 | **The MUSEUM driver** (the game's hub — display cases are portals). `seg000` "bmMUS" (109 funcs) + `seg001` "bmMUSDUNG" (8), thunk table `seg002` (431). Both ~100% coerced. 37 named: `enterExhibit`, `describeMuseumRoom`, `readPlaque`, `caretakerOffer`, `useCommand`, `chainToTown`/`Dungeon`/`Story`/`Cel`, ~15 `exhibitName_*`. |
 
 (Counts via `ida_scripts/identify.py -NoExport`; re-run any time as a
 sanity check.)
@@ -360,10 +361,20 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   `setViewport`, `drawActor`, `traceCombatLine`. These drive the
   `rtm_FE1x` graphics primitives in `leglib` `seg004` and read the
   interior map array (empty tile = `0xFF`).
-- **All six per-module IDBs now built** (menu, leglib, out, dun, twndr,
-  casdr). Next: (a) map the `ds:` engine state vars to name the
-  remaining `sub_` helpers across `out`/`dun`/`twndr`/`casdr`;
-  (b) continue `rtm_*` → `B$…` in `leglib.idb` (the `FF4B`/`FF20`/…
-  value-stack cluster, and the `rtm_FE1x` interior-graphics cluster the
-  `bmTNCALB` work exposed); (c) build the smaller modules (`MUS`,
-  `SAVER`, drivers, minigames).
+- **2026-08-31** — Built `mus.idb` and discovered **`MUS.EXE` is the
+  MUSEUM driver, not a music player** ("MUS" = Museum). The Tarmalon
+  Museum is the game's hub: display cases are portals — `MUS` chains to
+  `TWNDR` (town exhibits like "THORNBERRY"), `DUN` ("THE FOUR JEWEL
+  DUNGEON", "THE PIRATE'S LAIR"), `STDRV` (story sequences), `CELDRV`
+  (cel animations). 37/109 `seg000` functions named: `enterExhibit`
+  (the coin-portal mechanic), `describeMuseumRoom`, `readPlaque`,
+  `caretakerOffer`/`caretakerDialog`, `useCommand`, the `chainTo*`
+  hand-offs, ~15 `exhibitName_*` setters. Fixed the architecture
+  table + file-formats (`MUSDATA.BSV` etc = museum data; `STDRV` =
+  story driver, confirmed).
+- **Seven per-module IDBs now built** (menu, leglib, out, dun, twndr,
+  casdr, mus). Next: (a) map the `ds:` engine state vars to name the
+  remaining `sub_` helpers; (b) continue `rtm_*` → `B$…` in `leglib.idb`
+  (the `FF4B`/`FF20`/… value-stack cluster, and the `rtm_FE1x`
+  interior-graphics cluster); (c) build the last modules (`SAVER`,
+  `STDRV`, `CELDRV`, `SDEFENDR`, `GMB1`/`GMB2`, `CONFIGUR`).

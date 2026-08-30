@@ -50,9 +50,13 @@ Once `leglib.idb` gets more `B$…` names, re-run `resolve_rtm_leglib.py`
 to refresh `rtm_map.py` — the `-> name` comments propagate to every
 module on the next `resolve_thunks` pass.
 
-Still to build: `MUS`, `SAVER`, `CELDRV`, `STDRV`, `SDEFENDR`,
-`GMB1`/`GMB2` (check packing first), `CONFIGUR` (standalone C, low
-priority).
+`mus.idb` built 2026-08-31 — and **`MUS.EXE` turned out to be the MUSEUM
+driver, not music** ("MUS" = Museum; the hub, exhibits = portals; chains
+to `TWNDR`/`DUN`/`STDRV`/`CELDRV`).
+
+Still to build: `SAVER`, `STDRV` (story sequences), `CELDRV` (cel
+animations), `SDEFENDR`, `GMB1`/`GMB2` (check packing first), `CONFIGUR`
+(standalone C, low priority).
 
 ## DUN.EXE — open questions
 

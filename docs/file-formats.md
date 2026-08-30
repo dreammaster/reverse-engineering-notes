@@ -48,7 +48,7 @@ castle/fort layout banks.
 | `DUNDATA.BSV`, `DUNOBJ.BSV`, `DUNM1.BSV`…`DUNM3.BSV`, `DUNMONA.BSV` / `DUNMONB.BSV` | — | `DUN` | dungeon map / objects / monsters |
 | `DIS0.BSV`…`DIS15.BSV` (+ `DIS0A`, `DIS1A`) | 727–2055 | ? | "display" screens? ~18 of them |
 | `CEL0.BSV`…`CEL3.BSV` | 1573 / 2597 | `CELDRV` | cel animations |
-| `MUSDATA.BSV`, `MUSOBJ.BSV`, `MUSMSG.TXT` | 8055 / 12961 / 11229 | `MUS` | music data / objects / message text |
+| `MUSDATA.BSV`, `MUSOBJ.BSV`, `MUSMSG.TXT` | 8055 / 12961 / 11229 | `MUS` | MUSEUM data / exhibit objects / message text |
 | `SDMAP.GLB` / `.GMP`, `SDOBJ.GLB` | 4113 / 2081 / 6161 | `SDEFENDR` | Space Defender minigame map / objects |
 | `BJCHR.GLB` | 6161 | `GMB1`/`GMB2` | blackjack ("BJ") character graphics? |
 | `BIGNUM.DAT` | 420 | ? | large-digit font |
