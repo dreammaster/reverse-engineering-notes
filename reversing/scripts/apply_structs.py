@@ -1093,8 +1093,11 @@ struct GUITextBox {
                             // GUITextBox::KeyPress's "activated++" on kp==13 (Enter).
   char text[200];               // +0x20, high confidence: fwrite/fread with ElementSize=0xC8(200),
                             // ElementCount=1 at this offset in GUITextBox::WriteToFile/ReadFromFile;
-                            // also the strcpy destination in SetTextBoxText (already matched). Matches
-                            // 2011's char text[200] with zero drift (unlike GUILabel below).
+                            // also the strcpy destination in SetTextBoxText and GetTextBoxText
+                            // (both already matched), whose shared GUIMain::get_control_type()==5
+                            // check independently confirms Common/acgui.h:659's GOBJ_TEXTBOX=5 with
+                            // zero drift. Matches 2011's char text[200] with zero drift (unlike
+                            // GUILabel below).
   int font;                     // +0xE8, high confidence: confirmed via WriteToFile/ReadFromFile's 3-int
                             // fwrite/fread block starting here, and Draw's check_font(&font) call.
   int textcol;                  // +0xEC, high confidence: confirmed via ReadFromFile's
@@ -1139,7 +1142,10 @@ struct GUILabel {
                             // exact base-class layout.
   int activated;                // +0x1C, positional (GUIObject base field, see GUITextBox above).
   char text[200];               // +0x20, high confidence: fwrite/fread with ElementSize=0xC8(200),
-                            // ElementCount=1 at this offset in GUILabel::WriteToFile/ReadFromFile.
+                            // ElementCount=1 at this offset in GUILabel::WriteToFile/ReadFromFile;
+                            // also the strcmp/strcpy target in SetLabelText (already matched), whose
+                            // GUIMain::get_control_type()==2 check independently confirms
+                            // Common/acgui.h:656's GOBJ_LABEL=2 with zero drift.
                             // IMPORTANT DRIFT: this is a FIXED inline array in this 2002 build. 2011
                             // replaced it with a dynamically-allocated `char *text` + `textBufferLen`
                             // (Common/acgui.h:287-288) -- the old fixed-array fwrite survives only as a
@@ -1293,9 +1299,14 @@ struct GUISlider {
                             // not independently re-verified for GUISlider specifically this round).
   int min;                       // +0x20, high confidence: confirmed via GUISlider::WriteToFile's
                             // 16-byte bulk fwrite starting here (min/max/value/mpressed), and
-                            // GUISlider::Draw's opening "if (min>=max) max=min+1;" read.
+                            // GUISlider::Draw's opening "if (min>=max) max=min+1;" read. Also
+                            // clamped against by SetSliderValue (already matched), whose
+                            // GUIMain::get_control_type()==4 check independently confirms
+                            // Common/acgui.h:658's GOBJ_SLIDER=4 with zero drift.
   int max;                       // +0x24, high confidence, see min above.
-  int value;                     // +0x28, high confidence, see min above.
+  int value;                     // +0x28, high confidence, see min above; also read/written by
+                            // GetSliderValue/SetSliderValue (already matched), a further
+                            // reconfirmation route.
   int mpressed;                  // +0x2C, high confidence: confirmed THREE independent ways --
                             // GUISlider::MouseDown sets it 1, MouseUp clears it 0, MouseMove guards
                             // on it ("if (mpressed==0) return;") before its drag-ratio float math --

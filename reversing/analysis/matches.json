@@ -1397,7 +1397,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). A near-mirror of SetTextBoxText (already matched): same guin/objn validation, same GUIMain::get_control_type ==5 check, then strcpy(Destination, control+0x20) -- the reverse direction of SetTextBoxText's copy. Also confirms the Destination!=NULL null-check quits \"!String argument was null...\" BEFORE any GUI validation, matching AGS's usual argument-order convention. NEW ENUM CONFIRMATION: second independent site confirming Common/acgui.h:659's GOBJ_TEXTBOX=5 with zero drift. Bonus reconfirmation (3rd route) of GUITextBox.text@+0x20."
   },
   {
     "kind": "function",
@@ -1407,7 +1407,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Body: validates strlen(Str)<=0xBE(190) BEFORE the guin/objn validation (quitting \"!SetTextBoxText: text too long\" otherwise -- a previously undocumented length-validation constant, 190 < the struct's own confirmed 200-byte text[] capacity, leaving 10 bytes of headroom; not yet cross-checked against a specific named 2011 constant), then validates guin<numgui/objn<numobjs the same way as SetSliderValue, calls GUIMain::get_control_type(objn) and checks result==4+1=5, then strcpy(control+0x20, Str). NEW ENUM CONFIRMATION: the control-type check ==5 matches Common/acgui.h:659's GOBJ_TEXTBOX=5 exactly, zero drift. Reconfirms GUITextBox.text@+0x20 (already HIGH confidence via WriteToFile/ReadFromFile ElementSize=0xC8 fwrite/fread) via a second, independent strcpy-destination route -- already cross-referenced from that struct's own comment."
   },
   {
     "kind": "function",
@@ -1497,7 +1497,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Body: runs Str through the already-matched GetTranslation first (translated-text lookup), validates strlen(translated)<=0xBE(190) (quitting \"!SetLabelText: text too long\" otherwise -- same 190-char constant as SetTextBoxText, one byte under the struct's own 200-byte text[] capacity), validates guin/objn the same way as SetSliderValue/SetTextBoxText, calls GUIMain::get_control_type(objn) and checks result==2, then strcmp's the new text against the existing [control+0x20] and only strcpy's + sets guis_need_update=1 if they differ (a no-op-avoidance optimization not present in SetTextBoxText). NEW ENUM CONFIRMATION: the control-type check ==2 matches Common/acgui.h:656's GOBJ_LABEL=2 exactly, zero drift -- completing 3 of 6 GOBJ_* constants confirmed via script-API control-type checks this round (GOBJ_LABEL=2, GOBJ_SLIDER=4, GOBJ_TEXTBOX=5), all with zero drift from Common/acgui.h:655-660's declared 1-6 enum. Reconfirms GUILabel.text@+0x20 (already HIGH confidence via WriteToFile/ReadFromFile) via a new strcpy-destination route, and adds a new field to that struct's confirmation trail: the compare-before-write pattern requires text@+0x20 be readable as a live null-terminated string at exactly that offset, consistent with all prior evidence."
   },
   {
     "kind": "function",
@@ -1517,7 +1517,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Body: validates guin<numgui (dword_51DB04, quit \"!SetSliderValue: invalid GUI number\" otherwise), calls GUIMain::get_control_type(objn) on &guis[guin] and checks result==4, quitting \"!SetSliderValue: specified control is n...\" otherwise, then retrieves the control object via guis[guin].objs[objn] (dword_52312C[guin*0x184+objn*4+0x94]), clamps valn to [control+0x20,control+0x24] (min/max), writes the clamped result to [control+0x28] (value), and sets guis_need_update=1. Matches GUISlider::SetSliderValue-equivalent role exactly. NEW ENUM CONFIRMATION: the control-type check ==4 matches Common/acgui.h:658's GOBJ_SLIDER=4 exactly, zero drift -- see the matching GetSliderValue/SetTextBoxText/GetTextBoxText/SetLabelText entries for the other four GOBJ_* constants, all independently confirmed the same way. Bonus reconfirmation (3rd route) of GUISlider.min@+0x20/.max@+0x24/.value@+0x28, already HIGH confidence via WriteToFile/Draw."
   },
   {
     "kind": "function",
@@ -1527,7 +1527,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). A simple mirror of SetSliderValue (already matched, see its own entry for the shared guin/objn/get_control_type validation sequence): after the same ==4 GOBJ_SLIDER control-type check, reads and returns [control+0x28] (value) directly, no write. NEW ENUM CONFIRMATION: second independent site confirming Common/acgui.h:658's GOBJ_SLIDER=4 with zero drift. Bonus reconfirmation (4th route) of GUISlider.value@+0x28."
   },
   {
     "kind": "function",

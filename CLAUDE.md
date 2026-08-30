@@ -2419,6 +2419,22 @@ disassembly work.
   array-based system" pattern, here observed across a whole subsystem
   rather than one struct. `sub_425230` stays unnamed — too generic and
   trivial to confidently pin to a specific 2011 identifier.
+- **A GUI script-API sweep confirms the `GOBJ_*` enum with zero drift.**
+  `SetSliderValue`/`GetSliderValue`/`SetTextBoxText`/`GetTextBoxText`/
+  `SetLabelText` (all previously bare linker-symbol matches with no
+  field evidence) share one validation skeleton — bounds-check
+  `guin`/`objn`, call the already-matched `GUIMain::get_control_type`,
+  compare its result against a literal constant — and each literal
+  matches `Common/acgui.h:655-660`'s declared `GOBJ_*` values exactly:
+  `SetSliderValue`/`GetSliderValue` check `==4`(`GOBJ_SLIDER`),
+  `SetTextBoxText`/`GetTextBoxText` check `==5`(`GOBJ_TEXTBOX`),
+  `SetLabelText` checks `==2`(`GOBJ_LABEL`) — 3 of 6 constants now
+  confirmed via live script-API dispatch, all zero drift. Bonus finds:
+  a previously-undocumented 190-character text-length validation
+  constant shared by `SetTextBoxText`/`SetLabelText` (10 bytes under
+  `GUITextBox`/`GUILabel`'s own confirmed 200-byte `text[]` capacity),
+  and further reconfirmation routes for `GUISlider.min`/`.max`/`.value`
+  and `GUITextBox`/`GUILabel.text`@+0x20 (all already HIGH confidence).
 
 ## Third-party library identification (Task #10)
 

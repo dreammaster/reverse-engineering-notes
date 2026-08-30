@@ -8957,3 +8957,68 @@ specific 2011 identifier, especially since 2011's own equivalent logic
 is folded into a much larger `channels[]`-array-based audio-polling
 routine with no directly comparable single-purpose helper left to
 check it against.
+
+### GUI script-API sweep: GOBJ_* enum confirmed with zero drift
+
+A `matches.json` query for bare mechanical (linker-symbol-only, no field
+evidence) matches turned up a batch of GUI script-API functions worth a
+closer read: `SetSliderValue`, `GetSliderValue`, `SetTextBoxText`,
+`GetTextBoxText`, `SetLabelText`. All five share an identical validation
+skeleton -- check `guin<numgui` (`dword_51DB04`), check `objn<numobjs`
+(`[guis[guin]+0x3C]`), then call the already-matched
+`GUIMain::get_control_type(objn)` (`acgui.cpp:1135`) and compare its
+result against a literal control-type constant before touching the
+control object itself (`guis[guin].objs[objn]`, i.e.
+`dword_52312C[guin*0x184+objn*4+0x94]`).
+
+Reading each function's own literal comparison value and cross-checking
+against `Common/acgui.h:655-660`'s declared `GOBJ_*` enum
+(`GOBJ_BUTTON=1, GOBJ_LABEL=2, GOBJ_INVENTORY=3, GOBJ_SLIDER=4,
+GOBJ_TEXTBOX=5, GOBJ_LISTBOX=6`) closes all five with ZERO drift:
+
+- `SetSliderValue`/`GetSliderValue` both check `==4` (`GOBJ_SLIDER`).
+  `SetSliderValue` clamps its argument to `[control+0x20,control+0x24]`
+  (already-HIGH-confidence `GUISlider.min`/`.max`) and writes the
+  clamped result to `[control+0x28]` (`GUISlider.value`), then sets
+  `guis_need_update=1`. `GetSliderValue` is a pure mirror, reading
+  `[control+0x28]` back with no write. Both give `GUISlider.min`/`.max`/
+  `.value` a further reconfirmation route (already closed via
+  `GUISlider::WriteToFile`/`Draw`/`MouseMove` several rounds ago) rather
+  than new struct territory -- the real payoff here is the enum
+  confirmation and the two functions' own retroactive documentation.
+- `SetTextBoxText`/`GetTextBoxText` both check `==5` (`GOBJ_TEXTBOX`).
+  `SetTextBoxText` additionally validates `strlen(Str)<=0xBE`(190)
+  *before* the GUI/object-number checks (quitting `"!SetTextBoxText:
+  text too long"` otherwise) -- a previously-undocumented length
+  constant, 10 bytes under the struct's own confirmed 200-byte `text[]`
+  capacity, not yet tied to a specific named 2011 constant. Both
+  functions' `strcpy` source/destination is `[control+0x20]`, giving
+  `GUITextBox.text`@+0x20 (already HIGH confidence via
+  `WriteToFile`/`ReadFromFile`'s `ElementSize=0xC8` fwrite/fread) a
+  further confirmation route from each direction.
+- `SetLabelText` checks `==2` (`GOBJ_LABEL`) -- the third and last of
+  this round's confirmed enum values. Its own body is slightly more
+  involved than the other four: it runs `Str` through the already-
+  matched `GetTranslation` FIRST, then applies the *same* 190-character
+  length check (`"!SetLabelText: text too long"`) before the GUI/object
+  validation, then -- a small optimization none of the other four
+  functions have -- `strcmp`s the translated text against the existing
+  `[control+0x20]` and only `strcpy`s + sets `guis_need_update=1` if
+  they actually differ. This gives `GUILabel.text`@+0x20 (already HIGH
+  confidence via `WriteToFile`/`ReadFromFile`) a further confirmation
+  route, and confirms the field is read back as a live null-terminated
+  string at exactly that offset, consistent with every prior finding.
+
+Net result: 3 of 6 `GOBJ_*` constants (`LABEL=2`, `SLIDER=4`,
+`TEXTBOX=5`) are now independently confirmed via live script-API
+control-type dispatch, on top of the already-established
+`GUIMain::get_control_type`/`rebuild_array` packed-encoding evidence
+from several rounds ago -- and every one matches 2011's declared value
+with zero drift, unlike almost every capacity/array-size constant found
+elsewhere in this project. The remaining three (`BUTTON=1`,
+`INVENTORY=3`, `LISTBOX=6`) are strongly implied by the same dispatch
+mechanism but have no individually-read script-API call site checked
+yet in this project's own notes -- a small open item for a future
+round, not a doubt about the mechanism itself. All five functions
+(previously bare linker-symbol matches with no field evidence) are now
+fully retroactively documented in `matches.json`.
