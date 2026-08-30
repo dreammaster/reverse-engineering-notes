@@ -6,14 +6,14 @@
 ; |                       Paul Gilbert, ScummVM Team                        |
 ; +-------------------------------------------------------------------------+
 ;
-; Input SHA256 : D8E9294B9B805A507310262A7C9546F454ADC3B4EB48DC948133A6FE8921439D
-; Input MD5    : 6381737596B6542F1947DA978777069E
-; Input CRC32  : C5984E9B
+; Input SHA256 : 3A03C21D7208012BF10AB817B49F6D11C70EEAD65C64341E6CB1DF72644CB83A
+; Input MD5    : 41E67D1EA02837796325DA642486FDC8
+; Input CRC32  : 78429CFF
 
 ; File Name   : C:\dev\lota\out.exe
 ; Format      : MS-DOS executable (EXE)
-; Base Address: 1000h Range: 10000h-1B430h Loaded length: 8EF5h
-; Entry Point : 181E:10
+; Base Address: 1000h Range: 10000h-1AE90h Loaded length: A690h
+; Entry Point : 16E8:DF
 
                 .686p
                 .mmx
@@ -27,18 +27,9 @@ seg000          segment byte public 'CODE' use16
                 assume es:nothing, ss:nothing, ds:nothing, fs:nothing, gs:nothing
 aBmout          db 'bmOUT     ',0
                 align 2
-                db 0A2h
-                db  31h ; 1
-                db  84h
-                db  20h
-                db  54h ; T
-                db  24h ; $
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
+                db 0A2h, 31h, 84h, 20h, 54h, 24h
+word_10012      dw 0                    ; DATA XREF: start+5C↓r
+dword_10014     dd 0                    ; DATA XREF: start+65↓r
                 db 0C0h
                 db  1Ah
                 db  30h ; 0
@@ -95,7 +86,7 @@ loc_10048:
                 push    ax
                 call    far ptr rt_AF   ; -> basScreenInit  (leglib seg003:0x13608)
 
-loc_10060:                              ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+loc_10060:
                 cmp     word ptr ds:1AC0h, 0
                 jz      short loc_1006A
                 jmp     loc_1007B
@@ -335,7 +326,7 @@ loc_10271:
                 push    ax
                 call    far ptr rt_09   ; -> rtm_09  (leglib seg003:0x14a31)
 
-loc_10279:                              ; OUTDAT.DAT
+loc_10279:
                 mov     ax, 249Eh
                 push    ax
                 mov     ax, 212Ah
@@ -352,7 +343,7 @@ loc_1028F:
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
-loc_10298:                              ; outdat.dat
+loc_10298:
                 mov     ax, 24ACh
                 push    ax
                 mov     ax, 1
@@ -414,18 +405,18 @@ loc_102FB:
                 call    far ptr rt_09   ; -> rtm_09  (leglib seg003:0x14a31)
 
 loc_10305:
-                call    loc_1486B
+                call    near ptr sub_1486B
 ; ---------------------------------------------------------------------------
 
-loc_10308:                              ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+loc_10308:
                 cmp     word ptr ds:1ADAh, 0
-                mov     ax, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     ax, 0
                 jg      short loc_10313
                 dec     ax
 
 loc_10313:                              ; CODE XREF: outInit+177↑j
-                cmp     word ptr ds:1ACCh, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
-                mov     cx, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr ds:1ACCh, 0
+                mov     cx, 0
                 jg      short loc_1031E
                 dec     cx
 
@@ -438,7 +429,7 @@ loc_1031E:                              ; CODE XREF: outInit+182↑j
 
 loc_10327:                              ; CODE XREF: outInit+189↑j
                                         ; outInit+27A↓j ...
-                cmp     word ptr ds:212Eh, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr ds:212Eh, 0
                 jz      short loc_10331
                 jmp     loc_10342
 ; ---------------------------------------------------------------------------
@@ -458,7 +449,7 @@ loc_10342:                              ; CODE XREF: outInit+195↑j
                 call    far ptr rt_FE16 ; -> rtm_FE16  (leglib seg007:0x26654)
 
 loc_10350:                              ; CODE XREF: outInit+1A6↑j
-                cmp     word ptr ds:1E1Eh, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr ds:1E1Eh, 0
                 jnz     short loc_1035A
                 jmp     loc_10365
 ; ---------------------------------------------------------------------------
@@ -494,8 +485,7 @@ loc_10365:                              ; CODE XREF: outInit+1BE↑j
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 call    sub_109D3
 ; ---------------------------------------------------------------------------
-                db 9Ah, 6Fh, 5Eh, 2 dup(0)
-; ---------------------------------------------------------------------------
+                call    sub_15E6F
 
 loc_103A6:                              ; CODE XREF: outInit+1C9↑j
                 call    creatureApproach ; encounter start: "UNKNOWN CREATURE", " APPROACHING FROM THE ", " IS / ARE APPROACHING." ~1.3 KB.
@@ -505,10 +495,10 @@ loc_103A6:                              ; CODE XREF: outInit+1C9↑j
 ; ---------------------------------------------------------------------------
 
 loc_103B3:                              ; CODE XREF: outInit+215↑j
-                call    far ptr 0:58EEh
-                call    loc_145DB
+                call    pegasusOrAmbush ; special travel event: "PEGASUS SETS YOU DOWN", "YOU ARE AMBUSHED BY BANDITS!". ~0.75 KB.
+                call    sub_145DB
 ; ---------------------------------------------------------------------------
-                mov     ax, 24BAh       ; MUS.EXE
+                mov     ax, 24BAh
                 push    ax
                 mov     ax, 2136h
                 push    ax
@@ -518,8 +508,8 @@ loc_103B3:                              ; CODE XREF: outInit+215↑j
 ; ---------------------------------------------------------------------------
 
 loc_103D1:                              ; CODE XREF: outInit+217↑j
-                cmp     word ptr ds:1ADAh, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
-                mov     ax, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr ds:1ADAh, 0
+                mov     ax, 0
                 jle     short loc_103DC
                 dec     ax
 
@@ -530,7 +520,7 @@ loc_103DC:                              ; CODE XREF: outInit+240↑j
                 mov     bx, 1ACEh
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
                 call    far ptr rt_FF1F ; -> rtm_FF1F  (leglib seg004:0x21b5e)
-                mov     ax, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     ax, 0
                 jbe     short loc_103FA
                 dec     ax
 
@@ -550,13 +540,13 @@ loc_10404:                              ; CODE XREF: outInit+266↑j
 ; ---------------------------------------------------------------------------
 
 loc_10416:                              ; CODE XREF: outInit+268↑j
-                cmp     word ptr ds:1ADAh, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr ds:1ADAh, 0
                 jl      short loc_10420
                 jmp     loc_10426
 ; ---------------------------------------------------------------------------
 
 loc_10420:                              ; CODE XREF: outInit+282↑j
-                mov     word ptr ds:1ADAh, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:1ADAh, 0
 
 loc_10426:                              ; CODE XREF: outInit+284↑j
                 mov     bx, 24C6h
@@ -599,10 +589,12 @@ loc_10450:                              ; CODE XREF: outInit+2A4↑j
                 mov     ax, 2144h
                 push    ax
                 call    far ptr rt_FE56 ; -> rtm_FE56  (leglib seg007:0x27457)
-                call    far ptr 0:5018h
+                call    sub_15018
 
 loc_104A7:                              ; CODE XREF: outInit+18B↑j
-                call    far ptr 0:57B0h
+                call    sub_157B0
+
+loc_104AC:
                 push    word ptr ds:24E8h
                 push    word ptr ds:24E6h
                 call    far ptr rt_B8   ; -> rtm_B8  (leglib seg003:0x1a1ba)
@@ -665,7 +657,7 @@ loc_10526:                              ; CODE XREF: outInit+3A9↓j
                 mov     si, 1B0Ch
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
-                mov     word ptr es:[bx], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr es:[bx], 0
                 mov     ax, ds:2146h
                 inc     ax
 
@@ -673,19 +665,19 @@ loc_1053C:                              ; CODE XREF: outInit+389↑j
                 mov     ds:2146h, ax
                 cmp     ax, 4
                 jle     short loc_10526
-                mov     word ptr ds:2148h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:2148h, 0
                 mov     si, 1BC4h
                 mov     bx, 4
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
-                mov     word ptr es:[bx], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr es:[bx], 0
                 mov     bx, 6           ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
-                mov     word ptr es:[bx], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr es:[bx], 0
                 mov     word ptr ds:1AFCh, 63h ; 'c'
-                mov     word ptr ds:1E24h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
-                mov     word ptr ds:1AFEh, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:1E24h, 0
+                mov     word ptr ds:1AFEh, 0
                 mov     si, 1B96h
                 mov     bx, 0Eh
                 add     bx, [si+0Ah]
@@ -695,11 +687,11 @@ loc_1053C:                              ; CODE XREF: outInit+389↑j
                 mov     bx, 12h
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
-                mov     word ptr es:[bx], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr es:[bx], 0
                 mov     bx, 10h
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
-                mov     word ptr es:[bx], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr es:[bx], 0
                 mov     word ptr ds:1F24h, 0FFh
                 mov     ax, 4
                 jmp     loc_1061E
@@ -730,7 +722,7 @@ loc_105EE:                              ; CODE XREF: outInit+450↑j
                 mov     si, 1B0Ch
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
-                mov     word ptr es:[bx], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr es:[bx], 0
 
 loc_10602:                              ; CODE XREF: outInit+452↑j
                 mov     ax, ds:2146h
@@ -741,7 +733,7 @@ loc_10602:                              ; CODE XREF: outInit+452↑j
 
 loc_1060E:                              ; CODE XREF: outInit+470↑j
                 mov     word ptr ds:1AEAh, 63h ; 'c'
-                mov     word ptr ds:1AECh, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:1AECh, 0
 
 loc_1061A:                              ; CODE XREF: outInit+472↑j
                 mov     ax, ds:2146h
@@ -775,7 +767,7 @@ loc_1065A:                              ; CODE XREF: outInit+4DD↓j
                 mov     si, 1BC4h
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
-                mov     word ptr es:[bx], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr es:[bx], 0
                 mov     ax, ds:2146h
                 inc     ax
 
@@ -790,7 +782,7 @@ loc_1067D:
                 mov     bx, 1Ah
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
-                mov     word ptr es:[bx], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr es:[bx], 0
                 mov     ax, 19h
                 jmp     loc_106AA
 ; ---------------------------------------------------------------------------
@@ -823,8 +815,10 @@ loc_106C6:                              ; -> rtm_FF23  (leglib seg004:0x218ee)
 loc_106CB:
                 mov     ds:1AC2h, ax
                 mov     ds:1AC4h, dx
-                call    loc_145DB
+                call    sub_145DB
 ; ---------------------------------------------------------------------------
+
+loc_106D5:
                 mov     si, 1B96h
                 mov     bx, 0Ah
                 add     bx, [si+0Ah]
@@ -850,7 +844,7 @@ loc_106F9:                              ; CODE XREF: outInit:loc_106F4↑j
                 mov     es:[bx], ax
 
 loc_10708:                              ; CODE XREF: outInit+55D↑j
-                mov     word ptr ds:1ADCh, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:1ADCh, 0
                 mov     si, 1B96h
                 mov     bx, 0Ch
                 add     bx, [si+0Ah]
@@ -923,15 +917,17 @@ loc_10798:
                 push    ax
                 mov     ax, 1B06h
                 push    ax
-                call    far ptr 0:5075h
-                cmp     word ptr ds:1F02h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
-                mov     ax, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                call    sub_15075
+
+loc_107A8:
+                cmp     word ptr ds:1F02h, 0
+                mov     ax, 0
                 jnz     short loc_107B3
                 dec     ax
 
 loc_107B3:                              ; CODE XREF: outInit+617↑j
                 cmp     word ptr ds:1F02h, 2 ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
-                mov     cx, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     cx, 0
                 jle     short loc_107BE
                 dec     cx
 
@@ -944,27 +940,27 @@ loc_107BE:                              ; CODE XREF: outInit+622↑j
 
 loc_107C7:                              ; CODE XREF: outInit+629↑j
                 cmp     word ptr ds:1B02h, 32h ; '2'
-                mov     ax, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     ax, 0
                 jle     short loc_107D2
                 dec     ax
 
 loc_107D2:                              ; CODE XREF: outInit+636↑j
                 cmp     word ptr ds:1B02h, 39h ; '9'
-                mov     cx, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     cx, 0
                 jge     short loc_107DD
                 dec     cx
 
 loc_107DD:                              ; CODE XREF: outInit+641↑j
                 and     cx, ax
                 cmp     word ptr ds:1B06h, 32h ; '2'
-                mov     ax, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     ax, 0
                 jle     short loc_107EA
                 dec     ax
 
 loc_107EA:                              ; CODE XREF: outInit+64E↑j
                 and     ax, cx
                 cmp     word ptr ds:1B06h, 38h ; '8'
-                mov     cx, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     cx, 0
                 jge     short loc_107F7
                 dec     cx
 
@@ -1037,7 +1033,7 @@ loc_10870:                              ; CODE XREF: outInit+74F↓j
                 mov     es, word ptr [si+2]
                 mov     di, bx
                 cmp     word ptr es:[bx], 0FF9Dh
-                mov     cx, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     cx, 0
                 jge     short loc_10889
                 dec     cx
 
@@ -1053,7 +1049,7 @@ loc_10889:                              ; CODE XREF: outInit+6ED↑j
                 mov     [bp-10h], bx
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
                 call    far ptr rt_FF1F ; -> rtm_FF1F  (leglib seg004:0x21b5e)
-                mov     ax, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     ax, 0
                 jnb     short loc_108B9
                 dec     ax
 
@@ -1089,7 +1085,7 @@ loc_108E2:                              ; CODE XREF: outInit+6D4↑j
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
                 mov     di, bx
-                cmp     word ptr es:[bx], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr es:[bx], 0
                 jg      short loc_10901
                 jmp     loc_10920
 ; ---------------------------------------------------------------------------
@@ -1098,7 +1094,7 @@ loc_10901:                              ; CODE XREF: outInit+763↑j
                 mov     bx, 14h
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
-                mov     word ptr es:[bx], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr es:[bx], 0
                 mov     si, 1BF2h
                 mov     bx, 38h ; '8'
                 add     bx, [si+0Ah]
@@ -1111,7 +1107,7 @@ loc_10920:                              ; CODE XREF: outInit+765↑j
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
                 mov     di, bx
-                cmp     word ptr es:[bx], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr es:[bx], 0
                 jg      short loc_10937
                 jmp     loc_10956
 ; ---------------------------------------------------------------------------
@@ -1120,7 +1116,7 @@ loc_10937:                              ; CODE XREF: outInit+799↑j
                 mov     bx, 1Ah
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
-                mov     word ptr es:[bx], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr es:[bx], 0
                 mov     si, 1BF2h
                 mov     bx, 8
                 add     bx, [si+0Ah]
@@ -1136,9 +1132,9 @@ loc_10956:                              ; CODE XREF: outInit+79B↑j
                 mov     bx, 12h
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
-                mov     word ptr es:[bx], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
-                mov     word ptr ds:214Ah, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
-                call    loc_1486B
+                mov     word ptr es:[bx], 0
+                mov     word ptr ds:214Ah, 0
+                call    near ptr sub_1486B
 ; ---------------------------------------------------------------------------
 
 loc_1097E:
@@ -1249,8 +1245,8 @@ sub_10A05       endp
 
 ; Attributes: noreturn
 
-sub_10A1F       proc near               ; CODE XREF: mainDispatch+257↓j
-                                        ; mainDispatch+3A2↓p
+sub_10A1F       proc near               ; CODE XREF: sub_13D98+11F↓j
+                                        ; sub_13D98:loc_14002↓p
                 mov     word ptr ds:215Ah, 3Ch ; '<'
                 mov     word ptr ds:215Ch, 0CAh
                 mov     ax, 215Ah
@@ -1306,7 +1302,7 @@ sub_10A53       endp
 ; Attributes: noreturn
 
 sub_10A6D       proc near               ; CODE XREF: quitOrTalk+1C7↓j
-                                        ; mainDispatch+447↓p ...
+                                        ; sub_14054:loc_140A7↓p ...
                 mov     word ptr ds:2166h, 32h ; '2'
                 mov     word ptr ds:2168h, 2 ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
                 mov     ax, 2166h
@@ -1483,7 +1479,7 @@ loc_10B48:                              ; CODE XREF: doMovement+3D↑j
                 push    ax
                 mov     ax, 1E1Eh
                 push    ax
-                call    far ptr 0:51B7h
+                call    sub_151B7
                 mov     si, 1B96h
                 mov     bx, 18h
                 add     bx, [si+0Ah]
@@ -1492,7 +1488,7 @@ loc_10B48:                              ; CODE XREF: doMovement+3D↑j
                 mov     es:[bx], ax
                 mov     ax, ds:1F02h
                 mov     ds:2182h, ax
-                cmp     word ptr ds:1F04h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr ds:1F04h, 0
                 jz      short loc_10BB7
                 jmp     loc_10D6A
 ; ---------------------------------------------------------------------------
@@ -1505,7 +1501,7 @@ loc_10BB7:                              ; CODE XREF: doMovement+AC↑j
                 mov     ds:1B02h, ax
                 mov     ax, ds:208Ah
                 mov     ds:1B06h, ax
-                call    far ptr 0:5FA2h
+                call    sub_15FA2
                 mov     ax, ds:1F02h
                 call    far ptr rt_FF20 ; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
                 mov     bx, 24EAh
@@ -1551,7 +1547,7 @@ loc_10C3F:                              ; CODE XREF: doMovement+135↑j
                 mov     [bp-0Ch], bx
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
                 call    far ptr rt_FF1F ; -> rtm_FF1F  (leglib seg004:0x21b5e)
-                mov     ax, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     ax, 0
                 jbe     short loc_10C6D
                 dec     ax
 
@@ -1562,7 +1558,7 @@ loc_10C6D:                              ; CODE XREF: doMovement+164↑j
                 mov     bx, 1AF8h
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
                 call    far ptr rt_FF1F ; -> rtm_FF1F  (leglib seg004:0x21b5e)
-                mov     ax, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     ax, 0
                 jnb     short loc_10C8B
                 dec     ax
 
@@ -1616,7 +1612,7 @@ loc_10C96:                              ; CODE XREF: doMovement+18C↑j
                 call    far ptr rt_FF22 ; -> rtm_FF22  (leglib seg004:0x218e6)
                 mov     ds:2192h, ax
                 sub     ds:1ADAh, ax
-                mov     word ptr ds:2184h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:2184h, 0
                 mov     ax, 2588h       ; \nHIT POINTS:  -
                 push    ax
                 push    word ptr ds:2192h
@@ -1651,7 +1647,7 @@ loc_10D6A:                              ; CODE XREF: doMovement+AE↑j
 ; ---------------------------------------------------------------------------
 
 loc_10D74:                              ; CODE XREF: doMovement+269↑j
-                mov     word ptr ds:1F06h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:1F06h, 0
                 call    far ptr rt_FE5B ; -> screenRefresh  (leglib seg008:0x28861)
                 call    far ptr rt_FE5B ; -> screenRefresh  (leglib seg008:0x28861)
                 mov     bx, ds:1F04h
@@ -1769,7 +1765,7 @@ loc_10E75:                              ; CODE XREF: doMovement+36A↑j
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
                 mov     word ptr ds:1F24h, 0FFh
-                mov     word ptr ds:21B6h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:21B6h, 0
                 mov     word ptr ds:21B8h, 2 ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
                 mov     word ptr ds:21BAh, 3
                 mov     word ptr ds:21BCh, 1
@@ -1791,7 +1787,7 @@ loc_10ED1:                              ; CODE XREF: doMovement+36C↑j
                                         ; doMovement+3C6↑j
                 mov     ax, 1F02h
                 push    ax
-                call    far ptr 0:4E62h
+                call    sub_14E62
                 mov     word ptr ds:212Eh, 1
                 mov     si, 1B96h
                 mov     bx, 18h
@@ -1870,7 +1866,7 @@ loc_10EFE:                              ; CODE XREF: doMovement+3EE↑j
                 mov     ax, 21D4h
                 push    ax
                 call    far ptr rt_FE27 ; -> rtm_FE27  (leglib seg007:0x253ad)
-                mov     word ptr ds:21D6h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:21D6h, 0
                 jmp     loc_1109D
 ; ---------------------------------------------------------------------------
                 mov     word ptr ds:21D8h, 2 ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
@@ -1880,7 +1876,7 @@ loc_10EFE:                              ; CODE XREF: doMovement+3EE↑j
                 mov     ax, 21DAh
                 push    ax
                 call    far ptr rt_FE6B ; -> rtm_FE6B  (leglib seg008:0x28e5e)
-                mov     word ptr ds:21DCh, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:21DCh, 0
                 mov     ax, 2692h       ; YOU ARE OUT OF IMMEDIATE DANGER.
                 push    ax
                 mov     ax, 21DEh
@@ -1947,8 +1943,8 @@ loc_11072:                              ; CODE XREF: doMovement+563↑j
                 mov     ax, 21EEh
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
-                mov     word ptr ds:1ADAh, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
-                mov     word ptr ds:1F2Ah, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:1ADAh, 0
+                mov     word ptr ds:1F2Ah, 0
 
 loc_1109D:                              ; CODE XREF: doMovement+46D↑j
                                         ; doMovement+4BD↑j ...
@@ -2009,7 +2005,7 @@ loc_110FA:
 loc_11102:                              ; -> rtm_FF2B  (leglib seg004:0x21e15)
                 call    far ptr rt_FF2B
 
-loc_11107:                              ; -> rtm_FF4C  (leglib seg004:0x21b4a)
+j_rt_FF4C:                              ; -> rtm_FF4C  (leglib seg004:0x21b4a)
                 call    far ptr rt_FF4C
 
 loc_1110C:
@@ -2020,7 +2016,7 @@ loc_11114:
                 mov     bx, 272Eh
                 call    far ptr rt_FF4E ; -> rtm_FF4E  (leglib seg004:0x21a1a)
 
-loc_1111C:                              ; -> rtm_FF47  (leglib seg004:0x21b4f)
+j_rt_FF47:                              ; -> rtm_FF47  (leglib seg004:0x21b4f)
                 call    far ptr rt_FF47
 
 loc_11121:
@@ -2036,7 +2032,7 @@ loc_1112E:
 loc_11138:                              ; -> rtm_FF1F  (leglib seg004:0x21b5e)
                 call    far ptr rt_FF1F
 
-loc_1113D:                              ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+loc_1113D:
                 mov     ax, 0
                 jbe     short loc_11143
                 dec     ax
@@ -2059,7 +2055,7 @@ loc_1115B:
 loc_11165:                              ; -> rtm_FF1F  (leglib seg004:0x21b5e)
                 call    far ptr rt_FF1F
 
-loc_1116A:                              ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+loc_1116A:
                 mov     ax, 0
                 jnb     short loc_11170
                 dec     ax
@@ -2067,14 +2063,14 @@ loc_1116A:                              ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x8
 loc_11170:                              ; CODE XREF: tryDisengage+AE↑j
                 or      ax, [bp-0Eh]
                 cmp     word ptr ds:1F2Ah, 0Ch
-                mov     cx, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     cx, 0
                 jnz     short loc_1117E
                 dec     cx
 
 loc_1117E:                              ; CODE XREF: tryDisengage+BC↑j
                 or      cx, ax
                 cmp     word ptr ds:2200h, 3
-                mov     ax, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     ax, 0
                 jle     short loc_1118B
                 dec     ax
 
@@ -2122,10 +2118,12 @@ loc_111DF:
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
-loc_111E8:                              ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+loc_111E8:
                 mov     word ptr ds:1F2Ah, 0
-                call    far ptr 0:57B0h
-                mov     word ptr ds:2148h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                call    sub_157B0
+
+loc_111F3:
+                mov     word ptr ds:2148h, 0
                 jmp     loc_10B48
 tryDisengage    endp
 
@@ -2200,11 +2198,11 @@ loc_11267:
                 push    ax
                 call    far ptr rt_FE27 ; -> rtm_FE27  (leglib seg007:0x253ad)
 
-loc_11276:                              ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+loc_11276:
                 mov     word ptr ds:221Ah, 0
                 mov     word ptr ds:221Ch, 2 ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
                 mov     word ptr ds:221Eh, 3
-                mov     word ptr ds:2220h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:2220h, 0
                 mov     ax, 221Ah
                 push    ax
                 mov     ax, 221Ch
@@ -2223,7 +2221,7 @@ loc_112A3:
 
 loc_112AD:                              ; CODE XREF: enterLocation+AC↑j
                 cmp     word ptr ds:2182h, 0Dh
-                mov     ax, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     ax, 0
                 jnz     short loc_112B8
                 dec     ax
 
@@ -2233,8 +2231,8 @@ loc_112B8:                              ; CODE XREF: enterLocation+B9↑j
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
                 mov     si, bx
-                cmp     word ptr es:[bx], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
-                mov     cx, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr es:[bx], 0
+                mov     cx, 0
                 jle     short loc_112D0
                 dec     cx
 
@@ -2246,7 +2244,7 @@ loc_112D0:                              ; CODE XREF: enterLocation+D1↑j
 ; ---------------------------------------------------------------------------
 
 loc_112D9:                              ; CODE XREF: enterLocation+D8↑j
-                call    loc_145DB
+                call    sub_145DB
 ; ---------------------------------------------------------------------------
 
 loc_112DC:                              ; CODE XREF: enterLocation+DA↑j
@@ -2256,7 +2254,7 @@ loc_112DC:                              ; CODE XREF: enterLocation+DA↑j
                 mov     es, word ptr [si+2]
                 mov     di, bx
                 cmp     word ptr es:[bx], 2 ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
-                mov     ax, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     ax, 0
                 jnz     short loc_112F4
                 dec     ax
 
@@ -2266,7 +2264,7 @@ loc_112F4:                              ; CODE XREF: enterLocation+F5↑j
                 mov     es, word ptr [si+2]
                 mov     si, bx
                 cmp     word ptr es:[bx], 3
-                mov     cx, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     cx, 0
                 jle     short loc_11309
                 dec     cx
 
@@ -2300,14 +2298,14 @@ loc_11334:                              ; CODE XREF: enterLocation+113↑j
 
 loc_1133E:                              ; CODE XREF: enterLocation+13D↑j
                 call    far ptr rt_FE4E ; -> rtm_FE4E  (leglib seg007:0x25c5c)
-                call    far ptr 0:61ADh
+                call    museumAccessPrompt ; the museum access-code entry ("World- / Stone- / Ring- ", ordinal suffixes st/nd/rd/th, "*** TRY AGAIN ***"). ~1.6 KB.
                 jmp     loc_11408
 ; ---------------------------------------------------------------------------
 
 loc_1134B:                              ; CODE XREF: outInit+235↑j
                                         ; enterLocation+13F↑j
                 mov     word ptr ds:1F04h, 61A8h
-                mov     word ptr ds:1F06h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:1F06h, 0
                 mov     bx, ds:1AE0h
                 call    far ptr rt_FC   ; -> rtm_FC  (leglib seg003:0x1ca63)
 
@@ -2347,7 +2345,7 @@ loc_1139B:                              ; CODE XREF: enterLocation+18C↑j
                 mov     bx, 12h
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
-                mov     word ptr es:[bx], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr es:[bx], 0
                 mov     ax, ds:208Ch
                 mov     ds:1B02h, ax
                 mov     ax, ds:208Ah
@@ -2386,7 +2384,7 @@ loc_113EA:
 loc_113FF:
                 mov     ax, 2136h
                 push    ax
-                call    far ptr 0:5DD8h
+                call    sub_15DD8
 
 loc_11408:                              ; CODE XREF: enterLocation+14C↑j
                                         ; enterLocation:loc_11408↓j
@@ -2424,7 +2422,7 @@ sub_1141E       proc near
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
                 mov     si, bx
-                cmp     word ptr es:[bx], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr es:[bx], 0
                 jg      short loc_11441
                 jmp     loc_1144D
 ; ---------------------------------------------------------------------------
@@ -2443,14 +2441,14 @@ sub_1141E       endp
 
 
 sub_11454       proc near               ; CODE XREF: enterLocation:loc_1139B↑p
-                                        ; mainDispatch+C1E↓p
+                                        ; sub_1486B:loc_1487E↓p
                 mov     ax, 0Ah
                 jmp     loc_1148B
 ; ---------------------------------------------------------------------------
 
 loc_1145A:                              ; CODE XREF: sub_11454+3D↓j
-                mov     word ptr ds:2228h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
-                mov     word ptr ds:222Ah, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:2228h, 0
+                mov     word ptr ds:222Ah, 0
                 mov     ax, 2228h
                 push    ax
                 mov     ax, 222Ah
@@ -2461,7 +2459,7 @@ loc_1145A:                              ; CODE XREF: sub_11454+3D↓j
                 mov     si, 1C7Ch
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
-                mov     word ptr es:[bx], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr es:[bx], 0
                 mov     ax, ds:2146h
                 inc     ax
 
@@ -2486,14 +2484,14 @@ loc_114B0:                              ; CODE XREF: sub_11454+D8↓j
                 mov     si, 1C7Ch
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
-                mov     word ptr es:[bx], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr es:[bx], 0
                 add     ax, 22h ; '"'
                 mov     bx, ax
                 mov     si, 1BC4h
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
                 mov     si, bx
-                cmp     word ptr es:[bx], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr es:[bx], 0
                 jle     short loc_114DB
                 jmp     loc_11521
 ; ---------------------------------------------------------------------------
@@ -2515,7 +2513,7 @@ loc_114DB:                              ; CODE XREF: sub_11454+82↑j
                 db 0FEh
 ; ---------------------------------------------------------------------------
                 push    ss
-                cmp     word ptr ds:222Eh, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr ds:222Eh, 0
                 jnz     short loc_11500
                 jmp     loc_11521
 ; ---------------------------------------------------------------------------
@@ -2561,7 +2559,7 @@ loc_11540:                              ; CODE XREF: sub_11454+191↓j
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
                 mov     si, bx
-                cmp     word ptr es:[bx], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr es:[bx], 0
                 jge     short loc_11558
                 jmp     loc_115DA
 ; ---------------------------------------------------------------------------
@@ -2586,7 +2584,7 @@ loc_11558:                              ; CODE XREF: sub_11454+FF↑j
                 mov     [bp-0Eh], bx
                 call    far ptr rt_FF4E ; -> rtm_FF4E  (leglib seg004:0x21a1a)
                 call    far ptr rt_FF1F ; -> rtm_FF1F  (leglib seg004:0x21b5e)
-                mov     ax, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     ax, 0
                 jnb     short loc_115A0
                 dec     ax
 
@@ -2601,7 +2599,7 @@ loc_115A0:                              ; CODE XREF: sub_11454+149↑j
                 mov     [bp-12h], bx
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
                 call    far ptr rt_FF1F ; -> rtm_FF1F  (leglib seg004:0x21b5e)
-                mov     ax, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     ax, 0
                 jnb     short loc_115CD
                 dec     ax
 
@@ -2668,17 +2666,21 @@ sub_11454       endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 ; set game flag mask 0x03 (-> applyGameFlag).
+; Attributes: noreturn
 
 setFlag_03      proc near
                 mov     word ptr ds:2234h, 3
                 call    applyGameFlag   ; shared tail of the ds:2234h flag-setter family: mov si,1B96h then folds the pushed mask into the flag word.
+; ---------------------------------------------------------------------------
+
+loc_11641:
                 mov     si, 1B3Ah
                 mov     bx, 6           ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
                 mov     si, bx
-                cmp     word ptr es:[bx], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
-                mov     ax, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr es:[bx], 0
+                mov     ax, 0
                 jnz     short loc_11659
                 dec     ax
 
@@ -2689,8 +2691,8 @@ loc_11659:                              ; CODE XREF: setFlag_03+1E↑j
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
                 mov     si, bx
-                cmp     word ptr es:[bx], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
-                mov     cx, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr es:[bx], 0
+                mov     cx, 0
                 jle     short loc_11673
                 dec     cx
 
@@ -2707,6 +2709,7 @@ setFlag_03      endp
 ; =============== S U B R O U T I N E =======================================
 
 ; set game flag mask 0x38 (-> applyGameFlag).
+; Attributes: noreturn
 
 setFlag_38      proc near
                 mov     word ptr ds:2234h, 38h ; '8'
@@ -2722,8 +2725,11 @@ setFlag_38      endp
 setFlag_C0      proc near
                 mov     word ptr ds:2234h, 0C0h
                 call    applyGameFlag   ; shared tail of the ds:2234h flag-setter family: mov si,1B96h then folds the pushed mask into the flag word.
+; ---------------------------------------------------------------------------
+
+loc_11693:
                 cmp     word ptr ds:1AF0h, 1Ch
-                mov     ax, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     ax, 0
                 jge     short loc_1169E
                 dec     ax
 
@@ -2746,7 +2752,7 @@ loc_116B8:
 loc_116C2:                              ; -> rtm_FF1F  (leglib seg004:0x21b5e)
                 call    far ptr rt_FF1F
 
-loc_116C7:                              ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+loc_116C7:
                 mov     ax, 0
                 jnb     short loc_116CD
                 dec     ax
@@ -2762,6 +2768,7 @@ setFlag_C0      endp
 ; =============== S U B R O U T I N E =======================================
 
 ; set game flag mask 0x0300 (-> applyGameFlag).
+; Attributes: noreturn
 
 setFlag_0300    proc near
                 mov     word ptr ds:2234h, 300h
@@ -2772,7 +2779,7 @@ setFlag_0300    endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_116E1       proc near               ; CODE XREF: mainDispatch+E21↓p
+sub_116E1       proc near               ; CODE XREF: sub_1486B:loc_14A81↓p
                 cmp     word ptr ds:2236h, 9D1Ah
                 jnz     short loc_116EC
                 jmp     locret_116FD
@@ -2802,11 +2809,15 @@ sub_116FE       endp
 ; =============== S U B R O U T I N E =======================================
 
 ; set game flag mask 0x0800 (-> applyGameFlag).
+; Attributes: noreturn
 
 setFlag_0800    proc near
                 mov     word ptr ds:2234h, 800h
                 call    applyGameFlag   ; shared tail of the ds:2234h flag-setter family: mov si,1B96h then folds the pushed mask into the flag word.
-                cmp     word ptr ds:222Eh, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+; ---------------------------------------------------------------------------
+
+loc_1170E:
+                cmp     word ptr ds:222Eh, 0
                 jz      short loc_11718
                 jmp     locret_1171E
 ; ---------------------------------------------------------------------------
@@ -2822,11 +2833,15 @@ setFlag_0800    endp
 ; =============== S U B R O U T I N E =======================================
 
 ; set game flag mask 0x1000 (-> applyGameFlag).
+; Attributes: noreturn
 
 setFlag_1000    proc near
                 mov     word ptr ds:2234h, 1000h
                 call    applyGameFlag   ; shared tail of the ds:2234h flag-setter family: mov si,1B96h then folds the pushed mask into the flag word.
-                cmp     word ptr ds:222Eh, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+; ---------------------------------------------------------------------------
+
+loc_11728:
+                cmp     word ptr ds:222Eh, 0
                 jz      short loc_11732
                 jmp     locret_11738
 ; ---------------------------------------------------------------------------
@@ -2868,6 +2883,7 @@ sub_11739       endp
 ; =============== S U B R O U T I N E =======================================
 
 ; shared tail of the ds:2234h flag-setter family: mov si,1B96h then folds the pushed mask into the flag word.
+; Attributes: noreturn
 
 applyGameFlag   proc near               ; CODE XREF: setFlag_03+6↑p
                                         ; setFlag_38+6↑j ...
@@ -2884,7 +2900,9 @@ applyGameFlag   proc near               ; CODE XREF: setFlag_03+6↑p
                 push    ax
                 mov     ax, 223Ah
                 push    ax
-                call    far ptr 0:4B8Dh
+                call    sub_14B8D
+
+loc_11789:
                 mov     si, 1B96h
                 mov     bx, 16h
                 add     bx, [si+0Ah]
@@ -2893,7 +2911,7 @@ applyGameFlag   proc near               ; CODE XREF: setFlag_03+6↑p
                 mov     es:[bx], ax
                 mov     ax, ds:2234h
                 cmp     ax, ds:223Ch
-                mov     cx, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     cx, 0
                 jz      short loc_117A8
                 dec     cx
 
@@ -2910,7 +2928,7 @@ applyGameFlag   endp
 ; encounter start: "UNKNOWN CREATURE", " APPROACHING FROM THE ", " IS / ARE APPROACHING." ~1.3 KB.
 
 creatureApproach proc near              ; CODE XREF: outInit:loc_103A6↑p
-                cmp     word ptr ds:1F2Ah, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr ds:1F2Ah, 0
                 jle     short loc_117BA
                 jmp     loc_11A58
 ; ---------------------------------------------------------------------------
@@ -2919,13 +2937,13 @@ loc_117BA:                              ; CODE XREF: creatureApproach+5↑j
                 mov     ax, ds:1E1Eh
                 mov     ds:1F10h, ax
                 or      ax, ax
-                mov     cx, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     cx, 0
                 jnz     short loc_117C8
                 dec     cx
 
 loc_117C8:                              ; CODE XREF: creatureApproach+15↑j
                 cmp     word ptr ds:1F06h, 0FFF7h
-                mov     ax, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     ax, 0
                 jz      short loc_117D3
                 dec     ax
 
@@ -2979,8 +2997,8 @@ loc_11837:                              ; CODE XREF: creatureApproach+83↑j
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
                 mov     si, bx
-                cmp     word ptr es:[bx], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
-                mov     ax, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr es:[bx], 0
+                mov     ax, 0
                 jle     short loc_1184F
                 dec     ax
 
@@ -2991,7 +3009,7 @@ loc_1184F:                              ; CODE XREF: creatureApproach+9C↑j
                 mov     bx, 1AF8h
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
                 call    far ptr rt_FF1F ; -> rtm_FF1F  (leglib seg004:0x21b5e)
-                mov     ax, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     ax, 0
                 jbe     short loc_1186D
                 dec     ax
 
@@ -3012,20 +3030,20 @@ loc_11877:                              ; CODE XREF: creatureApproach+C2↑j
                 mov     [bp-0Eh], bx
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
                 call    far ptr rt_FF1F ; -> rtm_FF1F  (leglib seg004:0x21b5e)
-                mov     ax, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     ax, 0
                 jnb     short loc_118A1
                 dec     ax
 
 loc_118A1:                              ; CODE XREF: creatureApproach+EE↑j
                 cmp     word ptr ds:1AE0h, 2 ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
-                mov     cx, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     cx, 0
                 jle     short loc_118AC
                 dec     cx
 
 loc_118AC:                              ; CODE XREF: creatureApproach+F9↑j
                 or      cx, ax
                 cmp     word ptr ds:1AE0h, 7
-                mov     ax, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     ax, 0
                 jge     short loc_118B9
                 dec     ax
 
@@ -3050,7 +3068,7 @@ loc_118C2:                              ; CODE XREF: creatureApproach+C4↑j
                 push    ax
                 call    far ptr rt_14   ; -> rtm_14  (leglib seg003:0x1c9c9)
                 add     ax, 1
-                adc     dx, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                adc     dx, 0
                 mov     ds:2192h, ax
                 cmp     ax, 7
                 jg      short loc_118F3
@@ -3190,7 +3208,7 @@ loc_11A62:                              ; CODE XREF: creatureApproach+2AD↑j
 ; ---------------------------------------------------------------------------
 
 loc_11A6C:                              ; CODE XREF: creatureApproach+2B7↑j
-                cmp     word ptr ds:1E1Eh, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr ds:1E1Eh, 0
                 jz      short loc_11A76
                 jmp     loc_11AA2
 ; ---------------------------------------------------------------------------
@@ -3228,11 +3246,11 @@ loc_11AA2:                              ; CODE XREF: creatureApproach+2C3↑j
                 push    ax
                 mov     ax, 2250h
                 push    ax
-                call    far ptr 0:4B8Dh
+                call    sub_14B8D
                 mov     ax, ds:223Ch
                 mov     ds:2192h, ax
                 cmp     ax, 2           ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
-                mov     cx, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     cx, 0
                 jnz     short loc_11ADD
                 dec     cx
 
@@ -3247,7 +3265,7 @@ loc_11ADD:                              ; CODE XREF: creatureApproach+32A↑j
                 mov     [bp-0Eh], bx
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
                 call    far ptr rt_FF1F ; -> rtm_FF1F  (leglib seg004:0x21b5e)
-                mov     ax, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     ax, 0
                 jnb     short loc_11B0A
                 dec     ax
 
@@ -3259,8 +3277,8 @@ loc_11B0A:                              ; CODE XREF: creatureApproach+357↑j
 ; ---------------------------------------------------------------------------
 
 loc_11B14:                              ; CODE XREF: creatureApproach+35F↑j
-                cmp     word ptr ds:2192h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
-                mov     ax, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr ds:2192h, 0
+                mov     ax, 0
                 jz      short loc_11B1F
                 dec     ax
 
@@ -3275,7 +3293,7 @@ loc_11B1F:                              ; CODE XREF: creatureApproach+36C↑j
                 mov     [bp-0Eh], bx
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
                 call    far ptr rt_FF1F ; -> rtm_FF1F  (leglib seg004:0x21b5e)
-                mov     ax, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     ax, 0
                 jnb     short loc_11B4C
                 dec     ax
 
@@ -3295,8 +3313,8 @@ loc_11B56:                              ; CODE XREF: creatureApproach+1D5↑j
                 mov     ax, 2252h
                 push    ax
                 call    far ptr rt_FE27 ; -> rtm_FE27  (leglib seg007:0x253ad)
-                cmp     word ptr ds:1E1Eh, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
-                mov     ax, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr ds:1E1Eh, 0
+                mov     ax, 0
                 jz      short loc_11B79
                 dec     ax
 
@@ -3311,7 +3329,7 @@ loc_11B79:                              ; CODE XREF: creatureApproach+3C6↑j
                 mov     [bp-0Eh], bx
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
                 call    far ptr rt_FF1F ; -> rtm_FF1F  (leglib seg004:0x21b5e)
-                mov     ax, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     ax, 0
                 jbe     short loc_11BA6
                 dec     ax
 
@@ -3667,10 +3685,12 @@ loc_122B0:
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
-loc_122B9:                              ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+loc_122B9:
                 mov     word ptr ds:1F2Ah, 0
-                mov     word ptr ds:2148h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
-                call    far ptr 0:57B0h
+                mov     word ptr ds:2148h, 0
+                call    sub_157B0
+
+nullsub_10:
                 retn
 avoidCreature   endp
 
@@ -3680,7 +3700,7 @@ avoidCreature   endp
 ; Attributes: noreturn
 
 sub_122CB       proc near               ; CODE XREF: creatureAttack+454↑p
-                                        ; mainDispatch+C1B↓p
+                                        ; sub_1486B+10↓p
                 mov     word ptr ds:2274h, 0FC18h
                 mov     bx, 2476h
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
@@ -3816,7 +3836,7 @@ loc_123C1:                              ; CODE XREF: sub_1232F:loc_123BC↑j
 
 loc_123F0:                              ; CODE XREF: sub_1232F+BC↑j
                 mov     word ptr ds:2192h, 3
-                mov     word ptr ds:1F04h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:1F04h, 0
 
 loc_123FC:                              ; CODE XREF: sub_1232F+5A↑j
                                         ; sub_1232F+8F↑j ...
@@ -3837,13 +3857,13 @@ loc_1241B:
                 mov     ax, ds:2192h
                 call    far ptr rt_FF20 ; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
 
-loc_12423:                              ; -> rtm_FF4C  (leglib seg004:0x21b4a)
+j_rt_FF4C_0:                            ; -> rtm_FF4C  (leglib seg004:0x21b4a)
                 call    far ptr rt_FF4C
 
 loc_12428:                              ; -> rtm_FF27  (leglib seg004:0x21ddf)
                 call    far ptr rt_FF27
 
-loc_1242D:                              ; -> rtm_FF42  (leglib seg004:0x21b59)
+j_rt_FF42:                              ; -> rtm_FF42  (leglib seg004:0x21b59)
                 call    far ptr rt_FF42
 
 loc_12432:                              ; -> rtm_FF22  (leglib seg004:0x218e6)
@@ -3868,7 +3888,9 @@ loc_12437:
                 mov     ax, 22A4h
                 push    ax
                 mov     [bp-0Eh], dx
-                call    far ptr 0:4B8Dh
+                call    sub_14B8D
+
+loc_1246F:
                 mov     si, 209Ah
                 mov     bx, [bp-0Eh]
                 add     bx, [si+0Ah]
@@ -3934,7 +3956,9 @@ loc_124DF:
                 mov     ax, 22ACh
                 push    ax
                 mov     [bp-0Ch], dx
-                call    far ptr 0:4B8Dh
+                call    sub_14B8D
+
+loc_12519:
                 mov     si, 20ACh
                 mov     bx, [bp-0Ch]
                 add     bx, [si+0Ah]
@@ -3991,8 +4015,10 @@ loc_125A8:                              ; CODE XREF: sub_1232F+205↑j
                 push    ax
                 mov     ax, 1F10h
                 push    ax
-                call    far ptr 0:57DEh
-                mov     word ptr ds:2200h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                call    chainExec       ; loads + execs another program via the RTM (holds the "Error in loading RTM" path) -- the mechanism behind chainToTown/Castle/etc.
+
+loc_125C4:
+                mov     word ptr ds:2200h, 0
                 mov     ax, ds:1F10h
                 mov     ds:2148h, ax
                 retn
@@ -4024,7 +4050,7 @@ loc_125E7:
 j_rt_FE5B_2:                            ; -> screenRefresh  (leglib seg008:0x28861)
                 call    far ptr rt_FE5B
 
-loc_125F5:                              ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+loc_125F5:
                 cmp     word ptr ds:212Eh, 0
                 jz      short loc_125FF
                 jmp     loc_12634
@@ -4077,7 +4103,7 @@ loc_1264A:
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
-loc_12653:                              ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+loc_12653:
                 mov     word ptr ds:22BEh, 0
                 mov     ax, 22BEh
                 push    ax
@@ -4099,8 +4125,10 @@ loc_12677:
                 push    ax
                 mov     ax, 1B06h
                 push    ax
-                call    far ptr 0:5E82h
-                mov     word ptr ds:22C0h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                call    sub_15E82
+
+loc_1268D:
+                mov     word ptr ds:22C0h, 0
                 mov     word ptr ds:22C2h, 0FEh
                 mov     si, 1B96h
                 mov     bx, 18h
@@ -4120,27 +4148,29 @@ loc_12677:
                 push    ax
                 mov     ax, 1E1Eh
                 push    ax
-                call    far ptr 0:51B7h
+                call    sub_151B7
+
+loc_126C8:
                 mov     si, 1B96h
                 mov     bx, 18h
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
                 mov     ax, ds:22C4h
                 mov     es:[bx], ax
-                cmp     word ptr ds:1F04h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr ds:1F04h, 0
                 jz      short loc_126E4
                 jmp     loc_12717
 ; ---------------------------------------------------------------------------
 
 loc_126E4:                              ; CODE XREF: cantDoThat+9E↑j
-                call    far ptr 0:4EA4h
+                call    sub_14EA4
                 mov     ax, ds:208Ch
                 mov     ds:1B02h, ax
                 mov     ax, ds:208Ah
                 mov     ds:1B06h, ax
-                mov     word ptr ds:212Eh, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
-                mov     word ptr ds:1F2Ah, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
-                mov     word ptr ds:2148h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:212Eh, 0
+                mov     word ptr ds:1F2Ah, 0
+                mov     word ptr ds:2148h, 0
                 mov     word ptr ds:22C6h, 8
                 mov     ax, 22C6h
                 push    ax
@@ -4169,7 +4199,15 @@ loc_12717:                              ; CODE XREF: cantDoThat+A0↑j
                 push    ax
                 mov     ax, 22CCh
                 push    ax
-                call    far ptr 0:51B7h
+                call    sub_151B7
+cantDoThat      endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: noreturn
+
+sub_12752       proc near
                 mov     si, 1B96h
                 mov     bx, 18h
                 add     bx, [si+0Ah]
@@ -4180,10 +4218,14 @@ loc_12717:                              ; CODE XREF: cantDoThat+A0↑j
                 push    ax
                 mov     ax, 1B06h
                 push    ax
-                call    far ptr 0:50DAh
+                call    sub_150DA
+
+loc_12771:
                 mov     ax, 1F02h
                 push    ax
-                call    far ptr 0:4E62h
+                call    sub_14E62
+
+loc_1277A:
                 mov     ax, 2940h
                 push    ax
                 mov     bx, ds:1E20h
@@ -4193,14 +4235,8 @@ loc_12717:                              ; CODE XREF: cantDoThat+A0↑j
                 add     bx, [si+0Ah]
                 push    bx
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
-cantDoThat      endp
 
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: noreturn
-
-sub_12792       proc near
+loc_12792:
                 push    ax
                 mov     ax, 2950h
                 push    ax
@@ -4234,9 +4270,9 @@ loc_127C8:
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
-nullsub_10:
+nullsub_11:
                 retn
-sub_12792       endp
+sub_12752       endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -4276,8 +4312,8 @@ setMode_3       endp
 
 
 sub_12823       proc near               ; CODE XREF: j_rt_FE4E:loc_12817↑p
-                                        ; mainDispatch+C18↓p
-                mov     word ptr ds:2266h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                                        ; sub_1486B:loc_14878↓p
+                mov     word ptr ds:2266h, 0
                 cmp     word ptr ds:1AEAh, 8
                 jl      short loc_12833
                 jmp     loc_1286D
@@ -4444,7 +4480,7 @@ loc_12973:                              ; CODE XREF: quitOrTalk+5↑j
                 mov     ax, 22ECh
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
-                jmp     loc_13CF1
+                jmp     j_rt_FE5B_7
 ; ---------------------------------------------------------------------------
 
 loc_12995:                              ; CODE XREF: quitOrTalk+7↑j
@@ -4462,7 +4498,9 @@ loc_1299A:
 loc_129AD:
                 mov     ax, 22F0h
                 push    ax
-                call    far ptr 0:5DD8h
+                call    sub_15DD8
+
+loc_129B6:
                 mov     ax, 22F0h
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
@@ -4477,7 +4515,7 @@ loc_129C9:
                 call    sub_10A05
 ; ---------------------------------------------------------------------------
 
-loc_129CC:                              ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+loc_129CC:
                 cmp     word ptr ds:1F2Ah, 0
                 jz      short loc_129D6
                 jmp     loc_129F6
@@ -4668,14 +4706,14 @@ loc_12B57:
 ; ---------------------------------------------------------------------------
 
 loc_12B5C:                              ; CODE XREF: buyFood:loc_12B57↑j
-                mov     word ptr ds:2308h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
-                mov     word ptr ds:230Ah, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:2308h, 0
+                mov     word ptr ds:230Ah, 0
                 mov     ax, 2308h
                 push    ax
                 mov     ax, 230Ah
                 push    ax
                 call    far ptr rt_FE38 ; -> rtm_FE38  (leglib seg007:0x268f8)
-                cmp     word ptr ds:1AEEh, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr ds:1AEEh, 0
                 jz      short loc_12B7F
                 jmp     loc_13081
 ; ---------------------------------------------------------------------------
@@ -4687,7 +4725,7 @@ loc_12B7F:                              ; CODE XREF: buyFood+1E↑j
 
 loc_12B87:
                 cmp     word ptr ds:1ADAh, 64h ; 'd'
-                mov     ax, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     ax, 0
                 jge     short loc_12B92
                 dec     ax
 
@@ -4698,7 +4736,7 @@ loc_12B97:
                 mov     bx, 2A64h
                 call    far ptr rt_FF4E ; -> rtm_FF4E  (leglib seg004:0x21a1a)
 
-loc_12B9F:                              ; -> rtm_FF51  (leglib seg004:0x21b40)
+j_rt_FF51:                              ; -> rtm_FF51  (leglib seg004:0x21b40)
                 call    far ptr rt_FF51
 
 loc_12BA4:
@@ -4837,7 +4875,7 @@ loc_12D02:
 loc_12D0A:                              ; -> rtm_FF1F  (leglib seg004:0x21b5e)
                 call    far ptr rt_FF1F
 
-loc_12D0F:                              ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+loc_12D0F:
                 mov     ax, 0
                 jnb     short loc_12D15
                 dec     ax
@@ -4955,8 +4993,8 @@ loc_12E49:                              ; CODE XREF: buyFood+20D↑j
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
                 mov     di, bx
-                cmp     word ptr es:[bx], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
-                mov     ax, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr es:[bx], 0
+                mov     ax, 0
                 jz      short loc_12E61
                 dec     ax
 
@@ -4965,8 +5003,8 @@ loc_12E61:                              ; CODE XREF: buyFood+323↑j
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
                 mov     si, bx
-                cmp     word ptr es:[bx], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
-                mov     cx, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr es:[bx], 0
+                mov     cx, 0
                 jz      short loc_12E76
                 dec     cx
 
@@ -4984,8 +5022,8 @@ loc_12E7F:                              ; CODE XREF: buyFood+33F↑j
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
                 mov     di, bx
-                cmp     word ptr es:[bx], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
-                mov     ax, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr es:[bx], 0
+                mov     ax, 0
                 jz      short loc_12E9D
                 dec     ax
 
@@ -5007,7 +5045,7 @@ loc_12EB5:
 loc_12EBF:                              ; -> rtm_FF1F  (leglib seg004:0x21b5e)
                 call    far ptr rt_FF1F
 
-loc_12EC4:                              ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+loc_12EC4:
                 mov     ax, 0
                 jnb     short loc_12ECA
                 dec     ax
@@ -5017,8 +5055,8 @@ loc_12ECA:                              ; CODE XREF: buyFood+38C↑j
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
                 mov     si, bx
-                cmp     word ptr es:[bx], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
-                mov     cx, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr es:[bx], 0
+                mov     cx, 0
                 jnz     short loc_12EDF
                 dec     cx
 
@@ -5058,7 +5096,7 @@ loc_12F13:
 loc_12F1B:                              ; -> rtm_FF27  (leglib seg004:0x21ddf)
                 call    far ptr rt_FF27
 
-loc_12F20:                              ; -> rtm_FF42  (leglib seg004:0x21b59)
+j_rt_FF42_0:                            ; -> rtm_FF42  (leglib seg004:0x21b59)
                 call    far ptr rt_FF42
 
 loc_12F25:
@@ -5125,7 +5163,7 @@ sub_12F77       proc near
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
-nullsub_11:
+nullsub_12:
                 retn
 sub_12F77       endp
 
@@ -5142,7 +5180,7 @@ setItemAdj1     proc near
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
-nullsub_12:
+nullsub_13:
                 retn
 setItemAdj1     endp
 
@@ -5159,7 +5197,7 @@ setItemAdj2     proc near
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
-nullsub_13:
+nullsub_14:
                 retn
 setItemAdj2     endp
 
@@ -5176,7 +5214,7 @@ setItemAdj3     proc near
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
-nullsub_14:
+nullsub_15:
                 retn
 setItemAdj3     endp
 
@@ -5193,7 +5231,7 @@ setItemAdj4     proc near
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
-nullsub_15:
+nullsub_16:
                 retn
 setItemAdj4     endp
 
@@ -5272,7 +5310,7 @@ j_j_rt_FE5B:
                 call    j_rt_FE5B
 ; ---------------------------------------------------------------------------
 
-loc_13041:                              ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+loc_13041:
                 cmp     word ptr ds:1F04h, 0
                 jg      short loc_1304B
                 jmp     loc_1307E
@@ -5357,14 +5395,14 @@ loc_13081:                              ; CODE XREF: buyFood+41↑j
                 mov     word ptr ds:1F04h, 1
                 call    j_rt_FE5B
 ; ---------------------------------------------------------------------------
-                cmp     word ptr ds:1F04h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr ds:1F04h, 0
                 jg      short loc_13140
                 jmp     locret_131B7
 ; ---------------------------------------------------------------------------
 
 loc_13140:                              ; CODE XREF: shopBuy+174↑j
-                mov     word ptr ds:2330h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
-                mov     word ptr ds:2332h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:2330h, 0
+                mov     word ptr ds:2332h, 0
                 mov     ax, 2330h
                 push    ax
                 mov     ax, 2332h
@@ -5413,10 +5451,10 @@ locret_131B7:                           ; CODE XREF: shopBuy+176↑j
 j_rt_FE5B:                              ; CODE XREF: buyFood+1A2↑p
                                         ; buyFood+2E0↑p ...
                 call    far ptr rt_FE5B ; -> screenRefresh  (leglib seg008:0x28861)
-                mov     word ptr ds:2338h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:2338h, 0
                 mov     word ptr ds:233Ah, 2 ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
                 mov     word ptr ds:233Ch, 3
-                mov     word ptr ds:233Eh, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:233Eh, 0
                 mov     ax, 2338h
                 push    ax
                 mov     ax, 233Ah
@@ -5427,9 +5465,9 @@ j_rt_FE5B:                              ; CODE XREF: buyFood+1A2↑p
                 push    ax
                 call    far ptr rt_FE57 ; -> rtm_FE57  (leglib seg007:0x24f84)
                 call    far ptr rt_FE5B ; -> screenRefresh  (leglib seg008:0x28861)
-                mov     word ptr ds:1F2Ah, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
-                mov     word ptr ds:2148h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
-                call    far ptr 0:57B0h
+                mov     word ptr ds:1F2Ah, 0
+                mov     word ptr ds:2148h, 0
+                call    sub_157B0
                 mov     ax, ds:2192h
                 cwd
                 push    dx
@@ -5437,13 +5475,13 @@ j_rt_FE5B:                              ; CODE XREF: buyFood+1A2↑p
                 push    word ptr ds:1AD4h
                 push    word ptr ds:1AD2h
                 call    far ptr rt_EE   ; -> rtm_EE  (leglib seg003:0x1c9d3)
-                mov     cx, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     cx, 0
                 jg      short loc_13219
                 dec     cx
 
 loc_13219:                              ; CODE XREF: shopBuy+24F↑j
-                cmp     word ptr ds:1E22h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
-                mov     bx, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr ds:1E22h, 0
+                mov     bx, 0
                 jnz     short loc_13224
                 dec     bx
 
@@ -5458,7 +5496,7 @@ loc_1322D:                              ; CODE XREF: shopBuy+261↑j
                 sub     ax, ds:1AD2h
                 sbb     dx, ds:1AD4h
                 neg     ax
-                adc     dx, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                adc     dx, 0
                 neg     dx
                 mov     ds:1AD2h, ax
                 mov     ds:1AD4h, dx
@@ -5470,12 +5508,12 @@ loc_1322D:                              ; CODE XREF: shopBuy+261↑j
 ; ---------------------------------------------------------------------------
 
 loc_13253:                              ; CODE XREF: shopBuy+263↑j
-                mov     word ptr ds:1F04h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:1F04h, 0
                 mov     word ptr ds:2342h, 11h
                 mov     ax, 2342h
                 push    ax
                 call    far ptr rt_FE27 ; -> rtm_FE27  (leglib seg007:0x253ad)
-                cmp     word ptr ds:1E22h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr ds:1E22h, 0
                 jnz     short loc_13272
                 jmp     loc_132DB
 ; ---------------------------------------------------------------------------
@@ -5541,7 +5579,7 @@ loc_132DB:                              ; CODE XREF: shopBuy+2A8↑j
 
 loc_132FB:                              ; CODE XREF: buyFood+1BC↑j
                                         ; buyFood+30B↑j ...
-                cmp     word ptr ds:1F04h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr ds:1F04h, 0
                 jnz     short loc_13305
                 jmp     locret_13333
 ; ---------------------------------------------------------------------------
@@ -5573,7 +5611,7 @@ shopBuy         endp
 ; Attributes: noreturn
 
 sub_13334       proc near               ; CODE XREF: buyFood:loc_12EF1↑p
-                                        ; mainDispatch+839↓p
+                                        ; sub_14054+445↓p
                 cmp     word ptr ds:231Ch, 7
                 jnz     short loc_1333E
                 jmp     loc_133F5
@@ -5691,7 +5729,7 @@ loc_1345A:
                 mov     bx, 2C2Eh
                 call    far ptr rt_FF44 ; -> rtm_FF44  (leglib seg004:0x21a62)
 
-loc_13462:                              ; -> rtm_FF42  (leglib seg004:0x21b59)
+j_rt_FF42_1:                            ; -> rtm_FF42  (leglib seg004:0x21b59)
                 call    far ptr rt_FF42
 
 loc_13467:                              ; -> rtm_FF2B  (leglib seg004:0x21e15)
@@ -5715,7 +5753,7 @@ loc_1348B:
                 mov     bx, 2496h
                 call    far ptr rt_FF44 ; -> rtm_FF44  (leglib seg004:0x21a62)
 
-loc_13493:                              ; -> rtm_FF4C  (leglib seg004:0x21b4a)
+j_rt_FF4C_1:                            ; -> rtm_FF4C  (leglib seg004:0x21b4a)
                 call    far ptr rt_FF4C
 
 loc_13498:                              ; -> rtm_FF22  (leglib seg004:0x218e6)
@@ -5788,7 +5826,7 @@ loc_1350A:
                 mov     bx, 2476h
                 call    far ptr rt_FF44 ; -> rtm_FF44  (leglib seg004:0x21a62)
 
-loc_13512:                              ; -> rtm_FF4C  (leglib seg004:0x21b4a)
+j_rt_FF4C_2:                            ; -> rtm_FF4C  (leglib seg004:0x21b4a)
                 call    far ptr rt_FF4C
 
 loc_13517:                              ; -> rtm_FF27  (leglib seg004:0x21ddf)
@@ -5826,7 +5864,7 @@ loc_1354B:
                 imul    word ptr ds:1F04h
                 call    far ptr rt_FF20 ; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
 
-loc_13557:                              ; -> rtm_FF51  (leglib seg004:0x21b40)
+j_rt_FF51_0:                            ; -> rtm_FF51  (leglib seg004:0x21b40)
                 call    far ptr rt_FF51
 
 loc_1355C:                              ; -> rtm_FF22  (leglib seg004:0x218e6)
@@ -5856,7 +5894,7 @@ loc_13589:
                 mov     ax, ds:1F06h
                 call    far ptr rt_FF20 ; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
 
-loc_13591:                              ; -> rtm_FF4C  (leglib seg004:0x21b4a)
+j_rt_FF4C_3:                            ; -> rtm_FF4C  (leglib seg004:0x21b4a)
                 call    far ptr rt_FF4C
 
 loc_13596:                              ; -> rtm_FF27  (leglib seg004:0x21ddf)
@@ -5873,7 +5911,7 @@ loc_135A0:
 ; ---------------------------------------------------------------------------
 
 loc_135AA:                              ; CODE XREF: sub_134A1+104↑j
-                mov     word ptr ds:1F06h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:1F06h, 0
 
 locret_135B0:                           ; CODE XREF: sub_134A1+106↑j
                 retn
@@ -5993,7 +6031,7 @@ loc_1365E:                              ; CODE XREF: sub_135B1+A4↑j
 ; ---------------------------------------------------------------------------
 
 loc_136AC:                              ; CODE XREF: sub_135B1+F6↑j
-                mov     word ptr ds:1ADCh, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:1ADCh, 0
 
 locret_136B2:                           ; CODE XREF: sub_135B1+F8↑j
                 retn
@@ -6056,7 +6094,7 @@ loc_136FB:
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
-nullsub_16:
+nullsub_17:
                 retn
 sub_136F2       endp
 
@@ -6096,7 +6134,7 @@ loc_138C0:
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
-nullsub_17:
+nullsub_18:
                 retn
 describeAdjacent endp
 
@@ -6123,7 +6161,7 @@ loc_138D6:
                 push    ax
                 mov     ax, 208Ah
                 push    ax
-                call    far ptr 0:6030h
+                call    sub_16030
                 mov     bx, ds:1F02h
                 shl     bx, 1
                 shl     bx, 1
@@ -6168,7 +6206,7 @@ loc_1392F:
                 mov     es, word ptr [si+2]
                 mov     si, bx
                 cmp     word ptr es:[bx], 2 ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
-                mov     ax, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     ax, 0
                 jnz     short loc_13947
                 dec     ax
 
@@ -6200,7 +6238,7 @@ chainToMuseum   proc near
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
-loc_1396E:                              ; MUS.EXE
+loc_1396E:
                 mov     ax, 24BAh
                 push    ax
                 mov     ax, 2136h
@@ -6234,8 +6272,8 @@ loc_1398F:                              ; DUN.EXE
 
 loc_1399C:
                 mov     word ptr ds:1ACAh, 1
-                mov     word ptr ds:1AD6h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
-                mov     word ptr ds:1AD8h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:1AD6h, 0
+                mov     word ptr ds:1AD8h, 0
                 mov     word ptr ds:1F16h, 4
                 retn
 chainToDungeon  endp
@@ -6268,7 +6306,7 @@ loc_139BC:                              ; CODE XREF: sub_139B5+53↓j
                 mov     si, 1BC4h
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
-                mov     word ptr es:[bx], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr es:[bx], 0
                 mov     ax, ds:2146h
                 cmp     ax, ds:1E24h
                 jz      short loc_139F8
@@ -6276,7 +6314,7 @@ loc_139BC:                              ; CODE XREF: sub_139B5+53↓j
 ; ---------------------------------------------------------------------------
 
 loc_139F8:                              ; CODE XREF: sub_139B5+3E↑j
-                mov     word ptr ds:1E24h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:1E24h, 0
 
 loc_139FE:                              ; CODE XREF: sub_139B5+40↑j
                 mov     ax, ds:2146h
@@ -6321,7 +6359,7 @@ loc_13A3E:                              ; CODE XREF: doAttackOrCast+3↑j
                 mov     ds:2146h, ax
                 cmp     ax, 1Ch
                 jle     short loc_13A1A
-                cmp     word ptr ds:1E24h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr ds:1E24h, 0
                 jz      short locret_13A50
                 jmp     loc_13A51
 ; ---------------------------------------------------------------------------
@@ -6394,7 +6432,7 @@ loc_13A6F:                              ; CODE XREF: doAttackOrCast+57↑j
 ; ---------------------------------------------------------------------------
 
 loc_13AEF:                              ; CODE XREF: doAttackOrCast+D7↑j
-                mov     word ptr ds:1E24h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:1E24h, 0
 
 loc_13AF5:                              ; CODE XREF: doAttackOrCast+D9↑j
                 mov     ax, ds:1AF0h
@@ -6496,7 +6534,7 @@ loc_13BF0:
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
                 mov     si, bx
-                cmp     word ptr es:[bx], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr es:[bx], 0
                 jg      short loc_13C07
                 jmp     loc_13C27
 ; ---------------------------------------------------------------------------
@@ -6577,7 +6615,7 @@ loc_13C6F:
 ; ---------------------------------------------------------------------------
 
 loc_13C9F:                              ; CODE XREF: mainDispatch+3A↑j
-                mov     word ptr ds:1E24h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:1E24h, 0
 
 loc_13CA5:                              ; CODE XREF: mainDispatch+3C↑j
                 cmp     word ptr ds:212Eh, 1
@@ -6598,119 +6636,67 @@ loc_13CAF:                              ; CODE XREF: mainDispatch+4A↑j
                 mov     es:[bx], ax
 
 loc_13CCB:                              ; CODE XREF: mainDispatch+4C↑j
-                mov     word ptr ds:1F2Ah, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
-                mov     word ptr ds:2148h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
-                call    far ptr 0:57B0h
-                mov     word ptr ds:212Eh, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:1F2Ah, 0
+                mov     word ptr ds:2148h, 0
+                call    sub_157B0
+
+loc_13CDC:
+                mov     word ptr ds:212Eh, 0
                 mov     word ptr ds:1B02h, 54h ; 'T'
                 mov     word ptr ds:1B06h, 1Fh
                 jmp     loc_14B1A
-; ---------------------------------------------------------------------------
+mainDispatch    endp
 
-loc_13CF1:                              ; CODE XREF: quitOrTalk+29↑j
-                call    far ptr rt_FE5B ; -> screenRefresh  (leglib seg008:0x28861)
-                call    far ptr rt_FE5B ; -> screenRefresh  (leglib seg008:0x28861)
-                cmp     word ptr ds:1F2Ah, 9
-                jle     short loc_13D05
-                jmp     loc_13D8A
-; ---------------------------------------------------------------------------
+; [000000A7 BYTES: COLLAPSED FUNCTION j_rt_FE5B_7. PRESS NUMPAD+ TO EXPAND]
 
-loc_13D05:                              ; CODE XREF: doAttackOrCast+59↑j
-                                        ; mainDispatch+A0↑j
-                call    sub_10A05
-; ---------------------------------------------------------------------------
-                cmp     word ptr ds:1F2Ah, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
-                jz      short loc_13D12
-                jmp     loc_13D32
-; ---------------------------------------------------------------------------
+; =============== S U B R O U T I N E =======================================
 
-loc_13D12:                              ; CODE XREF: mainDispatch+AD↑j
-                mov     ax, 2E14h       ; NOTHING TO FIGHT
-                push    ax
-                mov     ax, 2392h
-                push    ax
-                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
-                mov     ax, 2392h
-                push    ax
-                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
-                mov     ax, 2392h
-                push    ax
-                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
-                retn
-; ---------------------------------------------------------------------------
+; Attributes: noreturn
 
-loc_13D32:                              ; CODE XREF: mainDispatch+AF↑j
-                mov     ax, 27E8h       ;  IS
-                push    ax
-                mov     ax, 2210h
-                push    ax
-                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
-                cmp     word ptr ds:21FEh, 1
-                jg      short loc_13D49
-                jmp     loc_13D56
-; ---------------------------------------------------------------------------
-
-loc_13D49:                              ; CODE XREF: mainDispatch+E4↑j
-                mov     ax, 29FEh       ; S ARE
-                push    ax
-                mov     ax, 2210h
-                push    ax
-                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
-
-loc_13D56:                              ; CODE XREF: mainDispatch+E6↑j
-                mov     ax, 2A08h       ; THE CREATURE
-                push    ax
-                mov     ax, 2210h
-                push    ax
-                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
-                push    ax
-                mov     ax, 2E28h       ;  NOT IN RANGE.
-                push    ax
-                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
-                push    ax
-                mov     ax, 2396h
-                push    ax
-                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
-                mov     ax, 2396h
-                push    ax
-                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
-                mov     ax, 2396h
-                push    ax
-                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
-                retn
-; ---------------------------------------------------------------------------
-
-loc_13D8A:                              ; CODE XREF: mainDispatch+A2↑j
-                mov     word ptr ds:1F2Ah, 0Bh
-                mov     bx, 2E3Ah
-                call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
+sub_13D98       proc near
                 mov     ax, ds:1AC0h
                 call    far ptr rt_FF20 ; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
-                call    far ptr rt_FF2B ; -> rtm_FF2B  (leglib seg004:0x21e15)
+
+loc_13DA0:                              ; -> rtm_FF2B  (leglib seg004:0x21e15)
+                call    far ptr rt_FF2B
+
+loc_13DA5:
                 mov     ax, ds:22D6h
                 add     ax, 12h
                 call    far ptr rt_FF20 ; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
-                call    far ptr rt_FF4C ; -> rtm_FF4C  (leglib seg004:0x21b4a)
+
+j_rt_FF4C_4:                            ; -> rtm_FF4C  (leglib seg004:0x21b4a)
+                call    far ptr rt_FF4C
+
+loc_13DB5:
                 mov     ax, ds:21FCh
                 call    far ptr rt_FF20 ; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
+
+loc_13DBD:
                 mov     bx, 2C26h
                 call    far ptr rt_FF4E ; -> rtm_FF4E  (leglib seg004:0x21a1a)
-                call    far ptr rt_FF47 ; -> rtm_FF47  (leglib seg004:0x21b4f)
+
+j_rt_FF47_0:                            ; -> rtm_FF47  (leglib seg004:0x21b4f)
+                call    far ptr rt_FF47
+
+loc_13DCA:
                 mov     bx, 208Eh
                 call    far ptr rt_FF50 ; -> rtm_FF50  (leglib seg004:0x2182d)
+
+loc_13DD2:
                 mov     ax, ds:22A6h
                 cmp     ax, ds:1AFEh
                 jz      short loc_13DDE
                 jmp     loc_13DEE
 ; ---------------------------------------------------------------------------
 
-loc_13DDE:                              ; CODE XREF: mainDispatch+179↑j
+loc_13DDE:                              ; CODE XREF: sub_13D98+41↑j
                 mov     bx, 24E6h
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
                 mov     bx, 208Eh
                 call    far ptr rt_FF50 ; -> rtm_FF50  (leglib seg004:0x2182d)
 
-loc_13DEE:                              ; CODE XREF: mainDispatch+17B↑j
+loc_13DEE:                              ; CODE XREF: sub_13D98+43↑j
                 mov     ax, 2E3Eh       ; ATTACK
                 push    ax
                 mov     bx, ds:2254h
@@ -6720,17 +6706,25 @@ loc_13DEE:                              ; CODE XREF: mainDispatch+17B↑j
                 add     bx, [si+0Ah]
                 push    bx
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+
+loc_13E06:
                 push    ax
                 mov     ax, 239Ah
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+
+loc_13E10:
                 mov     ax, 239Ah
                 push    ax
                 call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
+
+loc_13E19:
                 mov     ax, 239Ah
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
-                mov     ax, 2E4Ah       ; WITH
+
+loc_13E22:                              ; WITH
+                mov     ax, 2E4Ah
                 push    ax
                 mov     bx, ds:1AFEh
                 shl     bx, 1
@@ -6739,34 +6733,52 @@ loc_13DEE:                              ; CODE XREF: mainDispatch+17B↑j
                 add     bx, [si+0Ah]
                 push    bx
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+
+loc_13E3A:
                 push    ax
                 mov     ax, 27D6h
                 push    ax
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+
+loc_13E44:
                 push    ax
                 mov     ax, 239Eh
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+
+loc_13E4E:
                 mov     ax, 239Eh
                 push    ax
                 call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
+
+loc_13E57:
                 mov     ax, 239Eh
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+
+loc_13E60:
                 mov     bx, 208Eh
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
+
+loc_13E68:
                 push    word ptr ds:24E8h
                 push    word ptr ds:24E6h
                 call    far ptr rt_B8   ; -> rtm_B8  (leglib seg003:0x1a1ba)
+
+loc_13E75:
                 mov     bx, ax
                 mov     [bp-0Ch], bx
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
-                call    far ptr rt_FF1F ; -> rtm_FF1F  (leglib seg004:0x21b5e)
+
+loc_13E7F:                              ; -> rtm_FF1F  (leglib seg004:0x21b5e)
+                call    far ptr rt_FF1F
+
+loc_13E84:
                 jnb     short loc_13E89
                 jmp     loc_13EBA
 ; ---------------------------------------------------------------------------
 
-loc_13E89:                              ; CODE XREF: mainDispatch+224↑j
+loc_13E89:                              ; CODE XREF: sub_13D98:loc_13E84↑j
                 mov     ax, 2E54h       ; YOUR ATTACK MISSES.
                 push    ax
                 mov     ax, 23A2h
@@ -6785,50 +6797,72 @@ loc_13E89:                              ; CODE XREF: mainDispatch+224↑j
                 jmp     sub_10A1F
 ; ---------------------------------------------------------------------------
 
-loc_13EBA:                              ; CODE XREF: mainDispatch+226↑j
+loc_13EBA:                              ; CODE XREF: sub_13D98+EE↑j
                 mov     ax, ds:1B08h
                 call    far ptr rt_FF20 ; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
+
+loc_13EC2:
                 mov     ax, ds:22D6h
                 call    far ptr rt_FF20 ; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
+
+loc_13ECA:
                 mov     bx, 2E6Ch
                 call    far ptr rt_FF49 ; -> rtm_FF49  (leglib seg004:0x21a32)
+
+loc_13ED2:
                 mov     bx, 2482h
                 call    far ptr rt_FF44 ; -> rtm_FF44  (leglib seg004:0x21a62)
-                call    far ptr rt_FF4C ; -> rtm_FF4C  (leglib seg004:0x21b4a)
+
+j_rt_FF4C_5:                            ; -> rtm_FF4C  (leglib seg004:0x21b4a)
+                call    far ptr rt_FF4C
+
+loc_13EDF:
                 push    word ptr ds:24E8h
                 push    word ptr ds:24E6h
                 call    far ptr rt_B8   ; -> rtm_B8  (leglib seg003:0x1a1ba)
+
+loc_13EEC:
                 mov     bx, ax
                 mov     [bp-0Ch], bx
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
+
+loc_13EF6:
                 mov     bx, 280Ah
                 call    far ptr rt_FF4E ; -> rtm_FF4E  (leglib seg004:0x21a1a)
+
+loc_13EFE:
                 mov     bx, 24E6h
                 call    far ptr rt_FF44 ; -> rtm_FF44  (leglib seg004:0x21a62)
-                call    far ptr rt_FF47 ; -> rtm_FF47  (leglib seg004:0x21b4f)
-                call    far ptr rt_FF22 ; -> rtm_FF22  (leglib seg004:0x218e6)
+
+j_rt_FF47_1:                            ; -> rtm_FF47  (leglib seg004:0x21b4f)
+                call    far ptr rt_FF47
+
+loc_13F0B:                              ; -> rtm_FF22  (leglib seg004:0x218e6)
+                call    far ptr rt_FF22
+
+loc_13F10:
                 mov     ds:2192h, ax
                 cmp     word ptr ds:22A6h, 63h ; 'c'
-                mov     ax, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     ax, 0
                 jge     short loc_13F1E
                 dec     ax
 
-loc_13F1E:                              ; CODE XREF: mainDispatch+2BB↑j
+loc_13F1E:                              ; CODE XREF: sub_13D98+183↑j
                 mov     bx, ax
                 mov     ax, ds:22A6h
                 cmp     ax, ds:1AFEh
-                mov     cx, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     cx, 0
                 jz      short loc_13F2D
                 dec     cx
 
-loc_13F2D:                              ; CODE XREF: mainDispatch+2CA↑j
+loc_13F2D:                              ; CODE XREF: sub_13D98+192↑j
                 and     cx, bx
                 and     cx, cx
                 jnz     short loc_13F36
                 jmp     loc_13F7A
 ; ---------------------------------------------------------------------------
 
-loc_13F36:                              ; CODE XREF: mainDispatch+2D1↑j
+loc_13F36:                              ; CODE XREF: sub_13D98+199↑j
                 push    word ptr ds:24E8h
                 push    word ptr ds:24E6h
                 call    far ptr rt_B8   ; -> rtm_B8  (leglib seg003:0x1a1ba)
@@ -6847,14 +6881,14 @@ loc_13F36:                              ; CODE XREF: mainDispatch+2D1↑j
                 call    far ptr rt_FF22 ; -> rtm_FF22  (leglib seg004:0x218e6)
                 mov     ds:2192h, ax
 
-loc_13F7A:                              ; CODE XREF: mainDispatch+2D3↑j
+loc_13F7A:                              ; CODE XREF: sub_13D98+19B↑j
                 mov     ax, ds:1AFEh
                 cmp     ax, ds:22A6h
                 jz      short loc_13F86
                 jmp     loc_13FBA
 ; ---------------------------------------------------------------------------
 
-loc_13F86:                              ; CODE XREF: mainDispatch+321↑j
+loc_13F86:                              ; CODE XREF: sub_13D98+1E9↑j
                 mov     ax, ds:1B08h
                 call    far ptr rt_FF20 ; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
                 push    word ptr ds:24E8h
@@ -6870,33 +6904,49 @@ loc_13F86:                              ; CODE XREF: mainDispatch+321↑j
                 mov     ds:2192h, ax
 
 loc_13FBA:                              ; CODE XREF: doAttackOrCast+1BB↑j
-                                        ; mainDispatch+323↑j
+                                        ; sub_13D98+1EB↑j
                 mov     ax, 2E70h       ; ENEMY HIT BY BLOW OF
                 push    ax
                 push    word ptr ds:2192h
                 call    far ptr rt_D2   ; -> rtm_D2  (leglib seg003:0x1b870)
+
+loc_13FC7:
                 push    ax
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+
+loc_13FCD:
                 push    ax
                 mov     ax, 27D6h
                 push    ax
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+
+loc_13FD7:
                 push    ax
                 mov     ax, 23A8h
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+
+loc_13FE1:
                 mov     ax, 23A8h
                 push    ax
                 call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
+
+loc_13FEA:
                 mov     ax, 23A8h
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
-                mov     word ptr ds:23ACh, 2 ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
+
+loc_13FF3:                              ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
+                mov     word ptr ds:23ACh, 2
                 mov     ax, 23ACh
                 push    ax
                 call    far ptr rt_FE27 ; -> rtm_FE27  (leglib seg007:0x253ad)
+
+loc_14002:
                 call    sub_10A1F
 ; ---------------------------------------------------------------------------
+
+loc_14005:
                 mov     bx, ds:21FEh
                 shl     bx, 1
                 mov     si, 1C7Ch
@@ -6913,16 +6963,16 @@ loc_13FBA:                              ; CODE XREF: doAttackOrCast+1BB↑j
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
                 mov     si, bx
-                cmp     word ptr es:[bx], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr es:[bx], 0
                 jg      short locret_1403B
                 jmp     loc_1403C
 ; ---------------------------------------------------------------------------
 
-locret_1403B:                           ; CODE XREF: mainDispatch+3D6↑j
+locret_1403B:                           ; CODE XREF: sub_13D98+29E↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1403C:                              ; CODE XREF: mainDispatch+3D8↑j
+loc_1403C:                              ; CODE XREF: sub_13D98+2A0↑j
                 mov     ax, 2E8Ah       ; \n\nTHE
                 push    ax
                 mov     bx, ds:2254h
@@ -6932,38 +6982,62 @@ loc_1403C:                              ; CODE XREF: mainDispatch+3D8↑j
                 add     bx, [si+0Ah]
                 push    bx
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+sub_13D98       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: noreturn
+
+sub_14054       proc near
                 push    ax
                 mov     ax, 2E94h       ;  DIES.
                 push    ax
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+
+loc_1405E:
                 push    ax
                 mov     ax, 23AEh
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+
+loc_14068:
                 mov     ax, 23AEh
                 push    ax
                 call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
+
+loc_14071:
                 mov     ax, 23AEh
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
-                mov     word ptr ds:23B2h, 6 ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
+
+loc_1407A:                              ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
+                mov     word ptr ds:23B2h, 6
                 mov     ax, 23B2h
                 push    ax
                 call    far ptr rt_FE27 ; -> rtm_FE27  (leglib seg007:0x253ad)
+
+loc_14089:
                 dec     word ptr ds:21FEh
-                cmp     word ptr ds:21FEh, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr ds:21FEh, 0
                 jle     short loc_14097
                 jmp     sub_10A39
 ; ---------------------------------------------------------------------------
 
-loc_14097:                              ; CODE XREF: mainDispatch+432↑j
+loc_14097:                              ; CODE XREF: sub_14054+3E↑j
                 call    far ptr rt_FE5B ; -> screenRefresh  (leglib seg008:0x28861)
-                mov     word ptr ds:1F2Ah, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
-                call    far ptr 0:57B0h
+
+loc_1409C:
+                mov     word ptr ds:1F2Ah, 0
+                call    sub_157B0
+
+loc_140A7:
                 call    sub_10A6D
 ; ---------------------------------------------------------------------------
-                mov     word ptr ds:2184h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
-                mov     word ptr ds:2148h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+
+loc_140AA:
+                mov     word ptr ds:2184h, 0
+                mov     word ptr ds:2148h, 0
                 mov     cx, 100h
                 mov     bx, ds:2254h
                 shl     bx, 1
@@ -6975,47 +7049,67 @@ loc_14097:                              ; CODE XREF: mainDispatch+432↑j
                 idiv    cx
                 mov     ds:1F04h, ax
                 cmp     ax, 1
-                mov     cx, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     cx, 0
                 jge     short loc_140DA
                 dec     cx
 
-loc_140DA:                              ; CODE XREF: mainDispatch+477↑j
+loc_140DA:                              ; CODE XREF: sub_14054+83↑j
                 mov     bx, 2476h
                 mov     [bp-0Ch], cx
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
+
+loc_140E5:
                 mov     bx, 2E9Eh
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
+
+loc_140ED:
                 mov     bx, 1ACEh
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
-                call    far ptr rt_FF1F ; -> rtm_FF1F  (leglib seg004:0x21b5e)
-                mov     ax, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+
+loc_140F5:                              ; -> rtm_FF1F  (leglib seg004:0x21b5e)
+                call    far ptr rt_FF1F
+
+loc_140FA:
+                mov     ax, 0
                 jbe     short loc_14100
                 dec     ax
 
-loc_14100:                              ; CODE XREF: mainDispatch+49D↑j
+loc_14100:                              ; CODE XREF: sub_14054+A9↑j
                 call    far ptr rt_FF20 ; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
+
+loc_14105:
                 mov     bx, 2A64h
                 call    far ptr rt_FF4E ; -> rtm_FF4E  (leglib seg004:0x21a1a)
-                call    far ptr rt_FF51 ; -> rtm_FF51  (leglib seg004:0x21b40)
+
+j_rt_FF51_1:                            ; -> rtm_FF51  (leglib seg004:0x21b40)
+                call    far ptr rt_FF51
+
+loc_14112:
                 push    word ptr ds:24E8h
                 push    word ptr ds:24E6h
                 call    far ptr rt_B8   ; -> rtm_B8  (leglib seg003:0x1a1ba)
+
+loc_1411F:
                 mov     bx, ax
                 mov     [bp-0Eh], bx
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
-                call    far ptr rt_FF1F ; -> rtm_FF1F  (leglib seg004:0x21b5e)
-                mov     ax, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+
+loc_14129:                              ; -> rtm_FF1F  (leglib seg004:0x21b5e)
+                call    far ptr rt_FF1F
+
+loc_1412E:
+                mov     ax, 0
                 jnb     short loc_14134
                 dec     ax
 
-loc_14134:                              ; CODE XREF: mainDispatch+4D1↑j
+loc_14134:                              ; CODE XREF: sub_14054+DD↑j
                 or      ax, [bp-0Ch]
                 and     ax, ax
                 jz      short loc_1413E
                 jmp     loc_14314
 ; ---------------------------------------------------------------------------
 
-loc_1413E:                              ; CODE XREF: mainDispatch+4D9↑j
+loc_1413E:                              ; CODE XREF: sub_14054+E5↑j
                 mov     ax, 2EA2h       ; \nDO YOU WANT TO USE THE
                 push    ax
                 mov     ax, 23B4h
@@ -7058,14 +7152,14 @@ loc_1413E:                              ; CODE XREF: mainDispatch+4D9↑j
                 jmp     loc_141BA
 ; ---------------------------------------------------------------------------
 
-loc_141AD:                              ; CODE XREF: mainDispatch+548↑j
+loc_141AD:                              ; CODE XREF: sub_14054+154↑j
                 mov     ax, 2EC4h
                 push    ax
                 mov     ax, 2210h
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 
-loc_141BA:                              ; CODE XREF: mainDispatch+54A↑j
+loc_141BA:                              ; CODE XREF: sub_14054+156↑j
                 mov     ax, 2210h
                 push    ax
                 call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
@@ -7080,10 +7174,10 @@ loc_141BA:                              ; CODE XREF: mainDispatch+54A↑j
                 mov     ax, 23BCh
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
-                mov     word ptr ds:23C0h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:23C0h, 0
                 mov     word ptr ds:23C2h, 2 ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
                 mov     word ptr ds:23C4h, 3
-                mov     word ptr ds:23C6h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:23C6h, 0
                 mov     ax, 23C0h
                 push    ax
                 mov     ax, 23C2h
@@ -7098,8 +7192,8 @@ loc_141BA:                              ; CODE XREF: mainDispatch+54A↑j
                 jmp     loc_14314
 ; ---------------------------------------------------------------------------
 
-loc_14219:                              ; CODE XREF: mainDispatch+5B4↑j
-                mov     word ptr ds:2192h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+loc_14219:                              ; CODE XREF: sub_14054+1C0↑j
+                mov     word ptr ds:2192h, 0
                 mov     ax, ds:1F04h
                 and     ax, 3Fh
                 mov     ds:223Ch, ax
@@ -7109,7 +7203,7 @@ loc_14219:                              ; CODE XREF: mainDispatch+5B4↑j
                 jmp     loc_14286
 ; ---------------------------------------------------------------------------
 
-loc_14234:                              ; CODE XREF: mainDispatch+62D↓j
+loc_14234:                              ; CODE XREF: sub_14054+239↓j
                 mov     ax, ds:2192h
                 call    far ptr rt_FF20 ; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
                 push    word ptr ds:24E8h
@@ -7132,7 +7226,7 @@ loc_14234:                              ; CODE XREF: mainDispatch+62D↓j
                 mov     ax, ds:2146h
                 inc     ax
 
-loc_14286:                              ; CODE XREF: mainDispatch+5D1↑j
+loc_14286:                              ; CODE XREF: sub_14054+1DD↑j
                 mov     ds:2146h, ax
                 cmp     ax, ds:23C8h
                 jle     short loc_14234
@@ -7173,76 +7267,94 @@ loc_14286:                              ; CODE XREF: mainDispatch+5D1↑j
                 jmp     loc_14314
 ; ---------------------------------------------------------------------------
 
-loc_14304:                              ; CODE XREF: mainDispatch+69F↑j
+loc_14304:                              ; CODE XREF: sub_14054+2AB↑j
                 mov     bx, 2F04h
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
                 mov     bx, 2186h
                 call    far ptr rt_FF50 ; -> rtm_FF50  (leglib seg004:0x2182d)
 
-loc_14314:                              ; CODE XREF: mainDispatch+4DB↑j
-                                        ; mainDispatch+5B6↑j ...
+loc_14314:                              ; CODE XREF: sub_14054+E7↑j
+                                        ; sub_14054+1C2↑j ...
                 call    far ptr rt_FE5B ; -> screenRefresh  (leglib seg008:0x28861)
+
+loc_14319:
                 mov     bx, 2F08h
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
+
+loc_14321:
                 push    word ptr ds:24E8h
                 push    word ptr ds:24E6h
                 call    far ptr rt_B8   ; -> rtm_B8  (leglib seg003:0x1a1ba)
+
+loc_1432E:
                 mov     bx, ax
                 mov     [bp-0Ch], bx
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
-                call    far ptr rt_FF1F ; -> rtm_FF1F  (leglib seg004:0x21b5e)
+
+loc_14338:                              ; -> rtm_FF1F  (leglib seg004:0x21b5e)
+                call    far ptr rt_FF1F
+
+loc_1433D:
                 jb      short loc_14342
                 jmp     loc_14365
 ; ---------------------------------------------------------------------------
 
-loc_14342:                              ; CODE XREF: mainDispatch+6DD↑j
-                mov     word ptr ds:23CEh, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
-                mov     word ptr ds:23D0h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+loc_14342:                              ; CODE XREF: sub_14054:loc_1433D↑j
+                mov     word ptr ds:23CEh, 0
+                mov     word ptr ds:23D0h, 0
                 mov     ax, 23CEh
                 push    ax
                 mov     ax, 23D0h
                 push    ax
                 call    far ptr rt_FE38 ; -> rtm_FE38  (leglib seg007:0x268f8)
-                cmp     word ptr ds:1AEEh, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr ds:1AEEh, 0
                 jz      short loc_14365
-                jmp     loc_14523
+                jmp     sub_14523
 ; ---------------------------------------------------------------------------
 
-loc_14365:                              ; CODE XREF: mainDispatch+6DF↑j
-                                        ; mainDispatch+700↑j
+loc_14365:                              ; CODE XREF: sub_14054+2EB↑j
+                                        ; sub_14054+30C↑j
                 mov     si, 1B0Ch
                 mov     bx, 8
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
                 mov     si, bx
-                cmp     word ptr es:[bx], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
-                mov     ax, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr es:[bx], 0
+                mov     ax, 0
                 jnz     short loc_1437D
                 dec     ax
 
-loc_1437D:                              ; CODE XREF: mainDispatch+71A↑j
+loc_1437D:                              ; CODE XREF: sub_14054+326↑j
                 mov     bx, 2F0Ch
                 mov     [bp-0Ch], ax
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
+
+loc_14388:
                 push    word ptr ds:24E8h
                 push    word ptr ds:24E6h
                 call    far ptr rt_B8   ; -> rtm_B8  (leglib seg003:0x1a1ba)
+
+loc_14395:
                 mov     bx, ax
                 mov     [bp-0Eh], bx
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
-                call    far ptr rt_FF1F ; -> rtm_FF1F  (leglib seg004:0x21b5e)
-                mov     ax, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+
+loc_1439F:                              ; -> rtm_FF1F  (leglib seg004:0x21b5e)
+                call    far ptr rt_FF1F
+
+loc_143A4:
+                mov     ax, 0
                 jnb     short loc_143AA
                 dec     ax
 
-loc_143AA:                              ; CODE XREF: mainDispatch+747↑j
+loc_143AA:                              ; CODE XREF: sub_14054+353↑j
                 and     ax, [bp-0Ch]
                 and     ax, ax
                 jz      short loc_143B4
                 jmp     loc_14493
 ; ---------------------------------------------------------------------------
 
-loc_143B4:                              ; CODE XREF: mainDispatch+74F↑j
+loc_143B4:                              ; CODE XREF: sub_14054+35B↑j
                 mov     bx, ds:2254h
                 shl     bx, 1
                 mov     si, 20BEh
@@ -7260,7 +7372,7 @@ loc_143B4:                              ; CODE XREF: mainDispatch+74F↑j
                 mov     ax, 23D6h
                 push    ax
                 mov     [bp-0Ch], dx
-                call    far ptr 0:4B8Dh
+                call    sub_14B8D
                 mov     si, 20BEh
                 mov     bx, [bp-0Ch]
                 add     bx, [si+0Ah]
@@ -7314,10 +7426,17 @@ loc_143B4:                              ; CODE XREF: mainDispatch+74F↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_14493:                              ; CODE XREF: mainDispatch+751↑j
+loc_14493:                              ; CODE XREF: sub_14054+35D↑j
                 mov     word ptr ds:231Ch, 4
                 call    sub_13334
-; ---------------------------------------------------------------------------
+sub_14054       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: noreturn
+
+sub_1449C       proc near
                 mov     ax, 2F26h       ; YOU FIND A
                 push    ax
                 mov     bx, ds:1F06h
@@ -7327,10 +7446,14 @@ loc_14493:                              ; CODE XREF: mainDispatch+751↑j
                 add     bx, [si+0Ah]
                 push    bx
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+
+loc_144B4:
                 push    ax
                 mov     ax, 27E2h
                 push    ax
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+
+loc_144BE:
                 push    ax
                 mov     bx, ds:1F04h
                 shl     bx, 1
@@ -7339,20 +7462,30 @@ loc_14493:                              ; CODE XREF: mainDispatch+751↑j
                 add     bx, [si+0Ah]
                 push    bx
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+
+loc_144D3:
                 push    ax
                 mov     ax, 2F36h
                 push    ax
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+
+loc_144DD:
                 push    ax
                 mov     ax, 23DCh
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+
+loc_144E7:
                 mov     ax, 23DCh
                 push    ax
                 call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
+
+loc_144F0:
                 mov     ax, 23DCh
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+
+loc_144F9:
                 mov     si, 1B0Ch
                 mov     bx, 8
                 add     bx, [si+0Ah]
@@ -7366,27 +7499,40 @@ loc_14493:                              ; CODE XREF: mainDispatch+751↑j
                 mov     ax, ds:1F06h
                 mov     es:[bx], ax
                 call    far ptr rt_FE4F ; -> rtm_FE4F  (leglib seg007:0x2659c)
-                retn
-; ---------------------------------------------------------------------------
 
-loc_14523:                              ; CODE XREF: mainDispatch+702↑j
+nullsub_19:
+                retn
+sub_1449C       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: noreturn
+
+sub_14523       proc near               ; CODE XREF: sub_14054+30E↑j
                 mov     ax, 2F3Ch       ; YOU FIND A
                 push    ax
                 mov     ax, 23E0h
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+
+loc_14530:
                 mov     ax, 23E0h
                 push    ax
                 call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
+
+loc_14539:
                 mov     ax, 23E0h
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+
+loc_14542:
                 cmp     word ptr ds:1AEEh, 13h
                 jz      short loc_1454C
                 jmp     loc_1456B
 ; ---------------------------------------------------------------------------
 
-loc_1454C:                              ; CODE XREF: mainDispatch+8E7↑j
+loc_1454C:                              ; CODE XREF: sub_14523+24↑j
                 mov     ax, 2F4Ah
                 push    ax
                 mov     ax, 23E4h
@@ -7399,7 +7545,7 @@ loc_1454C:                              ; CODE XREF: mainDispatch+8E7↑j
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
-loc_1456B:                              ; CODE XREF: mainDispatch+8E9↑j
+loc_1456B:                              ; CODE XREF: sub_14523+26↑j
                 mov     ax, 27E2h
                 push    ax
                 mov     bx, ds:1AEEh
@@ -7409,20 +7555,30 @@ loc_1456B:                              ; CODE XREF: mainDispatch+8E9↑j
                 add     bx, [si+0Ah]
                 push    bx
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+
+loc_14583:
                 push    ax
                 mov     ax, 2F36h
                 push    ax
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+
+loc_1458D:
                 push    ax
                 mov     ax, 23E8h
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+
+loc_14597:
                 mov     ax, 23E8h
                 push    ax
                 call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
+
+loc_145A0:
                 mov     ax, 23E8h
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+
+loc_145A9:
                 mov     bx, ds:1AEEh
                 shl     bx, 1
                 mov     si, 1BC4h
@@ -7439,46 +7595,65 @@ loc_1456B:                              ; CODE XREF: mainDispatch+8E9↑j
                 mov     ax, 23ECh
                 push    ax
                 call    far ptr rt_FE27 ; -> rtm_FE27  (leglib seg007:0x253ad)
-                jmp     sub_10A6D
-; ---------------------------------------------------------------------------
 
-loc_145DB:                              ; CODE XREF: outInit+21F↑p
+loc_145D8:
+                jmp     sub_10A6D
+sub_14523       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: noreturn
+
+sub_145DB       proc near               ; CODE XREF: outInit+21F↑p
                                         ; outInit+539↑p ...
-                mov     word ptr ds:23EEh, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:23EEh, 0
                 mov     ax, 23EEh
                 push    ax
-                call    far ptr 0:608Dh
+                call    sub_1608D
+
+loc_145EA:
                 mov     si, 1B96h
                 mov     bx, 18h
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
                 mov     si, bx
-                cmp     word ptr es:[bx], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr es:[bx], 0
                 jz      short locret_14601
                 jmp     loc_14602
 ; ---------------------------------------------------------------------------
 
-locret_14601:                           ; CODE XREF: mainDispatch+99C↑j
+locret_14601:                           ; CODE XREF: sub_145DB+21↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_14602:                              ; CODE XREF: mainDispatch+99E↑j
+loc_14602:                              ; CODE XREF: sub_145DB+23↑j
                 mov     si, 1B96h
                 mov     bx, 18h
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
-                mov     word ptr es:[bx], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
-                mov     word ptr ds:2192h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr es:[bx], 0
+                mov     word ptr ds:2192h, 0
+sub_145DB       endp
 
-loc_14619:                              ; CODE XREF: mainDispatch:loc_148A1↓p
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: noreturn
+
+sub_14619       proc near               ; CODE XREF: sub_1486B:loc_148A1↓p
                 mov     ax, ds:2192h
                 add     ax, 30h ; '0'
                 push    ax
                 call    far ptr rt_32   ; -> rtm_32  (leglib seg003:0x1b627)
+
+loc_14625:
                 push    ax
                 mov     ax, 2210h
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+
+loc_1462F:
                 mov     si, 1E2Ah
                 xor     bx, bx
                 add     bx, [si+0Ah]
@@ -7486,38 +7661,56 @@ loc_14619:                              ; CODE XREF: mainDispatch:loc_148A1↓p
                 mov     ax, es
                 push    ax
                 call    far ptr rt_11   ; -> rtm_11  (leglib seg003:0x12bde)
-                mov     ax, 2F50h       ; OUTM
+
+loc_14642:                              ; OUTM
+                mov     ax, 2F50h
                 push    ax
                 mov     ax, 2210h
                 push    ax
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+
+loc_1464F:
                 push    ax
                 mov     ax, 2F58h       ; .BSV
                 push    ax
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+
+loc_14659:
                 push    ax
                 mov     ax, 23F0h
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+
+loc_14663:
                 mov     ax, 23F0h
                 push    ax
                 call    far ptr rt_FE63 ; -> rtm_FE63  (leglib seg007:0x24a83)
+
+loc_1466C:
                 mov     ax, 23F0h
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
-                mov     ax, 2F60h       ; outm
+
+loc_14675:                              ; outm
+                mov     ax, 2F60h
                 push    ax
                 mov     ax, 2210h
                 push    ax
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+
+loc_14682:
                 push    ax
                 mov     ax, 2F68h       ; .bsv
                 push    ax
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+
+loc_1468C:
                 push    ax
                 mov     ax, 23F4h
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+
+loc_14696:
                 mov     si, 1E2Ah
                 xor     bx, bx
                 add     bx, [si+0Ah]
@@ -7529,25 +7722,37 @@ loc_14619:                              ; CODE XREF: mainDispatch:loc_148A1↓p
                 mov     ax, 23F8h
                 push    ax
                 call    far ptr rt_FE07 ; -> rtm_FE07  (leglib seg007:0x24fbf)
+
+loc_146B3:
                 mov     ax, 23F4h
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
-                mov     ax, 2F70h       ; OUTDATA.BSV
+
+loc_146BC:                              ; OUTDATA.BSV
+                mov     ax, 2F70h
                 push    ax
                 mov     ax, 23FAh
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+
+loc_146C9:
                 mov     ax, 23FAh
                 push    ax
                 call    far ptr rt_FE63 ; -> rtm_FE63  (leglib seg007:0x24a83)
+
+loc_146D2:
                 mov     ax, 23FAh
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
-                mov     ax, 2F80h       ; outdata.bsv
+
+loc_146DB:                              ; outdata.bsv
+                mov     ax, 2F80h
                 push    ax
                 mov     ax, 23FEh
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+
+loc_146E8:
                 mov     si, 1E2Ah
                 mov     bx, 2B22h       ; WONDERFUL
                 add     bx, [si+0Ah]
@@ -7559,9 +7764,13 @@ loc_14619:                              ; CODE XREF: mainDispatch:loc_148A1↓p
                 mov     ax, 2402h
                 push    ax
                 call    far ptr rt_FE07 ; -> rtm_FE07  (leglib seg007:0x24fbf)
+
+loc_14706:
                 mov     ax, 23FEh
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+
+loc_1470F:
                 mov     si, 1E2Ah
                 mov     bx, 4
                 add     bx, [si+0Ah]
@@ -7578,6 +7787,8 @@ loc_14619:                              ; CODE XREF: mainDispatch:loc_148A1↓p
                 mov     ax, 2406h
                 push    ax
                 call    far ptr rt_FE29 ; -> rtm_FE29  (leglib seg007:0x27391)
+
+loc_1473D:
                 mov     si, 1E2Ah
                 mov     bx, 2           ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
                 add     bx, [si+0Ah]
@@ -7596,22 +7807,32 @@ loc_14619:                              ; CODE XREF: mainDispatch:loc_148A1↓p
                 mov     ax, es
                 push    ax
                 call    far ptr rt_11   ; -> rtm_11  (leglib seg003:0x12bde)
-                mov     ax, 2F90h       ; OUTOBJ.BSV
+
+loc_14771:                              ; OUTOBJ.BSV
+                mov     ax, 2F90h
                 push    ax
                 mov     ax, 2408h
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+
+loc_1477E:
                 mov     ax, 2408h
                 push    ax
                 call    far ptr rt_FE63 ; -> rtm_FE63  (leglib seg007:0x24a83)
+
+loc_14787:
                 mov     ax, 2408h
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
-                mov     ax, 2F9Eh       ; outobj.bsv
+
+loc_14790:                              ; outobj.bsv
+                mov     ax, 2F9Eh
                 push    ax
                 mov     ax, 240Ch
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+
+loc_1479D:
                 mov     si, 1E58h
                 xor     bx, bx
                 add     bx, [si+0Ah]
@@ -7623,9 +7844,13 @@ loc_14619:                              ; CODE XREF: mainDispatch:loc_148A1↓p
                 mov     ax, 2410h
                 push    ax
                 call    far ptr rt_FE07 ; -> rtm_FE07  (leglib seg007:0x24fbf)
+
+loc_147BA:
                 mov     ax, 240Ch
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+
+loc_147C3:
                 mov     si, 1E58h
                 xor     bx, bx
                 add     bx, [si+0Ah]
@@ -7642,7 +7867,7 @@ loc_14619:                              ; CODE XREF: mainDispatch:loc_148A1↓p
                 jmp     loc_1482D
 ; ---------------------------------------------------------------------------
 
-loc_147EB:                              ; CODE XREF: mainDispatch+B86↑j
+loc_147EB:                              ; CODE XREF: sub_14619+1CD↑j
                 mov     ax, 2FACh       ; PEGASUS.BSV
                 push    ax
                 mov     ax, 2414h
@@ -7668,19 +7893,19 @@ loc_147EB:                              ; CODE XREF: mainDispatch+B86↑j
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
-loc_1482D:                              ; CODE XREF: mainDispatch+B88↑j
-                cmp     word ptr ds:2192h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+loc_1482D:                              ; CODE XREF: sub_14619+1CF↑j
+                cmp     word ptr ds:2192h, 0
                 jz      short loc_14837
                 jmp     loc_1483D
 ; ---------------------------------------------------------------------------
 
-loc_14837:                              ; CODE XREF: mainDispatch+BD2↑j
-                call    loc_145DB
+loc_14837:                              ; CODE XREF: sub_14619+219↑j
+                call    sub_145DB
 ; ---------------------------------------------------------------------------
                 jmp     locret_1486A
 ; ---------------------------------------------------------------------------
 
-loc_1483D:                              ; CODE XREF: mainDispatch+BD4↑j
+loc_1483D:                              ; CODE XREF: sub_14619+21B↑j
                 mov     si, 1B96h
                 mov     bx, 18h
                 add     bx, [si+0Ah]
@@ -7689,7 +7914,9 @@ loc_1483D:                              ; CODE XREF: mainDispatch+BD4↑j
                 mov     ds:241Ch, ax
                 mov     ax, 241Ch
                 push    ax
-                call    far ptr 0:608Dh
+                call    sub_1608D
+
+loc_14858:
                 mov     si, 1B96h
                 mov     bx, 18h
                 add     bx, [si+0Ah]
@@ -7697,20 +7924,29 @@ loc_1483D:                              ; CODE XREF: mainDispatch+BD4↑j
                 mov     ax, ds:241Ch
                 mov     es:[bx], ax
 
-locret_1486A:                           ; CODE XREF: mainDispatch+BDA↑j
+locret_1486A:                           ; CODE XREF: sub_14619+221↑j
                 retn
-; ---------------------------------------------------------------------------
+sub_14619       endp
 
-loc_1486B:                              ; CODE XREF: outInit:loc_10305↑p
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: noreturn
+
+sub_1486B       proc far                ; CODE XREF: outInit:loc_10305↑p
                                         ; outInit+7E2↑p
                 mov     ax, 2FCCh       ; a defghi m p s u wx
                 push    ax
                 mov     ax, 1E8Ah
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+
+loc_14878:
                 call    sub_12823
                 call    sub_122CB
 ; ---------------------------------------------------------------------------
+
+loc_1487E:
                 call    sub_11454
                 mov     si, 1B96h
                 mov     bx, 18h
@@ -7723,105 +7959,77 @@ loc_1486B:                              ; CODE XREF: outInit:loc_10305↑p
                 jmp     loc_148A1
 ; ---------------------------------------------------------------------------
 
-loc_1489B:                              ; CODE XREF: mainDispatch+C36↑j
+loc_1489B:                              ; CODE XREF: sub_1486B+2B↑j
                 mov     word ptr ds:2192h, 2 ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
 
-loc_148A1:                              ; CODE XREF: mainDispatch+C38↑j
-                call    loc_14619
+loc_148A1:                              ; CODE XREF: sub_1486B+2D↑j
+                call    sub_14619
 ; ---------------------------------------------------------------------------
-                db 0C7h
-                db    6
-                db  84h
-                db  21h ; !
-                db    0
-                db    0
-                db 0C7h
-                db    6
-                db  2Ah ; *
-                db  1Fh
-                db    0
-                db    0
-                db 0C7h
-                db    6
-                db  48h ; H
-                db  21h ; !
-                db    0
-                db    0
-                db 0C7h
-                db    6
-                db  20h
-                db  1Eh
-                db  0Bh
-                db    0
-                db 0C7h
-                db    6
-                db  1Ah
-                db  1Fh
-                db    0
-                db    0
-                db 0BEh
-                db  96h
-                db  1Bh
-                db 0BBh
-                db  12h
-                db    0
-                db    3
-                db  5Ch ; \
-                db  0Ah
-                db  8Eh
-                db  44h ; D
-                db    2
-                db  26h ; &
-                db  8Bh
-                db    7
-                db 0A3h
-                db  2Eh ; .
-                db  21h ; !
-                db 0BBh
-                db 0E4h
-                db  2Fh ; /
-                db  9Ah
-                db    4
-                db    3
-                db  7Eh ; ~
-                db    6
-; ---------------------------------------------------------------------------
+
+loc_148A4:
+                mov     word ptr ds:2184h, 0
+                mov     word ptr ds:1F2Ah, 0
+                mov     word ptr ds:2148h, 0
+                mov     word ptr ds:1E20h, 0Bh
+                mov     word ptr ds:1F1Ah, 0
+                mov     si, 1B96h
+                mov     bx, 12h
+                add     bx, [si+0Ah]
+                mov     es, word ptr [si+2]
+                mov     ax, es:[bx]
+                mov     ds:212Eh, ax
+                mov     bx, 2FE4h
+                call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
+
+loc_148DC:
                 mov     bx, 1AF8h
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
-                call    far ptr rt_FF1F ; -> rtm_FF1F  (leglib seg004:0x21b5e)
+
+loc_148E4:                              ; -> rtm_FF1F  (leglib seg004:0x21b5e)
+                call    far ptr rt_FF1F
+
+loc_148E9:
                 ja      short loc_148EE
                 jmp     loc_148FE
 ; ---------------------------------------------------------------------------
 
-loc_148EE:                              ; CODE XREF: mainDispatch+C89↑j
+loc_148EE:                              ; CODE XREF: sub_1486B:loc_148E9↑j
                 mov     bx, 2FE4h
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
                 mov     bx, 1AF8h
                 call    far ptr rt_FF50 ; -> rtm_FF50  (leglib seg004:0x2182d)
 
-loc_148FE:                              ; CODE XREF: mainDispatch+C8B↑j
+loc_148FE:                              ; CODE XREF: sub_1486B+80↑j
                 mov     bx, 2FE4h
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
+
+loc_14906:
                 mov     bx, 1AF4h
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
-                call    far ptr rt_FF1F ; -> rtm_FF1F  (leglib seg004:0x21b5e)
+
+loc_1490E:                              ; -> rtm_FF1F  (leglib seg004:0x21b5e)
+                call    far ptr rt_FF1F
+
+loc_14913:
                 ja      short loc_14918
                 jmp     loc_14928
 ; ---------------------------------------------------------------------------
 
-loc_14918:                              ; CODE XREF: mainDispatch+CB3↑j
+loc_14918:                              ; CODE XREF: sub_1486B:loc_14913↑j
                 mov     bx, 2FE4h
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
                 mov     bx, 1AF4h
                 call    far ptr rt_FF50 ; -> rtm_FF50  (leglib seg004:0x2182d)
 
-loc_14928:                              ; CODE XREF: mainDispatch+CB5↑j
-                call    far ptr 0:5018h
+loc_14928:                              ; CODE XREF: sub_1486B+AA↑j
+                call    sub_15018
+
+loc_1492D:
                 mov     si, 1B96h
                 mov     bx, 44h ; 'D'
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
-                mov     word ptr es:[bx], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr es:[bx], 0
                 mov     word ptr ds:241Eh, 0Ah
                 mov     word ptr ds:2420h, 8
                 mov     ax, 241Eh
@@ -7829,11 +8037,17 @@ loc_14928:                              ; CODE XREF: mainDispatch+CB5↑j
                 mov     ax, 2420h
                 push    ax
                 call    far ptr rt_FE6B ; -> rtm_FE6B  (leglib seg008:0x28e5e)
-                call    far ptr 0:4BD0h
+
+loc_14957:
+                call    sub_14BD0
+
+loc_1495C:
                 mov     word ptr ds:2422h, 0FFFEh
                 mov     ax, 2422h
                 push    ax
                 call    far ptr rt_FE49 ; -> rtm_FE49  (leglib seg007:0x25248)
+
+loc_1496B:
                 mov     si, 1B96h
                 mov     bx, 18h
                 add     bx, [si+0Ah]
@@ -7844,44 +8058,44 @@ loc_14928:                              ; CODE XREF: mainDispatch+CB5↑j
                 jmp     loc_14991
 ; ---------------------------------------------------------------------------
 
-loc_14982:                              ; CODE XREF: mainDispatch+D1D↑j
+loc_14982:                              ; CODE XREF: sub_1486B+112↑j
                 mov     word ptr ds:1B02h, 7
                 mov     word ptr ds:1B06h, 5
-                call    loc_14A87
+                call    sub_14A87
 ; ---------------------------------------------------------------------------
 
-loc_14991:                              ; CODE XREF: mainDispatch+D1F↑j
+loc_14991:                              ; CODE XREF: sub_1486B+114↑j
                 mov     si, 1B96h
                 mov     bx, 18h
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
                 mov     si, bx
                 cmp     word ptr es:[bx], 2 ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
-                mov     ax, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     ax, 0
                 jnz     short loc_149A9
                 dec     ax
 
-loc_149A9:                              ; CODE XREF: mainDispatch+D46↑j
-                cmp     word ptr ds:1ADAh, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
-                mov     cx, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+loc_149A9:                              ; CODE XREF: sub_1486B+13B↑j
+                cmp     word ptr ds:1ADAh, 0
+                mov     cx, 0
                 jg      short loc_149B4
                 dec     cx
 
-loc_149B4:                              ; CODE XREF: mainDispatch+D51↑j
+loc_149B4:                              ; CODE XREF: sub_1486B+146↑j
                 and     cx, ax
                 and     cx, cx
                 jnz     short loc_149BD
                 jmp     loc_149CE
 ; ---------------------------------------------------------------------------
 
-loc_149BD:                              ; CODE XREF: mainDispatch+D58↑j
+loc_149BD:                              ; CODE XREF: sub_1486B+14D↑j
                 mov     si, 1BC4h
                 mov     bx, 1Eh
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
-                mov     word ptr es:[bx], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr es:[bx], 0
 
-loc_149CE:                              ; CODE XREF: mainDispatch+D5A↑j
+loc_149CE:                              ; CODE XREF: sub_1486B+14F↑j
                 mov     ax, 2FE8h       ; out.exe
                 push    ax
                 mov     ax, 1
@@ -7891,6 +8105,8 @@ loc_149CE:                              ; CODE XREF: mainDispatch+D5A↑j
                 mov     ax, 20h ; ' '
                 push    ax
                 call    far ptr rt_87   ; -> rtm_87  (leglib seg003:0x148ea)
+
+loc_149E3:
                 mov     ax, 1
                 push    ax
                 mov     ax, 1418h
@@ -7905,6 +8121,8 @@ loc_149CE:                              ; CODE XREF: mainDispatch+D5A↑j
                 mov     ax, 2           ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
                 push    ax
                 call    far ptr rt_5F   ; -> rtm_5F  (leglib seg003:0x145ab)
+
+loc_149FD:
                 mov     ax, ds:222Eh
                 mov     ds:2236h, ax
                 mov     ax, 1
@@ -7912,7 +8130,7 @@ loc_149CE:                              ; CODE XREF: mainDispatch+D5A↑j
 ; ---------------------------------------------------------------------------
                 nop
 
-loc_14A0A:                              ; CODE XREF: mainDispatch+DCF↓j
+loc_14A0A:                              ; CODE XREF: sub_1486B+1C4↓j
                 mov     ax, 1
                 push    ax
                 mov     bx, 222Eh
@@ -7928,7 +8146,7 @@ loc_14A0A:                              ; CODE XREF: mainDispatch+DCF↓j
                 mov     ax, ds:2146h
                 inc     ax
 
-loc_14A29:                              ; CODE XREF: mainDispatch+DA6↑j
+loc_14A29:                              ; CODE XREF: sub_1486B+19B↑j
                 mov     ds:2146h, ax
                 cmp     ax, 18h
                 jle     short loc_14A0A
@@ -7946,12 +8164,14 @@ loc_14A29:                              ; CODE XREF: mainDispatch+DA6↑j
                 mov     ax, 2           ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
                 push    ax
                 call    far ptr rt_5F   ; -> rtm_5F  (leglib seg003:0x145ab)
+
+loc_14A4B:
                 mov     ax, 1
                 jmp     loc_14A71
 ; ---------------------------------------------------------------------------
                 nop
 
-loc_14A52:                              ; CODE XREF: mainDispatch+E17↓j
+loc_14A52:                              ; CODE XREF: sub_1486B+20C↓j
                 mov     ax, 1
                 push    ax
                 mov     bx, 222Eh
@@ -7967,34 +8187,50 @@ loc_14A52:                              ; CODE XREF: mainDispatch+E17↓j
                 mov     ax, ds:2146h
                 inc     ax
 
-loc_14A71:                              ; CODE XREF: mainDispatch+DEE↑j
+loc_14A71:                              ; CODE XREF: sub_1486B+1E3↑j
                 mov     ds:2146h, ax
                 cmp     ax, 64h ; 'd'
                 jle     short loc_14A52
                 xor     ax, ax
                 push    ax
                 call    far ptr rt_09   ; -> rtm_09  (leglib seg003:0x14a31)
-                call    sub_116E1
-                jmp     loc_14AA7
-; ---------------------------------------------------------------------------
 
-loc_14A87:                              ; CODE XREF: mainDispatch+D2E↑p
+loc_14A81:
+                call    sub_116E1
+                jmp     near ptr sub_14AA7
+sub_1486B       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: noreturn
+
+sub_14A87       proc near               ; CODE XREF: sub_1486B+123↑p
                 mov     si, 1B96h
                 mov     bx, 18h
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
                 mov     word ptr es:[bx], 2 ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
-                call    loc_14AA7
+                call    near ptr sub_14AA7
 ; ---------------------------------------------------------------------------
-                mov     word ptr ds:1F1Ah, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+
+loc_14A9B:
+                mov     word ptr ds:1F1Ah, 0
 
 loc_14AA1:                              ; CODE XREF: creatureApproach+10F↑j
-                call    far ptr 0:58EEh
-                retn
-; ---------------------------------------------------------------------------
+                call    pegasusOrAmbush ; special travel event: "PEGASUS SETS YOU DOWN", "YOU ARE AMBUSHED BY BANDITS!". ~0.75 KB.
 
-loc_14AA7:                              ; CODE XREF: j_rt_FE4E_0+10↑j
-                                        ; mainDispatch+E24↑j ...
+nullsub_20:
+                retn
+sub_14A87       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: noreturn
+
+sub_14AA7       proc far                ; CODE XREF: j_rt_FE4E_0+10↑j
+                                        ; sub_1486B+219↑j ...
                 mov     word ptr ds:2424h, 2 ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
                 mov     word ptr ds:2426h, 17h
                 mov     word ptr ds:2428h, 0Ch
@@ -8023,6 +8259,8 @@ loc_14AD4:                              ; CODE XREF: j_rt_FE4E+36↑j
                 mov     ax, 2432h
                 push    ax
                 call    far ptr rt_FE42 ; -> rtm_FE42  (leglib seg007:0x2730c)
+
+loc_14B01:
                 mov     word ptr ds:2434h, 1
                 mov     word ptr ds:2436h, 1686h
                 mov     ax, 2434h
@@ -8033,7 +8271,7 @@ loc_14AD4:                              ; CODE XREF: j_rt_FE4E+36↑j
 
 loc_14B1A:                              ; CODE XREF: mainDispatch+8E↑j
                 mov     word ptr ds:2438h, 0FFh
-                mov     word ptr ds:243Ah, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:243Ah, 0
                 mov     word ptr ds:243Ch, 1
                 mov     ax, 1B02h
                 push    ax
@@ -8047,32 +8285,28 @@ loc_14B1A:                              ; CODE XREF: mainDispatch+8E↑j
                 push    ax
                 mov     ax, 243Ch
                 push    ax
-                call    far ptr 0:51B7h
-                cmp     word ptr ds:2148h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                call    sub_151B7
+
+loc_14B49:
+                cmp     word ptr ds:2148h, 0
                 jg      short loc_14B53
                 jmp     loc_14B60
 ; ---------------------------------------------------------------------------
 
-loc_14B53:                              ; CODE XREF: mainDispatch+EEE↑j
+loc_14B53:                              ; CODE XREF: sub_14AA7+A7↑j
                 mov     ax, 2254h
                 push    ax
                 mov     ax, 2148h
                 push    ax
-                call    far ptr 0:57DEh
+                call    chainExec       ; loads + execs another program via the RTM (holds the "Error in loading RTM" path) -- the mechanism behind chainToTown/Castle/etc.
 
-loc_14B60:                              ; CODE XREF: mainDispatch+EF0↑j
-                mov     word ptr ds:243Eh, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+loc_14B60:                              ; CODE XREF: sub_14AA7+A9↑j
+                mov     word ptr ds:243Eh, 0
                 mov     ax, 243Eh
                 push    ax
                 call    far ptr rt_FE49 ; -> rtm_FE49  (leglib seg007:0x25248)
-mainDispatch    endp
 
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: noreturn
-
-sub_14B6F       proc far
+loc_14B6F:
                 mov     word ptr ds:2440h, 28h ; '('
                 mov     ax, 2440h
                 push    ax
@@ -8083,21 +8317,22 @@ loc_14B7E:
                 mov     ds:214Ah, ax
                 call    far ptr rt_FE5B ; -> screenRefresh  (leglib seg008:0x28861)
 
-nullsub_18:
+nullsub_21:
                 retn
 ; ---------------------------------------------------------------------------
 
 loc_14B8A:
                 jmp     loc_14BCD
-sub_14B6F       endp
+sub_14AA7       endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: noreturn
 
-sub_14B8D       proc far
-                mov     cx, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+sub_14B8D       proc far                ; CODE XREF: applyGameFlag+24↑P
+                                        ; creatureApproach+319↑P ...
+                mov     cx, 0
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
 loc_14B95:
@@ -8131,11 +8366,11 @@ loc_14BB8:                              ; CODE XREF: sub_14B8D+26↑j
 loc_14BC5:                              ; CODE XREF: sub_14B8D+28↑j
                 call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
-nullsub_19:                             ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
+nullsub_22:                             ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
                 retf    6
 ; ---------------------------------------------------------------------------
 
-loc_14BCD:                              ; CODE XREF: sub_14B6F:loc_14B8A↑j
+loc_14BCD:                              ; CODE XREF: sub_14AA7:loc_14B8A↑j
                 jmp     loc_14CDC
 sub_14B8D       endp
 
@@ -8144,7 +8379,8 @@ sub_14B8D       endp
 
 ; Attributes: noreturn
 
-sub_14BD0       proc far
+sub_14BD0       proc far                ; CODE XREF: sub_1486B:loc_14957↑P
+                                        ; sub_157B0:loc_157B8↓P
                 mov     cx, 0Ch
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -8202,7 +8438,7 @@ loc_14C4F:                              ; CODE XREF: sub_14BD0+7A↑j
 ; ---------------------------------------------------------------------------
 
 loc_14C57:                              ; CODE XREF: sub_14BD0+7C↑j
-                mov     word ptr [bp-14h], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr [bp-14h], 0
 
 loc_14C5C:                              ; CODE XREF: sub_14BD0+84↑j
                 mov     bx, [bp-14h]
@@ -8246,7 +8482,7 @@ loc_14CBD:
                 mov     word ptr ds:2082h, 23CDh
                 call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
-nullsub_20:                             ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+nullsub_23:
                 retf    0
 ; ---------------------------------------------------------------------------
 
@@ -8259,7 +8495,7 @@ sub_14BD0       endp
 
 ; Attributes: noreturn
 
-sub_14CDF       proc far
+sub_14CDF       proc far                ; CODE XREF: sub_151B7+3BB↓P
                 mov     cx, 8
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -8281,13 +8517,13 @@ loc_14CEC:                              ; CODE XREF: sub_14CDF+175↓j
                 mov     ax, cx
                 mov     [bp-0Ch], ax
                 cmp     ax, 0FFFAh
-                mov     cx, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     cx, 0
                 jl      short loc_14D11
                 dec     cx
 
 loc_14D11:                              ; CODE XREF: sub_14CDF+2F↑j
                 cmp     ax, 6           ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
-                mov     dx, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     dx, 0
                 jg      short loc_14D1A
                 dec     dx
 
@@ -8308,13 +8544,13 @@ loc_14D23:                              ; CODE XREF: sub_14CDF+3F↑j
                 mov     ax, cx
                 mov     [bp-0Eh], ax
                 cmp     ax, 0FFFCh
-                mov     cx, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     cx, 0
                 jl      short loc_14D42
                 dec     cx
 
 loc_14D42:                              ; CODE XREF: sub_14CDF+60↑j
                 cmp     ax, 3
-                mov     dx, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     dx, 0
                 jg      short loc_14D4B
                 dec     dx
 
@@ -8326,14 +8562,14 @@ loc_14D4B:                              ; CODE XREF: sub_14CDF+69↑j
 ; ---------------------------------------------------------------------------
 
 loc_14D54:                              ; CODE XREF: sub_14CDF+70↑j
-                cmp     word ptr [bp-0Ch], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
-                mov     cx, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr [bp-0Ch], 0
+                mov     cx, 0
                 jnz     short loc_14D5E
                 dec     cx
 
 loc_14D5E:                              ; CODE XREF: sub_14CDF+7C↑j
                 or      ax, ax
-                mov     dx, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     dx, 0
                 jnz     short loc_14D66
                 dec     dx
 
@@ -8345,7 +8581,7 @@ loc_14D66:                              ; CODE XREF: sub_14CDF+84↑j
 ; ---------------------------------------------------------------------------
 
 loc_14D6F:                              ; CODE XREF: sub_14CDF+8B↑j
-                cmp     word ptr ds:212Eh, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr ds:212Eh, 0
                 jz      short loc_14D79
                 jmp     loc_14D85
 ; ---------------------------------------------------------------------------
@@ -8444,7 +8680,7 @@ loc_14E4C:                              ; CODE XREF: sub_14CDF+A↑j
 loc_14E57:                              ; CODE XREF: sub_14CDF+173↑j
                 call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
-nullsub_21:                             ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
+nullsub_24:                             ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
                 retf    6
 ; ---------------------------------------------------------------------------
 
@@ -8457,8 +8693,9 @@ sub_14CDF       endp
 
 ; Attributes: noreturn
 
-sub_14E62       proc far
-                mov     cx, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+sub_14E62       proc far                ; CODE XREF: doMovement+3CF↑P
+                                        ; sub_12752+23↑P
+                mov     cx, 0
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
 loc_14E6A:
@@ -8485,7 +8722,7 @@ loc_14E75:                              ; CODE XREF: sub_14E62+E↑j
 loc_14E99:                              ; CODE XREF: sub_14E62+10↑j
                 call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
-nullsub_22:                             ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
+nullsub_25:                             ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
                 retf    2
 ; ---------------------------------------------------------------------------
 
@@ -8498,7 +8735,8 @@ sub_14E62       endp
 
 ; Attributes: noreturn
 
-sub_14EA4       proc far
+sub_14EA4       proc far                ; CODE XREF: cantDoThat:loc_126E4↑P
+                                        ; sub_151B7:loc_15593↓P ...
                 mov     cx, 16h
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -8657,7 +8895,7 @@ loc_15000:                              ; CODE XREF: sub_14EA4+131↑j
 loc_1500D:                              ; -> basProcLeave  (leglib seg003:0x1bb7c)
                 call    far ptr rt_F4
 
-nullsub_23:                             ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+nullsub_26:
                 retf    0
 ; ---------------------------------------------------------------------------
 
@@ -8670,7 +8908,8 @@ sub_14EA4       endp
 
 ; Attributes: noreturn
 
-sub_15018       proc far
+sub_15018       proc far                ; CODE XREF: outInit+309↑P
+                                        ; sub_1486B:loc_14928↑P
                 mov     cx, 8
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -8712,7 +8951,7 @@ loc_15058:                              ; CODE XREF: sub_15018+39↑j
                 mov     es:[bx], ax
                 call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
-nullsub_24:                             ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+nullsub_27:
                 retf    0
 ; ---------------------------------------------------------------------------
 
@@ -8725,7 +8964,7 @@ sub_15018       endp
 
 ; Attributes: noreturn
 
-sub_15075       proc far
+sub_15075       proc far                ; CODE XREF: outInit+60A↑P
                 mov     cx, 2           ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -8764,7 +9003,7 @@ loc_150A5:
                 mov     ds:1F02h, ax
                 call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
-nullsub_25:
+nullsub_28:
                 retf    4
 ; ---------------------------------------------------------------------------
 
@@ -8777,7 +9016,7 @@ sub_15075       endp
 
 ; Attributes: noreturn
 
-sub_150DA       proc far
+sub_150DA       proc far                ; CODE XREF: sub_12752+1A↑P
                 mov     cx, 2           ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -8787,7 +9026,7 @@ loc_150E2:
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
                 mov     si, bx
-                cmp     word ptr es:[bx], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr es:[bx], 0
                 jz      short loc_150F9
                 jmp     loc_15101
 ; ---------------------------------------------------------------------------
@@ -8798,7 +9037,7 @@ loc_150F9:                              ; CODE XREF: sub_150DA+1A↑j
 ; ---------------------------------------------------------------------------
 
 loc_15101:                              ; CODE XREF: sub_150DA+1C↑j
-                mov     word ptr [bp-0Ch], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr [bp-0Ch], 0
 
 loc_15106:                              ; CODE XREF: sub_150DA+24↑j
                 mov     ax, [bp-0Ch]
@@ -8841,7 +9080,7 @@ loc_15142:                              ; CODE XREF: sub_150DA+2F↑j
                 jge     short loc_1510C
 
 loc_15149:                              ; CODE XREF: sub_150DA+61↑j
-                cmp     word ptr ds:1F02h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr ds:1F02h, 0
                 jl      short loc_15153
                 jmp     loc_15159
 ; ---------------------------------------------------------------------------
@@ -8852,7 +9091,7 @@ loc_15153:                              ; CODE XREF: sub_150DA+74↑j
 loc_15159:                              ; CODE XREF: sub_150DA+76↑j
                 call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
-nullsub_26:
+nullsub_29:
                 retf    4
 ; ---------------------------------------------------------------------------
 
@@ -8865,8 +9104,8 @@ sub_150DA       endp
 
 ; Attributes: noreturn
 
-sub_15164       proc far
-                mov     cx, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+sub_15164       proc far                ; CODE XREF: sub_15F10+50↓P
+                mov     cx, 0
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
 loc_1516C:
@@ -8901,7 +9140,7 @@ loc_151A0:                              ; CODE XREF: sub_15164+10↑j
 loc_151AC:                              ; CODE XREF: sub_15164+39↑j
                 call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
-nullsub_27:                             ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
+nullsub_30:                             ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
                 retf    2
 ; ---------------------------------------------------------------------------
 
@@ -8914,7 +9153,8 @@ sub_15164       endp
 
 ; Attributes: noreturn
 
-sub_151B7       proc far
+sub_151B7       proc far                ; CODE XREF: doMovement+8A↑P
+                                        ; cantDoThat+82↑P ...
                 mov     cx, 22h ; '"'
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -8922,7 +9162,9 @@ loc_151BF:
                 push    word ptr [bp+10h]
                 push    word ptr [bp+0Eh]
                 push    word ptr [bp+8]
-                call    far ptr 0:55A3h
+                call    sub_155A3
+
+loc_151CD:
                 mov     ax, 5Fh ; '_'
                 imul    word ptr ds:2444h
                 mov     si, 1E2Ah
@@ -8955,7 +9197,7 @@ loc_151FE:
 
 loc_15218:                              ; CODE XREF: sub_151B7+8E↓j
                 mov     word ptr [bp-14h], 0Dh
-                mov     word ptr [bp-16h], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr [bp-16h], 0
                 lea     ax, [bp-10h]
                 push    ax
                 lea     ax, [bp-12h]
@@ -8981,7 +9223,7 @@ loc_1523F:                              ; CODE XREF: sub_151B7+5E↑j
                 nop
 
 loc_15254:                              ; CODE XREF: sub_151B7+10A↓j
-                mov     word ptr [bp-1Ch], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr [bp-1Ch], 0
                 lea     ax, [bp-10h]
                 push    ax
                 lea     ax, [bp-12h]
@@ -9007,7 +9249,7 @@ loc_15254:                              ; CODE XREF: sub_151B7+10A↓j
                 mov     ax, ds:244Eh
                 add     [bp-12h], ax
                 add     word ptr [bp-0Eh], 5Fh ; '_'
-                mov     word ptr [bp-1Eh], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr [bp-1Eh], 0
                 lea     ax, [bp-10h]
                 push    ax
                 lea     ax, [bp-12h]
@@ -9035,7 +9277,7 @@ loc_152BB:                              ; CODE XREF: sub_151B7+99↑j
 
 loc_152D0:                              ; CODE XREF: sub_151B7+146↓j
                 mov     word ptr [bp-22h], 0Dh
-                mov     word ptr [bp-24h], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr [bp-24h], 0
                 lea     ax, [bp-10h]
                 push    ax
                 lea     ax, [bp-12h]
@@ -9070,7 +9312,7 @@ loc_152F7:                              ; CODE XREF: sub_151B7+115↑j
 ; ---------------------------------------------------------------------------
 
 loc_15327:                              ; CODE XREF: sub_151B7+16B↑j
-                cmp     word ptr [si], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr [si], 0
                 jz      short loc_1532F
                 jmp     loc_1544D
 ; ---------------------------------------------------------------------------
@@ -9091,13 +9333,13 @@ loc_1532F:                              ; CODE XREF: sub_151B7+173↑j
                 mov     es, word ptr [si+2]
                 mov     es:[bx], cx
                 mov     [bp-26h], ax
-                cmp     word ptr [bp-26h], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr [bp-26h], 0
                 jz      short loc_15361
                 jmp     loc_1536F
 ; ---------------------------------------------------------------------------
 
 loc_15361:                              ; CODE XREF: sub_151B7+1A5↑j
-                mov     word ptr ds:1F04h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:1F04h, 0
                 mov     word ptr [bp-2Ah], 8
                 jmp     loc_15441
 ; ---------------------------------------------------------------------------
@@ -9109,7 +9351,7 @@ loc_1536F:                              ; CODE XREF: sub_151B7+1A7↑j
 ; ---------------------------------------------------------------------------
 
 loc_15378:                              ; CODE XREF: sub_151B7+1BC↑j
-                mov     word ptr ds:1F04h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:1F04h, 0
                 mov     word ptr [bp-2Ah], 8
                 jmp     loc_15441
 ; ---------------------------------------------------------------------------
@@ -9121,7 +9363,7 @@ loc_15386:                              ; CODE XREF: sub_151B7+1BE↑j
 ; ---------------------------------------------------------------------------
 
 loc_1538F:                              ; CODE XREF: sub_151B7+1D3↑j
-                mov     word ptr ds:1F04h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:1F04h, 0
                 mov     word ptr [bp-2Ah], 8
                 jmp     loc_15441
 ; ---------------------------------------------------------------------------
@@ -9133,7 +9375,7 @@ loc_1539D:                              ; CODE XREF: sub_151B7+1D5↑j
 ; ---------------------------------------------------------------------------
 
 loc_153A6:                              ; CODE XREF: sub_151B7+1EA↑j
-                mov     word ptr ds:1F04h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:1F04h, 0
                 mov     word ptr [bp-2Ah], 0Bh
                 jmp     loc_15441
 ; ---------------------------------------------------------------------------
@@ -9145,7 +9387,7 @@ loc_153B4:                              ; CODE XREF: sub_151B7+1EC↑j
 ; ---------------------------------------------------------------------------
 
 loc_153BD:                              ; CODE XREF: sub_151B7+201↑j
-                mov     word ptr ds:1F04h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:1F04h, 0
                 mov     word ptr [bp-2Ah], 9
                 jmp     loc_15441
 ; ---------------------------------------------------------------------------
@@ -9157,7 +9399,7 @@ loc_153CB:                              ; CODE XREF: sub_151B7+203↑j
 ; ---------------------------------------------------------------------------
 
 loc_153D4:                              ; CODE XREF: sub_151B7+218↑j
-                mov     word ptr ds:1F04h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:1F04h, 0
                 mov     word ptr [bp-2Ah], 8
                 jmp     loc_15441
 ; ---------------------------------------------------------------------------
@@ -9177,7 +9419,7 @@ loc_153EB:                              ; CODE XREF: sub_151B7+22F↑j
 ; ---------------------------------------------------------------------------
 
 loc_153FB:                              ; CODE XREF: sub_151B7+23F↑j
-                mov     word ptr ds:1F04h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:1F04h, 0
                 jmp     loc_1540A
 ; ---------------------------------------------------------------------------
 
@@ -9249,7 +9491,7 @@ loc_15482:                              ; CODE XREF: sub_151B7+2C6↑j
 ; ---------------------------------------------------------------------------
 
 loc_1548B:                              ; CODE XREF: sub_151B7+2CF↑j
-                cmp     word ptr ds:2442h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr ds:2442h, 0
                 jz      short loc_15495
                 jmp     loc_1549E
 ; ---------------------------------------------------------------------------
@@ -9293,7 +9535,7 @@ loc_154C9:                              ; CODE XREF: sub_151B7+30D↑j
 ; ---------------------------------------------------------------------------
 
 loc_154D8:                              ; CODE XREF: sub_151B7+30F↑j
-                cmp     word ptr ds:2442h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr ds:2442h, 0
                 jg      short loc_154E2
                 jmp     loc_154EB
 ; ---------------------------------------------------------------------------
@@ -9304,14 +9546,14 @@ loc_154E2:                              ; CODE XREF: sub_151B7+326↑j
 ; ---------------------------------------------------------------------------
 
 loc_154EB:                              ; CODE XREF: sub_151B7+328↑j
-                cmp     word ptr [bp-28h], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
-                mov     ax, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr [bp-28h], 0
+                mov     ax, 0
                 jnz     short loc_154F5
                 dec     ax
 
 loc_154F5:                              ; CODE XREF: sub_151B7+33B↑j
                 cmp     word ptr [bp-28h], 7
-                mov     cx, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     cx, 0
                 jnz     short loc_154FF
                 dec     cx
 
@@ -9323,7 +9565,7 @@ loc_154FF:                              ; CODE XREF: sub_151B7+345↑j
 ; ---------------------------------------------------------------------------
 
 loc_15508:                              ; CODE XREF: sub_151B7+34C↑j
-                mov     word ptr ds:1F04h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:1F04h, 0
                 jmp     loc_15517
 ; ---------------------------------------------------------------------------
 
@@ -9332,7 +9574,7 @@ loc_15511:                              ; CODE XREF: sub_151B7+34E↑j
 
 loc_15517:                              ; CODE XREF: sub_151B7+331↑j
                                         ; sub_151B7+357↑j
-                mov     word ptr ds:2442h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:2442h, 0
 
 loc_1551D:                              ; CODE XREF: sub_151B7+293↑j
                                         ; sub_151B7+306↑j ...
@@ -9340,7 +9582,7 @@ loc_1551D:                              ; CODE XREF: sub_151B7+293↑j
 ; ---------------------------------------------------------------------------
 
 loc_15520:                              ; CODE XREF: sub_151B7+16D↑j
-                mov     word ptr ds:1F04h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:1F04h, 0
                 mov     si, [bp+6]
                 mov     ax, [si]
                 shl     ax, 1
@@ -9359,7 +9601,7 @@ loc_15520:                              ; CODE XREF: sub_151B7+16D↑j
 loc_1554C:                              ; CODE XREF: sub_151B7:loc_1551D↑j
                 mov     ax, [bp-28h]
                 mov     ds:1F02h, ax
-                mov     word ptr ds:1F24h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:1F24h, 0
                 mov     si, 1E58h
                 mov     bx, 120h
                 add     bx, [si+0Ah]
@@ -9368,7 +9610,9 @@ loc_1554C:                              ; CODE XREF: sub_151B7:loc_1551D↑j
                 push    word ptr [bp+10h]
                 push    word ptr [bp+0Eh]
                 push    word ptr [bp+6]
-                call    far ptr 0:4CDFh
+                call    sub_14CDF
+
+loc_15577:
                 mov     si, [bp+0Ah]
                 cmp     word ptr [si], 0FFh
                 jz      short loc_15583
@@ -9376,7 +9620,7 @@ loc_1554C:                              ; CODE XREF: sub_151B7:loc_1551D↑j
 ; ---------------------------------------------------------------------------
 
 loc_15583:                              ; CODE XREF: sub_151B7+3C7↑j
-                mov     word ptr ds:1F04h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:1F04h, 0
 
 loc_15589:                              ; CODE XREF: sub_151B7+3C9↑j
                 cmp     word ptr ds:1F04h, 1
@@ -9385,12 +9629,12 @@ loc_15589:                              ; CODE XREF: sub_151B7+3C9↑j
 ; ---------------------------------------------------------------------------
 
 loc_15593:                              ; CODE XREF: sub_151B7+3D7↑j
-                call    far ptr 0:4EA4h
+                call    sub_14EA4
 
 loc_15598:                              ; CODE XREF: sub_151B7+3D9↑j
                 call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
-nullsub_28:
+nullsub_31:
                 retf    0Ch
 ; ---------------------------------------------------------------------------
 
@@ -9403,13 +9647,13 @@ sub_151B7       endp
 
 ; Attributes: noreturn
 
-sub_155A3       proc far
+sub_155A3       proc far                ; CODE XREF: sub_151B7+11↑P
                 mov     cx, 4
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
-loc_155AB:                              ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+loc_155AB:
                 mov     word ptr ds:1F02h, 0
-                mov     word ptr ds:1F04h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:1F04h, 0
                 mov     si, [bp+0Ah]
                 cmp     word ptr [si], 5
                 jg      short loc_155C2
@@ -9417,7 +9661,7 @@ loc_155AB:                              ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x8
 ; ---------------------------------------------------------------------------
 
 loc_155C2:                              ; CODE XREF: sub_155A3+1A↑j
-                mov     word ptr ds:244Ch, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:244Ch, 0
                 mov     ax, [si]
                 mov     bx, ax
                 add     ax, 0FFFAh
@@ -9429,7 +9673,7 @@ loc_155C2:                              ; CODE XREF: sub_155A3+1A↑j
 
 loc_155DA:                              ; CODE XREF: sub_155A3+32↑j
                 mov     word ptr ds:244Eh, 0Dh
-                mov     word ptr ds:2450h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:2450h, 0
                 jmp     loc_15624
 ; ---------------------------------------------------------------------------
 
@@ -9451,7 +9695,7 @@ loc_155F4:                              ; CODE XREF: sub_155A3+4C↑j
 ; ---------------------------------------------------------------------------
 
 loc_15607:                              ; CODE XREF: sub_155A3+4E↑j
-                mov     word ptr ds:244Eh, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:244Eh, 0
                 mov     word ptr ds:2446h, 5Fh ; '_'
                 mov     word ptr ds:2450h, 0Dh
                 mov     si, [bp+0Ah]
@@ -9465,7 +9709,7 @@ loc_15624:                              ; CODE XREF: sub_155A3+43↑j
 ; ---------------------------------------------------------------------------
 
 loc_15627:                              ; CODE XREF: sub_155A3+1C↑j
-                mov     word ptr ds:2450h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:2450h, 0
                 mov     si, [bp+0Ah]
                 cmp     word ptr [si], 0FFF9h
                 jg      short loc_15638
@@ -9484,13 +9728,13 @@ loc_15638:                              ; CODE XREF: sub_155A3+90↑j
                 sub     cx, ds:244Ch
                 mov     ax, cx
                 mov     ds:244Eh, ax
-                cmp     word ptr ds:2446h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr ds:2446h, 0
                 jl      short loc_15660
                 jmp     loc_15666
 ; ---------------------------------------------------------------------------
 
 loc_15660:                              ; CODE XREF: sub_155A3+B8↑j
-                mov     word ptr ds:2446h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:2446h, 0
 
 loc_15666:                              ; CODE XREF: sub_155A3+BA↑j
                 jmp     loc_15685
@@ -9498,8 +9742,8 @@ loc_15666:                              ; CODE XREF: sub_155A3+BA↑j
 
 loc_15669:                              ; CODE XREF: sub_155A3+92↑j
                 mov     word ptr ds:244Ch, 0Dh
-                mov     word ptr ds:2446h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
-                mov     word ptr ds:244Eh, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:2446h, 0
+                mov     word ptr ds:244Eh, 0
                 mov     si, [bp+0Ah]
                 mov     ax, [si]
                 neg     ax
@@ -9510,7 +9754,7 @@ loc_15685:                              ; CODE XREF: sub_155A3:loc_15624↑j
                 mov     si, [bp+6]
                 mov     ax, [si]
                 mov     [bp-0Ch], ax
-                cmp     word ptr [bp-0Ch], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr [bp-0Ch], 0
                 jz      short loc_15696
                 jmp     loc_1569E
 ; ---------------------------------------------------------------------------
@@ -9551,7 +9795,7 @@ loc_156C0:                              ; CODE XREF: sub_155A3+F8↑j
 ; ---------------------------------------------------------------------------
 
 loc_156CB:                              ; CODE XREF: sub_155A3+123↑j
-                mov     word ptr ds:2448h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:2448h, 0
                 mov     ax, [si]
                 mov     bx, ax
                 add     ax, 0FFFCh
@@ -9565,7 +9809,7 @@ loc_156CB:                              ; CODE XREF: sub_155A3+123↑j
 
 loc_156E8:                              ; CODE XREF: sub_155A3+140↑j
                 mov     word ptr ds:244Ah, 9
-                mov     word ptr ds:2452h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:2452h, 0
                 jmp     loc_1573B
 ; ---------------------------------------------------------------------------
 
@@ -9590,7 +9834,7 @@ loc_15707:                              ; CODE XREF: sub_155A3+15F↑j
 ; ---------------------------------------------------------------------------
 
 loc_1571D:                              ; CODE XREF: sub_155A3+161↑j
-                mov     word ptr ds:244Ah, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:244Ah, 0
                 mov     word ptr ds:2452h, 9
                 mov     ax, [bp-0Eh]
                 mov     ds:2444h, ax
@@ -9606,7 +9850,7 @@ loc_1573B:                              ; CODE XREF: sub_155A3+151↑j
 ; ---------------------------------------------------------------------------
 
 loc_1573E:                              ; CODE XREF: sub_155A3+125↑j
-                mov     word ptr ds:2452h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:2452h, 0
                 mov     si, [bp+8]
                 cmp     word ptr [si], 0FFFBh
                 jg      short loc_1574F
@@ -9629,7 +9873,7 @@ loc_1574F:                              ; CODE XREF: sub_155A3+1A7↑j
 ; ---------------------------------------------------------------------------
 
 loc_1576E:                              ; CODE XREF: sub_155A3+1C6↑j
-                mov     word ptr ds:2444h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:2444h, 0
 
 loc_15774:                              ; CODE XREF: sub_155A3+1C8↑j
                 jmp     loc_15793
@@ -9637,8 +9881,8 @@ loc_15774:                              ; CODE XREF: sub_155A3+1C8↑j
 
 loc_15777:                              ; CODE XREF: sub_155A3+1A9↑j
                 mov     word ptr ds:2448h, 9
-                mov     word ptr ds:244Ah, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
-                mov     word ptr ds:2444h, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:244Ah, 0
+                mov     word ptr ds:2444h, 0
                 mov     si, [bp+8]
                 mov     ax, [si]
                 neg     ax
@@ -9659,7 +9903,7 @@ loc_1579F:                              ; CODE XREF: sub_155A3+1F7↑j
 loc_157A5:                              ; CODE XREF: sub_155A3+1F9↑j
                 call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
-nullsub_29:                             ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
+nullsub_32:                             ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
                 retf    6
 ; ---------------------------------------------------------------------------
 
@@ -9672,21 +9916,26 @@ sub_155A3       endp
 
 ; Attributes: noreturn
 
-sub_157B0       proc far
-                mov     cx, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+sub_157B0       proc far                ; CODE XREF: outInit:loc_104A7↑P
+                                        ; tryDisengage+12F↑P ...
+                mov     cx, 0
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
 loc_157B8:
-                call    far ptr 0:4BD0h
+                call    sub_14BD0
+
+loc_157BD:
                 mov     si, 1E58h
                 mov     bx, 11Eh
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
-                mov     word ptr es:[bx], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
-                call    far ptr 0:4EA4h
-                call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
+                mov     word ptr es:[bx], 0
+                call    sub_14EA4
 
-nullsub_30:                             ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+loc_157D3:                              ; -> basProcLeave  (leglib seg003:0x1bb7c)
+                call    far ptr rt_F4
+
+nullsub_33:
                 retf    0
 ; ---------------------------------------------------------------------------
 
@@ -9700,7 +9949,8 @@ sub_157B0       endp
 ; loads + execs another program via the RTM (holds the "Error in loading RTM" path) -- the mechanism behind chainToTown/Castle/etc.
 ; Attributes: noreturn
 
-chainExec       proc far
+chainExec       proc far                ; CODE XREF: sub_1232F+290↑P
+                                        ; sub_14AA7+B4↑P ...
                 mov     cx, 0Eh
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -9820,7 +10070,7 @@ loc_158CF:
 loc_158E3:                              ; -> basProcLeave  (leglib seg003:0x1bb7c)
                 call    far ptr rt_F4
 
-nullsub_31:
+nullsub_34:
                 retf    4
 ; ---------------------------------------------------------------------------
 
@@ -9834,7 +10084,8 @@ chainExec       endp
 ; special travel event: "PEGASUS SETS YOU DOWN", "YOU ARE AMBUSHED BY BANDITS!". ~0.75 KB.
 ; Attributes: noreturn
 
-pegasusOrAmbush proc near
+pegasusOrAmbush proc far                ; CODE XREF: outInit:loc_103B3↑P
+                                        ; sub_14A87:loc_14AA1↑P
                 mov     cx, 6Eh ; 'n'
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -9846,7 +10097,7 @@ loc_158F6:
                 mov     si, bx
                 cmp     word ptr es:[bx], 2 ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
                 jge     short loc_1590D
-                jmp     loc_15BB7
+                jmp     near ptr sub_15BB7 ; scripted story beat: "YOU AWAKE. THE COMPENDIUM IS GONE.", "YOU HEAR A VOICE... DO NOT BE DISCOURAGED. IT WAS INEVITABLE. KEEP TO YOUR QUEST."
 ; ---------------------------------------------------------------------------
 
 loc_1590D:                              ; CODE XREF: pegasusOrAmbush+1A↑j
@@ -9857,7 +10108,9 @@ loc_1590D:                              ; CODE XREF: pegasusOrAmbush+1A↑j
                 lea     ax, [bp-0Eh]
                 push    ax
                 call    far ptr rt_FE4D ; -> rtm_FE4D  (leglib seg007:0x25c79)
-                cmp     word ptr ds:1F1Ah, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+
+loc_15924:
+                cmp     word ptr ds:1F1Ah, 0
                 jle     short loc_1592E
                 jmp     loc_1599D
 ; ---------------------------------------------------------------------------
@@ -9870,7 +10123,7 @@ loc_1592E:                              ; CODE XREF: pegasusOrAmbush+3B↑j
                 nop
 
 loc_1593A:                              ; CODE XREF: pegasusOrAmbush+81↓j
-                call    loc_15AE1
+                call    sub_15AE1
 ; ---------------------------------------------------------------------------
                 mov     ax, [bp-14h]
                 mov     [bp-12h], ax
@@ -9880,7 +10133,7 @@ loc_1593A:                              ; CODE XREF: pegasusOrAmbush+81↓j
                 nop
 
 loc_1594A:                              ; CODE XREF: pegasusOrAmbush+69↓j
-                call    loc_15A78
+                call    sub_15A78
 ; ---------------------------------------------------------------------------
                 mov     ax, ds:1B02h
                 inc     ax
@@ -9895,7 +10148,7 @@ loc_15951:                              ; CODE XREF: pegasusOrAmbush+58↑j
 ; ---------------------------------------------------------------------------
 
 loc_15962:                              ; CODE XREF: pegasusOrAmbush+6F↑j
-                call    loc_15A21
+                call    sub_15A21
 ; ---------------------------------------------------------------------------
 
 loc_15965:                              ; CODE XREF: pegasusOrAmbush+71↑j
@@ -9914,12 +10167,11 @@ loc_15969:                              ; CODE XREF: pegasusOrAmbush+48↑j
                 push    ax
                 lea     ax, [bp-1Ch]
                 push    ax
-                call    far ptr 0:5E82h
-                call    loc_15B97
+                call    sub_15E82
+                call    sub_15B97
 ; ---------------------------------------------------------------------------
-                call    loc_15A6C
-; ---------------------------------------------------------------------------
-                mov     word ptr ds:1F1Ah, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                call    sub_15A6C
+                mov     word ptr ds:1F1Ah, 0
                 jmp     loc_15DCD
 ; ---------------------------------------------------------------------------
 
@@ -9930,7 +10182,7 @@ loc_1599D:                              ; CODE XREF: pegasusOrAmbush+3D↑j
 ; ---------------------------------------------------------------------------
 
 loc_159A8:                              ; CODE XREF: pegasusOrAmbush+EF↓j
-                call    loc_15AE1
+                call    sub_15AE1
 ; ---------------------------------------------------------------------------
                 mov     ax, [bp-16h]
                 mov     [bp-1Eh], ax
@@ -9940,7 +10192,7 @@ loc_159A8:                              ; CODE XREF: pegasusOrAmbush+EF↓j
                 nop
 
 loc_159B8:                              ; CODE XREF: pegasusOrAmbush+D7↓j
-                call    loc_15A78
+                call    sub_15A78
 ; ---------------------------------------------------------------------------
                 mov     ax, ds:1B02h
                 dec     ax
@@ -9955,7 +10207,7 @@ loc_159BF:                              ; CODE XREF: pegasusOrAmbush+C6↑j
 ; ---------------------------------------------------------------------------
 
 loc_159D0:                              ; CODE XREF: pegasusOrAmbush+DD↑j
-                call    loc_15A21
+                call    sub_15A21
 ; ---------------------------------------------------------------------------
 
 loc_159D3:                              ; CODE XREF: pegasusOrAmbush+DF↑j
@@ -9966,67 +10218,102 @@ loc_159D7:                              ; CODE XREF: pegasusOrAmbush+B7↑j
                 mov     [bp-18h], ax
                 cmp     ax, 1
                 jge     short loc_159A8
-                call    loc_15B97
+                call    sub_15B97
 ; ---------------------------------------------------------------------------
-                mov     ax, 2FF4h       ;  IN THE MUSEUM.
+
+loc_159E2:                              ;  IN THE MUSEUM.
+                mov     ax, 2FF4h
                 push    ax
                 lea     ax, [bp-22h]
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+
+loc_159EF:
                 lea     ax, [bp-22h]
                 push    ax
                 call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
+
+loc_159F8:
                 lea     ax, [bp-22h]
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+
+loc_15A01:
                 mov     si, 1B96h
                 mov     bx, 12h
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
-                mov     word ptr es:[bx], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
-                mov     word ptr ds:212Eh, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr es:[bx], 0
+                mov     word ptr ds:212Eh, 0
                 mov     word ptr ds:1F1Ah, 1
                 jmp     loc_15DCD
-; ---------------------------------------------------------------------------
+pegasusOrAmbush endp
 
-loc_15A21:                              ; CODE XREF: pegasusOrAmbush:loc_15962↑p
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: noreturn
+
+sub_15A21       proc near               ; CODE XREF: pegasusOrAmbush:loc_15962↑p
                                         ; pegasusOrAmbush:loc_159D0↑p
                 push    word ptr ds:24E8h
                 push    word ptr ds:24E6h
                 call    far ptr rt_B8   ; -> rtm_B8  (leglib seg003:0x1a1ba)
+
+loc_15A2E:
                 mov     bx, ax
                 mov     [bp-26h], bx
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
+
+loc_15A38:
                 mov     bx, 2AB8h
                 call    far ptr rt_FF4E ; -> rtm_FF4E  (leglib seg004:0x21a1a)
-                call    far ptr rt_FF27 ; -> rtm_FF27  (leglib seg004:0x21ddf)
+
+loc_15A40:                              ; -> rtm_FF27  (leglib seg004:0x21ddf)
+                call    far ptr rt_FF27
+
+loc_15A45:
                 mov     bx, 2502h
                 call    far ptr rt_FF44 ; -> rtm_FF44  (leglib seg004:0x21a62)
-                call    far ptr rt_FF22 ; -> rtm_FF22  (leglib seg004:0x218e6)
+
+loc_15A4D:                              ; -> rtm_FF22  (leglib seg004:0x218e6)
+                call    far ptr rt_FF22
+
+loc_15A52:
                 mov     [bp-24h], ax
                 mov     ax, 1
                 jmp     loc_15A63
 ; ---------------------------------------------------------------------------
                 nop
 
-loc_15A5C:                              ; CODE XREF: pegasusOrAmbush+17B↓j
-                call    loc_15A78
+loc_15A5C:                              ; CODE XREF: sub_15A21+48↓j
+                call    sub_15A78
 ; ---------------------------------------------------------------------------
                 mov     ax, [bp-28h]
                 inc     ax
 
-loc_15A63:                              ; CODE XREF: pegasusOrAmbush+16A↑j
+loc_15A63:                              ; CODE XREF: sub_15A21+37↑j
                 mov     [bp-28h], ax
                 cmp     ax, [bp-24h]
                 jle     short loc_15A5C
                 retn
-; ---------------------------------------------------------------------------
+sub_15A21       endp
 
-loc_15A6C:                              ; CODE XREF: pegasusOrAmbush+A3↑p
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_15A6C       proc near               ; CODE XREF: pegasusOrAmbush+A3↑p
                 mov     word ptr ds:1F24h, 0FFh
-                mov     word ptr ds:212Eh, 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr ds:212Eh, 0
+sub_15A6C       endp
 
-loc_15A78:                              ; CODE XREF: pegasusOrAmbush:loc_1594A↑p
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: noreturn
+
+sub_15A78       proc near               ; CODE XREF: pegasusOrAmbush:loc_1594A↑p
                                         ; pegasusOrAmbush:loc_159B8↑p ...
                 inc     word ptr ds:1B02h
                 mov     word ptr [bp-2Ah], 2 ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
@@ -10044,29 +10331,48 @@ loc_15A78:                              ; CODE XREF: pegasusOrAmbush:loc_1594A�
                 push    ax
                 lea     ax, [bp-10h]
                 push    ax
-                call    far ptr 0:51B7h
+                call    sub_151B7
+
+loc_15AA8:
                 dec     word ptr ds:1B02h
                 mov     bx, 1ACEh
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
+
+loc_15AB4:
                 mov     bx, 3008h
                 call    far ptr rt_FF44 ; -> rtm_FF44  (leglib seg004:0x21a62)
+
+loc_15ABC:
                 mov     bx, 1ACEh
                 call    far ptr rt_FF50 ; -> rtm_FF50  (leglib seg004:0x2182d)
+
+loc_15AC4:
                 mov     word ptr [bp-30h], 28h ; '('
                 lea     ax, [bp-30h]
                 push    ax
                 call    far ptr rt_FE55 ; -> rtm_FE55  (leglib seg007:0x273db)
+
+loc_15AD2:
                 mov     word ptr [bp-32h], 5Ah ; 'Z'
                 lea     ax, [bp-32h]
                 push    ax
                 call    far ptr rt_FE54 ; -> rtm_FE54  (leglib seg008:0x2869c)
-                retn
-; ---------------------------------------------------------------------------
 
-loc_15AE1:                              ; CODE XREF: pegasusOrAmbush:loc_1593A↑p
+nullsub_35:
+                retn
+sub_15A78       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: noreturn
+
+sub_15AE1       proc near               ; CODE XREF: pegasusOrAmbush:loc_1593A↑p
                                         ; pegasusOrAmbush:loc_159A8↑p
                 mov     bx, [bp-18h]
                 call    far ptr rt_FC   ; -> rtm_FC  (leglib seg003:0x1ca63)
+
+loc_15AE9:
                 add     ax, 5B2Eh
                 inc     sp
                 pop     bx
@@ -10079,7 +10385,7 @@ loc_15AE1:                              ; CODE XREF: pegasusOrAmbush:loc_1593A�
                 jmp     loc_15B16
 ; ---------------------------------------------------------------------------
 
-loc_15AFE:                              ; CODE XREF: pegasusOrAmbush+20B↑j
+loc_15AFE:                              ; CODE XREF: sub_15AE1+18↑j
                 mov     word ptr [bp-34h], 2 ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
                 mov     word ptr [bp-36h], 3Ch ; '<'
                 lea     ax, [bp-34h]
@@ -10090,7 +10396,7 @@ loc_15AFE:                              ; CODE XREF: pegasusOrAmbush+20B↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_15B16:                              ; CODE XREF: pegasusOrAmbush+20D↑j
+loc_15B16:                              ; CODE XREF: sub_15AE1+1A↑j
                 mov     word ptr [bp-3Ah], 0Ah
                 mov     word ptr [bp-3Ch], 8
                 lea     ax, [bp-3Ah]
@@ -10098,71 +10404,96 @@ loc_15B16:                              ; CODE XREF: pegasusOrAmbush+20D↑j
                 lea     ax, [bp-3Ch]
                 push    ax
                 call    far ptr rt_FE6B ; -> rtm_FE6B  (leglib seg008:0x28e5e)
+sub_15AE1       endp ; sp-analysis failed
+
                 retn
-; ---------------------------------------------------------------------------
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_15B2E       proc near
                 mov     word ptr [bp-16h], 7
                 mov     word ptr [bp-14h], 2Ch ; ','
                 mov     word ptr ds:1B06h, 5
-                mov     word ptr [bp-38h], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr [bp-38h], 0
                 retn
-; ---------------------------------------------------------------------------
+sub_15B2E       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_15B44       proc near
                 mov     word ptr [bp-16h], 1Bh
                 mov     word ptr [bp-14h], 2Ch ; ','
                 mov     word ptr ds:1B06h, 7
                 mov     word ptr [bp-38h], 1
                 retn
-; ---------------------------------------------------------------------------
+sub_15B44       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_15B5A       proc near
                 mov     word ptr [bp-16h], 19h
                 mov     word ptr [bp-14h], 2Ah ; '*'
                 mov     word ptr ds:1B06h, 7
                 retn
-; ---------------------------------------------------------------------------
+sub_15B5A       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_15B6B       proc near
                 mov     word ptr [bp-16h], 2Dh ; '-'
                 mov     word ptr [bp-14h], 3Dh ; '='
                 mov     word ptr ds:1B06h, 4
                 mov     word ptr [bp-38h], 1
                 retn
-; ---------------------------------------------------------------------------
+sub_15B6B       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_15B81       proc near
                 mov     word ptr [bp-16h], 2Ch ; ','
                 mov     word ptr [bp-14h], 56h ; 'V'
                 mov     word ptr ds:1B06h, 6 ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
-                mov     word ptr [bp-38h], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr [bp-38h], 0
                 retn
-; ---------------------------------------------------------------------------
+sub_15B81       endp
 
-loc_15B97:                              ; CODE XREF: pegasusOrAmbush+A0↑p
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: noreturn
+
+sub_15B97       proc near               ; CODE XREF: pegasusOrAmbush+A0↑p
                                         ; pegasusOrAmbush+F1↑p
                 mov     ax, 300Ch       ; @\n\n\n\nPEGASUS SETS YOU DOWN
                 push    ax
                 lea     ax, [bp-40h]
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+
+loc_15BA4:
                 lea     ax, [bp-40h]
 
 loc_15BA7:                              ; CODE XREF: j_rt_FE5B_5+25↑J
                 push    ax
                 call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
+
+loc_15BAD:
                 lea     ax, [bp-40h]
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
-                retn
-; ---------------------------------------------------------------------------
 
-loc_15BB7:                              ; CODE XREF: pegasusOrAmbush+1C↑j
-                mov     word ptr [bp-42h], 4
-                mov     word ptr [bp-44h], 1
-                lea     ax, [bp-42h]
-                push    ax
-                lea     ax, [bp-44h]
-                push    ax
-                call    far ptr 0:57DEh
-                mov     word ptr ds:1F24h, 0FFh
-                mov     ax, 302Ah       ; \n\nYOU ARE AMBUSHED BY BANDITS!
-                push    ax
-                lea     ax, [bp-48h]
-                push    ax
-                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
-pegasusOrAmbush endp
+nullsub_37:
+                retn
+sub_15B97       endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -10170,7 +10501,24 @@ pegasusOrAmbush endp
 ; scripted story beat: "YOU AWAKE. THE COMPENDIUM IS GONE.", "YOU HEAR A VOICE... DO NOT BE DISCOURAGED. IT WAS INEVITABLE. KEEP TO YOUR QUEST."
 ; Attributes: noreturn
 
-compendiumStolenEvent proc far
+sub_15BB7       proc far                ; CODE XREF: pegasusOrAmbush+1C↑j
+                mov     word ptr [bp-42h], 4
+                mov     word ptr [bp-44h], 1
+                lea     ax, [bp-42h]
+                push    ax
+                lea     ax, [bp-44h]
+                push    ax
+                call    chainExec       ; loads + execs another program via the RTM (holds the "Error in loading RTM" path) -- the mechanism behind chainToTown/Castle/etc.
+
+loc_15BCE:
+                mov     word ptr ds:1F24h, 0FFh
+                mov     ax, 302Ah       ; \n\nYOU ARE AMBUSHED BY BANDITS!
+                push    ax
+                lea     ax, [bp-48h]
+                push    ax
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+
+compendiumStolenEvent:
                 lea     ax, [bp-48h]
                 push    ax
                 call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
@@ -10191,7 +10539,7 @@ loc_15C01:
                 mov     bx, 1Eh
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
-                mov     word ptr es:[bx], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr es:[bx], 0
                 mov     si, 1B96h
                 mov     bx, 2Ch ; ','
                 add     bx, [si+0Ah]
@@ -10220,16 +10568,16 @@ loc_15C46:
                 jmp     loc_15C59
 ; ---------------------------------------------------------------------------
 
-loc_15C54:                              ; CODE XREF: compendiumStolenEvent+6E↑j
+loc_15C54:                              ; CODE XREF: sub_15BB7+98↑j
                 mov     word ptr [bp-4Eh], 14h
 
-loc_15C59:                              ; CODE XREF: compendiumStolenEvent+70↑j
+loc_15C59:                              ; CODE XREF: sub_15BB7+9A↑j
                 mov     ax, 1
                 jmp     loc_15CC2
 ; ---------------------------------------------------------------------------
                 nop
 
-loc_15C60:                              ; CODE XREF: compendiumStolenEvent+E7↓j
+loc_15C60:                              ; CODE XREF: sub_15BB7+111↓j
                 mov     ax, ds:1ADAh
                 call    far ptr rt_FF20 ; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
                 mov     ax, [bp-4Eh]
@@ -10258,7 +10606,7 @@ loc_15C60:                              ; CODE XREF: compendiumStolenEvent+E7↓
                 mov     ax, [bp-18h]
                 inc     ax
 
-loc_15CC2:                              ; CODE XREF: compendiumStolenEvent+7B↑j
+loc_15CC2:                              ; CODE XREF: sub_15BB7+A5↑j
                 mov     [bp-18h], ax
                 cmp     ax, 7
                 jle     short loc_15C60
@@ -10300,8 +10648,10 @@ loc_15D0E:
                 call    far ptr rt_FE54 ; -> rtm_FE54  (leglib seg008:0x2869c)
 
 loc_15D1C:
-                call    far ptr 0:57B0h
-                mov     ax, 3066h       ; \nYOU AWAKE.  THE COMPENDIUM IS GONE.
+                call    sub_157B0
+
+loc_15D21:                              ; \nYOU AWAKE.  THE COMPENDIUM IS GONE.
+                mov     ax, 3066h
                 push    ax
                 lea     ax, [bp-66h]
                 push    ax
@@ -10386,27 +10736,28 @@ loc_15DB9:
                 push    ax
                 call    far ptr rt_FE54 ; -> rtm_FE54  (leglib seg008:0x2869c)
 
-loc_15DC7:                              ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+loc_15DC7:
                 mov     word ptr ds:1F1Ah, 0
 
 loc_15DCD:                              ; CODE XREF: pegasusOrAmbush+AC↑j
                                         ; pegasusOrAmbush+130↑j
                 call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
-nullsub_32:                             ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+nullsub_38:
                 retf    0
 ; ---------------------------------------------------------------------------
 
 loc_15DD5:                              ; CODE XREF: chainExec:loc_158EB↑j
                 jmp     loc_15E6C
-compendiumStolenEvent endp
+sub_15BB7       endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: noreturn
 
-sub_15DD8       proc far
+sub_15DD8       proc far                ; CODE XREF: enterLocation+207↑P
+                                        ; quitOrTalk+48↑P ...
                 mov     cx, 2           ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -10450,7 +10801,9 @@ loc_15E10:
                 mov     [bp-0Ch], ax
                 lea     ax, [bp-0Ch]
                 push    ax
-                call    far ptr 0:5F10h
+                call    sub_15F10
+
+loc_15E3A:
                 mov     si, 1B96h
                 mov     bx, 18h
                 add     bx, [si+0Ah]
@@ -10472,11 +10825,11 @@ loc_15E5C:
 loc_15E64:                              ; -> basProcLeave  (leglib seg003:0x1bb7c)
                 call    far ptr rt_F4
 
-nullsub_33:                             ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
+nullsub_39:                             ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
                 retf    2
 ; ---------------------------------------------------------------------------
 
-loc_15E6C:                              ; CODE XREF: compendiumStolenEvent:loc_15DD5↑j
+loc_15E6C:                              ; CODE XREF: sub_15BB7:loc_15DD5↑j
                 jmp     loc_15E7F
 sub_15DD8       endp
 
@@ -10485,14 +10838,14 @@ sub_15DD8       endp
 
 ; Attributes: noreturn
 
-sub_15E6F       proc far
-                mov     cx, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+sub_15E6F       proc far                ; CODE XREF: outInit+208↑P
+                mov     cx, 0
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
 loc_15E77:                              ; -> basProcLeave  (leglib seg003:0x1bb7c)
                 call    far ptr rt_F4
 
-nullsub_34:                             ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+nullsub_40:
                 retf    0
 ; ---------------------------------------------------------------------------
 
@@ -10505,7 +10858,8 @@ sub_15E6F       endp
 
 ; Attributes: noreturn
 
-sub_15E82       proc far
+sub_15E82       proc far                ; CODE XREF: cantDoThat+47↑P
+                                        ; pegasusOrAmbush+9B↑P ...
                 mov     cx, 2           ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -10515,7 +10869,7 @@ loc_15E8A:
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
                 mov     si, bx
-                cmp     word ptr es:[bx], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr es:[bx], 0
                 jz      short loc_15EA1
                 jmp     loc_15EA9
 ; ---------------------------------------------------------------------------
@@ -10526,7 +10880,7 @@ loc_15EA1:                              ; CODE XREF: sub_15E82+1A↑j
 ; ---------------------------------------------------------------------------
 
 loc_15EA9:                              ; CODE XREF: sub_15E82+1C↑j
-                mov     word ptr [bp-0Ch], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr [bp-0Ch], 0
 
 loc_15EAE:                              ; CODE XREF: sub_15E82+24↑j
                 mov     ax, [bp-0Ch]
@@ -10573,7 +10927,7 @@ loc_15ED9:                              ; CODE XREF: sub_15E82+48↑j
                 mov     es:[bx], ax
                 call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
-nullsub_35:
+nullsub_41:
                 retf    4
 ; ---------------------------------------------------------------------------
 
@@ -10586,7 +10940,7 @@ sub_15E82       endp
 
 ; Attributes: noreturn
 
-sub_15F10       proc far
+sub_15F10       proc far                ; CODE XREF: sub_15DD8+5D↑P
                 mov     cx, 0Ah
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -10598,7 +10952,7 @@ loc_15F18:
 ; ---------------------------------------------------------------------------
 
 loc_15F23:                              ; CODE XREF: sub_15F10+E↑j
-                cmp     word ptr [si], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr [si], 0
                 jz      short loc_15F2B
                 jmp     loc_15F35
 ; ---------------------------------------------------------------------------
@@ -10630,7 +10984,7 @@ loc_15F56:                              ; CODE XREF: sub_15F10+85↓j
                 mov     [bp-12h], ax
                 lea     ax, [bp-12h]
                 push    ax
-                call    far ptr 0:5164h
+                call    sub_15164
                 mov     ax, ds:1F02h
                 shl     ax, 1
                 shl     ax, 1
@@ -10657,7 +11011,7 @@ loc_15F8F:                              ; CODE XREF: sub_15F10+43↑j
 loc_15F97:                              ; CODE XREF: sub_15F10+10↑j
                 call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
-nullsub_36:                             ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
+nullsub_42:                             ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
                 retf    2
 ; ---------------------------------------------------------------------------
 
@@ -10670,14 +11024,14 @@ sub_15F10       endp
 
 ; Attributes: noreturn
 
-sub_15FA2       proc far
+sub_15FA2       proc far                ; CODE XREF: doMovement+C3↑P
                 mov     cx, 2           ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
 loc_15FAA:
                 mov     ax, ds:2182h
                 mov     [bp-0Ch], ax
-                cmp     word ptr [bp-0Ch], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr [bp-0Ch], 0
                 jz      short loc_15FB9
                 jmp     loc_15FC2
 ; ---------------------------------------------------------------------------
@@ -10755,7 +11109,7 @@ loc_16025:                              ; CODE XREF: sub_15FA2+1D↑j
                                         ; sub_15FA2+38↑j ...
                 call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
-nullsub_37:                             ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+nullsub_43:
                 retf    0
 ; ---------------------------------------------------------------------------
 
@@ -10768,7 +11122,7 @@ sub_15FA2       endp
 
 ; Attributes: noreturn
 
-sub_16030       proc far
+sub_16030       proc far                ; CODE XREF: chainToTown+21↑P
                 mov     cx, 2           ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -10818,7 +11172,7 @@ loc_1607C:                              ; CODE XREF: sub_16030+3D↑j
                 mov     ds:1F02h, ax
                 call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
-nullsub_38:
+nullsub_44:
                 retf    4
 ; ---------------------------------------------------------------------------
 
@@ -10831,13 +11185,14 @@ sub_16030       endp
 
 ; Attributes: noreturn
 
-sub_1608D       proc far
+sub_1608D       proc far                ; CODE XREF: sub_145DB+A↑P
+                                        ; sub_14619+23A↑P
                 mov     cx, 16h
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
-loc_16095:                              ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+loc_16095:
                 mov     word ptr [bp-0Ch], 0
-                mov     word ptr [bp-0Eh], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr [bp-0Eh], 0
                 xor     ax, ax
                 jmp     loc_160CA
 ; ---------------------------------------------------------------------------
@@ -10868,7 +11223,7 @@ loc_160CA:                              ; CODE XREF: sub_1608D+14↑j
 ; ---------------------------------------------------------------------------
 
 loc_160DD:                              ; CODE XREF: sub_1608D+4B↑j
-                cmp     word ptr [si], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr [si], 0
                 jz      short loc_160E5
                 jmp     loc_160F2
 ; ---------------------------------------------------------------------------
@@ -10909,7 +11264,7 @@ loc_16108:                              ; CODE XREF: sub_1608D+B7↓j
                 push    ax
                 lea     ax, [bp-14h]
                 push    ax
-                call    far ptr 0:5E82h
+                call    sub_15E82
                 mov     ax, [bp-10h]
                 inc     ax
 
@@ -10934,19 +11289,19 @@ loc_16154:                              ; CODE XREF: sub_1608D+C2↑j
                 push    ax
                 lea     ax, [bp-1Ch]
                 push    ax
-                call    far ptr 0:5E82h
+                call    sub_15E82
 
 loc_1616B:                              ; CODE XREF: sub_1608D+B9↑j
                                         ; sub_1608D+C4↑j
                 mov     si, [bp+6]
                 cmp     word ptr [si], 1
-                mov     ax, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     ax, 0
                 jnz     short loc_16177
                 dec     ax
 
 loc_16177:                              ; CODE XREF: sub_1608D+E7↑j
                 cmp     word ptr ds:1B02h, 0Dh
-                mov     cx, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     cx, 0
                 jge     short loc_16182
                 dec     cx
 
@@ -10964,12 +11319,12 @@ loc_1618B:                              ; CODE XREF: sub_1608D+F9↑j
                 push    ax
                 lea     ax, [bp-20h]
                 push    ax
-                call    far ptr 0:5E82h
+                call    sub_15E82
 
 loc_161A2:                              ; CODE XREF: sub_1608D+FB↑j
                 call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
-nullsub_39:                             ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
+nullsub_45:                             ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
                 retf    2
 ; ---------------------------------------------------------------------------
 
@@ -10983,7 +11338,7 @@ sub_1608D       endp
 ; the museum access-code entry ("World- / Stone- / Ring- ", ordinal suffixes st/nd/rd/th, "*** TRY AGAIN ***"). ~1.6 KB.
 ; Attributes: noreturn
 
-museumAccessPrompt proc far
+museumAccessPrompt proc far             ; CODE XREF: enterLocation+147↑P
                 mov     cx, 82h
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -11084,7 +11439,7 @@ loc_161C7:                              ; CODE XREF: museumAccessPrompt+F↑j
                 add     bx, cx
                 mov     ax, bx
                 mov     [bp-0Ch], ax
-                cmp     word ptr [bp-36h], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                cmp     word ptr [bp-36h], 0
                 jl      short loc_162D9
                 jmp     loc_162DD
 ; ---------------------------------------------------------------------------
@@ -11211,7 +11566,7 @@ loc_163D4:                              ; CODE XREF: museumAccessPrompt+251↓j
 ; ---------------------------------------------------------------------------
 
 loc_163DC:                              ; CODE XREF: museumAccessPrompt+22A↑j
-                mov     word ptr [bp-0Ch], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr [bp-0Ch], 0
 
 loc_163E1:                              ; CODE XREF: museumAccessPrompt+22C↑j
                 mov     bx, [bp-3Eh]
@@ -11245,7 +11600,7 @@ loc_16422:                              ; CODE XREF: museumAccessPrompt+270↑j
                 call    far ptr rt_EC   ; -> basProcExit1  (leglib seg003:0x12dc7)
 
 loc_16430:                              ; CODE XREF: museumAccessPrompt+272↑j
-                mov     word ptr [bp-0Ch], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr [bp-0Ch], 0
                 nop
 
 loc_16436:                              ; CODE XREF: museumAccessPrompt+2B8↓j
@@ -11396,7 +11751,7 @@ loc_16560:                              ; CODE XREF: museumAccessPrompt+4D7↓j
                 lea     ax, [bp-48h]
                 push    ax
                 call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
-                mov     word ptr [bp-6Ah], 0 ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     word ptr [bp-6Ah], 0
                 mov     word ptr [bp-6Ch], 3
                 lea     ax, [bp-6Ah]
                 push    ax
@@ -11417,13 +11772,13 @@ loc_16560:                              ; CODE XREF: museumAccessPrompt+4D7↓j
                 call    far ptr rt_30   ; -> rtm_30  (leglib seg003:0x1b661)
                 mov     [bp-76h], ax
                 cmp     ax, 30h ; '0'
-                mov     cx, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     cx, 0
                 jl      short loc_165F9
                 dec     cx
 
 loc_165F9:                              ; CODE XREF: museumAccessPrompt+449↑j
                 cmp     ax, 3Ah ; ':'
-                mov     dx, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     dx, 0
                 jge     short loc_16602
                 dec     dx
 
@@ -11447,7 +11802,7 @@ loc_1660B:                              ; CODE XREF: museumAccessPrompt+459↑j
 
 loc_16622:                              ; CODE XREF: museumAccessPrompt+45B↑j
                 cmp     word ptr [bp-76h], 8
-                mov     ax, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     ax, 0
                 jnz     short loc_1662C
                 dec     ax
 
@@ -11458,7 +11813,7 @@ loc_1662C:                              ; CODE XREF: museumAccessPrompt+47C↑j
                 mov     [bp-78h], bx
                 call    far ptr rt_42   ; -> rtm_42  (leglib seg003:0x1b651)
                 or      ax, ax
-                mov     cx, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     cx, 0
                 jle     short loc_16642
                 dec     cx
 
@@ -11485,13 +11840,13 @@ loc_1664C:                              ; CODE XREF: museumAccessPrompt+49A↑j
 
 loc_1666A:                              ; CODE XREF: museumAccessPrompt+49C↑j
                 cmp     word ptr [bp-76h], 0Dh
-                mov     ax, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     ax, 0
                 jnz     short loc_16674
                 dec     ax
 
 loc_16674:                              ; CODE XREF: museumAccessPrompt+4C4↑j
                 cmp     word ptr [bp-76h], 0Ah
-                mov     cx, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+                mov     cx, 0
                 jnz     short loc_1667E
                 dec     cx
 
@@ -11615,14 +11970,14 @@ loc_16766:                              ; CODE XREF: museumAccessPrompt+17↑j
 
 loc_1676F:                              ; CODE XREF: museumAccessPrompt+5BD↑j
                 mov     word ptr ds:1EBCh, 61h ; 'a'
-                mov     ax, 24BAh       ; MUS.EXE
+                mov     ax, 24BAh
                 push    ax
                 lea     ax, [bp-8Ch]
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 lea     ax, [bp-8Ch]
                 push    ax
-                call    far ptr 0:5DD8h
+                call    sub_15DD8
                 lea     ax, [bp-8Ch]
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
@@ -11660,7 +12015,7 @@ loc_167C4:
 loc_167CD:                              ; -> basProcLeave  (leglib seg003:0x1bb7c)
                 call    far ptr rt_F4
 
-nullsub_40:                             ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
+nullsub_46:
                 retf    0
 museumAccessPrompt endp
 
@@ -11671,6 +12026,14 @@ museumAccessPrompt endp
                 db    0
                 db    0
                 db    0
+seg000          ends
+
+; ===========================================================================
+
+; Segment type: Pure code
+seg001          segment byte public 'CODE' use16
+                assume cs:seg001
+                assume es:nothing, ss:nothing, ds:nothing, fs:nothing, gs:nothing
                 db    0
                 db    0
                 db    0
@@ -11719,142 +12082,92 @@ rt_FF16:                                ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FFh, 16h
-; ---------------------------------------------------------------------------
 
-rt_FF54:                                ; Overlay manager interrupt
-                int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
-; ---------------------------------------------------------------------------
-                db 0FFh, 54h
-; ---------------------------------------------------------------------------
+; =============== S U B R O U T I N E =======================================
 
-rt_FF55:                                ; Overlay manager interrupt
-                int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
+; -> rtm_FF54  (leglib seg004:0x2135a)
+; Attributes: noreturn
+
+rt_FF54         proc near               ; CODE XREF: start+96↓P
+                int     3Fh             ; Overlay manager interrupt
+rt_FF54         endp                    ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
+
 ; ---------------------------------------------------------------------------
-                db 0FFh, 55h
-                db  9Ah
-                db  28h ; (
-                db    0
-                db  7Eh ; ~
-                db    6
-                db 0CBh
+                db 0FFh, 54h, 0CDh, 3Fh, 0FFh, 55h, 9Ah, 28h, 0
+                dw seg seg001
+; ---------------------------------------------------------------------------
+                retf
 ; ---------------------------------------------------------------------------
 
 rt_FF56:                                ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
-                db 0FFh, 56h
-; ---------------------------------------------------------------------------
-
-rt_FF57:                                ; Overlay manager interrupt
-                int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
-; ---------------------------------------------------------------------------
-                db 0FFh, 57h
-                db  9Ah
-                db  35h ; 5
-                db    0
-                db  7Eh ; ~
-                db    6
+                db 0FFh, 56h, 0CDh, 3Fh, 0FFh, 57h, 9Ah, 35h, 0
+                dw seg seg001
 ; ---------------------------------------------------------------------------
 
 rt_FF58:                                ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
-                db 0FFh, 58h
-                db  9Ah
-                db  3Eh ; >
-                db    0
-                db  7Eh ; ~
-                db    6
-; ---------------------------------------------------------------------------
+                call    dword ptr [bx+si-66h]
+                add     ds:[bp+16h], bh
 
 rt_FF59:                                ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
-                db 0FFh, 59h
-                db  9Ah
-                db  47h ; G
-                db    0
-                db  7Eh ; ~
-                db    6
-; ---------------------------------------------------------------------------
+                call    dword ptr [bx+di-66h]
+                inc     di
+                add     [bp+16h], bh
 
 rt_FF5A:                                ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
-                db 0FFh, 5Ah
-; ---------------------------------------------------------------------------
-
-rt_FF5B:                                ; Overlay manager interrupt
-                int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
-; ---------------------------------------------------------------------------
-                db 0FFh, 5Bh
-; ---------------------------------------------------------------------------
-
-rt_FF5C:                                ; Overlay manager interrupt
-                int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
-; ---------------------------------------------------------------------------
-                db 0FFh, 5Ch
-; ---------------------------------------------------------------------------
-
-rt_FF5D:                                ; Overlay manager interrupt
-                int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
-; ---------------------------------------------------------------------------
-                db 0FFh, 5Dh
-                db  9Ah
-                db  5Ch ; \
-                db    0
-                db  7Eh ; ~
-                db    6
-; ---------------------------------------------------------------------------
+                call    dword ptr [bp+si-33h]
+                aas
+                call    dword ptr [bp+di-33h]
+                aas
+                call    dword ptr [si-33h]
+                aas
+                call    dword ptr [di-66h]
+                pop     sp
+                add     [bp+16h], bh
 
 rt_FF5E:                                ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
-                db 0FFh, 5Eh
-                db  9Ah
-                db  66h ; f
-                db    0
-                db  7Eh ; ~
-                db    6
-                db 0CBh
+                call    dword ptr [bp-66h]
+                db      66h
+                add     [bp+16h], bh
+                retf
 ; ---------------------------------------------------------------------------
 
 rt_FF5F:                                ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
-                db 0FFh, 5Fh
-                db  9Ah
-                db  6Fh ; o
-                db    0
-                db  7Eh ; ~
-                db    6
-; ---------------------------------------------------------------------------
+                call    dword ptr [bx-66h]
+                outsw
+                add     [bp+16h], bh
 
 rt_FF60:                                ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
-                db 0FFh, 60h
-                db  9Ah
-                db  78h ; x
-                db    0
-                db  7Eh ; ~
-                db    6
+                jmp     word ptr [bx+si-66h]
+; ---------------------------------------------------------------------------
+                dd rt_FF61              ; -> rtm_FF61  (leglib seg004:0x213f4)  [mid-func]
 ; ---------------------------------------------------------------------------
 
-rt_FF61:                                ; Overlay manager interrupt
-                int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
+rt_FF61:                                ; DATA XREF: seg001:0074↑o
+                int     3Fh             ; Overlay manager interrupt
+                                        ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
-                db 0FFh, 61h
-                db    0
-                db    0
-                db    0
-                db    0
+                jmp     word ptr [bx+di+0]
 ; ---------------------------------------------------------------------------
+                align 4
 
 rt_00:                                  ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
-                db 0
+                db    0
 ; ---------------------------------------------------------------------------
 
 rt_06:                                  ; Overlay manager interrupt
@@ -11924,7 +12237,7 @@ rt_17:                                  ; Overlay manager interrupt
 ; -> rtm_32  (leglib seg003:0x1b627)
 ; Attributes: noreturn
 
-rt_32           proc near               ; CODE XREF: mainDispatch+9C0↑P
+rt_32           proc near               ; CODE XREF: sub_14619+7↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -12247,7 +12560,7 @@ rt_86:                                  ; Overlay manager interrupt
 ; Attributes: noreturn
 
 rt_87           proc near               ; CODE XREF: outInit+10F↑P
-                                        ; mainDispatch+D7E↑P
+                                        ; sub_1486B+173↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -13172,7 +13485,7 @@ rt_FF41:                                ; Overlay manager interrupt
 ; Attributes: noreturn
 
 rt_FF42         proc near               ; CODE XREF: creatureAttack+F0↑P
-                                        ; sub_1232F:loc_1242D↑P ...
+                                        ; sub_1232F:j_rt_FF42↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -13218,7 +13531,7 @@ rt_FF46:                                ; Overlay manager interrupt
 ; Attributes: noreturn
 
 rt_FF47         proc near               ; CODE XREF: doMovement+1FD↑P
-                                        ; tryDisengage:loc_1111C↑P ...
+                                        ; tryDisengage:j_rt_FF47↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -13271,7 +13584,7 @@ rt_FF4B         endp
 ; -> rtm_FF4C  (leglib seg004:0x21b4a)
 ; Attributes: noreturn
 
-rt_FF4C         proc near               ; CODE XREF: tryDisengage:loc_11107↑P
+rt_FF4C         proc near               ; CODE XREF: tryDisengage:j_rt_FF4C↑P
                                         ; creatureApproach+72↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
@@ -13332,8 +13645,8 @@ rt_FF50         endp
 ; -> rtm_FF51  (leglib seg004:0x21b40)
 ; Attributes: noreturn
 
-rt_FF51         proc near               ; CODE XREF: buyFood:loc_12B9F↑P
-                                        ; sub_134A1:loc_13557↑P ...
+rt_FF51         proc near               ; CODE XREF: buyFood:j_rt_FF51↑P
+                                        ; sub_134A1:j_rt_FF51_0↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -13639,8 +13952,8 @@ rt_0C:                                  ; Overlay manager interrupt
 ; -> rtm_11  (leglib seg003:0x12bde)
 ; Attributes: noreturn
 
-rt_11           proc near               ; CODE XREF: mainDispatch+9DD↑P
-                                        ; mainDispatch+B0C↑P ...
+rt_11           proc near               ; CODE XREF: sub_14619+24↑P
+                                        ; sub_14619+153↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -13926,8 +14239,8 @@ rt_5D:                                  ; Overlay manager interrupt
 ; -> rtm_5E  (leglib seg003:0x14589)
 ; Attributes: noreturn
 
-rt_5E           proc near               ; CODE XREF: mainDispatch+DB9↑P
-                                        ; mainDispatch+E01↑P
+rt_5E           proc near               ; CODE XREF: sub_1486B+1AE↑P
+                                        ; sub_1486B+1F6↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -13940,8 +14253,8 @@ rt_5E           endp
 ; -> rtm_5F  (leglib seg003:0x145ab)
 ; Attributes: noreturn
 
-rt_5F           proc near               ; CODE XREF: mainDispatch+D98↑P
-                                        ; mainDispatch+DE6↑P
+rt_5F           proc near               ; CODE XREF: sub_1486B+18D↑P
+                                        ; sub_1486B+1DB↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -14361,8 +14674,8 @@ rt_FE06         endp
 ; -> rtm_FE07  (leglib seg007:0x24fbf)
 ; Attributes: noreturn
 
-rt_FE07         proc near               ; CODE XREF: mainDispatch+A4E↑P
-                                        ; mainDispatch+AA1↑P ...
+rt_FE07         proc near               ; CODE XREF: sub_14619+95↑P
+                                        ; sub_14619+E8↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -14628,7 +14941,7 @@ rt_FE28:                                ; Overlay manager interrupt
 ; -> rtm_FE29  (leglib seg007:0x27391)
 ; Attributes: noreturn
 
-rt_FE29         proc near               ; CODE XREF: mainDispatch+AD8↑P
+rt_FE29         proc near               ; CODE XREF: sub_14619+11F↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -14791,7 +15104,7 @@ rt_FE3D:                                ; Overlay manager interrupt
 ; -> rtm_FE3E  (leglib seg007:0x2497a)
 ; Attributes: noreturn
 
-rt_FE3E         proc near               ; CODE XREF: mainDispatch+E6F↑P
+rt_FE3E         proc near               ; CODE XREF: sub_14AA7+28↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -14830,7 +15143,7 @@ rt_FE41:                                ; Overlay manager interrupt
 ; -> rtm_FE42  (leglib seg007:0x2730c)
 ; Attributes: noreturn
 
-rt_FE42         proc near               ; CODE XREF: mainDispatch+E9C↑P
+rt_FE42         proc near               ; CODE XREF: sub_14AA7+55↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -14888,7 +15201,7 @@ rt_FE48:                                ; Overlay manager interrupt
 ; Attributes: noreturn
 
 rt_FE49         proc near               ; CODE XREF: enterLocation+1FE↑P
-                                        ; mainDispatch+D06↑P ...
+                                        ; sub_1486B+FB↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -14941,7 +15254,7 @@ rt_FE4C         endp
 ; -> rtm_FE4D  (leglib seg007:0x25c79)
 ; Attributes: noreturn
 
-rt_FE4D         proc near               ; CODE XREF: mainDispatch+EB5↑P
+rt_FE4D         proc near               ; CODE XREF: sub_14AA7+6E↑P
                                         ; pegasusOrAmbush+31↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
@@ -15145,7 +15458,7 @@ rt_FE62:                                ; Overlay manager interrupt
 ; Attributes: noreturn
 
 rt_FE63         proc near               ; CODE XREF: outInit+F1↑P
-                                        ; mainDispatch+A07↑P ...
+                                        ; sub_14619+4E↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -15242,474 +15555,976 @@ rt_FE6D:                                ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FEh, 6Dh
+seg001          ends
+
+; ---------------------------------------------------------------------------
+; ===========================================================================
+
+; Segment type: Pure code
+seg002          segment byte public 'CODE' use16
+                assume cs:seg002
+                assume es:nothing, ss:nothing, ds:nothing, fs:nothing, gs:nothing
+                int     3Fh             ; Overlay manager interrupt
+                                        ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
+; ---------------------------------------------------------------------------
+                db 0FEh, 6Eh, 0CDh, 3Fh, 0FEh, 6Fh, 0CDh, 3Fh, 0FEh, 70h
+                db 4Ch, 45h, 47h, 4Ch, 49h, 42h, 2Eh, 45h, 58h, 45h, 20h
+                db 2Dh, 20h, 24h
+                dw 0
+                dw 0
+                dw 0
+                dw 0
+                dw 0
+                db 0Ah dup(0)
+                dw 0
+                dw 0
+                dw 0
+                align 8
+                dw 0
+                dw 0
+word_16EBC      dw 0                    ; DATA XREF: start+72↓r
+                                        ; sub_16FFA+46↓r
+                dw 0
+                dw 0
+word_16EC2      dw 0                    ; DATA XREF: sub_16FFA+4A↓r
+word_16EC4      dw 0                    ; DATA XREF: start+77↓r
+word_16EC6      dw 0                    ; DATA XREF: sub_16FFA+2↓w
+word_16EC8      dw 0                    ; DATA XREF: start+6↓w
+                                        ; start+8A↓r
+byte_16ECA      db 0                    ; DATA XREF: start+1E↓w
+                                        ; start+91↓r
+word_16ECB      dw 0                    ; DATA XREF: start+53↓w
+word_16ECD      dw 0                    ; DATA XREF: sub_16FFA+22↓w
+                                        ; sub_16FFA+31↓r ...
+word_16ECF      dw 0                    ; DATA XREF: sub_16FFA+15↓w
+                                        ; sub_16FFA+38↓r ...
+word_16ED1      dw 0                    ; DATA XREF: sub_16FFA+18↓w
+                                        ; sub_16FFA+3F↓r ...
+word_16ED3      dw 0                    ; DATA XREF: seg002:024E↓w
+                                        ; seg002:025B↓r
+word_16ED5      dw 0                    ; DATA XREF: seg002:0253↓w
+                                        ; seg002:0260↓r
+                db 50h, 41h, 54h, 48h, 3Dh, 74h
+                db 0
+                db 81h dup(0)
+                assume ss:seg004, ds:nothing
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: fuzzy-sp
+
+                public start
+start           proc far
+                mov     di, seg seg003
+                mov     ax, ds:2
+                mov     cs:word_16EC8, ax
+                sub     ax, di
+                cmp     ax, 1000h
+                jb      short loc_16F73
+                mov     ax, 1000h
+
+loc_16F73:                              ; CODE XREF: start+F↑j
+                cli
+                mov     ss, di
+                assume ss:seg003
+                add     sp, 31CEh
+                sti
+                xchg    ax, si
+                lahf
+                mov     cs:byte_16ECA, ah
+                xchg    ax, si
+                and     sp, 0FFFEh
+                add     ax, di
+                mov     ds:2, ax
+                mov     bx, es
+                sub     bx, ax
+                neg     bx
+                mov     ah, 4Ah
+                int     21h             ; DOS - 2+ - ADJUST MEMORY BLOCK SIZE (SETBLOCK)
+                                        ; ES = segment address of block to change
+                                        ; BX = new size in paragraphs
+                mov     ss:word_17541, ds
+                mov     ax, ds:2Ch
+                mov     ss:word_17570, ax
+                mov     ss:word_1756E, ds
+                mov     ss:word_1756C, 81h
+                xor     bp, bp
+                cld
+                mov     ax, ds
+                mov     cs:word_16ECB, ax
+                add     ax, 10h
+                mov     ds, ax
+                assume ds:seg000
+                mov     cx, word_10012
+                push    cs
+                pop     es
+                assume es:seg002
+                jcxz    short loc_16FDC
+                push    cx
+                lds     si, dword_10014
+                assume ds:nothing
+                mov     di, 36h ; '6'
+                mov     cx, 8
+                rep movsw
+                pop     cx
+                push    es:word_16EBC
+                push    es:word_16EC4
+                retf
 ; ---------------------------------------------------------------------------
 
-rt_FE6E:                                ; Overlay manager interrupt
-                int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
+loc_16FDC:                              ; CODE XREF: start+62↑j
+                call    sub_16FFA
+                mov     ax, ss:word_17541
+                mov     ds, ax
+                mov     es, ax
+                assume es:nothing
+                mov     ax, cs:word_16EC8
+                mov     ds:2, ax
+                mov     dh, cs:byte_16ECA
+                call    far ptr rt_FF54 ; -> rtm_FF54  (leglib seg004:0x2135a)
+start           endp ; sp-analysis failed
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_16FFA       proc far                ; CODE XREF: start:loc_16FDC↑P
+                mov     ax, ss
+                mov     cs:word_16EC6, ax
+                push    cs
+                pop     ds
+                assume ds:seg002
+                call    sub_17127
+                xchg    ax, bx
+                call    sub_171A8
+                call    sub_171EA
+                call    sub_17220
+                mov     word_16ECF, ax
+                mov     word_16ED1, dx
+                mov     bp, 0FFFFh
+                call    sub_17306
+                mov     word_16ECD, bp
+                call    sub_17249
+                xor     si, si
+                call    sub_1725D
+                call    sub_173DB
+                mov     ax, word_16ECD
+                mov     ss:word_175CB, ax
+                mov     ax, word_16ECF
+                mov     ss:word_175CD, ax
+                mov     ax, word_16ED1
+                mov     ss:word_175CF, ax
+                push    word_16EBC
+                push    word_16EC2
+                retf
+sub_16FFA       endp ; sp-analysis failed
+
 ; ---------------------------------------------------------------------------
-                db 0FEh, 6Eh
+; START OF FUNCTION CHUNK FOR sub_17127
+
+loc_17049:                              ; CODE XREF: sub_17127:loc_17143↓j
+                mov     bx, 595h
+                jmp     short loc_1706A
+; END OF FUNCTION CHUNK FOR sub_17127
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR sub_1708F
+;   ADDITIONAL PARENT FUNCTION sub_17306
+
+loc_1704E:                              ; CODE XREF: sub_1708F:loc_170A3↓j
+                                        ; sub_17306:loc_17384↓j
+                mov     bx, 57Dh
+                jmp     short loc_1706A
+; END OF FUNCTION CHUNK FOR sub_1708F
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR sub_17306
+
+loc_17053:                              ; CODE XREF: sub_17306:loc_17387↓j
+                mov     bx, 5CCh
+                jmp     short loc_1706A
+; END OF FUNCTION CHUNK FOR sub_17306
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR sub_1708F
+
+loc_17058:                              ; CODE XREF: sub_1708F+12↓j
+                mov     bx, 5DAh
+                jmp     short loc_1706A
+; END OF FUNCTION CHUNK FOR sub_1708F
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR sub_171A8
+
+loc_1705D:                              ; CODE XREF: seg002:loc_17124↓j
+                                        ; sub_171A8:loc_171E7↓j
+                mov     bx, 5BDh
+                jmp     short loc_1706A
+; END OF FUNCTION CHUNK FOR sub_171A8
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR sub_1725D
+;   ADDITIONAL PARENT FUNCTION sub_172BC
+;   ADDITIONAL PARENT FUNCTION sub_173DB
+
+loc_17062:                              ; CODE XREF: sub_1725D:loc_172B9↓j
+                                        ; sub_172BC:loc_17303↓j ...
+                mov     bx, 5AEh
+                jmp     short loc_1706A
+; END OF FUNCTION CHUNK FOR sub_1725D
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR sub_171EA
+
+loc_17067:                              ; CODE XREF: sub_171EA:loc_17205↓j
+                mov     bx, 5F1h
+; END OF FUNCTION CHUNK FOR sub_171EA
+; START OF FUNCTION CHUNK FOR sub_1708F
+;   ADDITIONAL PARENT FUNCTION sub_17127
+;   ADDITIONAL PARENT FUNCTION sub_171A8
+;   ADDITIONAL PARENT FUNCTION sub_1725D
+;   ADDITIONAL PARENT FUNCTION sub_17306
+
+loc_1706A:                              ; CODE XREF: sub_17127-DB↑j
+                                        ; sub_1708F-3E↑j ...
+                mov     dx, seg seg002
+                mov     ds, dx
+                mov     ah, 9
+                mov     dx, 566h
+                int     21h             ; DOS - PRINT STRING
+                                        ; DS:DX -> string terminated by "$"
+                mov     dx, 0Ch
+                int     21h             ; DOS -
+                mov     dx, bx
+                int     21h             ; DOS -
+                mov     dx, 617h
+                int     21h             ; DOS -
+                mov     ax, 4C01h
+                int     21h             ; DOS - 2+ - QUIT WITH EXIT CODE (EXIT)
+; END OF FUNCTION CHUNK FOR sub_1708F   ; AL = exit code
 ; ---------------------------------------------------------------------------
 
-rt_FE6F:                                ; Overlay manager interrupt
-                int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
+loc_17089:                              ; CODE XREF: seg002:0248↓p
+                                        ; sub_17306+74↓p
+                mov     ah, 49h ; 'I'
 ; ---------------------------------------------------------------------------
-                db 0FEh, 6Fh
+                db 3Dh
 ; ---------------------------------------------------------------------------
 
-rt_FE70:                                ; Overlay manager interrupt
-                int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
+loc_1708C:                              ; CODE XREF: sub_17306+50↓p
+                                        ; sub_17306+66↓p
+                mov     ah, 4Ah ; 'J'
 ; ---------------------------------------------------------------------------
-                db 0FEh, 70h
-                db  4Ch ; L
-                db  45h ; E
-                db  47h ; G
-                db  4Ch ; L
-                db  49h ; I
-                db  42h ; B
-                db  2Eh ; .
-                db  45h ; E
-                db  58h ; X
-                db  45h ; E
-                db  20h
-                db  2Dh ; -
-                db  20h
-                db  24h ; $
-                db    0
-                db  3Dh ; =
-                db    0
-                db 0B1h
-                db  50h ; P
-                db  41h ; A
-                db  54h ; T
-                db  48h ; H
-                db  3Dh ; =
-                db  74h ; t
-                db    6
-                db    0
-                db 0B2h
-                db    0
-                db  82h
-                db    0
-                db 0B0h
-                db 0BFh
-                db  4Ch ; L
-                db    7
-                db 0A1h
-                db    2
-                db    0
-                db  2Eh ; .
-                db 0A3h
-                db  48h ; H
-                db    0
-                db  2Bh ; +
-                db 0C7h
-                db  3Dh ; =
-                db    0
-                db  10h
-                db  72h ; r
-                db    3
-                db 0B8h
-                db    0
-                db  10h
-                db 0FAh
-                db  8Eh
-                db 0D7h
-                db  81h
-                db 0C4h
+                db 3Dh
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_1708F       proc near               ; CODE XREF: sub_17306+1B↓p
+                                        ; sub_17306+24↓p ...
+
+; FUNCTION CHUNK AT 01CE SIZE 00000005 BYTES
+; FUNCTION CHUNK AT 01D8 SIZE 00000005 BYTES
+; FUNCTION CHUNK AT 01EA SIZE 0000001F BYTES
+
+                mov     ah, 48h
+                int     21h             ; DOS - 2+ - ALLOCATE MEMORY
+                                        ; BX = number of 16-byte paragraphs desired
+                jnb     short locret_1709B
+                cmp     ax, 8
+                jnz     short loc_1709C
+                stc
+
+locret_1709B:                           ; CODE XREF: sub_1708F+4↑j
+                retn
+; ---------------------------------------------------------------------------
+
+loc_1709C:                              ; CODE XREF: sub_1708F+9↑j
+                cmp     ax, 7
+                jnz     short loc_170A3
+                jmp     short loc_17058
+; ---------------------------------------------------------------------------
+
+loc_170A3:                              ; CODE XREF: sub_1708F+10↑j
+                jmp     short loc_1704E
+sub_1708F       endp
+
+; ---------------------------------------------------------------------------
+                push    ax
+                push    dx
+                push    es
+                push    bx
+                mov     bx, es:10Dh
+                mov     cs:word_16ECF, bx
+                mov     bx, es:10Fh
+                mov     cs:word_16ED1, bx
+                pop     bx
+                mov     es, word ptr es:10Bh
+                mov     cs:word_16ECD, es
+                call    loc_17089
+                pop     es
+                pop     dx
+                pop     ax
+                mov     cs:word_16ED3, ss
+                mov     cs:word_16ED5, sp
+                int     21h             ; DOS -
+                cli
+                mov     ss, cs:word_16ED3
+                assume ss:nothing
+                mov     sp, cs:word_16ED5
+                sti
+                pushf
+                push    ax
+                push    cs
+                pop     ds
+                push    cs
+                pop     es
+                assume es:seg002
+                call    sub_17127
+                mov     bx, ax
+                call    sub_171A8
+                call    sub_17220
+                cmp     word_16ECF, ax
+                jnz     short loc_17124
+                cmp     word_16ED1, dx
+                jnz     short loc_17124
+                mov     bp, word_16ECD
+                call    sub_17306
+                cmp     word_16ECD, bp
+                jnz     short loc_17124
+                call    sub_17249
+                mov     si, 0FFFFh
+                call    sub_1725D
+                call    sub_173DB
+                mov     ax, seg seg003
+                mov     ds, ax
+                assume ds:seg003
+                pop     ax
+                popf
+                retf
+; ---------------------------------------------------------------------------
+
+loc_17124:                              ; CODE XREF: seg002:027B↑j
+                                        ; seg002:0281↑j ...
+                jmp     loc_1705D
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_17127       proc near               ; CODE XREF: sub_16FFA+8↑p
+                                        ; seg002:026C↑p
+
+; FUNCTION CHUNK AT 01C9 SIZE 00000005 BYTES
+; FUNCTION CHUNK AT 01EA SIZE 0000001F BYTES
+
+                mov     di, 5Eh ; '^'
+                call    sub_173AA
+                jnb     short locret_1717A
+                call    sub_1717B
+                jb      short loc_17146
+
+loc_17134:                              ; CODE XREF: sub_17127+1A↓j
+                mov     di, 5Eh ; '^'
+                call    sub_1738A
+                jb      short loc_17146
+                call    sub_173AA
+                jnb     short locret_1717A
+                jmp     short loc_17134
+; ---------------------------------------------------------------------------
+
+loc_17143:                              ; CODE XREF: sub_17127+2A↓j
+                jmp     loc_17049
+; ---------------------------------------------------------------------------
+
+loc_17146:                              ; CODE XREF: sub_17127+B↑j
+                                        ; sub_17127+13↑j ...
+                mov     bx, 1
+
+loc_17149:                              ; CODE XREF: sub_17127+2D↓j
+                mov     ax, 4400h
+                int     21h             ; DOS - 2+ - IOCTL - GET DEVICE INFORMATION
+                                        ; BX = file or device handle
+                test    dl, 80h
+                jz      short loc_17143
+                dec     bx
+                jz      short loc_17149
+                mov     dx, 61Bh
+                mov     ah, 9
+                int     21h             ; DOS - PRINT STRING
+                                        ; DS:DX -> string terminated by "$"
+                mov     dx, 5Ch ; '\'
+                mov     ax, 0C0Ah
+                int     21h             ; DOS - CLEAR KEYBOARD BUFFER
+                                        ; AL must be 01h, 06h, 07h, 08h, or 0Ah.
+                mov     dl, 0Ah
+                mov     ah, 2           ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
+                int     21h             ; DOS - DISPLAY OUTPUT
+                                        ; DL = character to send to standard output
+                xor     bx, bx
+                mov     bl, byte_1751D
+                lea     di, [bx+5Eh]
+                call    sub_173AA
+                jb      short loc_17146
+
+locret_1717A:                           ; CODE XREF: sub_17127+6↑j
+                                        ; sub_17127+18↑j
+                retn
+sub_17127       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_1717B       proc near               ; CODE XREF: sub_17127+8↑p
+                push    es
+                mov     es, word_1750B
+                assume es:nothing
+                mov     es, word ptr es:2Ch
+                assume es:nothing
+                xor     ax, ax
+                xor     di, di
+
+loc_17189:                              ; CODE XREF: sub_1717B+20↓j
+                mov     si, 57h ; 'W'
+                mov     cx, 5
+                repe cmpsb
+                jz      short loc_1719E
+                mov     cx, 0FFFFh
+                repne scasb
+                cmp     es:[di], al
+                jnz     short loc_17189
+                stc
+
+loc_1719E:                              ; CODE XREF: sub_1717B+16↑j
+                mov     word_17515, es
+                mov     word_17513, di
+                pop     es
+                retn
+sub_1717B       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_171A8       proc near               ; CODE XREF: sub_16FFA+C↑p
+                                        ; seg002:0271↑p
+
+; FUNCTION CHUNK AT 01DD SIZE 00000005 BYTES
+; FUNCTION CHUNK AT 01EA SIZE 0000001F BYTES
+
+                xor     ax, ax
+                cwd
+                mov     bp, ds
+                mov     cx, 1Ah
+                mov     si, dx
+                mov     di, 1Ch
+                call    sub_172BC
+                cmp     word_174DA, 5A4Dh
+                jnz     short loc_171E7
+                mov     dx, word_174E2
+                add     dx, word_174F0
+                mov     ax, word_174EE
+                mov     bp, ds
+                mov     cx, 36h ; '6'
+                xor     si, si
+                mov     di, 10h
+                call    sub_172BC
+                cmp     word_174F8, 6   ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
+                jnz     short loc_171E7
+                cmp     word_174FA, 0
+                jnz     short loc_171E7
+                retn
+; ---------------------------------------------------------------------------
+
+loc_171E7:                              ; CODE XREF: sub_171A8+16↑j
+                                        ; sub_171A8+35↑j ...
+                jmp     loc_1705D
+sub_171A8       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_171EA       proc near               ; CODE XREF: sub_16FFA+F↑p
+
+; FUNCTION CHUNK AT 01E7 SIZE 00000003 BYTES
+
+                mov     dx, 1AC0h
+                cmp     dx, word_17500
+                jnz     short loc_17205
+                mov     ax, 5C4h
+                cmp     ax, 6           ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
+                jbe     short loc_17208
+                mov     ax, 2084h
+                sub     ax, dx
+                cmp     ax, 5C4h
+                jz      short loc_17208
+
+loc_17205:                              ; CODE XREF: sub_171EA+7↑j
+                jmp     loc_17067
+; ---------------------------------------------------------------------------
+
+loc_17208:                              ; CODE XREF: sub_171EA+F↑j
+                                        ; sub_171EA+19↑j
+                mov     dx, word_174E2
+                mov     ax, word_174FE
+                mov     bp, seg seg003
+                mov     cx, ax
+                xor     si, si
+                mov     di, word_17500
+                sub     di, ax
+                call    sub_172BC
+                retn
+sub_171EA       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_17220       proc near               ; CODE XREF: sub_16FFA+12↑p
+                                        ; seg002:0274↑p
+                mov     dx, word_174DE
+                mov     cl, 5
+                shl     dx, cl
+                sub     dx, word_174E2
+                sub     dx, word_174FC
+                mov     ax, dx
+                mov     cl, 0Ch
+                shr     dx, cl
+                mov     cl, 4
+                shl     ax, cl
+                cmp     word_174DC, 0
+                jz      short locret_17248
+                sub     ax, 200h
+                add     ax, word_174DC
+
+locret_17248:                           ; CODE XREF: sub_17220+1F↑j
+                retn
+sub_17220       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_17249       proc near               ; CODE XREF: sub_16FFA+26↑p
+                                        ; seg002:0290↑p
+                mov     si, dx
+                mov     di, ax
+                xor     cx, cx
+                mov     dx, word_174E2
+                add     dx, word_174FC
+                mov     ax, cx
+                call    sub_172BC
+                retn
+sub_17249       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_1725D       proc near               ; CODE XREF: sub_16FFA+2B↑p
+                                        ; seg002:0296↑p
+
+; FUNCTION CHUNK AT 01E2 SIZE 00000005 BYTES
+; FUNCTION CHUNK AT 01EA SIZE 0000001F BYTES
+
+                mov     dx, word_174F2
+                xor     cx, cx
+                mov     ax, 4200h
+                int     21h             ; DOS - 2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
+                                        ; AL = method: offset from beginning of file
+                mov     di, word_174FC
+                sub     bp, di
+                mov     cx, 4
+                mov     dx, 53h ; 'S'
+
+loc_17274:                              ; CODE XREF: sub_1725D+51↓j
+                mov     ah, 3Fh
+                int     21h             ; DOS - 2+ - READ FROM FILE WITH HANDLE
+                                        ; BX = file handle, CX = number of bytes to read
+                                        ; DS:DX -> buffer
+                jb      short loc_172B9
+                cmp     ax, cx
+                jnz     short loc_172B9
+                push    bx
+                mov     bx, word_17515
+                cmp     bx, di
+                jnb     short loc_17291
+                or      si, si
+                jnz     short loc_172A9
+                add     bx, seg seg003
+                sub     bx, bp
+
+loc_17291:                              ; CODE XREF: sub_1725D+28↑j
+                add     bx, bp
+                mov     es, bx
+                mov     bx, word_17513
+                cmp     es:[bx], di
+                jnb     short loc_172A6
+                add     word ptr es:[bx], seg seg003
+                sub     es:[bx], bp
+
+loc_172A6:                              ; CODE XREF: sub_1725D+3F↑j
+                add     es:[bx], bp
+
+loc_172A9:                              ; CODE XREF: sub_1725D+2C↑j
+                pop     bx
+                dec     word_174E0
+                jnz     short loc_17274
+                add     word_174F0, bp
+                add     word_174FC, bp
+                retn
+; ---------------------------------------------------------------------------
+
+loc_172B9:                              ; CODE XREF: sub_1725D+1B↑j
+                                        ; sub_1725D+1F↑j
+                jmp     loc_17062
+sub_1725D       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_172BC       proc near               ; CODE XREF: sub_171A8+D↑p
+                                        ; sub_171A8+2D↑p ...
+
+; FUNCTION CHUNK AT 01E2 SIZE 00000005 BYTES
+
+                push    ds
+                push    bp
+                push    cx
+                xor     cx, cx
+                shl     dx, 1
+                rcl     cx, 1
+                shl     dx, 1
+                rcl     cx, 1
+                shl     dx, 1
+                rcl     cx, 1
+                shl     dx, 1
+                rcl     cx, 1
+                add     dx, ax
+                adc     cx, 0
+                mov     ax, 4200h
+                int     21h             ; DOS - 2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
+                                        ; AL = method: offset from beginning of file
+                pop     dx
+
+loc_172DC:                              ; CODE XREF: sub_172BC+3E↓j
+                                        ; sub_172BC+42↓j
+                mov     ds, bp
+                assume ds:nothing
+                mov     cx, 0FFF0h
+                or      si, si
+                jnz     short loc_172E7
+                mov     cx, di
+
+loc_172E7:                              ; CODE XREF: sub_172BC+27↑j
+                mov     ah, 3Fh
+                int     21h             ; DOS - 2+ - READ FROM FILE WITH HANDLE
+                                        ; BX = file handle, CX = number of bytes to read
+                                        ; DS:DX -> buffer
+                jb      short loc_17303
+                cmp     ax, cx
+                jnz     short loc_17303
+                add     bp, 0FFFh
+                sub     di, ax
+                sbb     si, 0
+                jnz     short loc_172DC
+                or      di, di
+                jnz     short loc_172DC
+                pop     bp
+                pop     ds
+                retn
+; ---------------------------------------------------------------------------
+
+loc_17303:                              ; CODE XREF: sub_172BC+2F↑j
+                                        ; sub_172BC+33↑j
+                jmp     loc_17062
+sub_172BC       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_17306       proc near               ; CODE XREF: sub_16FFA+1F↑p
+                                        ; seg002:0287↑p
+
+; FUNCTION CHUNK AT 01CE SIZE 00000005 BYTES
+; FUNCTION CHUNK AT 01D3 SIZE 00000005 BYTES
+; FUNCTION CHUNK AT 01EA SIZE 0000001F BYTES
+
+                push    ax
+                push    bx
+                push    dx
+                push    es
+                add     ax, 0Fh
+                adc     dx, 0
+                mov     cl, 4
+                shr     ax, cl
+                mov     cl, 0Ch
+                shl     dx, cl
+                add     dx, ax
+                xor     cx, cx
+                mov     si, cx
+
+loc_1731E:                              ; CODE XREF: sub_17306+37↓j
+                mov     bx, 0FFFFh
+                call    sub_1708F
+                jnb     short loc_17384
+                cmp     bx, dx
+                jb      short loc_1733F
+                call    sub_1708F
+                jb      short loc_17384
+                cmp     ax, bp
+                ja      short loc_1733B
+                cmp     ax, si
+                jb      short loc_1733B
+                mov     si, ax
+                mov     di, bx
+
+loc_1733B:                              ; CODE XREF: sub_17306+2B↑j
+                                        ; sub_17306+2F↑j
+                push    ax
+                inc     cx
+                jmp     short loc_1731E
+; ---------------------------------------------------------------------------
+
+loc_1733F:                              ; CODE XREF: sub_17306+22↑j
+                jcxz    short loc_17387
+                mov     bx, si
+                add     bx, di
+                sub     bx, dx
+                cmp     bx, bp
+                jb      short loc_1734D
+                mov     bx, bp
+
+loc_1734D:                              ; CODE XREF: sub_17306+43↑j
+                mov     ax, si
+                sub     bx, si
+                jz      short loc_17368
+                dec     bx
+                mov     es, si
+                call    loc_1708C
+                jb      short loc_17384
+                mov     bx, 0FFFFh
+                call    sub_1708F
+                jnb     short loc_17384
+                call    sub_1708F
+                jb      short loc_17384
+
+loc_17368:                              ; CODE XREF: sub_17306+4B↑j
+                mov     es, ax
+                mov     bx, dx
+                call    loc_1708C
+                jb      short loc_17384
+                mov     bp, ax
+
+loc_17373:                              ; CODE XREF: sub_17306:loc_1737D↓j
+                pop     ax
+                cmp     ax, bp
+                jz      short loc_1737D
+                mov     es, ax
+                call    loc_17089
+
+loc_1737D:                              ; CODE XREF: sub_17306+70↑j
+                loop    loc_17373
+                pop     es
+                pop     dx
+                pop     bx
+                pop     ax
+                retn
+; ---------------------------------------------------------------------------
+
+loc_17384:                              ; CODE XREF: sub_17306+1E↑j
+                                        ; sub_17306+27↑j ...
+                jmp     loc_1704E
+; ---------------------------------------------------------------------------
+
+loc_17387:                              ; CODE XREF: sub_17306:loc_1733F↑j
+                jmp     loc_17053
+sub_17306       endp ; sp-analysis failed
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_1738A       proc near               ; CODE XREF: sub_17127+10↑p
+                push    ds
+                lds     si, ds:53h
+                mov     cx, 74h ; 't'
+
+loc_17392:                              ; CODE XREF: sub_1738A+12↓j
+                lodsb
+                cmp     al, 3Bh ; ';'
+                jz      short loc_173A4
+                or      al, al
+                jz      short loc_1739F
+                stosb
+                loop    loc_17392
+                dec     cx
+
+loc_1739F:                              ; CODE XREF: sub_1738A+F↑j
+                dec     si
+                cmp     cx, 74h ; 't'
+                cmc
+
+loc_173A4:                              ; CODE XREF: sub_1738A+B↑j
+                pop     ds
+                mov     ds:53h, si
+                retn
+sub_1738A       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_173AA       proc near               ; CODE XREF: sub_17127+3↑p
+                                        ; sub_17127+15↑p ...
+                push    ds
+                push    es
+                pop     ds
+                cmp     di, 5Eh ; '^'
+                jz      short loc_173C5
+                mov     al, [di-1]
+                cmp     al, 3Ah ; ':'
+                jz      short loc_173C5
+                cmp     al, 5Ch ; '\'
+                jz      short loc_173C5
+                cmp     al, 2Fh ; '/'
+                jz      short loc_173C5
+                mov     al, 5Ch ; '\'
+                stosb
+
+loc_173C5:                              ; CODE XREF: sub_173AA+7↑j
+                                        ; sub_173AA+E↑j ...
+                mov     si, 0Ch
+                mov     cx, 16h
+                sub     cx, si
+                rep movsb
+                mov     [di], cl
+                pop     ds
+                mov     dx, 5Eh ; '^'
+                mov     ax, 3D00h
+                int     21h             ; DOS - 2+ - OPEN DISK FILE WITH HANDLE
+                                        ; DS:DX -> ASCIZ filename
+                                        ; AL = access mode
+                                        ; 0 - read
+                retn
+sub_173AA       endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_173DB       proc near               ; CODE XREF: sub_16FFA+2E↑p
+                                        ; seg002:0299↑p
+
+; FUNCTION CHUNK AT 01E2 SIZE 00000005 BYTES
+
+                mov     ah, 3Eh
+                int     21h             ; DOS - 2+ - CLOSE A FILE WITH HANDLE
+                                        ; BX = file handle
+                jb      short loc_173E2
+                retn
+; ---------------------------------------------------------------------------
+
+loc_173E2:                              ; CODE XREF: sub_173DB+4↑j
+                jmp     loc_17062
+sub_173DB       endp
+
+; ---------------------------------------------------------------------------
+                align 2
+aErrorInLoading db 'Error in loading RTM: $Memory allocation error$Cannot find file i'
+                db 'n PATH$Disk I/O error$Invalid format$Out of memory$DOS memory-are'
+                db 'na error$Incompatible extended run-time module$.',0Dh,0Ah
+                db '$Input run-time module path: $',0
+                align 8
+seg002          ends
+
+; ===========================================================================
+
+; Segment type: Regular
+seg003          segment byte public 'UNK' use16
+                assume cs:seg003
+                assume es:nothing, ss:nothing, ds:nothing, fs:nothing, gs:nothing
+                db 0D0h, 32h, 4 dup(0FFh), 0Ch dup(0)
+                dw seg seg003
+                db 6 dup(0)
+word_174DA      dw 0                    ; DATA XREF: sub_171A8+10↑r
+word_174DC      dw 0                    ; DATA XREF: sub_17220+1A↑r
+                                        ; sub_17220+24↑r
+word_174DE      dw 0                    ; DATA XREF: sub_17220↑r
+word_174E0      dw 0                    ; DATA XREF: sub_1725D+4D↑w
+word_174E2      dw 0                    ; DATA XREF: sub_171A8+18↑r
+                                        ; sub_171EA:loc_17208↑r ...
+                db 0Ah dup(0)
+word_174EE      dw 0                    ; DATA XREF: sub_171A8+20↑r
+word_174F0      dw 0                    ; DATA XREF: sub_171A8+1C↑r
+                                        ; sub_1725D+53↑w
+word_174F2      dw 0                    ; DATA XREF: sub_1725D↑r
+                align 8
+word_174F8      dw 0                    ; DATA XREF: sub_171A8+30↑r
+word_174FA      dw 0                    ; DATA XREF: sub_171A8+37↑r
+word_174FC      dw 0                    ; DATA XREF: sub_17220+C↑r
+                                        ; sub_17249+A↑r ...
+word_174FE      dw 0                    ; DATA XREF: sub_171EA+22↑r
+word_17500      dw 0                    ; DATA XREF: sub_171EA+3↑r
+                                        ; sub_171EA+2C↑r
+                db 9 dup(0)
+word_1750B      dw 0                    ; DATA XREF: sub_1717B+1↑r
+                db 6 dup(0)
+word_17513      dw 0                    ; DATA XREF: sub_1717B+27↑w
+                                        ; sub_1725D+38↑r
+word_17515      dw 0                    ; DATA XREF: sub_1717B:loc_1719E↑w
+                                        ; sub_1725D+22↑r
+                db 6 dup(0)
+byte_1751D      db 0                    ; DATA XREF: sub_17127+46↑r
+                align 4
+                db 10h, 0, 3Bh, 43h, 5Fh, 46h, 49h, 4Ch, 45h, 5Fh, 49h
+                db 4Eh, 46h, 4Fh, 13h dup(0)
+word_17541      dw 0                    ; DATA XREF: start+36↑w
+                                        ; start+82↑r
+                align 8
+                db 14h, 0, 3 dup(81h), 2 dup(1), 17h dup(0), 0AAh, 0
+                dw seg seg003
+                db 43h, 0
+word_1756C      dw 0                    ; DATA XREF: start+47↑w
+word_1756E      dw 0                    ; DATA XREF: start+42↑w
+word_17570      dw 0                    ; DATA XREF: start+3E↑w
+                align 8
+                db 0D0h, 31h, 51h, 32h, 0A4h, 31h, 0F0h, 1Fh, 0F6h, 1Fh
+                db 0CCh, 31h, 25h, 2
+                dw seg seg002
+                db 0ACh, 31h, 0ACh, 31h, 0ACh, 31h, 0ACh, 31h, 0CCh, 31h
+                db 0CCh, 31h, 0ACh, 31h, 0ACh, 31h, 0ACh, 31h, 0B0h, 31h
+                db 0B0h, 31h, 0B0h, 31h, 0ACh, 31h, 0C0h, 31h, 18h dup(0)
+                db 0C4h, 5, 0Dh dup(0)
+word_175CB      dw 0                    ; DATA XREF: sub_16FFA+34↑w
+word_175CD      dw 0                    ; DATA XREF: sub_16FFA+3B↑w
+word_175CF      dw 0                    ; DATA XREF: sub_16FFA+42↑w
+                db 234Fh dup(0), 9, 0, 64h, 24h, 62h, 61h, 64h, 20h, 63h
+                db 6Fh, 2 dup(6Dh), 64h, 0, 5Ch, 8Fh, 2, 3Fh, 0AEh, 47h
+                db 61h, 3Eh, 0CDh, 2 dup(0CCh), 3Eh, 1Fh, 85h, 2Bh, 3Fh
+                db 2 dup(0), 80h, 3Eh, 3 dup(0), 3Fh, 3 dup(66h), 3Fh
+                db 2 dup(33h), 0B3h, 3Eh, 0CDh, 0CCh, 0Ch, 3Fh, 2 dup(0)
+                db 0A0h, 3Fh, 9Ah, 99h, 19h, 3Fh, 2 dup(0), 80h, 0BFh
+                db 0Ah, 0, 0A2h, 24h, 4Fh, 55h, 54h, 44h, 41h, 54h, 2Eh
+                db 44h, 41h, 54h, 0Ah, 0, 0B0h, 24h, 6Fh, 75h, 74h, 64h
+                db 61h, 74h, 2Eh, 64h, 61h, 74h, 7, 0, 0BEh, 24h, 4Dh
+                db 55h, 53h, 2Eh, 45h, 58h, 45h, 6Ah, 4 dup(0), 18h, 0
                 db 0CEh
-                db  31h ; 1
-                db 0FBh
-                db  96h
-                db  9Fh
-                db  2Eh ; .
-                db  88h
-                db  26h ; &
-                db  4Ah ; J
-                db    0
-                db  96h
-                db  83h
-                db 0E4h
-                db 0FEh
-                db    3
-                db 0C7h
-                db 0A3h
-                db    2
-                db    0
-                db  8Ch
-                db 0C3h
-                db  2Bh ; +
-                db 0D8h
-                db 0F7h
-                db 0DBh
-                db 0B4h
-                db  4Ah ; J
-                db 0CDh
-                db  21h ; !
-                db  36h ; 6
-                db  8Ch
-                db  1Eh
-                db  81h
-                db    0
-                db 0A1h
-                db  2Ch ; ,
-                db    0
-                db  36h ; 6
-                db 0A3h
-                db 0B0h
-                db    0
-                db  36h ; 6
-                db  8Ch
-                db  1Eh
-                db 0AEh
-                db    0
-                db  36h ; 6
-                db 0C7h
-                db    6
-                db 0ACh
-                db    0
-                db  81h
-                db    0
-                db  33h ; 3
-                db 0EDh
-                db 0FCh
-                db  8Ch
-                db 0D8h
-                db  2Eh ; .
-                db 0A3h
-                db  4Bh ; K
-                db    0
-                db    5
-                db  10h
-                db    0
-                db  8Eh
-                db 0D8h
-                db  8Bh
-                db  0Eh
-                db  12h
-                db    0
-                db  0Eh
-                db    7
-                db 0E3h
-                db  19h
-                db  51h ; Q
-                db 0C5h
-                db  36h ; 6
-                db  14h
-                db    0
-                db 0BFh
-                db  36h ; 6
-                db    0
-                db 0B9h
-                db    8
-                db    0
-                db 0F3h
-                db 0A5h
-                db  59h ; Y
-                db  26h ; &
-                db 0FFh
-                db  36h ; 6
-                db  3Ch ; <
-                db    0
-                db  26h ; &
-                db 0FFh
-                db  36h ; 6
-                db  44h ; D
-                db    0
-                db 0CBh
-                db  9Ah
-                db  7Ah ; z
-                db    1
-                db 0E8h
-                db    6
-                db  36h ; 6
-                db 0A1h
-                db  81h
-                db    0
-                db  8Eh
-                db 0D8h
-                db  8Eh
-                db 0C0h
-                db  2Eh ; .
-                db 0A1h
-                db  48h ; H
-                db    0
-                db 0A3h
-                db    2
-                db    0
-                db  2Eh ; .
-                db  8Ah
-                db  36h ; 6
-                db  4Ah ; J
-                db    0
-                db  9Ah
-                db  1Ah
-                db    0
-                db  7Eh ; ~
-                db    6
-                db  8Ch
-                db 0D0h
-                db  2Eh ; .
-                db 0A3h
-                db  46h ; F
-                db    0
-                db  0Eh
-                db  1Fh
-                db 0E8h
-                db  22h ; "
-                db    1
-                db  93h
-                db 0E8h
-                db  9Fh
-                db    1
-                db 0E8h
-                db 0DEh
-                db    1
-                db 0E8h
-                db  11h
-                db    2
-                db 0A3h
-                db  4Fh ; O
-                db    0
-                db  89h
-                db  16h
-                db  51h ; Q
-                db    0
-                db 0BDh
-                db 0FFh
-                db 0FFh
-                db 0E8h
-                db 0EAh
-                db    2
-                db  89h
-                db  2Eh ; .
-                db  4Dh ; M
-                db    0
-                db 0E8h
-                db  26h ; &
-                db    2
-                db  33h ; 3
-                db 0F6h
-                db 0E8h
-                db  35h ; 5
-                db    2
-                db 0E8h
-                db 0B0h
-                db    3
-                db 0A1h
-                db  4Dh ; M
-                db    0
-                db  36h ; 6
-                db 0A3h
-                db  0Bh
-                db    1
-                db 0A1h
-                db  4Fh ; O
-                db    0
-                db  36h ; 6
-                db 0A3h
-                db  0Dh
-                db    1
-                db 0A1h
-                db  51h ; Q
-                db    0
-                db  36h ; 6
-                db 0A3h
-                db  0Fh
-                db    1
-                db 0FFh
-                db  36h ; 6
-                db  3Ch ; <
-                db    0
-                db 0FFh
-                db  36h ; 6
-                db  42h ; B
-                db    0
-                db 0CBh
-                db 0BBh
-                db  95h
-                db    5
-                db 0EBh
-                db  1Ch
-                db 0BBh
-                db  7Dh ; }
-                db    5
-                db 0EBh
-                db  17h
-                db 0BBh
-                db 0CCh
-                db    5
-                db 0EBh
-                db  12h
-                db 0BBh
-                db 0DAh
-                db    5
-                db 0EBh
-                db  0Dh
-                db 0BBh
-                db 0BDh
-                db    5
-                db 0EBh
-                db    8
-                db 0BBh
-                db 0AEh
-                db    5
-                db 0EBh
-                db    3
-                db 0BBh
-                db 0F1h
-                db    5
-                db 0BAh
-                db 0E8h
-                db    6
-                db  8Eh
-                db 0DAh
-                db 0B4h
-                db    9
-                db 0BAh
-                db  66h ; f
-                db    5
-                db 0CDh
-                db  21h ; !
-                db 0BAh
-                db 0Ch, 0, 0CDh, 21h, 8Bh, 0D3h, 0CDh, 21h, 0BAh, 17h
-                db 6, 0CDh, 21h, 0B8h, 1, 4Ch, 0CDh, 21h, 0B4h, 49h, 3Dh
-                db 0B4h, 4Ah, 3Dh, 0B4h, 48h, 0CDh, 21h, 73h, 6, 3Dh, 8
-                db 0, 75h, 2, 0F9h, 0C3h, 3Dh, 7, 0, 75h, 2, 0EBh, 0B5h
-                db 0EBh, 0A9h, 50h, 52h, 6, 53h, 26h, 8Bh, 1Eh, 0Dh, 1
-                db 2Eh, 89h, 1Eh, 4Fh, 0, 26h, 8Bh, 1Eh, 0Fh, 1, 2Eh, 89h
-                db 1Eh, 51h, 0, 5Bh, 26h, 8Eh, 6, 0Bh, 1, 2Eh, 8Ch, 6
-                db 4Dh, 0, 0E8h, 0BEh, 0FFh, 7, 5Ah, 58h, 2Eh, 8Ch, 16h
-                db 53h, 0, 2Eh, 89h, 26h, 55h, 0, 0CDh, 21h, 0FAh, 2Eh
-                db 8Eh, 16h, 53h, 0, 2Eh, 8Bh, 26h, 55h, 0, 0FBh, 9Ch
-                db 50h, 0Eh, 1Fh, 0Eh, 7, 0E8h, 38h, 0, 8Bh, 0D8h, 0E8h
-                db 0B4h, 0, 0E8h, 29h, 1, 39h, 6, 4Fh, 0, 75h, 27h, 39h
-                db 16h, 51h, 0, 75h, 21h, 8Bh, 2Eh, 4Dh, 0, 0E8h, 0FCh
-                db 1, 39h, 2Eh, 4Dh, 0, 75h, 14h, 0E8h, 36h, 1, 0BEh, 2 dup(0FFh)
-                db 0E8h, 44h, 1, 0E8h, 0BFh, 2, 0B8h, 4Ch, 7, 8Eh, 0D8h
-                db 58h, 9Dh, 0CBh, 0E9h, 36h, 0FFh, 0BFh, 5Eh, 0, 0E8h
-                db 7Dh, 2, 73h, 4Bh, 0E8h, 49h, 0, 72h, 12h, 0BFh, 5Eh
-                db 0, 0E8h, 50h, 2, 72h, 0Ah, 0E8h, 6Bh, 2, 73h, 39h, 0EBh
-                db 0F1h, 0E9h, 3, 0FFh, 0BBh, 1, 0, 0B8h, 0, 44h, 0CDh
-                db 21h, 0F6h, 0C2h, 80h, 74h, 0F0h, 4Bh, 74h, 0F3h, 0BAh
-                db 1Bh, 6, 0B4h, 9, 0CDh, 21h, 0BAh, 5Ch, 0, 0B8h, 0Ah
-                db 0Ch, 0CDh, 21h, 0B2h, 0Ah, 0B4h, 2, 0CDh, 21h, 33h
-                db 0DBh, 8Ah, 1Eh, 5Dh, 0, 8Dh, 0BFh, 5Eh, 0, 0E8h, 32h
-                db 2, 72h, 0CCh, 0C3h, 6, 8Eh, 6, 4Bh, 0, 26h, 8Eh, 6
-                db 2Ch, 0, 33h, 0C0h, 33h, 0FFh, 0BEh, 57h, 0, 0B9h, 5
-                db 0, 0F3h, 0A6h, 74h, 0Bh, 0B9h, 2 dup(0FFh), 0F2h, 0AEh
-                db 26h, 38h, 5, 75h, 0ECh, 0F9h, 8Ch, 6, 55h, 0, 89h, 3Eh
-                db 53h, 0, 7, 0C3h, 33h, 0C0h, 99h, 8Ch, 0DDh, 0B9h, 1Ah
-                db 0, 8Bh, 0F2h, 0BFh, 1Ch, 0, 0E8h, 4, 1, 81h, 3Eh, 1Ah
-                db 0, 4Dh, 5Ah, 75h, 27h, 8Bh, 16h, 22h, 0, 3, 16h, 30h
-                db 0, 0A1h, 2Eh, 0, 8Ch, 0DDh, 0B9h, 36h, 0, 33h, 0F6h
-                db 0BFh, 10h, 0, 0E8h, 0E4h, 0, 83h, 3Eh, 38h, 0, 6, 75h
-                db 8, 83h, 3Eh, 3Ah, 2 dup(0), 75h, 1, 0C3h, 0E9h, 73h
-                db 0FEh, 0BAh, 0C0h, 1Ah, 3Bh, 16h, 40h, 0, 75h, 12h, 0B8h
-                db 0C4h, 5, 3Dh, 6, 0, 76h, 0Dh, 0B8h, 84h, 20h, 2Bh, 0C2h
-                db 3Dh, 0C4h, 5, 74h, 3, 0E9h, 5Fh, 0FEh, 8Bh, 16h, 22h
-                db 0, 0A1h, 3Eh, 0, 0BDh, 4Ch, 7, 8Bh, 0C8h, 33h, 0F6h
-                db 8Bh, 3Eh, 40h, 0, 2Bh, 0F8h, 0E8h, 9Dh, 0, 0C3h, 8Bh
-                db 16h, 1Eh, 0, 0B1h, 5, 0D3h, 0E2h, 2Bh, 16h, 22h, 0
-                db 2Bh, 16h, 3Ch, 0, 8Bh, 0C2h, 0B1h, 0Ch, 0D3h, 0EAh
-                db 0B1h, 4, 0D3h, 0E0h, 83h, 3Eh, 1Ch, 2 dup(0), 74h, 7
-                db 2Dh, 0, 2, 3, 6, 1Ch, 0, 0C3h, 8Bh, 0F2h, 8Bh, 0F8h
-                db 33h, 0C9h, 8Bh, 16h, 22h, 0, 3, 16h, 3Ch, 0, 8Bh, 0C1h
-                db 0E8h, 60h, 0, 0C3h, 8Bh, 16h, 32h, 0, 33h, 0C9h, 0B8h
-                db 0, 42h, 0CDh, 21h, 8Bh, 3Eh, 3Ch, 0, 2Bh, 0EFh, 0B9h
-                db 4, 0, 0BAh, 53h, 0, 0B4h, 3Fh, 0CDh, 21h, 72h, 3Fh
-                db 3Bh
-                db 0C1h, 75h, 3Bh, 53h, 8Bh, 1Eh, 55h, 0, 3Bh, 0DFh, 73h
-                db 0Ah, 0Bh, 0F6h, 75h, 1Eh, 81h, 0C3h, 4Ch, 7, 2Bh, 0DDh
-                db 3, 0DDh, 8Eh, 0C3h, 8Bh, 1Eh, 53h, 0, 26h, 39h, 3Fh
-                db 73h, 8, 26h, 81h, 7, 4Ch, 7, 26h, 29h, 2Fh, 26h, 1
-                db 2Fh, 5Bh, 0FFh, 0Eh, 20h, 0, 75h, 0C4h, 1, 2Eh, 30h
-                db 0, 1, 2Eh, 3Ch, 0, 0C3h, 0E9h, 0A6h, 0FDh, 1Eh, 55h
-                db 51h, 33h, 0C9h, 0D1h, 0E2h, 3 dup(0D1h), 0E2h, 3 dup(0D1h)
-                db 0E2h, 3 dup(0D1h), 0E2h, 2 dup(0D1h), 3, 0D0h, 83h
-                db 0D1h, 0, 0B8h, 0, 42h, 0CDh, 21h, 5Ah, 8Eh, 0DDh, 0B9h
-                db 0F0h, 0FFh, 0Bh, 0F6h, 75h, 2, 8Bh, 0CFh, 0B4h, 3Fh
-                db 0CDh, 21h, 72h, 16h, 3Bh, 0C1h, 75h, 12h, 81h, 0C5h
-                db 0FFh, 0Fh, 2Bh, 0F8h, 83h, 0DEh, 0, 75h, 0E0h, 0Bh
-                db 0FFh, 75h, 0DCh, 5Dh, 1Fh, 0C3h, 0E9h, 5Ch, 0FDh, 50h
-                db 53h, 52h, 6, 5, 0Fh, 0, 83h, 0D2h, 0, 0B1h, 4, 0D3h
-                db 0E8h, 0B1h, 0Ch, 0D3h, 0E2h, 3, 0D0h, 33h, 0C9h, 8Bh
-                db 0F1h, 0BBh, 2 dup(0FFh), 0E8h, 6Bh, 0FDh, 73h, 5Eh
-                db 3Bh, 0DAh, 72h, 15h, 0E8h, 62h, 0FDh, 72h, 55h, 3Bh
-                db 0C5h, 77h, 8, 3Bh, 0C6h, 72h, 4, 8Bh, 0F0h, 8Bh, 0FBh
-                db 50h, 41h, 0EBh, 0DFh, 0E3h, 46h, 8Bh, 0DEh, 3, 0DFh
-                db 2Bh, 0DAh, 3Bh, 0DDh, 72h, 2, 8Bh, 0DDh, 8Bh, 0C6h
-                db 2Bh, 0DEh, 74h, 15h, 4Bh, 8Eh, 0C6h, 0E8h, 33h, 0FDh
-                db 72h, 29h, 0BBh, 2 dup(0FFh), 0E8h, 2Eh, 0FDh, 73h, 21h
-                db 0E8h, 29h, 0FDh, 72h, 1Ch, 8Eh, 0C0h, 8Bh, 0DAh, 0E8h
-                db 1Dh, 0FDh, 72h, 13h, 8Bh, 0E8h, 58h, 3Bh, 0C5h, 74h
-                db 5, 8Eh, 0C0h, 0E8h, 0Ch, 0FDh, 0E2h, 0F4h, 7, 5Ah, 5Bh
-                db 58h, 0C3h, 0E9h, 0C7h, 0FCh, 0E9h, 0C9h, 0FCh, 1Eh
-                db 0C5h, 36h, 53h, 0, 0B9h, 74h, 0, 0ACh, 3Ch, 3Bh, 74h
-                db 0Dh, 0Ah, 0C0h, 74h, 4, 0AAh, 0E2h, 0F4h, 49h, 4Eh
-                db 83h, 0F9h, 74h, 0F5h, 1Fh, 89h, 36h, 53h, 0, 0C3h, 1Eh
-                db 6, 1Fh, 81h, 0FFh, 5Eh, 0, 74h, 12h, 8Ah, 45h, 0FFh
-                db 3Ch, 3Ah, 74h, 0Bh, 3Ch, 5Ch, 74h, 7, 3Ch, 2Fh, 74h
-                db 3, 0B0h, 5Ch, 0AAh, 0BEh, 0Ch, 0, 0B9h, 16h, 0, 2Bh
-                db 0CEh, 0F3h, 0A4h, 88h, 0Dh, 1Fh, 0BAh, 5Eh, 0, 0B8h
-                db 0, 3Dh, 0CDh, 21h, 0C3h, 0B4h, 3Eh, 0CDh, 21h, 72h
-                db 1, 0C3h, 0E9h, 7Dh, 0FCh, 0, 45h, 2 dup(72h), 6Fh, 72h
-                db 20h, 69h, 6Eh, 20h, 6Ch, 6Fh, 61h, 64h, 69h, 6Eh, 67h
-                db 20h, 52h, 54h, 4Dh, 3Ah, 20h, 24h, 4Dh, 65h, 6Dh, 6Fh
-                db 72h, 79h, 20h, 61h, 2 dup(6Ch), 6Fh, 63h, 61h, 74h
-                db 69h, 6Fh, 6Eh, 20h, 65h, 2 dup(72h), 6Fh, 72h, 24h
-                db 43h, 61h, 2 dup(6Eh), 6Fh, 74h, 20h, 66h, 69h, 6Eh
-                db 64h, 20h, 66h, 69h, 6Ch, 65h, 20h, 69h, 6Eh, 20h, 50h
-                db 41h, 54h, 48h, 24h, 44h, 69h, 73h, 6Bh, 20h, 49h, 2Fh
-                db 4Fh, 20h, 65h, 2 dup(72h), 6Fh, 72h, 24h, 49h, 6Eh
-                db 76h, 61h, 6Ch, 69h, 64h, 20h, 66h, 6Fh, 72h, 6Dh, 61h
-                db 74h, 24h, 4Fh, 75h, 74h, 20h, 6Fh, 66h, 20h, 6Dh, 65h
-                db 6Dh, 6Fh, 72h, 79h, 24h, 44h, 4Fh, 53h, 20h, 6Dh, 65h
-                db 6Dh, 6Fh, 72h, 79h, 2Dh, 61h, 72h, 65h, 6Eh, 61h, 20h
-                db 65h, 2 dup(72h), 6Fh, 72h, 24h, 49h, 6Eh, 63h, 6Fh
-                db 6Dh, 70h, 61h, 74h, 69h, 62h, 6Ch, 65h, 20h, 65h, 78h
-                db 74h, 65h, 6Eh, 64h, 65h, 64h, 20h, 72h, 75h, 6Eh
-                db 2Dh, 74h, 69h, 6Dh, 65h, 20h, 6Dh, 6Fh, 64h, 75h, 6Ch
-                db 65h, 24h, 2Eh, 0Dh, 0Ah, 24h, 49h, 6Eh, 70h, 75h, 74h
-                db 20h, 72h, 75h, 6Eh, 2Dh, 74h, 69h, 6Dh, 65h, 20h, 6Dh
-                db 6Fh, 64h, 75h, 6Ch, 65h, 20h, 70h, 61h, 74h, 68h, 3Ah
-                db 20h, 24h, 59h, 5, 0B2h, 0, 8, 0, 0B0h, 0D0h, 32h, 4 dup(0FFh)
-                db 6, 0, 0B2h, 0, 0Ch, 0, 0B0h, 4Ch, 7, 2, 0, 0B2h, 0
-                db 4Ch, 0, 0B0h, 10h, 0, 3Bh, 43h, 5Fh, 46h, 49h, 4Ch
-                db 45h, 5Fh, 49h, 4Eh, 46h, 4Fh, 0Eh, 0, 0B2h, 0, 1Ah
-                db 0, 0B0h, 14h, 0, 3 dup(81h), 2 dup(1), 7, 0, 0B2h, 0
-                db 17h, 0, 0B0h, 0AAh, 0, 4Ch, 7, 43h, 5, 0, 0B2h, 0, 0Dh
-                db 0, 0B0h, 0D0h, 31h, 51h, 32h, 0A4h, 31h, 0F0h, 1Fh
-                db 0F6h, 1Fh, 0CCh, 31h, 25h, 2, 0E8h, 6, 0ACh, 31h, 0ACh
-                db 31h, 0ACh, 31h, 0ACh, 31h, 0CCh, 31h, 0CCh, 31h, 0ACh
-                db 31h, 0ACh, 31h, 0ACh, 31h, 0B0h, 31h, 0B0h, 31h, 0B0h
-                db 31h, 0ACh, 31h, 0C0h, 31h, 2Ch, 0, 0B2h, 0, 18h, 0
-                db 0B0h, 0C4h, 5, 2, 0, 0B2h, 0, 62h, 23h, 0B0h, 9, 0
-                db 64h, 24h, 62h, 61h, 64h, 20h, 63h, 6Fh, 2 dup(6Dh)
-                db 64h, 0, 5Ch, 8Fh, 2, 3Fh, 0AEh, 47h, 61h, 3Eh, 0CDh
-                db 2 dup(0CCh), 3Eh, 1Fh, 85h, 2Bh, 3Fh, 2 dup(0), 80h
-                db 3Eh, 3 dup(0), 3Fh, 3 dup(66h), 3Fh, 2 dup(33h), 0B3h
-                db 3Eh, 0CDh, 0CCh, 0Ch, 3Fh, 2 dup(0), 0A0h, 3Fh, 9Ah
-                db 99h, 19h, 3Fh, 2 dup(0), 80h, 0BFh, 0Ah, 0, 0A2h, 24h
-                db 4Fh, 55h, 54h, 44h, 41h, 54h, 2Eh, 44h, 41h, 54h, 0Ah
-                db 0, 0B0h, 24h, 6Fh, 75h, 74h, 64h, 61h, 74h, 2Eh, 64h
-                db 61h, 74h, 7, 0, 0BEh, 24h, 4Dh, 55h, 53h, 2Eh, 45h
-                db 58h, 45h, 6Ah, 4 dup(0), 18h, 0, 0CEh, 24h, 40h, 6Fh
-                db 0, 0B2h, 20h, 0Ch, 0, 0B0h, 59h, 4Fh, 55h, 20h, 44h
-                db 49h, 45h, 44h, 3 dup(21h), 2 dup(0), 80h, 3Fh, 2 dup(0)
-                db 0A0h, 41h, 2 dup(0), 4, 42h, 2 dup(0), 20h, 41h, 3 dup(0)
-                db 0C0h, 2 dup(0CCh), 0ECh, 3Fh, 2 dup(0), 5Ch, 42h, 2 dup(0)
-                db 70h, 41h, 1Bh, 0, 0Ah, 4 dup(25h), 54h, 48h, 45h, 20h
-                db 50h, 4Fh, 57h, 45h, 52h, 53h, 20h, 4Fh, 46h, 20h, 54h
-                db 48h, 45h, 20h, 4Dh, 55h, 53h, 45h, 55h, 4Dh, 0F4h, 1Eh
-                db 0, 2Ah, 25h, 52h, 45h, 53h, 55h, 2 dup(52h), 45h, 43h
-                db 54h, 20h, 59h, 4Fh, 55h, 20h, 46h, 52h, 4Fh, 4Dh, 20h
-                db 54h, 48h, 45h, 20h, 47h, 52h, 41h, 56h, 45h, 2 dup(21h)
-                db 5, 0, 4Ch, 25h, 4Dh, 4Fh, 56h, 45h, 20h, 0F4h, 2 dup(0)
-                db 0FAh, 43h, 14h, 0, 5Ah, 3 dup(25h), 59h, 4Fh, 55h, 20h
-                db 47h, 52h, 4Fh, 57h, 20h, 53h, 49h, 43h, 4Bh, 20h, 46h
-                db 52h, 4Fh, 4Dh, 12h, 0
+aYouDied        db '$@            YOU DIED!!!',0
+                align 2
+                db 80h, 3Fh, 2 dup(0), 0A0h, 41h, 2 dup(0), 4, 42h, 2 dup(0)
+                db 20h, 41h, 3 dup(0), 0C0h, 2 dup(0CCh), 0ECh, 3Fh, 2 dup(0)
+                db 5Ch, 42h, 2 dup(0), 70h, 41h, 1Bh, 0, 0Ah, 4 dup(25h)
+                db 54h, 48h, 45h, 20h, 50h, 4Fh, 57h, 45h, 52h, 53h, 20h
+                db 4Fh, 46h, 20h, 54h, 48h, 45h, 20h, 4Dh, 55h, 53h, 45h
+                db 55h, 4Dh, 0F4h, 1Eh, 0, 2Ah, 25h, 52h, 45h, 53h, 55h
+                db 2 dup(52h), 45h, 43h, 54h, 20h, 59h, 4Fh, 55h, 20h
+                db 46h, 52h, 4Fh, 4Dh, 20h, 54h, 48h, 45h, 20h, 47h, 52h
+                db 41h, 56h, 45h, 2 dup(21h), 5, 0, 4Ch, 25h, 4Dh, 4Fh
+                db 56h, 45h, 20h, 0F4h, 2 dup(0), 0FAh, 43h, 14h, 0, 5Ah
+                db 3 dup(25h), 59h, 4Fh, 55h, 20h, 47h, 52h, 4Fh, 57h
+                db 20h, 53h, 49h, 43h, 4Bh, 20h, 46h, 52h, 4Fh, 4Dh, 12h
+                db 0
 aRSomethingYouA db 'r%SOMETHING YOU ATE!',0
-                db 0, 2 dup(40h), 0Fh, 0, 8Ch, 2 dup(25h), 48h, 49h, 54h
+                align 2
+                db 2 dup(40h), 0Fh, 0, 8Ch, 2 dup(25h), 48h, 49h, 54h
                 db 20h, 50h, 4Fh, 49h, 4Eh, 54h, 53h, 3Ah, 2 dup(20h)
                 db 2Dh, 0F4h, 20h, 0, 0A0h, 25h, 54h, 48h, 45h, 20h, 52h
                 db 41h, 46h, 54h, 20h, 4Dh, 55h, 53h, 54h, 20h, 53h, 54h
@@ -15771,22 +16586,25 @@ aPYouAreSailing db 'p&YOU ARE SAILING INTO STORMY WATER. ',0
                 db 0, 36h, 28h, 4 dup(20h), 44h, 41h, 4Dh, 41h, 47h, 45h
                 db 3Ah, 2 dup(20h), 0F4h, 16h, 0
 aHYouFallUncons db 'H(%YOU FALL UNCONSCIOUS.',0
-                db 0, 48h, 42h, 2 dup(0), 70h, 42h, 19h, 0, 6Ah, 28h, 25h
-                db 54h, 48h, 45h, 20h, 53h, 4Ch, 2 dup(45h), 50h, 20h
-                db 44h, 4Fh, 45h, 53h, 20h, 59h, 4Fh, 55h, 20h, 47h, 2 dup(4Fh)
-                db 44h, 2Eh, 0F4h, 19h, 0, 88h, 28h, 59h, 4Fh, 55h, 20h
-                db 41h, 57h, 41h, 4Bh, 45h, 20h, 46h, 2 dup(45h), 4Ch
-                db 49h, 4Eh, 47h, 20h, 42h, 45h, 2 dup(54h), 45h, 52h
-                db 2Eh, 0F4h, 17h, 0, 0A6h, 28h, 2 dup(25h), 43h, 48h
-                db 45h, 43h, 4Bh, 20h, 59h, 4Fh, 55h, 52h, 20h, 53h, 55h
-                db 2 dup(50h), 4Ch, 49h, 45h, 53h, 2 dup(21h), 0F4h, 7
-                db 0, 0C2h, 28h, 20h, 53h, 54h, 41h, 4Eh, 44h, 53h, 0
-                db 6, 0, 0CEh, 28h, 20h, 53h, 54h, 41h, 4Eh, 44h, 1, 0
-                db 0D8h, 28h, 25h, 0C8h, 0Ch, 0, 0DEh, 28h, 20h, 42h, 45h
-                db 46h, 4Fh, 52h, 45h, 20h, 59h, 4Fh, 55h, 2Eh, 18h, 0
-                db 0EEh
+                align 2
+aHb             db 'HB',0
+                align 2
+                db 70h, 42h, 19h, 0, 6Ah, 28h, 25h, 54h, 48h, 45h, 20h
+                db 53h, 4Ch, 2 dup(45h), 50h, 20h, 44h, 4Fh, 45h, 53h
+                db 20h, 59h, 4Fh, 55h, 20h, 47h, 2 dup(4Fh), 44h, 2Eh
+                db 0F4h, 19h, 0, 88h, 28h, 59h, 4Fh, 55h, 20h, 41h, 57h
+                db 41h, 4Bh, 45h, 20h, 46h, 2 dup(45h), 4Ch, 49h, 4Eh
+                db 47h, 20h, 42h, 45h, 2 dup(54h), 45h, 52h, 2Eh, 0F4h
+                db 17h, 0, 0A6h, 28h, 2 dup(25h), 43h, 48h, 45h, 43h, 4Bh
+                db 20h, 59h, 4Fh, 55h, 52h, 20h, 53h, 55h, 2 dup(50h)
+                db 4Ch, 49h, 45h, 53h, 2 dup(21h), 0F4h, 7, 0, 0C2h, 28h
+                db 20h, 53h, 54h, 41h, 4Eh, 44h, 53h, 0, 6, 0, 0CEh, 28h
+                db 20h, 53h, 54h, 41h, 4Eh, 44h, 1, 0, 0D8h, 28h, 25h
+                db 0C8h, 0Ch, 0, 0DEh, 28h, 20h, 42h, 45h, 46h, 4Fh, 52h
+                db 45h, 20h, 59h, 4Fh, 55h, 2Eh, 18h, 0, 0EEh
 aYouAvoidTheCre db '(%%YOU AVOID THE CREATURE',0
-                db 0, 90h, 41h, 2 dup(99h), 49h, 41h, 2 dup(0), 80h, 43h
+                align 2
+                db 90h, 41h, 2 dup(99h), 49h, 41h, 2 dup(0), 80h, 43h
                 db 5, 0, 16h, 29h, 20h, 52h, 41h, 46h, 54h, 0F4h, 0Bh
                 db 0, 20h, 29h, 4Eh, 4Fh, 54h, 48h, 49h, 4Eh, 47h, 20h
                 db 54h, 4Fh, 20h, 0F4h, 10h, 0, 30h, 29h, 57h, 48h, 49h
@@ -15834,16 +16652,16 @@ aYouAvoidTheCre db '(%%YOU AVOID THE CREATURE',0
                 db 4Eh, 45h, 44h, 0Ch, 0, 4, 2Bh, 57h, 45h, 2 dup(4Ch)
                 db 20h, 43h, 52h, 41h, 46h, 54h, 45h, 44h, 0Dh, 0, 14h
                 db 2Bh, 53h, 50h, 41h, 52h, 4Bh, 4Ch, 49h, 4Eh, 47h, 20h
-                db 4Eh, 45h
-                db 57h, 0, 9, 0, 26h, 2Bh, 57h, 4Fh, 4Eh, 44h, 45h, 52h
-                db 46h, 55h, 4Ch, 0, 0Bh, 0, 34h, 2Bh, 4Dh, 41h, 47h, 4Eh
-                db 49h, 46h, 49h, 43h, 45h, 4Eh, 54h, 0, 15h, 0, 44h, 2Bh
-                db 44h, 4Fh, 20h, 59h, 4Fh, 55h, 20h, 57h, 41h, 4Eh, 54h
-                db 20h, 54h, 4Fh, 20h, 42h, 55h, 59h, 20h, 41h, 20h, 0F4h
-                db 5, 0, 5Eh, 2Bh, 20h, 46h, 4Fh, 52h, 20h, 0F4h, 17h
-                db 0, 68h, 2Bh, 57h, 4Fh, 55h, 4Ch, 44h, 20h, 59h, 4Fh
-                db 55h, 20h, 4Ch, 49h, 4Bh, 45h, 20h, 54h, 4Fh, 20h, 42h
-                db 55h, 59h, 20h, 41h, 0F4h, 10h, 0, 84h
+                db 4Eh, 45h, 57h
+                db 0, 9, 0, 26h, 2Bh, 57h, 4Fh, 4Eh, 44h, 45h, 52h, 46h
+                db 55h, 4Ch, 0, 0Bh, 0, 34h, 2Bh, 4Dh, 41h, 47h, 4Eh, 49h
+                db 46h, 49h, 43h, 45h, 4Eh, 54h, 0, 15h, 0, 44h, 2Bh, 44h
+                db 4Fh, 20h, 59h, 4Fh, 55h, 20h, 57h, 41h, 4Eh, 54h, 20h
+                db 54h, 4Fh, 20h, 42h, 55h, 59h, 20h, 41h, 20h, 0F4h, 5
+                db 0, 5Eh, 2Bh, 20h, 46h, 4Fh, 52h, 20h, 0F4h, 17h, 0
+                db 68h, 2Bh, 57h, 4Fh, 55h, 4Ch, 44h, 20h, 59h, 4Fh, 55h
+                db 20h, 4Ch, 49h, 4Bh, 45h, 20h, 54h, 4Fh, 20h, 42h, 55h
+                db 59h, 20h, 41h, 0F4h, 10h, 0, 84h
 aMuseumCoinFor  db '+MUSEUM COIN FOR ',9,0
                 db 98h, 2Bh, 55h, 53h, 45h, 20h, 54h, 48h, 49h, 53h, 20h
                 db 1, 6, 0, 0A6h, 2Bh, 20h, 57h, 45h, 2 dup(4Ch), 21h
@@ -15855,7 +16673,8 @@ aMuseumCoinFor  db '+MUSEUM COIN FOR ',9,0
                 db 4Fh, 4Eh, 27h, 54h, 20h, 48h, 41h, 56h, 45h, 20h, 54h
                 db 48h, 45h, 20h, 47h, 4Fh, 4Ch, 44h, 21h, 12h, 0, 0FCh
 aPurchaseComple db '+PURCHASE COMPLETED',0
-                db 0, 16h, 44h, 3 dup(0), 41h, 2 dup(66h), 6, 40h, 2 dup(66h)
+                align 2
+                db 16h, 44h, 3 dup(0), 41h, 2 dup(66h), 6, 40h, 2 dup(66h)
                 db 86h, 3Fh, 2 dup(0), 20h, 0C1h, 0, 0A0h, 8Dh, 44h, 2 dup(0)
                 db 30h, 41h, 5Ch, 8Fh, 82h, 3Fh, 2 dup(0), 2 dup(0C0h)
                 db 2 dup(66h), 0A6h, 3Fh, 0Fh, 0, 3Ah, 2Ch, 4Eh, 4Fh, 54h
@@ -15943,8 +16762,7 @@ aXCasdrExe      db 'x-CASDR.EXE',0
                 db 67h, 61h, 73h, 75h, 73h, 2Eh, 62h, 73h, 76h, 0F4h, 13h
                 db 0, 0D0h
 aADefghiMPSUWx  db '/a defghi m p s u wx',0
-                align 2
-                db 50h, 0C3h, 46h, 7, 0, 0ECh, 2Fh, 6Fh, 75h, 74h, 2Eh
+                db 0, 50h, 0C3h, 46h, 7, 0, 0ECh, 2Fh, 6Fh, 75h, 74h, 2Eh
                 db 65h, 78h, 65h, 0C0h, 0Fh, 0, 0F8h, 2Fh, 20h, 49h, 4Eh
                 db 20h, 54h, 48h, 45h, 20h, 4Dh, 55h, 53h, 45h, 55h, 4Dh
                 db 2Eh, 0F4h, 0CDh, 2 dup(0CCh), 0BDh, 1Ah, 0, 10h, 30h
@@ -15965,12 +16783,13 @@ aADefghiMPSUWx  db '/a defghi m p s u wx',0
 a0doNotBeDiscou db '0DO NOT BE DISCOURAGED.  IT WAS ',0
                 db 0CCh
 a0inevitableKee db '0INEVITABLE.  KEEP TO YOUR QUEST.',0
-                db 0, 0F0h, 30h, 2 dup(0), 0C0h, 41h, 2, 0, 0F8h, 30h
-                db 73h, 74h, 2, 0, 0FEh, 30h, 6Eh, 64h, 2, 0, 4, 31h, 72h
-                db 64h, 2, 0, 0Ah, 31h, 74h, 68h, 1, 0, 10h, 31h, 30h
-                db 0, 6, 0, 16h, 31h, 6Eh, 6Fh, 47h, 2 dup(6Fh), 64h, 13h
-                db 0, 20h, 31h, 45h, 6Eh, 74h, 65h, 72h, 20h, 6Dh, 75h
-                db 73h, 65h, 75h, 6Dh, 20h, 61h, 2 dup(63h), 65h, 2 dup(73h)
+                align 2
+                db 0F0h, 30h, 2 dup(0), 0C0h, 41h, 2, 0, 0F8h, 30h, 73h
+                db 74h, 2, 0, 0FEh, 30h, 6Eh, 64h, 2, 0, 4, 31h, 72h, 64h
+                db 2, 0, 0Ah, 31h, 74h, 68h, 1, 0, 10h, 31h, 30h, 0, 6
+                db 0, 16h, 31h, 6Eh, 6Fh, 47h, 2 dup(6Fh), 64h, 13h, 0
+                db 20h, 31h, 45h, 6Eh, 74h, 65h, 72h, 20h, 6Dh, 75h, 73h
+                db 65h, 75h, 6Dh, 20h, 61h, 2 dup(63h), 65h, 2 dup(73h)
                 db 0F4h, 13h, 0, 38h, 31h, 63h, 6Fh, 64h, 65h, 20h, 26h
                 db 20h, 68h, 69h, 74h, 20h, 3Ch, 72h, 65h, 74h, 75h, 72h
                 db 6Eh, 3Eh, 0F4h, 7, 0, 50h, 31h, 57h, 6Fh, 72h, 6Ch
@@ -15980,501 +16799,21 @@ a0inevitableKee db '0INEVITABLE.  KEEP TO YOUR QUEST.',0
                 db 0F4h, 6, 0, 80h, 31h, 6 dup(25h), 11h, 0, 8Ah, 31h
                 db 3 dup(2Ah), 20h, 54h, 52h, 59h, 20h, 41h, 47h, 41h
                 db 49h, 4Eh, 20h, 3 dup(2Ah), 0F4h, 4 dup(0), 2 dup(0FFh)
-                db 1, 0C8h, 0Ch, 0B2h, 0, 9, 0, 0B0h, 53h, 0, 7Eh, 6, 4
-                db 0, 0B2h, 0, 20h, 0, 0B0h, 4 dup(0FFh)
-seg000          ends
-
-; ===========================================================================
-
-; Segment type: Pure code
-seg001          segment byte public 'CODE' use16
-                assume cs:seg001
-                assume es:nothing, ss:nothing, ds:nothing, fs:nothing, gs:nothing
-byte_181E0      db 0DFh, 0, 0E8h, 6     ; DATA XREF: seg001:00E2↓w
-word_181E4      dw 0                    ; DATA XREF: start+7↓w
-                                        ; seg001:009B↓r
-word_181E6      dw 0D15h                ; DATA XREF: start+10↓r
-byte_181E8      db 0, 8, 69h, 0Ah       ; DATA XREF: seg001:00D8↓r
-                                        ; seg001:00DC↓r
-word_181EC      dw 0A69h                ; DATA XREF: start+A↓r
-; ---------------------------------------------------------------------------
-                push    dx
-                inc     dx
-                assume ss:seg002, ds:nothing
-
-; =============== S U B R O U T I N E =======================================
-
-
-                public start
-start           proc far
-                mov     ax, es
-                add     ax, 10h
-                push    cs
-                pop     ds
-                assume ds:seg001
-                mov     word_181E4, ax
-                add     ax, word_181EC
-                mov     es, ax
-                assume es:nothing
-                mov     cx, word_181E6
-                mov     di, cx
-                dec     di
-                mov     si, di
-                std
-                rep movsb
-                push    ax
-                mov     ax, 32h ; '2'
-                push    ax
-                retf
-start           endp ; sp-analysis failed
-
-; ---------------------------------------------------------------------------
-                mov     bx, es
-                mov     ax, ds
-                dec     ax
-                mov     ds, ax
-                assume ds:nothing
-                mov     es, ax
-                assume es:nothing
-                mov     di, 0Fh
-                mov     cx, 10h
-                mov     al, 0FFh
-                repe scasb
-                inc     di
-                mov     si, di
-                mov     ax, bx
-                dec     ax
-                mov     es, ax
-                assume es:nothing
-                mov     di, 0Fh
-
-loc_18230:                              ; CODE XREF: seg001:0094↓j
-                mov     cl, 4
-                mov     ax, si
-                not     ax
-                shr     ax, cl
-                jz      short loc_18243
-                mov     dx, ds
-                sub     dx, ax
-                mov     ds, dx
-                assume ds:nothing
-                or      si, 0FFF0h
-
-loc_18243:                              ; CODE XREF: seg001:0058↑j
-                mov     ax, di
-                not     ax
-                shr     ax, cl
-                jz      short loc_18254
-                mov     dx, es
-                sub     dx, ax
-                mov     es, dx
-                assume es:nothing
-                or      di, 0FFF0h
-
-loc_18254:                              ; CODE XREF: seg001:0069↑j
-                lodsb
-                mov     dl, al
-                dec     si
-                lodsw
-                mov     cx, ax
-                inc     si
-                mov     al, dl
-                and     al, 0FEh
-                cmp     al, 0B0h
-                jnz     short loc_1826A
-                lodsb
-                rep stosb
-                jmp     short loc_18270
-; ---------------------------------------------------------------------------
-                align 2
-
-loc_1826A:                              ; CODE XREF: seg001:0082↑j
-                cmp     al, 0B2h
-                jnz     short loc_182D9
-                rep movsb
-
-loc_18270:                              ; CODE XREF: seg001:0087↑j
-                mov     al, dl
-                test    al, 1
-                jz      short loc_18230
-                mov     si, 125h
-                push    cs
-                pop     ds
-                assume ds:seg001
-                mov     bx, word_181E4
-                cld
-                xor     dx, dx
-
-loc_18282:                              ; CODE XREF: seg001:00C4↓j
-                lodsw
-                mov     cx, ax
-                jcxz    short loc_1829A
-                mov     ax, dx
-                add     ax, bx
-                mov     es, ax
-                assume es:nothing
-
-loc_1828D:                              ; CODE XREF: seg001:loc_18298↓j
-                lodsw
-                mov     di, ax
-                cmp     di, 0FFFFh
-                jz      short loc_182A6
-                add     es:[di], bx
-
-loc_18298:                              ; CODE XREF: seg001:00D4↓j
-                loop    loc_1828D
-
-loc_1829A:                              ; CODE XREF: seg001:00A5↑j
-                cmp     dx, 0F000h
-                jz      short loc_182B6
-                add     dx, 1000h
-                jmp     short loc_18282
-; ---------------------------------------------------------------------------
-
-loc_182A6:                              ; CODE XREF: seg001:00B3↑j
-                mov     ax, es
-                inc     ax
-                mov     es, ax
-                assume es:nothing
-                sub     di, 10h
-                add     es:[di], bx
-                dec     ax
-                mov     es, ax
-                assume es:nothing
-                jmp     short loc_18298
-; ---------------------------------------------------------------------------
-
-loc_182B6:                              ; CODE XREF: seg001:00BE↑j
-                mov     ax, bx
-                mov     di, word ptr byte_181E8
-                mov     si, word ptr byte_181E8+2
-                add     si, ax
-                add     word ptr byte_181E0+2, ax
-                sub     ax, 10h
-                mov     ds, ax
-                assume ds:nothing
-                mov     es, ax
-                mov     bx, 0           ; \x18\xce$@o\xb2 \x0c\xb0YOU DIED!!!\x80?\xa0A\x04B A\xc0\xcc\xcc\xec?\Bp
-                cli
-                mov     ss, si
-                assume ss:nothing
-                mov     sp, di
-                sti
-                jmp     dword ptr cs:[bx]
-; ---------------------------------------------------------------------------
-
-loc_182D9:                              ; CODE XREF: seg001:008C↑j
-                mov     ah, 40h ; '@'
-                mov     bx, 2           ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
-                mov     cx, 16h
-                mov     dx, cs
-                mov     ds, dx
-                assume ds:seg001
-                mov     dx, 10Fh
-                int     21h             ; DOS - 2+ - WRITE TO FILE WITH HANDLE
-                                        ; BX = file handle, CX = number of bytes to write, DS:DX -> buffer
-                mov     ax, 4CFFh
-                int     21h             ; DOS - 2+ - QUIT WITH EXIT CODE (EXIT)
-                                        ; AL = exit code
-; ---------------------------------------------------------------------------
-                db 50h, 61h, 63h, 6Bh, 65h, 64h, 20h, 66h, 69h, 6Ch, 65h
-                db 20h, 69h, 73h, 20h, 63h, 6Fh, 2 dup(72h), 75h, 70h
-                db 74h, 0E8h, 5, 66h, 0A6h, 46h, 0, 5Eh, 0, 6Dh, 0, 85h
-                db 0, 0A2h, 0, 0AAh, 0, 0B2h, 0, 0BAh, 0, 0C2h, 0, 0CAh
-                db 0, 0D3h, 0, 0DBh, 0, 0E3h, 0, 0EBh, 0, 0F3h, 0, 0FBh
-                db 0, 4, 1, 0Ch, 1, 14h, 1, 1Ch, 1, 24h, 1, 2Ch, 1, 35h
-                db 1, 3Dh, 1, 45h, 1, 4Dh, 1, 55h, 1, 5Dh, 1, 66h, 1, 6Eh
-                db 1, 76h, 1, 7Eh, 1, 97h, 1, 0AFh, 1, 0C7h, 1, 0DFh, 1
-                db 0F7h, 1, 0Fh, 2, 27h, 2, 3Fh, 2, 57h, 2, 6Fh, 2, 77h
-                db 2, 84h, 2, 8Dh, 2, 96h, 2, 0ABh, 2, 0BAh, 2, 0C3h, 2
-                db 0CCh, 2, 0D5h, 2, 0DEh, 2, 0E7h, 2, 0F0h, 2, 0F9h, 2
-                db 2 dup(3), 38h, 3, 3Dh, 3, 49h, 3, 4Eh, 3, 60h, 3, 80h
-                db 3, 89h, 3, 9Ch, 3, 0A4h, 3, 0B6h, 3, 0C6h, 3, 0E5h
-                db 3, 0EDh, 3, 0F2h, 3, 11h, 4, 2Ch, 4, 34h, 4, 39h, 4
-                db 46h, 4, 4Eh, 4, 5Bh, 4, 64h, 4, 6Dh, 4, 7Ch, 4, 91h
-                db 4, 0A0h, 4, 0A5h, 4, 0AAh, 4, 0B7h, 4, 0C1h, 4, 0C9h
-                db 4, 0D1h, 4, 0D9h, 4, 0F8h, 4, 2, 5, 0Ah, 5, 12h, 5
-                db 17h, 5, 0C3h, 5, 0D0h, 5, 0DAh, 5, 0E2h, 5, 0E7h, 5
-                db 7Bh, 6, 0BCh, 6, 0C4h, 6, 0C9h, 6, 0F2h, 6, 3Eh, 7
-                db 48h, 7, 50h, 7, 55h, 7, 5Dh, 7, 62h, 7, 72h, 7, 7Ch
-                db 7, 84h, 7, 89h, 7, 91h, 7, 96h, 7, 0A6h, 7, 6, 8, 13h
-                db 8, 1Dh, 8, 22h, 8, 51h, 8, 59h, 8, 5Eh, 8, 95h, 8, 0A2h
-                db 8, 0ACh, 8, 0B1h, 8, 89h, 9, 92h, 9, 9Bh, 9, 0A8h, 9
-                db 0B1h, 9, 0BAh, 9, 0C9h, 9, 0CEh, 9, 0DBh, 9, 1Ch, 0Ah
-                db 36h, 0Ah, 50h, 0Ah, 6Ah, 0Ah, 84h, 0Ah, 9Eh, 0Ah, 0B8h
-                db 0Ah, 0D2h, 0Ah, 0E2h, 0Ah, 0E7h, 0Ah, 3, 0Bh, 20h, 0Bh
-                db 2Ah, 0Bh, 33h, 0Bh, 3Ch, 0Bh, 5Bh, 0Bh, 93h, 0Bh, 0CCh
-                db 0Bh, 0D4h, 0Bh, 0DCh, 0Bh, 0E4h, 0Bh, 0ECh, 0Bh, 0F4h
-                db 0Bh, 0FCh, 0Bh, 4, 3 dup(0Ch), 14h, 0Ch, 1Ch, 0Ch, 24h
-                db 0Ch, 2Ch, 0Ch, 49h, 0Ch, 56h, 0Ch, 60h, 0Ch, 65h, 0Ch
-                db 76h, 0Ch, 7Eh, 0Ch, 83h, 0Ch, 0A1h, 0Ch, 0AAh, 0Ch
-                db 0B3h, 0Ch, 0C0h, 0Ch, 0C9h, 0Ch, 0D2h, 0Ch, 0DAh, 0Ch
-                db 0E7h, 0Ch, 0F1h, 0Ch, 0F9h, 0Ch, 1, 0Dh, 6, 0Dh, 0Bh
-                db 0Dh, 25h, 0Dh, 2Bh, 0Dh, 35h, 0Dh, 3Eh, 0Dh, 47h, 0Dh
-                db 56h, 0Dh, 65h, 0Dh, 7Dh, 0Dh, 82h, 0Dh, 8Bh, 0Dh, 0B3h
-                db 0Dh, 0BCh, 0Dh, 0C5h, 0Dh, 0D4h, 0Dh, 0ECh, 0Dh, 0F5h
-                db 0Dh, 0FEh, 0Dh, 0Bh, 0Eh, 14h, 0Eh, 1Dh, 0Eh, 2Ch, 0Eh
-                db 3Ah, 0Eh, 43h, 0Eh, 4Ch, 0Eh, 5Bh, 0Eh, 80h, 0Eh, 89h
-                db 0Eh, 92h, 0Eh, 0C5h, 0Eh, 0D8h, 0Eh, 2 dup(0Fh), 18h
-                db 0Fh, 21h, 0Fh, 43h, 0Fh, 50h, 0Fh, 59h, 0Fh, 62h, 0Fh
-                db 71h, 0Fh, 8Dh, 0Fh, 9Ah, 0Fh, 0A3h, 0Fh, 0ACh, 0Fh
-                db 0BBh, 0Fh, 0DDh, 0Fh, 0F0h, 0Fh, 0F9h, 0Fh, 2, 10h
-                db 1Eh, 10h, 2Bh, 10h, 34h, 10h, 3Dh, 10h, 4Ah, 10h, 53h
-                db 10h, 5Ch, 10h, 7Dh, 10h, 86h, 10h, 8Fh, 10h, 0AAh, 10h
-                db 0BDh
-                db 10h, 0C6h, 10h, 0CFh, 10h, 0E8h, 10h, 0F0h, 10h, 0F8h
-                db 10h, 0, 11h, 5, 11h, 0Ah, 11h, 12h, 11h, 1Ah, 11h, 1Fh
-                db 11h, 2Ch, 11h, 36h, 11h, 3Bh, 11h, 4Ch, 11h, 59h, 11h
-                db 63h, 11h, 68h, 11h, 9Fh, 11h, 0A8h, 11h, 0B1h, 11h
-                db 0C0h, 11h, 0D4h, 11h, 0DDh, 11h, 0E6h, 11h, 0F1h, 11h
-                db 10h, 12h, 27h, 12h, 3Ah, 12h, 44h, 12h, 4Eh, 12h, 57h
-                db 12h, 60h, 12h, 65h, 12h, 74h, 12h, 0A1h, 12h, 1Dh, 13h
-                db 26h, 13h, 2Fh, 13h, 41h, 13h, 46h, 13h, 5Eh, 13h, 77h
-                db 13h, 7Fh, 13h, 84h, 13h, 91h, 13h, 99h, 13h, 0C1h, 13h
-                db 0C9h, 13h, 0CEh, 13h, 0DBh, 13h, 0E3h, 13h, 0E8h, 13h
-                db 0FDh, 13h, 6, 14h, 71h, 14h, 0E3h, 14h, 5Eh, 15h, 7Ch
-                db 15h, 89h, 15h, 93h, 15h, 98h, 15h, 0A9h, 15h, 0B6h
-                db 15h, 0C0h, 15h, 0C5h, 15h, 17h, 16h, 0A9h, 16h, 0B6h
-                db 16h, 0C0h, 16h, 0C5h, 16h, 87h, 17h, 0E5h, 17h, 0FEh
-                db 17h, 0Bh, 18h, 15h, 18h, 20h, 18h, 25h, 18h, 2Ah, 18h
-                db 2Fh, 18h, 58h, 18h, 60h, 18h, 65h, 18h, 7Dh, 18h, 8Ah
-                db 18h, 94h, 18h, 99h, 18h, 0D4h, 18h, 0D9h, 18h, 0E0h
-                db 18h, 4, 19h, 0Eh, 19h, 16h, 19h, 1Eh, 19h, 26h, 19h
-                db 2Eh, 19h, 36h, 19h, 3Bh, 19h, 43h, 19h, 48h, 19h, 50h
-                db 19h, 55h, 19h, 5Ah, 19h, 65h, 19h, 72h, 19h, 7Ch, 19h
-                db 81h, 19h, 93h, 19h, 9Dh, 19h, 0A5h, 19h, 0ADh, 19h
-                db 0B2h, 19h, 0B7h, 19h, 0C7h, 19h, 0D0h, 19h, 0D9h, 19h
-                db 0F0h, 19h, 0F9h, 19h, 2, 1Ah, 1Eh, 1Ah, 28h, 1Ah, 32h
-                db 1Ah, 3Bh, 1Ah, 44h, 1Ah, 53h, 1Ah, 7Ch, 1Ah, 89h, 1Ah
-                db 93h, 1Ah, 98h, 1Ah, 0CCh, 1Ah, 0E6h, 1Ah, 0F3h, 1Ah
-                db 0FDh, 1Ah, 2, 1Bh, 28h, 1Bh, 35h, 1Bh, 3Fh, 1Bh, 44h
-                db 1Bh, 6Ch, 1Bh, 82h, 1Bh, 8Fh, 1Bh, 99h, 1Bh, 9Eh, 1Bh
-                db 0C9h, 1Bh, 0D6h, 1Bh, 0E0h, 1Bh, 0E5h, 1Bh, 0F7h, 1Bh
-                db 0FDh, 1Bh, 7, 3 dup(1Ch), 26h, 1Ch, 2Fh, 1Ch, 38h, 1Ch
-                db 45h, 1Ch, 5Ch, 1Ch, 65h, 1Ch, 6Eh, 1Ch, 7Bh, 1Ch, 80h
-                db 1Ch, 8Dh, 1Ch, 97h, 1Ch, 0A0h, 1Ch, 0A9h, 1Ch, 0B1h
-                db 1Ch, 0B6h, 1Ch, 0D4h, 1Ch, 0DCh, 1Ch, 0E4h, 1Ch, 0ECh
-                db 1Ch, 0F1h, 1Ch, 0F9h, 1Ch, 1, 1Dh, 9, 1Dh, 0Eh, 1Dh
-                db 1Bh, 1Dh, 23h, 1Dh, 38h, 1Dh, 45h, 1Dh, 4Fh, 1Dh, 54h
-                db 1Dh, 65h, 1Dh, 6Dh, 1Dh, 75h, 1Dh, 82h, 1Dh, 8Ch, 1Dh
-                db 94h, 1Dh, 99h, 1Dh, 0A1h, 1Dh, 0A6h, 1Dh, 0ABh, 1Dh
-                db 0B3h, 1Dh, 0CAh, 1Dh, 0CFh, 1Dh, 0D7h, 1Dh, 0DFh, 1Dh
-                db 0E7h, 1Dh, 0ECh, 1Dh, 0F1h, 1Dh, 0F6h, 1Dh, 2Ch, 1Eh
-                db 32h, 1Eh, 3Ch, 1Eh, 51h, 1Eh, 5Bh, 1Eh, 64h, 1Eh, 6Dh
-                db 1Eh, 84h, 1Eh, 8Dh, 1Eh, 96h, 1Eh, 0A3h, 1Eh, 0A9h
-                db 1Eh, 0B3h, 1Eh, 0BDh, 1Eh, 0C3h, 1Eh, 0CDh, 1Eh, 0D6h
-                db 1Eh, 0DFh, 1Eh, 0EFh, 1Eh, 16h, 1Fh, 23h, 1Fh, 2Ch
-                db 1Fh, 35h, 1Fh, 57h, 1Fh, 61h, 1Fh, 69h, 1Fh, 71h, 1Fh
-                db 76h, 1Fh, 81h, 1Fh, 8Eh, 1Fh, 98h, 1Fh, 9Dh, 1Fh, 0AEh
-                db 1Fh, 0B6h, 1Fh, 0BBh, 1Fh, 0D3h, 1Fh, 0DBh, 1Fh, 0E3h
-                db 1Fh, 0F1h, 1Fh, 0FEh, 1Fh, 8, 20h, 0Dh, 20h, 28h, 20h
-                db 5Eh, 20h, 66h, 20h, 73h, 20h, 7Dh, 20h, 82h, 20h, 0B5h
-                db 20h, 0D4h, 20h, 0DDh, 20h, 0E6h, 20h, 0F3h, 20h, 0FCh
-                db 20h, 5, 21h, 23h, 21h, 2Ch
-                db 21h, 35h, 21h, 41h, 21h, 4Bh, 21h, 60h, 21h, 6Ah, 21h
-                db 73h, 21h, 7Ch, 21h, 89h, 21h, 0A0h, 21h, 0ADh, 21h
-                db 0B6h, 21h, 0BFh, 21h, 0CCh, 21h, 0D6h, 21h, 0E0h, 21h
-                db 0E9h, 21h, 0F2h, 21h, 5Dh, 22h, 66h, 22h, 6Fh, 22h
-                db 86h, 22h, 8Fh, 22h, 98h, 22h, 0A5h, 22h, 0AEh, 22h
-                db 0B7h, 22h, 0C8h, 22h, 0D7h, 22h, 0E4h, 22h, 0EEh, 22h
-                db 0F3h, 22h, 5, 23h, 0Fh, 23h, 17h, 23h, 1Fh, 23h, 24h
-                db 23h, 29h, 23h, 4Bh, 23h, 58h, 23h, 62h, 23h, 67h, 23h
-                db 76h, 23h, 9Eh, 23h, 0ABh, 23h, 0B5h, 23h, 0BAh, 23h
-                db 0CDh, 23h, 0DAh, 23h, 0E4h, 23h, 0E9h, 23h, 2, 24h
-                db 0Fh, 24h, 19h, 24h, 21h, 24h, 26h, 24h, 2Bh, 24h, 30h
-                db 24h, 35h, 24h, 6Dh, 24h, 0A4h, 24h, 0ACh, 24h, 0B1h
-                db 24h, 0CBh, 24h, 0D3h, 24h, 0D8h, 24h, 0DDh, 24h, 17h
-                db 25h, 3Eh, 25h, 4Bh, 25h, 55h, 25h, 5Dh, 25h, 65h, 25h
-                db 6Ah, 25h, 81h, 25h, 86h, 25h, 8Bh, 25h, 90h, 25h, 0C2h
-                db 25h, 0DCh, 25h, 0E5h, 25h, 0EEh, 25h, 0F3h, 25h, 15h
-                db 26h, 1Fh, 26h, 28h, 26h, 31h, 26h, 3Fh, 26h, 48h, 26h
-                db 51h, 26h, 60h, 26h, 75h, 26h, 8Bh, 26h, 0C6h, 26h, 0E7h
-                db 26h, 14h, 27h, 50h, 27h, 6Fh, 27h, 78h, 27h, 90h, 27h
-                db 9Ah, 27h, 0B3h, 27h, 0BDh, 27h, 0C6h, 27h, 0CFh, 27h
-                db 0EDh, 27h, 0FAh, 27h, 3, 28h, 0Ch, 28h, 15h, 28h, 4Bh
-                db 28h, 53h, 28h, 5Eh, 28h, 63h, 28h, 68h, 28h, 80h, 28h
-                db 9Ah, 28h, 0A2h, 28h, 0A7h, 28h, 0ACh, 28h, 0B5h, 28h
-                db 0BAh, 28h, 0D0h, 28h, 0D9h, 28h, 0E2h, 28h, 0EFh, 28h
-                db 0F8h, 28h, 1, 29h, 2Fh, 29h, 42h, 29h, 48h, 29h, 52h
-                db 29h, 5Bh, 29h, 64h, 29h, 7Eh, 29h, 87h, 29h, 90h, 29h
-                db 98h, 29h, 0ABh, 29h, 0B4h, 29h, 0BDh, 29h, 0C2h, 29h
-                db 0C7h, 29h, 0E1h, 29h, 0EAh, 29h, 0F3h, 29h, 6, 2Ah
-                db 13h, 2Ah, 1Dh, 2Ah, 22h, 2Ah, 3Ah, 2Ah, 51h, 2Ah, 5Eh
-                db 2Ah, 68h, 2Ah, 72h, 2Ah, 7Bh, 2Ah, 84h, 2Ah, 91h, 2Ah
-                db 9Ah, 2Ah, 0A3h, 2Ah, 0C6h, 2Ah, 0D0h, 2Ah, 0D9h, 2Ah
-                db 0E2h, 2Ah, 0EFh, 2Ah, 6, 2Bh, 0Fh, 2Bh, 1Ch, 2Bh, 25h
-                db 2Bh, 2Eh, 2Bh, 39h, 2Bh, 46h, 2Bh, 50h, 2Bh, 55h, 2Bh
-                db 73h, 2Bh, 85h, 2Bh, 95h, 2Bh, 9Dh, 2Bh, 0A2h, 2Bh, 0AFh
-                db 2Bh, 0B9h, 2Bh, 0BEh, 2Bh, 0E8h, 2Bh, 0F2h, 2Bh, 0FAh
-                db 2Bh, 2, 2Ch, 7, 2Ch, 3Fh, 2Ch, 4Ch, 2Ch, 56h, 2Ch, 5Eh
-                db 2Ch, 63h, 2Ch, 6Bh, 2Ch, 70h, 2Ch, 80h, 2Ch, 89h, 2Ch
-                db 92h, 2Ch, 9Bh, 2Ch, 0A5h, 2Ch, 0AFh, 2Ch, 0B5h, 2Ch
-                db 0BFh, 2Ch, 0C9h, 2Ch, 0D2h, 2Ch, 0DBh, 2Ch, 0EDh, 2Ch
-                db 0F5h, 2Ch, 0, 2Dh, 8, 2Dh, 0Dh, 2Dh, 18h, 2Dh, 20h
-                db 2Dh, 28h, 2Dh, 35h, 2Dh, 3Fh, 2Dh, 44h, 2Dh, 56h, 2Dh
-                db 60h, 2Dh, 68h, 2Dh, 70h, 2Dh, 75h, 2Dh, 7Dh, 2Dh, 8Ah
-                db 2Dh, 94h, 2Dh, 9Ch, 2Dh, 0A1h, 2Dh, 0A9h, 2Dh, 0AEh
-                db 2Dh, 0BEh, 2Dh, 0C4h, 2Dh, 0CEh, 2Dh, 0D7h, 2Dh, 0E0h
-                db 2Dh, 0EDh, 2Dh, 0F3h, 2Dh, 0FDh, 2Dh, 7, 2Eh, 10h, 2Eh
-                db 19h, 2Eh, 24h, 2Eh, 2Ch, 2Eh, 34h, 2Eh, 3Ch, 2Eh, 44h
-                db 2Eh, 0A6h, 2Eh, 0B3h, 2Eh, 0BDh, 2Eh, 0C2h, 2Eh, 0FAh
-                db 2Eh, 7, 2Fh, 11h, 2Fh, 19h, 2Fh, 1Eh, 2Fh, 23h, 2Fh
-                db 2Bh, 2Fh, 33h, 2Fh, 3Bh
-                db 2Fh, 43h, 2Fh, 48h, 2Fh, 55h, 2Fh, 5Dh, 2Fh, 65h, 2Fh
-                db 6Ah, 2Fh, 71h, 2Fh, 8Ch, 2Fh, 9Ah, 2Fh, 0A8h, 2Fh, 0B6h
-                db 2Fh, 0C4h, 2Fh, 0D2h, 2Fh, 0DCh, 2Fh, 0E5h, 2Fh, 0EEh
-                db 2Fh, 6, 30h, 10h, 30h, 16h, 30h, 20h, 30h, 2Ah, 30h
-                db 33h, 30h, 3Ch, 30h, 76h, 30h, 8Ch, 30h, 96h, 30h, 9Eh
-                db 30h, 0A3h, 30h, 0ABh, 30h, 0B0h, 30h, 0B8h, 30h, 0BDh
-                db 30h, 0CDh, 30h, 0D6h, 30h, 0DFh, 30h, 0ECh, 30h, 0F2h
-                db 30h, 0FCh, 30h, 6, 31h, 0Fh, 31h, 18h, 31h, 2Bh, 31h
-                db 57h, 31h, 8Fh, 31h, 99h, 31h, 0A3h, 31h, 0ACh, 31h
-                db 0B5h, 31h, 0BBh, 31h, 0E8h, 31h, 0EDh, 31h, 0FEh, 31h
-                db 11h, 32h, 50h, 32h, 66h, 32h, 78h, 32h, 85h, 32h, 8Fh
-                db 32h, 94h, 32h, 0A6h, 32h, 0AFh, 32h, 0B8h, 32h, 0C6h
-                db 32h, 0CFh, 32h, 0D8h, 32h, 0E6h, 32h, 0EFh, 32h, 0F8h
-                db 32h, 10h, 33h, 19h, 33h, 22h, 33h, 31h, 33h, 44h, 33h
-                db 4Ch, 33h, 54h, 33h, 5Ch, 33h, 64h, 33h, 6Ch, 33h, 77h
-                db 33h, 7Fh, 33h, 87h, 33h, 8Ch, 33h, 94h, 33h, 9Ch, 33h
-                db 0A1h, 33h, 0A9h, 33h, 0AEh, 33h, 0B6h, 33h, 0BEh, 33h
-                db 0CBh, 33h, 0D5h, 33h, 0DDh, 33h, 0E5h, 33h, 0EAh, 33h
-                db 0EFh, 33h, 0FBh, 33h, 3, 34h, 0Bh, 34h, 13h, 34h, 1Bh
-                db 34h, 23h, 34h, 33h, 34h, 3Bh, 34h, 43h, 34h, 48h, 34h
-                db 50h, 34h, 58h, 34h, 60h, 34h, 65h, 34h, 6Ah, 34h, 77h
-                db 34h, 81h, 34h, 89h, 34h, 91h, 34h, 96h, 34h, 9Bh, 34h
-                db 0A7h, 34h, 0AFh, 34h, 0B4h, 34h, 0BFh, 34h, 0C7h, 34h
-                db 0CCh, 34h, 0D9h, 34h, 0DEh, 34h, 0E9h, 34h, 0F6h, 34h
-                db 0, 35h, 8, 35h, 10h, 35h, 15h, 35h, 1Ah, 35h, 1Fh, 35h
-                db 49h, 35h, 55h, 35h, 5Ah, 35h, 5Fh, 35h, 7Dh, 35h, 87h
-                db 35h, 8Fh, 35h, 94h, 35h, 99h, 35h, 9Eh, 35h, 0CCh, 35h
-                db 0D6h, 35h, 0E6h, 35h, 0F0h, 35h, 0FAh, 35h, 3, 36h
-                db 0Ch, 36h, 30h, 36h, 38h, 36h, 40h, 36h, 45h, 36h, 4Ah
-                db 36h, 6Bh, 36h, 7Ah, 36h, 0B6h, 36h, 0D0h, 36h, 0D9h
-                db 36h, 0E2h, 36h, 0F0h, 36h, 0F9h, 36h, 2, 37h, 8, 37h
-                db 0Dh, 37h, 21h, 37h, 3Fh, 37h, 49h, 37h, 53h, 37h, 5Ch
-                db 37h, 65h, 37h, 6Fh, 37h, 8Dh, 37h, 97h, 37h, 0A1h, 37h
-                db 0ABh, 37h, 0B4h, 37h, 0BDh, 37h, 0CBh, 37h, 0D9h, 37h
-                db 0E7h, 37h, 0F5h, 37h, 3, 38h, 11h, 38h, 1Fh, 38h, 2Dh
-                db 38h, 3Bh, 38h, 48h, 38h, 56h, 38h, 63h, 38h, 71h, 38h
-                db 7Eh, 38h, 0A1h, 38h, 0ABh, 38h, 0B5h, 38h, 0BEh, 38h
-                db 0C7h, 38h, 0D4h, 38h, 0EEh, 38h, 6, 39h, 19h, 39h, 2Dh
-                db 39h, 58h, 39h, 6Ch, 39h, 79h, 39h, 8Dh, 39h, 9Ah, 39h
-                db 5Eh, 3Ah, 63h, 3Ah, 0ADh, 3Ah, 0B7h, 3Ah, 0C1h, 3Ah
-                db 0CAh, 3Ah, 0D3h, 3Ah, 0FEh, 3Ah, 0Bh, 3Bh, 15h, 3Bh
-                db 1Dh, 3Bh, 22h, 3Bh, 2Fh, 3Bh, 34h, 3Bh, 39h, 3Bh, 45h
-                db 3Bh, 52h, 3Bh, 5Bh, 3Bh, 64h, 3Bh, 6Fh, 3Bh, 77h, 3Bh
-                db 7Fh, 3Bh, 8Ch, 3Bh, 96h, 3Bh, 9Eh, 3Bh, 0A3h, 3Bh, 0A8h
-                db 3Bh, 0B6h, 3Bh, 0BBh, 3Bh, 0C0h, 3Bh, 0CCh, 3Bh, 0DCh
-                db 3Bh, 0E5h, 3Bh, 0EEh, 3Bh, 12h, 3Ch, 1Bh, 3Ch, 24h
-                db 3 dup(3Ch), 45h, 3Ch, 4Eh, 3Ch, 5Eh, 3Ch, 6Dh, 3Ch
-                db 0DAh, 3Ch, 0F4h, 3Ch, 0F9h, 3Ch, 1Dh, 3Dh, 26h, 3Dh
-                db 2Fh, 3 dup(3Dh), 54h, 3Dh, 61h
-                db 3Dh, 6Bh, 3Dh, 75h, 3Dh, 7Eh, 3Dh, 87h, 3Dh, 96h, 3Dh
-                db 9Eh, 3Dh, 0A3h, 3Dh, 0AEh, 3Dh, 0B3h, 3Dh, 0BBh, 3Dh
-                db 0C3h, 3Dh, 0C8h, 3Dh, 0D0h, 3Dh, 0E4h, 3Dh, 0ECh, 3Dh
-                db 4, 3Eh, 0Eh, 3Eh, 17h, 3Eh, 20h, 3Eh, 38h, 3Eh, 42h
-                db 3Eh, 4Ch, 3Eh, 55h, 3Eh, 5Eh, 3Eh, 66h, 3Eh, 73h, 3Eh
-                db 7Dh, 3Eh, 82h, 3Eh, 94h, 3Eh, 9Dh, 3Eh, 0A6h, 3Eh, 0B5h
-                db 3Eh, 0C0h, 3Eh, 0C8h, 3Eh, 0D0h, 3Eh, 0D8h, 3Eh, 0DDh
-                db 3Eh, 0EAh, 3Eh, 0F4h, 3Eh, 0FCh, 3Eh, 4, 3Fh, 9, 3Fh
-                db 0Eh, 3Fh, 41h, 3Fh, 4Bh, 3Fh, 53h, 3Fh, 5Bh, 3Fh, 63h
-                db 3Fh, 68h, 3Fh, 70h, 3Fh, 75h, 3Fh, 8Ch, 3Fh, 99h, 3Fh
-                db 0A3h, 3Fh, 0ABh, 3Fh, 0B0h, 3Fh, 0B5h, 3Fh, 0C5h, 3Fh
-                db 0CBh, 3Fh, 0D5h, 3Fh, 0DFh, 3Fh, 0E8h, 3Fh, 0F1h, 3Fh
-                db 0, 40h, 52h, 40h, 5Ch, 40h, 66h, 40h, 6Fh, 40h, 78h
-                db 40h, 87h, 40h, 9Ah, 40h, 0A5h, 40h, 0E3h, 40h, 0EBh
-                db 40h, 0F3h, 40h, 0F8h, 40h, 3, 41h, 0Bh, 41h, 10h, 41h
-                db 1Dh, 41h, 27h, 41h, 2Ch, 41h, 49h, 41h, 52h, 41h, 5Bh
-                db 41h, 78h, 41h, 81h, 41h, 94h, 41h, 0A1h, 41h, 0B8h
-                db 41h, 0C1h, 41h, 0CEh, 41h, 0D7h, 41h, 0E0h, 41h, 0Dh
-                db 42h, 3Ah, 42h, 47h, 42h, 51h, 42h, 59h, 42h, 61h, 42h
-                db 69h, 42h, 6Eh, 42h, 73h, 42h, 78h, 42h, 7Dh, 42h, 9Fh
-                db 42h, 0A7h, 42h, 0AFh, 42h, 0BCh, 42h, 0C2h, 42h, 0CCh
-                db 42h, 0D6h, 42h, 0DFh, 42h, 0E8h, 42h, 0F0h, 42h, 0F8h
-                db 42h, 0Ah, 43h, 12h, 43h, 17h, 43h, 1Fh, 43h, 2Ch, 43h
-                db 36h, 43h, 3Bh, 43h, 59h, 43h, 86h, 43h, 93h, 43h, 9Dh
-                db 43h, 0A2h, 43h, 0E9h, 43h, 8, 44h, 12h, 44h, 1Ah, 44h
-                db 22h, 44h, 2Ah, 44h, 2Fh, 44h, 37h, 44h, 3Ch, 44h, 41h
-                db 44h, 51h, 44h, 57h, 44h, 61h, 44h, 6Bh, 44h, 74h, 44h
-                db 7Dh, 44h, 0B2h, 44h, 0BCh, 44h, 0D1h, 44h, 0DBh, 44h
-                db 0E5h, 44h, 0EEh, 44h, 0F7h, 44h, 20h, 45h, 2Eh, 45h
-                db 37h, 45h, 40h, 45h, 57h, 45h, 60h, 45h, 69h, 45h, 81h
-                db 45h, 8Bh, 45h, 95h, 45h, 9Eh, 45h, 0A7h, 45h, 0D6h
-                db 45h, 0E8h, 45h, 23h, 46h, 2Dh, 46h, 40h, 46h, 4Dh, 46h
-                db 57h, 46h, 61h, 46h, 6Ah, 46h, 73h, 46h, 80h, 46h, 8Ah
-                db 46h, 94h, 46h, 0B1h, 46h, 0BAh, 46h, 0C7h, 46h, 0D0h
-                db 46h, 0D9h, 46h, 0E6h, 46h, 4, 47h, 0Dh, 47h, 3Bh, 47h
-                db 6Fh, 47h, 7Ch, 47h, 85h, 47h, 8Eh, 47h, 9Bh, 47h, 0B8h
-                db 47h, 0C1h, 47h, 0F6h, 47h, 0FFh, 47h, 8, 48h, 15h, 48h
-                db 22h, 48h, 2Bh, 48h, 56h, 48h, 76h, 48h, 0DAh, 48h, 0E2h
-                db 48h, 0E7h, 48h, 0F4h, 48h, 0FCh, 48h, 4, 49h, 0Ch, 49h
-                db 11h, 49h, 1Eh, 49h, 26h, 49h, 2Bh, 49h, 55h, 49h, 5Ah
-                db 49h, 69h, 49h, 0E1h, 49h, 0FBh, 49h, 1Ch, 4Ah, 49h
-                db 4Ah, 64h, 4Ah, 7Fh, 4Ah, 0A4h, 4Ah, 0D2h, 4Ah, 0FFh
-                db 4Ah, 18h, 4Bh, 47h, 4Bh, 5Eh, 4Bh, 6Dh, 4Bh, 7Ch, 4Bh
-                db 87h, 4Bh, 93h, 4Bh, 0C8h, 4Bh, 0D6h, 4Bh, 0DBh, 4Bh
-                db 0BBh, 4Ch, 0D7h, 4Ch, 0E5h, 4Ch, 5Ah, 4Eh, 68h, 4Eh
-                db 9Ch, 4Eh, 0AAh, 4Eh, 0EAh, 4Eh, 0Bh, 50h, 10h, 50h
-                db 1Eh, 50h, 6Dh, 50h, 7Bh, 50h, 0A3h, 50h, 0D2h, 50h
-                db 0E0h, 50h, 5Ch, 51h, 6Ah, 51h, 0AFh, 51h, 0BDh, 51h
-                db 0CBh, 51h, 0FCh, 51h, 35h
-                db 52h, 6Ch, 52h, 8Bh, 52h, 0AFh, 52h, 0EDh, 52h, 48h
-                db 54h, 75h, 55h, 96h, 55h, 9Bh, 55h, 0A9h, 55h, 0A8h
-                db 57h, 0B6h, 57h, 0BBh, 57h, 0D1h, 57h, 0D6h, 57h, 0E4h
-                db 57h, 80h, 58h, 9Ch, 58h, 0C2h, 58h, 0CDh, 58h, 0E1h
-                db 58h, 0E6h, 58h, 0F4h, 58h, 22h, 59h, 8Ch, 59h, 0EDh
-                db 59h, 0F6h, 59h, 0FFh, 59h, 2Ch, 5Ah, 36h, 5Ah, 3Eh
-                db 5Ah, 43h, 5Ah, 4Bh, 5Ah, 50h, 5Ah, 0A6h, 5Ah, 0B2h
-                db 5Ah, 0BAh, 5Ah, 0C2h, 5Ah, 0D0h, 5Ah, 0DEh, 5Ah, 0E7h
-                db 5Ah, 13h, 5Bh, 2Bh, 5Bh, 0A2h, 5Bh, 0ABh, 5Bh, 0B4h
-                db 5Bh, 0CCh, 5Bh, 0DFh, 5Bh, 0E8h, 5Bh, 0F1h, 5Bh, 0FFh
-                db 5Bh, 2Fh, 5Ch, 37h, 5Ch, 3Fh, 5Ch, 44h, 5Ch, 66h, 5Ch
-                db 6Eh, 5Ch, 7Bh, 5Ch, 85h, 5Ch, 8Ah, 5Ch, 8Fh, 5Ch, 0A0h
-                db 5Ch, 0AEh, 5Ch, 0BCh, 5Ch, 0DFh, 5Ch, 0ECh, 5Ch, 0F5h
-                db 5Ch, 0FEh, 5Ch, 0Ch, 5Dh, 1Ah, 5Dh, 1Fh, 5Dh, 2Ch, 5Dh
-                db 35h, 5Dh, 3Eh, 5Dh, 4Ch, 5Dh, 5Ah, 5Dh, 67h, 5Dh, 70h
-                db 5Dh, 79h, 5Dh, 86h, 5Dh, 8Fh, 5Dh, 98h, 5Dh, 0A5h, 5Dh
-                db 0AEh, 5Dh, 0B7h, 5Dh, 0C5h, 5Dh, 0D0h, 5Dh, 0DEh, 5Dh
-                db 0F6h, 5Dh, 0Eh, 5Eh, 38h, 5Eh, 52h, 5Eh, 5Ah, 5Eh, 62h
-                db 5Eh, 67h, 5Eh, 75h, 5Eh, 7Ah, 5Eh, 88h, 5Eh, 8, 5Fh
-                db 16h, 5Fh, 63h, 5Fh, 9Ah, 5Fh, 0A8h, 5Fh, 28h, 60h, 36h
-                db 60h, 85h, 60h, 93h, 60h, 38h, 61h, 69h, 61h, 0A0h, 61h
-                db 0A5h, 61h, 0B3h, 61h, 0CAh, 61h, 0D4h, 61h, 0DCh, 61h
-                db 0F4h, 61h, 1, 62h, 6, 62h, 10h, 62h, 18h, 62h, 1Dh
-                db 62h, 22h, 62h, 38h, 62h, 3Dh, 62h, 47h, 62h, 4Fh, 62h
-                db 54h, 62h, 59h, 62h, 6Fh, 62h, 74h, 62h, 7Eh, 62h, 86h
-                db 62h, 8Bh, 62h, 90h, 62h, 0A6h, 62h, 2, 63h, 0Fh, 63h
-                db 28h, 63h, 32h, 63h, 4Eh, 63h, 57h, 63h, 70h, 63h, 76h
-                db 63h, 80h, 63h, 90h, 63h, 9Ah, 63h, 0A7h, 63h, 0B1h
-                db 63h, 6, 64h, 0Eh, 64h, 16h, 64h, 29h, 64h, 2Eh, 64h
-                db 3Dh, 64h, 52h, 64h, 59h, 64h, 63h, 64h, 73h, 64h, 80h
-                db 64h, 89h, 64h, 92h, 64h, 9Fh, 64h, 0A8h, 64h, 0B1h
-                db 64h, 0C8h, 64h, 0D2h, 64h, 0DBh, 64h, 0E4h, 64h, 0FBh
-                db 64h, 5, 65h, 0Eh, 65h, 17h, 65h, 25h, 65h, 2Bh, 65h
-                db 35h, 65h, 3Eh, 65h, 47h, 65h, 5Eh, 65h, 75h, 65h, 82h
-                db 65h, 8Bh, 65h, 94h, 65h, 0ABh, 65h, 0B4h, 65h, 0CBh
-                db 65h, 0D5h, 65h, 0E2h, 65h, 0EBh, 65h, 16h, 66h, 20h
-                db 66h, 38h, 66h, 57h, 66h, 5Eh, 66h, 68h, 66h, 92h, 66h
-                db 9Bh, 66h, 0A4h, 66h, 0B1h, 66h, 0BFh, 66h, 0D4h, 66h
-                db 0DBh, 66h, 0E5h, 66h, 0FBh, 66h, 26h, 67h, 34h, 67h
-                db 3Eh, 67h, 48h, 67h, 58h, 67h, 81h, 67h, 8Bh, 67h, 95h
-                db 67h, 9Eh, 67h, 0A7h, 67h, 0B0h, 67h, 0B9h, 67h, 0C2h
-                db 67h, 0CBh, 67h, 0D0h, 67h, 0D8h, 67h, 0D2h, 74h, 68h
-                db 75h, 86h, 75h, 6Eh, 0A6h, 5, 68h, 13h, 68h, 1Ch, 68h
-                db 25h, 68h, 3Ah, 68h, 43h, 68h, 4Dh, 68h, 56h, 68h, 60h
-                db 6Fh, 0DFh, 6Fh, 0F8h, 6Fh, 6Bh, 70h, 1Dh, 71h, 10h
-                db 72h, 8Dh, 72h, 0A1h, 72h, 1Eh dup(0)
-                db 24BBh dup(?)
-seg001          ends
+                db 1, 3 dup(0)
+                dw seg seg000
+                db 4 dup(0), 53h, 0
+                dw seg seg001
+                db 20h dup(0)
+seg003          ends
 
 ; ===========================================================================
 
 ; Segment type: Uninitialized
-seg002          segment byte stack 'STACK' use16
-                assume cs:seg002
+seg004          segment byte stack 'STACK' use16
+                assume cs:seg004
                 assume es:nothing, ss:nothing, ds:nothing, fs:nothing, gs:nothing
-                db 80h dup(?)
-seg002          ends
+                db 800h dup(?)
+seg004          ends
 
 
                 end start

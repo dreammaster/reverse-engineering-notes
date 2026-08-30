@@ -33,10 +33,17 @@ downstream is readable until `LEGLIB`'s entry points are mapped. `MENU`
 is small and makes a good pipeline shakedown / first consumer to
 validate the thunk-table → `LEGLIB` cross-reference.
 
-Rough size order of the rest (biggest engine payoff first): `OUT` →
-`DUN` → `TWNDR` → `CASDR` → `MUS` → minigames (`SDEFENDR`, `GMB1`,
-`GMB2`) → drivers (`CELDRV`, `STDRV`, `SAVER`) → `CONFIGUR` (standalone,
-not BASIC).
+Rough size order of the rest (biggest engine payoff first): `OUT` (done,
+2026-08-30) → `DUN` → `TWNDR` → `CASDR` → `MUS` → minigames (`SDEFENDR`,
+`GMB1`, `GMB2`) → drivers (`CELDRV`, `STDRV`, `SAVER`) → `CONFIGUR`
+(standalone, not BASIC).
+
+`DUN.EXE` / `TWNDR.EXE` / `CASDR.EXE` were UNP-unpacked in place
+(2026-08-30) and are ready to build — same pipeline as `out`
+(`idat -B` → `resolve_thunks` → `coerce_code` → `resolve_thunks` →
+`dump_strings` → `apply_renames_<m>`). Once `leglib.idb` gets more `B$…`
+names, re-run `resolve_rtm_leglib.py` to refresh `rtm_map.py` and the
+`-> name` comments propagate to every module.
 
 ## LEGLIB.EXE — open questions
 
@@ -100,20 +107,25 @@ not BASIC).
 
 ## OUT.EXE — open questions
 
-- [x] Build `out.idb` (2026-08-30). `seg000` BASIC code coerced to
-      99.7%, 0 bad insns, ~97 functions, 1308 run-time calls resolved to
-      `rt_*`. Thunk table embedded mid-`seg000`; frame selector `0x67E`
-      registered (no segment carve).
-- [~] Name the `seg000` functions. Done so far (`apply_renames_out.py`):
-      `out_entry` → `outInit` → `mainDispatch` (3.8 KB central loop),
-      `updateGameState` (dispatch on `ds:1F2Ah`), the `setFlag_*` /
-      `setMode_*` / `applyGameFlag` families. ~80 helpers still `sub_` —
-      OUT's DGROUP text is position-coded (no anchors), so each needs
-      tracing its `ds:` state vars + `rtm_*` pattern. Recurring shapes
-      catalogued in the `apply_renames_out.py` header.
+- [x] Build `out.idb` (2026-08-30). First built from the still-packed
+      `OUT.EXE` (unreliable — un-relocated far ptrs, BSS DGROUP), then
+      **rebuilt from the UNP-unpacked `OUT.EXE`**: 5 clean segments like
+      menu, `seg000` coerced to 100%, 0 bad insns, ~97 functions, 467
+      thunks (== menu namespace), 1297 run-time calls resolved. The
+      `apply_renames_out.py` EAs carried over (reloc-only packing =
+      byte-stable code).
+- [~] Name the `seg000` functions (`apply_renames_out.py`): ~40 done —
+      `out_entry` → `outInit` → `mainDispatch`, `quitOrTalk` (dispatch on
+      `ds:1F2Ah`), the `setFlag_*` / `setMode_*` / `applyGameFlag`
+      families, and ~25 from the decoded screen text (`doMovement`,
+      `creatureApproach`/`creatureAttack`, `enterLocation`, `buyFood`,
+      `shopBuy`, `chainTo{Town,Castle,Museum,Dungeon}`, `doAttackOrCast`,
+      `museumAccessPrompt`, …). ~55 helpers still `sub_` — need the `ds:`
+      state vars mapped. Recurring shapes in the `apply_renames_out.py`
+      header.
 - [x] Fixed the call-far fragmentation merge (2026-08-30) — was
-      orphaning ~3.8 KB (`mainDispatch` came out 15 bytes). Now merges
-      only truly-adjacent fragments + re-sweeps; 1 unowned byte left.
+      orphaning code when a fragment's successor wasn't adjacent. Now
+      merges only truly-adjacent fragments + re-sweeps.
 - [x] Decode the screen-string pool format (2026-08-30) — see
       [file-formats.md](file-formats.md#screen-string-pool-in-the-exe-not-a-file--decoded-2026-08-30).
       `dump_strings.py` recovers + annotates it; drove ~25 `out`

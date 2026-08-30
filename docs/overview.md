@@ -86,7 +86,7 @@ one place that pays off across every module.
 |---|---|---|---|---|
 | `leglib.idb` | `LEGLIB.EXE` | ~445 / 773 (14 real, rest `rtm_*` provisional) | 0 | 10 segments; `seg003` (53 KB) + `seg004` (18 KB) are the code, `seg007`/`seg008` the `bm*` graphics. Every int-3Fh run-time entry resolved; the 14 hot BASIC-runtime primitives named (`apply_renames_leglib.py`). |
 | `menu.idb` | `MENU.EXE` | 25 / 25 seg000 funcs (+ 467 `rt_*` thunks) | 0 | `seg000` coerced + fully named. Layout: `seg000` code, `seg001` thunk table, `seg002` RTM bootstrap, `seg003` DGROUP text, `seg004` stack. |
-| `out.idb` | `OUT.EXE` | ~40 / ~95 seg000 funcs (+ `rt_*` thunks) | 0 | Overworld/towns/dungeons engine; chains to `MUS`/`SAVER`/`TWNDR`/`CASDR`/`DUN`. `seg000` coerced to 99.7% (2026-08-30), 1 unowned code byte, 1308 run-time calls resolved. ~40 functions named (`doMovement`, `creatureAttack`, `shopBuy`, `chainTo*`, …) from the decoded screen text (`dump_strings.py`); ~55 helpers still `sub_`. Layout differs from menu — see below. |
+| `out.idb` | `OUT.EXE` | ~40 / ~95 seg000 funcs (+ `rt_*` thunks) | 0 | Overworld/towns/dungeons engine; chains to `MUS`/`SAVER`/`TWNDR`/`CASDR`/`DUN`. rebuilt from the UNP-unpacked OUT.EXE (5 clean segments like menu); `seg000` coerced to 100%, 1297 run-time calls resolved. ~40 functions named (`doMovement`, `creatureAttack`, `shopBuy`, `chainTo*`, …) from the decoded screen text (`dump_strings.py`); ~55 helpers still `sub_`. Layout matches menu (5 segments) after unpacking. |
 
 (Counts via `ida_scripts/identify.py -NoExport`; re-run any time as a
 sanity check.)
@@ -104,26 +104,31 @@ code. `menu.idb`:
 | `seg003` | `13F30`–`1A1B0` | DGROUP data. Text block (menu items, credits, instructions, "poor peasant on the world of Tarmalon…" intro, MML music strings, chained-EXE names) at offset `21D0h`+ (file `0x6ED2`–`0x7F10`). |
 | `seg004` | `1A1B0`–`1A9B0` | Stack. |
 
-`out.idb` merges more into fewer segments:
+`out.idb` (rebuilt from the **UNP-unpacked** `OUT.EXE`, 2026-08-30) has
+the same 5-segment layout as menu:
 
 | Seg | Range | Contents |
 |---|---|---|
-| `seg000` | `10000`–`181E0` | BASIC code (`10030`–`167F0`); the `int 3Fh` **thunk table embedded mid-segment** (`167F0`–`16E8C`, 470 entries); the RTM-loader stub + its `$`-terminated DOS messages (`16E8C`–`~748C`); then the **screen-string pool** (`~748C`–`81B0`, a DGROUP initialiser — see [file-formats.md](file-formats.md)). |
-| `seg001` | `181E0`–`1B3B0` | DGROUP — BSS at load time; the startup copies the string pool + engine state into it. |
-| `seg002` | `1B3B0`–`1B430` | Stack. |
+| `seg000` | `10000`–`167E0` | BASIC code (26 KB). Coerced to 100%. |
+| `seg001` | `167E0`–`16E80` | `int 3Fh` thunk table (467 entries — matches menu's namespace exactly). |
+| `seg002` | `16E80`–`174C0` | BC 6.0 EXE bootstrap + RTM loader. |
+| `seg003` | `174C0`–`1A690` | DGROUP — screen-string pool (`~0x2150`+, in place) + engine state. |
+| `seg004` | `1A690`–`1AE90` | Stack. |
 
-`OUT.EXE` (and `DUN`/`TWNDR`/`CASDR`/`CONFIGUR`) carry a "Packed file is
-corrupt" stub and have zero relocations — likely EXEPACK-style packed, or
-at least linked so DGROUP is BSS in the image and rebuilt at startup from
-the `seg000`-tail initialiser list. `idat -B` disassembles the code
-cleanly regardless. `MENU.EXE` is plain (909 relocs, DGROUP in `seg003`).
-[verify: run OUT.EXE through an unpacker and diff.]
+### Packing
 
-Because `out.exe`'s thunk table isn't its own segment, its `call far`
-operands use a frame selector (`0x67E`) IDA has no mapping for and would
-render `call far ptr 67Eh:472h`. `resolve_thunks.py` registers the
-selector→paragraph mapping (**not** a carved segment — that renumbers
-every later segment) so they resolve to `call far ptr rt_<key>`.
+`OUT` / `DUN` / `TWNDR` / `CASDR` ship **packed** — a "Packed file is
+corrupt" stub, `relocs=0`, entry `:0010`. The code/data payload is
+literal but the relocation table is compressed, so `idat -B` loads them
+raw with **no relocations applied** and the far-pointer segment words are
+wrong (and DGROUP is BSS). Unpack with `UNP.EXE` (via DOSBox) first.
+Paul unpacked all four in place in `C:\games\lota` on 2026-08-30
+(`OUT.EXE`: 37 KB → 49 KB, 0 → 1512 relocs, entry `:00DF`). Because the
+packing is reloc-only, the rebuilt `out.idb` is **byte-stable at the
+code EAs**, so the `apply_renames_out.py` entries carried straight over.
+`MENU.EXE` was already unpacked (a different packer, unpacked earlier);
+`LEGLIB.EXE` is plain (1392 relocs); `CONFIGUR.EXE` still packed (skip —
+standalone C util).
 
 Segment names/numbers are **not** renamed or restructured — Paul
 correlates them with the DOSBox debugger at runtime (sibling `ultima1`
@@ -307,20 +312,22 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   `resolve_thunks.py` / `coerce_code.py` / `profile_module.py` (deleted
   `resolve_thunks.py`, `coerce_code.py`, `dump_thunk_table.py`,
   `profile_seg000_menu.py`). Verified menu output unchanged.
-- **2026-08-30** — Built `out.idb` (OUT.EXE, overworld engine). `-B` from
-  a copy of `OUT.EXE`, then the generic pipeline. `seg000` BASIC code
-  coerced to **99.7%**, 0 bad insns, ~97 functions, 1308 run-time calls
-  resolved to `rt_*` (thunk table is embedded mid-`seg000`; frame
-  selector `0x67E` registered so they render as `call far ptr rt_C2`).
-  All 22 module `CALL` targets sit before the table; the post-table
-  RTM-loader stub is not swept. Functions still mostly `sub_` — naming
-  is the next task. A few large functions look over-merged by the
-  call-far fragmentation merge (`sub_13C60` is a widely-called central
-  helper) — worth a tuning pass.
-- Next: (a) name the `out.idb` functions (lean on `rtm_*` call patterns +
-  data-file / chained-EXE refs — OUT's DGROUP text is position-coded, not
-  plain); (b) rank/attach real `B$…` names to the hot `rtm_*` — `rtm_F0`
-  is the BASIC SUB prologue, `rtm_EC`/`rtm_ED` the call/return pair,
-  `rtm_C2` string assign, `rtm_FE26` text blit, `rtm_FE3E`/`3F`/`42`
-  window/box; (b) mark up the `seg003:21D0h` text block as strings;
-  (c) build `out.idb` / `dun.idb`, confirm the shared namespace.
+- **2026-08-30** — Built `out.idb` (OUT.EXE, overworld engine). First
+  from the still-packed `OUT.EXE` — worked well enough to decode the
+  thunks / strings / ~40 functions, but the far pointers were
+  un-relocated and DGROUP was BSS. Paul then **UNP-unpacked** OUT/DUN/
+  TWNDR/CASDR in place; `out.idb` rebuilt from the unpacked `OUT.EXE`:
+  5 clean segments like menu, `seg000` **100%** coerced, 0 bad insns,
+  ~97 functions, 467 thunks (== menu's namespace), 1297 run-time calls
+  resolved. The `apply_renames_out.py` EAs carried over unchanged
+  (reloc-only packing → byte-stable code).
+- **2026-08-30** — Decoded the screen-string pool format
+  ([file-formats.md](file-formats.md#screen-string-pool-in-the-exe-not-a-file--decoded-2026-08-30));
+  `dump_strings.py` recovers + annotates it. Named ~14 LEGLIB runtime
+  primitives (`basProcEnter`/`Leave`, `basStrAssign`, …,
+  `apply_renames_leglib.py`) and ~40 `out` functions (`doMovement`,
+  `creatureAttack`, `shopBuy`, `chainTo*`, `museumAccessPrompt`, …).
+- Next: (a) build `dun.idb` / `twndr.idb` / `casdr.idb` (unpacked, ready
+  — same pipeline); (b) map `out`'s `ds:` engine state vars to name the
+  remaining ~55 helpers; (c) continue the `rtm_*` → `B$…` identification
+  in `leglib.idb` (the `FF4B`/`FF20`/… value-stack cluster next).

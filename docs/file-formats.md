@@ -75,23 +75,20 @@ db  length bytes       ; the raw text
 (db 00 or F4)          ; 0-1 byte, to word-align the next record
 ```
 
-Arrangement differs by how the module is linked:
+Once a module is unpacked (see [overview.md](overview.md#packing)) the
+pool **is** the DGROUP segment — for both menu (`seg003:~0x2150`+) and
+out (`seg003:~0x2150`+). `dgroup_ptr` is self-relative (the text is the
+4 bytes right after the descriptor); code does
+`mov ax,<descriptor_addr> / push ax / call basStrAssign`.
 
-- **`MENU.EXE`** (not EXEPACK'd) — the pool *is* the DGROUP segment
-  (`seg003`), starting ~`seg003:0x2150`. `dgroup_ptr` is self-relative
-  (points at the text 4 bytes after the descriptor). Code does
-  `mov ax,<descriptor_addr> / push ax / call basStrAssign`.
-- **`OUT.EXE`** and the other EXEPACK'd modules (`DUN`, `TWNDR`,
-  `CASDR`, `CONFIGUR`) — the pool sits in the **code segment's tail**
-  (`out`: `seg000:~0x748C`–`0x81B0`) as a DGROUP *initialiser* list. The
-  BASIC startup copies each record's text to `dgroup_ptr` in the (BSS)
-  DGROUP segment (`seg001`) and builds a 4-byte descriptor at
-  `dgroup_ptr − 4`. Code immediates are those `dgroup_ptr − 4` values.
+(In the *still-packed* image, DGROUP is BSS and the pool sits as an
+initialiser list in the code segment's tail with `dgroup_ptr` = the BSS
+destination — which is why the un-relocated far pointers and un-copied
+DGROUP made the packed `out.idb` unreliable. Unpack first.)
 
-`ida_scripts/dump_strings.py` walks the pool for either arrangement,
-maps each record to the code sites that reference it, and (with
-`ANNOTATE = True`) writes the text as an inline comment at each
-`mov reg,<dgrp>`.
+`ida_scripts/dump_strings.py` walks the pool, maps each record to the
+code sites that reference it, and (with `ANNOTATE = True`) writes the
+text as an inline comment at each `mov reg,<descriptor_addr>`.
 
 ### In-string control codes (interpreted by `drawString` / `rtm_FE26`)
 
@@ -116,7 +113,7 @@ Klonaris / Luzenski), SIMPLE INSTRUCTIONS / COMMANDS / CHARACTER
 MOVEMENT, character-management prompts, the "poor peasant on the world of
 Tarmalon" intro, MML music strings (`t120l4cl8ef…`).
 
-`OUT.EXE` `seg000:0x748C`+ (~140 records): overworld messages — terrain
+`OUT.EXE` `seg003:~0x2150`+ (~140 records): overworld messages — terrain
 ("GRASSLANDS", "A FOREST", "THE MOUNTAINS", "THE WATER"), travel/raft
 ("THE RAFT MUST STAY IN THE WATER.", "YOUR RAFT SINKS."), combat
 ("ATTACKED BY ", "YOUR ATTACK MISSES.", "ENEMY HIT BY BLOW OF "),
