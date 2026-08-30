@@ -238,6 +238,12 @@ reimplementation.
       `serviceMusic`, `delayWithMusic` / `waitKeyWithMusic` (tentative),
       `celAnimStep` / `blitCelFrame` (tentative). `sub_10777` is a NOP
       sled + `jmp` (dead).
+- [x] Map the CELDRV state vars (2026-08-31, `apply_dsvars_celdrv.py`;
+      DGROUP `seg003`). `storyLine` (20B2, the 0..999 line counter --
+      997 → credits), `celBank` (208A, 0..4), `celRelocBase` (208C),
+      `celFrame` (20BE, 1..5), `displayDuration` (20F8). No shared
+      LEGLIB slots -- CELDRV has no partyGold / hitPoints (pure
+      cinematic). The rest of DGROUP is drawString layout scratch.
 - [ ] Confirm this is *only* the ending — does `MUS`'s `chainToCel` ever
       invoke `CELDRV` for a mid-game exhibit animation, or is that path
       dead? (All 54 string records here are ending / credits content.)
