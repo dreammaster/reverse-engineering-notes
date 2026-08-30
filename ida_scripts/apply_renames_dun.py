@@ -76,6 +76,45 @@ RENAMES = [
     (0x13571, "loadDungeonLevel",
      'loads a dungeon level ("level", "monst" -- DUNM*.BSV / '
      'DUNMON*.BSV). ~0.7 KB, called from an init helper.'),
+
+    # --- 2nd pass: from the ds: engine state vars (apply_dsvars_dun.py)
+    #     + call graph ---
+    (0x12536, "processTileFeature",
+     'the per-turn tile / feature handler (~0.7 KB, called first from '
+     'dunMain). Walks a feature-name table (holds "POISON GAS VENT" / '
+     '"FLOOR HOLE" / "SLIME SPLOT" + a char-class table), updates '
+     'playerX / playerY / dungeonLevel / levelProgressFlags / '
+     'actionPhase, and branches on tileAhead.'),
+    (0x1320C, "moveMonsters",
+     'per-turn monster update loop (BASIC SUB) -- reads playerX / '
+     'playerY to step each monster and check reach. ~0.5 KB, called '
+     'from dunMain.'),
+    (0x12CE7, "stepMonsterToward",
+     'move one monster a step toward (playerX, playerY). TENTATIVE.'),
+    (0x1068D, "drawDungeonHud",
+     'draw the dungeon status line -- calls showHitPoints, formats the '
+     'level / feature text (reads dungeonLevel, featureUnderfoot).'),
+    (0x10CDB, "doLookSearch",
+     'the LOOK / SEARCH action: sets turnActionFlag, clears scanTile, '
+     'scans the surrounding tiles and reports (rtm_FE41). Called from '
+     'lookOrSearch.'),
+    (0x10CD2, "clearTurnFlag", "turnActionFlag := 0 (before a non-turn action)."),
+    (0x1305C, "rebuildLevelView",
+     'rebuild the level view after a climb / level change (descriptor '
+     'at ds:1E2Ah). Called only from climbDownOrExit. TENTATIVE.'),
+    (0x1393C, "updateLevelState",
+     'refresh per-level state (reads dungeonLevel + levelProgressFlags) '
+     '-- called after climbs, kills, and from processTileFeature. '
+     'TENTATIVE.'),
+    (0x12C34, "rollChestContents",
+     'decide what a chest holds (reads dungeonLevel + levelProgressFlags). '
+     'Called from openChest. TENTATIVE.'),
+    (0x1345D, "monsterSpecialAttack",
+     'monster special-attack resolution (called from monsterAttack). '
+     'TENTATIVE.'),
+    (0x1031C, "redrawDungeonView",
+     'repaint the dungeon viewport (called from climb / describe / '
+     'doAttack / the FE5B path). TENTATIVE.'),
 ]
 
 

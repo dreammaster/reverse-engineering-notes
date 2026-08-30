@@ -88,7 +88,7 @@ dunMain         proc near               ; CODE XREF: dun_entry↑j
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
                 mov     word ptr es:[bx], 1 ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
-                call    sub_12536
+                call    processTileFeature ; the per-turn tile / feature handler (~0.7 KB, called first from dunMain). Walks a feature-name table (holds "POISON GAS VENT" / "FLOOR HOLE" / "SLIME SPLOT" + a char-class table), updates playerX / playerY / dungeonLevel / levelProgressFlags / actionPhase, and branches on tileAhead.
 ; ---------------------------------------------------------------------------
 
 loc_1004D:                              ; CODE XREF: dunMain+166↓j
@@ -210,7 +210,7 @@ loc_10112:                              ; CODE XREF: dunMain+C9↑j
 loc_10115:                              ; CODE XREF: dunMain+BB↑j
                 mov     ax, 1AE2h
                 push    ax
-                call    sub_1320C
+                call    moveMonsters    ; per-turn monster update loop (BASIC SUB) -- reads playerX / playerY to step each monster and check reach. ~0.5 KB, called from dunMain.
 ; ---------------------------------------------------------------------------
                 mov     ax, ds:208Ch
                 and     ax, ax
@@ -527,9 +527,10 @@ sub_102EB       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; repaint the dungeon viewport (called from climb / describe / doAttack / the FE5B path). TENTATIVE.
 ; Attributes: noreturn
 
-sub_1031C       proc near               ; CODE XREF: climbUp:loc_107FE↓p
+redrawDungeonView proc near             ; CODE XREF: climbUp:loc_107FE↓p
                                         ; climbDownOrExit:loc_10864↓p ...
                 mov     word ptr ds:20A6h, 14h
                 mov     word ptr ds:20A8h, 2
@@ -541,7 +542,7 @@ sub_1031C       proc near               ; CODE XREF: climbUp:loc_107FE↓p
 
 nullsub_3:
                 retn
-sub_1031C       endp
+redrawDungeonView endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -998,9 +999,10 @@ moveHazards     endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; draw the dungeon status line -- calls showHitPoints, formats the level / feature text (reads dungeonLevel, featureUnderfoot).
 ; Attributes: noreturn
 
-sub_1068D       proc near
+drawDungeonHud  proc near
                 push    ax
                 mov     ax, 22BAh
                 push    ax
@@ -1064,7 +1066,7 @@ loc_106FC:
                 jnz     short loc_10707
                 dec     ax
 
-loc_10707:                              ; CODE XREF: sub_1068D+77↑j
+loc_10707:                              ; CODE XREF: drawDungeonHud+77↑j
                 call    far ptr rt_FF20 ; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
 
 loc_1070C:
@@ -1086,36 +1088,39 @@ loc_10723:
 
 nullsub_8:
                 retn
-sub_1068D       endp
+drawDungeonHud  endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; actionPhase := 1 (runtime-dispatched stub).
 ; Attributes: noreturn
 
-sub_1072C       proc near
+setActionPhase_1 proc near
                 mov     word ptr ds:20ECh, 1 ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
                 jmp     selectAbove     ; "- SELECT ABOVE" menu helper.
-sub_1072C       endp
+setActionPhase_1 endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; actionPhase := 2 (runtime-dispatched stub).
 ; Attributes: noreturn
 
-sub_10735       proc near
+setActionPhase_2 proc near
                 mov     word ptr ds:20ECh, 2
                 jmp     selectAbove     ; "- SELECT ABOVE" menu helper.
-sub_10735       endp
+setActionPhase_2 endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; actionPhase := 3 (runtime-dispatched stub).
 ; Attributes: noreturn
 
-sub_1073E       proc near
+setActionPhase_3 proc near
                 mov     word ptr ds:20ECh, 3
-sub_1073E       endp
+setActionPhase_3 endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -1123,8 +1128,8 @@ sub_1073E       endp
 ; "- SELECT ABOVE" menu helper.
 ; Attributes: noreturn
 
-selectAbove     proc near               ; CODE XREF: sub_1072C+6↑j
-                                        ; sub_10735+6↑j ...
+selectAbove     proc near               ; CODE XREF: setActionPhase_1+6↑j
+                                        ; setActionPhase_2+6↑j ...
                 mov     ax, 230Eh       ; - SELECT ABOVE
                 push    ax
                 mov     ax, 20EEh
@@ -1146,8 +1151,8 @@ loc_10763:
                 push    ax
                 call    far ptr rt_FE4C ; -> rtm_FE4C  (leglib seg007:0x2710a)
 
-loc_1076C:
-                call    sub_1393C
+loc_1076C:                              ; refresh per-level state (reads dungeonLevel + levelProgressFlags) -- called after climbs, kills, and from processTileFeature. TENTATIVE.
+                call    updateLevelState
 
 loc_10771:
                 jmp     loc_127D6
@@ -1181,7 +1186,7 @@ loc_107F5:                              ; CODE XREF: climbUp+13↑j
 ; ---------------------------------------------------------------------------
 
 loc_107FE:                              ; CODE XREF: climbUp+1A↑j
-                call    sub_1031C
+                call    redrawDungeonView ; repaint the dungeon viewport (called from climb / describe / doAttack / the FE5B path). TENTATIVE.
 ; ---------------------------------------------------------------------------
                 call    far ptr rt_FE5B ; -> screenRefresh  (leglib seg008:0x28861)
                 call    far ptr rt_FE5B ; -> screenRefresh  (leglib seg008:0x28861)
@@ -1233,8 +1238,8 @@ loc_1085B:                              ; CODE XREF: climbDownOrExit+D↑j
                 push    ax
                 call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
 
-loc_10864:
-                call    sub_1031C
+loc_10864:                              ; repaint the dungeon viewport (called from climb / describe / doAttack / the FE5B path). TENTATIVE.
+                call    redrawDungeonView
 ; ---------------------------------------------------------------------------
 
 j_rt_FE5B_2:                            ; -> screenRefresh  (leglib seg008:0x28861)
@@ -1291,8 +1296,8 @@ loc_108CD:                              ; CODE XREF: climbDownOrExit+92↑j
                 mov     ax, 20C2h
                 push    ax
                 call    far ptr rt_FE41 ; -> rtm_FE41  (leglib seg007:0x258c7)
-                call    sub_1305C
-                call    sub_1393C
+                call    rebuildLevelView ; rebuild the level view after a climb / level change (descriptor at ds:1E2Ah). Called only from climbDownOrExit. TENTATIVE.
+                call    updateLevelState ; refresh per-level state (reads dungeonLevel + levelProgressFlags) -- called after climbs, kills, and from processTileFeature. TENTATIVE.
                 jmp     sub_10336
 ; ---------------------------------------------------------------------------
 
@@ -1590,7 +1595,7 @@ loc_10BE1:                              ; CODE XREF: describeSurroundings+5↑j
                 mov     ax, 2130h
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
-                jmp     sub_1031C
+                jmp     redrawDungeonView ; repaint the dungeon viewport (called from climb / describe / doAttack / the FE5B path). TENTATIVE.
 ; ---------------------------------------------------------------------------
 
 loc_10C38:                              ; CODE XREF: describeSurroundings+7↑j
@@ -1678,23 +1683,25 @@ describeSurroundings endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; turnActionFlag := 0 (before a non-turn action).
 ; Attributes: noreturn
 
-sub_10CD2       proc near               ; CODE XREF: checkAttackTarget↓p
+clearTurnFlag   proc near               ; CODE XREF: checkAttackTarget↓p
                                         ; useMagicMenu+1CA↓p
                 mov     word ptr ds:212Eh, 0
                 jmp     loc_10CE1
-sub_10CD2       endp
+clearTurnFlag   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; the LOOK / SEARCH action: sets turnActionFlag, clears scanTile, scans the surrounding tiles and reports (rtm_FE41). Called from lookOrSearch.
 ; Attributes: noreturn
 
-sub_10CDB       proc near               ; CODE XREF: lookOrSearch:loc_10B4B↑p
+doLookSearch    proc near               ; CODE XREF: lookOrSearch:loc_10B4B↑p
                 mov     word ptr ds:212Eh, 1 ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
 
-loc_10CE1:                              ; CODE XREF: sub_10CD2+6↑j
+loc_10CE1:                              ; CODE XREF: clearTurnFlag+6↑j
                 mov     word ptr ds:20BEh, 0
                 mov     word ptr ds:1F06h, 0
                 mov     word ptr ds:2140h, 5
@@ -1708,19 +1715,19 @@ loc_10CFE:
 ; ---------------------------------------------------------------------------
                 nop
 
-loc_10D04:                              ; CODE XREF: sub_10CDB+EE↓j
+loc_10D04:                              ; CODE XREF: doLookSearch+EE↓j
                 cmp     word ptr ds:20C4h, 0
                 jnz     short loc_10D0E
                 jmp     loc_10D95
 ; ---------------------------------------------------------------------------
 
-loc_10D0E:                              ; CODE XREF: sub_10CDB+2E↑j
+loc_10D0E:                              ; CODE XREF: doLookSearch+2E↑j
                 cmp     word ptr ds:20C4h, 10h
                 jge     short loc_10D18
                 jmp     loc_10D38
 ; ---------------------------------------------------------------------------
 
-loc_10D18:                              ; CODE XREF: sub_10CDB+38↑j
+loc_10D18:                              ; CODE XREF: doLookSearch+38↑j
                 mov     ax, ds:2142h
                 mov     ds:2140h, ax
                 cmp     word ptr ds:20C4h, 80h
@@ -1728,29 +1735,29 @@ loc_10D18:                              ; CODE XREF: sub_10CDB+38↑j
                 jmp     loc_10D2F
 ; ---------------------------------------------------------------------------
 
-loc_10D29:                              ; CODE XREF: sub_10CDB+49↑j
+loc_10D29:                              ; CODE XREF: doLookSearch+49↑j
                 mov     ax, ds:20C4h
                 mov     ds:20BEh, ax
 
-loc_10D2F:                              ; CODE XREF: sub_10CDB+4B↑j
+loc_10D2F:                              ; CODE XREF: doLookSearch+4B↑j
                 mov     word ptr ds:2142h, 6
                 jmp     loc_10D95
 ; ---------------------------------------------------------------------------
 
-loc_10D38:                              ; CODE XREF: sub_10CDB+3A↑j
+loc_10D38:                              ; CODE XREF: doLookSearch+3A↑j
                 mov     ax, ds:212Eh
                 and     ax, ax
                 jnz     short loc_10D42
                 jmp     loc_10D70
 ; ---------------------------------------------------------------------------
 
-loc_10D42:                              ; CODE XREF: sub_10CDB+62↑j
+loc_10D42:                              ; CODE XREF: doLookSearch+62↑j
                 cmp     word ptr ds:20C4h, 8
                 mov     ax, 0
                 jge     short loc_10D4D
                 dec     ax
 
-loc_10D4D:                              ; CODE XREF: sub_10CDB+6F↑j
+loc_10D4D:                              ; CODE XREF: doLookSearch+6F↑j
                 or      ax, ds:1F06h
                 mov     ds:1F06h, ax
                 cmp     word ptr ds:20C4h, 8
@@ -1758,7 +1765,7 @@ loc_10D4D:                              ; CODE XREF: sub_10CDB+6F↑j
                 jmp     loc_10D70
 ; ---------------------------------------------------------------------------
 
-loc_10D5E:                              ; CODE XREF: sub_10CDB+7E↑j
+loc_10D5E:                              ; CODE XREF: doLookSearch+7E↑j
                 add     word ptr ds:20C4h, 8
                 mov     ax, 20CCh
                 push    ax
@@ -1766,32 +1773,32 @@ loc_10D5E:                              ; CODE XREF: sub_10CDB+7E↑j
                 push    ax
                 call    far ptr rt_FE41 ; -> rtm_FE41  (leglib seg007:0x258c7)
 
-loc_10D70:                              ; CODE XREF: sub_10CDB+64↑j
-                                        ; sub_10CDB+80↑j
+loc_10D70:                              ; CODE XREF: doLookSearch+64↑j
+                                        ; doLookSearch+80↑j
                 cmp     word ptr ds:20BEh, 0
                 mov     ax, 0
                 jnz     short loc_10D7B
                 dec     ax
 
-loc_10D7B:                              ; CODE XREF: sub_10CDB+9D↑j
+loc_10D7B:                              ; CODE XREF: doLookSearch+9D↑j
                 cmp     word ptr ds:20C4h, 7
                 mov     cx, 0
                 jle     short loc_10D86
                 dec     cx
 
-loc_10D86:                              ; CODE XREF: sub_10CDB+A8↑j
+loc_10D86:                              ; CODE XREF: doLookSearch+A8↑j
                 and     cx, ax
                 and     cx, cx
                 jnz     short loc_10D8F
                 jmp     loc_10D95
 ; ---------------------------------------------------------------------------
 
-loc_10D8F:                              ; CODE XREF: sub_10CDB+AF↑j
+loc_10D8F:                              ; CODE XREF: doLookSearch+AF↑j
                 mov     ax, ds:20C4h
                 mov     ds:20BEh, ax
 
-loc_10D95:                              ; CODE XREF: sub_10CDB+30↑j
-                                        ; sub_10CDB+5A↑j ...
+loc_10D95:                              ; CODE XREF: doLookSearch+30↑j
+                                        ; doLookSearch+5A↑j ...
                 mov     bx, ds:1AE4h
                 shl     bx, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
                 mov     si, 1C4Eh
@@ -1808,14 +1815,14 @@ loc_10D95:                              ; CODE XREF: sub_10CDB+30↑j
                 mov     ax, ds:2142h
                 inc     ax
 
-loc_10DC1:                              ; CODE XREF: sub_10CDB+25↑j
+loc_10DC1:                              ; CODE XREF: doLookSearch+25↑j
                 mov     ds:2142h, ax
                 cmp     ax, 4
                 jg      short loc_10DCC
                 jmp     loc_10D04
 ; ---------------------------------------------------------------------------
 
-loc_10DCC:                              ; CODE XREF: sub_10CDB+EC↑j
+loc_10DCC:                              ; CODE XREF: doLookSearch+EC↑j
                 mov     ax, ds:1F14h
                 mov     ds:20CCh, ax
                 cmp     word ptr ds:20C4h, 0Fh
@@ -1823,44 +1830,44 @@ loc_10DCC:                              ; CODE XREF: sub_10CDB+EC↑j
                 jle     short loc_10DDD
                 dec     ax
 
-loc_10DDD:                              ; CODE XREF: sub_10CDB+FF↑j
+loc_10DDD:                              ; CODE XREF: doLookSearch+FF↑j
                 cmp     word ptr ds:20C4h, 80h
                 mov     cx, 0
                 jge     short loc_10DE9
                 dec     cx
 
-loc_10DE9:                              ; CODE XREF: sub_10CDB+10B↑j
+loc_10DE9:                              ; CODE XREF: doLookSearch+10B↑j
                 and     cx, ax
                 cmp     word ptr ds:20BEh, 10h
                 mov     ax, 0
                 jge     short loc_10DF6
                 dec     ax
 
-loc_10DF6:                              ; CODE XREF: sub_10CDB+118↑j
+loc_10DF6:                              ; CODE XREF: doLookSearch+118↑j
                 and     ax, cx
                 cmp     word ptr ds:2142h, 6
                 mov     cx, 0
                 jge     short loc_10E03
                 dec     cx
 
-loc_10E03:                              ; CODE XREF: sub_10CDB+125↑j
+loc_10E03:                              ; CODE XREF: doLookSearch+125↑j
                 and     cx, ax
                 and     cx, cx
                 jnz     short loc_10E0C
                 jmp     loc_10E12
 ; ---------------------------------------------------------------------------
 
-loc_10E0C:                              ; CODE XREF: sub_10CDB+12C↑j
+loc_10E0C:                              ; CODE XREF: doLookSearch+12C↑j
                 mov     ax, ds:20C4h
                 mov     ds:20BEh, ax
 
-loc_10E12:                              ; CODE XREF: sub_10CDB+12E↑j
+loc_10E12:                              ; CODE XREF: doLookSearch+12E↑j
                 cmp     word ptr ds:20BEh, 0Fh
                 jg      short loc_10E1C
                 jmp     locret_10E32
 ; ---------------------------------------------------------------------------
 
-loc_10E1C:                              ; CODE XREF: sub_10CDB+13C↑j
+loc_10E1C:                              ; CODE XREF: doLookSearch+13C↑j
                 mov     cx, 10h
                 mov     ax, ds:20BEh
                 cwd
@@ -1871,9 +1878,9 @@ loc_10E1C:                              ; CODE XREF: sub_10CDB+13C↑j
                 push    ax
                 call    sub_12D93
 
-locret_10E32:                           ; CODE XREF: sub_10CDB+13E↑j
+locret_10E32:                           ; CODE XREF: doLookSearch+13E↑j
                 retn
-sub_10CDB       endp
+doLookSearch    endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -1888,7 +1895,7 @@ openNothing     proc near
 ; ---------------------------------------------------------------------------
 
 loc_10E3D:                              ; CODE XREF: openNothing+5↑j
-                call    sub_1031C
+                call    redrawDungeonView ; repaint the dungeon viewport (called from climb / describe / doAttack / the FE5B path). TENTATIVE.
 ; ---------------------------------------------------------------------------
                 call    far ptr rt_FE5B ; -> screenRefresh  (leglib seg008:0x28861)
                 call    far ptr rt_FE5B ; -> screenRefresh  (leglib seg008:0x28861)
@@ -2083,7 +2090,7 @@ loc_10FC6:                              ; CODE XREF: openChest+E1↑j
 ; ---------------------------------------------------------------------------
 
 loc_10FEF:                              ; CODE XREF: openChest+175↑j
-                call    sub_12C34
+                call    rollChestContents ; decide what a chest holds (reads dungeonLevel + levelProgressFlags). Called from openChest. TENTATIVE.
                 jmp     loc_113BC
 ; ---------------------------------------------------------------------------
 
@@ -2139,7 +2146,7 @@ loc_1104F:                              ; CODE XREF: openChest+1D5↑j
 ; ---------------------------------------------------------------------------
 
 loc_11066:                              ; CODE XREF: openChest+1EC↑j
-                call    sub_12C34
+                call    rollChestContents ; decide what a chest holds (reads dungeonLevel + levelProgressFlags). Called from openChest. TENTATIVE.
                 jmp     loc_113BC
 ; ---------------------------------------------------------------------------
 
@@ -2522,7 +2529,7 @@ loc_11532:                              ; CODE XREF: monsterAttack+188↓j
 ; ---------------------------------------------------------------------------
 
 loc_1154B:                              ; CODE XREF: monsterAttack+2A↑j
-                call    sub_1345D
+                call    monsterSpecialAttack ; monster special-attack resolution (called from monsterAttack). TENTATIVE.
                 mov     word ptr ds:1F0Ah, 0
                 inc     word ptr ds:1F1Ch
                 mov     ax, ds:218Ah
@@ -2858,7 +2865,7 @@ loc_117EC:                              ; CODE XREF: monsterAttack+2CC↑j
                 call    sub_12B18
 
 loc_118B1:                              ; CODE XREF: monsterAttack+270↑j
-                call    sub_1393C
+                call    updateLevelState ; refresh per-level state (reads dungeonLevel + levelProgressFlags) -- called after climbs, kills, and from processTileFeature. TENTATIVE.
                 call    far ptr rt_FE4F ; -> rtm_FE4F  (leglib seg007:0x2659c)
                 mov     word ptr ds:1F0Ah, 1 ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
                 jmp     sub_10384
@@ -3178,7 +3185,7 @@ sub_11A1D       endp
 ; Attributes: noreturn thunk
 
 checkAttackTarget proc near
-                call    sub_10CD2
+                call    clearTurnFlag   ; turnActionFlag := 0 (before a non-turn action).
 ; ---------------------------------------------------------------------------
 
 j_rt_FE5B_9:                            ; -> screenRefresh  (leglib seg008:0x28861)
@@ -3559,7 +3566,7 @@ loc_11E23:                              ; CODE XREF: doAttack+1EA↑j
 ; ---------------------------------------------------------------------------
 
 loc_11E26:                              ; CODE XREF: doAttack+1E0↑j
-                call    sub_1031C
+                call    redrawDungeonView ; repaint the dungeon viewport (called from climb / describe / doAttack / the FE5B path). TENTATIVE.
 ; ---------------------------------------------------------------------------
 
 j_rt_FE5B_11:                           ; -> screenRefresh  (leglib seg008:0x28861)
@@ -3824,7 +3831,7 @@ loc_11FE7:                              ; CODE XREF: useMagicMenu+12A↑j
                 mov     ax, 21EEh
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
-                call    sub_10CD2
+                call    clearTurnFlag   ; turnActionFlag := 0 (before a non-turn action).
 ; ---------------------------------------------------------------------------
                 mov     ax, ds:1AF0h
                 add     ax, 0Fh
@@ -4364,16 +4371,17 @@ sub_124FE       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; the per-turn tile / feature handler (~0.7 KB, called first from dunMain). Walks a feature-name table (holds "POISON GAS VENT" / "FLOOR HOLE" / "SLIME SPLOT" + a char-class table), updates playerX / playerY / dungeonLevel / levelProgressFlags / actionPhase, and branches on tileAhead.
 ; Attributes: noreturn
 
-sub_12536       proc near               ; CODE XREF: dunMain+11↑p
+processTileFeature proc near            ; CODE XREF: dunMain+11↑p
                 mov     word ptr ds:2224h, 10h
                 xor     ax, ax
                 jmp     loc_1257B
 ; ---------------------------------------------------------------------------
                 nop
 
-loc_12542:                              ; CODE XREF: sub_12536+4B↓j
+loc_12542:                              ; CODE XREF: processTileFeature+4B↓j
                 mov     cx, ds:2224h
                 neg     cx
                 shl     ax, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
@@ -4395,7 +4403,7 @@ loc_12542:                              ; CODE XREF: sub_12536+4B↓j
                 mov     ax, ds:20ECh
                 add     ax, 2
 
-loc_1257B:                              ; CODE XREF: sub_12536+8↑j
+loc_1257B:                              ; CODE XREF: processTileFeature+8↑j
                 mov     ds:20ECh, ax
                 cmp     ax, 2
                 jle     short loc_12542
@@ -4412,25 +4420,25 @@ loc_12590:
                 jmp     loc_125A8
 ; ---------------------------------------------------------------------------
 
-loc_1259A:                              ; CODE XREF: sub_12536+5F↑j
+loc_1259A:                              ; CODE XREF: processTileFeature+5F↑j
                 add     word ptr ds:1ACAh, 0FFF6h
                 mov     word ptr ds:2226h, 1 ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
                 jmp     loc_125E2
 ; ---------------------------------------------------------------------------
 
-loc_125A8:                              ; CODE XREF: sub_12536+61↑j
+loc_125A8:                              ; CODE XREF: processTileFeature+61↑j
                 cmp     word ptr ds:1ACAh, 0
                 jg      short loc_125B2
                 jmp     loc_125DC
 ; ---------------------------------------------------------------------------
 
-loc_125B2:                              ; CODE XREF: sub_12536+77↑j
+loc_125B2:                              ; CODE XREF: processTileFeature+77↑j
                 cmp     word ptr ds:1ACAh, 2
                 mov     ax, 0
                 jnz     short loc_125BD
                 dec     ax
 
-loc_125BD:                              ; CODE XREF: sub_12536+84↑j
+loc_125BD:                              ; CODE XREF: processTileFeature+84↑j
                 mov     cx, 700h
                 imul    cx
                 sub     ax, 10h
@@ -4440,10 +4448,10 @@ loc_125BD:                              ; CODE XREF: sub_12536+84↑j
                 mov     word ptr ds:1AE6h, 0
                 mov     word ptr ds:1AE8h, 0
 
-loc_125DC:                              ; CODE XREF: sub_12536+79↑j
+loc_125DC:                              ; CODE XREF: processTileFeature+79↑j
                 mov     word ptr ds:2226h, 0
 
-loc_125E2:                              ; CODE XREF: sub_12536+6F↑j
+loc_125E2:                              ; CODE XREF: processTileFeature+6F↑j
                 mov     ax, ds:1ACAh
                 cwd
                 xor     ax, dx
@@ -4463,7 +4471,7 @@ loc_125E2:                              ; CODE XREF: sub_12536+6F↑j
                 jmp     loc_126CC
 ; ---------------------------------------------------------------------------
 
-loc_1260F:                              ; CODE XREF: sub_12536+D4↑j
+loc_1260F:                              ; CODE XREF: processTileFeature+D4↑j
                 xor     ax, ax
                 push    ax
                 mov     ax, 0F4Bh
@@ -4516,7 +4524,7 @@ loc_1260F:                              ; CODE XREF: sub_12536+D4↑j
                 jmp     loc_1268A
 ; ---------------------------------------------------------------------------
 
-loc_12674:                              ; CODE XREF: sub_12536+15A↓j
+loc_12674:                              ; CODE XREF: processTileFeature+15A↓j
                 shl     ax, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
                 mov     bx, ax
                 mov     si, 1C7Ch
@@ -4526,7 +4534,7 @@ loc_12674:                              ; CODE XREF: sub_12536+15A↓j
                 mov     ax, ds:20ECh
                 inc     ax
 
-loc_1268A:                              ; CODE XREF: sub_12536+13B↑j
+loc_1268A:                              ; CODE XREF: processTileFeature+13B↑j
                 mov     ds:20ECh, ax
                 cmp     ax, 3Fh ; '?'
                 jle     short loc_12674
@@ -4536,7 +4544,7 @@ loc_1268A:                              ; CODE XREF: sub_12536+13B↑j
                 jmp     loc_126B6
 ; ---------------------------------------------------------------------------
 
-loc_1269C:                              ; CODE XREF: sub_12536+186↓j
+loc_1269C:                              ; CODE XREF: processTileFeature+186↓j
                 shl     ax, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
                 shl     ax, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
                 mov     bx, ax
@@ -4551,7 +4559,7 @@ loc_1269C:                              ; CODE XREF: sub_12536+186↓j
                 mov     ax, ds:20ECh
                 inc     ax
 
-loc_126B6:                              ; CODE XREF: sub_12536+163↑j
+loc_126B6:                              ; CODE XREF: processTileFeature+163↑j
                 mov     ds:20ECh, ax
                 cmp     ax, 0Bh
                 jle     short loc_1269C
@@ -4561,13 +4569,13 @@ loc_126B6:                              ; CODE XREF: sub_12536+163↑j
                 jmp     loc_126FA
 ; ---------------------------------------------------------------------------
 
-loc_126CC:                              ; CODE XREF: sub_12536+D6↑j
+loc_126CC:                              ; CODE XREF: processTileFeature+D6↑j
                 xor     ax, ax
                 jmp     loc_126F2
 ; ---------------------------------------------------------------------------
                 nop
 
-loc_126D2:                              ; CODE XREF: sub_12536+1C2↓j
+loc_126D2:                              ; CODE XREF: processTileFeature+1C2↓j
                 shl     ax, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
                 mov     bx, ax
                 mov     si, 1C7Ch
@@ -4579,20 +4587,20 @@ loc_126D2:                              ; CODE XREF: sub_12536+1C2↓j
                 jmp     loc_126EE
 ; ---------------------------------------------------------------------------
 
-loc_126EA:                              ; CODE XREF: sub_12536+1AF↑j
+loc_126EA:                              ; CODE XREF: processTileFeature+1AF↑j
                 inc     word ptr ds:21B4h
 
-loc_126EE:                              ; CODE XREF: sub_12536+1B1↑j
+loc_126EE:                              ; CODE XREF: processTileFeature+1B1↑j
                 mov     ax, ds:20ECh
                 inc     ax
 
-loc_126F2:                              ; CODE XREF: sub_12536+198↑j
+loc_126F2:                              ; CODE XREF: processTileFeature+198↑j
                 mov     ds:20ECh, ax
                 cmp     ax, 7
                 jle     short loc_126D2
 
-loc_126FA:                              ; CODE XREF: sub_12536+193↑j
-                call    sub_1393C
+loc_126FA:                              ; CODE XREF: processTileFeature+193↑j
+                call    updateLevelState ; refresh per-level state (reads dungeonLevel + levelProgressFlags) -- called after climbs, kills, and from processTileFeature. TENTATIVE.
 ; ---------------------------------------------------------------------------
 
 loc_126FF:
@@ -4616,7 +4624,7 @@ loc_1271D:
                 jmp     loc_1273F
 ; ---------------------------------------------------------------------------
 
-loc_12722:                              ; CODE XREF: sub_12536:loc_1271D↑j
+loc_12722:                              ; CODE XREF: processTileFeature:loc_1271D↑j
                 mov     ax, 2328h
                 imul    word ptr ds:1ACAh
                 cwd
@@ -4627,7 +4635,7 @@ loc_12722:                              ; CODE XREF: sub_12536:loc_1271D↑j
                 mov     ds:1AD6h, ax
                 mov     ds:1AD8h, dx
 
-loc_1273F:                              ; CODE XREF: sub_12536+1E9↑j
+loc_1273F:                              ; CODE XREF: processTileFeature+1E9↑j
                 mov     si, 1B96h
                 mov     bx, 44h ; 'D'
                 add     bx, [si+0Ah]
@@ -4714,7 +4722,7 @@ loc_127FE:
 
 nullsub_13:
                 retn
-sub_12536       endp
+processTileFeature endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -5593,9 +5601,10 @@ sub_12B5A       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; decide what a chest holds (reads dungeonLevel + levelProgressFlags). Called from openChest. TENTATIVE.
 ; Attributes: noreturn
 
-sub_12C34       proc far                ; CODE XREF: openChest:loc_10FEF↑P
+rollChestContents proc far              ; CODE XREF: openChest:loc_10FEF↑P
                                         ; openChest:loc_11066↑P
                 mov     cx, 0Ah
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
@@ -5753,14 +5762,15 @@ sub_12C34       proc far                ; CODE XREF: openChest:loc_10FEF↑P
 
 loc_12CE4:                              ; CODE XREF: sub_12B5A:loc_12C31↑j
                 jmp     loc_12D90
-sub_12C34       endp
+rollChestContents endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; move one monster a step toward (playerX, playerY). TENTATIVE.
 ; Attributes: noreturn
 
-sub_12CE7       proc far                ; CODE XREF: sub_1320C+1AE↓P
+stepMonsterToward proc far              ; CODE XREF: moveMonsters+1AE↓P
                 mov     cx, 8
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 ; ---------------------------------------------------------------------------
@@ -5788,7 +5798,7 @@ sub_12CE7       proc far                ; CODE XREF: sub_1320C+1AE↓P
                 jmp     loc_12D52
 ; ---------------------------------------------------------------------------
 
-loc_12D2D:                              ; CODE XREF: sub_12CE7+41↑j
+loc_12D2D:                              ; CODE XREF: stepMonsterToward+41↑j
                 mov     ax, ds:20CEh
                 inc     ax
                 cmp     ax, [bp-0Eh]
@@ -5796,10 +5806,10 @@ loc_12D2D:                              ; CODE XREF: sub_12CE7+41↑j
                 jmp     loc_12D3E
 ; ---------------------------------------------------------------------------
 
-loc_12D39:                              ; CODE XREF: sub_12CE7+4D↑j
+loc_12D39:                              ; CODE XREF: stepMonsterToward+4D↑j
                 mov     word ptr [bp-0Ch], 2
 
-loc_12D3E:                              ; CODE XREF: sub_12CE7+4F↑j
+loc_12D3E:                              ; CODE XREF: stepMonsterToward+4F↑j
                 mov     ax, ds:20CEh
                 dec     ax
                 cmp     ax, [bp-0Eh]
@@ -5807,21 +5817,21 @@ loc_12D3E:                              ; CODE XREF: sub_12CE7+4F↑j
                 jmp     loc_12D4F
 ; ---------------------------------------------------------------------------
 
-loc_12D4A:                              ; CODE XREF: sub_12CE7+5E↑j
+loc_12D4A:                              ; CODE XREF: stepMonsterToward+5E↑j
                 mov     word ptr [bp-0Ch], 4
 
-loc_12D4F:                              ; CODE XREF: sub_12CE7+60↑j
+loc_12D4F:                              ; CODE XREF: stepMonsterToward+60↑j
                 jmp     loc_12D7F
 ; ---------------------------------------------------------------------------
 
-loc_12D52:                              ; CODE XREF: sub_12CE7+43↑j
+loc_12D52:                              ; CODE XREF: stepMonsterToward+43↑j
                 mov     ax, ds:20CEh
                 cmp     ax, [bp-0Eh]
                 jz      short loc_12D5D
                 jmp     loc_12D7F
 ; ---------------------------------------------------------------------------
 
-loc_12D5D:                              ; CODE XREF: sub_12CE7+71↑j
+loc_12D5D:                              ; CODE XREF: stepMonsterToward+71↑j
                 mov     ax, ds:20D0h
                 inc     ax
                 cmp     ax, [bp-10h]
@@ -5829,10 +5839,10 @@ loc_12D5D:                              ; CODE XREF: sub_12CE7+71↑j
                 jmp     loc_12D6E
 ; ---------------------------------------------------------------------------
 
-loc_12D69:                              ; CODE XREF: sub_12CE7+7D↑j
+loc_12D69:                              ; CODE XREF: stepMonsterToward+7D↑j
                 mov     word ptr [bp-0Ch], 3
 
-loc_12D6E:                              ; CODE XREF: sub_12CE7+7F↑j
+loc_12D6E:                              ; CODE XREF: stepMonsterToward+7F↑j
                 mov     ax, ds:20D0h
                 dec     ax
                 cmp     ax, [bp-10h]
@@ -5840,11 +5850,11 @@ loc_12D6E:                              ; CODE XREF: sub_12CE7+7F↑j
                 jmp     loc_12D7F
 ; ---------------------------------------------------------------------------
 
-loc_12D7A:                              ; CODE XREF: sub_12CE7+8E↑j
+loc_12D7A:                              ; CODE XREF: stepMonsterToward+8E↑j
                 mov     word ptr [bp-0Ch], 1 ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
 
-loc_12D7F:                              ; CODE XREF: sub_12CE7:loc_12D4F↑j
-                                        ; sub_12CE7+73↑j ...
+loc_12D7F:                              ; CODE XREF: stepMonsterToward:loc_12D4F↑j
+                                        ; stepMonsterToward+73↑j ...
                 mov     ax, [bp-0Ch]
                 mov     [bp-12h], ax
                 mov     ax, [bp-12h]
@@ -5855,9 +5865,9 @@ loc_12D7F:                              ; CODE XREF: sub_12CE7:loc_12D4F↑j
                 db    0
 ; ---------------------------------------------------------------------------
 
-loc_12D90:                              ; CODE XREF: sub_12C34:loc_12CE4↑j
+loc_12D90:                              ; CODE XREF: rollChestContents:loc_12CE4↑j
                 jmp     loc_12E4F
-sub_12CE7       endp
+stepMonsterToward endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -5865,7 +5875,7 @@ sub_12CE7       endp
 ; Attributes: noreturn
 
 sub_12D93       proc far                ; CODE XREF: describeSurroundings+1B↑P
-                                        ; sub_10CDB+152↑P ...
+                                        ; doLookSearch+152↑P ...
                 mov     cx, 8
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 ; ---------------------------------------------------------------------------
@@ -6015,7 +6025,7 @@ loc_12E47:                              ; CODE XREF: sub_12D93+2A↑j
                 db    0
 ; ---------------------------------------------------------------------------
 
-loc_12E4F:                              ; CODE XREF: sub_12CE7:loc_12D90↑j
+loc_12E4F:                              ; CODE XREF: stepMonsterToward:loc_12D90↑j
                 jmp     loc_12E7A
 sub_12D93       endp
 
@@ -6064,7 +6074,7 @@ sub_12E52       endp
 ; Attributes: noreturn
 
 sub_12E7D       proc far                ; CODE XREF: climbDownOrExit+A0↑P
-                                        ; sub_10CDB+1E↑P ...
+                                        ; doLookSearch+1E↑P ...
                 mov     cx, 0
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 ; ---------------------------------------------------------------------------
@@ -6091,7 +6101,7 @@ sub_12E7D       endp
 
 ; Attributes: noreturn
 
-sub_12E9B       proc far                ; CODE XREF: sub_12536+15C↑P
+sub_12E9B       proc far                ; CODE XREF: processTileFeature+15C↑P
                 mov     cx, 0Ah
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 ; ---------------------------------------------------------------------------
@@ -6345,7 +6355,7 @@ sub_12E9B       endp
 ; Attributes: noreturn
 
 sub_12F9F       proc far                ; CODE XREF: climbDownOrExit+85↑P
-                                        ; sub_12536+188↑P
+                                        ; processTileFeature+188↑P
                 mov     cx, 8
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 ; ---------------------------------------------------------------------------
@@ -6516,9 +6526,10 @@ sub_12F9F       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; rebuild the level view after a climb / level change (descriptor at ds:1E2Ah). Called only from climbDownOrExit. TENTATIVE.
 ; Attributes: noreturn
 
-sub_1305C       proc far                ; CODE XREF: climbDownOrExit+B2↑P
+rebuildLevelView proc far               ; CODE XREF: climbDownOrExit+B2↑P
                 mov     cx, 10h
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 ; ---------------------------------------------------------------------------
@@ -6561,7 +6572,7 @@ sub_1305C       proc far                ; CODE XREF: climbDownOrExit+B2↑P
 ; ---------------------------------------------------------------------------
                 nop
 
-loc_13094:                              ; CODE XREF: sub_1305C+1A2↓j
+loc_13094:                              ; CODE XREF: rebuildLevelView+1A2↓j
                 shl     ax, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
                 mov     bx, ax
                 mov     si, 1C7Ch
@@ -6573,7 +6584,7 @@ loc_13094:                              ; CODE XREF: sub_1305C+1A2↓j
                 jmp     loc_131F2
 ; ---------------------------------------------------------------------------
 
-loc_130AC:                              ; CODE XREF: sub_1305C+4B↑j
+loc_130AC:                              ; CODE XREF: rebuildLevelView+4B↑j
                 add     ax, 40h ; '@'
                 mov     bx, ax
                 add     bx, [si+0Ah]
@@ -6599,13 +6610,13 @@ loc_130AC:                              ; CODE XREF: sub_1305C+4B↑j
                 mov     ax, bx
                 mov     [bp-12h], ax
 
-loc_130F0:                              ; CODE XREF: sub_1305C+D9↓j
+loc_130F0:                              ; CODE XREF: rebuildLevelView+D9↓j
                 cmp     word ptr [bp-12h], 0Fh
                 jg      short loc_130F9
                 jmp     loc_13138
 ; ---------------------------------------------------------------------------
 
-loc_130F9:                              ; CODE XREF: sub_1305C+98↑j
+loc_130F9:                              ; CODE XREF: rebuildLevelView+98↑j
                 call    far ptr rt_B7   ; -> rtm_B7  (leglib seg003:0x1a1b2)
 ; ---------------------------------------------------------------------------
                 mov     bx, ax
@@ -6633,7 +6644,7 @@ loc_130F9:                              ; CODE XREF: sub_1305C+98↑j
 ; ---------------------------------------------------------------------------
                 nop
 
-loc_13138:                              ; CODE XREF: sub_1305C+9A↑j
+loc_13138:                              ; CODE XREF: rebuildLevelView+9A↑j
                 mov     ax, [bp-16h]
                 shl     ax, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
                 shl     ax, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
@@ -6686,7 +6697,7 @@ loc_13138:                              ; CODE XREF: sub_1305C+9A↑j
                 jle     short loc_131BD
                 dec     cx
 
-loc_131BD:                              ; CODE XREF: sub_1305C+15E↑j
+loc_131BD:                              ; CODE XREF: rebuildLevelView+15E↑j
                 mov     bx, ax
                 mov     ax, cx
                 mov     [bp-18h], ax
@@ -6695,7 +6706,7 @@ loc_131BD:                              ; CODE XREF: sub_1305C+15E↑j
                 jmp     loc_131F2
 ; ---------------------------------------------------------------------------
 
-loc_131CC:                              ; CODE XREF: sub_1305C+16B↑j
+loc_131CC:                              ; CODE XREF: rebuildLevelView+16B↑j
                 mov     dx, bx
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
@@ -6711,8 +6722,8 @@ loc_131CC:                              ; CODE XREF: sub_1305C+16B↑j
                 mov     es, word ptr [si+2]
                 mov     es:[bx], cx
 
-loc_131F2:                              ; CODE XREF: sub_1305C+4D↑j
-                                        ; sub_1305C+16D↑j
+loc_131F2:                              ; CODE XREF: rebuildLevelView+4D↑j
+                                        ; rebuildLevelView+16D↑j
                 mov     ax, [bp-16h]
                 inc     ax
                 mov     [bp-16h], ax
@@ -6721,7 +6732,7 @@ loc_131F2:                              ; CODE XREF: sub_1305C+4D↑j
                 jmp     loc_13094
 ; ---------------------------------------------------------------------------
 
-loc_13201:                              ; CODE XREF: sub_1305C+1A0↑j
+loc_13201:                              ; CODE XREF: rebuildLevelView+1A0↑j
                 call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 ; ---------------------------------------------------------------------------
                 retf    0
@@ -6729,14 +6740,15 @@ loc_13201:                              ; CODE XREF: sub_1305C+1A0↑j
 
 loc_13209:                              ; CODE XREF: sub_12F9F:loc_13059↑j
                 jmp     loc_13403
-sub_1305C       endp
+rebuildLevelView endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; per-turn monster update loop (BASIC SUB) -- reads playerX / playerY to step each monster and check reach. ~0.5 KB, called from dunMain.
 ; Attributes: noreturn
 
-sub_1320C       proc far                ; CODE XREF: dunMain+E0↑P
+moveMonsters    proc far                ; CODE XREF: dunMain+E0↑P
                 mov     cx, 20h ; ' '
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 ; ---------------------------------------------------------------------------
@@ -6746,7 +6758,7 @@ sub_1320C       proc far                ; CODE XREF: dunMain+E0↑P
 ; ---------------------------------------------------------------------------
                 nop
 
-loc_13220:                              ; CODE XREF: sub_1320C+1EC↓j
+loc_13220:                              ; CODE XREF: moveMonsters+1EC↓j
                 mov     word ptr [bp-0Ch], 0
                 shl     ax, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
                 mov     bx, ax
@@ -6759,7 +6771,7 @@ loc_13220:                              ; CODE XREF: sub_1320C+1EC↓j
                 jmp     loc_133C8
 ; ---------------------------------------------------------------------------
 
-loc_1323D:                              ; CODE XREF: sub_1320C+2C↑j
+loc_1323D:                              ; CODE XREF: moveMonsters+2C↑j
                 mov     bx, ax
                 add     ax, 20h ; ' '
                 mov     dx, bx
@@ -6791,7 +6803,7 @@ loc_1323D:                              ; CODE XREF: sub_1320C+2C↑j
                 jmp     loc_132A4
 ; ---------------------------------------------------------------------------
 
-loc_1328E:                              ; CODE XREF: sub_1320C+7D↑j
+loc_1328E:                              ; CODE XREF: moveMonsters+7D↑j
                 neg     ax
                 mov     [bp-14h], ax
                 mov     word ptr [bp-16h], 1 ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
@@ -6800,11 +6812,11 @@ loc_1328E:                              ; CODE XREF: sub_1320C+7D↑j
                 jmp     loc_132A4
 ; ---------------------------------------------------------------------------
 
-loc_1329F:                              ; CODE XREF: sub_1320C+8E↑j
+loc_1329F:                              ; CODE XREF: moveMonsters+8E↑j
                 mov     word ptr [bp-16h], 0
 
-loc_132A4:                              ; CODE XREF: sub_1320C+7F↑j
-                                        ; sub_1320C+90↑j
+loc_132A4:                              ; CODE XREF: moveMonsters+7F↑j
+                                        ; moveMonsters+90↑j
                 mov     ax, [bp-10h]
                 sub     ax, ds:20D0h
                 mov     [bp-18h], ax
@@ -6815,7 +6827,7 @@ loc_132A4:                              ; CODE XREF: sub_1320C+7F↑j
                 jmp     loc_132DF
 ; ---------------------------------------------------------------------------
 
-loc_132BF:                              ; CODE XREF: sub_1320C+AE↑j
+loc_132BF:                              ; CODE XREF: moveMonsters+AE↑j
                 neg     ax
                 mov     [bp-18h], ax
                 mov     word ptr [bp-1Ah], 1 ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
@@ -6825,19 +6837,19 @@ loc_132BF:                              ; CODE XREF: sub_1320C+AE↑j
                 jmp     loc_132DF
 ; ---------------------------------------------------------------------------
 
-loc_132D5:                              ; CODE XREF: sub_1320C+C4↑j
+loc_132D5:                              ; CODE XREF: moveMonsters+C4↑j
                 mov     word ptr [bp-1Ah], 0
                 mov     word ptr [bp-1Ch], 0
 
-loc_132DF:                              ; CODE XREF: sub_1320C+B0↑j
-                                        ; sub_1320C+C6↑j
+loc_132DF:                              ; CODE XREF: moveMonsters+B0↑j
+                                        ; moveMonsters+C6↑j
                 mov     ax, [bp-14h]
                 cmp     ax, [bp-18h]
                 jl      short loc_132EA
                 jmp     loc_13330
 ; ---------------------------------------------------------------------------
 
-loc_132EA:                              ; CODE XREF: sub_1320C+D9↑j
+loc_132EA:                              ; CODE XREF: moveMonsters+D9↑j
                 lea     ax, [bp-12h]
                 push    ax
                 lea     ax, [bp-1Ch]
@@ -6855,7 +6867,7 @@ loc_132EA:                              ; CODE XREF: sub_1320C+D9↑j
                 jmp     loc_1332D
 ; ---------------------------------------------------------------------------
 
-loc_1330F:                              ; CODE XREF: sub_1320C+FE↑j
+loc_1330F:                              ; CODE XREF: moveMonsters+FE↑j
                 lea     ax, [bp-12h]
                 push    ax
                 lea     ax, [bp-16h]
@@ -6869,11 +6881,11 @@ loc_1330F:                              ; CODE XREF: sub_1320C+FE↑j
                 mov     ax, [bp-20h]
                 mov     [bp-22h], ax
 
-loc_1332D:                              ; CODE XREF: sub_1320C+100↑j
+loc_1332D:                              ; CODE XREF: moveMonsters+100↑j
                 jmp     loc_13373
 ; ---------------------------------------------------------------------------
 
-loc_13330:                              ; CODE XREF: sub_1320C+DB↑j
+loc_13330:                              ; CODE XREF: moveMonsters+DB↑j
                 lea     ax, [bp-12h]
                 push    ax
                 lea     ax, [bp-16h]
@@ -6891,7 +6903,7 @@ loc_13330:                              ; CODE XREF: sub_1320C+DB↑j
                 jmp     loc_13373
 ; ---------------------------------------------------------------------------
 
-loc_13355:                              ; CODE XREF: sub_1320C+144↑j
+loc_13355:                              ; CODE XREF: moveMonsters+144↑j
                 lea     ax, [bp-12h]
                 push    ax
                 lea     ax, [bp-1Ch]
@@ -6905,8 +6917,8 @@ loc_13355:                              ; CODE XREF: sub_1320C+144↑j
                 mov     ax, [bp-26h]
                 mov     [bp-22h], ax
 
-loc_13373:                              ; CODE XREF: sub_1320C:loc_1332D↑j
-                                        ; sub_1320C+146↑j
+loc_13373:                              ; CODE XREF: moveMonsters:loc_1332D↑j
+                                        ; moveMonsters+146↑j
                 mov     ax, [bp-2Ah]
                 shl     ax, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
                 mov     bx, ax
@@ -6934,12 +6946,12 @@ loc_13373:                              ; CODE XREF: sub_1320C:loc_1332D↑j
                 mov     es:[bx], ax
                 lea     ax, [bp-2Ah]
                 push    ax
-                call    sub_12CE7
+                call    stepMonsterToward ; move one monster a step toward (playerX, playerY). TENTATIVE.
                 mov     [bp-28h], ax
                 mov     ax, [bp-28h]
                 mov     [bp-0Ch], ax
 
-loc_133C8:                              ; CODE XREF: sub_1320C+2E↑j
+loc_133C8:                              ; CODE XREF: moveMonsters+2E↑j
                 mov     ax, [bp-2Ah]
                 shl     ax, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
                 add     ax, 50h ; 'P'
@@ -6954,29 +6966,29 @@ loc_133C8:                              ; CODE XREF: sub_1320C+2E↑j
                 jmp     loc_133EC
 ; ---------------------------------------------------------------------------
 
-loc_133E8:                              ; CODE XREF: sub_1320C+1D7↑j
+loc_133E8:                              ; CODE XREF: moveMonsters+1D7↑j
                 inc     word ptr ds:2188h
 
-loc_133EC:                              ; CODE XREF: sub_1320C+1D9↑j
+loc_133EC:                              ; CODE XREF: moveMonsters+1D9↑j
                 mov     ax, [bp-2Ah]
                 inc     ax
 
-loc_133F0:                              ; CODE XREF: sub_1320C+10↑j
+loc_133F0:                              ; CODE XREF: moveMonsters+10↑j
                 mov     [bp-2Ah], ax
                 cmp     ax, 7
                 jg      short loc_133FB
                 jmp     loc_13220
 ; ---------------------------------------------------------------------------
 
-loc_133FB:                              ; CODE XREF: sub_1320C+1EA↑j
+loc_133FB:                              ; CODE XREF: moveMonsters+1EA↑j
                 call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 ; ---------------------------------------------------------------------------
                 retf    2
 ; ---------------------------------------------------------------------------
 
-loc_13403:                              ; CODE XREF: sub_1305C:loc_13209↑j
+loc_13403:                              ; CODE XREF: rebuildLevelView:loc_13209↑j
                 jmp     loc_1345A
-sub_1320C       endp
+moveMonsters    endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -6984,7 +6996,7 @@ sub_1320C       endp
 ; "H.P. -".
 ; Attributes: noreturn
 
-showHitPoints   proc far                ; CODE XREF: sub_1068D+99↑P
+showHitPoints   proc far                ; CODE XREF: drawDungeonHud+99↑P
                                         ; openChest:loc_10FBE↑P
                 mov     cx, 6
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
@@ -7059,16 +7071,17 @@ showHitPoints   proc far                ; CODE XREF: sub_1068D+99↑P
                 db    0
 ; ---------------------------------------------------------------------------
 
-loc_1345A:                              ; CODE XREF: sub_1320C:loc_13403↑j
+loc_1345A:                              ; CODE XREF: moveMonsters:loc_13403↑j
                 jmp     loc_1356E
 showHitPoints   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; monster special-attack resolution (called from monsterAttack). TENTATIVE.
 ; Attributes: noreturn
 
-sub_1345D       proc far                ; CODE XREF: monsterAttack:loc_1154B↑P
+monsterSpecialAttack proc far           ; CODE XREF: monsterAttack:loc_1154B↑P
                 mov     cx, 12h
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 ; ---------------------------------------------------------------------------
@@ -7340,7 +7353,7 @@ j_rt_FE5B_21    db  9Ah
 
 loc_1356E:                              ; CODE XREF: showHitPoints:loc_1345A↑j
                 jmp     loc_1384D
-sub_1345D       endp
+monsterSpecialAttack endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -7792,7 +7805,7 @@ loc_13845:                              ; -> basProcLeave  (leglib seg003:0x1bb7
                 retf    0
 ; ---------------------------------------------------------------------------
 
-loc_1384D:                              ; CODE XREF: sub_1345D:loc_1356E↑j
+loc_1384D:                              ; CODE XREF: monsterSpecialAttack:loc_1356E↑j
                 jmp     loc_13939
 loadDungeonLevel endp
 
@@ -7913,9 +7926,10 @@ sub_13850       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; refresh per-level state (reads dungeonLevel + levelProgressFlags) -- called after climbs, kills, and from processTileFeature. TENTATIVE.
 ; Attributes: noreturn
 
-sub_1393C       proc far                ; CODE XREF: selectAbove:loc_1076C↑P
+updateLevelState proc far               ; CODE XREF: selectAbove:loc_1076C↑P
                                         ; climbDownOrExit+B7↑P ...
                 mov     cx, 4
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
@@ -7926,7 +7940,7 @@ sub_1393C       proc far                ; CODE XREF: selectAbove:loc_1076C↑P
                 jmp     loc_13981
 ; ---------------------------------------------------------------------------
 
-loc_13953:                              ; CODE XREF: sub_1393C+12↑j
+loc_13953:                              ; CODE XREF: updateLevelState+12↑j
                 mov     cx, 23h ; '#'
                 mov     bx, ds:1AEAh
                 shl     bx, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
@@ -7945,7 +7959,7 @@ loc_13953:                              ; CODE XREF: sub_1393C+12↑j
                 add     ax, 0FFBAh
                 mov     [bp-0Ch], ax
 
-loc_13981:                              ; CODE XREF: sub_1393C+14↑j
+loc_13981:                              ; CODE XREF: updateLevelState+14↑j
                 mov     ax, 0Ah
                 imul    word ptr ds:1AFEh
                 add     ax, 0Ah
@@ -7955,7 +7969,7 @@ loc_13981:                              ; CODE XREF: sub_1393C+14↑j
                 jmp     loc_139B9
 ; ---------------------------------------------------------------------------
 
-loc_13998:                              ; CODE XREF: sub_1393C+57↑j
+loc_13998:                              ; CODE XREF: updateLevelState+57↑j
                 mov     cx, 1Ch
                 mov     bx, ds:1AFCh
                 shl     bx, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
@@ -7969,7 +7983,7 @@ loc_13998:                              ; CODE XREF: sub_1393C+57↑j
                 idiv    cx
                 add     ds:21CEh, ax
 
-loc_139B9:                              ; CODE XREF: sub_1393C+59↑j
+loc_139B9:                              ; CODE XREF: updateLevelState+59↑j
                 mov     ax, [bp-0Ch]
                 add     ax, 1Eh
                 cmp     word ptr ds:1ACAh, 3
@@ -7977,7 +7991,7 @@ loc_139B9:                              ; CODE XREF: sub_1393C+59↑j
                 jnz     short loc_139CA
                 dec     cx
 
-loc_139CA:                              ; CODE XREF: sub_1393C+8B↑j
+loc_139CA:                              ; CODE XREF: updateLevelState+8B↑j
                 mov     dx, ds:1ACAh
                 sub     dx, cx
                 mov     bx, ax
@@ -8003,15 +8017,15 @@ loc_139CA:                              ; CODE XREF: sub_1393C+8B↑j
 
 loc_139F9:                              ; CODE XREF: sub_13850:loc_13939↑j
                 jmp     loc_13AC4
-sub_1393C       endp
+updateLevelState endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: noreturn
 
-sub_139FC       proc far                ; CODE XREF: sub_1320C+EE↑P
-                                        ; sub_1320C+113↑P ...
+sub_139FC       proc far                ; CODE XREF: moveMonsters+EE↑P
+                                        ; moveMonsters+113↑P ...
                 mov     cx, 8
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 ; ---------------------------------------------------------------------------
@@ -8198,7 +8212,7 @@ sub_139FC       proc far                ; CODE XREF: sub_1320C+EE↑P
                 db    0
 ; ---------------------------------------------------------------------------
 
-loc_13AC4:                              ; CODE XREF: sub_1393C:loc_139F9↑j
+loc_13AC4:                              ; CODE XREF: updateLevelState:loc_139F9↑j
                 jmp     j_rt_ED
 sub_139FC       endp
 
@@ -10103,7 +10117,7 @@ rt_B2:                                  ; Overlay manager interrupt
 ; -> rtm_B3  (leglib seg003:0x1b438)  [mid-func]
 ; Attributes: noreturn
 
-rt_B3           proc near               ; CODE XREF: sub_12536+177↑P
+rt_B3           proc near               ; CODE XREF: processTileFeature+177↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -10366,7 +10380,7 @@ rt_EB:                                  ; Overlay manager interrupt
 ; Attributes: noreturn
 
 rt_EE           proc near               ; CODE XREF: openChest+75↑P
-                                        ; sub_12536+1E2↑P
+                                        ; processTileFeature+1E2↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -10635,7 +10649,7 @@ rt_FF1E:                                ; Overlay manager interrupt
 ; Attributes: noreturn
 
 rt_FF20         proc near               ; CODE XREF: dunMain+103↑P
-                                        ; sub_1068D+58↑P ...
+                                        ; drawDungeonHud+58↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -10655,7 +10669,7 @@ rt_FF21:                                ; Overlay manager interrupt
 ; Attributes: noreturn
 
 rt_FF22         proc near               ; CODE XREF: dunMain:loc_1015E↑P
-                                        ; sub_1068D:loc_1071E↑P ...
+                                        ; drawDungeonHud:loc_1071E↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -10733,7 +10747,7 @@ rt_FF2A:                                ; Overlay manager interrupt
 ; Attributes: noreturn
 
 rt_FF2B         proc near               ; CODE XREF: dunMain:loc_10149↑P
-                                        ; sub_1068D:loc_106EA↑P
+                                        ; drawDungeonHud:loc_106EA↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -10970,8 +10984,8 @@ rt_FF4B         endp
 ; -> rtm_FF4C  (leglib seg004:0x21b4a)
 ; Attributes: noreturn
 
-rt_FF4C         proc near               ; CODE XREF: sub_1068D:j_rt_FF4C↑P
-                                        ; sub_1068D:j_rt_FF4C_0↑P ...
+rt_FF4C         proc near               ; CODE XREF: drawDungeonHud:j_rt_FF4C↑P
+                                        ; drawDungeonHud:j_rt_FF4C_0↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -10991,7 +11005,7 @@ rt_FF4D:                                ; Overlay manager interrupt
 ; Attributes: noreturn
 
 rt_FF4E         proc near               ; CODE XREF: dunMain+118↑P
-                                        ; sub_1068D+40↑P ...
+                                        ; drawDungeonHud+40↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -11024,7 +11038,7 @@ rt_FF50         endp
 ; -> rtm_FF51  (leglib seg004:0x21b40)
 ; Attributes: noreturn
 
-rt_FF51         proc near               ; CODE XREF: sub_1068D:j_rt_FF51↑P
+rt_FF51         proc near               ; CODE XREF: drawDungeonHud:j_rt_FF51↑P
                                         ; sub_11A1D:j_rt_FF51_0↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
@@ -11735,8 +11749,8 @@ rt_AC:                                  ; Overlay manager interrupt
 ; -> basScreenInit  (leglib seg003:0x13608)
 ; Attributes: noreturn
 
-rt_AF           proc near               ; CODE XREF: sub_12536+EC↑P
-                                        ; sub_12536+104↑P ...
+rt_AF           proc near               ; CODE XREF: processTileFeature+EC↑P
+                                        ; processTileFeature+104↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -11755,7 +11769,7 @@ rt_B0:                                  ; Overlay manager interrupt
 ; -> rtm_B7  (leglib seg003:0x1a1b2)
 ; Attributes: noreturn
 
-rt_B7           proc near               ; CODE XREF: sub_1305C:loc_130F9↑P
+rt_B7           proc near               ; CODE XREF: rebuildLevelView:loc_130F9↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -11768,7 +11782,7 @@ rt_B7           endp
 ; -> rtm_B8  (leglib seg003:0x1a1ba)
 ; Attributes: noreturn
 
-rt_B8           proc near               ; CODE XREF: sub_1068D+2E↑P
+rt_B8           proc near               ; CODE XREF: drawDungeonHud+2E↑P
                                         ; openChest+C0↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
@@ -12185,7 +12199,7 @@ rt_FE1F:                                ; Overlay manager interrupt
 ; -> rtm_FE20  (leglib seg007:0x25883)
 ; Attributes: noreturn
 
-rt_FE20         proc near               ; CODE XREF: sub_10CDB+D4↑P
+rt_FE20         proc near               ; CODE XREF: doLookSearch+D4↑P
                                         ; sub_12E52+12↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
@@ -12470,7 +12484,7 @@ rt_FE3D:                                ; Overlay manager interrupt
 ; -> rtm_FE3E  (leglib seg007:0x2497a)
 ; Attributes: noreturn
 
-rt_FE3E         proc near               ; CODE XREF: sub_12536+289↑P
+rt_FE3E         proc near               ; CODE XREF: processTileFeature+289↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -12509,7 +12523,7 @@ rt_FE41         endp
 ; -> rtm_FE42  (leglib seg007:0x2730c)
 ; Attributes: noreturn
 
-rt_FE42         proc near               ; CODE XREF: sub_12536+25C↑P
+rt_FE42         proc near               ; CODE XREF: processTileFeature+25C↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -12581,7 +12595,7 @@ rt_FE48:                                ; Overlay manager interrupt
 ; Attributes: noreturn
 
 rt_FE49         proc near               ; CODE XREF: climbDownOrExit+1EF↑P
-                                        ; sub_12536+2C3↑P
+                                        ; processTileFeature+2C3↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -12595,7 +12609,7 @@ rt_FE49         endp
 ; Attributes: noreturn
 
 rt_FE4A         proc near               ; CODE XREF: sub_102EB+2B↑P
-                                        ; sub_1031C+14↑P ...
+                                        ; redrawDungeonView+14↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -12714,7 +12728,7 @@ rt_FE54         endp
 ; Attributes: noreturn
 
 rt_FE55         proc near               ; CODE XREF: dunMain+131↑P
-                                        ; sub_12536+2D2↑P
+                                        ; processTileFeature+2D2↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -12805,7 +12819,7 @@ rt_FE5E:                                ; Overlay manager interrupt
 ; -> rtm_FE5F  (leglib seg004:0x1fc26)
 ; Attributes: noreturn
 
-rt_FE5F         proc near               ; CODE XREF: sub_12536+2B4↑P
+rt_FE5F         proc near               ; CODE XREF: processTileFeature+2B4↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -13851,20 +13865,8652 @@ aDDDT           db '@*@*@*@*`*`*@*@*@*D*D*D*@*T*',0
 word_1523B      dw 0                    ; DATA XREF: sub_14C6A+34↑w
 word_1523D      dw 0                    ; DATA XREF: sub_14C6A+3B↑w
 word_1523F      dw 0                    ; DATA XREF: sub_14C6A+42↑w
-                db 213Fh dup(0), 12h, 0, 54h, 22h, 59h, 4Fh, 55h, 20h
-                db 41h, 52h, 45h, 20h, 42h, 45h, 46h, 55h, 2 dup(44h)
-                db 4Ch, 45h, 44h, 2Eh, 1, 0, 6Ah, 22h, 20h, 0F4h, 3 dup(0)
-                db 40h, 2 dup(0), 0C8h, 42h, 2 dup(0), 80h, 3Fh, 4 dup(0)
-                db 9, 0, 80h, 22h, 59h, 4Fh, 55h, 20h, 44h, 49h, 45h, 44h
-                db 21h, 0F4h, 5, 0, 8Eh, 22h, 54h, 55h, 52h, 4Eh, 20h
-                db 0, 5, 0, 98h, 22h, 4Dh, 4Fh, 56h, 45h, 20h, 0EAh, 0CDh
-                db 0CCh, 4Ch, 0BDh, 0CDh, 0CCh, 4Ch, 3Dh, 0Fh, 0, 0AAh
-                db 22h, 25h, 59h, 4Fh, 55h, 20h, 41h, 56h, 4Fh, 49h, 44h
-                db 20h, 54h, 48h, 45h, 20h, 0ACh, 1, 0, 0BEh, 22h, 2Eh
-                db 0F4h, 20h, 0, 0C4h, 22h, 25h, 59h, 4Fh, 55h, 20h, 46h
-                db 41h, 2 dup(4Ch), 20h, 54h, 48h, 52h, 4Fh, 55h, 47h
-                db 48h, 20h, 41h, 20h, 48h, 49h, 2 dup(44h), 45h, 4Eh
-                db 20h, 48h, 4Fh, 4Ch, 45h, 2Eh, 16h, 0, 0E8h
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+dungeonLevel    dw 0                    ; current dungeon depth. dunMain / climbUp / climbDownOrExit / findJewel / loadDungeonLevel all key off it; used as the RNG scale (imul) and the DUNM<n>.BSV selector.
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+hitPoints       dw 0                    ; party hit points. monsterAttack subtracts damage; openChest / healing traps add (then cap); spellResult checks against 0xFA (250). Staged into ds:20EA for the "H.P." display.
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+levelProgressFlags dw 0                 ; per-level bit flags (openChest tests 0x100 / 0x200 / 0x400 / 0x700; sub_11A1D tests 0x400) -- what has been opened / triggered on this level. TENTATIVE.
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+selectedSpell   dw 0                    ; spell-menu selection index (0..0x19). Set by useMagicMenu, read by castSpell to pick the effect.
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+chainDestType   dw 0                    ; destination kind for the next executable: 3 = overworld (chainToOverworld), 6 = museum (chainToMuseum). Same slot as OUT.EXE's chainDestType.
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+scanTile        dw 0                    ; tile code the look / describe commands report on (describeSurroundings, lookOrSearch, sub_10CDB). TENTATIVE.
+moveDelta       dw 0                    ; signed step result set by doMovement (0 / 1 / -1). TENTATIVE.
+featureUnderfoot dw 0                   ; code for the feature on the player's own tile -- checked for stairs (0x0A / 0x0D) before climbUp / climbDownOrExit, and by lookOrSearch / openNothing. TENTATIVE.
+tileAhead       dw 0                    ; code for the tile / feature directly in front of the player -- doMovement and moveHazards branch on it (0..0x10, bit 0x80 = a flag); sub_10CDB rewrites it while resolving a step.
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+playerX         dw 0                    ; player column in the dungeon. doMovement inc/dec's it; sub_1320C uses (20CE,20D0) for range/line-of-sight distance.
+playerY         dw 0                    ; player row in the dungeon (paired with playerX).
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+hpDisplayScratch dw 0                   ; NOT engine state -- a DGROUP scratch word the code stages a value in before a runtime call / the "H.P." display (showHitPoints pushes it). Named so it is not mistaken for hitPoints (1ADA).
+actionPhase     dw 0                    ; small phase enum (1..4) set by the setActionPhase_* stubs and castSpell; monsterAttack and sub_12536 advance it. TENTATIVE.
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+turnActionFlag  dw 0                    ; 1 after a turn-consuming action (set by sub_10CDB, cleared by sub_10CD2). Combat routines also use it as a 0/1 index to pick attacker vs. defender stats. Same DGROUP slot as OUT.EXE.
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db  12h
+                db    0
+                db  54h ; T
+                db  22h ; "
+                db  59h ; Y
+                db  4Fh ; O
+                db  55h ; U
+                db  20h
+                db  41h ; A
+                db  52h ; R
+                db  45h ; E
+                db  20h
+                db  42h ; B
+                db  45h ; E
+                db  46h ; F
+                db  55h ; U
+                db  44h ; D
+                db  44h ; D
+                db  4Ch ; L
+                db  45h ; E
+                db  44h ; D
+                db  2Eh ; .
+                db    1
+                db    0
+                db  6Ah ; j
+                db  22h ; "
+                db  20h
+                db 0F4h
+                db    0
+                db    0
+                db    0
+                db  40h ; @
+                db    0
+                db    0
+                db 0C8h
+                db  42h ; B
+dungeonArrayPtr dw 0                    ; far pointer (offset @ 2274, segment @ 2276) to the main DUN game-data array -- pushed (seg then off) as an argument to nearly every rtm_ call (rtm_B8). Never written from seg000. Same role as OUT.EXE's overworldArrayPtr.
+dungeonArrayPtr_seg dw 3F80h            ; segment word of dungeonArrayPtr (2274).
+                db    0
+                db    0
+                db    0
+                db    0
+                db    9
+                db    0
+                db  80h
+                db  22h ; "
+                db  59h ; Y
+                db  4Fh ; O
+                db  55h ; U
+                db  20h
+                db  44h ; D
+                db  49h ; I
+                db  45h ; E
+                db  44h ; D
+                db  21h ; !
+                db 0F4h
+                db    5
+                db    0
+                db  8Eh
+                db  22h ; "
+                db  54h ; T
+                db  55h ; U
+                db  52h ; R
+                db  4Eh ; N
+                db  20h
+                db    0
+                db    5
+                db    0
+                db  98h
+                db  22h ; "
+                db  4Dh ; M
+                db  4Fh ; O
+                db  56h ; V
+                db  45h ; E
+                db  20h
+                db 0EAh
+                db 0CDh
+                db 0CCh
+                db  4Ch ; L
+                db 0BDh
+                db 0CDh
+                db 0CCh
+                db  4Ch ; L
+                db  3Dh ; =
+                db  0Fh
+                db    0
+                db 0AAh
+                db  22h ; "
+                db  25h ; %
+                db  59h ; Y
+                db  4Fh ; O
+                db  55h ; U
+                db  20h
+                db  41h ; A
+                db  56h ; V
+                db  4Fh ; O
+                db  49h ; I
+                db  44h ; D
+                db  20h
+                db  54h ; T
+                db  48h ; H
+                db  45h ; E
+                db  20h
+                db 0ACh
+                db    1
+                db    0
+                db 0BEh
+                db  22h ; "
+                db  2Eh ; .
+                db 0F4h
+                db  20h
+                db    0
+                db 0C4h
+                db  22h ; "
+                db  25h ; %
+                db  59h ; Y
+                db  4Fh ; O
+                db  55h ; U
+                db  20h
+                db  46h ; F
+                db  41h ; A
+                db  4Ch ; L
+                db  4Ch ; L
+                db  20h
+                db  54h ; T
+                db  48h ; H
+                db  52h ; R
+                db  4Fh ; O
+                db  55h ; U
+                db  47h ; G
+                db  48h ; H
+                db  20h
+                db  41h ; A
+                db  20h
+                db  48h ; H
+                db  49h ; I
+                db  44h ; D
+                db  44h ; D
+                db  45h ; E
+                db  4Eh ; N
+                db  20h
+                db  48h ; H
+                db  4Fh ; O
+                db  4Ch ; L
+                db  45h ; E
+                db  2Eh ; .
+                db  16h
+                db    0
+                db 0E8h
 aYouReAmbushedB db '"%YOU',27h,'RE AMBUSHED BY A ',0
                 align 2
 aHb             db 'HB',0

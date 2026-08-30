@@ -103,17 +103,24 @@ reimplementation.
 - [x] Build `dun.idb` (2026-08-30). 6 segments, two compiled-BASIC code
       segs (`seg000` "bmDUN" main + `seg001` "bmDUNG" graphics), thunk
       table `seg002`. Both coerced ~100%, 0 bad insns.
-- [~] Name `seg000` functions (`apply_renames_dun.py`): 24/72 —
-      `dun_entry` → `dunMain`; movement (`doMovement`, `moveHazards`,
-      `climbUp`, `climbDownOrExit`); combat (`monsterAttack`, `doAttack`,
-      `checkAttackTarget`); magic (`useMagicMenu`, `castSpell`,
-      `spellResult`, `psychoStrengthSpell`); `openChest`, `findJewel`,
-      `describeSurroundings`, `lookOrSearch`, `loadDungeonLevel`,
-      `chainToMuseum`/`chainToOverworld`.
+- [x] Map the DUN engine state vars (2026-08-31, `apply_dsvars_dun.py`;
+      DUN's DGROUP is **seg004**). ~16 named: `dungeonLevel` (1ACA),
+      `hitPoints` (1ADA), `playerX`/`playerY` (20CE/20D0), `tileAhead`
+      (20C4), `selectedSpell` (1E24), `dungeonArrayPtr` (2274 far ptr),
+      `levelProgressFlags` (1AE2), `actionPhase` (20EC); `turnActionFlag`
+      (212E) and `chainDestType` (1F16) are the **same DGROUP slots as
+      OUT**. `hpDisplayScratch` (20EA) explicitly flagged as scratch, not
+      HP. `featureUnderfoot` / `scanTile` / `moveDelta` tentative.
+- [~] Name `seg000` functions (`apply_renames_dun.py`): **38 / 72**
+      (2026-08-31 second pass). New: `processTileFeature` (was
+      `sub_12536` — the per-turn feature handler with the trap-name
+      table), `moveMonsters`, `drawDungeonHud`, `doLookSearch`,
+      `clearTurnFlag`, `setActionPhase_1/2/3`, plus tentatives
+      (`stepMonsterToward`, `rebuildLevelView`, `updateLevelState`,
+      `rollChestContents`, `monsterSpecialAttack`, `redrawDungeonView`).
 - [ ] Name `seg001` "bmDUNG" (9 funcs, no screen text — graphics).
-- [ ] `sub_12536` (called first from `dunMain`, holds a char-class table
-      + the trap names "POISON GAS VENT" / "FLOOR HOLE" / "SLIME SPLOT")
-      — the command parser / per-tile handler.
+- [ ] Confirm the DUN tentatives; identify the ~28 remaining `sub_`
+      (many are runtime-dispatched 6–26 byte stubs).
 
 ## TWNDR.EXE / CASDR.EXE — open questions
 

@@ -205,6 +205,7 @@ static Bytes_0(void) {
 	create_insn	(0X102EB);
 	set_name	(0X1031B,	"nullsub_2");
 	create_insn	(0X1031C);
+	set_name	(0X1031C,	"redrawDungeonView");
 	set_name	(0X10335,	"nullsub_3");
 	create_insn	(0X10336);
 	set_name	(0X1034F,	"nullsub_4");
@@ -266,14 +267,18 @@ static Bytes_0(void) {
 	set_cmt	(0X10680,	"\\nYOU'RE AMBUSHED BY A ",	0);
 	create_insn	(0X10680);
 	create_insn	(0X1068D);
+	set_name	(0X1068D,	"drawDungeonHud");
 	set_name	(0X106EF,	"j_rt_FF4C");
 	set_name	(0X10714,	"j_rt_FF51");
 	set_name	(0X10719,	"j_rt_FF4C_0");
 	set_name	(0X1072B,	"nullsub_8");
 	set_cmt	(0X1072C,	")?\\x01\\x10)*\\x01\\x16)0R\\x0f\\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT",	0);
 	create_insn	(0X1072C);
+	set_name	(0X1072C,	"setActionPhase_1");
 	create_insn	(0X10735);
+	set_name	(0X10735,	"setActionPhase_2");
 	create_insn	(0X1073E);
+	set_name	(0X1073E,	"setActionPhase_3");
 	set_cmt	(0X10744,	"- SELECT ABOVE",	0);
 	create_insn	(0X10744);
 	set_name	(0X10744,	"selectAbove");
@@ -394,8 +399,10 @@ static Bytes_0(void) {
 	create_insn	(0X10C7D);
 	set_cmt	(0X10C9C,	"TO A ",	0);
 	create_insn	(0X10CD2);
+	set_name	(0X10CD2,	"clearTurnFlag");
 	set_cmt	(0X10CDB,	")?\\x01\\x10)*\\x01\\x16)0R\\x0f\\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT",	0);
 	create_insn	(0X10CDB);
+	set_name	(0X10CDB,	"doLookSearch");
 	create_insn	(0X10D03);
 	create_insn	(0X10D0E);
 	create_insn	(0X10D18);
@@ -737,6 +744,7 @@ static Bytes_0(void) {
 	set_name	(0X12530,	"j_rt_FE01");
 	set_name	(0X12535,	"nullsub_12");
 	create_insn	(0X12536);
+	set_name	(0X12536,	"processTileFeature");
 	create_insn	(0X12541);
 	set_cmt	(0X12548,	")?\\x01\\x10)*\\x01\\x16)0R\\x0f\\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT",	0);
 	create_insn	(x=0X12548);
@@ -857,9 +865,11 @@ static Bytes_0(void) {
 	set_name	(0X12B62,	"j_rt_FE45");
 	create_insn	(0X12C31);
 	create_insn	(0X12C34);
+	set_name	(0X12C34,	"rollChestContents");
 	create_insn	(0X12C3C);
 	create_insn	(0X12CE4);
 	create_insn	(0X12CE7);
+	set_name	(0X12CE7,	"stepMonsterToward");
 	create_insn	(0X12CEF);
 	set_cmt	(0X12CF9,	")?\\x01\\x10)*\\x01\\x16)0R\\x0f\\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT",	0);
 	create_insn	(x=0X12CF9);
@@ -896,6 +906,7 @@ static Bytes_0(void) {
 	create_insn	(0X12FB8);
 	create_insn	(0X13059);
 	create_insn	(0X1305C);
+	set_name	(0X1305C,	"rebuildLevelView");
 	create_insn	(0X13064);
 	create_insn	(0X13093);
 	set_cmt	(0X13094,	")?\\x01\\x10)*\\x01\\x16)0R\\x0f\\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT",	0);
@@ -938,6 +949,7 @@ static Bytes_0(void) {
 	create_insn	(0X13206);
 	create_insn	(0X13209);
 	create_insn	(0X1320C);
+	set_name	(0X1320C,	"moveMonsters");
 	create_insn	(0X13214);
 	create_insn	(0X1321F);
 	set_cmt	(0X13225,	")?\\x01\\x10)*\\x01\\x16)0R\\x0f\\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT",	0);
@@ -970,6 +982,7 @@ static Bytes_0(void) {
 	create_insn	(0X1340E);
 	create_insn	(0X1345A);
 	create_insn	(0X1345D);
+	set_name	(0X1345D,	"monsterSpecialAttack");
 	create_insn	(0X13465);
 	set_name	(0X13465,	"j_rt_FE5B_20");
 	set_name	(0X1346A,	"j_rt_FE5B_21");
@@ -1115,6 +1128,7 @@ static Bytes_0(void) {
 	create_insn	(0X13936);
 	create_insn	(0X13939);
 	create_insn	(0X1393C);
+	set_name	(0X1393C,	"updateLevelState");
 	create_insn	(0X13944);
 	create_insn	(0X13953);
 	set_cmt	(0X1395A,	")?\\x01\\x10)*\\x01\\x16)0R\\x0f\\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT",	0);
@@ -2570,6 +2584,15 @@ static Bytes_0(void) {
 	create_insn	(x=0X1475C);
 	op_hex		(x,	0);
 	set_name	(0X1475C,	"rt_FF4D");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_byte	(0X1475E);
 	make_array	(0X1475E,	0X2);
 	set_cmt	(0X14760,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
@@ -2583,15 +2606,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X14764);
 	op_hex		(x,	0);
 	set_name	(0X14764,	"rt_FF4F");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_byte	(0X14766);
 	make_array	(0X14766,	0X2);
 	set_cmt	(0X14768,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
@@ -4460,8 +4474,54 @@ static Bytes_1(void) {
 	create_word	(0X1523B);
 	create_word	(0X1523D);
 	create_word	(0X1523F);
-	create_byte	(0X15241);
-	make_array	(0X15241,	0X21D6);
+	set_cmt	(0X16BFA,	"current dungeon depth. dunMain / climbUp / climbDownOrExit / findJewel / loadDungeonLevel all key off it; used as the RNG scale (imul) and the DUNM<n>.BSV selector.",	1);
+	create_word	(0X16BFA);
+	set_name	(0X16BFA,	"dungeonLevel");
+	set_cmt	(0X16C0A,	"party hit points. monsterAttack subtracts damage; openChest / healing traps add (then cap); spellResult checks against 0xFA (250). Staged into ds:20EA for the \"H.P.\" display.",	1);
+	create_word	(0X16C0A);
+	set_name	(0X16C0A,	"hitPoints");
+	set_cmt	(0X16C12,	"per-level bit flags (openChest tests 0x100 / 0x200 / 0x400 / 0x700; sub_11A1D tests 0x400) -- what has been opened / triggered on this level. TENTATIVE.",	1);
+	create_word	(0X16C12);
+	set_name	(0X16C12,	"levelProgressFlags");
+	set_cmt	(0X16F54,	"spell-menu selection index (0..0x19). Set by useMagicMenu, read by castSpell to pick the effect.",	1);
+	create_word	(0X16F54);
+	set_name	(0X16F54,	"selectedSpell");
+	set_cmt	(0X17046,	"destination kind for the next executable: 3 = overworld (chainToOverworld), 6 = museum (chainToMuseum). Same slot as OUT.EXE's chainDestType.",	1);
+	create_word	(0X17046);
+	set_name	(0X17046,	"chainDestType");
+	set_cmt	(0X171EE,	"tile code the look / describe commands report on (describeSurroundings, lookOrSearch, sub_10CDB). TENTATIVE.",	1);
+	create_word	(0X171EE);
+	set_name	(0X171EE,	"scanTile");
+	set_cmt	(0X171F0,	"signed step result set by doMovement (0 / 1 / -1). TENTATIVE.",	1);
+	create_word	(0X171F0);
+	set_name	(0X171F0,	"moveDelta");
+	set_cmt	(0X171F2,	"code for the feature on the player's own tile -- checked for stairs (0x0A / 0x0D) before climbUp / climbDownOrExit, and by lookOrSearch / openNothing. TENTATIVE.",	1);
+	create_word	(0X171F2);
+	set_name	(0X171F2,	"featureUnderfoot");
+	set_cmt	(0X171F4,	"code for the tile / feature directly in front of the player -- doMovement and moveHazards branch on it (0..0x10, bit 0x80 = a flag); sub_10CDB rewrites it while resolving a step.",	1);
+	create_word	(0X171F4);
+	set_name	(0X171F4,	"tileAhead");
+	set_cmt	(0X171FE,	"player column in the dungeon. doMovement inc/dec's it; sub_1320C uses (20CE,20D0) for range/line-of-sight distance.",	1);
+	create_word	(0X171FE);
+	set_name	(0X171FE,	"playerX");
+	set_cmt	(0X17200,	"player row in the dungeon (paired with playerX).",	1);
+	create_word	(0X17200);
+	set_name	(0X17200,	"playerY");
+	set_cmt	(0X1721A,	"NOT engine state -- a DGROUP scratch word the code stages a value in before a runtime call / the \"H.P.\" display (showHitPoints pushes it). Named so it is not mistaken for hitPoints (1ADA).",	1);
+	create_word	(0X1721A);
+	set_name	(0X1721A,	"hpDisplayScratch");
+	set_cmt	(0X1721C,	"small phase enum (1..4) set by the setActionPhase_* stubs and castSpell; monsterAttack and sub_12536 advance it. TENTATIVE.",	1);
+	create_word	(0X1721C);
+	set_name	(0X1721C,	"actionPhase");
+	set_cmt	(0X1725E,	"1 after a turn-consuming action (set by sub_10CDB, cleared by sub_10CD2). Combat routines also use it as a 0/1 index to pick attacker vs. defender stats. Same DGROUP slot as OUT.EXE.",	1);
+	create_word	(0X1725E);
+	set_name	(0X1725E,	"turnActionFlag");
+	set_cmt	(0X173A4,	"far pointer (offset @ 2274, segment @ 2276) to the main DUN game-data array -- pushed (seg then off) as an argument to nearly every rtm_ call (rtm_B8). Never written from seg000. Same role as OUT.EXE's overworldArrayPtr.",	1);
+	create_word	(0X173A4);
+	set_name	(0X173A4,	"dungeonArrayPtr");
+	set_cmt	(0X173A6,	"segment word of dungeonArrayPtr (2274).",	1);
+	create_word	(0X173A6);
+	set_name	(0X173A6,	"dungeonArrayPtr_seg");
 	create_strlit	(0X17417,	0X18);
 	set_name	(0X17417,	"aYouReAmbushedB");
 	create_strlit	(0X17430,	0X3);
@@ -4535,6 +4595,7 @@ static Functions_0(void) {
 	set_func_flags(0X102EB,0x1401);
 	add_func    (0X1031C,0X10336);
 	set_func_flags(0X1031C,0x1401);
+	set_func_cmt(0X1031C,	"repaint the dungeon viewport (called from climb / describe / doAttack / the FE5B path). TENTATIVE.", 1);
 	add_func    (0X10336,0X10350);
 	set_func_flags(0X10336,0x1401);
 	add_func    (0X10350,0X1036A);
@@ -4554,12 +4615,16 @@ static Functions_0(void) {
 	set_func_cmt(0X105E3,	"\"YOU AVOID THE \", \"YOU FALL THROUGH A HIDDEN HOLE.\", \"YOU'RE AMBUSHED BY A \" -- per-step trap / ambush check.", 1);
 	add_func    (0X1068D,0X1072C);
 	set_func_flags(0X1068D,0x1401);
+	set_func_cmt(0X1068D,	"draw the dungeon status line -- calls showHitPoints, formats the level / feature text (reads dungeonLevel, featureUnderfoot).", 1);
 	add_func    (0X1072C,0X10735);
 	set_func_flags(0X1072C,0x1401);
+	set_func_cmt(0X1072C,	"actionPhase := 1 (runtime-dispatched stub).", 1);
 	add_func    (0X10735,0X1073E);
 	set_func_flags(0X10735,0x1401);
+	set_func_cmt(0X10735,	"actionPhase := 2 (runtime-dispatched stub).", 1);
 	add_func    (0X1073E,0X10744);
 	set_func_flags(0X1073E,0x1401);
+	set_func_cmt(0X1073E,	"actionPhase := 3 (runtime-dispatched stub).", 1);
 	add_func    (0X10744,0X10774);
 	set_func_flags(0X10744,0x1401);
 	set_func_cmt(0X10744,	"\"- SELECT ABOVE\" menu helper.", 1);
@@ -4594,8 +4659,10 @@ static Functions_0(void) {
 	set_func_cmt(0X10BD7,	"\" IS STALKING YOU!\", \" IS IN SIGHT.\", \"YOU ARE STANDING NEXT TO A \"", 1);
 	add_func    (0X10CD2,0X10CDB);
 	set_func_flags(0X10CD2,0x1401);
+	set_func_cmt(0X10CD2,	"turnActionFlag := 0 (before a non-turn action).", 1);
 	add_func    (0X10CDB,0X10E33);
 	set_func_flags(0X10CDB,0x1401);
+	set_func_cmt(0X10CDB,	"the LOOK / SEARCH action: sets turnActionFlag, clears scanTile, scans the surrounding tiles and reports (rtm_FE41). Called from lookOrSearch.", 1);
 	add_func    (0X10E33,0X10E75);
 	set_func_flags(0X10E33,0x1401);
 	set_func_cmt(0X10E33,	"\"NOTHING TO OPEN\" stub.", 1);
@@ -4639,6 +4706,7 @@ static Functions_0(void) {
 	set_func_flags(0X124FE,0x1401);
 	add_func    (0X12536,0X1280E);
 	set_func_flags(0X12536,0x1001);
+	set_func_cmt(0X12536,	"the per-turn tile / feature handler (~0.7 KB, called first from dunMain). Walks a feature-name table (holds \"POISON GAS VENT\" / \"FLOOR HOLE\" / \"SLIME SPLOT\" + a char-class table), updates playerX / playerY / dungeonLevel / levelProgressFlags / actionPhase, and branches on tileAhead.", 1);
 	add_func    (0X1280E,0X12814);
 	set_func_flags(0X1280E,0x1401);
 	add_func    (0X12814,0X1299A);
@@ -4658,8 +4726,10 @@ static Functions_0(void) {
 	set_func_flags(0X12B5A,0x1403);
 	add_func    (0X12C34,0X12CE7);
 	set_func_flags(0X12C34,0x1403);
+	set_func_cmt(0X12C34,	"decide what a chest holds (reads dungeonLevel + levelProgressFlags). Called from openChest. TENTATIVE.", 1);
 	add_func    (0X12CE7,0X12D93);
 	set_func_flags(0X12CE7,0x1403);
+	set_func_cmt(0X12CE7,	"move one monster a step toward (playerX, playerY). TENTATIVE.", 1);
 	add_func    (0X12D93,0X12E52);
 	set_func_flags(0X12D93,0x1403);
 	add_func    (0X12E52,0X12E7D);
@@ -4672,13 +4742,16 @@ static Functions_0(void) {
 	set_func_flags(0X12F9F,0x1403);
 	add_func    (0X1305C,0X1320C);
 	set_func_flags(0X1305C,0x1403);
+	set_func_cmt(0X1305C,	"rebuild the level view after a climb / level change (descriptor at ds:1E2Ah). Called only from climbDownOrExit. TENTATIVE.", 1);
 	add_func    (0X1320C,0X13406);
 	set_func_flags(0X1320C,0x1403);
+	set_func_cmt(0X1320C,	"per-turn monster update loop (BASIC SUB) -- reads playerX / playerY to step each monster and check reach. ~0.5 KB, called from dunMain.", 1);
 	add_func    (0X13406,0X1345D);
 	set_func_flags(0X13406,0x1403);
 	set_func_cmt(0X13406,	"\"H.P. -\".", 1);
 	add_func    (0X1345D,0X13571);
 	set_func_flags(0X1345D,0x1403);
+	set_func_cmt(0X1345D,	"monster special-attack resolution (called from monsterAttack). TENTATIVE.", 1);
 	add_func    (0X13571,0X13850);
 	set_func_flags(0X13571,0x1403);
 	set_func_cmt(0X13571,	"loads a dungeon level (\"level\", \"monst\" -- DUNM*.BSV / DUNMON*.BSV). ~0.7 KB, called from an init helper.", 1);
@@ -4686,6 +4759,7 @@ static Functions_0(void) {
 	set_func_flags(0X13850,0x1403);
 	add_func    (0X1393C,0X139FC);
 	set_func_flags(0X1393C,0x1403);
+	set_func_cmt(0X1393C,	"refresh per-level state (reads dungeonLevel + levelProgressFlags) -- called after climbs, kills, and from processTileFeature. TENTATIVE.", 1);
 	add_func    (0X139FC,0X13AC7);
 	set_func_flags(0X139FC,0x1403);
 	add_func    (0X13AC7,0X13ACF);
