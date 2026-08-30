@@ -1,21 +1,21 @@
 ============================================================
 [*] batch_run_and_export starting
 [*] auto_wait (initial)
-[*] idb = C:\dev\lota\sdefendr.idb
-[*] ARGV = ['C:\\dev\\lota\\ida_scripts\\batch_run_and_export.py', 'apply_renames_sdefendr.py']
-[*] reading apply_renames_sdefendr.py
-[*] executing apply_renames_sdefendr.py
+[*] idb = C:\dev\lota\gmb1.idb
+[*] ARGV = ['C:\\dev\\lota\\ida_scripts\\batch_run_and_export.py', 'apply_renames_gmb1.py']
+[*] reading apply_renames_gmb1.py
+[*] executing apply_renames_gmb1.py
 [*] captured stdout from target script:
 ----- begin target script output -----
 
-applied 17, already-named 0
-seg000+seg001: 53/84 functions named
+applied 14, already-named 0
+seg000: 14/21 functions named
 ----- end target script output -----
-[*] finished executing apply_renames_sdefendr.py
+[*] finished executing apply_renames_gmb1.py
 [*] auto_wait (post-script)
-[*] exporting ASM to C:\dev\lota\sdefendr.asm
-[*] gen_file(OFILE_ASM) returned 7670
-[*] exporting IDC to C:\dev\lota\sdefendr.idc
+[*] exporting ASM to C:\dev\lota\gmb1.asm
+[*] gen_file(OFILE_ASM) returned 7433
+[*] exporting IDC to C:\dev\lota\gmb1.idc
 [*] gen_file(OFILE_IDC) returned 1
-[*] saving database to C:\dev\lota\sdefendr.idb
+[*] saving database to C:\dev\lota\gmb1.idb
 [*] done, exiting 0

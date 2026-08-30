@@ -62,7 +62,7 @@ notes on BRUN.
 | `CASDR.EXE` | 36,845 | Castle driver. `CASTLE.BS1`/`.BS2`, `TCASOBJ.BSV`. |
 | `MUS.EXE` | ~29,568 (unpacked) | **The MUSEUM driver** ("MUS" = Museum, *not* music). The Tarmalon Museum is the game's central hub; its display cases are portals into the world — chains to `TWNDR` (town exhibits), `DUN` (dungeon exhibits), `STDRV` (story), `CELDRV` (cel animations). `MUSDATA.BSV`, `MUSOBJ.BSV`, `MUSMSG.TXT`. |
 | `SDEFENDR.EXE` | 15,443 (34,368 unpacked) | **The combat-training school** minigame — a 360° "defender"-style shooter reached from a town. Pick ARMOR or WEAPONS training, survive waves of fireballs approaching from all sides (turn keys + shift to fire), and doing well raises ARMOR / WEAPON / ENDURANCE. 50 gold/session, seven levels. Chains back to `TWNDR`. `SDMAP.GLB`, `SDOBJ.GLB`, `SDMAP.GMP`. |
-| `GMB1.EXE` / `GMB2.EXE` | 13,285 / 21,079 | Gambling / casino minigames. |
+| `GMB1.EXE` / `GMB2.EXE` | 13,285 / 21,079 (26,208 / 31,808 unpacked) | Town gambling minigames ("GMB" = gamble). **`GMB1` = BlackJack / "21"** (confirmed — hit/stay vs. the dealer, natural pays double, five-card win, house stakes you 5 gold if you go broke). `GMB2` = the other casino game (also uses `BJCHR.GLB`). Both chain back to `TWNDR`. |
 | `CELDRV.EXE` | 8,967 (17,024 unpacked) | **Endgame victory cinematic** ("cel" = the cel-animation image banks). Shows "AGAINST ALL ODDS!", the scrolling victory-story narration (hero-name substitution, over music) and the end credits. `CEL0.BSV`…`CEL3.BSV`, `DIS9.BSV`. Chained to from `CASDR` after the Warlord falls. |
 | `STDRV.EXE` | 24,923 | **"Stones of Wisdom" dice game** — a Liar's-Dice / Perudo variant played against the "DEALER" as the museum's *Stones of Wisdom* exhibit (`MUS` chains to it). Bid (quantity, value) pairs, challenge, loser drops a die, last with dice wins; the match result changes the character's INTELLIGENCE; each replay costs gold. NOT a "story driver" despite the name. `STDRVSCR.DAT` = the rules text. |
 | `SAVER.EXE` | 5,903 (13,888 unpacked) | **Save-game handler.** Chained to from `OUT` / `DUN` on a save-or-quit request: "DO YOU WANT TO SAVE THE GAME NOW IN PROGRESS?", validates the character disk, writes the roster to `CHAR.DAT`, then either exits to DOS or re-execs the calling module. |
@@ -91,6 +91,7 @@ one place that pays off across every module.
 | `twndr.idb` | `TWNDR.EXE` | 41 / 98 seg000 (+ 13 `bmTNCALB` seg001) funcs (+ `rt_*` thunks) | 0 | Town driver (entered from `OUT` board; chains back). UNP-unpacked; 6 segments — `seg000` "bmTWNDR" (98 funcs) + `seg001` "bmTNCALB" (town/castle anim, 26 funcs), thunk table `seg002` (only **431** entries — TWNDR uses fewer runtime routines). Both ~100% coerced. 41 `seg000` functions named from the shop/NPC text (`foodShop`, `weaponShopEntry`, `borrowMoney`, `loanRepayment`, `fortuneTeller`, `jailScene`/`jailRelease`, `buyBackShop`, `townServiceDispatch` (~6 KB), …). |
 | `casdr.idb` | `CASDR.EXE` |  34 (+ 13 `bmTNCALB`) / 102 seg000 funcs (+ `rt_*` thunks) | 0 | Castle / fortress driver — **endgame** content (the Warlord, the Compendium, the king's quest). UNP-unpacked; `seg000` "bmCASDR" + `seg001` "bmTNCALB" (the **same** helper module TWNDR uses), thunk table `seg002` (431). Both ~100% coerced. 34 named from the story text (`warlordConfrontation`, `kingConfides` (the guardians-of-the-scroll / forearm-mark quest), `potionWizard`, `doFight`, `describeRoom`/`describeObjects`, `loadCastleLevel`, `exitCastle`, `gasRoomTrap`, …). |
 | `mus.idb` | `MUS.EXE` | 37 / 109 seg000 funcs (+ `rt_*` thunks) | 0 | **The MUSEUM driver** (the game's hub — display cases are portals). `seg000` "bmMUS" (109 funcs) + `seg001` "bmMUSDUNG" (8), thunk table `seg002` (431). Both ~100% coerced. 37 named: `enterExhibit`, `describeMuseumRoom`, `readPlaque`, `caretakerOffer`, `useCommand`, `chainToTown`/`Dungeon`/`Story`/`Cel`, ~15 `exhibitName_*`. |
+| `gmb1.idb` | `GMB1.EXE` | 14 / 21 seg000 funcs (+ `rt_*` thunks) | 0 | **BlackJack table.** Single code seg `seg000` "bmGMB1" (21 funcs), thunk table `seg001` (431), DGROUP `seg003`, card graphics `seg004` (`BJCHR.GLB`). 99.8% coerced, 0 bad insns, 431 thunks, 49 string records. Named `blackjackMain`, `showInstructions`, `pressKeyToContinue`, `showGoldLine`, `shuffleDeck`, `drawFromDeck` + hand/deal/render helpers (tentative). |
 | `sdefendr.idb` | `SDEFENDR.EXE` | ~15 game funcs named (+ `rt_*` thunks) | 0 | **The combat-training school minigame.** **Two** code segs: `seg000` "bmSDEFENDR" (compiled BASIC — framing: mode select, briefing, wave/score screens, rating + stat change, 50-gold economy, `TWNDR` hand-off) + `seg001` (hand-written **asm** — the real-time arena engine: `arenaGameLoop` over 8 step routines, playfield data in `seg004`). `seg000` 99.8% coerced, 0 bad insns; 328 thunks. Named `trainingSchoolMain`, `showBriefing`, `runTrainingLevel`, `runPractice`, `showWaveScore`, `drawScorePanel`, `arenaGameLoop` + engine steps (`pollPlayerTurn`, `firePlayerArrow`, `moveFireballs`, …, tentative). |
 | `saver.idb` | `SAVER.EXE` | 3 / 5 seg000 funcs (+ `rt_*` thunks) | 0 | **The save-game handler.** Tiny — single code seg `seg000` "bmSAVER" (5 funcs, 1.5 KB), thunk table `seg001` (373), DGROUP `seg003`. 99.8% coerced, 0 bad insns, 373 thunks resolved, 19 string records. 3 named: `saver_entry` (the "SAVE THE GAME NOW IN PROGRESS?" flow), `saveRosterToDisk` (writes `CHAR.DAT`), `chainBackOrQuit` (ESC → DOS, else re-exec `OUT`/`DUN`). |
 | `celdrv.idb` | `CELDRV.EXE` | 13 / 16 seg000 funcs (+ `rt_*` thunks) | 0 | **The endgame victory cinematic.** Tiny — single code seg `seg000` "bmCELDRV" (16 funcs, 2 KB), thunk table `seg001` (373), DGROUP `seg003`. 99.5% coerced, 0 bad insns, 373 thunks resolved, 54 string records. 13 named: `celdrv_entry` (loads `CEL*`/`DIS9.BSV`, "AGAINST ALL ODDS!", story crawl), `scrollStoryText`, `runCreditsCrawl` + `showCredit*`, `serviceMusic`/`delayWithMusic`, `celAnimStep`/`blitCelFrame`. |
@@ -423,9 +424,18 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   (`arenaGameLoop` cycling 8 step routines over playfield data in
   `seg004`), no BASIC frame; `seg000` is the usual compiled-BASIC
   framing. ~15 game functions named.
-- **Eleven per-module IDBs now built** (menu, leglib, out, dun, twndr,
-  casdr, mus, stdrv, celdrv, saver, sdefendr). Next: (a) map the `ds:`
-  engine state vars to name the remaining `sub_` helpers; (b) continue
-  `rtm_*` → `B$…` in `leglib.idb` (the `FF4B`/`FF20`/… value-stack
-  cluster, and the `rtm_FE1x` interior-graphics cluster); (c) build the
-  last modules (`GMB1`/`GMB2`, `CONFIGUR`).
+- **2026-08-31** — Built `gmb1.idb`. **`GMB1.EXE` is the BlackJack
+  table** ("GMB" = gamble) — reached from a town, hit/stay against the
+  dealer, "Natural BlackJack pays double", "You win with five cards
+  under 21", "Dealer stops with 17 or more"; bet 0 to quit; go broke and
+  the house stakes you 5 gold once, break the bank and "The house is
+  closed". Loads `BJCHR.GLB` (card sprites into `seg004`), chains back to
+  `TWNDR`. Single compiled-BASIC code seg; 14/21 functions named
+  (`blackjackMain`, `showInstructions`, `shuffleDeck`, `drawFromDeck`, …).
+- **Twelve per-module IDBs now built** (menu, leglib, out, dun, twndr,
+  casdr, mus, stdrv, celdrv, saver, sdefendr, gmb1). Next: (a) map the
+  `ds:` engine state vars to name the remaining `sub_` helpers; (b)
+  continue `rtm_*` → `B$…` in `leglib.idb` (the `FF4B`/`FF20`/…
+  value-stack cluster — heavily used by `gmb1` for hand scoring — and the
+  `rtm_FE1x` interior-graphics cluster); (c) build the last modules
+  (`GMB2`, `CONFIGUR`).

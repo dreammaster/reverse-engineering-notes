@@ -77,8 +77,13 @@ reached from a town; raises ARMOR/WEAPON/ENDURANCE, 50 gold/session,
 7 levels, chains back to `TWNDR`). First module with a hand-written
 **asm** code segment (`seg001` = the real-time arena engine).
 
-Still to build: `GMB1`/`GMB2` (check packing first), `CONFIGUR`
-(standalone C, low priority).
+`gmb1.idb` built 2026-08-31 — **`GMB1.EXE` is the BlackJack table**
+("GMB" = gamble; hit/stay vs. the dealer, natural pays double, five-card
+win, 17+ dealer stop, bet 0 to quit, broke → 5-gold stake, break the
+bank → house closes). Loads `BJCHR.GLB`, chains back to `TWNDR`.
+
+Still to build: `GMB2` (the other casino game — shares `BJCHR.GLB`),
+`CONFIGUR` (standalone C, low priority).
 
 ## DUN.EXE — open questions
 
@@ -212,6 +217,27 @@ Still to build: `GMB1`/`GMB2` (check packing first), `CONFIGUR`
       -" applied to `ARMOR,WEAPON,ENDUR`.
 - [ ] Which town building launches it, and how the trained stat writes
       back to `CHAR.DAT`.
+
+## GMB1.EXE / GMB2.EXE — open questions
+
+- [x] Build `gmb1.idb` (2026-08-31). Single compiled-BASIC code seg
+      `seg000` "bmGMB1" (21 funcs), thunk table `seg001` (431), card
+      graphics `seg004`. 99.8% coerced, 0 bad insns.
+- [~] Name `gmb1` functions (`apply_renames_gmb1.py`): 14/21 —
+      `blackjackMain` (the whole game + outcomes + bankroll handling +
+      `TWNDR` hand-off), `showInstructions`, `showWagerRules`,
+      `pressKeyToContinue`, `showGoldLine`, `shuffleDeck`, `drawFromDeck`;
+      `dealCardToHand` / `dealInitialHands` / `revealDealerCard` /
+      `drawGoldAndBet` / `drawDealerArea` / `clearPromptLine` /
+      `drawHandSprites` (all **tentative** — no distinctive text).
+- [ ] `gmb1`: the hand-scoring logic — it leans hard on the `leglib`
+      `rtm_FF4B`/`FF27`/`FF44`/`FF22`/`FF1F` value-stack cluster.
+      Identifying those `B$…` primitives would clarify `dealCardToHand`.
+- [ ] `gmb1` `ds:` vars: `ds:1F1Ah` (shoe pointer), `ds:1F04h`,
+      `ds:21A4h`, the hand struct at `ds:1C7Ch`.
+- [ ] Build `gmb2.idb` — which casino game is it? (Shares `BJCHR.GLB`,
+      so also cards: poker? war? acey-deucey?)
+- [ ] `BJCHR.GLB` sprite-sheet layout (52 cards + backs).
 
 ## LEGLIB.EXE — open questions
 

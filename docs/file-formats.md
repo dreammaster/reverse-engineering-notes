@@ -50,7 +50,7 @@ castle/fort layout banks.
 | `CEL0.BSV`…`CEL3.BSV` | 1573 / 2597 | `CELDRV` | endgame-cinematic image banks — `celdrv_entry` BLOADs `CEL0`/`CEL1`/`CEL2` (loop), then `DIS9.BSV`, then `CEL3.BSV`, via `rt_FE07`, and relocates each one's internal offset table by its load segment. |
 | `MUSDATA.BSV`, `MUSOBJ.BSV`, `MUSMSG.TXT` | 8055 / 12961 / 11229 | `MUS` | MUSEUM data / exhibit objects / message text |
 | `SDMAP.GLB` / `.GMP`, `SDOBJ.GLB` | 4113 / 2081 / 6161 | `SDEFENDR` | combat-training arena playfield / sprites (loaded into `seg004`, driven by the hand-written `arenaGameLoop`) |
-| `BJCHR.GLB` | 6161 | `GMB1`/`GMB2` | blackjack ("BJ") character graphics? |
+| `BJCHR.GLB` | 6161 | `GMB1`/`GMB2` | card sprites ("BJ" = BlackJack) — `GMB1` (BlackJack) BLOADs it into `seg004`; `GMB2` shares it |
 | `BIGNUM.DAT` | 420 | ? | large-digit font |
 | `D.BSV`, `R.BSV`, `PEGASUS.BSV` | 3527 / 3527 / 1159 | ? | ? |
 | `CHAR.DAT` | 3444 | `MENU` / `SAVER` / all play modules | character roster **and** the in-progress save (there is no separate save file). `SAVER.EXE`'s `saveRosterToDisk` is the write side; the menu roster screens + `readLegacyDat` read it. The "is not on this / character disk" / "empty" strings in `SAVER` imply a per-slot / removable "character disk" scheme. |
