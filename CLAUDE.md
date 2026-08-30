@@ -2355,6 +2355,20 @@ disassembly work.
   anywhere is now individually confirmed present with zero drift and
   zero gaps: `0-3` edges, `4` pre-fadein entry, `5` enters-screen, `6`
   repeatedly_execute, `7` post-fadein entry.
+- **`fade_interpolate` found, and `process_event`'s own `EV_FADEIN`
+  branch turns out to do real work.** `sub_40A21C` (the other unmatched
+  caller of the MP3-crossfade check from last round) is this build's
+  own AGS-side palette-fade-over-N-steps helper — no clean 2011
+  counterpart exists since 2011's `my_fade_out`/`my_fade_in` delegate
+  entirely to `gfxDriver->FadeOut()`. Its own inner call, `sub_43C8A0`,
+  is genuine Allegro library code: a six-argument signature and a
+  64-step weighted-palette-blend algorithm matching Allegro's public
+  `fade_interpolate()` exactly — named accordingly and recorded at the
+  library boundary. The bonus: `fade_interpolate` has a SECOND caller,
+  `process_event`'s own `EV_FADEIN` branch, confirming that branch
+  performs genuine per-frame palette interpolation for the room-entry
+  fade-in rather than delegating anywhere — another small confirmation
+  that this build's whole rendering pipeline predates `gfxDriver`.
 
 ## Third-party library identification (Task #10)
 

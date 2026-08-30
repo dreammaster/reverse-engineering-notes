@@ -8811,3 +8811,40 @@ paused -- these are recorded as the AGS-side boundary and not
 individually confirmed or chased further; a ScummVM reimplementation
 replaces ALMP3 wholesale regardless of exactly which internal calls
 this build makes.
+
+## `fade_interpolate` found, and `process_event`'s `EV_FADEIN` branch turns out to do real work
+
+Following the same trail one function further: `sub_40A21C` (the
+"other unmatched caller" of the MP3-crossfade check from the round
+above) turned out to be this build's own AGS-side palette-fade-over-N-
+steps helper -- and its own inner call, `sub_43C8A0`, is genuine
+Allegro library code. The signature (six arguments: source palette,
+dest palette, output palette, position, from, to) and the inner loop's
+arithmetic (a weighted average of the two palettes' entries, shifted
+right by 6 for an implicit divide-by-64) match Allegro's own public
+`fade_interpolate()` exactly -- a well-known, distinctive 64-step
+palette-blend algorithm. Renamed accordingly, and recorded at the
+library boundary per the usual convention (Allegro's own internals
+behind it aren't chased further).
+
+`sub_40A21C` itself has no clean 2011 counterpart -- 2011's `my_fade_
+out`/`my_fade_in` delegate entirely to `gfxDriver->FadeOut()`, a
+hardware abstraction with no manual palette loop left in the reference
+source to compare against. This build's own version copies the source
+palette, then loops calling `fade_interpolate` once per step (0 to 63)
+followed by `set_palette_range`, polling the already-characterized
+MP3-crossfade cluster and a generic plugin-hook function pointer once
+per iteration -- consistent with a blocking fade that still needs to
+keep other systems ticking over. Left unnamed, same as the crossfade
+pair, for lack of any 2011 identifier that actually applies.
+
+The genuine bonus: `fade_interpolate` turned out to have a SECOND
+caller besides `sub_40A21C` -- `process_event`'s own `EV_FADEIN`
+branch (already matched, but until now not confirmed to do anything
+more substantial than toggle a couple of already-known globals). It
+calls `fade_interpolate` directly, meaning the room-entry fade-in
+effect really is implemented as genuine per-frame palette interpolation
+inside `process_event` itself, not delegated to a separate helper or a
+hardware path -- one more small, concrete confirmation that this
+build's whole rendering pipeline predates `gfxDriver` from top to
+bottom.
