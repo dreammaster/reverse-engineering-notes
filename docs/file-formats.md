@@ -56,7 +56,7 @@ castle/fort layout banks.
 | `CHAR.DAT` | 3444 | `MENU` / `SAVER` / all play modules | character roster **and** the in-progress save (there is no separate save file). `SAVER.EXE`'s `saveRosterToDisk` is the write side; the menu roster screens + `readLegacyDat` read it. The "is not on this / character disk" / "empty" strings in `SAVER` imply a per-slot / removable "character disk" scheme. |
 | `LEGACY.DAT` | 2945 | `MENU`/`OUT` | **no `0xFD` magic** — not BSAVE; format unknown (config / progress?) |
 | `OUTDAT.DAT` | 1012 | `OUT` | not checked yet |
-| `DRCONFIG.DAT` | 1015 | `CONFIGUR` | driver / hardware config written by `CONFIGUR.EXE` |
+| `DRCONFIG.DAT` | 1015 | `CONFIGUR` + all disk-loading code | **disk-drive layout**, not hardware config — which drive letter(s) hold the game floppies (or HD floppy / hard disk), so the loaders know where to look and can prompt for swaps. Written by `CONFIGUR.EXE` (`_main`); at offset near the start it holds a config-type byte (`'0'`/`'1'`/`'2'` — HD/hard-disk vs. 360K vs. 720K) and one or two drive-letter bytes. |
 | `STDRVSCR.DAT` | 6192 | `STDRV` | "Stones of Wisdom" rules / instruction text — the walk-through the dealer narrates ("YOU AND THE DEALER BOTH RECEIVE FIVE DICE…", "THE LOSER OF A GAME GIVES UP ONE DIE…"). Read by `stonesOfWisdomMain`; **not** a story/cut-scene script. |
 | `TWNMSG.TXT` / `MUSMSG.TXT` | 1911 / 11229 | `TWNDR` / `MUS` | plain-text message tables |
 

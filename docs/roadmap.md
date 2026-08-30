@@ -89,7 +89,14 @@ buckets pay even / double / 5×; the bumpers "flip-flop"). Uses
 `BIGNUM.DAT`, chains back to `TWNDR`. NOT a card game — it doesn't use
 `BJCHR.GLB`.
 
-Still to build: `CONFIGUR` only (standalone C, no LEGLIB — low priority).
+`configur.idb` built 2026-08-31 — **`CONFIGUR.EXE` is the floppy-drive /
+disk-layout config utility** (edits `DRCONFIG.DAT`: which drive letters
+hold the game floppies, "to reduce disk swaps"). Standalone MSC, not
+packed; only `_main` + six BIOS screen/keyboard wrappers are app code.
+
+**All 14 executables now have an IDB.** Remaining work is depth per
+module, `leglib` `rtm_*` → `B$…`, on-disk formats, then the
+reimplementation.
 
 ## DUN.EXE — open questions
 
@@ -259,6 +266,20 @@ Still to build: `CONFIGUR` only (standalone C, no LEGLIB — low priority).
       whole board the hard-coded DRAW-macro set in `drawBumpers`?
 - [ ] Both games: how the gold delta is written back to `CHAR.DAT`.
 
+## CONFIGUR.EXE — open questions
+
+- [x] Build `configur.idb` (2026-08-31). Standalone Microsoft C — IDA's
+      C loader + FLIRT recovered the whole MSC CRT; 3 segments; not
+      packed. Named the only 6 app helpers + commented `_main`
+      (`apply_renames_configur.py`).
+- [x] It's a **disk-drive** config tool (drive letters for the game
+      floppies / "reduce disk swaps"), NOT graphics/sound.
+- [ ] `DRCONFIG.DAT` (1015 B) exact field layout — `_main` reads it into
+      a stack buffer and checks bytes for `'0'`/`'1'`/`'2'` + drive
+      letters near the start; the other ~1000 bytes are unexamined.
+- [ ] Who else reads `DRCONFIG.DAT` at runtime (the LEGLIB file loader?
+      each module's `BLOAD` path builder?).
+
 ## LEGLIB.EXE — open questions
 
 - [x] Map the `int 3Fh` thunk-table entry format and build a resolver
@@ -288,8 +309,11 @@ Still to build: `CONFIGUR` only (standalone C, no LEGLIB — low priority).
 - [ ] Input handling (keyboard poll used by the menu state machine).
 - [ ] `seg003` (53 KB) vs `seg004` (18 KB): which is runtime, which is
       game engine?
-- [ ] Confirm graphics mode support (CGA / EGA / Tandy — `CONFIGUR.EXE`
-      writes `DRCONFIG.DAT`; the `*DRV.EXE` files are hardware drivers).
+- [ ] Confirm graphics mode support (CGA / EGA / Tandy). NB `CONFIGUR.EXE`
+      turned out to be **disk-drive** config only, not graphics — and the
+      `*DR.EXE` files (`TWNDR`, `CASDR`, `STDRV`, `CELDRV`) are game
+      *drivers*, not hardware drivers. Where the video mode is actually
+      chosen is still open (LEGLIB startup? a `DIS*.BSV`?).
 
 ## MENU.EXE — open questions
 

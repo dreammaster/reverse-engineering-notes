@@ -66,7 +66,7 @@ notes on BRUN.
 | `CELDRV.EXE` | 8,967 (17,024 unpacked) | **Endgame victory cinematic** ("cel" = the cel-animation image banks). Shows "AGAINST ALL ODDS!", the scrolling victory-story narration (hero-name substitution, over music) and the end credits. `CEL0.BSV`…`CEL3.BSV`, `DIS9.BSV`. Chained to from `CASDR` after the Warlord falls. |
 | `STDRV.EXE` | 24,923 | **"Stones of Wisdom" dice game** — a Liar's-Dice / Perudo variant played against the "DEALER" as the museum's *Stones of Wisdom* exhibit (`MUS` chains to it). Bid (quantity, value) pairs, challenge, loser drops a die, last with dice wins; the match result changes the character's INTELLIGENCE; each replay costs gold. NOT a "story driver" despite the name. `STDRVSCR.DAT` = the rules text. |
 | `SAVER.EXE` | 5,903 (13,888 unpacked) | **Save-game handler.** Chained to from `OUT` / `DUN` on a save-or-quit request: "DO YOU WANT TO SAVE THE GAME NOW IN PROGRESS?", validates the character disk, writes the roster to `CHAR.DAT`, then either exits to DOS or re-execs the calling module. |
-| `CONFIGUR.EXE` | 10,349 | Standalone config utility — plain Microsoft C, **no LEGLIB dependency**. `DRCONFIG.DAT`. |
+| `CONFIGUR.EXE` | 10,349 | **Floppy-drive / disk-layout config utility.** Standalone Microsoft C (no LEGLIB, no int-3Fh). Edits `DRCONFIG.DAT` to tell the game which drive letter(s) hold the floppy disks (or that it runs from hard disk / HD floppy), to reduce disk swaps. Does **not** configure graphics or sound. |
 
 `LEGACY.BAT` is 4 bytes: `menu` — it just runs `MENU.EXE`.
 
@@ -91,6 +91,7 @@ one place that pays off across every module.
 | `twndr.idb` | `TWNDR.EXE` | 41 / 98 seg000 (+ 13 `bmTNCALB` seg001) funcs (+ `rt_*` thunks) | 0 | Town driver (entered from `OUT` board; chains back). UNP-unpacked; 6 segments — `seg000` "bmTWNDR" (98 funcs) + `seg001` "bmTNCALB" (town/castle anim, 26 funcs), thunk table `seg002` (only **431** entries — TWNDR uses fewer runtime routines). Both ~100% coerced. 41 `seg000` functions named from the shop/NPC text (`foodShop`, `weaponShopEntry`, `borrowMoney`, `loanRepayment`, `fortuneTeller`, `jailScene`/`jailRelease`, `buyBackShop`, `townServiceDispatch` (~6 KB), …). |
 | `casdr.idb` | `CASDR.EXE` |  34 (+ 13 `bmTNCALB`) / 102 seg000 funcs (+ `rt_*` thunks) | 0 | Castle / fortress driver — **endgame** content (the Warlord, the Compendium, the king's quest). UNP-unpacked; `seg000` "bmCASDR" + `seg001` "bmTNCALB" (the **same** helper module TWNDR uses), thunk table `seg002` (431). Both ~100% coerced. 34 named from the story text (`warlordConfrontation`, `kingConfides` (the guardians-of-the-scroll / forearm-mark quest), `potionWizard`, `doFight`, `describeRoom`/`describeObjects`, `loadCastleLevel`, `exitCastle`, `gasRoomTrap`, …). |
 | `mus.idb` | `MUS.EXE` | 37 / 109 seg000 funcs (+ `rt_*` thunks) | 0 | **The MUSEUM driver** (the game's hub — display cases are portals). `seg000` "bmMUS" (109 funcs) + `seg001` "bmMUSDUNG" (8), thunk table `seg002` (431). Both ~100% coerced. 37 named: `enterExhibit`, `describeMuseumRoom`, `readPlaque`, `caretakerOffer`, `useCommand`, `chainToTown`/`Dungeon`/`Story`/`Cel`, ~15 `exhibitName_*`. |
+| `configur.idb` | `CONFIGUR.EXE` | 6 helpers + `_main` (of 65; rest are MSC CRT) | 0 | **Floppy-drive config utility** — standalone Microsoft C, no LEGLIB/thunks (IDA's C loader + FLIRT recovered the CRT). 3 segments (`seg000` code, `dseg` data, `seg002`). Only app code is `_main` (1.2 KB) + `setTextColor` / `readKeyUpper` / `getVideoPage` / `clearScreen` / `gotoXY` / `clearRegion` (BIOS int-10h/16h wrappers). Edits `DRCONFIG.DAT`. |
 | `gmb2.idb` | `GMB2.EXE` | 14 / 20 seg000 funcs (+ `rt_*` thunks) | 0 | **"Flip-Flop Parlour"** (Plinko / pachinko betting game). Single code seg `seg000` "bmGMB2" (20 funcs), thunk table `seg001` (467), DGROUP `seg003`. **100.0%** coerced, 0 bad insns, 467 thunks, 80 string records. Named `flipFlopMain`, `showInstructions`, `playRound`, `playPracticeRound`, `dropBallAndBounce`, `computePayout`, `drawBumpers`, `playTune` + tentative helpers. Uses `BIGNUM.DAT` + GW-BASIC DRAW macros for the bumpers. |
 | `gmb1.idb` | `GMB1.EXE` | 14 / 21 seg000 funcs (+ `rt_*` thunks) | 0 | **BlackJack table.** Single code seg `seg000` "bmGMB1" (21 funcs), thunk table `seg001` (431), DGROUP `seg003`, card graphics `seg004` (`BJCHR.GLB`). 99.8% coerced, 0 bad insns, 431 thunks, 49 string records. Named `blackjackMain`, `showInstructions`, `pressKeyToContinue`, `showGoldLine`, `shuffleDeck`, `drawFromDeck` + hand/deal/render helpers (tentative). |
 | `sdefendr.idb` | `SDEFENDR.EXE` | ~15 game funcs named (+ `rt_*` thunks) | 0 | **The combat-training school minigame.** **Two** code segs: `seg000` "bmSDEFENDR" (compiled BASIC — framing: mode select, briefing, wave/score screens, rating + stat change, 50-gold economy, `TWNDR` hand-off) + `seg001` (hand-written **asm** — the real-time arena engine: `arenaGameLoop` over 8 step routines, playfield data in `seg004`). `seg000` 99.8% coerced, 0 bad insns; 328 thunks. Named `trainingSchoolMain`, `showBriefing`, `runTrainingLevel`, `runPractice`, `showWaveScore`, `drawScorePanel`, `arenaGameLoop` + engine steps (`pollPlayerTurn`, `firePlayerArrow`, `moveFireballs`, …, tentative). |
@@ -137,8 +138,12 @@ Paul unpacked all four in place in `C:\games\lota` on 2026-08-30
 packing is reloc-only, the rebuilt `out.idb` is **byte-stable at the
 code EAs**, so the `apply_renames_out.py` entries carried straight over.
 `MENU.EXE` was already unpacked (a different packer, unpacked earlier);
-`LEGLIB.EXE` is plain (1392 relocs); `CONFIGUR.EXE` still packed (skip —
-standalone C util).
+`LEGLIB.EXE` is plain (1392 relocs); `CONFIGUR.EXE` is plain Microsoft C
+(20 relocs, entry `02D4:05CE`) — not packed after all; built directly.
+
+`SDEFENDR` / `GMB1` / `GMB2` / `CELDRV` / `STDRV` / `SAVER` were all
+shipped packed too and unpacked in place alongside the first four (they
+now show `relocs>0`, entry `:00DF`).
 
 Segment names/numbers are **not** renamed or restructured — Paul
 correlates them with the DOSBox debugger at runtime (sibling `ultima1`
@@ -444,10 +449,24 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   `playRound`, `playPracticeRound`, `dropBallAndBounce`, `computePayout`,
   `drawBumpers`, `playTune`). Uses `BIGNUM.DAT` + GW-BASIC DRAW macro
   strings for the bumper/ball shapes.
-- **Thirteen per-module IDBs now built** (menu, leglib, out, dun, twndr,
-  casdr, mus, stdrv, celdrv, saver, sdefendr, gmb1, gmb2). Only
-  `CONFIGUR.EXE` (standalone C, no LEGLIB) is left. Next: (a) map the
-  `ds:` engine state vars to name the remaining `sub_` helpers; (b)
-  continue `rtm_*` → `B$…` in `leglib.idb` (the `FF4B`/`FF20`/…
-  value-stack cluster — heavily used by both gambling games — and the
-  `rtm_FE1x` interior-graphics cluster); (c) build `CONFIGUR`.
+- **2026-08-31** — Built `configur.idb`. **`CONFIGUR.EXE` is the
+  floppy-drive / disk-layout config utility**, not a graphics/sound
+  "driver config" as the file name suggested — it edits `DRCONFIG.DAT`
+  so the game knows which drive letter(s) hold the floppies ("four 360K
+  5.25\" floppy disks using drive %c:", "two 720K 3.5\" ...", "to reduce
+  disk swaps", "Please enter the letter of the drive to use for Disk 1
+  (A-Z)?"). Standalone Microsoft C — IDA's C loader + FLIRT recovered
+  the entire MSC runtime; the only app code is `_main` plus six BIOS
+  screen/keyboard wrappers (`clearScreen`, `gotoXY`, `readKeyUpper`, …),
+  all now named. Also: it is **not** packed (plain MSC, 20 relocs) —
+  earlier note corrected.
+- **All 14 executables now have an IDB** (leglib + 13 game modules).
+  Every compiled-BASIC module is coerced to ~100% with its screen text
+  decoded and its lead functions named. Remaining work is depth, not
+  breadth: (a) map the `ds:` engine state vars to name the remaining
+  `sub_` helpers per module; (b) continue `rtm_*` → `B$…` in
+  `leglib.idb` (the `FF4B`/`FF20`/… value-stack cluster — heavily used
+  by both gambling games — and the `rtm_FE1x` interior-graphics
+  cluster); (c) decode the on-disk data formats
+  ([file-formats.md](file-formats.md)); (d) then the C++ / ScummVM
+  reimplementation.
