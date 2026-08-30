@@ -9102,3 +9102,50 @@ gives `CharacterInfo.activeinv`@+0x34 a THIRD confirmation route (the
 general-case write, not just the already-cited `-1` special case) and
 reconfirms `inv[100]`@+0x44's short-array type/capacity from a new call
 site.
+
+### `SetScreenTransition` closes `GameState.fade_effect`'s valid range, and process_event's own dissolve effect gets fully characterized
+
+Another bare-match sweep hit turned into a genuine new-content round.
+`SetScreenTransition` (previously bare) validates its argument in `[0,2]`
+before writing it straight to `dword_4EEB6C` -- already established as
+`GameState.fade_effect` several rounds ago via the `FadeOut`-family
+functions -- matching 2011's `SetScreenTransition` (`AC.CPP:14017-14021`)
+almost exactly, EXCEPT this build's upper bound is a literal `2`, not
+2011's `FADE_LAST`(=4, `Common/acroom.h:2753-2758`: `FADE_NORMAL=0,
+FADE_INSTANT=1, FADE_DISSOLVE=2, FADE_BOXOUT=3, FADE_CROSSFADE=4`).
+
+Cross-checking that bound against `process_event`'s own EV_FADEIN
+dispatch (already matched, `sub_40C85E`) -- which reads `fade_effect`
+via three branches, `==1`(instant)/`==0`(normal)/`==2`(dissolve), with
+NO branch at all for anything higher, silently doing nothing on fall-
+through -- confirms `FADE_BOXOUT`(3)/`FADE_CROSSFADE`(4) absent both at
+the script-API validation boundary AND at the actual runtime dispatch,
+not merely a stricter argument check guarding an otherwise-present
+feature. This build's fade-effect enum genuinely only spans 3 values,
+not 2011's 5.
+
+The `==2` (`FADE_DISSOLVE`) branch turned out to be worth reading in
+full -- a substantial manual implementation with no 2011 counterpart to
+diff against at all (2011 delegates this entirely to `gfxDriver`, no
+comparable pixel loop survives in the reference source). It captures
+(and color-depth-converts if needed) a copy of the pre-fade screen into
+a temp bitmap, then runs 16 passes over the whole screen on a 4-pixel
+grid, using a fixed 16-entry order table (already a local array in this
+function, previously read for an unrelated purpose in an earlier round)
+combined with each grid cell's position to select ONE of the 16
+sub-positions within every 4x4 pixel block to reveal that pass, via
+`getpixel`(temp copy)/`putpixel`(live screen) -- both already-matched
+Allegro library functions, picking up two further call sites here. The
+net effect is a classic pre-hardware-acceleration checkerboard dissolve:
+each of the 16 passes reveals a different one of the 16 positions in
+every 4x4 block, in the table's fixed pseudo-random-looking order,
+rather than a plain raster sweep. An optional palette-interpolation step
+(gated on an unidentified flag, `dword_51D2F0`) runs alongside it for
+8-bit-palette-mode dissolves, via the already-matched
+`fade_interpolate`/`set_palette_range`. The exact per-pixel offset
+arithmetic (a standard MSVC mod-4-with-sign-correction idiom applied to
+the table value plus grid position) wasn't traced to full precision --
+documented at the level of "confirmed this branch exists and roughly how
+it operates," not yet pixel-perfect fidelity, left as a candidate for a
+future round if exact ScummVM-side dissolve-pattern replication ever
+matters.

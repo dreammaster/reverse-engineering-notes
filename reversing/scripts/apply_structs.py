@@ -3403,6 +3403,14 @@ struct GameState {
                             // using FADE_NORMAL=0/FADE_INSTANT=1 (acroom.h:2753-2754).
                             // Matches 2011's own declared adjacency to bg_frame_locked
                             // immediately below (acruntim.h:550-551) with zero drift.
+                            // Also written directly by SetScreenTransition (already
+                            // matched) and read a THIRD way by process_event's own
+                            // EV_FADEIN dispatch (also already matched, see its own
+                            // addendum), which additionally confirms FADE_DISSOLVE=2
+                            // and, via SetScreenTransition's own validation bound
+                            // ([0,2], not 2011's FADE_LAST=4), CONFIRMS ABSENT
+                            // FADE_BOXOUT(3)/FADE_CROSSFADE(4) -- this build's fade
+                            // effect enum only ever spans 3 values, not 2011's 5.
   int bg_frame_locked;           // +0x158, high confidence: TRIPLY confirmed --
                             // zeroed matching source's "play.bg_frame_locked=0;" in
                             // sub_40AAE3, sits immediately after fade_effect matching

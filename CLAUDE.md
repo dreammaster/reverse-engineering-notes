@@ -2462,6 +2462,24 @@ disassembly work.
   its `-1` branch) — the general-case path validates `iit` against
   `inv[iit]@+0x44>=1` (player must own the item) and writes
   `activeinv@+0x34=iit` directly, a third confirmation route.
+- **`SetScreenTransition` closes `GameState.fade_effect`'s valid range,
+  and `process_event`'s dissolve effect gets characterized.**
+  `SetScreenTransition` (previously bare) validates its argument in
+  `[0,2]`, not 2011's `[0,FADE_LAST=4]` (`Common/acroom.h:2753-2758`) —
+  cross-checked against `process_event`'s own `EV_FADEIN` dispatch
+  (already matched), which likewise has branches only for
+  `fade_effect==1`(instant)/`==0`(normal)/`==2`(dissolve) with nothing
+  for higher values, CONFIRMING `FADE_BOXOUT`(3)/`FADE_CROSSFADE`(4)
+  absent both at the API boundary and the runtime dispatch — this
+  build's fade-effect enum genuinely spans only 3 values, not 2011's 5.
+  The `FADE_DISSOLVE` branch itself is a substantial manual
+  implementation with no 2011 counterpart to diff against (2011
+  delegates it entirely to `gfxDriver`): 16 passes over a 4-pixel grid,
+  each revealing 1-of-16 sub-positions per 4x4 block via a fixed order
+  table and `getpixel`/`putpixel` (two further call sites for those
+  already-matched Allegro functions) — a classic pre-hardware-
+  acceleration checkerboard dissolve, documented at the level of
+  confirmed existence/rough operation rather than pixel-exact fidelity.
 
 ## Third-party library identification (Task #10)
 
