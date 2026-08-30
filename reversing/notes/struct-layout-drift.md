@@ -8434,3 +8434,29 @@ Recorded as a real, if inconclusive, argument FOR membership --
 upgraded from "no evidence either way" to "a positive but unproven
 case" in `apply_structs.py`'s own comment, without asserting a
 resolution the evidence doesn't actually support.
+
+## `SetObjectIgnoreWalkbehinds` matched, naming `is_valid_object` along the way
+
+Another self-identifying-error-string sweep hit: `SetObjectIgnoreWalkBehinds`
+was already correctly named in the IDB but had no matches.json entry at
+all. Matches `AC.CPP:20911-20919` exactly (minus a trailing cache-
+invalidation line this build predates): validates the object number,
+unconditionally clears `RoomObject.flags`@`+0x1D` bit 1, then sets it
+back if the caller's `clik` argument is nonzero -- a direct, clean THIRD
+confirmation of `OBJF_NOWALKBEHINDS`(2), on top of the two already on
+record. DRIFT: source's trailing `objcache[cha].ywas=-9999;` (clearing
+a hardware-acceleration drawing cache) has no counterpart here --
+consistent with this build's now-familiar, repeatedly-confirmed lack of
+the `objcache`/`actsps` drawing-cache abstraction (the same subsystem
+behind `CharacterInfo.actx`/`.acty`'s own absence).
+
+Its object-number validation calls an already-documented helper
+(`sub_4256E0`, previously left unnamed, "documented purely for the
+`RoomStatus.numobj` cross-confirmation it contributed") that turns out
+to be an exact match for 2011's own `inline int is_valid_object(int
+obtest)` (`AC.CPP:2610-2613`) once actually read end to end -- named
+accordingly. A small self-correction along the way: the earlier entry's
+own paraphrase of the function's return convention had the polarity
+backwards (claimed it returns 1 for an INVALID object; the code, like
+source, actually returns 1 for VALID and 0 for INVALID) -- fixed in
+place rather than left standing.

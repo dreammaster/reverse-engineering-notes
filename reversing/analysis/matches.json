@@ -5091,11 +5091,11 @@
   {
     "kind": "manual",
     "asm_name": "sub_4256E0",
-    "new_name": null,
-    "source_file": null,
-    "source_line": null,
-    "confidence": "medium",
-    "evidence": "Unnamed helper, called from SetObjectView and SetObjectFrame (both already matched) to validate an object number: \"return (arg_0<0 || arg_0>=croom->numobj) ? 1 : 0\" -- an exact bounds check against RoomStatus.numobj (dword_523128+4, see load_new_room's entry). Likely a small internal helper resembling 2011's inline object-number validation (no distinct standalone source-file match attempted this round). Documented purely for the RoomStatus.numobj cross-confirmation it contributed."
+    "new_name": "is_valid_object",
+    "source_file": "Engine/AC.CPP",
+    "source_line": 2610,
+    "confidence": "high",
+    "evidence": "Unnamed helper, called from SetObjectView and SetObjectFrame (both already matched) to validate an object number: \"return (arg_0<0 || arg_0>=croom->numobj) ? 1 : 0\" -- an exact bounds check against RoomStatus.numobj (dword_523128+4, see load_new_room's entry). Likely a small internal helper resembling 2011's inline object-number validation (no distinct standalone source-file match attempted this round). Documented purely for the RoomStatus.numobj cross-confirmation it contributed. NAMED (this round): confirmed as is_valid_object (inline int is_valid_object(int obtest) at AC.CPP:2610-2613) -- \"if(obtest<0 || obtest>=croom->numobj) return 0; return 1;\", an exact match once the code is actually read (correcting this entry's own earlier paraphrase of the return polarity -- the code returns 1 for VALID/0 for INVALID, matching source's convention exactly, not the inverted formula previously written here). Also called from SetObjectIgnoreWalkbehinds (newly matched this round, see its own entry)."
   },
   {
     "kind": "manual",
@@ -5752,5 +5752,14 @@
     "source_line": null,
     "confidence": "high",
     "evidence": "Unnamed walk-behind-occlusion masking helper, called from prepare_characters_for_drawing (already matched) on the RoomObject.flags&OBJF_NOWALKBEHINDS-clear path (the walk-behind-aware sort branch, already documented on RoomObject.flags itself). Signature (block bmp, int roomX, int roomY, int baseline): a doubly-nested per-pixel loop over the bitmap's own w/h ([arg_0+0]/[arg_0+4]), calling getpixel (sub_423F20) on the field DISPLAYED as rstruc.lookat at (roomX+col, roomY+row); wherever the pixel is a valid walk-behind-area id (>=1) AND RoomStatus.walkbehind_base[pixel]@+0x1370 (already confirmed) exceeds the passed-in baseline, masks that pixel out of the object's own bitmap (bitmap_mask_color + a putpixel-style helper, sub_423EC0) so the walk-behind area draws in front of it. This is the classic AGS walk-behind-occlusion effect. IMPORTANT: the mask this function reads is DISPLAYED as \"rstruc.lookat\" in the current rob_blanc_1.asm export, but its role (a walk-behind-area-id mask feeding walkbehind_base[]) can only be RoomStruct's real walk-behind mask, i.e. the field this project has independently confirmed as `object`@+0x08 via load order -- the third independent confirmation (after redo_walkable_areas and get_hotspot_at) that the live IDB's rstruc.FIELD symbolic display is shifted one position early. See RoomStruct.walls's own apply_structs.py entry for the complete cross-check. Left unnamed: a private drawing helper with no textual self-identification and no confirmed 2011 counterpart function name (2011's own walk-behind-occlusion logic lives inline in a much larger, differently-structured drawing routine, not a standalone helper like this)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "SetObjectIgnoreWalkBehinds",
+    "new_name": "SetObjectIgnoreWalkbehinds",
+    "source_file": "Engine/AC.CPP",
+    "source_line": 20911,
+    "confidence": "high",
+    "evidence": "void SetObjectIgnoreWalkbehinds(int cha,int clik) at AC.CPP:20911-20919. Exact match (minus a trailing cache-invalidation line this build predates): validates the object number via the newly-renamed is_valid_object (sub_4256E0, see its own entry), quitting with the function's own \"!SetObjectIgnoreWalkbehinds: Invalid object specified\" otherwise; unconditionally clears RoomObject.flags@+0x1D bit 1 (\"and al,0FDh\"), then sets it back if clik!=0 (\"or dl,2\") -- matching source's \"objs[cha].flags&=~OBJF_NOWALKBEHINDS; if(clik) objs[cha].flags|=OBJF_NOWALKBEHINDS;\" exactly, giving RoomObject.flags bit 1 (OBJF_NOWALKBEHINDS=2, already confirmed via prepare_characters_for_drawing) a third independent confirmation. DRIFT CONFIRMED ABSENT: source's trailing \"objcache[cha].ywas=-9999;\" (invalidating a hardware-acceleration drawing cache) has no counterpart here -- consistent with this build's established, repeated lack of the objcache/actsps drawing-cache abstraction found absent elsewhere (e.g. CharacterInfo.actx/.acty)."
   }
 ]

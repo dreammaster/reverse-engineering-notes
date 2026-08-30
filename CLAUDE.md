@@ -2229,6 +2229,15 @@ disassembly work.
   with a confirmed member, mirroring 2011's own successor field
   (`obsolete_inv_numorder`) staying synchronized with its own order
   array. Recorded as a real, if inconclusive, case FOR membership.
+- **`SetObjectIgnoreWalkbehinds` matched, naming `is_valid_object` along
+  the way.** Already correctly named but with no matches.json entry.
+  Matches `AC.CPP:20911-20919` exactly (minus a trailing hardware-cache
+  invalidation line this build predates), giving `RoomObject.flags` bit
+  1 (`OBJF_NOWALKBEHINDS`) a clean third confirmation. Its object-number
+  validation helper (`sub_4256E0`, previously left unnamed) turns out to
+  be an exact match for 2011's `is_valid_object` — named accordingly,
+  with a small self-correction: the earlier entry's paraphrase of its
+  return polarity was backwards (it returns 1 for VALID, not invalid).
 
 ## Third-party library identification (Task #10)
 

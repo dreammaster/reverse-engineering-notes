@@ -2631,7 +2631,12 @@ struct RoomObject {
                             // NOINTERACT`(1); bit 1 (`and edx,2`, `prepare_characters_for_
                             // drawing`, already matched: gates which of two draw paths is used
                             // -- a walk-behind-aware sort vs. a simpler direct draw) = `OBJF_
-                            // NOWALKBEHINDS`(2).
+                            // NOWALKBEHINDS`(2). THIRD confirmation of bit 1 (found this round):
+                            // `SetObjectIgnoreWalkbehinds` (newly matched, exact match to
+                            // `AC.CPP:20911-20919`) clears then conditionally re-sets this exact
+                            // bit ("and al,0FDh" / "or dl,2") in direct response to its own
+                            // script-facing `clik` parameter -- the clearest, most direct
+                            // confirmation yet of `OBJF_NOWALKBEHINDS`'s identity and value.
   char _pad_align[2];               // +0x1E..0x20, compiler alignment padding (not a real field)
                             // -- boxed in with zero slack by the confirmed total stride (0x20)
                             // and the confirmed `flags` field ending at +0x1E.
