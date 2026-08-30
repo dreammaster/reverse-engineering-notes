@@ -97,7 +97,7 @@ code. `menu.idb`:
 
 | Seg | Range | Contents |
 |---|---|---|
-| `seg000` | `10000`–`13160` | Root menu/intro code (compiled BASIC). Coerced to code 2026-08-30 (`coerce_seg000_menu.py`): 99.5%, 0 bad insns, 25 functions with a real call graph. Header (`0`–`0x31`) is the `bmMENU` name + BSS descriptor. |
+| `seg000` | `10000`–`13160` | Root menu/intro code (compiled BASIC). Coerced to code + all 25 functions named 2026-08-30. Header (`0`–`0x31`) is the `bmMENU` name + BSS descriptor. |
 | `seg001` | `13160`–`138F0` | `int 3Fh` run-time thunk table (467 entries) + a few small resident helpers at the top. Decoded — see "int 3Fh run-time dispatch" below. |
 | `seg002` | `138F0`–`13F30` | BC 6.0 EXE bootstrap + RTM loader (`start` at `139CF`). "Error in loading RTM…" strings live here. |
 | `seg003` | `13F30`–`1A1B0` | DGROUP data. Text block (menu items, credits, instructions, "poor peasant on the world of Tarmalon…" intro, MML music strings, chained-EXE names) at offset `21D0h`+ (file `0x6ED2`–`0x7F10`). |
@@ -231,18 +231,43 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   467 `seg001` thunks named + cross-referenced to `leglib`.
 - **2026-08-30** — `menu.idb` `seg000` coerced to code
   (`coerce_seg000_menu.py`): 99.5% instruction coverage, 0 bad insns, 25
-  functions. Call graph: `menu_main` → `sub_10580` (main-menu dispatch
-  loop) → 9 top-level option handlers (`sub_10738` credits, `sub_10D97`
-  instructions submenu, `sub_1138D`, `sub_11D3A`, …). ~830 `call far`
-  sites, all commented with their `rtm_*` target. Argument immediates
-  like `mov ax, 21DCh` are offsets into the `seg003` text block.
-  Remaining: functions unnamed; the `menu.idb` rebuild lost the original
-  `.idb` (recreated via `idat -B` from a copy of `MENU.EXE` — input path
-  in the DB now reads `C:\dev\lota\menu.exe`). IDA's `int 3Fh` =
-  "overlay-manager" special-casing chops every basic block after a
-  `call far` and mislabels some blocks `noreturn` — cosmetic, ownership
-  and xrefs are correct.
-- Next: (a) name the 25 `menu` functions + rank/attach real `B$…` names
-  to the hot `rtm_*`; (b) mark up the `seg003:21D0h` text block as
-  strings and back-reference the pushed offsets; (c) build `out.idb` /
-  `dun.idb` and confirm the shared `(prefix,ordinal)` namespace.
+  functions. The `menu.idb` rebuild lost the original `.idb` (recreated
+  via `idat -B` from a copy of `MENU.EXE` — input path in the DB now
+  reads `C:\dev\lota\menu.exe`).
+- **2026-08-30** — Named all 25 `seg000` functions
+  (`apply_renames_menu.py`), from the `seg003` text each one prints:
+
+  ```
+  menu_main -> mainMenuLoop  (SELECT CASE dispatch, self-looping)
+    +- showStartupSplash       the 3-copyright splash (called from menu_main)
+    +- drawMainMenuScreen -> drawCancelOption
+    +- showQuestCopyright      "...Quest Software, Inc."
+    +- showGameCredits         the credits screen
+    +- showInstructions        SIMPLE INSTRUCTIONS / COMMANDS / MOVEMENT
+    +- showTitleScreen -> loadTitleImage (TITLE.GLB/GMP->B800h), playMusicTick
+    +- readLegacyDat
+    +- eraseCharacterMenu  -.
+    +- startNewGameMenu     +-> showCharacterRoster, showEmptyCharacterSlots,
+    +- restartGameMenu     -'   promptCharacterNumber, sub_12055/12778/128A9
+         startNewGameMenu -> promptNewCharacterName, playIntroAndLaunchGame
+           (the "poor peasant on Tarmalon" intro, then chains to OUT.EXE)
+  ```
+
+  6 small CHAR.DAT-record / string-input helpers (`sub_11A15`,
+  `sub_11A1E`, `sub_1210E`, `sub_12055`, `sub_12778`, `sub_128A9`) left
+  `sub_` — genuinely hard to tell apart.
+
+  Cosmetic: added a fall-through cref past every `call far` so the
+  listing reads continuously (IDA's `int 3Fh` overlay special-casing
+  otherwise chops a block after each) — 1914 breaks down to 141.
+
+  **Pipeline order matters** (each idempotent, but run in this order):
+  `resolve_thunks_menu` → `coerce_seg000_menu` → `apply_renames_menu` →
+  `resolve_thunks_menu` again — the 2nd run is non-destructive and only
+  re-asserts the `-> rtm_*` call-site comments (a full re-itemise would
+  drop the flow-crefs).
+- Next: (a) rank/attach real `B$…` names to the hot `rtm_*` — `rtm_F0`
+  is the BASIC SUB prologue, `rtm_EC`/`rtm_ED` the call/return pair,
+  `rtm_C2` string assign, `rtm_FE26` text blit, `rtm_FE3E`/`3F`/`42`
+  window/box; (b) mark up the `seg003:21D0h` text block as strings;
+  (c) build `out.idb` / `dun.idb`, confirm the shared namespace.

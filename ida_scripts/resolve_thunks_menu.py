@@ -22,6 +22,7 @@ import idc
 import idautils
 import ida_bytes
 import ida_segment
+import ida_funcs
 
 DRY_RUN = False
 THUNK_SEG = "seg001"
@@ -60,11 +61,17 @@ def main():
         rt = RTM_MAP.get(k)
 
         if not DRY_RUN:
-            # make the thunk a clean 3-/4-byte item: int 3Fh + db operand(s)
-            ida_bytes.del_items(ea, ida_bytes.DELIT_SIMPLE, size)
-            idc.create_insn(ea)                       # CD 3F -> int 3Fh
-            ida_bytes.create_data(ea + 2, ida_bytes.FF_BYTE, size - 2, idc.BADADDR)
-            itemized += 1
+            # Itemise the thunk (int 3Fh + db operand) only if it's still
+            # raw. Never disturb one coerce_seg000_menu.py already turned
+            # into a returning function -- a del_items there triggers a
+            # reanalysis that drops seg000's flow-crefs. Names + the
+            # `-> rtm_*` comments are re-applied unconditionally, so this
+            # is safe to re-run at the end of the pipeline.
+            _f = ida_bytes.get_full_flags(ea)
+            if not ida_bytes.is_code(_f) and not ida_bytes.is_data(_f):
+                idc.create_insn(ea)
+                ida_bytes.create_data(ea + 2, ida_bytes.FF_BYTE, size - 2, idc.BADADDR)
+                itemized += 1
 
             want = "rt_" + key_str(prefix, ordinal)
             cur = idc.get_name(ea)
@@ -78,7 +85,13 @@ def main():
                     cmt += "  [mid-func]"
             else:
                 cmt = f"-> run-time entry {key_str(prefix, ordinal)} (unresolved)"
-            idc.set_cmt(ea, cmt, 1)
+            # a repeatable comment propagates to every `call far` site; use
+            # set_func_cmt when coerce has already made the thunk a function
+            # (plain set_cmt on a func head does not propagate).
+            if ida_funcs.get_func(ea) and ida_funcs.get_func(ea).start_ea == ea:
+                idc.set_func_cmt(ea, cmt, 1)
+            else:
+                idc.set_cmt(ea, cmt, 1)
             commented += 1
 
     # coverage

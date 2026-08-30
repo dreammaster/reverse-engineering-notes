@@ -59,13 +59,13 @@ dword_10014     dd 0                    ; DATA XREF: start+65↓r
 
 ; =============== S U B R O U T I N E =======================================
 
+; program entry (falls through into mainMenuLoop). BASIC module init: sets up the theme-music strings, YES/NO/"empty" literals, opens LEGACY.DAT.
 ; Attributes: noreturn
 
 menu_main       proc near
                 push    ax
                 push    ax
                 call    far ptr rt_FF09 ; -> rtm_FF09  (leglib seg003:0x1cb26)  [mid-func]
-; ---------------------------------------------------------------------------
 
 loc_10039:
                 xor     ax, ax
@@ -83,7 +83,6 @@ loc_10039:
                 mov     ax, 1E8Eh
                 push    ax
                 call    far ptr rt_AF   ; -> rtm_AF  (leglib seg003:0x13608)
-; ---------------------------------------------------------------------------
 
 loc_10058:
                 xor     ax, ax
@@ -97,7 +96,6 @@ loc_10058:
                 mov     ax, 1B0Ch
                 push    ax
                 call    far ptr rt_AF   ; -> rtm_AF  (leglib seg003:0x13608)
-; ---------------------------------------------------------------------------
 
 loc_10070:
                 xor     ax, ax
@@ -111,7 +109,6 @@ loc_10070:
                 mov     ax, 1B3Ah
                 push    ax
                 call    far ptr rt_AF   ; -> rtm_AF  (leglib seg003:0x13608)
-; ---------------------------------------------------------------------------
 
 loc_10088:
                 xor     ax, ax
@@ -125,7 +122,6 @@ loc_10088:
                 mov     ax, 1BF2h
                 push    ax
                 call    far ptr rt_AF   ; -> rtm_AF  (leglib seg003:0x13608)
-; ---------------------------------------------------------------------------
 
 loc_100A0:
                 xor     ax, ax
@@ -139,7 +135,6 @@ loc_100A0:
                 mov     ax, 1B68h
                 push    ax
                 call    far ptr rt_AF   ; -> rtm_AF  (leglib seg003:0x13608)
-; ---------------------------------------------------------------------------
 
 loc_100B8:
                 xor     ax, ax
@@ -153,7 +148,6 @@ loc_100B8:
                 mov     ax, 1BC4h
                 push    ax
                 call    far ptr rt_AF   ; -> rtm_AF  (leglib seg003:0x13608)
-; ---------------------------------------------------------------------------
 
 loc_100D0:
                 xor     ax, ax
@@ -167,7 +161,6 @@ loc_100D0:
                 mov     ax, 1B96h
                 push    ax
                 call    far ptr rt_AF   ; -> rtm_AF  (leglib seg003:0x13608)
-; ---------------------------------------------------------------------------
 
 loc_100E8:
                 xor     ax, ax
@@ -181,7 +174,6 @@ loc_100E8:
                 mov     ax, 1C20h
                 push    ax
                 call    far ptr rt_AF   ; -> rtm_AF  (leglib seg003:0x13608)
-; ---------------------------------------------------------------------------
 
 loc_10100:
                 xor     ax, ax
@@ -195,7 +187,6 @@ loc_10100:
                 mov     ax, 1CAEh
                 push    ax
                 call    far ptr rt_AF   ; -> rtm_AF  (leglib seg003:0x13608)
-; ---------------------------------------------------------------------------
 
 loc_10118:
                 xor     ax, ax
@@ -208,7 +199,6 @@ loc_10118:
                 mov     ax, 1CDCh
                 push    ax
                 call    far ptr rt_AF   ; -> rtm_AF  (leglib seg003:0x13608)
-; ---------------------------------------------------------------------------
 
 loc_1012D:
                 xor     ax, ax
@@ -222,7 +212,6 @@ loc_1012D:
                 mov     ax, 1D0Ah
                 push    ax
                 call    far ptr rt_AF   ; -> rtm_AF  (leglib seg003:0x13608)
-; ---------------------------------------------------------------------------
 
 loc_10145:
                 xor     ax, ax
@@ -236,7 +225,6 @@ loc_10145:
                 mov     ax, 1D38h
                 push    ax
                 call    far ptr rt_AF   ; -> rtm_AF  (leglib seg003:0x13608)
-; ---------------------------------------------------------------------------
 
 loc_1015D:
                 xor     ax, ax
@@ -250,7 +238,6 @@ loc_1015D:
                 mov     ax, 1D66h
                 push    ax
                 call    far ptr rt_AF   ; -> rtm_AF  (leglib seg003:0x13608)
-; ---------------------------------------------------------------------------
 
 loc_10175:
                 xor     ax, ax
@@ -264,7 +251,6 @@ loc_10175:
                 mov     ax, 1D94h
                 push    ax
                 call    far ptr rt_AF   ; -> rtm_AF  (leglib seg003:0x13608)
-; ---------------------------------------------------------------------------
 
 loc_1018D:
                 xor     ax, ax
@@ -278,7 +264,6 @@ loc_1018D:
                 mov     ax, 1DC2h
                 push    ax
                 call    far ptr rt_AF   ; -> rtm_AF  (leglib seg003:0x13608)
-; ---------------------------------------------------------------------------
 
 loc_101A5:
                 xor     ax, ax
@@ -292,7 +277,6 @@ loc_101A5:
                 mov     ax, 1DF0h
                 push    ax
                 call    far ptr rt_AF   ; -> rtm_AF  (leglib seg003:0x13608)
-; ---------------------------------------------------------------------------
 
 loc_101BD:
                 xor     ax, ax
@@ -310,7 +294,6 @@ loc_101BD:
                 mov     ax, 1C4Eh
                 push    ax
                 call    far ptr rt_AF   ; -> rtm_AF  (leglib seg003:0x13608)
-; ---------------------------------------------------------------------------
 
 loc_101DC:
                 xor     ax, ax
@@ -324,7 +307,6 @@ loc_101DC:
                 mov     ax, 1C7Ch
                 push    ax
                 call    far ptr rt_AF   ; -> rtm_AF  (leglib seg003:0x13608)
-; ---------------------------------------------------------------------------
 
 loc_101F4:
                 xor     ax, ax
@@ -338,7 +320,6 @@ loc_101F4:
                 mov     ax, 208Ah
                 push    ax
                 call    far ptr rt_AF   ; -> rtm_AF  (leglib seg003:0x13608)
-; ---------------------------------------------------------------------------
 
 loc_1020C:
                 xor     ax, ax
@@ -352,7 +333,6 @@ loc_1020C:
                 mov     ax, 1EC0h
                 push    ax
                 call    far ptr rt_0F   ; -> rtm_0F  (leglib seg003:0x1360b)
-; ---------------------------------------------------------------------------
 
 loc_10224:
                 xor     ax, ax
@@ -366,7 +346,6 @@ loc_10224:
                 mov     ax, 209Ch
                 push    ax
                 call    far ptr rt_AF   ; -> rtm_AF  (leglib seg003:0x13608)
-; ---------------------------------------------------------------------------
 
 loc_1023C:
                 xor     ax, ax
@@ -380,7 +359,6 @@ loc_1023C:
                 mov     ax, 20AEh
                 push    ax
                 call    far ptr rt_AF   ; -> rtm_AF  (leglib seg003:0x13608)
-; ---------------------------------------------------------------------------
 
 loc_10254:
                 xor     ax, ax
@@ -394,7 +372,6 @@ loc_10254:
                 mov     ax, 20C0h
                 push    ax
                 call    far ptr rt_AF   ; -> rtm_AF  (leglib seg003:0x13608)
-; ---------------------------------------------------------------------------
 
 loc_1026C:
                 xor     ax, ax
@@ -408,7 +385,6 @@ loc_1026C:
                 mov     ax, 20D2h
                 push    ax
                 call    far ptr rt_AF   ; -> rtm_AF  (leglib seg003:0x13608)
-; ---------------------------------------------------------------------------
 
 loc_10284:
                 xor     ax, ax
@@ -422,7 +398,6 @@ loc_10284:
                 mov     ax, 1F2Ch
                 push    ax
                 call    far ptr rt_AF   ; -> rtm_AF  (leglib seg003:0x13608)
-; ---------------------------------------------------------------------------
 
 loc_1029C:
                 xor     ax, ax
@@ -436,7 +411,6 @@ loc_1029C:
                 mov     ax, 1E2Ah
                 push    ax
                 call    far ptr rt_AF   ; -> rtm_AF  (leglib seg003:0x13608)
-; ---------------------------------------------------------------------------
 
 loc_102B4:
                 xor     ax, ax
@@ -450,7 +424,6 @@ loc_102B4:
                 mov     ax, 1E58h
                 push    ax
                 call    far ptr rt_AF   ; -> rtm_AF  (leglib seg003:0x13608)
-; ---------------------------------------------------------------------------
 
 loc_102CC:
                 xor     ax, ax
@@ -463,7 +436,6 @@ loc_102CC:
                 mov     ax, 1F5Eh
                 push    ax
                 call    far ptr rt_0F   ; -> rtm_0F  (leglib seg003:0x1360b)
-; ---------------------------------------------------------------------------
 
 loc_102E1:
                 xor     ax, ax
@@ -476,7 +448,6 @@ loc_102E1:
                 mov     ax, 1F8Ch
                 push    ax
                 call    far ptr rt_0F   ; -> rtm_0F  (leglib seg003:0x1360b)
-; ---------------------------------------------------------------------------
 
 loc_102F6:
                 xor     ax, ax
@@ -490,46 +461,37 @@ loc_102F6:
                 mov     ax, 1FBAh
                 push    ax
                 call    far ptr rt_0F   ; -> rtm_0F  (leglib seg003:0x1360b)
-; ---------------------------------------------------------------------------
 
 j_rt_DE:                                ; -> rtm_DE  (leglib seg003:0x19d02)
                 call    far ptr rt_DE
-; ---------------------------------------------------------------------------
 
 loc_10313:
                 mov     bx, ax
                 mov     [bp-0Ch], bx
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
-; ---------------------------------------------------------------------------
 
 loc_1031D:
                 sub     sp, 8
                 mov     bx, sp
                 call    far ptr rt_FF4F ; -> rtm_FF4F  (leglib seg004:0x2187b)
-; ---------------------------------------------------------------------------
 
 j_rt_BA:                                ; -> rtm_BA  (leglib seg003:0x1a237)
                 call    far ptr rt_BA
-; ---------------------------------------------------------------------------
 
 j_rt_FE61:                              ; -> rtm_FE61  (leglib seg007:0x265dd)
                 call    far ptr rt_FE61
-; ---------------------------------------------------------------------------
 
 j_rt_FE00:                              ; -> rtm_FE00  (leglib seg008:0x28e94)
                 call    far ptr rt_FE00
-; ---------------------------------------------------------------------------
 
 j_rt_FE67:                              ; -> rtm_FE67  (leglib seg004:0x20690)
                 call    far ptr rt_FE67
-; ---------------------------------------------------------------------------
 
 loc_1033B:
                 mov     ds:2108h, ax
                 mov     ax, 2108h
                 push    ax
                 call    far ptr rt_FE65 ; -> rtm_FE65  (leglib seg004:0x206f6)
-; ---------------------------------------------------------------------------
 
 loc_10347:
                 mov     ax, 2150h
@@ -537,7 +499,6 @@ loc_10347:
                 mov     ax, 210Ah
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_10354:
                 mov     ax, 2160h
@@ -545,19 +506,16 @@ loc_10354:
                 mov     ax, 210Eh
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_10361:
                 mov     ax, 210Ah
                 push    ax
                 call    far ptr rt_CE   ; -> rtm_CE  (leglib seg003:0x1edba)
-; ---------------------------------------------------------------------------
 
 loc_1036A:
                 mov     ax, 210Eh
                 push    ax
                 call    far ptr rt_CE   ; -> rtm_CE  (leglib seg003:0x1edba)
-; ---------------------------------------------------------------------------
 
 loc_10373:
                 mov     word ptr ds:1AC8h, 3
@@ -569,27 +527,22 @@ loc_10373:
                 mov     es, word ptr [si+2]
                 mov     word ptr es:[bx], 0Fh
                 call    far ptr rt_DE   ; -> rtm_DE  (leglib seg003:0x19d02)
-; ---------------------------------------------------------------------------
 
 loc_10395:
                 mov     bx, ax
                 mov     [bp-0Ch], bx
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
-; ---------------------------------------------------------------------------
 
 loc_1039F:
                 mov     bx, 21AAh
                 call    far ptr rt_FF44 ; -> rtm_FF44  (leglib seg004:0x21a62)
-; ---------------------------------------------------------------------------
 
 loc_103A7:
                 mov     bx, 2112h
                 call    far ptr rt_FF50 ; -> rtm_FF50  (leglib seg004:0x2182d)
-; ---------------------------------------------------------------------------
 
-loc_103AF:
-                call    sub_12414
-; ---------------------------------------------------------------------------
+j_showStartupSplash:                    ; the startup splash: "Legacy of the Ancients / Game Program Copyright (c) 1987-1989 / Installation Program Copyright (c) 1989 Electronic Arts / Program Compiler Copyright (c) 1982-1988 Microsoft Corp.". Called once from menu_main.
+                call    showStartupSplash
 
 loc_103B4:
                 mov     ax, 21AEh
@@ -599,7 +552,6 @@ loc_103B4:
                 add     bx, [si+0Ah]
                 push    bx
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_103C6:
                 mov     ax, 21B6h
@@ -608,7 +560,6 @@ loc_103C6:
                 add     bx, [si+0Ah]
                 push    bx
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_103D6:
                 mov     word ptr ds:1E22h, 1
@@ -617,7 +568,6 @@ loc_103D6:
                 mov     ax, 2116h
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_103E9:
                 mov     ax, 21CEh
@@ -629,7 +579,6 @@ loc_103E9:
                 mov     ax, 20h ; ' '
                 push    ax
                 call    far ptr rt_87   ; -> rtm_87  (leglib seg003:0x148ea)
-; ---------------------------------------------------------------------------
 
 loc_103FE:
                 mov     ax, 1
@@ -642,7 +591,6 @@ loc_103FE:
                 mov     ax, 2
                 push    ax
                 call    far ptr rt_5E   ; -> rtm_5E  (leglib seg003:0x14589)
-; ---------------------------------------------------------------------------
 
 loc_10412:
                 mov     ax, 1
@@ -655,7 +603,6 @@ loc_10412:
                 mov     ax, 2
                 push    ax
                 call    far ptr rt_5E   ; -> rtm_5E  (leglib seg003:0x14589)
-; ---------------------------------------------------------------------------
 
 loc_10426:
                 mov     ax, 1
@@ -668,7 +615,6 @@ loc_10426:
                 mov     ax, 2
                 push    ax
                 call    far ptr rt_5E   ; -> rtm_5E  (leglib seg003:0x14589)
-; ---------------------------------------------------------------------------
 
 loc_1043A:
                 mov     ax, 1
@@ -678,7 +624,6 @@ loc_1043A:
                 push    dx
                 push    ax
                 call    far ptr rt_CF   ; -> rtm_CF  (leglib seg003:0x16168)  [mid-func]
-; ---------------------------------------------------------------------------
 
 loc_10449:
                 mov     cx, 2
@@ -705,7 +650,6 @@ loc_1045E:                              ; CODE XREF: menu_main+455↓j
                 mov     ax, 2
                 push    ax
                 call    far ptr rt_5E   ; -> rtm_5E  (leglib seg003:0x14589)
-; ---------------------------------------------------------------------------
                 mov     ax, ds:2120h
                 inc     ax
 
@@ -720,7 +664,6 @@ loc_10480:                              ; CODE XREF: menu_main+428↑j
                 push    dx
                 push    ax
                 call    far ptr rt_CF   ; -> rtm_CF  (leglib seg003:0x16168)  [mid-func]
-; ---------------------------------------------------------------------------
 
 loc_10498:
                 xor     ax, ax
@@ -750,7 +693,6 @@ loc_104A4:                              ; CODE XREF: menu_main+4A3↓j
                 mov     ax, 2
                 push    ax
                 call    far ptr rt_5E   ; -> rtm_5E  (leglib seg003:0x14589)
-; ---------------------------------------------------------------------------
                 mov     ax, ds:2122h
                 inc     ax
 
@@ -791,7 +733,6 @@ loc_104EE:                              ; CODE XREF: menu_main+4ED↓j
                 mov     ax, 2
                 push    ax
                 call    far ptr rt_5E   ; -> rtm_5E  (leglib seg003:0x14589)
-; ---------------------------------------------------------------------------
                 mov     ax, ds:2122h
                 inc     ax
 
@@ -809,49 +750,41 @@ loc_10525:                              ; CODE XREF: menu_main+4B3↑j
                 mov     ax, 1CAEh
                 push    ax
                 call    far ptr rt_FE68 ; -> rtm_FE68  (leglib seg007:0x2706c)
-; ---------------------------------------------------------------------------
 
 loc_10536:
                 mov     ax, 1CDCh
                 push    ax
                 call    far ptr rt_FE68 ; -> rtm_FE68  (leglib seg007:0x2706c)
-; ---------------------------------------------------------------------------
 
 loc_1053F:
                 mov     ax, 1D0Ah
                 push    ax
                 call    far ptr rt_FE68 ; -> rtm_FE68  (leglib seg007:0x2706c)
-; ---------------------------------------------------------------------------
 
 loc_10548:
                 mov     ax, 1D38h
                 push    ax
                 call    far ptr rt_FE68 ; -> rtm_FE68  (leglib seg007:0x2706c)
-; ---------------------------------------------------------------------------
 
 loc_10551:
                 mov     ax, 1D66h
                 push    ax
                 call    far ptr rt_FE68 ; -> rtm_FE68  (leglib seg007:0x2706c)
-; ---------------------------------------------------------------------------
 
 loc_1055A:
                 mov     ax, 1D94h
                 push    ax
                 call    far ptr rt_FE68 ; -> rtm_FE68  (leglib seg007:0x2706c)
-; ---------------------------------------------------------------------------
 
 loc_10563:
                 mov     ax, 1DC2h
                 push    ax
                 call    far ptr rt_FE68 ; -> rtm_FE68  (leglib seg007:0x2706c)
-; ---------------------------------------------------------------------------
 
 loc_1056C:
                 mov     ax, 1DF0h
                 push    ax
                 call    far ptr rt_FE68 ; -> rtm_FE68  (leglib seg007:0x2706c)
-; ---------------------------------------------------------------------------
 
 loc_10575:
                 mov     ax, 1
@@ -860,50 +793,45 @@ loc_10575:
                 call    far ptr rt_09   ; -> rtm_09  (leglib seg003:0x14a31)
 menu_main       endp
 
-; ---------------------------------------------------------------------------
                 nop
 
 ; =============== S U B R O U T I N E =======================================
 
+; the main menu SELECT CASE dispatch loop. Draws the menu (drawMainMenuScreen), reads a key, and branches to showQuestCopyright / showInstructions / showGameCredits / startNewGameMenu / restartGameMenu / eraseCharacterMenu / showTitleScreen / readLegacyDat. Tail-loops to itself.
 ; Attributes: noreturn
 
-sub_10580       proc near               ; CODE XREF: sub_10580:loc_105A1↓j
+mainMenuLoop    proc near               ; CODE XREF: mainMenuLoop:loc_105A1↓j
                 mov     bx, 2112h
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
-; ---------------------------------------------------------------------------
 
 j_rt_DE_0:                              ; -> rtm_DE  (leglib seg003:0x19d02)
                 call    far ptr rt_DE
-; ---------------------------------------------------------------------------
 
 loc_1058D:
                 mov     bx, ax
                 mov     [bp-0Ch], bx
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
-; ---------------------------------------------------------------------------
 
 j_rt_FF1F:                              ; -> rtm_FF1F  (leglib seg004:0x21b5e)
                 call    far ptr rt_FF1F
-; ---------------------------------------------------------------------------
 
 loc_1059C:
                 jb      short loc_105A1
                 jmp     loc_105A4
 ; ---------------------------------------------------------------------------
 
-loc_105A1:                              ; CODE XREF: sub_10580:loc_1059C↑j
-                jmp     short sub_10580
+loc_105A1:                              ; CODE XREF: mainMenuLoop:loc_1059C↑j
+                jmp     short mainMenuLoop ; the main menu SELECT CASE dispatch loop. Draws the menu (drawMainMenuScreen), reads a key, and branches to showQuestCopyright / showInstructions / showGameCredits / startNewGameMenu / restartGameMenu / eraseCharacterMenu / showTitleScreen / readLegacyDat. Tail-loops to itself.
 ; ---------------------------------------------------------------------------
                 nop
 
-loc_105A4:                              ; CODE XREF: sub_10580+1E↑j
+loc_105A4:                              ; CODE XREF: mainMenuLoop+1E↑j
                 mov     word ptr ds:1AEEh, 0FFh
                 mov     word ptr ds:1E1Eh, 0
                 mov     word ptr ds:1F02h, 1
                 mov     word ptr ds:1F0Ch, 1
                 mov     word ptr ds:1F5Ch, 0FFFFh
                 call    far ptr rt_FE01 ; -> rtm_FE01  (leglib seg008:0x27c25)
-; ---------------------------------------------------------------------------
 
 loc_105C7:
                 mov     word ptr ds:2124h, 11h
@@ -913,11 +841,9 @@ loc_105C7:
                 mov     ax, 2126h
                 push    ax
                 call    far ptr rt_FE29 ; -> rtm_FE29  (leglib seg007:0x27391)
-; ---------------------------------------------------------------------------
 
-loc_105E0:
-                call    sub_13014
-; ---------------------------------------------------------------------------
+j_showTitleScreen:                      ; loads the title image (loadTitleImage -> TITLE.GLB / TITLE.GMP into B800h) and plays the theme music (5 MML strings at seg003:3034.. via playMusicTick / rtm_CE) until a key is pressed.
+                call    showTitleScreen
 
 loc_105E5:
                 mov     word ptr ds:2128h, 10h
@@ -927,33 +853,31 @@ loc_105E5:
                 mov     ax, 212Ah
                 push    ax
                 call    far ptr rt_FE29 ; -> rtm_FE29  (leglib seg007:0x27391)
-; ---------------------------------------------------------------------------
 
-loc_105FE:                              ; CODE XREF: sub_10580:loc_1072C↓j
+loc_105FE:                              ; CODE XREF: mainMenuLoop:loc_1072C↓j
                 mov     ax, ds:1F02h
                 and     ax, ax
                 jnz     short loc_10608
                 jmp     loc_10730
 ; ---------------------------------------------------------------------------
 
-loc_10608:                              ; CODE XREF: sub_10580+83↑j
+loc_10608:                              ; CODE XREF: mainMenuLoop+83↑j
                 mov     ax, 1F0Ch
                 push    ax
-                call    sub_108E7
+                call    showQuestCopyright ; draws "LEGACY OF THE ANCIENTS / Copyright (c) 1987 - 1989 / Quest Software, Inc." (the game-program copyright, distinct from showStartupSplash's EA installer notice).
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_10612:                              ; CODE XREF: sub_10580+CB↓j
+loc_10612:                              ; CODE XREF: mainMenuLoop+CB↓j
                 cmp     word ptr ds:1F02h, 0
                 jg      short loc_1061C
                 jmp     loc_1064E
 ; ---------------------------------------------------------------------------
 
-loc_1061C:                              ; CODE XREF: sub_10580+97↑j
+loc_1061C:                              ; CODE XREF: mainMenuLoop+97↑j
                 mov     ax, 1F0Ch
                 push    ax
-                call    sub_125AB
-; ---------------------------------------------------------------------------
+                call    drawMainMenuScreen ; renders the menu screen: "Loading...", the numbered items ("1. play a game" / "2. simple instructions" / "3. game credits" / "4. sound is currently on/off"), and the second-menu variant ("1. return to first menu" ...). Calls drawCancelOption.
                 mov     word ptr ds:212Ch, 1
                 mov     word ptr ds:212Eh, 4
                 mov     ax, 212Ch
@@ -962,8 +886,7 @@ loc_1061C:                              ; CODE XREF: sub_10580+97↑j
                 push    ax
                 mov     ax, 1F02h
                 push    ax
-                call    sub_10738
-; ---------------------------------------------------------------------------
+                call    readLegacyDat   ; reads LEGACY.DAT (menu state / last settings). Called from mainMenuLoop and the new-game / restart paths.
                 mov     ds:2130h, ax
                 mov     ax, ds:2130h
                 mov     ds:1F02h, ax
@@ -971,7 +894,7 @@ loc_1061C:                              ; CODE XREF: sub_10580+97↑j
 ; ---------------------------------------------------------------------------
                 nop
 
-loc_1064E:                              ; CODE XREF: sub_10580+99↑j
+loc_1064E:                              ; CODE XREF: mainMenuLoop+99↑j
                 mov     ax, ds:1F02h
                 neg     ax
                 mov     ds:1F02h, ax
@@ -982,7 +905,7 @@ loc_1064E:                              ; CODE XREF: sub_10580+99↑j
                 jmp     loc_106BB
 ; ---------------------------------------------------------------------------
 
-loc_10666:                              ; CODE XREF: sub_10580+E1↑j
+loc_10666:                              ; CODE XREF: mainMenuLoop+E1↑j
                 mov     ax, ds:1F02h
                 mov     ds:2134h, ax
                 cmp     word ptr ds:2134h, 1
@@ -990,60 +913,58 @@ loc_10666:                              ; CODE XREF: sub_10580+E1↑j
                 jmp     loc_1067F
 ; ---------------------------------------------------------------------------
 
-loc_10676:                              ; CODE XREF: sub_10580+F1↑j
+loc_10676:                              ; CODE XREF: mainMenuLoop+F1↑j
                 mov     word ptr ds:1F0Ch, 2
                 jmp     loc_106B8
 ; ---------------------------------------------------------------------------
 
-loc_1067F:                              ; CODE XREF: sub_10580+F3↑j
+loc_1067F:                              ; CODE XREF: mainMenuLoop+F3↑j
                 cmp     word ptr ds:2134h, 2
                 jz      short loc_10689
                 jmp     loc_10691
 ; ---------------------------------------------------------------------------
 
-loc_10689:                              ; CODE XREF: sub_10580+104↑j
-                call    sub_1138D
-; ---------------------------------------------------------------------------
+loc_10689:                              ; CODE XREF: mainMenuLoop+104↑j
+                call    showInstructions ; SIMPLE INSTRUCTIONS screens: "LEGACY OF THE ANCIENTS is a 'menu driven' game", COMMANDS, CHARACTER MOVEMENT ("Use the ARROW KEYS"). Largest text handler (~1.5 KB).
                 jmp     loc_106B8
 ; ---------------------------------------------------------------------------
 
-loc_10691:                              ; CODE XREF: sub_10580+106↑j
+loc_10691:                              ; CODE XREF: mainMenuLoop+106↑j
                 cmp     word ptr ds:2134h, 3
                 jz      short loc_1069B
                 jmp     loc_106A3
 ; ---------------------------------------------------------------------------
 
-loc_1069B:                              ; CODE XREF: sub_10580+116↑j
-                call    sub_10A76
-; ---------------------------------------------------------------------------
+loc_1069B:                              ; CODE XREF: mainMenuLoop+116↑j
+                call    showGameCredits ; GAME CREDITS screen -- Designed by John & Charles Dougherty, IBM version Al DeYoung, Artwork Rick Tumanis / Dan Stechow / Roseann Miller, Additional programming Gregg Seelhoff / Johnny Klonaris / Bob Luzenski. "(PICK OPTION USING KEYBOARD)".
                 jmp     loc_106B8
 ; ---------------------------------------------------------------------------
 
-loc_106A3:                              ; CODE XREF: sub_10580+118↑j
+loc_106A3:                              ; CODE XREF: mainMenuLoop+118↑j
                 cmp     word ptr ds:2134h, 4
                 jz      short loc_106AD
                 jmp     loc_106B8
 ; ---------------------------------------------------------------------------
 
-loc_106AD:                              ; CODE XREF: sub_10580+128↑j
+loc_106AD:                              ; CODE XREF: mainMenuLoop+128↑j
                 mov     ax, ds:1F5Ch
                 not     ax
                 mov     ds:1F5Ch, ax
                 jmp     $+3
 ; ---------------------------------------------------------------------------
 
-loc_106B8:                              ; CODE XREF: sub_10580+FC↑j
-                                        ; sub_10580+10E↑j ...
+loc_106B8:                              ; CODE XREF: mainMenuLoop+FC↑j
+                                        ; mainMenuLoop+10E↑j ...
                 jmp     loc_1072C
 ; ---------------------------------------------------------------------------
 
-loc_106BB:                              ; CODE XREF: sub_10580+E3↑j
+loc_106BB:                              ; CODE XREF: mainMenuLoop+E3↑j
                 cmp     word ptr ds:2132h, 2
                 jz      short loc_106C5
                 jmp     loc_10723
 ; ---------------------------------------------------------------------------
 
-loc_106C5:                              ; CODE XREF: sub_10580+140↑j
+loc_106C5:                              ; CODE XREF: mainMenuLoop+140↑j
                 mov     ax, ds:1F02h
                 mov     ds:2136h, ax
                 cmp     word ptr ds:2136h, 1
@@ -1051,100 +972,93 @@ loc_106C5:                              ; CODE XREF: sub_10580+140↑j
                 jmp     loc_106DE
 ; ---------------------------------------------------------------------------
 
-loc_106D5:                              ; CODE XREF: sub_10580+150↑j
+loc_106D5:                              ; CODE XREF: mainMenuLoop+150↑j
                 mov     word ptr ds:1F0Ch, 1
                 jmp     loc_10720
 ; ---------------------------------------------------------------------------
 
-loc_106DE:                              ; CODE XREF: sub_10580+152↑j
+loc_106DE:                              ; CODE XREF: mainMenuLoop+152↑j
                 cmp     word ptr ds:2136h, 2
                 jz      short loc_106E8
                 jmp     loc_106F0
 ; ---------------------------------------------------------------------------
 
-loc_106E8:                              ; CODE XREF: sub_10580+163↑j
-                call    sub_11D3A
-; ---------------------------------------------------------------------------
+loc_106E8:                              ; CODE XREF: mainMenuLoop+163↑j
+                call    startNewGameMenu ; START A NEW GAME: checks for a free slot ("YOU MUST FIRST ERASE / AN OLD CHARACTER BEFORE / STARTING A NEW ONE"), name-collision ("ALREADY EXISTS / PICK A DIFFERENT NAME"), DISK FULL. On success runs playIntroAndLaunchGame.
                 jmp     loc_10720
 ; ---------------------------------------------------------------------------
 
-loc_106F0:                              ; CODE XREF: sub_10580+165↑j
+loc_106F0:                              ; CODE XREF: mainMenuLoop+165↑j
                 cmp     word ptr ds:2136h, 3
                 jz      short loc_106FA
                 jmp     loc_10702
 ; ---------------------------------------------------------------------------
 
-loc_106FA:                              ; CODE XREF: sub_10580+175↑j
-                call    sub_121E4
-; ---------------------------------------------------------------------------
+loc_106FA:                              ; CODE XREF: mainMenuLoop+175↑j
+                call    restartGameMenu ; RESTART A GAME: "** NO CHARACTERS TO RESTART **", "RESTART WHICH CHARACTER?", "RESTARTING <name>". Then playIntroAndLaunchGame.
                 jmp     loc_10720
 ; ---------------------------------------------------------------------------
 
-loc_10702:                              ; CODE XREF: sub_10580+177↑j
+loc_10702:                              ; CODE XREF: mainMenuLoop+177↑j
                 cmp     word ptr ds:2136h, 4
                 jz      short loc_1070C
                 jmp     loc_10714
 ; ---------------------------------------------------------------------------
 
-loc_1070C:                              ; CODE XREF: sub_10580+187↑j
-                call    sub_10D97
-; ---------------------------------------------------------------------------
+loc_1070C:                              ; CODE XREF: mainMenuLoop+187↑j
+                call    eraseCharacterMenu ; ERASE A CHARACTER screen: "** NO CHARACTERS TO ERASE **", "ERASE WHICH CHARACTER? (SELECT BY NUMBER KEY)", "ERASING". Reads/rewrites CHAR.DAT.
                 jmp     loc_10720
 ; ---------------------------------------------------------------------------
 
-loc_10714:                              ; CODE XREF: sub_10580+189↑j
+loc_10714:                              ; CODE XREF: mainMenuLoop+189↑j
                 mov     word ptr ds:1F02h, 1
                 mov     word ptr ds:1F0Ch, 1
 
-loc_10720:                              ; CODE XREF: sub_10580+15B↑j
-                                        ; sub_10580+16D↑j ...
+loc_10720:                              ; CODE XREF: mainMenuLoop+15B↑j
+                                        ; mainMenuLoop+16D↑j ...
                 jmp     loc_1072C
 ; ---------------------------------------------------------------------------
 
-loc_10723:                              ; CODE XREF: sub_10580+142↑j
+loc_10723:                              ; CODE XREF: mainMenuLoop+142↑j
                 mov     ax, 27h ; '''
                 push    ax
                 call    far ptr rt_C8   ; -> rtm_C8  (leglib seg003:0x138e2)
-; ---------------------------------------------------------------------------
 
-loc_1072C:                              ; CODE XREF: sub_10580:loc_106B8↑j
-                                        ; sub_10580:loc_10720↑j
+loc_1072C:                              ; CODE XREF: mainMenuLoop:loc_106B8↑j
+                                        ; mainMenuLoop:loc_10720↑j
                 jmp     loc_105FE
 ; ---------------------------------------------------------------------------
                 nop
 
-loc_10730:                              ; CODE XREF: sub_10580+85↑j
+loc_10730:                              ; CODE XREF: mainMenuLoop+85↑j
                 call    far ptr rt_EC   ; -> rtm_EC  (leglib seg003:0x12dc7)
-; ---------------------------------------------------------------------------
 
 j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED:
                 jmp     j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED
-sub_10580       endp
+mainMenuLoop    endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; reads LEGACY.DAT (menu state / last settings). Called from mainMenuLoop and the new-game / restart paths.
 ; Attributes: noreturn
 
-sub_10738       proc far                ; CODE XREF: sub_10580+BD↑P
-                                        ; sub_10D97+19E↓P ...
+readLegacyDat   proc far                ; CODE XREF: mainMenuLoop+BD↑P
+                                        ; eraseCharacterMenu+19E↓P ...
                 mov     cx, 16h
                 call    far ptr rt_F0   ; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
-; ---------------------------------------------------------------------------
 
-loc_10740:                              ; CODE XREF: sub_10738:loc_1076A↓j
+loc_10740:                              ; CODE XREF: readLegacyDat:loc_1076A↓j
                 mov     word ptr [bp-0Ch], 0
                 lea     ax, [bp-0Ch]
                 push    ax
                 call    far ptr rt_FE53 ; -> rtm_FE53  (leglib seg008:0x281cb)
-; ---------------------------------------------------------------------------
 
 loc_1074E:
                 push    ax
                 lea     ax, [bp-10h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_10758:
                 lea     ax, [bp-10h]
@@ -1152,31 +1066,28 @@ loc_10758:
                 mov     ax, 21DCh
                 push    ax
                 call    far ptr rt_FF0A ; -> rtm_FF0A  (leglib seg003:0x1b5e8)
-; ---------------------------------------------------------------------------
 
 loc_10765:
                 jnz     short loc_1076A
                 jmp     loc_1076C
 ; ---------------------------------------------------------------------------
 
-loc_1076A:                              ; CODE XREF: sub_10738:loc_10765↑j
+loc_1076A:                              ; CODE XREF: readLegacyDat:loc_10765↑j
                 jmp     short loc_10740
 ; ---------------------------------------------------------------------------
 
-loc_1076C:                              ; CODE XREF: sub_10738+2F↑j
-                                        ; sub_10738:loc_1079E↓j
+loc_1076C:                              ; CODE XREF: readLegacyDat+2F↑j
+                                        ; readLegacyDat:loc_1079E↓j
                 mov     word ptr [bp-12h], 0
                 lea     ax, [bp-12h]
                 push    ax
                 call    far ptr rt_FE53 ; -> rtm_FE53  (leglib seg008:0x281cb)
-; ---------------------------------------------------------------------------
 
 loc_1077A:
                 push    ax
                 lea     ax, [bp-16h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_10784:
                 lea     ax, [bp-16h]
@@ -1184,7 +1095,6 @@ loc_10784:
                 lea     ax, [bp-1Ah]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_10791:
                 lea     ax, [bp-1Ah]
@@ -1192,14 +1102,12 @@ loc_10791:
                 mov     ax, 21DCh
                 push    ax
                 call    far ptr rt_FF0A ; -> rtm_FF0A  (leglib seg003:0x1b5e8)
-; ---------------------------------------------------------------------------
 
 loc_1079E:
                 jz      short loc_1076C
                 lea     ax, [bp-1Ah]
                 push    ax
                 call    far ptr rt_30   ; -> rtm_30  (leglib seg003:0x1b661)
-; ---------------------------------------------------------------------------
 
 loc_107A9:
                 mov     [bp-1Ch], ax
@@ -1208,7 +1116,7 @@ loc_107A9:
                 jmp     loc_107C1
 ; ---------------------------------------------------------------------------
 
-loc_107B4:                              ; CODE XREF: sub_10738+77↑j
+loc_107B4:                              ; CODE XREF: readLegacyDat+77↑j
                 mov     si, [bp+6]
                 mov     ax, [si]
                 neg     ax
@@ -1216,57 +1124,54 @@ loc_107B4:                              ; CODE XREF: sub_10738+77↑j
                 jmp     loc_108BE
 ; ---------------------------------------------------------------------------
 
-loc_107C1:                              ; CODE XREF: sub_10738+79↑j
+loc_107C1:                              ; CODE XREF: readLegacyDat+79↑j
                 cmp     word ptr [bp-1Ch], 1Bh
                 mov     ax, 0
                 jnz     short loc_107CB
                 dec     ax
 
-loc_107CB:                              ; CODE XREF: sub_10738+90↑j
+loc_107CB:                              ; CODE XREF: readLegacyDat+90↑j
                 cmp     word ptr [bp-1Ch], 30h ; '0'
                 mov     cx, 0
                 jnz     short loc_107D5
                 dec     cx
 
-loc_107D5:                              ; CODE XREF: sub_10738+9A↑j
+loc_107D5:                              ; CODE XREF: readLegacyDat+9A↑j
                 or      cx, ax
                 and     cx, cx
                 jnz     short loc_107DE
                 jmp     loc_107E6
 ; ---------------------------------------------------------------------------
 
-loc_107DE:                              ; CODE XREF: sub_10738+A1↑j
+loc_107DE:                              ; CODE XREF: readLegacyDat+A1↑j
                 mov     word ptr [bp-1Eh], 0
                 jmp     loc_108BE
 ; ---------------------------------------------------------------------------
 
-loc_107E6:                              ; CODE XREF: sub_10738+A3↑j
+loc_107E6:                              ; CODE XREF: readLegacyDat+A3↑j
                 lea     ax, [bp-1Ah]
                 push    ax
                 call    far ptr rt_42   ; -> rtm_42  (leglib seg003:0x1b651)
-; ---------------------------------------------------------------------------
                 cmp     ax, 1
                 jg      short loc_107F7
                 jmp     loc_1086C
 ; ---------------------------------------------------------------------------
 
-loc_107F7:                              ; CODE XREF: sub_10738+BA↑j
+loc_107F7:                              ; CODE XREF: readLegacyDat+BA↑j
                 lea     ax, [bp-1Ah]
                 push    ax
                 mov     ax, 1
                 push    ax
                 call    far ptr rt_B5   ; -> rtm_B5  (leglib seg003:0x1b707)  [mid-func]
-; ---------------------------------------------------------------------------
                 push    ax
                 call    far ptr rt_30   ; -> rtm_30  (leglib seg003:0x1b661)
-; ---------------------------------------------------------------------------
                 mov     [bp-1Ch], ax
                 cmp     ax, 48h ; 'H'
                 jz      short loc_10815
                 jmp     loc_1082D
 ; ---------------------------------------------------------------------------
 
-loc_10815:                              ; CODE XREF: sub_10738+D8↑j
+loc_10815:                              ; CODE XREF: readLegacyDat+D8↑j
                 mov     si, [bp+6]
                 dec     word ptr [si]
                 mov     di, [bp+0Ah]
@@ -1276,19 +1181,19 @@ loc_10815:                              ; CODE XREF: sub_10738+D8↑j
                 jmp     loc_1082D
 ; ---------------------------------------------------------------------------
 
-loc_10826:                              ; CODE XREF: sub_10738+E9↑j
+loc_10826:                              ; CODE XREF: readLegacyDat+E9↑j
                 mov     di, [bp+8]
                 mov     ax, [di]
                 mov     [si], ax
 
-loc_1082D:                              ; CODE XREF: sub_10738+DA↑j
-                                        ; sub_10738+EB↑j
+loc_1082D:                              ; CODE XREF: readLegacyDat+DA↑j
+                                        ; readLegacyDat+EB↑j
                 cmp     word ptr [bp-1Ch], 50h ; 'P'
                 jz      short loc_10836
                 jmp     loc_1084E
 ; ---------------------------------------------------------------------------
 
-loc_10836:                              ; CODE XREF: sub_10738+F9↑j
+loc_10836:                              ; CODE XREF: readLegacyDat+F9↑j
                 mov     si, [bp+6]
                 inc     word ptr [si]
                 mov     di, [bp+8]
@@ -1298,43 +1203,40 @@ loc_10836:                              ; CODE XREF: sub_10738+F9↑j
                 jmp     loc_1084E
 ; ---------------------------------------------------------------------------
 
-loc_10847:                              ; CODE XREF: sub_10738+10A↑j
+loc_10847:                              ; CODE XREF: readLegacyDat+10A↑j
                 mov     di, [bp+0Ah]
                 mov     ax, [di]
                 mov     [si], ax
 
-loc_1084E:                              ; CODE XREF: sub_10738+FB↑j
-                                        ; sub_10738+10C↑j
+loc_1084E:                              ; CODE XREF: readLegacyDat+FB↑j
+                                        ; readLegacyDat+10C↑j
                 mov     si, [bp+6]
                 cmp     word ptr [si], 0
                 jz      short loc_10859
                 jmp     loc_10861
 ; ---------------------------------------------------------------------------
 
-loc_10859:                              ; CODE XREF: sub_10738+11C↑j
+loc_10859:                              ; CODE XREF: readLegacyDat+11C↑j
                 mov     di, [bp+8]
                 mov     ax, [di]
                 inc     ax
                 mov     [si], ax
 
-loc_10861:                              ; CODE XREF: sub_10738+11E↑j
+loc_10861:                              ; CODE XREF: readLegacyDat+11E↑j
                 mov     si, [bp+6]
                 mov     ax, [si]
                 mov     [bp-1Eh], ax
                 jmp     loc_108BE
 ; ---------------------------------------------------------------------------
 
-loc_1086C:                              ; CODE XREF: sub_10738+BC↑j
+loc_1086C:                              ; CODE XREF: readLegacyDat+BC↑j
                 lea     ax, [bp-1Ah]
                 push    ax
                 call    far ptr rt_5A   ; -> rtm_5A  (leglib seg003:0x19a3c)
-; ---------------------------------------------------------------------------
                 mov     bx, ax
                 mov     [bp-20h], bx
                 call    far ptr rt_FF4A ; -> rtm_FF4A  (leglib seg004:0x216de)
-; ---------------------------------------------------------------------------
                 call    far ptr rt_FF22 ; -> rtm_FF22  (leglib seg004:0x218e6)
-; ---------------------------------------------------------------------------
                 mov     [bp-1Ch], ax
                 mov     si, [bp+0Ah]
                 cmp     ax, [si]
@@ -1342,72 +1244,71 @@ loc_1086C:                              ; CODE XREF: sub_10738+BC↑j
                 jge     short loc_10892
                 dec     cx
 
-loc_10892:                              ; CODE XREF: sub_10738+157↑j
+loc_10892:                              ; CODE XREF: readLegacyDat+157↑j
                 mov     si, [bp+8]
                 cmp     ax, [si]
                 mov     dx, 0
                 jle     short loc_1089D
                 dec     dx
 
-loc_1089D:                              ; CODE XREF: sub_10738+162↑j
+loc_1089D:                              ; CODE XREF: readLegacyDat+162↑j
                 or      dx, cx
                 and     dx, dx
                 jnz     short loc_108A6
                 jmp     loc_108B6
 ; ---------------------------------------------------------------------------
 
-loc_108A6:                              ; CODE XREF: sub_10738+169↑j
+loc_108A6:                              ; CODE XREF: readLegacyDat+169↑j
                 call    far ptr rt_FE59 ; -> rtm_FE59  (leglib seg007:0x256b5)
-; ---------------------------------------------------------------------------
                 mov     si, [bp+6]
                 mov     ax, [si]
                 mov     [bp-1Eh], ax
                 jmp     loc_108BE
 ; ---------------------------------------------------------------------------
 
-loc_108B6:                              ; CODE XREF: sub_10738+16B↑j
+loc_108B6:                              ; CODE XREF: readLegacyDat+16B↑j
                 mov     ax, [bp-1Ch]
                 neg     ax
                 mov     [bp-1Eh], ax
 
-loc_108BE:                              ; CODE XREF: sub_10738+86↑j
-                                        ; sub_10738+AB↑j ...
+loc_108BE:                              ; CODE XREF: readLegacyDat+86↑j
+                                        ; readLegacyDat+AB↑j ...
                 lea     ax, [bp-16h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_108C7:
                 lea     ax, [bp-10h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_108D0:
                 lea     ax, [bp-1Ah]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_108D9:
                 mov     ax, [bp-1Eh]
                 call    far ptr rt_F4   ; -> rtm_F4  (leglib seg003:0x1bb7c)
+
+nullsub_143:
+                retf    6
 ; ---------------------------------------------------------------------------
 
-nullsub_80:
-                retf    6
-sub_10738       endp
+j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED:
+                                        ; CODE XREF: mainMenuLoop:j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED↑j
+                jmp     j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED
+readLegacyDat   endp
 
-; [00000003 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
+; draws "LEGACY OF THE ANCIENTS / Copyright (c) 1987 - 1989 / Quest Software, Inc." (the game-program copyright, distinct from showStartupSplash's EA installer notice).
 ; Attributes: noreturn
 
-sub_108E7       proc far                ; CODE XREF: sub_10580+8C↑P
+showQuestCopyright proc far             ; CODE XREF: mainMenuLoop+8C↑P
                 mov     cx, 3Ah ; ':'
                 call    far ptr rt_F0   ; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
-; ---------------------------------------------------------------------------
 
 loc_108EF:
                 mov     si, [bp+6]
@@ -1418,7 +1319,7 @@ loc_108EF:
                 jmp     loc_1092C
 ; ---------------------------------------------------------------------------
 
-loc_10900:                              ; CODE XREF: sub_108E7+14↑j
+loc_10900:                              ; CODE XREF: showQuestCopyright+14↑j
                 mov     word ptr [bp-0Eh], 2
                 mov     word ptr [bp-10h], 17h
                 mov     word ptr [bp-12h], 0
@@ -1432,17 +1333,16 @@ loc_10900:                              ; CODE XREF: sub_108E7+14↑j
                 lea     ax, [bp-14h]
                 push    ax
                 call    far ptr rt_FE3E ; -> rtm_FE3E  (leglib seg007:0x2497a)
-; ---------------------------------------------------------------------------
                 jmp     loc_1096A
 ; ---------------------------------------------------------------------------
 
-loc_1092C:                              ; CODE XREF: sub_108E7+16↑j
+loc_1092C:                              ; CODE XREF: showQuestCopyright+16↑j
                 cmp     word ptr [bp-0Ch], 2
                 jz      short loc_10935
                 jmp     loc_10961
 ; ---------------------------------------------------------------------------
 
-loc_10935:                              ; CODE XREF: sub_108E7+49↑j
+loc_10935:                              ; CODE XREF: showQuestCopyright+49↑j
                 mov     word ptr [bp-16h], 1
                 mov     word ptr [bp-18h], 17h
                 mov     word ptr [bp-1Ah], 0
@@ -1456,18 +1356,16 @@ loc_10935:                              ; CODE XREF: sub_108E7+49↑j
                 lea     ax, [bp-1Ch]
                 push    ax
                 call    far ptr rt_FE3E ; -> rtm_FE3E  (leglib seg007:0x2497a)
-; ---------------------------------------------------------------------------
                 jmp     loc_1096A
 ; ---------------------------------------------------------------------------
 
-loc_10961:                              ; CODE XREF: sub_108E7+4B↑j
+loc_10961:                              ; CODE XREF: showQuestCopyright+4B↑j
                 mov     ax, 27h ; '''
                 push    ax
                 call    far ptr rt_C8   ; -> rtm_C8  (leglib seg003:0x138e2)
-; ---------------------------------------------------------------------------
 
-loc_1096A:                              ; CODE XREF: sub_108E7+42↑j
-                                        ; sub_108E7+77↑j
+loc_1096A:                              ; CODE XREF: showQuestCopyright+42↑j
+                                        ; showQuestCopyright+77↑j
                 mov     word ptr [bp-1Eh], 2
                 mov     word ptr [bp-20h], 25h ; '%'
                 mov     word ptr [bp-22h], 1
@@ -1481,7 +1379,6 @@ loc_1096A:                              ; CODE XREF: sub_108E7+42↑j
                 lea     ax, [bp-24h]
                 push    ax
                 call    far ptr rt_FE42 ; -> rtm_FE42  (leglib seg007:0x2730c)
-; ---------------------------------------------------------------------------
 
 loc_10993:
                 mov     word ptr [bp-26h], 9
@@ -1491,7 +1388,6 @@ loc_10993:
                 lea     ax, [bp-28h]
                 push    ax
                 call    far ptr rt_FE3F ; -> rtm_FE3F  (leglib seg008:0x27d5a)
-; ---------------------------------------------------------------------------
 
 loc_109AA:
                 mov     ax, 21E0h
@@ -1499,19 +1395,16 @@ loc_109AA:
                 lea     ax, [bp-2Ch]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_109B7:
                 lea     ax, [bp-2Ch]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_109C0:
                 lea     ax, [bp-2Ch]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_109C9:
                 mov     word ptr [bp-2Eh], 8
@@ -1521,7 +1414,6 @@ loc_109C9:
                 lea     ax, [bp-30h]
                 push    ax
                 call    far ptr rt_FE3F ; -> rtm_FE3F  (leglib seg008:0x27d5a)
-; ---------------------------------------------------------------------------
 
 loc_109E0:
                 mov     ax, 21FAh
@@ -1529,19 +1421,16 @@ loc_109E0:
                 lea     ax, [bp-34h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_109ED:
                 lea     ax, [bp-34h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_109F6:
                 lea     ax, [bp-34h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_109FF:
                 mov     word ptr [bp-36h], 0Ah
@@ -1551,7 +1440,6 @@ loc_109FF:
                 lea     ax, [bp-38h]
                 push    ax
                 call    far ptr rt_FE3F ; -> rtm_FE3F  (leglib seg008:0x27d5a)
-; ---------------------------------------------------------------------------
 
 loc_10A16:
                 mov     ax, 2218h
@@ -1559,19 +1447,16 @@ loc_10A16:
                 lea     ax, [bp-3Ch]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_10A23:
                 lea     ax, [bp-3Ch]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_10A2C:
                 lea     ax, [bp-3Ch]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_10A35:
                 mov     word ptr [bp-3Eh], 6
@@ -1581,7 +1466,6 @@ loc_10A35:
                 lea     ax, [bp-40h]
                 push    ax
                 call    far ptr rt_FE3F ; -> rtm_FE3F  (leglib seg008:0x27d5a)
-; ---------------------------------------------------------------------------
 
 loc_10A4C:
                 mov     ax, 2230h
@@ -1589,38 +1473,38 @@ loc_10A4C:
                 lea     ax, [bp-44h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_10A59:
                 lea     ax, [bp-44h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_10A62:
                 lea     ax, [bp-44h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 j_rt_F4:                                ; -> rtm_F4  (leglib seg003:0x1bb7c)
                 call    far ptr rt_F4
+
+nullsub_144:
+                retf    2
 ; ---------------------------------------------------------------------------
 
-nullsub_81:
-                retf    2
-sub_108E7       endp
+j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED:
+                                        ; CODE XREF: readLegacyDat:j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED↑j
+                jmp     j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED
+showQuestCopyright endp
 
-; [00000003 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
+; GAME CREDITS screen -- Designed by John & Charles Dougherty, IBM version Al DeYoung, Artwork Rick Tumanis / Dan Stechow / Roseann Miller, Additional programming Gregg Seelhoff / Johnny Klonaris / Bob Luzenski. "(PICK OPTION USING KEYBOARD)".
 ; Attributes: noreturn
 
-sub_10A76       proc far                ; CODE XREF: sub_10580:loc_1069B↑P
+showGameCredits proc far                ; CODE XREF: mainMenuLoop:loc_1069B↑P
                 mov     cx, 48h ; 'H'
                 call    far ptr rt_F0   ; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
-; ---------------------------------------------------------------------------
 
 loc_10A7E:
                 mov     word ptr [bp-0Ch], 1
@@ -1636,7 +1520,6 @@ loc_10A7E:
                 lea     ax, [bp-12h]
                 push    ax
                 call    far ptr rt_FE3E ; -> rtm_FE3E  (leglib seg007:0x2497a)
-; ---------------------------------------------------------------------------
 
 loc_10AA7:
                 mov     word ptr [bp-14h], 4
@@ -1652,7 +1535,6 @@ loc_10AA7:
                 lea     ax, [bp-1Ah]
                 push    ax
                 call    far ptr rt_FE42 ; -> rtm_FE42  (leglib seg007:0x2730c)
-; ---------------------------------------------------------------------------
 
 loc_10AD0:
                 mov     word ptr [bp-1Ch], 0Dh
@@ -1662,7 +1544,6 @@ loc_10AD0:
                 lea     ax, [bp-1Eh]
                 push    ax
                 call    far ptr rt_FE3F ; -> rtm_FE3F  (leglib seg008:0x27d5a)
-; ---------------------------------------------------------------------------
 
 loc_10AE7:
                 mov     ax, 2250h
@@ -1670,19 +1551,16 @@ loc_10AE7:
                 lea     ax, [bp-22h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_10AF4:
                 lea     ax, [bp-22h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_10AFD:
                 lea     ax, [bp-22h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_10B06:
                 mov     ax, 2262h
@@ -1690,19 +1568,16 @@ loc_10B06:
                 lea     ax, [bp-26h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_10B13:
                 lea     ax, [bp-26h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_10B1C:
                 lea     ax, [bp-26h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_10B25:
                 mov     ax, 2288h
@@ -1710,19 +1585,16 @@ loc_10B25:
                 lea     ax, [bp-2Ah]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_10B32:
                 lea     ax, [bp-2Ah]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_10B3B:
                 lea     ax, [bp-2Ah]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_10B44:
                 mov     ax, 22AEh
@@ -1730,19 +1602,16 @@ loc_10B44:
                 lea     ax, [bp-2Eh]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_10B51:
                 lea     ax, [bp-2Eh]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_10B5A:
                 lea     ax, [bp-2Eh]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_10B63:
                 mov     ax, 22CEh
@@ -1750,19 +1619,16 @@ loc_10B63:
                 lea     ax, [bp-32h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_10B70:
                 lea     ax, [bp-32h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_10B79:
                 lea     ax, [bp-32h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_10B82:
                 mov     ax, 22F0h
@@ -1770,19 +1636,16 @@ loc_10B82:
                 lea     ax, [bp-36h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_10B8F:
                 lea     ax, [bp-36h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_10B98:
                 lea     ax, [bp-36h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_10BA1:
                 mov     ax, 2310h
@@ -1790,19 +1653,16 @@ loc_10BA1:
                 lea     ax, [bp-3Ah]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_10BAE:
                 lea     ax, [bp-3Ah]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_10BB7:
                 lea     ax, [bp-3Ah]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_10BC0:
                 mov     ax, 2332h
@@ -1810,19 +1670,16 @@ loc_10BC0:
                 lea     ax, [bp-3Eh]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_10BCD:
                 lea     ax, [bp-3Eh]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_10BD6:
                 lea     ax, [bp-3Eh]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_10BDF:
                 mov     ax, 2356h
@@ -1830,19 +1687,16 @@ loc_10BDF:
                 lea     ax, [bp-42h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_10BEC:
                 lea     ax, [bp-42h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_10BF5:
                 lea     ax, [bp-42h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_10BFE:
                 mov     ax, 237Ah
@@ -1850,19 +1704,16 @@ loc_10BFE:
                 lea     ax, [bp-46h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_10C0B:
                 lea     ax, [bp-46h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_10C14:
                 lea     ax, [bp-46h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_10C1D:
                 mov     word ptr [bp-48h], 9
@@ -1872,7 +1723,6 @@ loc_10C1D:
                 lea     ax, [bp-4Ah]
                 push    ax
                 call    far ptr rt_FE3F ; -> rtm_FE3F  (leglib seg008:0x27d5a)
-; ---------------------------------------------------------------------------
 
 loc_10C34:
                 mov     ax, 239Ah
@@ -1880,50 +1730,48 @@ loc_10C34:
                 lea     ax, [bp-4Eh]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_10C41:
                 lea     ax, [bp-4Eh]
                 push    ax
                 call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
-; ---------------------------------------------------------------------------
 
 loc_10C4A:
                 lea     ax, [bp-4Eh]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_10C53:
                 call    far ptr sub_11A15
-; ---------------------------------------------------------------------------
 
 loc_10C58:
                 mov     [bp-50h], ax
                 mov     ax, [bp-50h]
                 mov     [bp-52h], ax
                 call    far ptr rt_FE45 ; -> rtm_FE45  (leglib seg008:0x27c6e)
-; ---------------------------------------------------------------------------
 
 j_rt_F4_0:                              ; -> rtm_F4  (leglib seg003:0x1bb7c)
                 call    far ptr rt_F4
+
+nullsub_145:
+                retf    0
 ; ---------------------------------------------------------------------------
 
-nullsub_82:
-                retf    0
-sub_10A76       endp
+j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED:
+                                        ; CODE XREF: showQuestCopyright:j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED↑j
+                jmp     j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED
+showGameCredits endp
 
-; [00000003 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
+; reads CHAR.DAT and lists the saved characters. Shared by eraseCharacterMenu, startNewGameMenu and restartGameMenu. One of a family of near-identical CHAR.DAT enumeration helpers (sub_12055 / sub_12778 / sub_128A9).
 ; Attributes: noreturn
 
-sub_10C71       proc far                ; CODE XREF: sub_10D97+30C↓P
-                                        ; sub_11D3A+2EF↓P ...
+showCharacterRoster proc far            ; CODE XREF: eraseCharacterMenu+30C↓P
+                                        ; startNewGameMenu+2EF↓P ...
                 mov     cx, 12h
                 call    far ptr rt_F0   ; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
-; ---------------------------------------------------------------------------
 
 loc_10C79:
                 mov     ax, 23B6h
@@ -1931,19 +1779,16 @@ loc_10C79:
                 lea     ax, [bp-0Eh]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_10C86:
                 lea     ax, [bp-0Eh]
                 push    ax
                 call    far ptr rt_FE63 ; -> rtm_FE63  (leglib seg007:0x24a83)
-; ---------------------------------------------------------------------------
 
 loc_10C8F:
                 lea     ax, [bp-0Eh]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_10C98:
                 mov     ax, 23B6h
@@ -1955,7 +1800,6 @@ loc_10C98:
                 mov     ax, 20h ; ' '
                 push    ax
                 call    far ptr rt_87   ; -> rtm_87  (leglib seg003:0x148ea)
-; ---------------------------------------------------------------------------
 
 loc_10CAD:
                 mov     ax, 1
@@ -1965,20 +1809,17 @@ loc_10CAD:
                 push    dx
                 push    ax
                 call    far ptr rt_CF   ; -> rtm_CF  (leglib seg003:0x16168)  [mid-func]
-; ---------------------------------------------------------------------------
 
 loc_10CBC:
                 mov     ax, 0Eh
                 push    ax
                 call    far ptr rt_CD   ; -> rtm_CD  (leglib seg003:0x1b774)
-; ---------------------------------------------------------------------------
 
 loc_10CC5:
                 push    ax
                 lea     ax, [bp-14h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_10CCF:
                 mov     ax, 1CAAh
@@ -1989,7 +1830,6 @@ loc_10CCF:
                 xor     ax, ax
                 push    ax
                 call    far ptr rt_73   ; -> rtm_73  (leglib seg003:0x1b4ed)
-; ---------------------------------------------------------------------------
 
 loc_10CE0:
                 mov     ax, 1
@@ -2002,7 +1842,6 @@ loc_10CE0:
                 xor     ax, ax
                 push    ax
                 call    far ptr rt_AB   ; -> rtm_AB  (leglib seg003:0x145a4)
-; ---------------------------------------------------------------------------
 
 loc_10CF3:
                 mov     ax, ds
@@ -2013,11 +1852,10 @@ loc_10CF3:
                 jmp     loc_10D32
 ; ---------------------------------------------------------------------------
 
-loc_10D04:                              ; CODE XREF: sub_10C71+C7↓j
+loc_10D04:                              ; CODE XREF: showCharacterRoster+C7↓j
                 push    word ptr [bp-16h]
                 push    word ptr [bp-1Ah]
                 call    far ptr rt_FE35 ; -> rtm_FE35  (leglib seg004:0x1fefb)
-; ---------------------------------------------------------------------------
                 mov     [bp-18h], ax
                 mov     ax, [bp-18h]
                 mov     [bp-1Ch], ax
@@ -2031,86 +1869,79 @@ loc_10D04:                              ; CODE XREF: sub_10C71+C7↓j
                 mov     ax, 2
                 push    ax
                 call    far ptr rt_AB   ; -> rtm_AB  (leglib seg003:0x145a4)
-; ---------------------------------------------------------------------------
                 mov     ax, [bp-1Ah]
                 add     ax, 2
 
-loc_10D32:                              ; CODE XREF: sub_10C71+90↑j
+loc_10D32:                              ; CODE XREF: showCharacterRoster+90↑j
                 mov     [bp-1Ah], ax
                 cmp     ax, [bp-10h]
                 jle     short loc_10D04
                 mov     ax, 1B0Ch
                 push    ax
                 call    far ptr rt_FE39 ; -> rtm_FE39  (leglib seg007:0x277fb)
-; ---------------------------------------------------------------------------
 
 loc_10D43:
                 mov     ax, 1B68h
                 push    ax
                 call    far ptr rt_FE39 ; -> rtm_FE39  (leglib seg007:0x277fb)
-; ---------------------------------------------------------------------------
 
 loc_10D4C:
                 mov     ax, 1BC4h
                 push    ax
                 call    far ptr rt_FE39 ; -> rtm_FE39  (leglib seg007:0x277fb)
-; ---------------------------------------------------------------------------
 
 loc_10D55:
                 mov     ax, 1B3Ah
                 push    ax
                 call    far ptr rt_FE39 ; -> rtm_FE39  (leglib seg007:0x277fb)
-; ---------------------------------------------------------------------------
 
 loc_10D5E:
                 mov     ax, 1B96h
                 push    ax
                 call    far ptr rt_FE39 ; -> rtm_FE39  (leglib seg007:0x277fb)
-; ---------------------------------------------------------------------------
 
 loc_10D67:
                 mov     ax, 1BF2h
                 push    ax
                 call    far ptr rt_FE39 ; -> rtm_FE39  (leglib seg007:0x277fb)
-; ---------------------------------------------------------------------------
 
 loc_10D70:
                 mov     ax, 1C20h
                 push    ax
                 call    far ptr rt_FE39 ; -> rtm_FE39  (leglib seg007:0x277fb)
-; ---------------------------------------------------------------------------
 
 loc_10D79:
                 mov     ax, 1
                 push    ax
                 push    ax
                 call    far ptr rt_09   ; -> rtm_09  (leglib seg003:0x14a31)
-; ---------------------------------------------------------------------------
 
 loc_10D83:
                 lea     ax, [bp-14h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 j_rt_F4_1:                              ; -> rtm_F4  (leglib seg003:0x1bb7c)
                 call    far ptr rt_F4
+
+nullsub_146:
+                retf    0
 ; ---------------------------------------------------------------------------
 
-nullsub_83:
-                retf    0
-sub_10C71       endp
+j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED:
+                                        ; CODE XREF: showGameCredits:j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED↑j
+                jmp     j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED
+showCharacterRoster endp
 
-; [00000003 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
+; ERASE A CHARACTER screen: "** NO CHARACTERS TO ERASE **", "ERASE WHICH CHARACTER? (SELECT BY NUMBER KEY)", "ERASING". Reads/rewrites CHAR.DAT.
 ; Attributes: noreturn
 
-sub_10D97       proc far                ; CODE XREF: sub_10580:loc_1070C↑P
+eraseCharacterMenu proc far             ; CODE XREF: mainMenuLoop:loc_1070C↑P
                 mov     cx, 56h ; 'V'
                 call    far ptr rt_F0   ; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
-; ---------------------------------------------------------------------------
 
 loc_10D9F:
                 mov     word ptr [bp-0Ch], 2
@@ -2126,7 +1957,6 @@ loc_10D9F:
                 lea     ax, [bp-12h]
                 push    ax
                 call    far ptr rt_FE3E ; -> rtm_FE3E  (leglib seg007:0x2497a)
-; ---------------------------------------------------------------------------
 
 loc_10DC8:
                 mov     word ptr [bp-14h], 2
@@ -2142,7 +1972,6 @@ loc_10DC8:
                 lea     ax, [bp-1Ah]
                 push    ax
                 call    far ptr rt_FE42 ; -> rtm_FE42  (leglib seg007:0x2730c)
-; ---------------------------------------------------------------------------
 
 loc_10DF1:
                 mov     word ptr [bp-1Ch], 0Ah
@@ -2152,7 +1981,6 @@ loc_10DF1:
                 lea     ax, [bp-1Eh]
                 push    ax
                 call    far ptr rt_FE3F ; -> rtm_FE3F  (leglib seg008:0x27d5a)
-; ---------------------------------------------------------------------------
 
 loc_10E08:
                 mov     ax, 23C2h
@@ -2160,27 +1988,22 @@ loc_10E08:
                 lea     ax, [bp-22h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_10E15:
                 lea     ax, [bp-22h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_10E1E:
                 lea     ax, [bp-22h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 j_rt_FE45:                              ; -> rtm_FE45  (leglib seg008:0x27c6e)
                 call    far ptr rt_FE45
-; ---------------------------------------------------------------------------
 
 loc_10E2C:
                 call    sub_12778
-; ---------------------------------------------------------------------------
 
 loc_10E31:
                 cmp     word ptr ds:2138h, 0
@@ -2188,23 +2011,19 @@ loc_10E31:
                 jmp     loc_10EAB
 ; ---------------------------------------------------------------------------
 
-loc_10E3B:                              ; CODE XREF: sub_10D97+9F↑j
+loc_10E3B:                              ; CODE XREF: eraseCharacterMenu+9F↑j
                 call    far ptr rt_FE59 ; -> rtm_FE59  (leglib seg007:0x256b5)
-; ---------------------------------------------------------------------------
                 mov     ax, 23DAh
                 push    ax
                 lea     ax, [bp-26h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-26h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-26h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     word ptr [bp-28h], 9
                 mov     word ptr [bp-2Ah], 17h
                 lea     ax, [bp-28h]
@@ -2212,34 +2031,27 @@ loc_10E3B:                              ; CODE XREF: sub_10D97+9F↑j
                 lea     ax, [bp-2Ah]
                 push    ax
                 call    far ptr rt_FE3F ; -> rtm_FE3F  (leglib seg008:0x27d5a)
-; ---------------------------------------------------------------------------
                 mov     ax, 2400h
                 push    ax
                 lea     ax, [bp-2Eh]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-2Eh]
                 push    ax
                 call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-2Eh]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 call    far ptr sub_11A15
-; ---------------------------------------------------------------------------
                 mov     [bp-30h], ax
                 mov     ax, [bp-30h]
                 mov     [bp-32h], ax
                 call    far ptr rt_FE45 ; -> rtm_FE45  (leglib seg008:0x27c6e)
-; ---------------------------------------------------------------------------
                 jmp     loc_110C2
 ; ---------------------------------------------------------------------------
 
-loc_10EAB:                              ; CODE XREF: sub_10D97+A1↑j
+loc_10EAB:                              ; CODE XREF: eraseCharacterMenu+A1↑j
                 call    far ptr rt_FE45 ; -> rtm_FE45  (leglib seg008:0x27c6e)
-; ---------------------------------------------------------------------------
 
 loc_10EB0:
                 mov     ax, 241Ah
@@ -2247,19 +2059,16 @@ loc_10EB0:
                 lea     ax, [bp-36h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_10EBD:
                 lea     ax, [bp-36h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_10EC6:
                 lea     ax, [bp-36h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_10ECF:
                 mov     word ptr [bp-38h], 9
@@ -2269,7 +2078,6 @@ loc_10ECF:
                 lea     ax, [bp-3Ah]
                 push    ax
                 call    far ptr rt_FE3F ; -> rtm_FE3F  (leglib seg008:0x27d5a)
-; ---------------------------------------------------------------------------
 
 loc_10EE6:
                 mov     ax, 2438h
@@ -2277,24 +2085,21 @@ loc_10EE6:
                 lea     ax, [bp-3Eh]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_10EF3:
                 lea     ax, [bp-3Eh]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_10EFC:
                 lea     ax, [bp-3Eh]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_10F05:
                 mov     word ptr [bp-40h], 0
 
-loc_10F0A:                              ; CODE XREF: sub_10D97+1AE↓j
+loc_10F0A:                              ; CODE XREF: eraseCharacterMenu+1AE↓j
                 mov     ax, ds:2138h
                 inc     ax
                 cmp     ax, [bp-40h]
@@ -2302,14 +2107,13 @@ loc_10F0A:                              ; CODE XREF: sub_10D97+1AE↓j
                 jmp     loc_10F1B
 ; ---------------------------------------------------------------------------
 
-loc_10F16:                              ; CODE XREF: sub_10D97+17A↑j
+loc_10F16:                              ; CODE XREF: eraseCharacterMenu+17A↑j
                 mov     word ptr [bp-40h], 0
 
-loc_10F1B:                              ; CODE XREF: sub_10D97+17C↑j
+loc_10F1B:                              ; CODE XREF: eraseCharacterMenu+17C↑j
                 lea     ax, [bp-40h]
                 push    ax
-                call    sub_11C2F
-; ---------------------------------------------------------------------------
+                call    promptCharacterNumber ; "SELECT BY NUMBER KEY" prompt -- reads a 1-4 digit and returns the chosen character index. Shared by erase / restart.
 
 loc_10F24:
                 mov     word ptr [bp-42h], 0
@@ -2319,8 +2123,7 @@ loc_10F24:
                 push    ax
                 lea     ax, [bp-40h]
                 push    ax
-                call    sub_10738
-; ---------------------------------------------------------------------------
+                call    readLegacyDat   ; reads LEGACY.DAT (menu state / last settings). Called from mainMenuLoop and the new-game / restart paths.
 
 loc_10F3A:
                 mov     [bp-44h], ax
@@ -2335,14 +2138,12 @@ loc_10F3A:
                 jmp     loc_110C2
 ; ---------------------------------------------------------------------------
 
-loc_10F53:                              ; CODE XREF: sub_10D97+1B7↑j
+loc_10F53:                              ; CODE XREF: eraseCharacterMenu+1B7↑j
                 call    far ptr rt_FE45 ; -> rtm_FE45  (leglib seg008:0x27c6e)
-; ---------------------------------------------------------------------------
                 mov     word ptr [bp-46h], 0FFFFh
                 lea     ax, [bp-46h]
                 push    ax
-                call    sub_11C2F
-; ---------------------------------------------------------------------------
+                call    promptCharacterNumber ; "SELECT BY NUMBER KEY" prompt -- reads a 1-4 digit and returns the chosen character index. Shared by erase / restart.
                 mov     ax, 2452h
                 push    ax
                 mov     ax, [bp-40h]
@@ -2351,28 +2152,22 @@ loc_10F53:                              ; CODE XREF: sub_10D97+1B7↑j
                 add     ax, 20E4h
                 push    ax
                 call    far ptr rt_BC   ; -> rtm_BC  (leglib seg003:0x1b82c)  [mid-func]
-; ---------------------------------------------------------------------------
                 push    ax
                 call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
-; ---------------------------------------------------------------------------
                 push    ax
                 mov     ax, 2460h
                 push    ax
                 call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
-; ---------------------------------------------------------------------------
                 push    ax
                 lea     ax, [bp-4Ah]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-4Ah]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-4Ah]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     word ptr [bp-4Ch], 0
                 mov     word ptr [bp-4Eh], 2
                 mov     word ptr [bp-50h], 2
@@ -2386,23 +2181,20 @@ loc_10F53:                              ; CODE XREF: sub_10D97+1B7↑j
                 lea     ax, [bp-52h]
                 push    ax
                 call    far ptr rt_FE58 ; -> rtm_FE58  (leglib seg007:0x27509)
-; ---------------------------------------------------------------------------
                 cmp     word ptr ds:1E22h, 1
                 jnz     short loc_10FDA
                 jmp     loc_110C2
 ; ---------------------------------------------------------------------------
 
-loc_10FDA:                              ; CODE XREF: sub_10D97+23E↑j
+loc_10FDA:                              ; CODE XREF: eraseCharacterMenu+23E↑j
                 mov     ax, [bp-40h]
                 shl     ax, 1
                 shl     ax, 1
                 add     ax, 20E4h
                 push    ax
                 call    far ptr rt_BC   ; -> rtm_BC  (leglib seg003:0x1b82c)  [mid-func]
-; ---------------------------------------------------------------------------
                 push    ax
                 call    far ptr rt_42   ; -> rtm_42  (leglib seg003:0x1b651)
-; ---------------------------------------------------------------------------
                 add     ax, 0Eh
                 mov     [bp-54h], ax
                 mov     ax, [bp-40h]
@@ -2413,21 +2205,17 @@ loc_10FDA:                              ; CODE XREF: sub_10D97+23E↑j
                 lea     ax, [bp-56h]
                 push    ax
                 call    far ptr rt_FE3F ; -> rtm_FE3F  (leglib seg008:0x27d5a)
-; ---------------------------------------------------------------------------
                 mov     ax, 2466h
                 push    ax
                 lea     ax, [bp-5Ah]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-5Ah]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-5Ah]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     word ptr [bp-5Ch], 0
                 mov     word ptr [bp-5Eh], 14h
                 lea     ax, [bp-5Ch]
@@ -2435,7 +2223,6 @@ loc_10FDA:                              ; CODE XREF: sub_10D97+23E↑j
                 lea     ax, [bp-5Eh]
                 push    ax
                 call    far ptr rt_FE3F ; -> rtm_FE3F  (leglib seg008:0x27d5a)
-; ---------------------------------------------------------------------------
                 mov     ax, 2116h
                 push    ax
                 mov     ax, [bp-40h]
@@ -2444,20 +2231,18 @@ loc_10FDA:                              ; CODE XREF: sub_10D97+23E↑j
                 add     ax, 20E4h
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
-                call    sub_11AEB
-; ---------------------------------------------------------------------------
+                call    showEmptyCharacterSlots ; displays the "empty" character slots (pushes the "!empty" literal). Called from eraseCharacterMenu and startNewGameMenu.
                 cmp     word ptr [bp-40h], 8
                 jl      short loc_11066
                 jmp     loc_110B4
 ; ---------------------------------------------------------------------------
 
-loc_11066:                              ; CODE XREF: sub_10D97+2CA↑j
+loc_11066:                              ; CODE XREF: eraseCharacterMenu+2CA↑j
                 mov     ax, [bp-40h]
                 jmp     loc_110AC
 ; ---------------------------------------------------------------------------
 
-loc_1106C:                              ; CODE XREF: sub_10D97+31B↓j
+loc_1106C:                              ; CODE XREF: eraseCharacterMenu+31B↓j
                 shl     ax, 1
                 shl     ax, 1
                 mov     bx, ax
@@ -2467,59 +2252,55 @@ loc_1106C:                              ; CODE XREF: sub_10D97+31B↓j
                 push    bx
                 mov     [bp-60h], bx
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 push    word ptr [bp-60h]
                 mov     ax, 1CAAh
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 call    far ptr sub_12055
-; ---------------------------------------------------------------------------
                 mov     ax, [bp-32h]
                 dec     ax
                 imul    word ptr ds:211Ch
                 add     ax, 7
                 mov     ds:1B0Ah, ax
-                call    sub_10C71
-; ---------------------------------------------------------------------------
+                call    showCharacterRoster ; reads CHAR.DAT and lists the saved characters. Shared by eraseCharacterMenu, startNewGameMenu and restartGameMenu. One of a family of near-identical CHAR.DAT enumeration helpers (sub_12055 / sub_12778 / sub_128A9).
                 mov     ax, [bp-32h]
                 inc     ax
 
-loc_110AC:                              ; CODE XREF: sub_10D97+2D2↑j
+loc_110AC:                              ; CODE XREF: eraseCharacterMenu+2D2↑j
                 mov     [bp-32h], ax
                 cmp     ax, 7
                 jle     short loc_1106C
 
-loc_110B4:                              ; CODE XREF: sub_10D97+2CC↑j
+loc_110B4:                              ; CODE XREF: eraseCharacterMenu+2CC↑j
                 dec     word ptr ds:2138h
                 call    sub_128A9
-; ---------------------------------------------------------------------------
                 call    far ptr rt_FE45 ; -> rtm_FE45  (leglib seg008:0x27c6e)
-; ---------------------------------------------------------------------------
 
-loc_110C2:                              ; CODE XREF: sub_10D97+111↑j
-                                        ; sub_10D97+1B9↑j ...
+loc_110C2:                              ; CODE XREF: eraseCharacterMenu+111↑j
+                                        ; eraseCharacterMenu+1B9↑j ...
                 call    far ptr rt_F4   ; -> rtm_F4  (leglib seg003:0x1bb7c)
+
+nullsub_147:
+                retf    0
 ; ---------------------------------------------------------------------------
 
-nullsub_84:
-                retf    0
-sub_10D97       endp
+j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED:
+                                        ; CODE XREF: showCharacterRoster:j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED↑j
+                jmp     j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED
+eraseCharacterMenu endp
 
-; [00000003 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
+; "Type in your new character's name. / It may be up to 14 letters long. / PRESS ENTER WHEN FINISHED / PRESS 'ESC' TO CANCEL". Writes the new roster entry (CHAR.DAT / LEGACY.DAT).
 ; Attributes: noreturn
 
-sub_110CD       proc far                ; CODE XREF: sub_11D3A:loc_11EA6↓P
+promptNewCharacterName proc far         ; CODE XREF: startNewGameMenu:loc_11EA6↓P
                 mov     cx, 28h ; '('
                 call    far ptr rt_F0   ; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
-; ---------------------------------------------------------------------------
 
 j_rt_FE45_0:                            ; -> rtm_FE45  (leglib seg008:0x27c6e)
                 call    far ptr rt_FE45
-; ---------------------------------------------------------------------------
 
 loc_110DA:
                 mov     ax, 2474h
@@ -2527,19 +2308,16 @@ loc_110DA:
                 lea     ax, [bp-0Eh]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_110E7:
                 lea     ax, [bp-0Eh]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_110F0:
                 lea     ax, [bp-0Eh]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_110F9:
                 mov     ax, 249Eh
@@ -2547,19 +2325,16 @@ loc_110F9:
                 lea     ax, [bp-12h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_11106:
                 lea     ax, [bp-12h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_1110F:
                 lea     ax, [bp-12h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_11118:
                 mov     word ptr [bp-14h], 3
@@ -2569,7 +2344,6 @@ loc_11118:
                 lea     ax, [bp-16h]
                 push    ax
                 call    far ptr rt_FE3F ; -> rtm_FE3F  (leglib seg008:0x27d5a)
-; ---------------------------------------------------------------------------
 
 loc_1112F:
                 mov     ax, 24C4h
@@ -2577,19 +2351,16 @@ loc_1112F:
                 lea     ax, [bp-1Ah]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_1113C:
                 lea     ax, [bp-1Ah]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_11145:
                 lea     ax, [bp-1Ah]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_1114E:
                 mov     word ptr [bp-1Ch], 7
@@ -2599,7 +2370,6 @@ loc_1114E:
                 lea     ax, [bp-1Eh]
                 push    ax
                 call    far ptr rt_FE3F ; -> rtm_FE3F  (leglib seg008:0x27d5a)
-; ---------------------------------------------------------------------------
 
 loc_11165:
                 mov     ax, 24EAh
@@ -2607,26 +2377,22 @@ loc_11165:
                 lea     ax, [bp-22h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_11172:
                 lea     ax, [bp-22h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_1117B:
                 lea     ax, [bp-22h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_11184:
                 mov     ax, 52h ; 'R'
                 push    ax
                 push    ax
                 call    far ptr rt_7A   ; -> rtm_7A  (leglib seg003:0x1a853)
-; ---------------------------------------------------------------------------
 
 loc_1118E:
                 mov     ax, 0CCh
@@ -2634,7 +2400,6 @@ loc_1118E:
                 mov     ax, 52h ; 'R'
                 push    ax
                 call    far ptr rt_7C   ; -> rtm_7C  (leglib seg003:0x1a86d)
-; ---------------------------------------------------------------------------
 
 loc_1119B:
                 mov     ax, 0FFFFh
@@ -2643,7 +2408,6 @@ loc_1119B:
                 xor     ax, ax
                 push    ax
                 call    far ptr rt_6D   ; -> rtm_6D  (leglib seg003:0x1dd26)
-; ---------------------------------------------------------------------------
 
 loc_111A8:
                 mov     ax, 0CCh
@@ -2651,7 +2415,6 @@ loc_111A8:
                 mov     ax, 63h ; 'c'
                 push    ax
                 call    far ptr rt_7C   ; -> rtm_7C  (leglib seg003:0x1a86d)
-; ---------------------------------------------------------------------------
 
 loc_111B5:
                 mov     ax, 0FFFFh
@@ -2660,7 +2423,6 @@ loc_111B5:
                 xor     ax, ax
                 push    ax
                 call    far ptr rt_6D   ; -> rtm_6D  (leglib seg003:0x1dd26)
-; ---------------------------------------------------------------------------
 
 loc_111C2:
                 mov     ax, 52h ; 'R'
@@ -2668,7 +2430,6 @@ loc_111C2:
                 mov     ax, 63h ; 'c'
                 push    ax
                 call    far ptr rt_7C   ; -> rtm_7C  (leglib seg003:0x1a86d)
-; ---------------------------------------------------------------------------
 
 loc_111CF:
                 mov     ax, 0FFFFh
@@ -2677,14 +2438,12 @@ loc_111CF:
                 xor     ax, ax
                 push    ax
                 call    far ptr rt_6D   ; -> rtm_6D  (leglib seg003:0x1dd26)
-; ---------------------------------------------------------------------------
 
 loc_111DC:
                 mov     ax, 52h ; 'R'
                 push    ax
                 push    ax
                 call    far ptr rt_7C   ; -> rtm_7C  (leglib seg003:0x1a86d)
-; ---------------------------------------------------------------------------
 
 loc_111E6:
                 mov     ax, 0FFFFh
@@ -2693,7 +2452,6 @@ loc_111E6:
                 xor     ax, ax
                 push    ax
                 call    far ptr rt_6D   ; -> rtm_6D  (leglib seg003:0x1dd26)
-; ---------------------------------------------------------------------------
 
 loc_111F3:
                 mov     ax, 21DCh
@@ -2701,30 +2459,27 @@ loc_111F3:
                 lea     ax, [bp-26h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
-j_rt_62:                                ; CODE XREF: sub_110CD:loc_11214↓j
+j_rt_62:                                ; CODE XREF: promptNewCharacterName:loc_11214↓j
                 call    far ptr rt_62   ; -> rtm_62  (leglib seg003:0x1cbdc)
-; ---------------------------------------------------------------------------
 
 loc_11205:
                 push    ax
                 mov     ax, 21DCh
                 push    ax
                 call    far ptr rt_FF0A ; -> rtm_FF0A  (leglib seg003:0x1b5e8)
-; ---------------------------------------------------------------------------
 
 loc_1120F:
                 jnz     short loc_11214
                 jmp     loc_11216
 ; ---------------------------------------------------------------------------
 
-loc_11214:                              ; CODE XREF: sub_110CD:loc_1120F↑j
+loc_11214:                              ; CODE XREF: promptNewCharacterName:loc_1120F↑j
                 jmp     short j_rt_62
 ; ---------------------------------------------------------------------------
 
-loc_11216:                              ; CODE XREF: sub_110CD+144↑j
-                                        ; sub_110CD+270↓j
+loc_11216:                              ; CODE XREF: promptNewCharacterName+144↑j
+                                        ; promptNewCharacterName+270↓j
                 mov     ax, 1
                 push    ax
                 mov     ax, 0Ch
@@ -2736,7 +2491,6 @@ loc_11216:                              ; CODE XREF: sub_110CD+144↑j
                 mov     ax, 4
                 push    ax
                 call    far ptr rt_70   ; -> rtm_70  (leglib seg003:0x1bc02)
-; ---------------------------------------------------------------------------
 
 loc_1122F:
                 lea     ax, [bp-26h]
@@ -2744,35 +2498,29 @@ loc_1122F:
                 mov     ax, 0Eh
                 push    ax
                 call    far ptr rt_CD   ; -> rtm_CD  (leglib seg003:0x1b774)
-; ---------------------------------------------------------------------------
 
 loc_1123C:
                 push    ax
                 call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
-; ---------------------------------------------------------------------------
 
 loc_11242:
                 push    ax
                 mov     ax, 0Eh
                 push    ax
                 call    far ptr rt_6C   ; -> rtm_6C  (leglib seg003:0x1b6fa)
-; ---------------------------------------------------------------------------
 
 loc_1124C:
                 push    ax
                 call    far ptr rt_98   ; -> rtm_98  (leglib seg003:0x1b0d8)  [mid-func]
-; ---------------------------------------------------------------------------
 
-j_rt_62_0:                              ; CODE XREF: sub_110CD:loc_1126E↓j
+j_rt_62_0:                              ; CODE XREF: promptNewCharacterName:loc_1126E↓j
                 call    far ptr rt_62   ; -> rtm_62  (leglib seg003:0x1cbdc)
-; ---------------------------------------------------------------------------
 
 loc_11257:
                 push    ax
                 lea     ax, [bp-2Ah]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_11261:
                 lea     ax, [bp-2Ah]
@@ -2780,14 +2528,12 @@ loc_11261:
                 mov     ax, 21DCh
                 push    ax
                 call    far ptr rt_FF0A ; -> rtm_FF0A  (leglib seg003:0x1b5e8)
-; ---------------------------------------------------------------------------
 
 loc_1126E:
                 jz      short j_rt_62_0
                 lea     ax, [bp-2Ah]
                 push    ax
                 call    far ptr rt_30   ; -> rtm_30  (leglib seg003:0x1b661)
-; ---------------------------------------------------------------------------
 
 loc_11279:
                 cmp     ax, 1Fh
@@ -2795,12 +2541,11 @@ loc_11279:
                 jle     short loc_11282
                 dec     cx
 
-loc_11282:                              ; CODE XREF: sub_110CD+1B2↑j
+loc_11282:                              ; CODE XREF: promptNewCharacterName+1B2↑j
                 lea     ax, [bp-26h]
                 push    ax
                 mov     [bp-2Ch], cx
                 call    far ptr rt_42   ; -> rtm_42  (leglib seg003:0x1b651)
-; ---------------------------------------------------------------------------
 
 loc_1128E:
                 cmp     ax, 0Eh
@@ -2808,34 +2553,30 @@ loc_1128E:
                 jge     short loc_11297
                 dec     cx
 
-loc_11297:                              ; CODE XREF: sub_110CD+1C7↑j
+loc_11297:                              ; CODE XREF: promptNewCharacterName+1C7↑j
                 and     cx, [bp-2Ch]
                 and     cx, cx
                 jnz     short loc_112A1
                 jmp     loc_112BE
 ; ---------------------------------------------------------------------------
 
-loc_112A1:                              ; CODE XREF: sub_110CD+1CF↑j
+loc_112A1:                              ; CODE XREF: promptNewCharacterName+1CF↑j
                 lea     ax, [bp-26h]
                 push    ax
                 lea     ax, [bp-2Ah]
                 push    ax
                 call    far ptr rt_E0   ; -> rtm_E0  (leglib seg003:0x1b7eb)
-; ---------------------------------------------------------------------------
                 push    ax
                 call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
-; ---------------------------------------------------------------------------
                 push    ax
                 lea     ax, [bp-26h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
-loc_112BE:                              ; CODE XREF: sub_110CD+1D1↑j
+loc_112BE:                              ; CODE XREF: promptNewCharacterName+1D1↑j
                 lea     ax, [bp-2Ah]
                 push    ax
                 call    far ptr rt_30   ; -> rtm_30  (leglib seg003:0x1b661)
-; ---------------------------------------------------------------------------
 
 loc_112C7:
                 cmp     ax, 1Bh
@@ -2843,21 +2584,19 @@ loc_112C7:
                 jmp     loc_112DF
 ; ---------------------------------------------------------------------------
 
-loc_112CF:                              ; CODE XREF: sub_110CD+1FD↑j
+loc_112CF:                              ; CODE XREF: promptNewCharacterName+1FD↑j
                 mov     ax, 21DCh
                 push    ax
                 lea     ax, [bp-30h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 jmp     loc_11367
 ; ---------------------------------------------------------------------------
 
-loc_112DF:                              ; CODE XREF: sub_110CD+1FF↑j
+loc_112DF:                              ; CODE XREF: promptNewCharacterName+1FF↑j
                 lea     ax, [bp-2Ah]
                 push    ax
                 call    far ptr rt_30   ; -> rtm_30  (leglib seg003:0x1b661)
-; ---------------------------------------------------------------------------
 
 loc_112E8:
                 cmp     ax, 8
@@ -2865,49 +2604,44 @@ loc_112E8:
                 jnz     short loc_112F1
                 dec     cx
 
-loc_112F1:                              ; CODE XREF: sub_110CD+221↑j
+loc_112F1:                              ; CODE XREF: promptNewCharacterName+221↑j
                 lea     ax, [bp-26h]
                 push    ax
                 mov     ax, 21DCh
                 push    ax
                 mov     [bp-32h], cx
                 call    far ptr rt_FF0A ; -> rtm_FF0A  (leglib seg003:0x1b5e8)
-; ---------------------------------------------------------------------------
 
 loc_11301:
                 mov     ax, 0
                 jz      short loc_11307
                 dec     ax
 
-loc_11307:                              ; CODE XREF: sub_110CD+237↑j
+loc_11307:                              ; CODE XREF: promptNewCharacterName+237↑j
                 and     ax, [bp-32h]
                 and     ax, ax
                 jnz     short loc_11311
                 jmp     loc_1132F
 ; ---------------------------------------------------------------------------
 
-loc_11311:                              ; CODE XREF: sub_110CD+23F↑j
+loc_11311:                              ; CODE XREF: promptNewCharacterName+23F↑j
                 lea     ax, [bp-26h]
                 push    ax
                 lea     ax, [bp-26h]
                 push    ax
                 call    far ptr rt_42   ; -> rtm_42  (leglib seg003:0x1b651)
-; ---------------------------------------------------------------------------
                 dec     ax
                 push    ax
                 call    far ptr rt_6C   ; -> rtm_6C  (leglib seg003:0x1b6fa)
-; ---------------------------------------------------------------------------
                 push    ax
                 lea     ax, [bp-26h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
-loc_1132F:                              ; CODE XREF: sub_110CD+241↑j
+loc_1132F:                              ; CODE XREF: promptNewCharacterName+241↑j
                 lea     ax, [bp-2Ah]
                 push    ax
                 call    far ptr rt_30   ; -> rtm_30  (leglib seg003:0x1b661)
-; ---------------------------------------------------------------------------
 
 loc_11338:
                 cmp     ax, 0Dh
@@ -2915,69 +2649,64 @@ loc_11338:
                 jmp     loc_11216
 ; ---------------------------------------------------------------------------
 
-loc_11340:                              ; CODE XREF: sub_110CD+26E↑j
+loc_11340:                              ; CODE XREF: promptNewCharacterName+26E↑j
                 lea     ax, [bp-26h]
                 push    ax
                 mov     ax, 0Eh
                 push    ax
                 call    far ptr rt_CD   ; -> rtm_CD  (leglib seg003:0x1b774)
-; ---------------------------------------------------------------------------
 
 loc_1134D:
                 push    ax
                 call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
-; ---------------------------------------------------------------------------
 
 loc_11353:
                 push    ax
                 mov     ax, 0Eh
                 push    ax
                 call    far ptr rt_6C   ; -> rtm_6C  (leglib seg003:0x1b6fa)
-; ---------------------------------------------------------------------------
 
 loc_1135D:
                 push    ax
                 lea     ax, [bp-30h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
-loc_11367:                              ; CODE XREF: sub_110CD+20F↑j
+loc_11367:                              ; CODE XREF: promptNewCharacterName+20F↑j
                 lea     ax, [bp-26h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_11370:
                 lea     ax, [bp-2Ah]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_11379:
                 lea     ax, [bp-30h]
                 push    ax
                 call    far ptr rt_FF0B ; -> rtm_FF0B  (leglib seg003:0x1b9c3)
-; ---------------------------------------------------------------------------
 
 j_rt_F4_2:                              ; -> rtm_F4  (leglib seg003:0x1bb7c)
                 call    far ptr rt_F4
+
+nullsub_148:
+                retf    0
 ; ---------------------------------------------------------------------------
 
-nullsub_85:
-                retf    0
-sub_110CD       endp
+j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED:  ; CODE XREF: eraseCharacterMenu:j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED↑j
+                jmp     j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED
+promptNewCharacterName endp
 
-; [00000003 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
+; SIMPLE INSTRUCTIONS screens: "LEGACY OF THE ANCIENTS is a 'menu driven' game", COMMANDS, CHARACTER MOVEMENT ("Use the ARROW KEYS"). Largest text handler (~1.5 KB).
 ; Attributes: noreturn
 
-sub_1138D       proc far                ; CODE XREF: sub_10580:loc_10689↑P
+showInstructions proc far               ; CODE XREF: mainMenuLoop:loc_10689↑P
                 mov     cx, 0C0h
                 call    far ptr rt_F0   ; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
-; ---------------------------------------------------------------------------
 
 loc_11395:
                 mov     word ptr [bp-0Ch], 1
@@ -2993,7 +2722,6 @@ loc_11395:
                 lea     ax, [bp-12h]
                 push    ax
                 call    far ptr rt_FE3E ; -> rtm_FE3E  (leglib seg007:0x2497a)
-; ---------------------------------------------------------------------------
 
 loc_113BE:
                 mov     word ptr [bp-14h], 2
@@ -3009,7 +2737,6 @@ loc_113BE:
                 lea     ax, [bp-1Ah]
                 push    ax
                 call    far ptr rt_FE42 ; -> rtm_FE42  (leglib seg007:0x2730c)
-; ---------------------------------------------------------------------------
 
 loc_113E7:
                 mov     word ptr [bp-1Ch], 0Dh
@@ -3019,7 +2746,6 @@ loc_113E7:
                 lea     ax, [bp-1Eh]
                 push    ax
                 call    far ptr rt_FE3F ; -> rtm_FE3F  (leglib seg008:0x27d5a)
-; ---------------------------------------------------------------------------
 
 loc_113FE:
                 mov     ax, 2508h
@@ -3027,19 +2753,16 @@ loc_113FE:
                 lea     ax, [bp-22h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_1140B:
                 lea     ax, [bp-22h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_11414:
                 lea     ax, [bp-22h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_1141D:
                 mov     ax, 251Ah
@@ -3047,19 +2770,16 @@ loc_1141D:
                 lea     ax, [bp-26h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_1142A:
                 lea     ax, [bp-26h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_11433:
                 lea     ax, [bp-26h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_1143C:
                 mov     ax, 253Ch
@@ -3067,19 +2787,16 @@ loc_1143C:
                 lea     ax, [bp-2Ah]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_11449:
                 lea     ax, [bp-2Ah]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_11452:
                 lea     ax, [bp-2Ah]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_1145B:
                 mov     ax, 2560h
@@ -3087,19 +2804,16 @@ loc_1145B:
                 lea     ax, [bp-2Eh]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_11468:
                 lea     ax, [bp-2Eh]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_11471:
                 lea     ax, [bp-2Eh]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_1147A:
                 mov     ax, 2586h
@@ -3107,19 +2821,16 @@ loc_1147A:
                 lea     ax, [bp-32h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_11487:
                 lea     ax, [bp-32h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_11490:
                 lea     ax, [bp-32h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_11499:
                 mov     ax, 25AEh
@@ -3127,19 +2838,16 @@ loc_11499:
                 lea     ax, [bp-36h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_114A6:
                 lea     ax, [bp-36h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_114AF:
                 lea     ax, [bp-36h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_114B8:
                 mov     ax, 25D6h
@@ -3147,19 +2855,16 @@ loc_114B8:
                 lea     ax, [bp-3Ah]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_114C5:
                 lea     ax, [bp-3Ah]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_114CE:
                 lea     ax, [bp-3Ah]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_114D7:
                 mov     ax, 25F6h
@@ -3167,19 +2872,16 @@ loc_114D7:
                 lea     ax, [bp-3Eh]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_114E4:
                 lea     ax, [bp-3Eh]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_114ED:
                 lea     ax, [bp-3Eh]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_114F6:
                 mov     ax, 261Ah
@@ -3187,19 +2889,16 @@ loc_114F6:
                 lea     ax, [bp-42h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_11503:
                 lea     ax, [bp-42h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_1150C:
                 lea     ax, [bp-42h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_11515:
                 mov     ax, 263Ah
@@ -3207,19 +2906,16 @@ loc_11515:
                 lea     ax, [bp-46h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_11522:
                 lea     ax, [bp-46h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_1152B:
                 lea     ax, [bp-46h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_11534:
                 mov     ax, 2662h
@@ -3227,19 +2923,16 @@ loc_11534:
                 lea     ax, [bp-4Ah]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_11541:
                 lea     ax, [bp-4Ah]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_1154A:
                 lea     ax, [bp-4Ah]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_11553:
                 mov     ax, 2688h
@@ -3247,19 +2940,16 @@ loc_11553:
                 lea     ax, [bp-4Eh]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_11560:
                 lea     ax, [bp-4Eh]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_11569:
                 lea     ax, [bp-4Eh]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_11572:
                 mov     ax, 26B0h
@@ -3267,19 +2957,16 @@ loc_11572:
                 lea     ax, [bp-52h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_1157F:
                 lea     ax, [bp-52h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_11588:
                 lea     ax, [bp-52h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_11591:
                 mov     word ptr [bp-54h], 9
@@ -3289,7 +2976,6 @@ loc_11591:
                 lea     ax, [bp-56h]
                 push    ax
                 call    far ptr rt_FE3F ; -> rtm_FE3F  (leglib seg008:0x27d5a)
-; ---------------------------------------------------------------------------
 
 loc_115A8:
                 mov     ax, 2400h
@@ -3297,23 +2983,19 @@ loc_115A8:
                 lea     ax, [bp-5Ah]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_115B5:
                 lea     ax, [bp-5Ah]
                 push    ax
                 call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
-; ---------------------------------------------------------------------------
 
 loc_115BE:
                 lea     ax, [bp-5Ah]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_115C7:
                 call    far ptr sub_11A15
-; ---------------------------------------------------------------------------
 
 loc_115CC:
                 mov     [bp-5Ch], ax
@@ -3323,15 +3005,13 @@ loc_115CC:
                 jmp     loc_115E1
 ; ---------------------------------------------------------------------------
 
-loc_115D9:                              ; CODE XREF: sub_1138D+247↑j
+loc_115D9:                              ; CODE XREF: showInstructions+247↑j
                 call    far ptr rt_FE45 ; -> rtm_FE45  (leglib seg008:0x27c6e)
-; ---------------------------------------------------------------------------
                 jmp     near ptr j_rt_F4_3
 ; ---------------------------------------------------------------------------
 
-loc_115E1:                              ; CODE XREF: sub_1138D+249↑j
+loc_115E1:                              ; CODE XREF: showInstructions+249↑j
                 call    far ptr rt_FE45 ; -> rtm_FE45  (leglib seg008:0x27c6e)
-; ---------------------------------------------------------------------------
 
 loc_115E6:
                 mov     word ptr [bp-5Eh], 10h
@@ -3341,7 +3021,6 @@ loc_115E6:
                 lea     ax, [bp-60h]
                 push    ax
                 call    far ptr rt_FE3F ; -> rtm_FE3F  (leglib seg008:0x27d5a)
-; ---------------------------------------------------------------------------
 
 loc_115FD:
                 mov     ax, 26D6h
@@ -3349,19 +3028,16 @@ loc_115FD:
                 lea     ax, [bp-64h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_1160A:
                 lea     ax, [bp-64h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_11613:
                 lea     ax, [bp-64h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_1161C:
                 mov     ax, 26E2h
@@ -3369,19 +3045,16 @@ loc_1161C:
                 lea     ax, [bp-68h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_11629:
                 lea     ax, [bp-68h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_11632:
                 lea     ax, [bp-68h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_1163B:
                 mov     ax, 270Ah
@@ -3389,19 +3062,16 @@ loc_1163B:
                 lea     ax, [bp-6Ch]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_11648:
                 lea     ax, [bp-6Ch]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_11651:
                 lea     ax, [bp-6Ch]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_1165A:
                 mov     ax, 2732h
@@ -3409,19 +3079,16 @@ loc_1165A:
                 lea     ax, [bp-70h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_11667:
                 lea     ax, [bp-70h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_11670:
                 lea     ax, [bp-70h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_11679:
                 mov     ax, 274Eh
@@ -3429,19 +3096,16 @@ loc_11679:
                 lea     ax, [bp-74h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_11686:
                 lea     ax, [bp-74h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_1168F:
                 lea     ax, [bp-74h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_11698:
                 mov     ax, 2778h
@@ -3449,19 +3113,16 @@ loc_11698:
                 lea     ax, [bp-78h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_116A5:
                 lea     ax, [bp-78h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_116AE:
                 lea     ax, [bp-78h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_116B7:
                 mov     ax, 2788h
@@ -3469,19 +3130,16 @@ loc_116B7:
                 lea     ax, [bp-7Ch]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_116C4:
                 lea     ax, [bp-7Ch]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_116CD:
                 lea     ax, [bp-7Ch]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_116D6:
                 mov     ax, 27AEh
@@ -3489,19 +3147,16 @@ loc_116D6:
                 lea     ax, [bp-80h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_116E3:
                 lea     ax, [bp-80h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_116EC:
                 lea     ax, [bp-80h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_116F5:
                 mov     ax, 27D4h
@@ -3509,19 +3164,16 @@ loc_116F5:
                 lea     ax, [bp-84h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_11703:
                 lea     ax, [bp-84h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_1170D:
                 lea     ax, [bp-84h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_11717:
                 mov     ax, 27F0h
@@ -3529,19 +3181,16 @@ loc_11717:
                 lea     ax, [bp-88h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_11725:
                 lea     ax, [bp-88h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_1172F:
                 lea     ax, [bp-88h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_11739:
                 mov     ax, 2816h
@@ -3549,19 +3198,16 @@ loc_11739:
                 lea     ax, [bp-8Ch]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_11747:
                 lea     ax, [bp-8Ch]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_11751:
                 lea     ax, [bp-8Ch]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_1175B:
                 mov     word ptr [bp-8Eh], 9
@@ -3571,7 +3217,6 @@ loc_1175B:
                 lea     ax, [bp-90h]
                 push    ax
                 call    far ptr rt_FE3F ; -> rtm_FE3F  (leglib seg008:0x27d5a)
-; ---------------------------------------------------------------------------
 
 loc_11776:
                 mov     ax, 2400h
@@ -3579,23 +3224,19 @@ loc_11776:
                 lea     ax, [bp-94h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_11784:
                 lea     ax, [bp-94h]
                 push    ax
                 call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
-; ---------------------------------------------------------------------------
 
 loc_1178E:
                 lea     ax, [bp-94h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_11798:
                 call    far ptr sub_11A15
-; ---------------------------------------------------------------------------
 
 loc_1179D:
                 mov     [bp-96h], ax
@@ -3605,15 +3246,13 @@ loc_1179D:
                 jmp     loc_117B4
 ; ---------------------------------------------------------------------------
 
-loc_117AC:                              ; CODE XREF: sub_1138D+41A↑j
+loc_117AC:                              ; CODE XREF: showInstructions+41A↑j
                 call    far ptr rt_FE45 ; -> rtm_FE45  (leglib seg008:0x27c6e)
-; ---------------------------------------------------------------------------
                 jmp     near ptr j_rt_F4_3
 ; ---------------------------------------------------------------------------
 
-loc_117B4:                              ; CODE XREF: sub_1138D+41C↑j
+loc_117B4:                              ; CODE XREF: showInstructions+41C↑j
                 call    far ptr rt_FE45 ; -> rtm_FE45  (leglib seg008:0x27c6e)
-; ---------------------------------------------------------------------------
 
 loc_117B9:
                 mov     word ptr [bp-98h], 0Bh
@@ -3623,7 +3262,6 @@ loc_117B9:
                 lea     ax, [bp-9Ah]
                 push    ax
                 call    far ptr rt_FE3F ; -> rtm_FE3F  (leglib seg008:0x27d5a)
-; ---------------------------------------------------------------------------
 
 loc_117D4:
                 mov     ax, 282Eh
@@ -3631,19 +3269,16 @@ loc_117D4:
                 lea     ax, [bp-9Eh]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_117E2:
                 lea     ax, [bp-9Eh]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_117EC:
                 lea     ax, [bp-9Eh]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_117F6:
                 mov     ax, 2844h
@@ -3651,19 +3286,16 @@ loc_117F6:
                 lea     ax, [bp-0A2h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_11804:
                 lea     ax, [bp-0A2h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_1180E:
                 lea     ax, [bp-0A2h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_11818:
                 mov     ax, 2860h
@@ -3671,19 +3303,16 @@ loc_11818:
                 lea     ax, [bp-0A6h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_11826:
                 lea     ax, [bp-0A6h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_11830:
                 lea     ax, [bp-0A6h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_1183A:
                 mov     ax, 2878h
@@ -3691,19 +3320,16 @@ loc_1183A:
                 lea     ax, [bp-0AAh]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_11848:
                 lea     ax, [bp-0AAh]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_11852:
                 lea     ax, [bp-0AAh]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_1185C:
                 mov     ax, 2894h
@@ -3711,19 +3337,16 @@ loc_1185C:
                 lea     ax, [bp-0AEh]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_1186A:
                 lea     ax, [bp-0AEh]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_11874:
                 lea     ax, [bp-0AEh]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_1187E:
                 mov     ax, 28AEh
@@ -3731,19 +3354,16 @@ loc_1187E:
                 lea     ax, [bp-0B2h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_1188C:
                 lea     ax, [bp-0B2h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_11896:
                 lea     ax, [bp-0B2h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_118A0:
                 mov     ax, 28D8h
@@ -3751,19 +3371,16 @@ loc_118A0:
                 lea     ax, [bp-0B6h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_118AE:
                 lea     ax, [bp-0B6h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_118B8:
                 lea     ax, [bp-0B6h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_118C2:
                 mov     ax, 28FCh
@@ -3771,19 +3388,16 @@ loc_118C2:
                 lea     ax, [bp-0BAh]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_118D0:
                 lea     ax, [bp-0BAh]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_118DA:
                 lea     ax, [bp-0BAh]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_118E4:
                 mov     ax, 2926h
@@ -3791,19 +3405,16 @@ loc_118E4:
                 lea     ax, [bp-0BEh]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_118F2:
                 lea     ax, [bp-0BEh]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_118FC:
                 lea     ax, [bp-0BEh]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_11906:
                 mov     word ptr [bp-0C0h], 9
@@ -3813,7 +3424,6 @@ loc_11906:
                 lea     ax, [bp-0C2h]
                 push    ax
                 call    far ptr rt_FE3F ; -> rtm_FE3F  (leglib seg008:0x27d5a)
-; ---------------------------------------------------------------------------
 
 loc_11921:
                 mov     ax, 2400h
@@ -3821,64 +3431,56 @@ loc_11921:
                 lea     ax, [bp-0C6h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_1192F:
                 lea     ax, [bp-0C6h]
                 push    ax
                 call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
-; ---------------------------------------------------------------------------
 
 loc_11939:
                 lea     ax, [bp-0C6h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_11943:
                 call    far ptr sub_11A15
-; ---------------------------------------------------------------------------
 
 loc_11948:
                 mov     [bp-0C8h], ax
                 mov     ax, [bp-0C8h]
                 mov     [bp-0CAh], ax
                 call    far ptr rt_FE45 ; -> rtm_FE45  (leglib seg008:0x27c6e)
-; ---------------------------------------------------------------------------
 
 j_j_rt_F4_3:
                 jmp     $+3
-sub_1138D       endp
+showInstructions endp
 
-; [00000008 BYTES: COLLAPSED FUNCTION j_rt_F4_3. PRESS NUMPAD+ TO EXPAND]
-; [00000003 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED. PRESS NUMPAD+ TO EXPAND]
+; [0000000B BYTES: COLLAPSED FUNCTION j_rt_F4_3. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
+; plays/advances a pushed MML music string and polls the keyboard; returns nonzero when a key is pressed (used to abort the title sequence). Called repeatedly by showTitleScreen. NB: also touches LEGACY.DAT -- confirm.
 ; Attributes: noreturn
 
-sub_11967       proc far                ; CODE XREF: sub_13014:loc_13067↓P
-                                        ; sub_13014+6E↓P ...
+playMusicTick   proc far                ; CODE XREF: showTitleScreen:j_playMusicTick↓P
+                                        ; showTitleScreen+6E↓P ...
                 mov     cx, 10h
                 call    far ptr rt_F0   ; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
-; ---------------------------------------------------------------------------
 
 loc_1196F:
                 mov     word ptr [bp-0Ch], 0
 
-loc_11974:                              ; CODE XREF: sub_11967+94↓j
+loc_11974:                              ; CODE XREF: playMusicTick+94↓j
                 mov     word ptr [bp-0Eh], 0
                 lea     ax, [bp-0Eh]
                 push    ax
                 call    far ptr rt_FE53 ; -> rtm_FE53  (leglib seg008:0x281cb)
-; ---------------------------------------------------------------------------
 
 loc_11982:
                 push    ax
                 lea     ax, [bp-12h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_1198C:
                 lea     ax, [bp-12h]
@@ -3886,94 +3488,84 @@ loc_1198C:
                 mov     ax, 21DCh
                 push    ax
                 call    far ptr rt_FF0A ; -> rtm_FF0A  (leglib seg003:0x1b5e8)
-; ---------------------------------------------------------------------------
 
 loc_11999:
                 jnz     short loc_1199E
                 jmp     loc_119A6
 ; ---------------------------------------------------------------------------
 
-loc_1199E:                              ; CODE XREF: sub_11967:loc_11999↑j
+loc_1199E:                              ; CODE XREF: playMusicTick:loc_11999↑j
                 mov     word ptr [bp-0Ch], 0FFFFh
                 jmp     loc_119FE
 ; ---------------------------------------------------------------------------
 
-loc_119A6:                              ; CODE XREF: sub_11967+34↑j
+loc_119A6:                              ; CODE XREF: playMusicTick+34↑j
                 call    far ptr rt_DE   ; -> rtm_DE  (leglib seg003:0x19d02)
-; ---------------------------------------------------------------------------
                 mov     bx, ax
                 mov     [bp-14h], bx
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
-; ---------------------------------------------------------------------------
                 mov     bx, 2948h
                 call    far ptr rt_FF44 ; -> rtm_FF44  (leglib seg004:0x21a62)
-; ---------------------------------------------------------------------------
                 lea     bx, [bp-18h]
                 call    far ptr rt_FF50 ; -> rtm_FF50  (leglib seg004:0x2182d)
-; ---------------------------------------------------------------------------
                 nop
 
-loc_119C6:                              ; CODE XREF: sub_11967:loc_119E7↓j
+loc_119C6:                              ; CODE XREF: playMusicTick:loc_119E7↓j
                 lea     bx, [bp-18h]
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
-; ---------------------------------------------------------------------------
                 call    far ptr rt_DE   ; -> rtm_DE  (leglib seg003:0x19d02)
-; ---------------------------------------------------------------------------
                 mov     bx, ax
                 mov     [bp-1Ah], bx
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
-; ---------------------------------------------------------------------------
                 call    far ptr rt_FF1F ; -> rtm_FF1F  (leglib seg004:0x21b5e)
-; ---------------------------------------------------------------------------
                 jb      short loc_119E7
                 jmp     loc_119EA
 ; ---------------------------------------------------------------------------
 
-loc_119E7:                              ; CODE XREF: sub_11967+7B↑j
+loc_119E7:                              ; CODE XREF: playMusicTick+7B↑j
                 jmp     short loc_119C6
 ; ---------------------------------------------------------------------------
                 nop
 
-loc_119EA:                              ; CODE XREF: sub_11967+7D↑j
-                call    sub_13219
+loc_119EA:                              ; CODE XREF: playMusicTick+7D↑j
+                call    scrollTitleImage ; resident helper (seg001): B800h row shuffle -- animates / scrolls the title image. Called by showTitleScreen. (name provisional)
                 xor     ax, ax
                 push    ax
                 call    far ptr rt_4E   ; -> rtm_4E  (leglib seg003:0x1edb0)
-; ---------------------------------------------------------------------------
                 and     ax, ax
                 jz      short loc_119FE
                 jmp     loc_11974
 ; ---------------------------------------------------------------------------
 
-loc_119FE:                              ; CODE XREF: sub_11967+3C↑j
-                                        ; sub_11967+92↑j
+loc_119FE:                              ; CODE XREF: playMusicTick+3C↑j
+                                        ; playMusicTick+92↑j
                 lea     ax, [bp-12h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_11A07:
                 mov     ax, [bp-0Ch]
                 call    far ptr rt_F4   ; -> rtm_F4  (leglib seg003:0x1bb7c)
+
+nullsub_150:
+                retf    0
 ; ---------------------------------------------------------------------------
 
-nullsub_87:
-                retf    0
-sub_11967       endp
+j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED:      ; CODE XREF: j_rt_F4_3:j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED↑j
+                jmp     j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED
+playMusicTick   endp
 
-; [00000003 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: noreturn
 
-sub_11A15       proc near               ; CODE XREF: sub_10A76:loc_10C53↑P
-                                        ; sub_10D97+FE↑P ...
+sub_11A15       proc near               ; CODE XREF: showGameCredits:loc_10C53↑P
+                                        ; eraseCharacterMenu+FE↑P ...
                 mov     cx, 18h
                 call    far ptr rt_F0   ; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
 sub_11A15       endp
 
-; ---------------------------------------------------------------------------
                 nop
 
 ; =============== S U B R O U T I N E =======================================
@@ -3985,14 +3577,12 @@ sub_11A1E       proc far                ; CODE XREF: sub_11A1E:loc_11A48↓j
                 lea     ax, [bp-0Ch]
                 push    ax
                 call    far ptr rt_FE53 ; -> rtm_FE53  (leglib seg008:0x281cb)
-; ---------------------------------------------------------------------------
 
 loc_11A2C:
                 push    ax
                 lea     ax, [bp-10h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_11A36:
                 lea     ax, [bp-10h]
@@ -4000,7 +3590,6 @@ loc_11A36:
                 mov     ax, 21DCh
                 push    ax
                 call    far ptr rt_FF0A ; -> rtm_FF0A  (leglib seg003:0x1b5e8)
-; ---------------------------------------------------------------------------
 
 loc_11A43:
                 jnz     short loc_11A48
@@ -4017,14 +3606,12 @@ loc_11A4A:                              ; CODE XREF: sub_11A1E+27↑j
                 lea     ax, [bp-12h]
                 push    ax
                 call    far ptr rt_FE53 ; -> rtm_FE53  (leglib seg008:0x281cb)
-; ---------------------------------------------------------------------------
 
 loc_11A58:
                 push    ax
                 lea     ax, [bp-16h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_11A62:
                 lea     ax, [bp-16h]
@@ -4032,7 +3619,6 @@ loc_11A62:
                 mov     ax, 21DCh
                 push    ax
                 call    far ptr rt_FF0A ; -> rtm_FF0A  (leglib seg003:0x1b5e8)
-; ---------------------------------------------------------------------------
 
 loc_11A6F:
                 jz      short loc_11A74
@@ -4048,14 +3634,12 @@ loc_11A76:                              ; CODE XREF: sub_11A1E+53↑j
                 lea     ax, [bp-18h]
                 push    ax
                 call    far ptr rt_FE53 ; -> rtm_FE53  (leglib seg008:0x281cb)
-; ---------------------------------------------------------------------------
 
 loc_11A84:
                 push    ax
                 lea     ax, [bp-1Ch]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_11A8E:
                 lea     ax, [bp-1Ch]
@@ -4063,13 +3647,11 @@ loc_11A8E:
                 lea     ax, [bp-20h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_11A9B:
                 lea     ax, [bp-20h]
                 push    ax
                 call    far ptr rt_30   ; -> rtm_30  (leglib seg003:0x1b661)
-; ---------------------------------------------------------------------------
 
 loc_11AA4:
                 cmp     ax, 1Bh
@@ -4089,46 +3671,44 @@ loc_11AB9:                              ; CODE XREF: sub_11A1E+93↑j
                 lea     ax, [bp-1Ch]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_11AC2:
                 lea     ax, [bp-16h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_11ACB:
                 lea     ax, [bp-10h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_11AD4:
                 lea     ax, [bp-20h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_11ADD:
                 mov     ax, [bp-22h]
                 call    far ptr rt_F4   ; -> rtm_F4  (leglib seg003:0x1bb7c)
+
+nullsub_151:
+                retf    0
 ; ---------------------------------------------------------------------------
 
-nullsub_88:
-                retf    0
+j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED:        ; CODE XREF: playMusicTick:j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED↑j
+                jmp     j_j_j_j_j_j_j_j_j_j_j_j_rt_ED
 sub_11A1E       endp
 
-; [00000003 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
+; displays the "empty" character slots (pushes the "!empty" literal). Called from eraseCharacterMenu and startNewGameMenu.
 ; Attributes: noreturn
 
-sub_11AEB       proc far                ; CODE XREF: sub_10D97+2C1↑P
-                                        ; sub_11D3A+2C7↓P
+showEmptyCharacterSlots proc far        ; CODE XREF: eraseCharacterMenu+2C1↑P
+                                        ; startNewGameMenu+2C7↓P
                 mov     cx, 12h
                 call    far ptr rt_F0   ; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
-; ---------------------------------------------------------------------------
 
 loc_11AF3:
                 mov     ax, 21CEh
@@ -4136,19 +3716,16 @@ loc_11AF3:
                 lea     ax, [bp-0Eh]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_11B00:
                 lea     ax, [bp-0Eh]
                 push    ax
                 call    far ptr rt_FE63 ; -> rtm_FE63  (leglib seg007:0x24a83)
-; ---------------------------------------------------------------------------
 
 loc_11B09:
                 lea     ax, [bp-0Eh]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_11B12:
                 mov     ax, 21CEh
@@ -4160,7 +3737,6 @@ loc_11B12:
                 mov     ax, 20h ; ' '
                 push    ax
                 call    far ptr rt_87   ; -> rtm_87  (leglib seg003:0x148ea)
-; ---------------------------------------------------------------------------
 
 loc_11B27:
                 mov     ax, 1
@@ -4170,7 +3746,6 @@ loc_11B27:
                 push    dx
                 push    ax
                 call    far ptr rt_CF   ; -> rtm_CF  (leglib seg003:0x16168)  [mid-func]
-; ---------------------------------------------------------------------------
 
 loc_11B36:
                 mov     ax, 1
@@ -4183,7 +3758,6 @@ loc_11B36:
                 mov     ax, 2
                 push    ax
                 call    far ptr rt_5E   ; -> rtm_5E  (leglib seg003:0x14589)
-; ---------------------------------------------------------------------------
 
 loc_11B4A:
                 mov     ax, 1
@@ -4196,20 +3770,17 @@ loc_11B4A:
                 mov     ax, 2
                 push    ax
                 call    far ptr rt_5E   ; -> rtm_5E  (leglib seg003:0x14589)
-; ---------------------------------------------------------------------------
 
 loc_11B5E:
                 mov     ax, 0Eh
                 push    ax
                 call    far ptr rt_CD   ; -> rtm_CD  (leglib seg003:0x1b774)
-; ---------------------------------------------------------------------------
 
 loc_11B67:
                 push    ax
                 lea     ax, [bp-16h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_11B71:
                 mov     ax, 1
@@ -4226,7 +3797,6 @@ loc_11B71:
                 xor     ax, ax
                 push    ax
                 call    far ptr rt_5F   ; -> rtm_5F  (leglib seg003:0x145ab)
-; ---------------------------------------------------------------------------
 
 loc_11B8A:
                 mov     ax, [bp-12h]
@@ -4239,7 +3809,7 @@ loc_11B8A:
                 jmp     loc_11BCA
 ; ---------------------------------------------------------------------------
 
-loc_11BA2:                              ; CODE XREF: sub_11AEB+E5↓j
+loc_11BA2:                              ; CODE XREF: showEmptyCharacterSlots+E5↓j
                 mov     ax, 1
                 push    ax
                 lea     bx, [bp-1Ah]
@@ -4250,92 +3820,83 @@ loc_11BA2:                              ; CODE XREF: sub_11AEB+E5↓j
                 mov     ax, 2
                 push    ax
                 call    far ptr rt_5E   ; -> rtm_5E  (leglib seg003:0x14589)
-; ---------------------------------------------------------------------------
                 push    word ptr [bp-18h]
                 push    word ptr [bp-1Ch]
                 push    word ptr [bp-1Ah]
                 call    far ptr rt_FE36 ; -> rtm_FE36  (leglib seg004:0x1ff08)
-; ---------------------------------------------------------------------------
                 mov     ax, [bp-1Ch]
                 add     ax, 2
 
-loc_11BCA:                              ; CODE XREF: sub_11AEB+B4↑j
+loc_11BCA:                              ; CODE XREF: showEmptyCharacterSlots+B4↑j
                 mov     [bp-1Ch], ax
                 cmp     ax, [bp-10h]
                 jle     short loc_11BA2
                 mov     ax, 1B0Ch
                 push    ax
                 call    far ptr rt_FE37 ; -> rtm_FE37  (leglib seg007:0x2701b)
-; ---------------------------------------------------------------------------
 
 loc_11BDB:
                 mov     ax, 1B68h
                 push    ax
                 call    far ptr rt_FE37 ; -> rtm_FE37  (leglib seg007:0x2701b)
-; ---------------------------------------------------------------------------
 
 loc_11BE4:
                 mov     ax, 1BC4h
                 push    ax
                 call    far ptr rt_FE37 ; -> rtm_FE37  (leglib seg007:0x2701b)
-; ---------------------------------------------------------------------------
 
 loc_11BED:
                 mov     ax, 1B3Ah
                 push    ax
                 call    far ptr rt_FE37 ; -> rtm_FE37  (leglib seg007:0x2701b)
-; ---------------------------------------------------------------------------
 
 loc_11BF6:
                 mov     ax, 1B96h
                 push    ax
                 call    far ptr rt_FE37 ; -> rtm_FE37  (leglib seg007:0x2701b)
-; ---------------------------------------------------------------------------
 
 loc_11BFF:
                 mov     ax, 1BF2h
                 push    ax
                 call    far ptr rt_FE37 ; -> rtm_FE37  (leglib seg007:0x2701b)
-; ---------------------------------------------------------------------------
 
 loc_11C08:
                 mov     ax, 1C20h
                 push    ax
                 call    far ptr rt_FE37 ; -> rtm_FE37  (leglib seg007:0x2701b)
-; ---------------------------------------------------------------------------
 
 loc_11C11:
                 mov     ax, 1
                 push    ax
                 push    ax
                 call    far ptr rt_09   ; -> rtm_09  (leglib seg003:0x14a31)
-; ---------------------------------------------------------------------------
 
 loc_11C1B:
                 lea     ax, [bp-16h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 j_rt_F4_4:                              ; -> rtm_F4  (leglib seg003:0x1bb7c)
                 call    far ptr rt_F4
+
+nullsub_152:
+                retf    0
 ; ---------------------------------------------------------------------------
 
-nullsub_89:
-                retf    0
-sub_11AEB       endp
+j_j_j_j_j_j_j_j_j_j_j_j_rt_ED:          ; CODE XREF: sub_11A1E:j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED↑j
+                jmp     j_j_j_j_j_j_j_j_j_j_j_rt_ED
+showEmptyCharacterSlots endp
 
-; [00000003 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_j_j_j_j_rt_ED. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
+; "SELECT BY NUMBER KEY" prompt -- reads a 1-4 digit and returns the chosen character index. Shared by erase / restart.
 ; Attributes: noreturn
 
-sub_11C2F       proc far                ; CODE XREF: sub_10D97+188↑P
-                                        ; sub_10D97+1CA↑P ...
+promptCharacterNumber proc far          ; CODE XREF: eraseCharacterMenu+188↑P
+                                        ; eraseCharacterMenu+1CA↑P ...
                 mov     cx, 18h
                 call    far ptr rt_F0   ; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
-; ---------------------------------------------------------------------------
 
 loc_11C37:
                 mov     word ptr [bp-0Ch], 0
@@ -4345,7 +3906,6 @@ loc_11C37:
                 lea     ax, [bp-0Eh]
                 push    ax
                 call    far ptr rt_FE3F ; -> rtm_FE3F  (leglib seg008:0x27d5a)
-; ---------------------------------------------------------------------------
 
 loc_11C4E:
                 xor     ax, ax
@@ -4353,7 +3913,7 @@ loc_11C4E:
 ; ---------------------------------------------------------------------------
                 nop
 
-loc_11C54:                              ; CODE XREF: sub_11C2F+FD↓j
+loc_11C54:                              ; CODE XREF: promptCharacterNumber+FD↓j
                 shl     ax, 1
                 shl     ax, 1
                 add     ax, 20E4h
@@ -4361,31 +3921,26 @@ loc_11C54:                              ; CODE XREF: sub_11C2F+FD↓j
                 mov     ax, 2116h
                 push    ax
                 call    far ptr rt_FF0A ; -> rtm_FF0A  (leglib seg003:0x1b5e8)
-; ---------------------------------------------------------------------------
                 jnz     short loc_11C6B
                 jmp     loc_11D20
 ; ---------------------------------------------------------------------------
 
-loc_11C6B:                              ; CODE XREF: sub_11C2F+37↑j
+loc_11C6B:                              ; CODE XREF: promptCharacterNumber+37↑j
                 mov     word ptr [bp-10h], 8
                 lea     ax, [bp-10h]
                 push    ax
                 call    far ptr rt_FE1E ; -> rtm_FE1E  (leglib seg008:0x28667)
-; ---------------------------------------------------------------------------
                 mov     ax, 294Ch
                 push    ax
                 lea     ax, [bp-14h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-14h]
                 push    ax
                 call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-14h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     si, [bp+6]
                 mov     ax, [si]
                 cmp     ax, [bp-18h]
@@ -4393,41 +3948,34 @@ loc_11C6B:                              ; CODE XREF: sub_11C2F+37↑j
                 jmp     loc_11CD2
 ; ---------------------------------------------------------------------------
 
-loc_11CA5:                              ; CODE XREF: sub_11C2F+71↑j
+loc_11CA5:                              ; CODE XREF: promptCharacterNumber+71↑j
                 mov     word ptr [bp-16h], 8
                 lea     ax, [bp-16h]
                 push    ax
                 call    far ptr rt_FE1E ; -> rtm_FE1E  (leglib seg008:0x28667)
-; ---------------------------------------------------------------------------
                 mov     ax, 2952h
                 push    ax
                 lea     ax, [bp-1Ch]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-1Ch]
                 push    ax
                 call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-1Ch]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
-loc_11CD2:                              ; CODE XREF: sub_11C2F+73↑j
+loc_11CD2:                              ; CODE XREF: promptCharacterNumber+73↑j
                 mov     word ptr [bp-1Eh], 9
                 lea     ax, [bp-1Eh]
                 push    ax
                 call    far ptr rt_FE1E ; -> rtm_FE1E  (leglib seg008:0x28667)
-; ---------------------------------------------------------------------------
                 push    word ptr [bp-18h]
                 call    far ptr rt_D2   ; -> rtm_D2  (leglib seg003:0x1b870)
-; ---------------------------------------------------------------------------
                 push    ax
                 mov     ax, 2958h
                 push    ax
                 call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
-; ---------------------------------------------------------------------------
                 push    ax
                 mov     ax, [bp-18h]
                 shl     ax, 1
@@ -4435,50 +3983,48 @@ loc_11CD2:                              ; CODE XREF: sub_11C2F+73↑j
                 add     ax, 20E4h
                 push    ax
                 call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
-; ---------------------------------------------------------------------------
                 push    ax
                 lea     ax, [bp-22h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-22h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-22h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
-loc_11D20:                              ; CODE XREF: sub_11C2F+39↑j
+loc_11D20:                              ; CODE XREF: promptCharacterNumber+39↑j
                 mov     ax, [bp-18h]
                 inc     ax
 
-loc_11D24:                              ; CODE XREF: sub_11C2F+21↑j
+loc_11D24:                              ; CODE XREF: promptCharacterNumber+21↑j
                 mov     [bp-18h], ax
                 cmp     ax, 8
                 jg      short loc_11D2F
                 jmp     loc_11C54
 ; ---------------------------------------------------------------------------
 
-loc_11D2F:                              ; CODE XREF: sub_11C2F+FB↑j
+loc_11D2F:                              ; CODE XREF: promptCharacterNumber+FB↑j
                 call    far ptr rt_F4   ; -> rtm_F4  (leglib seg003:0x1bb7c)
+
+nullsub_153:
+                retf    2
 ; ---------------------------------------------------------------------------
 
-nullsub_90:
-                retf    2
-sub_11C2F       endp
+j_j_j_j_j_j_j_j_j_j_j_rt_ED:            ; CODE XREF: showEmptyCharacterSlots:j_j_j_j_j_j_j_j_j_j_j_j_rt_ED↑j
+                jmp     j_j_j_j_j_j_j_j_j_j_rt_ED
+promptCharacterNumber endp
 
-; [00000003 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_j_j_j_rt_ED. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
+; START A NEW GAME: checks for a free slot ("YOU MUST FIRST ERASE / AN OLD CHARACTER BEFORE / STARTING A NEW ONE"), name-collision ("ALREADY EXISTS / PICK A DIFFERENT NAME"), DISK FULL. On success runs playIntroAndLaunchGame.
 ; Attributes: noreturn
 
-sub_11D3A       proc far                ; CODE XREF: sub_10580:loc_106E8↑P
+startNewGameMenu proc far               ; CODE XREF: mainMenuLoop:loc_106E8↑P
                 mov     cx, 52h ; 'R'
                 call    far ptr rt_F0   ; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
-; ---------------------------------------------------------------------------
 
 loc_11D42:
                 mov     word ptr [bp-0Ch], 2
@@ -4494,7 +4040,6 @@ loc_11D42:
                 lea     ax, [bp-12h]
                 push    ax
                 call    far ptr rt_FE3E ; -> rtm_FE3E  (leglib seg007:0x2497a)
-; ---------------------------------------------------------------------------
 
 loc_11D6B:
                 mov     word ptr [bp-14h], 2
@@ -4510,7 +4055,6 @@ loc_11D6B:
                 lea     ax, [bp-1Ah]
                 push    ax
                 call    far ptr rt_FE42 ; -> rtm_FE42  (leglib seg007:0x2730c)
-; ---------------------------------------------------------------------------
 
 loc_11D94:
                 mov     word ptr [bp-1Ch], 0Bh
@@ -4520,7 +4064,6 @@ loc_11D94:
                 lea     ax, [bp-1Eh]
                 push    ax
                 call    far ptr rt_FE3F ; -> rtm_FE3F  (leglib seg008:0x27d5a)
-; ---------------------------------------------------------------------------
 
 loc_11DAB:
                 mov     ax, 2960h
@@ -4528,27 +4071,22 @@ loc_11DAB:
                 lea     ax, [bp-22h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_11DB8:
                 lea     ax, [bp-22h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_11DC1:
                 lea     ax, [bp-22h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 j_rt_FE45_1:                            ; -> rtm_FE45  (leglib seg008:0x27c6e)
                 call    far ptr rt_FE45
-; ---------------------------------------------------------------------------
 
 loc_11DCF:
                 call    sub_12778
-; ---------------------------------------------------------------------------
 
 loc_11DD4:
                 cmp     word ptr ds:2138h, 7
@@ -4556,63 +4094,51 @@ loc_11DD4:
                 jmp     loc_11EA6
 ; ---------------------------------------------------------------------------
 
-loc_11DDE:                              ; CODE XREF: sub_11D3A+9F↑j
+loc_11DDE:                              ; CODE XREF: startNewGameMenu+9F↑j
                 mov     ax, 2976h
                 push    ax
                 lea     ax, [bp-26h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-26h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-26h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     ax, 2986h
                 push    ax
                 lea     ax, [bp-2Ah]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-2Ah]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-2Ah]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     ax, 29A0h
                 push    ax
                 lea     ax, [bp-2Eh]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-2Eh]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-2Eh]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     ax, 29BCh
                 push    ax
                 lea     ax, [bp-32h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-32h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-32h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     word ptr [bp-34h], 9
                 mov     word ptr [bp-36h], 17h
                 lea     ax, [bp-34h]
@@ -4620,41 +4146,33 @@ loc_11DDE:                              ; CODE XREF: sub_11D3A+9F↑j
                 lea     ax, [bp-36h]
                 push    ax
                 call    far ptr rt_FE3F ; -> rtm_FE3F  (leglib seg008:0x27d5a)
-; ---------------------------------------------------------------------------
                 mov     ax, 2400h
                 push    ax
                 lea     ax, [bp-3Ah]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-3Ah]
                 push    ax
                 call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-3Ah]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 call    far ptr sub_11A15
-; ---------------------------------------------------------------------------
                 mov     [bp-3Ch], ax
                 mov     ax, [bp-3Ch]
                 mov     [bp-3Eh], ax
                 call    far ptr rt_FE45 ; -> rtm_FE45  (leglib seg008:0x27c6e)
-; ---------------------------------------------------------------------------
                 jmp     loc_12038
 ; ---------------------------------------------------------------------------
 
-loc_11EA6:                              ; CODE XREF: sub_11D3A+A1↑j
-                call    sub_110CD
-; ---------------------------------------------------------------------------
+loc_11EA6:                              ; CODE XREF: startNewGameMenu+A1↑j
+                call    promptNewCharacterName ; "Type in your new character's name. / It may be up to 14 letters long. / PRESS ENTER WHEN FINISHED / PRESS 'ESC' TO CANCEL". Writes the new roster entry (CHAR.DAT / LEGACY.DAT).
 
 loc_11EAB:
                 push    ax
                 lea     ax, [bp-42h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_11EB5:
                 lea     ax, [bp-42h]
@@ -4662,11 +4180,9 @@ loc_11EB5:
                 lea     ax, [bp-46h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 j_rt_FE45_2:                            ; -> rtm_FE45  (leglib seg008:0x27c6e)
                 call    far ptr rt_FE45
-; ---------------------------------------------------------------------------
 
 loc_11EC7:
                 lea     ax, [bp-46h]
@@ -4674,20 +4190,19 @@ loc_11EC7:
                 mov     ax, 21DCh
                 push    ax
                 call    far ptr rt_FF0A ; -> rtm_FF0A  (leglib seg003:0x1b5e8)
-; ---------------------------------------------------------------------------
 
 loc_11ED4:
                 jnz     short loc_11ED9
                 jmp     loc_12038
 ; ---------------------------------------------------------------------------
 
-loc_11ED9:                              ; CODE XREF: sub_11D3A:loc_11ED4↑j
+loc_11ED9:                              ; CODE XREF: startNewGameMenu:loc_11ED4↑j
                 mov     ax, 1
                 jmp     loc_11F9F
 ; ---------------------------------------------------------------------------
                 nop
 
-loc_11EE0:                              ; CODE XREF: sub_11D3A+26D↓j
+loc_11EE0:                              ; CODE XREF: startNewGameMenu+26D↓j
                 shl     ax, 1
                 shl     ax, 1
                 add     ax, 20E4h
@@ -4695,53 +4210,43 @@ loc_11EE0:                              ; CODE XREF: sub_11D3A+26D↓j
                 lea     ax, [bp-46h]
                 push    ax
                 call    far ptr rt_FF0A ; -> rtm_FF0A  (leglib seg003:0x1b5e8)
-; ---------------------------------------------------------------------------
                 jz      short loc_11EF7
                 jmp     loc_11F9B
 ; ---------------------------------------------------------------------------
 
-loc_11EF7:                              ; CODE XREF: sub_11D3A+1B8↑j
+loc_11EF7:                              ; CODE XREF: startNewGameMenu+1B8↑j
                 mov     ax, 29D4h
                 push    ax
                 lea     ax, [bp-46h]
                 push    ax
                 call    far ptr rt_BC   ; -> rtm_BC  (leglib seg003:0x1b82c)  [mid-func]
-; ---------------------------------------------------------------------------
                 push    ax
                 call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
-; ---------------------------------------------------------------------------
                 push    ax
                 mov     ax, 29DEh
                 push    ax
                 call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
-; ---------------------------------------------------------------------------
                 push    ax
                 lea     ax, [bp-4Ah]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-4Ah]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-4Ah]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     ax, 29F2h
                 push    ax
                 lea     ax, [bp-4Eh]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-4Eh]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-4Eh]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     word ptr [bp-50h], 9
                 mov     word ptr [bp-52h], 17h
                 lea     ax, [bp-50h]
@@ -4749,70 +4254,58 @@ loc_11EF7:                              ; CODE XREF: sub_11D3A+1B8↑j
                 lea     ax, [bp-52h]
                 push    ax
                 call    far ptr rt_FE3F ; -> rtm_FE3F  (leglib seg008:0x27d5a)
-; ---------------------------------------------------------------------------
                 mov     ax, 2400h
                 push    ax
                 lea     ax, [bp-56h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-56h]
                 push    ax
                 call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-56h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 call    far ptr sub_11A15
-; ---------------------------------------------------------------------------
                 mov     [bp-58h], ax
                 mov     ax, [bp-58h]
                 mov     [bp-3Eh], ax
                 call    far ptr rt_FE45 ; -> rtm_FE45  (leglib seg008:0x27c6e)
-; ---------------------------------------------------------------------------
                 jmp     loc_12038
 ; ---------------------------------------------------------------------------
 
-loc_11F9B:                              ; CODE XREF: sub_11D3A+1BA↑j
+loc_11F9B:                              ; CODE XREF: startNewGameMenu+1BA↑j
                 mov     ax, [bp-3Eh]
                 inc     ax
 
-loc_11F9F:                              ; CODE XREF: sub_11D3A+1A2↑j
+loc_11F9F:                              ; CODE XREF: startNewGameMenu+1A2↑j
                 mov     [bp-3Eh], ax
                 cmp     ax, 8
                 jg      short loc_11FAA
                 jmp     loc_11EE0
 ; ---------------------------------------------------------------------------
 
-loc_11FAA:                              ; CODE XREF: sub_11D3A+26B↑j
+loc_11FAA:                              ; CODE XREF: startNewGameMenu+26B↑j
                 mov     ax, 2A10h
                 push    ax
                 lea     ax, [bp-46h]
                 push    ax
                 call    far ptr rt_BC   ; -> rtm_BC  (leglib seg003:0x1b82c)  [mid-func]
-; ---------------------------------------------------------------------------
                 push    ax
                 call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
-; ---------------------------------------------------------------------------
                 push    ax
                 mov     ax, 2A18h
                 push    ax
                 call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
-; ---------------------------------------------------------------------------
                 push    ax
                 lea     ax, [bp-5Ch]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-5Ch]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-5Ch]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 inc     word ptr ds:2138h
                 lea     ax, [bp-46h]
                 push    ax
@@ -4822,11 +4315,8 @@ loc_11FAA:                              ; CODE XREF: sub_11D3A+26B↑j
                 add     ax, 20E4h
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 call    sub_128A9
-; ---------------------------------------------------------------------------
-                call    sub_11AEB
-; ---------------------------------------------------------------------------
+                call    showEmptyCharacterSlots ; displays the "empty" character slots (pushes the "!empty" literal). Called from eraseCharacterMenu and startNewGameMenu.
                 mov     ax, ds:2138h
                 shl     ax, 1
                 shl     ax, 1
@@ -4835,51 +4325,46 @@ loc_11FAA:                              ; CODE XREF: sub_11D3A+26B↑j
                 mov     ax, 1CAAh
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 mov     ax, ds:2138h
                 dec     ax
                 imul    word ptr ds:211Ch
                 add     ax, 7
                 mov     ds:1B0Ah, ax
-                call    sub_10C71
-; ---------------------------------------------------------------------------
-                call    sub_129A8
-; ---------------------------------------------------------------------------
+                call    showCharacterRoster ; reads CHAR.DAT and lists the saved characters. Shared by eraseCharacterMenu, startNewGameMenu and restartGameMenu. One of a family of near-identical CHAR.DAT enumeration helpers (sub_12055 / sub_12778 / sub_128A9).
+                call    playIntroAndLaunchGame ; the new-character intro cut-scene ("You are only a poor peasant on the world of Tarmalon...", the dead man / leather scroll / shimmering archway narrative) then hands off to the game ("Mail2", MUS.EXE / OUT.EXE / DUN.EXE). Largest seg000 function (~1.6 KB).
                 call    far ptr rt_FF0D ; -> rtm_FF0D  (leglib seg003:0x151b6)
-; ---------------------------------------------------------------------------
 
-loc_12038:                              ; CODE XREF: sub_11D3A+169↑j
-                                        ; sub_11D3A+19C↑j ...
+loc_12038:                              ; CODE XREF: startNewGameMenu+169↑j
+                                        ; startNewGameMenu+19C↑j ...
                 lea     ax, [bp-42h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_12041:
                 lea     ax, [bp-46h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 j_rt_F4_5:                              ; -> rtm_F4  (leglib seg003:0x1bb7c)
                 call    far ptr rt_F4
+
+nullsub_154:
+                retf    0
 ; ---------------------------------------------------------------------------
 
-nullsub_91:
-                retf    0
-sub_11D3A       endp
+j_j_j_j_j_j_j_j_j_j_rt_ED:              ; CODE XREF: promptCharacterNumber:j_j_j_j_j_j_j_j_j_j_j_rt_ED↑j
+                jmp     j_j_j_j_j_j_j_j_j_rt_ED
+startNewGameMenu endp
 
-; [00000003 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_j_j_rt_ED. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: noreturn
 
-sub_12055       proc near               ; CODE XREF: sub_10D97+2F9↑P
-                                        ; sub_121E4+203↓P
+sub_12055       proc near               ; CODE XREF: eraseCharacterMenu+2F9↑P
+                                        ; restartGameMenu+203↓P
                 mov     cx, 14h
                 call    far ptr rt_F0   ; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
-; ---------------------------------------------------------------------------
 
 loc_1205D:
                 mov     ax, 23B6h
@@ -4887,19 +4372,16 @@ loc_1205D:
                 lea     ax, [bp-0Eh]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_1206A:
                 lea     ax, [bp-0Eh]
                 push    ax
                 call    far ptr rt_FE63 ; -> rtm_FE63  (leglib seg007:0x24a83)
-; ---------------------------------------------------------------------------
 
 loc_12073:
                 lea     ax, [bp-0Eh]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_1207C:
                 mov     ax, 23B6h
@@ -4911,7 +4393,6 @@ loc_1207C:
                 mov     ax, 20h ; ' '
                 push    ax
                 call    far ptr rt_87   ; -> rtm_87  (leglib seg003:0x148ea)
-; ---------------------------------------------------------------------------
 
 loc_12091:
                 mov     ax, 1
@@ -4924,7 +4405,6 @@ loc_12091:
                 mov     ax, 2
                 push    ax
                 call    far ptr rt_5E   ; -> rtm_5E  (leglib seg003:0x14589)
-; ---------------------------------------------------------------------------
 
 loc_120A5:
                 mov     ax, 1
@@ -4937,7 +4417,6 @@ loc_120A5:
                 mov     ax, 2
                 push    ax
                 call    far ptr rt_5E   ; -> rtm_5E  (leglib seg003:0x14589)
-; ---------------------------------------------------------------------------
 
 loc_120B9:
                 mov     ax, 1
@@ -4950,20 +4429,17 @@ loc_120B9:
                 mov     ax, 2
                 push    ax
                 call    far ptr rt_5E   ; -> rtm_5E  (leglib seg003:0x14589)
-; ---------------------------------------------------------------------------
 
 loc_120CD:
                 mov     ax, 0Eh
                 push    ax
                 call    far ptr rt_CD   ; -> rtm_CD  (leglib seg003:0x1b774)
-; ---------------------------------------------------------------------------
 
 loc_120D6:
                 push    ax
                 lea     ax, [bp-12h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_120E0:
                 lea     ax, [bp-12h]
@@ -4971,7 +4447,6 @@ loc_120E0:
                 lea     ax, [bp-16h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_120ED:
                 mov     ax, 1CAAh
@@ -4982,7 +4457,6 @@ loc_120ED:
                 xor     ax, ax
                 push    ax
                 call    far ptr rt_73   ; -> rtm_73  (leglib seg003:0x1b4ed)
-; ---------------------------------------------------------------------------
 
 loc_120FE:
                 mov     ax, 1
@@ -4994,7 +4468,6 @@ loc_120FE:
                 call    far ptr rt_CF   ; -> rtm_CF  (leglib seg003:0x16168)  [mid-func]
 sub_12055       endp
 
-; ---------------------------------------------------------------------------
                 nop
 
 ; =============== S U B R O U T I N E =======================================
@@ -5016,7 +4489,6 @@ sub_1210E       proc far                ; CODE XREF: sub_1210E:loc_1213B↓j
                 xor     ax, ax
                 push    ax
                 call    far ptr rt_5F   ; -> rtm_5F  (leglib seg003:0x145ab)
-; ---------------------------------------------------------------------------
 
 loc_12127:
                 mov     ax, ds:211Ch
@@ -5026,7 +4498,6 @@ loc_12127:
                 lea     ax, [bp-12h]
                 push    ax
                 call    far ptr rt_FF0A ; -> rtm_FF0A  (leglib seg003:0x1b5e8)
-; ---------------------------------------------------------------------------
 
 loc_1213B:
                 jnz     short near ptr sub_1210E
@@ -5049,12 +4520,10 @@ loc_1214E:                              ; CODE XREF: sub_1210E+6E↓j
                 mov     ax, 2
                 push    ax
                 call    far ptr rt_5E   ; -> rtm_5E  (leglib seg003:0x14589)
-; ---------------------------------------------------------------------------
                 push    word ptr [bp-1Ah]
                 push    word ptr [bp-1Eh]
                 push    word ptr [bp-1Ch]
                 call    far ptr rt_FE36 ; -> rtm_FE36  (leglib seg004:0x1ff08)
-; ---------------------------------------------------------------------------
                 mov     ax, [bp-1Eh]
                 add     ax, 2
 
@@ -5065,81 +4534,73 @@ loc_12176:                              ; CODE XREF: sub_1210E+3D↑j
                 mov     ax, 1B0Ch
                 push    ax
                 call    far ptr rt_FE37 ; -> rtm_FE37  (leglib seg007:0x2701b)
-; ---------------------------------------------------------------------------
 
 loc_12187:
                 mov     ax, 1B68h
                 push    ax
                 call    far ptr rt_FE37 ; -> rtm_FE37  (leglib seg007:0x2701b)
-; ---------------------------------------------------------------------------
 
 loc_12190:
                 mov     ax, 1BC4h
                 push    ax
                 call    far ptr rt_FE37 ; -> rtm_FE37  (leglib seg007:0x2701b)
-; ---------------------------------------------------------------------------
 
 loc_12199:
                 mov     ax, 1B3Ah
                 push    ax
                 call    far ptr rt_FE37 ; -> rtm_FE37  (leglib seg007:0x2701b)
-; ---------------------------------------------------------------------------
 
 loc_121A2:
                 mov     ax, 1B96h
                 push    ax
                 call    far ptr rt_FE37 ; -> rtm_FE37  (leglib seg007:0x2701b)
-; ---------------------------------------------------------------------------
 
 loc_121AB:
                 mov     ax, 1BF2h
                 push    ax
                 call    far ptr rt_FE37 ; -> rtm_FE37  (leglib seg007:0x2701b)
-; ---------------------------------------------------------------------------
 
 loc_121B4:
                 mov     ax, 1C20h
                 push    ax
                 call    far ptr rt_FE37 ; -> rtm_FE37  (leglib seg007:0x2701b)
-; ---------------------------------------------------------------------------
 
 loc_121BD:
                 mov     ax, 1
                 push    ax
                 push    ax
                 call    far ptr rt_09   ; -> rtm_09  (leglib seg003:0x14a31)
-; ---------------------------------------------------------------------------
 
 loc_121C7:
                 lea     ax, [bp-12h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_121D0:
                 lea     ax, [bp-16h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 j_rt_F4_6:                              ; -> rtm_F4  (leglib seg003:0x1bb7c)
                 call    far ptr rt_F4
+
+nullsub_155:
+                retf    0
 ; ---------------------------------------------------------------------------
 
-nullsub_92:
-                retf    0
+j_j_j_j_j_j_j_j_j_rt_ED:                ; CODE XREF: startNewGameMenu:j_j_j_j_j_j_j_j_j_j_rt_ED↑j
+                jmp     j_j_j_j_j_j_j_j_rt_ED
 sub_1210E       endp
 
-; [00000003 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_j_rt_ED. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
+; RESTART A GAME: "** NO CHARACTERS TO RESTART **", "RESTART WHICH CHARACTER?", "RESTARTING <name>". Then playIntroAndLaunchGame.
 ; Attributes: noreturn
 
-sub_121E4       proc far                ; CODE XREF: sub_10580:loc_106FA↑P
+restartGameMenu proc far                ; CODE XREF: mainMenuLoop:loc_106FA↑P
                 mov     cx, 3Eh ; '>'
                 call    far ptr rt_F0   ; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
-; ---------------------------------------------------------------------------
 
 loc_121EC:
                 mov     word ptr [bp-0Ch], 2
@@ -5155,7 +4616,6 @@ loc_121EC:
                 lea     ax, [bp-12h]
                 push    ax
                 call    far ptr rt_FE3E ; -> rtm_FE3E  (leglib seg007:0x2497a)
-; ---------------------------------------------------------------------------
 
 loc_12215:
                 mov     word ptr [bp-14h], 2
@@ -5171,7 +4631,6 @@ loc_12215:
                 lea     ax, [bp-1Ah]
                 push    ax
                 call    far ptr rt_FE42 ; -> rtm_FE42  (leglib seg007:0x2730c)
-; ---------------------------------------------------------------------------
 
 loc_1223E:
                 mov     word ptr [bp-1Ch], 0Ch
@@ -5181,7 +4640,6 @@ loc_1223E:
                 lea     ax, [bp-1Eh]
                 push    ax
                 call    far ptr rt_FE3F ; -> rtm_FE3F  (leglib seg008:0x27d5a)
-; ---------------------------------------------------------------------------
 
 loc_12255:
                 mov     ax, 2A30h
@@ -5189,27 +4647,22 @@ loc_12255:
                 lea     ax, [bp-22h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_12262:
                 lea     ax, [bp-22h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_1226B:
                 lea     ax, [bp-22h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 j_rt_FE45_3:                            ; -> rtm_FE45  (leglib seg008:0x27c6e)
                 call    far ptr rt_FE45
-; ---------------------------------------------------------------------------
 
 loc_12279:
                 call    sub_12778
-; ---------------------------------------------------------------------------
 
 loc_1227E:
                 cmp     word ptr ds:2138h, 0
@@ -5217,23 +4670,19 @@ loc_1227E:
                 jmp     loc_122F8
 ; ---------------------------------------------------------------------------
 
-loc_12288:                              ; CODE XREF: sub_121E4+9F↑j
+loc_12288:                              ; CODE XREF: restartGameMenu+9F↑j
                 call    far ptr rt_FE59 ; -> rtm_FE59  (leglib seg007:0x256b5)
-; ---------------------------------------------------------------------------
                 mov     ax, 2A44h
                 push    ax
                 lea     ax, [bp-26h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-26h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-26h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     word ptr [bp-28h], 9
                 mov     word ptr [bp-2Ah], 17h
                 lea     ax, [bp-28h]
@@ -5241,34 +4690,27 @@ loc_12288:                              ; CODE XREF: sub_121E4+9F↑j
                 lea     ax, [bp-2Ah]
                 push    ax
                 call    far ptr rt_FE3F ; -> rtm_FE3F  (leglib seg008:0x27d5a)
-; ---------------------------------------------------------------------------
                 mov     ax, 2400h
                 push    ax
                 lea     ax, [bp-2Eh]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-2Eh]
                 push    ax
                 call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-2Eh]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 call    far ptr sub_11A15
-; ---------------------------------------------------------------------------
                 mov     [bp-30h], ax
                 mov     ax, [bp-30h]
                 mov     [bp-32h], ax
                 call    far ptr rt_FE45 ; -> rtm_FE45  (leglib seg008:0x27c6e)
-; ---------------------------------------------------------------------------
                 jmp     loc_12409
 ; ---------------------------------------------------------------------------
 
-loc_122F8:                              ; CODE XREF: sub_121E4+A1↑j
+loc_122F8:                              ; CODE XREF: restartGameMenu+A1↑j
                 call    far ptr rt_FE45 ; -> rtm_FE45  (leglib seg008:0x27c6e)
-; ---------------------------------------------------------------------------
 
 loc_122FD:
                 mov     ax, 2A6Ch
@@ -5276,19 +4718,16 @@ loc_122FD:
                 lea     ax, [bp-36h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_1230A:
                 lea     ax, [bp-36h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_12313:
                 lea     ax, [bp-36h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_1231C:
                 mov     word ptr [bp-38h], 9
@@ -5298,7 +4737,6 @@ loc_1231C:
                 lea     ax, [bp-3Ah]
                 push    ax
                 call    far ptr rt_FE3F ; -> rtm_FE3F  (leglib seg008:0x27d5a)
-; ---------------------------------------------------------------------------
 
 loc_12333:
                 mov     ax, 2438h
@@ -5306,25 +4744,22 @@ loc_12333:
                 lea     ax, [bp-3Eh]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_12340:
                 lea     ax, [bp-3Eh]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_12349:
                 lea     ax, [bp-3Eh]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_12352:
                 mov     word ptr [bp-40h], 0
                 nop
 
-loc_12358:                              ; CODE XREF: sub_121E4+1AF↓j
+loc_12358:                              ; CODE XREF: restartGameMenu+1AF↓j
                 mov     ax, ds:2138h
                 inc     ax
                 cmp     ax, [bp-40h]
@@ -5332,14 +4767,13 @@ loc_12358:                              ; CODE XREF: sub_121E4+1AF↓j
                 jmp     loc_12369
 ; ---------------------------------------------------------------------------
 
-loc_12364:                              ; CODE XREF: sub_121E4+17B↑j
+loc_12364:                              ; CODE XREF: restartGameMenu+17B↑j
                 mov     word ptr [bp-40h], 0
 
-loc_12369:                              ; CODE XREF: sub_121E4+17D↑j
+loc_12369:                              ; CODE XREF: restartGameMenu+17D↑j
                 lea     ax, [bp-40h]
                 push    ax
-                call    sub_11C2F
-; ---------------------------------------------------------------------------
+                call    promptCharacterNumber ; "SELECT BY NUMBER KEY" prompt -- reads a 1-4 digit and returns the chosen character index. Shared by erase / restart.
 
 loc_12372:
                 mov     word ptr [bp-42h], 0
@@ -5349,8 +4783,7 @@ loc_12372:
                 push    ax
                 lea     ax, [bp-40h]
                 push    ax
-                call    sub_10738
-; ---------------------------------------------------------------------------
+                call    readLegacyDat   ; reads LEGACY.DAT (menu state / last settings). Called from mainMenuLoop and the new-game / restart paths.
 
 loc_12388:
                 mov     [bp-44h], ax
@@ -5365,7 +4798,7 @@ loc_12388:
                 jmp     loc_12409
 ; ---------------------------------------------------------------------------
 
-loc_123A1:                              ; CODE XREF: sub_121E4+1B8↑j
+loc_123A1:                              ; CODE XREF: restartGameMenu+1B8↑j
                 mov     ax, 2A8Ch
                 push    ax
                 mov     ax, [bp-40h]
@@ -5374,20 +4807,16 @@ loc_123A1:                              ; CODE XREF: sub_121E4+1B8↑j
                 add     ax, 20E4h
                 push    ax
                 call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
-; ---------------------------------------------------------------------------
                 push    ax
                 lea     ax, [bp-48h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-48h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-48h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     ax, [bp-40h]
                 shl     ax, 1
                 shl     ax, 1
@@ -5396,46 +4825,42 @@ loc_123A1:                              ; CODE XREF: sub_121E4+1B8↑j
                 mov     ax, 1CAAh
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 call    far ptr sub_12055
-; ---------------------------------------------------------------------------
                 mov     ax, [bp-40h]
                 dec     ax
                 imul    word ptr ds:211Ch
                 add     ax, 7
                 mov     ds:1B0Ah, ax
-                call    sub_10C71
-; ---------------------------------------------------------------------------
-                call    sub_129A8
-; ---------------------------------------------------------------------------
+                call    showCharacterRoster ; reads CHAR.DAT and lists the saved characters. Shared by eraseCharacterMenu, startNewGameMenu and restartGameMenu. One of a family of near-identical CHAR.DAT enumeration helpers (sub_12055 / sub_12778 / sub_128A9).
+                call    playIntroAndLaunchGame ; the new-character intro cut-scene ("You are only a poor peasant on the world of Tarmalon...", the dead man / leather scroll / shimmering archway narrative) then hands off to the game ("Mail2", MUS.EXE / OUT.EXE / DUN.EXE). Largest seg000 function (~1.6 KB).
                 call    far ptr rt_FF0D ; -> rtm_FF0D  (leglib seg003:0x151b6)
-; ---------------------------------------------------------------------------
 
-loc_12409:                              ; CODE XREF: sub_121E4+111↑j
-                                        ; sub_121E4+1BA↑j
+loc_12409:                              ; CODE XREF: restartGameMenu+111↑j
+                                        ; restartGameMenu+1BA↑j
                 call    far ptr rt_F4   ; -> rtm_F4  (leglib seg003:0x1bb7c)
+
+nullsub_156:
+                retf    0
 ; ---------------------------------------------------------------------------
 
-nullsub_93:
-                retf    0
-sub_121E4       endp
+j_j_j_j_j_j_j_j_rt_ED:                  ; CODE XREF: sub_1210E:j_j_j_j_j_j_j_j_j_rt_ED↑j
+                jmp     j_j_j_j_j_j_j_rt_ED
+restartGameMenu endp
 
-; [00000003 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_j_rt_ED. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
+; the startup splash: "Legacy of the Ancients / Game Program Copyright (c) 1987-1989 / Installation Program Copyright (c) 1989 Electronic Arts / Program Compiler Copyright (c) 1982-1988 Microsoft Corp.". Called once from menu_main.
 ; Attributes: noreturn
 
-sub_12414       proc far                ; CODE XREF: menu_main:loc_103AF↑P
+showStartupSplash proc far              ; CODE XREF: menu_main:j_showStartupSplash↑P
                 mov     cx, 0
                 call    far ptr rt_F0   ; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
-; ---------------------------------------------------------------------------
 
 loc_1241C:
                 mov     ax, 0FFFFh
                 push    ax
                 call    far ptr rt_C4   ; -> rtm_C4  (leglib seg003:0x1bc75)
-; ---------------------------------------------------------------------------
 
 loc_12425:
                 mov     ax, 1
@@ -5449,13 +4874,11 @@ loc_12425:
                 mov     ax, 4
                 push    ax
                 call    far ptr rt_70   ; -> rtm_70  (leglib seg003:0x1bc02)
-; ---------------------------------------------------------------------------
 
 loc_1243E:
                 mov     ax, 2AA2h
                 push    ax
                 call    far ptr rt_98   ; -> rtm_98  (leglib seg003:0x1b0d8)  [mid-func]
-; ---------------------------------------------------------------------------
 
 loc_12447:
                 mov     ax, 1
@@ -5469,13 +4892,11 @@ loc_12447:
                 mov     ax, 4
                 push    ax
                 call    far ptr rt_70   ; -> rtm_70  (leglib seg003:0x1bc02)
-; ---------------------------------------------------------------------------
 
 loc_12460:
                 mov     ax, 2ABCh
                 push    ax
                 call    far ptr rt_98   ; -> rtm_98  (leglib seg003:0x1b0d8)  [mid-func]
-; ---------------------------------------------------------------------------
 
 loc_12469:
                 mov     ax, 1
@@ -5489,13 +4910,11 @@ loc_12469:
                 mov     ax, 4
                 push    ax
                 call    far ptr rt_70   ; -> rtm_70  (leglib seg003:0x1bc02)
-; ---------------------------------------------------------------------------
 
 loc_12482:
                 mov     ax, 21FAh
                 push    ax
                 call    far ptr rt_98   ; -> rtm_98  (leglib seg003:0x1b0d8)  [mid-func]
-; ---------------------------------------------------------------------------
 
 loc_1248B:
                 mov     ax, 1
@@ -5509,13 +4928,11 @@ loc_1248B:
                 mov     ax, 4
                 push    ax
                 call    far ptr rt_70   ; -> rtm_70  (leglib seg003:0x1bc02)
-; ---------------------------------------------------------------------------
 
 loc_124A4:
                 mov     ax, 2218h
                 push    ax
                 call    far ptr rt_98   ; -> rtm_98  (leglib seg003:0x1b0d8)  [mid-func]
-; ---------------------------------------------------------------------------
 
 loc_124AD:
                 mov     ax, 1
@@ -5529,13 +4946,11 @@ loc_124AD:
                 mov     ax, 4
                 push    ax
                 call    far ptr rt_70   ; -> rtm_70  (leglib seg003:0x1bc02)
-; ---------------------------------------------------------------------------
 
 loc_124C6:
                 mov     ax, 2ACCh
                 push    ax
                 call    far ptr rt_98   ; -> rtm_98  (leglib seg003:0x1b0d8)  [mid-func]
-; ---------------------------------------------------------------------------
 
 loc_124CF:
                 mov     ax, 1
@@ -5549,13 +4964,11 @@ loc_124CF:
                 mov     ax, 4
                 push    ax
                 call    far ptr rt_70   ; -> rtm_70  (leglib seg003:0x1bc02)
-; ---------------------------------------------------------------------------
 
 loc_124E8:
                 mov     ax, 2AE4h
                 push    ax
                 call    far ptr rt_98   ; -> rtm_98  (leglib seg003:0x1b0d8)  [mid-func]
-; ---------------------------------------------------------------------------
 
 loc_124F1:
                 mov     ax, 1
@@ -5569,13 +4982,11 @@ loc_124F1:
                 mov     ax, 4
                 push    ax
                 call    far ptr rt_70   ; -> rtm_70  (leglib seg003:0x1bc02)
-; ---------------------------------------------------------------------------
 
 loc_1250A:
                 mov     ax, 2AFAh
                 push    ax
                 call    far ptr rt_98   ; -> rtm_98  (leglib seg003:0x1b0d8)  [mid-func]
-; ---------------------------------------------------------------------------
 
 loc_12513:
                 mov     ax, 1
@@ -5589,13 +5000,11 @@ loc_12513:
                 mov     ax, 4
                 push    ax
                 call    far ptr rt_70   ; -> rtm_70  (leglib seg003:0x1bc02)
-; ---------------------------------------------------------------------------
 
 loc_1252C:
                 mov     ax, 2B0Eh
                 push    ax
                 call    far ptr rt_98   ; -> rtm_98  (leglib seg003:0x1b0d8)  [mid-func]
-; ---------------------------------------------------------------------------
 
 loc_12535:
                 mov     ax, 1
@@ -5609,13 +5018,11 @@ loc_12535:
                 mov     ax, 4
                 push    ax
                 call    far ptr rt_70   ; -> rtm_70  (leglib seg003:0x1bc02)
-; ---------------------------------------------------------------------------
 
 loc_1254E:
                 mov     ax, 2B22h
                 push    ax
                 call    far ptr rt_98   ; -> rtm_98  (leglib seg003:0x1b0d8)  [mid-func]
-; ---------------------------------------------------------------------------
 
 loc_12557:
                 mov     ax, 1
@@ -5629,17 +5036,14 @@ loc_12557:
                 mov     ax, 4
                 push    ax
                 call    far ptr rt_70   ; -> rtm_70  (leglib seg003:0x1bc02)
-; ---------------------------------------------------------------------------
 
 loc_12570:
                 mov     ax, 2B40h
                 push    ax
                 call    far ptr rt_98   ; -> rtm_98  (leglib seg003:0x1b0d8)  [mid-func]
-; ---------------------------------------------------------------------------
 
 j_rt_FE62:                              ; -> rtm_FE62  (leglib seg007:0x25981)
                 call    far ptr rt_FE62
-; ---------------------------------------------------------------------------
 
 loc_1257E:
                 mov     ax, 1
@@ -5653,32 +5057,32 @@ loc_1257E:
                 mov     ax, 4
                 push    ax
                 call    far ptr rt_70   ; -> rtm_70  (leglib seg003:0x1bc02)
-; ---------------------------------------------------------------------------
 
 loc_12597:
                 mov     ax, 2B54h
                 push    ax
                 call    far ptr rt_A7   ; -> rtm_A7  (leglib seg003:0x1b0d3)  [mid-func]
-; ---------------------------------------------------------------------------
 
 j_rt_F4_7:                              ; -> rtm_F4  (leglib seg003:0x1bb7c)
                 call    far ptr rt_F4
+
+nullsub_157:
+                retf    0
 ; ---------------------------------------------------------------------------
 
-nullsub_94:
-                retf    0
-sub_12414       endp
+j_j_j_j_j_j_j_rt_ED:                    ; CODE XREF: restartGameMenu:j_j_j_j_j_j_j_j_rt_ED↑j
+                jmp     j_j_j_j_j_j_rt_ED
+showStartupSplash endp
 
-; [00000003 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_j_rt_ED. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
+; renders the menu screen: "Loading...", the numbered items ("1. play a game" / "2. simple instructions" / "3. game credits" / "4. sound is currently on/off"), and the second-menu variant ("1. return to first menu" ...). Calls drawCancelOption.
 ; Attributes: noreturn
 
-sub_125AB       proc far                ; CODE XREF: sub_10580+A0↑P
+drawMainMenuScreen proc far             ; CODE XREF: mainMenuLoop+A0↑P
                 mov     cx, 3Ah ; ':'
                 call    far ptr rt_F0   ; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
-; ---------------------------------------------------------------------------
 
 loc_125B3:
                 mov     word ptr [bp-0Ch], 0
@@ -5688,7 +5092,6 @@ loc_125B3:
                 lea     ax, [bp-0Eh]
                 push    ax
                 call    far ptr rt_FE3F ; -> rtm_FE3F  (leglib seg008:0x27d5a)
-; ---------------------------------------------------------------------------
 
 loc_125CA:
                 mov     si, [bp+6]
@@ -5699,218 +5102,190 @@ loc_125CA:
                 jmp     loc_126AF
 ; ---------------------------------------------------------------------------
 
-loc_125DB:                              ; CODE XREF: sub_125AB+2B↑j
+loc_125DB:                              ; CODE XREF: drawMainMenuScreen+2B↑j
                 mov     word ptr [bp-12h], 1
                 mov     ax, 2B62h
                 push    ax
                 lea     ax, [bp-16h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-12h]
                 push    ax
                 lea     ax, [bp-16h]
                 push    ax
-                call    sub_1294E
-; ---------------------------------------------------------------------------
+                call    drawCancelOption ; draws the "CANCEL" menu entry. Called only by drawMainMenuScreen.
                 lea     ax, [bp-16h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     word ptr [bp-18h], 2
                 mov     ax, 2B76h
                 push    ax
                 lea     ax, [bp-1Ch]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-18h]
                 push    ax
                 lea     ax, [bp-1Ch]
                 push    ax
-                call    sub_1294E
-; ---------------------------------------------------------------------------
+                call    drawCancelOption ; draws the "CANCEL" menu entry. Called only by drawMainMenuScreen.
                 lea     ax, [bp-1Ch]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     word ptr [bp-1Eh], 3
                 mov     ax, 2B92h
                 push    ax
                 lea     ax, [bp-22h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-1Eh]
                 push    ax
                 lea     ax, [bp-22h]
                 push    ax
-                call    sub_1294E
-; ---------------------------------------------------------------------------
+                call    drawCancelOption ; draws the "CANCEL" menu entry. Called only by drawMainMenuScreen.
                 lea     ax, [bp-22h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     ax, ds:1F5Ch
                 and     ax, ax
                 jnz     short loc_1265D
                 jmp     loc_1266D
 ; ---------------------------------------------------------------------------
 
-loc_1265D:                              ; CODE XREF: sub_125AB+AD↑j
+loc_1265D:                              ; CODE XREF: drawMainMenuScreen+AD↑j
                 mov     ax, 2BA6h
                 push    ax
                 lea     ax, [bp-26h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 jmp     loc_1267A
 ; ---------------------------------------------------------------------------
 
-loc_1266D:                              ; CODE XREF: sub_125AB+AF↑j
+loc_1266D:                              ; CODE XREF: drawMainMenuScreen+AF↑j
                 mov     ax, 2BAEh
                 push    ax
                 lea     ax, [bp-26h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
-loc_1267A:                              ; CODE XREF: sub_125AB+BF↑j
+loc_1267A:                              ; CODE XREF: drawMainMenuScreen+BF↑j
                 mov     word ptr [bp-28h], 4
                 mov     ax, 2BB6h
                 push    ax
                 lea     ax, [bp-26h]
                 push    ax
                 call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
-; ---------------------------------------------------------------------------
                 push    ax
                 lea     ax, [bp-2Ch]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-28h]
                 push    ax
                 lea     ax, [bp-2Ch]
                 push    ax
-                call    sub_1294E
-; ---------------------------------------------------------------------------
+                call    drawCancelOption ; draws the "CANCEL" menu entry. Called only by drawMainMenuScreen.
                 lea     ax, [bp-2Ch]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 jmp     loc_12764
 ; ---------------------------------------------------------------------------
 
-loc_126AF:                              ; CODE XREF: sub_125AB+2D↑j
+loc_126AF:                              ; CODE XREF: drawMainMenuScreen+2D↑j
                 cmp     word ptr [bp-10h], 2
                 jz      short loc_126B8
                 jmp     loc_1275B
 ; ---------------------------------------------------------------------------
 
-loc_126B8:                              ; CODE XREF: sub_125AB+108↑j
+loc_126B8:                              ; CODE XREF: drawMainMenuScreen+108↑j
                 mov     word ptr [bp-2Eh], 1
                 mov     ax, 2BD2h
                 push    ax
                 lea     ax, [bp-32h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-2Eh]
                 push    ax
                 lea     ax, [bp-32h]
                 push    ax
-                call    sub_1294E
-; ---------------------------------------------------------------------------
+                call    drawCancelOption ; draws the "CANCEL" menu entry. Called only by drawMainMenuScreen.
                 lea     ax, [bp-32h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     word ptr [bp-34h], 2
                 mov     ax, 2BEEh
                 push    ax
                 lea     ax, [bp-38h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-34h]
                 push    ax
                 lea     ax, [bp-38h]
                 push    ax
-                call    sub_1294E
-; ---------------------------------------------------------------------------
+                call    drawCancelOption ; draws the "CANCEL" menu entry. Called only by drawMainMenuScreen.
                 lea     ax, [bp-38h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     word ptr [bp-3Ah], 3
                 mov     ax, 2C06h
                 push    ax
                 lea     ax, [bp-3Eh]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-3Ah]
                 push    ax
                 lea     ax, [bp-3Eh]
                 push    ax
-                call    sub_1294E
-; ---------------------------------------------------------------------------
+                call    drawCancelOption ; draws the "CANCEL" menu entry. Called only by drawMainMenuScreen.
                 lea     ax, [bp-3Eh]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     word ptr [bp-40h], 4
                 mov     ax, 2C1Ch
                 push    ax
                 lea     ax, [bp-44h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-40h]
                 push    ax
                 lea     ax, [bp-44h]
                 push    ax
-                call    sub_1294E
-; ---------------------------------------------------------------------------
+                call    drawCancelOption ; draws the "CANCEL" menu entry. Called only by drawMainMenuScreen.
                 lea     ax, [bp-44h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 jmp     loc_12764
 ; ---------------------------------------------------------------------------
 
-loc_1275B:                              ; CODE XREF: sub_125AB+10A↑j
+loc_1275B:                              ; CODE XREF: drawMainMenuScreen+10A↑j
                 mov     ax, 27h ; '''
                 push    ax
                 call    far ptr rt_C8   ; -> rtm_C8  (leglib seg003:0x138e2)
-; ---------------------------------------------------------------------------
 
-loc_12764:                              ; CODE XREF: sub_125AB+101↑j
-                                        ; sub_125AB+1AD↑j
+loc_12764:                              ; CODE XREF: drawMainMenuScreen+101↑j
+                                        ; drawMainMenuScreen+1AD↑j
                 lea     ax, [bp-26h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 j_rt_F4_8:                              ; -> rtm_F4  (leglib seg003:0x1bb7c)
                 call    far ptr rt_F4
+
+nullsub_158:
+                retf    2
 ; ---------------------------------------------------------------------------
 
-nullsub_95:
-                retf    2
-sub_125AB       endp
+j_j_j_j_j_j_rt_ED:                      ; CODE XREF: showStartupSplash:j_j_j_j_j_j_j_rt_ED↑j
+                jmp     j_j_j_j_j_rt_ED
+drawMainMenuScreen endp
 
-; [00000003 BYTES: COLLAPSED FUNCTION j_j_j_j_j_j_rt_ED. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: noreturn
 
-sub_12778       proc far                ; CODE XREF: sub_10D97:loc_10E2C↑P
-                                        ; sub_11D3A:loc_11DCF↑P ...
+sub_12778       proc far                ; CODE XREF: eraseCharacterMenu:loc_10E2C↑P
+                                        ; startNewGameMenu:loc_11DCF↑P ...
                 mov     cx, 0Ah
                 call    far ptr rt_F0   ; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
-; ---------------------------------------------------------------------------
 
 loc_12780:
                 mov     ax, 23B6h
@@ -5918,19 +5293,16 @@ loc_12780:
                 lea     ax, [bp-0Eh]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_1278D:
                 lea     ax, [bp-0Eh]
                 push    ax
                 call    far ptr rt_FE63 ; -> rtm_FE63  (leglib seg007:0x24a83)
-; ---------------------------------------------------------------------------
 
 loc_12796:
                 lea     ax, [bp-0Eh]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_1279F:
                 mov     ax, 23B6h
@@ -5942,7 +5314,6 @@ loc_1279F:
                 mov     ax, 20h ; ' '
                 push    ax
                 call    far ptr rt_87   ; -> rtm_87  (leglib seg003:0x148ea)
-; ---------------------------------------------------------------------------
 
 loc_127B4:
                 mov     ax, 1
@@ -5955,7 +5326,6 @@ loc_127B4:
                 mov     ax, 2
                 push    ax
                 call    far ptr rt_5E   ; -> rtm_5E  (leglib seg003:0x14589)
-; ---------------------------------------------------------------------------
 
 loc_127C8:
                 mov     ax, 1
@@ -5968,7 +5338,6 @@ loc_127C8:
                 mov     ax, 2
                 push    ax
                 call    far ptr rt_5E   ; -> rtm_5E  (leglib seg003:0x14589)
-; ---------------------------------------------------------------------------
 
 loc_127DC:
                 mov     ax, 1
@@ -5981,20 +5350,17 @@ loc_127DC:
                 mov     ax, 2
                 push    ax
                 call    far ptr rt_5E   ; -> rtm_5E  (leglib seg003:0x14589)
-; ---------------------------------------------------------------------------
 
 loc_127F0:
                 mov     ax, 0Eh
                 push    ax
                 call    far ptr rt_CD   ; -> rtm_CD  (leglib seg003:0x1b774)
-; ---------------------------------------------------------------------------
 
 loc_127F9:
                 push    ax
                 lea     ax, [bp-12h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_12803:
                 mov     ax, 1
@@ -6017,7 +5383,6 @@ loc_1280A:                              ; CODE XREF: sub_12778+D1↓j
                 xor     ax, ax
                 push    ax
                 call    far ptr rt_5F   ; -> rtm_5F  (leglib seg003:0x145ab)
-; ---------------------------------------------------------------------------
                 mov     ax, ds:211Ch
                 add     ds:1B0Ah, ax
                 lea     ax, [bp-12h]
@@ -6028,7 +5393,6 @@ loc_1280A:                              ; CODE XREF: sub_12778+D1↓j
                 add     ax, 20E4h
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 mov     ax, [bp-14h]
                 inc     ax
 
@@ -6040,7 +5404,6 @@ loc_12843:                              ; CODE XREF: sub_12778+8E↑j
                 push    ax
                 push    ax
                 call    far ptr rt_09   ; -> rtm_09  (leglib seg003:0x14a31)
-; ---------------------------------------------------------------------------
 
 loc_12855:
                 mov     ax, 2C36h
@@ -6048,7 +5411,6 @@ loc_12855:
                 mov     ax, 20E4h
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_12862:
                 mov     word ptr ds:2138h, 8
@@ -6064,7 +5426,6 @@ loc_1286E:                              ; CODE XREF: sub_12778+11B↓j
                 mov     ax, 2116h
                 push    ax
                 call    far ptr rt_FF0A ; -> rtm_FF0A  (leglib seg003:0x1b5e8)
-; ---------------------------------------------------------------------------
                 jz      short loc_12885
                 jmp     loc_12889
 ; ---------------------------------------------------------------------------
@@ -6083,27 +5444,27 @@ loc_1288D:                              ; CODE XREF: sub_12778+F3↑j
                 lea     ax, [bp-12h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 j_rt_F4_9:                              ; -> rtm_F4  (leglib seg003:0x1bb7c)
                 call    far ptr rt_F4
+
+nullsub_159:
+                retf    0
 ; ---------------------------------------------------------------------------
 
-nullsub_96:
-                retf    0
+j_j_j_j_j_rt_ED:                        ; CODE XREF: drawMainMenuScreen:j_j_j_j_j_j_rt_ED↑j
+                jmp     j_j_j_j_rt_ED
 sub_12778       endp
 
-; [00000003 BYTES: COLLAPSED FUNCTION j_j_j_j_j_rt_ED. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: noreturn
 
-sub_128A9       proc far                ; CODE XREF: sub_10D97+321↑P
-                                        ; sub_11D3A+2C2↑P
+sub_128A9       proc far                ; CODE XREF: eraseCharacterMenu+321↑P
+                                        ; startNewGameMenu+2C2↑P
                 mov     cx, 0Ah
                 call    far ptr rt_F0   ; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
-; ---------------------------------------------------------------------------
 
 loc_128B1:
                 mov     ax, 23B6h
@@ -6111,19 +5472,16 @@ loc_128B1:
                 lea     ax, [bp-0Eh]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_128BE:
                 lea     ax, [bp-0Eh]
                 push    ax
                 call    far ptr rt_FE63 ; -> rtm_FE63  (leglib seg007:0x24a83)
-; ---------------------------------------------------------------------------
 
 loc_128C7:
                 lea     ax, [bp-0Eh]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_128D0:
                 mov     ax, 23B6h
@@ -6135,7 +5493,6 @@ loc_128D0:
                 mov     ax, 20h ; ' '
                 push    ax
                 call    far ptr rt_87   ; -> rtm_87  (leglib seg003:0x148ea)
-; ---------------------------------------------------------------------------
 
 loc_128E5:
                 mov     word ptr ds:1B0Ah, 7
@@ -6152,7 +5509,6 @@ loc_128F2:                              ; CODE XREF: sub_128A9+85↓j
                 lea     ax, [bp-12h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 mov     ax, 1
                 push    ax
                 mov     ax, ds:1B0Ah
@@ -6167,7 +5523,6 @@ loc_128F2:                              ; CODE XREF: sub_128A9+85↓j
                 xor     ax, ax
                 push    ax
                 call    far ptr rt_AC   ; -> rtm_AC  (leglib seg003:0x145d6)
-; ---------------------------------------------------------------------------
                 mov     ax, ds:211Ch
                 add     ds:1B0Ah, ax
                 mov     ax, [bp-14h]
@@ -6181,33 +5536,33 @@ loc_12928:                              ; CODE XREF: sub_128A9+45↑j
                 push    ax
                 push    ax
                 call    far ptr rt_09   ; -> rtm_09  (leglib seg003:0x14a31)
-; ---------------------------------------------------------------------------
 
 loc_1293A:
                 lea     ax, [bp-12h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 j_rt_F4_10:                             ; -> rtm_F4  (leglib seg003:0x1bb7c)
                 call    far ptr rt_F4
+
+nullsub_160:
+                retf    0
 ; ---------------------------------------------------------------------------
 
-nullsub_97:
-                retf    0
+j_j_j_j_rt_ED:                          ; CODE XREF: sub_12778:j_j_j_j_j_rt_ED↑j
+                jmp     j_j_j_rt_ED
 sub_128A9       endp
 
-; [00000003 BYTES: COLLAPSED FUNCTION j_j_j_j_rt_ED. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
+; draws the "CANCEL" menu entry. Called only by drawMainMenuScreen.
 ; Attributes: noreturn
 
-sub_1294E       proc far                ; CODE XREF: sub_125AB+4A↑P
-                                        ; sub_125AB+72↑P ...
+drawCancelOption proc far               ; CODE XREF: drawMainMenuScreen+4A↑P
+                                        ; drawMainMenuScreen+72↑P ...
                 mov     cx, 4
                 call    far ptr rt_F0   ; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
-; ---------------------------------------------------------------------------
 
 loc_12956:
                 mov     si, [bp+8]
@@ -6217,85 +5572,77 @@ loc_12956:
                 jmp     loc_12975
 ; ---------------------------------------------------------------------------
 
-loc_12964:                              ; CODE XREF: sub_1294E+11↑j
+loc_12964:                              ; CODE XREF: drawCancelOption+11↑j
                 push    word ptr [bp+6]
                 call    far ptr rt_E0   ; -> rtm_E0  (leglib seg003:0x1b7eb)
-; ---------------------------------------------------------------------------
                 push    ax
                 push    word ptr [bp+6]
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
-loc_12975:                              ; CODE XREF: sub_1294E+13↑j
+loc_12975:                              ; CODE XREF: drawCancelOption+13↑j
                 mov     ax, 2C40h
                 push    ax
                 push    word ptr [bp+6]
                 call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
-; ---------------------------------------------------------------------------
 
 loc_12981:
                 push    ax
                 lea     ax, [bp-0Eh]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_1298B:
                 lea     ax, [bp-0Eh]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
 
 loc_12994:
                 lea     ax, [bp-0Eh]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 j_rt_F4_11:                             ; -> rtm_F4  (leglib seg003:0x1bb7c)
                 call    far ptr rt_F4
+
+nullsub_161:
+                retf    4
 ; ---------------------------------------------------------------------------
 
-nullsub_98:
-                retf    4
-sub_1294E       endp
+j_j_j_rt_ED:                            ; CODE XREF: sub_128A9:j_j_j_j_rt_ED↑j
+                jmp     j_j_rt_ED
+drawCancelOption endp
 
-; [00000003 BYTES: COLLAPSED FUNCTION j_j_j_rt_ED. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
+; the new-character intro cut-scene ("You are only a poor peasant on the world of Tarmalon...", the dead man / leather scroll / shimmering archway narrative) then hands off to the game ("Mail2", MUS.EXE / OUT.EXE / DUN.EXE). Largest seg000 function (~1.6 KB).
 ; Attributes: noreturn
 
-sub_129A8       proc far                ; CODE XREF: sub_11D3A+2F4↑P
-                                        ; sub_121E4+21B↑P
+playIntroAndLaunchGame proc far         ; CODE XREF: startNewGameMenu+2F4↑P
+                                        ; restartGameMenu+21B↑P
                 mov     cx, 0AEh
                 call    far ptr rt_F0   ; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
-; ---------------------------------------------------------------------------
 
 j_rt_FE2C:                              ; -> rtm_FE2C  (leglib seg007:0x24fe3)
                 call    far ptr rt_FE2C
-; ---------------------------------------------------------------------------
 
 loc_129B5:
                 mov     bx, 2C4Ch
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
-; ---------------------------------------------------------------------------
 
 loc_129BD:
                 mov     bx, 1AF4h
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
-; ---------------------------------------------------------------------------
 
 j_rt_FF1F_0:                            ; -> rtm_FF1F  (leglib seg004:0x21b5e)
                 call    far ptr rt_FF1F
-; ---------------------------------------------------------------------------
 
 loc_129CA:
                 jz      short loc_129CF
                 jmp     loc_12DC7
 ; ---------------------------------------------------------------------------
 
-loc_129CF:                              ; CODE XREF: sub_129A8:loc_129CA↑j
+loc_129CF:                              ; CODE XREF: playIntroAndLaunchGame:loc_129CA↑j
                 mov     word ptr [bp-0Ch], 2
                 mov     word ptr [bp-0Eh], 25h ; '%'
                 mov     word ptr [bp-10h], 1
@@ -6309,177 +5656,139 @@ loc_129CF:                              ; CODE XREF: sub_129A8:loc_129CA↑j
                 lea     ax, [bp-12h]
                 push    ax
                 call    far ptr rt_FE42 ; -> rtm_FE42  (leglib seg007:0x2730c)
-; ---------------------------------------------------------------------------
                 call    far ptr rt_FE45 ; -> rtm_FE45  (leglib seg008:0x27c6e)
-; ---------------------------------------------------------------------------
                 mov     ax, 2C50h
                 push    ax
                 lea     ax, [bp-16h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-16h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-16h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     ax, 2C7Ah
                 push    ax
                 lea     ax, [bp-1Ah]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-1Ah]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-1Ah]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     ax, 2CA0h
                 push    ax
                 lea     ax, [bp-1Eh]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-1Eh]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-1Eh]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     ax, 2CC6h
                 push    ax
                 lea     ax, [bp-22h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-22h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-22h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     ax, 2CEAh
                 push    ax
                 lea     ax, [bp-26h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-26h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-26h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     ax, 2D10h
                 push    ax
                 lea     ax, [bp-2Ah]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-2Ah]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-2Ah]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     ax, 2D20h
                 push    ax
                 lea     ax, [bp-2Eh]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-2Eh]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-2Eh]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     ax, 2D46h
                 push    ax
                 lea     ax, [bp-32h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-32h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-32h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     ax, 2D6Ch
                 push    ax
                 lea     ax, [bp-36h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-36h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-36h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     ax, 2D92h
                 push    ax
                 lea     ax, [bp-3Ah]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-3Ah]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-3Ah]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     ax, 2DB8h
                 push    ax
                 lea     ax, [bp-3Eh]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-3Eh]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-3Eh]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     ax, 2DDEh
                 push    ax
                 lea     ax, [bp-42h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-42h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-42h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     word ptr [bp-44h], 9
                 mov     word ptr [bp-46h], 17h
                 lea     ax, [bp-44h]
@@ -6487,224 +5796,176 @@ loc_129CF:                              ; CODE XREF: sub_129A8:loc_129CA↑j
                 lea     ax, [bp-46h]
                 push    ax
                 call    far ptr rt_FE3F ; -> rtm_FE3F  (leglib seg008:0x27d5a)
-; ---------------------------------------------------------------------------
                 mov     ax, 2400h
                 push    ax
                 lea     ax, [bp-4Ah]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-4Ah]
                 push    ax
                 call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-4Ah]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 call    far ptr sub_11A15
-; ---------------------------------------------------------------------------
                 mov     [bp-4Ch], ax
                 mov     ax, [bp-4Ch]
                 mov     [bp-4Eh], ax
                 call    far ptr rt_FE45 ; -> rtm_FE45  (leglib seg008:0x27c6e)
-; ---------------------------------------------------------------------------
                 mov     ax, 2DECh
                 push    ax
                 lea     ax, [bp-52h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-52h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-52h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     ax, 2E10h
                 push    ax
                 lea     ax, [bp-56h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-56h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-56h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     ax, 2E36h
                 push    ax
                 lea     ax, [bp-5Ah]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-5Ah]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-5Ah]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     ax, 2E5Ah
                 push    ax
                 lea     ax, [bp-5Eh]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-5Eh]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-5Eh]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     ax, 2E7Eh
                 push    ax
                 lea     ax, [bp-62h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-62h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-62h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     ax, 2EA4h
                 push    ax
                 lea     ax, [bp-66h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-66h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-66h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     ax, 2ECCh
                 push    ax
                 lea     ax, [bp-6Ah]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-6Ah]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-6Ah]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     ax, 2EF4h
                 push    ax
                 lea     ax, [bp-6Eh]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-6Eh]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-6Eh]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     ax, 2F1Ch
                 push    ax
                 lea     ax, [bp-72h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-72h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-72h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     ax, 2F44h
                 push    ax
                 lea     ax, [bp-76h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-76h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-76h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     ax, 2F68h
                 push    ax
                 lea     ax, [bp-7Ah]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-7Ah]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-7Ah]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     ax, 2F8Eh
                 push    ax
                 lea     ax, [bp-7Eh]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-7Eh]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-7Eh]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     ax, 2FB0h
                 push    ax
                 lea     ax, [bp-82h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-82h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-82h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     ax, 2FC4h
                 push    ax
                 lea     ax, [bp-86h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-86h]
                 push    ax
                 call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-86h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     word ptr [bp-88h], 9
                 mov     word ptr [bp-8Ah], 17h
                 lea     ax, [bp-88h]
@@ -6712,32 +5973,26 @@ loc_129CF:                              ; CODE XREF: sub_129A8:loc_129CA↑j
                 lea     ax, [bp-8Ah]
                 push    ax
                 call    far ptr rt_FE3F ; -> rtm_FE3F  (leglib seg008:0x27d5a)
-; ---------------------------------------------------------------------------
                 mov     ax, 2400h
                 push    ax
                 lea     ax, [bp-8Eh]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-8Eh]
                 push    ax
                 call    far ptr rt_FE25 ; -> rtm_FE25  (leglib seg008:0x28bd2)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-8Eh]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 call    far ptr sub_11A15
-; ---------------------------------------------------------------------------
                 mov     [bp-90h], ax
                 mov     ax, [bp-90h]
                 mov     [bp-4Eh], ax
                 call    far ptr rt_FE45 ; -> rtm_FE45  (leglib seg008:0x27c6e)
-; ---------------------------------------------------------------------------
                 jmp     loc_12E69
 ; ---------------------------------------------------------------------------
 
-loc_12DC7:                              ; CODE XREF: sub_129A8+24↑j
+loc_12DC7:                              ; CODE XREF: playIntroAndLaunchGame+24↑j
                 mov     si, 1B96h
                 mov     bx, 0Eh
                 add     bx, [si+0Ah]
@@ -6753,14 +6008,13 @@ loc_12DC7:                              ; CODE XREF: sub_129A8+24↑j
                 push    dx
                 push    ax
                 call    far ptr rt_EE   ; -> rtm_EE  (leglib seg003:0x1c9d3)
-; ---------------------------------------------------------------------------
 
 loc_12DF0:
                 jge     short loc_12DF5
                 jmp     loc_12E69
 ; ---------------------------------------------------------------------------
 
-loc_12DF5:                              ; CODE XREF: sub_129A8:loc_12DF0↑j
+loc_12DF5:                              ; CODE XREF: playIntroAndLaunchGame:loc_12DF0↑j
                 mov     ax, ds:213Ah
                 shl     ax, 1
                 shl     ax, 1
@@ -6773,89 +6027,76 @@ loc_12DF5:                              ; CODE XREF: sub_129A8:loc_12DF0↑j
                 push    ax
                 mov     [bp-92h], bx
                 call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
-; ---------------------------------------------------------------------------
                 push    ax
                 mov     si, 1D66h
                 mov     bx, 24h ; '$'
                 add     bx, [si+0Ah]
                 push    bx
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 mov     si, 1DF0h
                 mov     bx, [bp-92h]
                 mov     dx, bx
                 add     bx, [si+0Ah]
                 push    bx
                 call    far ptr rt_42   ; -> rtm_42  (leglib seg003:0x1b651)
-; ---------------------------------------------------------------------------
                 cmp     ax, 9
                 jg      short loc_12E3E
                 jmp     loc_12E69
 ; ---------------------------------------------------------------------------
 
-loc_12E3E:                              ; CODE XREF: sub_129A8+491↑j
+loc_12E3E:                              ; CODE XREF: playIntroAndLaunchGame+491↑j
                 mov     bx, [bp-92h]
                 add     bx, [si+0Ah]
                 push    bx
                 mov     ax, 0Bh
                 push    ax
                 call    far ptr rt_6C   ; -> rtm_6C  (leglib seg003:0x1b6fa)
-; ---------------------------------------------------------------------------
                 push    ax
                 mov     ax, 2FF0h
                 push    ax
                 call    far ptr rt_C3   ; -> rtm_C3  (leglib seg003:0x1b5ab)
-; ---------------------------------------------------------------------------
                 push    ax
                 mov     si, 1D66h
                 mov     bx, 24h ; '$'
                 add     bx, [si+0Ah]
                 push    bx
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
-loc_12E69:                              ; CODE XREF: sub_129A8+41C↑j
-                                        ; sub_129A8+44A↑j ...
+loc_12E69:                              ; CODE XREF: playIntroAndLaunchGame+41C↑j
+                                        ; playIntroAndLaunchGame+44A↑j ...
                 mov     ax, 4
                 cwd
                 push    dx
                 push    ax
                 call    far ptr rt_DE   ; -> rtm_DE  (leglib seg003:0x19d02)
-; ---------------------------------------------------------------------------
 
 loc_12E74:
                 mov     bx, ax
                 mov     [bp-94h], bx
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
-; ---------------------------------------------------------------------------
 
 j_rt_FF23:                              ; -> rtm_FF23  (leglib seg004:0x218ee)
                 call    far ptr rt_FF23
-; ---------------------------------------------------------------------------
 
 loc_12E84:
                 push    dx
                 push    ax
                 call    far ptr rt_14   ; -> rtm_14  (leglib seg003:0x1c9c9)
-; ---------------------------------------------------------------------------
 
 loc_12E8B:
                 mov     [bp-96h], ax
                 lea     ax, [bp-96h]
                 push    ax
                 call    far ptr rt_FE13 ; -> rtm_FE13  (leglib seg004:0x200a1)
-; ---------------------------------------------------------------------------
 
 j_rt_FE2C_0:                            ; -> rtm_FE2C  (leglib seg007:0x24fe3)
                 call    far ptr rt_FE2C
-; ---------------------------------------------------------------------------
 
 loc_12E9E:
                 mov     word ptr [bp-98h], 0FFFEh
                 lea     ax, [bp-98h]
                 push    ax
                 call    far ptr rt_FE49 ; -> rtm_FE49  (leglib seg007:0x25248)
-; ---------------------------------------------------------------------------
 
 loc_12EAE:
                 mov     bx, 4Eh ; 'N'
@@ -6866,27 +6107,22 @@ loc_12EAE:
                 mov     ax, bx
                 mov     [bp-0A2h], bx
                 call    far ptr rt_FF20 ; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
-; ---------------------------------------------------------------------------
 
 loc_12EC7:
                 sub     sp, 4
                 mov     bx, sp
                 call    far ptr rt_FF50 ; -> rtm_FF50  (leglib seg004:0x2182d)
-; ---------------------------------------------------------------------------
 
 j_rt_B8:                                ; -> rtm_B8  (leglib seg003:0x1a1ba)
                 call    far ptr rt_B8
-; ---------------------------------------------------------------------------
 
 loc_12ED6:
                 mov     bx, ax
                 mov     [bp-0A4h], bx
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
-; ---------------------------------------------------------------------------
 
 j_rt_FF23_0:                            ; -> rtm_FF23  (leglib seg004:0x218ee)
                 call    far ptr rt_FF23
-; ---------------------------------------------------------------------------
 
 loc_12EE6:
                 mov     ds:213Ah, ax
@@ -6914,7 +6150,6 @@ loc_12EE6:
                 lea     ax, [bp-0A0h]
                 push    ax
                 call    far ptr rt_FE3E ; -> rtm_FE3E  (leglib seg007:0x2497a)
-; ---------------------------------------------------------------------------
 
 loc_12F3E:
                 mov     word ptr [bp-0A6h], 2
@@ -6930,11 +6165,9 @@ loc_12F3E:
                 lea     ax, [bp-0ACh]
                 push    ax
                 call    far ptr rt_FE42 ; -> rtm_FE42  (leglib seg007:0x2730c)
-; ---------------------------------------------------------------------------
 
 j_rt_FE45_4:                            ; -> rtm_FE45  (leglib seg008:0x27c6e)
                 call    far ptr rt_FE45
-; ---------------------------------------------------------------------------
 
 loc_12F74:
                 cmp     word ptr ds:1AEEh, 3
@@ -6942,106 +6175,95 @@ loc_12F74:
                 jmp     loc_12FA9
 ; ---------------------------------------------------------------------------
 
-loc_12F7E:                              ; CODE XREF: sub_129A8+5D1↑j
+loc_12F7E:                              ; CODE XREF: playIntroAndLaunchGame+5D1↑j
                 mov     ax, 2FF8h
                 push    ax
                 lea     ax, [bp-0B0h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-0B0h]
                 push    ax
                 call    far ptr rt_FE63 ; -> rtm_FE63  (leglib seg007:0x24a83)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-0B0h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     ax, 3004h
                 push    ax
                 call    far ptr rt_FF08 ; -> rtm_FF08  (leglib seg003:0x13346)
-; ---------------------------------------------------------------------------
 
-loc_12FA9:                              ; CODE XREF: sub_129A8+5D3↑j
+loc_12FA9:                              ; CODE XREF: playIntroAndLaunchGame+5D3↑j
                 cmp     word ptr ds:1AEEh, 0
                 jz      short loc_12FB3
                 jmp     loc_12FDE
 ; ---------------------------------------------------------------------------
 
-loc_12FB3:                              ; CODE XREF: sub_129A8+606↑j
+loc_12FB3:                              ; CODE XREF: playIntroAndLaunchGame+606↑j
                 mov     ax, 300Ch
                 push    ax
                 lea     ax, [bp-0B4h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-0B4h]
                 push    ax
                 call    far ptr rt_FE63 ; -> rtm_FE63  (leglib seg007:0x24a83)
-; ---------------------------------------------------------------------------
                 lea     ax, [bp-0B4h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
                 mov     ax, 3018h
                 push    ax
                 call    far ptr rt_FF08 ; -> rtm_FF08  (leglib seg003:0x13346)
-; ---------------------------------------------------------------------------
 
-loc_12FDE:                              ; CODE XREF: sub_129A8+608↑j
+loc_12FDE:                              ; CODE XREF: playIntroAndLaunchGame+608↑j
                 mov     ax, 3020h
                 push    ax
                 lea     ax, [bp-0B8h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_12FEC:
                 lea     ax, [bp-0B8h]
                 push    ax
                 call    far ptr rt_FE63 ; -> rtm_FE63  (leglib seg007:0x24a83)
-; ---------------------------------------------------------------------------
 
 loc_12FF6:
                 lea     ax, [bp-0B8h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_13000:
                 mov     ax, 302Ch
                 push    ax
                 call    far ptr rt_FF08 ; -> rtm_FF08  (leglib seg003:0x13346)
-; ---------------------------------------------------------------------------
 
 j_rt_F4_12:                             ; -> rtm_F4  (leglib seg003:0x1bb7c)
                 call    far ptr rt_F4
+
+nullsub_162:
+                retf    0
 ; ---------------------------------------------------------------------------
 
-nullsub_99:
-                retf    0
-sub_129A8       endp
+j_j_rt_ED:                              ; CODE XREF: drawCancelOption:j_j_j_rt_ED↑j
+                jmp     j_rt_ED
+playIntroAndLaunchGame endp
 
-; [00000003 BYTES: COLLAPSED FUNCTION j_j_rt_ED. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
+; loads the title image (loadTitleImage -> TITLE.GLB / TITLE.GMP into B800h) and plays the theme music (5 MML strings at seg003:3034.. via playMusicTick / rtm_CE) until a key is pressed.
 ; Attributes: noreturn
 
-sub_13014       proc far                ; CODE XREF: sub_10580:loc_105E0↑P
+showTitleScreen proc far                ; CODE XREF: mainMenuLoop:j_showTitleScreen↑P
                 mov     cx, 1Eh
                 call    far ptr rt_F0   ; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
-; ---------------------------------------------------------------------------
 
-loc_1301C:
-                call    sub_13170
-                call    sub_13219
+loc_1301C:                              ; resident helper (seg001): opens TITLE.GLB and TITLE.GMP, reads them and unpacks into B800h video memory. Called by showTitleScreen.
+                call    loadTitleImage
+                call    scrollTitleImage ; resident helper (seg001): B800h row shuffle -- animates / scrolls the title image. Called by showTitleScreen. (name provisional)
                 mov     ax, 3034h
                 push    ax
                 mov     ax, 213Eh
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_13033:
                 mov     ax, 307Ch
@@ -7049,7 +6271,6 @@ loc_13033:
                 lea     ax, [bp-10h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_13040:
                 mov     ax, 30BEh
@@ -7057,7 +6278,6 @@ loc_13040:
                 lea     ax, [bp-14h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_1304D:
                 mov     ax, 3104h
@@ -7065,7 +6285,6 @@ loc_1304D:
                 lea     ax, [bp-18h]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
 loc_1305A:
                 mov     ax, 3134h
@@ -7073,11 +6292,9 @@ loc_1305A:
                 lea     ax, [bp-1Ch]
                 push    ax
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
-; ---------------------------------------------------------------------------
 
-loc_13067:
-                call    sub_11967
-; ---------------------------------------------------------------------------
+j_playMusicTick:                        ; plays/advances a pushed MML music string and polls the keyboard; returns nonzero when a key is pressed (used to abort the title sequence). Called repeatedly by showTitleScreen. NB: also touches LEGACY.DAT -- confirm.
+                call    playMusicTick
 
 loc_1306C:
                 mov     [bp-0Ch], ax
@@ -7087,13 +6304,11 @@ loc_1306C:
                 jmp     loc_13124
 ; ---------------------------------------------------------------------------
 
-loc_13079:                              ; CODE XREF: sub_13014+60↑j
+loc_13079:                              ; CODE XREF: showTitleScreen+60↑j
                 mov     ax, 213Eh
                 push    ax
                 call    far ptr rt_CE   ; -> rtm_CE  (leglib seg003:0x1edba)
-; ---------------------------------------------------------------------------
-                call    sub_11967
-; ---------------------------------------------------------------------------
+                call    playMusicTick   ; plays/advances a pushed MML music string and polls the keyboard; returns nonzero when a key is pressed (used to abort the title sequence). Called repeatedly by showTitleScreen. NB: also touches LEGACY.DAT -- confirm.
                 mov     [bp-1Eh], ax
                 mov     ax, [bp-1Eh]
                 and     ax, ax
@@ -7101,13 +6316,11 @@ loc_13079:                              ; CODE XREF: sub_13014+60↑j
                 jmp     loc_13124
 ; ---------------------------------------------------------------------------
 
-loc_13094:                              ; CODE XREF: sub_13014+7B↑j
+loc_13094:                              ; CODE XREF: showTitleScreen+7B↑j
                 lea     ax, [bp-10h]
                 push    ax
                 call    far ptr rt_CE   ; -> rtm_CE  (leglib seg003:0x1edba)
-; ---------------------------------------------------------------------------
-                call    sub_11967
-; ---------------------------------------------------------------------------
+                call    playMusicTick   ; plays/advances a pushed MML music string and polls the keyboard; returns nonzero when a key is pressed (used to abort the title sequence). Called repeatedly by showTitleScreen. NB: also touches LEGACY.DAT -- confirm.
                 mov     [bp-20h], ax
                 mov     ax, [bp-20h]
                 and     ax, ax
@@ -7115,13 +6328,11 @@ loc_13094:                              ; CODE XREF: sub_13014+7B↑j
                 jmp     loc_13124
 ; ---------------------------------------------------------------------------
 
-loc_130AF:                              ; CODE XREF: sub_13014+96↑j
+loc_130AF:                              ; CODE XREF: showTitleScreen+96↑j
                 lea     ax, [bp-14h]
                 push    ax
                 call    far ptr rt_CE   ; -> rtm_CE  (leglib seg003:0x1edba)
-; ---------------------------------------------------------------------------
-                call    sub_11967
-; ---------------------------------------------------------------------------
+                call    playMusicTick   ; plays/advances a pushed MML music string and polls the keyboard; returns nonzero when a key is pressed (used to abort the title sequence). Called repeatedly by showTitleScreen. NB: also touches LEGACY.DAT -- confirm.
                 mov     [bp-22h], ax
                 mov     ax, [bp-22h]
                 and     ax, ax
@@ -7129,13 +6340,11 @@ loc_130AF:                              ; CODE XREF: sub_13014+96↑j
                 jmp     loc_13124
 ; ---------------------------------------------------------------------------
 
-loc_130CA:                              ; CODE XREF: sub_13014+B1↑j
+loc_130CA:                              ; CODE XREF: showTitleScreen+B1↑j
                 lea     ax, [bp-18h]
                 push    ax
                 call    far ptr rt_CE   ; -> rtm_CE  (leglib seg003:0x1edba)
-; ---------------------------------------------------------------------------
-                call    sub_11967
-; ---------------------------------------------------------------------------
+                call    playMusicTick   ; plays/advances a pushed MML music string and polls the keyboard; returns nonzero when a key is pressed (used to abort the title sequence). Called repeatedly by showTitleScreen. NB: also touches LEGACY.DAT -- confirm.
                 mov     [bp-24h], ax
                 mov     ax, [bp-24h]
                 and     ax, ax
@@ -7143,13 +6352,11 @@ loc_130CA:                              ; CODE XREF: sub_13014+B1↑j
                 jmp     loc_13124
 ; ---------------------------------------------------------------------------
 
-loc_130E5:                              ; CODE XREF: sub_13014+CC↑j
+loc_130E5:                              ; CODE XREF: showTitleScreen+CC↑j
                 lea     ax, [bp-1Ch]
                 push    ax
                 call    far ptr rt_CE   ; -> rtm_CE  (leglib seg003:0x1edba)
-; ---------------------------------------------------------------------------
-                call    sub_11967
-; ---------------------------------------------------------------------------
+                call    playMusicTick   ; plays/advances a pushed MML music string and polls the keyboard; returns nonzero when a key is pressed (used to abort the title sequence). Called repeatedly by showTitleScreen. NB: also touches LEGACY.DAT -- confirm.
                 mov     [bp-26h], ax
                 mov     ax, [bp-26h]
                 and     ax, ax
@@ -7157,13 +6364,11 @@ loc_130E5:                              ; CODE XREF: sub_13014+CC↑j
                 jmp     loc_13124
 ; ---------------------------------------------------------------------------
 
-loc_13100:                              ; CODE XREF: sub_13014+E7↑j
+loc_13100:                              ; CODE XREF: showTitleScreen+E7↑j
                 mov     ax, 210Eh
                 push    ax
                 call    far ptr rt_CE   ; -> rtm_CE  (leglib seg003:0x1edba)
-; ---------------------------------------------------------------------------
-                call    sub_11967
-; ---------------------------------------------------------------------------
+                call    playMusicTick   ; plays/advances a pushed MML music string and polls the keyboard; returns nonzero when a key is pressed (used to abort the title sequence). Called repeatedly by showTitleScreen. NB: also touches LEGACY.DAT -- confirm.
                 mov     [bp-28h], ax
                 mov     ax, [bp-28h]
                 and     ax, ax
@@ -7171,48 +6376,41 @@ loc_13100:                              ; CODE XREF: sub_13014+E7↑j
                 jmp     loc_13124
 ; ---------------------------------------------------------------------------
 
-loc_1311B:                              ; CODE XREF: sub_13014+102↑j
+loc_1311B:                              ; CODE XREF: showTitleScreen+102↑j
                 mov     ax, 213Eh
                 push    ax
                 call    far ptr rt_CE   ; -> rtm_CE  (leglib seg003:0x1edba)
-; ---------------------------------------------------------------------------
 
-loc_13124:                              ; CODE XREF: sub_13014+62↑j
-                                        ; sub_13014+7D↑j ...
+loc_13124:                              ; CODE XREF: showTitleScreen+62↑j
+                                        ; showTitleScreen+7D↑j ...
                 call    far ptr rt_FE45 ; -> rtm_FE45  (leglib seg008:0x27c6e)
-; ---------------------------------------------------------------------------
 
 loc_13129:
                 lea     ax, [bp-14h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_13132:
                 lea     ax, [bp-10h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_1313B:
                 lea     ax, [bp-1Ch]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 loc_13144:
                 lea     ax, [bp-18h]
                 push    ax
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
-; ---------------------------------------------------------------------------
 
 j_rt_F4_13:                             ; -> rtm_F4  (leglib seg003:0x1bb7c)
                 call    far ptr rt_F4
-; ---------------------------------------------------------------------------
 
-nullsub_100:
+nullsub_163:
                 retf    0
-sub_13014       endp
+showTitleScreen endp
 
 ; [00000005 BYTES: COLLAPSED FUNCTION j_rt_ED. PRESS NUMPAD+ TO EXPAND]
                 db    0
@@ -7248,19 +6446,20 @@ seg001          segment byte public 'CODE' use16
 
 ; =============== S U B R O U T I N E =======================================
 
+; resident helper (seg001): opens TITLE.GLB and TITLE.GMP, reads them and unpacks into B800h video memory. Called by showTitleScreen.
 
-sub_13170       proc far                ; CODE XREF: sub_13014:loc_1301C↑P
+loadTitleImage  proc far                ; CODE XREF: showTitleScreen:loc_1301C↑P
                 push    es
                 push    si
                 push    di
                 mov     dx, 317Ch
                 mov     bx, 3194h
                 mov     cx, ds:3190h
-                call    sub_131D3
+                call    readFileWhole   ; resident helper (seg001): DOS open (3D02) / read (3F) / close (3E) a whole file into a buffer. Used by loadTitleImage.
                 mov     dx, 3186h
                 mov     bx, 5194h
                 mov     cx, ds:3192h
-                call    sub_131D3
+                call    readFileWhole   ; resident helper (seg001): DOS open (3D02) / read (3F) / close (3E) a whole file into a buffer. Used by loadTitleImage.
                 mov     ax, 0B800h
                 mov     es, ax
                 assume es:nothing
@@ -7273,17 +6472,17 @@ sub_13170       proc far                ; CODE XREF: sub_13014:loc_1301C↑P
                 mov     bl, 0
                 mov     cx, 28h ; '('
 
-loc_131A7:                              ; CODE XREF: sub_13170+57↓j
+loc_131A7:                              ; CODE XREF: loadTitleImage+57↓j
                 push    cx
                 mov     bh, 0
                 mov     cx, 19h
 
-loc_131AD:                              ; CODE XREF: sub_13170+4F↓j
+loc_131AD:                              ; CODE XREF: loadTitleImage+4F↓j
                 mov     si, [di]
                 shl     si, 1
                 add     si, ds:6194h
                 push    di
-                call    sub_131E5
+                call    blitCharCell    ; resident helper (seg001): copies one 8x8-ish cell into the B800h framebuffer at (row*320 + col*2)+offset. (name provisional)
                 inc     bh
                 pop     di
                 add     di, 2
@@ -7298,14 +6497,15 @@ loc_131AD:                              ; CODE XREF: sub_13170+4F↓j
                 pop     es
                 assume es:nothing
                 retf
-sub_13170       endp
+loadTitleImage  endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; resident helper (seg001): DOS open (3D02) / read (3F) / close (3E) a whole file into a buffer. Used by loadTitleImage.
 
-sub_131D3       proc near               ; CODE XREF: sub_13170+D↑p
-                                        ; sub_13170+1A↑p
+readFileWhole   proc near               ; CODE XREF: loadTitleImage+D↑p
+                                        ; loadTitleImage+1A↑p
                 mov     ax, 3D02h
                 int     21h             ; DOS - 2+ - OPEN DISK FILE WITH HANDLE
                                         ; DS:DX -> ASCIZ filename
@@ -7321,14 +6521,15 @@ sub_131D3       proc near               ; CODE XREF: sub_13170+D↑p
                 int     21h             ; DOS - 2+ - CLOSE A FILE WITH HANDLE
                                         ; BX = file handle
                 retn
-sub_131D3       endp
+readFileWhole   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; resident helper (seg001): copies one 8x8-ish cell into the B800h framebuffer at (row*320 + col*2)+offset. (name provisional)
 
-sub_131E5       proc near               ; CODE XREF: sub_13170+46↑p
-                                        ; sub_13219+22↓p
+blitCharCell    proc near               ; CODE XREF: loadTitleImage+46↑p
+                                        ; scrollTitleImage+22↓p
                 mov     ah, 0
                 mov     al, bh
                 mov     dx, 140h
@@ -7355,14 +6556,15 @@ sub_131E5       proc near               ; CODE XREF: sub_13170+46↑p
                 add     di, 4Eh ; 'N'
                 movsw
                 retn
-sub_131E5       endp
+blitCharCell    endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; resident helper (seg001): B800h row shuffle -- animates / scrolls the title image. Called by showTitleScreen. (name provisional)
 
-sub_13219       proc far                ; CODE XREF: sub_11967:loc_119EA↑P
-                                        ; sub_13014+D↑P
+scrollTitleImage proc far               ; CODE XREF: playMusicTick:loc_119EA↑P
+                                        ; showTitleScreen+D↑P
                 push    es
                 push    si
                 push    di
@@ -7372,7 +6574,7 @@ sub_13219       proc far                ; CODE XREF: sub_11967:loc_119EA↑P
                 mov     dx, 0
                 mov     cx, 14h
 
-loc_13227:                              ; CODE XREF: sub_13219+29↓j
+loc_13227:                              ; CODE XREF: scrollTitleImage+29↓j
                 mov     di, dx
                 mov     bx, [di+6198h]
                 mov     ax, ds:6196h
@@ -7380,7 +6582,7 @@ loc_13227:                              ; CODE XREF: sub_13219+29↓j
                 mov     si, [di+61C0h]
                 add     si, ds:6194h
                 push    dx
-                call    sub_131E5
+                call    blitCharCell    ; resident helper (seg001): copies one 8x8-ish cell into the B800h framebuffer at (row*320 + col*2)+offset. (name provisional)
                 pop     dx
                 add     dx, 2
                 loop    loc_13227
@@ -7390,14 +6592,14 @@ loc_13227:                              ; CODE XREF: sub_13219+29↓j
                 jnz     short loc_13252
                 mov     ax, 0
 
-loc_13252:                              ; CODE XREF: sub_13219+34↑j
+loc_13252:                              ; CODE XREF: scrollTitleImage+34↑j
                 mov     ds:6196h, ax
                 pop     di
                 pop     si
                 pop     es
                 assume es:nothing
                 retf
-sub_13219       endp
+scrollTitleImage endp
 
 ; ---------------------------------------------------------------------------
                 db    0
@@ -7407,20 +6609,32 @@ sub_13219       endp
                 db    0
                 db    0
                 db    0
-; ---------------------------------------------------------------------------
 
-rt_EC:                                  ; CODE XREF: sub_10580:loc_10730↑P
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_EC  (leglib seg003:0x12dc7)
+; Attributes: noreturn
+
+rt_EC           proc near               ; CODE XREF: mainMenuLoop:loc_10730↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0ECh
-; ---------------------------------------------------------------------------
+rt_EC           endp
 
-rt_ED:                                  ; CODE XREF: j_rt_ED↑P
+
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_ED  (leglib seg003:0x12db0)
+; Attributes: noreturn
+
+rt_ED           proc near               ; CODE XREF: j_rt_ED↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0EDh
+rt_ED           endp
+
 ; ---------------------------------------------------------------------------
 
 rt_FF16:                                ; Overlay manager interrupt
@@ -7573,35 +6787,53 @@ rt_07:                                  ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 7
-; ---------------------------------------------------------------------------
 
-rt_09:                                  ; CODE XREF: menu_main+548↑P
-                                        ; sub_10C71+10D↑P ...
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_09  (leglib seg003:0x14a31)
+; Attributes: noreturn
+
+rt_09           proc near               ; CODE XREF: menu_main+548↑P
+                                        ; showCharacterRoster+10D↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 9
-; ---------------------------------------------------------------------------
+rt_09           endp
 
-rt_0F:                                  ; CODE XREF: menu_main+1ED↑P
+
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_0F  (leglib seg003:0x1360b)
+; Attributes: noreturn
+
+rt_0F           proc near               ; CODE XREF: menu_main+1ED↑P
                                         ; menu_main+2AA↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0Fh
+rt_0F           endp
+
 ; ---------------------------------------------------------------------------
 
 rt_13:                                  ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 13h
-; ---------------------------------------------------------------------------
 
-rt_14:                                  ; CODE XREF: sub_129A8+4DE↑P
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_14  (leglib seg003:0x1c9c9)
+; Attributes: noreturn
+
+rt_14           proc near               ; CODE XREF: playIntroAndLaunchGame+4DE↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 14h
+rt_14           endp
+
 ; ---------------------------------------------------------------------------
 
 rt_16:                                  ; Overlay manager interrupt
@@ -7674,14 +6906,20 @@ rt_41:                                  ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 41h
-; ---------------------------------------------------------------------------
 
-rt_42:                                  ; CODE XREF: sub_10738+B2↑P
-                                        ; sub_10D97+255↑P ...
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_42  (leglib seg003:0x1b651)
+; Attributes: noreturn
+
+rt_42           proc near               ; CODE XREF: readLegacyDat+B2↑P
+                                        ; eraseCharacterMenu+255↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 42h
+rt_42           endp
+
 ; ---------------------------------------------------------------------------
 
 rt_45:                                  ; Overlay manager interrupt
@@ -7724,13 +6962,19 @@ rt_4B:                                  ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 4Bh
-; ---------------------------------------------------------------------------
 
-rt_4E:                                  ; CODE XREF: sub_11967+8B↑P
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_4E  (leglib seg003:0x1edb0)
+; Attributes: noreturn
+
+rt_4E           proc near               ; CODE XREF: playMusicTick+8B↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 4Eh
+rt_4E           endp
+
 ; ---------------------------------------------------------------------------
 
 rt_50:                                  ; Overlay manager interrupt
@@ -7779,27 +7023,39 @@ rt_59:                                  ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 59h
-; ---------------------------------------------------------------------------
 
-rt_5A:                                  ; CODE XREF: sub_10738+138↑P
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_5A  (leglib seg003:0x19a3c)
+; Attributes: noreturn
+
+rt_5A           proc near               ; CODE XREF: readLegacyDat+138↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 5Ah
+rt_5A           endp
+
 ; ---------------------------------------------------------------------------
 
 rt_5B:                                  ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 5Bh
-; ---------------------------------------------------------------------------
 
-rt_62:                                  ; CODE XREF: sub_110CD:j_rt_62↑P
-                                        ; sub_110CD:j_rt_62_0↑P
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_62  (leglib seg003:0x1cbdc)
+; Attributes: noreturn
+
+rt_62           proc near               ; CODE XREF: promptNewCharacterName:j_rt_62↑P
+                                        ; promptNewCharacterName:j_rt_62_0↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 62h
+rt_62           endp
+
 ; ---------------------------------------------------------------------------
 
 rt_63:                                  ; Overlay manager interrupt
@@ -7848,28 +7104,40 @@ rt_6B:                                  ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 6Bh
-; ---------------------------------------------------------------------------
 
-rt_6C:                                  ; CODE XREF: sub_110CD+17A↑P
-                                        ; sub_110CD+253↑P ...
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_6C  (leglib seg003:0x1b6fa)
+; Attributes: noreturn
+
+rt_6C           proc near               ; CODE XREF: promptNewCharacterName+17A↑P
+                                        ; promptNewCharacterName+253↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 6Ch
+rt_6C           endp
+
 ; ---------------------------------------------------------------------------
 
 rt_6E:                                  ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 6Eh
-; ---------------------------------------------------------------------------
 
-rt_70:                                  ; CODE XREF: sub_110CD+15D↑P
-                                        ; sub_12414+25↑P ...
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_70  (leglib seg003:0x1bc02)
+; Attributes: noreturn
+
+rt_70           proc near               ; CODE XREF: promptNewCharacterName+15D↑P
+                                        ; showStartupSplash+25↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 70h
+rt_70           endp
+
 ; ---------------------------------------------------------------------------
 
 rt_71:                                  ; Overlay manager interrupt
@@ -7882,14 +7150,20 @@ rt_72:                                  ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 72h
-; ---------------------------------------------------------------------------
 
-rt_73:                                  ; CODE XREF: sub_10C71+6A↑P
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_73  (leglib seg003:0x1b4ed)
+; Attributes: noreturn
+
+rt_73           proc near               ; CODE XREF: showCharacterRoster+6A↑P
                                         ; sub_12055+A4↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 73h
+rt_73           endp
+
 ; ---------------------------------------------------------------------------
 
 rt_74:                                  ; Overlay manager interrupt
@@ -7926,14 +7200,20 @@ rt_86:                                  ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 86h
-; ---------------------------------------------------------------------------
 
-rt_87:                                  ; CODE XREF: menu_main+3C7↑P
-                                        ; sub_10C71+37↑P ...
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_87  (leglib seg003:0x148ea)
+; Attributes: noreturn
+
+rt_87           proc near               ; CODE XREF: menu_main+3C7↑P
+                                        ; showCharacterRoster+37↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 87h
+rt_87           endp
+
 ; ---------------------------------------------------------------------------
 
 rt_8C:                                  ; Overlay manager interrupt
@@ -7994,14 +7274,20 @@ rt_97:                                  ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 97h
-; ---------------------------------------------------------------------------
 
-rt_98:                                  ; CODE XREF: sub_110CD+180↑P
-                                        ; sub_12414+2E↑P ...
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_98  (leglib seg003:0x1b0d8)  [mid-func]
+; Attributes: noreturn
+
+rt_98           proc near               ; CODE XREF: promptNewCharacterName+180↑P
+                                        ; showStartupSplash+2E↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 98h
+rt_98           endp
+
 ; ---------------------------------------------------------------------------
 
 rt_A3:                                  ; Overlay manager interrupt
@@ -8026,13 +7312,19 @@ rt_A6:                                  ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0A6h
-; ---------------------------------------------------------------------------
 
-rt_A7:                                  ; CODE XREF: sub_12414+187↑P
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_A7  (leglib seg003:0x1b0d3)  [mid-func]
+; Attributes: noreturn
+
+rt_A7           proc near               ; CODE XREF: showStartupSplash+187↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0A7h
+rt_A7           endp
+
 ; ---------------------------------------------------------------------------
 
 rt_AD:                                  ; Overlay manager interrupt
@@ -8069,13 +7361,19 @@ rt_B4:                                  ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0B4h
-; ---------------------------------------------------------------------------
 
-rt_B5:                                  ; CODE XREF: sub_10738+C7↑P
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_B5  (leglib seg003:0x1b707)  [mid-func]
+; Attributes: noreturn
+
+rt_B5           proc near               ; CODE XREF: readLegacyDat+C7↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0B5h
+rt_B5           endp
+
 ; ---------------------------------------------------------------------------
 
 rt_B6:                                  ; Overlay manager interrupt
@@ -8088,43 +7386,67 @@ rt_BB:                                  ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0BBh
-; ---------------------------------------------------------------------------
 
-rt_BC:                                  ; CODE XREF: sub_10D97+1DF↑P
-                                        ; sub_10D97+24F↑P ...
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_BC  (leglib seg003:0x1b82c)  [mid-func]
+; Attributes: noreturn
+
+rt_BC           proc near               ; CODE XREF: eraseCharacterMenu+1DF↑P
+                                        ; eraseCharacterMenu+24F↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0BCh
+rt_BC           endp
+
 ; ---------------------------------------------------------------------------
 
 rt_C1:                                  ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0C1h
-; ---------------------------------------------------------------------------
 
-rt_C2:                                  ; CODE XREF: menu_main+31D↑P
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_C2  (leglib seg003:0x1b572)
+; Attributes: noreturn
+
+rt_C2           proc near               ; CODE XREF: menu_main+31D↑P
                                         ; menu_main+32A↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0C2h
-; ---------------------------------------------------------------------------
+rt_C2           endp
 
-rt_C3:                                  ; CODE XREF: sub_10D97+1E5↑P
-                                        ; sub_10D97+1EF↑P ...
+
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_C3  (leglib seg003:0x1b5ab)
+; Attributes: noreturn
+
+rt_C3           proc near               ; CODE XREF: eraseCharacterMenu+1E5↑P
+                                        ; eraseCharacterMenu+1EF↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0C3h
-; ---------------------------------------------------------------------------
+rt_C3           endp
 
-rt_C4:                                  ; CODE XREF: sub_12414+C↑P
+
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_C4  (leglib seg003:0x1bc75)
+; Attributes: noreturn
+
+rt_C4           proc near               ; CODE XREF: showStartupSplash+C↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0C4h
+rt_C4           endp
+
 ; ---------------------------------------------------------------------------
 
 rt_C5:                                  ; Overlay manager interrupt
@@ -8149,37 +7471,61 @@ rt_CC:                                  ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0CCh
-; ---------------------------------------------------------------------------
 
-rt_CD:                                  ; CODE XREF: sub_10C71+4F↑P
-                                        ; sub_110CD+16A↑P ...
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_CD  (leglib seg003:0x1b774)
+; Attributes: noreturn
+
+rt_CD           proc near               ; CODE XREF: showCharacterRoster+4F↑P
+                                        ; promptNewCharacterName+16A↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0CDh
-; ---------------------------------------------------------------------------
+rt_CD           endp
 
-rt_CE:                                  ; CODE XREF: menu_main+333↑P
+
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_CE  (leglib seg003:0x1edba)
+; Attributes: noreturn
+
+rt_CE           proc near               ; CODE XREF: menu_main+333↑P
                                         ; menu_main+33C↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0CEh
-; ---------------------------------------------------------------------------
+rt_CE           endp
 
-rt_D1:                                  ; CODE XREF: sub_10738+18A↑P
-                                        ; sub_10738+193↑P ...
+
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_D1  (leglib seg003:0x1b9b0)
+; Attributes: noreturn
+
+rt_D1           proc near               ; CODE XREF: readLegacyDat+18A↑P
+                                        ; readLegacyDat+193↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0D1h
-; ---------------------------------------------------------------------------
+rt_D1           endp
 
-rt_D2:                                  ; CODE XREF: sub_11C2F+B4↑P
+
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_D2  (leglib seg003:0x1b870)
+; Attributes: noreturn
+
+rt_D2           proc near               ; CODE XREF: promptCharacterNumber+B4↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0D2h
+rt_D2           endp
+
 ; ---------------------------------------------------------------------------
 
 rt_D3:                                  ; Overlay manager interrupt
@@ -8234,28 +7580,40 @@ rt_DD:                                  ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0DDh
-; ---------------------------------------------------------------------------
 
-rt_DE:                                  ; CODE XREF: menu_main:j_rt_DE↑P
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_DE  (leglib seg003:0x19d02)
+; Attributes: noreturn
+
+rt_DE           proc near               ; CODE XREF: menu_main:j_rt_DE↑P
                                         ; menu_main+35E↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0DEh
+rt_DE           endp
+
 ; ---------------------------------------------------------------------------
 
 rt_DF:                                  ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0DFh
-; ---------------------------------------------------------------------------
 
-rt_E0:                                  ; CODE XREF: sub_110CD+1DC↑P
-                                        ; sub_1294E+19↑P
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_E0  (leglib seg003:0x1b7eb)
+; Attributes: noreturn
+
+rt_E0           proc near               ; CODE XREF: promptNewCharacterName+1DC↑P
+                                        ; drawCancelOption+19↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0E0h
+rt_E0           endp
+
 ; ---------------------------------------------------------------------------
 
 rt_E1:                                  ; Overlay manager interrupt
@@ -8292,27 +7650,39 @@ rt_EB:                                  ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0EBh
-; ---------------------------------------------------------------------------
 
-rt_EE:                                  ; CODE XREF: sub_129A8+443↑P
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_EE  (leglib seg003:0x1c9d3)
+; Attributes: noreturn
+
+rt_EE           proc near               ; CODE XREF: playIntroAndLaunchGame+443↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0EEh
+rt_EE           endp
+
 ; ---------------------------------------------------------------------------
 
 rt_EF:                                  ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0EFh
-; ---------------------------------------------------------------------------
 
-rt_F0:                                  ; CODE XREF: sub_10738+3↑P
-                                        ; sub_108E7+3↑P ...
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
+; Attributes: noreturn
+
+rt_F0           proc near               ; CODE XREF: readLegacyDat+3↑P
+                                        ; showQuestCopyright+3↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0F0h
+rt_F0           endp
+
 ; ---------------------------------------------------------------------------
 
 rt_F1:                                  ; Overlay manager interrupt
@@ -8331,14 +7701,20 @@ rt_F3:                                  ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0F3h
-; ---------------------------------------------------------------------------
 
-rt_F4:                                  ; CODE XREF: sub_10738+1A4↑P
-                                        ; sub_108E7:j_rt_F4↑P ...
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_F4  (leglib seg003:0x1bb7c)
+; Attributes: noreturn
+
+rt_F4           proc near               ; CODE XREF: readLegacyDat+1A4↑P
+                                        ; showQuestCopyright:j_rt_F4↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0F4h
+rt_F4           endp
+
 ; ---------------------------------------------------------------------------
 
 rt_F5:                                  ; Overlay manager interrupt
@@ -8411,44 +7787,74 @@ rt_FF06:                                ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FFh, 6
-; ---------------------------------------------------------------------------
 
-rt_FF08:                                ; CODE XREF: sub_129A8+5FC↑P
-                                        ; sub_129A8+631↑P ...
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_FF08  (leglib seg003:0x13346)
+; Attributes: noreturn
+
+rt_FF08         proc near               ; CODE XREF: playIntroAndLaunchGame+5FC↑P
+                                        ; playIntroAndLaunchGame+631↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FFh, 8
-; ---------------------------------------------------------------------------
+rt_FF08         endp
 
-rt_FF09:                                ; CODE XREF: menu_main+2↑P
+
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_FF09  (leglib seg003:0x1cb26)  [mid-func]
+; Attributes: noreturn
+
+rt_FF09         proc near               ; CODE XREF: menu_main+2↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FFh, 9
-; ---------------------------------------------------------------------------
+rt_FF09         endp
 
-rt_FF0A:                                ; CODE XREF: sub_10738+28↑P
-                                        ; sub_10738+61↑P ...
+
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_FF0A  (leglib seg003:0x1b5e8)
+; Attributes: noreturn
+
+rt_FF0A         proc near               ; CODE XREF: readLegacyDat+28↑P
+                                        ; readLegacyDat+61↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FFh, 0Ah
-; ---------------------------------------------------------------------------
+rt_FF0A         endp
 
-rt_FF0B:                                ; CODE XREF: sub_110CD+2B0↑P
+
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_FF0B  (leglib seg003:0x1b9c3)
+; Attributes: noreturn
+
+rt_FF0B         proc near               ; CODE XREF: promptNewCharacterName+2B0↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FFh, 0Bh
-; ---------------------------------------------------------------------------
+rt_FF0B         endp
 
-rt_FF0D:                                ; CODE XREF: sub_11D3A+2F9↑P
-                                        ; sub_121E4+220↑P
+
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_FF0D  (leglib seg003:0x151b6)
+; Attributes: noreturn
+
+rt_FF0D         proc near               ; CODE XREF: startNewGameMenu+2F9↑P
+                                        ; restartGameMenu+220↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FFh, 0Dh
+rt_FF0D         endp
+
 ; ---------------------------------------------------------------------------
 
 rt_FF0E:                                ; Overlay manager interrupt
@@ -8461,14 +7867,20 @@ rt_FF0F:                                ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FFh, 0Fh
-; ---------------------------------------------------------------------------
 
-rt_FF1F:                                ; CODE XREF: sub_10580:j_rt_FF1F↑P
-                                        ; sub_11967+76↑P ...
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_FF1F  (leglib seg004:0x21b5e)
+; Attributes: noreturn
+
+rt_FF1F         proc near               ; CODE XREF: mainMenuLoop:j_rt_FF1F↑P
+                                        ; playMusicTick+76↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FFh, 1Fh
+rt_FF1F         endp
+
                 db    0
                 db    0
                 db    0
@@ -8513,34 +7925,52 @@ rt_FF1E:                                ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FFh, 1Eh
-; ---------------------------------------------------------------------------
 
-rt_FF20:                                ; CODE XREF: sub_129A8+51A↑P
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
+; Attributes: noreturn
+
+rt_FF20         proc near               ; CODE XREF: playIntroAndLaunchGame+51A↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FFh, 20h
+rt_FF20         endp
+
 ; ---------------------------------------------------------------------------
 
 rt_FF21:                                ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FFh, 21h
-; ---------------------------------------------------------------------------
 
-rt_FF22:                                ; CODE XREF: sub_10738+147↑P
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_FF22  (leglib seg004:0x218e6)
+; Attributes: noreturn
+
+rt_FF22         proc near               ; CODE XREF: readLegacyDat+147↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FFh, 22h
-; ---------------------------------------------------------------------------
+rt_FF22         endp
 
-rt_FF23:                                ; CODE XREF: sub_129A8:j_rt_FF23↑P
-                                        ; sub_129A8:j_rt_FF23_0↑P
+
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_FF23  (leglib seg004:0x218ee)
+; Attributes: noreturn
+
+rt_FF23         proc near               ; CODE XREF: playIntroAndLaunchGame:j_rt_FF23↑P
+                                        ; playIntroAndLaunchGame:j_rt_FF23_0↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FFh, 23h
+rt_FF23         endp
+
 ; ---------------------------------------------------------------------------
 
 rt_FF24:                                ; Overlay manager interrupt
@@ -8733,14 +8163,20 @@ rt_FF43:                                ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FFh, 43h
-; ---------------------------------------------------------------------------
 
-rt_FF44:                                ; CODE XREF: menu_main+370↑P
-                                        ; sub_11967+51↑P
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_FF44  (leglib seg004:0x21a62)
+; Attributes: noreturn
+
+rt_FF44         proc near               ; CODE XREF: menu_main+370↑P
+                                        ; playMusicTick+51↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FFh, 44h
+rt_FF44         endp
+
 ; ---------------------------------------------------------------------------
 
 rt_FF45:                                ; Overlay manager interrupt
@@ -8771,21 +8207,33 @@ rt_FF49:                                ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FFh, 49h
-; ---------------------------------------------------------------------------
 
-rt_FF4A:                                ; CODE XREF: sub_10738+142↑P
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_FF4A  (leglib seg004:0x216de)
+; Attributes: noreturn
+
+rt_FF4A         proc near               ; CODE XREF: readLegacyDat+142↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FFh, 4Ah
-; ---------------------------------------------------------------------------
+rt_FF4A         endp
 
-rt_FF4B:                                ; CODE XREF: menu_main+2E6↑P
+
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_FF4B  (leglib seg004:0x21690)
+; Attributes: noreturn
+
+rt_FF4B         proc near               ; CODE XREF: menu_main+2E6↑P
                                         ; menu_main+368↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FFh, 4Bh
+rt_FF4B         endp
+
 ; ---------------------------------------------------------------------------
 
 rt_FF4C:                                ; Overlay manager interrupt
@@ -8804,21 +8252,33 @@ rt_FF4E:                                ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FFh, 4Eh
-; ---------------------------------------------------------------------------
 
-rt_FF4F:                                ; CODE XREF: menu_main+2F0↑P
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_FF4F  (leglib seg004:0x2187b)
+; Attributes: noreturn
+
+rt_FF4F         proc near               ; CODE XREF: menu_main+2F0↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FFh, 4Fh
-; ---------------------------------------------------------------------------
+rt_FF4F         endp
 
-rt_FF50:                                ; CODE XREF: menu_main+378↑P
-                                        ; sub_11967+59↑P ...
+
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_FF50  (leglib seg004:0x2182d)
+; Attributes: noreturn
+
+rt_FF50         proc near               ; CODE XREF: menu_main+378↑P
+                                        ; playMusicTick+59↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FFh, 50h
+rt_FF50         endp
+
 ; ---------------------------------------------------------------------------
 
 rt_FF51:                                ; Overlay manager interrupt
@@ -8899,35 +8359,53 @@ rt_61:                                  ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 61h
-; ---------------------------------------------------------------------------
 
-rt_6D:                                  ; CODE XREF: sub_110CD+D6↑P
-                                        ; sub_110CD+F0↑P ...
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_6D  (leglib seg003:0x1dd26)
+; Attributes: noreturn
+
+rt_6D           proc near               ; CODE XREF: promptNewCharacterName+D6↑P
+                                        ; promptNewCharacterName+F0↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 6Dh
-; ---------------------------------------------------------------------------
+rt_6D           endp
 
-rt_7A:                                  ; CODE XREF: sub_110CD+BC↑P
+
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_7A  (leglib seg003:0x1a853)
+; Attributes: noreturn
+
+rt_7A           proc near               ; CODE XREF: promptNewCharacterName+BC↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 7Ah
+rt_7A           endp
+
 ; ---------------------------------------------------------------------------
 
 rt_7B:                                  ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 7Bh
-; ---------------------------------------------------------------------------
 
-rt_7C:                                  ; CODE XREF: sub_110CD+C9↑P
-                                        ; sub_110CD+E3↑P ...
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_7C  (leglib seg003:0x1a86d)
+; Attributes: noreturn
+
+rt_7C           proc near               ; CODE XREF: promptNewCharacterName+C9↑P
+                                        ; promptNewCharacterName+E3↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 7Ch
+rt_7C           endp
+
 ; ---------------------------------------------------------------------------
 
 rt_7D:                                  ; Overlay manager interrupt
@@ -9262,14 +8740,20 @@ rt_2F:                                  ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 2Fh
-; ---------------------------------------------------------------------------
 
-rt_30:                                  ; CODE XREF: sub_10738+6C↑P
-                                        ; sub_10738+CD↑P ...
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_30  (leglib seg003:0x1b661)
+; Attributes: noreturn
+
+rt_30           proc near               ; CODE XREF: readLegacyDat+6C↑P
+                                        ; readLegacyDat+CD↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 30h
+rt_30           endp
+
 ; ---------------------------------------------------------------------------
 
 rt_31:                                  ; Overlay manager interrupt
@@ -9366,22 +8850,34 @@ rt_5D:                                  ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 5Dh
-; ---------------------------------------------------------------------------
 
-rt_5E:                                  ; CODE XREF: menu_main+3DB↑P
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_5E  (leglib seg003:0x14589)
+; Attributes: noreturn
+
+rt_5E           proc near               ; CODE XREF: menu_main+3DB↑P
                                         ; menu_main+3EF↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 5Eh
-; ---------------------------------------------------------------------------
+rt_5E           endp
 
-rt_5F:                                  ; CODE XREF: sub_11AEB+9A↑P
+
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_5F  (leglib seg003:0x145ab)
+; Attributes: noreturn
+
+rt_5F           proc near               ; CODE XREF: showEmptyCharacterSlots+9A↑P
                                         ; sub_1210E+14↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 5Fh
+rt_5F           endp
+
 ; ---------------------------------------------------------------------------
 
 rt_67:                                  ; Overlay manager interrupt
@@ -9484,29 +8980,47 @@ rt_AA:                                  ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0AAh
-; ---------------------------------------------------------------------------
 
-rt_AB:                                  ; CODE XREF: sub_10C71+7D↑P
-                                        ; sub_10C71+B6↑P
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_AB  (leglib seg003:0x145a4)
+; Attributes: noreturn
+
+rt_AB           proc near               ; CODE XREF: showCharacterRoster+7D↑P
+                                        ; showCharacterRoster+B6↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0ABh
-; ---------------------------------------------------------------------------
+rt_AB           endp
 
-rt_AC:                                  ; CODE XREF: sub_128A9+6F↑P
+
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_AC  (leglib seg003:0x145d6)
+; Attributes: noreturn
+
+rt_AC           proc near               ; CODE XREF: sub_128A9+6F↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0ACh
-; ---------------------------------------------------------------------------
+rt_AC           endp
 
-rt_AF:                                  ; CODE XREF: menu_main+21↑P
+
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_AF  (leglib seg003:0x13608)
+; Attributes: noreturn
+
+rt_AF           proc near               ; CODE XREF: menu_main+21↑P
                                         ; menu_main+39↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0AFh
+rt_AF           endp
+
 ; ---------------------------------------------------------------------------
 
 rt_B0:                                  ; Overlay manager interrupt
@@ -9519,40 +9033,58 @@ rt_B7:                                  ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0B7h
-; ---------------------------------------------------------------------------
 
-rt_B8:                                  ; CODE XREF: sub_129A8:j_rt_B8↑P
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_B8  (leglib seg003:0x1a1ba)
+; Attributes: noreturn
+
+rt_B8           proc near               ; CODE XREF: playIntroAndLaunchGame:j_rt_B8↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0B8h
+rt_B8           endp
+
 ; ---------------------------------------------------------------------------
 
 rt_B9:                                  ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0B9h
-; ---------------------------------------------------------------------------
 
-rt_BA:                                  ; CODE XREF: menu_main:j_rt_BA↑P
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_BA  (leglib seg003:0x1a237)
+; Attributes: noreturn
+
+rt_BA           proc near               ; CODE XREF: menu_main:j_rt_BA↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0BAh
+rt_BA           endp
+
 ; ---------------------------------------------------------------------------
 
 rt_C7:                                  ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0C7h
-; ---------------------------------------------------------------------------
 
-rt_C8:                                  ; CODE XREF: sub_10580+1A7↑P
-                                        ; sub_108E7+7E↑P ...
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_C8  (leglib seg003:0x138e2)
+; Attributes: noreturn
+
+rt_C8           proc near               ; CODE XREF: mainMenuLoop+1A7↑P
+                                        ; showQuestCopyright+7E↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0C8h
+rt_C8           endp
+
 ; ---------------------------------------------------------------------------
 
 rt_C9:                                  ; Overlay manager interrupt
@@ -9565,14 +9097,20 @@ rt_CA:                                  ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0CAh
-; ---------------------------------------------------------------------------
 
-rt_CF:                                  ; CODE XREF: menu_main+412↑P
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_CF  (leglib seg003:0x16168)  [mid-func]
+; Attributes: noreturn
+
+rt_CF           proc near               ; CODE XREF: menu_main+412↑P
                                         ; menu_main+461↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0CFh
+rt_CF           endp
+
 ; ---------------------------------------------------------------------------
 
 rt_D0:                                  ; Overlay manager interrupt
@@ -9705,20 +9243,32 @@ rt_FF67:                                ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FFh, 67h
-; ---------------------------------------------------------------------------
 
-rt_FE00:                                ; CODE XREF: menu_main:j_rt_FE00↑P
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_FE00  (leglib seg008:0x28e94)
+; Attributes: noreturn
+
+rt_FE00         proc near               ; CODE XREF: menu_main:j_rt_FE00↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FEh, 0
-; ---------------------------------------------------------------------------
+rt_FE00         endp
 
-rt_FE01:                                ; CODE XREF: sub_10580+42↑P
+
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_FE01  (leglib seg008:0x27c25)
+; Attributes: noreturn
+
+rt_FE01         proc near               ; CODE XREF: mainMenuLoop+42↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FEh, 1
+rt_FE01         endp
+
 ; ---------------------------------------------------------------------------
 
 rt_FE02:                                ; Overlay manager interrupt
@@ -9821,13 +9371,19 @@ rt_FE12:                                ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FEh, 12h
-; ---------------------------------------------------------------------------
 
-rt_FE13:                                ; CODE XREF: sub_129A8+4EC↑P
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_FE13  (leglib seg004:0x200a1)
+; Attributes: noreturn
+
+rt_FE13         proc near               ; CODE XREF: playIntroAndLaunchGame+4EC↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FEh, 13h
+rt_FE13         endp
+
 ; ---------------------------------------------------------------------------
 
 rt_FE14:                                ; Overlay manager interrupt
@@ -9888,14 +9444,20 @@ rt_FE1D:                                ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FEh, 1Dh
-; ---------------------------------------------------------------------------
 
-rt_FE1E:                                ; CODE XREF: sub_11C2F+45↑P
-                                        ; sub_11C2F+7F↑P ...
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_FE1E  (leglib seg008:0x28667)
+; Attributes: noreturn
+
+rt_FE1E         proc near               ; CODE XREF: promptCharacterNumber+45↑P
+                                        ; promptCharacterNumber+7F↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FEh, 1Eh
+rt_FE1E         endp
+
 ; ---------------------------------------------------------------------------
 
 rt_FE1F:                                ; Overlay manager interrupt
@@ -9932,22 +9494,34 @@ rt_FE24:                                ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FEh, 24h
-; ---------------------------------------------------------------------------
 
-rt_FE25:                                ; CODE XREF: sub_10A76+1CF↑P
-                                        ; sub_10D97+F0↑P ...
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_FE25  (leglib seg008:0x28bd2)
+; Attributes: noreturn
+
+rt_FE25         proc near               ; CODE XREF: showGameCredits+1CF↑P
+                                        ; eraseCharacterMenu+F0↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FEh, 25h
-; ---------------------------------------------------------------------------
+rt_FE25         endp
 
-rt_FE26:                                ; CODE XREF: sub_108E7+D4↑P
-                                        ; sub_108E7+10A↑P ...
+
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_FE26  (leglib seg007:0x26967)
+; Attributes: noreturn
+
+rt_FE26         proc near               ; CODE XREF: showQuestCopyright+D4↑P
+                                        ; showQuestCopyright+10A↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FEh, 26h
+rt_FE26         endp
+
 ; ---------------------------------------------------------------------------
 
 rt_FE27:                                ; Overlay manager interrupt
@@ -9960,14 +9534,20 @@ rt_FE28:                                ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FEh, 28h
-; ---------------------------------------------------------------------------
 
-rt_FE29:                                ; CODE XREF: sub_10580+5B↑P
-                                        ; sub_10580+79↑P
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_FE29  (leglib seg007:0x27391)
+; Attributes: noreturn
+
+rt_FE29         proc near               ; CODE XREF: mainMenuLoop+5B↑P
+                                        ; mainMenuLoop+79↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FEh, 29h
+rt_FE29         endp
+
 ; ---------------------------------------------------------------------------
 
 rt_FE2A:                                ; Overlay manager interrupt
@@ -9980,14 +9560,20 @@ rt_FE2B:                                ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FEh, 2Bh
-; ---------------------------------------------------------------------------
 
-rt_FE2C:                                ; CODE XREF: sub_129A8:j_rt_FE2C↑P
-                                        ; sub_129A8:j_rt_FE2C_0↑P
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_FE2C  (leglib seg007:0x24fe3)
+; Attributes: noreturn
+
+rt_FE2C         proc near               ; CODE XREF: playIntroAndLaunchGame:j_rt_FE2C↑P
+                                        ; playIntroAndLaunchGame:j_rt_FE2C_0↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FEh, 2Ch
+rt_FE2C         endp
+
 ; ---------------------------------------------------------------------------
 
 rt_FE2D:                                ; Overlay manager interrupt
@@ -10036,43 +9622,67 @@ rt_FE34:                                ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FEh, 34h
-; ---------------------------------------------------------------------------
 
-rt_FE35:                                ; CODE XREF: sub_10C71+99↑P
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_FE35  (leglib seg004:0x1fefb)
+; Attributes: noreturn
+
+rt_FE35         proc near               ; CODE XREF: showCharacterRoster+99↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FEh, 35h
-; ---------------------------------------------------------------------------
+rt_FE35         endp
 
-rt_FE36:                                ; CODE XREF: sub_11AEB+D4↑P
+
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_FE36  (leglib seg004:0x1ff08)
+; Attributes: noreturn
+
+rt_FE36         proc near               ; CODE XREF: showEmptyCharacterSlots+D4↑P
                                         ; sub_1210E+5D↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FEh, 36h
-; ---------------------------------------------------------------------------
+rt_FE36         endp
 
-rt_FE37:                                ; CODE XREF: sub_11AEB+EB↑P
-                                        ; sub_11AEB+F4↑P ...
+
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_FE37  (leglib seg007:0x2701b)
+; Attributes: noreturn
+
+rt_FE37         proc near               ; CODE XREF: showEmptyCharacterSlots+EB↑P
+                                        ; showEmptyCharacterSlots+F4↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FEh, 37h
+rt_FE37         endp
+
 ; ---------------------------------------------------------------------------
 
 rt_FE38:                                ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FEh, 38h
-; ---------------------------------------------------------------------------
 
-rt_FE39:                                ; CODE XREF: sub_10C71+CD↑P
-                                        ; sub_10C71+D6↑P ...
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_FE39  (leglib seg007:0x277fb)
+; Attributes: noreturn
+
+rt_FE39         proc near               ; CODE XREF: showCharacterRoster+CD↑P
+                                        ; showCharacterRoster+D6↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FEh, 39h
+rt_FE39         endp
+
 ; ---------------------------------------------------------------------------
 
 rt_FE3A:                                ; Overlay manager interrupt
@@ -10097,22 +9707,34 @@ rt_FE3D:                                ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FEh, 3Dh
-; ---------------------------------------------------------------------------
 
-rt_FE3E:                                ; CODE XREF: sub_108E7+3D↑P
-                                        ; sub_108E7+72↑P ...
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_FE3E  (leglib seg007:0x2497a)
+; Attributes: noreturn
+
+rt_FE3E         proc near               ; CODE XREF: showQuestCopyright+3D↑P
+                                        ; showQuestCopyright+72↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FEh, 3Eh
-; ---------------------------------------------------------------------------
+rt_FE3E         endp
 
-rt_FE3F:                                ; CODE XREF: sub_108E7+BE↑P
-                                        ; sub_108E7+F4↑P ...
+
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_FE3F  (leglib seg008:0x27d5a)
+; Attributes: noreturn
+
+rt_FE3F         proc near               ; CODE XREF: showQuestCopyright+BE↑P
+                                        ; showQuestCopyright+F4↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FEh, 3Fh
+rt_FE3F         endp
+
 ; ---------------------------------------------------------------------------
 
 rt_FE40:                                ; Overlay manager interrupt
@@ -10125,14 +9747,20 @@ rt_FE41:                                ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FEh, 41h
-; ---------------------------------------------------------------------------
 
-rt_FE42:                                ; CODE XREF: sub_108E7+A7↑P
-                                        ; sub_10A76+55↑P ...
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_FE42  (leglib seg007:0x2730c)
+; Attributes: noreturn
+
+rt_FE42         proc near               ; CODE XREF: showQuestCopyright+A7↑P
+                                        ; showGameCredits+55↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FEh, 42h
+rt_FE42         endp
+
 ; ---------------------------------------------------------------------------
 
 rt_FE43:                                ; Overlay manager interrupt
@@ -10145,14 +9773,20 @@ rt_FE44:                                ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FEh, 44h
-; ---------------------------------------------------------------------------
 
-rt_FE45:                                ; CODE XREF: sub_10A76+1EB↑P
-                                        ; sub_10D97:j_rt_FE45↑P ...
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_FE45  (leglib seg008:0x27c6e)
+; Attributes: noreturn
+
+rt_FE45         proc near               ; CODE XREF: showGameCredits+1EB↑P
+                                        ; eraseCharacterMenu:j_rt_FE45↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FEh, 45h
+rt_FE45         endp
+
 ; ---------------------------------------------------------------------------
 
 rt_FE46:                                ; Overlay manager interrupt
@@ -10171,13 +9805,19 @@ rt_FE48:                                ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FEh, 48h
-; ---------------------------------------------------------------------------
 
-rt_FE49:                                ; CODE XREF: sub_129A8+501↑P
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_FE49  (leglib seg007:0x25248)
+; Attributes: noreturn
+
+rt_FE49         proc near               ; CODE XREF: playIntroAndLaunchGame+501↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FEh, 49h
+rt_FE49         endp
+
 ; ---------------------------------------------------------------------------
 
 rt_FE4A:                                ; Overlay manager interrupt
@@ -10232,14 +9872,20 @@ rt_FE52:                                ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FEh, 52h
-; ---------------------------------------------------------------------------
 
-rt_FE53:                                ; CODE XREF: sub_10738+11↑P
-                                        ; sub_10738+3D↑P ...
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_FE53  (leglib seg008:0x281cb)
+; Attributes: noreturn
+
+rt_FE53         proc near               ; CODE XREF: readLegacyDat+11↑P
+                                        ; readLegacyDat+3D↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FEh, 53h
+rt_FE53         endp
+
 ; ---------------------------------------------------------------------------
 
 rt_FE54:                                ; Overlay manager interrupt
@@ -10264,21 +9910,33 @@ rt_FE57:                                ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FEh, 57h
-; ---------------------------------------------------------------------------
 
-rt_FE58:                                ; CODE XREF: sub_10D97+234↑P
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_FE58  (leglib seg007:0x27509)
+; Attributes: noreturn
+
+rt_FE58         proc near               ; CODE XREF: eraseCharacterMenu+234↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FEh, 58h
-; ---------------------------------------------------------------------------
+rt_FE58         endp
 
-rt_FE59:                                ; CODE XREF: sub_10738:loc_108A6↑P
-                                        ; sub_10D97:loc_10E3B↑P ...
+
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_FE59  (leglib seg007:0x256b5)
+; Attributes: noreturn
+
+rt_FE59         proc near               ; CODE XREF: readLegacyDat:loc_108A6↑P
+                                        ; eraseCharacterMenu:loc_10E3B↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FEh, 59h
+rt_FE59         endp
+
 ; ---------------------------------------------------------------------------
 
 rt_FE5A:                                ; Overlay manager interrupt
@@ -10321,62 +9979,98 @@ rt_FE60:                                ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FEh, 60h
-; ---------------------------------------------------------------------------
 
-rt_FE61:                                ; CODE XREF: menu_main:j_rt_FE61↑P
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_FE61  (leglib seg007:0x265dd)
+; Attributes: noreturn
+
+rt_FE61         proc near               ; CODE XREF: menu_main:j_rt_FE61↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FEh, 61h
-; ---------------------------------------------------------------------------
+rt_FE61         endp
 
-rt_FE62:                                ; CODE XREF: sub_12414:j_rt_FE62↑P
+
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_FE62  (leglib seg007:0x25981)
+; Attributes: noreturn
+
+rt_FE62         proc near               ; CODE XREF: showStartupSplash:j_rt_FE62↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FEh, 62h
-; ---------------------------------------------------------------------------
+rt_FE62         endp
 
-rt_FE63:                                ; CODE XREF: sub_10C71+19↑P
-                                        ; sub_11AEB+19↑P ...
+
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_FE63  (leglib seg007:0x24a83)
+; Attributes: noreturn
+
+rt_FE63         proc near               ; CODE XREF: showCharacterRoster+19↑P
+                                        ; showEmptyCharacterSlots+19↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FEh, 63h
+rt_FE63         endp
+
 ; ---------------------------------------------------------------------------
 
 rt_FE64:                                ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FEh, 64h
-; ---------------------------------------------------------------------------
 
-rt_FE65:                                ; CODE XREF: menu_main+310↑P
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_FE65  (leglib seg004:0x206f6)
+; Attributes: noreturn
+
+rt_FE65         proc near               ; CODE XREF: menu_main+310↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FEh, 65h
+rt_FE65         endp
+
 ; ---------------------------------------------------------------------------
 
 rt_FE66:                                ; Overlay manager interrupt
                 int     3Fh             ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FEh, 66h
-; ---------------------------------------------------------------------------
 
-rt_FE67:                                ; CODE XREF: menu_main:j_rt_FE67↑P
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_FE67  (leglib seg004:0x20690)
+; Attributes: noreturn
+
+rt_FE67         proc near               ; CODE XREF: menu_main:j_rt_FE67↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FEh, 67h
-; ---------------------------------------------------------------------------
+rt_FE67         endp
 
-rt_FE68:                                ; CODE XREF: menu_main+4FF↑P
+
+; =============== S U B R O U T I N E =======================================
+
+; -> rtm_FE68  (leglib seg007:0x2706c)
+; Attributes: noreturn
+
+rt_FE68         proc near               ; CODE XREF: menu_main+4FF↑P
                                         ; menu_main+508↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FEh, 68h
+rt_FE68         endp
+
 ; ---------------------------------------------------------------------------
 
 rt_FE69:                                ; Overlay manager interrupt

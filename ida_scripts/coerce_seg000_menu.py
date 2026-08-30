@@ -285,6 +285,12 @@ def main():
             ida_auto.auto_wait()
     print(f"call-far function merges: {rounds} rounds")
 
+    # NB: the cosmetic "add a fall-through cref past every call far" pass
+    # (to stop IDA's overlay special-casing chopping a block break after
+    # each one) lives in apply_renames_menu.py -- it has to run *after*
+    # resolve_thunks_menu.py's auto_wait, which would otherwise wipe the
+    # crefs. Pipeline order: resolve_thunks -> coerce -> apply_renames.
+
     c1 = coverage()
     print(f"\nafter:  code={c1[0]} data={c1[1]} undef={c1[2]}  "
           f"({100.0 * c1[0] / (S0E - S0):.1f}% code)")

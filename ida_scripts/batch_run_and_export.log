@@ -1405,3 +1405,827 @@ currently referenced from (partial) seg000 analysis: 84
 [*] gen_file(OFILE_IDC) returned 1
 [*] saving database to C:\dev\lota\menu.idb
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\lota\menu.idb
+[*] ARGV = ['C:\\dev\\lota\\ida_scripts\\batch_run_and_export.py', 'profile_seg000_menu.py', 'noexport']
+[*] reading profile_seg000_menu.py
+[*] executing profile_seg000_menu.py
+[*] captured stdout from target script:
+----- begin target script output -----
+47 functions in seg000
+
+=== menu_main  0x10032-0x1057f (1357 bytes)
+    callers: -
+    rtm: -
+      0x1033e  push 0x2108  -> ""
+      0x10347  push 0x2150  -> ""
+      0x1034b  push 0x210a  -> ""
+      0x10354  push 0x2160  -> "F"
+      0x10358  push 0x210e  -> ""
+      0x1039f  push 0x21aa  -> "d!l4cl8g>mll4c.mncl8c<bab>l2c.<g.l4cl8g>mll4c.mnl8" (+72)
+      0x103a7  push 0x2112  -> ""
+      0x103b4  push 0x21ae  -> "@" (+1)
+      0x103c6  push 0x21b6  -> "!YES%" (+5)
+      0x103dc  push 0x21bc  -> "!NO" (+3)
+      0x103e0  push 0x2116  -> ""
+      0x103e9  push 0x21ce  -> "!empty         
+" (+15)
+      0x10402  push 0x211a  -> ""
+      0x1042a  push 0x211c  -> ""
+
+=== sub_10580  0x10580-0x10738 (440 bytes)
+    callers: sub_10580
+    rtm: -
+      0x10580  push 0x2112  -> ""
+      0x105d3  push 0x2124  -> ""
+      0x105d7  push 0x2126  -> ""
+      0x105f1  push 0x2128  -> ""
+      0x105f5  push 0x212a  -> ""
+      0x10631  push 0x212c  -> ""
+      0x10635  push 0x212e  -> ""
+
+=== sub_10738  0x10738-0x108e4 (428 bytes)
+    callers: sub_10580, sub_10D97, sub_121E4
+    rtm: -
+      0x1075c  push 0x21dc  -> "!LEGACY.DAT" (+11)
+
+=== j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED  0x108e4-0x108e7 (3 bytes)
+    callers: sub_10580
+    rtm: -
+
+=== sub_108E7  0x108e7-0x10a73 (396 bytes)
+    callers: sub_10580
+    rtm: -
+      0x109aa  push 0x21e0  -> "!" (+1)
+      0x109e0  push 0x21fa  -> "!LEGACY OF THE ANCIENTS" (+23)
+      0x10a16  push 0x2218  -> ""
+      0x10a4c  push 0x2230  -> ""Quest Software, Inc." (+21)
+
+=== j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED  0x10a73-0x10a76 (3 bytes)
+    callers: j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED
+    rtm: -
+
+=== sub_10A76  0x10a76-0x10c6e (504 bytes)
+    callers: sub_10580
+    rtm: -
+      0x10ae7  push 0x2250  -> "4"(PICK OPTION USING KEYBOARD)" (+30)
+      0x10b06  push 0x2262  -> "T" GAME CREDITS "" (+16)
+      0x10b25  push 0x2288  -> "f"%%%%Designed by:    John Dougherty!" (+36)
+      0x10b44  push 0x22ae  -> ""
+      0x10b63  push 0x22ce  -> ""%%IBM version by: Al DeYoung" (+29)
+      0x10b82  push 0x22f0  -> ""%%Artwork by:     Rick Tumanis" (+31)
+      0x10ba1  push 0x2310  -> ""
+      0x10bc0  push 0x2332  -> "#                Roseann Miller " (+31)
+      0x10bdf  push 0x2356  -> "6#%%Additional      Gregg Seelhoff" (+34)
+      0x10bfe  push 0x237a  -> ""
+      0x10c34  push 0x239a  -> "~#                Bob Luzenski" (+30)
+
+=== j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED  0x10c6e-0x10c71 (3 bytes)
+    callers: j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED
+    rtm: -
+
+=== sub_10C71  0x10c71-0x10d94 (291 bytes)
+    callers: sub_10D97, sub_11D3A, sub_121E4
+    rtm: -
+      0x10c79  push 0x23b6  -> ""
+
+=== j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED  0x10d94-0x10d97 (3 bytes)
+    callers: j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED
+    rtm: -
+
+=== sub_10D97  0x10d97-0x110ca (819 bytes)
+    callers: sub_10580
+    rtm: -
+      0x10e08  push 0x23c2  -> "#CHAR.DAT" (+9)
+      0x10e40  push 0x23da  -> """
+      0x10e76  push 0x2400  -> "#%%    ** NO CHARACTERS TO ERASE **" (+35)
+      0x10eb0  push 0x241a  -> ""
+      0x10ee6  push 0x2438  -> ""
+      0x10f2d  push 0x2138  -> ""
+      0x10f66  push 0x2452  -> "<$(SELECT BY NUMBER KEY)	" (+24)
+      0x10f82  push 0x2460  -> "V$%  ERASE N" (+12)
+      0x1100d  push 0x2466  -> "
+"
+      0x11043  push 0x2116  -> ""
+
+=== j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED  0x110ca-0x110cd (3 bytes)
+    callers: j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED
+    rtm: -
+
+=== sub_110CD  0x110cd-0x1138a (701 bytes)
+    callers: sub_11D3A
+    rtm: -
+      0x110da  push 0x2474  -> "j$<- ERASING&" (+12)
+      0x110f9  push 0x249e  -> "x$%%% Type in your new character's name."" (+40)
+      0x1112f  push 0x24c4  -> "$% It may be up to 14 letters long.!" (+35)
+      0x11165  push 0x24ea  -> ""
+      0x111f3  push 0x21dc  -> "!LEGACY.DAT" (+11)
+
+=== j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED  0x1138a-0x1138d (3 bytes)
+    callers: j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED
+    rtm: -
+
+=== sub_1138D  0x1138d-0x1195c (1487 bytes)
+    callers: sub_10580
+    rtm: -
+      0x113fe  push 0x2508  -> ""
+      0x1141d  push 0x251a  -> "% INSTRUCTIONS " (+15)
+      0x1143c  push 0x253c  -> "%%% LEGACY OF THE ANCIENTS is a" (+31)
+      0x1145b  push 0x2560  -> """
+      0x1147a  push 0x2586  -> "d% options from which you may choose$" (+36)
+      0x11499  push 0x25ae  -> "% are always displayed on the screen.#" (+37)
+      0x114b8  push 0x25d6  -> ""
+      0x114d7  push 0x25f6  -> "%%      - If menu choices are " (+29)
+      0x114f6  push 0x261a  -> "%        numbered, then make your" (+33)
+      0x11515  push 0x263a  -> "&        selection by number.$" (+29)
+      0x11534  push 0x2662  -> ">&%      - If choices aren't numbered,"" (+38)
+      0x11553  push 0x2688  -> "f&        then press the key for the$" (+36)
+      0x11572  push 0x26b0  -> "&        first letter of your choice."" (+37)
+      0x115a8  push 0x2400  -> "#%%    ** NO CHARACTERS TO ERASE **" (+35)
+      0x115fd  push 0x26d6  -> "&        (Example: 'A' for 'Armor')" (+35)
+      0x1161c  push 0x26e2  -> "&COMMANDS$" (+9)
+      0x1163b  push 0x270a  -> "&%% The last command that you used is$" (+37)
+      0x1165a  push 0x2732  -> "' always marked on the screen;  press" (+37)
+      0x11679  push 0x274e  -> "&"
+      0x11698  push 0x2778  -> "R'%% To perform a different command, you" (+40)
+      0x116b7  push 0x2788  -> "|' can either:"" (+14)
+      0x116d6  push 0x27ae  -> "'%      - Highlight the new command!" (+35)
+      0x116f5  push 0x27d4  -> ""
+      0x11717  push 0x27f0  -> """
+      0x11739  push 0x2816  -> "'%      - Select the command with a" (+35)
+      0x117d4  push 0x282e  -> ""
+      0x117f6  push 0x2844  -> "2(CHARACTER MOVEMENT" (+20)
+      0x11818  push 0x2860  -> "H(%%Use the ARROW KEYS to:" (+26)
+      0x1183a  push 0x2878  -> "d(%     - Walk forward" (+22)
+      0x1185c  push 0x2894  -> ""
+      0x1187e  push 0x28ae  -> "&"
+      0x118a0  push 0x28d8  -> "(%%Outside:  Use the arrow keys to move" (+39)
+      0x118c2  push 0x28fc  -> "&"
+      0x118e4  push 0x2926  -> ")%%Note:  Use these keys anytime you're" (+39)
+
+=== j_rt_F4_3  0x1195c-0x11964 (8 bytes)
+    callers: sub_1138D
+    rtm: -
+
+=== j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED  0x11964-0x11967 (3 bytes)
+    callers: j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED
+    rtm: -
+
+=== sub_11967  0x11967-0x11a12 (171 bytes)
+    callers: sub_13014
+    rtm: -
+      0x11990  push 0x21dc  -> "!LEGACY.DAT" (+11)
+      0x119b5  push 0x2948  -> "
+ף="
+
+=== j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED  0x11a12-0x11a15 (3 bytes)
+    callers: j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED
+    rtm: -
+
+=== sub_11A15  0x11a15-0x11a1d (8 bytes)
+    callers: sub_10A76, sub_10D97, sub_1138D, sub_11D3A, sub_121E4, sub_129A8
+    rtm: -
+
+=== sub_11A1E  0x11a1e-0x11ae8 (202 bytes)
+    callers: sub_11A1E
+    rtm: -
+      0x11a3a  push 0x21dc  -> "!LEGACY.DAT" (+11)
+
+=== j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED  0x11ae8-0x11aeb (3 bytes)
+    callers: j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED
+    rtm: -
+
+=== sub_11AEB  0x11aeb-0x11c2c (321 bytes)
+    callers: sub_10D97, sub_11D3A
+    rtm: -
+      0x11af3  push 0x21ce  -> "!empty         
+" (+15)
+
+=== j_j_j_j_j_j_j_j_j_j_j_j_rt_ED  0x11c2c-0x11c2f (3 bytes)
+    callers: j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED
+    rtm: -
+
+=== sub_11C2F  0x11c2f-0x11d37 (264 bytes)
+    callers: sub_10D97, sub_121E4
+    rtm: -
+      0x11c5d  push 0x2116  -> ""
+      0x11c79  push 0x294c  -> "=" (+1)
+      0x11cb3  push 0x2952  -> "P)  " (+4)
+      0x11ce9  push 0x2958  -> ""
+
+=== j_j_j_j_j_j_j_j_j_j_j_rt_ED  0x11d37-0x11d3a (3 bytes)
+    callers: j_j_j_j_j_j_j_j_j_j_j_j_rt_ED
+    rtm: -
+
+=== sub_11D3A  0x11d3a-0x12052 (792 bytes)
+    callers: sub_10580
+    rtm: -
+      0x11dab  push 0x2960  -> ""
+      0x11dde  push 0x2976  -> "d) START A NEW GAME " (+20)
+      0x11dfd  push 0x2986  -> "z)%%%DISK FULL" (+14)
+      0x11e1c  push 0x29a0  -> ")%%YOU MUST FIRST ERASE" (+23)
+      0x11e3b  push 0x29bc  -> ")%AN OLD CHARACTER BEFORE" (+25)
+      0x11e71  push 0x2400  -> "#%%    ** NO CHARACTERS TO ERASE **" (+35)
+      0x11ecb  push 0x21dc  -> "!LEGACY.DAT" (+11)
+      0x11ef7  push 0x29d4  -> ""
+      0x11f0b  push 0x29de  -> ")%%%   " (+7)
+      0x11f30  push 0x29f2  -> ") ALREADY EXISTS." (+17)
+      0x11faa  push 0x2a10  -> ""
+      0x11fbe  push 0x2a18  -> "*%%% " (+5)
+
+=== j_j_j_j_j_j_j_j_j_j_rt_ED  0x12052-0x12055 (3 bytes)
+    callers: j_j_j_j_j_j_j_j_j_j_j_rt_ED
+    rtm: -
+
+=== sub_12055  0x12055-0x1210d (184 bytes)
+    callers: sub_10D97, sub_121E4
+    rtm: -
+      0x1205d  push 0x23b6  -> ""
+      0x12095  push 0x211a  -> ""
+      0x120bd  push 0x211c  -> ""
+
+=== sub_1210E  0x1210e-0x121e1 (211 bytes)
+    callers: sub_1210E
+    rtm: -
+
+=== j_j_j_j_j_j_j_j_j_rt_ED  0x121e1-0x121e4 (3 bytes)
+    callers: j_j_j_j_j_j_j_j_j_j_rt_ED
+    rtm: -
+
+=== sub_121E4  0x121e4-0x12411 (557 bytes)
+    callers: sub_10580
+    rtm: -
+      0x12255  push 0x2a30  -> ""
+      0x1228d  push 0x2a44  -> "4* RESTART A GAME #" (+18)
+      0x122c3  push 0x2400  -> "#%%    ** NO CHARACTERS TO ERASE **" (+35)
+      0x122fd  push 0x2a6c  -> ""
+      0x12333  push 0x2438  -> ""
+      0x1237b  push 0x2138  -> ""
+      0x123a1  push 0x2a8c  -> ""
+
+=== j_j_j_j_j_j_j_j_rt_ED  0x12411-0x12414 (3 bytes)
+    callers: j_j_j_j_j_j_j_j_j_rt_ED
+    rtm: -
+
+=== sub_12414  0x12414-0x125a8 (404 bytes)
+    callers: menu_main
+    rtm: -
+      0x1243e  push 0x2aa2  -> ""
+      0x12460  push 0x2abc  -> "*Legacy of the Ancients" (+23)
+      0x12482  push 0x21fa  -> "!LEGACY OF THE ANCIENTS" (+23)
+      0x124a4  push 0x2218  -> ""
+      0x124c6  push 0x2acc  -> "*Game Program" (+13)
+      0x124e8  push 0x2ae4  -> "*Installation Program" (+21)
+      0x1250a  push 0x2afa  -> "*Copyright (c) 1989" (+19)
+      0x1252c  push 0x2b0e  -> ""
+      0x1254e  push 0x2b22  -> "+Program Compiler" (+17)
+      0x12570  push 0x2b40  -> ""
+      0x12597  push 0x2b54  -> "
+"
+
+=== j_j_j_j_j_j_j_rt_ED  0x125a8-0x125ab (3 bytes)
+    callers: j_j_j_j_j_j_j_j_rt_ED
+    rtm: -
+
+=== sub_125AB  0x125ab-0x12775 (458 bytes)
+    callers: sub_10580
+    rtm: -
+      0x125e0  push 0x2b62  -> "X+Loading..." (+12)
+      0x12608  push 0x2b76  -> ""
+      0x12630  push 0x2b92  -> ""
+      0x1265d  push 0x2ba6  -> "+3.  game credits" (+17)
+      0x1266d  push 0x2bae  -> ""
+      0x1267f  push 0x2bb6  -> ""
+      0x126bd  push 0x2bd2  -> ""
+      0x126e5  push 0x2bee  -> "+1.  return to first menu" (+25)
+      0x1270d  push 0x2c06  -> "+2.  start a new game" (+21)
+      0x12735  push 0x2c1c  -> ",3.  restart a game" (+19)
+
+=== j_j_j_j_j_j_rt_ED  0x12775-0x12778 (3 bytes)
+    callers: j_j_j_j_j_j_j_rt_ED
+    rtm: -
+
+=== sub_12778  0x12778-0x128a6 (302 bytes)
+    callers: sub_10D97, sub_11D3A, sub_121E4
+    rtm: -
+      0x12780  push 0x23b6  -> ""
+      0x127b8  push 0x211a  -> ""
+      0x127e0  push 0x211c  -> ""
+      0x12855  push 0x2c36  -> ""
+      0x12877  push 0x2116  -> ""
+
+=== j_j_j_j_j_rt_ED  0x128a6-0x128a9 (3 bytes)
+    callers: j_j_j_j_j_j_rt_ED
+    rtm: -
+
+=== sub_128A9  0x128a9-0x1294b (162 bytes)
+    callers: sub_10D97, sub_11D3A
+    rtm: -
+      0x128b1  push 0x23b6  -> ""
+
+=== j_j_j_j_rt_ED  0x1294b-0x1294e (3 bytes)
+    callers: j_j_j_j_j_rt_ED
+    rtm: -
+
+=== sub_1294E  0x1294e-0x129a5 (87 bytes)
+    callers: sub_125AB
+    rtm: -
+      0x12975  push 0x2c40  -> ":,CANCEL" (+8)
+
+=== j_j_j_rt_ED  0x129a5-0x129a8 (3 bytes)
+    callers: j_j_j_j_rt_ED
+    rtm: -
+
+=== sub_129A8  0x129a8-0x13011 (1641 bytes)
+    callers: sub_11D3A, sub_121E4
+    rtm: -
+      0x129b5  push 0x2c4c  -> "D,%       " (+10)
+      0x129fd  push 0x2c50  -> "%"
+      0x12a1c  push 0x2c7a  -> "!"
+      0x12a3b  push 0x2ca0  -> "!"
+      0x12a5a  push 0x2cc6  -> " "
+      0x12a79  push 0x2cea  -> ",a dead man before.  His crumpled!" (+33)
+      0x12a98  push 0x2d10  -> ""
+      0x12ab7  push 0x2d20  -> "-of the road."" (+13)
+      0x12ad6  push 0x2d46  -> "$-%%Fighting your fear, you kneel by!" (+36)
+      0x12af5  push 0x2d6c  -> "!"
+      0x12b14  push 0x2d92  -> """
+      0x12b33  push 0x2db8  -> "-band around his wrist, and a large"" (+35)
+      0x12b52  push 0x2dde  -> "-leather scroll clutched tightly to
+" (+35)
+      0x12b88  push 0x2400  -> "#%%    ** NO CHARACTERS TO ERASE **" (+35)
+      0x12bba  push 0x2dec  -> "-his chest." (+11)
+      0x12bd9  push 0x2e10  -> """
+      0x12bf8  push 0x2e36  -> ".something compels you to reach for " (+35)
+      0x12c17  push 0x2e5a  -> ":.the leather scroll.  Getting the " (+34)
+      0x12c36  push 0x2e7e  -> "^.armband off is trickier, but you!" (+34)
+      0x12c55  push 0x2ea4  -> "$"
+      0x12c74  push 0x2ecc  -> ".wrist.  You scoop up two green coins$" (+37)
+      0x12c93  push 0x2ef4  -> ".lying nearby and hasten on your way.$" (+37)
+      0x12cb2  push 0x2f1c  -> ".%%Before you've gone more than a few#" (+37)
+      0x12cd1  push 0x2f44  -> " "
+      0x12cf0  push 0x2f68  -> "H/Rising from the mists, as though"" (+34)
+      0x12d0f  push 0x2f8e  -> "l/you've never been this way before," (+36)
+      0x12d2e  push 0x2fb0  -> "/is a magnificient structure of" (+31)
+      0x12d50  push 0x2fc4  -> ""
+      0x12e07  push 0x2fe6  -> "/%A shimmering archway beckons." (+31)
+      0x12e50  push 0x2ff0  -> "/ Mail2" (+7)
+      0x12f7e  push 0x2ff8  -> "/ MLe" (+5)
+      0x12fa0  push 0x3004  -> ""
+      0x12fb3  push 0x300c  -> ""
+      0x12fd5  push 0x3018  -> ""
+      0x12fde  push 0x3020  -> ""
+      0x13000  push 0x302c  -> ""
+
+=== j_j_rt_ED  0x13011-0x13014 (3 bytes)
+    callers: j_j_j_rt_ED
+    rtm: -
+
+=== sub_13014  0x13014-0x13155 (321 bytes)
+    callers: sub_10580
+    rtm: -
+      0x13026  push 0x3034  -> "C"
+      0x1302a  push 0x213e  -> ""
+      0x13033  push 0x307c  -> "="
+      0x13040  push 0x30be  -> "A"
+      0x1304d  push 0x3104  -> ","
+      0x1305a  push 0x3134  -> "1t120l4cl8efl4gl8efl4dgcl8efl4al8efl4gl8efl1d," (+45)
+      0x13100  push 0x210e  -> ""
+
+=== j_rt_ED  0x13155-0x1315a (5 bytes)
+    callers: j_j_rt_ED
+    rtm: -
+----- end target script output -----
+[*] finished executing profile_seg000_menu.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\lota\menu.idb
+[*] ARGV = ['C:\\dev\\lota\\ida_scripts\\batch_run_and_export.py', 'apply_renames_menu.py', 'noexport']
+[*] reading apply_renames_menu.py
+[*] executing apply_renames_menu.py
+[*] captured stdout from target script:
+----- begin target script output -----
+  would name 0x10580: 'sub_10580' -> 'mainMenuLoop'
+  would name 0x10738: 'sub_10738' -> 'readLegacyDat'
+  would name 0x108e7: 'sub_108E7' -> 'showQuestCopyright'
+  would name 0x10a76: 'sub_10A76' -> 'showGameCredits'
+  would name 0x10c71: 'sub_10C71' -> 'showCharacterRoster'
+  would name 0x10d97: 'sub_10D97' -> 'eraseCharacterMenu'
+  would name 0x110cd: 'sub_110CD' -> 'promptNewCharacterName'
+  would name 0x1138d: 'sub_1138D' -> 'showInstructions'
+  would name 0x11967: 'sub_11967' -> 'playMusicTick'
+  would name 0x11aeb: 'sub_11AEB' -> 'showEmptyCharacterSlots'
+  would name 0x11c2f: 'sub_11C2F' -> 'promptCharacterNumber'
+  would name 0x11d3a: 'sub_11D3A' -> 'startNewGameMenu'
+  would name 0x121e4: 'sub_121E4' -> 'restartGameMenu'
+  would name 0x12414: 'sub_12414' -> 'showStartupSplash'
+  would name 0x125ab: 'sub_125AB' -> 'drawMainMenuScreen'
+  would name 0x1294e: 'sub_1294E' -> 'drawCancelOption'
+  would name 0x129a8: 'sub_129A8' -> 'playIntroAndLaunchGame'
+  would name 0x13014: 'sub_13014' -> 'showTitleScreen'
+  would name 0x13170: 'sub_13170' -> 'loadTitleImage'
+  would name 0x13219: 'sub_13219' -> 'scrollTitleImage'
+  would name 0x131d3: 'sub_131D3' -> 'readFileWhole'
+  would name 0x131e5: 'sub_131E5' -> 'blitCharCell'
+
+applied 22, already-named 1, epilogue stubs merged 0   [DRY_RUN]
+seg000: 1/47 functions named
+----- end target script output -----
+[*] finished executing apply_renames_menu.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\lota\menu.idb
+[*] ARGV = ['C:\\dev\\lota\\ida_scripts\\batch_run_and_export.py', 'apply_renames_menu.py']
+[*] reading apply_renames_menu.py
+[*] executing apply_renames_menu.py
+[!] EXCEPTION:
+Traceback (most recent call last):
+  File "C:/dev/lota/ida_scripts/batch_run_and_export.py", line 97, in main
+    exec(compile(code, target_script, "exec"), g)
+  File "apply_renames_menu.py", line 202, in <module>
+    main()
+  File "apply_renames_menu.py", line 166, in main
+    if cur != name and not idc.set_name(ea, name, idc.SN_NOWARN | idc.SN_FORCE):
+  File "C:\Program Files\IDA Pro 8.3\python\3\ida_ida.py", line 4269, in __getattribute__
+    return getattr(self.orig, name)
+AttributeError: module 'idc' has no attribute 'SN_FORCE'
+
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\lota\menu.idb
+[*] ARGV = ['C:\\dev\\lota\\ida_scripts\\batch_run_and_export.py', 'apply_renames_menu.py']
+[*] reading apply_renames_menu.py
+[*] executing apply_renames_menu.py
+[*] captured stdout from target script:
+----- begin target script output -----
+
+applied 22, already-named 1, epilogue stubs merged 20
+seg000: 19/27 functions named
+----- end target script output -----
+[*] finished executing apply_renames_menu.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\lota\menu.asm
+[*] gen_file(OFILE_ASM) returned 11498
+[*] exporting IDC to C:\dev\lota\menu.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\lota\menu.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\lota\menu.idb
+[*] ARGV = ['C:\\dev\\lota\\ida_scripts\\batch_run_and_export.py', 'C:/Users/PAULGI~1/AppData/Local/Temp/probe_ovl.py', 'noexport']
+[*] reading C:/Users/PAULGI~1/AppData/Local/Temp/probe_ovl.py
+[*] executing C:/Users/PAULGI~1/AppData/Local/Temp/probe_ovl.py
+[*] captured stdout from target script:
+----- begin target script output -----
+AF : 0xfffffff7
+AF2: 0x7
+procname: pc
+AF_MARKCODE 2
+AF_CODE 1
+AF2_DODATA n/a
+----- end target script output -----
+[*] finished executing C:/Users/PAULGI~1/AppData/Local/Temp/probe_ovl.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\lota\menu.idb
+[*] ARGV = ['C:\\dev\\lota\\ida_scripts\\batch_run_and_export.py', 'coerce_seg000_menu.py']
+[*] reading coerce_seg000_menu.py
+[*] executing coerce_seg000_menu.py
+[*] captured stdout from target script:
+----- begin target script output -----
+seg000 0x10000-0x13160 (12640 bytes)
+before: code=12580 data=28 undef=32
+reset:  code=0 data=24 undef=12616
+far-call sites: 885  (830 -> seg001 thunks, 55 -> seg000 procs / 21 distinct targets)
+seg001 thunks made into returning funcs: 82/82
+anchored 885/885 call-far sites
+gap sweep: +3328 insns
+  settle pass 1: +3 insns, code=12584 undef=32
+  settle pass 2: +0 insns, code=12584 undef=32
+seed functions (entry + 21 procs + near-calls): 22/22
+orphan-code functions: 592
+call-far function merges: 2 rounds
+fall-through crefs added past call-far: 883
+
+after:  code=12583 data=25 undef=32  (99.5% code)
+delta:  code +3, undef +0
+functions in seg000: 47
+bad insns: 0  
+largest undefined runs left: 6@0x1315a, 1@0x10031
+----- end target script output -----
+[*] finished executing coerce_seg000_menu.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\lota\menu.asm
+[*] gen_file(OFILE_ASM) returned 11234
+[*] exporting IDC to C:\dev\lota\menu.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\lota\menu.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\lota\menu.idb
+[*] ARGV = ['C:\\dev\\lota\\ida_scripts\\batch_run_and_export.py', 'resolve_thunks_menu.py']
+[*] reading resolve_thunks_menu.py
+[*] executing resolve_thunks_menu.py
+[*] captured stdout from target script:
+----- begin target script output -----
+seg001: 467 thunks  (bare 254, FF 103, FE 110)
+named 0, commented 467, itemized 467
+resolved via rtm_map: 467/467
+currently referenced from (partial) seg000 analysis: 84
+----- end target script output -----
+[*] finished executing resolve_thunks_menu.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\lota\menu.asm
+[*] gen_file(OFILE_ASM) returned 10824
+[*] exporting IDC to C:\dev\lota\menu.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\lota\menu.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\lota\menu.idb
+[*] ARGV = ['C:\\dev\\lota\\ida_scripts\\batch_run_and_export.py', 'apply_renames_menu.py']
+[*] reading apply_renames_menu.py
+[*] executing apply_renames_menu.py
+[*] captured stdout from target script:
+----- begin target script output -----
+
+applied 0, already-named 23, epilogue stubs merged 20
+seg000: 19/27 functions named
+----- end target script output -----
+[*] finished executing apply_renames_menu.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\lota\menu.asm
+[*] gen_file(OFILE_ASM) returned 15617
+[*] exporting IDC to C:\dev\lota\menu.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\lota\menu.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\lota\menu.idb
+[*] ARGV = ['C:\\dev\\lota\\ida_scripts\\batch_run_and_export.py', 'resolve_thunks_menu.py']
+[*] reading resolve_thunks_menu.py
+[*] executing resolve_thunks_menu.py
+[*] captured stdout from target script:
+----- begin target script output -----
+seg001: 467 thunks  (bare 254, FF 103, FE 110)
+named 0, commented 467, itemized 467
+resolved via rtm_map: 467/467
+currently referenced from (partial) seg000 analysis: 48
+----- end target script output -----
+[*] finished executing resolve_thunks_menu.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\lota\menu.asm
+[*] gen_file(OFILE_ASM) returned 15520
+[*] exporting IDC to C:\dev\lota\menu.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\lota\menu.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\lota\menu.idb
+[*] ARGV = ['C:\\dev\\lota\\ida_scripts\\batch_run_and_export.py', 'coerce_seg000_menu.py']
+[*] reading coerce_seg000_menu.py
+[*] executing coerce_seg000_menu.py
+[*] captured stdout from target script:
+----- begin target script output -----
+seg000 0x10000-0x13160 (12640 bytes)
+before: code=3718 data=27 undef=8895
+reset:  code=0 data=24 undef=12616
+far-call sites: 885  (830 -> seg001 thunks, 55 -> seg000 procs / 21 distinct targets)
+seg001 thunks made into returning funcs: 82/82
+anchored 885/885 call-far sites
+gap sweep: +3328 insns
+  settle pass 1: +3 insns, code=12584 undef=32
+  settle pass 2: +0 insns, code=12584 undef=32
+seed functions (entry + 21 procs + near-calls): 22/22
+orphan-code functions: 592
+call-far function merges: 2 rounds
+
+after:  code=12583 data=25 undef=32  (99.5% code)
+delta:  code +8865, undef -8863
+functions in seg000: 47
+bad insns: 0  
+largest undefined runs left: 6@0x1315a, 1@0x10031
+----- end target script output -----
+[*] finished executing coerce_seg000_menu.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\lota\menu.asm
+[*] gen_file(OFILE_ASM) returned 12116
+[*] exporting IDC to C:\dev\lota\menu.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\lota\menu.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\lota\menu.idb
+[*] ARGV = ['C:\\dev\\lota\\ida_scripts\\batch_run_and_export.py', 'apply_renames_menu.py']
+[*] reading apply_renames_menu.py
+[*] executing apply_renames_menu.py
+[*] captured stdout from target script:
+----- begin target script output -----
+
+applied 0, already-named 23, epilogue stubs merged 20, fall-through crefs 886
+seg000: 19/27 functions named
+----- end target script output -----
+[*] finished executing apply_renames_menu.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\lota\menu.asm
+[*] gen_file(OFILE_ASM) returned 11314
+[*] exporting IDC to C:\dev\lota\menu.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\lota\menu.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\lota\menu.idb
+[*] ARGV = ['C:\\dev\\lota\\ida_scripts\\batch_run_and_export.py', 'resolve_thunks_menu.py']
+[*] reading resolve_thunks_menu.py
+[*] executing resolve_thunks_menu.py
+[*] captured stdout from target script:
+----- begin target script output -----
+seg001: 467 thunks  (bare 254, FF 103, FE 110)
+named 0, commented 467, itemized 0
+resolved via rtm_map: 467/467
+currently referenced from (partial) seg000 analysis: 84
+----- end target script output -----
+[*] finished executing resolve_thunks_menu.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\lota\menu.asm
+[*] gen_file(OFILE_ASM) returned 11314
+[*] exporting IDC to C:\dev\lota\menu.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\lota\menu.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\lota\menu.idb
+[*] ARGV = ['C:\\dev\\lota\\ida_scripts\\batch_run_and_export.py', 'coerce_seg000_menu.py']
+[*] reading coerce_seg000_menu.py
+[*] executing coerce_seg000_menu.py
+[*] captured stdout from target script:
+----- begin target script output -----
+seg000 0x10000-0x13160 (12640 bytes)
+before: code=12583 data=25 undef=32
+reset:  code=0 data=24 undef=12616
+far-call sites: 885  (830 -> seg001 thunks, 55 -> seg000 procs / 21 distinct targets)
+seg001 thunks made into returning funcs: 82/82
+anchored 885/885 call-far sites
+gap sweep: +3328 insns
+  settle pass 1: +3 insns, code=12584 undef=32
+  settle pass 2: +0 insns, code=12584 undef=32
+seed functions (entry + 21 procs + near-calls): 22/22
+orphan-code functions: 592
+call-far function merges: 2 rounds
+
+after:  code=12583 data=25 undef=32  (99.5% code)
+delta:  code +0, undef +0
+functions in seg000: 47
+bad insns: 0  
+largest undefined runs left: 6@0x1315a, 1@0x10031
+----- end target script output -----
+[*] finished executing coerce_seg000_menu.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\lota\menu.asm
+[*] gen_file(OFILE_ASM) returned 12116
+[*] exporting IDC to C:\dev\lota\menu.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\lota\menu.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\lota\menu.idb
+[*] ARGV = ['C:\\dev\\lota\\ida_scripts\\batch_run_and_export.py', 'apply_renames_menu.py']
+[*] reading apply_renames_menu.py
+[*] executing apply_renames_menu.py
+[*] captured stdout from target script:
+----- begin target script output -----
+
+applied 0, already-named 23, epilogue stubs merged 20, fall-through crefs 886
+seg000: 19/27 functions named
+----- end target script output -----
+[*] finished executing apply_renames_menu.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\lota\menu.asm
+[*] gen_file(OFILE_ASM) returned 11314
+[*] exporting IDC to C:\dev\lota\menu.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\lota\menu.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\lota\menu.idb
+[*] ARGV = ['C:\\dev\\lota\\ida_scripts\\batch_run_and_export.py', 'resolve_thunks_menu.py']
+[*] reading resolve_thunks_menu.py
+[*] executing resolve_thunks_menu.py
+[*] captured stdout from target script:
+----- begin target script output -----
+seg001: 467 thunks  (bare 254, FF 103, FE 110)
+named 0, commented 467, itemized 0
+resolved via rtm_map: 467/467
+currently referenced from (partial) seg000 analysis: 84
+----- end target script output -----
+[*] finished executing resolve_thunks_menu.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\lota\menu.asm
+[*] gen_file(OFILE_ASM) returned 11314
+[*] exporting IDC to C:\dev\lota\menu.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\lota\menu.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\lota\menu.idb
+[*] ARGV = ['C:\\dev\\lota\\ida_scripts\\batch_run_and_export.py', 'C:/Users/PAULGI~1/AppData/Local/Temp/chk.py', 'noexport']
+[*] reading C:/Users/PAULGI~1/AppData/Local/Temp/chk.py
+[*] executing C:/Users/PAULGI~1/AppData/Local/Temp/chk.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0x1304d code=True data=False unk=False func=showTitleScreen (0x13014-0x13155)
+0x13060 code=False data=False unk=False func=showTitleScreen (0x13014-0x13155)
+0x13100 code=True data=False unk=False func=showTitleScreen (0x13014-0x13155)
+0x13154 code=False data=False unk=False func=showTitleScreen (0x13014-0x13155)
+---seg000 funcs---
+0x10032 menu_main sz=1357
+0x10580 mainMenuLoop sz=440
+0x10738 readLegacyDat sz=431
+0x108e7 showQuestCopyright sz=399
+0x10a76 showGameCredits sz=507
+0x10c71 showCharacterRoster sz=294
+0x10d97 eraseCharacterMenu sz=822
+0x110cd promptNewCharacterName sz=704
+0x1138d showInstructions sz=1487
+0x1195c j_rt_F4_3 sz=11
+0x11967 playMusicTick sz=174
+0x11a15 sub_11A15 sz=8
+0x11a1e sub_11A1E sz=205
+0x11aeb showEmptyCharacterSlots sz=324
+0x11c2f promptCharacterNumber sz=267
+0x11d3a startNewGameMenu sz=795
+0x12055 sub_12055 sz=184
+0x1210e sub_1210E sz=214
+0x121e4 restartGameMenu sz=560
+0x12414 showStartupSplash sz=407
+0x125ab drawMainMenuScreen sz=461
+0x12778 sub_12778 sz=305
+0x128a9 sub_128A9 sz=165
+0x1294e drawCancelOption sz=90
+0x129a8 playIntroAndLaunchGame sz=1644
+0x13014 showTitleScreen sz=321
+0x13155 j_rt_ED sz=5
+----- end target script output -----
+[*] finished executing C:/Users/PAULGI~1/AppData/Local/Temp/chk.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\lota\menu.idb
+[*] ARGV = ['C:\\dev\\lota\\ida_scripts\\batch_run_and_export.py', 'resolve_thunks_menu.py']
+[*] reading resolve_thunks_menu.py
+[*] executing resolve_thunks_menu.py
+[*] captured stdout from target script:
+----- begin target script output -----
+seg001: 467 thunks  (bare 254, FF 103, FE 110)
+named 0, commented 467, itemized 0
+resolved via rtm_map: 467/467
+currently referenced from (partial) seg000 analysis: 84
+----- end target script output -----
+[*] finished executing resolve_thunks_menu.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\lota\menu.asm
+[*] gen_file(OFILE_ASM) returned 11396
+[*] exporting IDC to C:\dev\lota\menu.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\lota\menu.idb
+[*] done, exiting 0

@@ -71,12 +71,15 @@ not BASIC).
       (2026-08-30, `resolve_thunks_menu.py`).
 - [x] Force `seg000` to code (2026-08-30, `coerce_seg000_menu.py`):
       99.5%, 0 bad insns, 25 functions, full call graph.
-- [ ] Name the 25 `seg000` functions. `menu_main` → `sub_10580`
-      (main-menu dispatch) → option handlers; `sub_10738` reads the
-      GAME CREDITS text (loops over `seg003` offsets).
-- [ ] Cosmetic: IDA's `int 3Fh` overlay special-casing chops blocks
-      after every `call far` and mislabels some `noreturn`. Find the
-      analysis/loader switch to disable it, or post-process.
+- [x] Name the 25 `seg000` functions (2026-08-30, `apply_renames_menu.py`).
+      6 CHAR.DAT-record helpers left `sub_` (hard to distinguish).
+- [x] Cosmetic block-chopping: post-process fixed via fall-through crefs
+      past each `call far` (`apply_renames_menu.py`, final step). 1914 → 141.
+- [ ] Identify the 6 remaining `sub_` helpers (`sub_11A15` 8-byte shared
+      wrapper, `sub_11A1E`/`sub_1210E` self-callers, `sub_12055`/`12778`/
+      `128A9` near-clone CHAR.DAT enumerators).
+- [ ] Confirm `playMusicTick` / `showTitleScreen` naming (the LEGACY.DAT
+      touch in `playMusicTick` is unexplained).
 - [ ] `menu.idb` input path reads `C:\dev\lota\menu.exe` (a copy; the
       original `.idb` was lost and rebuilt via `idat -B`). Harmless, but
       re-point at `C:\games\lota\MENU.EXE` if a full rebuild is ever
