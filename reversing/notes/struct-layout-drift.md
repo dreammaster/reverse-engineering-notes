@@ -8602,3 +8602,41 @@ independent instance (add AND remove both treat them as one unit) --
 still not proof of physical struct membership (the underlying
 limitation hasn't changed), but a second data point in the same
 direction as `add_inventory`'s.
+
+## A quick correction, then `process_event`'s full `EV_*` dispatch table closes with zero drift
+
+A quick loose end first: last round's `GiveScore` writeup flagged
+`byte_513337`'s identity as "not chased further this round, a candidate
+for a future round" -- turns out it didn't need chasing at all. It was
+already confirmed several sessions ago as `GameSetupStructBase.
+options[1]` (`OPT_SCORESOUND`), via this exact same call site, and
+simply hadn't been cross-referenced back into `GiveScore`'s own
+`matches.json` entry when that confirmation was made. Fixed in place.
+
+The main result this round: `process_event` (already matched via two
+of its own self-identifying error strings, but with only a one-line
+evidence summary) turns out to dispatch on its `EventHappened`
+parameter's leading `type` field through a switch that matches ALL FIVE
+of 2011's declared `EV_*` constants (`AC.CPP:647-651`) with genuinely
+ZERO drift -- no gaps, no additions, unlike almost every other enum
+this project has mapped:
+
+```
+type=1  EV_TEXTSCRIPT  run_text_script_iparam / ExecutingScript::run_another
+type=2  EV_RUNEVBLOCK  sub_40C335 / run_event_block (the room-level EventBlock)
+type=3  EV_FADEIN      room-entry fade-in (fast_forward/fade_effect/screen_tint)
+type=4  EV_IFACECLICK  process_interface_click(ifce, btn)
+type=5  EV_NEWROOM     NewRoom(data1)
+```
+
+Any other value falls straight through to the function's own
+`"process_event: unknown event to process"` quit, proving the switch
+exhaustive -- the same standard already used to close the `DCMD_*` and
+graph-script opcode tables. Along the way this pins down `EventHappened`'s
+own leading field layout: `type`@`+0x00`, `data1`@`+0x04` (a script-name
+index for `EV_TEXTSCRIPT`, the room number for `EV_NEWROOM`), `data2`@
+`+0x08` (an extra `wparam` for `EV_TEXTSCRIPT`, the `btn` argument for
+`EV_IFACECLICK`), and a fourth field@`+0x0C` referenced inside the
+`EV_RUNEVBLOCK` branch's own `in_enters_screen` bookkeeping -- its exact
+role not chased further this round, a reasonable next target given how
+cleanly the rest of this struct closed.

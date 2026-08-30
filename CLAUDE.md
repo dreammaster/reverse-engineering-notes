@@ -2297,6 +2297,20 @@ disassembly work.
   adjacent addresses in the disassembly — giving the "synchronized
   pair" argument a second, independent instance alongside
   `add_inventory`'s.
+- **`process_event`'s full `EV_*` dispatch table closes with zero
+  drift.** Already matched via two of its own self-identifying error
+  strings, but thinly evidenced. Its switch on `EventHappened.type`
+  matches all five of 2011's declared `EV_*` constants exactly, with no
+  gaps and no additions — `1=EV_TEXTSCRIPT`, `2=EV_RUNEVBLOCK`,
+  `3=EV_FADEIN`, `4=EV_IFACECLICK`, `5=EV_NEWROOM` — falling through to
+  the function's own "unknown event to process" quit for anything else,
+  proving it exhaustive. Pins down `EventHappened`'s leading fields:
+  `type`@+0x00, `data1`@+0x04, `data2`@+0x08, and a fourth field@+0x0C
+  whose exact role is left for a future round. A small correction along
+  the way: last round's `GiveScore` note flagged `byte_513337` as
+  unidentified — it was already confirmed as `GameSetupStructBase.
+  options[1]` (`OPT_SCORESOUND`) several sessions ago, just not
+  cross-referenced back into `GiveScore`'s own entry.
 
 ## Third-party library identification (Task #10)
 
