@@ -8480,3 +8480,40 @@ the error for 6 or anything else. `GetTime(eScriptTime.Year)`-equivalent
 support is confirmed absent, another instance of this project's
 recurring "later AGS addition, not yet present in 2002" pattern, closing
 out a small but clean function match.
+
+## `CharacterInfo.actx`/`.acty` found after all -- a self-caught correction, closing the struct completely
+
+A much older round had shelved `actx`/`acty` as "checked and not found,"
+reasoning that 2011's only usage site for either field sits deep inside
+hardware-accelerated drawing code (`gfxDriver`/`actspsbmp`/`SetTint`)
+this build had already been shown, repeatedly, to predate entirely.
+That conclusion turns out to have been drawn too hastily -- it looked at
+the SURROUNDING code (genuinely absent) without checking whether the
+one line actually assigning `actx`/`acty` was there independently of
+it.
+
+The connection became findable once `add_to_sprite_list` was matched a
+few rounds ago: `prepare_characters_for_drawing` (already matched)
+calls it, and immediately afterward -- with ZERO surrounding hardware-
+acceleration machinery -- writes "`[chin+0x10C]=(short)(atxp+offsetx);
+[chin+0x10E]=(short)(atyp+offsety);`" via two plain 16-bit `mov`
+instructions. This matches 2011's own "`add_to_sprite_list(actspsbmp[
+useindx],...); chin->actx=atxp+offsetx; chin->acty=atyp+offsety;`"
+(`AC.CPP:8523-8526`) exactly, right down to the call order -- the
+`actx`/`acty` ASSIGNMENT was never inside the hardware-acceleration code
+at all, just adjacent to a call (`add_to_sprite_list`) that TAKES an
+`IDriverDependantBitmap*` in 2011 but a plain bitmap here. The earlier
+round conflated "the surrounding call's own signature has drifted" with
+"the field assignment itself is absent," and only the first half of
+that was actually true.
+
+The pointer being written (`var_38`) is independently confirmed as a
+`CharacterInfo*` in the very same code block, via `baseline`@`+0x32`,
+`y`@`+0x18`, and `flags`@`+0x20` (all already-confirmed offsets) being
+read from it a few lines earlier -- and the write width (16-bit) matches
+2011's declared `short actx, acty;` (`Common/acroom.h:2617`) with zero
+type drift. Both fields upgrade from MEDIUM to HIGH confidence,
+correcting the standing dismissal in place. With this, `CharacterInfo`
+-- one of the most heavily-worked structs in the whole project, spanning
+dozens of rounds across many sessions -- has no remaining open fields
+at all.

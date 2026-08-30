@@ -2248,6 +2248,22 @@ disassembly work.
   dispatch only checks 1–5, confirming year support absent — the usual
   "later AGS addition" pattern, closing out this round's error-string
   sweep.
+- **`CharacterInfo.actx`/`.acty` found after all — a self-caught
+  correction, closing the struct completely.** A much older round had
+  shelved these as "checked and not found," reasoning 2011's only usage
+  site sits deep inside hardware-accelerated drawing code this build
+  predates. That conflated two different things: the SURROUNDING code
+  had drifted (true), but the field ASSIGNMENT itself hadn't been
+  checked independently of it (turned out to still be there).
+  `add_to_sprite_list`'s match a few rounds ago supplied the anchor:
+  `prepare_characters_for_drawing` calls it, then immediately writes
+  `[chin+0x10C]`/`[chin+0x10E]` via two 16-bit `mov`s — matching 2011's
+  `chin->actx=atxp+offsetx; chin->acty=atyp+offsety;` (`AC.CPP:
+  8523-8526`) exactly, call order included. The pointer is independently
+  confirmed as `CharacterInfo*` via `baseline`/`y`/`flags` read from it
+  moments earlier. Both fields upgrade to HIGH confidence — `CharacterInfo`,
+  one of the most heavily-worked structs in the whole project, now has
+  no remaining open fields at all.
 
 ## Third-party library identification (Task #10)
 

@@ -782,15 +782,31 @@ struct CharacterInfo {
                            // start position is HIGH confidence; individual elements beyond the
                            // one directly observed are inferred from the confirmed stride, same
                            // standard used for every other array in this project).
-  short actx;               // +0x10C, MEDIUM confidence: NOT independently confirmed via its own
-                           // access site -- positional inference only, matching 2011's declared
-                           // field (`acroom.h:2617`) immediately after `inv[100]`. Checked and NOT
-                           // found this round: 2011's only usage site for `actx`/`acty`
-                           // (`Engine/AC.CPP:8525-8526`) sits deep inside hardware-accelerated
-                           // drawing code (`gfxDriver`/`actspsbmp`/`SetTint`/`SetLightLevel`) that
-                           // this build has already been shown, repeatedly, to predate entirely --
-                           // plausibly a genuinely later addition, not just unfound.
-  short acty;                // +0x10E, MEDIUM confidence: same status as `actx` immediately above.
+  short actx;               // +0x10C, HIGH confidence (UPGRADED from MEDIUM -- CORRECTING an
+                           // earlier round's "checked and not found" conclusion): found via the
+                           // exact anchor a later round's `add_to_sprite_list` match supplied.
+                           // `prepare_characters_for_drawing` (already matched) writes
+                           // "[chin+0x10C]=(short)(atxp+offsetx)" via a 16-bit `mov [reg+10Ch],ax`
+                           // immediately after its call to `add_to_sprite_list` (`sub_4106EF`,
+                           // matched a few rounds ago) -- matching 2011's own "add_to_sprite_list
+                           // (actspsbmp[useindx],...); chin->actx=atxp+offsetx;" (`Engine/AC.CPP:
+                           // 8523-8525`) exactly, right down to the call ORDER. The earlier
+                           // round's dismissal ("2011's only usage site sits deep inside hardware-
+                           // accelerated drawing code this build predates") was based on an
+                           // incomplete check -- the actx/acty ASSIGNMENT itself sits at that same
+                           // call site, just without any of the surrounding `gfxDriver`-specific
+                           // machinery around it, and it turns out this build has it after all. The
+                           // pointer being written (`var_38`) is independently confirmed as a
+                           // `CharacterInfo*` in the same code block via `baseline`@+0x32,
+                           // `y`@+0x18, and `flags`@+0x20 (all already-confirmed offsets) being
+                           // read from it a few lines earlier. Type match confirmed too: a 16-bit
+                           // `mov` write, matching 2011's declared `short actx` (`acroom.h:2617`)
+                           // exactly.
+  short acty;                // +0x10E, HIGH confidence: same evidence and correction as `actx`
+                           // immediately above -- "[chin+0x10E]=(short)(atyp+offsety)" via
+                           // `mov [reg+10Eh],dx`, matching 2011's "chin->acty=atyp+offsety;"
+                           // (`AC.CPP:8526`) exactly, sitting right next to the confirmed `actx`
+                           // write with zero gap.
   char name[30];              // +0x110..0x12E, high confidence (UPGRADED from MEDIUM): confirmed
                            // via `GetLocationName` (already matched, script-exported): "lea
                            // ecx,[game_chars+idx*140h+110h]; push ecx; call GetTranslation" --
