@@ -88,6 +88,7 @@ one place that pays off across every module.
 | `menu.idb` | `MENU.EXE` | 25 / 25 seg000 funcs (+ 467 `rt_*` thunks) | 0 | `seg000` coerced + fully named. Layout: `seg000` code, `seg001` thunk table, `seg002` RTM bootstrap, `seg003` DGROUP text, `seg004` stack. |
 | `out.idb` | `OUT.EXE` | ~40 / ~95 seg000 funcs (+ `rt_*` thunks) | 0 | Overworld/towns/dungeons engine; chains to `MUS`/`SAVER`/`TWNDR`/`CASDR`/`DUN`. Rebuilt from the UNP-unpacked OUT.EXE (5 clean segments like menu); `seg000` coerced to 100%, 1297 run-time calls resolved. ~40 functions named (`doMovement`, `creatureAttack`, `shopBuy`, `chainTo*`, …) from the decoded screen text (`dump_strings.py`); ~55 helpers still `sub_`. |
 | `dun.idb` | `DUN.EXE` | 24 / 72 seg000 funcs (+ `rt_*` thunks) | 0 | Dungeon engine; chains back to `OUT`/`MUS`/`SAVER`. UNP-unpacked; 6 segments — **two** compiled-BASIC code segs: `seg000` "bmDUN" (main) + `seg001` "bmDUNG" (graphics helpers, 9 funcs), thunk table in `seg002`. Both coerced to ~100%. 24 `seg000` functions named from the screen text (`dunMain`, `openChest`, `monsterAttack`, `useMagicMenu`, `castSpell`, `loadDungeonLevel`, …). |
+| `twndr.idb` | `TWNDR.EXE` | 41 / 98 seg000 funcs (+ `rt_*` thunks) | 0 | Town driver (entered from `OUT` board; chains back). UNP-unpacked; 6 segments — `seg000` "bmTWNDR" (98 funcs) + `seg001` "bmTNCALB" (town/castle anim, 26 funcs), thunk table `seg002` (only **431** entries — TWNDR uses fewer runtime routines). Both ~100% coerced. 41 `seg000` functions named from the shop/NPC text (`foodShop`, `weaponShopEntry`, `borrowMoney`, `loanRepayment`, `fortuneTeller`, `jailScene`/`jailRelease`, `buyBackShop`, `townServiceDispatch` (~6 KB), …). |
 
 (Counts via `ida_scripts/identify.py -NoExport`; re-run any time as a
 sanity check.)
@@ -334,7 +335,13 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   `$env:COERCE_SEG` override for the 2nd pass. Both ~100% coerced; 24/72
   `seg000` functions named from the screen text (`dunMain`, `openChest`,
   `monsterAttack`, `useMagicMenu`, `castSpell`, `loadDungeonLevel`, …).
-- Next: (a) build `twndr.idb` / `casdr.idb` (unpacked, ready — same
-  pipeline); (b) map `out`/`dun` `ds:` engine state vars to name the
+- **2026-08-31** — Built `twndr.idb` (TWNDR.EXE, town driver) from the
+  unpacked exe. Same 2-code-segment shape as dun (`bmTWNDR` + `bmTNCALB`);
+  thunk table only 431 entries. 41/98 `seg000` functions named from the
+  rich shop/NPC text — the food shop, weapon/armor shops, buy-back shop,
+  bank, two moneylenders, fortune teller, jail, `townServiceDispatch`
+  (~6 KB), guard combat, mail-delivery quest.
+- Next: (a) build `casdr.idb` (unpacked, ready — same pipeline);
+  (b) map `out`/`dun`/`twndr` `ds:` engine state vars to name the
   remaining helpers; (c) continue the `rtm_*` → `B$…` identification in
   `leglib.idb` (the `FF4B`/`FF20`/… value-stack cluster next).

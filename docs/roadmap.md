@@ -38,13 +38,13 @@ Rough size order of the rest (biggest engine payoff first): `OUT` (done,
 `GMB1`, `GMB2`) → drivers (`CELDRV`, `STDRV`, `SAVER`) → `CONFIGUR`
 (standalone, not BASIC).
 
-`TWNDR.EXE` / `CASDR.EXE` were UNP-unpacked in place (2026-08-30) and are
-ready to build — same pipeline as `out` (`idat -B` → `resolve_thunks` →
-`coerce_code` → `resolve_thunks` → `dump_strings` → `apply_renames_<m>`).
-`dun.idb` done 2026-08-30 (needed a 2nd `coerce_code` pass with
-`$env:COERCE_SEG='seg001'` for the `bmDUNG` graphics module). Once
-`leglib.idb` gets more `B$…` names, re-run `resolve_rtm_leglib.py` to
-refresh `rtm_map.py` — the `-> name` comments propagate to every module.
+`CASDR.EXE` was UNP-unpacked in place (2026-08-30) and is ready to build
+— same pipeline as `out` (`idat -B` → `resolve_thunks` → `coerce_code` →
+`resolve_thunks` → `dump_strings` → `apply_renames_<m>`). `dun.idb` and
+`twndr.idb` done 2026-08-30/31 (each has a 2nd code segment — re-run
+`coerce_code` with `$env:COERCE_SEG='seg001'`). Once `leglib.idb` gets
+more `B$…` names, re-run `resolve_rtm_leglib.py` to refresh `rtm_map.py`
+— the `-> name` comments propagate to every module.
 
 ## DUN.EXE — open questions
 
