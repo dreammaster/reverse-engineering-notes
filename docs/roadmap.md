@@ -128,11 +128,22 @@ reimplementation.
       (2026-08-31, 34/102 named) from the unpacked exes. Each: `seg000`
       main + `seg001` "bmTNCALB" (**shared, identical** between the two),
       thunk table `seg002` (431 entries).
-- [~] `twndr` names: the shops (`foodShop`, `weapon`/`armorShopEntry`,
-      `buyBackShop`, `sellShopIntro`), money (`borrowMoney`,
-      `loanRepayment`, `fortuneTeller`), crime/jail (`robCommand`,
-      `arrestedByGuards`, `jailScene`, `jailRelease`, `fightGuard`),
-      `townServiceDispatch` (~6 KB), `mailDeliveryJob`.
+- [x] Map the TWNDR engine state vars (2026-08-31,
+      `apply_dsvars_twndr.py`; DGROUP = **seg004**). `partyGold` (1AD2)
+      and `hitPoints` (1ADA) are the **same DGROUP slots as OUT/DUN**.
+      Town-specific: `townServiceId` (1F22 — `townServiceDispatch`'s
+      SELECT CASE), `tileAhead` (1F02), `guardHitPoints` (216E),
+      `townArrayPtr` (278C far ptr); `menuChoice` / `turnFlag` /
+      `shopWorkQty` / `viewMode` tentative.
+- [~] `twndr` names: **51 / 98** (2nd pass 2026-08-31). The shops
+      (`foodShop`, `weapon`/`armorShopEntry`, `buyBackShop`,
+      `sellShopIntro`), money (`borrowMoney`, `loanRepayment`,
+      `fortuneTeller`), crime/jail (`robCommand`, `arrestedByGuards`,
+      `jailScene`, `jailRelease`, `fightGuard`), `townServiceDispatch`
+      (~6 KB), `mailDeliveryJob`, `spendGold`, `enterTownService` (the
+      ENTER/USE command -> dispatch), `facePlayerDirection`,
+      `checkLineOfSight`, `redrawTownView`; `offerGuardBribe` /
+      `initGuardCombat` / `grabTileItem` / `computeSellValue` tentative.
 - [~] `casdr` names (endgame content): `warlordConfrontation`,
       `kingConfides` (the guardians-of-the-scroll quest + forearm mark),
       `potionWizard`, `doFight`, `describeRoom`/`describeObjects` (incl.
@@ -147,8 +158,11 @@ reimplementation.
       `traceCombatLine`.
 - [ ] `bmTNCALB`: the other 13 helpers (mostly the direction/coord math
       variants and small draw wrappers).
-- [ ] `twndr`: `sub_11ED0` (calls `townServiceDispatch`) — the town
-      command loop.
+- [x] `twndr` `sub_11ED0` -> `enterTownService` (the ENTER/USE command
+      that locates the adjacent service tile and jumps to
+      `townServiceDispatch`).
+- [ ] Map the CASDR state vars the same way (also `seg004`; expect the
+      OUT/DUN/TWNDR shared slots + castle-specific ones).
 
 ## STDRV.EXE — open questions
 

@@ -223,11 +223,13 @@ static Bytes_0(void) {
 	create_insn	(0X103CE);
 	set_name	(0X103EE,	"nullsub_4");
 	create_insn	(0X103EF);
+	set_name	(0X103EF,	"spendGold");
 	set_cmt	(0X1040C,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 	set_cmt	(0X10411,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 	set_name	(0X1042C,	"nullsub_5");
 	set_cmt	(0X1042D,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 	create_insn	(0X1042D);
+	set_name	(0X1042D,	"facePlayerDirection");
 	set_cmt	(0X10433,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 	create_insn	(0X10446);
 	set_name	(0X10446,	"j_rt_FE4E");
@@ -244,6 +246,7 @@ static Bytes_0(void) {
 	create_insn	(0X104DF);
 	set_cmt	(0X10571,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 	create_insn	(0X10571);
+	set_name	(0X10571,	"checkLineOfSight");
 	set_cmt	(0X10577,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 	create_insn	(0X10592);
 	create_insn	(0X10593);
@@ -466,6 +469,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X10F29);
 	op_hex		(x,	1);
 	create_insn	(0X10F37);
+	set_name	(0X10F37,	"initGuardCombat");
 	set_name	(0X10F8A,	"j_rt_FF4C");
 	create_insn	(0X10F9F);
 	set_name	(0X10F9F,	"guardAttack");
@@ -828,6 +832,7 @@ static Bytes_0(void) {
 	create_insn	(0X11ECC);
 	create_insn	(0X11ECD);
 	create_insn	(0X11ED0);
+	set_name	(0X11ED0,	"enterTownService");
 	set_cmt	(0X11EE3,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 	set_cmt	(0X11EFE,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 	create_insn	(0X11F08);
@@ -1881,6 +1886,7 @@ static Bytes_0(void) {
 	create_insn	(0X14A1D);
 	set_cmt	(0X14A56,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 	create_insn	(0X14A56);
+	set_name	(0X14A56,	"computeSellValue");
 	create_insn	(0X14A66);
 	create_insn	(x=0X14A6A);
 	op_hex		(x,	1);
@@ -2090,6 +2096,7 @@ static Bytes_0(void) {
 	create_insn	(0X153DA);
 	create_insn	(0X153DB);
 	create_insn	(0X153F2);
+	set_name	(0X153F2,	"grabTileItem");
 	create_insn	(0X153F7);
 	set_cmt	(0X1540A,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 	create_insn	(0X15419);
@@ -2166,6 +2173,7 @@ static Bytes_0(void) {
 	set_cmt	(0X158E2,	"\\nNOW - GET OUT OF TOWN!",	0);
 	create_insn	(0X158E2);
 	create_insn	(0X158EF);
+	set_name	(0X158EF,	"redrawTownView");
 	create_insn	(0X158F8);
 	create_insn	(0X15901);
 	create_insn	(0X15906);
@@ -2188,6 +2196,7 @@ static Bytes_0(void) {
 	create_insn	(0X159E4);
 	create_insn	(0X159E5);
 	create_insn	(0X159F2);
+	set_name	(0X159F2,	"offerGuardBribe");
 	create_insn	(0X159F8);
 	set_cmt	(0X159F9,	" GOLD?",	0);
 	create_insn	(0X15A02);
@@ -2246,6 +2255,7 @@ static Bytes_0(void) {
 	create_insn	(0X15D2B);
 	create_insn	(0X15D89);
 	create_insn	(0X15D98);
+	set_name	(0X15D98,	"showFlavorText");
 	create_insn	(x=0X15D9C);
 	op_hex		(x,	1);
 	create_insn	(x=0X15D9E);
@@ -2929,14 +2939,6 @@ static Bytes_0(void) {
 	set_cmt	(0X18460,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 	set_cmt	(0X18463,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 	set_cmt	(0X18473,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
-	set_cmt	(0X18483,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
-	create_insn	(0X18492);
-	create_insn	(0X1849A);
-	create_insn	(x=0X1849F);
-	op_hex		(x,	1);
-	create_insn	(0X184DA);
-	create_insn	(0X184E2);
-	set_cmt	(0X184E7,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 }
 
 //------------------------------------------------------------------------
@@ -2946,6 +2948,14 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X18483,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
+	create_insn	(0X18492);
+	create_insn	(0X1849A);
+	create_insn	(x=0X1849F);
+	op_hex		(x,	1);
+	create_insn	(0X184DA);
+	create_insn	(0X184E2);
+	set_cmt	(0X184E7,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 	set_cmt	(0X184EB,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 	set_cmt	(0X184F6,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 	set_cmt	(0X18505,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
@@ -5161,15 +5171,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X18A6C);
 	op_hex		(x,	0);
 	set_name	(0X18A6C,	"rt_FE29");
-	create_byte	(0X18A6E);
-	make_array	(0X18A6E,	0X2);
-	set_cmt	(0X18A70,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X18A70,	"-> rtm_FE2A  (leglib seg004:0x1fd3f)",	1);
-	create_insn	(x=0X18A70);
-	op_hex		(x,	0);
-	set_name	(0X18A70,	"rt_FE2A");
-	create_byte	(0X18A72);
-	make_array	(0X18A72,	0X2);
 }
 
 //------------------------------------------------------------------------
@@ -5179,6 +5180,15 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_byte	(0X18A6E);
+	make_array	(0X18A6E,	0X2);
+	set_cmt	(0X18A70,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
+	set_cmt	(0X18A70,	"-> rtm_FE2A  (leglib seg004:0x1fd3f)",	1);
+	create_insn	(x=0X18A70);
+	op_hex		(x,	0);
+	set_name	(0X18A70,	"rt_FE2A");
+	create_byte	(0X18A72);
+	make_array	(0X18A72,	0X2);
 	set_cmt	(0X18A74,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
 	set_cmt	(0X18A74,	"-> rtm_FE2B  (leglib seg008:0x289a9)",	1);
 	create_insn	(x=0X18A74);
@@ -5875,12 +5885,42 @@ static Bytes_2(void) {
 	create_word	(0X192CB);
 	create_word	(0X192CD);
 	create_word	(0X192CF);
-	create_byte	(0X192D1);
-	make_array	(0X192D1,	0X265D);
-	create_strlit	(0X1B92E,	0X1F);
-	set_name	(0X1B92E,	"aPMerchantKille");
-	create_byte	(0X1B94E);
-	make_array	(0X1B94E,	0X29);
+	set_cmt	(0X1AC92,	"party gold (32-bit; high word at 1AD4). Every shop / bank / moneylender / fortune-teller reads it via `mov ax,1AD2 / mov dx,1AD4` and settles the transaction with rtm_EE. Same DGROUP slot as OUT.EXE / DUN.EXE.",	1);
+	create_word	(0X1AC92);
+	set_name	(0X1AC92,	"partyGold");
+	set_cmt	(0X1AC94,	"high word of partyGold (1AD2).",	1);
+	create_word	(0X1AC94);
+	set_name	(0X1AC94,	"partyGold_hi");
+	set_cmt	(0X1AC9A,	"party hit points -- guardAttack subtracts damage. Same slot as OUT.EXE / DUN.EXE.",	1);
+	create_word	(0X1AC9A);
+	set_name	(0X1AC9A,	"hitPoints");
+	set_cmt	(0X1AFE0,	"read-only context constant (12 / 13) tested by doWalk and every shop entry -- probably 'in a building' vs 'on the street'. TENTATIVE.",	1);
+	create_word	(0X1AFE0);
+	set_name	(0X1AFE0,	"viewMode");
+	set_cmt	(0X1AFE2,	"current menu / spell-menu selection -- useMagicMenu reads it as the spell index (`cmp ds:1E22h, 0x0B`), the shops as the option chosen. TENTATIVE.",	1);
+	create_word	(0X1AFE2);
+	set_name	(0X1AFE2,	"menuChoice");
+	set_cmt	(0X1B0C2,	"code for the tile / object in front of the player -- doWalk / walkBlocked / fightGuard branch on it (0xD7, 0xFD, 0xFE = special tiles; 0x40 = a guard, etc.).",	1);
+	create_word	(0X1B0C2);
+	set_name	(0X1B0C2,	"tileAhead");
+	set_cmt	(0X1B0D6,	"working quantity / haggle amount in the shop code (merchantOffer sets 0x63 = 99 max; promptSellItem / loanRepayment / buyBackShop read & update it). TENTATIVE.",	1);
+	create_word	(0X1B0D6);
+	set_name	(0X1B0D6,	"shopWorkQty");
+	set_cmt	(0X1B0E2,	"id of the town building / service the player is using. townServiceDispatch is one big SELECT CASE on it (0 / 2 / 4 / 5 / 9 / 0x0A / 0x0B = food shop / weapon / armor / bank / ... ); never written from seg000 (set by the bmTNCALB tile engine).",	1);
+	create_word	(0X1B0E2);
+	set_name	(0X1B0E2,	"townServiceId");
+	set_cmt	(0X1B0EA,	"1 after a turn-consuming / attention-drawing action (doWalk, fightGuard, stealGold, npcRecurringDialog set it; jailScene and the dialog code clear it). TENTATIVE.",	1);
+	create_word	(0X1B0EA);
+	set_name	(0X1B0EA,	"turnFlag");
+	set_cmt	(0X1B32E,	"the guard's hit points during fightGuard / guardAttack (accumulator: `mov ax,216E / sub ax,216E / mov 216E,ax`).",	1);
+	create_word	(0X1B32E);
+	set_name	(0X1B32E,	"guardHitPoints");
+	set_cmt	(0X1B94C,	"far pointer (offset @ 278C, segment @ 278E) to the main TWNDR game-data array -- pushed (seg then off) to nearly every rtm_ call (rtm_B8). Never written from seg000. Same role as OUT's overworldArrayPtr / DUN's dungeonArrayPtr.",	1);
+	create_word	(0X1B94C);
+	set_name	(0X1B94C,	"townArrayPtr");
+	set_cmt	(0X1B94E,	"segment word of townArrayPtr (278C).",	1);
+	create_word	(0X1B94E);
+	set_name	(0X1B94E,	"townArrayPtr_seg");
 	create_strlit	(0X1B977,	0X19);
 	set_name	(0X1B977,	"aAttackOnGuardM");
 	create_byte	(0X1B990);
@@ -5999,8 +6039,10 @@ static Functions_0(void) {
 	set_func_flags(0X103CE,0x1401);
 	add_func    (0X103EF,0X1042D);
 	set_func_flags(0X103EF,0x1401);
+	set_func_cmt(0X103EF,	"deduct an amount from partyGold (32-bit, via the rtm_FF2x value stack) and redraw (rtm_FE55). The shared \"pay N gold\" helper -- called from every shop / the bank / the moneylenders / guardAttack.", 1);
 	add_func    (0X1042D,0X10450);
 	set_func_flags(0X1042D,0x1001);
+	set_func_cmt(0X1042D,	"turn the player to face a direction (-> bmTNCALB viewFaceDirection).", 1);
 	add_func    (0X1046A,0X1048C);
 	set_func_flags(0X1046A,0x5400);
 	set_frame_size(0X1046A, 0, 0, 0);
@@ -6008,6 +6050,7 @@ static Functions_0(void) {
 	set_func_flags(0X1048C,0x1401);
 	add_func    (0X10571,0X10592);
 	set_func_flags(0X10571,0x1401);
+	set_func_cmt(0X10571,	"line-of-sight test to a target (-> bmTNCALB scanLineOfSight).", 1);
 	add_func    (0X10593,0X10631);
 	set_func_flags(0X10593,0x1401);
 	add_func    (0X10637,0X106C0);
@@ -6032,6 +6075,7 @@ static Functions_0(void) {
 	set_func_cmt(0X10E29,	"\"USE WHICH MAGIC?\", \"YOU HAVE NO \", \"ATTACK WITH \"", 1);
 	add_func    (0X10F37,0X10F9F);
 	set_func_flags(0X10F37,0x1401);
+	set_func_cmt(0X10F37,	"roll / fetch the guard's stats into guardHitPoints (reads townArrayPtr + menuChoice). TENTATIVE.", 1);
 	add_func    (0X10F9F,0X1119E);
 	set_func_flags(0X10F9F,0x5400);
 	set_func_cmt(0X10F9F,	"\"ATTACKED BY GUARD!\", \" -- MISSED\", \" -- BLOW \", \"YOU DIED.\"", 1);
@@ -6056,6 +6100,7 @@ static Functions_0(void) {
 	set_func_cmt(0X11CAC,	"\" ROBBERY IN PROGRESS \".", 1);
 	add_func    (0X11ED0,0X11F51);
 	set_func_flags(0X11ED0,0x1401);
+	set_func_cmt(0X11ED0,	"the ENTER / USE command: locate the service tile next to the player (stages playerY+1 etc.), then jmp townServiceDispatch.", 1);
 	add_func    (0X11F51,0X11FFA);
 	set_func_flags(0X11F51,0x1401);
 	add_func    (0X11FFA,0X1200B);
@@ -6133,6 +6178,7 @@ static Functions_0(void) {
 	set_func_cmt(0X14997,	"\"WHAT  WILL YOU SELL ME?\".", 1);
 	add_func    (0X14A56,0X14A91);
 	set_func_flags(0X14A56,0x5400);
+	set_func_cmt(0X14A56,	"work out the buy-back / sell price from shopWorkQty (called by merchantOffer / promptSellItem). TENTATIVE.", 1);
 	set_frame_size(0X14A56, 0, 0, 0);
 	add_func    (0X14A91,0X14AA0);
 	set_func_flags(0X14A91,0x1401);
@@ -6147,6 +6193,7 @@ static Functions_0(void) {
 	set_func_cmt(0X152C5,	"\"I KNOW NO MORE.\", \"READ YOUR FORTUNE FOR  GOLD?\".", 1);
 	add_func    (0X153F2,0X154B0);
 	set_func_flags(0X153F2,0x1401);
+	set_func_cmt(0X153F2,	"pick up / take an item from a tile -- adjusts partyGold, faces the tile, updates it. TENTATIVE.", 1);
 	add_func    (0X154B0,0X1550D);
 	set_func_flags(0X154B0,0x1401);
 	set_func_cmt(0X154B0,	"\"THE GUARDS OVERWHELM YOU!\".", 1);
@@ -6158,6 +6205,7 @@ static Functions_0(void) {
 	set_func_cmt(0X1560B,	"\"I'LL LET YOU OUT FOR A PRICE\", \"IT HAS COST  GOLD TO GET OUT.\", \"NOW - GET OUT OF TOWN!\".", 1);
 	add_func    (0X158EF,0X15906);
 	set_func_flags(0X158EF,0x1401);
+	set_func_cmt(0X158EF,	"repaint the town interior view (-> bmTNCALB refreshView).", 1);
 	add_func    (0X1590F,0X1591B);
 	set_func_flags(0X1590F,0x1481);
 	add_func    (0X1591B,0X15974);
@@ -6167,6 +6215,7 @@ static Functions_0(void) {
 	set_func_cmt(0X15974,	"\"WANT A MUSEUM COIN FOR  GOLD?\".", 1);
 	add_func    (0X159F2,0X15B77);
 	set_func_flags(0X159F2,0x1401);
+	set_func_cmt(0X159F2,	"\"... GOLD?\" -- pay-off-the-guard prompt (touches partyGold + guardHitPoints). TENTATIVE.", 1);
 	add_func    (0X15B77,0X15BA3);
 	set_func_flags(0X15B77,0x1401);
 	set_func_cmt(0X15B77,	"\"ROB\".", 1);
@@ -6175,6 +6224,7 @@ static Functions_0(void) {
 	set_func_cmt(0X15CF0,	"\" BAGS OF GOLD!\".", 1);
 	add_func    (0X15D98,0X15EA2);
 	set_func_flags(0X15D98,0x1401);
+	set_func_cmt(0X15D98,	"pick one of four strings by ds:1ADC and display it. TENTATIVE.", 1);
 	add_func    (0X15EA2,0X15EC4);
 	set_func_flags(0X15EA2,0x1401);
 	add_func    (0X15EC4,0X161FE);

@@ -101,6 +101,38 @@ RENAMES = [
      '"WE REMEMBER YOU - SLIME!", "THIS IS YOUR FRIENDLY LENDER" -- '
      'recurring-NPC lines keyed on prior encounters.'),
     (0x1624E, "loadTownData", '"TOWN", loads TCASOBJ.BSV.'),
+
+    # --- 2nd pass: from the ds: engine state vars (apply_dsvars_twndr.py)
+    #     + call graph ---
+    (0x103EF, "spendGold",
+     'deduct an amount from partyGold (32-bit, via the rtm_FF2x value '
+     'stack) and redraw (rtm_FE55). The shared "pay N gold" helper -- '
+     'called from every shop / the bank / the moneylenders / '
+     'guardAttack.'),
+    (0x11ED0, "enterTownService",
+     'the ENTER / USE command: locate the service tile next to the '
+     'player (stages playerY+1 etc.), then jmp townServiceDispatch.'),
+    (0x1042D, "facePlayerDirection",
+     'turn the player to face a direction (-> bmTNCALB viewFaceDirection).'),
+    (0x10571, "checkLineOfSight",
+     'line-of-sight test to a target (-> bmTNCALB scanLineOfSight).'),
+    (0x158EF, "redrawTownView",
+     'repaint the town interior view (-> bmTNCALB refreshView).'),
+
+    (0x159F2, "offerGuardBribe",
+     '"... GOLD?" -- pay-off-the-guard prompt (touches partyGold + '
+     'guardHitPoints). TENTATIVE.'),
+    (0x10F37, "initGuardCombat",
+     'roll / fetch the guard\'s stats into guardHitPoints (reads '
+     'townArrayPtr + menuChoice). TENTATIVE.'),
+    (0x153F2, "grabTileItem",
+     'pick up / take an item from a tile -- adjusts partyGold, faces '
+     'the tile, updates it. TENTATIVE.'),
+    (0x14A56, "computeSellValue",
+     'work out the buy-back / sell price from shopWorkQty (called by '
+     'merchantOffer / promptSellItem). TENTATIVE.'),
+    (0x15D98, "showFlavorText",
+     'pick one of four strings by ds:1ADC and display it. TENTATIVE.'),
 ]
 
 
