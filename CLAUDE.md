@@ -2278,6 +2278,25 @@ disassembly work.
   deliberate and source-documented. Per this project's third-party
   scope rule, recorded at the boundary only — the fast path's own
   line-lock/unlock callees aren't chased further.
+- **`run_on_event`'s full event-type table closes, correcting a stale
+  "called only from new_room" claim.** An exhaustive grep finds EIGHT
+  call sites, not one. Cross-referenced against 2011's `GE_*` constants:
+  1=`GE_LEAVE_ROOM`(new_room), 2=`GE_ENTER_ROOM`(process_event),
+  3=`GE_MAN_DIES`(run_event_block), 4=`GE_GOT_SCORE`(GiveScore),
+  5/6=`GE_GUI_MOUSEDOWN`/`MOUSEUP`(check_controls, two call sites),
+  7=`GE_ADD_INV`(add_inventory), 8=`GE_LOSE_INV`(LoseInventory). The
+  ninth, `GE_RESTORE_GAME`, is CONFIRMED ABSENT — all eight sites are
+  accounted for and `restore_game_data` never calls this function at
+  all. `GiveScore` (newly given field evidence) confirms `GameState.
+  score`@+0x00 a further way (the disassembly's own `play` global IS
+  `score`, since it's the struct's first field). `LoseInventory`
+  (previously undocumented entirely) turns out to be `add_inventory`'s
+  mirror image for the `play_invorder` question: it shifts every later
+  `play_invorder[]` entry down by one on removal — decisively confirmed
+  as `play_invorder[i]=play_invorder[i+1]` via the two globals' own
+  adjacent addresses in the disassembly — giving the "synchronized
+  pair" argument a second, independent instance alongside
+  `add_inventory`'s.
 
 ## Third-party library identification (Task #10)
 

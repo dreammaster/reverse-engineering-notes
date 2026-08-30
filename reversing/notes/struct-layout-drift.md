@@ -8547,3 +8547,58 @@ callees (line-lock/unlock helpers) are left uninvestigated -- a
 ScummVM reimplementation replaces this entire library wholesale, so
 there's no payoff in tracing further into how Allegro implements pixel
 access internally.
+
+## `run_on_event`'s full event-type table closes, correcting a stale "called only from new_room" claim
+
+`run_on_event`'s own matches.json entry had been sitting since an early
+round with a claim that doesn't hold up: "Caller matches exactly:
+called only from new_room." An exhaustive grep for every `call
+run_on_event` in the disassembly finds EIGHT call sites, not one --
+this round tracked every one of them down and cross-referenced against
+2011's own `GE_*` event-type constants (`Common/acruntim.h:1018-1026`):
+
+```
+evtype=1  GE_LEAVE_ROOM     new_room
+evtype=2  GE_ENTER_ROOM     process_event (queued-event dispatch)
+evtype=3  GE_MAN_DIES       run_event_block (respond[i]==3)
+evtype=4  GE_GOT_SCORE      GiveScore
+evtype=5  GE_GUI_MOUSEDOWN  check_controls
+evtype=6  GE_GUI_MOUSEUP    check_controls (second call site)
+evtype=7  GE_ADD_INV        add_inventory
+evtype=8  GE_LOSE_INV       LoseInventory
+```
+
+Eight of 2011's nine declared constants, each independently confirmed
+at its own call site. The ninth, `GE_RESTORE_GAME`(9), is CONFIRMED
+ABSENT -- with all eight call sites in the entire binary accounted for
+and none passing the literal `9`, and `restore_game_data` (already
+matched) never calling `run_on_event` at all, this build predates the
+`on_event("restore_game")` script hook entirely.
+
+Two of the newly-read call sites paid off further. `GiveScore` (already
+matched, but with zero field evidence until now) does `"guis_need_update
+=1; play+=amnt;"` -- the disassembly's own auto-named global `play`
+turns out to BE `GameState.score`@`+0x00` (since `score` is the struct's
+first field, its own address and the struct's base address are
+identical), giving `score` a further independent confirmation beyond
+the `replace_macro_tokens` one from many rounds ago. It also calls
+`PlaySound` on a fixed, as-yet-unidentified byte global when `amnt>0`,
+matching 2011's own `"if((amnt>0)&&(play.score_sound>=0))
+play_audio_clip_by_index(play.score_sound);"` in role -- a candidate for
+a future round.
+
+`LoseInventory` (already correctly named, but with NO matches.json
+entry at all) turned out to be exactly `add_inventory`'s mirror image
+for `play_invorder`'s still-open `GameState`-membership question: it
+searches `play_invorder[]` for the item being lost, and on finding it,
+decrements `inv_numorder` then shifts every later entry down by one --
+`"play_invorder[i]=word_4EF02E[i]"`. That second global turned out to
+be `play_invorder`'s own address plus exactly 2 bytes (verified via
+their adjacent data-label addresses in the disassembly, zero bytes
+between them) -- i.e. the line is genuinely `play_invorder[i]=
+play_invorder[i+1]`, a textbook array-compaction shift. This gives the
+`play_invorder`/`inv_numorder` "synchronized pair" argument a SECOND,
+independent instance (add AND remove both treat them as one unit) --
+still not proof of physical struct membership (the underlying
+limitation hasn't changed), but a second data point in the same
+direction as `add_inventory`'s.

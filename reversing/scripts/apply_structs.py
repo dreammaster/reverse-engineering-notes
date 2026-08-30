@@ -3466,6 +3466,15 @@ struct GameState {
   // proven contiguous. Left as still-unresolved per this project's convention, but no longer
   // "no evidence either way" -- there is now a real, if inconclusive, behavioral argument FOR
   // membership.
+  //
+  // SECOND CONFIRMATION of the same coupling (found immediately after, via `LoseInventory` --
+  // newly given a full matches.json entry): its own removal logic treats the pair identically in
+  // reverse -- decrements `inv_numorder` then shifts every later `play_invorder[]` entry down by
+  // one ("play_invorder[i]=play_invorder[i+1]", decisively confirmed via the two globals' own
+  // adjacent data-label addresses in the disassembly, zero bytes apart). Two independent
+  // functions (add/remove) now both treat this pair as a single synchronized unit -- still not
+  // proof of physical struct membership, but a second, independent instance of the same
+  // behavioral argument.
   char _pad_characterextras[0x12C];
   int music_master_volume;      // +0x808, high confidence (RESOLVED, correcting the previous
                             // round's "plausibly lipsync/close-mouth-timing related" guess --

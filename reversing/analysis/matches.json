@@ -1737,7 +1737,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (found this round, previously mechanically matched with no field evidence recorded): void GiveScore(int amnt) at AC.CPP:20399-20408. Exact role match: \"guis_need_update=1; play+=amnt;\" -- the global auto-named 'play' here IS GameState.score@+0x00 (the struct's own base address, since score is its first field), matching \"play.score+=amnt;\" exactly and giving GameState.score a further independent confirmation. Then, if amnt>0, plays a fixed sound via PlaySound(byte_513337) -- matching 2011's \"if((amnt>0)&&(play.score_sound>=0)) play_audio_clip_by_index(play.score_sound);\" in role (a simpler PlaySound call instead of the later audio-clip-index abstraction); byte_513337's exact identity (a per-game compiled setting, not chased further this round) is a candidate for a future round. Finally calls run_on_event(GE_GOT_SCORE=4,amnt) -- see that function's own now-complete event-type table."
   },
   {
     "kind": "function",
@@ -3628,7 +3628,7 @@
     "source_file": "Engine/AC.CPP",
     "source_line": 3827,
     "confidence": "high",
-    "evidence": "void run_on_event(int,int) at AC.CPP:3827. String matches: \"on_event\"/\"#on_event\" (3829, 3832), the function's own global-script hook name. Caller matches exactly: called only from new_room, an already-named function (room transitions fire an on_event hook)."
+    "evidence": "void run_on_event(int evtype,int wparam) at AC.CPP:3827-3833. String matches: \"on_event\"/\"#on_event\" (3829, 3832), the function's own global-script hook name. FULL EVENT-TYPE TABLE CLOSED (this round): an exhaustive count finds exactly 8 call sites for this function anywhere in the binary (not just one, correcting an earlier round's \"called only from new_room\" claim), matching 8 of 2011's 9 declared GE_* constants (Common/acruntim.h:1018-1026) exactly: evtype=1 (GE_LEAVE_ROOM) in new_room; evtype=2 (GE_ENTER_ROOM) in process_event's queued-event dispatch; evtype=3 (GE_MAN_DIES) in run_event_block's respond[i]==3 branch; evtype=4 (GE_GOT_SCORE) in GiveScore; evtype=5 (GE_GUI_MOUSEDOWN) and evtype=6 (GE_GUI_MOUSEUP) both in check_controls; evtype=7 (GE_ADD_INV) in add_inventory; evtype=8 (GE_LOSE_INV) in LoseInventory. GE_RESTORE_GAME(9) is CONFIRMED ABSENT: with all 8 call sites in the entire binary accounted for and none passing 9, and restore_game_data (already matched) never calling run_on_event at all, this build predates the on_event('restore_game') hook entirely."
   },
   {
     "kind": "manual",
@@ -5810,5 +5810,14 @@
     "confidence": "high",
     "is_library": true,
     "evidence": "Allegro's internal 8-bit-specific putpixel fast path (Allegro's own _putpixel8-equivalent) -- exact mirror of sub_425490 (see its own entry): acquires a scanline pointer (sub_4253B0), writes one byte directly, releases the line (sub_4253D0). Called only from redo_walkable_areas, for the same 8-bit-fast-path reason. THIRD-PARTY LIBRARY INTERNAL -- not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "LoseInventory",
+    "new_name": null,
+    "source_file": "Engine/AC.CPP",
+    "source_line": null,
+    "confidence": "high",
+    "evidence": "Already correctly named in the IDB (matching 2011's own script-facing LoseInventory name), previously with no matches.json entry at all. Validates the inventory number (0-99), decrements CharacterInfo.inv[]@+0x44 (already confirmed) on playerchar, clears activeinv@+0x34 and resets the cursor if the now-empty item was the active inventory item; if the item count reached zero, searches play_invorder[0..inv_numorder) for the item, and if found, decrements GameState.inv_numorder@+0xEC then shifts every later entry down by one: \"play_invorder[i]=word_4EF02E[i]\" for i from the found index onward -- decisively confirmed as play_invorder[i]=play_invorder[i+1] (word_4EF02E is play_invorder's own address +2 bytes/+1 element, verified via their adjacent data-label addresses in the disassembly with zero bytes between). Finally sets guis_need_update=1 and calls run_on_event(GE_LOSE_INV=8,wparam) -- see that function's own now-complete event-type table. A second function, alongside add_inventory, treating play_invorder[]/inv_numorder as one synchronized pair -- see the play_invorder GameState-membership discussion in apply_structs.py's own GameState struct comment."
   }
 ]
