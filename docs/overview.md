@@ -89,6 +89,7 @@ one place that pays off across every module.
 | `out.idb` | `OUT.EXE` | ~40 / ~95 seg000 funcs (+ `rt_*` thunks) | 0 | Overworld/towns/dungeons engine; chains to `MUS`/`SAVER`/`TWNDR`/`CASDR`/`DUN`. Rebuilt from the UNP-unpacked OUT.EXE (5 clean segments like menu); `seg000` coerced to 100%, 1297 run-time calls resolved. ~40 functions named (`doMovement`, `creatureAttack`, `shopBuy`, `chainTo*`, …) from the decoded screen text (`dump_strings.py`); ~55 helpers still `sub_`. |
 | `dun.idb` | `DUN.EXE` | 24 / 72 seg000 funcs (+ `rt_*` thunks) | 0 | Dungeon engine; chains back to `OUT`/`MUS`/`SAVER`. UNP-unpacked; 6 segments — **two** compiled-BASIC code segs: `seg000` "bmDUN" (main) + `seg001` "bmDUNG" (graphics helpers, 9 funcs), thunk table in `seg002`. Both coerced to ~100%. 24 `seg000` functions named from the screen text (`dunMain`, `openChest`, `monsterAttack`, `useMagicMenu`, `castSpell`, `loadDungeonLevel`, …). |
 | `twndr.idb` | `TWNDR.EXE` | 41 / 98 seg000 funcs (+ `rt_*` thunks) | 0 | Town driver (entered from `OUT` board; chains back). UNP-unpacked; 6 segments — `seg000` "bmTWNDR" (98 funcs) + `seg001` "bmTNCALB" (town/castle anim, 26 funcs), thunk table `seg002` (only **431** entries — TWNDR uses fewer runtime routines). Both ~100% coerced. 41 `seg000` functions named from the shop/NPC text (`foodShop`, `weaponShopEntry`, `borrowMoney`, `loanRepayment`, `fortuneTeller`, `jailScene`/`jailRelease`, `buyBackShop`, `townServiceDispatch` (~6 KB), …). |
+| `casdr.idb` | `CASDR.EXE` | 34 / 102 seg000 funcs (+ `rt_*` thunks) | 0 | Castle / fortress driver — **endgame** content (the Warlord, the Compendium, the king's quest). UNP-unpacked; `seg000` "bmCASDR" + `seg001` "bmTNCALB" (the **same** helper module TWNDR uses), thunk table `seg002` (431). Both ~100% coerced. 34 named from the story text (`warlordConfrontation`, `kingConfides` (the guardians-of-the-scroll / forearm-mark quest), `potionWizard`, `doFight`, `describeRoom`/`describeObjects`, `loadCastleLevel`, `exitCastle`, `gasRoomTrap`, …). |
 
 (Counts via `ida_scripts/identify.py -NoExport`; re-run any time as a
 sanity check.)
@@ -341,7 +342,17 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   rich shop/NPC text — the food shop, weapon/armor shops, buy-back shop,
   bank, two moneylenders, fortune teller, jail, `townServiceDispatch`
   (~6 KB), guard combat, mail-delivery quest.
-- Next: (a) build `casdr.idb` (unpacked, ready — same pipeline);
-  (b) map `out`/`dun`/`twndr` `ds:` engine state vars to name the
-  remaining helpers; (c) continue the `rtm_*` → `B$…` identification in
-  `leglib.idb` (the `FF4B`/`FF20`/… value-stack cluster next).
+- **2026-08-31** — Built `casdr.idb` (CASDR.EXE, castle/fortress driver —
+  the **endgame**). Same shape as twndr and shares the identical
+  `bmTNCALB` `seg001` module. 34/102 named from the story text:
+  `warlordConfrontation` ("YOU CAN'T STOP ME! … THE SPELL OF DEATH … ALL
+  LIFE OUTSIDE THIS FORTRESS WILL"), `kingConfides` (the guardians of the
+  scroll + the secret forearm mark), `potionWizard`, `doFight`,
+  `describeRoom`/`describeObjects` ("THE COMPENDIUM IS THERE!"),
+  `loadCastleLevel`, `exitCastle`.
+- **All six per-module IDBs now built** (menu, leglib, out, dun, twndr,
+  casdr). Next: (a) name the shared `bmTNCALB` `seg001` module once;
+  (b) map the `ds:` engine state vars to name the remaining `sub_`
+  helpers across `out`/`dun`/`twndr`/`casdr`; (c) continue `rtm_*` →
+  `B$…` in `leglib.idb` (the `FF4B`/`FF20`/… value-stack cluster);
+  (d) build the smaller modules (`MUS`, `SAVER`, drivers, minigames).

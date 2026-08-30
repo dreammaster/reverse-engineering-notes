@@ -38,13 +38,21 @@ Rough size order of the rest (biggest engine payoff first): `OUT` (done,
 `GMB1`, `GMB2`) → drivers (`CELDRV`, `STDRV`, `SAVER`) → `CONFIGUR`
 (standalone, not BASIC).
 
-`CASDR.EXE` was UNP-unpacked in place (2026-08-30) and is ready to build
-— same pipeline as `out` (`idat -B` → `resolve_thunks` → `coerce_code` →
-`resolve_thunks` → `dump_strings` → `apply_renames_<m>`). `dun.idb` and
-`twndr.idb` done 2026-08-30/31 (each has a 2nd code segment — re-run
-`coerce_code` with `$env:COERCE_SEG='seg001'`). Once `leglib.idb` gets
-more `B$…` names, re-run `resolve_rtm_leglib.py` to refresh `rtm_map.py`
-— the `-> name` comments propagate to every module.
+**All four formerly-packed modules — `OUT` / `DUN` / `TWNDR` / `CASDR` —
+are built** (2026-08-30/31), each via the same pipeline: `idat -B` from a
+copy of the UNP-unpacked exe → `resolve_thunks` → `coerce_code` →
+`resolve_thunks` → `dump_strings` → `apply_renames_<m>`. `DUN`/`TWNDR`/
+`CASDR` each link a 2nd compiled-BASIC code segment ("bmDUNG",
+"bmTNCALB") — re-run `coerce_code` with `$env:COERCE_SEG='seg001'` for
+it. `TWNDR`/`CASDR` share the identical `bmTNCALB` `seg001` module.
+
+Once `leglib.idb` gets more `B$…` names, re-run `resolve_rtm_leglib.py`
+to refresh `rtm_map.py` — the `-> name` comments propagate to every
+module on the next `resolve_thunks` pass.
+
+Still to build: `MUS`, `SAVER`, `CELDRV`, `STDRV`, `SDEFENDR`,
+`GMB1`/`GMB2` (check packing first), `CONFIGUR` (standalone C, low
+priority).
 
 ## DUN.EXE — open questions
 
@@ -62,6 +70,26 @@ more `B$…` names, re-run `resolve_rtm_leglib.py` to refresh `rtm_map.py`
 - [ ] `sub_12536` (called first from `dunMain`, holds a char-class table
       + the trap names "POISON GAS VENT" / "FLOOR HOLE" / "SLIME SPLOT")
       — the command parser / per-tile handler.
+
+## TWNDR.EXE / CASDR.EXE — open questions
+
+- [x] Build `twndr.idb` (2026-08-31, 41/98 named) and `casdr.idb`
+      (2026-08-31, 34/102 named) from the unpacked exes. Each: `seg000`
+      main + `seg001` "bmTNCALB" (**shared, identical** between the two),
+      thunk table `seg002` (431 entries).
+- [~] `twndr` names: the shops (`foodShop`, `weapon`/`armorShopEntry`,
+      `buyBackShop`, `sellShopIntro`), money (`borrowMoney`,
+      `loanRepayment`, `fortuneTeller`), crime/jail (`robCommand`,
+      `arrestedByGuards`, `jailScene`, `jailRelease`, `fightGuard`),
+      `townServiceDispatch` (~6 KB), `mailDeliveryJob`.
+- [~] `casdr` names (endgame content): `warlordConfrontation`,
+      `kingConfides` (the guardians-of-the-scroll quest + forearm mark),
+      `potionWizard`, `doFight`, `describeRoom`/`describeObjects` (incl.
+      "THE COMPENDIUM IS THERE!"), `loadCastleLevel` (CASTLE.BS1/2,
+      FORT.BS1/2), `exitCastle`, `gasRoomTrap`, `useKey`, spell handlers.
+- [ ] Name the shared `bmTNCALB` `seg001` module once (applies to both).
+- [ ] `twndr`: `sub_11ED0` (calls `townServiceDispatch`) — the town
+      command loop.
 
 ## LEGLIB.EXE — open questions
 
